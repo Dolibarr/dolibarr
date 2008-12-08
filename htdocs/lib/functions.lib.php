@@ -1765,7 +1765,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
  *	\param	    begin       ("" par defaut)
  *	\param	    options     ("" par defaut)
  *	\param      td          options de l'attribut td ("" par defaut)
- *	\param      sortfield   nom du champ sur lequel est effectu� le tri du tableau
+ *	\param      sortfield   nom du champ sur lequel est effectue le tri du tableau
  *	\param      sortorder   ordre du tri
  */
 function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="", $sortorder="")

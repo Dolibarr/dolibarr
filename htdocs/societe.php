@@ -249,10 +249,10 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom","",$params,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville","",$params,'',$sortfield,$sortorder);
-	print_liste_field_titre($form->textwithhelp($langs->trans("ProfId1Short"),$textprofid[1],1,0),"societe.php","s.siren","",$params,'',$sortfield,$sortorder);
-	print_liste_field_titre($form->textwithhelp($langs->trans("ProfId2Short"),$textprofid[2],1,0),"societe.php","s.siret","",$params,'',$sortfield,$sortorder);
-	print_liste_field_titre($form->textwithhelp($langs->trans("ProfId3Short"),$textprofid[3],1,0),"societe.php","s.ape","",$params,'',$sortfield,$sortorder);
-	print_liste_field_titre($form->textwithhelp($langs->trans("ProfId4Short"),$textprofid[4],1,0),"societe.php","s.idprof4","",$params,'',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithhelp($langs->trans("ProfId1Short"),$textprofid[1],1,0),"societe.php","s.siren","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithhelp($langs->trans("ProfId2Short"),$textprofid[2],1,0),"societe.php","s.siret","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithhelp($langs->trans("ProfId3Short"),$textprofid[3],1,0),"societe.php","s.ape","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithhelp($langs->trans("ProfId4Short"),$textprofid[4],1,0),"societe.php","s.idprof4","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
 	print '<td class="liste_titre" colspan="2" align="center">&nbsp;</td>';
 	print "</tr>\n";
 

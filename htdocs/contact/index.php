@@ -211,12 +211,12 @@ if ($result)
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-    print '<table class="liste" width="100%">';
-
     if ($sall)
     {
         print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
     }
+    
+    print '<table class="liste" width="100%">';
 
 	$param="&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email";
 	if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=$search_priv";

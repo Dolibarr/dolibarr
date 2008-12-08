@@ -28,10 +28,12 @@ require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 
-$langs->load("companies");
-$langs->load("products");
 $langs->load("admin");
 $langs->load("other");
+
+$langs->load("companies");
+$langs->load("products");
+$langs->load("members");
 
 if (!$user->admin)
   accessforbidden();
@@ -40,10 +42,13 @@ if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
 $dirtheme = "../theme";
 
-// Liste des zone de recherche permanantes support�es
-$searchform=array("main_searchform_societe","main_searchform_contact","main_searchform_produitservice");
-$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
-$searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
+// List of supported permanent search area
+$searchform=array(	"MAIN_SEARCHFORM_SOCIETE","MAIN_SEARCHFORM_CONTACT",
+					"MAIN_SEARCHFORM_PRODUITSERVICE","MAIN_SEARCHFORM_ADHERENT");
+$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,
+					$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_ADHERENT);
+$searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),
+					$langs->trans("ProductsAndServices"),$langs->trans("Members"));
 
 
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
@@ -61,9 +66,10 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	
 	dolibarr_set_const($db, "MAIN_THEME",              $_POST["main_theme"]);
 	
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT", $_POST["main_searchform_contact"]);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE", $_POST["main_searchform_societe"]);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["main_searchform_produitservice"]);
+	dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT", $_POST["MAIN_SEARCHFORM_CONTACT"]);
+	dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE", $_POST["MAIN_SEARCHFORM_SOCIETE"]);
+	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["MAIN_SEARCHFORM_PRODUITSERVICE"]);
+	dolibarr_set_const($db, "MAIN_SEARCHFORM_ADHERENT",$_POST["MAIN_SEARCHFORM_ADHERENT"]);
 	
 	dolibarr_set_const($db, "MAIN_MOTD",               $_POST["main_motd"]);
 	dolibarr_set_const($db, "MAIN_HOME",               $_POST["main_home"]);

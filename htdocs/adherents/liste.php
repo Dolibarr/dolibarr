@@ -32,18 +32,6 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 $langs->load("members");
 $langs->load("companies");
 
-
-/*
- * View
- */
-
-llxHeader();
-
-$form=new Form($db);
-
-$membertypestatic=new AdherentType($db);
-
-
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 
 $sortorder=$_GET["sortorder"];
@@ -58,6 +46,30 @@ if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+if ($_REQUEST["button_removefilter"])
+{
+    $_GET["search_nom"]="";
+    $_REQUEST["search_nom"]="";
+    $_GET["search_prenom"]="";
+    $_REQUEST["search_prenom"]="";
+    $_GET["type"]="";
+    $_REQUEST["type"]="";
+    $_GET["search_email"]="";
+    $_REQUEST["search_email"]="";
+    $sall="";
+}
+
+
+/*
+ * View
+ */
+
+llxHeader();
+
+$form=new Form($db);
+
+$membertypestatic=new AdherentType($db);
 
 $sql = "SELECT d.rowid, d.login, d.prenom, d.nom, d.societe, ";
 $sql.= " ".$db->pdate("d.datefin")." as datefin,";
@@ -151,6 +163,11 @@ if ($resql)
     if (isset($_GET["filter"]))       $param.="&filter=".$_GET["filter"];
     print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
+    if ($sall)
+    {
+        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
+    }
+    
     print "<table class=\"noborder\" width=\"100%\">";
 
     print '<tr class="liste_titre">';
@@ -176,7 +193,7 @@ if ($resql)
 	
 	print '<td class="liste_titre">';
     $listetype=$membertypestatic->liste_array();
-    $form->select_array("type", $listetype, $_REQUEST["type"], 1, 0, 0, 0, '', 0, 16);
+    $form->select_array("type", $listetype, $_REQUEST["type"], 1, 0, 0, 0, '', 0, 12);
     print '</td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -188,6 +205,7 @@ if ($resql)
 
 	print '<td align="right" colspan="2" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
+    print '&nbsp; <input type="image" value="button_removefilter" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
 	print '</td>';
 
 	print "</tr>\n";
@@ -219,7 +237,7 @@ if ($resql)
         print '<td nowrap="nowrap">';
         $membertypestatic->id=$objp->type_id;
         $membertypestatic->libelle=$objp->type;
-        print $membertypestatic->getNomUrl(1,16);
+        print $membertypestatic->getNomUrl(1,12);
         print '</td>';
         
         // Moral/Physique
