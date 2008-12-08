@@ -27,8 +27,7 @@
 
 require("../../master.inc.php");
 
-$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
-$langs->setDefaultLang($langcode);
+$langs->setDefaultLang('auto');
 
 $langs->load("main");
 $langs->load("other");
