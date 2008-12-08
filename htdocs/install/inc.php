@@ -106,8 +106,11 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 	}
 }
 
+
+// Define prefix
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
+
 define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
 if (empty($conf->character_set_client))     	  $conf->character_set_client=$charset;
 if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
@@ -168,7 +171,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en comp
 }
 
 // Defini objet langs
-$langs = new Translate('../langs',$conf);
+$langs = new Translate('..',$conf);
 $langs->setDefaultLang('auto');
 $langs->setPhpLang();
 

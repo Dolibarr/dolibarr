@@ -137,7 +137,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en comp
 }
 
 // Defini objet langs
-$langs = new Translate('../langs',$conf);
+$langs = new Translate('..',$conf);
 $langs->setDefaultLang('auto');
 $langs->setPhpLang();
 
