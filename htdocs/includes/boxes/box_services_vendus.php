@@ -137,7 +137,7 @@ class box_services_vendus extends ModeleBoxes {
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
                     'text' => dolibarr_print_date($objp->datem,'day'));
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="right width="18"',
+					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
                     'text' => $contratlignestatic->LibStatut($objp->statut,3)
 					);
 						
