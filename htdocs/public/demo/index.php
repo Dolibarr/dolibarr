@@ -55,9 +55,11 @@ function llxHeaderVierge($title, $head = "")
 
 	print "<html>\n";
 	print "<head>\n";
+	print '<meta name="robots" content="index,nofollow">'."\n";
+	print '<meta name="keywords" content="dolibarr,demo,online,demonstration,example,test,web,erp,crm,demos">'."\n";
+	print '<meta name="description" content="Dolibarr simple ERP/CRM demo. You can test here several profiles of Dolibarr ERP/CRM demos.">'."\n";
 	print "<title>".$title."</title>\n";
-	print '<meta name="robots" content="noindex,nofollow">'."\n";
-	print '<link rel="stylesheet" type="text/css" href="/theme/eldy/eldy.css.php">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css.php">'."\n";
 	if ($head) print $head."\n";
 	print "</head>\n";
 	print '<body style="margin: 20px;">'."\n";
