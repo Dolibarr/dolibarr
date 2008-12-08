@@ -154,7 +154,7 @@ if (! empty($dolibarr_main_document_root_alt))
 	}
 }
 
-// Defini prefix
+// Define prefix
 if (isset($_SERVER["LLX_DBNAME"])) $dolibarr_main_db_prefix=$_SERVER["LLX_DBNAME"];
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 

@@ -33,7 +33,7 @@
  */
 class Translate {
 
-    var $dir;						// Directories with translation files
+    var $dir;						// Directories that contains /langs subdirectory
 
     var $defaultlang;				// Langue courante en vigueur de l'utilisateur
 
@@ -48,7 +48,7 @@ class Translate {
 
     /**
      *  \brief      Constructeur de la classe
-     *  \param      dir             Force directory that contains translation files
+     *  \param      dir             Force directory that contains /langs subdirectory
      *  \param      conf			Objet qui contient la config Dolibarr
      */
     function Translate($dir = "",$conf)
@@ -102,7 +102,7 @@ class Translate {
     	
     	$this->origlang=$srclang;
 		
-        if ($srclang == 'auto')
+        if (empty($srclang) || $srclang == 'auto')
         {
             $langpref=$_SERVER['HTTP_ACCEPT_LANGUAGE'];
             $langpref=eregi_replace(";[^,]*","",$langpref);
