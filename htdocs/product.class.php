@@ -21,10 +21,10 @@
  */
 
 /**
- \file       htdocs/product.class.php
- \ingroup    produit
- \brief      Fichier de la classe des produits pr�d�finis
- \version    $Id$
+ *	\file       htdocs/product.class.php
+ *	\ingroup    produit
+ *	\brief      Fichier de la classe des produits pr�d�finis
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
@@ -120,7 +120,6 @@ class Product extends CommonObject
 		$this->db = $DB;
 		$this->id   = $id ;
 		$this->status = 0;
-		$this->finished = 1;
 		$this->stock_reel = 0;
 		$this->seuil_stock_alerte = 0;
 
@@ -166,11 +165,11 @@ class Product extends CommonObject
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
 		$this->libelle = trim($this->libelle);
-		if ($this->tva_tx=='') $this->tva_tx = 0;
-		if ($this->price=='')  $this->price = 0;
-		if ($this->price_min=='')  $this->price_min = 0;
-		if ($this->status=='') $this->status = 0;
-		if ($this->finished=='') $this->finished = 1;
+		if (empty($this->tva_tx))    $this->tva_tx = 0;
+		if (empty($this->price))     $this->price = 0;
+		if (empty($this->price_min)) $this->price_min = 0;
+		if (empty($this->status))    $this->status = 0;
+		if (empty($this->finished))  $this->finished = 0;
 		
 		$price_ht=0;
 		$price_ttc=0;
@@ -371,7 +370,9 @@ class Product extends CommonObject
 		$this->weight_units = trim($this->weight_units);
 		$this->volume = price2num($this->volume);
 		$this->volume_units = trim($this->volume_units);
-
+		if (empty($this->tva_tx))    $this->tva_tx = 0;
+		if (empty($this->finished))  $this->finished = 0;
+		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 		$sql .= " SET label = '" . addslashes($this->libelle) ."'";
 		if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
