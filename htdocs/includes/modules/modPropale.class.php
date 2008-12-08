@@ -17,27 +17,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     \defgroup   propale     Module propale
- \brief      Module pour gerer la tenue de propositions commerciales
+ *		\brief      Module pour gerer la tenue de propositions commerciales
  */
 
 /**
- \file       htdocs/includes/modules/modPropale.class.php
- \ingroup    propale
- \brief      Fichier de description et activation du module Propale
+ *	\file       htdocs/includes/modules/modPropale.class.php
+ *	\ingroup    propale
+ *	\brief      Fichier de description et activation du module Propale
+ * 	\version	$Id$
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/** \class modPropale
- \brief      Classe de description et activation du module Propale
+/** \class 		modPropale
+ *	\brief      Classe de description et activation du module Propale
  */
-
 class modPropale extends DolibarrModules
 {
 

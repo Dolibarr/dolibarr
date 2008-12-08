@@ -33,7 +33,7 @@ class box_propales extends ModeleBoxes {
     var $boxcode="lastpropals";
     var $boximg="object_propal";
     var $boxlabel;
-    var $depends = array("propale");
+    var $depends = array("propal");	// conf->propal->enabled
 
 	var $db;
 	var $param;

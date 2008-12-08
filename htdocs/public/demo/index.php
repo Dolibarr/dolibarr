@@ -35,9 +35,9 @@ $langs->load("other");
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-	'disablemodules'=>'banque,barcode,bookmark,boutique,cashdesk,commande,commercial,comptabilite,contrat,expedition,facture,fournisseur,prelevement,produit,projet,propal,service,societe,stock,tax'),
+	'disablemodules'=>'banque,barcode,bookmark,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock,tax'),
 	array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-	'disablemodules'=>'barcode,boutique,bookmark,cashdesk,commande,commercial,contrat,expedition,facture,fournisseur,prelevement,produit,projet,propal,service,societe,stock'),
+	'disablemodules'=>'barcode,boutique,bookmark,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock'),
 	array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
 	'disablemodules'=>'adherent,barcode,boutique,bookmark,cashdesk,don,expedition,prelevement,projet,stock'),
 	array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
