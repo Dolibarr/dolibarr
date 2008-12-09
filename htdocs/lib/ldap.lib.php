@@ -79,6 +79,46 @@ function ldap_prepare_head()
 }
 
 
+/**
+ *  \brief      	Show button test LDAP synchro
+ */
+function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
+{
+	global $langs, $conf, $user;
+	//print 'key='.$key.' dn='.$dn.' objectclass='.$objectclass;
+	
+	print '<br>';
+	if (! function_exists("ldap_connect"))
+	{
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$butlabel.'</a>';
+	}
+	else if (empty($conf->global->LDAP_SERVER_HOST))
+	{
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans('SetupNotComplete').'">'.$butlabel.'</a>';
+	}
+	else if (empty($key) || empty($dn) || empty($objectclass))
+	{
+		$langs->load("errors");
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans('ErrorLDAPSetupNotComplete').'">'.$butlabel.'</a>';
+	}
+	else
+	{
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action='.$testlabel.'">'.$butlabel.'</a>';
+	}
+	print '<br><br>';
+}
+
+
+/**
+ * Show an LDAP array in an HTML to records.
+ *
+ * @param unknown_type $result	Array to show. This array is already encoded into charset_output
+ * @param unknown_type $level
+ * @param unknown_type $count
+ * @param unknown_type $var
+ * @param unknown_type $hide
+ * @return unknown
+ */
 function show_ldap_content($result,$level,$count,$var,$hide=0)
 {
 	global $bc, $conf;
@@ -113,8 +153,8 @@ function show_ldap_content($result,$level,$count,$var,$hide=0)
 		}
 		else
 		{
-			if ($hide) print eregi_replace('.','*',utf8_decode("$val"));
-			else print utf8_decode($val);
+			if ($hide) print eregi_replace('.','*',$val);
+			else print $val;
 			print '</td></tr>';
 		}
 	}

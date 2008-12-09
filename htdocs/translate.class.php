@@ -42,8 +42,8 @@ class Translate {
 	
     var $cache_labels=array();		// Cache for labels
 	
-    var $charset_inputfile='ISO-8859-1';	// Codage used by default to encode lang files (used if CHARSET not found in file)
-	var $charset_output='UTF-8';			// Codage used by default for "trans" method output if $conf->character_set_client not defined (character_set_client in conf.php)
+    var $charset_inputfile='ISO-8859-1';	// Codage used by default to encode/decode lang files (used if CHARSET not found in file)
+	var $charset_output='UTF-8';			// Codage used by default for "trans" method output if $conf->character_set_client not defined (should never happen)
 	
 
     /**

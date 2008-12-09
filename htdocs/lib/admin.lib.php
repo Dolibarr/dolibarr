@@ -419,5 +419,4 @@ function security_prepare_head()
 	return $head;
 }
 
-
 ?>

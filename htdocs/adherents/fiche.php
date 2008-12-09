@@ -125,26 +125,26 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 		if ($result > 0)
 		{
 			// Modifie valeures
-			$adh->prenom      = $_POST["prenom"];
-			$adh->nom         = $_POST["nom"];
+			$adh->prenom      = trim($_POST["prenom"]);
+			$adh->nom         = trim($_POST["nom"]);
 			$adh->fullname    = trim($adh->prenom.' '.$adh->nom);
-			$adh->login       = $_POST["login"];
-			$adh->pass        = $_POST["pass"];
+			$adh->login       = trim($_POST["login"]);
+			$adh->pass        = trim($_POST["pass"]);
 
-			$adh->societe     = $_POST["societe"];
-			$adh->adresse     = $_POST["adresse"];
-			$adh->cp          = $_POST["cp"];
-			$adh->ville       = $_POST["ville"];
+			$adh->societe     = trim($_POST["societe"]);
+			$adh->adresse     = trim($_POST["adresse"]);
+			$adh->cp          = trim($_POST["cp"]);
+			$adh->ville       = trim($_POST["ville"]);
 			$adh->pays_id     = $_POST["pays"];
 
-			$adh->phone       = $_POST["phone"];
-			$adh->phone_perso = $_POST["phone_perso"];
-			$adh->phone_mobile= $_POST["phone_mobile"];
-			$adh->email       = $_POST["email"];
+			$adh->phone       = trim($_POST["phone"]);
+			$adh->phone_perso = trim($_POST["phone_perso"]);
+			$adh->phone_mobile= trim($_POST["phone_mobile"]);
+			$adh->email       = trim($_POST["email"]);
 			$adh->naiss       = $datenaiss;
 
 			$adh->typeid      = $_POST["type"];
-			$adh->note        = $_POST["comment"];
+			$adh->note        = trim($_POST["comment"]);
 			$adh->morphy      = $_POST["morphy"];
 
 			$adh->amount      = $_POST["amount"];

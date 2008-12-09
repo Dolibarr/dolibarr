@@ -50,6 +50,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_DN',$_POST["contactdn"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_OBJECT_CLASS',$_POST["objectclass"])) $error++;
+	
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"])) $error++;
@@ -252,17 +253,13 @@ print info_admin($langs->trans("LDAPDescValues"));
 /*
  * Test de la connexion
  */
-print '<br>';
-if (! function_exists("ldap_connect"))
-{
-	print '<a class="butActionRefused" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$langs->trans("LDAPTestSynchroContact").'</a>';
-}
-else if (empty($conf->global->LDAP_SERVER_HOST))
-{
-	print '<a class="butActionRefused" href="#" title="'.$langs->trans('SetupNotComplete').'">'.$langs->trans("LDAPTestSynchroContact").'</a>';
-}
-else print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestSynchroContact").'</a>';
-print '<br><br>';
+$butlabel=$langs->trans("LDAPTestSynchroContact");
+$testlabel='test';
+$key=$conf->global->LDAP_KEY_CONTACTS;
+$dn=$conf->global->LDAP_CONTACT_DN;
+$objectclass=$conf->global->LDAP_CONTACT_OBJECT_CLASS;
+
+show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass);
 
 
 if (function_exists("ldap_connect"))
@@ -270,8 +267,8 @@ if (function_exists("ldap_connect"))
 	if ($_GET["action"] == 'test')
 	{
 		// Creation objet
-		$contact=new Contact($db);
-		$contact->initAsSpecimen();
+		$object=new Contact($db);
+		$object->initAsSpecimen();
 
 		// Test synchro
 		$ldap=new Ldap();
@@ -279,8 +276,8 @@ if (function_exists("ldap_connect"))
 
 		if ($result > 0)
 		{
-			$info=$contact->_load_ldap_info();
-			$dn=$contact->_load_ldap_dn($info);
+			$info=$object->_load_ldap_info();
+			$dn=$object->_load_ldap_dn($info);
 
 			$result2=$ldap->update($dn,$info,$user);
 			$result3=$ldap->delete($dn);
@@ -296,6 +293,7 @@ if (function_exists("ldap_connect"))
 				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
 				print '</font><br>';
+				print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
 			}
 		}
 		else
@@ -304,8 +302,13 @@ if (function_exists("ldap_connect"))
 			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
 			print '</font><br>';
+			print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
 		}
 
+		print "<br>\n";
+		print "LDAP input file used for test:<br><br>\n";
+		print nl2br($ldap->dump_content($dn,$info));
+		print "\n<br>";
 	}
 }
 

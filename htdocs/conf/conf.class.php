@@ -38,18 +38,19 @@ class Conf
 {
     /** \public */
 	//! Object with database handler
-	var $db;            
-	//! Charset for HTML output
-	var $character_set_client;	// UTF8, ISO-8859-1
+	var $db;
+
+	//! Charset for HTML output and for storing data in memory
+	var $character_set_client='UTF-8';	// UTF-8, ISO-8859-1
 
 	var $dol_document_root;
-	
+
 	var $monnaie;	// Used to store current currency
 	var $css;		// Used to store current css (from theme)
-	
+
 	var $css_modules=array();
 	var $tabs_modules=array();
-	
+
 
 	/**
 	*      \brief      Positionne toutes les variables de configuration

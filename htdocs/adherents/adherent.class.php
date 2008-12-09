@@ -346,7 +346,7 @@ class Adherent extends CommonObject
 		$nbrowsaffected=0;
 		$error=0;
 
-		dolibarr_syslog("Adherent::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser);
+		dolibarr_syslog("Adherent::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", email=".$this->email);
 
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
