@@ -1,0 +1,5 @@
+* Page with licence compatibility
+http://www.gnu.org/licenses/quick-guide-gplv3.fr.html
+
+* FAQ on GPL licence
+http://www.fsf.org/licensing/licenses/gpl-faq.html
