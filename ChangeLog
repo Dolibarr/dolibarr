@@ -33,6 +33,11 @@ For users:
 - Can clone an emailing.
 - Reduce memory usage (about 2%).
 - Add weight and size in sendings module.
+- Add a fast search form on left menu for member module.
+- Fix: Do not show export filter for disabled modules
+- Show greyed lines for not allowed export filters.
+- Add nature in product fields (manufactured product or not).
+- Add export filters for category module.
 
 For translators:
 - The errors language file contains only error or warning messages with 
@@ -51,7 +56,12 @@ For developers:
   to build skins that use different style for each menu entry.
 - All emails and url HTML output use same function.
 - Add more integrity check on database
+- Can disable modules on logon page. This make possible to
+  have several profiles of demo with only one demo. Also added a new
+  Dolibarr demo front page (in htdocs/public/demo).
+- Allow modules to add new tabs.
 
+   
 
 ***** Changelog for 2.4 compared to 2.2 *****
 
