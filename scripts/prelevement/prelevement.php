@@ -352,7 +352,7 @@ if (sizeof($factures_prev) > 0)
    */
 
   $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
-  $sql .= " SET amount = ".ereg_replace(",",".",$bonprev->total);
+  $sql .= " SET amount = ".price2num($bonprev->total);
   $sql .= " WHERE rowid = ".$prev_id;
 
   if (!$db->query($sql))

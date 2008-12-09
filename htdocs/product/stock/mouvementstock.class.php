@@ -283,7 +283,7 @@ class MouvementStock
 	  	if ( strftime('%Y%m%d',$entrepot_value_date) == strftime('%Y%m%d',$now) )
 	  	{
 	  		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot_valorisation";
-	  		$sql.= " SET valo_pmp='".ereg_replace(",",".",$new_value)."'";
+	  		$sql.= " SET valo_pmp='".price2num($new_value)."'";
 	  		$sql.= " WHERE fk_entrepot = $entrepot_id ";
 	  		$sql.= " AND ".$this->db->pdate("date_calcul")."='".$entrepot_value_date."';";
 	  	}
@@ -292,7 +292,7 @@ class MouvementStock
 	  		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot_valorisation";
 	  		$sql.= " (date_calcul, fk_entrepot, valo_pmp)";
 	  		$sql.= " VALUES (".$this->db->idate(mktime()).", ".$entrepot_id;
-	  		$sql.= ",'".ereg_replace(",",".",$new_value)."');";
+	  		$sql.= ",'".price2num($new_value)."')";
 	  	}
 	  	 
 	  	if ($this->db->query($sql))
@@ -309,7 +309,7 @@ class MouvementStock
 	  if ($error === 0)
 	  {
 	  	$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot";
-	  	$sql.= " SET valo_pmp='".ereg_replace(",",".",$new_value)."'";
+	  	$sql.= " SET valo_pmp='".price2num($new_value)."'";
 	  	$sql.= " WHERE rowid = $entrepot_id ";
 	  	 
 	  	if ($this->db->query($sql))

@@ -504,9 +504,6 @@ else                        // Si utilisateur externe
 	$conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
 }
 
-// Only rodolphe and auguria menu manage canvas menu (auguria not correctly yet)
-if (! eregi('^rodolphe',$conf->left_menu) && ! eregi('^auguria',$conf->left_menu)) $conf->global->PRODUCT_CANVAS_ABILITY=0;
-
 
 // For modules using Smarty
 if ($conf->global->MAIN_NEED_SMARTY)

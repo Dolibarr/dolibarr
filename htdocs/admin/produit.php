@@ -110,11 +110,11 @@ else if ($_POST["action"] == 'confirmDeleteProdLineInForm')
 }
 else if ($_POST["action"] == 'ProductCanvasAbility')
 {
-	dolibarr_set_const($db, "PRODUCT_CANVAS_ABILITY", $_POST["ProductCanvasAbility"]);
-	dolibarr_set_const($db, "MAIN_NEED_SMARTY", $_POST["ProductCanvasAbility"]);
 	// Create temp directory for smarty
 	if (! empty($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
 	if (! empty($dolibarr_smarty_cache))   create_exdir($dolibarr_smarty_cache);
+	
+	dolibarr_set_const($db, "MAIN_NEED_SMARTY", $_POST["ProductCanvasAbility"]);
 }
 else if ($_POST["action"] == 'usesearchtoselectproduct')
 {
@@ -122,6 +122,10 @@ else if ($_POST["action"] == 'usesearchtoselectproduct')
 }
 else if ($_GET["action"] == 'set')
 {
+	// Create temp directory for smarty
+	if (! empty($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
+	if (! empty($dolibarr_smarty_cache))   create_exdir($dolibarr_smarty_cache);
+	
 	$const = "PRODUIT_SPECIAL_".strtoupper($_GET["spe"]);
 	if ($_GET["value"]) dolibarr_set_const($db, $const, $_GET["value"]);
 	else dolibarr_del_const($db, $const);
@@ -277,8 +281,8 @@ print '</tr>';
 print '</form>';
 
 
-// Only rodolphe and auguria menu manage canvas menu (auguria not correctly yet)
-if (eregi('^rodolphe',$conf->left_menu) || eregi('^auguria',$conf->left_menu))
+// Old canvas feature
+if ($conf->global->PRODUCT_CANVAS_ABILITY)
 {
 	// Propose utilisation de canvas.
 	// Ces derniers ne sont geres que par le menu default
@@ -288,17 +292,6 @@ if (eregi('^rodolphe',$conf->left_menu) || eregi('^auguria',$conf->left_menu))
 	print "  <td>".$langs->trans("ProductSpecial")."</td>\n";
 	print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
 	print "  <td width=\"80\">&nbsp;</td></tr>\n";
-
-	print '<form method="post" action="produit.php">';
-	print '<input type="hidden" name="action" value="ProductCanvasAbility">';
-	print "<tr ".$bc[$var].">";
-	print '<td>'.$langs->trans("ProductCanvasAbility").'</td>';
-	print '<td width="60" align="right">';
-	print $html->selectyesno("ProductCanvasAbility",$conf->global->PRODUCT_CANVAS_ABILITY,1);
-	print '</td><td align="right">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print "</td>";
-	print '</tr></form>';
 
 	require_once(DOL_DOCUMENT_ROOT . "/product.class.php");
 	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
