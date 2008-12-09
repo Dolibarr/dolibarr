@@ -290,10 +290,10 @@ class ProductLivre extends Product
 		$sql.= " SET isbn = '$isbn'";
 		$sql.= " , ean = '$ean'";
 		$sql.= " , pages         = '".$this->pages."'";
-		$sql.= " , px_feuillet   = ".($this->px_feuillet?price2num($this->px_feuillet):'null');
-		$sql.= " , px_revient    = ".($this->px_revient?price2num($this->px_revient):'null');
-		$sql.= " , px_reliure    = ".($this->px_reliure?price2num($this->px_reliure):'null');
-		$sql.= " , px_couverture = ".($this->px_couverture?price2num($this->px_couverture):'null');
+		$sql.= " , px_feuillet   = '".$this->px_feuillet."'";
+		$sql.= " , px_revient    = '".price2num($this->px_revient)."'";
+		$sql.= " , px_reliure = '".price2num($this->px_reliure)."'";
+		$sql.= " , px_couverture = '".price2num($this->px_couverture)."'";
 		$sql.= " , fk_couverture = '".$this->couverture->id."'";
 		$sql.= " , fk_contrat    = '".$this->contrat->id."'";
 		$sql.= " , fk_auteur     = '".$datas["auteur"]."'";
