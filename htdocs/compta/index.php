@@ -336,7 +336,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 // Derniers clients
-if ($user->rights->societe->lire)
+if ($user->societe->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 	$max=5;
@@ -399,7 +399,7 @@ if ($user->rights->societe->lire)
 
 
 // Derniers fournisseurs
-if ($user->rights->societe->lire)
+if ($user->fournisseur->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 	$max=5;

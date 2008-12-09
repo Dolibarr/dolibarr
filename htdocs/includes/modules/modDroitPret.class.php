@@ -17,23 +17,23 @@
  */
 
 /**
- \defgroup   DroitPret     Module pret
- \version	$Id$
- \brief      Module pour gerer le suivi des droits de prets
+ *	\defgroup   DroitPret     Module pret
+ *	\version	$Id$
+ *	\brief      Module pour gerer le suivi des droits de prets
  */
 
 /**
- \file       htdocs/includes/modules/modDroitPret.class.php
- \ingroup    don
- \brief      Fichier de description et activation du module DroitPret
+ *	\file       htdocs/includes/modules/modDroitPret.class.php
+ *	\ingroup    don
+ *	\brief      Fichier de description et activation du module DroitPret
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- \class      modDroitPret
- \brief      Classe de description et activation du module DroitPr�t
+ *	\class      modDroitPret
+ *	\brief      Classe de description et activation du module DroitPr�t
  */
 
 class modDroitPret  extends DolibarrModules
