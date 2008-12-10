@@ -600,11 +600,11 @@ else
 
 
 /**
- \brief      Affiche formulaire de login
- \param		langs		Lang object
- \param		conf		Conf object
- \param		mysoc		Company object
- \remarks    Il faut changer le code html dans cette fonction pour changer le design de la logon
+ *	\brief      Show Dolibarr default login page
+ *	\param		langs		Lang object
+ *	\param		conf		Conf object
+ *	\param		mysoc		Company object
+ *	\remarks    You must change HTML code in this page to change design of logon page.
  */
 function dol_loginfunction($langs,$conf,$mysoc)
 {
@@ -617,6 +617,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	header('Cache-Control: Public, must-revalidate');
 
+	if (! empty($_REQUEST["urlfrom"])) $_SESSION["urlfrom"]=$_REQUEST["urlfrom"];
+	else unset($_SESSION["urlfrom"]);
+	
 	// Ce DTD est KO car inhibe document.body.scrollTop
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	// Ce DTD est OK
@@ -719,7 +722,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
-	// Code de sécurité
+	// Security graphical code
 	$disabled=! $conf->global->MAIN_SECURITY_ENABLECAPTCHA;
 	if (function_exists("imagecreatefrompng") && ! $disabled)
 	{
@@ -747,8 +750,10 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 
 	print '</table>';
+	
+	// Hidden fields
 	print '<input type="hidden" name="loginfunction" value="loginfunction" />';
-
+	
 	print '</form>';
 
 	// Message
@@ -766,6 +771,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print '</td></tr></table></center><br>';
 	}
 
+	print "\n";
+	print '<!-- urlfrom in session = '.$_SESSION["urlfrom"].' -->';
+	
 	// Fin entete html
 	print "\n</body>\n</html>";
 }
