@@ -1022,46 +1022,45 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 	$menuleft->showmenu();
 
 	// Affichage des zones de recherche permanantes
-	$addzonerecherche=0;
-	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE) $addzonerecherche=1;
-	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT) $addzonerecherche=1;
-	if (($conf->produit->enabled || $conf->service->enabled) && $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE) $addzonerecherche=1;
-
-	if ($addzonerecherche  && ($user->rights->societe->lire || $user->rights->produit->lire))
+	$ret='';
+	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
 	{
-		print '<div class="blockvmenupair">';
-
-		if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
-		{
-			$langs->load("companies");
-			printSearchForm(DOL_URL_ROOT.'/societe.php', DOL_URL_ROOT.'/societe.php',
-			img_object($langs->trans("List"),'company').' '.$langs->trans("Companies"), 'soc', 'socname');
-		}
-
-		if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
-		{
-			$langs->load("companies");
-			printSearchForm(DOL_URL_ROOT.'/contact/index.php', DOL_URL_ROOT.'/contact/index.php',
-			img_object($langs->trans("List"),'contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
-		}
-
-		if (($conf->produit->enabled || $conf->service->enabled) && $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE && $user->rights->produit->lire)
-		{
-			$langs->load("products");
-			printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/index.php',
-			img_object($langs->trans("List"),'product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
-		}
-
-		if ($conf->adherent->enabled && $conf->global->MAIN_SEARCHFORM_ADHERENT && $user->rights->adherent->lire)
-		{
-			$langs->load("members");
-			printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php',
-			img_object($langs->trans("List"),'user').' '.$langs->trans("Members"), 'member', 'sall');
-		}
-		
-		print '</div>';
+		$langs->load("companies");
+		$ret.=printSearchForm(DOL_URL_ROOT.'/societe.php', DOL_URL_ROOT.'/societe.php',
+		img_object($langs->trans("List"),'company').' '.$langs->trans("Companies"), 'soc', 'socname');
 	}
 
+	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
+	{
+		$langs->load("companies");
+		$ret.=printSearchForm(DOL_URL_ROOT.'/contact/index.php', DOL_URL_ROOT.'/contact/index.php',
+		img_object($langs->trans("List"),'contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
+	}
+
+	if (($conf->produit->enabled || $conf->service->enabled) && $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE && $user->rights->produit->lire)
+	{
+		$langs->load("products");
+		$ret.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/index.php',
+		img_object($langs->trans("List"),'product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
+	}
+
+	if ($conf->adherent->enabled && $conf->global->MAIN_SEARCHFORM_ADHERENT && $user->rights->adherent->lire)
+	{
+		$langs->load("members");
+		$ret.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php',
+		img_object($langs->trans("List"),'user').' '.$langs->trans("Members"), 'member', 'sall');
+	}
+		
+	if ($ret)
+	{
+		print "\n";
+		print "<!-- Begin SearchForm -->\n";
+		print '<div class="blockvmenupair">'."\n";
+		print $ret;
+		print '</div>'."\n";
+		print "<!-- End SearchForm -->\n";
+	}
+		
 	// Zone de recherche supplementaire
 	if ($form_search)
 	{
@@ -1131,18 +1130,17 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
 	global $langs;
-	print "\n<!-- Begin SearchForm ".$htmlinputname." -->\n";
-	print '<form action="'.$urlaction.'" method="post">';
-	print '<div class="menu_titre">';
-	print '<a class="vsmenu" href="'.$urlobject.'">';
-	print $title.'</a><br>';
-	print '</div>';
-	print '<input type="hidden" name="mode" value="search">';
-	print '<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
-	print '<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
-	print '<input type="submit" class="button" value="'.$langs->trans("Go").'">';
-	print "</form>";
-	print "\n<!-- End SearchForm -->\n";
+	$ret ='<form action="'.$urlaction.'" method="post">';
+	$ret.='<div class="menu_titre">';
+	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
+	$ret.=$title.'</a><br>';
+	$ret.='</div>';
+	$ret.='<input type="hidden" name="mode" value="search">';
+	$ret.='<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
+	$ret.='<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
+	$ret.='<input type="submit" class="button" value="'.$langs->trans("Go").'">';
+	$ret.="</form>\n";
+	return $ret;
 }
 
 
