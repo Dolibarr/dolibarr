@@ -193,8 +193,8 @@ if (! defined('NOREQUIREDB'))
 	}
 }
 // Now database connexion is known we can forget password
-$dolibarr_main_db_pass='';
-$conf->db->pass='';
+//$dolibarr_main_db_pass=''; 	// Comment this because pass is used in a lot of pages
+$conf->db->pass='';				// This is to avoir password to be shown in dump
 
 /*
  * Creation objet $user

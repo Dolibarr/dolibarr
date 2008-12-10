@@ -462,6 +462,8 @@ DisabledModules=Modules désactivés
 For=Pour
 ForCustomer=Pour le client
 Signature=Sign
+HidePassword=Afficher commande avec mot de passe masqué
+UnHidePassword=Afficher commande réelle avec mot de passe en clair
 # Week day
 Monday=Lundi
 Tuesday=Mardi

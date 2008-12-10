@@ -96,7 +96,7 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, "listevents.php","",$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, "listevents.php","",$sortfield,$sortorder,'',$num,0,'setup');
 
 	if ($_GET["action"] == 'purge')
 	{

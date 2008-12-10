@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,10 +89,13 @@ if ($what == 'mysql')
 	create_exdir(DOL_DATA_ROOT.'/admin/temp');
 	
 	// Parameteres execution	
-	$command=escapeshellarg($mysqldump);
+	$command=$mysqldump;
+	if (eregi(" ",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
+	
 	//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
 	$param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
 	$param.=" -u ".$dolibarr_main_db_user;
+	if (! empty($dolibarr_main_db_port)) $param.=" -P ".$dolibarr_main_db_port;
 	$compression=isset($_POST['compression']) ? $_POST['compression'] : 'none';
 	if (! $_POST["use_transaction"]) $param.=" -l --single-transaction";
 	if ($_POST["disable_fk"])        $param.=" -K";
