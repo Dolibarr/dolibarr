@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
  */
 
 /**
-		\file 		htdocs/admin/tools/dolibarr_import.php
-		\brief      Page import de la base
-		\version    $Id$
-*/
+ *		\file 		htdocs/admin/tools/dolibarr_import.php
+ *		\brief      Page import de la base
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -30,6 +30,10 @@ $langs->load("other");
 if (! $user->admin)
   accessforbidden();
 
+
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -44,7 +48,7 @@ print_titre($langs->trans("Restore")).'<br>';
 
 ?>
 
-
+<!-- Run on page load -->
 <script type="text/javascript" language="javascript">
 //<![CDATA[
 function hide_them_all() {
@@ -53,27 +57,10 @@ function hide_them_all() {
 //    document.getElementById("latex_options").style.display = 'none';
 //    document.getElementById("pdf_options").style.display = 'none';
 //    document.getElementById("none_options").style.display = 'none';
-}
 
-function show_checked_option() {
-    hide_them_all();
-
-    if (document.getElementById('radio_dump_mysql')) {
-        document.getElementById('mysql_options').style.display = 'block';
-    }
-//    if (document.getElementById('radio_dump_latex').checked) {
-//        document.getElementById('latex_options').style.display = 'block';
-//    }
-//    if (document.getElementById('radio_dump_pdf').checked) {
-//        document.getElementById('pdf_options').style.display = 'block';
-//    }
-//    if (document.getElementById('radio_dump_xml').checked) {
-//        document.getElementById('none_options').style.display = 'block';
-//    }
-//    if (document.getElementById('radio_dump_csv')) {
-//        document.getElementById('csv_options').style.display = 'block';
-//    }
-    
+<?php
+if (! empty($_GET["radio_dump"])) print "document.getElementById('mysql_options').style.display = 'block';";
+?>
 }
 
 //]]>
@@ -89,6 +76,7 @@ function show_checked_option() {
 	<legend><?php echo $langs->trans("ImportMethod"); ?></legend>
     <div class="formelementrow">
         <input type="radio" name="what" value="mysql" id="radio_dump_mysql"
+        	<?php echo ($_GET["radio_dump"]=='mysql_options'?' checked':''); ?>
             onclick="
                 if (this.checked) {
                     hide_them_all();
@@ -110,9 +98,13 @@ function show_checked_option() {
 	<div class="formelementrow">
 	<?php
 	// Parameteres execution	
-	$command=escapeshellarg('mysql');
-
-	$param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host." -u ".$dolibarr_main_db_user;
+	$command='mysql';
+	if (eregi(" ",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
+	
+	$param=$dolibarr_main_db_name;
+	$param.=" -h ".$dolibarr_main_db_host;
+	if (! empty($dolibarr_main_db_port)) $param.=" -P ".$dolibarr_main_db_port;
+	$param.=" -u ".$dolibarr_main_db_user;
 	$paramcrypted=$param;
 	$paramclear=$param;
 	if (! empty($dolibarr_main_db_pass))
@@ -121,17 +113,22 @@ function show_checked_option() {
 		$paramclear.=" -p".$dolibarr_main_db_pass;
 	}
 	
-	echo $langs->trans("ImportMySqlDesc"); ?><br>
-	<textarea rows="1" cols="120"><?php echo $langs->trans("ImportMySqlCommand",$command,$paramcrypted); ?></textarea><br>
-    </div>
+	echo $langs->trans("ImportMySqlDesc"); 
+	print '<br>';
+	print '<textarea rows="1" cols="120">'.$langs->trans("ImportMySqlCommand",$command,$_GET["showpass"]?$paramclear:$paramcrypted).'</textarea><br>';
+
+	if ($_GET["showpass"]) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
+	else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
+	print '</div>';
+	
+	?>
 	
 	<script type="text/javascript" language="javascript">
 //<![CDATA[
-    show_checked_option();
 	hide_them_all();
 //]]>
-</script>
-</fieldset>
+	</script>
+	</fieldset>
 </div>	
 
 
