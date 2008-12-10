@@ -102,7 +102,10 @@ if ($_REQUEST["action"] == 'gotodemo')
 
 	if ($disablestring)
 	{
-		header("Location: ".DOL_URL_ROOT.'/index.php?disablemodules='.$disablestring);
+		$url=DOL_URL_ROOT.'/index.php?disablemodules='.$disablestring;
+		if (! empty($_REQUEST["urlfrom"]))     $url.='&urlfrom='.$_REQUEST["urlfrom"];
+		if (! empty($conf->global->MAIN_DEMO)) $url.='&username='.urlencode($conf->global->MAIN_DEMO);
+		header("Location: ".$url);
 		exit;
 	}
 }
@@ -207,7 +210,7 @@ foreach ($demoprofiles as $profilarray)
 {
 	if ($profilarray['default'] >= 0)
 	{
-		$url=$_SERVER["PHP_SELF"].'?action=gotodemo&amp;demochoice='.$profilarray['key'];
+		$url=$_SERVER["PHP_SELF"].'?action=gotodemo&amp;demochoice='.$profilarray['key'].'&amp;urlfrom='.urlencode($_SERVER["PHP_SELF"]);
 		//if ($i % $NBOFCOLS == 0) print '<tr>';
 		print '<tr>';
 		print '<td align="left">';

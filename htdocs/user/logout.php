@@ -33,6 +33,9 @@ if ($_SESSION["dol_authmode"] == 'forceuser'
 include_once("../conf/conf.php");
 require_once("../main.inc.php");
 
+// Define url to go after disconnect
+$urlfrom=empty($_SESSION["urlfrom"])?'':$_SESSION["urlfrom"];
+
 // Module Phenix
 if ($conf->phenix->enabled && $conf->phenix->cookie)
 {
@@ -56,5 +59,13 @@ dolibarr_syslog("Start session name=".$sessionname." Session id()=".session_id()
 
 session_unregister("dol_login");
 
-header("Location: ".DOL_URL_ROOT."/index.php");
+
+// Define url to go
+$url=DOL_URL_ROOT."/index.php";		// By default go to login page
+if ($urlfrom) 
+{
+	$url=DOL_URL_ROOT.$urlfrom;
+}
+
+header("Location: ".$url);
 ?>
