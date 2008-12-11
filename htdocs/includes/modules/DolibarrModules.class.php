@@ -363,7 +363,7 @@ class DolibarrModules
 		$sql ="INSERT INTO ".MAIN_DB_PREFIX."dolibarr_modules (numero,active,active_date,active_version)";
 		$sql .= " VALUES (";
 		$sql .= $this->numero.",1,".$this->db->idate(mktime()).",'".$this->version."')";
-
+		dolibarr_syslog("DolibarrModules::_dbactive sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
 
 		return $err;
@@ -379,6 +379,7 @@ class DolibarrModules
 		$err = 0;
 
 		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero;
+		dolibarr_syslog("DolibarrModules::_dbactive sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql_del);
 
 		return $err;
@@ -398,7 +399,7 @@ class DolibarrModules
 
 		$sql ="INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
         ('".$this->const_name."','1',0)";
-		dolibarr_syslog("DolibarrModules::_active sql=".$sql);
+		dolibarr_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		if (!$this->db->query($sql))
 		{
 			$err++;
