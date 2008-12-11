@@ -533,7 +533,7 @@ class DoliDb
 	 *              Fonction a utiliser pour generer les SELECT.
 	 *   \param	    param       Nom champ base de type date ou chaine 'YYYY-MM-DD HH:MM:SS'
 	 *   \return	date        Date au format TMS.
-	 *	\TODO		Remove unix_timestamp functions
+	 *	 \TODO		Remove unix_timestamp functions so use jdate instead
 	 */
 	function pdate($param)
 	{
@@ -541,23 +541,37 @@ class DoliDb
 	}
 
 	/**
-	 *   \brief     Formatage (par PHP) d'une date vers format texte pour insertion dans champ date.
-	 *              Fonction a utiliser pour generer les INSERT, UPDATE ou les clauses WHERE
+	 *   \brief     Convert (by PHP) a GM Timestamp date into a GM string date to insert into a date field.
+	 *              Function to use to build INSERT, UPDATE or WHERE predica
 	 *   \param	    param       Date TMS to convert
-	 *   \return	date        Date au format texte YYYYMMDDHHMMSS.
+	 *   \return	string      Date in a string YYYYMMDDHHMMSS
 	 */
 	function idate($param)
 	{
 		return adodb_strftime("%Y%m%d%H%M%S",$param);
 	}
 
+	/**
+	 *	\brief  	Convert (by PHP) a GM string date into a GM Timestamps date
+	 *	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	\return		date			Date TMS
+	 * 	\example	19700101020000 -> 7200
+	 */
+	function jdate($string)
+	{
+		$string=eregi_replace('[^0-9]','',$string);
+		$tmp=$string.'000000';
+		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
+		return $date;
+	}
+	
 
 	/**
-	 \brief      Formatage d'un if SQL
-	 \param		test            chaine test
-	 \param		resok           resultat si test egal
-	 \param		resko           resultat si test non egal
-	 \return		string          chaine format� SQL
+	 *	\brief      Formatage d'un if SQL
+	 *	\param		test            chaine test
+	 *	\param		resok           resultat si test egal
+	 *	\param		resko           resultat si test non egal
+	 *	\return		string          chaine formatee SQL
 	 */
 	function ifsql($test,$resok,$resko)
 	{
@@ -566,8 +580,8 @@ class DoliDb
 
 
 	/**
-	 \brief      Renvoie la derniere requete soumise par la methode query()
-	 \return	    lastquery
+	 *	\brief      Renvoie la derniere requete soumise par la methode query()
+	 *	\return	    lastquery
 	 */
 	function lastquery()
 	{
@@ -575,8 +589,8 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie la derniere requete en erreur
-	 \return	    string	lastqueryerror
+	 *	\brief      Renvoie la derniere requete en erreur
+	 *	\return	    string	lastqueryerror
 	 */
 	function lastqueryerror()
 	{
@@ -584,8 +598,8 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie le libelle derniere erreur
-	 \return	    string	lasterror
+	 *	\brief      Renvoie le libelle derniere erreur
+	 *	\return	    string	lasterror
 	 */
 	function lasterror()
 	{
@@ -593,8 +607,8 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie le code derniere erreur
-	 \return	    string	lasterrno
+	 *	\brief      Renvoie le code derniere erreur
+	 *	\return	    string	lasterrno
 	 */
 	function lasterrno()
 	{
@@ -602,8 +616,8 @@ class DoliDb
 	}
 
 	/**
-	 \brief     Renvoie le code erreur generique de l'operation precedente.
-	 \return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+	 *	\brief     Renvoie le code erreur generique de l'operation precedente.
+	 *	\return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
 	function errno()
 	{

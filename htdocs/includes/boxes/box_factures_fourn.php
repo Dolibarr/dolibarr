@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-	    \file       htdocs/includes/boxes/box_factures_fourn.php
-        \ingroup    fournisseur
-		\brief      Fichier de gestion d'une box des factures fournisseurs
-		\version    $Id$
-*/
+ *	    \file       htdocs/includes/boxes/box_factures_fourn.php
+ *      \ingroup    supplier
+ *		\brief      Fichier de gestion d'une box des factures fournisseurs
+ *		\version    $Id$
+ */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
@@ -71,9 +71,11 @@ class box_factures_fourn extends ModeleBoxes {
         if ($user->rights->fournisseur->facture->lire)
         {
             $sql = "SELECT s.nom, s.rowid as socid,";
-            $sql.= " f.rowid as facid, f.facnumber, f.amount,".$db->pdate("f.datef")." as df,";
-            $sql.= " f.paye, f.fk_statut, f.datec,";
-            $sql.= ' '.$db->pdate('f.date_lim_reglement').' as datelimite ';
+            $sql.= " f.rowid as facid, f.facnumber, f.amount,";
+            $sql.= " f.paye, f.fk_statut,";
+            $sql.= ' f.datef as df,';
+            $sql.= ' f.datec as datec,';
+            $sql.= ' f.date_lim_reglement as datelimite ';
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -87,7 +89,6 @@ class box_factures_fourn extends ModeleBoxes {
             $sql .= $db->plimit($max, 0);
 
             $result = $db->query($sql);
-
             if ($result)
             {
                 $num = $db->num_rows($result);
@@ -98,8 +99,11 @@ class box_factures_fourn extends ModeleBoxes {
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
+					$datelimite=$db->jdate($obj->datelimite);
+					$datec=$db->jdate($objp->datec);
+					
                     $late = '';
-                    if ($objp->paye == 0 && $objp->datelimite < (time() - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dolibarr_print_date($objp->datelimite,'day')));
+                    if ($objp->paye == 0 && $datelimite < (time() - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dolibarr_print_date($datelimite,'day')));
 
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
@@ -115,7 +119,7 @@ class box_factures_fourn extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-                    'text' => dolibarr_print_date($objp->datec,'day'));
+                    'text' => dolibarr_print_date($datec,'day'));
 
                     $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
                     'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));

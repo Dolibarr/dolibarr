@@ -104,7 +104,8 @@ class box_services_vendus extends ModeleBoxes {
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($result);
-
+					$datem=$db->jdate($objp->datem);
+					
 					// Multilangs
 					if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 					{
@@ -135,7 +136,7 @@ class box_services_vendus extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-                    'text' => dolibarr_print_date($objp->datem,'day'));
+                    'text' => dolibarr_print_date($datem,'day'));
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
                     'text' => $contratlignestatic->LibStatut($objp->statut,3)

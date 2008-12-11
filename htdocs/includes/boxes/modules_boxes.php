@@ -103,6 +103,8 @@ class ModeleBoxes
 		$bcx[1] = 'class="box_impair"';
 		$var = true;
 
+		dolibarr_syslog("modules_box::showBox ".get_Class($this));
+		
 		// Define nbcol and nblines of the box to show
 		$nbcol=0;
 		if (isset($contents[0])) $nbcol=sizeof($contents[0]);

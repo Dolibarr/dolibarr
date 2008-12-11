@@ -72,8 +72,8 @@ class box_factures_imp extends ModeleBoxes {
         if ($user->rights->facture->lire)
         {
             $sql = "SELECT s.nom, s.rowid as socid,";
-            $sql.= " f.facnumber,".$db->pdate("f.date_lim_reglement")." as datelimite,";
-            $sql.= " f.amount,".$db->pdate("f.datef")." as df,";
+            $sql.= " f.facnumber, f.date_lim_reglement as datelimite,";
+            $sql.= " f.amount, f.datef as df,";
             $sql.= " f.paye, f.fk_statut, f.rowid as facid";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -99,9 +99,10 @@ class box_factures_imp extends ModeleBoxes {
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
-
+					$datelimite=$db->jdate($objp->datelimite);
+					
                     $late='';
-                    if ($objp->datelimite < (time() - $conf->facture->warning_delay)) $late = img_warning(sprintf($l_due_date,dolibarr_print_date($objp->datelimite,'day')));
+                    if ($datelimite < (time() - $conf->facture->warning_delay)) $late = img_warning(sprintf($l_due_date,dolibarr_print_date($datelimite,'day')));
 
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
@@ -118,10 +119,10 @@ class box_factures_imp extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
                     $this->info_box_contents[$i][3] = array('td' => 'align="right"',
-                    'text' => dolibarr_print_date($objp->datelimite,'day'),
+                    'text' => dolibarr_print_date($datelimite,'day'),
                     );
 
-                    $this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
+                    $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
                     'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));                    
 
                     $i++;

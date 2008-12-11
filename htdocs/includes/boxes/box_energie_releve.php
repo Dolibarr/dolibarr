@@ -62,9 +62,9 @@ class box_energie_releve extends ModeleBoxes {
 		$this->info_box_head = array('text' => $text,$max);
 
 
-		$sql = "SELECT ec.libelle, ".$db->pdate("date_releve")." as date_releve, ecr.valeur, ec.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."energie_compteur_releve as ecr";
-		$sql .= " , ".MAIN_DB_PREFIX."energie_compteur as ec";
+		$sql = "SELECT ec.libelle, ecr.valeur, ec.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."energie_compteur_releve as ecr,";
+		$sql .= " ".MAIN_DB_PREFIX."energie_compteur as ec";
 		$sql .= " WHERE ecr.fk_compteur = ec.rowid";
 		$sql .= " ORDER BY ecr.date_releve DESC LIMIT 5";
 		$resql = $db->query($sql);

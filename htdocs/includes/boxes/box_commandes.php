@@ -89,8 +89,9 @@ class box_commandes extends ModeleBoxes {
 
             if ($result)
             {
-                $num = $db->num_rows();
-
+                $num = $db->num_rows($result);
+				$datem=$db->jdate($objp->tms);
+				
                 $i = 0;
 
                 while ($i < $num)
@@ -110,7 +111,7 @@ class box_commandes extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
                     $this->info_box_contents[$i][3] = array('td' => 'align="right"',
-                    'text' => dolibarr_print_date($objp->tms,'day'),
+                    'text' => dolibarr_print_date($datem,'day'),
                     );
                     
                     $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',

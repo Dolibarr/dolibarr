@@ -46,9 +46,9 @@ class DoliDb
 	var $forcecollate='latin1_swedish_ci';
 	//! Version min database
 	var $versionmin=array(2000);
-	//! Resultset de la derni�re requete  
+	//! Resultset de la derni�re requete
 	var $results;
-	//! 1 si connect�, 0 sinon  
+	//! 1 si connect�, 0 sinon
 	var $connected;
 	//! 1 si base s�lectionn�, 0 sinon
 	var $database_selected;
@@ -80,7 +80,7 @@ class DoliDb
 	 \param	    name		Nom de la database
 	 \param	    port		Port of database server
 	 \return     int			1 en cas de succ�s, 0 sinon
-  */
+	 */
 	function DoliDb($type='mssql', $host, $user, $pass, $name='', $port=0)
 	{
 		global $conf,$langs;
@@ -165,7 +165,7 @@ class DoliDb
 	 * 	\brief      Selectionne une database.
 	 *	\param	    database		Nom de la database
 	 *	\return	    boolean         true si ok, false si ko
-  	 */
+	 */
 	function select_db($database)
 	{
 		return mssql_select_db($database, $this->db);
@@ -180,7 +180,7 @@ class DoliDb
 	 \param		port		Port of database server
 	 \return	resource	handler d'acc�s � la bas
 	 \seealso	close
-  */
+	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
 		dolibarr_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
@@ -198,7 +198,7 @@ class DoliDb
 	/**
 	 \brief          Renvoie la version du serveur
 	 \return	        string      Chaine version
-  */
+	 */
 	function getVersion()
 	{
 		$resql=$this->query("SELECT @@VERSION");
@@ -210,7 +210,7 @@ class DoliDb
 	/**
 	 \brief          Renvoie la version du serveur dans un tableau
 	 \return	        array  		Tableau de chaque niveau de version
-  */
+	 */
 	function getVersionArray()
 	{
 		return split('\.',$this->getVersion());
@@ -221,7 +221,7 @@ class DoliDb
 	 \brief      Fermeture d'une connexion vers une database.
 	 \return	    resource
 	 \seealso	connect
-  */
+	 */
 	function close()
 	{
 		return mssql_close($this->db);
@@ -277,7 +277,7 @@ class DoliDb
 	/**
 	 \brief      Annulation d'une transaction et retour aux anciennes valeurs
 	 \return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
-  */
+	 */
 	function rollback()
 	{
 		if ($this->transaction_opened<=1)
@@ -298,7 +298,7 @@ class DoliDb
 	 \brief      Effectue une requete et renvoi le resultset de r�ponse de la base
 	 \param	    query	    Contenu de la query
 	 \return	    resource    Resultset de la reponse
-  */
+	 */
 	function query($query)
 	{
 		$query = trim($query);
@@ -371,7 +371,7 @@ class DoliDb
 
 				$result = mssql_query("SELECT @@ERROR as code", $this->db);
 				$row = mssql_fetch_array($result);
-				 
+					
 				$this->lasterror = $this->error();
 				$this->lasterrno = $row["code"];
 			}
@@ -533,24 +533,37 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Formatage (par PHP) d'une date vers format texte pour insertion dans champ date.
-	 Fonction � utiliser pour g�n�rer les INSERT.
-	 \param	    param       Date TMS � convertir
-	 \return	    date        Date au format texte YYYYMMDDHHMMSS.
+	 *	\brief      Formatage (par PHP) d'une date vers format texte pour insertion dans champ date.
+	 *				Fonction a utiliser pour generer les INSERT.
+	 *	\param	    param       Date TMS a convertir
+	 *	\return	    date        Date au format texte YYYYMMDDHHMMSS.
 	 */
 	function idate($param)
 	{
 		//return "dbo.from_unixtime(".$param.")";
-		return adodb_strftime("%d/%m/%Y %H:%M:%S",$param);
+		return adodb_strftime("%Y-%m-%d %H:%M:%S",$param);
 	}
 
+	/**
+	 *	\brief  	Convert a GM string date into a GM Timestamps date
+	 *	\param		string			Date in a string (YYYYMMDD, YYYYMMDDHHMMSS, YYYY-MM-DD HH:MM:SS)
+	 *	\return		date			Date
+	 * 	\example	19700101020000 -> 7200
+	 */
+	function jdate($string)
+	{
+		$string=eregi_replace('[^0-9]','',$string);
+		$tmp=$string.'000000';
+		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
+		return $date;
+	}
 
 	/**
-	 \brief      Formatage d'un if SQL
-	 \param		test            chaine test
-	 \param		resok           resultat si test egal
-	 \param		resko           resultat si test non egal
-	 \return		string          chaine format� SQL
+	 *	\brief      Formatage d'un if SQL
+	 *	\param		test            chaine test
+	 *	\param		resok           resultat si test egal
+	 *	\param		resko           resultat si test non egal
+	 *	\return		string          chaine format� SQL
 	 */
 	function ifsql($test,$resok,$resko)
 	{
@@ -559,8 +572,8 @@ class DoliDb
 
 
 	/**
-	 \brief      Renvoie la derniere requete soumise par la methode query()
-	 \return	    lastquery
+	 *	\brief      Renvoie la derniere requete soumise par la methode query()
+	 *	\return	    lastquery
 	 */
 	function lastquery()
 	{
@@ -632,8 +645,8 @@ class DoliDb
 			1216 => 'DB_ERROR_NO_PARENT',
 			1217 => 'DB_ERROR_CHILD_EXISTS',
 			1451 => 'DB_ERROR_CHILD_EXISTS'
-		     );
-			
+			);
+				
 			if (isset($errorcode_map[$this->lasterrno]))
 			{
 				return $errorcode_map[$this->lasterrno];

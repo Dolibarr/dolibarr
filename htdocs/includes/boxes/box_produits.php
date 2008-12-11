@@ -89,6 +89,7 @@ class box_produits extends ModeleBoxes {
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($result);
+					$datem=$db->jdate($obj->tms);
 
 					// Multilangs
 					if ($conf->global->MAIN_MULTILANGS) // si l'option est active
@@ -130,7 +131,7 @@ class box_produits extends ModeleBoxes {
                     'text' => $price_base_type);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-                    'text' => dolibarr_print_date($objp->tms,'day'));
+                    'text' => dolibarr_print_date($datem,'day'));
 
 					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
                     'text' => $productstatic->LibStatut($objp->envente,3));

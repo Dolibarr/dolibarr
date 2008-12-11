@@ -67,7 +67,7 @@ class box_clients extends ModeleBoxes {
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.nom, s.rowid as socid, ".$db->pdate("s.datec")." as dc";
+			$sql = "SELECT s.nom, s.rowid as socid, s.datec as dc";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -85,13 +85,15 @@ class box_clients extends ModeleBoxes {
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-
+				$datec=$db->jdate($objp->dc);
+				
 				$i = 0;
 				//$customerstatic=new Client($db);
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($result);
-
+					$datec=$db->jdate($objp->dc);
+					
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
@@ -101,7 +103,7 @@ class box_clients extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
-					'text' => dolibarr_print_date($objp->dc, "day"));
+					'text' => dolibarr_print_date($datec, "day"));
 
 					$i++;
 				}

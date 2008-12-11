@@ -71,7 +71,7 @@ class box_actions extends ModeleBoxes {
 
 		if ($user->rights->agenda->myactions->read)
 		{
-			$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp , a.percent as percentage,";
+			$sql = "SELECT a.id, a.label, a.datep as dp , a.percent as percentage,";
 			$sql.= " ta.code,";
 			$sql.= " s.nom, s.rowid as socid";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -99,8 +99,9 @@ class box_actions extends ModeleBoxes {
 				{
 					$late = '';
 					$objp = $db->fetch_object($result);
-
-					if (date("U",$objp->dp)  < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) $late=img_warning($langs->trans("Late"));
+					$datelimite=$db->jdate($obj->dp);
+					
+					if ($datelimite  < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) $late=img_warning($langs->trans("Late"));
 
 					$label=($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label);
 
@@ -118,7 +119,7 @@ class box_actions extends ModeleBoxes {
 					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-					'text' => dolibarr_print_date($objp->dp, "dayhour"));
+					'text' => dolibarr_print_date($datelimite, "dayhour"));
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
 					'text' => $objp->percentage. "%");
