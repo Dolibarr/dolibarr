@@ -62,7 +62,7 @@ class modMyModule extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=other)
-		$this->special = 1;
+		$this->special = 0;
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png. 
 		$this->picto='generic';
@@ -136,26 +136,39 @@ class modMyModule extends DolibarrModules
 		// This is to declare the Top Menu entry:
 		// $this->menu[$r]=array(	'fk_menu'=>0,			// Put 0 if this is a top menu
 		//							'type'=>'top',			// This is a Top menu entry
-		//							'titre'=>'Title top menu',
+		//							'titre'=>'MyModule top menu',
 		//							'mainmenu'=>'mymodule',
 		//							'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-		//							'url'=>'/comm/action/index.php',
+		//							'url'=>'/mymodule/pagetop.php',
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
-		//							'perms'=>'$user->rights->mymodule->level1->level2',		// Use 'perms'=>'1' if you want your menu with no permission rules
+		//							'perms'=>'1',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
 		//
 		// This is to declare a Left Menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>'r=0',		// Use r=value where r is index key used for the top menu entry
+		// $this->menu[$r]=array(	'fk_menu'=>'r=0',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 		//							'type'=>'left',			// This is a Left menu entry
-		//							'titre'=>'Title left menu',
+		//							'titre'=>'MyModule left menu 1',
 		//							'mainmenu'=>'mymodule',
-		//							'url'=>'/comm/action/index2.php',
+		//							'url'=>'/mymodule/pagelevel1.php',
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
-		//							'perms'=>'$user->rights->mymodule->level1->level2',		// Use 'perms'=>'1' if you want your menu with no permission rules
+		//							'perms'=>'1',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+		//							'target'=>'',
+		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+		// $r++;
+		//
+		// This is to declare a Left Menu entry:
+		// $this->menu[$r]=array(	'fk_menu'=>'r=1',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		//							'type'=>'left',			// This is a Left menu entry
+		//							'titre'=>'MyModule left menu 2',
+		//							'mainmenu'=>'mymodule',
+		//							'url'=>'/mymodule/pagelevel2.php',
+		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+		//							'position'=>100,
+		//							'perms'=>'1',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
