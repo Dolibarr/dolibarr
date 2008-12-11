@@ -84,7 +84,7 @@ print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
 print "<br>";
 
 
-print_fiche_titre($langs->trans("MemberMainOptions"));
+print_fiche_titre($langs->trans("MemberMainOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -167,13 +167,13 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 			    'ADHERENT_MAILMAN_UNSUB_URL',
 			    'ADHERENT_MAILMAN_URL'
 			    );
-	  print_fiche_titre("Mailman - Systeme de mailing listes",$lien);
+	  print_fiche_titre("Mailman - Systeme de mailing listes",$lien,'');
 	  form_constantes($constantes);
 	}
 	else
 	{
 	  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
-	  print_fiche_titre("Mailman - Systeme de mailing listes",$lien);
+	  print_fiche_titre("Mailman - Systeme de mailing listes",$lien,'');
 	}
 
 	print "<hr>\n";
@@ -196,13 +196,13 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 			    'ADHERENT_SPIP_USER',
 			    'ADHERENT_SPIP_PASS'
 			    );
-	  print_fiche_titre("SPIP - Systeme de publication en ligne",$lien);
+	  print_fiche_titre("SPIP - Systeme de publication en ligne",$lien,'');
 	  form_constantes($constantes);
 	}
 	else
 	{
 	  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
-	  print_fiche_titre("SPIP - Systeme de publication en ligne",$lien);
+	  print_fiche_titre("SPIP - Systeme de publication en ligne",$lien,'');
 	}
 
 	print "<hr>\n";
@@ -224,7 +224,7 @@ $constantes=array(
 		  'ADHERENT_CARD_FOOTER_TEXT',
 		  'ADHERENT_ETIQUETTE_TYPE'
 		  );
-print_fiche_titre("Autres variables globales");
+print_fiche_titre($langs->trans("Other"),'','');
 
 print $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';

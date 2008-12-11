@@ -359,7 +359,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     
     //dolibarr_syslog("dolibarr_set_const name=$name, value=$value");
     $sql = "DELETE FROM llx_const WHERE name = '".addslashes($name)."';";
-    dolibarr_syslog("admin.lib::dolibarr_set_const sql=".$sql);
+    dolibarr_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 
     if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
@@ -367,7 +367,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 	    $sql = "INSERT INTO llx_const(name,value,type,visible,note)";
 	    $sql.= " VALUES ('".$name."','".addslashes($value)."','".$type."',".$visible.",'".addslashes($note)."')";
 
-		dolibarr_syslog("admin.lib::dolibarr_set_const sql=".$sql);
+		dolibarr_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 	    $resql=$db->query($sql);
     }
 
@@ -379,7 +379,9 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     }
     else
     {
-        $db->rollback();
+    	$this->error=$db->lasterror();
+    	dolibarr_syslog("admin.lib::dolibarr_set_const ".$this->error, LOG_ERR);
+    	$db->rollback();
         return -1;
     }
 }
