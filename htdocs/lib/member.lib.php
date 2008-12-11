@@ -15,18 +15,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
-	    \file       htdocs/lib/member.lib.php
-		\brief      Ensemble de fonctions de base pour les adhérents
-		\version    $Revision$
-
-		Ensemble de fonctions de base de dolibarr sous forme d'include
-*/
+ *	    \file       htdocs/lib/member.lib.php
+ *		\brief      Ensemble de fonctions de base pour les adhérents
+ *		\version    $Id$
+ *
+ *		Ensemble de fonctions de base de dolibarr sous forme d'include
+ */
 
 function member_prepare_head($member)
 {
@@ -68,6 +65,21 @@ function member_prepare_head($member)
 	$head[$h][2] = 'info';
 	$h++;
 
+	// More tabs from modules
+	if (is_array($conf->tabs_modules['member']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['member'] as $value)
+		{
+			$values=split(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = eregi_replace('__ID__',$member->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
+	
 	return $head;
 }
 

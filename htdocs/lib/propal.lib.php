@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  */
 
 /**
-	    \file       htdocs/lib/propal.lib.php
-		\brief      Ensemble de fonctions de base pour le module propal
-        \ingroup    propal
-        \version    $Id$
-
-		Ensemble de fonctions de base de dolibarr sous forme d'include
-*/
+ *	\file       htdocs/lib/propal.lib.php
+ *	\brief      Ensemble de fonctions de base pour le module propal
+ *	\ingroup    propal
+ *	\version    $Id$
+ * 
+ * 	Ensemble de fonctions de base de dolibarr sous forme d'include
+ */
 
 function propal_prepare_head($propal)
 {
@@ -39,19 +39,19 @@ function propal_prepare_head($propal)
 	$head[$h][1] = $langs->trans('CommercialCard');
 	$head[$h][2] = 'comm';
 	$h++;
-	
-	if ((!$conf->commande->enabled && 
+
+	if ((!$conf->commande->enabled &&
 	(($conf->expedition_bon->enabled && $user->rights->expedition->lire)
-     || ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))))
-  {
-  	$langs->load("sendings");
-  	$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?propalid='.$propal->id;
-    if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
-    if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
-    $head[$h][1] = $text;
-    $head[$h][2] = 'shipping';
-    $h++;
-  }
+	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))))
+	{
+		$langs->load("sendings");
+		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?propalid='.$propal->id;
+		if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
+		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
+		$head[$h][1] = $text;
+		$head[$h][2] = 'shipping';
+		$h++;
+	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?propalid='.$propal->id;
 	$head[$h][1] = $langs->trans('AccountancyCard');
@@ -86,6 +86,21 @@ function propal_prepare_head($propal)
 	$head[$h][2] = 'info';
 	$h++;
 
+	// More tabs from modules
+	if (is_array($conf->tabs_modules['propal']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['propal'] as $value)
+		{
+			$values=split(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = eregi_replace('__ID__',$propal->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
+		
 	return $head;
 }
 

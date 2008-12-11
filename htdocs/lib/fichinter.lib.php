@@ -16,38 +16,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
-   \file       htdocs/lib/fichinter.lib.php
-   \brief      Ensemble de fonctions de base pour le module fichinter
-   \ingroup    fichinter
-   \version    $Revision$
-   
-   Ensemble de fonctions de base de dolibarr sous forme d'include
-*/
+ *	\file       htdocs/lib/fichinter.lib.php
+ *	\brief      Ensemble de fonctions de base pour le module fichinter
+ *	\ingroup    fichinter
+ *	\version    $Id$
+ * 
+ * 	Ensemble de fonctions de base de dolibarr sous forme d'include
+ */
 
 function fichinter_prepare_head($fichinter)
 {
-  global $langs, $conf, $user;
-  $langs->load("fichinter");
-  
-  $h = 0;
-  $head = array();
-  
-  $head[$h][0] = DOL_URL_ROOT.'/fichinter/fiche.php?id='.$fichinter->id;
-  $head[$h][1] = $langs->trans("Card");
-  $head[$h][2] = 'card';
-  $h++;
-  
-  $head[$h][0] = DOL_URL_ROOT.'/fichinter/contact.php?id='.$fichinter->id;
+	global $langs, $conf, $user;
+	$langs->load("fichinter");
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/fiche.php?id='.$fichinter->id;
+	$head[$h][1] = $langs->trans("Card");
+	$head[$h][2] = 'card';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/contact.php?id='.$fichinter->id;
 	$head[$h][1] = $langs->trans('InterventionContact');
 	$head[$h][2] = 'contact';
 	$h++;
-	
+
 	if ($conf->use_preview_tabs)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/fichinter/apercu.php?id='.$fichinter->id;
@@ -55,18 +52,33 @@ function fichinter_prepare_head($fichinter)
 		$head[$h][2] = 'preview';
 		$h++;
 	}
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$fichinter->id;
 	$head[$h][1] = $langs->trans('Notes');
 	$head[$h][2] = 'note';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/info.php?id='.$fichinter->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
-  
-  return $head;
+
+	// More tabs from modules
+	if (is_array($conf->tabs_modules['intervention']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['intervention'] as $value)
+		{
+			$values=split(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = eregi_replace('__ID__',$fichinter->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
+		
+	return $head;
 }
 
 ?>

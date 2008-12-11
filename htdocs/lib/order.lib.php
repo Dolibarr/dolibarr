@@ -27,70 +27,85 @@
 
 function commande_prepare_head($commande)
 {
-  global $langs, $conf, $user;
-  if ($conf->expedition->enabled) $langs->load("sendings");
-  $langs->load("orders");
-  
-  $h = 0;
-  $head = array();
-  
-  if ($conf->commande->enabled && $user->rights->commande->lire)
-    {
-      $head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
-      $head[$h][1] = $langs->trans("OrderCard");
-      $head[$h][2] = 'order';
-      $h++;
-    }
-  
-  if (($conf->expedition_bon->enabled && $user->rights->expedition->lire)
-     || ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
-    {
-      $head[$h][0] = DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id;
-      if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
-      if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
-      $head[$h][1] = $text;
-      $head[$h][2] = 'shipping';
-      $h++;
-    }
-  
-  // Commande à facturer
-  if ($conf->facture->enabled)
-    {
-      $head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
-      $head[$h][1] = $langs->trans("Compta");
-      $head[$h][2] = 'accountancy';
-      $h++;
-    }
-  
-  if ($conf->use_preview_tabs)
-    {
-      $head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$commande->id;
-      $head[$h][1] = $langs->trans("Preview");
-      $head[$h][2] = 'preview';
-      $h++;
-    }
-  
-  $head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$commande->id;
-  $head[$h][1] = $langs->trans('OrderContact');
-  $head[$h][2] = 'contact';
-  $h++;
- 
-  $head[$h][0] = DOL_URL_ROOT.'/commande/document.php?id='.$commande->id;
-  $head[$h][1] = $langs->trans('Documents');
-  $head[$h][2] = 'documents';
-  $h++;
- 
-  $head[$h][0] = DOL_URL_ROOT.'/commande/note.php?id='.$commande->id;
-  $head[$h][1] = $langs->trans('Notes');
-  $head[$h][2] = 'note';
-  $h++;
-  
-  $head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
-  $head[$h][1] = $langs->trans("Info");
-  $head[$h][2] = 'info';
-  $h++;
-  
-  return $head;
+	global $langs, $conf, $user;
+	if ($conf->expedition->enabled) $langs->load("sendings");
+	$langs->load("orders");
+
+	$h = 0;
+	$head = array();
+
+	if ($conf->commande->enabled && $user->rights->commande->lire)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
+		$head[$h][1] = $langs->trans("OrderCard");
+		$head[$h][2] = 'order';
+		$h++;
+	}
+
+	if (($conf->expedition_bon->enabled && $user->rights->expedition->lire)
+	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id;
+		if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
+		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
+		$head[$h][1] = $text;
+		$head[$h][2] = 'shipping';
+		$h++;
+	}
+
+	// Commande à facturer
+	if ($conf->facture->enabled)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
+		$head[$h][1] = $langs->trans("Compta");
+		$head[$h][2] = 'accountancy';
+		$h++;
+	}
+
+	if ($conf->use_preview_tabs)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$commande->id;
+		$head[$h][1] = $langs->trans("Preview");
+		$head[$h][2] = 'preview';
+		$h++;
+	}
+
+	$head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$commande->id;
+	$head[$h][1] = $langs->trans('OrderContact');
+	$head[$h][2] = 'contact';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/commande/document.php?id='.$commande->id;
+	$head[$h][1] = $langs->trans('Documents');
+	$head[$h][2] = 'documents';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/commande/note.php?id='.$commande->id;
+	$head[$h][1] = $langs->trans('Notes');
+	$head[$h][2] = 'note';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
+
+	// More tabs from modules
+	if (is_array($conf->tabs_modules['order']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['order'] as $value)
+		{
+			$values=split(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = eregi_replace('__ID__',$commande->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
+
+	return $head;
 }
 
 ?>

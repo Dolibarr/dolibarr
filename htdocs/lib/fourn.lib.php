@@ -50,6 +50,21 @@ function facturefourn_prepare_head($fac)
 	$head[$h][2] = 'info';
 	$h++;
 
+	// More tabs from modules
+	if (is_array($conf->tabs_modules['supplier_invoice']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['supplier_invoice'] as $value)
+		{
+			$values=split(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = eregi_replace('__ID__',$fac->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
+	
 	return $head;
 }
 
@@ -85,6 +100,21 @@ function ordersupplier_prepare_head($commande)
 	$head[$h][2] = 'info';
 	$h++;
 
+	// More tabs from modules
+	if (is_array($conf->tabs_modules['supplier_order']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['supplier_order'] as $value)
+		{
+			$values=split(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = eregi_replace('__ID__',$commande->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
+	
 	return $head;
 }
 
