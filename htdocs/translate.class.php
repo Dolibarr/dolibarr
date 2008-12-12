@@ -462,16 +462,19 @@ class Translate {
     function file_exists($filename,$searchalt=0)
     {
         // Test si fichier dans repertoire de la langue
-        $htmlfile=$this->dir."/".$this->defaultlang."/".$filename;
-        if (is_readable($htmlfile)) return true;
-
-        if ($searchalt) {
-            // Test si fichier dans repertoire de la langue alternative
-            if ($this->defaultlang != "en_US") $htmlfilealt = $this->dir."/en_US/".$filename;   
-            else $htmlfilealt = $this->dir."/fr_FR/".$filename;
-            if (is_readable($htmlfilealt)) return true;
-        }
-        
+		foreach($this->dir as $searchdir)
+		{
+	        $htmlfile=$searchdir."/langs/".$this->defaultlang."/".$filename;
+	        if (is_readable($htmlfile)) return true;
+	
+	        if ($searchalt) {
+	            // Test si fichier dans repertoire de la langue alternative
+	            if ($this->defaultlang != "en_US") $htmlfilealt = $searchdir."/langs/en_US/".$filename;   
+	            else $htmlfilealt = $searchdir."/langs/fr_FR/".$filename;
+	            if (is_readable($htmlfilealt)) return true;
+	        }
+		}
+		        
         return false;
     }
 
@@ -487,32 +490,35 @@ class Translate {
     	global $conf;
     	
         // Test si fichier dans repertoire de la langue
-        $htmlfile=$this->dir."/".$this->defaultlang."/".$filename;
-        if (is_readable($htmlfile))
-        {
-            $content=file_get_contents($htmlfile);
-            $isutf8=utf8_check($content);
-	        if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content); 
-	        elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content); 
-	        else print $content;
-            return true;
-        }
-
-        if ($searchalt) {
-            // Test si fichier dans repertoire de la langue alternative
-            if ($this->defaultlang != "en_US") $htmlfilealt = $this->dir."/en_US/".$filename;   
-            else $htmlfilealt = $this->dir."/fr_FR/".$filename;
-            if (is_readable($htmlfilealt))
-            {
-	            $content=file_get_contents($htmlfile);
-            	$isutf8=utf8_check($content);
-	            if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content); 
-	            elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content); 
-	            else print $content;
+		foreach($this->dir as $searchdir)
+		{
+	        $htmlfile=($searchdir."/langs/".$this->defaultlang."/".$filename);
+	        if (is_readable($htmlfile))
+	        {
+	        	$content=file_get_contents($htmlfile);
+	            $isutf8=utf8_check($content);
+		        if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content); 
+		        elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content); 
+		        else print $content;
 	            return true;
-            }
-        }
-        
+	        }
+	
+	        if ($searchalt) {
+	            // Test si fichier dans repertoire de la langue alternative
+	            if ($this->defaultlang != "en_US") $htmlfilealt = $searchdir."/en_US/".$filename;   
+	            else $htmlfilealt = $searchdir."/langs/fr_FR/".$filename;
+	            if (is_readable($htmlfilealt))
+	            {
+		            $content=file_get_contents($htmlfile);
+	            	$isutf8=utf8_check($content);
+		            if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content); 
+		            elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content); 
+		            else print $content;
+		            return true;
+	            }
+	        }
+		}
+		        
         return false;
     }
 
