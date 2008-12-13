@@ -1,4 +1,7 @@
 # Dolibarr language file - es_ES - main
+
+
+
 CHARSET=ISO-8859-1
 DatabaseConnection=Conexión a la base de datos
 SeparatorDecimal=,
@@ -165,6 +168,7 @@ Previous=Anterior
 Next=Siguiente
 Cards=Fichas
 Card=Ficha
+Now=Ahora
 Date=Fecha
 DateStart=Fecha inicio
 DateEnd=Fecha fin
@@ -299,7 +303,7 @@ Category=Categorúia
 By=Por
 From=De
 to=a
-To=A
+To=a
 and=y
 or=o
 Other=Otro
@@ -457,9 +461,16 @@ ThisLimitIsDefinedInSetup=Límite Dolibarr (Menú inicio-configuración-seguridad):
 NoFileFound=No hay documentos guardados en esta carpeta
 CurrentUserLanguage=Idioma actual
 CurrentTheme=Tema actual
+DisabledModules=Módulos desactivados
 For=Para
 ForCustomer=Para cliente
+Signature=Firma
+HidePassword=Mostrar comando con contraseña oculta
+UnHidePassword=Mostrar comando con contraseña a la vista
 # Week day
+
+
+
 Monday=Lunes
 Tuesday=Martes
 Wednesday=Miercoles

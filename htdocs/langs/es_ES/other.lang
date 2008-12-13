@@ -1,6 +1,9 @@
 # Dolibarr language file - es_ES - other
 
 
+
+
+
 ErrorPasswordDiffers=Las contraseñas no son identicas, vuelva a introducirlas
 ErrorForbidden=Acceso no autorizado.<br>Intenta acceder a una página, zona o función sin estar en una sesión autentificada o que no se autoriza para su cuenta de usuario.
 ErrorForbidden2=Los permisos para este usuario pueden ser asignados por el administrador Dolibarr mediante el menú %s-> %s.
@@ -12,7 +15,7 @@ ErrorCantReadDir=Error de lectura de la carpeta '%s'
 ErrorFailedToFindEntity=Error de lectura de la entidad '%s'
 ErrorBadLoginPassword=Identificadores de usuario o contraseña incorrectos
 ErrorLoginDisabled=Su cuenta está desactivada
-ErrorFailedToRunExternalCommand=Error de ejecución del comando externo. Compruebe que está disponible y ejecutable por su servidor PHP. Si el PHP <b>Safe Mode</b> está activio, compruebe que el comando se encuentra en una carpeta definida en el parámetro <b>safe_mode_exec_dir</b>.
+ErrorFailedToRunExternalCommand=Error de ejecución del comando externo. Compruebe que está disponible y ejecutable por su servidor PHP. Si el PHP <b>Safe Mode</b> está activo, compruebe que el comando se encuentra en una carpeta definida en el parámetro <b>safe_mode_exec_dir</b>.
 ErrorFailedToChangePassword=Error en la modificación de la contraseña
 ErrorLoginDoesNotExists=La cuenta de usuario de <b>%s</b> no se ha encontrado.
 ErrorLoginHasNoEmail=Este usuario no tiene e-mail. Imposible continuar.
@@ -37,30 +40,18 @@ NbOfActiveNotifications=Número notificaciones
 WarningInstallDirExists=Atención: La carpeta install (%s) todavía existe. Una vez concluida la instalación su presencia no es necesaria, y representa un fallo serio de seguridad. Debería eliminarla lo antes posible.
 WarningUntilDirRemoved=Esta alerta seguirá activa mientras la carpeta exista (alerta visible para los usuarios admin solamente).
 PredefinedMailContentSendInvoice=Le adjuntamos la factura __FACREF__\n\nCordialmente\n\n
-PredefinedMailContentSendInvoiceReminder=Ponemos en su conocimiento que la factura __FACREF__ parece no estar pagada. Se la adjuntamos pues, para que puede revisarla.\n\nCordialmente\n\n
+PredefinedMailContentSendInvoiceReminder=Ponemos en su conocimiento que la factura __FACREF__ parece no estar pagada. Se la adjuntamos pues, para que pueda revisarla.\n\nCordialmente\n\n
 PredefinedMailContentSendProposal=Le adjuntamos el presupuesto __PROPREF__\n\nCordialmente\n\n
 PredefinedMailContentSendOrder=Le adjuntamos el el pedido __ORDERREF__\n\nCordialmente\n\n
-Bookmark=bookmark
-Bookmarks=Bookmarks
-NewBookmark=Nueva bookmark
-ShowBookmark=Mostrar bookmarks
-BookmarkThisPage=Añadir esta página a sus favoritos
-OpenANewWindow=Abrir una nueva ventana
-ReplaceWindow=Reemplazar la ventana actual
-BookmarkTargetNewWindowShort=Nueva ventana
-BookmarkTargetReplaceWindowShort=Ventana actual
-BookmarkTitle=Título del bookmark
-UrlOrLink=URL
-BehaviourOnClick=Comportamiento al hacer click en la URL
-CreateBookmark=Crear bookmark
-SetHereATitleForLink=Indicar aquí un título del bookmark
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Indicar un URL http externo o un URL Dolibarr relativo
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elegir si debe abrise la página en una nueva ventana o en la actual
-BookmarksManagement=Gestión de bookmarks
-ListOfBookmarks=Listado de bookmarks
-NoExportableData=No hay datos exportables (sin módulos con datos exportables cargados, o carecen de permisos)
-ToExport=Exportar
-NewExport=Nueva exportación
+DemoDesc=Dolibarr no es un ERP monolítico, pero está compuesto de módulos funcionales simples y opcionales. Una demostración que incluya todos estos módulos no tiene sentido, ya que jamás todos los módulos son utilizados. De todas maneras hay disponibles muchos perfiles de demostración
+ChooseYourDemoProfil=Quiere ver el perfil de demostración que mejor corresponda a su actividad...
+DemoFundation=Gesstión de miembros de una asociación
+DemoFundation2=Gestión de miembros y tesorería de una asociación
+DemoCompanyServiceOnly=Gestión de un trabajador por cuenta propia realizando servicios
+DemoCompanyShopWithCashDesk=Gestión de una tienda con caja
+DemoCompanyProductAndStocks=Gestión de una PYME con venta de productos
+DemoCompanyAll=Gestión de una PYME con actividades múltiples (todos los módulos principales)
+GoToDemo=Acceder a la demo
 CreatedBy=Creado por %s
 ModifiedBy=Modificado por %s
 ValidatedBy=Validado por %s
@@ -86,9 +77,9 @@ VolumeUnitm3=m3
 VolumeUnitdm3=dm3
 VolumeUnitcm3=cm3
 VolumeUnitmm3=mm3
-Height=ancho
-Width=Largo
-Depth=Fondo
+Height=
+Width=largo
+Depth=fondo
 Size=tamaño
 SizeUnitm=m
 SizeUnitdm=dm
@@ -101,7 +92,29 @@ AuthenticationDoesNotAllowSendNewPassword=El modo de autentificación de Dolibarr
 EnableGDLibraryDesc=Debe activar o instalar la librería GD en su PHP para poder activar esta opción
 EnablePhpAVModuleDesc=Debe instalar un módulo PHP compatible con su antivirus. (Clamav : php4-clamavlib ó php5-clamavlib)
 ProfIdShortDesc=<b>Prof Id %s</b> es una información dependiente del país del tercero.<br>Por ejemplo, para el país  <b>%s</b>, és el código <b>%s</b>.
+DolibarrDemo=
+Bookmark=bookmark
+Bookmarks=Bookmarks
+NewBookmark=Nueva bookmark
+ShowBookmark=Mostrar bookmarks
+BookmarkThisPage=Añadir esta página a sus favoritos
+OpenANewWindow=Abrir una nueva ventana
+ReplaceWindow=Reemplazar la ventana actual
+BookmarkTargetNewWindowShort=Nueva ventana
+BookmarkTargetReplaceWindowShort=Ventana actual
+BookmarkTitle=Título del bookmark
+UrlOrLink=URL
+BehaviourOnClick=Comportamiento al hacer click en la URL
+CreateBookmark=Crear bookmark
+SetHereATitleForLink=Indicar aquí un título del bookmark
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Indicar un URL http externo o un URL Dolibarr relativo
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elegir si debe abrise la página en una nueva ventana o en la actual
+BookmarksManagement=Gestión de bookmarks
+ListOfBookmarks=Listado de bookmarks
 ##### Webcal #####
+
+
+
 
 
 LoginWebcal=Login Webcalendar
@@ -128,8 +141,14 @@ MemberSubscriptionAddedInDolibarr=Subscripción del miembro % añadida en Dolibarr
 ##### Export #####
 
 
+
+
+
 ExportsArea=Area de exportaciones
 AvailableFormats=Formatos disponibles
 LibraryUsed=Librería utilizada
 LibraryVersion=Versión
 ExportableDatas=Datos exportables
+NoExportableData=No hay datos exportables (sin módulos con datos exportables cargados, o carecen de permisos)
+ToExport=Exportar
+NewExport=Nueva exportación

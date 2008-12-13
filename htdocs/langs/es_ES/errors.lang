@@ -3,6 +3,8 @@ ErrorGroupAlreadyExists=El grupo %s ya existe.
 # Dolibarr language file - es_ES - errors
 
 
+
+
 ErrorDuplicateTrigger=Un archvio trigger de nombre '<b>%s</b>' está cargado. Elimine el dobre de la carpeta '<b>%s</b>'.
 ErrorFailToCreateFile=Error al crear el archivo  '<b>%s</b>'
 ErrorFailToDeleteFile=Error al eliminar el archivo '<b>%s</b>'.
@@ -38,3 +40,6 @@ WarningBuildScriptNotRunned=El script <b>% s</b> todavía no ha ejecutado la cons
 WarningBookmarkAlreadyExists=Ya existe un marcador con este título o esta URL.
 WarningPassIsEmpty=Atención: La contraseña de la base de datos está vacía. Esto es unagujero de seguridad. Debe agregar una contraseña a su base de datos y cambiar su archivo conf.php para reflejar esto. 
 ErrorNoAccountancyModuleLoaded=Módulo de contabilidad no activado
+ErrorExportDuplicateProfil=El nombre del perfil ya existe para este lote de exportación
+ErrorLDAPSetupNotComplete=La configuración Dolibarr-LDAP es incompleta.
+ErrorLDAPMakeManualTest=Se ha creado unn archivo .ldif en la carpeta %s. Trate de cargar manualmente este archivo desde la línea de comandos para obtener más detalles acerca del error.

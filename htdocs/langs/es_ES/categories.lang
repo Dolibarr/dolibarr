@@ -1,9 +1,11 @@
 # Dolibarr language file - es_ES - categories
+
+
 Category=Categoría
-Categories=Categorias
-Rubrique=Categoría
-Rubriques=Categorias
-categories=Categoría(s)
+Categories=Categoría(s)
+Rubrique=Partida
+Rubriques=Partidas
+categories=categoría(s)
 TheCategorie=La categoría
 In=En
 AddIn=Añadir en
@@ -69,7 +71,7 @@ CustomersCategoryShort=Categoría clientes
 ProductsCategoryShort=Categoría productos
 SuppliersCategoriesShort=Categorías proveedores
 CustomersCategoriesShort=Categorías clientes
-CustomersProspectsCategoriesShort=Categorías clientes
+CustomersProspectsCategoriesShort=Categorías clientes/clientes potenciales
 ProductsCategoriesShort=Categorías productos
 ThisCategoryHasNoProduct=Esta categoría no contiene ningún producto.
 ThisCategoryHasNoSupplier=Esta categoría no contiene a ningún proveedor.
@@ -78,3 +80,4 @@ AssignedToCustomer=Asignado a un cliente
 AssignedToTheCustomer=Asignado al cliente
 InternalCategory=Categoría innerente
 CategoryContents=Contenidos categoría
+CategId=Id categoría

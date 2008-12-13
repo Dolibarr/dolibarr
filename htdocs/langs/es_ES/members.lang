@@ -1,6 +1,7 @@
 # Dolibarr language file - es_ES - members
 
 
+
 MembersArea=Area miembros
 PublicMembersArea=Area pública de los miembros
 MemberCard=Ficha miembro
@@ -133,4 +134,4 @@ DescADHERENT_ETIQUETTE_TYPE=Formato etiquetas
 DescADHERENT_CARD_HEADER_TEXT=Texto a imprimir en la parte superior del carné de miembro
 DescADHERENT_CARD_TEXT=Texto a imprimir en el carné de miembro
 DescADHERENT_CARD_FOOTER_TEXT=Texto a imprimir en la parte inferior del carné de miembro
-ShowTypeCard=Ver tipo '%s'
+ShowTypeCard=Ver tipo %s

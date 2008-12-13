@@ -1,5 +1,7 @@
 # Dolibarr language file - es_ES - banks
 
+
+
 Bank=Banco
 Banks=Bancos
 MenuBankCash=Bancos/Cajas
@@ -71,9 +73,12 @@ DeleteAccount=Eliminación de cuenta
 ConfirmDeleteAccount=¿Está seguro de querer eliminar esta cuenta?
 Account=Cuenta
 ByCategories=Por categorías
-ByRubriques=Por categorías
-RemoveFromRubrique=Eliminar vínculo con categoría
-RemoveFromRubriqueConfirm=¿Está seguro de querer eliminar el vínculo entre la transacción y la categoría?
+ByRubriques=Por partidas
+BankTransactionByCategories=Registros bancarios por partidas
+BankTransactionForCategory=Registros bancarios por la partida <b>%s</b>
+RemoveFromRubrique=Eliminar vínculo con partida
+RemoveFromRubriqueConfirm=¿Está seguro de querer eliminar el vínculo entre la transación y la partida?
+ListBankTransactions=Listado de transacciones
 IdTransaction=Id de transacción
 BankTransactions=Transacciones bancarias
 SearchTransaction=Buscar registro
@@ -110,9 +115,12 @@ TransferTo=Hacia
 TransferFromToDone=La transferencia de <b>%s</b> hacia <b>%s</b> de <b>%s</b> %s se ha creado.
 CheckTransmitter=Emisor
 ValidateCheckReceipt=¿Validar esta ficha de entrega?
+ConfirmValidateCheckReceipt=¿Está seguro de querer validar esta ficha (ninguna modificación será posible una vez la ficha esté validada)?
 DeleteCheckReceipt=¿Eliminar esta ficha de entrega?
+ConfirmDeleteCheckReceipt=¿Está seguro de querer eliminar esta ficha?
 BankChecks=Cheques
 BankChecksToReceipt=Cheques a depositar
+NumberOfCheques=Nº de cheques
 DeleteTransaction=Eliminar la transacción
 ConfirmDeleteTransaction=¿Está seguro de querer eliminar esta transacción?
 ThisWillAlsoDeleteBankRecord=Esto eliminará también los registros bancarios generados

@@ -3,6 +3,8 @@
 
 
 
+
+
 ProductServiceCard=Ficha producto/servicio
 Products=Productos
 Services=Servicios
@@ -14,6 +16,7 @@ Reference=Referencia
 NewProduct=Nuevo producto
 NewBook=Nuevo libro
 Book=Libro
+Books=Libros
 BookList=Listado libros
 NewService=Nuevo servicio
 ProductCode=Código producto
@@ -98,7 +101,7 @@ BarcodeType=Tipo de código de barras
 BarcodeValue=Valor del código de barras
 GenbarcodeLocation=Herramienta generación código de barra en línea de pedido (utilizado por el motor phpbar para determinados tipos de códigos barra)
 SetDefaultBarcodeType=Defina el tipo de código de barras
-NoteNotVisibleOnBill=Nota (no visible en las facturar, presupuestos, etc.)
+NoteNotVisibleOnBill=Nota (no visible en las facturas, presupuestos, etc.)
 CreateCopy=Crear cópia
 ServiceLimitedDuration=Si el servicio es de duración limitada :
 MultiPricesAbility=Activar múltiples precios
@@ -141,3 +144,6 @@ RecordedProductsAndServices=Productos/servicios en venta
 GenerateThumb=Generar la etiqueta
 ProductCanvasAbility=Usar las extensiones especiales "canvas"
 ServiceNb=Servicio no %s
+ListProductByPopularity=Listado de productos/servicios por popularidad
+Finished=Producto manofacturado
+RowMaterial=Materia prima

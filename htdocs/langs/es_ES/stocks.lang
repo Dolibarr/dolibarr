@@ -1,5 +1,6 @@
 # Dolibarr language file - es_ES - stocks
 
+
 WarehouseCard=Ficha almacen
 Warehouse=Almacen
 NewWarehouse=Nuevo almacen o zona de almacenaje
@@ -60,3 +61,4 @@ StockUpShort=Stock max.
 IdWarehouse=Id. almacén
 DescWareHouse=Descripción almacén
 LieuWareHouse=Localización almacén
+WarehousesAndProducts=Almacenes y productos
