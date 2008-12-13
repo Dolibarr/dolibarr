@@ -1008,7 +1008,7 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 	print "\n";
 
 	// Colonne de gauche
-	print '<!-- Debut left vertical menu -->'."\n";
+	print '<!-- Begin left vertical menu -->'."\n";
 	print '<div class="vmenu">'."\n";
 
 
@@ -1101,18 +1101,18 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 	}
 	print "\n";
 	print "</div>\n";
-	print "<!-- Fin left vertical menu -->\n";
+	print "<!-- End left vertical menu -->\n";
 
 	print "\n";
 
-	print '<!-- fin de zone gauche, debut zone droite -->'."\n";
+	print '<!-- End of left column, begin right area -->'."\n";
 	//	    print '</div>'."\n";
 	//		print '<div class="vmenuplusfiche">'."\n";
 	print '</td><td valign="top">'."\n";
 
 
 	print "\n";
-	print '<div class="fiche"> <!-- begin fiche area -->'."\n";
+	print '<div class="fiche"> <!-- begin main area -->'."\n";
 
 }
 
