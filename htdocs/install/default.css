@@ -15,44 +15,42 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 body {
-font-size:13px;
-font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
-background-color: #F4F4F4;
-margin-left: 20px;
-margin-right: 20px;
-margin-top: 20px;
-margin-bottom: 20px;
-}
-
-div.titre {
-padding: 5px 5px 5px 5px;
-margin: 0em 0em 0em 0em;
+	font-size:13px;
+	font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
+	background-color: #F4F4F4;
+	margin-left: 20px;
+	margin-right: 20px;
+	margin-top: 20px;
+	margin-bottom: 20px;
 }
 
 span.titre {
-font-size:1.1em;
-font-weight: bold;
-background: #dcdcd3;
-color: #4965B3;
-padding: 5px 5px 5px 5px;
-margin: 0em 0em 0em 0em;
-border: 1px solid #8CACBB;
+	font-size:1.1em;
+	font-weight: bold;
+	background: #dcdcd3;
+	color: #4965B3;
+	border: 1px solid #8CACBB;
+	padding: 5px 5px 5px 5px;
+	margin: 0em 0em 0em 0em;
 }
 
+div.titre {
+	padding: 5px 5px 5px 5px;
+	margin: 0em 0em 0em 0em;
+}
 
 div.soustitre {
-font-size: 15px;
-font-weight: bold;
-color: #4965B3;
-padding: 0em 1.2em 0.5em 2em;
-margin: 1.2em 1.2em 1.2em 1.2em;
-border-bottom: 1px solid #8CACBB;
-border-right: 1px solid #8CACBB;
-text-align: right;
+	font-size: 15px;
+	font-weight: bold;
+	color: #4965B3;
+	padding: 0em 1.2em 0.5em 2em;
+	margin: 1.2em 1.2em 1.2em 1.2em;
+	border-bottom: 1px solid #8CACBB;
+	border-right: 1px solid #8CACBB;
+	text-align: right;
 }
 
 inputdisabled

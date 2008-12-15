@@ -1177,7 +1177,7 @@ function llxFooter($foot='',$limitIEbug=1)
 
 	if ($conf->use_javascript_ajax)
 	{
-		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>';
+		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>'."\n";
 	}
 
 	// Juste pour eviter bug IE qui reorganise mal div precedents si celui-ci absent

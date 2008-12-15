@@ -50,7 +50,9 @@ class Conf
 
 	var $css_modules=array();
 	var $tabs_modules=array();
-
+	
+	var $logbuffer=array();
+	 
 
 	/**
 	*      \brief      Positionne toutes les variables de configuration

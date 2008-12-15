@@ -677,13 +677,15 @@ class User extends CommonObject
 		// Nettoyage parametres
 		$this->login = trim($this->login);
 
-		dolibarr_syslog("User::Create login=".$this->login.", user=".(is_object($user)?$user->id:''));
+		dolibarr_syslog("User::Create login=".$this->login.", user=".(is_object($user)?$user->id:''), LOG_DEBUG);
 
 		$error=0;
 		$this->db->begin();
 
 		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE login ='".addslashes($this->login)."'";
+		
+		dolibarr_syslog("User::Create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -752,13 +754,15 @@ class User extends CommonObject
 					else
 					{
 						$this->error=$interface->error;
+						dolibarr_syslog("User::Create ".$this->error, LOG_ERR);
 						$this->db->rollback();
 						return -3;
 					}
 				}
 				else
 				{
-					$this->error=$this->db->error();
+					$this->error=$this->db->lasterror();
+					dolibarr_syslog("User::Create ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -2;
 				}
@@ -766,7 +770,8 @@ class User extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("User::Create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -977,7 +982,7 @@ class User extends CommonObject
 		$sql.= ", note = '".addslashes($this->note)."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("User::update sql=".$sql);
+		dolibarr_syslog("User::update sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1117,7 +1122,7 @@ class User extends CommonObject
 
 		$error=0;
 
-		dolibarr_syslog("User::Password user=".$user->id." password=".eregi_replace('.','*',$password)." changelater=".$changelater." notrigger=".$notrigger);
+		dolibarr_syslog("User::setPassword user=".$user->id." password=".eregi_replace('.','*',$password)." changelater=".$changelater." notrigger=".$notrigger, LOG_DEBUG);
 
 		// Si nouveau mot de passe non communique, on genere par module
 		if (! $password)
@@ -1146,8 +1151,8 @@ class User extends CommonObject
 			}
 			$sql.= " WHERE rowid = ".$this->id;
 
-			//dolibarr_syslog("User::Password sql=hidden");
-			dolibarr_syslog("User::Password sql=".$sql);
+			dolibarr_syslog("User::setPassword sql=hidden", LOG_DEBUG);
+			//dolibarr_syslog("User::Password sql=".$sql);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -1172,7 +1177,7 @@ class User extends CommonObject
 							if ($result < 0)
 							{
 								$this->error=$adh->error;
-								dolibarr_syslog("User::password ".$this->error,LOG_ERR);
+								dolibarr_syslog("User::setPassword ".$this->error,LOG_ERR);
 								$error++;
 							}
 						}
@@ -1214,7 +1219,7 @@ class User extends CommonObject
 			$sql.= " SET pass_temp = '".addslashes($password)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			// dolibarr_syslog("User::update sql=".$sql);  Pas de trace
+			dolibarr_syslog("User::setPassword sql=hidden", LOG_DEBUG);	// No log
 			$result = $this->db->query($sql);
 			if ($result)
 			{

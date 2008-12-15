@@ -170,11 +170,11 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 	                $db->query("UPDATE llx_const set value='eldy_frontoffice.php' WHERE name='MAIN_MENUFRONT_BARRELEFT';");
 	            }
 	
-				dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_INSTALL const', LOG_ERR);
+				dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_INSTALL const to '.DOL_VERSION, LOG_DEBUG);
 	            $db->query("DELETE FROM llx_const WHERE name='MAIN_VERSION_LAST_INSTALL'");
 				$db->query("INSERT INTO llx_const(name,value,type,visible,note) values('MAIN_VERSION_LAST_INSTALL','".DOL_VERSION."','chaine',0,'Dolibarr version for last install')");
 
-				dolibarr_install_syslog('install/etape5.php Remove MAIN_NOT_INSTALLED const', LOG_ERR);
+				dolibarr_install_syslog('install/etape5.php Remove MAIN_NOT_INSTALLED const', LOG_DEBUG);
 	            $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
 			}
     	}

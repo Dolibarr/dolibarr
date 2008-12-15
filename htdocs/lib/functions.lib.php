@@ -158,26 +158,32 @@ function dol_escape_js($stringtoescape)
 }
 
 
-
-
 /**
- *	\brief      Envoi des messages dolibarr dans un fichier ou dans syslog
- *				Pour fichier:   fichier defini par SYSLOG_FILE
- *				Pour syslog:    facility defini par SYSLOG_FACILITY
- *	\param      message		    Message a tracer. Ne doit pas etre traduit si level = LOG_ERR
- *	\param      level           Niveau de l'erreur
+ *	\brief      Write log message in a file or to syslog process
+ *				Pour fichier:   	fichier defined by SYSLOG_FILE
+ *				Pour syslog:    	facility defined by SYSLOG_FACILITY
+ * 				Warning, les fonctions syslog sont buggues sous Windows et generent des
+ *				fautes de protection memoire. Pour resoudre, utiliser le loggage fichier,
+ *				au lieu du loggage syslog (configuration du module).
+ *				Si SYSLOG_FILE_NO_ERROR defini, on ne gere pas erreur ecriture log
+ * 	\param      message		    	Line to log. Ne doit pas etre traduit si level = LOG_ERR
+ *	\param      level           	Log level
  *	\remarks	Cette fonction n'a un effet que si le module syslog est active.
- *	Warning, les fonctions syslog sont buggues sous Windows et generent des
- *	fautes de protection memoire. Pour resoudre, utiliser le loggage fichier,
- *	au lieu du loggage syslog (configuration du module).
- *	Si SYSLOG_FILE_NO_ERROR defini, on ne gere pas erreur ecriture log
  *	\remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=LOG_DEBUG=6
  *				On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  */
 function dolibarr_syslog($message, $level=LOG_INFO)
 {
-	global $conf,$user,$langs;
+	global $conf,$user,$langs,$REQUEST;
 
+	// If adding log inside HTML page is required
+	if (! empty($REQUEST['logtohtml']))
+	{
+		$conf->logbuffer[]=strftime("%Y-%m-%d %H:%M:%S",time())." ".$message;			
+
+	}
+
+	// If syslog module enabled
 	if (! empty($conf->syslog->enabled))
 	{
 		//print $level.' - '.$conf->global->SYSLOG_LEVEL.' - '.$conf->syslog->enabled." \n";

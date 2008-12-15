@@ -32,6 +32,9 @@ require_once('../lib/admin.lib.php');
 
 // DOL_DOCUMENT_ROOT has been defined in function.inc.php to '..'
 
+// Define REQUEST["logtohtml"]
+$REQUEST["logtohtml"]=1;
+
 // Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
 // et non path absolu.
 if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"])
@@ -255,7 +258,8 @@ function pHeader($soutitre,$next,$action='set')
 
 function pFooter($nonext=0,$setuplang='')
 {
-    global $langs;
+    global $conf,$langs;
+    
     $langs->load("main");
     $langs->load("admin");
     
@@ -272,6 +276,22 @@ function pFooter($nonext=0,$setuplang='')
     }
 
     print '</form>'."\n";
+
+    // If there is some logs in buffer to show
+    if (sizeof($conf->logbuffer))
+    {
+		print "\n";
+		print "<!-- Start of log output\n";    	
+    	//print '<div class="hidden">'."\n";
+	    foreach($conf->logbuffer as $logline)
+	    {
+	    	print $logline."<br>\n";
+	    }
+	    //print '</div>'."\n";
+		print "End of log output -->\n";    	
+		print "\n";
+    }
+    
     print '</body>'."\n";
     print '</html>'."\n";
 }
