@@ -90,7 +90,7 @@ class modMyModule extends DolibarrModules
 		
 		
 		// New pages on tabs
-		$this->tabs = array('entity:Title:@langfile:/mymodule/mynewtab.php?id=__ID__');
+		$this->tabs = array('entity:Title:@mymodule:/mymodule/mynewtab.php?id=__ID__');
 		
 		
 		// Boxes
