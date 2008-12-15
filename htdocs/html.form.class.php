@@ -2100,7 +2100,7 @@ class Form
 				if ("$conf->use_popup_calendar" == "eldy")	// Laisser conf->use_popup_calendar entre quote
 				{
 					// Zone de saisie manuelle de la date
-					print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="10" maxlength="11" value="'.$formated_date.'"';
+					print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
 					print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\'); "';
 					print '>';
 						
@@ -2123,7 +2123,7 @@ class Form
 						print '</script>';
 					}
 					print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';
-					print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="10" value="'.$formated_date.'"';
+					print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="9" value="'.$formated_date.'"';
 					print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
 					print '> ';
 					print '<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
