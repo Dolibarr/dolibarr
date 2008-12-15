@@ -47,8 +47,6 @@ function llxHeader($head = "", $urlp = "")
   $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=4&filter=expired", $langs->trans("MenuExpiredServices"), 2 , true);
   $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=5", $langs->trans("MenuClosedServices"), 2 , true);
   
-  $menu->add_submenu(DOL_URL_ROOT."/contrat/facturation.php", $langs->trans("AutoBill"));
-  
   left_menu($menu->liste);
 }
 ?>
