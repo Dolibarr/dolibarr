@@ -153,8 +153,8 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 	            }
 	            else
 	            {
-					dolibarr_install_syslog('install/etape5.php FailedToCreateAdminLogin', LOG_ERR);
-	                print '<br>'.$langs->trans("FailedToCreateAdminLogin").'<br><br>';
+					dolibarr_install_syslog('install/etape5.php FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
+	                print '<br>'.$langs->trans("FailedToCreateAdminLogin").' '.$newuser->error.'<br><br>';
 	            }
 	        }
 	    
