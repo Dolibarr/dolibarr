@@ -18,23 +18,23 @@
  */
 
 /**
- \defgroup   	prelevement     Module prelevement
- \brief      	Module de gestion des prelevements bancaires
- \version		$Id$
+ *	\defgroup   	prelevement     Module prelevement
+ *	\brief      	Module de gestion des prelevements bancaires
+ *	\version		$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modPrelevement.class.php
- \ingroup    prelevement
- \brief      Fichier de description et activation du module Prelevement
+ *	\file       htdocs/includes/modules/modPrelevement.class.php
+ *	\ingroup    prelevement
+ *	\brief      Fichier de description et activation du module Prelevement
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- \class 		modPrelevement
- \brief      Classe de description et activation du module Prelevement
+ *	\class 		modPrelevement
+ *	\brief      Classe de description et activation du module Prelevement
  */
 class modPrelevement extends DolibarrModules
 {
@@ -55,8 +55,8 @@ class modPrelevement extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion des Prelevements";
 
-		$this->revision = explode(' ','$Revision$');
-		$this->version = $this->revision[1];
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+		$this->version = 'experimental';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
@@ -64,9 +64,9 @@ class modPrelevement extends DolibarrModules
 		$this->picto='payment';
 		// Dir
 		$this->dirs = array();
-		$this->data_directory = $conf->prelevement->dir_output . "/bon";
+		$this->dirs[0] = $conf->prelevement->dir_output . "/bon";
 
-		// D�pendances
+		// Dependancies
 		$this->depends = array("modFacture");
 		$this->requiredby = array();
 
