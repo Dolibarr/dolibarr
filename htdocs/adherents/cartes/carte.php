@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +19,16 @@
  */
 
 /**
- \file 		htdocs/adherents/cartes/carte.php
- \ingroup    adherent
- \brief      Page de creation d'une carte PDF
- \version    $Id$
+ *	\file 		htdocs/adherents/cartes/carte.php
+ *	\ingroup    adherent
+ *	\brief      Page de creation d'une carte PDF
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/cartes/PDF_card.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/PDF_card.class.php");
+//require_once(DOL_DOCUMENT_ROOT."/adherents/cartes/PDF_card.class.php");
 
 
 // liste des patterns remplacable dans le texte a imprimer
@@ -56,6 +57,19 @@ $patterns = array (
  *-------------------------------------------------
  */
 
+		   
+$dir = $conf->adherent->dir_tmp;
+$file = $dir . "/tmpcard.pdf";
+
+if (! file_exists($dir))
+{
+	if (create_exdir($dir) < 0)
+	{
+		$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+		return 0;
+	}
+}
+				
 //$pdf = new PDF_Label(array('name'=>'perso1', 'marginLeft'=>1, 'marginTop'=>1, 'NX'=>2, 'NY'=>7, 'SpaceX'=>0, 'SpaceY'=>0, 'width'=>99.1, 'height'=>'38.1', 'metric'=>'mm', 'font-size'=>14), 1, 2);
 $pdf = new PDF_card('CARD', 1, 1);
 
@@ -107,14 +121,29 @@ if ($result)
 		// imprime le texte specifique sur la carte
 		$pdf->Add_PDF_card(preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_TEXT),
 		preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_HEADER_TEXT),
-		preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_FOOTER_TEXT));
+		preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_FOOTER_TEXT), $langs);
 		$i++;
 	}
 
-	$db->close();
-	
 	// Output to http strem
-	$pdf->Output();
+	$pdf->Output($file);
+	
+	if (! empty($conf->global->MAIN_UMASK)) 
+		@chmod($file, octdec($conf->global->MAIN_UMASK));
+	
+	$db->close();
+
+	// Output file
+	$type = 'application/octet-stream';
+
+	if ($type)       header('Content-Type: '.$type);
+	header('Content-Disposition: attachment; filename="tmpcard.pdf"');
+	
+	// Ajout directives pour resoudre bug IE
+	header('Cache-Control: Public, must-revalidate');
+	header('Pragma: public');
+	 
+	readfile($file);
 }
 else
 {

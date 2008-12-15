@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,15 @@
  */
 
 /**
- \file 		htdocs/adherents/cartes/etiquette.php
- \ingroup    adherent
- \brief      Page de creation d'etiquettes
- \version    $Id$
+ *	\file 		htdocs/adherents/cartes/etiquette.php
+ *	\ingroup    adherent
+ *	\brief      Page de creation d'etiquettes
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-
-require_once('PDF_card.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/includes/modules/member/PDF_card.class.php');
 
 /*
  *-------------------------------------------------
@@ -37,6 +36,21 @@ require_once('PDF_card.class.php');
  * Soit on donne le type d'�tiquette au format AVERY
  *-------------------------------------------------
  */
+
+
+$dir = $conf->adherent->dir_tmp;
+$file = $dir . "/tmplabel.pdf";
+
+if (! file_exists($dir))
+{
+	if (create_exdir($dir) < 0)
+	{
+		$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+		return 0;
+	}
+}
+
+
 
 //$pdf = new PDF_Label(array('name'=>'perso1', 'marginLeft'=>1, 'marginTop'=>1, 'NX'=>2, 'NY'=>7, 'SpaceX'=>0, 'SpaceY'=>0, 'width'=>99.1, 'height'=>'38.1', 'metric'=>'mm', 'font-size'=>14), 1, 2);
 //$pdf = new PDF_card('CARD', 1, 1);
@@ -68,20 +82,36 @@ $sql.= " ORDER BY d.rowid ASC";
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows();
+	$num = $db->num_rows($result);
 	$i = 0;
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
 		// imprime le texte specifique sur la carte
-		$pdf->Add_PDF_card(sprintf("%s\n%s\n%s %s\n%s", ucfirst(strtolower($objp->prenom))." ".strtoupper($objp->nom), ucwords(strtolower($objp->adresse)), $objp->cp, strtoupper($objp->ville), ucfirst(strtolower($objp->pays))),'','');
+		$message=sprintf("%s\n%s\n%s %s\n%s", ucfirst(strtolower($objp->prenom))." ".strtoupper($objp->nom), ucwords(strtolower($objp->adresse)), $objp->cp, strtoupper($objp->ville), ucfirst(strtolower($objp->pays)));
+		$pdf->Add_PDF_card($message,'','',$langs);
 		$i++;
 	}
 
+	// Output to http strem
+	$pdf->Output($file);
+
+	if (! empty($conf->global->MAIN_UMASK)) 
+		@chmod($file, octdec($conf->global->MAIN_UMASK));
+		
 	$db->close();
 
-	// Output to http strem
-	$pdf->Output();
+	// Output file
+	$type = 'application/octet-stream';
+
+	if ($type)       header('Content-Type: '.$type);
+	header('Content-Disposition: attachment; filename="tmplabel.pdf"');
+	
+	// Ajout directives pour resoudre bug IE
+	header('Cache-Control: Public, must-revalidate');
+	header('Pragma: public');
+	 
+	readfile($file);
 }
 else
 {

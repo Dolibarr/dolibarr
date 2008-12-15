@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,17 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
         \file       htdocs/adherents/cartes/pre.inc.php
         \ingroup    adherent
 		\brief      Fichier de gestion du menu gauche du module adherent
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("../../main.inc.php");
@@ -64,7 +60,6 @@ function llxHeader($head = "") {
   $menu->add_submenu(DOL_URL_ROOT."/adherents/options.php",$langs->trans("MembersAttributes"));
 
   left_menu($menu->liste);
-
 }
 
 ?>

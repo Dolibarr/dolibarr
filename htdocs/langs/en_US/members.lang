@@ -132,3 +132,4 @@ DescADHERENT_CARD_HEADER_TEXT=Text printed on top of member cards
 DescADHERENT_CARD_TEXT=Text printed on member cards
 DescADHERENT_CARD_FOOTER_TEXT=Text printed on bottom of member cards
 ShowTypeCard=Show type '%s'
+HTPasswordExport=htpassword file generation
