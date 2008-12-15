@@ -192,6 +192,12 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if ($conf->global->MAIN_HOME)
 	{
 		print '<center><table cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td align="center">';
+		$i=0;
+		while (eregi('__\(([a-zA-Z]+)\)__',$conf->global->MAIN_HOME,$reg) && $i < 100)
+		{
+			$conf->global->MAIN_HOME=eregi_replace('__\('.$reg[1].'\)__',$langs->trans($reg[1]),$conf->global->MAIN_HOME);
+			$i++;
+		}
 		print nl2br($conf->global->MAIN_HOME);
 		print '</td></tr></table></center><br>';
 	}
