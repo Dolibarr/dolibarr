@@ -239,7 +239,7 @@ class pdf_huitre extends ModelePDFFactures
 				 *
 				 */
 
-				if ( $fac->note_public)
+				if (! empty($fac->note_public))
 				{
 					$pdf->SetFont('Arial','',7);
 					$pdf->SetXY(10, 211);

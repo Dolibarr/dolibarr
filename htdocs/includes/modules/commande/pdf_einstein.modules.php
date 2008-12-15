@@ -203,13 +203,13 @@ class pdf_einstein extends ModelePDFCommandes
 				$tab_height_newpage = 180;
 
 				// Affiche notes
-				if ($com->note_public)
+				if (! empty($com->note_public))
 				{
 					$tab_top = 88;
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 3, $com->note_public, 0, 'J');
+					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($com->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 

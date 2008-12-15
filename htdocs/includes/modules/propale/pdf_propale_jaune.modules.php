@@ -84,7 +84,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 
 	/**
-	 *	\brief      Fonction gï¿½nï¿½rant la propale sur le disque
+	 *	\brief      Fonction generant la propale sur le disque
 	 *	\param	    propale			Objet propal
 	 *	\param		outputlangs		Lang object for output language
 	 *	\return	    int     		1=ok, 0=ko
@@ -117,7 +117,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$ret=$propale->fetch($id);
 			}
 
-			// Dï¿½finition de $dir et $file
+			// Definition de $dir et $file
 			if ($propale->specimen)
 			{
 				$dir = $conf->propal->dir_output;
@@ -189,20 +189,47 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$nexY = $pdf->GetY();
 				$nblignes = sizeof($propale->lignes);
 
+				// Loop on each lines
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
 
+					// Description de la ligne produit
+					$libelleproduitservice=dol_htmlentitiesbr($propale->lignes[$i]->libelle,1);
+					if ($propale->lignes[$i]->desc && $propale->lignes[$i]->desc!=$propale->lignes[$i]->libelle)
+					{
+						if ($libelleproduitservice) $libelleproduitservice.="<br>";
+
+						if ($propale->lignes[$i]->desc == '(CREDIT_NOTE)' && $propale->lignes[$i]->fk_remise_except)
+						{
+							$discount=new DiscountAbsolute($this->db);
+							$discount->fetch($propale->lignes[$i]->fk_remise_except);
+							$libelleproduitservice=dol_htmlentitiesbr($langs->trans("DiscountFromCreditNote",$discount->ref_facture_source),1);
+						}
+						else
+						{
+							$libelleproduitservice.=dol_htmlentitiesbr($propale->lignes[$i]->desc,1);
+						}
+					}
+					if ($propale->lignes[$i]->date_start && $propale->lignes[$i]->date_end)
+					{
+						// Affichage durée si il y en a une
+						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($propale->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($propale->lignes[$i]->date_end,'',false,$outputlangs).")",1);
+					}
+
+					
 					$pdf->SetXY (30, $curY );
-					$pdf->MultiCell(102, 5, $outputlangs->convToOutputCharset($propale->lignes[$i]->desc), 0, 'J', 0);
+					$pdf->MultiCell(102, 5, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 'J', 0);
 
 					$nexY = $pdf->GetY();
 
+					$ref=dol_htmlentitiesbr($propale->lignes[$i]->ref);
+					
 					$pdf->SetXY (10, $curY );
-					$pdf->MultiCell(20, 5, $outputlangs->convToOutputCharset($propale->lignes[$i]->ref), 0, 'C', 0);
+					$pdf->MultiCell(20, 5, $outputlangs->convToOutputCharset($ref), 0, 'C', 0);
 
 					$pdf->SetXY (132, $curY );
-					$pdf->MultiCell(12, 5, $propale->lignes[$i]->tva_tx, 0, 'C', 0);
+					$pdf->MultiCell(12, 5, vatrate($propale->lignes[$i]->tva_tx,0,$propale->lignes[$i]->info_bits), 0, 'C', 0);
 
 					$pdf->SetXY (144, $curY );
 					$pdf->MultiCell(10, 5, $propale->lignes[$i]->qty, 0, 'C', 0);

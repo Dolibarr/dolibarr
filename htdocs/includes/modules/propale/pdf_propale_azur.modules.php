@@ -206,7 +206,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				$tab_height_middlepage = 190;
 
 				// Affiche notes
-				if ($propale->note_public)
+				if (! empty($propale->note_public))
 				{
 					$tab_top = 88;
 
@@ -232,7 +232,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				$curY = $tab_top + 8;
 				$nexY = $tab_top + 8;
 
-				// Boucle sur les lignes
+				// Loop on each lines
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
