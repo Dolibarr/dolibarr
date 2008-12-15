@@ -26,6 +26,7 @@
 
 require("./pre.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 
 $langs->load("products");
 $langs->load("companies");
@@ -56,7 +57,7 @@ $result = restrictedArea($user, 'contrat',$contratid,'');
 
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
-
+$companystatic=new Societe($db);
 
 /*
  * View
@@ -97,7 +98,7 @@ $filter_date1=dolibarr_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_
 $filter_date2=dolibarr_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUEST['op2year']);
 if (! empty($_REQUEST['filter_op1']) && $_REQUEST['filter_op1'] != -1 && $filter_date1 != '') $sql.= " AND date_ouverture_prevue ".$_REQUEST['filter_op1']." ".$db->idate($filter_date1);
 if (! empty($_REQUEST['filter_op2']) && $_REQUEST['filter_op2'] != -1 && $filter_date2 != '') $sql.= " AND date_fin_validite ".$_REQUEST['filter_op2']." ".$db->idate($filter_date2);
-$sql .= " ORDER BY $sortfield $sortorder";
+$sql .= $db->order($sortfield,$sortorder);
 $sql .= $db->plimit($limit + 1 ,$offset);
 
 //print $sql;
@@ -124,16 +125,16 @@ if ($resql)
     print '<table class="liste" width="100%">';
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contract"),"services.php", "c.rowid","$param","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Service"),"services.php", "p.description","$param","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),"services.php", "s.nom","$param","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Contract"),"services.php", "c.rowid",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Service"),"services.php", "p.description",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),"services.php", "s.nom",$param,"","",$sortfield,$sortorder);
     // Date debut
-    if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),"services.php", "cd.date_ouverture_prevue","$param",'',' align="center"',$sortfield,$sortorder);
-    if ($mode == "" || $mode > 0) print_liste_field_titre($langs->trans("DateStartRealShort"),"services.php", "cd.date_ouverture","$param",'',' align="center"',$sortfield,$sortorder);
+    if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),"services.php", "cd.date_ouverture_prevue",$param,'',' align="center"',$sortfield,$sortorder);
+    if ($mode == "" || $mode > 0) print_liste_field_titre($langs->trans("DateStartRealShort"),"services.php", "cd.date_ouverture",$param,'',' align="center"',$sortfield,$sortorder);
     // Date fin
-    if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),"services.php", "cd.date_fin_validite","$param",'',' align="center"',$sortfield,$sortorder);
-    else print_liste_field_titre($langs->trans("DateEndRealShort"),"services.php", "cd.date_cloture","$param",'',' align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),"services.php", "cd.statut","$param","","align=\"right\"",$sortfield,$sortorder);
+    if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),"services.php", "cd.date_fin_validite",$param,'',' align="center"',$sortfield,$sortorder);
+    else print_liste_field_titre($langs->trans("DateEndRealShort"),"services.php", "cd.date_cloture",$param,'',' align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"services.php", "cd.statut,c.statut",$param,"","align=\"right\"",$sortfield,$sortorder);
     print "</tr>\n";
 
     print '<form method="POST" action="services.php">';
@@ -179,8 +180,9 @@ if ($resql)
         $contractstatic->id=$obj->cid;
         $contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
         print $contractstatic->getNomUrl(1); 
-        //'<a href="fiche.php?id='.$obj->cid.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a>';
         print '</td>';
+        
+        // Service
         print '<td>';
         if ($obj->pid)
         {
@@ -193,13 +195,18 @@ if ($resql)
         print '</td>';
         
         // Third party
-        print '<td><a href="../comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,40).'</a></td>';
-
-        // Date debut
+        print '<td>';
+        $companystatic->id=$obj->socid;
+        $companystatic->nom=$obj->nom;
+        $companystatic->client=1;
+		print $companystatic->getNomUrl(1,'customer',32);
+		print '</td>';
+		
+        // Start date
         if ($mode == "0") {
             print '<td align="center">';
             print ($obj->date_ouverture_prevue?dolibarr_print_date($obj->date_ouverture_prevue):'&nbsp;');
-            if ($obj->date_ouverture_prevue && ($obj->date_ouverture_prevue < (time() - $conf->contrat->services->inactifs->warning_delay)))
+            if ($obj->date_ouverture_prevue && ($obj->date_ouverture_prevue < ($now - $conf->contrat->services->inactifs->warning_delay)))
             print img_picto($langs->trans("Late"),"warning");
             else print '&nbsp;&nbsp;&nbsp;&nbsp;';
             print '</td>';
@@ -209,7 +216,7 @@ if ($resql)
         if ($mode == "" || $mode < 5) print '<td align="center">'.($obj->date_fin_validite?dolibarr_print_date($obj->date_fin_validite):'&nbsp;');
         else print '<td align="center">'.dolibarr_print_date($obj->date_cloture);
         // Icone warning
-        if ($obj->date_fin_validite && $obj->date_fin_validite < (time() - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) print img_warning($langs->trans("Late"));
+        if ($obj->date_fin_validite && $obj->date_fin_validite < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) print img_warning($langs->trans("Late"));
         else print '&nbsp;&nbsp;&nbsp;&nbsp;';
         print '</td>';
         print '<td align="right" nowrap="nowrap">';
