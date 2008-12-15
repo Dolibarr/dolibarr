@@ -30,4 +30,5 @@ MakeWithdrawRequest=Make a withdraw request
 ThirdPartyBankCode=Third party bank code
 ThirdPartyDeskCode=Third party desk code
 NoInvoiceCouldBeWithdrawed=No invoice withdrawed with success. Check that invoice are on companies with a valid BAN.
-ClassCredited=Classer crédité
+ClassCredited=Classify credited
+ClassCreditedConfirm=Are you sure you want to classify this withdrawal receipt as credited on your bank account ?

@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,7 +147,7 @@ if ($_GET["id"])
 
       if ($_GET["action"] == 'credite')
 	{
-	  $html->form_confirm("fiche.php?id=".$bon->id,"Classer comme crédité","Etes-vous sûr de vouloir classer ce bon de prélèvement comme crédité sur votre compte bancaire ?","confirm_credite");
+	  $html->form_confirm("fiche.php?id=".$bon->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite");
 	  print '<br />';
 	}
 
