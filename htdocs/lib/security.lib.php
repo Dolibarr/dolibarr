@@ -89,13 +89,13 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '</head>'."\n";
 
 	// Body
-	print '<body class="body" onload="donnefocus();">';
+	print '<body class="body" onload="donnefocus();">'."\n";
 
 	// Start Form
 	print '<form id="login" name="login" method="post" action="';
 	print $_SERVER['PHP_SELF'];
 	print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
-	print '">';
+	print '">'."\n";
 
 	// Table 1
 	print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="450">';
