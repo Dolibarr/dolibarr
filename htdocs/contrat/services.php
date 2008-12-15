@@ -191,7 +191,10 @@ if ($resql)
         	print dolibarr_trunc($obj->description,20);
     	}
         print '</td>';
-        print '<td><a href="../comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+        
+        // Third party
+        print '<td><a href="../comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,40).'</a></td>';
+
         // Date debut
         if ($mode == "0") {
             print '<td align="center">';
@@ -209,7 +212,7 @@ if ($resql)
         if ($obj->date_fin_validite && $obj->date_fin_validite < (time() - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) print img_warning($langs->trans("Late"));
         else print '&nbsp;&nbsp;&nbsp;&nbsp;';
         print '</td>';
-        print '<td align="right">';
+        print '<td align="right" nowrap="nowrap">';
         if ($obj->cstatut == 0)
         {
         	print $contractstatic->LibStatut(0,5);
