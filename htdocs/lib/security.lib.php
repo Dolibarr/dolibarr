@@ -19,9 +19,189 @@
 
 /**
  *  \file			htdocs/lib/security.lib.php
- *  \brief			Ensemble de fonctions de securite de dolibarr sous forme de lib
+ *  \brief			Set of function used for dolibarr security
  *  \version		$Id$
  */
+
+
+/**
+ *	\brief      Show Dolibarr default login page
+ *	\param		langs		Lang object
+ *	\param		conf		Conf object
+ *	\param		mysoc		Company object
+ *	\remarks    You must change HTML code in this page to change design of logon page.
+ */
+function dol_loginfunction($langs,$conf,$mysoc)
+{
+	$langs->load("main");
+	$langs->load("other");
+
+	$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+	// Si feuille de style en php existe
+	if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
+
+	header('Cache-Control: Public, must-revalidate');
+
+	if (! empty($_REQUEST["urlfrom"])) $_SESSION["urlfrom"]=$_REQUEST["urlfrom"];
+	else unset($_SESSION["urlfrom"]);
+	
+	// Ce DTD est KO car inhibe document.body.scrollTop
+	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+	// Ce DTD est OK
+	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
+
+	// En tete html
+	print "<html>\n";
+	print "<head>\n";
+	print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
+	print "<title>".$langs->trans("Login")."</title>\n";
+
+	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+
+	print '<style type="text/css">'."\n";
+	print '<!--'."\n";
+	print '#login {';
+	print '  margin-top: 70px;';
+	print '  margin-bottom: 30px;';
+	print '  text-align: center;';
+	print '  font: 12px arial,helvetica;';
+	print '}'."\n";
+	print '#login table {';
+	print '  border: 1px solid #C0C0C0;';
+	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
+	{
+		print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png) repeat-x;';
+	}
+	else
+	{
+		print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/login_background.png) repeat-x;';
+	}
+	print 'font-size: 12px;';
+	print '}'."\n";
+	print '-->'."\n";
+	print '</style>'."\n";
+	print '<script type="text/javascript">'."\n";
+	print "function donnefocus() {\n";
+	if (! $_REQUEST["username"]) print "document.getElementById('username').focus();\n";
+	else print "document.getElementById('password').focus();\n";
+	print "}\n";
+	print '</script>'."\n";
+	print '</head>'."\n";
+
+	// Body
+	print '<body class="body" onload="donnefocus();">';
+
+	// Start Form
+	print '<form id="login" name="login" method="post" action="';
+	print $_SERVER['PHP_SELF'];
+	print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
+	print '">';
+
+	// Table 1
+	print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="450">';
+	$title='Dolibarr '.DOL_VERSION;
+	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
+	print '<tr class="vmenu"><td align="center">'.$title.'</td></tr>';
+	print '</table>';
+	print '<br>';
+
+	// Table 2
+	print '<table cellpadding="2" align="center" width="450">';
+
+	print '<tr><td colspan="3">&nbsp;</td></tr>';
+
+	print '<tr>';
+
+	// Login field
+	print '<td align="left" valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
+	print '<td valign="bottom"><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="'.(isset($_REQUEST["username"])?$_REQUEST["username"]:'').'" tabindex="1" /></td>';
+
+	$title=$langs->trans("SessionName").': '.session_name();
+	if ($conf->main_authentication) $title.=", ".$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
+
+	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
+	$width=0;
+	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
+	if (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small))
+	{
+		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
+	}
+	elseif (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/'.$mysoc->logo))
+	{
+		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
+		$width=96;
+	}
+	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
+	{
+		$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
+	}
+	print '<td rowspan="2" align="center"><img title="'.$title.'" src="'.$urllogo.'"';
+	if ($width) print ' width="'.$width.'"';
+	print '></td>';
+	print '</tr>'."\n";
+
+	// Password field
+	print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
+	print '<td valign="top" nowrap="nowrap"><input id="password" name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
+	print '</td></tr>';
+
+	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
+
+	// Security graphical code
+	$disabled=! $conf->global->MAIN_SECURITY_ENABLECAPTCHA;
+	if (function_exists("imagecreatefrompng") && ! $disabled)
+	{
+		//print "Info session: ".session_name().session_id();print_r($_SESSION);
+		print '<tr><td align="left" valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
+		print '<td valign="top" nowrap="nowrap" align="left" class="e">';
+
+		print '<table><tr>';
+		print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="3"></td>';
+		print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36"></td>';
+		print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>';
+		print '</tr></table>';
+
+		print '</td>';
+		print '</tr>';
+	}
+
+	print '<tr><td colspan="3" style="text-align:center;"><br>';
+	print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />';
+	print '</td></tr>';
+
+	if (! $conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
+	{
+		print '<tr><td colspan="3" align="center"><a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">('.$langs->trans("PasswordForgotten").')</a></td></tr>';
+	}
+
+	print '</table>';
+	
+	// Hidden fields
+	print '<input type="hidden" name="loginfunction" value="loginfunction" />';
+	
+	print '</form>';
+
+	// Message
+	if ($_SESSION["dol_loginmesg"])
+	{
+		print '<center><table width="60%"><tr><td align="center" class="small"><div class="error">';
+		print $_SESSION["dol_loginmesg"];
+		$_SESSION["dol_loginmesg"]="";
+		print '</div></td></tr></table></center>';
+	}
+	if ($conf->global->MAIN_HOME)
+	{
+		print '<center><table cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td align="center">';
+		print nl2br($conf->global->MAIN_HOME);
+		print '</td></tr></table></center><br>';
+	}
+
+	print "\n";
+	print '<!-- urlfrom in session = '.$_SESSION["urlfrom"].' -->';
+	
+	// Fin entete html
+	print "\n</body>\n</html>";
+}
 
 
 /**
