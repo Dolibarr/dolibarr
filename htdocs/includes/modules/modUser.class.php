@@ -52,9 +52,9 @@ class modUser extends DolibarrModules
 		$this->description = "Gestion des utilisateurs (requis)";
 		$this->always_enabled = 1;	// Can't be disabled
 
-		$this->revision = explode(' ','$Revision$');
-		$this->version = $this->revision[1];
-
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+		$this->version = 'dolibarr';
+		
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto='group';

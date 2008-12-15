@@ -57,8 +57,8 @@ class modComptabiliteExpert extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion expert de comptabilite (doubles parties)";
 
-		//    $this->revision = explode(' ','$Revision$');
-		//    $this->version = $this->revision[1];
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+		//$this->version = 'dolibarr';
 		$this->version = "development";
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);

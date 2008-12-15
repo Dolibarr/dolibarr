@@ -52,9 +52,9 @@ class modFournisseur extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion des fournisseurs";
 
-		$this->revision = explode(' ','$Revision$');
-		$this->version = $this->revision[1];
-
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+		$this->version = 'dolibarr';
+		
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto='company';
