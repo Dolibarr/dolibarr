@@ -100,14 +100,14 @@ class modECM extends DolibarrModules
 		$this->rights[$r][1] = 'Consulter les documents';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'read';
+		$this->rights[$r][4] = 'download';
 
 		$r++;
 		$this->rights[$r][0] = 2501;
 		$this->rights[$r][1] = 'Soumettre ou supprimer des documents';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'create';
+		$this->rights[$r][4] = 'upload';
 
 		$r++;
 		$this->rights[$r][0] = 2515;
@@ -131,7 +131,7 @@ class modECM extends DolibarrModules
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
 							  'position'=>100,
-							  'perms'=>'$user->rights->ecm->create || $user->rights->ecm->read || $user->rights->ecm->setup',
+							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload || $user->rights->ecm->setup',
 							  'target'=>'',
 							  'user'=>0);
 		$r++;
@@ -144,7 +144,7 @@ class modECM extends DolibarrModules
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
 							  'position'=>101,
-							  'perms'=>'$user->rights->ecm->read',
+							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
 							  'target'=>'',
 							  'user'=>0);
 		$r++;
@@ -156,7 +156,7 @@ class modECM extends DolibarrModules
 							  'url'=>'/ecm/index.php?action=file_manager',
 							  'langs'=>'ecm',
 							  'position'=>102,
-							  'perms'=>'$user->rights->ecm->read',
+							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
 							  'target'=>'',
 							  'user'=>0);
 		$r++;
@@ -168,7 +168,7 @@ class modECM extends DolibarrModules
 							  'url'=>'/ecm/index.php?action=search_form',
 							  'langs'=>'ecm',
 							  'position'=>103,
-							  'perms'=>'$user->rights->ecm->read',
+							  'perms'=>'$user->rights->ecm->download',
 							  'target'=>'',
 							  'user'=>0);
 		$r++;

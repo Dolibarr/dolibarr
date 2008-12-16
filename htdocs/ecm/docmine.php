@@ -355,16 +355,16 @@ $formfile=new FormFile($db);
 
 /*
 // Affiche formulaire upload
-if ($user->rights->ecm->create)
+if ($user->rights->ecm->upload)
 {
 	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/docmine.php','',0,$section);
 }
 
 // List of document
-if ($user->rights->ecm->read)
+if ($user->rights->ecm->download)
 {
 	$param='&amp;section='.$section;
-	$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->create);
+	$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload);
 }
 */
 

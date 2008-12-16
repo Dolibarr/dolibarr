@@ -367,6 +367,7 @@ FillTownFromZip=Fill town from zip
 ShowLog=Show log
 File=File
 Files=Files
+NotAllowed=Not allowed
 ReadPermissionNotAllowed=Read permission not allowed
 AmountInCurrency=Amount in %s currency
 Example=Example

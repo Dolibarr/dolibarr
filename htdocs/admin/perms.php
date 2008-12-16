@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ $db->commit();
 
 
 // Affiche lignes des permissions
-$sql ="SELECT r.id, r.libelle, r.module, r.bydefault";
+$sql ="SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
 $sql.=" FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.=" WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.=" ORDER BY r.module, r.id";
@@ -106,7 +106,7 @@ $sql.=" ORDER BY r.module, r.id";
 $result = $db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows();
+    $num = $db->num_rows($result);
     $i = 0;
     $var=True;
     $old = "";
@@ -121,9 +121,15 @@ if ($result)
             continue;
         }
 
+        // Check if permission is inside module definition
+        // TODO If not, we remove it
+        foreach($objMod->rights as $key => $val)
+        {
+        }
+                
+        // Break found, it's a new module to catch
         if ($old <> $obj->module)
         {
-            // Rupture d�tect�e, on r�cup�re objMod
             $objMod=$modules[$obj->module];
             $picto=($objMod->picto?$objMod->picto:'generic');
 

@@ -592,7 +592,7 @@ $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolowe
 $formfile=new FormFile($db);
 $param='&amp;section='.$section;
 $textifempty=($section?$langs->trans("NoFileFound"):$langs->trans("ECMSelectASection"));
-$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->create,1,$textifempty);
+$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty);
 
 //	print '<table width="100%" class="border">';
 
@@ -617,7 +617,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action))
 	}
 }
 print '</td><td>';
-if ($user->rights->ecm->create && ! empty($section))
+if ($user->rights->ecm->upload && ! empty($section))
 {
 	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php','',0,$section,1);
 }

@@ -327,7 +327,7 @@ if ($modulepart)
     if ($modulepart == 'ecm')
     {
         $user->getrights('ecm');
-        if ($user->rights->ecm->read)
+        if ($user->rights->ecm->download)
         {
 			$accessallowed=1;
         }

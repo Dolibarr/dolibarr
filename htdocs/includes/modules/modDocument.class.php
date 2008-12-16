@@ -17,23 +17,23 @@
  */
 
 /**
- \defgroup   	document     Module de generation de documents
- \brief      	Module pour gerer des generations de documents
- \version		$Id$
+ *	\defgroup   	document     Module de generation de documents
+ *	\brief      	Module pour gerer des generations de documents
+ *	\version		$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modDocument.class.php
- \ingroup    document
- \brief      Fichier de description et activation du module Generation document
+ *	\file       htdocs/includes/modules/modDocument.class.php
+ *	\ingroup    document
+ *	\brief      Fichier de description et activation du module Generation document
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- \class      modDocument
- \brief      Classe de description et activation du module Document
+ *	\class      modDocument
+ *	\brief      Classe de description et activation du module Document
  */
 
 class modDocument extends DolibarrModules

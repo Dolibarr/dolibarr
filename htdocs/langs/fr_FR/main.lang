@@ -368,6 +368,7 @@ FillTownFromZip=Renseigner ville
 ShowLog=Afficher historique
 File=Fichier
 Files=Fichiers
+NotAllowed=Non autorisé
 ReadPermissionNotAllowed=Lecture non autorisée
 AmountInCurrency=Montants exprimés en %s
 Example=Exemple

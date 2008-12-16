@@ -3447,7 +3447,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `llx_menu` WRITE;
 /*!40000 ALTER TABLE `llx_menu` DISABLE KEYS */;
-INSERT INTO `llx_menu` VALUES (1,'all','agenda','top','agenda',0,100,'/comm/action/index.php','','Agenda','commercial',0,'0','$user->rights->agenda->myactions->read',0,'2008-08-07 19:59:53'),(2,'all','ecm','top','ecm',0,100,'/ecm/index.php','','MenuECM','ecm',0,'1','$user->rights->ecm->create || $user->rights->ecm->read || $user->rights->ecm->setup',0,'2008-08-07 20:00:42'),(3,'all','ecm','left','ecm',2,100,'/ecm/index.php','','ECMArea','ecm',0,'','$user->rights->ecm->read',0,'2008-08-07 20:00:42'),(4,'all','ecm','left','ecm',3,100,'/ecm/index.php','','List','ecm',0,'','$user->rights->ecm->read',0,'2008-08-07 20:00:42'),(5,'all','ecm','left','ecm',3,100,'/ecm/docdir.php?action=create','','ECMNewSection','ecm',0,'','$user->rights->ecm->setup',0,'2008-08-07 20:00:42');
+INSERT INTO `llx_menu` VALUES (1,'all','agenda','top','agenda',0,100,'/comm/action/index.php','','Agenda','commercial',0,'0','$user->rights->agenda->myactions->read',0,'2008-08-07 19:59:53'),(2,'all','ecm','top','ecm',0,100,'/ecm/index.php','','MenuECM','ecm',0,'1','$user->rights->ecm->upload || $user->rights->ecm->download || $user->rights->ecm->setup',0,'2008-08-07 20:00:42'),(3,'all','ecm','left','ecm',2,100,'/ecm/index.php','','ECMArea','ecm',0,'','$user->rights->ecm->download',0,'2008-08-07 20:00:42'),(4,'all','ecm','left','ecm',3,100,'/ecm/index.php','','List','ecm',0,'','$user->rights->ecm->download',0,'2008-08-07 20:00:42'),(5,'all','ecm','left','ecm',3,100,'/ecm/docdir.php?action=create','','ECMNewSection','ecm',0,'','$user->rights->ecm->setup',0,'2008-08-07 20:00:42');
 /*!40000 ALTER TABLE `llx_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -280,7 +280,7 @@ class User extends CommonObject
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE ";
-			$sql.=" id = '".$rid."'";
+			$sql.= " id = '".$rid."'";
 
 			$result=$this->db->query($sql);
 			if ($result) {
