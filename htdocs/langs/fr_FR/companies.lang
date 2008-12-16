@@ -197,6 +197,7 @@ ContactPrivate=Privé
 ContactPublic=Partagé
 ContactVisibility=Visibilité
 OthersNotLinkedToThirdParty=Autres, non liés à un tiers
+ProspectStatus=Statut prospect
 PL_NONE=Aucun
 PL_UNKNOWN=Indéterminé
 PL_LOW=Faible

@@ -95,8 +95,8 @@ class Prospect extends Societe
 
     
 	/**
-	 *    \brief      Retourne le libell� du statut d'une facture (brouillon, valid�e, abandonn�e, pay�e)
-	 *    \param      mode          0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long
+	 *    \brief      Return status of prospect
+	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -105,9 +105,9 @@ class Prospect extends Societe
 	}
 
 	/**
-	 *    	\brief      Renvoi le libelle d'un statut donne
+	 *    	\brief      Return label of a given status
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\param      mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *    	\return     string        	Libelle du statut
 	 */
 	function LibStatut($statut,$mode=0)
