@@ -1491,6 +1491,7 @@ class Form
 	{
 		global $langs;
 
+		print "\n<!-- begin form_confirm -->\n";
 		print '<form method="post" action="'.$page.'" class="notoptoleftroright">';
 		print '<input type="hidden" name="action" value="'.$action.'">';
 
@@ -1574,6 +1575,8 @@ class Form
 		}
 
 		print "</form>\n";
+
+		print "\n<!-- end form_confirm -->\n";
 	}
 
 

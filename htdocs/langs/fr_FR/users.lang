@@ -93,3 +93,5 @@ UserDeleted=Suppression utilisateur %s
 NewGroupCreated=Création groupe %s
 GroupModified=Modification groupe %s
 GroupDeleted=Suppression groupe %s
+ConfirmCreateContact=Etes vous sur de vouloir créer un compte Dolibarr pour ce contact ?
+LoginToCreate=Login à créer

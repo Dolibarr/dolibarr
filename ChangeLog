@@ -38,6 +38,7 @@ For users:
 - Show greyed lines for not allowed export filters.
 - Add nature in product fields (manufactured product or not).
 - Add export filters for category module.
+- Can choose login of dolibarr account created when create from contact
 
 For translators:
 - The errors language file contains only error or warning messages with 

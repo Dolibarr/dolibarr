@@ -51,37 +51,32 @@ $result = restrictedArea($user, 'contact', $contactid, 'socpeople');
 */
 
 // Creation utilisateur depuis contact
-if ($user->rights->user->user->creer)
+if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
 {
-	if ($_GET["action"] == 'create_user')
+	// Recuperation contact actuel
+	$contact = new Contact($db);
+	$result = $contact->fetch($_GET["id"]);
+
+	if ($result > 0)
 	{
-		// Recuperation contact actuel
-		$contact = new Contact($db);
-		$result = $contact->fetch($_GET["id"]);
+		// Creation user
+		$nuser = new User($db);
+		$result=$nuser->create_from_contact($contact,$_POST["login"]);
 
-		if ($result > 0)
+		if ($result < 0)
 		{
-			// Creation user
-			$nuser = new User($db);
-			$result=$nuser->create_from_contact($contact);
-
-			if ($result < 0)
-			{
-				$msg=$nuser->error;
-			}
+			$msg=$nuser->error;
 		}
-		else
-		{
-			$msg=$contact->error;
-		}
+	}
+	else
+	{
+		$msg=$contact->error;
 	}
 }
 
 // Creation contact
-if ($user->rights->societe->contact->creer)
+if ($_POST["action"] == 'add' && $user->rights->societe->contact->creer)
 {
-  if ($_POST["action"] == 'add')
-  {
     $contact = new Contact($db);
 
     $contact->socid        = $_POST["socid"];
@@ -124,67 +119,60 @@ if ($user->rights->societe->contact->creer)
 			$_GET["action"] = 'create';
 		}
 	}
-  }
 }
 
-if ($user->rights->societe->contact->supprimer)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->contact->supprimer)
 {
-	if ($_POST["action"] == 'confirm_delete' AND $_POST["confirm"] == 'yes')
+	$contact = new Contact($db);
+	$result=$contact->fetch($_GET["id"]);
+
+	$contact->old_name      = $_POST["old_name"];
+	$contact->old_firstname = $_POST["old_firstname"];
+
+	$result = $contact->delete();
+
+	Header("Location: index.php");
+	exit;
+}
+
+if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
+{
+	$contact = new Contact($db);
+
+	$contact->old_name      = $_POST["old_name"];
+	$contact->old_firstname = $_POST["old_firstname"];
+
+	$contact->socid         = $_POST["socid"];
+	$contact->name          = $_POST["name"];
+	$contact->firstname     = $_POST["firstname"];
+	$contact->civilite_id   = $_POST["civilite_id"];
+	$contact->poste         = $_POST["poste"];
+
+	$contact->address       = $_POST["address"];
+	$contact->cp            = $_POST["cp"];
+	$contact->ville         = $_POST["ville"];
+	$contact->fk_pays       = $_POST["pays_id"];
+
+	$contact->email         = $_POST["email"];
+	$contact->phone_pro     = $_POST["phone_pro"];
+	$contact->phone_perso   = $_POST["phone_perso"];
+	$contact->phone_mobile  = $_POST["phone_mobile"];
+	$contact->fax           = $_POST["fax"];
+	$contact->jabberid      = $_POST["jabberid"];
+	$contact->priv          = $_POST["priv"];
+
+	$contact->note          = $_POST["note"];
+
+	$result = $contact->update($_POST["contactid"], $user);
+
+	if ($result > 0)
 	{
-		$contact = new Contact($db);
-		$result=$contact->fetch($_GET["id"]);
-
-		$contact->old_name      = $_POST["old_name"];
-		$contact->old_firstname = $_POST["old_firstname"];
-
-		$result = $contact->delete();
-
-		Header("Location: index.php");
-		exit;
+		$contact->old_name='';
+		$contact->old_firstname='';
 	}
-}
-
-if ($user->rights->societe->contact->creer)
-{
-	if ($_POST["action"] == 'update' && ! $_POST["cancel"])
+	else
 	{
-		$contact = new Contact($db);
-	
-		$contact->old_name      = $_POST["old_name"];
-		$contact->old_firstname = $_POST["old_firstname"];
-	
-		$contact->socid         = $_POST["socid"];
-		$contact->name          = $_POST["name"];
-		$contact->firstname     = $_POST["firstname"];
-		$contact->civilite_id   = $_POST["civilite_id"];
-		$contact->poste         = $_POST["poste"];
-	
-		$contact->address       = $_POST["address"];
-		$contact->cp            = $_POST["cp"];
-		$contact->ville         = $_POST["ville"];
-		$contact->fk_pays       = $_POST["pays_id"];
-	
-		$contact->email         = $_POST["email"];
-		$contact->phone_pro     = $_POST["phone_pro"];
-		$contact->phone_perso   = $_POST["phone_perso"];
-		$contact->phone_mobile  = $_POST["phone_mobile"];
-		$contact->fax           = $_POST["fax"];
-		$contact->jabberid      = $_POST["jabberid"];
-		$contact->priv          = $_POST["priv"];
-	
-		$contact->note          = $_POST["note"];
-	
-		$result = $contact->update($_POST["contactid"], $user);
-	
-		if ($result > 0)
-		{
-			$contact->old_name='';
-			$contact->old_firstname='';
-		}
-		else
-		{
-			$error = $contact->error;
-		}
+		$error = $contact->error;
 	}
 }
 
@@ -484,8 +472,24 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	* Fiche en mode visualisation
 	*
 	*/
-	if ($msg) print '<div class="error">'.$msg.'</div>';
+	if ($msg) 
+	{
+		$langs->load("errors");
+		print '<div class="error">'.$langs->trans($msg).'</div>';
+	}
 
+	if ($_GET["action"] == 'create_user')
+	{
+		$login=strtolower(substr($contact->prenom, 0, 4)) . strtolower(substr($contact->nom, 0, 4));
+		
+		// Crée un tableau formulaire
+		$formquestion=array(
+		array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
+		
+		$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$contact->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
+		print '<br>';
+	}
+		
 	print '<table class="border" width="100%">';
 
 	// Ref
