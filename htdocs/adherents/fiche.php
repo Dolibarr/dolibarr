@@ -44,12 +44,12 @@ $canadduser=$user->rights->adherent->creer;
 // Defini si peux lire/modifier info user ou mot de passe
 if ($_GET["rowid"])
 {
-  $caneditfield=$user->rights->adherent->creer;
-  $caneditpassword=$user->rights->adherent->creer;
+	$caneditfield=$user->rights->adherent->creer;
+	$caneditpassword=$user->rights->adherent->creer;
 }
 if (! $user->rights->adherent->lire)
 {
-  accessforbidden();
+	accessforbidden();
 }
 
 
@@ -521,7 +521,7 @@ if ($errmsg)
 }
 
 // fetch optionals attributes and labels
-$adho->fetch_optionals();
+$adho->fetch_name_optionals_label();
 
 
 if ($action == 'edit')
@@ -539,7 +539,7 @@ if ($action == 'edit')
 	// fetch optionals value
 	$adh->fetch_optionals($rowid);
 	// fetch optionals attributes and labels
-	$adho->fetch_optionals();
+	$adho->fetch_name_optionals_label();
 	
 	$adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
@@ -965,7 +965,7 @@ if ($rowid && $action != 'edit')
 	print '</td></tr>';
 
     
-    // Autres attributs
+    // Other attributs
     foreach($adho->attribute_label as $key=>$value)
     {
         print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";

@@ -150,7 +150,7 @@ class AdherentOptions
 					break;
 			}
 
-			dolibarr_syslog("AdherentOptions::create sql=".$sql);
+			dolibarr_syslog("AdherentOptions::create sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				return 1;
@@ -170,15 +170,15 @@ class AdherentOptions
 		\param	attrname			nom de l'atribut
 		\param	label				nom du label
 		*/
-	function create_label($attrname,$label='')
+	function create_label($attrname,$label='',$type='',$pos=0,$size=0)
 	{
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label SET ";
-			$escaped_label=mysql_escape_string($label);
-			$sql .= " name='$attrname',label='".addslashes($escaped_label)."'";
-
+			$sql .= " name='$attrname', label='".addslashes($label)."',";
+			$sql .= " type='".$type."', pos='".$pos."', size='".$size."'";
+			
 			dolibarr_syslog("AdherentOptions::create_label sql=".$sql);
 			if ($this->db->query($sql))
 			{
@@ -321,60 +321,31 @@ class AdherentOptions
 		*/
 	function fetch_optionals()
 	{
-		$this->fetch_name_optionals();
 		$this->fetch_name_optionals_label();
 	}
 
 
-	/*!
-		\brief fonction qui modifie un label
-		*/
-	function fetch_name_optionals()
-	{
-		$array_name_options=array();
-		$sql = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."adherent_options";
-
-		if ( $this->db->query( $sql) )
-		{
-			if ($this->db->num_rows())
-			{
-				while ($tab = $this->db->fetch_object())
-				{
-					if ($tab->Field != 'optid' && $tab->Field != 'tms' && $tab->Field != 'adhid')
-	    {
-	    	// we can add this attribute to adherent object
-	    	$array_name_options[]=$tab->Field;
-	    	$this->attribute_name[$tab->Field]=$tab->Type;
-	    }
-				}
-				return $array_name_options;
-			}else{
-				return array();
-			}
-		}else{
-			print $this->db->error();
-			return array() ;
-		}
-
-	}
-
-	/*!
-		\brief fonction qui modifie un label
-		*/
+	/**
+	 * 	\brief 	Load array this->attribute_label
+	 */
 	function fetch_name_optionals_label()
 	{
 		$array_name_label=array();
-		$sql = "SELECT name,label FROM ".MAIN_DB_PREFIX."adherent_options_label";
-
-		if ( $this->db->query( $sql) )
+		$sql = "SELECT name,label,type FROM ".MAIN_DB_PREFIX."adherent_options_label";
+		$sql.= " ORDER BY pos";
+		
+		dolibarr_syslog("Adherent_options::fetch_name_optionals_label");
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			if ($this->db->num_rows())
+			if ($this->db->num_rows($resql))
 			{
-				while ($tab = $this->db->fetch_object())
+				while ($tab = $this->db->fetch_object($resql))
 				{
-	    // we can add this attribute to adherent object
-	    $array_name_label[$tab->name]=stripslashes($tab->label);
-	    $this->attribute_label[$tab->name]=stripslashes($tab->label);
+				    // we can add this attribute to adherent object
+				    $array_name_label[$tab->name]=$tab->label;
+				    $this->attribute_name[$tab->name]=$tab->type;
+				    $this->attribute_label[$tab->name]=$tab->label;
 				}
 				return $array_name_label;
 			}else{

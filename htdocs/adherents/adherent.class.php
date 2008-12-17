@@ -397,9 +397,8 @@ class Adherent extends CommonObject
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid";
 				foreach($this->array_options as $key => $value)
 				{
-					// Add field o fattribut
-					$attr=substr($key,8);
-					$sql.=",$attr";
+					// Add field of attribut
+					$sql.=",".substr($key,8);	// Remove 'options_' prefix
 				}
 				$sql .= ") VALUES (".$this->id;
 				foreach($this->array_options as $key => $value)
@@ -936,11 +935,11 @@ class Adherent extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent_options";
 		$sql.= " WHERE adhid=".$rowid;
 
+		dolibarr_syslog("Adherent::fetch_optionals sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query( $sql);
-
 		if ($result)
 		{
-			if ($this->db->num_rows())
+			if ($this->db->num_rows($result))
 			{
 				$tab = $this->db->fetch_array($result);
 
@@ -961,43 +960,6 @@ class Adherent extends CommonObject
 
 	}
 
-	/**
-	 * 	\brief	Fetch optional attribute name
-	 */
-	function fetch_name_optionals()
-	{
-		$array_name_options=array();
-		$sql = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."adherent_options";
-
-		$result=$this->db->query( $sql);
-
-		if ($result)
-		{
-			if ($this->db->num_rows())
-			{
-				//$array_name_options[]=$tab->Field;
-				while ($tab = $this->db->fetch_object($result))
-				{
-					if ($tab->Field != 'optid' && $tab->Field != 'tms' && $tab->Field != 'adhid')
-					{
-						// we can add this attribute to adherent object
-						$array_name_options[]=$tab->Field;
-					}
-				}
-				return $array_name_options;
-			}
-			else
-			{
-				return array();
-			}
-		}
-		else
-		{
-			dolibarr_print_error($this->db);
-			return array() ;
-		}
-
-	}
 
 	/**
 	 *	\brief      Fonction qui insere la cotisation dans la base de donnees

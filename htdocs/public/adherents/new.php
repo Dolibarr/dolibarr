@@ -179,7 +179,7 @@ print_titre($langs->trans("NewMember"));
 $adht = new AdherentType($db);
 
 // fetch optionals attributes and labels
-$adho->fetch_optionals();
+$adho->fetch_name_optionals_label();
 
 if (isset($_GET["action"]) && $_GET["action"] == 'added')
 {
@@ -242,7 +242,7 @@ print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Login").'</td><td><in
 print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Password").'</td><td><input type="password" name="pass1" size="40"><BR><input type="password" name="pass2" size="40"></td></tr>';
 print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$naiss.'"></td></tr>';
 print '<tr><td><FONT COLOR="blue">*</FONT> URL Photo</td><td><input type="text" name="photo" size="40" value="'.$photo.'"></td></tr>';
-print '<tr><td>Profil public ?</td><td><input type="checkbox" name="public" checked></td></tr>';
+print '<tr><td>'.$langs->trans("Public").' ?</td><td><input type="checkbox" name="public" checked></td></tr>';
 foreach($adho->attribute_label as $key=>$value){
 	print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
 }

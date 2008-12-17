@@ -67,10 +67,9 @@ $adho = new AdherentOptions($db);
 llxHeaderVierge($langs->trans("MemberCard"));
 
 // fetch optionals attributes and labels
-$adho->fetch_optionals();
+$adho->fetch_name_optionals_label();
 if ($rowid > 0)
 {
-
 	$adh = new Adherent($db);
 	$adh->id = $rowid;
 	$adh->fetch($rowid);
