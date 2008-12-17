@@ -37,7 +37,7 @@ For users:
 - Fix: Do not show export filter for disabled modules
 - Show greyed lines for not allowed export filters.
 - Add nature in product fields (manufactured product or not).
-- Add export filters for category module.
+- Add export filters for category module and trip and expenses module.
 - Can choose login of dolibarr account created when create from contact
 
 For translators:
