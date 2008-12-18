@@ -80,6 +80,11 @@ alter table llx_don add import_key      varchar(14);
 ALTER TABLE llx_export_model DROP INDEX uk_export_model;
 ALTER TABLE llx_export_model ADD UNIQUE uk_export_model (label,type);
 
+alter table llx_adherent_options_label add column type varchar(8);
+alter table llx_adherent_options_label add column size integer DEFAULT 0;
+alter table llx_adherent_options_label add column pos integer DEFAULT 0;
+
+
 -- Reverse option
 update llx_const set visible = 1, name = 'FACTURE_ENABLE_RECUR', value='1' where name = 'FACTURE_DISABLE_RECUR' and value = '0';
 delete from llx_const where name = 'FACTURE_DISABLE_RECUR' and value = '1';
