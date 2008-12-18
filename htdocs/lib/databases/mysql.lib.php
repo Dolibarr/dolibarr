@@ -882,7 +882,7 @@ class DoliDb
 		$sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_user',password('$dolibarr_main_db_pass')";
 		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
 
-		dolibarr_syslog("mysql.lib::DDLCreateUser sql=".$sql);
+		dolibarr_syslog("mysql.lib::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
 		if (! $resql)
 		{

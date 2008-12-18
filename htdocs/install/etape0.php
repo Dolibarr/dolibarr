@@ -18,11 +18,11 @@
  */
 
 /**
-		\file       htdocs/install/etape0.php
-		\ingroup	install
-		\brief      Permet d'afficher et de confirmer le charset par rapport aux informations précédentes -> sélection suite à connexion'
-		\version    $Id$
-*/
+ \file       htdocs/install/etape0.php
+ \ingroup	install
+ \brief      Permet d'afficher et de confirmer le charset par rapport aux informations précédentes -> sélection suite à connexion'
+ \version    $Id$
+ */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
 
@@ -50,8 +50,8 @@ dolibarr_install_syslog("etape0: Entering etape0.php page");
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
 pHeader($langs->trans("ConfigurationFile"),"etape1");
 
@@ -59,11 +59,11 @@ pHeader($langs->trans("ConfigurationFile"),"etape1");
 if ($_POST["action"] == "set")
 {
 	umask(0);
-    foreach($_POST as $cle=>$valeur)
-    {
-    	echo '<input type="hidden" name="'.$cle.'"  value="'.$valeur.'">';
+	foreach($_POST as $cle=>$valeur)
+	{
+		echo '<input type="hidden" name="'.$cle.'"  value="'.$valeur.'">';
 		if (! eregi('^db_pass',$cle)) dolibarr_install_syslog("Choice for ".$cle." = ".$valeur);
-    }
+	}
 }
 
 // Check parameters
@@ -90,8 +90,8 @@ if (empty($_POST["db_user"]))
 
 
 /**
-* 	Tentative de connexion a la base
-*/
+ * 	Tentative de connexion a la base
+ */
 if (! $error)
 {
 	$result=include_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
@@ -117,7 +117,7 @@ if (! $error)
 
 		// If we need root access
 		if (! $error && (! empty($_POST["db_create_database"]) || ! empty($_POST["db_create_user"])))
-		{	
+		{
 			$databasefortest=$_POST["db_name"];
 			if (! empty($_POST["db_create_database"]))
 			{
@@ -136,7 +136,7 @@ if (! $error)
 			}
 			//print $_POST["db_type"].",".$_POST["db_host"].",$userroot,$passroot,$databasefortest,".$_POST["db_port"];
 			$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest,$_POST["db_port"]);
-			
+				
 			dolibarr_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
 			//print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
 
@@ -147,7 +147,7 @@ if (! $error)
 				if (! $db->connected) print $langs->trans("IfDatabaseNotExistsGoBackAndUncheckCreate").'<br><br>';
 				print $langs->trans("ErrorGoBackAndCorrectParameters");
 				$error++;
-			}		
+			}
 			elseif ($db->error && ! (! empty($_POST["db_create_database"]) && $db->connected))
 			{
 				print '<div class="error">'.$db->error.'</div>';
@@ -158,7 +158,7 @@ if (! $error)
 		}
 		// If we need simple access
 		if (! $error && (empty($_POST["db_create_database"]) && empty($_POST["db_create_user"])))
-		{	
+		{
 			$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$_POST["db_user"],$_POST["db_pass"],$_POST["db_name"],$_POST["db_port"]);
 			if ($db->error)
 			{
@@ -180,15 +180,15 @@ if (! $error)
 
 else
 {
-		if (isset($db)) print $db->lasterror();
-		if (isset($db) && ! $db->connected) print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
-		print $langs->trans("ErrorGoBackAndCorrectParameters");
-		$error++;
+	if (isset($db)) print $db->lasterror();
+	if (isset($db) && ! $db->connected) print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+	print $langs->trans("ErrorGoBackAndCorrectParameters");
+	$error++;
 }
 
 /*
-* Si creation database demandée, il est possible de faire un choix
-*/
+ * Si creation database demandée, il est possible de faire un choix
+ */
 $disabled="";
 if (! $error && ! empty($_POST["db_create_database"]))
 {
@@ -215,22 +215,25 @@ if (! $error && $db->connected)
 if (! $error && $db->connected)
 {
 	?>
-	<table border="0" cellpadding="1" cellspacing="0">
-	
-	<tr><td align="center" class="label" colspan="3"><h3><?php echo $langs->trans("CharsetChoice");?></h3></td></tr>
-	
+<table border="0" cellpadding="1" cellspacing="0">
+
+	<tr>
+		<td align="center" class="label" colspan="3">
+		<h3><?php echo $langs->trans("CharsetChoice");?></h3>
+		</td>
+	</tr>
+
 	<?php
 	$defaultCharacterSet=$db->getDefaultCharacterSetDatabase();
 	$defaultCollationConnection=$db->getDefaultCollationDatabase();
 	$listOfCharacterSet=$db->getListOfCharacterSet();
 	$listOfCollation=$db->getListOfCollation();
 
-	
-		?>
-		<tr>
+	// Choice of character_set_database
+	?>
+	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("CharacterSetDatabase"); ?></td>
-		<td valign="top" class="label">
-		<?php 
+		<td valign="top" class="label"><?php 
 		if (sizeof($listOfCharacterSet))
 		{
 			print '<select name="character_set_database" '.$disabled.'>';
@@ -256,20 +259,20 @@ if (! $error && $db->connected)
 		{
 			print '<input type="text" name="character_set_database"  value="'.$defaultCharacterSet.'">';
 		}
-		?>
+		?></td>
+		<td class="label">
+		<div class="comment"><?php echo $langs->trans("CharacterSetDatabaseComment"); ?></div>
 		</td>
-		<td class="label"><div class="comment"><?php echo $langs->trans("CharacterSetDatabaseComment"); ?></div></td>
-		</tr>
-		<?php
-	
+	</tr>
+	<?php
 
+	// Choice of dolibarr_main_db_collation
 	if ($defaultCollationConnection)
 	{
 		?>
-		<tr>
+	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("CollationConnection"); ?></td>
-		<td valign="top" class="label">
-		<?php
+		<td valign="top" class="label"><?php
 		if (sizeof($listOfCollation))
 		{
 			print '<select name="dolibarr_main_db_collation" '.$disabled.'>';
@@ -295,15 +298,16 @@ if (! $error && $db->connected)
 		{
 			print '<input type="text" name="dolibarr_main_db_collation"  value="'.$defaultCollationConnection.'">';
 		}
-		?>
+		?></td>
+		<td class="label">
+		<div class="comment"><?php echo $langs->trans("CollationConnectionComment"); ?></div>
 		</td>
-		<td class="label"><div class="comment"><?php echo $langs->trans("CollationConnectionComment"); ?></div></td>
-		</tr>
-		<?php
-	}
-	?>
-	</table>
+	</tr>
 	<?php
+}
+?>
+</table>
+<?php
 }
 
 

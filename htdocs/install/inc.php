@@ -139,9 +139,6 @@ if (file_exists('../../install.lock'))
 }
 
 
-// Forcage constante LOG
-
-
 // Forcage du log pour les install et mises a jour
 $conf->syslog->enabled=1;
 $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
@@ -216,6 +213,15 @@ function conf($dolibarr_main_document_root)
 	if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';
 	$conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
 
+	// Forcage du log pour les install et mises a jour
+	$conf->syslog->enabled=1;
+	$conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
+	if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
+	else if (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE',$_ENV["TMP"].'/dolibarr_install.log');
+	else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
+	else if (@is_writable("/")) define('SYSLOG_FILE','/dolibarr_install.log');
+	define('SYSLOG_FILE_NO_ERROR',1);
+	
 	return 1;
 }
 

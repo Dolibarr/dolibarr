@@ -126,6 +126,8 @@ OrphelinsPaymentsDetectedByMethod=Paiement orphelins detectés par la méthode %s
 RemoveItManuallyAndPressF5ToContinue=Supprimer le manuellement et appuyez sur F5 pour continuer.
 KeepDefaultValues=Comme vous utilisez l'assistant d'installation depuis DoliWamp, les valeurs proposées aux paramètres sont déjà optimisées. Ne les modifier qu'en connaissance de cause.
 FieldRenamed=Champ renommé
+IfLoginDoesNotExistsCheckCreateUser=Si le login n'existe pas encore, vous devez cocher l'option "Créer l'utilisateur"
+ErrorConnection=Le serveur "<b>%s</b>", nom de base "<b>%s</b>", login "<b>%s</b>", ou mot de passe de la base de donnée est peut-être incorrect ou la version du client PHP trop ancienne par rapport à la version de la base de donnée.
 
 #########
 # upgrade

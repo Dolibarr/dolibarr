@@ -833,7 +833,7 @@ class DoliDb
 	{
 		$sql = "create user \"".$dolibarr_main_db_user."\" with password '".$dolibarr_main_db_pass."'";
 
-		dolibarr_syslog("pgsql.lib::DDLCreateUser sql=".$sql);
+		dolibarr_syslog("pgsql.lib::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
 		if (! $resql)
 		{

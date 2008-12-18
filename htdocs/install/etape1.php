@@ -77,6 +77,11 @@ if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 if ($_POST["action"] == "set")
 {
 	umask(0);
+	foreach($_POST as $cle=>$valeur)
+	{
+		if (! eregi('^db_pass',$cle)) dolibarr_install_syslog("Choice for ".$cle." = ".$valeur);
+	}
+
 	print '<h3>'.$langs->trans("ConfigurationFile").'</h3>';  
 	print '<table cellspacing="0" width="100%" cellpadding="1" border="0">';
 
@@ -153,11 +158,11 @@ if ($_POST["action"] == "set")
 			/* Authentication */
 			if ($_POST["db_type"] == 'mssql')
 			{
-			fputs($fp, '$dolibarr_main_authentication="dolibarr_mdb2";');
+				fputs($fp, '$dolibarr_main_authentication="dolibarr_mdb2";');
 			}
 			else
 			{
-			fputs($fp, '$dolibarr_main_authentication="dolibarr";');
+				fputs($fp, '$dolibarr_main_authentication="dolibarr";');
 			}
 			fputs($fp,"\n");
 
@@ -381,8 +386,7 @@ if ($_POST["action"] == "set")
 		*/
 		if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on"))
 		{
-			dolibarr_install_syslog("etape1: Creation de la base : ".$dolibarr_main_db_name);
-
+			dolibarr_install_syslog("etape1: Create database : ".$dolibarr_main_db_name);
 			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
 
 			if ($db->connected)
@@ -507,8 +511,9 @@ if ($_POST["action"] == "set")
 				print "</td></tr>";
 
 				// Affiche aide diagnostique
-				print '<tr><td colspan="2"><br>Le serveur "<b>'.$conf->db->host.'</b>", nom de base "<b>'.$conf->db->name.'</b>", login "<b>'.$conf->db->user.'</b>", ou mot de passe de la base de donnée est peut-être incorrect ou la version du client PHP trop ancienne par rapport à la version de la base de donnée.<br>';
-				print 'Si le login n\'existe pas encore, vous devez cocher l\'option "Créer l\'utilisateur".<br>';
+				print '<tr><td colspan="2"><br>';
+				print $langs->trans("ErrorConnection",$conf->db->host,$conf->db->name,$conf->db->user);
+				print $langs->trans('IfLoginDoesNotExistsCheckCreateUser').'<br>';
 				print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 				print '</td></tr>';
 
@@ -521,5 +526,4 @@ if ($_POST["action"] == "set")
 }
 
 pFooter($error,$setuplang);
-
 ?>

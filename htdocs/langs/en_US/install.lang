@@ -126,6 +126,8 @@ OrphelinsPaymentsDetectedByMethod=Orphelins payment detected by method %s
 RemoveItManuallyAndPressF5ToContinue=Remove it manually and press F5 to continue.
 KeepDefaultValues=You use the Doliwamp setup wizard, so values proposed here are already optimized. Change them only if you know what you do.
 FieldRenamed=Field renamed
+IfLoginDoesNotExistsCheckCreateUser=If login does not exists yet, you must check option "Create user"
+ErrorConnection=Server "<b>%s</b>", database name "<b>%s</b>", login "<b>%s</b>", or database password may be wrong or PHP client version may be too old compared to database version.
 
 #########
 # upgrade
