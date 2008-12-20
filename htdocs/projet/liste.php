@@ -71,9 +71,9 @@ $staticsoc=new Societe($db);
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, ".$db->pdate("p.dateo")." as do";
 $sql .= ", s.nom, s.rowid as socid, s.client";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql .= " FROM (".MAIN_DB_PREFIX."projet as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = p.fk_soc";
+$sql .= ") LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = p.fk_soc";
 $sql .= " WHERE 1 = 1 ";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
