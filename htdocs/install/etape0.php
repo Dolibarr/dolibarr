@@ -229,14 +229,14 @@ if (! $error && $db->connected)
 	$listOfCharacterSet=$db->getListOfCharacterSet();
 	$listOfCollation=$db->getListOfCollation();
 
-	// Choice of character_set_database
+	// Choice of dolibarr_main_db_charaster_set
 	?>
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("CharacterSetDatabase"); ?></td>
 		<td valign="top" class="label"><?php 
 		if (sizeof($listOfCharacterSet))
 		{
-			print '<select name="character_set_database" '.$disabled.'>';
+			print '<select name="dolibarr_main_db_charaster_set" '.$disabled.'>';
 			$selected="";
 			foreach ($listOfCharacterSet as $characterSet)
 			{
@@ -252,12 +252,12 @@ if (! $error && $db->connected)
 			}
 			print '</select>';
 			if ($disabled=="disabled"){
-				print '<input type="hidden" name="character_set_database"  value="'.$defaultCharacterSet.'">';
+				print '<input type="hidden" name="dolibarr_main_db_charaster_set"  value="'.$defaultCharacterSet.'">';
 			}
 		}
 		else
 		{
-			print '<input type="text" name="character_set_database"  value="'.$defaultCharacterSet.'">';
+			print '<input type="text" name="dolibarr_main_db_charaster_set"  value="'.$defaultCharacterSet.'">';
 		}
 		?></td>
 		<td class="label">

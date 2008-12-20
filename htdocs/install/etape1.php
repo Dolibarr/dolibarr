@@ -149,7 +149,7 @@ if ($_POST["action"] == "set")
 			fputs($fp, '$dolibarr_main_db_type="'.$_POST["db_type"].'";');
 			fputs($fp,"\n");
 
-			fputs($fp, '$dolibarr_main_db_character_set="'.$_POST["character_set_database"].'";');
+			fputs($fp, '$dolibarr_main_db_character_set="'.$_POST["dolibarr_main_db_charaster_set"].'";');
 			fputs($fp,"\n");
 			
 			fputs($fp, '$dolibarr_main_db_collation="'.$_POST["dolibarr_main_db_collation"].'";');

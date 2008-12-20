@@ -17,15 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
  \file       htdocs/admin/system/database-tables.php
  \brief      Page d'infos des tables de la base
- \version    $Revision$
+ \version    $Id$
  */
 
 require("./pre.inc.php");
@@ -93,6 +90,7 @@ else
 		print '<td>Index_length</td>';
 		print '<td>Increment</td>';
 		print '<td>Last check</td>';
+		print '<td>Collation</td>';
 		print "</tr>\n";
 	  
 		$sql = "SHOW TABLE STATUS";
@@ -127,6 +125,7 @@ else
 				print '<td align="right">'.$obj->Index_length.'</td>';
 				print '<td align="right">'.$obj->Auto_increment.'</td>';
 				print '<td align="right">'.$obj->Check_time.'</td>';
+				print '<td align="right">'.$obj->Collation.'</td>';
 				print '</tr>';
 				$i++;
 			}
