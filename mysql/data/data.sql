@@ -647,11 +647,11 @@ delete from llx_c_forme_juridique;
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (0, '0','-');
 
 -- Pour la France: Extrait de http://www.insee.fr/fr/nom_def_met/nomenclatures/cj/cjniveau2.htm
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'11','Artisan Commerçant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'12','Commerçant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'13','Artisan');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'11','Artisan Commerçant (EI)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'12','Commerçant (EI)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'13','Artisan (EI)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'14','Officier public ou ministériel');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'15','Profession libérale');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'15','Profession libérale (EI)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'16','Exploitant agricole');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'17','Agent commercial');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'18','Associé Gérant de société');
