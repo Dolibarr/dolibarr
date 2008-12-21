@@ -49,5 +49,5 @@ create table llx_bank_account
   currency_code  varchar(3) NOT NULL,
   min_allowed    integer DEFAULT 0,
   min_desired    integer DEFAULT 0,
-  comment        varchar(254)
+  comment        text
 )type=innodb;
