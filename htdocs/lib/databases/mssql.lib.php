@@ -707,13 +707,15 @@ class DoliDb
 	}
 
 	/**
-		\brief          Cr�ation d'une nouvelle base de donn�e
-		\param	        database		nom de la database � cr�er
-		\return	        resource		resource d�finie si ok, null si k
-		\remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mssql, ...) car elles sont deprecated
-		On force creation de la base avec le charset forcecharset
-		*/
-	function DDLCreateDb($database)
+	 *	\brief          Create a new database
+	 *	\param	        database		Database name to create
+	 * 	\param			charset			Charset used to store data
+	 * 	\param			collation		Charset used to sort data
+	 * 	\return	        resource		resource defined if OK, null if KO
+	 * 	\remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mssql, ...) car elles sont deprecated
+	 *					On force creation de la base avec le charset forcecharset
+	 */
+	function DDLCreateDb($database,$charset='',$collation='')
 	{
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
 		$sql = 'CREATE DATABASE '.$database;

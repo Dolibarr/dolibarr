@@ -697,15 +697,20 @@ class DoliDb
 	/**
 	 *	\brief          Create a new database
 	 *	\param	        database		Database name to create
+	 * 	\param			charset			Charset used to store data
+	 * 	\param			collation		Charset used to sort data
 	 *	\return	        resource		resource defined if OK, null if KO
 	 *	\remarks        Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
 	 *					We force to create database with charset this->forcecharset and collate this->forcecollate
 	 */
-	function DDLCreateDb($database)
+	function DDLCreateDb($database,$charset='',$collation='')
 	{
+		if (empty($charset))   $charset=$this->forcecharset;
+		if (empty($collation)) $collation=$this->collation;
+		
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
 		$sql = 'CREATE DATABASE '.$database;
-		$sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
+		$sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
 
 		dolibarr_syslog($sql,LOG_DEBUG);
 		$ret=$this->query($sql);
@@ -714,6 +719,7 @@ class DoliDb
 			// We try again for compatibility with Mysql < 4.1.1
 			$sql = 'CREATE DATABASE '.$database;
 			$ret=$this->query($sql);
+			dolibarr_syslog($sql,LOG_DEBUG);
 		}
 		return $ret;
 	}

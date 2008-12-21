@@ -136,7 +136,7 @@ if (! $error)
 			}
 			//print $_POST["db_type"].",".$_POST["db_host"].",$userroot,$passroot,$databasefortest,".$_POST["db_port"];
 			$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest,$_POST["db_port"]);
-				
+
 			dolibarr_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
 			//print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
 
@@ -229,17 +229,21 @@ if (! $error && $db->connected)
 	$listOfCharacterSet=$db->getListOfCharacterSet();
 	$listOfCollation=$db->getListOfCollation();
 
-	// Choice of dolibarr_main_db_charaster_set
+	// Choice of dolibarr_main_db_character_set
 	?>
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("CharacterSetDatabase"); ?></td>
 		<td valign="top" class="label"><?php 
 		if (sizeof($listOfCharacterSet))
 		{
-			print '<select name="dolibarr_main_db_charaster_set" '.$disabled.'>';
+			print '<select name="dolibarr_main_db_character_set" '.$disabled.'>';
 			$selected="";
 			foreach ($listOfCharacterSet as $characterSet)
 			{
+				// We keep only utf8 and iso
+				$linedisabled=false;
+				if (! eregi('(utf8|latin1)',$characterSet['charset'])) $linedisabled=true;
+				
 				if ($defaultCharacterSet == $characterSet['charset'] )
 				{
 					$selected="selected";
@@ -248,16 +252,16 @@ if (! $error && $db->connected)
 				{
 					$selected="";
 				}
-				print '<option value="'.$characterSet['charset'].'" '.$selected.'>'.$characterSet['charset'].' ('.$characterSet['description'].')</option>';
+				print '<option value="'.$characterSet['charset'].'" '.$selected.($linedisabled?' disabled="true"':'').'>'.$characterSet['charset'].' ('.$characterSet['description'].')</option>';
 			}
 			print '</select>';
 			if ($disabled=="disabled"){
-				print '<input type="hidden" name="dolibarr_main_db_charaster_set"  value="'.$defaultCharacterSet.'">';
+				print '<input type="hidden" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
 			}
 		}
 		else
 		{
-			print '<input type="text" name="dolibarr_main_db_charaster_set"  value="'.$defaultCharacterSet.'">';
+			print '<input type="text" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
 		}
 		?></td>
 		<td class="label">
@@ -279,6 +283,10 @@ if (! $error && $db->connected)
 			$selected="";
 			foreach ($listOfCollation as $collation)
 			{
+				// We keep only utf8 and iso
+				$linedisabled=false;
+				if (! eregi('(utf8_general|latin1_swedish)',$collation['collation'])) $linedisabled=true;
+				
 				if ($defaultCollationConnection == $collation['collation'])
 				{
 					$selected="selected";
@@ -287,7 +295,7 @@ if (! $error && $db->connected)
 				{
 					$selected="";
 				}
-				print '<option value="'.$collation['collation'].'" '.$selected.'>'.$collation['collation'].'</option>';
+				print '<option value="'.$collation['collation'].'" '.$selected.($linedisabled?' disabled="true"':'').'>'.$collation['collation'].'</option>';
 			}
 			print '</select>';
 			if ($disabled=="disabled"){

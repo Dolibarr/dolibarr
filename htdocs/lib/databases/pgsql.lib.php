@@ -798,14 +798,19 @@ class DoliDb
 
 
     /**
-            \brief          Cr�ation d'une nouvelle base de donn�e
-            \param	        database		nom de la database � cr�er
-            \return	        resource		resource d�finie si ok, null si ko
-            \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
-    */
-    function DDLCreateDb($database)
+	 *	\brief          Create a new database
+ 	 *	\param	        database		Database name to create
+	 * 	\param			charset			Charset used to store data
+	 * 	\param			collation		Charset used to sort data
+	 * 	\return	        resource		resource defined if OK, null if KO
+	 *  \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
+     */
+    function DDLCreateDb($database,$charset='',$collation='')
     {
-        $ret=$this->query('CREATE DATABASE '.$database.' OWNER '.$this->db_user.' ENCODING \''.$this->forcecharset.'\' ;');
+		if (empty($charset))   $charset=$this->forcecharset;
+		if (empty($collation)) $collation=$this->collation;
+		
+    	$ret=$this->query('CREATE DATABASE '.$database.' OWNER '.$this->db_user.' ENCODING \''.$charset.'\' ;');
         return $ret;
     }
 

@@ -215,12 +215,14 @@ class ModeleBoxes
 				}
 			}
 			
+			// Complete line to max
+			/*
 			while ($i < $this->max)
 			{
 				$var=!$var;
 				print '<tr '.$bcx[$var].'><td colspan="'.$nbcol.'">&nbsp;</td></tr>';
 				$i++;
-			}
+			}*/
 							
 			print "</table>\n";
 		}
