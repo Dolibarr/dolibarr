@@ -1094,7 +1094,8 @@ else
 			else {
 				dolibarr_print_error($db);
 			}
-
+			$db->free($resql);
+			
 			if ($caneditperms)
 			{
 				$form = new Form($db);
@@ -1168,7 +1169,6 @@ else
 			
 			print "</table>";
 			print "<br>";
-			$db->free($result);
 		}
 
 		/*
