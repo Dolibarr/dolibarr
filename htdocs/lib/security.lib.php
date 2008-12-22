@@ -41,6 +41,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
 
 	header('Cache-Control: Public, must-revalidate');
+	header("Content-type: text/html; charset=".$conf->character_set_client);
 
 	if (! empty($_REQUEST["urlfrom"])) $_SESSION["urlfrom"]=$_REQUEST["urlfrom"];
 	else unset($_SESSION["urlfrom"]);
