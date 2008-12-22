@@ -46,7 +46,7 @@ class RemiseCheque extends CommonObject
 
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler accès base de données
+	 *    \param  DB          handler accï¿½s base de donnï¿½es
 	 *    \param  id          id compte (0 par defaut)
 	 */
 	function RemiseCheque($DB)
@@ -157,7 +157,7 @@ class RemiseCheque extends CommonObject
 				$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql.= " WHERE b.fk_type = 'CHQ' AND b.amount > 0";
 				$sql.= " AND b.fk_bordereau = 0 AND b.fk_account='".$account_id."'";
-				$sql.= " LIMIT 40"; // On limite a 40 pour ne générer des PDF que d'une page
+				$sql.= " LIMIT 40"; // On limite a 40 pour ne gï¿½nï¿½rer des PDF que d'une page
 
 				dolibarr_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -282,6 +282,8 @@ class RemiseCheque extends CommonObject
 	 */
 	function Validate($user)
 	{
+		global $langs;
+	
 		$this->errno = 0;
 
 		$this->db->begin();
@@ -315,11 +317,6 @@ class RemiseCheque extends CommonObject
 				$this->errno = -1033;
 				dolibarr_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
 			}
-		}
-
-		if ($this->errno == 0)
-		{
-			$result=$this->GeneratePdf();
 		}
 
 		// Commit/Rollback
@@ -412,6 +409,8 @@ class RemiseCheque extends CommonObject
 	function GeneratePdf($model='blochet', $outputlangs)
 	{
 		global $langs;
+		
+		if (empty($model)) $model='blochet';
 		
 		dolibarr_syslog("RemiseCheque::GeneratePdf model=".$model, LOG_DEBUG);
 
@@ -538,7 +537,7 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 \brief  Insère la remise en base
+	 \brief  Insï¿½re la remise en base
 	 \param  user utilisateur qui effectue l'operation
 	 \param  account_id Compte bancaire concerne
 	 */
@@ -565,7 +564,7 @@ class RemiseCheque extends CommonObject
 		return 0;
 	}
 	/**
-	 \brief      Charge les propriétés ref_previous et ref_next
+	 \brief      Charge les propriï¿½tï¿½s ref_previous et ref_next
 	 \return     int   <0 si ko, 0 si ok
 	 */
 	function load_previous_next_id()
@@ -607,7 +606,7 @@ class RemiseCheque extends CommonObject
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
-		global $langs;	// TODO Renvoyer le libellé anglais et faire traduction a affichage
+		global $langs;	// TODO Renvoyer le libellï¿½ anglais et faire traduction a affichage
 
 		$result='';
 
@@ -623,8 +622,8 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\brief      Retourne le libellï¿½ du statut d'une facture (brouillon, validï¿½e, abandonnï¿½e, payï¿½e)
+	 *    	\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
 	 *    	\return     string		Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -633,14 +632,14 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libellé d'un statut donne
+	 *    	\brief      Renvoi le libellï¿½ d'un statut donne
 	 *    	\param      status      Statut
-	 *		\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string      Libellé du statut
+	 *		\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string      Libellï¿½ du statut
 	 */
 	function LibStatut($status,$mode=0)
 	{
-		global $langs;	// TODO Renvoyer le libellé anglais et faire traduction a affichage
+		global $langs;	// TODO Renvoyer le libellï¿½ anglais et faire traduction a affichage
 		$langs->load('compta');
 		if ($mode == 0)
 		{
