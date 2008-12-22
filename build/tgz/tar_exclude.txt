@@ -19,11 +19,6 @@ htdocs/conf/conf.php
 htdocs/avoir
 htdocs/document
 htdocs/documents
-htdocs/lolix
-htdocs/postnuke
-htdocs/rapport
-htdocs/telephonie
-htdocs/voyage
 htdocs/includes/jpgraph2
 htdocs/includes/fckeditor/_samples
 htdocs/includes/fckeditor/_testcases
@@ -43,9 +38,14 @@ htdocs/includes/modules/modTelephonie.class.php
 htdocs/includes/triggers/interface_user.class.php
 htdocs/includes/triggers/interface_contractfrombill.class.php-NORUN
 htdocs/includes/triggers/interface_modEditeur_Editeur.class.php-NORUN
+htdocs/lolix
 htdocs/oscommerce_ws/ws_client_demo
+htdocs/postnuke
 htdocs/public/bplc
+htdocs/rapport
 htdocs/theme/rodolphe
+htdocs/telephonie
+htdocs/voyage
 mssql
 scripts/addons
 scripts/courrier
