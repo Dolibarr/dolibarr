@@ -112,20 +112,33 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 // Set and init common variables
 require_once("master.inc.php");
 
+
 // Check if HTTPS
 if ($conf->main_force_https)
 {
-	if (eregi('^http:',$_SERVER["SCRIPT_URI"]) && ! eregi('^https:',$_SERVER["SCRIPT_URI"]))
+	if (! empty($_SERVER["SCRIPT_URI"]))	// If SCRIPT_URI supported by server
 	{
-		if ($_SERVER["HTTPS"] != 'on')
+		if (eregi('^http:',$_SERVER["SCRIPT_URI"]) && ! eregi('^https:',$_SERVER["SCRIPT_URI"]))	// If link is http
 		{
-			dolibarr_syslog("dolibarr_main_force_https is on but https disabled on serveur. We ignore option.",LOG_ERR);
-		}
-		else
-		{
-			dolibarr_syslog("dolibarr_main_force_https is on, we make a redirect",LOG_DEBUG);
 			$newurl=eregi_replace('^http:','https:',$_SERVER["SCRIPT_URI"]);
-				
+					
+			dolibarr_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl,LOG_DEBUG);
+			header("Location: ".$newurl);
+			exit;
+		}
+	}
+	else	// Check on HTTPS environment variable (Apache/mod_ssl only)
+	{
+		// $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
+		if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')		// If link is http
+		{
+			$uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
+			$val=split('/',$uri);
+			$domaineport=$val[0];	// $domaineport contient nom domaine et port
+
+			$newurl='https://'.$domaineport.$_SERVER["REQUEST_URI"];
+			//print 'eee'.$newurl; 	exit;
+			dolibarr_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl,LOG_DEBUG);
 			header("Location: ".$newurl);
 			exit;
 		}
