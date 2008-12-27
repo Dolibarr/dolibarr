@@ -176,8 +176,8 @@ class pdf_paiement extends FPDF
 		for ($i = 0 ; $i < $pages ; $i++)
 		{
 		$pdf->AddPage();
-		$this->Header($pdf, $i+1, $pages);
-		$this->Body($pdf, $i+1, $lines);
+		$this->Header($pdf, $i+1, $pages, $outputlangs);
+		$this->Body($pdf, $i+1, $lines, $outputlangs);
 		}
 		*/
 		
@@ -196,11 +196,11 @@ class pdf_paiement extends FPDF
 	}  
 
 	/**	
-	\brief  Generate Header
-	\param  pdf pdf object
-	\param  page current page number
-	\param  pages number of pages
-	*/  
+	 *	\brief  Generate Header
+	 *	\param  pdf pdf object
+	 *	\param  page current page number
+	 *	\param  pages number of pages
+	 */  
 	function Header(&$pdf, $page, $pages, $outputlangs)
 	{
 		global $langs;
@@ -240,6 +240,9 @@ class pdf_paiement extends FPDF
 	}
 
 
+	/**
+	 * 
+	 */
 	function Body(&$pdf, $page, $lines, $outputlangs)
 	{
 		$pdf->SetFont('Arial','', 9);
@@ -255,7 +258,7 @@ class pdf_paiement extends FPDF
 				{
 					$page++;
 					$pdf->AddPage();
-					$this->Header($pdf, $page, $pages);
+					$this->Header($pdf, $page, $pages, $outputlangs);
 					$pdf->SetFont('Arial','', 9);
 					$yp = 0;
 				}
