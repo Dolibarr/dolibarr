@@ -73,7 +73,7 @@ $type = 'application/octet-stream';
 if (! empty($_GET["type"])) $type=urldecode($_GET["type"]);
 else $type=dol_mimetype($original_file);
 
-// Define attachment (attachment=1 to force popup 'save as')
+// Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
 if (eregi('\.sql$',$original_file))     { $attachment = true; }
 if (eregi('\.html$',$original_file)) 	{ $attachment = false; }
@@ -86,6 +86,8 @@ if (eregi('\.png$',$original_file)) 	{ $attachment = true; }
 if (eregi('\.tiff$',$original_file)) 	{ $attachment = true; }
 if (eregi('\.vcs$',$original_file))  	{ $attachment = true; }
 if (eregi('\.ics$',$original_file))  	{ $attachment = true; }
+if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
+
 
 // Suppression de la chaine de caractere ../ dans $original_file
 $original_file = str_replace("../","/", "$original_file");
@@ -453,7 +455,7 @@ if ($action == 'remove_file')
 else
 {
 	/*
-	 * Ouvre et renvoi fichier
+	 * Open and return file
 	 */
 	clearstatcache(); 
 	$filename = basename($original_file);
