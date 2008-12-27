@@ -85,7 +85,7 @@ SizeUnitm=m
 SizeUnitdm=dm
 SizeUnitcm=cm
 SizeUnitmm=mm
-BugTracker=Bug tracker
+BugTracker=Incidencias
 SendNewPasswordDesc=Este formulario permite enviar una nueva contraseña. Se enviará al e-mail del usuario<br>La modificación de la contraseña no será efectiva hasta que el usario haga click en el link de confirmación incluido en este e-mail.<br>Supervise su correo.
 BackToLoginPage=Volver a la página de conexión
 AuthenticationDoesNotAllowSendNewPassword=El modo de autentificación de Dolibarr está configurado como "<b>%s</b>".<br>En este modo Dolibarr no puede conocer ni modificar su contraseña<br>Contacte con su administrador para conocer las modalidades de cambio.
@@ -112,11 +112,6 @@ ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elegir si debe abrise la página 
 BookmarksManagement=Gestión de bookmarks
 ListOfBookmarks=Listado de bookmarks
 ##### Webcal #####
-
-
-
-
-
 LoginWebcal=Login Webcalendar
 ErrorWebcalLoginNotDefined=El login Webcalendar asociado a su usuario Dolibarr <b>%s</b> no está definido
 ErrorPhenixLoginNotDefined=El login Phenix asociado a su cuenta Dolibarrr <b>%s</b>  no está definido

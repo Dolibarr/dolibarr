@@ -2,6 +2,8 @@
 
 
 
+
+
 MembersArea=Area miembros
 PublicMembersArea=Area pública de los miembros
 MemberCard=Ficha miembro
@@ -16,9 +18,6 @@ FundationMembers=Miembros de la asociación
 Attributs=Atributos
 Person=Persona
 ErrorMemberTypeNotDefined=No se ha indicado el tipo de miembro
-ListOfPublicMembers=Listado de miembros públicos
-ListOfValidatedPublicMembers=Listado de miembros públicos validados
-ErrorThisMemberIsNotPublic=Este miembro no es público
 MembersCards=Carnés de miembros
 MembersList=Listado de miembros
 MembersListToValid=Listado de miembros borrador (a validar)
@@ -39,7 +38,7 @@ DateEndSubscription=Fecha fin afiliación
 EndSubscription=Fin afiliación
 NewMember=Nuevo miembro
 NewType=Nuevo tipo de miembro
-MemberType=Tipo de miembro
+MemberType=
 MemberTypeId=ID tipo de miembro
 MemberTypeLabel=Etiqueta tipo de miembro
 MembersTypes=Tipos de miembros
@@ -117,7 +116,6 @@ Text=Texto largo
 Int=Numérico
 Date=Fecha
 DateAndTime=Fecha y hora
-PublicMemberCard=Ficha miembro público
 MemberNotOrNoMoreExpectedToSubscribe=No sometida a cotización
 AddSubscription=Añadir afiliación
 ShowSubscription=Mostrar afiliación
@@ -134,4 +132,3 @@ DescADHERENT_ETIQUETTE_TYPE=Formato etiquetas
 DescADHERENT_CARD_HEADER_TEXT=Texto a imprimir en la parte superior del carné de miembro
 DescADHERENT_CARD_TEXT=Texto a imprimir en el carné de miembro
 DescADHERENT_CARD_FOOTER_TEXT=Texto a imprimir en la parte inferior del carné de miembro
-ShowTypeCard=Ver tipo %s

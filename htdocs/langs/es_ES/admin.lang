@@ -2,10 +2,8 @@
 
 
 
+
 Version=Versión
-VersionProgram=Versión programa
-VersionLastInstall=Versión instalación
-VersionLastUpgrade=Versión última actualización
 VersionExperimental=Experimental
 VersionDevelopment=Desarrollo
 VersionUnknown=Desconocida
@@ -40,9 +38,6 @@ UsePopupCalendar=Utilizar popups para la introducción de las fechas
 UsePreviewTabs=Ver fichas "vista previa"
 ShowPreview=Ver vista previa
 ThemeCurrentlyActive=Tema actualmente activo
-CurrentTimeZone=Zona horaria actual
-Space=Area
-Fields=Campos
 Mask=Máscara
 NextValue=Próximo valor
 NextValueForInvoices=Próximo valor (facturas)
@@ -80,12 +75,11 @@ ParameterInDolibarr=Variable %s
 LanguageParameter=Variable idioma %s
 LanguageBrowserParameter=Variable %s
 LocalisationDolibarrParameters=Parámetros de localización
-ClientTZ=Zona horaria cliente (usuario)
+DolibarrTZ=Zona horaria Dolibarr
 ServerTZ=Zona hoaria
 PHPTZ=Zona horaria PHP
 PHPServerOffsetWithGreenwich=Offset con Greenwich (segundos)
 CurrentHour=Hora actual
-CurrentSessionTimeOut=Tiempo espera sesión actual
 OSEnv=Entorno SO
 Box=Caja
 Boxes=Cajas
@@ -107,8 +101,6 @@ PurgeDeleteAllFilesInDocumentsDir=Eliminar todos los archivos de la carpeta <b>%
 PurgeRunNow=Purgar
 PurgeNothingToDelete=Ninguna carpeta a eliminar
 PurgeNDirectoriesDeleted=<b>%s</b> archivos o carpetas eliminados
-PurgeAuditEvents=Purgar los eventos de seguridad
-ConfirmPurgeAuditEvents=¿Está seguro de querer purgar la lista de eventos de auditorías de seguridad (La lista completa se borrará, pero esto no afecta a sus otros datos)?
 NewBackup=Nueva copia
 GenerateBackup=Generar copia
 Backup=Copia
@@ -167,7 +159,6 @@ ProtectAndEncryptPdfFiles=Protección y encriptación de los pdf generados
 ProtectAndEncryptPdfFilesDesc=La protección de un documento pdf deja el documento libre a la lectura y a la impresión a cualquier lector de PDF. Por el contrario, la modificación y la copia resultan imposibles.
 DolibarrLicense=Licencia
 DolibarrProjectLeader=jefe de proyecto
-Developpers=Desarrolladores/contribuidores
 OtherDeveloppers=Otros desarrolladores/contribuidores
 OfficialWebSite=Sitio web oficial internacional
 OfficialWebSiteFr=sitio web oficial francofono
@@ -180,11 +171,8 @@ EMailsSetup=Configuración E-Mails
 EMailsDesc=Esta página permite sustituir los parámetros PHP relacionados con el envío de correos electrónicos. En la mayoría de los casos en SO como UNIX/Linux, los parámetros PHP son ya correctos y esta página es inútil.
 MAIN_MAIL_SMTP_PORT=Puerto del servidor SMTP (Por defencto en php.ini: <b>%s</b>)
 MAIN_MAIL_SMTP_SERVER=Nombre host o ip del servidor SMTP (Por defecto en php.ini: <b>%s</b>)
-MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=Puerto SMTP (No definido en PHP con sistemas UNIX)
-MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=Servidor SMTP (No definido en PHP con sistemas Unix)
 MAIN_MAIL_EMAIL_FROM=E-Mail del emisor para envios E-Mail automáticos (Por defecto en php.ini: <b>%s</b>)
 MAIN_DISABLE_ALL_MAILS=Desactivar globalmente todo envío de correos electrónicos (para modo de pruebas)
-FeatureNotAvailableOnLinux=Opción no disponible en sistemas UNIX. Pruebe su programa de correo local.
 ModuleSetup=Configuración del módulo
 ModulesSetup=configuración de los módulos
 ModuleFamilyBase=Sistema
@@ -215,9 +203,8 @@ DoTestServerAvailability=Probar conectividad con el servidor
 DoTestSend=Probar envío
 DoTestSendHTML=Probar envío HTML
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Error, no se puede usar opción @ si la secuencia {yy}{mm} o {yyyy}{mm} no se encuentra en la máscara.
-UMask=Parámetro UMask para ficheros nuevos en sistema de archivos Unix/Linux/BSD
-UMaskExplanation=Este parámetro le permite definir los permisos establecidos por defecto en los archivos creados por Dolibarr en el servidor (durante la subida, por ejemplo).<br>Debe ser el valor octal (por ejemplo, 0666 significa leer y escribir para todos). Este parámetro no sirve bajo un servidor Windows
 # Modules
+
 
 
 
@@ -311,8 +298,6 @@ Module2400Name=Agenda
 Module2400Desc=Gestión de la agenda y de las acciones
 Module2500Name=Gestión Electrónica de Documentos
 Module2500Desc=Permite administrar una base de documentos
-Module50100Name=Caja
-Module50100Desc=Módulo de caja
 Permission11=Consultar facturas
 Permission12=Crear facturas
 Permission13=Modificar facturas
@@ -592,10 +577,6 @@ SystemInfoDesc=La información del sistema es información técnica accesible solam
 SystemAreaForAdminOnly=Esta área solo es accesible a los usuarios de tipo administradores. Ningún permiso Dolibarr permite extender el círculo de suarios autorizados a esta áera.
 CompanyFundationDesc=Editar en esta página toda la información conocida sobre la empresa o asociación a administrar
 DisplayDesc=Puede encontrar aquí todos los parámetros relacionados con la apariencia de Dolibarr
-AvailableModules=Módulos disponibles
-ToActivateModule=Para activar módulos, vaya al área de configuración
-SessionTimeOut=Tiempo de espera para la sesión
-SessionExplanation=Este número garantiza que la sesión no expire antes de este plazo. Sin embargo, PHP sessoin management no garantiza que la sesión siempre expire después de ese tiempo: Esto ocurre cuando un sistema de limpieza de la caché de se está ejecutando.<br>Nota: Los procesos internos de PHP limpian las sesiones siempre del acceso <b>%s/%s</b> solamente si se realizan otras sesiones.
 TriggersAvailable=Triggers disponibles
 TriggersDesc=Los triggers son archivos que, une vez depositados en la carpeta <b>htdocs/includes/triggers</b>, modifican el comportamiento del workflow de Dolibarr. Realizan acciones suplementarias, desencadenadas por los eventos Dolibarr (creación de empresa, validación factura, cierre contrato, etc).
 TriggerDisabledByName=Triggers de este archivo desactivador por el sufijo <b>-NORUN</b> en el nombre del archivo.
@@ -615,10 +596,8 @@ MAIN_MAX_DECIMALS_SHOWN=Decimales máximos para los importes mostrados en pantall
 ParameterActiveForNextInputOnly=Parámetro efectivo solamente a partir de las próximas sesiones
 NoEventOrNoAuditSetup=No se han registrado eventos de seguridad. Esto puede ser normal si la auditoría no ha sido habilitado en la página "configuración - seguridad - auditoría".
 NoEventFoundWithCriteria=No se han encontrado eventos de seguridad para tales criterios de búsqueda.
-SeeLocalSendMailSetup=Consulte su sistema de envío de correo local
-PasswordGenerationStandard=Devuelve una contraseña generada de acuerdo con el algoritmo interno Dolibarr: 8 caracteres que contengan compartidos números y caracteres en minúsculas.
-PasswordGenerationNone=No se sugiere ninguna generación de contraseña. La contraseña debe ser de tipo manual.
 ##### Users setup #####
+
 
 
 
@@ -632,6 +611,7 @@ DisableForgetPasswordLinkOnLogonPage=No mostrar el vínculo "Contraseña olvidada"
 
 
 
+
 CompanySetup=Configuración del módulo empresas
 CompanyCodeChecker=Módulo de generación e control de los códigos de terceros (clientes/proveedores)
 AccountCodeManager=Módulo de generación de los códigos contables (clientes/proveedores)
@@ -641,6 +621,7 @@ ModuleCompanyCodeDigitaria=Devuelve un código contable compuesto siguiendo el có
 UseNotifications=Usar notificaciones
 NotificationsDesc=La función de las notificaciones permite enviar automáticamente un correo electrónico para un determinado evento Dolibarr en las empresas configuradas para ello
 ##### Webcal setup #####
+
 
 
 
@@ -671,6 +652,7 @@ WebCalCheckWebcalSetup=La configuración del módulo Webcal puede ser incorrecta
 
 
 
+
 BillsSetup=Configuración del módulo Facturas
 BillsDate=Fecha de las facturas
 BillsNumberingModule=Módulo de numeración de facturas y albaranes
@@ -688,6 +670,7 @@ SuggestPaymentByChequeToAddress=Sugerir el pago por cheque a
 FreeLegalTextOnInvoices=Texto libre en facturas
 WatermarkOnDraftInvoices=Marca de agua en las facturas borrador (en caso de estar vacío)
 ##### Proposals #####
+
 
 
 
@@ -710,6 +693,7 @@ WatermarkOnDraftProposal=Marca de agua en presupuestos borrador (en caso de esta
 
 
 
+
 OrdersSetup=Configuración del módulo pedidos
 OrdersNumberingModules=Módulos de numeración de los pedidos
 OrdersModelModule=Modelos de documentos de pedidos
@@ -721,10 +705,12 @@ WatermarkOnDraftOrders=Marca de agua en pedidos borrador (en caso de estar vacío
 
 
 
+
 FicheinterNumberingModules=Módulos de numeración de las fichas de intervención
 TemplatePDFInterventions=Modelo de documentos de las fichas de intervención
 WatermarkOnDraftInterventionCards=Marca de agua en fichas de intervención (en caso de estar vacío)
 ##### Clicktodial #####
+
 
 
 
@@ -734,8 +720,10 @@ ClickToDialUrlDesc=Url de llamada haciendo click en el icono teléfono. <br>La 'u
 
 
 
+
 Bookmark4uSetup=Configuración del módulo Bookmark4u
 ##### Interventions #####
+
 
 
 
@@ -744,12 +732,13 @@ InterventionsSetup=Configuración del módulo intervenciones
 
 
 
+
 MembersSetup=Configuración del módulo Asociaciones
 MemberMainOptions=Opciones principales
 AddSubscriptionIntoAccount=Registrar cotizaciones en cuenta bancaria o caja del módulo bancario
 AdherentMailRequired=E-Mail obligatorio para crear un miembro nuevo
-MemberSendInformationByMailByDefault=Casilla para enviar confirmación e-mail a miembros está activa por defecto
 ##### LDAP setup #####
+
 
 
 
@@ -886,6 +875,7 @@ ForANonAnonymousAccess=Para un acceso autentificado
 
 
 
+
 ProductSetup=Configuración del módulo Productos
 NumberOfProductShowInSelect=Nº de productos max en las listas (0=sin límite)
 ConfirmDeleteProductLineAbility=Confirmación de eliminación de una línea de producido en los formularios
@@ -893,15 +883,15 @@ ModifyProductDescAbility=Personalización de las descripciones de los productos e
 ViewProductDescInFormAbility=Visualización de las descripciones de los productos en los formularios
 UseSearchToSelectProduct=Utilizar un formulario de búsqueda para la selección de un producto (en vez de la lista desplegable)
 UseEcoTaxeAbility=Asumir ecotasa (DEEE)
-UseMinPrice=Utilización de un precio mínimo de venta
-SetDefaultBarcodeTypeProducts=tipo códigos de barra utiliazdos por defecto para los productos
-SetDefaultBarcodeTypeThirdParties=Tipo código de barras por defecto para uso con terceros
+SetDefaultBarcodeType=
 ##### Suppliers #####
+
 
 
 
 SuppliersSetup=Configuración del módulo de proveedor
 ##### Syslog #####
+
 
 
 
@@ -917,8 +907,10 @@ ErrorUnknownSyslogConstant=La constante %s no es una constante syslog conocida
 
 
 
+
 DonationsSetup=Configuración del módulo subvenciones
 ##### Barcode #####
+
 
 
 
@@ -939,8 +931,10 @@ BarcodeDescC128=Códigos de barra tipo C128
 
 
 
+
 WithdrawalsSetup=Configuración del módulo domiciliaciones
 ##### ExternalRSS #####
+
 
 
 
@@ -951,14 +945,17 @@ MailingSetup=Configuración del módulo E-Mailing
 
 
 
+
 MailingEMailFrom=E-Mail emisor (From) de los mailis enviados por E-Mailing
 ##### Notification #####
+
 
 
 
 NotificationSetup=Configuración del módulo notificaciones
 NotificationEMailFrom=E-Mail emisor (From) de los mails enviados a traves de notificaciones
 ##### Sendings #####
+
 
 
 
@@ -970,11 +967,12 @@ NoNeedForDeliveryReceipts=En la mayoría de los casos, los albaranes se utilizan 
 
 
 
+
 DeliveryOrderNumberingModules=Módulo de numeración de los envios a clientes
 DeliveryOrderModel=Modelo de orden de envío
 DeliveriesOrderAbility=Portes pagados por el cliente
-FreeLegalTextOnDeliveryReceipts=Texto libre en los albaranes
 ##### FCKeditor #####
+
 
 
 
@@ -990,11 +988,13 @@ FCKeditorForMailing=Creación/edición WYSIWIG de los E-Mails
 
 
 
+
 OSCommerceErrorConnectOkButWrongDatabase=La conexión se ha establecido, pero la base de datos no parece de OSCommerce.
 OSCommerceTestOk=La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' es correcta.
 OSCommerceTestKo1=La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' no se pudo efectuar.
 OSCommerceTestKo2=La conexión al servidor '%s' por el usuario '%s' ha fallado.
 ##### Mantis #####
+
 
 
 
@@ -1013,9 +1013,11 @@ MantisErrorConnectOkButWrongDatabase=La conexión es correcta pero la base de dat
 
 
 
+
 StockSetup=configuración del módulo Stock
 UserWarehouse=Utilizar los stocks personales de usuarios
 ##### DroitPret #####
+
 
 
 
@@ -1023,6 +1025,7 @@ PretSetup=Configuración del modulo derecho de préstamo
 catActive=Categoría para los que el derecho de préstamo está activado
 mailDroitPret=Dirección de correo a las que se envían las declaraciones
 ##### Menu #####
+
 
 
 
@@ -1061,7 +1064,3 @@ OptionVatDebitOptionDesc=La carga del IVA es: <br>-en el envío de los bienes <br
 AgendaSetup=Módulo configuración de acciones y agenda
 PasswordTogetVCalExport=Clave de autorización vcal export link
 ClickToDialDesc=Este módulo permite agregar un icono después del número de teléfono de contactos Dolibarr. Un clic en este icono, Llama a un servidor con una URL que se indica a continuación. Esto puede ser usado para llamar al sistema call center de Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
-CashDeskSetup=Módulo de configuración de caja
-CashDeskThirdPartyForSell=Terceros de uso para ventas
-CashDeskBankAccountForSell=Cuenta de caja de uso para ventas
-CashDeskIdWareHouse=Almacen de uso para ventas

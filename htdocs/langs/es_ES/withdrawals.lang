@@ -1,5 +1,6 @@
 # Dolibarr language file - es_ES - withdrawals
 
+
 StandingOrdersArea=Area domiciliaciones
 CustomersStandingOrdersArea=Area domiciliaciones de clientes
 StandingOrders=Domiciliaciones
@@ -32,3 +33,4 @@ ThirdPartyBankCode=Código banco del tercero
 ThirdPartyDeskCode=Código oficina del tercero
 NoInvoiceCouldBeWithdrawed=Ninguna factura domiciliable, domiciliación con éxito. Asegúrese de que las facturas son de empresas con los datos de cuentas bancarias correctos.
 ClassCredited=Clasificar acreditados
+ClassCreditedConfirm=¿Está seguro de querer clasificar esta domiciliación como realizada sobre su cuenta bancaria?

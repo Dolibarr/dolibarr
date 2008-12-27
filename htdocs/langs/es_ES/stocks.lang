@@ -1,6 +1,7 @@
 # Dolibarr language file - es_ES - stocks
 
 
+
 WarehouseCard=Ficha almacen
 Warehouse=Almacen
 NewWarehouse=Nuevo almacen o zona de almacenaje
@@ -40,13 +41,10 @@ EnhancedValueOfWarehouses=Valor de stocks
 UserWarehouseAutoCreate=Crear existencias automáticamente en la creación de un usuario
 QtyDispatched=Cantidad desglosada
 OrderDispatch=Desglose pedido
-RuleForStockManagementDecrease=Regla para gestión de disminución de existencias
-RuleForStockManagementIncrease=Regla para gestión de incremento de existencias
-DeStockOnBill=Decrementar las existencias con las facturas/abonos
-DeStockOnValidateOrder=Decrementar las existencias en los pedidos
-DeStockOnShipment=Decrementar los stocks en los envíos
-ReStockOnBill=Incrementar las existencias con las facturas/abonos
-ReStockOnValidateOrder=Incrementar las existencias en los pedidos
+RuleForStockManagement=Regla de gestión de stock
+DeStockReStockOnBill=Decrementar/Incrementar los stocks físicos sobre las facturas/abonos (atención, en esta versión, todavía se realiza el ajuste sobre el almacén número 1)
+DeStockReStockOnValidateOrder=Decrementar/Incrementar los stocks físicos sobre los pedidos (atención, en esta versión, todavía se realiza el ajuste sobre el almacén número 1)
+DeStockReStockOnShipment=Decrementar/Incrementar los stocks físicos sobre los envíos (recomendado)
 StockDiffPhysicTeoric=Motivo de la diferencia entre valores físicos y teóricos
 StockLimitShort=Límite máximo
 StockLimit=Límite máximo existencias
@@ -61,4 +59,3 @@ StockUpShort=Stock max.
 IdWarehouse=Id. almacén
 DescWareHouse=Descripción almacén
 LieuWareHouse=Localización almacén
-WarehousesAndProducts=Almacenes y productos

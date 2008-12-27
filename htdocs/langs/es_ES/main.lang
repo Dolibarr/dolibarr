@@ -2,6 +2,7 @@
 
 
 
+
 CHARSET=ISO-8859-1
 DatabaseConnection=Conexión a la base de datos
 SeparatorDecimal=,
@@ -67,9 +68,9 @@ PrecisionUnitIsLimitedToXDecimals=Dolibarr está configurado para limitar la prec
 DoTest=Probar
 ToFilter=Filtrar
 WarningYouHaveAtLeastOneTaskLate=Atención, tiene al menos un elemento que ha pasado la fecha de tolerencia.
-yes=sí
-Yes=Sí
-no=no
+yes=Sí
+Yes=
+no=
 No=No
 All=Todo
 Home=Inicio
@@ -204,8 +205,8 @@ Minute=Minuto
 Second=Segundo
 Years=Años
 Months=Meses
-Days=Días
-days=días
+Days=días
+days=
 Hours=Horas
 Minutes=Minutos
 Seconds=Segundos
@@ -303,7 +304,7 @@ Category=Categorúia
 By=Por
 From=De
 to=a
-To=a
+To=
 and=y
 or=o
 Other=Otro
@@ -371,6 +372,7 @@ FillTownFromZip=Indicar población
 ShowLog=Ver histórico
 File=Archivo
 Files=Archivos
+NotAllowed=No autorizado
 ReadPermissionNotAllowed=Lectura no autorizada
 AmountInCurrency=Importes visualizados en %s
 Example=Ejemplo
@@ -468,6 +470,7 @@ Signature=Firma
 HidePassword=Mostrar comando con contraseña oculta
 UnHidePassword=Mostrar comando con contraseña a la vista
 # Week day
+
 
 
 

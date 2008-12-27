@@ -2,6 +2,8 @@
 
 
 
+
+
 Bill=Factura
 Bills=Facturas
 BillsCustomers=Facturas a clientes
@@ -10,9 +12,7 @@ BillsCustomersUnpayed=Facturas a clientes pendientes de cobro
 BillsCustomersUnpayedForCompany=Facturas a clientes pendientes de cobro de %s
 BillsSuppliersUnpayed=Facturas de proveedores pendientes de pago
 BillsUnpayed=Pendientes de pago
-BillsLate=Retraso en el pago
 BillsStatistics=Estadísticas facturas a clientes
-BillsStatisticsSuppliers=Estadisticas facturas de proveedores
 InvoiceStandard=Factura estandard
 InvoiceStandardAsk=Factura estandard
 InvoiceStandardDesc=Este tipo de factura es la factura tradicional. Tambien se la conoce como <b>factura de débito</b> (del verbo deber).
@@ -118,8 +118,8 @@ BillFrom=Emisor
 BillTo=Enviar a
 ActionsOnBill=Acciones sobre la factura
 NewBill=Nueva factura
-Prélèvements=Domiciliación
 Prélèvements=Domiciliaciones
+Prélèvements=
 LastBills=Las %s últimas facturas
 LastCustomersBills=Las %s últimas facturas a clientes
 LastSuppliersBills=Las %s últimas facturas de proveedores
@@ -151,12 +151,9 @@ ConfirmClassifyPayedPartiallyReasonOtherDesc=Esta elección será posible, por eje
 ConfirmClassifyAbandonReasonOther=Otro
 ConfirmClassifyAbandonReasonOtherDesc=Esta elección será para cualquier otro caso. Por ejemplo a raíz de la intención de crear una factura rectificativa.
 ConfirmCustomerPayment=¿Confirma el proceso  de este pago de <b>%s</b> %s ?
-ConfirmValidatePayment=¿Está usted seguro de querer validar este pago (no se puede modificar una vez el pago esté validado)?
 ValidateBill=Validar factura
 NumberOfBills=Nº de facturas
 NumberOfBillsByMonth=Nº de facturas por mes
-AmountOfBills=Importe facturas
-AmountOfBillsByMonthHT=Importe de las facturas por mes (sin IVA)
 ShowSocialContribution=Mostrar contribución social
 ShowBill=Ver factura
 ShowInvoice=Ver factura
@@ -201,7 +198,6 @@ Billed=Facturado
 RepeatableInvoice=Factura recurrente
 RepeatableInvoices=Facturas recurrentes
 Repeatable=Recurrente
-Repeatables=Recurrentes
 ChangeIntoRepeatableInvoice=Modificar en recurrente
 CreateRepeatableInvoice=Crear factura recurrente
 CreateFromRepeatableInvoice=Crear despues factura recurrente
@@ -242,13 +238,10 @@ InvoicePayed=Factura pagada
 PaymentNumber=Número de pago
 RemoveDiscount=Eliminar descuento
 WatermarkOnDraftBill=Marca de agua en facturas borrador (nada si está vacía)
-UnpayedNotChecked=Ninguna factura pendiente ha sido seleccionada
-CloneInvoice=Clonar factura
-CloneMainAttributes=Clonar el objeto con sus atributos principales
-ConfirmCloneInvoice=¿Está seguro de querer clonar esta factura?
-DisabledBecauseReplacedInvoice=Acción desactivada porque sustituye la factura
 
 # PaymentConditions
+
+
 
 
 
@@ -263,6 +256,8 @@ PaymentCondition60D=Pago a los 60 días
 PaymentConditionShort60DENDMONTH=60 días a fin de mes
 PaymentCondition60DENDMONTH=Pago a los 60 días a fin de mes
 # PaymentType
+
+
 
 
 
@@ -288,10 +283,9 @@ DeskCode=Código sucursal
 BankAccountNumber=Número cuenta
 BankAccountNumberKey=Dígito Control
 Residence=Domiciliación
-IBANNumber=Código IBAN
+IbanPrefix=Prefijo IBAN
 IBAN=IBAN
 BIC=BIC/SWIFT
-BICNumber=Código BIC/SWIFT
 ExtraInfos=Informaciones complementarias
 RegulatedOn=Pagar el
 ChequeNumber=Cheque nº
@@ -326,10 +320,10 @@ ChequeDeposits=Depósito de cheques
 Cheques=Cheques
 CreditNoteConvertedIntoDiscount=Este abono se convirtió en %s
 UsBillingContactAsIncoiveRecipientIfExist=Utilizar la dirección del contacto de cliente de facturación de la factura en vez de lla dirección del tercero como destinatario de las facturas
-ShowUnpayedAll=Mostrar todos los pendientes
-ShowUnpayedLateOnly=Mostrar los pendientes en retraso
 
 # oursin PDF model
+
+
 
 
 
@@ -339,9 +333,13 @@ Of=de
 
 
 
+
+
 PDFBerniqueDescription=Modelo para las facturas con varios tipos de IVA, incluido también el número de IVA Intracomunitario
 
 # bigorneau PDF Model
+
+
 
 
 
@@ -351,9 +349,13 @@ PDFBigorneauDescription=Modelo de factura sin informaciones de pago
 
 
 
+
+
 PDFBulotDescription=Modelo de factura con descuentos e información de pago
 
 # crabe PDF Model
+
+
 
 
 
@@ -363,9 +365,13 @@ PDFCrabeDescription=Modelo de factura completo (IVA,  método de pago a mostrar, 
 
 
 
+
+
 PDFHuitreDescription=Modelo de factura con descuento e información de pago
 
 # oursin PDF Model
+
+
 
 
 
@@ -375,11 +381,26 @@ PDFOursinDescription=Modelo de factura completo (IVA, métodos de pago, entregas,
 
 
 
+
+
 PDFTourteauDescription=Modelo de factura sin descuento
+DefinedAndHasThisValue=Definido y con valor
+IsNotDefined=No está definido
 
 # terre
 
 
 
+
+
 TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas y %syymm-nnnn para los abonos donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
 TerreNumRefModelError=Una factura que comienza por $$syymm existe en base y es incompatible con esta numeración. Eliminela o renombrela para activar este módulo.
+OrionNumRefModelDesc1=Devuelve el número bajo el formato FAYYNNNNN donde AA es el año y NNNNN el incremento numérico que comienza en 1.
+OrionNumRefModelDesc2=El año se incrementa en 1 SIN quedar a cero al inicio de ejercicio.
+OrionNumRefModelDesc3=Defina el més de inicio de ejercicio en configuración->empresa, ej: septiembre.
+OrionNumRefModelDesc4=En este ejemplo tendremos a partir del 1 de septiembre de 2007, un factura como FA0800354.
+TitanNumRefModelDesc1=Devuelve el número bajo el formato FAYYNNNNN donde AA es el año y NNNNN el incremento numérico que comienza en 1.
+TitanNumRefModelDesc2=El año se incrementa en 1 y el número de incremento queda a cero al inicio de ejercicio.
+TitanNumRefModelDesc3=Defina el més de inicio de ejercicio en configuración->empresa, ej: septiembre.
+TitanNumRefModelDesc4=En este ejemplo tendremos a partir del 1 de septiembre de 2007, un factura como FA0800354.
+PlutonNumRefModelDesc1=Devuele el número de factura personalizado según una mascara a definir.
