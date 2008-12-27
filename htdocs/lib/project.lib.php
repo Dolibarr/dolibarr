@@ -53,9 +53,9 @@ function project_prepare_head($objsoc)
 
 
 /**
-		\brief      Affiche la liste déroulante des projets d'une société donnée
-		\param      socid       Id société
-		\param      selected    Id projet pré-sélectionné
+		\brief      Affiche la liste dï¿½roulante des projets d'une sociï¿½tï¿½ donnï¿½e
+		\param      socid       Id sociï¿½tï¿½
+		\param      selected    Id projet prï¿½-sï¿½lectionnï¿½
 		\param      htmlname    Nom de la zone html
 		\return     int         Nbre de projet si ok, <0 si ko
 */
@@ -66,7 +66,7 @@ function select_projects($socid, $selected='', $htmlname='projectid')
 	// On recherche les projets
 	$sql = 'SELECT p.rowid, p.title FROM ';
 	$sql.= MAIN_DB_PREFIX .'projet as p';
-	$sql.= " WHERE fk_soc='".$socid."'";
+	$sql.= " WHERE (fk_soc='".$socid."' or fk_soc IS NULL)";
 	$sql.= " ORDER BY p.title ASC";
 
 	dolibarr_syslog("project.lib::select_projects sql=".$sql);

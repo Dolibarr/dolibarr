@@ -1572,7 +1572,7 @@ if ($_GET['action'] == 'create')
 	$html->select_types_paiements($mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 
-	// Projet
+	// Project
 	if ($conf->projet->enabled)
 	{
 		$langs->load('projects');
