@@ -2458,7 +2458,7 @@ else
 			print '<tr><td>'.$langs->trans('Status').'</td>';
 			print '<td align="left" colspan="3">'.($fac->getLibStatut(4,$totalpaye)).'</td></tr>';
 
-			// Projet
+			// Project
 			if ($conf->projet->enabled)
 			{
 				$langs->load('projects');

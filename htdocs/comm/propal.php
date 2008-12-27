@@ -687,7 +687,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=eregi_replace('\*','',$vat_rate);
 
-	// On vérifie que le prix minimum est respecté
+	// On vï¿½rifie que le prix minimum est respectï¿½
 	$productid = $_POST['productid'] ;
 	if ($productid)
 	{
@@ -1093,55 +1093,43 @@ if ($_GET['propalid'] > 0)
 	}
 	print '</td></tr>';
 
-	// Projet
+	// Project
 	if ($conf->projet->enabled)
 	{
 		$langs->load("projects");
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Project').'</td>';
-		$numprojet = $societe->has_projects();
-		if (! $numprojet)
+		if ($propal->statut == 0 && $user->rights->propale->creer)
 		{
-			print '</td></tr></table>';
-			print '<td colspan="2">';
-			print $langs->trans("NoProject").'</td><td>';
-			print '<a href=../projet/fiche.php?socid='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
-			print '</td>';
-		}
-		else
-		{
-			if ($propal->statut == 0 && $user->rights->propale->creer)
+			if ($_GET['action'] != 'classer' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($_GET['action'] == 'classer')
 			{
-				if ($_GET['action'] != 'classer' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
-				print '</tr></table>';
-				print '</td><td colspan="3">';
-				if ($_GET['action'] == 'classer')
-				{
-					$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'projetidp');
-				}
-				else
-				{
-					$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'none');
-				}
-				print '</td></tr>';
+				$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'projetidp');
 			}
 			else
 			{
-				print '</td></tr></table>';
-				if (!empty($propal->projetidp))
-				{
-					print '<td colspan="3">';
-					$proj = new Project($db);
-					$proj->fetch($propal->projetidp);
-					print '<a href="../projet/fiche.php?id='.$propal->projetidp.'" title="'.$langs->trans('ShowProject').'">';
-					print $proj->title;
-					print '</a>';
-					print '</td>';
-				}
-				else {
-					print '<td colspan="3">&nbsp;</td>';
-				}
+				$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'none');
+			}
+			print '</td></tr>';
+		}
+		else
+		{
+			print '</td></tr></table>';
+			if (!empty($propal->projetidp))
+			{
+				print '<td colspan="3">';
+				$proj = new Project($db);
+				$proj->fetch($propal->projetidp);
+				print '<a href="../projet/fiche.php?id='.$propal->projetidp.'" title="'.$langs->trans('ShowProject').'">';
+				print $proj->title;
+				print '</a>';
+				print '</td>';
+			}
+			else {
+				print '<td colspan="3">&nbsp;</td>';
 			}
 		}
 		print '</tr>';

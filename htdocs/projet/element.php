@@ -40,7 +40,7 @@ if ($conf->facture->enabled)  $langs->load("bills");
 if ($conf->commande->enabled) $langs->load("orders");
 if ($conf->propal->enabled)   $langs->load("propal");
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 $projetid='';
 if ($_GET["id"]) { $projetid=$_GET["id"]; }
 
@@ -123,6 +123,7 @@ foreach ($listofreferent as $key => $value)
 		print '<td width="150">'.$langs->trans("Ref").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td align="right">'.$langs->trans("Amount").'</td>';
+		print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 		$elementarray = $projet->get_element_list($key);
 		if (sizeof($elementarray)>0 && is_array($elementarray))
@@ -143,13 +144,15 @@ foreach ($listofreferent as $key => $value)
 				if (empty($date)) $date=$element->datep;
 				print '<td>'.dolibarr_print_date($date,'day').'</td>';
 		        print '<td align="right">'.price($element->total_ht).'</td>';
-				print '</tr>';
+		        print '<td align="right">'.$element->getLibStatut(5).'</td>';
+		        print '</tr>';
 
 		        $total = $total + $element->total_ht;
 		    }
 
-		    print '<tr class="liste_total"><td colspan="2">'.$i.' '.$langs->trans("Bills").'</td>';
+		    print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Number").': '.$i.'</td>';
 		    print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total).'</td>';
+		    print '<td>&nbsp;</td>';
 		    print '</tr>';
 		}
 	    print "</table>";
@@ -189,7 +192,7 @@ foreach ($listofreferent as $key => $value)
 	}
 }
 
-// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+// Juste pour ï¿½viter bug IE qui rï¿½organise mal div prï¿½cï¿½dents si celui-ci absent
 print '<div class="tabsAction">';
 print '</div>';
 
