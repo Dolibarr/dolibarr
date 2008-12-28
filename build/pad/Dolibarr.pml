@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PADGEN_PML>
-	<AppVerInfo>PADGen 2.0.2.30</AppVerInfo>
+	<AppVerInfo>PADGen 3.0.1.38</AppVerInfo>
 	<CompanyName />
 	<Program_Info>
 		<Program_Name>Dolibarr</Program_Name>
-		<Program_Version>2.1</Program_Version>
-		<Program_Release_Month>07</Program_Release_Month>
-		<Program_Release_Day>14</Program_Release_Day>
-		<Program_Release_Year>2006</Program_Release_Year>
-		<Program_Cost_Dollars>0</Program_Cost_Dollars>
+		<Program_Version>2.5</Program_Version>
+		<Program_Release_Month>12</Program_Release_Month>
+		<Program_Release_Day>28</Program_Release_Day>
+		<Program_Release_Year>2008</Program_Release_Year>
+		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
-		<Program_Cost_Other>0</Program_Cost_Other>
+		<Program_Cost_Other />
 		<Program_Type>Freeware</Program_Type>
 		<Program_Release_Status>Major Update</Program_Release_Status>
-		<Program_Install_Support>Uninstall Only</Program_Install_Support>
-		<Program_OS_Support>Win95,Win98,WinME,WinNT 4.x,Windows2000,WinXP,Windows2003,Windows Vista Starter,Windows Vista Home Basic,Windows Vista Home Premium,Windows Vista Business,Windows Vista Enterprise,Windows Vista Ultimate,Windows Vista Home Basic x64,Windows Vista Home Premium x64,Windows Vista Business x64,Windows Vista Enterprise x64,Windows Vista Ultimate x64,Unix,Linux,OS/2,OS/2 Warp,OS/2 Warp 4,MAC 68k,Mac PPC,Mac OS X,Mac Other,BEOS</Program_OS_Support>
-		<Program_Language>English,French</Program_Language>
+		<Program_Install_Support>No Install Support</Program_Install_Support>
+		<Program_OS_Support>Win95,Win98,WinME,WinNT 4.x,Windows2000,WinXP,Windows2003,Windows Vista Starter,Windows Vista Home Basic,Windows Vista Home Premium,Windows Vista Business,Windows Vista Enterprise,Windows Vista Ultimate,Windows Vista Home Basic x64,Windows Vista Home Premium x64,Windows Vista Business x64,Windows Vista Enterprise x64,Windows Vista Ultimate x64,Unix,Linux,OS/2,OS/2 Warp,OS/2 Warp 4,MAC 68k,Mac PPC,Mac OS X,Mac OS X 10.1,Mac OS X 10.2,Mac OS X 10.3,Mac OS X 10.4,Mac OS X 10.5,Mac Other,BEOS</Program_OS_Support>
+		<Program_Language>English,French,Spanish</Program_Language>
 		<Program_Change_Info>http://www.dolibarr.org</Program_Change_Info>
 		<Program_Specific_Category>Business</Program_Specific_Category>
 		<Program_Category_Class>Business::Accounting &amp; Finance</Program_Category_Class>
@@ -57,13 +57,13 @@
 		<Application_URLs>
 			<Application_Info_URL>http://www.dolibarr.org</Application_Info_URL>
 			<Application_Order_URL>http://www.dolibarr.org</Application_Order_URL>
-			<Application_Screenshot_URL>http://www.dolibarr.org/demo/doc/images/dolibarr_screenshot2.png</Application_Screenshot_URL>
-			<Application_Icon_URL>http://www.dolibarr.org/demo/doc/images/dolibarr.ico</Application_Icon_URL>
-			<Application_XML_File_URL>http://www.dolibarr.org/demo/build/pad/pad_dolibarr.xml</Application_XML_File_URL>
+			<Application_Screenshot_URL>http://www.dolibarr.org/images/dolibarr_screenshot2.png</Application_Screenshot_URL>
+			<Application_Icon_URL>http://www.dolibarr.org/images/dolibarr.gif</Application_Icon_URL>
+			<Application_XML_File_URL>http://www.dolibarr.org/files/pad_dolibarr.xml</Application_XML_File_URL>
 		</Application_URLs>
 		<Download_URLs>
-			<Primary_Download_URL />
-			<Secondary_Download_URL />
+			<Primary_Download_URL>http://www.dolibarr.org/files/dolibarr.tgz</Primary_Download_URL>
+			<Secondary_Download_URL>http://www.dolibarr.org/files/dolibarr.tgz</Secondary_Download_URL>
 			<Additional_Download_URL_1 />
 			<Additional_Download_URL_2 />
 		</Download_URLs>
@@ -79,7 +79,7 @@
 	</ASP>
 	<Affiliates>
 		<Affiliates_FORM>Y</Affiliates_FORM>
-		<Affiliates_VERSION>1.2</Affiliates_VERSION>
+		<Affiliates_VERSION>1.4</Affiliates_VERSION>
 		<Affiliates_URL>http://www.asp-shareware.org/pad/extensions/Affiliates.htm</Affiliates_URL>
 		<Affiliates_Information_Page />
 		<Affiliates_Avangate_Order_Page />
@@ -90,6 +90,10 @@
 		<Affiliates_BMTMicro_Vendor_ID />
 		<Affiliates_BMTMicro_Product_ID />
 		<Affiliates_BMTMicro_Maximum_Commission_Rate />
+		<Affiliates_Cleverbridge_Order_Page />
+		<Affiliates_Cleverbridge_Vendor_ID />
+		<Affiliates_Cleverbridge_Product_ID />
+		<Affiliates_Cleverbridge_Maximum_Commission_Rate />
 		<Affiliates_clixGalore_Order_Page />
 		<Affiliates_clixGalore_Vendor_ID />
 		<Affiliates_clixGalore_Product_ID />
@@ -126,6 +130,10 @@
 		<Affiliates_NorthStarSol_Vendor_ID />
 		<Affiliates_NorthStarSol_Product_ID />
 		<Affiliates_NorthStarSol_Maximum_Commission_Rate />
+		<Affiliates_OneNetworkDirect_Order_Page />
+		<Affiliates_OneNetworkDirect_Vendor_ID />
+		<Affiliates_OneNetworkDirect_Product_ID />
+		<Affiliates_OneNetworkDirect_Maximum_Commission_Rate />
 		<Affiliates_Order1_Order_Page />
 		<Affiliates_Order1_Vendor_ID />
 		<Affiliates_Order1_Product_ID />
