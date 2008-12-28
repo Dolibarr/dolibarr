@@ -52,8 +52,10 @@ $offset = $limit * $page ;
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
-if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
+if (! empty($_POST["button_removefilter"])) 
+{
 	$sref="";
+	$sRefSupplier="";
 	$snom="";
 }
 
@@ -87,7 +89,7 @@ if ($fourn_id)
 
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type,";
 $sql .= " pf.fk_soc, pf.ref_fourn,";
-$sql .= " ppf.price as price, ppf.quantity as qty,";
+$sql .= " ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
 $sql .= " s.rowid as socid, s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid)
@@ -182,6 +184,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Supplier"),"liste.php", "pf.fk_soc",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("BuyingPrice"),"liste.php", "ppf.price",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("QtyMin"),"liste.php", "ppf.qty",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("UnitPrice"),"liste.php", "ppf.unitprice",$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -200,9 +203,9 @@ if ($resql)
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
 	print '</td>';
-	print '<td class="liste_titre" colspan="3" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-	print '&nbsp; <input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
+	print '<td class="liste_titre" colspan="4" align="right">';
+	print '<input type="image" class="liste_titre" value="button_search" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+	print '&nbsp; <input type="image" class="liste_titre" value="button_removefilter" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
 	print '</td>';
 	print '</tr>';
 	print '</form>';
@@ -233,6 +236,8 @@ if ($resql)
 		print '<td align="right">'.price($objp->price).'</td>';
 		
 		print '<td align="right">'.$objp->qty.'</td>';
+		
+		print '<td align="right">'.price($objp->unitprice).'</td>';
 		
 		print "</tr>\n";
 		$i++;
