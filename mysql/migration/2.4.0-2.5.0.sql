@@ -87,6 +87,7 @@ alter table llx_adherent_options_label add column pos integer DEFAULT 0;
 -- Reverse option
 update llx_const set visible = 1, name = 'FACTURE_ENABLE_RECUR', value='1' where name = 'FACTURE_DISABLE_RECUR' and value = '0';
 delete from llx_const where name = 'FACTURE_DISABLE_RECUR' and value = '1';
+delete from llx_const where name like 'MAIN_FASTSEARCH_%';
 
 alter table llx_bank_account modify comment        text;
 
