@@ -29,6 +29,7 @@ esac
 
 # ---------------------------- remove conf file
 echo "Remove file $mydir../../htdocs/conf/conf.php"
+cp -pf $mydir../../htdocs/conf/conf.php $mydir../../htdocs/conf/conf.sav.php 2>/dev/null
 rm $mydir../../htdocs/conf/conf.php 2>/dev/null
 echo "Remove file $mydir../../install.lock"
 rm $mydir../../install.lock 2>/dev/null
