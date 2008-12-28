@@ -26,6 +26,8 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 
 $langs->load("products");
 $langs->load("suppliers");
@@ -65,10 +67,15 @@ if (isset($_REQUEST['catid']))
 	$catid = $_REQUEST['catid'];
 }
 
+
+
 /*
 * Mode Liste
 *
 */
+
+$productstatic = new Product($db);
+$companystatic = new Societe($db);
 
 $title=$langs->trans("ProductsAndServices");
 
@@ -78,10 +85,10 @@ if ($fourn_id)
 	$supplier->fetch($fourn_id);
 }
 
-$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type";
-$sql .= ", pf.fk_soc, pf.ref_fourn";
-$sql .= ", min(ppf.price) as price";
-$sql .= ", s.nom";
+$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type,";
+$sql .= " pf.fk_soc, pf.ref_fourn,";
+$sql .= " ppf.price as price, ppf.quantity as qty,";
+$sql .= " s.rowid as socid, s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid)
 {
@@ -89,7 +96,7 @@ if ($catid)
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pf.fk_soc";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON ppf.fk_product_fournisseur = pf.rowid AND ppf.quantity = 1";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON ppf.fk_product_fournisseur = pf.rowid";
 
 if ($_POST["mode"] == 'search')
 {
@@ -125,12 +132,11 @@ if ($fourn_id > 0)
 {
 	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
 }
-$sql .= " GROUP BY p.rowid";
-$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit($limit + 1 ,$offset);
 
 
-dolibarr_syslog("fourn/product/liste: sql=$sql");
+dolibarr_syslog("fourn/product/liste: sql=".$sql);
 
 $resql = $db->query($sql) ;
 if ($resql)
@@ -175,6 +181,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Supplier"),"liste.php", "pf.fk_soc",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("BuyingPrice"),"liste.php", "ppf.price",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("QtyMin"),"liste.php", "ppf.qty",$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -185,15 +192,15 @@ if ($resql)
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="sref" value="'.$sref.'">';
+	print '<input class="flat" type="text" name="sref" value="'.$sref.'" size="12">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="srefsupplier" value="'.$sRefSupplier.'">';
+	print '<input class="flat" type="text" name="srefsupplier" value="'.$sRefSupplier.'" size="12">';
 	print '</td>';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
 	print '</td>';
-	print '<td class="liste_titre" colspan="2" align="right">';
+	print '<td class="liste_titre" colspan="3" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '&nbsp; <input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
 	print '</td>';
@@ -208,24 +215,25 @@ if ($resql)
 		$var=!$var;
 		print "<tr $bc[$var]>";
 
-		if ($oldid <> $objp->rowid)
-		{
-			$oldid = $objp->rowid;
-			print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->rowid.'">';
-			if ($objp->fk_product_type==1) print img_object($langs->trans("ShowService"),"service");
-			else print img_object($langs->trans("ShowProduct"),"product");
-			print "</a> ";
-			print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></td>';
-			print '<td>'.$objp->ref_fourn.'</td>';
-			print '<td>'.$objp->label.'</td>'."\n";
-		}
-		else
-		{
-			print '<td colspan="2">&nbsp;</td>';
-		}
+		print '<td>';
+		$productstatic->id=$objp->rowid;
+		$productstatic->ref=$objp->ref;
+		$productstatic->type=$objp->fk_product_type;
+		print $productstatic->getNomUrl(1,'supplier');
+		print '</td>';
 		
-		print '<td>'.$objp->nom.'</td>';
+		print '<td>'.$objp->ref_fourn.'</td>';
+		
+		print '<td>'.$objp->label.'</td>'."\n";
+		
+		$companystatic->nom=$objp->nom;
+		$companystatic->id=$objp->socid;
+		print '<td>'.$companystatic->getNomUrl(1,'supplier').'</td>';
+		
 		print '<td align="right">'.price($objp->price).'</td>';
+		
+		print '<td align="right">'.$objp->qty.'</td>';
+		
 		print "</tr>\n";
 		$i++;
 	}

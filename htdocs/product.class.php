@@ -2096,8 +2096,16 @@ class Product extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">';
-		$lienfin='</a>';
+		if ($option == 'supplier')
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.'">';
+			$lienfin='</a>';
+		}
+		else
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">';
+			$lienfin='</a>';
+		}
 		$newref=$this->ref;
 		if ($maxlength) $newref=dolibarr_trunc($newref,$maxlength,'middle');
 
