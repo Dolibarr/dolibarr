@@ -1408,16 +1408,17 @@ class Propal extends CommonObject
 	 */
 	function delete($user)
 	{
-		global $conf,$langs;
+		global $conf;
 
+		$this->db->begin();
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
 		if ( $this->db->query($sql) )
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
 			if ( $this->db->query($sql) )
 			{
-
-				// On efface le r�pertoire du pdf
+				// We remove directory
 				$propalref = sanitizeFileName($this->ref);
 				if ($conf->propal->dir_output)
 				{
@@ -1429,30 +1430,36 @@ class Propal extends CommonObject
 
 						if (!dol_delete_file($file))
 						{
-							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+							$this->error='ErrorFailToDeleteFile';
+							$this->db->rollback();
 							return 0;
 						}
 					}
 					if (file_exists($dir))
 					{
-						if (!dol_delete_dir($dir))
+						$res=@dol_delete_dir($dir);
+						if (! $res)
 						{
-							$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+							$this->error='ErrorFailToDeleteDir';
+							$this->db->rollback();
 							return 0;
 						}
 					}
 				}
 
-				dolibarr_syslog("Suppression de la proposition $this->id par $user->id");
+				dolibarr_syslog("Suppression de la proposition $this->id par $user->id", LOG_DEBUG);
+				$this->db->commit();
 				return 1;
 			}
 			else
 			{
+				$this->db->rollback();
 				return -2;
 			}
 		}
 		else
 		{
+			$this->db->rollback();
 			return -1;
 		}
 	}

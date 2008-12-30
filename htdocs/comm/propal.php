@@ -83,12 +83,22 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 	{
 		$propal = new Propal($db, 0, $_GET['propalid']);
 		$propal->fetch($_GET['propalid']);
-		$propal->delete($user);
+		$result=$propal->delete($user);
 		$propalid = 0;
 		$brouillon = 1;
+
+		if ($result > 0)
+		{
+			Header('Location: '.$_SERVER["PHP_SELF"]);
+			exit;
+		}
+		else
+		{
+			$langs->load("errors");
+			if ($propal->error == 'ErrorFailToDeleteDir') $mesg='<div class="error">'.$langs->trans('ErrorFailedToDeleteJoinedFiles').'</div>';
+			else $mesg='<div class="error">'.$propal->error.'</div>';
+		}
 	}
-	Header('Location: '.$_SERVER["PHP_SELF"]);
-	exit;
 }
 
 /*
@@ -135,7 +145,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 	}
 	else
 	{
-		$mesg='<div class="error">'.$fac->error.'</div>';
+		$mesg='<div class="error">'.$propal->error.'</div>';
 	}
 }
 
@@ -846,7 +856,7 @@ if ($_GET['propalid'] > 0)
 	 *
 	 */
 
-	if ($mesg) print "$mesg<br>";
+	if ($mesg) print $mesg."<br>";
 
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
