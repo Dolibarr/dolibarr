@@ -1408,7 +1408,7 @@ class Propal extends CommonObject
 	 */
 	function delete($user)
 	{
-		global $conf;
+		global $conf,$langs;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
 		if ( $this->db->query($sql) )
