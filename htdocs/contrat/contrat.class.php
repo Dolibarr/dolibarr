@@ -100,8 +100,8 @@ class Contrat extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4,";
-		$sql.= " date_ouverture = '".$this->db->idate($date)."',";
-		if ($date_end) $sql.= " date_fin_validite = '".$this->db->idate($date_end)."',";
+		$sql.= " date_ouverture = ".(strlen($date)!=0?"'".$this->db->idate($date)."'":"null").",";
+		$sql.= " date_fin_validite = ".(strlen($date_end)!=0?"'".$this->db->idate($date_end)."'":"null").",";
 		$sql.= " fk_user_ouverture = ".$user->id.",";
 		$sql.= " date_cloture = null";
 		$sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3 OR statut = 5)";
