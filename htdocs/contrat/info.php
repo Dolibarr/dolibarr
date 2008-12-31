@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,9 +47,7 @@ $contrat->info($_GET["id"]);
 
 $head = contract_prepare_head($contrat);
 
-$hselected = 3;
-
-dolibarr_fiche_head($head, $hselected, $langs->trans("Contract"));
+dolibarr_fiche_head($head, 'info', $langs->trans("Contract"));
 
 
 print '<table width="100%"><tr><td>';
