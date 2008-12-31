@@ -27,10 +27,11 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
+if ($conf->facture->enabled)     require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+if ($conf->commande->enabled)    require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
+if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
+if ($conf->contrat->enabled)     require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $langs->load("projects");
@@ -40,7 +41,7 @@ if ($conf->facture->enabled)  $langs->load("bills");
 if ($conf->commande->enabled) $langs->load("orders");
 if ($conf->propal->enabled)   $langs->load("propal");
 
-// S�curit� acc�s client
+// Security check
 $projetid='';
 if ($_GET["id"]) { $projetid=$_GET["id"]; }
 
@@ -104,7 +105,12 @@ $listofreferent=array(
 'invoice_supplier'=>array(
 	'title'=>"ListSupplierInvoicesAssociatedProject",
 	'class'=>'FactureFournisseur',
-	'test'=>$conf->fournisseur->enabled)
+	'test'=>$conf->fournisseur->enabled),
+'contract'=>array(
+	'title'=>"ListContractAssociatedProject",
+	'class'=>'Contrat',
+	'test'=>$conf->contrat->enabled)
+
 );
 
 foreach ($listofreferent as $key => $value)
@@ -142,8 +148,9 @@ foreach ($listofreferent as $key => $value)
 				print "</td>\n";
 		        $date=$element->date;
 				if (empty($date)) $date=$element->datep;
+				if (empty($date)) $date=$element->date_contrat;
 				print '<td>'.dolibarr_print_date($date,'day').'</td>';
-		        print '<td align="right">'.price($element->total_ht).'</td>';
+		        print '<td align="right">'.(isset($element->total_ht)?price($element->total_ht):'&nbsp;').'</td>';
 		        print '<td align="right">'.$element->getLibStatut(5).'</td>';
 		        print '</tr>';
 
@@ -192,7 +199,7 @@ foreach ($listofreferent as $key => $value)
 	}
 }
 
-// Juste pour �viter bug IE qui r�organise mal div pr�c�dents si celui-ci absent
+// Juste pour eviter bug IE qui reorganise mal div pr�c�dents si celui-ci absent
 print '<div class="tabsAction">';
 print '</div>';
 
