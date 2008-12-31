@@ -86,11 +86,11 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *      \brief      Active une ligne detail d'un contrat
+	 *      \brief      Activate a contract line
 	 *      \param      user        Objet User qui avtice le contrat
 	 *      \param      line_id     Id de la ligne de detail � activer
 	 *      \param      date        Date d'ouverture
-	 *      \param      date_end    Date fin pr�vue
+	 *      \param      date_end    Date fin prevue
 	 *      \return     int         < 0 si erreur, > 0 si ok
 	 */
 	function active_line($user, $line_id, $date, $date_end='')
@@ -131,9 +131,9 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *      \brief      Active une ligne detail d'un contrat
+	 *      \brief      Close a contract line
 	 *      \param      user        Objet User qui avtice le contrat
-	 *      \param      line_id     Id de la ligne de detail � activer
+	 *      \param      line_id     Id de la ligne de detail a activer
 	 *      \param      date_end     Date fin
 	 *      \return     int         <0 si erreur, >0 si ok
 	 */
@@ -169,37 +169,46 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *    \brief      Cloture un contrat
-	 *    \param      user      Objet User qui cloture
-	 *    \param      langs     Environnement langue de l'utilisateur
-	 *    \param      conf      Environnement de configuration lors de l'op�ration
+	 *    \brief      Close all lines of a contract
+	 *    \param      user      Object User making action
+	 *    \param      langs     Object Lang
+	 *    \param      conf      Object Conf
 	 *
 	 */
 	function cloture($user,$langs='',$conf='')
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 2";
-		$sql .= " , date_cloture = ".$this->db->idate(mktime()).", fk_user_cloture = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
+		$this->db->begin();
+		
+		// Load lines
+		$this->fetch_lignes();
 
-		$resql = $this->db->query($sql) ;
-		if ($resql)
+		$ok=true;
+		foreach($this->lignes as $contratline)
 		{
-			$this->use_webcal=($conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='always'?1:0);
-
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTRACT_CLOSE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
-
-			return 1;
+			// Close line not already closed
+	        if ($contratline->statut != 5)
+	        {
+				$contratline->date_cloture=mktime();
+				$contratline->fk_user_cloture=$user->id;
+				$contratline->statut='5';
+				$result=$contratline->update($user);
+				if ($result < 0)
+				{
+					$ok=false;
+					break;
+				}
+	        }
 		}
-		else
-		{
-			$this->error=$this->db->error();
-			return -1;
-		}
+		
+        if ($ok)
+        {
+            $this->db->commit();
+        }
+        else
+        {
+            dolibarr_print_error($db,'Failed to update contrat_det');
+            $this->db->rollback();
+        }
 	}
 
 	/**
@@ -234,38 +243,6 @@ class Contrat extends CommonObject
 		}
 	}
 
-	/**
-	 *    \brief      Annule un contrat
-	 *    \param      user      Objet User qui annule
-	 *    \param      langs     Environnement langue de l'utilisateur
-	 *    \param      conf      Environnement de configuration lors de l'op�ration
-	 */
-	function annule($user,$langs='',$conf='')
-	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 0";
-		$sql .= " , date_cloture = ".$this->db->idate(mktime()).", fk_user_cloture = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
-
-		$resql = $this->db->query($sql) ;
-		if ($resql)
-		{
-			$this->use_webcal=($conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='always'?1:0);
-
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTRACT_CANCEL',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
-
-			return 1;
-		}
-		else
-		{
-			$this->error=$this->db->error();
-			return -1;
-		}
-	}
 
 	/**
 	 *    \brief      Chargement depuis la base des donnees du contrat
@@ -336,7 +313,7 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *      \brief      Reinitialise le tableau lignes
+	 *      \brief      Load lignes array
 	 */
 	function fetch_lignes()
 	{
@@ -346,10 +323,16 @@ class Contrat extends CommonObject
 
 		// Selectionne les lignes contrats liees a un produit
 		$sql = "SELECT p.label, p.description as product_desc, p.ref,";
-		$sql.= " d.rowid, d.statut, d.description, d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
+		$sql.= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
+		$sql.= " d.total_ht,";
+		$sql.= " d.total_tva,";
+		$sql.= " d.total_ttc,";
 		$sql.= " d.info_bits, d.fk_product,";
 		$sql.= " d.date_ouverture_prevue, d.date_ouverture,";
-		$sql.= " d.date_fin_validite, d.date_cloture";
+		$sql.= " d.date_fin_validite, d.date_cloture,";
+		$sql.= " d.fk_user_author,";
+		$sql.= " d.fk_user_ouverture,";
+		$sql.= " d.fk_user_cloture";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d, ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = p.rowid";
 		$sql.= " ORDER by d.rowid ASC";
@@ -365,27 +348,44 @@ class Contrat extends CommonObject
 			{
 				$objp                  = $this->db->fetch_object($result);
 
-				$ligne                 = new ContratLigne($db);
+				$ligne                 = new ContratLigne($this->db);
 				$ligne->id             = $objp->rowid;
+				$ligne->fk_contrat     = $objp->fk_contrat;
 				$ligne->desc           = $objp->description;  // Description ligne
 				$ligne->qty            = $objp->qty;
 				$ligne->tva_tx         = $objp->tva_tx;
 				$ligne->subprice       = $objp->subprice;
 				$ligne->statut 		   = $objp->statut;
 				$ligne->remise_percent = $objp->remise_percent;
-				$ligne->price          = $objp->price;
+				$ligne->price_ht       = $objp->price_ht;
+				$ligne->price          = $objp->price;	// For backward compatibility
+				$ligne->total_ht       = $objp->total_ht;
+				$ligne->total_tva      = $objp->total_tva;
+				$ligne->total_ttc      = $objp->total_ttc;
 				$ligne->fk_product     = $objp->fk_product;
 				$ligne->info_bits      = $objp->info_bits;
 
+				$ligne->fk_user_author   = $objp->fk_user_author;
+				$ligne->fk_user_ouverture= $objp->fk_user_ouverture;
+				$ligne->fk_user_cloture  = $objp->fk_user_cloture;
+				
 				$ligne->ref            = $objp->ref;
 				$ligne->libelle        = $objp->label;        // Label produit
+				$ligne->label          = $objp->label;        // For backward compatibility
 				$ligne->product_desc   = $objp->product_desc; // Description produit
 
-				$ligne->date_debut_prevue = $objp->date_ouverture_prevue;
-				$ligne->date_debut_reel   = $objp->date_ouverture;
-				$ligne->date_fin_prevue   = $objp->date_fin_validite;
-				$ligne->date_fin_reel     = $objp->date_cloture;
-
+				$ligne->description    = $objp->description;
+				
+				$ligne->date_ouverture_prevue = $this->db->jdate($objp->date_ouverture_prevue);
+				$ligne->date_ouverture        = $this->db->jdate($objp->date_ouverture);
+				$ligne->date_fin_validite     = $this->db->jdate($objp->date_fin_validite);
+				$ligne->date_cloture          = $this->db->jdate($objp->date_cloture);
+				// For backward compatibility
+				$ligne->date_debut_prevue = $this->db->jdate($objp->date_ouverture_prevue);
+				$ligne->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
+				$ligne->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
+				$ligne->date_fin_reel     = $this->db->jdate($objp->date_cloture);
+				
 				$this->lignes[]        = $ligne;
 				//dolibarr_syslog("1 ".$ligne->desc);
 				//dolibarr_syslog("2 ".$ligne->product_desc);
@@ -400,17 +400,24 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dolibarr_syslog("Contrat::Fetch Erreur lecture des lignes de contrats li�es aux produits");
+			dolibarr_syslog("Contrat::Fetch Erreur lecture des lignes de contrats liees aux produits");
 			return -3;
 		}
 
 		// Selectionne les lignes contrat liees a aucun produit
-		$sql = "SELECT d.rowid, d.statut, d.qty, d.description, d.price_ht, d.subprice, d.tva_tx, d.rowid, d.remise_percent,";
+		$sql = "SELECT d.rowid, d.fk_contrat, d.statut, d.qty, d.description, d.price_ht, d.tva_tx, d.rowid, d.remise_percent, d.subprice,";
+		$sql.= " d.total_ht,";
+		$sql.= " d.total_tva,";
+		$sql.= " d.total_ttc,";
+		$sql.= " d.info_bits, d.fk_product,";
 		$sql.= " d.date_ouverture_prevue, d.date_ouverture,";
-		$sql.= " d.date_fin_validite, d.date_cloture";
+		$sql.= " d.date_fin_validite, d.date_cloture,";
+		$sql.= " d.fk_user_author,";
+		$sql.= " d.fk_user_ouverture,";
+		$sql.= " d.fk_user_cloture";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d";
 		$sql.= " WHERE d.fk_contrat = ".$this->id;
-		$sql.= " AND (d.fk_product IS NULL OR d.fk_product = 0)";   // fk_product = 0 gard� pour compatibilit�
+		$sql.= " AND (d.fk_product IS NULL OR d.fk_product = 0)";   // fk_product = 0 gardee pour compatibilitee
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -421,23 +428,41 @@ class Contrat extends CommonObject
 			while ($i < $num)
 			{
 				$objp                  = $this->db->fetch_object($result);
+				
 				$ligne                 = new ContratLigne($this->db);
 				$ligne->id 			   = $objp->rowid;
-				$ligne->libelle        = stripslashes($objp->description);
-				$ligne->desc           = stripslashes($objp->description);
+				$ligne->fk_contrat     = $objp->fk_contrat;
+				$ligne->libelle        = $objp->description;
+				$ligne->desc           = $objp->description;
 				$ligne->qty            = $objp->qty;
 				$ligne->statut 		   = $objp->statut;
 				$ligne->ref            = $objp->ref;
 				$ligne->tva_tx         = $objp->tva_tx;
 				$ligne->subprice       = $objp->subprice;
 				$ligne->remise_percent = $objp->remise_percent;
-				$ligne->price          = $objp->price;
+				$ligne->price_ht       = $objp->price_ht;
+				$ligne->price          = $objp->price;	// For backward compatibility
+				$ligne->total_ht       = $objp->total_ht;
+				$ligne->total_tva      = $objp->total_tva;
+				$ligne->total_ttc      = $objp->total_ttc;
 				$ligne->fk_product     = 0;
+				$ligne->info_bits      = $objp->info_bits;
+				
+				$ligne->fk_user_author   = $objp->fk_user_author;
+				$ligne->fk_user_ouverture= $objp->fk_user_ouverture;
+				$ligne->fk_user_cloture  = $objp->fk_user_cloture;
 
-				$ligne->date_debut_prevue = $objp->date_ouverture_prevue;
-				$ligne->date_debut_reel   = $objp->date_ouverture;
-				$ligne->date_fin_prevue   = $objp->date_fin_validite;
-				$ligne->date_fin_reel     = $objp->date_cloture;
+				$ligne->description    = $objp->description;
+
+				$ligne->date_ouverture_prevue = $this->db->jdate($objp->date_ouverture_prevue);
+				$ligne->date_ouverture        = $this->db->jdate($objp->date_ouverture);
+				$ligne->date_fin_validite     = $this->db->jdate($objp->date_fin_validite);
+				$ligne->date_cloture          = $this->db->jdate($objp->date_cloture);
+				// For backward compatibility
+				$ligne->date_debut_prevue = $this->db->jdate($objp->date_ouverture_prevue);
+				$ligne->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
+				$ligne->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
+				$ligne->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
 				if ($ligne->statut == 0) $this->nbofserviceswait++;
 				if ($ligne->statut == 4) $this->nbofservicesopened++;
@@ -1581,7 +1606,7 @@ class ContratLigne
 		$sql.= " tva_tx='".$this->tva_tx."',";
 		$sql.= " qty='".$this->qty."',";
 		$sql.= " remise_percent='".$this->remise_percent."',";
-		$sql.= " remise='".$this->remise."',";
+		$sql.= " remise=".($this->remise?"'".$this->remise."'":"null").",";
 		$sql.= " fk_remise_except=".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
 		$sql.= " subprice='".$this->subprice."',";
 		$sql.= " price_ht='".$this->price_ht."',";

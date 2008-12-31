@@ -317,11 +317,13 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
 		$contratline->subprice=$_POST["elprice"];
         $contratline->qty=$_POST["elqty"];
         $contratline->remise_percent=$_POST["elremise_percent"];
-        $contratline->date_ouverture_prevue=$date_start_update;
+		$contratline->tva_tx=$_POST["eltva_tx"];
+
+		$contratline->date_ouverture_prevue=$date_start_update;
 		$contratline->date_ouverture=$date_start_real_update;
 		$contratline->date_fin_validite=$date_end_update;
         $contratline->date_cloture=$date_end_real_update;
-		$contratline->tva_tx=$_POST["eltva_tx"];
+		$contratline->fk_user_cloture=$user->id;
             
 		$result=$contratline->update($user);
         if ($result > 0)
