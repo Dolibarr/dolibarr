@@ -3,9 +3,6 @@
 
 
 
-
-
-
 MenuECM=Documentos
 DocsMine=Mis documentos
 DocsGenerated=Documentos generados
@@ -20,13 +17,18 @@ ECMNbOfDocsSmall=Nº Docs.
 ECMSection=Carpeta
 ECMSectionManual=Carpeta manual
 ECMSectionAuto=Carpeta automática
+ECMSectionsManual=Carpetas manuales
+ECMSectionsAuto=Carpetas automáticas
 ECMSections=Carpetas
 ECMRoot=Raíz
-ECMNewSection=Nueva carpeta manual
+ECMNewSection=Nueva carpeta
 ECMAddSection=Añadir carpeta manual
 ECMNewSection=Nueva carpeta manual
 ECMNewDocument=Nuevo documento
 ECMCreationDate=Fecha creación
+ECMNbOfFilesInDir=Número de archivos en la carpeta
+ECMNbOfSubDir=número de subcarpetas
+ECMNbOfFilesInSubDir=Número de archivos en las subcarpetas
 ECMCreationUser=Creador
 ECMArea=Area GED
 ECMAreaDesc=El área GED (Gestión Electrónica de Documentos) le permite controlar rápidamente los documentos en Dolibarr.
@@ -44,11 +46,11 @@ ECMDocsByOrders=Documentos asociados a pedidos
 ECMDocsByContracts=Documentos asociados a contratos
 ECMDocsByInvoices=Documentos asociados a facturas
 ECMDocsByProducts=Documentos enlazados a productos
-ECMManualOrg=Carpeta manual
-ECMAutoOrg=Carpeta automática
 ECMNoDirecotyYet=No se ha creado carpeta
 ShowECMSection=Mostrar carpeta
 DeleteSection=Eleminación carpeta
 ConfirmDeleteSection=¿Confirma la eliminación de la carpeta <b>%s</b>?
 ECMDirectoryForFiles=Carpeta relativa para ficheros
 CannotRemoveDirectoryContainsFiles=No se puede eliminar porque contiene archivos
+ECMFileManager=Explorador de archivos
+ECMSelectASection=Seleccione una carpeta en el árbol de la izquierda

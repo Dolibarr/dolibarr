@@ -1,5 +1,6 @@
 # Dolibarr language file - es_ES - propal
 
+
 Proposals=Presupuestos
 Proposal=Presupuesto
 ProposalsDraft=Presupuestos borrador
@@ -26,6 +27,7 @@ LastProposals=Ultimos presupuestos
 SearchAProposal=Buscar un presupuesto
 ProposalsStatistics=Estadísticas de presupuestos
 NumberOfProposalsByMonth=Número por mes
+AmountOfProposalsByMonthHT=Importe por mes (Sin IVA)
 NbOfProposals=Número presupuestos
 ShowPropal=Ver presupuesto
 PropalsDraft=Borrador
@@ -53,7 +55,6 @@ NoOpenedPropals=Sin presupuestos abiertos
 NoOtherOpenedPropals=Ningún otro presupuesto abierto
 RefProposal=Ref. presupuesto
 SendPropalByMail=Enviar presupuesto por e-mail
-Documents=Documentos
 FileNotUploaded=No se ha subido el archivo
 FileUploaded=El archivo se ha subido correctamente
 AssociatedDocuments=Documentos asociados al presupuesto :
@@ -74,14 +75,6 @@ CopyPropalFrom=Crear presupuesto por copia de uno existente
 CreateEmptyPropal=Crear presupuesto desde la listado de productos predefinidos
 DefaultProposalDurationValidity=Plazo de validez por defecto (en días)
 UseCustomerContactAsPropalRecipientIfExist=Utilizar dirección contacto de seguimiento de cliente definido en vez de la dirección del tercero como destinatario de los presupuestos
-PDFAzurDescription=Modelo de presupuesto completo (logo...)
-DefinedAndHasThisValue=Definido y con valor
-IsNotDefined=No está definido
-EmeraudeNumRefModelDesc1=Devuelve el número bajo el formato  PRYYNNNNN donde YY es el año y NNNNN el número de incremento que empieza con 1
-EmeraudeNumRefModelDesc2=El año se incrementa en 1 y el número de incremento vuelve a cero en el inicio de ejercicio.
-EmeraudeNumRefModelDesc3=Defina el mes de inicio de ejercicio en configuración->empresa, ej: septiembre.
-EmeraudeNumRefModelDesc4=En este ejemplo tendríamos el 1 de septiembre de 2007 un presupuesto llamado PR0800001
-RubisNumRefModelDesc1=Devuelve el número bajo el formato  PRYYNNNNN donde YY es el año y NNNNN el número de incremento que empieza con 1
-RubisNumRefModelDesc2=El año se incrementa en 1 SIN volver a 0 en el inicio de ejercicio.
-RubisNumRefModelDesc3=Defina el mes de inicio de ejercicio en configuración->empresa, ej: septiembre.
-RubisNumRefModelDesc4=En este ejemplo tendríamos el 1 de septiembre de 2007 un presupuesto llamado PR0800345
+DocModelAzurDescription=Modelo de presupuesto completo (logo...)
+DocModelJauneDescription=Modelo de presupuesto Jaune
+MarbreNumRefModelDesc=Devuelve el número bajo el formato PRyymm-nnnn donde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0

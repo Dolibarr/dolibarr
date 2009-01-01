@@ -1,0 +1,47 @@
+# Dolibarr language file - ca_ES - agenda
+Actions=Accions
+ActionsArea=Area d'accions (Esdeveniments i tasques)
+Agenda=Agenda
+Agendas=Agendes
+Calendar=Calendari
+Calendars=Calendaris
+AffectedTo=Afecta a
+DoneBy=Realitzat per
+Events=Esdeveniments
+ListOfActions=Llista d'esdeveniments
+Location=Localització
+SearchAnAction=Cercar una acció/tasca
+MenuToDoActions=Les accions incompletes
+MenuDoneActions=Les accions acabades
+MenuToDoMyActions=Les meves accions incompletes
+MenuDoneMyActions=Les meves accions acabades
+ListOfEvents=Llistat d'esdeveniments Dolibarr
+ActionsAskedBy=Accions registrades per
+ActionsToDoBy=Accions que afecten a
+ActionsDoneBy=Accions realitzades per
+AllMyActions=Totes les meves accions/tasques
+AllActions=Totes les accions/tasques
+ViewList=Veure llista
+ViewCal=Veure calendari
+ViewWithPredefinedFilters=Veure amb els filtres predefinits
+AutoActions=Inclusió automàtica a l'agenda
+AgendaAutoActionDesc=Definir els esdeveniments aquí per què voleu que Dolibarr creu automàticament una acció en l'ordre del dia. Si no està marcada (per defecte), es podran crear manualment.
+AgendaSetupOtherDesc=Aquesta pàgina us permet configurar altres paràmetres del mòdul agenda.
+ActionsEvents=Esdeveniments per a què Dolibarr crei una acció de forma automàtica
+PropalValidatedInDolibarr=Pressupost validat
+InvoiceValidatedInDolibarr=Factura validada
+OrderValidatedInDolibarr=Comanda validada
+NewCompanyToDolibarr=Tercer creat
+DateActionPlannedStart=Data d'inici prevista
+DateActionPlannedEnd=Data fi prevista
+DateActionDoneStart=Data real d'inici
+DateActionDoneEnd=Data real de finalització
+DateActionStart=Data d'inici
+DateActionEnd=Data finalització
+AgendaUrlOptions1=Podeu també afegir aquests paràmetres al filtre de sortida:
+AgendaUrlOptions2=<b>login =%s</b> per a restringir insercions a accions creades, que afectin o realitzades per l'usuari <b>%s</b>.
+AgendaUrlOptions3=<b>logina =%s</b> per a restringir insercions a accciones creades per l'usuari <b>%s</b>.
+AgendaUrlOptions4=<b>logint =%s</b> per a restringir insercions a accions que afectin a l'usuari <b>%s</b>.
+AgendaUrlOptions5=<b>logind= %s</b> per a restringir insercions a accions realitzades per l'usuari <b>%s</b>.
+AgendaShowBirthdayEvents=Mostra aniversari dels contactes
+AgendaHideBirthdayEvents=Amaga aniversari dels contacte

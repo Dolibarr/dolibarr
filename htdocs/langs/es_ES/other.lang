@@ -4,6 +4,8 @@
 
 
 
+
+
 ErrorPasswordDiffers=Las contraseñas no son identicas, vuelva a introducirlas
 ErrorForbidden=Acceso no autorizado.<br>Intenta acceder a una página, zona o función sin estar en una sesión autentificada o que no se autoriza para su cuenta de usuario.
 ErrorForbidden2=Los permisos para este usuario pueden ser asignados por el administrador Dolibarr mediante el menú %s-> %s.
@@ -92,7 +94,7 @@ AuthenticationDoesNotAllowSendNewPassword=El modo de autentificación de Dolibarr
 EnableGDLibraryDesc=Debe activar o instalar la librería GD en su PHP para poder activar esta opción
 EnablePhpAVModuleDesc=Debe instalar un módulo PHP compatible con su antivirus. (Clamav : php4-clamavlib ó php5-clamavlib)
 ProfIdShortDesc=<b>Prof Id %s</b> es una información dependiente del país del tercero.<br>Por ejemplo, para el país  <b>%s</b>, és el código <b>%s</b>.
-DolibarrDemo=
+DolibarrDemo=Demo de Dolibarr ERP/CRM
 Bookmark=bookmark
 Bookmarks=Bookmarks
 NewBookmark=Nueva bookmark
@@ -112,6 +114,8 @@ ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elegir si debe abrise la página 
 BookmarksManagement=Gestión de bookmarks
 ListOfBookmarks=Listado de bookmarks
 ##### Webcal #####
+
+
 LoginWebcal=Login Webcalendar
 ErrorWebcalLoginNotDefined=El login Webcalendar asociado a su usuario Dolibarr <b>%s</b> no está definido
 ErrorPhenixLoginNotDefined=El login Phenix asociado a su cuenta Dolibarrr <b>%s</b>  no está definido
@@ -134,6 +138,8 @@ MemberResiliatedInDolibarr=Miembro %s dado de baja en Dolibarr
 MemberDeletedInDolibarr=Miembro %s eliminado de Dolibarr
 MemberSubscriptionAddedInDolibarr=Subscripción del miembro % añadida en Dolibarr
 ##### Export #####
+
+
 
 
 

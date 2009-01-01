@@ -3,6 +3,7 @@
 
 
 
+
 CHARSET=ISO-8859-1
 InstallEasy=Hemos procurado que la instalación sea lo más simple posible, usted sólo tiene que seguir los pasos uno a uno.
 MiscellanousChecks=Comprobación de los prerequisitos
@@ -130,12 +131,13 @@ OrphelinsPaymentsDetectedByMethod=Pagos huérfanos detectados por el método %s
 RemoveItManuallyAndPressF5ToContinue=Suprimalo manualmente y pulse F5 para continuar.
 KeepDefaultValues=Está utilizando el asistente de instalación Doliwamp, los valores propuestos aquí están optimizados. Cambielos sólamente si está seguro de ello.
 FieldRenamed=Campo renombrado
-IfLoginDoesNotExistsCheckCreateUser=
-ErrorConnection=
+IfLoginDoesNotExistsCheckCreateUser=Si el login aún no existe, debe seleccionar la opción "Creación del usuario"
+ErrorConnection=El servidor "<b>%s</b>", base de datos "<b>%s</b>", login "<b>%s</b>", o la contraseña de la base de datos pueden ser incorrectos o la versión de PHP muy vieja en comparación con la versión de la base de datos.
 
 #########
 # upgrade
 #########
+
 
 
 
@@ -157,6 +159,7 @@ MigrationUpdateFailed=La actualización ha fallado
 
 
 
+
 MigrationPaymentsUpdate=Actualización de los pagos (vínculo n-n pagos-facturas)
 MigrationPaymentsNumberToUpdate=%s pago(s) a actualizar
 MigrationProcessPaymentUpdate=Actualización pago(s) %s
@@ -164,6 +167,7 @@ MigrationPaymentsNothingToUpdate=No hay más pagos huérfanos que deban corregirse
 MigrationPaymentsNothingUpdatable=Ningún  pago huérfano corregible.
 
 # Contracts Update
+
 
 
 
@@ -183,6 +187,7 @@ MigrationContractsFieldDontExist=Los campos fk_facture no existen ya. No hay ope
 
 
 
+
 MigrationContractsEmptyDatesUpdate=Actualización de las fechas de contratos no indicadas
 MigrationContractsEmptyDatesUpdateSuccess=Ok para fecha de contrato
 MigrationContractsEmptyDatesNothingToUpdate=No hay más  próximas fechas de contratos.
@@ -190,6 +195,7 @@ MigrationContractsEmptyCreationDatesUpdateSuccess=OK para la fecha de creación
 MigrationContractsEmptyCreationDatesNothingToUpdate=No hay más próximas fechas de creación.
 
 # Contracts Invalid Dates Update
+
 
 
 
@@ -208,11 +214,13 @@ MigrationContractsInvalidDatesNothingToUpdate=No hay más de contratos que deban 
 
 
 
+
 MigrationContractsIncoherentCreationDateUpdate=Actualización de las fechas de creación de contrato que tienen un valor incoherente
 MigrationContractsIncoherentCreationDateUpdateSuccess=Ok
 MigrationContractsIncoherentCreationDateNothingToUpdate=No hay más fechas de contratos.
 
 # Reopening Contracts
+
 
 
 
@@ -225,6 +233,7 @@ MigrationReopenedContractsNumber=%s contratos modificados
 MigrationReopeningContractsNothingToUpdate=No hay más contratos que deban reabrirse.
 
 # Migration transfert
+
 
 
 

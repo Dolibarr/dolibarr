@@ -1,0 +1,24 @@
+# Dolibarr language file - ca_ES - donations
+Donation=Subvenció
+Donations=Subvencions
+Donor=Donant
+Donors=Donants
+AddDonation=Afegir subvenció
+NewDonation=Nova subvenció
+DonationPromise=Promesa de subvenció
+PromisesNotValid=Promeses no validades
+PromisesValid=Promeses validades
+DonationsPayed=Subvencions pagades
+DonationsReceived=Subvencions ingressades
+PublicDonation=Subvenció pública
+DonationsNumber=Número de subvencions
+DonationsArea=Àrea de subvencions
+DonationStatusPromiseNotValidated=Promesa no validada
+DonationStatusPromiseValidated=Promesa validada
+DonationStatusPayed=Subvenció pagada
+DonationStatusPromiseNotValidatedShort=No validada
+DonationStatusPromiseValidatedShort=Validada
+DonationStatusPayedShort=Pagada
+ValidPromess=Validar promesa
+BuildDonationReceipt=Crear rebut
+DonationsModels=Model de document de recepció de subvenció

@@ -2,6 +2,7 @@
 
 
 
+
 WarehouseCard=Ficha almacen
 Warehouse=Almacen
 NewWarehouse=Nuevo almacen o zona de almacenaje
@@ -41,10 +42,13 @@ EnhancedValueOfWarehouses=Valor de stocks
 UserWarehouseAutoCreate=Crear existencias automáticamente en la creación de un usuario
 QtyDispatched=Cantidad desglosada
 OrderDispatch=Desglose pedido
-RuleForStockManagement=Regla de gestión de stock
-DeStockReStockOnBill=Decrementar/Incrementar los stocks físicos sobre las facturas/abonos (atención, en esta versión, todavía se realiza el ajuste sobre el almacén número 1)
-DeStockReStockOnValidateOrder=Decrementar/Incrementar los stocks físicos sobre los pedidos (atención, en esta versión, todavía se realiza el ajuste sobre el almacén número 1)
-DeStockReStockOnShipment=Decrementar/Incrementar los stocks físicos sobre los envíos (recomendado)
+RuleForStockManagementDecrease=Regla de gestión de decrementos de stock
+RuleForStockManagementIncrease=Regla de gestión de incrementos de stock
+DeStockOnBill=Decrementar los stocks físicos sobre las facturas/abonos (atención, en esta versión, todavía se realiza el ajuste sobre el almacén número 1)
+DeStockOnValidateOrder=Decrementar los stocks físicos sobre los pedidos (atención, en esta versión, todavía se realiza el ajuste sobre el almacén número 1)
+DeStockOnShipment=Decrementar los stocks físicos sobre los envíos (recomendado)
+ReStockOnBill=Incrementar los stocks físicos sobre las facturas/abonos (atención, en esta versión, todavía se realiza el ajuste sobre el almacén número 1)
+ReStockOnValidateOrder=Incrementar los stocks físicos sobre los pedidos (atención, en esta versión, todavía se realiza el ajuste sobre el almacén número 1)
 StockDiffPhysicTeoric=Motivo de la diferencia entre valores físicos y teóricos
 StockLimitShort=Límite máximo
 StockLimit=Límite máximo existencias
@@ -59,3 +63,4 @@ StockUpShort=Stock max.
 IdWarehouse=Id. almacén
 DescWareHouse=Descripción almacén
 LieuWareHouse=Localización almacén
+WarehousesAndProducts=Almacenes y productos

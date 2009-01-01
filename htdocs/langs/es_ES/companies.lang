@@ -6,6 +6,7 @@
 
 
 
+
 ErrorBadEMail=e-mail %s no correcto
 ErrorCompanyNameAlreadyExists=El nombre de la emprea %s ya existe. Indique otro.
 ErrorPrefixAlreadyExists=El prefijo %s ya existe. Indique otro.
@@ -69,7 +70,6 @@ Fax=Fax
 Zip=Código postal
 Town=Población
 Web=Web
-Birthday=Fecha de nacimiento
 VATIsUsed=Sujeto a IVA
 VATIsNotUsed=No sujeto a IVA
 ThirdPartyEMail=%s
@@ -83,6 +83,7 @@ ProfId2Short=Prof. id 2
 ProfId3Short=Prof. id 3
 ProfId4Short=Prof. id 4
 ##### Professionnal ID #####
+
 
 
 
@@ -213,6 +214,8 @@ ContactPrivate=Privado
 ContactPublic=Compartido
 ContactVisibility=Visibilidad
 OthersNotLinkedToThirdParty=Otros, no enlazado a un tercero
+ProspectStatus=Estado cliente potencial
+PL_NONE=Ninguno
 PL_UNKNOWN=Desconocido
 PL_LOW=Bajo
 PL_MEDIUM=Medio
@@ -274,6 +277,7 @@ FiscalYearInformation=Información del año fiscal
 FiscalMonthStart=Mes de inicio de ejercicio
 
 # Tigre
+
 
 
 

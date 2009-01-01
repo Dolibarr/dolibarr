@@ -1,0 +1,18 @@
+# Dolibarr language file - ca_ES - trips
+Trip=Desplaçament
+Trips=Desplaçaments
+TripsAndExpenses=Desplaçaments i despeses
+TripId=Id desplaçament
+TripCard=Fitxa desplaçament
+AddTrip=Afegir desplaçament
+ListOfTrips=Llistat de desplaçaments
+ListOfFees=Llistat de taxes
+NewTrip=Nou desplaçament
+CompanyVisited=Empresa/institució visitada
+Kilometers=Quilòmetres
+FeesKilometersOrAmout=Import o quilòmetres
+DeleteTrip=Eliminar desplaçament
+ConfirmDeleteTrip=Esteu segur de voler eliminar aquest desplaçament?
+TF_OTHER=Altre
+TF_LUNCH=Dieta
+TF_TRIP=Viatge

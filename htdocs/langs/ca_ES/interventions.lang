@@ -1,0 +1,44 @@
+# Dolibarr language file - ca_ES - interventions
+Intervention=Intervenció
+Interventions=Intervencions
+InterventionCard=Fitxa intervenció
+NewIntervention=Nova itervenció
+AddIntervention=Crear intervenció
+ListOfInterventions=Llista d'intervencions
+EditIntervention=Editar
+LastInterventions=Les %s darreres intervencions
+AllInterventions=Totes les intervencions
+CreateDraftIntervention=Crear esborrany
+CustomerDoesNotHavePrefix=El client no té prefix de definit
+InterventionContact=Contacte intervenció
+DeleteIntervention=Eliminar intervenció
+ValidateIntervention=Validar intervenció
+DeleteInterventionLine=Eliminar línia d'intervenció
+ConfirmDeleteIntervention=Esteu segur de voler eliminar aquesta intervenció?
+ConfirmValidateIntervention=Esteu segur de voler validar aquesta intervenció?
+ConfirmModifyIntervention=Esteu segur de voler modificar aquesta intervenció?
+ConfirmDeleteInterventionLine=Esteu segur de voler eliminar aquesta línia?
+NameAndSignatureOfInternalContact=Nom i signatura del participant:
+NameAndSignatureOfExternalContact=Nom i signatura del client:
+InterventionCardsAndInterventionLines=Fitxes i línies d'intervenció
+InterId=Id intervenció
+InterRef=Ref. intervenció
+InterDateCreation=Data de creació
+InterDuration=Duració total
+InterStatus=Estat
+InterNote=Descripció
+InterLine=Línia intervenció
+InterLineId=Id línea detall
+InterLineDate=Data línea
+InterLineDuration=Duració línea
+InterLineDesc=Descripció linea
+##### Types de contacts #####
+TypeContact_fichinter_internal_INTERREPFOLL=Responsable seguiment de la intervenció
+TypeContact_fichinter_internal_INTERVENING=Interventor
+TypeContact_fichinter_external_BILLING=Contacte client facturació intevenció
+TypeContact_fichinter_external_CUSTOMER=Contacte client seguiment intervenció
+# Modele numérotation
+ArcticNumRefModelDesc1=Model de numeració genèric
+ArcticNumRefModelError=Activació impossible
+PacificNumRefModelDesc1=Retorna el número amb el format %syymm-nnnn on yy és l'any, mm. el mes i nnnn un comptador seqüencial sense ruptura i sense quedar a 0
+PacificNumRefModelError=Una factura que comença per # $$syymm existeix en base i és incompatible amb aquesta numeració. Elemínela o renombrela per activar aquest mòdul.

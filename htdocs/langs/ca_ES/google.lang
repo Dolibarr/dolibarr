@@ -1,0 +1,6 @@
+# Dolibarr language file - ca_ES - google
+GoogleSetup=Configuració integració amb Google tools
+GoogleSetupHelp=Ajuda a definir els paràmetres que es troben amb la URL de configuració de google %s
+GoogleAgendaNb=Agenda nº %s 
+GoogleIDAgenda=ID Agenda
+GoogleNbOfAgenda=Número de agendes

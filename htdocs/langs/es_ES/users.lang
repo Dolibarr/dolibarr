@@ -6,6 +6,7 @@
 
 
 
+
 UserCard=Ficha usuario
 ContactCard=Ficha contacto
 GroupCard=Ficha grupo
@@ -44,8 +45,6 @@ NewUser=Nuevo usuario
 CreateUser=Crear usuario
 SearchAGroup=Buscar un grupo
 SearchAUser=Buscar un usuario
-ErrorLoginAlreadyExists=
-ErrorGroupAlreadyExists=
 ErrorFailedToSendPassword=Error en el envío de la contraseña
 LoginNotDefined=El usuario no está definido
 NameNotDefined=el nombre no está definido
@@ -102,3 +101,5 @@ UserDeleted=Usuario %s eliminado
 NewGroupCreated=Grupo %s creado
 GroupModified=Grupo %s modificado
 GroupDeleted=Grupo %s eliminado
+ConfirmCreateContact=¿Está seguro de querer crear una cuenta Dolibarr para este contacto?
+LoginToCreate=Login a crear

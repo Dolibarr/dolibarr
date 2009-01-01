@@ -7,6 +7,7 @@
 
 
 
+
 ContractsArea=Area contratos
 ListOfContracts=Listado de contratos
 LastContracts=Los %s últimos contratos modificados
@@ -26,6 +27,7 @@ ServicesLegend=Leyenda para los servicios
 Contracts=Contratos
 Contract=Contrato
 ContractContacts=Contactos contrato
+NoContracts=Sin contratos
 MenuServices=Servicios
 MenuInactiveServices=Servicios inactivos
 MenuRunningServices=Servicios activos
@@ -77,7 +79,11 @@ ServiceStatus=Estado del servicio
 DraftContracts=Contractos borrador
 CloseRefusedBecauseOneServiceActive=El contrato no puede ser cerrado ya que contiene al menos un servicio abierto.
 CloseAllContracts=cerrar todos los contratos
+MoveToAnotherContract=Mover el servicio a otro contrato de este tercero.
+ConfirmMoveToAnotherContract=He elegido el contrato y confirmo el cambio de servicio en el presente contrato.
+ConfirmMoveToAnotherContractQuestion=Elija cualquier otro contrato del mismo tercero, ¿desea mover este servicio?
 ##### Types de contacts #####
+
 
 
 
