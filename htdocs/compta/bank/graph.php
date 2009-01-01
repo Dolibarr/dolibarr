@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,7 +187,13 @@ if ($_GET["account"] || $_GET["ref"])
 	
 				$i++;
 			}
-		
+			// If we are the first of month, only $datas[0] is defined to an int value, others are defined to ""
+			// and this make artichow report a warning.
+			//$datas[0]=100; KO			
+			//$datas[0]=100; $datas[1]=90; OK			
+			//var_dump($datas);
+			//exit;			
+			
 			// Fabrication tableau 1
 			$file= $conf->banque->dir_temp."/balance".$account."-".$year.$month.".png";
 			$title=$langs->transnoentities("Balance").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
@@ -197,6 +203,7 @@ if ($_GET["account"] || $_GET["ref"])
 				if ($acct->min_desired) $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i],$datamin[$i]);
 				else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
 		    }
+		    
 			$px = new DolGraph();
 		    $px->SetData($graph_datas);
 		    if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
@@ -212,8 +219,8 @@ if ($_GET["account"] || $_GET["ref"])
 			$px->setBgColorGrid(array(255,255,255));
 			$px->SetHorizTickIncrement(1);
 			$px->SetPrecisionY(0);
-		    $px->draw($file);
-			
+			$px->draw($file);
+
 			unset($graph_datas);
 			unset($px);
 			unset($datas);
@@ -636,6 +643,7 @@ if ($_GET["account"] || $_GET["ref"])
 		}
 	}
 	
+	
 	// Onglets
 	$head=bank_prepare_head($acct);
 	dolibarr_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0);
@@ -647,7 +655,8 @@ if ($_GET["account"] || $_GET["ref"])
 	// Ref
 	print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
-	print $form->showrefnav($acct,'ref','',1,'ref');
+	$moreparam='&month='.$month.'&year='.$year.($mode=='showalltime'?'&mode=showalltime':'');
+	print $form->showrefnav($acct,'ref','',1,'ref','ref','',$moreparam);
 	print '</td></tr>';
 
 	// Label
@@ -663,6 +672,15 @@ if ($_GET["account"] || $_GET["ref"])
 
 	if ($mode == 'standard')
 	{
+		$prevyear=$year;$nextyear=$year;
+		$prevmonth=$month-1;$nextmonth=$month+1;
+		if ($prevmonth < 1)  { $prevmonth=12; $prevyear--; }
+		if ($nextmonth > 12) { $nextmonth=1; $nextyear++; }
+		
+		// For month
+		$lien="<a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year=".$prevyear."&month=".$prevmonth."'>".img_previous()."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year=".$nextyear."&month=".$nextmonth."'>".img_next()."</a>";
+		print '<tr><td align="right">'.$lien.'</td></tr>';
+		
 		print '<tr><td align="center">';
 	    $file = "movement".$account."-".$year.$month.".png";
 	    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
@@ -672,6 +690,11 @@ if ($_GET["account"] || $_GET["ref"])
 		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
 	    print '</td></tr>';
 	
+		// For year
+	    $prevyear=$year-1;$nextyear=$year+1;
+	    $lien="<a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year=".($prevyear)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year=".($nextyear)."'>".img_next()."</a>";
+		print '<tr><td align="right">'.$lien.'</td></tr>';
+		
 		print '<tr><td align="center">';
 	    $file = "movement".$account."-".$year.".png";
 	    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
@@ -681,30 +704,35 @@ if ($_GET["account"] || $_GET["ref"])
 	    $file = "balance".$account."-".$year.".png";
 	    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
 	    print '</td></tr>';
-	    
-	    print '<tr><td align="center"><br>';
-	    print '<a href="'.$_SERVER["PHP_SELF"].'?mode=showalltime&account='.$account.'">';
-	    print $langs->trans("ShowAllTimeBalance");
-	    print '</a>';
-	    print '</td></tr>';
 	}    
-    
-    // All time
+
 	if ($mode == 'showalltime')
 	{
     	print '<tr><td align="center">';
 	    $file = "balance".$account.".png";
     	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
     	print '</td></tr>';
-
+	}
+		
+    // Switch All time/Not all time
+	if ($mode == 'showalltime')
+	{
 	    print '<tr><td align="center"><br>';
 	    print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'">';
 	    print $langs->trans("GoBack");
 	    print '</a>';
 	    print '</td></tr>';
 	}
-
-    print '</table>';
+	else
+	{
+	    print '<tr><td align="center"><br>';
+	    print '<a href="'.$_SERVER["PHP_SELF"].'?mode=showalltime&account='.$account.'">';
+	    print $langs->trans("ShowAllTimeBalance");
+	    print '</a>';
+	    print '</td></tr>';
+	}
+	
+	print '</table>';
     
 	print "\n</div>\n";
     

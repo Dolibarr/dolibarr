@@ -22,7 +22,7 @@
  *		\ingroup     banque
  *		\brief       Page reporting mensuel Entr�es/Sorties d'un compte bancaire
  *		\version     $Id$
-*/
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
@@ -33,18 +33,18 @@ $year_start=isset($_GET["year_start"])?$_GET["year_start"]:$_POST["year_start"];
 $year_current = strftime("%Y",time());
 if (! $year_start)
 {
-  $year_start = $year_current - 2;
-  $year_end = $year_current;
+	$year_start = $year_current - 2;
+	$year_end = $year_current;
 }
 else
 {
-  $year_end=$year_start+2;   
+	$year_end=$year_start+2;
 }
 
 // S�curit� acc�s client
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
-  $socid = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 
@@ -55,11 +55,11 @@ $form = new Form($db);
 
 // R�cup�re info du compte
 $acct = new Account($db);
-if ($_GET["account"]) 
+if ($_GET["account"])
 {
 	$result=$acct->fetch($_GET["account"]);
 }
-if ($_GET["ref"]) 
+if ($_GET["ref"])
 {
 	$result=$acct->fetch(0,$_GET["ref"]);
 	$_GET["account"]=$acct->id;
@@ -120,7 +120,7 @@ $head=bank_prepare_head($acct);
 dolibarr_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0);
 
 $title=$langs->trans("FinancialAccount")." : ".$acct->label;
-$lien=($year_start?"<a href='annuel.php?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='annuel.php?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
+$lien=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
 
 print '<table class="border" width="100%">';
 
@@ -145,50 +145,50 @@ print '<tr class="liste_titre"><td rowspan=2>'.$langs->trans("Month").'</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="center" width="20%" colspan="2">'.$annee.'</td>';
+	print '<td align="center" width="20%" colspan="2">'.$annee.'</td>';
 }
 print '</tr>';
 print '<tr class="liste_titre">';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
-{ 
-  print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td>';
+{
+	print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td>';
 }
 print '</tr>';
 
 $var=true;
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'>';
-    print "<td>".dolibarr_print_date(dolibarr_mktime(1,1,1,$mois,1,2000),"%B")."</td>";
-    for ($annee = $year_start ; $annee <= $year_end ; $annee++)
-    {
-        $case = sprintf("%04s-%02s",$annee,$mois);
-    	
-        print '<td align="right" width="10%">&nbsp;';
-        if ($decaiss[$case]>0)
-        {
-            print price($decaiss[$case]);
-            $totsorties[$annee]+=$decaiss[$case];
-        }
-        print "</td>";
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print "<td>".dolibarr_print_date(dolibarr_mktime(1,1,1,$mois,1,2000),"%B")."</td>";
+	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+	{
+		$case = sprintf("%04s-%02s",$annee,$mois);
+		 
+		print '<td align="right" width="10%">&nbsp;';
+		if ($decaiss[$case]>0)
+		{
+			print price($decaiss[$case]);
+			$totsorties[$annee]+=$decaiss[$case];
+		}
+		print "</td>";
 
-        print '<td align="right" width="10%">&nbsp;';
-        if ($encaiss[$case]>0)
-        {
-            print price($encaiss[$case]);
-            $totentrees[$annee]+=$encaiss[$case];
-        }
-        print "</td>";
-    }
-    print '</tr>';
+		print '<td align="right" width="10%">&nbsp;';
+		if ($encaiss[$case]>0)
+		{
+			print price($encaiss[$case]);
+			$totentrees[$annee]+=$encaiss[$case];
+		}
+		print "</td>";
+	}
+	print '</tr>';
 }
 
 // Total debit-credit
 print '<tr class="liste_total"><td><b>'.$langs->trans("Total")."</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="right"><b>'.price($totsorties[$annee]).'</b></td><td align="right"><b>'.price($totentrees[$annee]).'</b></td>';
+	print '<td align="right"><b>'.price($totsorties[$annee]).'</b></td><td align="right"><b>'.price($totentrees[$annee]).'</b></td>';
 }
 print "</tr>\n";
 
@@ -197,7 +197,7 @@ print '<tr><td>&nbsp;</td>';
 $nbcol=0;
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-    $nbcol+=2;
+	$nbcol+=2;
 }
 print "</tr>\n";
 
@@ -209,11 +209,11 @@ if ($_GET["account"]) { $sql .= " WHERE fk_account = ".$_GET["account"]; }
 $resql=$db->query($sql);
 if ($resql)
 {
-    $obj = $db->fetch_object($resql);
-    if ($obj) $balance=$obj->total;
+	$obj = $db->fetch_object($resql);
+	if ($obj) $balance=$obj->total;
 }
 else {
-    dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 print '<tr class="liste_total"><td><b>'.$langs->trans("CurrentBalance")."</b></td>";
 print '<td colspan="'.($nbcol).'" align="right">'.price($balance).'</td>';
