@@ -940,7 +940,7 @@ else
 		else
 			if ($user->rights->fournisseur->facture->creer)
 			{
-				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=copy&amp;socid='.$fac->socid.'">'.$langs->trans('Copy').'</a>';
+				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=copy&amp;socid='.$fac->socid.'">'.$langs->trans('ToClone').'</a>';
 			}
 
 		if ($_GET['action'] != 'edit' && $fac->statut == 0 && $user->rights->fournisseur->facture->supprimer)
