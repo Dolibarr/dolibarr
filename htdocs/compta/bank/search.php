@@ -72,7 +72,7 @@ else $viewline = 50;
 
 $sql = "SELECT b.rowid, b.dateo as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq,";
 $sql.= " b.fk_account, b.fk_type,";
-$sql.= " ba.rowid as bankid, ba.label as bankref,";
+$sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.label as labelurl, bu.url_id";
 $sql.= " FROM (";
 if (! empty($_REQUEST["bid"])) $sql.= MAIN_DB_PREFIX."bank_class as l, ";
@@ -133,8 +133,9 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('DateOperation'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('DateOperationShort'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="left"',$sortfield,$sortorder);
 	print '<td class="liste_titre">'.$langs->trans("Description").'</td>';
+	print '<td class="liste_titre">'.$langs->trans("ThirdParty").'</td>';
 	print '<td class="liste_titre" align="right">'.$langs->trans("Debit").'</td>';
 	print '<td class="liste_titre" align="right">'.$langs->trans("Credit").'</td>';
 	print '<td class="liste_titre" align="center">'.$langs->trans("Type").'</td>';
@@ -146,8 +147,9 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="description" size="40" value="'.$description.'">';
+	print '<input type="text" class="flat" name="description" size="32" value="'.$description.'">';
 	print '</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
 	print '<input type="text" class="flat" name="debit" size="6" value="'.$debit.'">';
 	print '</td>';
@@ -188,6 +190,21 @@ if ($resql)
 		else print dolibarr_trunc($objp->label,40);
 		print "</a>&nbsp;";
 
+		// Third party
+		print "<td>";
+		if ($objp->url_id)
+		{
+			$companystatic->id=$objp->url_id;
+			$companystatic->nom=$objp->labelurl;
+			print $companystatic->getNomUrl(1);
+		}
+		else
+		{
+			print '&nbsp;';
+		}
+		print '</td>';
+		
+		// Debit/Credit
 		if ($objp->amount < 0)
 		{
 			print "<td align=\"right\">".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
@@ -197,11 +214,12 @@ if ($resql)
 			print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</td>\n";
 		}
 
+		// Payment type
 		print "<td align=\"center\">".$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle')."</td>\n";
 
 		// Bank account
 		print "<td align=\"left\">";
-		$bankaccountstatic->id=$objp->bankid;
+		$bankaccountstatic->id=$objp->url_id;
 		$bankaccountstatic->label=$objp->bankref;
 		print $bankaccountstatic->getNomUrl(1);
 		print "</td>\n";
