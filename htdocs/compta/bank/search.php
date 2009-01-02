@@ -147,7 +147,7 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="description" size="32" value="'.$description.'">';
+	print '<input type="text" class="flat" name="description" size="28" value="'.$description.'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
@@ -218,7 +218,7 @@ if ($resql)
 		print "<td align=\"center\">".$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle')."</td>\n";
 
 		// Bank account
-		print "<td align=\"left\">";
+		print '<td align="left" nowrap="nowrap">';
 		$bankaccountstatic->id=$objp->url_id;
 		$bankaccountstatic->label=$objp->bankref;
 		print $bankaccountstatic->getNomUrl(1);

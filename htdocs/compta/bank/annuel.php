@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 if (!$user->rights->banque->lire) accessforbidden();
 
@@ -55,7 +56,7 @@ $form = new Form($db);
 
 // Get account informations
 $acct = new Account($db);
-if ($_GET["account"])
+if ($_GET["account"] && ! eregi(',',$_GET["account"]))	// if for a particular account and not a list
 {
 	$result=$acct->fetch($_GET["account"]);
 }
@@ -72,7 +73,7 @@ if ($_GET["ref"])
 $sql = "SELECT sum(f.amount), date_format(f.dateo,'%Y-%m') as dm";
 $sql .= " FROM llx_bank as f";
 $sql .= " WHERE f.amount >= 0";
-if ($_GET["account"]) { $sql .= " AND fk_account = ".$_GET["account"]; }
+if ($_GET["account"]) { $sql .= " AND fk_account in (".$_GET["account"].")"; }
 $sql .= " GROUP BY dm";
 
 $resql=$db->query($sql);
@@ -95,7 +96,7 @@ else
 $sql = "SELECT sum(f.amount), date_format(f.dateo,'%Y-%m') as dm";
 $sql .= " FROM llx_bank as f";
 $sql .= " WHERE f.amount <= 0";
-if ($_GET["account"]) { $sql .= " AND fk_account = ".$_GET["account"]; }
+if ($_GET["account"]) { $sql .= " AND fk_account in (".$_GET["account"].")"; }
 $sql .= " GROUP BY dm";
 $resql=$db->query($sql);
 if ($resql)
@@ -129,7 +130,22 @@ print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
 if ($_GET["account"])
 {
-	print $form->showrefnav($acct,'ref','',1,'ref');
+	if (! eregi(',',$_GET["account"]))
+	{
+		print $form->showrefnav($acct,'ref','',1,'ref');
+	}
+	else
+	{
+		$bankaccount=new Account($db);
+		$listid=split(',',$_GET["account"]);
+		foreach($listid as $key => $id)
+		{
+			$bankaccount->fetch($id);
+			$bankaccount->label=$bankaccount->ref;
+			print $bankaccount->getNomUrl(1); 
+			if ($key < (sizeof($listid)-1)) print ', ';
+		}
+	}
 }
 else
 {
@@ -221,7 +237,7 @@ print "</tr>\n";
 $balance=0;
 $sql = "SELECT sum(f.amount) as total";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as f";
-if ($_GET["account"]) { $sql .= " WHERE fk_account = ".$_GET["account"]; }
+if ($_GET["account"]) { $sql .= " WHERE fk_account in (".$_GET["account"].")"; }
 $resql=$db->query($sql);
 if ($resql)
 {

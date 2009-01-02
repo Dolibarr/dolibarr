@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/compta/bank/index.php
-        \ingroup    banque
-        \brief      Page accueil banque
-        \version    $Id$
-*/
+ *       \file       htdocs/compta/bank/index.php
+ *       \ingroup    banque
+ *       \brief      Page accueil banque
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 $langs->load("banks");
 
 if (!$user->rights->banque->lire)
-  accessforbidden();
+accessforbidden();
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:'';
 
@@ -58,27 +58,27 @@ $accounts = array();
 $sql  = "SELECT rowid, courant, rappro";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
 if ($statut != 'all') {
-    $sql .= " WHERE clos = 0";
+	$sql .= " WHERE clos = 0";
 }
-$sql .= " ORDER BY label";
+$sql .= $db->order('label', 'ASC');
 
 $resql = $db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0; 
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object($resql);
-      $accounts[$objp->rowid] = $objp->courant;
-      $i++;
-    }
-  $db->free($resql);
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($resql);
+		$accounts[$objp->rowid] = $objp->courant;
+		$i++;
+	}
+	$db->free($resql);
 }
 
 
 /*
- * Comptes courants
+ * Comptes courants (courant = 1)
  */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CurrentAccounts").'</td>';
@@ -106,7 +106,7 @@ foreach ($accounts as $key=>$type)
 		print '<td>'.$acc->bank.'</td>';
 		print '<td>'.$acc->number.'</td>';
 		print '<td align="center">';
-		if ($acc->rappro) 
+		if ($acc->rappro)
 		{
 			$result=$acc->load_board($user,$acc->id);
 			print $acc->nbtodo;
@@ -132,7 +132,52 @@ print '<tr><td colspan="5">&nbsp;</td></tr>';
 
 
 /*
- * Comptes placements
+ * Comptes caisse/liquide (courant = 2)
+ */
+print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CashAccounts").'</td><td width="20%">&nbsp;</td>';
+print '<td align="left">&nbsp;</td>';
+print '<td align="left" width="100">&nbsp;</td>';
+print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
+print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
+print "</tr>\n";
+
+$total = 0;
+$var=true;
+foreach ($accounts as $key=>$type)
+{
+	if ($type == 2)
+	{
+		$acc = new Account($db);
+		$acc->fetch($key);
+
+		$var = !$var;
+		$solde = $acc->solde(1);
+
+		print "<tr ".$bc[$var].">";
+		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
+		print '<td>'.$acc->bank.'</td>';
+		print '<td>&nbsp;</td>';
+		print '<td>&nbsp;</td>';
+		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
+		print '<td align="right">';
+		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
+		print '</td>';
+		print '</tr>';
+
+		$total += $solde;
+	}
+}
+
+// Total
+print '<tr class="liste_total"><td colspan="4">&nbsp;</td><td align="center"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td></tr>';
+
+
+
+print '<tr><td colspan="5">&nbsp;</td></tr>';
+
+
+/*
+ * Comptes placements (courant = 0)
  */
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("SavingAccounts").'</td>';
@@ -160,7 +205,7 @@ foreach ($accounts as $key=>$type)
 		print '<td>'.$acc->bank.'</td>';
 		print '<td>'.$acc->number.'</td>';
 		print '<td align="center">';
-		if ($acc->rappro) 
+		if ($acc->rappro)
 		{
 			$result=$acc->load_board($user,$acc->id);
 			print $acc->nbtodo;
@@ -181,49 +226,6 @@ foreach ($accounts as $key=>$type)
 // Total
 print '<tr class="liste_total"><td colspan="4">&nbsp;</td><td align="center"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td></tr>';
 
-
-print '<tr><td colspan="5">&nbsp;</td></tr>';
-
-
-/*
- * Comptes caisse/liquide
- */
-print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CashAccounts").'</td><td width="20%">&nbsp;</td>';
-print '<td align="left">&nbsp;</td>';
-print '<td align="left" width="100">&nbsp;</td>';
-print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
-print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
-print "</tr>\n";
-
-$total = 0;
-$var=true;
-foreach ($accounts as $key=>$type)
-{
-    if ($type == 2)
-    {
-        $acc = new Account($db);
-        $acc->fetch($key);
-
-        $var = !$var;
-        $solde = $acc->solde(1);
-
-        print "<tr ".$bc[$var].">";
-		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
-        print '<td>'.$acc->bank.'</td>';
-        print '<td>&nbsp;</td>';
-        print '<td>&nbsp;</td>';
-        print '<td align="center">'.$acc->getLibStatut(2).'</td>';
-		print '<td align="right">';
-		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
-		print '</td>';
-        print '</tr>';
-
-        $total += $solde;
-    }
-}
-
-// Total
-print '<tr class="liste_total"><td colspan="4">&nbsp;</td><td align="center"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td></tr>';
 
 
 print "</table>";

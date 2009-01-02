@@ -18,14 +18,15 @@
  */
 
 /**
- \file       htdocs/compta/bank/graph.php
- \ingroup    banque
- \brief      Page graph des transactions bancaires
- \version    $Id$
+ *	\file       htdocs/compta/bank/graph.php
+ *	\ingroup    banque
+ *	\brief      Page graph des transactions bancaires
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 $langs->load("banks");
@@ -33,12 +34,16 @@ $langs->load("banks");
 if (!$user->rights->banque->lire)
 accessforbidden();
 
-$account = $_GET["account"];
+$account=$_GET["account"];
 $mode='standard';
 if (isset($_GET["mode"]) && $_GET["mode"] == 'showalltime') $mode='showalltime';
 $mesg = '';
 $error=0;
 
+
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -57,7 +62,7 @@ if (! empty($_GET["month"])) $month=sprintf("%02d",$_GET["month"]);
 
 
 $acct = new Account($db);
-if ($_GET["account"])
+if ($_GET["account"] && ! eregi(',',$_GET["account"]))	// if for a particular account and not a list
 {
 	$result=$acct->fetch($_GET["account"]);
 }
@@ -84,7 +89,7 @@ else
 	// Calcul de $min et $max
 	$sql = "SELECT min(".$db->pdate("datev")."), max(".$db->pdate("datev").")";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-	if ($account) $sql.= " WHERE fk_account = ".$account;
+	if ($account) $sql.= " WHERE fk_account in (".$account.")";
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -111,7 +116,7 @@ else
 		$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE date_format(datev,'%Y%m') = '".$year.$month."'";
-		if ($account) $sql .= " AND fk_account = ".$account;
+		if ($account) $sql .= " AND fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -136,7 +141,7 @@ else
 		$sql = "SELECT SUM(amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE datev < '".$year."-".sprintf("%02s",$month)."-01'";
-		if ($account) $sql .= " AND fk_account = ".$account;
+		if ($account) $sql .= " AND fk_account in (".$account.")";
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -237,7 +242,7 @@ else
 		$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE date_format(datev,'%Y') = '".$year."'";
-		if ($account) $sql .= " AND fk_account = ".$account;
+		if ($account) $sql .= " AND fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -262,7 +267,7 @@ else
 		$sql = "SELECT sum(amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE datev < '".$year."-01-01'";
-		if ($account) $sql .= " AND fk_account = ".$account;
+		if ($account) $sql .= " AND fk_account in (".$account.")";
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -355,7 +360,7 @@ else
 		$amounts = array();
 		$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		if ($account) $sql .= " WHERE fk_account = ".$account;
+		if ($account) $sql .= " WHERE fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -458,7 +463,7 @@ else
 		$sql .= " WHERE datev >= '".$year."-".$month."-01 00:00:00'";
 		$sql .= " AND datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
 		$sql .= " AND amount > 0";
-		if ($account) $sql .= " AND fk_account = ".$account;
+		if ($account) $sql .= " AND fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%d')";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -484,7 +489,7 @@ else
 		$sql .= " WHERE datev >= '".$year."-".$month."-01 00:00:00'";
 		$sql .= " AND datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
 		$sql .= " AND amount < 0";
-		if ($account) $sql .= " AND fk_account = ".$account;
+		if ($account) $sql .= " AND fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%d')";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -556,7 +561,7 @@ else
 		$sql .= " WHERE datev >= '".$year."-01-01 00:00:00'";
 		$sql .= " AND datev <= '".$year."-12-31 23:59:59'";
 		$sql .= " AND amount > 0";
-		if ($account) $sql .= " AND fk_account = ".$account;
+		if ($account) $sql .= " AND fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%m');";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -580,8 +585,8 @@ else
 		$sql .= " WHERE datev >= '".$year."-01-01 00:00:00'";
 		$sql .= " AND datev <= '".$year."-12-31 23:59:59'";
 		$sql .= " AND amount < 0";
-		if ($account) $sql .= " AND fk_account = ".$account;
-		$sql .= " GROUP BY date_format(datev,'%m');";
+		if ($account) $sql .= " AND fk_account in (".$account.")";
+		$sql .= " GROUP BY date_format(datev,'%m')";
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -655,8 +660,23 @@ print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
 if ($account)
 {
-	$moreparam='&month='.$month.'&year='.$year.($mode=='showalltime'?'&mode=showalltime':'');
-	print $form->showrefnav($acct,'ref','',1,'ref','ref','',$moreparam);
+	if (! eregi(',',$account))
+	{
+		$moreparam='&month='.$month.'&year='.$year.($mode=='showalltime'?'&mode=showalltime':'');
+		print $form->showrefnav($acct,'ref','',1,'ref','ref','',$moreparam);
+	}
+	else
+	{
+		$bankaccount=new Account($db);
+		$listid=split(',',$account);
+		foreach($listid as $key => $id)
+		{
+			$bankaccount->fetch($id);
+			$bankaccount->label=$bankaccount->ref;
+			print $bankaccount->getNomUrl(1); 
+			if ($key < (sizeof($listid)-1)) print ', ';
+		}
+	}
 }
 else
 {
