@@ -463,7 +463,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(50, $posy);
-			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$object->cond_reglement;
+			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement);
 			$pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
 
 			$posy=$pdf->GetY()+3;
