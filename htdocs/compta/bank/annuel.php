@@ -53,7 +53,7 @@ llxHeader();
 
 $form = new Form($db);
 
-// R�cup�re info du compte
+// Get account informations
 $acct = new Account($db);
 if ($_GET["account"])
 {
@@ -127,12 +127,28 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
-print $form->showrefnav($acct,'ref','',1,'ref');
+if ($_GET["account"])
+{
+	print $form->showrefnav($acct,'ref','',1,'ref');
+}
+else
+{
+	print $langs->trans("ALL");
+}
 print '</td></tr>';
 
 // Label
 print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
-print '<td colspan="3">'.$acct->label.'</td></tr>';
+print '<td colspan="3">';
+if ($_GET["account"])
+{
+	print $acct->label;
+}
+else
+{
+	print $langs->trans("AllAccounts");
+}
+print '</td></tr>';
 
 print '</table>';
 
