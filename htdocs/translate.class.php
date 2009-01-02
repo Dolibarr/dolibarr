@@ -111,9 +111,15 @@ class Translate {
             $langlist=split("[;,]",$langpref);
 
             $langpart=split("_",$langlist[0]);
-
+            //print $langpart[0].'/'.$langpart[1];
+            
             if (isset($langpart[1])) $srclang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
-            else $srclang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
+            else {
+            	// Array to convert short lang code into long code.
+            	$longforshort=array('ca'=>'ca_ES');
+            	if (isset($longforshort[strtolower($langpart[0])])) $srclang=$longforshort[strtolower($langpart[0])];
+            	else $srclang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
+            }
         }
 
         $this->defaultlang=$srclang;
@@ -141,8 +147,9 @@ class Translate {
         //dolibarr_syslog("Translate::setPhpLang ".$this->defaultlang,LOG_DEBUG);
        
         $code_lang_tiret=ereg_replace('_','-',$this->defaultlang);
-        setlocale(LC_ALL, $this->defaultlang);    // Compenser pb de locale avec windows
-        setlocale(LC_ALL, $code_lang_tiret);
+        //print 'code_lang_tiret='.$code_lang_tiret;
+        setlocale(LC_ALL, $this->defaultlang);    	// Some OS (Windows) need local with _
+        setlocale(LC_ALL, $code_lang_tiret);    	// Other OS need local with -
 
         if (defined("MAIN_FORCE_SETLOCALE_LC_ALL") && MAIN_FORCE_SETLOCALE_LC_ALL)         
         	$res_lc_all=setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_ALL.'.UTF-8', MAIN_FORCE_SETLOCALE_LC_ALL);
@@ -193,12 +200,13 @@ class Translate {
 				$searchdir=$searchdir ."/".$domain."/langs";
 			}
 			else $searchdir=$searchdir."/langs";
-			
+
 	        // Directory of translation files
 	        $scandir = $searchdir."/".$this->defaultlang;
 	        $file_lang =  $scandir . "/".$domain.".lang";
 	        $filelangexists=is_file($file_lang);
-	        
+			//print 'Load default_lang='.$this->defaultlang.' alt='.$alt.' newalt='.$newalt.' '.$file_lang."-".$filelangexists.'<br>';
+
 	        // Check in "always available" alternate file if not found or if asked
 	        if ($newalt || ! $filelangexists)
 	        {
@@ -213,8 +221,8 @@ class Translate {
 	            $filelangexists=is_file($file_lang);
 	            $newalt=1;
 	        }
-	
-			//print 'eee'.$file_lang."-".$filelangexists;
+			//print 'Load alt='.$alt.' newalt='.$newalt.' '.$file_lang."-".$filelangexists.'<br>';
+
 	        if ($filelangexists)
 	        {
 				// Enable cache of lang file in session (faster but need more memory)
@@ -262,6 +270,7 @@ class Translate {
 										// We do not load Separator values for alternate files
 										if (! $newalt || (! eregi('^Separator',$key)))
 										{
+											//print 'XX'.$key;
 											$this->tab_translate[$key]=$value;
 										}
 										if ($enablelangcacheinsession) $tabtranslatedomain[$key]=$value;	// To save lang in session
