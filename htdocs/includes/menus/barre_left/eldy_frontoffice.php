@@ -830,13 +830,6 @@ class MenuLeft {
 					if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php?leftmenu=export",$langs->trans("MembersTickets"),1,$user->rights->adherent->export,'_blank');
 
 					$newmenu->add(DOL_URL_ROOT."/adherents/public.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
-					/*
-					if ($leftmenu=="member_public") $newmenu->add(DOL_URL_ROOT."/public/adherents/","Non adherent");
-					if ($leftmenu=="member_public") $newmenu->add_submenu("new.php","Inscription");
-					if ($leftmenu=="member_public") $newmenu->add(DOL_URL_ROOT."/public/adherents/","Adherents");
-					if ($leftmenu=="member_public") $newmenu->add_submenu("priv_edit.php",$langs->trans("EditCard"));
-					if ($leftmenu=="member_public") $newmenu->add_submenu("priv_liste.php",$langs->trans("List"));
-					*/
 
 					$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=setup&amp;mainmenu=members",$langs->trans("Setup"),0,$user->rights->adherent->configurer);
 					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/type.php?leftmenu=setup&amp;",$langs->trans("MembersTypes"),1,$user->rights->adherent->configurer);

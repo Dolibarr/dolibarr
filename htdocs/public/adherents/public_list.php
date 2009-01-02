@@ -37,7 +37,8 @@ function llxHeaderVierge($title, $head = "")
 {
 	global $user, $conf, $langs;
 
-    print "<html>\n";
+	header("Content-type: text/html; charset=".$conf->character_set_client);
+	print "<html>\n";
     print "<head>\n";
     print "<title>".$title."</title>\n";
     if ($head) print $head."\n";

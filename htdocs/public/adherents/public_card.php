@@ -19,16 +19,14 @@
  */
 
 /**
- \file       htdocs/public/adherents/priv_fiche.php
- \brief      Fichier de gestion de la popup de selection de date eldy
- \version    $Id$
+ *	\file       htdocs/public/adherents/priv_fiche.php
+ *	\brief      Fichier de gestion de la popup de selection de date eldy
+ *	\version    $Id$
  */
 
 require("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
-require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 
 $langs->setDefaultLang('auto');
@@ -37,24 +35,6 @@ $langs->load("main");
 $langs->load("members");
 $langs->load("companies");
 
-
-function llxHeaderVierge($title, $head = "")
-{
-	global $user, $conf, $langs;
-
-	print "<html>\n";
-	print "<head>\n";
-	print "<title>".$title."</title>\n";
-	if ($head) print $head."\n";
-	print "</head>\n";
-	print "<body>\n";
-}
-
-function llxFooter()
-{
-	print "</body>\n";
-	print "</html>\n";
-}
 
 $rowid=$_GET["id"];
 $adho = new AdherentOptions($db);
@@ -85,31 +65,35 @@ if ($rowid > 0)
 	{
 		print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
 
-		print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type."</td>\n";
-		print '<td valign="top" width="50%">'.$langs->trans("Comments").'</tr>';
+		print '<tr><td width="15%">'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type."</td></tr>\n";
 
-		print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td>';
+		print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$adh->morphy.'</td></tr>';
 
-		print '<td rowspan="13" valign="top" width="50%">';
-		print nl2br($adh->note).'&nbsp;</td></tr>';
-
-		print '<tr><td width="15%">'.$langs->trans("Surname").'</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("Surname").'</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Name").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
 
-
 		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
+
 		print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
+		
 		print '<tr><td>'.$langs->trans("Zip").' '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
+		
 		print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
+		
 		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
+		
 		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
+		
 		if (isset($adh->photo) && $adh->photo !=''){
 			print '<tr><td>URL Photo</td><td class="valeur">'."<A HREF=\"$adh->photo\"><IMG SRC=\"$adh->photo\"></A>".'&nbsp;</td></tr>';
 		}
 		//  foreach($adho->attribute_label as $key=>$value){
 		//    print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
 		//  }
+
+		print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>'.nl2br($adh->note).'</td></tr>';
+		
 		print '</table>';
 	}
 
@@ -118,4 +102,27 @@ if ($rowid > 0)
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
+
+
+/* Functions header and footer */
+
+function llxHeaderVierge($title, $head = "")
+{
+	global $user, $conf, $langs;
+
+	header("Content-type: text/html; charset=".$conf->character_set_client);
+	print "<html>\n";
+	print "<head>\n";
+	print "<title>".$title."</title>\n";
+	if ($head) print $head."\n";
+	print "</head>\n";
+	print "<body>\n";
+}
+
+function llxFooter()
+{
+	print "</body>\n";
+	print "</html>\n";
+}
+
 ?>
