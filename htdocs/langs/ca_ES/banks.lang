@@ -131,4 +131,5 @@ PaymentNumberUpdateSucceeded=Numero de pagament modificat
 PaymentNumberUpdateFailed=Numero de pagament no va poder ser modificat
 PaymentDateUpdateSucceeded=Data de pagament modificada
 PaymentDateUpdateFailed=Data de pagament no va poder ser modificada
+Transactions=Transactions
 BankTransactionLine=Transancció bancària
