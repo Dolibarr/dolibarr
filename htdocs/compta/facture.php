@@ -220,20 +220,29 @@ if ($_POST['action'] == 'setmode')
 	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
 }
 
-if ($_POST['action'] == 'setconditions')
-{
-	$facture = new Facture($db);
-	$facture->fetch($_GET['facid']);
-	$result=$facture->cond_reglement($_POST['cond_reglement_id']);
-	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
-}
-
 if ($_POST['action'] == 'setpaymentterm')
 {
 	$facture = new Facture($db);
 	$facture->fetch($_GET['facid']);
 	$date_lim_reglement=dolibarr_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
 	$result=$facture->cond_reglement($facture->cond_reglement_id,$date_lim_reglement);
+	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
+}
+
+if ($_POST['action'] == 'setinvoicedate')
+{
+	$facture = new Facture($db);
+	$facture->fetch($_GET['facid']);
+	$facture->date=dolibarr_mktime(12,0,0,$_POST['invoicedatemonth'],$_POST['invoicedateday'],$_POST['invoicedateyear']);
+	$result=$facture->update($user);
+	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
+}
+
+if ($_POST['action'] == 'setconditions')
+{
+	$facture = new Facture($db);
+	$facture->fetch($_GET['facid']);
+	$result=$facture->cond_reglement($_POST['cond_reglement_id']);
 	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
 }
 
@@ -2199,10 +2208,33 @@ else
 			if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 			print '</td></tr>';
 
-			// Dates
-			print '<tr><td>'.$langs->trans('Date').'</td>';
-			print '<td colspan="3">'.dolibarr_print_date($fac->date,'daytext').'</td>';
-
+			// Date invoice
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('Date');
+			print '</td>';
+			if ($fac->type != 2 && $_GET['action'] != 'editinvoicedate' && $fac->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($fac->type != 2)
+			{
+				if ($_GET['action'] == 'editinvoicedate')
+				{
+					$html->form_date($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->date,'invoicedate');
+				}
+				else
+				{
+					print dolibarr_print_date($fac->date,'daytext');
+				}
+			}
+			else
+			{
+				print '&nbsp;';
+			}
+			print '</td>';
+			
+			
+			// Payments
 			$nbrows=8;
 			if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
 			if ($conf->projet->enabled) $nbrows++;
@@ -2347,7 +2379,7 @@ else
 
 			print '</td></tr>';
 
-			// Date limite reglement
+			// Date payment term
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DateMaxPayment');
