@@ -2568,15 +2568,16 @@ class Form
 	 *    \param      fieldid   	Nom du champ en base a utiliser pour select next et previous
 	 *    \param      fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
 	 *    \param      morehtmlref  	Code html supplementaire a afficher apres ref
+	 *    \param      moreparam  	More param to ad in nav link url.
 	 * 	  \return     string    	Portion HTML avec ref + boutons nav
 	 */
-	function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='')
+	function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='')
 	{
 		$ret='';
 
 		$object->load_previous_next_ref($object->next_prev_filter,$fieldid);
-		$previous_ref = $object->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).'">'.img_previous().'</a>':'';
-		$next_ref     = $object->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).'">'.img_next().'</a>':'';
+		$previous_ref = $object->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.img_previous().'</a>':'';
+		$next_ref     = $object->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.img_next().'</a>':'';
 
 		//print "xx".$previous_ref."x".$next_ref;
 		if ($previous_ref || $next_ref || $morehtml) {
