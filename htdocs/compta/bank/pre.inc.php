@@ -67,8 +67,8 @@ function llxHeader($head = "")
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/fiche.php?action=create",$langs->trans("MenuNewFinancialAccount"),1,$user->rights->banque->configurer);
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/categ.php",$langs->trans("Rubriques"),1,$user->rights->banque->configurer);
 
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("SearchTransaction"),1,$user->rights->banque->lire);
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ByRubriques"),1,$user->rights->banque->lire);
+	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("ListTransactions"),1,$user->rights->banque->lire);
+	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ListTransactionsByCategory"),1,$user->rights->banque->lire);
 
 	if ($user->rights->banque->transfer)
 	{

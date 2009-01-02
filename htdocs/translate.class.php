@@ -526,7 +526,7 @@ class Translate {
      *      \brief      Return a label for a key. Store key-label in a cache.
      * 		\param		db			Database handler
      * 		\param		key			Key to get label
-     * 		\param		tablename	Table name
+     * 		\param		tablename	Table name without prefix
      * 		\param		fieldkey	Field for key
      * 		\param		fieldlabel	Field for label	
      *      \return     string		Label
@@ -543,9 +543,9 @@ class Translate {
         }
 		
 		// Check in cache
-        if (! empty($this->cache_labels[$tablename][$key]))
+        if (isset($this->cache_labels[$tablename][$key]))	// Can be defined to 0 or ''
         {
-        	return $this->cache_labels[$tablename][$key];    // Found in cache
+        	return $this->cache_labels[$tablename][$key];   // Found in cache
         }
 
         $sql = "SELECT ".$fieldlabel." as label";
@@ -556,7 +556,8 @@ class Translate {
         if ($resql)
         {
             $obj = $db->fetch_object($resql);
-            $this->cache_labels[$tablename][$key]=$obj->label;
+            if ($obj) $this->cache_labels[$tablename][$key]=$obj->label;
+            else $this->cache_labels[$tablename][$key]='';
             $db->free($resql);
             return $this->cache_labels[$tablename][$key];
         }
