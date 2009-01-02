@@ -6,7 +6,7 @@
 CHARSET=ISO-8859-1
 DatabaseConnection=Conexión a la base de datos
 SeparatorDecimal=,
-SeparatorThousand= 
+SeparatorThousand=
 Error=Error
 ErrorFieldRequired=El campo '%s' es obligatorio
 ErrorFieldFormat=El campo '%s' tiene un valor incorrecto

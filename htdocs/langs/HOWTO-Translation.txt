@@ -1,1 +1,6 @@
-See http://dolibarr.com/wikidev/index.php/Documentation_traducteur
+--- Translation How to --- 
+
+Document explaining how to translate Dolibarr in a new language is
+available on wiki:
+
+http://wiki.dolibarr.org/index.php/Documentation_traducteur

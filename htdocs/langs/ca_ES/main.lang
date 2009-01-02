@@ -2,7 +2,7 @@
 CHARSET=ISO-8859-1
 DatabaseConnection=Connexió a la base de dades
 SeparatorDecimal=,
-SeparatorThousand=.
+SeparatorThousand=
 Error=Error
 ErrorFieldRequired=El camp '%s' és obligatori
 ErrorFieldFormat=El camp '%s' té un valor incorrecte
