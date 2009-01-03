@@ -250,18 +250,12 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalTTC"), 1, 'R', 1);
 
 				$pdf->SetXY (174, $tab2_top + 0);
-				$pdf->MultiCell(26, $tab2_lh, price($com->total_ht + $com->remise), 0, 'R', 0);
-
-				$pdf->SetXY (174, $tab2_top + $tab2_lh);
-				$pdf->MultiCell(26, $tab2_lh, price($com->remise), 0, 'R', 0);
-
-				$pdf->SetXY (174, $tab2_top + $tab2_lh*2);
 				$pdf->MultiCell(26, $tab2_lh, price($com->total_ht), 0, 'R', 0);
 
-				$pdf->SetXY (174, $tab2_top + $tab2_lh*3);
+				$pdf->SetXY (174, $tab2_top + $tab2_lh);
 				$pdf->MultiCell(26, $tab2_lh, price($com->total_tva), 0, 'R', 0);
 
-				$pdf->SetXY (174, $tab2_top + ($tab2_lh*4));
+				$pdf->SetXY (174, $tab2_top + ($tab2_lh*2));
 				$pdf->MultiCell(26, $tab2_lh, price($com->total_ttc), 1, 'R', 1);
 
 				// Pied de page

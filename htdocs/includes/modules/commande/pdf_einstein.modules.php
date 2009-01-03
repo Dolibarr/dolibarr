@@ -311,7 +311,6 @@ class pdf_einstein extends ModelePDFCommandes
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$com->lignes[$i]->total_tva;
-					if ($com->remise_percent) $tvaligne-=($tvaligne*$com->remise_percent)/100;
 					$vatrate=(string) $com->lignes[$i]->tva_tx;
 					if ($com->lignes[$i]->info_bits & 0x01 == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
@@ -834,7 +833,7 @@ class pdf_einstein extends ModelePDFCommandes
 			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 	
 			$pdf->SetFont('Arial','',9);
-			$pdf->SetXY(12,42);
+			$pdf->SetXY(12,$posy+7);
 			$pdf->MultiCell(80,4, $carac_emetteur);
 			
 			// Client destinataire
