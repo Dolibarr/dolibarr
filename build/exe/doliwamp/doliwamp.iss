@@ -16,10 +16,10 @@
 [Setup]
 ; ----- Change this -----
 AppName=DoliWamp
-; DoliWamp x.x or DoliWamp x.x-dev or DoliWamp x.x-beta
-AppVerName=DoliWamp 2.5
-; DoliWamp x.x or DoliWamp x.x-dev or DoliWamp x.x-beta
-OutputBaseFilename=DoliWamp 2.5
+; DoliWamp-x.x or DoliWamp-x.x-dev or DoliWamp-x.x-beta
+AppVerName=DoliWamp-2.6-beta
+; DoliWamp-x.x or DoliWamp-x.x-dev or DoliWamp-x.x-beta
+OutputBaseFilename=DoliWamp-2.6-beta
 ; Define full path from wich all relative path are defined
 ; You must modify this to put here your dolibarr root directory
 SourceDir=E:\Mes Developpements\dolibarr
@@ -30,7 +30,7 @@ AppPublisherURL=http://www.nltechno.com
 AppSupportURL=http://www.dolibarr.org
 AppUpdatesURL=http://www.dolibarr.org
 AppComments=DoliWamp includes Dolibarr, Apache, PHP and Mysql softwares.
-AppCopyright=Copyright (C) 2008 Laurent Destailleur, NLTechno
+AppCopyright=Copyright (C) 2008-2009 Laurent Destailleur, NLTechno
 DefaultDirName=c:\dolibarr
 DefaultGroupName=Dolibarr
 LicenseFile=COPYING
