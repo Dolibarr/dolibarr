@@ -210,11 +210,12 @@ class ActionComm
 		global $langs;
 	
 		$sql = "SELECT a.id,";
-		$sql.= " ".$this->db->pdate("a.datea")." as datea,";
-		$sql.= " ".$this->db->pdate("a.datea2")." as datea2,";
-		$sql.= " ".$this->db->pdate("a.datep")." as datep,";
-		$sql.= " ".$this->db->pdate("a.datep2")." as datep2,";
-		$sql.= " ".$this->db->pdate("a.datec")." as datec, tms as datem,";
+		$sql.= " datep,";
+		$sql.= " datep2,";
+		//$sql.= " datea,";
+		//$sql.= " datea2,";
+		$sql.= " datec,";
+		$sql.= " tms as datem,";
 		$sql.= " a.note, a.label, a.fk_action as type_id,";
 		$sql.= " a.fk_soc,";
 		$sql.= " a.fk_user_author, a.fk_user_mod,";
@@ -243,13 +244,14 @@ class ActionComm
 				$this->type    = $type_libelle;
 				
 				$this->label   = $obj->label;
-				$this->datep   = $obj->datep;
-				$this->datef   = $obj->datep2;
-				$this->date    = $obj->datea;
-				$this->dateend = $obj->datea2;
-
-				$this->datec = $obj->datec;
-				$this->datem = $obj->datem;
+				$this->datep   = $this->db->jdate($obj->datep);
+				$this->datef   = $this->db->jdate($obj->datep2);
+				//$this->date    = $this->db->jdate($obj->datea);
+				//$this->dateend = $this->db->jdate($obj->datea2);
+				
+				$this->datec   = $this->db->jdate($obj->datec);
+				$this->datem   = $this->db->jdate($obj->datem);
+				
 				$this->note =$obj->note;
 				$this->percentage =$obj->percentage;
 
@@ -349,8 +351,8 @@ class ActionComm
         $sql.= ", label = ".($this->label ? "'".addslashes($this->label)."'":"null");
         $sql.= ", datep = ".(strval($this->datep)!='' ? "'".$this->db->idate($this->datep)."'" : 'null');
         $sql.= ", datep2 = ".(strval($this->datef)!='' ? "'".$this->db->idate($this->datef)."'" : 'null');
-        $sql.= ", datea = ".(strval($this->date)!='' ? "'".$this->db->idate($this->date)."'" : 'null');
-        $sql.= ", datea2 = ".(strval($this->dateend)!='' ? "'".$this->db->idate($this->dateend)."'" : 'null');
+        //$sql.= ", datea = ".(strval($this->date)!='' ? "'".$this->db->idate($this->date)."'" : 'null');
+        //$sql.= ", datea2 = ".(strval($this->dateend)!='' ? "'".$this->db->idate($this->dateend)."'" : 'null');
         $sql.= ", note = ".($this->note ? "'".addslashes($this->note)."'":"null");
         $sql.= ", fk_soc =". ($this->societe->id > 0 ? "'".$this->societe->id."'":"null");
         $sql.= ", fk_contact =". ($this->contact->id > 0 ? "'".$this->contact->id."'":"null");
@@ -385,7 +387,7 @@ class ActionComm
         global $conf, $user;
         
         $this->nbtodo=$this->nbtodolate=0;
-        $sql = "SELECT a.id,".$this->db->pdate("a.datep")." as dp";
+        $sql = "SELECT a.id, a.datep as dp";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -398,7 +400,7 @@ class ActionComm
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
-                if ($obj->dp < (time() - $conf->actions->warning_delay)) $this->nbtodolate++;
+                if ($this->db->jdate($obj->dp) < (time() - $conf->actions->warning_delay)) $this->nbtodolate++;
             }
             return 1;
         }
@@ -416,8 +418,10 @@ class ActionComm
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT a.id, '.$this->db->pdate('a.datec').' as datec,';
-		$sql.= ' '.$this->db->pdate('tms').' as datem,';
+		$sql = 'SELECT ';
+		$sql.= ' a.id,';
+		$sql.= ' datec,';
+		$sql.= ' tms as datem,';
 		$sql.= ' fk_user_author,';
 		$sql.= ' fk_user_mod';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
@@ -444,8 +448,8 @@ class ActionComm
 					$this->user_modification = $muser;
 				}
 
-				$this->date_creation     = $obj->datec;
-				$this->date_modification = $obj->datem;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
 			}
 			$this->db->free($result);
 		}
@@ -668,9 +672,9 @@ class ActionComm
 					//$datestart=$obj->datea?$obj->datea:$obj->datep;
 					//$dateend=$obj->datea2?$obj->datea2:$obj->datep2;
 					//$duration=$obj->durationa?$obj->durationa:$obj->durationp;
-					$datestart=dolibarr_stringtotime($obj->datep);
+					$datestart=$this->db->jdate($obj->datep);
 					//print $datestart.'x'; exit;
-					$dateend=dolibarr_stringtotime($obj->datep2);
+					$dateend=$this->db->jdate($obj->datep2);
 					$duration=$obj->durationp;
 					$event['summary']=$langs->convToOutputCharset($obj->label);
 					$event['desc']=$langs->convToOutputCharset($obj->note);

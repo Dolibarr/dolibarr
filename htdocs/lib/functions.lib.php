@@ -593,8 +593,8 @@ function dolibarr_getdate($timestamp,$fast=false)
 }
 
 /**
- *	Retourne une date fabriquee depuis infos.
- * 	Remplace la fonction mktime non implementee sous Windows si annee < 1970
+ *	Return a GMT date built from detailed informations
+ * 	Replace function mktime not available under Windows if year < 1970
  *	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  * 	@param		hour			Hour	(can be -1 for undefined)
  *	@param		minute			Minute	(can be -1 for undefined)
@@ -602,8 +602,8 @@ function dolibarr_getdate($timestamp,$fast=false)
  *	@param		month			Month
  *	@param		day				Day
  *	@param		year			Year
- *	@param		gm				Time gm
- *	@param		check			No check on parameters (Can use day 32, etc...)
+ *	@param		gm				1=Input informations are GMT values, otherwise local to user
+ *	@param		check			0=No check on parameters (Can use day 32, etc...)
  *	@return		timestamp		Date en timestamp, '' if error
  */
 function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)

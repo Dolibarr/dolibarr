@@ -77,15 +77,15 @@ if ($_POST["action"] == 'add_action')
 		exit;	
 	}
 
-	// Nettoyage parametres
+	// Clean parameters
 	if ($_POST["aphour"] == -1) $_POST["aphour"]='0';
 	if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
 	if ($_POST["p2hour"] == -1) $_POST["p2hour"]='0';
 	if ($_POST["p2min"] == -1) $_POST["p2min"]='0';
-	if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
-	if ($_POST["admin"] == -1) $_POST["admin"]='0';
-	if ($_POST["a2hour"] == -1) $_POST["a2hour"]='0';
-	if ($_POST["a2min"] == -1) $_POST["a2min"]='0';
+	//if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
+	//if ($_POST["admin"] == -1) $_POST["admin"]='0';
+	//if ($_POST["a2hour"] == -1) $_POST["a2hour"]='0';
+	//if ($_POST["a2min"] == -1) $_POST["a2min"]='0';
 	$datep=dolibarr_mktime($_POST["aphour"],
                    $_POST["apmin"],
                    0,
@@ -98,7 +98,7 @@ if ($_POST["action"] == 'add_action')
                    $_POST["p2month"],
                    $_POST["p2day"],
                    $_POST["p2year"]);
-	$datea=dolibarr_mktime($_POST["adhour"],	// deprecated
+	/*$datea=dolibarr_mktime($_POST["adhour"],	// deprecated
                    $_POST["admin"],
                    0,
                    $_POST["admonth"],
@@ -110,7 +110,8 @@ if ($_POST["action"] == 'add_action')
                    $_POST["a2month"],
                    $_POST["a2day"],
                    $_POST["a2year"]);
-	
+	*/
+                   
 	if (! $datep2 && $_POST["percentage"] == 100)
 	{
 		$error=1;
@@ -296,10 +297,13 @@ if ($_POST["action"] == 'update')
 {
     if (! $_POST["cancel"])
     {
+    	// Clean parameters
 		if ($_POST["aphour"] == -1) $_POST["aphour"]='0';
 		if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
-		if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
-		if ($_POST["admin"] == -1) $_POST["admin"]='0';
+		if ($_POST["p2hour"] == -1) $_POST["p2hour"]='0';
+		if ($_POST["p2min"] == -1) $_POST["p2min"]='0';
+		//if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
+		//if ($_POST["admin"] == -1) $_POST["admin"]='0';
 
         $actioncomm = new Actioncomm($db);
         $actioncomm->fetch($_POST["id"]);
@@ -317,7 +321,7 @@ if ($_POST["action"] == 'update')
 	                   $_POST["p2month"],
 	                   $_POST["p2day"],
 	                   $_POST["p2year"]);
-    	$datea=dolibarr_mktime($_POST["adhour"],
+    	/*$datea=dolibarr_mktime($_POST["adhour"],
                                    $_POST["admin"],
                                    0,
                                    $_POST["admonth"],
@@ -329,15 +333,16 @@ if ($_POST["action"] == 'update')
 	                   $_POST["a2month"],
 	                   $_POST["a2day"],
 	                   $_POST["a2year"]);
-		
+		*/
+	                   
 		//print $_POST["apmonth"].",".$_POST["apday"].",".$_POST["apyear"].",".$_POST["aphour"].",".$_POST["apmin"]."<br>\n";
 		//print $actioncomm->datep;
 	    //print 'dddd'.$datep;
 	    $actioncomm->label       = $_POST["label"];
 		$actioncomm->datep       = $datep;
 		$actioncomm->datef       = $datep2;
-		$actioncomm->date        = $datea;
-		$actioncomm->dateend     = $datea2;
+		//$actioncomm->date        = $datea;
+		//$actioncomm->dateend     = $datea2;
         $actioncomm->percentage  = $_POST["percentage"];
         $actioncomm->priority    = $_POST["priority"];
 		$actioncomm->location    = isset($_POST["location"])?$_POST["location"]:'';
@@ -368,7 +373,13 @@ if ($_POST["action"] == 'update')
 		if (! $error)
 		{
 			$db->begin();
-			
+			//print $_POST["aphour"].','.$_POST["apmin"].',0,'.$_POST["apmonth"].','.$_POST["apday"].','.$_POST["apyear"];
+			//print $actioncomm->datep;
+			//print gmmktime($_POST["aphour"],$_POST["apmin"],0,$_POST["apmonth"],$_POST["apday"],$_POST["apyear"]);
+			//print $actioncomm->datep;	// This is a GMT time
+			//print '-'.$db->idate($actioncomm->datep);
+			//print '-'.$db->jdate('19700101020000');
+			//print '-'.$db->gm($actioncomm->datep);
 			$result=$actioncomm->update($user);
 			
 			if ($result > 0)

@@ -517,9 +517,9 @@ class DoliDb
 
 
 	/**
-	 \brief      Escape a string to insert data.
-	 \param	    stringtoencode		String to escape
-	 \return	    string				String escaped
+	 *	\brief      Escape a string to insert data.
+	 *	\param	    stringtoencode		String to escape
+	 *	\return	    string				String escaped
 	 */
 	function escape($stringtoencode)
 	{
@@ -541,7 +541,7 @@ class DoliDb
 	}
 
 	/**
-	 *   \brief     Convert (by PHP) a GM Timestamp date into a GM string date to insert into a date field.
+	 *   \brief     Convert (by PHP) a GM Timestamp date into a PHP server TZ to insert into a date field.
 	 *              Function to use to build INSERT, UPDATE or WHERE predica
 	 *   \param	    param       Date TMS to convert
 	 *   \return	string      Date in a string YYYYMMDDHHMMSS
@@ -552,12 +552,37 @@ class DoliDb
 	}
 
 	/**
+	 *	\brief  	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
+	 *	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	\return		date			Date TMS
+	 * 	\example	19700101020000 -> 3600 with TZ+1
+	 */
+	function jdate($string)
+	{
+		$string=eregi_replace('[^0-9]','',$string);
+		$tmp=$string.'000000';
+		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
+		return $date;
+	}
+	
+	/**
+	 *   \brief     Convert (by PHP) a GM Timestamp date into a GM string date to insert into a date field.
+	 *              Function to use to build INSERT, UPDATE or WHERE predica
+	 *   \param	    param       Date TMS to convert
+	 *   \return	string      Date in a string YYYYMMDDHHMMSS
+	 */
+	function gmtosdate($param)
+	{
+		return adodb_strftime("%Y%m%d%H%M%S",$param,true);
+	}
+	
+	/**
 	 *	\brief  	Convert (by PHP) a GM string date into a GM Timestamps date
 	 *	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	\return		date			Date TMS
 	 * 	\example	19700101020000 -> 7200
 	 */
-	function jdate($string)
+	function gmtotdate($string)
 	{
 		$string=eregi_replace('[^0-9]','',$string);
 		$tmp=$string.'000000';

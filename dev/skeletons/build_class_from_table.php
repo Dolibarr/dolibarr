@@ -301,9 +301,7 @@ foreach($property as $key => $prop)
 	if ($prop['field'] != 'rowid')
 	{
 		$varprop.="\t\t\$sql.= \" ";
-		if ($prop['istime']) $varprop.="\".\$this->db->pdate('";
 		$varprop.="t.".$prop['field'];
-		if ($prop['istime']) $varprop.="').\" as ".$prop['field'];
 		if ($i < sizeof($property)) $varprop.=",";
 		$varprop.="\";";
 		$varprop.="\n";
@@ -322,7 +320,9 @@ foreach($property as $key => $prop)
 	if ($prop['field'] != 'rowid')
 	{
 		$varprop.="\t\t\t\t\$this->".$prop['field']." = ";
-		$varprop.="\$obj->".$prop['field'];
+		if ($prop['istime']) $varprop.='$this->db->jdate(';
+		$varprop.='$obj->'.$prop['field'];
+		if ($prop['istime']) $varprop.=')';
 		$varprop.=";";
 		$varprop.="\n";
 	}
