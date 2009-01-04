@@ -45,7 +45,7 @@ class Societe extends CommonObject
 
 	var $id;
 	var $nom;
-	var $nom_particulier;
+	var $nom_particulier; 
 	var $prenom;
 	var $particulier;
 	var $adresse;
@@ -73,6 +73,7 @@ class Societe extends CommonObject
 
 	var $capital;
 	var $typent_id;
+	var $typent_code;
 	var $effectif_id;
 	var $forme_juridique_code;
 	var $forme_juridique;

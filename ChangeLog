@@ -4,6 +4,8 @@ English Dolibarr changelog
 
 For users:
 - Enhance bank transactions reportings
+- When creating a contact from a third party, informations from third party card
+  are automatically suggested.
 
 For translators:
 - Nothing
