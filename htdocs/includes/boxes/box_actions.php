@@ -71,7 +71,7 @@ class box_actions extends ModeleBoxes {
 
 		if ($user->rights->agenda->myactions->read)
 		{
-			$sql = "SELECT a.id, a.label, a.datep as dp , a.percent as percentage,";
+			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage,";
 			$sql.= " ta.code,";
 			$sql.= " s.nom, s.rowid as socid";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -99,7 +99,7 @@ class box_actions extends ModeleBoxes {
 				{
 					$late = '';
 					$objp = $db->fetch_object($result);
-					$datelimite=$db->jdate($obj->dp);
+					$datelimite=$db->jdate($objp->dp);
 					
 					if ($datelimite  < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) $late=img_warning($langs->trans("Late"));
 
