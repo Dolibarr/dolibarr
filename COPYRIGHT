@@ -16,7 +16,7 @@ In alphabetical order of includes directory:
 AdoDb-Date        0.21     Modified BSD License        Yes              Date convertion
 Php-barcode       0.3pl1   GPL 2.0                     Yes              Bar code generation
 FCKEditor         2.6      LGPL 2.1 or Mozilla PL 1.0  Yes              Editor WYSIWYG
-FPDF              1.53     Not clear                   Not clear        PDF generation (original code was modified)
+FPDF              1.53     Public domain               Yes              PDF generation (original code is modified)
 FPDI              1.2      Apache Software License 2.0 No GPL3 only     PDF encryption (8 files)
 MagPieRss         0.72     GPL 2.0                     Yes              Load RSS
 NuSoap            0.6.5    LGPL 2.1                    Yes              Interfaces with third tools
