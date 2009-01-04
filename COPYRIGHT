@@ -9,23 +9,23 @@ However it uses some external libraries under different licences. This is compat
 Composant         Version  License                     Compatible GPL   Usage
 ----------------------------------------------------------------------------
 In alphabetical order of external-lib directory:
-ArtiChow          1.07     Public Domain               Oui              Graphics
-Smarty			  2.6.0    LGPL 2.1                    Oui              Some pages templates
+ArtiChow          1.07     Public Domain               Yes              Graphics
+Smarty			  2.6.0    LGPL 2.1                    Yes              Some pages templates
 
 In alphabetical order of includes directory:
-AdoDb-Date        0.21     Modified BSD License        Oui              Conversion dates
-Php-barcode       0.3pl1   GPL 2.0                     Oui              Bar code generation
-FCKEditor         2.6      LGPL 2.1 ou Mozilla PL 1.0  Oui              Editor WYSIWYG
-FPDF              1.53     Public Domain (not clear)   Oui              PDF generation (original code was modified)
-FPDI              1.2      Apache Software License 2.0 Non GPL3 uniqmt  PDF encryption (8 files)
-MagPieRss         0.72     GPL 2.0                     Oui              Load RSS
-NuSoap            0.6.5    LGPL 2.1                    Oui              Interfaces with third tools
-PHP_WriteExcel    0.3.0    LGPL 2.1                    Oui              Excel files generation
-Prototype         1.6.0.2  MIT License                 Oui              Ajax library
-Scriptaculous     1.8.1    MIT License                 Oui              Ajax library
-PWC               1.3      MIT License                 Oui              Ajax library
-Treemenu          1.1      Perso                       Oui              Tree in HTML pages (like categories)
-VCard             2.0      GPL 2.0                     Oui              Fonctions vcard
+AdoDb-Date        0.21     Modified BSD License        Yes              Date convertion
+Php-barcode       0.3pl1   GPL 2.0                     Yes              Bar code generation
+FCKEditor         2.6      LGPL 2.1 or Mozilla PL 1.0  Yes              Editor WYSIWYG
+FPDF              1.53     Not clear                   Not clear        PDF generation (original code was modified)
+FPDI              1.2      Apache Software License 2.0 No GPL3 only     PDF encryption (8 files)
+MagPieRss         0.72     GPL 2.0                     Yes              Load RSS
+NuSoap            0.6.5    LGPL 2.1                    Yes              Interfaces with third tools
+PHP_WriteExcel    0.3.0    LGPL 2.1                    Yes              Excel files generation
+Prototype         1.6.0.2  MIT License                 Yes              Ajax library
+PWC               1.3      MIT License                 Yes              Ajax library
+Scriptaculous     1.8.1    MIT License                 Yes              Ajax library
+Treemenu          1.1      Perso                       Yes              Tree in HTML pages (like categories)
+VCard             2.0      GPL 2.0                     Yes              Fonctions vcard
 
 For licenses compatibility informations:
 http://www.fsf.org/licensing/licenses/index_html
