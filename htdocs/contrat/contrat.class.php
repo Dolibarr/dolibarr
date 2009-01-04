@@ -251,8 +251,8 @@ class Contrat extends CommonObject
 	 */
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, statut, ref, fk_soc, ".$this->db->pdate("mise_en_service")." as datemise,";
-		$sql.= " fk_user_mise_en_service, ".$this->db->pdate("date_contrat")." as datecontrat,";
+		$sql = "SELECT rowid, statut, ref, fk_soc, mise_en_service as datemise,";
+		$sql.= " fk_user_mise_en_service, date_contrat as datecontrat,";
 		$sql.= " fk_user_author,";
 		$sql.= " fk_projet,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
@@ -272,9 +272,9 @@ class Contrat extends CommonObject
 				$this->statut            = $result["statut"];
 				$this->factureid         = $result["fk_facture"];
 				$this->facturedetid      = $result["fk_facturedet"];
-				$this->mise_en_service   = $result["datemise"];
+				$this->mise_en_service   = $this->db->jdate($result["datemise"]);
 				$this->date_fin_validite = $result["datefin"];
-				$this->date_contrat      = $result["datecontrat"];
+				$this->date_contrat      = $this->db->jdate($result["datecontrat"]);
 
 				$this->user_author_id    = $result["fk_user_author"];
 

@@ -546,10 +546,10 @@ class DoliDb
 	 *   \param	    param       Date TMS to convert
 	 *   \return	string      Date in a string YYYYMMDDHHMMSS
 	 */
-	function gmtosdate($param)
+	/*function gmtosdate($param)
 	{
 		return adodb_strftime("%Y%m%d%H%M%S",$param,true);
-	}
+	}*/
 	
 	/**
 	 *	\brief  	Convert (by PHP) a GM string date into a GM Timestamps date
@@ -557,13 +557,13 @@ class DoliDb
 	 *	\return		date			Date TMS
 	 * 	\example	19700101020000 -> 7200
 	 */
-	function gmtotdate($string)
+	/*function gmtotdate($string)
 	{
 		$string=eregi_replace('[^0-9]','',$string);
 		$tmp=$string.'000000';
 		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
 		return $date;
-	}
+	}*/
 	
 
 	/**
