@@ -373,13 +373,7 @@ if ($_POST["action"] == 'update')
 		if (! $error)
 		{
 			$db->begin();
-			//print $_POST["aphour"].','.$_POST["apmin"].',0,'.$_POST["apmonth"].','.$_POST["apday"].','.$_POST["apyear"];
-			//print $actioncomm->datep;
-			//print gmmktime($_POST["aphour"],$_POST["apmin"],0,$_POST["apmonth"],$_POST["apday"],$_POST["apyear"]);
-			//print $actioncomm->datep;	// This is a GMT time
-			//print '-'.$db->idate($actioncomm->datep);
-			//print '-'.$db->jdate('19700101020000');
-			//print '-'.$db->gm($actioncomm->datep);
+
 			$result=$actioncomm->update($user);
 			
 			if ($result > 0)
