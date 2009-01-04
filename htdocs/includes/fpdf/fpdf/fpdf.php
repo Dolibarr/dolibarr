@@ -1,33 +1,25 @@
 <?php
 /*******************************************************************************
-* Modifié par Régis Houssin                                                    *
 * Logiciel : FPDF                                                              *
 * Version :  1.53                                                              *
 * Date :     31/12/2004                                                        *
 * Auteur :   Olivier PLATHEY                                                   *
+* Modified par Régis Houssin                                                    *
 * Licence :  Freeware                                                          *
 *                                                                              *
 * Vous pouvez utiliser et modifier ce logiciel comme vous le souhaitez.        *
 *******************************************************************************/
 
-/*
-* $Id$
-*/
 
-/**
- * height of cell repect font height
- */
+/* Begin DOLCHANGE Added by Regis */
+// height of cell repect font height
 define("K_CELL_HEIGHT_RATIO", 1.25);
-
-/**
- * Répertoire des documents de fckeditor
- */
+// Répertoire des documents de fckeditor
 define ("K_PATH_CACHE", $conf->fckeditor->dir_output);
-
-/**
- * url qui sera substituer par le K_PATH_CACHE lorsqu'une image sera intégrée au pdf
- */
+// url qui sera substituer par le K_PATH_CACHE lorsqu'une image sera intégrée au pdf
 if (defined('DOL_URL_ROOT')) define ("K_PATH_URL_CACHE", DOL_URL_ROOT."/document.php?modulepart=editor&amp;file=");
+/* End DOLCHANGE Added by Regis */
+
 
 if(!class_exists('FPDF'))
 {
@@ -89,6 +81,10 @@ var $keywords;           //keywords
 var $creator;            //creator
 var $AliasNbPages;       //alias for total number of pages
 var $PDFVersion;         //PDF version number
+
+
+/* Begin DOLCHANGE Added by Regis */
+
 var $prevFontFamily;     //store previous font family
 var $prevFontStyle;      //store previous style family
 
@@ -200,7 +196,7 @@ var $DisplayPreferences=''; //préférences d'affichage
 *******************************************************************************/
 function FPDF($orientation='P',$unit='mm',$format='A4')
 {
-	// ajout pour HTML PARSER
+	/* Begin DOLCHANGE Added by Regis */
 	$this->fontlist = array("arial", "times", "courier", "helvetica", "symbol");
 	$this->b = 0;
 	$this->i = 0;
@@ -214,6 +210,7 @@ function FPDF($orientation='P',$unit='mm',$format='A4')
 	$this->tdheight = 0;
 	$this->tdalign = "L";
 	$this->tdbgcolor = false;
+	/* End DOLCHANGE Added by Regis */
 	
 	//Some checks
 	$this->_dochecks();
@@ -241,6 +238,7 @@ function FPDF($orientation='P',$unit='mm',$format='A4')
 	$this->ColorFlag=false;
 	$this->ws=0;
 	
+	/* Begin DOLCHANGE Added by Regis */
 	//Correspondance des tailles html en point
 	$this->xxsmall = 6.9;
 	$this->xsmall  = 8.3;
@@ -249,6 +247,7 @@ function FPDF($orientation='P',$unit='mm',$format='A4')
 	$this->large   = 14.4;
 	$this->xlarge  = 17.28;
 	$this->xxlarge = 20.7;
+	/* End DOLCHANGE Added by Regis */
 	
 	//Standard fonts
 	$this->CoreFonts=array('courier'=>'Courier','courierB'=>'Courier-Bold','courierI'=>'Courier-Oblique','courierBI'=>'Courier-BoldOblique',
@@ -269,9 +268,11 @@ function FPDF($orientation='P',$unit='mm',$format='A4')
 	//Page format
 	if(is_string($format))
 	{
+		$format=strtolower($format);
+		
+		/* Begin DOLCHANGE Added by Regis */
 		// Added new page formats (45 standard ISO paper formats and 4 american common formats).
 		// Paper cordinates are calculated in this way: (inches * 72) where (1 inch = 2.54 cm)
-		$format=strtolower($format);
 		if($format=='4a0')
 			$format=array(4767.87,6740.79);
 		elseif($format=='2a0')
@@ -282,12 +283,16 @@ function FPDF($orientation='P',$unit='mm',$format='A4')
 			$format=array(1683.78,2383.94);
 		elseif($format=='a2')
 			$format=array(1190.55,1683.78);
+		/* End DOLCHANGE Added by Regis */
+		
 		elseif($format=='a3')
 			$format=array(841.89,1190.55);
 		elseif($format=='a4')
 			$format=array(595.28,841.89);
 		elseif($format=='a5')
 			$format=array(420.94,595.28);
+
+		/* Begin DOLCHANGE Added by Regis */
 		elseif($format=='a6')
 			$format=array(297.64,419.53);
 		elseif($format=='a7')
@@ -362,14 +367,16 @@ function FPDF($orientation='P',$unit='mm',$format='A4')
 			$format=array(907.09,1275.59);
 		elseif($format=='sra4')
 			$format=array(637.80,907.09);
-		elseif($format=='letter')
-			$format=array(612,792);
-		elseif($format=='legal')
-			$format=array(612,1008);
 		elseif($format=='executive')
 			$format=array(521.86,756);
 		elseif($format=='folio')
 			$format=array(612,936);
+		/* End DOLCHANGE Added by Regis */
+		
+		elseif($format=='letter')
+			$format=array(612,792);
+		elseif($format=='legal')
+			$format=array(612,1008);
 		else
 			$this->Error('Unknown page format: '.$format);
 		$this->fwPt=$format[0];
@@ -747,9 +754,11 @@ function AddFont($family,$style='',$file='')
 
 function SetFont($family,$style='',$size=0)
 {
+	/* Begin DOLCHANGE Added by Regis */
 	// save previous values
 	$this->prevFontFamily = $this->FontFamily;
 	$this->prevFontStyle = $this->FontStyle;
+	/* End DOLCHANGE Added by Regis */
 	
 	//Select a font; size given in points
 	global $fpdf_charwidths;
@@ -758,7 +767,12 @@ function SetFont($family,$style='',$size=0)
 		$family=$this->FontFamily;
 	if($family=='arial')
 		$family='helvetica';
+		
+	/* Begin DOLCHANGE Added by Regis */
+	//elseif($family=='symbol' || $family=='zapfdingbats')
 	elseif($family=='symbol' || $family=='zapfdingbats' || $family=='courier')
+	/* End DOLCHANGE Added by Regis */
+	
 		$style='';
 	$style=strtoupper($style);
 	if(strpos($style,'U')!==false)
@@ -796,7 +810,11 @@ function SetFont($family,$style='',$size=0)
 			$this->fonts[$fontkey]=array('i'=>$i,'type'=>'core','name'=>$this->CoreFonts[$fontkey],'up'=>-100,'ut'=>50,'cw'=>$fpdf_charwidths[$fontkey]);
 		}
 		else
+		
+			/* Begin DOLCHANGE Added by Regis */
 			$this->Error('Undefined font - family: '.$family.' - style: '.$style);
+			//$this->Error('Undefined font: '.$family.' '.$style);
+			/* End DOLCHANGE Added by Regis */
 	}
 	//Select it
 	$this->FontFamily=$family;
@@ -1623,6 +1641,7 @@ function _putcatalog()
 	elseif($this->LayoutMode=='two')
 		$this->_out('/PageLayout /TwoColumnLeft');
 	
+	/* Begin DOLCHANGE Added by Regis */
 	//Préférences d'affichage - @author Michel Poulain
 	//affiche le document en plein écran (escape pour revenir en mode normal)
 	if(is_int(strpos($this->DisplayPreferences,'FullScreen')))
@@ -1649,6 +1668,8 @@ function _putcatalog()
             $this->_out('/FitWindow true');
         $this->_out('>>');
     }
+	/* End DOLCHANGE Added by Regis */
+    
 }
 
 function _putheader()
@@ -1901,6 +1922,9 @@ function _out($s)
 	else
 		$this->buffer.=$s."\n";
 }
+
+
+	/* Begin DOLCHANGE Added by Regis */
 
     // --- HTML PARSER FUNCTIONS ---
     
@@ -2614,6 +2638,8 @@ function _out($s)
 		{
 			$this->DisplayPreferences.=$preferences;
 		}
+
+		/* End DOLCHANGE Added by Regis */
 
 //End of class
 }
