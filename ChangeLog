@@ -6,12 +6,13 @@ For users:
 - Enhance bank transactions reportings
 - When creating a contact from a third party, informations from third party card
   are automatically suggested.
+- Sort list of languages in combo box.
 
 For translators:
-- Nothing
+- Added ca_ES language files
 
 For developers:
-- Nothing
+- Removed som deprecated files
 
 
 ***** Changelog for 2.5 compared to 2.4 *****
