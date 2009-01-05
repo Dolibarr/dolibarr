@@ -57,7 +57,7 @@ class FormAdmin
 		global $langs;
 
 		$langs_available=$langs->get_available_languages();
-
+		
 		print '<select class="flat" name="'.$htmlname.'">';
 		if ($showauto)
 		{
@@ -65,6 +65,8 @@ class FormAdmin
 			if ($selected == 'auto') print ' selected="true"';
 			print '>'.$langs->trans("AutoDetectLang").'</option>';
 		}
+
+		sort($langs_available);
 		$num = count($langs_available);
 		$i = 0;
 		if ($num)
