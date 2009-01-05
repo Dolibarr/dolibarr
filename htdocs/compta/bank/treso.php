@@ -168,6 +168,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql3.= " ORDER BY dlr ASC";
 
 	$error=0;
+	$tab_sqlobjorder=array();
 	$tab_sqlobj=array();
 	
 	// List customer invoices
