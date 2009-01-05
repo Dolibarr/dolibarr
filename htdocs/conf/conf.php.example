@@ -143,6 +143,19 @@ $character_set_client="UTF-8";
 $dolibarr_main_authentication="dolibarr";
 
 
+# dolibarr_main_force_https
+# This parameter allows to force the HTTPS mode.
+# Warning: If you enable this parameter, your dolibarr_main_url_root parameter
+# must contains an URL with https and web server must be configured to respond
+# to such an URL.
+# Default value: 0
+# Possible values: 0 or 1
+# Examples:
+# $dolibarr_main_authentication=0;
+#
+$dolibarr_main_force_https=0
+
+
 # Parameters used to setup LDAP authentication.
 # Uncomment them if dolibarr_main_authentication = "ldap"
 #
