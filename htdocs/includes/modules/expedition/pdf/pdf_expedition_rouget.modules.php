@@ -87,9 +87,11 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 		$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
 
-		if ($this->barcode->enabled)
+		if ($conf->barcode->enabled)
 		{
-			$pdf->Code39($this->marge_gauche+3, $this->marge_haute+3, $this->expe->ref);
+			// TODO Build code bar with function writeBarCode of barcode module for sending ref $this->expe->ref
+			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);			
+			//$pdf->Image($logo,10, 5, 0, 24);
 		}
 
 		$pdf->SetDrawColor(128,128,128);
@@ -100,9 +102,11 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$pdf->Text($posx, 28, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date($this->expe->date,"%d %b %Y",false,$outputlangs));
 		$pdf->Text($posx, 34, $outputlangs->transnoentities("Page")." : ".$pdf->PageNo() ."/{nb}", 0);
 
-		if ($this->barcode->enabled)
+		if ($conf->barcode->enabled)
 		{
-			$pdf->Code39($this->marge_gauche+3, 44, $this->expe->commande->ref);
+			// TODO Build code bar with function writeBarCode of barcode module for sending ref $this->expe->ref
+			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);			
+			//$pdf->Image($logo,10, 5, 0, 24);
 		}
 
 		$pdf->SetFont('Arial','', 14);

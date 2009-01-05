@@ -52,7 +52,6 @@ if (! file_exists($dir))
 
 
 
-//$pdf = new PDF_Label(array('name'=>'perso1', 'marginLeft'=>1, 'marginTop'=>1, 'NX'=>2, 'NY'=>7, 'SpaceX'=>0, 'SpaceY'=>0, 'width'=>99.1, 'height'=>'38.1', 'metric'=>'mm', 'font-size'=>14), 1, 2);
 //$pdf = new PDF_card('CARD', 1, 1);
 if (defined("ADHERENT_ETIQUETTE_TYPE") && ADHERENT_ETIQUETTE_TYPE !=''){
 	$pdf = new PDF_card(ADHERENT_ETIQUETTE_TYPE, 1, 1);

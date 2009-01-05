@@ -3,9 +3,27 @@ This file describe changes made on external library after beeing included
 in Dolibarr root.
 
 
+PHP-BARCODE:
+------------
+If files are replaced by new version, following changes must be done:
+
+* Add lines into barcode_outimage function
+*******************************************
+	// DOLCHANGE LDR
+    global $filebarcode;
+
+
+	// Begin DOLCHANGE LDR
+    } else if (! empty($filebarcode))
+    {
+		imagepng($im,$filebarcode);
+	// End DOLCHANGE LDR
+	
+
+
 FCKEDITOR:
 ----------
-If fckeditor files are replaced by new version, following changes must be done:
+If files are replaced by new version, following changes must be done:
 
 * Edit file fckeditor/editor/filemanager/browser/default/browser.css
 **********************************************************

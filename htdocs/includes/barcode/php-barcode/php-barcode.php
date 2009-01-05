@@ -207,6 +207,9 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png",
 	}
     }
 
+	// DOLCHANGE LDR
+    global $filebarcode;
+    
     /* output the image */
     $mode=strtolower($mode);
     if ($mode=='jpg' || $mode=='jpeg'){
@@ -215,11 +218,17 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png",
     } else if ($mode=='gif'){
 	header("Content-Type: image/gif; name=\"barcode.gif\"");
 	imagegif($im);
+
+	// Begin DOLCHANGE LDR
+    } else if (! empty($filebarcode))
+    {
+		imagepng($im,$filebarcode);
+	// End DOLCHANGE LDR
+		
     } else {
 	header("Content-Type: image/png; name=\"barcode.png\"");
 	imagepng($im);
     }
-
 }
 
 /*

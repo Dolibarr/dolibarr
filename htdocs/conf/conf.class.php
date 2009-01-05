@@ -282,7 +282,8 @@ class Conf
 		// Module oscommerce 1
 		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
-		
+		// Module Barcode
+		$this->barcode->dir_temp=DOL_DATA_ROOT."/barcode/temp";
 		
 		/*
 		 * Modification de quelques variable de conf en fonction des Constantes

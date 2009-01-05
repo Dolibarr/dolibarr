@@ -16,15 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
         \file       htdocs/includes/modules/barcode/phpbarcode.modules.php
 		\ingroup    facture
 		\brief      Fichier contenant la classe du modèle de generation code barre phpbarcode
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/barcode/modules_barcode.php");
@@ -84,10 +82,10 @@ class modPhpbarcode extends ModeleBarCode
 	}
 	
     /**
-			\brief      Retourne fichier image
-			\param   	$code			Valeur numérique a coder
-			\param   	$encoding		Mode de codage
-			\param   	$readable		Code lisible
+	 *		\brief      Return an image file on output
+	 *		\param   	$code			Valeur numérique a coder
+	 *		\param   	$encoding		Mode de codage
+	 *		\param   	$readable		Code lisible
      */
     function buildBarCode($code,$encoding,$readable='Y')
     { 
@@ -112,7 +110,27 @@ class modPhpbarcode extends ModeleBarCode
 
 		return 1;
     }
-    
+
+    /**
+	 *		\brief      Save an image file on disk
+	 *		\param   	$code			Valeur numérique a coder
+	 *		\param   	$encoding		Mode de codage
+	 *		\param   	$readable		Code lisible
+     */
+    function writeBarCode($code,$encoding,$readable='Y')
+    { 
+    	global $conf,$filebarcode;
+
+		create_exdir($conf->barcode->dir_temp);
+		
+		$file=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+
+		$filebarcode=$file;	// global var to be used in buildBarCode
+    	$result=$this->buildBarCode($code,$encoding,$readable);
+		    	
+		return $result;
+    }
+        
 }
 
 ?>
