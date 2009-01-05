@@ -49,7 +49,7 @@ print '<table class="border" cellspacing="0" cellpadding="3">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("URL").'</td></tr>';
 print '<tr><td>'.$langs->trans("BlankSubscriptionForm").'</td><td><a target="_blank" href="'.DOL_URL_ROOT.'/public/adherents/new.php'.'">'.$dolibarr_main_url_root.DOL_URL_ROOT.'/public/adherents/new.php'.'</a></td></tr>';
 print '<tr><td>'.$langs->trans("PublicMemberList").'</td><td><a target="_blank" href="'.DOL_URL_ROOT.'/public/adherents/public_list.php'.'">'.$dolibarr_main_url_root.DOL_URL_ROOT.'/public/adherents/public_list.php'.'</a></td></tr>';
-print '<tr><td>'.$langs->trans("PublicMemberCard").'</td><td>'.$dolibarr_main_url_root.DOL_URL_ROOT.'/public/adherents/public_card.php?id=xxx'.'</td></tr>';
+print '<tr><td>'.$langs->trans("PublicMemberCard").'</td><td>'.DOL_URL_ROOT.'/public/adherents/public_card.php?id=xxx'.'</td></tr>';
 print '</table>';
 
 
