@@ -7,6 +7,8 @@ For users:
 - When creating a contact from a third party, informations from third party card
   are automatically suggested.
 - Sort list of languages in combo box.
+- Fixed: Failed to go on the future view of bank transaction if there is no 
+  future bank transaction already wrote.  
 
 For translators:
 - Added ca_ES language files
