@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ $langs->load("companies");
 
 $socid = $_GET["socid"];
 
-// Sécurité accés client
+// Security check
 if ($user->societe_id > 0) 
 {
   $_GET["action"] = '';
@@ -54,9 +54,9 @@ if (! $sortfield) $sortfield="fac.datef";
 
 
 /*
- * Recherche
- *
+ * Actions
  */
+
 if ($_POST["mode"] == 'search')
 {
   if ($_POST["mode-search"] == 'soc')
@@ -80,8 +80,7 @@ if ($_POST["mode"] == 'search')
 
 
 /*
- * Mode Liste
- *
+ * View
  */
  
 llxHeader();
@@ -205,7 +204,7 @@ if ($resql)
         print "<tr $bc[$var]>";
         print '<td nowrap>';
 		$facturestatic->id=$obj->facid;
-		$facturestatic->ref=$obj->facnumber;
+		$facturestatic->ref=$obj->ref;
 		print $facturestatic->getNomUrl(1);
         if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance < (time() - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
         print "</td>\n";
@@ -225,7 +224,7 @@ if ($resql)
 
         // Affiche statut de la facture
         print '<td align="right" nowrap="nowrap">';
-	      // \todo  le montant deja payé obj->am n'est pas définie
+	      // \todo  le montant deja payï¿½ obj->am n'est pas dï¿½finie
 		print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$objp->am);
         print '</td>';
 	

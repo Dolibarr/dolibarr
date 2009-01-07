@@ -7,14 +7,19 @@ For users:
 - When creating a contact from a third party, informations from third party card
   are automatically suggested.
 - Sort list of languages in combo box.
+- New: EMails links are show with function dol_print_email
 - Fixed: Failed to go on the future view of bank transaction if there is no 
   future bank transaction already wrote.  
+- Fixed: Bad ref in supplier list.
+- Fixed: Bad link in product statistics for supplier referers.
 
 For translators:
 - Added ca_ES language files
 
 For developers:
-- Removed som deprecated files
+- Removed som deprecated files.
+- Renamed all function dolibarr_xxx into dol_xxx to have same prefix everywhere.
+
 
 
 ***** Changelog for 2.5 compared to 2.4 *****
