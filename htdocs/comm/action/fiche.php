@@ -254,14 +254,16 @@ if ($_POST["action"] == 'add_action')
                 // Si erreur
                 $db->rollback();
                 $_GET["id"]=$idaction;
-	            $error=$actioncomm->error;
+				$langs->load("errors");
+            	$error=$langs->trans($actioncomm->error);
             }
         }
         else
         {
             $db->rollback();
             $_GET["id"]=$idaction;
-            $error=$actioncomm->error;
+			$langs->load("errors");
+            $error=$langs->trans($actioncomm->error);
         }
     }
 
@@ -389,7 +391,8 @@ if ($_POST["action"] == 'update')
 
     if ($result < 0)
     {
-    	$mesg='<div class="error">'.$actioncomm->error.'</div>';
+		$langs->load("errors");
+    	$mesg='<div class="error">'.$langs->trans($actioncomm->error).'</div>';
     	$_GET["id"]=$_POST["id"];
     }
     else
