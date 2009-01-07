@@ -12,6 +12,8 @@ For users:
   future bank transaction already wrote.  
 - Fixed: Bad ref in supplier list.
 - Fixed: Bad link in product statistics for supplier referers.
+- Fix: Usage of reset of cursor in personalized numbering modules for a particular
+  month (@ option) was broken.
 
 For translators:
 - Added ca_ES language files

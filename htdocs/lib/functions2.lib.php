@@ -75,7 +75,8 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
 function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date='')
 {
 	// Clean parameters
-	if ($date == '') $date=time();
+	if ($date == '') $date=mktime();	// We use local year and month of PHP server to search numbers
+										// but we should use local year and month of user
 	
 	// Extract value for mask counter, mask raz and mask offset
 	if (! eregi('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$mask,$reg)) return 'ErrorBadMask';
@@ -117,6 +118,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	if (! empty($reg[3]) && eregi('^\+',$reg[3])) $maskoffset=eregi_replace('^\+','',$reg[3]);
 
 	// Define $sqlwhere
+
 	// If a restore to zero after a month is asked we check if there is already a value for this year.
 	if (! empty($reg[2]) && eregi('^@',$reg[2]))  $maskraz=eregi_replace('^@','',$reg[2]);
 	if (! empty($reg[3]) && eregi('^@',$reg[3]))  $maskraz=eregi_replace('^@','',$reg[3]);
@@ -139,10 +141,15 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 		if (strlen($reg[2]) == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
 			
 		$sqlwhere='';
-		$sqlwhere.='SUBSTRING('.$field.', '.(strlen($reg[1])+1).', '.strlen($reg[2]).') >= '.$yearcomp;
+		$sqlwhere.='( (SUBSTRING('.$field.', '.(strlen($reg[1])+1).', '.strlen($reg[2]).') >= '.$yearcomp;
 		if ($monthcomp > 1)	// Test useless if monthcomp = 1 (or 0 is same as 1)
 		{
-			$sqlwhere.=' AND SUBSTRING('.$field.', '.(strlen($reg[1])+strlen($reg[2])+1).', '.strlen($reg[3]).') >= '.$monthcomp;
+			$sqlwhere.=' AND SUBSTRING('.$field.', '.(strlen($reg[1])+strlen($reg[2])+1).', '.strlen($reg[3]).') >= '.$monthcomp.')';
+			$sqlwhere.=' OR SUBSTRING('.$field.', '.(strlen($reg[1])+1).', '.strlen($reg[2]).') >= '.sprintf("%02d",($yearcomp+1)).' )';
+		}
+		else
+		{
+			$sqlwhere.=') )';
 		}
 	}
 	//print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
@@ -174,6 +181,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	if ($where) $sql.=$where;
 	if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
+	//print $sql;
 	dolibarr_syslog("functions2::get_next_value sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)

@@ -23,7 +23,7 @@
 /**
 	\file       htdocs/includes/modules/commande/mod_commande_saphir.php
 	\ingroup    commande
-	\brief      Fichier contenant la classe du modèle de numérotation de référence de commande Saphir
+	\brief      Fichier contenant la classe du modï¿½le de numï¿½rotation de rï¿½fï¿½rence de commande Saphir
 	\version    $Id$
 */
 
@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php
 
 /**
 	\class      mod_commande_saphir
-	\brief      Classe du modèle de numérotation de référence de commande Saphir
+	\brief      Classe du modï¿½le de numï¿½rotation de rï¿½fï¿½rence de commande Saphir
 */
 class mod_commande_saphir extends ModeleNumRefCommandes
 {
@@ -41,7 +41,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	var $nom = 'Saphir';
 
 	
-    /**     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Renvoi la description du modele de numï¿½rotation
      *      \return     string      Texte descripif
      */
 	function info()
@@ -72,7 +72,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numï¿½rotation
      *      \return     string      Example
      */
     function getExample()
@@ -102,7 +102,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 
 		require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
 		
-		// On défini critere recherche compteur
+		// We get cursor rule
 		$mask=$conf->global->COMMANDE_SAPHIR_MASK;
 		
 		if (! $mask) 
