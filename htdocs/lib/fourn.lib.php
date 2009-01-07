@@ -35,6 +35,11 @@ function facturefourn_prepare_head($fac)
 	$head[$h][2] = 'card';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/contact.php?facid='.$fac->id;
+	$head[$h][1] = $langs->trans('BillContacts');
+	$head[$h][2] = 'contact';
+	$h++;
+	
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note.php?facid='.$fac->id;
 	$head[$h][1] = $langs->trans('Notes');
 	$head[$h][2] = 'note';
