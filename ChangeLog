@@ -14,6 +14,7 @@ For users:
 - Fixed: Bad link in product statistics for supplier referers.
 - Fix: Usage of reset of cursor in personalized numbering modules for a particular
   month (@ option) was broken.
+- Can add contacts to a supplier invoice.
 
 For translators:
 - Added ca_ES language files
@@ -21,7 +22,7 @@ For translators:
 For developers:
 - Removed som deprecated files.
 - Renamed all function dolibarr_xxx into dol_xxx to have same prefix everywhere.
-
+- Rewrite clone feature for supplier invoice to work like other clone features.
 
 
 ***** Changelog for 2.5 compared to 2.4 *****
