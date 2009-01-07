@@ -16,10 +16,10 @@
 [Setup]
 ; ----- Change this -----
 AppName=DoliWamp
-; DoliWamp-x.x or DoliWamp-x.x-dev or DoliWamp-x.x-beta
-AppVerName=DoliWamp-2.6-beta
-; DoliWamp-x.x or DoliWamp-x.x-dev or DoliWamp-x.x-beta
-OutputBaseFilename=DoliWamp-2.6-beta
+; DoliWamp x.x or DoliWamp x.x-dev or DoliWamp x.x-beta
+AppVerName=DoliWamp 2.6-dev
+; DoliWamp x.x or DoliWamp x.x-dev or DoliWamp x.x-beta
+OutputBaseFilename=DoliWamp 2.6-dev
 ; Define full path from wich all relative path are defined
 ; You must modify this to put here your dolibarr root directory
 SourceDir=E:\Mes Developpements\dolibarr
