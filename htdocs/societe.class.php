@@ -1809,6 +1809,7 @@ class Societe extends CommonObject
 			'LV',	// Latvia
 			'LT',	// Lithuania
 			'LU',	// Luxembourg
+			'MO',	// Monaco
 			'MT',	// Malta
 			'NO',	// Norway
 			'PL',	// Poland
