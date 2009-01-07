@@ -1699,10 +1699,12 @@ class Adherent extends CommonObject
 	{
 		global $conf;
 
+		$now=gmmktime();
+		
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$this->nbtodo=$this->nbtodolate=0;
-		$sql = "SELECT a.rowid,".$this->db->pdate("a.datefin")." as datefin";
+		$sql = "SELECT a.rowid, a.datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql.= " WHERE a.statut=1";
 		$resql=$this->db->query($sql);
@@ -1711,7 +1713,7 @@ class Adherent extends CommonObject
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nbtodo++;
-				if ($obj->datefin < (time() - $conf->adherent->cotisation->warning_delay)) $this->nbtodolate++;
+				if ($this->db->jdate($obj->datefin) < ($now - $conf->adherent->cotisation->warning_delay)) $this->nbtodolate++;
 			}
 			return 1;
 		}

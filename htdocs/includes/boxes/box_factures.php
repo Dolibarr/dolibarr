@@ -21,7 +21,7 @@
 /**
  \file       htdocs/includes/boxes/box_factures.php
  \ingroup    factures
- \brief      Module de génération de l'affichage de la box factures
+ \brief      Module de gï¿½nï¿½ration de l'affichage de la box factures
  \version	$Id$
  */
 
@@ -53,8 +53,8 @@ class box_factures extends ModeleBoxes {
 	}
 
 	/**
-	 *      \brief      Charge les données en mémoire pour affichage ultérieur
-	 *      \param      $max        Nombre maximum d'enregistrements à charger
+	 *      \brief      Charge les donnï¿½es en mï¿½moire pour affichage ultï¿½rieur
+	 *      \param      $max        Nombre maximum d'enregistrements ï¿½ charger
 	 */
 	function loadBox($max=5)
 	{
@@ -93,7 +93,8 @@ class box_factures extends ModeleBoxes {
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-
+				$now=gmmktime();
+				
 				$i = 0;
 				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
 
@@ -107,7 +108,7 @@ class box_factures extends ModeleBoxes {
 					if ($objp->type == 1) $picto.='r';
 					if ($objp->type == 2) $picto.='a';
 					$late = '';
-					if($objp->paye == 0 && $datelimite < (time() - $conf->facture->warning_delay)) { $late = img_warning(sprintf($l_due_date,dolibarr_print_date($datelimite,'day')));}
+					if($objp->paye == 0 && $datelimite < ($now - $conf->facture->warning_delay)) { $late = img_warning(sprintf($l_due_date,dolibarr_print_date($datelimite,'day')));}
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $picto,

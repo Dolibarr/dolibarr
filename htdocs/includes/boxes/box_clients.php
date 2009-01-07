@@ -21,7 +21,7 @@
 /**
  \file       htdocs/includes/boxes/box_clients.php
  \ingroup    societes
- \brief      Module de génération de l'affichage de la box clients
+ \brief      Module de gï¿½nï¿½ration de l'affichage de la box clients
  \version	$Id$
  */
 
@@ -53,8 +53,8 @@ class box_clients extends ModeleBoxes {
 	}
 
 	/**
-	 *      \brief      Charge les données en mémoire pour affichage ultérieur
-	 *      \param      $max        Nombre maximum d'enregistrements à charger
+	 *      \brief      Charge les donnï¿½es en mï¿½moire pour affichage ultï¿½rieur
+	 *      \param      $max        Nombre maximum d'enregistrements ï¿½ charger
 	 */
 	function loadBox($max=5)
 	{
@@ -85,7 +85,6 @@ class box_clients extends ModeleBoxes {
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-				$datec=$db->jdate($objp->dc);
 				
 				$i = 0;
 				//$customerstatic=new Client($db);

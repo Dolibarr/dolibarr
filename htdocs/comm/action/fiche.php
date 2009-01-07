@@ -636,7 +636,9 @@ if ($_GET["id"])
 
     dolibarr_fiche_head($head, $hselected, $langs->trans("Action"));
 
-
+    $now=gmmktime();
+	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
+    
     // Confirmation suppression action
     if ($_GET["action"] == 'delete')
     {
@@ -700,14 +702,12 @@ if ($_GET["id"])
 		if ($_REQUEST["afaire"] == 1) $html->select_date($act->datep,'ap',1,1,0,"action",1,1);
 		else if ($_REQUEST["afaire"] == 2) $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
 		else $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
-		if ($act->percentage == 0 && $act->datep && $act->datep < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
 		if ($_REQUEST["afaire"] == 1) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
 		else if ($_REQUEST["afaire"] == 2) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
 		else $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
-		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
 		// Status
@@ -820,13 +820,13 @@ if ($_GET["id"])
         // Date debut
 		print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
 		print dolibarr_print_date($act->datep,'dayhour');
-		if ($act->percentage == 0 && $act->datep && $act->datep < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
+		if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
         // Date fin
         print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
 		print dolibarr_print_date($act->datef,'dayhour');
-		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
+		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
         // Statut

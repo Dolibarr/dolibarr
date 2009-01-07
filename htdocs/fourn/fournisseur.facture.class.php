@@ -647,8 +647,10 @@ class FactureFournisseur extends Facture
 	{
 		global $conf, $user;
 
+		$now=gmmktime();
+		
 		$this->nbtodo=$this->nbtodolate=0;
-		$sql = 'SELECT ff.rowid,'.$this->db->pdate('ff.date_lim_reglement').' as datefin';
+		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin';
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -661,7 +663,7 @@ class FactureFournisseur extends Facture
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nbtodo++;
-				if ($obj->datefin < (time() - $conf->facture->fournisseur->warning_delay)) $this->nbtodolate++;
+				if ($this->db->jdate($obj->datefin) < ($now - $conf->facture->fournisseur->warning_delay)) $this->nbtodolate++;
 			}
 			$this->db->free($resql);
 			return 1;

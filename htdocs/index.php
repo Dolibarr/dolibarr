@@ -287,9 +287,9 @@ if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Actions"),"task").'</td><td>'.$board->label.'</td>';
-	print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?status=todo">'.$board->nbtodo.'</a></td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$board->nbtodo.'</a></td>';
 	print '<td align="right">';
-	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?status=todo">';
+	print '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">';
 	print $board->nbtodolate;
 	print '</a></td><td nowrap align="right">';
 	print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';

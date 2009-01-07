@@ -54,6 +54,14 @@ $langs->load('companies');
 $html = new Form($db);
 $formfile = new FormFile($db);
 
+
+
+/*
+ * View
+ */
+
+$now=gmmktime();
+
 llxHeader();
 
 $sql = "SELECT s.nom, s.rowid as socid,";
@@ -104,7 +112,7 @@ if ($resql)
     {
         $title = $langs->trans("ListOfOrders");
     }
-    // Si page des commandes à facturer
+    // Si page des commandes ï¿½ facturer
     $link=DOL_URL_ROOT."/compta/commande/fiche.php";
     $title.=" - ".$langs->trans("StatusOrderToBill");
     $param="&amp;socid=".$socid."&amp;year=".$_GET["year"]."&amp;month=".$_GET["month"];
@@ -142,7 +150,7 @@ if ($resql)
         print '</td>';
         
         print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-        if (($objp->date_commande < (time() - $conf->commande->traitement->warning_delay)) && $objp->statutid == 1 ) print img_picto($langs->trans("Late"),"warning");
+        if (($objp->date_commande < ($now - $conf->commande->traitement->warning_delay)) && $objp->statutid == 1 ) print img_picto($langs->trans("Late"),"warning");
         print '</td>';
         
         print '<td width="16" align="right" class="nobordernopadding">';

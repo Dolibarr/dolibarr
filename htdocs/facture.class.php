@@ -2506,10 +2506,12 @@ class Facture extends CommonObject
 	{
 		global $conf, $user;
 
+		$now=gmmktime();
+		
 		$this->nbtodo=$this->nbtodolate=0;
 		$clause = "WHERE";
 
-		$sql = 'SELECT f.rowid,'.$this->db->pdate('f.date_lim_reglement').' as datefin';
+		$sql = 'SELECT f.rowid, f.date_lim_reglement as datefin';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -2525,7 +2527,7 @@ class Facture extends CommonObject
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nbtodo++;
-				if ($obj->datefin < (time() - $conf->facture->client->warning_delay)) $this->nbtodolate++;
+				if ($this->db->jdate($obj->datefin) < ($now - $conf->facture->client->warning_delay)) $this->nbtodolate++;
 			}
 			return 1;
 		}

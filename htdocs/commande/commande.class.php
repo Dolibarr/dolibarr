@@ -1811,10 +1811,12 @@ class Commande extends CommonObject
 	{
 		global $conf, $user;
 
+		$now=gmmktime();
+		
 		$this->nbtodo=$this->nbtodolate=0;
 		$clause = "WHERE";
 
-		$sql = 'SELECT c.rowid,'.$this->db->pdate('c.date_creation').' as datec';
+		$sql = 'SELECT c.rowid, c.date_creation as datec';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -1830,7 +1832,7 @@ class Commande extends CommonObject
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nbtodo++;
-				if ($obj->datec < (time() - $conf->commande->traitement->warning_delay)) $this->nbtodolate++;
+				if ($this->db->jdate($obj->datec) < ($now - $conf->commande->traitement->warning_delay)) $this->nbtodolate++;
 			}
 			return 1;
 		}

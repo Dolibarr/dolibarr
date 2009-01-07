@@ -191,6 +191,8 @@ if ($socid > 0)
 	            print '</tr>';
 	        }
 
+	        $now = gmmktime();
+	        
 	        while ($i < $num && $i < $MAXLIST)
 	        {
 	            $objp = $db->fetch_object($resql);
@@ -198,8 +200,8 @@ if ($socid > 0)
 	            print "<tr $bc[$var]>";
 	            print "<td><a href=\"../propal.php?propalid=$objp->propalid\">";
 	            print img_object($langs->trans("ShowPropal"),"propal");
-	            print " $objp->ref</a>\n";
-	            if ( ($objp->dp < time() - $conf->propal->cloture->warning_delay) && $objp->fk_statut == 1 )
+	            print " ".$objp->ref."</a>\n";
+	            if ( $objp->dp < ($now - $conf->propal->cloture->warning_delay) && $objp->fk_statut == 1 )
 	            {
 	                print " ".img_warning();
 	            }

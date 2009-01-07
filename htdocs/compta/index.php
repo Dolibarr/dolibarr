@@ -85,6 +85,8 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
  *
  */
 
+$now=gmmktime();
+
 $facturestatic=new Facture($db);
 $facturesupplierstatic=new FactureFournisseur($db);
 
@@ -611,7 +613,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-				if ($obj->datelimite < (time() - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($obj->datelimite < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding">';
 				$filename=sanitizeFileName($obj->facnumber);

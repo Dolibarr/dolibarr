@@ -345,7 +345,8 @@ if ($socid > 0)
     print '</table>';
     print '<br>';
 
-
+	$now=gmmktime();
+	
     /*
      * Dernieres propales
      */
@@ -380,7 +381,7 @@ if ($socid > 0)
                 $objp = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
                 print "<td nowrap><a href=\"propal.php?propalid=$objp->propalid\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a>\n";
-                if ( ($objp->dp < time() - $conf->propal->cloture->warning_delay) && $objp->fk_statut == 1 )
+                if ( ($objp->dp < $now - $conf->propal->cloture->warning_delay) && $objp->fk_statut == 1 )
                 {
                     print " ".img_warning();
                 }

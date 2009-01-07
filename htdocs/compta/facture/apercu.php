@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      ï¿½ric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 /**
 	    \file       htdocs/compta/facture/apercu.php
 		\ingroup    facture
-		\brief      Page de l'onglet aperçu d'une facture
+		\brief      Page de l'onglet aperï¿½u d'une facture
 		\version    $Revision$
 */
 
@@ -39,13 +39,20 @@ if (!$user->rights->facture->lire)
 $langs->load("bills");
 
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socid = $user->societe_id;
 }
 
+
+
+/*
+ * View
+ */
+
+$now=gmmktime();
 
 llxHeader('',$langs->trans("Bill"),'Facture');
 
@@ -93,10 +100,10 @@ if ($_GET["facid"] > 0)
         print '<tr><td>'.$langs->trans("Date").'</td>';
         print '<td colspan="3">'.dolibarr_print_date($fac->date,"daytext").'</td>';
         print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"daytext");
-        if ($fac->paye == 0 && $fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+        if ($fac->paye == 0 && $fac->date_lim_reglement < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
         print "</td></tr>";
 
-        // Conditions et modes de réglement
+        // Conditions et modes de rï¿½glement
         print '<tr><td>'.$langs->trans("PaymentConditions").'</td><td colspan="3">';
         $html->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->cond_reglement_id,"none");
         print '</td>';
@@ -137,7 +144,7 @@ if ($_GET["facid"] > 0)
         $relativepath = "${facref}/${facref}.pdf";
         $relativepathdetail = "${facref}/${facref}-detail.pdf";
 
-        // Chemin vers png aperçus
+        // Chemin vers png aperï¿½us
         $relativepathimage = "${facref}/${facref}.pdf.png";
         $fileimage = $file.".png";          // Si PDF d'1 page
         $fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
@@ -160,9 +167,9 @@ if ($_GET["facid"] > 0)
             print '</tr>';
 
             // Si fichier detail PDF existe
-            if (file_exists($filedetail)) // facture détaillée supplémentaire
+            if (file_exists($filedetail)) // facture dï¿½taillï¿½e supplï¿½mentaire
             {
-                print "<tr $bc[$var]><td>Facture détaillée</td>";
+                print "<tr $bc[$var]><td>Facture dï¿½taillï¿½e</td>";
 
                 print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$fac->ref.'-detail.pdf</a></td>';
                 print '<td align="right">'.filesize($filedetail). ' bytes</td>';
@@ -244,17 +251,17 @@ if ($_GET["facid"] > 0)
     }
     else
     {
-        // Facture non trouvée
+        // Facture non trouvï¿½e
         print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
     }
 } 
 
-// Si fichier png PDF d'1 page trouvé
+// Si fichier png PDF d'1 page trouvï¿½
 if (file_exists($fileimage))
 {	  
   print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($relativepathimage).'">';
 }
-// Si fichier png PDF de plus d'1 page trouvé
+// Si fichier png PDF de plus d'1 page trouvï¿½
 elseif (file_exists($fileimagebis))
 	{
 		$multiple = $relativepathimage . ".";
@@ -274,7 +281,7 @@ elseif (file_exists($fileimagebis))
 print '</div>';
 
 
-// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+// Juste pour ï¿½viter bug IE qui rï¿½organise mal div prï¿½cï¿½dents si celui-ci absent
 print '<div class="tabsAction">';
 print '</div>';
 

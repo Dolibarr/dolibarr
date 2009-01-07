@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      ï¿½ric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,7 @@ $langs->load("bills");
 $langs->load("banks");
 $langs->load("withdrawals");
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0)
 {
 	$action = '';
@@ -84,6 +84,8 @@ if ($_GET["action"] == "delete")
 /*
  * View
  */
+
+$now=gmmktime();
 
 llxHeader('',$langs->trans("Bill"));
 
@@ -135,10 +137,10 @@ if ($_GET["facid"] > 0)
 		print '<tr><td>'.$langs->trans("Date").'</td>';
 		print '<td colspan="3">'.dolibarr_print_date($fac->date,"daytext").'</td>';
 		print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"daytext");
-		if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans("Late"));
+		if ($fac->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans("Late"));
 		print "</td></tr>";
 
-		// Conditions et modes de réglement
+		// Conditions et modes de rï¿½glement
 		print '<tr><td>'.$langs->trans("PaymentConditions").'</td><td colspan="3">';
 		$html->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->cond_reglement_id,"none");
 		print '</td>';
@@ -162,7 +164,7 @@ if ($_GET["facid"] > 0)
 		print '</div>';
 
 		/*
-		 * Demande de prélèvement
+		 * Demande de prï¿½lï¿½vement
 		 *
 		 */
 
@@ -198,7 +200,7 @@ if ($_GET["facid"] > 0)
 
 
 		/*
-		 * Prélèvement
+		 * Prï¿½lï¿½vement
 		 */
 		print '<table class="noborder" width="100%">';
 
@@ -297,7 +299,7 @@ if ($_GET["facid"] > 0)
 	}
 	else
 	{
-		/* Facture non trouvée */
+		/* Facture non trouvï¿½e */
 		print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
 	}
 }

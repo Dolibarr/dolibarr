@@ -98,6 +98,8 @@ if ($_GET['propalid'])
 {
 	if ($mesg) print $mesg;
 	
+	$now=gmmktime();
+	
 	$propal = new Propal($db);
 	if ( $propal->fetch($_GET['propalid']) )
 	{
@@ -111,7 +113,7 @@ if ($_GET['propalid'])
 
 	        print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref.'</td></tr>';
 
-            // Société
+            // Sociï¿½tï¿½
             print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
             
 			// Ligne info remises tiers
@@ -137,7 +139,7 @@ if ($_GET['propalid'])
             if ($propal->fin_validite)
             {
                 print dolibarr_print_date($propal->fin_validite,'daytext');
-                if ($propal->statut == 1 && $propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+                if ($propal->statut == 1 && $propal->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
             }
             else
             {
@@ -163,7 +165,7 @@ if ($_GET['propalid'])
 		    }
 			print "</td></tr>";
 		
-			// Note privée
+			// Note privï¿½e
 			if (! $user->societe_id)
 			{
 			    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';

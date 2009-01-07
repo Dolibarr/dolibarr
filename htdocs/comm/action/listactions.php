@@ -101,8 +101,8 @@ llxHeader();
 $form=new Form($db);
 
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
-$sql.= " a.id, ".$db->pdate("a.datep")." as dp, ".$db->pdate("a.datep2")." as dp2,";
-//$sql.= " ".$db->pdate("a.datea")." as da, ".$db->pdate("a.datea2")." as da2,";
+$sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
+//$sql.= " a.datea as da, a.datea2 as da2,";
 $sql.= " a.fk_contact, a.note, a.label, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle,";
 $sql.= " ua.login as loginauthor, ua.rowid as useridauthor,";
@@ -233,8 +233,8 @@ if ($resql)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ActionUserAsk"),$_SERVER["PHP_SELF"],"ua.login",$param,"","",$sortfield,$sortorder);
@@ -244,7 +244,9 @@ if ($resql)
     print "</tr>\n";
 	
     $contactstatic = new Contact($db);
-
+	$now=gmmktime();
+	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
+	
     $var=true;
     while ($i < min($num,$limit))
     {
@@ -268,17 +270,17 @@ if ($resql)
         //print '</td>';
 
        	print '<td align="center" nowrap="nowrap">';
-		print dolibarr_print_date($obj->dp,"day");
+		print dolibarr_print_date($db->jdate($obj->dp),"day");
 		$late=0;
-		if ($obj->percent == 0 && $obj->dp && date("U",$obj->dp) < time()) $late=1;
-		if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && date("U",$obj->dp) < time()) $late=1;
-		if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && date("U",$obj->dp2) < time()) $late=1;
-		if ($obj->percent > 0 && $obj->percent < 100 && ! $obj->dp2 && $obj->dp && date("U",$obj->dp) < time()) $late=1;
+		if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
+		if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
+		if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && $db->jdate($obj->dp2) < ($now - $delay_warning)) $late=1;
+		if ($obj->percent > 0 && $obj->percent < 100 && ! $obj->dp2 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
 		if ($late) print img_warning($langs->trans("Late"));
 		print '</td>';
 
 		print '<td align="center" nowrap="nowrap">';
-		print dolibarr_print_date($obj->dp2,"day");
+		print dolibarr_print_date($db->jdate($obj->dp2),"day");
 		print '</td>';
 
         // Third party

@@ -92,7 +92,8 @@ class box_factures_fourn extends ModeleBoxes {
             if ($result)
             {
                 $num = $db->num_rows($result);
-
+				$now=gmmktime();
+                
                 $i = 0;
                 $l_due_date =  $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
 
@@ -103,7 +104,7 @@ class box_factures_fourn extends ModeleBoxes {
 					$datec=$db->jdate($objp->datec);
 					
                     $late = '';
-                    if ($objp->paye == 0 && $datelimite < (time() - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dolibarr_print_date($datelimite,'day')));
+                    if ($objp->paye == 0 && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dolibarr_print_date($datelimite,'day')));
 
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,

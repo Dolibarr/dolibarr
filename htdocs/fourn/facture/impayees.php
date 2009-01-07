@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      ï¿½ric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
 		\file       htdocs/fourn/facture/impayees.php
 		\ingroup    facture
-		\brief      Page de liste des factures fournisseurs impayées
+		\brief      Page de liste des factures fournisseurs impayï¿½es
 		\version    $Id$
 */
 
@@ -39,13 +39,19 @@ $langs->load("bills");
 
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0)
 {
 	$action = '';
 	$socid = $user->societe_id;
 }
 
+
+/*
+ * View
+ */
+
+$now=gmmktime();
 
 llxHeader('',$langs->trans("BillsSuppliersUnpayed"));
 
@@ -200,7 +206,7 @@ if ($user->rights->fournisseur->facture->lire)
 
 				print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill")."</a> ";
 				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.$objp->ref.'</a>';
-				if ($objp->datelimite < (time() - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+				if ($objp->datelimite < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 				print "</td>\n";
 
 				print "<td nowrap>".dolibarr_trunc($objp->facnumber,12)."</td>\n";

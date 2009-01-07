@@ -110,6 +110,11 @@ if ( $action == 'delete' )
 }
 
 
+/*
+ * View
+ */
+
+$now=gmmktime();
 
 llxHeader();
 
@@ -195,7 +200,7 @@ if ($_GET["propalid"] > 0)
     if ($propal->fin_validite)
     {
         print dolibarr_print_date($propal->fin_validite,'daytext');
-        if ($propal->statut == 1 && $propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+        if ($propal->statut == 1 && $propal->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
     }
     else
     {
@@ -641,6 +646,7 @@ else
    *
    */
 
+	$now=gmmktime();
 
   $limit = $conf->liste_limit;
   $offset = $limit * $page ;
@@ -753,7 +759,7 @@ else
             print '</td>';
           
             print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-            if ($objp->fk_statut == 1 && $objp->din < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+            if ($objp->fk_statut == 1 && $objp->din < ($now() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
             print '</td>';
                     
             print '<td width="16" align="right" class="nobordernopadding">';

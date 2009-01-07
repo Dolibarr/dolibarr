@@ -1880,6 +1880,8 @@ if ($_GET['action'] == 'create')
 }
 else
 {
+	$now=gmmktime();
+	
 	$id = $_GET['facid'];
 	$ref= $_GET['ref'];
 	if ($id > 0 || ! empty($ref))
@@ -2397,7 +2399,7 @@ else
 				else
 				{
 					print dolibarr_print_date($fac->date_lim_reglement,'daytext');
-					if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans('Late'));
+					if ($fac->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans('Late'));
 				}
 			}
 			else
@@ -3382,6 +3384,8 @@ else
 			*                      Mode Liste                                         *
 			*                                                                         *
 			***************************************************************************/
+		$now=gmmktime();
+
 		$page     =$_GET['page'];
 		$sortorder=$_GET['sortorder'];
 		$sortfield=$_GET['sortfield'];
@@ -3546,7 +3550,7 @@ else
 					print $facturestatic->getNomUrl(1);
 					print $objp->increment;
 					print '</td>';
-					if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am)
+					if ($objp->datelimite < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am)
 					{
 						print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
 						print img_warning($langs->trans('Late'));

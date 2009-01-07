@@ -21,7 +21,7 @@
 /**
 		\file       htdocs/includes/boxes/box_propales.php
 		\ingroup    propales
-		\brief      Module de génération de l'affichage de la box propales
+		\brief      Module de gï¿½nï¿½ration de l'affichage de la box propales
 		\version	$Id$
 */
 
@@ -54,13 +54,13 @@ class box_propales extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les données en mémoire pour affichage ultérieur
-     *      \param      $max        Nombre maximum d'enregistrements à charger
+     *      \brief      Charge les donnï¿½es en mï¿½moire pour affichage ultï¿½rieur
+     *      \param      $max        Nombre maximum d'enregistrements ï¿½ charger
      */
     function loadBox($max=5)
     {
         
-        global $user, $langs, $db;
+        global $user, $langs, $db, $conf;
 
 		$this->max=$max;
         
@@ -73,7 +73,7 @@ class box_propales extends ModeleBoxes {
         {
 
             $sql = "SELECT s.nom, s.rowid as socid,";
-            $sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec";
+            $sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -91,13 +91,19 @@ class box_propales extends ModeleBoxes {
             if ($result)
             {
                 $num = $db->num_rows($result);
-
+				$now=gmmktime();
+                
                 $i = 0;
 
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
 					$datec=$db->jdate($objp->datec);
+					$dateterm=$db->jdate($objp->fin_validite);
+					$dateclose=$db->jdate($objp->date_cloture);
+					
+					$late = '';
+					if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 					
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
@@ -105,6 +111,7 @@ class box_propales extends ModeleBoxes {
 
                     $this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->ref,
+					'text2'=> $late,
                     'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
                     
                     $this->info_box_contents[$i][2] = array('td' => 'align="left"',

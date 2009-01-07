@@ -83,6 +83,8 @@ if ($_POST["mode"] == 'search')
  * View
  */
  
+$now=gmmktime();
+
 llxHeader();
 
 $sql = "SELECT s.rowid as socid, s.nom, ";
@@ -206,7 +208,7 @@ if ($resql)
 		$facturestatic->id=$obj->facid;
 		$facturestatic->ref=$obj->ref;
 		print $facturestatic->getNomUrl(1);
-        if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance < (time() - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+        if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
         print "</td>\n";
         print '<td nowrap>'.dolibarr_trunc($obj->facnumber,10)."</td>";
         print '<td align="center" nowrap="1">'.dolibarr_print_date($obj->datef,'day').'</td>';

@@ -144,6 +144,9 @@ $formfile = new FormFile($db);
 *                      Mode Liste                                         *
 *                                                                         *
 ***************************************************************************/
+
+$now=gmmktime();
+
 $page = $_GET["page"];
 $sortfield=$_GET["sortfield"];
 $sortorder=$_GET["sortorder"];
@@ -311,7 +314,7 @@ if ($result)
 			print '</td>';
 			
 			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-			if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+			if ($objp->datelimite < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 			print '</td>';
 			
 			print '<td width="16" align="right" class="nobordernopadding">';

@@ -1225,10 +1225,12 @@ class Contrat extends CommonObject
 	{
 		global $conf, $user;
 
+		$now=gmmktime();
+		
 		$this->nbtodo=$this->nbtodolate=0;
 		if ($mode == 'inactives')
 		{
-			$sql = "SELECT cd.rowid,".$this->db->pdate("cd.date_ouverture_prevue")." as datefin";
+			$sql = "SELECT cd.rowid, cd.date_ouverture_prevue as datefin";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 			$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1237,7 +1239,7 @@ class Contrat extends CommonObject
 		}
 		if ($mode == 'expired')
 		{
-			$sql = "SELECT cd.rowid,".$this->db->pdate("cd.date_fin_validite")." as datefin";
+			$sql = "SELECT cd.rowid, cd.date_fin_validite as datefin";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 			$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1254,9 +1256,9 @@ class Contrat extends CommonObject
 			{
 				$this->nbtodo++;
 				if ($mode == 'inactives')
-				if ($obj->datefin && $obj->datefin < (time() - $conf->contrat->services->inactifs->warning_delay)) $this->nbtodolate++;
+				if ($obj->datefin && $this->db->jdate($obj->datefin) < ($now - $conf->contrat->services->inactifs->warning_delay)) $this->nbtodolate++;
 				if ($mode == 'expired')
-				if ($obj->datefin && $obj->datefin < (time() - $conf->contrat->services->expires->warning_delay)) $this->nbtodolate++;
+				if ($obj->datefin && $this->db->jdate($obj->datefin) < ($now - $conf->contrat->services->expires->warning_delay)) $this->nbtodolate++;
 			}
 			return 1;
 		}

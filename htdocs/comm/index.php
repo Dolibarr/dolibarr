@@ -418,6 +418,8 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
     $langs->load("propal");
     
+    $now=gmmktime();
+    
     $sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
@@ -454,7 +456,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 print $propalstatic->getNomUrl(1);
                 print '</td>';
                 print '<td width="18" class="nobordernopadding" nowrap="nowrap">';
-                if ($obj->dp < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+                if ($obj->dp < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
                 print '</td>';
                 print '<td width="16" align="center" class="nobordernopadding">';
                 $filename=sanitizeFileName($obj->ref);

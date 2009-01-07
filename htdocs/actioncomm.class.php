@@ -386,6 +386,8 @@ class ActionComm
     {
         global $conf, $user;
         
+        $now=gmmktime();		// gmmktime(0,0,0,1,1,1970) -> 0,  mktime(0,0,0,1,1,1970) -> -3600;
+
         $this->nbtodo=$this->nbtodolate=0;
         $sql = "SELECT a.id, a.datep as dp";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -400,7 +402,7 @@ class ActionComm
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
-                if ($this->db->jdate($obj->dp) < (time() - $conf->actions->warning_delay)) $this->nbtodolate++;
+                if (isset($obj->dp) && $this->db->jdate($obj->dp) < ($now - $conf->actions->warning_delay)) $this->nbtodolate++;
             }
             return 1;
         }

@@ -1663,10 +1663,12 @@ class Propal extends CommonObject
 	{
 		global $conf, $user;
 
+		$now=gmmktime();
+		
 		$this->nbtodo=$this->nbtodolate=0;
 		$clause = "WHERE";
 
-		$sql ="SELECT p.rowid, p.ref, ".$this->db->pdate("p.datec")." as datec,".$this->db->pdate("p.fin_validite")." as datefin";
+		$sql ="SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin";
 		$sql.=" FROM ".MAIN_DB_PREFIX."propal as p";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -1680,16 +1682,22 @@ class Propal extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			if ($mode == 'opened') $delay_warning=$conf->propal->cloture->warning_delay;
+			if ($mode == 'signed') $delay_warning=$conf->propal->facture->warning_delay;
+			
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nbtodo++;
-				if ($obj->datefin < (time() - $conf->propal->cloture->warning_delay))
+				if ($mode == 'opened') 
 				{
-					if ($mode == 'opened') $this->nbtodolate++;
-					if ($mode == 'signed') $this->nbtodolate++;
-					// \todo Definir r�gle des propales � facturer en retard
-					// if ($mode == 'signed' && ! sizeof($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
+					$datelimit = $this->db->jdate($obj->datefin);
+					if ($datelimit < ($now - $delay_warning))
+					{
+						$this->nbtodolate++;
+					}
 				}
+				// \todo Definir r�gle des propales � facturer en retard
+				// if ($mode == 'signed' && ! sizeof($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
 			}
 			return 1;
 		}

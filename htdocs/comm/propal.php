@@ -857,6 +857,8 @@ if ($_GET['propalid'] > 0)
 	 *
 	 */
 
+	$now=gmmktime();
+	
 	if ($mesg) print $mesg."<br>";
 
 	$propal = new Propal($db);
@@ -1001,7 +1003,7 @@ if ($_GET['propalid'] > 0)
 		if ($propal->fin_validite)
 		{
 			print dolibarr_print_date($propal->fin_validite,'daytext');
-			if ($propal->statut == 1 && $propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+			if ($propal->statut == 1 && $propal->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 		}
 		else
 		{
@@ -1872,6 +1874,8 @@ else
 	 *                         Mode Liste des propales                          *
 	 *                                                                          *
 	 ****************************************************************************/
+	
+	$now=gmmktime();
 
 	$sortorder=$_GET['sortorder'];
 	$sortfield=$_GET['sortfield'];
@@ -2009,7 +2013,7 @@ else
 			print '</td>';
 
 			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-			if ($objp->fk_statut == 1 && $objp->dfv < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+			if ($objp->fk_statut == 1 && $objp->dfv < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 			print '</td>';
 
 			print '<td width="16" align="right" class="nobordernopadding">';

@@ -90,14 +90,14 @@ class box_commandes extends ModeleBoxes {
             if ($result)
             {
                 $num = $db->num_rows($result);
-				$datem=$db->jdate($objp->tms);
 				
                 $i = 0;
 
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
-
+					$datem=$db->jdate($objp->tms);
+                    
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
                     'url' => DOL_URL_ROOT."/commande/fiche.php?id=".$objp->rowid);

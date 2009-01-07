@@ -93,6 +93,9 @@ class box_actions extends ModeleBoxes {
 			$result = $db->query($sql);
 			if ($result)
 			{
+				$now=gmmktime();
+				$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
+				
 				$num = $db->num_rows($result);
 				$i = 0;
 				while ($i < $num)
@@ -100,8 +103,8 @@ class box_actions extends ModeleBoxes {
 					$late = '';
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->dp);
-					
-					if ($datelimite  < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) $late=img_warning($langs->trans("Late"));
+
+					if ($datelimite  < ($now - $delay_warning)) $late=img_warning($langs->trans("Late"));
 
 					$label=($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label);
 

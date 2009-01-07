@@ -51,6 +51,8 @@ $result = restrictedArea($user, 'commande', $orderid,'');
  * View
  */
 
+$now=gmmktime();
+
 $html = new Form($db);
 $formfile = new FormFile($db);
 
@@ -93,15 +95,15 @@ if ($viewstatut <> '')
 {
 	if ($viewstatut < 4 && $viewstatut > -2)
 	{
-		$sql .= ' AND c.fk_statut ='.$viewstatut; // brouillon, validée, en cours, annulée
+		$sql .= ' AND c.fk_statut ='.$viewstatut; // brouillon, validï¿½e, en cours, annulï¿½e
 		if ($viewstatut == 3)
 		{
-			$sql .= ' AND c.facture = 0'; // à facturer
+			$sql .= ' AND c.facture = 0'; // ï¿½ facturer
 		}
 	}
 	if ($viewstatut == 4)
 	{
-		$sql .= ' AND c.facture = 1'; // facturée
+		$sql .= ' AND c.facture = 1'; // facturï¿½e
 	}
 	if ($viewstatut == -2)
 	{
@@ -204,7 +206,7 @@ if ($resql)
 		print '</td>';
 		 
 		print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $objp->date_commande < (time() - $conf->commande->traitement->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $objp->date_commande < ($now - $conf->commande->traitement->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 
 		print '<td width="16" align="right" class="nobordernopadding">';
