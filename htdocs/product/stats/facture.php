@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,9 +56,11 @@ if ($user->societe_id > 0)
 
 
 /*
- * Affiche fiche
- *
+ * View
  */
+
+$invoicestatic=new Facture($db);
+
 $html = new Form($db);
 
 
@@ -96,8 +98,8 @@ if ($_GET["id"] || $_GET["ref"])
         // Libelle
         print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
         print '</tr>';
-        
-        // Prix
+ 
+        // Price
         print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">';
 		if ($product->price_base_type == 'TTC')
 		{
@@ -164,16 +166,17 @@ if ($_GET["id"] || $_GET["ref"])
                     $var=!$var;
 
                     print "<tr $bc[$var]>";
-                    print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' ';
-                    print $objp->facnumber;
-                    print "</a></td>\n";
+                    print '<td>';
+                    $invoicestatic->id=$objp->facid;
+                    $invoicestatic->ref=$objp->facnumber;
+					print $invoicestatic->getNomUrl(1);
+                    print "</td>\n";
                     print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
                     print "<td>".$objp->code_client."</td>\n";
                     print "<td align=\"center\">";
                     print dolibarr_print_date($objp->date)."</td>";
                     print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
-                    $fac=new Facture($db);
-                    print '<td align="right">'.$fac->LibStatut($objp->paye,$objp->statut,5).'</td>';
+                    print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
                     print "</tr>\n";
                     $i++;
                 }

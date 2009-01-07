@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("companies");
@@ -57,9 +57,11 @@ if ($user->societe_id > 0)
 
 
 /*
- * Affiche fiche
- *
+ * View
  */
+
+$supplierinvoicestatic=new FactureFournisseur($db);
+
 $html = new Form($db);
 
 if ($_GET["id"] || $_GET["ref"])
@@ -164,9 +166,11 @@ if ($_GET["id"] || $_GET["ref"])
                     $var=!$var;
 
                     print "<tr $bc[$var]>";
-                    print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' ';
-                    print $objp->facnumber;
-                    print "</a></td>\n";
+                    print '<td>';
+                    $supplierinvoicestatic->id=$objp->facid;
+                    $supplierinvoicestatic->ref=$objp->facnumber;
+					print $supplierinvoicestatic->getNomUrl(1);
+                    print "</td>\n";
                     print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
                     print "<td>".$objp->code_client."</td>\n";
                     print "<td align=\"center\">";

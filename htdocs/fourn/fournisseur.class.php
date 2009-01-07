@@ -40,7 +40,7 @@ class Fournisseur extends Societe
 
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB     handler accès base de données
+	 *    \param  DB     handler accï¿½s base de donnï¿½es
 	 *    \param  id     id societe (0 par defaut)
 	 */
 
@@ -84,12 +84,12 @@ class Fournisseur extends Societe
 
 	function NbProduct()
 	{
-		$sql = "SELECT count(*)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
-		$sql .= " WHERE fk_soc = ".$this->id;
+		$sql = "SELECT count(pf.rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur as pf,";
+		$sql.= " ".MAIN_DB_PREFIX."product_fournisseur_price as ppf";
+		$sql .= " WHERE fk_soc = ".$this->id." AND ppf.fk_product_fournisseur = pf.rowid";
 
 		$resql = $this->db->query($sql) ;
-
 		if ( $resql )
 		{
 			$row = $this->db->fetch_row($resql);
@@ -99,13 +99,12 @@ class Fournisseur extends Societe
 		{
 			return -1;
 		}
-
 	}
 
 	/**
-	 *      \brief      Créé la commande au statut brouillon
-	 *      \param      user        Utilisateur qui crée
-	 *      \return     int         <0 si ko, id de la commande créée si ok
+	 *      \brief      Crï¿½ï¿½ la commande au statut brouillon
+	 *      \param      user        Utilisateur qui crï¿½e
+	 *      \return     int         <0 si ko, id de la commande crï¿½ï¿½e si ok
 	 */
 	function updateFromCommandeClient($user, $idc, $comclientid)
 	{
@@ -116,9 +115,9 @@ class Fournisseur extends Societe
 	}
 
 	/**
-	 *      \brief      Créé la commande au statut brouillon
-	 *      \param      user        Utilisateur qui crée
-	 *      \return     int         <0 si ko, id de la commande créée si ok
+	 *      \brief      Crï¿½ï¿½ la commande au statut brouillon
+	 *      \param      user        Utilisateur qui crï¿½e
+	 *      \return     int         <0 si ko, id de la commande crï¿½ï¿½e si ok
 	 */
 	function create_commande($user)
 	{
@@ -215,8 +214,8 @@ class Fournisseur extends Societe
 	}
 
 	/**
-	 *    \brief      Créé une categorie fournisseur
-	 *    \param      user        Utilisateur qui crée
+	 *    \brief      Crï¿½ï¿½ une categorie fournisseur
+	 *    \param      user        Utilisateur qui crï¿½e
 	 *	\param		name		Nom categorie
 	 *    \return     int         <0 si ko, 0 si ok
 	 */
