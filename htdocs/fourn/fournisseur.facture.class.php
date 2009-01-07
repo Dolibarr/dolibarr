@@ -39,12 +39,15 @@ class FactureFournisseur extends Facture
 {
 	var $id;
 	var $db;
-	var $socid;
+
 	var $element='facture_fourn';
 	var $table_element='facture_fourn';
 	var $table_element_line='facture_fourn_det';
 	var $fk_element='fk_facture_fourn';
 
+	var $ref;
+	var $ref_supplier;
+	var $socid;
 	//! 0=draft,
 	//! 1=validated,
 	//! TODO Ce statut doit etre 2 et non 1 classee payee partiellement (close_code='discount_vat','badcustomer') ou completement (close_code=null),
@@ -57,7 +60,6 @@ class FactureFournisseur extends Facture
 	var $libelle;
 	var $date;
 	var $date_echeance;
-	var $ref;
 	var $amount;
 	var $remise;
 	var $tva;
@@ -105,8 +107,11 @@ class FactureFournisseur extends Facture
 	{
 		global $langs;
 
+		// Clear parameters
+		if (empty($this->date)) $this->date=gmmktime();
+
 		$socid = $this->socid;
-		$number = $this->ref;
+		$number = $this->ref_supplier?$this->ref_supplier:$this->ref;
 		$amount = $this->amount;
 		$remise = $this->remise;
 
@@ -118,6 +123,8 @@ class FactureFournisseur extends Facture
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author, date_lim_reglement) ';
 		$sql .= " VALUES ('".addslashes($number)."','".addslashes($this->libelle)."',";
 		$sql .= $this->socid.", ".$this->db->idate(mktime()).",'".$this->db->idate($this->date)."','".addslashes($this->note)."', ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
+		
+		dolibarr_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -126,15 +133,22 @@ class FactureFournisseur extends Facture
 			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
 				$sql .= ' VALUES ('.$this->id.');';
+				
+				dolibarr_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
 				$resql_insert=$this->db->query($sql);
 				if ($resql_insert)
 				{
 					$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
+					
 					$this->updateline($idligne,
 					$this->lignes[$i]->description,
 					$this->lignes[$i]->pu_ht,
 					$this->lignes[$i]->tva_taux,
-					$this->lignes[$i]->qty);
+					$this->lignes[$i]->qty,
+					$this->lignes[$i]->fk_product,
+					'HT',
+					$this->lignes[$i]->info_bits
+					);
 				}
 			}
 			// Update total price
@@ -168,9 +182,9 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 *    	\brief      Recup�re l'objet facture et ses lignes de factures
-	 *    	\param      rowid       id de la facture a r�cup�rer
-	 *		\return     int         >0 si ok, <0 si ko
+	 *    	\brief      Load object from database
+	 *    	\param      rowid       id of object to get
+	 *		\return     int         >0 if ok, <0 if ko
 	 */
 	function fetch($rowid)
 	{
@@ -182,7 +196,7 @@ class FactureFournisseur extends Facture
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 		$sql.= ' WHERE f.rowid='.$rowid.' AND f.fk_soc = s.rowid';
 
-		dolibarr_syslog("FactureFourn::Fetch sql=".$sql, LOG_DEBUG);
+		dolibarr_syslog("FactureFournisseur::Fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -196,6 +210,7 @@ class FactureFournisseur extends Facture
 				$this->ref_supplier  = $obj->facnumber;
 
 				$this->datep         = $obj->df;
+				$this->date          = $obj->df;
 				$this->date_echeance = $obj->de;
 				$this->libelle       = $obj->libelle;
 
@@ -226,7 +241,7 @@ class FactureFournisseur extends Facture
 				if ($result < 0)
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog('Facture::Fetch Error '.$this->error);
+					dolibarr_syslog('FactureFournisseur::Fetch Error '.$this->error, LOG_ERROR);
 					return -3;
 				}
 				return 1;
@@ -250,9 +265,9 @@ class FactureFournisseur extends Facture
 
 	
 	/**
-		\brief      Recup�re les lignes de factures dans this->lignes
-		\return     int         1 si ok, < 0 si erreur
-	*/
+	 *	\brief      Load this->lignes
+	 *	\return     int         1 si ok, < 0 si erreur
+	 */
 	function fetch_lines()
 	{
 		$sql = 'SELECT f.rowid, f.description, f.pu_ht, f.pu_ttc, f.qty, f.tva_taux, f.tva';
@@ -264,7 +279,7 @@ class FactureFournisseur extends Facture
 		//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur as pf ON f.fk_product = pf.fk_product';
 		$sql.= ' WHERE fk_facture_fourn='.$this->id;
 
-		dolibarr_syslog("FactureFourn::fetch_lines sql=".$sql, LOG_DEBUG);
+		dolibarr_syslog("FactureFournisseur::fetch_lines sql=".$sql, LOG_DEBUG);
 		$resql_rows = $this->db->query($sql);
 		if ($resql_rows)
 		{
@@ -506,12 +521,12 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 * \brief     Mets � jour une ligne de facture
+	 * \brief     Update line
 	 * \param     id            	Id de la ligne de facture
 	 * \param     label         	Description de la ligne
 	 * \param     pu          		Prix unitaire (HT ou TTC selon price_base_type)
 	 * \param     tauxtva       	Taux tva
-	 * \param     qty           	Quantit�
+	 * \param     qty           	Quantity
 	 * \param     idproduct			Id produit
 	 * \param	  price_base_type	HT ou TTC
 	 * \param	  info_bits			Miscellanous informations of line
@@ -770,6 +785,70 @@ class FactureFournisseur extends Facture
 		$this->total_ht       = $xnbp*100;
 		$this->total_tva      = $xnbp*19.6;
 		$this->total_ttc      = $xnbp*119.6;
-	}	
+	}
+	
+		/**
+	 *		\brief      Load an object from its id and create a new one in database
+	 *		\param      fromid     		Id of object to clone
+	 *		\param		invertdetail	Reverse sign of amounts for lines
+	 * 	 	\return		int				New id of clone
+	 */
+	function createFromClone($fromid,$invertdetail=0)
+	{
+		global $user,$langs;
+
+		$error=0;
+
+		$object=new FactureFournisseur($this->db);
+
+		$this->db->begin();
+
+		// Load source object
+		$object->fetch($fromid);
+		$object->id=0;
+		$object->statut=0;
+		
+		// Clear fields
+		$object->ref_supplier=$langs->trans("CopyOf").' '.$object->ref_supplier;
+		$object->author             = $user->id;
+		$object->user_valid         = '';
+		$object->fk_facture_source  = 0;
+		$object->date_creation      = '';
+		$object->date_validation    = '';
+		$object->date               = '';
+		$object->ref_client         = '';
+		$object->close_code         = '';
+		$object->close_note         = '';
+		
+		// Create clone
+		$result=$object->create($user);
+
+		// Other options
+		if ($result < 0)
+		{
+			$this->error=$object->error;
+			$error++;
+		}
+
+		if (! $error)
+		{
+				
+				
+				
+		}
+
+		// End
+		if (! $error)
+		{
+			$this->db->commit();
+			return $object->id;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
+	
 }
 ?>

@@ -42,3 +42,4 @@ ErrorExportDuplicateProfil=Ce nom de profil existe déjà pour ce lot d'export.
 ErrorLDAPSetupNotComplete=Le matching Dolibarr-LDAP est incomplet.
 ErrorLDAPMakeManualTest=Un fichier .ldif a été généré dans le répertoire %s. Essayer de charger ce fichier en manuel depuis la ligne de commande pour plus de détail sur l'erreur.
 ErrorCantSaveADoneUserWithZeroPercentage=Impossible sauver une action à l'état non commencé avec un utilisateur défini comme ayant fait l'action.
+ErrorBillRefAlreadyExists=La référence utilisée pour la création existe déjà

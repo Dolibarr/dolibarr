@@ -48,10 +48,40 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 
-
 $html = new Form($db);
 $mesg='';
 $action=isset($_GET['action'])?$_GET['action']:$_POST['action'];
+
+
+/*
+ * Actions
+ */
+
+// Action clone object
+if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
+{
+	if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
+	{
+		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+	}
+	else
+	{
+		$object=new FactureFournisseur($db);
+		$result=$object->createFromClone($_REQUEST['facid']);
+		if ($result > 0)
+		{
+			header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
+			exit;
+		}
+		else
+		{
+			$langs->load("errors");
+			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+			$_GET['action']='';
+			$_GET['id']=$_REQUEST['id'];
+		}
+	}
+}
 
 if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->facture->valider)
 {
@@ -322,22 +352,15 @@ if ($_POST['action'] == 'classin')
 *	View
 */
 
-$addons='';
-llxHeader('','', $addons);
+llxHeader('','','');
 
 
 // Mode creation
-if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
+if ($_GET['action'] == 'create')
 {
 	print_titre($langs->trans('NewBill'));
 
 	if ($mesg) { print $mesg.'<br>'; }
-
-	if ($_GET['action'] == 'copy')
-	{
-		$fac_ori = new FactureFournisseur($db);
-		$fac_ori->fetch($_GET['facid']);
-	}
 
 	$societe='';
 	if ($_GET['socid'])
@@ -401,18 +424,8 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 
 		for ($i = 1 ; $i < 9 ; $i++)
 		{
-			if ($_GET['action'] == 'copy')
-			{
-				$value_label = $fac_ori->lignes[$i-1]->description;
-				$value_pu = $fac_ori->lignes[$i-1]->pu_ht;
-				$value_tauxtva = $fac_ori->lignes[$i-1]->tva_taux;
-				$value_qty = $fac_ori->lignes[$i-1]->qty;
-			}
-			else
-			{
-				$value_qty = '1';
-				$value_tauxtva = '';
-			}
+			$value_qty = '1';
+			$value_tauxtva = '';
 			print '<tr><td>'.$i.'</td>';
 			print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
 			print '<td align="right"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
@@ -550,18 +563,27 @@ else
 
 			if ($mesg) { print $mesg.'<br>'; }
 
-			/*
-			 * Confirmation de la suppression d'une ligne produit
-			 */
-			 if ($_GET['action'] == 'confirm_delete_line')
-			 {
+			// Confirmation de la suppression d'une ligne produit
+			if ($_GET['action'] == 'confirm_delete_line')
+			{
 			 	$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
 			 	print '<br>';
-			 }
-			/*
-			 * Confirmation de la validation
-			 *
-			 */
+			}
+			
+			// Clone confirmation
+			if ($_GET["action"] == 'clone')
+			{
+				// Create an array for form
+				$formquestion=array(
+				//'text' => $langs->trans("ConfirmClone"),
+				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
+				);
+				// Paiement incomplet. On demande si motif = escompte ou autre
+				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$fac->ref),'confirm_clone',$formquestion,'yes');
+				print '<br>';
+			}
+				
+			// Confirmation de la validation
 			if ($_GET['action'] == 'valid')
 			{
 				$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $fac->ref), 'confirm_valid');
@@ -939,11 +961,11 @@ else
 				print '>'.$langs->trans('Validate').'</a>';
 			}
 		}
-		else
-			if ($user->rights->fournisseur->facture->creer)
-			{
-				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=copy&amp;socid='.$fac->socid.'">'.$langs->trans('ToClone').'</a>';
-			}
+		
+		if ($user->rights->fournisseur->facture->creer)
+		{
+			print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=clone&amp;socid='.$fac->socid.'">'.$langs->trans('ToClone').'</a>';
+		}
 
 		if ($_GET['action'] != 'edit' && $fac->statut == 0 && $user->rights->fournisseur->facture->supprimer)
 		{
