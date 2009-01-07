@@ -72,12 +72,12 @@ dolibarr_fiche_head($head, 'info', $langs->trans("Subscription"));
 $subscription->info($rowid);
 
 print '<table width="100%"><tr><td>';
-dolibarr_print_object_info($subscription);
+dol_print_object_info($subscription);
 print '</td></tr></table>';
 
 print '</div>';
 
-// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+// Juste pour ï¿½viter bug IE qui rï¿½organise mal div prï¿½cï¿½dents si celui-ci absent
 print '<div class="tabsAction">';
 print '</div>';
 

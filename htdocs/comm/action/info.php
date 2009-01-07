@@ -70,7 +70,7 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("Action"));
 
 
 print '<table width="100%"><tr><td>';
-dolibarr_print_object_info($act);
+dol_print_object_info($act);
 print '</td></tr></table>';
 
 print '</div>';

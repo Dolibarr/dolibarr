@@ -770,7 +770,7 @@ if ($_GET["id"])
 		{
 			if ($act->societe->fetch($act->societe->id))
 			{
-				print "<br>".dolibarr_print_phone($act->societe->tel);
+				print "<br>".dol_print_phone($act->societe->tel);
 			}
 		}	
         print '</td>';
@@ -783,7 +783,7 @@ if ($_GET["id"])
 			{
 				if ($act->contact->fetch($act->contact->id))
 				{
-					print "<br>".dolibarr_print_phone($act->contact->phone_pro);
+					print "<br>".dol_print_phone($act->contact->phone_pro);
 				}
 			}	
         }

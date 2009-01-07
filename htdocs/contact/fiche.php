@@ -483,7 +483,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	{
 		$login=strtolower(substr($contact->prenom, 0, 4)) . strtolower(substr($contact->nom, 0, 4));
 		
-		// Crée un tableau formulaire
+		// Crï¿½e un tableau formulaire
 		$formquestion=array(
 		array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
 		
@@ -533,11 +533,11 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	print $contact->pays;
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dolibarr_print_phone($contact->phone_pro,$contact->pays_code,$contact->id,$contact->socid).'</td>';
-	print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dolibarr_print_phone($contact->phone_perso,$contact->pays_code,$contact->id,$contact->socid).'</td></tr>';
+	print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dol_print_phone($contact->phone_pro,$contact->pays_code,$contact->id,$contact->socid).'</td>';
+	print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dol_print_phone($contact->phone_perso,$contact->pays_code,$contact->id,$contact->socid).'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dolibarr_print_phone($contact->phone_mobile,$contact->pays_code,$contact->id,$contact->socid).'</td>';
-	print '<td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($contact->fax,$contact->pays_code,$contact->id,$contact->socid).'</td></tr>';
+	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dol_print_phone($contact->phone_mobile,$contact->pays_code,$contact->id,$contact->socid).'</td>';
+	print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($contact->fax,$contact->pays_code,$contact->id,$contact->socid).'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("EMail").'</td><td>';
 	if ($contact->email && ! ValidEmail($contact->email))

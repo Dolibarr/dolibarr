@@ -52,12 +52,12 @@ dolibarr_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"));
 
 
 print '<table width="100%"><tr><td>';
-dolibarr_print_object_info($fac);
+dol_print_object_info($fac);
 print '</td></tr></table>';
 
 print '</div>';
 
-// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+// Juste pour ï¿½viter bug IE qui rï¿½organise mal div prï¿½cï¿½dents si celui-ci absent
 print '<div class="tabsAction">';
 print '</div>';
 

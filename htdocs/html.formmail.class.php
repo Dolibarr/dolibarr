@@ -18,16 +18,15 @@
 
 /**
         \file       htdocs/html.formmail.class.php
-        \brief      Fichier de la classe permettant la génération du formulaire html d'envoi de mail unitaire
+        \brief      Fichier de la classe permettant la gï¿½nï¿½ration du formulaire html d'envoi de mail unitaire
         \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");
 
 
 /**     \class      FormMail
-        \brief      Classe permettant la génération du formulaire html d'envoi de mail unitaire
+        \brief      Classe permettant la gï¿½nï¿½ration du formulaire html d'envoi de mail unitaire
         \remarks    Utilisation: $formail = new FormMail($db)
         \remarks                 $formmail->proprietes=1 ou chaine ou tableau de valeurs
         \remarks                 $formmail->show_form() affiche le formulaire
@@ -67,7 +66,7 @@ class FormMail
   
 	/**
 		\brief     Constructeur
-	    \param     DB      handler d'accès base de donnée
+	    \param     DB      handler d'accï¿½s base de donnï¿½e
 	*/
 	function FormMail($DB)
 	{
@@ -153,7 +152,7 @@ class FormMail
 	}
 		
 	/**
-	 *	\brief  		Affiche la partie de formulaire pour saisie d'un mail en fonction des propriétés
+	 *	\brief  		Affiche la partie de formulaire pour saisie d'un mail en fonction des propriï¿½tï¿½s
 	 *	\param			addfileaction		Name of action when posting file attachments	
 	 * 	\remarks		this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
 	 */
@@ -457,10 +456,10 @@ class FormMail
 
   /*
    *    \brief  Affiche la partie de formulaire pour saisie d'un mail
-   *    \param  withtopic   1 pour proposer à la saisie le sujet
-   *    \param  withbody    1 pour proposer à la saisie le corps du message
-   *    \param  withfile    1 pour proposer à la saisie l'ajout d'un fichier joint
-   *    \todo   Fonction a virer quand fichier /comm/mailing.php viré (= quand ecran dans /comm/mailing prets)
+   *    \param  withtopic   1 pour proposer ï¿½ la saisie le sujet
+   *    \param  withbody    1 pour proposer ï¿½ la saisie le corps du message
+   *    \param  withfile    1 pour proposer ï¿½ la saisie l'ajout d'un fichier joint
+   *    \todo   Fonction a virer quand fichier /comm/mailing.php virï¿½ (= quand ecran dans /comm/mailing prets)
    */
   function mail_topicmessagefile($withtopic=1,$withbody=1,$withfile=1,$defaultbody) {
     global $langs;

@@ -189,10 +189,10 @@ if ($socid > 0)
 	print '</td></tr>';
 
     // Phone
-    print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($objsoc->tel,$objsoc->pays_code,0,$objsoc->id).'</td>';
+    print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($objsoc->tel,$objsoc->pays_code,0,$objsoc->id).'</td>';
     
     // Fax
-	print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($objsoc->fax,$objsoc->pays_code,0,$objsoc->id).'</td></tr>';
+	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($objsoc->fax,$objsoc->pays_code,0,$objsoc->id).'</td></tr>';
 
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\" target=\"_blank\">".$objsoc->url."</a>&nbsp;</td></tr>";
 

@@ -169,7 +169,7 @@ if ($resql)
       
       print '<td><a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->email.'</a>&nbsp;</td>';
       
-      print '<td>'.dolibarr_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->rowid).'&nbsp;</td>';
+      print '<td>'.dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->rowid).'&nbsp;</td>';
       
       print "</tr>\n";
       $i++;

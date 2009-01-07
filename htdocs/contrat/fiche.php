@@ -1064,7 +1064,7 @@ else
 					{
 						$product=new Product($db);
 						$product->fetch($objp->fk_product);
-						$dateactend = dolibarr_time_plus_duree (time(), $product->duration_value, $product->duration_unit);
+						$dateactend = dol_time_plus_duree (time(), $product->duration_value, $product->duration_unit);
 					}
 				}
 
@@ -1112,7 +1112,7 @@ else
 					{
 						$product=new Product($db);
 						$product->fetch($objp->fk_product);
-						$dateactend = dolibarr_time_plus_duree (time(), $product->duration_value, $product->duration_unit);
+						$dateactend = dol_time_plus_duree (time(), $product->duration_value, $product->duration_unit);
 					}
 				}
 				$now=mktime();

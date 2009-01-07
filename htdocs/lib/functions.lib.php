@@ -158,6 +158,12 @@ function dol_escape_js($stringtoescape)
 }
 
 
+/* For backward compatiblity */
+function dolibarr_syslog($message, $level=LOG_INFO)
+{
+	return dol_syslog($message, $level);
+}
+
 /**
  *	\brief      Write log message in a file or to syslog process
  *				Pour fichier:   	fichier defined by SYSLOG_FILE
@@ -172,7 +178,7 @@ function dol_escape_js($stringtoescape)
  *	\remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=LOG_DEBUG=6
  *				On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  */
-function dolibarr_syslog($message, $level=LOG_INFO)
+function dol_syslog($message, $level=LOG_INFO)
 {
 	global $conf,$user,$langs,$REQUEST;
 
@@ -273,14 +279,21 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 	}
 }
 
-/**
- \brief      Affiche le header d'une fiche
- \param	    links		Tableau de titre d'onglets
- \param	    active      0=onglet non actif, 1=onglet actif
- \param      title       Titre tabelau ("" par defaut)
- \param      notab		0=Add tab header, 1=no tab header
- */
+
+/* For backward compatibility */
 function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
+{
+	return dol_fiche_head($links, $active, $title, $notab);
+}
+
+/**
+ *	\brief      Affiche le header d'une fiche
+ *	\param	    links		Tableau de titre d'onglets
+ *	\param	    active      0=onglet non actif, 1=onglet actif
+ *	\param      title       Titre tabelau ("" par defaut)
+ *	\param      notab		0=Add tab header, 1=no tab header
+ */
+function dol_fiche_head($links, $active='0', $title='', $notab=0)
 {
 	print "\n".'<div class="tabs">'."\n";
 
@@ -325,112 +338,13 @@ function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
 
 
 /**
- \brief      Sauvegarde parametrage personnel
- \param	    db          Handler d'acc�s base
- \param	    user        Objet utilisateur
- \param	    url         Si defini, on sauve parametre du tableau tab dont cl� = (url avec sortfield, sortorder, begin et page)
- Si non defini on sauve tous parametres du tableau tab
- \param	    tab         Tableau (cl�=>valeur) des param�tres a sauvegarder
- \return     int         <0 si ko, >0 si ok
+ *	\brief      Add a delay to a date
+ *	\param	    time                Date timestamp ou au format YYYY-MM-DD
+ *	\param	    duration_value      Value of delay to add
+ *	\param	    duration_unit       Unit of added delay (d, m, y)
+ *	\return     int                 New timestamp
  */
-function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
-{
-	// Verification parametres
-	if (sizeof($tab) < 1) return -1;
-
-	$db->begin();
-
-	// On efface anciens param�tres pour toutes les cl� dans $ta
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
-	$sql.= " WHERE fk_user = ".$user->id;
-	if ($url) $sql.=" AND page='".$url."'";
-	else $sql.=" AND page=''";	// Page ne peut etre null
-	$sql.= " AND param in (";
-	$i=0;
-	foreach ($tab as $key => $value)
-	{
-		if ($i > 0) $sql.=',';
-		$sql.="'".$key."'";
-		$i++;
-	}
-	$sql.= ")";
-	dolibarr_syslog("functions.lib::dolibarr_set_user_page_param $sql");
-
-	$resql=$db->query($sql);
-	if (! $resql)
-	{
-		dolibarr_print_error($db);
-		$db->rollback();
-		exit;
-	}
-
-	foreach ($tab as $key => $value)
-	{
-		// On positionne nouveaux param�tres
-		if ($value && (! $url || in_array($key,array('sortfield','sortorder','begin','page'))))
-		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value)";
-			$sql.= " VALUES (".$user->id.",";
-			if ($url) $sql.= " '".urlencode($url)."',";
-			else $sql.= " '',";
-			$sql.= " '".$key."','".addslashes($value)."');";
-			dolibarr_syslog("functions.lib::dolibarr_set_user_page_param $sql");
-
-			$result=$db->query($sql);
-			if (! $result)
-			{
-				dolibarr_print_error($db);
-				$db->rollback();
-				exit;
-			}
-
-			$user->page_param[$key] = $value;
-		}
-	}
-
-	$db->commit();
-	return 1;
-}
-
-
-/**
- \brief  Formattage des nombres
- \param	ca			valeur a formater
- \return	int			valeur format�e
- */
-function dolibarr_print_ca($ca)
-{
-	global $langs,$conf;
-
-	if ($ca > 1000)
-	{
-		$cat = round(($ca / 1000),2);
-		$cat = "$cat K".$langs->trans("Currency".$conf->monnaie);
-	}
-	else
-	{
-		$cat = round($ca,2);
-		$cat = "$cat ".$langs->trans("Currency".$conf->monnaie);
-	}
-
-	if ($ca > 1000000)
-	{
-		$cat = round(($ca / 1000000),2);
-		$cat = "$cat M".$langs->trans("Currency".$conf->monnaie);
-	}
-
-	return $cat;
-}
-
-
-/**
- \brief      Effectue un d�calage de date par rapport a une dur�e
- \param	    time                Date timestamp ou au format YYYY-MM-DD
- \param	    duration_value      Valeur de la dur�e a ajouter
- \param	    duration_unit       Unit� de la dur�e a ajouter (d, m, y)
- \return     int                 Nouveau timestamp
- */
-function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
+function dol_time_plus_duree($time,$duration_value,$duration_unit)
 {
 	if ($duration_value == 0) return $time;
 	if ($duration_value > 0) $deltastring="+".abs($duration_value);
@@ -441,6 +355,12 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
 	return strtotime($deltastring,$time);
 }
 
+
+/* For backward compatibility */
+function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
+{
+	return dol_print_date($time,$format,$to_gmt,$outputlangs);
+}
 
 /**
  *	\brief      Output date in a string format according to language $conf->language
@@ -455,7 +375,7 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
  * 								This means output is endoded in UTF-8 in default case.
  * 	\return     string      	Formated date or '' if time is null
  */
-function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
+function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 {
 	global $conf,$langs;
 
@@ -519,12 +439,12 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
  *	\return		date			Date
  * 	\example	19700101020000 -> 7200
  */
-function dolibarr_stringtotime($string)
+function dol_stringtotime($string)
 {
 	if (eregi('^([0-9]+)\/([0-9]+)\/([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$string,$reg))
 	{
 		// This part of code should not be used.
-		dolibarr_syslog("Functions.lib::dolibarr_stringtotime call to function with deprecated parameter", LOG_WARN);
+		dolibarr_syslog("Functions.lib::dol_stringtotime call to function with deprecated parameter", LOG_WARN);
 		// Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
 		// Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
 		$sday = $reg[1];
@@ -574,7 +494,7 @@ function dolibarr_stringtotime($string)
  *				'ndays' => $ndays
  *	\remarks	PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  */
-function dolibarr_getdate($timestamp,$fast=false)
+function dol_getdate($timestamp,$fast=false)
 {
 	$usealternatemethod=false;
 	if ($timestamp <= 0) $usealternatemethod=true;				// <= 1970
@@ -592,6 +512,12 @@ function dolibarr_getdate($timestamp,$fast=false)
 	return $arrayinfo;
 }
 
+/* For backward compatibility */
+function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
+{
+	return dol_mktime($hour,$minute,$second,$month,$day,$year,$gm,$check);
+}
+
 /**
  *	Return a GMT date built from detailed informations
  * 	Replace function mktime not available under Windows if year < 1970
@@ -606,7 +532,7 @@ function dolibarr_getdate($timestamp,$fast=false)
  *	@param		check			0=No check on parameters (Can use day 32, etc...)
  *	@return		timestamp		Date en timestamp, '' if error
  */
-function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
+function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 {
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
 
@@ -651,6 +577,11 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 }
 
 
+/* For backward compatibility */
+function dolibarr_date($fmt, $timestamp, $gm=0)
+{
+	return dol_date($fmt, $timestamp, $gm);
+}
 
 /**
  *	\brief  	Returns formated date
@@ -659,7 +590,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
  *	\param		gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
  *	\return		string			Formated date
  */
-function dolibarr_date($fmt, $timestamp, $gm=0)
+function dol_date($fmt, $timestamp, $gm=0)
 {
 	$usealternatemethod=false;
 	if ($timestamp <= 0) $usealternatemethod=true;
@@ -682,7 +613,7 @@ function dolibarr_date($fmt, $timestamp, $gm=0)
  *	\brief  Affiche les informations d'un objet
  *	\param	object			objet a afficher
  */
-function dolibarr_print_object_info($object)
+function dol_print_object_info($object)
 {
 	global $langs;
 	$langs->load("other");
@@ -718,6 +649,13 @@ function dolibarr_print_object_info($object)
 	print $langs->trans("DateConciliating")." : " . dolibarr_print_date($object->date_rappro,"dayhourtext") . '<br>';
 }
 
+
+/* For backward compatibility */
+function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$nolinks=false,$separ="&nbsp;")
+{
+	return dol_print_phone($phone,$country,$cid,$socid,$nolinks,$separ);
+}
+
 /**
  * 	\brief 		Format phone numbers according to country
  * 	\param 		phone 		Phone number to format
@@ -728,7 +666,7 @@ function dolibarr_print_object_info($object)
  * 	\param 		separ 		separation between numbers for a better visibility example : xx.xx.xx.xx.xx
  * 	\return 	string 		Formated phone number
  */
-function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$nolinks=false,$separ="&nbsp;")
+function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$nolinks=false,$separ="&nbsp;")
 {
 	global $conf,$user;
 
@@ -903,7 +841,13 @@ function dol_substr($string,$start,$length,$stringencoding='')
 	return $ret;
 }
 
-	
+
+/* For backward compatibility */
+function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
+{
+	return dol_trunc($string,$size,$trunc,$stringencoding);
+}
+
 /**
  *	\brief      Truncate a string to a particular length adding '...' if string larger than length
  *	\param      string				String to truncate
@@ -912,7 +856,7 @@ function dol_substr($string,$start,$length,$stringencoding='')
  *	\return     string				Truncated string
  *	\remarks	USE_SHORT_TITLE=0 can disable all truncings
  */
-function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
+function dol_trunc($string,$size=40,$trunc='right',$stringencoding='')
 {
 	global $conf;
 
@@ -952,26 +896,6 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
 	}
 }
 
-/**
- *	\brief      Complete une chaine a une taille donnee par des espaces
- *	\param      string		Chaine a completer
- *	\param      size		Longueur de la chaine.
- *	\param      side		0=Completion a droite, 1=Completion a gauche
- *	\param		char		Chaine de completion
- *	\return     string		Chaine complete
- */
-function dolibarr_pad($string,$size,$side,$char=' ')
-{
-	$taille=sizeof($string);
-	$i=0;
-	while($i < ($size - $taille))
-	{
-		if ($side > 0) $string.=$char;
-		else $string=$char.$string;
-		$i++;
-	}
-	return $string;
-}
 
 /**
  *	\brief      Affiche picto propre a une notion/module (fonction g�n�rique)
@@ -1600,6 +1524,12 @@ function accessforbidden($message='',$printheader=1)
 }
 
 
+/* For backward compatibility */
+function dolibarr_print_error($db='',$error='')
+{
+	return dol_print_error($db, $error);
+}
+
 /**
  *	\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remont�e des bugs.
  *				On doit appeler cette fonction quand une erreur technique bloquante est rencontree.
@@ -1608,7 +1538,7 @@ function accessforbidden($message='',$printheader=1)
  *				\param      db      Database handler
  *				\param      error	Chaine erreur ou tableau de chaines erreur complementaires a afficher
  */
-function dolibarr_print_error($db='',$error='')
+function dol_print_error($db='',$error='')
 {
 	global $conf,$langs,$argv;
 	$syslog = '';
@@ -2764,29 +2694,6 @@ function monthArrayOrSelected($selected=0)
 	{
 		return $month;
 	}
-}
-
-/**
- *	\brief  	Returns formated reduction
- *	\param		reduction		Reduction percentage
- *	\return		string			Formated reduction
- */
-function dolibarr_print_reduction($reduction=0)
-{
-	global $langs;
-	$langs->load("main");
-
-	$string = '';
-	if ($reduction == 100)
-	{
-		$string = $langs->trans("Offered");
-	}
-	else
-	{
-		$string = $reduction.'%';
-	}
-
-	return $string;
 }
 
 

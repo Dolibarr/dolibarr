@@ -89,7 +89,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 	}
 	if (! $datesubend)
 	{
-		$datesubend=dolibarr_time_plus_duree(dolibarr_time_plus_duree($datecotisation,$defaultdelay,$defaultdelayunit),-1,'d');
+		$datesubend=dol_time_plus_duree(dol_time_plus_duree($datecotisation,$defaultdelay,$defaultdelayunit),-1,'d');
 	}
 	
 	// Payment informations
@@ -398,7 +398,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	{
 		if ($adh->datefin > 0)
 		{
-			$datefrom=dolibarr_time_plus_duree($adh->datefin,1,'d');
+			$datefrom=dol_time_plus_duree($adh->datefin,1,'d');
 		}
 		else
 		{
@@ -415,7 +415,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	}
 	if (! $dateto)
 	{
-		//$dateto=dolibarr_time_plus_duree(dolibarr_time_plus_duree($datefrom,$defaultdelay,$defaultdelayunit),-1,'d');
+		//$dateto=dol_time_plus_duree(dol_time_plus_duree($datefrom,$defaultdelay,$defaultdelayunit),-1,'d');
 		$dateto=-1;		// By default, no date is suggested
 	}
 	print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';

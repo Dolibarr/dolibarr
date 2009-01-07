@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 
 $langs->load("users");
 
-// Sécurité accés client et commerciaux
+// Sï¿½curitï¿½ accï¿½s client et commerciaux
 $id = isset($_GET["id"])?$_GET["id"]:'';
 
 $fuser = new User($db);
@@ -59,7 +59,7 @@ dolibarr_fiche_head($head, 'info', $langs->trans("User"));
 
 
 print '<table width="100%"><tr><td>';
-dolibarr_print_object_info($fuser);
+dol_print_object_info($fuser);
 print '</td></tr></table>';
 
 print '</div>';

@@ -134,10 +134,10 @@ if ($result >= 0)
 	$justthese=array();
 
 	
-	// On désactive la synchro Dolibarr vers LDAP
+	// On dï¿½sactive la synchro Dolibarr vers LDAP
 	$conf->global->LDAP_MEMBER_ACTIVE=0;
 	
-	// Liste des champs a récupérer de LDAP
+	// Liste des champs a rï¿½cupï¿½rer de LDAP
 	$required_fields = array(
 	$conf->global->LDAP_FIELD_FULLNAME,
 	$conf->global->LDAP_FIELD_LOGIN,
@@ -175,7 +175,7 @@ if ($result >= 0)
 	{
 		$db->begin();
 
-		// Warning $ldapuser a une clé en minuscule
+		// Warning $ldapuser a une clï¿½ en minuscule
 		foreach ($ldaprecords as $key => $ldapuser)
 		{
 			$member = new Adherent($db);
@@ -204,13 +204,13 @@ if ($result >= 0)
 			$member->morphy='phy';
 			$member->photo='';
 			$member->public=1;
-			$member->naiss=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE]);
+			$member->naiss=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE]);
 
 			$member->statut=-1;
 			if (isset($ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS]))
 			{
-				$member->datec=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
-				$member->datevalid=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
+				$member->datec=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
+				$member->datevalid=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
 				$member->statut=$ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS];
 			}
 			//if ($member->statut > 1) $member->statut=1;
@@ -240,19 +240,19 @@ if ($result >= 0)
 			$datefirst='';
 			if ($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)
 			{
-				$datefirst=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
+				$datefirst=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
 				$pricefirst=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT]);
 			}
 
 			$datelast='';
 			if ($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)
 			{
-				$datelast=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]);
+				$datelast=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]);
 				$pricelast=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT]);
 			}
 			elseif ($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)
 			{
-				$datelast=dolibarr_time_plus_duree(dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION]),-1,'y')+60*60*24;
+				$datelast=dol_time_plus_duree(dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION]),-1,'y')+60*60*24;
 				$pricelast=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT]);
 
 				// Cas special ou date derniere <= date premiere
@@ -265,7 +265,7 @@ if ($result >= 0)
 			}
 
 			
-			// Insertion première adhésion
+			// Insertion premiï¿½re adhï¿½sion
 			if ($datefirst)
 			{
 				// Cree premiere cotisation et met a jour datefin dans adherent
@@ -273,7 +273,7 @@ if ($result >= 0)
 				$crowid=$member->cotisation($datefirst, $pricefirst, 0);
 			}
 
-			// Insertion dernière adhésion
+			// Insertion derniï¿½re adhï¿½sion
 			if ($datelast)
 			{
 				// Cree derniere cotisation et met a jour datefin dans adherent

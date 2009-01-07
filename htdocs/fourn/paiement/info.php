@@ -59,12 +59,12 @@ $paiement->fetch($_GET["id"], $user);
 $paiement->info($_GET["id"]);
 
 print '<table width="100%"><tr><td>';
-dolibarr_print_object_info($paiement);
+dol_print_object_info($paiement);
 print '</td></tr></table>';
 
 print '</div>';
 
-// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+// Juste pour ï¿½viter bug IE qui rï¿½organise mal div prï¿½cï¿½dents si celui-ci absent
 print '<div class="tabsAction">';
 print '</div>';
 

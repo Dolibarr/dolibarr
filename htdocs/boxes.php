@@ -41,7 +41,7 @@ class InfoBox
 
     /**
      *      \brief      Constructeur de la classe
-     *      \param      $DB         Handler d'accès base
+     *      \param      $DB         Handler d'accï¿½s base
      */
     function InfoBox($DB)
     {
@@ -170,6 +170,8 @@ class InfoBox
      */
 	function saveboxorder($zone,$boxorder,$userid=0)
 	{
+		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+		
 		dolibarr_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);
 
 		if (! $userid || $userid == 0) return 0;
@@ -181,7 +183,7 @@ class InfoBox
 		// Sauve parametre indiquant que le user a une 
 		$confuserzone='MAIN_BOXES_'.$zone;
 		$tab[$confuserzone]=1;
- 		if (! dolibarr_set_user_page_param($this->db, $user, '', $tab))
+ 		if (! dol_set_user_page_param($this->db, $user, '', $tab))
  		{
 			$this->error=$this->db->error();
 			$this->db->rollback();

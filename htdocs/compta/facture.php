@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
@@ -2638,7 +2639,7 @@ else
 						print '</td>';
 						if ($objp->remise_percent > 0)
 						{
-							print '<td align="right">'.dolibarr_print_reduction($objp->remise_percent)."</td>\n";
+							print '<td align="right">'.dol_print_reduction($objp->remise_percent)."</td>\n";
 						}
 						else
 						{

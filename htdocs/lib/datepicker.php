@@ -115,7 +115,7 @@ function displayBox($selectedDate,$month,$year){
 	$thedate=dolibarr_mktime(12,0,0,$month,1,$year);
 	//print "thedate=$thedate";
 	$today=mktime();
-	$todayArray=dolibarr_getdate($today);
+	$todayArray=dol_getdate($today);
 	if($selectedDate != "00000000")
 	{ 
 		$selDate=xyzToUnixTimestamp($selectedDate);
@@ -156,7 +156,7 @@ function displayBox($selectedDate,$month,$year){
 	</tr>
 <?php 
 		//print "x ".$thedate." y";
-		$firstdate=dolibarr_getdate($thedate);
+		$firstdate=dol_getdate($thedate);
 		$mydate=$firstdate;
 
 		// Loop on each day of month
@@ -205,7 +205,7 @@ function displayBox($selectedDate,$month,$year){
 			}
 			else
 			{
-				$mydate=dolibarr_getdate($thedate);
+				$mydate=dol_getdate($thedate);
 				if ($firstdate["month"] != $mydate["month"]) $stoploop=1;
 			}
 		}
@@ -219,7 +219,7 @@ function displayBox($selectedDate,$month,$year){
 	<tr><td id="dpExp" class="dpExplanation" colspan="7"><?php 
 		if($selDate)
 		{
-			$tempDate=dolibarr_getdate($selDate);
+			$tempDate=dol_getdate($selDate);
 			print $langs->trans($selectMonth)." ";
 			print sprintf("%02s",$tempDate["mday"]);
 			print ", ".$selectYear;

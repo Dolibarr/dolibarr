@@ -30,6 +30,7 @@
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
 /**
@@ -303,7 +304,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($propale->lignes[$i]->remise_percent && $propale->lignes[$i]->special_code != 3)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dolibarr_print_reduction($propale->lignes[$i]->remise_percent), 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dol_print_reduction($propale->lignes[$i]->remise_percent), 0, 'R');
 					}
 
 					// Total HT ligne

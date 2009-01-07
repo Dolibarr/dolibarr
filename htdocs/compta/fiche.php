@@ -140,7 +140,7 @@ if ($socid > 0)
 	else print $societe->pays;
 	print '</td></tr>';
 
-    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel,$societe->pays_code,0,$societe->id).'</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax,$societe->pays_code,0,$societe->id).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id).'</td><td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($societe->fax,$societe->pays_code,0,$societe->id).'</td></tr>';
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\" target=\"_blank\">$societe->url</a>&nbsp;</td></tr>";
 
 	// Assujeti a TVA ou pas

@@ -33,6 +33,7 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/modules_command
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php";
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.product.class.php";
 require_once DOL_DOCUMENT_ROOT."/lib/fourn.lib.php";
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 
 $langs->load('orders');
@@ -723,7 +724,7 @@ if ($id > 0)
 				print '<td align="right" nowrap="nowrap">'.$commandline->qty.'</td>';
 				if ($commandline->remise_percent >	0)
 				{
-					print '<td align="right" nowrap="nowrap">'.dolibarr_print_reduction($commandline->remise_percent)."</td>\n";
+					print '<td align="right" nowrap="nowrap">'.dol_print_reduction($commandline->remise_percent)."</td>\n";
 				}
 				else
 				{

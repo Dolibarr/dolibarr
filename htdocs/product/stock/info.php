@@ -76,7 +76,7 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse"));
 
 
 print '<table width="100%"><tr><td>';
-dolibarr_print_object_info($entrepot);
+dol_print_object_info($entrepot);
 print '</td></tr></table>';
 
 print '</div>';

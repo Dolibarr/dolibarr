@@ -314,14 +314,14 @@ if ($result)
 		
 		// Phone
         print '<td>';
-		print dolibarr_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->socid);
+		print dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->socid);
     	print '</td>';
 		
         if ($_GET["view"] == 'phone')
         {
-            print '<td>'.dolibarr_print_phone($obj->phone_mobile,$obj->pays_code,$obj->cidp,$obj->socid).'&nbsp;</td>';
+            print '<td>'.dol_print_phone($obj->phone_mobile,$obj->pays_code,$obj->cidp,$obj->socid).'&nbsp;</td>';
 
-            print '<td>'.dolibarr_print_phone($obj->fax,$obj->pays_code,$obj->cidp,$obj->socid).'&nbsp;</td>';
+            print '<td>'.dol_print_phone($obj->fax,$obj->pays_code,$obj->cidp,$obj->socid).'&nbsp;</td>';
         }
         else
         {

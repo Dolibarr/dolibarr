@@ -335,9 +335,9 @@ if ($showbirthday)
 			$obj = $db->fetch_object($resql);
 			$action=new ActionComm($db);
 			$action->id=$obj->rowid;	// We put contact id in action id for birthdays events
-			$datebirth=dolibarr_stringtotime($obj->birthday);
+			$datebirth=dol_stringtotime($obj->birthday);
 			//print 'ee'.$obj->birthday.'-'.$datebirth;
-			$datearray=dolibarr_getdate($datebirth,true);
+			$datearray=dol_getdate($datebirth,true);
 			$action->datep=dolibarr_mktime(0,0,0,$datearray['mon'],$datearray['mday'],$year);
 			$action->datef=$action->datep;
 			$action->type_code='BIRTHDAY';

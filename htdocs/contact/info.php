@@ -73,11 +73,11 @@ if ($contact->socid > 0)
   print $langs->trans("Company").' : '.$societe->getNomUrl(0).'<br>';
 }
 
-dolibarr_print_object_info($contact);
+dol_print_object_info($contact);
 
 print "</div>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

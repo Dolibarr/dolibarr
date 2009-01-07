@@ -30,6 +30,7 @@
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
 /**
@@ -301,7 +302,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($com->lignes[$i]->remise_percent)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, dolibarr_print_reduction($com->lignes[$i]->remise_percent), 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, dol_print_reduction($com->lignes[$i]->remise_percent), 0, 'R');
 					}
 
 					// Total HT ligne

@@ -23,6 +23,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 
@@ -93,7 +94,7 @@ if ($_POST["action"] == 'update' && ($caneditfield  || $user->admin))
         $tabparam["MAIN_SEARCHFORM_SOCIETE"]=$_POST["main_searchform_societe"];
         $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
     
-        dolibarr_set_user_page_param($db, $fuser, '', $tabparam);
+        dol_set_user_page_param($db, $fuser, '', $tabparam);
 
         $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
     

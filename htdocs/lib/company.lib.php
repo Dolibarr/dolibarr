@@ -298,10 +298,10 @@ function show_contacts($conf,$langs,$db,$objsoc)
 
 			// Lien click to dial
 			print '<td>';
-			print dolibarr_print_phone($obj->phone,$obj->pays_code,$obj->rowid,$objsoc->id);
+			print dol_print_phone($obj->phone,$obj->pays_code,$obj->rowid,$objsoc->id);
 			print '</td>';
 			print '<td>';
-			print dolibarr_print_phone($obj->fax,$obj->pays_code,$obj->rowid,$objsoc->id);
+			print dol_print_phone($obj->fax,$obj->pays_code,$obj->rowid,$objsoc->id);
 			print '</td>';
 			print '<td>';
 			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
@@ -310,7 +310,7 @@ function show_contacts($conf,$langs,$db,$objsoc)
 			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
 			print '</a>';
 			// \TODO
-			//if ($obj->email) print dol_email_link($obj->email);
+			if ($obj->email) print dol_email_link($obj->email);
 			print '&nbsp;</td>';
 
 			print '<td align="center">';

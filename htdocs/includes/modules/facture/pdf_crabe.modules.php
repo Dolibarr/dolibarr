@@ -30,6 +30,7 @@
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
 /**
@@ -320,7 +321,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($fac->lignes[$i]->remise_percent)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dolibarr_print_reduction($fac->lignes[$i]->remise_percent), 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dol_print_reduction($fac->lignes[$i]->remise_percent), 0, 'R');
 					}
 
 					// Total HT ligne

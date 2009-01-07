@@ -991,8 +991,8 @@ class Adherent extends CommonObject
 		else
 		{
 			// If no end date, end date = date + 1 year - 1 day
-			$datefin = dolibarr_time_plus_duree($date,1,'y');
-			$datefin = dolibarr_time_plus_duree($datefin,-1,'d');
+			$datefin = dol_time_plus_duree($date,1,'y');
+			$datefin = dol_time_plus_duree($datefin,-1,'d');
 		}
 
 		// Create subscription

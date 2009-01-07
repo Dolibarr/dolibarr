@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/commande/modules_commande.php"
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
@@ -1553,7 +1553,7 @@ else
 						print '</td>';
 						if ($objp->remise_percent > 0)
 						{
-							print '<td align="right">'.dolibarr_print_reduction($objp->remise_percent).'</td>';
+							print '<td align="right">'.dol_print_reduction($objp->remise_percent).'</td>';
 						}
 						else
 						{

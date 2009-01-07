@@ -32,6 +32,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 $langs->load('companies');
 $langs->load('propal');
@@ -1335,7 +1336,7 @@ if ($_GET['propalid'] > 0)
 				// Remise %
 				if ($objp->remise_percent > 0 && $objp->special_code != 3)
 				{
-					print '<td align="right">'.dolibarr_print_reduction($objp->remise_percent)."</td>\n";
+					print '<td align="right">'.dol_print_reduction($objp->remise_percent)."</td>\n";
 				}
 				else
 				{

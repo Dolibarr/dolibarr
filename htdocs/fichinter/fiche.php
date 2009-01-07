@@ -838,7 +838,7 @@ elseif ($_GET["id"] > 0)
 	
 			// Date intervention
 			print '<td align="center" nowrap="nowrap">';
-			$timearray=dolibarr_getdate(mktime());
+			$timearray=dol_getdate(mktime());
 			$timewithnohour=dolibarr_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
 			$html->select_date($timewithnohour,'di',1,1,0,"addinter");
 			print '</td>';
