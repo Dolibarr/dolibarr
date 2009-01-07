@@ -527,6 +527,17 @@ class DoliDb
 	}
 
 	/**
+	 *   \brief     Convert (by PHP) a GM Timestamp date into a PHP server TZ to insert into a date field.
+	 *              Function to use to build INSERT, UPDATE or WHERE predica
+	 *   \param	    param       Date TMS to convert
+	 *   \return	string      Date in a string YYYYMMDDHHMMSS
+	 */
+	function idate($param)
+	{
+		return adodb_strftime("%Y%m%d%H%M%S",$param);
+	}
+	
+	/**
 	 *	\brief  	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
 	 *	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	\return		date			Date TMS
