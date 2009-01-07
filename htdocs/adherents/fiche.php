@@ -932,16 +932,16 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.getCountryLabel($adh->pays_id).'</td></tr>';
 
     // Tel pro.
-    print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.$adh->phone.'</td></tr>';
+    print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.dol_print_phone($adh->phone,$adh->pays_code).'</td></tr>';
 
     // Tel perso
-    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td class="valeur">'.$adh->phone_perso.'</td></tr>';
+    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td class="valeur">'.dol_print_phone($adh->phone_perso,$adh->pays_code).'</td></tr>';
 
     // Tel mobile
-    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.$adh->phone_mobile.'</td></tr>';
+    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.dol_print_phone($adh->phone_mobile,$adh->pays_code).'</td></tr>';
     
     // EMail
-    print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($adh->email).'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($adh->email,0,0,1).'&nbsp;</td></tr>';
 
 	// Date naissance
     print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dolibarr_print_date($adh->naiss,'day').'&nbsp;</td></tr>';

@@ -38,9 +38,9 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 
 
 /**
- *	\brief      Renvoi vrai si l'email est syntaxiquement valide
- *	\param	    address     adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	\return     boolean     true si email valide, false sinon
+ *	\brief      Return true if email syntax is ok
+ *	\param	    address     email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	\return     boolean     true if email ok, false if ko
  */
 function ValidEmail($address)
 {
@@ -650,71 +650,6 @@ function dol_print_object_info($object)
 }
 
 
-/* For backward compatibility */
-function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$nolinks=false,$separ="&nbsp;")
-{
-	return dol_print_phone($phone,$country,$cid,$socid,$nolinks,$separ);
-}
-
-/**
- * 	\brief 		Format phone numbers according to country
- * 	\param 		phone 		Phone number to format
- * 	\param 		country 	Country to use for formatting
- * 	\param 		cid 		Id of contact if known
- * 	\param 		socid 		Id of third party if known
- * 	\param 		nolinks 	true means no HTML links is added
- * 	\param 		separ 		separation between numbers for a better visibility example : xx.xx.xx.xx.xx
- * 	\return 	string 		Formated phone number
- */
-function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$nolinks=false,$separ="&nbsp;")
-{
-	global $conf,$user;
-
-	$phone = ereg_replace("[ .-]","",trim($phone));
-	if (empty($phone)) { return ''; }
-
-	$newphone=$phone;
-	if (strtoupper($country) == "FR")
-	{
-		// France
-		if (strlen($phone) == 10) {
-			$newphone=substr($newphone,0,2).$separ.substr($newphone,2,2).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2);
-		}
-		elseif (strlen($newphone) == 7)
-		{
-			$newphone=substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2);
-		}
-		elseif (strlen($newphone) == 9)
-		{
-			$newphone=substr($newphone,0,2).$separ.substr($newphone,2,3).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2);
-		}
-		elseif (strlen($newphone) == 11)
-		{
-			$newphone=substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
-		}
-		elseif (strlen($newphone) == 12)
-		{
-			$newphone=substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
-		}
-	}
-
-	if (empty($nolinks))
-	{
-		if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
-		{
-			$newphone='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode=AC_TEL&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.$newphone.'</a>';
-		}
-		$clicktodiallink=dol_print_phone_link($phone);
-		if ($clicktodiallink)
-		{
-			$newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>'.$clicktodiallink.'</td></tr></table>';
-		}
-	}
-
-	return $newphone;
-}
-
-
 /**
  * \brief		Return string with formated size
  * \param		size		Size to print
@@ -751,41 +686,111 @@ function dol_print_url($url,$target='_blank',$max=32)
 /**
  * \brief		Show EMail link
  * \param		email		EMail to show
+ * \param 		cid 		Id of contact if known
+ * \param 		socid 		Id of third party if known
+ * \param 		addlink		0=no link to create action
  * \param		max			Max number of characters to show
  * \return		string		HTML Link
  */
-function dol_print_email($email,$max=32)
+function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64)
 {
-	$link='<a href="';
-	if (! eregi('^mailto:',$email)) $link.='mailto:';
-	$link.=$email;
-	$link.='">';
-	$link.=dolibarr_trunc($email,$max);
-	$link.='</a>';
-	return $link;
+	global $conf,$user,$langs;
+	
+	$newemail=$email;
+	
+    if (empty($email)) return '&nbsp;';
+
+    if (! ValidEmail($email)) return "Bad email";
+	
+	if (! empty($addlink))
+	{
+		$newemail='<a href="';
+		if (! eregi('^mailto:',$email)) $newemail.='mailto:';
+		$newemail.=$email;
+		$newemail.='">';
+		$newemail.=dol_trunc($email,$max);
+		$newemail.='</a>';
+				
+		if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
+		{
+			$type='AC_EMAIL';
+			$link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
+			$newemail='<table class="nobordernopadding"><tr><td>'.$newemail.' </td><td>&nbsp;'.$link.'</td></tr></table>';
+		}
+	}
+		
+	return $newemail;
+}
+
+/* For backward compatibility */
+function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ="&nbsp;")
+{
+	return dol_print_phone($phone,$country,$cid,$socid,$addlink,$separ);
 }
 
 /**
- * \brief		Show click to dial link
- * \param		phone		Phone to call
- * \param		option		Type of picto
- * \return		string		Link
+ * 	\brief 		Format phone numbers according to country
+ * 	\param 		phone 		Phone number to format
+ * 	\param 		country 	Country to use for formatting
+ * 	\param 		cid 		Id of contact if known
+ * 	\param 		socid 		Id of third party if known
+ * 	\param 		addlink		0=no link to create action
+ * 	\param 		separ 		separation between numbers for a better visibility example : xx.xx.xx.xx.xx
+ * 	\return 	string 		Formated phone number
  */
-function dol_print_phone_link($phone,$option=0)
+function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ="&nbsp;")
 {
-	global $conf,$user;
+	global $conf,$user,$langs;
 
-	$link='';
-	//if (! empty($conf->global->CLICKTODIAL_URL))
-	if ($conf->clicktodial->enabled)
+	// Clean phone parameter
+	$phone = ereg_replace("[ .-]","",trim($phone));
+	if (empty($phone)) { return ''; }
+
+	$newphone=$phone;
+	if (strtoupper($country) == "FR")
 	{
-		// Cleaning phone number
-		$phone = ereg_replace("[ .-]","",trim($phone));
-
-		$url = sprintf($conf->global->CLICKTODIAL_URL, urlencode($phone), urlencode($user->clicktodial_poste), urlencode($user->clicktodial_login), urlencode($user->clicktodial_password));
-		$link.='<a href="'.$url.'">'.img_phone("default",0).'</a>';
+		// France
+		if (strlen($phone) == 10) {
+			$newphone=substr($newphone,0,2).$separ.substr($newphone,2,2).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2);
+		}
+		elseif (strlen($newphone) == 7)
+		{
+			$newphone=substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2);
+		}
+		elseif (strlen($newphone) == 9)
+		{
+			$newphone=substr($newphone,0,2).$separ.substr($newphone,2,3).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2);
+		}
+		elseif (strlen($newphone) == 11)
+		{
+			$newphone=substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
+		}
+		elseif (strlen($newphone) == 12)
+		{
+			$newphone=substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+		}
 	}
-	return $link;
+
+	if (! empty($addlink))
+	{
+		if ($conf->clicktodial->enabled)
+		{
+			if (empty($conf->global->CLICKTODIAL_URL)) $urlmask='ErrorClickToDialModuleNotConfigured'; 
+			else $urlmask=$conf->global->CLICKTODIAL_URL;
+			$url = sprintf($urlmask, urlencode($phone), urlencode($user->clicktodial_poste), urlencode($user->clicktodial_login), urlencode($user->clicktodial_password));
+			$newphone='<a href="'.$url.'">'.$newphone.'</a>';
+		}
+
+		if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
+		{
+			$type='AC_TEL';
+			if ($addlink == 'AC_FAX') $type='AC_FAX';
+			$link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
+			$newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>&nbsp;'.$link.'</td></tr></table>';
+		}
+	}
+
+	return $newphone;
 }
 
 

@@ -314,29 +314,18 @@ if ($result)
 		
 		// Phone
         print '<td>';
-		print dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->socid);
+		print dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL');
     	print '</td>';
 		
         if ($_GET["view"] == 'phone')
         {
-            print '<td>'.dol_print_phone($obj->phone_mobile,$obj->pays_code,$obj->cidp,$obj->socid).'&nbsp;</td>';
+            print '<td>'.dol_print_phone($obj->phone_mobile,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
 
-            print '<td>'.dol_print_phone($obj->fax,$obj->pays_code,$obj->cidp,$obj->socid).'&nbsp;</td>';
+            print '<td>'.dol_print_phone($obj->fax,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
         }
         else
         {
-            print '<td>';
-            if (! $obj->email) {
-                print '&nbsp;';
-            }
-            elseif (! ValidEmail($obj->email))
-            {
-                print "Bad email";
-            }
-            else {
-                print dol_print_email($obj->email);
-            }
-            print '</td>';
+            print '<td>'.dol_print_email($obj->email,$obj->cidp,$obj->socid,'AC_EMAIL').'</td>';
         }
 
 		// Date

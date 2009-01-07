@@ -298,20 +298,14 @@ function show_contacts($conf,$langs,$db,$objsoc)
 
 			// Lien click to dial
 			print '<td>';
-			print dol_print_phone($obj->phone,$obj->pays_code,$obj->rowid,$objsoc->id);
+			print dol_print_phone($obj->phone,$obj->pays_code,$obj->rowid,$objsoc->id,'AC_TEL');
 			print '</td>';
 			print '<td>';
-			print dol_print_phone($obj->fax,$obj->pays_code,$obj->rowid,$objsoc->id);
+			print dol_print_phone($obj->fax,$obj->pays_code,$obj->rowid,$objsoc->id,'AC_FAX');
 			print '</td>';
 			print '<td>';
-			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-			print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
-			print $obj->email;
-			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-			print '</a>';
-			// \TODO
-			if ($obj->email) print dol_email_link($obj->email);
-			print '&nbsp;</td>';
+			print dol_print_email($obj->email,$obj->rowid,$objsoc->id,'AC_EMAIL');
+			print '</td>';
 
 			print '<td align="center">';
 			print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?action=edit&amp;id='.$obj->rowid.'">';

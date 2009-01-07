@@ -167,9 +167,9 @@ if ($resql)
       print '<td><a href="'.$_SERVER["PHP_SELF"].'?type='.$type.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
       print "<a href=\"".$urlfiche."?socid=".$obj->rowid."\">$obj->nom</a></td>\n";
       
-      print '<td><a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->email.'</a>&nbsp;</td>';
+      print '<td>'.dol_print_phone($obj->email,$obj->cidp,$obj->rowid,'AC_EMAIL').'</td>';
       
-      print '<td>'.dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->rowid).'&nbsp;</td>';
+      print '<td>'.dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->rowid,'AC_TEL').'&nbsp;</td>';
       
       print "</tr>\n";
       $i++;

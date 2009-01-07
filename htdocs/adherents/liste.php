@@ -227,7 +227,7 @@ if ($resql)
         }
         else
         {
-            print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
+            print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.$objp->prenom." ".$objp->nom."</a></td>\n";
         }
         
         // Login
@@ -244,7 +244,7 @@ if ($resql)
         print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
 
         // EMail
-        print "<td>".dol_print_email($objp->email)."</td>\n";
+        print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
         
         // Statut
         print "<td>";

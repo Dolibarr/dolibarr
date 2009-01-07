@@ -533,22 +533,13 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	print $contact->pays;
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dol_print_phone($contact->phone_pro,$contact->pays_code,$contact->id,$contact->socid).'</td>';
-	print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dol_print_phone($contact->phone_perso,$contact->pays_code,$contact->id,$contact->socid).'</td></tr>';
+	print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dol_print_phone($contact->phone_pro,$contact->pays_code,$contact->id,$contact->socid,'AC_TEL').'</td>';
+	print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dol_print_phone($contact->phone_perso,$contact->pays_code,$contact->id,$contact->socid,'AC_TEL').'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dol_print_phone($contact->phone_mobile,$contact->pays_code,$contact->id,$contact->socid).'</td>';
-	print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($contact->fax,$contact->pays_code,$contact->id,$contact->socid).'</td></tr>';
+	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dol_print_phone($contact->phone_mobile,$contact->pays_code,$contact->id,$contact->socid,'AC_TEL').'</td>';
+	print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($contact->fax,$contact->pays_code,$contact->id,$contact->socid,'AC_FAX').'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("EMail").'</td><td>';
-	if ($contact->email && ! ValidEmail($contact->email))
-	{
-		print '<font class="error">'.$langs->trans("ErrorBadEMail",$contact->email)."</font>";
-	}
-	else
-	{
-		print dol_print_email($contact->email);
-	}
-	print '</td>';
+	print '<tr><td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($contact->email,$contact->id,$contact->socid,'AC_EMAIL').'</td>';
 	if ($conf->mailing->enabled)
 	{
 		$langs->load("mails");
