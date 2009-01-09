@@ -17,6 +17,7 @@ For users:
 - Can add contacts to a supplier invoice.
 - Fixed: When an invoice is changed back to status draft, warehouse is increased 
   back.
+- Fixed: Category of a bank transaction was not saved.
 
 For translators:
 - Added ca_ES language files

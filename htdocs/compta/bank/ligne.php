@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/compta/bank/ligne.php
  *	\ingroup    compta
- *	\brief      Page edition d'une ecriture bancaire
+ *	\brief      Page to edit a bank transaction record
  *	\version    $Id$
  */
 
@@ -136,7 +136,7 @@ if ($_POST["action"] == 'emetteur')
 	$result = $db->query($sql);
 }
 
-if ($_POST["action"] == 'num_releve')
+if ($user->rights->banque->consolidate && $_POST["action"] == 'num_releve')
 {
 	$db->begin();
 
@@ -147,6 +147,7 @@ if ($_POST["action"] == 'num_releve')
 	if (! $num_rel) $sql.= ", rappro = 0";
 	$sql.= " WHERE rowid = ".$rowid;
 
+	dol_syslog("ligne.php sql=".$sql, LOG_DEBUG);
 	$result = $db->query($sql);
 	if ($result)
 	{

@@ -789,16 +789,21 @@ class AccountLine
 	var $error;
 	var $db;
 
-	var $rowid;
-	var $rappro;
+	var $id;
+	var $ref;
 	var $datec;
 	var $dateo;
 	var $datev;
 	var $amount;
 	var $label;
-	var $note;
 	var $fk_account;
-
+	var $note;
+	var $fk_user_author;
+	var $fk_user_rappro;
+	var $num_releve;
+	var $num_chq;
+	var $rappro;
+	
 	var $bank_account_label;
 	
 	
@@ -837,6 +842,7 @@ class AccountLine
 			{
 				$obj = $this->db->fetch_object($result);
 
+				$this->id            = $rowid;
 				$this->rowid         = $rowid;
 				$this->ref           = $rowid;
 
@@ -932,7 +938,7 @@ class AccountLine
 		$sql.= " dateo='".$this->db->idate($this->dateo)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dolibarr_syslog("AccountLine::update sql=".$sql);
+		dol_syslog("AccountLine::update sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -943,12 +949,54 @@ class AccountLine
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dolibarr_syslog("AccountLine::update ".$this->error);
+			dol_syslog("AccountLine::update ".$this->error);
 			return -1;
 		}
 	}
 
 
+	/**
+	 *		\brief 		Update conciliation field
+	 *		\param 		user			Objet user making update
+	 *		\param 		cat				Category id
+	 *		\param		int				<0 if KO, >0 if OK
+	 */
+	function update_conciliation($user,$cat)
+	{
+		$this->db->begin();
+
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+        $sql.= " set rappro=1, num_releve='".$this->num_releve."',";
+        $sql.= " fk_user_rappro=".$user->id;
+        $sql.= " WHERE rowid=".$this->id;
+
+        dol_syslog("AccountLine::update_conciliation sql=".$sql, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+        	if (! empty($cat))
+            {
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ)";
+                $sql.= " VALUES (".$this->id.", ".$cat.")";
+
+                dol_syslog("AccountLine::update_conciliation sql=".$sql, LOG_DEBUG);
+                $resql = $this->db->query($sql);
+                
+                // No error check. Can fail if category already affected
+            }
+
+        	$bankline->rappro=1;
+            
+        	$this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -1;
+        }	
+	}
+	
 	/**
 	 *      \brief     Charge les informations d'ordre info dans l'objet facture
 	 *      \param     id       Id de la facture a charger

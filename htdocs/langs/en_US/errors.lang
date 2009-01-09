@@ -43,3 +43,4 @@ ErrorLDAPSetupNotComplete=Dolibarr-LDAP matching is not complete.
 ErrorLDAPMakeManualTest=A .ldif file has been generated in directory %s. Try to load it manually from command line to have more informations on errors.
 ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "statut not started" if field "done by" is also filled.
 ErrorBillRefAlreadyExists=Ref used for creation already exists.
+ErrorPleaseTypeBankTransactionReportName=Please type bank receipt name where transaction is reported (Format YYYYMM or YYYYMMDD) 

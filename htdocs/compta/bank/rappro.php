@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/compta/bank/rappro.php
-        \ingroup    banque
-        \brief      Page de rapprochement bancaire
-        \version    $Id$
-*/
+ *       \file       htdocs/compta/bank/rappro.php
+ *       \ingroup    banque
+ *       \brief      Page de rapprochement bancaire
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -53,50 +53,21 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 if ($user->rights->banque->consolidate && $_POST["action"] == 'rappro')
 {
 	// Definition, nettoyage parametres
-    $valrappro=1;
     $num_releve=trim($_POST["num_releve"]);
     
     if ($num_releve)
     {
-        $db->begin();
+        $bankline=new AccountLine($db);
+        $result=$bankline->fetch($_POST["rowid"]);
+        $bankline->num_releve=$_POST["num_releve"];
         
-        $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-        $sql.= " set rappro=".$valrappro.", num_releve='".$_POST["num_releve"]."',";
-        $sql.= " fk_user_rappro=".$user->id;
-        $sql.= " WHERE rowid=".$_POST["rowid"];
-
-        $resql = $db->query($sql);
-        if ($resql)
-        {
-            if ($cat1 && $_POST["action"])
-            {
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ)";
-                $sql.= " VALUES ($rowid, $cat1)";
-                $resql = $db->query($sql);
-        
-                if ($resql)
-                {
-                    $db->commit();
-                }
-                else
-                {
-                    $db->rollback();
-                    dolibarr_print_error($db);
-                }
-            }
-            else
-            {
-                $db->commit();
-            }
-        }
-        else
-        {
-            $db->rollback();
-            dolibarr_print_error($db);
-        }
+        $result=$bankline->update_conciliation($user,$_POST["cat"]);
+        if ($result < 0) $mesg=$bankline->error;
     }
-    else {
-        $msg="Erreur: Saisissez le relevé qui référence la transaction pour la rapprocher.";
+    else 
+    {
+    	$langs->load("errors");
+        $mesg='<div class="error">'.$langs->trans("ErrorPleaseTypeBankTransactionReportName").'</div>';
     }
 }
 
@@ -135,6 +106,7 @@ if ($resql) {
 /*
  * View
  */
+
 $form=new Form($db);
 
 llxHeader();
@@ -157,9 +129,7 @@ if ($resql)
     print_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$_GET["account"].'">'.$acct->label.'</a>');
     print '<br>';
 
-    if ($msg) {
-        print "$msg<br><br>";
-    }
+    if ($mesg) print $mesg."<br>";
 
     // Affiche nom des derniers relevés
     $nbmax=5;
@@ -183,7 +153,7 @@ if ($resql)
             $liste='<a href="releve.php?account='.$_GET["account"].'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
         }
         if ($num >= $nbmax) $liste="... &nbsp; ".$liste;
-        print "$liste";
+        print $liste;
         if ($num > 0) print '<br><br>';
         else print $langs->trans("None").'<br><br>';
     }
@@ -365,15 +335,15 @@ if ($resql)
 
 
         // Affiche zone saisie relevé + bouton "Rapprocher"
-        if ($objp->do <= mktime())
+        if ($objp->do <= gmmktime())
         {
             print '<td align="center" nowrap="nowrap">';
-            print "<input class=\"flat\" name=\"num_releve\" type=\"text\" value=\"\" size=\"8\">";
+            print '<input class="flat" name="num_releve" type="text" value="'.$objp->num_releve.'" size="8">';
             print ' &nbsp; ';
             print "<input class=\"button\" type=\"submit\" value=\"".$langs->trans("Rapprocher")."\">";
             if ($options)
             {
-                print "<br><select class=\"flat\" name=\"cat1\">$options";
+                print "<br><select class=\"flat\" name=\"cat\">$options";
                 print "</select>";
             }
             print "</td>";
@@ -381,7 +351,7 @@ if ($resql)
         else
         {
             print '<td align="left">';
-            print 'Ecriture future. Ne peut pas encore être rapprochée.';
+            print 'Transaction in futur. No way to conciliate.';
             print '</td>';
         }
 
