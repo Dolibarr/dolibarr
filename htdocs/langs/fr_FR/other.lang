@@ -98,6 +98,10 @@ NumberOfUnitsProposals=Nombre d'unités sur les propal des 12 derniers mois
 NumberOfUnitsCustomerOrders=Nombre d'unités sur les commandes clients des 12 derniers mois
 NumberOfUnitsCustomerInvoices=Nombre d'unités sur les factures clients des 12 derniers mois
 NumberOfUnitsSupplierInvoices=Nombre d'unités sur les factures fournisseurs des 12 derniers mois
+EMailTextOrderApproved=Commande %s approuvée
+EMailTextOrderApprovedBy=Commande %s approuvée par %s
+EMailTextOrderRefused=Commande %s réfusée
+EMailTextOrderRefusedBy=Commande %s réfusée par %s
 
 ##### Bookmark #####
 Bookmark=Marque page

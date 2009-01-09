@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/fourn/fournisseur.commande.class.php
- \ingroup    fournisseur,commande
- \brief      Fichier des classes des commandes fournisseurs
- \version    $Id$
+ *	\file       htdocs/fourn/fournisseur.commande.class.php
+ *	\ingroup    fournisseur,commande
+ *	\brief      Fichier des classes des commandes fournisseurs
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
@@ -31,10 +31,9 @@ require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 
 /**
- \class      CommandeFournisseur
- \brief      Classe de gestion de commande fournisseur
+ *	\class      CommandeFournisseur
+ *	\brief      Classe de gestion de commande fournisseur
  */
-
 class CommandeFournisseur extends Commande
 {
 	var $db ;
@@ -302,7 +301,7 @@ class CommandeFournisseur extends Commande
 			$statut = 6;
 
 			$this->db->begin();
-			
+				
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
 			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1";
 
@@ -503,13 +502,13 @@ class CommandeFournisseur extends Commande
 		global $langs,$conf;
 
 		$error=0;
-		
+
 		dolibarr_syslog("CommandeFournisseur::Approve");
-		
+
 		if ($user->rights->fournisseur->commande->approuver)
 		{
 			$this->db->begin();
-			
+				
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 2";
 			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1 ;";
 
@@ -534,7 +533,7 @@ class CommandeFournisseur extends Commande
 				}
 
 				if ($error == 0)
-				{				
+				{
 					// Appel des triggers
 					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 					$interface=new Interfaces($this->db);
@@ -542,16 +541,18 @@ class CommandeFournisseur extends Commande
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 				}
-				
+
 				if ($error == 0)
 				{
-					$subject = "Votre commande ".$this->ref." a �t� approuv�e";
-					$message = "Bonjour,\n\n";
-					$message .= "Votre commande ".$this->ref." a �t� approuv�e, par $user->fullname";
-					$message .= "\n\nCordialement,\n\n";
+					$langs->load("other");
+						
+					$subject = $langs->trans("EMailTextOrderApproved",$this->ref);
+					$message = $langs->trans("Hello").",\n\n";
+					$message .= $langs->trans("EMailTextOrderApprovedBy",$this->ref,$user->fullname);
+					$message .= "\n\n".$langs->trans("Sincerely").",\n\n";
 					$this->_NotifyCreator($user, $subject, $message);
 				}
-				
+
 				if ($error == 0)
 				{
 					$this->db->commit();
@@ -598,8 +599,9 @@ class CommandeFournisseur extends Commande
 	  	$result = 0;
 	  	$this->log($user, 9, time());
 
-	  	$subject = "Votre commande ".$this->ref." a �t� refus�e";
-	  	$message = "Votre commande ".$this->ref." a �t� refus�e, par $user->fullname";
+	  	$subject = $langs->trans("EMailTextOrderRefused",$this->ref);
+	  	$message = $langs->trans("Hello").",\n\n";
+	  	$message .= $langs->trans("EMailTextOrderRefusedBy",$this->ref,$user->fullname);
 
 	  	$this->_NotifyCreator($user, $subject, $message);
 	  }
@@ -790,7 +792,7 @@ class CommandeFournisseur extends Commande
 					}
 					if ($result == 0 || $result == -1)
 					{
-						$this->error="Aucun tarif trouv� pour cette quantit�. Quantit� saisie insuffisante ?";
+						$this->error="No price found for this quantity. Quantity may be too low ?";
 						$this->db->rollback();
 						dolibarr_syslog("FournisseurCommande::addline result=".$result." - ".$this->error, LOG_DEBUG);
 						return -1;
@@ -1214,57 +1216,6 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			dolibarr_syslog("ReadApprobators Erreur");
-		}
-	}
-
-	/*
-	 *
-	 *
-	 */
-	function _details_text()
-	{
-		$blank = "                                                                                                                            ";
-		$this->details_text = substr("Produit".$blank,0,50);
-		$this->details_text .= substr("Qty".$blank,0,8);
-		$this->details_text .= substr("Prix".$blank,0,8);
-		$this->details_text .= "\n";
-		$this->details_text .= substr("-----------------------------------------------------------------------------------------------------------------------",0,66);
-		$this->details_text .= "\n";
-
-		$sql = "SELECT l.ref, l.fk_product, l.description, l.price, l.qty";
-		$sql .= ", l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l ";
-		$sql .= " WHERE l.fk_commande = ".$this->id." ORDER BY l.rowid";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num_lignes = $this->db->num_rows($resql);
-			$i = 0;
-
-			while ($i < $num_lignes)
-	  {
-	  	$objp = $this->db->fetch_object();
-
-	  	$this->details_text .=  "-".substr(stripslashes($objp->description).$blank, 0, 50);
-	  	$this->details_text .= substr($objp->qty.$blank, 0, 7);
-	  	$this->details_text .= substr($blank.price($objp->subprice),-8);
-	  	$this->details_text .= "\n";
-	  	$i++;
-	  	 
-	  }
-	  $this->details_text .= substr("-----------------------------------------------------------------------------------------------------------------------",0,66);
-	  $this->details_text .= "\n";
-	  $this->details_text .= substr($blank."Total HT : ".price($this->total_ht), -66);
-	  $this->details_text .= "\n";
-	  $this->details_text .= substr($blank."Total TTC : ".price($this->total_ttc), -66);
-	  $this->details_text .= "\n";
-
-	  $this->db->free();
-		}
-		else
-		{
-			print $this->db->error();
 		}
 	}
 

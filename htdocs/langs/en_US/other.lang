@@ -98,6 +98,10 @@ NumberOfUnitsProposals=Number of units on proposals des 12 derniers mois
 NumberOfUnitsCustomerOrders=Number of units on customer orders on last 12 month
 NumberOfUnitsCustomerInvoices=Number of units on customer invoices on last 12 month
 NumberOfUnitsSupplierInvoices=Number of units on supplier invoices on last 12 month
+EMailTextOrderApproved=Order %s approved
+EMailTextOrderApprovedBy=Order %s approved by %s
+EMailTextOrderRefused=Order %s refused
+EMailTextOrderRefusedBy=Order %s refused by %s
 
 ##### Bookmark #####
 Bookmark=Bookmark
