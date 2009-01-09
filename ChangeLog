@@ -3,11 +3,12 @@ English Dolibarr changelog
 ***** Changelog for 2.6 compared to 2.5 *****
 
 For users:
-- Enhance bank transactions reportings
-- When creating a contact from a third party, informations from third party card
+- New: Enhance bank transactions reportings.
+- New: When creating a contact from a third party, informations from third party card
   are automatically suggested.
-- Sort list of languages in combo box.
+- New: Sort list of languages in combo box.
 - New: EMails links are show with function dol_print_email
+- New: Add graph report on number of entities in product statistics page.
 - Fixed: Failed to go on the future view of bank transaction if there is no 
   future bank transaction already wrote.  
 - Fixed: Bad ref in supplier list.

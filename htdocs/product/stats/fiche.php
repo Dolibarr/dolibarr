@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  *
@@ -20,11 +20,11 @@
  */
 
 /**
-        \file       htdocs/product/stats/fiche.php
-        \ingroup    product
-        \brief      Page des stats produits
-        \version    $Id$
-*/
+ *       \file       htdocs/product/stats/fiche.php
+ *       \ingroup    product
+ *       \brief      Page des stats produits
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
@@ -35,6 +35,9 @@ require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 $langs->load("companies");
 $langs->load("products");
 $langs->load("bills");
+$langs->load("other");
+
+$mode=isset($_GET["mode"])?$_GET["mode"]:'byunit';
 
 if ($user->societe_id > 0)
 {
@@ -65,11 +68,6 @@ if ($_GET["id"] || $_GET["ref"])
 
 	if ($result)
 	{
-		// Efface rep obsolete
-		if(is_dir(DOL_DOCUMENT_ROOT."/document/produits"))
-		rmdir(DOL_DOCUMENT_ROOT."/document/produits");
-
-
 		$head=product_prepare_head($product, $user);
 		$titre=$langs->trans("CardProduct".$product->type);
 		dolibarr_fiche_head($head, 'stats', $titre);
@@ -124,6 +122,19 @@ if ($_GET["id"] || $_GET["ref"])
 		print '</div>';
 		
 		
+		// Choice of stats
+		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&mode=byunit">';
+		else print img_picto('','tick').' ';
+		print $langs->trans("StatsByNumberOfUnits");
+		if ($mode == 'bynumber') print '</a>';
+		print ' &nbsp; &nbsp; &nbsp; ';
+		if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&mode=bynumber">';
+		else print img_picto('','tick').' ';
+		print $langs->trans("StatsByNumberOfEntities");
+		if ($mode == 'byunit') print '</a>';
+		
+		print '<br><br>';
+		
 		print '<table width="100%">';
 
 		// Generation des graphs
@@ -141,16 +152,16 @@ if ($_GET["id"] || $_GET["ref"])
 		$graphfiles=array(
 		'propal'           =>array('modulepart'=>'productstats_proposals', 
 		'file' => $product->id.'/propal12m.png', 
-		'label' => $langs->trans("Nombre propal sur les 12 derniers mois")),
+		'label' => ($mode=='byunit'?$langs->trans("NumberOfUnitsProposals"):$langs->trans("NumberOfProposals"))),
 		'orders'           =>array('modulepart'=>'productstats_orders', 
 		'file' => $product->id.'/orders12m.png', 
-		'label' => $langs->trans("Nombre commande clients sur les 12 derniers mois")),
+		'label' => ($mode=='byunit'?$langs->trans("NumberOfUnitsCustomerOrders"):$langs->trans("NumberOfCustomerOrders"))),
 		'invoices'         =>array('modulepart'=>'productstats_invoices', 
 		'file' => $product->id.'/invoices12m.png', 
-		'label' => $langs->trans("Nombre facture clients sur les 12 derniers mois")),
+		'label' => ($mode=='byunit'?$langs->trans("NumberOfUnitsCustomerInvoices"):$langs->trans("NumberOfCustomerInvoices"))),
 		'invoicessuppliers'=>array('modulepart'=>'productstats_invoicessuppliers', 
 		'file' => $product->id.'/invoicessuppliers12m.png', 
-		'label' => $langs->trans("Nombre facture fournisseurs sur les 12 derniers mois")),
+		'label' => ($mode=='byunit'?$langs->trans("NumberOfUnitsSupplierInvoices"):$langs->trans("NumberOfSupplierInvoices"))),
 
 		//			'orderssuppliers'  =>array('modulepart'=>'productstats_orderssuppliers', 'file' => $product->id.'/orderssuppliers12m.png', 'label' => $langs->trans("Nombre commande fournisseurs sur les 12 derniers mois")),
 		//			'contracts'        =>array('modulepart'=>'productstats_contracts', 'file' => $product->id.'/contracts12m.png', 'label' => $langs->trans("Nombre contrats sur les 12 derniers mois")),
@@ -168,10 +179,10 @@ if ($_GET["id"] || $_GET["ref"])
 				$graph_data = array();
 				
 				// \todo Test si deja existant et recent, on ne genere pas
-				if ($key == 'propal')            $graph_data = $product->get_nb_propal($socid);
-				if ($key == 'orders')            $graph_data = $product->get_nb_order($socid);
-				if ($key == 'invoices')          $graph_data = $product->get_nb_vente($socid);
-				if ($key == 'invoicessuppliers') $graph_data = $product->get_nb_achat($socid);
+				if ($key == 'propal')            $graph_data = $product->get_nb_propal($socid,$mode);
+				if ($key == 'orders')            $graph_data = $product->get_nb_order($socid,$mode);
+				if ($key == 'invoices')          $graph_data = $product->get_nb_vente($socid,$mode);
+				if ($key == 'invoicessuppliers') $graph_data = $product->get_nb_achat($socid,$mode);
 				if (is_array($graph_data))
 				{
 					$px->SetData($graph_data);
@@ -234,7 +245,7 @@ if ($_GET["id"] || $_GET["ref"])
 			{
 				print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
 			}
-			print '<td align="center"><a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.img_picto($langs->trans("ReCalculate"),'refresh').'</a></td>';
+			print '<td align="center"><a href="fiche.php?id='.$product->id.'&amp;action=recalcul&amp;mode='.$mode.'">'.img_picto($langs->trans("ReCalculate"),'refresh').'</a></td>';
 			print '</tr>';
 			print '</table>';
 			

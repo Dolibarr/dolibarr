@@ -88,6 +88,16 @@ EnableGDLibraryDesc=Vous devez activer ou installer la librairie GD avec votre P
 EnablePhpAVModuleDesc=Vous devez installer un module PHP compatible avec votre anti-virus. (Clamav : php4-clamavlib ou php5-clamavlib)
 ProfIdShortDesc=<b>Id prof. %s</b> est une information qui dépend du pays du tiers.<br>Par exemple, pour le pays <b>%s</b>, il s'agit du code <b>%s</b>. 
 DolibarrDemo=Démo de Dolibarr ERP/CRM
+StatsByNumberOfUnits=Statistiques en nombre d'unités
+StatsByNumberOfEntities=Statistiques en nombre d'entités
+NumberOfProposals=Nombre de propal sur les 12 derniers mois
+NumberOfCustomerOrders=Nombre de commande clients sur les 12 derniers mois
+NumberOfCustomerInvoices=Nombre de facture clients sur les 12 derniers mois
+NumberOfSupplierInvoices=Nombre de facture fournisseurs sur les 12 derniers mois
+NumberOfUnitsProposals=Nombre d'unités sur les propal des 12 derniers mois
+NumberOfUnitsCustomerOrders=Nombre d'unités sur les commandes clients des 12 derniers mois
+NumberOfUnitsCustomerInvoices=Nombre d'unités sur les factures clients des 12 derniers mois
+NumberOfUnitsSupplierInvoices=Nombre d'unités sur les factures fournisseurs des 12 derniers mois
 
 ##### Bookmark #####
 Bookmark=Marque page

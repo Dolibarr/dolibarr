@@ -71,8 +71,8 @@ class Product extends CommonObject
 	var $duration_unit;
 	// Statut indique si le produit est en vente '1' ou non '0'
 	var $status;
-	 // Statut indique si le produit est un produit finis '1' ou une matiere premi�re '0'
-  	var $finished; 
+	// Statut indique si le produit est un produit finis '1' ou une matiere premi�re '0'
+	var $finished;
 
 	//! Unites de mesure
 	var $weight;
@@ -170,7 +170,7 @@ class Product extends CommonObject
 		if (empty($this->price_min)) $this->price_min = 0;
 		if (empty($this->status))    $this->status = 0;
 		if (empty($this->finished))  $this->finished = 0;
-		
+
 		$price_ht=0;
 		$price_ttc=0;
 		$price_min_ht=0;
@@ -373,7 +373,7 @@ class Product extends CommonObject
 		if (empty($this->tva_tx))    			$this->tva_tx = 0;
 		if (empty($this->finished))  			$this->finished = 0;
 		if (empty($this->seuil_stock_alerte))  	$this->seuil_stock_alerte = 0;
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 		$sql .= " SET label = '" . addslashes($this->libelle) ."'";
 		if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
@@ -740,24 +740,24 @@ class Product extends CommonObject
 	 */
 	function log_price_delete($user,$rowid)
 	{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price";
-			$sql.= " WHERE rowid=".$rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price";
+		$sql.= " WHERE rowid=".$rowid;
 
-			dolibarr_syslog("Product::log_price_delete sql=".$sql);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				return 1;
-			}
-			else
-			{
-				$this->error=$this->db->lasterror();
-				return -1;
-			}
-		
+		dolibarr_syslog("Product::log_price_delete sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
+
 	}
 
-	
+
 	/**
 	 *    \brief		Lit le prix pratique par un fournisseur
 	 *				On renseigne le couple prodfournprice/qty ou le triplet qty/product_id/fourn_ref)
@@ -866,7 +866,7 @@ class Product extends CommonObject
 					$price_min = price2num($newminprice) / (1 + ($newvat / 100));
 					$price_min = price2num($price_min,'MU');
 				}
-				else 
+				else
 				{
 					$price_min=0;
 					$price_min_ttc=0;
@@ -884,14 +884,14 @@ class Product extends CommonObject
 					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
 					$price_min_ttc = price2num($price_min_ttc,'MU');
 				}
-				else 
+				else
 				{
 					$price_min=0;
 					$price_min_ttc=0;
 				}
 			}
 			//print 'x'.$id.'-'.$newprice.'-'.$newpricebase.'-'.$price.'-'.$price_ttc.'-'.$price_min.'-'.$price_min_ttc;
-			
+
 			// Ne pas mettre de quote sur le numeriques decimaux.
 			// Ceci provoque des stockage avec arrondis en base au lieu des valeurs exactes.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
@@ -1397,23 +1397,25 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief    Return an array formated for showing graphs
-	 *    \param    sql         Request to execute
-	 *    \return   array       <0 if KO, result[i]=array(valuex,valuey);
+	 *    	\brief    	Return an array formated for showing graphs
+	 *    	\param		sql         Request to execute
+	 * 		\param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 * 		\return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function _get_stats($sql)
+	function _get_stats($sql,$mode)
 	{
-		$result = $this->db->query($sql) ;
-		if ($result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			$num = $this->db->num_rows($result);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
-	  {
-	  	$arr = $this->db->fetch_array($result);
-	  	$tab[$arr[1]] = $arr[0];
-	  	$i++;
-	  }
+			{
+				$arr = $this->db->fetch_array($resql);
+				if ($mode == 'byunit')   $tab[$arr[1]] = $arr[0];	// 1st field
+				if ($mode == 'bynumber') $tab[$arr[1]] = $arr[2];	// 3rd field
+				$i++;
+			}
 		}
 		else
 		{
@@ -1427,7 +1429,7 @@ class Product extends CommonObject
 
 		for ($j = 0 ; $j < 12 ; $j++)
 		{
-			$idx=ucfirst(substr(dolibarr_print_date(dolibarr_mktime(12,0,0,$month,1,$year),"%b") ,0,3) );
+			$idx=ucfirst(substr(dolibarr_print_date(dolibarr_mktime(12,0,0,$month,1,$year),"%b"),0,3) );
 			$monthnum=sprintf("%02s",$month);
 
 			$result[$j] = array($idx,isset($tab[$year.$month])?$tab[$year.$month]:0);
@@ -1435,122 +1437,129 @@ class Product extends CommonObject
 
 			$month = "0".($month - 1);
 			if (strlen($month) == 3)
-	  {
-	  	$month = substr($month,1);
-	  }
-	  if ($month == 0)
-	  {
-	  	$month = 12;
-	  	$year = $year - 1;
-	  }
+			{
+				$month = substr($month,1);
+			}
+			if ($month == 0)
+			{
+				$month = 12;
+				$year = $year - 1;
+			}
 		}
 
 		return array_reverse($result);
-
 	}
 
 
 	/**
-	 *    \brief  Renvoie le nombre de factures clients du produit/service par mois
-	 *    \param  socid       id societe
-	 *    \return array       nombre de vente par mois
+	 *    	\brief  	Return nb of units or customers invoices in which product is included
+	 *    	\param  	socid       Limit count on a particular third party id
+	 * 		\param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 * 		\return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_vente($socid=0)
+	function get_nb_vente($socid=0,$mode)
 	{
 		global $conf;
 		global $user;
 
-		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
+		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m')";
+		if ($mode == 'bynumber') $sql.= ", count(DISTINCT f.rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE f.rowid = d.fk_facture and d.fk_product =".$this->id;
+		$sql.= " WHERE f.rowid = d.fk_facture and d.fk_product =".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)
 		{
 			$sql .= " AND f.fk_soc = $socid";
 		}
-		$sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
+		$sql.= " GROUP BY date_format(f.datef,'%Y%m') DESC";
 
-		return $this->_get_stats($sql);
+		return $this->_get_stats($sql,$mode);
 	}
 
 
 	/**
-	 *    \brief  Renvoie le nombre de factures fournisseurs du produit/service par mois
-	 *    \param  socid       id societe
-	 *    \return array       nombre d'achat par mois
+	 *    	\brief  	Return nb of units or supplier invoices in which product is included
+	 *    	\param  	socid       Limit count on a particular third party id
+	 * 		\param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 * 		\return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_achat($socid=0)
+	function get_nb_achat($socid=0,$mode)
 	{
 		global $conf;
 		global $user;
 
-		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as d, ".MAIN_DB_PREFIX."facture_fourn as f";
+		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m')";
+		if ($mode == 'bynumber') $sql.= ", count(DISTINCT f.rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as d, ".MAIN_DB_PREFIX."facture_fourn as f";
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE f.rowid = d.fk_facture_fourn and d.fk_product =".$this->id;
+		$sql.= " WHERE f.rowid = d.fk_facture_fourn and d.fk_product =".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)
 		{
 			$sql .= " AND f.fk_soc = $socid";
 		}
-		$sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
+		$sql.= " GROUP BY date_format(f.datef,'%Y%m') DESC";
 
-		$resarray=$this->_get_stats($sql);
+		$resarray=$this->_get_stats($sql,$mode);
 		return $resarray;
 	}
 
 	/**
-	 *    \brief  Renvoie le nombre de propales dans lesquelles figure le produit par mois
-	 *    \param  socid       id societe
-	 *    \return array       nombre de propales par mois
+	 *    	\brief  	Return nb of units or proposals in which product is included
+	 *    	\param  	socid       Limit count on a particular third party id
+	 * 		\param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 * 		\return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_propal($socid=0)
+	function get_nb_propal($socid=0,$mode)
 	{
 		global $conf;
 		global $user;
 
-		$sql = "SELECT sum(d.qty), date_format(p.datep, '%Y%m') ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p";
+		$sql = "SELECT sum(d.qty), date_format(p.datep, '%Y%m')";
+		if ($mode == 'bynumber') $sql.= ", count(DISTINCT p.rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p";
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE p.rowid = d.fk_propal and d.fk_product =".$this->id;
+		$sql.= " WHERE p.rowid = d.fk_propal and d.fk_product =".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)
 		{
 			$sql .= " AND p.fk_soc = $socid";
 		}
-		$sql .= " GROUP BY date_format(p.datep,'%Y%m') DESC ;";
+		$sql.= " GROUP BY date_format(p.datep,'%Y%m') DESC";
 
-		return $this->_get_stats($sql);
+		return $this->_get_stats($sql,$mode);
 	}
 
 	/**
-	 *    \brief  Renvoie le nombre de commandes dans lesquelles figure le produit par mois
-	 *    \param  socid       id societe
-	 *    \return array       nombre de commandes par mois
+	 *    	\brief  	Return nb of units or orders in which product is included
+	 *    	\param  	socid       Limit count on a particular third party id
+	 * 		\param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 * 		\return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_order($socid=0)
+	function get_nb_order($socid=0,$mode)
 	{
 		global $conf, $user;
 
-		$sql = "SELECT sum(d.qty), date_format(p.date_commande, '%Y%m') ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as d, ".MAIN_DB_PREFIX."commande as p";
+		$sql = "SELECT sum(d.qty), date_format(p.date_commande, '%Y%m')";
+		if ($mode == 'bynumber') $sql.= ", count(DISTINCT p.rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as d, ".MAIN_DB_PREFIX."commande as p";
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE p.rowid = d.fk_commande and d.fk_product =".$this->id;
+		$sql.= " WHERE p.rowid = d.fk_commande and d.fk_product =".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)
 		{
 			$sql .= " AND p.fk_soc = $socid";
 		}
-		$sql .= " GROUP BY date_format(p.date_commande,'%Y%m') DESC ;";
+		$sql.= " GROUP BY date_format(p.date_commande,'%Y%m') DESC";
 
-		return $this->_get_stats($sql);
+		return $this->_get_stats($sql,$mode);
 	}
 
 	/**
 	 *    \brief      Lie un produit associe au produit/service
-	 *    \param      id_pere    Id du produit auquel sera li� le produit � lier
-	 *    \param      id_fils    Id du produit � lier
+	 *    \param      id_pere    Id du produit auquel sera lie le produit a lier
+	 *    \param      id_fils    Id du produit a lier
 	 *    \return     int        < 0 si erreur, > 0 si ok
 	 */
 	function add_sousproduit($id_pere, $id_fils,$qty)
@@ -1567,38 +1576,37 @@ class Product extends CommonObject
 			$sql = 'select fk_product_pere from '.MAIN_DB_PREFIX.'product_association';
 			$sql .= ' WHERE fk_product_pere  = "'.$id_fils.'" and fk_product_fils = "'.$id_pere.'"';
 			if (! $this->db->query($sql))
-	  {
-	  	dolibarr_print_error($this->db);
-	  	return -1;
-	  }
-	  else
-	  {
-	  	$result = $this->db->query($sql) ;
-	  	if ($result)
-	  	{
-	  		$num = $this->db->num_rows($result);
-	  		if($num > 0)
-	  		{
-		    $this->error="isFatherOfThis";
-		    return -1;
-	  		}
-	  		else
-	  		{
-		    $sql = 'insert into '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
-		    $sql .= ' VALUES ("'.$id_pere.'","'.$id_fils.'","'.$qty.'")';
-		    if (! $this->db->query($sql))
-		    {
-		    	dolibarr_print_error($this->db);
-		    	return -1;
-		    }
-		    else
-		    {
-		    	return 1;
-		    }
-	  		}
-	  	}
-	  }
-
+			{
+				dolibarr_print_error($this->db);
+				return -1;
+			}
+			else
+			{
+				$result = $this->db->query($sql) ;
+				if ($result)
+				{
+					$num = $this->db->num_rows($result);
+					if($num > 0)
+					{
+						$this->error="isFatherOfThis";
+						return -1;
+					}
+					else
+					{
+						$sql = 'insert into '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
+						$sql .= ' VALUES ("'.$id_pere.'","'.$id_fils.'","'.$qty.'")';
+						if (! $this->db->query($sql))
+						{
+							dolibarr_print_error($this->db);
+							return -1;
+						}
+						else
+						{
+							return 1;
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -2169,17 +2177,17 @@ class Product extends CommonObject
 		}
 		return $langs->trans('Unknown');
 	}
-	
-	
+
+
 	/**
-	*    	\brief      Retourne le libell� du finished du produit
-	*    	\return     string		Libelle
-	*/
+	 *    	\brief      Retourne le libell� du finished du produit
+	 *    	\return     string		Libelle
+	 */
 	function getLibFinished()
 	{
 		global $langs;
 		$langs->load('products');
-		
+
 		if ($this->finished == '0') return $langs->trans("RowMaterial");
 		if ($this->finished == '1') return $langs->trans("Finished");
 		return '';
