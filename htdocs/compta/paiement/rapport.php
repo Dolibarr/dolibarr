@@ -59,7 +59,7 @@ if ($_POST["action"] == 'gen')
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	
+
 	// We save charset_output to restore it because write_file can change it if needed for
 	// output format that does not support UTF8.
 	$sav_charset_output=$outputlangs->charset_output;
@@ -73,7 +73,7 @@ if ($_POST["action"] == 'gen')
 		dolibarr_syslog("Erreur dans commande_pdf_create");
 		dolibarr_print_error($db,$obj->pdferror());
 	}
-			
+		
 	$year = $_POST["reyear"];
 }
 
@@ -85,7 +85,7 @@ if ($_POST["action"] == 'gen')
 llxHeader();
 
 $titre=($year?$langs->trans("PaymentsReportsForYear",$year):$langs->trans("PaymentsReports"));
-print_titre($titre);
+print_fiche_titre($titre);
 
 // Formulaire de génération
 print '<br><form method="post" action="rapport.php?year='.$year.'">';
@@ -135,10 +135,15 @@ if (is_dir($dir))
 	{
 		if (is_dir($dir.'/'.$file) && ! eregi('^\.',$file))
 		{
-	  $found=1;
-	  print '<a href="rapport.php?year='.$file.'">'.$file.'</a> ';
+			$found=1;
+			$linkforyear[]=$file;
 		}
 	}
+}
+asort($linkforyear);
+foreach($linkforyear as $cursoryear)
+{
+	print '<a href="rapport.php?year='.$cursoryear.'">'.$cursoryear.'</a> &nbsp;';
 }
 
 if ($year)
