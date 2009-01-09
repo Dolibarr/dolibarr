@@ -900,10 +900,10 @@ class Facture extends CommonObject
 	}
 
 	/**
-		\brief     	Supprime la facture
-		\param     	rowid      	Id de la facture à supprimer
-		\return		int			<0 si ko, >0 si ok
-		*/
+	 *	\brief     	Delete invoice
+	 *	\param     	rowid      	Id de la facture à supprimer
+	 *	\return		int			<0 si ko, >0 si ok
+	 */
 	function delete($rowid=0)
 	{
 		global $user,$langs,$conf;
@@ -1389,18 +1389,42 @@ class Facture extends CommonObject
 	{
 		global $conf,$langs;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
-		$sql.= " WHERE rowid = ".$this->id;
-
-		dolibarr_syslog("Facture::set_draft sql=".$sql, LOG_DEBUG);
-		if ($this->db->query($sql))
+		if ($this->statut != 0)
 		{
-			return 1;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
+			$sql.= " WHERE rowid = ".$this->id;
+	
+			dol_syslog("Facture::set_draft sql=".$sql, LOG_DEBUG);
+			if ($this->db->query($sql))
+			{
+				// Si activé on décrémente le produit principal et ses composants à la validation de facture
+				if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+
+					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+					{
+						if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
+						{
+							$mouvP = new MouvementStock($this->db);
+							// We decrease stock for product
+							$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
+							$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+						}
+					}
+				}				
+				
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				return -1;
+			}
 		}
 		else
 		{
-			$this->error=$this->db->error();
-			return -1;
+			dol_syslog("Facture::set_draft Invoice already with draf status", LOG_WARNING);
 		}
 	}
 
@@ -1424,7 +1448,7 @@ class Facture extends CommonObject
 		// Nettoyage parametres
 		if (! $qty) $qty = 1;
 
-		dolibarr_syslog("Facture::add_product $idproduct, $qty, $remise_percent, $date_start, $date_end", LOG_DEBUG);
+		dol_syslog("Facture::add_product $idproduct, $qty, $remise_percent, $date_start, $date_end", LOG_DEBUG);
 
 		if ($idproduct > 0)
 		{
@@ -1477,7 +1501,7 @@ class Facture extends CommonObject
 	 */
 	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
 	{
-		dolibarr_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc", LOG_DEBUG);
+		dol_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
@@ -1569,7 +1593,7 @@ class Facture extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
+					dol_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
 					$this->db->rollback();
 					return -1;
 				}
@@ -1601,7 +1625,7 @@ class Facture extends CommonObject
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
-		dolibarr_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $price_base_type, $info_bits", LOG_DEBUG);
+		dol_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $price_base_type, $info_bits", LOG_DEBUG);
 
 		if ($this->brouillon)
 		{
@@ -1688,7 +1712,7 @@ class Facture extends CommonObject
 	{
 		global $langs, $conf;
 
-		dolibarr_syslog("Facture::Deleteline rowid=".$rowid, LOG_DEBUG);
+		dol_syslog("Facture::Deleteline rowid=".$rowid, LOG_DEBUG);
 
 		if (! $this->brouillon)
 		{
@@ -1701,24 +1725,24 @@ class Facture extends CommonObject
 		// Libere remise liee a ligne de facture
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 		$sql.= ' SET fk_facture_line = NULL where fk_facture_line = '.$rowid;
-		dolibarr_syslog("Facture::Deleteline sql=".$sql);
+		dol_syslog("Facture::Deleteline sql=".$sql);
 		$result = $this->db->query($sql);
 		if (! $result)
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Facture::Deleteline Error ".$this->error);
+			dol_syslog("Facture::Deleteline Error ".$this->error);
 			$this->db->rollback();
 			return -1;
 		}
 			
 		// Efface ligne de facture
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid = '.$rowid;
-		dolibarr_syslog("Facture::Deleteline sql=".$sql);
+		dol_syslog("Facture::Deleteline sql=".$sql);
 		$result = $this->db->query($sql);
 		if (! $result)
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Facture::Deleteline  Error ".$this->error);
+			dol_syslog("Facture::Deleteline  Error ".$this->error);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1788,7 +1812,7 @@ class Facture extends CommonObject
 			$sql.= ' SET remise_absolue = '.$remise;
 			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
 
-			dolibarr_syslog("Facture::set_remise_absolue sql=$sql");
+			dol_syslog("Facture::set_remise_absolue sql=$sql");
 
 			if ($this->db->query($sql))
 	  {
@@ -1823,7 +1847,7 @@ class Facture extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$table;
 		$sql.= ' WHERE '.$field.' = '.$this->id;
 
-		dolibarr_syslog("Facture::getSommePaiement sql=".$sql, LOG_DEBUG);
+		dol_syslog("Facture::getSommePaiement sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2183,7 +2207,7 @@ class Facture extends CommonObject
 			$sql.= ' date_lim_reglement='.$this->db->idate($datelim);
 			$sql.= ' WHERE rowid='.$this->id;
 
-			dolibarr_syslog('Facture::cond_reglement sql='.$sql, LOG_DEBUG);
+			dol_syslog('Facture::cond_reglement sql='.$sql, LOG_DEBUG);
 			if ( $this->db->query($sql) )
 			{
 				$this->cond_reglement_id = $cond_reglement_id;
@@ -2191,14 +2215,14 @@ class Facture extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog('Facture::cond_reglement Erreur '.$sql.' - '.$this->db->error());
+				dol_syslog('Facture::cond_reglement Erreur '.$sql.' - '.$this->db->error());
 				$this->error=$this->db->error();
 				return -1;
 			}
 		}
 		else
 		{
-			dolibarr_syslog('Facture::cond_reglement, etat facture incompatible');
+			dol_syslog('Facture::cond_reglement, etat facture incompatible');
 			$this->error='Entity status not compatible '.$this->statut.' '.$this->paye;
 			return -2;
 		}
@@ -2212,7 +2236,7 @@ class Facture extends CommonObject
 	 */
 	function mode_reglement($mode_reglement_id)
 	{
-		dolibarr_syslog('Facture::mode_reglement('.$mode_reglement_id.')', LOG_DEBUG);
+		dol_syslog('Facture::mode_reglement('.$mode_reglement_id.')', LOG_DEBUG);
 		if ($this->statut >= 0 && $this->paye == 0)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
@@ -2225,14 +2249,14 @@ class Facture extends CommonObject
 	  }
 	  else
 	  {
-	  	dolibarr_syslog('Facture::mode_reglement Erreur '.$sql.' - '.$this->db->error());
+	  	dol_syslog('Facture::mode_reglement Erreur '.$sql.' - '.$this->db->error());
 	  	$this->error=$this->db->error();
 	  	return -1;
 	  }
 		}
 		else
 		{
-			dolibarr_syslog('Facture::mode_reglement, etat facture incompatible');
+			dol_syslog('Facture::mode_reglement, etat facture incompatible');
 			$this->error='Etat facture incompatible '.$this->statut.' '.$this->paye;
 			return -2;
 		}
@@ -2336,7 +2360,7 @@ class Facture extends CommonObject
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
 		$sql.= " ORDER BY f.facnumber";
 
-		dolibarr_syslog("Facture::list_replacable_invoices sql=$sql");
+		dol_syslog("Facture::list_replacable_invoices sql=$sql");
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2352,7 +2376,7 @@ class Facture extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Facture::list_replacable_invoices ".$this->error);
+			dol_syslog("Facture::list_replacable_invoices ".$this->error);
 			return -1;
 		}
 	}
@@ -2383,7 +2407,7 @@ class Facture extends CommonObject
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
 		$sql.= " ORDER BY f.facnumber";
 
-		dolibarr_syslog("Facture::list_qualified_avoir_invoices sql=$sql");
+		dol_syslog("Facture::list_qualified_avoir_invoices sql=$sql");
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2405,7 +2429,7 @@ class Facture extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Facture::list_avoir_invoices ".$this->error);
+			dol_syslog("Facture::list_avoir_invoices ".$this->error);
 			return -1;
 		}
 	}
@@ -2418,7 +2442,7 @@ class Facture extends CommonObject
 	 */
 	function demande_prelevement($user)
 	{
-		dolibarr_syslog("Facture::demande_prelevement", LOG_DEBUG);
+		dol_syslog("Facture::demande_prelevement", LOG_DEBUG);
 
 		$soc = new Societe($this->db);
 		$soc->id = $this->socid;
@@ -2450,27 +2474,27 @@ class Facture extends CommonObject
 					else
 					{
 						$this->error=$this->db->error();
-						dolibarr_syslog('Facture::DemandePrelevement Erreur');
+						dol_syslog('Facture::DemandePrelevement Erreur');
 						return -1;
 					}
 				}
 				else
 				{
 					$this->error="Une demande existe déjà";
-					dolibarr_syslog('Facture::DemandePrelevement Impossible de créer une demande, demande déja en cours');
+					dol_syslog('Facture::DemandePrelevement Impossible de créer une demande, demande déja en cours');
 				}
 			}
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog('Facture::DemandePrelevement Erreur -2');
+				dol_syslog('Facture::DemandePrelevement Erreur -2');
 				return -2;
 			}
 		}
 		else
 		{
 			$this->error="Etat facture incompatible avec l'action";
-			dolibarr_syslog("Facture::DemandePrelevement Etat facture incompatible $this->statut, $this->paye, $this->mode_reglement_id");
+			dol_syslog("Facture::DemandePrelevement Etat facture incompatible $this->statut, $this->paye, $this->mode_reglement_id");
 			return -3;
 		}
 	}
@@ -2491,7 +2515,7 @@ class Facture extends CommonObject
 		}
 		else
 		{
-			dolibarr_syslog('Facture::DemandePrelevement Erreur');
+			dol_syslog('Facture::DemandePrelevement Erreur');
 			return -1;
 		}
 	}
@@ -2805,7 +2829,7 @@ class FactureLigne
 	{
 		global $langs,$user,$conf;
 
-		dolibarr_syslog("FactureLigne::Insert rang=".$this->rang, LOG_DEBUG);
+		dol_syslog("FactureLigne::Insert rang=".$this->rang, LOG_DEBUG);
 
 		// Clean parameters
 		$this->desc=trim($this->desc);
@@ -2868,7 +2892,7 @@ class FactureLigne
 		$sql.= " ".price2num($this->total_ttc);
 		$sql.= ')';
 
-		dolibarr_syslog("FactureLigne::insert sql=".$sql);
+		dol_syslog("FactureLigne::insert sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2889,7 +2913,7 @@ class FactureLigne
 						if ($discount->fk_facture)
 						{
 							$this->error=$langs->trans("ErrorDiscountAlreadyUsed",$discount->id);
-							dolibarr_syslog("FactureLigne::insert Error ".$this->error);
+							dol_syslog("FactureLigne::insert Error ".$this->error);
 							$this->db->rollback();
 							return -3;
 						}
@@ -2899,7 +2923,7 @@ class FactureLigne
 							if ($result < 0)
 							{
 								$this->error=$discount->error;
-								dolibarr_syslog("FactureLigne::insert Error ".$this->error);
+								dol_syslog("FactureLigne::insert Error ".$this->error);
 								$this->db->rollback();
 								return -3;
 							}
@@ -2908,7 +2932,7 @@ class FactureLigne
 					else
 					{
 						$this->error=$langs->trans("ErrorADiscountThatHasBeenRemovedIsIncluded");
-						dolibarr_syslog("FactureLigne::insert Error ".$this->error);
+						dol_syslog("FactureLigne::insert Error ".$this->error);
 						$this->db->rollback();
 						return -3;
 					}
@@ -2916,7 +2940,7 @@ class FactureLigne
 				else
 				{
 					$this->error=$discount->error;
-					dolibarr_syslog("FactureLigne::insert Error ".$this->error);
+					dol_syslog("FactureLigne::insert Error ".$this->error);
 					$this->db->rollback();
 					return -3;
 				}
@@ -2939,7 +2963,7 @@ class FactureLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("FactureLigne::insert Error ".$this->error);
+			dol_syslog("FactureLigne::insert Error ".$this->error);
 			$this->db->rollback();
 			return -2;
 		}
@@ -2980,7 +3004,7 @@ class FactureLigne
 		$sql.= ",total_ttc=".price2num($this->total_ttc)."";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dolibarr_syslog("FactureLigne::update sql=".$sql);
+		dol_syslog("FactureLigne::update sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2991,7 +3015,7 @@ class FactureLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("FactureLigne::update Error ".$this->error, LOG_ERR);
+			dol_syslog("FactureLigne::update Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -3004,7 +3028,7 @@ class FactureLigne
 	function update_total()
 	{
 		$this->db->begin();
-		dolibarr_syslog("FactureLigne::update_total", LOG_DEBUG);
+		dol_syslog("FactureLigne::update_total", LOG_DEBUG);
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
@@ -3024,7 +3048,7 @@ class FactureLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("FactureLigne::update_total Error ".$this->error);
+			dol_syslog("FactureLigne::update_total Error ".$this->error);
 			$this->db->rollback();
 			return -2;
 		}
