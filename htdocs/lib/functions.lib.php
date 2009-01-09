@@ -421,6 +421,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 	// What is page code of texts from strftime functions ?
 	$pagecodefrom='ISO-8859-1';
 	$localtime=setlocale(LC_TIME,0);
+	//print $localtime;
 	if (eregi('UTF',$localtime)) $pagecodefrom='UTF-8';
 
 	if (! is_object($outputlangs)) $outputlangs=$langs;

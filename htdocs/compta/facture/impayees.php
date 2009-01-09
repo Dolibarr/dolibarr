@@ -41,7 +41,7 @@ $diroutputpdf=$conf->facture->dir_output . '/unpayed/temp';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'facture',$facid,'');
+$result = restrictedArea($user,'facture',$facid,'');
 
 
 /*
@@ -186,24 +186,24 @@ if ($_GET["filtre"])
 	}
 }
 
-if ($_GET["search_ref"])
+if ($_REQUEST["search_ref"])
 {
-	$sql .= " AND f.facnumber like '%".$_GET["search_ref"]."%'";
+	$sql .= " AND f.facnumber like '%".$_REQUEST["search_ref"]."%'";
 }
 
-if ($_GET["search_societe"])
+if ($_REQUEST["search_societe"])
 {
-	$sql .= " AND s.nom like '%".$_GET["search_societe"]."%'";
+	$sql .= " AND s.nom like '%".$_REQUEST["search_societe"]."%'";
 }
 
-if ($_GET["search_montant_ht"])
+if ($_REQUEST["search_montant_ht"])
 {
-	$sql .= " AND f.total = '".$_GET["search_montant_ht"]."'";
+	$sql .= " AND f.total = '".$_REQUEST["search_montant_ht"]."'";
 }
 
-if ($_GET["search_montant_ttc"])
+if ($_REQUEST["search_montant_ttc"])
 {
-	$sql .= " AND f.total_ttc = '".$_GET["search_montant_ttc"]."'";
+	$sql .= " AND f.total_ttc = '".$_REQUEST["search_montant_ttc"]."'";
 }
 
 if (strlen($_POST["sf_ref"]) > 0)
@@ -231,7 +231,17 @@ if ($result)
 		$soc->fetch($socid);
 	}
 
-	$param="&amp;socid=".$socid."&amp;option=".$option;
+	$param="";
+	$param.=($socid?"&amp;socid=".$socid:"");
+	$param.=($option?"&amp;option=".$option:"");
+	if ($_REQUEST["search_ref"])         $param.='&amp;search_ref='.urlencode($_REQUEST["search_ref"]);
+	if ($_REQUEST["search_societe"])     $param.='&amp;search_societe='.urlencode($_REQUEST["search_societe"]);
+	if ($_REQUEST["search_montant_ht"])  $param.='&amp;search_montant_ht='.urlencode($_REQUEST["search_montant_ht"]);
+	if ($_REQUEST["search_montant_ttc"]) $param.='&amp;search_montant_ttc='.urlencode($_REQUEST["search_montant_ttc"]);
+	if ($_REQUEST["late"])               $param.='&amp;late='.urlencode($_REQUEST["search_late"]);
+	
+	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource.=eregi_replace('&amp;','&',$param);
 	
 	$titre=($socid?$langs->trans("BillsCustomersUnpayedForCompany",$soc->nom):$langs->trans("BillsCustomersUnpayed"));
 	if ($option == 'late') $titre.=' ('.$langs->trans("Late").')';
@@ -264,16 +274,16 @@ if ($result)
 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
+	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_REQUEST["search_ref"].'"></td>';
 	print '<td class="liste_titre" align="center"><input type="checkbox" onclick="checkall(this.checked);"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
+	print '<input class="flat" type="text" name="search_societe" value="'.$_REQUEST["search_societe"].'">';
 	print '</td><td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
+	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_REQUEST["search_montant_ht"].'">';
 	print '</td><td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
+	print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_REQUEST["search_montant_ttc"].'">';
 	print '</td><td class="liste_titre" colspan="2" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '</td>';
@@ -321,12 +331,14 @@ if ($result)
 				
 			$filename=sanitizeFileName($objp->facnumber);
 			$filedir=$conf->facture->dir_output . '/' . sanitizeFileName($objp->facnumber);
-			$urlsource=$_SERVER['PHP_SELF'].'?facid='.$objp->facid;
-			$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
-				
+			$foundpdf=$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1,$param);
 			print '</td></tr></table>';
 			
-			print '<td align="center"><input id="cb'.$objp->facid.'" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'"></td>' ;
+			// Checkbox
+			print '<td align="center">';
+			if ($foundpdf) print '<input id="cb'.$objp->facid.'" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
+			else print '&nbsp;';
+			print '</td>' ;
 			
 			print "</td>\n";
 
@@ -368,13 +380,17 @@ if ($result)
 	 * Show list of available documents
 	 */
 	$filedir=$diroutputpdf;
-	$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
+	if ($_REQUEST["search_ref"])         print '<input type="hidden" name="search_ref" value="'.$_REQUEST["search_ref"].'">';
+	if ($_REQUEST["search_societe"])     print '<input type="hidden" name="search_societe" value="'.$_REQUEST["search_societe"].'">';
+	if ($_REQUEST["search_montant_ht"])  print '<input type="hidden" name="search_montant_ht" value="'.$_REQUEST["search_montant_ht"].'">';
+	if ($_REQUEST["search_montant_ttc"]) print '<input type="hidden" name="search_montant_ttc" value="'.$_REQUEST["search_montant_ttc"].'">';
+	if ($_REQUEST["late"])               print '<input type="hidden" name="late" value="'.$_REQUEST["late"].'">';
 	$genallowed=$user->rights->facture->lire;
 	$delallowed=$user->rights->facture->lire;
 
 	print '<br>';
 	print '<input type="hidden" name="option" value="'.$option.'">';
-	$formfile->show_documents('unpayed','',$filedir,$urlsource,$genallowed,$delallowed,'','',0,0,48,1);
+	$formfile->show_documents('unpayed','',$filedir,$urlsource,$genallowed,$delallowed,'','',0,0,48,1,$param);
 	print '</form>';		
 	
 	$db->free();

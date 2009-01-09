@@ -437,7 +437,7 @@ if ($action == 'remove_file')
 	clearstatcache(); 
 	$filename = basename($original_file);
 	
-	dolibarr_syslog("document.php remove $original_file $filename $urlsource");
+	dolibarr_syslog("document.php remove $original_file $filename $urlsource", LOG_DEBUG);
 
 	if (! file_exists($original_file)) 
 	{
@@ -446,7 +446,7 @@ if ($action == 'remove_file')
 	}
 	unlink($original_file);
 
-	dolibarr_syslog("document.php back to ".urldecode($urlsource));
+	dolibarr_syslog("document.php back to ".urldecode($urlsource), LOG_DEBUG);
 
 	header("Location: ".urldecode($urlsource));
 

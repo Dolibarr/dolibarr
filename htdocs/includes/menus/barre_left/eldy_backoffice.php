@@ -435,8 +435,6 @@ class MenuLeft {
 					}
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php?leftmenu=customers_bills",$langs->trans("Unpayed"),2,$user->rights->facture->lire);
 
-					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php?option=late&amp;leftmenu=customers_bills",$langs->trans("Unpayed").' ('.$langs->trans("Late").')',2,$user->rights->facture->lire);
-					
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php?leftmenu=customers_bills_payments",$langs->trans("Payments"),2,$user->rights->facture->lire);
 
 					if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)

@@ -88,7 +88,7 @@ $titre=($year?$langs->trans("PaymentsReportsForYear",$year):$langs->trans("Payme
 print_fiche_titre($titre);
 
 // Formulaire de génération
-print '<br><form method="post" action="rapport.php?year='.$year.'">';
+print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="action" value="gen">';
 $cmonth = date("n", time());
 $syear = date("Y", time());

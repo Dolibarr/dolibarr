@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,25 +19,25 @@
  */
 
 /**
-	\file       htdocs/includes/modules/rapport/pdf_paiement.class.php
-	\ingroup    banque
-	\brief      Fichier de la classe permettant de g�n�rer les rapports de paiement
-	\version    $Id$
-*/
+ *	\file       htdocs/includes/modules/rapport/pdf_paiement.class.php
+ *	\ingroup    banque
+ *	\brief      Fichier de la classe permettant de g�n�rer les rapports de paiement
+ *	\version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**	
-	\class      pdf_paiement
-	\brief      Classe permettant de g�n�rer les rapports de paiement
-*/
+ *	\class      pdf_paiement
+ *	\brief      Classe permettant de generer les rapports de paiement
+ */
 class pdf_paiement extends FPDF
 {
 	/**	
-		\brief  Constructeur
-		\param	db		handler acc�s base de donn�e
-	*/
+	 *	\brief  Constructeur
+	 *	\param	db		handler acces base de donnee
+	 */
 	function pdf_paiement($db)
 	{ 
 		global $langs;

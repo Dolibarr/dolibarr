@@ -122,18 +122,19 @@ class FormFile
 	 *      \param      filedir             Dir to scan
 	 *      \param      urlsource           Url of origin page (for return)
 	 *      \param      genallowed          Generation is allowed (1/0 or array of formats)
-	 *      \param      delallowed          Suppression autoris�e (1/0)
-	 *      \param      modelselected       Modele � pr�-s�lectionner par d�faut
+	 *      \param      delallowed          Remove is allowed (1/0)
+	 *      \param      modelselected       Model to preselect by default
 	 *      \param      modelliste			Tableau des modeles possibles. Use '' to hide combo select list.
-	 *      \param      forcenomultilang	N'affiche pas option langue meme si MAIN_MULTILANGS d�fini
+	 *      \param      forcenomultilang	N'affiche pas option langue meme si MAIN_MULTILANGS defini
 	 *      \param      iconPDF             N'affiche que l'icone PDF avec le lien (1/0)
 	 * 		\param		maxfilenamelength	Max length for filename shown
 	 * 		\param		noform				Do not output html form start and end 
-	 *      \remarks    Le fichier de facture d�taill�e est de la forme
+	 * 		\param		param				More param on http links
+	 *      \remarks    Le fichier de facture detaillee est de la forme
 	 *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
-	 *		\return		int					<0 si ko, nbre de fichiers affich�s si ok
+	 *		\return		int					<0 si ko, nbre de fichiers affiches si ok
 	 */
-	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0)
+	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='')
 	{
 		// filedir = conf->...dir_ouput."/".get_exdir(id)
 		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
@@ -330,7 +331,7 @@ class FormFile
 		}
 		$file_list=dol_dir_list($filedir,'files',0,$filter,'\.meta$'.$png,'date',SORT_DESC);
 
-		// Affiche en-tete tableau si non deja affich�
+		// Affiche en-tete tableau si non deja affiche
 		if (sizeof($file_list) && ! $headershown && !$iconPDF)
 		{
 			$headershown=1;
@@ -338,12 +339,12 @@ class FormFile
 			print '<table class="border" width="100%">';
 		}
 
-		// Boucle sur chaque ligne trouv�e
+		// Boucle sur chaque ligne trouvee
 		foreach($file_list as $i => $file)
 		{
 			$var=!$var;
 			
-			// D�fini chemin relatif par rapport au module pour lien download
+			// Defini chemin relatif par rapport au module pour lien download
 			$relativepath=$file["name"];								// Cas general
 			if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
 			// Autre cas
@@ -372,7 +373,10 @@ class FormFile
 
 			if ($delallowed)
 			{
-				print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'&amp;urlsource='.urlencode($urlsource).'">'.img_delete().'</a></td>';
+				print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
+				print ($param?'&amp;'.$param:'');
+				print '&amp;urlsource='.urlencode($urlsource);
+				print '">'.img_delete().'</a></td>';
 			}
 
 			if (!$iconPDF) print '</tr>';
