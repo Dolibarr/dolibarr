@@ -9,6 +9,7 @@ For users:
 - New: Sort list of languages in combo box.
 - New: EMails links are show with function dol_print_email
 - New: Add graph report on number of entities in product statistics page.
+- New: Can delete a supplier order whatever is its status.
 - Fix: Failed to go on the future view of bank transaction if there is no 
   future bank transaction already wrote.  
 - Fix: Bad ref in supplier list.

@@ -301,7 +301,7 @@ class CommandeFournisseur extends Commande
 			$statut = 6;
 
 			$this->db->begin();
-				
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
 			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1";
 
@@ -508,7 +508,7 @@ class CommandeFournisseur extends Commande
 		if ($user->rights->fournisseur->commande->approuver)
 		{
 			$this->db->begin();
-				
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 2";
 			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1 ;";
 
@@ -545,7 +545,7 @@ class CommandeFournisseur extends Commande
 				if ($error == 0)
 				{
 					$langs->load("other");
-						
+
 					$subject = $langs->trans("EMailTextOrderApproved",$this->ref);
 					$message = $langs->trans("Hello").",\n\n";
 					$message .= $langs->trans("EMailTextOrderApprovedBy",$this->ref,$user->fullname);
@@ -975,8 +975,8 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * 	\brief		Supprime la commande
-	 *
+	 * 		\brief		Delete an order
+	 *		\return		int		<0 if KO, >0 if OK
 	 */
 	function delete()
 	{
@@ -987,19 +987,20 @@ class CommandeFournisseur extends Commande
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =". $this->id ;
+		dol_syslog("FournisseurCommande::delete sql=".$sql, LOG_DEBUG);
 		if (! $this->db->query($sql) )
 		{
 			$err++;
 		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".$this->id;
-		$sql.= " AND fk_statut = 0;";
+		dol_syslog("FournisseurCommande::delete sql=".$sql, LOG_DEBUG);
 		if ($resql = $this->db->query($sql) )
 		{
-			if ($this->db->affected_rows($resql) <> 1)
-	  {
-	  	$err++;
-	  }
+			if ($this->db->affected_rows($resql) < 1)
+			{
+				$err++;
+			}
 		}
 		else
 		{

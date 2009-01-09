@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -904,7 +904,7 @@ if ($id > 0)
 		/**
 		 * Boutons actions
 		 */
-		if ($user->societe_id == 0 && $commande->statut < 3 && $_GET['action'] <> 'editline')
+		if ($user->societe_id == 0 && $_GET['action'] != 'editline' && $_GET['action'] != 'delete')
 		{
 			print '<div	class="tabsAction">';
 
@@ -953,12 +953,9 @@ if ($id > 0)
 				}
 			}
 
-			if ($commande->statut == 0)
+			if ($user->rights->fournisseur->commande->annuler)
 			{
-				if ($user->rights->fournisseur->commande->creer)
-				{
-					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-				}
+				print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 			}
 
 			print "</div>";
