@@ -931,19 +931,19 @@ else
 
 			// Tel pro
 			print '<tr><td width="25%" valign="top">'.$langs->trans("PhonePro").'</td>';
-			print '<td>'.$fuser->office_phone.'</td>';
+			print '<td>'.dol_print_phone($fuser->office_phone,'',0,0,1).'</td>';
 
 			// Tel mobile
 			print '<tr><td width="25%" valign="top">'.$langs->trans("PhoneMobile").'</td>';
-			print '<td>'.$fuser->user_mobile.'</td>';
+			print '<td>'.dol_print_phone($fuser->user_mobile,'',0,0,1).'</td>';
 
 			// Fax
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Fax").'</td>';
-			print '<td>'.$fuser->office_fax.'</td>';
+			print '<td>'.dol_print_phone($fuser->office_fax,'',0,0,1).'</td>';
 
 			// EMail
 			print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
-			print '<td><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
+			print '<td>'.dol_print_email($fuser->email,0,0,1).'</td>';
 			print "</tr>\n";
 
 			// Statut

@@ -741,7 +741,7 @@ function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$s
 function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ="&nbsp;")
 {
 	global $conf,$user,$langs;
-
+	
 	// Clean phone parameter
 	$phone = ereg_replace("[ .-]","",trim($phone));
 	if (empty($phone)) { return ''; }
@@ -770,11 +770,13 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 			$newphone=substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
 		}
 	}
-
+	
 	if (! empty($addlink))
 	{
 		if ($conf->clicktodial->enabled)
 		{
+			if (empty($user->clicktodial_loaded)) $user->fetch_clicktodial();
+			
 			if (empty($conf->global->CLICKTODIAL_URL)) $urlmask='ErrorClickToDialModuleNotConfigured'; 
 			else $urlmask=$conf->global->CLICKTODIAL_URL;
 			$url = sprintf($urlmask, urlencode($phone), urlencode($user->clicktodial_poste), urlencode($user->clicktodial_login), urlencode($user->clicktodial_password));

@@ -108,7 +108,7 @@ class User extends CommonObject
 
 		// Preference utilisateur
 		$this->liste_limit = 0;
-		$this->clicktodial_enabled = 0;
+		$this->clicktodial_loaded = 0;
 
 		$this->all_permissions_are_loaded = 0;
 		$this->admin=0;
@@ -116,14 +116,14 @@ class User extends CommonObject
 		return 1;
 	}
 
-	
+
 	/* Polymorph functions not allowed in PHP
-	function fetch($id)
-	{
+	 function fetch($id)
+	 {
 		$this->id=$id;
-		$this->fetch();	
-	}
-	*/
+		$this->fetch();
+		}
+		*/
 
 	/**
 	 *	\brief      Charge un objet user avec toutes ces caracteristiques depuis un id ou login
@@ -684,7 +684,7 @@ class User extends CommonObject
 
 		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE login ='".addslashes($this->login)."'";
-		
+
 		dolibarr_syslog("User::Create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -793,7 +793,7 @@ class User extends CommonObject
 		$this->nom = $contact->nom;
 		$this->prenom = $contact->prenom;
 		$this->email = $contact->email;
-		
+
 		if (empty($login)) $login=strtolower(substr($contact->prenom, 0, 4)) . strtolower(substr($contact->nom, 0, 4));
 		$this->login = $login;
 
@@ -1264,7 +1264,7 @@ class User extends CommonObject
 		{	// If user has not defined its own language, we used current language
 			$outputlangs=$langs;
 		}
-		
+
 		// \TODO Use outputlangs to translate messages
 		if (! $changelater)
 		{
@@ -1317,41 +1317,36 @@ class User extends CommonObject
 
 
 	/**
-	 *    \brief      Lecture des infos de click to dial
+	 *    	\brief      Read clicktodial information for user
+	 * 		\return		<0 if KO, >0 if OK
 	 */
 	function fetch_clicktodial()
 	{
-
 		$sql = "SELECT login, pass, poste ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_clicktodial as u";
 		$sql.= " WHERE u.fk_user = ".$this->id;
 
-		$result = $this->db->query($sql);
-
-		if ($result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-	  if ($this->db->num_rows())
-	  {
-	  	$obj = $this->db->fetch_object();
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
 
-	  	$this->clicktodial_login = $obj->login;
-	  	$this->clicktodial_password = $obj->pass;
-	  	$this->clicktodial_poste = $obj->poste;
+				$this->clicktodial_login = $obj->login;
+				$this->clicktodial_password = $obj->pass;
+				$this->clicktodial_poste = $obj->poste;
+			}
 
-	  	if (strlen(trim($this->clicktodial_login)) &&
-		  strlen(trim($this->clicktodial_password)) &&
-		  strlen(trim($this->clicktodial_poste)))
-		  {
-		  	$this->clicktodial_enabled = 1;
-		  }
-
-	  }
-
-	  $this->db->free();
+			$this->clicktodial_loaded = 1;	// Data loaded (found or not)
+			
+			$this->db->free($resql);
+			return 1;
 		}
 		else
 		{
-	  print $this->db->error();
+			$this->error=$this->db->error();
+			return -1;
 		}
 	}
 

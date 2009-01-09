@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /**
-        \file       htdocs/user/clicktodial.php
-        \brief      Page for Click to dial datas
-        \version    $Id$
-*/
+ *       \file       htdocs/user/clicktodial.php
+ *       \brief      Page for Click to dial datas
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
@@ -93,7 +93,6 @@ if ($_GET["id"])
     print "</table>\n";
     print "<br>\n";
 
-    print info_admin($langs->trans("ClickToDialUrlDesc"));
     
     if ($_GET["action"] == 'edit')
     {
@@ -104,7 +103,9 @@ if ($_GET["id"])
         if ($user->admin)
         {
         	print "<tr>".'<td width="25%" valign="top">ClickToDial URL</td>';
-        	print '<td class="valeur">'.$conf->global->CLICKTODIAL_URL.'</td>';
+        	print '<td class="valeur">';
+    		print $form->textwithhelp($conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
+        	print '</td>';
         	print '</tr>';
         }
         
@@ -138,7 +139,9 @@ if ($_GET["id"])
         if ($user->admin)
         {
         	print "<tr>".'<td width="25%" valign="top">ClickToDial URL</td>';
-        	print '<td class="valeur">'.$conf->global->CLICKTODIAL_URL.'</td>';
+        	print '<td class="valeur">';
+    		print $form->textwithhelp($conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
+        	print '</td>';
         	print '</tr>';
         }
         print "<tr>".'<td width="25%" valign="top">ClickToDial '.$langs->trans("Login").'</td>';
