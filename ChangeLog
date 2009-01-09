@@ -15,6 +15,8 @@ For users:
 - Fix: Usage of reset of cursor in personalized numbering modules for a particular
   month (@ option) was broken.
 - Can add contacts to a supplier invoice.
+- Fixed: When an invoice is changed back to status draft, warehouse is increased 
+  back.
 
 For translators:
 - Added ca_ES language files

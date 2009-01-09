@@ -143,7 +143,7 @@ class Facture extends CommonObject
 		if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 		$this->brouillon = 1;
 
-		dolibarr_syslog("Facture::Create user=".$user->id);
+		dol_syslog("Facture::Create user=".$user->id);
 
 		$soc = new Societe($this->db);
 		$soc->fetch($this->socid);
@@ -212,7 +212,7 @@ class Facture extends CommonObject
 		$sql.= ",".$this->mode_reglement_id;
 		$sql.= ",".$this->db->idate($datelim).", '".$this->modelpdf."')";
 
-		dolibarr_syslog("Facture::Create sql=".$sql);
+		dol_syslog("Facture::Create sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -221,7 +221,7 @@ class Facture extends CommonObject
 			$this->ref='(PROV'.$this->id.')';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET facnumber='".$this->ref."' WHERE rowid=".$this->id;
 
-			dolibarr_syslog("Facture::create sql=".$sql);
+			dol_syslog("Facture::create sql=".$sql);
 			$resql=$this->db->query($sql);
 			if (! $resql) $error++;
 
@@ -229,14 +229,14 @@ class Facture extends CommonObject
 			if (! $error && $this->id && $this->propalid)
 			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fa_pr (fk_facture, fk_propal) VALUES ('.$this->id.','.$this->propalid.')';
-				dolibarr_syslog("Facture::Create sql=".$sql);
+				dol_syslog("Facture::Create sql=".$sql);
 				$resql=$this->db->query($sql);
 				if (! $resql) $error++;
 			}
 			if (! $error && $this->id && $this->commandeid)
 			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_fa (fk_facture, fk_commande) VALUES ('.$this->id.','.$this->commandeid.')';
-				dolibarr_syslog("Facture::Create sql=".$sql);
+				dol_syslog("Facture::Create sql=".$sql);
 				$resql=$this->db->query($sql);
 				if (! $resql) $error++;
 			}
@@ -321,7 +321,7 @@ class Facture extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog("Facture::create error ".$this->error);
+				dol_syslog("Facture::create error ".$this->error);
 				$this->db->rollback();
 				return -2;
 			}
@@ -329,7 +329,7 @@ class Facture extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Facture::create error ".$this->error." sql=".$sql);
+			dol_syslog("Facture::create error ".$this->error." sql=".$sql);
 			$this->db->rollback();
 			return -1;
 		}
@@ -376,7 +376,7 @@ class Facture extends CommonObject
 			}
 		}
 
-		dolibarr_syslog("Facture::createFromCurrent invertdetail=".$invertdetail." socid=".$this->socid." nboflines=".sizeof($facture->lignes));
+		dol_syslog("Facture::createFromCurrent invertdetail=".$invertdetail." socid=".$this->socid." nboflines=".sizeof($facture->lignes));
 
 		$facid = $facture->create($user);
 
@@ -510,7 +510,7 @@ class Facture extends CommonObject
 		if ($ref) $sql.= " WHERE f.facnumber='".$ref."'";
 		else $sql.= " WHERE f.rowid=".$rowid;
 
-		dolibarr_syslog("Facture::Fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("Facture::Fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -582,7 +582,7 @@ class Facture extends CommonObject
 				if ($result < 0)
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog('Facture::Fetch Error '.$this->error);
+					dol_syslog('Facture::Fetch Error '.$this->error);
 					return -3;
 				}
 				return 1;
@@ -590,14 +590,14 @@ class Facture extends CommonObject
 			else
 			{
 				$this->error='Bill with id '.$rowid.' not found sql='.$sql;
-				dolibarr_syslog('Facture::Fetch Error '.$this->error);
+				dol_syslog('Facture::Fetch Error '.$this->error);
 				return -2;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog('Facture::Fetch Error '.$this->error);
+			dol_syslog('Facture::Fetch Error '.$this->error);
 			return -1;
 		}
 	}
@@ -619,7 +619,7 @@ class Facture extends CommonObject
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
 		$sql.= ' ORDER BY l.rang';
 
-		dolibarr_syslog('Facture::fetch_lines sql='.$sql, LOG_DEBUG);
+		dol_syslog('Facture::fetch_lines sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -666,7 +666,7 @@ class Facture extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog('Facture::fetch_lines: Error '.$this->error,LOG_ERR);
+			dol_syslog('Facture::fetch_lines: Error '.$this->error,LOG_ERR);
 			return -3;
 		}
 	}
@@ -754,7 +754,7 @@ class Facture extends CommonObject
 
 		$this->db->begin();
 
-		dolibarr_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -779,7 +779,7 @@ class Facture extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-				dolibarr_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -910,7 +910,7 @@ class Facture extends CommonObject
 
 		if (! $rowid) $rowid=$this->id;
 
-		dolibarr_syslog("Facture::delete rowid=".$rowid, LOG_DEBUG);
+		dol_syslog("Facture::delete rowid=".$rowid, LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -936,11 +936,11 @@ class Facture extends CommonObject
 					$sql.= ' SET fk_facture = NULL';
 					$sql.= ' WHERE fk_facture in ('.join(',',$list_rowid_det).')';
 
-					dolibarr_syslog("Facture.class::delete sql=".$sql);
+					dol_syslog("Facture.class::delete sql=".$sql);
 					if (! $this->db->query($sql))
 					{
 						$this->error=$this->db->error()." sql=".$sql;
-						dolibarr_syslog("Facture.class::delete ".$this->error);
+						dol_syslog("Facture.class::delete ".$this->error);
 						$this->db->rollback();
 						return -5;
 					}
@@ -966,7 +966,7 @@ class Facture extends CommonObject
 					else
 					{
 						$this->error=$this->db->error()." sql=".$sql;
-						dolibarr_syslog("Facture.class::delete ".$this->error);
+						dol_syslog("Facture.class::delete ".$this->error);
 						$this->db->rollback();
 						return -6;
 					}
@@ -974,7 +974,7 @@ class Facture extends CommonObject
 				else
 				{
 					$this->error=$this->db->error()." sql=".$sql;
-					dolibarr_syslog("Facture.class::delete ".$this->error);
+					dol_syslog("Facture.class::delete ".$this->error);
 					$this->db->rollback();
 					return -4;
 				}
@@ -982,7 +982,7 @@ class Facture extends CommonObject
 			else
 			{
 				$this->error=$this->db->error()." sql=".$sql;
-				dolibarr_syslog("Facture.class::delete ".$this->error);
+				dol_syslog("Facture.class::delete ".$this->error);
 				$this->db->rollback();
 				return -3;
 			}
@@ -990,7 +990,7 @@ class Facture extends CommonObject
 		else
 		{
 			$this->error=$this->db->error()." sql=".$sql;
-			dolibarr_syslog("Facture.class::delete ".$this->error);
+			dol_syslog("Facture.class::delete ".$this->error);
 			$this->db->rollback();
 			return -2;
 		}
@@ -1071,7 +1071,7 @@ class Facture extends CommonObject
 
 		if ($this->paye != 1)
 		{
-			dolibarr_syslog("Facture::set_payed rowid=".$this->id, LOG_DEBUG);
+			dol_syslog("Facture::set_payed rowid=".$this->id, LOG_DEBUG);
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
 			$sql.= ' fk_statut=2';
 			if (! $close_code) $sql.= ', paye=1';
@@ -1112,13 +1112,13 @@ class Facture extends CommonObject
 	{
 		global $conf,$langs;
 
-		dolibarr_syslog("Facture::set_unpayed rowid=".$this->id, LOG_DEBUG);
+		dol_syslog("Facture::set_unpayed rowid=".$this->id, LOG_DEBUG);
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 		$sql.= ' SET paye=0, fk_statut=1, close_code=null, close_note=null';
 		$sql.= ' WHERE rowid = '.$this->id;
 		$resql = $this->db->query($sql);
 
-		dolibarr_syslog("Facture::set_unpayed sql=".$sql);
+		dol_syslog("Facture::set_unpayed sql=".$sql);
 		if ($resql)
 		{
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
@@ -1146,7 +1146,7 @@ class Facture extends CommonObject
 	{
 		global $conf,$langs;
 
-		dolibarr_syslog("Facture::set_canceled rowid=".$this->id, LOG_DEBUG);
+		dol_syslog("Facture::set_canceled rowid=".$this->id, LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -1285,7 +1285,7 @@ class Facture extends CommonObject
 			}
 			$sql.= ' WHERE rowid = '.$this->id;
 
-			dolibarr_syslog("Facture::set_valid() sql=".$sql, LOG_DEBUG);
+			dol_syslog("Facture::set_valid() sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -1293,7 +1293,7 @@ class Facture extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog("Facture::set_valid() Echec update - 10 - sql=".$sql, LOG_DEBUG);
+				dol_syslog("Facture::set_valid() Echec update - 10 - sql=".$sql, LOG_DEBUG);
 				dolibarr_print_error($this->db);
 				$error++;
 			}
@@ -1310,11 +1310,11 @@ class Facture extends CommonObject
 				$dirdest = $conf->facture->dir_output.'/'.$snumfa;
 				if (file_exists($dirsource))
 				{
-					dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
+					dol_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
 
 					if (@rename($dirsource, $dirdest))
 					{
-						dolibarr_syslog("Renommage ok");
+						dol_syslog("Renommage ok");
 						// Suppression ancien fichier PDF dans nouveau rep
 						dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
 					}
