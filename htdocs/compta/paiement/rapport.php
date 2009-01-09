@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,21 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
- \file       htdocs/compta/paiement/rapport.php
- \ingroup    facture
- \brief      Rapports de paiements
- \version    $Revision$
+ *	\file       htdocs/compta/paiement/rapport.php
+ *	\ingroup    facture
+ *	\brief      Payment reports page
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/rapport/pdf_paiement.class.php");
 
-// Sécurité accés
+// Security check
 if (! $user->rights->facture->lire)
 accessforbidden();
 
@@ -46,13 +44,22 @@ if ($user->societe_id > 0)
 $year = $_GET["year"];
 if (! $year) { $year=date("Y"); }
 
+
 /*
- * Action générer fichier rapport paiements
+ * Actions
  */
+
 if ($_POST["action"] == 'gen')
 {
 	$rap = new pdf_paiement($db);
 
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+	
 	// We save charset_output to restore it because write_file can change it if needed for
 	// output format that does not support UTF8.
 	$sav_charset_output=$outputlangs->charset_output;
@@ -71,13 +78,12 @@ if ($_POST["action"] == 'gen')
 }
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
-/*
- * Affichage liste des paiements
- *
- */
 $titre=($year?$langs->trans("PaymentsReportsForYear",$year):$langs->trans("PaymentsReports"));
 print_titre($titre);
 
