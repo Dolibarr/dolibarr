@@ -397,10 +397,12 @@ class Product extends CommonObject
 		{
 			// Multilangs
 			if($conf->global->MAIN_MULTILANGS)
-			if ( $this->setMultiLangs() < 0)
 			{
-				$this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
-				return -2;
+				if ( $this->setMultiLangs() < 0)
+				{
+					$this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+					return -2;
+				}
 			}
 			return 1;
 		}
@@ -648,86 +650,30 @@ class Product extends CommonObject
 
 
 	/**
-	 *   \brief  	Ajoute un changement de prix en base dans l'historique des prix
-	 *	\param  	user        Objet utilisateur qui modifie le prix
-	 *	\return		int			<0 si KO, >0 si OK
+	 *   	\brief  	Ajoute un changement de prix en base dans l'historique des prix
+	 *		\param  	user        Objet utilisateur qui modifie le prix
+	 *		\return		int			<0 si KO, >0 si OK
 	 */
-	function _log_price($user)
+	function _log_price($user,$level=0)
 	{
-		// MultiPrix : si activ�, on g�re tout ici, m�me le prix standard
-		global $conf;
+		// Add new price
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx,";
+		$sql.= " price_min,price_min_ttc) ";
+		$sql.= " VALUES(".($level?$level:1).", ".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.",";
+		$sql.= " ".$this->price_min.",".$this->price_min_ttc;
+		$sql.= ")";
 
-		if ($conf->global->PRODUIT_MULTIPRICES)
+		dolibarr_syslog("Product::_log_price sql=".$sql);
+		$resql=$this->db->query($sql);
+		if(! $resql)
 		{
-			$queryError = false;
-			for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-			{
-				if($this->multiprices["$i"] != "")
-				{
-					// Prise en compte du type
-					if ($this->multiprices_base_type["$i"] == 'TTC')
-					{
-						$multiprice_ttc = price2num($this->multiprices["$i"],'MU');
-						$multiprice_ht = price2num($this->multiprices["$i"] / (1 + ($this->tva_tx / 100)),'MU');
-					}
-					else
-					{
-						$multiprice_ht = price2num($this->multiprices["$i"],'MU');
-						$multiprice_ttc = price2num($this->multiprices["$i"] * (1 + ($this->tva_tx / 100)),'MU');
-					}
-
-					// On ajoute nouveau tarif
-					$sql_multiprix = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price_level,price,price_ttc,price_base_type,tva_tx) ";
-					$sql_multiprix.= " VALUES(".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$i.",".price2num($multiprice_ht).",'".price2num($multiprice_ttc)."','".$this->multiprices_base_type["$i"]."',".$this->tva_tx;
-					$sql_multiprix.= ")";
-					if (! $this->db->query($sql_multiprix) )
-					{
-						$queryError = true;
-					}
-				}
-			}
-			if (strlen(trim($this->price)) > 0 )
-			{
-				// On ajoute nouveau tarif
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx,price_min,price_min_ttc) ";
-				$sql.= " VALUES(".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx;
-				$sql.= ",".$this->price_min.",".$this->price_min_ttc;
-				$sql.= ")";
-				if (! $this->db->query($sql) )
-				$queryError = true;
-			}
-			if($queryError)
-			{
-				dolibarr_print_error($this->db);
-				return 0;
-			}
-			else
-			return 1;
+			$this->error=$this->db->error();
+			dolibarr_print_error($this->db);
+			return -1;
 		}
 		else
 		{
-			$queryError = false;
-
-			// On ajoute nouveau tarif
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx,price_min,price_min_ttc) ";
-			$sql.= " VALUES(".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx;
-			$sql.= ",".$this->price_min.",".$this->price_min_ttc;
-			$sql.= ")";
-
-			dolibarr_syslog("Product::_log_price sql=".$sql);
-			$resql=$this->db->query($sql);
-			if (!$resql)
-			$queryError = true;
-
-			if($queryError)
-			{
-				dolibarr_print_error($this->db);
-				return -1;
-			}
-			else
-			{
-				return 1;
-			}
+			return 1;
 		}
 	}
 
@@ -743,7 +689,7 @@ class Product extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price";
 		$sql.= " WHERE rowid=".$rowid;
 
-		dolibarr_syslog("Product::log_price_delete sql=".$sql);
+		dolibarr_syslog("Product::log_price_delete sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -842,13 +788,15 @@ class Product extends CommonObject
 	 *	\param  	newpricebase	HT ou TTC
 	 *	\param  	user        	Objet utilisateur qui modifie le prix
 	 *	\param  	newvat			New VAT Rate
+	 *  \param		newminprice		New price min
+	 *  \param		level			0=standard, >0 = level if multilevel prices
 	 * 	\return		int				<0 if KO, >0 if OK
 	 */
-	function update_price($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='')
+	function update_price($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0)
 	{
-		//multiprix
 		global $conf,$langs;
-		dolibarr_syslog("Product::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase, LOG_DEBUG);
+		
+		dolibarr_syslog("Product::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level, LOG_DEBUG);
 
 		if ($newvat == '') $newvat=$this->tva_tx;
 
@@ -860,7 +808,7 @@ class Product extends CommonObject
 				$price = price2num($newprice) / (1 + ($newvat / 100));
 				$price = price2num($price,'MU');
 
-				if($newminprice!='')
+				if ($newminprice!='')
 				{
 					$price_min_ttc = price2num($newminprice,'MU');
 					$price_min = price2num($newminprice) / (1 + ($newvat / 100));
@@ -914,25 +862,15 @@ class Product extends CommonObject
 				$this->price_base_type = $newpricebase;
 				$this->tva_tx = $newvat;
 
-				$this->_log_price($user);
-				return 1;
+				$this->_log_price($user,$level);
 			}
 			else
 			{
 				dolibarr_print_error($this->db);
-				return -1;
 			}
 		}
-		else if(($conf->global->PRODUIT_MULTIPRICES) && (count($this->multiprices) > 0))
-		{
-			$this->_log_price($user);
-			return 1;
-		}
-		else
-		{
-			$this->error = $langs->trans("ErrorBadParameter");
-			return -2;
-		}
+
+		return 1;
 	}
 
 
@@ -957,7 +895,8 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc, price_min, price_min_ttc, price_base_type, tva_tx, envente,";
+		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc,";
+		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, envente,";
 		$sql.= " fk_product_type, duration, seuil_stock_alerte,canvas,";
 		$sql.= " stock_commande, stock_loc, weight, weight_units, volume, volume_units, barcode, fk_barcode_type, finished";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -1002,6 +941,7 @@ class Product extends CommonObject
 			$this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
 
 			$this->db->free();
+
 			// multilangs
 			if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
 
@@ -1037,52 +977,25 @@ class Product extends CommonObject
 			// multiprix
 			if ($conf->global->PRODUIT_MULTIPRICES)
 			{
-				if ($ref)
+				for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 				{
-					$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product ";
-					$sql.=  "WHERE ref = '".addslashes($ref)."'";
-					$result = $this->db->query($sql) ;
-					if ($result)
-					{
-						$result = $this->db->fetch_array();
-						$prodid = $result["rowid"];
-					}
-					else
-					{
-						dolibarr_print_error($this->db);
-						return -1;
-					}
-				}
-					
-				$this->multiprices[1] = $this->price;
-				$this->multiprices_ttc[1] = $this->price_ttc;
-				$this->multiprices_base_type[1] = $this->price_base_type;
+					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
+					$sql.= " price_base_type, tva_tx, envente";
+					$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
+					$sql.= " where price_level=".$i." and";
+					$sql.= " fk_product = '".$this->id."'";
+					$sql.= " order by date_price DESC limit 1";
 
-				for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-				{
-					$sql= "SELECT price, price_ttc, price_base_type, tva_tx, envente ";
-					$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
-					$sql.= "where price_level=".$i." and ";
-					if ($id) $sql.= "fk_product = '".$id."' ";
-					if ($ref) $sql.= "fk_product = '".$prodid."' ";
-					$sql.= "order by date_price DESC limit 1";
 					$result = $this->db->query($sql) ;
 					if ( $result )
 					{
 						$result = $this->db->fetch_array();
 							
-						if ($result["price"] != "" && $result["price"] != "0.00")
-						{
-							$this->multiprices[$i]=$result["price"];
-							$this->multiprices_ttc[$i]=$result["price_ttc"];
-							$this->multiprices_base_type[$i] = $result["price_base_type"];
-						}
-						else
-						{
-							$this->multiprices[$i]=$this->price;
-							$this->multiprices_ttc[$i]=$this->price_ttc;
-							$this->multiprices_base_type[$i] = $this->price_base_type;
-						}
+						$this->multiprices[$i]=$result["price"];
+						$this->multiprices_ttc[$i]=$result["price_ttc"];
+						$this->multiprices_min[$i]=$result["price_min"];
+						$this->multiprices_min_ttc[$i]=$result["price_min_ttc"];
+						$this->multiprices_base_type[$i]=$result["price_base_type"];
 					}
 					else
 					{
