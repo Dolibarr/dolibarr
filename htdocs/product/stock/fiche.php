@@ -265,11 +265,13 @@ else
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
 
+			// Nb of products
 			print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
-			print $entrepot->nb_products();
+			$nb=$entrepot->nb_products();
+			print empty($nb)?'0':$nb;
 			print "</td></tr>";
 
-			// Dernier mouvement
+			// Last movement
 			$sql = "SELECT max( ".$db->pdate("m.datem").") as datem";
 			$sql .= " FROM llx_stock_mouvement as m";
 			$sql .= " WHERE m.fk_entrepot = '".$entrepot->id."';";
@@ -320,12 +322,14 @@ else
 			print_liste_field_titre($langs->trans("Product"),"", "p.ref","&amp;id=".$_GET['id'],"","",$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$_GET['id'],"","",$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$_GET['id'],"",'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("PMP"),"", "ps.pmp","&amp;id=".$_GET['id'],"",'align="center"',$sortfield,$sortorder);
 			if ($user->rights->stock->mouvement->creer) print '<td>&nbsp;</td>';
 			if ($user->rights->stock->creer)            print '<td>&nbsp;</td>';
 			print "</tr>";
 
-			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, ps.reel as value ";
-			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p ";
+			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit,";
+			$sql.= " ps.reel as value";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p ";
 			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
@@ -375,8 +379,11 @@ else
 					print img_object($langs->trans("ShowProduct"),"product").' '.$objp->ref;
 					print "</a></td>";
 					print '<td>'.$objp->produit.'</td>';
+
 					print '<td align="right">'.$objp->value.'</td>';
-						
+
+					print '<td align="center">'.$langs->trans("FeatureNotYetAvailableShort").'</td>';
+					
 					if ($user->rights->stock->mouvement->creer)
 					{
 						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$entrepot->id.'&amp;id='.$objp->rowid.'&amp;action=transfert">';

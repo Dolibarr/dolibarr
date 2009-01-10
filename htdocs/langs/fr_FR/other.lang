@@ -54,6 +54,7 @@ CanceledBy=Annulé par %s
 ClosedBy=Cloturé par %s
 FileWasRemoved=Le fichier a été supprimé
 DirWasRemoved=Le répertoire a été supprimé
+FeatureNotYetAvailableShort=Disponible dans une prochaine version
 FeatureNotYetAvailable=Fonctionnalité pas encore disponible dans cette version
 FeatureExperimental=Fonctionnalité expérimentale. Non stable dans cette version
 FeatureDevelopment=Fonctionnalité en développement. Non stable dans cette version

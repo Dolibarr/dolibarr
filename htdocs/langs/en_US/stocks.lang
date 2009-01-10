@@ -34,6 +34,7 @@ NumberOfUnit=Number of units
 TotalStock=Total in stock
 StockTooLow=Stock too low
 EnhancedValue=Value
+PMPValue=Value
 EnhancedValueOfWarehouses=Warehouses value
 UserWarehouseAutoCreate=Create a stock automatically when creating a user
 QtyDispatched=Quantity dispatched

@@ -24,6 +24,7 @@ create table llx_product_stock
   tms             timestamp,
   fk_product      integer NOT NULL,
   fk_entrepot     integer NOT NULL,
-  reel            integer          -- stock réel
+  reel            integer           -- physical stock
+  pmp             double(24,8) default 0 NOT NULL		-- PMP value for product in this warehous
 )type=innodb;
 

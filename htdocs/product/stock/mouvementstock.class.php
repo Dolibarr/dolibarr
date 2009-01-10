@@ -45,7 +45,7 @@ class MouvementStock
 	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
 	{
 		global $conf;
-		
+
 		$error = 0;
 		dolibarr_syslog("MouvementStock::_Create $user->id, $fk_product, $entrepot_id, qty=$qty, type=$type, $price");
 
@@ -59,7 +59,7 @@ class MouvementStock
 			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, price)";
 			$sql.= " VALUES (".$this->db->idate(mktime()).", ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.", ".$user->id;
 			$sql.= ",'".price2num($price)."')";
-	
+
 			dolibarr_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
 			if ($resql = $this->db->query($sql))
 			{
@@ -70,8 +70,8 @@ class MouvementStock
 				dolibarr_syslog("MouvementStock::_Create ".$this->error);
 				$error = -1;
 			}
-			
-			// Get current value of stock
+
+			// Test if there is already a record for couple (warehouse / product)
 			$num = 0;
 			if ($error == 0)
 			{
@@ -108,7 +108,9 @@ class MouvementStock
 				dolibarr_syslog("MouvementStock::_Create sql=".$sql, LOG_DEBUG);
 				if ($this->db->query($sql))
 				{
-
+					// TODO
+					// Update value of PMP in product_stock
+					
 				}
 				else
 				{
@@ -117,24 +119,26 @@ class MouvementStock
 				}
 			}
 
+			/*
 			if ($error == 0)
 			{
 				$valo_mouvement = 0;
 				$error = $this->CalculateValoPmp($mvid, $fk_product, $qty, $price, $valo_mouvement);
 			}
-	
+
 			if ($error == 0)
 			{
 				$error = $this->CalculateEntrepotValoPmp($user, $entrepot_id, $valo_mouvement);
 			}
+			*/
 		}
-		
-		// Add movement for sub products 
+
+		// Add movement for sub products
 		if ($error == 0 && $conf->global->PRODUIT_SOUSPRODUITS)
 		{
 			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, $price=0);
 		}
-		
+
 		// composition module
 		if ($error == 0 && $qty < 0 && $conf->global->MAIN_MODULE_COMPOSITION)
 		{
@@ -157,7 +161,7 @@ class MouvementStock
 
 
 	/**
-	 *      \brief      Create movement in databse for all subproducts
+	 *      \brief      Create movement in database for all subproducts
 	 *      \return     int     <0 si ko, 0 si ok
 	 */
 	function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price=0)
@@ -198,52 +202,93 @@ class MouvementStock
 		return $error;
 	}
 
+	
+	/**
+	 *      \brief      Crée un mouvement en base pour toutes les compositions de produits
+	 *      \return     int     <0 si ko, 0 si ok
+	 */
+	function _createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
+	{
+
+
+		dolibarr_syslog("MouvementStock::_createComposition $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
+		$products_compo = array();
+
+		$sql = "SELECT fk_product_composition, qte, etat_stock";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_composition";
+		$sql.= " WHERE fk_product = $fk_product;";
+
+		$all = $this->db->query($sql);
+
+		if ($all)
+		{
+			while($item = $this->db->fetch_object($all)	)
+			{
+				if($item->etat_stock != 0) array_push($products_compo,$item);
+			}
+			$this->db->free($resql);
+		}
+		else
+		{
+			dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
+			return -1;
+		}
+
+		foreach($products_compo as $product)
+		{
+			$this->_create($user, $product->fk_product_composition, $entrepot_id, ($qty*$product->qte), $type, $price=0);
+		}
+
+		return 0;
+	}
+
+	
+	/**
+	 *	\brief		Decrease stock for product and subproducts
+	 *	\return		int		<0 if KO, >0 if OK
+	 */
+	function livraison($user, $fk_product, $entrepot_id, $qty)
+	{
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2);
+	}
 
 
 	/**
-   *      \brief      Crée un mouvement en base pour toutes les compositions de produits
-   *      \return     int     <0 si ko, 0 si ok
-   */
-  function _createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
-  {
-
-    
-  	dolibarr_syslog("MouvementStock::_createComposition $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
-    $products_compo = array();
-
-    $sql = "SELECT fk_product_composition, qte, etat_stock";
-    $sql.= " FROM ".MAIN_DB_PREFIX."product_composition";
-    $sql.= " WHERE fk_product = $fk_product;";
-
-    $all = $this->db->query($sql);
-    
-    if ($all)
-    {
-    	while($item = $this->db->fetch_object($all)	)
-    	{
-    		if($item->etat_stock != 0) array_push($products_compo,$item);
-    	}
-    	$this->db->free($resql);
-    }
-    else
-    {
-    	dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
-    	return -1;
-    }
-
-    foreach($products_compo as $product)
-    {
-    	$this->_create($user, $product->fk_product_composition, $entrepot_id, ($qty*$product->qte), $type, $price=0);
-    }
-
-    return 0;
-  }
+	 *	\brief		Increase stock for product and subproducts
+	 *	\return		int		<0 if KO, >0 if OK
+	 */
+	function reception($user, $fk_product, $entrepot_id, $qty, $price=0)
+	{
+		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price);
+	}
 
 
-    /**
+	/**
+	 * Return nb of subproducts for a product
+	 *
+	 * @param unknown_type $id
+	 * @return unknown
+	 */
+	function nbOfSubProdcuts($id)
+	{
+		$nbSP=0;
+
+		$resql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."product_association";
+		$resql.= " WHERE fk_product_pere = ".$id;
+		if ($this->db->query($resql))
+		{
+			$obj=$this->db->fetch_object($resql);
+			$nbSP=$obj->nb;
+		}
+		$this->db->free($resql);
+		return $nbSP;
+	}
+	
+	/**
 	 *      \brief      Calcul ???
 	 *      \return     int    		<0 si ko, >0 si ok
 	 */
+	/*
 	function CalculateEntrepotValoPmp($user, $entrepot_id, $valo_mouvement)
 	{
 		$error = 0;
@@ -251,94 +296,94 @@ class MouvementStock
 
 		if ( $valo_mouvement <> 0 )
 		{
-	  $entrepot_value_pmp = 0;
+			$entrepot_value_pmp = 0;
 
-	  if ($error === 0)
-	  {
-	  	$sql = "SELECT valo_pmp,".$this->db->pdate("date_calcul")." FROM ".MAIN_DB_PREFIX."entrepot_valorisation";
-	  	$sql.= " WHERE fk_entrepot = $entrepot_id ORDER BY date_calcul DESC LIMIT 1;";
-	  	 
-	  	if ($this->db->query($sql))
-	  	{
-	  		while ($row = $this->db->fetch_row($resql) )
-	  		{
-	  			$entrepot_value_pmp  = $row[0];
-	  			$entrepot_value_date = $row[1];
-	  		}
-	  		$this->db->free($resql);
-	  	}
-	  	else
-	  	{
-	  		$error = -26;
-	  		dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
-	  	}
-	  }
+			if ($error === 0)
+			{
+				$sql = "SELECT valo_pmp,".$this->db->pdate("date_calcul")." FROM ".MAIN_DB_PREFIX."entrepot_valorisation";
+				$sql.= " WHERE fk_entrepot = $entrepot_id ORDER BY date_calcul DESC LIMIT 1;";
+				 
+				if ($this->db->query($sql))
+				{
+					while ($row = $this->db->fetch_row($resql) )
+					{
+						$entrepot_value_pmp  = $row[0];
+						$entrepot_value_date = $row[1];
+					}
+					$this->db->free($resql);
+				}
+				else
+				{
+					$error = -26;
+					dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
+				}
+			}
 
-	  $new_value = $entrepot_value_pmp + $valo_mouvement;
+			$new_value = $entrepot_value_pmp + $valo_mouvement;
 
-	  $now = time();
+			$now = time();
 
-	  if ($error === 0)
-	  {
-	  	if ( strftime('%Y%m%d',$entrepot_value_date) == strftime('%Y%m%d',$now) )
-	  	{
-	  		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot_valorisation";
-	  		$sql.= " SET valo_pmp='".price2num($new_value)."'";
-	  		$sql.= " WHERE fk_entrepot = $entrepot_id ";
-	  		$sql.= " AND ".$this->db->pdate("date_calcul")."='".$entrepot_value_date."';";
-	  	}
-	  	else
-	  	{
-	  		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot_valorisation";
-	  		$sql.= " (date_calcul, fk_entrepot, valo_pmp)";
-	  		$sql.= " VALUES (".$this->db->idate(mktime()).", ".$entrepot_id;
-	  		$sql.= ",'".price2num($new_value)."')";
-	  	}
-	  	 
-	  	if ($this->db->query($sql))
-	  	{
+			if ($error === 0)
+			{
+				if ( strftime('%Y%m%d',$entrepot_value_date) == strftime('%Y%m%d',$now) )
+				{
+					$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot_valorisation";
+					$sql.= " SET valo_pmp='".price2num($new_value)."'";
+					$sql.= " WHERE fk_entrepot = $entrepot_id ";
+					$sql.= " AND ".$this->db->pdate("date_calcul")."='".$entrepot_value_date."';";
+				}
+				else
+				{
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot_valorisation";
+					$sql.= " (date_calcul, fk_entrepot, valo_pmp)";
+					$sql.= " VALUES (".$this->db->idate(mktime()).", ".$entrepot_id;
+					$sql.= ",'".price2num($new_value)."')";
+				}
+				 
+				if ($this->db->query($sql))
+				{
 
-	  	}
-	  	else
-	  	{
-	  		$error = -27;
-	  		dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
-	  	}
-	  }
+				}
+				else
+				{
+					$error = -27;
+					dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
+				}
+			}
 
-	  if ($error === 0)
-	  {
-	  	$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot";
-	  	$sql.= " SET valo_pmp='".price2num($new_value)."'";
-	  	$sql.= " WHERE rowid = $entrepot_id ";
-	  	 
-	  	if ($this->db->query($sql))
-	  	{
+			if ($error === 0)
+			{
+				$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot";
+				$sql.= " SET valo_pmp='".price2num($new_value)."'";
+				$sql.= " WHERE rowid = $entrepot_id ";
+				 
+				if ($this->db->query($sql))
+				{
 
-	  	}
-	  	else
-	  	{
-	  		$error = -28;
-	  		dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
-	  	}
-	  }
+				}
+				else
+				{
+					$error = -28;
+					dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
+				}
+			}
 
-	  if ($error === 0)
-	  {
-	  	return 0;
-	  }
-	  else
-	  {
-	  	dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp RETURN IN ERROR[$error]");
-	  	return $error;
-	  }
+			if ($error === 0)
+			{
+				return 0;
+			}
+			else
+			{
+				dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp RETURN IN ERROR[$error]");
+				return $error;
+			}
 		}
 		else
 		{
-	  return 0;
+			return 0;
 		}
 	}
-
+	*/
 
 	/**
 	 * \brief  ???
@@ -349,6 +394,7 @@ class MouvementStock
 	 * \param  value_ope    float  Valeur du mouvement en retour
 	 * \return int          <0 si ko, 0 si ok
 	 */
+	/*
 	function CalculateValoPmp($mvid, $fk_product, $qty, $price=0, &$value_ope)
 	{
 		$error = 0;
@@ -382,9 +428,7 @@ class MouvementStock
 				}
 			}
 
-			/*
-			 * Calcul
-			 */
+			// Calcul
 			if ($qty > 0)
 			{
 				// on stock
@@ -405,9 +449,8 @@ class MouvementStock
 
 			$new_stock_qty = $qty_stock + $qty;
 			$new_stock_value_pmp = $stock_value_pmp + $value_ope;
-			/*
-			 * Fin calcul
-			 */
+			
+			// Fin calcul
 			if ($error === 0)
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_valorisation";
@@ -446,48 +489,6 @@ class MouvementStock
 			return 0;
 		}
 	}
-
-
-	/**
-	 *	\brief		Decrease stock for product and subproducts
-	 *	\return		int		<0 if KO, >0 if OK
-	 */
-	function livraison($user, $fk_product, $entrepot_id, $qty)
-	{
-		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2);
-	}
-
-
-	/**
-	 *	\brief		Increase stock for product and subproducts
-	 *	\return		int		<0 if KO, >0 if OK
-	 */
-	function reception($user, $fk_product, $entrepot_id, $qty, $price=0)
-	{
-		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price);
-	}
-
-
-	/**
-	 * Return nb of subproducts for a product
-	 *
-	 * @param unknown_type $id
-	 * @return unknown
-	 */
-	function nbOfSubProdcuts($id)
-	{
-		$nbSP=0;
-		
-		$resql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."product_association";
-		$resql.= " WHERE fk_product_pere = ".$id;
-		if ($this->db->query($resql))
-		{
-			$obj=$this->db->fetch_object($resql);
-			$nbSP=$obj->nb;
-		}
-		$this->db->free($resql);
-		return $nbSP;
-	}
-
+	*/
 }
 ?>
