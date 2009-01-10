@@ -428,7 +428,9 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	//print "fullpathselected=".$fullpathselected."<br>";
 
 	// Update expandedsectionarray in session
-	$expandedsectionarray=split(',',$_SESSION['expandedsectionarray']);
+	$expandedsectionarray=array();
+	if (isset($_SESSION['expandedsectionarray'])) $expandedsectionarray=split(',',$_SESSION['expandedsectionarray']);
+
 	if ($section && $_GET['sectionexpand'] == 'true')
 	{
 		// We add all sections that are parent of opened section
