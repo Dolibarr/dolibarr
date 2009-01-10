@@ -334,7 +334,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			$tva_tx = get_default_tva($mysoc,$commande->client,$prod->tva_tx);
 
 			// multiprix
-			if ($conf->global->PRODUIT_MULTIPRICES == 1)
+			if ($conf->global->PRODUIT_MULTIPRICES)
 			{
 				$pu_ht = $prod->multiprices[$commande->client->price_level];
 				$pu_ttc = $prod->multiprices_ttc[$commande->client->price_level];
@@ -1038,7 +1038,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 					{
 						print '<tr><td>';
 						// multiprix
-						if($conf->global->PRODUIT_MULTIPRICES == 1)
+						if($conf->global->PRODUIT_MULTIPRICES)
 						print $html->select_produits('','idprod'.$i,'',$conf->produit->limit_size,$soc->price_level);
 						else
 						print $html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
@@ -1791,7 +1791,7 @@ else
 					print '<tr '.$bc[$var].'>';
 					print '<td colspan="3">';
 					// multiprix
-					if($conf->global->PRODUIT_MULTIPRICES == 1)
+					if($conf->global->PRODUIT_MULTIPRICES)
 					{
 						$html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
 					}

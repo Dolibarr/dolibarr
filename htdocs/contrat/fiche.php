@@ -226,7 +226,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
             $tva_npr = get_default_npr($mysoc,$contrat->client,$prod->tva_npr);
 
             // On defini prix unitaire
-            if ($conf->global->PRODUIT_MULTIPRICES == 1)
+            if ($conf->global->PRODUIT_MULTIPRICES)
             {
             	$pu_ht = $prod->multiprices[$contrat->client->price_level];
             	$pu_ttc = $prod->multiprices_ttc[$contrat->client->price_level];
@@ -1179,7 +1179,7 @@ else
 			print "<tr $bc[$var]>";
 			print '<td colspan="3">';
 			// multiprix
-			if($conf->global->PRODUIT_MULTIPRICES == 1)
+			if($conf->global->PRODUIT_MULTIPRICES)
 				$form->select_produits('','p_idprod',1,$conf->produit->limit_size,$contrat->societe->price_level);
 			else
 				$form->select_produits('','p_idprod',1,$conf->produit->limit_size);

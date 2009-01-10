@@ -874,7 +874,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 			$tva_npr = get_default_npr($mysoc,$fac->client,$prod->tva_tx);
 
 			// On defini prix unitaire
-			if ($conf->global->PRODUIT_MULTIPRICES == 1)
+			if ($conf->global->PRODUIT_MULTIPRICES)
 			{
 				$pu_ht = $prod->multiprices[$fac->client->price_level];
 				$pu_ttc = $prod->multiprices_ttc[$fac->client->price_level];
@@ -1714,7 +1714,7 @@ if ($_GET['action'] == 'create')
 				print '<tr>';
 				print '<td>';
 				// multiprix
-				if($conf->global->PRODUIT_MULTIPRICES == 1)
+				if($conf->global->PRODUIT_MULTIPRICES)
 				$html->select_produits('','idprod'.$i,'',$conf->produit->limit_size,$soc->price_level);
 				else
 				$html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
@@ -2864,7 +2864,7 @@ else
 					print '<tr '.$bc[$var].'>';
 					print '<td colspan="3">';
 					// multiprix
-					if($conf->global->PRODUIT_MULTIPRICES == 1)
+					if($conf->global->PRODUIT_MULTIPRICES)
 					{
 						$html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
 					}

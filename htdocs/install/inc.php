@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 		\version    $Id$
 */
 
-define('DOL_VERSION','2.6-dev');	// Also defined in htdocs/master.inc.php
+define('DOL_VERSION','2.5.1-beta');	// Also defined in htdocs/master.inc.php
 
 require_once('../translate.class.php');
 require_once('../lib/functions.lib.php');

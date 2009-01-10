@@ -501,7 +501,7 @@ class Societe extends CommonObject
 		}
 
 		$sql = 'SELECT s.rowid, s.nom, s.address,'.$this->db->pdate('s.datec').' as dc, s.prefix_comm';
-		if($conf->global->PRODUIT_MULTIPRICES == 1) $sql .= ', s.price_level';
+		if($conf->global->PRODUIT_MULTIPRICES) $sql .= ', s.price_level';
 		$sql .= ','. $this->db->pdate('s.tms').' as date_update';
 		$sql .= ', s.tel, s.fax, s.email, s.url, s.cp, s.ville, s.note, s.client, s.fournisseur';
 		$sql .= ', s.siren, s.siret, s.ape, s.idprof4';
@@ -605,7 +605,7 @@ class Societe extends CommonObject
 				$this->rubrique = $obj->rubrique;
 				$this->note = $obj->note;
 				// multiprix
-				if($conf->global->PRODUIT_MULTIPRICES == 1) $this->price_level = $obj->price_level;
+				$this->price_level = $obj->price_level;
 
 				$result = 1;
 			}

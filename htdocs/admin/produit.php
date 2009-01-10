@@ -175,7 +175,7 @@ print '</form>';
 
 
 // multiprix nombre de prix a proposer
-if($conf->global->PRODUIT_MULTIPRICES == 1)
+if($conf->global->PRODUIT_MULTIPRICES)
 {
 	$var=!$var;
 	print "<form method=\"post\" action=\"produit.php\">";

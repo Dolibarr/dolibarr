@@ -106,7 +106,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 		$product->volume_units       = $_POST["volume_units"];
 		$product->finished           = $_POST["finished"];
 		// MultiPrix
-		if($conf->global->PRODUIT_MULTIPRICES == 1)
+		if($conf->global->PRODUIT_MULTIPRICES)
 		{
 			for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
 			{
@@ -316,7 +316,7 @@ if ($_POST["action"] == 'addinpropal')
 	$price_base_type = 'HT';
 
 	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES == 1)
+	if ($conf->global->PRODUIT_MULTIPRICES)
 	{
 		$pu_ht = $prod->multiprices[$soc->price_level];
 		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
@@ -395,7 +395,7 @@ if ($_POST["action"] == 'addincommande')
 	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 
 	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES == 1)
+	if ($conf->global->PRODUIT_MULTIPRICES)
 	{
 		$pu_ht = $prod->multiprices[$soc->price_level];
 		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
@@ -475,7 +475,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 
 	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES == 1)
+	if ($conf->global->PRODUIT_MULTIPRICES)
 	{
 		$pu_ht = $prod->multiprices[$soc->price_level];
 		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
@@ -687,7 +687,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 		print '<br>';
 
 		print '<table class="border" width="100%">';
-		if($conf->global->PRODUIT_MULTIPRICES == 1)
+		if($conf->global->PRODUIT_MULTIPRICES)
 		{
 			print '<tr><td>'.$langs->trans("SellingPrice").' 1</td>';
 			print '<td><input name="price" size="10" value="'.$product->price.'">';

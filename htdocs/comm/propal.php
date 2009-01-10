@@ -597,7 +597,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			$tva_npr = get_default_npr($mysoc,$propal->client,$prod->tva_tx);
 
 			// On defini prix unitaire
-			if ($conf->global->PRODUIT_MULTIPRICES == 1)
+			if ($conf->global->PRODUIT_MULTIPRICES)
 			{
 				$pu_ht = $prod->multiprices[$propal->client->price_level];
 				$pu_ttc = $prod->multiprices_ttc[$propal->client->price_level];
@@ -1592,7 +1592,7 @@ if ($_GET['propalid'] > 0)
 			print '<tr '.$bc[$var].'>';
 			print '<td '.$colspan.'>';
 			// multiprix
-			if($conf->global->PRODUIT_MULTIPRICES == 1)
+			if($conf->global->PRODUIT_MULTIPRICES)
 			{
 				$html->select_produits('','idprod','',$conf->produit->limit_size,$societe->price_level);
 			}

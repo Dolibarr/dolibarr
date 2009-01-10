@@ -1457,7 +1457,7 @@ class Facture extends CommonObject
 
 			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
 			// multiprix
-			if($conf->global->PRODUIT_MULTIPRICES == 1)
+			if($conf->global->PRODUIT_MULTIPRICES)
 			$price = $prod->multiprices[$this->client->price_level];
 			else
 			$price = $prod->price;

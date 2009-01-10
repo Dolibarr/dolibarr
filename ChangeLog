@@ -21,6 +21,7 @@ For users:
   back.
 - Fix: Category of a bank transaction was not saved.
 - Fix: Clicktodial plugin works correctly now
+- Fix: Multiprices features works correctly.
 
 For translators:
 - Added ca_ES language files
