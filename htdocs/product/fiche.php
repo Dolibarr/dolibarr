@@ -844,22 +844,9 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td></tr>';
 
 			// MultiPrix
-			if($conf->global->PRODUIT_MULTIPRICES == 1)
+			if($conf->global->PRODUIT_MULTIPRICES)
 			{
-				print '<tr><td>'.$langs->trans("SellingPrice").' 1</td>';
-
-				if ($product->price_base_type == 'TTC')
-				{
-					print '<td>'.price($product->price_ttc);
-				}
-				else
-				{
-					print '<td>'.price($product->price);
-				}
-
-				print ' '.$langs->trans($product->price_base_type);
-				print '</td></tr>';
-				for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+				for ($i=1; $i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 				{
 					print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
 
@@ -880,13 +867,24 @@ if ($_GET["id"] || $_GET["ref"])
 					{
 						print ' '.$langs->trans($product->price_base_type);
 					}
-
 					print '</td></tr>';
+					
+					// Prix mini
+					print '<tr><td>'.$langs->trans("MinPrice").' '.$i.'</td><td>';
+					if ($product->multiprices_base_type["$i"] == 'TTC')
+					{
+						print price($product->multiprices_min_ttc["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
+					}
+					else
+					{
+						print price($product->multiprices_min["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
+					}
+					print '</td></tr>';					
 				}
 			}
-			// Prix
 			else
 			{
+				// Prix
 				print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
 				if ($product->price_base_type == 'TTC')
 				{
@@ -897,19 +895,19 @@ if ($_GET["id"] || $_GET["ref"])
 					print price($product->price).' '.$langs->trans($product->price_base_type);
 				}
 				print '</td></tr>';
-			}
 				
-			// Prix mini
-			print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
-			if ($product->price_base_type == 'TTC')
-			{
-				print price($product->price_min_ttc).' '.$langs->trans($product->price_base_type);
+				// Prix mini
+				print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
+				if ($product->price_base_type == 'TTC')
+				{
+					print price($product->price_min_ttc).' '.$langs->trans($product->price_base_type);
+				}
+				else
+				{
+					print price($product->price_min).' '.$langs->trans($product->price_base_type);
+				}
+				print '</td></tr>';
 			}
-			else
-			{
-				print price($product->price_min).' '.$langs->trans($product->price_base_type);
-			}
-			print '</td></tr>';
 
 			// TVA
 			print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx,true).'</td></tr>';

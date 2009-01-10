@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,17 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
 	    \file       htdocs/expedition/stats/index.php
         \ingroup    expedition
 		\brief      Page des stats expeditions
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -59,7 +55,7 @@ if ($db->query($sql))
 }
 $db->free();
 
-print '</table><br><i>Statistiques effectuées sur les expéditions validées uniquement</i>';
+print '</table><br><i>Statistiques effectuees sur les expeditions validees uniquement</i>';
 
 $db->close();
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -130,10 +130,11 @@ llxHeader("","",$langs->trans("WarehouseCard"));
 
 if ($_GET["action"] == 'create')
 {
+	print_fiche_titre($langs->trans("NewWarehouse"));
+	
 	print "<form action=\"fiche.php\" method=\"post\">\n";
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="type" value="'.$type.'">'."\n";
-	print_titre($langs->trans("NewWarehouse"));
 
 	if ($mesg)
 	{

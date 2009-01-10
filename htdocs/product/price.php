@@ -156,7 +156,7 @@ if ($conf->global->PRODUIT_MULTIPRICES)
 		print '</td></tr>';
 		
 		// Prix minimum
-		print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
+		print '<tr><td>'.$langs->trans("MinPrice").' '.$i.'</td><td>';
 		if ($product->multiprices_base_type["$i"] == 'TTC')
 		{
 			print price($product->multiprices_min_ttc["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
@@ -314,7 +314,7 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 			print '</td></tr>';
 
 			print '<tr><td>';
-			$text=$langs->trans('MinPrice') ;
+			$text=$langs->trans('MinPrice').' '.$i;
 			print $html->textwithhelp($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
 			if ($product->multiprices_base_type["$i"] == 'TTC')
 			{
