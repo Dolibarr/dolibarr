@@ -24,6 +24,7 @@
  *	\brief      Fiche projet
  *	\version    $Id$
  */
+
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
@@ -139,10 +140,9 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	/*
 	 * Create
 	 */
-	print_titre($langs->trans("NewProject"));
+	print_fiche_titre($langs->trans("NewProject"));
 
-	if ($mesg) print $mesg;
-	print '<br>';
+	if ($mesg) print $mesg.'<br>';
 	
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	//if ($_REQUEST["socid"]) print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';

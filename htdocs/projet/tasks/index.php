@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /**
- \file       htdocs/projet/tasks/index.php
- \ingroup    project
- \brief      Fiche tâches d'un projet
- \version    $Id$
+ *	\file       htdocs/projet/tasks/index.php
+ *	\ingroup    project
+ *	\brief      Fiche tâches d'un projet
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -77,51 +77,21 @@ $h++;
 
 dolibarr_fiche_head($head, 'tasks', $title);
 
-/* Liste des tâches */
+$projet = new Project($db);
+$tasksarray=$projet->getTasksArray();
 
-$sql = "SELECT t.rowid, t.title, t.fk_task_parent, t.duration_effective";
-$sql .= " , p.rowid as prowid, p.title as ptitle";
-$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t";
-$sql .= " , ".MAIN_DB_PREFIX."projet_task_actors as a";
-$sql .= " , ".MAIN_DB_PREFIX."projet as p";
-$sql .= " WHERE p.rowid = t.fk_projet";
-$sql .= " AND a.fk_projet_task = t.rowid";
-if ($mode == 'mine') $sql.= " AND a.fk_user = ".$user->id;
-$sql .= " ORDER BY p.rowid, t.fk_task_parent";
-
-$resql = $db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
-	$tasks = array();
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($resql);
-		$tasks[$i][0] = $obj->title;
-		$tasks[$i][1] = $obj->fk_task_parent;
-		$tasks[$i][2] = $obj->rowid;
-		$tasks[$i][3] = $obj->duration_effective;
-		$tasks[$i][4] = $obj->ptitle;
-		$tasks[$i][5] = $obj->prowid;
-		$i++;
-	}
-	$db->free();
-}
-else
-{
-	dolibarr_print_error($db);
-}
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("Task").'</td>';
+print '<td>&nbsp;</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print "</tr>\n";
-$var=true;
 
-PLines($j, 0, $tasks, $level, $var);
+$level=0;
+$j=0;
+PLines($j, 0, $tasksarray, $level, true);
 
 print "</table>";
 print '</div>';
@@ -141,52 +111,65 @@ $db->close();
 llxFooter('$Date$ - $Revision$');
 
 
-
-Function PLines(&$inc, $parent, $lines, &$level, &$var)
+// TODO Same function PLines than in fiche.php
+function PLines(&$inc, $parent, $lines, &$level, $var)
 {
-	global $db;
-	global $bc, $langs;
+	global $user, $bc, $langs;
+
+	$lastprojectid=0;
 	
-	$projectstatic=new Project($db);
+	$projectstatic = new Project($db);
 	
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
-		if ($parent == 0)
-		{
-		  $level = 0;
-		  $var = !$var;
-		}
+		if ($parent == 0) $level = 0;
 
-		if ($lines[$i][1] == $parent)
+		if ($lines[$i]->fk_parent == $parent)
 		{
-			  print "<tr ".$bc[$var].">\n<td>";
-			  $projectstatic->id=$lines[$i][5];
-			  $projectstatic->ref=$lines[$i][4];
-			  print $projectstatic->getNomUrl(1);
-			  print "</td><td>\n";
-		
-			  for ($k = 0 ; $k < $level ; $k++)
-			  {
-			  	print "&nbsp;&nbsp;&nbsp;";
-			  }
-		
-			  print '<a href="task.php?id='.$lines[$i][2].'">'.$lines[$i][0]."</a></td>\n";
-		
-			  $heure = intval($lines[$i][3]);
-			  $minutes = (($lines[$i][3] - $heure) * 60);
-			  $minutes = substr("00"."$minutes", -2);
-		
-			  print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
-			  print "</tr>\n";
-			  $inc++;
-			  $level++;
-			  PLines($inc, $lines[$i][2], $lines, $level, $var);
-			  $level--;
+			// Break on a new project
+			if ($parent == 0 && $lines[$i]->projectid != $lastprojectid)
+			{
+				$var = !$var;
+				$lastprojectid=$lines[$i]->projectid;
+			}
+			
+			print "<tr $bc[$var]>\n";
+
+			print "<td>";
+			$projectstatic->id=$lines[$i]->projectid;
+			$projectstatic->ref=$lines[$i]->projectref;
+			print $projectstatic->getNomUrl(1);
+			print "</td>";
+				
+			print "<td>".$lines[$i]->id."</td>";
+				
+			print "<td>";
+			for ($k = 0 ; $k < $level ; $k++)
+			{
+				print "&nbsp;&nbsp;&nbsp;";
+			}
+
+			print '<a href="task.php?id='.$lines[$i]->id.'">'.$lines[$i]->title."</a></td>\n";
+
+			$heure = intval($lines[$i]->duration);
+			$minutes = round((($lines[$i]->duration - $heure) * 60),0);
+			$minutes = substr("00"."$minutes", -2);
+
+			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
+
+			print "</tr>\n";
+			
+			$inc++;
+			
+			$level++;
+			if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $var);
+			$level--;
 		}
 		else
 		{
-	 		//$level--;
+			//$level--;
 		}
 	}
 }
+
 ?>

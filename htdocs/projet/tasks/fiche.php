@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,11 +39,18 @@ $result = restrictedArea($user, 'projet', $projetid);
  * Actions
  */
 
-if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
+if ($_POST["action"] == 'createtask' && $user->rights->projet->creer && empty($_POST["cancel"]))
 {
 	$error=0;
 
-	if (empty($_POST["cancel"]))
+	if (empty($_POST['task_parent']))
+	{
+		$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTaks"));
+		$_GET["action"]='create';
+		$error++;
+	}
+	
+	if (! $error)
 	{
 		$tmparray=split('_',$_POST['task_parent']);
 		$projectid=$tmparray[0];
@@ -98,6 +105,7 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 /*
  * View
  */
+
 $form=new Form($db);
 
 llxHeader("",$langs->trans("Tasks"),"Tasks");
@@ -116,7 +124,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
 	$tasksarray=$projet->getTasksArray();
 
-	if ($mesg) print $mesg;
+	if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
 	print '<form action="fiche.php" method="post">';
 	print '<input type="hidden" name="action" value="createtask">';
@@ -131,6 +139,8 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
 		print '<select class="flat" name="task_parent">';
 		print '<option value="0" selected="true">&nbsp;</option>';
+		$j=0;
+		$level=0;
 		PLineSelect($j, 0, $tasksarray, $level);
 		print '</select>';
 	}
@@ -167,8 +177,6 @@ else
 	else print '&nbsp;';
 	print '</td></tr>';
 
-	$tasksrole=$projet->getTasksRoleForUser($user);
-
 	$tasksarray=$projet->getTasksArray();
 
 	print '</table>';
@@ -184,7 +192,8 @@ else
 	print '<td>'.$langs->trans("LabelTask").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 	print "</tr>\n";
-	PLines($j, 0, $tasksarray, $level, $tasksrole);
+	$j=0;
+	PLines($j, 0, $tasksarray, $level, true);
 	print '</form>';
 
 
@@ -205,22 +214,29 @@ $db->close();
 llxFooter('$Date$ - $Revision$');
 
 
-function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
+
+// TODO Same function PLines than in fiche.php
+function PLines(&$inc, $parent, $lines, &$level, $var)
 {
 	global $user, $bc, $langs;
 
+	$lastprojectid=0;
+	
 	$projectstatic = new Project($db);
 	
-	$var=true;
-
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
-		if ($parent == 0)
-		$level = 0;
+		if ($parent == 0) $level = 0;
 
 		if ($lines[$i]->fk_parent == $parent)
 		{
-			$var = !$var;
+			// Break on a new project
+			if ($parent == 0 && $lines[$i]->projectid != $lastprojectid)
+			{
+				$var = !$var;
+				$lastprojectid=$lines[$i]->projectid;
+			}
+			
 			print "<tr $bc[$var]>\n";
 
 			print "<td>";
@@ -246,9 +262,11 @@ function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 
 			print "</tr>\n";
+			
 			$inc++;
+			
 			$level++;
-			if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $tasksrole);
+			if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $var);
 			$level--;
 		}
 		else
@@ -259,9 +277,19 @@ function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
 }
 
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $inc
+ * @param unknown_type $parent
+ * @param unknown_type $lines
+ * @param unknown_type $level
+ */
 function PLineSelect(&$inc, $parent, $lines, &$level)
 {
 	global $langs;
+	
+	$lastprojectid=0;
 	
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
@@ -270,6 +298,19 @@ function PLineSelect(&$inc, $parent, $lines, &$level)
 		if ($lines[$i]->fk_parent == $parent)
 		{
 			$var = !$var;
+
+			// Break on a new project
+			if ($parent == 0 && $lines[$i]->projectid != $lastprojectid)
+			{
+				print '<option value="'.$lines[$i]->projectid.'_0">';
+				print $langs->trans("Project").' '.$lines[$i]->projectref;
+				//print '-'.$parent.'-'.$lines[$i]->projectid.'-'.$lastprojectid;
+				print "</option>\n";
+
+				$lastprojectid=$lines[$i]->projectid;
+				$inc++;
+			}
+			
 			print '<option value="'.$lines[$i]->projectid.'_'.$lines[$i]->id.'">';
 			print $langs->trans("Project").' '.$lines[$i]->projectref;
 			if ($lines[$i]->id) print ' > ';
@@ -277,14 +318,15 @@ function PLineSelect(&$inc, $parent, $lines, &$level)
 			{
 				print "&nbsp;&nbsp;&nbsp;";
 			}
-
 			print $lines[$i]->title."</option>\n";
 
 			$inc++;
+			
 			$level++;
 			if ($lines[$i]->id) PLineSelect($inc, $lines[$i]->id, $lines, $level);
 			$level--;
 		}
 	}
 }
+
 ?>
