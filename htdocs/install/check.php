@@ -269,7 +269,7 @@ else
 								array('from'=>'2.1.0', 'to'=>'2.2.0'),
 								array('from'=>'2.2.0', 'to'=>'2.4.0'),
 								array('from'=>'2.4.0', 'to'=>'2.5.0'),
-								array('from'=>'2.5.0', 'to'=>'2.6.0')
+								//array('from'=>'2.5.0', 'to'=>'2.6.0')
 								);
 		# Upgrade lines
 		foreach ($migrationscript as $migarray)
