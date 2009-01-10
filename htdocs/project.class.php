@@ -425,12 +425,12 @@ class Project extends CommonObject
 
 		/* List of tasks */
 	
-		$sql = "SELECT p.rowid as projectid, p.ref, p.title,";
+		$sql = "SELECT p.rowid as projectid, p.ref, p.title as ptitle,";
 		$sql.= " t.rowid, t.title, t.fk_task_parent, t.duration_effective";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
 		if ($this->id) $sql .= " WHERE t.fk_projet =".$this->id;
-		$sql.= " ORDER BY p.ref, t.fk_task_parent";
+		$sql.= " ORDER BY p.ref, t.title";
 
 		dolibarr_syslog("Project::getTasksArray sql=".$sql);
 		$resql = $this->db->query($sql);
