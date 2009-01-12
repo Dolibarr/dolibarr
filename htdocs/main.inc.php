@@ -981,14 +981,14 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 /**
  *		\brief   	Show HTML footer DIV + BODY + HTML
  *		\remarks	Close 2 div
- * 		\param   	foot    		Not used
+ * 		\param   	foot    		A text to add in HTML generated page
  * 		\param		limitIEbug		Not used
  */
 function llxFooter($foot='',$limitIEbug=1)
 {
 	global $conf, $dolibarr_auto_user, $micro_start_time;
 
-	print "\n".'</div> <!-- end div class="fiche" -->'."\n";
+	print "\n\n".'</div> <!-- end div class="fiche" -->'."\n";
 
 	//    print "\n".'</div> <!-- end div class="vmenuplusfiche" -->'."\n";
 	print "\n".'</td></tr></table> <!-- end right area -->'."\n";
@@ -996,7 +996,7 @@ function llxFooter($foot='',$limitIEbug=1)
 	if (! empty($_SERVER['DOL_TUNING']))
 	{
 		$micro_end_time=dol_microtime_float(true);
-		print '<script type="text/javascript">window.status="Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+		print "\n".'<script type="text/javascript">window.status="Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
 		if (function_exists("memory_get_usage"))
 		{
 			print ' - Memory usage: '.memory_get_usage();
@@ -1031,7 +1031,8 @@ function llxFooter($foot='',$limitIEbug=1)
     }
     
 	print "\n";
-    print "</body>\n";
+    if ($foot) print '<!-- '.$foot.' -->'."\n"; 
+	print "</body>\n";
 	print "</html>\n";
 }
 
