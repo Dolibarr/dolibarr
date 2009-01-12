@@ -16,3 +16,8 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 
 alter table llx_product_stock add column   pmp             double(24,8) default 0 NOT NULL;
 
+ALTER TABLE llx_bank ADD INDEX idx_bank_datev(datev);
+ALTER TABLE llx_bank ADD INDEX idx_bank_dateo(dateo);
+ALTER TABLE llx_bank ADD INDEX idx_bank_fk_account(fk_account);
+ALTER TABLE llx_bank ADD INDEX idx_bank_rappro(rappro);
+
