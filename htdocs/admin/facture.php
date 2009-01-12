@@ -438,10 +438,8 @@ while (($file = readdir($handle))!==false)
     	$htmltooltip.='<br><b>'.$langs->trans("Escompte").'</b>: '.yn($module->option_escompte,1,1);
     	$htmltooltip.='<br><b>'.$langs->trans("CreditNote").'</b>: '.yn($module->option_credit_note,1,1);
     	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang,1,1);
-		//TODO : $htmltooltip.='<br><b>'.$langs->trans("Escompte").'</b>: '.yn($module->option_escompte); 
-		$htmltooltip.='<br><b>'.$langs->trans("CreditNote").'</b>: '.yn($module->option_credit_note);
-		$htmltooltip.='<br><b>'.$langs->trans("FreeLegalTextOnInvoices").'</b>: '.yn($module->option_freetext);
-		$htmltooltip.='<br><b>'.$langs->trans("WatermarkOnDraftInvoices").'</b>: '.yn($module->option_draft_watermark);
+		$htmltooltip.='<br><b>'.$langs->trans("FreeLegalTextOnInvoices").'</b>: '.yn($module->option_freetext,1,1);
+		$htmltooltip.='<br><b>'.$langs->trans("WatermarkOnDraftInvoices").'</b>: '.yn($module->option_draft_watermark,1,1);
 		
 		
     	print '<td align="center">';

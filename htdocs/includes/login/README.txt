@@ -2,7 +2,9 @@ README (english)
 ---------------------------------------------
 Decription of htdocs/includes/login directory
 ---------------------------------------------
+
 This directory contains files that handle way to validate passwords.
+
 If you want to add a new password checker function, just add a file in
 this directory that follow example of already existing files.
 This file must be called for example : 
