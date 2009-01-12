@@ -134,3 +134,6 @@ PaymentNumberUpdateFailed=Payment number could not be updated
 PaymentDateUpdateSucceeded=Payment date update succesfully
 PaymentDateUpdateFailed=Payment date could not be updated
 BankTransactionLine=Bank transaction
+AllAccounts=All bank/cash accounts
+BackToAccount=Back to account
+ShowAllAccounts=Show fo all accounts

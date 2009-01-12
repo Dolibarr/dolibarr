@@ -135,3 +135,6 @@ PaymentDateUpdateSucceeded=Date de paiement mise à jour
 PaymentDateUpdateFailed=Impossible de mettre la date de paiement à jour
 Transactions=Ecritures
 BankTransactionLine=Ecriture bancaire
+AllAccounts=Tous les comptes bancaires/caisses
+BackToAccount=Retour au compte
+ShowAllAccounts=Afficher pour tous les comptes
