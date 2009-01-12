@@ -119,8 +119,7 @@ if ($_GET["id"])
 
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
-	print_titre($langs->trans("NewTask"));
-	print '<br>';
+	print_fiche_titre($langs->trans("NewTask"));
 
 	$tasksarray=$projet->getTasksArray();
 
@@ -171,11 +170,12 @@ else
 
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
-
 	print '<td>'.$langs->trans("Company").'</td><td>';
 	if (! empty($projet->societe->id)) print $projet->societe->getNomUrl(1);
 	else print '&nbsp;';
-	print '</td></tr>';
+	print '</td>';
+	//print '<td>&nbsp;</td>';
+	print '</tr>';
 
 	$tasksarray=$projet->getTasksArray();
 
@@ -191,6 +191,7 @@ else
 	print '<td>'.$langs->trans("RefTask").'</td>';
 	print '<td>'.$langs->trans("LabelTask").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+	
 	print "</tr>\n";
 	$j=0;
 	PLines($j, 0, $tasksarray, $level, true);
@@ -205,7 +206,12 @@ else
 	 * Actions
 	 */
 	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$projet->id.'&amp;action=create">'.$langs->trans('AddTask').'</a>';
+
+	if ($user->rights->projet->creer)
+	{
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$projet->id.'&amp;action=create">'.$langs->trans('AddTask').'</a>';
+	}
+	
 	print '</div>';
 }
 

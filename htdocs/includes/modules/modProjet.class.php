@@ -60,14 +60,14 @@ class modProjet extends DolibarrModules
 		$this->special = 0;
 		$this->picto='email';
 
-		// D�pendances
+		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions

@@ -29,12 +29,43 @@ require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
+/*
+ * Actions
+ */
+
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->creer)
+{
+	$task = new Task($db);
+	if ($task->fetch($_GET["id"]) >= 0 )
+	{
+		$projet = new Project($db);
+		$result=$projet->fetch($task->fk_projet);
+		if (! empty($projet->socid))
+		{
+			$projet->societe->fetch($projet->socid);
+		}
+
+		if ($task->delete($user) >= 0)
+		{
+			Header("Location: index.php");
+			exit;
+		}
+		else
+		{
+			$mesg=$task->error;
+			$_POST["action"]='';
+		}
+	}
+}
+
 
 /*
  * View
  */
 
 llxHeader("",$langs->trans("Task"));
+
+$html = new Form($db);
 
 $projectstatic = new Project($db);
 
@@ -63,6 +94,12 @@ if ($_GET["id"] > 0)
 
 		dolibarr_fiche_head($head, 'tasks', $langs->trans("Tasks"));
 
+		if ($_GET["action"] == 'delete')
+		{
+			$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
+			print "<br>";
+		}
+	
 		print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
 		print '<input type="hidden" name="action" value="createtask">';
 		print '<table class="border" width="100%">';
@@ -78,7 +115,7 @@ if ($_GET["id"] > 0)
 
 		/* Liste des tâches */
 
-		$sql = "SELECT t.task_date, t.task_duration, t.fk_user, u.login";
+		$sql = "SELECT t.task_date, t.task_duration, t.fk_user, u.login, u.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " , ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE t.fk_task =".$task->id;
@@ -113,8 +150,8 @@ if ($_GET["id"] > 0)
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
-		print '<td>'.$langs->trans("TimeSpent").'</td>';
-		print '<td colspan="2">'.$langs->trans("User").'</td>';
+		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+		print '<td align="right">'.$langs->trans("User").'</td>';
 		print "</tr>\n";
 
 		foreach ($tasks as $task_time)
@@ -122,13 +159,27 @@ if ($_GET["id"] > 0)
 			$var=!$var;
   		    print "<tr ".$bc[$var].">";
 		    print '<td>'.dolibarr_print_date($task_time[0],'day').'</td>';
-		    print '<td>'.$task_time[1].'</td>';
-		    print '<td>'.$task_time[3].'</td>';
+		    print '<td align="right">'.$task_time[1].'</td>';
+		    $user->id=$task_time[4];
+		    $user->nom=$task_time[3];
+		    print '<td align="right">'.$user->getNomUrl(1).'</td>';
 		    print "</tr>\n";
 		}
 
 		print "</table>";
 		print '</div>';
+		
+		/*
+		 * Actions
+		 */
+		print '<div class="tabsAction">';
+	
+		if ($user->rights->projet->creer)
+		{
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+		}
+		
+		print '</div>';		
 	}
 }
 
