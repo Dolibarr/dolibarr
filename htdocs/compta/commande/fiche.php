@@ -105,22 +105,21 @@ if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 }
 
 
-llxHeader('',$langs->trans("OrderCard"),"Commande");
+/*
+ * View
+ */
 
+llxHeader('',$langs->trans("OrderCard"),"Commande");
 
 $html = new Form($db);
 $formfile = new FormFile($db);
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
-
-if ($_GET["id"] > 0)
+$id = $_GET['id'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	$commande = new Commande($db);
-	if ( $commande->fetch($_GET["id"]) > 0)
+	if ( $commande->fetch($_GET['id'],$_GET['ref']) > 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($commande->socid);
@@ -142,7 +141,9 @@ if ($_GET["id"] > 0)
 
 		// Ref
 		print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
-		print '<td colspan="3">'.$commande->ref.'</td>';
+		print '<td colspan="3">';
+		print $html->showrefnav($commande,'ref','',1,'ref','ref');
+		print '</td>';
 		print '</tr>';
 
 		// Ref commande client

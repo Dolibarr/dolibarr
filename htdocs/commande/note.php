@@ -16,16 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-        \file       htdocs/commande/note.php
-        \ingroup    commande
-        \brief      Fiche de notes sur une commande
-		\version    $Revision$
-*/
+ \file       htdocs/commande/note.php
+ \ingroup    commande
+ \brief      Fiche de notes sur une commande
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/order.lib.php');
@@ -33,27 +31,32 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/order.lib.php');
 $socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
 
 if (!$user->rights->commande->lire)
-  accessforbidden();
+accessforbidden();
 
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("orders");
 
 // Sécurité accés
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
-  unset($_GET["action"]);
-  $socid = $user->societe_id;
+	unset($_GET["action"]);
+	$socid = $user->societe_id;
 }
 
 
+$id = $_GET['id'];
+$ref= $_GET['ref'];
 $commande = new Commande($db);
-$commande->fetch($_GET["id"]);
+if (! $commande->fetch($_GET['id'],$_GET['ref']) > 0)
+{
+	dolibarr_print_error($db);
+}
 
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
+/*
+ * Actions
+ */
 
 if ($_POST["action"] == 'update' && $user->rights->commande->creer)
 {
@@ -61,7 +64,7 @@ if ($_POST["action"] == 'update' && $user->rights->commande->creer)
 
 	$resPrivateNote=$commande->update_note($_POST["note"]);
 	$resPublicNote=$commande->update_note_public($_POST["note_public"]);
-	
+
 	if ($resPrivateNote < 0 || $resPublicNote < 0)
 	{
 		$mesg='<div class="error">'.$commande->error.'</div>';
@@ -75,77 +78,77 @@ if ($_POST["action"] == 'update' && $user->rights->commande->creer)
 
 
 
-/******************************************************************************/
-/* Affichage fiche                                                            */
-/******************************************************************************/
+/*
+ * View
+ */
 
 llxHeader();
 
 $html = new Form($db);
 
-if ($_GET["id"])
+if ($id > 0 || ! empty($ref))
 {
 	$soc = new Societe($db, $commande->socid);
-  $soc->fetch($commande->socid);
-  
-  $head = commande_prepare_head($commande);
-  
-  dolibarr_fiche_head($head, 'note', $langs->trans("CustomerOrder"));
-  
-  print '<table class="border" width="100%">';
+	$soc->fetch($commande->socid);
+
+	$head = commande_prepare_head($commande);
+
+	dolibarr_fiche_head($head, 'note', $langs->trans("CustomerOrder"));
+
+	print '<table class="border" width="100%">';
 
 	// Ref
 	print '<tr><td width="18%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $commande->ref;
+	print $html->showrefnav($commande,'ref','',1,'ref','ref');
 	print "</td></tr>";
 
 	// Ref commande client
 	print '<tr><td>';
-  print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
 	print $langs->trans('RefCustomer').'</td><td align="left">';
-  print '</td>';
-  print '</tr></table>';
-  print '</td><td colspan="3">';
+	print '</td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
 	print $commande->ref_client;
 	print '</td>';
 	print '</tr>';
-	
+
 	// Customer
 	print "<tr><td>".$langs->trans("Company")."</td>";
 	print '<td colspan="3">'.$soc->getNomUrl(1).'</td></tr>';
 
 	// Note publique
-  print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
+	print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
 	print '<td valign="top" colspan="3">';
-  if ($_GET["action"] == 'edit')
-  {
-  	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'">';
-  	print '<input type="hidden" name="action" value="update">';
-    print '<textarea name="note_public" cols="80" rows="8">'.$commande->note_public."</textarea><br>";
-  }
-  else
-  {
-  	print ($commande->note_public?nl2br($commande->note_public):"&nbsp;");
-  }
-  print "</td></tr>";
+	if ($_GET["action"] == 'edit')
+	{
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<textarea name="note_public" cols="80" rows="8">'.$commande->note_public."</textarea><br>";
+	}
+	else
+	{
+		print ($commande->note_public?nl2br($commande->note_public):"&nbsp;");
+	}
+	print "</td></tr>";
 
 	// Note privée
 	if (! $user->societe_id)
 	{
 		print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
 		print '<td valign="top" colspan="3">';
-	  if ($_GET["action"] == 'edit')
-	  {
-	    print '<textarea name="note" cols="80" rows="8">'.$commande->note."</textarea><br>";
-	  }
+		if ($_GET["action"] == 'edit')
+		{
+			print '<textarea name="note" cols="80" rows="8">'.$commande->note."</textarea><br>";
+		}
 		else
 		{
-		  print ($commande->note?nl2br($commande->note):"&nbsp;");
+			print ($commande->note?nl2br($commande->note):"&nbsp;");
 		}
 		print "</td></tr>";
 	}
 	print "</table>";
-	
+
 	if ($_GET["action"] == 'edit')
 	{
 		print '<br><center>';
@@ -153,21 +156,21 @@ if ($_GET["id"])
 		print '</center>';
 		print '</form>';
 	}
-	
+
 	print '</div>';
-	
+
 	/*
-   * Actions
-   */
-   
-  print '<div class="tabsAction">';
+	 * Actions
+	 */
+	 
+	print '<div class="tabsAction">';
 
-  if ($user->rights->commande->creer && $_GET["action"] <> 'edit')
-  {
-  	print "<a class=\"butAction\" href=\"note.php?id=".$commande->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
-  }
+	if ($user->rights->commande->creer && $_GET["action"] <> 'edit')
+	{
+		print "<a class=\"butAction\" href=\"note.php?id=".$commande->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
+	}
 
-  print "</div>";
+	print "</div>";
 }
 
 $db->close();

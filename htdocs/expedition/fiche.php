@@ -210,7 +210,7 @@ if ($_GET["action"] == 'create')
 
 	$expe = new Expedition($db);
 
-	print_titre($langs->trans("CreateASending"));
+	print_fiche_titre($langs->trans("CreateASending"));
 	if (! $origin)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorBadParameters").'</div>';
@@ -295,9 +295,8 @@ if ($_GET["action"] == 'create')
 			{
 				print '<tr><td colspan="3">'.$langs->trans("NotePrivate").': '.nl2br($object->note)."</td></tr>";
 			}
-			print "</table>";
-				
-			print '<table><tr><td>';
+			
+			print '<tr><td>';
 			print $langs->trans("Weight");
 			print '</td><td><input name="weight" size="4" value=""></td><td>';
 			print $formproduct->select_measuring_units("weight_units","weight");
@@ -311,10 +310,7 @@ if ($_GET["action"] == 'create')
 			print '</td></tr><tr><td>';
 			print $langs->trans("Depth");
 			print '</td><td><input name="sizeS" size="4" value=""></td>';
-			print '<td>&nbsp;</td></tr></table>';
-
-
-			print '<table>';
+			print '<td>&nbsp;</td></tr>';
 
 			// Delivery method
 			print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";

@@ -1142,7 +1142,7 @@ if ($_GET["action"] == '')
 		print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Modify").'</a>';
 
 		if ($product->no_button_copy <> 1)
-		print '<a class="butAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
+		print '<a class="butAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("ToClone").'</a>';
 	}
 
 	/*

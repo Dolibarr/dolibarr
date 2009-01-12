@@ -41,6 +41,7 @@ ConfirmCancelSending=Are you sure you want to cancel this sending ?
 GenericTransport=Generic transport
 Enlevement=Gotten by customer
 DocumentModelSimple=Simple document model
-
+WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
+ 
 # NumRef
 NumRefModelJade=Return a reference number with format BLYY00001, ... where YY is year. Number at end is never reset to zero.

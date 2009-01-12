@@ -154,14 +154,15 @@ $contactstatic=new Contact($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-if ( isset($mesg))
-	print $mesg;
-$id = $_GET["id"];
-if ($id > 0)
+if (isset($mesg)) print $mesg;
+
+$id = $_GET['id'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	$langs->trans("OrderCard");
-	$commande = New Commande($db);
-	if ( $commande->fetch($_GET['id'], $user->societe_id) > 0)
+	$commande = new Commande($db);
+	if ( $commande->fetch($_GET['id'],$_GET['ref']) > 0)
 	{
 		$soc = new Societe($db, $commande->socid);
 		$soc->fetch($commande->socid);
@@ -178,7 +179,7 @@ if ($id > 0)
 
 		// Ref
 		print '<tr><td width="18%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $commande->ref;
+		print $html->showrefnav($commande,'ref','',1,'ref','ref');
 		print "</td></tr>";
 
 		// Ref commande client

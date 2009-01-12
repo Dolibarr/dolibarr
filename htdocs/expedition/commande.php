@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -123,10 +123,12 @@ $formfile = new FormFile($db);
 
 llxHeader('',$langs->trans("OrderCard"));
 
-if ($_GET["id"] > 0)
+$id = $_GET['id'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	$commande = new Commande($db);
-	if ( $commande->fetch($_GET["id"]) > 0)
+	if ( $commande->fetch($_GET['id'],$_GET['ref']) > 0)
 	{
 		$commande->loadExpeditions(1);
 
@@ -158,7 +160,9 @@ if ($_GET["id"] > 0)
 
 		// Ref
 		print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
-		print '<td colspan="3">'.$commande->ref.'</td>';
+		print '<td colspan="3">';
+		print $html->showrefnav($commande,'ref','',1,'ref','ref');
+		print '</td>';
 		print '</tr>';
 
 		// Ref commande client
@@ -507,72 +511,85 @@ if ($_GET["id"] > 0)
 			print '<div class="tabsAction">';
 
 			// Bouton expedier sans gestion des stocks
-			if (! $conf->stock->enabled && $reste_a_livrer_total > 0 && ! $commande->brouillon && $user->rights->expedition->creer)
-			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?action=create&amp;origin=commande&amp;object_id='.$_GET["id"].'">'.$langs->trans("NewSending").'</a>';
+			if (! $conf->stock->enabled && ! $commande->brouillon)
+			{ 
+				if ($user->rights->expedition->creer)
+				{
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?action=create&amp;origin=commande&amp;object_id='.$_GET["id"].'">'.$langs->trans("NewSending").'</a>';
+					if ($reste_a_livrer_total <= 0) 
+					{
+						print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
+					}
+				}
+				else
+				{
+					print '<a class="butActionRefused" href="#">'.$langs->trans("NewSending").'</a>';
+				}
 			}
 			print "</div>";
 		}
 
 
 		// Bouton expedier avec gestion des stocks
-
-		print '<table width="100%"><tr><td width="100%" colspan="2" valign="top">';
-
-		if ($conf->stock->enabled && $reste_a_livrer_total > 0 && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
+		if ($conf->stock->enabled && $commande->statut > 0 && $commande->statut < 3)
 		{
-			print_titre($langs->trans("NewSending"));
-
-			print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/fiche.php">';
-			print '<input type="hidden" name="action" value="create">';
-			print '<input type="hidden" name="id" value="'.$commande->id.'">';
-			print '<input type="hidden" name="origin" value="commande">';
-			print '<input type="hidden" name="object_id" value="'.$commande->id.'">';
-			print '<table class="border" width="100%">';
-
-			$entrepot = new Entrepot($db);
-			$langs->load("stocks");
-
-			print '<tr>';
-			print '<td>'.$langs->trans("Warehouse").'</td>';
-			print '<td>';
-
-			if (sizeof($user->entrepots) === 1)
+			if ($user->rights->expedition->creer)
 			{
-				$uentrepot = array();
-				$uentrepot[$user->entrepots[0]['id']] = $user->entrepots[0]['label'];
-				$html->select_array("entrepot_id",$uentrepot);
+				print_titre($langs->trans("NewSending"));
+	
+				print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/fiche.php">';
+				print '<input type="hidden" name="action" value="create">';
+				print '<input type="hidden" name="id" value="'.$commande->id.'">';
+				print '<input type="hidden" name="origin" value="commande">';
+				print '<input type="hidden" name="object_id" value="'.$commande->id.'">';
+				print '<table class="border" width="100%">';
+	
+				$entrepot = new Entrepot($db);
+				$langs->load("stocks");
+	
+				print '<tr>';
+				print '<td>'.$langs->trans("Warehouse").'</td>';
+				print '<td>';
+	
+				if (sizeof($user->entrepots) === 1)
+				{
+					$uentrepot = array();
+					$uentrepot[$user->entrepots[0]['id']] = $user->entrepots[0]['label'];
+					$html->select_array("entrepot_id",$uentrepot);
+				}
+				else
+				{
+					$html->select_array("entrepot_id",$entrepot->list_array());
+				}
+	
+				if (sizeof($entrepot->list_array()) <= 0)
+				{
+					print ' &nbsp; No warehouse defined, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">add one</a>';
+				}
+				print '</td><td align="center">';
+				print '<input type="submit" class="button" named="save" value="'.$langs->trans("NewSending").'">';
+				if ($reste_a_livrer_total <= 0) 
+				{
+					print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
+				}
+				print '</td></tr>';
+	
+				print "</table>";
+				print "</form>\n";
+				print '<br>';
+				
+				$somethingshown=1;
+		
 			}
 			else
 			{
-				$html->select_array("entrepot_id",$entrepot->list_array());
+				print '<div class="tabsAction">';
+				print '<a class="butActionRefused" href="#">'.$langs->trans("NewSending").'</a>';
+				print '</div>';
 			}
-
-			if (sizeof($entrepot->list_array()) <= 0)
-			{
-				print ' &nbsp; Aucun entrepôt définit, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">definissez en un</a>';
-			}
-			print '</td></tr>';
-			/*
-			 print '<tr><td width="20%">Mode d\'expédition</td>';
-			 print '<td>';
-			 $html->select_array("entrepot_id",$entrepot->list_array());
-			 print '</td></tr>';
-			 */
-
-			print '<tr><td align="center" colspan="2">';
-			print '<input type="submit" class="button" named="save" value="'.$langs->trans("NewSending").'">';
-			print '</td></tr>';
-
-			print "</table>";
-			print "</form>\n";
-
-			$somethingshown=1;
 		}
 
-		print "</td></tr></table>";
 
-		print '<br>';
 		show_list_sending_receive('commande',$commande->id);
 
 	}

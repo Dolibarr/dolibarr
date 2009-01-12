@@ -1136,122 +1136,128 @@ else
 	/* Mode vue et edition                                                         */
 	/*                                                                             */
 	/* *************************************************************************** */
+	$now=gmmktime();
+	
 	$id = $_GET['id'];
-	if ($id > 0)
+	$ref= $_GET['ref'];
+	if ($id > 0 || ! empty($ref))
 	{
 		if ($mesg) print $mesg.'<br>';
 
 		$commande = new Commande($db);
-		if ( $commande->fetch($_GET['id']) > 0)
+		$result=$commande->fetch($_GET['id'],$_GET['ref']);
+		if ($result > 0)
 		{
-	  $soc = new Societe($db);
-	  $soc->fetch($commande->socid);
+			$soc = new Societe($db);
+			$soc->fetch($commande->socid);
 
-	  $author = new User($db);
-	  $author->id = $commande->user_author_id;
-	  $author->fetch();
+			$author = new User($db);
+			$author->id = $commande->user_author_id;
+			$author->fetch();
 
-	  $head = commande_prepare_head($commande);
-	  dolibarr_fiche_head($head, 'order', $langs->trans("CustomerOrder"));
+			$head = commande_prepare_head($commande);
+			dolibarr_fiche_head($head, 'order', $langs->trans("CustomerOrder"));
 
-	  /*
-	   * Confirmation de la suppression de la commande
-	   */
-	  if ($_GET['action'] == 'delete')
-	  {
-	  	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete');
-	  	print '<br />';
-	  }
+			/*
+			 * Confirmation de la suppression de la commande
+			 */
+			if ($_GET['action'] == 'delete')
+			{
+				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete');
+				print '<br />';
+			}
 
-	  /*
-	   * Confirmation de la validation
-	   */
-	  if ($_GET['action'] == 'validate')
-	  {
-	  	// on verifie si la facture est en numerotation provisoire
-	  	$ref = substr($commande->ref, 1, 4);
-	  	if ($ref == 'PROV')
-	  	{
-	  		$num = $commande->getNextNumRef($soc);
-	  	}
-	  	else
-	  	{
-	  		$num = $commande->ref;
-	  	}
-	  	 
-	  	$text=$langs->trans('ConfirmValidateOrder',$num);
-	  	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text, 'confirm_validate');
-	  	print '<br />';
-	  }
+			/*
+			 * Confirmation de la validation
+			 */
+			if ($_GET['action'] == 'validate')
+			{
+				// on verifie si la facture est en numerotation provisoire
+				$ref = substr($commande->ref, 1, 4);
+				if ($ref == 'PROV')
+				{
+					$num = $commande->getNextNumRef($soc);
+				}
+				else
+				{
+					$num = $commande->ref;
+				}
 
-	  /*
-	   * Confirmation de la cloture
-	   */
-	  if ($_GET['action'] == 'close')
-	  {
-	  	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close');
-	  	print '<br />';
-	  }
+				$text=$langs->trans('ConfirmValidateOrder',$num);
+				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text, 'confirm_validate');
+				print '<br />';
+			}
 
-	  /*
-	   * Confirmation de l'annulation
-	   */
-	  if ($_GET['action'] == 'cancel')
-	  {
-	  	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel');
-	  	print '<br />';
-	  }
+			/*
+			 * Confirmation de la cloture
+			 */
+			if ($_GET['action'] == 'close')
+			{
+				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close');
+				print '<br />';
+			}
 
-	  /*
-	   * Confirmation de la suppression d'une ligne produit
-	   */
-	  if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-	  {
-	  	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
-	  	print '<br>';
-	  }
+			/*
+			 * Confirmation de l'annulation
+			 */
+			if ($_GET['action'] == 'cancel')
+			{
+				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel');
+				print '<br />';
+			}
 
-	  /*
-	   *   Commande
-	   */
-	  $nbrow=8;
-	  if ($conf->projet->enabled) $nbrow++;
+			/*
+			 * Confirmation de la suppression d'une ligne produit
+			 */
+			if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+			{
+				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
+				print '<br>';
+			}
 
-	  print '<table class="border" width="100%">';
+			/*
+			 *   Commande
+			 */
+			$nbrow=8;
+			if ($conf->projet->enabled) $nbrow++;
 
-	  // Ref
-	  print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
-	  print '<td colspan="3">'.$commande->ref.'</td>';
-	  print '</tr>';
+			print '<table class="border" width="100%">';
 
-	  // Ref commande client
-	  print '<tr><td>';
-	  print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-	  print $langs->trans('RefCustomer').'</td><td align="left">';
-	  print '</td>';
-	  if ($_GET['action'] != 'RefCustomerOrder' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;id='.$commande->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
-	  print '</tr></table>';
-	  print '</td><td colspan="3">';
-	  if ($user->rights->commande->creer && $_GET['action'] == 'RefCustomerOrder')
-	  {
-	  	print '<form action="fiche.php?id='.$id.'" method="post">';
-	  	print '<input type="hidden" name="action" value="set_ref_client">';
-	  	print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
-	  	print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-	  	print '</form>';
-	  }
-	  else
-	  {
-	  	print $commande->ref_client;
-	  }
-	  print '</td>';
-	  print '</tr>';
+			// Ref
+			print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
+			print '<td colspan="3">';
+			print $html->showrefnav($commande,'ref','',1,'ref','ref');
+			print '</td>';
+			print '</tr>';
+
+			// Ref commande client
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+			print $langs->trans('RefCustomer').'</td><td align="left">';
+			print '</td>';
+			if ($_GET['action'] != 'RefCustomerOrder' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;id='.$commande->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($user->rights->commande->creer && $_GET['action'] == 'RefCustomerOrder')
+			{
+				print '<form action="fiche.php?id='.$id.'" method="post">';
+				print '<input type="hidden" name="action" value="set_ref_client">';
+				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
+				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+			}
+			else
+			{
+				print $commande->ref_client;
+			}
+			print '</td>';
+			print '</tr>';
 
 
-	  // Societe
-	  print '<tr><td>'.$langs->trans('Company').'</td>';
-	  print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
-	  print '</tr>';
+			// Societe
+			print '<tr><td>'.$langs->trans('Company').'</td>';
+			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
+			print '</tr>';
 
 			// Ligne info remises tiers
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';

@@ -485,10 +485,10 @@ class Facture extends CommonObject
 
 
 	/**
-	 *	\brief      Recupére l'objet facture et ses lignes de factures
-	 *	\param      rowid       id de la facture a récupérer
+	 *	\brief      Get object and lines from database
+	 *	\param      rowid       id of object to load
 	 * 	\param		ref			Ref of invoice
-	 *	\return     int         >0 si ok, <0 si ko
+	 *	\return     int         >0 if OK, <0 if KO
 	 */
 	function fetch($rowid,$ref='')
 	{
