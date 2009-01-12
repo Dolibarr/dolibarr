@@ -3,4 +3,5 @@
 Document explaining how to translate Dolibarr in a new language is
 available on wiki:
 
-http://wiki.dolibarr.org/index.php/Documentation_traducteur
+English: http://wiki.dolibarr.org/index.php/Translator_documentation
+French:  http://wiki.dolibarr.org/index.php/Documentation_traducteur
