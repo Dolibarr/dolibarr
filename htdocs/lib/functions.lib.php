@@ -183,12 +183,10 @@ function dol_syslog($message, $level=LOG_INFO)
 	global $conf,$user,$langs,$_REQUEST;
 
 	// If adding log inside HTML page is required
-	/* Disabled because this is a security hole
-	if (! empty($_REQUEST['logtohtml']))
+	if (! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_LOGTOHTML))
 	{
 		$conf->logbuffer[]=strftime("%Y-%m-%d %H:%M:%S",time())." ".$message;			
 	}
-	*/
 
 	// If syslog module enabled
 	if (! empty($conf->syslog->enabled))
