@@ -2529,13 +2529,14 @@ function dol_string_is_good_iso($s)
 
 
 /**
- *	\brief		Return nb of lines of a text
+ *	\brief		Return nb of lines of a clear text
  *	\param		s			String to check
  * 	\param		maxchar		Not yet used
- *	\return		int			0 if bad iso, 1 if good iso
+ *	\return		int			Number of lines
  */
 function dol_nboflines($s,$maxchar=0)
 {
+	if ($s == '') return 0;
 	$arraystring=split("\n",$s);
 	$nb=sizeof($arraystring);
 
@@ -2544,12 +2545,12 @@ function dol_nboflines($s,$maxchar=0)
 
 
 /**
- *	\brief     Fonction retournant le nombre de lignes dans un texte formate
- *	\param	   texte      	Texte
+ *	\brief     Return nb of lines of a formated text with \n and <br>
+ *	\param	   texte      	Text
  *	\param	   maxlinesize  Largeur de ligne en caracteres(ou 0 si pas de limite - defaut)
- *	\return    nblines    	Nombre de lignes
+ *	\return    int			Number of lines
  */
-function num_lines($texte,$maxlinesize=0)
+function dol_nboflines_bis($texte,$maxlinesize=0)
 {
 	$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " ");
 	$texte = strtr($texte, $repTable);

@@ -804,13 +804,15 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$pdf->SetDrawColor(224,224,224);
 
 	// On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-	$posy=$marge_basse + 1 + ($ligne?6:0) + ($ligne1?3:0) + ($ligne2?3:0);
+	$nbofligne=dol_nboflines($ligne);
+	//print 'e'.$ligne.'t'.dol_nboflines($ligne);exit;
+	$posy=$marge_basse + ($nbofligne*3) + ($ligne1?3:0) + ($ligne2?3:0);
 
 	if ($ligne)
 	{
 		$pdf->SetXY($marge_gauche,-$posy);
 		$pdf->MultiCell(190, 3, $ligne, 0, 'L', 0);
-		$posy-=9;	// 6 of ligne + 3 of MultiCell
+		$posy-=($nbofligne*3);	// 6 of ligne + 3 of MultiCell
 	}
 
 	$pdf->SetY(-$posy);
