@@ -89,7 +89,7 @@ else
 	// Calcul de $min et $max
 	$sql = "SELECT min(".$db->pdate("datev")."), max(".$db->pdate("datev").")";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-	if ($account) $sql.= " WHERE fk_account in (".$account.")";
+	if ($account && $_GET["option"]!='all') $sql.= " WHERE fk_account in (".$account.")";
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -111,12 +111,14 @@ else
 	if ($mode == 'standard')
 	{
 		// Chargement du tableau $amounts
-		// \todo peut etre optimise en virant les date_format
 		$amounts = array();
 		$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE date_format(datev,'%Y%m') = '".$year.$month."'";
-		if ($account) $sql .= " AND fk_account in (".$account.")";
+		$monthnext=$month+1; $yearnext=$year;
+		if ($monthnext > 12) { $monthnext=1; $yearnext++; }
+		$sql .= " WHERE datev >= '".$year."-".$month."-01 00:00:00'";
+		$sql .= " AND datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -141,7 +143,7 @@ else
 		$sql = "SELECT SUM(amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE datev < '".$year."-".sprintf("%02s",$month)."-01'";
-		if ($account) $sql .= " AND fk_account in (".$account.")";
+		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -237,12 +239,12 @@ else
 	if ($mode == 'standard')
 	{
 		// Chargement du tableau $amounts
-		// \todo peut etre optimise en virant les date_format
 		$amounts = array();
 		$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE date_format(datev,'%Y') = '".$year."'";
-		if ($account) $sql .= " AND fk_account in (".$account.")";
+		$sql .= " WHERE datev >= '".$year."-01-01 00:00:00'";
+		$sql .= " AND datev <= '".$year."-12-31 23:59:59'";
+		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -267,7 +269,7 @@ else
 		$sql = "SELECT sum(amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE datev < '".$year."-01-01'";
-		if ($account) $sql .= " AND fk_account in (".$account.")";
+		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -356,11 +358,10 @@ else
 	if ($mode == 'showalltime')
 	{
 		// Chargement du tableau $amounts
-		// \todo peut etre optimise en virant les date_format
 		$amounts = array();
 		$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		if ($account) $sql .= " WHERE fk_account in (".$account.")";
+		if ($account && $_GET["option"]!='all') $sql .= " WHERE fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -463,7 +464,7 @@ else
 		$sql .= " WHERE datev >= '".$year."-".$month."-01 00:00:00'";
 		$sql .= " AND datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
 		$sql .= " AND amount > 0";
-		if ($account) $sql .= " AND fk_account in (".$account.")";
+		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%d')";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -489,7 +490,7 @@ else
 		$sql .= " WHERE datev >= '".$year."-".$month."-01 00:00:00'";
 		$sql .= " AND datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
 		$sql .= " AND amount < 0";
-		if ($account) $sql .= " AND fk_account in (".$account.")";
+		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%d')";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -561,7 +562,7 @@ else
 		$sql .= " WHERE datev >= '".$year."-01-01 00:00:00'";
 		$sql .= " AND datev <= '".$year."-12-31 23:59:59'";
 		$sql .= " AND amount > 0";
-		if ($account) $sql .= " AND fk_account in (".$account.")";
+		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%m');";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -585,7 +586,7 @@ else
 		$sql .= " WHERE datev >= '".$year."-01-01 00:00:00'";
 		$sql .= " AND datev <= '".$year."-12-31 23:59:59'";
 		$sql .= " AND amount < 0";
-		if ($account) $sql .= " AND fk_account in (".$account.")";
+		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
 		$sql .= " GROUP BY date_format(datev,'%m')";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -663,7 +664,17 @@ if ($account)
 	if (! eregi(',',$account))
 	{
 		$moreparam='&month='.$month.'&year='.$year.($mode=='showalltime'?'&mode=showalltime':'');
-		print $form->showrefnav($acct,'ref','',1,'ref','ref','',$moreparam);
+		if ($_GET["option"]!='all') 
+		{
+			$morehtml='<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'&option=all'.$moreparam.'">'.$langs->trans("ShowAllAccounts").'</a>';
+			print $form->showrefnav($acct,'ref','',1,'ref','ref','',$moreparam);
+		}
+		else
+		{ 
+			$morehtml='<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.$moreparam.'">'.$langs->trans("BackToAccount").'</a>';
+			print $langs->trans("All");
+			//print $morehtml;
+		}
 	}
 	else
 	{
@@ -680,14 +691,14 @@ if ($account)
 }
 else
 {
-	print $langs->trans("ALL");
+	print $langs->trans("All");
 }
 print '</td></tr>';
 
 // Label
 print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
 print '<td colspan="3">';
-if ($account)
+if ($account && $_GET["option"]!='all')
 {
 	print $acct->label;
 }
@@ -699,10 +710,24 @@ print '</td></tr>';
 
 print '</table>';
 
-print '<br>';
-
-
 print '<table class="notopnoleftnoright" width="100%">';
+
+// Navigation links
+print '<tr><td align="right">'.$morehtml.' &nbsp; &nbsp; ';
+if ($mode == 'showalltime')
+{
+	print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'">';
+	print $langs->trans("GoBack");
+	print '</a>';
+}
+else
+{
+	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=showalltime&account='.$account.'">';
+	print $langs->trans("ShowAllTimeBalance");
+	print '</a>';
+}
+print '<br><br></td></tr>';
+
 
 if ($mode == 'standard')
 {
@@ -748,24 +773,6 @@ if ($mode == 'showalltime')
 	print '</td></tr>';
 }
 
-// Switch All time/Not all time
-if ($mode == 'showalltime')
-{
-	print '<tr><td align="center"><br>';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'">';
-	print $langs->trans("GoBack");
-	print '</a>';
-	print '</td></tr>';
-}
-else
-{
-	print '<tr><td align="center"><br>';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=showalltime&account='.$account.'">';
-	print $langs->trans("ShowAllTimeBalance");
-	print '</a>';
-	print '</td></tr>';
-}
-
 print '</table>';
 
 print "\n</div>\n";
@@ -774,5 +781,4 @@ print "\n</div>\n";
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
 ?>

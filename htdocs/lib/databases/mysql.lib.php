@@ -85,12 +85,9 @@ class DoliDb
 	{
 		global $conf,$langs;
 
-		if (isset($conf->db->character_set) && $conf->db->character_set) {
-			$this->forcecharset=$conf->db->character_set;
-		}
-		if (isset($conf->db->dolibarr_main_db_collation) && $conf->db->dolibarr_main_db_collation) {
-			$this->forcecollate=$conf->db->dolibarr_main_db_collation;
-		}
+		if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
+		if (! empty($conf->db->dolibarr_main_db_collation))	$this->forcecollate=$conf->db->dolibarr_main_db_collation;
+
 		$this->database_user=$user;
 
 		$this->transaction_opened=0;
@@ -199,6 +196,7 @@ class DoliDb
 	 */
 	function select_db($database)
 	{
+		dolibarr_syslog("DoliDB::select_db database=".$database, LOG_DEBUG);
 		return mysql_select_db($database, $this->db);
 	}
 

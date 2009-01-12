@@ -979,11 +979,11 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 
 
 /**
- *		\brief   	Impression du pied de page DIV + BODY + HTML
- *		\remarks	Ferme 2 div
- * 		\param   	foot    Non utilise
+ *		\brief   	Show HTML footer DIV + BODY + HTML
+ *		\remarks	Close 2 div
+ * 		\param   	foot    		Not used
+ * 		\param		limitIEbug		Not used
  */
-
 function llxFooter($foot='',$limitIEbug=1)
 {
 	global $conf, $dolibarr_auto_user, $micro_start_time;
@@ -1005,8 +1005,7 @@ function llxFooter($foot='',$limitIEbug=1)
 		{
 			print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
 		}
-		print '"</script>';
-		print "\n";
+		print '"</script>'."\n";
 	}
 
 	if ($conf->use_javascript_ajax)
@@ -1017,7 +1016,22 @@ function llxFooter($foot='',$limitIEbug=1)
 	// Juste pour eviter bug IE qui reorganise mal div precedents si celui-ci absent
 	if ($limitIEbug && ! $conf->browser->firefox) print "\n".'<div class="tabsAction">&nbsp;</div>'."\n";
 
-	print "</body>\n";
+	// If there is some logs in buffer to show
+    if (sizeof($conf->logbuffer))
+    {
+		print "\n";
+		print "<!-- Start of log output\n";    	
+    	//print '<div class="hidden">'."\n";
+	    foreach($conf->logbuffer as $logline)
+	    {
+	    	print $logline."<br>\n";
+	    }
+	    //print '</div>'."\n";
+		print "End of log output -->\n";    	
+    }
+    
+	print "\n";
+    print "</body>\n";
 	print "</html>\n";
 }
 

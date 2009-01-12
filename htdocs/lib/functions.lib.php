@@ -180,14 +180,15 @@ function dolibarr_syslog($message, $level=LOG_INFO)
  */
 function dol_syslog($message, $level=LOG_INFO)
 {
-	global $conf,$user,$langs,$REQUEST;
+	global $conf,$user,$langs,$_REQUEST;
 
 	// If adding log inside HTML page is required
-	if (! empty($REQUEST['logtohtml']))
+	/* Disabled because this is a security hole
+	if (! empty($_REQUEST['logtohtml']))
 	{
 		$conf->logbuffer[]=strftime("%Y-%m-%d %H:%M:%S",time())." ".$message;			
-
 	}
+	*/
 
 	// If syslog module enabled
 	if (! empty($conf->syslog->enabled))

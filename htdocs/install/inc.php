@@ -32,8 +32,8 @@ require_once('../lib/admin.lib.php');
 
 // DOL_DOCUMENT_ROOT has been defined in function.inc.php to '..'
 
-// Define REQUEST["logtohtml"]
-$REQUEST["logtohtml"]=1;
+// Define $_REQUEST["logtohtml"]
+$_REQUEST["logtohtml"]=1;
 
 // Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
 // et non path absolu.
