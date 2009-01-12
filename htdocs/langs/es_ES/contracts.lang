@@ -1,14 +1,5 @@
 # Dolibarr language file - es_ES - contracts
-
-
-
-
-
-
-
-
-
-ContractsArea=Area contratos
+ContractsArea=Área contratos
 ListOfContracts=Listado de contratos
 LastContracts=Los %s últimos contratos modificados
 AllContracts=Todos los contratos
@@ -46,7 +37,7 @@ ValidateAContract=Validar un contrato
 ActivateService=Activar el servicio
 ConfirmActivateService=¿Está seguro de querer activar este servicio en fecha %s?
 DateContract=Fecha contrato
-DateServiceActivate=Fech activación del servicio
+DateServiceActivate=Fecha activación del servicio
 DateServiceUnactivate=Fecha desactivación del servicio
 DateServiceStart=Fecha inicio del servicio
 DateServiceEnd=Fecha finalización del servicio
@@ -83,16 +74,6 @@ MoveToAnotherContract=Mover el servicio a otro contrato de este tercero.
 ConfirmMoveToAnotherContract=He elegido el contrato y confirmo el cambio de servicio en el presente contrato.
 ConfirmMoveToAnotherContractQuestion=Elija cualquier otro contrato del mismo tercero, ¿desea mover este servicio?
 ##### Types de contacts #####
-
-
-
-
-
-
-
-
-
-
 TypeContact_contrat_internal_SALESREPSIGN=Comercial firmante del contrato
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguimiento del contrato
 TypeContact_contrat_external_BILLING=Contacto cliente de facturación del contrato

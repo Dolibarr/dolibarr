@@ -1,12 +1,4 @@
 # Dolibarr language file - es_ES - soc
-
-
-
-
-
-
-
-
 ErrorBadEMail=e-mail %s no correcto
 ErrorCompanyNameAlreadyExists=El nombre de la emprea %s ya existe. Indique otro.
 ErrorPrefixAlreadyExists=El prefijo %s ya existe. Indique otro.
@@ -26,7 +18,7 @@ NewCompany=Nueva empresa (cliente potencial, cliente, proveedor)
 NewThirdParty=Nuevo tercero (cliente potencial, cliente, proveedor)
 NewSocGroup=Nueva agrupación de empresas
 NewPrivateIndividual=Nuevo particular (cliente potencial, cliente, proveedor)
-ProspectionArea=Area de prospección
+ProspectionArea=Área de prospección
 SocGroup=Agrupamiento de empresas
 IdThirdParty=ID tercero
 IdCompany=Id empresa
@@ -83,15 +75,6 @@ ProfId2Short=Prof. id 2
 ProfId3Short=Prof. id 3
 ProfId4Short=Prof. id 4
 ##### Professionnal ID #####
-
-
-
-
-
-
-
-
-
 ProfId1=ID profesional 1
 ProfId2=ID profesional 2
 ProfId3=ID profesional 3
@@ -171,7 +154,7 @@ ValidityControledByModule=Validación controlada por el módulo
 ThisIsModuleRules=Esta es la regla para este módulo
 LastProspect=Ultimo cliente potencial
 ProspectToContact=Cliente potencial a contactar
-CompanyDeleted=La empresa"%s" ha sido eliminada
+CompanyDeleted=La empresa "%s" ha sido eliminada
 ListOfContacts=Listado de contactos
 ListOfCustomersContacts=Listado de contactos clientes
 ListOfProspectsContacts=Listado de contactos clientes potenciales
@@ -187,11 +170,11 @@ ContactForProposals=Contacto de presupuestos
 ContactForContracts=Contacto de contratos
 ContactForInvoices=Contacto de facturas
 NoContactForAnyOrder=Este contacto no es contacto de ningún pedido
-NoContactForAnyProposal=Este contacto no es contacto de ningun presupuesto
+NoContactForAnyProposal=Este contacto no es contacto de ningún presupuesto
 NoContactForAnyContract=Este contacto no es contacto de ningún contrato
 NoContactForAnyInvoice=Este contacto no es contacto de ninguna factura
 NewContact=Nuevo contacto
-LastContacts=Ultimos contactos
+LastContacts=Últimos contactos
 MyContacts=Mis contactos
 Phones=Teléfonos
 Capital=Capital
@@ -275,16 +258,6 @@ Organization=Organismo
 AutomaticallyGenerated=Generado automáticamente
 FiscalYearInformation=Información del año fiscal
 FiscalMonthStart=Mes de inicio de ejercicio
-
 # Tigre
-
-
-
-
-
-
-
-
-
 TigreNumRefModelDesc1=Devuelve un código cliente/proveedor personalizable según una máscara que debe definirse.
 TigreMaskCodes=Usted puede indicar una máscara de numeración. En esta máscara, puede utilizar las etiquetas:<br><b>{000000}</b>corresponde a un número que se incrementa en cada código de cliente/proveedor. Indique tantos ceros como medida desee en el contador. El medidor se completará con 0 a la izquierda para tener tantos  ceros como en la máscara.<br><b>{dd}</b>día de creació del código de cliente/proveedor (01 a 31).<br><b>{mm}</b> mes de creación del código de cliente/proveedor (01 a 12).<br><b>{yy}</b> y/o {yyyy} año, con 2 o 4 cifras, de la creación del código de cliente7proveedor.

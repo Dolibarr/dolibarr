@@ -1,7 +1,4 @@
 # Dolibarr language file - es_ES - dict
-
-
-
 CountryFR=Francia
 CountryBE=Bélgica
 CountryIT=Italia
@@ -248,22 +245,12 @@ CountryJE=Jersey
 CountryME=Monténégro
 CountryBL=Saint-Barthélemy
 CountryMF=Saint-Martin
-
 ##### Civilities #####
-
-
-
-
 CivilityMME=Señora
 CivilityMR=Señor
 CivilityMLE=Señorita
 CivilityMTRE=Don
-
 ##### Currencies #####
-
-
-
-
 Currencyeuros=Euros
 CurrencyAUD=Dólares Aus.
 CurrencyCAD=Dólares canadienses

@@ -1,5 +1,4 @@
 # Dolibarr language file - es_ES - interventions
-
 Intervention=Intervención
 Interventions=Intervenciones
 InterventionCard=Ficha intervención
@@ -34,15 +33,11 @@ InterLineDate=Fecha línea
 InterLineDuration=Duración línea
 InterLineDesc=Descripción linea
 ##### Types de contacts #####
-
-
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable seguimiento de la intervención
 TypeContact_fichinter_internal_INTERVENING=Interventor
 TypeContact_fichinter_external_BILLING=Contacto cliente facturación intevención
 TypeContact_fichinter_external_CUSTOMER=Contacto cliente seguimiento intervención
 # Modele numérotation
-
-
 ArcticNumRefModelDesc1=Modelo de numeración genérico
 ArcticNumRefModelError=Activación imposible
 PacificNumRefModelDesc1=Devuelve el número con el formato %syymm-nnnn dónde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin quedar a 0

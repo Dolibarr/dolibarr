@@ -1,16 +1,12 @@
 # Dolibarr language file - es_ES - stocks
-
-
-
-
-WarehouseCard=Ficha almacen
-Warehouse=Almacen
-NewWarehouse=Nuevo almacen o zona de almacenaje
-MenuNewWarehouse=Nuevo almacen
-WarehouseOpened=Almacen abierto
-WarehouseClosed=Almacen cerrado
-WarehouseSource=Almacen origen
-WarehouseTarget=Almacen destino
+WarehouseCard=Ficha almacén
+Warehouse=Almacén
+NewWarehouse=Nuevo almacén o zona de almacenaje
+MenuNewWarehouse=Nuevo almacén
+WarehouseOpened=almacén abierto
+WarehouseClosed=almacén cerrado
+WarehouseSource=almacén origen
+WarehouseTarget=almacén destino
 ValidateSending=Validar envío
 CancelSending=Anular envío
 DeleteSending=Eliminar envío
@@ -18,8 +14,8 @@ Stock=Stock
 Stocks=Stocks
 Movement=Movimiento
 Movements=Movimientos
-ErrorWarehouseRefRequired=El nombre de referencia del almaccen es obligatorio
-ErrorWarehouseLabelRequired=La etiqueta del almacen es obligatoria
+ErrorWarehouseRefRequired=El nombre de referencia del almacén es obligatorio
+ErrorWarehouseLabelRequired=La etiqueta del almacén es obligatoria
 CorrectStock=Corregir stock
 ListOfWarehouses=Listado de almacenes
 ListOfStockMovements=Listado de movimientos de stock
@@ -34,7 +30,7 @@ Unit=Unidad
 StockCorrection=Corrección stock
 StockMovement=Transferencia
 StockMovements=Movimientos de stock
-NumberOfUnit=Numero de piezas
+NumberOfUnit=Número de piezas
 TotalStock=Total en stock
 StockTooLow=Stock insuficiente
 EnhancedValue=Valor
@@ -63,4 +59,4 @@ StockUpShort=Stock max.
 IdWarehouse=Id. almacén
 DescWareHouse=Descripción almacén
 LieuWareHouse=Localización almacén
-WarehousesAndProducts=Almacenes y productos
+WarehousesAndProducts=almacenes y productos

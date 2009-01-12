@@ -1,12 +1,8 @@
 # Dolibarr language file - es_ES - main
-
-
-
-
 CHARSET=ISO-8859-1
 DatabaseConnection=Conexión a la base de datos
 SeparatorDecimal=,
-SeparatorThousand=
+SeparatorThousand= 
 Error=Error
 ErrorFieldRequired=El campo '%s' es obligatorio
 ErrorFieldFormat=El campo '%s' tiene un valor incorrecto
@@ -69,15 +65,15 @@ DoTest=Probar
 ToFilter=Filtrar
 WarningYouHaveAtLeastOneTaskLate=Atención, tiene al menos un elemento que ha pasado la fecha de tolerencia.
 yes=Sí
-Yes=
-no=
+Yes=sí
+no=no
 No=No
 All=Todo
 Home=Inicio
 Help=Ayuda
 Always=Siempre
 Never=Nunca
-Under=bajo
+Under=Bajo
 Period=Periodo
 Activate=Activar
 Activated=Activado
@@ -205,8 +201,8 @@ Minute=Minuto
 Second=Segundo
 Years=Años
 Months=Meses
-Days=días
-days=
+Days=Días
+days=días
 Hours=Horas
 Minutes=Minutos
 Seconds=Segundos
@@ -304,7 +300,7 @@ Category=Categorúia
 By=Por
 From=De
 to=a
-To=
+To=A
 and=y
 or=o
 Other=Otro
@@ -470,10 +466,6 @@ Signature=Firma
 HidePassword=Mostrar comando con contraseña oculta
 UnHidePassword=Mostrar comando con contraseña a la vista
 # Week day
-
-
-
-
 Monday=Lunes
 Tuesday=Martes
 Wednesday=Miercoles

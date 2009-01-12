@@ -1,12 +1,8 @@
 # Dolibarr language file - es_ES - ecm
-
-
-
-
 MenuECM=Documentos
 DocsMine=Mis documentos
 DocsGenerated=Documentos generados
-DocsElements=Doocumentos elementos
+DocsElements=Documentos elementos
 DocsThirdParties=Documentos terceros
 DocsContracts=Documentos contratos
 DocsProposals=Documentos presupuestos
@@ -30,7 +26,7 @@ ECMNbOfFilesInDir=Número de archivos en la carpeta
 ECMNbOfSubDir=número de subcarpetas
 ECMNbOfFilesInSubDir=Número de archivos en las subcarpetas
 ECMCreationUser=Creador
-ECMArea=Area GED
+ECMArea=Área GED
 ECMAreaDesc=El área GED (Gestión Electrónica de Documentos) le permite controlar rápidamente los documentos en Dolibarr.
 ECMAreaDesc2=Puede crear carpetas manuales y adjuntar los documentos<br>Las carpetas automáticas son rellenadas automáticamente en la adición de un documento en una ficha.
 ECMSectionWasRemoved=La carpeta <b>%s</b> ha sido eliminada

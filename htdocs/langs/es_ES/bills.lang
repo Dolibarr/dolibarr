@@ -1,11 +1,4 @@
 # Dolibarr language file - es_ES - bills
-
-
-
-
-
-
-
 Bill=Factura
 Bills=Facturas
 BillsCustomers=Facturas a clientes
@@ -19,7 +12,7 @@ BillsStatistics=Estadísticas facturas a clientes
 BillsStatisticsSuppliers=Estadísticas facturas de proveedores
 InvoiceStandard=Factura estandard
 InvoiceStandardAsk=Factura estandard
-InvoiceStandardDesc=Este tipo de factura es la factura tradicional. Tambien se la conoce como <b>factura de débito</b> (del verbo deber).
+InvoiceStandardDesc=Este tipo de factura es la factura tradicional. También se la conoce como <b>factura de débito</b> (del verbo deber).
 InvoiceReplacement=Factura rectificativa
 InvoiceReplacementAsk=Factura rectificativa de la factura
 InvoiceReplacementDesc=La <b>factura rectificativa</b> sirve para cancelar y para sustituir una factura existente sobre la que aún no hay pagos.<br><br>Nota: Sólo una factura sin ningún pago puede rectificarse. Si esta última no está cerrada, pasará automáticamente al estado'abandonada'.
@@ -251,15 +244,7 @@ CloneInvoice=Clonar factura
 CloneMainAttributes=Clonar el objeto con sus atributos principales
 ConfirmCloneInvoice=¿Está seguro de querer clonar esta factura?
 DisabledBecauseReplacedInvoice=Acción desactivada porque es una factura reemplazada
-
 # PaymentConditions
-
-
-
-
-
-
-
 PaymentConditionShortRECEP=A la recepción
 PaymentConditionRECEP=A la recepción de la factura
 PaymentConditionShort30D=30 días
@@ -271,13 +256,6 @@ PaymentCondition60D=Pago a los 60 días
 PaymentConditionShort60DENDMONTH=60 días a fin de mes
 PaymentCondition60DENDMONTH=Pago a los 60 días a fin de mes
 # PaymentType
-
-
-
-
-
-
-
 PaymentTypeVIR=Transferencia bancaria
 PaymentTypeShortVIR=Transferencia
 PaymentTypePRE=Domiciliación bancaria
@@ -340,94 +318,22 @@ CreditNoteConvertedIntoDiscount=Este abono se convirtió en %s
 UsBillingContactAsIncoiveRecipientIfExist=Utilizar la dirección del contacto de cliente de facturación de la factura en vez de lla dirección del tercero como destinatario de las facturas
 ShowUnpayedAll=Mostrar todos los pendientes
 ShowUnpayedLateOnly=Mostrar los pendientes en retraso solamente
-
 # oursin PDF model
-
-
-
-
-
-
-
 Of=de
-
 # bernique PDF model
-
-
-
-
-
-
-
 PDFBerniqueDescription=Modelo para las facturas con varios tipos de IVA, incluido también el número de IVA Intracomunitario
-
 # bigorneau PDF Model
-
-
-
-
-
-
-
 PDFBigorneauDescription=Modelo de factura sin informaciones de pago
-
 # bulot PDF Model
-
-
-
-
-
-
-
 PDFBulotDescription=Modelo de factura con descuentos e información de pago
-
 # crabe PDF Model
-
-
-
-
-
-
-
 PDFCrabeDescription=Modelo de factura completo (IVA,  método de pago a mostrar, logotipo...)
-
 # huitre PDF Model
-
-
-
-
-
-
-
 PDFHuitreDescription=Modelo de factura con descuento e información de pago
-
 # oursin PDF Model
-
-
-
-
-
-
-
 PDFOursinDescription=Modelo de factura completo (IVA, métodos de pago, entregas, nombre del proyecto, referencias de presupuesto, logotipo...)
-
 # tourteau PDF Model
-
-
-
-
-
-
-
 PDFTourteauDescription=Modelo de factura sin descuento
-
 # terre
-
-
-
-
-
-
-
 TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas y %syymm-nnnn para los abonos donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
 TerreNumRefModelError=Una factura que comienza por $$syymm existe en base y es incompatible con esta numeración. Eliminela o renombrela para activar este módulo.

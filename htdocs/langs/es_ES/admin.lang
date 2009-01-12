@@ -1,5 +1,4 @@
 # Dolibarr language file - es_ES - admin
-
 Version=Versión
 VersionProgram=Versión programa
 VersionLastInstall=Versión instalación inicial
@@ -13,7 +12,7 @@ HTMLCharset=Charset de las páginas HTML
 DBStoringCharset=Charset base de datos para almacenamiento de datos
 DBSortingCharset=Charset base de datos para clasificar los datos
 WarningModuleNotActive=Módulo <b>%s</b> no activo
-WarningOnlyPermissionOfActivatedModules=Atención, solamente los permisos relacionados con los módulos activados se indican aquí. Puede activar los otros módulos en la página Configuración - Módulos
+WarningOnlyPermissionOfActivatedModules=Atención, solamente los permisos relacionados con los módulos activados se indican aquí. Puede activar los otros módulos en la página Configuración->Módulos
 DolibarrSetup=Instalación de Dolibarr
 DolibarrUser=Usuario Dolibarr
 InternalUser=Usuario interno
@@ -22,7 +21,7 @@ InternalUsers=Usuarios internos
 ExternalUsers=Usuarios externos
 GlobalSetup=General
 GUISetup=Entorno
-SetupArea=Area configuración
+SetupArea=Área configuración
 SecuritySetup=Configuración de la seguridad
 ErrorModuleRequirePHPVersion=Error, este módulo requiere una versión %s o superior de PHP
 ErrorModuleRequireDolibarrVersion=Error, este módulo requiere una versión %s o superior de Dolibarr
@@ -39,7 +38,7 @@ UsePreviewTabs=Ver fichas "vista previa"
 ShowPreview=Ver vista previa
 ThemeCurrentlyActive=Tema actualmente activo
 CurrentTimeZone=Zona horaria actual
-Space=Area
+Space=Área
 Fields=Campos
 Mask=Máscara
 NextValue=Próximo valor
@@ -79,7 +78,7 @@ LanguageParameter=Variable idioma %s
 LanguageBrowserParameter=Variable %s
 LocalisationDolibarrParameters=Parámetros de localización
 ClientTZ=Zona horaria Cliente (usuario)
-ServerTZ=Zona hoaria
+ServerTZ=Zona horaria
 PHPTZ=Zona horaria PHP
 PHPServerOffsetWithGreenwich=Offset con Greenwich (segundos)
 CurrentHour=Hora actual
@@ -101,12 +100,12 @@ SystemToolsArea=Area utilidades del sistema
 SystemToolsAreaDesc=Esta área ofrece distintas funciones de administración. Utilice la menú para elegir la funcionalidad buscada.
 PurgeAreaDesc=Esta página le permite eliminar todos los archivos creados o guardados por Dolibarr (archivos temporales o todos los archivos de la carpeta <b>%s</b>). El uso de esta función no es necesaria. Se proporciona para los usuarios que albergan a Dolibarr en un servidor que no ofrece los permisos de eliminación de archivos salvaguardados por el servidor Web.
 PurgeDeleteTemporaryFiles=Eliminar todos los archivos temporales (sin riesgo de perdida de datos)
-PurgeDeleteAllFilesInDocumentsDir=Eliminar todos los archivos de la carpeta <b>%s</b>. Archivos temporales y archivos adjunados a elementos (terceros, facturas, etc.) serán eliminados.
+PurgeDeleteAllFilesInDocumentsDir=Eliminar todos los archivos de la carpeta <b>%s</b>. Archivos temporales y archivos adjuntados a elementos (terceros, facturas, etc.) serán eliminados.
 PurgeRunNow=Purgar
 PurgeNothingToDelete=Ninguna carpeta a eliminar
 PurgeNDirectoriesDeleted=<b>%s</b> archivos o carpetas eliminados
 PurgeAuditEvents=Purgar los eventos de seguridad
-ConfirmPurgeAuditEvents=¿Está seguro de querer purgar la lista de los eventos de auditoría de seguridad. Se borrará toda la lista, pero esto no afecta a sus datos?
+ConfirmPurgeAuditEvents=¿Está seguro de querer purgar la lista de los eventos de auditoría de seguridad (Se borrará toda la lista, pero esto no afecta a sus datos)?
 NewBackup=Nueva copia
 GenerateBackup=Generar copia
 Backup=Copia
@@ -168,8 +167,8 @@ DolibarrProjectLeader=jefe de proyecto
 Developpers=Desarrolladores/contribuidores
 OtherDeveloppers=Otros desarrolladores/contribuidores
 OfficialWebSite=Sitio web oficial internacional
-OfficialWebSiteFr=sitio web oficial francofono
-OfficialWikiFr=Wiki francofono
+OfficialWebSiteFr=sitio web oficial habla francesa
+OfficialWikiFr=Wiki habla francesa
 CurrentTopMenuHandler=Gestor de menú superior
 CurrentLeftMenuHandler=Gestor de menú izquierdo
 MeasuringUnit=Unidad de medida
@@ -216,12 +215,6 @@ ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Error, no se puede usar opción @
 UMask=Parámetro UMask de nuevos archivos en Unix/Linux/BSD.
 UMaskExplanation=Este parámetro determina los derechos de los archivos creados en el servidor Dolibarr (durante la subida, por ejemplo).<br>Este debe ser el valor octal (por ejemplo, 0666 significa lectura / escritura para todos).<br>Este parámetro no tiene ningún efecto sobre un servidor Windows.
 # Modules
-
-
-
-
-
-
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
@@ -237,7 +230,7 @@ Module22Desc=Administración y envío de E-Mails masivos
 Module25Name=Pedidos de clientes
 Module25Desc=Gestión de pedidos de clientes
 Module30Name=Facturas y albaranes
-Module30Desc=Gestión de facturas y albarames de clientes. Gestión facturas de proveedores
+Module30Desc=Gestión de facturas y albarames a clientes. Gestión facturas de proveedores
 Module40Name=Proveedores
 Module40Desc=Gestión de proveedores
 Module42Name=Syslog
@@ -277,7 +270,7 @@ Module200Desc=sincronización con un anuario LDAP
 Module210Name=PostNuke
 Module210Desc=Integración con PostNuke
 Module240Name=Exportaciones de datos
-Module240Desc=Herramienta de exportaciones de datos Dolibarr (con asistente)
+Module240Desc=Herramienta de exportación de datos Dolibarr (con asistente)
 Module250Name=Importación de datos
 Module250Desc=Herramienta de importación de datos a Dolibarr (con asistente)
 Module310Name=Miembros
@@ -299,14 +292,14 @@ Module700Desc=Gestión de subvenciones
 Module800Name=OSCommerce 1
 Module800Desc=Interface de visualización de una tienda OSCommerce mediante acceso directo a su base de datos
 Module900Name=OSCommerce 2
-Module900Desc=Interface de visualización de una tienda OSCommerce mediante Web services.\nEste modulo requiere instalar los archivos de /oscommerce_ws/ws_server en OSCommerce. Lea el archivo README de la carpeta /oscommerce_ws/ws_server.
+Module900Desc=Interface de visualización de una tienda OSCommerce mediante Web services.\nEste módulo requiere instalar los archivos de /oscommerce_ws/ws_server en OSCommerce. Lea el archivo README de la carpeta /oscommerce_ws/ws_server.
 Module1200Name=Mantis
 Module1200Desc=Interface con el sistema de seguimiento de incidencias Mantis
 Module1780Name=Categorías
-Module1780Desc=Gestión de categorías (producots, proveedores y clientes)
+Module1780Desc=Gestión de categorías (productos, proveedores y clientes)
 Module2200Name=Derecho de préstamos
 Module2200Desc=Gestión de los derechos de préstamos
-Module2300Name=Menus
+Module2300Name=Menús
 Module2300Desc=Administración de los menús por base de datos
 Module2400Name=Agenda
 Module2400Desc=Gestión de la agenda y de las acciones
@@ -393,7 +386,7 @@ Permission187=Cerrar pedidos a proveedores
 Permission188=Anular pedidos a proveedores
 Permission221=Consultar E-Mails
 Permission222=Crear/modificar E-Mails (asunto, destinatarios, etc.)
-Permission223=Validar E-Mails (permite el envio)
+Permission223=Validar E-Mails (permite el envío)
 Permission229=Eliminar E-Mails
 Permission231=Consultar facturas de proveedores
 Permission232=Crear/modificar facturas de proveedores
@@ -480,7 +473,7 @@ DictionnaryEcotaxe=Baremos CEcoParticipación (DEEE)
 DictionnaryPaperFormat=Formatos papel
 DictionnaryFees=Tipo de tasas
 SetupSaved=Configuración guardada
-BackToModuleList=Devolver lista de módulos
+BackToModuleList=Volver a la lista de módulos
 BackToDictionnaryList=Volver a la lista de diccionarios
 VATReceivedOnly=Impuestos especiales no facturables
 VATManagement=Gestión IVA
@@ -496,7 +489,7 @@ Offset=Decálogo
 AlwaysActive=Siempre activo
 UpdateRequired=Su sistema necesita una actualización. Para actualizar haga click en <a href="%s">Actualizar</a>.
 Upgrade=Actualización
-AddExtensionThemeModuleOrOther=Ajustar extension (tema, módulo, etc.)
+AddExtensionThemeModuleOrOther=Ajustar extensión (tema, módulo, etc.)
 WebServer=Servidor web
 DocumentRootServer=Carpeta raiz de las páginas web
 DataRootServer=Carpeta raiz de los archivos de datos
@@ -553,7 +546,7 @@ CompanyAddress=Dirección
 CompanyZip=Código postal
 CompanyTown=Población
 CompanyCountry=País
-CompanyCurrency=Devisa principal
+CompanyCurrency=Divisa principal
 DoNotShow=No mostrar
 DoNotSuggestPaymentMode=No sugerir
 NoActiveBankAccountDefined=Ninguna cuenta bancaria activa definida
@@ -569,7 +562,7 @@ DelaysOfToleranceBeforeWarning=Plazos de tolerancia antes de alerta
 DelaysOfToleranceDesc=Esta pantalla permite configura los plazos de tolerancia antes de que se alerte con el símbolo %s, sobre cada elemento en retraso.
 DelaysOfToleranceActionsToDo=Tolerancia de retraso antes de la alerta (en días) sobre acciones planificadas no realizadas
 DelaysOfToleranceOrdersToProcess=Tolerancia de retraso antes de la alerta (en días) sobre pedidos no procesados
-DelaysOfTolerancePropalsToClose=Tolerancia de retraso antes de la alerta (en días) sobre presupuestoa a cerrar
+DelaysOfTolerancePropalsToClose=Tolerancia de retraso antes de la alerta (en días) sobre presupuestos a cerrar
 DelaysOfTolerancePropalsToBill=Tolerancia de retraso antes de la alerta (en días) sobre presupuestos no facturados
 DelaysOfToleranceNotActivatedServices=Tolerancia de retraso antes de la alerta (en días) sobre servicios a activar
 DelaysOfToleranceRunningServices=Tolerancia de retraso antes de la alerta (en días) sobre servicios expirados
@@ -590,7 +583,7 @@ ListOfSecurityEvents=Listado de eventos de seguridad Dolibarr
 LogEventDesc=Puede habilitar el registro de eventos de seguridad Dolibarr aquí. Los administradores pueden ver su contenido a través de menú <b>Herramientas del sistema - Auditoria</b>.Atención, esta característica puede consumir una gran cantidad de datos en la base de datos.
 AreaForAdminOnly=Estas funciones solo son accesibles a un usuario administrador. La función de administrador y las ayudas para los administradores son definidas en Dolibarr por el siguiente símbolo:
 SystemInfoDesc=La información del sistema es información técnica accesible solamente en solo lectura a los administradores.
-SystemAreaForAdminOnly=Esta área solo es accesible a los usuarios de tipo administradores. Ningún permiso Dolibarr permite extender el círculo de suarios autorizados a esta áera.
+SystemAreaForAdminOnly=Esta área solo es accesible a los usuarios de tipo administradores. Ningún permiso Dolibarr permite extender el círculo de usuarios autorizados a esta áera.
 CompanyFundationDesc=Editar en esta página toda la información conocida sobre la empresa o asociación a administrar
 DisplayDesc=Puede encontrar aquí todos los parámetros relacionados con la apariencia de Dolibarr
 AvailableModules=Módulos disponibles
@@ -614,18 +607,12 @@ MAIN_MAX_DECIMALS_UNIT=Decimales máximos para los precios unitarios
 MAIN_MAX_DECIMALS_TOT=Decimales máximos para los precios totales
 MAIN_MAX_DECIMALS_SHOWN=Decimales máximos para los importes mostrados en pantalla (Poner <b>...</b> después del máximo si quiere ver <b>...</b> cuando el número se trunque al mostrarlo en pantalla)
 ParameterActiveForNextInputOnly=Parámetro efectivo solamente a partir de las próximas sesiones
-NoEventOrNoAuditSetup=No se han registrado eventos de seguridad. Esto puede ser normal si la auditoría no ha sido habilitado en la página "configuración - seguridad - auditoría".
+NoEventOrNoAuditSetup=No se han registrado eventos de seguridad. Esto puede ser normal si la auditoría no ha sido habilitado en la página "configuración->seguridad->auditoría".
 NoEventFoundWithCriteria=No se han encontrado eventos de seguridad para tales criterios de búsqueda.
 SeeLocalSendMailSetup=Ver la configuración local de sendmail
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####
-
-
-
-
-
-
 UserGroupSetup=Configuración módulo usuarios y grupos
 GeneratePassword=Proponer una contraseña generada
 RuleForGeneratedPasswords=Norma para la generación de las contraseñas propuestas
@@ -633,12 +620,6 @@ DoNotSuggest=No proponer
 EncryptedPasswordInDatabase=Permitir encriptación de las contraseñas en la base de datos
 DisableForgetPasswordLinkOnLogonPage=No mostrar el vínculo "Contraseña olvidada" en la página de login
 ##### Company setup #####
-
-
-
-
-
-
 CompanySetup=Configuración del módulo empresas
 CompanyCodeChecker=Módulo de generación e control de los códigos de terceros (clientes/proveedores)
 AccountCodeManager=Módulo de generación de los códigos contables (clientes/proveedores)
@@ -648,12 +629,6 @@ ModuleCompanyCodeDigitaria=Devuelve un código contable compuesto siguiendo el có
 UseNotifications=Usar notificaciones
 NotificationsDesc=La función de las notificaciones permite enviar automáticamente un correo electrónico para un determinado evento Dolibarr en las empresas configuradas para ello
 ##### Webcal setup #####
-
-
-
-
-
-
 WebCalSetup=Configuración de enlace con el calendario Webcalendar
 WebCalSyncro=Integrar los eventos Dolibarr en WebCalendar
 WebCalAllways=Siempre, sin consultar
@@ -678,12 +653,6 @@ WebCalAddEventOnStatusMember=Añadir evento en el calendario en el cambio de esta
 WebCalUrlForVCalExport=Un vínculo de exportación del calendario en formato <b>%s</b> estará disponible en la url: %s
 WebCalCheckWebcalSetup=La configuración del módulo Webcal puede ser incorrecta
 ##### Invoices #####
-
-
-
-
-
-
 BillsSetup=Configuración del módulo Facturas
 BillsDate=Fecha de las facturas
 BillsNumberingModule=Módulo de numeración de facturas y albaranes
@@ -701,12 +670,6 @@ SuggestPaymentByChequeToAddress=Sugerir el pago por cheque a
 FreeLegalTextOnInvoices=Texto libre en facturas
 WatermarkOnDraftInvoices=Marca de agua en las facturas borrador (en caso de estar vacío)
 ##### Proposals #####
-
-
-
-
-
-
 PropalSetup=Configuración del módulo Presupuestos
 CreateForm=Creación formulario
 NumberOfProductLines=Numero de líneas de productos
@@ -723,12 +686,6 @@ UseOptionLineIfNoQuantity=Una línea de producto/servicio que tiene una cantidad 
 FreeLegalTextOnProposal=Texto libre en presupuestos
 WatermarkOnDraftProposal=Marca de agua en presupuestos borrador (en caso de estar vacío)
 ##### Orders #####
-
-
-
-
-
-
 OrdersSetup=Configuración del módulo pedidos
 OrdersNumberingModules=Módulos de numeración de los pedidos
 OrdersModelModule=Modelos de documentos de pedidos
@@ -737,59 +694,23 @@ ValidOrderAfterPropalClosed=Validar el pedido después del cierre del presupuesto
 FreeLegalTextOnOrders=Texto libre en pedidos
 WatermarkOnDraftOrders=Marca de agua en pedidos borrador (en caso de estar vacío)
 ##### Fiche inter #####
-
-
-
-
-
-
 FicheinterNumberingModules=Módulos de numeración de las fichas de intervención
 TemplatePDFInterventions=Modelo de documentos de las fichas de intervención
 WatermarkOnDraftInterventionCards=Marca de agua en fichas de intervención (en caso de estar vacío)
 ##### Clicktodial #####
-
-
-
-
-
-
 ClickToDialSetup=Configuración del módulo Click To Dial
 ClickToDialUrlDesc=Url de llamada haciendo click en el icono teléfono. <br>La 'url completa llamada será: URL?login=...&password=...&caller=...&called=telellamada
 ##### Bookmark4u #####
-
-
-
-
-
-
 Bookmark4uSetup=Configuración del módulo Bookmark4u
 ##### Interventions #####
-
-
-
-
-
-
 InterventionsSetup=Configuración del módulo intervenciones
 ##### Members #####
-
-
-
-
-
-
 MembersSetup=Configuración del módulo Asociaciones
 MemberMainOptions=Opciones principales
 AddSubscriptionIntoAccount=Registrar cotizaciones en cuenta bancaria o caja del módulo bancario
 AdherentMailRequired=E-Mail obligatorio para crear un miembro nuevo
 MemberSendInformationByMailByDefault=Casilla de verificación para enviar el correo de confirmación a los miembros es por defecto "sí"
 ##### LDAP setup #####
-
-
-
-
-
-
 LDAPSetup=Configuracón del módulo LDAP
 LDAPGlobalParameters=Parámetros globales
 LDAPUsersSynchro=Usuarios
@@ -920,12 +841,6 @@ LDAPDescMembers=Esta página permite definir el nombre de los atributos del árbol
 LDAPDescValues=Los valores de ejemplos se adaptan a <b>OpenLDAP</b> con los schemas cargados: <b>core.schema, cosine.schema, inetorgperson.schema</b>). Si usted utiliza los a valores sugeridos y OpenLDAP, modifique su fichero de configuración LDAP <b>slapd.conf</b> para tener todos estos schemas activos.
 ForANonAnonymousAccess=Para un acceso autentificado
 ##### Products #####
-
-
-
-
-
-
 ProductSetup=Configuración del módulo Productos
 NumberOfProductShowInSelect=Nº de productos max en las listas (0=sin límite)
 ConfirmDeleteProductLineAbility=Confirmación de eliminación de una línea de producido en los formularios
@@ -937,20 +852,8 @@ UseMinPrice=Utilización de un precio mínimo de venta
 SetDefaultBarcodeTypeProducts=Tipo de código de barras utilizado por defecto para los productos
 SetDefaultBarcodeTypeThirdParties=Tipo de código de barras utilizado por defecto para los terceros
 ##### Suppliers #####
-
-
-
-
-
-
 SuppliersSetup=Configuración del módulo de proveedor
 ##### Syslog #####
-
-
-
-
-
-
 SyslogSetup=Configuración del módulo Syslog
 SyslogOutput=Salida del log
 SyslogSyslog=Syslog
@@ -960,20 +863,8 @@ SyslogSimpleFile=Archivo
 SyslogFilename=Nombre y ruta del archivo
 ErrorUnknownSyslogConstant=La constante %s no es una constante syslog conocida
 ##### Donations #####
-
-
-
-
-
-
 DonationsSetup=Configuración del módulo subvenciones
 ##### Barcode #####
-
-
-
-
-
-
 BarcodeSetup=Configuración de los códigos de barra
 PaperFormatModule=Módulos de formatos de impresión
 BarcodeEncodeModule=Módulos de codificación de los códigos de barra
@@ -988,69 +879,27 @@ BarcodeDescISBN=Códigos de barra tipo ISBN
 BarcodeDescC39=Códigos de barra tipo C39
 BarcodeDescC128=Códigos de barra tipo C128
 ##### Prelevements #####
-
-
-
-
-
-
 WithdrawalsSetup=Configuración del módulo domiciliaciones
 ##### ExternalRSS #####
-
-
-
-
-
-
 ExternalRSSSetup=Configuración de las importaciones del flujo RSS
 NewRSS=Sindicación de un nuevo flujo RSS
 MailingSetup=Configuración del módulo E-Mailing
 ##### Mailing #####
-
-
-
-
-
-
-MailingEMailFrom=E-Mail emisor (From) de los mailis enviados por E-Mailing
+MailingEMailFrom=E-Mail emisor (From) de los correos enviados por E-Mailing
 ##### Notification #####
-
-
-
-
-
-
 NotificationSetup=Configuración del módulo notificaciones
-NotificationEMailFrom=E-Mail emisor (From) de los mails enviados a traves de notificaciones
+NotificationEMailFrom=E-Mail emisor (From) de los correos enviados a traves de notificaciones
 ##### Sendings #####
-
-
-
-
-
-
 SendingsSetup=Configuración del módulos envíos
 SendingsReceiptModel=Modelo de la ficha de expedición
 SendingsAbility=Portes pagados por el cliente
-NoNeedForDeliveryReceipts=En la mayoría de los casos, los albaranes se utilizan como hoja de entrega al cliente (lista de productos a enviar), se reciben y firman por el cliente. Por lo tanto, la hoja de entrega de productos es una característica duplicada y rara vez es activada.
+NoNeedForDeliveryReceipts=En la mayoría de los casos, los albaranes se utilizan como nota de entrega al cliente (lista de productos a enviar), se reciben y firman por el cliente. Por lo tanto, la hoja de entrega de productos es una característica duplicada y rara vez es activada.
 ##### Deliveries #####
-
-
-
-
-
-
 DeliveryOrderNumberingModules=Módulo de numeración de los envios a clientes
 DeliveryOrderModel=Modelo de orden de envío
 DeliveriesOrderAbility=Portes pagados por el cliente
 FreeLegalTextOnDeliveryReceipts=Texto libre en las notas de entrega.
 ##### FCKeditor #####
-
-
-
-
-
-
 ActivateFCKeditor=Activar FCKeditor para :
 FCKeditorForUsers=Creación/edición WYSIWIG de la descripción y notas de los usuarios
 FCKeditorForCompany=Creación/edición WYSIWIG de la descripción y notas de los terceros
@@ -1060,23 +909,11 @@ FCKeditorForProductDetails=Creación/edición WYSIWIG de las líneas de detalle de 
 FCKeditorForProductDetailsPerso=Creación/edición WYSIWIG de las líneas de detalle en los productos personalizadas (en pedidos, presupuestos, facturas, etc.)
 FCKeditorForMailing=Creación/edición WYSIWIG de los E-Mails
 ##### OSCommerce 1 #####
-
-
-
-
-
-
 OSCommerceErrorConnectOkButWrongDatabase=La conexión se ha establecido, pero la base de datos no parece de OSCommerce.
 OSCommerceTestOk=La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' es correcta.
 OSCommerceTestKo1=La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' no se pudo efectuar.
 OSCommerceTestKo2=La conexión al servidor '%s' por el usuario '%s' ha fallado.
 ##### Mantis #####
-
-
-
-
-
-
 MantisSetup=Configuración del enlace con el sitema de seguimiento Mantis
 MantisURL=Dirección (URL) de acceso a Mantis
 MantisServer=Servidor de la base de datos Mantis
@@ -1088,38 +925,19 @@ MantisTestKo1=La conexión al servidor '%s' es correcta pero la base de datos' %s
 MantisTestKo2=La conexión al servidor '%s' por el usuario '%s' a fallado.
 MantisErrorConnectOkButWrongDatabase=La conexión es correcta pero la base de datos no parece ser una base de datos Mantis.
 ##### Stock #####
-
-
-
-
-
-
-
 StockSetup=configuración del módulo Stock
 UserWarehouse=Utilizar los stocks personales de usuarios
 ##### DroitPret #####
-
-
-
-
-
-
-PretSetup=Configuración del modulo derecho de préstamo
+PretSetup=Configuración del módulo derecho de préstamo
 catActive=Categoría para los que el derecho de préstamo está activado
 mailDroitPret=Dirección de correo a las que se envían las declaraciones
 ##### Menu #####
-
-
-
-
-
-
-MenuDeleted=Menu eliminado
+MenuDeleted=Menú eliminado
 TreeMenu=Estructura de los menús
 TreeMenuPersonalized=Menus personalizados
 NewMenu=Nuevo menú
 MenuConf=Configuración de los menus
-Menu=Selección de los menus
+Menu=Selección de los menús
 MenuHandler=Gestor de menús
 MenuModule=Módulo origen
 DetailId=Identificador del menú
@@ -1134,7 +952,7 @@ DetailRight=Condición de visualización completa o cristálida
 DetailLangs=Archivo langs para la traducción del título
 DetailUser=Interno / Externo / Todos
 DetailTarget=Objetivo
-DetailLevel=Nivel (-1:menu superior, 0:principal, >0 menu y submenu)
+DetailLevel=Nivel (-1:menú superior, 0:principal, >0 menú y submenú)
 ModifMenu=Modificación del menú
 DeleteMenu=Eliminar entrada de menú
 ConfirmDeleteMenu=Está seguro de querer eliminar la entrada de menú <b>%s</b> ?

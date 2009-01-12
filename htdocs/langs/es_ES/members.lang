@@ -1,12 +1,6 @@
 # Dolibarr language file - es_ES - members
-
-
-
-
-
-
-MembersArea=Area miembros
-PublicMembersArea=Area pública de los miembros
+MembersArea=Área miembros
+PublicMembersArea=Área pública de los miembros
 MemberCard=Ficha miembro
 SubscriptionCard=Ficha afiliación
 Member=Miembro

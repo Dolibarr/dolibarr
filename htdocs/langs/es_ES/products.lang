@@ -1,10 +1,4 @@
 # Dolibarr language file - es_ES - products
-
-
-
-
-
-
 ProductServiceCard=Ficha producto/servicio
 Products=Productos
 Services=Servicios
@@ -42,10 +36,10 @@ LastProducts=Ultimos productos
 CardProduct0=Ficha producto
 CardProduct1=Ficha servicio
 CardContract=Ficha contrato
-Warehouse=Almacen
+Warehouse=Almacén
 Warehouses=Almacenes
-WarehouseOpened=Almacen abierto
-WarehouseClosed=Almacen cerrado
+WarehouseOpened=Almacén abierto
+WarehouseClosed=Almacén cerrado
 Stock=Stock
 Stocks=Stocks
 Movement=Movimiento

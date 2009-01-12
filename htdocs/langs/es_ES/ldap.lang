@@ -1,5 +1,4 @@
 # Dolibarr language file - es_ES - ldap
-
 DomainPassword=Contraseña del dominio
 YouMustChangePassNextLogon=La contraseña de <b>%s</b> en el dominio <b>%s</b> debe de ser modificada.
 UserMustChangePassNextLogon=El usuario debe cambiar de contraseña en la próxima conexión

@@ -1,7 +1,5 @@
 # Dolibarr language file - es_ES - withdrawals
-
-
-StandingOrdersArea=Area domiciliaciones
+StandingOrdersArea=Área domiciliaciones
 CustomersStandingOrdersArea=Area domiciliaciones de clientes
 StandingOrders=Domiciliaciones
 StandingOrder=Domiciliación

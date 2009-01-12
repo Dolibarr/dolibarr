@@ -1,5 +1,4 @@
 # Dolibarr language file - es_ES - boxes
-
 BoxLastRssInfos=Hilos de información RSS
 BoxLastProducts=Últimos productos/servicios
 BoxLastProductsInContract=Últimos productos/servicios contratados
@@ -10,7 +9,7 @@ BoxOldestUnpayedSupplierBills=Facturas de proveedores más antiguas pendientes de
 BoxLastProposals=Últimos presupuestos
 BoxLastProspects=Últimos clientes potenciales
 BoxLastCustomers=Últimos clientes
-BoxLastCustomerOrders=Ültimos pedidos
+BoxLastCustomerOrders=Últimos pedidos
 BoxLastSuppliers=Últimos proveedores
 BoxLastBooks=Últimos books
 BoxLastActions=Últimas acciones
@@ -20,7 +19,7 @@ BoxTotalUnpayedCustomerBills=Total facturas a clientes pendientes de pago
 BoxTotalUnpayedSuppliersBills=Total facturas de proveedores pendientes de pago
 BoxTitleLastBooks=Los %s últimos bookmarks registrados
 BoxTitleNbOfCustomers=Número de clientes
-BoxTitleLastRssInfos=Las %s últimas infos  de %s
+BoxTitleLastRssInfos=Las %s últimas infos de %s
 BoxTitleLastProducts=Los %s últimos productos/servicios registrados
 BoxTitleLastCustomerOrders=Los %s últimos pedidos de clientes modificados
 BoxTitleLastSuppliers=Los %s últimos proveedores registrados
@@ -31,7 +30,7 @@ BoxTitleLastCustomerBills=Las %s últimas facturas a clientes registradas
 BoxTitleLastSupplierBills=Las %s últimas facturas de proveedores registradas
 BoxTitleLastProspects=Los %s últimos clientes potenciales registrados
 BoxTitleLastProductsInContract=Los %s últimos productos/servicios contratados
-BoxTitleOldestUnpayedCustomerBills=Las %s facturas más antiguas a clientes pendientes de pago
+BoxTitleOldestUnpayedCustomerBills=Las %s facturas más antiguas a clientes pendientes de cobro
 BoxTitleOldestUnpayedSupplierBills=Las %s facturas más antiguas de proveedores pendientes de pago
 BoxTitleCurrentAccounts=Saldos de las cuentas corrientes
 BoxTitleSalesTurnover=Volumen de negocio realizado

@@ -1,6 +1,6 @@
 # Dolibarr language file - es_ES - commercial
 Commercial=Comercial
-CommercialArea=Area comercial
+CommercialArea=Área comercial
 CommercialCard=Ficha comercial
 CustomerArea=Area clientes
 Customer=Cliente
@@ -60,7 +60,7 @@ LastProspectContactDone=Clientes potenciales contactados
 DateActionPlanned=Fecha planificación
 DateActionDone=Fecha realización
 ActionAskedBy=Acción preguntada por
-ActionAffectedTo=Acción afectada a
+ActionAffectedTo=Acción asignada a
 ActionDoneBy=Acción realizada por
 ActionUserAsk=Registrada por
 ErrorStatusCantBeZeroIfStarted=Si el campo '<b>Fecha de realización</b>' contiene datos la acción está en curso , por lo que el campo ' Estado ' no puede ser 0%%.

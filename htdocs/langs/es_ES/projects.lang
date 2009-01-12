@@ -1,10 +1,8 @@
 # Dolibarr language file - es_ES - projects
-
-
 Project=Proyecto
 Projects=Proyectos
 Myprojects=Mis proyectos
-ProjectsArea=Area proyectos
+ProjectsArea=Área proyectos
 NewProject=Nuevo proyecto
 AddProject=Crear proyecto
 DeleteAProject=Eliminar un proyecto
@@ -38,6 +36,7 @@ ListOrdersAssociatedProject=Listado de pedidos asociados al proyecto
 ListInvoicesAssociatedProject=Listado de facturas asociadas al proyecto
 ListSupplierOrdersAssociatedProject=Listado de pedidos a proveedores asociados al proyecto
 ListSupplierInvoicesAssociatedProject=Listado de facturas de proveedor asociados al proyecto
+ListContractAssociatedProject=Listado de contratos asociados al proyecto
 ActivityOnProjectThisWeek=Actividad en el proyecto esta semana
 ActivityOnProjectThisMonth=Actividad en el proyecto este mes
 ActivityOnProjectThisYear=Actividad en el proyecto este año

@@ -1,12 +1,4 @@
 # Dolibarr language file - es_ES - users
-
-
-
-
-
-
-
-
 UserCard=Ficha usuario
 ContactCard=Ficha contacto
 GroupCard=Ficha grupo
@@ -16,7 +8,7 @@ Permissions=Derechos
 EditPassword=Modificar contraseña
 SendNewPassword=Enviar nueva contraseña
 ReinitPassword=Generar nueva contraseña
-PasswordChangedTo=Contraseña modificda en: %s
+PasswordChangedTo=Contraseña modificada en: %s
 SubjectNewPassword=Su contraseña Dolibarr
 AvailableRights=Permisos disponibles
 OwnedRights=Permisos tenidos
@@ -59,7 +51,7 @@ ListOfGroups=Listado de grupos
 NewGroup=Nuevo grupo
 CreateGroup=Crear el grupo
 RemoveFromGroup=Eliminar del grupo
-PasswordChangedAndSentTo=Contrasela cambiada y enviada a <b>%s</b>.
+PasswordChangedAndSentTo=Contraseña cambiada y enviada a <b>%s</b>.
 PasswordChangeRequestSent=Petición de cambio de contraseña para <b>%s</b> enviada a <b>%s</b>.
 MenuUsersAndGroups=Usuarios y grupos
 LastGroupsCreated=Los %s últimos grupos creados

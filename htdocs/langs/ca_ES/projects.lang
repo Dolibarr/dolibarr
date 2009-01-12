@@ -36,6 +36,7 @@ ListOrdersAssociatedProject=Llistat de comandes associades al projecte
 ListInvoicesAssociatedProject=Llistat de factures associades al projecte
 ListSupplierOrdersAssociatedProject=Llistat de comandes a proveïdors associades al projecte
 ListSupplierInvoicesAssociatedProject=Llistat de factures de proveïdor associades al projecte
+ListContractAssociatedProject=Llistatde contractes associats al projecte
 ActivityOnProjectThisWeek=Activitat en el projecte aquesta setmana
 ActivityOnProjectThisMonth=Activitat en el projecte aquest mes
 ActivityOnProjectThisYear=Activitat en el projecte aquest any
