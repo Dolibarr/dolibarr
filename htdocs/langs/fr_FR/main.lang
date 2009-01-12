@@ -465,6 +465,7 @@ ForCustomer=Pour le client
 Signature=Sign
 HidePassword=Afficher commande avec mot de passe masqué
 UnHidePassword=Afficher commande réelle avec mot de passe en clair
+Root=Racine
 # Week day
 Monday=Lundi
 Tuesday=Mardi

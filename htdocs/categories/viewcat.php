@@ -109,6 +109,7 @@ print '<table border="0" width="100%" class="border">';
 print '<tr><td width="20%" class="notopnoleft">';
 $ways = $c->print_all_ways ();
 print $langs->trans("Ref").'</td><td>';
+print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 foreach ($ways as $way)
 {
   print $way."<br />\n";

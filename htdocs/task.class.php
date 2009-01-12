@@ -309,6 +309,9 @@ class Task // extends CommonObject
 		global $conf, $langs;
 		$error=0;
 		
+		// TODO. Refused if there is some child.
+		
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task";
 		$sql.= " WHERE rowid=".$this->id;
 	

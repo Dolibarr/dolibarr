@@ -47,7 +47,9 @@ class Conf
 
 	var $monnaie;	// Used to store current currency
 	var $css;		// Used to store current css (from theme)
-
+	var $top_menu;
+	var $left_menu;
+	
 	var $css_modules=array();
 	var $tabs_modules=array();
 	

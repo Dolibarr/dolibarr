@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -29,20 +29,21 @@
 
 require("./pre.inc.php");
 
-$type=$_GET['type'];
+$type=isset($_GET['type'])?$_GET['type']:$_POST['type'];
 
 if (!$user->rights->categorie->lire) accessforbidden();
 
 
 
-/**
- * Affichage page accueil
+
+/*
+ * View
  */
 
 $c = new Categorie($db);
 $html = new Form($db);
 
-if (! $type)    $title=$langs->trans("ProductsCategoriesArea");
+if ($type == 0) $title=$langs->trans("ProductsCategoriesArea");
 if ($type == 1) $title=$langs->trans("SuppliersCategoriesArea");
 if ($type == 2) $title=$langs->trans("CustomersCategoriesArea");
 
@@ -59,8 +60,8 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 /*
  * Zone recherche produit/service
  */
-print '<form method="post" action="index.php?type='.$_GET['type'].'">';
-print '<input type="hidden" name="type" value="'.$_GET['type'].'">';
+print '<form method="post" action="index.php?type='.$type.'">';
+print '<input type="hidden" name="type" value="'.$type.'">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
@@ -118,7 +119,6 @@ $cate_arbo = $c->get_full_arbo($_GET['type']);
 * Catégories en javascript
 */
 
-
 if ($conf->use_javascript_ajax)
 {
 	print '<table class="noborder" width="100%">';
@@ -127,12 +127,12 @@ if ($conf->use_javascript_ajax)
 	if ($_GET["expand"] != 'all')
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?expand=all&type='.$_GET['type'].'">'.$langs->trans("ExpandAll").'</a>';
-		print '</td><td width="18"><img border="0" src="'.DOL_URL_ROOT.'/includes/treemenu/images/folder-expanded.gif">';
+		print '</td><td width="18"><img border="0" src="'.DOL_URL_ROOT.'/theme/common/treemenu/folder-expanded.gif">';
 	}
 	if ($_GET["expand"] && $_GET["expand"] != 'none')
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?expand=none&type='.$_GET['type'].'">'.$langs->trans("UndoExpandAll").'</a>';
-		print '</td><td width="18"><img border="0" src="'.DOL_URL_ROOT.'/includes/treemenu/images/folder.gif">';
+		print '</td><td width="18"><img border="0" src="'.DOL_URL_ROOT.'/theme/common/treemenu/folder.gif">';
 	}
 	print '</td>';
 	print '</tr>';
