@@ -126,7 +126,7 @@ $dolibarr_main_db_collation="latin1_swedish_ci";
 # Default value: UTF-8
 # Possible values: UTF-8, ISO-8859-1
 #
-$character_set_client="UTF-8";
+#$character_set_client="UTF-8";
 
 
 # dolibarr_main_authentication
