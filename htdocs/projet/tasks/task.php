@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +45,15 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user-
 			$projet->societe->fetch($projet->socid);
 		}
 
-		if ($task->delete($user) >= 0)
+		if ($task->delete($user) > 0)
 		{
 			Header("Location: index.php");
 			exit;
 		}
 		else
 		{
-			$mesg=$task->error;
+			$langs->load("errors");
+			$mesg='<div class="error">'.$langs->trans($task->error).'</div>';
 			$_POST["action"]='';
 		}
 	}
@@ -81,10 +82,7 @@ if ($_GET["id"] > 0)
 	{
 		$projet = new Project($db);
 		$result=$projet->fetch($task->fk_projet);
-		if (! empty($projet->socid))
-		{
-			$projet->societe->fetch($projet->socid);
-		}
+		if (! empty($projet->socid)) $projet->societe->fetch($projet->socid);
 
 		$h=0;
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$task->id;
@@ -94,6 +92,8 @@ if ($_GET["id"] > 0)
 
 		dolibarr_fiche_head($head, 'tasks', $langs->trans("Tasks"));
 
+		if ($mesg) print $mesg.'<br>';
+		
 		if ($_GET["action"] == 'delete')
 		{
 			$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
@@ -111,7 +111,10 @@ if ($_GET["id"] > 0)
 		print $projet->getNomUrl(1);
 		print '</td></tr>';
 
-		print '<td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
+		print '<td>'.$langs->trans("Company").'</td><td>';
+		if ($projet->societe->id) print $projet->societe->getNomUrl(1);
+		else print '&nbsp;';
+		print '</td></tr>';
 
 		/* Liste des tâches */
 
@@ -131,43 +134,20 @@ if ($_GET["id"] > 0)
 			$tasks = array();
 			while ($i < $num)
 			{
-				$row = $db->fetch_row($resql);
+				$row = $db->fetch_object($resql);
 				$tasks[$i] = $row;
 				$i++;
 			}
-			$db->free();
+			$db->free($resql);
 		}
 		else
 		{
 			dolibarr_print_error($db);
 		}
 
-
-		/* Nouvelle tâche */
-		print '</table></form><br />';
-
-		print '<input type="hidden" name="action" value="addtime">';
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Date").'</td>';
-		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-		print '<td align="right">'.$langs->trans("User").'</td>';
-		print "</tr>\n";
-
-		foreach ($tasks as $task_time)
-		{
-			$var=!$var;
-  		    print "<tr ".$bc[$var].">";
-		    print '<td>'.dolibarr_print_date($task_time[0],'day').'</td>';
-		    print '<td align="right">'.$task_time[1].'</td>';
-		    $user->id=$task_time[4];
-		    $user->nom=$task_time[3];
-		    print '<td align="right">'.$user->getNomUrl(1).'</td>';
-		    print "</tr>\n";
-		}
-
-		print "</table>";
+		print '</table></form>';
 		print '</div>';
+
 		
 		/*
 		 * Actions
@@ -180,6 +160,30 @@ if ($_GET["id"] > 0)
 		}
 		
 		print '</div>';		
+		
+		print '<br>';
+		print '<input type="hidden" name="action" value="addtime">';
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Date").'</td>';
+		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+		print '<td align="right">'.$langs->trans("User").'</td>';
+		print "</tr>\n";
+
+		foreach ($tasks as $task_time)
+		{
+			$var=!$var;
+  		    print "<tr ".$bc[$var].">";
+		    print '<td>'.dolibarr_print_date($db->jdate($task_time->task_date),'day').'</td>';
+		    print '<td align="right">'.$task_time->task_duration.'</td>';
+		    $user->id=$task_time->rowid;
+		    $user->nom=$task_time->login;
+		    print '<td align="right">'.$user->getNomUrl(1).'</td>';
+		    print "</tr>\n";
+		}
+
+		print "</table>";
+		
 	}
 }
 

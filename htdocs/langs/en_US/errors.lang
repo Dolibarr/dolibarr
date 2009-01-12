@@ -44,3 +44,4 @@ ErrorLDAPMakeManualTest=A .ldif file has been generated in directory %s. Try to 
 ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "statut not started" if field "done by" is also filled.
 ErrorBillRefAlreadyExists=Ref used for creation already exists.
 ErrorPleaseTypeBankTransactionReportName=Please type bank receipt name where transaction is reported (Format YYYYMM or YYYYMMDD) 
+ErrorRecordHasChildren=Failed to delete records since it has some childs.

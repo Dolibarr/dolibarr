@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,9 +43,10 @@ if ($conf->propal->enabled)   $langs->load("propal");
 
 // Security check
 $projetid='';
-if ($_GET["id"]) { $projetid=$_GET["id"]; }
-
-if ($projetid == '') accessforbidden();
+$ref='';
+if (isset($_GET["id"]))  { $projetid=$_GET["id"]; }
+if (isset($_GET["ref"])) { $ref=$_GET["ref"]; }
+if ($projetid == '' && $ref == '') accessforbidden();
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -58,8 +59,10 @@ $result = restrictedArea($user, 'projet', $projetid);
 
 llxHeader("",$langs->trans("Referers"));
 
+$form = new Form($db);
+
 $projet = new Project($db);
-$projet->fetch($_GET["id"]);
+$projet->fetch($_GET["id"],$_GET["ref"]);
 $projet->societe->fetch($projet->societe->id);
 
 $head=project_prepare_head($projet);
@@ -68,7 +71,9 @@ dolibarr_fiche_head($head, 'element', $langs->trans("Project"));
 
 print '<table class="border" width="100%">';
 
-print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+print $form->showrefnav($projet,'ref','',1,'ref','ref');
+print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
 

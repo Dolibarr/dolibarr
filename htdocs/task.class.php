@@ -309,13 +309,18 @@ class Task // extends CommonObject
 		global $conf, $langs;
 		$error=0;
 		
-		// TODO. Refused if there is some child.
+		$this->db->begin();
 		
+		if ($this->hasChildren() > 0)
+		{
+			dolibarr_syslog(get_class($this)."::delete Can't delete record as it has some child", LOG_WARNING);
+			$this->error='ErrorRecordHasChildren';
+			$this->db->rollback();
+			return 0;
+		}
 		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task";
 		$sql.= " WHERE rowid=".$this->id;
-	
-		$this->db->begin();
 		
 		dolibarr_syslog(get_class($this)."::delete sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -355,7 +360,36 @@ class Task // extends CommonObject
 		}
 	}
 
-  
+	/**
+	 *		\brief		Return nb of children
+	 *		\return 	<0 if KO, 0 if no children, >0 if OK
+	 */
+	function hasChildren()
+	{
+		$ret=0;
+		
+		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."projet_task";
+		$sql.= " WHERE fk_task_parent=".$this->id;
+		
+		dolibarr_syslog(get_class($this)."::hasChildren sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		else
+		{
+			$obj=$this->db->fetch_object($resql);
+			if ($obj) $ret=$obj->nb;
+		}
+		
+		if (! $error)
+		{
+			return $ret;			
+		}
+		else
+		{
+			return -1;
+		}
+	}	
+	
 	/**
 	 *		\brief		Initialise object with example values
 	 *		\remarks	id must be 0 if object instance is a specimen.
@@ -371,8 +405,6 @@ class Task // extends CommonObject
 		$this->fk_user_creat='';
 		$this->statut='';
 		$this->note='';
-
-		
 	}
 
 }

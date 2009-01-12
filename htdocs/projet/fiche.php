@@ -32,7 +32,9 @@ require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $projetid='';
-if ($_GET["id"]) { $projetid=$_GET["id"]; }
+$ref='';
+if (isset($_GET["id"]))  { $projetid=$_GET["id"]; }
+if (isset($_GET["ref"])) { $ref=$_GET["ref"]; }
 
 // If socid provided by ajax company selector
 if (! empty($_POST['socid_id']))
@@ -41,7 +43,7 @@ if (! empty($_POST['socid_id']))
 	$_REQUEST['socid'] = $_REQUEST['socid_id'];
 }
 
-if ($projetid == '' && ($_GET['action'] != "create" && $_POST['action'] != "add" && $_POST["action"] != "update" && !$_POST["cancel"])) accessforbidden();
+if ($projetid == '' && $ref == '' && ($_GET['action'] != "create" && $_POST['action'] != "add" && $_POST["action"] != "update" && !$_POST["cancel"])) accessforbidden();
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -180,7 +182,7 @@ else
 	if ($mesg) print $mesg;
 	
 	$projet = new Project($db);
-	$projet->fetch($_GET["id"]);
+	$projet->fetch($_GET["id"],$_GET["ref"]);
 	$projet->societe->fetch($projet->societe->id);
 
 	$head=project_prepare_head($projet);
@@ -227,7 +229,9 @@ else
 		print '<table class="border" width="100%">';
 		
 		// Ref
-		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+		print $html->showrefnav($projet,'ref','',1,'ref','ref');
+		print '</td></tr>';
 		
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';

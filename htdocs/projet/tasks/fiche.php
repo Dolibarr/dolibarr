@@ -29,7 +29,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $projetid='';
-$projetid=isset($_GET["id"])?$_GET["id"]:$_POST["projetid"];
+$projetid=isset($_REQUEST["id"])?$_REQUEST["id"]:$_POST["projetid"];
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -39,7 +39,7 @@ $result = restrictedArea($user, 'projet', $projetid);
  * Actions
  */
 
-if ($_POST["action"] == 'createtask' && $user->rights->projet->creer && empty($_POST["cancel"]))
+if ($_POST["action"] == 'createtask' && empty($_POST["cancel"]) && $user->rights->projet->creer)
 {
 	$error=0;
 
@@ -66,8 +66,16 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer && empty($_
 
 	if (! $error)
 	{
-		Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php');
-		exit;
+		if (empty($projetid))
+		{
+			Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php');
+			exit;
+		}
+		else
+		{
+			Header("Location: ".DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$projetid);
+			exit;
+		}
 	}
 }
 
@@ -111,9 +119,12 @@ $form=new Form($db);
 llxHeader("",$langs->trans("Tasks"),"Tasks");
 
 $projet = new Project($db);
-if ($_GET["id"])
+
+$id = $_REQUEST['id'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
-	$projet->fetch($_GET["id"]);
+	$projet->fetch($_REQUEST["id"],$_GET["ref"]);
 	$projet->societe->fetch($projet->societe->id);
 }
 
@@ -127,7 +138,8 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
 	print '<form action="fiche.php" method="post">';
 	print '<input type="hidden" name="action" value="createtask">';
-
+	if ($_GET['id']) print '<input type="hidden" name="id" value="'.$_GET['id'].'">';
+	
 	print '<table class="border" width="100%">';
 
 	print '<tr><td>'.$langs->trans("NewTask").'</td><td colspan="3">';
@@ -165,10 +177,17 @@ else
 	$head=project_prepare_head($projet);
 	dolibarr_fiche_head($head, 'tasks', $langs->trans("Project"));
 
-
+	print '<form name="addtime" method="POST" action="fiche.php?id='.$projet->id.'">';
+	
 	print '<table class="border" width="100%">';
 
-	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+	// Ref
+	print '<tr><td width="30%">';
+	print $langs->trans("Ref");
+	print '</td><td>';
+	print $form->showrefnav($projet,'ref','',1,'ref','ref');
+	print '</td></tr>';
+	
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
 	print '<td>'.$langs->trans("Company").'</td><td>';
 	if (! empty($projet->societe->id)) print $projet->societe->getNomUrl(1);
@@ -180,28 +199,13 @@ else
 	$tasksarray=$projet->getTasksArray();
 
 	print '</table>';
-	print '<br>';
 
-	print '<form name="addtime" method="POST" action="fiche.php?id='.$projet->id.'">';
 	print '<input type="hidden" name="action" value="addtime">';
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Project").'</td>';
-	print '<td>'.$langs->trans("RefTask").'</td>';
-	print '<td>'.$langs->trans("LabelTask").'</td>';
-	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-	
-	print "</tr>\n";
-	$j=0;
-	PLines($j, 0, $tasksarray, $level, true);
 	print '</form>';
-
-
-	print "</table>";
 	print '</div>';
-
-
+	
+	
 	/*
 	 * Actions
 	 */
@@ -213,6 +217,20 @@ else
 	}
 	
 	print '</div>';
+	
+	print '<br>';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Project").'</td>';
+	print '<td>'.$langs->trans("RefTask").'</td>';
+	print '<td>'.$langs->trans("LabelTask").'</td>';
+	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+	print "</tr>\n";
+	$j=0;
+	PLines($j, 0, $tasksarray, $level, true);
+	print "</table>";
+	print '</div>';
+	
 }
 
 $db->close();

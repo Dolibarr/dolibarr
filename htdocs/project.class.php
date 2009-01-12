@@ -33,13 +33,19 @@ require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 */
 class Project extends CommonObject
 {
+	var $db;							//!< To store db handler
+	var $error;							//!< To return error code (or message)
+	var $errors=array();				//!< To return several error codes (or messages)
+	var $element='project';				//!< Id that identify managed objects
+	var $table_element='projet';		//!< Name of table without prefix where object is stored
+	
 	var $id;
-	var $db;
 	var $ref;
 	var $title;
 	var $socid;
 	var $user_resp_id;
 
+	
 	/**
 	*    \brief  Constructeur de la classe
 	*    \param  DB          handler acc�s base de donn�es
@@ -121,17 +127,20 @@ class Project extends CommonObject
 	}
 
 
-	/*
-	*    \brief      Charge objet projet depuis la base
-	*    \param      rowid       id du projet a charger
-	*/
-	function fetch($rowid)
+	/**
+	 *	\brief      Get object and lines from database
+	 *	\param      rowid       id of object to load
+	 * 	\param		ref			Ref of project
+	 *	\return     int         >0 if OK, <0 if KO
+	 */
+	function fetch($id,$ref='')
 	{
-
-		$sql = "SELECT title, ref, fk_soc, fk_user_creat, fk_user_resp, fk_statut, note";
+		$sql = "SELECT rowid, ref, title, fk_soc, fk_user_creat, fk_user_resp, fk_statut, note";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
-		$sql.= " WHERE rowid=".$rowid;
+		if ($ref) $sql.= " WHERE ref='".$ref."'";
+		else $sql.= " WHERE rowid=".$id;
 
+		dolibarr_syslog("Project::fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -139,7 +148,7 @@ class Project extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id             = $rowid;
+				$this->id             = $obj->rowid;
 				$this->ref            = $obj->ref;
 				$this->title          = $obj->title;
 				$this->titre          = $obj->title;
