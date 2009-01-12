@@ -1562,6 +1562,8 @@ function dol_print_error($db='',$error='')
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
 		print $langs->trans("DolibarrHasDetectedError").".<br>\n";
+		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) 
+			print "You use an experimental level of features, so please do NOT report any bugs, anywhere, until going back to MAIN_FEATURES_LEVEL = 0.<br>\n"; 
 		print $langs->trans("InformationToHelpDiagnose").":<br><br>\n";
 
 		print "<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";;
@@ -1622,7 +1624,7 @@ function dol_print_error($db='',$error='')
 			$syslog.=", msg=".$msg;
 		}
 	}
-
+	
 	dolibarr_syslog("Error ".$syslog, LOG_ERR);
 }
 
