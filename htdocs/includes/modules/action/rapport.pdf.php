@@ -208,9 +208,7 @@ class CommActionRapport
                 $y2 = $pdf->GetY();
 
                 $pdf->SetXY(106,$y);
-                //$pdf->Cell(94, 4, eregi_replace('<br>',"\n",dolibarr_trunc($obj->note,150)), 0, 'L', 0);
                 $pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset($text), 0, 'L', 0);
-                //$pdf->writeHTMLCell(dol_htmlentitiesbr($obj->note,1));
                 $y3 = $pdf->GetY();
                 
                 //$pdf->MultiCell(94,2,"y=$y y3=$y3",0,'L',0);

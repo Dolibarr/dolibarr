@@ -10,6 +10,7 @@ For users:
 - New: EMails links are show with function dol_print_email
 - New: Add graph report on number of entities in product statistics page.
 - New: Can delete a supplier order whatever is its status.
+- New: No limit on free text on PDF generated documents.
 - Fix: Failed to go on the future view of bank transaction if there is no 
   future bank transaction already wrote.  
 - Fix: Bad ref in supplier list.

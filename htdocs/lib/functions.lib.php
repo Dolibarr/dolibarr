@@ -1102,7 +1102,9 @@ function img_delete($alt = "default")
 
 /**
  *	\brief      Affiche logo help avec curseur "?"
- *	\return     string      Retourne tag img
+ * 	\param		usehelpcursor	
+ * 	\param		usealttitle	
+ * 	\return     string      	Retourne tag img
  */
 function img_help($usehelpcursor=1,$usealttitle=1)
 {
@@ -1110,7 +1112,11 @@ function img_help($usehelpcursor=1,$usealttitle=1)
 	$s ='<img ';
 	if ($usehelpcursor) $s.='style="cursor: help;" ';
 	$s.='src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/info.png" border="0"';
-	if ($usealttitle) $s.=' alt="'.$langs->trans("Info").'" title="'.$langs->trans("Info").'"';
+	if ($usealttitle) 
+	{
+		if (is_string($usealttitle)) $s.=' alt="'.$usealttitle.'" title="'.$usealttitle.'"';
+		else $s.=' alt="'.$langs->trans("Info").'" title="'.$langs->trans("Info").'"';
+	}
 	$s.='>';
 	return $s;
 }

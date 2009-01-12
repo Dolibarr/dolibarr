@@ -154,7 +154,10 @@ class Form
 	 */
 	function textwithhelp($text,$htmltext,$direction=1,$usehelpcursor=1)
 	{
-		return $this->textwithtooltip($text,$htmltext,2,$direction,img_help($usehelpcursor,0));
+		global $conf;
+		$alt='';
+		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';
+		return $this->textwithtooltip($text,$htmltext,2,$direction,img_help($usehelpcursor,$alt));
 	}
 
 	/**

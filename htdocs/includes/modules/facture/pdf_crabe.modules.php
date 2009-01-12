@@ -344,7 +344,7 @@ class pdf_crabe extends ModelePDFFactures
 						//on récupère la description du produit suivant
 						$follow_descproduitservice = $fac->lignes[$i+1]->desc;
 						//on compte le nombre de ligne afin de vérifier la place disponible (largeur de ligne 52 caracteres)
-						$nblineFollowDesc = num_lines($follow_descproduitservice,52)*4;
+						$nblineFollowDesc = dol_nboflines_bis($follow_descproduitservice,52)*4;
 						// Et si on affiche dates de validite, on ajoute encore une ligne
 						if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end)
 						{
