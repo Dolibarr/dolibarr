@@ -224,7 +224,10 @@ else
 	}
 	else
 	{
-		$projet->fetch_user($projet->user_resp_id);
+		if ($projet->user_resp_id > 0)
+		{
+			$result=$projet->fetch_user($projet->user_resp_id);
+		}
 
 		print '<table class="border" width="100%">';
 		
@@ -243,7 +246,10 @@ else
 		print '</td></tr>';
 		
 		// Project leader
-		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>'.$projet->user->fullname.'</td></tr>';
+		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
+		if ($projet->user->id) print $projet->user->getNomUrl(1);
+		else print '&nbsp;';
+		print '</td></tr>';
 
 		print '</table>';
 	}
