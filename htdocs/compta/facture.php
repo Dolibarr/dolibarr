@@ -536,7 +536,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$error=1;
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("CorrectInvoice")).'</div>';
 		}
-			
+
 		$datefacture = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		if (empty($datefacture))
 		{
@@ -1650,7 +1650,7 @@ if ($_GET['action'] == 'create')
 		//print '<input type="hidden" name="remise_absolue" value="'.$propal->remise_absolue.'">'."\n";
 		//print '<input type="hidden" name="remise_percent" value="'.$propal->remise_percent.'">'."\n";
 		print '<input type="hidden" name="propalid"       value="'.$propal->id.'">';
-			
+
 		print '<tr><td>'.$langs->trans('Proposal').'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.img_object($langs->trans("ShowPropal"),'propal').' '.$propal->ref.'</a></td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($propal->price).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($propal->total_tva)."</td></tr>";
@@ -1666,7 +1666,7 @@ if ($_GET['action'] == 'create')
 		//print '<input type="hidden" name="remise_absolue" value="'.$commande->remise_absolue.'">'."\n";
 		//print '<input type="hidden" name="remise_percent" value="'.$commande->remise_percent.'">'."\n";
 		print '<input type="hidden" name="commandeid"     value="'.$commande->id.'">';
-			
+
 		print '<tr><td>'.$langs->trans('Order').'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a></td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($commande->total_ht).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($commande->total_tva)."</td></tr>";
@@ -1880,17 +1880,16 @@ if ($_GET['action'] == 'create')
 }
 else
 {
+	/*
+	 * Show object in view mode
+	 */
+
 	$now=gmmktime();
-	
+
 	$id = $_GET['facid'];
 	$ref= $_GET['ref'];
 	if ($id > 0 || ! empty($ref))
 	{
-		/* *************************************************************************** */
-		/*                                                                             */
-		/* Fiche en mode visu / edition                                                */
-		/*                                                                             */
-		/* *************************************************************************** */
 		if ($mesg) print $mesg.'<br>';
 
 		$facstatic = new Facture($db);
@@ -1914,13 +1913,13 @@ else
 			//$resteapayer=bcadd($fac->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 			//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 			$resteapayer = price2num($fac->total_ttc - $totalpaye - $totalavoir,'MT');
-				
+
 			if ($fac->paye) $resteapayer=0;
 			$resteapayeraffiche=$resteapayer;
 
 			$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
 			$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
-				
+
 			$author = new User($db);
 			if ($fac->user_author)
 			{
@@ -2076,8 +2075,8 @@ else
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$fac->ref),'confirm_clone',$formquestion,'yes');
 				print '<br>';
 			}
-				
-				
+
+
 			// Invoice content
 
 			print '<table class="border" width="100%">';
@@ -2235,8 +2234,8 @@ else
 				print '&nbsp;';
 			}
 			print '</td>';
-			
-			
+
+
 			// Payments
 			$nbrows=8;
 			if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
@@ -2267,7 +2266,7 @@ else
 				print '<td align="right">'.$langs->trans('Amount').'</td>';
 				print '<td width="18">&nbsp;</td>';
 				print '</tr>';
-					
+
 				if ($fac->type != 2)
 				{
 					$var=True;
@@ -2293,7 +2292,7 @@ else
 					$resteapayeraffiche=$resteapayer;
 
 					$creditnoteamount=0;
-					
+
 					// Loop on each credit note applied
 					$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 					$sql.= " re.description, re.fk_facture_source, re.fk_facture_source";
@@ -3071,7 +3070,7 @@ else
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=clone&amp;object=invoice">'.$langs->trans("ToClone").'</a>';
 					}
-						
+
 					// Clone as predefined
 					if ($conf->global->FACTURE_ENABLE_RECUR && $fac->type == 0 && $fac->statut == 0 && $user->rights->facture->creer)
 					{
@@ -3081,7 +3080,7 @@ else
 						}
 					}
 
-					// Supprimer
+					// Delete
 					if ($fac->is_erasable() && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
 					{
 						if ($facidnext)

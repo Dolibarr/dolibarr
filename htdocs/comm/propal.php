@@ -77,6 +77,31 @@ $NBLINES=4;
 /*                     Actions                                                */
 /******************************************************************************/
 
+// Action clone object
+if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
+{
+	if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
+	{
+		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+	}
+	else
+	{
+		$object=new Propal($db);
+		$result=$object->createFromClone($_REQUEST['propalid']);
+		if ($result > 0)
+		{
+			header("Location: ".$_SERVER['PHP_SELF'].'?propalid='.$result);
+			exit;
+		}
+		else
+		{
+			$mesg=$object->error;
+			$_GET['action']='';
+			$_GET['propalid']=$_REQUEST['propalid'];
+		}
+	}
+}
+
 // Suppression de la propale
 if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
@@ -850,25 +875,39 @@ llxHeader('',$langs->trans('Proposal'),'Proposition');
 $html = new Form($db);
 $formfile = new FormFile($db);
 
-if ($_GET['propalid'] > 0)
+$now=gmmktime();
+
+$id = $_GET['propalid'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	/*
-	 * Affichage fiche propal en mode visu
-	 *
+	 * Show object in view mode
 	 */
 
-	$now=gmmktime();
-	
 	if ($mesg) print $mesg."<br>";
 
 	$propal = new Propal($db);
-	$propal->fetch($_GET['propalid']);
+	$propal->fetch($_GET['propalid'],$_GET['ref']);
 
 	$societe = new Societe($db);
 	$societe->fetch($propal->socid);
 
 	$head = propal_prepare_head($propal);
 	dolibarr_fiche_head($head, 'comm', $langs->trans('Proposal'));
+
+	// Clone confirmation
+	if ($_GET["action"] == 'clone')
+	{
+		// Create an array for form
+		$formquestion=array(
+		//'text' => $langs->trans("ConfirmClone"),
+		//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
+		);
+		// Paiement incomplet. On demande si motif = escompte ou autre
+		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$propal->ref),'confirm_clone',$formquestion,'yes');
+		print '<br>';
+	}
 
 	/*
 	 * Confirmation de la suppression de la propale
@@ -906,7 +945,9 @@ if ($_GET['propalid'] > 0)
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref.'</td></tr>';
+	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">';
+	print $html->showrefnav($propal,'ref','',1,'ref','ref','');
+	print '</td></tr>';
 
 	// Ref client
 	print '<tr><td>';
@@ -1038,7 +1079,7 @@ if ($_GET['propalid'] > 0)
 			}
 			else
 			{
-				print dolibarr_print_date($propal->date_livraison,'%a %d %B %Y');
+				print dolibarr_print_date($propal->date_livraison,'daytext');
 			}
 			print '</td>';
 			print '</tr>';
@@ -1727,6 +1768,12 @@ if ($_GET['propalid'] > 0)
 				print '>'.$langs->trans('Close').'</a>';
 			}
 
+			// Clone
+			if ($propal->type == 0 && $user->rights->propale->creer)
+			{
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?propalid='.$propal->id.'&amp;action=clone&amp;object=propal">'.$langs->trans("ToClone").'</a>';
+			}
+
 			// Delete
 			if ($propal->statut == 0 && $user->rights->propale->supprimer)
 			{
@@ -1874,7 +1921,7 @@ else
 	 *                         Mode Liste des propales                          *
 	 *                                                                          *
 	 ****************************************************************************/
-	
+
 	$now=gmmktime();
 
 	$sortorder=$_GET['sortorder'];

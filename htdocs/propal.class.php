@@ -269,7 +269,7 @@ class Propal extends CommonObject
 
 		dolibarr_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-		 
+
 		if ($this->statut == 0)
 		{
 			$this->db->begin();
@@ -306,7 +306,7 @@ class Propal extends CommonObject
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
-				
+
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
@@ -333,7 +333,7 @@ class Propal extends CommonObject
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
-				
+
 			// Mise en option de la ligne
 			if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty) $ligne->special_code=3;
 
@@ -384,14 +384,14 @@ class Propal extends CommonObject
 	function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $desc='', $price_base_type='HT', $info_bits=0)
 	{
 		global $conf;
-		 
+
 		dolibarr_syslog("Propal::UpdateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-		 
+
 		if ($this->statut == 0)
 		{
 			$this->db->begin();
-			 
+
 			// Nettoyage paramï¿½tres
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
@@ -505,7 +505,7 @@ class Propal extends CommonObject
 	function create($user='')
 	{
 		global $langs,$conf,$mysoc;
-		 
+
 		// on verifie si la ref n'est pas utilisee
 		$soc = new Societe($this->db);
 		$soc->fetch($this->socid);
@@ -513,8 +513,6 @@ class Propal extends CommonObject
 
 		// Clean parameters
 		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
-
-		dolibarr_syslog("Propal::create ref=".$this->ref);
 
 		$this->db->begin();
 
@@ -539,6 +537,7 @@ class Propal extends CommonObject
 		if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $sql.= ", ".($this->date_livraison?$this->db->idate($this->date_livraison):'null');
 		$sql.= ")";
 
+		dolibarr_syslog("Propal::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -632,52 +631,101 @@ class Propal extends CommonObject
 	 */
 	function create_from($user)
 	{
-		global $conf,$lang;
-
-		$this->products=array();
-		$i=0;
-		foreach($this->lignes as $ligne)
-		{
-			$this->products[$i]->desc=$ligne->desc;
-			$this->products[$i]->subprice=$ligne->subprice;
-			$this->products[$i]->qty=$ligne->qty;
-			$this->products[$i]->tva_tx=$ligne->tva_tx;
-			$this->products[$i]->fk_product=$ligne->fk_product;
-			$this->products[$i]->remise_percent=$ligne->remise_percent;
-
-			$i++;
-		}
+		$this->products=$this->lignes;
 
 		return $this->create();
 	}
 
 	/**
-	 *    	\brief      Recupere de la base les caracteristiques d'une propale
-	 *    	\param      rowid       id de la propal a recuperer
-	 *		\return		int			<0 si ko, 0 si non trouve, >0 si ok
+	 *		\brief      Load an object from its id and create a new one in database
+	 *		\param      fromid     		Id of object to clone
+	 *		\param		invertdetail	Reverse sign of amounts for lines
+	 * 	 	\return		int				New id of clone
 	 */
-	function fetch($rowid)
+	function createFromClone($fromid,$invertdetail=0)
+	{
+		global $user,$langs;
+
+		$error=0;
+
+		$object=new Propal($this->db);
+
+		$this->db->begin();
+
+		// Load source object
+		$object->fetch($fromid);
+		$object->id=0;
+		$object->statut=0;
+
+		// Clear fields
+		$object->user_author        = $user->id;
+		$object->user_valid         = '';
+		$object->date               = '';
+		$object->datep              = gmmktime();
+		$object->fin_validite       = '';
+		$object->ref_client         = '';
+		$object->products = $object->lignes;	// Tant que products encore utilisé
+
+		// Create clone
+		$result=$object->create($user);
+
+		// Other options
+		if ($result < 0)
+		{
+			$this->error=$object->error;
+			$error++;
+		}
+
+		if (! $error)
+		{
+
+
+
+		}
+
+		// End
+		if (! $error)
+		{
+			$this->db->commit();
+			return $object->id;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 *    	\brief      Load a proposal from database and its ligne array
+	 *		\param      rowid       id of object to load
+	 * 		\param		ref			Ref of proposal
+	 *		\return     int         >0 if OK, <0 if KO
+	 */
+	function fetch($rowid,$ref='')
 	{
 		$sql = "SELECT p.rowid,ref,remise,remise_percent,remise_absolue,fk_soc";
 		$sql.= ", total, tva, total_ht";
-		$sql.= ", ".$this->db->pdate("datep")." as dp";
-		$sql.= ", ".$this->db->pdate("fin_validite")." as dfv";
-		$sql.= ", ".$this->db->pdate("date_livraison")." as date_livraison";
+		$sql.= ", datep as dp";
+		$sql.= ", fin_validite as dfv";
+		$sql.= ", date_livraison as date_livraison";
 		$sql.= ", model_pdf, ref_client";
 		$sql.= ", note, note_public";
 		$sql.= ", fk_projet, fk_statut, fk_user_author";
 		$sql.= ", fk_adresse_livraison";
-		$sql.= ", p.fk_cond_reglement, cr.code as cond_reglement_code";
-		$sql.= ", p.fk_mode_reglement, cp.code as mode_reglement_code";
+		$sql.= ", p.fk_cond_reglement";
+		$sql.= ", p.fk_mode_reglement";
 		$sql.= ", c.label as statut_label";
+		$sql.= ", cr.code as cond_reglement_code, cr.libelle, cr.libelle_facture";
+		$sql.= ", cp.code as mode_reglement_code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON p.fk_cond_reglement = cr.rowid';
 		$sql.= " WHERE p.fk_statut = c.id";
-		$sql.= " AND p.rowid='".$rowid."'";
+		if ($ref) $sql.= " AND p.ref='".$ref."'";
+		else $sql.= " AND p.rowid=".$rowid;
 
-		dolibarr_syslog("Propal::fecth rowid=".$rowid);
-
+		dolibarr_syslog("Propal::fecth sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -685,11 +733,8 @@ class Propal extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id                   = $rowid;
+				$this->id                   = $obj->rowid;
 
-				$this->date                 = $obj->dp;
-				$this->datep                = $obj->dp;
-				$this->fin_validite         = $obj->dfv;
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
 				$this->remise               = $obj->remise;
@@ -706,31 +751,21 @@ class Propal extends CommonObject
 				$this->note_public          = $obj->note_public;
 				$this->statut               = $obj->fk_statut;
 				$this->statut_libelle       = $obj->statut_label;
+
+				$this->date                 = $this->db->jdate($obj->dp);
+				$this->datep                = $this->db->jdate($obj->dp);
+				$this->fin_validite         = $this->db->jdate($obj->dfv);
+				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
+				$this->adresse_livraison_id = $obj->fk_adresse_livraison;
+
 				$this->mode_reglement_id    = $obj->fk_mode_reglement;
 				$this->mode_reglement_code  = $obj->mode_reglement_code;
 				$this->cond_reglement_id    = $obj->fk_cond_reglement;
 				$this->cond_reglement_code  = $obj->cond_reglement_code;
-				$this->date_livraison       = $obj->date_livraison;
-				$this->adresse_livraison_id = $obj->fk_adresse_livraison;
+				$this->cond_reglement           = $objc->libelle;
+				$this->cond_reglement_document  = $objc->libelle_facture;
 
 				$this->user_author_id = $obj->fk_user_author;
-
-				if ($this->cond_reglement_id)
-				{
-					$sql = "SELECT rowid, libelle, code, libelle_facture";
-					$sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
-					$sql.= " WHERE rowid = ".$this->cond_reglement_id;
-
-					$resqlcond = $this->db->query($sql);
-
-					if ($resqlcond)
-					{
-						$objc = $this->db->fetch_object($resqlcond);
-						$this->cond_reglement           = $objc->libelle;
-						$this->cond_reglement_document  = $objc->libelle_facture;
-						$this->cond_reglement_code      = $objc->code;
-					}
-				}
 
 				if ($obj->fk_statut == 0)
 				{
@@ -741,7 +776,7 @@ class Propal extends CommonObject
 				$this->db->free($resql);
 
 				/*
-				 * Lignes propales liï¿½es ï¿½ un produit ou non
+				 * Lignes propales liees a un produit ou non
 				 */
 				$sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
 				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_ttc, d.marge_tx, d.marque_tx, d.special_code, d.rang,";
@@ -796,7 +831,7 @@ class Propal extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog("Propal::Fetch Error $this->error, sql=$sql");
+					dolibarr_syslog("Propal::Fetch Error ".$this->error, LOG_ERROR);
 					return -1;
 				}
 
@@ -809,7 +844,7 @@ class Propal extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Propal::Fetch Error sql=$sql ".$this->error);
+			dolibarr_syslog("Propal::Fetch Error ".$this->error, LOG_ERROR);
 			return -1;
 		}
 	}
@@ -1369,7 +1404,7 @@ class Propal extends CommonObject
 			}
 			$this->db->free($resql);
 			$nump = $this->db->num_rows($resql2);
-				
+
 			for ($i = 0;$i < $nump;$i++)
 			{
 				$sqlobj = $this->db->fetch_object($resql2);
@@ -1378,10 +1413,10 @@ class Propal extends CommonObject
 			}
 			$this->db->free($resql2);
 			//array_multisort ($tab_sqlobjOrder,$tab_sqlobj);
-				
+
 			//$nump = $this->db->num_rows($resql);
 			$nump = sizeOf($tab_sqlobj);
-				
+
 			if ($nump)
 			{
 				$i = 0;
@@ -1389,7 +1424,7 @@ class Propal extends CommonObject
 				{
 					//$obj = $this->db->fetch_object($resql);
 					$obj = array_shift($tab_sqlobj);
-						
+
 					$ga[$obj->rowid] = $obj->facnumber;
 					$i++;
 				}
@@ -1411,7 +1446,7 @@ class Propal extends CommonObject
 		global $conf;
 
 		$this->db->begin();
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
 		if ( $this->db->query($sql) )
 		{
@@ -1664,7 +1699,7 @@ class Propal extends CommonObject
 		global $conf, $user;
 
 		$now=gmmktime();
-		
+
 		$this->nbtodo=$this->nbtodolate=0;
 		$clause = "WHERE";
 
@@ -1684,11 +1719,11 @@ class Propal extends CommonObject
 		{
 			if ($mode == 'opened') $delay_warning=$conf->propal->cloture->warning_delay;
 			if ($mode == 'signed') $delay_warning=$conf->propal->facture->warning_delay;
-			
+
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nbtodo++;
-				if ($mode == 'opened') 
+				if ($mode == 'opened')
 				{
 					$datelimit = $this->db->jdate($obj->datefin);
 					if ($datelimit < ($now - $delay_warning))
@@ -1839,7 +1874,7 @@ class Propal extends CommonObject
 			}
 		}
 	}
-	 
+
 
 	/**
 	 *      \brief      Renvoie la rï¿½fï¿½rence de propale suivante non utilisï¿½e en fonction du module

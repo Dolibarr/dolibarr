@@ -73,6 +73,8 @@ CopyPropalFrom=Créer proposition/devis par recopie d'un proposition existante
 CreateEmptyPropal=Créer proposition/devis vierge ou depuis liste de produits prédéfinis
 DefaultProposalDurationValidity=Délai de validité par défaut (en jours)
 UseCustomerContactAsPropalRecipientIfExist=Utiliser adresse contact suivi client si défini plutot que adresse tiers comme destinataire des propositions
+ClonePropal=Cloner proposition commerciale
+ConfirmClonePropal=Etes-vous sur de vouloir cloner cette proposition commerciale <b>%s</b> ?
 
 # Documents models
 DocModelAzurDescription=Modèle de propositions commerciales complet (logo...)
