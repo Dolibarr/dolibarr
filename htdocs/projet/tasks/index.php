@@ -58,10 +58,11 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 /*
  * View
  */
+
 $form=new Form($db);
 
 $title=$langs->trans("Tasks");
-if ($mode == 'mine') $title=$langs->trans("Mytasks");
+if ($mode == 'mine') $title=$langs->trans("MyTasks");
 
 llxHeader("",$title,"Projet");
 
@@ -70,7 +71,7 @@ llxHeader("",$title,"Projet");
  */
 
 $h=0;
-$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/index.php';
+$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/index.php'.($_GET["mode"]?'?mode='.$_GET["mode"]:'');
 $head[$h][1] = $title;
 $head[$h][2] = 'tasks';
 $h++;
@@ -78,7 +79,7 @@ $h++;
 dolibarr_fiche_head($head, 'tasks', $title);
 
 $projet = new Project($db);
-$tasksarray=$projet->getTasksArray();
+$tasksarray=$projet->getTasksArray($_GET["mode"]=='mine'?$user:0);
 
 
 print '<table class="noborder" width="100%">';
@@ -117,9 +118,9 @@ function PLines(&$inc, $parent, $lines, &$level, $var)
 	global $user, $bc, $langs;
 
 	$lastprojectid=0;
-	
+
 	$projectstatic = new Project($db);
-	
+
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
 		if ($parent == 0) $level = 0;
@@ -132,7 +133,7 @@ function PLines(&$inc, $parent, $lines, &$level, $var)
 				$var = !$var;
 				$lastprojectid=$lines[$i]->projectid;
 			}
-			
+
 			print "<tr $bc[$var]>\n";
 
 			print "<td>";
@@ -140,9 +141,9 @@ function PLines(&$inc, $parent, $lines, &$level, $var)
 			$projectstatic->ref=$lines[$i]->projectref;
 			print $projectstatic->getNomUrl(1);
 			print "</td>";
-				
+
 			print "<td>".$lines[$i]->id."</td>";
-				
+
 			print "<td>";
 			for ($k = 0 ; $k < $level ; $k++)
 			{
@@ -158,9 +159,9 @@ function PLines(&$inc, $parent, $lines, &$level, $var)
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 
 			print "</tr>\n";
-			
+
 			$inc++;
-			
+
 			$level++;
 			if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $var);
 			$level--;

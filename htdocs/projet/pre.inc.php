@@ -43,7 +43,7 @@ $langs->load("commercial");
 function llxHeader($head = "", $title="", $help_url='')
 {
   global $langs, $user;
-  
+
   top_menu($head, $title);
 
   $menu = new Menu();
@@ -54,12 +54,12 @@ function llxHeader($head = "", $title="", $help_url='')
 
 	$menu->add(DOL_URL_ROOT."/projet/tasks/index.php", $langs->trans("Tasks"), 0, $user->rights->projet->lire);
 	$menu->add_submenu(DOL_URL_ROOT."/projet/tasks/fiche.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
-	$menu->add_submenu(DOL_URL_ROOT."/projet/tasks/index.php?mode=mine", $langs->trans("Mytasks"), 1, $user->rights->projet->lire);
-	
+	$menu->add_submenu(DOL_URL_ROOT."/projet/tasks/index.php?mode=mine", $langs->trans("MyTasks"), 1, $user->rights->projet->lire);
+
 	$menu->add(DOL_URL_ROOT."/projet/activity/index.php", $langs->trans("TimeSpent"), 0, $user->rights->projet->lire);
 	$menu->add_submenu(DOL_URL_ROOT."/projet/activity/list.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer);
 	$menu->add_submenu(DOL_URL_ROOT."/projet/activity/index.php?mode=mine", $langs->trans("MyTimeSpent"), 1, $user->rights->projet->lire);
-  
+
   left_menu($menu->liste, $help_url);
 }
 ?>

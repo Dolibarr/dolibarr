@@ -40,6 +40,11 @@ function project_prepare_head($objsoc)
     $head[$h][2] = 'tasks';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$objsoc->id.'&mode=mine';
+	$head[$h][1] = $langs->trans("MyTasks");
+    $head[$h][2] = 'mytasks';
+	$h++;
+
 	if ($conf->propal->enabled || $conf->commande->enabled || $conf->facture->enabled)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$objsoc->id;
@@ -103,5 +108,5 @@ function select_projects($socid, $selected='', $htmlname='projectid')
 		return -1;
 	}
 }
-  
+
 ?>

@@ -38,14 +38,14 @@ class Project extends CommonObject
 	var $errors=array();				//!< To return several error codes (or messages)
 	var $element='project';				//!< Id that identify managed objects
 	var $table_element='projet';		//!< Name of table without prefix where object is stored
-	
+
 	var $id;
 	var $ref;
 	var $title;
 	var $socid;
 	var $user_resp_id;
 
-	
+
 	/**
 	*    \brief  Constructeur de la classe
 	*    \param  DB          handler acc�s base de donn�es
@@ -76,7 +76,7 @@ class Project extends CommonObject
 		$sql.= " ".($this->socid > 0?$this->socid:"null").",";
 		$sql.= " ".$user->id.",";
 		$sql.= " ".$this->user_resp_id.", ".$this->db->idate(mktime()).", 0)";
-		
+
 		dolibarr_syslog("Project::create sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -214,7 +214,7 @@ class Project extends CommonObject
 		}
 
 	}
-	
+
 	/**
 	* 	\brief		Return list of elements for type linked to project
 	*	\param		type		'propal','order','invoice','order_supplier','invoice_supplier'
@@ -424,24 +424,34 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * Return list of project - tasks
+	 * Return list of task for project
+	 * @param	user	Object user to limit task affected to a particular user
 	 *
 	 * @return unknown
 	 */
-	function getTasksArray()
+	function getTasksArray($user=0)
 	{
 		$tasks = array();
 
 		/* List of tasks */
-	
 		$sql = "SELECT p.rowid as projectid, p.ref, p.title as ptitle,";
 		$sql.= " t.rowid, t.title, t.fk_task_parent, t.duration_effective";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
-		if ($this->id) $sql .= " WHERE t.fk_projet =".$this->id;
+		if (is_object($user))
+		{
+			$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+			$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as ta";
+		}
+		else
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+		}
+		$sql.=" WHERE 1 = 1";
+		if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
+		if (is_object($user)) $sql .= " AND t.fk_projet = p.rowid AND ta.fk_projet_task = t.rowid AND ta.fk_user =".$user->id;
 		$sql.= " ORDER BY p.ref, t.title";
 
-		dolibarr_syslog("Project::getTasksArray sql=".$sql);
+		dolibarr_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -465,7 +475,7 @@ class Project extends CommonObject
 		{
 			dolibarr_print_error($this->db);
 		}
-		
+
 		return $tasks;
 	}
 
@@ -492,6 +502,6 @@ class Project extends CommonObject
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;
-	}	
+	}
 }
 ?>

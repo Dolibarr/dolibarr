@@ -49,18 +49,18 @@ if ($_POST["action"] == 'createtask' && empty($_POST["cancel"]) && $user->rights
 		$_GET["action"]='create';
 		$error++;
 	}
-	
+
 	if (! $error)
 	{
 		$tmparray=split('_',$_POST['task_parent']);
 		$projectid=$tmparray[0];
 		$task_parent=$tmparray[1];
 		if (empty($task_parent)) $task_parent=0;	// If task_parent is ''
-		
+
 		//print $_POST['task_parent'].'-'.$projectid.'-'.$task_parent;exit;
 		$project = new Project($db);
 		$result = $project->fetch($projectid);
-		
+
 		$result=$project->CreateTask($user, $_POST["task_name"], $task_parent);
 	}
 
@@ -95,7 +95,7 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 				{
 					$post=intval($post)+(($post-intval($post))*(1+2/3));
 					$post=price2num($post);
-					 
+
 					$id = ereg_replace("task","",$key);
 
 					$date = dolibarr_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
@@ -138,8 +138,9 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
 	print '<form action="fiche.php" method="post">';
 	print '<input type="hidden" name="action" value="createtask">';
-	if ($_GET['id']) print '<input type="hidden" name="id" value="'.$_GET['id'].'">';
-	
+	if ($_GET['id'])   print '<input type="hidden" name="id" value="'.$_GET['id'].'">';
+	if ($_GET['mode']) print '<input type="hidden" name="mode" value="'.$_GET['mode'].'">';
+
 	print '<table class="border" width="100%">';
 
 	print '<tr><td>'.$langs->trans("NewTask").'</td><td colspan="3">';
@@ -166,28 +167,32 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '</table>';
 	print '</form>';
 
-} 
+}
 else
 {
 	/*
 	 * Fiche projet en mode visu
 	 *
 	 */
+	$tab='tasks';
+	if ($_REQUEST["mode"]=='mine') $tab='mytasks';
 
 	$head=project_prepare_head($projet);
-	dolibarr_fiche_head($head, 'tasks', $langs->trans("Project"));
+	dolibarr_fiche_head($head, $tab, $langs->trans("Project"));
+
+	$param=($_REQUEST["mode"]=='mine'?'&mode=mine':'');
 
 	print '<form name="addtime" method="POST" action="fiche.php?id='.$projet->id.'">';
-	
+
 	print '<table class="border" width="100%">';
 
 	// Ref
 	print '<tr><td width="30%">';
 	print $langs->trans("Ref");
 	print '</td><td>';
-	print $form->showrefnav($projet,'ref','',1,'ref','ref');
+	print $form->showrefnav($projet,'ref','',1,'ref','ref','',$param);
 	print '</td></tr>';
-	
+
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
 	print '<td>'.$langs->trans("Company").'</td><td>';
 	if (! empty($projet->societe->id)) print $projet->societe->getNomUrl(1);
@@ -196,7 +201,7 @@ else
 	//print '<td>&nbsp;</td>';
 	print '</tr>';
 
-	$tasksarray=$projet->getTasksArray();
+	$tasksarray=$projet->getTasksArray($_REQUEST["mode"]=='mine'?$user:0);
 
 	print '</table>';
 
@@ -204,8 +209,8 @@ else
 
 	print '</form>';
 	print '</div>';
-	
-	
+
+
 	/*
 	 * Actions
 	 */
@@ -213,11 +218,11 @@ else
 
 	if ($user->rights->projet->creer)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$projet->id.'&amp;action=create">'.$langs->trans('AddTask').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$projet->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
 	}
-	
+
 	print '</div>';
-	
+
 	print '<br>';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -230,7 +235,7 @@ else
 	PLines($j, 0, $tasksarray, $level, true);
 	print "</table>";
 	print '</div>';
-	
+
 }
 
 $db->close();
@@ -245,9 +250,9 @@ function PLines(&$inc, $parent, $lines, &$level, $var)
 	global $user, $bc, $langs;
 
 	$lastprojectid=0;
-	
+
 	$projectstatic = new Project($db);
-	
+
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
 		if ($parent == 0) $level = 0;
@@ -260,7 +265,7 @@ function PLines(&$inc, $parent, $lines, &$level, $var)
 				$var = !$var;
 				$lastprojectid=$lines[$i]->projectid;
 			}
-			
+
 			print "<tr $bc[$var]>\n";
 
 			print "<td>";
@@ -268,9 +273,9 @@ function PLines(&$inc, $parent, $lines, &$level, $var)
 			$projectstatic->ref=$lines[$i]->projectref;
 			print $projectstatic->getNomUrl(1);
 			print "</td>";
-				
+
 			print "<td>".$lines[$i]->id."</td>";
-				
+
 			print "<td>";
 			for ($k = 0 ; $k < $level ; $k++)
 			{
@@ -286,9 +291,9 @@ function PLines(&$inc, $parent, $lines, &$level, $var)
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 
 			print "</tr>\n";
-			
+
 			$inc++;
-			
+
 			$level++;
 			if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $var);
 			$level--;
@@ -312,9 +317,9 @@ function PLines(&$inc, $parent, $lines, &$level, $var)
 function PLineSelect(&$inc, $parent, $lines, &$level)
 {
 	global $langs;
-	
+
 	$lastprojectid=0;
-	
+
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
 		if ($parent == 0) $level = 0;
@@ -334,7 +339,7 @@ function PLineSelect(&$inc, $parent, $lines, &$level)
 				$lastprojectid=$lines[$i]->projectid;
 				$inc++;
 			}
-			
+
 			print '<option value="'.$lines[$i]->projectid.'_'.$lines[$i]->id.'">';
 			print $langs->trans("Project").' '.$lines[$i]->projectref;
 			if ($lines[$i]->id) print ' > ';
@@ -345,7 +350,7 @@ function PLineSelect(&$inc, $parent, $lines, &$level)
 			print $lines[$i]->title."</option>\n";
 
 			$inc++;
-			
+
 			$level++;
 			if ($lines[$i]->id) PLineSelect($inc, $lines[$i]->id, $lines, $level);
 			$level--;

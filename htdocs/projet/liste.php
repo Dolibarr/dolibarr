@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/** 
+/**
         \file       htdocs/projet/liste.php
         \ingroup    projet
         \brief      Page liste des projets
@@ -59,9 +59,8 @@ $pagenext = $page + 1;
 
 
 
-/**
- * Affichage de la liste des projets
- * 
+/*
+ * View
  */
 
 llxHeader();
@@ -77,8 +76,8 @@ $sql .= ") LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = p.fk_soc";
 $sql .= " WHERE 1 = 1 ";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
-{ 
-  $sql .= " AND s.rowid = ".$socid; 
+{
+  $sql .= " AND s.rowid = ".$socid;
 }
 if ($_GET["search_ref"])
 {
@@ -100,9 +99,9 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
   $i = 0;
-  
+
   print_barre_liste($langs->trans("ProjectsList"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
-  
+
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Ref"),"liste.php","p.ref","","","",$sortfield,$sortorder);
@@ -110,7 +109,7 @@ if ($resql)
   print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","","",$sortfield,$sortorder);
   print '<td>&nbsp;</td>';
   print "</tr>\n";
-  
+
   print '<form method="get" action="liste.php">';
   print '<tr class="liste_titre">';
   print '<td valign="right">';
@@ -125,15 +124,15 @@ if ($resql)
   print '<td class="liste_titre" align="center"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
   print "</td>";
   print "</tr>\n";
-  
+
   while ($i < $num)
     {
-      $objp = $db->fetch_object($resql);    
+      $objp = $db->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$objp->projectid\">".img_object($langs->trans("ShowProject"),"project")." ".$objp->ref."</a></td>\n";
       print "<td><a href=\"fiche.php?id=$objp->projectid\">".$objp->title."</a></td>\n";
-      
+
 	  // Company
 	  print '<td>';
 	  if ($objp->socid)
@@ -143,17 +142,17 @@ if ($resql)
 		  print $staticsoc->getNomUrl(1);
 		 }
 		 else
-		 { 
+		 {
 		 print '&nbsp;';
 		}
 	print '</td>';
-	  
+
       print '<td>&nbsp;</td>';
       print "</tr>\n";
-      
+
       $i++;
     }
-  
+
   $db->free($resql);
 }
 else

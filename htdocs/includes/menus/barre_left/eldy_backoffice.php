@@ -20,7 +20,7 @@
 		\file       htdocs/includes/menus/barre_left/eldy_backoffice.php
 		\brief      Gestionnaire du menu du gauche Eldy
 		\version    $Id$
-		
+
 		\remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
 		\remarks    A l'aide d'un objet $newmenu=new Menu() et des méthode add et add_submenu,
 		\remarks    définir la liste des entrées menu à faire apparaitre.
@@ -95,14 +95,14 @@ class MenuLeft {
 		}
 
 		$newmenu = new Menu();
-		
+
 		// Show logo company
 		if (! empty($conf->global->MAIN_SHOW_LOGO))
 		{
-			$mysoc->logo_small=$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL; 
-	    if (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small)) 
+			$mysoc->logo_small=$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
+	    if (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small))
 	    {
-	    	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small); 
+	    	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
 	    	print '<img title="'.$title.'" src="'.$urllogo.'">';
 	    }
 	  }
@@ -120,7 +120,7 @@ class MenuLeft {
 			if ($mainmenu == 'home')
 			{
 				$langs->load("users");
- 				
+
 				if ($user->admin)
 				{
 					$langs->load("admin");
@@ -179,13 +179,13 @@ class MenuLeft {
 			    {
 			        $langs->load("companies");
 			        $newmenu->add(DOL_URL_ROOT."/societe.php", $langs->trans("ThirdParty"), 0, $user->rights->societe->lire);
-			
+
 			        if ($user->rights->societe->creer)
 			        {
 			            $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", $langs->trans("MenuNewThirdParty"));
 			            if (! $conf->use_javascript_ajax) $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;private=1",$langs->trans("MenuNewPrivateIndividual"));
 			        }
-			
+
 			        if(is_dir("societe/groupe"))
 			        {
 			            $newmenu->add_submenu(DOL_URL_ROOT."/societe/groupe/index.php", $langs->trans("MenuSocGroup"));
@@ -218,7 +218,7 @@ class MenuLeft {
 					$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 2, $user->rights->societe->creer);
 					//$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=p", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
 				}
-				
+
 				// Clients
 			    if ($conf->societe->enabled)
 			    {
@@ -299,7 +299,7 @@ class MenuLeft {
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=c", $langs->trans("Customers"), 2, $user->rights->societe->contact->lire);
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=f", $langs->trans("Suppliers"), 2, $user->rights->societe->contact->lire);
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=o", $langs->trans("Others"), 2, $user->rights->societe->contact->lire);
-				
+
 				// Propal
 				if ($conf->propal->enabled)
 				{
@@ -366,7 +366,7 @@ class MenuLeft {
 					if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/fichinter/fiche.php?action=create&leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->rights->ficheinter->creer);
 					if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("List"), 1 ,$user->rights->ficheinter->lire);
 				}
-				
+
 			}
 
 
@@ -445,7 +445,7 @@ class MenuLeft {
 
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=customers_bills", $langs->trans("Statistics"),2,$user->rights->facture->lire);
 				}
-				
+
 				// Proposals
 				if ($conf->propal->enabled)
 				{
@@ -479,7 +479,7 @@ class MenuLeft {
 					if ($leftmenu=="tripsandexpenses") $newmenu->add(DOL_URL_ROOT."/compta/deplacement/fiche.php?action=create&amp;leftmenu=tripsandexpenses&amp;mainmenu=accountancy", $langs->trans("New"), 1, $user->rights->deplacement->creer);
 					if ($leftmenu=="tripsandexpenses") $newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=tripsandexpenses&amp;mainmenu=accountancy", $langs->trans("List"), 1, $user->rights->deplacement->lire);
 				}
-				
+
 				// Taxes and social contributions
 				if ($conf->tax->enabled)
 				{
@@ -603,7 +603,7 @@ class MenuLeft {
 							$newmenu->add_submenu(DOL_URL_ROOT."/product/fiche.php?leftmenu=product&amp;action=create&amp;type=0&canvas=livre", $langs->trans("NewBook"), 1, $user->rights->produit->creer);
 							$newmenu->add_submenu(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0&amp;canvas=livre", $langs->trans("BookList"), 1, $user->rights->produit->creer);
 						}
-					}					
+					}
 					if ($conf->stock->enabled)
 					{
 						$newmenu->add_submenu(DOL_URL_ROOT."/product/reassort.php?type=0", $langs->trans("Stocks"), 1, $user->rights->stock->lire);
@@ -652,7 +652,7 @@ class MenuLeft {
 				}
 
 				// Expeditions
-				if ($conf->expedition->enabled) 
+				if ($conf->expedition->enabled)
 				{
 					$langs->load("sendings");
 					$newmenu->add(DOL_URL_ROOT."/expedition/index.php?leftmenu=sendings", $langs->trans("Sendings"), 0, $user->rights->expedition->lire);
@@ -717,7 +717,7 @@ class MenuLeft {
 				}
 
 			}
-			
+
 			/*
 			* Menu AGENDA
 			*/
@@ -727,7 +727,7 @@ class MenuLeft {
 				if ($conf->agenda->enabled)
 				{
 					$langs->load("agenda");
-					
+
 					// Actions
 					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda", $langs->trans("Actions"), 0, $user->rights->agenda->myactions->read);
 					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/fiche.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
@@ -752,8 +752,8 @@ class MenuLeft {
 					// Reports
 					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?mainmenu=agenda&amp;leftmenu=agenda", $langs->trans("Reportings"), 1, $user->rights->agenda->myactions->read);
 				}
-			}	
-			
+			}
+
 			/*
 			* Menu PROJETS
 			*/
@@ -768,8 +768,8 @@ class MenuLeft {
 
 					$newmenu->add(DOL_URL_ROOT."/projet/tasks/index.php", $langs->trans("Tasks"), 0, $user->rights->projet->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/projet/tasks/fiche.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
-					$newmenu->add_submenu(DOL_URL_ROOT."/projet/tasks/index.php?mode=mine", $langs->trans("Mytasks"), 1, $user->rights->projet->lire);
-					
+					$newmenu->add_submenu(DOL_URL_ROOT."/projet/tasks/index.php?mode=mine", $langs->trans("MyTasks"), 1, $user->rights->projet->lire);
+
 					$newmenu->add(DOL_URL_ROOT."/projet/activity/index.php", $langs->trans("TimeSpent"), 0, $user->rights->projet->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/projet/activity/list.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer);
 					$newmenu->add_submenu(DOL_URL_ROOT."/projet/activity/index.php?mode=mine", $langs->trans("MyTimeSpent"), 1, $user->rights->projet->lire);
@@ -855,13 +855,13 @@ class MenuLeft {
 						if (eregi("members_checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=members_checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->adherent->cotisation->creer);
 						if (eregi("members_checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=members_checks",$langs->trans("MenuChequesReceipts"),1,$user->rights->adherent->cotisation->lire);
 					}
-					
+
 					if ($conf->banque->enabled)
 					{
 						$langs->load("banks");
 						$newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=members",$langs->trans("Banks"),0,$user->rights->adherent->lire);
 					}
-					
+
 					$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&amp;mainmenu=members",$langs->trans("Exports"),0,$user->rights->adherent->export);
 					if ($conf->export->enabled && $leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->rights->adherent->export);
 					if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php?leftmenu=export",$langs->trans("Filehtpasswd"),1,$user->rights->adherent->export);
@@ -876,17 +876,17 @@ class MenuLeft {
 				}
 
 			}
-			
+
 			// Affichage des menus personnalises
     	   	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
-    	   	
+
 	        $menuArbo = new Menubase($this->db,'eldy','left');
 			$this->overwritemenufor = $menuArbo->listeMainmenu();
 			// Add other mainmenu to the list of menu to overwrite pre.inc.php
 			$overwritemenumore=array('home','companies','members','products','suppliers','commercial','accountancy','agenda','project','tools','ecm');
 			$this->overwritemenufor=array_merge($overwritemenumore, $this->overwritemenufor);
 			$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,0,'eldy');
-			
+
 			/*
 			* Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)
 			*/
@@ -938,7 +938,7 @@ class MenuLeft {
 						$tabstring.='&nbsp; &nbsp;';
 					}
 				}
-				
+
 				// Menu niveau 0
 				if ($this->menu_array[$i]['level'] == 0)
 				{
@@ -981,7 +981,7 @@ class MenuLeft {
 				}
 			}
             if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
-			
+
 		}
 	}
 
