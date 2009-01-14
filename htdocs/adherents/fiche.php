@@ -67,30 +67,28 @@ $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
  * 	Actions
  */
 
-// Creation utilisateur depuis adherent
-if ($user->rights->user->user->creer)
+// Create user from a memeber
+if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
 {
-	if ($_GET["action"] == 'create_user')
-	{
-		// Recuperation contact actuel
-		$adh = new Adherent($db);
-		$result = $adh->fetch($_GET["rowid"]);
-		
-		if ($result > 0)
-		{
-			// Creation user
-			$nuser = new User($db);
-			$result=$nuser->create_from_member($adh);
+	// Recuperation contact actuel
+	$adh = new Adherent($db);
+	$result = $adh->fetch($_GET["rowid"]);
 
-			if ($result < 0)
-			{
-				$msg=$nuser->error;
-			}
-		}
-		else
+	if ($result > 0)
+	{
+		// Creation user
+		$nuser = new User($db);
+		$result=$nuser->create_from_member($adh,$_POST["login"]);
+
+		if ($result < 0)
 		{
-			$msg=$adh->error;
+			$langs->load("errors");
+			$msg=$langs->trans($nuser->error);
 		}
+	}
+	else
+	{
+		$msg=$adh->error;
 	}
 }
 
@@ -98,7 +96,7 @@ if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
 {
     $adh->id = $rowid;
     $adh->fetch($rowid);
-    
+
 	if ($adh->email)
 	{
 		$result=$adh->send_an_email("Voici le contenu de votre fiche\n\n%INFOS%\n\n","Contenu de votre fiche adherent");
@@ -348,7 +346,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
                     }
                 }
             }
-			
+
 			$db->commit();
 
             Header("Location: liste.php?statut=-1");
@@ -360,12 +358,12 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
 
 			if ($adh->error) $errmsg=$adh->error;
 			else $errmsg=$adh->errors[0];
-			
-			$action = 'create';   
+
+			$action = 'create';
         }
     }
     else {
-        $action = 'create';   
+        $action = 'create';
     }
 }
 
@@ -388,7 +386,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_P
 {
 	$result=$adh->fetch($rowid);
     $result=$adh->validate($user);
-	
+
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
 
@@ -410,13 +408,13 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_P
 				$errmsg.=$adh->error;
 			}
 		}
-		
+
 	    // Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
 	    if ($adh->add_to_abo($adht) < 0)
 	    {
 	        // error
 	        $errmsg.="Echec du rajout de l'utilisateur aux abonnements mailman: ".$adh->error."<BR>\n";
-	    }		
+	    }
 	}
 	else
 	{
@@ -455,7 +453,7 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' &
 		{
 			$errmsg.=$adh->error;
 		}
-		
+
 	    // supprime l'utilisateur des divers abonnements ..
 	    if (! $adh->del_to_abo($adht))
 	    {
@@ -540,7 +538,7 @@ if ($action == 'edit')
 	$adh->fetch_optionals($rowid);
 	// fetch optionals attributes and labels
 	$adho->fetch_name_optionals_label();
-	
+
 	$adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
 
@@ -549,7 +547,7 @@ if ($action == 'edit')
 	 * Affichage onglets
 	 */
 	$head = member_prepare_head($adh);
-	
+
 	dolibarr_fiche_head($head, 'general', $langs->trans("Member"));
 
 
@@ -561,10 +559,10 @@ if ($action == 'edit')
 	$htmls = new Form($db);
 
 	print '<table class="border" width="100%">';
-	
+
     // Ref
     print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$adh->id.'&nbsp;</td></tr>';
-	
+
 	// Nom
 	print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
 
@@ -593,10 +591,10 @@ if ($action == 'edit')
 	// Prenom
 	print '<tr><td width="20%">'.$langs->trans("Firstname").'*</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
 	print '</tr>';
-	
+
 	// Login
 	print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="login" size="30" value="'.$adh->login.'"></td></tr>';
-	
+
 	// Password
 	print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="pass" size="30" value="'.$adh->pass.'"></td></tr>';
 
@@ -612,14 +610,14 @@ if ($action == 'edit')
 		print '<input type="hidden" name="type" value="'.$adh->typeid.'">';
 	}
 	print "</td></tr>";
-	
-	// Physique-Moral	
+
+	// Physique-Moral
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Morale");
 	print "<tr><td>".$langs->trans("Person")."*</td><td>";
 	$htmls->select_array("morphy",  $morphys, $adh->morphy);
 	print "</td></tr>";
-	
+
 	// Societe
 	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
 
@@ -629,12 +627,12 @@ if ($action == 'edit')
 
 	// Cp
 	print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="6" value="'.$adh->cp.'"> <input type="text" name="ville" size="32" value="'.$adh->ville.'"></td></tr>';
-	
+
 	// Pays
 	print '<tr><td>'.$langs->trans("Country").'</td><td>';
 	$htmls->select_pays($adh->pays_code?$adh->pays_code:$mysoc->pays_code,'pays');
 	print '</td></tr>';
-	
+
 	// Tel
 	print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.$adh->phone.'"></td></tr>';
 
@@ -646,7 +644,7 @@ if ($action == 'edit')
 
 	// EMail
 	print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
-	
+
 	// Date naissance
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
     $htmls->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'update');
@@ -672,8 +670,8 @@ if ($action == 'edit')
 	print '</table>';
 
 	print '</form>';
-	
-	print '</div>'; 
+
+	print '</div>';
 }
 
 if ($action == 'create')
@@ -689,7 +687,7 @@ if ($action == 'create')
 
     print_titre($langs->trans("NewMember"));
 
-    print '<form name="add" action="fiche.php" method="post" enctype="multipart/form-data">';
+	print '<form name="add" action="fiche.php" method="post" enctype="multipart/form-data">';
     print '<input type="hidden" name="action" value="add">';
 
     print '<table class="border" width="100%">';
@@ -704,7 +702,7 @@ if ($action == 'create')
 
 	// Login
     print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="member_login" size="40" value="'.$adh->login.'"></td></tr>';
-	
+
 	// Mot de passe
 	$generated_password='';
 	if ($conf->global->USER_PASSWORD_GENERATED)
@@ -727,7 +725,7 @@ if ($action == 'create')
     {
         $htmls->select_array("type", $listetype, $typeid);
     } else {
-        print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';   
+        print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
     }
     print "</td>\n";
 
@@ -740,11 +738,11 @@ if ($action == 'create')
     print "</td>\n";
 
     print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
-    
+
     // Adresse
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
     print '<textarea name="adresse" wrap="soft" cols="40" rows="2">'.$adh->adresse.'</textarea></td></tr>';
-    
+
     // CP / Ville
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="32" value="'.$adh->ville.'"></td></tr>';
 
@@ -752,7 +750,7 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans("Country").'</td><td>';
     $htmls->select_pays($adh->pays_id ? $adh->pays_id : $mysoc->pays_id,'pays_id');
     print '</td></tr>';
-    
+
     // Tel pro
     print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.$adh->phone.'"></td></tr>';
 
@@ -818,15 +816,28 @@ if ($rowid && $action != 'edit')
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
+	// Confirm create user
+	if ($_GET["action"] == 'create_user')
+	{
+		$login=$adh->login;
+		if (empty($login)) $login=strtolower(substr($adh->prenom, 0, 4)) . strtolower(substr($adh->nom, 0, 4));
 
-    // Confirmation de la suppression de l'adherent
+		// Create a form array
+		$formquestion=array(
+		array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
+
+		$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
+		print '<br>';
+	}
+
+    // Confirm remove member
     if ($action == 'delete')
     {
         $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete");
         print '<br>';
     }
 
-    // Confirmation de la validation
+    // Confirm validate memeber
     if ($action == 'valid')
     {
 		// Cree un tableau formulaire
@@ -837,18 +848,18 @@ if ($rowid && $action != 'edit')
         print '<br>';
     }
 
-    // Confirmation de l'envoi fiche par mail
+    // Confirm send card by mail
     if ($action == 'sendinfo')
     {
         $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail"),"confirm_sendinfo");
         print '<br>';
     }
 
-    // Confirmation de la Resiliation
+    // Confirm resiliate
     if ($action == 'resign')
     {
 		$langs->load("mails");
-		
+
     	// Cree un tableau formulaire
 		$formquestion=array();
 		$label=$langs->trans("SendAnEMailToMember").' ('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
@@ -861,7 +872,7 @@ if ($rowid && $action != 'edit')
     }
 
     /*
-    * Confirmation de l'ajout dans spip
+    * Confirm add in spip
     */
     if ($action == 'add_spip')
     {
@@ -870,7 +881,7 @@ if ($rowid && $action != 'edit')
     }
 
     /*
-    * Confirmation de la suppression dans spip
+    * Confirm removed from spip
     */
     if ($action == 'del_spip')
     {
@@ -915,7 +926,7 @@ if ($rowid && $action != 'edit')
 
 	// Type
 	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
-    
+
     // Morphy
     print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$adh->getmorphylib().'</td></tr>';
 
@@ -924,7 +935,7 @@ if ($rowid && $action != 'edit')
 
 	// Adresse
     print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
-    
+
     // CP / Ville
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
 
@@ -939,16 +950,16 @@ if ($rowid && $action != 'edit')
 
     // Tel mobile
     print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.dol_print_phone($adh->phone_mobile,$adh->pays_code).'</td></tr>';
-    
+
     // EMail
     print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($adh->email,0,0,1).'&nbsp;</td></tr>';
 
 	// Date naissance
     print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dolibarr_print_date($adh->naiss,'day').'&nbsp;</td></tr>';
-    
+
     // Public
     print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($adh->public).'</td></tr>';
-    
+
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
 
@@ -964,25 +975,25 @@ if ($rowid && $action != 'edit')
 	else print $langs->trans("NoDolibarrAccess");
 	print '</td></tr>';
 
-    
+
     // Other attributs
     foreach($adho->attribute_label as $key=>$value)
     {
         print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
     }
-    
+
     print "</table>\n";
     print '</form>';
-    
+
     print "</div>\n";
 
-    
+
     /*
      * Barre d'actions
      *
      */
     print '<div class="tabsAction">';
-    
+
     // Modify
 	if ($user->rights->adherent->creer || ($user->rights->adherent->self->creer && $adh->user_id == $user->id))
 	{
@@ -992,7 +1003,7 @@ if ($rowid && $action != 'edit')
 	{
 		print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Modify")."</font>";
 	}
-	
+
 	// Valider
 	if ($adh->statut == -1)
 	{
@@ -1005,7 +1016,7 @@ if ($rowid && $action != 'edit')
 			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Validate")."</font>";
 		}
 	}
-	
+
 	// Reactiver
 	if ($adh->statut == 0)
 	{
@@ -1018,7 +1029,7 @@ if ($rowid && $action != 'edit')
 			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Reenable")."</font>";
 		}
 	}
-	
+
 	// Envoi fiche par mail
 	if ($adh->statut >= 1 && $adh->email)
 	{
@@ -1031,7 +1042,7 @@ if ($rowid && $action != 'edit')
 			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("SendCardByMail")."</font>";
 		}
 	}
-		
+
 	// Resilier
 	if ($adh->statut >= 1)
 	{
@@ -1044,7 +1055,7 @@ if ($rowid && $action != 'edit')
 			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Resiliate")."</font>";
 		}
 	}
-	
+
 	// Create user
 	if (! $user->societe_id && ! $adh->user_id)
 	{
@@ -1057,7 +1068,7 @@ if ($rowid && $action != 'edit')
 			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("CreateDolibarrLogin")."</font>";
 		}
 	}
-    
+
     // Supprimer
     if ($user->rights->adherent->supprimer)
     {
@@ -1067,7 +1078,7 @@ if ($rowid && $action != 'edit')
 	{
 		print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Delete")."</font>";
 	}
-        
+
     // Action SPIP
     if ($conf->global->ADHERENT_USE_SPIP)
     {
@@ -1084,27 +1095,27 @@ if ($rowid && $action != 'edit')
             print '<br><font class="error">Failed to connect to SPIP: '.$adh->error.'</font>';
         }
     }
-    
+
     print '</div>';
     print "<br>\n";
-    
-    
-    
+
+
+
     /*
      * Bandeau des cotisations
      *
      */
-    
+
     print '<table border=0 width="100%">';
-    
+
     print '<tr>';
     print '<td valign="top" width="50%">';
-    
+
     print '</td><td valign="top">';
-    
+
     print '</td></tr>';
     print '</table>';
-    
+
 }
 
 

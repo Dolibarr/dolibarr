@@ -11,6 +11,7 @@ For users:
 - New: Add graph report on number of entities in product statistics page.
 - New: Can delete a supplier order whatever is its status.
 - New: No limit on free text on PDF generated documents.
+- New: can force login value when creating a user from a member.
 - Fix: Failed to go on the future view of bank transaction if there is no 
   future bank transaction already wrote.  
 - Fix: Bad ref in supplier list.

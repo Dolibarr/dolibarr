@@ -265,7 +265,7 @@ if ($user->rights->societe->contact->creer)
 		}
 		else {
 			print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
-            print $form->select_societes('','socid','',1); 
+            print $form->select_societes('','socid','',1);
 			//print $form->select_societes('','socid','');
 			//print $langs->trans("ContactNotLinkedToCompany");
 			print '</td></tr>';
@@ -313,7 +313,7 @@ if ($user->rights->societe->contact->creer)
 		$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
 		$form->select_array('priv',$selectarray,$contact->priv,0);
 		print '</td></tr>';
-		
+
 		// Note
 		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3" valign="note"><textarea name="note" cols="70" rows="'.ROWS_3.'">'.$contact->note.'</textarea></td></tr>';
 
@@ -473,7 +473,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	* Fiche en mode visualisation
 	*
 	*/
-	if ($msg) 
+	if ($msg)
 	{
 		$langs->load("errors");
 		print '<div class="error">'.$langs->trans($msg).'</div>';
@@ -482,15 +482,15 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	if ($_GET["action"] == 'create_user')
 	{
 		$login=strtolower(substr($contact->prenom, 0, 4)) . strtolower(substr($contact->nom, 0, 4));
-		
-		// Cr�e un tableau formulaire
+
+		// Create a form array
 		$formquestion=array(
 		array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
-		
+
 		$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$contact->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
 		print '<br>';
 	}
-		
+
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -558,7 +558,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
 	print $contact->LibPubPriv($contact->priv);
 	print '</td></tr>';
-	
+
 	print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
 	print nl2br($contact->note);
 	print '</td></tr>';

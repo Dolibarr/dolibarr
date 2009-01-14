@@ -637,7 +637,7 @@ class User extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".$this->contact_id;
 			if ($this->db->query($sql))
 			{
-					
+
 			}
 		}
 
@@ -797,7 +797,6 @@ class User extends CommonObject
 		if (empty($login)) $login=strtolower(substr($contact->prenom, 0, 4)) . strtolower(substr($contact->nom, 0, 4));
 		$this->login = $login;
 
-
 		$this->db->begin();
 
 		// Cree et positionne $this->id
@@ -839,21 +838,22 @@ class User extends CommonObject
 	/**
 	 *      \brief      Cree en base un utilisateur depuis l'objet adherent
 	 *      \param      member	Objet adherent source
+	 * 		\param		login	Login to force
 	 *      \return     int		Si erreur <0, si ok renvoie id compte cree
 	 */
-	function create_from_member($member)
+	function create_from_member($member,$login='')
 	{
 		global $conf,$user,$langs;
 
 		// Positionne parametres
+		$this->admin = 0;
 		$this->nom = $member->nom;
 		$this->prenom = $member->prenom;
-
-		$this->login = $member->login;
-		$this->pass = $member->pass;
-		$this->admin = 0;
-
 		$this->email = $member->email;
+		$this->pass = $member->pass;
+
+		if (empty($login)) $login=strtolower(substr($member->prenom, 0, 4)) . strtolower(substr($member->nom, 0, 4));
+		$this->login = $login;
 
 		$this->db->begin();
 
@@ -1339,7 +1339,7 @@ class User extends CommonObject
 			}
 
 			$this->clicktodial_loaded = 1;	// Data loaded (found or not)
-			
+
 			$this->db->free($resql);
 			return 1;
 		}
