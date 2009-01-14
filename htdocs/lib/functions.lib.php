@@ -125,7 +125,7 @@ function dol_string_unaccent($str)
 	        OOOOOUUUY
 	        aaaaaceeee
 	        iiiidnooooo
-	        uuuyy");  
+	        uuuyy");
 		$string = strtr($string, array("\xC4"=>"Ae", "\xC6"=>"AE", "\xD6"=>"Oe", "\xDC"=>"Ue", "\xDE"=>"TH", "\xDF"=>"ss", "\xE4"=>"ae", "\xE6"=>"ae", "\xF6"=>"oe", "\xFC"=>"ue", "\xFE"=>"th"));
 		return $string;
 	}
@@ -185,7 +185,7 @@ function dol_syslog($message, $level=LOG_INFO)
 	// If adding log inside HTML page is required
 	if (! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_LOGTOHTML))
 	{
-		$conf->logbuffer[]=strftime("%Y-%m-%d %H:%M:%S",time())." ".$message;			
+		$conf->logbuffer[]=strftime("%Y-%m-%d %H:%M:%S",time())." ".$message;
 	}
 
 	// If syslog module enabled
@@ -395,7 +395,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 
 	// If date undefined or "", we return ""
 	if (strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
-	
+
 	// Analyse de la date (deprecated)
 	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg))
 	{
@@ -672,7 +672,7 @@ function dol_print_size($size)
 function dol_print_url($url,$target='_blank',$max=32)
 {
 	if (empty($url)) return '';
-	
+
 	$link='<a href="';
 	if (! eregi('^http',$url)) $link.='http://';
 	$link.=$url;
@@ -695,13 +695,13 @@ function dol_print_url($url,$target='_blank',$max=32)
 function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64)
 {
 	global $conf,$user,$langs;
-	
+
 	$newemail=$email;
-	
+
     if (empty($email)) return '&nbsp;';
 
     if (! ValidEmail($email)) return "Bad email";
-	
+
 	if (! empty($addlink))
 	{
 		$newemail='<a href="';
@@ -710,7 +710,7 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64)
 		$newemail.='">';
 		$newemail.=dol_trunc($email,$max);
 		$newemail.='</a>';
-				
+
 		if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
 		{
 			$type='AC_EMAIL';
@@ -718,7 +718,7 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64)
 			$newemail='<table class="nobordernopadding"><tr><td>'.$newemail.' </td><td>&nbsp;'.$link.'</td></tr></table>';
 		}
 	}
-		
+
 	return $newemail;
 }
 
@@ -741,7 +741,7 @@ function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$s
 function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ="&nbsp;")
 {
 	global $conf,$user,$langs;
-	
+
 	// Clean phone parameter
 	$phone = ereg_replace("[ .-]","",trim($phone));
 	if (empty($phone)) { return ''; }
@@ -770,14 +770,14 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 			$newphone=substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
 		}
 	}
-	
+
 	if (! empty($addlink))
 	{
 		if ($conf->clicktodial->enabled)
 		{
 			if (empty($user->clicktodial_loaded)) $user->fetch_clicktodial();
-			
-			if (empty($conf->global->CLICKTODIAL_URL)) $urlmask='ErrorClickToDialModuleNotConfigured'; 
+
+			if (empty($conf->global->CLICKTODIAL_URL)) $urlmask='ErrorClickToDialModuleNotConfigured';
 			else $urlmask=$conf->global->CLICKTODIAL_URL;
 			$url = sprintf($urlmask, urlencode($phone), urlencode($user->clicktodial_poste), urlencode($user->clicktodial_login), urlencode($user->clicktodial_password));
 			$newphone='<a href="'.$url.'">'.$newphone.'</a>';
@@ -806,7 +806,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 function dol_strlen($string,$stringencoding='')
 {
 	global $langs;
-	
+
 	if (empty($stringencoding)) $stringencoding=$langs->charset_output;
 
 	$ret='';
@@ -833,7 +833,7 @@ function dol_strlen($string,$stringencoding='')
 function dol_substr($string,$start,$length,$stringencoding='')
 {
 	global $langs;
-	
+
 	if (empty($stringencoding)) $stringencoding=$langs->charset_output;
 
 	$ret='';
@@ -1101,8 +1101,8 @@ function img_delete($alt = "default")
 
 /**
  *	\brief      Affiche logo help avec curseur "?"
- * 	\param		usehelpcursor	
- * 	\param		usealttitle	
+ * 	\param		usehelpcursor
+ * 	\param		usealttitle
  * 	\return     string      	Retourne tag img
  */
 function img_help($usehelpcursor=1,$usealttitle=1)
@@ -1111,7 +1111,7 @@ function img_help($usehelpcursor=1,$usealttitle=1)
 	$s ='<img ';
 	if ($usehelpcursor) $s.='style="cursor: help;" ';
 	$s.='src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/info.png" border="0"';
-	if ($usealttitle) 
+	if ($usealttitle)
 	{
 		if (is_string($usealttitle)) $s.=' alt="'.$usealttitle.'" title="'.$usealttitle.'"';
 		else $s.=' alt="'.$langs->trans("Info").'" title="'.$langs->trans("Info").'"';
@@ -1567,8 +1567,8 @@ function dol_print_error($db='',$error='')
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
 		print $langs->trans("DolibarrHasDetectedError").".<br>\n";
-		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) 
-			print "You use an experimental level of features, so please do NOT report any bugs, anywhere, until going back to MAIN_FEATURES_LEVEL = 0.<br>\n"; 
+		if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+			print "You use an experimental level of features, so please do NOT report any bugs, anywhere, until going back to MAIN_FEATURES_LEVEL = 0.<br>\n";
 		print $langs->trans("InformationToHelpDiagnose").":<br><br>\n";
 
 		print "<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";;
@@ -1612,7 +1612,7 @@ function dol_print_error($db='',$error='')
 	if ($error)
 	{
 		$langs->load("errors");
-			
+
 		if (is_array($error)) $errors=$error;
 		else $errors=array($error);
 
@@ -1630,7 +1630,7 @@ function dol_print_error($db='',$error='')
 			$syslog.=", msg=".$msg;
 		}
 	}
-	
+
 	dolibarr_syslog("Error ".$syslog, LOG_ERR);
 }
 
@@ -1717,7 +1717,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
  *	\param	    begin       ("" par defaut)
  *	\param	    options     ("" par defaut)
  *	\param      td          options de l'attribut td ("" par defaut)
- *	\param      sortfield   nom du champ sur lequel est effectue le tri du tableau
+ *	\param      sortfield   field currently used to sort
  *	\param      sortorder   ordre du tri
  */
 function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="", $sortorder="")
@@ -1727,7 +1727,7 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
 
 	// Le champ de tri est mis en evidence.
 	// Exemple si (sortfield,field)=("nom","xxx.nom") ou (sortfield,field)=("nom","nom")
-	if ($sortfield == $field || $sortfield == ereg_replace("^[^\.]+\.","",$field))
+	if ($field && ($sortfield == $field || $sortfield == ereg_replace("^[^\.]+\.","",$field)))
 	{
 		print '<td class="liste_titre_sel" '. $td.'>';
 	}
@@ -1829,7 +1829,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	}
 
 	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
-	
+
 	$pagelist = '';
 
 	// Left
@@ -2109,17 +2109,17 @@ function price2num($amount,$rounding='',$alreadysqlnb=-1)
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
 	if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format
 	{
-		//print 'ZZ'.$nbofdec.'=>'.$amount.'<br>';		
-		
+		//print 'ZZ'.$nbofdec.'=>'.$amount.'<br>';
+
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be like defined by Dolibarr setup.
-		if (is_numeric($amount)) 
+		if (is_numeric($amount))
 		{
 			$nbofdec=max(0,strlen($amount-intval($amount))-2);
 			$amount=number_format($amount,$nbofdec,$dec,$thousand);
 		}
 		//print "QQ".$amount.'<br>';
-		
+
 		// Now make replace (the main goal of function)
 		if ($thousand != ',' && $thousand != '.') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
 		$amount=str_replace(' ','',$amount);		// To avoid spaces
@@ -2133,12 +2133,12 @@ function price2num($amount,$rounding='',$alreadysqlnb=-1)
 		$nbofdectoround='';
 		if ($rounding == 'MU')     $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_UNIT;
 		elseif ($rounding == 'MT') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_TOT;
-		elseif ($rounding == 'MS') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_SHOWN; 
+		elseif ($rounding == 'MS') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
 		elseif ($rounding == '2')  $nbofdectoround=2; 	// For admin info page
 		if (strlen($nbofdectoround)) $amount = round($amount,$nbofdectoround);	// $nbofdectoround can be 0.
 		else return 'ErrorBadParameterProvidedToFunction';
-		//print 'ZZ'.$nbofdec.'-'.$nbofdectoround.'=>'.$amount.'<br>';		
-		
+		//print 'ZZ'.$nbofdec.'-'.$nbofdectoround.'=>'.$amount.'<br>';
+
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be defined by Dolibarr setup.
 		if (is_numeric($amount))
@@ -2155,7 +2155,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=-1)
 		$amount=str_replace($thousand,'',$amount);	// Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount=str_replace($dec,'.',$amount);
 	}
-	
+
 	return $amount;
 }
 
@@ -2384,7 +2384,7 @@ function clean_url($url,$http=1)
 		//print $url." -> ".$proto." - ".$domain." - ".$port;
 		//$url = dol_string_nospecial(trim($url));
 		$url = trim($url);
-		
+
 		// Si http: defini on supprime le http (Si https on ne supprime pas)
 		$newproto=$proto;
 		if ($http==0)

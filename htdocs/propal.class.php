@@ -831,7 +831,7 @@ class Propal extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog("Propal::Fetch Error ".$this->error, LOG_ERROR);
+					dolibarr_syslog("Propal::Fetch Error ".$this->error, LOG_ERR);
 					return -1;
 				}
 

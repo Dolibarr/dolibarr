@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -20,11 +20,11 @@
  */
 
 /**
-        \file       htdocs/projet/liste.php
-        \ingroup    projet
-        \brief      Page liste des projets
-        \version    $Id$
-*/
+ *	\file       htdocs/projet/liste.php
+ *	\ingroup    projet
+ *	\brief      Page liste des projets
+ *	\version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -39,9 +39,9 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 
 if ($socid > 0)
 {
-  $soc = new Societe($db);
-  $soc->fetch($socid);
-  $title .= ' (<a href="liste.php">'.$soc->nom.'</a>)';
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	$title .= ' (<a href="liste.php">'.$soc->nom.'</a>)';
 }
 
 
@@ -65,31 +65,34 @@ $pagenext = $page + 1;
 
 llxHeader();
 
+$projectstatic = new Project($db);
+$userstatic = new User($db);
 $staticsoc=new Societe($db);
 
-$sql = "SELECT p.rowid as projectid, p.ref, p.title, ".$db->pdate("p.dateo")." as do";
-$sql .= ", s.nom, s.rowid as socid, s.client";
+$sql = "SELECT p.rowid as projectid, p.ref, p.title, ".$db->pdate("p.dateo")." as do, p.fk_user_resp,";
+$sql .= " s.nom, s.rowid as socid, s.client";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM (".MAIN_DB_PREFIX."projet as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= ") LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = p.fk_soc";
 $sql .= " WHERE 1 = 1 ";
+if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 {
-  $sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".$socid;
 }
 if ($_GET["search_ref"])
 {
-  $sql .= " AND p.ref LIKE '%".addslashes($_GET["search_ref"])."%'";
+	$sql .= " AND p.ref LIKE '%".addslashes($_GET["search_ref"])."%'";
 }
 if ($_GET["search_label"])
 {
-  $sql .= " AND p.title LIKE '%".addslashes($_GET["search_label"])."%'";
+	$sql .= " AND p.title LIKE '%".addslashes($_GET["search_label"])."%'";
 }
 if ($_GET["search_societe"])
 {
-  $sql .= " AND s.nom LIKE '%".addslashes($_GET["search_societe"])."%'";
+	$sql .= " AND s.nom LIKE '%".addslashes($_GET["search_societe"])."%'";
 }
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
@@ -97,67 +100,88 @@ $var=true;
 $resql = $db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-  print_barre_liste($langs->trans("ProjectsList"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+	$text=$langs->trans("Projects");
+	if ($_REQUEST["mode"]=='mine') $text=$langs->trans('MyProjects');
+	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"liste.php","p.ref","","","",$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Label"),"liste.php","p.title","","","",$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","","",$sortfield,$sortorder);
-  print '<td>&nbsp;</td>';
-  print "</tr>\n";
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"),"liste.php","p.ref","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"),"liste.php","p.title","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("OfficerProject"),"liste.php","","","","",$sortfield,$sortorder);
+	print '<td>&nbsp;</td>';
+	print "</tr>\n";
 
-  print '<form method="get" action="liste.php">';
-  print '<tr class="liste_titre">';
-  print '<td valign="right">';
-  print '<input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'">';
-  print '</td>';
-  print '<td valign="right">';
-  print '<input type="text" class="flat" name="search_label" value="'.$_GET["search_label"].'">';
-  print '</td>';
-  print '<td valign="right">';
-  print '<input type="text" class="flat" name="search_societe" value="'.$_GET["search_societe"].'">';
-  print '</td>';
-  print '<td class="liste_titre" align="center"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-  print "</td>";
-  print "</tr>\n";
-
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object($resql);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->projectid\">".img_object($langs->trans("ShowProject"),"project")." ".$objp->ref."</a></td>\n";
-      print "<td><a href=\"fiche.php?id=$objp->projectid\">".$objp->title."</a></td>\n";
-
-	  // Company
-	  print '<td>';
-	  if ($objp->socid)
-	  {
-		  $staticsoc->id=$objp->socid;
-		  $staticsoc->nom=$objp->nom;
-		  print $staticsoc->getNomUrl(1);
-		 }
-		 else
-		 {
-		 print '&nbsp;';
-		}
+	print '<form method="get" action="liste.php">';
+	print '<tr class="liste_titre">';
+	print '<td valign="right">';
+	print '<input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'" size="6">';
 	print '</td>';
+	print '<td valign="right">';
+	print '<input type="text" class="flat" name="search_label" value="'.$_GET["search_label"].'">';
+	print '</td>';
+	print '<td valign="right">';
+	print '<input type="text" class="flat" name="search_societe" value="'.$_GET["search_societe"].'">';
+	print '</td>';
+	print '<td>&nbsp;</td>';
+	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+	print "</td>";
+	print "</tr>\n";
 
-      print '<td>&nbsp;</td>';
-      print "</tr>\n";
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($resql);
+		$var=!$var;
+		print "<tr $bc[$var]>";
 
-      $i++;
-    }
+		print "<td>";
+		$projectstatic->id=$objp->projectid;
+		$projectstatic->ref=$objp->ref;
+		print $projectstatic->getNomUrl(1);
+		print "</td>";
 
-  $db->free($resql);
+		// Title
+		print '<td>';
+		print dolibarr_trunc($objp->title,24);
+		print '</td>';
+
+		// Company
+		print '<td>';
+		if ($objp->socid)
+		{
+			$staticsoc->id=$objp->socid;
+			$staticsoc->nom=$objp->nom;
+			print $staticsoc->getNomUrl(1);
+		}
+		else
+		{
+		 	print '&nbsp;';
+		}
+		print '</td>';
+
+		// Title
+		$userstatic->id=$objp->fk_user_resp;
+		$userstatic->nom=$objp->fk_user_resp;
+		print '<td align="left">';
+		if ($objp->fk_user_resp > 0) print $userstatic->getNomUrl(1);
+		else print $langs->trans("SharedProject");
+		print '</td>';
+
+		print '<td>&nbsp;</td>';
+		print "</tr>\n";
+
+		$i++;
+	}
+
+	$db->free($resql);
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 print "</table>";
@@ -166,5 +190,4 @@ $db->close();
 
 
 llxFooter('$Date$ - $Revision$');
-
 ?>

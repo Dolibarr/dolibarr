@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-		\file       htdocs/projet/activity/myactivity.php
-		\ingroup    projet
-		\brief      Page activite perso du module projet
-		\version    $Id$
-*/
+ \file       htdocs/projet/activity/myactivity.php
+ \ingroup    projet
+ \brief      Page activite perso du module projet
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -31,9 +31,9 @@ $mode=$_REQUEST["mode"];
 
 // Security check
 if (!$user->rights->projet->lire) accessforbidden();
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
-  $socid = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 $langs->load("projects");
@@ -43,10 +43,12 @@ $langs->load("projects");
  * View
  */
 
-$now = time();
+$now = gmmktime();
 
-if ($mode == 'mine') $title=$langs->trans("MyActivity");
-else $title=$langs->trans("Activity");
+$projectstatic=new Project($db);
+
+if ($mode == 'mine') $title=$langs->trans("MyActivities");
+else $title=$langs->trans("Activities");
 
 llxHeader("",$title);
 
@@ -55,18 +57,13 @@ print_fiche_titre($title);
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
-/*
- *
- * Affichage de la liste des projets
- * 
- */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
 print '<td align="right">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.title, p.rowid, count(t.rowid)";
+$sql = "SELECT p.rowid, p.ref, p.title, count(t.rowid) as nb";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p,";
 $sql .= " ".MAIN_DB_PREFIX."projet_task as t";
@@ -75,8 +72,8 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFI
 $sql .= " WHERE t.fk_projet = p.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
-{ 
-  $sql .= " AND p.fk_soc = ".$socid; 
+{
+	$sql .= " AND p.fk_soc = ".$socid;
 }
 if ($mode == 'mine') $sql.=" AND t.rowid = pta.fk_projet_task";
 if ($mode == 'mine') $sql.=" AND pta.fk_user = ".$user->id;
@@ -86,26 +83,30 @@ $var=true;
 $resql = $db->query($sql);
 if ( $resql )
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-  while ($i < $num)
-    {
-      $row = $db->fetch_row( $resql);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="right">'.$row[2].'</td>';
-      print "</tr>\n";
-    
-      $i++;
-    }
-  
-  $db->free($resql);
+	while ($i < $num)
+	{
+		$row = $db->fetch_object($resql);
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		print '<td>';
+		$projectstatic->id=$row->rowid;
+		$projectstatic->ref=$row->ref;
+		print $projectstatic->getNomUrl(1);
+		print '</td>';
+		print '<td align="right">'.$row->nb.'</td>';
+		print "</tr>\n";
+
+		$i++;
+	}
+
+	$db->free($resql);
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 print "</table>";
 
@@ -116,7 +117,7 @@ print '<td width="50%">'.$langs->trans('Today').'</td>';
 print '<td width="50%" align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
+$sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -131,26 +132,30 @@ $total=0;
 $resql = $db->query($sql);
 if ( $resql )
 {
-  while ($row = $db->fetch_row($resql))
-    {
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="right">'.$row[2].'</td>';
-      print "</tr>\n";
-      $total += $row[2];
-    }
-  
-  $db->free($resql);
+	while ($row = $db->fetch_object($resql))
+	{
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		print '<td>';
+		$projectstatic->id=$row->rowid;
+		$projectstatic->ref=$row->ref;
+		print $projectstatic->getNomUrl(1);
+		print '</td>';
+		print '<td align="right">'.$row->nb.'</td>';
+		print "</tr>\n";
+		$total += $row->nb;
+	}
+
+	$db->free($resql);
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
 print '<td align="right">'.$total.'</td>';
-print "</tr>\n";    
+print "</tr>\n";
 print "</table>";
 
 /* Affichage de la liste des projets d'hier */
@@ -160,7 +165,7 @@ print '<td>'.$langs->trans('Yesterday').'</td>';
 print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
+$sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -175,21 +180,25 @@ $total=0;
 $resql = $db->query($sql);
 if ( $resql )
 {
-  while ($row = $db->fetch_row($resql))
-    {
-      $var=!$var;
-    	print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="right">'.$row[2].'</td>';
-      print "</tr>\n";
-      $total += $row[2];
-    }
-  
-  $db->free($resql);
+	while ($row = $db->fetch_object($resql))
+	{
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		print '<td>';
+		$projectstatic->id=$row->rowid;
+		$projectstatic->ref=$row->ref;
+		print $projectstatic->getNomUrl(1);
+		print '</td>';
+		print '<td align="right">'.$row->nb.'</td>';
+		print "</tr>\n";
+		$total += $row->nb;
+	}
+
+	$db->free($resql);
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
@@ -206,7 +215,7 @@ print '<td>'.$langs->trans("ActivityOnProjectThisWeek").'</td>';
 print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
+$sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -220,21 +229,25 @@ $var=true;
 $resql = $db->query($sql);
 if ( $resql )
 {
-  while ($row = $db->fetch_row( $resql))
-    {
-      $var=!$var;
-    	print "<tr ".$bc[$var].">";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="right">'.$row[2].'</td>';
-      print "</tr>\n";    
-      $total += $row[2];
-    }
-  
-  $db->free($resql);
+	while ($row = $db->fetch_object($resql))
+	{
+		$var=!$var;
+		print "<tr ".$bc[$var].">";
+		print '<td>';
+		$projectstatic->id=$row->rowid;
+		$projectstatic->ref=$row->ref;
+		print $projectstatic->getNomUrl(1);
+		print '</td>';
+		print '<td align="right">'.$row->nb.'</td>';
+		print "</tr>\n";
+		$total += $row->nb;
+	}
+
+	$db->free($resql);
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
@@ -249,7 +262,7 @@ print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.strftime("%B %Y", 
 print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
+$sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -263,19 +276,23 @@ $var=false;
 $resql = $db->query($sql);
 if ( $resql )
 {
-  while ($row = $db->fetch_row($resql))
-    {
-      print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="right">'.$row[2].'</td>';
-      print "</tr>\n";    
-      $var=!$var;
-    }  
-  $db->free($resql);
+	while ($row = $db->fetch_object($resql))
+	{
+		print "<tr $bc[$var]>";
+		print '<td>';
+		$projectstatic->id=$row->rowid;
+		$projectstatic->ref=$row->ref;
+		print $projectstatic->getNomUrl(1);
+		print '</td>';
+		print '<td align="right">'.$row->nb.'</td>';
+		print "</tr>\n";
+		$var=!$var;
+	}
+	$db->free($resql);
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 print "</table>";
 
@@ -286,7 +303,7 @@ print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now
 print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
+$sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -300,19 +317,23 @@ $var=false;
 $resql = $db->query($sql);
 if ( $resql )
 {
-  while ($row = $db->fetch_row($resql))
-    {
-      print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="right">'.$row[2].'</td>';
-      print "</tr>\n";    
-      $var=!$var;
-    }  
-  $db->free($resql);
+	while ($row = $db->fetch_object($resql))
+	{
+		print "<tr $bc[$var]>";
+		print '<td>';
+		$projectstatic->id=$row->rowid;
+		$projectstatic->ref=$row->ref;
+		print $projectstatic->getNomUrl(1);
+		print '</td>';
+		print '<td align="right">'.$row->nb.'</td>';
+		print "</tr>\n";
+		$var=!$var;
+	}
+	$db->free($resql);
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 print "</table>";
 

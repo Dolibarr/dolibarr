@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -153,6 +153,102 @@ class FormOther
 		}
 	}
 
+
+	/**
+	 *	\brief     	Retourn list of project and tasks
+	 *	\param     	selected    	Pre-selected value
+	 * 	\param		modeproject		1 to restrict on projects owned by user
+	 * 	\param		modetask		1 to restrict on tasks associated to user
+	 * 	\param     	htmlname    	Name of html select
+	 */
+	function selectProjectTasks($selected='',$htmlname='task_parent', $modeproject=0, $modetask=0)
+	{
+		global $user;
+
+		require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+
+		//print $modeproject.'-'.$modetask;
+		$project=new Project($this->db);
+		$tasksarray=$project->getTasksArray($modetask?$user:0, $modeproject?$user:0);
+		if ($tasksarray)
+		{
+			print '<select class="flat" name="'.$htmlname.'">';
+			print '<option value="0" selected="true">&nbsp;</option>';
+			$j=0;
+			$level=0;
+			PLineSelect($j, 0, $tasksarray, $level);
+			print '</select>';
+		}
+	}
+}
+
+
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $inc
+ * @param unknown_type $parent
+ * @param unknown_type $lines
+ * @param unknown_type $level
+ */
+function PLineSelect(&$inc, $parent, $lines, &$level)
+{
+	global $langs;
+
+	$lastprojectid=0;
+
+	for ($i = 0 ; $i < sizeof($lines) ; $i++)
+	{
+		if ($parent == 0) $level = 0;
+
+		if ($lines[$i]->fk_parent == $parent)
+		{
+			$var = !$var;
+
+			// Break on a new project
+			if ($parent == 0 && $lines[$i]->projectid != $lastprojectid)
+			{
+				print '<option value="'.$lines[$i]->projectid.'_0">';
+				print $langs->trans("Project").' '.$lines[$i]->projectref;
+				if ($lines[$i]->name || $lines[$i]->fistname)
+				{
+					//print ' ('.$lines[$i]->name.($lines[$i]->name && $lines[$i]->firstname?' ':'').$lines[$i]->firstname.')';
+				}
+				else
+				{
+					print ' ('.$langs->trans("SharedProject").')';
+				}
+				//print '-'.$parent.'-'.$lines[$i]->projectid.'-'.$lastprojectid;
+				print "</option>\n";
+
+				$lastprojectid=$lines[$i]->projectid;
+				$inc++;
+			}
+
+			print '<option value="'.$lines[$i]->projectid.'_'.$lines[$i]->id.'">';
+			print $langs->trans("Project").' '.$lines[$i]->projectref;
+			if ($lines[$i]->name || $lines[$i]->fistname)
+			{
+				//print ' ('.$lines[$i]->name.($lines[$i]->name && $lines[$i]->firstname?' ':'').$lines[$i]->firstname.')';
+			}
+			else
+			{
+				print ' ('.$langs->trans("SharedProject").')';
+			}
+			if ($lines[$i]->id) print ' > ';
+			for ($k = 0 ; $k < $level ; $k++)
+			{
+				print "&nbsp;&nbsp;&nbsp;";
+			}
+			print $lines[$i]->title."</option>\n";
+
+			$inc++;
+
+			$level++;
+			if ($lines[$i]->id) PLineSelect($inc, $lines[$i]->id, $lines, $level);
+			$level--;
+		}
+	}
 }
 
 ?>

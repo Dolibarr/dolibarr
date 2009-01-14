@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,7 +68,7 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 		  	{
 				$post=intval($post)+(($post-intval($post))*(1+2/3));
 				$post=price2num($post);
-		  		
+
 				$id = ereg_replace("task","",$key);
 
 				$task=new Task($db);
@@ -76,7 +76,7 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 
 				$project = new Project($db);
 				$result = $project->fetch($task->fk_projet);
-				
+
 		  		$date = dolibarr_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
 		  		$project->TaskAddTime($user, $id , $post, $date);
 		  	}
@@ -118,7 +118,8 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorde
 if ($mesg) print $mesg;
 
 $tasksrole=$projet->getTasksRoleForUser($user);
-$tasksarray=$projet->getTasksArray();
+$tasksarray=$projet->getTasksArray(0,0);
+//var_dump($tasksarray);
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$projet->id.'">';
 print '<input type="hidden" name="action" value="addtime">';
@@ -131,7 +132,7 @@ print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
 print "</tr>\n";
-PLines($j, 0, $tasksarray, $level, $tasksrole);
+PLinesb($j, 0, $tasksarray, $level, $tasksrole);
 print '</form>';
 
 
@@ -141,75 +142,4 @@ print '</div>';
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
-
-function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
-{
-	global $user, $bc, $langs;
-	global $form;
-
-	$projectstatic = new Project($db);
-	
-	$var=true;
-	
-	for ($i = 0 ; $i < sizeof($lines) ; $i++)
-	{
-		if ($parent == 0)
-		$level = 0;
-
-		if ($lines[$i]->fk_parent == $parent)
-		{
-			$var = !$var;
-			print "<tr $bc[$var]>\n";
-
-			print "<td>";
-			$projectstatic->id=$lines[$i]->projectid;
-			$projectstatic->ref=$lines[$i]->projectref;
-			print $projectstatic->getNomUrl(1);
-			print "</td>";
-
-			print "<td>".$lines[$i]->id."</td>";
-
-			print "<td>";
-
-			for ($k = 0 ; $k < $level ; $k++)
-			{
-				print "&nbsp;&nbsp;&nbsp;";
-			}
-
-			print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'">'.$lines[$i]->title."</a></td>\n";
-
-			$heure = intval($lines[$i]->duration);
-			$minutes = round((($lines[$i]->duration - $heure) * 60),0);
-			$minutes = substr("00"."$minutes", -2);
-
-			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
-
-			if ($tasksrole[$lines[$i]->id] == 'admin')
-			{
-				print '<td>';
-				print '<input size="4" type="text" class="flat" name="task'.$lines[$i]->id.'" value="">';
-				print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-				print '</td>';
-				print "<td>";
-				print $form->select_date('',$lines[$i]->id,'','','',"addtime");
-				print '</td>';
-			}
-			else
-			{
-				print '<td colspan="2">&nbsp;</td>';
-			}
-			print "</tr>\n";
-			$inc++;
-			$level++;
-			if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $tasksrole);
-			$level--;
-		}
-		else
-		{
-			//$level--;
-		}
-	}
-}
-
 ?>

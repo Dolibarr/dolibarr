@@ -25,6 +25,7 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $mode=$_REQUEST["mode"];
 
@@ -86,7 +87,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("Task").'</td>';
-print '<td>&nbsp;</td>';
+print '<td>'.$langs->trans("Label").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print "</tr>\n";
 
@@ -110,67 +111,4 @@ print '</div>';
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
-
-// TODO Same function PLines than in fiche.php
-function PLines(&$inc, $parent, $lines, &$level, $var)
-{
-	global $user, $bc, $langs;
-
-	$lastprojectid=0;
-
-	$projectstatic = new Project($db);
-
-	for ($i = 0 ; $i < sizeof($lines) ; $i++)
-	{
-		if ($parent == 0) $level = 0;
-
-		if ($lines[$i]->fk_parent == $parent)
-		{
-			// Break on a new project
-			if ($parent == 0 && $lines[$i]->projectid != $lastprojectid)
-			{
-				$var = !$var;
-				$lastprojectid=$lines[$i]->projectid;
-			}
-
-			print "<tr $bc[$var]>\n";
-
-			print "<td>";
-			$projectstatic->id=$lines[$i]->projectid;
-			$projectstatic->ref=$lines[$i]->projectref;
-			print $projectstatic->getNomUrl(1);
-			print "</td>";
-
-			print "<td>".$lines[$i]->id."</td>";
-
-			print "<td>";
-			for ($k = 0 ; $k < $level ; $k++)
-			{
-				print "&nbsp;&nbsp;&nbsp;";
-			}
-
-			print '<a href="task.php?id='.$lines[$i]->id.'">'.$lines[$i]->title."</a></td>\n";
-
-			$heure = intval($lines[$i]->duration);
-			$minutes = round((($lines[$i]->duration - $heure) * 60),0);
-			$minutes = substr("00"."$minutes", -2);
-
-			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
-
-			print "</tr>\n";
-
-			$inc++;
-
-			$level++;
-			if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $var);
-			$level--;
-		}
-		else
-		{
-			//$level--;
-		}
-	}
-}
-
 ?>

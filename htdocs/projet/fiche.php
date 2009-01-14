@@ -145,7 +145,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print_fiche_titre($langs->trans("NewProject"));
 
 	if ($mesg) print $mesg.'<br>';
-	
+
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	//if ($_REQUEST["socid"]) print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
 	print '<table class="border" width="100%">';
@@ -165,7 +165,15 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
 	// Responsable du projet
 	print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
-	$html->select_users($projet->user_resp_id,'officer_project',1);
+	if ($_REQUEST["mode"] != 'mine')
+	{
+		$html->select_users($projet->user_resp_id,'officer_project',1);
+	}
+	else
+	{
+		print $user->getNomUrl(1);
+		print '<input type="hidden" name="officer_project" value="'.$user->id.'">';
+	}
 	print '</td></tr>';
 
 	print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
@@ -180,10 +188,14 @@ else
 	 */
 
 	if ($mesg) print $mesg;
-	
+
 	$projet = new Project($db);
 	$projet->fetch($_GET["id"],$_GET["ref"]);
 	$projet->societe->fetch($projet->societe->id);
+	if ($projet->user_resp_id > 0)
+	{
+		$result=$projet->fetch_user($projet->user_resp_id);
+	}
 
 	$head=project_prepare_head($projet);
 	dolibarr_fiche_head($head, 'project', $langs->trans("Project"));
@@ -224,31 +236,26 @@ else
 	}
 	else
 	{
-		if ($projet->user_resp_id > 0)
-		{
-			$result=$projet->fetch_user($projet->user_resp_id);
-		}
-
 		print '<table class="border" width="100%">';
-		
+
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 		print $html->showrefnav($projet,'ref','',1,'ref','ref');
 		print '</td></tr>';
-		
+
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
-		
+
 		// Third party
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
 		if ($projet->societe->id > 0) print $projet->societe->getNomUrl(1);
 		else print'&nbsp;';
 		print '</td></tr>';
-		
+
 		// Project leader
 		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
 		if ($projet->user->id) print $projet->user->getNomUrl(1);
-		else print '&nbsp;';
+		else print $langs->trans('SharedProject');
 		print '</td></tr>';
 
 		print '</table>';

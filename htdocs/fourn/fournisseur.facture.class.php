@@ -55,7 +55,7 @@ class FactureFournisseur extends Facture
 	var $statut;
 	//! 1 si facture payee COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
 	var $paye;
-	
+
 	var $author;
 	var $libelle;
 	var $date;
@@ -123,7 +123,7 @@ class FactureFournisseur extends Facture
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author, date_lim_reglement) ';
 		$sql .= " VALUES ('".addslashes($number)."','".addslashes($this->libelle)."',";
 		$sql .= $this->socid.", ".$this->db->idate(mktime()).",'".$this->db->idate($this->date)."','".addslashes($this->note)."', ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
-		
+
 		dolibarr_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -133,13 +133,13 @@ class FactureFournisseur extends Facture
 			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
 				$sql .= ' VALUES ('.$this->id.');';
-				
+
 				dolibarr_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
 				$resql_insert=$this->db->query($sql);
 				if ($resql_insert)
 				{
 					$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
-					
+
 					$this->updateline($idligne,
 					$this->lignes[$i]->description,
 					$this->lignes[$i]->pu_ht,
@@ -241,7 +241,7 @@ class FactureFournisseur extends Facture
 				if ($result < 0)
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog('FactureFournisseur::Fetch Error '.$this->error, LOG_ERROR);
+					dolibarr_syslog('FactureFournisseur::Fetch Error '.$this->error, LOG_ERR);
 					return -3;
 				}
 				return 1;
@@ -263,7 +263,7 @@ class FactureFournisseur extends Facture
 		}
 	}
 
-	
+
 	/**
 	 *	\brief      Load this->lignes
 	 *	\return     int         1 si ok, < 0 si erreur
@@ -319,8 +319,8 @@ class FactureFournisseur extends Facture
 			return -3;
 		}
 	}
-	
-	
+
+
 	/**
 	 * \brief     Recup�re l'objet fournisseur li� � la facture
 	 *
@@ -339,7 +339,7 @@ class FactureFournisseur extends Facture
 	function delete($rowid)
 	{
 		$this->db->begin();
-		
+
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
 		dolibarr_syslog("FactureFournisseur sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -398,7 +398,7 @@ class FactureFournisseur extends Facture
 	function set_valid($user)
 	{
 		global $conf,$langs;
-		
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
@@ -410,7 +410,7 @@ class FactureFournisseur extends Facture
 		if ($resql)
 		{
 			$error=0;
-			
+
 			// Si activé on décrémente le produit principal et ses composants à la validation de facture
 			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
 			{
@@ -428,7 +428,7 @@ class FactureFournisseur extends Facture
 					}
 				}
 			}
-			
+
 			if ($error == 0)
 			{
 				// Appel des triggers
@@ -438,7 +438,7 @@ class FactureFournisseur extends Facture
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
-			
+
 			if ($error == 0)
 			{
 				$this->db->commit();
@@ -487,7 +487,7 @@ class FactureFournisseur extends Facture
 		// Nettoyage param�tres
 		if ($txtva == '') $txtva=0;
 		$txtva=price2num($txtva);
-	
+
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
 		$sql .= ' VALUES ('.$this->id.');';
@@ -560,7 +560,7 @@ class FactureFournisseur extends Facture
 			$result=$product->fetch($idproduct);
 			$product_type=$product->type;
 		}
-		
+
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn_det ';
 		$sql.= 'SET ';
 		$sql.= 'description =\''.addslashes($label).'\'';
@@ -651,7 +651,7 @@ class FactureFournisseur extends Facture
 			dolibarr_print_error($this->db);
 		}
 	}
-	
+
 
 	/**
 	 *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
@@ -663,7 +663,7 @@ class FactureFournisseur extends Facture
 		global $conf, $user;
 
 		$now=gmmktime();
-		
+
 		$this->nbtodo=$this->nbtodolate=0;
 		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin';
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -701,9 +701,9 @@ class FactureFournisseur extends Facture
 	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;
-		
+
 		$result='';
-		
+
 		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$this->id.'">';
 		$lienfin='</a>';
 
@@ -712,7 +712,7 @@ class FactureFournisseur extends Facture
 		return $result;
 	}
 
-	
+
 	/**
 	*		\brief		Initialise la facture avec valeurs fictives al�atoire
 	*					Sert � g�n�rer une facture pour l'aperu des mod�les ou demo
@@ -786,7 +786,7 @@ class FactureFournisseur extends Facture
 		$this->total_tva      = $xnbp*19.6;
 		$this->total_ttc      = $xnbp*119.6;
 	}
-	
+
 		/**
 	 *		\brief      Load an object from its id and create a new one in database
 	 *		\param      fromid     		Id of object to clone
@@ -807,7 +807,7 @@ class FactureFournisseur extends Facture
 		$object->fetch($fromid);
 		$object->id=0;
 		$object->statut=0;
-		
+
 		// Clear fields
 		$object->ref_supplier=$langs->trans("CopyOf").' '.$object->ref_supplier;
 		$object->author             = $user->id;
@@ -819,7 +819,7 @@ class FactureFournisseur extends Facture
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
-		
+
 		// Create clone
 		$result=$object->create($user);
 
@@ -832,9 +832,9 @@ class FactureFournisseur extends Facture
 
 		if (! $error)
 		{
-				
-				
-				
+
+
+
 		}
 
 		// End
@@ -849,6 +849,6 @@ class FactureFournisseur extends Facture
 			return -1;
 		}
 	}
-	
+
 }
 ?>

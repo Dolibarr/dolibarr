@@ -19,18 +19,17 @@
  */
 
 /**
-		\file       htdocs/project.class.php
-		\ingroup    projet
-		\brief      Fichier de la classe de gestion des projets
-		\version    $Id$
-*/
-
+ *		\file       htdocs/project.class.php
+ *		\ingroup    projet
+ *		\brief      Fichier de la classe de gestion des projets
+ *		\version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 
 /**
-		\class      Project
-		\brief      Classe permettant la gestion des projets
-*/
+ *		\class      Project
+ *		\brief      Class to manage projects
+ */
 class Project extends CommonObject
 {
 	var $db;							//!< To store db handler
@@ -47,9 +46,9 @@ class Project extends CommonObject
 
 
 	/**
-	*    \brief  Constructeur de la classe
-	*    \param  DB          handler acc�s base de donn�es
-	*/
+	 *    \brief  Constructeur de la classe
+	 *    \param  DB          handler acc�s base de donn�es
+	 */
 	function Project($DB)
 	{
 		$this->db = $DB;
@@ -57,10 +56,10 @@ class Project extends CommonObject
 	}
 
 	/*
-	*    \brief      Cree un projet en base
-	*    \param      user        Id utilisateur qui cree
-	*    \return     int         <0 si ko, id du projet cree si ok
-	*/
+	 *    \brief      Cree un projet en base
+	 *    \param      user        Id utilisateur qui cree
+	 *    \return     int         <0 si ko, id du projet cree si ok
+	 */
 	function create($user)
 	{
 		// Check parameters
@@ -176,10 +175,10 @@ class Project extends CommonObject
 	}
 
 	/**
-	*	\brief		Return list of projects
-	* 	\param		id_societe	To filter on a particular third party
-	* 	\return		array		Liste of projects
-	*/
+	 *	\brief		Return list of projects
+	 * 	\param		id_societe	To filter on a particular third party
+	 * 	\return		array		Liste of projects
+	 */
 	function liste_array($id_societe='')
 	{
 		$projets = array();
@@ -216,10 +215,10 @@ class Project extends CommonObject
 	}
 
 	/**
-	* 	\brief		Return list of elements for type linked to project
-	*	\param		type		'propal','order','invoice','order_supplier','invoice_supplier'
-	*	\return		array		List of orders linked to project, <0 if error
-	*/
+	 * 	\brief		Return list of elements for type linked to project
+	 *	\param		type		'propal','order','invoice','order_supplier','invoice_supplier'
+	 *	\return		array		List of orders linked to project, <0 if error
+	 */
 	function get_element_list($type)
 	{
 		$elements = array();
@@ -262,9 +261,9 @@ class Project extends CommonObject
 	}
 
 	/**
-	*    \brief    Supprime le projet dans la base
-	*    \param    Utilisateur
-	*/
+	 *    \brief    Supprime le projet dans la base
+	 *    \param    Utilisateur
+	 */
 	function delete($user)
 	{
 
@@ -283,51 +282,71 @@ class Project extends CommonObject
 	}
 
 	/**
-	*    \brief     Create a task into project
-	*    \param     user     Id user that create
-	*    \param		title    Title of task
-	*    \param     parent   Id task parent
-	*/
-	function CreateTask($user, $title, $parent = 0)
+	 *  \brief     	Create a task into project
+	 *  \param     	user    	Id user that create
+	 *  \param		title    	Title of task
+	 *  \param     	parent   	Id task parent
+	 *	\param		id_resp		Id of responsible user
+	 * 	\return		int			Task id if succes, <0 if KO
+	 */
+	function CreateTask($user, $title, $parent=0, $id_resp=0)
 	{
 		$result = 0;
+		$task_id = -1;
+
 		if (trim($title))
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (fk_projet, title, fk_user_creat, fk_task_parent, duration_effective)";
-			$sql.= " VALUES (".$this->id.",'$title', ".$user->id.",".$parent.", 0)";
+			$this->db->begin();
 
-			dolibarr_syslog("Project::CreateTask sql=".$sql,LOG_DEBUG);
-			if ($this->db->query($sql) )
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (fk_projet, title, fk_user_creat, fk_task_parent, duration_effective)";
+			$sql.= " VALUES (".$this->id.",'".addslashes($title)."', ".$user->id.",".($parent>0?$parent:'0').", 0)";
+
+			dolibarr_syslog("Project::CreateTask sql=".$sql, LOG_DEBUG);
+			if ($this->db->query($sql))
 			{
 				$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
-				$result = 0;
+				$result = $task_id;
 			}
 			else
 			{
-				$this->error=$this->db->error();
-				dolibarr_syslog("Project::CreateTask error -2 ".$this->error,LOG_ERR);
-				$result = -2;
+				$this->error=$this->db->lasterror();
+				dolibarr_syslog("Project::CreateTask error -1 ".$this->error, LOG_ERR);
+				$result = -1;
 			}
 
-			if ($result == 0)
+			if ($result >= 0)
 			{
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_actors (fk_projet_task, fk_user)";
-				$sql.= " VALUES (".$task_id.",".$user->id.")";
-
-				dolibarr_syslog("Project::CreateTask sql=".$sql,LOG_DEBUG);
-				if ($this->db->query($sql) )
+				if ($id_resp > 0)
 				{
-					$result = 0;
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_actors (fk_projet_task, fk_user)";
+					$sql.= " VALUES (".$task_id.",".($id_resp>0?$id_resp:'null').")";
+
+					dolibarr_syslog("Project::CreateTask sql=".$sql,LOG_DEBUG);
+					if ($this->db->query($sql) )
+					{
+						$this->db->commit();
+						return $task_id;
+					}
+					else
+					{
+						$this->error=$this->db->lasterror();
+						dolibarr_syslog("Project::CreateTask error -3 ".$this->error,LOG_ERR);
+						$this->db->rollback();
+						return -3;
+					}
 				}
 				else
 				{
-					$this->error=$this->db->error();
-					dolibarr_syslog("Project::CreateTask error -3 ".$this->error,LOG_ERR);
-					$result = -2;
+					$this->db->commit();
+					return $task_id;
 				}
 			}
-
-
+			else
+			{
+				dolibarr_syslog("Project::CreateTask error -2 ".$this->error,LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
 		}
 		else
 		{
@@ -340,11 +359,11 @@ class Project extends CommonObject
 
 
 	/**
-	*    \brief     Cree une tache dans le projet
-	*    \param     user     Id utilisateur qui cree
-	*    \param     title    titre de la tache
-	*    \param     parent   tache parente
-	*/
+	 *    \brief     Cree une tache dans le projet
+	 *    \param     user     Id utilisateur qui cree
+	 *    \param     title    titre de la tache
+	 *    \param     parent   tache parente
+	 */
 	function TaskAddTime($user, $task, $time, $date)
 	{
 		$result = 0;
@@ -424,31 +443,39 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * Return list of task for project
-	 * @param	user	Object user to limit task affected to a particular user
-	 *
-	 * @return unknown
+	 * Return list of task for all projects or a particular project
+	 * Sort order is on project, TODO then of position of task, and last on title of first level task
+	 * @param	usert	Object user to limit task affected to a particular user
+	 * @param	userp	Object user to limit projects of a particular user
+	 * @return 	array	Array of tasks
 	 */
-	function getTasksArray($user=0)
+	function getTasksArray($usert=0,$userp=0)
 	{
 		$tasks = array();
 
-		/* List of tasks */
+		//print $usert.'-'.$userp;
+
+		// List of tasks
 		$sql = "SELECT p.rowid as projectid, p.ref, p.title as ptitle,";
-		$sql.= " t.rowid, t.title, t.fk_task_parent, t.duration_effective";
-		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-		if (is_object($user))
+		$sql.= " t.rowid, t.title, t.fk_task_parent, t.duration_effective,";
+		$sql.= " up.name, up.firstname";
+		$sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
+		if (is_object($usert))	// Limit to task affected to a user
 		{
 			$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 			$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as ta";
+			$sql.= ")";
 		}
 		else
 		{
+			$sql.= ")";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
 		}
-		$sql.=" WHERE 1 = 1";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as up on p.fk_user_resp = up.rowid";
+		$sql.= " WHERE 1 = 1";
 		if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
-		if (is_object($user)) $sql .= " AND t.fk_projet = p.rowid AND ta.fk_projet_task = t.rowid AND ta.fk_user =".$user->id;
+		if (is_object($usert)) $sql .= " AND t.fk_projet = p.rowid AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
+		if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
 		$sql.= " ORDER BY p.ref, t.title";
 
 		dolibarr_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
@@ -463,10 +490,12 @@ class Project extends CommonObject
 				$tasks[$i]->projectid    = $obj->projectid;
 				$tasks[$i]->projectref   = $obj->ref;
 				$tasks[$i]->projectlabel = $obj->title;
-				$tasks[$i]->id         = $obj->rowid;
-				$tasks[$i]->title      = $obj->title;
-				$tasks[$i]->fk_parent  = $obj->fk_task_parent;
-				$tasks[$i]->duration   = $obj->duration_effective;
+				$tasks[$i]->id           = $obj->rowid;
+				$tasks[$i]->title        = $obj->title;
+				$tasks[$i]->fk_parent    = $obj->fk_task_parent;
+				$tasks[$i]->duration     = $obj->duration_effective;
+				$tasks[$i]->name         = $obj->name;
+				$tasks[$i]->firstname    = $obj->firstname;
 				$i++;
 			}
 			$this->db->free();
@@ -478,6 +507,7 @@ class Project extends CommonObject
 
 		return $tasks;
 	}
+
 
 	/**
 	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)

@@ -33,31 +33,7 @@ if (!$user->rights->projet->lire) accessforbidden();
  * Actions
  */
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->creer)
-{
-	$task = new Task($db);
-	if ($task->fetch($_GET["id"]) >= 0 )
-	{
-		$projet = new Project($db);
-		$result=$projet->fetch($task->fk_projet);
-		if (! empty($projet->socid))
-		{
-			$projet->societe->fetch($projet->socid);
-		}
 
-		if ($task->delete($user) > 0)
-		{
-			Header("Location: index.php");
-			exit;
-		}
-		else
-		{
-			$langs->load("errors");
-			$mesg='<div class="error">'.$langs->trans($task->error).'</div>';
-			$_POST["action"]='';
-		}
-	}
-}
 
 
 /*
@@ -69,6 +45,7 @@ llxHeader("",$langs->trans("Task"));
 $html = new Form($db);
 
 $projectstatic = new Project($db);
+$userstatic = new User($db);
 
 
 if ($_GET["id"] > 0)
@@ -86,15 +63,9 @@ if ($_GET["id"] > 0)
 
 		$head=task_prepare_head($task);
 
-		dolibarr_fiche_head($head, 'tasks', $langs->trans("Task"));
+		dolibarr_fiche_head($head, 'who', $langs->trans("Task"));
 
 		if ($mesg) print $mesg.'<br>';
-
-		if ($_GET["action"] == 'delete')
-		{
-			$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
-			print "<br>";
-		}
 
 		print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
 		print '<input type="hidden" name="action" value="createtask">';
@@ -112,15 +83,18 @@ if ($_GET["id"] > 0)
 		else print '&nbsp;';
 		print '</td></tr>';
 
-		/* Liste des tâches */
 
-		$sql = "SELECT t.task_date, t.task_duration, t.fk_user, u.login, u.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-		$sql .= " , ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE t.fk_task =".$task->id;
-		$sql .= " AND t.fk_user = u.rowid";
-		$sql .= " ORDER BY t.task_date DESC";
+		/* Liste des affectations */
 
+		$sql = "SELECT t.title, t.duration_effective, t.fk_task_parent, t.statut,";
+		$sql.= " u.login, u.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t,";
+		$sql.= " ".MAIN_DB_PREFIX."projet_task_actors as ta,";
+		$sql.= " ".MAIN_DB_PREFIX."user as u";
+		$sql.= " WHERE t.rowid =".$task->id;
+		$sql.= " AND t.rowid = ta.fk_projet_task AND ta.fk_user = u.rowid";
+
+		$lines=array();
 		$var=true;
 		$resql = $db->query($sql);
 		if ($resql)
@@ -131,7 +105,7 @@ if ($_GET["id"] > 0)
 			while ($i < $num)
 			{
 				$row = $db->fetch_object($resql);
-				$tasks[$i] = $row;
+				$lines[$i] = $row;
 				$i++;
 			}
 			$db->free($resql);
@@ -150,31 +124,29 @@ if ($_GET["id"] > 0)
 		 */
 		print '<div class="tabsAction">';
 
-		if ($user->rights->projet->creer)
+		/*if ($user->rights->projet->creer)
 		{
 			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-		}
+		}*/
 
 		print '</div>';
+
 
 		print '<br>';
 		print '<input type="hidden" name="action" value="addtime">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Date").'</td>';
-		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-		print '<td align="right">'.$langs->trans("User").'</td>';
+		print '<td align="left">'.$langs->trans("User").'</td>';
 		print "</tr>\n";
 
-		foreach ($tasks as $task_time)
+		foreach ($lines as $xxx)
 		{
 			$var=!$var;
   		    print "<tr ".$bc[$var].">";
-		    print '<td>'.dolibarr_print_date($db->jdate($task_time->task_date),'day').'</td>';
-		    print '<td align="right">'.$task_time->task_duration.'</td>';
-		    $user->id=$task_time->rowid;
-		    $user->nom=$task_time->login;
-		    print '<td align="right">'.$user->getNomUrl(1).'</td>';
+		    $userstatic->id=$xxx->rowid;
+		    $userstatic->nom=$xxx->login;
+		    print '<td align="left">'.$userstatic->getNomUrl(1).'</td>';
+
 		    print "</tr>\n";
 		}
 

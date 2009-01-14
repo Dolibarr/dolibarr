@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - projects
 Project=Projet
 Projects=Projets
+SharedProject=Projet partagé
 Myprojects=Mes projets
 ProjectsArea=Espace projet
 NewProject=Nouveau projet
@@ -30,7 +31,10 @@ NewTask=Nouvelle tâche
 AddTask=Créer tâche
 AddDuration=Ajouter la durée
 Activity=Activité
+Activities=Tâches/activités
 MyActivity=Mon activité
+MyActivities=Mes tâches/activités
+MyProjects=Mes projets
 DurationEffective=Durée effective
 Time=Temps
 ListProposalsAssociatedProject=Liste des propositions commerciales associées au projet
@@ -42,4 +46,6 @@ ListContractAssociatedProject=Liste des contrats associés au projet
 ActivityOnProjectThisWeek=Activité sur les projets cette semaine
 ActivityOnProjectThisMonth=Activité sur les projets ce mois
 ActivityOnProjectThisYear=Activité sur les projets cette année
-ChildOfTaks=fille de la tache
+ChildOfTaks=Fille du projet/tâche
+NotOwnerOfProject=Non responsable de ce projet privé
+AffectedTo=Affecté à

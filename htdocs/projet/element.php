@@ -64,6 +64,10 @@ $form = new Form($db);
 $projet = new Project($db);
 $projet->fetch($_GET["id"],$_GET["ref"]);
 $projet->societe->fetch($projet->societe->id);
+if ($projet->user_resp_id > 0)
+{
+	$result=$projet->fetch_user($projet->user_resp_id);
+}
 
 $head=project_prepare_head($projet);
 dolibarr_fiche_head($head, 'element', $langs->trans("Project"));
@@ -75,11 +79,17 @@ print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 print $form->showrefnav($projet,'ref','',1,'ref','ref');
 print '</td></tr>';
 
-print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
+print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
 
 print '<tr><td>'.$langs->trans("Company").'</td><td>';
 if (! empty($projet->societe->id)) print $projet->societe->getNomUrl(1);
 else print '&nbsp;';
+print '</td></tr>';
+
+// Project leader
+print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
+if ($projet->user->id) print $projet->user->getNomUrl(1);
+else print $langs->trans('SharedProject');
 print '</td></tr>';
 
 print '</table>';
