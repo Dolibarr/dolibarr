@@ -14,6 +14,7 @@ For users:
 - New: Can force login value when creating a user from a member.
 - New: Can clone a commercial proposal.
 - New: Major enhancement of project module.
+- New: Added product label in invoice exports fields.
 - Fix: Failed to go on the future view of bank transaction if there is no 
   future bank transaction already wrote.  
 - Fix: Bad ref in supplier list.
