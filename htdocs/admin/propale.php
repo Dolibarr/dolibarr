@@ -79,7 +79,7 @@ if ($_GET["action"] == 'specimen')
 		{
 			$mesg='<div class="error">'.$module->error.'</div>';
 			dolibarr_syslog($module->error, LOG_ERR);
-		}		
+		}
 	}
 	else
 	{
@@ -245,10 +245,10 @@ if ($handle)
 	            print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
 	            print $module->info();
 	            print '</td>';
-	
+
 	            // Examples
 	            print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
-	
+
 	            print '<td align="center">';
 	            if ($conf->global->PROPALE_ADDON == "$file")
 	            {
@@ -259,10 +259,10 @@ if ($handle)
 	                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
 	            }
 	            print '</td>';
-	            
+
 	            $propale=new Propal($db);
 				$propale->initAsSpecimen();
-				     
+
 				// Info
 				$htmltooltip='';
 				$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
@@ -280,11 +280,11 @@ if ($handle)
 						$htmltooltip.=$langs->trans($module->error).'<br>';
 					}
 				}
-	
+
 		    	print '<td align="center">';
 		    	print $html->textwithhelp('',$htmltooltip,1,0);
 		    	print '</td>';
-	
+
 	            print "</tr>\n";
 		    }
         }
@@ -398,13 +398,12 @@ while (($file = readdir($handle))!==false)
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
     	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
-		//TODO : $htmltooltip.='<br><b>'.$langs->trans("Escompte").'</b>: '.yn($module->option_escompte); 
+		//TODO : $htmltooltip.='<br><b>'.$langs->trans("Escompte").'</b>: '.yn($module->option_escompte);
 		$htmltooltip.='<br><b>'.$langs->trans("CreditNote").'</b>: '.yn($module->option_credit_note);
-		$htmltooltip.='<br><b>'.$langs->trans("FreeLegalTextOnProposal").'</b>: '.yn($module->option_freetext);
 		$htmltooltip.='<br><b>'.$langs->trans("WatermarkOnDraftProposal").'</b>: '.yn($module->option_draft_watermark);
-		
-		
-		
+
+
+
     	print '<td align="center">';
     	print $html->textwithhelp('',$htmltooltip,1,0);
     	print '</td>';

@@ -257,21 +257,21 @@ while (($file = readdir($handle))!==false)
 			// Show modules according to features level
 		    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 		    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-			
+
 		    if ($module->isEnabled())
 		    {
 		        $var = !$var;
 		        print '<tr '.$bc[$var].'><td width="100">';
 		        echo "$file";
 		        print "</td><td>\n";
-	
+
 		        print $module->info();
-	
+
 		        print '</td>';
-	
+
 		        // Affiche example
 		        print '<td nowrap="nowrap">'.$module->getExample().'</td>';
-	
+
 		        print '<td align="center">';
 		        if ($conf->global->FACTURE_ADDON == "$file")
 		        {
@@ -282,10 +282,10 @@ while (($file = readdir($handle))!==false)
 		            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
 		        }
 		        print '</td>';
-	
+
 				$facture=new Facture($db);
 				$facture->initAsSpecimen();
-				
+
 				// Example for standard invoice
 				$htmltooltip='';
 				$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
@@ -318,11 +318,11 @@ while (($file = readdir($handle))!==false)
 						$htmltooltip.=$langs->trans($module->error);
 					}
 				}
-				
+
 		    	print '<td align="center">';
 		    	print $html->textwithhelp('',$htmltooltip,1,0);
 		    	print '</td>';
-	
+
 		        print "</tr>\n";
 		    }
 		}
@@ -438,10 +438,9 @@ while (($file = readdir($handle))!==false)
     	$htmltooltip.='<br><b>'.$langs->trans("Escompte").'</b>: '.yn($module->option_escompte,1,1);
     	$htmltooltip.='<br><b>'.$langs->trans("CreditNote").'</b>: '.yn($module->option_credit_note,1,1);
     	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang,1,1);
-		$htmltooltip.='<br><b>'.$langs->trans("FreeLegalTextOnInvoices").'</b>: '.yn($module->option_freetext,1,1);
 		$htmltooltip.='<br><b>'.$langs->trans("WatermarkOnDraftInvoices").'</b>: '.yn($module->option_draft_watermark,1,1);
-		
-		
+
+
     	print '<td align="center">';
     	print $html->textwithhelp('',$htmltooltip,1,0);
     	print '</td>';

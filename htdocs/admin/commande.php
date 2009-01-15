@@ -241,7 +241,7 @@ if ($handle)
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
 				}
 				print '</td>';
-					
+
 				$commande=new Commande($db);
 				$commande->initAsSpecimen();
 
@@ -383,7 +383,6 @@ while (($file = readdir($handle))!==false)
 		$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
 		// \TODO : $htmltooltip.='<br><b>'.$langs->trans("Escompte").'</b>: '.yn($module->option_escompte);
 		$htmltooltip.='<br><b>'.$langs->trans("CreditNote").'</b>: '.yn($module->option_credit_note);
-		$htmltooltip.='<br><b>'.$langs->trans("FreeLegalTextOnOrders").'</b>: '.yn($module->option_freetext);
 		$htmltooltip.='<br><b>'.$langs->trans("WatermarkOnDraftOrders").'</b>: '.yn($module->option_draft_watermark);
 
 		print '<td align="center">';
