@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -170,6 +170,11 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET['id']);
 	$fichinter->fetch_lines();
+
+	if ($_REQUEST['model'])
+	{
+		$fichinter->setDocModel($user, $_REQUEST['model']);
+	}
 
 	$outputlangs = $langs;
 	if (! empty($_REQUEST['lang_id']))
@@ -650,7 +655,7 @@ elseif ($_GET["id"] > 0)
 	/*
 	 * Lignes d'intervention
 	 */
-	
+
 	$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang';
 	$sql.= ', '.$db->pdate('ft.date').' as date_intervention';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
@@ -665,7 +670,7 @@ elseif ($_GET["id"] > 0)
 		if ($num)
 		{
 			print '<br><table class="noborder" width="100%">';
-			
+
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans('Description').'</td>';
 			print '<td align="center">'.$langs->trans('Date').'</td>';
@@ -796,31 +801,31 @@ elseif ($_GET["id"] > 0)
 		}
 
 		$db->free($resql);
-		
+
 		/*
 		 * Ajouter une ligne
 		 */
 		if ($fichinter->statut == 0 && $user->rights->ficheinter->creer && $_GET["action"] <> 'editline')
 		{
 			if (! $num) print '<br><table class="noborder" width="100%">';
-			
+
 			print '<tr class="liste_titre">';
 			print '<td>';
 			print '<a name="add"></a>'; // ancre
 			print $langs->trans('Description').'</td>';
 			print '<td align="center">'.$langs->trans('Date').'</td>';
 			print '<td align="right">'.$langs->trans('Duration').'</td>';
-	
+
 			print '<td colspan="4">&nbsp;</td>';
 			print "</tr>\n";
-	
+
 			// Ajout ligne d'intervention
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'#add" name="addinter" method="post">';
 			print '<input type="hidden" name="fichinterid" value="'.$fichinter->id.'">';
 			print '<input type="hidden" name="action" value="addligne">';
-	
+
 			$var=false;
-	
+
 			print '<tr '.$bc[$var].">\n";
 			print '<td>';
 			// �diteur wysiwyg
@@ -835,27 +840,27 @@ elseif ($_GET["id"] > 0)
 				print '<textarea class="flat" cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea>';
 			}
 			print '</td>';
-	
+
 			// Date intervention
 			print '<td align="center" nowrap="nowrap">';
 			$timearray=dol_getdate(mktime());
 			$timewithnohour=dolibarr_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
 			$html->select_date($timewithnohour,'di',1,1,0,"addinter");
 			print '</td>';
-	
+
 			// Duration
 			print '<td align="right">';
 			$html->select_duree('duration');
 			print '</td>';
-	
+
 			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
 			print '</tr>';
-	
+
 			print '</form>';
-			
+
 			if (! $num) print '</table>';
-		}		
-		
+		}
+
 		if ($num) print '</table>';
 	}
 	else
@@ -892,7 +897,7 @@ elseif ($_GET["id"] > 0)
 				}
 				print '>'.$langs->trans("Valid").'</a>';
 			}
-	
+
 			// Modify
 			if ($fichinter->statut == 1 && $user->rights->ficheinter->creer)
 			{
@@ -908,7 +913,7 @@ elseif ($_GET["id"] > 0)
 				}
 				print '>'.$langs->trans("Modify").'</a>';
 			}
-	
+
 			// Delete
 			if (($fichinter->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
 			{
@@ -944,7 +949,7 @@ elseif ($_GET["id"] > 0)
 	$var=true;
 
 	print "<br>\n";
-	$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$ficheinter->modelpdf);
+	$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fichinter->modelpdf);
 
 	print "</td><td>";
 	print "&nbsp;</td>";

@@ -32,6 +32,7 @@ InterLineId=Id ligne détail
 InterLineDate=Date ligne
 InterLineDuration=Durée ligne
 InterLineDesc=Description ligne
+DocumentModelStandard=Modèle de fiche intervention standard
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable suivi de l'intervention
 TypeContact_fichinter_internal_INTERVENING=Intervenant
