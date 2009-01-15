@@ -428,9 +428,9 @@ class Facture extends CommonObject
 
 		if (! $error)
 		{
-				
-				
-				
+
+
+
 		}
 
 		// End
@@ -682,7 +682,7 @@ class Facture extends CommonObject
 	{
 		global $conf, $langs;
 		$error=0;
-			
+
 		// Clean parameters
 
 		if (isset($this->facnumber)) $this->facnumber=trim($this->ref);
@@ -711,7 +711,7 @@ class Facture extends CommonObject
 		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
 		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
 		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
-			
+
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -1310,11 +1310,11 @@ class Facture extends CommonObject
 				$dirdest = $conf->facture->dir_output.'/'.$snumfa;
 				if (file_exists($dirsource))
 				{
-					dol_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
+					dol_syslog("Facture::set_valid() rename dir ".$dirsource." into ".$dirdest);
 
 					if (@rename($dirsource, $dirdest))
 					{
-						dol_syslog("Renommage ok");
+						dol_syslog("Rename ok");
 						// Suppression ancien fichier PDF dans nouveau rep
 						dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
 					}
@@ -1393,7 +1393,7 @@ class Facture extends CommonObject
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
 			$sql.= " WHERE rowid = ".$this->id;
-	
+
 			dol_syslog("Facture::set_draft sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
@@ -1412,8 +1412,8 @@ class Facture extends CommonObject
 							$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 						}
 					}
-				}				
-				
+				}
+
 				return 1;
 			}
 			else
@@ -1535,7 +1535,7 @@ class Facture extends CommonObject
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
-			
+
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
@@ -1734,7 +1734,7 @@ class Facture extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-			
+
 		// Efface ligne de facture
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid = '.$rowid;
 		dol_syslog("Facture::Deleteline sql=".$sql);
@@ -1746,18 +1746,18 @@ class Facture extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-			
+
 		$result=$this->update_price();
-			
+
 		// Appel des triggers
 		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		$interface=new Interfaces($this->db);
 		$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
 		if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		// Fin appel triggers
-			
+
 		$this->db->commit();
-			
+
 		return 1;
 	}
 
@@ -2531,7 +2531,7 @@ class Facture extends CommonObject
 		global $conf, $user;
 
 		$now=gmmktime();
-		
+
 		$this->nbtodo=$this->nbtodolate=0;
 		$clause = "WHERE";
 

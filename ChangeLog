@@ -29,6 +29,7 @@ For users:
 - Fix: Clicktodial plugin works correctly now
 - Fix: Multiprices features works correctly.
 - Fix: Project module and task creation.
+- Fix: Validation of order if a file was attached.
 
 For translators:
 - Added ca_ES language files

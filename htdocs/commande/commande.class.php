@@ -209,7 +209,7 @@ class Commande extends CommonObject
 		global $conf,$langs;
 
 		$error=0;
-			
+
 		// Protection
 		if ($this->statut == 1)
 		{
@@ -221,7 +221,7 @@ class Commande extends CommonObject
 			$this->error='Permission denied';
 			return -1;
 		}
-			
+
 		$this->db->begin();
 
 		// Definition du nom de module de numerotation de commande
@@ -251,33 +251,25 @@ class Commande extends CommonObject
 			// On efface le repertoire de pdf provisoire
 			if (eregi('^\(PROV', $this->ref))
 			{
+				// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
+				// afin de ne pas perdre les fichiers attachés
 				$comref = sanitizeFileName($this->ref);
-				if ($conf->commande->dir_output)
+				$snum = sanitizeFileName($num);
+				$dirsource = $conf->commande->dir_output.'/'.$comref;
+				$dirdest = $conf->commande->dir_output.'/'.$snum;
+				if (file_exists($dirsource))
 				{
-					$dir = $conf->commande->dir_output . "/" . $comref ;
-					$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
-					if (file_exists($file))
-					{
-						commande_delete_preview($this->db, $this->id, $this->ref);
+					dol_syslog("Commande::valid() rename dir ".$dirsource." into ".$dirdest);
 
-						if (!dol_delete_file($file))
-						{
-							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-							$this->db->rollback();
-							return 0;
-						}
-					}
-					if (file_exists($dir))
+					if (@rename($dirsource, $dirdest))
 					{
-						if (!dol_delete_dir($dir))
-						{
-							$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-							$this->db->rollback();
-							return 0;
-						}
+						dol_syslog("Rename ok");
+						// Suppression ancien fichier PDF dans nouveau rep
+						dol_delete_file($conf->commande->dir_output.'/'.$snum.'/'.$comref.'.*');
 					}
 				}
 			}
+
 
 			// If stock is incremented on validate order, we must increment it
 			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
@@ -563,7 +555,7 @@ class Commande extends CommonObject
 		    break;
 					}
 	  	}
-	  	 
+
 	  	// Mise a jour ref
 	  	$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 	  	if ($this->db->query($sql))
@@ -805,10 +797,10 @@ class Commande extends CommonObject
 	   // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
 	   if(! in_array($value[1],$this->products))
 	   $this->add_product($value[1], $value[0]);
-	    
+
 	   }
 	   }
-	    
+
 	   }
 	   **/
 		}
@@ -1260,7 +1252,7 @@ class Commande extends CommonObject
 					if ($result > 0)
 					{
 						$result=$this->update_price();
-							
+
 						if ($result > 0)
 						{
 							$this->db->commit();
@@ -1765,7 +1757,7 @@ class Commande extends CommonObject
 			if (file_exists($file))
 	  {
 	  	commande_delete_preview($this->db, $this->id, $this->ref);
-	  	 
+
 	  	if (!dol_delete_file($file))
 	  	{
 	  		$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
