@@ -302,7 +302,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($com->lignes[$i]->remise_percent)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, dol_print_reduction($com->lignes[$i]->remise_percent), 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, dol_print_reduction($com->lignes[$i]->remise_percent,$outputlangs), 0, 'R');
 					}
 
 					// Total HT ligne

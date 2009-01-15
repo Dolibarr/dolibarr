@@ -304,7 +304,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($propale->lignes[$i]->remise_percent && $propale->lignes[$i]->special_code != 3)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dol_print_reduction($propale->lignes[$i]->remise_percent), 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dol_print_reduction($propale->lignes[$i]->remise_percent,$outputlangs), 0, 'R');
 					}
 
 					// Total HT ligne
@@ -341,7 +341,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					{
 						$nblineFollowDesc = 0;
 					}
-						
+
 					// test si besoin nouvelle page
 					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
@@ -847,7 +847,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('Arial','B',11);
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
-			
+
 			// Caracteristiques emetteur
 			$carac_emetteur = '';
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);

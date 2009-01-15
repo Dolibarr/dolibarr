@@ -1379,7 +1379,7 @@ if ($id > 0 || ! empty($ref))
 				// Remise %
 				if ($objp->remise_percent > 0 && $objp->special_code != 3)
 				{
-					print '<td align="right">'.dol_print_reduction($objp->remise_percent)."</td>\n";
+					print '<td align="right">'.dol_print_reduction($objp->remise_percent,$langs)."</td>\n";
 				}
 				else
 				{

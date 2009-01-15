@@ -564,7 +564,7 @@ if ($id > 0)
 			$langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dolibarr_print_date($date_com,'day')),"confirm_commande");
 			print '<br />';
 		}
-			
+
 		/*
 		 * Confirmation de la suppression d'une ligne produit
 		 */
@@ -724,7 +724,7 @@ if ($id > 0)
 				print '<td align="right" nowrap="nowrap">'.$commandline->qty.'</td>';
 				if ($commandline->remise_percent >	0)
 				{
-					print '<td align="right" nowrap="nowrap">'.dol_print_reduction($commandline->remise_percent)."</td>\n";
+					print '<td align="right" nowrap="nowrap">'.dol_print_reduction($commandline->remise_percent,$langs)."</td>\n";
 				}
 				else
 				{
@@ -864,7 +864,7 @@ if ($id > 0)
 				print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
 				print '<td colspan="4">&nbsp;</td>';
 				print '</tr>';
-					
+
 				print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 				print '<input type="hidden" name="action" value="addligne">';

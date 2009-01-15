@@ -57,7 +57,7 @@ class pdf_crabe extends ModelePDFFactures
         $this->db = $db;
         $this->name = "crabe";
         $this->description = $langs->trans('PDFCrabeDescription');
-        
+
         // Dimension page pour format A4
         $this->type = 'pdf';
         $this->page_largeur = 210;
@@ -78,7 +78,7 @@ class pdf_crabe extends ModelePDFFactures
         $this->option_credit_note = 1;             // Gère les avoirs
 		$this->option_freetext = 1;					// Support add of a personalised text
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
-		
+
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
       		$this->franchise=1;
 
@@ -113,13 +113,13 @@ class pdf_crabe extends ModelePDFFactures
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
-		
+
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
-		
+
 		$outputlangs->setPhpLang();
 
 		if ($conf->facture->dir_output)
@@ -131,7 +131,7 @@ class pdf_crabe extends ModelePDFFactures
 				$fac = new Facture($this->db,"",$id);
 				$ret=$fac->fetch($id);
 			}
-			
+
 			$deja_regle = $fac->getSommePaiement();
 			$amount_credit_not_included = $fac->getSommeCreditNote();
 
@@ -174,7 +174,7 @@ class pdf_crabe extends ModelePDFFactures
 				{
 					$pdf=new FPDI('P','mm',$this->format);
 				}
-				
+
 				$pdf->Open();
 				$pdf->AddPage();
 
@@ -237,13 +237,13 @@ class pdf_crabe extends ModelePDFFactures
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
-					
+
 					// Description de la ligne produit
 					$libelleproduitservice=dol_htmlentitiesbr($fac->lignes[$i]->libelle,1);
 					if ($fac->lignes[$i]->desc && $fac->lignes[$i]->desc != $fac->lignes[$i]->libelle)
 					{
 						if ($libelleproduitservice) $libelleproduitservice.="<br>";
-						
+
 						if ($fac->lignes[$i]->desc == '(CREDIT_NOTE)' && $fac->lignes[$i]->fk_remise_except)
 						{
 							$discount=new DiscountAbsolute($this->db);
@@ -266,7 +266,7 @@ class pdf_crabe extends ModelePDFFactures
 							}
 						}
 					}
-					
+
 					// Si ligne associee a un code produit
 					if ($fac->lignes[$i]->produit_id)
 					{
@@ -287,7 +287,7 @@ class pdf_crabe extends ModelePDFFactures
 
 							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
 						}
-						
+
 					}
 
 					if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end)
@@ -321,7 +321,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($fac->lignes[$i]->remise_percent)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dol_print_reduction($fac->lignes[$i]->remise_percent), 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dol_print_reduction($fac->lignes[$i]->remise_percent,$outputlangs), 0, 'R');
 					}
 
 					// Total HT ligne
@@ -355,7 +355,7 @@ class pdf_crabe extends ModelePDFFactures
 					{
 						$nblineFollowDesc = 0;
 					}
-										
+
 					// test si besoin nouvelle page
 					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
@@ -413,9 +413,9 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->Close();
 
 				$pdf->Output($file);
-				if (! empty($conf->global->MAIN_UMASK)) 
+				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				
+
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}
@@ -617,7 +617,7 @@ class pdf_crabe extends ModelePDFFactures
         if ($object->type != 2)
         {
 	        // Check a payment mode is defined
-	        if (empty($object->mode_reglement_code) 
+	        if (empty($object->mode_reglement_code)
 	        	&& ! $conf->global->FACTURE_CHQ_NUMBER
 	        	&& ! $conf->global->FACTURE_RIB_NUMBER)
 			{
@@ -626,10 +626,10 @@ class pdf_crabe extends ModelePDFFactures
 	            $pdf->SetFont('Arial','B',8);
 	            $pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
 	            $pdf->SetTextColor(0,0,0);
-	
+
 	            $posy=$pdf->GetY()+1;
 	        }
-        	
+
         	// Sown payment mode
         	if ($object->mode_reglement_code
         		 && $object->mode_reglement_code != 'CHQ'
@@ -639,15 +639,15 @@ class pdf_crabe extends ModelePDFFactures
 		            $pdf->SetXY($this->marge_gauche, $posy);
 		            $titre = $outputlangs->transnoentities("PaymentMode").':';
 		            $pdf->MultiCell(80, 5, $titre, 0, 'L');
-		
+
 		            $pdf->SetFont('Arial','',8);
 		            $pdf->SetXY(50, $posy);
 		            $lib_mode_reg=$outputlangs->transnoentities("PaymentMode".$object->mode_reglement_code)!=('PaymentMode'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentMode".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
 		            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
-           		 	
+
 		            $posy=$pdf->GetY()+2;
            		 }
-	
+
 			/*
 	         * Propose mode reglement par CHQ
 	         */
@@ -660,16 +660,16 @@ class pdf_crabe extends ModelePDFFactures
 		            {
 		                $account = new Account($this->db);
 		                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
-		
+
 		                $pdf->SetXY($this->marge_gauche, $posy);
 		                $pdf->SetFont('Arial','B',8);
 		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$outputlangs->convToOutputCharset($account->proprio)).':',0,'L',0);
 			            $posy=$pdf->GetY()+1;
-		
+
 		                $pdf->SetXY($this->marge_gauche, $posy);
 		                $pdf->SetFont('Arial','',8);
 		                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
-		
+
 			            $posy=$pdf->GetY()+2;
 		            }
 		            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
@@ -678,16 +678,16 @@ class pdf_crabe extends ModelePDFFactures
 		                $pdf->SetFont('Arial','B',8);
 		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->nom).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
 			            $posy=$pdf->GetY()+1;
-		
+
 		                $pdf->SetXY($this->marge_gauche, $posy);
 		                $pdf->SetFont('Arial','',8);
 		                $pdf->MultiCell(80, 6, $outputlangs->convToOutputCharset($this->emetteur->adresse_full), 0, 'L', 0);
-		
+
 			            $posy=$pdf->GetY()+2;
 		            }
 		        }
 			}
-			
+
 	        /*
 	         * Si mode reglement non force ou si force a VIR, propose mode reglement par RIB
 	         */
@@ -697,7 +697,7 @@ class pdf_crabe extends ModelePDFFactures
 		        {
 	                $account = new Account($this->db);
 	                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
-	
+
 	                $curx=$this->marge_gauche;
 	                $cury=$posy;
 
@@ -707,7 +707,7 @@ class pdf_crabe extends ModelePDFFactures
 		        }
 			}
         }
-        
+
         return $posy;
     }
 
@@ -732,7 +732,7 @@ class pdf_crabe extends ModelePDFFactures
         $lltot = 200; $col1x = 120; $col2x = 182; $largcol2 = $lltot - $col2x;
 
         $index = 0;
-        
+
         // Total HT
         $pdf->SetFillColor(255,255,255);
         $pdf->SetXY ($col1x, $tab2_top + 0);
@@ -755,7 +755,7 @@ class pdf_crabe extends ModelePDFFactures
 				if (eregi('\*',$tvakey))
 				{
 					$tvakey=eregi_replace('\*','',$tvakey);
-					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")"; 
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 				}
                 $totalvat =$outputlangs->transnoentities("TotalVAT").' ';
 				$totalvat.=vatrate($tvakey,1).$tvacompl;
@@ -790,7 +790,7 @@ class pdf_crabe extends ModelePDFFactures
         $creditnoteamount=$object->getSommeCreditNote();
 		$resteapayer = $object->total_ttc - $deja_regle - $creditnoteamount;
 		if ($object->paye) $resteapayer=0;
-        
+
 		if ($deja_regle > 0 || $creditnoteamount > 0)
         {
             // Already payed
@@ -809,7 +809,7 @@ class pdf_crabe extends ModelePDFFactures
 	            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 	            $pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount), 0, 'R', 0);
 			}
-			            
+
 			$resteapayer = $object->total_ttc - $deja_regle - $creditnoteamount;
 			if ($object->paye) $resteapayer=0;
 
@@ -823,7 +823,7 @@ class pdf_crabe extends ModelePDFFactures
 	            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOffered"), $useborder, 'L', 1);
 	            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 	            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle), $useborder, 'R', 1);
-				
+
 				$resteapayer=0;
 			}
 
@@ -915,7 +915,7 @@ class pdf_crabe extends ModelePDFFactures
         $outputlangs->load("companies");
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
-		if($object->statut==0 && (! empty($conf->global->FACTURE_DRAFT_WATERMARK)) )		
+		if($object->statut==0 && (! empty($conf->global->FACTURE_DRAFT_WATERMARK)) )
 		{
 			$watermark_angle=atan($this->page_hauteur/$this->page_largeur);
 			$watermark_x=5;
@@ -932,7 +932,7 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->_out('Q');
 		}
 		//Print content
-		
+
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFont('Arial','B',13);
 
@@ -1010,7 +1010,7 @@ class pdf_crabe extends ModelePDFFactures
 	        $pdf->SetTextColor(0,0,60);
 	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("CorrectionInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
 		}
-		
+
         $posy+=5;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
@@ -1023,7 +1023,7 @@ class pdf_crabe extends ModelePDFFactures
 	        $pdf->SetTextColor(0,0,60);
 	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEcheance")." : " . dolibarr_print_date($object->date_lim_reglement,"day",false,$outputlangs), '', 'R');
 		}
-		
+
         if ($showadress)
         {
 	        // Emetteur
@@ -1102,7 +1102,7 @@ class pdf_crabe extends ModelePDFFactures
 					$socname = $object->client->nom;
 				}
 				$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($socname), 0, 'L');
-				
+
 				// Nom client
 				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
 
@@ -1121,7 +1121,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY(102,$posy+3);
 				$pdf->SetFont('Arial','B',11);
 				$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($object->client->nom), 0, 'L');
-				
+
 				// Nom du contact facturation si c'est une societe
 				$arrayidcontact = $object->getIdContact('external','BILLING');
 				if (sizeof($arrayidcontact) > 0)

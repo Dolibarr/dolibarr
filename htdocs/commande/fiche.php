@@ -1137,7 +1137,7 @@ else
 	/*                                                                             */
 	/* *************************************************************************** */
 	$now=gmmktime();
-	
+
 	$id = $_GET['id'];
 	$ref= $_GET['ref'];
 	if ($id > 0 || ! empty($ref))
@@ -1559,7 +1559,7 @@ else
 						print '</td>';
 						if ($objp->remise_percent > 0)
 						{
-							print '<td align="right">'.dol_print_reduction($objp->remise_percent).'</td>';
+							print '<td align="right">'.dol_print_reduction($objp->remise_percent,$langs).'</td>';
 						}
 						else
 						{
@@ -2053,7 +2053,7 @@ else
 				include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
 				$formactions=new FormActions($db);
 				$somethingshown=$formactions->showactions($commande,'order',$socid);
-					
+
 				print '</td></tr></table>';
 			}
 

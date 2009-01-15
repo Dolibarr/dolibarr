@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008 Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -77,7 +77,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	// Clean parameters
 	if ($date == '') $date=mktime();	// We use local year and month of PHP server to search numbers
 										// but we should use local year and month of user
-	
+
 	// Extract value for mask counter, mask raz and mask offset
 	if (! eregi('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$mask,$reg)) return 'ErrorBadMask';
 	$masktri=$reg[1].$reg[2].$reg[3];
@@ -139,7 +139,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 		if (strlen($reg[2]) == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
 		if (strlen($reg[2]) == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
 		if (strlen($reg[2]) == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
-			
+
 		$sqlwhere='';
 		$sqlwhere.='( (SUBSTRING('.$field.', '.(strlen($reg[1])+1).', '.strlen($reg[2]).') >= '.$yearcomp;
 		if ($monthcomp > 1)	// Test useless if monthcomp = 1 (or 0 is same as 1)
@@ -196,7 +196,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	if ($maskrefclient_maskcounter)
 	{
 		//print "maskrefclient_maskcounter=".$maskrefclient_maskcounter." maskwithnocode=".$maskwithnocode." maskrefclient=".$maskrefclient."\n<br>";
-			
+
 		// Define $sqlstring
 		$maskrefclient_posnumstart=strpos($maskwithnocode,$maskrefclient_maskcounter,strpos($maskwithnocode,$maskrefclient));	// Pos of counter in final string (from 0 to ...)
 		if ($maskrefclient_posnumstart <= 0) return 'ErrorBadMask';
@@ -224,7 +224,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 		if ($where) $maskrefclient_sql.=$where; //use the same optional where as general mask
 		if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
 		$maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode,$maskrefclient)+1).', '.strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
-			
+
 		dolibarr_syslog("functions2::get_next_value maskrefclient_sql=".$maskrefclient_sql, LOG_DEBUG);
 		$maskrefclient_resql=$db->query($maskrefclient_sql);
 		if ($maskrefclient_resql)
@@ -522,11 +522,8 @@ function dol_set_user_page_param($db, &$user, $url='', $tab)
  *	\param		reduction		Reduction percentage
  *	\return		string			Formated reduction
  */
-function dol_print_reduction($reduction=0)
+function dol_print_reduction($reduction=0,$langs)
 {
-	global $langs;
-	$langs->load("main");
-
 	$string = '';
 	if ($reduction == 100)
 	{
