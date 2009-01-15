@@ -499,7 +499,7 @@ class MenuLeft {
 				}
 
 				// Compta simple
-				if ($conf->compta->enabled)
+				if ($conf->compta->enabled && $conf->global->FACTURE_VENTILATION)
 				{
 					$newmenu->add(DOL_URL_ROOT."/compta/ventilation/index.php?leftmenu=ventil",$langs->trans("Dispatch"),0,$user->rights->compta->ventilation->lire);
 					if ($leftmenu=="ventil") $newmenu->add(DOL_URL_ROOT."/compta/ventilation/liste.php",$langs->trans("ToDispatch"),1,$user->rights->compta->ventilation->lire);
