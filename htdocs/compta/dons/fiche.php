@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,7 +207,7 @@ $formfile = new FormFile($db);
 
 if ($_GET["action"] == 'create')
 {
-	print_titre($langs->trans("AddDonation"));
+	print_fiche_titre($langs->trans("AddDonation"));
 
 	print '<form name="add" action="fiche.php" method="post">';
 	print '<table class="border" width="100%">';
@@ -383,7 +383,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 	print $don->getNomUrl();
 	print '</td>';
 	print '</tr>';
-	 
+
 	// Date
 	print "<tr><td>".$langs->trans("Date")."</td><td>";
 	print dolibarr_print_date($don->date,"day");
@@ -426,8 +426,8 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
 	// \TODO Gérer action émettre paiement
 	$resteapayer = 0;
-	
-	
+
+
 	/**
 	 * Barre d'actions
 	 */
