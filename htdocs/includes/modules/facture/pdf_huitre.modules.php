@@ -157,10 +157,12 @@ class pdf_huitre extends ModelePDFFactures
 
 				$this->_pagehead($pdf, $fac, $outputlangs);
 
-				$pdf->SetTitle($fac->ref);
-				$pdf->SetSubject($langs->transnoentities("Bill"));
-				$pdf->SetCreator("Dolibarr (By ADYTEK)".DOL_VERSION);
-				$pdf->SetAuthor($user->fullname);
+				$pdf->SetTitle($outputlangs->convToOutputCharset($fac->ref));
+				$pdf->SetSubject($outputlangs->transnoentities("Invoice"));
+				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($fac->ref)." ".$outputlangs->transnoentities("Invoice"));
+
 				$pdf->SetMargins(10, 10, 10);
 				$pdf->SetAutoPageBreak(1,0);
 				$tab_top = 100;
@@ -229,7 +231,7 @@ class pdf_huitre extends ModelePDFFactures
 
 						$curx=10;
 		                $cury=40;
-	
+
 		                $posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account);
 					}
 				}
@@ -257,7 +259,7 @@ class pdf_huitre extends ModelePDFFactures
 					$titre.=$lib_condition_paiement;
 					$pdf->MultiCell(190, 5, $titre, 0, 'J');
 		        }
-		        
+
 				$this->_pagefoot($pdf, $fac, $outputlangs);
 				$pdf->AliasNbPages();
 				//----
@@ -496,7 +498,7 @@ class pdf_huitre extends ModelePDFFactures
 		//Print content
 		$pdf->SetXY(10,5);
 		$posy=5;
-		
+
 			// Logo
         $logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
         if ($this->emetteur->logo)

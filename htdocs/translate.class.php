@@ -39,12 +39,12 @@ class Translate {
 
     var $tab_loaded=array();		// Tableau pour signaler les fichiers deja charges
     var $tab_translate=array();		// Tableau des traductions
-	
+
     var $cache_labels=array();		// Cache for labels
-	
+
     var $charset_inputfile='ISO-8859-1';	// Codage used by default to encode/decode lang files (used if CHARSET not found in file)
 	var $charset_output='UTF-8';			// Codage used by default for "trans" method output if $conf->character_set_client not defined (should never happen)
-	
+
 
     /**
      *  \brief      Constructeur de la classe
@@ -54,7 +54,7 @@ class Translate {
     function Translate($dir = "",$conf)
     {
 		// If charset output is forced
-		if (! empty($conf->character_set_client)) 
+		if (! empty($conf->character_set_client))
 		{
 			$this->charset_output=$conf->character_set_client;
 		}
@@ -99,9 +99,9 @@ class Translate {
     function setDefaultLang($srclang='fr_FR')
     {
         //dolibarr_syslog("Translate::setDefaultLang ".$this->defaultlang,LOG_DEBUG);
-    	
+
     	$this->origlang=$srclang;
-		
+
         if (empty($srclang) || $srclang == 'auto')
         {
             $langpref=$_SERVER['HTTP_ACCEPT_LANGUAGE'];
@@ -112,7 +112,7 @@ class Translate {
 
             $langpart=split("_",$langlist[0]);
             //print $langpart[0].'/'.$langpart[1];
-            
+
             if (isset($langpart[1])) $srclang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
             else {
             	// Array to convert short lang code into long code.
@@ -125,7 +125,7 @@ class Translate {
         $this->defaultlang=$srclang;
     }
 
-    
+
     /**
      *  \brief      Return active language code for current user
      * 	\remarks	Accessor for this->defaultlang
@@ -136,7 +136,7 @@ class Translate {
         return $this->defaultlang;
     }
 
-    
+
     /**
     		\brief      Positionne environnement PHP en fonction du langage
     		\remarks    Le code langue long (fr_FR, en_US, ...) doit avoir etre positionne par setDefaultLang
@@ -145,15 +145,15 @@ class Translate {
     function setPhpLang()
     {
         //dolibarr_syslog("Translate::setPhpLang ".$this->defaultlang,LOG_DEBUG);
-       
+
         $code_lang_tiret=ereg_replace('_','-',$this->defaultlang);
         //print 'code_lang_tiret='.$code_lang_tiret;
         setlocale(LC_ALL, $this->defaultlang);    	// Some OS (Windows) need local with _
         setlocale(LC_ALL, $code_lang_tiret);    	// Other OS need local with -
 
-        if (defined("MAIN_FORCE_SETLOCALE_LC_ALL") && MAIN_FORCE_SETLOCALE_LC_ALL)         
+        if (defined("MAIN_FORCE_SETLOCALE_LC_ALL") && MAIN_FORCE_SETLOCALE_LC_ALL)
         	$res_lc_all=setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_ALL.'.UTF-8', MAIN_FORCE_SETLOCALE_LC_ALL);
-        if (defined("MAIN_FORCE_SETLOCALE_LC_TIME") && MAIN_FORCE_SETLOCALE_LC_TIME) 
+        if (defined("MAIN_FORCE_SETLOCALE_LC_TIME") && MAIN_FORCE_SETLOCALE_LC_TIME)
         	$res_lc_time=setlocale(LC_TIME, MAIN_FORCE_SETLOCALE_LC_TIME.'.UTF-8', MAIN_FORCE_SETLOCALE_LC_TIME);
         if (defined("MAIN_FORCE_SETLOCALE_LC_NUMERIC") && MAIN_FORCE_SETLOCALE_LC_NUMERIC)
         	$res_lc_numeric=setlocale(LC_NUMERIC, MAIN_FORCE_SETLOCALE_LC_NUMERIC.'.UTF-8', MAIN_FORCE_SETLOCALE_LC_NUMERIC);
@@ -171,31 +171,31 @@ class Translate {
      *  \param      domain      File name to load (.lang file). Use @ before value if domain is in a module directory.
      *  \param      alt         Use alternate file even if file in target language is found
 	 *	\return		int			<0 if KO, >0 if OK
-     *	\remarks	tab_loaded is completed with $domain key. 
+     *	\remarks	tab_loaded is completed with $domain key.
 	 *				Value for key is: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
 	 */
     function Load($domain,$alt=0)
     {
     	// dolibarr_syslog("Translate::Load domain=".$domain." alt=".$alt);
-    	
+
 		// Check parameters
 		if (empty($domain))
 		{
 			dolibarr_syslog("Translate::Load ErrorWrongParameters",LOG_WARNING);
 			return -1;
 		}
-		
+
 		// Check cache
 		if (! empty($this->tab_loaded[$domain])) { return; }    // Le fichier de ce domaine est deja charge
-	
+
 		foreach($this->dir as $searchdir)
 		{
 			$newalt=$alt;
 
-			// If $domain is @xxx instead of xxx then we look for module lang file htdocs/xxx/langs/code_CODE/xxx.lang 
+			// If $domain is @xxx instead of xxx then we look for module lang file htdocs/xxx/langs/code_CODE/xxx.lang
 			// instead of global lang file htdocs/langs/code_CODE/xxx.lang
 			if (eregi('@',$domain))	// It's a language file of a module, we look in dir of this module.
-			{   
+			{
 				$domain=eregi_replace('@','',$domain);
 				$searchdir=$searchdir ."/".$domain."/langs";
 			}
@@ -216,7 +216,7 @@ class Translate {
 	            elseif (eregi('^en',$this->defaultlang) && $this->defaultlang != 'en_US') $scandiralt = $searchdir."/en_US";
 	            elseif (eregi('^es',$this->defaultlang) && $this->defaultlang != 'es_ES') $scandiralt = $searchdir."/es_ES";
 	            else $scandiralt = $searchdir."/en_US";
-	
+
 	            $file_lang = $scandiralt . "/".$domain.".lang";
 	            $filelangexists=is_file($file_lang);
 	            $newalt=1;
@@ -228,7 +228,7 @@ class Translate {
 				// Enable cache of lang file in session (faster but need more memory)
 				// Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 				$enablelangcacheinsession=false;
-				
+
 				if ($enablelangcacheinsession && isset($_SESSION['lang_'.$domain]))
 				{
 					foreach($_SESSION['lang_'.$domain] as $key => $value)
@@ -254,7 +254,7 @@ class Translate {
 		                        if (empty($this->tab_translate[$key]) && isset($tab[1]))
 		                        {
 			                        $value=trim(ereg_replace('\\\n',"\n",$tab[1]));
-									
+
 									if (eregi('^CHARSET$',$key))
 									{
 										// On est tombe sur une balise qui declare le format du fichier lu
@@ -266,7 +266,7 @@ class Translate {
 										// On stocke toujours dans le tableau Tab en UTF-8
 			                        	//if ($this->charset_inputfile == 'UTF-8')      $value=utf8_decode($value);
 			                        	if ($this->charset_inputfile == 'ISO-8859-1') $value=utf8_encode($value);
-	
+
 										// We do not load Separator values for alternate files
 										if (! $newalt || (! eregi('^Separator',$key)))
 										{
@@ -279,32 +279,32 @@ class Translate {
 		                    }
 		                }
 						fclose($fp);
-	
+
 		                // Pour les langues aux fichiers parfois incomplets, on charge la langue alternative
 		                if (! $newalt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
 		                {
 		                    dolibarr_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$domain.".lang file)", LOG_DEBUG);
 		                    $this->load($domain,1);
 		                }
-	
+
 		                $this->tab_loaded[$domain]=1;           // Marque ce fichier comme charge
-	
+
 						// To save lang in session
 						if ($enablelangcacheinsession && sizeof($tabtranslatedomain)) $_SESSION['lang_'.$domain]=$tabtranslatedomain;
-						
+
 						break;		// Break loop on each root dir
 		            }
 				}
 	        }
 		}
-		
+
 		if (empty($this->tab_loaded[$domain])) $this->tab_loaded[$domain]=2;           // Marque ce fichier comme non trouve
-		
+
 		return 1;
     }
 
 
-    /**     
+    /**
      *	\brief      Retourne la liste des domaines charg�es en memoire
      *  \return     array       Tableau des domaines charg�es
      */
@@ -318,8 +318,8 @@ class Translate {
 		}
 		return $ret;
     }
-    
-    
+
+
     /**
      *  \brief      Retourne la version traduite du texte passe en parametre en la codant en HTML
      *              Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
@@ -345,8 +345,8 @@ class Translate {
             $newstr=ereg_replace('>','__gt__',$newstr);
             $newstr=ereg_replace('"','__quot__',$newstr);
 
-			$newstr=$this->convToOutputCharset($newstr);	// Convert string to this->charset_output
-			
+			$newstr=$this->convToOutputCharset($newstr);	// Convert string to $this->charset_output
+
             // Cryptage en html de la chaine
 			// $newstr est une chaine stockee en memoire au format $this->charset_output
             $newstr=htmlentities($newstr,ENT_QUOTES,$this->charset_output);
@@ -367,7 +367,7 @@ class Translate {
 				//$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','labelshort');
 				$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','code');
 			}
-			else if (ereg('Currency([A-Z]+)$',$key,$reg)) 
+			else if (ereg('Currency([A-Z]+)$',$key,$reg))
 			{
 				global $db;
 				$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
@@ -427,7 +427,7 @@ class Translate {
         else return $this->transnoentities($str);
     }
 
-    
+
 	/**
      *  \brief      Convert a string into output charset (this->charset_output that should be defined to conf->character_set_client)
      *  \param      str            	String to convert
@@ -460,7 +460,7 @@ class Translate {
         }
         return $langs_available;
     }
-    
+
 
    /**
      *  \brief      Renvoi si le fichier $filename existe dans la version de la langue courante ou alternative
@@ -475,15 +475,15 @@ class Translate {
 		{
 	        $htmlfile=$searchdir."/langs/".$this->defaultlang."/".$filename;
 	        if (is_readable($htmlfile)) return true;
-	
+
 	        if ($searchalt) {
 	            // Test si fichier dans repertoire de la langue alternative
-	            if ($this->defaultlang != "en_US") $htmlfilealt = $searchdir."/langs/en_US/".$filename;   
+	            if ($this->defaultlang != "en_US") $htmlfilealt = $searchdir."/langs/en_US/".$filename;
 	            else $htmlfilealt = $searchdir."/langs/fr_FR/".$filename;
 	            if (is_readable($htmlfilealt)) return true;
 	        }
 		}
-		        
+
         return false;
     }
 
@@ -497,7 +497,7 @@ class Translate {
     function print_file($filename,$searchalt=0)
     {
     	global $conf;
-    	
+
         // Test si fichier dans repertoire de la langue
 		foreach($this->dir as $searchdir)
 		{
@@ -506,28 +506,28 @@ class Translate {
 	        {
 	        	$content=file_get_contents($htmlfile);
 	            $isutf8=utf8_check($content);
-		        if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content); 
-		        elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content); 
+		        if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content);
+		        elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content);
 		        else print $content;
 	            return true;
 	        }
-	
+
 	        if ($searchalt) {
 	            // Test si fichier dans repertoire de la langue alternative
-	            if ($this->defaultlang != "en_US") $htmlfilealt = $searchdir."/en_US/".$filename;   
+	            if ($this->defaultlang != "en_US") $htmlfilealt = $searchdir."/en_US/".$filename;
 	            else $htmlfilealt = $searchdir."/langs/fr_FR/".$filename;
 	            if (is_readable($htmlfilealt))
 	            {
 		            $content=file_get_contents($htmlfile);
 	            	$isutf8=utf8_check($content);
-		            if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content); 
-		            elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content); 
+		            if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content);
+		            elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content);
 		            else print $content;
 		            return true;
 	            }
 	        }
 		}
-		        
+
         return false;
     }
 
@@ -537,7 +537,7 @@ class Translate {
      * 		\param		key			Key to get label
      * 		\param		tablename	Table name without prefix
      * 		\param		fieldkey	Field for key
-     * 		\param		fieldlabel	Field for label	
+     * 		\param		fieldlabel	Field for label
      *      \return     string		Label
      */
     function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel)
@@ -550,7 +550,7 @@ class Translate {
         {
         	return $this->transnoentities($key);    // Found in language array
         }
-		
+
 		// Check in cache
         if (isset($this->cache_labels[$tablename][$key]))	// Can be defined to 0 or ''
         {

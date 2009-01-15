@@ -179,10 +179,11 @@ class pdf_propale_azur extends ModelePDFPropales
 
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($propale->ref);
+				$pdf->SetTitle($outputlangs->convToOutputCharset($propale->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("CommercialProposal"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($user->fullname);
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($propale->ref)." ".$outputlangs->transnoentities("CommercialProposal"));
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);

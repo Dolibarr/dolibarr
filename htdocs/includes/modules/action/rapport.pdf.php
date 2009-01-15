@@ -39,15 +39,15 @@ class CommActionRapport
     var $date_edition;
     var $year;
     var $month;
-    
+
     var $title;
     var $subject;
-    
+
     function CommActionRapport($db=0, $month, $year)
     {
         global $langs;
         $langs->load("commercial");
-        
+
         $this->db = $db;
         $this->description = "";
         $this->date_edition = time();
@@ -63,7 +63,7 @@ class CommActionRapport
         $this->marge_droite=5;
         $this->marge_haute=10;
         $this->marge_basse=10;
-        
+
         $this->title=$langs->trans("ActionsReport").' '.$this->year."-".$this->month;
         $this->subject=$langs->trans("ActionsReport").' '.$this->year."-".$this->month;
     }
@@ -75,15 +75,15 @@ class CommActionRapport
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
-		
+
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
-		
+
 		$outputlangs->setPhpLang();
-        
+
 		$dir = $conf->actions->dir_temp."/";
         $file = $dir . "actions-".$this->month."-".$this->year.".pdf";
 
@@ -113,28 +113,28 @@ class CommActionRapport
 			}
 
 			$pdf->Open();
-			
+
 			$pdf->SetDrawColor(128,128,128);
             $pdf->SetFillColor(220,220,220);
-			
-			$pdf->SetTitle($this->title);
-            $pdf->SetSubject($this->subject);
+
+			$pdf->SetTitle($outputlangs->convToOutputCharset($this->title));
+            $pdf->SetSubject($outputlangs->convToOutputCharset($this->subject));
             $pdf->SetCreator("Dolibarr ".DOL_VERSION);
-            $pdf->SetAuthor($user->fullname);
-            $pdf->SetKeywords($this->title." ".$this->subject." Dolibarr");
-            
+            $pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+            $pdf->SetKeywords($outputlangs->convToOutputCharset($this->title." ".$this->subject));
+
 			$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 			$pdf->SetAutoPageBreak(1,0);
-            
+
             $nbpage = $this->_pages($pdf, $outputlangs);
 
             $pdf->AliasNbPages();
             $pdf->Close();
 
             $pdf->Output($file);
-			if (! empty($conf->global->MAIN_UMASK)) 
+			if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
-            
+
             return 1;
         }
     }
@@ -149,11 +149,11 @@ class CommActionRapport
     {
 		$height=3;		// height for text separation
     	$pagenb=1;
-    	
+
 		$y=$this->_pagehead($pdf, $outputlangs, $pagenb);
     	$y++;
 		$pdf->SetFont('Arial','',8);
-    	
+
 		$sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 		$sql.= " a.id,".$this->db->pdate("a.datep")." as dp, ".$this->db->pdate("a.datep2")." as dp2,";
 		$sql.= " a.fk_contact, a.note, a.percent as percent,";
@@ -178,7 +178,7 @@ class CommActionRapport
         		$obj = $this->db->fetch_object($resql);
 
 		        $y = max($y, $pdf->GetY(), $y0, $y1, $y2, $y3);
-        		
+
 		        // Calculate height of text
         		$text=dolibarr_trunc(dol_htmlentitiesbr_decode($obj->note),150);
 		        //print 'd'.$text; exit;
@@ -194,7 +194,7 @@ class CommActionRapport
 					$pdf->SetFont('Arial','',8);
 		        }
 		        $y++;
-		        
+
                 $pdf->SetXY($this->marge_gauche, $y);
                 $pdf->MultiCell(22, $height, dolibarr_print_date($obj->dp,"day")."\n".dolibarr_print_date($obj->dp,"hour"), 0, 'L', 0);
                 $y0 = $pdf->GetY();
@@ -210,7 +210,7 @@ class CommActionRapport
                 $pdf->SetXY(106,$y);
                 $pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset($text), 0, 'L', 0);
                 $y3 = $pdf->GetY();
-                
+
                 //$pdf->MultiCell(94,2,"y=$y y3=$y3",0,'L',0);
 
                 $i++;
@@ -229,7 +229,7 @@ class CommActionRapport
     function _pagehead(&$pdf, $outputlangs, $pagenb)
     {
 		global $conf,$langs;
-    
+
 		// New page
         $pdf->AddPage();
 
@@ -239,14 +239,14 @@ class CommActionRapport
         $pdf->MultiCell(80, 1, $this->title, 0, 'L', 0);
 		$pdf->SetXY($this->page_largeur-$this->marge_droite-40, $this->marge_haute);
         $pdf->MultiCell(40, 1, $pagenb.'/{nb}', 0, 'R', 0);
-		
+
         $y=$pdf->GetY()+2;
 
-		$pdf->Rect($this->marge_gauche, $y, 
+		$pdf->Rect($this->marge_gauche, $y,
 			$this->page_largeur - $this->marge_gauche - $this->marge_droite,
 			$this->page_hauteur - $this->marge_haute - $this->marge_basse);
 		$y=$pdf->GetY()+1;
-		
+
 		return $y;
     }
 }

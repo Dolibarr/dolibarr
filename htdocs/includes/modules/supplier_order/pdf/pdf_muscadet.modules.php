@@ -86,7 +86,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->posxqty=151;
 		$this->posxdiscount=162;
 		$this->postotalht=177;
-			
+
 		$this->tva=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
@@ -181,10 +181,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($com->ref);
+				$pdf->SetTitle($outputlangs->convToOutputCharset($com->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Order"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($user->fullname);
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($com->ref)." ".$outputlangs->transnoentities("Order"));
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
@@ -301,12 +302,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
 						$this->_pagefoot($pdf, $outputlangs);
-							
+
 						// Nouvelle page
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $com, 0, $outputlangs);
-							
+
 						$nexY = $tab_top_newpage + 8;
 						$pdf->SetTextColor(0,0,0);
 						$pdf->SetFont('Arial','', 10);
@@ -491,7 +492,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			if ($tvakey)    // On affiche pas taux 0
 			{
 				$this->atleastoneratenotnull++;
-					
+
 				$index++;
 				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 
@@ -566,7 +567,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
 		global $conf;
-			
+
 		// Montants exprim�s en     (en tab_top - 1
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);

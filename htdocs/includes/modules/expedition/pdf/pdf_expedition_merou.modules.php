@@ -51,7 +51,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$this->db = $db;
 		$this->name = "Merou";
 		$this->description = "Modele Merou 2xA5 \n
-	Attention !! Il est necessaire de creer 4 nouveaux types de contact : \n 
+	Attention !! Il est necessaire de creer 4 nouveaux types de contact : \n
 	 |element->commande,source->internal,code->LIVREUR \n
 	 |element->commande,source->external,code->LIVREUR \n
 	 |element->commande,source->external,code->EXPEDITEUR \n
@@ -159,10 +159,12 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->Open();
 				$pdf->AddPage();
 				//Generation de l entete du fichier
-				$pdf->SetTitle($this->expe->ref);
-				$pdf->SetSubject($langs->transnoentities("Sending"));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($this->expe->ref));
+				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($user->fullname);
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($this->expe->ref)." ".$outputlangs->transnoentities("Sending"));
+
 				$pdf->SetMargins(10, 10, 10);
 				$pdf->SetAutoPageBreak(1,0);
 
@@ -210,7 +212,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (170, $curY );
 					$pdf->MultiCell(30, 5, $this->expe->lignes[$i]->qty_shipped, 0, 'C', 0);
-						
+
 					//Generation de la page 2
 					$curY += 4;
 					$nexY = $curY;
@@ -395,7 +397,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($livreur->fullname), '' , 'L');
 
-		
+
 		/**********************************/
 		//Emplacement Informations Expediteur (Client)
 		/**********************************/

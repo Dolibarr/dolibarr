@@ -37,7 +37,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 class pdf_edison extends ModelePDFCommandes
 {
 	var $emetteur;	// Objet societe qui emet
-	
+
 	/**
 	 * 	\brief      Constructeur
 	 *	\param	    db	    handler acc�s base de donn�e
@@ -48,7 +48,7 @@ class pdf_edison extends ModelePDFCommandes
 
         $langs->load("main");
         $langs->load("bills");
-		
+
         $this->db = $db;
 		$this->name = "edison";
 		$this->description = "Modele de commande simple";
@@ -62,7 +62,7 @@ class pdf_edison extends ModelePDFCommandes
 		$this->marge_droite=10;
 		$this->marge_haute=10;
 		$this->marge_basse=10;
-		
+
 		$this->option_multilang = 0;               // Dispo en plusieurs langues
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
@@ -92,7 +92,7 @@ class pdf_edison extends ModelePDFCommandes
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
-		
+
 		$outputlangs->load("main");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
@@ -155,10 +155,11 @@ class pdf_edison extends ModelePDFCommandes
 
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($com->ref);
-				$pdf->SetSubject($langs->transnoentities("Order"));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($com->ref));
+				$pdf->SetSubject($outputlangs->transnoentities("Order"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($user->fullname);
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($com->ref)." ".$outputlangs->transnoentities("Order"));
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
@@ -265,9 +266,9 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->Close();
 
 				$pdf->Output($file);
-				if (! empty($conf->global->MAIN_UMASK)) 
+				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				
+
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}
@@ -278,7 +279,7 @@ class pdf_edison extends ModelePDFCommandes
 			$langs->setPhpLang();	// On restaure langue session
 			return 0;
 		}
-			
+
 		$this->error=$langs->transnoentities("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
 		return 0;   // Erreur par defaut
@@ -364,7 +365,7 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->SetFont('Arial','',9);
 		$pdf->SetXY(12,10);
 		$pdf->MultiCell(80,4, $carac_emetteur);
-		
+
 		/*
 		 * Adresse Client
 		 */
@@ -386,7 +387,7 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($com->date,'day',false,$outputlangs));
 		$pdf->Text(11, 94, $outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($com->ref));
 	}
-	
+
     /*
      *   \brief      Affiche le pied de page
      *   \param      pdf     objet PDF

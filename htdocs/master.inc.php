@@ -1,12 +1,12 @@
 <?PHP
-/* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com> 
- * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net> 
+ * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
+ * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +31,12 @@
  */
 
 define('DOL_VERSION','2.5.1-beta');	// Also defined in htdocs/install/inc.php
-define('EURO',chr(128)); 
+define('EURO',chr(128));
 
 // La fonction clearstatcache ne doit pas etre appelée de manière globale car ralenti.
 // Elle doit etre appelée uniquement par les pages qui ont besoin d'un cache fichier vidé
 // comme par exemple document.php
-//clearstatcache();     
+//clearstatcache();
 
 // Definition des constantes syslog
 if (function_exists("define_syslog_variables"))
@@ -127,9 +127,9 @@ $conf->db->user   = $dolibarr_main_db_user;
 $conf->db->pass   = $dolibarr_main_db_pass;
 if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 $conf->db->type   = $dolibarr_main_db_type;
-if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set='latin1'; 
+if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set='latin1';
 $conf->db->character_set=$dolibarr_main_db_character_set;
-if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_'; 
+if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_';
 $conf->db->prefix = $dolibarr_main_db_prefix;
 if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';
 $conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
@@ -137,14 +137,13 @@ $conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
 $conf->main_authentication = $dolibarr_main_authentication;
 // Force https
 $conf->main_force_https = $dolibarr_main_force_https;
-// Define charset for HTML Output
-$charset='UTF-8';	// If not output format found in any conf file
-if (empty($character_set_client)) $character_set_client=$charset;
-$conf->character_set_client=strtoupper($character_set_client);
+// Define charset for HTML Output (can set hidden value force_charset in conf.php file)
+if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
+$conf->character_set_client=strtoupper($force_charset_do_notuse);
 
 // Define array of document root directories
 $conf->dol_document_root=array(DOL_DOCUMENT_ROOT);
-if (! empty($dolibarr_main_document_root_alt)) 
+if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt contains several directories
 	$values=split(';',$dolibarr_main_document_root_alt);
@@ -174,7 +173,7 @@ if (! defined('NOREQUIREDB'))   require_once(DOL_DOCUMENT_ROOT ."/lib/databases/
 /*
  * Creation objet $langs (must be before all other code)
  */
-if (! defined('NOREQUIRETRAN')) 
+if (! defined('NOREQUIRETRAN'))
 {
 	$langs = new Translate("",$conf);	// A mettre apres lecture de la conf
 }
@@ -182,14 +181,14 @@ if (! defined('NOREQUIRETRAN'))
 /*
  * Creation objet $db
  */
-if (! defined('NOREQUIREDB'))   
+if (! defined('NOREQUIREDB'))
 {
 	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
 	if ($db->error)
 	{
 		dolibarr_print_error($db,"host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
-		exit;   
+		exit;
 	}
 }
 // Now database connexion is known we can forget password
@@ -199,7 +198,7 @@ $conf->db->pass='';				// This is to avoir password to be shown in dump
 /*
  * Creation objet $user
  */
-if (! defined('NOREQUIREUSER')) 
+if (! defined('NOREQUIREUSER'))
 {
 	$user = new User($db);
 }
@@ -208,7 +207,7 @@ if (! defined('NOREQUIREUSER'))
  * Chargement objet $conf
  * After this, all parameters conf->global->CONSTANTS are loaded
  */
-if (! defined('NOREQUIREDB'))   
+if (! defined('NOREQUIREDB'))
 {
 	$conf->setValues($db);
 }
@@ -216,7 +215,7 @@ if (! defined('NOREQUIREDB'))
 /*
  * Set default language (must be after the setValues of $conf)
  */
-if (! defined('NOREQUIRETRAN')) 
+if (! defined('NOREQUIRETRAN'))
 {
 	$langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
 	$langs->setPhpLang();
@@ -248,7 +247,7 @@ if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->exte
 
 
 
-/* 
+/*
  * Creation objet mysoc
  * Objet Societe qui contient carac de l'institution géré par Dolibarr.
  */

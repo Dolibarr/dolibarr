@@ -179,11 +179,11 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->AddPage();
 
 				$pdf->SetDrawColor(128,128,128);
-
-				$pdf->SetTitle($fac->ref);
+				$pdf->SetTitle($outputlangs->convToOutputCharset($fac->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Invoice"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($user->fullname);
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($fac->ref)." ".$outputlangs->transnoentities("Invoice"));
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);

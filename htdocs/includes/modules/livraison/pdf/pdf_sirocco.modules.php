@@ -45,14 +45,14 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	function pdf_sirocco($db)
 	{
 		global $conf,$langs,$mysoc;
-		
+
         $langs->load("main");
         $langs->load("bills");
-		
+
         $this->db = $db;
 		$this->name = "sirocco";
 		$this->description = $langs->trans("DocumentModelSirocco");
-		
+
 		// Dimension page pour format A4
 		$this->type = 'pdf';
 		$this->page_largeur = 210;
@@ -66,7 +66,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		// Recupere emmetteur
         $this->emetteur=$mysoc;
         if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
-		
+
 		$this->error = "";
 	}
 
@@ -149,10 +149,11 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$pdf->Open();
 				$pdf->AddPage();
 
-				$pdf->SetTitle($delivery->ref);
+				$pdf->SetTitle($outputlangs->convToOutputCharset($delivery->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("DeliveryOrder"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($user->fullname);
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($delivery->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
 
 				$this->_pagehead($pdf, $delivery, $outputlangs);
 
@@ -251,9 +252,9 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 
 				$pdf->Output($file);
-				if (! empty($conf->global->MAIN_UMASK)) 
+				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				
+
 				return 1;
 			}
 		}

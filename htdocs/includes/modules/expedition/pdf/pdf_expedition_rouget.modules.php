@@ -90,7 +90,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		if ($conf->barcode->enabled)
 		{
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $this->expe->ref
-			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);			
+			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
 		}
 
@@ -105,7 +105,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		if ($conf->barcode->enabled)
 		{
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $this->expe->ref
-			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);			
+			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
 		}
 
@@ -129,7 +129,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
-		
+
 		$outputlangs->load("main");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
@@ -163,30 +163,31 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					return 0;
 				}
 			}
-				
+
 			if (file_exists($dir))
 			{
 				$pdf=new ModelePdfExpedition();
 				//$this = new ModelePdfExpedition();
 				//$this->expe = &$this->expe;
-					
+
 				$pdf->Open();
 				$pdf->AliasNbPages();
 				$pdf->AddPage();
-					
-				$pdf->SetTitle($this->expe->ref);
-				$pdf->SetSubject($langs->transnoentities("Sending"));
+
+				$pdf->SetTitle($outputlangs->convToOutputCharset($this->expe->ref));
+				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				//$this->pdf->SetAuthor($user->fullname);
-					
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($fac->ref)." ".$outputlangs->transnoentities("Sending"));
+
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
 
 				$this->_pagehead($pdf,$this->exp,0,$outputlangs);
-					
+
 				$pdf->SetFont('Arial','', 14);
 				$pdf->SetTextColor(0,0,0);
-					
+
 				$tab_top = 90;
 				$height_note = 200;
 				$pdf->Rect($this->marge_gauche, 80, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 210);
@@ -213,12 +214,12 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
 				{
 					$curY = $this->tableau_top + 14 + ($i * 7);
-						
+
 					if ($this->barcode->enabled)
 					{
 						$pdf->i25($this->marge_gauche+3, ($curY - 2), "000000".$this->expe->lignes[$i]->fk_product, 1, 8);
 					}
-						
+
 					// Description de la ligne produit
 					$libelleproduitservice=dol_htmlentitiesbr($this->expe->lignes[$i]->description,1);
 					if ($this->expe->lignes[$i]->description && $this->expe->lignes[$i]->description!=$com->lignes[$i]->libelle)
@@ -252,14 +253,14 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 					$pdf->SetXY (160, $curY);
 					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_asked);
-						
+
 					$pdf->SetXY (186, $curY);
 					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_shipped);
 				}
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
-					
+
 				$pdf->Output($file);
 
 				$langs->setPhpLang();	// On restaure langue session

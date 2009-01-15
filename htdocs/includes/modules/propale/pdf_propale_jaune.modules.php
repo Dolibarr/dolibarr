@@ -158,10 +158,11 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$pdf->Open();
 				$pdf->AddPage();
 
-				$pdf->SetTitle($propale->ref);
+				$pdf->SetTitle($outputlangs->convToOutputCharset($propale->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("CommercialProposal"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($user->fullname);
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($propale->ref)." ".$outputlangs->transnoentities("CommercialProposal"));
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
@@ -217,14 +218,14 @@ class pdf_propale_jaune extends ModelePDFPropales
 						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($propale->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($propale->lignes[$i]->date_end,'',false,$outputlangs).")",1);
 					}
 
-					
+
 					$pdf->SetXY (30, $curY );
 					$pdf->MultiCell(102, 5, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 'J', 0);
 
 					$nexY = $pdf->GetY();
 
 					$ref=dol_htmlentitiesbr($propale->lignes[$i]->ref);
-					
+
 					$pdf->SetXY (10, $curY );
 					$pdf->MultiCell(20, 5, $outputlangs->convToOutputCharset($ref), 0, 'C', 0);
 
@@ -343,7 +344,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetFont('Arial','',10);
 	}
 
-	
+
 	function _pagehead(&$pdf, $propale, $outputlangs)
 	{
 		//Affiche le filigrane brouillon - Print Draft Watermark
@@ -365,7 +366,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		}
 
 		$pdf->SetTextColor(0,0,0);
-		
+
 		// Caracteristiques emetteur
 		$carac_emetteur = '';
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
@@ -383,8 +384,8 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetFont('Arial','',9);
 		$pdf->SetXY(12,42);
 		$pdf->MultiCell(80,3, $carac_emetteur);
-				
-		
+
+
 		$pdf->rect(10, 40, 80, 40);
 
 		$pdf->SetXY(10,5);

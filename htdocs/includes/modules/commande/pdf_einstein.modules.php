@@ -177,10 +177,11 @@ class pdf_einstein extends ModelePDFCommandes
 
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($com->ref);
+				$pdf->SetTitle($outputlangs->convToOutputCharset($com->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Order"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($user->fullname);
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($com->ref)." ".$outputlangs->transnoentities("Order"));
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);

@@ -33,7 +33,7 @@ $langs->load("install");
 if (!$user->admin)
   accessforbidden();
 
-  
+
 /*
  * View
  */
@@ -55,10 +55,10 @@ print "<br>\n";
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("OS")."</td></tr>\n";
 // Récupère la version de l'OS
-ob_start(); 
+ob_start();
 phpinfo();
-$chaine = ob_get_contents(); 
-ob_end_clean(); 
+$chaine = ob_get_contents();
+ob_end_clean();
 eregi('System </td><td class="v">([^\/]*)</td>',$chaine,$reg);
 print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".$reg[1]."</td></tr>\n";
 print '</table>';
@@ -112,8 +112,6 @@ $configfileparameters=array(
 							'dolibarr_main_db_character_set',
 							'dolibarr_main_db_collation',
 							'separator',
-							'character_set_client',
-							'separator',
 							'dolibarr_main_authentication',
 							'separator',
 							'dolibarr_main_auth_ldap_login_attribute',
@@ -143,8 +141,6 @@ $configfilelib=array(
 					$langs->trans("Password"),
 					$langs->trans("DBStoringCharset"),
 					$langs->trans("DBSortingCharset"),
-					'separator',
-					$langs->trans("HTMLCharset"),
 					'separator',
 					$langs->trans("AuthenticationMode"),
 					'separator',
@@ -185,8 +181,8 @@ foreach($configfileparameters as $key)
 		// TODO Afficher charset effectif de base $db
 		if ($key == 'dolibarr_main_db_charset')
 		{
-			
-			
+
+
 		}
 		print "</td>";
 	}

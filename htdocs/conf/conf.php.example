@@ -121,14 +121,6 @@ $dolibarr_main_db_character_set="latin1";
 $dolibarr_main_db_collation="latin1_swedish_ci";
 
 
-# character_set_client
-# Page code for HTML outputs.
-# Default value: UTF-8
-# Possible values: UTF-8, ISO-8859-1
-#
-#$character_set_client="UTF-8";
-
-
 # dolibarr_main_authentication
 # This parameter contains the way authentication is done.
 # If value "ldap" is used, you must also set parameters dolibarr_main_auth_ldap_*

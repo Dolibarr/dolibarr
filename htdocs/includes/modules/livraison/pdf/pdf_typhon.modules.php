@@ -88,7 +88,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$this->posxqty=168;
 		$this->posxdiscount=162;
 		$this->postotalht=177;
-			
+
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
 	}
@@ -177,10 +177,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($delivery->ref);
-				$pdf->SetSubject($langs->transnoentities("DeliveryOrder"));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($delivery->ref));
+				$pdf->SetSubject($outputlangs->transnoentities("DeliveryOrder"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($user->fullname);
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($delivery->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
@@ -490,7 +491,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY($this->marge_gauche+2,$posy+9);
 			$pdf->MultiCell(80,3, $carac_emetteur);
-				
+
 			// Client destinataire
 			$posy=42;
 			$pdf->SetTextColor(0,0,0);

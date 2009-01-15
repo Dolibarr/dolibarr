@@ -167,10 +167,11 @@ class pdf_oursin extends ModelePDFFactures
 
 				$this->_pagehead($pdf, $fac, $outputlangs);
 
-				$pdf->SetTitle($fac->ref);
+				$pdf->SetTitle($outputlangs->convToOutputCharset($fac->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Invoice"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($user->fullname);
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($fac->ref)." ".$outputlangs->transnoentities("Invoice"));
 
 				$pdf->SetMargins(10, 10, 10);
 				$pdf->SetAutoPageBreak(1,0);
@@ -380,7 +381,7 @@ class pdf_oursin extends ModelePDFFactures
 		$y=0;
 
 		$pdf->SetFont('Arial','',6);
-		
+
 		// Loop on each credit note included
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql.= " re.description, re.fk_facture_source, re.fk_facture_source";
@@ -510,7 +511,7 @@ class pdf_oursin extends ModelePDFFactures
 		}
 
 		$index = 0;
-		
+
 		// Total TTC
 		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
 		$pdf->SetXY ($col1x, $tab2_top + 0);
@@ -538,11 +539,11 @@ class pdf_oursin extends ModelePDFFactures
         $creditnoteamount=$fac->getSommeCreditNote();
 		$resteapayer = $fac->total_ttc - $deja_regle - $creditnoteamount;
 		if ($object->paye) $resteapayer=0;
-		
+
 		if ($deja_regle > 0 || $creditnoteamount > 0)
         {
 			$pdf->SetFont('Arial','', 10);
-        	
+
 			// Already payed
             $index++;
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
@@ -559,10 +560,10 @@ class pdf_oursin extends ModelePDFFactures
 	            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 	            $pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount), 0, 'R', 0);
 			}
-			            
+
 			$resteapayer = $object->total_ttc - $deja_regle - $creditnoteamount;
 			if ($object->paye) $resteapayer=0;
-			
+
         	$index++;
 			$pdf->SetTextColor(0,0,60);
         	$pdf->SetFont('Arial','B', 11);
@@ -573,7 +574,7 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 0);
 			$pdf->SetTextColor(0,0,0);
 		}
-		
+
  		$index++;
         return ($tab2_top + ($tab2_hl * $index));
 	}
@@ -759,7 +760,7 @@ class pdf_oursin extends ModelePDFFactures
 		if ($conf->propal->enabled)
 		{
 			$outputlangs->load('propal');
-			
+
 			$sql = "SELECT ".$fac->db->pdate("p.datep")." as dp, p.ref, p.rowid as propalid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $fac->id";
 			$result = $fac->db->query($sql);
@@ -770,7 +771,7 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->MultiCell(60, 4, $outputlangs->transnoentities("RefProposal")." : ".$objp->ref);
 			}
 		}
-		
+
 		/*
 		 * monnaie
 		 */
