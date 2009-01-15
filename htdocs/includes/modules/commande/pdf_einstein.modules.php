@@ -111,7 +111,7 @@ class pdf_einstein extends ModelePDFCommandes
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
-		
+
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
@@ -317,20 +317,20 @@ class pdf_einstein extends ModelePDFCommandes
 					$this->tva[$vatrate] += $tvaligne;
 
 					$nexY+=2;    // Passe espace entre les lignes
-					
+
 					// cherche nombre de lignes a venir pour savoir si place suffisante
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
 						$follow_descproduitservice = $outputlangs->convToOutputCharset($com->lignes[$i+1]->desc);
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
-						$nblineFollowDesc = (dol_num_lines($follow_descproduitservice,52)*4);
+						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52)*4);
 					}
 					else	// If it's last line
 					{
 						$nblineFollowDesc = 0;
 					}
-										
+
 					// test si besoin nouvelle page
 					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
@@ -387,9 +387,9 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->Close();
 
 				$pdf->Output($file);
-				if (! empty($conf->global->MAIN_UMASK)) 
+				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				
+
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}
@@ -746,7 +746,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->_out('Q');
 		}
 		//Print content
-		 
+
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('Arial','B',13);
 
@@ -832,11 +832,11 @@ class pdf_einstein extends ModelePDFCommandes
 			if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($this->emetteur->email);
 			// Web
 			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
-	
+
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY(12,$posy+7);
 			$pdf->MultiCell(80,4, $carac_emetteur);
-			
+
 			// Client destinataire
 			$posy=42;
 			$pdf->SetTextColor(0,0,0);
@@ -844,10 +844,10 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetXY(102,$posy-5);
 			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
 			$object->fetch_client();
-	   
+
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);
-	   
+
 			// If CUSTOMER contact defined on invoice, we use it
 			$usecontact=false;
 			if ($conf->global->COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT)
@@ -866,10 +866,10 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->SetXY(102,$posy+3);
 				$pdf->SetFont('Arial','B',11);
 				$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($object->client->nom), 0, 'L');
-					
+
 				// Nom client
 				$carac_client = "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
-					
+
 				// Caract�ristiques client
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->adresse);
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
@@ -885,7 +885,7 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->SetXY(102,$posy+3);
 				$pdf->SetFont('Arial','B',11);
 				$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($object->client->nom), 0, 'L');
-					
+
 				// Nom du contact suivi commande si c'est une soci�t�
 				$arrayidcontact = $object->getIdContact('external','CUSTOMER');
 				if (sizeof($arrayidcontact) > 0)
@@ -897,7 +897,7 @@ class pdf_einstein extends ModelePDFCommandes
 						$carac_client .= "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
 					}
 				}
-					
+
 				// Caract�ristiques client
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->adresse);
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
