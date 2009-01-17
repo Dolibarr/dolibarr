@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier              <benoit.mortier@opensides.be>
- * Copyright (C) 2004-2008 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
@@ -151,14 +151,10 @@ class Contact extends CommonObject
         
         $this->email=trim($this->email);
         $this->phone_pro=trim($this->phone_pro);
-    
-        if (! $this->phone_pro && $this->socid > 0)
-        {
-            $soc = new Societe($this->db);
-            $soc->fetch($this->socid);
-            $this->phone_pro = $soc->tel;
-        }
-    
+        $this->phone_perso=trim($this->phone_perso);
+        $this->phone_mobile=trim($this->phone_mobile);
+        $this->fax=trim($this->fax);
+                
         $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
         if ($this->socid > 0) $sql .= " fk_soc='".addslashes($this->socid)."',";
         if ($this->socid == -1) $sql .= " fk_soc=null,";
