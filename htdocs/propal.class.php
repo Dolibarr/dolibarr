@@ -277,6 +277,7 @@ class Propal extends CommonObject
 			// Clean parameters
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
+			/*
 			if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty)
 			{
 				$qty=0;
@@ -285,6 +286,7 @@ class Propal extends CommonObject
 			{
 				$qty=1;
 			}
+			*/
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$txtva=price2num($txtva);
@@ -335,7 +337,8 @@ class Propal extends CommonObject
 			$ligne->total_ttc=$total_ttc;
 
 			// Mise en option de la ligne
-			if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty) $ligne->special_code=3;
+			//if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty) $ligne->special_code=3;
+			if (empty($qty)) $ligne->special_code=3;
 
 			// \TODO Ne plus utiliser
 			$ligne->price=$price;
@@ -395,6 +398,7 @@ class Propal extends CommonObject
 			// Nettoyage param�tres
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
+			/*
 			if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty)
 			{
 				$qty=0;
@@ -404,6 +408,7 @@ class Propal extends CommonObject
 			{
 				$qty=1;
 			}
+			*/
 			$pu = price2num($pu);
 			$txtva = price2num($txtva);
 
@@ -435,15 +440,9 @@ class Propal extends CommonObject
 			$sql.= " , total_tva=".price2num($total_tva);
 			$sql.= " , total_ttc=".price2num($total_ttc);
 			$sql.= " , info_bits=".$info_bits;
-			if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty)
-			{
-				$sql.= " , special_code=3";
-			}
-			else
-			{
-				$sql.= " , special_code=0";
-			}
-			$sql.= " WHERE rowid = '".$rowid."';";
+			//if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty)
+			$sql.= " , special_code=".(empty($qty)?"3":"0");
+			$sql.= " WHERE rowid = '".$rowid."'";
 
 			$result=$this->db->query($sql);
 			if ($result > 0)

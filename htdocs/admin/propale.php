@@ -118,10 +118,12 @@ if ($_POST["action"] == 'setadddeliveryaddress')
     dolibarr_set_const($db, "PROPALE_ADD_DELIVERY_ADDRESS",$_POST["value"]);
 }
 
+/*
 if ($_POST["action"] == 'setuseoptionline')
 {
     dolibarr_set_const($db, "PROPALE_USE_OPTION_LINE",$_POST["value"]);
 }
+*/
 
 if ($_POST["action"] == 'setclassifiedinvoiced')
 {
@@ -476,6 +478,7 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
+/*
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="setuseoptionline">';
@@ -487,6 +490,7 @@ print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
+*/
 
 if ($conf->commande->enabled)
 {
