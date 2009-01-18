@@ -52,3 +52,54 @@ NbOfCustomersContacts=Nm. de contactos únicos para todos os clientes
 MailNoChangePossible=Os destinatários de malings validados não podem ser mudados
 SendMailing=Enviar mailing
 MailingNeedCommand=Por questões de segurança, enviar um mailing apenas pode ser feito através da linha de comando. Peça ao seu informático para correr o seguinte comando de forma a enviar um mailing para todos os destinatários:
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+EMailing=Emailing
+Mailings=EMailings
+EMailings=EMailings
+MailRecipient=Recipiente
+MailErrorsTo=Erros de
+MailCCC=Cached copy a
+ShowEMailing=Mostrar emailing
+ListOfEMailings=Lista de emailings
+MailingStatusSentPartialy=Enviado parcialmente
+MailingStatusSentCompletely=Enviadas completamente
+MailingStatusError=Erro
+MailingStatusNotSent=Não enviado
+WarningNoEMailsAdded=Nenhum novo e-mail do destinatário para adicionar à lista.
+NbOfUniqueEMails=Nb dos únicos e-mails
+NbOfEMails=Nb de e-mails
+RemoveRecipient=Remover destinatário
+CommonSubstitutions=Comum substituições
+YouCanAddYourOwnPredefindedListHere=Para criar o seu e-mail selector módulo, ver htdocs / includes / modules / expedições / README.
+EMailTestSubstitutionReplacedByGenericValues=Ao usar o modo de teste, substituições variáveis são substituídas por valores genéricos
+MailingAddFile=Anexe esse arquivo
+NoAttachedFiles=Não ficheiros anexados
+MailingModuleDescContactCompanies=Contactos de todos os terceiros (clientes, prospecção, fornecedor ...)
+MailingModuleDescFundationMembers=Fundação membros com e-mails
+MailingModuleDescEmailsFromFile=E-mails de um arquivo de texto (e-mail, nome, sobrenome)
+MailingModuleDescContactsCategories=Contactos de todos os terceiros (por categoria)
+LineInFile=Linha% s no arquivo
+NbOfCompaniesContacts=Unique contactos das empresas
+SearchAMailing=Pesquisa mailing
+SendMail=Enviar e-mail
+SentBy=Enviada por
+MailingNeedCommand2=Você pode, no entanto, enviá-las on-line, acrescentando MAILING_LIMIT_SENDBYWEB parâmetro com o valor máximo do número de e-mails que pretende enviar por sessão.
+ConfirmSendingEmailing=Tem certeza de que deseja enviar correspondência? <br> Em linha envio de emailings são limitados por razões de segurança <b>para% s</b> destinatários através do envio sessão.
+TargetsReset=Limpar lista
+ToClearAllRecipientsClickHere=Para limpar destinatários &quot;lista para este e-mail, clique em botão
+ToAddRecipientsChooseHere=Para adicionar destinatários, escolha nessas listas
+NbOfEMailingsReceived=Massa emailings recebidas
+IdRecord=ID recorde
+DeliveryReceipt=Entrega Recibo
+Notifications=Notificações
+NoNotificationsWillBeSent=Não notificações por e-mail estão programadas para este evento e da empresa
+ANotificationsWillBeSent=1 notificação será enviada por e-mail
+SomeNotificationsWillBeSent=% s notificações serão enviadas por e-mail
+AddNewNotification=Activar uma nova notificação pedido
+ListOfActiveNotifications=Lista todos os ativos notificações pedidos
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser

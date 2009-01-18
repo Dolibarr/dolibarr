@@ -1,0 +1,22 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pt_PT
+ * Automatic generated via language parser
+ * Generation date 2009-01-18 18:56:33
+ */
+
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+OSCommerce=OS Commerce
+OSCommerceSetup=OS Commerce módulo configuração
+OSCommerceSetupSaved=OS Commerce configuração salva
+OSCommerceServer=OS Commerce servidor host / ip
+OSCommerceDatabaseName=OS Commerce nome do banco de dados
+OSCommercePrefix=OS Commerce quadros prefixo
+OSCommerceUser=OS Commerce base login
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser

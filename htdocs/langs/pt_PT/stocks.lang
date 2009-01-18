@@ -1,0 +1,77 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pt_PT
+ * Automatic generated via language parser
+ * Generation date 2009-01-18 18:56:33
+ */
+
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+WarehouseCard=Armazém cartão
+Warehouse=Armazém
+NewWarehouse=Novo armazém / Stock área
+MenuNewWarehouse=Novo entreposto
+WarehouseOpened=Armazém aberta
+WarehouseClosed=Armazém fechado
+WarehouseSource=Fonte armazém
+WarehouseTarget=Alvo armazém
+ValidateSending=Apagar envio
+CancelSending=Cancelar envio
+DeleteSending=Apagar envio
+Stock=Stock
+Stocks=Acções
+Movement=Movimento
+Movements=Movimentos
+ErrorWarehouseRefRequired=Armazém nome de referência é necessário
+ErrorWarehouseLabelRequired=Armazém etiqueta é necessária
+CorrectStock=Corrigir estoque
+ListOfWarehouses=Lista de armazéns
+ListOfStockMovements=Lista de stock movimentos
+StocksArea=Acções área
+Location=Lieu
+LocationSummary=Curto nome local
+NumberOfProducts=Número total de produtos
+LastMovement=Última circulação
+LastMovements=Última movimentos
+Units=Unidades
+Unit=Unidade
+StockCorrection=Corrigir estoque
+StockMovement=Transferência
+StockMovements=Stock transferências
+NumberOfUnit=Número de unidades
+TotalStock=Total em estoque
+StockTooLow=Stock demasiado baixa
+EnhancedValue=Valor
+PMPValue=Valor
+EnhancedValueOfWarehouses=Armazéns valor
+UserWarehouseAutoCreate=Criar um estoque automaticamente quando cria um usuário
+QtyDispatched=Quantidade expedidos
+OrderDispatch=Ordem despachando
+RuleForStockManagementDecrease=Regra para a diminuição da gestão das existências
+RuleForStockManagementIncrease=Regra ações de gestão para aumentar
+DeStockOnBill=Diminuição real stocks nas facturas / notas de crédito (advertência, nesta versão, é apenas no armazém número 1, que a unidade populacional é modificada)
+DeStockOnValidateOrder=Diminuição existências reais em encomendas notas (advertência, nesta versão, é apenas no armazém número 1, que a unidade populacional é modificada)
+DeStockOnShipment=
+ReStockOnBill=Aumento real em existências facturas / notas de crédito (advertência, nesta versão, é apenas no armazém número 1, que a unidade populacional é modificada)
+ReStockOnValidateOrder=Aumento real em existências ordens notas (advertência, nesta versão, é apenas no armazém número 1, que a unidade populacional é modificada)
+StockDiffPhysicTeoric=Motivo da diferença estoque físico e teórico
+StockLimitShort=Limite
+StockLimit=Stock-limite para alertas
+PhysicalStock=Inventário físico
+RealStock=Real Stock
+TheoreticalStock=Therocial estoque
+VirtualStock=Virtual estoque
+MininumStock=Existências mínimas
+StockUp=Stock-se
+MininumStockShort=Stock min
+StockUpShort=Stock-se
+IdWarehouse=Id armazém
+DescWareHouse=Descrição armazém
+LieuWareHouse=Localisation armazém
+WarehousesAndProducts=Armazéns e produtos
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser

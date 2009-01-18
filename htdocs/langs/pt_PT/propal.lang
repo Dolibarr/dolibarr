@@ -27,3 +27,60 @@ ListOfProposals=Lista de propostas comerciais
 ActionsOnPropal=Tarefas associadas à proposta
 NoOpenedPropals=Nenhuma proposta comercialo aberta
 NoOtherOpenedPropals=Nenhuma outra proposta comercial aberta
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+CommercialProposal=Proposta comercial
+CommercialProposals=Propostas comerciais
+ProposalContact=Proposta contato
+NewProposal=Nova proposta comercial
+NewPropal=Nova proposta
+ValidateProp=Validar proposta comercial
+ConfirmValidateProp=Tem certeza de que deseja validar esta proposta comercial?
+LastProposals=Última propostas
+AmountOfProposalsByMonthHT=Montante por mês (líquido de impostos)
+PropalsNotBilled=Fechado não faturado
+PropalStatusOpened=Validado (proposta é aberto)
+PropalStatusClosed=Fechado
+PropalStatusSigned=Assinado (a lei)
+PropalStatusNotSigned=Não assinado (fechado)
+PropalStatusBilled=Faturada
+PropalStatusDraftShort=Rascunho
+PropalStatusValidatedShort=Validado
+PropalStatusOpenedShort=Inaugurado
+PropalStatusClosedShort=Fechado
+PropalStatusSignedShort=Assinado
+PropalStatusNotSignedShort=Não assinado
+PropalStatusBilledShort=Faturada
+PropalsToClose=Propostas comerciais para fechar
+PropalsToBill=Assinado propostas comerciais para faturar
+RefProposal=Proposta comercial ref
+SendPropalByMail=Enviar proposta comercial por correio
+FileNotUploaded=O arquivo não foi carregado
+FileUploaded=O arquivo foi carregado com sucesso
+AssociatedDocuments=Documentos relacionados com a proposta:
+ErrorCantOpenDir=Não é possível abrir diretório
+DateEndPropal=Data final validade
+DateEndPropalShort=Data final
+ValidityDuration=Validade duração
+CloseAs=Fechar com status
+ClassifyBilled=Classificar faturado
+BuildBill=Construa factura
+RelatedBill=Relacionadas factura
+RelatedBills=Relacionadas facturas
+ErrorPropalNotFound=Propal% s não foi encontrado
+Estimate=Estimativa:
+EstimateShort=Estimativa
+OtherPropals=Outras propostas
+CopyPropalFrom=Criar uma proposta comercial, copiando proposta existente
+CreateEmptyPropal=Criar vazio propostas comerciais vierge ou da lista de produtos / serviços
+DefaultProposalDurationValidity=Predefinição proposta comercial validade duração (em dias)
+UseCustomerContactAsPropalRecipientIfExist=Use cliente endereço definido em vez de se terceiro endereço como destinatário proposta endereço
+ClonePropal=Clone proposta comercial
+ConfirmClonePropal=Tem certeza que pretende clonar esta proposta <b>comercial% s?</b>
+DocModelAzurDescription=A proposta completa modelo (logo. ..)
+DocModelJauneDescription=Jaune proposta modelo
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser

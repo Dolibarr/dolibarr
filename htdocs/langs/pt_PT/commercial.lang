@@ -28,3 +28,58 @@ LastRecordedTasks=Lista de tarefas registadas recentemente
 DoneAndToDoTasksFor=Tarefas feitas e por fazer para
 DoneAndToDoTasks=Tarefas feitas e por fazer
 SendPropalRef=Enviar proposta comercial %s
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+CommercialCard=Comercial cartão
+CustomerArea=Área clientes
+NewAction=Nova acção / tarefa
+AddAnAction=Adicionar uma acção / tarefa
+ShowAction=Mostrar acção
+ActionsReport=Acções relatório
+SalesRepresentatives=Representantes de Vendas
+SalesRepresentativeFollowUp=Representante de vendas (follow-up)
+SalesRepresentativeSignature=Representante de vendas (assinatura)
+CommercialInterlocutor=Comercial interlocutor
+LastActionsToDo=Última% s mais antigas acções não concluídas
+DoneAndToDoActionsFor=Feito e fazer tarefas para% s
+DoneAndToDoActions=Feito e fazer tarefas
+DoneActions=Feito acções
+DoneActionsFor=Feito acções para% s
+ToDoActions=Uncomplete acções
+ToDoActionsFor=Uncomplete acções para% s
+SendOrderRef=Envie para% s
+NoRecordedProspects=Não perspectiva gravado
+StatusActionToDo=Para fazer
+StatusActionDone=Feito
+MyActionsAsked=Acções tenho gravado
+MyActionsToDo=As acções que tenho que fazer
+MyActionsDone=Acções afetadas para mim
+StatusActionInProcess=Em processo
+TasksHistoryForThisContact=Ações para este contato
+LastProspectDoNotContact=Não contato
+LastProspectNeverContacted=Nunca contactado
+LastProspectToContact=Para entrar em contato
+LastProspectContactInProcess=Contato em processo
+LastProspectContactDone=Contato feito
+DateActionPlanned=Data prevista para ação
+DateActionDone=Data de acção feito
+ActionAskedBy=Acção perguntou por
+ActionAffectedTo=Acção afectada a
+ActionDoneBy=Acção feito por
+ActionUserAsk=Gravado por
+ErrorStatusCantBeZeroIfStarted=Se o campo <b>&#39;Data feito&#39;</b> é preenchido, a acção é iniciado (ou acabados), para campo <b>&#39;Estado&#39;</b> não pode ser de 0%%.
+ActionAC_TEL=Telefonema
+ActionAC_FAX=Enviar fax
+ActionAC_PROP=Enviar proposta
+ActionAC_EMAIL=Enviar e-mail
+ActionAC_RDV=Reuniões
+ActionAC_FAC=Enviar faturamento
+ActionAC_REL=Envie faturamento (lembrete)
+ActionAC_CLO=Fechar
+ActionAC_EMAILING=Envie massa emailing
+ActionAC_COM=Enviar por correio para
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser

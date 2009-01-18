@@ -1,0 +1,45 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pt_PT
+ * Automatic generated via language parser
+ * Generation date 2009-01-18 18:56:33
+ */
+
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+Intervention=Intervenção
+Interventions=Intervenções
+InterventionCard=Intervenção cartão
+NewIntervention=Nova intervenção
+AddIntervention=Adicionar intervenção
+ListOfInterventions=Lista das intervenções
+EditIntervention=Editer intervenção
+LastInterventions=Última% s intervenções
+AllInterventions=Todas as intervenções
+CreateDraftIntervention=Criar um projecto de
+CustomerDoesNotHavePrefix=O cliente não tem um prefixo
+InterventionContact=Intervenção contato
+DeleteIntervention=Apagar intervenção
+ValidateIntervention=Validar intervenção
+DeleteInterventionLine=Apagar intervenção linha
+ConfirmDeleteIntervention=Tem certeza de que deseja apagar esta intervenção?
+ConfirmValidateIntervention=Tem certeza de que deseja validar esta intervenção?
+ConfirmModifyIntervention=Tem certeza de que pretende modificar esta intervenção?
+ConfirmDeleteInterventionLine=Tem certeza de que deseja apagar esta intervenção linha?
+NameAndSignatureOfInternalContact=Nome e assinatura do intervalo:
+NameAndSignatureOfExternalContact=Nome e assinatura do cliente:
+DocumentModelStandard=Norma documento modelo para intervenções
+TypeContact_fichinter_internal_INTERREPFOLL=Representante seguimento de intervenção
+TypeContact_fichinter_internal_INTERVENING=Intervir
+TypeContact_fichinter_external_BILLING=Faturamento cliente contato
+TypeContact_fichinter_external_CUSTOMER=Seguindo-se cliente contacto
+ArcticNumRefModelDesc1=Genérico número modelo
+ArcticNumRefModelError=Falha ao ativar
+PacificNumRefModelDesc1=Retornar numero com formato% syymm-nnnn onde yy é o ano, mm mês e é nnnn é uma seqüência, sem interrupção e sem volta para 0
+PacificNumRefModelError=Uma intervenção cartão começando com $ syymm já existe e não é compatível com este modelo de seqüência. Removê-lo ou renomeá-lo para ativar este módulo.
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser

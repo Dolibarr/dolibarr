@@ -1,0 +1,48 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pt_PT
+ * Automatic generated via language parser
+ * Generation date 2009-01-18 18:56:33
+ */
+
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+StandingOrdersArea=Permanente ordens área
+CustomersStandingOrdersArea=Os clientes permanentes área
+StandingOrders=Permanente encomendas
+StandingOrder=Permanente encomendas
+NewStandingOrder=Nova ordem permanente
+Withdrawals=Retiradas
+Withdrawal=Retirada
+WithdrawalsReceipts=Retiradas recibos
+WithdrawalReceipt=Retirada recepção
+WithdrawalReceiptShort=Recibo
+LastWithdrawalReceipts=Última% s retirada recibos
+WithdrawedBills=Withdrawed facturas
+WithdrawalsLines=Retiradas linhas
+RequestStandingOrderToTreat=Pedido de permanentes para tratar
+RequestStandingOrderTreated=Pedido de permanentes tratados
+CustomersStandingOrders=Cliente permanentes
+CustomerStandingOrder=Cliente ordem permanente
+NbOfInvoiceToWithdraw=Nb retirar pedido de uma factura com
+InvoiceWaitingWithdraw=Factura esperando para retirar
+AmountToWithdraw=Montante a retirar
+WithdrawsRefused=Retire recusada
+NoInvoiceToWithdraw=Nenhum cliente fatura no modo de pagamento &quot;retirar&quot; está à espera. Vá em &quot;Retirar&quot; guia na factura cartão para fazer um pedido.
+ResponsibleUser=Responsável usuário
+WithdrawalsSetup=Retirada setup
+WithdrawStatistics=Retire «estatísticas
+WithdrawRejectStatistics=Retirar rejeita «estatísticas
+LastWithdrawalReceipt=Última% s retirando receitas
+MakeWithdrawRequest=Faça um pedido retirar
+ThirdPartyBankCode=Terceiro código bancário
+ThirdPartyDeskCode=Terceiro secretária código
+NoInvoiceCouldBeWithdrawed=Não factura withdrawed com sucesso. Verifique se a factura são as empresas com um válido BAN.
+ClassCredited=Classificar creditado
+ClassCreditedConfirm=Tem certeza de que deseja classificar esta retirada recepção como creditado em sua conta bancária?
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser

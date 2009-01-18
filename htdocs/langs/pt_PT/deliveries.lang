@@ -1,0 +1,35 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pt_PT
+ * Automatic generated via language parser
+ * Generation date 2009-01-18 18:56:33
+ */
+
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+Delivery=Entrega
+Deliveries=Entregas
+DeliveryCard=Entrega cartão
+DeliveryOrder=Entrega fim
+DeliveryOrders=Entrega encomendas
+DeliveryDate=Data de entrega
+DeliveryDateShort=Deliv. data
+CreateDeliveryOrder=Gere entrega ordem
+QtyDelivered=Qtd entregues
+SetDeliveryDate=Definir a data marítimo
+ValidateDeliveryReceipt=Validar recibo de entrega
+ValidateDeliveryReceiptConfirm=Tem certeza de que deseja validar esta entrega recibo?
+DeliveryMethod=Método de entrega
+TrackingNumber=Número de rastreamento
+NameAndSignature=Nome e Assinatura:
+ToAndDate=To___________________________________ em ____ / _____ / __________
+GoodStatusDeclaration=Ter recebido as mercadorias acima em bom estado,
+Deliverer=Entregador:
+Sender=Remetente
+Recipient=Recipiente
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser

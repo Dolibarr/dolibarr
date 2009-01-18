@@ -9,3 +9,23 @@ DonationsPayed=Donativos pagos
 DonationsReceived=Donativos recebidos
 PublicDonation=Donativos públicos
 DonationsNumber=Nr. do donativo
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+Donor=Doador
+Donors=Doadores
+NewDonation=Nova doação
+DonationsArea=Donativos área
+DonationStatusPromiseNotValidated=Projecto de promessa
+DonationStatusPromiseValidated=Validado promessa
+DonationStatusPayed=Doação recebida
+DonationStatusPromiseNotValidatedShort=Rascunho
+DonationStatusPromiseValidatedShort=Validado
+DonationStatusPayedShort=Recebidos
+ValidPromise=Validar promessa
+BuildDonationReceipt=Construa recepção
+DonationsModels=Documentos modelos de recibos doação
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser

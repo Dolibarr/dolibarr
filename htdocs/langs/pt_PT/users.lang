@@ -55,3 +55,49 @@ ListOfUsersInGroup=Lista de utilizadores neste grupo
 ListOfGroupsForUser=Lista de grupos para este utilizador
 UsersToAdd=Utilizadores a adicionar a este grupo
 GroupsToAdd=Grupos a adicionar a este utilizador
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+EditPassword=Editar senha
+ReinitPassword=Gerar nova senha
+PasswordChangedTo=Senha alterada para:% s
+UserGUISetup=Usuário display setup
+EnableAUser=Ativar um usuário
+EnableAGroup=Activar um grupo
+ConfirmEnableUser=Tem certeza de que deseja ativar <b>usuário% s?</b>
+ConfirmEnableGroup=Tem certeza de que deseja ativar <b>grupo% s?</b>
+ConfirmReinitPassword=Tem certeza de que deseja gerar uma nova senha para o <b>usuário% s?</b>
+ConfirmSendNewPassword=Tem certeza de que deseja gerar e enviar uma nova senha para o <b>usuário% s?</b>
+ErrorFailedToSendPassword=Falha ao enviar a senha
+PasswordChangeRequestSent=Pedir para alterar a senha <b>para% s</b> foi enviado <b>para% s.</b>
+NoLogin=Não login
+CreateDolibarrLogin=Criar conta Dolibarr
+LoginAccountDisable=Conta com deficiência, colocou um novo login para ativá-la.
+LoginAccountDisableInDolibarr=Conta desativada no Dolibarr.
+LoginAccountDisableInLdap=Conta desativada no domínio.
+UsePersonalValue=Uso pessoal valor
+GuiLanguage=Idioma da interface
+InternalUser=Usuário interno
+MyInformations=Meus dados
+ExportDataset_user_1=Dolibarr de usuários e propriedades
+DomainUser=Domínio usuário% s
+Reactivate=Reativar
+CreateInternalUserDesc=Este formulário permite-lhe criar um usuário interno de sua empresa / Fundation. Para criar um usuário externo (clientes, fornecedores, ...), uso botão &quot;Criar usuário Dolibarr &#39;de terceiros, de contacto do cartão.
+InternalExternalDesc=Um usuário <b>interno</b> é um usuário que faz parte da sua empresa / Fundation. <br> Um usuário <b>externo</b> é um cliente, fornecedor ou outro. <br><br> Em ambos os casos, as permissões define direitos sobre Dolibarr, também usuário externo pode ter um menu diferente gerente do que o usuário interno (ver Início - Instalação - Display)
+PermissionInheritedFromAGroup=Permissão concedida porque ineherited a partir de um de um usuário do grupo.
+IdPhoneCaller=Id do telefone chamador
+UserLogged=Usuário% s ligado
+NewUserCreated=Usuário% s criado
+NewUserPassword=Alteração de senha para% s
+EventUserModified=Usuário% s modificados
+UserDisabled=Usuário% s deficientes
+UserEnabled=Usuário% s activada
+UserDeleted=Usuário% s removido
+NewGroupCreated=Grupo criado% s
+GroupDeleted=Grupo% s removido
+ConfirmCreateContact=Tem certeza yu Dolibarr deseja criar uma conta para este contato?
+LoginToCreate=Login para criar
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser

@@ -8,3 +8,35 @@ History=História
 OrderCard=Cartão de encomenda
 ListOfSuppliers=Lista de fornecedores
 ShowSupplier=Mostrar fonecedor
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+SuppliersInvoice=Fornecedores factura
+SuppliersInvoices=Fornecedores facturas
+OrderDate=Ordenar data
+BuyingPrice=Comprando preço
+AddSupplierPrice=Adicionar fornecedor preço
+ChangeSupplierPrice=Mudar de fornecedor preço
+ErrorQtyTooLowForThisSupplier=Quantidade muito baixa para esse fornecedor ou sem preço definido sobre este produto para este fornecedor
+ErrorSupplierCountryIsNotDefined=País para este fornecedor não está definido. Corrigir esta primeira.
+ProductHasAlreadyReferenceInThisSupplier=Este produto já uma referência neste fornecedor
+NoRecordedSuppliers=Não fornecedores registrados
+SupplierPayment=Fornecedor pagamento
+SuppliersArea=Fornecedores área
+RefSupplierShort=Ref. fornecedor
+ExportDataset_fournisseur_1=Fornecedor lista facturas e facturas «linhas
+ExportDataset_fournisseur_2=Fornecedor facturas e pagamentos
+ApproveThisOrder=Aprovar este fim
+ConfirmApproveThisOrder=Tem certeza de que deseja aprovar esta ordem?
+DenyingThisOrder=Negar este fim
+ConfirmDenyingThisOrder=Tem certeza que pretende negar essa ordem?
+ConfirmCancelThisOrder=Tem certeza de que deseja cancelar esse pedido?
+AddCustomerOrder=Criar cliente fim
+AddCustomerInvoice=Criar cliente factura
+AddSupplierOrder=Criar fornecedor fim
+AddSupplierInvoice=Criar fornecedor factura
+ListOfSupplierProductForSupplier=Lista dos produtos e dos preços de <b>fornecedor% s</b>
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser

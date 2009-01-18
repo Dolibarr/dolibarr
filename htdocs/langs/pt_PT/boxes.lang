@@ -26,3 +26,33 @@ BoxTitleLastProspects=Últimas possibilidades de venda %s
 BoxTitleLastProductsInContract=Últimos produtos/serviços contractados %s
 BoxTitleOldestUnpayedCustomerBills=Contas de clientes por pagar mais antigas %s
 BoxTitleOldestUnpayedSupplierBills=Contas de fornecedores por pagar mais antigas %s
+
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+BoxLastActions=Última acções
+BoxCurrentAccounts=Saldo de contas correntes
+BoxSalesTurnover=Volume de negócios
+BoxTotalUnpayedCustomerBills=Total unpayed do cliente facturas
+BoxTotalUnpayedSuppliersBills=Total unpayed do fornecedor de facturas
+BoxTitleLastCustomersOrProspects=Última% s gravado clientes ou perspectivas
+BoxTitleCurrentAccounts=Saldos da conta corrente
+BoxTitleSalesTurnover=Volume de negócios
+BoxTitleTotalUnpayedCustomerBills=Unpayed do cliente facturas
+BoxTitleTotalUnpayedSuppliersBills=Unpayed do fornecedor de facturas
+BoxMyLastBookmarks=Meus últimos% s favoritos
+FailedToRefreshDataInfoNotUpToDate=Falha ao atualizar fluxo RSS. Última atualização êxito data:% s
+NoRecordedBookmarks=No bookmarks defined. Click <a href=Não favoritos definidos. Clique <a href="%s">aqui</a> para adicionar marcadores.
+NoRecordedCustomers=Não clientes registados
+BoxTitleLastActionsToDo=Última% s acções que fazer
+NoActionsToDo=Nenhuma ação de fazer
+NoRecordedOrders=Não gravado ordens do cliente
+NoRecordedProposals=Não gravado propostas
+NoRecordedInvoices=Não gravados do cliente facturas
+NoUnpayedCustomerBills=Não unpayed do cliente facturas
+NoRecordedSupplierInvoices=Não gravado facturas do fornecedor
+NoUnpayedSupplierBills=Não unpayed do fornecedor de facturas
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser
