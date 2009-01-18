@@ -1,0 +1,128 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_NL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:04:30
+ */
+
+
+// Date 2009-01-19 00:04:30
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+OrdersArea=Klanten bestellingen gebied
+SuppliersOrdersArea=Leveranciers bestellingen gebied
+OrderCard=Bestel kaart
+Order=Bestellen
+Orders=Bestellingen
+OrderFollow=Follow-up
+OrderContact=Bestellen contact
+OrderDate=Bestel datum
+NewOrder=Nieuwe orde
+ToOrder=Zorg bestelling
+MakeOrder=Zorg bestelling
+SupplierOrder=Leverancier bestelling
+SuppliersOrders=Leveranciers orders
+SuppliersOrdersRunning=Huidige leveranciers orders
+CustomerOrder=Klant bestelling
+CustomersOrders=Klanten orders
+CustomersOrdersRunning=Huidige klanten orders
+CustomersOrdersAndOrdersLines=Klant orders en orders&#39; lijnen
+OrdersToValid=Orders op geldige
+OrdersToBill=Verwijst naar factuur
+OrdersInProcess=Bestellingen in uitvoering
+OrdersToProcess=Orders te verwerken
+StatusOrderCanceledShort=Geannuleerd
+StatusOrderDraftShort=Ontwerp
+StatusOrderValidatedShort=Gevalideerd
+StatusOrderOnProcessShort=Op proces
+StatusOrderProcessedShort=Verwerkte
+StatusOrderToBillShort=Voor Bill
+StatusOrderApprovedShort=Goedgekeurd
+StatusOrderRefusedShort=Geweigerd
+StatusOrderToProcessShort=Te verwerken
+StatusOrderReceivedPartiallyShort=Gedeeltelijk ontvangen
+StatusOrderReceivedAllShort=Alles ontvangen
+StatusOrderCanceled=Geannuleerd
+StatusOrderDraft=Ontwerp (moet worden gevalideerd)
+StatusOrderValidated=Gevalideerd
+StatusOrderOnProcess=Op proces
+StatusOrderProcessed=Verwerkte
+StatusOrderToBill=Voor Bill
+StatusOrderApproved=Goedgekeurd
+StatusOrderRefused=Geweigerd
+StatusOrderReceivedPartially=Gedeeltelijk ontvangen
+StatusOrderReceivedAll=Alles ontvangen
+DraftOrWaitingApproved=Ontwerp-of goedgekeurde nog niet besteld
+DraftOrWaitingShipped=Ontwerp of gevalideerd nog niet verzonden
+MenuOrdersToBill=Verwijst naar factuur
+SearchOrder=Zoekopdracht
+Sending=Thuisinstelling
+Sendings=Verzendingen
+ShipProduct=Schip product
+Discount=Korting
+CreateOrder=Orde scheppen
+RefuseOrder=Weigeren order
+ApproveOrder=Aanvaarden teneinde
+ValidateOrder=Valideer bestelling
+DeleteOrder=Verwijderen Om
+CancelOrder=Annuleren bestelling
+AddOrder=Toevoegen bestelling
+AddToMyOrders=Voeg toe aan mijn bestellingen
+AddToOtherOrders=Toevoegen aan andere bestellingen
+ShowOrder=Toon bestelling
+NoOpenedOrders=Nr. geopend bestellingen
+NoOtherOpenedOrders=Geen enkele andere bestellingen geopend
+OtherOrders=Andere bestellingen
+LastOrders=Last% s bestellingen
+LastModifiedOrders=Last% s bewerkt bestellingen
+LastClosedOrders=Last% s gesloten bestellingen
+AllOrders=Alle bestellingen
+NbOfOrders=Aantal bestellingen
+OrdersStatistics=Orders&#39; statistieken
+OrdersStatisticsSuppliers=Leverancier bestellingen &quot;statistieken
+NumberOfOrdersByMonth=Aantal bestellingen per maand
+AmountOfOrdersByMonthHT=bedrag van de bestellingen per maand (exclusief BTW)
+ListOfOrders=Lijst van orders
+CloseOrder=Sluiten bestelling
+ConfirmCloseOrder=Weet u zeker dat u wilt sluiten deze bestelling? Nadat een order is gesloten, kan zij alleen worden aangerekend.
+ConfirmCloseOrderIfSending=Weet u zeker dat u wilt sluiten deze bestelling? U moet sluiten een bestelling alleen wanneer alle scheepvaart worden gedaan.
+ConfirmDeleteOrder=Weet u zeker dat u wilt verwijderen deze bestelling?
+ConfirmValidateOrder=Weet u zeker dat u wilt valideren deze bestelling onder de <b>naam% s?</b>
+ConfirmCancelOrder=Weet u zeker dat u wilt annuleren deze bestelling?
+ConfirmMakeOrder=Weet u zeker dat u wenst te bevestigen dat u deze bestelling <b>op% s?</b>
+GenerateBill=Genereer factuur
+ClassifyBilled=Classify &quot;gefactureerde&quot;
+ComptaCard=Accountancy kaart
+DraftOrders=Ontwerp-orders
+RelatedOrders=Betrokken bestellingen
+OnProcessOrders=Op verwerken van bestellingen
+RefOrder=Ref. bestellen
+RefCustomerOrder=Ref. bestelling van de klant
+CustomerOrder=Klant bestelling
+RefCustomerOrderShort=Ref. Cust. bestellen
+SendOrderByMail=Verstuur bestelling per mail
+ActionsOnOrder=Acties op bestelling
+NoArticleOfTypeProduct=Geen enkel artikel van het type &#39;product&#39; dus geen shippable artikel voor deze bestelling
+OrderMode=Bestel methode
+AuthorRequest=Verzoek auteur
+UseCustomerContactAsOrderRecipientIfExist=Gebruik het contact met klanten adres als gedefinieerd in plaats van derden adres Om ontvangstadres
+RunningOrders=Orders op proces
+UserWithApproveOrderGrant=Useres verleend met &quot;goed te keuren bestellingen&quot; toestemming.
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON niet gedefinieerd
+Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON niet gedefinieerd
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module bestand &#39;% s&#39;
+Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module bestand &#39;% s&#39;
+OrderSource0=Commerciële voorstel
+OrderSource1=Internet
+OrderSource2=Mail campagne
+OrderSource3=Telefoon compain
+OrderSource4=Fax campagne
+OrderSource5=Commercieel
+OrderSource6=Bewaren
+QtyOrdered=Aantal besteld
+AddDeliveryCostLine=Voeg een regel die aangeeft dat de levering kosten van het gewicht van de bestelling
+PDFEinsteinDescription=Een complete order model (logo. ..)
+MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn ou jj est l&#39;annee, mm le mois et nnnn un compteur sequentiel sans breuk et sans remise e 0
+// Date 2009-01-19 00:04:30
+// STOP - Lines generated via parser

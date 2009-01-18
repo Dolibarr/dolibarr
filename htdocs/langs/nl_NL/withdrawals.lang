@@ -1,0 +1,47 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_NL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:04:30
+ */
+
+
+// Date 2009-01-19 00:04:30
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+StandingOrdersArea=Permanente opdrachten gebied
+CustomersStandingOrdersArea=Klanten permanente opdrachten gebied
+StandingOrders=Permanente opdrachten
+StandingOrder=Permanente opdrachten
+NewStandingOrder=Nieuwe doorlopende opdracht
+Withdrawals=Intrekkingen
+Withdrawal=Intrekking
+WithdrawalsReceipts=Intrekking van aandelen
+WithdrawalReceipt=Intrekking ontvangst
+WithdrawalReceiptShort=Ontvangst
+LastWithdrawalReceipts=Last% s intrekking van aandelen
+WithdrawedBills=Withdrawed facturen
+WithdrawalsLines=Opnemingen lijnen
+RequestStandingOrderToTreat=Verzoek om permanente opdrachten te behandelen
+RequestStandingOrderTreated=Verzoek om permanente opdrachten behandeld
+CustomersStandingOrders=Klant permanente opdrachten
+CustomerStandingOrder=Klant doorlopende opdracht
+NbOfInvoiceToWithdraw=Nb van de factuur met verzoek intrekken
+InvoiceWaitingWithdraw=Factuur wachten intrekken
+AmountToWithdraw=Bedrag terug te trekken
+WithdrawsRefused=Intrekt geweigerd
+NoInvoiceToWithdraw=Geen klant factuur betaling modus &quot;trekken&quot; wacht. Ga op &#39;Trek&#39; lipje op factuur kaart te maken van een verzoek.
+ResponsibleUser=Verantwoordelijke gebruiker
+WithdrawalsSetup=Intrekking setup
+WithdrawStatistics=Intrekt &quot;statistieken
+WithdrawRejectStatistics=Intrekken verwerpt &#39;statistieken
+LastWithdrawalReceipt=Last% s intrekking van aandelen
+MakeWithdrawRequest=Maak een verzoek intrekken
+ThirdPartyBankCode=Derde bankcode
+ThirdPartyDeskCode=Derde bureau code
+NoInvoiceCouldBeWithdrawed=Geen factuur withdrawed met succes. Controleer of de factuur zijn op bedrijven met een geldige BAN.
+ClassCredited=Classify gecrediteerd
+ClassCreditedConfirm=Weet u zeker dat u wilt classificeren deze terugtrekking ontvangst als bijgeschreven op uw bankrekening?
+// Date 2009-01-19 00:04:30
+// STOP - Lines generated via parser

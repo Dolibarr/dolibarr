@@ -1,0 +1,154 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_NL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:04:30
+ */
+
+
+// Date 2009-01-19 00:04:30
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+ProductServiceCard=Producten / Diensten kaart
+Products=Producten
+Services=Diensten
+Product=Product
+Service=Service
+ProductId=Product / dienst id
+Create=Maak
+Reference=Referentie
+NewProduct=Nieuw product
+NewBook=Nieuw boek
+Book=Boek
+Books=Boeken
+BookList=Lijst van boeken
+NewService=Nieuwe dienst
+ProductCode=Productcode
+ServiceCode=Service-code
+ProductOrService=Product of Dienst
+ProductsAndServices=Producten en Diensten
+ProductsOrServices=Producten of diensten
+ProductsAndServicesOnSell=Producten en diensten verkopen
+ProductsAndServicesNotOnSell=Producten en Diensten van de verkopen
+ProductsAndServicesStatistics=Producten en Diensten statistieken
+ProductsStatistics=Producten statistieken
+ProductsOnSell=Producten op verkopen
+ProductsNotOnSell=Producten van de verkopen
+ServicesOnSell=Diensten op verkopen
+ServicesNotOnSell=Diensten van de verkopen
+InternalRef=Verslag
+LastRecorded=Laatste producten / diensten verkopen geregistreerd
+LastRecordedProductsAndServices=Last% s precorded roducts / diensten
+LastModifiedProductsAndServices=Last% s gemodificeerde producten / diensten
+LastRecordedProducts=Last% s producten geregistreerd
+LastRecordedServices=Last% s diensten opgenomen
+LastProducts=Laatste producten
+CardProduct0=Product kaart
+CardProduct1=Service kaart
+CardContract=Contract kaart
+Warehouse=Warehouse
+Warehouses=Opslagruimtes
+WarehouseOpened=Magazijn geopend
+WarehouseClosed=Warehouse gesloten
+Stock=Voorraad
+Stocks=Aandelen
+Movement=Verkeer
+Movements=Mutaties
+OnSell=Op verkopen
+NotOnSell=Out of Verkopen
+ProductStatusOnSell=Op verkopen
+ProductStatusNotOnSell=Out of verkopen
+ProductStatusOnSellShort=Op verkopen
+ProductStatusNotOnSellShort=Out of verkopen
+UpdatePrice=Update prijs
+AppliedPricesFrom=Toegepaste prijzen vanaf
+SellingPrice=Verkoopprijs
+PublicPrice=Openbare prijs
+CurrentPrice=Huidige prijs
+NewPrice=Nieuwe prijs
+ContractStatus=Contract status
+ContractStatusClosed=Gesloten
+ContractStatusRunning=Hardlopen
+ContractStatusExpired=verstreken
+ContractStatusOnHold=Niet actief
+ContractStatusToRun=Een METTRE en service
+ContractNotRunning=Dit contract is niet actief
+ErrorProductAlreadyExists=Een product met verwijzing% s bestaat reeds.
+ErrorProductBadRefOrLabel=Verkeerde waarde voor de referentie-of etiket.
+Suppliers=Leveranciers
+SupplierRef=Leverancier ref.
+ShowProduct=Toon producten
+ShowService=Toon dienst
+ProductsAndServicesArea=Producten en Diensten gebied
+ProductsArea=Productgroep
+ServicesArea=Diensten gebied
+AddToMyProposals=Voeg toe aan mijn voorstellen
+AddToOtherProposals=Toevoegen aan andere voorstellen
+AddToMyBills=Voeg toe aan mijn facturen
+AddToOtherBills=Toevoegen aan andere rekeningen
+CorrectStock=Juiste materieel
+AddPhoto=Foto toevoegen
+ListOfStockMovements=Lijst van de voorraden
+NoPhotoYet=Geen foto&#39;s beschikbaar
+BuiingPrice=Aankoop prijs
+SupplierCard=Leverancier kaart
+CommercialCard=Commerciële kaart
+AllWays=Pad naar het vinden van uw product in voorraad
+NoCat=Uw product is niet in elke categorie
+PrimaryWay=Primaire weg
+DeleteFromCat=Verwijderen uit de categorie
+PriceRemoved=Prijs verwijderd
+BarCode=Barcode
+BarcodeType=Barcode type
+SetDefaultBarcodeType=Stel barcode type
+BarcodeValue=Barcode waarde
+GenbarcodeLocation=Bar code generatie command-line tool (gebruikt door phpbarcode motor voor enkele streepjescode typen)
+NoteNotVisibleOnBill=Nota (niet zichtbaar op facturen, voorstellen ...)
+CreateCopy=Maak kopie
+ServiceLimitedDuration=Als product is een dienst met een beperkte duur:
+MultiPricesAbility=Activeer de multi-prijzen
+MultiPricesNumPrices=Aantal prijs
+MultiPriceLevelsName=Prijscategorieën
+AssociatedProductsAbility=Activeer de aanverwante producten
+AssociatedProducts=Aanverwante producten
+AssociatedProductsNumber=Aantal aanverwante producten
+EditAssociate=Universitair
+Translation=Vertaling
+KeywordFilter=Zoekwoord filter
+CategoryFilter=Categorie filter
+ProductToAddSearch=Zoek product toe te voegen
+AddDel=Toevoegen / Verwijderen
+Quantity=Hoeveelheid
+NoMatchFound=Geen resultaten gevonden
+ProductAssociationList=Lijst van gerelateerde producten / diensten: naam van het product / de dienst (hoeveelheid aangetast)
+ErrorAssociationIsFatherOfThis=Een van de geselecteerde product is ouder met huidige product
+DeleteProduct=Het verwijderen van een product / dienst
+ConfirmDeleteProduct=Weet u zeker dat u wilt verwijderen van dit product / dienst?
+ProductDeleted=Product / Dienst: &quot;% s&quot; geschrapt uit de database.
+DeletePicture=Verwijderen van een beeld
+ConfirmDeletePicture=Weet u zeker dat u wilt verwijderen van deze foto?
+ExportDataset_produit_1=Producten en diensten
+DeleteProductLine=Verwijderen productlijn
+ConfirmDeleteProductLine=Weet u zeker dat u wilt verwijderen van dit product lijn?
+NoProductMatching=Geen product / dienst voldoen aan uw criteria
+MatchingProducts=Gevonden producten / diensten
+NoStockForThisProduct=Geen voorraad voor dit product
+NoStock=Nr. Voorraad
+Restock=Voorraadbericht
+ProductSpecial=Speciale
+QtyMin=Minimale hoeveelheid
+PriceQty=Prijs voor deze hoeveelheid
+PriceQtyMin=Prijs hoeveelheid min.
+NoPriceDefinedForThisSupplier=Geen prijs / Qty gedefinieerd voor deze leverancier / product
+NoSupplierPriceDefinedForThisProduct=Geen enkele leverancier prijs / Qty gedefinieerd voor dit product
+RecordedProducts=Producten geregistreerd
+RecordedProductsAndServices=Producten / diensten opgenomen
+GenerateThumb=Genereer duim
+ProductCanvasAbility=Gebruik speciale &quot;doek&quot; addons
+ServiceNb=Service #% s
+ListProductByPopularity=Lijst van producten / diensten op populariteit
+Finished=Fabrikaat
+RowMaterial=Eerste materiaal
+// Date 2009-01-19 00:04:30
+// STOP - Lines generated via parser

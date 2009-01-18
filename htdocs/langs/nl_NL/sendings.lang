@@ -1,0 +1,58 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_NL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:04:30
+ */
+
+
+// Date 2009-01-19 00:04:30
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+RefSending=Ref. verzenden
+Sending=Thuisinstelling
+Sendings=Verzendingen
+Receivings=Receivings
+SendingsArea=Verzendingen gebied
+ListOfSendings=Lijst van de verzendingen
+SendingMethod=Verzendmethode
+SendingReceipt=Thuisinstelling in ontvangst
+LastSendings=Last% s verzendingen
+SearchASending=Zoek een zendorganisatie
+StatisticsOfSendings=Statistieken van verzendingen
+NbOfSendings=Aantal zendingen
+SendingCard=Thuisinstelling in kaart
+NewSending=Nieuwe verzenden
+CreateASending=Maak een zendorganisatie
+CreateSending=Maak verzenden
+QtyOrdered=Aantal besteld
+QtyShipped=Aantal verzonden
+QtyToShip=Qty Verzendklaar
+QtyReceived=Aantal ontvangen
+KeepToShip=Houd Verzendklaar
+OtherSendingsForSameOrder=Andere verzendingen voor deze bestelling
+DateSending=Datum sturen teneinde
+DateSendingShort=Datum sturen teneinde
+SendingsForSameOrder=Verzendingen voor deze bestelling
+SendingsAndReceivingForSameOrder=Verzendingen en receivings voor deze bestelling
+SendingsToValidate=Thuisinstelling te valideren
+StatusSendingDraft=Ontwerp
+StatusSendingValidated=Gevalideerd (producten naar het schip of reeds verzonden)
+StatusSendingDraftShort=Ontwerp
+StatusSendingValidatedShort=Gevalideerd
+SendingSheet=Thuisinstelling vel
+Carriers=Vervoerders
+Carrier=Vervoerder
+CarriersArea=Vervoerders gebied
+NewCarrier=Nieuwe vervoerder
+ConfirmDeleteSending=Weet u zeker dat u wilt verwijderen verzenden?
+ConfirmValidateSending=Weet u zeker dat u wilt valdate deze zending?
+ConfirmCancelSending=Weet u zeker dat u wilt annuleren dit sturen?
+GenericTransport=Generieke vervoer
+Enlevement=Geworden door klant
+DocumentModelSimple=Eenvoudig document model
+WarningNoQtyLeftToSend=Waarschuwing, geen producten nog moeten worden verzonden.
+NumRefModelJade=Terugkeer van een referentienummer met formaat BLYY00001, ... waar is YY jaar. Aantal op het einde is nooit op nul.
+// Date 2009-01-19 00:04:30
+// STOP - Lines generated via parser

@@ -1,0 +1,21 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_NL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:04:30
+ */
+
+
+// Date 2009-01-19 00:04:30
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+OSCommerce=OS Commerce
+OSCommerceSetup=OS Commerce module setup
+OSCommerceSetupSaved=OS Commerce setup opgeslagen
+OSCommerceServer=OS Commerce server host / ip
+OSCommerceDatabaseName=OS Commerce databasenaam
+OSCommercePrefix=OS Commerce tabellen voorvoegsel
+OSCommerceUser=OS Commerce database login
+// Date 2009-01-19 00:04:30
+// STOP - Lines generated via parser

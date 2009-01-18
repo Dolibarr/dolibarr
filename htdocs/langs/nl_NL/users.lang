@@ -1,0 +1,110 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_NL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:04:30
+ */
+
+
+// Date 2009-01-19 00:04:30
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+UserCard=Gebruiker kaart
+ContactCard=Contactkaart
+GroupCard=Groep kaart
+NoContactCard=Geen kaart bij de contacten
+Permission=Toestemming
+Permissions=Machtigingen
+EditPassword=Bewerken wachtwoord
+SendNewPassword=Stuur nieuw wachtwoord
+ReinitPassword=Genereer een nieuw wachtwoord
+PasswordChangedTo=Wachtwoord veranderd naar:% s
+SubjectNewPassword=Uw nieuwe wachtwoord voor Dolibarr
+AvailableRights=Beschikbare machtigingen
+OwnedRights=Owned machtigingen
+GroupRights=Groep machtigingen
+UserRights=Gebruiker machtigingen
+UserGUISetup=Gebruiker display setup
+DisableUser=Uitschakelen
+DisableAUser=Uitschakelen van een gebruiker
+DeleteUser=Wissen
+DeleteAUser=Verwijderen van een gebruiker
+DisableGroup=Uitschakelen
+DisableAGroup=Uitschakelen van een groep
+EnableAUser=Activeer een gebruiker
+EnableAGroup=Inschakelen van een groep
+DeleteGroup=Wissen
+DeleteAGroup=Verwijderen van een groep
+ConfirmDisableUser=Weet u zeker dat u wilt uitschakelen <b>gebruiker% s?</b>
+ConfirmDisableGroup=Weet u zeker dat u wilt uitschakelen <b>groep% s?</b>
+ConfirmDeleteUser=Weet u zeker dat u wilt verwijderen <b>gebruiker% s?</b>
+ConfirmDeleteGroup=Weet u zeker dat u wilt verwijderen <b>groep% s?</b>
+ConfirmEnableUser=Weet u zeker dat u wilt inschakelen <b>gebruiker% s?</b>
+ConfirmEnableGroup=Weet u zeker dat u wilt inschakelen <b>groep% s?</b>
+ConfirmReinitPassword=Weet u zeker dat u wilt een nieuw wachtwoord voor <b>gebruiker% s?</b>
+ConfirmSendNewPassword=Weet u zeker dat u wilt genereren en verzenden van een nieuw wachtwoord voor <b>gebruiker% s?</b>
+NewUser=Nieuwe gebruiker
+CreateUser=Maak gebruiker
+SearchAGroup=Zoek een groep
+SearchAUser=Zoek een gebruiker
+ErrorFailedToSendPassword=Mislukt te sturen wachtwoord
+LoginNotDefined=Inloggen is niet gedefinieerd.
+NameNotDefined=Naam is niet gedefinieerd.
+ListOfUsers=Lijst van gebruikers
+Administrator=Administrator
+DefaultRights=Standaardmachtigingen
+DefaultRightsDesc=Definieer hier standaard machtigingen die automatisch worden toegekend aan een nieuwe gebruiker aangemaakt.
+DolibarrUsers=Dolibarr gebruikers
+LastName=Naam
+FirstName=Voornaam
+ListOfGroups=Lijst van groepen
+NewGroup=Nieuwe groep
+CreateGroup=Groep maken
+RemoveFromGroup=Verwijderen uit groep
+PasswordChangedAndSentTo=Wachtwoord veranderd en verstuurd <b>naar% s.</b>
+PasswordChangeRequestSent=Verzoek om wachtwoord wijzigen <b>voor% s naar% s.</b>
+MenuUsersAndGroups=Gebruikers en groepen
+LastGroupsCreated=Last% s gemaakt groepen
+LastUsersCreated=Last% s gebruikers gecreëerde
+ShowGroup=Toon groep
+ShowUser=Toon gebruiker
+NonAffectedUsers=Niet betrokken gebruikers
+UserModified=Gebruikershandleiding gemodificeerde succes
+GroupModified=Groep bewerkt succes
+PhotoFile=Foto bestand
+UserWithDolibarrAccess=Gebruiker met toegang Dolibarr
+ListOfUsersInGroup=Lijst van gebruikers in deze groep
+ListOfGroupsForUser=Lijst van groepen voor deze gebruiker
+UsersToAdd=Gebruikers toe te voegen aan deze groep
+GroupsToAdd=Groepen toe te voegen aan deze gebruiker
+NoLogin=Geen login
+CreateDolibarrLogin=Maak Dolibarr rekening
+LoginAccountDisable=De account is uitgeschakeld, zet een nieuwe login te activeren.
+LoginAccountDisableInDolibarr=Account uitgeschakeld in Dolibarr.
+LoginAccountDisableInLdap=Met een handicap in het domein.
+UsePersonalValue=Gebruik persoonlijke waarde
+GuiLanguage=Taal van de interface
+InternalUser=Interne gebruiker
+MyInformations=Mijn gegevens
+ExportDataset_user_1=Dolibarr gebruikers en eigenschappen
+DomainUser=Domeingebruikersaccount% s
+Reactivate=Reactiveren
+CreateInternalUserDesc=Dit formulier kunt u maken van een gebruiker binnen uw bedrijf / fundation. Maak een externe gebruiker (klant, leverancier, ...), gebruik knop &#39;Create Dolibarr gebruiker&#39; uit derde partij contactkaart.
+InternalExternalDesc=Een <b>interne</b> gebruiker is een gebruiker die deel uitmaakt van uw bedrijf / fundation. <br> Een <b>externe</b> gebruiker is een klant, de leverancier of de andere. <br><br> In beide gevallen, machtigingen omschrijft de rechten op Dolibarr, ook externe gebruiker kan beschikken over een ander menu manager dan interne gebruiker (Zie Home - Setup - Display)
+PermissionInheritedFromAGroup=Toestemming verleend, omdat ineherited van een van een gebruiker van de groep.
+IdPhoneCaller=Id telefoon beller
+UserLogged=Gebruiker% s aangesloten
+NewUserCreated=Gebruiker% s gemaakt
+NewUserPassword=Wachtwoord wijzigen voor% s
+EventUserModified=Gebruiker% s bewerkt
+UserDisabled=Gebruiker% s uitgeschakeld
+UserEnabled=Gebruiker% s geactiveerd
+UserDeleted=Gebruiker% s verwijderd
+NewGroupCreated=Groep% s gemaakt
+GroupModified=Groep% s bewerkt
+GroupDeleted=Groep% s verwijderd
+ConfirmCreateContact=Weet u zeker dat yu wilt maken Dolibarr een account voor deze contactpersoon?
+LoginToCreate=Login maken
+// Date 2009-01-19 00:04:30
+// STOP - Lines generated via parser

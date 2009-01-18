@@ -1,0 +1,76 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_NL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:04:30
+ */
+
+
+// Date 2009-01-19 00:04:30
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+WarehouseCard=Warehouse kaart
+Warehouse=Warehouse
+NewWarehouse=Nieuw magazijn / Stock gebied
+MenuNewWarehouse=Nieuw magazijn
+WarehouseOpened=Magazijn geopend
+WarehouseClosed=Warehouse gesloten
+WarehouseSource=Bron magazijn
+WarehouseTarget=Target magazijn
+ValidateSending=Wissen verzenden
+CancelSending=Verzenden annuleren
+DeleteSending=Wissen verzenden
+Stock=Voorraad
+Stocks=Aandelen
+Movement=Verkeer
+Movements=Mutaties
+ErrorWarehouseRefRequired=Warehouse verwijzing naam is verplicht
+ErrorWarehouseLabelRequired=Warehouse etiket wordt vereist
+CorrectStock=Juiste materieel
+ListOfWarehouses=Lijst van opslagplaatsen
+ListOfStockMovements=Lijst van de voorraden
+StocksArea=Aandelen gebied
+Location=Lieu
+LocationSummary=Korte naam locatie
+NumberOfProducts=Totaal aantal producten
+LastMovement=Laatste verkeer
+LastMovements=Laatste bewegingen
+Units=Eenheden
+Unit=Eenheid
+StockCorrection=Juiste materieel
+StockMovement=Overschrijving
+StockMovements=Voorraad overdrachten
+NumberOfUnit=Aantal eenheden
+TotalStock=Totaal in voorraad
+StockTooLow=Voorraad te laag
+EnhancedValue=Prijs
+PMPValue=Prijs
+EnhancedValueOfWarehouses=Opslagruimtes waarde
+UserWarehouseAutoCreate=Maak een bestand automatisch bij het aanmaken van een gebruiker
+QtyDispatched=Hoeveelheid verzonden
+OrderDispatch=Bestel dispatching
+RuleForStockManagementDecrease=Regel voor voorraadbeheer daling
+RuleForStockManagementIncrease=Regel voor voorraadbeheer verhogen
+DeStockOnBill=Daling van de reële voorraad op de facturen / creditnota&#39;s (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
+DeStockOnValidateOrder=Daling van de reële voorraad op bestellingen notities (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
+DeStockOnShipment=Daling van de reële voorraad op overbrenging (aanbevolen)
+ReStockOnBill=Toename echte voorraden op facturen / creditnota&#39;s (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
+ReStockOnValidateOrder=Toename voorraden echt op bestellingen notities (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
+StockDiffPhysicTeoric=Reden voor het verschil voorraad fysieke en theoretische
+StockLimitShort=Limiet
+StockLimit=Voorraad limiet voor signaleringen
+PhysicalStock=Fysieke voorraad
+RealStock=Real Voorraad
+TheoreticalStock=Therocial voorraad
+VirtualStock=Virtuele voorraad
+MininumStock=Minimumvoorraad
+StockUp=Stock up
+MininumStockShort=Voorraad min
+StockUpShort=Stock up
+IdWarehouse=Id-entrepot
+DescWareHouse=Beschrijving magazijn
+LieuWareHouse=Localisatie magazijn
+WarehousesAndProducts=Opslagruimtes en producten
+// Date 2009-01-19 00:04:30
+// STOP - Lines generated via parser

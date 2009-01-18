@@ -1,0 +1,30 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_NL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:04:30
+ */
+
+
+// Date 2009-01-19 00:04:30
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Trip=Reis
+Trips=Uitstapjes
+TripsAndExpenses=Uitstapjes en lasten
+TripCard=Trip kaart
+AddTrip=Toevoegen reis
+ListOfTrips=Lijst van excursies
+ListOfFees=Lijst van de vergoedingen
+NewTrip=Nieuwe tocht
+CompanyVisited=Bedrijf / fundation bezocht
+Kilometers=Kilometers
+FeesKilometersOrAmout=Bedrag of kilometers
+DeleteTrip=Verwijderen reis
+ConfirmDeleteTrip=Weet u zeker dat u wilt verwijderen van deze reis?
+TF_OTHER=Ander
+TF_LUNCH=Lunch
+TF_TRIP=Reis
+// Date 2009-01-19 00:04:30
+// STOP - Lines generated via parser

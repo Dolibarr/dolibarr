@@ -1,0 +1,82 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_NL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 23:55:46
+ */
+
+
+// Date 2009-01-18 23:55:46
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Actions=Acties
+ActionsArea=Acties gebied (Evenementen en taken)
+Agenda=Agenda
+Agendas=Agenda
+Calendar=Kalender
+Calendars=Kalenders
+AffectedTo=Beïnvloed in
+DoneBy=Gedaan door
+Events=Evenementen
+ListOfActions=Lijst met evenementen
+Location=Locatie
+SearchAnAction=Zoek een actie / taak
+MenuToDoActions=Alle uncomplete acties
+MenuDoneActions=Alle beëindigd acties
+MenuToDoMyActions=Mijn onvolledige acties
+MenuDoneMyActions=Mijn beëindigd acties
+ListOfEvents=Lijst van Dolibarr evenementen
+ActionsAskedBy=Acties door
+ActionsToDoBy=Maatregelen getroffen om
+ActionsDoneBy=Acties die door
+AllMyActions=Al mijn acties / taken
+AllActions=Toutes les acties / taken
+ViewList=Bekijk de lijst
+ViewCal=Bekijk kalender
+ViewWithPredefinedFilters=Bekijk met voorgedefinieerde filters
+AutoActions=Automatisch invullen van de agenda
+AgendaAutoActionDesc=Definieer hier evenementen waarvoor u wilt Dolibarr om automatisch een optreden op de agenda. Als er niets is aangevinkt (standaard), alleen handmatige acties zullen worden opgenomen in de agenda.
+AgendaSetupOtherDesc=Op deze pagina kunt het configureren van andere parameters van de agenda module.
+ActionsEvents=Evenementen waarvoor Dolibarr zullen maken van een optreden in de agenda automatisch
+PropalValidatedInDolibarr=Voorstel gevalideerd
+InvoiceValidatedInDolibarr=Factuur gevalideerd
+OrderValidatedInDolibarr=Bestel gevalideerd
+NewCompanyToDolibarr=Derde partij gemaakt
+DateActionPlannedStart=Geplande startdatum
+DateActionPlannedEnd=Geplande einddatum
+DateActionDoneStart=Werkelijke start datum
+DateActionDoneEnd=Real einddatum
+DateActionStart=Begindatum
+DateActionEnd=Einddatum
+AgendaUrlOptions1=U kunt ook de volgende parameters te filteren output:
+AgendaUrlOptions2=<b>login=<b>login =% s</b> te beperken tot acties die door aangetast of gedaan door <b>gebruiker% s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% s</b> te beperken tot acties die door de <b>gebruiker% s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% s</b> te beperken tot acties die de <b>gebruiker% s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind =% s</b> te beperken tot acties die door de <b>gebruiker% s.</b>
+AgendaShowBirthdayEvents=Toon verjaardag met contacten
+AgendaHideBirthdayEvents=Verberg verjaardag met contacten
+// Date 2009-01-18 23:55:46
+// STOP - Lines generated via parser
+
+
+// Date 2009-01-18 23:57:49
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+AgendaUrlOptions2=<b>login=<b>login =% s</b> te beperken tot acties die door aangetast of gedaan door <b>gebruiker% s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% s</b> te beperken tot acties die door de <b>gebruiker% s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% s</b> te beperken tot acties die de <b>gebruiker% s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind =% s</b> te beperken tot acties die door de <b>gebruiker% s.</b>
+// Date 2009-01-18 23:57:49
+// STOP - Lines generated via parser
+
+
+// Date 2009-01-19 00:04:30
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+AgendaUrlOptions2=<b>login=<b>login =% s</b> te beperken tot acties die door aangetast of gedaan door <b>gebruiker% s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% s</b> te beperken tot acties die door de <b>gebruiker% s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% s</b> te beperken tot acties die de <b>gebruiker% s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind =% s</b> te beperken tot acties die door de <b>gebruiker% s.</b>
+// Date 2009-01-19 00:04:30
+// STOP - Lines generated via parser
