@@ -90,12 +90,12 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	}
 	$relativepath=$ecmdir->getRelativePath();
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-	
+
 	if (! is_dir($upload_dir))
 	{
 		$result=create_exdir($upload_dir);
 	}
-	 
+
 	if (is_dir($upload_dir))
 	{
 		$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
@@ -261,20 +261,20 @@ if (eregi('search',$action))
 	foreach($sectionauto as $sectioncur)
 	{
 		if (! $sectioncur['test']) continue;
-		//if ($butshown % 2 == 0) 
+		//if ($butshown % 2 == 0)
 			print '<tr '. $bc[false].'>';
 		print "<td>".$sectioncur['label'].':</td>';
 		print '<td';
-		//if ($butshown % 2 == 1) 
+		//if ($butshown % 2 == 1)
 			print ' align="right"';
 		print '>';
 		print '<input type="text" name="search_'.$sectioncur['module'].'" class="flat" size="14">';
 		print '</td>';
-		//if ($butshown % 2 == 1) 
+		//if ($butshown % 2 == 1)
 			print '</tr>';
 		$butshown++;
 	}
-	//if ($butshown % 2 == 1) 
+	//if ($butshown % 2 == 1)
 	//	print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
 	print '<tr '. $bc[false].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
@@ -339,13 +339,13 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 				$var=false;
 
 				print '<tr>';
-					
+
 				// Section
 				print '<td align="left">';
 				print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>';
 				tree_showpad($sectionauto,$key);
 				print '</td>';
-				
+
 				print '<td valign="top">';
 				$n=3;
 				$ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop'.$n.'.gif','',1);
@@ -355,13 +355,13 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 				$ecmdirstatic->ref=$oldref;
 				print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/folder.gif','',1);
 				print '</td>';
-				
+
 				print '<td valign="middle">';
 				print '<a href="'.DOL_URL_ROOT.'/ecm/docother.php">';
 				print $val['label'];
 				print '</a></td></tr></table>';
 				print "</td>\n";
-					
+
 				// Nb of doc in dir
 				print '<td align="right">&nbsp;</td>';
 
@@ -457,14 +457,14 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 		$_SESSION['expandedsectionarray']=join(',',$expandedsectionarray);
 	}
 	//print $_SESSION['expandedsectionarray'].'<br>';
-			
+
 	$nbofentries=0;
 	$oldvallevel=0;
 	$var=true;
 	foreach($fulltree as $key => $val)
 	{
 		$var=false;
-			
+
 		$ecmdirstatic->id=$val['id'];
 		$ecmdirstatic->ref=$val['label'];
 
@@ -479,10 +479,10 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 		}
 
 		//$fullpathparent=eregi_replace('_[^_]+$','',$val['fullpath']);
-		
+
 		// Define showline
 		$showline=0;
-		
+
 		// If directory is son of expanded directory, we show line
 		if (in_array($val['id_mere'],$expandedsectionarray)) $showline=4;
 		// If directory is brother of selected directory, we show line
@@ -495,7 +495,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 		if ($showline)
 		{
 			if (in_array($val['id'],$expandedsectionarray)) $option='indexexpanded';
-			else $option='indexnotexpanded'; 
+			else $option='indexnotexpanded';
 			//print $option;
 
 			print '<tr>';
@@ -541,14 +541,14 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			print '<td align="left">';
 			if ($nbofsubdir && $nboffilesinsubdir) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
 			print '</td>';
-			
+
 			// Edit link
 			print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_edit().'</a></td>';
-				
+
 			// Add link
 			//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';
 			print '<td align="right">&nbsp;</td>';
-				
+
 			// Info
 			print '<td align="center">';
 			$userstatic->id=$val['fk_user_c'];
@@ -563,7 +563,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
 			print $form->textwithhelp('',$htmltooltip,1,0);
 			print "</td>";
-				
+
 			print "</tr>\n";
 		}
 
@@ -574,7 +574,16 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	// If nothing to show
 	if ($nbofentries == 0)
 	{
-		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("ECMNoDirecotyYet").'</td></tr>';
+		print '<tr>';
+		print '<td class="left"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
+		print '<td>'.img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/minustop3.gif','',1).'</td>';
+		print '<td valign="middle">';
+		print $langs->trans("ECMNoDirecotyYet");
+		print '</td>';
+		print '<td>&nbsp;</td>';
+		print '</table></td>';
+		print '<td colspan="5">&nbsp;</td>';
+		print '</tr>';
 	}
 
 	print "</table>";
