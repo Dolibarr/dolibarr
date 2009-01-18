@@ -18,6 +18,7 @@ For users:
 - New: Add VAT number in export fields.
 - New: Upgrade FPDF to 1.6
 - New: Added keywords in PDF
+- New: Add hidden option MAIN_DISABLE_PDF_COMPRESSION.
 - Fix: Author, title and topic are correctly encoded i nPDF.
 - Fix: Now HTML output is always UTF8, this solve bad PDF encoding on old users.
 - Fix: Save new model when changed on interventions.

@@ -79,7 +79,7 @@ class Form
 
 		$paramfortooltiptext ='';
 		$paramfortooltippicto ='';
-	  
+
 		// Sanitize tooltip
 		$htmltext=ereg_replace("'","\'",$htmltext);
 		$htmltext=ereg_replace("&#039;","\'",$htmltext);
@@ -374,7 +374,7 @@ class Form
 			if ($selected == -1) print ' selected="true"';
 			print '>&nbsp;</option>';
 		}
-	  
+
 		$sql = "SELECT c.code, c.libelle as type FROM ".MAIN_DB_PREFIX."c_type_fees as c";
 		$sql.= " ORDER BY lower(c.libelle) ASC";
 		$resql=$db->query($sql);
@@ -529,7 +529,7 @@ class Form
 						$desc=$langs->trans("CreditNote");
 						//$desc.=$obj->fk_facture_source;
 					}
-						
+
 					$selectstring='';
 					if ($selected > 0 && $selected == $obj->rowid) $selectstring=' selected="true"';
 
@@ -585,7 +585,7 @@ class Form
 		{
 			$num=$this->db->num_rows($resql);
 			if ($num == 0) return 0;
-				
+
 			if ($htmlname != 'none') print '<select class="flat" name="'.$htmlname.'">';
 			if ($showempty) print '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
@@ -661,7 +661,7 @@ class Form
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object();
-						
+
 					if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
 					{
 						print '<option value="'.$obj->rowid.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
@@ -746,7 +746,7 @@ class Form
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 		}
 		if($finished == 0)
-		{			
+		{
 			$sql.= " WHERE p.finished = ".$finished;
 		}
 		elseif($finished == 1)
@@ -788,7 +788,7 @@ class Form
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
-				
+
 			if ($conf->use_javascript_ajax)
 			{
 				if (! $num)
@@ -809,7 +809,7 @@ class Form
 				print '<select class="flat" name="'.$htmlname.'">';
 				print '<option value="0" selected="true">&nbsp;</option>';
 			}
-				
+
 			$i = 0;
 			while ($num && $i < $num)
 			{
@@ -881,9 +881,9 @@ class Form
 				print $opt;
 				$i++;
 			}
-				
+
 			print '</select>';
-				
+
 			$this->db->free($result);
 		}
 		else
@@ -948,9 +948,9 @@ class Form
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-				
+
 			$num = $this->db->num_rows($result);
-				
+
 			if ($conf->use_javascript_ajax)
 			{
 				if (! $num)
@@ -970,7 +970,7 @@ class Form
 				if (! $selected) print '<option value="0" selected="true">&nbsp;</option>';
 				else print '<option value="0">&nbsp;</option>';
 			}
-				
+
 			$i = 0;
 			while ($i < $num)
 			{
@@ -1012,7 +1012,7 @@ class Form
 				$i++;
 			}
 			print '</select>';
-				
+
 			$this->db->free($result);
 		}
 		else
@@ -1050,9 +1050,9 @@ class Form
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
-				
+
 			$form = '<select class="flat" name="'.$htmlname.'">';
-				
+
 			if (! $num)
 			{
 				$form.= '<option value="0">-- '.$langs->trans("NoSupplierPriceDefinedForThisProduct").' --</option>';
@@ -1065,10 +1065,10 @@ class Form
 				while ($i < $num)
 				{
 					$objp = $this->db->fetch_object($result);
-						
+
 					$opt = '<option value="'.$objp->idprodfournprice.'"';
 					$opt.= '>'.$objp->nom.' - '.$objp->ref_fourn.' - ';
-						
+
 					if ($objp->quantity == 1)
 					{
 						$opt.= price($objp->fprice);
@@ -1092,7 +1092,7 @@ class Form
 					}
 					if ($objp->duration) $opt .= " - ".$objp->duration;
 					$opt .= "</option>\n";
-						
+
 					$form.= $opt;
 					$i++;
 				}
@@ -1437,7 +1437,7 @@ class Form
 			dolibarr_print_error($this->db);
 		}
 	}
-	 
+
 	/**
 	 *    \brief    Retourne la liste des catégories du type choisi
 	 *    \param    type			Type de categories (0=produit, 1=fournisseur, 2=client)
@@ -1663,7 +1663,7 @@ class Form
 	function form_date($page, $selected='', $htmlname)
 	{
 		global $langs;
-		
+
 		if ($htmlname != "none")
 		{
 			print '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
@@ -1686,7 +1686,7 @@ class Form
 			}
 		}
 	}
-	
+
 
 	/**
 	 *    \brief      Affiche formulaire de selection des modes de reglement
@@ -2009,7 +2009,7 @@ class Form
 		if (sizeof($txtva))
 		{
 			print '<select class="flat" name="'.$name.'">';
-				
+
 			for ($i = 0 ; $i < $nbdetaux ; $i++)
 			{
 				//print "xxxxx".$txtva[$i]."-".$nprtva[$i];
@@ -2109,12 +2109,12 @@ class Form
 					print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
 					print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\'); "';
 					print '>';
-						
+
 					// Icone calendrier
 					print '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
 					$base=DOL_URL_ROOT.'/lib/';
 					print ' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$conf->format_date_short_java.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
-						
+
 					print '<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
 					print '<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
 					print '<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
@@ -2149,7 +2149,7 @@ class Form
 					}
 				}
 			}
-			 
+
 			/*
 			 * Affiche date en select
 			 */
@@ -2157,7 +2157,7 @@ class Form
 			{
 				// Jour
 				print '<select class="flat" name="'.$prefix.'day">';
-	    
+
 				if ($empty || $set_time == -1)
 				{
 					print '<option value="0" selected="true">&nbsp;</option>';
@@ -2175,15 +2175,15 @@ class Form
 					}
 					print "</option>";
 				}
-	    
+
 				print "</select>";
-	    
+
 				print '<select class="flat" name="'.$prefix.'month">';
 				if ($empty || $set_time == -1)
 				{
 					print '<option value="0" selected="true">&nbsp;</option>';
 				}
-	    
+
 				// Mois
 				for ($month = 1 ; $month <= 12 ; $month++)
 				{
@@ -2192,7 +2192,7 @@ class Form
 					print "</option>";
 				}
 				print "</select>";
-	    
+
 				// Année
 				if ($empty || $set_time == -1)
 				{
@@ -2201,7 +2201,7 @@ class Form
 				else
 				{
 					print '<select class="flat" name="'.$prefix.'year">';
-					 
+
 					for ($year = $syear - 5; $year < $syear + 10 ; $year++)
 					{
 						if ($year == $syear)
@@ -2246,7 +2246,7 @@ class Form
 			print "</select>";
 			print "H\n";
 		}
-		 
+
 		if ($m)
 		{
 			/*
@@ -2279,7 +2279,7 @@ class Form
 		{
 			// Script which will be inserted in the OnClick of the "Now" button
 			$reset_scripts = "";
-			
+
 			// Generate the date part, depending on the use or not of the javascript calendar
 			if ($conf->use_popup_calendar)
 			{
@@ -2304,14 +2304,14 @@ class Form
 			}
 			// If reset_scripts is not empty, print the button with the reset_scripts in OnClick
 			if ($reset_scripts)
-			{			
+			{
 				print '<button class="dpInvisibleButtons" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="Maintenant" onClick="'.$reset_scripts.'">';
 				print $langs->trans("Now");
 				//print img_refresh($langs->trans("Now"));
 				print '</button> ';
 			}
 		}
-		
+
 	}
 
 	/**
@@ -2324,7 +2324,7 @@ class Form
 		if ($iSecond)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
-				
+
 			$hourSelected = ConvertSecondToTime($iSecond,'hour');
 			$minSelected = ConvertSecondToTime($iSecond,'min');
 		}
@@ -2404,7 +2404,7 @@ class Form
 			else
 			{
 				$newval=($translate?$langs->trans($value):$value);
-				$selectOptionValue = ($maxlen?dolibarr_trunc($newval,$maxlen):$newval); 
+				$selectOptionValue = ($maxlen?dolibarr_trunc($newval,$maxlen):$newval);
 				if ($value == '' || $value == '-') { $selectOptionValue='&nbsp;'; }
 				print $selectOptionValue;
 			}
@@ -2421,7 +2421,7 @@ class Form
 	 *    \param      value           Valeur pré-sélectionnée
 	 *    \param      option          0 retourne yes/no, 1 retourne 1/0
 	 */
-	function selectyesno($name,$value='',$option=0)
+	function selectyesno($htmlname,$value='',$option=0)
 	{
 		global $langs;
 
@@ -2433,7 +2433,7 @@ class Form
 			$no="0";
 		}
 
-		$resultyesno = '<select class="flat" name="'.$name.'">'."\n";
+		$resultyesno = '<select class="flat" name="'.$htmlname.'">'."\n";
 		if (("$value" == 'yes') || ($value == 1))
 		{
 			$resultyesno .= '<option value="'.$yes.'" selected="true">'.$langs->trans("yes").'</option>'."\n";
@@ -2459,7 +2459,7 @@ class Form
 	 */
 	function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
 	{
-			
+
 		$sql = "SELECT rowid, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."export_model";
 		$sql.= " WHERE type = '".$type."'";
@@ -2591,7 +2591,7 @@ class Form
 		if ($morehtmlref) {
 			$ret.=' '.$morehtmlref;
 		}
-		
+
 		if ($morehtml) {
 			$ret.='</td><td class="nobordernopadding" align="right">'.$morehtml;
 		}

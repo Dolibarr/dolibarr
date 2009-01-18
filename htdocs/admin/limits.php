@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,10 +44,11 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	}
 	else
 	{
-		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT",  $_POST["MAIN_MAX_DECIMALS_UNIT"]);
-		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TOT",   $_POST["MAIN_MAX_DECIMALS_TOT"]);
-		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_SHOWN", $_POST["MAIN_MAX_DECIMALS_SHOWN"]);
-			
+		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT",   $_POST["MAIN_MAX_DECIMALS_UNIT"]);
+		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TOT",    $_POST["MAIN_MAX_DECIMALS_TOT"]);
+		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_SHOWN",  $_POST["MAIN_MAX_DECIMALS_SHOWN"]);
+		dolibarr_set_const($db, "MAIN_DISABLE_PDF_COMPRESSION", $_POST["MAIN_DISABLE_PDF_COMPRESSION"]);
+
 		Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 		exit;
 	}
@@ -90,7 +91,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td><input class="flat" name="MAIN_MAX_DECIMALS_SHOWN" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_SHOWN . '"></td></tr>';
 
-
+    /*
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_PDF_COMPRESSION").'</td><td>';
+	print $html->selectyesno('MAIN_DISABLE_PDF_COMPRESSION',$conf->global->MAIN_DISABLE_PDF_COMPRESSION);
+    print '</td></tr>';
+	*/
 
     print '</table>';
 
@@ -121,7 +127,12 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_SHOWN.'</td></tr>';
 
-    print '</table><br>';
+    /*
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_PDF_COMPRESSION").'</td><td align="right">'.yn($conf->global->MAIN_DISABLE_PDF_COMPRESSION).'</td></tr>';
+	*/
+
+    print '</table>';
 
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
