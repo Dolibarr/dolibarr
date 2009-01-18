@@ -27,7 +27,8 @@ class langAutoParser {
 		$this->time = date('Y-m-d H:i:s');
 
 		// Translate
-		ini_set('default_charset','ISO-8859-1');
+		ini_set('default_charset','UTF-8');
+		//ini_set('default_charset','ISO-8859-1');
 		$this->parseRefLangTranslationFiles();
 
 	}
@@ -74,7 +75,7 @@ FILE_SKIP_EMPTY_LINES);
 			fwrite($fp, "\r\n");
 			fwrite($fp, "\r\n");
 			fwrite($fp, "// Date " . $this->time . "\r\n");
-			fwrite($fp, "// START - Lines generated via parser\r\n");
+			fwrite($fp, "// START - Lines generated via autotranslator.php tool.\r\n");
 			fwrite($fp, "// Reference language: {$this->refLang}\r\n");
 			foreach( $this->translatedFiles[$file] as $line) {
 				fwrite($fp, $line . "\r\n");
