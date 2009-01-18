@@ -15,7 +15,8 @@ class langAutoParser {
 	private $destLang = string;
 	private $refLang = string;
 	private $langDir = string;
-
+	private $outputpagecode = 'UTF-8';
+	//private $outputpagecode = 'ISO-8859-1';
 	const DIR_SEPARATOR = '/';
 
 	function __construct($destLang,$refLang,$langDir){
@@ -28,7 +29,7 @@ class langAutoParser {
 
 		// Translate
 		//ini_set('default_charset','UTF-8');
-		ini_set('default_charset','ISO-8859-1');
+		ini_set('default_charset',$this->outputpagecode);
 		$this->parseRefLangTranslationFiles();
 
 	}
@@ -110,9 +111,12 @@ FILE_SKIP_EMPTY_LINES);
 		}
 
 		// If not translated then translate
-		$this->translatedFiles[$file][] = $key . '=' .
-utf8_decode($this->translateTexts(array($value),substr($this->refLang,0,2),substr($this->destLang,0,2)));
+		if ($this->outputpagecode == 'UTF-8') $val=$this->translateTexts(array($value),substr($this->refLang,0,2),substr($this->destLang,0,2));
+		else $val=utf8_decode($this->translateTexts(array($value),substr($this->refLang,0,2),substr($this->destLang,0,2)));
 
+		if ($key == 'CHARSET') $val=$this->outputpagecode;
+
+		$this->translatedFiles[$file][] = $key . '=' . $val ;
 	}
 
 
