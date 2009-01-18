@@ -27,8 +27,8 @@ class langAutoParser {
 		$this->time = date('Y-m-d H:i:s');
 
 		// Translate
-		ini_set('default_charset','UTF-8');
-		//ini_set('default_charset','ISO-8859-1');
+		//ini_set('default_charset','UTF-8');
+		ini_set('default_charset','ISO-8859-1');
 		$this->parseRefLangTranslationFiles();
 
 	}
