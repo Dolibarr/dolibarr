@@ -39,7 +39,10 @@ For users:
 
 For translators:
 - Added ca_ES language files
-
+- Added autotranslator tool. A tool to build/update automatically
+  languages files using Google API for a new language. Wonderfull to start a
+  new translation.
+  
 For developers:
 - Removed som deprecated files.
 - Renamed all function dolibarr_xxx into dol_xxx to have same prefix everywhere.

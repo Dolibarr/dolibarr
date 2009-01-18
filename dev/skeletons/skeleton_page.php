@@ -18,13 +18,13 @@
  */
 
 /**
-    	\file       dev/skeletons/skeleton_page.php
-		\ingroup    mymodule othermodule1 othermodule2
-		\brief      This file is an example of a php page
-		\version    $Id$
-		\author		Put author name here
-		\remarks	Put here some comments
-*/
+ *   	\file       dev/skeletons/skeleton_page.php
+ *		\ingroup    mymodule othermodule1 othermodule2
+ *		\brief      This file is an example of a php page
+ *		\version    $Id$
+ *		\author		Put author name here
+ *		\remarks	Put here some comments
+ */
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
 

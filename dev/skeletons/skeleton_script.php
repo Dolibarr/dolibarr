@@ -18,17 +18,17 @@
  */
 
 /**
-        \file       dev/skeletons/skeleton_script.php
-		\ingroup    mymodule othermodule1 othermodule2
-        \brief      This file is an example for a command line script
-        \version    $Id$
-		\author		Put author name here
-		\remarks	Put here some comments
-*/
+ *      \file       dev/skeletons/skeleton_script.php
+ *		\ingroup    mymodule othermodule1 othermodule2
+ *      \brief      This file is an example for a command line script
+ *      \version    $Id$
+ *		\author		Put author name here
+ *		\remarks	Put here some comments
+ */
 
 // Test if batch mode
 $sapi_type = php_sapi_name();
-$script_file=__FILE__; 
+$script_file=__FILE__;
 if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
