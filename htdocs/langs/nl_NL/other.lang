@@ -10,6 +10,7 @@
 // Date 2009-01-19 00:04:30
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 ErrorPasswordDiffers=Wachtwoorden verschilt, typt u deze opnieuw.
 ErrorForbidden=Toegang verboden. <br> Je probeert de toegang tot een pagina of functie zonder in een geauthentiseerde sessie, of dat niet is toegestaan om uw gebruikersnaam.
 ErrorForbidden2=Toestemming voor deze aanmelding kan worden gedefinieerd door de beheerder van Dolibarr menu% s-&gt;% s.

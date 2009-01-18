@@ -10,6 +10,7 @@
 // Date 2009-01-18 23:57:49
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 Bill=Factuur
 Bills=Facturen
 BillsCustomers=Klanten facturen
@@ -126,8 +127,8 @@ BillFrom=Van
 BillTo=Bill tot
 ActionsOnBill=Acties op factuur
 NewBill=Nieuwe factuur
-Prélèvements=Doorlopende opdracht
-Prélèvements=Permanente opdrachten
+Prï¿½lï¿½vements=Doorlopende opdracht
+Prï¿½lï¿½vements=Permanente opdrachten
 LastBills=Last% s facturen
 LastCustomersBills=Last% s klanten facturen
 LastSuppliersBills=Last% s leveranciers facturen

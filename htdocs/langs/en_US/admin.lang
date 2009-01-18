@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - admin
+CHARSET=ISO-8859-1
 Version=Version
 VersionProgram=Version program
 VersionLastInstall=Version initial install

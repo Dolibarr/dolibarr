@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - mails
+CHARSET=ISO-8859-1
 Mailing=EMailing
 EMailing=EMailing
 Mailings=EMailings

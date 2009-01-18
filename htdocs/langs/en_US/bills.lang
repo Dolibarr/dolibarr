@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - bills
+CHARSET=ISO-8859-1
 Bill=Invoice
 Bills=Invoices
 BillsCustomers=Customers' invoices

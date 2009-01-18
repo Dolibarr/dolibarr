@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - donations
+CHARSET=ISO-8859-1
 Donation=Donation
 Donationss=Donations
 Donor=Donor

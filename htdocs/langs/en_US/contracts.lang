@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - contracts
+CHARSET=ISO-8859-1
 ContractsArea=Contracts area
 ListOfContracts=List of contracts
 LastContracts=Last %s modified contracts

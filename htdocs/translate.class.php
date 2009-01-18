@@ -42,8 +42,8 @@ class Translate {
 
     var $cache_labels=array();		// Cache for labels
 
-    var $charset_inputfile='ISO-8859-1';	// Codage used by default to encode/decode lang files (used if CHARSET not found in file)
-	var $charset_output='UTF-8';			// Codage used by default for "trans" method output if $conf->character_set_client not defined (should never happen)
+    var $charset_inputfile=array();	// To store charset encoding used for language
+	var $charset_output='UTF-8';	// Codage used by default for "trans" method output if $conf->character_set_client not defined (should never happen)
 
 
     /**
@@ -214,7 +214,6 @@ class Translate {
 				if ($this->defaultlang == "en_US") $scandiralt = $searchdir."/fr_FR";
 	            elseif (eregi('^fr',$this->defaultlang) && $this->defaultlang != 'fr_FR') $scandiralt = $searchdir."/fr_FR";
 	            elseif (eregi('^en',$this->defaultlang) && $this->defaultlang != 'en_US') $scandiralt = $searchdir."/en_US";
-	            elseif (eregi('^es',$this->defaultlang) && $this->defaultlang != 'es_ES') $scandiralt = $searchdir."/es_ES";
 	            else $scandiralt = $searchdir."/en_US";
 
 	            $file_lang = $scandiralt . "/".$domain.".lang";
@@ -258,14 +257,14 @@ class Translate {
 									if (eregi('^CHARSET$',$key))
 									{
 										// On est tombe sur une balise qui declare le format du fichier lu
-										$this->charset_inputfile=strtoupper($value);
-										//print 'File '.$file_lang.' has format '.$this->charset_inputfile.'<br>';
+										$this->charset_inputfile[$domain]=strtoupper($value);
+										//print 'File '.$file_lang.' is declared to have format '.$this->charset_inputfile[$domain].'<br>';
 									}
 									else
 									{
 										// On stocke toujours dans le tableau Tab en UTF-8
-			                        	//if ($this->charset_inputfile == 'UTF-8')      $value=utf8_decode($value);
-			                        	if ($this->charset_inputfile == 'ISO-8859-1') $value=utf8_encode($value);
+			                        	//if (empty($this->charset_inputfile[$domain]) || $this->charset_inputfile[$domain] == 'UTF-8')      $value=utf8_decode($value);
+			                        	if (empty($this->charset_inputfile[$domain]) || $this->charset_inputfile[$domain] == 'ISO-8859-1') $value=utf8_encode($value);
 
 										// We do not load Separator values for alternate files
 										if (! $newalt || (! eregi('^Separator',$key)))

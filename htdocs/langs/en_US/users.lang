@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - users
+CHARSET=ISO-8859-1
 UserCard=User card
 ContactCard=Contact card
 GroupCard=Group card

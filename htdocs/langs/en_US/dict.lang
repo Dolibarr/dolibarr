@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - dict
+CHARSET=ISO-8859-1
 CountryFR=France
 CountryBE=Belgium
 CountryIT=Italy

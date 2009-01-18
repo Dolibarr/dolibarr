@@ -1,5 +1,5 @@
 # Dolibarr language file - pt_PT - principal
-charset=iso-8859-1
+CHARSET=ISO-8859-1
 Error=Erro
 ErrorFieldRequired=O campo '%s' é obrigatório
 ErrorFileDoesNotExists=O ficheiro %s não existe

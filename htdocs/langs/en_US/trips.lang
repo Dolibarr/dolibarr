@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - trips
+CHARSET=ISO-8859-1
 Trip=Trip
 Trips=Trips
 TripsAndExpenses=Trips and expenses

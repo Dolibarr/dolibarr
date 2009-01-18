@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - orders
+CHARSET=ISO-8859-1
 OrdersArea=Customers orders area
 SuppliersOrdersArea=Suppliers orders area
 OrderCard=Order card

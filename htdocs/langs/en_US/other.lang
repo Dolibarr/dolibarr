@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - other
+CHARSET=ISO-8859-1
 ErrorPasswordDiffers=Passwords differs, please type them again.
 ErrorForbidden=Access forbidden.<br>You try to access to a page, area or feature without being in an authenticated session or that is not allowed to your user.
 ErrorForbidden2=Permission for this login can be defined by your Dolibarr administrator from menu %s->%s.
