@@ -1,0 +1,63 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+BoxLastRssInfos=RSS-Informationen
+BoxLastProducts=Letzte Produkte / Dienstleistungen
+BoxLastProductsInContract=Letzte vertraglich Produkte / Dienstleistungen
+BoxLastSupplierBills=Letzte Lieferanten Rechnungen
+BoxLastCustomerBills=Letzte Kunden Rechnungen
+BoxOldestUnpayedCustomerBills=Älteste unpayed Kunden Rechnungen
+BoxOldestUnpayedSupplierBills=Älteste unpayed Lieferanten Rechnungen
+BoxLastProposals=Letzte kommerzielle Vorschläge
+BoxLastProspects=Letzte Aussichten
+BoxLastCustomers=Letzte Kunden
+BoxLastCustomerOrders=Letzte Kundenaufträge
+BoxLastSuppliers=Letzte Lieferanten
+BoxLastBooks=Letzte Bücher
+BoxLastActions=Letzte Aktionen
+BoxCurrentAccounts=Aktueller Saldo
+BoxSalesTurnover=Umsatz
+BoxTotalUnpayedCustomerBills=Insgesamt unpayed Kunden Rechnungen
+BoxTotalUnpayedSuppliersBills=Insgesamt unpayed Lieferanten Rechnungen
+BoxTitleLastBooks=Letzte% s aufgezeichnet Bücher
+BoxTitleNbOfCustomers=Nombre de-Client
+BoxTitleLastRssInfos=Letzte Neuigkeiten aus% s% s
+BoxTitleLastProducts=Letzte% s veränderte Produkte / Dienstleistungen
+BoxTitleLastCustomerOrders=Letzte% s geändert Kundenaufträge
+BoxTitleLastSuppliers=Letzte% s aufgezeichnet Lieferanten
+BoxTitleLastCustomers=Letzte% s aufgezeichnet Kunden
+BoxTitleLastCustomersOrProspects=Letzte% s aufgezeichnet Kunden oder Interessenten
+BoxTitleLastPropals=Letzte% s aufgezeichnet Vorschläge
+BoxTitleLastCustomerBills=Letzte% s Kunden Rechnungen
+BoxTitleLastSupplierBills=
+BoxTitleLastProspects=Letzte% s aufgezeichnet Aussichten
+BoxTitleLastProductsInContract=Letzte% s Derniers produits / Verträge
+BoxTitleOldestUnpayedCustomerBills=Älteste% s unpayed Kunden Rechnungen
+BoxTitleOldestUnpayedSupplierBills=Älteste% s unpayed Lieferanten Rechnungen
+BoxTitleCurrentAccounts=Leistungsbilanz der Salden
+BoxTitleSalesTurnover=Umsatz
+BoxTitleTotalUnpayedCustomerBills=Unpayed Kunden Rechnungen
+BoxTitleTotalUnpayedSuppliersBills=Unpayed Lieferanten Rechnungen
+BoxMyLastBookmarks=Meine letzte% s Lesezeichen
+FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS Fluss. Letzte erfolgreiche Aktualisierungsdatum:% s
+NoRecordedBookmarks=No bookmarks defined. Click <a href=Keine Lesezeichen definiert. Klicken Sie <a href="%s">hier,</a> um Lesezeichen.
+NoRecordedCustomers=Nr. aufgezeichnet Kunden
+BoxTitleLastActionsToDo=Letzte% s Aktionen zu tun
+NoActionsToDo=Nr. Aktionen zu tun
+NoRecordedOrders=Nr. erfasst Kunden Aufträge
+NoRecordedProposals=Nr. aufgenommenen Vorschläge
+NoRecordedInvoices=Nr. erfasst Kunden Rechnungen
+NoUnpayedCustomerBills=Nr. unpayed Kunden Rechnungen
+NoRecordedSupplierInvoices=Nr. erfasst Lieferanten Rechnungen
+NoUnpayedSupplierBills=Nr. unpayed Lieferanten Rechnungen
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

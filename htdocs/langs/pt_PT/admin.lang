@@ -710,7 +710,7 @@ WatermarkOnDraftOrders=Marca d&#39;água sobre o projecto de encomendas (se qualq
 FicheinterNumberingModules=Intervenção numeração módulos
 TemplatePDFInterventions=Intervenção cartão documentos modelos
 WatermarkOnDraftInterventionCards=Marca d&#39;água na intervenção cartão documentos (qualquer se vazia)
-ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=Url chamado quando um clique no telefone picto é feito. <br> URL completo será: URL? Login =...&amp; senha =...&amp; chamador =...&amp; chamado = phonecalled
+ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=Url chamado quando um clique no telefone picto é feito. <br> URL completo será: URL?login=...&password=...&caller=...&called=phonecalled
 Bookmark4uSetup=Bookmark4u configuração do módulo
 InterventionsSetup=Intervenções módulo configuração
 MembersSetup=Deputados módulo configuração
@@ -795,7 +795,7 @@ LDAPLdapMapping=Mapeamento LDAP
 LDAPFieldLoginUnix=Login (unix)
 LDAPFieldLoginExample=Exemplo: uid
 LDAPFilterConnection=Filtro de pesquisa
-LDAPFilterConnectionExample=Example : &(objectClass=Exemplo: &amp; (objectClass = inetOrgPerson)
+LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Exemplo: samAccountName
 LDAPFieldFullname=Primeiro Nome

@@ -1,0 +1,89 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Commercial=Kommerzielle
+CommercialArea=Kommerziellen Bereich
+CommercialCard=Handelsregister-Karte
+CustomerArea=Kunden Bereich
+Customer=Kunde
+Customers=Kunden
+Prospect=Prospect
+Prospects=Perspektiven
+DeleteAction=Löschen einer Aktion / Aufgabe
+NewAction=Neue Maßnahme / Aufgabe
+AddAction=Add Maßnahme / Aufgabe
+AddAnAction=Hinzufügen einer Aktion / Aufgabe
+AddActionRendezVous=Fügen Sie ein Rendez-Vous Aufgabe
+ConfirmDeleteAction=Sind Sie sicher, dass Sie löschen möchten, diese Aufgabe?
+CardAction=Action-Karte
+PercentDone=Anteil Geschehen
+ActionOnCompany=Aufgabe über die Firma
+ActionOnContact=Aufgabe Über uns Kontakt
+TaskRDV=Meetings
+TaskRDVWith=Treffen mit% s
+ShowTask=Zeige Aufgabe
+ShowAction=Show Aktion
+ActionsReport=Maßnahmen Bericht
+SalesRepresentative=Vertriebsmitarbeiter
+SalesRepresentatives=Vertreter
+SalesRepresentativeFollowUp=Vertriebsmitarbeiter (Follow-up)
+SalesRepresentativeSignature=Vertriebsmitarbeiter (Unterschrift)
+CommercialInterlocutor=Kommerzielle Gesprächspartner
+ErrorWrongCode=Falscher Code
+NoSalesRepresentativeAffected=Keine besonderen Vertriebsmitarbeiter betroffen
+ShowCustomer=Zeige Kunden
+ShowProspect=Show Aussicht
+ListOfProspects=Liste der Perspektiven
+ListOfCustomers=Liste der Kunden
+LastDoneTasks=Letzte% s getan Aufgaben
+LastRecordedTasks=Letzten Aufgaben
+LastActionsToDo=Letzte% s ältesten, die nicht abgeschlossen
+DoneAndToDoActionsFor=Geschehen zu tun, und Aufgaben, für% s
+DoneAndToDoActions=Geschehen zu tun und Aufgaben
+DoneActions=Geschehen Aktionen
+DoneActionsFor=Geschehen für% s
+ToDoActions=Unvollständige Aktionen
+ToDoActionsFor=Unvollständige für% s
+SendPropalRef=Senden kommerzieller Vorschlag% s
+SendOrderRef=Senden, um% s
+NoRecordedProspects=Keine Aussicht erfasst
+StatusActionToDo=Gehen Sie
+StatusActionDone=Getan
+MyActionsAsked=Aktionen Ich habe
+MyActionsToDo=Maßnahmen habe ich zu tun
+MyActionsDone=Maßnahmen, die zu mir!
+StatusActionInProcess=In Bearbeitung
+TasksHistoryForThisContact=Aktionen für diesen Kontakt
+LastProspectDoNotContact=Nicht Kontakt
+LastProspectNeverContacted=Nie kontaktiert
+LastProspectToContact=Zum Kontakt
+LastProspectContactInProcess=Kontakt in der Verfahrenstechnik
+LastProspectContactDone=Kontakt Geschehen
+DateActionPlanned=Datum der geplanten Maßnahmen für
+DateActionDone=Datum der Maßnahme erfolgt
+ActionAskedBy=Aktion Frage gestellt von:
+ActionAffectedTo=Aktion betroffen
+ActionDoneBy=Aktion durch
+ActionUserAsk=Aufgenommen von
+ErrorStatusCantBeZeroIfStarted=Ist das Feld <b>&quot;Datum gemacht&quot;</b> wird, sind Maßnahmen in Angriff genommen (bzw. abgeschlossen), so Feld <b>&#39;Status&#39;</b> kann nicht 0%%.
+ActionAC_TEL=Anruf
+ActionAC_FAX=Fax versenden
+ActionAC_PROP=Vorschlag senden
+ActionAC_EMAIL=E-Mail senden
+ActionAC_RDV=Meetings
+ActionAC_FAC=Senden Abrechnung
+ActionAC_REL=Senden Sie Abrechnung (Erinnerung)
+ActionAC_CLO=Schließen
+ActionAC_EMAILING=Massen-E-Mail senden
+ActionAC_COM=Senden Sie per Post bestellen
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

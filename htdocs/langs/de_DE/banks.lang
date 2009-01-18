@@ -1,0 +1,152 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Bank=Bank
+Banks=Banken
+MenuBankCash=Bank / Kasse
+MenuSetupBank=Bank / Cash-Setup
+BankName=Name der Bank
+FinancialAccount=Konto
+FinancialAccounts=Konten
+BankAccount=Bank-Konto
+BankAccounts=Bankkonten
+AccountRef=Kapitalbilanz ref
+AccountLabel=Kapitalbilanz Label
+CashAccount=Cash-Konto
+CashAccounts=Kassenkonten
+MainAccount=Main-Konto
+CurrentAccount=Girokonto
+CurrentAccounts=Girokonten
+SavingAccount=Sparkonto
+SavingAccounts=Sparkonten
+ErrorBankLabelAlreadyExists=Kapitalbilanz Label existiert bereits
+BankBalance=Balance
+BalanceMinimalAllowed=Minimum erlaubt Gleichgewicht
+BalanceMinimalDesired=Minimale gewünschte Gleichgewicht
+InitialBankBalance=Erste Bilanz
+EndBankBalance=Endsaldo
+CurrentBalance=Aktuelle Bilanz
+FutureBalance=Künftige Gleichgewicht
+ShowAllTimeBalance=Show Balance von Anfang
+Reconciliation=Versöhnung
+RIB=Bank Account Number
+IBAN=IBAN-Nummer
+BIC=BIC / SWIFT Nummer
+StandingOrders=Daueraufträge
+StandingOrder=Dauerauftrag
+Withdrawals=Entnahmen
+Withdrawal=Rücktritt
+AccountStatement=Kontoauszug
+AccountStatementShort=Aussage
+AccountStatements=Kontoauszüge
+LastAccountStatements=Letzte Kontoauszüge
+Rapprochement=Reconciliate
+IOMonthlyReporting=Monatliche Meldung
+BankAccountDomiciliation=Konto-Adresse
+BankAccountOwner=Kontoinhaber Name
+BankAccountOwnerAddress=Konto-Inhaber-Adresse
+RIBControlError=Inetgrity Kontrolle der Werte nicht. Dies bedeutet, Informationen für das Konto-Nummer sind nicht vollständig oder falsch (Land überprüfen, Zahlen und IBAN).
+CreateAccount=Konto erstellen
+StandingOrderToProcess=Zur Bearbeitung
+StandingOrderProcessed=Verarbeitete
+NewAccount=Neues Konto
+NewBankAccount=Neue Bankverbindung
+NewFinancialAccount=Neue finanzielle Konto
+MenuNewFinancialAccount=Neue finanzielle Konto
+NewCurrentAccount=Neue Girokonto
+NewSavingAccount=Neue Sparkonto
+NewCashAccount=Neue Cash-Konto
+EditFinancialAccount=Konto bearbeiten
+AccountSetup=Finanzielle Konten einrichten
+SearchBankMovement=Suche Bank Bewegung
+Debts=Schulden
+LabelBankCashAccount=Bank-oder Cash-Label
+AccountType=Kontoart
+BankType0=Sparkonto
+BankType1=Girokonto
+BankType2=Cash-Konto
+IfBankAccount=Wenn Bankkonto
+AccountsArea=Konten-Bereich
+AccountCard=Konto-Karte
+DeleteAccount=Account löschen
+ConfirmDeleteAccount=Sind Sie sicher, dass Sie löschen möchten, auf dieses Konto?
+Account=Konto
+ByCategories=Nach Kategorien
+ByRubriques=Nach Kategorien
+BankTransactionByCategories=Bank-Transaktionen nach Kategorien
+BankTransactionForCategory=Bank-Transaktionen für die <b>Klasse% s</b>
+RemoveFromRubrique=Nehmen Sie Verbindung mit Kategorie
+RemoveFromRubriqueConfirm=Sind Sie sicher, dass Sie entfernen möchten Zusammenhang zwischen der Transaktion und der Kategorie?
+ListBankTransactions=Liste der Transaktionen
+IdTransaction=Transaktions-ID
+BankTransactions=Bank-Transaktionen
+SearchTransaction=Suche Transaktion
+ListTransactions=US-Transaktionen
+ListTransactionsByCategory=US-Transaktion / Kategorie
+TransactionsToConciliate=Geschäfte zu vermitteln
+Conciliable=Conciliable
+Conciliate=Beschwichtigen
+Conciliation=Vermittlungsausschuss
+ConciliationForAccount=Beschwichtigen dieses Konto
+IncludeClosedAccount=Zählen Konten
+OnlyOpenedAccount=Nur Konten eröffnet
+AccountToCredit=Konto zu Krediten
+AccountToDebit=Konto zu belasten
+DisableConciliation=Deaktivieren Vermittlungsausschuss Funktion für dieses Konto
+ConciliationDisabled=Vermittlungsausschuss-Funktion deaktiviert
+StatusAccountOpened=Geöffnet
+StatusAccountClosed=Geschlossen
+AccountIdShort=Anzahl
+EditBankRecord=Eintrag bearbeiten
+LineRecord=Transaktionscode
+AddBankRecord=Add Transaktion
+AddBankRecordLong=Transaktion manuell hinzufügen
+ConciliatedBy=Conciliated von
+DateConciliating=Beschwichtigen Datum
+BankLineConciliated=Transaktionscode conciliated
+CustomerInvoicePayment=Kunde die Zahlung
+SupplierInvoicePayment=Lieferant Zahlung
+SocialContributionPayment=Sozialbeitrags Zahlung
+FinancialAccountJournal=Kapitalbilanz Zeitschrift
+BankTransfer=Überweisung
+BankTransfers=Bank Transfers
+TransferDesc=Transfer von einem Konto auf ein anderes, Dolibarr schreibt beiden Sätze (eine Belastungsanzeige im Source-Konto und einen Kredit in Ziel Rechnung, der den gleichen Betrag. Das gleiche Etikett und Datum wird für diese Transaktion)
+TransferFrom=Von
+TransferTo=Zu
+TransferFromToDone=Eine Übertragung <b>von% s bis% s von% s% s</b> wurde.
+CheckTransmitter=Transmitter
+ValidateCheckReceipt=Bestätigen Sie dieses Kontrollkästchen Eingang?
+ConfirmValidateCheckReceipt=Sind Sie sicher, dass Sie dieses Kontrollkästchen, um den Eingang, keine Änderung möglich sein wird, wenn dies geschieht?
+DeleteCheckReceipt=Löschen Sie dieses Kontrollkästchen Eingang?
+ConfirmDeleteCheckReceipt=Sind Sie sicher, dass Sie löschen möchten dieses Kontrollkästchen Eingang?
+BankChecks=Bankschecks
+BankChecksToReceipt=Schecks warten für die Hinterlegung
+NumberOfCheques=Zahl der Schecks
+DeleteTransaction=Löschen Transaktion
+ConfirmDeleteTransaction=Sind Sie sicher, dass Sie löschen möchten, dieser Transaktion?
+ThisWillAlsoDeleteBankRecord=Dies wird auch zu löschen, die Bank-Transaktionen
+BankMovements=Bewegungen
+CashBudget=Cash-Haushalt
+PlannedTransactions=Geplante Transaktionen
+ExportDataset_banque_1=Bank-Transaktionen und Kontoauszug
+TransactionOnTheOtherAccount=Transaktion auf der anderen Konto
+TransactionWithOtherAccount=Konto transfert
+PaymentNumberUpdateSucceeded=Zahlung Anzahl erfolgreich aktualisiert
+PaymentNumberUpdateFailed=Die Zahlung konnte nicht aktualisiert werden
+PaymentDateUpdateSucceeded=Zahltag Update erfolgreich
+PaymentDateUpdateFailed=Zahltag können nicht aktualisiert werden
+BankTransactionLine=Bank-Transaktion
+AllAccounts=Alle Bank / Kasse
+BackToAccount=Zurück zur Rechenschaft zu ziehen
+ShowAllAccounts=Show für alle
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

@@ -1,0 +1,104 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Mailing=EMailing
+EMailing=EMailing
+Mailings=EMailings
+EMailings=EMailings
+MailCard=EMailing Karte
+MailTargets=Ziele
+MailRecipients=Empfänger
+MailRecipient=Empfänger
+MailTitle=Titel
+MailFrom=Absender
+MailErrorsTo=Fehler zu
+MailReply=Antwort an
+MailTo=Empfänger (n)
+MailCC=Kopie an
+MailCCC=Cache-Kopie zu
+MailTopic=E-Mail Thema
+MailText=Nachricht
+MailFile=Angehängte Dateien
+MailMessage=E-Mail-Text
+ShowEMailing=Zeige E-Mail
+ListOfEMailings=Liste der emailings
+NewMailing=Neue E-Mail
+EditMailing=Bearbeiten Sie E-Mail
+DeleteMailing=Löschen Sie E-Mail
+DeleteAMailing=Löschen einer E-Mail
+PreviewMailing=E-Mail-Vorschau
+PrepareMailing=Bereiten Sie eine E-Mail
+CreateMailing=Erstellen Sie eine E-Mail
+MailingDesc=Auf dieser Seite können Sie senden emailings zu einer Gruppe von Menschen.
+MailingResult=Senden von E-Mails zu
+TestMailing=Test-E-Mail
+ValidMailing=Gültige E-Mail
+ApproveMailing=Bestätigen Sie E-Mail
+MailingStatusDraft=Entwurf
+MailingStatusValidated=Validated
+MailingStatusApproved=Genehmigt
+MailingStatusSent=Gesendet
+MailingStatusSentPartialy=Gesendet teilweise
+MailingStatusSentCompletely=Gesendet komplett
+MailingStatusError=Fehler
+MailingStatusNotSent=Nicht gesendet
+MailSuccessfulySent=E-Mail erfolgreich gesendet (von% s bis% s)
+ErrorMailRecipientIsEmpty=E-Mail-Empfänger ist leer
+WarningNoEMailsAdded=Keine neuen E-Mail an einen Empfänger in den auf der Liste.
+ConfirmValidMailing=Sind Sie sicher, dass Sie, um diese E-Mail?
+ConfirmDeleteMailing=Sind Sie sicher, dass Sie löschen möchten emailling?
+NbOfRecipients=Anzahl der Empfänger
+NbOfUniqueEMails=Zahl der einzigartigen E-Mails
+NbOfEMails=Nb von E-Mails
+TotalNbOfDistinctRecipients=Anzahl der Empfänger
+NoTargetYet=Keine Empfänger noch (Gehen Sie auf die Registerkarte &quot;Empfänger&quot;)
+AddRecipients=Empfänger hinzufügen
+RemoveRecipient=Entfernen Empfänger
+CommonSubstitutions=Gemeinsame Ersetzungen
+YouCanAddYourOwnPredefindedListHere=So erstellen Sie Ihre E-Mail-Selector-Modul, siehe htdocs / includes / modules / Mailings / README.
+EMailTestSubstitutionReplacedByGenericValues=Bei der Verwendung von Test-Modus, Vertauschungen Variablen werden durch generische Werte
+MailingAddFile=Bringen Sie diese Datei
+NoAttachedFiles=Keine angehängten Dateien
+MailingModuleDescContactCompanies=Kontakte aller Dritte (Kunden, Aussicht, Lieferanten, ...)
+MailingModuleDescDolibarrUsers=Alle Dolibarr Nutzer mit E-Mails
+MailingModuleDescFundationMembers=Stiftung Mitglieder mit E-Mails
+MailingModuleDescEmailsFromFile=E-Mails von einem Text-Datei (E-Mail, Name, Nachname)
+MailingModuleDescContactsCategories=Kontakte von Dritten (nach Kategorie)
+LineInFile=Zeile% s in der Datei
+RecipientSelectionModules=Definiert Anforderungen für Empfänger Auswahl
+MailSelectedRecipients=Ausgewählte Empfänger
+MailingArea=EMailings Bereich
+LastMailings=Letzte% s emailings
+TargetsStatistics=Ziele Statistiken
+NbOfCompaniesContacts=Unique Kontakte von Unternehmen
+MailNoChangePossible=Empfänger für validierte E-Mail kann nicht geändert werden
+SearchAMailing=Mailing-Suche
+SendMailing=Senden Sie eine E-Mail
+SendMail=E-Mail versenden
+SentBy=Gesendet von
+MailingNeedCommand=Für Wertpapiere, Grund, senden Sie eine E-Mail kann nur von der Kommandozeile aus. Fragen Sie Ihren Administrator, um den folgenden Befehl ein, um die E-Mail an alle Empfänger:
+MailingNeedCommand2=Sie können jedoch senden sie online, indem Sie Parameter MAILING_LIMIT_SENDBYWEB mit dem Wert von max Anzahl der Emails, die Sie senden möchten, von Sitzung.
+ConfirmSendingEmailing=Sind Sie sicher, dass Sie senden möchten, Mailing? <br> Online-Versand von emailings begrenzt sind aus Sicherheitsgründen <b>an% s</b> Empfänger per Session.
+TargetsReset=Liste löschen
+ToClearAllRecipientsClickHere=Zum Löschen der Empfänger dieser E-Mail-Liste, klicken Sie auf Schaltfläche
+ToAddRecipientsChooseHere=So fügen Sie Empfänger, wählen Sie in den Listen
+NbOfEMailingsReceived=Masse emailings erhalten
+IdRecord=ID Rekord
+DeliveryReceipt=Lieferschein
+Notifications=Benachrichtigungen
+NoNotificationsWillBeSent=Keine E-Mail-Benachrichtigungen sind für diese Veranstaltung und Unternehmen
+ANotificationsWillBeSent=1 Meldung wird per E-Mail
+SomeNotificationsWillBeSent=% s Anmeldungen werden per E-Mail
+AddNewNotification=Aktivieren Sie eine neue Mitteilung Anfrage
+ListOfActiveNotifications=Liste aller aktiven Meldungen Anfragen
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

@@ -1,0 +1,94 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Category=Kategorie
+Categories=Kategorien
+Rubrique=Kategorie
+Rubriques=Kategorien
+categories=Kategorien
+TheCategorie=Die Kategorie
+In=In
+AddIn=Fügen Sie in
+modify=ändern
+Classify=Einordnen
+CategoriesArea=Kategorien Bereich
+ProductsCategoriesArea=Produkte / Dienstleistungen &quot;Kategorien Gebiet
+SuppliersCategoriesArea=Lieferanten-Kategorien Gebiet
+CustomersCategoriesArea=Kunden Kategorien Gebiet
+ThirdPartyCategoriesArea=Dritter Bereich Kategorien
+MainCats=Hauptkategorien
+SubCats=Unterkategorien
+CatStatistics=Statistik
+CatList=Liste der catgories
+AllCats=Alle Kategorien
+ViewCat=Kategorie
+NewCat=Kategorie hinzufügen
+NewCategory=Neue Kategorie
+ModifCat=Ändern Kategorie
+CatCreated=Kategorie erstellt
+CreateCat=Kategorie erstellen
+CreateThisCat=Erstellen dieser Kategorie
+ValidateFields=Bestätigen Sie die Felder
+NoSubCat=Keine Unterkategorie.
+SubCatOf=Unterkategorie
+FoundCats=Gefunden Kategorien
+FoundCatsForName=Treffer für den Namen:
+FoundSubCatsIn=Unterkategorien in der Kategorie
+ErrSameCatSelected=Sie haben die gleiche Kategorie mehrere Male
+ErrForgotCat=Sie haben vergessen, wählen Sie die Kategorie
+ErrForgotField=Sie haben vergessen, die Felder
+ErrCatAlreadyExists=Dieser Name wird bereits verwendet
+AddProductToCat=Dieses Produkt einer Kategorie?
+ImpossibleAddCat=Unmöglich, um die Kategorie hinzuzufügen
+ImpossibleAssociateCategory=Unmöglich, um die Kategorie zu
+WasAddedSuccessfully=<b>% s</b> wurde erfolgreich hinzugefügt.
+ObjectAlreadyLinkedToCategory=Element ist bereits im Zusammenhang mit dieser Kategorie.
+CategorySuccessfullyCreated=Diese Kategorie% s wurde hinzugefügt, mit Erfolg.
+ProductIsInCategories=Produkt / Dienstleistung gehört zu folgenden Kategorien
+SupplierIsInCategories=Dritte besitzt die folgenden Lieferanten Kategorien
+CompanyIsInCustomersCategories=Diese dritte Partei gehört zu folgenden Kunden / Interessenten Kategorien
+CompanyIsInSuppliersCategories=Diese dritte Partei gehört zu folgenden Kategorien Lieferanten
+ProductHasNoCategory=Dieses Produkt / Dienstleistung ist nicht in allen Kategorien
+SupplierHasNoCategory=Dieser Lieferant ist nicht in allen Kategorien
+CompanyHasNoCategory=Dieses Unternehmen ist nicht in allen Kategorien
+ClassifyInCategory=Einordnen in der Kategorie
+NoneCategory=Keine
+CategoryExistsAtSameLevel=In dieser Kategorie gibt es bereits am selben Ort
+ReturnInProduct=Zurück zum Produkt / Service-Karte
+ReturnInSupplier=Zurück zur Anbieter-Karte
+ReturnInCompany=Zurück zum Kunden / Aussicht Karte
+ContentsVisibleByAll=Der Inhalt wird sichtbar von allen
+ContentsVisibleByAllShort=Inhalt sichtbar von allen
+ContentsNotVisibleByAllShort=Inhalt nicht von allen
+CategoriesTree=Kategorien Baum
+DeleteCategory=Kategorie
+ConfirmDeleteCategory=Sind Sie sicher, dass Sie diese Kategorie löschen möchten?
+RemoveFromCategory=Nehmen Sie Verbindung mit Kategorie
+RemoveFromCategoryConfirm=Sind Sie sicher, dass Sie entfernen möchten Zusammenhang zwischen der Transaktion und der Kategorie?
+NoCategoriesDefined=Keine Kategorie definiert
+SuppliersCategoryShort=Kategorie Lieferanten
+CustomersCategoryShort=Kunden der Kategorie
+ProductsCategoryShort=Produkte der Kategorie
+SuppliersCategoriesShort=Lieferanten Kategorien
+CustomersCategoriesShort=Kunden Kategorien
+CustomersProspectsCategoriesShort=Custo. / Prosp. Kategorien
+ProductsCategoriesShort=Produkte Kategorien
+ThisCategoryHasNoProduct=Diese Kategorie enthält keine Produkte.
+ThisCategoryHasNoSupplier=Diese Kategorie enthält keine Lieferanten.
+ThisCategoryHasNoCustomer=Diese Kategorie enthält keine Kunden.
+AssignedToCustomer=Einem Kunden zugeordnet
+AssignedToTheCustomer=An den Kunden
+InternalCategory=Inernal Kategorie
+CategoryContents=Kategorie Inhalt
+CategId=Kategorie-ID
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

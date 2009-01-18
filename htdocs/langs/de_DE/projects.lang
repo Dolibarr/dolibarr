@@ -1,0 +1,64 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Project=Projekt
+Projects=Projekte
+SharedProject=Gemeinsames Projekt
+Myprojects=Meine Projekte
+ProjectsArea=Projekte Bereich
+NewProject=Neues Projekt
+AddProject=Projekt hinzufügen
+DeleteAProject=Löschen eines Projekts
+DeleteATask=Löschen einer Aufgabe
+ConfirmDeleteAProject=Sind Sie sicher, dass Sie löschen möchten dieses Projekt?
+ConfirmDeleteATask=Sind Sie sicher, dass Sie löschen möchten, diese Aufgabe?
+OfficerProject=Officer Projekt
+LastProjects=Letzte% s Projekte
+AllProjects=Alle Projekte
+ProjectsList=Liste der Projekte
+ShowProject=Projekt anzeigen
+SetProject=Set-Projekt
+NoProject=Kein Projekt definiert
+NbOpenTasks=Zahl der eröffneten Aufgaben
+NbOfProjects=Zahl der Projekte
+TimeSpent=Die Zeit, in der
+RefTask=Artikel-Nr. Aufgabe
+LabelTask=Label Aufgabe
+NewTimeSpent=Neue Zeit
+MyTimeSpent=Meine Zeit
+MyTasks=Meine Aufgaben
+Tasks=Aufgaben
+Task=Aufgabe
+NewTask=Neue Aufgabe
+AddTask=Aufgabe hinzufügen
+AddDuration=Add Dauer
+Activity=Aktivitätsart
+Activities=Aufgaben / Aktivitäten
+MyActivity=Meine Tätigkeit
+MyActivities=Meine Aufgaben / Aktivitäten
+DurationEffective=Effektive Dauer
+MyProjects=Meine Projekte
+Time=Zeit
+ListProposalsAssociatedProject=Listen der gewerblichen Vorschläge im Zusammenhang mit dem Projekt
+ListOrdersAssociatedProject=Listen der Aufträge im Zusammenhang mit dem Projekt
+ListInvoicesAssociatedProject=Listen der Rechnungen im Zusammenhang mit dem Projekt
+ListSupplierOrdersAssociatedProject=Liste der Anbieter Aufträge im Zusammenhang mit dem Projekt
+ListSupplierInvoicesAssociatedProject=Liste der Lieferanten Rechnungen im Zusammenhang mit dem Projekt
+ListContractAssociatedProject=Liste der Verträge im Zusammenhang mit dem Projekt
+ActivityOnProjectThisWeek=Die Aktivitäten Projekt in dieser Woche
+ActivityOnProjectThisMonth=Die Aktivitäten Projekt in diesem Monat
+ActivityOnProjectThisYear=Die Aktivitäten Projekt in diesem Jahr
+ChildOfTaks=Kind von Projekt / Aufgabe
+NotOwnerOfProject=Nicht Eigentümer der privaten Projekt
+AffectedTo=Betroffene zu
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

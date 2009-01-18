@@ -1,0 +1,154 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+ProductServiceCard=Produkte / Dienstleistungen Karte
+Products=Produkte
+Services=Services
+Product=Produktinformation
+Service=Service
+ProductId=Produkt / Dienstleistung id
+Create=Erstellen
+Reference=Referenz
+NewProduct=Neues Produkt
+NewBook=Neues Buch
+Book=Buch
+Books=Bücher
+BookList=Liste der Bücher
+NewService=Neuer Service
+ProductCode=Produkt-Code
+ServiceCode=Service-Code
+ProductOrService=Produkt oder Service
+ProductsAndServices=Produkte und Services
+ProductsOrServices=Produkte oder Dienstleistungen
+ProductsAndServicesOnSell=Produkte und Services verkaufen, auf
+ProductsAndServicesNotOnSell=Produkte und Services von verkaufen
+ProductsAndServicesStatistics=Produkte und Services Statistiken
+ProductsStatistics=Produkte Statistiken
+ProductsOnSell=Produkte zu verkaufen
+ProductsNotOnSell=Produkte aus dem Verkauf
+ServicesOnSell=Services auf verkaufen
+ServicesNotOnSell=Dienstleistungen von verkaufen
+InternalRef=Interne Referenz
+LastRecorded=Letzte Produkte / Dienstleistungen verkaufen erfasst
+LastRecordedProductsAndServices=Letzte% s precorded rodukte / Dienstleistungen
+LastModifiedProductsAndServices=Letzte% s veränderte Produkte / Dienstleistungen
+LastRecordedProducts=Letzte% s Produkte erfasst
+LastRecordedServices=Letzte% s Dienstleistungsverkehr
+LastProducts=Letzte Produkte
+CardProduct0=Produkt-Karte
+CardProduct1=Service-Karte
+CardContract=Auftrags-Karte
+Warehouse=Warehouse
+Warehouses=Gewerberäume
+WarehouseOpened=Warehouse eröffnet
+WarehouseClosed=Lager geschlossen
+Stock=Lager
+Stocks=Aktien
+Movement=Bewegung
+Movements=Bewegungen
+OnSell=Am verkaufen
+NotOnSell=Aus verkaufen
+ProductStatusOnSell=Am verkaufen
+ProductStatusNotOnSell=Aus verkaufen
+ProductStatusOnSellShort=Am verkaufen
+ProductStatusNotOnSellShort=Aus verkaufen
+UpdatePrice=Aktual Preis
+AppliedPricesFrom=Angewandte Preise ab
+SellingPrice=Verkaufspreis
+PublicPrice=Public price
+CurrentPrice=Aktueller Preis
+NewPrice=Neuer Preis
+ContractStatus=Auftrags-Status
+ContractStatusClosed=Geschlossen
+ContractStatusRunning=Running
+ContractStatusExpired=abgelaufen
+ContractStatusOnHold=Nicht ausgeführt
+ContractStatusToRun=A mettre en service
+ContractNotRunning=Dieser Vertrag läuft nicht
+ErrorProductAlreadyExists=Ein Produkt mit% s ist bereits vorhanden.
+ErrorProductBadRefOrLabel=Falscher Wert für die Referenz-oder Etikett vorzeigen.
+Suppliers=Lieferanten
+SupplierRef=Supplier ref.
+ShowProduct=Produkt anzeigen
+ShowService=Show-Service
+ProductsAndServicesArea=Produkt-und Dienstleistungsbereich
+ProductsArea=Produktbereich
+ServicesArea=Bereich
+AddToMyProposals=Meine Vorschläge
+AddToOtherProposals=In den anderen Vorschlägen
+AddToMyBills=Meine Rechnungen
+AddToOtherBills=In den anderen Rechnungen
+CorrectStock=Korrigieren Lager
+AddPhoto=Foto hinzufügen
+ListOfStockMovements=Liste der Lagerbewegungen
+NoPhotoYet=Keine Bilder verfügbar
+BuiingPrice=Kaufpreis
+SupplierCard=Lieferanten-Karte
+CommercialCard=Handelsregister-Karte
+AllWays=Weg zu finden, Ihr Produkt auf Lager
+NoCat=Ihr Produkt ist nicht in jeder Kategorie
+PrimaryWay=Primäre Pfad
+DeleteFromCat=Entfernen Sie aus der Kategorie
+PriceRemoved=Preis entfernt
+BarCode=Barcode
+BarcodeType=Barcode-Typ
+SetDefaultBarcodeType=Stellen Sie Barcode-Typ
+BarcodeValue=Barcode-Wert
+GenbarcodeLocation=Bar Code-Generierung Kommandozeilen-Tool (von phpbarcode Motor für die Barcode-Typen)
+NoteNotVisibleOnBill=Anmerkung (nicht sichtbar auf Rechnungen, Vorschläge ...)
+CreateCopy=Kopie erstellen
+ServiceLimitedDuration=Falls das Produkt ist ein Service, mit begrenzter Dauer:
+MultiPricesAbility=Aktivieren Sie die Multi-Preise
+MultiPricesNumPrices=Anzahl Preis
+MultiPriceLevelsName=Preis-Kategorien
+AssociatedProductsAbility=Aktivieren Sie die damit verbundenen Produkte
+AssociatedProducts=Associated products
+AssociatedProductsNumber=Anzahl der zugehörigen Produkte
+EditAssociate=Associate
+Translation=Übersetzung
+KeywordFilter=Stichwort-Filter
+CategoryFilter=Kategorie Filter
+ProductToAddSearch=Produkt-Suche hinzufügen
+AddDel=Hinzufügen / Löschen
+Quantity=Menge
+NoMatchFound=Keine Treffer gefunden
+ProductAssociationList=Liste der entsprechenden Produkte / Dienstleistungen: Name des Produkts / der Dienstleistung (die Menge)
+ErrorAssociationIsFatherOfThis=Eines der ausgewählten Produkt ist Elternteil mit aktuellen Produktinformationen
+DeleteProduct=Löschen Sie ein Produkt / Service
+ConfirmDeleteProduct=Sind Sie sicher, dass Sie löschen möchten, dieses Produkt / Service?
+ProductDeleted=Produkt / Service &quot;% s&quot; aus der Datenbank gelöscht.
+DeletePicture=So löschen Sie ein Bild
+ConfirmDeletePicture=Sind Sie sicher, dass Sie löschen möchten dieses Bild?
+ExportDataset_produit_1=Produkte und Dienstleistungen
+DeleteProductLine=Löschen Produktlinie
+ConfirmDeleteProductLine=Sind Sie sicher, dass Sie löschen möchten, dieser Produktlinie?
+NoProductMatching=Nr. Produkt / der Dienstleistung mit Ihren Kriterien
+MatchingProducts=Passende Produkte / Dienstleistungen
+NoStockForThisProduct=Nr. Lager für dieses Produkt
+NoStock=Nr. Lager
+Restock=Bestandserinnerung
+ProductSpecial=Special
+QtyMin=Menge mindestens
+PriceQty=Preis für diese Menge
+PriceQtyMin=Preis Menge min.
+NoPriceDefinedForThisSupplier=Nein Preis / Stück für diesen Anbieter / Produkt
+NoSupplierPriceDefinedForThisProduct=Kein Lieferant Preis / Stück, die für dieses Produkt
+RecordedProducts=Produkte erfasst
+RecordedProductsAndServices=Produkte / Dienstleistungen erfasst
+GenerateThumb=Generate Daumen
+ProductCanvasAbility=Verwenden Sie spezielle &quot;Leinwand&quot; Add-Ons
+ServiceNb=Service #% s
+ListProductByPopularity=Liste der Produkte / Dienstleistungen durch die Popularität
+Finished=Hergestellt werden,
+RowMaterial=Erste Material
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

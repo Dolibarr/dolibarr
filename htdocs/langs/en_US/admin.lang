@@ -800,7 +800,7 @@ LDAPFieldFullname=Firstname Name
 LDAPFieldFullnameExample=Example : cn
 LDAPFieldPassword=Password
 LDAPFieldPasswordNotCrypted=Password not crypted
-LDAPFieldPasswordCrypted�Password crypted
+LDAPFieldPasswordCrypted=Password crypted
 LDAPFieldPasswordExample=Example : userPassword
 LDAPFieldCommonName=Common name
 LDAPFieldCommonNameExample=Example : cn

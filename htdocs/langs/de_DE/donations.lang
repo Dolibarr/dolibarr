@@ -1,0 +1,37 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Donation=Spenden
+Donationss=Spenden
+Donor=Spender
+Donors=Spender
+AddDonation=Fügen Sie eine Spende
+NewDonation=Neue Spende
+DonationPromise=Geschenk-Versprechen
+PromisesNotValid=Nicht validiert Versprechen
+PromisesValid=Validierte Versprechen
+DonationsPayed=Spenden bezahlt
+DonationsReceived=Spenden
+PublicDonation=Öffentliche Spenden
+DonationsNumber=Spenden Anzahl
+DonationsArea=Spenden Bereich
+DonationStatusPromiseNotValidated=Entwurf Versprechen
+DonationStatusPromiseValidated=Validierte Versprechen
+DonationStatusPayed=Spende erhalten
+DonationStatusPromiseNotValidatedShort=Entwurf
+DonationStatusPromiseValidatedShort=Validated
+DonationStatusPayedShort=Received
+ValidPromise=Validate Versprechen
+BuildDonationReceipt=Build-Eingang
+DonationsModels=Dokumente, Modelle für die Spende Einnahmen
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

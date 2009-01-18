@@ -81,7 +81,7 @@ UseCaptchaCode=Gebruik grafische code op aanmeldingspagina
 UseAvToScanUploadedFiles=Gebruik anti-virus te scannen geüploade bestanden
 ComptaSetup=Boekhoudkundige module setup
 UserSetup=Gebruikers beheer setup
-MenuSetup=Menus &quot;beheer setup
+MenuSetup=Beheer setup
 MenuLimits=Grenzen en nauwkeurigheid
 MenuIdParent=Oudermotor menu ID
 DetailMenuIdParent=ID van de ouders menu (0 voor een &quot;top-menu)
@@ -604,7 +604,7 @@ TriggerActiveAsModuleActive=Triggers in dit bestand zijn actief als <b>module% s
 GeneratedPasswordDesc=Definieer hier de regel die u wilt gebruiken voor het genereren van nieuwe wachtwoord als u vragen om automatisch gegenereerd wachtwoord
 DictionnaryDesc=Definieer hier alle referentie data. U kunt vooraf gedefinieerde waarde met de jouwe.
 ConstDesc=Deze pagina kunt u alle andere parameters die niet beschikbaar zijn in de voorgaande pagina&#39;s. Ze zijn voorbehouden parameters voor geavanceerde ontwikkelaars of voor troubleshouting.
-OnceSetupFinishedCreateUsers=Waarschuwing, u bent een Dolibarr beheerder. Beheerder gebruikers worden gebruikt voor de installatie Dolibarr. Voor een normaal gebruik van Dolibarr, wordt aangeraden gebruik te maken van een niet-beheerder gebruiker aangemaakt Gebruikers Groepen &amp; menu.
+OnceSetupFinishedCreateUsers=Waarschuwing, u bent een Dolibarr beheerder. Beheerder gebruikers worden gebruikt voor de installatie Dolibarr. Voor een normaal gebruik van Dolibarr, wordt aangeraden gebruik te maken van een niet-beheerder gebruiker aangemaakt Gebruikers Groepen & menu.
 MiscellanousDesc=Definieer hier alle andere parameters die betrekking hebben op veiligheid.
 LimitsSetup=Grenzen / Precision setup
 LimitsDesc=U kunt definiëren grenzen, preciseringen en optimalisatie gebruikt door Dolibarr hier
@@ -697,7 +697,7 @@ FicheinterNumberingModules=Interventie nummering modules
 TemplatePDFInterventions=Interventie kaart documenten modellen
 WatermarkOnDraftInterventionCards=Watermerk interventie kaart documenten (een als leeg)
 ClickToDialSetup=Klik Aan Dial module setup
-ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=Url aangeroepen wanneer een klik op de telefoon picto gebeurt. <br> Complete url zal zijn: URL? Login =...&amp; wachtwoord =...&amp; beller =...&amp; genaamd = phonecalled
+ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=phonecalled
 Bookmark4uSetup=Bookmark4u module instelscherm
 InterventionsSetup=Interventies module setup
 MembersSetup=Leden module setup
@@ -783,7 +783,7 @@ LDAPLdapMapping=LDAP Mapping
 LDAPFieldLoginUnix=Login (Unix)
 LDAPFieldLoginExample=Voorbeeld: uid
 LDAPFilterConnection=Zoekfilter
-LDAPFilterConnectionExample=Example : &(objectClass=Voorbeeld: &amp; (objectClass = inetOrgPerson)
+LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Voorbeeld: sAMAccountName
 LDAPFieldFullname=Voornaam Naam

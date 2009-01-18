@@ -1,0 +1,58 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+RefSending=Artikel-Nr. Senden
+Sending=Senden
+Sendings=Sendungen
+Receivings=Ein gutes
+SendingsArea=Sendungen Bereich
+ListOfSendings=Liste der Sendungen
+SendingMethod=Senden Methode
+SendingReceipt=Senden Eingang
+LastSendings=Letzte% s Sendungen
+SearchASending=Suche eine Entsendeorganisation
+StatisticsOfSendings=Statistik der Sendungen
+NbOfSendings=Anzahl der Sendungen
+SendingCard=Senden Karte
+NewSending=Neue Senden
+CreateASending=Erstellen Sie eine Entsendeorganisation
+CreateSending=Erstellen Sie das Senden
+QtyOrdered=Anzahl bestellt
+QtyShipped=Menge geliefert
+QtyToShip=Anzahl Versandfertig
+QtyReceived=Menge erhalten
+KeepToShip=Halten Sie sich an Schiff
+OtherSendingsForSameOrder=Weitere Sendungen zu dieser Bestellung
+DateSending=Datum Senden, um
+DateSendingShort=Datum Senden, um
+SendingsForSameOrder=Sendungen zu dieser Bestellung
+SendingsAndReceivingForSameOrder=Sendungen und ein gutes zu dieser Bestellung
+SendingsToValidate=Senden, um
+StatusSendingDraft=Entwurf
+StatusSendingValidated=Validated (Produkte-Schiff oder bereits im Lieferumfang)
+StatusSendingDraftShort=Entwurf
+StatusSendingValidatedShort=Validated
+SendingSheet=Senden Blatt
+Carriers=Träger
+Carrier=Carrier
+CarriersArea=Träger Bereich
+NewCarrier=Neuer Träger
+ConfirmDeleteSending=Sind Sie sicher, dass Sie löschen möchten, senden diese?
+ConfirmValidateSending=Sind Sie sicher, dass Sie diese valdate senden?
+ConfirmCancelSending=Sind Sie sicher, dass Sie abbrechen möchten diese senden?
+GenericTransport=Generic Verkehr
+Enlevement=Kunden bekommen von
+DocumentModelSimple=Einfache Dokument-Modell
+WarningNoQtyLeftToSend=Achtung, keine Produkte, aber noch nicht verschickt.
+NumRefModelJade=Zurück eine Referenznummer mit Format BLYY00001, ... wo ist JJ Jahr. Zahl am Ende ist nicht auf Null zurückgesetzt.
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

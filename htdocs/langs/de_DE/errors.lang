@@ -1,0 +1,60 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+ErrorLoginAlreadyExists=Login% s existiert bereits.
+ErrorGroupAlreadyExists=Gruppe% s existiert bereits.
+ErrorDuplicateTrigger=Die Trigger-Datei mit nam-Klasse <b>&#39;% s&#39;</b> ist sevaral mal. Entfernen Sie doppelte Trigger-Datei im Verzeichnis <b>&quot;% s&quot;.</b>
+ErrorFailToDeleteFile=Failed to remove file <b>&#39;% s&#39;.</b>
+ErrorFailToCreateFile=Fehler beim Erstellen einer Datei <b>&quot;% s&quot;.</b>
+ErrorFailToRenameDir=Failed to rename <b>Verzeichnis&#39;% s&#39;</b> in <b>&#39;% s&#39;.</b>
+ErrorFailToCreateDir=Fehler beim Erstellen von <b>Verzeichnis&#39;% s&#39;.</b>
+ErrorFailToDeleteDir=Fehler zu löschen <b>Verzeichnis&#39;% s&#39;.</b>
+ErrorFailedToDeleteJoinedFiles=Unternehmen können nicht gelöscht, weil es sich einige Dateien. Nehmen Sie sich Dateien zuerst.
+ErrorThisContactIsAlreadyDefinedAsThisType=Dieser Kontakt ist bereits definiert als Ansprechpartner für diese Art.
+ErrorCashAccountAcceptsOnlyCashMoney=Dieses Konto ist ein Cash-Konto, so dass sie Zahlungen vom Typ nur Barzahlung.
+ErrorFromToAccountsMustDiffers=Quelle und Ziele Bankkonten müssen anders sein.
+ErrorBadThirdPartyName=Unzulässiger Wert für den Netzzugang Dritter Namen
+ErrorBadCustomerCodeSyntax=Bad Syntax für den Kunden-Code
+ErrorCustomerCodeRequired=Kunden-Code erforderlich
+ErrorCustomerCodeAlreadyUsed=Kunden-Code bereits verwendet
+ErrorPrefixRequired=Präfix erforderlich
+ErrorBadSupplierCodeSyntax=Bad Syntax für Lieferanten-Code
+ErrorSupplierCodeRequired=Supplier Code erforderlich
+ErrorSupplierCodeAlreadyUsed=Supplier Code bereits
+ErrorBadParameters=Bad Parameter
+ErrorFailedToWriteInDir=Fehler beim Schreiben in das Verzeichnis% s
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Gefunden falsche E-Mail-Syntax für% s Zeilen in der Datei (zB Zeile% s mit E-Mail =% s)
+ErrorUserCannotBeDelete=Der Benutzer kann nicht gelöscht werden. Kann es ist auf Dolibarr Einrichtungen.
+ErrorFieldsRequired=Einige Felder müssen ausgefüllt wurden nicht besetzt.
+ErrorFailedToCreateDir=Fehler beim Erstellen eines Verzeichnis. Vergewissern Sie sich, dass Web-Server-Benutzer-Berechtigungen zu schreiben, in Dolibarr Dokumenten-Verzeichnis. Ist der Parameter <b>safe_mode</b> aktiviert ist, für die dieser PHP, prüfen Sie, ob Dolibarr PHP-Dateien besitzt, um Web-Server-Benutzer (oder Gruppe).
+ErrorNoMailDefinedForThisUser=Keine Mail, die für dieses Benutzers
+ErrorFeatureNeedJavascript=Diese Funktion muss JavaScript aktiviert werden zu arbeiten. Ändern Sie diese im Setup - Display.
+ErrorTopMenuMustHaveAParentWithId0=Ein Menü vom Typ &#39;Top&#39; kann nicht sein, Eltern-Menü. Put 0 in Stamm-Menü oder wählen Sie ein Menü vom Typ &#39;Links&#39;.
+ErrorLeftMenuMustHaveAParentId=Ein Menü vom Typ &#39;Linke&#39; muss ein Elternteil id.
+ErrorGenbarCodeNotfound=Datei nicht gefunden (Bad Weg, falsche Berechtigungen oder der Zugriff wurde verweigert, indem openbasedir-Parameter)
+ErrorFunctionNotAvailableInPHP=<b>Funktion% s</b> ist für diese Funktion ist aber nicht in dieser Version / Konfiguration von PHP.
+ErrorDirAlreadyExists=Ein Verzeichnis mit diesem Namen ist bereits vorhanden.
+ErrorFieldCanNotContainSpecialCharacters=<b>Feld% s</b> ist nicht Sonderzeichen.
+WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> muss so eingestellt werden, dass <b>in der php.ini</b> für Filer mit diesem Modul arbeiten völlig. Sie müssen diese Datei manuell.
+WarningBuildScriptNotRunned=<b>Skript% s</b> wurde noch nicht lief, um Grafiken, oder es gibt keine Daten, um zu zeigen.
+WarningBookmarkAlreadyExists=Ein Lesezeichen mit diesem Titel oder dieses Ziel (URL) ist bereits vorhanden.
+WarningPassIsEmpty=Warn-, Datenbank-Passwort ist leer. Dies ist eine Sicherheitslücke. Sie sollten ein Passwort zu Ihrer Datenbank und ändern Sie Ihre conf.php Datei zu spiegeln dies wider.
+ErrorNoAccountancyModuleLoaded=Nr. Rechnungswesen-Modul aktiviert
+ErrorExportDuplicateProfil=Dieses Profil existiert bereits für diesen Export festgelegt.
+ErrorLDAPSetupNotComplete=Dolibarr LDAP-Matching ist nicht vollständig.
+ErrorLDAPMakeManualTest=A. Ldif-Datei generiert wurde im Verzeichnis% s. Versuchen Sie, laden Sie es manuell von der Kommandozeile aus, um mehr Informationen über Fehler.
+ErrorCantSaveADoneUserWithZeroPercentage=Kann nicht speichern, eine Aktion mit &quot;statut nicht begonnen&quot;, wenn Feld &quot;durch&quot; ist auch gefüllt.
+ErrorBillRefAlreadyExists=Referenz für die Gründung ist bereits vorhanden.
+ErrorPleaseTypeBankTransactionReportName=Bitte geben Sie Bank-Eingang, wo Transaktion wird (oder JJJJMM Format JJJJMMTT)
+ErrorRecordHasChildren=Fehler zu löschen Einträge, da es einige Kinder.
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

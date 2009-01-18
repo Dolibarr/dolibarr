@@ -1,0 +1,148 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+MembersArea=Mitglieder Bereich
+PublicMembersArea=Öffentliche Mitglieder Bereich
+MemberCard=Mitglied Karte
+SubscriptionCard=Abonnement-Karte
+Member=Mitglied
+Members=Mitglieder
+MemberAccount=Mitglieder Login
+ShowMember=Mitglied Karte anzeigen
+UserNotLinkedToMember=Benutzer nicht mit einem Mitglied
+MembersTickets=Mitglieder Tickets
+FundationMembers=Stiftung Mitglieder
+Attributs=Attribute
+Person=Person
+ErrorMemberTypeNotDefined=Mitglied Typ nicht definiert
+ListOfPublicMembers=Liste der Mitglieder der öffentlichen
+ListOfValidatedPublicMembers=Liste der validierten öffentlichen Mitglieder
+ErrorThisMemberIsNotPublic=Dieses Mitglied ist nicht öffentlich
+MembersCards=Mitglieder Print-Karten
+MembersList=Liste der Mitglieder
+MembersListToValid=Liste der Mitglieder Entwurf (wird)
+MembersListValid=Liste der gültigen Mitglieder
+MembersListUpToDate=Liste der gültigen Mitglieder mit aktuellen Zeichnung
+MembersListNotUpToDate=Liste der gültigen Mitglieder mit Abonnement veraltet
+MembersListResiliated=Liste der Mitglieder resiliated
+MembersListQualified=Liste der qualifizierten Mitglieder
+MenuMembersToValidate=Entwurf Mitglieder
+MenuMembersValidated=Validierte Mitglieder
+MenuMembersUpToDate=Aktuelle Mitglieder
+MenuMembersNotUpToDate=Veraltet Mitglieder
+MenuMembersResiliated=Resiliated Mitglieder
+DateAbonment=Anmeldungs-Datum
+DateSubscription=Anmeldungs-Datum
+DateNextSubscription=Weiter Abonnement
+DateEndSubscription=Abonnement Enddatum
+EndSubscription=Ende Abonnement
+NewMember=Neues Mitglied
+NewType=Neues Mitglied Art
+MemberType=Mitglied Art
+MemberTypeId=Mitglied ID-Typ
+MemberTypeLabel=Mitglied Typschild
+MembersTypes=Mitglieder Arten
+MembersAttributes=Mitglieder Attribute
+SearchAMember=Suche Mitglied
+MemberStatusDraft=Entwurf (muss validiert)
+MemberStatusDraftShort=Zur Validierung
+MemberStatusActive=Validierte (warten Abonnement)
+MemberStatusActiveShort=Validated
+MemberStatusActiveLate=Abonnement abgelaufen
+MemberStatusActiveLateShort=Abgelaufen
+MemberStatusPayed=Abonnement auf dem neuesten Stand
+MemberStatusPayedShort=Up to date
+MemberStatusResiliated=Resiliated Mitglied
+MemberStatusResiliatedShort=Resiliated
+MembersStatusToValid=Entwurf Mitglieder
+MembersStatusToValidShort=Entwurf Mitglieder
+MembersStatusValidated=Validierte Mitglieder
+MembersStatusPayed=Abonnement auf dem neuesten Stand
+MembersStatusPayedShort=Up to date
+MembersStatusNotPayed=Abonnement veraltet
+MembersStatusNotPayedShort=Veraltet
+MembersStatusResiliated=Resiliated Mitglieder
+MembersStatusResiliatedShort=Resiliated Mitglieder
+NewCotisation=Neuer Beitrag
+EditMember=Edit Mitglied
+SubscriptionEndDate=Abonnement das Enddatum
+NewAttribute=Neues Attribut
+AttributeCode=Attribut-Code
+OptionalFieldsSetup=Optionale Felder einrichten
+MembersTypeSetup=Mitglieder Art einrichten
+NewSubscription=Neue Abonnements
+Subscription=Abonnement
+Subscriptions=Abonnements
+SubscriptionLate=Spät
+SubscriptionNotReceived=Abonnement nie
+SubscriptionLateShort=Spät
+SubscriptionNotReceivedShort=Nie
+ListOfSubscriptions=Liste der Abonnements
+SendCardByMail=Schicken Sie Karte
+AddMember=Mitglied hinzufügen
+MemberType=Mitglied Art
+NoTypeDefinedGoToSetup=Kein Mitglied Arten definiert werden. Gehen Sie zu Setup - Mitglieder Arten
+NewMemberType=Neues Mitglied Art
+WelcomeEMail=Willkommen E-Mail
+SubscriptionRequired=Abonnement erforderlich
+EditType=Bearbeiten Mitglied Art
+DeleteType=Löschen
+VoteAllowed=Abstimmung erlaubt
+Physical=Physikalische
+Moral=Moral
+MorPhy=Moral / Physikalische
+Reenable=Reaktivieren
+ResiliateMember=Resiliate Mitglied
+ConfirmResiliateMember=Sind Sie sicher, dass Sie diese resiliate Mitglied?
+DeleteMember=Löschen eines Mitglieds
+ConfirmDeleteMember=Sind Sie sicher, dass Sie löschen möchten Mitglied (Löschen eines Mitglieds werden alle seine Abonnements)?
+DeleteSubscription=Löschen eines Abonnements
+ConfirmDeleteSubscription=Sind Sie sicher, dass Sie löschen möchten Abonnement?
+Filehtpasswd=htpasswd-Datei
+ValidateMember=Validate Mitglied
+ConfirmValidateMember=Sind Sie sicher, dass Sie, um dieses Mitglied?
+FollowingLinksArePublic=Die folgenden Links sind Seiten nicht durch alle Dolibarr Erlaubnis. Sie sind nicht formatierte Seiten, die als Beispiel zu zeigen, wie die Liste Mitglieder-Datenbank.
+PublicMemberList=Öffentliche Mitglied Liste
+BlankSubscriptionForm=Abo-Formular
+MemberPublicLinks=Public-Links / Seiten
+ExportDataset_member_1=Mitglieder und Abonnements
+LastMembers=Letzte% s Mitglieder
+LastMembersModified=Letzte% s geändert Mitglieder
+AttributeName=Attributname
+FieldEdition=% Bereich Auflage
+AlphaNumOnlyCharsAndNoSpace=nur alphanumericals Zeichen ohne Leerzeichen
+String=String
+Text=Text
+Int=Int
+Date=Datum
+DateAndTime=Datum und Uhrzeit
+PublicMemberCard=Mitglied öffentlich-Karte
+MemberNotOrNoMoreExpectedToSubscribe=Mitglied nicht oder nicht mehr zu erwarten abonnieren
+AddSubscription=Abonnement hinzufügen
+ShowSubscription=Show-Abo
+MemberModifiedInDolibarr=Mitglied geändert Dolibarr
+SendAnEMailToMember=Senden Sie E-Mail-Informationen an die Mitgliedstaaten
+DescADHERENT_MAIL_VALID_SUBJECT=EMail Thema Mitglied Validierung
+DescADHERENT_MAIL_VALID=E-Mail für Validierung Mitglied
+DescADHERENT_MAIL_COTIS_SUBJECT=EMail Thema für die Zeichnung
+DescADHERENT_MAIL_COTIS=E-Mail für die Zeichnung
+DescADHERENT_MAIL_RESIL_SUBJECT=EMail Thema Mitglied resiliation
+DescADHERENT_MAIL_RESIL=E-Mail für resiliation Mitglied
+DescADHERENT_MAIL_FROM=Absender E-Mail für den automatischen E-Mails
+DescADHERENT_ETIQUETTE_TYPE=Etiketten-Format
+DescADHERENT_CARD_HEADER_TEXT=Text oben auf der Mitglied-Karten
+DescADHERENT_CARD_TEXT=Text auf Karten Mitglied
+DescADHERENT_CARD_FOOTER_TEXT=Text unten auf der Mitglied-Karten
+ShowTypeCard=Show Typ &#39;% s&#39;
+HTPasswordExport=htpassword Datei Generation
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

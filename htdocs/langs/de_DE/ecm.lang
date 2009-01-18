@@ -1,0 +1,65 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+MenuECM=Dokumente
+DocsMine=Meine Dokumente
+DocsGenerated=Erzeugt Dokumente
+DocsElements=Elemente Dokumente
+DocsThirdParties=Dokumente Dritter
+DocsContracts=Dokumente, Verträge
+DocsProposals=Dokumente Vorschläge
+DocsOrders=Dokumente bestellen
+DocsInvoices=Dokumente Rechnungen
+ECMNbOfDocs=Zahl der Dokumente im Verzeichnis
+ECMNbOfDocsSmall=Zahl der doc.
+ECMSection=Directory
+ECMSectionManual=Handbuch der Dienststellen
+ECMSectionAuto=Automatische Verzeichnis
+ECMSectionsManual=Handbuch Verzeichnisse
+ECMSectionsAuto=Automatische Verzeichnisse
+ECMSections=Directories
+ECMRoot=Root
+ECMNewSection=Neues Verzeichnis
+ECMAddSection=Fügen Sie eine manuelle Verzeichnis
+ECMNewSection=Neues Handbuch der Dienststellen
+ECMNewDocument=Neues Dokument
+ECMCreationDate=Erstellungsdatum
+ECMNbOfFilesInDir=Anzahl der Dateien im Verzeichnis
+ECMNbOfSubDir=Anzahl der Unter-Verzeichnissen
+ECMNbOfFilesInSubDir=Nunber des Iles in sub-directories
+ECMCreationUser=Creator
+ECMArea=ECM-Bereich
+ECMAreaDesc=Die ECM (Electronic Content Management) erlaubt Ihnen zu speichern, zu teilen und suchen Sie schnell alle Arten von Dokumenten in Dolibarr.
+ECMAreaDesc2=* Automatische Verzeichnisse werden automatisch ausgefüllt, wenn Sie Dokumente von der Karte eines Elements. <br> * Handbuch Verzeichnisse genutzt werden können, um Dokumente, die nicht im Zusammenhang mit einem bestimmten Element.
+ECMSectionWasRemoved=<b>Verzeichnis% s</b> wurde gelöscht.
+ECMDocumentsSection=Dokument des Verzeichnisses
+ECMSearchByKeywords=Suche nach Stichwörtern
+ECMSearchByEntity=Suche nach Objekt
+ECMSectionOfDocuments=Verzeichnisse von Dokumenten
+ECMTypeManual=Handbuch
+ECMTypeAuto=Automatische
+ECMDocsByThirdParties=Dokumente im Zusammenhang mit Dritten
+ECMDocsByProposals=Dokumente im Zusammenhang mit Vorschlägen
+ECMDocsByOrders=Dokumente im Zusammenhang mit Kunden Aufträge
+ECMDocsByContracts=Dokumente im Zusammenhang mit Verträgen
+ECMDocsByInvoices=Dokumente im Zusammenhang mit Kunden Rechnungen
+ECMDocsByProducts=Dokumente im Zusammenhang mit Erzeugnissen,
+ECMNoDirecotyYet=Nr. Verzeichnis erstellt
+ShowECMSection=Show-Verzeichnis
+DeleteSection=Verzeichnis entfernen
+ConfirmDeleteSection=Können Sie bestätigen, die Sie löschen möchten, in das <b>Verzeichnis% s?</b>
+ECMDirectoryForFiles=Relative-Verzeichnis für Dateien
+CannotRemoveDirectoryContainsFiles=Entfernt nicht möglich, da es einige Dateien
+ECMFileManager=Datei-Manager
+ECMSelectASection=Wählen Sie ein Verzeichnis auf der linken Baum ...
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

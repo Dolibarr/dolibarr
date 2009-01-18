@@ -767,7 +767,7 @@ LDAPLdapMapping								   =Mappatura LDAP
 LDAPFieldLoginUnix							   =Login (Unix)
 LDAPFieldLoginExample							   =Esempio: uid
 LDAPFilterConnection							   =Filtro di ricerca
-LDAPFilterConnectionExample						   =Esempio: & (objectClass
+LDAPFilterConnectionExample						   =Esempio: &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba							   =Login (samba, ActiveDirectory)
 LDAPFieldLoginSambaExample						   =Esempio: samAccountName
 LDAPFieldFullname							   =Cognome Nome
@@ -973,7 +973,7 @@ MAIN_DISABLE_PDF_COMPRESSION=PDF Usa la compressione per i file PDF generati.
 SeeLocalSendMailSetup=Consultare il locale di installazione di sendmail
 PasswordGenerationStandard=Torna una password generata in base al Dolibarr algoritmo interno: 8 caratteri contenenti condivisa numeri e caratteri in minuscolo.
 PasswordGenerationNone=Non suggerire eventuali password generata. La password deve essere di tipo manuale.
-ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=Url chiamata quando un clic sul telefono cellulare picto è fatto. <br> URL completo sarà: URL? =...&amp; Login password =...&amp; chiamante =...&amp; chiamato = phonecalled
+ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=Url chiamata quando un clic sul telefono cellulare picto è fatto. <br> URL completo sarà: URL?login=...&password=...&caller=...&called=phonecalled
 MemberSendInformationByMailByDefault=Checkbox per inviare una mail di conferma per i membri è attivata per impostazione predefinita
 LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=DN completo (ad esempio: cn = adminldap, dc = società, dc = it)
 LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=DN completo (es: ou = utenti, dc = società, dc = it)
@@ -986,7 +986,7 @@ LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP conn
 LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP connettersi a server LDAP fallito (% s = Server, Port =% s)
 LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Collegare / Authentificate al server LDAP successo (= Server% s, Port =% s,% s = Admin, password =% s)
 LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Collegare / Authentificate al server LDAP fallito (% s = Server, Port =% s,% s = Admin, password =% s)
-LDAPFilterConnectionExample=Example : &(objectClass=Esempio: &amp; (objectClass = inetOrgPerson)
+LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max numero di prodotti in combo selezionare liste (0 = nessun limite)
 SetDefaultBarcodeTypeProducts=Predefinita di codici a barre tipo da utilizzare per i prodotti
 SetDefaultBarcodeTypeThirdParties=Predefinita di codici a barre tipo da utilizzare per terze parti

@@ -1,0 +1,47 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+StandingOrdersArea=Daueraufträge Bereich
+CustomersStandingOrdersArea=Kunden Daueraufträge Bereich
+StandingOrders=Daueraufträge
+StandingOrder=Daueraufträge
+NewStandingOrder=Neue Dauerauftrags
+Withdrawals=Entnahmen
+Withdrawal=Rücktritt
+WithdrawalsReceipts=Rücknahmen Einnahmen
+WithdrawalReceipt=Rücknahme Eingang
+WithdrawalReceiptShort=Eingang
+LastWithdrawalReceipts=Letzte% s Rückzug Einnahmen
+WithdrawedBills=Withdrawed Rechnungen
+WithdrawalsLines=Rücknahmen Linien
+RequestStandingOrderToTreat=Antrag für Daueraufträge zur Behandlung von
+RequestStandingOrderTreated=Antrag auf Daueraufträge behandelt
+CustomersStandingOrders=Kunden Daueraufträge
+CustomerStandingOrder=Kunden Dauerauftrags
+NbOfInvoiceToWithdraw=Zahl der Rechnung mit Rücktritt Antrag
+InvoiceWaitingWithdraw=Rechnung warten auf Rücktritt
+AmountToWithdraw=Betrag, um
+WithdrawsRefused=Zieht abgelehnt
+NoInvoiceToWithdraw=Nr. Kunden in Rechnung Zahlung Modus &quot;widerrufen&quot; wartet. Gehen Sie auf &quot;Abheben&quot; Registerkarte auf Rechnung Karte, um eine Anfrage.
+ResponsibleUser=Verantwortlich Benutzer
+WithdrawalsSetup=Rücknahme-Setup
+WithdrawStatistics=Zieht &quot;Statistiken
+WithdrawRejectStatistics=Ziehen Sie lehnt die &quot;Statistik
+LastWithdrawalReceipt=Letzte% s Aberkennung der Einnahmen
+MakeWithdrawRequest=Einen Antrag zurückziehen
+ThirdPartyBankCode=Dritter BLZ
+ThirdPartyDeskCode=Dritter Schreibtisch-Code
+NoInvoiceCouldBeWithdrawed=Keine Rechnung withdrawed mit Erfolg. Vergewissern Sie sich, dass die Rechnung für die Unternehmen mit einer gültigen BAN.
+ClassCredited=Einordnen gutgeschrieben
+ClassCreditedConfirm=Sind Sie sicher, dass Sie klassifizieren diese Rücknahme Eingang als Gutschrift auf Ihrem Konto?
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

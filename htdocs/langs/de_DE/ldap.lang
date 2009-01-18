@@ -1,0 +1,39 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+DomainPassword=Passwort für die Domain
+YouMustChangePassNextLogon=Passwort für <b>Benutzer% s</b> auf der <b>Domain% s</b> geändert werden muss.
+UserMustChangePassNextLogon=User muss sich ändern Kennwort für die Domäne% s
+LdapUacf_NORMAL_ACCOUNT=Benutzerkonto
+LdapUacf_DONT_EXPIRE_PASSWORD=Kennwort läuft nie ab
+LdapUacf_ACCOUNTDISABLE=Konto ist in der Domäne% s
+LDAPInformationsForThisContact=Informationen im LDAP-Datenbank für diesen Kontakt
+LDAPInformationsForThisUser=Informationen im LDAP-Datenbank für diesen Benutzer
+LDAPInformationsForThisGroup=Informationen im LDAP-Datenbank für diese Gruppe
+LDAPInformationsForThisMember=Informationen im LDAP-Datenbank für dieses Mitglied
+LDAPAttribute=LDAP-Attribut
+LDAPAttributes=LDAP-Attribute
+LDAPCard=LDAP-Karte
+LDAPRecordNotFound=Datensatz nicht in der LDAP-Datenbank
+LDAPUsers=Benutzer in LDAP-Datenbank
+LDAPGroups=Gruppen in der LDAP-Datenbank
+LDAPFieldStatus=Status
+LDAPFieldFirstSubscriptionDate=Erste Abonnement Datum
+LDAPFieldFirstSubscriptionAmount=Fist Abonnement Betrag
+LDAPFieldLastSubscriptionDate=Letzte Abonnement Datum
+LDAPFieldLastSubscriptionAmount=Letzte Abonnement Betrag
+SynchronizeDolibarr2Ldap=Synchronisieren Sie Benutzer (Dolibarr -&gt; LDAP)
+UserSynchronized=Benutzer synchronisiert
+ForceSynchronize=Force Synchronisierung Dolibarr -&gt; LDAP
+ErrorFailedToReadLDAP=Fehler beim Lesen LDAP-Datenbank. LDAP-Setup-Check-Modul und Datenbank Barrierefreiheit.
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

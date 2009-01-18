@@ -1,0 +1,48 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+ExportsArea=Bereich Export
+ImportArea=Import
+NewExport=Neue Exportmärkte
+NewImport=Neue Import -
+ExportableDatas=Exportable Datenbestand
+ImportableDatas=Einfuhrbeschränkung Datenbestand
+SelectExportDataSet=Wählen Sie Datensatz exportieren wollen ...
+SelectExportFields=Wählen Sie Felder, die Sie exportieren wollen, oder wählen Sie einen vordefinierten Export profil
+SaveExportModel=Speichern Sie diese Export-Profil, wenn Sie planen, um sie später wieder verwenden ...
+ExportModelName=Export Profilnamen
+ExportModelSaved=Export-Profil gespeichert unter dem <b>Namen% s.</b>
+ExportableFields=Exportable Felder
+ExportedFields=Exportierte Felder
+DatasetToExport=Datensatz exportieren
+Dataset=Dataset
+ChooseFieldsOrdersAndTitle=Wählen Sie Felder, um ...
+FieldsOrder=Felder, um
+FieldsTitle=Felder Titel
+ChooseExportFormat=Wählen Sie den Export-Format
+NowClickToGenerateToBuildExportFile=Nun, klicken Sie auf &quot;Generieren&quot;, um Export-Datei ...
+AvailableFormats=Formate verfügbar
+LibraryUsed=Librairie
+LibraryVersion=Version
+Step=Schritt
+FormatedImport=Import-Assistent
+FormatedImportDesc1=Dieser Bereich erlaubt die Einfuhr persönlichen Daten, mit Hilfe eines Assistenten, die Sie im Prozess ohne technische Kenntnisse.
+FormatedImportDesc2=Erster Schritt ist die Wahl eines Königs von Daten, die Sie laden wollen, dann Datei zu laden, dann wählen Sie die Felder, die Sie laden wollen.
+FormatedExport=Export-Assistent
+FormatedExportDesc1=Dieser Bereich erlaubt es, die Ausfuhr personalisierten Daten, mit Hilfe eines Assistenten, die Sie im Prozess ohne technische Kenntnisse.
+FormatedExportDesc2=Erster Schritt ist die Wahl eines vordefinierten Datenbestand, dann wählen, welche Felder Sie in Ihrem Ergebnis-Dateien, und die Reihenfolge.
+FormatedExportDesc3=Wenn die Daten für den Export ausgewählt haben, können Sie festlegen, Output-Datei-Format exportieren möchten Sie Ihre Daten an.
+Sheet=Blatt
+NoImportableData=Nr. Einfuhrbeschränkung Daten (kein Modul mit Definitionen für Daten-Importe)
+FileSuccessfullyBuilt=Export-Datei erzeugt
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

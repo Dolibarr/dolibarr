@@ -1,0 +1,128 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+OrdersArea=Kunden Bestellungen Bereich
+SuppliersOrdersArea=Lieferanten Bestellungen Bereich
+OrderCard=Bestell-Karte
+Order=Auftrag
+Orders=Bestellungen
+OrderFollow=Follow-up
+OrderContact=Bestellung Kontakt
+OrderDate=Bestell-Datum
+NewOrder=Neuer Auftrag
+ToOrder=Bestellen Sie die
+MakeOrder=Bestellen Sie die
+SupplierOrder=Lieferanten, um
+SuppliersOrders=Lieferanten-Bestellungen
+SuppliersOrdersRunning=Aktuelle Lieferanten Bestellungen
+CustomerOrder=Kundenauftrag
+CustomersOrders=Kundenaufträge
+CustomersOrdersRunning=Aktuelle Kunden-Bestellungen
+CustomersOrdersAndOrdersLines=Kunden-Bestellungen und Aufträge &quot;Linien
+OrdersToValid=Bestellungen auf gültige
+OrdersToBill=Bestellungen auf Rechnung
+OrdersInProcess=Aufträge in Bearbeitung
+OrdersToProcess=Bestellungen zu bearbeiten
+StatusOrderCanceledShort=Storniert
+StatusOrderDraftShort=Entwurf
+StatusOrderValidatedShort=Validated
+StatusOrderOnProcessShort=Am Prozess
+StatusOrderProcessedShort=Verarbeitete
+StatusOrderToBillShort=An Bill
+StatusOrderApprovedShort=Genehmigt
+StatusOrderRefusedShort=Abgelehnt
+StatusOrderToProcessShort=Zur Bearbeitung
+StatusOrderReceivedPartiallyShort=Teilweise erhalten
+StatusOrderReceivedAllShort=Alles, was erhalten
+StatusOrderCanceled=Storniert
+StatusOrderDraft=Entwurf (muss validiert)
+StatusOrderValidated=Validated
+StatusOrderOnProcess=Am Prozess
+StatusOrderProcessed=Verarbeitete
+StatusOrderToBill=An Bill
+StatusOrderApproved=Genehmigt
+StatusOrderRefused=Abgelehnt
+StatusOrderReceivedPartially=Teilweise erhalten
+StatusOrderReceivedAll=Alles, was erhalten
+DraftOrWaitingApproved=Entwurf oder genehmigt noch nicht bestellt
+DraftOrWaitingShipped=Entwurf oder validiert noch nicht versandt
+MenuOrdersToBill=Bestellungen auf Rechnung
+SearchOrder=Suche um
+Sending=Senden
+Sendings=Sendungen
+ShipProduct=Schiff Produkt
+Discount=Discount
+CreateOrder=Ordnung
+RefuseOrder=Ablehnen, um
+ApproveOrder=Akzeptauftrag
+ValidateOrder=Bestätigen, um
+DeleteOrder=Löschen
+CancelOrder=Abbrechen, um
+AddOrder=Hinzufügen, um
+AddToMyOrders=Meine Bestellungen
+AddToOtherOrders=In den anderen Aufträgen
+ShowOrder=Anzeigen, um
+NoOpenedOrders=Nr. eröffnet Bestellungen
+NoOtherOpenedOrders=Keine andere geöffnet Bestellungen
+OtherOrders=Andere Aufträge
+LastOrders=Letzte% s Aufträge
+LastModifiedOrders=Letzte% s geändert Bestellungen
+LastClosedOrders=Letzte% s geschlossen Bestellungen
+AllOrders=Alle Bestellungen
+NbOfOrders=Anzahl der Bestellungen
+OrdersStatistics=Bestellungen &#39;Statistik
+OrdersStatisticsSuppliers=Lieferanten Bestellungen &quot;Statistiken
+NumberOfOrdersByMonth=Anzahl der Bestellungen pro Monat
+AmountOfOrdersByMonthHT=Anzahl der Aufträge pro Monat (nach Steuern)
+ListOfOrders=Liste der Aufträge
+CloseOrder=Schließen, um
+ConfirmCloseOrder=Sind Sie sicher, dass Sie wollen, schließen Sie dieses um? Sobald ein Auftrag abgeschlossen ist, kann es nur in Rechnung gestellt werden.
+ConfirmCloseOrderIfSending=Sind Sie sicher, dass Sie wollen, schließen Sie dieses um? Sie müssen einen Auftrag nur dann, wenn die Schifffahrt gesperrt werden.
+ConfirmDeleteOrder=Sind Sie sicher, dass Sie diese Bestellung löschen möchten?
+ConfirmValidateOrder=Sind Sie sicher, dass Sie für die Validierung dieser Reihenfolge unter dem <b>Namen% s?</b>
+ConfirmCancelOrder=Sind Sie sicher, dass Sie abbrechen möchten diese bestellen?
+ConfirmMakeOrder=Sind Sie sicher, dass Sie bestätigen, dass Sie diese, um <b>auf% s?</b>
+GenerateBill=Generate Rechnung
+ClassifyBilled=Einordnen &quot;Rechnung&quot;
+ComptaCard=Accountancy Karte
+DraftOrders=Entwurf Bestellungen
+RelatedOrders=Verwandte Bestellungen
+OnProcessOrders=Am Aufträge
+RefOrder=Artikel-Nr. Auftrag
+RefCustomerOrder=Artikel-Nr. Kundenauftrag
+CustomerOrder=Kundenauftrag
+RefCustomerOrderShort=Artikel-Nr. Cust. Auftrag
+SendOrderByMail=Senden Sie per Post bestellen
+ActionsOnOrder=Aktionen auf, um
+NoArticleOfTypeProduct=Kein Artikel vom Typ &quot;Produkt&quot; so nicht lieferbaren Artikel zu dieser Bestellung
+OrderMode=Bestell-Methode
+AuthorRequest=Anfrage Autor
+UseCustomerContactAsOrderRecipientIfExist=Verwenden Sie Kundenkontakt-Adresse definiert, wenn anstelle von Dritten Adresse als Empfänger-Adresse, um
+RunningOrders=Bestellungen über Prozess
+UserWithApproveOrderGrant=Useres, die mit &quot;billigen Bestellungen&quot; Erlaubnis.
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON nicht definiert
+Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON nicht definiert
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load-Modul-Datei &#39;% s&#39;
+Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load-Modul-Datei &#39;% s&#39;
+OrderSource0=Kommerzielle Vorschlag
+OrderSource1=Internet
+OrderSource2=E-Mail-Kampagne
+OrderSource3=Telefon Compain
+OrderSource4=Fax-Kampagne
+OrderSource5=Kommerzielle
+OrderSource6=Lagern
+QtyOrdered=Anzahl bestellt
+AddDeliveryCostLine=Fügen Sie eine Lieferung Kosten Linie zeigt das Gewicht der Bestellung
+PDFEinsteinDescription=Eine vollständige Um-Modell (logo. ..)
+MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn oder yy est l&#39;année, le mois et mm nnnn un compteur sequentiel ohne Bruch et sans remise e 0
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

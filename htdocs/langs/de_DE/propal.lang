@@ -1,0 +1,92 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Proposals=Kommerzielle Vorschläge
+Proposal=Kommerzielle Vorschlag
+ProposalsDraft=Entwurf der Vorschläge
+ProposalDraft=Entwurf der Vorschlag
+ProposalsOpened=Geöffnet kommerzielle Vorschläge
+Prop=Kommerzielle Vorschläge
+CommercialProposal=Kommerzielle Vorschlag
+CommercialProposals=Kommerzielle Vorschläge
+ProposalContact=Vorschlag Kontakt
+NewProp=Neue Vorschlag
+NewProposal=Neue Vorschlag
+NewPropal=Neuer Vorschlag
+Prospect=Prospect
+ProspectList=Prospect-Liste
+DeleteProp=Löschen der Vorschlag
+ValidateProp=Bestätigen kommerzieller Vorschlag
+AddProp=Add Vorschlag
+ConfirmDeleteProp=Sind Sie sicher, dass Sie löschen möchten, dass dieses kommerzielle Vorschlag?
+ConfirmValidateProp=Sind Sie sicher, dass Sie für die Validierung dieser kommerziellen Vorschlag?
+LastPropals=Letzte% s Vorschläge
+LastClosedProposals=Letzte% s geschlossen Vorschläge
+AllPropals=Alle Vorschläge
+LastProposals=Letzte Vorschläge
+SearchAProposal=Suche einen Vorschlag
+ProposalsStatistics=Vorschläge Handelsregister-Statistiken
+NumberOfProposalsByMonth=Anzahl pro Monat
+AmountOfProposalsByMonthHT=Betrag pro Monat (nach Steuern)
+NbOfProposals=Zahl der Vorschläge
+ShowPropal=Vorschlag anzeigen
+PropalsDraft=Drafts
+PropalsOpened=Geöffnet
+PropalsNotBilled=Geschlossen nicht in Rechnung gestellt
+PropalStatusDraft=Entwurf (muss validiert)
+PropalStatusValidated=Validated (Vorschlag wird geöffnet)
+PropalStatusOpened=Validated (Vorschlag wird geöffnet)
+PropalStatusClosed=Geschlossen
+PropalStatusSigned=Unterzeichnet (auf Rechnung)
+PropalStatusNotSigned=Nicht unterzeichnet (geschlossen)
+PropalStatusBilled=Rechnung
+PropalStatusDraftShort=Entwurf
+PropalStatusValidatedShort=Validated
+PropalStatusOpenedShort=Geöffnet
+PropalStatusClosedShort=Geschlossen
+PropalStatusSignedShort=Unterschrieben
+PropalStatusNotSignedShort=Nicht unterzeichnet
+PropalStatusBilledShort=Rechnung
+PropalsToClose=Kommerzielle Vorschläge schließen
+PropalsToBill=Unterschrieben kommerzielle Vorschläge zur Rechnung
+ListOfProposals=Liste von Vorschlägen
+ActionsOnPropal=Aktionen auf Vorschlag
+NoOpenedPropals=Nr. eröffnet kommerzielle Vorschläge
+NoOtherOpenedPropals=Keine andere geöffnet kommerzielle Vorschläge
+RefProposal=Kommerzielle Vorschlag ref
+SendPropalByMail=Senden kommerzieller Vorschlag per E-Mail
+FileNotUploaded=Die Datei wurde nicht hochgeladen
+FileUploaded=Die Datei wurde erfolgreich hochgeladen
+AssociatedDocuments=Dokumente im Zusammenhang mit dem Vorschlag:
+ErrorCantOpenDir=Verzeichnis kann nicht geöffnet werden
+DateEndPropal=Datum Ende Gültigkeit
+DateEndPropalShort=Datum Ende
+ValidityDuration=Gültigkeitsdauer
+CloseAs=Schließen Sie mit dem Status
+ClassifyBilled=Einordnen in Rechnung
+BuildBill=Build Rechnung
+RelatedBill=Verwandte Rechnung
+RelatedBills=Verwandte Rechnungen
+ErrorPropalNotFound=Propal% s nicht gefunden
+Estimate=Schätzwert:
+EstimateShort=Schätzung
+OtherPropals=Weitere Vorschläge
+CopyPropalFrom=Erstellen kommerzieller Vorschlag durch Kopieren bestehender Vorschlag
+CreateEmptyPropal=Erstellen leer kommerzielle Vorschläge vierge oder aus der Liste der Produkte / Dienstleistungen
+DefaultProposalDurationValidity=Standard-kommerziellen Vorschlag Gültigkeitsdauer (Tage)
+UseCustomerContactAsPropalRecipientIfExist=Verwenden Sie Kundenkontakt-Adresse definiert, wenn anstelle von Dritten Adresse als Vorschlag Empfänger-Adresse
+ClonePropal=Clone kommerziellen Vorschlag
+ConfirmClonePropal=Sind Sie sicher, dass Sie zu klonen dieser kommerziellen <b>Vorschlag% s?</b>
+DocModelAzurDescription=Eine vollständige Vorschlag Modell (logo. ..)
+DocModelJauneDescription=Jaune Vorschlag Modell
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

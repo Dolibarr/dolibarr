@@ -1,0 +1,60 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Actions=Aktionen
+ActionsArea=Bereich Maßnahmen (Veranstaltungen und Aufgaben)
+Agenda=Agenda
+Agendas=Tagesordnungen
+Calendar=Kalender
+Calendars=Kalender
+AffectedTo=Betroffene zu
+DoneBy=Geschehen von
+Events=Veranstaltungen
+ListOfActions=Liste der Veranstaltungen
+Location=Standort
+SearchAnAction=Suche eine Aktion / Aufgabe
+MenuToDoActions=Alle unvollständige Aktionen
+MenuDoneActions=Alle Aktionen beendet
+MenuToDoMyActions=Mein unvollständig Aktionen
+MenuDoneMyActions=Meine Aktionen beendet
+ListOfEvents=Liste der Dolibarr Veranstaltungen
+ActionsAskedBy=Aktionen, die von
+ActionsToDoBy=Maßnahmen betroffen
+ActionsDoneBy=Maßnahmen durch
+AllMyActions=Alle meine Handlungen / Aufgaben
+AllActions=Toutes les actions / Aufgaben
+ViewList=Liste anzeigen
+ViewCal=Kalender anzeigen
+ViewWithPredefinedFilters=Ansicht mit vordefinierten Filtern
+AutoActions=Automatische Befüllung der Tagesordnung
+AgendaAutoActionDesc=Definieren Sie hier, für die Sie Dolibarr, um automatisch eine Aktion in der Agenda. Wenn nichts aktiviert ist (Standard), nur manuellen Aktionen werden in der Agenda.
+AgendaSetupOtherDesc=Diese Seite ermöglicht die Konfiguration anderer Parameter der Tagesordnung Modul.
+ActionsEvents=Veranstaltungen, für die Dolibarr wird eine Aktion in der Agenda automatisch
+PropalValidatedInDolibarr=Vorschlag validiert
+InvoiceValidatedInDolibarr=Rechnung validiert
+OrderValidatedInDolibarr=Bestell-validiert
+NewCompanyToDolibarr=Dritter erstellt
+DateActionPlannedStart=Geplanter Start-Termin
+DateActionPlannedEnd=Geplante Enddatum
+DateActionDoneStart=Real Beginn
+DateActionDoneEnd=Real Enddatum
+DateActionStart=Beginn
+DateActionEnd=Enddatum
+AgendaUrlOptions1=Außerdem können Sie folgende Parameter zum Filtern der Ausgabe:
+AgendaUrlOptions2=<b>login=<b>login =% s</b> zu beschränken, Ausgabe an, die durch Maßnahmen, die zu oder von <b>Benutzer% s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% s,</b> um sich auf Maßnahmen beschränken, Ausgabe von <b>Benutzer% s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% s</b> zu beschränken, sich auf Maßnahmen, die Ausgabe auf <b>Benutzer% s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind =% s,</b> um sich auf Maßnahmen beschränken, Ausgabe von <b>Benutzer% s.</b>
+AgendaShowBirthdayEvents=Show Geburtstag Kontakte
+AgendaHideBirthdayEvents=Ausblenden Geburtstag Kontakte
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

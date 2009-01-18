@@ -1,0 +1,110 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+UserCard=User-Karte
+ContactCard=Kontakt-Karte
+GroupCard=Konzern-Karte
+NoContactCard=Keine Karte unter Kontakte
+Permission=Permission
+Permissions=Berechtigungen
+EditPassword=Passwort bearbeiten
+SendNewPassword=Neues Passwort senden
+ReinitPassword=Neues Passwort generieren
+PasswordChangedTo=Passwort geändert:% s
+SubjectNewPassword=Ihr neues Passwort für Dolibarr
+AvailableRights=Verfügbare Berechtigungen
+OwnedRights=Besitz Berechtigungen
+GroupRights=Gruppe Berechtigungen
+UserRights=Benutzerberechtigungen
+UserGUISetup=User-Display-Setup
+DisableUser=Deaktivieren
+DisableAUser=Deaktivieren Sie einen Benutzer
+DeleteUser=Löschen
+DeleteAUser=Löschen eines Benutzers
+DisableGroup=Deaktivieren
+DisableAGroup=Deaktivieren Sie eine Gruppe
+EnableAUser=Aktivieren Sie einen Benutzer
+EnableAGroup=Aktivieren Sie eine Gruppe
+DeleteGroup=Löschen
+DeleteAGroup=Löschen einer Gruppe
+ConfirmDisableUser=Sind Sie sicher, dass Sie deaktivieren möchten <b>Benutzer% s?</b>
+ConfirmDisableGroup=Sind Sie sicher, dass Sie deaktivieren möchten <b>Gruppe% s?</b>
+ConfirmDeleteUser=Sind Sie sicher, dass Sie löschen möchten <b>Benutzer% s?</b>
+ConfirmDeleteGroup=Sind Sie sicher, dass Sie löschen möchten <b>Gruppe% s?</b>
+ConfirmEnableUser=Sind Sie sicher, dass Sie möchten, können <b>Benutzer% s?</b>
+ConfirmEnableGroup=Sind Sie sicher, dass Sie aktivieren möchten <b>Gruppe% s?</b>
+ConfirmReinitPassword=Sind Sie sicher, dass Sie ein neues Passwort für <b>Benutzer% s?</b>
+ConfirmSendNewPassword=Sind Sie sicher, dass Sie erzeugen wollen und schicken Sie neues Passwort für <b>Benutzer% s?</b>
+NewUser=Neuer Benutzer
+CreateUser=Benutzer anlegen
+SearchAGroup=Suche eine Gruppe
+SearchAUser=Suche ein Benutzer
+ErrorFailedToSendPassword=Fehler beim Passwort senden
+LoginNotDefined=Eine Anmeldung ist nicht definiert.
+NameNotDefined=Name ist nicht definiert.
+ListOfUsers=Liste der Benutzer
+Administrator=Administrator
+DefaultRights=Standard-Berechtigungen
+DefaultRightsDesc=Definieren Sie hier Standard-Berechtigungen, die automatisch auf einen neuen Benutzer erstellt.
+DolibarrUsers=Dolibarr Benutzer
+LastName=Name
+FirstName=Vorname
+ListOfGroups=Liste von Gruppen
+NewGroup=Neue Gruppe
+CreateGroup=Gruppe erstellen
+RemoveFromGroup=Entfernen aus Gruppe
+PasswordChangedAndSentTo=Passwort geändert und <b>an% s</b> gesendet.
+PasswordChangeRequestSent=Antrag auf eine Änderung das Passwort <b>für% s an% s</b> gesendet.
+MenuUsersAndGroups=Benutzer & Gruppen
+LastGroupsCreated=Letzte% s erstellt Gruppen
+LastUsersCreated=Letzte% s Benutzer
+ShowGroup=Show-Gruppe
+ShowUser=Benutzer anzeigen
+NonAffectedUsers=Nicht betroffen Benutzer
+UserModified=User erfolgreich geändert
+GroupModified=Gruppe erfolgreich geändert
+PhotoFile=Foto-Datei
+UserWithDolibarrAccess=Benutzer mit Dolibarr Zugang
+ListOfUsersInGroup=Liste der Benutzer in dieser Gruppe
+ListOfGroupsForUser=Liste von Gruppen für diesen Benutzer
+UsersToAdd=Benutzer, um zu dieser Gruppe
+GroupsToAdd=Gruppen, um auf dieses Benutzers
+NoLogin=Kein Login
+CreateDolibarrLogin=Erstellen Dolibarr Konto
+LoginAccountDisable=Konto deaktiviert, ein neues Login, um es zu aktivieren.
+LoginAccountDisableInDolibarr=Konto deaktiviert in Dolibarr.
+LoginAccountDisableInLdap=Konto deaktiviert in der Domäne.
+UsePersonalValue=Verwenden Sie persönliche Wert
+GuiLanguage=Sprache für das Interface
+InternalUser=Interne Benutzer
+MyInformations=Meine Daten
+ExportDataset_user_1=Dolibarr-Nutzern und Eigenschaften
+DomainUser=Domain-Benutzer% s
+Reactivate=Reaktivieren
+CreateInternalUserDesc=Dieses Formular erlaubt Ihnen, die Schaffung eines Benutzers innerhalb Ihres Unternehmens / Ihrer Stiftung. Um die Schaffung einer externen Nutzer (Kunden, Lieferanten, ...), Verwendung Schaltfläche &quot;Erstellen Dolibarr user &#39;von Dritten Kontaktkarte.
+InternalExternalDesc=Ein <b>interner</b> Benutzer ist ein Benutzer, der ist ein Teil Ihres Unternehmens / Ihrer Stiftung. <br> Ein <b>externer</b> Benutzer ist ein Kunde, Lieferant oder andere. <br><br> In beiden Fällen, Berechtigungen definiert Rechte über Dolibarr, auch externe Benutzer kann ein anderes Menü-Manager als interne Benutzer (siehe Home - Setup - Display)
+PermissionInheritedFromAGroup=Genehmigung erteilt, weil ineherited von einer Benutzer-Gruppe.
+IdPhoneCaller=Id Telefon Anrufer
+UserLogged=User% s verbunden
+NewUserCreated=User% s erstellt
+NewUserPassword=Passwort ändern für% s
+EventUserModified=User% s geändert
+UserDisabled=User% s deaktiviert
+UserEnabled=User% s aktiviert
+UserDeleted=User% s entfernt
+NewGroupCreated=Gruppe% s erstellt
+GroupModified=Gruppe% s geändert
+GroupDeleted=Gruppe% s entfernt
+ConfirmCreateContact=Sind Sie sicher, dass Yu wollen ein Dolibarr für diesen Kontakt?
+LoginToCreate=Login erstellen
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser

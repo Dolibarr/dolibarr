@@ -1,0 +1,93 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: de_DE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 20:30:12
+ */
+
+
+// Date 2009-01-18 20:30:12
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+ContractsArea=Verträge Bereich
+ListOfContracts=Liste der Verträge
+LastContracts=Letzte% s geändert Verträge
+AllContracts=Alle Verträge
+ContractCard=Auftrags-Karte
+ContractStatus=Auftrags-Status
+ContractStatusNotRunning=Nicht ausgeführt
+ContractStatusRunning=Running
+ContractStatusDraft=Entwurf
+ContractStatusValidated=Validated
+ContractStatusClosed=Geschlossen
+ServiceStatusInitial=Nicht ausgeführt
+ServiceStatusRunning=Running
+ServiceStatusLate=Laufen, abgelaufen
+ServiceStatusClosed=Geschlossen
+ServicesLegend=Service Legende
+Contracts=Verträge
+Contract=Vertrag
+ContractContacts=Contract Kontakte
+NoContracts=Keine Verträge
+MenuServices=Services
+MenuInactiveServices=Dienstleistungen, die nicht aktiv
+MenuRunningServices=Laufende Dienste
+MenuExpiredServices=Abgelaufen Dienstleistungen
+MenuClosedServices=Geschlossen Dienstleistungen
+NewContract=Neuer Auftrag
+AddContract=Add Vertrag
+SearchAContract=Suche einen Vertrag
+DeleteAContract=Löschen eines Auftrags
+CloseAContract=Schließen Sie einen Vertrag
+ConfirmDeleteAContract=Sind Sie sicher, dass Sie löschen möchten, diesen Vertrag und alle seine Dienste?
+ConfirmValidateContract=Sind Sie sicher, dass Sie, um diesen Vertrag?
+ConfirmCloseContract=Dies schließt alle Dienste (aktiv oder nicht). Sind Sie sicher, dass Sie diesen Vertrag zu schließen?
+ConfirmCloseService=Sind Sie sicher, dass Sie wollen, schließen Sie dieses mit <b>Datum% s?</b>
+ValidateAContract=Validate einen Vertrag
+ActivateService=Aktivieren Service
+ConfirmActivateService=Sind Sie sicher, dass Sie möchten, aktivieren Sie diesen Service mit Datum <b>von% s?</b>
+DateContract=Contract Date
+DateServiceActivate=Datum der Zustellung Aktivierung
+DateServiceUnactivate=Datum der Zustellung unactivation
+DateServiceStart=Datum für den Beginn des Dienstes
+DateServiceEnd=Termin für Ende des Servicemenüs
+ShowContract=Zeige Vertrag
+ListOfServices=Liste der Dienstleistungen
+ListOfRunningContractsLines=Liste der laufenden Vertrag Linien
+ListOfRunningServices=Liste der Dienste
+NotActivatedServices=Nicht aktiviert Dienstleistungen (unter validiert Verträge)
+BoardNotActivatedServices=Services zu aktivieren unter validiert Verträge
+LastContracts=Letzte% Verträge
+LastActivatedServices=Letzte% s aktiviert Dienstleistungen
+LastModifiedServices=Letzte% s geändert Dienstleistungen
+EditServiceLine=Bearbeiten Service-Line
+ContractStartDate=Beginn
+ContractEndDate=Enddatum
+DateStartPlanned=Geplanter Start-Termin
+DateStartPlannedShort=Geplanter Start-Termin
+DateEndPlanned=Geplante Enddatum
+DateEndPlannedShort=Geplante Enddatum
+DateStartReal=Real Beginn
+DateStartRealShort=Real Beginn
+DateEndReal=Real Enddatum
+DateEndRealShort=Real Enddatum
+NbOfServices=Zahl der Dienste
+CloseService=Schließen Service
+ServicesNomberShort=% s (e)
+RunningServices=Laufende Dienste
+BoardRunningServices=Abgelaufen Dienste
+ServiceStatus=Status des Dienstes
+DraftContracts=Drafts Verträge
+CloseRefusedBecauseOneServiceActive=Kann nicht geschlossen werden, wie es ist mindestens eine Öffnung der Dienstleistungsmärkte auf
+CloseAllContracts=Schließen Sie alle Verträge
+MoveToAnotherContract=Verschieben in einen anderen Service-Vertrag.
+ConfirmMoveToAnotherContract=Ich wählte neues Ziel Vertrag und bestätigen Ich möchte diesen Dienst in diesem Vertrag.
+ConfirmMoveToAnotherContractQuestion=Wählen Sie in dem bestehenden Vertrag (von derselben dritten Partei), die Sie verschieben möchten diesen Service an?
+TypeContact_contrat_internal_SALESREPSIGN=Vertreter unterzeichnet Vertrag
+TypeContact_contrat_internal_SALESREPFOLL=Vertriebsmitarbeiter Follow-up Vertrag
+TypeContact_contrat_external_BILLING=Billing Kunden Kontakt
+TypeContact_contrat_external_CUSTOMER=Follow-up Kunden Kontakt
+TypeContact_contrat_external_SALESREPSIGN=Unterzeichnung Vertrag Kundenkontakt
+// Date 2009-01-18 20:30:12
+// STOP - Lines generated via parser
