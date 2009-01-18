@@ -103,3 +103,21 @@ OrderSource5=Commercieel
 OrderSource6=Winkel
 QtyOrdered=Hoeveelheid besteld
 AddDeliveryCostLine=Voeg een lijn 'Leveringskost' toe, duidend op het gewicht van de bestelling
+
+
+// Date 2009-01-18 19:49:33
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+SuppliersOrdersArea=Leveranciers bestellingen gebied
+CustomersOrdersAndOrdersLines=Klant orders en orders&#39; lijnen
+StatusOrderToProcessShort=Te verwerken
+DraftOrWaitingShipped=Ontwerp of gevalideerd nog niet verzonden
+OrdersStatisticsSuppliers=Leverancier bestellingen &quot;statistieken
+AmountOfOrdersByMonthHT=bedrag van de bestellingen per maand (exclusief BTW)
+UseCustomerContactAsOrderRecipientIfExist=Gebruik het contact met klanten adres als gedefinieerd in plaats van derden adres Om ontvangstadres
+RunningOrders=Orders op proces
+UserWithApproveOrderGrant=Useres verleend met &quot;goed te keuren bestellingen&quot; toestemming.
+PDFEinsteinDescription=Een complete order model (logo. ..)
+MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn ou jj est l&#39;annee, mm le mois et nnnn un compteur sequentiel sans breuk et sans remise e 0
+// Date 2009-01-18 19:49:33
+// STOP - Lines generated via parser

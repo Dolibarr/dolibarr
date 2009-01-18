@@ -1,0 +1,65 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_BE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 19:49:33
+ */
+
+
+// Date 2009-01-18 19:49:33
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+MenuECM=Documenten
+DocsMine=Mijn documenten
+DocsGenerated=Gegenereerd documenten
+DocsElements=Elementen documenten
+DocsThirdParties=Documenten van derden
+DocsContracts=Documenten contracten
+DocsProposals=Documenten voorstellen
+DocsOrders=Documenten bestellingen
+DocsInvoices=Documenten facturen
+ECMNbOfDocs=Nb van documenten in de directory
+ECMNbOfDocsSmall=Nb van doc.
+ECMSection=Bedrijvengids
+ECMSectionManual=Handleiding directory
+ECMSectionAuto=Automatisch map
+ECMSectionsManual=Handleiding abonneelijsten
+ECMSectionsAuto=Automatische abonneelijsten
+ECMSections=Directories
+ECMRoot=Root
+ECMNewSection=Nieuwe map
+ECMAddSection=Voeg een handleiding directory
+ECMNewSection=Nieuwe handleiding directory
+ECMNewDocument=Nieuw document
+ECMCreationDate=Creation date
+ECMNbOfFilesInDir=Aantal bestanden in de directory
+ECMNbOfSubDir=Aantal sub-directories
+ECMNbOfFilesInSubDir=Nunber van Iles in sub-directories
+ECMCreationUser=Ontwerper
+ECMArea=ECM gebied
+ECMAreaDesc=De ECM (Electronic Content Management) ruimte kunt u opslaan, delen en zoeken snel allerlei documenten in Dolibarr.
+ECMAreaDesc2=* Automatische directories zijn gevuld automatisch bij het toevoegen van documenten vanaf kaart van een element. <br> * Handleiding abonneelijsten kunnen worden gebruikt voor het opslaan van documenten die niet gekoppeld zijn aan een bepaald element.
+ECMSectionWasRemoved=<b>Directory% s</b> is verwijderd.
+ECMDocumentsSection=Document van directory
+ECMSearchByKeywords=Zoeken op trefwoorden
+ECMSearchByEntity=Zoek op doel
+ECMSectionOfDocuments=Repertoria van documenten
+ECMTypeManual=Handleiding
+ECMTypeAuto=Automatische
+ECMDocsByThirdParties=Documenten in verband met derden
+ECMDocsByProposals=Documenten in verband met voorstellen
+ECMDocsByOrders=Documenten in verband met klanten orders
+ECMDocsByContracts=Documenten in verband met contracten
+ECMDocsByInvoices=Documenten in verband met klanten facturen
+ECMDocsByProducts=Documenten in verband met producten
+ECMNoDirecotyYet=Geen map aangemaakt
+ShowECMSection=Toon map
+DeleteSection=Verwijder map
+ConfirmDeleteSection=Kunt u bevestigen dat u wilt verwijderen van de <b>directory% s?</b>
+ECMDirectoryForFiles=Relatieve directory voor bestanden
+CannotRemoveDirectoryContainsFiles=Verwijderd niet mogelijk omdat het bevat een aantal bestanden
+ECMFileManager=Bestandsbeheer
+ECMSelectASection=Selecteer een map op de linker boom ...
+// Date 2009-01-18 19:49:33
+// STOP - Lines generated via parser

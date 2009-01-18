@@ -1,0 +1,93 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_BE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 19:49:33
+ */
+
+
+// Date 2009-01-18 19:49:33
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+ContractsArea=Contracten gebied
+ListOfContracts=Lijst van opdrachten
+LastContracts=Last% s bewerkt contracten
+AllContracts=Alle contracten
+ContractCard=Contract kaart
+ContractStatus=Contract status
+ContractStatusNotRunning=Niet actief
+ContractStatusRunning=Hardlopen
+ContractStatusDraft=Ontwerp
+ContractStatusValidated=Gevalideerd
+ContractStatusClosed=Gesloten
+ServiceStatusInitial=Niet actief
+ServiceStatusRunning=Hardlopen
+ServiceStatusLate=Hardlopen, verstreken
+ServiceStatusClosed=Gesloten
+ServicesLegend=Diensten legende
+Contracts=Contracten
+Contract=Contract
+ContractContacts=Contract contacten
+NoContracts=Geen contracten
+MenuServices=Diensten
+MenuInactiveServices=Diensten die niet actief
+MenuRunningServices=Services
+MenuExpiredServices=Verstreken diensten
+MenuClosedServices=Gesloten diensten
+NewContract=Nieuw contract
+AddContract=Toevoegen contract
+SearchAContract=Zoek een contract
+DeleteAContract=Verwijderen van een contract
+CloseAContract=Sluit een contract
+ConfirmDeleteAContract=Weet u zeker dat u wilt verwijderen van dit contract en al haar diensten?
+ConfirmValidateContract=Weet u zeker dat u wilt valideren van dit contract?
+ConfirmCloseContract=Dit sluit alle diensten (actief of niet). Weet u zeker dat u wilt afsluiten van dit contract?
+ConfirmCloseService=Weet u zeker dat u wilt afsluiten van deze dienst met <b>datum% s?</b>
+ValidateAContract=Valideren van een contract
+ActivateService=Activering
+ConfirmActivateService=Weet u zeker dat u wilt activeren van deze dienst met de datum <b>van% s?</b>
+DateContract=Contractdatum
+DateServiceActivate=Datum van de activering van de dienst
+DateServiceUnactivate=Datum van betekening unactivation
+DateServiceStart=Datum voor het begin van de dienst
+DateServiceEnd=Datum voor het einde van de dienst
+ShowContract=Toon contract
+ListOfServices=Lijst van diensten
+ListOfRunningContractsLines=Lijst van de lopende contract lijnen
+ListOfRunningServices=Lijst van services
+NotActivatedServices=Niet geactiveerd diensten (onder gevalideerde contracten)
+BoardNotActivatedServices=Diensten te activeren onder gevalideerde contracten
+LastContracts=Laatst% contracten
+LastActivatedServices=Last% s geactiveerd diensten
+LastModifiedServices=Last% s bewerkt diensten
+EditServiceLine=Bewerken service lijn
+ContractStartDate=Begindatum
+ContractEndDate=Einddatum
+DateStartPlanned=Geplande startdatum
+DateStartPlannedShort=Geplande startdatum
+DateEndPlanned=Geplande einddatum
+DateEndPlannedShort=Geplande einddatum
+DateStartReal=Werkelijke start datum
+DateStartRealShort=Werkelijke start datum
+DateEndReal=Real einddatum
+DateEndRealShort=Real einddatum
+NbOfServices=Nb van diensten
+CloseService=Sluiten dienst
+ServicesNomberShort=% s service (s)
+RunningServices=Services
+BoardRunningServices=Verstreken services
+ServiceStatus=Status van de dienst
+DraftContracts=Concepten contracten
+CloseRefusedBecauseOneServiceActive=Overeenkomst niet kan worden gesloten als er ten minste een open dienst op het
+CloseAllContracts=Sluit alle contracten
+MoveToAnotherContract=Verplaats dienst in een ander contract.
+ConfirmMoveToAnotherContract=Ik gekozen nieuwe doelstelling opdracht te bevestigen en ik wil verplaatsen van deze dienst in dit contract.
+ConfirmMoveToAnotherContractQuestion=Kies in dat de bestaande overeenkomst (van dezelfde derde partij), die u wilt verplaatsen deze dienst aan?
+TypeContact_contrat_internal_SALESREPSIGN=Verkoopvertegenwoordiger ondertekening contract
+TypeContact_contrat_internal_SALESREPFOLL=Verkoopvertegenwoordiger follow-up contract
+TypeContact_contrat_external_BILLING=Billing Customer Contact
+TypeContact_contrat_external_CUSTOMER=Follow-up van het contact met klanten
+TypeContact_contrat_external_SALESREPSIGN=Ondertekening contract Customer Contact
+// Date 2009-01-18 19:49:33
+// STOP - Lines generated via parser

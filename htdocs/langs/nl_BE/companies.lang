@@ -194,3 +194,74 @@ AddDeliveryAddress=Voeg adres toe
 AddAddress=Voeg adres toe
 NoOtherDeliveryAddress=Geen alternatieve bestellingsadressen gedefinieerd
 JuridicalStatus200=Zelfstandige
+
+
+// Date 2009-01-18 19:49:33
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+DeleteThirdParty=Verwijder een derde partij
+DeleteContact=Verwijderen van een contactpersoon
+ConfirmDeleteContact=Weet u zeker dat u wilt verwijderen dit contact en alle erfelijke informatie?
+MenuNewPrivateIndividual=Nieuw particulier
+NewPrivateIndividual=Nieuw particulier (prospect, klant, leverancier)
+IdThirdParty=Id derden
+CountryIsInEEC=Land binnen de Europese Economische Gemeenschap
+ThirdPartyType=Derde soort
+Company/Fundation=Bedrijf / Fundation
+Individual=Particulier
+ToCreateContactWithSameName=Maakt automatisch een fysieke contact met dezelfde informatie
+ReportByCustomers=Verslag door klanten
+ReportByQuarter=Verslag per kwartaal
+VATIsNotUsed=BTW wordt niet gebruikt
+WrongCustomerCode=Klant code ongeldig
+WrongSupplierCode=Leverancier code ongeldig
+CustomerCodeModel=Klant code model
+SupplierCodeModel=Leverancier code model
+Gencod=Streepjescode
+ProfId1Short=Prof id 1
+ProfId2Short=Prof id 2
+ProfId3Short=Prof id 3
+ProfId4Short=Prof id 4
+ProfId1CH=--
+ProfId2CH=--
+ProfId3CH=Prof. id 1 (Federale nummer)
+ProfId4CH=Prof. id 2 (Commerciële Record aantal)
+ProfId1TN=Prof. id 1 (RC)
+ProfId2TN=Prof. id 2 (Fiscale matricule)
+ProfId3TN=Prof. Id 3 (Douane-code)
+ProfId4TN=Prof. id 4 (BAN)
+CompanyHasCreditNote=Deze klant heeft nog creditnota&#39;s <b>voor% s% s</b>
+NoContactDefined=Geen contact gedefinieerd voor deze derde partij
+CustomerCodeDesc=Klant code, uniek voor alle klanten
+SupplierCodeDesc=Leverancier code, uniek voor alle leveranciers
+RequiredIfCustomer=Vereist als derde partij een klant of prospect
+RequiredIfSupplier=Vereist als derde partij is een leverancier
+ValidityControledByModule=Geldigheid gecontroleerd door module
+ThisIsModuleRules=Dit is de regels voor deze module
+EditDeliveryAddress=Bewerken afleveradres
+VATIntraManualCheck=You can also check manually from european web site <a href="%s" target=U kunt ook handmatig controleren van de Europese <a href="%s" target="_blank">website% s</a>
+ProspectLevelShort=Potentiel
+ProspectLevel=Prospect potentiële
+ContactPrivate=Prive
+ContactPublic=Gedeelde
+ContactVisibility=Zichtbaarheid
+OthersNotLinkedToThirdParty=Anderen, die niet gebonden is aan een derde partij
+ProspectStatus=Prospect status
+PL_NONE=Aucun
+PL_UNKNOWN=Onbekend
+PL_LOW=Laag
+PL_MEDIUM=Medium
+PL_HIGH=Hoog
+TE_UNKNOWN=--
+DeleteFile=Verwijderen bestand
+ConfirmDeleteFile=Weet u zeker dat u wilt verwijderen van dit bestand?
+AllocateCommercial=Toewijzing van een commerciële
+SelectCountry=Kies een land
+SelectCompany=Selecteer een derde partij
+Organization=Organisatie
+AutomaticallyGenerated=Automatisch gegenereerd
+FiscalYearInformation=Informatie over het fiscale jaar
+FiscalMonthStart=Startbod maand van het boekjaar
+TigreNumRefModelDesc1=Terugkeer een aanpasbare klant / leverancier aantal volgens een omschreven masker.
+// Date 2009-01-18 19:49:33
+// STOP - Lines generated via parser

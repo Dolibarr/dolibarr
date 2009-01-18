@@ -1,0 +1,48 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_BE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 19:49:33
+ */
+
+
+// Date 2009-01-18 19:49:33
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+ExportsArea=Uitvoer gebied
+ImportArea=Import gebied
+NewExport=Nieuwe exportmogelijkheden
+NewImport=Nieuwe invoer
+ExportableDatas=Exportable dataset
+ImportableDatas=Invoerbeperking dataset
+SelectExportDataSet=Kies dataset die u wilt exporteren ...
+SelectExportFields=Kies velden die u wilt exporteren, of selecteer een vooraf gedefinieerde uitvoer Profiel
+SaveExportModel=Bewaar deze uitvoer profiel als u van plan bent om hergebruik het later ...
+ExportModelName=Export profiel naam
+ExportModelSaved=Export profiel opgeslagen onder de <b>naam% s.</b>
+ExportableFields=Exportable velden
+ExportedFields=Geëxporteerde velden
+DatasetToExport=Dataset te exporteren
+Dataset=Dataset
+ChooseFieldsOrdersAndTitle=Kies velden Om ...
+FieldsOrder=Velden bestelling
+FieldsTitle=Velden titel
+ChooseExportFormat=Kies uitvoer formaat
+NowClickToGenerateToBuildExportFile=Nu, klik op &quot;Generate&quot; te bouwen exportbestand ...
+AvailableFormats=Formaten disponibles
+LibraryUsed=Librairie
+LibraryVersion=Versie
+Step=Stap
+FormatedImport=Import-assistent
+FormatedImportDesc1=Dit gebied maakt het mogelijk te importeren persoonlijke gegevens, met een assistent om u te helpen in het proces, zonder technische kennis.
+FormatedImportDesc2=Eerste stap is het kiezen van een koning van de gegevens die u wilt laden, dan bestand te laden en vervolgens te kiezen welke velden u wilt laden.
+FormatedExport=Export assistent
+FormatedExportDesc1=Dit gebied maakt het mogelijk om te exporteren persoonlijke gegevens, met een assistent om u te helpen in het proces, zonder technische kennis.
+FormatedExportDesc2=Eerste stap is het kiezen van een vooraf gedefinieerde dataset, dan te kiezen welke velden u in uw resultaat bestanden, en welke volgorde.
+FormatedExportDesc3=Wanneer de gegevens te exporteren zijn geselecteerd, kunt u de output bestand dat u wilt exporteren van uw gegevens aan.
+Sheet=Blad
+NoImportableData=Geen invoerbeperking gegevens (geen module met definities, zodat gegevens invoer)
+FileSuccessfullyBuilt=Export bestand
+// Date 2009-01-18 19:49:33
+// STOP - Lines generated via parser

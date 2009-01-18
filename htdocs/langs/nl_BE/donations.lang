@@ -1,0 +1,37 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_BE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 19:49:33
+ */
+
+
+// Date 2009-01-18 19:49:33
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Donation=Donatie
+Donationss=Donaties
+Donor=Donor
+Donors=Donoren
+AddDonation=Voeg een donatie
+NewDonation=Nieuwe donatie
+DonationPromise=Gift belofte
+PromisesNotValid=Niet gevalideerd beloften
+PromisesValid=Gevalideerde beloften
+DonationsPayed=Donaties betaald
+DonationsReceived=Donaties ontvangen
+PublicDonation=Openbare donatie
+DonationsNumber=Donatienummer
+DonationsArea=Donaties gebied
+DonationStatusPromiseNotValidated=Ontwerp belofte
+DonationStatusPromiseValidated=Gevalideerde belofte
+DonationStatusPayed=Donatie ontvangen
+DonationStatusPromiseNotValidatedShort=Ontwerp
+DonationStatusPromiseValidatedShort=Gevalideerd
+DonationStatusPayedShort=Ontvangen
+ValidPromise=Valideer belofte
+BuildDonationReceipt=Build-ontvangst
+DonationsModels=Documenten modellen voor donatie ontvangsten
+// Date 2009-01-18 19:49:33
+// STOP - Lines generated via parser

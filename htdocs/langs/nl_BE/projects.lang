@@ -1,2 +1,58 @@
 # Dolibarr language file - nl_BE - projects
 Projects=Projecten
+
+
+// Date 2009-01-18 19:49:33
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Project=Project
+SharedProject=Gezamenlijk project
+Myprojects=Mijn projecten
+ProjectsArea=Projecten gebied
+NewProject=Nieuw project
+AddProject=Toevoegen project
+DeleteAProject=Verwijderen van een project
+DeleteATask=Verwijderen van een taak
+ConfirmDeleteAProject=Weet u zeker dat u wilt verwijderen dit project?
+ConfirmDeleteATask=Weet u zeker dat u wilt verwijderen van deze taak?
+OfficerProject=Project officer
+LastProjects=Last% s projecten
+AllProjects=Alle projecten
+ProjectsList=Lijst van projecten
+ShowProject=Toon project
+SetProject=Stel project
+NoProject=Geen enkel project gedefinieerd
+NbOpenTasks=Nb geopend van taken
+NbOfProjects=Nb van projecten
+TimeSpent=Bestede tijd
+RefTask=Ref. taak
+LabelTask=Label taak
+NewTimeSpent=Nieuwe tijd
+MyTimeSpent=Mijn tijd besteed
+MyTasks=Mijn taken
+Tasks=Taken
+Task=Taak
+NewTask=Nieuwe taak
+AddTask=Toevoegen taak
+AddDuration=Voeg duur
+Activity=Activiteit
+Activities=Taken / activiteiten
+MyActivity=Mijn activiteit
+MyActivities=Mijn taken / activiteiten
+DurationEffective=Effectieve looptijd
+MyProjects=Mijn projecten
+Time=Tijd
+ListProposalsAssociatedProject=Lijsten van de commerciële voorstellen in verband met het project
+ListOrdersAssociatedProject=Lijsten van de orders in verband met het project
+ListInvoicesAssociatedProject=Lijsten van de facturen in verband met het project
+ListSupplierOrdersAssociatedProject=Lijst van de leveranciers orders in verband met het project
+ListSupplierInvoicesAssociatedProject=Lijst van de leveranciers facturen in verband met het project
+ListContractAssociatedProject=Lijst van opdrachten in verband met het project
+ActivityOnProjectThisWeek=Activiteit op project deze week
+ActivityOnProjectThisMonth=Activiteit op project deze maand
+ActivityOnProjectThisYear=Activiteit op project dit jaar
+ChildOfTaks=Kind van het project / taak
+NotOwnerOfProject=Geen eigenaar van dit prive-project
+AffectedTo=Beïnvloed in
+// Date 2009-01-18 19:49:33
+// STOP - Lines generated via parser

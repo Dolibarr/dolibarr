@@ -1,0 +1,63 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_BE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 19:49:33
+ */
+
+
+// Date 2009-01-18 19:49:33
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+BoxLastRssInfos=RSS informatie
+BoxLastProducts=Laatste producten / diensten
+BoxLastProductsInContract=Laatste gecontracteerde producten / diensten
+BoxLastSupplierBills=Laatste leverancier facturen
+BoxLastCustomerBills=Laatste klant facturen
+BoxOldestUnpayedCustomerBills=Oudste unpayed klant facturen
+BoxOldestUnpayedSupplierBills=Oudste unpayed leverancier facturen
+BoxLastProposals=Laatste commerciële voorstellen
+BoxLastProspects=Laatste kans
+BoxLastCustomers=Laatste klanten
+BoxLastCustomerOrders=Laatste klantenbestellingen
+BoxLastSuppliers=Laatste leveranciers
+BoxLastBooks=Laatste boeken
+BoxLastActions=Laatste acties
+BoxCurrentAccounts=Lopende rekeningen evenwicht
+BoxSalesTurnover=Omzet
+BoxTotalUnpayedCustomerBills=Totaal unpayed klant facturen
+BoxTotalUnpayedSuppliersBills=Totaal unpayed leverancier facturen
+BoxTitleLastBooks=Last% s geregistreerd boeken
+BoxTitleNbOfCustomers=Nombre de client
+BoxTitleLastRssInfos=Laatste nieuws uit% s% s
+BoxTitleLastProducts=Last% s gemodificeerde producten / diensten
+BoxTitleLastCustomerOrders=Last% s bewerkt klantenbestellingen
+BoxTitleLastSuppliers=Last% s geregistreerd leveranciers
+BoxTitleLastCustomers=Last% s geregistreerd klanten
+BoxTitleLastCustomersOrProspects=Last% s geregistreerd klanten of prospecten
+BoxTitleLastPropals=Last% s opgenomen voorstellen
+BoxTitleLastCustomerBills=Last% s klant facturen
+BoxTitleLastSupplierBills=Last% s leverancier facturen
+BoxTitleLastProspects=Last% s geregistreerd vooruitzichten
+BoxTitleLastProductsInContract=Last% s derniers produits / diensten
+BoxTitleOldestUnpayedCustomerBills=Oudste% s unpayed klant facturen
+BoxTitleOldestUnpayedSupplierBills=Oudste% s unpayed leveranciersverklaringen facturen
+BoxTitleCurrentAccounts=Lopende rekening van de saldi
+BoxTitleSalesTurnover=Omzet
+BoxTitleTotalUnpayedCustomerBills=Unpayed klant facturen
+BoxTitleTotalUnpayedSuppliersBills=Unpayed leverancier facturen
+BoxMyLastBookmarks=Mijn laatste% s bladwijzers
+FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Laatste succesvolle refresh datum:% s
+NoRecordedBookmarks=No bookmarks defined. Click <a href=Geen bladwijzers gedefinieerd. Klik <a href="%s">hier</a> om bladwijzers toe te voegen.
+NoRecordedCustomers=Geen geregistreerde klanten
+BoxTitleLastActionsToDo=Last% s acties te doen
+NoActionsToDo=Geen acties te doen
+NoRecordedOrders=Nr. geregistreerd klant orders
+NoRecordedProposals=Nr. opgenomen voorstellen
+NoRecordedInvoices=Nr. geregistreerd klant facturen
+NoUnpayedCustomerBills=Nr. unpayed klant facturen
+NoRecordedSupplierInvoices=Nr. geregistreerd leverancier facturen
+NoUnpayedSupplierBills=Nr. unpayed leverancier facturen
+// Date 2009-01-18 19:49:33
+// STOP - Lines generated via parser

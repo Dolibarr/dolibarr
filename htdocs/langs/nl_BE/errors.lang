@@ -1,0 +1,60 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_BE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 19:49:33
+ */
+
+
+// Date 2009-01-18 19:49:33
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+ErrorLoginAlreadyExists=Inloggen% s bestaat reeds.
+ErrorGroupAlreadyExists=Groep% s bestaat reeds.
+ErrorDuplicateTrigger=Een trigger bestand met klasse nam <b>&#39;% s&#39;</b> is aanwezig sevaral tijden. Verwijder dubbele trigger-bestand in de directory <b>&#39;% s&#39;.</b>
+ErrorFailToDeleteFile=Mislukt te verwijderen bestand <b>&#39;% s&#39;.</b>
+ErrorFailToCreateFile=Mislukt om bestand <b>&#39;% s&#39;.</b>
+ErrorFailToRenameDir=Failed to rename directory <b>&#39;% s&#39; in&#39;% s&#39;.</b>
+ErrorFailToCreateDir=Mislukt het creëren van directory <b>&#39;% s&#39;.</b>
+ErrorFailToDeleteDir=Failed to delete directory <b>&#39;% s&#39;.</b>
+ErrorFailedToDeleteJoinedFiles=Kan niet verwijderen entiteit omdat er trad bestanden. Verwijder toetreden bestanden eerst.
+ErrorThisContactIsAlreadyDefinedAsThisType=Dit contact is al omschreven als contactpersoon voor dit type.
+ErrorCashAccountAcceptsOnlyCashMoney=Deze bankrekening is een cash-account, zodat zij aanvaardt betalingen van het type cash only.
+ErrorFromToAccountsMustDiffers=Bron en doelstellingen bankrekeningen moet anders.
+ErrorBadThirdPartyName=Onjuiste waarde voor derden naam
+ErrorBadCustomerCodeSyntax=Bad syntaxis voor klantcode
+ErrorCustomerCodeRequired=Klant-code nodig
+ErrorCustomerCodeAlreadyUsed=Klant code al gebruikt
+ErrorPrefixRequired=Prefix nodig
+ErrorBadSupplierCodeSyntax=Bad syntaxis voor Leverancier code
+ErrorSupplierCodeRequired=Leverancier code nodig
+ErrorSupplierCodeAlreadyUsed=Leverancier code al gebruikt
+ErrorBadParameters=Bad parameters
+ErrorFailedToWriteInDir=Mislukt te schrijven in de map% s
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Gevonden onjuist e-syntax voor% s-lijnen in het bestand (bijvoorbeeld regel% s met email =% s)
+ErrorUserCannotBeDelete=Gebruiker kan niet worden verwijderd. Mag het is gekoppeld aan Dolibarr entiteiten.
+ErrorFieldsRequired=Enkele verplichte velden zijn niet ingevuld.
+ErrorFailedToCreateDir=Mislukt het creëren van een directory. Controleer of Web server gebruiker heeft toestemming om te schrijven in Dolibarr documenten map. Als parameter <b>safe_mode</b> is ingeschakeld op dit PHP, controleren dat Dolibarr php bestanden is eigenaar van de web server gebruiker (of groep).
+ErrorNoMailDefinedForThisUser=No mail gedefinieerd voor deze gebruiker
+ErrorFeatureNeedJavascript=Deze functie moet javascript geactiveerd te werken. Verander dit in de setup - display.
+ErrorTopMenuMustHaveAParentWithId0=Een menu van het type &#39;Top&#39; kan niet beschikken over een ouder menu. Leg 0 bij de ouders menu of kiezen uit een menu van het type &#39;Links&#39;.
+ErrorLeftMenuMustHaveAParentId=Een menu van het type &#39;links&#39; moeten een ouder id.
+ErrorGenbarCodeNotfound=Bestand niet gevonden (Bad pad, verkeerde permissies of toegang geweigerd door openbasedir parameter)
+ErrorFunctionNotAvailableInPHP=<b>Functie% s</b> is vereist voor deze functie, maar is niet beschikbaar in deze versie / setup van PHP.
+ErrorDirAlreadyExists=Een map met deze naam al bestaat.
+ErrorFieldCanNotContainSpecialCharacters=<b>Veld% s</b> mag geen speciale tekens bevat.
+WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> moet zo worden ingesteld dat <b>in</b> Filer <b>php.ini</b> voor het feit dat deze module werkt volledig. U moet dit bestand handmatig te wijzigen.
+WarningBuildScriptNotRunned=<b>Script% s</b> is nog niet liep te bouwen graphics, of er geen gegevens aan te tonen.
+WarningBookmarkAlreadyExists=Een bladwijzer met deze titel of deze doelgroep (URL) al bestaat.
+WarningPassIsEmpty=Waarschuwing, database wachtwoord is leeg. Dit is een gat in de beveiliging. Moet u een wachtwoord voor uw database en uw conf.php bestand weerspiegelt dit.
+ErrorNoAccountancyModuleLoaded=Nr. accountancy module geactiveerd
+ErrorExportDuplicateProfil=Dit profiel naam al bestaat voor deze uitvoer ingesteld.
+ErrorLDAPSetupNotComplete=Dolibarr LDAP-matching is niet compleet.
+ErrorLDAPMakeManualTest=A. Ldif bestand is gegenereerd in de map% s. Probeert te laden dat handmatig uit opdrachtregel om meer informatie over fouten.
+ErrorCantSaveADoneUserWithZeroPercentage=Kan niet opslaan met een actie &quot;Statut niet&quot; als veld &quot;door&quot; is ook gevuld.
+ErrorBillRefAlreadyExists=Ref gebruikt voor de oprichting al bestaat.
+ErrorPleaseTypeBankTransactionReportName=Vul bank ontvangst naam waar transactie wordt gemeld (Formaat YYYYMM of JJJJMMDD)
+ErrorRecordHasChildren=Mislukt records te verwijderen, omdat er nog wat kinderen.
+// Date 2009-01-18 19:49:33
+// STOP - Lines generated via parser

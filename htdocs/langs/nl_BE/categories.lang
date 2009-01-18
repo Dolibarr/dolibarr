@@ -1,0 +1,94 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_BE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 19:49:33
+ */
+
+
+// Date 2009-01-18 19:49:33
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Category=Categorie
+Categories=Categorieën
+Rubrique=Categorie
+Rubriques=Categorieën
+categories=categorieën
+TheCategorie=De categorie
+In=In
+AddIn=Voeg in
+modify=wijzigen
+Classify=Classify
+CategoriesArea=Categorieën gebied
+ProductsCategoriesArea=Producten / Diensten &#39;categorieën gebied
+SuppliersCategoriesArea=Leveranciers categorieën gebied
+CustomersCategoriesArea=Klanten categorieën gebied
+ThirdPartyCategoriesArea=Derden &quot;categorieën gebied
+MainCats=Belangrijkste categorieën
+SubCats=Subcategorieën
+CatStatistics=Statistieken
+CatList=Lijst van catgories
+AllCats=Alle categorieën
+ViewCat=Bekijk categorie
+NewCat=Toevoegen categorie
+NewCategory=Nieuwe categorie
+ModifCat=Wijzigen categorie
+CatCreated=Categorie aangemaakt
+CreateCat=Maak categorie
+CreateThisCat=Maak deze categorie
+ValidateFields=Valideren van de velden
+NoSubCat=Geen subcategorie.
+SubCatOf=Subcategorie
+FoundCats=Gevonden categorieën
+FoundCatsForName=Categorieën gevonden voor de naam:
+FoundSubCatsIn=Subcategorieën gevonden in de categorie
+ErrSameCatSelected=U geselecteerde dezelfde categorie meerdere malen
+ErrForgotCat=Je vergat te kiezen voor de categorie
+ErrForgotField=Je vergat om de velden
+ErrCatAlreadyExists=Deze naam wordt al gebruikt
+AddProductToCat=Voeg dit product naar een categorie?
+ImpossibleAddCat=Onmogelijk om de categorie
+ImpossibleAssociateCategory=Onmogelijk om de categorie
+WasAddedSuccessfully=<b>% s</b> is succesvol toegevoegd.
+ObjectAlreadyLinkedToCategory=Element is al gekoppeld aan deze categorie.
+CategorySuccessfullyCreated=Deze categorie% s is toegevoegd met succes.
+ProductIsInCategories=Product / dienst is eigenaar van de volgende categorieën
+SupplierIsInCategories=Derde partij is eigenaar van de volgende categorieën leveranciers
+CompanyIsInCustomersCategories=Deze derde partij is eigenaar van de volgende klanten / prospects categorieën
+CompanyIsInSuppliersCategories=Deze derde partij is eigenaar van de volgende categorieën leveranciers
+ProductHasNoCategory=Dit product / service is niet in alle categorieën
+SupplierHasNoCategory=Deze leverancier is op geen enkele categorieën
+CompanyHasNoCategory=Dit bedrijf is niet in alle categorieën
+ClassifyInCategory=Classificeren in categorie
+NoneCategory=Geen
+CategoryExistsAtSameLevel=Deze categorie bestaat al op dezelfde plaats
+ReturnInProduct=Terug naar product / dienst-kaart
+ReturnInSupplier=Terug naar leverancier kaart
+ReturnInCompany=Terug naar de klant / prospect kaart
+ContentsVisibleByAll=De inhoud wordt zichtbaar door alle
+ContentsVisibleByAllShort=Inhoud zichtbaar door alle
+ContentsNotVisibleByAllShort=Inhoud niet zichtbaar is door alle
+CategoriesTree=Categorieën boom
+DeleteCategory=Verwijderen categorie
+ConfirmDeleteCategory=Weet u zeker dat u wilt verwijderen deze categorie?
+RemoveFromCategory=Verwijder de band met de categorie
+RemoveFromCategoryConfirm=Weet u zeker dat u wilt verwijderen verband tussen de transactie en de categorie?
+NoCategoriesDefined=Geen gedefinieerde categorie
+SuppliersCategoryShort=Leveranciers categorie
+CustomersCategoryShort=Klanten categorie
+ProductsCategoryShort=Producten categorie
+SuppliersCategoriesShort=Leveranciers categorieën
+CustomersCategoriesShort=Klanten categorieën
+CustomersProspectsCategoriesShort=Custo. / Prosp. categorieën
+ProductsCategoriesShort=Producten categorieën
+ThisCategoryHasNoProduct=Deze categorie bevat geen producten.
+ThisCategoryHasNoSupplier=Deze categorie bevat geen enkele leverancier.
+ThisCategoryHasNoCustomer=Deze categorie bevat geen klant.
+AssignedToCustomer=Toegewezen aan een klant
+AssignedToTheCustomer=Toegewezen aan de klant
+InternalCategory=Inernal categorie
+CategoryContents=Categorie inhoud
+CategId=Categorie-id
+// Date 2009-01-18 19:49:33
+// STOP - Lines generated via parser

@@ -1,0 +1,39 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_BE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 19:49:33
+ */
+
+
+// Date 2009-01-18 19:49:33
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+DomainPassword=Wachtwoord voor het domein
+YouMustChangePassNextLogon=Wachtwoord voor <b>gebruiker% s</b> op het <b>domein% s</b> moet worden veranderd.
+UserMustChangePassNextLogon=Gebruiker moet wachtwoord wijzigen op het domein% s
+LdapUacf_NORMAL_ACCOUNT=Gebruikersaccount
+LdapUacf_DONT_EXPIRE_PASSWORD=Wachtwoord verloopt nooit
+LdapUacf_ACCOUNTDISABLE=Account is uitgeschakeld in het domein% s
+LDAPInformationsForThisContact=Informatie in LDAP database voor dit contact
+LDAPInformationsForThisUser=Informatie in LDAP database voor deze gebruiker
+LDAPInformationsForThisGroup=Informatie in LDAP database voor deze groep
+LDAPInformationsForThisMember=Informatie in LDAP database voor dit lid
+LDAPAttribute=LDAP-attribuut
+LDAPAttributes=LDAP-attributen
+LDAPCard=LDAP-kaart
+LDAPRecordNotFound=Record niet gevonden in de LDAP database
+LDAPUsers=Gebruikers in LDAP database
+LDAPGroups=Groepen in de LDAP database
+LDAPFieldStatus=Status
+LDAPFieldFirstSubscriptionDate=Eerste abonnement datum
+LDAPFieldFirstSubscriptionAmount=Fist abonnement bedrag
+LDAPFieldLastSubscriptionDate=Laatste inschrijvingsdatum
+LDAPFieldLastSubscriptionAmount=Laatste abonnement bedrag
+SynchronizeDolibarr2Ldap=Synchroniseren gebruiker (Dolibarr -&gt; LDAP)
+UserSynchronized=Gebruiker gesynchroniseerd
+ForceSynchronize=Force synchroniserende Dolibarr -&gt; LDAP
+ErrorFailedToReadLDAP=Failed to read LDAP-database. Check LDAP module setup en database toegankelijkheid.
+// Date 2009-01-18 19:49:33
+// STOP - Lines generated via parser

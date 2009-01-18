@@ -1,0 +1,152 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: nl_BE
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-18 19:49:33
+ */
+
+
+// Date 2009-01-18 19:49:33
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+Bank=Bank
+Banks=Banken
+MenuBankCash=Bank / Cash
+MenuSetupBank=Bank / Cash setup
+BankName=Banknaam
+FinancialAccount=Account
+FinancialAccounts=Rekeningen
+BankAccount=Bankrekening
+BankAccounts=Bankrekeningen
+AccountRef=Financiële rekening ref
+AccountLabel=Financiële rekening label
+CashAccount=Kasrekening
+CashAccounts=Kasrekeningen
+MainAccount=Hoofdaccount
+CurrentAccount=Lopende rekening
+CurrentAccounts=Lopende rekeningen
+SavingAccount=Spaarrekening
+SavingAccounts=Spaarrekeningen
+ErrorBankLabelAlreadyExists=Financiële rekening label bestaat al
+BankBalance=Saldo
+BalanceMinimalAllowed=Minimaal toegestane evenwicht
+BalanceMinimalDesired=Minimale gewenste evenwicht
+InitialBankBalance=Eerste balans
+EndBankBalance=Einde evenwicht
+CurrentBalance=Huidig saldo
+FutureBalance=Toekomstige evenwicht
+ShowAllTimeBalance=Toon saldo van start
+Reconciliation=Verzoening
+RIB=Bank Account Number
+IBAN=IBAN-nummer
+BIC=BIC / SWIFT-nummer
+StandingOrders=Permanente opdrachten
+StandingOrder=Doorlopende opdracht
+Withdrawals=Intrekkingen
+Withdrawal=Intrekking
+AccountStatement=Rekeningoverzicht
+AccountStatementShort=Verklaring
+AccountStatements=Rekeningafschriften
+LastAccountStatements=Laatste rekeningafschriften
+Rapprochement=Reconciliate
+IOMonthlyReporting=Maandelijkse rapportage
+BankAccountDomiciliation=Account adres
+BankAccountOwner=Account eigenaar naam
+BankAccountOwnerAddress=Account eigenaar adres
+RIBControlError=Inetgrity controles van waarden mislukt. Dit betekent dat informatie voor dit nummer zijn niet volledig of onjuist (check land, nummers en IBAN).
+CreateAccount=Maak account
+StandingOrderToProcess=Te verwerken
+StandingOrderProcessed=Verwerkte
+NewAccount=Nieuw account
+NewBankAccount=Nieuwe bankrekening
+NewFinancialAccount=Nieuwe financiële rekening
+MenuNewFinancialAccount=Nieuwe financiële rekening
+NewCurrentAccount=Nieuwe lopende rekening
+NewSavingAccount=Nieuwe spaarrekening
+NewCashAccount=Nieuwe kasrekening
+EditFinancialAccount=Aanmaken account
+AccountSetup=Financiële rekeningen setup
+SearchBankMovement=Zoeken bank verkeer
+Debts=Schulden
+LabelBankCashAccount=Bank of contant label
+AccountType=Accounttype
+BankType0=Spaarrekening
+BankType1=Lopende rekening
+BankType2=Kasrekening
+IfBankAccount=Als bankrekening
+AccountsArea=Rekeningen gebied
+AccountCard=Account kaart
+DeleteAccount=Account verwijderen
+ConfirmDeleteAccount=Weet u zeker dat u deze account wilt verwijderen?
+Account=Account
+ByCategories=Per categorie
+ByRubriques=Per categorie
+BankTransactionByCategories=Bank transacties per categorie
+BankTransactionForCategory=Bank transacties <b>categorie% s</b>
+RemoveFromRubrique=Verwijder de band met de categorie
+RemoveFromRubriqueConfirm=Weet u zeker dat u wilt verwijderen verband tussen de transactie en de categorie?
+ListBankTransactions=Lijst van de bank transacties
+IdTransaction=Transaction ID
+BankTransactions=Bank transacties
+SearchTransaction=Zoeken transactie
+ListTransactions=Lijst transacties
+ListTransactionsByCategory=Lijst transactie / categorie
+TransactionsToConciliate=Transacties te verzoenen
+Conciliable=Conciliable
+Conciliate=Verzoenen
+Conciliation=Bemiddelingscomite
+ConciliationForAccount=Verzoenen deze account
+IncludeClosedAccount=Behoren de sluiting van de rekeningen
+OnlyOpenedAccount=Alleen geopende rekeningen
+AccountToCredit=Account tot krediet
+AccountToDebit=Rekening te debiteren
+DisableConciliation=Uitschakelen bemiddeling functie voor deze account
+ConciliationDisabled=Bemiddelingscomite functie uitgeschakeld
+StatusAccountOpened=Geopend
+StatusAccountClosed=Gesloten
+AccountIdShort=Aantal
+EditBankRecord=Bewerk record
+LineRecord=Transactie
+AddBankRecord=Toevoegen transactie
+AddBankRecordLong=Toevoegen transactie handmatig
+ConciliatedBy=Na bemiddeling door
+DateConciliating=Verzoenen datum
+BankLineConciliated=Transactie na bemiddeling
+CustomerInvoicePayment=Klant betaling
+SupplierInvoicePayment=Leverancier betaling
+SocialContributionPayment=Sociale bijdrage betalen
+FinancialAccountJournal=Financiële rekening Tijdschrift
+BankTransfer=Bank transfer
+BankTransfers=Bank transfers
+TransferDesc=Overdracht van de ene rekening naar een andere, Dolibarr zullen twee records (een debitering in bron-account en een krediet in rekening doelgroep, van hetzelfde bedrag. Hetzelfde label en datum zal worden gebruikt voor deze transactie)
+TransferFrom=Van
+TransferTo=Aan
+TransferFromToDone=Een overdracht <b>van% s naar% s van% s% s</b> is opgenomen.
+CheckTransmitter=Zender
+ValidateCheckReceipt=Valideer deze controle ontvangst?
+ConfirmValidateCheckReceipt=Weet u zeker dat u wilt valideren deze controle ontvangst, geen verandering mogelijk zal zijn als dit is gebeurd?
+DeleteCheckReceipt=Verwijder deze controle ontvangst?
+ConfirmDeleteCheckReceipt=Weet u zeker dat u wilt verwijderen deze controle ontvangst?
+BankChecks=Bankcheque
+BankChecksToReceipt=Cheques wachten voor statiegeld
+NumberOfCheques=Nb van cheques
+DeleteTransaction=Verwijderen transactie
+ConfirmDeleteTransaction=Weet u zeker dat u wilt verwijderen van deze transactie?
+ThisWillAlsoDeleteBankRecord=Dit zal ook verwijderen gegenereerd banktransacties
+BankMovements=Mutaties
+CashBudget=Cash begroting
+PlannedTransactions=Geplande transacties
+ExportDataset_banque_1=Bank transacties en rekeningoverzicht
+TransactionOnTheOtherAccount=Transactie op de andere account
+TransactionWithOtherAccount=Account transfer
+PaymentNumberUpdateSucceeded=Betaling aantal bijgewerkt
+PaymentNumberUpdateFailed=Betaling aantal kon niet worden bijgewerkt
+PaymentDateUpdateSucceeded=Betaalbaarstelling update succesvol
+PaymentDateUpdateFailed=Betaling datum kon niet worden bijgewerkt
+BankTransactionLine=Bank transactie
+AllAccounts=Alle bank / Kasrekeningen
+BackToAccount=Terug naar de rekening
+ShowAllAccounts=Toon voor alle accounts
+// Date 2009-01-18 19:49:33
+// STOP - Lines generated via parser
