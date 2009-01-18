@@ -101,3 +101,21 @@ OptionVatInfoModuleComptabilite			 =Remarque: Pour les beni materiali, il faudra
 PercentOfInvoice				 =%% / fattura
 Compta					 =Contabilità
 Warehouse				=Magazzino
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+ReportInOut=Reddito / Esito
+PaymentsNotLinkedToInvoice=I pagamenti non legati a una fattura, quindi non legato ad alcuna parte terza
+PaymentsNotLinkedToUser=I pagamenti non legati a qualsiasi utente
+PaymentCustomerInvoice=Clienti fattura di pagamento
+PaymentSupplierInvoice=Fornitore fattura di pagamento
+PaymentSocialContribution=Contributo sociale di pagamento
+PaymentVat=Pagamento
+ShowVatPayment=Visualizza pagamento IVA
+Dispatch=Dispacciamento
+Dispatched=Spediti
+ToDispatch=Per la spedizione
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

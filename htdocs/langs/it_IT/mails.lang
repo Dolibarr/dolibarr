@@ -93,3 +93,11 @@ ANotificationsWillBeSent				     =1 notifica sarà inviata per e-mail
 SomeNotificationsWillBeSent				     =%s notifiche saranno inviate via e-mail 
 AddNewNotification					     =Attivare una nuova richiesta di notifica 
 ListOfActiveNotifications				     =Elenchi tutte le notifiche richieste attivi
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+MailingModuleDescContactsCategories=Contatti di tutte le terze parti (per categoria)
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

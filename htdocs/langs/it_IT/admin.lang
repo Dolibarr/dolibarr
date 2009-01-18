@@ -939,3 +939,61 @@ AgendaSetup								   =Actions and agenda module setup
 PasswordTogetVCalExport							   =Key to authorize export link
 ##### ClickToDial #####							   
 ClickToDialDesc								   =This module allows to add an icon after the phone number of Dolibarr contacts. A click on this icon, will call a serveur with a particular URL you define below. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+VersionProgram=Versione programma
+VersionLastInstall=Versione l&#39;installazione iniziale
+VersionLastUpgrade=Versione ultimo aggiornamento
+CurrentTimeZone=Corrente TimeZone
+Space=Spazio
+Fields=Settori
+CurrentSessionTimeOut=Timeout sessione corrente
+PurgeAuditEvents=Elimina tutti gli eventi
+ConfirmPurgeAuditEvents=Sei sicuro di voler eliminare tutti gli eventi di sicurezza? Tutti i log di sicurezza verranno eliminati, altri dati non verranno rimossi.
+ToBuildBackupFileClickHere=To build a backup file, click <a href=Per costruire un file di backup, fare clic <a href="%s">qui.</a>
+OnlyActiveElementsAreShown=Only elements from <a href=Solo gli elementi di <a href="modules.php">abilitare i moduli</a> vengono visualizzati.
+Developpers=Sviluppatori / contribuenti
+MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=Porta SMTP (non definito in PHP su Unix, come i sistemi)
+MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=SMTP Host (non definito in PHP su Unix, come i sistemi)
+FeatureNotAvailableOnLinux=Funzione non disponibile sui sistemi Unix come. Prova il tuo sendmail programma a livello locale.
+UMask=Parametro umask per i nuovi file su Unix / Linux / BSD file di sistema.
+UMaskExplanation=Questo parametro consente di definire i permessi impostati di default per i file creati da Dolibarr sul server (per esempio durante il caricamento). <br> Esso deve essere il valore ottale (per esempio, 0.666 mezzi di lettura e scrittura per tutti). <br> Ce ne paramtre insert pas sous un server Windows.
+Module50100Name=Cassa
+Module50100Desc=Cassa modulo
+VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country = buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=L&#39;aliquota IVA per impostazione predefinita durante la creazione di prospettive, fatture, ordini, ecc seguire la regola standard attivi: <br> Se il venditore è soggetto ad IVA, quindi l&#39;IVA di default = 0. Fine della regola. <br> Se la (vendita paese = paese di acquisto), quindi l&#39;IVA di default = IVA del prodotto nel paese di vendita. Fine della regola. <br> Se il venditore e l&#39;acquirente nella Comunità europea e le merci sono vendute avere nuovi mezzi di trasporto (auto, nave, aereo), il default IVA = 0 (L&#39;IVA deve essere pagato dal compratore al customoffice del suo paese e non a carico del venditore ). Fine della regola. <br> Se il venditore e l&#39;acquirente nella Comunità europea e dei beni venduti da altri mezzi, piuttosto che i nuovi mezzi di trasporto, quindi l&#39;IVA di default = IVA del prodotto venduto. Fine della regola. <br> Altre proposte di default IVA = 1. Fine della regola.
+UpdateRequired=Your system needs to be updated. To do this, click on <a href=Il sistema deve essere aggiornato. Per effettuare questa operazione, fare clic su <a href="%s">Aggiorna ora.</a>
+AvailableModules=Moduli disponibili
+ToActivateModule=Per attivare i moduli, andare su Setup.
+SessionTimeOut=Tempo per sessione
+SessionExplanation=Questo numero di garanzia che non sarà mai sessione scade prima di questo ritardo. Ma PHP sessoin di gestione non è sempre garanzia che sessione scade dopo questo ritardo: Questo si verifica se un sistema per la pulizia della cache di sessione è in esecuzione. <br> Nota: con particolare sistema interno PHP processo pulito ogni sessione <b>su% s /% s</b> di accesso, ma solo durante l&#39;accesso da altre sessioni.
+MAIN_DISABLE_PDF_COMPRESSION=PDF Usa la compressione per i file PDF generati.
+SeeLocalSendMailSetup=Consultare il locale di installazione di sendmail
+PasswordGenerationStandard=Torna una password generata in base al Dolibarr algoritmo interno: 8 caratteri contenenti condivisa numeri e caratteri in minuscolo.
+PasswordGenerationNone=Non suggerire eventuali password generata. La password deve essere di tipo manuale.
+ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=Url chiamata quando un clic sul telefono cellulare picto è fatto. <br> URL completo sarà: URL? =...&amp; Login password =...&amp; chiamante =...&amp; chiamato = phonecalled
+MemberSendInformationByMailByDefault=Checkbox per inviare una mail di conferma per i membri è attivata per impostazione predefinita
+LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=DN completo (ad esempio: cn = adminldap, dc = società, dc = it)
+LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=DN completo (es: ou = utenti, dc = società, dc = it)
+LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=DN completo (es: ou = gruppo, dc = società, dc = it)
+LDAPServerDnExample=Complete DN (ex: dc=company,dc=DN completo (ad esempio: dc = azienda, dc = it)
+LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=DN completo (es: ou = contatti, dc = società, dc = it)
+LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=DN completo (es: ou = membri, dc = società, dc = it)
+LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=DN completo (es: ou = type_members, dc = società, dc = it)
+LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP connettersi a server LDAP di successo (= Server% s, Port =% s)
+LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP connettersi a server LDAP fallito (% s = Server, Port =% s)
+LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Collegare / Authentificate al server LDAP successo (= Server% s, Port =% s,% s = Admin, password =% s)
+LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Collegare / Authentificate al server LDAP fallito (% s = Server, Port =% s,% s = Admin, password =% s)
+LDAPFilterConnectionExample=Example : &(objectClass=Esempio: &amp; (objectClass = inetOrgPerson)
+NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max numero di prodotti in combo selezionare liste (0 = nessun limite)
+SetDefaultBarcodeTypeProducts=Predefinita di codici a barre tipo da utilizzare per i prodotti
+SetDefaultBarcodeTypeThirdParties=Predefinita di codici a barre tipo da utilizzare per terze parti
+FreeLegalTextOnDeliveryReceipts=Testo libero al momento della consegna delle entrate
+CashDeskSetup=Cassa modulo configurazione
+CashDeskThirdPartyForSell=Generico di terzi da utilizzare per vende
+CashDeskBankAccountForSell=Conto di cassa da utilizzare per vende
+CashDeskIdWareHouse=Datawarehous per utente per vende
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

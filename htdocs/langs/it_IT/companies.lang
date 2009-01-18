@@ -261,3 +261,13 @@ FiscalMonthStart				     =Il mese di partenza per l'anno fiscale
 						     
 # Tigre						     
 TigreNumRefModelDesc1				     =Torna uno codice cliente / fornitore personalizzabile in base al modello definito.
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+VATIntraManualCheck=You can also check manually from european web site <a href="%s" target=È inoltre possibile controllare manualmente dal sito Web <a href="%s" target="_blank">europeo% s</a>
+ProspectStatus=Prospect stato
+PL_NONE=Aucun
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

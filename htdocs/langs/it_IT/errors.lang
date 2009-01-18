@@ -32,3 +32,25 @@ ErrorFunctionNotAvailableInPHP			   =Funzione <b> %s </b> è necessario per quest
 ErrorDirAlreadyExists				   =Una directory con questo nome esiste già.
 WarningAllowUrlFopenMustBeOn			   =Parametro <b> allow_url_fopen </b> deve essere impostato su <b> su </b> nel filer <b> php.ini </b> per avere questo modulo di lavoro completamente. È necessario modificare questo file manualmente.
 ErrorFieldCanNotContainSpecialCharacters	   =Campo <b> %s </b> non contiene caratteri speciali.
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+ErrorFailToDeleteDir=Impossibile eliminare directory <b>&#39;% s&#39;.</b>
+ErrorFailedToDeleteJoinedFiles=Impossibile eliminare entità perché non vi è aderito alcuni file. Rimuovere i file prima aderire.
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Trovato email sintassi errata per% s righe nel file (ad esempio linea con l&#39;e-mail% s =% s)
+ErrorUserCannotBeDelete=L&#39;utente non può essere soppresso. Può essere che è associato a Dolibarr entità.
+WarningBuildScriptNotRunned=<b>Script% s</b> non è stato ancora eseguito a costruire grafici, o non ci sono dati da visualizzare.
+WarningBookmarkAlreadyExists=Un segnalibro con questo titolo o questo obiettivo (URL) già esistente.
+WarningPassIsEmpty=Attenzione, la password di database è vuoto. Si tratta di un buco di sicurezza. Si dovrebbe aggiungere una password per il database e cambiare il tuo conf.php file per riflettere questo.
+ErrorNoAccountancyModuleLoaded=N. contabile modulo attivato
+ErrorExportDuplicateProfil=Questo profilo nome esiste già fissato per l&#39;esportazione.
+ErrorLDAPSetupNotComplete=Dolibarr-LDAP corrispondenti non è completa.
+ErrorLDAPMakeManualTest=A. Ldif file è stato generato nella directory% s. Prova a caricare manualmente dalla riga di comando per avere maggiori informazioni sugli errori.
+ErrorCantSaveADoneUserWithZeroPercentage=Impossibile salvare un azione con &quot;statuto non iniziato&quot; se il campo &quot;da fare&quot; è anche riempita.
+ErrorBillRefAlreadyExists=Rif. utilizzato per la creazione esiste già.
+ErrorPleaseTypeBankTransactionReportName=Si prega di tipo bancario ricevimento nome transazione in cui è riportato (o AAAAMM Formato AAAAMMGG)
+ErrorRecordHasChildren=Impossibile eliminare i record in quanto ha alcuni bambini.
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

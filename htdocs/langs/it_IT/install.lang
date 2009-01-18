@@ -180,3 +180,16 @@ MigrationBankTransfertsNothingToUpdate				     =Tutti i link sono aggiornati
 MigrationShipmentOrderMatching					     =Spedizione ricevimento aggiornamento 
 MigrationDeliveryOrderMatching					     =Ricevuta di consegna aggiornamento 
 MigrationDeliveryDetail						     =Consegna aggiornamento
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+PHPSupportUTF8=Questo supporto PHP UTF8 funzioni.
+ErrorPHPDoesNotSupportGD=La tua installazione di PHP non supporta la funzione grafica GD. N. grafico sarà disponibile.
+ErrorPHPDoesNotSupportUTF8=La tua installazione di PHP non supporta UTF8 funzioni. Dolibarr non può funzionare correttamente. Risolvere questo problema prima di installare Dolibarr.
+IfLoginDoesNotExistsCheckCreateUser=Se il login non esiste ancora, è necessario verificare l&#39;opzione &quot;Crea utente&quot;
+ErrorConnection=Server <b>&quot;% s&quot;,</b> nome del database <b>&quot;% s&quot;,</b> di accesso <b>&quot;% s&quot;,</b> o la password di database può essere sbagliato o PHP versione client può essere troppo vecchio rispetto alla versione del database.
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Correggere contratto% s (data del contratto =% s, data di inizio del servizio min =% s)
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

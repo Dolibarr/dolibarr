@@ -36,3 +36,18 @@ DateActionDoneStart 		      =Data effettiva di inizio
 DateActionDoneEnd 		      =Data effettiva di fine
 DateActionStart 		      =Data di inizio
 DateActionEnd 			      =Data di fine
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+ListOfActions=Lista degli eventi
+Location=Località
+AgendaUrlOptions1=È inoltre possibile aggiungere seguenti parametri di filtro in uscita:
+AgendaUrlOptions2=<b>login=<b>login =% s</b> per limitare la produzione di azioni creato da, o interessati a fare da <b>utente% s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% s</b> per limitare la produzione di azioni creato da <b>utente% s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% s</b> per limitare la produzione di azioni <b>compromesso% s</b> utente.
+AgendaUrlOptions5=<b>logind=<b>logind =% s</b> per limitare la produzione di azioni fatto da <b>utente% s.</b>
+AgendaShowBirthdayEvents=Visualizza i contatti di compleanno
+AgendaHideBirthdayEvents=Nascondi i contatti di compleanno
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

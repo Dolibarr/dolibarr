@@ -356,3 +356,19 @@ TitanNumRefModelDesc4						   =In questo esempio, avremo il 1 ° settembre 2006, 
 # pluton							   
 PlutonNumRefModelDesc1						   =Restituire un numero di fattura personalizzabile in base ad una maschera definito.
 ValidatePayment								   =Convalidare questo pagamento?
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+BillsStatisticsSuppliers=Fornitori &#39;fatture statistiche
+ConfirmValidatePayment=ETES-vous sur de vouloir Valider ce paiment, auncune possibile modifica n&#39;est une fois le paiement valido?
+NumberOfBillsByMonthHT=Nb di fatture per mese (al netto delle imposte)
+AmountOfBills=Importo delle fatture
+AmountOfBillsByMonth=Importo delle fatture da mesi
+Repeatables=Pre-definito
+CloneInvoice=Clone fattura
+CloneMainAttributes=Clone oggetto con i suoi principali attributi
+ConfirmCloneInvoice=Sei sicuro di voler clonare presente <b>fattura% s?</b>
+DisabledBecauseReplacedInvoice=Azione disabili perché fattura è stato sostituito
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

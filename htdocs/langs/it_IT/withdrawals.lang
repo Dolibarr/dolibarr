@@ -16,3 +16,25 @@ RequestStandingOrderToTreat		       =Richiesta di ordini permanenti da trattare
 RequestStandingOrderTreated		       =Richiesta di ordini permanenti trattati 
 CustomersStandingOrders			       =Ordini permanenti clienti  
 CustomerStandingOrder			       =Ordine permanente cliente 
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+NbOfInvoiceToWithdraw=Nb di ritirare la richiesta con fattura
+InvoiceWaitingWithdraw=Fattura di attesa per ritirare
+AmountToWithdraw=Importo di ritirare
+WithdrawsRefused=Ritira rifiutato
+NoInvoiceToWithdraw=Nessun cliente fattura in modalità di pagamento &quot;ritirare&quot; è in attesa. Vai su &#39;Prelevare&#39; sulla scheda fattura carta a fare una richiesta.
+ResponsibleUser=Merito utente
+WithdrawalsSetup=Ritiro di setup
+WithdrawStatistics=Ritira &#39;statistiche
+WithdrawRejectStatistics=Prelevare respinge &#39;statistiche
+LastWithdrawalReceipt=Ultimo% s ritiro ricevute
+MakeWithdrawRequest=Effettuare una richiesta di ritirare
+ThirdPartyBankCode=Da parte di terzi codice bancario
+ThirdPartyDeskCode=Scrivania codice da parte di terzi
+NoInvoiceCouldBeWithdrawed=N. fattura withdrawed con successo. Verificare che sulla fattura sono le imprese con un valido BAN.
+ClassCredited=Classificazione accreditati
+ClassCreditedConfirm=Sei sicuro di voler classificare questo ritiro ricevuta come accreditati sul vostro conto in banca?
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

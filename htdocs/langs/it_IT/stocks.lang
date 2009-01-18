@@ -58,3 +58,14 @@ StockUpShort				    =Scorte max
 IdWarehouse				    =Id magazzino 
 DescWareHouse				    =Descrizione magazzino 
 LieuWareHouse				    =Localizzazione magazzino
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+PMPValue=Rapporto
+RuleForStockManagementDecrease=Regola di gestione delle scorte diminuzione
+RuleForStockManagementIncrease=Regola per aumentare la gestione delle scorte
+WarehousesAndProducts=Magazzini e prodotti
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

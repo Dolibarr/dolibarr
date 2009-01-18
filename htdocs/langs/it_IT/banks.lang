@@ -129,3 +129,22 @@ PaymentNumberUpdateFailed		 =Il numero di pagamento potrebbe non essere stato ag
 PaymentDateUpdateSucceeded		 =Data di pagamento aggiornamento con successo
 PaymentDateUpdateFailed			 =Data di pagamento potrebbe non essere stata aggiornata
 Rapprocher					=Concilia
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+RIBControlError=Inetgrity controlli non di valori. Ciò significa che per questo numero di conto non sono complete o sbagliato (controlla paese, i numeri e IBAN).
+BankTransactionByCategories=Banca operazioni per categorie
+BankTransactionForCategory=Transazioni bancarie per la <b>categoria% s</b>
+ListBankTransactions=Elenco delle operazioni bancarie
+ListTransactions=Elenco transazioni
+ListTransactionsByCategory=Elenco operazione / categoria
+ConfirmValidateCheckReceipt=Sei sicuro di voler verificare per convalidare questa ricevuta, nessun cambiamento sarà possibile una volta che questo è fatto?
+ConfirmDeleteCheckReceipt=Sei sicuro di voler eliminare questo controllo ricevuta?
+NumberOfCheques=Numero di assegni
+BankTransactionLine=Banca transazione
+AllAccounts=Tutte le banche / tesoreria
+BackToAccount=Torna al conto
+ShowAllAccounts=Visualizza per tutti gli account
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

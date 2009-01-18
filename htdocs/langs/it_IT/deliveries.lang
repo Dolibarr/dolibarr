@@ -21,3 +21,13 @@ Recipient						=Destinatario
 ICOMM							=N° Part. IVA : 
 APE								=Iscr. trib. : 
 SIRET							=R.E.A. : 
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+DeliveryDateShort=Consegna. data
+QtyDelivered=Quantità consegnata
+DeliveryMethod=Metodo di consegna
+TrackingNumber=Numero di tracking
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

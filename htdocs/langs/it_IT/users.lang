@@ -93,3 +93,12 @@ UserDeleted				    =Utente %s rimosso
 NewGroupCreated				    =Gruppo creato %s 
 GroupModified				    =Gruppo %s modificato
 GroupDeleted				    =Gruppo %s rimosso
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+ConfirmCreateContact=Sei sicuro di yu desidera creare un conto Dolibarr per questo contatto?
+LoginToCreate=Accedi per creare
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

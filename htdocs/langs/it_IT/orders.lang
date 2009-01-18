@@ -112,3 +112,16 @@ AddDeliveryCostLine					=Aggiungi un costo di consegna linea che indica il peso 
 
 # einstein PDF Model
 PDFEinsteinDescription					=Un modello completo per (logo. ..)
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+CustomersOrdersAndOrdersLines=Ordini dei clienti e degli ordini &#39;linee
+OrdersStatisticsSuppliers=Fornitore ordini &#39;di statistiche
+AmountOfOrdersByMonthHT=quantità di ordini da mesi (al netto delle imposte)
+RunningOrders=Ordini in corso
+UserWithApproveOrderGrant=Useres concesso con &quot;approvare ordini&quot; permesso.
+MarbreNumRefDesc=Renvoie le numro sous la forme syymm% aa-nnnn ou est l&#39;année, le mois et millimetri nnnn un compteur sequentiel sans rottura et sans remise e 0
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

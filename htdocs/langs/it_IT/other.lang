@@ -114,3 +114,48 @@ AvailableFormats				     =Formati disponibili
 LibraryUsed					     =Librairy utilizzate 
 LibraryVersion					     =Versione 
 ExportableDatas					     =Dati Esportabili 
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+DateToBirth=Data di nascita
+PredefinedMailContentSendInvoice=Veuillez trouver ci-joint la facture __FACREF__ \ n \ nCordialement \ n \ n
+PredefinedMailContentSendInvoiceReminder=Nous apportons vostra conoscenza che la facture __FACREF__ ne semble pas avoir t rgle. La voici donc, pour rappel, en pice jointe. \ N \ nCordialement \ n \ n
+PredefinedMailContentSendProposal=Veuillez trouver ci-joint la proposta commerciale __PROPREF__ \ n \ nCordialement \ n \ n
+PredefinedMailContentSendOrder=Veuillez trouver ci-joint la commande __ORDERREF__ \ n \ nCordialement \ n \ n
+DemoDesc=Dolibarr non è una compatta ERP, ma è costituito da diversi moduli fonctionnal. Un demo che comprende tutti i moduli non significa niente come questo non si verifica. Così, diversi profili demo sono disponibili.
+ChooseYourDemoProfil=Scegli la demo profilo che corrispondono alla tua attività ...
+DemoFundation=Gestisci membri di una Fondazione
+DemoFundation2=Gestisci membri e di un conto bancario Fundation
+DemoCompanyServiceOnly=Gestire un servizio di vendita activiy freelance solo
+DemoCompanyShopWithCashDesk=Gestire un negozio con una cassa
+DemoCompanyProductAndStocks=Gestire una piccola o media azienda che vende prodotti
+DemoCompanyAll=Gestire una piccola o media azienda con più attività (tutti i principali moduli)
+GoToDemo=Vai alla demo
+FeatureNotYetAvailableShort=Disponibile in una prossima versione
+Depth=Altezza
+Size=dimensione
+SizeUnitm=m
+SizeUnitdm=dm
+SizeUnitcm=centimetro
+SizeUnitmm=millimetro
+ProfIdShortDesc=<b>Prof ID% s</b> è un centro informazioni, a seconda del paese terzo. <br> Ad esempio, per il <b>paese% s,</b> è il <b>codice% s.</b>
+DolibarrDemo=Dolibarr ERP / CRM demo
+StatsByNumberOfUnits=Statistiche in numero di unità
+StatsByNumberOfEntities=Statistiche del numero di enti
+NumberOfProposals=Numero di proposte sulla ultimi 12 mesi
+NumberOfCustomerOrders=Numero di ordini dei clienti sul ultimi 12 mesi
+NumberOfCustomerInvoices=Numero di fatture a clienti negli ultimi 12 mesi
+NumberOfSupplierInvoices=Numero di fatture fornitore sul ultimi 12 mesi
+NumberOfUnitsProposals=Numero di unità sulle proposte des derniers 12 mois
+NumberOfUnitsCustomerOrders=Numero di unità su ordini dei clienti sul ultimi 12 mesi
+NumberOfUnitsCustomerInvoices=Numero di unità sulle fatture del cliente negli ultimi 12 mesi
+NumberOfUnitsSupplierInvoices=Numero di unità su fatture fornitore ultimi 12 mesi
+EMailTextOrderApproved=Ordine% s approvato
+EMailTextOrderApprovedBy=Ordine approvato% s da% s
+EMailTextOrderRefused=Ordine rifiutato% s
+EMailTextOrderRefusedBy=Ordine rifiutato da% s% s
+MemberSubscriptionAddedInDolibarr=Abbonamento membro aggiunto in% s Dolibarr
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

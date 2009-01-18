@@ -127,3 +127,16 @@ DescADHERENT_ETIQUETTE_TYPE			    =Formato etichette
 DescADHERENT_CARD_HEADER_TEXT			    =Testo stampato sull'intestazione della carta membro 
 DescADHERENT_CARD_TEXT				    =Testo stampato sulla carta membro 
 DescADHERENT_CARD_FOOTER_TEXT			    =Testo stampato sul fondo della carta membro
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+ListOfPublicMembers=Elenco dei membri del pubblico
+ListOfValidatedPublicMembers=Elenco dei membri del pubblico convalidati
+ErrorThisMemberIsNotPublic=Questo membro non è pubblico
+PublicMemberCard=Stati pubblico carta
+ShowTypeCard=Visualizza il tipo &#39;% s&#39;
+HTPasswordExport=htpassword la generazione del file
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

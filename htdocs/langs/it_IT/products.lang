@@ -133,3 +133,16 @@ RecordedProductsAndServices			    =Prodotti / servizi registrati
 GenerateThumb					    =Genera etichetta 
 ProductCanvasAbility				    =Uso estensioni speciali "canvas"
 ServiceNb					    =Servizio non %s
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+Book=Libro
+Books=Libri
+BookList=Elenco dei libri
+ListProductByPopularity=Elenco dei prodotti / servizi per popolarità
+Finished=Prodotto
+RowMaterial=Prima materiale
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

@@ -74,3 +74,14 @@ ProductsCategoriesShort				=Categorie prodotti
 ThisCategoryHasNoProduct			=Questa categoria non contiene alcun prodotto.
 ThisCategoryHasNoSupplier			=Questa categoria non contiene alcun fornitore.
 ThisCategoryHasNoCustomer			=Questa categoria non contiene alcun cliente.
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+AssignedToCustomer=Assegnato ad un cliente
+AssignedToTheCustomer=Assegnato al cliente
+InternalCategory=Inernal categoria
+CategoryContents=Categoria contenuto
+CategId=Categoria id
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser

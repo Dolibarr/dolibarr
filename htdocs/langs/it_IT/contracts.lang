@@ -75,3 +75,14 @@ TypeContact_contrat_internal_SALESREPFOLL	  =Rappresentante di vendita a seguito
 TypeContact_contrat_external_BILLING		  =Fatturazione contatto con i clienti
 TypeContact_contrat_external_CUSTOMER		  =In seguito a contatto con i clienti
 TypeContact_contrat_external_SALESREPSIGN	  =Firma del contratto di contatto con i clienti
+
+
+// Date 2009-01-18 19:41:54
+// START - Lines generated via parser
+// Reference language: en_US
+NoContracts=N. contratti
+MoveToAnotherContract=Sposta in un altro contratto di servizio.
+ConfirmMoveToAnotherContract=Ho scelto nuovo obiettivo contratto e confermare voglio passare questo servizio nel presente contratto.
+ConfirmMoveToAnotherContractQuestion=Scegli in cui contratto esistente (della stessa parte terza), che si desidera spostare il servizio di?
+// Date 2009-01-18 19:41:54
+// STOP - Lines generated via parser
