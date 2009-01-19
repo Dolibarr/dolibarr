@@ -225,7 +225,7 @@ DoTestSendHTML=Test trimiterea HTML
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Eroare, nu poate utilizator @ opţiune dacă secvenţa (aa) (mm) sau (AAAA) (mm) nu este în masca.
 UMask=UMask parametru pentru noi imagini pe Unix / Linux / BSD sistem de fişiere.
 UMaskExplanation=Acest parametru permite să se definească permissions stabilit, în mod implicit pe fişierele create de Dolibarr pe server (în timpul de încărcare, de exemplu). <br> Acesta trebuie să fie de octal valoare (de exemplu, 0666 înseamnă citi şi scrie pentru toată lumea). <br> Ce paramtre ne sert pas sous un serveur Windows.
-Module0Name=Utilizatori &amp; grupuri
+Module0Name=Utilizatori & grupuri
 Module0Desc=Utilizatori şi grupuri de management
 Module1Name=Terţi
 Module1Desc=Companiile şi persoanele de contact &quot;de gestionare a
@@ -702,7 +702,7 @@ FicheinterNumberingModules=Modulele de intervenţie de numerotare
 TemplatePDFInterventions=Carte de modele de documente de intervenţie
 WatermarkOnDraftInterventionCards=Watermark pe documente carte de intervenţie (în cazul în orice gol)
 ClickToDialSetup=Click pentru a Dial modul setup
-ClickToDialUrlDesc=Url called when a click on phone picto is done.  Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplac� par le t�l�phone de l'appel�<br><b>%%2$s</b> qui sera remplac� par le t�l�phone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplac� par votre login clicktodial (d�fini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplac� par votre mot de passe clicktodial (d�fini sur votre fiche utilisateur).
+ClickToDialUrlDesc=Url called when a click on phone picto is done.  Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplac� par le t�l�phone de l'appel�<br><b>%%2$s</b> qui sera remplac� par le t�l�phone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplac� par votre login clicktodial (d�fini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplac� par votre mot de passe clicktodial (d�fini sur votre fiche utilisateur).
 Bookmark4uSetup=Bookmark4u modul de configurare
 InterventionsSetup=Intervenţii de modul de configurare
 MembersSetup=Membrii modul de configurare
@@ -788,7 +788,7 @@ LDAPLdapMapping=LDAP Mapping
 LDAPFieldLoginUnix=Login (Unix)
 LDAPFieldLoginExample=Exemplu: Uid
 LDAPFilterConnection=Cautati filtru
-LDAPFilterConnectionExample=Example : &(objectClass=Exemplu: &amp; (objectClass = inetOrgPerson)
+LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Exemplu: samaccountname
 LDAPFieldFullname=Prenume Nume

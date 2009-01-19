@@ -609,7 +609,7 @@ TriggerActiveAsModuleActive=Trigger i denne filen er aktiv som <b>modulen% s</b>
 GeneratedPasswordDesc=Define her som regel du vil bruke til å generere nytt passord hvis du be om å få automatisk generert passord
 DictionnaryDesc=Define her referanse datas. Du kan fullføre forhåndsdefinert verdi med deg.
 ConstDesc=På denne siden kan du redigere alle andre parametere ikke tilgjengelig på tidligere sider. De er forbeholdt parametere for erfarne utviklere eller troubleshouting.
-OnceSetupFinishedCreateUsers=Advarsel, du er en Dolibarr administratorbrukeren. Administrator brukere er vant til oppsett Dolibarr. For en vanlig bruk av Dolibarr, er det anbefalt å bruke en ikke administratorbrukeren opprettes fra Users &amp; Grupper menyen.
+OnceSetupFinishedCreateUsers=Advarsel, du er en Dolibarr administratorbrukeren. Administrator brukere er vant til oppsett Dolibarr. For en vanlig bruk av Dolibarr, er det anbefalt å bruke en ikke administratorbrukeren opprettes fra Users & Grupper menyen.
 MiscellanousDesc=Define her alle andre parametere knyttet til sikkerhet.
 LimitsSetup=Grenser / Precision oppsett
 LimitsDesc=Du kan definere grenser, precisions og optimisations brukes av Dolibarr her
@@ -788,7 +788,7 @@ LDAPLdapMapping=LDAP kartverk
 LDAPFieldLoginUnix=Login (UNIX)
 LDAPFieldLoginExample=Eksempel: uid
 LDAPFilterConnection=Søkefilter
-LDAPFilterConnectionExample=Example : &(objectClass=Eksempel: &amp; (objectClass = inetOrgPerson)
+LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Eksempel: samaccountname
 LDAPFieldFullname=Fornavn Navn

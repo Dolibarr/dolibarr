@@ -790,7 +790,7 @@ LDAPLdapMapping=LDAP Mapping
 LDAPFieldLoginUnix=Login (UNIX)
 LDAPFieldLoginExample=Przykład: uid
 LDAPFilterConnection=Wyszukaj filtr
-LDAPFilterConnectionExample=Example : &(objectClass=Przykład: &amp; (objectClass = InetOrgPerson)
+LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Przykład: sAMAccountName
 LDAPFieldFullname=Imię i nazwisko

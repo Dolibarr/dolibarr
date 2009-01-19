@@ -611,7 +611,7 @@ TriggerActiveAsModuleActive=Triggers in dit bestand zijn actief als <b>module% s
 GeneratedPasswordDesc=Definieer hier de regel die u wilt gebruiken voor het genereren van nieuwe wachtwoord als u vragen om automatisch gegenereerd wachtwoord
 DictionnaryDesc=Definieer hier alle referentie data. U kunt vooraf gedefinieerde waarde met de jouwe.
 ConstDesc=Deze pagina kunt u alle andere parameters die niet beschikbaar zijn in de voorgaande pagina&#39;s. Ze zijn voorbehouden parameters voor geavanceerde ontwikkelaars of voor troubleshouting.
-OnceSetupFinishedCreateUsers=Waarschuwing, u bent een Dolibarr beheerder. Beheerder gebruikers worden gebruikt voor de installatie Dolibarr. Voor een normaal gebruik van Dolibarr, wordt aangeraden gebruik te maken van een niet-beheerder gebruiker aangemaakt Gebruikers Groepen &amp; menu.
+OnceSetupFinishedCreateUsers=Waarschuwing, u bent een Dolibarr beheerder. Beheerder gebruikers worden gebruikt voor de installatie Dolibarr. Voor een normaal gebruik van Dolibarr, wordt aangeraden gebruik te maken van een niet-beheerder gebruiker aangemaakt Gebruikers Groepen & menu.
 MiscellanousDesc=Definieer hier alle andere parameters die betrekking hebben op veiligheid.
 LimitsSetup=Grenzen / Precision setup
 LimitsDesc=U kunt definiëren grenzen, preciseringen en optimalisatie gebruikt door Dolibarr hier
@@ -790,7 +790,7 @@ LDAPLdapMapping=LDAP Mapping
 LDAPFieldLoginUnix=Login (Unix)
 LDAPFieldLoginExample=Voorbeeld: uid
 LDAPFilterConnection=Zoekfilter
-LDAPFilterConnectionExample=Example : &(objectClass=Voorbeeld: &amp; (objectClass = inetOrgPerson)
+LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Voorbeeld: sAMAccountName
 LDAPFieldFullname=Voornaam Naam

@@ -609,7 +609,7 @@ TriggerActiveAsModuleActive=Löst in dieser Datei sind als <b>Modul% s</b> ist a
 GeneratedPasswordDesc=Definieren Sie hier die Artikel die Sie verwenden möchten, um neues Passwort, wenn Sie fragen, ob die automatische Passwort
 DictionnaryDesc=Legen Sie hier alle Daten auf. Sie können mit Ihren vordefinierten Wert.
 ConstDesc=Auf dieser Seite können Sie bearbeiten alle anderen Parameter, die nicht in den vorherigen Seiten. Sie sind für fortgeschrittene Entwickler oder für troubleshouting.
-OnceSetupFinishedCreateUsers=Achtung, Sie sind ein Dolibarr Administrator. Administrator-Benutzer verwendet werden, um Dolibarr. Für eine übliche Verwendung von Dolibarr, wird empfohlen, die Verwendung einer nicht Administrator erstellt von &quot;Benutzer &amp; Gruppen&quot;-Menü.
+OnceSetupFinishedCreateUsers=Achtung, Sie sind ein Dolibarr Administrator. Administrator-Benutzer verwendet werden, um Dolibarr. Für eine übliche Verwendung von Dolibarr, wird empfohlen, die Verwendung einer nicht Administrator erstellt von &quot;Benutzer & Gruppen&quot;-Menü.
 MiscellanousDesc=Definieren Sie hier, alle anderen Parameter im Zusammenhang mit der Sicherheit.
 LimitsSetup=Limits / Präzisions-Setup
 LimitsDesc=Sie können festlegen, Grenzen, Präzision und Optimierungen von Dolibarr hier
@@ -788,7 +788,7 @@ LDAPLdapMapping=LDAP-Mapping
 LDAPFieldLoginUnix=Login (Unix)
 LDAPFieldLoginExample=Beispiel: uid
 LDAPFilterConnection=Suchfilter
-LDAPFilterConnectionExample=Example : &(objectClass=Beispiel: &amp; (objectClass = InetOrgPerson)
+LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba=Login (Samba, ActiveDirectory)
 LDAPFieldLoginSambaExample=Beispiel: sAMAccountName
 LDAPFieldFullname=Vorname Name

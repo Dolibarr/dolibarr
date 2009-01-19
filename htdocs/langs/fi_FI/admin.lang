@@ -225,7 +225,7 @@ DoTestSendHTML=Test lähettämällä HTML
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Virhe ei voi käyttäjä vaihtoehto @ jos SEQUENCE (yy) (mm) tai (vvvv) (mm) ei mask.
 UMask=UMask parametri uusia tiedostoja Unix / Linux / BSD-tiedostojärjestelmää.
 UMaskExplanation=Tämän parametrin avulla voit määrittää käyttöoikeudet asettaa oletuksena tiedostoja luotu Dolibarr palvelimelle (aikana ladata esimerkiksi). <br> Se on oktaali-arvo (esim. 0666 tarkoittaa, lukea ja kirjoittaa kaikki). <br> Ce paramtre ne Sert pas sous un serveur Windows.
-Module0Name=Käyttäjät &amp; ryhmät
+Module0Name=Käyttäjät & ryhmät
 Module0Desc=Käyttäjien ja ryhmien hallinta
 Module1Name=Kolmannet osapuolet
 Module1Desc=Yritykset ja yhteystiedot hallinto
@@ -609,7 +609,7 @@ TriggerActiveAsModuleActive=Käynnistäjät tähän tiedostoon ovat aktiivisia <
 GeneratedPasswordDesc=Määritä tässä joka sääntö, jota haluat käyttää luoda uuden salasanan, jos pyytää, että auto tuotti salasana
 DictionnaryDesc=Määritä tässä kaikki viittaukset datas. Voit täysin ennalta-arvon sinun.
 ConstDesc=Tällä sivulla voit muokata kaikkia muita muuttujia ei ole saatavilla edellinen sivua. Ne on varattu parametrit edistyneelle kehittäjät tai troubleshouting.
-OnceSetupFinishedCreateUsers=Varoitus, olet Dolibarr järjestelmänvalvojan käyttäjätili. Administrator käyttäjät ovat tottuneet setup Dolibarr. Jos kyseessä on tavanomainen käyttö Dolibarr, on suositeltavaa käyttää kuin järjestelmänvalvojan käyttäjätili luotu Käyttäjät &amp; ryhmät valikosta.
+OnceSetupFinishedCreateUsers=Varoitus, olet Dolibarr järjestelmänvalvojan käyttäjätili. Administrator käyttäjät ovat tottuneet setup Dolibarr. Jos kyseessä on tavanomainen käyttö Dolibarr, on suositeltavaa käyttää kuin järjestelmänvalvojan käyttäjätili luotu Käyttäjät & ryhmät valikosta.
 MiscellanousDesc=Määritä tässä kaikki muut parametrit, jotka liittyvät turvallisuuteen.
 LimitsSetup=Rajat / Precision setup
 LimitsDesc=Voit määrittää rajat, täsmennyksiä ja optimisations käyttää Dolibarr tästä
@@ -788,7 +788,7 @@ LDAPLdapMapping=LDAP Mapping
 LDAPFieldLoginUnix=Login (unix)
 LDAPFieldLoginExample=Esimerkki: uid
 LDAPFilterConnection=Hakusuodatin
-LDAPFilterConnectionExample=Example : &(objectClass=Esimerkki: &amp; (objectClass = inetOrgPerson)
+LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Esimerkki: samaccountname
 LDAPFieldFullname=Etunimi Nimi

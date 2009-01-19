@@ -611,7 +611,7 @@ TriggerActiveAsModuleActive=Udløser i denne fil er aktive som <b>modul% s</b> e
 GeneratedPasswordDesc=Definer her som regel, du vil bruge til at generere nye adgangskode, hvis du beder om at få automatisk genereret adgangskode
 DictionnaryDesc=Definer her alle reference oplysningerne. Du kan færdiggøre foruddefineret værdi med dine.
 ConstDesc=Denne side giver dig mulighed for at redigere alle andre parametre, som ikke findes i de foregående sider. De er forbeholdt parametre for avancerede udviklere eller for troubleshouting.
-OnceSetupFinishedCreateUsers=Advarsel, du er en Dolibarr administrator bruger. Administrator brugere er vant til opsætningen Dolibarr. For en almindelig brug af Dolibarr, anbefales det at bruge en ikke administrator bruger oprettet fra Brugere &amp; Grupper menuen.
+OnceSetupFinishedCreateUsers=Advarsel, du er en Dolibarr administrator bruger. Administrator brugere er vant til opsætningen Dolibarr. For en almindelig brug af Dolibarr, anbefales det at bruge en ikke administrator bruger oprettet fra Brugere & Grupper menuen.
 MiscellanousDesc=Definer her alle andre parametre med relation til sikkerhed.
 LimitsSetup=Grænseværdier / Precision setup
 LimitsDesc=Du kan definere grænser, præciseringer og optimeringer bruges af Dolibarr her
@@ -790,7 +790,7 @@ LDAPLdapMapping=LDAP Mapping
 LDAPFieldLoginUnix=Login (Unix)
 LDAPFieldLoginExample=Eksempel: uid
 LDAPFilterConnection=Søgefilter
-LDAPFilterConnectionExample=Example : &(objectClass=Eksempel: &amp; (objectClass = inetOrgPerson)
+LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Eksempel: samaccountname
 LDAPFieldFullname=Fornavn Navn
