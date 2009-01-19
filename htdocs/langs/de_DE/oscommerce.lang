@@ -1,21 +1,20 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 OSCommerce=OS Commerce
 OSCommerceSetup=OS-Commerce-Modul Setup
 OSCommerceSetupSaved=OS Commerce-Setup gespeichert
 OSCommerceServer=OS Commerce Server Host / IP
 OSCommerceDatabaseName=OS Commerce Datenbanknamen
-OSCommercePrefix=OS Commerce Tabellen-Pr‰fix
+OSCommercePrefix=OS Commerce Tabellen-Pr√§fix
 OSCommerceUser=OS Commerce Datenbank Login
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

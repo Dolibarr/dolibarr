@@ -1,30 +1,29 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 Accountancy=Accountancy
 AccountancyCard=Accountancy Karte
 Treasury=Treasury
 MenuFinancial=Finanzielle
-OptionMode=Option für die Buchhaltung
+OptionMode=Option fÃ¼r die Buchhaltung
 OptionModeTrue=Option Input-Ausgang
 OptionModeVirtual=Option Credits-Soll
-OptionModeTrueDesc=In diesem Zusammenhang, der Umsatz wird über Paiements (Zeitpunkt der Zahlungen). \ nDie Gültigkeit der Daten gewährleistet ist, nur dann, wenn die Buchhaltung geprüft werden durch die Eingabe / Ausgabe auf die Konten über Rechnungen.
-OptionModeVirtualDesc=In diesem Zusammenhang, der Umsatz wird über Rechnungen (Datum der Anerkennung). Wenn diese Rechnungen sind, unabhängig davon, ob sie gezahlt worden ist oder nicht, sie sind in der Umsatz-Ausgang.
-FeatureIsSupportedInInOutModeOnly=Feature nur in CREDITS-SCHULDEN Buchführungen (siehe Rechnungswesen-Modul-Konfiguration)
+OptionModeTrueDesc=In diesem Zusammenhang, der Umsatz wird Ã¼ber Paiements (Zeitpunkt der Zahlungen). \ nDie GÃ¼ltigkeit der Daten gewÃ¤hrleistet ist, nur dann, wenn die Buchhaltung geprÃ¼ft werden durch die Eingabe / Ausgabe auf die Konten Ã¼ber Rechnungen.
+OptionModeVirtualDesc=In diesem Zusammenhang, der Umsatz wird Ã¼ber Rechnungen (Datum der Anerkennung). Wenn diese Rechnungen sind, unabhÃ¤ngig davon, ob sie gezahlt worden ist oder nicht, sie sind in der Umsatz-Ausgang.
+FeatureIsSupportedInInOutModeOnly=Feature nur in CREDITS-SCHULDEN BuchfÃ¼hrungen (siehe Rechnungswesen-Modul-Konfiguration)
 Param=Setup
 AccountsGeneral=Konten
 Account=Konto
 Accounts=Konten
-BillsForSuppliers=Rechnungen für Lieferanten
+BillsForSuppliers=Rechnungen fÃ¼r Lieferanten
 Income=Ergebnis
 Outcome=Ergebnis
 ReportInOut=Ertrag / Ergebnis
@@ -34,7 +33,7 @@ Profit=Profit
 Balance=Balance
 Debit=Soll
 Credit=Credit
-Withdrawal=Rücktritt
+Withdrawal=RÃ¼cktritt
 Withdrawals=Entnahmen
 AmountHTVATRealReceived=HT gesammelt
 AmountHTVATRealPayed=HT bezahlt
@@ -45,7 +44,7 @@ VATSummary=MwSt. Zusammenfassung
 VATPayed=MwSt. bezahlt
 VATCollected=Mehrwertsteuer erhoben
 ToPay=Zu zahlen
-ToGet=Um zurück
+ToGet=Um zurÃ¼ck
 TaxAndDividendsArea=Steuern, Sozialabgaben und Dividenden Bereich
 SocialContribution=Sozialbeitrags
 SocialContributions=Sozialabgaben
@@ -53,7 +52,7 @@ MenuTaxAndDividends=Steuern und Dividenden
 MenuSocialContributions=Sozialabgaben
 MenuNewSocialContribution=Neuer Beitrag
 NewSocialContribution=Neue soziale Beitrag
-ContributionsToPay=Beiträge zu zahlen
+ContributionsToPay=BeitrÃ¤ge zu zahlen
 AccountancyTreasuryArea=Rechnungswesen / Treasury-Bereich
 AccountancySetup=Accountancy setup
 NewPayment=Neue Zahlungs -
@@ -73,7 +72,7 @@ VATPayments=MwSt-Zahlungen
 ShowVatPayment=Show MwSt. Zahlung
 TotalToPay=Total zu zahlen
 TotalVATReceived=Total Mehrwertsteuer erhalten
-CustomerAccountancyCode=Kunden Buchführungen Code
+CustomerAccountancyCode=Kunden BuchfÃ¼hrungen Code
 SupplierAccountancyCode=Accountacy Supplier Code
 AlreadyPayed=Bereits bezahlt
 AccountNumberShort=Konto-Nummer
@@ -83,7 +82,7 @@ SalesTurnover=Umsatz
 ByThirdParties=Bu Dritte
 ByUserAuthorOfInvoice=Mit Rechnung Autor
 AccountancyExport=Buchhaltung Export
-ErrorWrongAccountancyCodeForCompany=Bad Kunden Buchführungen für% s
+ErrorWrongAccountancyCodeForCompany=Bad Kunden BuchfÃ¼hrungen fÃ¼r% s
 SuppliersProductsSellSalesTurnover=Der Umsatz durch den Verkauf von Lieferanten Produkte.
 CheckReceipt=Anreise Anzahlung
 CheckReceiptShort=Anreise Anzahlung
@@ -94,20 +93,20 @@ NoWaitingChecks=Nr. Kontrollen erwartet Anzahlung.
 DateChequeReceived=Scheck Empfang Eingang Datum
 NbOfCheques=Zahl der Schecks
 PaySocialContribution=Einen sozialen Beitrag
-ConfirmPaySocialContribution=Sind Sie sicher, dass Sie für die Einstufung dieser sozialen Beitrag als bezahlt?
-DeleteSocialContribution=Löschen eines sozialen Beitrag
-ConfirmDeleteSocialContribution=Sind Sie sicher, dass Sie löschen möchten, dieser sozialen Beitrag leisten?
-ExportDataset_tax_1=Soziale Beiträge und Zahlungen
+ConfirmPaySocialContribution=Sind Sie sicher, dass Sie fÃ¼r die Einstufung dieser sozialen Beitrag als bezahlt?
+DeleteSocialContribution=LÃ¶schen eines sozialen Beitrag
+ConfirmDeleteSocialContribution=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten, dieser sozialen Beitrag leisten?
+ExportDataset_tax_1=Soziale BeitrÃ¤ge und Zahlungen
 AnnualSummaryDueDebtMode=Bilan des recettes et dpenses, rsum annuel, en <b>mode% sCrances-Dettes% s</b> dit <b>comptabilit d&#39;engagement.</b>
 AnnualSummaryInputOutputMode=Bilan des recettes et dpenses, rsum annuel, en <b>mode% sRecettes-Dpenses% s</b> dit <b>comptabilit de caisse.</b>
 AnnualByCompaniesDueDebtMode=Bilan des recettes et dpenses, dtail par tiers, en <b>mode% sCrances-Dettes% s</b> dit <b>comptabilit d&#39;engagement.</b>
 AnnualByCompaniesInputOutputMode=Bilan des recettes et dpenses, dtail par tiers, en <b>mode% sRecettes-Dpenses% s</b> dit <b>comptabilit de caisse.</b>
 SeeReportInInputOutputMode=Voir le <b>rapport% sRecettes-Dpenses% s</b> dit <b>comptabilit de caisse</b> pour un Calcul sur les paiements effectivement raliss
 SeeReportInDueDebtMode=Voir le <b>rapport% sCrances-Dettes% s</b> dit <b>comptabilit d&#39;engagement</b> pour un Calcul sur les factures Mises
-RulesResultDue=- Die Beträge verstehen sich einschließlich aller Steuern <br> - Es umfasst ausstehende Rechnungen, Spesen und Umsatzsteuer, ob sie bezahlt werden oder nicht. <br> - Es ist auf der Grundlage der Validierung Tag der Rechnungen und die Mehrwertsteuer und über die Fälligkeit der Kosten.
-RulesResultInOut=- Die Beträge verstehen sich einschließlich aller Steuern <br> - Es umfasst die tatsächlichen Zahlungen auf Rechnungen, Kosten und Mehrwertsteuer. <br> - Es ist auf der Grundlage der Termine für die Zahlung der Rechnungen, Aufwendungen ANF Mehrwertsteuer. <br>
+RulesResultDue=- Die BetrÃ¤ge verstehen sich einschlieÃŸlich aller Steuern <br> - Es umfasst ausstehende Rechnungen, Spesen und Umsatzsteuer, ob sie bezahlt werden oder nicht. <br> - Es ist auf der Grundlage der Validierung Tag der Rechnungen und die Mehrwertsteuer und Ã¼ber die FÃ¤lligkeit der Kosten.
+RulesResultInOut=- Die BetrÃ¤ge verstehen sich einschlieÃŸlich aller Steuern <br> - Es umfasst die tatsÃ¤chlichen Zahlungen auf Rechnungen, Kosten und Mehrwertsteuer. <br> - Es ist auf der Grundlage der Termine fÃ¼r die Zahlung der Rechnungen, Aufwendungen ANF Mehrwertsteuer. <br>
 RulesCADue=- Es umfasst die Kunden durch Rechnungen, ob sie bezahlt werden oder nicht. <br> - Es ist auf der Grundlage der Validierung Datum dieser Rechnungen. <br>
-RulesCAIn=- Es enthält alle effektiven Zahlungen der Rechnungen von Kunden. <br> - Es ist auf der Grundlage der Zeitpunkt der Zahlung dieser Rechnungen <br>
+RulesCAIn=- Es enthÃ¤lt alle effektiven Zahlungen der Rechnungen von Kunden. <br> - Es ist auf der Grundlage der Zeitpunkt der Zahlung dieser Rechnungen <br>
 VATReportByCustomersInInputOutputMode=Rapport par Client des TVA collectes et zahlt (TVA sur encaissement)
 VATReportByCustomersInDueDebtMode=Rapport par Client des TVA collectes et zahlt (TVA sur DBIT)
 VATReportByQuartersInInputOutputMode=Rapport par trimestre des TVA collectes et zahlt (TVA sur encaissement)
@@ -115,11 +114,11 @@ VATReportByQuartersInDueDebtMode=Rapport par trimestre des TVA collectes et zahl
 SeeVATReportInInputOutputMode=Voir le <b>rapport% sTVA encaissement% s</b> pour de Calcul Standard-Modus
 SeeVATReportInDueDebtMode=Voir le rapport <b>sur sTVA% DBIT% s-Modus</b> pour de Calcul mit Option sur les dbits
 RulesVATIn=- Pour les services, le rapport inclut les TVA des rglements effectivement reus ou mis en se basant sur la date du rglement. <br> - Pour les biens matriels, il inclut les TVA des factures de se basant sur la date de Validierung de la facture.
-RulesVATDue=- Pour les services, le rapport inclut les TVA des factures Gebühren, payés ou non de se basant sur la date de Validierung de ces factures. <br> - Pour les biens matriels, il inclut les TVA des factures de se basant sur la date de Validierung de la facture.
+RulesVATDue=- Pour les services, le rapport inclut les TVA des factures GebÃ¼hren, payÃ©s ou non de se basant sur la date de Validierung de ces factures. <br> - Pour les biens matriels, il inclut les TVA des factures de se basant sur la date de Validierung de la facture.
 OptionVatInfoModuleComptabilite=Remarque: Pour les biens matriels, il faudrait utiliser la date de livraison pour tre plus juste.
 PercentOfInvoice=%% / Rechnung
 Dispatch=Dispatching
 Dispatched=Versand
 ToDispatch=Zum Versand
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

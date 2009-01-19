@@ -1,22 +1,21 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 CountryFR=Frankreich
 CountryBE=Belgien
 CountryIT=Italien
 CountryES=Spanien
 CountryDE=Deutschland
 CountryCH=Suitzerland
-CountryGB=Großbritannien
+CountryGB=GroÃŸbritannien
 CountryIE=Irland
 CountryCN=China
 CountryTN=Tunesien
@@ -30,7 +29,7 @@ CountryNL=Niederlande
 CountryHU=Ungarn
 CountryRU=Russland
 CountrySE=Schweden
-CountryCI=Ivoiry Küste
+CountryCI=Ivoiry KÃ¼ste
 CountrySN=Senegal
 CountryAR=Argentinien
 CountryCM=Kamerun
@@ -50,13 +49,13 @@ CountryAQ=Antarktis
 CountryAG=Antigua und Barbuda
 CountryAM=Armenien
 CountryAW=Aruba
-CountryAT=Österreich
+CountryAT=Ã–sterreich
 CountryAZ=Aserbaidschan
 CountryBS=Bahamas
 CountryBH=Bahrain
 CountryBD=Bangladesch
 CountryBB=Barbados
-CountryBY=Weißrussland
+CountryBY=WeiÃŸrussland
 CountryBZ=Belize
 CountryBJ=Benin
 CountryBM=Bermuda
@@ -89,30 +88,30 @@ CountryHR=Kroatien
 CountryCU=Kuba
 CountryCY=Zypern
 CountryCZ=Tschechische Republik
-CountryDK=Dänemark
+CountryDK=DÃ¤nemark
 CountryDJ=Dschibuti
 CountryDM=Dominica
 CountryDO=Dominikanische Republik
 CountryEC=Ecuador
-CountryEG=Ägypten
+CountryEG=Ã„gypten
 CountrySV=El Salvador
-CountryGQ=Äquatorial-Guinea
+CountryGQ=Ã„quatorial-Guinea
 CountryER=Eritrea
 CountryEE=Estland
-CountryET=Äthiopien
+CountryET=Ã„thiopien
 CountryFK=Falkland-Inseln
-CountryFO=Färöer-Inseln
+CountryFO=FÃ¤rÃ¶er-Inseln
 CountryFJ=Fidschi-Inseln
 CountryFI=Finnland
-CountryGF=Französisch-Guayana
-CountryPF=Französisch-Polynesien
-CountryTF=Französische Südgebiete
+CountryGF=FranzÃ¶sisch-Guayana
+CountryPF=FranzÃ¶sisch-Polynesien
+CountryTF=FranzÃ¶sische SÃ¼dgebiete
 CountryGM=Gambia
 CountryGE=Georgien
 CountryGH=Ghana
 CountryGI=Gibraltar
 CountryGR=Griechenland
-CountryGL=Grönland
+CountryGL=GrÃ¶nland
 CountryGD=Grenada
 CountryGP=Guadeloupe
 CountryGU=Guam
@@ -138,7 +137,7 @@ CountryKZ=Kasachstan
 CountryKE=Kenia
 CountryKI=Kiribati
 CountryKP=Nordkorea
-CountryKR=Südkorea
+CountryKR=SÃ¼dkorea
 CountryKW=Kuwait
 CountryKG=Kyrghyztan
 CountryLA=Laotisch
@@ -173,7 +172,7 @@ CountryMM=Birma (Myanmar)
 CountryNA=Namibia
 CountryNR=Nauru
 CountryNP=Nepal
-CountryAN=Niederländische Antillen
+CountryAN=NiederlÃ¤ndische Antillen
 CountryNC=Neukaledonien
 CountryNZ=Neuseeland
 CountryNI=Nicaragua
@@ -181,12 +180,12 @@ CountryNE=Niger
 CountryNG=Nigeria
 CountryNU=Niue
 CountryNF=Norfolk Island
-CountryMP=Nördliche Marianen-Inseln
+CountryMP=NÃ¶rdliche Marianen-Inseln
 CountryNO=Norwegen
 CountryOM=Oman
 CountryPK=Pakistan
 CountryPW=Palau
-CountryPS=Palästinensische Gebiete, Besetzte
+CountryPS=PalÃ¤stinensische Gebiete, Besetzte
 CountryPA=Panama
 CountryPG=Papua-Neuguinea
 CountryPY=Paraguay
@@ -197,7 +196,7 @@ CountryPL=Polen
 CountryPR=Puerto Rico
 CountryQA=Katar
 CountryRE=Reunion
-CountryRO=Rumänien
+CountryRO=RumÃ¤nien
 CountryRW=Ruanda
 CountrySH=St. Helena
 CountryKN=Saint Kitts und Nevis
@@ -214,8 +213,8 @@ CountrySK=Slowakei
 CountrySI=Slowenien
 CountrySB=Salomonen
 CountrySO=Somalia
-CountryZA=Südafrika
-CountryGS=Süd-Georgien und Süd-Sandwich-Inseln
+CountryZA=SÃ¼dafrika
+CountryGS=SÃ¼d-Georgien und SÃ¼d-Sandwich-Inseln
 CountryLK=Sri Lanka
 CountrySD=Sudan
 CountrySR=Suriname
@@ -230,7 +229,7 @@ CountryTL=Timor-Leste
 CountryTK=Tokelau
 CountryTO=Tonga
 CountryTT=Trinidad und Tobago
-CountryTR=Türkei
+CountryTR=TÃ¼rkei
 CountryTM=Turkmenistan
 CountryTC=Turks-und Cailos Inseln
 CountryTV=Elliceanisch
@@ -265,7 +264,7 @@ CurrencyAUD=AU Dollar
 CurrencyCAD=CAN-Dollar
 CurrencyCHF=Schweizer Franken
 CurrencyEUR=Euro
-CurrencyFRF=Französische Franken
+CurrencyFRF=FranzÃ¶sische Franken
 CurrencyMAD=Dirham
 CurrencyMGA=Ariary
 CurrencyGBP=GB Pfund
@@ -273,5 +272,5 @@ CurrencyTND=TND
 CurrencyUSD=US-Dollar
 CurrencyXAF=CFA-Franc BEAC
 CurrencyXOF=CFA Francs BCEAO
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

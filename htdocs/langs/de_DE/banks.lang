@@ -1,15 +1,14 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 Bank=Bank
 Banks=Banken
 MenuBankCash=Bank / Kasse
@@ -31,30 +30,30 @@ SavingAccounts=Sparkonten
 ErrorBankLabelAlreadyExists=Kapitalbilanz Label existiert bereits
 BankBalance=Balance
 BalanceMinimalAllowed=Minimum erlaubt Gleichgewicht
-BalanceMinimalDesired=Minimale gewünschte Gleichgewicht
+BalanceMinimalDesired=Minimale gewÃ¼nschte Gleichgewicht
 InitialBankBalance=Erste Bilanz
 EndBankBalance=Endsaldo
 CurrentBalance=Aktuelle Bilanz
-FutureBalance=Künftige Gleichgewicht
+FutureBalance=KÃ¼nftige Gleichgewicht
 ShowAllTimeBalance=Show Balance von Anfang
-Reconciliation=Versöhnung
+Reconciliation=VersÃ¶hnung
 RIB=Bank Account Number
 IBAN=IBAN-Nummer
 BIC=BIC / SWIFT Nummer
-StandingOrders=Daueraufträge
+StandingOrders=DauerauftrÃ¤ge
 StandingOrder=Dauerauftrag
 Withdrawals=Entnahmen
-Withdrawal=Rücktritt
+Withdrawal=RÃ¼cktritt
 AccountStatement=Kontoauszug
 AccountStatementShort=Aussage
-AccountStatements=Kontoauszüge
-LastAccountStatements=Letzte Kontoauszüge
+AccountStatements=KontoauszÃ¼ge
+LastAccountStatements=Letzte KontoauszÃ¼ge
 Rapprochement=Reconciliate
 IOMonthlyReporting=Monatliche Meldung
 BankAccountDomiciliation=Konto-Adresse
 BankAccountOwner=Kontoinhaber Name
 BankAccountOwnerAddress=Konto-Inhaber-Adresse
-RIBControlError=Inetgrity Kontrolle der Werte nicht. Dies bedeutet, Informationen für das Konto-Nummer sind nicht vollständig oder falsch (Land überprüfen, Zahlen und IBAN).
+RIBControlError=Inetgrity Kontrolle der Werte nicht. Dies bedeutet, Informationen fÃ¼r das Konto-Nummer sind nicht vollstÃ¤ndig oder falsch (Land Ã¼berprÃ¼fen, Zahlen und IBAN).
 CreateAccount=Konto erstellen
 StandingOrderToProcess=Zur Bearbeitung
 StandingOrderProcessed=Verarbeitete
@@ -77,39 +76,39 @@ BankType2=Cash-Konto
 IfBankAccount=Wenn Bankkonto
 AccountsArea=Konten-Bereich
 AccountCard=Konto-Karte
-DeleteAccount=Account löschen
-ConfirmDeleteAccount=Sind Sie sicher, dass Sie löschen möchten, auf dieses Konto?
+DeleteAccount=Account lÃ¶schen
+ConfirmDeleteAccount=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten, auf dieses Konto?
 Account=Konto
 ByCategories=Nach Kategorien
 ByRubriques=Nach Kategorien
 BankTransactionByCategories=Bank-Transaktionen nach Kategorien
-BankTransactionForCategory=Bank-Transaktionen für die <b>Klasse% s</b>
+BankTransactionForCategory=Bank-Transaktionen fÃ¼r die <b>Klasse% s</b>
 RemoveFromRubrique=Nehmen Sie Verbindung mit Kategorie
-RemoveFromRubriqueConfirm=Sind Sie sicher, dass Sie entfernen möchten Zusammenhang zwischen der Transaktion und der Kategorie?
+RemoveFromRubriqueConfirm=Sind Sie sicher, dass Sie entfernen mÃ¶chten Zusammenhang zwischen der Transaktion und der Kategorie?
 ListBankTransactions=Liste der Transaktionen
 IdTransaction=Transaktions-ID
 BankTransactions=Bank-Transaktionen
 SearchTransaction=Suche Transaktion
 ListTransactions=US-Transaktionen
 ListTransactionsByCategory=US-Transaktion / Kategorie
-TransactionsToConciliate=Geschäfte zu vermitteln
+TransactionsToConciliate=GeschÃ¤fte zu vermitteln
 Conciliable=Conciliable
 Conciliate=Beschwichtigen
 Conciliation=Vermittlungsausschuss
 ConciliationForAccount=Beschwichtigen dieses Konto
-IncludeClosedAccount=Zählen Konten
-OnlyOpenedAccount=Nur Konten eröffnet
+IncludeClosedAccount=ZÃ¤hlen Konten
+OnlyOpenedAccount=Nur Konten erÃ¶ffnet
 AccountToCredit=Konto zu Krediten
 AccountToDebit=Konto zu belasten
-DisableConciliation=Deaktivieren Vermittlungsausschuss Funktion für dieses Konto
+DisableConciliation=Deaktivieren Vermittlungsausschuss Funktion fÃ¼r dieses Konto
 ConciliationDisabled=Vermittlungsausschuss-Funktion deaktiviert
-StatusAccountOpened=Geöffnet
+StatusAccountOpened=GeÃ¶ffnet
 StatusAccountClosed=Geschlossen
 AccountIdShort=Anzahl
 EditBankRecord=Eintrag bearbeiten
 LineRecord=Transaktionscode
 AddBankRecord=Add Transaktion
-AddBankRecordLong=Transaktion manuell hinzufügen
+AddBankRecordLong=Transaktion manuell hinzufÃ¼gen
 ConciliatedBy=Conciliated von
 DateConciliating=Beschwichtigen Datum
 BankLineConciliated=Transaktionscode conciliated
@@ -117,23 +116,23 @@ CustomerInvoicePayment=Kunde die Zahlung
 SupplierInvoicePayment=Lieferant Zahlung
 SocialContributionPayment=Sozialbeitrags Zahlung
 FinancialAccountJournal=Kapitalbilanz Zeitschrift
-BankTransfer=Überweisung
+BankTransfer=Ãœberweisung
 BankTransfers=Bank Transfers
-TransferDesc=Transfer von einem Konto auf ein anderes, Dolibarr schreibt beiden Sätze (eine Belastungsanzeige im Source-Konto und einen Kredit in Ziel Rechnung, der den gleichen Betrag. Das gleiche Etikett und Datum wird für diese Transaktion)
+TransferDesc=Transfer von einem Konto auf ein anderes, Dolibarr schreibt beiden SÃ¤tze (eine Belastungsanzeige im Source-Konto und einen Kredit in Ziel Rechnung, der den gleichen Betrag. Das gleiche Etikett und Datum wird fÃ¼r diese Transaktion)
 TransferFrom=Von
 TransferTo=Zu
-TransferFromToDone=Eine Übertragung <b>von% s bis% s von% s% s</b> wurde.
+TransferFromToDone=Eine Ãœbertragung <b>von% s bis% s von% s% s</b> wurde.
 CheckTransmitter=Transmitter
-ValidateCheckReceipt=Bestätigen Sie dieses Kontrollkästchen Eingang?
-ConfirmValidateCheckReceipt=Sind Sie sicher, dass Sie dieses Kontrollkästchen, um den Eingang, keine Änderung möglich sein wird, wenn dies geschieht?
-DeleteCheckReceipt=Löschen Sie dieses Kontrollkästchen Eingang?
-ConfirmDeleteCheckReceipt=Sind Sie sicher, dass Sie löschen möchten dieses Kontrollkästchen Eingang?
+ValidateCheckReceipt=BestÃ¤tigen Sie dieses KontrollkÃ¤stchen Eingang?
+ConfirmValidateCheckReceipt=Sind Sie sicher, dass Sie dieses KontrollkÃ¤stchen, um den Eingang, keine Ã„nderung mÃ¶glich sein wird, wenn dies geschieht?
+DeleteCheckReceipt=LÃ¶schen Sie dieses KontrollkÃ¤stchen Eingang?
+ConfirmDeleteCheckReceipt=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten dieses KontrollkÃ¤stchen Eingang?
 BankChecks=Bankschecks
-BankChecksToReceipt=Schecks warten für die Hinterlegung
+BankChecksToReceipt=Schecks warten fÃ¼r die Hinterlegung
 NumberOfCheques=Zahl der Schecks
-DeleteTransaction=Löschen Transaktion
-ConfirmDeleteTransaction=Sind Sie sicher, dass Sie löschen möchten, dieser Transaktion?
-ThisWillAlsoDeleteBankRecord=Dies wird auch zu löschen, die Bank-Transaktionen
+DeleteTransaction=LÃ¶schen Transaktion
+ConfirmDeleteTransaction=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten, dieser Transaktion?
+ThisWillAlsoDeleteBankRecord=Dies wird auch zu lÃ¶schen, die Bank-Transaktionen
 BankMovements=Bewegungen
 CashBudget=Cash-Haushalt
 PlannedTransactions=Geplante Transaktionen
@@ -143,10 +142,10 @@ TransactionWithOtherAccount=Konto transfert
 PaymentNumberUpdateSucceeded=Zahlung Anzahl erfolgreich aktualisiert
 PaymentNumberUpdateFailed=Die Zahlung konnte nicht aktualisiert werden
 PaymentDateUpdateSucceeded=Zahltag Update erfolgreich
-PaymentDateUpdateFailed=Zahltag können nicht aktualisiert werden
+PaymentDateUpdateFailed=Zahltag kÃ¶nnen nicht aktualisiert werden
 BankTransactionLine=Bank-Transaktion
 AllAccounts=Alle Bank / Kasse
-BackToAccount=Zurück zur Rechenschaft zu ziehen
-ShowAllAccounts=Show für alle
-// Date 2009-01-18 20:30:12
+BackToAccount=ZurÃ¼ck zur Rechenschaft zu ziehen
+ShowAllAccounts=Show fÃ¼r alle
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

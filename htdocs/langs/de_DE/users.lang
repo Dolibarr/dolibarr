@@ -1,15 +1,14 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 UserCard=User-Karte
 ContactCard=Kontakt-Karte
 GroupCard=Konzern-Karte
@@ -19,31 +18,31 @@ Permissions=Berechtigungen
 EditPassword=Passwort bearbeiten
 SendNewPassword=Neues Passwort senden
 ReinitPassword=Neues Passwort generieren
-PasswordChangedTo=Passwort geändert:% s
-SubjectNewPassword=Ihr neues Passwort für Dolibarr
-AvailableRights=Verfügbare Berechtigungen
+PasswordChangedTo=Passwort geÃ¤ndert:% s
+SubjectNewPassword=Ihr neues Passwort fÃ¼r Dolibarr
+AvailableRights=VerfÃ¼gbare Berechtigungen
 OwnedRights=Besitz Berechtigungen
 GroupRights=Gruppe Berechtigungen
 UserRights=Benutzerberechtigungen
 UserGUISetup=User-Display-Setup
 DisableUser=Deaktivieren
 DisableAUser=Deaktivieren Sie einen Benutzer
-DeleteUser=Löschen
-DeleteAUser=Löschen eines Benutzers
+DeleteUser=LÃ¶schen
+DeleteAUser=LÃ¶schen eines Benutzers
 DisableGroup=Deaktivieren
 DisableAGroup=Deaktivieren Sie eine Gruppe
 EnableAUser=Aktivieren Sie einen Benutzer
 EnableAGroup=Aktivieren Sie eine Gruppe
-DeleteGroup=Löschen
-DeleteAGroup=Löschen einer Gruppe
-ConfirmDisableUser=Sind Sie sicher, dass Sie deaktivieren möchten <b>Benutzer% s?</b>
-ConfirmDisableGroup=Sind Sie sicher, dass Sie deaktivieren möchten <b>Gruppe% s?</b>
-ConfirmDeleteUser=Sind Sie sicher, dass Sie löschen möchten <b>Benutzer% s?</b>
-ConfirmDeleteGroup=Sind Sie sicher, dass Sie löschen möchten <b>Gruppe% s?</b>
-ConfirmEnableUser=Sind Sie sicher, dass Sie möchten, können <b>Benutzer% s?</b>
-ConfirmEnableGroup=Sind Sie sicher, dass Sie aktivieren möchten <b>Gruppe% s?</b>
-ConfirmReinitPassword=Sind Sie sicher, dass Sie ein neues Passwort für <b>Benutzer% s?</b>
-ConfirmSendNewPassword=Sind Sie sicher, dass Sie erzeugen wollen und schicken Sie neues Passwort für <b>Benutzer% s?</b>
+DeleteGroup=LÃ¶schen
+DeleteAGroup=LÃ¶schen einer Gruppe
+ConfirmDisableUser=Sind Sie sicher, dass Sie deaktivieren mÃ¶chten <b>Benutzer% s?</b>
+ConfirmDisableGroup=Sind Sie sicher, dass Sie deaktivieren mÃ¶chten <b>Gruppe% s?</b>
+ConfirmDeleteUser=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten <b>Benutzer% s?</b>
+ConfirmDeleteGroup=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten <b>Gruppe% s?</b>
+ConfirmEnableUser=Sind Sie sicher, dass Sie mÃ¶chten, kÃ¶nnen <b>Benutzer% s?</b>
+ConfirmEnableGroup=Sind Sie sicher, dass Sie aktivieren mÃ¶chten <b>Gruppe% s?</b>
+ConfirmReinitPassword=Sind Sie sicher, dass Sie ein neues Passwort fÃ¼r <b>Benutzer% s?</b>
+ConfirmSendNewPassword=Sind Sie sicher, dass Sie erzeugen wollen und schicken Sie neues Passwort fÃ¼r <b>Benutzer% s?</b>
 NewUser=Neuer Benutzer
 CreateUser=Benutzer anlegen
 SearchAGroup=Suche eine Gruppe
@@ -62,49 +61,49 @@ ListOfGroups=Liste von Gruppen
 NewGroup=Neue Gruppe
 CreateGroup=Gruppe erstellen
 RemoveFromGroup=Entfernen aus Gruppe
-PasswordChangedAndSentTo=Passwort geändert und <b>an% s</b> gesendet.
-PasswordChangeRequestSent=Antrag auf eine Änderung das Passwort <b>für% s an% s</b> gesendet.
-MenuUsersAndGroups=Benutzer & Gruppen
+PasswordChangedAndSentTo=Passwort geÃ¤ndert und <b>an% s</b> gesendet.
+PasswordChangeRequestSent=Antrag auf eine Ã„nderung das Passwort <b>fÃ¼r% s an% s</b> gesendet.
+MenuUsersAndGroups=Benutzer &amp; Gruppen
 LastGroupsCreated=Letzte% s erstellt Gruppen
 LastUsersCreated=Letzte% s Benutzer
 ShowGroup=Show-Gruppe
 ShowUser=Benutzer anzeigen
 NonAffectedUsers=Nicht betroffen Benutzer
-UserModified=User erfolgreich geändert
-GroupModified=Gruppe erfolgreich geändert
+UserModified=User erfolgreich geÃ¤ndert
+GroupModified=Gruppe erfolgreich geÃ¤ndert
 PhotoFile=Foto-Datei
 UserWithDolibarrAccess=Benutzer mit Dolibarr Zugang
 ListOfUsersInGroup=Liste der Benutzer in dieser Gruppe
-ListOfGroupsForUser=Liste von Gruppen für diesen Benutzer
+ListOfGroupsForUser=Liste von Gruppen fÃ¼r diesen Benutzer
 UsersToAdd=Benutzer, um zu dieser Gruppe
 GroupsToAdd=Gruppen, um auf dieses Benutzers
 NoLogin=Kein Login
 CreateDolibarrLogin=Erstellen Dolibarr Konto
 LoginAccountDisable=Konto deaktiviert, ein neues Login, um es zu aktivieren.
 LoginAccountDisableInDolibarr=Konto deaktiviert in Dolibarr.
-LoginAccountDisableInLdap=Konto deaktiviert in der Domäne.
-UsePersonalValue=Verwenden Sie persönliche Wert
-GuiLanguage=Sprache für das Interface
+LoginAccountDisableInLdap=Konto deaktiviert in der DomÃ¤ne.
+UsePersonalValue=Verwenden Sie persÃ¶nliche Wert
+GuiLanguage=Sprache fÃ¼r das Interface
 InternalUser=Interne Benutzer
 MyInformations=Meine Daten
 ExportDataset_user_1=Dolibarr-Nutzern und Eigenschaften
 DomainUser=Domain-Benutzer% s
 Reactivate=Reaktivieren
-CreateInternalUserDesc=Dieses Formular erlaubt Ihnen, die Schaffung eines Benutzers innerhalb Ihres Unternehmens / Ihrer Stiftung. Um die Schaffung einer externen Nutzer (Kunden, Lieferanten, ...), Verwendung Schaltfläche &quot;Erstellen Dolibarr user &#39;von Dritten Kontaktkarte.
-InternalExternalDesc=Ein <b>interner</b> Benutzer ist ein Benutzer, der ist ein Teil Ihres Unternehmens / Ihrer Stiftung. <br> Ein <b>externer</b> Benutzer ist ein Kunde, Lieferant oder andere. <br><br> In beiden Fällen, Berechtigungen definiert Rechte über Dolibarr, auch externe Benutzer kann ein anderes Menü-Manager als interne Benutzer (siehe Home - Setup - Display)
+CreateInternalUserDesc=Dieses Formular erlaubt Ihnen, die Schaffung eines Benutzers innerhalb Ihres Unternehmens / Ihrer Stiftung. Um die Schaffung einer externen Nutzer (Kunden, Lieferanten, ...), Verwendung SchaltflÃ¤che &quot;Erstellen Dolibarr user &#39;von Dritten Kontaktkarte.
+InternalExternalDesc=Ein <b>interner</b> Benutzer ist ein Benutzer, der ist ein Teil Ihres Unternehmens / Ihrer Stiftung. <br> Ein <b>externer</b> Benutzer ist ein Kunde, Lieferant oder andere. <br><br> In beiden FÃ¤llen, Berechtigungen definiert Rechte Ã¼ber Dolibarr, auch externe Benutzer kann ein anderes MenÃ¼-Manager als interne Benutzer (siehe Home - Setup - Display)
 PermissionInheritedFromAGroup=Genehmigung erteilt, weil ineherited von einer Benutzer-Gruppe.
 IdPhoneCaller=Id Telefon Anrufer
 UserLogged=User% s verbunden
 NewUserCreated=User% s erstellt
-NewUserPassword=Passwort ändern für% s
-EventUserModified=User% s geändert
+NewUserPassword=Passwort Ã¤ndern fÃ¼r% s
+EventUserModified=User% s geÃ¤ndert
 UserDisabled=User% s deaktiviert
 UserEnabled=User% s aktiviert
 UserDeleted=User% s entfernt
 NewGroupCreated=Gruppe% s erstellt
-GroupModified=Gruppe% s geändert
+GroupModified=Gruppe% s geÃ¤ndert
 GroupDeleted=Gruppe% s entfernt
-ConfirmCreateContact=Sind Sie sicher, dass Yu wollen ein Dolibarr für diesen Kontakt?
+ConfirmCreateContact=Sind Sie sicher, dass Yu wollen ein Dolibarr fÃ¼r diesen Kontakt?
 LoginToCreate=Login erstellen
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

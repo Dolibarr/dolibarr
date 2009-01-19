@@ -1,48 +1,47 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 BoxLastRssInfos=RSS-Informationen
 BoxLastProducts=Letzte Produkte / Dienstleistungen
 BoxLastProductsInContract=Letzte vertraglich Produkte / Dienstleistungen
 BoxLastSupplierBills=Letzte Lieferanten Rechnungen
 BoxLastCustomerBills=Letzte Kunden Rechnungen
-BoxOldestUnpayedCustomerBills=Älteste unpayed Kunden Rechnungen
-BoxOldestUnpayedSupplierBills=Älteste unpayed Lieferanten Rechnungen
-BoxLastProposals=Letzte kommerzielle Vorschläge
+BoxOldestUnpayedCustomerBills=Ã„lteste unpayed Kunden Rechnungen
+BoxOldestUnpayedSupplierBills=Ã„lteste unpayed Lieferanten Rechnungen
+BoxLastProposals=Letzte kommerzielle VorschlÃ¤ge
 BoxLastProspects=Letzte Aussichten
 BoxLastCustomers=Letzte Kunden
-BoxLastCustomerOrders=Letzte Kundenaufträge
+BoxLastCustomerOrders=Letzte KundenauftrÃ¤ge
 BoxLastSuppliers=Letzte Lieferanten
-BoxLastBooks=Letzte Bücher
+BoxLastBooks=Letzte BÃ¼cher
 BoxLastActions=Letzte Aktionen
 BoxCurrentAccounts=Aktueller Saldo
 BoxSalesTurnover=Umsatz
 BoxTotalUnpayedCustomerBills=Insgesamt unpayed Kunden Rechnungen
 BoxTotalUnpayedSuppliersBills=Insgesamt unpayed Lieferanten Rechnungen
-BoxTitleLastBooks=Letzte% s aufgezeichnet Bücher
+BoxTitleLastBooks=Letzte% s aufgezeichnet BÃ¼cher
 BoxTitleNbOfCustomers=Nombre de-Client
 BoxTitleLastRssInfos=Letzte Neuigkeiten aus% s% s
-BoxTitleLastProducts=Letzte% s veränderte Produkte / Dienstleistungen
-BoxTitleLastCustomerOrders=Letzte% s geändert Kundenaufträge
+BoxTitleLastProducts=Letzte% s verÃ¤nderte Produkte / Dienstleistungen
+BoxTitleLastCustomerOrders=Letzte% s geÃ¤ndert KundenauftrÃ¤ge
 BoxTitleLastSuppliers=Letzte% s aufgezeichnet Lieferanten
 BoxTitleLastCustomers=Letzte% s aufgezeichnet Kunden
 BoxTitleLastCustomersOrProspects=Letzte% s aufgezeichnet Kunden oder Interessenten
-BoxTitleLastPropals=Letzte% s aufgezeichnet Vorschläge
+BoxTitleLastPropals=Letzte% s aufgezeichnet VorschlÃ¤ge
 BoxTitleLastCustomerBills=Letzte% s Kunden Rechnungen
-BoxTitleLastSupplierBills=
+BoxTitleLastSupplierBills=Letzte% s Lieferanten Rechnungen
 BoxTitleLastProspects=Letzte% s aufgezeichnet Aussichten
-BoxTitleLastProductsInContract=Letzte% s Derniers produits / Verträge
-BoxTitleOldestUnpayedCustomerBills=Älteste% s unpayed Kunden Rechnungen
-BoxTitleOldestUnpayedSupplierBills=Älteste% s unpayed Lieferanten Rechnungen
+BoxTitleLastProductsInContract=Letzte% s Derniers produits / VertrÃ¤ge
+BoxTitleOldestUnpayedCustomerBills=Ã„lteste% s unpayed Kunden Rechnungen
+BoxTitleOldestUnpayedSupplierBills=Ã„lteste% s unpayed Lieferanten Rechnungen
 BoxTitleCurrentAccounts=Leistungsbilanz der Salden
 BoxTitleSalesTurnover=Umsatz
 BoxTitleTotalUnpayedCustomerBills=Unpayed Kunden Rechnungen
@@ -53,11 +52,11 @@ NoRecordedBookmarks=No bookmarks defined. Click <a href=Keine Lesezeichen defini
 NoRecordedCustomers=Nr. aufgezeichnet Kunden
 BoxTitleLastActionsToDo=Letzte% s Aktionen zu tun
 NoActionsToDo=Nr. Aktionen zu tun
-NoRecordedOrders=Nr. erfasst Kunden Aufträge
-NoRecordedProposals=Nr. aufgenommenen Vorschläge
+NoRecordedOrders=Nr. erfasst Kunden AuftrÃ¤ge
+NoRecordedProposals=Nr. aufgenommenen VorschlÃ¤ge
 NoRecordedInvoices=Nr. erfasst Kunden Rechnungen
 NoUnpayedCustomerBills=Nr. unpayed Kunden Rechnungen
 NoRecordedSupplierInvoices=Nr. erfasst Lieferanten Rechnungen
 NoUnpayedSupplierBills=Nr. unpayed Lieferanten Rechnungen
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

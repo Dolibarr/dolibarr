@@ -1,92 +1,91 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
-Proposals=Kommerzielle Vorschl‰ge
+CHARSET=UTF-8
+Proposals=Kommerzielle Vorschl√§ge
 Proposal=Kommerzielle Vorschlag
-ProposalsDraft=Entwurf der Vorschl‰ge
+ProposalsDraft=Entwurf der Vorschl√§ge
 ProposalDraft=Entwurf der Vorschlag
-ProposalsOpened=Geˆffnet kommerzielle Vorschl‰ge
-Prop=Kommerzielle Vorschl‰ge
+ProposalsOpened=Ge√∂ffnet kommerzielle Vorschl√§ge
+Prop=Kommerzielle Vorschl√§ge
 CommercialProposal=Kommerzielle Vorschlag
-CommercialProposals=Kommerzielle Vorschl‰ge
+CommercialProposals=Kommerzielle Vorschl√§ge
 ProposalContact=Vorschlag Kontakt
 NewProp=Neue Vorschlag
 NewProposal=Neue Vorschlag
 NewPropal=Neuer Vorschlag
 Prospect=Prospect
 ProspectList=Prospect-Liste
-DeleteProp=Lˆschen der Vorschlag
-ValidateProp=Best‰tigen kommerzieller Vorschlag
+DeleteProp=L√∂schen der Vorschlag
+ValidateProp=Best√§tigen kommerzieller Vorschlag
 AddProp=Add Vorschlag
-ConfirmDeleteProp=Sind Sie sicher, dass Sie lˆschen mˆchten, dass dieses kommerzielle Vorschlag?
-ConfirmValidateProp=Sind Sie sicher, dass Sie f¸r die Validierung dieser kommerziellen Vorschlag?
-LastPropals=Letzte% s Vorschl‰ge
-LastClosedProposals=Letzte% s geschlossen Vorschl‰ge
-AllPropals=Alle Vorschl‰ge
-LastProposals=Letzte Vorschl‰ge
+ConfirmDeleteProp=Sind Sie sicher, dass Sie l√∂schen m√∂chten, dass dieses kommerzielle Vorschlag?
+ConfirmValidateProp=Sind Sie sicher, dass Sie f√ºr die Validierung dieser kommerziellen Vorschlag?
+LastPropals=Letzte% s Vorschl√§ge
+LastClosedProposals=Letzte% s geschlossen Vorschl√§ge
+AllPropals=Alle Vorschl√§ge
+LastProposals=Letzte Vorschl√§ge
 SearchAProposal=Suche einen Vorschlag
-ProposalsStatistics=Vorschl‰ge Handelsregister-Statistiken
+ProposalsStatistics=Vorschl√§ge Handelsregister-Statistiken
 NumberOfProposalsByMonth=Anzahl pro Monat
 AmountOfProposalsByMonthHT=Betrag pro Monat (nach Steuern)
-NbOfProposals=Zahl der Vorschl‰ge
+NbOfProposals=Zahl der Vorschl√§ge
 ShowPropal=Vorschlag anzeigen
 PropalsDraft=Drafts
-PropalsOpened=Geˆffnet
+PropalsOpened=Ge√∂ffnet
 PropalsNotBilled=Geschlossen nicht in Rechnung gestellt
 PropalStatusDraft=Entwurf (muss validiert)
-PropalStatusValidated=Validated (Vorschlag wird geˆffnet)
-PropalStatusOpened=Validated (Vorschlag wird geˆffnet)
+PropalStatusValidated=Validated (Vorschlag wird ge√∂ffnet)
+PropalStatusOpened=Validated (Vorschlag wird ge√∂ffnet)
 PropalStatusClosed=Geschlossen
 PropalStatusSigned=Unterzeichnet (auf Rechnung)
 PropalStatusNotSigned=Nicht unterzeichnet (geschlossen)
 PropalStatusBilled=Rechnung
 PropalStatusDraftShort=Entwurf
 PropalStatusValidatedShort=Validated
-PropalStatusOpenedShort=Geˆffnet
+PropalStatusOpenedShort=Ge√∂ffnet
 PropalStatusClosedShort=Geschlossen
 PropalStatusSignedShort=Unterschrieben
 PropalStatusNotSignedShort=Nicht unterzeichnet
 PropalStatusBilledShort=Rechnung
-PropalsToClose=Kommerzielle Vorschl‰ge schlieﬂen
-PropalsToBill=Unterschrieben kommerzielle Vorschl‰ge zur Rechnung
-ListOfProposals=Liste von Vorschl‰gen
+PropalsToClose=Kommerzielle Vorschl√§ge schlie√üen
+PropalsToBill=Unterschrieben kommerzielle Vorschl√§ge zur Rechnung
+ListOfProposals=Liste von Vorschl√§gen
 ActionsOnPropal=Aktionen auf Vorschlag
-NoOpenedPropals=Nr. erˆffnet kommerzielle Vorschl‰ge
-NoOtherOpenedPropals=Keine andere geˆffnet kommerzielle Vorschl‰ge
+NoOpenedPropals=Nr. er√∂ffnet kommerzielle Vorschl√§ge
+NoOtherOpenedPropals=Keine andere ge√∂ffnet kommerzielle Vorschl√§ge
 RefProposal=Kommerzielle Vorschlag ref
 SendPropalByMail=Senden kommerzieller Vorschlag per E-Mail
 FileNotUploaded=Die Datei wurde nicht hochgeladen
 FileUploaded=Die Datei wurde erfolgreich hochgeladen
 AssociatedDocuments=Dokumente im Zusammenhang mit dem Vorschlag:
-ErrorCantOpenDir=Verzeichnis kann nicht geˆffnet werden
-DateEndPropal=Datum Ende G¸ltigkeit
+ErrorCantOpenDir=Verzeichnis kann nicht ge√∂ffnet werden
+DateEndPropal=Datum Ende G√ºltigkeit
 DateEndPropalShort=Datum Ende
-ValidityDuration=G¸ltigkeitsdauer
-CloseAs=Schlieﬂen Sie mit dem Status
+ValidityDuration=G√ºltigkeitsdauer
+CloseAs=Schlie√üen Sie mit dem Status
 ClassifyBilled=Einordnen in Rechnung
 BuildBill=Build Rechnung
 RelatedBill=Verwandte Rechnung
 RelatedBills=Verwandte Rechnungen
 ErrorPropalNotFound=Propal% s nicht gefunden
-Estimate=Sch‰tzwert:
-EstimateShort=Sch‰tzung
-OtherPropals=Weitere Vorschl‰ge
+Estimate=Sch√§tzwert:
+EstimateShort=Sch√§tzung
+OtherPropals=Weitere Vorschl√§ge
 CopyPropalFrom=Erstellen kommerzieller Vorschlag durch Kopieren bestehender Vorschlag
-CreateEmptyPropal=Erstellen leer kommerzielle Vorschl‰ge vierge oder aus der Liste der Produkte / Dienstleistungen
-DefaultProposalDurationValidity=Standard-kommerziellen Vorschlag G¸ltigkeitsdauer (Tage)
-UseCustomerContactAsPropalRecipientIfExist=Verwenden Sie Kundenkontakt-Adresse definiert, wenn anstelle von Dritten Adresse als Vorschlag Empf‰nger-Adresse
+CreateEmptyPropal=Erstellen leer kommerzielle Vorschl√§ge vierge oder aus der Liste der Produkte / Dienstleistungen
+DefaultProposalDurationValidity=Standard-kommerziellen Vorschlag G√ºltigkeitsdauer (Tage)
+UseCustomerContactAsPropalRecipientIfExist=Verwenden Sie Kundenkontakt-Adresse definiert, wenn anstelle von Dritten Adresse als Vorschlag Empf√§nger-Adresse
 ClonePropal=Clone kommerziellen Vorschlag
 ConfirmClonePropal=Sind Sie sicher, dass Sie zu klonen dieser kommerziellen <b>Vorschlag% s?</b>
-DocModelAzurDescription=Eine vollst‰ndige Vorschlag Modell (logo. ..)
+DocModelAzurDescription=Eine vollst√§ndige Vorschlag Modell (logo. ..)
 DocModelJauneDescription=Jaune Vorschlag Modell
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

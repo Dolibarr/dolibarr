@@ -1,25 +1,24 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
-DomainPassword=Passwort für die Domain
-YouMustChangePassNextLogon=Passwort für <b>Benutzer% s</b> auf der <b>Domain% s</b> geändert werden muss.
-UserMustChangePassNextLogon=User muss sich ändern Kennwort für die Domäne% s
+CHARSET=UTF-8
+DomainPassword=Passwort fÃ¼r die Domain
+YouMustChangePassNextLogon=Passwort fÃ¼r <b>Benutzer% s</b> auf der <b>Domain% s</b> geÃ¤ndert werden muss.
+UserMustChangePassNextLogon=User muss sich Ã¤ndern Kennwort fÃ¼r die DomÃ¤ne% s
 LdapUacf_NORMAL_ACCOUNT=Benutzerkonto
-LdapUacf_DONT_EXPIRE_PASSWORD=Kennwort läuft nie ab
-LdapUacf_ACCOUNTDISABLE=Konto ist in der Domäne% s
-LDAPInformationsForThisContact=Informationen im LDAP-Datenbank für diesen Kontakt
-LDAPInformationsForThisUser=Informationen im LDAP-Datenbank für diesen Benutzer
-LDAPInformationsForThisGroup=Informationen im LDAP-Datenbank für diese Gruppe
-LDAPInformationsForThisMember=Informationen im LDAP-Datenbank für dieses Mitglied
+LdapUacf_DONT_EXPIRE_PASSWORD=Kennwort lÃ¤uft nie ab
+LdapUacf_ACCOUNTDISABLE=Konto ist in der DomÃ¤ne% s
+LDAPInformationsForThisContact=Informationen im LDAP-Datenbank fÃ¼r diesen Kontakt
+LDAPInformationsForThisUser=Informationen im LDAP-Datenbank fÃ¼r diesen Benutzer
+LDAPInformationsForThisGroup=Informationen im LDAP-Datenbank fÃ¼r diese Gruppe
+LDAPInformationsForThisMember=Informationen im LDAP-Datenbank fÃ¼r dieses Mitglied
 LDAPAttribute=LDAP-Attribut
 LDAPAttributes=LDAP-Attribute
 LDAPCard=LDAP-Karte
@@ -35,5 +34,5 @@ SynchronizeDolibarr2Ldap=Synchronisieren Sie Benutzer (Dolibarr -&gt; LDAP)
 UserSynchronized=Benutzer synchronisiert
 ForceSynchronize=Force Synchronisierung Dolibarr -&gt; LDAP
 ErrorFailedToReadLDAP=Fehler beim Lesen LDAP-Datenbank. LDAP-Setup-Check-Modul und Datenbank Barrierefreiheit.
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

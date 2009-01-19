@@ -1,15 +1,14 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 OrdersArea=Kunden Bestellungen Bereich
 SuppliersOrdersArea=Lieferanten Bestellungen Bereich
 OrderCard=Bestell-Karte
@@ -25,12 +24,12 @@ SupplierOrder=Lieferanten, um
 SuppliersOrders=Lieferanten-Bestellungen
 SuppliersOrdersRunning=Aktuelle Lieferanten Bestellungen
 CustomerOrder=Kundenauftrag
-CustomersOrders=Kundenauftr‰ge
+CustomersOrders=Kundenauftr√§ge
 CustomersOrdersRunning=Aktuelle Kunden-Bestellungen
-CustomersOrdersAndOrdersLines=Kunden-Bestellungen und Auftr‰ge &quot;Linien
-OrdersToValid=Bestellungen auf g¸ltige
+CustomersOrdersAndOrdersLines=Kunden-Bestellungen und Auftr√§ge &quot;Linien
+OrdersToValid=Bestellungen auf g√ºltige
 OrdersToBill=Bestellungen auf Rechnung
-OrdersInProcess=Auftr‰ge in Bearbeitung
+OrdersInProcess=Auftr√§ge in Bearbeitung
 OrdersToProcess=Bestellungen zu bearbeiten
 StatusOrderCanceledShort=Storniert
 StatusOrderDraftShort=Entwurf
@@ -64,39 +63,39 @@ Discount=Discount
 CreateOrder=Ordnung
 RefuseOrder=Ablehnen, um
 ApproveOrder=Akzeptauftrag
-ValidateOrder=Best‰tigen, um
-DeleteOrder=Lˆschen
+ValidateOrder=Best√§tigen, um
+DeleteOrder=L√∂schen
 CancelOrder=Abbrechen, um
-AddOrder=Hinzuf¸gen, um
+AddOrder=Hinzuf√ºgen, um
 AddToMyOrders=Meine Bestellungen
-AddToOtherOrders=In den anderen Auftr‰gen
+AddToOtherOrders=In den anderen Auftr√§gen
 ShowOrder=Anzeigen, um
-NoOpenedOrders=Nr. erˆffnet Bestellungen
-NoOtherOpenedOrders=Keine andere geˆffnet Bestellungen
-OtherOrders=Andere Auftr‰ge
-LastOrders=Letzte% s Auftr‰ge
-LastModifiedOrders=Letzte% s ge‰ndert Bestellungen
+NoOpenedOrders=Nr. er√∂ffnet Bestellungen
+NoOtherOpenedOrders=Keine andere ge√∂ffnet Bestellungen
+OtherOrders=Andere Auftr√§ge
+LastOrders=Letzte% s Auftr√§ge
+LastModifiedOrders=Letzte% s ge√§ndert Bestellungen
 LastClosedOrders=Letzte% s geschlossen Bestellungen
 AllOrders=Alle Bestellungen
 NbOfOrders=Anzahl der Bestellungen
 OrdersStatistics=Bestellungen &#39;Statistik
 OrdersStatisticsSuppliers=Lieferanten Bestellungen &quot;Statistiken
 NumberOfOrdersByMonth=Anzahl der Bestellungen pro Monat
-AmountOfOrdersByMonthHT=Anzahl der Auftr‰ge pro Monat (nach Steuern)
-ListOfOrders=Liste der Auftr‰ge
-CloseOrder=Schlieﬂen, um
-ConfirmCloseOrder=Sind Sie sicher, dass Sie wollen, schlieﬂen Sie dieses um? Sobald ein Auftrag abgeschlossen ist, kann es nur in Rechnung gestellt werden.
-ConfirmCloseOrderIfSending=Sind Sie sicher, dass Sie wollen, schlieﬂen Sie dieses um? Sie m¸ssen einen Auftrag nur dann, wenn die Schifffahrt gesperrt werden.
-ConfirmDeleteOrder=Sind Sie sicher, dass Sie diese Bestellung lˆschen mˆchten?
-ConfirmValidateOrder=Sind Sie sicher, dass Sie f¸r die Validierung dieser Reihenfolge unter dem <b>Namen% s?</b>
-ConfirmCancelOrder=Sind Sie sicher, dass Sie abbrechen mˆchten diese bestellen?
-ConfirmMakeOrder=Sind Sie sicher, dass Sie best‰tigen, dass Sie diese, um <b>auf% s?</b>
+AmountOfOrdersByMonthHT=Anzahl der Auftr√§ge pro Monat (nach Steuern)
+ListOfOrders=Liste der Auftr√§ge
+CloseOrder=Schlie√üen, um
+ConfirmCloseOrder=Sind Sie sicher, dass Sie wollen, schlie√üen Sie dieses um? Sobald ein Auftrag abgeschlossen ist, kann es nur in Rechnung gestellt werden.
+ConfirmCloseOrderIfSending=Sind Sie sicher, dass Sie wollen, schlie√üen Sie dieses um? Sie m√ºssen einen Auftrag nur dann, wenn die Schifffahrt gesperrt werden.
+ConfirmDeleteOrder=Sind Sie sicher, dass Sie diese Bestellung l√∂schen m√∂chten?
+ConfirmValidateOrder=Sind Sie sicher, dass Sie f√ºr die Validierung dieser Reihenfolge unter dem <b>Namen% s?</b>
+ConfirmCancelOrder=Sind Sie sicher, dass Sie abbrechen m√∂chten diese bestellen?
+ConfirmMakeOrder=Sind Sie sicher, dass Sie best√§tigen, dass Sie diese, um <b>auf% s?</b>
 GenerateBill=Generate Rechnung
 ClassifyBilled=Einordnen &quot;Rechnung&quot;
 ComptaCard=Accountancy Karte
 DraftOrders=Entwurf Bestellungen
 RelatedOrders=Verwandte Bestellungen
-OnProcessOrders=Am Auftr‰ge
+OnProcessOrders=Am Auftr√§ge
 RefOrder=Artikel-Nr. Auftrag
 RefCustomerOrder=Artikel-Nr. Kundenauftrag
 CustomerOrder=Kundenauftrag
@@ -106,8 +105,8 @@ ActionsOnOrder=Aktionen auf, um
 NoArticleOfTypeProduct=Kein Artikel vom Typ &quot;Produkt&quot; so nicht lieferbaren Artikel zu dieser Bestellung
 OrderMode=Bestell-Methode
 AuthorRequest=Anfrage Autor
-UseCustomerContactAsOrderRecipientIfExist=Verwenden Sie Kundenkontakt-Adresse definiert, wenn anstelle von Dritten Adresse als Empf‰nger-Adresse, um
-RunningOrders=Bestellungen ¸ber Prozess
+UseCustomerContactAsOrderRecipientIfExist=Verwenden Sie Kundenkontakt-Adresse definiert, wenn anstelle von Dritten Adresse als Empf√§nger-Adresse, um
+RunningOrders=Bestellungen √ºber Prozess
 UserWithApproveOrderGrant=Useres, die mit &quot;billigen Bestellungen&quot; Erlaubnis.
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON nicht definiert
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON nicht definiert
@@ -121,8 +120,8 @@ OrderSource4=Fax-Kampagne
 OrderSource5=Kommerzielle
 OrderSource6=Lagern
 QtyOrdered=Anzahl bestellt
-AddDeliveryCostLine=F¸gen Sie eine Lieferung Kosten Linie zeigt das Gewicht der Bestellung
-PDFEinsteinDescription=Eine vollst‰ndige Um-Modell (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn oder yy est l&#39;annÈe, le mois et mm nnnn un compteur sequentiel ohne Bruch et sans remise e 0
-// Date 2009-01-18 20:30:12
+AddDeliveryCostLine=F√ºgen Sie eine Lieferung Kosten Linie zeigt das Gewicht der Bestellung
+PDFEinsteinDescription=Eine vollst√§ndige Um-Modell (logo. ..)
+MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn oder yy est l&#39;ann√©e, le mois et mm nnnn un compteur sequentiel ohne Bruch et sans remise e 0
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

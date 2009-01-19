@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ class DolibarrModules
 				{
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_generator (rowid,name,classfile,class) VALUES ";
 					$sql .= "(".$doc[0].",'".addslashes($doc[1])."','".$doc[2]."','".$doc[3]."');";
-						
+
 					$result=$this->db->query($sql);
 					if (! $result)
 					{
@@ -188,7 +188,7 @@ class DolibarrModules
 
 		// Supprime les liens de pages en onglets issus de modules
 		$err+=$this->delete_tabs();
-		
+
 		// Supprime les boites de la liste des boites disponibles
 		$err+=$this->delete_boxes();
 
@@ -357,12 +357,13 @@ class DolibarrModules
 	{
 		$err = 0;
 
-		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero.";";
-		$this->db->query($sql_del);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero.";";
+		dolibarr_syslog("DolibarrModules::_dbactive sql=".$sql, LOG_DEBUG);
+		$this->db->query($sql);
 
-		$sql ="INSERT INTO ".MAIN_DB_PREFIX."dolibarr_modules (numero,active,active_date,active_version)";
-		$sql .= " VALUES (";
-		$sql .= $this->numero.",1,".$this->db->idate(mktime()).",'".$this->version."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."dolibarr_modules (numero,active,active_date,active_version)";
+		$sql.= " VALUES (";
+		$sql.= $this->numero.",1,".$this->db->idate(mktime()).",'".$this->version."')";
 		dolibarr_syslog("DolibarrModules::_dbactive sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
 
@@ -378,9 +379,9 @@ class DolibarrModules
 	{
 		$err = 0;
 
-		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero;
 		dolibarr_syslog("DolibarrModules::_dbactive sql=".$sql, LOG_DEBUG);
-		$this->db->query($sql_del);
+		$this->db->query($sql);
 
 		return $err;
 	}
@@ -394,10 +395,11 @@ class DolibarrModules
 	{
 		$err = 0;
 
-		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."'";
-		$this->db->query($sql_del);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."'";
+		dolibarr_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
+		$this->db->query($sql);
 
-		$sql ="INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
         ('".$this->const_name."','1',0)";
 		dolibarr_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		if (!$this->db->query($sql))
@@ -417,9 +419,9 @@ class DolibarrModules
 	{
 		$err = 0;
 
-		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."'";
-		dolibarr_syslog("DolibarrModules::_unactive sql=".$sql_del);
-		$this->db->query($sql_del);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."'";
+		dolibarr_syslog("DolibarrModules::_unactive sql=".$sql);
+		$this->db->query($sql);
 
 		return $err;
 	}
@@ -437,7 +439,7 @@ class DolibarrModules
 		global $db,$conf;
 
 		include_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
-		
+
 		$ok = 1;
 		foreach($conf->dol_document_root as $dirroot)
 		{
@@ -445,7 +447,7 @@ class DolibarrModules
 			{
 				$dir = $dirroot.$reldir;
 				$ok = 0;
-	
+
 				// Run llx_mytable.sql files
 				$handle=opendir($dir);
 				if ($handle)
@@ -459,7 +461,7 @@ class DolibarrModules
 					}
 					closedir($handle);
 				}
-	
+
 				// Run llx_mytable.key.sql files
 				$handle=opendir($dir);
 				if ($handle)
@@ -473,7 +475,7 @@ class DolibarrModules
 					}
 					closedir($handle);
 				}
-				
+
 				if ($error == 0)
 				{
 					$ok = 1;
@@ -484,7 +486,7 @@ class DolibarrModules
 		return $ok;
 	}
 
-	
+
 	/**
 	 *	\brief      Insere les boites associees au module dans llx_boxes_def
 	 *	\return     int     Nombre d'erreurs (0 si ok)
@@ -673,7 +675,7 @@ class DolibarrModules
 	function insert_tabs()
 	{
 		$err=0;
-		
+
 		if (! empty($this->tabs))
 		{
 			$i=0;
@@ -697,7 +699,7 @@ class DolibarrModules
 		}
 		return $err;
 	}
-	
+
 	/**
 	 *	\brief      Insere les constantes associees au module dans llx_const
 	 *	\return     int     Nombre d'erreurs (0 si ok)
@@ -853,7 +855,7 @@ class DolibarrModules
 	function insert_menus()
 	{
 		global $user;
-		 
+
 		require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
 
 		$err=0;

@@ -1,48 +1,47 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 ExportsArea=Bereich Export
 ImportArea=Import
-NewExport=Neue Exportmärkte
+NewExport=Neue ExportmÃ¤rkte
 NewImport=Neue Import -
 ExportableDatas=Exportable Datenbestand
-ImportableDatas=Einfuhrbeschränkung Datenbestand
-SelectExportDataSet=Wählen Sie Datensatz exportieren wollen ...
-SelectExportFields=Wählen Sie Felder, die Sie exportieren wollen, oder wählen Sie einen vordefinierten Export profil
-SaveExportModel=Speichern Sie diese Export-Profil, wenn Sie planen, um sie später wieder verwenden ...
+ImportableDatas=EinfuhrbeschrÃ¤nkung Datenbestand
+SelectExportDataSet=WÃ¤hlen Sie Datensatz exportieren wollen ...
+SelectExportFields=WÃ¤hlen Sie Felder, die Sie exportieren wollen, oder wÃ¤hlen Sie einen vordefinierten Export profil
+SaveExportModel=Speichern Sie diese Export-Profil, wenn Sie planen, um sie spÃ¤ter wieder verwenden ...
 ExportModelName=Export Profilnamen
 ExportModelSaved=Export-Profil gespeichert unter dem <b>Namen% s.</b>
 ExportableFields=Exportable Felder
 ExportedFields=Exportierte Felder
 DatasetToExport=Datensatz exportieren
 Dataset=Dataset
-ChooseFieldsOrdersAndTitle=Wählen Sie Felder, um ...
+ChooseFieldsOrdersAndTitle=WÃ¤hlen Sie Felder, um ...
 FieldsOrder=Felder, um
 FieldsTitle=Felder Titel
-ChooseExportFormat=Wählen Sie den Export-Format
+ChooseExportFormat=WÃ¤hlen Sie den Export-Format
 NowClickToGenerateToBuildExportFile=Nun, klicken Sie auf &quot;Generieren&quot;, um Export-Datei ...
-AvailableFormats=Formate verfügbar
+AvailableFormats=Formate verfÃ¼gbar
 LibraryUsed=Librairie
 LibraryVersion=Version
 Step=Schritt
 FormatedImport=Import-Assistent
-FormatedImportDesc1=Dieser Bereich erlaubt die Einfuhr persönlichen Daten, mit Hilfe eines Assistenten, die Sie im Prozess ohne technische Kenntnisse.
-FormatedImportDesc2=Erster Schritt ist die Wahl eines Königs von Daten, die Sie laden wollen, dann Datei zu laden, dann wählen Sie die Felder, die Sie laden wollen.
+FormatedImportDesc1=Dieser Bereich erlaubt die Einfuhr persÃ¶nlichen Daten, mit Hilfe eines Assistenten, die Sie im Prozess ohne technische Kenntnisse.
+FormatedImportDesc2=Erster Schritt ist die Wahl eines KÃ¶nigs von Daten, die Sie laden wollen, dann Datei zu laden, dann wÃ¤hlen Sie die Felder, die Sie laden wollen.
 FormatedExport=Export-Assistent
 FormatedExportDesc1=Dieser Bereich erlaubt es, die Ausfuhr personalisierten Daten, mit Hilfe eines Assistenten, die Sie im Prozess ohne technische Kenntnisse.
-FormatedExportDesc2=Erster Schritt ist die Wahl eines vordefinierten Datenbestand, dann wählen, welche Felder Sie in Ihrem Ergebnis-Dateien, und die Reihenfolge.
-FormatedExportDesc3=Wenn die Daten für den Export ausgewählt haben, können Sie festlegen, Output-Datei-Format exportieren möchten Sie Ihre Daten an.
+FormatedExportDesc2=Erster Schritt ist die Wahl eines vordefinierten Datenbestand, dann wÃ¤hlen, welche Felder Sie in Ihrem Ergebnis-Dateien, und die Reihenfolge.
+FormatedExportDesc3=Wenn die Daten fÃ¼r den Export ausgewÃ¤hlt haben, kÃ¶nnen Sie festlegen, Output-Datei-Format exportieren mÃ¶chten Sie Ihre Daten an.
 Sheet=Blatt
-NoImportableData=Nr. Einfuhrbeschränkung Daten (kein Modul mit Definitionen für Daten-Importe)
+NoImportableData=Nr. EinfuhrbeschrÃ¤nkung Daten (kein Modul mit Definitionen fÃ¼r Daten-Importe)
 FileSuccessfullyBuilt=Export-Datei erzeugt
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

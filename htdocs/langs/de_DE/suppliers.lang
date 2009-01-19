@@ -1,18 +1,17 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 Suppliers=Lieferanten
 Supplier=Lieferant
-AddSupplier=Hinzufügen eines Lieferanten
+AddSupplier=HinzufÃ¼gen eines Lieferanten
 SupplierRemoved=Lieferant entfernt
 SuppliersInvoice=Lieferanten Rechnung
 SuppliersInvoices=Lieferanten Rechnungen
@@ -24,8 +23,8 @@ OrderDate=Bestell-Datum
 BuyingPrice=Kaufpreis
 AddSupplierPrice=Add Lieferant Preis
 ChangeSupplierPrice=Wechsel des Lieferanten Preis
-ErrorQtyTooLowForThisSupplier=Menge zu gering für diesen Lieferanten oder kein Preis definiert zu diesem Produkt für diesen Anbieter
-ErrorSupplierCountryIsNotDefined=Land für diese Anbieter ist nicht definiert. Korrigieren Sie diese zuerst.
+ErrorQtyTooLowForThisSupplier=Menge zu gering fÃ¼r diesen Lieferanten oder kein Preis definiert zu diesem Produkt fÃ¼r diesen Anbieter
+ErrorSupplierCountryIsNotDefined=Land fÃ¼r diese Anbieter ist nicht definiert. Korrigieren Sie diese zuerst.
 ProductHasAlreadyReferenceInThisSupplier=Dieses Produkt hat bereits einen Hinweis in diesem Lieferanten
 NoRecordedSuppliers=Nr. Lieferanten erfasst
 SupplierPayment=Lieferant Zahlung
@@ -33,15 +32,15 @@ SuppliersArea=Lieferanten Bereich
 RefSupplierShort=Artikel-Nr. Lieferanten
 ExportDataset_fournisseur_1=Lieferanten Rechnungen und Rechnungen Liste &quot;Linien
 ExportDataset_fournisseur_2=Lieferanten Rechnungen und Zahlungen
-ApproveThisOrder=Bestätigen Sie diese, um
+ApproveThisOrder=BestÃ¤tigen Sie diese, um
 ConfirmApproveThisOrder=Sind Sie sicher, dass Sie die Genehmigung dieser Reihenfolge?
 DenyingThisOrder=Verweigerung dieser Reihenfolge
 ConfirmDenyingThisOrder=Sind Sie sicher, dass Sie diese, um zu leugnen?
-ConfirmCancelThisOrder=Sind Sie sicher, dass Sie abbrechen möchten diese bestellen?
+ConfirmCancelThisOrder=Sind Sie sicher, dass Sie abbrechen mÃ¶chten diese bestellen?
 AddCustomerOrder=Anlegen Kundenauftrag
 AddCustomerInvoice=Erstellen Kunden Rechnung
 AddSupplierOrder=Erstellen Lieferanten, um
 AddSupplierInvoice=Erstellen Lieferanten Rechnung
-ListOfSupplierProductForSupplier=Liste der Produkte und Preise für <b>Anbieter% s</b>
-// Date 2009-01-18 20:30:12
+ListOfSupplierProductForSupplier=Liste der Produkte und Preise fÃ¼r <b>Anbieter% s</b>
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

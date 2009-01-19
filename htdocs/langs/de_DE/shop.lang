@@ -1,15 +1,14 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 Shop=Shop
 ShopWeb=Web-Shop
 LastOrders=Letzte Bestellungen
@@ -19,5 +18,5 @@ LastCustomers=Letzte Kunden
 OSCommerceShop=OsCommerce Shop
 OSCommerce=OSCommerce
 AddProd=Online-Verkauf
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

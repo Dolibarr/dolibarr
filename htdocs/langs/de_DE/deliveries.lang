@@ -1,15 +1,14 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 Delivery=Lieferung
 Deliveries=Lieferungen
 DeliveryCard=Liefer-Karte
@@ -29,6 +28,6 @@ ToAndDate=To___________________________________ am ____ / _____ / __________
 GoodStatusDeclaration=Haben die oben genannten Waren in gutem Zustand,
 Deliverer=Lieferant:
 Sender=Absender
-Recipient=Empf‰nger
-// Date 2009-01-18 20:30:12
+Recipient=Empf√§nger
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

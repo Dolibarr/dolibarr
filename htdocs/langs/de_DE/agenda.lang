@@ -1,17 +1,16 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 Actions=Aktionen
-ActionsArea=Bereich Maﬂnahmen (Veranstaltungen und Aufgaben)
+ActionsArea=Bereich Ma√ünahmen (Veranstaltungen und Aufgaben)
 Agenda=Agenda
 Agendas=Tagesordnungen
 Calendar=Kalender
@@ -22,23 +21,23 @@ Events=Veranstaltungen
 ListOfActions=Liste der Veranstaltungen
 Location=Standort
 SearchAnAction=Suche eine Aktion / Aufgabe
-MenuToDoActions=Alle unvollst‰ndige Aktionen
+MenuToDoActions=Alle unvollst√§ndige Aktionen
 MenuDoneActions=Alle Aktionen beendet
-MenuToDoMyActions=Mein unvollst‰ndig Aktionen
+MenuToDoMyActions=Mein unvollst√§ndig Aktionen
 MenuDoneMyActions=Meine Aktionen beendet
 ListOfEvents=Liste der Dolibarr Veranstaltungen
 ActionsAskedBy=Aktionen, die von
-ActionsToDoBy=Maﬂnahmen betroffen
-ActionsDoneBy=Maﬂnahmen durch
+ActionsToDoBy=Ma√ünahmen betroffen
+ActionsDoneBy=Ma√ünahmen durch
 AllMyActions=Alle meine Handlungen / Aufgaben
 AllActions=Toutes les actions / Aufgaben
 ViewList=Liste anzeigen
 ViewCal=Kalender anzeigen
 ViewWithPredefinedFilters=Ansicht mit vordefinierten Filtern
-AutoActions=Automatische Bef¸llung der Tagesordnung
-AgendaAutoActionDesc=Definieren Sie hier, f¸r die Sie Dolibarr, um automatisch eine Aktion in der Agenda. Wenn nichts aktiviert ist (Standard), nur manuellen Aktionen werden in der Agenda.
-AgendaSetupOtherDesc=Diese Seite ermˆglicht die Konfiguration anderer Parameter der Tagesordnung Modul.
-ActionsEvents=Veranstaltungen, f¸r die Dolibarr wird eine Aktion in der Agenda automatisch
+AutoActions=Automatische Bef√ºllung der Tagesordnung
+AgendaAutoActionDesc=Definieren Sie hier, f√ºr die Sie Dolibarr, um automatisch eine Aktion in der Agenda. Wenn nichts aktiviert ist (Standard), nur manuellen Aktionen werden in der Agenda.
+AgendaSetupOtherDesc=Diese Seite erm√∂glicht die Konfiguration anderer Parameter der Tagesordnung Modul.
+ActionsEvents=Veranstaltungen, f√ºr die Dolibarr wird eine Aktion in der Agenda automatisch
 PropalValidatedInDolibarr=Vorschlag validiert
 InvoiceValidatedInDolibarr=Rechnung validiert
 OrderValidatedInDolibarr=Bestell-validiert
@@ -49,12 +48,12 @@ DateActionDoneStart=Real Beginn
 DateActionDoneEnd=Real Enddatum
 DateActionStart=Beginn
 DateActionEnd=Enddatum
-AgendaUrlOptions1=Auﬂerdem kˆnnen Sie folgende Parameter zum Filtern der Ausgabe:
-AgendaUrlOptions2=<b>login=<b>login =% s</b> zu beschr‰nken, Ausgabe an, die durch Maﬂnahmen, die zu oder von <b>Benutzer% s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina =% s,</b> um sich auf Maﬂnahmen beschr‰nken, Ausgabe von <b>Benutzer% s.</b>
-AgendaUrlOptions4=<b>logint=<b>logint =% s</b> zu beschr‰nken, sich auf Maﬂnahmen, die Ausgabe auf <b>Benutzer% s.</b>
-AgendaUrlOptions5=<b>logind=<b>logind =% s,</b> um sich auf Maﬂnahmen beschr‰nken, Ausgabe von <b>Benutzer% s.</b>
+AgendaUrlOptions1=Au√üerdem k√∂nnen Sie folgende Parameter zum Filtern der Ausgabe:
+AgendaUrlOptions2=<b>login=<b>login =% s</b> zu beschr√§nken, Ausgabe an, die durch Ma√ünahmen, die zu oder von <b>Benutzer% s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% s,</b> um sich auf Ma√ünahmen beschr√§nken, Ausgabe von <b>Benutzer% s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% s</b> zu beschr√§nken, sich auf Ma√ünahmen, die Ausgabe auf <b>Benutzer% s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind =% s,</b> um sich auf Ma√ünahmen beschr√§nken, Ausgabe von <b>Benutzer% s.</b>
 AgendaShowBirthdayEvents=Show Geburtstag Kontakte
 AgendaHideBirthdayEvents=Ausblenden Geburtstag Kontakte
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

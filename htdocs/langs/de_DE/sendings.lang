@@ -1,15 +1,14 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 RefSending=Artikel-Nr. Senden
 Sending=Senden
 Sendings=Sendungen
@@ -42,17 +41,17 @@ StatusSendingValidated=Validated (Produkte-Schiff oder bereits im Lieferumfang)
 StatusSendingDraftShort=Entwurf
 StatusSendingValidatedShort=Validated
 SendingSheet=Senden Blatt
-Carriers=Träger
+Carriers=TrÃ¤ger
 Carrier=Carrier
-CarriersArea=Träger Bereich
-NewCarrier=Neuer Träger
-ConfirmDeleteSending=Sind Sie sicher, dass Sie löschen möchten, senden diese?
+CarriersArea=TrÃ¤ger Bereich
+NewCarrier=Neuer TrÃ¤ger
+ConfirmDeleteSending=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten, senden diese?
 ConfirmValidateSending=Sind Sie sicher, dass Sie diese valdate senden?
-ConfirmCancelSending=Sind Sie sicher, dass Sie abbrechen möchten diese senden?
+ConfirmCancelSending=Sind Sie sicher, dass Sie abbrechen mÃ¶chten diese senden?
 GenericTransport=Generic Verkehr
 Enlevement=Kunden bekommen von
 DocumentModelSimple=Einfache Dokument-Modell
 WarningNoQtyLeftToSend=Achtung, keine Produkte, aber noch nicht verschickt.
-NumRefModelJade=Zurück eine Referenznummer mit Format BLYY00001, ... wo ist JJ Jahr. Zahl am Ende ist nicht auf Null zurückgesetzt.
-// Date 2009-01-18 20:30:12
+NumRefModelJade=ZurÃ¼ck eine Referenznummer mit Format BLYY00001, ... wo ist JJ Jahr. Zahl am Ende ist nicht auf Null zurÃ¼ckgesetzt.
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

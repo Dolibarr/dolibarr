@@ -1,35 +1,34 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
-ContractsArea=Vertr‰ge Bereich
-ListOfContracts=Liste der Vertr‰ge
-LastContracts=Letzte% s ge‰ndert Vertr‰ge
-AllContracts=Alle Vertr‰ge
+CHARSET=UTF-8
+ContractsArea=Vertr√§ge Bereich
+ListOfContracts=Liste der Vertr√§ge
+LastContracts=Letzte% s ge√§ndert Vertr√§ge
+AllContracts=Alle Vertr√§ge
 ContractCard=Auftrags-Karte
 ContractStatus=Auftrags-Status
-ContractStatusNotRunning=Nicht ausgef¸hrt
+ContractStatusNotRunning=Nicht ausgef√ºhrt
 ContractStatusRunning=Running
 ContractStatusDraft=Entwurf
 ContractStatusValidated=Validated
 ContractStatusClosed=Geschlossen
-ServiceStatusInitial=Nicht ausgef¸hrt
+ServiceStatusInitial=Nicht ausgef√ºhrt
 ServiceStatusRunning=Running
 ServiceStatusLate=Laufen, abgelaufen
 ServiceStatusClosed=Geschlossen
 ServicesLegend=Service Legende
-Contracts=Vertr‰ge
+Contracts=Vertr√§ge
 Contract=Vertrag
 ContractContacts=Contract Kontakte
-NoContracts=Keine Vertr‰ge
+NoContracts=Keine Vertr√§ge
 MenuServices=Services
 MenuInactiveServices=Dienstleistungen, die nicht aktiv
 MenuRunningServices=Laufende Dienste
@@ -38,29 +37,29 @@ MenuClosedServices=Geschlossen Dienstleistungen
 NewContract=Neuer Auftrag
 AddContract=Add Vertrag
 SearchAContract=Suche einen Vertrag
-DeleteAContract=Lˆschen eines Auftrags
-CloseAContract=Schlieﬂen Sie einen Vertrag
-ConfirmDeleteAContract=Sind Sie sicher, dass Sie lˆschen mˆchten, diesen Vertrag und alle seine Dienste?
+DeleteAContract=L√∂schen eines Auftrags
+CloseAContract=Schlie√üen Sie einen Vertrag
+ConfirmDeleteAContract=Sind Sie sicher, dass Sie l√∂schen m√∂chten, diesen Vertrag und alle seine Dienste?
 ConfirmValidateContract=Sind Sie sicher, dass Sie, um diesen Vertrag?
-ConfirmCloseContract=Dies schlieﬂt alle Dienste (aktiv oder nicht). Sind Sie sicher, dass Sie diesen Vertrag zu schlieﬂen?
-ConfirmCloseService=Sind Sie sicher, dass Sie wollen, schlieﬂen Sie dieses mit <b>Datum% s?</b>
+ConfirmCloseContract=Dies schlie√üt alle Dienste (aktiv oder nicht). Sind Sie sicher, dass Sie diesen Vertrag zu schlie√üen?
+ConfirmCloseService=Sind Sie sicher, dass Sie wollen, schlie√üen Sie dieses mit <b>Datum% s?</b>
 ValidateAContract=Validate einen Vertrag
 ActivateService=Aktivieren Service
-ConfirmActivateService=Sind Sie sicher, dass Sie mˆchten, aktivieren Sie diesen Service mit Datum <b>von% s?</b>
+ConfirmActivateService=Sind Sie sicher, dass Sie m√∂chten, aktivieren Sie diesen Service mit Datum <b>von% s?</b>
 DateContract=Contract Date
 DateServiceActivate=Datum der Zustellung Aktivierung
 DateServiceUnactivate=Datum der Zustellung unactivation
-DateServiceStart=Datum f¸r den Beginn des Dienstes
-DateServiceEnd=Termin f¸r Ende des Servicemen¸s
+DateServiceStart=Datum f√ºr den Beginn des Dienstes
+DateServiceEnd=Termin f√ºr Ende des Servicemen√ºs
 ShowContract=Zeige Vertrag
 ListOfServices=Liste der Dienstleistungen
 ListOfRunningContractsLines=Liste der laufenden Vertrag Linien
 ListOfRunningServices=Liste der Dienste
-NotActivatedServices=Nicht aktiviert Dienstleistungen (unter validiert Vertr‰ge)
-BoardNotActivatedServices=Services zu aktivieren unter validiert Vertr‰ge
-LastContracts=Letzte% Vertr‰ge
+NotActivatedServices=Nicht aktiviert Dienstleistungen (unter validiert Vertr√§ge)
+BoardNotActivatedServices=Services zu aktivieren unter validiert Vertr√§ge
+LastContracts=Letzte% Vertr√§ge
 LastActivatedServices=Letzte% s aktiviert Dienstleistungen
-LastModifiedServices=Letzte% s ge‰ndert Dienstleistungen
+LastModifiedServices=Letzte% s ge√§ndert Dienstleistungen
 EditServiceLine=Bearbeiten Service-Line
 ContractStartDate=Beginn
 ContractEndDate=Enddatum
@@ -73,21 +72,21 @@ DateStartRealShort=Real Beginn
 DateEndReal=Real Enddatum
 DateEndRealShort=Real Enddatum
 NbOfServices=Zahl der Dienste
-CloseService=Schlieﬂen Service
+CloseService=Schlie√üen Service
 ServicesNomberShort=% s (e)
 RunningServices=Laufende Dienste
 BoardRunningServices=Abgelaufen Dienste
 ServiceStatus=Status des Dienstes
-DraftContracts=Drafts Vertr‰ge
-CloseRefusedBecauseOneServiceActive=Kann nicht geschlossen werden, wie es ist mindestens eine ÷ffnung der Dienstleistungsm‰rkte auf
-CloseAllContracts=Schlieﬂen Sie alle Vertr‰ge
+DraftContracts=Drafts Vertr√§ge
+CloseRefusedBecauseOneServiceActive=Kann nicht geschlossen werden, wie es ist mindestens eine √ñffnung der Dienstleistungsm√§rkte auf
+CloseAllContracts=Schlie√üen Sie alle Vertr√§ge
 MoveToAnotherContract=Verschieben in einen anderen Service-Vertrag.
-ConfirmMoveToAnotherContract=Ich w‰hlte neues Ziel Vertrag und best‰tigen Ich mˆchte diesen Dienst in diesem Vertrag.
-ConfirmMoveToAnotherContractQuestion=W‰hlen Sie in dem bestehenden Vertrag (von derselben dritten Partei), die Sie verschieben mˆchten diesen Service an?
+ConfirmMoveToAnotherContract=Ich w√§hlte neues Ziel Vertrag und best√§tigen Ich m√∂chte diesen Dienst in diesem Vertrag.
+ConfirmMoveToAnotherContractQuestion=W√§hlen Sie in dem bestehenden Vertrag (von derselben dritten Partei), die Sie verschieben m√∂chten diesen Service an?
 TypeContact_contrat_internal_SALESREPSIGN=Vertreter unterzeichnet Vertrag
 TypeContact_contrat_internal_SALESREPFOLL=Vertriebsmitarbeiter Follow-up Vertrag
 TypeContact_contrat_external_BILLING=Billing Kunden Kontakt
 TypeContact_contrat_external_CUSTOMER=Follow-up Kunden Kontakt
 TypeContact_contrat_external_SALESREPSIGN=Unterzeichnung Vertrag Kundenkontakt
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

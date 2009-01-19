@@ -1,44 +1,43 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 Intervention=Intervention
 Interventions=Interventionen
 InterventionCard=Intervention Karte
 NewIntervention=Neue Intervention
-AddIntervention=Hinzufügen Interventionsstelle
+AddIntervention=HinzufÃ¼gen Interventionsstelle
 ListOfInterventions=Liste der Eingriffe
 EditIntervention=Herausgeber Intervention
 LastInterventions=Letzte% s Interventionen
 AllInterventions=Alle Interventionen
 CreateDraftIntervention=Erstellen Entwurf
-CustomerDoesNotHavePrefix=Kunde nicht hat, ein Präfix
+CustomerDoesNotHavePrefix=Kunde nicht hat, ein PrÃ¤fix
 InterventionContact=Intervention Kontakt
-DeleteIntervention=Löschen Intervention
+DeleteIntervention=LÃ¶schen Intervention
 ValidateIntervention=Validate Intervention
-DeleteInterventionLine=Intervention Zeile löschen
-ConfirmDeleteIntervention=Sind Sie sicher, dass Sie löschen möchten diese Intervention?
+DeleteInterventionLine=Intervention Zeile lÃ¶schen
+ConfirmDeleteIntervention=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten diese Intervention?
 ConfirmValidateIntervention=Sind Sie sicher, dass Sie, um diese Intervention?
-ConfirmModifyIntervention=Sind Sie sicher, dass Sie ändern möchten diese Intervention?
-ConfirmDeleteInterventionLine=Sind Sie sicher, dass Sie löschen möchten, diese Intervention Linie?
+ConfirmModifyIntervention=Sind Sie sicher, dass Sie Ã¤ndern mÃ¶chten diese Intervention?
+ConfirmDeleteInterventionLine=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten, diese Intervention Linie?
 NameAndSignatureOfInternalContact=Name und Unterschrift der Zwischenzeit:
 NameAndSignatureOfExternalContact=Name und Unterschrift des Kunden:
-DocumentModelStandard=Standard-Dokument für Interventionen
+DocumentModelStandard=Standard-Dokument fÃ¼r Interventionen
 TypeContact_fichinter_internal_INTERREPFOLL=Vertreter Follow-up Intervention
 TypeContact_fichinter_internal_INTERVENING=Intervenieren
 TypeContact_fichinter_external_BILLING=Billing Kunden Kontakt
 TypeContact_fichinter_external_CUSTOMER=Follow-up Kunden Kontakt
 ArcticNumRefModelDesc1=Generic Anzahl Modell
 ArcticNumRefModelError=Fehler beim aktivieren
-PacificNumRefModelDesc1=Zurück NUMERO mit Format% syymm-nnnn wo ist JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und keine Rückkehr auf 0
+PacificNumRefModelDesc1=ZurÃ¼ck NUMERO mit Format% syymm-nnnn wo ist JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und keine RÃ¼ckkehr auf 0
 PacificNumRefModelError=Eine Intervention Karte, beginnend mit $ syymm existiert bereits und ist nicht kompatibel mit diesem Modell der Reihe. Entfernen oder umbenennen, um dieses Modul.
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

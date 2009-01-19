@@ -48,7 +48,7 @@ class langAutoParser {
 			$destPath = $this->langDir.$this->destLang.self::DIR_SEPARATOR.$file;
 			$fileContent = file($refPath,FILE_IGNORE_NEW_LINES |
 FILE_SKIP_EMPTY_LINES);
-			print "Processing file " . $file . "<br>\n";
+			print "Processing file " . $file . ", found ".sizeof($fileContent)." records<br>\n";
 			// Check destination file presence
 			if ( ! file_exists( $destPath ) ){
 				// No file presente generate file

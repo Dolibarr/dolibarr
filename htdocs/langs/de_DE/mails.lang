@@ -1,48 +1,47 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 Mailing=EMailing
 EMailing=EMailing
 Mailings=EMailings
 EMailings=EMailings
 MailCard=EMailing Karte
 MailTargets=Ziele
-MailRecipients=Empf‰nger
-MailRecipient=Empf‰nger
+MailRecipients=Empf√§nger
+MailRecipient=Empf√§nger
 MailTitle=Titel
 MailFrom=Absender
 MailErrorsTo=Fehler zu
 MailReply=Antwort an
-MailTo=Empf‰nger (n)
+MailTo=Empf√§nger (n)
 MailCC=Kopie an
 MailCCC=Cache-Kopie zu
 MailTopic=E-Mail Thema
 MailText=Nachricht
-MailFile=Angeh‰ngte Dateien
+MailFile=Angeh√§ngte Dateien
 MailMessage=E-Mail-Text
 ShowEMailing=Zeige E-Mail
 ListOfEMailings=Liste der emailings
 NewMailing=Neue E-Mail
 EditMailing=Bearbeiten Sie E-Mail
-DeleteMailing=Lˆschen Sie E-Mail
-DeleteAMailing=Lˆschen einer E-Mail
+DeleteMailing=L√∂schen Sie E-Mail
+DeleteAMailing=L√∂schen einer E-Mail
 PreviewMailing=E-Mail-Vorschau
 PrepareMailing=Bereiten Sie eine E-Mail
 CreateMailing=Erstellen Sie eine E-Mail
-MailingDesc=Auf dieser Seite kˆnnen Sie senden emailings zu einer Gruppe von Menschen.
+MailingDesc=Auf dieser Seite k√∂nnen Sie senden emailings zu einer Gruppe von Menschen.
 MailingResult=Senden von E-Mails zu
 TestMailing=Test-E-Mail
-ValidMailing=G¸ltige E-Mail
-ApproveMailing=Best‰tigen Sie E-Mail
+ValidMailing=G√ºltige E-Mail
+ApproveMailing=Best√§tigen Sie E-Mail
 MailingStatusDraft=Entwurf
 MailingStatusValidated=Validated
 MailingStatusApproved=Genehmigt
@@ -52,53 +51,53 @@ MailingStatusSentCompletely=Gesendet komplett
 MailingStatusError=Fehler
 MailingStatusNotSent=Nicht gesendet
 MailSuccessfulySent=E-Mail erfolgreich gesendet (von% s bis% s)
-ErrorMailRecipientIsEmpty=E-Mail-Empf‰nger ist leer
-WarningNoEMailsAdded=Keine neuen E-Mail an einen Empf‰nger in den auf der Liste.
+ErrorMailRecipientIsEmpty=E-Mail-Empf√§nger ist leer
+WarningNoEMailsAdded=Keine neuen E-Mail an einen Empf√§nger in den auf der Liste.
 ConfirmValidMailing=Sind Sie sicher, dass Sie, um diese E-Mail?
-ConfirmDeleteMailing=Sind Sie sicher, dass Sie lˆschen mˆchten emailling?
-NbOfRecipients=Anzahl der Empf‰nger
+ConfirmDeleteMailing=Sind Sie sicher, dass Sie l√∂schen m√∂chten emailling?
+NbOfRecipients=Anzahl der Empf√§nger
 NbOfUniqueEMails=Zahl der einzigartigen E-Mails
 NbOfEMails=Nb von E-Mails
-TotalNbOfDistinctRecipients=Anzahl der Empf‰nger
-NoTargetYet=Keine Empf‰nger noch (Gehen Sie auf die Registerkarte &quot;Empf‰nger&quot;)
-AddRecipients=Empf‰nger hinzuf¸gen
-RemoveRecipient=Entfernen Empf‰nger
+TotalNbOfDistinctRecipients=Anzahl der Empf√§nger
+NoTargetYet=Keine Empf√§nger noch (Gehen Sie auf die Registerkarte &quot;Empf√§nger&quot;)
+AddRecipients=Empf√§nger hinzuf√ºgen
+RemoveRecipient=Entfernen Empf√§nger
 CommonSubstitutions=Gemeinsame Ersetzungen
 YouCanAddYourOwnPredefindedListHere=So erstellen Sie Ihre E-Mail-Selector-Modul, siehe htdocs / includes / modules / Mailings / README.
 EMailTestSubstitutionReplacedByGenericValues=Bei der Verwendung von Test-Modus, Vertauschungen Variablen werden durch generische Werte
 MailingAddFile=Bringen Sie diese Datei
-NoAttachedFiles=Keine angeh‰ngten Dateien
+NoAttachedFiles=Keine angeh√§ngten Dateien
 MailingModuleDescContactCompanies=Kontakte aller Dritte (Kunden, Aussicht, Lieferanten, ...)
 MailingModuleDescDolibarrUsers=Alle Dolibarr Nutzer mit E-Mails
 MailingModuleDescFundationMembers=Stiftung Mitglieder mit E-Mails
 MailingModuleDescEmailsFromFile=E-Mails von einem Text-Datei (E-Mail, Name, Nachname)
 MailingModuleDescContactsCategories=Kontakte von Dritten (nach Kategorie)
 LineInFile=Zeile% s in der Datei
-RecipientSelectionModules=Definiert Anforderungen f¸r Empf‰nger Auswahl
-MailSelectedRecipients=Ausgew‰hlte Empf‰nger
+RecipientSelectionModules=Definiert Anforderungen f√ºr Empf√§nger Auswahl
+MailSelectedRecipients=Ausgew√§hlte Empf√§nger
 MailingArea=EMailings Bereich
 LastMailings=Letzte% s emailings
 TargetsStatistics=Ziele Statistiken
 NbOfCompaniesContacts=Unique Kontakte von Unternehmen
-MailNoChangePossible=Empf‰nger f¸r validierte E-Mail kann nicht ge‰ndert werden
+MailNoChangePossible=Empf√§nger f√ºr validierte E-Mail kann nicht ge√§ndert werden
 SearchAMailing=Mailing-Suche
 SendMailing=Senden Sie eine E-Mail
 SendMail=E-Mail versenden
 SentBy=Gesendet von
-MailingNeedCommand=F¸r Wertpapiere, Grund, senden Sie eine E-Mail kann nur von der Kommandozeile aus. Fragen Sie Ihren Administrator, um den folgenden Befehl ein, um die E-Mail an alle Empf‰nger:
-MailingNeedCommand2=Sie kˆnnen jedoch senden sie online, indem Sie Parameter MAILING_LIMIT_SENDBYWEB mit dem Wert von max Anzahl der Emails, die Sie senden mˆchten, von Sitzung.
-ConfirmSendingEmailing=Sind Sie sicher, dass Sie senden mˆchten, Mailing? <br> Online-Versand von emailings begrenzt sind aus Sicherheitsgr¸nden <b>an% s</b> Empf‰nger per Session.
-TargetsReset=Liste lˆschen
-ToClearAllRecipientsClickHere=Zum Lˆschen der Empf‰nger dieser E-Mail-Liste, klicken Sie auf Schaltfl‰che
-ToAddRecipientsChooseHere=So f¸gen Sie Empf‰nger, w‰hlen Sie in den Listen
+MailingNeedCommand=F√ºr Wertpapiere, Grund, senden Sie eine E-Mail kann nur von der Kommandozeile aus. Fragen Sie Ihren Administrator, um den folgenden Befehl ein, um die E-Mail an alle Empf√§nger:
+MailingNeedCommand2=Sie k√∂nnen jedoch senden sie online, indem Sie Parameter MAILING_LIMIT_SENDBYWEB mit dem Wert von max Anzahl der Emails, die Sie senden m√∂chten, von Sitzung.
+ConfirmSendingEmailing=Sind Sie sicher, dass Sie senden m√∂chten, Mailing? <br> Online-Versand von emailings begrenzt sind aus Sicherheitsgr√ºnden <b>an% s</b> Empf√§nger per Session.
+TargetsReset=Liste l√∂schen
+ToClearAllRecipientsClickHere=Zum L√∂schen der Empf√§nger dieser E-Mail-Liste, klicken Sie auf Schaltfl√§che
+ToAddRecipientsChooseHere=So f√ºgen Sie Empf√§nger, w√§hlen Sie in den Listen
 NbOfEMailingsReceived=Masse emailings erhalten
 IdRecord=ID Rekord
 DeliveryReceipt=Lieferschein
 Notifications=Benachrichtigungen
-NoNotificationsWillBeSent=Keine E-Mail-Benachrichtigungen sind f¸r diese Veranstaltung und Unternehmen
+NoNotificationsWillBeSent=Keine E-Mail-Benachrichtigungen sind f√ºr diese Veranstaltung und Unternehmen
 ANotificationsWillBeSent=1 Meldung wird per E-Mail
 SomeNotificationsWillBeSent=% s Anmeldungen werden per E-Mail
 AddNewNotification=Aktivieren Sie eine neue Mitteilung Anfrage
 ListOfActiveNotifications=Liste aller aktiven Meldungen Anfragen
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

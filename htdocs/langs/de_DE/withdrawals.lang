@@ -1,47 +1,46 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
-StandingOrdersArea=Daueraufträge Bereich
-CustomersStandingOrdersArea=Kunden Daueraufträge Bereich
-StandingOrders=Daueraufträge
-StandingOrder=Daueraufträge
+CHARSET=UTF-8
+StandingOrdersArea=DauerauftrÃ¤ge Bereich
+CustomersStandingOrdersArea=Kunden DauerauftrÃ¤ge Bereich
+StandingOrders=DauerauftrÃ¤ge
+StandingOrder=DauerauftrÃ¤ge
 NewStandingOrder=Neue Dauerauftrags
 Withdrawals=Entnahmen
-Withdrawal=Rücktritt
-WithdrawalsReceipts=Rücknahmen Einnahmen
-WithdrawalReceipt=Rücknahme Eingang
+Withdrawal=RÃ¼cktritt
+WithdrawalsReceipts=RÃ¼cknahmen Einnahmen
+WithdrawalReceipt=RÃ¼cknahme Eingang
 WithdrawalReceiptShort=Eingang
-LastWithdrawalReceipts=Letzte% s Rückzug Einnahmen
+LastWithdrawalReceipts=Letzte% s RÃ¼ckzug Einnahmen
 WithdrawedBills=Withdrawed Rechnungen
-WithdrawalsLines=Rücknahmen Linien
-RequestStandingOrderToTreat=Antrag für Daueraufträge zur Behandlung von
-RequestStandingOrderTreated=Antrag auf Daueraufträge behandelt
-CustomersStandingOrders=Kunden Daueraufträge
+WithdrawalsLines=RÃ¼cknahmen Linien
+RequestStandingOrderToTreat=Antrag fÃ¼r DauerauftrÃ¤ge zur Behandlung von
+RequestStandingOrderTreated=Antrag auf DauerauftrÃ¤ge behandelt
+CustomersStandingOrders=Kunden DauerauftrÃ¤ge
 CustomerStandingOrder=Kunden Dauerauftrags
-NbOfInvoiceToWithdraw=Zahl der Rechnung mit Rücktritt Antrag
-InvoiceWaitingWithdraw=Rechnung warten auf Rücktritt
+NbOfInvoiceToWithdraw=Zahl der Rechnung mit RÃ¼cktritt Antrag
+InvoiceWaitingWithdraw=Rechnung warten auf RÃ¼cktritt
 AmountToWithdraw=Betrag, um
 WithdrawsRefused=Zieht abgelehnt
 NoInvoiceToWithdraw=Nr. Kunden in Rechnung Zahlung Modus &quot;widerrufen&quot; wartet. Gehen Sie auf &quot;Abheben&quot; Registerkarte auf Rechnung Karte, um eine Anfrage.
 ResponsibleUser=Verantwortlich Benutzer
-WithdrawalsSetup=Rücknahme-Setup
+WithdrawalsSetup=RÃ¼cknahme-Setup
 WithdrawStatistics=Zieht &quot;Statistiken
 WithdrawRejectStatistics=Ziehen Sie lehnt die &quot;Statistik
 LastWithdrawalReceipt=Letzte% s Aberkennung der Einnahmen
-MakeWithdrawRequest=Einen Antrag zurückziehen
+MakeWithdrawRequest=Einen Antrag zurÃ¼ckziehen
 ThirdPartyBankCode=Dritter BLZ
 ThirdPartyDeskCode=Dritter Schreibtisch-Code
-NoInvoiceCouldBeWithdrawed=Keine Rechnung withdrawed mit Erfolg. Vergewissern Sie sich, dass die Rechnung für die Unternehmen mit einer gültigen BAN.
+NoInvoiceCouldBeWithdrawed=Keine Rechnung withdrawed mit Erfolg. Vergewissern Sie sich, dass die Rechnung fÃ¼r die Unternehmen mit einer gÃ¼ltigen BAN.
 ClassCredited=Einordnen gutgeschrieben
-ClassCreditedConfirm=Sind Sie sicher, dass Sie klassifizieren diese Rücknahme Eingang als Gutschrift auf Ihrem Konto?
-// Date 2009-01-18 20:30:12
+ClassCreditedConfirm=Sind Sie sicher, dass Sie klassifizieren diese RÃ¼cknahme Eingang als Gutschrift auf Ihrem Konto?
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

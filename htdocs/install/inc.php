@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -68,10 +68,10 @@ $charset="UTF-8";	// If not output format found in any conf file
 if (! defined('DONOTLOADCONF') && file_exists($conffile))
 {
 	$result=include_once($conffile);	// Load conf file
-	if ($result) 
+	if ($result)
 	{
-		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility 
-		
+		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+
 		// Remove last / or \ on directories or url value
 		if (! empty($dolibarr_main_document_root) && ! ereg('^[\\\/]+$',$dolibarr_main_document_root)) $dolibarr_main_document_root=ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
 		if (! empty($dolibarr_main_url_root)      && ! ereg('^[\\\/]+$',$dolibarr_main_url_root))      $dolibarr_main_url_root=ereg_replace('[\\\/]+$','',$dolibarr_main_url_root);
@@ -100,18 +100,18 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 		}
 		else
 		{
-			$includeconferror='ErrorBadValueForDolibarrMainDocumentRoot';			
+			$includeconferror='ErrorBadValueForDolibarrMainDocumentRoot';
 		}
 	}
 	else
 	{
-		$includeconferror='ErrorBadFormatForConfFile';	
+		$includeconferror='ErrorBadFormatForConfFile';
 	}
 }
 
 
 // Define prefix
-if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
 
 define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
@@ -119,9 +119,9 @@ if (empty($conf->character_set_client))     	  $conf->character_set_client=$char
 if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
 if (empty($conf->db->user)) $conf->db->user='';
 
-	
+
 // Security check
-if (eregi('install.lock',$_SERVER["SCRIPT_FILENAME"])) 
+if (eregi('install.lock',$_SERVER["SCRIPT_FILENAME"]))
 {
 	print 'Install pages have been disabled for security reason (directory renamed with .lock).';
 	print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
@@ -142,10 +142,13 @@ if (file_exists('../../install.lock'))
 // Forcage du log pour les install et mises a jour
 $conf->syslog->enabled=1;
 $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
-if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
-else if (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE',$_ENV["TMP"].'/dolibarr_install.log');
-else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
-else if (@is_writable("/")) define('SYSLOG_FILE','/dolibarr_install.log');
+if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant already defined
+{
+	if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
+	else if (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE',$_ENV["TMP"].'/dolibarr_install.log');
+	else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
+	else if (@is_writable("/")) define('SYSLOG_FILE','/dolibarr_install.log');
+}
 define('SYSLOG_FILE_NO_ERROR',1);
 
 
@@ -208,7 +211,7 @@ function conf($dolibarr_main_document_root)
 
 	if (empty($character_set_client)) $character_set_client=$charset;
 	$conf->character_set_client=strtoupper($character_set_client);
-	if (empty($dolibarr_main_db_charset)) $dolibarr_main_db_charset='latin1'; 
+	if (empty($dolibarr_main_db_charset)) $dolibarr_main_db_charset='latin1';
 	$conf->db->character_set=$dolibarr_main_db_charset;
 	if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';
 	$conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
@@ -216,12 +219,15 @@ function conf($dolibarr_main_document_root)
 	// Forcage du log pour les install et mises a jour
 	$conf->syslog->enabled=1;
 	$conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
-	if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
-	else if (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE',$_ENV["TMP"].'/dolibarr_install.log');
-	else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
-	else if (@is_writable("/")) define('SYSLOG_FILE','/dolibarr_install.log');
+	if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant already defined
+	{
+		if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
+		else if (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE',$_ENV["TMP"].'/dolibarr_install.log');
+		else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
+		else if (@is_writable("/")) define('SYSLOG_FILE','/dolibarr_install.log');
+	}
 	define('SYSLOG_FILE_NO_ERROR',1);
-	
+
 	return 1;
 }
 
@@ -265,13 +271,13 @@ function pHeader($soutitre,$next,$action='set')
 function pFooter($nonext=0,$setuplang='')
 {
     global $conf,$langs;
-    
+
     $langs->load("main");
     $langs->load("admin");
-    
+
     print '</td></tr></table>'."\n";
     print '</td></tr></table>'."\n";
-    
+
     if (! $nonext)
     {
         print '<div class="barrebottom"><input type="submit" value="'.$langs->trans("NextStep").' ->"></div>';
@@ -287,17 +293,17 @@ function pFooter($nonext=0,$setuplang='')
     if (sizeof($conf->logbuffer))
     {
 		print "\n";
-		print "<!-- Start of log output\n";    	
+		print "<!-- Start of log output\n";
     	//print '<div class="hidden">'."\n";
 	    foreach($conf->logbuffer as $logline)
 	    {
 	    	print $logline."<br>\n";
 	    }
 	    //print '</div>'."\n";
-		print "End of log output -->\n";    	
+		print "End of log output -->\n";
 		print "\n";
     }
-    
+
     print '</body>'."\n";
     print '</html>'."\n";
 }

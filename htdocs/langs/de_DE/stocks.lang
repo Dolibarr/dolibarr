@@ -1,26 +1,25 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 WarehouseCard=Warehouse-Karte
 Warehouse=Warehouse
 NewWarehouse=Neues Lager / Lager Bereich
 MenuNewWarehouse=Neues Lager
-WarehouseOpened=Warehouse eröffnet
+WarehouseOpened=Warehouse erÃ¶ffnet
 WarehouseClosed=Lager geschlossen
 WarehouseSource=Warehouse-Quelle
 WarehouseTarget=Target Lager
-ValidateSending=Löschen Senden
+ValidateSending=LÃ¶schen Senden
 CancelSending=Abbrechen Senden
-DeleteSending=Löschen Senden
+DeleteSending=LÃ¶schen Senden
 Stock=Lager
 Stocks=Aktien
 Movement=Bewegung
@@ -50,27 +49,27 @@ EnhancedValueOfWarehouses=Hallen-Wert
 UserWarehouseAutoCreate=Erstellen Sie eine Aktie automatisch beim Anlegen eines Benutzers
 QtyDispatched=Menge
 OrderDispatch=Bestell-Versand
-RuleForStockManagementDecrease=Regel für Lagerverwaltung Rückgang
-RuleForStockManagementIncrease=Artikel für Lager-Management erhöhen
-DeStockOnBill=Decrease realen Bestände in den Rechnungen / Gutschriften (Achtung, in dieser Version, es ist nur im Lager Nummer 1 ist, dass die Lagerbestände modifiziert)
-DeStockOnValidateOrder=Decrease realen Bestände auf Bestellungen stellt fest (Achtung, in dieser Version, es ist nur im Lager Nummer 1 ist, dass die Lagerbestände modifiziert)
-DeStockOnShipment=Decrease realen Bestände auf Sendung (empfohlen)
-ReStockOnBill=Erhöhung der tatsächlichen Bestände in den Rechnungen / Gutschriften (Achtung, in dieser Version, es ist nur im Lager Nummer 1 ist, dass die Lagerbestände modifiziert)
-ReStockOnValidateOrder=Erhöhung der realen Bestände auf Bestellungen stellt fest (Achtung, in dieser Version, es ist nur im Lager Nummer 1 ist, dass die Lagerbestände modifiziert)
-StockDiffPhysicTeoric=Grund für die Differenz Lager physische und theoretischen
+RuleForStockManagementDecrease=Regel fÃ¼r Lagerverwaltung RÃ¼ckgang
+RuleForStockManagementIncrease=Artikel fÃ¼r Lager-Management erhÃ¶hen
+DeStockOnBill=Decrease realen BestÃ¤nde in den Rechnungen / Gutschriften (Achtung, in dieser Version, es ist nur im Lager Nummer 1 ist, dass die LagerbestÃ¤nde modifiziert)
+DeStockOnValidateOrder=Decrease realen BestÃ¤nde auf Bestellungen stellt fest (Achtung, in dieser Version, es ist nur im Lager Nummer 1 ist, dass die LagerbestÃ¤nde modifiziert)
+DeStockOnShipment=Decrease realen BestÃ¤nde auf Sendung (empfohlen)
+ReStockOnBill=ErhÃ¶hung der tatsÃ¤chlichen BestÃ¤nde in den Rechnungen / Gutschriften (Achtung, in dieser Version, es ist nur im Lager Nummer 1 ist, dass die LagerbestÃ¤nde modifiziert)
+ReStockOnValidateOrder=ErhÃ¶hung der realen BestÃ¤nde auf Bestellungen stellt fest (Achtung, in dieser Version, es ist nur im Lager Nummer 1 ist, dass die LagerbestÃ¤nde modifiziert)
+StockDiffPhysicTeoric=Grund fÃ¼r die Differenz Lager physische und theoretischen
 StockLimitShort=Limit
-StockLimit=Lager für Ausschreibungen
+StockLimit=Lager fÃ¼r Ausschreibungen
 PhysicalStock=Physikalische Lager
 RealStock=Real Lager
 TheoreticalStock=Therocial Lager
 VirtualStock=Virtuelles Lager
-MininumStock=Mindestlagerbestände
-StockUp=
+MininumStock=MindestlagerbestÃ¤nde
+StockUp=Lager bis
 MininumStockShort=Lager min
 StockUpShort=Lager bis
 IdWarehouse=Id Lager
 DescWareHouse=Beschreibung Lager
 LieuWareHouse=Localisation Lager
 WarehousesAndProducts=Hallen und Produkte
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

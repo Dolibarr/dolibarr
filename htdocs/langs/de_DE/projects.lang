@@ -1,26 +1,25 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 Project=Projekt
 Projects=Projekte
 SharedProject=Gemeinsames Projekt
 Myprojects=Meine Projekte
 ProjectsArea=Projekte Bereich
 NewProject=Neues Projekt
-AddProject=Projekt hinzufügen
-DeleteAProject=Löschen eines Projekts
-DeleteATask=Löschen einer Aufgabe
-ConfirmDeleteAProject=Sind Sie sicher, dass Sie löschen möchten dieses Projekt?
-ConfirmDeleteATask=Sind Sie sicher, dass Sie löschen möchten, diese Aufgabe?
+AddProject=Projekt hinzufÃ¼gen
+DeleteAProject=LÃ¶schen eines Projekts
+DeleteATask=LÃ¶schen einer Aufgabe
+ConfirmDeleteAProject=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten dieses Projekt?
+ConfirmDeleteATask=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten, diese Aufgabe?
 OfficerProject=Officer Projekt
 LastProjects=Letzte% s Projekte
 AllProjects=Alle Projekte
@@ -28,7 +27,7 @@ ProjectsList=Liste der Projekte
 ShowProject=Projekt anzeigen
 SetProject=Set-Projekt
 NoProject=Kein Projekt definiert
-NbOpenTasks=Zahl der eröffneten Aufgaben
+NbOpenTasks=Zahl der erÃ¶ffneten Aufgaben
 NbOfProjects=Zahl der Projekte
 TimeSpent=Die Zeit, in der
 RefTask=Artikel-Nr. Aufgabe
@@ -39,26 +38,26 @@ MyTasks=Meine Aufgaben
 Tasks=Aufgaben
 Task=Aufgabe
 NewTask=Neue Aufgabe
-AddTask=Aufgabe hinzufügen
+AddTask=Aufgabe hinzufÃ¼gen
 AddDuration=Add Dauer
-Activity=Aktivitätsart
-Activities=Aufgaben / Aktivitäten
-MyActivity=Meine Tätigkeit
-MyActivities=Meine Aufgaben / Aktivitäten
+Activity=AktivitÃ¤tsart
+Activities=Aufgaben / AktivitÃ¤ten
+MyActivity=Meine TÃ¤tigkeit
+MyActivities=Meine Aufgaben / AktivitÃ¤ten
 DurationEffective=Effektive Dauer
 MyProjects=Meine Projekte
 Time=Zeit
-ListProposalsAssociatedProject=Listen der gewerblichen Vorschläge im Zusammenhang mit dem Projekt
-ListOrdersAssociatedProject=Listen der Aufträge im Zusammenhang mit dem Projekt
+ListProposalsAssociatedProject=Listen der gewerblichen VorschlÃ¤ge im Zusammenhang mit dem Projekt
+ListOrdersAssociatedProject=Listen der AuftrÃ¤ge im Zusammenhang mit dem Projekt
 ListInvoicesAssociatedProject=Listen der Rechnungen im Zusammenhang mit dem Projekt
-ListSupplierOrdersAssociatedProject=Liste der Anbieter Aufträge im Zusammenhang mit dem Projekt
+ListSupplierOrdersAssociatedProject=Liste der Anbieter AuftrÃ¤ge im Zusammenhang mit dem Projekt
 ListSupplierInvoicesAssociatedProject=Liste der Lieferanten Rechnungen im Zusammenhang mit dem Projekt
-ListContractAssociatedProject=Liste der Verträge im Zusammenhang mit dem Projekt
-ActivityOnProjectThisWeek=Die Aktivitäten Projekt in dieser Woche
-ActivityOnProjectThisMonth=Die Aktivitäten Projekt in diesem Monat
-ActivityOnProjectThisYear=Die Aktivitäten Projekt in diesem Jahr
+ListContractAssociatedProject=Liste der VertrÃ¤ge im Zusammenhang mit dem Projekt
+ActivityOnProjectThisWeek=Die AktivitÃ¤ten Projekt in dieser Woche
+ActivityOnProjectThisMonth=Die AktivitÃ¤ten Projekt in diesem Monat
+ActivityOnProjectThisYear=Die AktivitÃ¤ten Projekt in diesem Jahr
 ChildOfTaks=Kind von Projekt / Aufgabe
-NotOwnerOfProject=Nicht Eigentümer der privaten Projekt
+NotOwnerOfProject=Nicht EigentÃ¼mer der privaten Projekt
 AffectedTo=Betroffene zu
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

@@ -1,15 +1,14 @@
 /*
- * Lince Translation File
- * Filename: 
  * Language code: de_DE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 20:30:12
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-20 00:09:12
  */
 
 
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 ProductServiceCard=Produkte / Dienstleistungen Karte
 Products=Produkte
 Services=Services
@@ -21,8 +20,8 @@ Reference=Referenz
 NewProduct=Neues Produkt
 NewBook=Neues Buch
 Book=Buch
-Books=Bücher
-BookList=Liste der Bücher
+Books=BÃ¼cher
+BookList=Liste der BÃ¼cher
 NewService=Neuer Service
 ProductCode=Produkt-Code
 ServiceCode=Service-Code
@@ -40,7 +39,7 @@ ServicesNotOnSell=Dienstleistungen von verkaufen
 InternalRef=Interne Referenz
 LastRecorded=Letzte Produkte / Dienstleistungen verkaufen erfasst
 LastRecordedProductsAndServices=Letzte% s precorded rodukte / Dienstleistungen
-LastModifiedProductsAndServices=Letzte% s veränderte Produkte / Dienstleistungen
+LastModifiedProductsAndServices=Letzte% s verÃ¤nderte Produkte / Dienstleistungen
 LastRecordedProducts=Letzte% s Produkte erfasst
 LastRecordedServices=Letzte% s Dienstleistungsverkehr
 LastProducts=Letzte Produkte
@@ -48,8 +47,8 @@ CardProduct0=Produkt-Karte
 CardProduct1=Service-Karte
 CardContract=Auftrags-Karte
 Warehouse=Warehouse
-Warehouses=Gewerberäume
-WarehouseOpened=Warehouse eröffnet
+Warehouses=GewerberÃ¤ume
+WarehouseOpened=Warehouse erÃ¶ffnet
 WarehouseClosed=Lager geschlossen
 Stock=Lager
 Stocks=Aktien
@@ -71,11 +70,11 @@ ContractStatus=Auftrags-Status
 ContractStatusClosed=Geschlossen
 ContractStatusRunning=Running
 ContractStatusExpired=abgelaufen
-ContractStatusOnHold=Nicht ausgeführt
+ContractStatusOnHold=Nicht ausgefÃ¼hrt
 ContractStatusToRun=A mettre en service
-ContractNotRunning=Dieser Vertrag läuft nicht
+ContractNotRunning=Dieser Vertrag lÃ¤uft nicht
 ErrorProductAlreadyExists=Ein Produkt mit% s ist bereits vorhanden.
-ErrorProductBadRefOrLabel=Falscher Wert für die Referenz-oder Etikett vorzeigen.
+ErrorProductBadRefOrLabel=Falscher Wert fÃ¼r die Referenz-oder Etikett vorzeigen.
 Suppliers=Lieferanten
 SupplierRef=Supplier ref.
 ShowProduct=Produkt anzeigen
@@ -83,28 +82,28 @@ ShowService=Show-Service
 ProductsAndServicesArea=Produkt-und Dienstleistungsbereich
 ProductsArea=Produktbereich
 ServicesArea=Bereich
-AddToMyProposals=Meine Vorschläge
-AddToOtherProposals=In den anderen Vorschlägen
+AddToMyProposals=Meine VorschlÃ¤ge
+AddToOtherProposals=In den anderen VorschlÃ¤gen
 AddToMyBills=Meine Rechnungen
 AddToOtherBills=In den anderen Rechnungen
 CorrectStock=Korrigieren Lager
-AddPhoto=Foto hinzufügen
+AddPhoto=Foto hinzufÃ¼gen
 ListOfStockMovements=Liste der Lagerbewegungen
-NoPhotoYet=Keine Bilder verfügbar
+NoPhotoYet=Keine Bilder verfÃ¼gbar
 BuiingPrice=Kaufpreis
 SupplierCard=Lieferanten-Karte
 CommercialCard=Handelsregister-Karte
 AllWays=Weg zu finden, Ihr Produkt auf Lager
 NoCat=Ihr Produkt ist nicht in jeder Kategorie
-PrimaryWay=Primäre Pfad
+PrimaryWay=PrimÃ¤re Pfad
 DeleteFromCat=Entfernen Sie aus der Kategorie
 PriceRemoved=Preis entfernt
 BarCode=Barcode
 BarcodeType=Barcode-Typ
 SetDefaultBarcodeType=Stellen Sie Barcode-Typ
 BarcodeValue=Barcode-Wert
-GenbarcodeLocation=Bar Code-Generierung Kommandozeilen-Tool (von phpbarcode Motor für die Barcode-Typen)
-NoteNotVisibleOnBill=Anmerkung (nicht sichtbar auf Rechnungen, Vorschläge ...)
+GenbarcodeLocation=Bar Code-Generierung Kommandozeilen-Tool (von phpbarcode Motor fÃ¼r die Barcode-Typen)
+NoteNotVisibleOnBill=Anmerkung (nicht sichtbar auf Rechnungen, VorschlÃ¤ge ...)
 CreateCopy=Kopie erstellen
 ServiceLimitedDuration=Falls das Produkt ist ein Service, mit begrenzter Dauer:
 MultiPricesAbility=Aktivieren Sie die Multi-Preise
@@ -112,43 +111,43 @@ MultiPricesNumPrices=Anzahl Preis
 MultiPriceLevelsName=Preis-Kategorien
 AssociatedProductsAbility=Aktivieren Sie die damit verbundenen Produkte
 AssociatedProducts=Associated products
-AssociatedProductsNumber=Anzahl der zugehörigen Produkte
+AssociatedProductsNumber=Anzahl der zugehÃ¶rigen Produkte
 EditAssociate=Associate
-Translation=Übersetzung
+Translation=Ãœbersetzung
 KeywordFilter=Stichwort-Filter
 CategoryFilter=Kategorie Filter
-ProductToAddSearch=Produkt-Suche hinzufügen
-AddDel=Hinzufügen / Löschen
+ProductToAddSearch=Produkt-Suche hinzufÃ¼gen
+AddDel=HinzufÃ¼gen / LÃ¶schen
 Quantity=Menge
 NoMatchFound=Keine Treffer gefunden
 ProductAssociationList=Liste der entsprechenden Produkte / Dienstleistungen: Name des Produkts / der Dienstleistung (die Menge)
-ErrorAssociationIsFatherOfThis=Eines der ausgewählten Produkt ist Elternteil mit aktuellen Produktinformationen
-DeleteProduct=Löschen Sie ein Produkt / Service
-ConfirmDeleteProduct=Sind Sie sicher, dass Sie löschen möchten, dieses Produkt / Service?
-ProductDeleted=Produkt / Service &quot;% s&quot; aus der Datenbank gelöscht.
-DeletePicture=So löschen Sie ein Bild
-ConfirmDeletePicture=Sind Sie sicher, dass Sie löschen möchten dieses Bild?
+ErrorAssociationIsFatherOfThis=Eines der ausgewÃ¤hlten Produkt ist Elternteil mit aktuellen Produktinformationen
+DeleteProduct=LÃ¶schen Sie ein Produkt / Service
+ConfirmDeleteProduct=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten, dieses Produkt / Service?
+ProductDeleted=Produkt / Service &quot;% s&quot; aus der Datenbank gelÃ¶scht.
+DeletePicture=So lÃ¶schen Sie ein Bild
+ConfirmDeletePicture=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten dieses Bild?
 ExportDataset_produit_1=Produkte und Dienstleistungen
-DeleteProductLine=Löschen Produktlinie
-ConfirmDeleteProductLine=Sind Sie sicher, dass Sie löschen möchten, dieser Produktlinie?
+DeleteProductLine=LÃ¶schen Produktlinie
+ConfirmDeleteProductLine=Sind Sie sicher, dass Sie lÃ¶schen mÃ¶chten, dieser Produktlinie?
 NoProductMatching=Nr. Produkt / der Dienstleistung mit Ihren Kriterien
 MatchingProducts=Passende Produkte / Dienstleistungen
-NoStockForThisProduct=Nr. Lager für dieses Produkt
+NoStockForThisProduct=Nr. Lager fÃ¼r dieses Produkt
 NoStock=Nr. Lager
 Restock=Bestandserinnerung
 ProductSpecial=Special
 QtyMin=Menge mindestens
-PriceQty=Preis für diese Menge
+PriceQty=Preis fÃ¼r diese Menge
 PriceQtyMin=Preis Menge min.
-NoPriceDefinedForThisSupplier=Nein Preis / Stück für diesen Anbieter / Produkt
-NoSupplierPriceDefinedForThisProduct=Kein Lieferant Preis / Stück, die für dieses Produkt
+NoPriceDefinedForThisSupplier=Nein Preis / StÃ¼ck fÃ¼r diesen Anbieter / Produkt
+NoSupplierPriceDefinedForThisProduct=Kein Lieferant Preis / StÃ¼ck, die fÃ¼r dieses Produkt
 RecordedProducts=Produkte erfasst
 RecordedProductsAndServices=Produkte / Dienstleistungen erfasst
 GenerateThumb=Generate Daumen
 ProductCanvasAbility=Verwenden Sie spezielle &quot;Leinwand&quot; Add-Ons
 ServiceNb=Service #% s
-ListProductByPopularity=Liste der Produkte / Dienstleistungen durch die Popularität
+ListProductByPopularity=Liste der Produkte / Dienstleistungen durch die PopularitÃ¤t
 Finished=Hergestellt werden,
 RowMaterial=Erste Material
-// Date 2009-01-18 20:30:12
+// Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
