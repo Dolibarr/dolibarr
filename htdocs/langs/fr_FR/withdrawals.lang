@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - withdrawals
+CHARSET=ISO-8859-1
 StandingOrdersArea=Espace prélèvements
 CustomersStandingOrdersArea=Espace prélèvements clients
 StandingOrders=Prélèvements

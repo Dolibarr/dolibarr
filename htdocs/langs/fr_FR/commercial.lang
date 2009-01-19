@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - commercial
+CHARSET=ISO-8859-1
 Commercial=Commercial
 CommercialArea=Espace commercial
 CommercialCard=Fiche commerciale

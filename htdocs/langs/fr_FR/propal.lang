@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - propal
+CHARSET=ISO-8859-1
 Proposals=Propositions commerciales
 Proposal=Proposition commerciale
 ProposalsDraft=Propositions commerciales brouillons

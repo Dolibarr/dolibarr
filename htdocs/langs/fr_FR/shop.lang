@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - shop
+CHARSET=ISO-8859-1
 Shop=Boutique
 ShopWeb=Boutique Web
 LastOrders=Dernières commandes

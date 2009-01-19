@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - trips
+CHARSET=ISO-8859-1
 Trip=Déplacement
 Trips=Déplacements
 TripsAndExpenses=Déplacements et frais

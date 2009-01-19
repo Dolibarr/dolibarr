@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - other
+CHARSET=ISO-8859-1
 ErrorPasswordDiffers=Les mots de passe ne sont pas identiques, veuillez les saisir à nouveau
 ErrorForbidden=Accès non autorisé.<br>Vous essayez d'accéder à une page, zone ou fonction sans être au sein d'une session authentifiée ou qui n'est pas autorisée pour votre compte utilisateur.
 ErrorForbidden2=Les permissions pour ce login peuvent être attribuées par l'administrateur Dolibarr via le menu %s -> %s.

@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - ldap
+CHARSET=ISO-8859-1
 DomainPassword=Mot de passe du domaine
 YouMustChangePassNextLogon=Le mot de passe de <b>%s</b> sur le domaine <b>%s</b> doit etre modifié.
 UserMustChangePassNextLogon=L'utilisateur doit modifier son mot de passe sur le domaine %s

@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - deliveries
+CHARSET=ISO-8859-1
 Delivery=Livraison
 Deliveries=Livraisons
 DeliveryCard=Fiche livraison

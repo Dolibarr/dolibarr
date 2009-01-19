@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - bills
+CHARSET=ISO-8859-1
 Bill=Facture
 Bills=Factures
 BillsCustomers=Factures clients

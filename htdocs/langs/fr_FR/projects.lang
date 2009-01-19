@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - projects
+CHARSET=ISO-8859-1
 Project=Projet
 Projects=Projets
 SharedProject=Projet partagé

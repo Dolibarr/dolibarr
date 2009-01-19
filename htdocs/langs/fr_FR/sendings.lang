@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - sendings
+CHARSET=ISO-8859-1
 RefSending=Réf. expédition
 Sending=Expédition
 Sendings=Expéditions

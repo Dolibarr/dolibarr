@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - products
+CHARSET=ISO-8859-1
 NewBook=Nouveau livre
 ListBook=Livres
 ListCover=Couvertures

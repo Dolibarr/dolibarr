@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - members
+CHARSET=ISO-8859-1
 MembersArea=Espace adhérents
 PublicMembersArea=Espace public des adhérents
 MemberCard=Fiche adhérent

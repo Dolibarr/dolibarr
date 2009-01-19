@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - boxes
+CHARSET=ISO-8859-1
 BoxLastRssInfos=Fils d'informations RSS
 BoxLastProducts=Derniers produits/services
 BoxLastProductsInContract=Derniers produits/services contractés

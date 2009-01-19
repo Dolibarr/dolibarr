@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - ecm
+CHARSET=ISO-8859-1
 MenuECM=Documents
 DocsMine=Mes documents
 DocsGenerated=Documents générés

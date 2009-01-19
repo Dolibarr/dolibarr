@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - categories
+CHARSET=ISO-8859-1
 Category=Categorie
 Categories=Catégories
 Rubrique=Rubrique

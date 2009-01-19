@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - orders
+CHARSET=ISO-8859-1
 OrdersArea=Espace commandes clients
 SuppliersOrdersArea=Espace commandes fournisseurs
 OrderCard=Fiche commande

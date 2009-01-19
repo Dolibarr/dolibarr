@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - banks
+CHARSET=ISO-8859-1
 Bank=Banque
 Banks=Banques
 MenuBankCash=Banques/Caisses
