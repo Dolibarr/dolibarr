@@ -366,7 +366,7 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 				{
 					$obj=$db->fetch_object($resql);
 					$facid=$obj->rowid;
-						
+
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
 					$sql .= " VALUES (".$facid.",".$row[$i]['paymentid'].",".$row[$i]['pamount'].")";
 					$res += $db->query($sql);
@@ -474,7 +474,7 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 				{
 					$obj=$db->fetch_object($resql);
 					$facid=$obj->rowid;
-						
+
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
 					$sql .= " VALUES (".$facid.",".$row[$i]['paymentid'].",".$row[$i]['pamount'].")";
 					$res += $db->query($sql);
@@ -966,7 +966,7 @@ function migrate_price_facture($db,$langs,$conf)
 	print '<b>'.$langs->trans('MigrationInvoice')."</b><br>\n";
 
 	// Liste des lignes facture non a jour
-	$sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_taux, fd.total_ttc,";
+	$sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_taux, fd.total_ttc, fd.info_bits,";
 	$sql.= " f.rowid as facid, f.remise_percent as remise_percent_global, f.total_ttc as total_ttc_f";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE fd.fk_facture = f.rowid";
@@ -990,6 +990,7 @@ function migrate_price_facture($db,$langs,$conf)
 				$remise_percent = $obj->remise_percent;
 				$remise_percent_global = $obj->remise_percent_global;
 				$total_ttc_f = $obj->total_ttc_f;
+				$info_bits = $obj->info_bits;
 
 				// On met a jour les 3 nouveaux champs
 				$facligne= new FactureLigne($db);
@@ -1075,7 +1076,7 @@ function migrate_price_propal($db,$langs,$conf)
 	print '<b>'.$langs->trans('MigrationProposal')."</b><br>\n";
 
 	// Liste des lignes propal non a jour
-	$sql = "SELECT pd.rowid, pd.qty, pd.subprice, pd.remise_percent, pd.tva_tx as tva_taux, ";
+	$sql = "SELECT pd.rowid, pd.qty, pd.subprice, pd.remise_percent, pd.tva_tx as tva_taux, pd.info_bits,";
 	$sql.= " p.rowid as propalid, p.remise_percent as remise_percent_global";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as p";
 	$sql.= " WHERE pd.fk_propal = p.rowid";
@@ -1097,6 +1098,7 @@ function migrate_price_propal($db,$langs,$conf)
 				$txtva = $obj->tva_taux;
 				$remise_percent = $obj->remise_percent;
 				$remise_percent_global = $obj->remise_percent_global;
+				$info_bits = $obj->info_bits;
 
 				// On met a jour les 3 nouveaux champs
 				$propalligne= new PropaleLigne($db);
@@ -1144,7 +1146,7 @@ function migrate_price_propal($db,$langs,$conf)
 		{
 			print $langs->trans("AlreadyDone");
 		}
-			
+
 		$db->free($resql);
 
 		$db->commit();
@@ -1179,7 +1181,7 @@ function migrate_price_contrat($db,$langs,$conf)
 	print '<b>'.$langs->trans('MigrationContract')."</b><br>\n";
 
 	// Liste des lignes contrat non a jour
-	$sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, ";
+	$sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, cd.info_bits,";
 	$sql.= " c.rowid as contratid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
 	$sql.= " WHERE cd.fk_contrat = c.rowid";
@@ -1201,6 +1203,7 @@ function migrate_price_contrat($db,$langs,$conf)
 				$txtva = $obj->tva_taux;
 				$remise_percent = $obj->remise_percent;
 				$remise_percent_global = $obj->remise_percent_global;
+				$info_bits = $obj->info_bits;
 
 				// On met a jour les 3 nouveaux champs
 				$contratligne= new ContratLigne($db);
@@ -1249,7 +1252,7 @@ function migrate_price_contrat($db,$langs,$conf)
 		{
 			print $langs->trans("AlreadyDone");
 		}
-			
+
 		$db->free($resql);
 
 		$db->commit();
@@ -1283,7 +1286,7 @@ function migrate_price_commande($db,$langs,$conf)
 	print '<b>'.$langs->trans('MigrationOrder')."</b><br>\n";
 
 	// Liste des lignes commande non a jour
-	$sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, ";
+	$sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, cd.info_bits,";
 	$sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."commande as c";
 	$sql.= " WHERE cd.fk_commande = c.rowid";
@@ -1305,6 +1308,7 @@ function migrate_price_commande($db,$langs,$conf)
 				$txtva = $obj->tva_taux;
 				$remise_percent = $obj->remise_percent;
 				$remise_percent_global = $obj->remise_percent_global;
+				$info_bits = $obj->info_bits;
 
 				// On met a jour les 3 nouveaux champs
 				$commandeligne= new CommandeLigne($db);
@@ -1393,7 +1397,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 	print '<b>'.$langs->trans('MigrationSupplierOrder')."</b><br>\n";
 
 	// Liste des lignes commande non a jour
-	$sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, ";
+	$sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, cd.info_bits,";
 	$sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd, ".MAIN_DB_PREFIX."commande_fournisseur as c";
 	$sql.= " WHERE cd.fk_commande = c.rowid";
@@ -1415,6 +1419,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 				$txtva = $obj->tva_taux;
 				$remise_percent = $obj->remise_percent;
 				$remise_percent_global = $obj->remise_percent_global;
+				$info_bits = $obj->info_bits;
 
 				// On met a jour les 3 nouveaux champs
 				$commandeligne= new CommandeFournisseurLigne($db);
@@ -1624,9 +1629,9 @@ function migrate_commande_expedition($db,$langs,$conf)
 	if ($obj)
 	{
 		$error = 0;
-		
+
 		$db->begin();
-		
+
 		$sql = "SELECT e.rowid, e.fk_commande FROM ".MAIN_DB_PREFIX."expedition as e";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -1637,7 +1642,7 @@ function migrate_commande_expedition($db,$langs,$conf)
 			if ($num)
 			{
 				$db->begin();
-				 
+
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
@@ -1696,9 +1701,9 @@ function migrate_commande_livraison($db,$langs,$conf)
 	if ($obj)
 	{
 		$error = 0;
-		
+
 		$db->begin();
-		
+
 		$sql = "SELECT l.rowid, l.fk_commande";
 		$sql.= ", c.ref_client, c.date_livraison";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l, ".MAIN_DB_PREFIX."commande as c";
@@ -1786,7 +1791,7 @@ function migrate_detail_livraison($db,$langs,$conf)
 		$error = 0;
 
 		$db->begin();
-		
+
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.subprice, cd.total_ht";
 		$sql.= ", ld.fk_livraison";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
@@ -1817,7 +1822,7 @@ function migrate_detail_livraison($db,$langs,$conf)
 						$sql.= " FROM ".MAIN_DB_PREFIX."livraison";
 						$sql.= " WHERE rowid = ".$obj->fk_livraison;
 						$resql3=$db->query($sql);
-       
+
 						if ($resql3)
 						{
 							$obju = $db->fetch_object($resql3);

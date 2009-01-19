@@ -64,7 +64,6 @@ else
 
 $includeconferror='';
 $conffile = "../conf/conf.php";
-$charset="UTF-8";	// If not output format found in any conf file
 if (! defined('DONOTLOADCONF') && file_exists($conffile))
 {
 	$result=include_once($conffile);	// Load conf file
@@ -115,7 +114,7 @@ if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_m
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
 
 define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
-if (empty($conf->character_set_client))     	  $conf->character_set_client=$charset;
+if (empty($conf->character_set_client))     	  $conf->character_set_client="UTF-8";
 if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
 if (empty($conf->db->user)) $conf->db->user='';
 
@@ -149,8 +148,10 @@ if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant alrea
 	else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
 	else if (@is_writable("/")) define('SYSLOG_FILE','/dolibarr_install.log');
 }
-define('SYSLOG_FILE_NO_ERROR',1);
-
+if (! defined('SYSLOG_FILE_NO_ERROR'))
+{
+	define('SYSLOG_FILE_NO_ERROR',1);
+}
 
 // Forcage du parametrage PHP magic_quotes_gpc et nettoyage des parametres
 // (Sinon il faudrait a chaque POST, conditionner
@@ -209,7 +210,7 @@ function conf($dolibarr_main_document_root)
 	$conf->db->user = trim($dolibarr_main_db_user);
 	$conf->db->pass = trim($dolibarr_main_db_pass);
 
-	if (empty($character_set_client)) $character_set_client=$charset;
+	if (empty($character_set_client)) $character_set_client="UTF-8";
 	$conf->character_set_client=strtoupper($character_set_client);
 	if (empty($dolibarr_main_db_charset)) $dolibarr_main_db_charset='latin1';
 	$conf->db->character_set=$dolibarr_main_db_charset;
@@ -226,7 +227,10 @@ function conf($dolibarr_main_document_root)
 		else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
 		else if (@is_writable("/")) define('SYSLOG_FILE','/dolibarr_install.log');
 	}
-	define('SYSLOG_FILE_NO_ERROR',1);
+	if (! defined('SYSLOG_FILE_NO_ERROR'))
+	{
+		define('SYSLOG_FILE_NO_ERROR',1);
+	}
 
 	return 1;
 }

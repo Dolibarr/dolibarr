@@ -782,7 +782,7 @@ class DolibarrModules
 					$r_type     = $this->rights[$key][2];
 					$r_def      = $this->rights[$key][3];
 					$r_perms    = $this->rights[$key][4];
-					$r_subperms = $this->rights[$key][5];
+					$r_subperms = isset($this->rights[$key][5])?$this->rights[$key][5]:'';
 					$r_modul    = $this->rights_class;
 
 					if (empty($r_type)) $r_type='w';
