@@ -1,0 +1,105 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Mailing=E-maila
+EMailing=E-maila
+Mailings=EMailings
+EMailings=EMailings
+MailCard=Pocztą elektroniczną kartę
+MailTargets=Cele
+MailRecipients=Odbiorcy
+MailRecipient=Odbiorca
+MailTitle=Tytuł
+MailFrom=Nadawca
+MailErrorsTo=Błędów
+MailReply=Odpowiedz
+MailTo=Receiver (s)
+MailCC=Kopiuj do
+MailCCC=Kopii do
+MailTopic=EMail tematu
+MailText=Wiadomość
+MailFile=Dołączone pliki
+MailMessage=EMail ciała
+ShowEMailing=Pokaż e-maila
+ListOfEMailings=Lista emailings
+NewMailing=Nowy e-maila
+EditMailing=Edytuj e-maila
+DeleteMailing=Usuń e-maila
+DeleteAMailing=Usunąć e-maila
+PreviewMailing=Podgląd e-maila
+PrepareMailing=Przygotowanie e-maila
+CreateMailing=Tworzenie e-maila
+MailingDesc=Ta strona umożliwia wysłanie emailings do grupy osób.
+MailingResult=Wysyłanie e-maili wynik
+TestMailing=Test e-maila
+ValidMailing=Aktualny e-maila
+ApproveMailing=Zatwierdź e-maila
+MailingStatusDraft=Szkic
+MailingStatusValidated=Zatwierdzona
+MailingStatusApproved=Zatwierdzony
+MailingStatusSent=Wysłany
+MailingStatusSentPartialy=Wysłane częściowo
+MailingStatusSentCompletely=Wysłane całkowicie
+MailingStatusError=Błąd
+MailingStatusNotSent=Nie wysłano
+MailSuccessfulySent=E-mail wysłany successfuly (od% s do% s)
+ErrorMailRecipientIsEmpty=E-mail odbiorcy jest pusty
+WarningNoEMailsAdded=Brak nowych wiadomości e-mail, aby dodać adres do listy.
+ConfirmValidMailing=Czy na pewno chcesz, aby potwierdzić tego e-maila?
+ConfirmDeleteMailing=Czy na pewno chcesz usunąć tę emailling?
+NbOfRecipients=Liczba odbiorców
+NbOfUniqueEMails=Nb unikatowych wiadomości e-mail
+NbOfEMails=Nb-mail
+TotalNbOfDistinctRecipients=Liczba różnych odbiorców
+NoTargetYet=Nie określono jeszcze odbiorców (Przejdź na kartę &quot;Odbiorcy&quot;)
+AddRecipients=Dodaj odbiorców
+RemoveRecipient=Usuń odbiorcę
+CommonSubstitutions=Wspólne zastępstw
+YouCanAddYourOwnPredefindedListHere=Aby utworzyć swój adres e-mail wyboru modułu, patrz htdocs / includes / modules / mailing / README.
+EMailTestSubstitutionReplacedByGenericValues=Przy użyciu testu trybie zastępstwa zmienne otrzymują uniwersalne wartości
+MailingAddFile=Dołącz ten plik
+NoAttachedFiles=Nie załączone pliki
+MailingModuleDescContactCompanies=Kontakty wszystkich stron trzecich (klienta, perspektywa, dostawca, ...)
+MailingModuleDescDolibarrUsers=Wszystkie Dolibarr użytkownikom wiadomości e-mail
+MailingModuleDescFundationMembers=Fundacja użytkowników z e-maili
+MailingModuleDescEmailsFromFile=E-maile z pliku tekstowego (e-mail, imię, nazwisko)
+MailingModuleDescContactsCategories=Kontakty wszystkich stron trzecich (według kategorii)
+LineInFile=Linia w pliku% s
+RecipientSelectionModules=Definiowane wnioski dla odbiorców wyboru
+MailSelectedRecipients=Wybrane odbiorców
+MailingArea=EMailings obszarze
+LastMailings=Ostatnia% s emailings
+TargetsStatistics=Celów statystycznych
+NbOfCompaniesContacts=Unikalne kontaktów firm
+MailNoChangePossible=Odbiorców potwierdzone e-maila nie można zmienić
+SearchAMailing=Szukaj mailowych
+SendMailing=Wyślij e-maila
+SendMail=Wyślij e-mail
+SentBy=Wysłane przez
+MailingNeedCommand=Dla papierów wartościowych powodu, wysyłając e-maila może być wykonywana tylko z linii poleceń. Zapytaj swojego administratora, aby uruchomić następujące polecenie, aby wysłać e-maila do wszystkich odbiorców:
+MailingNeedCommand2=Możesz jednak wysłać je w sieci poprzez dodanie parametru MAILING_LIMIT_SENDBYWEB o wartości max liczba wiadomości e-mail, który chcesz wysłać przez sesji.
+ConfirmSendingEmailing=Czy na pewno chcesz wysłać mailowych? <br> On line wysyłanie emailings są ograniczone na rzecz bezpieczeństwa <b>powodu% s</b> do odbiorców poprzez wysłanie sesji.
+TargetsReset=Wyczyść listę
+ToClearAllRecipientsClickHere=Aby wyczyścić odbiorców tego e-maila na listę, kliknij przycisk
+ToAddRecipientsChooseHere=Aby dodać odbiorców, wybierz w tych wykazach
+NbOfEMailingsReceived=Masa emailings otrzymała
+IdRecord=ID rekordu
+DeliveryReceipt=Odbiór dostawy
+Notifications=Powiadomienia
+NoNotificationsWillBeSent=Brak powiadomień e-mail są planowane dla tego wydarzenia i spółka
+ANotificationsWillBeSent=1 zgłoszenie zostanie wysłane pocztą elektroniczną
+SomeNotificationsWillBeSent=% s powiadomienia będą wysyłane przez e-mail
+AddNewNotification=Aktywacja nowego zgłoszenia wniosku
+ListOfActiveNotifications=Lista wszystkich aktywnych zgłoszeń wniosków
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

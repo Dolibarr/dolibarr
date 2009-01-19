@@ -1,0 +1,111 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+UserCard=Użytkownik karty
+ContactCard=Kontakt karty
+GroupCard=Grupa karty
+NoContactCard=Nr karty kontaktów między
+Permission=Zezwolenie
+Permissions=Uprawnienia
+EditPassword=Edytuj hasło
+SendNewPassword=Wyślij nowe hasło
+ReinitPassword=Wygeneruj nowe hasło
+PasswordChangedTo=Hasło zmieniono na:% s
+SubjectNewPassword=Twoje nowe hasło Dolibarr
+AvailableRights=Dostępne uprawnienia
+OwnedRights=Posiadanych uprawnień
+GroupRights=Grupa uprawnienia
+UserRights=Użytkownik uprawnienia
+UserGUISetup=Użytkownik Display Setup
+DisableUser=Wyłączyć
+DisableAUser=Wyłącz użytkownika
+DeleteUser=Usunąć
+DeleteAUser=Usuń użytkownika
+DisableGroup=Wyłączyć
+DisableAGroup=Wyłącz grupy
+EnableAUser=Włącz użytkownika
+EnableAGroup=Włącz grupy
+DeleteGroup=Usunąć
+DeleteAGroup=Usuń grupę
+ConfirmDisableUser=Czy na pewno chcesz wyłączyć <b>użytkownik% s?</b>
+ConfirmDisableGroup=Czy na pewno chcesz wyłączyć <b>grupie% s?</b>
+ConfirmDeleteUser=Czy na pewno chcesz usunąć <b>użytkownika% s?</b>
+ConfirmDeleteGroup=Czy na pewno chcesz usunąć <b>grupę% s?</b>
+ConfirmEnableUser=Czy na pewno chcesz, aby umożliwić <b>użytkownikowi% s?</b>
+ConfirmEnableGroup=Czy na pewno chcesz, aby umożliwić <b>grupie% s?</b>
+ConfirmReinitPassword=Czy na pewno chcesz, aby wygenerować nowe hasło dla <b>użytkownika% s?</b>
+ConfirmSendNewPassword=Czy na pewno chcesz wygenerować i wysłać nowe hasło dla <b>użytkownika% s?</b>
+NewUser=Nowy użytkownik
+CreateUser=Utwórz użytkownika
+SearchAGroup=Szukaj grupy
+SearchAUser=Szukaj użytkownika
+ErrorFailedToSendPassword=Nie można wysłać hasło
+LoginNotDefined=Logowanie nie zostało zdefiniowane.
+NameNotDefined=Nazwa nie jest zdefiniowane.
+ListOfUsers=Lista użytkowników
+Administrator=Administrator
+DefaultRights=Domyślne uprawnienia
+DefaultRightsDesc=Określ tutaj domyślne uprawnienia, które są przyznawane automatycznie utworzony nowy użytkownik.
+DolibarrUsers=Dolibarr użytkowników
+LastName=Imię
+FirstName=Imię
+ListOfGroups=Lista grup
+NewGroup=Nowa grupa
+CreateGroup=Tworzenie grupy
+RemoveFromGroup=Usuń z grupy
+PasswordChangedAndSentTo=Hasło zmieniło i wysyłane <b>do% s.</b>
+PasswordChangeRequestSent=Wniosek o zmianę hasła <b>dla% s</b> wysłane <b>do% s.</b>
+MenuUsersAndGroups=Użytkownicy i grupy
+LastGroupsCreated=Ostatnia% s utworzonych grup
+LastUsersCreated=Ostatnia% s użytkowników utworzonych
+ShowGroup=Pokaż grupy
+ShowUser=Pokaż użytkownika
+NonAffectedUsers=Brak wpływu na użytkowników
+UserModified=Użytkownik zmodyfikowano pomyślnie
+GroupModified=Grupa zmodyfikowano pomyślnie
+PhotoFile=Plików ze zdjęciami
+UserWithDolibarrAccess=Użytkownik z Dolibarr dostępu
+ListOfUsersInGroup=Lista użytkowników w tej grupie
+ListOfGroupsForUser=Lista grup dla tego użytkownika
+UsersToAdd=Użytkownicy będą mogli dodać do tej grupy
+GroupsToAdd=Grupy, które można dodać do tego użytkownika
+NoLogin=Brak logowania
+CreateDolibarrLogin=Utwórz konto Dolibarr
+LoginAccountDisable=Konto wyłączone, położyć nowy login uaktywnić.
+LoginAccountDisableInDolibarr=Konto wyłączone w Dolibarr.
+LoginAccountDisableInLdap=Wyłączone konto w domenie.
+UsePersonalValue=Użyj wartości osobowych
+GuiLanguage=Język interfejsu
+InternalUser=Wewnętrzny użytkownik
+MyInformations=Moje dane
+ExportDataset_user_1=Dolibarr Użytkownicy i właściwości
+DomainUser=Domena użytkownika% s
+Reactivate=Przywraca
+CreateInternalUserDesc=Ta forma pozwala na utworzenie jeden użytkownik wewnętrzną Twojej firmy / fundacji. Aby creat zewnętrznego użytkownika (klienta, dostawcy, ...), użyć przycisku &quot;Utwórz Dolibarr użytkownika&quot; od osoby trzeciej karcie kontaktu.
+InternalExternalDesc=<b>Wewnętrzny</b> użytkownik jest użytkownikiem, który jest częścią firmy / fundacji. <br> <b>Zewnętrzna</b> użytkownika klienta, dostawcy lub innym. <br><br> W obu przypadkach uprawnienia określa prawa Dolibarr, także zewnętrznych użytkownik może mieć różne menu menedżera niż użytkownika wewnętrznego (patrz strona główna - Instalator - Display)
+PermissionInheritedFromAGroup=Zezwolenie udzielone ineherited ponieważ jeden z użytkowników grupy.
+IdPhoneCaller=ID dzwoniącego telefonu
+UserLogged=Użytkownik% s podłączony
+NewUserCreated=Użytkownik% s tworzone
+NewUserPassword=Zmiana hasła dla% s
+EventUserModified=Użytkownik% s zmodyfikowane
+UserDisabled=Użytkownik% s osób niepełnosprawnych
+UserEnabled=Użytkownik% s aktywowany
+UserDeleted=Użytkownik% s usunięto
+NewGroupCreated=Grupa% s tworzone
+GroupModified=Grupa% s zmodyfikowane
+GroupDeleted=Grupa% s usunięto
+ConfirmCreateContact=Czy na pewno chcesz yu Dolibarr utworzyć konto dla tego kontaktu?
+LoginToCreate=Zaloguj się, aby utworzyć
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

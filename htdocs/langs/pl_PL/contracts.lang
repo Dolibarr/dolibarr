@@ -1,0 +1,94 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ContractsArea=Zamówienia obszarze
+ListOfContracts=Wykaz umów
+LastContracts=Ostatnia% s zmodyfikowane umów
+AllContracts=Wszystkie umowy
+ContractCard=Zamówienie karty
+ContractStatus=Kontrakt statusu
+ContractStatusNotRunning=Nie działa
+ContractStatusRunning=Uruchamianie
+ContractStatusDraft=Szkic
+ContractStatusValidated=Zatwierdzona
+ContractStatusClosed=Zamknięte
+ServiceStatusInitial=Nie działa
+ServiceStatusRunning=Uruchamianie
+ServiceStatusLate=Running, minął
+ServiceStatusClosed=Zamknięte
+ServicesLegend=Usługi legendy
+Contracts=Kontrakty
+Contract=Kontrakt
+ContractContacts=Kontrakt kontaktów
+NoContracts=Nr umowy
+MenuServices=Usługi
+MenuInactiveServices=Usługi, które nie są aktywne
+MenuRunningServices=Uruchamianie usług
+MenuExpiredServices=Minął usług
+MenuClosedServices=Zamknięte usług
+NewContract=Nowe umowy
+AddContract=Dodaj umowy
+SearchAContract=Szukaj zamówienia
+DeleteAContract=Usuń umowy
+CloseAContract=Zamknij umowy
+ConfirmDeleteAContract=Czy na pewno chcesz usunąć tę umowę i wszystkich jego usług?
+ConfirmValidateContract=Czy na pewno chcesz, aby potwierdzić tę umowę?
+ConfirmCloseContract=Spowoduje to zamknięcie wszystkich usług (aktywne lub nie). Czy na pewno chcesz zamknąć tej umowy?
+ConfirmCloseService=Czy na pewno chcesz zamknąć tej usługi wraz z <b>datą% s?</b>
+ValidateAContract=Sprawdź umowę
+ActivateService=Aktywacja usługi
+ConfirmActivateService=Czy na pewno chcesz, aby uaktywnić tę usługę z <b>dnia% s?</b>
+DateContract=Kontrakt daty
+DateServiceActivate=Data aktywacji usługi
+DateServiceUnactivate=Data doręczenia unactivation
+DateServiceStart=Data na początku usługi
+DateServiceEnd=Termin do końca służby
+ShowContract=Pokaż umowy
+ListOfServices=Lista usług
+ListOfRunningContractsLines=Listę uruchomionych linii zamówienia
+ListOfRunningServices=Lista uruchomionych usług
+NotActivatedServices=Nie aktywacji usług (wśród zatwierdzonych umów)
+BoardNotActivatedServices=Usługi uaktywnić wśród zatwierdzonych umów
+LastContracts=Ostatnia% zamówień
+LastActivatedServices=Ostatnia% s aktywacji usługi
+LastModifiedServices=Ostatnia% s zmodyfikowane usług
+EditServiceLine=Edycja usługa linii
+ContractStartDate=Data rozpoczęcia
+ContractEndDate=Data zakończenia
+DateStartPlanned=Planowana data rozpoczęcia
+DateStartPlannedShort=Planowana data rozpoczęcia
+DateEndPlanned=Planowana data zakończenia
+DateEndPlannedShort=Planowana data zakończenia
+DateStartReal=Real data rozpoczęcia
+DateStartRealShort=Real data rozpoczęcia
+DateEndReal=Real data zakończenia
+DateEndRealShort=Real data zakończenia
+NbOfServices=Nb usług
+CloseService=Zamknij usługi
+ServicesNomberShort=Usługa% s (s)
+RunningServices=Uruchamianie usług
+BoardRunningServices=Minął prowadzenie usług
+ServiceStatus=Status usługi
+DraftContracts=Projekty budowlane
+CloseRefusedBecauseOneServiceActive=Umowa nie może zostać zamknięty, gdyż istnieje co najmniej jeden serwis otwarty na nim
+CloseAllContracts=Zamknij wszystkie umowy
+MoveToAnotherContract=Przenieś usługi do innego zamówienia.
+ConfirmMoveToAnotherContract=I choosed nowego celu potwierdzenia zamówienia i chcę, aby przenieść tę usługę do niniejszej umowy.
+ConfirmMoveToAnotherContractQuestion=Wybierz, w którym istniejące umowy (na tej stronie), które chcesz przenieść tę usługę?
+TypeContact_contrat_internal_SALESREPSIGN=Podpisanie umowy sprzedaży
+TypeContact_contrat_internal_SALESREPFOLL=Przedstawiciel handlowy w ślad za umowy
+TypeContact_contrat_external_BILLING=Billing kontakt z klientem
+TypeContact_contrat_external_CUSTOMER=W ślad za kontakt z klientem
+TypeContact_contrat_external_SALESREPSIGN=Podpisanie umowy, kontakt z klientem
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

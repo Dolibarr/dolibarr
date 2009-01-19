@@ -1,0 +1,59 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+RefSending=Nr ref. wysyłanie
+Sending=Wysyłanie
+Sendings=Sendings
+Receivings=Receivings
+SendingsArea=Sendings obszarze
+ListOfSendings=Lista sendings
+SendingMethod=Wysyłanie metody
+SendingReceipt=Wysyłanie otrzymania
+LastSendings=Ostatnia% s sendings
+SearchASending=Wyszukaj wysyłanie
+StatisticsOfSendings=Statystyka sendings
+NbOfSendings=Liczba sendings
+SendingCard=Wysyłanie kart
+NewSending=Nowe wysyłanie
+CreateASending=Utwórz wysyłanie
+CreateSending=Utwórz wysyłanie
+QtyOrdered=Ilosc sortowane
+QtyShipped=Ilosc wysłane
+QtyToShip=Ilosc do statku
+QtyReceived=Ilość otrzymanych
+KeepToShip=Lek na statku
+OtherSendingsForSameOrder=Inne sendings do tego celu
+DateSending=Data wysłania porządku
+DateSendingShort=Data wysłania porządku
+SendingsForSameOrder=Sendings do tego celu
+SendingsAndReceivingForSameOrder=Sendings i receivings do tego celu
+SendingsToValidate=Wysyłanie do zatwierdzenia
+StatusSendingDraft=Szkic
+StatusSendingValidated=Zatwierdzona (produkty do wysyłki lub już wysłane)
+StatusSendingDraftShort=Szkic
+StatusSendingValidatedShort=Zatwierdzona
+SendingSheet=Wysyłanie arkusza
+Carriers=Przewoźnicy
+Carrier=Przewoźnik
+CarriersArea=Przewoźnicy obszarze
+NewCarrier=Nowy przewoźnik
+ConfirmDeleteSending=Czy na pewno chcesz usunąć tę wysyłania?
+ConfirmValidateSending=Czy na pewno chcesz valdate tym wysyłania?
+ConfirmCancelSending=Czy na pewno chcesz anulować wysyłanie?
+GenericTransport=Generic transportu
+Enlevement=Zgarnięte przez klienta
+DocumentModelSimple=Prosty wzór dokumentu
+WarningNoQtyLeftToSend=Ostrzeżenie nie produktów oczekujących na wysłanie.
+NumRefModelJade=Wróć numeru referencyjnego w formacie BLYY00001 ... gdzie RR jest rok. Liczba na końcu nigdy nie jest resetowany do zera.
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

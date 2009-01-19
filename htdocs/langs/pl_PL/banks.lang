@@ -1,0 +1,153 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Bank=Bank
+Banks=Banki
+MenuBankCash=Bank / Cash
+MenuSetupBank=Bank / Cash konfiguracji
+BankName=Nazwa banku
+FinancialAccount=Konto
+FinancialAccounts=Konta
+BankAccount=Konto bankowe
+BankAccounts=Rachunki bankowe
+AccountRef=Rachunek finansowy ref
+AccountLabel=Rachunek finansowy etykiety
+CashAccount=Cash konto
+CashAccounts=Rachunki bieżące
+MainAccount=Główne konto
+CurrentAccount=Rachunek bieżący
+CurrentAccounts=Rachunki bieżące
+SavingAccount=Konta oszczędnościowe
+SavingAccounts=Konta oszczędnościowe
+ErrorBankLabelAlreadyExists=Rachunek finansowy etykiety już istnieje
+BankBalance=Saldo
+BalanceMinimalAllowed=Minimalne dozwolone równowagi
+BalanceMinimalDesired=Minimalna pożądanego bilansu
+InitialBankBalance=Początkowe saldo
+EndBankBalance=Koniec równowagi
+CurrentBalance=Bieżące saldo
+FutureBalance=Przyszłość równowagi
+ShowAllTimeBalance=Pokaż saldo od początku
+Reconciliation=Pojednanie
+RIB=Numer konta bankowego
+IBAN=Numer IBAN
+BIC=BIC / SWIFT numer
+StandingOrders=Zlecenia stałe
+StandingOrder=Zlecenie stałe
+Withdrawals=Wypłaty
+Withdrawal=Wycofanie
+AccountStatement=Konta
+AccountStatementShort=Oświadczenie
+AccountStatements=Rachunku
+LastAccountStatements=Ostatnie oświadczenia
+Rapprochement=Reconciliate
+IOMonthlyReporting=Miesiąc sprawozdawczy
+BankAccountDomiciliation=Konto adres
+BankAccountOwner=Nazwa właściciela konta
+BankAccountOwnerAddress=Adres właściciela konta
+RIBControlError=Inetgrity kontroli wartości kończy się niepowodzeniem. Oznacza to, że informacje na ten numer konta nie są kompletne lub błędne (sprawdź kraju, liczby i IBAN).
+CreateAccount=Załóż konto
+StandingOrderToProcess=Do procesu
+StandingOrderProcessed=Przetworzone
+NewAccount=Nowe konto
+NewBankAccount=Nowe konto bankowe
+NewFinancialAccount=Nowy rachunek finansowy
+MenuNewFinancialAccount=Nowy rachunek finansowy
+NewCurrentAccount=Nowy rachunek bieżący
+NewSavingAccount=Nowe konta oszczędnościowe
+NewCashAccount=Nowe konto pieniężne
+EditFinancialAccount=Edytuj konto
+AccountSetup=Sprawozdania finansowe konfiguracji
+SearchBankMovement=Szukaj banku ruchu
+Debts=Zadłużenie
+LabelBankCashAccount=Bank etykiecie lub w gotówce
+AccountType=Typ konta
+BankType0=Konta oszczędnościowe
+BankType1=Rachunek bieżący
+BankType2=Cash konto
+IfBankAccount=Jeżeli rachunek bankowy
+AccountsArea=Konta obszarze
+AccountCard=Konto karty
+DeleteAccount=Usuń konto
+ConfirmDeleteAccount=Czy na pewno chcesz usunąć to konto?
+Account=Konto
+ByCategories=Według kategorii
+ByRubriques=Według kategorii
+BankTransactionByCategories=Bank transakcji według kategorii
+BankTransactionForCategory=Bank transakcji <b>kategorii% s</b>
+RemoveFromRubrique=Usuń powiązanie z kategorii
+RemoveFromRubriqueConfirm=Czy na pewno chcesz usunąć związek między transakcją i kategorii?
+ListBankTransactions=Lista transakcji bankowych
+IdTransaction=Identyfikator transakcji
+BankTransactions=Bank transakcji
+SearchTransaction=Wyszukiwanie transakcji
+ListTransactions=Lista transakcji
+ListTransactionsByCategory=Lista transakcji / kategoria
+TransactionsToConciliate=Transakcje do pogodzenia
+Conciliable=Conciliable
+Conciliate=Ugłaskać
+Conciliation=Pojednawczy
+ConciliationForAccount=Zjednać sobie tego konta
+IncludeClosedAccount=Dołącz zamkniętych rachunków
+OnlyOpenedAccount=Tylko otworzyła rachunek
+AccountToCredit=Konto do kredytów
+AccountToDebit=Konto do obciążania
+DisableConciliation=Wyłącz funkcję pojednawczą dla tego konta
+ConciliationDisabled=Pojednawczy funkcji niepełnosprawnych
+StatusAccountOpened=Czynny
+StatusAccountClosed=Zamknięte
+AccountIdShort=Liczba
+EditBankRecord=Edycja rekordu
+LineRecord=Transakcja
+AddBankRecord=Dodaj transakcji
+AddBankRecordLong=Dodaj transakcji ręcznie
+ConciliatedBy=Pojednaniem przez
+DateConciliating=Zjednać daty
+BankLineConciliated=Transakcja pojednaniem
+CustomerInvoicePayment=Klient płatności
+SupplierInvoicePayment=Dostawca płatności
+SocialContributionPayment=Społeczny wkład płatności
+FinancialAccountJournal=Rachunek finansowy dziennika
+BankTransfer=Przelew bankowy
+BankTransfers=Przelewy bankowe
+TransferDesc=Przeniesienie z jednego konta do drugiego, Dolibarr napisze dwa rekordy (ujemne w źródle konta i kredytu w rachunku docelowego, o tej samej kwocie. Te same etykiety i daty będą stosowane w odniesieniu do tej transakcji)
+TransferFrom=Od
+TransferTo=By
+TransferFromToDone=Przeniesienie <b>z% s do% s% s%</b> s została zapisana.
+CheckTransmitter=Nadajnik
+ValidateCheckReceipt=Validate otrzymania tej kontroli?
+ConfirmValidateCheckReceipt=Czy na pewno chcesz, aby potwierdzić odbiór tej kontroli, nie będzie można zmienić raz to zrobić?
+DeleteCheckReceipt=Usuń to sprawdzić odbiór?
+ConfirmDeleteCheckReceipt=Czy na pewno chcesz usunąć to sprawdzić odbiór?
+BankChecks=Czeki bankowe
+BankChecksToReceipt=Czeki czeka na depozyt
+NumberOfCheques=Nb czeków
+DeleteTransaction=Usuń transakcji
+ConfirmDeleteTransaction=Czy na pewno chcesz usunąć tę transakcję?
+ThisWillAlsoDeleteBankRecord=Spowoduje to również usunięcie generowane transakcje bankowe
+BankMovements=Ruchy
+CashBudget=Środki pieniężne budżetu
+PlannedTransactions=Planowane transakcje
+ExportDataset_banque_1=Bank transakcji i konta
+TransactionOnTheOtherAccount=Transakcji na inne konta
+TransactionWithOtherAccount=Konto transferu
+PaymentNumberUpdateSucceeded=Płatność liczba zaktualizowany
+PaymentNumberUpdateFailed=Płatność liczba nie może być aktualizowane
+PaymentDateUpdateSucceeded=Płatność data aktualizacji pomyślnie
+PaymentDateUpdateFailed=Data płatności nie mogą być aktualizowane
+BankTransactionLine=Bank transakcji
+AllAccounts=Wszystkie bank / Rachunki
+BackToAccount=Powrót do konta
+ShowAllAccounts=Pokaż wszystkich rachunków
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

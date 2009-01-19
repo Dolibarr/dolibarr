@@ -181,3 +181,16 @@ MigrationShipmentOrderMatching=Aktualizacja rachunków za wysyłki
 MigrationDeliveryOrderMatching=Aktualizacja rachunków za dostawy
 MigrationDeliveryDetail=Aktualizacja dostawy
 
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+PHPSupportUTF8=To wsparcie PHP UTF8 funkcji.
+ErrorPHPDoesNotSupportGD=Twoja instalacji PHP nie obsługuje funkcji graficznych GD. Nr wykresie będą dostępne.
+ErrorPHPDoesNotSupportUTF8=Twoja instalacji PHP nie obsługuje UTF8 funkcji. Dolibarr może nie działać poprawnie. Rozwiązać ten problem przed instalacją Dolibarr.
+IfLoginDoesNotExistsCheckCreateUser=Jeśli logowania jeszcze nie istnieje, należy sprawdzić opcję &quot;Utwórz użytkownika&quot;
+ErrorConnection=Serwer <b>&quot;% s&quot;,</b> nazwa bazy danych <b>&quot;% s&quot;</b> login <b>&quot;% s&quot;</b> lub hasło bazy danych mogą być złe lub PHP wersji klienckiej może być zbyt stare porównaniu do wersji bazy danych.
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Poprawna umowa% s (Kontrakt data =% s, daty rozpoczęcia usługi min =% s)
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

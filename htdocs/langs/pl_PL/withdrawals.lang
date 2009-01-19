@@ -1,0 +1,48 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+StandingOrdersArea=Stały dziedzinie zamówień
+CustomersStandingOrdersArea=Klienci stałych zleceń obszarze
+StandingOrders=Zlecenia stałe
+StandingOrder=Zlecenia stałe
+NewStandingOrder=Nowe zlecenie stałe
+Withdrawals=Wypłaty
+Withdrawal=Wycofanie
+WithdrawalsReceipts=Wycofania wpływy
+WithdrawalReceipt=Wycofanie otrzymania
+WithdrawalReceiptShort=Odbiór
+LastWithdrawalReceipts=Ostatnia% s wycofania wpływy
+WithdrawedBills=Withdrawed faktur
+WithdrawalsLines=Wycofania linie
+RequestStandingOrderToTreat=Wniosek o stałych zleceń w leczeniu
+RequestStandingOrderTreated=Wniosek o stałych zleceń leczonych
+CustomersStandingOrders=Stałych zleceń klienta
+CustomerStandingOrder=Klient zlecenie stałe
+NbOfInvoiceToWithdraw=Nb faktury z wycofać wniosek
+InvoiceWaitingWithdraw=Faktura czeka na wycofać
+AmountToWithdraw=Kwota do wycofania
+WithdrawsRefused=Wycofuje odmówił
+NoInvoiceToWithdraw=Nr klienta zapłaty faktury w trybie &quot;wycofania&quot; czeka. Idź na &quot;Wypłata&quot; kartę na fakturze kartę do złożenia wniosku.
+ResponsibleUser=Odpowiedzialny użytkownika
+WithdrawalsSetup=Wycofanie konfiguracji
+WithdrawStatistics=Wycofuje statystyk
+WithdrawRejectStatistics=Wypłaty odrzuca &quot;statystyki
+LastWithdrawalReceipt=Ostatnia% s wycofanie wpływy
+MakeWithdrawRequest=Zrób wycofać wniosek
+ThirdPartyBankCode=Trzeciej kod banku
+ThirdPartyDeskCode=Trzeciej biurko kod
+NoInvoiceCouldBeWithdrawed=Nr faktury withdrawed sukces. Sprawdź, czy faktura jest na spółki z ważnych BAN.
+ClassCredited=Klasyfikacja zapisane
+ClassCreditedConfirm=Czy na pewno chcesz to wycofanie otrzymania sklasyfikowania jako wpłacone na konto bankowe?
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

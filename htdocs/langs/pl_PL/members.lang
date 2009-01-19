@@ -1,0 +1,149 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+MembersArea=Strefa
+PublicMembersArea=Strefa publiczna
+MemberCard=Państwa karty
+SubscriptionCard=Subskrypcja karty
+Member=Państwa
+Members=Członkowie
+MemberAccount=Member Login
+ShowMember=Pokaż Państwa karty
+UserNotLinkedToMember=Użytkownik nie wiąże się z członkiem
+MembersTickets=Członkowie Bilety
+FundationMembers=Fundacja użytkowników
+Attributs=Atrybuty
+Person=Osoba
+ErrorMemberTypeNotDefined=Państwo nie określono rodzaju
+ListOfPublicMembers=Lista członków publicznych
+ListOfValidatedPublicMembers=Wykaz zatwierdzonych publicznej użytkowników
+ErrorThisMemberIsNotPublic=Członek ten nie jest publicznie dostępna
+MembersCards=Członkowie wydruku karty
+MembersList=Lista członków
+MembersListToValid=Lista członków projektu (być weryfikowane)
+MembersListValid=Wykaz ważnych członków
+MembersListUpToDate=Wykaz ważnych członków aktualne subskrypcji
+MembersListNotUpToDate=Wykaz ważnych członków z subskrypcji nieaktualne
+MembersListResiliated=Lista członków resiliated
+MembersListQualified=Lista członków wykwalifikowanych
+MenuMembersToValidate=Projekt użytkowników
+MenuMembersValidated=Zatwierdzona użytkowników
+MenuMembersUpToDate=Aktualnych członków
+MenuMembersNotUpToDate=Nieaktualne użytkowników
+MenuMembersResiliated=Resiliated użytkowników
+DateAbonment=Subskrypcja daty
+DateSubscription=Subskrypcja daty
+DateNextSubscription=Następna subskrypcji
+DateEndSubscription=Data zakończenia subskrypcji
+EndSubscription=Koniec subskrypcji
+NewMember=Nowy członek
+NewType=Nowy członek typu
+MemberType=Państwa typ
+MemberTypeId=Państwa typu identyfikatora
+MemberTypeLabel=Państwa typu etykiety
+MembersTypes=Członkowie typy
+MembersAttributes=Członkowie atrybuty
+SearchAMember=Szukaj członka
+MemberStatusDraft=Projekt (musi zostać zatwierdzone)
+MemberStatusDraftShort=Aby potwierdzić
+MemberStatusActive=Zatwierdzona (oczekujących subskrypcji)
+MemberStatusActiveShort=Zatwierdzona
+MemberStatusActiveLate=Subskrypcja minął
+MemberStatusActiveLateShort=Minął
+MemberStatusPayed=Subskrypcja aktualne
+MemberStatusPayedShort=Aktualne
+MemberStatusResiliated=Resiliated członek
+MemberStatusResiliatedShort=Resiliated
+MembersStatusToValid=Projekt użytkowników
+MembersStatusToValidShort=Projekt użytkowników
+MembersStatusValidated=Zatwierdzona użytkowników
+MembersStatusPayed=Subskrypcja aktualne
+MembersStatusPayedShort=Aktualne
+MembersStatusNotPayed=Subskrypcja nieaktualne
+MembersStatusNotPayedShort=Nieaktualne
+MembersStatusResiliated=Resiliated użytkowników
+MembersStatusResiliatedShort=Resiliated użytkowników
+NewCotisation=Nowe Wkład
+EditMember=Edytuj członków
+SubscriptionEndDate=Data zakończenia subskrypcji
+NewAttribute=Nowe attribut
+AttributeCode=Attribute kod
+OptionalFieldsSetup=Pola opcjonalne konfiguracji
+MembersTypeSetup=Członkowie typu instalacji
+NewSubscription=Nowa subskrypcja
+Subscription=Subskrypcja
+Subscriptions=Subskrypcje
+SubscriptionLate=Późno
+SubscriptionNotReceived=Subskrypcja nigdy nie otrzymały
+SubscriptionLateShort=Późno
+SubscriptionNotReceivedShort=Nigdy nie otrzymała
+ListOfSubscriptions=Lista subskrypcji
+SendCardByMail=Wyślij kartę
+AddMember=Dodaj członków
+MemberType=Państwa typ
+NoTypeDefinedGoToSetup=Żaden członek typów zdefiniowanych. Przejdź do konfiguracji - Członkowie typy
+NewMemberType=Nowy członek typu
+WelcomeEMail=Zapraszamy e-mail
+SubscriptionRequired=Subskrypcja wymagane
+EditType=Edycja członkiem typu
+DeleteType=Usunąć
+VoteAllowed=Głosowanie dozwolone
+Physical=Fizyczne
+Moral=Moralny
+MorPhy=Moralnej i fizycznej
+Reenable=Ponownym włączeniu
+ResiliateMember=Resiliate członkiem
+ConfirmResiliateMember=Czy na pewno chcesz resiliate tym członkiem?
+DeleteMember=Usuń członka
+ConfirmDeleteMember=Czy na pewno chcesz usunąć ten użytkownik (Usuwanie członek usunąć wszystkie jego subskrypcji)?
+DeleteSubscription=Usuwanie subskrypcji
+ConfirmDeleteSubscription=Czy na pewno chcesz usunąć ten abonament?
+Filehtpasswd=htpasswd plik
+ValidateMember=Validate członkiem
+ConfirmValidateMember=Czy na pewno chcesz, aby potwierdzić tę członkiem?
+FollowingLinksArePublic=Poniższe linki są otwarte strony nie są chronione przez jakiekolwiek Dolibarr zgody. Nie są one sformtowany strony, pod warunkiem, jako przykład pokazuje jak lista użytkowników bazy danych.
+PublicMemberList=Publicznego liście członków
+BlankSubscriptionForm=Formularz subskrypcji
+MemberPublicLinks=Publicznego linki / pages
+ExportDataset_member_1=Członkowie i abonamentów
+LastMembers=Ostatnia% s użytkowników
+LastMembersModified=Ostatnia% s zmodyfikowane użytkowników
+AttributeName=Nazwa atrybutu
+FieldEdition=% Dziedzinie wydanie
+AlphaNumOnlyCharsAndNoSpace=tylko alphanumericals znaków bez spacji
+String=String
+Text=Tekst
+Int=Int.
+Date=Data
+DateAndTime=Data i czas
+PublicMemberCard=Państwa publiczne karty
+MemberNotOrNoMoreExpectedToSubscribe=Państwa nie są lub nie oczekuje, aby subskrybować
+AddSubscription=Dodaj abonament
+ShowSubscription=Pokaż subskrypcji
+MemberModifiedInDolibarr=Państwa zmodyfikowany w Dolibarr
+SendAnEMailToMember=Wyślij e-mail informacji na członka
+DescADHERENT_MAIL_VALID_SUBJECT=EMail temat członkiem walidacji
+DescADHERENT_MAIL_VALID=EMail dla członka walidacji
+DescADHERENT_MAIL_COTIS_SUBJECT=EMail temat subskrypcji
+DescADHERENT_MAIL_COTIS=EMail subskrypcji
+DescADHERENT_MAIL_RESIL_SUBJECT=EMail temat członka resiliation
+DescADHERENT_MAIL_RESIL=EMail dla członka resiliation
+DescADHERENT_MAIL_FROM=Nadawca wiadomości e-mail do automatycznych wiadomości e-mail
+DescADHERENT_ETIQUETTE_TYPE=Etykiety formacie
+DescADHERENT_CARD_HEADER_TEXT=Tekst wydrukowany na górę członka karty
+DescADHERENT_CARD_TEXT=Tekst wydrukowany na członka karty
+DescADHERENT_CARD_FOOTER_TEXT=Tekst wydrukowany na dole karty członka
+ShowTypeCard=Pokaż typu &#39;% s&#39;
+HTPasswordExport=htpassword pliku generacji
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

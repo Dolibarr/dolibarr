@@ -1,0 +1,45 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Intervention=Interwencja
+Interventions=Interwencje
+InterventionCard=Interwencja karty
+NewIntervention=Nowa interwencja
+AddIntervention=Dodaj interwencji
+ListOfInterventions=Wykaz interwencji
+EditIntervention=Editer interwencji
+LastInterventions=Ostatnia% s interwencji
+AllInterventions=Wszystkie interwencje
+CreateDraftIntervention=Tworzenie projektu
+CustomerDoesNotHavePrefix=Klient nie ma prefiks
+InterventionContact=Interwencja kontakt
+DeleteIntervention=Usuń interwencji
+ValidateIntervention=Validate interwencji
+DeleteInterventionLine=Usuń interwencyjnej linii
+ConfirmDeleteIntervention=Czy na pewno chcesz usunąć tę interwencję?
+ConfirmValidateIntervention=Czy na pewno chcesz, aby potwierdzić tej interwencji?
+ConfirmModifyIntervention=Czy na pewno chcesz modyfikować tej interwencji?
+ConfirmDeleteInterventionLine=Czy na pewno chcesz usunąć tę linię interwencji?
+NameAndSignatureOfInternalContact=Nazwisko i podpis interwencji:
+NameAndSignatureOfExternalContact=Nazwisko i podpis klienta:
+DocumentModelStandard=Model standardowy dokument dla interwencji
+TypeContact_fichinter_internal_INTERREPFOLL=Przedstawiciela w ślad za interwencję
+TypeContact_fichinter_internal_INTERVENING=Interwencja
+TypeContact_fichinter_external_BILLING=Billing kontakt z klientem
+TypeContact_fichinter_external_CUSTOMER=W ślad za kontakt z klientem
+ArcticNumRefModelDesc1=Generic numer modelu
+ArcticNumRefModelError=Nie można włączyć
+PacificNumRefModelDesc1=Wróć NUMERO z formatu% syymm rr-nnnn gdzie jest rok, mm miesiąc i nnnn jest ciągiem bez przerwy i nie ma powrotu do 0
+PacificNumRefModelError=Interwencja karty zaczynające się od $ syymm już istnieje i nie jest kompatybilne z tym modelem sekwencji. Usuń go lub zmienić jego nazwę, aby włączyć ten moduł.
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

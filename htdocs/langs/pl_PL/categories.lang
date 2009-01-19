@@ -1,0 +1,95 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Category=Kategoria
+Categories=Kategorie
+Rubrique=Kategoria
+Rubriques=Kategorie
+categories=kategorie
+TheCategorie=Kategoria
+In=W
+AddIn=Dodaj w
+modify=modyfikować
+Classify=Klasyfikacja
+CategoriesArea=Kategorie obszarze
+ProductsCategoriesArea=Produkty / Usługi kategorii powierzchni
+SuppliersCategoriesArea=Dostawcy kategorii powierzchni
+CustomersCategoriesArea=Klienci kategorii powierzchni
+ThirdPartyCategoriesArea=Stron trzecich kategorii powierzchni
+MainCats=Główne kategorie
+SubCats=Podkategorie
+CatStatistics=Statystyki
+CatList=Lista catgories
+AllCats=Wszystkie kategorie
+ViewCat=Wyświetl kategorii
+NewCat=Dodaj kategorię
+NewCategory=Nowa kategoria
+ModifCat=Modyfikacja kategorii
+CatCreated=Kategoria utworzonych
+CreateCat=Tworzenie kategorii
+CreateThisCat=Tworzenie tej kategorii
+ValidateFields=Validate pola
+NoSubCat=Brak podkategorii.
+SubCatOf=Podkategoria
+FoundCats=Znaleziono kategorii
+FoundCatsForName=Kategorie znaleźć na imię i nazwisko:
+FoundSubCatsIn=Podkategorie w kategorii
+ErrSameCatSelected=Wybrano tej samej kategorii, kilka razy
+ErrForgotCat=You forgot wybrać kategorię
+ErrForgotField=Zapomniałeś o zakresie
+ErrCatAlreadyExists=Ta nazwa jest już używany
+AddProductToCat=Dodaj produkt do kategorii?
+ImpossibleAddCat=Niemożliwe, aby dodać kategorię
+ImpossibleAssociateCategory=Niemożliwe włączają do kategorii
+WasAddedSuccessfully=<b>% s</b> został dodany pomyślnie.
+ObjectAlreadyLinkedToCategory=Element jest już powiązana z tej kategorii.
+CategorySuccessfullyCreated=Ta kategoria% s został dodany pomyślnie.
+ProductIsInCategories=Produktu / usługi posiada do następujących kategorii
+SupplierIsInCategories=Trzeciej posiada do następujących kategorii dostawców
+CompanyIsInCustomersCategories=Wspomniana strona trzecia posiada do następujących klientów / perspektywy kategorii
+CompanyIsInSuppliersCategories=Wspomniana strona trzecia posiada do następujących kategorii dostawców
+ProductHasNoCategory=Ten produkt / usługa nie jest w żaden kategorii
+SupplierHasNoCategory=To dostawca nie jest w żaden kategorii
+CompanyHasNoCategory=Ta firma nie jest w żaden kategorii
+ClassifyInCategory=Klasyfikacja w kategorii
+NoneCategory=Żaden
+CategoryExistsAtSameLevel=Ta kategoria już istnieje w tym samym miejscu
+ReturnInProduct=Powrót do produktów / usług karty
+ReturnInSupplier=Powrót do dostawcy kart
+ReturnInCompany=Powrót do klienta / perspektywa karty
+ContentsVisibleByAll=Zawartość będzie widoczny przez wszystkich
+ContentsVisibleByAllShort=Zawartość widoczna przez wszystkie
+ContentsNotVisibleByAllShort=Treść nie jest widoczna dla wszystkich
+CategoriesTree=Kategorie drzewa
+DeleteCategory=Usuwanie kategorii
+ConfirmDeleteCategory=Czy na pewno chcesz usunąć tę kategorię?
+RemoveFromCategory=Usuń powiązanie z kategorii
+RemoveFromCategoryConfirm=Czy na pewno chcesz usunąć związek między transakcją i kategorii?
+NoCategoriesDefined=Nr kategorii zdefiniowanych
+SuppliersCategoryShort=Dostawcy kategorii
+CustomersCategoryShort=Klienci kategorii
+ProductsCategoryShort=Produkty kategorii
+SuppliersCategoriesShort=Dostawcy kategorii
+CustomersCategoriesShort=Klienci kategorii
+CustomersProspectsCategoriesShort=Custo. / prosp. kategorie
+ProductsCategoriesShort=Produkty kategorii
+ThisCategoryHasNoProduct=Ta kategoria nie zawiera żadnych produktów.
+ThisCategoryHasNoSupplier=Ta kategoria nie zawiera żadnego dostawcy.
+ThisCategoryHasNoCustomer=Ta kategoria nie zawiera żadnych klientów.
+AssignedToCustomer=Przypisany do klienta
+AssignedToTheCustomer=Przypisany do klienta
+InternalCategory=Inernal kategorii
+CategoryContents=Kategoria treści
+CategId=Kategoria id
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

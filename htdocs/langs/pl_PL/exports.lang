@@ -1,0 +1,49 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ExportsArea=Wywóz obszarze
+ImportArea=Import obszarze
+NewExport=Nowy eksport
+NewImport=Nowe importu
+ExportableDatas=Eksport danych
+ImportableDatas=Przywozowe danych
+SelectExportDataSet=Wybierz dane, które chcesz wyeksportować ...
+SelectExportFields=Wybierz pola, które chcesz wyeksportować, lub wybrać predefiniowany profil eksportu
+SaveExportModel=Zapisz ten wywóz profil jeśli masz zamiar ponownego użycia go później ...
+ExportModelName=Eksport nazwę profilu
+ExportModelSaved=Eksport profil zapisany pod <b>nazwą% s.</b>
+ExportableFields=Wywóz pola
+ExportedFields=Eksportowane pola
+DatasetToExport=Dataset do wywozu
+Dataset=Dataset
+ChooseFieldsOrdersAndTitle=Wybierz pola porządku ...
+FieldsOrder=Obszary celu
+FieldsTitle=Obszary tytuł
+ChooseExportFormat=Wybierz format eksportu
+NowClickToGenerateToBuildExportFile=Teraz kliknij na &quot;Generuj&quot; budować pliku eksportu ...
+AvailableFormats=Formaty disponibles
+LibraryUsed=Librairie
+LibraryVersion=Wersja
+Step=Krok
+FormatedImport=Import asystent
+FormatedImportDesc1=Obszar ten pozwala importować spersonalizowanych danych, za pomocą asystenta, który pomoże Państwu w procesie bez wiedzy technicznej.
+FormatedImportDesc2=Pierwszym krokiem jest wybór króla dane, które chcesz załadować, a następnie załadować plik, a następnie wybrać pola, które chcesz załadować.
+FormatedExport=Eksport asystent
+FormatedExportDesc1=Obszar ten pozwala na eksport spersonalizowanych danych, za pomocą asystenta, który pomoże Państwu w procesie bez wiedzy technicznej.
+FormatedExportDesc2=Pierwszym krokiem jest wybór gotowych danych, a następnie wybrać pola, które chcesz w wyniku plików, które kolejności.
+FormatedExportDesc3=Po danych na wywóz są wybierane, można określić format pliku, który chcesz wyeksportować dane.
+Sheet=Arkusz
+NoImportableData=Nr przywozowe danych (bez modułu z definicji pozwalają na import danych)
+FileSuccessfullyBuilt=Eksport plików generowanych
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

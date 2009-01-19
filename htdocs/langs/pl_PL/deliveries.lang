@@ -1,0 +1,35 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Delivery=Dostawa
+Deliveries=Dostawy
+DeliveryCard=Dostępność kart
+DeliveryOrder=Dostawa celu
+DeliveryOrders=Zamówienia na dostawy
+DeliveryDate=Data dostawy
+DeliveryDateShort=Deliv. data
+CreateDeliveryOrder=Generowanie zamówienia dostawy
+QtyDelivered=Ilość wydana
+SetDeliveryDate=Ustaw datę wysyłki
+ValidateDeliveryReceipt=Validate otrzymania dostawy
+ValidateDeliveryReceiptConfirm=Czy na pewno chcesz, aby potwierdzić dostawę otrzymania?
+DeliveryMethod=Metoda dostawy
+TrackingNumber=Numer
+NameAndSignature=Nazwisko i podpis:
+ToAndDate=To___________________________________ na ____ / _____ / __________
+GoodStatusDeclaration=Czy otrzymane towary powyżej w dobrym stanie,
+Deliverer=Dostawca:
+Sender=Nadawca
+Recipient=Odbiorca
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

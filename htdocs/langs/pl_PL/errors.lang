@@ -1,0 +1,61 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ErrorLoginAlreadyExists=Zaloguj% s już istnieje.
+ErrorGroupAlreadyExists=Grupa% s już istnieje.
+ErrorDuplicateTrigger=A powodować nam plik z klasą <b>&quot;% s \&quot;</b> jest obecna sevaral razy. Usuń zduplikowane wywołać plik w katalogu <b>&quot;% s&quot;.</b>
+ErrorFailToDeleteFile=Nie można usunąć pliku <b>&quot;% s&quot;.</b>
+ErrorFailToCreateFile=Nie można utworzyć pliku <b>&#39;% s&#39;.</b>
+ErrorFailToRenameDir=Nie można zmienić nazwy katalogu <b>&#39;% s&#39; do&#39;% s&#39;.</b>
+ErrorFailToCreateDir=Nie można utworzyć katalogu <b>&#39;% s&#39;.</b>
+ErrorFailToDeleteDir=Nie można usunąć katalogu <b>&quot;% s&quot;.</b>
+ErrorFailedToDeleteJoinedFiles=Nie można usunąć, ponieważ jednostka nie ma przystąpiły niektóre pliki. Usuń dołączyć plików.
+ErrorThisContactIsAlreadyDefinedAsThisType=Ten kontakt jest już zdefiniowana jako kontaktowy dla tego typu.
+ErrorCashAccountAcceptsOnlyCashMoney=To konto bankowe jest gotówką uwagę, dlatego akceptuje płatności typu cash only.
+ErrorFromToAccountsMustDiffers=Źródło i celów rachunków bankowych muszą być różne.
+ErrorBadThirdPartyName=Zła wartość w trzeciej imię
+ErrorBadCustomerCodeSyntax=Bad składni kodu klienta
+ErrorCustomerCodeRequired=Klient kod wymagane
+ErrorCustomerCodeAlreadyUsed=Klient kod już używane
+ErrorPrefixRequired=Prefiks wymagana
+ErrorBadSupplierCodeSyntax=Bad składni kodu dostawcy
+ErrorSupplierCodeRequired=Dostawca kod wymagane
+ErrorSupplierCodeAlreadyUsed=Dostawca kod już używane
+ErrorBadParameters=Bad parametry
+ErrorFailedToWriteInDir=Nie można zapisać w katalogu% s
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Znaleziono nieprawidłowy adres e-mail składni% s linii w pliku (np. z linii email% s =% s)
+ErrorUserCannotBeDelete=Użytkownik nie może być usunięty. Może być to związane jest na Dolibarr podmiotów.
+ErrorFieldsRequired=Niektóre pola wymagane nie były obsadzone.
+ErrorFailedToCreateDir=Nie można utworzyć katalogu. Sprawdź, czy serwer WWW użytkownik ma uprawnienia do zapisu do katalogu dokumentów Dolibarr. Jeśli parametr <b>safe_mode</b> jest włączona w tym PHP, czy posiada Dolibarr php pliki do serwera internetowego użytkownika (lub grupy).
+ErrorNoMailDefinedForThisUser=Nie określono mail do tego użytkownika
+ErrorFeatureNeedJavascript=Ta funkcja JavaScript trzeba być aktywowany do pracy. Zmień to w konfiguracji - wyświetlacz.
+ErrorTopMenuMustHaveAParentWithId0=Menu typu &quot;góry&quot; nie może mieć dominującej menu. Umieść 0 dominującej w menu lub wybrać z menu typu &quot;Lewy&quot;.
+ErrorLeftMenuMustHaveAParentId=Menu typu &quot;Lewy&quot; musi mieć identyfikator rodzica.
+ErrorGenbarCodeNotfound=Nie znaleziono pliku (Złe drogi, złe uprawnienia lub odmowa dostępu przez openbasedir parametr)
+ErrorFunctionNotAvailableInPHP=<b>Funkcja% s</b> jest wymagane dla tej funkcji, ale nie jest dostępny w tej wersji / konfiguracji PHP.
+ErrorDirAlreadyExists=A katalog o takiej nazwie już istnieje.
+ErrorFieldCanNotContainSpecialCharacters=<b>Pole% s</b> nie zawiera znaki specjalne.
+WarningAllowUrlFopenMustBeOn=<b>Allow_url_fopen</b> Parametr musi być ustawiony <b>w</b> Filer <b>php.ini</b> za ten moduł pracy całkowicie. Należy zmodyfikować ten plik ręcznie.
+WarningBuildScriptNotRunned=<b>Skrypt% s</b> nie zostało jeszcze prowadził do tworzenia grafiki, lub nie ma danych do pokazania.
+WarningBookmarkAlreadyExists=Zakładka z tego tytułu lub ten cel (URL) już istnieje.
+WarningPassIsEmpty=Ostrzeżenie, hasło bazy danych jest pusta. To jest chroniony. Należy dodać hasło do bazy danych i zmienić conf.php pliku w celu odzwierciedlenia tego.
+ErrorNoAccountancyModuleLoaded=Nr rachunkowych moduł aktywowany
+ErrorExportDuplicateProfil=Ten profil nazwie już istnieje dla tego zestawu eksportowych.
+ErrorLDAPSetupNotComplete=Dolibarr-LDAP dopasowywania nie jest kompletna.
+ErrorLDAPMakeManualTest=A. LDIF plik został wygenerowany w katalogu% s. Spróbuj załadować go ręcznie z wiersza polecenia, aby mieć więcej informacji na temat błędów.
+ErrorCantSaveADoneUserWithZeroPercentage=Nie można zapisać działania z &quot;Statut nie rozpocznie&quot;, jeśli pole &quot;wykonana przez&quot; jest wypełniona.
+ErrorBillRefAlreadyExists=Numer identyfikacyjny używany do tworzenia już istnieje.
+ErrorPleaseTypeBankTransactionReportName=Wpisz nazwę banku otrzymania gdy transakcja jest zgłaszane (Format RRRRMM lub RRRRMMDD)
+ErrorRecordHasChildren=Nie można usunąć rekordy, ponieważ ma pewne Childs.
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

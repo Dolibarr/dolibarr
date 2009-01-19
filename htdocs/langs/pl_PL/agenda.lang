@@ -1,0 +1,61 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Actions=Działania
+ActionsArea=Działania obszaru (Zdarzenia i zadania)
+Agenda=Porządek obrad
+Agendas=Agendas
+Calendar=Kalendarz
+Calendars=Kalendarze
+AffectedTo=Affected do
+DoneBy=Sporządzono przez
+Events=Wydarzenia
+ListOfActions=Lista wydarzeń
+Location=Położenie
+SearchAnAction=Szukaj działania / zadania
+MenuToDoActions=Wszystkie działania uncomplete
+MenuDoneActions=Wszystkie działania zakończone
+MenuToDoMyActions=Moje działania niekompletne
+MenuDoneMyActions=Moje działania zakończone
+ListOfEvents=Wykaz imprez Dolibarr
+ActionsAskedBy=Akcje zostały zarejestrowane przez
+ActionsToDoBy=Akcje przeznaczone na
+ActionsDoneBy=Czynności wykonywane przez
+AllMyActions=Wszystkie moje działania / zadania
+AllActions=Toutes les działania / zadania
+ViewList=Pokaż listę
+ViewCal=Wyświetl kalendarz
+ViewWithPredefinedFilters=Widok z predefiniowane filtry
+AutoActions=Automatyczne wypełnianie porządku
+AgendaAutoActionDesc=Określ tutaj zdarzeń, dla której chcesz Dolibarr aby utworzyć automatycznie działania w porządku. Jeżeli nie jest zaznaczone (domyślnie), tylko podręcznik działań będą uwzględnione w porządku obrad.
+AgendaSetupOtherDesc=Ta strona pozwala skonfigurować inne parametry porządku modułu.
+ActionsEvents=Zdarzenia, za które Dolibarr stworzy automatycznie działania w porządku
+PropalValidatedInDolibarr=Wniosek zatwierdzone
+InvoiceValidatedInDolibarr=Faktura zatwierdzone
+OrderValidatedInDolibarr=Zamówienie zatwierdzone
+NewCompanyToDolibarr=Trzeciej utworzonych
+DateActionPlannedStart=Planowana data rozpoczęcia
+DateActionPlannedEnd=Planowana data zakończenia
+DateActionDoneStart=Real data rozpoczęcia
+DateActionDoneEnd=Real data zakończenia
+DateActionStart=Data rozpoczęcia
+DateActionEnd=Data zakończenia
+AgendaUrlOptions1=Możesz także dodać następujące parametry do filtr wyjściowy:
+AgendaUrlOptions2=<b>login=<b>login =% s,</b> aby ograniczyć wyjścia do działań stworzonych przez wpływ, lub wykonane przez <b>użytkownika% s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% s,</b> aby ograniczyć wyjścia do działań stworzonych przez <b>użytkownika% s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% s,</b> aby ograniczyć wyjścia do działań dotknięte do <b>użytkownika% s.</b>
+AgendaUrlOptions5=<b>logind=<b>logowanie =% s,</b> aby ograniczyć wyjścia do działań wykonanych przez <b>użytkownika% s.</b>
+AgendaShowBirthdayEvents=Pokaż urodziny kontaktów
+AgendaHideBirthdayEvents=Ukryj urodzin kontaktów
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

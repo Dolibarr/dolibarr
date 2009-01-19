@@ -1,0 +1,48 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Suppliers=Dostawcy
+Supplier=Dostawca
+AddSupplier=Dodaj dostawcy
+SupplierRemoved=Dostawca usunięte
+SuppliersInvoice=Dostawcy faktury
+SuppliersInvoices=Dostawcy faktur
+NewSupplier=Nowy dostawca
+History=Historia
+ListOfSuppliers=Lista dostawców
+ShowSupplier=Pokaż dostawcy
+OrderDate=Kolejność Data
+BuyingPrice=Kupowanie cena
+AddSupplierPrice=Dodaj dostawcy cen
+ChangeSupplierPrice=Zmiana dostawcy cen
+ErrorQtyTooLowForThisSupplier=Ilość ta jest zbyt niska dla dostawcy lub ceny nie określono tego produktu w tym dostawcy
+ErrorSupplierCountryIsNotDefined=Kraj dla tego dostawcy nie jest zdefiniowany. Popraw ten pierwszy.
+ProductHasAlreadyReferenceInThisSupplier=Ten produkt ma już odniesienia w tym dostawcy
+NoRecordedSuppliers=Nr dostawców rejestrowane
+SupplierPayment=Dostawca płatności
+SuppliersArea=Dostawcy obszarze
+RefSupplierShort=Nr ref. Dostawca
+ExportDataset_fournisseur_1=Dostawca faktury i faktury listę &quot;linii
+ExportDataset_fournisseur_2=Dostawca faktur i płatności
+ApproveThisOrder=Zatwierdzenie tego celu
+ConfirmApproveThisOrder=Czy na pewno chcesz zatwierdzić tego celu?
+DenyingThisOrder=Odmawiając tym celu
+ConfirmDenyingThisOrder=Czy na pewno chcesz zaprzecza tej kolejności?
+ConfirmCancelThisOrder=Czy na pewno chcesz anulować zamówienie?
+AddCustomerOrder=Tworzenie zamówieniem
+AddCustomerInvoice=Tworzenie klienta faktury
+AddSupplierOrder=Tworzenie dostawcy celu
+AddSupplierInvoice=Tworzenie faktury dostawcy
+ListOfSupplierProductForSupplier=Wykaz produktów i cen <b>dostawcy% s</b>
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

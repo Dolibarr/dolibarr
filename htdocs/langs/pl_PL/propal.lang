@@ -1,0 +1,93 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Proposals=Commercial propozycje
+Proposal=Commercial wniosku
+ProposalsDraft=Projekt propozycji
+ProposalDraft=Projekt wniosku handlowych
+ProposalsOpened=Czynny propozycji
+Prop=Commercial propozycje
+CommercialProposal=Commercial wniosku
+CommercialProposals=Commercial propozycje
+ProposalContact=Wniosek o kontakt
+NewProp=Nowy wniosek handlowych
+NewProposal=Nowy wniosek handlowych
+NewPropal=Nowa propozycja
+Prospect=Prospect
+ProspectList=Prospect listy
+DeleteProp=Usuń handlowych wniosku
+ValidateProp=Validate handlowych wniosku
+AddProp=Dodaj projekt
+ConfirmDeleteProp=Czy na pewno chcesz usunąć tę propozycję handlową?
+ConfirmValidateProp=Czy na pewno chcesz, aby potwierdzić tę propozycję handlową?
+LastPropals=Ostatnia% s propozycje
+LastClosedProposals=Ostatnia% s zamknięte propozycje
+AllPropals=Wszystkie propozycje
+LastProposals=Ostatnie propozycje
+SearchAProposal=Szukaj projektu
+ProposalsStatistics=Commercial propozycje &quot;statystyki
+NumberOfProposalsByMonth=Liczba miesięcy
+AmountOfProposalsByMonthHT=Kwota przez miesiąc (po odliczeniu podatku)
+NbOfProposals=Liczba propozycji
+ShowPropal=Pokaż wniosku
+PropalsDraft=Robocze
+PropalsOpened=Czynny
+PropalsNotBilled=Zamknięte nie rozliczone
+PropalStatusDraft=Projekt (musi zostać zatwierdzone)
+PropalStatusValidated=Zatwierdzona (projekt jest otwarty)
+PropalStatusOpened=Zatwierdzona (projekt jest otwarty)
+PropalStatusClosed=Zamknięte
+PropalStatusSigned=Podpisano (do rachunku)
+PropalStatusNotSigned=Nie podpisały (zamknięte)
+PropalStatusBilled=Billed
+PropalStatusDraftShort=Szkic
+PropalStatusValidatedShort=Zatwierdzona
+PropalStatusOpenedShort=Czynny
+PropalStatusClosedShort=Zamknięte
+PropalStatusSignedShort=Podpisano
+PropalStatusNotSignedShort=Nie podpisała
+PropalStatusBilledShort=Billed
+PropalsToClose=Propozycji, aby zamknąć
+PropalsToBill=Podpisano propozycji do rachunku
+ListOfProposals=Lista propozycji
+ActionsOnPropal=Działania na wniosek
+NoOpenedPropals=Nie otworzył propozycji
+NoOtherOpenedPropals=Żadne inne otwarte propozycji
+RefProposal=Commercial wniosku ref
+SendPropalByMail=Wyślij handlowych wniosku pocztą
+FileNotUploaded=Plik nie został wysłany
+FileUploaded=Plik został pomyślnie przesłany
+AssociatedDocuments=Dokumenty związane z projektem:
+ErrorCantOpenDir=Nie można otworzyć katalogu
+DateEndPropal=Data końca obowiązywania
+DateEndPropalShort=Data zakończenia
+ValidityDuration=Ważność czas
+CloseAs=Zamknij ze statusu
+ClassifyBilled=Klasyfikacja billed
+BuildBill=Zbuduj faktury
+RelatedBill=Podobne faktury
+RelatedBills=Podobne faktur
+ErrorPropalNotFound=Propal% s nie znaleziono
+Estimate=Prognoza:
+EstimateShort=Prognoza
+OtherPropals=Inne propozycje
+CopyPropalFrom=Tworzenie komercyjnych wniosek kopiowanie istniejących wniosku
+CreateEmptyPropal=Utwórz pusty propozycji Vierge lub z wykazu produktów / usług
+DefaultProposalDurationValidity=Domyślny czas ważności wniosku handlowych (w dniach)
+UseCustomerContactAsPropalRecipientIfExist=Użyj klienta adres, jeśli określone zamiast trzeciej adres wniosku adres odbiorcy
+ClonePropal=Clone handlowych wniosku
+ConfirmClonePropal=Czy na pewno chcesz klon tej propozycji <b>komercyjnych% s?</b>
+DocModelAzurDescription=Kompletny wniosek modelu (logo. ..)
+DocModelJauneDescription=Jaune propozycję modelu
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

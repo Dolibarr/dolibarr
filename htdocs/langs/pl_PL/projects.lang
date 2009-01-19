@@ -1,0 +1,65 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Project=Project
+Projects=Projekty
+SharedProject=Współużytkowane projektu
+Myprojects=Moje projekty
+ProjectsArea=Projekty obszaru
+NewProject=Nowy projekt
+AddProject=Dodaj projekt
+DeleteAProject=Usuń projektu
+DeleteATask=Usuń zadanie
+ConfirmDeleteAProject=Czy na pewno chcesz usunąć ten projekt?
+ConfirmDeleteATask=Czy na pewno chcesz usunąć to zadanie?
+OfficerProject=Oficer projektu
+LastProjects=Ostatnia% s projektów
+AllProjects=Wszystkich projektów
+ProjectsList=Lista projektów
+ShowProject=Pokaż projekt
+SetProject=Ustaw projektu
+NoProject=Projekt zdefiniowane
+NbOpenTasks=Nb otwartych zadań
+NbOfProjects=Nb projektów
+TimeSpent=Czas spędzony
+RefTask=Nr ref. zadanie
+LabelTask=Wytwórnia zadanie
+NewTimeSpent=Nowy czas spędzony
+MyTimeSpent=Mój czas spędzony
+MyTasks=Moje zadania
+Tasks=Zadania
+Task=Zadanie
+NewTask=Nowe zadania
+AddTask=Dodaj zadanie
+AddDuration=Dodaj czas
+Activity=Aktywność
+Activities=Zadania / działania
+MyActivity=Moja aktywność
+MyActivities=Moje zadania / działania
+DurationEffective=Efektywny czas trwania
+MyProjects=Moje projekty
+Time=Czas
+ListProposalsAssociatedProject=Lista komercyjne propozycje związane z projektem
+ListOrdersAssociatedProject=Lista zamówień związanych z projektem
+ListInvoicesAssociatedProject=Lista faktur związanych z projektem
+ListSupplierOrdersAssociatedProject=Lista dostawców zamówień związanych z projektem
+ListSupplierInvoicesAssociatedProject=Lista dostawców faktur związanych z projektem
+ListContractAssociatedProject=Wykaz umów związanych z projektem
+ActivityOnProjectThisWeek=Aktywność na projekt w tym tygodniu
+ActivityOnProjectThisMonth=Aktywność w sprawie projektu w tym miesiącu
+ActivityOnProjectThisYear=Aktywność na projekt w tym roku
+ChildOfTaks=Dziecko projektu / zadania
+NotOwnerOfProject=Nie prywatnego właściciela tego projektu
+AffectedTo=Affected do
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

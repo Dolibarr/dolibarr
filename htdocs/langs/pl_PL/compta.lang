@@ -1,0 +1,126 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Accountancy=Księgowość
+AccountancyCard=Księgowość karty
+Treasury=Skarbiec
+MenuFinancial=Finansowego
+OptionMode=Opcja dla księgowych
+OptionModeTrue=Opcja Input-Ouput
+OptionModeVirtual=Opcja Kredyty-Debits
+OptionModeTrueDesc=W tym kontekście, obrót jest obliczana przez paiements (data płatności). \ nThe ważności danych jest zapewniona tylko wtedy, gdy księgowości jest zbadane przez wejścia / wyjścia na rachunkach poprzez faktury.
+OptionModeVirtualDesc=W tym kontekście, obrót jest obliczana na fakturach (data zatwierdzenia). Gdy te faktury są należne, czy zostały zapłacone, czy nie są one wymienione w obrocie wyjście.
+FeatureIsSupportedInInOutModeOnly=Funkcja dostępna tylko w KREDYTÓW-DŁUGI rachunkowych trybu (patrz Rachunkowych moduł konfiguracji)
+Param=Instalator
+AccountsGeneral=Konta
+Account=Konto
+Accounts=Konta
+BillsForSuppliers=Rachunki dla dostawców
+Income=Przychody
+Outcome=Rezultat
+ReportInOut=Przychody / Rezultat
+PaymentsNotLinkedToInvoice=Płatności związane z wszelkich faktur, więc nie są związane z jakąkolwiek osobą trzecią
+PaymentsNotLinkedToUser=Płatności związane z dowolnego użytkownika
+Profit=Zysk
+Balance=Saldo
+Debit=Rozchody
+Credit=Kredyt
+Withdrawal=Wycofanie
+Withdrawals=Wypłaty
+AmountHTVATRealReceived=HT zebrane
+AmountHTVATRealPayed=HT payed
+VATToPay=VAT do zapłaty
+VATReceived=VAT otrzymana
+VATToCollect=VAT do gromadzenia
+VATSummary=VAT Podsumowanie
+VATPayed=VAT payed
+VATCollected=VAT zebrane
+ToPay=Aby zapłacić
+ToGet=Aby powrócić
+TaxAndDividendsArea=Podatek, składki na ubezpieczenie społeczne i dywidendy obszarze
+SocialContribution=Społeczny wkład
+SocialContributions=Składek na ubezpieczenia społeczne
+MenuTaxAndDividends=Podatki i dywidendy
+MenuSocialContributions=Składek na ubezpieczenia społeczne
+MenuNewSocialContribution=Nowe Wkład
+NewSocialContribution=Nowe społecznego wkładu
+ContributionsToPay=Składki do zapłaty
+AccountancyTreasuryArea=Księgowość / Skarbu obszarze
+AccountancySetup=Księgowość konfiguracji
+NewPayment=Nowa płatność
+Payments=Płatności
+PaymentCustomerInvoice=Klient płatności faktury
+PaymentSupplierInvoice=Dostawca płatności faktury
+PaymentSocialContribution=Społeczny wkład płatności
+PaymentVat=Zapłaty podatku VAT
+ListPayment=Wykaz płatności
+ListOfPayments=Wykaz płatności
+ListOfCustomerPayments=Lista klientów płatności
+ListOfSupplierPayments=Lista dostawców płatności
+DatePayment=Data płatności
+NewVATPayment=Nowe zapłaty podatku VAT
+VATPayment=Zapłaty podatku VAT
+VATPayments=Płatności VAT
+ShowVatPayment=Pokaż VAT PAYEMENT
+TotalToPay=Razem do zapłaty
+TotalVATReceived=Razem VAT otrzymana
+CustomerAccountancyCode=Klient rachunkowych kod
+SupplierAccountancyCode=Dostawca accountacy kod
+AlreadyPayed=Już payed
+AccountNumberShort=Numer konta
+AccountNumber=Numer konta
+NewAccount=Nowe konto
+SalesTurnover=Obrót
+ByThirdParties=Bu trzecich
+ByUserAuthorOfInvoice=Na fakturze autora
+AccountancyExport=Księgowość eksportu
+ErrorWrongAccountancyCodeForCompany=Bad klienta rachunkowych kod% s
+SuppliersProductsSellSalesTurnover=Obrotów generowanych przez sprzedaż dostawców produktów.
+CheckReceipt=Sprawdź depozyt
+CheckReceiptShort=Sprawdź depozyt
+NewCheckReceipt=Nowe zniżki
+NewCheckDeposit=Nowe sprawdzić depozytu
+NewCheckDepositOn=Nowe sprawdzić depozytu na konto:% s
+NoWaitingChecks=Nie czekając na kontrole depozytów.
+DateChequeReceived=Czek odbiór daty wejścia
+NbOfCheques=Nb czeków
+PaySocialContribution=Płacić składki społeczne
+ConfirmPaySocialContribution=Czy na pewno chcesz sklasyfikować ten społecznego wkładu wypłatę?
+DeleteSocialContribution=Usuń społecznego wkładu
+ConfirmDeleteSocialContribution=Czy na pewno chcesz usunąć ten wkład społeczny?
+ExportDataset_tax_1=Składek na ubezpieczenia społeczne i płatności
+AnnualSummaryDueDebtMode=Bilan et des recettes dpenses, rsum annuel, pl <b>trybie% sCrances-dettes% s comptabilit</b> dit <b>d&#39;engagement.</b>
+AnnualSummaryInputOutputMode=Bilan et des recettes dpenses, rsum annuel, pl <b>trybie% sRecettes-Dpenses% s comptabilit</b> dit <b>de Caisse.</b>
+AnnualByCompaniesDueDebtMode=Bilan et des recettes dpenses, dtail par tiers, en <b>trybie% sCrances-dettes% s comptabilit</b> dit <b>d&#39;engagement.</b>
+AnnualByCompaniesInputOutputMode=Bilan et des recettes dpenses, dtail par tiers, en <b>trybie% sRecettes-Dpenses% s comptabilit</b> dit <b>de Caisse.</b>
+SeeReportInInputOutputMode=Voir le <b>rapport% sRecettes-Dpenses% s comptabilit</b> dit pour un <b>Caisse de</b> calcul sur les paiements effectivement raliss
+SeeReportInDueDebtMode=Voir le <b>rapport% sCrances-dettes% s comptabilit</b> dit <b>d&#39;engagement</b> pour un calcul sur les factures mises
+RulesResultDue=- Kwoty wykazane są łącznie ze wszystkimi podatkami <br> - Obejmuje ona zaległych faktur, kosztów i podatku VAT, czy są one wypłacane lub nie. <br> - Jest on oparty na zatwierdzanie daty faktur i podatku VAT oraz o terminie płatności na wydatki.
+RulesResultInOut=- Kwoty wykazane są łącznie ze wszystkimi podatkami <br> - Obejmuje on rzeczywiste płatności faktur, koszty i VAT. <br> - Jest on oparty na terminy płatności faktur, koszty ANF VAT. <br>
+RulesCADue=- Obejmuje ona klientów z powodu faktury, czy są one wypłacane, czy nie. <br> - Jest on oparty na zatwierdzenie daty tych faktur. <br>
+RulesCAIn=- Obejmuje wszystkie skuteczne płatności faktur otrzymanych od klientów. <br> - Jest on oparty na dacie płatności tych faktur <br>
+VATReportByCustomersInInputOutputMode=Rapport par des klienta TVA et collectes płaci (TVA sur encaissement)
+VATReportByCustomersInDueDebtMode=Rapport par des klienta TVA et collectes płaci (TVA sur dbit)
+VATReportByQuartersInInputOutputMode=Rapport trimestre par des TVA et collectes płaci (TVA sur encaissement)
+VATReportByQuartersInDueDebtMode=Rapport trimestre par des TVA et collectes płaci (TVA sur dbit)
+SeeVATReportInInputOutputMode=Voir le <b>rapport% sTVA encaissement% s</b> pour de calcul trybie standardowym
+SeeVATReportInDueDebtMode=Voir le rapport <b>sur dbit% sTVA% s</b> pour Mode de calcul avec opcja sur les dbits
+RulesVATIn=- Pour les usług le rapport inclut les TVA des rglements effectivement Reus mis en ou se basant sur la date du rglement. <br> - Pour les biens matriels, il les TVA inclut des factures en se basant sur la date de walidacji de la faktura.
+RulesVATDue=- Pour les usług le rapport inclut les TVA des factures należności, payes ou se non en basant sur la date de walidacji de ces factures. <br> - Pour les biens matriels, il les TVA inclut des factures en se basant sur la date de walidacji de la faktura.
+OptionVatInfoModuleComptabilite=Remarque: Pour les biens matriels, il faudrait korzystać la date de livraison pour tre plus juste.
+PercentOfInvoice=%% / faktury
+Dispatch=Dysponowanie
+Dispatched=Wysłane
+ToDispatch=Do wysyłki
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

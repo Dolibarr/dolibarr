@@ -1,0 +1,77 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+WarehouseCard=Magazyn karty
+Warehouse=Magazyn
+NewWarehouse=Nowy magazyn / Stock obszarze
+MenuNewWarehouse=Nowy magazyn
+WarehouseOpened=Magazyn otwarty
+WarehouseClosed=Magazyn zamknięte
+WarehouseSource=Źródło magazynu
+WarehouseTarget=Docelowe magazynie
+ValidateSending=Usuń wysyłanie
+CancelSending=Anuluj wysyłanie
+DeleteSending=Usuń wysyłanie
+Stock=Zasób
+Stocks=Zapasy
+Movement=Ruch
+Movements=Ruchy
+ErrorWarehouseRefRequired=Magazyn referencyjnego Wymagana jest nazwa
+ErrorWarehouseLabelRequired=Magazyn etykiecie jest wymagane
+CorrectStock=Poprawny stanie
+ListOfWarehouses=Lista magazynów
+ListOfStockMovements=Wykaz stanu magazynowego
+StocksArea=Zapasy obszarze
+Location=Lieu
+LocationSummary=Nazwa skrócona lokalizacji
+NumberOfProducts=Łączna liczba produktów
+LastMovement=Ostatni ruch
+LastMovements=Ostatnie ruchy
+Units=Jednostki
+Unit=Jednostka
+StockCorrection=Poprawny stanie
+StockMovement=Przeniesienie
+StockMovements=Stock transfery
+NumberOfUnit=Liczba jednostek
+TotalStock=Razem w akcji
+StockTooLow=Zasób zbyt niska
+EnhancedValue=Wartość
+PMPValue=Wartość
+EnhancedValueOfWarehouses=Magazyny wartości
+UserWarehouseAutoCreate=Tworzenie stanie automatycznie podczas tworzenia użytkownika
+QtyDispatched=Ilość wysyłanych
+OrderDispatch=Postanowienie wysyłkowe
+RuleForStockManagementDecrease=Artykuł na zarządzanie zapasami spadek
+RuleForStockManagementIncrease=Artykuł na zarządzanie zapasami wzrost
+DeStockOnBill=Spadek realnych zasobów faktur / not kredytowych (uwaga, w tej wersji, to tylko w magazynie nr 1 tego zasobu zostanie zmodyfikowany)
+DeStockOnValidateOrder=Spadek realnych zasobów zamówień notatek (uwaga, w tej wersji, to tylko w magazynie nr 1 tego zasobu zostanie zmodyfikowany)
+DeStockOnShipment=Spadek realnych zasobów wysyłką (zaleciły)
+ReStockOnBill=Wzrost realnego zasobów faktur / not kredytowych (uwaga, w tej wersji, to tylko w magazynie nr 1 tego zasobu zostanie zmodyfikowany)
+ReStockOnValidateOrder=Wzrost realnego zasobów zamówień notatek (uwaga, w tej wersji, to tylko w magazynie nr 1 tego zasobu zostanie zmodyfikowany)
+StockDiffPhysicTeoric=Powód różnica stanie fizycznym i teoretycznego
+StockLimitShort=Limit
+StockLimit=Stock limit wpisów
+PhysicalStock=Fizyczne zapasy
+RealStock=Real Stock
+TheoreticalStock=Therocial stanie
+VirtualStock=Wirtualne stanie
+MininumStock=Minimum stock
+StockUp=Stanie się
+MininumStockShort=Stock min
+StockUpShort=Stanie się
+IdWarehouse=Identyfikator magazynu
+DescWareHouse=Opis składu
+LieuWareHouse=Lokalizacja hurtowni
+WarehousesAndProducts=Magazyny i produktów
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

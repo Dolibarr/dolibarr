@@ -1,0 +1,64 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+BoxLastRssInfos=Rss informacji
+BoxLastProducts=Ostatnie produkty / usługi
+BoxLastProductsInContract=Ostatnia zakontraktowanych produktów / usług
+BoxLastSupplierBills=Ostatnia dostawcy faktur
+BoxLastCustomerBills=Ostatnia klienta faktury
+BoxOldestUnpayedCustomerBills=Najstarszy unpayed klienta faktury
+BoxOldestUnpayedSupplierBills=Najstarszy unpayed dostawcy faktur
+BoxLastProposals=Ostatnia propozycji
+BoxLastProspects=Ostatnia perspektywy
+BoxLastCustomers=Ostatnia klientów
+BoxLastCustomerOrders=Ostatnia zamówień
+BoxLastSuppliers=Ostatnia dostawców
+BoxLastBooks=Ostatnie książki
+BoxLastActions=Ostatnie działania
+BoxCurrentAccounts=Rachunki bieżące saldo
+BoxSalesTurnover=Obrót
+BoxTotalUnpayedCustomerBills=Razem unpayed klienta faktury
+BoxTotalUnpayedSuppliersBills=Razem unpayed dostawcy faktur
+BoxTitleLastBooks=Ostatnia% s rejestrowane książek
+BoxTitleNbOfCustomers=Nombre de klienta
+BoxTitleLastRssInfos=Ostatnie wieści z% s% s
+BoxTitleLastProducts=Ostatnia% s zmodyfikowane produkty / usługi
+BoxTitleLastCustomerOrders=Ostatnia% s zmodyfikowane zamówień
+BoxTitleLastSuppliers=Ostatnia% s zarejestrowanych dostawców
+BoxTitleLastCustomers=Ostatnia% s zarejestrowanych klientów
+BoxTitleLastCustomersOrProspects=Ostatnia% s zarejestrowanych klientów lub potencjalnych klientów
+BoxTitleLastPropals=Ostatnia% s rejestrowane propozycje
+BoxTitleLastCustomerBills=Ostatnia% s klienta faktury
+BoxTitleLastSupplierBills=Ostatnia% s dostawcy faktur
+BoxTitleLastProspects=Ostatnia% s rejestrowane perspektywy
+BoxTitleLastProductsInContract=Ostatnia% s derniers produktów / usług umów
+BoxTitleOldestUnpayedCustomerBills=Najstarszy% s unpayed klienta faktury
+BoxTitleOldestUnpayedSupplierBills=Najstarszy% s unpayed dostawcy faktur
+BoxTitleCurrentAccounts=Salda na rachunku obrotów bieżących
+BoxTitleSalesTurnover=Obrót
+BoxTitleTotalUnpayedCustomerBills=Unpayed klienta faktury
+BoxTitleTotalUnpayedSuppliersBills=Unpayed dostawcy faktur
+BoxMyLastBookmarks=Moje ostatnie% s zakładek
+FailedToRefreshDataInfoNotUpToDate=Nie można odświeżyć RSS topnika. Ostatnie udane odświeżenie data:% s
+NoRecordedBookmarks=No bookmarks defined. Click <a href=Nie zdefiniowano zakładki. Kliknij <a href="%s">tutaj,</a> aby dodać zakładki.
+NoRecordedCustomers=Nr zarejestrowanych klientów
+BoxTitleLastActionsToDo=Ostatnia% s do działania
+NoActionsToDo=Brak działań do
+NoRecordedOrders=Nr rejestrowane klienta zamówienia
+NoRecordedProposals=Nr zarejestrowanych wniosków
+NoRecordedInvoices=Nr rejestrowane klienta faktury
+NoUnpayedCustomerBills=Nr unpayed klienta faktury
+NoRecordedSupplierInvoices=Nr rejestrowane dostawcy faktur
+NoUnpayedSupplierBills=Nr unpayed dostawcy faktur
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

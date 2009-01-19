@@ -1,0 +1,90 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Commercial=Komercyjne
+CommercialArea=Powierzchnia handlowa
+CommercialCard=Commercial karty
+CustomerArea=Klienci obszaru
+Customer=Klient
+Customers=Klienci
+Prospect=Prospect
+Prospects=Perspektywy
+DeleteAction=Usuń działania / zadania
+NewAction=Nowe działania / zadania
+AddAction=Dodaj działania / zadania
+AddAnAction=Dodaj działania / zadania
+AddActionRendezVous=Dodaj Rendez-Vous zadanie
+ConfirmDeleteAction=Czy na pewno chcesz usunąć to zadanie?
+CardAction=Działanie karty
+PercentDone=Procent zrobić
+ActionOnCompany=Zadanie o firmie
+ActionOnContact=Zadanie o kontakt
+TaskRDV=Spotkania
+TaskRDVWith=Spotkanie z% s
+ShowTask=Pokaż zadanie
+ShowAction=Pokaż działania
+ActionsReport=Działania raport
+SalesRepresentative=Przedstawiciel handlowy
+SalesRepresentatives=Przedstawiciele handlowi
+SalesRepresentativeFollowUp=Przedstawiciel handlowy (kontynuacja)
+SalesRepresentativeSignature=Przedstawiciel handlowy (podpis)
+CommercialInterlocutor=Commercial interlokutora
+ErrorWrongCode=Niewłaściwy kod
+NoSalesRepresentativeAffected=Nr szczególności przedstawiciel handlowy dotknięte
+ShowCustomer=Pokaż klienta
+ShowProspect=Pokaż perspektywa
+ListOfProspects=Lista perspektyw
+ListOfCustomers=Lista klientów
+LastDoneTasks=Ostatnia% s wykonane zadania
+LastRecordedTasks=Ostatnio zapisane zadania
+LastActionsToDo=Ostatnia% s najstarszych działania nie zakończyły
+DoneAndToDoActionsFor=Gotowe i zadania Aby zrobić dla% s
+DoneAndToDoActions=Sporządzono zadań oraz do uczynienia
+DoneActions=Sporządzono działania
+DoneActionsFor=Sporządzono działań dla% s
+ToDoActions=Uncomplete działania
+ToDoActionsFor=Uncomplete działań dla% s
+SendPropalRef=Wyślij handlowych wniosku% s
+SendOrderRef=Wyślij zamówienie% s
+NoRecordedProspects=Nr perspektywa rejestrowane
+StatusActionToDo=Aby to zrobić
+StatusActionDone=Zrobione
+MyActionsAsked=Działania Mam zapisane
+MyActionsToDo=Działania mam zrobić
+MyActionsDone=Działania wpływa do mnie
+StatusActionInProcess=W procesie
+TasksHistoryForThisContact=Działania na rzecz tego kontaktu
+LastProspectDoNotContact=Nie kontakt
+LastProspectNeverContacted=Nigdy nie skontaktował
+LastProspectToContact=Aby skontaktować się
+LastProspectContactInProcess=Kontakt w procesie
+LastProspectContactDone=Kontakt zrobić
+DateActionPlanned=Data działania planowane na
+DateActionDone=Data zrobienia działania
+ActionAskedBy=Działanie zadawane przez
+ActionAffectedTo=Wpływ na działanie
+ActionDoneBy=Działania wykonywane przez
+ActionUserAsk=Zarejestrowane przez
+ErrorStatusCantBeZeroIfStarted=Jeżeli pole <b>&#39;Data zrobienia</b> &quot;jest wypełniona, rozpoczęto działania (lub gotowy), więc pole&quot; <b>Status</b> &quot;nie może być 0%%.
+ActionAC_TEL=Telefon
+ActionAC_FAX=Wyślij faks
+ActionAC_PROP=Wyślij wniosek
+ActionAC_EMAIL=Wyślij e-mail
+ActionAC_RDV=Spotkania
+ActionAC_FAC=Wyślij rozliczeniowe
+ActionAC_REL=Wyślij rozliczeniowe (przypomnienie)
+ActionAC_CLO=Blisko
+ActionAC_EMAILING=Wyślij e-maila masa
+ActionAC_COM=Wyślij zamówienie pocztą
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser

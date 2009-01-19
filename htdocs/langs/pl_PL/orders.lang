@@ -1,0 +1,129 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: pl_PL
+ * Automatic generated via autotranslator tool
+ * Generation date 2009-01-19 00:44:06
+ */
+
+
+// Date 2009-01-19 00:44:06
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+OrdersArea=Klienci dziedzinie zamówień
+SuppliersOrdersArea=Dostawcy dziedzinie zamówień
+OrderCard=Zamów kartę
+Order=Porządek
+Orders=Zamówienia
+OrderFollow=Kontynuacja
+OrderContact=Zamówienie kontakt
+OrderDate=Kolejność Data
+NewOrder=New Order
+ToOrder=Zamów
+MakeOrder=Zamów
+SupplierOrder=Dostawca celu
+SuppliersOrders=Dostawcy zleceń
+SuppliersOrdersRunning=Aktualna dostawców zleceń
+CustomerOrder=Zamówieniem
+CustomersOrders=Klienci zleceń
+CustomersOrdersRunning=Aktualna klientów zleceń
+CustomersOrdersAndOrdersLines=Zamówień i zleceń linii
+OrdersToValid=Zamówienia do ważnych
+OrdersToBill=Zamówienia na rachunku
+OrdersInProcess=Zamówienia w procesie
+OrdersToProcess=Zamówienia na proces
+StatusOrderCanceledShort=Odwołany
+StatusOrderDraftShort=Szkic
+StatusOrderValidatedShort=Zatwierdzona
+StatusOrderOnProcessShort=Na proces
+StatusOrderProcessedShort=Przetworzone
+StatusOrderToBillShort=Do rachunku
+StatusOrderApprovedShort=Zatwierdzony
+StatusOrderRefusedShort=Odmowa
+StatusOrderToProcessShort=Aby proces
+StatusOrderReceivedPartiallyShort=Częściowo otrzymała
+StatusOrderReceivedAllShort=Wszystko otrzymała
+StatusOrderCanceled=Odwołany
+StatusOrderDraft=Projekt (musi zostać zatwierdzone)
+StatusOrderValidated=Zatwierdzona
+StatusOrderOnProcess=Na proces
+StatusOrderProcessed=Przetworzone
+StatusOrderToBill=Do rachunku
+StatusOrderApproved=Zatwierdzony
+StatusOrderRefused=Odmowa
+StatusOrderReceivedPartially=Częściowo otrzymała
+StatusOrderReceivedAll=Wszystko otrzymała
+DraftOrWaitingApproved=Projekt nie został jeszcze zatwierdzony lub sortowane
+DraftOrWaitingShipped=Projekt lub zatwierdzonych jeszcze nie wysłane
+MenuOrdersToBill=Zamówienia na rachunku
+SearchOrder=Szukaj celu
+Sending=Wysyłanie
+Sendings=Sendings
+ShipProduct=Statek produktu
+Discount=Rabat
+CreateOrder=Tworzenie Zamówienie
+RefuseOrder=Odmówić celu
+ApproveOrder=Akceptuj zamówienie
+ValidateOrder=Sprawdź zamówienie
+DeleteOrder=Usuń zamówienie
+CancelOrder=Anulować zamówienie
+AddOrder=Dodaj zamówienie
+AddToMyOrders=Dodaj do mojego zamówienia
+AddToOtherOrders=Dodaj do zamówienia
+ShowOrder=Pokaż zamówienie
+NoOpenedOrders=Nie otworzył zamówień
+NoOtherOpenedOrders=Żadne inne otwarte zamówienia
+OtherOrders=Inne zamówienia
+LastOrders=Ostatnia% s zamówień
+LastModifiedOrders=Ostatnia% s zmodyfikowane zamówień
+LastClosedOrders=Ostatnia% s zamkniętych zleceń
+AllOrders=Wszystkie zlecenia
+NbOfOrders=Liczba zleceń
+OrdersStatistics=Zamówienia statystyk
+OrdersStatisticsSuppliers=Dostawca zamówień statystyk
+NumberOfOrdersByMonth=Liczba zleceń przez miesiąc
+AmountOfOrdersByMonthHT=Kwota zamówienia przez miesiąc (po odliczeniu podatku)
+ListOfOrders=Lista zamówień
+CloseOrder=Zamknij celu
+ConfirmCloseOrder=Czy na pewno chcesz zamknąć to zamówienie? Gdy zamówienie jest zamknięta, to może być rozliczone.
+ConfirmCloseOrderIfSending=Czy na pewno chcesz zamknąć to zamówienie? Musisz zamknąć zamówienie tylko wtedy, gdy wszystkie wysyłki są zrobione.
+ConfirmDeleteOrder=Czy na pewno chcesz usunąć to zamówienie?
+ConfirmValidateOrder=Czy na pewno chcesz, aby potwierdzić tej kolejności pod <b>nazwą% s?</b>
+ConfirmCancelOrder=Czy na pewno chcesz anulować zamówienie?
+ConfirmMakeOrder=Czy na pewno chcesz, aby potwierdzić wprowadzone tym celu <b>na% s?</b>
+GenerateBill=Generowanie faktur
+ClassifyBilled=Klasyfikacja &quot;obciążonego&quot;
+ComptaCard=Księgowość karty
+DraftOrders=Projekt zamówień
+RelatedOrders=Podobne zamówienia
+OnProcessOrders=Na proces zamówienia
+RefOrder=Nr ref. porządek
+RefCustomerOrder=Nr ref. zamówieniem
+CustomerOrder=Zamówieniem
+RefCustomerOrderShort=Nr ref. cust. porządek
+SendOrderByMail=Wyślij zamówienie pocztą
+ActionsOnOrder=Działania mające na celu
+NoArticleOfTypeProduct=Nr artykułu typu &quot;produktu&quot;, więc nie shippable artykule tej kolejności
+OrderMode=Postanowienie metody
+AuthorRequest=Wniosek autora
+UseCustomerContactAsOrderRecipientIfExist=Użyj klienta adres, jeśli określone zamiast trzeciej kolejności adres odbiorcy adres
+RunningOrders=Zamówienia na proces
+UserWithApproveOrderGrant=Useres przyznane z &quot;zatwierdza zamówienia zgody.
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Stała COMMANDE_SUPPLIER_ADDON nie zdefiniowane
+Error_COMMANDE_ADDON_NotDefined=Stała COMMANDE_ADDON nie zdefiniowane
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Nie można załadować modułu pliku &#39;% s&#39;
+Error_FailedToLoad_COMMANDE_ADDON_File=Nie można załadować modułu pliku &#39;% s&#39;
+OrderSource0=Commercial wniosku
+OrderSource1=Internet
+OrderSource2=Poczta kampanii
+OrderSource3=Telefon compain
+OrderSource4=Faks kampanii
+OrderSource5=Komercyjne
+OrderSource6=Przechowywać
+QtyOrdered=Ilosc sortowane
+AddDeliveryCostLine=Dodaj dostawy koszt linii wskazujące wagi zamówienia
+PDFEinsteinDescription=Pełna kolejność modelu (logo. ..)
+MarbreNumRefDesc=Renvoie le numro sous la forme syymm% rr-nnnn ou est l&#39;année, le mois mm et un nnnn compteur sequentiel bez pęknięcia et sans zrzekanie e 0
+// Date 2009-01-19 00:44:06
+// STOP - Lines generated via parser
