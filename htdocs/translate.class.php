@@ -378,10 +378,10 @@ class Translate {
 
 
     /**
-     *  \brief       Retourne la version traduite du texte pass� en param�tre
+     *  \brief       Return translated value of a text string
      *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
-     *               et si toujours pas trouv�, il est retourn� tel quel.
-     *               Les param�tres de cette m�thode ne doivent pas contenir de balises HTML.
+     *               et si toujours pas trouve, il est retourne tel quel.
+     *               Parameters of this method must not contains any HTML tags.
      *  \param       key         cl� de chaine a traduire
      *  \param       param1      chaine de param1
      *  \param       param2      chaine de param1

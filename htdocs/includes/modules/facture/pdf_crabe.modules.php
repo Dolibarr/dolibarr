@@ -1077,6 +1077,7 @@ class pdf_crabe extends ModelePDFFactures
             // Cadre client destinataire
             $pdf->rect(100, $posy, 100, $hautcadre);
 
+
 			// If BILLING contact defined on invoice, we use it
 			$usecontact=false;
 			if ($conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT)
@@ -1094,21 +1095,15 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY(102,$posy+3);
 				$pdf->SetFont('Arial','B',11);
 				// On peut utiliser le nom de la societe du contact facturation
-				if ($conf->global->FACTURE_USE_COMPANY_NAME_OF_BILL_CONTACT)
-				{
-					$socname = $object->contact->socname;
-				}
-				else
-				{
-					$socname = $object->client->nom;
-				}
+				if ($conf->global->FACTURE_USE_COMPANY_NAME_OF_BILL_CONTACT) $socname = $object->contact->socname;
+				else $socname = $object->client->nom;
 				$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($socname), 0, 'L');
 
-				// Nom client
+				// Customer name
 				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
 
-				// Caracteristiques client
-				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->adresse);
+				// Customer properties
+				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
 				//Pays si different de l'emetteur
 				if ($this->emetteur->pays_code != $object->contact->pays_code)

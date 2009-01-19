@@ -845,12 +845,12 @@ class pdf_propale_azur extends ModelePDFPropales
 
 			$pdf->SetXY($this->marge_gauche+2,$posy+3);
 
-			// Nom emetteur
+			// Customer name
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('Arial','B',11);
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
-			// Caracteristiques emetteur
+			// Customer properties
 			$carac_emetteur = '';
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
@@ -879,7 +879,9 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);
 
-			// If BILLING contact defined on invoice, we use it
+
+			// If BILLING contact defined, we use it
+			$pdf->SetTextColor(0,0,0);
 			$usecontact=false;
 			if ($conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT)
 			{
@@ -890,7 +892,6 @@ class pdf_propale_azur extends ModelePDFPropales
 					$result=$object->fetch_contact($arrayidcontact[0]);
 				}
 			}
-
 			if ($usecontact)
 			{
 				// Nom societe
@@ -902,7 +903,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
 
 				// Caractéristiques client
-				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->adresse);
+				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
 				//Pays si different de l'emetteur
 				if ($this->emetteur->pays_code != $object->contact->pays_code)

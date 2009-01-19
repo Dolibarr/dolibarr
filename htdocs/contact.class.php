@@ -41,7 +41,7 @@ class Contact extends CommonObject
     var $error;
     var $element='contact';
     var $table_element='socpeople';
-	
+
     var $id;
 	var $civilite_id;
     var $name;
@@ -52,7 +52,7 @@ class Contact extends CommonObject
     var $fk_pays;
     var $socid;					// fk_soc
     var $status;				// 0=brouillon, 1=4=actif, 5=inactif
-	
+
     var $code;
     var $email;
     var $birthday;
@@ -71,11 +71,11 @@ class Contact extends CommonObject
      *      \param      DB      Habler d'acc�s base
      *      \param      id      Id contact
      */
-    function Contact($DB, $id=0) 
+    function Contact($DB, $id=0)
     {
         $this->db = $DB;
         $this->id = $id;
-        
+
         return 1;
     }
 
@@ -87,7 +87,7 @@ class Contact extends CommonObject
     function create($user)
     {
     	global $conf, $langs;
-    	
+
 		// Clean parameters
         $this->name=trim($this->name);
         if (! $this->socid) $this->socid = 0;
@@ -101,13 +101,13 @@ class Contact extends CommonObject
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
         $sql.= $this->priv;
         $sql.= ")";
-        
+
         dolibarr_syslog("Contact::create sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."socpeople");
-    
+
             $result=$this->update($this->id, $user, 1);
             if ($result < 0)
             {
@@ -142,19 +142,19 @@ class Contact extends CommonObject
     function update($id, $user=0, $notrigger=0)
     {
     	global $conf, $langs;
-    	
+
         $this->id = $id;
-    
+
     	// Nettoyage parametres
         $this->name=trim($this->name);
         $this->firstname=trim($this->firstname);
-        
+
         $this->email=trim($this->email);
         $this->phone_pro=trim($this->phone_pro);
         $this->phone_perso=trim($this->phone_perso);
         $this->phone_mobile=trim($this->phone_mobile);
         $this->fax=trim($this->fax);
-                
+
         $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
         if ($this->socid > 0) $sql .= " fk_soc='".addslashes($this->socid)."',";
         if ($this->socid == -1) $sql .= " fk_soc=null,";
@@ -198,8 +198,8 @@ class Contact extends CommonObject
 
         return 1;
     }
-  
-  
+
+
 	/*
 	*	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	*	\param		info		Info string loaded by _load_ldap_info
@@ -229,8 +229,8 @@ class Contact extends CommonObject
 
 		// Object classes
 		$info["objectclass"]=split(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
-		
-		// Champs 
+
+		// Champs
 		if ($this->getFullName($langs) && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = utf8_encode($this->getFullName($langs));
 		if ($this->name && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = utf8_encode($this->name);
 		if ($this->firstname && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = utf8_encode($this->firstname);
@@ -281,11 +281,11 @@ class Contact extends CommonObject
 			if ($this->email) $info["rfc822Mailbox"] = $this->email;
 			if ($this->phone_mobile) $info["phpgwCellTelephoneNumber"] = $this->phone_mobile;
 		}
-						
+
 		return $info;
 	}
 
-	
+
 	/*
 	*    \brief      Mise � jour des alertes
 	*    \param      id          id du contact
@@ -295,30 +295,30 @@ class Contact extends CommonObject
 	{
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET rowid=".$id;
-	
+
 		if ($this->birthday)	// <0 si avant 1970, >0 si apres 1970
 		{
             if (eregi('^[0-9]+\-',$this->birthday))
             {
                 // Si date = chaine (ne devrait pas arriver)
-                $sql .= ", birthday='".$this->birthday."'"; 	 
-            } 	 
-            else 	 
-            { 	 
-                // Si date = timestamp 	 
-            	$sql .= ", birthday=".$this->db->idate($this->birthday); 	 
+                $sql .= ", birthday='".$this->birthday."'";
+            }
+            else
+            {
+                // Si date = timestamp
+            	$sql .= ", birthday=".$this->db->idate($this->birthday);
             }
 		}
         if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql .= " WHERE rowid=".$id;
 		//print "update_perso: ".$this->birthday.'-'.$this->db->idate($this->birthday);
-		dolibarr_syslog("Contact::update_perso this->birthday=".$this->birthday." - sql=".$sql);	
+		dolibarr_syslog("Contact::update_perso this->birthday=".$this->birthday." - sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error=$this->db->error();
 		}
-	
+
 		// Mis a jour alerte birthday
 		if ($this->birthday_alert)
 		{
@@ -378,7 +378,7 @@ class Contact extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
         $sql.= " WHERE c.rowid = ". $id;
-    
+
     	dolibarr_syslog("Contact::fetch sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -386,7 +386,7 @@ class Contact extends CommonObject
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-    
+
                 $this->id             = $obj->rowid;
                 $this->ref            = $obj->rowid;
                 $this->civilite_id    = $obj->civilite_id;
@@ -402,12 +402,12 @@ class Contact extends CommonObject
                 $this->fk_pays        = $obj->fk_pays;
                 $this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
                 $this->pays           = ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
-    
+
                 $this->societeid      = $obj->fk_soc;
                 $this->socid          = $obj->fk_soc;
                 $this->socname        = $obj->socname;
                 $this->poste          = $obj->poste;
-    
+
                 $this->phone_pro      = trim($obj->phone);
                 $this->fax            = trim($obj->fax);
                 $this->phone_perso    = trim($obj->phone_perso);
@@ -417,7 +417,7 @@ class Contact extends CommonObject
                 $this->jabberid       = $obj->jabberid;
                 $this->priv           = $obj->priv;
                 $this->mail           = $obj->email;
-    
+
                 $this->birthday       = dol_stringtotime($obj->birthday);
 				//print "fetch: ".$obj->birthday.'-'.$this->birthday;
                 $this->birthday_alert = $obj->birthday_alert;
@@ -429,14 +429,14 @@ class Contact extends CommonObject
 	            $sql = "SELECT u.rowid ";
 	            $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	            $sql .= " WHERE u.fk_socpeople = ". $this->id;
-	    
+
 	            $resql=$this->db->query($sql);
 	            if ($resql)
 	            {
 	                if ($this->db->num_rows($resql))
 	                {
 	                    $uobj = $this->db->fetch_object($resql);
-	    
+
 	                    $this->user_id = $uobj->rowid;
 	                }
 	                $this->db->free($resql);
@@ -447,21 +447,21 @@ class Contact extends CommonObject
 	                dolibarr_syslog("Contact::fetch ".$this->error, LOG_ERR);
 	                return -1;
 	            }
-	    
+
 	            // Charge alertes du user
 	            if ($user)
 	            {
 	                $sql = "SELECT fk_user";
 	                $sql .= " FROM ".MAIN_DB_PREFIX."user_alert";
 	                $sql .= " WHERE fk_user = ".$user->id." AND fk_contact = ".$id;
-	    
+
 	                $resql=$this->db->query($sql);
 	                if ($resql)
 	                {
 	                    if ($this->db->num_rows($resql))
 	                    {
 	                        $obj = $this->db->fetch_object($resql);
-	    
+
 	                        $this->birthday_alert = 1;
 	                    }
 	                    $this->db->free($resql);
@@ -489,8 +489,8 @@ class Contact extends CommonObject
             return -1;
         }
     }
-    
-    
+
+
     /*
      *    \brief        Charge le nombre d'elements auquel est li� ce contact
      *                  ref_facturation
@@ -509,7 +509,7 @@ class Contact extends CommonObject
         $sql.=" GROUP BY tc.element";
 
         dolibarr_syslog("Contact::load_ref_elements sql=".$sql);
-        
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -541,14 +541,14 @@ class Contact extends CommonObject
 	function delete($notrigger=0)
 	{
 		global $conf, $langs, $user;
-		
+
 		$error=0;
-		
+
 		$this->old_name           = $obj->name;
 		$this->old_firstname      = $obj->firstname;
-	
+
 		$this->db->begin();
-		
+
 		if (! $error)
 		{
 			// Get all rowid of element_contact linked to a type that is link to llx_socpeople
@@ -563,7 +563,7 @@ class Contact extends CommonObject
 			if ($resql)
 			{
                 $num=$this->db->num_rows($resql);
-				
+
 				$i=0;
 				while ($i < $num && ! $error)
 				{
@@ -588,7 +588,7 @@ class Contact extends CommonObject
 				$this->error=$this->db->error().' sql='.$sql;
 			}
 		}
-		
+
 		if (! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
@@ -611,10 +611,10 @@ class Contact extends CommonObject
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
-		
+
 		if (! $error)
 		{
-		
+
 			$this->db->commit();
 			return 1;
 		}
@@ -625,7 +625,7 @@ class Contact extends CommonObject
 		}
 	}
 
-  
+
     /*
      *    \brief      Charge les informations sur le contact, depuis la base
      *    \param      id      id du contact � charger
@@ -636,33 +636,33 @@ class Contact extends CommonObject
         $sql .= ", ".$this->db->pdate("c.tms")." as tms, c.fk_user_modif";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= " WHERE c.rowid = ".$id;
-        
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-    
+
                 $this->id                = $obj->rowid;
-    
+
                 if ($obj->fk_user_creat) {
                     $cuser = new User($this->db, $obj->fk_user_creat);
                     $cuser->fetch();
                     $this->user_creation     = $cuser;
                 }
-    
+
                 if ($obj->fk_user_modif) {
                     $muser = new User($this->db, $obj->fk_user_modif);
                     $muser->fetch();
                     $this->user_modification = $muser;
                 }
-    
+
                 $this->date_creation     = $obj->datec;
                 $this->date_modification = $obj->tms;
-    
+
             }
-    
+
             $this->db->free($resql);
         }
         else
@@ -670,7 +670,7 @@ class Contact extends CommonObject
             print $this->db->error();
         }
     }
-    
+
     /*
      *    \brief        Renvoi nombre d'emailings re�u par le contact avec son email
      *    \return       int     Nombre d'emailings
@@ -686,7 +686,7 @@ class Contact extends CommonObject
         {
             $obj = $this->db->fetch_object($resql);
             $nb=$obj->nb;
-             
+
             $this->db->free($resql);
             return $nb;
         }
@@ -695,7 +695,7 @@ class Contact extends CommonObject
             $this->error=$this->db->error();
             return -1;
         }
-    }    
+    }
 
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
@@ -708,9 +708,9 @@ class Contact extends CommonObject
 	function getNomUrl($withpicto=0,$option='',$maxlen=0)
 	{
 		global $langs;
-		
+
 		$result='';
-		
+
 		$lien = '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
@@ -736,40 +736,42 @@ class Contact extends CommonObject
         $langs->load("dict");
 
 		$code=$this->civilite_id;
-        return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : $code;           
+        return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : $code;
     }
 
 
 	/**
 	 *    	\brief      Return full name (name+' '+lastname)
-	 *		\param		langs			Lang for output
-	 *		\param		option			0=No option, 1=Add civility	
-	 * 		\param		nameorder		0=Lastname+Firstname, 1=Firstname+Lastname	
+	 *		\param		langs			Lang object for output
+	 *		\param		option			0=No option, 1=Add civility
+	 * 		\param		nameorder		0=Lastname+Firstname, 1=Firstname+Lastname
 	 * 		\return		string			String with full name
 	 */
 	function getFullName($langs,$option=0,$nameorder=0)
 	{
 		$ret='';
 		if ($option && $this->civilite_id)
-		{	
+		{
 			if ($langs->transnoentities("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentities("Civility".$this->civilite_id).' ';
 			else $ret.=$this->civilite_id.' ';
 		}
-		
+
 		if ($nameorder)
 		{
-			if ($this->firstname) $ret.=$this->firstname.' ';
-			if ($this->name)      $ret.=$this->name.' ';
+			if ($this->firstname) $ret.=$langs->convToOutputCharset($this->firstname);
+			if ($this->firstname && $this->name) $ret.=' ';
+			if ($this->name)      $ret.=$langs->convToOutputCharset($this->name);
 		}
 		else
 		{
-			if ($this->name)      $ret.=$this->name.' ';
-			if ($this->firstname) $ret.=$this->firstname.' ';
+			if ($this->name)      $ret.=$langs->convToOutputCharset($this->name);
+			if ($this->firstname && $this->name) $ret.=' ';
+			if ($this->firstname) $ret.=$langs->convToOutputCharset($this->firstname);
 		}
 		return trim($ret);
 	}
 
-	
+
 	/**
 	 *    	\brief      Retourne le libell� du statut du contact
 	 *    	\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
@@ -789,7 +791,7 @@ class Contact extends CommonObject
 	function LibStatut($statut,$mode)
 	{
 		global $langs;
-		
+
         if ($mode == 0)
         {
         	if ($statut==0) return $langs->trans('StatusContactDraft');

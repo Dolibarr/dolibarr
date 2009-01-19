@@ -869,11 +869,11 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->SetFont('Arial','B',11);
 				$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($object->client->nom), 0, 'L');
 
-				// Nom client
-				$carac_client = "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
+				// Customer name
+				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
 
-				// Caract�ristiques client
-				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->adresse);
+				// Customer properties
+				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
 				//Pays si different de l'emetteur
 				if ($this->emetteur->pays_code != $object->contact->pays_code)
@@ -883,7 +883,7 @@ class pdf_einstein extends ModelePDFCommandes
 			}
 			else
 			{
-				// Nom client
+				// Customer name
 				$pdf->SetXY(102,$posy+3);
 				$pdf->SetFont('Arial','B',11);
 				$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($object->client->nom), 0, 'L');
@@ -896,7 +896,7 @@ class pdf_einstein extends ModelePDFCommandes
 					// On v�rifie si c'est une soci�t� ou un particulier
 					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 					{
-						$carac_client .= "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
+						$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
 					}
 				}
 

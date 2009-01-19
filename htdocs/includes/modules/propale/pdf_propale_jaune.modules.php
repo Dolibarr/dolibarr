@@ -348,6 +348,8 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 	function _pagehead(&$pdf, $propale, $outputlangs)
 	{
+		global $conf,$langs;
+
 		//Affiche le filigrane brouillon - Print Draft Watermark
 		if($propale->statut==0 && defined("PROPALE_DRAFT_WATERMARK") )
 		{
@@ -394,17 +396,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetTextColor(0,0,200);
 		$pdf->MultiCell(200, 20, $outputlangs->transnoentities("CommercialProposal"), '' , 'C');
 
-		/*
-		 * Adresse Client
-		 */
-		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('Arial','B',12);
-		$propale->fetch_client();
-		$pdf->SetXY(102,42);
-		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($propale->client->nom));
-		$pdf->SetFont('Arial','B',11);
-		$pdf->SetXY(102,$pdf->GetY());
-		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($propale->client->adresse) . "\n" . $outputlangs->convToOutputCharset($propale->client->cp) . " " . $outputlangs->convToOutputCharset($propale->client->ville));
+		// Cadre client destinataire
 		$pdf->rect(100, 40, 100, 40);
 
 		$pdf->SetTextColor(200,0,0);
@@ -417,6 +409,80 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->MultiCell(110, 10, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($propale->ref));
 		$pdf->SetXY(110,90);
 		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($propale->date,'day',false,$outputlangs));
+
+
+		$posy=39;
+
+		$object=$propale;
+		$object->fetch_client();
+
+
+		// If BILLING contact defined, we use it
+		$pdf->SetTextColor(0,0,0);
+		$usecontact=false;
+		if ($conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT)
+		{
+			$arrayidcontact=$object->getIdContact('external','CUSTOMER');
+			if (sizeof($arrayidcontact) > 0)
+			{
+				$usecontact=true;
+				$result=$object->fetch_contact($arrayidcontact[0]);
+			}
+		}
+		if ($usecontact)
+		{
+			// Nom societe
+			$pdf->SetXY(102,$posy+3);
+			$pdf->SetFont('Arial','B',11);
+			$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($object->client->nom), 0, 'L');
+
+			// Nom client
+			$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
+
+			// Caractéristiques client
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
+			//Pays si different de l'emetteur
+			if ($this->emetteur->pays_code != $object->contact->pays_code)
+			{
+				$carac_client.=$outputlangs->convToOutputCharset($object->contact->pays)."\n";
+			}
+		}
+		else
+		{
+			// Nom client
+			$pdf->SetXY(102,$posy+3);
+			$pdf->SetFont('Arial','B',11);
+			$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($object->client->nom), 0, 'L');
+
+			// Nom du contact suivi propal si c'est une société
+			$arrayidcontact = $object->getIdContact('external','CUSTOMER');
+			if (sizeof($arrayidcontact) > 0)
+			{
+				$object->fetch_contact($arrayidcontact[0]);
+				// On vérifie si c'est une société ou un particulier
+				if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
+				{
+					$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
+				}
+			}
+
+			// Caractéristiques client
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->adresse);
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
+
+			//Pays si different de l'emetteur
+			if ($this->emetteur->pays_code != $object->client->pays_code)
+			{
+				$carac_client.=$outputlangs->convToOutputCharset($object->client->pays)."\n";
+			}
+		}
+		// Numéro TVA intracom
+		if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
+		$pdf->SetFont('Arial','',9);
+		$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
+		$pdf->SetXY(102,$posy+6);
+		$pdf->MultiCell(86,4, $carac_client);
 	}
 
 	/*
