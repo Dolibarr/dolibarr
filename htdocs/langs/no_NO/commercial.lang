@@ -1,0 +1,88 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Commercial=Commercial
+CommercialArea=Kommersielle området
+CommercialCard=Kommersiell kortet
+CustomerArea=Kunder området
+Customer=Kunde
+Customers=Kunder
+Prospect=Prospekt
+Prospects=Utsiktene
+DeleteAction=Slett en handling / oppgave
+NewAction=Nye tiltak / oppgave
+AddAction=Legg action / oppgave
+AddAnAction=Legg til en handling / oppgave
+AddActionRendezVous=Legg til en Rendez-vous oppgave
+ConfirmDeleteAction=Er du sikker på at du vil slette denne oppgaven?
+CardAction=Action-kortet
+PercentDone=Prosentvis gjort
+ActionOnCompany=Oppgave om selskapet
+ActionOnContact=Oppgave om kontakt
+TaskRDV=Møter
+TaskRDVWith=Møte med% s
+ShowTask=Vis oppgave
+ShowAction=Vis handling
+ActionsReport=Handlinger rapport
+SalesRepresentative=Salgsrepresentant
+SalesRepresentatives=Salgsrepresentanter
+SalesRepresentativeFollowUp=Salgsrepresentant (oppfølging)
+SalesRepresentativeSignature=Salgsrepresentant (underskrift)
+CommercialInterlocutor=Kommersiell interlocutor
+ErrorWrongCode=Feil kode
+NoSalesRepresentativeAffected=Ingen spesiell salgsrepresentant berørt
+ShowCustomer=Vis kunde
+ShowProspect=Vis prospekt
+ListOfProspects=Liste over prospekter
+ListOfCustomers=Liste over kunder
+LastDoneTasks=Siste% s gjort oppgaver
+LastRecordedTasks=Siste spilte oppgaver
+LastActionsToDo=Siste% s eldste handlinger ikke fullført
+DoneAndToDoActionsFor=Gjort og å gjøre oppgaver for% s
+DoneAndToDoActions=Gjort og å gjøre oppgaver
+DoneActions=Ferdig handlinger
+DoneActionsFor=Gjort tiltak for% s
+ToDoActions=Uncomplete handlinger
+ToDoActionsFor=Uncomplete handlinger for% s
+SendPropalRef=Send kommersielle forslaget% s
+SendOrderRef=Send bestilling% s
+NoRecordedProspects=Ingen prospektet registrert
+StatusActionToDo=Slik gjør du
+StatusActionDone=Ferdig
+MyActionsAsked=Handlinger jeg har registrert
+MyActionsToDo=Handlinger jeg gjøre
+MyActionsDone=Handlinger påvirket meg
+StatusActionInProcess=I prosessen
+TasksHistoryForThisContact=Handlinger for denne kontakten
+LastProspectDoNotContact=Ikke kontakt
+LastProspectNeverContacted=Aldri kontaktet
+LastProspectToContact=Til kontakt
+LastProspectContactInProcess=Kontaktperson i prosessen
+LastProspectContactDone=Kontakt gjort
+DateActionPlanned=Dato handling planlagt
+DateActionDone=Dato handling utført
+ActionAskedBy=Action spurt av
+ActionAffectedTo=Action påvirkes til
+ActionDoneBy=Handling utført av
+ActionUserAsk=Registrert av
+ErrorStatusCantBeZeroIfStarted=Dersom feltet <b>&quot;Dato gjort</b> &#39;er fylt, er i gang (eller ferdig), slik at feltet&quot; <b>Status</b> &quot;kan ikke være 0%%.
+ActionAC_TEL=Telefonsamtale
+ActionAC_FAX=Send faks
+ActionAC_PROP=Send forslag
+ActionAC_EMAIL=Send e-post
+ActionAC_RDV=Møter
+ActionAC_FAC=Send faktureringsinformasjonen
+ActionAC_REL=Send faktureringsstatusen (påminnelse)
+ActionAC_CLO=Lukke
+ActionAC_EMAILING=Send masseutsendte e-post
+ActionAC_COM=Send bestilling via e-post
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

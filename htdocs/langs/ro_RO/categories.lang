@@ -1,0 +1,93 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Category=Categorie
+Categories=Categorii
+Rubrique=Categorie
+Rubriques=Categorii
+categories=categorii
+TheCategorie=În categoria
+In=În
+AddIn=Adăugaţi în
+modify=modifica
+Classify=Clasifica
+CategoriesArea=Categorii zona
+ProductsCategoriesArea=Produse / Servicii categorii zona
+SuppliersCategoriesArea=Furnizori categorii zona
+CustomersCategoriesArea=Clienţii categorii zona
+ThirdPartyCategoriesArea=Terţilor categorii zona
+MainCats=Principalele categorii de
+SubCats=Subcategorii
+CatStatistics=Statistici
+CatList=Lista de catgories
+AllCats=Toate categoriile
+ViewCat=Vezi categoria
+NewCat=Adauga categorie
+NewCategory=Noua categorie
+ModifCat=Modificare categorie
+CatCreated=Categorie creat
+CreateCat=Creaţi categorie
+CreateThisCat=Creaţi această categorie
+ValidateFields=Validate domeniile
+NoSubCat=Nu subcategorie.
+SubCatOf=Subcategorie
+FoundCats=Found categorii
+FoundCatsForName=Categorii găsit de nume:
+FoundSubCatsIn=Subcategorii găsit în categoria
+ErrSameCatSelected=Le-aţi selectat în aceeaşi categorie de mai multe ori
+ErrForgotCat=Ai uitat de a-şi alege categoria
+ErrForgotField=Ai uitat să îl informeze pe domenii
+ErrCatAlreadyExists=Acest nume este folosit deja
+AddProductToCat=Adauga acest produs la o categorie?
+ImpossibleAddCat=Imposibil de a adăuga la categoria
+ImpossibleAssociateCategory=Imposibil de a se asocia în categoria a
+WasAddedSuccessfully=<b>% s</b> a fost adaugat cu succes.
+ObjectAlreadyLinkedToCategory=Elementul este deja legate de această categorie.
+CategorySuccessfullyCreated=Această categorie% s a fost adaugata cu succes.
+ProductIsInCategories=Produse / servicii pentru a deţine următoarele categorii
+SupplierIsInCategories=Terţă parte de a deţine următoarele categorii de furnizori
+CompanyIsInCustomersCategories=Acest terţ deţine la următoarele clienţi / perspectivele categorii
+CompanyIsInSuppliersCategories=Acest terţ deţine la următoarele categorii de furnizori
+ProductHasNoCategory=Acest produs / serviciu nu este în nici un categorii
+SupplierHasNoCategory=Acest furnizor nu este în nici un categorii
+CompanyHasNoCategory=Aceasta companie nu este în nici un categorii
+ClassifyInCategory=Clasifica în categoria
+NoneCategory=Niciunul
+CategoryExistsAtSameLevel=Această categorie nu există deja în acelaşi loc
+ReturnInProduct=Inapoi la produs / serviciu de carte
+ReturnInSupplier=Inapoi la furnizor carte
+ReturnInCompany=Inapoi la client / perspectiva carte
+ContentsVisibleByAll=Conţinutul vor fi vizibile de către toate
+ContentsVisibleByAllShort=Cuprins vizibil de către toate
+ContentsNotVisibleByAllShort=Cuprins nu sunt vizibile de către toate
+CategoriesTree=Categorii de copac
+DeleteCategory=Ştergere categorie
+ConfirmDeleteCategory=Sunteţi sigur că doriţi să ştergeţi această categorie?
+RemoveFromCategory=Eliminaţi link-ul cu Categorie
+RemoveFromCategoryConfirm=Sunteţi sigur că doriţi să ştergeţi legătura dintre tranzacţie şi de categorie?
+NoCategoriesDefined=Nu categorie definită
+SuppliersCategoryShort=Furnizori categorie
+CustomersCategoryShort=Clienţii categorie
+ProductsCategoryShort=Produse categorie
+SuppliersCategoriesShort=Furnizori categorii
+CustomersCategoriesShort=Clienţii categorii
+CustomersProspectsCategoriesShort=Custo. / Prosp. categorii
+ProductsCategoriesShort=Produse Categorii
+ThisCategoryHasNoProduct=Această categorie nu conţine nici un produs.
+ThisCategoryHasNoSupplier=Această categorie nu conţine nici un furnizor.
+ThisCategoryHasNoCustomer=Această categorie nu conţine nici un client.
+AssignedToCustomer=Angajat într-un client
+AssignedToTheCustomer=Atribuite de client
+InternalCategory=Inernal categorie
+CategoryContents=Categorie conţinutul
+CategId=Id-ul categoriei
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

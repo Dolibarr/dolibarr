@@ -1,0 +1,43 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Intervention=Intervensjon
+Interventions=Intervensjoner
+InterventionCard=Intervensjon kortet
+NewIntervention=Nye tiltak
+AddIntervention=Legg intervensjon
+ListOfInterventions=Liste over tiltak
+EditIntervention=Editer intervensjon
+LastInterventions=Siste% s intervensjoner
+AllInterventions=Alle tiltak
+CreateDraftIntervention=Lage utkast
+CustomerDoesNotHavePrefix=Kunden har ikke et prefiks
+InterventionContact=Intervensjon kontakt
+DeleteIntervention=Slett intervensjon
+ValidateIntervention=Validate intervensjon
+DeleteInterventionLine=Slett intervensjon linje
+ConfirmDeleteIntervention=Er du sikker på at du vil slette denne intervensjon?
+ConfirmValidateIntervention=Er du sikker på at du vil bekrefte dette intervensjon?
+ConfirmModifyIntervention=Er du sikker på at du vil endre denne intervensjon?
+ConfirmDeleteInterventionLine=Er du sikker på at du vil slette denne intervensjon linjen?
+NameAndSignatureOfInternalContact=Navn og signatur for mellomliggende:
+NameAndSignatureOfExternalContact=Navn og signatur for kunden:
+DocumentModelStandard=Standarddokument modell for intervensjoner
+TypeContact_fichinter_internal_INTERREPFOLL=Representant følge opp intervensjon
+TypeContact_fichinter_internal_INTERVENING=Mellomliggende
+TypeContact_fichinter_external_BILLING=Fakturering kundekontakt
+TypeContact_fichinter_external_CUSTOMER=Følge opp kundekontakt
+ArcticNumRefModelDesc1=Generisk nummer modell
+ArcticNumRefModelError=Kunne ikke aktivere
+PacificNumRefModelDesc1=Return numero med format% syymm-nnnn der ÅÅ er årstallet, MM er måneden og nnnn er en sekvens uten pause og ingen retur til 0
+PacificNumRefModelError=En intervensjon kortet starter med $ syymm finnes allerede og er ikke kompatible med denne modellen sekvens. Fjerne den eller endre den for å aktivere denne modulen.
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

@@ -1,0 +1,36 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Donation=Donation
+Donationss=Donatii
+Donor=Donator
+Donors=Donatori
+AddDonation=Adăugaţi o donatie
+NewDonation=New donatie
+DonationPromise=Cadouri promisiune
+PromisesNotValid=Nu este validat promisiuni
+PromisesValid=Validat promisiuni
+DonationsPayed=Donatii platite
+DonationsReceived=Donatii primite
+PublicDonation=Public donatie
+DonationsNumber=Numărul de donatie
+DonationsArea=Donatii zona
+DonationStatusPromiseNotValidated=Proiect de promisiune
+DonationStatusPromiseValidated=Validat promisiune
+DonationStatusPayed=Donatii primite
+DonationStatusPromiseNotValidatedShort=Proiect
+DonationStatusPromiseValidatedShort=Validat
+DonationStatusPayedShort=Primit
+ValidPromise=Validate promisiune
+BuildDonationReceipt=Construieste-primirea
+DonationsModels=Documente modele de donare încasări
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

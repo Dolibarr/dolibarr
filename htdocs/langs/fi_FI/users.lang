@@ -1,0 +1,109 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+UserCard=Käyttäjän kortti
+ContactCard=Osoitekortin
+GroupCard=Ryhmän kortti
+NoContactCard=N: o kortin joukossa yhteystiedot
+Permission=Lupa
+Permissions=Oikeudet
+EditPassword=Muokkaa salasanaa
+SendNewPassword=Lähetä uusi salasana
+ReinitPassword=Luo uusi salasana
+PasswordChangedTo=Salasana muutettu:% s
+SubjectNewPassword=Uusi salasana Dolibarr
+AvailableRights=Saatavilla olevat luvat
+OwnedRights=Omisti käyttöoikeudet
+GroupRights=Ryhmän käyttöoikeudet
+UserRights=Käyttöluvat
+UserGUISetup=Käyttäjän näytön asetukset
+DisableUser=Poistaa käytöstä
+DisableAUser=Poista käyttäjä
+DeleteUser=Poistaa
+DeleteAUser=Poista käyttäjä
+DisableGroup=Poistaa käytöstä
+DisableAGroup=Poista ryhmä
+EnableAUser=Ota käyttäjä
+EnableAGroup=Ota ryhmä
+DeleteGroup=Poistaa
+DeleteAGroup=Poista ryhmä
+ConfirmDisableUser=Oletko varma, että haluat poistaa <b>käyttäjän% s?</b>
+ConfirmDisableGroup=Oletko varma, että haluat poistaa <b>ryhmän% s?</b>
+ConfirmDeleteUser=Oletko varma, että haluat <b>poistaa% s?</b>
+ConfirmDeleteGroup=Oletko varma, että haluat poistaa <b>ryhmän% s?</b>
+ConfirmEnableUser=Oletko varma, että haluat antaa <b>käyttäjän% s?</b>
+ConfirmEnableGroup=Oletko varma, että haluat antaa <b>ryhmän% s?</b>
+ConfirmReinitPassword=Oletko varma, että haluat luoda uuden käyttäjän <b>salasana% s?</b>
+ConfirmSendNewPassword=Oletko varma, että haluat luoda ja lähettää uuden salasanan <b>käyttäjän% s?</b>
+NewUser=Uusi käyttäjä
+CreateUser=Luo käyttäjä
+SearchAGroup=Etsi ryhmää
+SearchAUser=Etsi käyttäjä
+ErrorFailedToSendPassword=Epäonnistui lähettää salasana
+LoginNotDefined=Kirjaudu ei ole määritelty.
+NameNotDefined=Nimi ei ole määritelty.
+ListOfUsers=Luettelo käyttäjistä
+Administrator=Administrator
+DefaultRights=Oletus käyttöoikeudet
+DefaultRightsDesc=Määritä tässä default käyttöoikeudet automaattisesti joka myönnetään uusille käyttäjille.
+DolibarrUsers=Dolibarr käyttäjät
+LastName=Nimi
+FirstName=Etunimi
+ListOfGroups=Luettelo ryhmien
+NewGroup=Uusi ryhmä
+CreateGroup=Luo ryhmä
+RemoveFromGroup=Poista ryhmästä
+PasswordChangedAndSentTo=Salasana muutettu ja <b>lähetetään% s.</b>
+PasswordChangeRequestSent=Pyynnön vaihtaa <b>salasana% s lähetetään% s.</b>
+MenuUsersAndGroups=Käyttäjät & ryhmät
+LastGroupsCreated=Viimeisin% s luonut ryhmiä
+LastUsersCreated=Viimeisin% s käyttäjät luotu
+ShowGroup=Näytä ryhmä
+ShowUser=Näytä käyttäjän
+NonAffectedUsers=Ei vaikuttaa käyttäjien
+UserModified=Käyttäjä muutettu onnistuneesti
+GroupModified=Ryhmän muunnettu onnistuneesti
+PhotoFile=Photo tiedosto
+UserWithDolibarrAccess=Käyttäjälle Dolibarr pääsy
+ListOfUsersInGroup=Luettelo käyttäjien tässä ryhmässä
+ListOfGroupsForUser=Luettelo ryhmien tälle käyttäjälle
+UsersToAdd=Käyttäjät lisätä tähän ryhmään
+GroupsToAdd=Ryhmät, jos haluat lisätä tämän käyttäjän
+NoLogin=Ei tunnus
+CreateDolibarrLogin=Luo Dolibarr huomioon
+LoginAccountDisable=Tili poistettu, aseta uusi kirjautumistunnuksesi sen käyttöön.
+LoginAccountDisableInDolibarr=Huomioon vammaisten Dolibarr.
+LoginAccountDisableInLdap=Tili poistettu alalla.
+UsePersonalValue=Käytä henkilökohtaista arvo
+GuiLanguage=Kieli -
+InternalUser=Sisäinen käyttäjä
+MyInformations=Omat tiedot
+ExportDataset_user_1=Dolibarr käyttäjille ja ominaisuudet
+DomainUser=Domain käyttäjän% s
+Reactivate=Uudelleenaktivoi
+CreateInternalUserDesc=Tämän lomakkeen avulla voit luotu käyttäjän sisäinen yrityksenne / fundation. Voit luotu ulkopuolinen käyttäjä (asiakas, toimittaja, ...), käytä painiketta Luo Dolibarr käyttäjä &quot;kolmannen osapuolen yhteystiedot kortin.
+InternalExternalDesc=<b>Sisäinen</b> käyttäjä on käyttäjä, joka on osa yrityksen / fundation. <br> <b>Ulkoinen</b> käyttäjä on asiakas, toimittaja tai muu. <br><br> Molemmissa tapauksissa, oikeudet määritellään oikeuksia Dolibarr myös ulkoinen käyttäjä voi olla eri valikosta johtaja kuin sisäinen käyttäjä (Katso etusivu - Asetukset - Display)
+PermissionInheritedFromAGroup=Lupa myönnettiin, koska ineherited jostakin käyttäjän ryhmään.
+IdPhoneCaller=Id puhelimeen soittajan
+UserLogged=Käyttäjän% s kytketty
+NewUserCreated=Käyttäjä% s on luotu
+NewUserPassword=Salasana muutos% s
+EventUserModified=Käyttäjän% s muuntamattomat
+UserDisabled=Käyttäjän% s pois päältä
+UserEnabled=Käyttäjän% s aktivoitu
+UserDeleted=Käyttäjän% s poistettu
+NewGroupCreated=Ryhmän% s on luotu
+GroupModified=Ryhmän% s muuntamattomat
+GroupDeleted=Ryhmän% s poistettu
+ConfirmCreateContact=Oletko varma yu haluamme luoda Dolibarr huomioon tässä yhteydessä?
+LoginToCreate=Kirjaudu luoda
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

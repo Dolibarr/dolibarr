@@ -1,0 +1,46 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+StandingOrdersArea=Permanent comenzi zona
+CustomersStandingOrdersArea=Clienţii ordine de plată zona
+StandingOrders=Ordine de plată
+StandingOrder=Ordine de plată
+NewStandingOrder=New permanent pentru
+Withdrawals=Retrageri
+Withdrawal=Retragerea
+WithdrawalsReceipts=Retragerile încasări
+WithdrawalReceipt=Retragere de la primirea
+WithdrawalReceiptShort=Chitanţă
+LastWithdrawalReceipts=Ultima% s retragere încasări
+WithdrawedBills=Withdrawed facturi
+WithdrawalsLines=Retragerile de linii de
+RequestStandingOrderToTreat=Cerere de ordine de plată pentru a trata
+RequestStandingOrderTreated=Cerere de ordine de plată trataţi
+CustomersStandingOrders=Clientul ordine de plată
+CustomerStandingOrder=Client permanent pentru
+NbOfInvoiceToWithdraw=Nb de factură cu retrage cererea
+InvoiceWaitingWithdraw=Factura de aşteptare pentru al retrage
+AmountToWithdraw=Suma de a se retrage
+WithdrawsRefused=Retrage refuzat
+NoInvoiceToWithdraw=Nici un client nu facturii de plată, în modul de &quot;retragere&quot; este în aşteptare. Du-te la &quot;Retrageţi fila&quot; pe factura cardul pentru a face o cerere.
+ResponsibleUser=Responsabil de utilizator
+WithdrawalsSetup=Retragerea setup
+WithdrawStatistics=Retrage &quot;statistici
+WithdrawRejectStatistics=Retrageţi respinge &quot;statistici
+LastWithdrawalReceipt=Ultima% s retragerea încasări
+MakeWithdrawRequest=Face o retragă cererea
+ThirdPartyBankCode=Terţă parte de cod bancar
+ThirdPartyDeskCode=A treia parte birou cod
+NoInvoiceCouldBeWithdrawed=Nu withdrawed factură cu succes. Verificaţi dacă factura sunt pe companii cu un valide BAN.
+ClassCredited=Clasifica creditat
+ClassCreditedConfirm=Sunteţi sigur că doriţi pentru a clasifica această retragere primirea ca creditate pe contul bancar?
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

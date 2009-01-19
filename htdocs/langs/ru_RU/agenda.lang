@@ -1,0 +1,59 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Actions=Действия
+ActionsArea=Действия области (События и задач)
+Agenda=Повестка дня
+Agendas=Повестка дня
+Calendar=Календарь
+Calendars=Календари
+AffectedTo=Затронутые в
+DoneBy=Проделанную
+Events=События
+ListOfActions=Список событий
+Location=Местонахождение
+SearchAnAction=Поиск действия / задачи
+MenuToDoActions=Все действия uncomplete
+MenuDoneActions=Все действия прекращены
+MenuToDoMyActions=Мои действия неполным
+MenuDoneMyActions=Мои действия прекращены
+ListOfEvents=Список Dolibarr событий
+ActionsAskedBy=Действия зарегистрированы
+ActionsToDoBy=Действия, пострадавших в
+ActionsDoneBy=Действия, проделанную
+AllMyActions=Все мои действия / задачи
+AllActions=Все ле действия / задачи
+ViewList=Посмотреть список
+ViewCal=Просмотр календаря
+ViewWithPredefinedFilters=Вид с встроенные фильтры
+AutoActions=Автоматическое заполнение дня
+AgendaAutoActionDesc=Определить здесь события, для которого вы хотите Dolibarr создать автоматическое действие в повестку дня. Если ничего не будет проверяться (по умолчанию), только вручную действия, будут включены в повестку дня.
+AgendaSetupOtherDesc=Эта страница позволяет настроить и другие параметры модуля дня.
+ActionsEvents=События, за которые Dolibarr создадут действий в повестку дня автоматически
+PropalValidatedInDolibarr=Предложение проверены
+InvoiceValidatedInDolibarr=Счет проверены
+OrderValidatedInDolibarr=Приказ проверены
+NewCompanyToDolibarr=Третья группа создала
+DateActionPlannedStart=Планируемая дата начала
+DateActionPlannedEnd=Планируемая дата окончания
+DateActionDoneStart=Реальная дата начала
+DateActionDoneEnd=Реальная дата окончания
+DateActionStart=Начальная дата
+DateActionEnd=Конечная дата
+AgendaUrlOptions1=Можно также добавить следующие параметры для фильтрации вывода:
+AgendaUrlOptions2=<b>login=<b>логин =% S</b> ограничить выход на действия, созданный, пострадавших или сделали <b>пользователем% S.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% S</b> ограничить выход на действия, созданные <b>пользователем% S.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% S</b> ограничить выход на действия пользователя, <b>пострадавших% S.</b>
+AgendaUrlOptions5=<b>logind=<b>logind =% S</b> ограничить выход на действия пользователя, <b>проделанной% S.</b>
+AgendaShowBirthdayEvents=Показать рождения контакты
+AgendaHideBirthdayEvents=Скрыть рождения контакты
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

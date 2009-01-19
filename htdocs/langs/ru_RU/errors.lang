@@ -1,0 +1,59 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ErrorLoginAlreadyExists=Логин% уже существует.
+ErrorGroupAlreadyExists=Группа% уже существует.
+ErrorDuplicateTrigger=Вызывать файл с классом Nam <b>&#39;% S&#39;</b> присутствует sevaral раза. Удалите дубликаты вызвать файл в директории <b>&#39;% S&#39;.</b>
+ErrorFailToDeleteFile=Не удается удалить файл <b>&#39;% S&#39;.</b>
+ErrorFailToCreateFile=Не удалось создать файл <b>&#39;% S&#39;.</b>
+ErrorFailToRenameDir=Не удалось переименовать директорию <b>&#39;% S&#39;</b> в <b>&#39;% S&#39;.</b>
+ErrorFailToCreateDir=Не удалось создать каталог <b>&#39;% S&#39;.</b>
+ErrorFailToDeleteDir=Не удалось удалить каталог <b>&#39;% S&#39;.</b>
+ErrorFailedToDeleteJoinedFiles=Не удается удалить орган, поскольку существует определенная присоединились файлов. Удалить объединить файлы.
+ErrorThisContactIsAlreadyDefinedAsThisType=Этот контакт уже определено в качестве контакта для данного типа.
+ErrorCashAccountAcceptsOnlyCashMoney=Этот банковский счет наличными счет, так что она принимает платежи от типа только наличными.
+ErrorFromToAccountsMustDiffers=Источник и цели банковского счета должны быть разными.
+ErrorBadThirdPartyName=Неправильное значение для сторонних имя
+ErrorBadCustomerCodeSyntax=Плохо синтаксис для заказчика код
+ErrorCustomerCodeRequired=Клиенту требуется код
+ErrorCustomerCodeAlreadyUsed=Клиент код уже используется
+ErrorPrefixRequired=Префикс требуется
+ErrorBadSupplierCodeSyntax=Плохо синтаксис поставщиком код
+ErrorSupplierCodeRequired=Поставщик код необходимо
+ErrorSupplierCodeAlreadyUsed=Поставщик код уже используется
+ErrorBadParameters=Плохо параметры
+ErrorFailedToWriteInDir=Не удалось записать в каталог% S
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Найдено неверный электронный синтаксис% с линии в файл (например, строка% S с электронной почтой =% S)
+ErrorUserCannotBeDelete=Пользователь не может быть удален. Может быть, это связано в Dolibarr образований.
+ErrorFieldsRequired=Некоторые обязательные поля не были заполнены.
+ErrorFailedToCreateDir=Не удалось создать каталог. Убедитесь, что веб-сервер пользователь имеет разрешения на запись в каталог Dolibarr документы. Если параметр <b>safe_mode</b> включен по этому PHP, проверьте, что Dolibarr PHP файлы принадлежат к веб-серверу пользователей (или группы).
+ErrorNoMailDefinedForThisUser=Нет почты определить для этого пользователя
+ErrorFeatureNeedJavascript=Эта функция JavaScript должны быть активированы на работу. Изменить это в настройки - дисплей.
+ErrorTopMenuMustHaveAParentWithId0=Меню типа &#39;Top&#39; не может быть родителем меню. Положить 0 родителей в меню или выбрать меню типа &#39;левых&#39;.
+ErrorLeftMenuMustHaveAParentId=Меню типа &#39;левых&#39; должен иметь родителя ID.
+ErrorGenbarCodeNotfound=Файл не найден (Неверный путь, неправильное или разрешения доступа отказано openbasedir параметр)
+ErrorFunctionNotAvailableInPHP=<b>Функция% S</b> необходим для этой функции, но не доступен в этой версии / настройки PHP.
+ErrorDirAlreadyExists=Каталог с таким именем уже существует.
+ErrorFieldCanNotContainSpecialCharacters=<b>Поле% S</b> не содержит специальных символов.
+WarningAllowUrlFopenMustBeOn=Параметр <b>allow_url_fopen</b> должен быть установлен на заполнителя <b>в php.ini</b> за этот модуль полностью рабочий. Вы должны изменить этот файл вручную.
+WarningBuildScriptNotRunned=<b>Сценарий% S</b> еще не побежал строить графики, или нет никаких данных, чтобы показать.
+WarningBookmarkAlreadyExists=Закладка этого титула или этой цели (URL), уже существует.
+WarningPassIsEmpty=Внимание, базы данных пароль пуст. Это дыра в безопасности. Вы должны добавить пароль к вашей базе данных и изменить свой conf.php файл, чтобы отразить это.
+ErrorNoAccountancyModuleLoaded=Нет бухгалтерского модуля активируется
+ErrorExportDuplicateProfil=Эта анкета именем уже существует на этом экспорт набора.
+ErrorLDAPSetupNotComplete=Dolibarr-LDAP соответствия не является полной.
+ErrorLDAPMakeManualTest=. LDIF файл был создан в директории% s. Попробуйте загрузить его вручную из командной строки, чтобы иметь больше информации об ошибках.
+ErrorCantSaveADoneUserWithZeroPercentage=Не удается сохранить действие с &quot;Статут не началась&quot;, если поле &quot;проделанной&quot; также заполнены.
+ErrorBillRefAlreadyExists=Ссылки, используемые для создания, уже существует.
+ErrorPleaseTypeBankTransactionReportName=Введите название банка, где получение сделки (в формате ГГГГММ или ГГГГММДД)
+ErrorRecordHasChildren=Не удается удалить записи, поскольку он имеет некоторые хлеб.
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

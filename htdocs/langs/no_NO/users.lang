@@ -1,0 +1,109 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+UserCard=Minnebrikke
+ContactCard=Kontaktkortet
+GroupCard=Gruppe kortet
+NoContactCard=Ingen kort blant kontakter
+Permission=Tillatelse
+Permissions=Tillatelser
+EditPassword=Rediger passord
+SendNewPassword=Send nytt passord
+ReinitPassword=Generer nytt passord
+PasswordChangedTo=Passordet er endret til:% s
+SubjectNewPassword=Ditt nye passord for Dolibarr
+AvailableRights=Ledige permissions
+OwnedRights=Eide rettighetene
+GroupRights=Gruppe permissions
+UserRights=Brukertillatelser
+UserGUISetup=Bruker viser oppsett
+DisableUser=Deaktivere
+DisableAUser=Deaktivere en brukers
+DeleteUser=Slette
+DeleteAUser=Slette en brukerkonto
+DisableGroup=Deaktivere
+DisableAGroup=Deaktivere en gruppe
+EnableAUser=Aktivere en bruker
+EnableAGroup=Aktivere en gruppe
+DeleteGroup=Slette
+DeleteAGroup=Slette en gruppe
+ConfirmDisableUser=Er du sikker på at du vil deaktivere <b>user% s?</b>
+ConfirmDisableGroup=Er du sikker på at du vil deaktivere <b>gruppe% s?</b>
+ConfirmDeleteUser=Er du sikker på at du vil slette <b>brukeren% s?</b>
+ConfirmDeleteGroup=Er du sikker på at du vil slette <b>gruppen% s?</b>
+ConfirmEnableUser=Er du sikker på at du vil aktivere <b>brukeren% s?</b>
+ConfirmEnableGroup=Er du sikker på at du vil aktivere <b>gruppen% s?</b>
+ConfirmReinitPassword=Er du sikker på at du vil generere et nytt passord for <b>bruker% s?</b>
+ConfirmSendNewPassword=Er du sikker på at du vil generere og sende nytt passord for <b>bruker% s?</b>
+NewUser=Ny bruker
+CreateUser=Opprett bruker
+SearchAGroup=Søk en gruppe
+SearchAUser=Søk en bruker
+ErrorFailedToSendPassword=Kunne ikke sende passordet
+LoginNotDefined=Logikk er ikke definert.
+NameNotDefined=Navnet er ikke definert.
+ListOfUsers=Liste over brukere
+Administrator=Administrator
+DefaultRights=Standardtillatelsene
+DefaultRightsDesc=Define her standardtillatelsene som automatisk tildelt en ny opprettede brukeren.
+DolibarrUsers=Dolibarr brukere
+LastName=Navn
+FirstName=Firstname
+ListOfGroups=Liste over gruppene
+NewGroup=Ny gruppe
+CreateGroup=Opprett gruppe
+RemoveFromGroup=Fjern fra gruppe
+PasswordChangedAndSentTo=Passordet er endret og sendt <b>til% s.</b>
+PasswordChangeRequestSent=Forespørsel om å endre passord <b>for% s til% s.</b>
+MenuUsersAndGroups=Brukere og grupper
+LastGroupsCreated=Siste% s opprettet grupper
+LastUsersCreated=Siste% s brukere opprettet
+ShowGroup=Vis gruppe
+ShowUser=Vis bruker
+NonAffectedUsers=Ikke påvirket brukere
+UserModified=Bruker endret vellykket
+GroupModified=Konsernet endret vellykket
+PhotoFile=Foto fil
+UserWithDolibarrAccess=Bruker med Dolibarr tilgang
+ListOfUsersInGroup=Liste over brukere i denne gruppen
+ListOfGroupsForUser=Liste over for denne brukeren
+UsersToAdd=Brukerne å legge til denne gruppen
+GroupsToAdd=Grupper for å legge til denne brukeren
+NoLogin=No login
+CreateDolibarrLogin=Opprett Dolibarr konto
+LoginAccountDisable=Kontoen er deaktivert sette ny pålogging for å aktivere det.
+LoginAccountDisableInDolibarr=Konto deaktivert i Dolibarr.
+LoginAccountDisableInLdap=Konto deaktivert i domenet.
+UsePersonalValue=Bruk personlig verdi
+GuiLanguage=Grensesnittspråk
+InternalUser=Intern bruker
+MyInformations=Mine data
+ExportDataset_user_1=Dolibarr brukere og egenskaper
+DomainUser=Domenebruker% s
+Reactivate=Reaktiver
+CreateInternalUserDesc=Dette skjemaet kan du opprette en bruker internt for din bedrift / fundation. Å opprette en ekstern bruker (kunder, leverandører, ...), bruke knappen &quot;Opprett Dolibarr brukers fra tredjeparts kontaktkortet.
+InternalExternalDesc=En <b>intern</b> bruker er en bruker som er en del av din bedrift / fundation. <br> En <b>ekstern</b> bruker er en kunde, leverandør eller andre. <br><br> I begge tilfeller tillatelser definerer rettigheter på Dolibarr, også ekstern bruker kan ha en annen meny manager enn intern bruker (Se hjemmeside - Setup - Display)
+PermissionInheritedFromAGroup=Tillatelse gis fordi ineherited fra en av brukerens gruppe.
+IdPhoneCaller=Id telefonen ringer
+UserLogged=User% s koblet
+NewUserCreated=User% s opprettet
+NewUserPassword=Endring av passord for% s
+EventUserModified=User% s endret
+UserDisabled=User% s deaktivert
+UserEnabled=User% s aktivert
+UserDeleted=User% s fjernet
+NewGroupCreated=Gruppe% s opprettet
+GroupModified=Gruppe% s endret
+GroupDeleted=Gruppe% s fjernet
+ConfirmCreateContact=Er du sikker yu vil opprette en Dolibarr konto for denne kontakten?
+LoginToCreate=Logg inn for å lage
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

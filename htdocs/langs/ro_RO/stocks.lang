@@ -1,0 +1,75 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+WarehouseCard=Depozit carte
+Warehouse=Warehouse
+NewWarehouse=Nou depozit / zona de stoc
+MenuNewWarehouse=Nou depozit
+WarehouseOpened=Warehouse deschis
+WarehouseClosed=Depozit închis
+WarehouseSource=Sursa de depozit
+WarehouseTarget=Target antrepozit
+ValidateSending=Ştergere trimiterea
+CancelSending=Anulare expediere
+DeleteSending=Ştergere trimiterea
+Stock=Stoc
+Stocks=Stocuri
+Movement=Mişcarea
+Movements=Mişcările
+ErrorWarehouseRefRequired=Warehouse nume de referinţă este necesară
+ErrorWarehouseLabelRequired=Warehouse etichetei este necesară
+CorrectStock=Corect stoc
+ListOfWarehouses=Lista de depozite
+ListOfStockMovements=Lista de stoc mişcările
+StocksArea=Stocuri zona
+Location=Lieu
+LocationSummary=Nume scurt locaţie
+NumberOfProducts=Numărul total de produse
+LastMovement=Ultima circulaţie
+LastMovements=Ultima mişcările
+Units=Unităţi
+Unit=Unitatea de
+StockCorrection=Corect stoc
+StockMovement=Transfer
+StockMovements=Transferuri de stoc
+NumberOfUnit=Numărul de unităţi
+TotalStock=Total în stoc
+StockTooLow=Stoc prea mică
+EnhancedValue=Valoare
+PMPValue=Valoare
+EnhancedValueOfWarehouses=Depozite valoare
+UserWarehouseAutoCreate=Creaţi un stoc în mod automat atunci când se creează un utilizator
+QtyDispatched=Cantitate expediate
+OrderDispatch=Ordinul de expediţie
+RuleForStockManagementDecrease=Norma de management al stocurilor scădere
+RuleForStockManagementIncrease=Norma de management al stocurilor creştere
+DeStockOnBill=Reducerea real stocurile de pe facturi / note de credit (avertisment, în această versiune, este doar în depozit numărul 1, care stocul este modificat)
+DeStockOnValidateOrder=Reducerea real stocurile de pe ordinele de note (avertisment, în această versiune, este doar în depozit numărul 1, care stocul este modificat)
+DeStockOnShipment=Reducerea real cu privire la stocurile de transport (de recommanded)
+ReStockOnBill=Creşterea reală stocurile de pe facturi / note de credit (avertisment, în această versiune, este doar în depozit numărul 1, care stocul este modificat)
+ReStockOnValidateOrder=Creşterea reală stocurile de pe ordinele de note (avertisment, în această versiune, este doar în depozit numărul 1, care stocul este modificat)
+StockDiffPhysicTeoric=Motiv pentru diferenţa stocul fizic şi theorical
+StockLimitShort=Limita de
+StockLimit=Stoc limită pentru alerte
+PhysicalStock=Stocul fizic
+RealStock=Real de stoc
+TheoreticalStock=Therocial stoc
+VirtualStock=Virtual stoc
+MininumStock=Minim stoc
+StockUp=Stoc sus
+MininumStockShort=Stoc min
+StockUpShort=Stoc sus
+IdWarehouse=Id-ul antrepozit
+DescWareHouse=Descriere antrepozit
+LieuWareHouse=Localizare depozit
+WarehousesAndProducts=Depozite şi produse
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

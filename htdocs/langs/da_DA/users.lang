@@ -1,0 +1,111 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+UserCard=Bruger kortet
+ContactCard=Kontaktkort
+GroupCard=Gruppen kortet
+NoContactCard=Nr. kortet blandt kontakter
+Permission=Tilladelse
+Permissions=Tilladelser
+EditPassword=Rediger adgangskode
+SendNewPassword=Send ny adgangskode
+ReinitPassword=Generer ny adgangskode
+PasswordChangedTo=Password ændret til:% s
+SubjectNewPassword=Din nye adgangskode for Dolibarr
+AvailableRights=Ledige tilladelser
+OwnedRights=Ejet permissions
+GroupRights=Gruppen permissions
+UserRights=Brugertilladelser
+UserGUISetup=Bruger display setup
+DisableUser=Deaktivere
+DisableAUser=Deaktiver en bruger
+DeleteUser=Slet
+DeleteAUser=Slet en bruger
+DisableGroup=Deaktivere
+DisableAGroup=Deaktiver en gruppe
+EnableAUser=Aktiver en bruger
+EnableAGroup=Aktiver en gruppe
+DeleteGroup=Slet
+DeleteAGroup=Slette en gruppe
+ConfirmDisableUser=Er du sikker på du vil deaktivere <b>brugeren% s?</b>
+ConfirmDisableGroup=Er du sikker på du vil deaktivere <b>gruppe% s?</b>
+ConfirmDeleteUser=Er du sikker på du vil slette <b>brugeren% s?</b>
+ConfirmDeleteGroup=Er du sikker på du vil slette <b>gruppen% s?</b>
+ConfirmEnableUser=Er du sikker på at du vil gøre det muligt for <b>brugeren% s?</b>
+ConfirmEnableGroup=Er du sikker på at du ønsker at aktivere <b>gruppe% s?</b>
+ConfirmReinitPassword=Er du sikker på at du vil generere en ny adgangskode for <b>bruger% s?</b>
+ConfirmSendNewPassword=Er du sikker på at du vil generere og sende nye adgangskode for <b>bruger% s?</b>
+NewUser=Ny bruger
+CreateUser=Opret bruger
+SearchAGroup=Søg en gruppe
+SearchAUser=Søg en bruger
+ErrorFailedToSendPassword=Det lykkedes ikke at sende password
+LoginNotDefined=Login er ikke defineret.
+NameNotDefined=Navn er ikke defineret.
+ListOfUsers=Liste over brugere
+Administrator=Administrator
+DefaultRights=Standardtilladelserne
+DefaultRightsDesc=Definer her standardtilladelserne, der indrømmes automatisk til en ny oprettet bruger.
+DolibarrUsers=Dolibarr brugere
+LastName=Navn
+FirstName=Fornavn
+ListOfGroups=Liste over grupper
+NewGroup=Ny gruppe
+CreateGroup=Opret gruppe
+RemoveFromGroup=Fjern fra gruppe
+PasswordChangedAndSentTo=Password ændret og sendt <b>til% s.</b>
+PasswordChangeRequestSent=Anmodning om at ændre password <b>for% s</b> sendt <b>til% s.</b>
+MenuUsersAndGroups=Brugere & Grupper
+LastGroupsCreated=Seneste% s oprettet grupper
+LastUsersCreated=Seneste% s brugere oprettet
+ShowGroup=Vis gruppe
+ShowUser=Vis bruger
+NonAffectedUsers=Ikke berørt brugere
+UserModified=Bruger modificerede held
+GroupModified=Gruppen modificerede held
+PhotoFile=Fotofilen
+UserWithDolibarrAccess=Bruger med Dolibarr adgang
+ListOfUsersInGroup=Liste over brugere i denne gruppe
+ListOfGroupsForUser=Liste over grupper for denne bruger
+UsersToAdd=Brugere at tilføje til denne gruppe
+GroupsToAdd=Grupper for at føje til denne bruger
+NoLogin=Nr. login
+CreateDolibarrLogin=Opret Dolibarr konto
+LoginAccountDisable=Konto deaktiveret, kan du sætte et nyt login til at aktivere den.
+LoginAccountDisableInDolibarr=Konto deaktiveret i Dolibarr.
+LoginAccountDisableInLdap=Konto deaktiveret i domænet.
+UsePersonalValue=Brug personlige værdi
+GuiLanguage=Grænsefladesprog
+InternalUser=Intern bruger
+MyInformations=Mine data
+ExportDataset_user_1=Dolibarr brugere og egenskaber
+DomainUser=Domænebruger% s
+Reactivate=Genaktiver
+CreateInternalUserDesc=Denne form giver dig mulighed for at oprettet en bruger interne til din virksomheds / fundation. At oprettet en ekstern bruger (kunde, leverandør, ...), bruge knappen &#39;Opret Dolibarr bruger&#39; fra tredjepartens kontaktkort.
+InternalExternalDesc=En <b>intern</b> bruger er en bruger, der er en del af din virksomhed / fundation. <br> En <b>ekstern</b> bruger er en kunde, leverandør eller andre. <br><br> I begge tilfælde permissions definerer rettigheder på Dolibarr, også eksterne bruger kan have en anden menu manager end intern bruger (Se Home - Setup - Display)
+PermissionInheritedFromAGroup=Tilladelse gives, fordi ineherited fra en af en brugers gruppe.
+IdPhoneCaller=Id telefonen ringer op
+UserLogged=Bruger% s tilsluttet
+NewUserCreated=Bruger% s oprettet
+NewUserPassword=Ændring af adgangskode for% s
+EventUserModified=Bruger% s modificerede
+UserDisabled=Bruger% s handicappede
+UserEnabled=Bruger% s aktiveret
+UserDeleted=Bruger% s fjernes
+NewGroupCreated=Gruppe% s oprettet
+GroupModified=Gruppe% s modificerede
+GroupDeleted=Gruppe% s fjernes
+ConfirmCreateContact=Er du sikker yu ønsker at skabe et Dolibarr højde for denne kontakt?
+LoginToCreate=Log ind for at oprette
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

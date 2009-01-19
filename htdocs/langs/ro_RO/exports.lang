@@ -1,0 +1,47 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ExportsArea=Exporturi zona
+ImportArea=Import zona
+NewExport=New export
+NewImport=New import
+ExportableDatas=Exportabil de date
+ImportableDatas=Importable de date
+SelectExportDataSet=Alegeţi de date pe care doriţi să le export ...
+SelectExportFields=Alegeţi câmpurile pe care doriţi să le de export, sau selectaţi un profil predefinit de export
+SaveExportModel=Salvaţi acest profil de export dacă aveţi de gând să-l refolosire mai târziu ...
+ExportModelName=Export profil nume
+ExportModelSaved=Export profil salvat sub <b>numele% s.</b>
+ExportableFields=Exportabil domenii
+ExportedFields=Exportate domenii
+DatasetToExport=De date la export
+Dataset=De date
+ChooseFieldsOrdersAndTitle=Alegeţi câmpurile pentru ...
+FieldsOrder=Domenii pentru
+FieldsTitle=Domenii titlu
+ChooseExportFormat=Alegeţi formatul de export
+NowClickToGenerateToBuildExportFile=Acum, dati click pe &quot;Generează&quot; fişier de export pentru a construi ...
+AvailableFormats=Formate disponibile
+LibraryUsed=Librairie
+LibraryVersion=Version
+Step=Pasul
+FormatedImport=Import asistent
+FormatedImportDesc1=Această zonă permite de a importa date personalizate, folosind un asistent pentru a vă ajuta în procesul fără cunoştinţe tehnice.
+FormatedImportDesc2=Primul pas este de a alege un rege de date pe care doriţi să se încarce, apoi să se încarce fişierul, apoi de a alege care câmpurile pe care doriţi să se încarce.
+FormatedExport=Asistent export
+FormatedExportDesc1=Această zonă permite să exporte personalizate de date, folosind un asistent pentru a vă ajuta în procesul fără cunoştinţe tehnice.
+FormatedExportDesc2=Primul pas este de a alege un predefinite de date, iar apoi de a alege care domeniile în care doriţi dumneavoastră rezultat imagini, şi pentru care.
+FormatedExportDesc3=Când de date la export sunt selectate, puteţi defini ieşire formatul de fişier pe care doriţi să vă datele la export.
+Sheet=Foaie
+NoImportableData=Nu importable de date (nu cu modul de definiţii, pentru a permite importul de date)
+FileSuccessfullyBuilt=Export fişier generat
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

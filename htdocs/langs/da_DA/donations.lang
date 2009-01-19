@@ -1,0 +1,38 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Donation=Donation
+Donationss=Donationer
+Donor=Donor
+Donors=Donorer
+AddDonation=Tilføj en donation
+NewDonation=Ny donation
+DonationPromise=Gave løfte
+PromisesNotValid=Ikke valideret løfter
+PromisesValid=Valideret løfter
+DonationsPayed=Donationer betales
+DonationsReceived=Donationer modtages
+PublicDonation=Offentlige donation
+DonationsNumber=Tappenummer
+DonationsArea=Donationer område
+DonationStatusPromiseNotValidated=Udkast til løfte
+DonationStatusPromiseValidated=Valideret løfte
+DonationStatusPayed=Donationen er modtaget
+DonationStatusPromiseNotValidatedShort=Udkast
+DonationStatusPromiseValidatedShort=Valideret
+DonationStatusPayedShort=Modtaget
+ValidPromise=Valider løfte
+BuildDonationReceipt=Build modtagelse
+DonationsModels=Dokumenter modeller for donation kvitteringer
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

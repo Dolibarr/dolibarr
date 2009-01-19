@@ -1,0 +1,57 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+RefSending=Ref. trimite
+Sending=Trimiterea
+Sendings=Sendings
+Receivings=Receivings
+SendingsArea=Sendings zona
+ListOfSendings=Lista de sendings
+SendingMethod=Trimiterea metodă
+SendingReceipt=Trimiterea la primirea
+LastSendings=Ultima% s sendings
+SearchASending=Cautati o trimitere
+StatisticsOfSendings=Statistica de sendings
+NbOfSendings=Numărul de sendings
+SendingCard=Trimiterea de carte
+NewSending=New trimiterea
+CreateASending=Creaţi o trimitere
+CreateSending=Creaţi trimiterea
+QtyOrdered=Cantitate ordonat
+QtyShipped=Cantitate transportate
+QtyToShip=Cantitate de navă
+QtyReceived=Cantitate primit
+KeepToShip=Păstraţi la navă
+OtherSendingsForSameOrder=Alte sendings pentru acest ordin
+DateSending=Data de trimitere pentru
+DateSendingShort=Data de trimitere pentru
+SendingsForSameOrder=Sendings pentru acest ordin
+SendingsAndReceivingForSameOrder=Sendings şi receivings pentru acest ordin
+SendingsToValidate=Trimiterea pentru a valida
+StatusSendingDraft=Proiect
+StatusSendingValidated=Validat (produse pentru a navei sau deja livrat)
+StatusSendingDraftShort=Proiect
+StatusSendingValidatedShort=Validat
+SendingSheet=Trimiterea foaie
+Carriers=Suporti
+Carrier=Transportatorul
+CarriersArea=Suporti zona
+NewCarrier=Nou operator de transport
+ConfirmDeleteSending=Sunteţi sigur că doriţi să ştergeţi acest trimiterea?
+ConfirmValidateSending=Sunteţi sigur că doriţi să valdate acest trimiterea?
+ConfirmCancelSending=Sunteţi sigur că doriţi să anulaţi această expediere?
+GenericTransport=Generic de transport
+Enlevement=Ajuns de către client
+DocumentModelSimple=Simplă documentul model
+WarningNoQtyLeftToSend=Atenţie, nu produse care aşteaptă să fie expediate.
+NumRefModelJade=Întoarceţi-vă cu un număr de referinţă în format BLYY00001, ... unde YY este an. Numărul de la sfârşitul anului nu este niciodată resetate la zero.
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

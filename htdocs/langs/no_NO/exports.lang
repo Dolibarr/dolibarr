@@ -1,0 +1,47 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ExportsArea=Eksport området
+ImportArea=Import området
+NewExport=Ny eksportere
+NewImport=Ny import
+ExportableDatas=Exportable datasett
+ImportableDatas=Importable datasett
+SelectExportDataSet=Velg datasett som du vil eksportere ...
+SelectExportFields=Velg feltene du vil eksportere, eller velg en forhåndsdefinert eksport profil
+SaveExportModel=Lagre denne eksporten profil dersom du planlegger å bruke det senere ...
+ExportModelName=Eksport Profilnavn
+ExportModelSaved=Eksport profil lagret under <b>navnet% s.</b>
+ExportableFields=Exportable felt
+ExportedFields=Eksporterte felt
+DatasetToExport=Datasettet til å eksportere
+Dataset=Datasett
+ChooseFieldsOrdersAndTitle=Velg felt bestillingen ...
+FieldsOrder=Felt bestilling
+FieldsTitle=Felt tittel
+ChooseExportFormat=Velg eksport format
+NowClickToGenerateToBuildExportFile=Nå, klikk på &quot;Generer&quot; å bygge eksportfil ...
+AvailableFormats=Formater tilgjengelige
+LibraryUsed=Librairie
+LibraryVersion=Versjon
+Step=Trinn
+FormatedImport=Import assistent
+FormatedImportDesc1=Dette området kan importere personlige data, ved hjelp av en assistent som hjelper deg i prosessen uten teknisk kunnskap.
+FormatedImportDesc2=Første trinn er å velge en konge av data du vil laste ned, og deretter filen til å laste, og til å velge hvilke områder du ønsker å laste.
+FormatedExport=Eksport assistent
+FormatedExportDesc1=Dette området kan eksportere personlige data, ved hjelp av en assistent som hjelper deg i prosessen uten teknisk kunnskap.
+FormatedExportDesc2=Første trinn er å velge en forhåndsdefinert datasett, og deretter velge hvilket felt du ønsker i følge filer, og som pålegg.
+FormatedExportDesc3=Når data til eksport, er valgt, kan du definere output filformat du vil eksportere data til.
+Sheet=Ark
+NoImportableData=Ingen importable data (ingen modul med definisjoner for å la data import)
+FileSuccessfullyBuilt=Eksportfilen generert
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

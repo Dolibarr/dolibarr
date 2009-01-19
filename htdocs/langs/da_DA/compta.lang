@@ -1,0 +1,126 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Accountancy=Regnskabsmæssig
+AccountancyCard=Regnskabsmæssig kortet
+Treasury=Treasury
+MenuFinancial=Finansielle
+OptionMode=Mulighed for regnskabspool
+OptionModeTrue=Mulighed Input-Ouput
+OptionModeVirtual=Mulighed Credits-automatiske
+OptionModeTrueDesc=I denne sammenhæng, omsætningen er beregnet over paiements (dato for betalinger). \ nDen gyldigheden af tallene sikres kun, hvis bogføring er granskes gennem input / output på konti via fakturaer.
+OptionModeVirtualDesc=I denne sammenhæng, omsætningen er beregnet over fakturaer (datoen for bekræftelsen). Når disse fakturaer skyldes, uanset om de er blevet betalt eller ej, de er anført i omsætning output.
+FeatureIsSupportedInInOutModeOnly=Funktionen kun tilgængelig i CREDITS-FORDRINGER regnskabspool mode (Se Regnskabsmæssig modul konfiguration)
+Param=Setup
+AccountsGeneral=Konti
+Account=Konto
+Accounts=Konti
+BillsForSuppliers=Regninger for leverandører
+Income=Indkomst
+Outcome=Resultatet
+ReportInOut=Indkomst / resultatfelt
+PaymentsNotLinkedToInvoice=Betalinger ikke er knyttet til en faktura, så der ikke er knyttet til nogen tredjepart
+PaymentsNotLinkedToUser=Betalinger ikke er knyttet til en bruger
+Profit=Profit
+Balance=Balance
+Debit=Debet
+Credit=Credit
+Withdrawal=Tilbagetrækning
+Withdrawals=Tilbagekøb
+AmountHTVATRealReceived=HT indsamlet
+AmountHTVATRealPayed=HT betales
+VATToPay=Moms til at betale
+VATReceived=Moms modtaget
+VATToCollect=Moms til at indsamle
+VATSummary=Moms Resumé
+VATPayed=Moms betales
+VATCollected=Moms indsamlet
+ToPay=Til at betale
+ToGet=For at komme tilbage
+TaxAndDividendsArea=Skat, sociale bidrag og udbytte område
+SocialContribution=Sociale bidrag
+SocialContributions=Sociale bidrag
+MenuTaxAndDividends=Skatter og udbytter
+MenuSocialContributions=Sociale bidrag
+MenuNewSocialContribution=Nye bidrag
+NewSocialContribution=Nye sociale bidrag
+ContributionsToPay=Bidrag til at betale
+AccountancyTreasuryArea=Regnskabsmæssig / Treasury område
+AccountancySetup=Regnskabsmæssig setup
+NewPayment=Ny betaling
+Payments=Betalinger
+PaymentCustomerInvoice=Kunden faktura betaling
+PaymentSupplierInvoice=Leverandør faktura betaling
+PaymentSocialContribution=Sociale bidrag betaling
+PaymentVat=Moms betaling
+ListPayment=Liste over betalinger
+ListOfPayments=Liste over betalinger
+ListOfCustomerPayments=Liste over kundebetalinger
+ListOfSupplierPayments=Liste over leverandør betalinger
+DatePayment=Betalingsdato
+NewVATPayment=Ny momsbetaling
+VATPayment=Moms Betaling
+VATPayments=Momsbetalinger
+ShowVatPayment=Vis moms payement
+TotalToPay=I alt at betale
+TotalVATReceived=Total moms modtaget
+CustomerAccountancyCode=Kunden regnskabspool kode
+SupplierAccountancyCode=Leverandør accountacy kode
+AlreadyPayed=Allerede betales
+AccountNumberShort=Kontonummer
+AccountNumber=Kontonummer
+NewAccount=Ny konto
+SalesTurnover=Omsætning
+ByThirdParties=Bu tredjemand
+ByUserAuthorOfInvoice=Ved faktura forfatter
+AccountancyExport=Regnskabsmæssig eksport
+ErrorWrongAccountancyCodeForCompany=Bad kunde regnskabspool kode for% s
+SuppliersProductsSellSalesTurnover=Det gav en omsætning fra salg af leverandørernes produkter.
+CheckReceipt=Check depositum
+CheckReceiptShort=Check depositum
+NewCheckReceipt=Ny discount
+NewCheckDeposit=Ny tjekke depositum
+NewCheckDepositOn=Ny tjekke depositum på konto:% s
+NoWaitingChecks=Nr. kontrol venter for indskudsgarantiordninger.
+DateChequeReceived=Check modtagelse input dato
+NbOfCheques=Nb af checks
+PaySocialContribution=Betale sociale bidrag
+ConfirmPaySocialContribution=Er du sikker på at du vil klassificere denne sociale bidrag, som betales?
+DeleteSocialContribution=Slet et socialt bidrag
+ConfirmDeleteSocialContribution=Er du sikker på du vil slette denne sociale bidrag?
+ExportDataset_tax_1=Sociale bidrag og betalinger
+AnnualSummaryDueDebtMode=Bilan des indtægter og dpenses, rsum annuel, da <b>mode% sCrances-Dettes% s</b> DIT <b>comptabilit d&#39;engagement.</b>
+AnnualSummaryInputOutputMode=Bilan des indtægter og dpenses, rsum annuel, da <b>mode% sRecettes-Dpenses% s</b> DIT <b>comptabilit de caisse.</b>
+AnnualByCompaniesDueDebtMode=Bilan des indtægter og dpenses, dtail par etager, da <b>mode% sCrances-Dettes% s</b> DIT <b>comptabilit d&#39;engagement.</b>
+AnnualByCompaniesInputOutputMode=Bilan des indtægter og dpenses, dtail par etager, da <b>mode% sRecettes-Dpenses% s</b> DIT <b>comptabilit de caisse.</b>
+SeeReportInInputOutputMode=Voir le <b>rapport% sRecettes-Dpenses% s</b> DIT <b>comptabilit de caisse</b> pour un calcul sur les paiements effectivement raliss
+SeeReportInDueDebtMode=Voir le <b>rapport% sCrances-Dettes% s</b> DIT <b>comptabilit d&#39;engagement</b> pour un calcul sur les factures Mises
+RulesResultDue=- Beløbene er inklusive alle skatter og afgifter <br> - Det omfatter udestående fakturaer, udgifter og moms, uanset om de er betalt eller ej. <br> - Det er baseret på validering datoen for fakturaer og moms og på forfaldsdatoen for udgifter.
+RulesResultInOut=- Beløbene er inklusive alle skatter og afgifter <br> - Det omfatter de egentlige betalinger på fakturaer, udgifter og moms. <br> - Det er baseret på forfaldsdatoer af de fakturaer, udgifter ANF moms. <br>
+RulesCADue=- Det omfatter kunders grund fakturaer om de er betalt eller ej. <br> - Det er baseret på validering dato med disse fakturaer. <br>
+RulesCAIn=- Den omfatter alle de faktiske betalinger af fakturaer modtaget fra kunder. <br> - Det er baseret på betaling dato med disse fakturaer <br>
+VATReportByCustomersInInputOutputMode=Rapport par klient des TVA collectes et betaler (TVA sur encaissement)
+VATReportByCustomersInDueDebtMode=Rapport par klient des TVA collectes et betaler (TVA sur dbit)
+VATReportByQuartersInInputOutputMode=Rapport par trimestre des TVA collectes et betaler (TVA sur encaissement)
+VATReportByQuartersInDueDebtMode=Rapport par trimestre des TVA collectes et betaler (TVA sur dbit)
+SeeVATReportInInputOutputMode=Voir le <b>rapport% sTVA encaissement% s</b> pour mode de calcul standard
+SeeVATReportInDueDebtMode=Voir le <b>rapport% sTVA sur dbit% s</b> pour mode de calcul avec mulighed sur les dbits
+RulesVATIn=- Pour les tjenester, le rapport inclut les TVA des rglements effectivement Reus ou mis da se basant sur la dato du rglement. <br> - Pour les biens matriels, il inclut les TVA des factures da se basant sur la Date de validering de la fremstilling.
+RulesVATDue=- Pour les tjenester, le rapport inclut les TVA des factures afgifter, payes ou non da se basant sur la Date de validering de ces factures. <br> - Pour les biens matriels, il inclut les TVA des factures da se basant sur la Date de validering de la fremstilling.
+OptionVatInfoModuleComptabilite=Remarque: Pour les biens matriels, il faudrait utiliser la Date de livraison pour TRE plus juste.
+PercentOfInvoice=%% / faktura
+Dispatch=Lastfordeling
+Dispatched=Afsendt
+ToDispatch=Afsendelsen
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

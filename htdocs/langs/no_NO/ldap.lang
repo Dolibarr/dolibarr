@@ -1,0 +1,38 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+DomainPassword=Passord for domenet
+YouMustChangePassNextLogon=Passord for <b>bruker% s</b> på <b>domenet% s</b> må endres.
+UserMustChangePassNextLogon=Bruker må endre passord på domenet% s
+LdapUacf_NORMAL_ACCOUNT=Brukerkonto
+LdapUacf_DONT_EXPIRE_PASSWORD=Passord utløper aldri
+LdapUacf_ACCOUNTDISABLE=Konto er deaktivert i domenet% s
+LDAPInformationsForThisContact=Informasjon i LDAP database for denne kontakten
+LDAPInformationsForThisUser=Informasjon i LDAP-databasen for denne brukeren
+LDAPInformationsForThisGroup=Informasjon i LDAP-databasen for denne gruppen
+LDAPInformationsForThisMember=Informasjon i LDAP database for dette medlem
+LDAPAttribute=LDAP-attributtet
+LDAPAttributes=LDAP attributter
+LDAPCard=LDAP-kortet
+LDAPRecordNotFound=Vanlig ikke funnet i LDAP database
+LDAPUsers=Brukere i LDAP database
+LDAPGroups=Grupper i LDAP database
+LDAPFieldStatus=Status
+LDAPFieldFirstSubscriptionDate=Først abonnement dato
+LDAPFieldFirstSubscriptionAmount=Fist abonnement beløp
+LDAPFieldLastSubscriptionDate=Sist abonnement dato
+LDAPFieldLastSubscriptionAmount=Sist abonnement beløp
+SynchronizeDolibarr2Ldap=Synkronisere bruker (Dolibarr -&gt; LDAP)
+UserSynchronized=Bruker synkronisert
+ForceSynchronize=Force synkronisering Dolibarr -&gt; LDAP
+ErrorFailedToReadLDAP=Kunne ikke lese LDAP database. Sjekk LDAP modul oppsett og database tilgjengelighet.
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

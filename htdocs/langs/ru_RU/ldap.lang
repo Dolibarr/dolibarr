@@ -1,0 +1,38 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+DomainPassword=Пароль к домену
+YouMustChangePassNextLogon=Пароль для <b>пользователя% S</b> на <b>домене% S</b> должно быть изменено.
+UserMustChangePassNextLogon=Пользователь должен изменить пароль на домене% S
+LdapUacf_NORMAL_ACCOUNT=Учетная запись пользователя
+LdapUacf_DONT_EXPIRE_PASSWORD=Пароль никогда не истекает
+LdapUacf_ACCOUNTDISABLE=Аккаунт отключен в домене% S
+LDAPInformationsForThisContact=Информация в базе данных LDAP для этого контакта
+LDAPInformationsForThisUser=Информация в базе данных LDAP для данного пользователя
+LDAPInformationsForThisGroup=Информация в базе данных LDAP для этой группы
+LDAPInformationsForThisMember=Информация в базе данных LDAP для этого члена
+LDAPAttribute=LDAP атрибута
+LDAPAttributes=Атрибутов LDAP
+LDAPCard=LDAP-карты
+LDAPRecordNotFound=Запись не найдена в базе данных LDAP
+LDAPUsers=Пользователи, находящиеся в базе данных LDAP
+LDAPGroups=Группы в базе LDAP
+LDAPFieldStatus=Статус
+LDAPFieldFirstSubscriptionDate=Первая дата подписки
+LDAPFieldFirstSubscriptionAmount=Кулак сумма подписки
+LDAPFieldLastSubscriptionDate=Последняя дата подписки
+LDAPFieldLastSubscriptionAmount=Последняя сумма подписки
+SynchronizeDolibarr2Ldap=Синхронизация пользователей (Dolibarr -&gt; LDAP)
+UserSynchronized=Пользователь синхронизированы
+ForceSynchronize=Силы синхронизации Dolibarr -&gt; LDAP
+ErrorFailedToReadLDAP=Не удалось прочитать LDAP базе. Проверка LDAP модуль настройки и доступности данных.
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

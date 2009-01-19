@@ -1,0 +1,24 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Shop=Shop
+ShopWeb=Web Shop
+LastOrders=Seneste kendelser
+OnStandBy=På standby
+TreatmentInProgress=Behandling i gang
+LastCustomers=Seneste kunder
+OSCommerceShop=OsCommerce shop
+OSCommerce=OsCommerce
+AddProd=Sælge online
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

@@ -1,0 +1,127 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+OrdersArea=Kunder bestillinger området
+SuppliersOrdersArea=Leverandører bestillinger området
+OrderCard=Bestill kortet
+Order=Bestille
+Orders=Bestillinger
+OrderFollow=Oppfølging
+OrderContact=Bestill kontakt
+OrderDate=Ordredato
+NewOrder=Ny ordre
+ToOrder=Lag bestilling
+MakeOrder=Lag bestilling
+SupplierOrder=Tilbydersøk bestilling
+SuppliersOrders=Leverandørenes bestillinger
+SuppliersOrdersRunning=Gjeldende leverandørenes bestillinger
+CustomerOrder=Kundeordre
+CustomersOrders=Kundenes ordre
+CustomersOrdersRunning=Gjeldende kundenes ordre
+CustomersOrdersAndOrdersLines=Kunde bestillinger og bestillinger &#39;linjer
+OrdersToValid=Bestillinger til gyldig
+OrdersToBill=Ordrer til fakturering
+OrdersInProcess=Ordre i prosessen
+OrdersToProcess=Bestillinger å behandle
+StatusOrderCanceledShort=Avbrutt
+StatusOrderDraftShort=Utkast
+StatusOrderValidatedShort=Validert
+StatusOrderOnProcessShort=På prosessen
+StatusOrderProcessedShort=Behandlet
+StatusOrderToBillShort=Å fakturere
+StatusOrderApprovedShort=Godkjent
+StatusOrderRefusedShort=Refused
+StatusOrderToProcessShort=Å behandle
+StatusOrderReceivedPartiallyShort=Delvis mottatt
+StatusOrderReceivedAllShort=Alt mottas
+StatusOrderCanceled=Avbrutt
+StatusOrderDraft=Utkast (må være validert)
+StatusOrderValidated=Validert
+StatusOrderOnProcess=På prosessen
+StatusOrderProcessed=Behandlet
+StatusOrderToBill=Å fakturere
+StatusOrderApproved=Godkjent
+StatusOrderRefused=Refused
+StatusOrderReceivedPartially=Delvis mottatt
+StatusOrderReceivedAll=Alt mottas
+DraftOrWaitingApproved=Utkast eller godkjent ennå ikke bestilt
+DraftOrWaitingShipped=Utkast eller validert ennå ikke levert
+MenuOrdersToBill=Ordrer til fakturering
+SearchOrder=Søkeoppdrag
+Sending=Sender
+Sendings=Sendings
+ShipProduct=Ship produkt
+Discount=Rabatt
+CreateOrder=Opprett Bestill
+RefuseOrder=Nekte bestilling
+ApproveOrder=Godta pålegg
+ValidateOrder=Validate bestilling
+DeleteOrder=Slett bestilling
+CancelOrder=Kansellere bestillingen
+AddOrder=Legg til bestilling
+AddToMyOrders=Legg til i min ordre
+AddToOtherOrders=Legg til andre bestillinger
+ShowOrder=Vis bestilling
+NoOpenedOrders=Ingen åpnet bestillinger
+NoOtherOpenedOrders=Ingen andre åpnet bestillinger
+OtherOrders=Andre bestillinger
+LastOrders=Siste% s bestillinger
+LastModifiedOrders=Siste% s endret bestillinger
+LastClosedOrders=Siste% s lukket bestillinger
+AllOrders=Alle bestillinger
+NbOfOrders=Antall bestillinger
+OrdersStatistics=Bestillinger &#39;statistikk
+OrdersStatisticsSuppliers=Tilbydersøk ordre &#39;statistikk
+NumberOfOrdersByMonth=Antall bestillinger per måned
+AmountOfOrdersByMonthHT=Mengden bestillinger per måned (netto etter skatt)
+ListOfOrders=Liste over pålegg
+CloseOrder=Lukk bestilling
+ConfirmCloseOrder=Er du sikker på at du vil lukke denne bestillingen? Når en bestilling er lukket, det kan bare bli fakturert.
+ConfirmCloseOrderIfSending=Er du sikker på at du vil lukke denne bestillingen? Du må lukke en bestilling bare når alle shipping er ferdig.
+ConfirmDeleteOrder=Er du sikker på at du vil slette denne bestillingen?
+ConfirmValidateOrder=Er du sikker på at du ønsker å validere denne rekkefølgen under <b>navnet% s?</b>
+ConfirmCancelOrder=Er du sikker på at du vil kansellere denne bestillingen?
+ConfirmMakeOrder=Er du sikker på at du vil bekrefte at du har gjort denne bestillingen <b>på% s?</b>
+GenerateBill=Generer faktura
+ClassifyBilled=Klassifisere &quot;fakturert&quot;
+ComptaCard=Accountancy kortet
+DraftOrders=Utkast bestillinger
+RelatedOrders=Relaterte bestillinger
+OnProcessOrders=På behandle bestillinger
+RefOrder=Ref. bestille
+RefCustomerOrder=Ref. kundeordre
+CustomerOrder=Kundeordre
+RefCustomerOrderShort=Ref. kunde. bestille
+SendOrderByMail=Send bestilling via e-post
+ActionsOnOrder=Handlinger på bestilling
+NoArticleOfTypeProduct=Ingen artikkel av typen &quot;produkt&quot;, slik at ingen shippable artikkelen for denne bestillingen
+OrderMode=Bestill metode
+AuthorRequest=Forespørsel forfatter
+UseCustomerContactAsOrderRecipientIfExist=Bruk kundekontakt adressen hvis definert stedet for tredjepart adresse som pålegg mottakerens adresse
+RunningOrders=Bestillinger på prosessen
+UserWithApproveOrderGrant=Useres gitt med &quot;godkjenne bestillinger&quot; tillatelse.
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON ikke definert
+Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON ikke definert
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Lastingen modulen filen &#39;% s&#39;
+Error_FailedToLoad_COMMANDE_ADDON_File=Lastingen modulen filen &#39;% s&#39;
+OrderSource0=Kommersiell forslag
+OrderSource1=Internett
+OrderSource2=Post kampanje
+OrderSource3=Telefon compain
+OrderSource4=Fax kampanje
+OrderSource5=Commercial
+OrderSource6=Butikk
+QtyOrdered=Ant. bestilt
+AddDeliveryCostLine=Legg til en kostnad linje indikerer vekten av bestillingen
+PDFEinsteinDescription=En fullstendig bestilling modell (logo. ..)
+MarbreNumRefDesc=Renvoie le numro sous la Forme% syymm-nnnn ou åå est l&#39;annee, mm le mois et nnnn un compteur sequentiel sans brudd et sans remise e 0
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

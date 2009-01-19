@@ -1,0 +1,65 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Project=Projekt
+Projects=Projekter
+SharedProject=Fælles projekt
+Myprojects=Mine projekter
+ProjectsArea=Projekter område
+NewProject=Nyt projekt
+AddProject=Tilføj projekt
+DeleteAProject=Slet et projekt
+DeleteATask=Slet en opgave
+ConfirmDeleteAProject=Er du sikker på du vil slette dette projekt?
+ConfirmDeleteATask=Er du sikker på du vil slette denne opgave?
+OfficerProject=Officer projekt
+LastProjects=Seneste% s projekter
+AllProjects=Alle projekter
+ProjectsList=Liste over projekter
+ShowProject=Vis projekt
+SetProject=Indstil projekt
+NoProject=Nr. projektet defineret
+NbOpenTasks=Nb af åbnet opgaver
+NbOfProjects=Nb af projekter
+TimeSpent=Tid brugt
+RefTask=Ref. opgave
+LabelTask=Label opgave
+NewTimeSpent=Ny tid
+MyTimeSpent=Min tid
+MyTasks=Mine opgaver
+Tasks=Opgaver
+Task=Opgave
+NewTask=Ny opgave
+AddTask=Tilføj opgave
+AddDuration=Tilføj varighed
+Activity=Aktivitet
+Activities=Opgaver / aktiviteter
+MyActivity=Min virksomhed
+MyActivities=Mine opgaver / aktiviteter
+DurationEffective=Effektiv varighed
+MyProjects=Mine projekter
+Time=Tid
+ListProposalsAssociatedProject=Lister over de kommercielle forslag er forbundet med projektet
+ListOrdersAssociatedProject=Lister over de ordrer, er forbundet med projektet
+ListInvoicesAssociatedProject=Lister over de fakturaer forbundet med projektet
+ListSupplierOrdersAssociatedProject=Liste over leverandører ordrer forbundet med projektet
+ListSupplierInvoicesAssociatedProject=Liste over leverandører fakturaer forbundet med projektet
+ListContractAssociatedProject=Liste over kontrakter i forbindelse med projektet
+ActivityOnProjectThisWeek=Aktivitet på projektet i denne uge
+ActivityOnProjectThisMonth=Aktivitet på projektet i denne måned
+ActivityOnProjectThisYear=Aktivitet på projektet i år
+ChildOfTaks=Barn af projekt / opgave
+NotOwnerOfProject=Ikke ejer af denne private projekt
+AffectedTo=Påvirkes i
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

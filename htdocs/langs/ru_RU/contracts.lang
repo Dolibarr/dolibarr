@@ -1,0 +1,92 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ContractsArea=Контракты области
+ListOfContracts=Список договоров
+LastContracts=Последнее% с измененными контрактами
+AllContracts=Все контракты
+ContractCard=Контракт карту
+ContractStatus=Контракт статус
+ContractStatusNotRunning=Не работает
+ContractStatusRunning=Запуск
+ContractStatusDraft=Черновик
+ContractStatusValidated=Подтвержденные
+ContractStatusClosed=Закрытые
+ServiceStatusInitial=Не работает
+ServiceStatusRunning=Запуск
+ServiceStatusLate=Запуск, истек
+ServiceStatusClosed=Закрытые
+ServicesLegend=Услуги легенда
+Contracts=Договоры
+Contract=Контракт
+ContractContacts=Контракт контакты
+NoContracts=Нет контрактов
+MenuServices=Услуги
+MenuInactiveServices=Услуга не активна
+MenuRunningServices=Запуск служб
+MenuExpiredServices=Истекшим сроком службы
+MenuClosedServices=Закрытые услуги
+NewContract=Новый контракт
+AddContract=Добавить контракт
+SearchAContract=Поиск контракта
+DeleteAContract=Удалить договор
+CloseAContract=Закрыть контракта
+ConfirmDeleteAContract=Вы уверены, что хотите удалить этот контракт, и на все свои услуги?
+ConfirmValidateContract=Вы уверены, что хотите проверить этот договор?
+ConfirmCloseContract=Это позволит закрыть все услуги (активный или нет). Вы уверены, что хотите закрыть этот договор?
+ConfirmCloseService=Вы действительно хотите закрыть эту услугу с <b>даты% S?</b>
+ValidateAContract=Проверить контракт
+ActivateService=Активировать услугу
+ConfirmActivateService=Вы уверены, что хотите, чтобы активировать данную услугу с <b>даты% S?</b>
+DateContract=Контракт дата
+DateServiceActivate=Дата активации услуги
+DateServiceUnactivate=Сроки службы unactivation
+DateServiceStart=Дата начала службы
+DateServiceEnd=Дата окончания службы
+ShowContract=Показать контракта
+ListOfServices=Перечень услуг
+ListOfRunningContractsLines=Список запуска контракта линий
+ListOfRunningServices=Список запущенных служб
+NotActivatedServices=Не активируется услуг (в том числе утверждены контракты)
+BoardNotActivatedServices=Услуги для активации среди утверждены контракты
+LastContracts=Последнее% контрактов
+LastActivatedServices=Последнее% S активированных услуг
+LastModifiedServices=Последнее% с измененными услуги
+EditServiceLine=Изменить направление
+ContractStartDate=Начальная дата
+ContractEndDate=Конечная дата
+DateStartPlanned=Планируемая дата начала
+DateStartPlannedShort=Планируемая дата начала
+DateEndPlanned=Планируемая дата окончания
+DateEndPlannedShort=Планируемая дата окончания
+DateStartReal=Реальная дата начала
+DateStartRealShort=Реальная дата начала
+DateEndReal=Реальная дата окончания
+DateEndRealShort=Реальная дата окончания
+NbOfServices=Nb услуг
+CloseService=Закрыть службы
+ServicesNomberShort=% S служба (ы)
+RunningServices=Запуск служб
+BoardRunningServices=Истекшие Запуск услуги
+ServiceStatus=Положение о службе
+DraftContracts=Проекты контрактов
+CloseRefusedBecauseOneServiceActive=Контракт не может быть закрыто, пока, по крайней мере один открытый службе по нему
+CloseAllContracts=Закрыть все контракты
+MoveToAnotherContract=Переместите службу в другой договор.
+ConfirmMoveToAnotherContract=Я выбранного новая цель договора и подтвердить, я хочу перейти эту услугу в этом договоре.
+ConfirmMoveToAnotherContractQuestion=Выборы, в которых существующего контракта (от же третья сторона), вы хотите переместить эту услугу?
+TypeContact_contrat_internal_SALESREPSIGN=Торговый представитель подписания контракта
+TypeContact_contrat_internal_SALESREPFOLL=Торговый представитель последующего договора
+TypeContact_contrat_external_BILLING=Платежная заказчика контакт
+TypeContact_contrat_external_CUSTOMER=После деятельность заказчика контакт
+TypeContact_contrat_external_SALESREPSIGN=Подписание контракта заказчик контакт
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

@@ -1,0 +1,92 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ContractsArea=Kontrakter området
+ListOfContracts=Liste over kontrakter
+LastContracts=Siste% s endret kontrakter
+AllContracts=Alle kontrakter
+ContractCard=Kontrakt kort
+ContractStatus=Kontrakt status
+ContractStatusNotRunning=Kjører ikke
+ContractStatusRunning=Publiseres
+ContractStatusDraft=Utkast
+ContractStatusValidated=Validert
+ContractStatusClosed=Stengt
+ServiceStatusInitial=Kjører ikke
+ServiceStatusRunning=Publiseres
+ServiceStatusLate=Kjører, utløpt
+ServiceStatusClosed=Stengt
+ServicesLegend=Tjenester legende
+Contracts=Kontrakter
+Contract=Kontrakt
+ContractContacts=Kontrakt kontakter
+NoContracts=Ingen kontrakter
+MenuServices=Tjenester
+MenuInactiveServices=Service ikke aktiv
+MenuRunningServices=Running tjenester
+MenuExpiredServices=Utløpt tjenester
+MenuClosedServices=Lukkede tjenester
+NewContract=Ny kontrakt
+AddContract=Legg kontrakt
+SearchAContract=Søk kontrakt
+DeleteAContract=Slett en kontrakt
+CloseAContract=Lukk kontrakt
+ConfirmDeleteAContract=Er du sikker på at du vil slette denne kontrakten og alle sine tjenester?
+ConfirmValidateContract=Er du sikker på at du ønsker å validere denne kontrakten?
+ConfirmCloseContract=Dette vil lukke alle tjenester (aktiv eller ikke). Er du sikker på at du vil lukke denne kontrakten?
+ConfirmCloseService=Er du sikker på at du vil lukke denne tjenesten med <b>dato% s?</b>
+ValidateAContract=Validate kontrakt
+ActivateService=Aktivere tjenesten
+ConfirmActivateService=Er du sikker på at du vil aktivere denne tjenesten med dato <b>for% s?</b>
+DateContract=Kontrakt dato
+DateServiceActivate=Dato for tjenesten aktivisering
+DateServiceUnactivate=Dato for tjenesten unactivation
+DateServiceStart=Dato for oppstart av tjenesten
+DateServiceEnd=Dato for utløpet av tjeneste
+ShowContract=Vis kontrakt
+ListOfServices=Liste over tjenester
+ListOfRunningContractsLines=Liste over kjører kontrakt linjer
+ListOfRunningServices=Liste over kjører tjenester
+NotActivatedServices=Ikke aktivert tjenester (blant validated kontrakter)
+BoardNotActivatedServices=Tjenester for å aktivere blant validated kontrakter
+LastContracts=Sist% kontrakter
+LastActivatedServices=Siste% s aktivert tjenester
+LastModifiedServices=Siste% s endret tjenester
+EditServiceLine=Rediger service line
+ContractStartDate=Startdato
+ContractEndDate=Sluttdato
+DateStartPlanned=Planlagt startdato
+DateStartPlannedShort=Planlagt startdato
+DateEndPlanned=Planlagt sluttdato
+DateEndPlannedShort=Planlagt sluttdato
+DateStartReal=Real startdato
+DateStartRealShort=Real startdato
+DateEndReal=Real sluttdato
+DateEndRealShort=Real sluttdato
+NbOfServices=NB tjenester
+CloseService=Lukk service
+ServicesNomberShort=% s tjeneste (r)
+RunningServices=Running tjenester
+BoardRunningServices=Utløpt kjører tjenester
+ServiceStatus=Status for tjenesten
+DraftContracts=Utkast kontrakter
+CloseRefusedBecauseOneServiceActive=Kontrakten kan ikke lukket som det er minst en åpen tjeneste på det
+CloseAllContracts=Lukk alle kontrakter
+MoveToAnotherContract=Flytte tjenesten til en annen kontrakt.
+ConfirmMoveToAnotherContract=Jeg choosed nye målet kontrakt og bekrefter jeg ønsker å flytte dette inn i denne kontrakten.
+ConfirmMoveToAnotherContractQuestion=Velg hvor eksisterende kontrakt (av samme tredjepart), du ønsker å flytte dette til?
+TypeContact_contrat_internal_SALESREPSIGN=Salgsrepresentant signere kontrakt
+TypeContact_contrat_internal_SALESREPFOLL=Salgsrepresentant følge opp kontrakten
+TypeContact_contrat_external_BILLING=Fakturering kundekontakt
+TypeContact_contrat_external_CUSTOMER=Følge opp kundekontakt
+TypeContact_contrat_external_SALESREPSIGN=Signering kontrakt kundekontakt
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

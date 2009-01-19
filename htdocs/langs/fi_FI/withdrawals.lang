@@ -1,0 +1,46 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+StandingOrdersArea=Pysyvän tilaukset alueella
+CustomersStandingOrdersArea=Asiakkaat pysyvän tilaukset alueella
+StandingOrders=Pysyvän tilaukset
+StandingOrder=Pysyvän tilaukset
+NewStandingOrder=Uusi kestotilaus
+Withdrawals=Nostot
+Withdrawal=Peruuttaminen
+WithdrawalsReceipts=Nostot kuitit
+WithdrawalReceipt=Peruuttaminen vastaanottamisesta
+WithdrawalReceiptShort=Kuitti
+LastWithdrawalReceipts=Viimeisin% s vetäytymis kuitit
+WithdrawedBills=Withdrawed laskut
+WithdrawalsLines=Nostot linjat
+RequestStandingOrderToTreat=Pyyntö seisoville tilausten hoitoon
+RequestStandingOrderTreated=Pyyntö seisoville tilaukset käsitellään
+CustomersStandingOrders=Asiakas pysyvän tilaukset
+CustomerStandingOrder=Asiakas kestotilaus
+NbOfInvoiceToWithdraw=Nb laskun kanssa peruuttaa pyynnön
+InvoiceWaitingWithdraw=Laskun odottaa peruuttaa
+AmountToWithdraw=Määrä peruuttaa
+WithdrawsRefused=Peruuttaa evätty
+NoInvoiceToWithdraw=Ei asiakasta laskun maksu mode &quot;vetää&quot; odottaa. Mene &quot;Peruuta&quot; välilehdessä laskun kortin pyytää.
+ResponsibleUser=Vastaava käyttäjä
+WithdrawalsSetup=Peruuttaminen setup
+WithdrawStatistics=Peruuttaa tilastot
+WithdrawRejectStatistics=Peruuta hylkää tilastot
+LastWithdrawalReceipt=Viimeisin% s poistamista kuitit
+MakeWithdrawRequest=Tee peruuttaa pyynnön
+ThirdPartyBankCode=Kolmannen osapuolen pankin koodi
+ThirdPartyDeskCode=Kolmannen osapuolen desk-koodi
+NoInvoiceCouldBeWithdrawed=N: o laskun withdrawed menestyksekkäästi. Tarkista, että laskussa yrityksiin, joilla on voimassa oleva kielto.
+ClassCredited=Luokittele hyvitetään
+ClassCreditedConfirm=Oletko varma, että haluat luokitella tämän vetäytymisen vastaanottamisesta kuin hyvitetty pankkitilisi?
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

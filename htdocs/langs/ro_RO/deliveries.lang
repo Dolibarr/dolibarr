@@ -1,0 +1,33 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Delivery=Livrare
+Deliveries=Livrări
+DeliveryCard=Livrarea carte
+DeliveryOrder=De livrare pentru
+DeliveryOrders=Livrarea comenzilor
+DeliveryDate=Data de livrare
+DeliveryDateShort=Deliv. dată
+CreateDeliveryOrder=Generarea de livrare pentru
+QtyDelivered=Cantitate livrată
+SetDeliveryDate=Setaţi data de expediere
+ValidateDeliveryReceipt=Validate livrare la primirea
+ValidateDeliveryReceiptConfirm=Sunteţi sigur că doriţi pentru a valida acest livrare primire?
+DeliveryMethod=Metoda de livrare
+TrackingNumber=Număr de urmărire
+NameAndSignature=Nume şi Semnătura:
+ToAndDate=To___________________________________ pe ____ / _____ / __________
+GoodStatusDeclaration=Au primit bunurile în bună stare de mai sus,
+Deliverer=Eliberator:
+Sender=Expeditor
+Recipient=Recipient
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

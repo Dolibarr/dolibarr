@@ -1,0 +1,43 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Intervention=De intervenţie
+Interventions=Intervenţiile
+InterventionCard=Carte de intervenţie
+NewIntervention=New intervenţie
+AddIntervention=Adauga intervenţie
+ListOfInterventions=Lista de intervenţii
+EditIntervention=Editer intervenţie
+LastInterventions=Ultima% s intervenţii
+AllInterventions=Toate intervenţiile
+CreateDraftIntervention=Creaţi proiect
+CustomerDoesNotHavePrefix=Clientul nu are un prefix
+InterventionContact=Intervenţia de contact
+DeleteIntervention=Ştergere intervenţie
+ValidateIntervention=Validate intervenţie
+DeleteInterventionLine=Ştergere intervenţie linie
+ConfirmDeleteIntervention=Sunteţi sigur că doriţi să ştergeţi această intervenţie?
+ConfirmValidateIntervention=Sunteţi sigur că doriţi să valideze această intervenţie?
+ConfirmModifyIntervention=Sunteţi sigur că doriţi să modificaţi această intervenţie?
+ConfirmDeleteInterventionLine=Sunteţi sigur că doriţi să ştergeţi această intervenţie linie?
+NameAndSignatureOfInternalContact=Numele şi semnătura intervenit:
+NameAndSignatureOfExternalContact=Numele şi semnătura de client:
+DocumentModelStandard=Document standard model pentru intervenţii
+TypeContact_fichinter_internal_INTERREPFOLL=Reprezentant următoarele-up intervenţie
+TypeContact_fichinter_internal_INTERVENING=Interveniente
+TypeContact_fichinter_external_BILLING=Factură client de contact
+TypeContact_fichinter_external_CUSTOMER=După-up client de contact
+ArcticNumRefModelDesc1=Generic numărul model
+ArcticNumRefModelError=Nu a reuşit să activeze
+PacificNumRefModelDesc1=Întoarceţi-vă cu NUMERO format% syymm-NNNN în cazul în care este aa ani, mm este luna şi NNNN este o secvenţă fără nici o pauză şi a reveni la 0
+PacificNumRefModelError=O carte de intervenţie începând cu $ syymm există deja şi nu este compatibilă cu acest model de succesiune. Eliminaţi-o sau redenumiţi-o pentru a activa acest modul.
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

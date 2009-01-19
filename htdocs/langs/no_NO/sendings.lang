@@ -1,0 +1,57 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+RefSending=Ref. sending
+Sending=Sender
+Sendings=Sendings
+Receivings=Receivings
+SendingsArea=Sendings området
+ListOfSendings=Liste over sendings
+SendingMethod=Sende metode
+SendingReceipt=Sender kvittering
+LastSendings=Siste% s sendings
+SearchASending=Søk i en sending
+StatisticsOfSendings=Statistikk av sendings
+NbOfSendings=Antall sendings
+SendingCard=Sender kort
+NewSending=Ny sending
+CreateASending=Opprett en sending
+CreateSending=Opprett sending
+QtyOrdered=Ant. bestilt
+QtyShipped=Antall sendt
+QtyToShip=Ant. til skip
+QtyReceived=Antall mottatte
+KeepToShip=Hold til skip
+OtherSendingsForSameOrder=Andre sendings for denne bestillingen
+DateSending=Dato sende bestilling
+DateSendingShort=Dato sende bestilling
+SendingsForSameOrder=Sendings for denne bestillingen
+SendingsAndReceivingForSameOrder=Sendings og receivings for denne bestillingen
+SendingsToValidate=Sende til å validere
+StatusSendingDraft=Utkast
+StatusSendingValidated=Validert (produkter til skip eller allerede sendt)
+StatusSendingDraftShort=Utkast
+StatusSendingValidatedShort=Validert
+SendingSheet=Sende ark
+Carriers=Bærere
+Carrier=Carrier
+CarriersArea=Bærere området
+NewCarrier=Ny operatør
+ConfirmDeleteSending=Er du sikker på at du vil slette denne sendingen?
+ConfirmValidateSending=Er du sikker på at du vil valdate denne sendingen?
+ConfirmCancelSending=Er du sikker på at du vil avbryte sendingen?
+GenericTransport=Generisk transport
+Enlevement=Fått etter kunde
+DocumentModelSimple=Enkelt dokumentet modell
+WarningNoQtyLeftToSend=Advarsel, ikke produkter som venter på å bli sendt.
+NumRefModelJade=Returnere et referansenummer med formatet BLYY00001, ... der ÅÅ er årstallet år. Tall ved utgangen aldri nullstilles.
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

@@ -1,0 +1,93 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Proposals=Kommerciel forslag
+Proposal=Kommerciel forslag
+ProposalsDraft=Udkast til kommercielle forslag
+ProposalDraft=Udkast til kommercielle forslag
+ProposalsOpened=Åbnet kommercielle forslag
+Prop=Kommerciel forslag
+CommercialProposal=Kommerciel forslag
+CommercialProposals=Kommerciel forslag
+ProposalContact=Forslag kontakt
+NewProp=Nye kommercielle forslag
+NewProposal=Nye kommercielle forslag
+NewPropal=Nyt forslag
+Prospect=Prospect
+ProspectList=Prospect liste
+DeleteProp=Slet kommercielle forslag
+ValidateProp=Valider kommercielle forslag
+AddProp=Tilføj forslag
+ConfirmDeleteProp=Er du sikker på du vil slette denne kommercielle forslag?
+ConfirmValidateProp=Er du sikker på at du ønsker at validere denne kommercielle forslag?
+LastPropals=Seneste% s forslag
+LastClosedProposals=Seneste% s lukket forslag
+AllPropals=Alle forslag
+LastProposals=Seneste forslag
+SearchAProposal=Søg forslag
+ProposalsStatistics=Kommerciel forslag &#39;statistikker
+NumberOfProposalsByMonth=Antal af måneden
+AmountOfProposalsByMonthHT=Beløb af måneden (efter skat)
+NbOfProposals=Antal kommercielle forslag
+ShowPropal=Vis forslag
+PropalsDraft=Drafts
+PropalsOpened=Åbnet
+PropalsNotBilled=Lukket ikke faktureret
+PropalStatusDraft=Udkast (skal valideres)
+PropalStatusValidated=Valideret (forslag er åbnet)
+PropalStatusOpened=Valideret (forslag er åbnet)
+PropalStatusClosed=Lukket
+PropalStatusSigned=Underskrevet (til bill)
+PropalStatusNotSigned=Ikke underskrevet (lukket)
+PropalStatusBilled=Billed
+PropalStatusDraftShort=Udkast
+PropalStatusValidatedShort=Valideret
+PropalStatusOpenedShort=Åbnet
+PropalStatusClosedShort=Lukket
+PropalStatusSignedShort=Underskrevet
+PropalStatusNotSignedShort=Ikke underskrevet
+PropalStatusBilledShort=Billed
+PropalsToClose=Kommercielle forslag til at lukke
+PropalsToBill=Undertegnet kommercielle forslag til lovforslag
+ListOfProposals=Liste over kommercielle forslag
+ActionsOnPropal=Aktioner for forslaget
+NoOpenedPropals=Nr. åbnet kommercielle forslag
+NoOtherOpenedPropals=Ingen andre åbnet kommercielle forslag
+RefProposal=Kommercielle forslag ref
+SendPropalByMail=Send kommercielle forslag mail
+FileNotUploaded=Filen blev ikke uploadet
+FileUploaded=Filen blev uploadet
+AssociatedDocuments=Dokumenter i forbindelse med forslaget:
+ErrorCantOpenDir=Kan ikke åbne mappe
+DateEndPropal=Dato udgangen gyldighedens
+DateEndPropalShort=Dato udgangen
+ValidityDuration=Gyldigheden varighed
+CloseAs=Luk med status
+ClassifyBilled=Klassificere faktureret
+BuildBill=Build faktura
+RelatedBill=Relaterede faktura
+RelatedBills=Relaterede fakturaer
+ErrorPropalNotFound=Propal% s blev ikke fundet
+Estimate=Skøn:
+EstimateShort=Skøn
+OtherPropals=Andre forslag
+CopyPropalFrom=Opret kommercielle forslag ved at kopiere eksisterende forslag
+CreateEmptyPropal=Opret tom kommercielle forslag vierge eller fra listen over de produkter / ydelser
+DefaultProposalDurationValidity=Default kommercielle forslag gyldighedens løbetid (i dage)
+UseCustomerContactAsPropalRecipientIfExist=Brug kunde kontakt adresse, hvis defineret i stedet for tredjepart adresse som forslag modtagerens adresse
+ClonePropal=Klon kommercielle forslag
+ConfirmClonePropal=Er du sikker på at du vil klone denne kommercielle <b>forslag% s?</b>
+DocModelAzurDescription=En komplet forslag model (logo. ..)
+DocModelJauneDescription=Jaune forslag model
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

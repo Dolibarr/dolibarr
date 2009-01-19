@@ -1,0 +1,43 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Intervention=Väliintulo
+Interventions=Interventions
+InterventionCard=Interventio-kortti
+NewIntervention=Uusi
+AddIntervention=Lisää interventioelimen
+ListOfInterventions=Luettelo interventioiden
+EditIntervention=Editer interventioelimen
+LastInterventions=Viimeisin% s interventioiden
+AllInterventions=Kaikki interventiot
+CreateDraftIntervention=Luo luonnos
+CustomerDoesNotHavePrefix=Asiakas ei ole etuliitettä
+InterventionContact=Väliintulo yhteyttä
+DeleteIntervention=Poista interventioelimen
+ValidateIntervention=Validate interventioelimen
+DeleteInterventionLine=Poista interventioelimen linja
+ConfirmDeleteIntervention=Oletko varma, että haluat poistaa tämän intervention?
+ConfirmValidateIntervention=Oletko varma, että haluat vahvistaa tätä väliintuloa?
+ConfirmModifyIntervention=Oletko varma, että haluat muuttaa tätä väliintuloa?
+ConfirmDeleteInterventionLine=Oletko varma, että haluat poistaa tämän interventioelimen linja?
+NameAndSignatureOfInternalContact=Nimi ja allekirjoitus puuttua:
+NameAndSignatureOfExternalContact=Nimi ja allekirjoitus asiakas:
+DocumentModelStandard=Vakioasiakirja malli interventioiden
+TypeContact_fichinter_internal_INTERREPFOLL=Edustajan seuraamaan interventioelimen
+TypeContact_fichinter_internal_INTERVENING=Sääntely
+TypeContact_fichinter_external_BILLING=Laskutus asiakkaan yhteystiedot
+TypeContact_fichinter_external_CUSTOMER=Seurata asiakkaiden yhteystiedot
+ArcticNumRefModelDesc1=Generic numero malli
+ArcticNumRefModelError=Epäonnistui aktivoida
+PacificNumRefModelDesc1=Paluu numero on muodossa% syymm-nnnn jossa VV on vuosi, mm kuukausi ja nnnn on sarja ilman taukoa eikä palata 0
+PacificNumRefModelError=Interventiokynnyksen kortin alkaen $ syymm jo olemassa, ja ei ole yhteensopiva tämän mallin järjestyksessä. Poistaa sen tai nimetä sen aktivoida tämän moduulin.
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

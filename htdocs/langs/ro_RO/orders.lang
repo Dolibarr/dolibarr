@@ -1,0 +1,127 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+OrdersArea=Clienţii ordinele zona
+SuppliersOrdersArea=Furnizori ordinele zona
+OrderCard=Comanda carte
+Order=Comanda
+Orders=Comenzi
+OrderFollow=Urmări
+OrderContact=Ordinul de contact
+OrderDate=Ordinul data
+NewOrder=Noua ordine
+ToOrder=Asiguraţi pentru
+MakeOrder=Asiguraţi pentru
+SupplierOrder=Furnizor pentru
+SuppliersOrders=Furnizori ordinelor
+SuppliersOrdersRunning=Current furnizori ordinelor
+CustomerOrder=Pentru clienţi
+CustomersOrders=Ordinelor clienţilor
+CustomersOrdersRunning=Current ordinelor clienţilor
+CustomersOrdersAndOrdersLines=Clientul comenzi şi ordine &quot;linii
+OrdersToValid=Comenzi la valabil
+OrdersToBill=Comenzi la factura
+OrdersInProcess=Comenzi în procesul de
+OrdersToProcess=Ordinele de a procesa
+StatusOrderCanceledShort=Anulat
+StatusOrderDraftShort=Proiect
+StatusOrderValidatedShort=Validat
+StatusOrderOnProcessShort=La proces
+StatusOrderProcessedShort=Prelucrate
+StatusOrderToBillShort=Pentru a factura
+StatusOrderApprovedShort=Aprobat
+StatusOrderRefusedShort=A refuzat
+StatusOrderToProcessShort=Pentru a procesa
+StatusOrderReceivedPartiallyShort=Parţial primit
+StatusOrderReceivedAllShort=Tot ceea ce a primit
+StatusOrderCanceled=Anulat
+StatusOrderDraft=Proiect (trebuie să fie validate)
+StatusOrderValidated=Validat
+StatusOrderOnProcess=La proces
+StatusOrderProcessed=Prelucrate
+StatusOrderToBill=Pentru a factura
+StatusOrderApproved=Aprobat
+StatusOrderRefused=A refuzat
+StatusOrderReceivedPartially=Parţial primit
+StatusOrderReceivedAll=Tot ceea ce a primit
+DraftOrWaitingApproved=Proiectul nu a fost încă aprobat sau a ordonat
+DraftOrWaitingShipped=Proiect de validat sau nu au fost încă expediate
+MenuOrdersToBill=Comenzi la factura
+SearchOrder=Comanda de cautare
+Sending=Trimiterea
+Sendings=Sendings
+ShipProduct=Expediaţi produs
+Discount=Reducere
+CreateOrder=Creaţi Comanda
+RefuseOrder=Refuza, pentru
+ApproveOrder=Pentru a accepta
+ValidateOrder=Validate pentru
+DeleteOrder=Ştergere pentru
+CancelOrder=Anulare pentru
+AddOrder=Adăugare pentru
+AddToMyOrders=Adauga la ordinele mele
+AddToOtherOrders=Adauga la alte comenzi
+ShowOrder=Arata pentru
+NoOpenedOrders=Nu a deschis comenzile
+NoOtherOpenedOrders=Nici o altă ordine de deschis
+OtherOrders=Alte comenzi
+LastOrders=Ultima% s ordinele
+LastModifiedOrders=Ultima modificare% s ordinele
+LastClosedOrders=Ultima% s ordinele închise
+AllOrders=Toate comenzile
+NbOfOrders=Numar de comenzi
+OrdersStatistics=Comenzi &#39;statistici
+OrdersStatisticsSuppliers=Furnizor ordinele &quot;statistici
+NumberOfOrdersByMonth=Numarul de comenzi de luni
+AmountOfOrdersByMonthHT=valoarea ordinelor de luna (net de impozite)
+ListOfOrders=Lista de comenzi
+CloseOrder=Inchide pentru
+ConfirmCloseOrder=Sunteţi sigur că vreţi să închideţi acest ordin? Odată ce un ordin este închis, nu poate fi taxat doar.
+ConfirmCloseOrderIfSending=Sunteţi sigur că vreţi să închideţi acest ordin? Trebuie să închideţi un ordin doar atunci când toate expediere sunt de facut.
+ConfirmDeleteOrder=Sunteţi sigur că doriţi să ştergeţi acest ordin?
+ConfirmValidateOrder=Sunteţi sigur că doriţi să valideze această ordine sub <b>numele% s?</b>
+ConfirmCancelOrder=Sunteţi sigur că doriţi să anulaţi acest ordin?
+ConfirmMakeOrder=Sunteţi sigur că doriţi să confirme acest lucru, pentru ai face <b>pe% s?</b>
+GenerateBill=Generare factură
+ClassifyBilled=Clasifica &quot;facturat&quot;
+ComptaCard=Contabilitate carte
+DraftOrders=Proiect de ordine de
+RelatedOrders=Legate de comenzi
+OnProcessOrders=La procesul de comenzi
+RefOrder=Ref. comanda
+RefCustomerOrder=Ref. pentru client
+CustomerOrder=Pentru clienţi
+RefCustomerOrderShort=Ref. client. comanda
+SendOrderByMail=Pentru a trimite prin e-mail
+ActionsOnOrder=Acţiunile de pe ordinea
+NoArticleOfTypeProduct=Nici un articol de tip &quot;produs&quot; astfel încât nu shippable articol pentru acest ordin
+OrderMode=Ordinul metodă
+AuthorRequest=Cerere de autor
+UseCustomerContactAsOrderRecipientIfExist=Utilizaţi client adresa de contact, dacă este definită în loc de o terţă parte, pentru ca adresa destinatarului adresa
+RunningOrders=COMANDA ON proces
+UserWithApproveOrderGrant=Useres acordate cu &quot;aproba ordinele&quot; permisiune.
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON nu sunt definite
+Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON nu sunt definite
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Încărcare fişier modul &quot;% s&quot;
+Error_FailedToLoad_COMMANDE_ADDON_File=Încărcare fişier modul &quot;% s&quot;
+OrderSource0=Comerciale propunerea
+OrderSource1=Internet
+OrderSource2=Mail campanie
+OrderSource3=Telefon compain
+OrderSource4=Fax campanie
+OrderSource5=Comerciale
+OrderSource6=Magazin
+QtyOrdered=Cantitate ordonat
+AddDeliveryCostLine=
+PDFEinsteinDescription=Un model complet pentru (logo. ..)
+MarbreNumRefDesc=Renvoie le numro sous la Forme% syymm-NNNN ou aa est l&#39;année, le mois et mm NNNN un compteur sequentiel sans ruptură et sans remiză e 0
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

@@ -1,0 +1,149 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+MembersArea=Medlemsområde
+PublicMembersArea=Offentlige medlemmer område
+MemberCard=Medlem kortet
+SubscriptionCard=Subscription kortet
+Member=Medlem
+Members=Medlemmer
+MemberAccount=Medlem login
+ShowMember=Vis medlem kortet
+UserNotLinkedToMember=Brugeren ikke er knyttet til et medlem
+MembersTickets=Medlemmer Billetter
+FundationMembers=Fundation medlemmer
+Attributs=Attributter
+Person=Person
+ErrorMemberTypeNotDefined=Medlem type ikke defineret
+ListOfPublicMembers=Liste over offentlige medlemmer
+ListOfValidatedPublicMembers=Liste over validerede offentlige medlemmer
+ErrorThisMemberIsNotPublic=Dette medlem er ikke offentlige
+MembersCards=Medlemmer udskrive kort
+MembersList=Liste over medlemmer
+MembersListToValid=Liste over udkast til medlemmer (der skal bekræftes)
+MembersListValid=Liste over gyldige medlemmer
+MembersListUpToDate=Liste over gyldige medlemmer ajour abonnement
+MembersListNotUpToDate=Liste over gyldige medlemmer med abonnement uaktuel
+MembersListResiliated=Liste over resiliated medlemmer
+MembersListQualified=Liste over kvalificerede medlemmer
+MenuMembersToValidate=Udkast til medlemmer
+MenuMembersValidated=Valideret medlemmer
+MenuMembersUpToDate=Ajour medlemmer
+MenuMembersNotUpToDate=Uaktuel medlemmer
+MenuMembersResiliated=Resiliated medlemmer
+DateAbonment=Subscription dato
+DateSubscription=Subscription dato
+DateNextSubscription=Næste abonnement
+DateEndSubscription=Subscription slutdato
+EndSubscription=End abonnement
+NewMember=Nyt medlem
+NewType=Nyt medlem type
+MemberType=Medlem type
+MemberTypeId=Medlem type id
+MemberTypeLabel=Medlem type label
+MembersTypes=Medlemmer typer
+MembersAttributes=Medlemmer attributter
+SearchAMember=Søg et medlem
+MemberStatusDraft=Udkast (skal valideres)
+MemberStatusDraftShort=At validere
+MemberStatusActive=Valideret (venter abonnement)
+MemberStatusActiveShort=Valideret
+MemberStatusActiveLate=abonnement er udløbet
+MemberStatusActiveLateShort=Udløbet
+MemberStatusPayed=Subscription ajour
+MemberStatusPayedShort=Ajour
+MemberStatusResiliated=Resiliated medlem
+MemberStatusResiliatedShort=Resiliated
+MembersStatusToValid=Udkast til medlemmer
+MembersStatusToValidShort=Udkast til medlemmer
+MembersStatusValidated=Valideret medlemmer
+MembersStatusPayed=Subscription ajour
+MembersStatusPayedShort=Ajour
+MembersStatusNotPayed=Subscription uaktuel
+MembersStatusNotPayedShort=Uaktuel
+MembersStatusResiliated=Resiliated medlemmer
+MembersStatusResiliatedShort=Resiliated medlemmer
+NewCotisation=Nye bidrag
+EditMember=Rediger medlem
+SubscriptionEndDate=Subscription slutdato
+NewAttribute=Ny henføres
+AttributeCode=Attribut kode
+OptionalFieldsSetup=Valgfrie felter setup
+MembersTypeSetup=Medlemmer type setup
+NewSubscription=Nyt abonnement
+Subscription=Subscription
+Subscriptions=Abonnementer
+SubscriptionLate=Sen
+SubscriptionNotReceived=Subscription aldrig modtaget
+SubscriptionLateShort=Sen
+SubscriptionNotReceivedShort=Aldrig modtaget
+ListOfSubscriptions=Liste over abonnementer
+SendCardByMail=Send kort
+AddMember=Tilføj medlem
+MemberType=Medlem type
+NoTypeDefinedGoToSetup=Intet medlem definerede typer. Gå til opsætning - Medlemmer typer
+NewMemberType=Nyt medlem type
+WelcomeEMail=Velkommen e-mail
+SubscriptionRequired=Kræver abonnement
+EditType=Rediger medlem type
+DeleteType=Slet
+VoteAllowed=Afstemning tilladt
+Physical=Fysisk
+Moral=Moral
+MorPhy=Moralske / Fysisk
+Reenable=Genaktivere
+ResiliateMember=Resiliate et medlem
+ConfirmResiliateMember=Er du sikker på at du vil resiliate dette medlem?
+DeleteMember=Slet medlem
+ConfirmDeleteMember=Er du sikker på du vil slette denne medlem (Sletning af et medlem vil slette alle hans abonnementer)?
+DeleteSubscription=Slet abonnement
+ConfirmDeleteSubscription=Er du sikker på du vil slette dette abonnement?
+Filehtpasswd=htpasswd fil
+ValidateMember=Validere et medlem
+ConfirmValidateMember=Er du sikker på at du ønsker at validere dette medlem?
+FollowingLinksArePublic=De følgende links er åbne sider ikke er beskyttet af nogen Dolibarr tilladelse. De er ikke formated sider, gives som eksempel for at vise, hvordan man listen medlemmer database.
+PublicMemberList=Offentlige medlem liste
+BlankSubscriptionForm=Subscription form
+MemberPublicLinks=Offentlige links / sider
+ExportDataset_member_1=Medlemmer og abonnementer
+LastMembers=Seneste% s medlemmer
+LastMembersModified=Seneste% s modificerede medlemmer
+AttributeName=Attribut navn
+FieldEdition=% Område udgave
+AlphaNumOnlyCharsAndNoSpace=kun alphanumericals tegn uden mellemrum
+String=String
+Text=Tekst
+Int=Int
+Date=Dato
+DateAndTime=Dato og tid
+PublicMemberCard=Medlem offentlige kortet
+MemberNotOrNoMoreExpectedToSubscribe=Medlem ikke eller ikke længere forventes at abonnere
+AddSubscription=Tilføj abonnement
+ShowSubscription=Vis tegning
+MemberModifiedInDolibarr=Medlem ændret i Dolibarr
+SendAnEMailToMember=Send information email til medlem
+DescADHERENT_MAIL_VALID_SUBJECT=E-mail emne til medlem validering
+DescADHERENT_MAIL_VALID=E-mail for medlem validering
+DescADHERENT_MAIL_COTIS_SUBJECT=E-mail emne for tegning
+DescADHERENT_MAIL_COTIS=E-mail for abonnement
+DescADHERENT_MAIL_RESIL_SUBJECT=E-mail emne til medlem resiliation
+DescADHERENT_MAIL_RESIL=E-mail for medlem resiliation
+DescADHERENT_MAIL_FROM=Sender e-mail for automatiske e-mails
+DescADHERENT_ETIQUETTE_TYPE=Etiketter format
+DescADHERENT_CARD_HEADER_TEXT=Tekst trykt på toppen af medlem-kort
+DescADHERENT_CARD_TEXT=Tekst påtrykt medlem kort
+DescADHERENT_CARD_FOOTER_TEXT=Tekst trykt på bunden af medlem-kort
+ShowTypeCard=Vis type &#39;% s&#39;
+HTPasswordExport=htpassword fil generation
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

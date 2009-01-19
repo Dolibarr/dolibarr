@@ -1,0 +1,127 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+OrdersArea=Asiakkaiden tilausten alueella
+SuppliersOrdersArea=Toimittajien tilaukset alueella
+OrderCard=Tilaa kortti
+Order=Tilata
+Orders=Tilaukset
+OrderFollow=Seuranta
+OrderContact=Tilaa yhteyttä
+OrderDate=Tilaa päivämäärä
+NewOrder=Uusi järjestys
+ToOrder=Tee jotta
+MakeOrder=Tee jotta
+SupplierOrder=Toimittaja jotta
+SuppliersOrders=Toimittajien tilaukset
+SuppliersOrdersRunning=Nykyinen toimittajien tilaukset
+CustomerOrder=Asiakas jotta
+CustomersOrders=Asiakkaiden tilausten
+CustomersOrdersRunning=Nykyisten asiakkaiden tilausten
+CustomersOrdersAndOrdersLines=Asiakkaan tilaukset ja tilaukset &quot;linjat
+OrdersToValid=Tilauksia voimassa
+OrdersToBill=Tilaukset laskuttaa
+OrdersInProcess=Tilaukset prosessi
+OrdersToProcess=Tilausten käsittely
+StatusOrderCanceledShort=Peruutettu
+StatusOrderDraftShort=Vedos
+StatusOrderValidatedShort=Validoidut
+StatusOrderOnProcessShort=Prosessissa
+StatusOrderProcessedShort=Jalostettu
+StatusOrderToBillShort=Bill
+StatusOrderApprovedShort=Hyväksyttiin
+StatusOrderRefusedShort=Kieltäydytty
+StatusOrderToProcessShort=Käsitellä
+StatusOrderReceivedPartiallyShort=Osittain saanut
+StatusOrderReceivedAllShort=Kaikki saivat
+StatusOrderCanceled=Peruutettu
+StatusOrderDraft=Luonnos (on vahvistettu)
+StatusOrderValidated=Validoidut
+StatusOrderOnProcess=Prosessissa
+StatusOrderProcessed=Jalostettu
+StatusOrderToBill=Bill
+StatusOrderApproved=Hyväksyttiin
+StatusOrderRefused=Kieltäydytty
+StatusOrderReceivedPartially=Osittain saanut
+StatusOrderReceivedAll=Kaikki saivat
+DraftOrWaitingApproved=Esitys tai hyväksytty ei vielä määrännyt
+DraftOrWaitingShipped=Esitys tai validoitua ole vielä lähetetty
+MenuOrdersToBill=Tilaukset laskuttaa
+SearchOrder=Haku jotta
+Sending=Lähettävä
+Sendings=Sendings
+ShipProduct=Laiva tuote
+Discount=Discount
+CreateOrder=Luo Tilaa
+RefuseOrder=Jätteiden jotta
+ApproveOrder=Hyväksy jotta
+ValidateOrder=Validate jotta
+DeleteOrder=Poista jotta
+CancelOrder=Peruuta tilaus
+AddOrder=Lisää jotta
+AddToMyOrders=Add to my tilaukset
+AddToOtherOrders=Lisää muut tilaukset
+ShowOrder=Näytä jotta
+NoOpenedOrders=N: o avataan tilaukset
+NoOtherOpenedOrders=Mikään muu avataan tilaukset
+OtherOrders=Muut tilaukset
+LastOrders=Viimeisin% s tilaukset
+LastModifiedOrders=Viimeisin% s muunnettu tilaukset
+LastClosedOrders=Viimeisin% s suljettu tilaukset
+AllOrders=Kaikki tilaukset
+NbOfOrders=Määrä tilauksia
+OrdersStatistics=Tilaukset tilastot
+OrdersStatisticsSuppliers=Toimittaja tilaukset tilastot
+NumberOfOrdersByMonth=Määrä tilauksia kuukausittain
+AmountOfOrdersByMonthHT=määrä tilauksia kuukausittain (ilman veroja)
+ListOfOrders=Luettelo tilaukset
+CloseOrder=Sulje jotta
+ConfirmCloseOrder=Oletko varma, että haluat sulkea tämän tilauksen? Kun tilaus on päättynyt, se voidaan laskuttaa.
+ConfirmCloseOrderIfSending=Oletko varma, että haluat sulkea tämän tilauksen? Sinun on lähellä tilauksen vasta, kun kaikki merenkulku on valmis.
+ConfirmDeleteOrder=Oletko varma, että haluat poistaa tämän tilauksen?
+ConfirmValidateOrder=Oletko varma, että haluamme vahvistaa tämän määräyksen nojalla <b>nimi% s?</b>
+ConfirmCancelOrder=Oletko varma, että haluat peruuttaa tämän tilauksen?
+ConfirmMakeOrder=Oletko varma, että haluat vahvistaa olet tehnyt tämän <b>tilauksen% s?</b>
+GenerateBill=Luo lasku
+ClassifyBilled=Luokittele &quot;Laskutetun&quot;
+ComptaCard=Kirjanpito-kortti
+DraftOrders=Luonnos tilaukset
+RelatedOrders=Aiheeseen liittyvät tilaukset
+OnProcessOrders=Prosessissa tilaukset
+RefOrder=Ref. tilata
+RefCustomerOrder=Ref. asiakas jotta
+CustomerOrder=Asiakas jotta
+RefCustomerOrderShort=Ref. asiakasnumero. tilata
+SendOrderByMail=Lähetä tilata postitse
+ActionsOnOrder=Toimia, jotta
+NoArticleOfTypeProduct=N: o artikkeli tyypin &quot;tuote&quot; niin ei shippable artikkeli tässä tilauksessa
+OrderMode=Jotta menetelmä
+AuthorRequest=Pyydä tekijä
+UseCustomerContactAsOrderRecipientIfExist=Käytä asiakkaan yhteystiedot, jos se on määritetty sijaan kolmannen osapuolen osoite jotta vastaanottajan osoite
+RunningOrders=Toimitussuhteet prosessi
+UserWithApproveOrderGrant=Useres myönnetään &quot;hyväksyä tilauksia&quot; lupaa.
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON ole määritelty
+Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON ole määritelty
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module file &#39;% s&#39;
+Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module file &#39;% s&#39;
+OrderSource0=Kaupalliset ehdotus
+OrderSource1=Internet
+OrderSource2=Mail kampanja
+OrderSource3=Puhelin compain
+OrderSource4=Faksi kampanja
+OrderSource5=Kaupalliset
+OrderSource6=Varastoida
+QtyOrdered=Kpl velvoitti
+AddDeliveryCostLine=Lisää toimitus kustannukset linja ilmoitetaan paino, jotta
+PDFEinsteinDescription=Täydellinen jotta malli (logo. ..)
+MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn tai vv est l&#39;année, mm le mois et nnnn un compteur sequentiel sans murtumasta et sans remise e 0
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

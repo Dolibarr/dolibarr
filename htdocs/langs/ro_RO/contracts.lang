@@ -1,0 +1,92 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ContractsArea=Contractele zona
+ListOfContracts=Lista de contracte
+LastContracts=Ultima modificare contracte% s
+AllContracts=Toate contractele
+ContractCard=Contract de carte
+ContractStatus=Contractul de stare
+ContractStatusNotRunning=Nu rulează
+ContractStatusRunning=Rularea
+ContractStatusDraft=Proiect
+ContractStatusValidated=Validat
+ContractStatusClosed=Închis
+ServiceStatusInitial=Nu rulează
+ServiceStatusRunning=Rularea
+ServiceStatusLate=Rularea, expirat
+ServiceStatusClosed=Închis
+ServicesLegend=Servicii de legenda
+Contracts=Contracte
+Contract=Contract
+ContractContacts=Contractul de contact
+NoContracts=Nu contractelor
+MenuServices=Servicii
+MenuInactiveServices=Servicii care nu sunt active
+MenuRunningServices=Rularea servicii
+MenuExpiredServices=Expirat servicii
+MenuClosedServices=Închis servicii
+NewContract=Nou contract
+AddContract=Adauga contract
+SearchAContract=Cautati un contract
+DeleteAContract=Ştergeţi un contract
+CloseAContract=Aproape un contract
+ConfirmDeleteAContract=Sunteţi sigur că doriţi să ştergeţi acest contract şi toate serviciile sale?
+ConfirmValidateContract=Sunteţi sigur că doriţi pentru a valida acest contract?
+ConfirmCloseContract=Acest lucru se va închide toate serviciile (activă sau nu). Sunteţi sigur că vreţi să închideţi acest contract?
+ConfirmCloseService=Sunteţi sigur că vreţi să închideţi acest serviciu cu data <b>de% s?</b>
+ValidateAContract=Validate un contract
+ActivateService=Activare serviciu
+ConfirmActivateService=Sunteţi sigur că doriţi să activaţi acest serviciu cu data <b>de% s?</b>
+DateContract=Contract de data
+DateServiceActivate=Data de activare a serviciului
+DateServiceUnactivate=Data de serviciu unactivation
+DateServiceStart=Data de inceput de serviciu
+DateServiceEnd=Data de sfârşit de serviciu
+ShowContract=Arata contract
+ListOfServices=Lista de servicii
+ListOfRunningContractsLines=Lista de rularea contractului linii
+ListOfRunningServices=Lista de servicii care rulează
+NotActivatedServices=Nu activat servicii (printre validate de contracte)
+BoardNotActivatedServices=Servicii pentru a activa în rândul validate de contracte
+LastContracts=Ultima% contracte
+LastActivatedServices=Ultima% s activat servicii
+LastModifiedServices=Ultima% s modificate servicii
+EditServiceLine=Editare serviciu linie
+ContractStartDate=Data începerii
+ContractEndDate=Data de final
+DateStartPlanned=Planificate data de început
+DateStartPlannedShort=Planificate data de început
+DateEndPlanned=Planificate data de sfârşit
+DateEndPlannedShort=Planificate data de sfârşit
+DateStartReal=Real Data începerii
+DateStartRealShort=Real Data începerii
+DateEndReal=Real data de sfârşit
+DateEndRealShort=Real data de sfârşit
+NbOfServices=Nb de servicii
+CloseService=Inchide serviciu
+ServicesNomberShort=% s serviciu (e)
+RunningServices=Rularea servicii
+BoardRunningServices=Expirat execută servicii
+ServiceStatus=Stare de serviciu
+DraftContracts=Schiţe de contracte
+CloseRefusedBecauseOneServiceActive=Contractul nu poate fi închisă după cum există cel puţin un serviciu deschis pe ea
+CloseAllContracts=Închideţi toate contractele
+MoveToAnotherContract=Mutare serviciu într-un alt contract.
+ConfirmMoveToAnotherContract=Am choosed nou contract de ţintă şi de a confirma Vreau să mutaţi acest serviciu în acest contract.
+ConfirmMoveToAnotherContractQuestion=Alegeţi, în care contract existent (de acelaşi terţ), în care doriţi să mutaţi acest serviciu pentru a?
+TypeContact_contrat_internal_SALESREPSIGN=Reprezentant vanzari de semnare a contractului
+TypeContact_contrat_internal_SALESREPFOLL=Sales reprezentative următoarele-up contract
+TypeContact_contrat_external_BILLING=Factură client de contact
+TypeContact_contrat_external_CUSTOMER=După-up client de contact
+TypeContact_contrat_external_SALESREPSIGN=Semnarea contractului de client de contact
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

@@ -1,0 +1,75 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+WarehouseCard=Warehouse-kortti
+Warehouse=Warehouse
+NewWarehouse=Uusi varasto / Kanta-alue
+MenuNewWarehouse=Uusi varasto
+WarehouseOpened=Warehouse avattu
+WarehouseClosed=Warehouse suljettu
+WarehouseSource=Lähde varasto
+WarehouseTarget=Kohdekieli varasto
+ValidateSending=Poista lähettäminen
+CancelSending=Peruuta lähettäminen
+DeleteSending=Poista lähettäminen
+Stock=Kanta
+Stocks=Varastot
+Movement=Movement
+Movements=Liikkeet
+ErrorWarehouseRefRequired=Warehouse viite nimi tarvitaan
+ErrorWarehouseLabelRequired=Warehouse etiketissä on
+CorrectStock=Oikea varastossa
+ListOfWarehouses=Luettelo varastoissa
+ListOfStockMovements=Luettelo varastojen muutokset
+StocksArea=Varastot alueella
+Location=Lieu
+LocationSummary=Lyhyt nimi sijainti
+NumberOfProducts=Kokonaismäärä tuotteet
+LastMovement=Viimeisin liikkuvuus
+LastMovements=Viimeisin liikkeet
+Units=Yksiköt
+Unit=Yksikkö
+StockCorrection=Oikea varastossa
+StockMovement=Siirto
+StockMovements=Kanta siirrot
+NumberOfUnit=Kappalemäärä
+TotalStock=Yhteensä varastossa
+StockTooLow=Kanta liian alhainen
+EnhancedValue=Value
+PMPValue=Value
+EnhancedValueOfWarehouses=Varastot arvo
+UserWarehouseAutoCreate=Luo varastossa automaattisesti luoda käyttäjä
+QtyDispatched=Määrä lähetysolosuhteita
+OrderDispatch=Tilaa lähetyskeskukset
+RuleForStockManagementDecrease=Sääntö varaston hallintaan lasku
+RuleForStockManagementIncrease=Sääntö varaston hallintaan lisätä
+DeStockOnBill=Decrease todellinen varastot laskuista / hyvityslaskuja (varoitus, tässä versiossa, se on vain varasto numero 1, että varastossa on muutettu)
+DeStockOnValidateOrder=Decrease todellinen varastot tilaukset toteaa (varoitus, tässä versiossa, se on vain varasto numero 1, että varastossa on muutettu)
+DeStockOnShipment=Decrease todellinen varastot siirtoa (recommanded)
+ReStockOnBill=Lisäys todellinen varastot laskuista / hyvityslaskuja (varoitus, tässä versiossa, se on vain varasto numero 1, että varastossa on muutettu)
+ReStockOnValidateOrder=Lisäys todellinen varastot tilaukset toteaa (varoitus, tässä versiossa, se on vain varasto numero 1, että varastossa on muutettu)
+StockDiffPhysicTeoric=Syy ero varastossa fyysisen ja theorical
+StockLimitShort=Limit
+StockLimit=Kanta raja hälytykset
+PhysicalStock=Varasto
+RealStock=Real Stock
+TheoreticalStock=Therocial varastossa
+VirtualStock=Virtual varastossa
+MininumStock=Vähimmäisvarasto
+StockUp=Kanta ylös
+MininumStockShort=Kanta min
+StockUpShort=Kanta ylös
+IdWarehouse=Id-varasto
+DescWareHouse=Kuvaus varasto
+LieuWareHouse=Lokalisointi varasto
+WarehousesAndProducts=Varastot ja tuotteet
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

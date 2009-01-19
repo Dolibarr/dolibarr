@@ -1,0 +1,155 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ProductServiceCard=Produkter / Tjenester kortet
+Products=Produkter
+Services=Services
+Product=Produkt
+Service=Service
+ProductId=Produkt / service id
+Create=Opret
+Reference=Reference
+NewProduct=Nyt produkt
+NewBook=Ny bog
+Book=Bog
+Books=Bøger
+BookList=Liste over bøger
+NewService=Ny tjeneste
+ProductCode=Produktkode
+ServiceCode=Service-kode
+ProductOrService=Produkt eller tjeneste
+ProductsAndServices=Produkter og services
+ProductsOrServices=Produkter eller tjenesteydelser
+ProductsAndServicesOnSell=Produkter og tjenester på sælge
+ProductsAndServicesNotOnSell=Produkter og services ud af sælge
+ProductsAndServicesStatistics=Produkter og services statistik
+ProductsStatistics=Produkter statistik
+ProductsOnSell=Produkter på sælge
+ProductsNotOnSell=Produkter ud af sælge
+ServicesOnSell=Tjenester på sælge
+ServicesNotOnSell=Tjenester ud af sælge
+InternalRef=Intern reference
+LastRecorded=Seneste produkter / ydelser på sælge registreres
+LastRecordedProductsAndServices=Seneste% s precorded rodukter / tjenester
+LastModifiedProductsAndServices=Seneste% s modificerede produkter / ydelser
+LastRecordedProducts=Seneste% s produkter registreres
+LastRecordedServices=Seneste% s tjenester registreres
+LastProducts=Seneste produkter
+CardProduct0=Produkt-kortet
+CardProduct1=Service kortet
+CardContract=Kontrakt-kortet
+Warehouse=Warehouse
+Warehouses=Lager
+WarehouseOpened=Warehouse åbnet
+WarehouseClosed=Warehouse lukket
+Stock=Stock
+Stocks=Lagre
+Movement=Bevægelighed
+Movements=Bevægelser
+OnSell=På sælge
+NotOnSell=Out of Sælg
+ProductStatusOnSell=På sælge
+ProductStatusNotOnSell=Ud af sælger
+ProductStatusOnSellShort=På sælge
+ProductStatusNotOnSellShort=Ud af sælger
+UpdatePrice=Opdater pris
+AppliedPricesFrom=Anvendt priser fra
+SellingPrice=Salgspris
+PublicPrice=Offentlige pris
+CurrentPrice=Nuværende pris
+NewPrice=Ny pris
+ContractStatus=Kontrakt status
+ContractStatusClosed=Lukket
+ContractStatusRunning=Kørsel
+ContractStatusExpired=udløbet
+ContractStatusOnHold=Ikke kører
+ContractStatusToRun=En mettre en service
+ContractNotRunning=Denne kontrakt er ikke kører
+ErrorProductAlreadyExists=Et produkt med henvisning% s eksisterer allerede.
+ErrorProductBadRefOrLabel=Forkert værdi for reference eller etiket.
+Suppliers=Leverandører
+SupplierRef=Leverandør ref.
+ShowProduct=Vis produkt
+ShowService=Vis service
+ProductsAndServicesArea=Produkt-og tjenesteydelser
+ProductsArea=Produktområde
+ServicesArea=Service området
+AddToMyProposals=Tilføj til mine forslag
+AddToOtherProposals=Føj til andre forslag
+AddToMyBills=Føj til mine regninger
+AddToOtherBills=Føj til andre regninger
+CorrectStock=Korrekt lager
+AddPhoto=Tilføj foto
+ListOfStockMovements=Liste over lagerbevægelserne
+NoPhotoYet=Ingen billeder tilgængelige endnu
+BuiingPrice=Koebspris
+SupplierCard=Leverandør-kortet
+CommercialCard=Kommerciel kortet
+AllWays=Vej til at finde dit produkt på lager
+NoCat=Dit produkt ikke er i enhver kategori
+PrimaryWay=Primær vej
+DeleteFromCat=Fjern fra kategori
+PriceRemoved=Pris fjernet
+BarCode=Barcode
+BarcodeType=Barcode type
+SetDefaultBarcodeType=Indstil stregkode type
+BarcodeValue=Barcode værdi
+GenbarcodeLocation=Stregkode generation kommando linje værktøj (der benyttes af phpbarcode motor for nogle stregkode typer)
+NoteNotVisibleOnBill=Note (ikke synlig på fakturaer, forslag ...)
+CreateCopy=Opret kopi
+ServiceLimitedDuration=Hvis produktet er en tjeneste med begrænset varighed:
+MultiPricesAbility=Aktivere det multi-priser
+MultiPricesNumPrices=Antal pris
+MultiPriceLevelsName=Pris kategorier
+AssociatedProductsAbility=Aktiver tilhørende produkter
+AssociatedProducts=Tilhørende produkter
+AssociatedProductsNumber=Antallet af tilknyttede produkter
+EditAssociate=Associate
+Translation=Oversættelse
+KeywordFilter=Keyword filter
+CategoryFilter=Kategori filter
+ProductToAddSearch=Søg produkt for at tilføje
+AddDel=Tilføj / Slet
+Quantity=Mængde
+NoMatchFound=Ingen match fundet
+ProductAssociationList=Liste over relaterede produkter / tjenesteydelser: navn på produkt / tjeneste (mængde påvirkes)
+ErrorAssociationIsFatherOfThis=En af valgte produkt er moderselskab med aktuelle produkt
+DeleteProduct=Slet et produkt / service
+ConfirmDeleteProduct=Er du sikker på du vil slette dette produkt / service?
+ProductDeleted=Produkt / Service &quot;% s&quot; slettet fra databasen.
+DeletePicture=Slet et billede
+ConfirmDeletePicture=Er du sikker på du vil slette dette billede?
+ExportDataset_produit_1=Produkter og tjenester
+DeleteProductLine=Slet produktlinje
+ConfirmDeleteProductLine=Er du sikker på du vil slette denne produktlinje?
+NoProductMatching=Ingen vare / tjeneste stemmer overens med dine kriterier
+MatchingProducts=Matchende produkter / tjenester
+NoStockForThisProduct=Nr. materiel til dette produkt
+NoStock=Nr. Stock
+Restock=Genpåfyldning
+ProductSpecial=Særlige
+QtyMin=Mængde minimum
+PriceQty=Pris for denne mængde
+PriceQtyMin=Pris mængde min.
+NoPriceDefinedForThisSupplier=Ingen pris / Qty defineret for denne leverandør / produkt
+NoSupplierPriceDefinedForThisProduct=Ingen leverandoer pris / Qty defineret for dette produkt
+RecordedProducts=Produkter registreres
+RecordedProductsAndServices=Produkter / tjenester registreres
+GenerateThumb=Generer tommelfinger
+ProductCanvasAbility=Brug specielle &quot;lærred&quot; addons
+ServiceNb=Service #% s
+ListProductByPopularity=Liste over produkter / ydelser ved popularitet
+Finished=Fremstillede produkt
+RowMaterial=Første materiale
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

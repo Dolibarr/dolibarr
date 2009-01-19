@@ -1,0 +1,103 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Mailing=Email-uri
+EMailing=Email-uri
+Mailings=EMailings
+EMailings=EMailings
+MailCard=Carte de email-uri
+MailTargets=Ţinte
+MailRecipients=Destinatari
+MailRecipient=Recipient
+MailTitle=Titlu
+MailFrom=Expeditor
+MailErrorsTo=Erori la
+MailReply=Răspundeţi
+MailTo=Receiver (e)
+MailCC=Copiere în
+MailCCC=Copie în cache a
+MailTopic=EMail subiect
+MailText=Mesaj
+MailFile=Fişiere ataşate
+MailMessage=EMail organism
+ShowEMailing=Arata email-uri
+ListOfEMailings=Lista de emailings
+NewMailing=Nou email-uri
+EditMailing=Editaţi email-uri
+DeleteMailing=Ştergere email-uri
+DeleteAMailing=A şterge un email-uri
+PreviewMailing=Previzualizare email-uri
+PrepareMailing=Pregătiţi-email-uri
+CreateMailing=Creaţi-email-uri
+MailingDesc=Această pagină vă permite să trimiteţi emailings la un grup de persoane.
+MailingResult=Trimiterea de e-mail-uri rezultat
+TestMailing=Test de email-uri
+ValidMailing=Valid email-uri
+ApproveMailing=Aprobaţi email-uri
+MailingStatusDraft=Proiect
+MailingStatusValidated=Validat
+MailingStatusApproved=Aprobat
+MailingStatusSent=Trimis
+MailingStatusSentPartialy=Trimis parţial
+MailingStatusSentCompletely=Trimis complet
+MailingStatusError=Eroare
+MailingStatusNotSent=Nu trimis
+MailSuccessfulySent=Email trimis cu succes (din% s în% s)
+ErrorMailRecipientIsEmpty=Email destinatar este gol
+WarningNoEMailsAdded=Nu nou e-mail pentru a adăuga şi a destinatarului, listă.
+ConfirmValidMailing=Sunteţi sigur că doriţi pentru a valida acest email?
+ConfirmDeleteMailing=Sunteţi sigur că doriţi să ştergeţi acest emailling?
+NbOfRecipients=Numărul de beneficiari
+NbOfUniqueEMails=Nb unic de e-mail-uri
+NbOfEMails=Nb de mesaje de poştă electronică
+TotalNbOfDistinctRecipients=Numărul de distincte destinatari
+NoTargetYet=Nu destinatari definit încă (Du-te la tab-ul &#39;Recipients&#39;)
+AddRecipients=Adăugaţi destinatari
+RemoveRecipient=Eliminaţi destinatar
+CommonSubstitutions=Frecvente substituţiilor
+YouCanAddYourOwnPredefindedListHere=Pentru a crea dvs. de e-mail selectorul de module, a se vedea htdocs / includes / modules / mesaje / README.
+EMailTestSubstitutionReplacedByGenericValues=Când utilizaţi modul de testare, substituţiilor variabile sunt înlocuite de valorile generic
+MailingAddFile=Ataşaţi acest fisier
+NoAttachedFiles=Nu fişiere ataşate
+MailingModuleDescContactCompanies=De contact ale tuturor părţilor terţe (client, perspectiva, furnizor, ...)
+MailingModuleDescDolibarrUsers=Toate Dolibarr utilizatorii cu mesajele de poştă electronică
+MailingModuleDescFundationMembers=Fundaţia membri cu e-mail-uri
+MailingModuleDescEmailsFromFile=Mesaje de poştă electronică de la un fişier text (de e-mail, nume, prenume)
+MailingModuleDescContactsCategories=De contact ale tuturor părţilor terţe (pe categorii)
+LineInFile=Linia% s în fişierul
+RecipientSelectionModules=Definit pentru cererile beneficiarilor de selecţie
+MailSelectedRecipients=Selectat destinatarii
+MailingArea=EMailings zona
+LastMailings=Ultima% s emailings
+TargetsStatistics=Ţinte statistici
+NbOfCompaniesContacts=Unic de contact din companii
+MailNoChangePossible=Destinatari validate de email-uri nu poate fi schimbat
+SearchAMailing=Căutare de e-mail
+SendMailing=Trimite email-uri
+SendMail=Trimite un email
+SentBy=Trimis de
+MailingNeedCommand=Pentru valori mobiliare motiv, trimitand un email-uri pot fi efectuate numai de la linia de comandă. Adresaţi-vă de administrator pentru a lansa următoarea comandă pentru a trimite email-uri la toate destinatari:
+MailingNeedCommand2=Puteţi, totuşi, trimite-le on-line, prin adăugarea parametrului MAILING_LIMIT_SENDBYWEB cu valoare de numărul maxim de mesaje de poştă electronică pe care doriţi să o trimiteţi prin sesiuni.
+ConfirmSendingEmailing=Sunteţi sigur că doriţi să trimiteţi e-mail? <br> Pe linie de trimiterea de emailings sunt limitate de securitate, motiv pentru <b>a% s</b> destinatari, prin trimiterea de sesiune.
+TargetsReset=Cer senin lista
+ToClearAllRecipientsClickHere=Pentru a goli beneficiarilor lista pentru acest email-uri, faceţi clic pe butonul
+ToAddRecipientsChooseHere=Pentru a adăuga destinatari, alegeţi din aceste liste
+NbOfEMailingsReceived=Mass emailings primit
+IdRecord=ID-ul de înregistrare
+DeliveryReceipt=Livrarea Chitanţă
+Notifications=Anunturi
+NoNotificationsWillBeSent=Nu notificări prin email sunt planificate pentru acest eveniment şi a companiei
+ANotificationsWillBeSent=1 notificarea va fi trimis prin e-mail
+SomeNotificationsWillBeSent=% s notificări vor fi trimise prin e-mail
+AddNewNotification=Activaţi-o nouă notificare cerere
+ListOfActiveNotifications=Lista tuturor notificărilor activă a cererilor
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

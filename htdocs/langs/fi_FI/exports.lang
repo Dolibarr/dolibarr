@@ -1,0 +1,47 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ExportsArea=Vienti alueen
+ImportArea=Tuo alue
+NewExport=Uusia vientimahdollisuuksia
+NewImport=Uusi tuonti
+ExportableDatas=Exportable tietokokonaisuus
+ImportableDatas=Tuoda maahan tietokokonaisuus
+SelectExportDataSet=Valitse tiedot, jonka haluat viedä ...
+SelectExportFields=Valitse kentät, jonka haluat viedä tai valita ennalta vienti profil
+SaveExportModel=Tallenna tämä vienti profiili, jos aiot käyttää uudelleen myöhemmin ...
+ExportModelName=Vienti profiilin nimi
+ExportModelSaved=Vienti profiili tallennetaan <b>nimi% s.</b>
+ExportableFields=Exportable kentät
+ExportedFields=Viedyt kentät
+DatasetToExport=Tietokokonaisuus viedä
+Dataset=Tietokokonaisuus
+ChooseFieldsOrdersAndTitle=Valitse kentät, jotta ...
+FieldsOrder=Aloilla, jotta
+FieldsTitle=Fields otsikko
+ChooseExportFormat=Valitse vientimuoto
+NowClickToGenerateToBuildExportFile=Nyt klikkaa &quot;Luo&quot; rakentaa vienti tiedostoa ...
+AvailableFormats=Muodot disponibles
+LibraryUsed=Librairie
+LibraryVersion=Version
+Step=Vaihe
+FormatedImport=Tuo avustaja
+FormatedImportDesc1=Tämä alue voidaan tuoda henkikökohtaiset tietoja käyttäen avustaja auttaa sinua prosessi ilman teknistä osaamista.
+FormatedImportDesc2=Ensimmäinen askel on valita kuningas tietoja haluat kuormitus, sitten tiedosto latautuu, sitten valita kentät, jotka haluat ladata.
+FormatedExport=Vienti avustaja
+FormatedExportDesc1=Tämä alue voidaan viedä henkikökohtaiset tietoja käyttäen avustaja auttaa sinua prosessi ilman teknistä osaamista.
+FormatedExportDesc2=Ensimmäinen askel on valita ennalta tiedot, sitten valita kentät, jotka haluat teidän tulos kuvaa, ja missä järjestyksessä.
+FormatedExportDesc3=Kun tiedot vienti on valittu, voit määritellä lähtö-tiedostomuodossa, jonka haluat viedä tietosi.
+Sheet=Arkki
+NoImportableData=Ei tuoda maahan tiedot (ei-moduulin määritelmiä mahdollistaa tietojen tuonti)
+FileSuccessfullyBuilt=Vie tiedosto luotu
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

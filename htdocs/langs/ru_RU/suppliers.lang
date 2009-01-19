@@ -1,0 +1,46 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Suppliers=Поставщики
+Supplier=Поставщик
+AddSupplier=Добавить поставщиком
+SupplierRemoved=Поставщик удален
+SuppliersInvoice=Поставщики счета
+SuppliersInvoices=Поставщики счета
+NewSupplier=Новый поставщик
+History=История
+ListOfSuppliers=Список поставщиков
+ShowSupplier=Показать поставщиком
+OrderDate=Дата заказа
+BuyingPrice=Покупка цене
+AddSupplierPrice=Добавить поставщиком цены
+ChangeSupplierPrice=Изменение цен поставщиков
+ErrorQtyTooLowForThisSupplier=Количество слишком низкий для данного поставщика или не определена цена на этот продукт для этого поставщика
+ErrorSupplierCountryIsNotDefined=Страна для данного поставщика не определен. Исправить это первое.
+ProductHasAlreadyReferenceInThisSupplier=Этот продукт уже ссылку на этот поставщик
+NoRecordedSuppliers=Нет зарегистрированных поставщиков
+SupplierPayment=Поставщик оплаты
+SuppliersArea=Поставщики области
+RefSupplierShort=Ref. Поставщик
+ExportDataset_fournisseur_1=Поставщик списка счетов и счетов-фактур линий
+ExportDataset_fournisseur_2=Поставщиком счета-фактуры и платежи
+ApproveThisOrder=Утвердить этот порядок
+ConfirmApproveThisOrder=Вы уверены, что хотите утвердить этот порядок?
+DenyingThisOrder=Отказ в таком порядке
+ConfirmDenyingThisOrder=Вы уверены, что хотите лишить этого заказа?
+ConfirmCancelThisOrder=Вы уверены, что хотите отменить этот заказ?
+AddCustomerOrder=Создать клиента порядка
+AddCustomerInvoice=Создать счет-фактуру заказчику
+AddSupplierOrder=Создать поставщиком порядка
+AddSupplierInvoice=Создать поставщику счет-фактуру
+ListOfSupplierProductForSupplier=Перечень продукции и цен для <b>поставщиков% S</b>
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

@@ -1,0 +1,45 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Intervention=Intervention
+Interventions=Interventioner
+InterventionCard=Intervention kortet
+NewIntervention=Ny intervention
+AddIntervention=Tilføj intervention
+ListOfInterventions=Liste over interventioner
+EditIntervention=Editer intervention
+LastInterventions=Seneste% s interventioner
+AllInterventions=Alle interventioner
+CreateDraftIntervention=Opret udkast
+CustomerDoesNotHavePrefix=Kunden er ikke et præfiks
+InterventionContact=Intervention kontakt
+DeleteIntervention=Slet intervention
+ValidateIntervention=Valider intervention
+DeleteInterventionLine=Slet intervention linje
+ConfirmDeleteIntervention=Er du sikker på du vil slette dette indlæg?
+ConfirmValidateIntervention=Er du sikker på at du ønsker at validere denne intervention?
+ConfirmModifyIntervention=Er du sikker på at du vil ændre denne intervention?
+ConfirmDeleteInterventionLine=Er du sikker på du vil slette denne intervention linje?
+NameAndSignatureOfInternalContact=Navn og underskrift for at gribe ind:
+NameAndSignatureOfExternalContact=Navn og underskrift af kunde:
+DocumentModelStandard=Standard dokument model for indgreb
+TypeContact_fichinter_internal_INTERREPFOLL=Repræsentant opfølgning intervention
+TypeContact_fichinter_internal_INTERVENING=Mellemliggende
+TypeContact_fichinter_external_BILLING=Faktureringsindstillinger kunde kontakt
+TypeContact_fichinter_external_CUSTOMER=Opfølgning kunde kontakt
+ArcticNumRefModelDesc1=Generic antal model
+ArcticNumRefModelError=Det lykkedes ikke at aktivere
+PacificNumRefModelDesc1=Retur numero med format% syymm-nnnn hvor ÅÅ er årstal, MM er måneden og nnnn er en sekvens uden pause, og ikke vende tilbage til 0
+PacificNumRefModelError=En intervention kortet begynder med $ syymm allerede eksisterer og er ikke kompatible med denne model af sekvensinformation. Fjern den eller omdøbe den til at aktivere dette modul.
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

@@ -1,0 +1,127 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+OrdersArea=Клиенты заказы области
+SuppliersOrdersArea=Поставщики заказы области
+OrderCard=Заказать карту
+Order=Заказ
+Orders=Приказы
+OrderFollow=Последующие меры
+OrderContact=Заказ контакт
+OrderDate=Дата заказа
+NewOrder=Новый порядок
+ToOrder=Сделать заказ
+MakeOrder=Сделать заказ
+SupplierOrder=Для поставщиков
+SuppliersOrders=Поставщики заказ
+SuppliersOrdersRunning=Текущие поставщиков заказов
+CustomerOrder=Для клиентов
+CustomersOrders=Клиенты заказ
+CustomersOrdersRunning=Текущие клиентов заказы
+CustomersOrdersAndOrdersLines=Клиент приказов и распоряжений линий
+OrdersToValid=Приказы по силе
+OrdersToBill=Заказы на законопроект
+OrdersInProcess=Заказы в процессе
+OrdersToProcess=Заказы на процесс
+StatusOrderCanceledShort=Отменен
+StatusOrderDraftShort=Черновик
+StatusOrderValidatedShort=Подтвержденные
+StatusOrderOnProcessShort=В процессе
+StatusOrderProcessedShort=Обработано
+StatusOrderToBillShort=В законопроекте
+StatusOrderApprovedShort=Утверждено
+StatusOrderRefusedShort=Отказался
+StatusOrderToProcessShort=Для обработки
+StatusOrderReceivedPartiallyShort=Частично получил
+StatusOrderReceivedAllShort=Все полученные
+StatusOrderCanceled=Отменен
+StatusOrderDraft=Проект (должно быть подтверждено)
+StatusOrderValidated=Подтвержденные
+StatusOrderOnProcess=В процессе
+StatusOrderProcessed=Обработано
+StatusOrderToBill=В законопроекте
+StatusOrderApproved=Утверждено
+StatusOrderRefused=Отказался
+StatusOrderReceivedPartially=Частично получил
+StatusOrderReceivedAll=Все полученные
+DraftOrWaitingApproved=Проект или утверждены еще не заказал
+DraftOrWaitingShipped=Проект или подтверждены не отгружен
+MenuOrdersToBill=Заказы на законопроект
+SearchOrder=Поиск тем
+Sending=Отправка
+Sendings=Отправок
+ShipProduct=Судно продукта
+Discount=Скидка
+CreateOrder=Создать заказ
+RefuseOrder=Отписаться порядка
+ApproveOrder=Принять порядок
+ValidateOrder=Проверка порядка
+DeleteOrder=Удалить тему
+CancelOrder=Отмена порядка
+AddOrder=Добавить тему
+AddToMyOrders=Добавить в мои заказы
+AddToOtherOrders=Добавить в других заказов
+ShowOrder=Показать порядок
+NoOpenedOrders=Нет открыл заказов
+NoOtherOpenedOrders=Никакие другие открыли заказов
+OtherOrders=Другие заказы
+LastOrders=Последнее% S заказов
+LastModifiedOrders=Последнее% с измененными заказов
+LastClosedOrders=Последнее% с закрытых заказов
+AllOrders=Все заказы
+NbOfOrders=Количество заказов
+OrdersStatistics=Приказы Статистика
+OrdersStatisticsSuppliers=Поставщик заказов статистика
+NumberOfOrdersByMonth=Количество заказов в месяц
+AmountOfOrdersByMonthHT=Сумма заказов в месяц (за вычетом налогов)
+ListOfOrders=Список заказов
+CloseOrder=Закрыть тему
+ConfirmCloseOrder=Вы уверены, что хотите, чтобы закрыть эту тему? После того, как заказ является закрытым, он может быть выставлен счет.
+ConfirmCloseOrderIfSending=Вы уверены, что хотите, чтобы закрыть эту тему? Вы должны закрыть тему только тогда, когда все судоходство осуществляется.
+ConfirmDeleteOrder=Вы уверены, что хотите удалить эту тему?
+ConfirmValidateOrder=Вы уверены, что хотите проверить эту тему под <b>названием% S?</b>
+ConfirmCancelOrder=Вы уверены, что хотите отменить этот заказ?
+ConfirmMakeOrder=Вы уверены, что хотите, чтобы подтвердить вы сделали этот заказ <b>на% S?</b>
+GenerateBill=Создать счет-фактуру
+ClassifyBilled=Классифицировать &quot;Billed&quot;
+ComptaCard=Бухгалтерия карту
+DraftOrders=Проект распоряжения
+RelatedOrders=Похожие заказов
+OnProcessOrders=В процессе заказов
+RefOrder=Ref. заказ
+RefCustomerOrder=Ref. Для клиента
+CustomerOrder=Для клиентов
+RefCustomerOrderShort=Ref. CUST. заказ
+SendOrderByMail=Отправить заказ по почте
+ActionsOnOrder=Меры по заказу
+NoArticleOfTypeProduct=Нет статьи типа &quot;продукт&quot;, поэтому не shippable статью для этого заказа
+OrderMode=Заказать метод
+AuthorRequest=Просьба автора
+UseCustomerContactAsOrderRecipientIfExist=Используйте адрес клиента, если определено, вместо сторонних адрес как адрес получателя порядка
+RunningOrders=Приказы о процессе
+UserWithApproveOrderGrant=Useres предоставляется с &quot;утвердить приказы&quot; разрешения.
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Постоянная COMMANDE_SUPPLIER_ADDON не определена
+Error_COMMANDE_ADDON_NotDefined=Постоянная COMMANDE_ADDON не определена
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Не удалось загрузить модуль файл &#39;% S&#39;
+Error_FailedToLoad_COMMANDE_ADDON_File=Не удалось загрузить модуль файл &#39;% S&#39;
+OrderSource0=Коммерческое предложение
+OrderSource1=Интернет
+OrderSource2=Mail кампании
+OrderSource3=Телефон compain
+OrderSource4=Факс кампании
+OrderSource5=Коммерческие
+OrderSource6=Склад
+QtyOrdered=Количество заказанных
+AddDeliveryCostLine=Добавить доставки Стоимость линии с указанием веса заказа
+PDFEinsteinDescription=Для полной модели (logo. ..)
+MarbreNumRefDesc=Renvoie LE numro SOUS LA форме% syymm-NNNN или YY EST L&#39;année, мм LE Mois и NNNN ООН compteur sequentiel без разрывов и без REMISE E 0
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

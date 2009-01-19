@@ -7,6 +7,8 @@
  *
  * http://www.plentyofcode.com/2008/10/google-translation-api-translate-on.html
  * Hope you make a good use of it  :)
+ *
+ * http://code.google.com/intl/fr/apis/ajaxlanguage/documentation/#SupportedPairs
  */
 
 class langAutoParser {
@@ -91,10 +93,8 @@ FILE_SKIP_EMPTY_LINES);
 	private function createTranslationFile($path){
 		$fp = fopen($path, 'w+');
 		fwrite($fp, "/*\r\n");
-		fwrite($fp, " * Lince Translation File\r\n");
-		fwrite($fp, " * Filename: {$file}\r\n");
 		fwrite($fp, " * Language code: {$this->destLang}\r\n");
-		fwrite($fp, " * Automatic generated via autotranslator tool\r\n");
+		fwrite($fp, " * Automatic generated via autotranslator.php tool\r\n");
 		fwrite($fp, " * Generation date " . $this->time. "\r\n");
 		fwrite($fp, " */\r\n");
 		fclose($fp);
@@ -143,6 +143,12 @@ FILE_SKIP_EMPTY_LINES);
 
 	private function translateTexts($src_texts = array(), $src_lang,
 $dest_lang){
+
+		$tmp=split('_',$src_lang);
+		if ($tmp[0] == $tmp[1]) $src_lang=$tmp[0];
+
+		$tmp=split('_',$dest_lang);
+		if ($tmp[0] == $tmp[1]) $dest_lang=$tmp[0];
 
 		//setting language pair
 		$lang_pair = $src_lang.'|'.$dest_lang;

@@ -1,0 +1,20 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+OSCommerce=OS Коммерция
+OSCommerceSetup=OS Торгово модуль настройки
+OSCommerceSetupSaved=Торгово настройки ОС сохраняются
+OSCommerceServer=OS Commerce Server хост / IP
+OSCommerceDatabaseName=OS Торгово имя_базы_данных
+OSCommercePrefix=OS Торгово префикс таблиц
+OSCommerceUser=OS Торгово регистрационную базу данных
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

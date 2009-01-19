@@ -1,0 +1,62 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+BoxLastRssInfos=Rss informaţii
+BoxLastProducts=Ultimele produse / servicii
+BoxLastProductsInContract=Ultima contractate de produse / servicii
+BoxLastSupplierBills=Ultima furnizorului facturi
+BoxLastCustomerBills=Ultimul client a facturilor
+BoxOldestUnpayedCustomerBills=Cele mai vechi unpayed clientului facturi
+BoxOldestUnpayedSupplierBills=Cele mai vechi unpayed furnizorului, facturi
+BoxLastProposals=Ultima comerciale propuneri
+BoxLastProspects=Ultima perspectivele
+BoxLastCustomers=Ultima clienţi
+BoxLastCustomerOrders=Ultima client ordinelor
+BoxLastSuppliers=Ultima furnizori
+BoxLastBooks=Ultimele cărţi
+BoxLastActions=Ultima acţiuni
+BoxCurrentAccounts=Conturile curente echilibru
+BoxSalesTurnover=Vanzari cifra de afaceri
+BoxTotalUnpayedCustomerBills=Total unpayed clientului facturi
+BoxTotalUnpayedSuppliersBills=Total unpayed furnizorului, facturi
+BoxTitleLastBooks=Ultima% s înregistrate cărţi
+BoxTitleNbOfCustomers=Nombre de client
+BoxTitleLastRssInfos=Ultimele noutăţi de la% s% s
+BoxTitleLastProducts=Ultima% s modificate produse / servicii
+BoxTitleLastCustomerOrders=Ultima modificare% s client ordinelor
+BoxTitleLastSuppliers=Ultima% s înregistrate de furnizori
+BoxTitleLastCustomers=Ultima% s înregistrate de clienţi
+BoxTitleLastCustomersOrProspects=Ultima% s înregistrate de clienţi sau de perspectivele
+BoxTitleLastPropals=Ultima% s înregistrate propuneri
+BoxTitleLastCustomerBills=Ultima% s clientului facturi
+BoxTitleLastSupplierBills=Ultima% s furnizorului facturi
+BoxTitleLastProspects=Ultima% s înregistrate perspectivele
+BoxTitleLastProductsInContract=Ultima% s derniers produselor / serviciilor de contracte
+BoxTitleOldestUnpayedCustomerBills=Cele mai vechi% s unpayed clientului facturi
+BoxTitleOldestUnpayedSupplierBills=Cele mai vechi% s unpayed furnizorului, facturi
+BoxTitleCurrentAccounts=Contul curent al soldurilor
+BoxTitleSalesTurnover=Vanzari cifra de afaceri
+BoxTitleTotalUnpayedCustomerBills=Unpayed clientului facturi
+BoxTitleTotalUnpayedSuppliersBills=Unpayed furnizorului, facturi
+BoxMyLastBookmarks=Ultima mea% s marcaje
+FailedToRefreshDataInfoNotUpToDate=Nu a reuşit să reîmprospătaţi flux RSS. Ultima reuşită a reîmprospăta data:% s
+NoRecordedBookmarks=No bookmarks defined. Click <a href=Nu marcaje definite. Faceţi clic <a href="%s">aici</a> pentru a adăuga marcaje.
+NoRecordedCustomers=Nu înregistrate de clienţi
+BoxTitleLastActionsToDo=Ultima% s acţiunile de a face
+NoActionsToDo=Nr actiuni pentru a face
+NoRecordedOrders=Nu înregistrate clientului ordinelor
+NoRecordedProposals=Nu înregistrate propuneri
+NoRecordedInvoices=Nu înregistrate clientului facturi
+NoUnpayedCustomerBills=Nu unpayed clientului facturi
+NoRecordedSupplierInvoices=Nu înregistrate furnizorului facturi
+NoUnpayedSupplierBills=Nu unpayed furnizorului, facturi
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

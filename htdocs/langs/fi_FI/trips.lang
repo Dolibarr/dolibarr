@@ -1,0 +1,29 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Trip=Matka
+Trips=Retket
+TripsAndExpenses=Matkat ja kulut
+TripCard=Trip-kortti
+AddTrip=Lisää matka
+ListOfTrips=Luettelo matkat
+ListOfFees=Luettelo palkkiot
+NewTrip=Uusi matka
+CompanyVisited=Yritys / fundation vieraili
+Kilometers=Kilometers
+FeesKilometersOrAmout=Määrä tai kilometreinä
+DeleteTrip=Poista matka
+ConfirmDeleteTrip=Oletko varma, että haluat poistaa tämän matkan?
+TF_OTHER=Muu
+TF_LUNCH=Lounas
+TF_TRIP=Matka
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

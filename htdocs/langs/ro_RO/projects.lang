@@ -1,0 +1,63 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Project=Proiect
+Projects=Proiecte
+SharedProject=Shared proiect
+Myprojects=Proiectele mele
+ProjectsArea=Proiecte de zona
+NewProject=Nou proiect
+AddProject=Adauga proiect
+DeleteAProject=Ştergeţi un proiect
+DeleteATask=Ştergeţi o sarcină
+ConfirmDeleteAProject=Sunteţi sigur că doriţi să ştergeţi acest proiect?
+ConfirmDeleteATask=Sunteţi sigur că doriţi să ştergeţi această sarcină?
+OfficerProject=Ofiţer de proiect
+LastProjects=Ultima% s proiecte
+AllProjects=Toate proiectele
+ProjectsList=Lista de proiecte
+ShowProject=Arata proiect
+SetProject=Setare proiect
+NoProject=Nu proiectului definit
+NbOpenTasks=Nb deschis de sarcini
+NbOfProjects=Nb de proiecte
+TimeSpent=Timpul petrecut
+RefTask=Ref. sarcină
+LabelTask=Eticheta sarcină
+NewTimeSpent=New timpul petrecut
+MyTimeSpent=My timpul petrecut
+MyTasks=Meu de sarcini
+Tasks=Activităţi
+Task=Sarcină
+NewTask=Noua sarcină
+AddTask=Adăugaţi sarcina
+AddDuration=Adauga durata
+Activity=Activitate
+Activities=Activităţi / activităţi
+MyActivity=Meu de activitate
+MyActivities=My sarcini / activităţi
+DurationEffective=Durata efectivă a
+MyProjects=Proiectele mele
+Time=Timp
+ListProposalsAssociatedProject=Liste de propuneri comerciale legate de proiect
+ListOrdersAssociatedProject=Liste de comenzi legate de proiect
+ListInvoicesAssociatedProject=Liste de facturile legate de proiect
+ListSupplierOrdersAssociatedProject=Lista de furnizori ordinele asociate cu proiectul
+ListSupplierInvoicesAssociatedProject=Lista de furnizori facturi asociate cu proiectul
+ListContractAssociatedProject=Lista de contracte legate de proiect
+ActivityOnProjectThisWeek=Activitatea de pe proiect în această săptămână
+ActivityOnProjectThisMonth=Activitatea de pe proiect în această lună
+ActivityOnProjectThisYear=Activitatea de pe proiect în acest an
+ChildOfTaks=Copil de proiect / sarcina
+NotOwnerOfProject=Nu este proprietar al acestui proiect privat
+AffectedTo=Afectate de
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

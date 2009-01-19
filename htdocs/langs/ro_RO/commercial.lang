@@ -1,0 +1,88 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Commercial=Comerciale
+CommercialArea=Zona comerciala
+CommercialCard=Comerciale carte
+CustomerArea=Clienţii zona
+Customer=Client
+Customers=Clienti
+Prospect=Prospect
+Prospects=Perspectivele
+DeleteAction=Ştergeţi o acţiune / sarcina
+NewAction=New acţiune / sarcina
+AddAction=Adăugare acţiune / sarcina
+AddAnAction=Adăugaţi o acţiune / sarcina
+AddActionRendezVous=Adauga un Rendez-vous sarcină
+ConfirmDeleteAction=Sunteţi sigur că doriţi să ştergeţi această sarcină?
+CardAction=Acţiunea carte
+PercentDone=Procentajul făcut
+ActionOnCompany=Task despre companie
+ActionOnContact=Task despre contact
+TaskRDV=Întâlniri
+TaskRDVWith=Întâlnire cu% s
+ShowTask=Arata sarcină
+ShowAction=Arata acţiune
+ActionsReport=Acţiuni de raport
+SalesRepresentative=Reprezentant vanzari
+SalesRepresentatives=Reprezentanţii de vânzări
+SalesRepresentativeFollowUp=Reprezentant vanzari (follow-up)
+SalesRepresentativeSignature=Reprezentant vanzari (semnătura)
+CommercialInterlocutor=Comerciale interlocutor
+ErrorWrongCode=Greşit codul
+NoSalesRepresentativeAffected=Nu special afectate reprezentant vânzări
+ShowCustomer=Arata client
+ShowProspect=Arata perspectiva
+ListOfProspects=Lista de perspectivele
+ListOfCustomers=Lista de clienţi
+LastDoneTasks=Ultima% s făcut sarcini
+LastRecordedTasks=Ultima înregistrate sarcini
+LastActionsToDo=Ultima% s acţiunile cele mai vechi nu sa finalizat cu
+DoneAndToDoActionsFor=Pentru a face Adoptată şi sarcinile pentru% s
+DoneAndToDoActions=Pentru a face Adoptată şi sarcinile
+DoneActions=Adoptat acţiuni
+DoneActionsFor=Adoptat acţiuni pentru% s
+ToDoActions=Uncomplete acţiuni
+ToDoActionsFor=Uncomplete acţiuni pentru% s
+SendPropalRef=Trimite comerciale propunerea% s
+SendOrderRef=Trimite pentru% s
+NoRecordedProspects=Nu perspectiva înregistrate
+StatusActionToDo=Pentru a face
+StatusActionDone=Făcut
+MyActionsAsked=Acţiuni am inregistrat
+MyActionsToDo=Acţiuni ce am de făcut
+MyActionsDone=Acţiuni afectate pentru a-mi
+StatusActionInProcess=În procesul de
+TasksHistoryForThisContact=Acţiuni pentru acest contact
+LastProspectDoNotContact=Nu de contact
+LastProspectNeverContacted=N-am contactat
+LastProspectToContact=Pentru a contacta
+LastProspectContactInProcess=De contact în procesul de
+LastProspectContactDone=Contact făcut
+DateActionPlanned=Data planificată pentru acţiune
+DateActionDone=Data de acţiune făcut
+ActionAskedBy=Acţiunea a cerut de către
+ActionAffectedTo=Afectate de acţiune pentru a
+ActionDoneBy=Acţiunea efectuată de către
+ActionUserAsk=Înregistrate de către
+ErrorStatusCantBeZeroIfStarted=Dacă câmpul <b>&quot;Data făcut&quot;</b> este completat, este început de acţiune (sau finite), astfel încât câmpul <b>&quot;Status&quot;</b> nu poate fi 0%%.
+ActionAC_TEL=Telefon
+ActionAC_FAX=Trimite fax
+ActionAC_PROP=Trimiteţi propunere
+ActionAC_EMAIL=Trimite un email
+ActionAC_RDV=Întâlniri
+ActionAC_FAC=Trimite facturare
+ActionAC_REL=Trimite facturare (memento)
+ActionAC_CLO=Închide
+ActionAC_EMAILING=Trimite email-uri în masă
+ActionAC_COM=Pentru a trimite prin e-mail
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

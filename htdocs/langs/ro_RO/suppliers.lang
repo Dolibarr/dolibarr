@@ -1,0 +1,46 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Suppliers=Furnizori
+Supplier=Furnizor
+AddSupplier=Adauga un furnizor
+SupplierRemoved=Furnizor eliminat
+SuppliersInvoice=Furnizori de factură
+SuppliersInvoices=Furnizori facturi
+NewSupplier=New furnizor
+History=Istorie
+ListOfSuppliers=Lista de furnizori
+ShowSupplier=Arata furnizor
+OrderDate=Ordinul data
+BuyingPrice=Cumpararea de preţ
+AddSupplierPrice=Adăugare furnizor de preţ
+ChangeSupplierPrice=Schimbarea furnizorului de preţ
+ErrorQtyTooLowForThisSupplier=Cantitate prea mici pentru această furnizor sau de preţ nu este definit la acest produs pentru acest furnizor
+ErrorSupplierCountryIsNotDefined=Ţara pentru acest furnizor nu este definit. Corectaţi această primă.
+ProductHasAlreadyReferenceInThisSupplier=Acest produs a fost deja o trimitere în acest furnizor
+NoRecordedSuppliers=Nu furnizori înregistrate
+SupplierPayment=Furnizor de plată
+SuppliersArea=Furnizori zona
+RefSupplierShort=Ref. furnizor
+ExportDataset_fournisseur_1=Furnizor lista de facturi si facturi &quot;linii
+ExportDataset_fournisseur_2=Furnizor de facturi şi plăţi
+ApproveThisOrder=Aprobaţi această ordine
+ConfirmApproveThisOrder=Sunteţi sigur că doriţi să aprobe acest ordin?
+DenyingThisOrder=Negarea acest ordin
+ConfirmDenyingThisOrder=Sunteţi sigur că doriţi să nege acest ordin?
+ConfirmCancelThisOrder=Sunteţi sigur că doriţi să anulaţi acest ordin?
+AddCustomerOrder=Creaţi client pentru
+AddCustomerInvoice=Creaţi client factură
+AddSupplierOrder=Creaţi furnizor pentru
+AddSupplierInvoice=Creaţi furnizor factura
+ListOfSupplierProductForSupplier=Lista de produse şi a preţurilor pentru <b>furnizor% s</b>
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

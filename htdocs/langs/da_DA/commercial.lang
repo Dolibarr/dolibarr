@@ -1,0 +1,90 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Commercial=Kommerciel
+CommercialArea=Kommercielle område
+CommercialCard=Kommerciel kortet
+CustomerArea=Kunder område
+Customer=Kunde
+Customers=Kunder
+Prospect=Prospect
+Prospects=Perspektiver
+DeleteAction=Slet en foranstaltning / opgave
+NewAction=Ny action / opgave
+AddAction=Tilføj action / opgave
+AddAnAction=Tilføj en foranstaltning / opgave
+AddActionRendezVous=Tilføj et Rendez-Vous opgave
+ConfirmDeleteAction=Er du sikker på du vil slette denne opgave?
+CardAction=Action-kortet
+PercentDone=Procentdel gjort
+ActionOnCompany=Opgave om virksomheden
+ActionOnContact=Task om kontakt
+TaskRDV=Møder
+TaskRDVWith=Møde med% s
+ShowTask=Vis opgave
+ShowAction=Vis aktion
+ActionsReport=Aktioner rapport
+SalesRepresentative=Salg repræsentant
+SalesRepresentatives=Salgsrepræsentanter
+SalesRepresentativeFollowUp=Salg repræsentant (opfølgning)
+SalesRepresentativeSignature=Salg repræsentant (underskrift)
+CommercialInterlocutor=Kommerciel samtalepartner
+ErrorWrongCode=Forkert kode
+NoSalesRepresentativeAffected=Ingen særlige salg repræsentant påvirket
+ShowCustomer=Vis kunde
+ShowProspect=Vis udsigt
+ListOfProspects=Liste over udsigterne
+ListOfCustomers=Listen over kunder
+LastDoneTasks=Seneste% s udført opgaver
+LastRecordedTasks=Seneste registreres opgaver
+LastActionsToDo=Seneste% s ældste aktioner ikke er afsluttet
+DoneAndToDoActionsFor=Udfærdiget og gøre opgaver for% s
+DoneAndToDoActions=Udfærdiget og gøre opgaver
+DoneActions=Udfærdiget aktioner
+DoneActionsFor=Gøres tiltag for% s
+ToDoActions=Uncomplete aktioner
+ToDoActionsFor=Uncomplete aktioner for% s
+SendPropalRef=Send kommercielle forslag% s
+SendOrderRef=Send for% s
+NoRecordedProspects=Ingen udsigt registreres
+StatusActionToDo=At gøre
+StatusActionDone=Gjort
+MyActionsAsked=Aktioner jeg har indspillet
+MyActionsToDo=Initiativer, jeg har at gøre
+MyActionsDone=Aktioner påvirket mig
+StatusActionInProcess=I proces
+TasksHistoryForThisContact=Handlinger for denne kontakt
+LastProspectDoNotContact=Må ikke komme i kontakt med
+LastProspectNeverContacted=Aldrig kontaktet
+LastProspectToContact=Til at kontakte
+LastProspectContactInProcess=Kontakt i processen
+LastProspectContactDone=Kontakt gjort
+DateActionPlanned=Dato aktion er planlagt til
+DateActionDone=Dato indsats gøres
+ActionAskedBy=Aktion spurgt af
+ActionAffectedTo=Aktion påvirkes i
+ActionDoneBy=Aktion gøres ved
+ActionUserAsk=Registreres af
+ErrorStatusCantBeZeroIfStarted=Hvis feltet <b>&#39;Dato gjort</b> «er fyldt handling er startet (eller afsluttet), så felt&#39; <b>Status&#39;</b> kan ikke være 0%%.
+ActionAC_TEL=Telefonopkald
+ActionAC_FAX=Send fax
+ActionAC_PROP=Send forslag
+ActionAC_EMAIL=Send Email
+ActionAC_RDV=Møder
+ActionAC_FAC=Send fakturering
+ActionAC_REL=Send faktureringsstatus (påmindelse)
+ActionAC_CLO=Luk
+ActionAC_EMAILING=Send masse emailing
+ActionAC_COM=Send ordre ved mail
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

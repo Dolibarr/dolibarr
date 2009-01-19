@@ -1,0 +1,61 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:18
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Actions=Aktioner
+ActionsArea=Aktioner område (Events og opgaver)
+Agenda=Agenda
+Agendas=Dagsordener
+Calendar=Kalender
+Calendars=Kalendere
+AffectedTo=Påvirkes i
+DoneBy=Gøres ved at
+Events=Events
+ListOfActions=Liste over begivenheder
+Location=Placering
+SearchAnAction=Søg en action / opgave
+MenuToDoActions=Alle uncomplete aktioner
+MenuDoneActions=Alle henlagt aktioner
+MenuToDoMyActions=Min ufuldstændige aktioner
+MenuDoneMyActions=Min henlagt aktioner
+ListOfEvents=Liste over Dolibarr begivenheder
+ActionsAskedBy=Handlinger registreres af
+ActionsToDoBy=Aktioner påvirkes i
+ActionsDoneBy=Aktioner udført af
+AllMyActions=Alle mine handlinger / opgaver
+AllActions=Alle les handlinger / opgaver
+ViewList=Vis liste
+ViewCal=Vis kalender
+ViewWithPredefinedFilters=Se med foruddefinerede filtre
+AutoActions=Automatisk påfyldning af dagsorden
+AgendaAutoActionDesc=Definer her begivenheder, som du vil Dolibarr at skabe automatisk en indsats på dagsordenen. Hvis det ikke er kontrolleret (som standard), kun manuel foranstaltninger vil blive inkluderet i dagsordenen.
+AgendaSetupOtherDesc=Denne side giver mulighed for at konfigurere andre parametre af dagsorden-modulet.
+ActionsEvents=Begivenheder, for hvilke Dolibarr vil skabe en indsats på dagsordenen automatisk
+PropalValidatedInDolibarr=Forslag valideret
+InvoiceValidatedInDolibarr=Faktura valideret
+OrderValidatedInDolibarr=Bestil valideret
+NewCompanyToDolibarr=Tredjepart skabt
+DateActionPlannedStart=Planlagt startdato
+DateActionPlannedEnd=Planlagte slutdato
+DateActionDoneStart=Real startdato
+DateActionDoneEnd=Real slutdato
+DateActionStart=Startdato
+DateActionEnd=Slutdato
+AgendaUrlOptions1=Du kan også tilføje følgende parametre til at filtrere output:
+AgendaUrlOptions2=<b>login=<b>login =% s</b> for at begrænse produktionen til aktioner skabt af, påvirkes i eller udføres af <b>brugeren% s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% s</b> for at begrænse produktionen til aktioner skabt af <b>brugeren% s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% s</b> for at begrænse produktionen til aktioner påvirket til <b>brugeren% s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind =% s</b> for at begrænse produktionen til aktioner udført af <b>brugeren% s.</b>
+AgendaShowBirthdayEvents=Vis fødselsdag kontakter
+AgendaHideBirthdayEvents=Skjul fødselsdag kontakter
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

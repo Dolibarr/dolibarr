@@ -1,0 +1,64 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+MenuECM=Dokumenter
+DocsMine=Mine dokumenter
+DocsGenerated=Generated dokumenter
+DocsElements=Elements dokumenter
+DocsThirdParties=Dokumenter tredjeparter
+DocsContracts=Dokumenter kontrakter
+DocsProposals=Dokumenter forslag
+DocsOrders=Dokumenter bestillinger
+DocsInvoices=Dokumenter fakturaer
+ECMNbOfDocs=NB av dokumenter i katalogen
+ECMNbOfDocsSmall=Nb av doc.
+ECMSection=Directory
+ECMSectionManual=Manuell katalog
+ECMSectionAuto=Automatisk katalog
+ECMSectionsManual=
+ECMSectionsAuto=Automatisk kataloger
+ECMSections=Kataloger
+ECMRoot=Rot
+ECMNewSection=Ny katalog
+ECMAddSection=Legg til en manuell katalog
+ECMNewSection=Ny manuell katalog
+ECMNewDocument=Nytt dokument
+ECMCreationDate=Opprettelsesdato
+ECMNbOfFilesInDir=Antall filer i katalogen
+ECMNbOfSubDir=Antall sub-kataloger
+ECMNbOfFilesInSubDir=Nunber av iles i sub-kataloger
+ECMCreationUser=Creator
+ECMArea=ECM-området
+ECMAreaDesc=The ECM (Electronic Content Management)-området kan du lagre, dele og søke raskt alle slags dokumenter i Dolibarr.
+ECMAreaDesc2=* Automatisk kataloger fylles ut automatisk når du legger dokumenter fra kort av et element. <br> * Manual kataloger kan brukes til å lagre dokumenter som ikke er knyttet til et bestemt element.
+ECMSectionWasRemoved=<b>Directory% s</b> har blitt slettet.
+ECMDocumentsSection=Dokumentet i katalogen
+ECMSearchByKeywords=Søk med nøkkelord
+ECMSearchByEntity=Søk med objekt
+ECMSectionOfDocuments=Kataloger av dokumenter
+ECMTypeManual=Manuell
+ECMTypeAuto=Automatisk
+ECMDocsByThirdParties=Dokumenter knyttet til tredjeparter
+ECMDocsByProposals=Dokumenter knyttet til forslag
+ECMDocsByOrders=Dokumenter knyttet til kunder bestillinger
+ECMDocsByContracts=Dokumenter knyttet til kontrakter
+ECMDocsByInvoices=Dokumenter knyttet til kunder fakturaer
+ECMDocsByProducts=Dokumenter knyttet til produkter
+ECMNoDirecotyYet=Ingen katalogen opprettet
+ShowECMSection=Vis katalog
+DeleteSection=Fjern katalog
+ConfirmDeleteSection=Kan du bekrefte at du vil slette <b>mappen% s?</b>
+ECMDirectoryForFiles=Relativ katalog for filer
+CannotRemoveDirectoryContainsFiles=Fjernet ikke mulig fordi det inneholder noen filer
+ECMFileManager=Filbehandling
+ECMSelectASection=Velg en katalog på venstre treet ...
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

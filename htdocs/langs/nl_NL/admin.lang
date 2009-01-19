@@ -704,7 +704,7 @@ FicheinterNumberingModules=Interventie nummering modules
 TemplatePDFInterventions=Interventie kaart documenten modellen
 WatermarkOnDraftInterventionCards=Watermerk interventie kaart documenten (een als leeg)
 ClickToDialSetup=Klik om te Dial module setup
-ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=Url aangeroepen wanneer een klik op de telefoon picto gebeurt. <br> Complete url zal zijn: URL? Login =...&amp; wachtwoord =...&amp; beller =...&amp; genaamd = phonecalled
+ClickToDialUrlDesc=Url called when a click on phone picto is done.  Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacé par le téléphone de l'appelé<br><b>%%2$s</b> qui sera remplacé par le téléphone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplacé par votre login clicktodial (défini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacé par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
 Bookmark4uSetup=Bookmark4u module setup
 InterventionsSetup=Interventies module setup
 MembersSetup=Leden module setup

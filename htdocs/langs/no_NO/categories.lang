@@ -1,0 +1,93 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Category=Kategori
+Categories=Kategorier
+Rubrique=Kategori
+Rubriques=Kategorier
+categories=Kategorier
+TheCategorie=Kategorien
+In=I
+AddIn=Legg i
+modify=endre
+Classify=Klassifisere
+CategoriesArea=Kategorier området
+ProductsCategoriesArea=Produkter / Tjenester &quot;kategorier området
+SuppliersCategoriesArea=Leverandørenes kategorier området
+CustomersCategoriesArea=Kunders kategorier området
+ThirdPartyCategoriesArea=Tredjeparts kategorier området
+MainCats=Hovedkategorier
+SubCats=Subcategories
+CatStatistics=Statistikk
+CatList=Liste over catgories
+AllCats=Alle kategorier
+ViewCat=Vis kategori
+NewCat=Legg til kategori
+NewCategory=Ny kategori
+ModifCat=Endre kategori
+CatCreated=Kategori opprettet
+CreateCat=Opprett kategori
+CreateThisCat=Opprett denne kategorien
+ValidateFields=Validate feltene
+NoSubCat=Ingen underkategorier.
+SubCatOf=Underkategori
+FoundCats=Funnet kategorier
+FoundCatsForName=Kategorier fant på navnet:
+FoundSubCatsIn=Subcategories funnet i kategorien
+ErrSameCatSelected=Du har valgt samme kategori flere ganger
+ErrForgotCat=Du glemte å velge kategorien
+ErrForgotField=Du glemte å informere felt
+ErrCatAlreadyExists=Dette navnet er allerede brukt
+AddProductToCat=Legg dette produktet til en kategori?
+ImpossibleAddCat=Umulig å legge til kategorien
+ImpossibleAssociateCategory=Umulig å knytte kategorien
+WasAddedSuccessfully=<b>% s</b> ble lagt til.
+ObjectAlreadyLinkedToCategory=Element er allerede koblet til denne kategorien.
+CategorySuccessfullyCreated=Denne kategorien% s har blitt lagt med suksess.
+ProductIsInCategories=Produktet / tjenesten eier til følgende kategorier
+SupplierIsInCategories=Tredjepart eier til følgende leverandører kategorier
+CompanyIsInCustomersCategories=Dette tredjepart eier til følgende kunder / prospekter kategorier
+CompanyIsInSuppliersCategories=Dette tredjepart eier til følgende leverandører kategorier
+ProductHasNoCategory=Dette produktet / tjenesten ikke er i noen kategorier
+SupplierHasNoCategory=Denne leverandøren er ikke i alle kategorier
+CompanyHasNoCategory=Dette selskapet er ikke i alle kategorier
+ClassifyInCategory=Klassifisere i kategori
+NoneCategory=Ingen
+CategoryExistsAtSameLevel=Denne kategorien allerede finnes på samme sted
+ReturnInProduct=Tilbake til produkt / tjeneste kortet
+ReturnInSupplier=Tilbake til leverandør kortet
+ReturnInCompany=Tilbake til kunde / prospekt kort
+ContentsVisibleByAll=Innholdet vil være synlig ved alle
+ContentsVisibleByAllShort=Innhold synlig ved alle
+ContentsNotVisibleByAllShort=Innhold som ikke er synlig ved alle
+CategoriesTree=Kategorier treet
+DeleteCategory=Slett kategori
+ConfirmDeleteCategory=Er du sikker på at du vil slette denne kategorien?
+RemoveFromCategory=Fjern kobling med Categorie
+RemoveFromCategoryConfirm=Er du sikker på at du vil fjerne koblingen mellom transaksjonstidspunktet og kategorien?
+NoCategoriesDefined=Ingen kategori definert
+SuppliersCategoryShort=Leverandører kategorien
+CustomersCategoryShort=Kunder kategorien
+ProductsCategoryShort=Produkter kategorien
+SuppliersCategoriesShort=Leverandører kategorier
+CustomersCategoriesShort=Kunder kategorier
+CustomersProspectsCategoriesShort=Custo. / Prosp. Kategorier
+ProductsCategoriesShort=Produkter Kategorier
+ThisCategoryHasNoProduct=Denne kategorien inneholder ikke produktet.
+ThisCategoryHasNoSupplier=Denne kategorien inneholder ingen leverandør.
+ThisCategoryHasNoCustomer=Denne kategorien inneholder ikke kunden.
+AssignedToCustomer=Tilordnet til en kunde
+AssignedToTheCustomer=Tilordnet til kunden
+InternalCategory=Inernal kategorien
+CategoryContents=Kategori innholdet
+CategId=Kategori-ID
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

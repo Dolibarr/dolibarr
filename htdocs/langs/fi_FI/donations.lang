@@ -1,0 +1,36 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Donation=Lahjoitus
+Donationss=Lahjoitukset
+Donor=Rahoittajien
+Donors=Luovuttajat
+AddDonation=Lisää lahjoitus
+NewDonation=Uusi lahjoitus
+DonationPromise=Gift lupaus
+PromisesNotValid=Ei validoitava lupaukset
+PromisesValid=Validoidut lupaukset
+DonationsPayed=Lahjoitukset maksetaan
+DonationsReceived=Lahjoitukset
+PublicDonation=Julkiset lahjoitus
+DonationsNumber=Luovutusnumero
+DonationsArea=Lahjoitukset alueella
+DonationStatusPromiseNotValidated=Luonnos lupaus
+DonationStatusPromiseValidated=Validoidut lupaus
+DonationStatusPayed=Lahjoituksen vastaanotti
+DonationStatusPromiseNotValidatedShort=Vedos
+DonationStatusPromiseValidatedShort=Validoidut
+DonationStatusPayedShort=Vastatut
+ValidPromise=Validate lupaus
+BuildDonationReceipt=Rakenna vastaanottamisesta
+DonationsModels=Asiakirjat malleja lahjoitus kuitit
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

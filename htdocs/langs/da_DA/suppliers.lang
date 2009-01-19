@@ -1,0 +1,48 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Suppliers=Leverandører
+Supplier=Leverandør
+AddSupplier=Tilføj en leverandør
+SupplierRemoved=Leverandør fjernet
+SuppliersInvoice=Leverandører faktura
+SuppliersInvoices=Leverandører fakturaer
+NewSupplier=Ny leverandør
+History=Historie
+ListOfSuppliers=Liste over leverandører
+ShowSupplier=Vis leverandør
+OrderDate=Bestil dato
+BuyingPrice=Koebspris
+AddSupplierPrice=Tilføj leverandør pris
+ChangeSupplierPrice=Skifte leverandør pris
+ErrorQtyTooLowForThisSupplier=Mængde for lav for denne leverandør eller ingen pris defineret om dette produkt for denne leverandør
+ErrorSupplierCountryIsNotDefined=Land for denne leverandør er ikke defineret. Korrigere denne første.
+ProductHasAlreadyReferenceInThisSupplier=Dette produkt har allerede en henvisning i denne leverandør
+NoRecordedSuppliers=Nr. leverandører registreres
+SupplierPayment=Leverandør betaling
+SuppliersArea=Leverandører område
+RefSupplierShort=Ref. leverandør
+ExportDataset_fournisseur_1=Leverandør fakturaer listen og fakturaer &#39;linjer
+ExportDataset_fournisseur_2=Leverandør fakturaer og betalinger
+ApproveThisOrder=Godkende denne ordre
+ConfirmApproveThisOrder=Er du sikker på at du vil godkende denne ordre?
+DenyingThisOrder=Benægte denne ordre
+ConfirmDenyingThisOrder=Er du sikker på at du vil benægte denne ordre?
+ConfirmCancelThisOrder=Er du sikker på du vil annullere denne ordre?
+AddCustomerOrder=Opret kunde for
+AddCustomerInvoice=Opret kunde faktura
+AddSupplierOrder=Opret leverandør for
+AddSupplierInvoice=Opret leverandørens faktura
+ListOfSupplierProductForSupplier=Liste over produkter og priser for <b>leverandørens% s</b>
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

@@ -1,0 +1,38 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+DomainPassword=Salasana verkkotunnuksen
+YouMustChangePassNextLogon=Salasana <b>käyttäjän% s verkkotunnuksen% s</b> on muuttunut.
+UserMustChangePassNextLogon=Käyttäjän on muutettava salasana verkkotunnuksen% s
+LdapUacf_NORMAL_ACCOUNT=User account
+LdapUacf_DONT_EXPIRE_PASSWORD=Salasana ei vanhene
+LdapUacf_ACCOUNTDISABLE=Tili on poistettu käytöstä verkkotunnuksen% s
+LDAPInformationsForThisContact=Tiedot LDAP-tietokannan tämä yhteystieto
+LDAPInformationsForThisUser=Tiedot LDAP-tietokannan tämän käyttäjän
+LDAPInformationsForThisGroup=Tiedot LDAP-tietokannan tähän ryhmään
+LDAPInformationsForThisMember=Tiedot LDAP-tietokannan tämä jäsen
+LDAPAttribute=LDAP-attribuutti
+LDAPAttributes=LDAP-attribuutteja
+LDAPCard=LDAP-kortti
+LDAPRecordNotFound=Kirjataan ei löydy LDAP-tietokanta
+LDAPUsers=Käyttäjät LDAP-tietokanta
+LDAPGroups=Ryhmät LDAP-tietokanta
+LDAPFieldStatus=Tila
+LDAPFieldFirstSubscriptionDate=Ensimmäisen tilauksen päivämäärä
+LDAPFieldFirstSubscriptionAmount=Fist merkinnän määrästä
+LDAPFieldLastSubscriptionDate=Viimeisin tilaus päivämäärän
+LDAPFieldLastSubscriptionAmount=Viimeisin tilaus määrä
+SynchronizeDolibarr2Ldap=Synkronoi käyttäjä (Dolibarr -&gt; LDAP)
+UserSynchronized=Käyttäjän synkronoidaan
+ForceSynchronize=Force synkronointi Dolibarr -&gt; LDAP
+ErrorFailedToReadLDAP=Lukeminen epäonnistui LDAP-tietokantaan. Tarkista LDAP-moduulin asennus ja tietokannan saavutettavuus.
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

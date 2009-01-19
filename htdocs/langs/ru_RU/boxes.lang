@@ -1,0 +1,62 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+BoxLastRssInfos=Rss информации
+BoxLastProducts=Последние продукты / услуги
+BoxLastProductsInContract=Последний контракт продукции / услуг
+BoxLastSupplierBills=Последнее поставщиком счета-фактуры
+BoxLastCustomerBills=Последнее клиента счета-фактуры
+BoxOldestUnpayedCustomerBills=Старые unpayed клиента счета-фактуры
+BoxOldestUnpayedSupplierBills=Старые unpayed поставщиком счета-фактуры
+BoxLastProposals=Последние коммерческие предложения
+BoxLastProspects=Последнее перспективы
+BoxLastCustomers=Последние клиенты
+BoxLastCustomerOrders=Последние заказы
+BoxLastSuppliers=Последнее поставщиков
+BoxLastBooks=Последние книги
+BoxLastActions=Последние действия
+BoxCurrentAccounts=Текущий баланс счетов
+BoxSalesTurnover=Оборот по продажам
+BoxTotalUnpayedCustomerBills=Всего unpayed клиента счета-фактуры
+BoxTotalUnpayedSuppliersBills=Всего unpayed поставщиком счета-фактуры
+BoxTitleLastBooks=Последнее% S зарегистрированные книг
+BoxTitleNbOfCustomers=Имя клиента
+BoxTitleLastRssInfos=Последние новости% S% от S
+BoxTitleLastProducts=Последнее% S модифицированных продуктов / услуг
+BoxTitleLastCustomerOrders=Последнее% S измененных заказов
+BoxTitleLastSuppliers=Последнее% S зарегистрированных поставщиков
+BoxTitleLastCustomers=Последнее% S зарегистрированных клиентов
+BoxTitleLastCustomersOrProspects=Последнее% S зарегистрированные клиенты и перспективы
+BoxTitleLastPropals=Последнее% S зарегистрированы предложения
+BoxTitleLastCustomerBills=Последнее% с клиента счета
+BoxTitleLastSupplierBills=Последнее% с поставщиком счета-фактуры
+BoxTitleLastProspects=Последнее% S зарегистрированные перспективы
+BoxTitleLastProductsInContract=Последняя% с derniers продукты / услуги, контракты
+BoxTitleOldestUnpayedCustomerBills=Старые% S unpayed клиента счета-фактуры
+BoxTitleOldestUnpayedSupplierBills=Старые% S unpayed поставщиками счетов-фактур
+BoxTitleCurrentAccounts=Текущий счет в остатках
+BoxTitleSalesTurnover=Оборот по продажам
+BoxTitleTotalUnpayedCustomerBills=Unpayed клиента счета-фактуры
+BoxTitleTotalUnpayedSuppliersBills=Unpayed поставщиком счета-фактуры
+BoxMyLastBookmarks=Мой последний% с закладками
+FailedToRefreshDataInfoNotUpToDate=Не удалось обновить RSS поток. Последняя дата обновления успешным:% S
+NoRecordedBookmarks=No bookmarks defined. Click <a href=Нет закладок определены. Нажмите <a href="%s">здесь,</a> чтобы добавить закладку.
+NoRecordedCustomers=Нет зарегистрированных клиентов
+BoxTitleLastActionsToDo=Последнее% с действиями делать
+NoActionsToDo=Нет действия, сделать
+NoRecordedOrders=Нет зарегистрированных клиентов заказы
+NoRecordedProposals=Зарегистрировано ни одного предложения
+NoRecordedInvoices=Зарегистрировано ни одного клиента счета
+NoUnpayedCustomerBills=Нет unpayed клиента счета-фактуры
+NoRecordedSupplierInvoices=Зарегистрировано ни одного поставщика, счета-фактуры
+NoUnpayedSupplierBills=Нет unpayed поставщиком счета-фактуры
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

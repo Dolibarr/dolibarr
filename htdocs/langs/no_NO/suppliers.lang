@@ -1,0 +1,46 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Suppliers=Leverandører
+Supplier=Tilbydersøk
+AddSupplier=Legg til en leverandør
+SupplierRemoved=Tilbydersøk fjernet
+SuppliersInvoice=Leverandører faktura
+SuppliersInvoices=Leverandører fakturaer
+NewSupplier=Ny leverandør
+History=Historie
+ListOfSuppliers=Liste over leverandører
+ShowSupplier=Vis leverandør
+OrderDate=Ordredato
+BuyingPrice=Kjøpe pris
+AddSupplierPrice=Legg leverandør pris
+ChangeSupplierPrice=Endre leverandør pris
+ErrorQtyTooLowForThisSupplier=Mengde for lavt for denne leverandøren eller ingen pris definert på dette produktet på denne leverandør
+ErrorSupplierCountryIsNotDefined=Landet for denne leverandøren er ikke definert. Riktig dette først.
+ProductHasAlreadyReferenceInThisSupplier=Dette produktet har allerede en referanse i denne leverandør
+NoRecordedSuppliers=Ingen leverandører registrert
+SupplierPayment=Tilbydersøk betaling
+SuppliersArea=Leverandører området
+RefSupplierShort=Ref. leverandør
+ExportDataset_fournisseur_1=Leverandørfakturaer og fakturaer &#39;linjer
+ExportDataset_fournisseur_2=Leverandørfakturaer og betalinger
+ApproveThisOrder=Godkjenn denne bestillingen
+ConfirmApproveThisOrder=Er du sikker på at du vil godkjenne denne ordren?
+DenyingThisOrder=Avkrefte denne bestillingen
+ConfirmDenyingThisOrder=Er du sikker på at du vil avslå denne bestillingen?
+ConfirmCancelThisOrder=Er du sikker på at du vil kansellere denne bestillingen?
+AddCustomerOrder=Opprette kundeordre
+AddCustomerInvoice=Opprett kunde faktura
+AddSupplierOrder=Opprett leverandør bestilling
+AddSupplierInvoice=Opprett leverandør faktura
+ListOfSupplierProductForSupplier=Listen over produkter og priser for <b>leverandør% s</b>
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

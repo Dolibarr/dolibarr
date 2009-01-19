@@ -1,0 +1,94 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ContractsArea=Kontrakter område
+ListOfContracts=Liste over kontrakter
+LastContracts=Seneste% s modificerede kontrakter
+AllContracts=Alle kontrakter
+ContractCard=Kontrakt-kortet
+ContractStatus=Kontrakt status
+ContractStatusNotRunning=Ikke kører
+ContractStatusRunning=Kørsel
+ContractStatusDraft=Udkast
+ContractStatusValidated=Valideret
+ContractStatusClosed=Lukket
+ServiceStatusInitial=Ikke kører
+ServiceStatusRunning=Kørsel
+ServiceStatusLate=Kører, er udløbet
+ServiceStatusClosed=Lukket
+ServicesLegend=Services legend
+Contracts=Kontrakter
+Contract=Kontrakt
+ContractContacts=Kontrakt kontakter
+NoContracts=Nr. kontrakter
+MenuServices=Services
+MenuInactiveServices=Tjenester, der ikke er aktive
+MenuRunningServices=Kørsel tjenester
+MenuExpiredServices=Udløbet tjenester
+MenuClosedServices=Lukket tjenester
+NewContract=Ny kontrakt
+AddContract=Tilføj kontrakt
+SearchAContract=Søg en kontrakt
+DeleteAContract=Slet en kontrakt
+CloseAContract=Luk en kontrakt
+ConfirmDeleteAContract=Er du sikker på du vil slette denne kontrakt og alle dets tjenester?
+ConfirmValidateContract=Er du sikker på at du ønsker at validere denne kontrakt?
+ConfirmCloseContract=Dette vil lukke alle tjenester (aktiv eller ej). Er du sikker på du ønsker at lukke denne kontrakt?
+ConfirmCloseService=Er du sikker på du ønsker at lukke denne service med <b>dato% s?</b>
+ValidateAContract=Validere en kontrakt
+ActivateService=Aktivér service
+ConfirmActivateService=Er du sikker på du vil aktivere denne tjeneste med datoen <b>for% s?</b>
+DateContract=Kontrakt dato
+DateServiceActivate=Forkyndelsesdato aktivering
+DateServiceUnactivate=Forkyndelsesdato unactivation
+DateServiceStart=Dato for starten af service
+DateServiceEnd=Datoen for afslutningen af tjenesten
+ShowContract=Vis kontrakt
+ListOfServices=Liste over tjenesteydelser
+ListOfRunningContractsLines=Liste over kører kontrakt linjer
+ListOfRunningServices=Liste over kører tjenester
+NotActivatedServices=Ikke aktiverede tjenester (blandt valideret kontrakter)
+BoardNotActivatedServices=Tjenester for at aktivere blandt valideret kontrakter
+LastContracts=Seneste% kontrakter
+LastActivatedServices=Seneste% s aktiveret tjenester
+LastModifiedServices=Seneste% s modificerede tjenester
+EditServiceLine=Rediger service line
+ContractStartDate=Startdato
+ContractEndDate=Slutdato
+DateStartPlanned=Planlagt startdato
+DateStartPlannedShort=Planlagt startdato
+DateEndPlanned=Planlagte slutdato
+DateEndPlannedShort=Planlagte slutdato
+DateStartReal=Real startdato
+DateStartRealShort=Real startdato
+DateEndReal=Real slutdato
+DateEndRealShort=Real slutdato
+NbOfServices=Nb af tjenesteydelser
+CloseService=Luk service
+ServicesNomberShort=% s tjeneste (r)
+RunningServices=Kørsel tjenester
+BoardRunningServices=Udløbet kører tjenester
+ServiceStatus=Status for service
+DraftContracts=Drafts kontrakter
+CloseRefusedBecauseOneServiceActive=Kontrakten ikke kan lukkes, da der er mindst en åben tjeneste på det
+CloseAllContracts=Luk alle kontrakter
+MoveToAnotherContract=Flyt tjeneste i en anden kontrakt.
+ConfirmMoveToAnotherContract=Jeg choosed nyt mål kontrakt og bekræfte, jeg ønsker at flytte denne tjeneste i denne kontrakt.
+ConfirmMoveToAnotherContractQuestion=Vælg, hvor eksisterende kontrakt (af samme tredjemand), du ønsker at flytte denne service?
+TypeContact_contrat_internal_SALESREPSIGN=Salg repræsentant, der underskriver kontrakt
+TypeContact_contrat_internal_SALESREPFOLL=Salg repræsentant opfølgning kontrakt
+TypeContact_contrat_external_BILLING=Faktureringsindstillinger kunde kontakt
+TypeContact_contrat_external_CUSTOMER=Opfølgning kunde kontakt
+TypeContact_contrat_external_SALESREPSIGN=Undertegnelse kontrakt kunde kontakt
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

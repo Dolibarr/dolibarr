@@ -1,0 +1,57 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+RefSending=Ref. отправка
+Sending=Отправка
+Sendings=Отправок
+Receivings=Receivings
+SendingsArea=Отправок области
+ListOfSendings=Список отправок
+SendingMethod=Отправка метод
+SendingReceipt=Отправка получения
+LastSendings=Последнее% S отправок
+SearchASending=Поиск направления
+StatisticsOfSendings=Статистика отправок
+NbOfSendings=Число отправок
+SendingCard=
+NewSending=Новые направления
+CreateASending=Создать отправке
+CreateSending=Создать отправке
+QtyOrdered=Количество заказанных
+QtyShipped=Количество отгружен
+QtyToShip=Количество судов
+QtyReceived=Количество получил
+KeepToShip=Держите на корабль
+OtherSendingsForSameOrder=Другие отправок с этой целью
+DateSending=Дата отправки порядка
+DateSendingShort=Дата отправки порядка
+SendingsForSameOrder=Отправок с этой целью
+SendingsAndReceivingForSameOrder=Отправок и receivings в таком порядке
+SendingsToValidate=Отправка на проверку
+StatusSendingDraft=Черновик
+StatusSendingValidated=Удостоверенная (продукты для судна или уже отгружен)
+StatusSendingDraftShort=Черновик
+StatusSendingValidatedShort=Подтвержденные
+SendingSheet=Отправка листа
+Carriers=Перевозчики
+Carrier=Перевозчик
+CarriersArea=Перевозчики области
+NewCarrier=Новый перевозчик
+ConfirmDeleteSending=Вы уверены, что хотите удалить эту отправку?
+ConfirmValidateSending=Вы уверены, что хотите valdate этой передаче?
+ConfirmCancelSending=Вы уверены, что хотите отменить отправку?
+GenericTransport=Общие транспорт
+Enlevement=Полученной клиентом
+DocumentModelSimple=Простая модель документа
+WarningNoQtyLeftToSend=Внимание, без продуктов, ожидающих отправки.
+NumRefModelJade=Вернуться номер с форматом BLYY00001, ... где YY является год. Количество на конец никогда сброс до нуля.
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

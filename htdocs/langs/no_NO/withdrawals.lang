@@ -1,0 +1,46 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+StandingOrdersArea=Stående ordre området
+CustomersStandingOrdersArea=Kunder stående ordre området
+StandingOrders=Stående ordre
+StandingOrder=Stående ordre
+NewStandingOrder=Ny stående pålegg
+Withdrawals=Uttak
+Withdrawal=Uttak
+WithdrawalsReceipts=Uttak kvitteringer
+WithdrawalReceipt=Uttak kvittering
+WithdrawalReceiptShort=Kvittering
+LastWithdrawalReceipts=Siste% s tilbaketrekking kvitteringer
+WithdrawedBills=Withdrawed fakturaer
+WithdrawalsLines=Uttak linjer
+RequestStandingOrderToTreat=Forespørsel om stående ordre om å behandle
+RequestStandingOrderTreated=Forespørsel om stående ordre behandles
+CustomersStandingOrders=Kunden stående ordre
+CustomerStandingOrder=Kunden stående pålegg
+NbOfInvoiceToWithdraw=Nb av faktura med trekke forespørsel
+InvoiceWaitingWithdraw=Faktura venter trekke
+AmountToWithdraw=Beløp å trekke
+WithdrawsRefused=Trekker nektet
+NoInvoiceToWithdraw=Ingen kunde faktura på innbetaling mode &quot;trekke&quot; venter. Gå på &quot;Uttak&quot;-kategorien på fakturaen kortet å gjøre en avtale.
+ResponsibleUser=Ansvarlig brukeren
+WithdrawalsSetup=Uttak oppsett
+WithdrawStatistics=Trekker &#39;statistikk
+WithdrawRejectStatistics=Uttak avviser &#39;statistikk
+LastWithdrawalReceipt=Siste% s trekke kvitteringer
+MakeWithdrawRequest=Foreta en trekke forespørsel
+ThirdPartyBankCode=Tredjepartsprodukter bankkode
+ThirdPartyDeskCode=Tredjepartsprodukter desk koden
+NoInvoiceCouldBeWithdrawed=Ingen faktura withdrawed med suksess. Kontroller at fakturaen er på selskaper med en gyldig BAN.
+ClassCredited=Klassifisere kreditert
+ClassCreditedConfirm=Er du sikker på at du vil klassifisere dette tilbaketrekking kvittering som krediteres på bankkontoen din?
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

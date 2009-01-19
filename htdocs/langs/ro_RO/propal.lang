@@ -1,0 +1,91 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Proposals=Comerciale propuneri
+Proposal=Comerciale propunerea
+ProposalsDraft=Proiect de propuneri comerciale
+ProposalDraft=Proiect de propunere comerciale
+ProposalsOpened=Deschis comerciale propuneri
+Prop=Comerciale propuneri
+CommercialProposal=Comerciale propunerea
+CommercialProposals=Comerciale propuneri
+ProposalContact=Propunere de contact
+NewProp=Noua propunere comerciale
+NewProposal=Noua propunere comerciale
+NewPropal=Noua propunere
+Prospect=Prospect
+ProspectList=Prospect lista
+DeleteProp=Ştergere comerciale propunerea
+ValidateProp=Validate comerciale propunerea
+AddProp=Adauga propunere
+ConfirmDeleteProp=Sunteţi sigur că doriţi să ştergeţi acest comerciale propunerea?
+ConfirmValidateProp=Sunteţi sigur că doriţi să valideze această propunere comerciale?
+LastPropals=Ultima% s propuneri
+LastClosedProposals=Ultima% s închis propuneri
+AllPropals=Toate propunerile
+LastProposals=Ultimele propuneri
+SearchAProposal=Cautati o propunere
+ProposalsStatistics=Comerciale propuneri &#39;statistici
+NumberOfProposalsByMonth=Numărul de luni
+AmountOfProposalsByMonthHT=Suma de luna (net de impozite)
+NbOfProposals=Numărul de propuneri
+ShowPropal=Arata propunerea
+PropalsDraft=Schiţe
+PropalsOpened=Deschis
+PropalsNotBilled=Închis nu facturat
+PropalStatusDraft=Proiect (trebuie să fie validate)
+PropalStatusValidated=Validat (propunere este deschis)
+PropalStatusOpened=Validat (propunere este deschis)
+PropalStatusClosed=Închis
+PropalStatusSigned=Semnat (cu factura)
+PropalStatusNotSigned=Nu a semnat (închis)
+PropalStatusBilled=Facturat
+PropalStatusDraftShort=Proiect
+PropalStatusValidatedShort=Validat
+PropalStatusOpenedShort=Deschis
+PropalStatusClosedShort=Închis
+PropalStatusSignedShort=Semnat
+PropalStatusNotSignedShort=Nu este semnat
+PropalStatusBilledShort=Facturat
+PropalsToClose=Comerciale propuneri pentru a închide
+PropalsToBill=Semnat comerciale propuneri de proiect de lege
+ListOfProposals=Lista de propuneri comerciale
+ActionsOnPropal=Acţiuni la propunerea
+NoOpenedPropals=Nu a deschis comerciale propuneri
+NoOtherOpenedPropals=Nu există alte propuneri deschis comerciale
+RefProposal=Comerciale propunerea ref
+SendPropalByMail=Trimite comerciale propunerea de mail
+FileNotUploaded=Fişierul nu a fost încărcat
+FileUploaded=Fişierul a fost încărcat cu succes
+AssociatedDocuments=Documente asociate cu propunerea:
+ErrorCantOpenDir=Nu se poate deschide directorul
+DateEndPropal=Data sfârşitul valabilitate
+DateEndPropalShort=Data sfârşit
+ValidityDuration=Durata de valabilitate
+CloseAs=Close cu statut
+ClassifyBilled=Clasifica facturat
+BuildBill=Build factură
+RelatedBill=Legate de factură
+RelatedBills=Legate de facturi
+ErrorPropalNotFound=Propal% s nu a fost găsit
+Estimate=Estimare:
+EstimateShort=Estimaţi
+OtherPropals=Alte propuneri
+CopyPropalFrom=Creaţi propunerea comerciale prin copierea existente propunerea
+CreateEmptyPropal=Creaţi gol propuneri vierge comerciale sau de la lista de produse / servicii
+DefaultProposalDurationValidity=Implicit comerciale propunerea valabilitate durata (în zile)
+UseCustomerContactAsPropalRecipientIfExist=Utilizaţi client adresa de contact, dacă este definită în loc de o terţă parte adresa ca propunerea adresa destinatarului
+ClonePropal=Clone comerciale propunerea
+ConfirmClonePropal=Sunteţi sigur că doriţi să clona această propunere <b>comerciale% s?</b>
+DocModelAzurDescription=Un model de propunere (logo. ..)
+DocModelJauneDescription=Jaune propunerea model
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

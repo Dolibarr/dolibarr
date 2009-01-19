@@ -51,23 +51,36 @@ $error=0;
 // -------------------- START OF YOUR CODE HERE --------------------
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") *****\n";
+$dir=DOL_DOCUMENT_ROOT."/langs";
 
 // Check parameters
 if (! isset($argv[2])) {
     print "Usage:   ".$script_file." lang_code_src lang_code_dest\n";
     print "Example: ".$script_file." en_US         pt_PT\n";
+    print "Tem:     code to use can be found on http://www.google.com/language_tools\n";
     exit;
 }
 
 // Show parameters
 print 'Argument 1='.$argv[1]."\n";
 print 'Argument 2='.$argv[2]."\n";
-print 'Files will be generated/updated in directory '.DOL_DOCUMENT_ROOT."/langs\n";
+print 'Files will be generated/updated in directory '.$dir."\n";
+
+if (! is_dir($dir.'/'.$argv[2]))
+{
+	print 'Create directory '.$dir.'/'.$argv[2]."\n";
+	$result=mkdir($dir.'/'.$argv[2]);
+	if (! $result)
+	{
+		$db->close();
+		return -1;
+	}
+}
 
 // Examples for manipulating class skeleton_class
 require_once(DOL_DOCUMENT_ROOT."/../dev/translation/langAutoParser.class.php");
 
-$langParser = new langAutoParser($argv[2],$argv[1],DOL_DOCUMENT_ROOT.'/langs');
+$langParser = new langAutoParser($argv[2],$argv[1],$dir);
 
 // -------------------- END OF YOUR CODE --------------------
 

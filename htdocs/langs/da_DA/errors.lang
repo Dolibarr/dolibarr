@@ -1,0 +1,61 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ErrorLoginAlreadyExists=Log ind% s eksisterer allerede.
+ErrorGroupAlreadyExists=Gruppe% s eksisterer allerede.
+ErrorDuplicateTrigger=En udløse fil med klasse nam <b>&#39;% s&#39;</b> er til stede sevaral gange. Fjern duplikateksemplaret udløse filen i mappen <b>&#39;% s&#39;.</b>
+ErrorFailToDeleteFile=Det lykkedes ikke at fjerne filen <b>&#39;% s&#39;.</b>
+ErrorFailToCreateFile=Kunne ikke oprette filen <b>&#39;% s&#39;.</b>
+ErrorFailToRenameDir=Kunne ikke omdøbe mappe <b>&#39;% s&#39; i&#39;% s&#39;.</b>
+ErrorFailToCreateDir=Kunne ikke oprette mappen <b>&#39;% s&#39;.</b>
+ErrorFailToDeleteDir=Det lykkedes ikke at slette mappen <b>&#39;% s&#39;.</b>
+ErrorFailedToDeleteJoinedFiles=Kan ikke slette enhed, fordi der er nogle tiltrådte filer. Fjern slutte filer først.
+ErrorThisContactIsAlreadyDefinedAsThisType=Denne kontaktperson er allerede defineret som kontaktperson for denne type.
+ErrorCashAccountAcceptsOnlyCashMoney=Denne bankkonto er et kontant-konto, så det accepterer betaling af type cash only.
+ErrorFromToAccountsMustDiffers=Kilde og mål bankkonti skal være anderledes.
+ErrorBadThirdPartyName=Bad værdi for tredjeparts navn
+ErrorBadCustomerCodeSyntax=Bad syntaks for kunde-kode
+ErrorCustomerCodeRequired=Kunden kode kræves
+ErrorCustomerCodeAlreadyUsed=Kunden koden allerede anvendes
+ErrorPrefixRequired=Prefix kræves
+ErrorBadSupplierCodeSyntax=Bad syntaks for leverandør-kode
+ErrorSupplierCodeRequired=Leverandør kode kræves
+ErrorSupplierCodeAlreadyUsed=Leverandør koden allerede anvendes
+ErrorBadParameters=Bad parametre
+ErrorFailedToWriteInDir=Det lykkedes ikke at skrive i mappen% s
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Fundet forkerte e-mail-syntaks for% s linjer i filen (f.eks line% s med email =% s)
+ErrorUserCannotBeDelete=Bruger kan ikke slettes. Kan det er knyttet til den Dolibarr enheder.
+ErrorFieldsRequired=Nogle krævede felter ikke var fyldt.
+ErrorFailedToCreateDir=Det lykkedes ikke at oprette en mappe. Kontroller, at web-serveren bruger har tilladelse til at skrive i Dolibarr dokumenter bibliotek. Hvis parameter <b>safe_mode</b> er aktiveret på dette PHP, kontrollere, at Dolibarr php filer ejer til web-serveren bruger (eller gruppe).
+ErrorNoMailDefinedForThisUser=Nr. mail defineret for denne bruger
+ErrorFeatureNeedJavascript=Denne funktion skal have Javascript skal aktiveres for at arbejde. Ændre dette i opsætningen - displayet.
+ErrorTopMenuMustHaveAParentWithId0=En menu af type &#39;Top&#39; kan ikke have en forælder menuen. Sæt 0 i moderselskabet menu eller vælge en menu af typen »Venstre«.
+ErrorLeftMenuMustHaveAParentId=En menu af typen »Venstre« skal have en forælder id.
+ErrorGenbarCodeNotfound=Filen blev ikke fundet (Forkert sti, forkerte tilladelser eller adgang nægtet ved openbasedir parameter)
+ErrorFunctionNotAvailableInPHP=<b>Funktion% s</b> er påkrævet for denne funktion, men er ikke tilgængelig i denne version / opsætning af PHP.
+ErrorDirAlreadyExists=En mappe med dette navn findes allerede.
+ErrorFieldCanNotContainSpecialCharacters=<b>Felt% s</b> må ikke indeholder specialtegn.
+WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> skal være slået <b>til</b> i filer <b>php.ini</b> for at have dette modul arbejder fuldstændigt. Du skal ændre denne fil manuelt.
+WarningBuildScriptNotRunned=<b>Script% s</b> var endnu ikke løb at opbygge grafik, eller der er ingen data at vise.
+WarningBookmarkAlreadyExists=Et bogmærke med denne titel eller dette mål (URL), der allerede eksisterer.
+WarningPassIsEmpty=Advarsel, database password er tomt. Det er en sikkerheds hul. Du skal tilføje en adgangskode til din database og ændre din conf.php fil for at afspejle dette.
+ErrorNoAccountancyModuleLoaded=Nr. regnskabspool modul aktiveret
+ErrorExportDuplicateProfil=Denne profil navn eksisterer allerede for denne eksport sæt.
+ErrorLDAPSetupNotComplete=Dolibarr-LDAP matchende er ikke komplet.
+ErrorLDAPMakeManualTest=A. LDIF-fil er blevet genereret i mappen% s. Prøv at indlæse den manuelt fra kommandolinjen for at få flere informationer om fejl.
+ErrorCantSaveADoneUserWithZeroPercentage=Kan ikke gemme en aktion med &quot;vedtægt ikke startes&quot;, hvis feltet &quot;udført af&quot; er også fyldt.
+ErrorBillRefAlreadyExists=Ref bruges til oprettelse eksisterer allerede.
+ErrorPleaseTypeBankTransactionReportName=Please type bank modtagelsen navn, hvor transaktionen er rapporteret (Format ÅÅÅÅMM eller ÅÅÅÅMMDD)
+ErrorRecordHasChildren=Det lykkedes ikke at slette poster, da det har nogle Childs.
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

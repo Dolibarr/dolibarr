@@ -1,0 +1,75 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+WarehouseCard=Склад-карты
+Warehouse=Склад
+NewWarehouse=Новый склад / Фондовый области
+MenuNewWarehouse=Новый склад
+WarehouseOpened=Склад открыт
+WarehouseClosed=Склад закрыто
+WarehouseSource=Источник склад
+WarehouseTarget=Целевой показатель на складе
+ValidateSending=Удалить отправке
+CancelSending=Отменить отправку
+DeleteSending=Удалить отправке
+Stock=Фондовый
+Stocks=Акции
+Movement=Движение
+Movements=Перевозкой
+ErrorWarehouseRefRequired=Склад ссылкой зовут требуется
+ErrorWarehouseLabelRequired=Склад этикетке необходимо
+CorrectStock=Правильно запас
+ListOfWarehouses=Список складов
+ListOfStockMovements=Список акций движения
+StocksArea=Акции области
+Location=Вместо
+LocationSummary=Сокращенное наименование расположение
+NumberOfProducts=Общее количество продукции
+LastMovement=Последнее движение
+LastMovements=Последние движения
+Units=Единицы
+Unit=Единица
+StockCorrection=Правильно запас
+StockMovement=Трансфер
+StockMovements=Фондовый переводы
+NumberOfUnit=Количество единиц
+TotalStock=Всего на складе
+StockTooLow=Фондовый слишком низкими
+EnhancedValue=Значение
+PMPValue=Значение
+EnhancedValueOfWarehouses=Склады стоимости
+UserWarehouseAutoCreate=Создать запас автоматически при создании пользователя
+QtyDispatched=Количество направил
+OrderDispatch=Приказ диспетчерского
+RuleForStockManagementDecrease=Правило для управления запасами сокращение
+RuleForStockManagementIncrease=Правило для управления запасами увеличить
+DeStockOnBill=Снижение реальных запасов на счета / кредитных нот (предупреждение, в этой версии, это только на склад № 1, что запас изменяется)
+DeStockOnValidateOrder=Снижение реальных запасов по заказам записки (предупреждение, в этой версии, это только на склад № 1, что запас изменяется)
+DeStockOnShipment=Снижение реальных запасов по отгрузке (recommanded)
+ReStockOnBill=Увеличение реальных запасов на счета / кредитных нот (предупреждение, в этой версии, это только на склад № 1, что запас изменяется)
+ReStockOnValidateOrder=Увеличение реальных запасов по заказам записки (предупреждение, в этой версии, это только на склад № 1, что запас изменяется)
+StockDiffPhysicTeoric=Причина разницы запас физических и теоретических
+StockLimitShort=Предельные
+StockLimit=Фондовый предел для оповещения
+PhysicalStock=Физическая запас
+RealStock=Real фондовая
+TheoreticalStock=Therocial запас
+VirtualStock=Виртуальный запас
+MininumStock=Минимальный запас
+StockUp=Запасти
+MininumStockShort=Фондовый мин
+StockUpShort=Запасти
+IdWarehouse=Идентификатор склад
+DescWareHouse=Описание склада
+LieuWareHouse=Локализация склад
+WarehousesAndProducts=Склады и продукты
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

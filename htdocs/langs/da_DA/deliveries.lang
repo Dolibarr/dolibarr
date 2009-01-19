@@ -1,0 +1,35 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Delivery=Aflevering
+Deliveries=Leverancer
+DeliveryCard=Levering kortet
+DeliveryOrder=Leveringsbevis med
+DeliveryOrders=Levering ordrer
+DeliveryDate=Leveringsdato
+DeliveryDateShort=Leve. dato
+CreateDeliveryOrder=Generer leveringsbevis med
+QtyDelivered=Qty leveret
+SetDeliveryDate=Indstil shipping dato
+ValidateDeliveryReceipt=Valider levering modtagelse
+ValidateDeliveryReceiptConfirm=Er du sikker på at du ønsker at validere denne levering modtagelse?
+DeliveryMethod=Leveringsmåde
+TrackingNumber=Sporingsnummer
+NameAndSignature=Navn og underskrift:
+ToAndDate=To___________________________________ om ____ / _____ / __________
+GoodStatusDeclaration=Har modtaget varerne over i god stand,
+Deliverer=Befrier:
+Sender=Sender
+Recipient=Recipient
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

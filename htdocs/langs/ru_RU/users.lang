@@ -1,0 +1,109 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+UserCard=Пользователь карточки
+ContactCard=Контакт-карты
+GroupCard=Группа карту
+NoContactCard=Нет контактов между картой
+Permission=Разрешение
+Permissions=Разрешения
+EditPassword=Изменить пароль
+SendNewPassword=Отправить новый пароль
+ReinitPassword=Создать новый пароль
+PasswordChangedTo=Пароль изменен на:% S
+SubjectNewPassword=Ваш новый пароль для Dolibarr
+AvailableRights=Доступные разрешения
+OwnedRights=Собственное разрешение
+GroupRights=Группа разрешений
+UserRights=Пользователь разрешений
+UserGUISetup=Пользователь Настройка дисплея
+DisableUser=Выключать
+DisableAUser=Отключение пользователя
+DeleteUser=Удалить
+DeleteAUser=Удалить пользователя
+DisableGroup=Выключать
+DisableAGroup=Отключить группу
+EnableAUser=Включить пользователя
+EnableAGroup=Включить группы
+DeleteGroup=Удалить
+DeleteAGroup=Удалить группу
+ConfirmDisableUser=Вы уверены, что хотите, чтобы отключить <b>пользователя% S?</b>
+ConfirmDisableGroup=Вы уверены, что хотите отключить <b>группа% S?</b>
+ConfirmDeleteUser=Вы уверены, что хотите удалить <b>пользователя% S?</b>
+ConfirmDeleteGroup=Вы уверены, что хотите удалить <b>группу% S?</b>
+ConfirmEnableUser=Вы уверены, что хотите, чтобы <b>пользователь% S?</b>
+ConfirmEnableGroup=Вы уверены, что хотите, чтобы <b>группа% S?</b>
+ConfirmReinitPassword=Вы уверены, что хотите, чтобы создать новый пароль для <b>пользователя% S?</b>
+ConfirmSendNewPassword=Вы уверены, что хотите создать и отправить новый пароль для <b>пользователя% S?</b>
+NewUser=Новый пользователь
+CreateUser=Создать пользователя
+SearchAGroup=Поиск группы
+SearchAUser=Поиск пользователей
+ErrorFailedToSendPassword=Не удалось отправить пароль
+LoginNotDefined=Логин не определены.
+NameNotDefined=Имя не определено.
+ListOfUsers=Список пользователей
+Administrator=Администратор
+DefaultRights=По умолчанию разрешения
+DefaultRightsDesc=Определить здесь умолчанию разрешения, что автоматически предоставляются новые созданные пользователем.
+DolibarrUsers=Dolibarr пользователей
+LastName=Имя
+FirstName=Имя
+ListOfGroups=Список групп
+NewGroup=Новая группа
+CreateGroup=Создать группу
+RemoveFromGroup=Удалить из группы
+PasswordChangedAndSentTo=Пароль изменен и направил <b>в% S.</b>
+PasswordChangeRequestSent=Запрос на изменение пароля <b>для% S направлено% S.</b>
+MenuUsersAndGroups=И Пользователи Группы
+LastGroupsCreated=Последнее% S созданы группы
+LastUsersCreated=Последнее% S пользователей создаются
+ShowGroup=Показать группы
+ShowUser=Показать пользователей
+NonAffectedUsers=Расходы пользователей
+UserModified=Пользователь изменен успешно
+GroupModified=Группа успешно изменен
+PhotoFile=Фото файл
+UserWithDolibarrAccess=Пользователь с доступом Dolibarr
+ListOfUsersInGroup=Список пользователей в эту группу
+ListOfGroupsForUser=Список групп для этого пользователя
+UsersToAdd=Пользователи, чтобы добавить к этой группе
+GroupsToAdd=Группы, чтобы добавить к этому пользователю
+NoLogin=Нет входа
+CreateDolibarrLogin=Создать аккаунт Dolibarr
+LoginAccountDisable=Учетная запись отключена, поставить новую регистрационную информацию, чтобы активировать ее.
+LoginAccountDisableInDolibarr=Счет-инвалидов в Dolibarr.
+LoginAccountDisableInLdap=Счет-инвалидов в домене.
+UsePersonalValue=Использование личных ценностей
+GuiLanguage=Язык интерфейса
+InternalUser=Внутренний пользователь
+MyInformations=Мои данные
+ExportDataset_user_1=Dolibarr пользователей и свойства
+DomainUser=Домен пользователя% S
+Reactivate=Возобновить
+CreateInternalUserDesc=Эта форма позволяет пользователю создаст внутри вашей компании / Фонд. Для создания внешнего пользователя (заказчика, поставщика, ...), использовать кнопку &quot;Создать Dolibarr пользователя&quot; от третьего лица карточку контакта.
+InternalExternalDesc=<b>Внутреннего</b> пользователя является пользователем, который является частью вашей компании / Фонд. <br> <b>Внешний</b> пользователь клиента, поставщика или другого. <br><br> В обоих случаях разрешение определяет права на Dolibarr, а также внешних пользователей могут иметь разные меню менеджера, чем внутреннего пользователя (См. начало - настройки - дисплей)
+PermissionInheritedFromAGroup=Разрешение предоставляется, поскольку ineherited от одного из пользователей в группы.
+IdPhoneCaller=Идентификатор телефона абонента
+UserLogged=Пользователь% связаны с
+NewUserCreated=Пользователь% S создали
+NewUserPassword=Смена пароля для% S
+EventUserModified=Пользователь% с измененными
+UserDisabled=Пользователь% S-инвалидов
+UserEnabled=Пользователь% S активированного
+UserDeleted=Пользователь% S удален
+NewGroupCreated=Группа создала% S
+GroupModified=Группа% с измененными
+GroupDeleted=Группа удалить% S
+ConfirmCreateContact=Вы уверены, что Ю. хотите создать Dolibarr счета для этого обратиться?
+LoginToCreate=Логин для создания
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

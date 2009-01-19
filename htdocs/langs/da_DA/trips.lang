@@ -1,0 +1,31 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Trip=Tur
+Trips=Trips
+TripsAndExpenses=Udflugter og udgifter
+TripCard=Trip kortet
+AddTrip=Tilføj tur
+ListOfTrips=Liste over ture
+ListOfFees=Liste over gebyrer
+NewTrip=Ny tur
+CompanyVisited=Company / fundation besøgte
+Kilometers=Kilometer
+FeesKilometersOrAmout=Beløb eller kilometer
+DeleteTrip=Slet tur
+ConfirmDeleteTrip=Er du sikker på du vil slette denne tur?
+TF_OTHER=Anden
+TF_LUNCH=Frokost
+TF_TRIP=Tur
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

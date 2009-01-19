@@ -1,0 +1,92 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ContractsArea=Sopimukset alueella
+ListOfContracts=Luetteloa sopimuksista
+LastContracts=Viimeisin% s muunnettu sopimukset
+AllContracts=Kaikki sopimukset
+ContractCard=Sopimus-kortti
+ContractStatus=Sopimus asema
+ContractStatusNotRunning=Ole käynnissä
+ContractStatusRunning=Running
+ContractStatusDraft=Vedos
+ContractStatusValidated=Validoidut
+ContractStatusClosed=Suljettu
+ServiceStatusInitial=Ole käynnissä
+ServiceStatusRunning=Running
+ServiceStatusLate=Juoksu, lakkaa
+ServiceStatusClosed=Suljettu
+ServicesLegend=Palvelut legenda
+Contracts=Sopimukset
+Contract=Sopimus
+ContractContacts=Sopimus yhteystiedot
+NoContracts=Sopimuksia ei
+MenuServices=Palvelut
+MenuInactiveServices=Palvelut, joita ei aktiivinen
+MenuRunningServices=Käynnissä olevat palvelut
+MenuExpiredServices=Lakkaa palvelut
+MenuClosedServices=Suljettu palvelut
+NewContract=Uusi sopimus
+AddContract=Lisää sopimuksen
+SearchAContract=Haku sopimuksen
+DeleteAContract=Poista sopimuksen
+CloseAContract=Sulje sopimuksen
+ConfirmDeleteAContract=Oletko varma, että haluat poistaa tämän sopimuksen ja kaikki sen palveluja?
+ConfirmValidateContract=Oletko varma, että haluamme vahvistaa tämän sopimuksen?
+ConfirmCloseContract=Tämä sulkee kaikki palvelut (aktiivinen tai ei). Oletko varma, että haluat sulkea tämän sopimuksen?
+ConfirmCloseService=Oletko varma, että haluat sulkea tämän palvelun <b>päivämäärä% s?</b>
+ValidateAContract=Vahvista sopimus
+ActivateService=Ota palvelu
+ConfirmActivateService=Oletko varma, että haluat aktivoida tämän palvelun <b>päivämäärä% s?</b>
+DateContract=Sopimuspäivä
+DateServiceActivate=Tiedoksiantopäivä aktivointi
+DateServiceUnactivate=Tiedoksiantopäivä unactivation
+DateServiceStart=Voimassaolo alkaa palvelun
+DateServiceEnd=Päivämäärä lopussa palvelu
+ShowContract=Näytä sopimus
+ListOfServices=Luettelo palveluista
+ListOfRunningContractsLines=Luettelo käynnissä sopimuksen linjat
+ListOfRunningServices=Luettelo käynnissä olevat palvelut
+NotActivatedServices=Ei aktivoitu palvelut (muun muassa validoitava sopimukset)
+BoardNotActivatedServices=Palvelut aktivoida kesken validoitava sopimukset
+LastContracts=Viimeisin% sopimukset
+LastActivatedServices=Viimeisin% s aktivoitu palvelut
+LastModifiedServices=Viimeisin% s muunnettu palvelut
+EditServiceLine=Muokkaa palvelulinja
+ContractStartDate=Aloituspäivämäärä
+ContractEndDate=Lopetuspäivä
+DateStartPlanned=SUUNNITELTU ALKAMISPÄIVÄ
+DateStartPlannedShort=SUUNNITELTU ALKAMISPÄIVÄ
+DateEndPlanned=Suunniteltu lopetuspäivämäärää
+DateEndPlannedShort=Suunniteltu lopetuspäivämäärää
+DateStartReal=Real Aloituspäivästä
+DateStartRealShort=Real Aloituspäivästä
+DateEndReal=Real lopetuspäivämäärää
+DateEndRealShort=Real lopetuspäivämäärää
+NbOfServices=Nb palvelujen
+CloseService=Sulje palvelu
+ServicesNomberShort=% s service (s)
+RunningServices=Käynnissä olevat palvelut
+BoardRunningServices=Lakkaa käynnissä olevat palvelut
+ServiceStatus=Tila-palvelun
+DraftContracts=Drafts sopimukset
+CloseRefusedBecauseOneServiceActive=Sopimus ei voida sulkea, koska on olemassa vähintään yksi avoin palvelu sitä
+CloseAllContracts=Sulje kaikki sopimukset
+MoveToAnotherContract=Siirrä palvelua toisen sopimuksen.
+ConfirmMoveToAnotherContract=I choosed uusi tavoite sopimuksen ja vahvistaa Haluan siirtää tämän palvelua tämän sopimuksen.
+ConfirmMoveToAnotherContractQuestion=Valitse jossa nykyistä sopimusta (samaa kolmannelle osapuolelle), jonka haluat siirtää tämän palvelun?
+TypeContact_contrat_internal_SALESREPSIGN=Myyntiedustajaasi allekirjoittamalla sopimuksen
+TypeContact_contrat_internal_SALESREPFOLL=Myyntiedustajaasi seurata sopimuksen
+TypeContact_contrat_external_BILLING=Laskutus asiakkaan yhteystiedot
+TypeContact_contrat_external_CUSTOMER=Seurata asiakkaiden yhteystiedot
+TypeContact_contrat_external_SALESREPSIGN=Kirjautuminen sopimus asiakkaiden yhteystiedot
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

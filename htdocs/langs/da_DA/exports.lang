@@ -1,0 +1,49 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ExportsArea=Eksport område
+ImportArea=Import område
+NewExport=Nye eksportmarkeder
+NewImport=Nye importcertifikater
+ExportableDatas=Exportable datasæt
+ImportableDatas=Indføres datasæt
+SelectExportDataSet=Vælg datasæt, du vil eksportere ...
+SelectExportFields=Vælg felter, du ønsker at eksportere, eller vælg en foruddefineret eksport profil
+SaveExportModel=Gem denne eksport profil hvis du planlægger at genbruge det senere ...
+ExportModelName=Eksporter Profilnavn
+ExportModelSaved=Eksporter profil gemt under <b>navnet% s.</b>
+ExportableFields=Exportable felter
+ExportedFields=Eksporteres felter
+DatasetToExport=Datasæt til eksport
+Dataset=Datasæt
+ChooseFieldsOrdersAndTitle=Vælg felter ordre ...
+FieldsOrder=Områder for
+FieldsTitle=Felter titel
+ChooseExportFormat=Vælg eksportformat
+NowClickToGenerateToBuildExportFile=Nu skal du klikke på &quot;Generer&quot; at opbygge eksport fil ...
+AvailableFormats=Formater disponibles
+LibraryUsed=Librairie
+LibraryVersion=Version
+Step=Trin
+FormatedImport=Import assistent
+FormatedImportDesc1=Dette område giver mulighed for at importere personlige data ved hjælp af en assistent til at hjælpe dig i processen uden teknisk viden.
+FormatedImportDesc2=Første trin er at vælge en konge af de data, du vil indlæse og derefter filen for at indlæse og derefter at vælge, hvilke felter du vil indlæse.
+FormatedExport=Eksport assistent
+FormatedExportDesc1=Dette område giver mulighed for at eksportere personlige data ved hjælp af en assistent til at hjælpe dig i processen uden teknisk viden.
+FormatedExportDesc2=Første trin er at vælge en foruddefineret datasæt, derefter at vælge, hvilke felter du ønsker i dit resultat filer, og hvilken rækkefølge.
+FormatedExportDesc3=Når data for at eksportere er valgt, kan du definere outputfil format du ønsker at eksportere dine data til.
+Sheet=Ark
+NoImportableData=Nr. indføres data (ingen modul med definitioner at tillade data import)
+FileSuccessfullyBuilt=Eksporter fil genereret
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

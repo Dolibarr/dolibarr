@@ -1,0 +1,33 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Delivery=Toimitus
+Deliveries=Toimitukset
+DeliveryCard=Toimitus-kortti
+DeliveryOrder=Toimitusvahvistus
+DeliveryOrders=Toimitus tilaukset
+DeliveryDate=Toimituspäivää
+DeliveryDateShort=Toimitus. päivämäärä
+CreateDeliveryOrder=Luo toimitusvahvistus
+QtyDelivered=Kpl toimitettu
+SetDeliveryDate=Aseta meriliikenneyhtiön päivämäärä
+ValidateDeliveryReceipt=Validate toimituksen vastaanottamisen
+ValidateDeliveryReceiptConfirm=Oletko varma, että haluat vahvistaa tämän toimituksen vastaanottamisesta?
+DeliveryMethod=Toimitustapa
+TrackingNumber=Seurantanumero
+NameAndSignature=Nimi ja allekirjoitus:
+ToAndDate=To___________________________________ on ____ / _____ / __________
+GoodStatusDeclaration=Ovat saaneet tavarat edellä hyvässä kunnossa,
+Deliverer=Deliverer:
+Sender=Sender
+Recipient=Edunsaajavaltiot
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

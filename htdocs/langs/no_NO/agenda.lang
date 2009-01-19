@@ -1,0 +1,59 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Actions=Handlinger
+ActionsArea=Handlinger området (arrangementer og oppgaver)
+Agenda=Agenda
+Agendas=Agendaer
+Calendar=Kalender
+Calendars=Kalendere
+AffectedTo=Berørte til
+DoneBy=Utført av
+Events=Events
+ListOfActions=Listen over hendelser
+Location=Sted
+SearchAnAction=Søk en handling / oppgave
+MenuToDoActions=Alle uncomplete handlinger
+MenuDoneActions=Alle avsluttet handlinger
+MenuToDoMyActions=Min ufullstendig handlinger
+MenuDoneMyActions=Min avsluttet handlinger
+ListOfEvents=Liste over Dolibarr hendelser
+ActionsAskedBy=Handlinger registrert av
+ActionsToDoBy=Handlinger påvirkes til
+ActionsDoneBy=Handlinger utført av
+AllMyActions=Alle mine handlinger / oppgaver
+AllActions=Toutes les handlinger / oppgaver
+ViewList=Vis liste
+ViewCal=Vis kalender
+ViewWithPredefinedFilters=Med forhåndsdefinerte filtre
+AutoActions=Automatisk utfylling av dagsorden
+AgendaAutoActionDesc=Define her hendelser som du vil Dolibarr å opprette automatisk en handling i agenda. Hvis ingenting er merket (som standard), bare manuell tiltak vil bli inkludert i agenda.
+AgendaSetupOtherDesc=Denne siden gjør det mulig å konfigurere andre parametere av agendaen modulen.
+ActionsEvents=Arrangementer som Dolibarr vil opprette en handling i agenda automatisk
+PropalValidatedInDolibarr=Forslaget validated
+InvoiceValidatedInDolibarr=Faktura validated
+OrderValidatedInDolibarr=Bestill validated
+NewCompanyToDolibarr=Tredjepartsprodukter opprettet
+DateActionPlannedStart=Planlagt startdato
+DateActionPlannedEnd=Planlagt sluttdato
+DateActionDoneStart=Real startdato
+DateActionDoneEnd=Real sluttdato
+DateActionStart=Startdato
+DateActionEnd=Sluttdato
+AgendaUrlOptions1=Du kan også legge til følgende parameter til å filtrere utgang:
+AgendaUrlOptions2=<b>login=<b>login =% s</b> for å begrense produksjonen til handlinger skapt av, påvirkes eller gjort av <b>brukeren% s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% s</b> for å begrense produksjonen til handlinger som er opprettet av <b>brukeren% s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% s</b> for å begrense produksjonen til handlinger påvirkes til <b>bruker% s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind =% s</b> for å begrense produksjonen til handlinger utført av <b>brukeren% s.</b>
+AgendaShowBirthdayEvents=Vis bursdag kontaktminne
+AgendaHideBirthdayEvents=Skjul bursdag kontaktminne
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

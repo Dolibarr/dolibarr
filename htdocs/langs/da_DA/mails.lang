@@ -1,0 +1,105 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Mailing=Emailing
+EMailing=Emailing
+Mailings=EMailings
+EMailings=EMailings
+MailCard=Emailing kortet
+MailTargets=Mål
+MailRecipients=Modtagere
+MailRecipient=Recipient
+MailTitle=Titel
+MailFrom=Sender
+MailErrorsTo=Fejl
+MailReply=Besvar
+MailTo=Receiver (r)
+MailCC=Kopier til
+MailCCC=Cachelagrede kopi til
+MailTopic=E-Mail emne
+MailText=Besked
+MailFile=Vedhæftede filer
+MailMessage=E-Mail organ
+ShowEMailing=Vis emailing
+ListOfEMailings=Liste over emailings
+NewMailing=Ny emailing
+EditMailing=Rediger emailing
+DeleteMailing=Slet emailing
+DeleteAMailing=Slette en e-mail
+PreviewMailing=Preview emailing
+PrepareMailing=Forbered emailing
+CreateMailing=Opret emailing
+MailingDesc=Denne side giver dig mulighed for at sende emailings til en gruppe af mennesker.
+MailingResult=Sende e-mails resultat
+TestMailing=Test emailing
+ValidMailing=Gyldig emailing
+ApproveMailing=Godkend emailing
+MailingStatusDraft=Udkast
+MailingStatusValidated=Valideret
+MailingStatusApproved=Godkendt
+MailingStatusSent=Sendt
+MailingStatusSentPartialy=Sendt delvist
+MailingStatusSentCompletely=Sendte helt
+MailingStatusError=Fejl
+MailingStatusNotSent=Ikke sendt
+MailSuccessfulySent=Email successfuly sendes (fra% s til% s)
+ErrorMailRecipientIsEmpty=E-mail-modtager er tom
+WarningNoEMailsAdded=Ingen nye e-mail for at tilføje til modtagerens listen.
+ConfirmValidMailing=Er du sikker på at du ønsker at validere denne e-mail?
+ConfirmDeleteMailing=Er du sikker på du vil slette denne emailling?
+NbOfRecipients=Antal modtagere
+NbOfUniqueEMails=Nb af unikke e-mails
+NbOfEMails=Nb af e-mails
+TotalNbOfDistinctRecipients=Antal forskellige modtagere
+NoTargetYet=Nr. modtagere er endnu ikke fastlagt (Gå på fanen &#39;modtagernes)
+AddRecipients=Tilføj modtagere
+RemoveRecipient=Fjern modtageren
+CommonSubstitutions=Fælles substitutioner
+YouCanAddYourOwnPredefindedListHere=Til at oprette din e-mail selector modulet, se htdocs / includes / modules / postforsendelser / README.
+EMailTestSubstitutionReplacedByGenericValues=Når du bruger testtilstand, substitutioner variabler er erstattet af generiske værdier
+MailingAddFile=Vedhæft denne fil
+NoAttachedFiles=Ingen vedhæftede filer
+MailingModuleDescContactCompanies=Kontakter af alle tredjemand (kunde, udsigt, leverandør, ...)
+MailingModuleDescDolibarrUsers=Alle Dolibarr brugere med e-mails
+MailingModuleDescFundationMembers=Fundation medlemmer med e-mails
+MailingModuleDescEmailsFromFile=E-mails fra en tekstfil (email; navn, efternavn)
+MailingModuleDescContactsCategories=Kontakter af alle tredjeparter (efter kategori)
+LineInFile=Line% s filtjenester
+RecipientSelectionModules=Defineret anmodninger om modtagernes udvælgelse
+MailSelectedRecipients=Udvalgte modtagere
+MailingArea=EMailings område
+LastMailings=Seneste% s emailings
+TargetsStatistics=Mål statistik
+NbOfCompaniesContacts=Unikke kontakter af virksomheder
+MailNoChangePossible=Modtagere til validerede emailing kan ikke ændres
+SearchAMailing=Søg mailing
+SendMailing=Send emailing
+SendMail=Send email
+SentBy=Sendt af
+MailingNeedCommand=For værdipapirer grunden til, at sende en e-mail kan kun udføres fra kommandolinjen. Spørg din administrator om at iværksætte følgende kommando til at sende e-mail til alle modtagere:
+MailingNeedCommand2=Du kan dog sende dem online ved at tilføje parameteren MAILING_LIMIT_SENDBYWEB med værdien af max antal e-mails, du vil sende ved session.
+ConfirmSendingEmailing=Er du sikker på du vil sende e-mail? <br> On line afsendelse af emailings er begrænset af sikkerhedsmæssige grunde til <b>at% s</b> modtagere ved at sende session.
+TargetsReset=Ryd liste
+ToClearAllRecipientsClickHere=At rydde modtagernes liste for denne e-mail, skal du klikke på knappen
+ToAddRecipientsChooseHere=Hvis du vil tilføje modtagere, skal du vælge i disse lister
+NbOfEMailingsReceived=Masse emailings modtaget
+IdRecord=ID record
+DeliveryReceipt=Levering Modtagelse
+Notifications=Adviséringer
+NoNotificationsWillBeSent=Ingen e-mail-meddelelser er planlagt for denne begivenhed, og selskabet
+ANotificationsWillBeSent=1 anmeldelse vil blive sendt via email
+SomeNotificationsWillBeSent=% s meddelelser vil blive sendt via email
+AddNewNotification=Aktivere en ny anmeldelse anmodning
+ListOfActiveNotifications=List alle aktive meddelelser anmodninger
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

@@ -1,0 +1,48 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+StandingOrdersArea=Stående ordrer område
+CustomersStandingOrdersArea=Kunder stående ordrer område
+StandingOrders=Stående ordrer
+StandingOrder=Stående ordrer
+NewStandingOrder=Nye stående ordre
+Withdrawals=Tilbagekøb
+Withdrawal=Tilbagetrækning
+WithdrawalsReceipts=Tilbagekøb kvitteringer
+WithdrawalReceipt=Tilbagetrækning modtagelse
+WithdrawalReceiptShort=Modtagelse
+LastWithdrawalReceipts=Seneste% s tilbagetrækning kvitteringer
+WithdrawedBills=Withdrawed fakturaer
+WithdrawalsLines=Tilbagekøb linjer
+RequestStandingOrderToTreat=Anmodning om stående ordrer til behandling
+RequestStandingOrderTreated=Anmodning om stående ordrer behandles
+CustomersStandingOrders=Kunden stående ordrer
+CustomerStandingOrder=Kunden stående ordre
+NbOfInvoiceToWithdraw=Nb af faktura med trække anmodning
+InvoiceWaitingWithdraw=Faktura afvente trække
+AmountToWithdraw=Beløb til at trække
+WithdrawsRefused=Tilbagekalder nægtet
+NoInvoiceToWithdraw=Nr. kundens faktura i betalingssystemer mode &quot;trække&quot; venter. Gå på &#39;Træk&#39; fane på faktura-kort til at fremsætte en anmodning.
+ResponsibleUser=Ansvarlig bruger
+WithdrawalsSetup=Tilbagetrækning setup
+WithdrawStatistics=Tilbagekalder »statistik
+WithdrawRejectStatistics=Trække afviser &#39;statistikker
+LastWithdrawalReceipt=Seneste% s tilbagetrækning kvitteringer
+MakeWithdrawRequest=Foretag en trække anmodning
+ThirdPartyBankCode=Tredjepart bankkode
+ThirdPartyDeskCode=Tredjepart desk-kode
+NoInvoiceCouldBeWithdrawed=Nr. faktura withdrawed med succes. Kontroller, at fakturaen er for selskaber med en gyldig forbud.
+ClassCredited=Klassificere krediteres
+ClassCreditedConfirm=Er du sikker på at du vil klassificere denne tilbagetrækning modtagelse som krediteres på din bankkonto?
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

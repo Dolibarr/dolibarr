@@ -1,0 +1,77 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+WarehouseCard=Warehouse kortet
+Warehouse=Warehouse
+NewWarehouse=Nyt oplag / Stock område
+MenuNewWarehouse=Ny lagerhal
+WarehouseOpened=Warehouse åbnet
+WarehouseClosed=Warehouse lukket
+WarehouseSource=Kilde lagerhal
+WarehouseTarget=Målret lager
+ValidateSending=Slet afsendelse
+CancelSending=Annuller afsendelse
+DeleteSending=Slet afsendelse
+Stock=Stock
+Stocks=Lagre
+Movement=Bevægelighed
+Movements=Bevægelser
+ErrorWarehouseRefRequired=Warehouse reference navn er påkrævet
+ErrorWarehouseLabelRequired=Warehouse fareseddel kræves
+CorrectStock=Korrekt lager
+ListOfWarehouses=Liste over pakhuse
+ListOfStockMovements=Liste over lagerbevægelserne
+StocksArea=Lagre område
+Location=Lieu
+LocationSummary=Kortnavn placering
+NumberOfProducts=Samlet antal produkter
+LastMovement=Seneste bevægelighed
+LastMovements=Seneste bevægelser
+Units=Enheder
+Unit=Enhed
+StockCorrection=Korrekt lager
+StockMovement=Transfer
+StockMovements=Stock overførsler
+NumberOfUnit=Antal enheder
+TotalStock=I alt på lager
+StockTooLow=Stock for lavt
+EnhancedValue=Værdi
+PMPValue=Værdi
+EnhancedValueOfWarehouses=Lager værdi
+UserWarehouseAutoCreate=Opret en bestand automatisk, når du opretter en bruger
+QtyDispatched=Afsendte mængde
+OrderDispatch=Bestil lastfordelingen
+RuleForStockManagementDecrease=Reglen for lagerstyring fald
+RuleForStockManagementIncrease=Reglen for lagerstyring stigning
+DeStockOnBill=Fraførsel reelle bestande på fakturaer / kreditnotaer (advarsel, i denne version, er det kun i oplag nummer 1, at bestanden er ændret)
+DeStockOnValidateOrder=Fraførsel reelle bestande om ordrer noter (advarsel, i denne version, er det kun i oplag nummer 1, at bestanden er ændret)
+DeStockOnShipment=Fraførsel reelle bestande om overfoerslen (recommanded)
+ReStockOnBill=Forhøjelse reelle bestande på fakturaer / kreditnotaer (advarsel, i denne version, er det kun i oplag nummer 1, at bestanden er ændret)
+ReStockOnValidateOrder=Forhøjelse reelle bestande om ordrer noter (advarsel, i denne version, er det kun i oplag nummer 1, at bestanden er ændret)
+StockDiffPhysicTeoric=Årsagen til forskellen lager fysiske og theorical
+StockLimitShort=Limit
+StockLimit=Stock grænse for indberetninger
+PhysicalStock=Fysiske lager
+RealStock=Real Stock
+TheoreticalStock=Therocial lager
+VirtualStock=Virtual lager
+MininumStock=Minimumslager
+StockUp=Stock op
+MininumStockShort=Stock min
+StockUpShort=Stock op
+IdWarehouse=Id lager
+DescWareHouse=Beskrivelse lager
+LieuWareHouse=Lokalisering lager
+WarehousesAndProducts=Lager og produkter
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

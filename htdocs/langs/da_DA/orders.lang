@@ -1,0 +1,129 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+OrdersArea=Kunder ordrer område
+SuppliersOrdersArea=Leverandører ordrer område
+OrderCard=Bestil kort
+Order=Rækkefølge
+Orders=Ordrer
+OrderFollow=Opfølgning
+OrderContact=Bestil kontakt
+OrderDate=Bestil dato
+NewOrder=Ny ordre
+ToOrder=Foretag orden
+MakeOrder=Foretag orden
+SupplierOrder=Leverandør orden
+SuppliersOrders=Suppliers&#39; ordrer
+SuppliersOrdersRunning=Nuværende leverandører ordrer
+CustomerOrder=Kunden for
+CustomersOrders=Kundernes ordrer
+CustomersOrdersRunning=Nuværende kundernes ordrer
+CustomersOrdersAndOrdersLines=Kundens ordrer og kendelser &#39;linjer
+OrdersToValid=Ordrer på gyldige
+OrdersToBill=Ordrer til lovforslag
+OrdersInProcess=Ordrer i processen
+OrdersToProcess=Ordrer til processen
+StatusOrderCanceledShort=Annulleret
+StatusOrderDraftShort=Udkast
+StatusOrderValidatedShort=Valideret
+StatusOrderOnProcessShort=Den proces
+StatusOrderProcessedShort=Forarbejdede
+StatusOrderToBillShort=Til lovforslag
+StatusOrderApprovedShort=Godkendt
+StatusOrderRefusedShort=Afviste
+StatusOrderToProcessShort=Til at behandle
+StatusOrderReceivedPartiallyShort=Delvist modtaget
+StatusOrderReceivedAllShort=Alt modtaget
+StatusOrderCanceled=Annulleret
+StatusOrderDraft=Udkast (skal valideres)
+StatusOrderValidated=Valideret
+StatusOrderOnProcess=Den proces
+StatusOrderProcessed=Forarbejdede
+StatusOrderToBill=Til lovforslag
+StatusOrderApproved=Godkendt
+StatusOrderRefused=Afviste
+StatusOrderReceivedPartially=Delvist modtaget
+StatusOrderReceivedAll=Alt modtaget
+DraftOrWaitingApproved=Udkast til eller godkendt endnu ikke bestilt
+DraftOrWaitingShipped=Udkast til eller valideres endnu ikke afsendt
+MenuOrdersToBill=Ordrer til lovforslag
+SearchOrder=Search for
+Sending=Sender
+Sendings=Sendings
+ShipProduct=Skib produkt
+Discount=Discount
+CreateOrder=Opret Order
+RefuseOrder=Nægte at
+ApproveOrder=Acceptere for
+ValidateOrder=Valider orden
+DeleteOrder=Slet orden
+CancelOrder=Annuller ordre
+AddOrder=Tilføj orden
+AddToMyOrders=Føj til mine ordrer
+AddToOtherOrders=Føj til andre ordrer
+ShowOrder=Vis for
+NoOpenedOrders=Nr. åbnet ordrer
+NoOtherOpenedOrders=Ingen andre åbnet ordrer
+OtherOrders=Andre kendelser
+LastOrders=Seneste% s ordrer
+LastModifiedOrders=Seneste% s modificerede ordrer
+LastClosedOrders=Seneste% s lukkede ordrer
+AllOrders=Alle ordrer
+NbOfOrders=Antal ordrer
+OrdersStatistics=Orders »statistik
+OrdersStatisticsSuppliers=Leverandør ordrer «statistik
+NumberOfOrdersByMonth=Antallet af ordrer efter måned
+AmountOfOrdersByMonthHT=størrelsen af ordrer af måneden (efter skat)
+ListOfOrders=Liste af ordrer
+CloseOrder=Luk for
+ConfirmCloseOrder=Er du sikker på du ønsker at lukke denne ordre? Når en ordre er afsluttet, kan den kun blive faktureret.
+ConfirmCloseOrderIfSending=Er du sikker på du ønsker at lukke denne ordre? Du skal lukke en ordre kun, når alle shipping er færdig.
+ConfirmDeleteOrder=Er du sikker på du vil slette denne ordre?
+ConfirmValidateOrder=Er du sikker på at du ønsker at validere denne ordre under <b>navnet% s?</b>
+ConfirmCancelOrder=Er du sikker på du vil annullere denne ordre?
+ConfirmMakeOrder=Er du sikker på du vil bekræfte, du har foretaget denne ordre <b>på% s?</b>
+GenerateBill=Generer faktura
+ClassifyBilled=Klassificere &quot;Billed&quot;
+ComptaCard=Regnskabsmæssig kortet
+DraftOrders=Udkast til ordrer
+RelatedOrders=Relaterede ordrer
+OnProcessOrders=Den proces ordrer
+RefOrder=Ref. rækkefølge
+RefCustomerOrder=Ref. kunde for
+CustomerOrder=Kunden for
+RefCustomerOrderShort=Ref. kunde. rækkefølge
+SendOrderByMail=Send ordre ved mail
+ActionsOnOrder=Aktioner på bestilling
+NoArticleOfTypeProduct=Nr. artiklen af type &#39;produkt&#39;, så ingen shippable artikelnummer for denne ordre
+OrderMode=Bestil metode
+AuthorRequest=Anmodning forfatter
+UseCustomerContactAsOrderRecipientIfExist=Brug kunde kontakt adresse, hvis defineret i stedet for tredjepart adresse som for modtagerens adresse
+RunningOrders=Ordrer på processen
+UserWithApproveOrderGrant=Useres ydes med &quot;godkende ordrer&quot; tilladelse.
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Konstant COMMANDE_SUPPLIER_ADDON ikke defineret
+Error_COMMANDE_ADDON_NotDefined=Konstant COMMANDE_ADDON ikke defineret
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Det lykkedes ikke at indlæse modulet fil &#39;% s&#39;
+Error_FailedToLoad_COMMANDE_ADDON_File=Det lykkedes ikke at indlæse modulet fil &#39;% s&#39;
+OrderSource0=Kommerciel forslag
+OrderSource1=Internet
+OrderSource2=Mail-kampagne
+OrderSource3=Telefon compain
+OrderSource4=Fax kampagne
+OrderSource5=Kommerciel
+OrderSource6=Opbevare
+QtyOrdered=Qty bestilt
+AddDeliveryCostLine=Tilføj en leveringsrapport omkostninger linje angiver vægten af den rækkefølge
+PDFEinsteinDescription=En fuldstændig orden model (logo. ..)
+MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn ou yy est l&#39;année, mm le mois et nnnn un compteur sequentiel sans ruptur et sans bedre e 0
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

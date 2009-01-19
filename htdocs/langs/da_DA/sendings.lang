@@ -1,0 +1,59 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+RefSending=Ref. afsendelse
+Sending=Sender
+Sendings=Sendings
+Receivings=Receivings
+SendingsArea=Sendings område
+ListOfSendings=Liste over sendings
+SendingMethod=Afsendelse metode
+SendingReceipt=Afsendelse modtagelse
+LastSendings=Seneste% s sendings
+SearchASending=Søg en sendeorganisation
+StatisticsOfSendings=Statistik over sendings
+NbOfSendings=Antal sendings
+SendingCard=Afsendelse kortet
+NewSending=Ny afsendelse
+CreateASending=Opret en sendeorganisation
+CreateSending=Opret afsendelse
+QtyOrdered=Qty bestilt
+QtyShipped=Qty afsendt
+QtyToShip=Qty til skibet
+QtyReceived=Antal modtagne
+KeepToShip=Hold til skib
+OtherSendingsForSameOrder=Andre sendings for denne ordre
+DateSending=Dato for afsendelse orden
+DateSendingShort=Dato for afsendelse orden
+SendingsForSameOrder=Sendings for denne ordre
+SendingsAndReceivingForSameOrder=Sendings og receivings for denne ordre
+SendingsToValidate=Henvist til validere
+StatusSendingDraft=Udkast
+StatusSendingValidated=Valideret (produkter til skib eller allerede er afsendt)
+StatusSendingDraftShort=Udkast
+StatusSendingValidatedShort=Valideret
+SendingSheet=Afsendelse ark
+Carriers=Carriers
+Carrier=Carrier
+CarriersArea=Rederierne område
+NewCarrier=Ny carrier
+ConfirmDeleteSending=Er du sikker på du vil slette denne sende?
+ConfirmValidateSending=Er du sikker på at du vil valdate denne sende?
+ConfirmCancelSending=Er du sikker på at du vil annullere denne sende?
+GenericTransport=Generic transport
+Enlevement=Fået efter kunde
+DocumentModelSimple=Simpelt dokument model
+WarningNoQtyLeftToSend=Advarsel, ikke produkter som venter på at blive afsendt.
+NumRefModelJade=Retur et referencenummer med format BLYY00001, ... hvor ÅÅ er året. Antal ultimo aldrig er nulstillet.
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

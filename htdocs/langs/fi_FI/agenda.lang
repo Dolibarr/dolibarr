@@ -1,0 +1,59 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Actions=Toimet
+ActionsArea=Toimien alueella (tapahtumat ja tehtävät)
+Agenda=Agenda
+Agendas=Esityslistat
+Calendar=Kalenteri
+Calendars=Kalenterit
+AffectedTo=Vaikuttaa
+DoneBy=Tekemiäni
+Events=Tapahtumat
+ListOfActions=Luettelo tapahtumista
+Location=Sijainti
+SearchAnAction=Haku toimintasuunnitelma / tehtävä
+MenuToDoActions=Kaikki uncomplete toimia
+MenuDoneActions=Kaikki irti toimia
+MenuToDoMyActions=Oma puutteellisia toimia
+MenuDoneMyActions=Oma irtisanotaan toimia
+ListOfEvents=Luettelo Dolibarr tapahtumat
+ActionsAskedBy=Toimet kirjattava
+ActionsToDoBy=Toimet vaikuttaa
+ActionsDoneBy=Toimet tehdään
+AllMyActions=Kaikki toimet / tehtävät
+AllActions=Toutes les actions / tehtävät
+ViewList=Näytä lista
+ViewCal=Näytä kalenteri
+ViewWithPredefinedFilters=Näytä ennalta suodattimet
+AutoActions=Automaattinen täyttö Esityslistan
+AgendaAutoActionDesc=Määritä tässä tapahtumia joihin haluat Dolibarr luoda automaattisesti toimia asialistalla. Jos mitään ei tarkastettu (oletuksena), vain ruumiillisen toimien on oltava mukana esityslistalla.
+AgendaSetupOtherDesc=Tämän sivun avulla määrittää muita muuttujia Esityslistan moduuli.
+ActionsEvents=Tapahtumat, joista Dolibarr luo toimia esityslistan automaattisesti
+PropalValidatedInDolibarr=Ehdotus validoitava
+InvoiceValidatedInDolibarr=Laskun validoitava
+OrderValidatedInDolibarr=Tilaa validoitava
+NewCompanyToDolibarr=Kolmannen osapuolen luonut
+DateActionPlannedStart=SUUNNITELTU ALKAMISPÄIVÄ
+DateActionPlannedEnd=Suunniteltu lopetuspäivämäärää
+DateActionDoneStart=Real Aloituspäivästä
+DateActionDoneEnd=Real lopetuspäivämäärää
+DateActionStart=Aloituspäivämäärä
+DateActionEnd=Lopetuspäivä
+AgendaUrlOptions1=Voit myös lisätä seuraavat parametrit suodattaa output:
+AgendaUrlOptions2=<b>login=<b>login =% s</b> rajoittaa tuotannon toimiin luotu, vaikuttaa tavalla tai tehdä <b>käyttäjä% s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% s</b> rajoittaa tuotannon toimiin luotu <b>käyttäjän% s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% s</b> rajoittaa tuotannon toimet vaikuttavat <b>käyttäjän% s.</b>
+AgendaUrlOptions5=<b>logind=<b>sisäänkirj =% s</b> rajoittaa tuotannon toimet tehdään <b>käyttäjän% s.</b>
+AgendaShowBirthdayEvents=Näytä syntymäpäivä yhteyksiä
+AgendaHideBirthdayEvents=Piilota syntymäpäivä yhteyksiä
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

@@ -1,0 +1,59 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Actions=Acţiuni
+ActionsArea=Acţiuni domeniu (Evenimente si sarcini)
+Agenda=Ordinea de zi
+Agendas=Agendas
+Calendar=Calendar
+Calendars=Calendare
+AffectedTo=Afectate de
+DoneBy=Adoptată de către
+Events=Evenimente
+ListOfActions=Lista de evenimente
+Location=Locaţie
+SearchAnAction=Cautati o acţiune / sarcina
+MenuToDoActions=Toate acţiunile uncomplete
+MenuDoneActions=Toate acţiunile oprite
+MenuToDoMyActions=Incomplet acţiunile mele
+MenuDoneMyActions=My oprite acţiuni
+ListOfEvents=Lista de evenimente Dolibarr
+ActionsAskedBy=Acţiuni înregistrate de către
+ActionsToDoBy=Acţiuni afectate de
+ActionsDoneBy=Acţiuni făcut de către
+AllMyActions=Toate acţiunile / sarcini
+AllActions=Toutes les acţiuni / sarcini
+ViewList=Vezi lista
+ViewCal=Vezi calendarul
+ViewWithPredefinedFilters=Vezi cu filtre predefinite
+AutoActions=Completarea automată a ordinii de zi
+AgendaAutoActionDesc=Definiţi aici evenimente pentru care doriţi Dolibarr de a crea automat o acţiune în ordine de zi. Dacă nimic nu este verificat (implicit), doar manualul de acţiuni vor fi incluse în ordinea de zi.
+AgendaSetupOtherDesc=Această pagină permite să configuraţi alţi parametri de modul de ordine de zi.
+ActionsEvents=Evenimente pentru Dolibarr care va crea o acţiune în ordinea de zi în mod automat
+PropalValidatedInDolibarr=Propunere validate
+InvoiceValidatedInDolibarr=Factura validate
+OrderValidatedInDolibarr=Ordinul validate
+NewCompanyToDolibarr=A treia parte a creat
+DateActionPlannedStart=Planificate data de început
+DateActionPlannedEnd=Planificate data de sfârşit
+DateActionDoneStart=Real Data începerii
+DateActionDoneEnd=Real data de sfârşit
+DateActionStart=Data începerii
+DateActionEnd=Data de final
+AgendaUrlOptions1=Puteţi, de asemenea, să adăugaţi următorii parametri la filtru de iesire:
+AgendaUrlOptions2=<b>login=<b>login =% s</b> pentru a limita producţia de acţiuni create de, afectate pentru a face sau de către <b>utilizator% s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% s</b> pentru a limita producţia de acţiuni create de <b>utilizator% s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% s</b> pentru a limita producţia de acţiunile afectate de <b>utilizator% s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind =% s</b> pentru a limita producţia de acţiuni efectuată de către <b>utilizatorul% s.</b>
+AgendaShowBirthdayEvents=Arata de ziua lui de contact
+AgendaHideBirthdayEvents=Ascunde ziua lui de contact
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

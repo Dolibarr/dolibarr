@@ -1,0 +1,59 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ErrorLoginAlreadyExists=Login% s finnes allerede.
+ErrorGroupAlreadyExists=Gruppe% s eksisterer allerede.
+ErrorDuplicateTrigger=En utløse fil med klassen nam <b>&#39;% s&#39;</b> finnes sevaral ganger. Fjern duplikatinnhold utløse fil i katalogen <b>&#39;% s&#39;.</b>
+ErrorFailToDeleteFile=Kunne ikke fjerne filen <b>&#39;% s&#39;.</b>
+ErrorFailToCreateFile=Kunne ikke opprette filen <b>&#39;% s&#39;.</b>
+ErrorFailToRenameDir=Kunne ikke endre navn katalogen <b>&#39;% s&#39; til&#39;% s&#39;.</b>
+ErrorFailToCreateDir=Kunne ikke opprette katalogen <b>&#39;% s&#39;.</b>
+ErrorFailToDeleteDir=Kunne ikke slette katalogen <b>&#39;% s&#39;.</b>
+ErrorFailedToDeleteJoinedFiles=Kan ikke slette foretaket fordi det er enkelte deltar filer. Fjern delta filene først.
+ErrorThisContactIsAlreadyDefinedAsThisType=Denne kontakten er allerede definert som kontaktperson for denne typen.
+ErrorCashAccountAcceptsOnlyCashMoney=Denne bankkontoen er en cash-konto, slik at den godtar betalinger av typen cash only.
+ErrorFromToAccountsMustDiffers=Kilde og mål bankkontoer må være annerledes.
+ErrorBadThirdPartyName=Ugyldig verdi for tredjepart navn
+ErrorBadCustomerCodeSyntax=Bad syntaks for kunde koden
+ErrorCustomerCodeRequired=Kunden koden kreves
+ErrorCustomerCodeAlreadyUsed=Kunden koden allerede brukt
+ErrorPrefixRequired=Prefix kreves
+ErrorBadSupplierCodeSyntax=Bad syntaks for leverandør koden
+ErrorSupplierCodeRequired=Tilbydersøk koden kreves
+ErrorSupplierCodeAlreadyUsed=Tilbydersøk koden allerede brukt
+ErrorBadParameters=Bad parametere
+ErrorFailedToWriteInDir=Klarte ikke å skrive i katalogen% s
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Fant feil e-syntaks for% s linjer i bildet (f.eks linje% s med e =% s)
+ErrorUserCannotBeDelete=Brukeren kan ikke slettes. Kanskje det er registrert på Dolibarr enheter.
+ErrorFieldsRequired=Noen obligatoriske feltene ikke er fylt.
+ErrorFailedToCreateDir=Kunne ikke opprette en katalog. Kontroller at webserveren brukeren har tillatelse til å skrive inn Dolibarr dokumenter katalog. Hvis parameteren <b>safe_mode</b> aktivert på PHP, sjekk at Dolibarr php filer eier til webserveren bruker (eller gruppe).
+ErrorNoMailDefinedForThisUser=Ingen post er definert for denne brukeren
+ErrorFeatureNeedJavascript=Denne funksjonen må JavaScript være aktivert for å fungere. Endre dette i oppsettet - displayet.
+ErrorTopMenuMustHaveAParentWithId0=En meny av typen &quot;Topp&quot; kan ikke ha en forelder menyen. Sett 0 i foreldre-menyen, eller velge en meny av typen &quot;Venstre&quot;.
+ErrorLeftMenuMustHaveAParentId=En meny av typen &quot;Venstre&quot; må ha en overordnet id.
+ErrorGenbarCodeNotfound=Finner ikke filen (Ugyldig bane, feil tillatelser eller ingen tilgang ved openbasedir parameter)
+ErrorFunctionNotAvailableInPHP=<b>Funksjonen% s</b> er nødvendig for at denne funksjonen, men er ikke tilgjengelig i denne versjonen / oppsett av PHP.
+ErrorDirAlreadyExists=En katalog med dette navnet eksisterer allerede.
+ErrorFieldCanNotContainSpecialCharacters=<b>Feltet% s</b> må ikke inneholder spesialtegn.
+WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> må være satt til <b>i</b> filer <b>php.ini</b> for å ha denne modulen fungerer helt. Du må endre denne filen manuelt.
+WarningBuildScriptNotRunned=<b>Skriptet% s</b> var ikke løp å bygge grafikk, eller det er ingen data som skal vises.
+WarningBookmarkAlreadyExists=Et bokmerke med dette eller dette målet (URL) finnes allerede.
+WarningPassIsEmpty=Advarsel, database passord er tom. Dette er et sikkerhetshull. Du bør legge til et passord til databasen, og endre conf.php fil å reflektere dette.
+ErrorNoAccountancyModuleLoaded=Ingen accountancy modul aktivert
+ErrorExportDuplicateProfil=Dette profil finnes allerede på denne eksporten sett.
+ErrorLDAPSetupNotComplete=Dolibarr-LDAP samsvarende er ikke fullført.
+ErrorLDAPMakeManualTest=A. LDIF-filen er generert i katalogen% s. Prøv å laste den manuelt fra kommandolinjen for å ha mer informasjon om feil.
+ErrorCantSaveADoneUserWithZeroPercentage=Kan ikke lagre en handling med &quot;statut ikke startet&quot; dersom feltet &quot;ferdig med&quot; er fylt.
+ErrorBillRefAlreadyExists=Ref brukes til etablering allerede eksisterer.
+ErrorPleaseTypeBankTransactionReportName=Vennligst skriv banken kvittering hvor transaksjonen er rapportert (Format ÅÅÅÅMM eller ÅÅÅÅMMDD)
+ErrorRecordHasChildren=Kunne ikke slette poster siden det har noen Childs.
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

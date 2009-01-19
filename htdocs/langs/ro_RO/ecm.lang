@@ -1,0 +1,64 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+MenuECM=Documente
+DocsMine=Documentele mele
+DocsGenerated=Generat documente
+DocsElements=Elemente de documente
+DocsThirdParties=Documente terţi
+DocsContracts=Documente contracte
+DocsProposals=Documente propuneri
+DocsOrders=Documente ordinelor
+DocsInvoices=Documente facturi
+ECMNbOfDocs=Nb de documente în directorul de
+ECMNbOfDocsSmall=Nb din doc.
+ECMSection=Directory
+ECMSectionManual=Manual de director
+ECMSectionAuto=Automat director
+ECMSectionsManual=Manual de directoare
+ECMSectionsAuto=Automat directoare
+ECMSections=Directoare
+ECMRoot=Root
+ECMNewSection=Nou director
+ECMAddSection=Adauga un manual directorul
+ECMNewSection=Nou director manual
+ECMNewDocument=Document nou
+ECMCreationDate=Data creării
+ECMNbOfFilesInDir=Numărul de fişiere în directorul de
+ECMNbOfSubDir=Număr de sub-directoare
+ECMNbOfFilesInSubDir=Nunber de iles în sub-directoare
+ECMCreationUser=Creator
+ECMArea=ECM zona
+ECMAreaDesc=De ECM (Electronic Content Management) domeniu vă permite să salvaţi, să-şi împărtăşească şi căutare de repede tot felul de documente în Dolibarr.
+ECMAreaDesc2=* Automatic directoare sunt completate automat la adăugarea de documente de la carte de un element. <br> * Manual de directoare pot fi folosite pentru a salva documente care nu sunt legate de un anumit element.
+ECMSectionWasRemoved=<b>Directorul% s</b> a fost ştearsă.
+ECMDocumentsSection=Document de director
+ECMSearchByKeywords=Cautare dupa cuvinte cheie
+ECMSearchByEntity=Cautati cu obiect
+ECMSectionOfDocuments=Directoare de documente
+ECMTypeManual=Manual
+ECMTypeAuto=Automat
+ECMDocsByThirdParties=Documente legate de către terţe părţi
+ECMDocsByProposals=Documente legate de propuneri
+ECMDocsByOrders=Documente legate de ordinele de la clienţi
+ECMDocsByContracts=Documente legate de contractele de
+ECMDocsByInvoices=Documente legate de clienţi facturi
+ECMDocsByProducts=Documente legate de produse
+ECMNoDirecotyYet=Nu directorul creat
+ShowECMSection=Arata director
+DeleteSection=Eliminaţi director
+ConfirmDeleteSection=Puteţi confirma că doriţi să ştergeţi <b>directorul% s?</b>
+ECMDirectoryForFiles=Relative directorul pentru fişiere
+CannotRemoveDirectoryContainsFiles=Ştearsă nu este posibil deoarece conţine câteva fişiere
+ECMFileManager=Manager fişiere
+ECMSelectASection=Selectaţi un director de pe stânga copac ...
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

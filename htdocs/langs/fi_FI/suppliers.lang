@@ -1,0 +1,46 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Suppliers=Tavarantoimittajat
+Supplier=Toimittaja
+AddSupplier=Lisää toimittaja
+SupplierRemoved=Toimittaja poistettu
+SuppliersInvoice=Tavarantoimittajat lasku
+SuppliersInvoices=Tavarantoimittajat laskut
+NewSupplier=Uuden toimittajan
+History=Historia
+ListOfSuppliers=Luettelo toimittajat
+ShowSupplier=Näytä toimittaja
+OrderDate=Tilaa päivämäärä
+BuyingPrice=Osto
+AddSupplierPrice=Lisää toimittaja hinta
+ChangeSupplierPrice=Vaihtaa toimittajaa hinta
+ErrorQtyTooLowForThisSupplier=Määrä liian alhaisia tämän toimittajan tai ei hinta määritellään tämän tuotteen tämän toimittajan
+ErrorSupplierCountryIsNotDefined=Maa tämä toimittaja ei ole määritelty. Korjata ensin.
+ProductHasAlreadyReferenceInThisSupplier=Tämä tuote on jo viittaus tässä toimittaja
+NoRecordedSuppliers=N: o toimittajat kirjataan
+SupplierPayment=Toimittaja maksu
+SuppliersArea=Tavarantoimittajat alueella
+RefSupplierShort=Ref. toimittaja
+ExportDataset_fournisseur_1=Toimittajan laskujen luettelo ja laskut &quot;linjat
+ExportDataset_fournisseur_2=Toimittajan laskut ja maksut
+ApproveThisOrder=Hyväksy tämä tilaus
+ConfirmApproveThisOrder=Oletko varma, että haluat hyväksyä tämän tilauksen?
+DenyingThisOrder=Kiellä tätä järjestystä
+ConfirmDenyingThisOrder=Oletko varma, että haluat kieltää tämän tilauksen?
+ConfirmCancelThisOrder=Oletko varma, että haluat peruuttaa tämän tilauksen?
+AddCustomerOrder=Luo asiakas jotta
+AddCustomerInvoice=Luo asiakkaalle laskun
+AddSupplierOrder=Luo toimittaja jotta
+AddSupplierInvoice=Luo toimittajan laskun
+ListOfSupplierProductForSupplier=Luettelo tuotteista ja hinnoista <b>toimittaja% s</b>
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

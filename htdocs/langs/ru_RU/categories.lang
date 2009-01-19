@@ -1,0 +1,93 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Category=Категория
+Categories=Категории
+Rubrique=Категория
+Rubriques=Категории
+categories=Категории
+TheCategorie=Категория
+In=В
+AddIn=Добавить в
+modify=изменить
+Classify=Классификация
+CategoriesArea=Категории области
+ProductsCategoriesArea=Товары / Услуги категорий области
+SuppliersCategoriesArea=Поставщики категорий области
+CustomersCategoriesArea=Клиенты категорий области
+ThirdPartyCategoriesArea=Третьи стороны категорий области
+MainCats=Основные категории
+SubCats=Подкатегории
+CatStatistics=Статистика
+CatList=Список catgories
+AllCats=Все категории
+ViewCat=Просмотреть категории
+NewCat=Добавить категорию
+NewCategory=Новая категория
+ModifCat=Изменить категории
+CatCreated=Категория создали
+CreateCat=Создать категорию
+CreateThisCat=Создание этой категории
+ValidateFields=Проверить поля
+NoSubCat=Нет подкатегории.
+SubCatOf=Подкатегория
+FoundCats=Найдено категорий
+FoundCatsForName=Категории найдено имя:
+FoundSubCatsIn=Подкатегории в категории
+ErrSameCatSelected=Вы выбрали ту же категорию в несколько раз
+ErrForgotCat=Вы забыли выбрать категорию
+ErrForgotField=Вы забыли сообщить поля
+ErrCatAlreadyExists=Это имя уже используется
+AddProductToCat=Добавить этот продукт к категории?
+ImpossibleAddCat=Невозможно добавить категорию
+ImpossibleAssociateCategory=Невозможно присоединиться к категории
+WasAddedSuccessfully=<b>% S</b> был добавлен успешно.
+ObjectAlreadyLinkedToCategory=Элемент уже связаны с этой категории.
+CategorySuccessfullyCreated=Эта категория% S был добавлен в успехе.
+ProductIsInCategories=Товар / услуга принадлежат к следующим категориям
+SupplierIsInCategories=Третий участник владеет следующими категориями поставщиков
+CompanyIsInCustomersCategories=Этот третий участник принадлежит к следующим лицам / Перспективы категорий
+CompanyIsInSuppliersCategories=Эта третья сторона владеет следующими категориями поставщиков
+ProductHasNoCategory=Этот продукт / услуга не является в какой-либо категории
+SupplierHasNoCategory=Этот поставщик не находится в какой-либо категории
+CompanyHasNoCategory=Эта компания не является в какой-либо категории
+ClassifyInCategory=Классификация в категории
+NoneCategory=Никакой
+CategoryExistsAtSameLevel=Эта категория уже существует на одном месте
+ReturnInProduct=Перейти на продукт / услугу картой
+ReturnInSupplier=Вернуться к поставщику карту
+ReturnInCompany=Вернуться к клиенту / проспект карточка
+ContentsVisibleByAll=Содержание будут видны всем
+ContentsVisibleByAllShort=Содержание видны всем
+ContentsNotVisibleByAllShort=Содержание не видно все
+CategoriesTree=Категории дерево
+DeleteCategory=Удаление категории
+ConfirmDeleteCategory=Вы уверены, что хотите удалить эту категорию?
+RemoveFromCategory=Удалить ссылку с Categorie
+RemoveFromCategoryConfirm=Вы уверены, что хотите удалить связь между сделкой и категорий?
+NoCategoriesDefined=Не определены категории
+SuppliersCategoryShort=Поставщики категории
+CustomersCategoryShort=Заказчики категории
+ProductsCategoryShort=Товары категории
+SuppliersCategoriesShort=Поставщики категории
+CustomersCategoriesShort=Клиенты категорий
+CustomersProspectsCategoriesShort=Custo. / просп. Категории
+ProductsCategoriesShort=Товары категории
+ThisCategoryHasNoProduct=Эта категория не содержит какого-либо продукта.
+ThisCategoryHasNoSupplier=Эта категория не содержит какого-либо поставщика.
+ThisCategoryHasNoCustomer=Эта категория не содержит какого-либо клиента.
+AssignedToCustomer=Установленное для заказчика
+AssignedToTheCustomer=Установленное для заказчика
+InternalCategory=Inernal категории
+CategoryContents=Категория содержание
+CategId=Идентификатор категории
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

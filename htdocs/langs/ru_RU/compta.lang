@@ -1,0 +1,124 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Accountancy=Бухгалтерия
+AccountancyCard=Бухгалтерия карту
+Treasury=Казначейство
+MenuFinancial=Финансовые
+OptionMode=Вариант для бухгалтеров
+OptionModeTrue=Варианты ввода-Ouput
+OptionModeVirtual=Вариант Кредиты-Вычеты
+OptionModeTrueDesc=В этом контексте, оборот исчисляется более paiements (сроки платежей). \ nThe действительности цифры обеспечивается только в том случае, если бухгалтерия является тщательно путем ввода / вывода по счетам с помощью счетов-фактур.
+OptionModeVirtualDesc=В этом контексте, оборот исчисляется более счетов (дата проверки). Когда эти счета-фактуры должны ли они были выплачены или нет, они перечислены в оборот продукции.
+FeatureIsSupportedInInOutModeOnly=Функция доступна только в виде кредитов-ДОЛГОВ бухгалтерия (см. Бухгалтерия конфигурации модуля)
+Param=Настройка
+AccountsGeneral=Счета
+Account=Учетная запись
+Accounts=Счета
+BillsForSuppliers=Законопроекты для поставщиков
+Income=Поступления
+Outcome=Итог
+ReportInOut=Поступления / Результат
+PaymentsNotLinkedToInvoice=Платежи, не связанные с какой-либо счет, это не связано с какой-либо третьей стороны
+PaymentsNotLinkedToUser=Платежи, не связанные с какой-либо пользователь
+Profit=Прибыль
+Balance=Баланс
+Debit=Дебет
+Credit=Кредит
+Withdrawal=Снятие
+Withdrawals=Снятие
+AmountHTVATRealReceived=HT собрали
+AmountHTVATRealPayed=HT оплачивается
+VATToPay=НДС к оплате
+VATReceived=НДС получил
+VATToCollect=НДС для сбора
+VATSummary=НДС Резюме
+VATPayed=НДС оплачивается
+VATCollected=НДС собрали
+ToPay=Для оплаты
+ToGet=Чтобы вернуться
+TaxAndDividendsArea=Налог, социальные отчисления и дивиденды области
+SocialContribution=Социальный вклад
+SocialContributions=Социальные взносы
+MenuTaxAndDividends=Налоги и дивиденды
+MenuSocialContributions=Социальные взносы
+MenuNewSocialContribution=Новый вклад
+NewSocialContribution=Новый социальный взнос
+ContributionsToPay=Взносы платить
+AccountancyTreasuryArea=Бухгалтерия / Казначейство области
+AccountancySetup=Бухгалтерия установки
+NewPayment=Новые оплаты
+Payments=Платежи
+PaymentCustomerInvoice=Заказчиком оплаты счетов-фактур
+PaymentSupplierInvoice=Поставщик оплате счета-фактуры
+PaymentSocialContribution=Социальный вклад оплаты
+PaymentVat=НДС платеж
+ListPayment=Список платежей
+ListOfPayments=Список платежей
+ListOfCustomerPayments=Список клиентов платежи
+ListOfSupplierPayments=Список поставщиков платежей
+DatePayment=Дата оплаты
+NewVATPayment=Новые оплаты НДС
+VATPayment=Оплата НДС
+VATPayments=НДС Платежи
+ShowVatPayment=Показать НДС payement
+TotalToPay=Всего к оплате
+TotalVATReceived=Общая сумма НДС, полученные
+CustomerAccountancyCode=Заказчиком бухгалтерской код
+SupplierAccountancyCode=Поставщик accountacy код
+AlreadyPayed=Уже оплачивается
+AccountNumberShort=Номер счета
+AccountNumber=Номер счета
+NewAccount=Новый счет
+SalesTurnover=Оборот по продажам
+ByThirdParties=Бу-третьих сторон
+ByUserAuthorOfInvoice=На счету автора
+AccountancyExport=Бухгалтерия экспорт
+ErrorWrongAccountancyCodeForCompany=Плохо заказчику бухгалтерские код% S
+SuppliersProductsSellSalesTurnover=Генерируемый оборот по продажам поставщиков продукции.
+CheckReceipt=Проверьте депозит
+CheckReceiptShort=Проверьте депозит
+NewCheckReceipt=Новые скидки
+NewCheckDeposit=Новая проверка депозит
+NewCheckDepositOn=Новый депозит проверить на счету:% S
+NoWaitingChecks=Не дожидаясь проверок на хранение.
+DateChequeReceived=Чек при ввода даты
+NbOfCheques=Nb чеков
+PaySocialContribution=Оплатить социального взноса
+ConfirmPaySocialContribution=Вы уверены, что хотите классифицировать этот социальный вклад, как оплачивается?
+DeleteSocialContribution=Удалить социального взноса
+ConfirmDeleteSocialContribution=Вы уверены, что хотите удалить этот социальный взнос?
+ExportDataset_tax_1=Социальные взносы и платежи
+AnnualSummaryDueDebtMode=Билан DES recettes и dpenses, rsum annuel, в <b>режиме% sCrances-Dettes% S</b> DIT <b>comptabilit d&#39;участия.</b>
+AnnualSummaryInputOutputMode=Билан DES recettes и dpenses, rsum annuel, в <b>режиме% sRecettes-Dpenses% S</b> DIT <b>comptabilit де ящик.</b>
+AnnualByCompaniesDueDebtMode=Билан DES recettes и dpenses, dtail пар ярусов, в <b>режиме% sCrances-Dettes% S</b> DIT <b>comptabilit d&#39;участия.</b>
+AnnualByCompaniesInputOutputMode=Билан DES recettes и dpenses, dtail пар ярусов, в <b>режиме% sRecettes-Dpenses% S</b> DIT <b>comptabilit де ящик.</b>
+SeeReportInInputOutputMode=См. LE <b>отношения% sRecettes-Dpenses% S</b> DIT <b>comptabilit де ящик</b> POUR UN CALCUL SUR LES paiements effectivement raliss
+SeeReportInDueDebtMode=См. LE <b>отношения% sCrances-Dettes% S</b> DIT <b>comptabilit d&#39;участие</b> POUR UN CALCUL SUR LES factures Мизеса
+RulesResultDue=- Суммы указаны с НДС <br> - Она включает в себя неоплаченные счета, расходы и НДС ли они выплачиваются или нет. <br> - Он основан на одобрении даты счета-фактуры и НДС, и на сегодняшний день из-за расходов.
+RulesResultInOut=- Суммы указаны с НДС <br> - Она включает в себя реальные выплаты на счета, расходы и НДС. <br> - Он основан на оплату даты счета-фактуры, расходы ANF НДС. <br>
+RulesCADue=- Она включает в себя клиентов из-за счетов ли они выплачиваются или нет. <br> - Он основан на дату одобрения этих счетов-фактур. <br>
+RulesCAIn=- Она включает в себя все эффективные платежи в счетах-фактурах, полученных от клиентов. <br> - Он основан на день оплаты этих счетов-фактур <br>
+VATReportByCustomersInInputOutputMode=Rapport пар клиента DES TVA collectes и платит (TVA сюр encaissement)
+VATReportByCustomersInDueDebtMode=Rapport пар клиента DES TVA collectes и платит (TVA сюр dbit)
+VATReportByQuartersInInputOutputMode=Rapport пар trimestre DES TVA collectes и платит (TVA сюр encaissement)
+VATReportByQuartersInDueDebtMode=Rapport пар trimestre DES TVA collectes и платит (TVA сюр dbit)
+SeeVATReportInInputOutputMode=См. LE <b>отношения% sTVA encaissement% S</b> для режима де CALCUL стандарт
+SeeVATReportInDueDebtMode=См. LE <b>отношения% sTVA сюр dbit% S</b> для режима де CALCUL AVEC вариант SUR LES dbits
+RulesVATIn=- POUR LES услуг, Le отношения inclut Ле дез TVA rglements effectivement Реус или MIS EN SE basant сюр-ла-дю rglement даты. <br> - POUR LES имущества matriels, IL inclut Ле дез TVA factures EN SE basant сюр-де-ла даты подтверждения де-ла-Фактура.
+RulesVATDue=- POUR LES услуг, Le отношения inclut Ле дез TVA factures взносы, или, не payes EN SE basant сюр-де-ла даты подтверждения DE CES factures. <br> - POUR LES имущества matriels, IL inclut Ле дез TVA factures EN SE basant сюр-де-ла даты подтверждения де-ла-Фактура.
+OptionVatInfoModuleComptabilite=Ремарка: POUR LES имущества matriels, IL faudrait использовать дата-де-ла-livraison за тра плюс Жюст.
+PercentOfInvoice=%% / счет-фактура
+Dispatch=Экспедирование
+Dispatched=Отправлено
+ToDispatch=Направить
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

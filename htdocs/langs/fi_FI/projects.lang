@@ -1,0 +1,63 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Project=Hanke
+Projects=Projektit
+SharedProject=Yhteiset hanke
+Myprojects=Omat hankkeet
+ProjectsArea=Projektit alueella
+NewProject=Uusi projekti
+AddProject=Lisää hanke
+DeleteAProject=Poista hanke
+DeleteATask=Poista tehtävä
+ConfirmDeleteAProject=Oletko varma, että haluat poistaa tämän hankkeen?
+ConfirmDeleteATask=Oletko varma, että haluat poistaa tämän tehtävän?
+OfficerProject=Officer hanke
+LastProjects=Viimeisin% s hankkeiden
+AllProjects=Kaikki hankkeet
+ProjectsList=Luettelo hankkeista
+ShowProject=Näytä hankkeen
+SetProject=Aseta hankkeen
+NoProject=Ei hanke määritellään
+NbOpenTasks=Nb on avattu tehtävät
+NbOfProjects=Nb hankkeiden
+TimeSpent=Käytetty aika
+RefTask=Ref. tehtävä
+LabelTask=Label tehtävä
+NewTimeSpent=Uusi käytetty aika
+MyTimeSpent=Oma käytetty aika
+MyTasks=Omat tehtävät
+Tasks=Tehtävät
+Task=Tehtävä
+NewTask=Uusi tehtävä
+AddTask=Lisää tehtävä
+AddDuration=Lisää kesto
+Activity=Toiminto
+Activities=Tehtävät / toiminnot
+MyActivity=Oma aktiivisuus
+MyActivities=Omat tehtävät / toiminnot
+DurationEffective=Todellisen keston
+MyProjects=Omat hankkeet
+Time=Aika
+ListProposalsAssociatedProject=Luettelot kaupallisen ehdotuksia hankkeeseen liittyvät
+ListOrdersAssociatedProject=Luettelot tilausten hankkeeseen liittyvät
+ListInvoicesAssociatedProject=Luettelot laskut liittyvät hankkeen
+ListSupplierOrdersAssociatedProject=Luettelo toimittajien tilaukset hankkeeseen liittyvät
+ListSupplierInvoicesAssociatedProject=Luettelo tavarantoimittajien laskut liittyvät hankkeen
+ListContractAssociatedProject=Luettelo sopimukset hankkeeseen liittyvät
+ActivityOnProjectThisWeek=Toiminta hanke tällä viikolla
+ActivityOnProjectThisMonth=Toiminta hankkeen tässä kuussa
+ActivityOnProjectThisYear=Toiminta hanke tänä vuonna
+ChildOfTaks=Child Hankkeen / tehtävä
+NotOwnerOfProject=Ei omistaja tämän yksityistä hanketta
+AffectedTo=Vaikuttaa
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

@@ -1,0 +1,33 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Delivery=Доставка
+Deliveries=Рассылки
+DeliveryCard=Доставка карту
+DeliveryOrder=Доставка порядок
+DeliveryOrders=Доставка заказов
+DeliveryDate=Дата доставки
+DeliveryDateShort=Доставки. свидание
+CreateDeliveryOrder=Генерируйте доставки порядка
+QtyDelivered=Количество доставлено
+SetDeliveryDate=Установить дату судоходство
+ValidateDeliveryReceipt=Подтверждение доставки получения
+ValidateDeliveryReceiptConfirm=Вы уверены, что хотите проверить эту доставки получения?
+DeliveryMethod=Способ доставки
+TrackingNumber=Отслеживание числа
+NameAndSignature=Имя и подпись:
+ToAndDate=To___________________________________ на ____ / _____ / __________
+GoodStatusDeclaration=Получили товары выше, в хорошем состоянии,
+Deliverer=Избавитель:
+Sender=Отправитель
+Recipient=Получатель
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

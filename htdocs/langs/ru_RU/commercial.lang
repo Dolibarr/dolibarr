@@ -1,0 +1,88 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Commercial=Коммерческие
+CommercialArea=Коммерческие площади
+CommercialCard=Коммерческая карту
+CustomerArea=Клиенты область
+Customer=Клиент
+Customers=Заказчики
+Prospect=Проспект
+Prospects=Перспективы
+DeleteAction=Удалить действия / задачи
+NewAction=Новые меры / задачи
+AddAction=Добавить действия / задачи
+AddAnAction=Добавить меры / задачи
+AddActionRendezVous=Добавить Rendez-Vous задачи
+ConfirmDeleteAction=Вы уверены, что хотите удалить эту задачу?
+CardAction=Действия карточки
+PercentDone=Процент сделали
+ActionOnCompany=Задача о компании
+ActionOnContact=Задача о контакте
+TaskRDV=Встречи
+TaskRDVWith=Встреча с% S
+ShowTask=Показать задачу
+ShowAction=Показать действий
+ActionsReport=Действия доклад
+SalesRepresentative=Торговый представитель
+SalesRepresentatives=Представители по продажам
+SalesRepresentativeFollowUp=Представитель по продажам (последующих)
+SalesRepresentativeSignature=Торговый представитель (подпись)
+CommercialInterlocutor=Коммерческая собеседник
+ErrorWrongCode=Неверный код
+NoSalesRepresentativeAffected=Нет частности торговый представитель пострадавших
+ShowCustomer=Показать заказчика
+ShowProspect=Показать проспект
+ListOfProspects=Список перспективы
+ListOfCustomers=Список клиентов
+LastDoneTasks=Последнее% S сделали задач
+LastRecordedTasks=Последние зарегистрированные задач
+LastActionsToDo=Последнее% S старейших действия не завершены
+DoneAndToDoActionsFor=Составлено и делать задач% S
+DoneAndToDoActions=Составлено и делать задач
+DoneActions=Совершено действия
+DoneActionsFor=Совершено меры для% S
+ToDoActions=Uncomplete действия
+ToDoActionsFor=Uncomplete меры для% S
+SendPropalRef=Отправить коммерческое предложение% S
+SendOrderRef=Отправить заказ% S
+NoRecordedProspects=Нет перспективы зарегистрировано
+StatusActionToDo=Чтобы сделать
+StatusActionDone=Готово
+MyActionsAsked=Действия Я записала
+MyActionsToDo=Действия я должен делать
+MyActionsDone=Действия пострадавших мне
+StatusActionInProcess=В процессе
+TasksHistoryForThisContact=Меры для этого контакта
+LastProspectDoNotContact=Не контакт
+LastProspectNeverContacted=Никогда не обращались
+LastProspectToContact=Для контакта
+LastProspectContactInProcess=Обратная связь в процессе
+LastProspectContactDone=Контакт сделали
+DateActionPlanned=Сроки действия, запланированные на
+DateActionDone=Сроки действия сделали
+ActionAskedBy=Действий, заданных
+ActionAffectedTo=Действий для пострадавших
+ActionDoneBy=Действий, проделанную
+ActionUserAsk=Зарегистрировано
+ErrorStatusCantBeZeroIfStarted=Если поле <b>&#39;Дата сделали&#39;</b> заполнен, действие начинается (или закончили), так что поле <b>&quot;Статус&quot;</b> не может быть 0%%.
+ActionAC_TEL=Телефонный звонок
+ActionAC_FAX=Отправить факс
+ActionAC_PROP=Отправить предложение
+ActionAC_EMAIL=Отправить электронное письмо
+ActionAC_RDV=Встречи
+ActionAC_FAC=Отправить платежную
+ActionAC_REL=Отправить платежную (напоминание)
+ActionAC_CLO=Закрыть
+ActionAC_EMAILING=Отправить по электронной почте масса
+ActionAC_COM=Отправить заказ по почте
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

@@ -1,0 +1,124 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Accountancy=Kirjanpito
+AccountancyCard=Kirjanpito-kortti
+Treasury=Treasury
+MenuFinancial=Financial
+OptionMode=Vaihtoehto kirjanpitotietojen
+OptionModeTrue=Vaihtoehto Panos-Ouput
+OptionModeVirtual=Vaihtoehto Credits-Debits
+OptionModeTrueDesc=Tässä yhteydessä, että liikevaihto on laskettu yli paiements (maksupäivät). \ nThe voimassaoloaika luvut on taattu vain, jos kirjanpitoon on tarkastettu kautta panos / tuotos-ja tilien kautta laskut.
+OptionModeVirtualDesc=Tässä yhteydessä, että liikevaihto on laskettava laskuista (päivämäärä validointi). Kun nämä laskut maksetaan, onko ne maksettu vai ei, ne on mainittu liikevaihto tuotos.
+FeatureIsSupportedInInOutModeOnly=Ominaisuus saatavilla vain CREDITS-VELAT kirjanpitotietojen tilassa (Katso kirjanpidon moduulin määritykset)
+Param=Setup
+AccountsGeneral=Tilit
+Account=Tili
+Accounts=Tilit
+BillsForSuppliers=Esitykset toimittajille
+Income=Tuotot
+Outcome=Tulos
+ReportInOut=Tulot / tulokset
+PaymentsNotLinkedToInvoice=Maksut eivät ole sidoksissa mihinkään lasku, joten ei liity mihinkään kolmannen osapuolen
+PaymentsNotLinkedToUser=Maksut eivät ole sidoksissa mihinkään käyttäjä
+Profit=Voitto
+Balance=Saldo
+Debit=Debet
+Credit=Credit
+Withdrawal=Peruuttaminen
+Withdrawals=Nostot
+AmountHTVATRealReceived=HT kerätty
+AmountHTVATRealPayed=HT maksetaan
+VATToPay=ALV maksettava
+VATReceived=ALV
+VATToCollect=Alv kerätä
+VATSummary=Alv Yhteenveto
+VATPayed=Alv maksetaan
+VATCollected=Alv
+ToPay=Maksaa
+ToGet=Palatakseni
+TaxAndDividendsArea=Vero-, sosiaali-ja osingot alueella
+SocialContribution=Yhteiskunnallinen
+SocialContributions=Sosiaaliturvamaksut
+MenuTaxAndDividends=Veroja ja osinkoja
+MenuSocialContributions=Sosiaaliturvamaksut
+MenuNewSocialContribution=Uusi rahoitusosuus
+NewSocialContribution=Uusi yhteiskunnallinen
+ContributionsToPay=Osallistuminen maksaa
+AccountancyTreasuryArea=Kirjanpito / Treasury alueella
+AccountancySetup=Kirjanpidon setup
+NewPayment=Uusi maksu
+Payments=Maksut
+PaymentCustomerInvoice=Asiakas laskun maksu
+PaymentSupplierInvoice=Toimittajan laskun maksu
+PaymentSocialContribution=Sosiaaliturvamaksujen maksamisesta
+PaymentVat=ALV-maksu
+ListPayment=Luettelo maksut
+ListOfPayments=Luettelo maksut
+ListOfCustomerPayments=Luettelo asiakkaan maksut
+ListOfSupplierPayments=Luettelo toimittaja maksut
+DatePayment=Maksupäivä
+NewVATPayment=Uuden alv-maksu
+VATPayment=Alv maksutoimisto
+VATPayments=Alv-maksut
+ShowVatPayment=Näytä alv payement
+TotalToPay=Yhteensä maksaa
+TotalVATReceived=Yhteensä ALV
+CustomerAccountancyCode=Asiakas kirjanpitotietojen koodi
+SupplierAccountancyCode=Toimittaja accountacy koodi
+AlreadyPayed=Jo maksanut
+AccountNumberShort=Tilinumero
+AccountNumber=Tilinumero
+NewAccount=Uusi tili
+SalesTurnover=Myynnin liikevaihto
+ByThirdParties=Bu kolmansien osapuolten
+ByUserAuthorOfInvoice=Laskulla tekijä
+AccountancyExport=Kirjanpidon vienti
+ErrorWrongAccountancyCodeForCompany=Bad asiakas kirjanpitotietojen koodi% s
+SuppliersProductsSellSalesTurnover=Luotu liikevaihto myynti toimittajien tuotteita.
+CheckReceipt=Tarkista tallettaa
+CheckReceiptShort=Tarkista tallettaa
+NewCheckReceipt=Uusi edullisista
+NewCheckDeposit=Uusi tarkistaa talletus
+NewCheckDepositOn=Uusi tarkistaa talletuksen huomioon:% s
+NoWaitingChecks=N: o tarkastusten odottaa talletus.
+DateChequeReceived=Cheque vastaanotto panos päivämäärä
+NbOfCheques=Nb Sekkien
+PaySocialContribution=Maksa yhteiskunnallinen
+ConfirmPaySocialContribution=Oletko varma, että haluat luokitella tämä yhteiskunnallinen osallistuminen maksetaan?
+DeleteSocialContribution=Poista yhteiskunnallinen
+ConfirmDeleteSocialContribution=Oletko varma, että haluat poistaa tämän yhteiskunnallinen?
+ExportDataset_tax_1=Sosiaaliturvamaksut ja maksut
+AnnualSummaryDueDebtMode=Bilan des RECETTES et dpenses, rsum annuel, en <b>tilassa% sCrances-dettes% s</b> dit <b>comptabilit d&#39;engagement.</b>
+AnnualSummaryInputOutputMode=Bilan des RECETTES et dpenses, rsum annuel, en <b>tilassa% sRecettes-Dpenses% s</b> dit <b>comptabilit de caisse.</b>
+AnnualByCompaniesDueDebtMode=Bilan des RECETTES et dpenses, dtail par tiers, en <b>tilassa% sCrances-dettes% s</b> dit <b>comptabilit d&#39;engagement.</b>
+AnnualByCompaniesInputOutputMode=Bilan des RECETTES et dpenses, dtail par tiers, en <b>tilassa% sRecettes-Dpenses% s</b> dit <b>comptabilit de caisse.</b>
+SeeReportInInputOutputMode=Voir le <b>rapport% sRecettes-Dpenses% s</b> dit <b>comptabilit de caisse</b> pour un calcul sur les paiements effectivement raliss
+SeeReportInDueDebtMode=Voir le <b>rapport% sCrances-dettes% s</b> dit <b>comptabilit d&#39;engagement</b> pour un calcul sur les valmistaa Mises
+RulesResultDue=- Määrät ovat kaikki verot mukaan luettuina <br> - Se sisältää maksamatta laskuja, kulut ja ALV ne on maksettu tai ei. <br> - Se perustuu validointia päivämäärä laskut ja alv ja eräpäivä kuluihin.
+RulesResultInOut=- Määrät ovat kaikki verot mukaan luettuina <br> - Se sisältää todellista maksetaan laskut, kuluja ja arvonlisäveroa. <br> - Se perustuu maksupäivät koskevista laskuista, kulut ANF arvonlisäveroa. <br>
+RulesCADue=- Se sisältää asiakkaiden vuoksi laskut ne on maksettu tai ei. <br> - Se perustuu validointia päivämäärä nämä laskut. <br>
+RulesCAIn=- Se sisältää kaikki tehokkaan maksut laskut asiakkailta. <br> - Se perustuu maksupäivä näiden laskujen osalta <br>
+VATReportByCustomersInInputOutputMode=Rapport par asiakkaan des TVA collectes et pays (TVA sur encaissement)
+VATReportByCustomersInDueDebtMode=Rapport par asiakkaan des TVA collectes et pays (TVA sur dbit)
+VATReportByQuartersInInputOutputMode=Rapport par trimestre des TVA collectes et pays (TVA sur encaissement)
+VATReportByQuartersInDueDebtMode=Rapport par trimestre des TVA collectes et pays (TVA sur dbit)
+SeeVATReportInInputOutputMode=Voir le <b>rapport% sTVA encaissement% s</b> pour mode de calcul standardi
+SeeVATReportInDueDebtMode=Voir le <b>rapport% sTVA sur dbit% s</b> pour mode de calcul avec vaihtoehto sur les dbits
+RulesVATIn=- Pour les palvelut, le rapport inclut les TVA des rglements effectivement reus ou mis fi se basant sur la date du rglement. <br> - Pour les biens matriels, il inclut les TVA des valmistaa fi se basant sur la date de validointia de la seen.
+RulesVATDue=- Pour les palvelut, le rapport inclut les TVA des valmistaa veroja, payes tai ei fi se basant sur la date de validointia de ces valmistaa. <br> - Pour les biens matriels, il inclut les TVA des valmistaa fi se basant sur la date de validointia de la seen.
+OptionVatInfoModuleComptabilite=Remarque: Pour les biens matriels, il faudrait käytä la date de livraison pour tre plus juste.
+PercentOfInvoice=%% / lasku
+Dispatch=Lähetyskeskukset
+Dispatched=Lähetysolosuhteita
+ToDispatch=Lähettämistä
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

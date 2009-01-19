@@ -1,0 +1,47 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ExportsArea=Экспорт области
+ImportArea=Импорт области
+NewExport=Новый экспорт
+NewImport=Новые импортные
+ExportableDatas=Экспортировать данные
+ImportableDatas=ИМПОРТИРОВАННАЯ данных
+SelectExportDataSet=Выберите набор данных вы хотите экспортировать ...
+SelectExportFields=Выбрать поля, вы хотите экспортировать, или выбрать заранее экспортировать профиль
+SaveExportModel=Сохранить этот экспортный профиль, если вы планируете использовать повторно момент ...
+ExportModelName=Экспорт имя профиля
+ExportModelSaved=Экспорт профиль сохраняется под <b>именем% S.</b>
+ExportableFields=Экспортируемых полей
+ExportedFields=Экспортируемые поля
+DatasetToExport=Dataset экспорта
+Dataset=Dataset
+ChooseFieldsOrdersAndTitle=Выбрать поля порядке ...
+FieldsOrder=Поля порядка
+FieldsTitle=Поля заголовка
+ChooseExportFormat=Выберите формат экспорта
+NowClickToGenerateToBuildExportFile=Теперь нажмите кнопку &quot;Создать&quot;, чтобы построить экспортный файл ...
+AvailableFormats=Форматы доступное
+LibraryUsed=Librairie
+LibraryVersion=Версии
+Step=Шаг
+FormatedImport=Импорт ассистент
+FormatedImportDesc1=Эта область позволяет импортировать персонализированных данных, с помощью ассистента, чтобы помочь вам в процессе без технических знаний.
+FormatedImportDesc2=Первый шаг состоит в том, чтобы выбирать царя из данных, которые вы хотите загрузить, а затем файл для загрузки, а затем выбрать поля, которые вы хотите загрузить.
+FormatedExport=Ассистент по экспорту
+FormatedExportDesc1=Эта область позволяет экспортировать персонализированных данных, с помощью ассистента, чтобы помочь вам в процессе без технических знаний.
+FormatedExportDesc2=Первый шаг состоит в том, чтобы выбирать заранее данных, а затем выбрать, какие поля нужно в результате файлы, и которые тем.
+FormatedExportDesc3=Когда данные экспортировать выбраны, вы можете задать формат выходного файла вы хотите экспортировать данные.
+Sheet=Лист
+NoImportableData=Нет данных ввозимый (без модуля с определениями разрешить импорт данных)
+FileSuccessfullyBuilt=Экспортный файл
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

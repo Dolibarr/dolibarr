@@ -1,0 +1,59 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ErrorLoginAlreadyExists=Login% s există deja.
+ErrorGroupAlreadyExists=Grupul% s există deja.
+ErrorDuplicateTrigger=A pune în mişcare fişier cu clasa nam <b>&quot;% s&quot;</b> este prezent sevaral ori. Eliminaţi duplicat declanşa fişier în directorul <b>&#39;% s&#39;.</b>
+ErrorFailToDeleteFile=Nu a reuşit să eliminaţi fişierul <b>&quot;% s&quot;.</b>
+ErrorFailToCreateFile=Nu a reuşit să creeze fişierul <b>&quot;% s&quot;.</b>
+ErrorFailToRenameDir=Nu a reuşit să redenumiţi directorul <b>&quot;% s&quot;</b> în <b>&quot;% s&quot;.</b>
+ErrorFailToCreateDir=Nu a reuşit să crea directorul <b>&quot;% s&quot;.</b>
+ErrorFailToDeleteDir=Esec pentru a şterge directorul <b>&quot;% s&quot;.</b>
+ErrorFailedToDeleteJoinedFiles=Nu se poate sterge entitate pentru că există unele aderat fişiere. Eliminaţi fişierele alătura primele.
+ErrorThisContactIsAlreadyDefinedAsThisType=Acest contact este deja definit ca persoană de contact pentru acest tip.
+ErrorCashAccountAcceptsOnlyCashMoney=Acest cont bancar este un cont de bani, aşa că acceptă plăţi de tip cash numai.
+ErrorFromToAccountsMustDiffers=Sursa obiective şi conturi bancare trebuie să fie diferite.
+ErrorBadThirdPartyName=Bad valoarea de terţă parte nume
+ErrorBadCustomerCodeSyntax=Bad sintaxă pentru codul de client
+ErrorCustomerCodeRequired=Clientul codul necesar
+ErrorCustomerCodeAlreadyUsed=Clientul codul folosit deja
+ErrorPrefixRequired=Prefix necesare
+ErrorBadSupplierCodeSyntax=Bad sintaxă pentru furnizor cod
+ErrorSupplierCodeRequired=Furnizor codul necesar
+ErrorSupplierCodeAlreadyUsed=Furnizor de cod folosit deja
+ErrorBadParameters=Bad parametrii
+ErrorFailedToWriteInDir=Nu a reuşit să scrie în directorul% s
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Found incorecte de email sintaxă pentru% s linii în fişier (de exemplu linia de e-mail cu% s =% s)
+ErrorUserCannotBeDelete=Utilizatorul nu poate fi şters. Mai fi ce este asociată pe Dolibarr entităţi.
+ErrorFieldsRequired=Unele campuri obligatorii nu au fost ocupate.
+ErrorFailedToCreateDir=Nu a reuşit să creeze un director. Verificaţi ca server Web utilizator are permisiuni pentru a scrie în directorul de Dolibarr documente. Dacă <b>safe_mode</b> parametru este activat pe această PHP, Dolibarr verifica faptul că fişierele PHP detine la server web utilizator (sau grup).
+ErrorNoMailDefinedForThisUser=Nu mail definite pentru acest utilizator
+ErrorFeatureNeedJavascript=Această caracteristică JavaScript trebuie activat pentru a fi la locul de muncă. Schimbare în acest setup - display.
+ErrorTopMenuMustHaveAParentWithId0=Un meniu de tip &quot;Top&quot; nu poate avea un părinte de meniu. Pune-0 în meniul părinte sau alege un meniu de tip &quot;stânga&quot;.
+ErrorLeftMenuMustHaveAParentId=Un meniu de tip &quot;stânga&quot; trebuie să aibă o mamă id.
+ErrorGenbarCodeNotfound=Fişierul nu a fost găsit (Bad calea, greşit permisiunile de acces refuzat sau de openbasedir parametru)
+ErrorFunctionNotAvailableInPHP=<b>Funcţia% s</b> este necesar pentru această funcţie, dar nu este disponibil în această versiune / setup de PHP.
+ErrorDirAlreadyExists=Un director cu acest nume există deja.
+ErrorFieldCanNotContainSpecialCharacters=<b>Câmp% s</b> trebuie să nu conţine caractere speciale.
+WarningAllowUrlFopenMustBeOn=Parametru <b>allow_url_fopen</b> trebuie să fie setat la filer <b>în php.ini</b> pentru acest modul de lucru complet. Trebuie să modificaţi acest fişier manual.
+WarningBuildScriptNotRunned=<b>Script-ul% s</b> nu a fost alergat de a construi grafice, sau nu există date pentru a arăta.
+WarningBookmarkAlreadyExists=Un marcaj cu acest titlu sau acest obiectiv (URL) există deja.
+WarningPassIsEmpty=Atenţie, parola baza de date este gol. Aceasta este o gaura de securitate. Ar trebui să adăugaţi o parolă pentru a vă baza de date şi să vă schimbaţi conf.php fişier, pentru a reflecta acest lucru.
+ErrorNoAccountancyModuleLoaded=Nu activat modul de contabilitate
+ErrorExportDuplicateProfil=Acest profil nume există deja pentru acest set de export.
+ErrorLDAPSetupNotComplete=Dolibarr-LDAP de potrivire nu este completă.
+ErrorLDAPMakeManualTest=A. Ldif fişier a fost generat în directorul% s. Încercaţi să încărcaţi manual de la linia de comandă pentru a avea mai multe informatii cu privire la erori.
+ErrorCantSaveADoneUserWithZeroPercentage=Nu se poate salva o acţiune cu &quot;statut nu a început&quot; în cazul în domeniu &quot;realizat de către&quot; este, de asemenea, completat.
+ErrorBillRefAlreadyExists=Ref utilizate pentru crearea există deja.
+ErrorPleaseTypeBankTransactionReportName=Vă rugăm să scrieţi numele băncii primirea în cazul în care tranzacţia este raportate (Format YYYYMM sau YYYYMMDD)
+ErrorRecordHasChildren=Nu a reuşit să ştergeţi înregistrări, deoarece acesta are unele Childs.
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

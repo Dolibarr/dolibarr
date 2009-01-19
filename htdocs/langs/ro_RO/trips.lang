@@ -1,0 +1,29 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:32:52
+ */
+
+
+// Date 2009-01-19 21:32:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Trip=Excursie
+Trips=Excursii
+TripsAndExpenses=Excursii si cheltuieli
+TripCard=Trip carte
+AddTrip=Adauga-intors
+ListOfTrips=Lista de excursii
+ListOfFees=Lista de taxe
+NewTrip=Nou-intors
+CompanyVisited=Companie / Fundaţia vizitate
+Kilometers=Kilometri
+FeesKilometersOrAmout=Suma sau km
+DeleteTrip=Ştergeţi-intors
+ConfirmDeleteTrip=Sunteţi sigur că doriţi să ştergeţi această călătorie?
+TF_OTHER=Alt
+TF_LUNCH=Prânz
+TF_TRIP=Excursie
+// Date 2009-01-19 21:32:52
+// STOP - Lines generated via parser

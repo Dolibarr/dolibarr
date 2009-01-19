@@ -1,0 +1,153 @@
+/*
+ * Lince Translation File
+ * Filename: 
+ * Language code: da_DA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:26:39
+ */
+
+
+// Date 2009-01-19 21:26:39
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Bank=Bank
+Banks=Banker
+MenuBankCash=Bank / Cash
+MenuSetupBank=Bank / Cash setup
+BankName=Bankens navn
+FinancialAccount=Konto
+FinancialAccounts=Konti
+BankAccount=Bankkonto
+BankAccounts=Bankkonti
+AccountRef=Finansiel konto ref
+AccountLabel=Finansiel konto etiket
+CashAccount=Cash konto
+CashAccounts=Likvide beholdninger
+MainAccount=Main konto
+CurrentAccount=Løbende poster
+CurrentAccounts=Anfordringskonti
+SavingAccount=Opsparingskonto
+SavingAccounts=Opsparingskonti
+ErrorBankLabelAlreadyExists=Finansiel konto etiket findes allerede
+BankBalance=Balance
+BalanceMinimalAllowed=Mindste tilladte balance
+BalanceMinimalDesired=Mindste ønskede balance
+InitialBankBalance=Oprindelige balance
+EndBankBalance=Ultimo balance
+CurrentBalance=Betalingsbalancens løbende poster
+FutureBalance=Fremtidige balance
+ShowAllTimeBalance=Vis balance fra start
+Reconciliation=Forsoning
+RIB=Bankkontonummer
+IBAN=IBAN-nummer
+BIC=BIC / SWIFT-nummer
+StandingOrders=Stående ordrer
+StandingOrder=Stående ordre
+Withdrawals=Tilbagekøb
+Withdrawal=Tilbagetrækning
+AccountStatement=Kontoudtog
+AccountStatementShort=Erklæring
+AccountStatements=Kontoudtog
+LastAccountStatements=Seneste kontoudtog
+Rapprochement=Reconciliate
+IOMonthlyReporting=Månedlig rapportering
+BankAccountDomiciliation=Account adresse
+BankAccountOwner=Account ejerens navn
+BankAccountOwnerAddress=Konto ejer adresse
+RIBControlError=Inetgrity kontrol af værdier mislykkes. Dette betyder for denne konto nummer ikke er komplette eller forkert (check land, numre og IBAN).
+CreateAccount=Opret konto
+StandingOrderToProcess=Til at behandle
+StandingOrderProcessed=Forarbejdede
+NewAccount=Ny konto
+NewBankAccount=Ny bankkonto
+NewFinancialAccount=Nye finansielle poster
+MenuNewFinancialAccount=Nye finansielle poster
+NewCurrentAccount=Ny løbende poster
+NewSavingAccount=Ny opsparingskonto
+NewCashAccount=Ny kontant konto
+EditFinancialAccount=Rediger konto
+AccountSetup=Finansielle konti setup
+SearchBankMovement=Søg bank bevægelighed
+Debts=Gæld
+LabelBankCashAccount=Bank eller kontanter etiket
+AccountType=Account type
+BankType0=Opsparingskonto
+BankType1=Løbende poster
+BankType2=Cash konto
+IfBankAccount=Hvis bankkonto
+AccountsArea=Konti område
+AccountCard=Account kortet
+DeleteAccount=Slet konto
+ConfirmDeleteAccount=Er du sikker på du vil slette denne konto?
+Account=Konto
+ByCategories=Ved kategorier
+ByRubriques=Ved kategorier
+BankTransactionByCategories=Banktransaktioner ved kategorier
+BankTransactionForCategory=Banktransaktioner for <b>kategori% s</b>
+RemoveFromRubrique=Fjern link med kategori
+RemoveFromRubriqueConfirm=Er du sikker på du vil fjerne forbindelsen mellem transaktionen og den kategori?
+ListBankTransactions=Liste over banktransaktioner
+IdTransaction=Transaktions-id
+BankTransactions=Banktransaktioner
+SearchTransaction=Søg transaktion
+ListTransactions=Liste transaktioner
+ListTransactionsByCategory=Liste transaktion / kategori
+TransactionsToConciliate=Transaktioner at forlige
+Conciliable=Conciliable
+Conciliate=Forlige
+Conciliation=Forligsudvalget
+ConciliationForAccount=Forlige denne konto
+IncludeClosedAccount=Medtag lukkede konti
+OnlyOpenedAccount=Kun åbnet konti
+AccountToCredit=Hensyn til kredit
+AccountToDebit=Hensyn til at debitere
+DisableConciliation=Deaktiver forlig kendetegn for denne konto
+ConciliationDisabled=Forligsudvalget funktionen slået
+StatusAccountOpened=Åbnet
+StatusAccountClosed=Lukket
+AccountIdShort=Antal
+EditBankRecord=Rediger record
+LineRecord=Transaktion
+AddBankRecord=Tilføj transaktion
+AddBankRecordLong=Tilføj transaktion manuelt
+ConciliatedBy=Forligsteksten ved
+DateConciliating=Forlige dato
+BankLineConciliated=Transaktion forligsteksten
+CustomerInvoicePayment=Kundens betaling
+SupplierInvoicePayment=Leverandør betaling
+SocialContributionPayment=Sociale bidrag betaling
+FinancialAccountJournal=Finansiel konto tidsskrift
+BankTransfer=Bankoverførsel
+BankTransfers=Bankoverførsler
+TransferDesc=Overførsel fra en konto til en anden, Dolibarr vil skrive to bøger (en overførselsautorisation i kilde-konto og en kredit i målet konto, af samme beløb. Samme etiket og dato vil blive brugt til denne transaktion)
+TransferFrom=Fra
+TransferTo=Til
+TransferFromToDone=En overførsel <b>fra% s til% s% s%</b> s er blevet registreret.
+CheckTransmitter=Transmitter
+ValidateCheckReceipt=Valider dette kontrollere modtagelsen?
+ConfirmValidateCheckReceipt=Er du sikker på at du ønsker at validere denne kontrol modtagelse, ingen ændring vil være mulig, når dette er gjort?
+DeleteCheckReceipt=Slet denne check modtagelse?
+ConfirmDeleteCheckReceipt=Er du sikker på du vil slette denne check modtagelse?
+BankChecks=Bankcheck
+BankChecksToReceipt=Checks venter for indskudsgarantiordninger
+NumberOfCheques=Nb af checks
+DeleteTransaction=Slet transaktion
+ConfirmDeleteTransaction=Er du sikker på du vil slette denne transaktion?
+ThisWillAlsoDeleteBankRecord=Dette vil også slette genereret banktransaktioner
+BankMovements=Bevægelser
+CashBudget=Cash budget
+PlannedTransactions=Planlagte transaktioner
+ExportDataset_banque_1=Banktransaktioner og kontoudtog
+TransactionOnTheOtherAccount=Transaktion på den anden konto
+TransactionWithOtherAccount=Account Transfert
+PaymentNumberUpdateSucceeded=Betaling antal opdateret
+PaymentNumberUpdateFailed=Betaling antal kunne ikke opdateres
+PaymentDateUpdateSucceeded=Betaling dato opdatering held
+PaymentDateUpdateFailed=Betaling dato kunne ikke opdateres
+BankTransactionLine=Bank transaktion
+AllAccounts=Alle bank / kontokurantkonti
+BackToAccount=Tilbage til regnskab
+ShowAllAccounts=Vis for alle konti
+// Date 2009-01-19 21:26:39
+// STOP - Lines generated via parser

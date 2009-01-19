@@ -1,0 +1,62 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+BoxLastRssInfos=Rss tiedot
+BoxLastProducts=Uusimmat tuotteet / palvelut
+BoxLastProductsInContract=Viimeisin sopimus tuotteet / palvelut
+BoxLastSupplierBills=Viimeisin toimittajan laskut
+BoxLastCustomerBills=Viimeisin asiakkaan laskut
+BoxOldestUnpayedCustomerBills=Vanhin unpayed asiakkaan laskut
+BoxOldestUnpayedSupplierBills=Vanhin unpayed toimittajan laskut
+BoxLastProposals=Viimeisin kaupallinen ehdotuksia
+BoxLastProspects=Viimeisin näkymät
+BoxLastCustomers=Viimeisin asiakkaille
+BoxLastCustomerOrders=Viimeisin asiakkaan tilaukset
+BoxLastSuppliers=Viimeisin toimittajat
+BoxLastBooks=Uusimmat kirjat
+BoxLastActions=Viimeisin toimia
+BoxCurrentAccounts=Sekkitilit tasapaino
+BoxSalesTurnover=Myynnin liikevaihto
+BoxTotalUnpayedCustomerBills=Yhteensä unpayed asiakkaan laskut
+BoxTotalUnpayedSuppliersBills=Yhteensä unpayed toimittajan laskut
+BoxTitleLastBooks=Viimeisin% s kirjataan kirjat
+BoxTitleNbOfCustomers=Nombre de asiakas
+BoxTitleLastRssInfos=Viimeisin% s uutisia% s
+BoxTitleLastProducts=Viimeisin% s muunneltuja tuotteita / palveluita
+BoxTitleLastCustomerOrders=Viimeisin% s muutettu asiakkaan tilaukset
+BoxTitleLastSuppliers=Viimeisin% s kirjataan toimittajat
+BoxTitleLastCustomers=Viimeisin% s kirjataan asiakkaille
+BoxTitleLastCustomersOrProspects=Viimeisin% s kirjataan asiakkaita tai näkymät
+BoxTitleLastPropals=Viimeisin% s kirjataan ehdotuksia
+BoxTitleLastCustomerBills=Viimeisin% s asiakkaan laskut
+BoxTitleLastSupplierBills=Viimeisin% s toimittajan laskut
+BoxTitleLastProspects=Viimeisin% s kirjataan näkymät
+BoxTitleLastProductsInContract=Viimeisin% s derniers produits / palveluhankinnat
+BoxTitleOldestUnpayedCustomerBills=Vanhin% s unpayed asiakkaan laskut
+BoxTitleOldestUnpayedSupplierBills=Vanhin% s unpayed toimittajan laskut
+BoxTitleCurrentAccounts=Nykyinen tilin saldot
+BoxTitleSalesTurnover=Myynnin liikevaihto
+BoxTitleTotalUnpayedCustomerBills=Unpayed asiakkaan laskut
+BoxTitleTotalUnpayedSuppliersBills=Unpayed toimittajan laskut
+BoxMyLastBookmarks=Viimeinen% s kirjanmerkeistä
+FailedToRefreshDataInfoNotUpToDate=Päivitys ei onnistunut RSS muutostilassa. Viimeisin onnistunut virkistystaajuuden päivämäärä:% s
+NoRecordedBookmarks=No bookmarks defined. Click <a href=Ei kirjanmerkkejä määritelty. Klikkaa <a href="%s">tästä</a> lisätä kirjanmerkkejä.
+NoRecordedCustomers=Ei kirjata asiakkaiden
+BoxTitleLastActionsToDo=Viimeisin% s toimet eivät
+NoActionsToDo=Mitään toimenpiteitä tehdä
+NoRecordedOrders=N: o kirjataan asiakkaan tilaukset
+NoRecordedProposals=Ei kirjata ehdotuksia
+NoRecordedInvoices=N: o kirjataan asiakkaan laskut
+NoUnpayedCustomerBills=N: o unpayed asiakkaan laskut
+NoRecordedSupplierInvoices=Ei kirjata toimittajan laskut
+NoUnpayedSupplierBills=N: o unpayed toimittajan laskut
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

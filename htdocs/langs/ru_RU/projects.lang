@@ -1,0 +1,63 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Project=Проект
+Projects=Проекты
+SharedProject=Общий проект
+Myprojects=Мои проекты
+ProjectsArea=Проекты области
+NewProject=Новый проект
+AddProject=Добавить проект
+DeleteAProject=Удаление проекта
+DeleteATask=Удалить задание
+ConfirmDeleteAProject=Вы уверены, что хотите удалить этот проект?
+ConfirmDeleteATask=Вы уверены, что хотите удалить эту задачу?
+OfficerProject=Сотрудник по проектам
+LastProjects=Последнее% S проекты
+AllProjects=Все проекты
+ProjectsList=Список проектов
+ShowProject=Показать проекта
+SetProject=Комплекс проектов
+NoProject=Нет проекта определена
+NbOpenTasks=Nb открытых задач
+NbOfProjects=Nb проектов
+TimeSpent=Время, затраченное
+RefTask=Ref. задача
+LabelTask=Этикетка задачи
+NewTimeSpent=Новое время
+MyTimeSpent=Мое время
+MyTasks=Мои задачи
+Tasks=Задание
+Task=Задача
+NewTask=Новые задачи
+AddTask=Добавить задачу
+AddDuration=Добавить продолжительность
+Activity=Мероприятие
+Activities=Задачи / мероприятия
+MyActivity=Наша деятельность
+MyActivities=Мои задачи / мероприятия
+DurationEffective=Эффективная длительность
+MyProjects=Мои проекты
+Time=Время
+ListProposalsAssociatedProject=Списки коммерческих предложений, связанных с проектом
+ListOrdersAssociatedProject=Списки заказы, связанные с проектом
+ListInvoicesAssociatedProject=Списки счетов, связанных с проектом
+ListSupplierOrdersAssociatedProject=Список поставщиков заказов, связанных с проектом
+ListSupplierInvoicesAssociatedProject=Список поставщиков счетов-фактур, связанных с проектом
+ListContractAssociatedProject=Перечень договоров, связанных с проектом
+ActivityOnProjectThisWeek=Деятельность по проекту на этой неделе
+ActivityOnProjectThisMonth=Деятельность по проектам в этом месяце
+ActivityOnProjectThisYear=Деятельность по проектам в этом году
+ChildOfTaks=Детский проекта / задачи
+NotOwnerOfProject=Не владелец этого частного проекта
+AffectedTo=Затронутые в
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

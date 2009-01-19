@@ -1,0 +1,91 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Proposals=Коммерческие предложения
+Proposal=Коммерческое предложение
+ProposalsDraft=Проект коммерческого предложения
+ProposalDraft=Проект коммерческого предложения
+ProposalsOpened=Открытие коммерческих предложений
+Prop=Коммерческие предложения
+CommercialProposal=Коммерческое предложение
+CommercialProposals=Коммерческие предложения
+ProposalContact=Предложение, контакт
+NewProp=Новое коммерческое предложение
+NewProposal=Новое коммерческое предложение
+NewPropal=Новое предложение
+Prospect=Проспект
+ProspectList=Проспект список
+DeleteProp=Удалить коммерческого предложения
+ValidateProp=Проверка коммерческого предложения
+AddProp=Добавить предложение
+ConfirmDeleteProp=Вы уверены, что хотите удалить это коммерческое предложение?
+ConfirmValidateProp=Вы уверены, что хотите проверить эту коммерческое предложение?
+LastPropals=Последнее% с предложениями
+LastClosedProposals=Последнее% с закрытых предложений
+AllPropals=Все предложения
+LastProposals=Последние предложения
+SearchAProposal=Поиск предложений
+ProposalsStatistics=Коммерческие предложения Статистика
+NumberOfProposalsByMonth=Количество в месяц
+AmountOfProposalsByMonthHT=Сумма в месяц (за вычетом налогов)
+NbOfProposals=Количество коммерческих предложений
+ShowPropal=Показать предложение
+PropalsDraft=Черновики
+PropalsOpened=Открыты
+PropalsNotBilled=Закрытые не будет взиматься
+PropalStatusDraft=Проект (должно быть подтверждено)
+PropalStatusValidated=Удостоверенная (предложение открыто)
+PropalStatusOpened=Удостоверенная (предложение открыто)
+PropalStatusClosed=Закрытые
+PropalStatusSigned=Подпись (в законопроекте)
+PropalStatusNotSigned=Не подписал (закрытые)
+PropalStatusBilled=Billed
+PropalStatusDraftShort=Черновик
+PropalStatusValidatedShort=Подтвержденные
+PropalStatusOpenedShort=Открыты
+PropalStatusClosedShort=Закрытые
+PropalStatusSignedShort=Подпись
+PropalStatusNotSignedShort=Не подписано
+PropalStatusBilledShort=Billed
+PropalsToClose=Коммерческие предложения закрыть
+PropalsToBill=Подпись коммерческие предложения по законопроекту
+ListOfProposals=Список коммерческих предложений
+ActionsOnPropal=Меры по предложению
+NoOpenedPropals=Нет открыли коммерческие предложения
+NoOtherOpenedPropals=Никакие другие открыли коммерческие предложения
+RefProposal=Коммерческие предложения исх
+SendPropalByMail=Отправить коммерческое предложение по почте
+FileNotUploaded=Файл не был загружен
+FileUploaded=Этот файл был успешно загружен
+AssociatedDocuments=Документы, связанные с предложением:
+ErrorCantOpenDir=Не удается открыть каталог
+DateEndPropal=Дата окончания действия
+DateEndPropalShort=Дата окончания
+ValidityDuration=Срок действия
+CloseAs=Закрыть со статусом
+ClassifyBilled=Классифицировать счета
+BuildBill=Создание счета-фактуры
+RelatedBill=Похожие счета
+RelatedBills=Похожие счета
+ErrorPropalNotFound=Пропал% не найдены
+Estimate=Оценка:
+EstimateShort=Расчетный показатель
+OtherPropals=Другие предложения
+CopyPropalFrom=Создание коммерческого предложения, копируя существующие предложения
+CreateEmptyPropal=Создайте пустую коммерческих предложений vierge либо из списка товаров / услуг
+DefaultProposalDurationValidity=По умолчанию коммерческого предложения действительности продолжительность (в днях)
+UseCustomerContactAsPropalRecipientIfExist=Используйте адрес клиента, если определено, вместо третьей стороной решения, как предложение, адрес получателя
+ClonePropal=Клон коммерческого предложения
+ConfirmClonePropal=Вы уверены, что хотите этого клона коммерческие <b>предложения% S?</b>
+DocModelAzurDescription=Полный текст предложения модели (logo. ..)
+DocModelJauneDescription=Желтый предложение модель
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

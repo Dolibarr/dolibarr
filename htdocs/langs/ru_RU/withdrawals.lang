@@ -1,0 +1,46 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+StandingOrdersArea=Постоянные заказы области
+CustomersStandingOrdersArea=Клиенты Регламента области
+StandingOrders=Постоянные заказы
+StandingOrder=Постоянные заказы
+NewStandingOrder=Новый постоянный порядок
+Withdrawals=Снятие
+Withdrawal=Снятие
+WithdrawalsReceipts=Снятие квитанции
+WithdrawalReceipt=Снятие получения
+WithdrawalReceiptShort=Квитанция
+LastWithdrawalReceipts=Последнее% с выводом квитанции
+WithdrawedBills=Withdrawed счетов-фактур
+WithdrawalsLines=Снятие линии
+RequestStandingOrderToTreat=Запрос Регламента для лечения
+RequestStandingOrderTreated=Запрос Регламента лечение
+CustomersStandingOrders=Клиент Регламент
+CustomerStandingOrder=Для постоянных клиентов
+NbOfInvoiceToWithdraw=Nb счета с просьбой отозвать
+InvoiceWaitingWithdraw=Счет ждет снимать
+AmountToWithdraw=Сумма снять
+WithdrawsRefused=Отзывает отказала
+NoInvoiceToWithdraw=Нет счета клиента в оплате режиме &quot;отозвать&quot; ждет. Переход на &quot;Вывод &#39;вкладки на счету карточки сделать запрос.
+ResponsibleUser=Ответственный пользователь
+WithdrawalsSetup=Выход установки
+WithdrawStatistics=Выходит статистика
+WithdrawRejectStatistics=Снять отвергает Статистика
+LastWithdrawalReceipt=Последнее% S снятия квитанции
+MakeWithdrawRequest=Сделать отозвать запрос
+ThirdPartyBankCode=Третьей стороной банковский код
+ThirdPartyDeskCode=Третий участник стол код
+NoInvoiceCouldBeWithdrawed=Нет счета withdrawed с успехом. Убедитесь в том, что счета-фактуры на компании с действительным запрета.
+ClassCredited=Классифицировать зачисленных
+ClassCreditedConfirm=Вы уверены, что хотите классифицировать этот вывод получения как кредитуются на ваш счет в банке?
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

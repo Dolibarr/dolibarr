@@ -1,0 +1,75 @@
+/*
+ * Language code: no_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:45:03
+ */
+
+
+// Date 2009-01-19 21:45:03
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+WarehouseCard=Warehouse kortet
+Warehouse=Warehouse
+NewWarehouse=Nytt varehus / lager området
+MenuNewWarehouse=Ny lagerbygning
+WarehouseOpened=Warehouse åpnet
+WarehouseClosed=Warehouse stengt
+WarehouseSource=Kilde varehus
+WarehouseTarget=Målrett varehus
+ValidateSending=Slett sending
+CancelSending=Avbryt sending
+DeleteSending=Slett sending
+Stock=Stock
+Stocks=Aksjer
+Movement=Movement
+Movements=Bevegelser
+ErrorWarehouseRefRequired=Warehouse referanse er påkrevd
+ErrorWarehouseLabelRequired=Warehouse etiketten er nødvendig
+CorrectStock=Riktig lager
+ListOfWarehouses=Liste over lager
+ListOfStockMovements=Liste over lager bevegelser
+StocksArea=Aksjer området
+Location=Lieu
+LocationSummary=Kortnavn plassering
+NumberOfProducts=Totalt antall produkter
+LastMovement=Siste bevegelse
+LastMovements=Siste bevegelser
+Units=Einingar
+Unit=Enhet
+StockCorrection=Riktig lager
+StockMovement=Overføring
+StockMovements=Stock overføringer
+NumberOfUnit=Antall enheter
+TotalStock=Totalt på lager
+StockTooLow=Lager for lavt
+EnhancedValue=Verdi
+PMPValue=Verdi
+EnhancedValueOfWarehouses=Næringslokaler verdi
+UserWarehouseAutoCreate=Opprett et lager automatisk når du oppretter en bruker
+QtyDispatched=Mengde ekspederte
+OrderDispatch=Bestill sende
+RuleForStockManagementDecrease=Regel for stock management nedgang
+RuleForStockManagementIncrease=Regel for lager ledelse øker
+DeStockOnBill=Reduser reelle aksjekurser på fakturaer / kreditnotaer (advarsel, i denne versjonen, er det bare i varehus nummer 1 som lager er endret)
+DeStockOnValidateOrder=Reduser reelle aksjekurser på ordre notater (advarsel i denne versjonen, er det bare i varehus nummer 1 som lager er endret)
+DeStockOnShipment=Reduser reelle aksjekurser på forsendelsen (recommanded)
+ReStockOnBill=Øke reelle aksjekurser på fakturaer / kreditnotaer (advarsel, i denne versjonen, er det bare i varehus nummer 1 som lager er endret)
+ReStockOnValidateOrder=Øke reelle aksjekurser på ordre notater (advarsel i denne versjonen, er det bare i varehus nummer 1 som lager er endret)
+StockDiffPhysicTeoric=Grunnen til forskjellen lager fysiske og theorical
+StockLimitShort=Limit
+StockLimit=Stock grensen for varsler
+PhysicalStock=Fysisk lager
+RealStock=Real Stock
+TheoreticalStock=Therocial lager
+VirtualStock=Virtual lager
+MininumStock=Minimum lager
+StockUp=Aksje opp
+MininumStockShort=Stock min
+StockUpShort=Aksje opp
+IdWarehouse=Id varehus
+DescWareHouse=Beskrivelse varehus
+LieuWareHouse=Lokalisering varehus
+WarehousesAndProducts=Næringslokaler og produkter
+// Date 2009-01-19 21:45:03
+// STOP - Lines generated via parser

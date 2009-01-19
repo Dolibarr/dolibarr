@@ -703,7 +703,7 @@ FicheinterNumberingModules=Intervention Nummerierung Module
 TemplatePDFInterventions=Intervention Karte Dokumenten Modelle
 WatermarkOnDraftInterventionCards=Wasserzeichen auf Intervention Karte Dokumente (alle, wenn leer)
 ClickToDialSetup=Click-to-Dial-Modul Setup
-ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=Url aufgerufen, wenn ein Klick auf Telefon picto wird. <br> Vollständige URL wird: URL? =...&Login-Passwort=...&Anrufer=...&genannt=phonecalled
+ClickToDialUrlDesc=Url called when a click on phone picto is done.  Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacé par le téléphone de l'appelé<br><b>%%2$s</b> qui sera remplacé par le téléphone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplacé par votre login clicktodial (défini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacé par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
 Bookmark4uSetup=Bookmark4u Modul Setup
 InterventionsSetup=Interventionen Modul Setup
 MembersSetup=Mitglieder-Modul Setup

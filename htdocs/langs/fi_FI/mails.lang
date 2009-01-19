@@ -1,0 +1,103 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Mailing=Sähköpostituksen
+EMailing=Sähköpostituksen
+Mailings=EMailings
+EMailings=EMailings
+MailCard=Sähköpostituksen kortti
+MailTargets=Tavoitteet
+MailRecipients=Vastaanottajat
+MailRecipient=Edunsaajavaltiot
+MailTitle=Otsikko
+MailFrom=Sender
+MailErrorsTo=Virheiden
+MailReply=Vastaa
+MailTo=Vastaanotin (s)
+MailCC=Kopioi
+MailCCC=Välimuistissa jäljennös
+MailTopic=EMail aihe
+MailText=Viesti
+MailFile=Liitetyt tiedostot
+MailMessage=EMail elin
+ShowEMailing=Näytä sähköpostia
+ListOfEMailings=Luettelo emailings
+NewMailing=Uusi sähköpostia
+EditMailing=Muokkaa sähköpostia
+DeleteMailing=Poista sähköpostia
+DeleteAMailing=Poistaa sähköpostia
+PreviewMailing=Esikatselu sähköpostia
+PrepareMailing=Valmistetaan sähköpostia
+CreateMailing=Luo sähköpostia
+MailingDesc=Tällä sivulla voit lähettää emailings on ryhmä ihmisiä.
+MailingResult=Lähetysvalinnat sähköpostit tulos
+TestMailing=Test sähköpostia
+ValidMailing=Voimassa sähköpostia
+ApproveMailing=Hyväksy sähköpostitse
+MailingStatusDraft=Vedos
+MailingStatusValidated=Validoidut
+MailingStatusApproved=Hyväksyttiin
+MailingStatusSent=Lähetetty
+MailingStatusSentPartialy=Lähetetyt osittain
+MailingStatusSentCompletely=Lähetetyt täysin
+MailingStatusError=Virhe
+MailingStatusNotSent=Ei lähetetty
+MailSuccessfulySent=Sähköposti onnistui lähetettävä (kohteesta% s% s)
+ErrorMailRecipientIsEmpty=Sähköposti vastaanottaja on tyhjä
+WarningNoEMailsAdded=Ei uusia Email lisätä vastaanottajan luetteloon.
+ConfirmValidMailing=Oletko varma, että haluat vahvistaa tämän sähköpostitse?
+ConfirmDeleteMailing=Oletko varma, että haluat poistaa tämän emailling?
+NbOfRecipients=Määrälle vastaanottajia
+NbOfUniqueEMails=Nb ainutlaatuisia sähköpostit
+NbOfEMails=Nb sähköpostia
+TotalNbOfDistinctRecipients=Useita eri vastaanottajille
+NoTargetYet=N: o vastaanottajat määritelty vielä (Mene välilehti &quot;Vastaanottajat&quot;)
+AddRecipients=Lisää vastaanottajat
+RemoveRecipient=Poista vastaanottaja
+CommonSubstitutions=Yhteinen vaihtumisista
+YouCanAddYourOwnPredefindedListHere=Voit luoda sähköpostisi Valitsimen moduuli, katso htdocs / includes / modules / postitusten / README.
+EMailTestSubstitutionReplacedByGenericValues=Kun käytät testi tilassa, vaihtumisista muuttujat korvataan yleisnimi arvot
+MailingAddFile=Liitä tämä kuva
+NoAttachedFiles=Ei liitetiedostoja
+MailingModuleDescContactCompanies=Yhteystiedot kaikista kolmansien osapuolten (asiakas, näkymä, toimittaja, ...)
+MailingModuleDescDolibarrUsers=Kaikki Dolibarr käyttäjien sähköpostit
+MailingModuleDescFundationMembers=Fundation jäsenten sähköpostit
+MailingModuleDescEmailsFromFile=Sähköpostit tekstitiedosto (sähköposti, nimi, sukunimi)
+MailingModuleDescContactsCategories=Yhteystiedot kaikista kolmansien osapuolten (luokittain)
+LineInFile=Rivi% s tiedosto
+RecipientSelectionModules=Määritelty pyynnöt vastaanottajien valinta
+MailSelectedRecipients=Valitut vastaanottajat
+MailingArea=EMailings alueella
+LastMailings=Viimeisin% s emailings
+TargetsStatistics=Tavoitteet tilastot
+NbOfCompaniesContacts=Ainutlaatuinen yhteyksiä yritysten
+MailNoChangePossible=Vastaanottajat validoitava sähköpostia ei voi muuttaa
+SearchAMailing=Haku mailing
+SendMailing=Lähetä sähköpostia
+SendMail=Lähetä sähköpostia
+SentBy=Lähettänyt
+MailingNeedCommand=Arvopapereita syystä lähettämällä sähköpostia voidaan hoitaa komentorivillä. Kysy ylläpitäjältä käynnistää seuraava komento lähettää sähköpostitse kaikille vastaanottajille:
+MailingNeedCommand2=Voit kuitenkin lähettää ne online lisäämällä parametri MAILING_LIMIT_SENDBYWEB kanssa arvo max määrä sähköpostit haluat lähettää istunnossa.
+ConfirmSendingEmailing=Oletko varma, että haluat lähettää sähköpostilistalle? <br> Rivillä lähettämisen emailings on rajoitettu turvallisuussyistä <b>syytä% s</b> vastaanottajille lähettämistä istuntoon.
+TargetsReset=Tyhjennä lista
+ToClearAllRecipientsClickHere=Voit tyhjentää vastaanottajien luetteloon tässä sähköpostitse napsauttamalla painiketta
+ToAddRecipientsChooseHere=Jos haluat lisätä vastaanottajia, valitse niissä luetellaan
+NbOfEMailingsReceived=Massa emailings saanut
+IdRecord=ID kirjaa
+DeliveryReceipt=Toimitus Kuitti
+Notifications=Ilmoitukset
+NoNotificationsWillBeSent=Ei sähköposti-ilmoituksia on suunniteltu tähän tapahtumaan ja yritys
+ANotificationsWillBeSent=1 ilmoituksesta lähetetään sähköpostitse
+SomeNotificationsWillBeSent=% s ilmoitukset lähetetään sähköpostitse
+AddNewNotification=Ota uusi ilmoitus pyynnöstä
+ListOfActiveNotifications=Listaa kaikki aktiiviset ilmoitukset pyynnöt
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

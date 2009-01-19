@@ -1,0 +1,91 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 22:07:11
+ */
+
+
+// Date 2009-01-19 22:07:11
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Proposals=Kaupalliset ehdotuksia
+Proposal=Kaupalliset ehdotus
+ProposalsDraft=Luonnos kaupallinen ehdotuksia
+ProposalDraft=Luonnos kaupallinen ehdotus
+ProposalsOpened=Avoinna kaupallinen ehdotuksia
+Prop=Kaupalliset ehdotuksia
+CommercialProposal=Kaupalliset ehdotus
+CommercialProposals=Kaupalliset ehdotuksia
+ProposalContact=Ehdotus yhteyttä
+NewProp=Uusia kaupallisia ehdotus
+NewProposal=Uusia kaupallisia ehdotus
+NewPropal=Uusi ehdotus
+Prospect=Esitetilaus
+ProspectList=Esitetilaus luettelo
+DeleteProp=Poista kaupallinen ehdotus
+ValidateProp=Validate kaupallinen ehdotus
+AddProp=Lisää ehdotus
+ConfirmDeleteProp=Oletko varma, että haluat poistaa tämän kaupallisen ehdotusta?
+ConfirmValidateProp=Oletko varma, että haluat vahvistaa kaupallista ehdotusta?
+LastPropals=Viimeisin% s ehdotuksia
+LastClosedProposals=Viimeisin% s suljettu ehdotuksia
+AllPropals=Kaikki ehdotukset
+LastProposals=Viimeisin ehdotuksia
+SearchAProposal=Haku ehdotuksen
+ProposalsStatistics=Kaupalliset ehdotuksia tilastot
+NumberOfProposalsByMonth=Lukumäärä kuukausittain
+AmountOfProposalsByMonthHT=Määrä kuukausittain (ilman veroja)
+NbOfProposals=Numero kaupallisten ehdotuksia
+ShowPropal=Näytä ehdotus
+PropalsDraft=Drafts
+PropalsOpened=Avoinna
+PropalsNotBilled=Suljettu ei laskuteta
+PropalStatusDraft=Luonnos (on vahvistettu)
+PropalStatusValidated=Validoidut (ehdotus on avattu)
+PropalStatusOpened=Validoidut (ehdotus on avattu)
+PropalStatusClosed=Suljettu
+PropalStatusSigned=Allekirjoitettu (laskuttaa)
+PropalStatusNotSigned=Ei ole kirjautunut (suljettu)
+PropalStatusBilled=Laskutetun
+PropalStatusDraftShort=Vedos
+PropalStatusValidatedShort=Validoidut
+PropalStatusOpenedShort=Avoinna
+PropalStatusClosedShort=Suljettu
+PropalStatusSignedShort=Allekirjoitettu
+PropalStatusNotSignedShort=Ei ole kirjautunut
+PropalStatusBilledShort=Laskutetun
+PropalsToClose=Kaupalliset ehdotuksia lähellä
+PropalsToBill=Allekirjoitettu kaupallinen ehdotuksia bill
+ListOfProposals=Luettelo kaupallisista ehdotuksia
+ActionsOnPropal=Toimia, ehdotus
+NoOpenedPropals=N: o avataan kaupalliseen ehdotuksia
+NoOtherOpenedPropals=Mikään muu avataan kaupalliseen ehdotuksia
+RefProposal=Kaupalliset ehdotus ref
+SendPropalByMail=Lähetä kaupallinen ehdotus postitse
+FileNotUploaded=Tiedosto ei ole ladattu
+FileUploaded=Tiedosto on siirretty onnistuneesti
+AssociatedDocuments=Asiakirjat kanssa assosioituneet ehdotus:
+ErrorCantOpenDir=Ei voi avata hakemistoon
+DateEndPropal=Päiväys loppuun voimassaoloaika
+DateEndPropalShort=Voimassaolo päättyy
+ValidityDuration=Voimassaolo kesto
+CloseAs=Sulje joiden tila
+ClassifyBilled=Luokittele laskutetaan
+BuildBill=Rakenna lasku
+RelatedBill=Liittyvät lasku
+RelatedBills=Liittyvät laskut
+ErrorPropalNotFound=Propal% s ei löydy
+Estimate=Arvio:
+EstimateShort=Arvio
+OtherPropals=Muut ehdotukset
+CopyPropalFrom=Luo kaupallinen ehdotus kopioimalla olemassa olevan ehdotuksen
+CreateEmptyPropal=Luo tyhjä kaupallinen ehdotuksia vierge tai luettelo tuotteet / palvelut
+DefaultProposalDurationValidity=Oletus kaupallinen ehdotus voim. kesto (päivinä)
+UseCustomerContactAsPropalRecipientIfExist=Käytä asiakkaan yhteystiedot, jos se on määritetty sijaan kolmannen osapuolen osoite ehdotus vastaanottajan osoite
+ClonePropal=Klooni kaupallinen ehdotus
+ConfirmClonePropal=Oletko varma, että haluat klooni kaupallista <b>ehdotus% s?</b>
+DocModelAzurDescription=Täydellinen ehdotus malli (logo. ..)
+DocModelJauneDescription=Jaune ehdotus malli
+// Date 2009-01-19 22:07:11
+// STOP - Lines generated via parser

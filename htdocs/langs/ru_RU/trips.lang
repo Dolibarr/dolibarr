@@ -1,0 +1,29 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Trip=Поездка
+Trips=Экскурсии
+TripsAndExpenses=Экскурсии и расходы
+TripCard=Дорожные карточки
+AddTrip=Добавить поездку
+ListOfTrips=Перечень экскурсий
+ListOfFees=Список сборов
+NewTrip=Новое путешествие
+CompanyVisited=Компании / Фонд посетил
+Kilometers=Километры
+FeesKilometersOrAmout=Сумма или километры
+DeleteTrip=Удалить путешествие
+ConfirmDeleteTrip=Вы уверены, что хотите удалить эту поездку?
+TF_OTHER=Другой
+TF_LUNCH=Обед
+TF_TRIP=Поездка
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser

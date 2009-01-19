@@ -1,0 +1,22 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-01-19 21:30:52
+ */
+
+
+// Date 2009-01-19 21:30:52
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Shop=Магазин
+ShopWeb=Интернет-магазин
+LastOrders=Последние заказы
+OnStandBy=В режиме ожидания
+TreatmentInProgress=Лечение продолжается
+LastCustomers=Последние клиенты
+OSCommerceShop=OSCommerce магазин
+OSCommerce=OSCommerce
+AddProd=Продажа онлайн
+// Date 2009-01-19 21:30:52
+// STOP - Lines generated via parser
