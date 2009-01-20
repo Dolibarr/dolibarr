@@ -166,9 +166,9 @@ if ($_POST["action"] == 'add' && $canadduser)
 			{
 				$edituser->setPassword($user,trim($_POST['password']),$conf->global->DATABASE_PWD_ENCRYPTED);
 			}
-				
+
 			$db->commit();
-				
+
 			Header("Location: fiche.php?id=$id");
 			exit;
 		}
@@ -425,10 +425,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
 			$conf->global->LDAP_FIELD_FIRSTNAME,
 			$conf->global->LDAP_FIELD_LOGIN,
 			$conf->global->LDAP_FIELD_LOGIN_SAMBA);
-				
+
 			// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 			$required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
-				
+
 			// Get from LDAP database an array of results
 			$ldapusers = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 1);
 			if (is_array($ldapusers))
@@ -714,7 +714,7 @@ else
 				{
 					$message .= $ldap->error;
 				}
-				 
+
 				$passDoNotExpire = 0;
 				$userChangePassNextLogon = 0;
 				$userDisabled = 0;
@@ -737,7 +737,7 @@ else
 					$userDisabled = 1;
 					$statutUACF = "ACCOUNTDISABLE";
 				}
-				 
+
 				if ($ldap->pwdlastset == 0)
 				{
 					$userChangePassNextLogon = 1;
@@ -912,7 +912,7 @@ else
 			{
 				$societe = new Societe($db);
 				$societe->fetch($fuser->societe_id);
-				print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$fuser->societe_id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.dolibarr_trunc($societe->nom,32).'</a>';
+				print $societe->getNomUrl(1,'');
 			}
 			else
 			{
@@ -1014,7 +1014,7 @@ else
 			/*
 			 * Barre d'actions
 			 */
-			 
+
 			print '<div class="tabsAction">';
 
 
@@ -1034,7 +1034,7 @@ else
 				{
 					print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
 				}
-					
+
 				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login && !$fuser->ldap_sid)
 				{
 					print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
@@ -1095,7 +1095,7 @@ else
 				dolibarr_print_error($db);
 			}
 			$db->free($resql);
-			
+
 			if ($caneditperms)
 			{
 				$form = new Form($db);
@@ -1120,12 +1120,12 @@ else
 			$usergroup=new UserGroup($db);
 			$listofgroups=$usergroup->listGroupsForUser($fuser);
 			$num=sizeof($listofgroups);
-			
+
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre" width="25%">'.$langs->trans("Groups").'</td>';
 			print "<td>&nbsp;</td></tr>\n";
-			
+
 			if ($num > 0)
 			{
 				$i = 0;
@@ -1166,7 +1166,7 @@ else
 			{
 				print '<tr '.$bc[false].'><td colspan=2>'.$langs->trans("None").'</td></tr>';
 			}
-			
+
 			print "</table>";
 			print "<br>";
 		}
@@ -1317,7 +1317,7 @@ else
 			{
 				$societe = new Societe($db);
 				$societe->fetch($fuser->societe_id);
-				print '<a href="'.DOL_URL_ROOT.'/soc.php?id='.$fuser->societe_id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.dolibarr_trunc($societe->nom,32).'</a>';
+				print $societe->getNomUrl(1,'');
 				if ($fuser->contact_id)
 				{
 					$contact = new Contact($db);
@@ -1373,7 +1373,7 @@ else
 				print $fuser->office_fax;
 			}
 			print '</td></tr>';
-				
+
 			// EMail
 			print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
 			print '<td>';
