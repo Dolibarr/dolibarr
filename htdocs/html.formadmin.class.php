@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. 
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
@@ -41,10 +41,10 @@ class FormAdmin
 	function FormAdmin($DB)
 	{
 		$this->db = $DB;
-		
+
 		return 1;
 	}
-  
+
 
 	/**
 	 *    \brief      Retourne la liste déroulante des langues disponibles
@@ -57,7 +57,7 @@ class FormAdmin
 		global $langs;
 
 		$langs_available=$langs->get_available_languages();
-		
+
 		print '<select class="flat" name="'.$htmlname.'">';
 		if ($showauto)
 		{
@@ -88,17 +88,17 @@ class FormAdmin
 	}
 
 	/**
-     *    \brief      Retourne la liste dï¿½roulante des menus disponibles (eldy_backoffice, ...)
-     *    \param      selected        Menu prï¿½-sï¿½lectionnï¿½e
+     *    \brief      Retourne la liste deroulante des menus disponibles (eldy_backoffice, ...)
+     *    \param      selected        Menu pre-selectionnee
      *    \param      htmlname        Nom de la zone select
-     *    \param      dirmenu         Repï¿½rtoire ï¿½ scanner
+     *    \param      dirmenu         Repertoire a scanner
      */
     function select_menu($selected='',$htmlname,$dirmenu)
     {
         global $langs,$conf;
-    
+
         if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // Pour compatibilitï¿½
-    
+
 		$menuarray=array();
         $handle=opendir($dirmenu);
         while (($file = readdir($handle))!==false)
@@ -113,7 +113,7 @@ class FormAdmin
 				else if (eregi('^rodolphe',$file)) $prefix='2';	// Other
 				else if (eregi('^empty',$file)) $prefix='2';	// Other
 				else $prefix='1';								// Experimental
-				
+
                 if ($file == $selected)
                 {
 					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="true">'.$filelib.'</option>';
@@ -125,7 +125,7 @@ class FormAdmin
             }
         }
 		ksort($menuarray);
-		
+
 		// Affichage liste deroulante des menus
         print '<select class="flat" name="'.$htmlname.'">';
         $oldprefix='';
@@ -133,7 +133,7 @@ class FormAdmin
 		{
 			$tab=split('_',$key);
 			$newprefix=$tab[0];
-			if ($conf->browser->firefox && $newprefix != $oldprefix)
+			if (! empty($conf->browser->firefox) && $newprefix != $oldprefix)	// Add separators
 			{
 				// Affiche titre
 				print '<option value="-1" disabled="disabled">';
@@ -143,7 +143,7 @@ class FormAdmin
 				print '</option>';
 				$oldprefix=$newprefix;
 			}
-			print $val."\n";
+			print $val."\n";	// Show menu entry
 		}
 		print '</select>';
     }
@@ -157,7 +157,7 @@ class FormAdmin
     function select_menu_families($selected='',$htmlname,$dirmenu)
     {
 		global $langs,$conf;
-    
+
 		$menuarray=array();
         $handle=opendir($dirmenu);
         while (($file = readdir($handle))!==false)
@@ -196,7 +196,7 @@ class FormAdmin
 		print '</select>';
     }
 
-	
+
     /**
      *    \brief      Retourne la liste dï¿½roulante des menus disponibles (eldy)
      *    \param      selected        Menu prï¿½-sï¿½lectionnï¿½e
@@ -205,10 +205,10 @@ class FormAdmin
     function select_timezone($selected='',$htmlname)
     {
 		global $langs,$conf;
-    
+
         print '<select class="flat" name="'.$htmlname.'">';
 		print '<option value="-1">&nbsp;</option>';
-		
+
 		$arraytz=array(
 			"Pacific/Midway"=>"GMT-11:00",
 			"Pacific/Fakaofo"=>"GMT-10:00",
@@ -244,7 +244,7 @@ class FormAdmin
 		}
 		print '</select>';
 	}
-	
+
     /**
      *    \brief      Return colors list selector
      *    \param      selected        Color pre-selected
@@ -253,12 +253,12 @@ class FormAdmin
     function select_colors($selected='', $htmlname, $arrayofcolors='', $showcolorbox=1)
     {
 		global $langs,$conf;
-    
+
 		if (! is_array($arrayofcolors)) $arrayofcolors=array('29527A','5229A3','A32929','7A367A','B1365F','0D7813');
 
 		//$selected='';
 		if ($showcolorbox) print '<table class="nobordernopadding"><tr valign="middle" class="nobordernopadding"><td class="nobordernopadding">';
-        
+
 		print '<select class="flat" name="'.$htmlname.'">';
 		print '<option value="-1">&nbsp;</option>';
 		foreach ($arrayofcolors as $val)

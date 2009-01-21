@@ -156,7 +156,7 @@ $sessionname="DOLSESSID_".$dolibarr_main_db_name;
 if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
 session_name($sessionname);
 session_start();
-dolibarr_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"].", ".ini_get("session.gc_maxlifetime"));
+dolibarr_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".(isset($_SESSION["dol_login"])?$_SESSION["dol_login"]:'').", ".ini_get("session.gc_maxlifetime"));
 
 // Disable modules (this must be after session_start)
 if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
@@ -206,7 +206,7 @@ if (! isset($_SESSION["dol_login"]))
 	// On est pas deja authentifie, on demande le login/mot de passe
 
 	// Verification du code securite graphique
-	if ($test && isset($_POST["username"]) && $conf->global->MAIN_SECURITY_ENABLECAPTCHA)
+	if ($test && isset($_POST["username"]) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
 		require_once ARTICHOW."/AntiSpam.class.php";
@@ -380,9 +380,10 @@ else
 // Est-ce une nouvelle session
 if (! isset($_SESSION["dol_login"]))
 {
+	$error=0;
+
 	// Nouvelle session pour ce login
 	$_SESSION["dol_login"]=$user->login;
-	$_SESSION["dol_password"]=$user->pass_crypted;
 	$_SESSION["dol_authmode"]=$conf->authmode;
 	dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
@@ -410,7 +411,7 @@ if (! isset($_SESSION["dol_login"]))
 	}
 
 	// Module webcalendar
-	if ($conf->webcal->enabled && $user->webcal_login != "")
+	if (! empty($conf->webcal->enabled) && $user->webcal_login != "")
 	{
 		$domain='';
 		// Extract domain from url (Useless because only cookie on same domain are authorized by browser
@@ -431,7 +432,7 @@ if (! isset($_SESSION["dol_login"]))
 	}
 
 	// Module Phenix
-	if ($conf->phenix->enabled && $user->phenix_login != "" && $conf->phenix->cookie)
+	if (! empty($conf->phenix->enabled) && $user->phenix_login != "" && $conf->phenix->cookie)
 	{
 		// Creation du cookie permettant la connexion automatique, valide jusqu'a la fermeture du browser
 		if (!isset($HTTP_COOKIE_VARS[$conf->phenix->cookie]))
@@ -1014,7 +1015,7 @@ function llxFooter($foot='',$limitIEbug=1)
 	}
 
 	// Juste pour eviter bug IE qui reorganise mal div precedents si celui-ci absent
-	if ($limitIEbug && ! $conf->browser->firefox) print "\n".'<div class="tabsAction">&nbsp;</div>'."\n";
+	if ($limitIEbug && empty($conf->browser->firefox)) print "\n".'<div class="tabsAction">&nbsp;</div>'."\n";
 
 	// If there is some logs in buffer to show
     if (sizeof($conf->logbuffer))

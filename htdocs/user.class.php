@@ -63,17 +63,18 @@ class User extends CommonObject
 	var $admin;
 	var $login;
 
-	//! Mot de passe en clair en memoire
+	//! Clear password in memory
 	var $pass;
-	//! Mot de passe en clair en base (renseigne si DATABASE_PWD_ENCRYPTED=0)
+	//! Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
 	var $pass_indatabase;
-	//! Mot de passe crypte en base (toujours renseigne)
+	//! Encrypted password in database (always defined)
 	var $pass_indatabase_crypted;
 
 	var $datec;
 	var $datem;
 	var $societe_id;
 	var $fk_member;
+
 	var $webcal_login;
 	var $phenix_login;
 	var $phenix_pass;

@@ -246,22 +246,16 @@ function dol_syslog($message, $level=LOG_INFO)
 		{
 			if (function_exists('openlog'))	// This function does not exists on some ISP (Ex: Free in France)
 			{
+				$facility = LOG_USER;
+
 				//define_syslog_variables(); already defined in master.inc.php
-				if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
-				{
-					$facility = constant("MAIN_SYSLOG_FACILITY");
-				}
-				elseif (defined("SYSLOG_FACILITY") && SYSLOG_FACILITY)
+				if (defined("SYSLOG_FACILITY") && SYSLOG_FACILITY)
 				{
 					// Exemple: SYSLOG_FACILITY vaut LOG_USER qui vaut 8. On a besoin de 8 dans $facility.
 					$facility = constant("SYSLOG_FACILITY");
 				}
-				else
-				{
-					$facility = LOG_USER;
-				}
-unset ($facility);
-				openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
+
+				openlog("dolibarr", LOG_PID | LOG_PERROR, (int) $facility);		// (int) is required to avoid error parameter 3 expected to be long
 
 				if (! $level)
 				{

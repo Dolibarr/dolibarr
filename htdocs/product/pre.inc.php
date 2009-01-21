@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Auguria SARL <info@auguria.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,17 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \file       htdocs/product/pre.inc.php
-   \ingroup    product,service
-   \brief      Fichier gestionnaire du menu gauche des produits et services
-   \version    $Revision$
-   \todo       Rodo - Gere les menus depuis les canvas
-*/
+ *	\file       htdocs/product/pre.inc.php
+ *  \ingroup    product,service
+ *  \brief      Fichier gestionnaire du menu gauche des produits et services
+ *  \version    $Id$
+ */
 require("../main.inc.php");
 
 $langs->load("products");
@@ -44,7 +41,7 @@ function llxHeader($head = "", $urlp = "", $title="")
 	{
 		$menu->add(DOL_URL_ROOT."/product/index.php?type=0", $langs->trans("Products"));
 		$menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("List"));
-		
+
 		if ($user->societe_id == 0 && $user->rights->produit->creer)
 		{
 			$menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
@@ -53,7 +50,7 @@ function llxHeader($head = "", $urlp = "", $title="")
 
 	// Produit specifique
 	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
-	if(is_dir($dir) && $conf->global->PRODUCT_CANVAS_ABILITY)
+	if(is_dir($dir) && ! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 	{
 		if ($handle = opendir($dir))
 		{
@@ -62,10 +59,10 @@ function llxHeader($head = "", $urlp = "", $title="")
 				if (substr($file, strlen($file) -10) == '.class.php' && substr($file,0,8) == 'product.')
 				{
 					$parts = explode('.',$file);
-					$classname = 'Product'.ucfirst($parts[1]);		  
-					require_once($dir.$file);		  
+					$classname = 'Product'.ucfirst($parts[1]);
+					require_once($dir.$file);
 					$module = new $classname();
-					
+
 					if ($module->active === '1' && $module->menu_add === 1)
 					{
 						$module->PersonnalizeMenu($menu);

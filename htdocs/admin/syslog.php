@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,19 +37,22 @@ $langs->load("other");
 /*
  * Actions
  */
-if ($_POST["action"] == 'setlevel')
+if (! empty($_POST["action"]) && $_POST["action"] == 'setlevel')
 {
 	dolibarr_set_const($db,"SYSLOG_LEVEL",$_POST["level"]);
 	dolibarr_syslog("admin/syslog: level ".$_POST["level"]);
 }
 
-if ($_POST["action"] == 'set')
+if (! empty($_POST["action"]) && $_POST["action"] == 'set')
 {
 	$optionlogoutput=$_POST["optionlogoutput"];
 	if ($optionlogoutput == "syslog")
 	{
 		if (defined($_POST["facility"]))
 		{
+			// Only LOG_USER supported on Windows
+			if (! empty($_SERVER["WINDIR"])) $_POST["facility"]='LOG_USER';
+
 			dolibarr_del_const($db,"SYSLOG_FILE");
 			dolibarr_set_const($db,"SYSLOG_FACILITY",$_POST["facility"]);
 			dolibarr_syslog("admin/syslog: facility ".$_POST["facility"]);
@@ -110,11 +113,13 @@ print '<td align="right"><input type="submit" class="button" value="'.$langs->tr
 print "</tr>\n";
 $var=true;
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optionlogoutput\" value=\"syslog\" ".($syslogfacility?" checked":"")."> ".$langs->trans("SyslogSyslog")."</td>";
-print '<td colspan="2">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" value="'.$defaultsyslogfacility.'"></td></tr>';
+print "<tr ".$bc[$var]."><td width=\"140\"><input ".$bc[$var]." type=\"radio\" name=\"optionlogoutput\" value=\"syslog\" ".($syslogfacility?" checked":"")."> ".$langs->trans("SyslogSyslog")."</td>";
+print '<td colspan="2">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" value="'.$defaultsyslogfacility.'">';
+print ' '.img_info('Only LOG_USER supported on Windows');
+print '</td></tr>';
 
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optionlogoutput\" value=\"file\"".($syslogfile?" checked":"")."> ".$langs->trans("SyslogSimpleFile")."</td>";
+print "<tr ".$bc[$var]."><td width=\"140\"><input ".$bc[$var]." type=\"radio\" name=\"optionlogoutput\" value=\"file\"".($syslogfile?" checked":"")."> ".$langs->trans("SyslogSimpleFile")."</td>";
 print '<td colspan="2">'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" size="60" value="'.$defaultsyslogfile.'"></td></tr>';
 
 print "</table>\n";

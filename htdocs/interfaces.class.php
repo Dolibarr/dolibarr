@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ class Interfaces
 {
 	var $dir;				// Directory with all trigger files
 	var $errors=array();	// Array for errors
-	
+
 	/**
 	*   \brief      Constructeur.
 	*   \param      DB      handler d'accès base
@@ -44,7 +44,7 @@ class Interfaces
 		$this->db = $DB ;
 		$this->dir = DOL_DOCUMENT_ROOT . "/includes/triggers";
 	}
-	
+
 	/**
 	*   \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
 	*               Cette fonction déclenche tous les triggers trouvés actifs.
@@ -60,13 +60,13 @@ class Interfaces
 		$handle=opendir($this->dir);
 		$modules = array();
 		$nbfile = $nbtotal = $nbok = $nbko = 0;
-	
+
 		while (($file = readdir($handle))!==false)
 		{
 			if (is_readable($this->dir."/".$file) && eregi('^interface_([^_]+)_(.+)\.class\.php$',$file,$reg))
 			{
 				$nbfile++;
-				
+
 				$modName = "Interface".ucfirst($reg[2]);
 				//print "file=$file"; print "modName=$modName"; exit;
 				if (in_array($modName,$modules))
@@ -89,7 +89,7 @@ class Interfaces
 					$constparam='MAIN_MODULE_'.strtoupper($module);
 					if (empty($conf->global->$constparam)) $qualified=false;
 				}
-				
+
 				if (! $qualified)
 				{
 					dolibarr_syslog("Interfaces::run_triggers Triggers for file '".$file."' need module to be enabled",LOG_INFO);
@@ -99,6 +99,7 @@ class Interfaces
 				dolibarr_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
 				include_once($this->dir."/".$file);
 				$objMod = new $modName($this->db);
+				$i=0;
 				if ($objMod)
 				{
 					$modules[$i] = $modName;
@@ -136,6 +137,6 @@ class Interfaces
 			//dolibarr_syslog("Interfaces::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_DEBUG);
 			return $nbok;
 		}
-	} 
+	}
 }
 ?>

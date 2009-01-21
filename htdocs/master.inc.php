@@ -160,7 +160,7 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 // Detection browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
-  if (eregi('firefox',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->firefox=1;
+  if (eregi('firefox',$_SERVER["HTTP_USER_AGENT"]))   $conf->browser->firefox=1;
   if (eregi('iceweasel',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->firefox=1;
 }
 

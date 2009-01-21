@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	if (! empty($_REQUEST["urlfrom"])) $_SESSION["urlfrom"]=$_REQUEST["urlfrom"];
 	else unset($_SESSION["urlfrom"]);
-	
+
 	// Ce DTD est KO car inhibe document.body.scrollTop
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	// Ce DTD est OK
@@ -149,8 +149,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 	// Security graphical code
-	$disabled=! $conf->global->MAIN_SECURITY_ENABLECAPTCHA;
-	if (function_exists("imagecreatefrompng") && ! $disabled)
+	if (function_exists("imagecreatefrompng") && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 	{
 		//print "Info session: ".session_name().session_id();print_r($_SESSION);
 		print '<tr><td align="left" valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
@@ -170,27 +169,27 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />';
 	print '</td></tr>';
 
-	if (! $conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
+	if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 	{
 		print '<tr><td colspan="3" align="center"><a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">('.$langs->trans("PasswordForgotten").')</a></td></tr>';
 	}
 
 	print '</table>';
-	
+
 	// Hidden fields
 	print '<input type="hidden" name="loginfunction" value="loginfunction" />';
-	
+
 	print '</form>';
 
 	// Message
-	if ($_SESSION["dol_loginmesg"])
+	if (! empty($_SESSION["dol_loginmesg"]))
 	{
 		print '<center><table width="60%"><tr><td align="center" class="small"><div class="error">';
 		print $_SESSION["dol_loginmesg"];
 		$_SESSION["dol_loginmesg"]="";
 		print '</div></td></tr></table></center>';
 	}
-	if ($conf->global->MAIN_HOME)
+	if (! empty($conf->global->MAIN_HOME))
 	{
 		print '<center><table cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td align="center">';
 		$i=0;
@@ -204,8 +203,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 
 	print "\n";
-	print '<!-- urlfrom in session = '.$_SESSION["urlfrom"].' -->';
-	
+	print '<!-- urlfrom in session = '.(isset($_SESSION["urlfrom"])?$_SESSION["urlfrom"]:'').' -->';
+
 	// Fin entete html
 	print "\n</body>\n</html>";
 }
@@ -242,7 +241,7 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 /**
  *  \brief   	Encode\decode database password in config file
  *  \param   	level   Encode level : 0 no enconding, 1 encoding
- *	\return		int		<0 if KO, >0 if OK	
+ *	\return		int		<0 if KO, >0 if OK
  */
 function encodedecode_dbpassconf($level=0)
 {
@@ -254,7 +253,7 @@ function encodedecode_dbpassconf($level=0)
 		while(!feof($fp))
 		{
 			$buffer = fgets($fp,4096);
-			
+
 			if (strstr($buffer,"\$dolibarr_main_db_encrypted_pass") && $level == 0)
 			{
 				$passwd = strstr($buffer,"$dolibarr_main_db_encrypted_pass=");
@@ -275,7 +274,7 @@ function encodedecode_dbpassconf($level=0)
 			}
 		}
 		fclose($fp);
-		
+
 		$file=DOL_DOCUMENT_ROOT.'/conf/conf.php';
 		if ($fp = @fopen($file,'w'))
 		{
@@ -283,7 +282,7 @@ function encodedecode_dbpassconf($level=0)
 			fclose($fp);
 			// It's config file, so we set permission for creator only
 			// @chmod($file, octdec('0600'));
-			
+
 			return 1;
 		}
 		else

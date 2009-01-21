@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ class MenuLeft {
 		else
 		{
 			// On va le chercher en session si non défini par le lien
-			$mainmenu=$_SESSION["mainmenu"];
+			$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
 		}
 
 		if (isset($_GET["leftmenu"]))
@@ -789,7 +789,7 @@ class MenuLeft {
 			if ($mainmenu == 'tools')
 			{
 
-				if ($conf->mailing->enabled)
+				if (! empty($conf->mailing->enabled))
 				{
 					$langs->load("mails");
 
@@ -798,7 +798,7 @@ class MenuLeft {
 					$newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/liste.php?leftmenu=mailing", $langs->trans("List"), 1, $user->rights->mailing->lire);
 				}
 
-				if ($conf->bookmark->enabled)
+				if (! empty($conf->bookmark->enabled))
 				{
 					$langs->load("other");
 					$newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php?leftmenu=bookmarks", $langs->trans("Bookmarks"), 0, $user->rights->bookmark->lire);
@@ -806,7 +806,7 @@ class MenuLeft {
 					$newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("List"), 1, $user->rights->bookmark->lire);
 				}
 
-				if ($conf->export->enabled)
+				if (! empty($conf->export->enabled))
 				{
 					$langs->load("exports");
 					$newmenu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("FormatedExport"),0, $user->rights->export->lire);
@@ -814,14 +814,14 @@ class MenuLeft {
 					//$newmenu->add_submenu(DOL_URL_ROOT."/exports/export.php?leftmenu=export",$langs->trans("List"),1, $user->rights->export->lire);
 				}
 
-				if ($conf->global->MAIN_MODULE_IMPORT)
+				if (! empty($conf->global->MAIN_MODULE_IMPORT))
 				{
 					$langs->load("exports");
 					$newmenu->add_submenu(DOL_URL_ROOT."/admin/import/index.php?leftmenu=import",$langs->trans("FormatedImport"),0, $user->rights->import->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/admin/import/import.php?leftmenu=import",$langs->trans("NewImport"),1, $user->rights->import->creer);
 				}
 
-				if ($conf->global->MAIN_MODULE_DOMAIN)
+				if (! empty($conf->global->MAIN_MODULE_DOMAIN))
 				{
 					$langs->load("domains");
 					$newmenu->add_submenu(DOL_URL_ROOT."/domain/index.php?leftmenu=export",$langs->trans("DomainNames"),0, $user->rights->domain->read);

@@ -700,7 +700,7 @@ if ($conf->use_javascript_ajax)
 }
 
 // Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
-if (! $conf->browser->firefox)
+if (empty($conf->browser->firefox))
 {
 	print '<div class="tabsAction">&nbsp;</div>';
 }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,28 +43,27 @@ class Events // extends CommonObject
 	var $errors=array();				//!< To return several error codes (or messages)
 	var $element='events';				//!< Id that identify managed objects
 	var $table_element='events';		//!< Name of table without prefix where object is stored
-    
+
     var $id;
-    
+
 	var $tms;
 	var $type;
 	var $dateevent;
 	var $description;
 
-    
 
-	
+
     /**
      *      \brief      Constructor
      *      \param      DB      Database handler
      */
-    function Events($DB) 
+    function Events($DB)
     {
         $this->db = $DB;
         return 1;
     }
 
-	
+
     /**
      *      \brief      Create in database
      *      \param      user        User that create
@@ -73,18 +72,17 @@ class Events // extends CommonObject
     function create($user)
     {
     	global $conf, $langs;
-    	
+
 		// Clean parameters
 		$this->id=trim($this->id);
-		$this->fk_action=trim($this->fk_action);
 		$this->description=trim($this->description);
 
 		// Check parameters
 		if (! $this->description) { $this->error='ErrorBadValueForParameter'; return -1; }
-		
+
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
-		
+
 		$sql.= "type,";
 		$sql.= "ip,";
 		$sql.= "dateevent,";
@@ -92,7 +90,7 @@ class Events // extends CommonObject
 		$sql.= "description";
 
         $sql.= ") VALUES (";
-       
+
 		$sql.= " '".$this->type."',";
 		$sql.= " '".$_SERVER['REMOTE_ADDR']."',";
 		$sql.= " ".$this->db->idate($this->dateevent).",";
@@ -106,7 +104,7 @@ class Events // extends CommonObject
         if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."events");
-    
+
             return $this->id;
         }
         else
@@ -126,25 +124,25 @@ class Events // extends CommonObject
     function update($user=0, $notrigger=0)
     {
     	global $conf, $langs;
-    	
+
 		// Clean parameters
-        
+
 		$this->id=trim($this->id);
 		$this->type=trim($this->type);
 		$this->description=trim($this->description);
 
-        
+
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
-        
+
 		$sql.= " type='".$this->type."',";
 		$sql.= " dateevent=".$this->db->idate($this->dateevent).",";
 		$sql.= " description='".addslashes($this->description)."'";
-        
+
         $sql.= " WHERE rowid=".$this->id;
 
         dolibarr_syslog("Events::update sql=".$sql, LOG_DEBUG);
@@ -158,8 +156,8 @@ class Events // extends CommonObject
 
         return 1;
     }
-  
-  
+
+
     /*
      *    \brief      Load object in memory from database
      *    \param      id          id object
@@ -171,16 +169,16 @@ class Events // extends CommonObject
     	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid,";
-		
+
 		$sql.= " ".$this->db->pdate('t.tms').",";
 		$sql.= " t.type,";
 		$sql.= " ".$this->db->pdate('t.dateevent').",";
 		$sql.= " t.description";
 
-		
+
         $sql.= " FROM ".MAIN_DB_PREFIX."events as t";
         $sql.= " WHERE t.rowid = ".$id;
-    
+
     	dolibarr_syslog("Events::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -188,18 +186,18 @@ class Events // extends CommonObject
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-    
+
                 $this->id    = $obj->rowid;
-                
+
 				$this->tms = $obj->tms;
 				$this->type = $obj->type;
 				$this->dateevent = $obj->dateevent;
 				$this->description = $obj->description;
 
-                
+
             }
             $this->db->free($resql);
-            
+
             return 1;
         }
         else
@@ -209,8 +207,8 @@ class Events // extends CommonObject
             return -1;
         }
     }
-    
-    
+
+
  	/*
 	*   \brief      Delete object in database
     *	\param      user        User that delete
@@ -219,10 +217,10 @@ class Events // extends CommonObject
 	function delete($user)
 	{
 		global $conf, $langs;
-	
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
 		$sql.= " WHERE rowid=".$this->id;
-	
+
 	   	dolibarr_syslog("Events::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
@@ -231,11 +229,11 @@ class Events // extends CommonObject
             dolibarr_syslog("Events::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
-	
+
 		return 1;
 	}
 
-  
+
 	/**
 	 *		\brief		Initialise object with example values
 	 *		\remarks	id must be 0 if object instance is a specimen.
@@ -243,7 +241,7 @@ class Events // extends CommonObject
 	function initAsSpecimen()
 	{
 		$this->id=0;
-		
+
 		$this->tms=time();
 		$this->type='';
 		$this->dateevent=time();

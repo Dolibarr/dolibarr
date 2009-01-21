@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,7 +88,7 @@ function versiondolibarrarray()
 function run_sql($sqlfile,$silent=1)
 {
 	global $db, $conf, $langs, $user;
-	
+
 	dolibarr_syslog("Admin.lib::run_sql run sql file ".$sqlfile, LOG_DEBUG);
 
 	$ok=0;
@@ -106,7 +106,7 @@ function run_sql($sqlfile,$silent=1)
 		while (!feof ($fp))
 		{
 			$buf = fgets($fp, 4096);
-			
+
 			// Cas special de lignes autorisees pour certaines versions uniquement
 			if (eregi('^-- V([0-9\.]+)',$buf,$reg))
 			{
@@ -121,7 +121,7 @@ function run_sql($sqlfile,$silent=1)
 					//print "Ligne $i qualifi?e par version: ".$buf.'<br>';
 				}
 			}
-			
+
 			// Ajout ligne si non commentaire
 			if (! eregi('^--',$buf)) $buffer .= $buf;
 
@@ -135,7 +135,7 @@ function run_sql($sqlfile,$silent=1)
 				$buffer='';
 			}
 		}
-		
+
 		if ($buffer) $arraysql[$i]=trim($buffer);
 		fclose($fp);
 	}
@@ -147,7 +147,7 @@ function run_sql($sqlfile,$silent=1)
 		if ($sql)
 		{
 			$newsql=$sql;
-		
+
 			// Replace __+MAX_table__ with max of table
 			while (eregi('__\+MAX_([A-Za-z_]+)__',$newsql,$reg))
 			{
@@ -175,7 +175,7 @@ function run_sql($sqlfile,$silent=1)
 				$to='+'.$listofmaxrowid[$table];
 				$newsql=str_replace($from,$to,$newsql);
 				dolibarr_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
-			
+
 				$arraysql[$i]=$newsql;
 			}
 		}
@@ -189,17 +189,17 @@ function run_sql($sqlfile,$silent=1)
 		if ($sql)
 		{
 			$newsql=$sql;
-			
+
 			// Ajout trace sur requete (eventuellement ? commenter si beaucoup de requetes)
 			if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$newsql."'</td></tr>\n";
 			dolibarr_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
-			
+
 			if (eregi('insert into ([^ ]+)',$newsql,$reg))
-			{	
+			{
 				// It's an insert
 				$cursorinsert++;
 			}
-			
+
 			// Replace __x__ with rowid of insert nb x
 			while (eregi('__([0-9]+)__',$newsql,$reg))
 			{
@@ -217,12 +217,12 @@ function run_sql($sqlfile,$silent=1)
 				$newsql=str_replace($from,$to,$newsql);
 				dolibarr_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
 			}
-			
+
 			$result=$db->query($newsql);
 			if ($result)
 			{
 				if (eregi('insert into ([^ ]+)',$newsql,$reg))
-				{	
+				{
 					// It's an insert
 					$table=eregi_replace('[^a-zA-Z_]+','',$reg[1]);
 					$insertedrowid=$db->last_insert_id($table);
@@ -234,7 +234,7 @@ function run_sql($sqlfile,$silent=1)
 			else
 			{
 				$errno=$db->errno();
-				
+
 				$okerror=array( 'DB_ERROR_TABLE_ALREADY_EXISTS',
 				'DB_ERROR_COLUMN_ALREADY_EXISTS',
 				'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
@@ -291,7 +291,7 @@ function run_sql($sqlfile,$silent=1)
 function dolibarr_del_const($db, $name)
 {
 	global $conf;
-	
+
 	$sql = "DELETE FROM llx_const";
 	$sql.=" WHERE name='".addslashes($name)."' or rowid='".addslashes($name)."'";
 
@@ -328,7 +328,7 @@ function dolibarr_get_const($db, $name)
     if ($resql)
     {
         $obj=$db->fetch_object($resql);
-        $value=$obj->value;
+        if ($obj) $value=$obj->value;
     }
     return $value;
 }
@@ -356,7 +356,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     }
 
     $db->begin();
-    
+
     //dolibarr_syslog("dolibarr_set_const name=$name, value=$value");
     $sql = "DELETE FROM llx_const WHERE name = '".addslashes($name)."';";
     dolibarr_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
@@ -417,7 +417,7 @@ function security_prepare_head()
 	$head[$h][1] = $langs->trans("Audit");
 	$head[$h][2] = 'audit';
 	$h++;
-	
+
 	return $head;
 }
 
