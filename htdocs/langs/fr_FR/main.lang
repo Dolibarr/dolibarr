@@ -467,6 +467,7 @@ Signature=Sign
 HidePassword=Afficher commande avec mot de passe masqué
 UnHidePassword=Afficher commande réelle avec mot de passe en clair
 Root=Racine
+Informations=Informations
 # Week day
 Monday=Lundi
 Tuesday=Mardi
