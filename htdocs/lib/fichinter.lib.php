@@ -23,7 +23,7 @@
  *	\brief      Ensemble de fonctions de base pour le module fichinter
  *	\ingroup    fichinter
  *	\version    $Id$
- * 
+ *
  * 	Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
@@ -58,6 +58,11 @@ function fichinter_prepare_head($fichinter)
 	$head[$h][2] = 'note';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$fichinter->id;
+	$head[$h][1] = $langs->trans("Documents");
+	$head[$h][2] = 'documents';
+	$h++;
+
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/info.php?id='.$fichinter->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
@@ -77,7 +82,7 @@ function fichinter_prepare_head($fichinter)
 			$h++;
 		}
 	}
-		
+
 	return $head;
 }
 
