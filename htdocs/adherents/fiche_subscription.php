@@ -225,20 +225,24 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="2">';
 	print '<input type="text" class="flat" size="60" name="note" value="'.$subscription->note.'"></td></tr>';
 
-	if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
+	// Bank line
+	if ($conf->banque->enabled)
 	{
-    	print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
-		if ($subscription->fk_bank)
-		{
-			$bankline=new AccountLine($db);
-			$result=$bankline->fetch($subscription->fk_bank);
-			print $bankline->getNomUrl(1,0,'showall');
-		}
-		else
-		{
-			print $langs->trans("NoneF");
-		}
-    	print '</td></tr>';
+		if ($conf->global->ADHERENT_BANK_USE || $subscription->fk_bank)
+	    {
+    		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
+			if ($subscription->fk_bank)
+			{
+	    		$bankline=new AccountLine($db);
+		    	$result=$bankline->fetch($subscription->fk_bank);
+				print $bankline->getNomUrl(1,0,'showall');
+			}
+			else
+			{
+				print $langs->trans("NoneF");
+			}
+	    	print '</td></tr>';
+	    }
 	}
 
 	print '<tr><td colspan="3" align="center">';
@@ -328,25 +332,23 @@ if ($rowid && $action != 'edit')
     // Amount
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="3">'.$subscription->note.'</td></tr>';
 
-    // Bank account
+    // Bank line
 	if ($conf->banque->enabled)
 	{
-	    if ($subscription->fk_bank)
+		if ($conf->global->ADHERENT_BANK_USE || $subscription->fk_bank)
 	    {
-	    	$bankline=new AccountLine($db);
-	    	$result=$bankline->fetch($subscription->fk_bank);
-
-	    	$bank=new Account($db);
-	    	$result=$bank->fetch($bankline->fk_account);
-
-	    	print '<tr>';
-	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
-			$bankline=new AccountLine($db);
-			$result=$bankline->fetch($subscription->fk_bank);
-			print $bankline->getNomUrl(1,0,'showall');
-	    	print '</td>';
-	    	print '</tr>';
+    		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="3">';
+			if ($subscription->fk_bank)
+			{
+	    		$bankline=new AccountLine($db);
+		    	$result=$bankline->fetch($subscription->fk_bank);
+		    	print $bankline->getNomUrl(1,0,'showall');
+			}
+			else
+			{
+				print $langs->trans("NoneF");
+			}
+	    	print '</td></tr>';
 	    }
 	}
 
