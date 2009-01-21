@@ -466,6 +466,7 @@ Signature=Signature
 HidePassword=Show command with password hidden
 UnHidePassword=Show real command with clear password
 Root=Root
+Informations=Informations
 # Week day
 Monday=Monday
 Tuesday=Tuesday
