@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,11 @@ $langs->load("companies");
 if (!$user->admin)
   accessforbidden();
 
+$mesg='';
+
 
 /*
- * Affichage page
+ * View
  */
 
 llxHeader();
@@ -46,7 +48,7 @@ print_fiche_titre($langs->trans("SetupArea"),'','setup');
 print "<br>";
 print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo_2.png" alt="Dolibarr logo"></center><br>';
 
-if ($message) print $message.'<br>';
+if ($mesg) print $mesg.'<br>';
 
 print "<br>";
 print $langs->trans("SetupDescription1")."<br>";

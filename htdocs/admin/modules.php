@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
  *  \file       htdocs/admin/modules.php
  *  \brief      Page de configuration et activation des modules
@@ -39,7 +39,7 @@ if (!$user->admin)
  * Actions
  */
 
-if ($_GET["action"] == 'set' && $user->admin)
+if (isset($_GET["action"]) && $_GET["action"] == 'set' && $user->admin)
 {
     $result=Activate($_GET["value"]);
     $mesg='';
@@ -48,7 +48,7 @@ if ($_GET["action"] == 'set' && $user->admin)
 	exit;
 }
 
-if ($_GET["action"] == 'reset' && $user->admin)
+if (isset($_GET["action"]) && $_GET["action"] == 'reset' && $user->admin)
 {
     $result=UnActivate($_GET["value"]);
     $mesg='';
@@ -70,21 +70,21 @@ function Activate($value,$withdeps=1)
 	$modName = $value;
 
 	$ret='';
-	
+
 	// Activation du module
 	if ($modName)
 	{
 		$file = $modName . ".class.php";
-		
+
 		// Loop on each directory
 		foreach ($conf->dol_document_root as $dol_document_root)
 		{
 			$found=@include_once($dol_document_root."/includes/modules/".$file);
 			if ($found) break;
 		}
-		
+
 		$objMod = new $modName($db);
-		
+
 		// Test si version PHP ok
 		$verphp=versionphparray();
 		$vermin=$objMod->phpmin;
@@ -92,7 +92,7 @@ function Activate($value,$withdeps=1)
 		{
 			return $langs->trans("ErrorModuleRequirePHPVersion",versiontostring($vermin));
 		}
-		
+
 		// Test si version Dolibarr ok
 		$verdol=versiondolibarrarray();
 		$vermin=$objMod->need_dolibarr_version;
@@ -112,7 +112,7 @@ function Activate($value,$withdeps=1)
 		{
 			Activate($objMod->depends[$i]);
 		}
-		
+
 		// Desactivation des modules qui entrent en conflit
 		for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
 		{
@@ -147,7 +147,7 @@ function UnActivate($value,$requiredby=1)
 		{
 			$found=@include_once($dol_document_root."/includes/modules/".$file);
 			if ($found) break;
-		}		
+		}
 
 		if ($found)
 		{
@@ -204,7 +204,7 @@ foreach ($conf->dol_document_root as $dirroot)
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
 	$handle=opendir($dir);
-	if ($handle) 	
+	if ($handle)
 	{
 		while (($file = readdir($handle))!==false)
 		{
@@ -212,12 +212,12 @@ foreach ($conf->dol_document_root as $dirroot)
 		    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
 		    {
 		        $modName = substr($file, 0, strlen($file) - 10);
-	
+
 		        if ($modName)
 		        {
 		            include_once($dir.$file);
 		            $objMod = new $modName($db);
-	
+
 		            if ($objMod->numero > 0)
 		            {
 		                $j = $objMod->numero;
@@ -226,26 +226,27 @@ foreach ($conf->dol_document_root as $dirroot)
 		            {
 		                $j = 1000 + $i;
 		            }
-	
+
 					$modulequalified=1;
-	
+
 					// We discard modules that does not respect constraint on menu handlers
-					if ($objMod->needleftmenu && sizeof($objMod->needleftmenu) && ! in_array($conf->left_menu,$objMod->needleftmenu)) $modulequalified=0;
-					if ($objMod->needtopmenu  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
-	
+					if (! empty($objMod->needleftmenu) && sizeof($objMod->needleftmenu) && ! in_array($conf->left_menu,$objMod->needleftmenu)) $modulequalified=0;
+					if (! empty($objMod->needtopmenu)  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
+
 					// We discard modules according to features level (PS: if module is activated we always show it)
 					$const_name = 'MAIN_MODULE_'.strtoupper(eregi_replace('^mod','',get_class($objMod)));
 					if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
 					if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
-	
+
 					if ($modulequalified)
 					{
 						$modules[$i] = $objMod;
 			            $filename[$i]= $modName;
 			            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
 						//print "x".$modName." ".$orders[$i]."\n<br>";
-						$categ[$objMod->special]++;					// Array of all different modules categories
-			            $dirmod[$i] = $dirroot;
+						if (isset($categ[$objMod->special])) $categ[$objMod->special]++;					// Array of all different modules categories
+			            else $categ[$objMod->special]=1;
+						$dirmod[$i] = $dirroot;
 						$j++;
 			            $i++;
 					}
@@ -272,7 +273,7 @@ print "<br>\n";
 $h = 0;
 
 $categidx=0;
-if ($categ[$categidx])
+if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
 	$head[$h][1] = $langs->trans("ModulesCommon");
@@ -281,7 +282,7 @@ if ($categ[$categidx])
 }
 
 $categidx=1;
-if ($categ[$categidx])
+if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
 	$head[$h][1] = $langs->trans("ModulesInterfaces");
@@ -290,7 +291,7 @@ if ($categ[$categidx])
 }
 
 $categidx=2;
-if ($categ[$categidx])
+if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
 	$head[$h][1] = $langs->trans("ModulesOther");
@@ -299,7 +300,7 @@ if ($categ[$categidx])
 }
 
 $categidx=3;
-if ($categ[$categidx])
+if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
 	$head[$h][1] = $langs->trans("ModulesJob");
@@ -327,7 +328,8 @@ print "</tr>\n";
 
 // Affichage liste modules
 
-$var=True;
+$var=true;
+$oldfamily='';
 
 $familylib=array(
 'base'=>$langs->trans("ModuleFamilyBase"),
@@ -351,14 +353,14 @@ foreach ($orders as $key => $value)
     $const_name = 'MAIN_MODULE_'.strtoupper(eregi_replace('^mod','',get_class($objMod)));
 
     // Load all lang files of module
-    if (is_array($objMod->langfiles))
+    if (isset($objMod->langfiles) && is_array($objMod->langfiles))
     {
     	foreach($objMod->langfiles as $domain)
     	{
     		$langs->load($domain);
     	}
     }
-    
+
     // Print a separator if we change family
     if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
         print "<tr class=\"liste_titre\">\n  <td colspan=\"9\"></td>\n</tr>\n";
@@ -387,7 +389,7 @@ foreach ($orders as $key => $value)
         }
         print "</td>\n";
         print '  <td valign="top" width="14" align="center">';
-        print $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
+        print ! empty($objMod->picto)?img_object('',$objMod->picto):img_object('','generic');
         print '</td><td valign="top">'.$objMod->getName();
         print "</td>\n  <td valign=\"top\">";
         print nl2br($objMod->getDesc());
@@ -397,7 +399,7 @@ foreach ($orders as $key => $value)
 //        print $objMod->getDbVersion();
         print "</td>\n  <td align=\"center\" valign=\"top\">";
 
-        if ($conf->global->$const_name)
+        if (! empty($conf->global->$const_name))
         {
             print img_tick();
         }
@@ -408,13 +410,13 @@ foreach ($orders as $key => $value)
 
         print "</td>\n  <td align=\"center\" valign=\"top\">";
 
-        if ($conf->global->$const_name)
+        if (! empty($conf->global->$const_name))
         {
             // Module actif
-            if ($objMod->always_enabled) print $langs->trans("Required");
+            if (! empty($objMod->always_enabled)) print $langs->trans("Required");
             else print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;mode=" . $mode . "\">" . $langs->trans("Disable") . "</a></td>\n";
 
-            if ($objMod->config_page_url)
+            if (! empty($objMod->config_page_url))
             {
                 if (is_array($objMod->config_page_url))
                 {
@@ -450,7 +452,7 @@ foreach ($orders as $key => $value)
         }
         else
         {
-            if ($objMod->always_enabled)
+            if (! empty($objMod->always_enabled))
             {
                 // Ne devrait pas arriver.
             }

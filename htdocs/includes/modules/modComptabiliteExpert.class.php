@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -81,7 +81,6 @@ class modComptabiliteExpert extends DolibarrModules
 		$this->dirs[0] = $conf->comptaexpert->dir_output;
 		$this->dirs[1] = $conf->comptaexpert->dir_output."/rapport";
 		$this->dirs[2] = $conf->comptaexpert->dir_output."/export";
-		$this->dirs[3] = $conf->comptaexpert->dir_images;
 
 		// Boites
 		$this->boxes = array();

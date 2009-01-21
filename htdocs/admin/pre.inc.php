@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser  <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,10 +35,10 @@ function llxHeader($head = '', $title='', $help_url='')
 {
 	global $conf, $user, $langs;
 
-	top_menu($head, $title, $target);
+	top_menu($head, $title, '');
 
 	$menuarray=array();
-	
+
 	//if ($conf->left_menu == 'rodolphe.php')
 	//{
 	$langs->load("admin");
@@ -60,7 +60,7 @@ function llxHeader($head = '', $title='', $help_url='')
 	$menu->add(DOL_URL_ROOT."/admin/tools/", $langs->trans("Tools"));
 	$varmenuarray=$menu->liste;
 	//}
-	
+
 	left_menu($varmenuarray, $help_url);
 }
 

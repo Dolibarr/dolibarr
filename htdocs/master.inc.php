@@ -57,8 +57,8 @@ else
 }
 
 // Forcage du parametrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
-//error_reporting(E_ALL);
 error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL);
 
 
 // Include configuration
