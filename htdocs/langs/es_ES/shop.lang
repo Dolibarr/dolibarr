@@ -1,4 +1,5 @@
 # Dolibarr language file - es_ES - shop
+CHARSET = UTF-8
 Shop=Tienda
 ShopWeb=Tienda web
 LastOrders=Ultimos pedidos
@@ -7,4 +8,4 @@ TreatmentInProgress=En proceso
 LastCustomers=Ultimos clientes
 OSCommerceShop=Tienda OS Commerce
 OSCommerce=OSCommerce
-AddProd=Venta en línea
+AddProd=Venta en lÃ­nea

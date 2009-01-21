@@ -1,4 +1,5 @@
 # Dolibarr language file - es_ES - energy
-Energy=Energía
+CHARSET = UTF-8
+Energy=EnergÃ­a
 NewCounter=Nuevo contador
 NewGroup=Nuevo grupo

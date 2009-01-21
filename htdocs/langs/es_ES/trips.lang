@@ -1,18 +1,19 @@
 # Dolibarr language file - es_ES - trips
+CHARSET = UTF-8
 Trip=Desplazamiento
 Trips=Desplazamientos
 TripsAndExpenses=Desplazamientos y gastos
 TripId=Id desplazamiento
 TripCard=Ficha desplazamiento
-AddTrip=Añadir desplazamiento
+AddTrip=AÃ±adir desplazamiento
 ListOfTrips=Listado de desplazamientos
 ListOfFees=Listado de tasas
 NewTrip=Nuevo desplazamiento
-CompanyVisited=Empresa/institución visitada
+CompanyVisited=Empresa/instituciÃ³n visitada
 Kilometers=Kilometros
-FeesKilometersOrAmout=Importe o kilómetros
+FeesKilometersOrAmout=Importe o kilÃ³metros
 DeleteTrip=Eliminar desplazamiento
-ConfirmDeleteTrip=¿Está seguro de querer eliminar este desplazamiento?
+ConfirmDeleteTrip=Â¿EstÃ¡ seguro de querer eliminar este desplazamiento?
 TF_OTHER=Otro
 TF_LUNCH=Dieta
 TF_TRIP=Viaje
