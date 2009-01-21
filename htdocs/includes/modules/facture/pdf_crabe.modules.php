@@ -70,12 +70,12 @@ class pdf_crabe extends ModelePDFFactures
 
         $this->option_logo = 1;                    // Affiche logo
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-        $this->option_modereg = 1;                 // Affiche mode règlement
-        $this->option_condreg = 1;                 // Affiche conditions règlement
+        $this->option_modereg = 1;                 // Affiche mode rï¿½glement
+        $this->option_condreg = 1;                 // Affiche conditions rï¿½glement
         $this->option_codeproduitservice = 1;      // Affiche code produit-service
         $this->option_multilang = 1;               // Dispo en plusieurs langues
         $this->option_escompte = 1;                // Affiche si il y a eu escompte
-        $this->option_credit_note = 1;             // Gère les avoirs
+        $this->option_credit_note = 1;             // Gï¿½re les avoirs
 		$this->option_freetext = 1;					// Support add of a personalised text
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
@@ -84,7 +84,7 @@ class pdf_crabe extends ModelePDFFactures
 
         // Recupere emmetteur
         $this->emetteur=$mysoc;
-        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
 
         // Defini position des colonnes
         $this->posxdesc=$this->marge_gauche+1;
@@ -101,8 +101,8 @@ class pdf_crabe extends ModelePDFFactures
 
 
     /**
-     *		\brief      Fonction générant la facture sur le disque
-     *		\param	    fac				Objet facture à générer (ou id si ancienne methode)
+     *		\brief      Fonction gï¿½nï¿½rant la facture sur le disque
+     *		\param	    fac				Objet facture ï¿½ gï¿½nï¿½rer (ou id si ancienne methode)
 	 *		\param		outputlangs		Lang object for output language
      *		\return	    int     		1=ok, 0=ko
      */
@@ -124,7 +124,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		if ($conf->facture->dir_output)
 		{
-			// Définition de l'objet $fac (pour compatibilite ascendante)
+			// Dï¿½finition de l'objet $fac (pour compatibilite ascendante)
 			if (! is_object($fac))
 			{
 				$id = $fac;
@@ -135,7 +135,7 @@ class pdf_crabe extends ModelePDFFactures
 			$deja_regle = $fac->getSommePaiement();
 			$amount_credit_not_included = $fac->getSommeCreditNote();
 
-			// Définition de $dir et $file
+			// Dï¿½finition de $dir et $file
 			if ($fac->specimen)
 			{
 				$dir = $conf->facture->dir_output;
@@ -167,7 +167,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propriétire, crée aléatoirement si pas défini
+					$pdfownerpass = NULL; // Mot de passe du propriï¿½tire, crï¿½e alï¿½atoirement si pas dï¿½fini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -259,7 +259,7 @@ class pdf_crabe extends ModelePDFFactures
 							}
 							else
 							{
-								//$fac->lignes[$i]->desc='€zaaaa';
+								//$fac->lignes[$i]->desc='ï¿½zaaaa';
 								//print dol_string_is_good_iso($fac->lignes[$i]->desc);
 								//print dol_htmlentitiesbr($fac->lignes[$i]->desc);
 								//print exit;
@@ -342,9 +342,9 @@ class pdf_crabe extends ModelePDFFactures
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
-						//on récupère la description du produit suivant
+						//on rï¿½cupï¿½re la description du produit suivant
 						$follow_descproduitservice = $fac->lignes[$i+1]->desc;
-						//on compte le nombre de ligne afin de vérifier la place disponible (largeur de ligne 52 caracteres)
+						//on compte le nombre de ligne afin de vï¿½rifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = dol_nboflines_bis($follow_descproduitservice,52)*4;
 						// Et si on affiche dates de validite, on ajoute encore une ligne
 						if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end)
@@ -853,7 +853,7 @@ class pdf_crabe extends ModelePDFFactures
     {
         global $conf;
 
-        // Montants exprimés en     (en tab_top - 1)
+        // Montants exprimï¿½s en     (en tab_top - 1)
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentities("Currency".$conf->monnaie));

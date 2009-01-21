@@ -57,9 +57,9 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 	if ($result > 0)
 	{
 		$db->begin();
-		
+
 		$errmsg='';
-		
+
 		if ($subscription->fk_bank)
 		{
 			$accountline=new AccountLine($db);
@@ -82,7 +82,7 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 				}
 			}
 		}
-		
+
 		if (! $errmsg)
 		{
 			// Modifie valeures
@@ -170,13 +170,13 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 
     $subscription->fetch($rowid);
 	$result=$adh->fetch($subscription->fk_adherent);
-    
+
 	/*
 	 * Affichage onglets
 	 */
 	$h = 0;
 	$head = array();
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$subscription->id;
 	$head[$h][1] = $langs->trans("SubscriptionCard");
 	$head[$h][2] = 'general';
@@ -195,10 +195,10 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 	print "<input type=\"hidden\" name=\"fk_bank\" value=\"".$subscription->fk_bank."\">";
 	print '<table class="border" width="100%">';
-	
+
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$subscription->ref.'&nbsp;</td></tr>';
-	
+
     // Member
 	$adh->ref=$adh->fullname;
     print '<tr>';
@@ -224,16 +224,23 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
     // Label
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="2">';
 	print '<input type="text" class="flat" size="60" name="note" value="'.$subscription->note.'"></td></tr>';
-	
+
 	if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 	{
     	print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
-		$bankline=new AccountLine($db);
-		$result=$bankline->fetch($subscription->fk_bank);
-		print $bankline->getNomUrl(1,0,'showall');
+		if ($subscription->fk_bank)
+		{
+			$bankline=new AccountLine($db);
+			$result=$bankline->fetch($subscription->fk_bank);
+			print $bankline->getNomUrl(1,0,'showall');
+		}
+		else
+		{
+			print $langs->trans("NoneF");
+		}
     	print '</td></tr>';
 	}
-		
+
 	print '<tr><td colspan="3" align="center">';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; &nbsp; ';
@@ -243,8 +250,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	print '</table>';
 	print '</form>';
 	print "\n";
-	
-	print '</div>'; 
+
+	print '</div>';
 	print "\n";
 }
 
@@ -258,13 +265,13 @@ if ($rowid && $action != 'edit')
 
     $result=$subscription->fetch($rowid);
 	$result=$adh->fetch($subscription->fk_adherent);
-	
+
 	/*
 	 * Affichage onglets
 	 */
 	$h = 0;
 	$head = array();
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$subscription->id;
 	$head[$h][1] = $langs->trans("SubscriptionCard");
 	$head[$h][2] = 'general';
@@ -317,14 +324,14 @@ if ($rowid && $action != 'edit')
 
     // Amount
     print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur" colspan="3">'.price($subscription->amount).'</td></tr>';
-    
+
     // Amount
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="3">'.$subscription->note.'</td></tr>';
-    
+
     // Bank account
 	if ($conf->banque->enabled)
 	{
-	    if ($subscription->fk_bank) 
+	    if ($subscription->fk_bank)
 	    {
 	    	$bankline=new AccountLine($db);
 	    	$result=$bankline->fetch($subscription->fk_bank);
@@ -337,25 +344,25 @@ if ($rowid && $action != 'edit')
 			print '<td colspan="3">';
 			$bankline=new AccountLine($db);
 			$result=$bankline->fetch($subscription->fk_bank);
-			print $bankline->getNomUrl(1,0,'showall');			
+			print $bankline->getNomUrl(1,0,'showall');
 	    	print '</td>';
 	    	print '</tr>';
 	    }
 	}
 
-	
+
     print "</table>\n";
     print '</form>';
-    
+
     print "</div>\n";
 
-    
+
     /*
      * Barre d'actions
      *
      */
     print '<div class="tabsAction">';
-    
+
     if ($user->rights->adherent->cotisation->creer)
 	{
 		if (! $bankline->rappro)
@@ -373,10 +380,10 @@ if ($rowid && $action != 'edit')
     {
         print "<a class=\"butActionDelete\" href=\"".$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=delete\">".$langs->trans("Delete")."</a>\n";
     }
-        
+
     print '</div>';
     print "<br>\n";
-    
+
 }
 
 
