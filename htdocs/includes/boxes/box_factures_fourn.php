@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class box_factures_fourn extends ModeleBoxes {
 
 	var $db;
 	var $param;
-	
+
     var $info_box_head = array();
     var $info_box_contents = array();
 
@@ -57,10 +57,10 @@ class box_factures_fourn extends ModeleBoxes {
      */
     function loadBox($max=5)
     {
-        global $user, $langs, $db;
+        global $conf, $user, $langs, $db;
 
 		$this->max=$max;
-        
+
 		include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
         $facturestatic=new FactureFournisseur($db);
 
@@ -93,23 +93,23 @@ class box_factures_fourn extends ModeleBoxes {
             {
                 $num = $db->num_rows($result);
 				$now=gmmktime();
-                
+
                 $i = 0;
                 $l_due_date =  $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
 
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
-					$datelimite=$db->jdate($obj->datelimite);
+					$datelimite=$db->jdate($objp->datelimite);
 					$datec=$db->jdate($objp->datec);
-					
+
                     $late = '';
                     if ($objp->paye == 0 && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dolibarr_print_date($datelimite,'day')));
 
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
                     'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
-                    
+
                     $this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->facnumber,
                     'text2'=> $late,
@@ -124,10 +124,10 @@ class box_factures_fourn extends ModeleBoxes {
 
                     $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
                     'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
-                    
+
                     $i++;
                 }
-                
+
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpayedCustomerBills"));
             }
             else {

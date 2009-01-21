@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,9 @@ class Menubase
 	var $db;							// To store db handler
 	var $error;							// To return error code (or message)
 	var $errors=array();				// To return several error codes (or messages)
-    
+
     var $id;
-    
+
 	var $menu_handler;
 	var $module;
 	var $type;
@@ -48,12 +48,12 @@ class Menubase
 	var $titre;
 	var $langs;
 	var $level;
-	var $leftmenu;		//<! 0=Left menu in pre.inc.php files must not be overwrite by database menu, 1=Must be 
+	var $leftmenu;		//<! 0=Left menu in pre.inc.php files must not be overwrite by database menu, 1=Must be
 	var $perms;
 	var $user;
 	var $tms;
 
-	
+
     /**
      *      \brief      Constructor
      *      \param      DB      Database handler
@@ -66,7 +66,7 @@ class Menubase
         return 1;
     }
 
-	
+
     /**
      *      \brief      Create in database
      *      \param      user        User that create
@@ -75,7 +75,7 @@ class Menubase
     function create($user)
     {
     	global $conf, $langs;
-    	
+
 		// Clean parameters
 		$this->menu_handler=trim($this->menu_handler);
 		$this->module=trim($this->module);
@@ -92,10 +92,10 @@ class Menubase
 		$this->perms=trim($this->perms);
 		$this->user=trim($this->user);
 		if (! $this->level) $this->level=0;
-		
+
 		// Check parameters
 		// Put here code to add control on parameters values
-		
+
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
 		$sql.= "menu_handler,";
@@ -134,7 +134,7 @@ class Menubase
         if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
-    
+
             return $this->id;
         }
         else
@@ -154,7 +154,7 @@ class Menubase
     function update($user=0, $notrigger=0)
     {
     	global $conf, $langs;
-    	
+
 		// Clean parameters
 		$this->rowid=trim($this->rowid);
 		$this->menu_handler=trim($this->menu_handler);
@@ -204,8 +204,8 @@ class Menubase
 
         return 1;
     }
-  
-  
+
+
     /*
      *    \brief      Load object in memory from database
      *    \param      id          id object
@@ -235,7 +235,7 @@ class Menubase
 		$sql.= " ".$this->db->pdate('t.tms')."";
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
         $sql.= " WHERE t.rowid = ".$id;
-    
+
     	dolibarr_syslog("Menubase::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -243,9 +243,9 @@ class Menubase
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-    
+
                 $this->id    = $obj->rowid;
-                
+
 				$this->menu_handler = $obj->menu_handler;
 				$this->module = $obj->module;
 				$this->type = $obj->type;
@@ -263,7 +263,7 @@ class Menubase
 				$this->tms = $obj->tms;
             }
             $this->db->free($resql);
-            
+
             return 1;
         }
         else
@@ -273,8 +273,8 @@ class Menubase
             return -1;
         }
     }
-    
-    
+
+
  	/*
 	*   \brief      Delete object in database
     *	\param      user        User that delete
@@ -283,10 +283,10 @@ class Menubase
 	function delete($user)
 	{
 		global $conf, $langs;
-	
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 		$sql.= " WHERE rowid=".$this->id;
-	
+
 	   	dolibarr_syslog("Menubase::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
@@ -295,11 +295,11 @@ class Menubase
             dolibarr_syslog("Menubase::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
-	
+
 		return 1;
 	}
 
-  
+
 	/**
 	 *		\brief		Initialise object with example values
 	 *		\remarks	id must be 0 if object instance is a specimen.
@@ -307,7 +307,7 @@ class Menubase
 	function initAsSpecimen()
 	{
 		$this->id=0;
-		
+
 		$this->menu_handler='all';
 		$this->module='specimen';
 		$this->type='top';
@@ -335,18 +335,18 @@ class Menubase
 	 * @param menu_handler				Name of menu_handler used (auguria, eldy...)
 	 * @return 	array					Menu array completed
 	 */
-	function menuLeftCharger($newmenu, $mainmenu, $myleftmenu, $type_user, $menu_handler) 
+	function menuLeftCharger($newmenu, $mainmenu, $myleftmenu, $type_user, $menu_handler)
 	{
 		global $langs, $user, $conf, $leftmenu;	// To export to dol_eval function
 		global $rights;	// To export to dol_eval function
-		
+
 		$leftmenu=$myleftmenu;
-		
+
 		$this->newmenu = $newmenu;
 		$this->leftmenu = $leftmenu;
 
 		$tabMenu = array ();
-		
+
 		$sql = "SELECT m.rowid, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.target, m.mainmenu, m.leftmenu,";
 		$sql.= " mo.action";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
@@ -375,7 +375,7 @@ class Menubase
 	            // Define $chaine
 	            $chaine="";
 				$title = $langs->trans($menu['titre']);
-	            if ($title == $menu['titre'] && ! empty($menu['langs'])) 
+	            if ($title == $menu['titre'] && ! empty($menu['langs']))
 				{
 					$title = $langs->trans($menu['titre']);
 					$langs->load($menu['langs']);
@@ -388,8 +388,8 @@ class Menubase
 	        	else
 	        	{
 	        		$chaine = $langs->trans($title);
-	        	} 
-				
+	        	}
+
 		        // Define $right
 	        	$perms = true;
 	        	if ($menu['perms'])
@@ -397,7 +397,7 @@ class Menubase
 	        		$perms = $this->verifCond($menu['perms']);
 	        		//print "verifCond rowid=".$menu['rowid']." ".$menu['right'].":".$perms."<br>\n";
 	        	}
-	        	
+
 		        // Define $constraint
 	        	$constraint = true;
 	        	if ($menu['action'])
@@ -405,7 +405,7 @@ class Menubase
 					$constraint = $this->verifCond($menu['action']);
 	        		//print "verifCond rowid=".$menu['rowid']." ".$menu['action'].":".$constraint."<br>\n";
 				}
-	        	
+
 		        if ($menu['rowid'] != $oldrowid && $oldrowid) $b++;	// Break on new entry
 		        $oldrowid=$menu['rowid'];
 
@@ -421,7 +421,7 @@ class Menubase
 	        	else $tabMenu[$b][4] = ($tabMenu[$b][4] && $perms);
 	        	if (! isset($tabMenu[$b][7])) $tabMenu[$b][7] = $constraint;
 	        	else $tabMenu[$b][7] = ($tabMenu[$b][7] && $constraint);
-				
+
 				$a++;
 			}
 			$this->db->free($resql);
@@ -430,8 +430,9 @@ class Menubase
 		{
 			dolibarr_print_error($this->db);
 		}
-		
+
 		// Get menutopid
+		$menutopid='';
 		$sql = "SELECT m.rowid, m.titre, m.type";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
 		$sql.= " WHERE m.mainmenu = '".$mainmenu."'";
@@ -440,9 +441,9 @@ class Menubase
 		// It should have only one response
 		$resql = $this->db->query($sql);
 		$menutop = $this->db->fetch_object($resql);
-		$menutopid=$menutop->rowid;
+		if ($menutop) $menutopid=$menutop->rowid;
 		$this->db->free($resql);
-		//print "menutopid=".$menutopid." sql=".$sql;		
+		//print "menutopid=".$menutopid." sql=".$sql;
 
 		// Now edit this->newmenu to add entries in tabMenu that are in parent sons
 		$this->recur($tabMenu, $menutopid, 1);
@@ -457,27 +458,27 @@ class Menubase
 	 * @param string $pere
 	 * @param string $rang
 	 */
-	function recur($tab, $pere, $rang) 
+	function recur($tab, $pere, $rang)
 	{
 		global $leftmenu;	// To be exported in dol_eval function
-		
+
 		//print "xx".$pere;
 		$leftmenu = $this->leftmenu;
 		//ballayage du tableau
 		for ($x = 0; $x < count($tab); $x++)
 		{
 			//si un element a pour pere : $pere
-			if ($tab[$x][1] == $pere) 
+			if ($tab[$x][1] == $pere)
 			{
 				if ($tab[$x][7])
 				{
 					$leftmenuConstraint = true;
-					if ($tab[$x][6]) 
+					if ($tab[$x][6])
 					{
 						$leftmenuConstraint = $this->verifCond($tab[$x][6]);
 					}
 
-					if ($leftmenuConstraint) 
+					if ($leftmenuConstraint)
 					{
 //				print "x".$pere." ".$tab[$x][6];
 
@@ -500,7 +501,7 @@ class Menubase
 		global $user,$conf,$lang,$leftmenu;
 		global $rights;	// To export to dol_eval function
 
-		//print $strRights."<br>\n";		
+		//print $strRights."<br>\n";
 		if ($strRights != "")
 		{
 			$rights = true;
@@ -516,12 +517,12 @@ class Menubase
 		{
 			$rights = true;
 		}
-		
+
 		return $rights;
 	}
 
 	/**
-	 * Return all values of mainmenu where leftmenu defined 
+	 * Return all values of mainmenu where leftmenu defined
 	 * in pre.inc.php must be overwritten completely by dynamic menu.
 	 *
 	 * @return array
@@ -529,7 +530,7 @@ class Menubase
 	function listeMainmenu()
 	{
 		$overwritemenufor=array();
-		
+
 		$sql = "SELECT DISTINCT m.mainmenu";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
 		$sql.= " WHERE m.menu_handler in ('".$this->menu_handler."','all')";
@@ -548,10 +549,10 @@ class Menubase
 		{
 			dolibarr_print_error($this->db);
 		}
-		
+
 		return $overwritemenufor;
 	}
-	
+
 	/**
 	*		\brief		Load tabMenu array
 	* 		\param		type_user		0=Internal,1=External,2=All
@@ -563,15 +564,15 @@ class Menubase
 	{
 		global $langs, $user, $conf;
 		global $rights;	// To export to dol_eval function
-		
+
 		$tabMenu=array();
-		
-		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.perms,";
+
+		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.perms, m.target,";
 		$sql.= " mo.action";
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_const as mc ON m.rowid = mc.fk_menu";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_constraint as mo ON mc.fk_constraint = mo.rowid";
-		$sql.= " WHERE m.type = 'top'"; 
+		$sql.= " WHERE m.type = 'top'";
 		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
 		if ($type_user == 0) $sql.= " AND m.user in (0,2)";
 		if ($type_user == 1) $sql.= " AND m.user in (1,2)";
@@ -590,18 +591,18 @@ class Menubase
 			while ($a < $numa)
 			{
 				$objm = $this->db->fetch_object($resql);
-			
+
 	            // Define $chaine
 	            $chaine="";
 	            $title=$langs->trans($objm->titre);
 	            if ($title == $objm->titre)	// Translation not found
-				{	
+				{
 					if (! empty($objm->langs))
 					{
 						// If it seems there no translation, we load language file defined in menu entry table
 						$langs->load($objm->langs);
 					}
-					
+
 	 	        	if (eregi("/",$title))
 		        	{
 		        		$tab_titre = explode("/",$title);
@@ -610,28 +611,28 @@ class Menubase
 		        	else
 		        	{
 		        		$chaine = $langs->trans($title);
-		        	} 
+		        	}
 				}
 				else
 				{
 					$chaine=$title;
 				}
 				//print "x".$objm->titre."-".$chaine;
-				
+
 		        // Define $right
 	        	$perms = true;
 	        	if ($objm->perms)
 	        	{
 					$perms = $this->verifCond($objm->perms);
 	        	}
-				
+
 		        // Define $constraint
 	        	$constraint = true;
 	        	if ($objm->action)
 				{
 					$constraint = $this->verifCond($objm->action);
 				}
-				
+
 		        if ($objm->rowid != $oldrowid && $oldrowid) $b++;	// Break on new entry
 		        $oldrowid=$objm->rowid;
 
@@ -639,15 +640,14 @@ class Menubase
 				$tabMenu[$b]['mainmenu'] = $objm->mainmenu;
 				$tabMenu[$b]['titre'] = $chaine;	// Title
 	        	$tabMenu[$b]['url'] = $objm->url;
-	        	$tabMenu[$b]['atarget'] = $this->atarget;
-	        	$tabMenu[$b]['class'] = $class;
+	        	$tabMenu[$b]['atarget'] = $objm->target;
 	        	if (! isset($tabMenu[$b]['right'])) $tabMenu[$b]['right'] = $perms;
 	        	else $tabMenu[$b]['right'] = ($tabMenu[$b]['right'] && $perms);
 	        	if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $constraint;
 	        	else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $constraint);
-	        	
-	        	//var_dump($tabMenu);		        
-				$a++;	
+
+	        	//var_dump($tabMenu);
+				$a++;
 			}
 		}
 		else
@@ -671,15 +671,15 @@ function dol_eval($s)
 	// Only global variables can be changed by eval function and returned to caller
 	global $langs, $user, $conf;
 	global $rights;
-	global $leftmenu; 
-	
+	global $leftmenu;
+
 	// \todo
 	// Warning. We must add code to exclude test if it contains = (affectation) that is not == (compare)
-	
+
 	//print $s."<br>\n";
 	eval($s);
-	
-	return 1; 
+
+	return 1;
 }
 
 ?>

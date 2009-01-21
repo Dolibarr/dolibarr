@@ -260,7 +260,7 @@ function dol_syslog($message, $level=LOG_INFO)
 				{
 					$facility = LOG_USER;
 				}
-
+unset ($facility);
 				openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
 
 				if (! $level)
@@ -2051,7 +2051,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
 	$amount = ereg_replace(',','.',$amount);	// should be useless
 	//print $amount."-";
 	$datas = split('\.',$amount);
-	$decpart = $datas[1];
+	$decpart = isset($datas[1])?$datas[1]:'';
 	$decpart = eregi_replace('0+$','',$decpart);	// Supprime les 0 de fin de partie decimale
 	//print "decpart=".$decpart."<br>";
 	$end='';

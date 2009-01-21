@@ -134,9 +134,9 @@ $conf->db->prefix = $dolibarr_main_db_prefix;
 if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';
 $conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
 // Identifiant autres
-$conf->main_authentication = $dolibarr_main_authentication;
+$conf->main_authentication = empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
 // Force https
-$conf->main_force_https = $dolibarr_main_force_https;
+$conf->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
 // Define charset for HTML Output (can set hidden value force_charset in conf.php file)
 if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
 $conf->character_set_client=strtoupper($force_charset_do_notuse);
@@ -284,15 +284,15 @@ if (! defined('NOREQUIRESOC'))
 	$mysoc->fax=$conf->global->MAIN_INFO_SOCIETE_FAX;
 	$mysoc->url=$conf->global->MAIN_INFO_SOCIETE_WEB;
 	// Anciens id prof
-	$mysoc->siren=$conf->global->MAIN_INFO_SIREN;
-	$mysoc->siret=$conf->global->MAIN_INFO_SIRET;
-	$mysoc->ape=$conf->global->MAIN_INFO_APE;
-	$mysoc->rcs=$conf->global->MAIN_INFO_RCS;
+	$mysoc->siren=empty($conf->global->MAIN_INFO_SIREN)?'':$conf->global->MAIN_INFO_SIREN;
+	$mysoc->siret=empty($conf->global->MAIN_INFO_SIRET)?'':$conf->global->MAIN_INFO_SIRET;
+	$mysoc->ape=empty($conf->global->MAIN_INFO_APE)?'':$conf->global->MAIN_INFO_APE;
+	$mysoc->rcs=empty($conf->global->MAIN_INFO_RCS)?'':$conf->global->MAIN_INFO_RCS;
 	// Id prof génériques
-	$mysoc->profid1=$conf->global->MAIN_INFO_SIREN;
-	$mysoc->profid2=$conf->global->MAIN_INFO_SIRET;
-	$mysoc->profid3=$conf->global->MAIN_INFO_APE;
-	$mysoc->profid4=$conf->global->MAIN_INFO_RCS;
+	$mysoc->profid1=empty($conf->global->MAIN_INFO_SIREN)?'':$conf->global->MAIN_INFO_SIREN;
+	$mysoc->profid2=empty($conf->global->MAIN_INFO_SIRET)?'':$conf->global->MAIN_INFO_SIRET;
+	$mysoc->profid3=empty($conf->global->MAIN_INFO_APE)?'':$conf->global->MAIN_INFO_APE;
+	$mysoc->profid4=empty($conf->global->MAIN_INFO_RCS)?'':$conf->global->MAIN_INFO_RCS;
 	$mysoc->tva_assuj=$conf->global->FACTURE_TVAOPTION;
 	$mysoc->tva_intra=$conf->global->MAIN_INFO_TVAINTRA;
 	$mysoc->capital=$conf->global->MAIN_INFO_CAPITAL;

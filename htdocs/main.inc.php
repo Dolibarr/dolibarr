@@ -121,7 +121,7 @@ if ($conf->main_force_https)
 		if (eregi('^http:',$_SERVER["SCRIPT_URI"]) && ! eregi('^https:',$_SERVER["SCRIPT_URI"]))	// If link is http
 		{
 			$newurl=eregi_replace('^http:','https:',$_SERVER["SCRIPT_URI"]);
-					
+
 			dolibarr_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl,LOG_DEBUG);
 			header("Location: ".$newurl);
 			exit;
@@ -160,7 +160,7 @@ dolibarr_syslog("Start session name=".$sessionname." Session id()=".session_id()
 
 // Disable modules (this must be after session_start)
 if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
-if (! empty($_SESSION["disablemodules"])) 
+if (! empty($_SESSION["disablemodules"]))
 {
 	$disabled_modules=split(',',$_SESSION["disablemodules"]);
 	foreach($disabled_modules as $module)
@@ -220,11 +220,11 @@ if (! isset($_SESSION["dol_login"]))
 			dolibarr_syslog('Bad value for code, connexion refused');
 			$langs->load('main');
 			$langs->load('other');
-				
+
 			$user->trigger_mesg='ErrorBadValueForCode - login='.$_POST["username"];
 			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 			$test=false;
-				
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($db);
@@ -282,7 +282,7 @@ if (! isset($_SESSION["dol_login"]))
 			// Bad password. No authmode has found a good password.
 			$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.$_POST["username"];
 			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
-				
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($db);
@@ -530,7 +530,7 @@ if ($conf->global->MAIN_NEED_SMARTY)
 	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DATA_ROOT.'/../external-libs/smarty/libs/';
 	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
 	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
-	
+
 	$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
 	if (file_exists ($smarty_libs))
 	{
@@ -559,7 +559,7 @@ if ($user->statut < 1)
 	accessforbidden($langs->trans("ErrorLoginDisabled"));
 	exit;
 }
-	
+
 
 dolibarr_syslog("Access to ".$_SERVER["PHP_SELF"],LOG_INFO);
 
@@ -814,7 +814,7 @@ function top_menu($head, $title='', $target='')
 	$htmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
 	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.$langs->getDefaultLang();
 	if (! empty($_SESSION["disablemodules"])) $htmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join('<br>',split(',',$_SESSION["disablemodules"]));
-	
+
 	$html=new Form($db);
 	print $html->textwithtooltip('',$htmltext,2,1,$text);
 
@@ -884,7 +884,7 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 		$ret.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php',
 		img_object($langs->trans("List"),'user').' '.$langs->trans("Members"), 'member', 'sall');
 	}
-		
+
 	if ($ret)
 	{
 		print "\n";
@@ -894,7 +894,7 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 		print '</div>'."\n";
 		print "<!-- End SearchForm -->\n";
 	}
-		
+
 	// Zone de recherche supplementaire
 	if ($form_search)
 	{
@@ -921,7 +921,7 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 		}
 	}
 
-	if ($conf->global->MAIN_SHOW_BUGTRACK_LINK == 1)
+	if (! empty($conf->global->MAIN_SHOW_BUGTRACK_LINK))
 	{
 		// Lien vers le bugtrack
 		$bugbaseurl='http://savannah.nongnu.org/bugs/?';
@@ -1020,18 +1020,18 @@ function llxFooter($foot='',$limitIEbug=1)
     if (sizeof($conf->logbuffer))
     {
 		print "\n";
-		print "<!-- Start of log output\n";    	
+		print "<!-- Start of log output\n";
     	//print '<div class="hidden">'."\n";
 	    foreach($conf->logbuffer as $logline)
 	    {
 	    	print $logline."<br>\n";
 	    }
 	    //print '</div>'."\n";
-		print "End of log output -->\n";    	
+		print "End of log output -->\n";
     }
-    
+
 	print "\n";
-    if ($foot) print '<!-- '.$foot.' -->'."\n"; 
+    if ($foot) print '<!-- '.$foot.' -->'."\n";
 	print "</body>\n";
 	print "</html>\n";
 }

@@ -25,7 +25,7 @@
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
         \remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
         \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
-		\remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a> 
+		\remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a>
 */
 
 
@@ -37,10 +37,10 @@ class MenuTop {
 
     var $require_left=array("eldy_backoffice");     // Si doit etre en phase avec un gestionnaire de menu gauche particulier
     var $hideifnotallowed=false;					// Put 0 for back office menu, 1 for front office menu
-    
+
     var $atarget="";                                // Valeur du target a utiliser dans les liens
 
-    
+
     /**
      *    \brief      Constructeur
      *    \param      db      Handler d'acces base de donnee
@@ -49,25 +49,25 @@ class MenuTop {
     {
         global $langs;
         $this->db=$db;
-        
+
         $langs->setTransFromTab("Company",$langs->trans("ThirdParty"));
         $langs->setTransFromTab("NewCompany",$langs->trans("NewThirdParty"));
     }
-    
-    
+
+
     /**
      *    \brief      Affiche le menu
      */
     function showmenu()
     {
         global $user,$conf,$langs,$dolibarr_main_db_name;;
-        
+
         // On sauve en session le menu principal choisi
 		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
 		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
         $_SESSION["leftmenuopened"]="";
 
-		
+
         print '<table class="tmenu"><tr class="tmenu">';
 
         // Home
@@ -89,7 +89,7 @@ class MenuTop {
         {
             $langs->load("companies");
             $langs->load("suppliers");
-        
+
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies")
             {
@@ -117,7 +117,7 @@ class MenuTop {
         if ($conf->produit->enabled || $conf->service->enabled)
         {
             $langs->load("products");
-        
+
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "products")
             {
@@ -131,7 +131,7 @@ class MenuTop {
             if ($conf->produit->enabled) { $chaine.=$langs->trans("Products"); }
             if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
             if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
-        
+
     		$idsel='id="products" ';
             if ($user->rights->produit->lire)
             {
@@ -154,7 +154,7 @@ class MenuTop {
 		if ($conf->commercial->enabled)
         {
 	        $langs->load("commercial");
-	    
+
 	        $class="";
 	        if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial")
 	        {
@@ -164,7 +164,7 @@ class MenuTop {
 	        {
 	            $class = 'class="tmenu"';
 	        }
-        
+
     		$idsel='id="commercial" ';
 	        if($user->rights->societe->lire)
 			{
@@ -181,7 +181,7 @@ class MenuTop {
         	|| $conf->facture->enabled)
         {
             $langs->load("compta");
-        
+
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy")
             {
@@ -191,7 +191,7 @@ class MenuTop {
             {
                 $class = 'class="tmenu"';
             }
-            
+
     		$idsel='id="accountancy" ';
             if ($user->rights->compta->resultat->lire || $user->rights->comptaexpert->plancompte->lire
             	|| $user->rights->facture->lire || $user->rights->banque->lire)
@@ -208,7 +208,7 @@ class MenuTop {
         if ($conf->projet->enabled)
         {
             $langs->load("projects");
-        
+
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project")
             {
@@ -218,7 +218,7 @@ class MenuTop {
             {
                 $class = 'class="tmenu"';
             }
-            
+
     		$idsel='id="project" ';
             if ($user->rights->projet->lire)
             {
@@ -235,7 +235,7 @@ class MenuTop {
 				|| $conf->global->MAIN_MODULE_IMPORT || $conf->global->MAIN_MODULE_DOMAIN)
         {
             $langs->load("other");
-            
+
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools")
             {
@@ -245,7 +245,7 @@ class MenuTop {
             {
                 $class = 'class="tmenu"';
             }
-            
+
     		$idsel='id="tools" ';
             if ($user->rights->mailing->lire || $user->rights->bookmark->lire || $user->rights->export->lire)
             {
@@ -256,9 +256,9 @@ class MenuTop {
            		if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$langs->trans("Tools").'</a></td>';
         	}
         }
-        
+
         // Telephonie
-        if ($conf->telephonie->enabled && $user->rights->telephonie->lire)
+        if (! empty($conf->telephonie->enabled) && $user->rights->telephonie->lire)
         {
             $class="";
             if (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
@@ -275,7 +275,7 @@ class MenuTop {
         }
 
         // Energie
-        if ($conf->energie->enabled)
+        if (! empty($conf->energie->enabled))
         {
             $langs->load("energy");
             $class="";
@@ -291,12 +291,12 @@ class MenuTop {
             $idsel='id="energie" ';
             print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/energie/index.php?mainmenu=energie"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Energy").'</a></td>';
         }
- 
+
 		// OSCommerce 1
-        if ($conf->boutique->enabled)
+        if (! empty($conf->boutique->enabled))
         {
             $langs->load("shop");
-        
+
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "shop")
             {
@@ -306,16 +306,16 @@ class MenuTop {
             {
                 $class = 'class="tmenu"';
             }
-        
+
             $idsel='id="shop" ';
             print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/boutique/index.php?mainmenu=shop&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
         }
-        
+
         // OSCommerce WS
-        if ($conf->oscommercews->enabled)
+        if (! empty($conf->oscommercews->enabled))
         {
             $langs->load("shop");
-        
+
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "shop")
             {
@@ -325,7 +325,7 @@ class MenuTop {
             {
                 $class = 'class="tmenu"';
             }
-        
+
             $idsel='id="shop" ';
             print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/oscommerce_ws/index.php?mainmenu=shop&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
         }
@@ -334,7 +334,7 @@ class MenuTop {
         if ($conf->adherent->enabled)
         {
             // $langs->load("members"); Added in main file
-        
+
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
             {
@@ -344,7 +344,7 @@ class MenuTop {
             {
                 $class = 'class="tmenu"';
             }
-        
+
             $idsel='id="members" ';
             if ($user->rights->adherent->lire)
             {
@@ -387,8 +387,8 @@ class MenuTop {
 	        	}
         	}
         }
-		
-        
+
+
         print '</tr></table>';
     }
 

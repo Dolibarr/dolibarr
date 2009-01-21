@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,7 +63,7 @@ class box_actions extends ModeleBoxes {
 		global $user, $langs, $db, $conf;
 
 		$this->max=$max;
-		
+
 		include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 		$actionstatic=new ActionComm($db);
 
@@ -89,13 +89,13 @@ class box_actions extends ModeleBoxes {
 			$sql.= " ORDER BY a.datec DESC";
 			$sql.= $db->plimit($max, 0);
 
-			dolibarr_syslog("Box_actions::loadBox boxcode=".$boxcode." sql=".$sql);
+			dolibarr_syslog("Box_actions::loadBox sql=".$sql, LOG_DEBUG);
 			$result = $db->query($sql);
 			if ($result)
 			{
 				$now=gmmktime();
 				$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
-				
+
 				$num = $db->num_rows($result);
 				$i = 0;
 				while ($i < $num)
@@ -111,7 +111,7 @@ class box_actions extends ModeleBoxes {
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
 					'logo' => ("task"),
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
-					
+
 					$this->info_box_contents[$i][1] = array('td' => 'align="left" nowrap="1"',
 					'text' => dolibarr_trunc($label,12),
 					'text2'=> $late,
@@ -132,7 +132,7 @@ class box_actions extends ModeleBoxes {
 
 					$i++;
 				}
-					
+
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoActionsToDo"));
 			}
 			else {

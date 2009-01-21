@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2008 Raphael Bertrand (Resultic)   <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic)   <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1717,7 +1717,7 @@ class Propal extends CommonObject
 		if ($resql)
 		{
 			if ($mode == 'opened') $delay_warning=$conf->propal->cloture->warning_delay;
-			if ($mode == 'signed') $delay_warning=$conf->propal->facture->warning_delay;
+			if ($mode == 'signed') $delay_warning=$conf->propal->facturation->warning_delay;
 
 			while ($obj=$this->db->fetch_object($resql))
 			{

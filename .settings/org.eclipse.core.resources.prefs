@@ -1,4 +1,4 @@
-#Tue Jan 20 00:15:44 CET 2009
+#Wed Jan 21 13:16:02 CET 2009
 eclipse.preferences.version=1
 encoding//dev/initdemo/initdemo.sql=UTF-8
 encoding//dev/skeletons/modMyModule.class.php=ISO-8859-1
@@ -50,7 +50,6 @@ encoding//htdocs/includes/menus/barre_left/eldy_frontoffice.php=ISO-8859-1
 encoding//htdocs/includes/menus/barre_top/empty.php=ISO-8859-1
 encoding//htdocs/includes/menus/barre_top/rodolphe.php=ISO-8859-1
 encoding//htdocs/includes/modules/DolibarrModules.class.php=ISO-8859-1
-encoding//htdocs/includes/modules/facture/pdf_crabe.modules.php=ISO-8859-1
 encoding//htdocs/includes/modules/modAdherent.class.php=ISO-8859-1
 encoding//htdocs/includes/modules/modBanque.class.php=ISO-8859-1
 encoding//htdocs/includes/modules/modCategorie.class.php=ISO-8859-1

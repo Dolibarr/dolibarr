@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -124,17 +124,18 @@ if ($user->societe_id == 0)
 	$var=true;
 
 	// Condition à vérifier pour affichage de chaque ligne du tableau de bord
-	$conditions=array($conf->societe->enabled && $user->rights->societe->lire,
-	$conf->societe->enabled && $user->rights->societe->lire,
-	$conf->fournisseur->enabled && $user->rights->fournisseur->lire,
-	$conf->adherent->enabled && $user->rights->adherent->lire,
-	$conf->produit->enabled && $user->rights->produit->lire,
-	$conf->service->enabled && $user->rights->produit->lire,
-	$conf->propal->enabled && $user->rights->propale->lire,
-	$conf->commande->enabled && $user->rights->commande->lire,
-	$conf->facture->enabled && $user->rights->facture->lire,
-	$conf->telephonie->enabled && $user->rights->telephonie->lire,
-	$conf->societe->enabled && $user->rights->contrat->activer);
+	$conditions=array(
+	! empty($conf->societe->enabled) && $user->rights->societe->lire,
+	! empty($conf->societe->enabled) && $user->rights->societe->lire,
+	! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire,
+	! empty($conf->adherent->enabled) && $user->rights->adherent->lire,
+	! empty($conf->produit->enabled) && $user->rights->produit->lire,
+	! empty($conf->service->enabled) && $user->rights->produit->lire,
+	! empty($conf->propal->enabled) && $user->rights->propale->lire,
+	! empty($conf->commande->enabled) && $user->rights->commande->lire,
+	! empty($conf->facture->enabled) && $user->rights->facture->lire,
+	! empty($conf->telephonie->enabled) && $user->rights->telephonie->lire,
+	! empty($conf->societe->enabled) && $user->rights->contrat->activer);
 	// Fichier des classes qui contiennent la methode load_state_board pour chaque ligne
 	$includes=array(DOL_DOCUMENT_ROOT."/client.class.php",
 	DOL_DOCUMENT_ROOT."/prospect.class.php",
@@ -219,7 +220,7 @@ if ($user->societe_id == 0)
                     "bills",
                     "",
 					"Contracts");
-	 
+
 	//print memory_get_usage()."<br>";
 
 	// Boucle et affiche chaque ligne du tableau
@@ -585,7 +586,7 @@ if (sizeof($boxarray))
 	print '<tr><td class="notopnoleftnoright">'."\n";
 
 	print '<table width="100%" style="border-collapse: collapse; border: 0px; margin: 0px; padding: 0px;"><tr>';
-	
+
 	// Affichage colonne gauche
 	print '<td width="50%" valign="top">'."\n";
 
@@ -622,7 +623,7 @@ if (sizeof($boxarray))
 	print "</td>\n";
 	// Affichage colonne droite
 	print '<td width="50%" valign="top">';
-	
+
 	print "\n<!-- Box right container -->\n";
 	print '<div id="right">'."\n";
 

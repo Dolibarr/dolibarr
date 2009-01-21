@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class ModeleBoxes
 	var $db;
 	var $error='';
 	var $max=5;
-	
+
 	/*
 	 *	\brief		Constructeur
 	 */
@@ -104,7 +104,7 @@ class ModeleBoxes
 		$var = true;
 
 		dolibarr_syslog("modules_box::showBox ".get_Class($this));
-		
+
 		// Define nbcol and nblines of the box to show
 		$nbcol=0;
 		if (isset($contents[0])) $nbcol=sizeof($contents[0]);
@@ -158,7 +158,7 @@ class ModeleBoxes
 				if (isset($contents[$i]))
 				{
 					$var=!$var;
-					
+
 					// TR
 					if (isset($contents[$i][0]['tr'])) print '<tr valign="top" '.$contents[$i][0]['tr'].'>';
 					else print '<tr valign="top" '.$bcx[$var].'>';
@@ -171,7 +171,7 @@ class ModeleBoxes
 						$tdparam='';
 						if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
 
-						if (!$contents[$i][$j]['text']) $contents[$i][$j]['text']="";
+						if (empty($contents[$i][$j]['text'])) $contents[$i][$j]['text']="";
 						$texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
 						$textewithnotags=eregi_replace('<[^>]+>','',$texte);
 						$texte2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
@@ -194,7 +194,7 @@ class ModeleBoxes
 							$logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
 							print img_object($langs->trans("Show"),$logo);
 						}
-							
+
 						$maxlength=$MAXLENGTHBOX;
 						if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
@@ -207,14 +207,14 @@ class ModeleBoxes
 
 						if (eregi('^<img',$texte2)) print $texte2;	// show text with no html cleaning
 						else print $texte2withnotags;				// show text with html cleaning
-						
+
 						print "</td>";
 					}
 
 					print "</tr>\n";
 				}
 			}
-			
+
 			// Complete line to max
 			/*
 			while ($i < $this->max)
@@ -223,7 +223,7 @@ class ModeleBoxes
 				print '<tr '.$bcx[$var].'><td colspan="'.$nbcol.'">&nbsp;</td></tr>';
 				$i++;
 			}*/
-							
+
 			print "</table>\n";
 		}
 
