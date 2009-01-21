@@ -1,8 +1,8 @@
 <?php
 //
-//  FPDI - Version 1.2
+//  FPDI - Version 1.2.1
 //
-//    Copyright 2004-2007 Setasign - Jan Slabon
+//    Copyright 2004-2008 Setasign - Jan Slabon
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class LZWDecode {
      *
      * @param string data    The compressed data.
      */
-    function decode(&$data) {
+    function decode($data) {
 
         if($data[0] == 0x00 && $data[1] == 0x01) {
             $this->fpdi->error("LZW flavour not supported.");
@@ -46,7 +46,7 @@ class LZWDecode {
 
         $this->initsTable();
 
-        $this->data =& $data;
+        $this->data = $data;
 
         // Initialize pointers
         $this->bytePointer = 0;
@@ -145,7 +145,3 @@ class LZWDecode {
         return $code;
     }
 }
-
-
-
-?>

@@ -1,8 +1,8 @@
 <?php
 //
-//  FPDI - Version 1.2
+//  FPDI - Version 1.2.1
 //
-//    Copyright 2004-2007 Setasign - Jan Slabon
+//    Copyright 2004-2008 Setasign - Jan Slabon
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -39,7 +39,11 @@ if (!defined ('PDF_TYPE_OBJECT'))
     define ('PDF_TYPE_OBJECT', 9);
 if (!defined ('PDF_TYPE_STREAM'))
     define ('PDF_TYPE_STREAM', 10);
-
+if (!defined ('PDF_TYPE_BOOLEAN'))
+    define ('PDF_TYPE_BOOLEAN', 11);
+if (!defined ('PDF_TYPE_REAL'))
+    define ('PDF_TYPE_REAL', 12);
+    
 require_once("pdf_context.php");
 require_once("wrapper_functions.php");
 
@@ -75,6 +79,11 @@ class pdf_parser {
      */
     var $root;
 	
+    /**
+     * PDF version of the loaded document
+     * @var string
+     */
+    var $pdfVersion;
     
     /**
      * Constructor
@@ -158,15 +167,22 @@ class pdf_parser {
     function getPDFVersion() {
         fseek($this->f, 0);
         preg_match("/\d\.\d/",fread($this->f,16),$m);
-        $this->pdfVersion = $m[0];
+        if (isset($m[0]))
+            $this->pdfVersion = $m[0];
+        return $this->pdfVersion;
     }
     
     /**
      * Find the xref-Table
      */
     function pdf_find_xref() {
-       	fseek ($this->f, -min(filesize($this->filename),1500), SEEK_END);
-        $data = fread($this->f, 1500);
+       	$toRead = 1500;
+                
+        $stat = fseek ($this->f, -$toRead, SEEK_END);
+        if ($stat === -1) {
+            fseek ($this->f, 0);
+        }
+       	$data = fread($this->f, $toRead);
         
         $pos = strlen($data) - strpos(strrev($data), strrev('startxref')); 
         $data = substr($data, $pos);
@@ -183,106 +199,108 @@ class pdf_parser {
      *
      * @param array $result Array of xref-table
      * @param integer $offset of xref-table
-     * @param integer $start start-position in xref-table
-     * @param integer $end end-position in xref-table
      */
-    function pdf_read_xref(&$result, $offset, $start = null, $end = null) {
-        if (is_null ($start) || is_null ($end)) {
-		    fseek($this->f, $o_pos = $offset);
-            $data = trim(fgets($this->f,1024));
-            	        
-            if (strlen($data) == 0) 
-                $data = trim(fgets($this->f,1024));
-            		
-            if ($data !== 'xref') {
-            	fseek($this->f, $o_pos);
-            	$data = trim(_fgets($this->f, true));
-            	if ($data !== 'xref') {
-            	    if (preg_match('/(.*xref)(.*)/m', $data, $m)) { // xref 0 128 - in one line
-                        fseek($this->f, $o_pos+strlen($m[1]));            	        
-            	    } elseif (preg_match('/(x|r|e|f)+/', $data, $m)) { // correct invalid xref-pointer
-            	        $tmpOffset = $offset-4+strlen($m[0]);
-            	        $this->pdf_read_xref($result, $tmpOffset, $start, $end);
-            	        return;
-                    } else {
-                        $this->error("Unable to find xref table - Maybe a Problem with 'auto_detect_line_endings'");
-            	    }
-            	}
-    		}
-
-    		$o_pos = ftell($this->f);
-    	    $data = explode(' ', trim(fgets($this->f,1024)));
-			if (count($data) != 2) {
-    	        fseek($this->f, $o_pos);
-    	        $data = explode(' ', trim(_fgets($this->f, true)));
-			
-            	if (count($data) != 2) {
-            	    if (count($data) > 2) { // no lineending
-            	        $n_pos = $o_pos+strlen($data[0])+strlen($data[1])+2;
-            	        fseek($this->f, $n_pos);
-            	    } else {
-                        $this->error("Unexpected header in xref table");
-            	    }
-            	}
-            }
-            $start = $data[0];
-            $end = $start + $data[1];
-        }
-
-        if (!isset($result['xref_location'])) {
-            $result['xref_location'] = $offset;
-    	}
-
-    	if (!isset($result['max_object']) || $end > $result['max_object']) {
-    	    $result['max_object'] = $end;
-    	}
-
-    	for (; $start < $end; $start++) {
-    		$data = ltrim(fread($this->f, 20)); // Spezifications says: 20 bytes including newlines
-    		$offset = substr($data, 0, 10);
-    		$generation = substr($data, 11, 5);
-
-    	    if (!isset ($result['xref'][$start][(int) $generation])) {
-    	    	$result['xref'][$start][(int) $generation] = (int) $offset;
-    	    }
-    	}
-
-    	$o_pos = ftell($this->f);
-        $data = fgets($this->f,1024);
-		if (strlen(trim($data)) == 0) 
-		    $data = fgets($this->f, 1024);
-        
-        if (preg_match("/trailer/",$data)) {
-            if (preg_match("/(.*trailer[ \n\r]*)/",$data,$m)) {
-            	fseek($this->f, $o_pos+strlen($m[1]));
-    		}
-    		
-			$c =&  new pdf_context($this->f);
-    	    $trailer = $this->pdf_read_value($c);
-    	    
-    	    if (isset($trailer[1]['/Prev'])) {
-    	    	$this->pdf_read_xref($result, $trailer[1]['/Prev'][1]);
-    		    $result['trailer'][1] = array_merge($result['trailer'][1], $trailer[1]);
-    	    } else {
-    	        $result['trailer'] = $trailer;
-            }
-    	} else {
-    	    $data = explode(' ', trim($data));
+    function pdf_read_xref(&$result, $offset) {
+        fseek($this->f, $o_pos = $offset-20); // set some bytes backwards to fetch errorious docs
             
-    		if (count($data) != 2) {
-            	fseek($this->f, $o_pos);
-        		$data = explode(' ', trim (_fgets ($this->f, true)));
-
-        		if (count($data) != 2) {
-        		    $this->error("Unexpected data in xref table");
-        		}
-		    }
-		    
-		    $this->pdf_read_xref($result, null, (int) $data[0], (int) $data[0] + (int) $data[1]);
+        $data = fread($this->f, 100);
+        
+        $xrefPos = strpos($data, 'xref');
+        
+        if ($xrefPos === false) {
+            $this->error('Unable to find xref table.');
+        }
+        
+        if (!isset($result['xref_location'])) {
+            $result['xref_location'] = $o_pos+$xrefPos;
+            $result['max_object'] = 0;
     	}
+
+    	$cylces = -1;
+        $bytesPerCycle = 100;
+        
+    	fseek($this->f, $o_pos = $o_pos+$xrefPos+4); // set the handle directly after the "xref"-keyword
+        $data = fread($this->f, $bytesPerCycle);
+        
+        while (($trailerPos = strpos($data, 'trailer', max($bytesPerCycle*$cylces++, 0))) === false && !feof($this->f)) {
+            $data .= fread($this->f, $bytesPerCycle);
+        }
+        
+        if ($trailerPos === false) {
+            $this->error('Trailer keyword not found after xref table');
+        }
+        
+        $data = substr($data, 0, $trailerPos);
+        
+        // get Line-Ending
+        preg_match_all("/(\r\n|\n|\r)/", substr($data, 0, 100), $m); // check the first 100 bytes for linebreaks
+
+        $differentLineEndings = count(array_unique($m[0]));
+        if ($differentLineEndings > 1) {
+            $lines = preg_split("/(\r\n|\n|\r)/", $data, -1, PREG_SPLIT_NO_EMPTY);
+        } else {
+            $lines = explode($m[0][1], $data);
+        }
+        
+        $data = $differentLineEndings = $m = null;
+        unset($data, $differentLineEndings, $m);
+        
+        $linesCount = count($lines);
+        
+        $start = 1;
+        
+        for ($i = 0; $i < $linesCount; $i++) {
+            $line = trim($lines[$i]);
+            if ($line) {
+                $pieces = explode(" ", $line);
+                $c = count($pieces);
+                switch($c) {
+                    case 2:
+                        $start = (int)$pieces[0];
+                        $end   = $start+(int)$pieces[1];
+                        if ($end > $result['max_object'])
+                            $result['max_object'] = $end;
+                        break;
+                    case 3:
+                        if (!isset($result['xref'][$start]))
+                            $result['xref'][$start] = array();
+                        
+                        if (!array_key_exists($gen = (int) $pieces[1], $result['xref'][$start])) {
+                	        $result['xref'][$start][$gen] = $pieces[2] == 'n' ? (int) $pieces[0] : null;
+                	    }
+                        $start++;
+                        break;
+                    default:
+                        $this->error('Unexpected data in xref table');
+                }
+            }
+        }
+        
+        $lines = $pieces = $line = $start = $end = $gen = null;
+        unset($lines, $pieces, $line, $start, $end, $gen);
+        
+        fseek($this->f, $o_pos+$trailerPos+7);
+        
+        $c =&  new pdf_context($this->f);
+	    $trailer = $this->pdf_read_value($c);
+	    
+	    $c = null;
+	    unset($c);
+	    
+	    if (!isset($result['trailer'])) {
+            $result['trailer'] = $trailer;          
+	    }
+	    
+	    if (isset($trailer[1]['/Prev'])) {
+	    	$this->pdf_read_xref($result, $trailer[1]['/Prev'][1]);
+	    } 
+	    
+	    $trailer = null;
+	    unset($trailer);
+        
+        return true;
     }
-
-
+    
     /**
      * Reads an Value
      *
@@ -322,7 +340,7 @@ class pdf_parser {
     				}
 
     				$result = substr ($c->buffer, $c->offset, $match - $c->offset);
-    				$c->offset = $match+1;
+    				$c->offset = $match + 1;
     				
     				return array (PDF_TYPE_HEX, $result);
                 }
@@ -371,45 +389,30 @@ class pdf_parser {
 
     		case	'('		:
                 // This is a string
-
-    			$pos = $c->offset;
-
-    			while(1) {
-
-                    // Start by finding the next closed
-    				// parenthesis
-
-    				$match = strpos ($c->buffer, ')', $pos);
-
-    				// If you can't find it, try
-    				// reading more data from the stream
-
-    				if ($match === false) {
-    					if (!$c->increase_length()) {
-                            return false;
-    					} else {
-                            continue;
+                $pos = $c->offset;
+                
+                $openBrackets = 1;
+    			do {
+                    for (; $openBrackets != 0 && $pos < $c->length; $pos++) {
+                        switch (ord($c->buffer[$pos])) {
+                            case 0x28: // '('
+                                $openBrackets++;
+                                break;
+                            case 0x29: // ')'
+                                $openBrackets--;
+                                break;
+                            case 0x5C: // backslash
+                                $pos++;
                         }
-    				}
+                    }
+    			} while($openBrackets != 0 && $c->increase_length());
+    			
+    			$result = substr($c->buffer, $c->offset, $pos - $c->offset - 1);
+    			$c->offset = $pos;
+    			
+    			return array (PDF_TYPE_STRING, $result);
 
-    				// Make sure that there is no backslash
-    				// before the parenthesis. If there is,
-    				// move on. Otherwise, return the string.
-                    $esc = preg_match('/([\\\\]+)$/', $tmpresult = substr($c->buffer, $c->offset, $match - $c->offset), $m);
-                    
-                    if ($esc === 0 || strlen($m[1]) % 2 == 0) {
-    				    $result = $tmpresult;
-                        $c->offset = $match + 1;
-                        return array (PDF_TYPE_STRING, $result);
-    				} else {
-    					$pos = $match + 1;
-
-    					if ($pos > $c->offset + $c->length) {
-    						$c->increase_length();
-    					}
-    				}    				
-                }
-
+    			
             case "stream":
             	$o_pos = ftell($c->file)-strlen($c->buffer);
 		        $o_offset = $c->offset;
@@ -440,6 +443,30 @@ class pdf_parser {
 		        
 		        return array(PDF_TYPE_STREAM, $v);
 		        
+	        case '%':
+	            // this is a comment - just jump over it
+                $pos = $c->offset;
+    			while(1) {
+    			    // PHP 4.3.3 required
+                    #$match = preg_match("/(\r\n|\r|\n)/", $c->buffer, $m, PREG_OFFSET_CAPTURE, $pos);
+                    // alternative
+                    $match = preg_match("/(\r\n|\r|\n)/", substr($c->buffer, $pos), $m);
+					if ($match === false) {
+    					if (!$c->increase_length()) {
+    						return false;
+    					} else {
+                        	continue;
+                    	}
+    				}
+
+    				// PHP 4.3.3 required
+                    #$c->offset = $m[0][1]+strlen($m[0][0]);
+    				// alternative
+                    $c->offset = strpos($c->buffer, $m[0], $pos)+strlen($m[0]);
+    				
+    				return $this->pdf_read_value($c);
+                }
+                
     		default	:
             	if (is_numeric ($token)) {
                     // A numeric token. Make sure that
@@ -469,7 +496,12 @@ class pdf_parser {
     					array_push ($c->stack, $tok2);
     				}
 
-    				return array (PDF_TYPE_NUMERIC, $token);
+    				if ($token === (string)((int)$token))
+        				return array (PDF_TYPE_NUMERIC, (int)$token);
+    				else 
+    					return array (PDF_TYPE_REAL, (float)$token);
+    			} else if ($token == 'true' || $token == 'false') {
+                    return array (PDF_TYPE_BOOLEAN, $token == 'true');
     			} else {
 
                     // Just a token. Return it.
@@ -656,5 +688,3 @@ class pdf_parser {
 
 	
 }
-
-?>

@@ -1,8 +1,8 @@
 <?php
 //
-//  FPDI - Version 1.2
+//  FPDI - Version 1.2.1
 //
-//    Copyright 2004-2007 Setasign - Jan Slabon
+//    Copyright 2004-2008 Setasign - Jan Slabon
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -311,6 +311,12 @@ class fpdi_pdf_parser extends pdf_parser {
         return $boxes;
     }
 
+    /**
+     * Get the page rotation by pageno
+     *
+     * @param integer $pageno
+     * @return array
+     */
     function getPageRotation($pageno) {
         return $this->_getPageRotation($this->pages[$pageno-1]);
     }
@@ -368,12 +374,7 @@ class fpdi_pdf_parser extends pdf_parser {
      */
     function getPDFVersion() {
         parent::getPDFVersion();
-    	
-        if (isset($this->fpdi->importVersion) && $this->pdfVersion > $this->fpdi->importVersion) {
-            $this->fpdi->importVersion = $this->pdfVersion;
-        }
+        $this->fpdi->PDFVersion = max($this->fpdi->PDFVersion, $this->pdfVersion);
     }
     
 }
-
-?>

@@ -1,8 +1,8 @@
 <?php
 //
-//  FPDI - Version 1.2
+//  FPDI - Version 1.2.1
 //
-//    Copyright 2004-2007 Setasign - Jan Slabon
+//    Copyright 2004-2008 Setasign - Jan Slabon
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -43,8 +43,10 @@ class pdf_context {
 		}
 
 		$this->buffer = $l > 0 ? fread($this->file, $l) : '';
-		$this->offset = 0;
 		$this->length = strlen($this->buffer);
+		if ($this->length < $l)
+            $this->increase_length($l - $this->length);
+		$this->offset = 0;
 		$this->stack = array();
 	}
 
@@ -68,11 +70,13 @@ class pdf_context {
 		if (feof($this->file)) {
 			return false;
 		} else {
-			$this->buffer .= fread($this->file, $l);
-			$this->length = strlen($this->buffer);
+			$totalLength = $this->length + $l;
+		    do {
+                $this->buffer .= fread($this->file, $totalLength-$this->length);
+            } while ((($this->length = strlen($this->buffer)) != $totalLength) && !feof($this->file));
+			
 			return true;
 		}
 	}
 
 }
-?>

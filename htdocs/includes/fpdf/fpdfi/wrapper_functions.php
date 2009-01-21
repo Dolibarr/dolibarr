@@ -1,8 +1,8 @@
 <?php
 //
-//  FPDI - Version 1.2
+//  FPDI - Version 1.2.1
 //
-//    Copyright 2004-2007 Setasign - Jan Slabon
+//    Copyright 2004-2008 Setasign - Jan Slabon
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -68,21 +68,3 @@ function _strcspn($str1, $str2, $start=null, $length=null) {
         return strcspn($str1, $str2, $start, $length);
     }
 }
-
-
-/**
- * ensure that fgets works correct if php-version < 4.3
- */
-function _fgets (&$h, $force=false) {
-    $startpos = ftell($h);
-	$s = fgets($h, 1024);
-    
-    if ((PHP_VER_LOWER43 == 1 || $force) && preg_match("/^([^\r\n]*[\r\n]{1,2})(.)/",trim($s), $ns)) {
-		$s = $ns[1];
-		fseek($h,$startpos+strlen($s));
-	}
-	
-	return $s;
-}
-
-?>
