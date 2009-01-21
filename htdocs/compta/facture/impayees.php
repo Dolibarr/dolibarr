@@ -32,6 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/fpdf/fpdfi/fpdi.php");
 
+
 $langs->load("bills");
 
 $facid = isset($_GET["facid"])?$_GET["facid"]:'';
@@ -52,7 +53,7 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 {
 	if (is_array($_POST['toGenerate']))
 	{
-		
+
 		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('\.pdf|',$_POST['toGenerate']).'\.pdf','\.meta$|\.png','date',SORT_DESC) ;
 
 		// liste les fichiers
@@ -65,47 +66,50 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 				}
 			}
 		}
-		
+
 		// Create empty PDF
 		$pdf=new FPDI('P','mm','A4');
+		if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+		//$pdf->SetCompression(false);
+
 		//$pdf->Open();
 		//$pdf->AddPage();
 		//$title=$langs->trans("BillsCustomersUnpayed");
 		//if ($option=='late') $title=$langs->trans("BillsCustomersUnpayed");
 		//$pdf->MultiCell(100, 3, $title, 0, 'J');
-		
+
 		// Add all others
 		foreach($files as $file)
 		{
 			// Charge un document PDF depuis un fichier.
-			$pagecount = $pdf->setSourceFile($file); 
-            for ($i = 1; $i <= $pagecount; $i++)
-            { 
-                 $tplidx = $pdf->ImportPage($i); 
-                 $s = $pdf->getTemplatesize($tplidx); 
-                 $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L'); 
-                 $pdf->useTemplate($tplidx); 
-            } 
+			$pagecount = $pdf->setSourceFile($file);
+			for ($i = 1; $i <= $pagecount; $i++)
+            {
+                 $tplidx = $pdf->importPage($i);
+                 $s = $pdf->getTemplatesize($tplidx);
+                 $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+                 $pdf->useTemplate($tplidx);
+            }
 		}
-		
+
 		// Create output dir if not exists
 		create_exdir($diroutputpdf);
 
 		// enregistre le fichier pdf concatene
 		$filename=strtolower(sanitizeFileName($langs->transnoentities("Unpayed")));
 		if ($option=='late') $filename.='_'.strtolower(sanitizeFileName($langs->transnoentities("Late")));
-		if ($pagecount) 
+		if ($pagecount)
 		{
 			$file=$diroutputpdf.'/'.$filename.'_'.dolibarr_print_date(mktime(),'dayhourlog').'.pdf';
 			$pdf->Output($file);
-			if (! empty($conf->global->MAIN_UMASK)) 
+			if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 		}
-		else 
+		else
 		{
 			$mesg='<div class="error">'.$langs->trans('NoPDFAvailableForChecked').'</div>';
 		}
-	} 
+	}
 	else
 	{
 		$mesg='<div class="error">'.$langs->trans('UnpayedNotChecked').'</div>' ;
@@ -128,7 +132,7 @@ llxHeader('',$title);
 $html = new Form($db);
 $formfile = new FormFile($db);
 ?><script type="text/javascript">
-<!-- 
+<!--
 	function checkall(checked){
 		var checkboxes = [];
 		checkboxes = $$('input').each(function(e){ if(e.type == 'checkbox') checkboxes.push(e) });
@@ -239,14 +243,14 @@ if ($result)
 	if ($_REQUEST["search_montant_ht"])  $param.='&amp;search_montant_ht='.urlencode($_REQUEST["search_montant_ht"]);
 	if ($_REQUEST["search_montant_ttc"]) $param.='&amp;search_montant_ttc='.urlencode($_REQUEST["search_montant_ttc"]);
 	if ($_REQUEST["late"])               $param.='&amp;late='.urlencode($_REQUEST["search_late"]);
-	
+
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	$urlsource.=eregi_replace('&amp;','&',$param);
-	
+
 	$titre=($socid?$langs->trans("BillsCustomersUnpayedForCompany",$soc->nom):$langs->trans("BillsCustomersUnpayed"));
 	if ($option == 'late') $titre.=' ('.$langs->trans("Late").')';
 	else $titre.=' ('.$langs->trans("All").')';
-	
+
 	$link='';
 	if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late">'.$langs->trans("ShowUnpayedLateOnly").'</a>';
 	elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("ShowUnpayedAll").'</a>';
@@ -254,7 +258,7 @@ if ($result)
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 
 	if ($mesg) print $mesg;
-	
+
 	$i = 0;
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
@@ -302,7 +306,7 @@ if ($result)
 		$total_payed=0;
 
 		print '<form id="form_generate_pdf" method="post" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $_GET['sortfield'] .'&sortorder='. $_GET['sortorder'] .'">';
-	
+
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
@@ -313,33 +317,33 @@ if ($result)
 			$class = "impayee";
 
 			print '<td nowrap="nowrap">';
-			
+
 			$facturestatic->id=$objp->facid;
 			$facturestatic->ref=$objp->facnumber;
 			$facturestatic->type=$objp->type;
-			
+
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
 			print $facturestatic->getNomUrl(1);
 			print '</td>';
-			
+
 			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
 			if ($objp->datelimite < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 			print '</td>';
-			
+
 			print '<td width="16" align="right" class="nobordernopadding">';
-				
+
 			$filename=sanitizeFileName($objp->facnumber);
 			$filedir=$conf->facture->dir_output . '/' . sanitizeFileName($objp->facnumber);
 			$foundpdf=$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1,$param);
 			print '</td></tr></table>';
-			
+
 			// Checkbox
 			print '<td align="center">';
 			if ($foundpdf) print '<input id="cb'.$objp->facid.'" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
 			else print '&nbsp;';
 			print '</td>' ;
-			
+
 			print "</td>\n";
 
 			print "<td nowrap align=\"center\">".dolibarr_print_date($objp->df)."</td>\n";
@@ -374,8 +378,8 @@ if ($result)
 	}
 
 	print "</table>";
-	
-	
+
+
 	/*
 	 * Show list of available documents
 	 */
@@ -391,8 +395,8 @@ if ($result)
 	print '<br>';
 	print '<input type="hidden" name="option" value="'.$option.'">';
 	$formfile->show_documents('unpayed','',$filedir,$urlsource,$genallowed,$delallowed,'','',0,0,48,1,$param);
-	print '</form>';		
-	
+	print '</form>';
+
 	$db->free();
 }
 
