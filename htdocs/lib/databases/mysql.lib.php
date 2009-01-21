@@ -160,7 +160,7 @@ class DoliDb
 		{
 			// Pas de selection de base demandee, ok ou ko
 			$this->database_selected = 0;
-			
+
 			if ($this->connected)
 			{
 				// If client connected with different charset than Dolibarr HTML output
@@ -456,10 +456,10 @@ class DoliDb
 
 
 	/**
-	 \brief      D�fini les limites de la requ�te.
-	 \param	    limit       nombre maximum de lignes retourn�es
-	 \param	    offset      num�ro de la ligne � partir de laquelle recup�rer les ligne
-	 \return	    string      chaine exprimant la syntax sql de la limite
+	 *	\brief      Defini les limites de la requete.
+	 *	\param	    limit       nombre maximum de lignes retournees
+	 *	\param	    offset      numero de la ligne a partir de laquelle recuperer les ligne
+	 *	\return	    string      chaine exprimant la syntax sql de la limite
 	 */
 	function plimit($limit=0,$offset=0)
 	{
@@ -471,12 +471,12 @@ class DoliDb
 
 
 	/**
-	 \brief      D�fini le tri de la requ�te.
-	 \param	    sortfield   liste des champ de tri
-	 \param	    sortorder   ordre du tri
-	 \return	    string      chaine exprimant la syntax sql de l'ordre de tri
-		\TODO		A mutualiser dans classe mere
-		*/
+	 *	\brief      Defini le tri de la requete.
+	 *	\param	    sortfield   liste des champ de tri
+	 *	\param	    sortorder   ordre du tri
+	 *	\return	    string      chaine exprimant la syntax sql de l'ordre de tri
+	 *	\TODO		A mutualiser dans classe mere
+	 */
 	function order($sortfield=0,$sortorder=0)
 	{
 		if ($sortfield)
@@ -512,9 +512,9 @@ class DoliDb
 
 
 	/**
-	 *   \brief     Formatage (par la base de donn�es) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
-	 *              afin de retourner une donn�e toujours au format universel date TMS unix.
-	 *              Fonction � utiliser pour g�n�rer les SELECT.
+	 *   \brief     Formatage (par la base de donnees) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
+	 *              afin de retourner une donnee toujours au format universel date TMS unix.
+	 *              Fonction a utiliser pour generer les SELECT.
 	 *   \param	    param       Nom champ base de type date ou chaine 'YYYY-MM-DD HH:MM:SS'
 	 *   \return	date        Date au format TMS.
 	 *	 \TODO		Remove unix_timestamp functions so use jdate instead
@@ -525,7 +525,7 @@ class DoliDb
 	}
 
 	/**
-	 *   \brief     Convert (by PHP) a GM Timestamp date into a PHP server TZ to insert into a date field.
+	 *   \brief     Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *              Function to use to build INSERT, UPDATE or WHERE predica
 	 *   \param	    param       Date TMS to convert
 	 *   \return	string      Date in a string YYYYMMDDHHMMSS
@@ -534,7 +534,7 @@ class DoliDb
 	{
 		return adodb_strftime("%Y%m%d%H%M%S",$param);
 	}
-	
+
 	/**
 	 *	\brief  	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
 	 *	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
@@ -548,7 +548,7 @@ class DoliDb
 		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 		return $date;
 	}
-	
+
 	/**
 	 *   \brief     Convert (by PHP) a GM Timestamp date into a GM string date to insert into a date field.
 	 *              Function to use to build INSERT, UPDATE or WHERE predica
@@ -559,7 +559,7 @@ class DoliDb
 	{
 		return adodb_strftime("%Y%m%d%H%M%S",$param,true);
 	}*/
-	
+
 	/**
 	 *	\brief  	Convert (by PHP) a GM string date into a GM Timestamps date
 	 *	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
@@ -573,7 +573,7 @@ class DoliDb
 		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
 		return $date;
 	}*/
-	
+
 
 	/**
 	 *	\brief      Formatage d'un if SQL
@@ -663,7 +663,7 @@ class DoliDb
 			1217 => 'DB_ERROR_CHILD_EXISTS',
 			1451 => 'DB_ERROR_CHILD_EXISTS'
 			);
-				
+
 			if (isset($errorcode_map[mysql_errno($this->db)]))
 			{
 				return $errorcode_map[mysql_errno($this->db)];
@@ -730,7 +730,7 @@ class DoliDb
 	{
 		if (empty($charset))   $charset=$this->forcecharset;
 		if (empty($collation)) $collation=$this->collation;
-		
+
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
 		$sql = 'CREATE DATABASE '.$database;
 		$sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;

@@ -1392,7 +1392,8 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 
 	// Check write permission from module
 	$createok=1;
-	if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
+	if ( (isset($_GET["action"])  && $_GET["action"]  == 'create')
+	  || (isset($_POST["action"]) && $_POST["action"] == 'create') )
 	{
 		if ($feature == 'societe')
 		{

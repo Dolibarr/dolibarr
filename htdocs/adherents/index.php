@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ if ($result)
 		else
 		{
 			$Cotisants[$objp->rowid]=0;	// Calculé plus loin
-		}	
+		}
 		$i++;
 	}
 	$db->free($result);
@@ -110,7 +110,7 @@ $sql.= " WHERE d.statut = 1 AND d.datefin >= ".$db->idate(mktime());
 $sql.= " GROUP BY d.fk_adherent_type";
 
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
   $num = $db->num_rows($result);
   $i = 0;
@@ -247,7 +247,7 @@ if(isset($date_select) && $date_select != '')
 	$sql .= " AND dateadh LIKE '$date_select%'";
 }
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
   $num = $db->num_rows($result);
   $i = 0;
@@ -255,8 +255,8 @@ if ($result)
     {
       $objp = $db->fetch_object($result);
       $year=dolibarr_print_date($objp->dateadh,"%Y");
-      $Total[$year]+=$objp->cotisation;
-      $Number[$year]+=1;
+      $Total[$year]=(isset($Total[$year])?$Total[$year]:0)+$objp->cotisation;
+      $Number[$year]=(isset($Number[$year])?$Number[$year]:0)+1;
       $tot+=$objp->cotisation;
       $numb+=1;
       $i++;

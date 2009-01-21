@@ -301,7 +301,7 @@ class MenuLeft {
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=o", $langs->trans("Others"), 2, $user->rights->societe->contact->lire);
 
 				// Propal
-				if ($conf->propal->enabled)
+				if (! empty($conf->propal->enabled))
 				{
 					$langs->load("propal");
 					$newmenu->add(DOL_URL_ROOT."/comm/propal.php?leftmenu=propals", $langs->trans("Prop"), 0 ,$user->rights->propale->lire);
@@ -317,7 +317,7 @@ class MenuLeft {
 				}
 
 				// Customers orders
-				if ($conf->commande->enabled)
+				if (! empty($conf->commande->enabled))
 				{
 					$langs->load("orders");
 					$newmenu->add(DOL_URL_ROOT."/commande/index.php?leftmenu=orders", $langs->trans("CustomersOrders"), 0 ,$user->rights->commande->lire);
@@ -331,11 +331,11 @@ class MenuLeft {
 					if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/liste.php?leftmenu=orders&viewstatut=-1", $langs->trans("StatusOrderCanceledShort"), 2, $user->rights->commande->lire);
 					if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1 ,$user->rights->commande->lire);
 					// Statistiques de vente perso
-					if ($conf->global->COMMANDE_SHOWMYSTATS && $leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/comm/stats.php?leftmenu=orders", $langs->trans("Stats"), 1, $user->rights->commande->lire);
+					if (! empty($conf->global->COMMANDE_SHOWMYSTATS) && $leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/comm/stats.php?leftmenu=orders", $langs->trans("Stats"), 1, $user->rights->commande->lire);
 				}
 
 				// Suppliers orders
-				if ($conf->fournisseur->enabled)
+				if (! empty($conf->fournisseur->enabled))
 				{
 					$langs->load("orders");
 					$newmenu->add(DOL_URL_ROOT."/fourn/commande/index.php?leftmenu=orders_suppliers",$langs->trans("SuppliersOrders"), 0, $user->rights->fournisseur->commande->lire);
@@ -345,7 +345,7 @@ class MenuLeft {
 				}
 
 				// Contrat
-				if ($conf->contrat->enabled)
+				if (! empty($conf->contrat->enabled))
 				{
 					$langs->load("contracts");
 					$newmenu->add(DOL_URL_ROOT."/contrat/index.php?leftmenu=contracts", $langs->trans("Contracts"), 0 ,$user->rights->contrat->lire);
@@ -359,7 +359,7 @@ class MenuLeft {
 				}
 
 				// Interventions
-				if ($conf->ficheinter->enabled)
+				if (! empty($conf->ficheinter->enabled))
 				{
 					$langs->load("interventions");
 					$newmenu->add(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->rights->ficheinter->lire);

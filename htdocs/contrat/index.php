@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +30,14 @@ require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 $langs->load("products");
 $langs->load("companies");
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:(isset($_POST["sortfield"])?$_POST["sortfield"]:'');
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:(isset($_POST["sortorder"])?$_POST["sortorder"]:'');
+$page = isset($_GET["page"])?$_GET["page"]:(isset($_POST["page"])?$_POST["page"]:'');
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
 
 // Security check
+$socid=0;
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat',$contratid,'');
@@ -122,7 +123,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 			$companystatic=new Societe($db);
 
 			$i = 0;
-			$tot_ttc = 0;
+			//$tot_ttc = 0;
 			while ($i < $num && $i < 20)
 			{
 				$obj = $db->fetch_object($resql);
@@ -138,7 +139,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
 				print '</tr>';
-				$tot_ttc+=$obj->total_ttc;
+				//$tot_ttc+=$obj->total_ttc;
 				$i++;
 				$var=!$var;
 			}
@@ -163,8 +164,8 @@ print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
 $max=5;
 $sql = 'SELECT ';
 $sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
-$sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > ".$db->idate(mktime()),1,0).') as nb_running,';
-$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= ".$db->idate(mktime()).")",1,0).') as nb_late,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > ".$db->idate(gmmktime()),1,0).') as nb_running,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= ".$db->idate(gmmktime()).")",1,0).') as nb_late,';
 $sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
 $sql.= " c.rowid as cid, c.ref, c.datec, c.tms, c.statut, s.nom, s.rowid as socid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -179,26 +180,27 @@ $sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.rowid";
 $sql.= " ORDER BY c.tms DESC";
 $sql.= " LIMIT ".$max;
 
+dolibarr_syslog("contrat/index.php sql=".$sql, LOG_DEBUG);
 $result=$db->query($sql);
 if ($result)
 {
     $num = $db->num_rows($result);
     $i = 0;
-    
+
     print '<table class="noborder" width="100%">';
-    
+
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastContracts",5).'</td>';
     print '<td align="center">'.$langs->trans("DateModification").'</td>';
     //print '<td align="left">'.$langs->trans("Status").'</td>';
     print '<td align="right" width="80" colspan="3">'.$langs->trans("Services").'</td>';
     print "</tr>\n";
-    
+
     $var=True;
     while ($i < $num)
     {
         $obj = $db->fetch_object($result);
         $var=!$var;
-    
+
         print "<tr $bc[$var]>";
         print "<td>";
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->cid);
@@ -220,9 +222,9 @@ if ($result)
         $i++;
     }
     $db->free($result);
-    
+
     print "</table>";
-    
+
 }
 else
 {
@@ -327,7 +329,7 @@ if ($resql)
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
-        if ($obj->nb_late) print img_warning($langs->trans("Late"));
+        //if (1 == 1) print img_warning($langs->trans("Late"));
         print '</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
         if ($obj->label) print ' '.dolibarr_trunc($obj->label,20).'</a></td>';
