@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
        	\file       htdocs/public/demo/index.php
 		\ingroup    core
@@ -60,6 +60,11 @@ function llxHeaderVierge($title, $head = "")
 {
 	global $user, $conf, $langs;
 
+	header("Content-type: text/html; charset=".$conf->character_set_client);
+
+	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
+	print "\n";
 	print "<html>\n";
 	print "<head>\n";
 	print '<meta name="robots" content="index,nofollow">'."\n";
@@ -114,7 +119,7 @@ if ($_REQUEST["action"] == 'gotodemo')
 /*
  * View
  */
- 
+
 llxHeaderVierge($langs->trans("DolibarrDemo"));
 
 
@@ -190,7 +195,7 @@ print '<form name="choosedemo" action="'.$_SERVER["PHP_SELF"].'" method="POST">'
 print '<input type="hidden" name="username" value="demo">';
 print "\n";
 
-print '<table style="font-size:14px;">';
+print '<table style="font-size:14px;" summary="List of Dolibarr demos">';
 
 print '<tr><td>';
 print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo_2.png" alt="Dolibarr logo"></center><br>';
@@ -204,7 +209,7 @@ print '</td></tr>';
 print '<tr><td width="50%">';
 
 $NBOFCOLS=2;
-print '<table style="font-size:14px;" width="100%">'."\n";
+print '<table style="font-size:14px;" width="100%" summary="List of Dolibarr demos">'."\n";
 $i=0;
 foreach ($demoprofiles as $profilarray)
 {
@@ -214,9 +219,9 @@ foreach ($demoprofiles as $profilarray)
 		//if ($i % $NBOFCOLS == 0) print '<tr>';
 		print '<tr>';
 		print '<td align="left">';
-		print '<table style="font-size:14px;" width="100%" class="CTableRow'.($i%2==0?'1':'2').'">'."\n";
+		print '<table summary="Dolibarr online demonstration for profile '.$profilarray['label'].'" style="font-size:14px;" width="100%" class="CTableRow'.($i%2==0?'1':'2').'">'."\n";
 		print '<tr>';
-		print '<td align="left" width="50"><a href="'.$url.'"><img src="'.$profilarray['icon'].'" width="48" border="0"></a></td>';
+		print '<td align="left" width="50"><a href="'.$url.'"><img src="'.$profilarray['icon'].'" width="48" border="0" alt="Demo '.$profilarray['label'].'"></a></td>';
 		//print '<td><input type="radio" name="demochoice"';
 		//if ($profilarray['default']) print ' checked="true"';
 		//print ' value="'.$profilarray['key'].'"></td>';
