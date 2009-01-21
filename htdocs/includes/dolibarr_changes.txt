@@ -3,6 +3,18 @@ This file describe changes made on external library after beeing included
 in Dolibarr root.
 
 
+
+FPDF:
+-----
+* All changes were added in fpdf.php file and marked with tag DOLCHANGE
+
+
+FPDFI and FPDF_TPL:
+-------------------
+* Added the include FPDF at beginning of fpdf_tpl.php
+* Replaced all sprintf(%0.2f) by sprintf(%0.2F) (Fix bug)
+
+
 PHP-BARCODE:
 ------------
 If files are replaced by new version, following changes must be done:
