@@ -6,7 +6,7 @@
 -- when current version is 2.4.0 or higher. 
 --
 
-alter table llx_expedition_methode change statut active;
+alter table llx_expedition_methode change statut active tinyint DEFAULT 1;
 
 update llx_actioncomm set datep = datea where datep is null;
 
