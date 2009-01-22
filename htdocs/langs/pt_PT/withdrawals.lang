@@ -11,17 +11,18 @@
 // Date 2009-01-18 18:56:33
 // START - Lines generated via parser
 // Reference language: en_US
-StandingOrdersArea=Permanente ordens área
-CustomersStandingOrdersArea=Os clientes permanentes área
+CHARSET=UTF-8
+StandingOrdersArea=Permanente ordens Ã¡rea
+CustomersStandingOrdersArea=Os clientes permanentes Ã¡rea
 StandingOrders=Permanente encomendas
 StandingOrder=Permanente encomendas
 NewStandingOrder=Nova ordem permanente
 Withdrawals=Retiradas
 Withdrawal=Retirada
 WithdrawalsReceipts=Retiradas recibos
-WithdrawalReceipt=Retirada recepção
+WithdrawalReceipt=Retirada recepÃ§Ã£o
 WithdrawalReceiptShort=Recibo
-LastWithdrawalReceipts=Última% s retirada recibos
+LastWithdrawalReceipts=Ãšltima% s retirada recibos
 WithdrawedBills=Withdrawed facturas
 WithdrawalsLines=Retiradas linhas
 RequestStandingOrderToTreat=Pedido de permanentes para tratar
@@ -32,17 +33,17 @@ NbOfInvoiceToWithdraw=Nb retirar pedido de uma factura com
 InvoiceWaitingWithdraw=Factura esperando para retirar
 AmountToWithdraw=Montante a retirar
 WithdrawsRefused=Retire recusada
-NoInvoiceToWithdraw=Nenhum cliente fatura no modo de pagamento &quot;retirar&quot; está à espera. Vá em &quot;Retirar&quot; guia na factura cartão para fazer um pedido.
-ResponsibleUser=Responsável usuário
+NoInvoiceToWithdraw=Nenhum cliente fatura no modo de pagamento &quot;retirar&quot; estÃ¡ Ã  espera. VÃ¡ em &quot;Retirar&quot; guia na factura cartÃ£o para fazer um pedido.
+ResponsibleUser=ResponsÃ¡vel usuÃ¡rio
 WithdrawalsSetup=Retirada setup
-WithdrawStatistics=Retire «estatísticas
-WithdrawRejectStatistics=Retirar rejeita «estatísticas
-LastWithdrawalReceipt=Última% s retirando receitas
-MakeWithdrawRequest=Faça um pedido retirar
-ThirdPartyBankCode=Terceiro código bancário
-ThirdPartyDeskCode=Terceiro secretária código
-NoInvoiceCouldBeWithdrawed=Não factura withdrawed com sucesso. Verifique se a factura são as empresas com um válido BAN.
+WithdrawStatistics=Retire Â«estatÃ­sticas
+WithdrawRejectStatistics=Retirar rejeita Â«estatÃ­sticas
+LastWithdrawalReceipt=Ãšltima% s retirando receitas
+MakeWithdrawRequest=FaÃ§a um pedido retirar
+ThirdPartyBankCode=Terceiro cÃ³digo bancÃ¡rio
+ThirdPartyDeskCode=Terceiro secretÃ¡ria cÃ³digo
+NoInvoiceCouldBeWithdrawed=NÃ£o factura withdrawed com sucesso. Verifique se a factura sÃ£o as empresas com um vÃ¡lido BAN.
 ClassCredited=Classificar creditado
-ClassCreditedConfirm=Tem certeza de que deseja classificar esta retirada recepção como creditado em sua conta bancária?
+ClassCreditedConfirm=Tem certeza de que deseja classificar esta retirada recepÃ§Ã£o como creditado em sua conta bancÃ¡ria?
 // Date 2009-01-18 18:56:33
 // STOP - Lines generated via parser

@@ -11,9 +11,10 @@
 // Date 2009-01-18 18:56:33
 // START - Lines generated via parser
 // Reference language: en_US
+CHARSET=UTF-8
 OSCommerce=OS Commerce
-OSCommerceSetup=OS Commerce módulo configuração
-OSCommerceSetupSaved=OS Commerce configuração salva
+OSCommerceSetup=OS Commerce mÃ³dulo configuraÃ§Ã£o
+OSCommerceSetupSaved=OS Commerce configuraÃ§Ã£o salva
 OSCommerceServer=OS Commerce servidor host / ip
 OSCommerceDatabaseName=OS Commerce nome do banco de dados
 OSCommercePrefix=OS Commerce quadros prefixo

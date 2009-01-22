@@ -1,11 +1,12 @@
 # Dolibarr language file - pt_PT - projectos
+CHARSET=UTF-8
 Project=Projecto
 Projects=Projectos
 NewProject=Novo projecto
 AddProject=Adicionar projecto
 DeleteAProject=Apagar projecto
-ConfirmDeleteAProject=Têm a certeza que quer apagar este projecto ?
-LastProjects=Últimos %s projectos
+ConfirmDeleteAProject=TÃªm a certeza que quer apagar este projecto ?
+LastProjects=Ãšltimos %s projectos
 AllProjects=Todos os projectos
 
 
@@ -14,14 +15,14 @@ AllProjects=Todos os projectos
 // Reference language: en_US
 SharedProject=Projecto partilhado
 Myprojects=Meus projetos
-ProjectsArea=Projetos área
+ProjectsArea=Projetos Ã¡rea
 DeleteATask=Excluir uma tarefa
 ConfirmDeleteATask=Tem certeza de que deseja eliminar esta tarefa?
 OfficerProject=Officer projecto
 ProjectsList=Lista dos projectos
 ShowProject=Visualizar projeto
 SetProject=Definir projeto
-NoProject=Não projecto definido
+NoProject=NÃ£o projecto definido
 NbOpenTasks=Nb abertura de tarefas
 NbOfProjects=Nb de projectos
 TimeSpent=Tempo gasto
@@ -34,12 +35,12 @@ Tasks=Tarefas
 Task=Tarefa
 NewTask=Nova tarefa
 AddTask=Adicionar tarefa
-AddDuration=Adicionar duração
+AddDuration=Adicionar duraÃ§Ã£o
 Activity=Atividade
 Activities=Tarefas / atividades
 MyActivity=Minha atividade
 MyActivities=Minhas tarefas / actividades
-DurationEffective=Duração efectiva
+DurationEffective=DuraÃ§Ã£o efectiva
 MyProjects=Meus projetos
 Time=Timne
 ListProposalsAssociatedProject=Lista de propostas comerciais associados ao projecto
@@ -49,10 +50,10 @@ ListSupplierOrdersAssociatedProject=Lista de fornecedores, associadas com o proj
 ListSupplierInvoicesAssociatedProject=Lista de fornecedores facturas relacionadas com o projecto
 ListContractAssociatedProject=Lista de contratos relacionados com o projecto
 ActivityOnProjectThisWeek=Atividade no projeto esta semana
-ActivityOnProjectThisMonth=Atividade no projeto este mês
+ActivityOnProjectThisMonth=Atividade no projeto este mÃªs
 ActivityOnProjectThisYear=Atividade no projeto deste ano
-ChildOfTaks=Criança de projecto / tarefa
-NotOwnerOfProject=Não proprietário deste projecto privado,
+ChildOfTaks=CrianÃ§a de projecto / tarefa
+NotOwnerOfProject=NÃ£o proprietÃ¡rio deste projecto privado,
 AffectedTo=Visado para
 // Date 2009-01-18 18:56:33
 // STOP - Lines generated via parser

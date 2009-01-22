@@ -1,13 +1,14 @@
 # Dolibarr language file - pt_PT - donativos
+CHARSET=UTF-8
 Donation=Donativo
 Donationss=Donativos
 AddDonation=Adicionar um donativo
 DonationPromise=Promessa de presente
-PromisesNotValid=Sem promessas v·lidas
-PromisesValid=Promessas v·lidas
+PromisesNotValid=Sem promessas v√°lidas
+PromisesValid=Promessas v√°lidas
 DonationsPayed=Donativos pagos
 DonationsReceived=Donativos recebidos
-PublicDonation=Donativos p˙blicos
+PublicDonation=Donativos p√∫blicos
 DonationsNumber=Nr. do donativo
 
 
@@ -16,16 +17,16 @@ DonationsNumber=Nr. do donativo
 // Reference language: en_US
 Donor=Doador
 Donors=Doadores
-NewDonation=Nova doaÁ„o
-DonationsArea=Donativos ·rea
+NewDonation=Nova doa√ß√£o
+DonationsArea=Donativos √°rea
 DonationStatusPromiseNotValidated=Projecto de promessa
 DonationStatusPromiseValidated=Validado promessa
-DonationStatusPayed=DoaÁ„o recebida
+DonationStatusPayed=Doa√ß√£o recebida
 DonationStatusPromiseNotValidatedShort=Rascunho
 DonationStatusPromiseValidatedShort=Validado
 DonationStatusPayedShort=Recebidos
 ValidPromise=Validar promessa
-BuildDonationReceipt=Construa recepÁ„o
-DonationsModels=Documentos modelos de recibos doaÁ„o
+BuildDonationReceipt=Construa recep√ß√£o
+DonationsModels=Documentos modelos de recibos doa√ß√£o
 // Date 2009-01-18 18:56:33
 // STOP - Lines generated via parser

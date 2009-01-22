@@ -11,35 +11,36 @@
 // Date 2009-01-18 18:56:33
 // START - Lines generated via parser
 // Reference language: en_US
-Intervention=Intervenção
-Interventions=Intervenções
-InterventionCard=Intervenção cartão
-NewIntervention=Nova intervenção
-AddIntervention=Adicionar intervenção
-ListOfInterventions=Lista das intervenções
-EditIntervention=Editer intervenção
-LastInterventions=Última% s intervenções
-AllInterventions=Todas as intervenções
+CHARSET=UTF-8
+Intervention=IntervenÃ§Ã£o
+Interventions=IntervenÃ§Ãµes
+InterventionCard=IntervenÃ§Ã£o cartÃ£o
+NewIntervention=Nova intervenÃ§Ã£o
+AddIntervention=Adicionar intervenÃ§Ã£o
+ListOfInterventions=Lista das intervenÃ§Ãµes
+EditIntervention=Editer intervenÃ§Ã£o
+LastInterventions=Ãšltima% s intervenÃ§Ãµes
+AllInterventions=Todas as intervenÃ§Ãµes
 CreateDraftIntervention=Criar um projecto de
-CustomerDoesNotHavePrefix=O cliente não tem um prefixo
-InterventionContact=Intervenção contato
-DeleteIntervention=Apagar intervenção
-ValidateIntervention=Validar intervenção
-DeleteInterventionLine=Apagar intervenção linha
-ConfirmDeleteIntervention=Tem certeza de que deseja apagar esta intervenção?
-ConfirmValidateIntervention=Tem certeza de que deseja validar esta intervenção?
-ConfirmModifyIntervention=Tem certeza de que pretende modificar esta intervenção?
-ConfirmDeleteInterventionLine=Tem certeza de que deseja apagar esta intervenção linha?
+CustomerDoesNotHavePrefix=O cliente nÃ£o tem um prefixo
+InterventionContact=IntervenÃ§Ã£o contato
+DeleteIntervention=Apagar intervenÃ§Ã£o
+ValidateIntervention=Validar intervenÃ§Ã£o
+DeleteInterventionLine=Apagar intervenÃ§Ã£o linha
+ConfirmDeleteIntervention=Tem certeza de que deseja apagar esta intervenÃ§Ã£o?
+ConfirmValidateIntervention=Tem certeza de que deseja validar esta intervenÃ§Ã£o?
+ConfirmModifyIntervention=Tem certeza de que pretende modificar esta intervenÃ§Ã£o?
+ConfirmDeleteInterventionLine=Tem certeza de que deseja apagar esta intervenÃ§Ã£o linha?
 NameAndSignatureOfInternalContact=Nome e assinatura do intervalo:
 NameAndSignatureOfExternalContact=Nome e assinatura do cliente:
-DocumentModelStandard=Norma documento modelo para intervenções
-TypeContact_fichinter_internal_INTERREPFOLL=Representante seguimento de intervenção
+DocumentModelStandard=Norma documento modelo para intervenÃ§Ãµes
+TypeContact_fichinter_internal_INTERREPFOLL=Representante seguimento de intervenÃ§Ã£o
 TypeContact_fichinter_internal_INTERVENING=Intervir
 TypeContact_fichinter_external_BILLING=Faturamento cliente contato
 TypeContact_fichinter_external_CUSTOMER=Seguindo-se cliente contacto
-ArcticNumRefModelDesc1=Genérico número modelo
+ArcticNumRefModelDesc1=GenÃ©rico nÃºmero modelo
 ArcticNumRefModelError=Falha ao ativar
-PacificNumRefModelDesc1=Retornar numero com formato% syymm-nnnn onde yy é o ano, mm mês e é nnnn é uma seqüência, sem interrupção e sem volta para 0
-PacificNumRefModelError=Uma intervenção cartão começando com $ syymm já existe e não é compatível com este modelo de seqüência. Removê-lo ou renomeá-lo para ativar este módulo.
+PacificNumRefModelDesc1=Retornar numero com formato% syymm-nnnn onde yy Ã© o ano, mm mÃªs e Ã© nnnn Ã© uma seqÃ¼Ãªncia, sem interrupÃ§Ã£o e sem volta para 0
+PacificNumRefModelError=Uma intervenÃ§Ã£o cartÃ£o comeÃ§ando com $ syymm jÃ¡ existe e nÃ£o Ã© compatÃ­vel com este modelo de seqÃ¼Ãªncia. RemovÃª-lo ou renomeÃ¡-lo para ativar este mÃ³dulo.
 // Date 2009-01-18 18:56:33
 // STOP - Lines generated via parser

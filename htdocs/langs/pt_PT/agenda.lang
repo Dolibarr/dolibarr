@@ -11,51 +11,52 @@
 // Date 2009-01-18 18:56:33
 // START - Lines generated via parser
 // Reference language: en_US
-Actions=Acções
-ActionsArea=Acções área (Eventos e tarefas)
+CHARSET=UTF-8
+Actions=AcÃ§Ãµes
+ActionsArea=AcÃ§Ãµes Ã¡rea (Eventos e tarefas)
 Agenda=Agenda
 Agendas=Agendas
-Calendar=Calendário
-Calendars=Calendários
+Calendar=CalendÃ¡rio
+Calendars=CalendÃ¡rios
 AffectedTo=Visado para
 DoneBy=Feito por
 Events=Eventos
 ListOfActions=Lista de eventos
 Location=Local
-SearchAnAction=Procurar uma acção / tarefa
-MenuToDoActions=Todas as acções uncomplete
-MenuDoneActions=Todas as acções arquivado
-MenuToDoMyActions=Minhas ações incompleto
-MenuDoneMyActions=Meu arquivado acções
+SearchAnAction=Procurar uma acÃ§Ã£o / tarefa
+MenuToDoActions=Todas as acÃ§Ãµes uncomplete
+MenuDoneActions=Todas as acÃ§Ãµes arquivado
+MenuToDoMyActions=Minhas aÃ§Ãµes incompleto
+MenuDoneMyActions=Meu arquivado acÃ§Ãµes
 ListOfEvents=Lista de eventos Dolibarr
-ActionsAskedBy=Ações registrado pelo
-ActionsToDoBy=Acções afectado a
-ActionsDoneBy=Acções feito por
-AllMyActions=Todas as minhas acções / tarefas
-AllActions=Todas as acções / tarefas
+ActionsAskedBy=AÃ§Ãµes registrado pelo
+ActionsToDoBy=AcÃ§Ãµes afectado a
+ActionsDoneBy=AcÃ§Ãµes feito por
+AllMyActions=Todas as minhas acÃ§Ãµes / tarefas
+AllActions=Todas as acÃ§Ãµes / tarefas
 ViewList=Ver lista
-ViewCal=Ver calendário
+ViewCal=Ver calendÃ¡rio
 ViewWithPredefinedFilters=Ver com filtros predefinidos
-AutoActions=Enchimento automático da ordem do dia
-AgendaAutoActionDesc=Defina aqui eventos para os quais você deseja Dolibarr para criar automaticamente uma acção em agenda. Se nada está marcada (por padrão), apenas manual ações serão incluídas na agenda.
-AgendaSetupOtherDesc=Esta página permite configurar outros parâmetros de agenda módulo.
-ActionsEvents=Eventos para Dolibarr que irá criar uma acção na agenda automaticamente
+AutoActions=Enchimento automÃ¡tico da ordem do dia
+AgendaAutoActionDesc=Defina aqui eventos para os quais vocÃª deseja Dolibarr para criar automaticamente uma acÃ§Ã£o em agenda. Se nada estÃ¡ marcada (por padrÃ£o), apenas manual aÃ§Ãµes serÃ£o incluÃ­das na agenda.
+AgendaSetupOtherDesc=Esta pÃ¡gina permite configurar outros parÃ¢metros de agenda mÃ³dulo.
+ActionsEvents=Eventos para Dolibarr que irÃ¡ criar uma acÃ§Ã£o na agenda automaticamente
 PropalValidatedInDolibarr=Proposta validada
 InvoiceValidatedInDolibarr=Factura validados
 OrderValidatedInDolibarr=Ordem validados
 NewCompanyToDolibarr=Terceiro, criado
-DateActionPlannedStart=Planejada a data de início
+DateActionPlannedStart=Planejada a data de inÃ­cio
 DateActionPlannedEnd=Planejada data final
-DateActionDoneStart=Real data de início
+DateActionDoneStart=Real data de inÃ­cio
 DateActionDoneEnd=Real data final
-DateActionStart=Data de início
+DateActionStart=Data de inÃ­cio
 DateActionEnd=Data final
-AgendaUrlOptions1=Você também pode adicionar os seguintes parâmetros de filtro de saída:
-AgendaUrlOptions2=<b>login=<b>login =% s</b> para restringir a produção para acções criadas por, ou afectadas a fazer pelo <b>usuário% s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina =% s</b> para restringir a produção para ações criadas pelo <b>usuário% s.</b>
-AgendaUrlOptions4=<b>logint=<b>logint =% s</b> para restringir a produção para acções afectadas para o <b>usuário% s.</b>
-AgendaUrlOptions5=<b>logind=<b>logind =% s</b> para restringir a produção para acções feitas pelo <b>usuário% s.</b>
-AgendaShowBirthdayEvents=Show de aniversário da contactos
-AgendaHideBirthdayEvents=Ocultar contatos do aniversário
+AgendaUrlOptions1=VocÃª tambÃ©m pode adicionar os seguintes parÃ¢metros de filtro de saÃ­da:
+AgendaUrlOptions2=<b>login=<b>login =% s</b> para restringir a produÃ§Ã£o para acÃ§Ãµes criadas por, ou afectadas a fazer pelo <b>usuÃ¡rio% s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina =% s</b> para restringir a produÃ§Ã£o para aÃ§Ãµes criadas pelo <b>usuÃ¡rio% s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint =% s</b> para restringir a produÃ§Ã£o para acÃ§Ãµes afectadas para o <b>usuÃ¡rio% s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind =% s</b> para restringir a produÃ§Ã£o para acÃ§Ãµes feitas pelo <b>usuÃ¡rio% s.</b>
+AgendaShowBirthdayEvents=Show de aniversÃ¡rio da contactos
+AgendaHideBirthdayEvents=Ocultar contatos do aniversÃ¡rio
 // Date 2009-01-18 18:56:33
 // STOP - Lines generated via parser

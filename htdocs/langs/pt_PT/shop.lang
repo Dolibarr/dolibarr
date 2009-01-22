@@ -11,12 +11,13 @@
 // Date 2009-01-18 18:56:33
 // START - Lines generated via parser
 // Reference language: en_US
+CHARSET=UTF-8
 Shop=Loja
 ShopWeb=Web Shop
-LastOrders=Últimos pedidos
+LastOrders=Ãšltimos pedidos
 OnStandBy=Em espera
 TreatmentInProgress=Tratamento em andamento
-LastCustomers=Última clientes
+LastCustomers=Ãšltima clientes
 OSCommerceShop=OSCommerce loja
 OSCommerce=OSCommerce
 AddProd=Venda on-line

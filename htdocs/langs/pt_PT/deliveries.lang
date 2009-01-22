@@ -11,20 +11,21 @@
 // Date 2009-01-18 18:56:33
 // START - Lines generated via parser
 // Reference language: en_US
+CHARSET=UTF-8
 Delivery=Entrega
 Deliveries=Entregas
-DeliveryCard=Entrega cartão
+DeliveryCard=Entrega cartÃ£o
 DeliveryOrder=Entrega fim
 DeliveryOrders=Entrega encomendas
 DeliveryDate=Data de entrega
 DeliveryDateShort=Deliv. data
 CreateDeliveryOrder=Gere entrega ordem
 QtyDelivered=Qtd entregues
-SetDeliveryDate=Definir a data marítimo
+SetDeliveryDate=Definir a data marÃ­timo
 ValidateDeliveryReceipt=Validar recibo de entrega
 ValidateDeliveryReceiptConfirm=Tem certeza de que deseja validar esta entrega recibo?
-DeliveryMethod=Método de entrega
-TrackingNumber=Número de rastreamento
+DeliveryMethod=MÃ©todo de entrega
+TrackingNumber=NÃºmero de rastreamento
 NameAndSignature=Nome e Assinatura:
 ToAndDate=To___________________________________ em ____ / _____ / __________
 GoodStatusDeclaration=Ter recebido as mercadorias acima em bom estado,

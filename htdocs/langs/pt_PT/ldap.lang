@@ -11,30 +11,31 @@
 // Date 2009-01-18 18:56:33
 // START - Lines generated via parser
 // Reference language: en_US
-DomainPassword=Senha para o domínio
-YouMustChangePassNextLogon=Senha para o <b>usuário% s</b> sobre o <b>domínio% s</b> devem ser alteradas.
-UserMustChangePassNextLogon=Usuário deve alterar senha no domínio% s
+CHARSET=UTF-8
+DomainPassword=Senha para o domÃ­nio
+YouMustChangePassNextLogon=Senha para o <b>usuÃ¡rio% s</b> sobre o <b>domÃ­nio% s</b> devem ser alteradas.
+UserMustChangePassNextLogon=UsuÃ¡rio deve alterar senha no domÃ­nio% s
 LdapUacf_NORMAL_ACCOUNT=Conta de utilizador
 LdapUacf_DONT_EXPIRE_PASSWORD=Senha nunca expira
-LdapUacf_ACCOUNTDISABLE=Conta desativada no domínio% s
-LDAPInformationsForThisContact=Informações em LDAP base de dados para este contato
-LDAPInformationsForThisUser=Informações na base de dados para esse usuário LDAP
-LDAPInformationsForThisGroup=Informações em LDAP base de dados para este grupo
-LDAPInformationsForThisMember=Informações em LDAP base de dados para este membro
+LdapUacf_ACCOUNTDISABLE=Conta desativada no domÃ­nio% s
+LDAPInformationsForThisContact=InformaÃ§Ãµes em LDAP base de dados para este contato
+LDAPInformationsForThisUser=InformaÃ§Ãµes na base de dados para esse usuÃ¡rio LDAP
+LDAPInformationsForThisGroup=InformaÃ§Ãµes em LDAP base de dados para este grupo
+LDAPInformationsForThisMember=InformaÃ§Ãµes em LDAP base de dados para este membro
 LDAPAttribute=Atributo LDAP
 LDAPAttributes=LDAP attributes
-LDAPCard=LDAP cartão
-LDAPRecordNotFound=O registo não foi encontrado na base de dados LDAP
-LDAPUsers=Os usuários na base de dados LDAP
+LDAPCard=LDAP cartÃ£o
+LDAPRecordNotFound=O registo nÃ£o foi encontrado na base de dados LDAP
+LDAPUsers=Os usuÃ¡rios na base de dados LDAP
 LDAPGroups=Grupos de LDAP database
 LDAPFieldStatus=Status
 LDAPFieldFirstSubscriptionDate=Primeira assinatura data
-LDAPFieldFirstSubscriptionAmount=Fist subscrição montante
-LDAPFieldLastSubscriptionDate=Última data subscrição
-LDAPFieldLastSubscriptionAmount=Última subscrição montante
-SynchronizeDolibarr2Ldap=Sincronizar usuário (Dolibarr -&gt; LDAP)
-UserSynchronized=Usuário sincronizado
-ForceSynchronize=Força sincronização Dolibarr -&gt; LDAP
-ErrorFailedToReadLDAP=Falha ao ler dados LDAP. Verifique LDAP módulo de dados de configuração e acessibilidade.
+LDAPFieldFirstSubscriptionAmount=Fist subscriÃ§Ã£o montante
+LDAPFieldLastSubscriptionDate=Ãšltima data subscriÃ§Ã£o
+LDAPFieldLastSubscriptionAmount=Ãšltima subscriÃ§Ã£o montante
+SynchronizeDolibarr2Ldap=Sincronizar usuÃ¡rio (Dolibarr -&gt; LDAP)
+UserSynchronized=UsuÃ¡rio sincronizado
+ForceSynchronize=ForÃ§a sincronizaÃ§Ã£o Dolibarr -&gt; LDAP
+ErrorFailedToReadLDAP=Falha ao ler dados LDAP. Verifique LDAP mÃ³dulo de dados de configuraÃ§Ã£o e acessibilidade.
 // Date 2009-01-18 18:56:33
 // STOP - Lines generated via parser
