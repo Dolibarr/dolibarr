@@ -1,4 +1,5 @@
 # Dolibarr language file - nl_BE - products
+CHARSET=UTF-8
 Products=Producten
 Services=Diensten
 Product=Product
@@ -88,7 +89,7 @@ ListOfStockMovements=Lijst van de voorraden
 NoPhotoYet=Geen foto&#39;s beschikbaar
 BuiingPrice=Aankoop prijs
 SupplierCard=Leverancier kaart
-CommercialCard=Commerciële kaart
+CommercialCard=CommerciÃ«le kaart
 AllWays=Pad naar het vinden van uw product in voorraad
 NoCat=Uw product is niet in elke categorie
 PrimaryWay=Primaire weg
@@ -104,7 +105,7 @@ CreateCopy=Maak kopie
 ServiceLimitedDuration=Als product is een dienst met een beperkte duur:
 MultiPricesAbility=Activeer de multi-prijzen
 MultiPricesNumPrices=Aantal prijs
-MultiPriceLevelsName=Prijscategorieën
+MultiPriceLevelsName=PrijscategorieÃ«n
 AssociatedProductsAbility=Activeer de aanverwante producten
 AssociatedProducts=Aanverwante producten
 AssociatedProductsNumber=Aantal aanverwante producten

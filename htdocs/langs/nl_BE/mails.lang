@@ -10,6 +10,7 @@
 // Date 2009-01-18 19:49:33
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 Mailing=E-mailen
 EMailing=E-mailen
 Mailings=EMailings
@@ -23,7 +24,7 @@ MailFrom=Afzender
 MailErrorsTo=Fouten
 MailReply=Antwoord op
 MailTo=Ontvanger (s)
-MailCC=Kopiëren naar
+MailCC=KopiÃ«ren naar
 MailCCC=Cached kopie aan
 MailTopic=EMail onderwerp
 MailText=Bericht

@@ -10,22 +10,23 @@
 // Date 2009-01-18 19:49:33
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 Actions=Acties
 ActionsArea=Acties gebied (Evenementen en taken)
 Agenda=Agenda
 Agendas=Agenda
 Calendar=Kalender
 Calendars=Kalenders
-AffectedTo=Beïnvloed in
+AffectedTo=BeÃ¯nvloed in
 DoneBy=Gedaan door
 Events=Evenementen
 ListOfActions=Lijst met evenementen
 Location=Locatie
 SearchAnAction=Zoek een actie / taak
 MenuToDoActions=Alle uncomplete acties
-MenuDoneActions=Alle beëindigd acties
+MenuDoneActions=Alle beÃ«indigd acties
 MenuToDoMyActions=Mijn onvolledige acties
-MenuDoneMyActions=Mijn beëindigd acties
+MenuDoneMyActions=Mijn beÃ«indigd acties
 ListOfEvents=Lijst van Dolibarr evenementen
 ActionsAskedBy=Acties door
 ActionsToDoBy=Maatregelen getroffen om

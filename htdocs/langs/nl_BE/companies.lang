@@ -1,4 +1,5 @@
 # Dolibarr language file - nl_BE - companies
+CHARSET=UTF-8
 ErrorBadEMail=EMail %s is verkeerd
 ErrorCompanyNameAlreadyExists=Bedrijfsnaam %s bestaat reeds. Kies een andere naam.
 ErrorPrefixAlreadyExists=Prefix %s bestaat reeds. Kies een ander prefix.
@@ -225,7 +226,7 @@ ProfId4Short=Prof id 4
 ProfId1CH=--
 ProfId2CH=--
 ProfId3CH=Prof. id 1 (Federale nummer)
-ProfId4CH=Prof. id 2 (Commerciële Record aantal)
+ProfId4CH=Prof. id 2 (CommerciÃ«le Record aantal)
 ProfId1TN=Prof. id 1 (RC)
 ProfId2TN=Prof. id 2 (Fiscale matricule)
 ProfId3TN=Prof. Id 3 (Douane-code)
@@ -241,7 +242,7 @@ ThisIsModuleRules=Dit is de regels voor deze module
 EditDeliveryAddress=Bewerken afleveradres
 VATIntraManualCheck=You can also check manually from european web site <a href="%s" target=U kunt ook handmatig controleren van de Europese <a href="%s" target="_blank">website% s</a>
 ProspectLevelShort=Potentiel
-ProspectLevel=Prospect potentiële
+ProspectLevel=Prospect potentiÃ«le
 ContactPrivate=Prive
 ContactPublic=Gedeelde
 ContactVisibility=Zichtbaarheid
@@ -255,7 +256,7 @@ PL_HIGH=Hoog
 TE_UNKNOWN=--
 DeleteFile=Verwijderen bestand
 ConfirmDeleteFile=Weet u zeker dat u wilt verwijderen van dit bestand?
-AllocateCommercial=Toewijzing van een commerciële
+AllocateCommercial=Toewijzing van een commerciÃ«le
 SelectCountry=Kies een land
 SelectCompany=Selecteer een derde partij
 Organization=Organisatie

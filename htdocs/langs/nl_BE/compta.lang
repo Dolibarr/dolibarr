@@ -1,10 +1,11 @@
 # Dolibarr language file - nl_BE - compta
 Accountancy=De boekhouding
-Treasury=Trésorerie
+Treasury=TrÃ©sorerie
 
 // Date 2009-01-18 19:49:33
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 AccountancyCard=Accountancy kaart
 MenuFinancial=Financieel
 OptionMode=Optie voor de boekhouding
@@ -36,7 +37,7 @@ VATReceived=BTW ontvangen
 VATToCollect=BTW te verzamelen
 VATSummary=BTW Samenvatting
 VATPayed=BTW betaald
-VATCollected=Geïnde BTW
+VATCollected=GeÃ¯nde BTW
 ToPay=Te betalen
 ToGet=Om terug te
 TaxAndDividendsArea=Belastingen, sociale premies en dividenden gebied
@@ -57,7 +58,7 @@ PaymentSocialContribution=Sociale bijdrage betalen
 PaymentVat=BTW-betaling
 ListPayment=Lijst van de betalingen
 ListOfPayments=Lijst van de betalingen
-ListOfCustomerPayments=Lijst van cliëntenbetalingen
+ListOfCustomerPayments=Lijst van cliÃ«ntenbetalingen
 ListOfSupplierPayments=Lijst van de leverancier betalingen
 DatePayment=Betaalbaarstelling
 NewVATPayment=Nieuwe BTW-betaling
@@ -99,7 +100,7 @@ SeeReportInInputOutputMode=Voir le <b>rapport% sRecettes-Dpenses% s</b> dit <b>c
 SeeReportInDueDebtMode=Voir le <b>rapport% sCrances-dettes% s</b> dit <b>comptabilit d&#39;engagement</b> pour un berekening sur les factures Mises
 RulesResultDue=- Bedragen zijn inclusief alle belastingen <br> - Het omvat openstaande facturen, onkosten en BTW of ze worden betaald of niet. <br> - Het is gebaseerd op de validatie datum van de facturen en BTW en op de vervaldag voor de kosten.
 RulesResultInOut=- Bedragen zijn inclusief alle belastingen <br> - Het omvat de werkelijke betalingen op facturen, onkosten en BTW. <br> - Het is gebaseerd op de data van betaling van de facturen, uitgaven ANF BTW. <br>
-RulesCADue=- Het omvat de cliënten als gevolg van facturen of ze worden betaald of niet. <br> - Het is gebaseerd op de validatie datum van deze facturen. <br>
+RulesCADue=- Het omvat de cliÃ«nten als gevolg van facturen of ze worden betaald of niet. <br> - Het is gebaseerd op de validatie datum van deze facturen. <br>
 RulesCAIn=- Het omvat alle effectieve betalingen van facturen van klanten. <br> - Het is gebaseerd op de betalingsdatum van deze facturen <br>
 VATReportByCustomersInInputOutputMode=Rapport par client des TVA collectes et betaalt (TVA sur encaissement)
 VATReportByCustomersInDueDebtMode=Rapport par client des TVA collectes et betaalt (TVA sur dbit)

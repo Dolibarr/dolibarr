@@ -10,6 +10,7 @@
 // Date 2009-01-18 19:49:33
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
+CHARSET=UTF-8
 WarehouseCard=Warehouse kaart
 Warehouse=Warehouse
 NewWarehouse=Nieuw magazijn / Stock gebied
@@ -52,9 +53,9 @@ QtyDispatched=Hoeveelheid verzonden
 OrderDispatch=Bestel dispatching
 RuleForStockManagementDecrease=Regel voor voorraadbeheer daling
 RuleForStockManagementIncrease=Regel voor voorraadbeheer verhogen
-DeStockOnBill=Daling van de reële voorraad op de facturen / creditnota&#39;s (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
-DeStockOnValidateOrder=Daling van de reële voorraad op bestellingen notities (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
-DeStockOnShipment=Daling van de reële voorraad op overbrenging (aanbevolen)
+DeStockOnBill=Daling van de reÃ«le voorraad op de facturen / creditnota&#39;s (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
+DeStockOnValidateOrder=Daling van de reÃ«le voorraad op bestellingen notities (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
+DeStockOnShipment=Daling van de reÃ«le voorraad op overbrenging (aanbevolen)
 ReStockOnBill=Toename echte voorraden op facturen / creditnota&#39;s (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
 ReStockOnValidateOrder=Toename voorraden echt op bestellingen notities (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
 StockDiffPhysicTeoric=Reden voor het verschil voorraad fysieke en theoretische

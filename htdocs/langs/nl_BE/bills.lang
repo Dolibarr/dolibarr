@@ -1,4 +1,5 @@
 # Dolibarr language file - nl_BE - bills
+CHARSET=UTF-8
 Bill=Factuur
 Bills=Facturen
 BillsCustomers=Klanten facturen
@@ -94,8 +95,8 @@ BillFrom=Van
 BillTo=Factureren aan
 ActionsOnBill=Acties op factuur
 NewBill=Nieuwe factuur
-Prélèvements=Prelevment
-Prélèvements=Prelevments
+PrÃ©lÃ¨vements=Prelevment
+PrÃ©lÃ¨vements=Prelevments
 LastBills=Laatste %s facturen
 LastCustomersBills=Laatste %s klanten facturen
 LastSuppliersBills=Laatste %s leveranciers facturen
@@ -109,13 +110,13 @@ ConfirmClassifyPayedBill=Bent u zeker dat u de status van factuur <b>%s</b> wil 
 ConfirmCancelBill=Bent u zeker dat u factuur <b>%s</b> wil annuleren ?
 ConfirmClassifyPayedPartially=Bent u zeker dat u de status van factuur <b>%s</b> wil wijzigen naar 'Gedeeltelijk Betaald' ?
 ConfirmClassifyPayedPartiallyQuestion=Deze factuur is niet volledig betaald. Wat zijn uw rederen om deze factuur af te sluiten ?
-ConfirmClassifyPayedPartiallyReasonAvoir=Remainder to pay <b>(%s %s)</b> is a discount granted because payment was made before term. Je régularise la TVA par un avoir.
+ConfirmClassifyPayedPartiallyReasonAvoir=Remainder to pay <b>(%s %s)</b> is a discount granted because payment was made before term. Je rÃ©gularise la TVA par un avoir.
 ConfirmClassifyPayedPartiallyReasonDiscountNoVat=Remainder to pay <b>(%s %s)</b> is a discount granted because payment was made before term. J'accepte de perdre la TVA sur cet escompte.
-ConfirmClassifyPayedPartiallyReasonDiscountVat=Remainder to pay <b>(%s %s)</b> is a discount granted because payment was made before term. Je récupère la TVA sur cet escompte sans avoir.
+ConfirmClassifyPayedPartiallyReasonDiscountVat=Remainder to pay <b>(%s %s)</b> is a discount granted because payment was made before term. Je rÃ©cupÃ¨re la TVA sur cet escompte sans avoir.
 ConfirmClassifyPayedPartiallyReasonBadCustomer=Slechte klant
 ConfirmClassifyPayedPartiallyReasonOther=Debit irremediably not recoverable (other reason)
-ConfirmClassifyPayedPartiallyNoVat=Ce choix est possible si votre facture était munie de la mention adéquate. (Exemple: « escompte net de taxe »)
-ConfirmClassifyPayedPartiallyVat=Ce choix est possible si votre facture était munie de la mention adéquate. (Exemple: «seule la taxe correspondant au prix effectivement payé ouvre droit à déduction»)
+ConfirmClassifyPayedPartiallyNoVat=Ce choix est possible si votre facture Ã©tait munie de la mention adÃ©quate. (Exemple: Â« escompte net de taxe Â»)
+ConfirmClassifyPayedPartiallyVat=Ce choix est possible si votre facture Ã©tait munie de la mention adÃ©quate. (Exemple: Â«seule la taxe correspondant au prix effectivement payÃ© ouvre droit Ã  dÃ©ductionÂ»)
 ConfirmClassifyPayedPartiallyAvoir=Use this choice if all other does not suit
 ConfirmClassifyPayedPartiallyBadCustomer=This choice will be use for bad customers with no hope to be paied
 ConfirmClassifyPayedPartiallyOther=Use this choice if all other does not suit
@@ -155,8 +156,8 @@ ClassifyBill=Classifiseer factuur
 NoSupplierBillsUnpayed=Geen onbetaalde leveranciers facturen
 SupplierBillsToPay=Te betalen leveranciers facturen
 CustomerBillsUnpayed=Obetaalde klanten facturen
-DispenseMontantLettres=Les factures rédigées par procédés mécanographiques sont dispensées de l'arrêté en lettres
-NonPercuRecuperable=Non perçue récupérable
+DispenseMontantLettres=Les factures rÃ©digÃ©es par procÃ©dÃ©s mÃ©canographiques sont dispensÃ©es de l'arrÃªtÃ© en lettres
+NonPercuRecuperable=Non perÃ§ue rÃ©cupÃ©rable
 SetConditions=Stel betalingsvoorwaarden in
 SetMode=Stel betalingswijze in
 Billed=Gefactureerd
@@ -227,22 +228,22 @@ BIC=BIC/SWIFT
 BICNumber=BIC/SWIFT nummer
 ExtraInfos=Extra info
 RegulatedOn=Regulariseerd op
-ChequeNumber=Cheque N°
-ChequeOrTransferNumber=Cheque/Transfer N°
+ChequeNumber=Cheque NÂ°
+ChequeOrTransferNumber=Cheque/Transfer NÂ°
 NetToBePaid=Netto te betalen
 PhoneNumber=Tel
 FullPhoneNumber=Telefoonnummer
 TeleFax=Fax
-PrettyLittleSentence=Accepte le réglement des sommes dues par chèques libellés à mon nom en ma qualité de Membre d'une Association de Gestion agréée par l'Administration Fiscale.
+PrettyLittleSentence=Accepte le rÃ©glement des sommes dues par chÃ¨ques libellÃ©s Ã  mon nom en ma qualitÃ© de Membre d'une Association de Gestion agrÃ©Ã©e par l'Administration Fiscale.
 IntracommunityVATNumber=Intracommunity number of VAT
 PaymentByChequeOrderedTo=Cheque payment are payable to %s send to
 PaymentByChequeOrderedToShort=Cheque payment are payable to
-SendTo=envoyé à
+SendTo=envoyÃ© Ã 
 PaymentByTransferOnThisBankAccount=Payment by transfer on the following bank account
 VATIsNotUsedForInvoice=* TVA non applicable art-293B du CGI
 LawApplicationPart1=Par application de la loi 80.335 du 12/05/80
-LawApplicationPart2=les marchandises demeurent la propriété du
-LawApplicationPart3=vendeur jusqu'à complet encaissement de 
+LawApplicationPart2=les marchandises demeurent la propriÃ©tÃ© du
+LawApplicationPart3=vendeur jusqu'Ã  complet encaissement de 
 LawApplicationPart4=leurs prix.
 LimitedLiabilityCompanyCapital=SARL au Capital de
 UseDiscount=Use discount
@@ -277,39 +278,39 @@ PDFTourteauDescription=Factuurmodel Tourteau
 # NumRef Modules
 
 # deneb
-DenebNumRefModelDesc1=Renvoie le numéro de facture sous la forme, PREF-31-12-2004-01, où PREF est le préfixe commercial de la société, et est suivi de la date (ici le 31 décembre 2004) et d'un compteur.
-DenebNumRefModelDesc2=Si la constante FACTURE_DENEB_DELTA est définie, un offset est appliqué sur le compteur
+DenebNumRefModelDesc1=Renvoie le numÃ©ro de facture sous la forme, PREF-31-12-2004-01, oÃ¹ PREF est le prÃ©fixe commercial de la sociÃ©tÃ©, et est suivi de la date (ici le 31 dÃ©cembre 2004) et d'un compteur.
+DenebNumRefModelDesc2=Si la constante FACTURE_DENEB_DELTA est dÃ©finie, un offset est appliquÃ© sur le compteur
 
 # mars
-MarsNumRefModelDesc1=Numéro de facture sous la forme, PREF-10-2004-005, qui correspond à la 5ème facture d'octobre 2004 et où PREF est le préfix de la société.
-MarsNumRefModelDesc2=Le nombre final est formaté sur 3 chiffres ou plus.
-MarsNumRefModelDesc3=Si la constante FACTURE_MARS_DELTA est définie, un offset est appliqué sur le compteur
+MarsNumRefModelDesc1=NumÃ©ro de facture sous la forme, PREF-10-2004-005, qui correspond Ã  la 5Ã¨me facture d'octobre 2004 et oÃ¹ PREF est le prÃ©fix de la sociÃ©tÃ©.
+MarsNumRefModelDesc2=Le nombre final est formatÃ© sur 3 chiffres ou plus.
+MarsNumRefModelDesc3=Si la constante FACTURE_MARS_DELTA est dÃ©finie, un offset est appliquÃ© sur le compteur
 
 # mercure
-MercureNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la quinzième facture ayant le numéro 15, le numéro est préfixé par la lettre F, ce module peut être utilisé avec dans le cas d'une numérotaion double.
+MercureNumRefModelDesc1=Renvoie le numÃ©ro de facture sous une forme numÃ©rique simple, la premiÃ¨re facture porte le numÃ©ro 1, la quinziÃ¨me facture ayant le numÃ©ro 15, le numÃ©ro est prÃ©fixÃ© par la lettre F, ce module peut Ãªtre utilisÃ© avec dans le cas d'une numÃ©rotaion double.
 
 # neptune
-NeptuneNumRefModelDesc1=Renvoie le numéro de facture sous une forme du préfix FA suivi de l'année sur 2 chiffres et d'un compteur simple sur 4 chiffres.
-NeptuneNumRefModelDesc2=Si la constante FACTURE_NEPTUNE_DELTA est définie, un offset est appliqué sur le compteur
+NeptuneNumRefModelDesc1=Renvoie le numÃ©ro de facture sous une forme du prÃ©fix FA suivi de l'annÃ©e sur 2 chiffres et d'un compteur simple sur 4 chiffres.
+NeptuneNumRefModelDesc2=Si la constante FACTURE_NEPTUNE_DELTA est dÃ©finie, un offset est appliquÃ© sur le compteur
 
 # orion
-OrionNumRefModelDesc1=Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.
-OrionNumRefModelDesc2=L'année s'incrémente de 1 SANS remise à zero en début d'année d'exercice.
-OrionNumRefModelDesc3=Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.
-OrionNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2006 une facture nommée FA0700354.
+OrionNumRefModelDesc1=Renvoie le numÃ©ro sous la forme FAYYNNNNN oÃ¹ YY est l'annÃ©e et NNNNN le numÃ©ro d'incrÃ©ment qui commence Ã  1.
+OrionNumRefModelDesc2=L'annÃ©e s'incrÃ©mente de 1 SANS remise Ã  zero en dÃ©but d'annÃ©e d'exercice.
+OrionNumRefModelDesc3=DÃ©finir la variable SOCIETE_FISCAL_MONTH_START avec le mois du dÃ©but d'exercice, ex: 9 pour septembre.
+OrionNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2006 une facture nommÃ©e FA0700354.
 
 # terre
-TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
-TerreNumRefModelError=Une facture commençant par $fayymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.
+TerreNumRefModelDesc1=Renvoie le numÃ©ro sous la forme %syymm-nnnn oÃ¹ yy est l'annÃ©e, mm le mois et nnnn un compteur sÃ©quentiel sans rupture et sans remise Ã  0
+TerreNumRefModelError=Une facture commenÃ§ant par $fayymm existe en base et est incompatible avec cette numÃ©rotation. Supprimer la ou renommer la pour activer ce module.
 
 # titan
-TitanNumRefModelDesc1=Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.
-TitanNumRefModelDesc2=L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.
-TitanNumRefModelDesc3=Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.
-TitanNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2006 une facture nommée FA0700001.
+TitanNumRefModelDesc1=Renvoie le numÃ©ro sous la forme FAYYNNNNN oÃ¹ YY est l'annÃ©e et NNNNN le numÃ©ro d'incrÃ©ment qui commence Ã  1.
+TitanNumRefModelDesc2=L'annÃ©e s'incrÃ©mente de 1 et le numÃ©ro d'incrÃ©ment se remet Ã  zero en dÃ©but d'annÃ©e d'exercice.
+TitanNumRefModelDesc3=DÃ©finir la variable SOCIETE_FISCAL_MONTH_START avec le mois du dÃ©but d'exercice, ex: 9 pour septembre.
+TitanNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2006 une facture nommÃ©e FA0700001.
 
 # uranus
-UranusNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique simple, préfixé par l'année sur un seul chiffre
+UranusNumRefModelDesc1=Renvoie le numÃ©ro de facture sous une forme numÃ©rique simple, prÃ©fixÃ© par l'annÃ©e sur un seul chiffre
 
 # venus
-VenusNumRefModelDesc1=Renvoie le numéro de facture sous la forme, FA-PREF-030202, où PREF est le préfixe commercial de la société, et est suivi de la date sur un format de 6 digits avec Année, Mois et Jour
+VenusNumRefModelDesc1=Renvoie le numÃ©ro de facture sous la forme, FA-PREF-030202, oÃ¹ PREF est le prÃ©fixe commercial de la sociÃ©tÃ©, et est suivi de la date sur un format de 6 digits avec AnnÃ©e, Mois et Jour

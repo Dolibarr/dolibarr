@@ -8,8 +8,9 @@ Prospects=Vooruitzichten
 // Date 2009-01-18 19:49:33
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
-CommercialArea=Commerciële ruimte
-CommercialCard=Commerciële kaart
+CHARSET=UTF-8
+CommercialArea=CommerciÃ«le ruimte
+CommercialCard=CommerciÃ«le kaart
 CustomerArea=Klanten ruimte
 DeleteAction=Verwijder een actie / taak
 NewAction=Nieuwe actie / taak
@@ -30,7 +31,7 @@ SalesRepresentative=Sales Representative
 SalesRepresentatives=Verkoopvertegenwoordigers
 SalesRepresentativeFollowUp=Sales Representative (follow-up)
 SalesRepresentativeSignature=Sales Representative (handtekening)
-CommercialInterlocutor=Commerciële gesprekspartner
+CommercialInterlocutor=CommerciÃ«le gesprekspartner
 ErrorWrongCode=Verkeerde code
 NoSalesRepresentativeAffected=Geen bijzondere verkoopvertegenwoordiger getroffen
 ShowCustomer=Toon klant
@@ -46,7 +47,7 @@ DoneActions=Gedaan acties
 DoneActionsFor=Gedaan acties voor% s
 ToDoActions=Uncomplete acties
 ToDoActionsFor=Uncomplete acties voor% s
-SendPropalRef=Stuur commerciële voorstel% s
+SendPropalRef=Stuur commerciÃ«le voorstel% s
 SendOrderRef=Stuur Om% s
 NoRecordedProspects=Geen uitzicht geregistreerd
 StatusActionToDo=Te doen

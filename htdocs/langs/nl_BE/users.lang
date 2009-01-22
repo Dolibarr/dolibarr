@@ -1,4 +1,5 @@
 # Dolibarr language file - nl_BE - users
+CHARSET=UTF-8
 UserCard=De gebruiker kaart
 ContactCard=De contactkaart
 NoContactCard=Geen contactkaart
@@ -9,12 +10,12 @@ AvailableRights=Verkrijgbare rechten
 OwnedRights=Bezeten rechten
 DisableUser=Maak onbruikbaar gebruiker
 NewUser=De nieuwe gebruiker
-CreateUser=Creëer gebruiker
+CreateUser=CreÃ«er gebruiker
 LoginAlreadyExists=login bestaat reeds
 ListOfUsers=Lijsten van gebruikers
 Administrator=De administrateur
 DefaultRights=standaardtoestemmingen
-DefaultRightsDesc=Definieer hier standaardtoestemmingen die automatisch gegund zijn naar een nieuwe gecreëerde gebruiker.
+DefaultRightsDesc=Definieer hier standaardtoestemmingen die automatisch gegund zijn naar een nieuwe gecreÃ«erde gebruiker.
 
 
 
@@ -62,7 +63,7 @@ PasswordChangedAndSentTo=Wachtwoord veranderd en verstuurd <b>naar% s.</b>
 PasswordChangeRequestSent=Verzoek om wachtwoord wijzigen <b>voor% s naar% s.</b>
 MenuUsersAndGroups=Gebruikers en groepen
 LastGroupsCreated=Last% s gemaakt groepen
-LastUsersCreated=Last% s gebruikers gecreëerde
+LastUsersCreated=Last% s gebruikers gecreÃ«erde
 ShowGroup=Toon groep
 ShowUser=Toon gebruiker
 NonAffectedUsers=Niet betrokken gebruikers
