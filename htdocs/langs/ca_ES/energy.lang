@@ -1,4 +1,5 @@
-# Dolibarr language file - ca_ES - energy
-Energy=Energia
-NewCounter=Nou comptador
-NewGroup=Nou grup
+# Dolibarr language file - ca_ES - energy 
+CHARSET = UTF-8
+Energy = Energia
+NewCounter = Nou comptador
+NewGroup = Nou grup

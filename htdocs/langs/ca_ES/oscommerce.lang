@@ -1,7 +1,8 @@
 # Dolibarr language file - ca_ES - oscommerce
+CHARSET = UTF-8
 OSCommerce=OS Commerce
-OSCommerceSetup=Configuració del mòdul OS Commerce
-OSCommerceSetupSaved=Configuració OS Commerce desada
+OSCommerceSetup=ConfiguraciÃ³ del mÃ²dul OS Commerce
+OSCommerceSetupSaved=ConfiguraciÃ³ OS Commerce desada
 OSCommerceServer=Nom/IP servidor de la base de dades OS commerce
 OSCommerceDatabaseName=Nom de la base de dades OS Commerce
 OSCommercePrefix=Prefix taules OS Commerce

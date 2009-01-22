@@ -1,3 +1,4 @@
-# Dolibarr language file - ca_ES - domains
-DomainNames=Noms de dominis
-NewDomain=Nou domini
+# Dolibarr language file - ca_ES - domains 
+CHARSET = UTF-8
+DomainNames = Noms de dominis
+NewDomain = Nou domini

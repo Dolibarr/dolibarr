@@ -1,47 +1,48 @@
 # Dolibarr language file - ca_ES - agenda
-Actions=Accions
-ActionsArea=Area d'accions (Esdeveniments i tasques)
-Agenda=Agenda
-Agendas=Agendes
-Calendar=Calendari
-Calendars=Calendaris
-AffectedTo=Assignada a
-DoneBy=Realitzat per
-Events=Esdeveniments
-ListOfActions=Llista d'esdeveniments
-Location=LocalitzaciÛ
-SearchAnAction=Cercar una acciÛ/tasca
-MenuToDoActions=Accions incompletes
-MenuDoneActions=Accions acabades
-MenuToDoMyActions=Les meves accions incompletes
-MenuDoneMyActions=Les meves accions acabades
-ListOfEvents=Llistat d'esdeveniments Dolibarr
-ActionsAskedBy=Accions registrades per
-ActionsToDoBy=Accions assignades a
-ActionsDoneBy=Accions realitzades per
-AllMyActions=Totes les meves accions/tasques
-AllActions=Totes les accions/tasques
-ViewList=Veure llista
-ViewCal=Veure calendari
-ViewWithPredefinedFilters=Veure amb els filtres predefinits
-AutoActions=InclusiÛ autom‡tica a l'agenda
-AgendaAutoActionDesc=Definir els esdeveniments aquÌ per quË voleu que Dolibarr creu autom‡ticament una acciÛ en l'ordre del dia. Si no est‡ marcada (per defecte), es podran crear manualment.
-AgendaSetupOtherDesc=Aquesta p‡gina us permet configurar altres par‡metres del mÚdul agenda.
-ActionsEvents=Esdeveniments per a quË Dolibarr crei una acciÛ de forma autom‡tica
-PropalValidatedInDolibarr=Pressupost validat
-InvoiceValidatedInDolibarr=Factura validada
-OrderValidatedInDolibarr=Comanda validada
-NewCompanyToDolibarr=Tercer creat
-DateActionPlannedStart=Data d'inici prevista
-DateActionPlannedEnd=Data fi prevista
-DateActionDoneStart=Data real d'inici
-DateActionDoneEnd=Data real de finalitzaciÛ
-DateActionStart=Data d'inici
-DateActionEnd=Data finalitzaciÛ
-AgendaUrlOptions1=Podeu tambÈ afegir aquests par‡metres al filtre de sortida:
-AgendaUrlOptions2=<b>login =%s</b> per a restringir insercions a accions creades, que afectin o realitzades per l'usuari <b>%s</b>.
-AgendaUrlOptions3=<b>logina =%s</b> per a restringir insercions a accciones creades per l'usuari <b>%s</b>.
-AgendaUrlOptions4=<b>logint =%s</b> per a restringir insercions a accions que afectin a l'usuari <b>%s</b>.
-AgendaUrlOptions5=<b>logind= %s</b> per a restringir insercions a accions realitzades per l'usuari <b>%s</b>.
-AgendaShowBirthdayEvents=Mostra aniversari dels contactes
-AgendaHideBirthdayEvents=Amaga aniversari dels contacte
+CHARSET = UTF-8
+Actions = Accions
+ActionsArea = √Ärea d'accions (Esdeveniments i tasques)
+Agenda = Agenda
+Agendas = Agendes
+Calendar = Calendari
+Calendars = Calendaris
+AffectedTo = Assignada a
+DoneBy = Realitzat per
+Events = Esdeveniments
+ListOfActions = Llista d'esdeveniments
+Location = Localitzaci√≥
+SearchAnAction = Cercar una acci√≥/tasca
+MenuToDoActions = Accions incompletes
+MenuDoneActions = Accions acabades
+MenuToDoMyActions = Les meves accions incompletes
+MenuDoneMyActions = Les meves accions acabades
+ListOfEvents = Llistat d'esdeveniments Dolibarr
+ActionsAskedBy = Accions registrades per
+ActionsToDoBy = Accions assignades a
+ActionsDoneBy = Accions realitzades per
+AllMyActions = Totes les meves accions/tasques
+AllActions = Totes les accions/tasques
+ViewList = Veure llista
+ViewCal = Veure calendari
+ViewWithPredefinedFilters = Veure amb els filtres predefinits
+AutoActions = Inclusi√≥ autom√†tica a l'agenda
+AgendaAutoActionDesc = Definir els esdeveniments aqu√≠ per qu√® voleu que Dolibarr creu autom√†ticament una acci√≥ en l'ordre del dia. Si no est√† marcada (per defecte), es podran crear manualment.
+AgendaSetupOtherDesc = Aquesta p√†gina us permet configurar altres par√†metres del m√≤dul agenda.
+ActionsEvents = Esdeveniments per a qu√® Dolibarr crei una acci√≥ de forma autom√†tica
+PropalValidatedInDolibarr = Pressupost validat
+InvoiceValidatedInDolibarr = Factura validada
+OrderValidatedInDolibarr = Comanda validada
+NewCompanyToDolibarr = Tercer creat
+DateActionPlannedStart = Data d'inici prevista
+DateActionPlannedEnd = Data fi prevista
+DateActionDoneStart = Data real d'inici
+DateActionDoneEnd = Data real de finalitzaci√≥
+DateActionStart = Data d'inici
+DateActionEnd = Data finalitzaci√≥
+AgendaUrlOptions1 = Podeu tamb√© afegir aquests par√†metres al filtre de sortida:
+AgendaUrlOptions2 = <b>login =%s</b> per a restringir insercions a accions creades, que afectin o realitzades per l'usuari <b>%s</b>.
+AgendaUrlOptions3 = <b>logina =%s</b> per a restringir insercions a accciones creades per l'usuari <b>%s</b>.
+AgendaUrlOptions4 = <b>logint =%s</b> per a restringir insercions a accions que afectin a l'usuari <b>%s</b>.
+AgendaUrlOptions5 = <b>logind= %s</b> per a restringir insercions a accions realitzades per l'usuari <b>%s</b>.
+AgendaShowBirthdayEvents = Mostra aniversari dels contactes
+AgendaHideBirthdayEvents = Amaga aniversari dels contacte
