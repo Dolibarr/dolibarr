@@ -1,48 +1,48 @@
 # Dolibarr language file - fr_FR - agenda
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 Actions=Actions
-ActionsArea=Espace actions (évènement et tâches)
+ActionsArea=Espace actions (Ã©vÃ¨nement et tÃ¢ches)
 Agenda=Agenda
 Agendas=Agendas
 Calendar=Calendrier
 Calendars=Calendriers
-AffectedTo=Affecté à
-DoneBy=Réalisé par
-Events=Evênements
-ListOfActions=Liste des évênements
+AffectedTo=AffectÃ© Ã 
+DoneBy=RÃ©alisÃ© par
+Events=EvÃªnements
+ListOfActions=Liste des Ã©vÃªnements
 Location=Lieu
 SearchAnAction=Rechercher une action/tache
-MenuToDoActions=Les actions incomplètes
-MenuDoneActions=Les actions terminées
-MenuToDoMyActions=Mes actions incomplètes
-MenuDoneMyActions=Mes actions terminées
-ListOfEvents=Liste des évènements Dolibarr
-ActionsAskedBy=Actions enregistrées par
-ActionsToDoBy=Actions affectées à
-ActionsDoneBy=Actions réalisées par
+MenuToDoActions=Les actions incomplÃ¨tes
+MenuDoneActions=Les actions terminÃ©es
+MenuToDoMyActions=Mes actions incomplÃ¨tes
+MenuDoneMyActions=Mes actions terminÃ©es
+ListOfEvents=Liste des Ã©vÃ¨nements Dolibarr
+ActionsAskedBy=Actions enregistrÃ©es par
+ActionsToDoBy=Actions affectÃ©es Ã 
+ActionsDoneBy=Actions rÃ©alisÃ©es par
 AllMyActions=Toutes mes actions
 AllActions=Toutes les actions
 ViewList=Voir liste
 ViewCal=Voir calendrier
-ViewWithPredefinedFilters=Vues avec filtres prédéfinis
+ViewWithPredefinedFilters=Vues avec filtres prÃ©dÃ©finis
 AutoActions=Alimentation automatique de l'agenda
-AgendaAutoActionDesc=Définissez dans cet onglet les évènements pour lesquels dolibarr créera automatiquement une action dans l'agenda. Si aucune case n'est cochée (par défaut), seules les actions manuelles seront incluses dans l'agenda.
-AgendaSetupOtherDesc=Cette page permet de configurer les autres paramètres du module agenda.
-ActionsEvents=Evènements pour lesquels Dolibarr doit créer une action dans l'agenda en automatique.
-PropalValidatedInDolibarr=Proposition validée
-InvoiceValidatedInDolibarr=Facture validée
-OrderValidatedInDolibarr=Commande validée
-NewCompanyToDolibarr=Tiers créé
-DateActionPlannedStart=Date début réalisation prévue
-DateActionPlannedEnd=Date fin réalisation prévue
-DateActionDoneStart=Date début réalisation réelle
-DateActionDoneEnd=Date fin réalisation réelle
-DateActionStart=Date début
+AgendaAutoActionDesc=DÃ©finissez dans cet onglet les Ã©vÃ¨nements pour lesquels dolibarr crÃ©era automatiquement une action dans l'agenda. Si aucune case n'est cochÃ©e (par dÃ©faut), seules les actions manuelles seront incluses dans l'agenda.
+AgendaSetupOtherDesc=Cette page permet de configurer les autres paramÃ¨tres du module agenda.
+ActionsEvents=EvÃ¨nements pour lesquels Dolibarr doit crÃ©er une action dans l'agenda en automatique.
+PropalValidatedInDolibarr=Proposition validÃ©e
+InvoiceValidatedInDolibarr=Facture validÃ©e
+OrderValidatedInDolibarr=Commande validÃ©e
+NewCompanyToDolibarr=Tiers crÃ©Ã©
+DateActionPlannedStart=Date dÃ©but rÃ©alisation prÃ©vue
+DateActionPlannedEnd=Date fin rÃ©alisation prÃ©vue
+DateActionDoneStart=Date dÃ©but rÃ©alisation rÃ©elle
+DateActionDoneEnd=Date fin rÃ©alisation rÃ©elle
+DateActionStart=Date dÃ©but
 DateActionEnd=Date fin
-AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivant pour filtrer les réponses:
-AgendaUrlOptions2=<b>login=%s</b> pour limiter l'export aux actions crées, affectées ou réalisées par l'utilisateur <b>%s</b>.
-AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions crées par l'utilisateur <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> pour limiter l'export aux actions affectées à l'utilisateur <b>%s</b>.
-AgendaUrlOptions5=<b>logind=%s</b> pour limiter l'export aux actions réalisées par l'utilisateur <b>%s</b>.
+AgendaUrlOptions1=Vous pouvez aussi ajouter les paramÃ¨tres suivant pour filtrer les rÃ©ponses:
+AgendaUrlOptions2=<b>login=%s</b> pour limiter l'export aux actions crÃ©es, affectÃ©es ou rÃ©alisÃ©es par l'utilisateur <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions crÃ©es par l'utilisateur <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> pour limiter l'export aux actions affectÃ©es Ã  l'utilisateur <b>%s</b>.
+AgendaUrlOptions5=<b>logind=%s</b> pour limiter l'export aux actions rÃ©alisÃ©es par l'utilisateur <b>%s</b>.
 AgendaShowBirthdayEvents=Afficher anniversaires contacts
 AgendaHideBirthdayEvents=Cacher anniversaires contacts

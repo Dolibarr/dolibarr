@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - categories
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 Category=Category
 Categories=Categories
 Rubrique=Category
@@ -18,7 +18,7 @@ ThirdPartyCategoriesArea=Third parties' categories area
 MainCats=Main categories
 SubCats=Subcategories
 CatStatistics=Statistics
-CatList=List of catégories
+CatList=List of categories
 AllCats=All categories
 ViewCat=View category
 NewCat=Add category

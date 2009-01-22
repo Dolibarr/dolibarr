@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - install
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 InstallEasy=We tried to make the Dolibarr setup as easy as possible. Just follow the instructions step by step.
 MiscellanousChecks=Prerequisites check
 DolibarrWelcome=Welcome to Dolibarr

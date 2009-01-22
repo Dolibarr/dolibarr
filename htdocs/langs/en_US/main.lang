@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - main
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 DatabaseConnection=Database connection
 SeparatorDecimal=.
 SeparatorThousand=,
@@ -362,7 +362,7 @@ ReportName=Report name
 ReportPeriod=Report period
 ReportDescription=Description
 Report=Report
-Keyword=Mot clé
+Keyword=Mot clÃ©
 Legend=Legend
 FillTownFromZip=Fill town from zip
 ShowLog=Show log

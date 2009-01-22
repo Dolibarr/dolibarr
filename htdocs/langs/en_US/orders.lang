@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - orders
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 OrdersArea=Customers orders area
 SuppliersOrdersArea=Suppliers orders area
 OrderCard=Order card
@@ -121,4 +121,4 @@ AddDeliveryCostLine=Add a delivery cost line indicating the weight of the order
 PDFEinsteinDescription=A complete order model (logo...)
 
 # NumRef Modules
-MarbreNumRefDesc=Renvoie le numéro sous la forme %syymm-nnnn ou yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise e 0
+MarbreNumRefDesc=Renvoie le numÃ©ro sous la forme %syymm-nnnn ou yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise e 0

@@ -1,5 +1,5 @@
 # Dolibarr language file - fr_FR - energy
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 Energy=Energie
 NewCounter=Nouveau compteur
 NewGroup=Nouveau groupe

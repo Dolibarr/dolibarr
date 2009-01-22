@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - interventions
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 Intervention=Intervention
 Interventions=Interventions
 InterventionCard=Intervention card
@@ -27,7 +27,7 @@ TypeContact_fichinter_internal_INTERREPFOLL=Representative following-up interven
 TypeContact_fichinter_internal_INTERVENING=Intervening
 TypeContact_fichinter_external_BILLING=Billing customer contact
 TypeContact_fichinter_external_CUSTOMER=Following-up customer contact
-# Modele numérotation
+# Modele numÃ©rotation
 ArcticNumRefModelDesc1=Generic number model
 ArcticNumRefModelError=Failed to activate
 PacificNumRefModelDesc1=Return numero with format %syymm-nnnn where yy is year, mm is month and nnnn is a sequence with no break and no return to 0

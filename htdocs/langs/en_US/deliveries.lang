@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - deliveries
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 Delivery=Delivery
 Deliveries=Deliveries
 DeliveryCard=Delivery card

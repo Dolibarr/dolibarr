@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - withdrawals
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 StandingOrdersArea=Standing orders area
 CustomersStandingOrdersArea=Customers standing orders area
 StandingOrders=Standing orders

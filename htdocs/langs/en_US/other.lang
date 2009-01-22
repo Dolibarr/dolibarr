@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - other
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 ErrorPasswordDiffers=Passwords differs, please type them again.
 ErrorForbidden=Access forbidden.<br>You try to access to a page, area or feature without being in an authenticated session or that is not allowed to your user.
 ErrorForbidden2=Permission for this login can be defined by your Dolibarr administrator from menu %s->%s.
@@ -36,7 +36,7 @@ NbOfActiveNotifications=Number of notifications
 WarningInstallDirExists=Warning, install directory (%s) still exists. This is a serious security hole. You should removed it as soon as possible.
 WarningUntilDirRemoved=This warning will remain active as long as this directory is present (Shown only to admin users).
 PredefinedMailContentSendInvoice=Veuillez trouver ci-joint la facture __FACREF__\n\nCordialement\n\n
-PredefinedMailContentSendInvoiceReminder=Nous apportons à votre connaissance que la facture  __FACREF__ ne semble pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n
+PredefinedMailContentSendInvoiceReminder=Nous apportons Ã  votre connaissance que la facture  __FACREF__ ne semble pas avoir Ã©tÃ© rÃ©glÃ©e. La voici donc, pour rappel, en piÃ¨ce jointe.\n\nCordialement\n\n
 PredefinedMailContentSendProposal=Veuillez trouver ci-joint la proposition commerciale __PROPREF__\n\nCordialement\n\n
 PredefinedMailContentSendOrder=Veuillez trouver ci-joint la commande __ORDERREF__\n\nCordialement\n\n
 DemoDesc=Dolibarr is not a compact ERP but is built from several fonctionnal modules. A demo that includes all modules does not mean anything as this never occurs. So, several demo profiles are available.

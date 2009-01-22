@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - products
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 ProductServiceCard=Products/Services card
 Products=Products
 Services=Services

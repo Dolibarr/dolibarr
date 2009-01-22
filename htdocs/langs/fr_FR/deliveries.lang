@@ -1,5 +1,5 @@
 # Dolibarr language file - fr_FR - deliveries
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 Delivery=Livraison
 Deliveries=Livraisons
 DeliveryCard=Fiche livraison
@@ -7,18 +7,18 @@ DeliveryOrder=Bon de livraison
 DeliveryOrders=Bons de livraison
 DeliveryDate=Date de livraison
 DeliveryDateShort=Date livr.
-CreateDeliveryOrder=Générer bon de livraison
-QtyDelivered=Qté livrée 
-SetDeliveryDate=Définir la date de livraison
+CreateDeliveryOrder=GÃ©nÃ©rer bon de livraison
+QtyDelivered=QtÃ© livrÃ©e 
+SetDeliveryDate=DÃ©finir la date de livraison
 ValidateDeliveryReceipt=Valider le bon de livraison
 ValidateDeliveryReceiptConfirm=Etes-vous sur de vouloir valider ce bon de livraison ?
-DeliveryMethod=Méthode de livraison
+DeliveryMethod=MÃ©thode de livraison
 TrackingNumber=Numero de suivi
 
 # merou PDF model						   
 NameAndSignature=Nom et Signature : 
 ToAndDate=A___________________________________ le ____/_____/__________
-GoodStatusDeclaration=Déclare avoir reçu les marchandises ci-dessus en bon état,
+GoodStatusDeclaration=DÃ©clare avoir reÃ§u les marchandises ci-dessus en bon Ã©tat,
 Deliverer=Livreur(s) : 
-Sender=Expéditeur
+Sender=ExpÃ©diteur
 Recipient=Destinataire

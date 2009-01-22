@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - dict
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 CountryFR=France
 CountryBE=Belgium
 CountryIT=Italy
@@ -30,7 +30,7 @@ CountryMC=Monaco
 CountryAU=Australia
 CountrySG=Singapore
 CountryAF=Afghanistan
-CountryAX=Åland Islands
+CountryAX=Ã…land Islands
 CountryAL=Albania
 CountryAS=American Samoa
 CountryAD=Andorra
@@ -110,7 +110,7 @@ CountryGT=Guatemala
 CountryGN=Guinea
 CountryGW=Guinea-Bissau
 CountryGY=Guyana
-CountryHT=Haïti
+CountryHT=HaÃ¯ti
 CountryHM=Heard Island and McDonald
 CountryVA=Holy See (Vatican City State)
 CountryHN=Honduras

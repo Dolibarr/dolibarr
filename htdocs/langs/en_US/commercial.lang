@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - commercial
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 Commercial=Commercial
 CommercialArea=Commercial area
 CommercialCard=Commercial card

@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - companies
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 ErrorBadEMail=EMail %s is wrong
 ErrorCompanyNameAlreadyExists=Company name %s already exists. Choose another one.
 ErrorPrefixAlreadyExists=Prefix %s already exists. Choose another one.

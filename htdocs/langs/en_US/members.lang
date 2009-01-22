@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - members
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 MembersArea=Members area
 PublicMembersArea=Public members area
 MemberCard=Member card

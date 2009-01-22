@@ -1,4 +1,4 @@
 # Dolibarr language file - fr_FR - domains
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 DomainNames=Noms de domaines
 NewDomain=Nouveau domaine

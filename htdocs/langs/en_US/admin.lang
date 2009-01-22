@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - admin
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 Version=Version
 VersionProgram=Version program
 VersionLastInstall=Version initial install
@@ -215,7 +215,7 @@ DoTestSend=Test sending
 DoTestSendHTML=Test sending HTML
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Error, can't user option @ if sequence {yy}{mm} or {yyyy}{mm} is not in mask.
 UMask=UMask parameter for new files on Unix/Linux/BSD file system.
-UMaskExplanation=This parameter allow you to define permissions set by default on files created by Dolibarr on server (during upload for example).<br>It must be the octal value (for example, 0666 means read and write for everyone).<br>Ce paramètre ne sert pas sous un serveur Windows.
+UMaskExplanation=This parameter allow you to define permissions set by default on files created by Dolibarr on server (during upload for example).<br>It must be the octal value (for example, 0666 means read and write for everyone).<br>Ce paramÃ¨tre ne sert pas sous un serveur Windows.
 
 # Modules
 Module0Name=Users & groups
@@ -704,7 +704,7 @@ TemplatePDFInterventions=Intervention card documents models
 WatermarkOnDraftInterventionCards=Watermark on intervention card documents (any if empty)
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup
-ClickToDialUrlDesc=Url called when a click on phone picto is done.  Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacé par le téléphone de l'appelé<br><b>%%2$s</b> qui sera remplacé par le téléphone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplacé par votre login clicktodial (défini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacé par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
+ClickToDialUrlDesc=Url called when a click on phone picto is done.  Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacÃ© par le tÃ©lÃ©phone de l'appelÃ©<br><b>%%2$s</b> qui sera remplacÃ© par le tÃ©lÃ©phone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplacÃ© par votre login clicktodial (dÃ©fini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacÃ© par votre mot de passe clicktodial (dÃ©fini sur votre fiche utilisateur).
 ##### Bookmark4u #####
 Bookmark4uSetup=Bookmark4u module setup
 ##### Interventions #####
@@ -785,8 +785,8 @@ LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s,
 LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=%s)
 LDAPUnbindSuccessfull=Disconnect successfull
 LDAPUnbindFailed=Disconnect failed
-LDAPConnectToDNSuccessfull=Connection au DN (%s) rï¿½ussie
-LDAPConnectToDNFailed=Connection au DN (%s) ï¿½chouï¿½e
+LDAPConnectToDNSuccessfull=Connection au DN (%s) rÃ¯Â¿Â½ussie
+LDAPConnectToDNFailed=Connection au DN (%s) Ã¯Â¿Â½chouÃ¯Â¿Â½e
 LDAPSetupForVersion3=LDAP server configured for version 3
 LDAPSetupForVersion2=LDAP server configured for version 2
 LDAPDolibarrMapping=Dolibarr Mapping
@@ -958,11 +958,11 @@ DeleteLine=Delete line
 ConfirmDeleteLine=Are you sure you want to delete this line ?
 ##### Tax #####
 TaxSetup=Taxes, social contributions and dividends module setup
-OptionVatMode=Option d'exigibilité de TVA
+OptionVatMode=Option d'exigibilitÃ© de TVA
 OptionVATDefault=Standard
 OptionVATDebitOption=Option services sur debit
-OptionVatDefaultDesc=L'exigibilité de la TVA est:<br>- sur livraison pour les biens<br>- sur paiement pour les services
-OptionVatDebitOptionDesc=L'exigibilité de la TVA est:<br>- sur livraison pour les biens<br>- sur facturation (dï¿½bit) pour les services
+OptionVatDefaultDesc=L'exigibilitÃ© de la TVA est:<br>- sur livraison pour les biens<br>- sur paiement pour les services
+OptionVatDebitOptionDesc=L'exigibilitÃ© de la TVA est:<br>- sur livraison pour les biens<br>- sur facturation (dÃ¯Â¿Â½bit) pour les services
 ##### Agenda #####
 AgendaSetup=Actions and agenda module setup
 PasswordTogetVCalExport=Key to authorize export link
