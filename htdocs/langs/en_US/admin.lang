@@ -475,6 +475,7 @@ DictionnaryTypeContact=Contact types
 DictionnaryEcotaxe=Ecotax (WEEE)
 DictionnaryPaperFormat=Paper formats
 DictionnaryFees=Type of fees
+DictionnarySendingMethods=Sendings methods
 SetupSaved=Setup saved
 BackToModuleList=Back to modules list
 BackToDictionnaryList=Back to dictionaries list

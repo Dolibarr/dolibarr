@@ -762,7 +762,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT em.rowid, em.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition_methode as em";
-		$sql.= " WHERE em.statut = 1 ORDER BY em.libelle ASC";
+		$sql.= " WHERE em.active = 1 ORDER BY em.libelle ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql)

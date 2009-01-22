@@ -2384,33 +2384,36 @@ class Form
 			print '<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
 		}
 
-		while (list($key, $value) = each ($array))
+		if (is_array($array))
 		{
-			print '<option value="'.($value_as_key?$value:$key).'"';
-			// Si il faut pré-sélectionner une valeur
-			if ($id != '' && ($id == $key || $id == $value))
+			while (list($key, $value) = each ($array))
 			{
-				print ' selected="true"';
+				print '<option value="'.($value_as_key?$value:$key).'"';
+				// Si il faut pré-sélectionner une valeur
+				if ($id != '' && ($id == $key || $id == $value))
+				{
+					print ' selected="true"';
+				}
+	
+				print '>';
+	
+				if ($key_in_label)
+				{
+					$newval=($translate?$langs->trans($value):$value);
+					$selectOptionValue = $key.' - '.($maxlen?dolibarr_trunc($newval,$maxlen):$newval);
+					print $selectOptionValue;
+				}
+				else
+				{
+					$newval=($translate?$langs->trans($value):$value);
+					$selectOptionValue = ($maxlen?dolibarr_trunc($newval,$maxlen):$newval);
+					if ($value == '' || $value == '-') { $selectOptionValue='&nbsp;'; }
+					print $selectOptionValue;
+				}
+				print "</option>\n";
 			}
-
-			print '>';
-
-			if ($key_in_label)
-			{
-				$newval=($translate?$langs->trans($value):$value);
-				$selectOptionValue = $key.' - '.($maxlen?dolibarr_trunc($newval,$maxlen):$newval);
-				print $selectOptionValue;
-			}
-			else
-			{
-				$newval=($translate?$langs->trans($value):$value);
-				$selectOptionValue = ($maxlen?dolibarr_trunc($newval,$maxlen):$newval);
-				if ($value == '' || $value == '-') { $selectOptionValue='&nbsp;'; }
-				print $selectOptionValue;
-			}
-			print "</option>\n";
 		}
-
+		
 		print "</select>";
 	}
 

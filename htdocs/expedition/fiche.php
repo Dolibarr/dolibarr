@@ -370,6 +370,8 @@ if ($_GET["action"] == 'create')
 				$ligne = $object->lignes[$indiceAsked];
 				$var=!$var;
 				print "<tr ".$bc[$var].">\n";
+				
+				// Desc
 				if ($ligne->fk_product > 0)
 				{
 					$product->fetch($ligne->fk_product);
@@ -384,9 +386,11 @@ if ($_GET["action"] == 'create')
 					print "<td>".nl2br($ligne->desc)."</td>\n";
 				}
 
+				// Qty
 				print '<td align="center">'.$ligne->qty.'</td>';
 				$qtyProdCom=$ligne->qty;
 
+				// Sendings
 				print '<td align="center">';
 				$quantityDelivered = $object->expeditions[$ligne->id];
 				print $quantityDelivered;
@@ -415,7 +419,8 @@ if ($_GET["action"] == 'create')
 					// Stock
 					if ($_GET["entrepot_id"])
 					{
-						print '<td align="right">'.$stock;
+						print '<td align="right">';
+						print $stock;
 						if ($stock < $quantityToBeDelivered)
 						{
 							print ' '.img_warning($langs->trans("StockTooLow"));
@@ -468,7 +473,7 @@ if ($_GET["action"] == 'create')
 
 				print "</tr>\n";
 
-				// associations sous produits
+				// Show subproducts of product
 				if ($ligne->fk_product > 0)
 				{
 					$product->get_sousproduits_arbo ();
@@ -484,10 +489,6 @@ if ($_GET["action"] == 'create')
 
 				$indiceAsked++;
 			}
-
-			/*
-			 *
-			 */
 
 			print '<tr><td align="center" colspan="5"><br><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
 			print "</table>";

@@ -48,7 +48,7 @@ $active = 1;
 // Mettre ici tous les caract�ristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
-$taborder=array(9,0,4,3,2,0,1,8,16,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,15);
+$taborder=array(9,0,4,3,2,0,1,8,16,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,18,0,15);
 
 // Nom des tables des dictionnaires
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -68,8 +68,9 @@ $tabname[14]= MAIN_DB_PREFIX."c_ecotaxe";
 $tabname[15]= MAIN_DB_PREFIX."c_paper_format";
 $tabname[16]= MAIN_DB_PREFIX."c_prospectlevel";
 $tabname[17]= MAIN_DB_PREFIX."c_type_fees";
+$tabname[18]= MAIN_DB_PREFIX."expedition_methode";
 
-// Libell� des dictionnaires
+// Dictionary labels
 $tablib[1] = $langs->trans("DictionnaryCompanyJuridicalType");
 $tablib[2] = $langs->trans("DictionnaryCanton");
 $tablib[3] = $langs->trans("DictionnaryRegion");
@@ -87,8 +88,9 @@ $tablib[14]= $langs->trans("DictionnaryEcotaxe");
 $tablib[15]= $langs->trans("DictionnaryPaperFormat");
 $tablib[16]= $langs->trans("DictionnaryProspectLevel");
 $tablib[17]= $langs->trans("DictionnaryFees");
+$tablib[18]= $langs->trans("DictionnarySendingMethods");
 
-// Requete pour extraction des donn�es des dictionnaires
+// Requete pour extraction des donnees des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, d.fk_region as region_id, r.nom as region, p.libelle as pays, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
 $tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, r.fk_pays as pays_id, p.libelle as pays, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
@@ -106,6 +108,7 @@ $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.org
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
 $tabsql[16]= "SELECT code, label as libelle, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 $tabsql[17]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_fees";
+$tabsql[18]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."expedition_methode";
 
 // Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays, code ASC";
@@ -125,6 +128,7 @@ $tabsqlsort[14]="pays, e.organization ASC, code ASC";
 $tabsqlsort[15]="rowid ASC";
 $tabsqlsort[16]="sortorder ASC";
 $tabsqlsort[17]="code ASC";
+$tabsqlsort[18]="code ASC, libelle ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -144,6 +148,7 @@ $tabfield[14]= "code,libelle,price,organization,pays_id,pays";
 $tabfield[15]= "code,libelle,width,height,unit";
 $tabfield[16]= "code,libelle";
 $tabfield[17]= "code,libelle";
+$tabfield[18]= "code,libelle";
 
 // Nom des champs d'edition pour modification du dictionnaire
 $tabfieldvalue[1] = "code,libelle,pays";
@@ -163,6 +168,7 @@ $tabfieldvalue[14]= "code,libelle,price,organization,pays";
 $tabfieldvalue[15]= "code,libelle,width,height,unit";
 $tabfieldvalue[16]= "code,libelle";
 $tabfieldvalue[17]= "code,libelle";
+$tabfieldvalue[18]= "code,libelle";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -182,8 +188,9 @@ $tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
 $tabfieldinsert[16]= "code,label";
 $tabfieldinsert[17]= "code,libelle";
+$tabfieldinsert[18]= "code,libelle";
 
-// Nom du rowid si le champ n'est pas de type autoincr�ment
+// Nom du rowid si le champ n'est pas de type autoincrement
 $tabrowid[1] = "";
 $tabrowid[2] = "";
 $tabrowid[3] = "";
@@ -201,6 +208,7 @@ $tabrowid[14]= "";
 $tabrowid[15]= "";
 $tabrowid[16]= "code";
 $tabrowid[17]= "id";
+$tabrowid[18]= "rowid";
 
 // Condition to show dictionnary in setup page
 $tabcond[1] = true;
@@ -220,6 +228,7 @@ $tabcond[14]= $conf->produit->enabled&&$conf->global->PRODUIT_USE_ECOTAXE;
 $tabcond[15]= true;
 $tabcond[16]= $conf->societe->enabled;
 $tabcond[17]= $conf->deplacement->enabled;
+$tabcond[18]= $conf->expedition->enabled;
 
 $msg='';
 
@@ -542,6 +551,7 @@ if ($_GET["id"])
     }
 
     // Affiche table des valeurs
+	dolibarr_syslog("htdocs/admin/dict sql=".$sql, LOG_DEBUG);
     $resql=$db->query($sql);
 	if ($resql)
     {

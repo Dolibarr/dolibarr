@@ -104,4 +104,9 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 
 alter table llx_product_stock add column   pmp             double(24,8) default 0 NOT NULL;
 
+alter table llx_expedition_methode change statut active tinyint DEFAULT 1;
+
+INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUES (1,'CATCH','Catch','Catch by client',1);
+INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUES (2,'TRANS','Transporter','Generic transporter',1);
+INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUES (3,'COLSUI','Colissimo Suivi','Colissimo Suivi',0);
 

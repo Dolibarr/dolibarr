@@ -1392,3 +1392,7 @@ INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTION
 INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_ORDER_SUPPLIER_VALIDATE','1','chaine',0,'');
 INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_SUPPLIER_VALIDATE','1','chaine',0,'');
 
+
+INSERT INTO llx_expedition_methode (rowid,code,libelle,description,statut) VALUES (1,'CATCH','Catch','Catch by client',1);
+INSERT INTO llx_expedition_methode (rowid,code,libelle,description,statut) VALUES (2,'TRANS','Transporter','Generic transporter',1);
+INSERT INTO llx_expedition_methode (rowid,code,libelle,description,statut) VALUES (3,'COLSUI','Colissimo Suivi','Colissimo Suivi',0);
