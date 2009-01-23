@@ -911,7 +911,7 @@ function img_object($alt, $object)
 }
 
 /**
- *	\brief      Affiche picto (fonction generique)
+ *	\brief      Show picto (generic function)
  *	\param      alt         		Texte sur le alt de l'image
  *	\param      picto       		Nom de l'image a afficher (Si pas d'extension, on met '.png')
  *	\param		options				Attribut supplementaire a la balise img
@@ -927,12 +927,12 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 }
 
 /**
- \brief      Affiche picto (fonction g�n�rique)
- \param      alt         		Texte sur le alt de l'image
- \param      picto       		Nom de l'image a afficher (Si pas d'extension, on met '.png')
- \param		options				Attribut supplementaire a la balise img
- \param		pictoisfullpath		If 1, image path is a full path
- \return     string      		Retourne tag img
+ *	\brief      Show picto (generic function)
+ *	\param      alt         		Texte sur le alt de l'image
+ *	\param      picto       		Nom de l'image a afficher (Si pas d'extension, on met '.png')
+ *	\param		options				Attribut supplementaire a la balise img
+ *	\param		pictoisfullpath		If 1, image path is a full path
+ *	\return     string      		Retourne tag img
  */
 function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 {

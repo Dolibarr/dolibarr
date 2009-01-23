@@ -43,12 +43,9 @@ function printBookmarksList ($aDb, $aLangs)
 	$ret.= '<div class="menu_titre">';
 	$ret.= '<table class="nobordernopadding" width="100%"><tr class="no"><td>';
 	$ret.= '<a class="vmenu" href="'.DOL_URL_ROOT.'/bookmarks/liste.php">'.$langs->trans('Bookm').'</a>';
-//	$ret.='</div>';
-	// Menu New bookmark
-//	$ret.= '<div class="menu_contenu">';
 	$ret.= '</td><td align="right">';
 	$ret.= '<a class="vsmenu" href="'.DOL_URL_ROOT.'/bookmarks/fiche.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url).'">';
-//	$ret.= $langs->trans('NewBookmark');
+	//$ret.=img_picto($langs->trans('AddThisPageToBookmarks'),'edit_add').' ';
 	$ret.=img_object($langs->trans('AddThisPageToBookmarks'),'bookmark');
 	$ret.= '</a>';
 	$ret.= '</td></tr></table>';
@@ -57,15 +54,19 @@ function printBookmarksList ($aDb, $aLangs)
 	if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
 	{
 		$sql = "SELECT rowid, title, url FROM ".MAIN_DB_PREFIX."bookmark";
-		if ( $resql = $db->query($sql) ) {
-			while ( $obj = $db->fetch_object($resql) ) {
+		if ($resql = $db->query($sql) )
+		{
+			$i=0;
+			while ($i < $conf->global->BOOKMARKS_SHOW_IN_MENU && $obj = $db->fetch_object($resql))
+			{
 				$ret.='<div class="menu_contenu"><a class="vsmenu" title="'.$obj->title.'" href="'.$obj->url.'">';
 				$ret.=' '.img_object($langs->trans("BookmarkThisPage"),'bookmark').' ';
-				$ret.= dolibarr_trunc($obj->title, 30).'</a><br></div>';
+				$ret.= dolibarr_trunc($obj->title, 20).'</a><br></div>';
+				$i++;
 			}
-
-		} else {
-
+		}
+		else
+		{
 			dolibarr_print_error($db);
 		}
 	}

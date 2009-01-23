@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur       <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
  *       \file       htdocs/bookmarks/liste.php
  *       \brief      Page affichage des bookmarks
@@ -43,7 +43,7 @@ $pagenext = $page + 1;
 /*
  * Actions
  */
- 
+
 if ($_GET["action"] == 'delete')
 {
     $bookmark=new Bookmark($db);
@@ -67,7 +67,7 @@ if ($_GET["action"] == 'delete')
 llxHeader();
 
 print_fiche_titre($langs->trans("Bookmarks"));
- 
+
 if ($mesg) print $mesg;
 
 $sql = "SELECT b.fk_soc as rowid, ".$db->pdate("b.dateb")." as dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon,";
@@ -134,20 +134,20 @@ if ($resql)
         print $title;
         if ($lieninterne) print "</a>";
         print "</td>\n";
-        
+
         // Url
         print "<td>";
         if (! $lieninterne) print '<a href="'.$obj->url.'"'.($obj->target?' target="newlink"':'').'>';
         print $lien;
         if (! $lieninterne) print '</a>';
         print "</td>\n";
-        
+
         // Target
         print '<td align="center">';
         if ($obj->target == 0) print $langs->trans("BookmarkTargetReplaceWindowShort");
         if ($obj->target == 1) print $langs->trans("BookmarkTargetNewWindowShort");
         print "</td>\n";
-        
+
         // Author
         print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login."</a></td>\n";
 
@@ -163,7 +163,7 @@ if ($resql)
         else
         {
             print "&nbsp;";
-        }        
+        }
         print "</td>";
         print "</tr>\n";
         $i++;
