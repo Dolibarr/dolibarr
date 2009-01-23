@@ -29,7 +29,8 @@
  * @param unknown_type $aDb
  * @param unknown_type $aLangs
  * @return unknown
- */function printBookmarksList ($aDb, $aLangs)
+ */
+function printBookmarksList ($aDb, $aLangs)
 {
 	global $conf, $user;
 
@@ -37,6 +38,7 @@
 	$langs = $aLangs;
 
 	require_once(DOL_DOCUMENT_ROOT."/bookmarks/bookmark.class.php");
+	if (! isset($conf->global->BOOKMARKS_SHOW_IN_MENU)) $conf->global->BOOKMARKS_SHOW_IN_MENU=5;
 
 	$bookm = new Bookmark($db);
 

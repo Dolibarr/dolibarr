@@ -64,12 +64,12 @@ class modBookmark extends DolibarrModules
 		// Dir
 		$this->dirs = array();
 
-		// D�pendances
+		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
 
 		// Config pages
-		//$this->config_page_url = array();
+		$this->config_page_url = array('bookmark.php');
 
 		// Constantes
 		$this->const = array();

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 
 if (!$user->rights->societe->lire)
 accessforbidden();
- 
+
 $langs->load("commercial");
 $langs->load("orders");
 
@@ -342,7 +342,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // \todo A REF
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastContracts",5).'</td></tr>';
 	  $i = 0;
-	   
+
 	  $staticcontrat=new Contrat($db);
 
 	  $var=false;
@@ -400,13 +400,15 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				$obj = $db->fetch_object($result);
 				$var=!$var;
 				print "<tr $bc[$var]>";
+
+				// Ref
 				print '<td nowrap="nowrap" width="140">';
 
 				$propalstatic->id=$obj->propalid;
 				$propalstatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
+				print '<td class="nobordernopadding" nowrap="nowrap">';
 				print $propalstatic->getNomUrl(1);
 				print '</td>';
 				print '<td width="18" class="nobordernopadding" nowrap="nowrap">';
@@ -420,6 +422,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				print '</td></tr></table>';
 
 				print "</td>";
+
 				print "<td align=\"left\"><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,44)."</a></td>\n";
 				print "<td align=\"right\">";
 				print dolibarr_print_date($obj->dp,'day')."</td>\n";
@@ -442,8 +445,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 }
 
 /*
- * Derni�res propales ferm�es
- *
+ * Last closed proposals
  */
 
 if ($conf->propal->enabled && $user->rights->propale->lire)
@@ -466,7 +468,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	if ( $db->query($sql) )
 	{
 		$num = $db->num_rows();
-		 
+
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("LastClosedProposals",$NBMAX).'</td></tr>';
@@ -475,13 +477,15 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 		{
 			$objp = $db->fetch_object();
 			print "<tr $bc[$var]>";
+
+			// Ref
 			print '<td nowrap="nowrap" width="140">';
 
 			$propalstatic->id=$objp->propalid;
 			$propalstatic->ref=$objp->ref;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
+			print '<td class="nobordernopadding" nowrap="nowrap">';
 			print $propalstatic->getNomUrl(1);
 			print '</td>';
 			print '<td width="18" class="nobordernopadding" nowrap="nowrap">';
@@ -506,7 +510,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 			$var=!$var;
 
 		}
-	  
+
 		print "</table>";
 		$db->free();
 	}
