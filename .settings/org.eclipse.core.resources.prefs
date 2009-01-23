@@ -1,4 +1,4 @@
-#Thu Jan 22 02:05:11 CET 2009
+#Fri Jan 23 00:49:24 CET 2009
 eclipse.preferences.version=1
 encoding//dev/initdemo/initdemo.sql=UTF-8
 encoding//dev/skeletons/modMyModule.class.php=ISO-8859-1
@@ -176,6 +176,7 @@ encoding//htdocs/langs/en_US/admin.lang=UTF-8
 encoding//htdocs/langs/en_US/agenda.lang=UTF-8
 encoding//htdocs/langs/en_US/banks.lang=UTF-8
 encoding//htdocs/langs/en_US/bills.lang=UTF-8
+encoding//htdocs/langs/en_US/bookmarks.lang=UTF-8
 encoding//htdocs/langs/en_US/boxes.lang=UTF-8
 encoding//htdocs/langs/en_US/categories.lang=UTF-8
 encoding//htdocs/langs/en_US/commercial.lang=UTF-8
@@ -284,6 +285,7 @@ encoding//htdocs/langs/fr_FR/admin.lang=UTF-8
 encoding//htdocs/langs/fr_FR/agenda.lang=UTF-8
 encoding//htdocs/langs/fr_FR/banks.lang=UTF-8
 encoding//htdocs/langs/fr_FR/bills.lang=UTF-8
+encoding//htdocs/langs/fr_FR/bookmarks.lang=UTF-8
 encoding//htdocs/langs/fr_FR/boxes.lang=UTF-8
 encoding//htdocs/langs/fr_FR/categories.lang=UTF-8
 encoding//htdocs/langs/fr_FR/commercial.lang=UTF-8

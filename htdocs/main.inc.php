@@ -901,6 +901,21 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 	{
 		print $form_search;
 	}
+	
+	// Zone d'affichage permanente des marque pages
+	if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
+	{
+		include_once (DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php');
+		$langs->load("bookmarks");
+		
+		$ret=printBookmarksList($db, $langs);
+		print "\n";
+		print "<!-- Begin Bookmarks -->\n";
+		print '<div class="blockvmenupair">'."\n";
+		print $ret;
+		print '</div>'."\n";
+		print "<!-- End Bookmarks -->\n";
+	}
 
 	// Lien vers l'aide en ligne (uniquement si langue fr_FR)
 	if ($helppagename)

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  *       \version    $Id$
  */
 
- 
+
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/bookmarks/bookmark.class.php");
 
@@ -87,7 +87,7 @@ if ($action == 'add' || $action == 'addproduct')
         $res=$bookmark->create();
         if ($res > 0)
         {
-            $urlsource=isset($_GET["urlsource"])?$_GET["urlsource"]:DOL_URL_ROOT.'/bookmarks/liste.php';
+			$urlsource=isset($_GET["urlsource"])?$_GET["urlsource"]:DOL_URL_ROOT.'/bookmarks/liste.php';
             header("Location: ".$urlsource);
             exit;
         }

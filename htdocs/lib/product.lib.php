@@ -143,14 +143,6 @@ function product_prepare_head($product, $user)
 		}
 	}
 
-	if ($conf->bookmark->enabled && $user->rights->bookmark->creer)
-	{
-		$head[$h][0] = DOL_URL_ROOT."/bookmarks/fiche.php?action=addproduct&amp;id=".$product->id."&amp;urlsource=".$_SERVER["PHP_SELF"]."?id=".$product->id;
-		$head[$h][1] = img_object($langs->trans("BookmarkThisPage"),'bookmark');
-		$head[$h][2] = 'image';
-		$h++;
-	}
-
 	return $head;
 }
 

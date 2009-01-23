@@ -231,8 +231,7 @@ class MenuTop {
         }
 
         // Tools
-        if ($conf->mailing->enabled || $conf->export->enabled || $conf->bookmark->enabled
-				|| $conf->global->MAIN_MODULE_IMPORT || $conf->global->MAIN_MODULE_DOMAIN)
+        if ($conf->mailing->enabled || $conf->export->enabled || $conf->global->MAIN_MODULE_IMPORT || $conf->global->MAIN_MODULE_DOMAIN)
         {
             $langs->load("other");
 

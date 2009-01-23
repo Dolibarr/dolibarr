@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2003      ï¿½ric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
@@ -142,7 +142,7 @@ function llxHeader($head = "")
 
 	if (! empty($conf->telephonie->enabled))
 	{
-		$menu->add(DOL_URL_ROOT."/telephonie/index.php", "Téléphonie");
+		$menu->add(DOL_URL_ROOT."/telephonie/index.php", "Tï¿½lï¿½phonie");
 	}
 
 	if (! empty($conf->don->enabled))
@@ -171,11 +171,6 @@ function llxHeader($head = "")
 	if (! empty($conf->postnuke->enabled))
 	{
 		$menu->add(DOL_URL_ROOT."/postnuke/articles/index.php", "Editorial");
-	}
-
-	if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
-	{
-		$menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
 	}
 
 	if (! empty($conf->export->enabled))
