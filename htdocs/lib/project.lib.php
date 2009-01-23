@@ -95,7 +95,7 @@ function select_projects($socid, $selected='', $htmlname='projectid')
 	global $db;
 
 	// On recherche les projets
-	$sql = 'SELECT p.rowid, p.title FROM ';
+	$sql = 'SELECT p.rowid, p.ref, p.title FROM ';
 	$sql.= MAIN_DB_PREFIX .'projet as p';
 	$sql.= " WHERE (fk_soc='".$socid."' or fk_soc IS NULL)";
 	$sql.= " ORDER BY p.title ASC";
@@ -115,11 +115,11 @@ function select_projects($socid, $selected='', $htmlname='projectid')
 				$obj = $db->fetch_object($resql);
 				if (!empty($selected) && $selected == $obj->rowid)
 				{
-					print '<option value="'.$obj->rowid.'" selected="true">'.$obj->title.'</option>';
+					print '<option value="'.$obj->rowid.'" selected="true">'.dolibarr_trunc($obj->ref,12).' - '.dolibarr_trunc($obj->title,12).'</option>';
 				}
 				else
 				{
-					print '<option value="'.$obj->rowid.'">'.$obj->title.'</option>';
+					print '<option value="'.$obj->rowid.'">'.dolibarr_trunc($obj->ref,12).' - '.dolibarr_trunc($obj->title,12).'</option>';
 				}
 				$i++;
 			}

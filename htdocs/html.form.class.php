@@ -1613,7 +1613,8 @@ class Form
 			if ($selected) {
 				$projet = new Project($this->db);
 				$projet->fetch($selected);
-				print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$selected.'">'.$projet->title.'</a>';
+				//print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$selected.'">'.$projet->title.'</a>';
+				print $projet->getNomUrl(1);
 			} else {
 				print "&nbsp;";
 			}
@@ -2394,9 +2395,9 @@ class Form
 				{
 					print ' selected="true"';
 				}
-	
+
 				print '>';
-	
+
 				if ($key_in_label)
 				{
 					$newval=($translate?$langs->trans($value):$value);
@@ -2413,7 +2414,7 @@ class Form
 				print "</option>\n";
 			}
 		}
-		
+
 		print "</select>";
 	}
 
