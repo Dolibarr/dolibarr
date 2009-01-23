@@ -614,6 +614,10 @@ ParameterActiveForNextInputOnly=Parametre effectif pour les prochaines saisies u
 NoEventOrNoAuditSetup=Aucun évenement d'audit de sécurité n'a été enregistré. Ceci peut etre normal si l'audit n'a pas été activé dans la configuration - sécurité - audit.
 NoEventFoundWithCriteria=Aucun évenement d'audit de sécurité trouvé avec ces critères.
 SeeLocalSendMailSetup=Voir votre config local de sendmail
+BackupDesc=Pour réaliser une sauvegarde complète de Dolibarr, vous devez:
+BackupDesc2=* Sauvegarder le contenu du répertoire <b>%s</b> (à zipper par exemple) qui contient tous les fichiers uploadés ou générés.
+BackupDesc3=* Sauvegarder le contenu de votre base de données par un dump. Pour cela vous pouvez utiliser l'assistant ci-dessous.
+BackupDescX=Le fichier fabriqué devra être placé en lieu sur.
 ##### Module password generation
 PasswordGenerationStandard=Renvoie un mot de passe généré selon algorithme interne Dolibarr: 8 caractères, chiffres et caractères en minuscules mélangés.
 PasswordGenerationNone=Ne propose pas de mots de passe générés. Le mot de passe est à saisir manuellement.

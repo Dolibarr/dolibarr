@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ $langs->load("admin");
 if (! $user->admin)
   accessforbidden();
 
-  
+
 $html=new Form($db);
 $formfile = new FormFile($db);
 
@@ -46,7 +46,11 @@ llxHeader();
 print_fiche_titre($langs->trans("Backup"),'','setup');
 print '<br>';
 
-print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
+print $langs->trans("BackupDesc",DOL_DOCUMENT_ROOT).'<br><br>';
+print $langs->trans("BackupDesc2",DOL_DOCUMENT_ROOT).'<br>';
+print $langs->trans("BackupDescX").'<br><br>';
+print $langs->trans("BackupDesc3",DOL_DOCUMENT_ROOT).'<br>';
+print $langs->trans("BackupDescX").'<br><br>';
 print '<br>';
 
 if ($_GET["msg"])
@@ -56,8 +60,6 @@ if ($_GET["msg"])
 	print "\n";
 }
 
-
-print_titre($langs->trans("NewBackup")).'<br>';
 
 ?>
 
@@ -96,7 +98,7 @@ function show_checked_option() {
 //    if (document.getElementById('radio_dump_csv')) {
 //        document.getElementById('csv_options').style.display = 'block';
 //    }
-    
+
 }
 
 //]]>
@@ -107,6 +109,11 @@ function show_checked_option() {
 
 <!-- LDR -->
 <table><tr><td valign="top">
+
+<?php
+print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
+print '<br>';
+?>
 
 <div id="div_container_exportoptions">
 <fieldset id="exportoptions">
@@ -123,7 +130,7 @@ function show_checked_option() {
             <label for="radio_dump_mysql">MySQLDump</label>
     </div>
 
-<!--    
+<!--
     <div class="formelementrow">
         <input type="radio" name="what" value="latex" id="radio_dump_latex"
             onclick="
@@ -135,7 +142,7 @@ function show_checked_option() {
         <label for="radio_dump_latex">LaTeX</label>
 
     </div>
-    
+
     <div class="formelementrow">
         <input type="radio" name="what" value="pdf" id="radio_dump_pdf"
             onclick="
@@ -157,7 +164,7 @@ function show_checked_option() {
               />
         <label for="radio_dump_csv">CSV</label>
     </div>
-    
+
     <div class="formelementrow">
         <input type="radio" name="what" value="xml" id="radio_dump_xml"
             onclick="
@@ -526,7 +533,7 @@ foreach($compression as $key => $val)
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled="true">';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 		print ' ('.$langs->trans("NotAvailable").')';
-	}	
+	}
 	print ' &nbsp; &nbsp; ';
 }
 
