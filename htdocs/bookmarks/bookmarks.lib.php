@@ -23,9 +23,15 @@
  *	\version    $Id$
  */
 
-function printBookmarksList ($aDb, $aLangs)
+/**
+ * Add area with bookmarks in menu
+ *
+ * @param unknown_type $aDb
+ * @param unknown_type $aLangs
+ * @return unknown
+ */function printBookmarksList ($aDb, $aLangs)
 {
-	global $conf;
+	global $conf, $user;
 
 	$db = $aDb;
 	$langs = $aLangs;
@@ -54,6 +60,7 @@ function printBookmarksList ($aDb, $aLangs)
 	if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
 	{
 		$sql = "SELECT rowid, title, url FROM ".MAIN_DB_PREFIX."bookmark";
+		if (! $user->admin) $sql.= " WHERE (fk_user = ".$user->id." OR fk_user is NULL)";
 		if ($resql = $db->query($sql) )
 		{
 			$i=0;
