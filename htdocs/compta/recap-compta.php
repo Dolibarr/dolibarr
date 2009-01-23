@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/compta/recap-compta.php
    \ingroup    compta
    \brief      Page de fiche recap compta
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -59,11 +56,11 @@ if ($socid > 0)
      * Affichage onglets
      */
 	$head = societe_prepare_head($societe);
-	
-    dolibarr_fiche_head($head, 'compta', $societe->nom);
+
+    dolibarr_fiche_head($head, 'compta', $langs->trans("ThirdParty"));
 
     print "<table width=\"100%\">\n";
-    print '<tr><td valign="top" width="50%">'; 
+    print '<tr><td valign="top" width="50%">';
 
     print '<table class="border" width="100%">';
 
@@ -74,7 +71,7 @@ if ($socid > 0)
     print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
     print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
     print '</td></tr>';
-    
+
     print "</table>";
 
     print "</td></tr></table>\n";
@@ -86,9 +83,9 @@ if ($socid > 0)
     {
         // Factures
         print_fiche_titre($langs->trans("AccountancyPreview"));
-    
+
         print '<table class="noborder" width="100%">';
-    
+
         $sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df,";
         $sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
         $sql.= " u.login, u.rowid as userid";
@@ -96,7 +93,7 @@ if ($socid > 0)
         $sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
         $sql.= " AND f.fk_user_valid = u.rowid";
         $sql.= " ORDER BY f.datef DESC";
-    
+
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -117,41 +114,41 @@ if ($socid > 0)
             {
                 print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
             }
-            
+
             $solde = 0;
-    
+
             // Boucle sur chaque facture
             for ($i = 0 ; $i < $num ; $i++)
 	      {
 		$objf = $db->fetch_object($resql);
-		
+
 		$fac = new Facture($db);
 		$ret=$fac->fetch($objf->facid);
-                if ($ret < 0) 
+                if ($ret < 0)
 		  {
 		    print $fac->error."<br>";
 		    continue;
 		  }
 		$totalpaye = $fac->getSommePaiement();
-		
+
                 $var=!$var;
                 print "<tr $bc[$var]>";
-    
+
                 print "<td align=\"center\">".dolibarr_print_date($fac->date)."</td>\n";
                 print "<td><a href=\"../compta/facture.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
-    
+
     			print '<td aling="left">'.$fac->getLibStatut(2,$totalpaye).'</td>';
                 print '<td align="right">'.price($fac->total_ttc)."</td>\n";
                 $solde = $solde + $fac->total_ttc;
-    
+
                 print '<td align="right">&nbsp;</td>';
                 print '<td align="right">'.price($solde)."</td>\n";
 
 		// Auteur
                 print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objf->login.'</a></td>';
-		
+
                 print "</tr>\n";
-		
+
                 // Paiements
                 $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, pf.amount, p.statut,";
 		$sql.= " p.fk_user_creat, u.login, u.rowid as userid";
@@ -160,13 +157,13 @@ if ($socid > 0)
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_creat = u.rowid";
                 $sql.= " WHERE pf.fk_paiement = p.rowid";
                 $sql.= " AND pf.fk_facture = ".$fac->id;
-    
+
                 $resqlp = $db->query($sql);
                 if ($resqlp)
                 {
                     $nump = $db->num_rows($resqlp);
                     $j = 0;
-    
+
                     while ($j < $nump)
                     {
                         $objp = $db->fetch_object($resqlp);
@@ -186,7 +183,7 @@ if ($socid > 0)
 		                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
 
                         print '</tr>';
-    
+
                         $j++;
                     }
 
@@ -204,7 +201,7 @@ if ($socid > 0)
         }
         print "</table>";
         print "<br>";
-    }      
+    }
 }
 else
 {

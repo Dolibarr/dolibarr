@@ -404,6 +404,7 @@ AccountancyPreview=Accountancy preview
 ShowCustomerPreview=Show customer preview
 ShowSupplierPreview=Show supplier preview
 ShowAccountancyPreview=Show accountancy preview
+ShowProspectPreview=Show prospect preview
 RefCustomer=Ref. customer
 Currency=Currency
 InfoAdmin=Information for administrators

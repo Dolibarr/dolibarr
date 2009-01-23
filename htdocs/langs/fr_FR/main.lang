@@ -404,6 +404,7 @@ SupplierPreview=Aperçu fournisseur
 AccountancyPreview=Aperçu compta
 ShowCustomerPreview=Afficher aperçu client
 ShowSupplierPreview=Afficher aperçu fournisseur
+ShowProspectPreview=Afficher aperçu prospect
 ShowAccountancyPreview=Afficher aperçu compta
 RefCustomer=Réf. client
 Currency=Devise

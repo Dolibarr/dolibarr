@@ -45,7 +45,7 @@ class Societe extends CommonObject
 
 	var $id;
 	var $nom;
-	var $nom_particulier; 
+	var $nom_particulier;
 	var $prenom;
 	var $particulier;
 	var $adresse;
@@ -137,7 +137,7 @@ class Societe extends CommonObject
 	function create($user='')
 	{
 		global $langs,$conf;
-		
+
 		// clean parameters
 		$this->nom=trim($this->nom);
 
@@ -344,7 +344,7 @@ class Societe extends CommonObject
 
 		$this->effectif_id=trim($this->effectif_id);
 		$this->forme_juridique_code=trim($this->forme_juridique_code);
-		
+
 		//Gencod
         $this->gencod=trim($this->gencod);
 
@@ -385,7 +385,7 @@ class Societe extends CommonObject
 			$sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
 
 			$sql .= ",capital = '" .   addslashes($this->capital) ."'";
-			 
+
 			$sql .= ",prefix_comm = ".($this->prefix_comm?"'".addslashes($this->prefix_comm)."'":"null");
 
 			$sql .= ",fk_effectif = ".($this->effectif_id?"'".$this->effectif_id."'":"null");
@@ -397,7 +397,7 @@ class Societe extends CommonObject
 			$sql .= ",client = " . $this->client;
 			$sql .= ",fournisseur = " . $this->fournisseur;
             $sql .= ",gencod = ".($this->gencod?"'".$this->gencod."'":"null");
-			
+
 
 			if ($allowmodcodeclient)
 			{
@@ -427,7 +427,7 @@ class Societe extends CommonObject
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? "'".$user->id."'":"null");
 			$sql .= " WHERE rowid = '" . $id ."'";
 
-			 
+
 			dolibarr_syslog("Societe::update sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -694,9 +694,27 @@ class Societe extends CommonObject
 		dolibarr_syslog("Societe::Delete");
 		$sqr = 0;
 
-		// \Todo
 		// Check if third party can be deleted
-
+		$nbpropal=0;
+		$sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX."propal";
+		$sql.= " WHERE fk_soc = " . $id;
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj=$this->db->fetch_object($resql);
+			$nbpropal=$obj->nb;
+			if ($nbpropal > 0)
+			{
+				$this->error="ErrorRecordHasChildren";
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error .= $this->db->lasterror();
+			dolibarr_syslog("Societe::Delete erreur -1 ".$this->error);
+			return -1;
+		}
 
 
 
@@ -705,20 +723,20 @@ class Societe extends CommonObject
 			// Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-third-party-deleting.html)
 			// Removing every "categorie" link with this company
 			require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
-			
+
 			$static_cat = new Categorie($this->db);
 			$toute_categs = array();
-			
+
 			// Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
 			if ($this->client || $this->prospect)
 			{
 				$toute_categs ['societe'] = $static_cat->containing($this->id,'societe',2);
 			}
 			if ($this->fournisseur)
-			{				
+			{
 				$toute_categs ['fournisseur'] = $static_cat->containing($this->id,'fournisseur',1);
 			}
-			
+
 			// Remove each "Categorie"
 			foreach ($toute_categs as $type => $categs_type)
 			{
@@ -727,7 +745,7 @@ class Societe extends CommonObject
 					$cat->del_type($this, $type);
 				}
 			}
-			
+
 			// Remove contacts
 			$sql = "DELETE from ".MAIN_DB_PREFIX."socpeople";
 			$sql.= " WHERE fk_soc = " . $id;
@@ -956,7 +974,7 @@ class Societe extends CommonObject
 		if ($this->id)
 		{
 			$this->db->begin();
-				
+
 			// Positionne remise courante
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
 			$sql.= " SET remise_client = '".$remise."'";
@@ -1052,7 +1070,7 @@ class Societe extends CommonObject
 		if ($this->id)
 		{
 			require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
-				
+
 			$discount = new DiscountAbsolute($this->db);
 			$result=$discount->fetch($id);
 			$result=$discount->delete();
@@ -1086,7 +1104,7 @@ class Societe extends CommonObject
 		}
 	}
 
-	
+
 	/**
 	 * Enter description here...
 	 *
@@ -1198,7 +1216,7 @@ class Societe extends CommonObject
 			$lien = '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$this->id.'">';
 			$lienfin='</a>';
 		}
-		
+
 		if (empty($lien))
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">';
@@ -1411,7 +1429,7 @@ class Societe extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
 			$var = $conf->global->SOCIETE_CODECLIENT_ADDON;
 			$mod = new $var;
-				
+
 			$this->code_client = $mod->getNextValue($objsoc,$type);
 			$this->prefixCustomerIsRequired = $mod->prefixIsRequired;
 
@@ -1431,10 +1449,10 @@ class Societe extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
 			$var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
 			$mod = new $var;
-				
+
 			$this->code_fournisseur = $mod->getNextValue($objsoc,$type);
 			$this->prefixSupplierIsRequired = $mod->prefixIsRequired;
-				
+
 			dolibarr_syslog("Societe::get_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
 		}
 	}
@@ -1567,7 +1585,7 @@ class Societe extends CommonObject
 
 			// Defini code compta dans $mod->code
 			$result = $mod->get_code($this->db, $this, $type);
-				
+
 			if ($type == 'customer') $this->code_compta = $mod->code;
 			if ($type == 'supplier') $this->code_compta_fournisseur = $mod->code;
 
@@ -1819,7 +1837,7 @@ class Societe extends CommonObject
 			'SI',	// Slovenia
 			'ES',	// Spain
 			'SE',	// Sweden
-			'CH',	// Switzerland 		
+			'CH',	// Switzerland
 		);
 		//print "dd".$this->pays_code;
 		return in_array($this->pays_code,$country_code_in_EEC);
