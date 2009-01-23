@@ -23,10 +23,10 @@
  *	\version    $Id$
  */
 
-function printBookmarksList ($aDb, $aLangs) 
+function printBookmarksList ($aDb, $aLangs)
 {
 	global $conf;
-	
+
 	$db = $aDb;
 	$langs = $aLangs;
 
@@ -37,13 +37,22 @@ function printBookmarksList ($aDb, $aLangs)
 	$langs->load("bookmarks");
 
 	$url= $_SERVER["PHP_SELF"].(! empty($_SERVER["QUERY_STRING"])?'?'.$_SERVER["QUERY_STRING"]:'');
-	
+
 	$ret = '';
 	// Menu bookmark
-	$ret.= '<div class="menu_titre"><a class="vmenu" href="'.DOL_URL_ROOT.'/bookmarks/liste.php">'.$langs->trans('Bookm').'</a></div>';
+	$ret.= '<div class="menu_titre">';
+	$ret.= '<table class="nobordernopadding" width="100%"><tr class="no"><td>';
+	$ret.= '<a class="vmenu" href="'.DOL_URL_ROOT.'/bookmarks/liste.php">'.$langs->trans('Bookm').'</a>';
+//	$ret.='</div>';
 	// Menu New bookmark
-	$ret.= '<div class="menu_contenu"><a class="vsmenu" href="'.DOL_URL_ROOT.'/bookmarks/fiche.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url).'">';
-	$ret.= $langs->trans('NewBookmark').'</a><br></div>';
+//	$ret.= '<div class="menu_contenu">';
+	$ret.= '</td><td align="right">';
+	$ret.= '<a class="vsmenu" href="'.DOL_URL_ROOT.'/bookmarks/fiche.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url).'">';
+//	$ret.= $langs->trans('NewBookmark');
+	$ret.=img_object($langs->trans('AddThisPageToBookmarks'),'bookmark');
+	$ret.= '</a>';
+	$ret.= '</td></tr></table>';
+	$ret.= '</div>';
 	// Menu with all bookmarks
 	if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
 	{
@@ -54,12 +63,12 @@ function printBookmarksList ($aDb, $aLangs)
 				$ret.=' '.img_object($langs->trans("BookmarkThisPage"),'bookmark').' ';
 				$ret.= dolibarr_trunc($obj->title, 30).'</a><br></div>';
 			}
-	
+
 		} else {
-	
+
 			dolibarr_print_error($db);
 		}
-	}		
+	}
 
 	$ret .= '<div class="menu_fin"></div>';
 

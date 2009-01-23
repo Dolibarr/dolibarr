@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
  *       \file       htdocs/bookmarks/fiche.php
  *       \brief      Page affichage/creation des bookmarks
@@ -41,15 +41,23 @@ $target=isset($_GET["target"])?$_GET["target"]:$_POST["target"];
  */
 
 if ($action == 'add' || $action == 'addproduct')
-{
+{var_dump($_POST);
+	if ($_POST["cancel"])
+	{
+		$urlsource=isset($_GET["urlsource"])?$_GET["urlsource"]:(isset($url)?$url:DOL_URL_ROOT.'/bookmarks/liste.php');
+        header("Location: ".$urlsource);
+        exit;
+	}
+
     $mesg='';
-    
+
     $bookmark=new Bookmark($db);
     $bookmark->fk_user=$user->id;
     $bookmark->title=$title;
     $bookmark->url=$url;
     $bookmark->target=$target;
-    
+
+    // TODO Remove because this test is now always false
     if ($action == 'add' && $_GET["socid"])    // Link to third party card
     {
         require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
@@ -63,6 +71,7 @@ if ($action == 'add' || $action == 'addproduct')
         $title=$bookmark->title;
        	$url=$bookmark->url;
     }
+    // TODO Remove because this test is now always false
     if ($action == 'addproduct' && $_GET["id"])    // Link to product card
     {
         require_once(DOL_DOCUMENT_ROOT."/product.class.php");
@@ -76,14 +85,14 @@ if ($action == 'add' || $action == 'addproduct')
         $title=$bookmark->title;
        	$url=$bookmark->url;
     }
-    
+
     if (! $title) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("BookmarkTitle"));
     if (! $url) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("UrlOrLink"));
 
     if (! $mesg)
     {
         $bookmark->favicon='none';
-        
+
         $res=$bookmark->create();
         if ($res > 0)
         {
@@ -121,7 +130,7 @@ if ($_GET["action"] == 'delete')
     $bookmark->target=$user->id;
     $bookmark->title='xxx';
     $bookmark->favicon='xxx';
-    
+
     $res=$bookmark->remove();
     if ($res > 0)
     {
@@ -165,9 +174,14 @@ if ($action == 'create')
     $liste=array(1=>$langs->trans("OpenANewWindow"),0=>$langs->trans("ReplaceWindow"));
     $html->select_array('target',$liste,1);
     print '</td><td>'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
-    print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'"></td></tr>';
+
+    print '<tr><td colspan="3" align="center">';
+    print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
+    print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel">';
+    print '</td></tr>';
+
     print '</table>';
-    
+
     print '</form>';
 }
 
@@ -179,7 +193,7 @@ if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
      */
     $bookmark=new Bookmark($db);
     $bookmark->fetch($_GET["id"]);
-    
+
 
     dolibarr_fiche_head($head, $hselected, $langs->trans("Bookmark"));
 
@@ -195,7 +209,7 @@ if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
     print '</table>';
 
     print "</div>\n";
-    
+
     print "<div class=\"tabsAction\">\n";
 
     // Supprimer

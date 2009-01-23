@@ -61,12 +61,12 @@ class box_fournisseurs extends ModeleBoxes {
         $langs->load("boxes");
 
 		$this->max=$max;
-        
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastSuppliers",$max));
 
         if ($user->rights->societe->lire)
         {
-            $sql = "SELECT s.nom, s.rowid as socid, s.datec as dc";
+            $sql = "SELECT s.nom, s.rowid as socid, s.tms";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -76,21 +76,21 @@ class box_fournisseurs extends ModeleBoxes {
             {
                 $sql .= " AND s.rowid = ".$user->societe_id;
             }
-            $sql .= " ORDER BY s.datec DESC ";
+            $sql .= " ORDER BY s.tms DESC ";
             $sql .= $db->plimit($max, 0);
-    
+
             $result = $db->query($sql);
             if ($result)
             {
                 $num = $db->num_rows($result);
-    
+
                 $i = 0;
     			//$supplierstatic=new Fournisseur($db);
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
-    				$datec=$db->jdate($objp->dc);
-    				
+    				$datem=$objp->tms;
+
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
                     'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
@@ -98,9 +98,9 @@ class box_fournisseurs extends ModeleBoxes {
                     $this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
-                    
+
                     $this->info_box_contents[$i][2] = array('td' => 'align="right"',
-					'text' => dolibarr_print_date($datec, "day"));
+					'text' => dolibarr_print_date($datem, "day"));
 
                     $i++;
                 }

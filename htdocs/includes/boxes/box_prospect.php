@@ -53,7 +53,7 @@ class box_prospect extends ModeleBoxes {
 
 		$this->db=$DB;
 		$this->param=$param;
-        
+
 		$this->boxlabel=$langs->trans("BoxLastProspects");
     }
 
@@ -66,12 +66,12 @@ class box_prospect extends ModeleBoxes {
         global $user, $langs, $db;
 
 		$this->max=$max;
-        
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProspects",$max));
 
-        if ($user->rights->societe->lire) 
+        if ($user->rights->societe->lire)
         {
-            $sql = "SELECT s.nom, s.rowid as socid, s.fk_stcomm, s.datec as dc";
+            $sql = "SELECT s.nom, s.rowid as socid, s.fk_stcomm, s.tms";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -81,7 +81,7 @@ class box_prospect extends ModeleBoxes {
             {
                 $sql .= " AND s.rowid = ".$user->societe_id;
             }
-            $sql .= " ORDER BY s.datec DESC";
+            $sql .= " ORDER BY s.tms DESC";
             $sql .= $db->plimit($max, 0);
 
 			dolibarr_syslog("box_prospect::loadBox sql=".$sql,LOG_DEBUG);
@@ -89,14 +89,14 @@ class box_prospect extends ModeleBoxes {
             if ($resql)
             {
                 $num = $db->num_rows($resql);
-    
+
                 $i = 0;
     			$prospectstatic=new Prospect($db);
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($resql);
-    				$datec=$db->jdate($objp->dc);
-    				
+    				$datem=$objp->tms;
+
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
                     'url' => DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$objp->socid);
@@ -104,16 +104,16 @@ class box_prospect extends ModeleBoxes {
                     $this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$objp->socid);
-                    
+
                     $this->info_box_contents[$i][2] = array('td' => 'align="right"',
-					'text' => dolibarr_print_date($datec, "day"));
+					'text' => dolibarr_print_date($datem, "day"));
 
                     $this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
                     'text' => eregi_replace('img ','img height="14px" ',$prospectstatic->LibStatut($objp->fk_stcomm,3)));
 
                     $i++;
                 }
- 
+
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProspects"));
             }
 			else

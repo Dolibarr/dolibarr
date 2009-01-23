@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,11 @@
  */
 
 /**
-   \file       htdocs/fourn/index.php
-   \ingroup    fournisseur
-   \brief      Page accueil de la zone fournisseurs
-   \version    $Id$
-*/
+ \file       htdocs/fourn/index.php
+ \ingroup    fournisseur
+ \brief      Page accueil de la zone fournisseurs
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');
@@ -40,8 +40,8 @@ $result = restrictedArea($user, 'societe',$socid,'');
 
 
 /*
-* Affichage page
-*/
+ * Affichage page
+ */
 
 $commandestatic=new CommandeFournisseur($db);
 $facturestatic=new FactureFournisseur($db);
@@ -53,34 +53,6 @@ print_fiche_titre($langs->trans("SuppliersArea"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
-
-
-/*
- * Liste des categories
- */
-$companystatic->LoadSupplierCateg();
-
-if (sizeof($companystatic->SupplierCategories))
-{
-		print '<table class="liste" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">';
-		print $langs->trans("Category");
-		print "</td></tr>\n";
-		$var=True;
-
-		foreach ($companystatic->SupplierCategories as $rowid => $label)
-		{
-			$var=!$var;
-			print "<tr $bc[$var]>\n";
-			print '<td><a href="liste.php?cat='.$rowid.'">'.stripslashes($label).'</a>';
-			print '</td><td align="right">';
-			print '<a href="stats.php?cat='.$rowid.'">('.$langs->trans("Stats").')</a>';
-			print "</tr>\n";
-		}
-		print "</table>\n";
-		print "<br>\n";
-}
-
 
 
 /*
@@ -121,9 +93,9 @@ if ($resql)
 	print "<br>\n";
 	$db->free($resql);
 }
-else 
+else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 
@@ -132,56 +104,56 @@ else
  */
 if ($conf->fournisseur->enabled)
 {
-    $langs->load("orders");
-    $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.rowid as socid";
-    $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c, ".MAIN_DB_PREFIX."societe as s";
-    $sql.= " WHERE c.fk_soc = s.rowid AND c.fk_statut = 0";
-    if ($socid)
-    {
-        $sql .= " AND c.fk_soc = ".$socid;
-    }
+	$langs->load("orders");
+	$sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.rowid as socid";
+	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c, ".MAIN_DB_PREFIX."societe as s";
+	$sql.= " WHERE c.fk_soc = s.rowid AND c.fk_statut = 0";
+	if ($socid)
+	{
+		$sql .= " AND c.fk_soc = ".$socid;
+	}
 
-    $resql = $db->query($sql);
-    if ($resql)
-    {
-        $total = 0;
-        $num = $db->num_rows($resql);
-        if ($num)
-        {
-            print '<table class="noborder" width="100%">';
-            print '<tr class="liste_titre">';
-            print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$total = 0;
+		$num = $db->num_rows($resql);
+		if ($num)
+		{
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre">';
+			print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
 
-            $i = 0;
-            $var = true;
-            while ($i < $num)
-            {
-                $var=!$var;
-                $obj = $db->fetch_object($resql);
-                print '<tr '.$bc[$var].'><td  nowrap="nowrap">';
+			$i = 0;
+			$var = true;
+			while ($i < $num)
+			{
+				$var=!$var;
+				$obj = $db->fetch_object($resql);
+				print '<tr '.$bc[$var].'><td  nowrap="nowrap">';
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
 				print $commandestatic->getNomUrl(1,'',16);
 				print '</td>';
-                print '<td  nowrap="nowrap">';
+				print '<td  nowrap="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->nom=$obj->nom;
 				$companystatic->client=0;
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
-                print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td></tr>';
-                $i++;
-                $total += $obj->total_ttc;
-            }
-            if ($total>0)
-            {
-                $var=!$var;
-                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
-            }
-            print "</table>";
+				print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td></tr>';
+				$i++;
+				$total += $obj->total_ttc;
+			}
+			if ($total>0)
+			{
+				$var=!$var;
+				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+			}
+			print "</table>";
 			print "<br>\n";
-        }
-    }
+		}
+	}
 }
 
 /**
@@ -248,10 +220,6 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 	}
 }
 
-/*
- *
- *
- */
 print "</td>\n";
 print '<td valign="top" width="70%" class="notopnoleft">';
 
@@ -260,7 +228,7 @@ print '<td valign="top" width="70%" class="notopnoleft">';
  *
  */
 $max=10;
-$sql = "SELECT s.rowid as socid, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm";
+$sql = "SELECT s.rowid as socid, s.nom, s.ville, s.datec, s.datea, s.tms, st.libelle as stcomm, s.prefix_comm";
 $sql.= " , code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -268,7 +236,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFI
 $sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql .= " AND s.rowid = ".$socid;
-$sql.= " ORDER BY s.datec DESC";
+$sql.= " ORDER BY s.tms DESC";
 $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
@@ -281,7 +249,7 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("BoxTitleLastSuppliers",min($max,$num))."</td>\n";
-	print '<td align="right">'.$langs->trans("DateCreation")."</td>\n";
+	print '<td align="right">'.$langs->trans("DateModification")."</td>\n";
 	print "</tr>\n";
 
 	$var=True;
@@ -294,16 +262,45 @@ if ($resql)
 		print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
 		print "&nbsp;<a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
-		print '<td align="right">'.dolibarr_print_date($obj->datec,'day').'</td>';
+		print '<td align="right">'.dolibarr_print_date($obj->tms,'day').'</td>';
 		print "</tr>\n";
 	}
 	print "</table>\n";
 
 	$db->free($resql);
 }
-else 
+else
 {
 	dolibarr_print_error($db);
+}
+
+
+/*
+ * List of categories
+ */
+$companystatic->LoadSupplierCateg();
+
+if (sizeof($companystatic->SupplierCategories))
+{
+	print '<br>';
+
+	print '<table class="liste" width="100%">';
+	print '<tr class="liste_titre"><td colspan="2">';
+	print $langs->trans("Category");
+	print "</td></tr>\n";
+	$var=True;
+
+	foreach ($companystatic->SupplierCategories as $rowid => $label)
+	{
+		$var=!$var;
+		print "<tr $bc[$var]>\n";
+		print '<td><a href="liste.php?cat='.$rowid.'">'.stripslashes($label).'</a>';
+		print '</td><td align="right">';
+		print '<a href="stats.php?cat='.$rowid.'">('.$langs->trans("Stats").')</a>';
+		print "</tr>\n";
+	}
+	print "</table>\n";
+	print "<br>\n";
 }
 
 print "</td></tr>\n";

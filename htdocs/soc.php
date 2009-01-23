@@ -629,7 +629,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 	/*
 	 * Fiche societe en mode edition
 	 */
-	print_titre($langs->trans("EditCompany"));
+	print_fiche_titre($langs->trans("EditCompany"));
 
 	if ($socid)
 	{
