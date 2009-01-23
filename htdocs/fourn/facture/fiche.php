@@ -113,7 +113,7 @@ if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes
     }
 }
 
-if ($_GET['action'] == 'payed')
+if ($_REQUEST['action'] == 'confirm_payed' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->facture->creer)
 {
 	$facturefourn=new FactureFournisseur($db);
 	$facturefourn->fetch($_GET['facid']);
@@ -590,6 +590,13 @@ else
 				print '<br />';
 			}
 
+			// Confirmation de la validation
+			if ($_GET['action'] == 'payed')
+			{
+				$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ClassifyPayed'), $langs->trans('ConfirmClassifyPayedBill', $fac->ref), 'confirm_payed');
+				print '<br />';
+			}
+
 			/*
 			* Confirmation de la suppression de la facture fournisseur
 			*/
@@ -761,7 +768,6 @@ else
 
 			/*
 			 * Lignes
-			 *
 			 */
             print '<br>';
 			print '<table class="noborder" width="100%">';
@@ -925,27 +931,37 @@ else
 
 		print '<div class="tabsAction">';
 
-		if ($fac->statut <= 1 && $fac->getSommePaiement() <= 0 && $user->rights->fournisseur->facture->creer)
+		if ($_GET['action'] != 'edit' && $fac->statut <= 1 && $fac->getSommePaiement() <= 0 && $user->rights->fournisseur->facture->creer)
 		{
-			if ($_GET['action'] != 'edit')
-			{
-				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
-			}
+			print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 		}
 
-		if ($fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
+		if ($_GET['action'] != 'edit' && $fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
 		{
 			print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
 		}
 
-		if ($fac->statut == 1 && price($resteapayer) <= 0 && $fac->paye == 0  && $user->societe_id == 0)
+		if ($_GET['action'] != 'edit' && $fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
 		{
-			print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
+			print '<a class="butAction" ';
+			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+			{
+				$num = $fac->ref;
+				$url = $_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=confirm_payed&confirm=yes';
+				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmClassifPayed',$num)).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'validate\')"';
+			}
+			else
+			{
+				print 'href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=payed"';
+			}
+			print '>'.$langs->trans('ClassifyPayed').'</a>';
+
+			//print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
 		}
 
-		if ($fac->statut == 0 && $user->rights->fournisseur->facture->valider)
+		if ($_GET['action'] != 'edit' && $fac->statut == 0 && $user->rights->fournisseur->facture->valider)
 		{
-			if (sizeof($fac->lignes) && $_GET['action'] <> 'edit')
+			if (sizeof($fac->lignes))
 			{
 				print '<a class="butAction" ';
 				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
@@ -964,12 +980,12 @@ else
 			}
 		}
 
-		if ($user->rights->fournisseur->facture->creer)
+		if ($_GET['action'] != 'edit' && $user->rights->fournisseur->facture->creer)
 		{
 			print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=clone&amp;socid='.$fac->socid.'">'.$langs->trans('ToClone').'</a>';
 		}
 
-		if ($_GET['action'] != 'edit' && $fac->statut == 0 && $user->rights->fournisseur->facture->supprimer)
+		if ($_GET['action'] != 'edit' && $user->rights->fournisseur->facture->supprimer)
 		{
 			print '<a class="butActionDelete" href="fiche.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}
