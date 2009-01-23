@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.fr>
  * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
@@ -153,7 +153,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 {
 	$datefacture=dolibarr_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
 	$datedue=dolibarr_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
-	
+
 	if ($datefacture == '')
 	{
 		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')).'</div>';
@@ -169,7 +169,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 		$error++;
 	}
 
-	if (! $error)		
+	if (! $error)
 	{
 		$db->begin();
 
@@ -285,7 +285,7 @@ if ($_GET['action'] == 'add_ligne')
 		dolibarr_print_error($db,$facfou->error);
 		exit;
 	}
-	
+
 	if ($_POST['prodfournpriceid'])	// > 0 or -1
 	{
 		$nv_prod = new ProductFournisseur($db);
@@ -293,7 +293,7 @@ if ($_GET['action'] == 'add_ligne')
 		if ($idprod > 0)
 		{
 			$result=$nv_prod->fetch($idprod);
-			
+
 			// cas special pour lequel on a les meme reference que le fournisseur
 			// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
 			$label = $nv_prod->libelle;
@@ -371,13 +371,13 @@ if ($_GET['action'] == 'create')
 
 	$datefacture=dolibarr_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
 	$datedue=dolibarr_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
-	
+
 	$dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
-	
+
 	print '<form name="add" action="fiche.php" method="post">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<table class="border" width="100%">';
-	
+
 	// Third party
 	print '<tr><td>'.$langs->trans('Company').'</td>';
 	print '<td>';
@@ -438,7 +438,7 @@ if ($_GET['action'] == 'create')
 
 		print '</table>';
 	}
-	
+
 	print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
 	print '</form>';
 }
@@ -453,7 +453,7 @@ else
 		/* *************************************************************************** */
 
 		$now=gmmktime();
-		
+
 		$productstatic = new Product($db);
 
 		$fac = new FactureFournisseur($db);
@@ -569,7 +569,7 @@ else
 			 	$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
 			 	print '<br>';
 			}
-			
+
 			// Clone confirmation
 			if ($_GET["action"] == 'clone')
 			{
@@ -582,7 +582,7 @@ else
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$fac->ref),'confirm_clone',$formquestion,'yes');
 				print '<br>';
 			}
-				
+
 			// Confirmation de la validation
 			if ($_GET['action'] == 'valid')
 			{
@@ -608,7 +608,9 @@ else
 			print '<table class="border" width="100%">';
 
             // Ref
-            print '<tr><td nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">'.$fac->ref.'</td>';
+            print '<tr><td nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
+			print $html->showrefnav($fac,'facid','',1,'rowid','ref',$morehtmlref);
+            print '</td>';
             print "</tr>\n";
 
             // Ref supplier
@@ -648,7 +650,7 @@ else
 				$langs->load('projects');
 				print '<tr>';
 				print '<td>';
-				
+
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $langs->trans('Project');
 				print '</td>';
@@ -659,7 +661,7 @@ else
 					print '</a></td>';
 				}
 				print '</tr></table>';
-				
+
 				print '</td><td colspan="3">';
 				if ($_GET['action'] == 'classer')
 				{
@@ -672,7 +674,7 @@ else
 				print '</td>';
 				print '</tr>';
 			}
-			
+
 			print '</table>';
 
 			print '</td><td valign="top" class="notopnoleftnoright">';
@@ -779,7 +781,7 @@ else
 					print '<td>&nbsp;</td>';
 					print '</tr>';
 				}
-				
+
 				$var=!$var;
 				// Ligne en modification
 				if ($fac->statut == 0 && $_GET['action'] == 'mod_ligne' && $_GET['etat'] == '0' && $_GET['ligne_id'] == $fac->lignes[$i]->rowid)
@@ -847,8 +849,8 @@ else
 					else print '&nbsp;';
 					print '</td>';
 					print '</tr>';
-				}				
-				
+				}
+
 			}
 
 			if ($fac->statut == 0 && $_GET['action'] != 'mod_ligne')
@@ -910,7 +912,7 @@ else
 	                print '</form>';
 	            }
 			}
-			
+
 			print '</table>';
 
 			print '</div>';
@@ -920,7 +922,7 @@ else
 		/*
 		 * Boutons actions
 		 */
-		
+
 		print '<div class="tabsAction">';
 
 		if ($fac->statut <= 1 && $fac->getSommePaiement() <= 0 && $user->rights->fournisseur->facture->creer)
@@ -961,7 +963,7 @@ else
 				print '>'.$langs->trans('Validate').'</a>';
 			}
 		}
-		
+
 		if ($user->rights->fournisseur->facture->creer)
 		{
 			print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=clone&amp;socid='.$fac->socid.'">'.$langs->trans('ToClone').'</a>';
