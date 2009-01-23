@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - main = 
+# Dolibarr language file - ca_ES - main 
 CHARSET = UTF-8
 DatabaseConnection = Connexió a la base de dades
 SeparatorDecimal = ,
@@ -404,6 +404,7 @@ SupplierPreview = Historial proveïdor
 AccountancyPreview = Historial comptable
 ShowCustomerPreview = Veure historial client
 ShowSupplierPreview = Veure historial proveïdor
+ShowProspectPreview = Veure historial client potencial
 ShowAccountancyPreview = Veure historial comptable
 RefCustomer = Ref. client
 Currency = Divisa

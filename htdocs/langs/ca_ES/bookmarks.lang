@@ -1,0 +1,5 @@
+# Dolibarr language file - ca_ES - marque pages 
+CHARSET = UTF-8
+Bookm = Bookmarks
+NewBookmark = Nou Bookmark
+AddThisPageToBookmarks = Afigeix aquesta pàgina als bookmarks

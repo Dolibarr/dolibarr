@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - admin 
+# Dolibarr language file - ca_ES - admin
 CHARSET = UTF-8
 Version = Versió
 VersionProgram = Versió programa
@@ -206,7 +206,6 @@ CurrentVersion = Versió actual de Dolibarr
 CallUpdatePage = Trucar a la pàgina d'actualització de l'estructura i dades de la base de dades %s.
 LastStableVersion = Última versió estable
 GenericMaskCodes = Podeu introduir qualsevol màscara numèrica. En aquesta màscara, pot utilitzar les següents etiquetes: <br> <b> (000000) </b> correspon a un nombre que s'incrementa en cadascun %s. Introduïu tants zeros com longuitud desitgi mostrar. El comptador es completarà a partir de zeros per l'esquerra per tal de tenir tants zeros com la màscara. <br> <b> 000.000 (000) </b> Igual que l'anterior, amb una compensació corresponent al número a la dreta del signe + s'aplica a partir del primer %s. <br> <b> (000000) @ x </b> igual que l'anterior, però el comptador es restableix a zero quan s'arriba a x mesos (x entre 1 i 12). Si aquesta opció s'utilitza i x és de 2 o superior, llavors la seqüència () (aa mm) (o) (aaaa) mm també és necessària. <br> <b> dd () </b> dies (01 a 31). <br> <b> mm () </ b> mes (01 a 12). <br> <b> yy () </ b>, <b> (aaaa) </ b> o <b> (i) </ b> de més de 2 anys, 4 o l'1 de números. <br> <b> cccc000 () </b> el codi de client en n caràcters seguits d'una ref. client sense offset i 0 al comptador global. <br> Tots els altres caràcters de la màscara es mantindran intactes. <br> No es permeten espais. <br> <u> exemple, en la 99 % s del tercer de l'empresa dóna 31.01.2007: </u> <br> <b> ABC yy () (mm) - (000000) < /b> donarà <b> ABC0701-000099 </b> <br> <b> 0000 (100)-ZZZ/() dd / XXX </b> donarà <b> 0199-ZZZ/31/XXX </b ><br>
-
 GenericNumRefModelDesc = Retorna un nombre creat d'acord amb una màscara definida.
 ServerAvailableOnIPOrPort = Servidor disponible a l'adreça <b>%s</b> al port <b>%s</b>
 ServerNotAvailableOnIPOrPort = Servidor no disponible en l'adreça <b>%s</b> al port <b>%s</b>
@@ -474,6 +473,7 @@ DictionnaryTypeContact = Tipus de contactes
 DictionnaryEcotaxe = Barems CEcoParticipación (DEEE)
 DictionnaryPaperFormat = Formats paper
 DictionnaryFees = Tipus de taxes
+DictionnarySendingMethods = Mètodes d'expedició
 SetupSaved = Configuració desada
 BackToModuleList = Retornar llista de mòduls
 BackToDictionnaryList = Tornar a la llista de diccionaris
@@ -613,6 +613,13 @@ ParameterActiveForNextInputOnly = Paràmetre efectiu només a partir de les prop
 NoEventOrNoAuditSetup = No s'han registrat esdeveniments de seguretat. Això pot ser normal si l'auditoria no ha estat habilitat a la pàgina "configuració->seguretat->auditoria".
 NoEventFoundWithCriteria = No s'han trobat esdeveniments de seguretat per a aquests criteris de cerca.
 SeeLocalSendMailSetup = Veure la configuració local d'sendmail
+BackupDesc = Per realitzar una còpia de seguretat completa de Dolibarr, vostè ha de:
+BackupDesc2 = * Guardar el contingut de la carpeta de documents (<b>%s</b>) que conté tots els arxius pujats o generats (en un zip, per exemple).
+BackupDesc3 = * Guardar el contingut de la base de dades en un arxiu de bolcat. Per això pot utilitzar l'assistent a continuació.
+BackupDescX = El fitxer generat s'haurà d'ubicar en un lloc segur.
+RestoreDesc = Per restaurar una còpia de seguretat de Dolibarr, vostè ha de:
+RestoreDesc2 = * Prendre el fitxer (fitxer zip, per exemple) de la carpeta dels documents i descomprimir-lo a la carpeta dels documents d'una nova instal·lació de Dolibarr o en la carpeda dels documents d'aquesta instal·lació (<b>%s</b>).
+RestoreDesc3 = * Recarregar el fitxer de bolcat guardat a la base de dades d'una nova instal·lació de Dolibarr o d'aquesta instal·lació. Atenció, una vegada realitzada la restauració, haurà d'utilitzar un login/contrasenya d'administrador existent en el moment de la còpia de seguretat per connectar-se. Per restaurar la base de dades en la instal·lació actual, pot utilitzar l'assistent a continuació.
 ##### Module password generation =  = 
 PasswordGenerationStandard = Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone = No ofereix contrasenyes. La contrasenya s'introdueix manualment.
@@ -979,3 +986,7 @@ CashDeskSetup = Mòdul de configuració Caixa registradora
 CashDeskThirdPartyForSell = Tercer genéric a utilitzar per a les vendes
 CashDeskBankAccountForSell = Compte d'efectiu que s'utilitzarà per a les vendes
 CashDeskIdWareHouse = Magatzem a ultilitzar per a les vendes
+##### Bookmark ##### =  = 
+BookmarkSetup = Configuració del mòdul Bookmark
+BookmarkDesc = Aquest mòdul li permet gestionar els enllaços i accessos directes. També permet afegir qualsevol pàgina de Dolibarr o enllaç web al menú d'accés ràpid de l'esquerra.
+NbOfBoomarkToShow = Nombre màxim de marcadors que es mostrarà en el menú

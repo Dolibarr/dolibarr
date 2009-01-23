@@ -1,8 +1,8 @@
-# Dolibarr language file - es_ES - main
+# Dolibarr language file - es_ES - main 
 CHARSET = UTF-8
 DatabaseConnection = Conexión a la base de datos
 SeparatorDecimal = ,
-SeparatorThousand = 
+SeparatorThousand =  
 Error = Error
 ErrorFieldRequired = El campo '%s' es obligatorio
 ErrorFieldFormat = El campo '%s' tiene un valor incorrecto
@@ -404,6 +404,7 @@ SupplierPreview = Historial proveedor
 AccountancyPreview = Historial contable
 ShowCustomerPreview = Ver historial cliente
 ShowSupplierPreview = Ver historial proveedor
+ShowProspectPreview = Ver historial cliente potencial
 ShowAccountancyPreview = Ver historial contable
 RefCustomer = Ref. client
 Currency = Divisa

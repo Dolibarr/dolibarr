@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - boxes
+# Dolibarr language file - ca_ES - boxes 
 CHARSET = UTF-8
 BoxLastRssInfos = Fils d'informació RSS
 BoxLastProducts = Últims productes/serveis
@@ -23,13 +23,13 @@ BoxTitleNbOfCustomers = Nombre de clients
 BoxTitleLastRssInfos = Les %s últimes infos de %s
 BoxTitleLastProducts = Els %s darrers productes/serveis registrats
 BoxTitleLastCustomerOrders = Les %s darreres comandes de clients modificades
-BoxTitleLastSuppliers = Els %s darrers proveïdors registrats
-BoxTitleLastCustomers = Els %s darrers clients registrats
+BoxTitleLastSuppliers = Els %s darrers proveïdors modificats
+BoxTitleLastCustomers = Els %s darrers clients modificats
 BoxTitleLastCustomersOrProspects = Els %s darrers clients o clients potencials registrats
 BoxTitleLastPropals = Els %s darrers pressupostos registrats
 BoxTitleLastCustomerBills = Les %s últimes factures a clients registrades
 BoxTitleLastSupplierBills = Les %s últimes factures de proveïdors registrades
-BoxTitleLastProspects = Els %s darrers clients potencials registrats
+BoxTitleLastProspects = Els %s darrers clients potencials modificats
 BoxTitleLastProductsInContract = Els %s darrers productes/serveis contractats
 BoxTitleOldestUnpayedCustomerBills = Les %s factures més antigues a clients pendents de cobrament
 BoxTitleOldestUnpayedSupplierBills = Les %s factures més antigues de proveïdors pendents de pagament
