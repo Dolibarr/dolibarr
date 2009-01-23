@@ -1775,7 +1775,7 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Delete
-			if ($propal->statut == 0 && $user->rights->propale->supprimer)
+			if ($user->rights->propale->supprimer)
 			{
 				print '<a class="butActionDelete" ';
 				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
