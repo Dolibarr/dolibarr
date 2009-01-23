@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,11 +40,11 @@ llxHeader();
 print_fiche_titre($langs->trans("Restore"),'','setup');
 print '<br>';
 
-print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
-print '<br>';
-
-
-print_titre($langs->trans("Restore")).'<br>';
+print $langs->trans("RestoreDesc",DOL_DOCUMENT_ROOT).'<br><br>';
+print $langs->trans("RestoreDesc2",DOL_DOCUMENT_ROOT).'<br><br>';
+//print $langs->trans("BackupDescX").'<br><br>';
+print $langs->trans("RestoreDesc3",DOL_DOCUMENT_ROOT).'<br><br>';
+//print $langs->trans("BackupDescX").'<br><br>';
 
 ?>
 
@@ -69,7 +69,10 @@ if (! empty($_GET["radio_dump"])) print "document.getElementById('mysql_options'
 
 <fieldset id="fieldsetexport">
 <table><tr><td valign="top">
-
+<?php
+print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
+print '<br>';
+?>
 
 <div id="div_container_exportoptions">
 <fieldset id="exportoptions">
@@ -97,10 +100,10 @@ if (! empty($_GET["radio_dump"])) print "document.getElementById('mysql_options'
     <legend>Import MySql</legend>
 	<div class="formelementrow">
 	<?php
-	// Parameteres execution	
+	// Parameteres execution
 	$command='mysql';
 	if (eregi(" ",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
-	
+
 	$param=$dolibarr_main_db_name;
 	$param.=" -h ".$dolibarr_main_db_host;
 	if (! empty($dolibarr_main_db_port)) $param.=" -P ".$dolibarr_main_db_port;
@@ -112,24 +115,24 @@ if (! empty($_GET["radio_dump"])) print "document.getElementById('mysql_options'
 		$paramcrypted.=" -p".eregi_replace('.','*',$dolibarr_main_db_pass);
 		$paramclear.=" -p".$dolibarr_main_db_pass;
 	}
-	
-	echo $langs->trans("ImportMySqlDesc"); 
+
+	echo $langs->trans("ImportMySqlDesc");
 	print '<br>';
 	print '<textarea rows="1" cols="120">'.$langs->trans("ImportMySqlCommand",$command,$_GET["showpass"]?$paramclear:$paramcrypted).'</textarea><br>';
 
 	if (empty($_GET["showpass"])) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
 	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
 	print '</div>';
-	
+
 	?>
-	
+
 	<script type="text/javascript" language="javascript">
 //<![CDATA[
 	hide_them_all();
 //]]>
 	</script>
 	</fieldset>
-</div>	
+</div>
 
 
 </td></tr></table>

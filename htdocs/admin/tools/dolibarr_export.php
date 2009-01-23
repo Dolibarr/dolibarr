@@ -51,7 +51,6 @@ print $langs->trans("BackupDesc2",DOL_DOCUMENT_ROOT).'<br>';
 print $langs->trans("BackupDescX").'<br><br>';
 print $langs->trans("BackupDesc3",DOL_DOCUMENT_ROOT).'<br>';
 print $langs->trans("BackupDescX").'<br><br>';
-print '<br>';
 
 if ($_GET["msg"])
 {

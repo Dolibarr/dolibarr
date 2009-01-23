@@ -616,9 +616,12 @@ NoEventOrNoAuditSetup=No security event has been recorded yet. This can be norma
 NoEventFoundWithCriteria=No security event has been found for such search criterias.
 SeeLocalSendMailSetup=See your local sendmail setup
 BackupDesc=To make a complete backup of Dolibarr, you must:
-BackupDesc2=* Save content of directory <b>%s</b> (you can make a zip of it for exeample) that contains all uplaoded and generated files.
+BackupDesc2=* Save content of documents directory (<b>%s</b>) that contains all uplaoded and generated files (you can make a zip for exeample).
 BackupDesc3=* Save content of your database with a dump. for this, you can use following assistant.
 BackupDescX=Built file should be stored in a secure place.
+RestoreDesc=To restore a Dolibarr backup, you must:
+RestoreDesc2=* Restore archive file (zip file for example) of documents directory to extract tree of files in documents directory of a new Dolibarr installation or into this current documents directoy (<b>%s</b>).
+RestoreDesc3=* Restore, from saved dump file, the database of a new Dolibarr installation or database of this current installation. Warning, once restore is finished, you must use a login/password, that existed when backup was made, to connect again. To restore database for this current installation, you can follow this assistant.
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.
