@@ -4,10 +4,10 @@
 	<CompanyName />
 	<Program_Info>
 		<Program_Name>Dolibarr</Program_Name>
-		<Program_Version>2.5</Program_Version>
-		<Program_Release_Month>12</Program_Release_Month>
+		<Program_Version>2.5.1</Program_Version>
+		<Program_Release_Month>01</Program_Release_Month>
 		<Program_Release_Day>28</Program_Release_Day>
-		<Program_Release_Year>2008</Program_Release_Year>
+		<Program_Release_Year>2009</Program_Release_Year>
 		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
 		<Program_Cost_Other />

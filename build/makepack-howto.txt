@@ -1,7 +1,6 @@
 ***** Actions to do to release *****
 - Check all files are commited.
 - Update files in root directory (README*.txt, ChangeLog...)
-- Update version number in doc files
 - Update version number in makepack-dolibarr.pl file
 - Update version number in htdocs/build/exe/doliwamp/doliwamp.iss
 - Update version number in htdocs/master.inc.php
