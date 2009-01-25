@@ -1,4 +1,7 @@
 ***** Actions to do to release *****
+This files describe steps made by Dolibarr packaging team to make a 
+complete release of Dolibarr, step by step.
+
 - Check all files are commited.
 - Update files in root directory (README*.txt, ChangeLog...)
 - Update version number in makepack-dolibarr.pl file
@@ -12,12 +15,12 @@
 - Build packages with makepack-dolibarr.pl
 - Build DoliWamp with doliwamp.iss file.
 - Check content of built packages.
-- Move build files into Dolibarr web site repository.
+- Move build files (exe+tgz) and ChangeLog into NLTechno web site repository.
 - Update NLTechno web site page dolibarrwinbin.php
 - Upload NLTechno web site on web server.
 - Move links in files dir on server to point to new files.
 
 - Upload files on dolibarr.org
-- Upload files on sourceforge
+- Upload files on sourceforge or Dolibarr.org
 - Send mail on mailings-list
 - Send a news on OpenSource web sites (if major beta or release)
