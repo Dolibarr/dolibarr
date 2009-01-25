@@ -91,7 +91,7 @@ Miscellanous:
 - Several skins.
 - Code is highly customizable (a lot of use of modules).
 - Works with Mysql 3.1 or higher, experimental support for PostgreSql.
-- Works with PHP 4.1 or higher.
+- Works with PHP 4.3 or higher.
 
 
 V - CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)

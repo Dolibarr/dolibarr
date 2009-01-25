@@ -94,7 +94,7 @@ Miscellanous:
 - Several skins.
 - Code is highly customizable (a lot of use of modules and submodules).
 - Works with Mysql 3.1 or higher, experimental support for PostgreSql.
-- Works with PHP 4.1 or higher.
+- Works with PHP 4.3 or higher.
 - An easy to understand and maintain code (PHP with no heavy frameworks).
 - A trigger architecture to allow you to make Dolibarr business events run
   PHP code to update your own information system.
