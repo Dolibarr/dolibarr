@@ -1736,7 +1736,7 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
 	if ($field)
 	{
 		//print "&nbsp;";
-		print '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png">';
+		print '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
 		if (! $sortorder)
 		{
 			print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
@@ -1787,7 +1787,7 @@ function print_fiche_titre($titre, $mesg='', $picto='title.gif', $pictoisfullpat
 	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
 	if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding" valign="middle">';
-	print '<div class="titre" valign="middle">'.$titre.'</div>';
+	print '<div class="titre">'.$titre.'</div>';
 	print '</td>';
 	if (strlen($mesg))
 	{
