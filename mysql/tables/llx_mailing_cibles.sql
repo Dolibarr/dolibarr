@@ -27,6 +27,7 @@ create table llx_mailing_cibles
   nom                varchar(160),
   prenom             varchar(160),
   email              varchar(160) NOT NULL,
+  other              varchar(255) NULL,
   statut             smallint NOT NULL DEFAULT 0,
   url                varchar(160),
   date_envoi         datetime

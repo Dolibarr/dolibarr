@@ -49,6 +49,7 @@ create table llx_product
   weight_units       tinyint      DEFAULT NULL,
   volume             float        DEFAULT NULL,
   volume_units       tinyint      DEFAULT NULL,
+  pmp                double(24,8) default 0 NOT NULL;
   canvas             varchar(15)  DEFAULT '',
   finished			 tinyint	  DEFAULT NULL,
   import_key         varchar(14)
