@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copytight (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -40,7 +40,7 @@ require_once(DOL_DOCUMENT_ROOT."/fourn/facture/paiementfourn.class.php");
 if (!$user->rights->banque->lire)
     accessforbidden();
 
-    
+
 $langs->load("bills");
 
 
@@ -57,15 +57,16 @@ if ($negpage)
 
 $mesg='';
 
-	
+
 /*
 * Action
 */
+$dateop=-1;
 
 if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user->rights->banque->modifier)
 {
-	
-	if ($_POST["credit"] > 0)
+
+	if (price2num($_POST["credit"]) > 0)
     {
         $amount = price2num($_POST["credit"]);
     }
@@ -83,7 +84,7 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user-
 	if (! $dateop)    $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Date"));
 	if (! $operation) $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
 	if (! $amount)    $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
-	
+
 	if (! $mesg)
 	{
 	    $acct=new Account($db,$account);
@@ -137,11 +138,11 @@ if ($account || $_GET["ref"])
 		$viewline = 20;
 	}
 	$acct = new Account($db);
-	if ($account) 
+	if ($account)
 	{
 		$result=$acct->fetch($account);
 	}
-	if ($_GET["ref"]) 
+	if ($_GET["ref"])
 	{
 		$result=$acct->fetch(0,$_GET["ref"]);
 		$account=$acct->id;
@@ -169,7 +170,7 @@ if ($account || $_GET["ref"])
 		$db->free($result);
 	}
 
-	
+
 	// Definition de sql_rech et param
 	$param='';
 	$sql_rech='';
@@ -207,7 +208,7 @@ if ($account || $_GET["ref"])
 	}
 	$sql.= " WHERE b.fk_account=".$acct->id;
 	$sql.= $sql_rech;
-	
+
 	dolibarr_syslog("account.php count transactions - sql=".$sql);
 	$result=$db->query($sql);
 	if ($result)
@@ -249,7 +250,7 @@ if ($account || $_GET["ref"])
 	// Onglets
 	$head=bank_prepare_head($acct);
 	dolibarr_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0);
-	
+
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -265,10 +266,10 @@ if ($account || $_GET["ref"])
 	print '</table>';
 
 	print '<br>';
-	
+
 	if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
-	
+
 	/**
 	* Search form
 	*/
@@ -296,7 +297,7 @@ if ($account || $_GET["ref"])
 	}
 	$navig.='</form>';
 
-	
+
 	// Confirmation delete
 	if ($_GET["action"]=='delete')
 	{
@@ -314,8 +315,8 @@ if ($account || $_GET["ref"])
 		print '<tr><td colspan="9" align="right">'.$navig.'</td></tr>';
 	}
 
-	
-	// Formulaire de saisie d'une opération hors factures
+
+	// Form to add a transaction with no invoice
 	if ($user->rights->banque->modifier && $_GET["action"]=='addline')
 	{
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -339,20 +340,20 @@ if ($account || $_GET["ref"])
 
 		print '<tr '.$bc[false].'>';
 		print '<td nowrap="nowrap" colspan="2">';
-		$html->select_date(-1,'op',0,0,0,'transaction');
+		$html->select_date($dateop,'op',0,0,0,'transaction');
 		print '</td>';
 		print '<td nowrap="nowrap">';
-		$html->select_types_paiements('','operation','1,2',2,1);
-		print '<input name="num_chq" class="flat" type="text" size="4"></td>';
+		$html->select_types_paiements((isset($_POST["operation"])?$_POST["operation"]:''),'operation','1,2',2,1);
+		print '<input name="num_chq" class="flat" type="text" size="4" value="'.(isset($_POST["num_chq"])?$_POST["num_chq"]:'').'"></td>';
 		print '<td colspan="2">';
-		print '<input name="label" class="flat" type="text" size="32">';
+		print '<input name="label" class="flat" type="text" size="32"  value="'.(isset($_POST["label"])?$_POST["label"]:'').'">';
 		if ($nbcategories)
 		{
 			print '<br>'.$langs->trans("Category").': <select class="flat" name="cat1">'.$options.'</select>';
 		}
 		print '</td>';
-		print '<td align=right><input name="debit" class="flat" type="text" size="4"></td>';
-		print '<td align=right><input name="credit" class="flat" type="text" size="4"></td>';
+		print '<td align=right><input name="debit" class="flat" type="text" size="4" value="'.(isset($_POST["debit"])?$_POST["debit"]:'').'"></td>';
+		print '<td align=right><input name="credit" class="flat" type="text" size="4" value="'.(isset($_POST["credit"])?$_POST["credit"]:'').'"></td>';
 		print '<td colspan="2" align="center">';
 		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
@@ -446,10 +447,10 @@ if ($account || $_GET["ref"])
         $time = time();
 
 	    $var=true;
-	    
+
 	    $num = $db->num_rows($result);
 	    $i = 0; $total = 0; $sep = 0;
-	    
+
 	    while ($i < $num)
 	    {
 	        $objp = $db->fetch_object($result);
@@ -457,7 +458,7 @@ if ($account || $_GET["ref"])
 	        if ($i >= ($nbline - $viewline))
 	        {
 	            $var=!$var;
-	    
+
 	            if ($objp->do > $time && !$sep)
 	            {
 	                $sep = 1 ;
@@ -466,20 +467,20 @@ if ($account || $_GET["ref"])
 	                print "<td>&nbsp;</td>";
 	                print '</tr>';
 	            }
-	    
+
 	            print "<tr $bc[$var]>";
 
 	            print "<td nowrap>".dolibarr_print_date($objp->do,"day")."</td>\n";
-	            
+
 	            print "<td nowrap>&nbsp;".dolibarr_print_date($objp->dv,"day")."</td>\n";
-	            
+
 	            print "<td nowrap>&nbsp;".$langs->trans($objp->fk_type)." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
-	            
+
 	            // Description
 	            print '<td>';
-	            
+
 	            $links = $acct->get_url($objp->rowid);
-	            
+
 	            $isbanktransfert=false;
 	            foreach($links as $key=>$val) { if ($val['type']=='banktransfert') $isbanktransfert=true; }
 	            $issocialcontrib=false;
@@ -492,11 +493,11 @@ if ($account || $_GET["ref"])
 	            {
 					if (eregi('^\((.*)\)$',$objp->label,$reg))
 					{
-						// Genereic description because between (). We show it after translating.	
+						// Genereic description because between (). We show it after translating.
 						print $langs->trans($reg[1]);
 					}
 					else
-					{    
+					{
 		            	print dolibarr_trunc($objp->label,60);
 		            }
 	            }
@@ -520,7 +521,7 @@ if ($account || $_GET["ref"])
 	                    $chargestatic->ref=$links[$key]['url_id'];
 	                    print ' '.$chargestatic->getNomUrl(2);
 					}
-					else if ($links[$key]['type']=='payment_sc') 
+					else if ($links[$key]['type']=='payment_sc')
 					{
 						//print ' - ';
 						/*
@@ -530,7 +531,7 @@ if ($account || $_GET["ref"])
 						print '</a>';
 						*/
 					}
-					else if ($links[$key]['type']=='payment_vat') 
+					else if ($links[$key]['type']=='payment_vat')
 					{
 	                    $paymentvatstatic->id=$links[$key]['url_id'];
 						$paymentvatstatic->ref=$links[$key]['url_id'];
@@ -546,12 +547,12 @@ if ($account || $_GET["ref"])
 	    			    print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
 						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
 						{
-							// Label générique car entre parenthèses. On l'affiche en le traduisant	
+							// Label générique car entre parenthèses. On l'affiche en le traduisant
 							if ($reg[1]=='paiement') $reg[1]='Payment';
 							print $langs->trans($reg[1]);
 						}
 						else
-						{    
+						{
 			            	print $links[$key]['label'];
 			            }
 	                	print '</a>';
@@ -589,7 +590,7 @@ if ($account || $_GET["ref"])
 					}
 	            }
 	            print '</td>';
-				
+
 	            if ($objp->amount < 0)
 	            {
 	                print "<td align=\"right\" nowrap>".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
@@ -598,7 +599,7 @@ if ($account || $_GET["ref"])
 	            {
 	                print "<td>&nbsp;</td><td align=\"right\" nowrap>&nbsp;".price($objp->amount)."</td>\n";
 	            }
-	    
+
 	            if ($action != 'search')
 	            {
 	                if ($total >= 0)
@@ -614,7 +615,7 @@ if ($account || $_GET["ref"])
 	            {
 	                print '<td align="right">-</td>';
 	            }
-	    
+
 	            // Relevé rappro ou lien edition
 	            if ($objp->rappro && $acct->type != 2)  // Si non compte cash
 	            {
@@ -650,14 +651,14 @@ if ($account || $_GET["ref"])
 	                }
 					print '</td>';
 	            }
-	    
+
 	            print "</tr>";
-	    
+
 	        }
-	    
+
 	        $i++;
 	    }
-		
+
 		// Affichage total
 		if ($page == 0 && ! $mode_search)
 		{

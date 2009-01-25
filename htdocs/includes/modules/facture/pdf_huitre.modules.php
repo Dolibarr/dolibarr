@@ -583,7 +583,7 @@ class pdf_huitre extends ModelePDFFactures
 		// Montants exprimes en euros
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',10);
-		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentities("Currency".$conf->monnaie));
+		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
 		$pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
 
 	}

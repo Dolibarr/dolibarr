@@ -382,7 +382,7 @@ class Translate {
      *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
      *               et si toujours pas trouve, il est retourne tel quel.
      *               Parameters of this method must not contains any HTML tags.
-     *  \param       key         cl� de chaine a traduire
+     *  \param       key         key of string to translate
      *  \param       param1      chaine de param1
      *  \param       param2      chaine de param1
      *  \param       param3      chaine de param1
@@ -398,6 +398,30 @@ class Translate {
             $newstr=sprintf($this->tab_translate[$newstr],$param1,$param2,$param3,$param4);
         }
         return $this->convToOutputCharset($newstr);
+    }
+
+
+    /**
+     *  \brief       Return translated value of a text string
+     *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
+     *               et si toujours pas trouve, il est retourne tel quel.
+     *               Parameters of this method must not contains any HTML tags.
+     *  \param       key         key of string to translate
+     *  \param       param1      chaine de param1
+     *  \param       param2      chaine de param1
+     *  \param       param3      chaine de param1
+     *  \param       param4      chaine de param1
+     *  \return      string      chaine traduite
+     */
+    function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='')
+    {
+    	$newstr=$key;
+        if ($this->getTransFromTab($newstr))
+        {
+            // Si la traduction est disponible
+            $newstr=sprintf($this->tab_translate[$newstr],$param1,$param2,$param3,$param4);
+        }
+        return $newstr;
     }
 
 

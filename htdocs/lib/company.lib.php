@@ -345,7 +345,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 		$actionstatic=new ActionComm($db);
 		$userstatic=new User($db);
 		$contactstatic = new Contact($db);
-			
+
 		if (is_object($objcon) && $objcon->id) print_titre($langs->trans("TasksHistoryForThisContact"));
 		else print_titre($langs->trans("ActionsOnCompany"));
 
@@ -409,7 +409,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 						$actionstatic->id=$obj->id;
 						print '<td width="140">'.$actionstatic->getNomUrl(1,16).'</td>';
 					}
-						
+
 					print '<td colspan="2">'.$obj->label.'</td>';
 
 					// Contact pour cette action
@@ -424,7 +424,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 					{
 						print '<td>&nbsp;</td>';
 					}
-						
+
 					print '<td width="80" nowrap="nowrap">';
 					$userstatic->id=$obj->fk_user_author;
 					$userstatic->login=$obj->login;
@@ -441,7 +441,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 			else
 			{
 				// Aucun action a faire
-					
+
 			}
 			$db->free($result);
 		}
@@ -605,7 +605,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 
 			// Note
 			print '<td>'.dolibarr_trunc($histo[$key]['note'], 30).'</td>';
-				
+
 			// Objet lie
 			print '<td>';
 			if ($histo[$key]['pid'] && $conf->propal->enabled)
@@ -642,7 +642,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 			{
 				print '<td>&nbsp;</td>';
 			}
-				
+
 			// Auteur
 			print '<td nowrap="nowrap" width="80">';
 			$userstatic->id=$histo[$key]['userid'];
@@ -672,11 +672,11 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 {
 	$pdf->SetXY ($curx, $cury);
 	$pdf->SetFont('Arial','B',8);
-	$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
+	$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
 	$cury+=4;
-	
+
 	$usedetailedbban=$account->useDetailedBBAN();
-	
+
 	if ($usedetailedbban)
 	{
 		$pdf->SetFont('Arial','B',6);
@@ -693,7 +693,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 		$pdf->SetXY ($curx+60, $cury);
 		$pdf->MultiCell(13, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
 		$pdf->line($curx+73, $cury, $curx+73, $cury+10 );
-	
+
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetXY ($curx, $cury+6);
 		$pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_banque), 0, 'C', 0);
@@ -711,7 +711,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 		$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
 		$cury-=9;
 	}
-		
+
 	$pdf->SetXY ($curx, $cury+12);
 	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").': ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
 	$pdf->SetXY ($curx, $cury+22);

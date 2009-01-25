@@ -2079,24 +2079,25 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
 }
 
 /**
- *	\brief     		Fonction qui retourne un numerique conforme SQL, depuis un montant issu d'une saisie
- *					utilisateur.
- *	\remarks   		Fonction a appeler sur montants saisis avant un insert en base
- *	\param	    	amount		Montant a formater
- *	\param	    	rounding	'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
- *								'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
- *								'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
- *								''=No rounding
- *	\return			string		Montant au format numerique universel et SQL (Exemple: '99.99999')
- *	\seealso		price		Fonction inverse de price2num
+ *	\brief     		Function that return a number with universal decimal format (decimal separator is '.') from
+ *					an amount typed by a user.
+ *	\remarks   		Function to use on each input amount before any numeric test or database insert.
+ *	\param	    	amount			Amount to convert/clean
+ *	\param	    	rounding		''=No rounding
+ * 									'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
+ *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
+ *									'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
+ * 	\param			alreadysqlnb	Put 1 if you know that content is already universal format number
+ *	\return			string			Amount with universal numeric format (Example: '99.99999')
+ *	\seealso		price			Opposite function of price2num
  */
-function price2num($amount,$rounding='',$alreadysqlnb=-1)
+function price2num($amount,$rounding='',$alreadysqlnb=0)
 {
 	global $langs,$conf;
 
 	// Round PHP function does not allow number like '1,234.56' nor '1.234,56' nor '1 234,56'
 	// Numbers must be '1234.56'
-	// Decimal delimiter for database SQL request must be '.'
+	// Decimal delimiter for PHP and database SQL requests must be '.'
 	$dec=','; $thousand=' ';
 	if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
 	if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
@@ -2122,7 +2123,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=-1)
 		$amount=str_replace($dec,'.',$amount);
 	}
 
-	// Now if rounding required
+	// Now, make a rounding if required
 	if ($rounding)
 	{
 		$nbofdectoround='';

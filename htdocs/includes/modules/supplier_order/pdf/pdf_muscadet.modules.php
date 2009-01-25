@@ -572,7 +572,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		// Montants exprim�s en     (en tab_top - 1
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);
-		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentities("Currency".$conf->monnaie));
+		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
 		$pdf->Text($this->page_largeur - $this->marge_droite - $pdf->GetStringWidth($titre), $tab_top-1, $titre);
 
 		$pdf->SetDrawColor(128,128,128);
@@ -690,7 +690,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->SetFont('Arial','B',11);
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($mysoc->nom), 0, 'L');
 
-			// Caract�ristiques emetteur
+			// Caracteristiques emetteur
 			$carac_emetteur = '';
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->adresse);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->cp).' '.$outputlangs->convToOutputCharset($mysoc->ville);
@@ -723,17 +723,22 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);
 
-			// Nom client
-			$pdf->SetXY(102,$posy+3);
-			$pdf->SetFont('Arial','B',11);
-			$pdf->MultiCell(106,4, $outputlangs->convToOutputCharset($object->client->nom), 0, 'L');
+			$carac_client_name = $outputlangs->convToOutputCharset($object->client->nom);
 
-			// Caract�ristiques client
 			$carac_client=$outputlangs->convToOutputCharset($object->client->adresse);
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
+
+			// Numero TVA intracom
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
+
+			// Show customer/recipient
+			$pdf->SetXY(102,$posy+3);
+			$pdf->SetFont('Arial','B',11);
+			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
+
 			$pdf->SetFont('Arial','',9);
-			$pdf->SetXY(102,$posy+8);
+			$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
+			$pdf->SetXY(102,$posy+6);
 			$pdf->MultiCell(86,4, $carac_client);
 		}
 	}
