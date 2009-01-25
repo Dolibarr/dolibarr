@@ -269,6 +269,7 @@ class DoliDb
 	 */
 	function close()
 	{
+		dolibarr_syslog("DoliDB::disconnect",LOG_DEBUG);
 		return mysql_close($this->db);
 	}
 

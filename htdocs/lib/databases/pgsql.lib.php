@@ -55,7 +55,7 @@ class DoliDb
     var $ok;
     var $error;
     var $lasterror;
- 
+
 
 
     /**
@@ -142,7 +142,7 @@ class DoliDb
         return $this->ok;
     }
 
-    
+
     /**
 	 *	\brief		Convert a SQL request in mysql syntax to database syntax
 	 * 	\param		line		SQL request line to convert
@@ -151,7 +151,7 @@ class DoliDb
 	function convertSQLFromMysql($line)
 	{
 		# comments or empty lines
-    	if (eregi('^-- \$Id',$line)) { 
+    	if (eregi('^-- \$Id',$line)) {
     		return '';
 		}
 		# comments or empty lines
@@ -162,12 +162,12 @@ class DoliDb
     	if ($create_sql != "")
     	{ 		# we are inside create table statement so lets process datatypes
     		if (eregi('(ISAM|innodb)',$line)) { # end of create table sequence
-    			$line=eregi_replace('\) *type=(MyISAM|innodb);',');');  
-    			$line=eregi_replace('\) *engine=(MyISAM|innodb);',');');  
-    		} 
+    			$line=eregi_replace('\) *type=(MyISAM|innodb);',');');
+    			$line=eregi_replace('\) *engine=(MyISAM|innodb);',');');
+    		}
 
             # int, auto_increment -> serial
-//    		} elsif (/^[\s\t]*(\w*)\s*.*int.*auto_increment/i) { 		
+//    		} elsif (/^[\s\t]*(\w*)\s*.*int.*auto_increment/i) {
 //    			$seq = qq~${table}_${1}_seq~;
 //    			s/[\s\t]*([a-zA-Z_0-9]*)\s*.*int.*auto_increment[^,]*/  $1 SERIAL PRIMARY KEY/ig;
 //    			$create_sql.=$_;
@@ -186,44 +186,44 @@ class DoliDb
     			s/\w*int\(\d+\)/$out/g;
     		}
 */
-    		$line=eregi_replace('tinyint','smallint');  
-    
+    		$line=eregi_replace('tinyint','smallint');
+
     		# nuke unsigned
     		if (eregi_replace('(int\w+|smallint)\s+unsigned','smallint',$reg))
     		{
-    			$line=eregi_replace('(int\w+|smallint)\s+unsigned',$reg[1]);  
+    			$line=eregi_replace('(int\w+|smallint)\s+unsigned',$reg[1]);
     		}
 
-    
+
     		# blob -> text
-   			$line=eregi_replace('\w*blob','text');  
+   			$line=eregi_replace('\w*blob','text');
 
     		# tinytext/mediumtext -> text
-   			$line=eregi_replace('tinytext','text');  
-   			$line=eregi_replace('mediumtext','text');  
-    
+   			$line=eregi_replace('tinytext','text');
+   			$line=eregi_replace('mediumtext','text');
+
     		# char -> varchar
     		# PostgreSQL would otherwise pad with spaces as opposed
     		# to MySQL! Your user interface may depend on this!
 //    		s/(\s+)char/${1}varchar/gi;
-    
+
     		# nuke date representation (not supported in PostgreSQL)
 //    		s/datetime default '[^']+'/datetime/i;
 //    		s/date default '[^']+'/datetime/i;
 //    		s/time default '[^']+'/datetime/i;
-    
+
     		# change not null datetime field to null valid ones
     		# (to support remapping of "zero time" to null
-   			$line=eregi_replace('datetime not null','datetime');  
-   			$line=eregi_replace('datetime','timestamp');  
-    
+   			$line=eregi_replace('datetime not null','datetime');
+   			$line=eregi_replace('datetime','timestamp');
+
     		# nuke size of timestamp
 //    		s/timestamp\([^)]*\)/timestamp/i;
-    
+
     		# double -> real
 //    		s/^double/real/i;
 //    		s/(\s*)double/${1}real/i;
-    
+
     		# unique key(field1,field2)
 /*    		if (/unique key\s*\((\w+\s*,\s*\w+)\)/i) {
     		    s/unique key\s*\((\w+\s*,\s*\w+)\)/UNIQUE\($1\)/i;
@@ -237,7 +237,7 @@ class DoliDb
                 $create_sql.=$_;
     		    next;
     		}
-*/    
+*/
             # unique key [name] (field)
 /*            if (/unique key\s*(\w*)\s*\((\w+)\)/i) {
                 s/unique key\s*(\w*)\s*\((\w+)\)/UNIQUE\($2\)/i;
@@ -266,30 +266,30 @@ class DoliDb
                 $create_index .= "CREATE INDEX $idxname ON $table ($fieldlist);\n";
                 next;
             }
-*/            
+*/
             # index(field)
 /*            if (/index\s*(\w*)\s*\((\w+)\)/i) {
                 my $idxname=($1?"$1":"idx_${table}_$2");
                 $create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
                 next;
             }
-*/            
+*/
             # primary key
 /*    		if (/\bkey\b/i && !/^\s+primary key\s+/i) {
     			s/KEY(\s+)[^(]*(\s+)/$1 UNIQUE $2/i;		 # hack off name of the non-primary key
     		}
-*/    
+*/
             # key(xxx)
 /*            if (/key\s*\((\w+)\)/i) {
                 my $idxname="idx_${table}_$1";
                 $create_index .= "CREATE INDEX $idxname ON $table ($1);\n";
                 next;
             }
-*/            
+*/
     		# Quote column names
 /*    		s/(^\s*)([^\s\-\(]+)(\s*)/$1"$2"$3/gi if (!/\bkey\b/i);
-*/  
-    		# Remap colums with names of existing system attribute 
+*/
+    		# Remap colums with names of existing system attribute
 /*    		if (/"oid"/i) {
     			s/"oid"/"_oid"/g;
     			print STDERR "WARNING: table $table uses column \"oid\" which is renamed to \"_oid\"\nYou should fix application manually! Press return to continue.";
@@ -309,13 +309,13 @@ class DoliDb
     			s!\x85!... !g;	# \ldots
     			s!\x92!`!g;
     		}
-*/    
+*/
     		# fix dates '0000-00-00 00:00:00' (should be null)
 /*    		s/'0000-00-00 00:00:00'/null/gi;
     		s/'0000-00-00'/null/gi;
     		s/'00:00:00'/null/gi;
     		s/([12]\d\d\d)([01]\d)([0-3]\d)([0-2]\d)([0-6]\d)([0-6]\d)/'$1-$2-$3 $4:$5:$6'/;
-    
+
     		if (/create\s+table\s+(\w+)/i) {
     			$create_sql = $_;
     			/create\s*table\s*(\w+)/i;
@@ -325,11 +325,11 @@ class DoliDb
     		}
 */
     	} # end of if inside create_table
-		
-		
+
+
 		return $line;
 	}
-        
+
     /**
         \brief      Selectionne une database.
         \param		database		nom de la database
@@ -396,7 +396,7 @@ class DoliDb
 			}
 			return $vlist[0].$vlist[1].$vlist[2];
 	  }
-  
+
     /**
             \brief          Renvoie la version du serveur dans un tableau
             \return	        array  		Tableau de chaque niveau de version
@@ -412,7 +412,8 @@ class DoliDb
     */
     function close()
     {
-        return pg_close($this->db);
+		dolibarr_syslog("DoliDB::disconnect",LOG_DEBUG);
+    	return pg_close($this->db);
     }
 
 
@@ -448,7 +449,7 @@ class DoliDb
         if ($this->transaction_opened<=1)
         {
             $ret=$this->query("COMMIT;");
-			if ($ret) 
+			if ($ret)
 			{
 				$this->transaction_opened=0;
 				dolibarr_syslog("COMMIT Transaction",LOG_DEBUG);
@@ -491,11 +492,11 @@ class DoliDb
     function query($query)
     {
         $query = trim($query);
-        
+
 		if ($this->forcecharset=="UTF-8"){
 					$buffer=utf8_encode ($buffer);
 		}
-		$ret = pg_query($this->db, $query);	
+		$ret = pg_query($this->db, $query);
         if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
         {
             // Si requete utilisateur, on la sauvegarde ainsi que son resultset
@@ -622,7 +623,7 @@ class DoliDb
 			{
 				if (! $return) $return.=' ORDER BY ';
 				else $return.=',';
-				
+
 				$return.=$val;
 				if ($sortorder) $return.=' '.$sortorder;
 			}
@@ -633,8 +634,8 @@ class DoliDb
 			return '';
 		}
     }
-	
-	
+
+
 	/**
         \brief      Escape a string to insert data.
         \param	    stringtoencode		String to escape
@@ -682,7 +683,7 @@ class DoliDb
 		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 		return $date;
 	}
-	
+
 	/**
 	 *   \brief     Convert (by PHP) a GM Timestamp date into a GM string date to insert into a date field.
 	 *              Function to use to build INSERT, UPDATE or WHERE predica
@@ -693,7 +694,7 @@ class DoliDb
 	{
 		return adodb_strftime("%Y%m%d%H%M%S",$param,true);
 	}*/
-	
+
 	/**
 	 *	\brief  	Convert (by PHP) a GM string date into a GM Timestamps date
 	 *	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
@@ -707,7 +708,7 @@ class DoliDb
 		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
 		return $date;
 	}*/
-	
+
     /**
      *   \brief      Formatage d'un if SQL
      *   \param		test            chaine test
@@ -834,7 +835,7 @@ class DoliDb
     {
 		if (empty($charset))   $charset=$this->forcecharset;
 		if (empty($collation)) $collation=$this->collation;
-		
+
     	$ret=$this->query('CREATE DATABASE '.$database.' OWNER '.$this->db_user.' ENCODING \''.$charset.'\' ;');
         return $ret;
     }
@@ -850,7 +851,7 @@ class DoliDb
         return  $this->results;
     }
 
-	
+
 	/**
 			\brief      Create a user
 			\param	    dolibarr_main_db_host 		Ip serveur
@@ -869,28 +870,28 @@ class DoliDb
 		{
 			return -1;
 		}
-		
+
 		return 1;
 	}
-	
+
 	function getDefaultCharacterSetDatabase(){
 		 $resql=$this->query('SHOW SERVER_ENCODING');
 	    $liste=$this->fetch_array($resql);
 	    return $liste['server_encoding'];
 	}
-	
+
 	function getListOfCharacterSet(){
 		 $resql=$this->query('SHOW CHARSET');
 		$liste = array();
-		if ($resql) 
+		if ($resql)
 			{
 			$i = 0;
 			while ($obj = $this->fetch_object($resql) )
 			{
 				$liste[$i]['charset'] = $obj->Charset;
 				$liste[$i]['description'] = $obj->Description;
-				$i++;           
-			}   
+				$i++;
+			}
 	    	$this->free($resql);
 	  	} else {
 	  		// version Mysql < 4.1.1
@@ -898,7 +899,7 @@ class DoliDb
 	  	}
     	return $liste;
 	}
-	
+
 	function getDefaultCollationDatabase(){
 		$resql=$this->query('SHOW VARIABLES LIKE \'collation_database\'');
 		 if (!$resql)
@@ -909,18 +910,18 @@ class DoliDb
 	    $liste=$this->fetch_array($resql);
 	    return $liste['Value'];
 	}
-	
+
 	function getListOfCollation(){
 		 $resql=$this->query('SHOW COLLATION');
 		$liste = array();
-		if ($resql) 
+		if ($resql)
 			{
 			$i = 0;
 			while ($obj = $this->fetch_object($resql) )
 			{
 				$liste[$i]['collation'] = $obj->Collation;
-				$i++;           
-			}   
+				$i++;
+			}
 	    	$this->free($resql);
 	  	} else {
 	  		// version Mysql < 4.1.1
@@ -928,6 +929,6 @@ class DoliDb
 	  	}
     	return $liste;
 	}
-	
+
 }
 ?>

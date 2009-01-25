@@ -48,7 +48,7 @@ class DoliDb
 	var $versionmin=array(4,1,0);
 	//! Resultset of last request
 	var $results;
-	//! 1 if connected, 0 else  
+	//! 1 if connected, 0 else
 	var $connected;
 	//! 1 if database selected, 0 else
 	var $database_selected;
@@ -162,7 +162,7 @@ class DoliDb
 		{
 			// Pas de selection de base demandee, ok ou ko
 			$this->database_selected = 0;
-			
+
 			if ($this->connected)
 			{
 				// If client connected with different charset than Dolibarr HTML output
@@ -275,6 +275,7 @@ class DoliDb
 	 */
 	function close()
 	{
+		dolibarr_syslog("DoliDB::disconnect",LOG_DEBUG);
 		return mysqli_close($this->db);
 	}
 
@@ -562,7 +563,7 @@ class DoliDb
 		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 		return $date;
 	}
-	
+
 	/**
 	 *   \brief     Convert (by PHP) a GM Timestamp date into a GM string date to insert into a date field.
 	 *              Function to use to build INSERT, UPDATE or WHERE predica
@@ -573,7 +574,7 @@ class DoliDb
 	{
 		return adodb_strftime("%Y%m%d%H%M%S",$param,true);
 	}*/
-	
+
 	/**
 	 *	\brief  	Convert (by PHP) a GM string date into a GM Timestamps date
 	 *	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
@@ -677,7 +678,7 @@ class DoliDb
 			1217 => 'DB_ERROR_CHILD_EXISTS',
 			1451 => 'DB_ERROR_CHILD_EXISTS'
 		     );
-		
+
 			if (isset($errorcode_map[mysqli_errno($this->db)]))
 			{
 				return $errorcode_map[mysqli_errno($this->db)];
@@ -744,7 +745,7 @@ class DoliDb
 	{
 		if (empty($charset))   $charset=$this->forcecharset;
 		if (empty($collation)) $collation=$this->collation;
-		
+
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
 		$sql = 'CREATE DATABASE '.$database;
 		$sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;

@@ -107,6 +107,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 		$includeconferror='ErrorBadFormatForConfFile';
 	}
 }
+$conf->global->MAIN_LOGTOHTML=1;
 
 
 // Define prefix
@@ -294,7 +295,7 @@ function pFooter($nonext=0,$setuplang='')
     print '</form>'."\n";
 
     // If there is some logs in buffer to show
-    if (sizeof($conf->logbuffer))
+    if (isset($conf->logbuffer) && sizeof($conf->logbuffer))
     {
 		print "\n";
 		print "<!-- Start of log output\n";

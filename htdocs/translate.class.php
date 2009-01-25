@@ -522,10 +522,12 @@ class Translate {
     {
     	global $conf;
 
-        // Test si fichier dans repertoire de la langue
+
+        // Test if file is in lang directory
 		foreach($this->dir as $searchdir)
 		{
 	        $htmlfile=($searchdir."/langs/".$this->defaultlang."/".$filename);
+			dolibarr_syslog('Translate::print_file search file '.$htmlfile, LOG_DEBUG);
 	        if (is_readable($htmlfile))
 	        {
 	        	$content=file_get_contents($htmlfile);
@@ -535,20 +537,24 @@ class Translate {
 		        else print $content;
 	            return true;
 	        }
+	        else dolibarr_syslog('Translate::print_file not found', LOG_DEBUG);
 
 	        if ($searchalt) {
 	            // Test si fichier dans repertoire de la langue alternative
-	            if ($this->defaultlang != "en_US") $htmlfilealt = $searchdir."/en_US/".$filename;
+	            if ($this->defaultlang != "en_US") $htmlfilealt = $searchdir."/langs/en_US/".$filename;
 	            else $htmlfilealt = $searchdir."/langs/fr_FR/".$filename;
-	            if (is_readable($htmlfilealt))
+				dolibarr_syslog('Translate::print_file search alt file '.$htmlfilealt, LOG_DEBUG);
+    			//print 'getcwd='.getcwd().' htmlfilealt='.$htmlfilealt.' X '.file_exists(getcwd().'/'.$htmlfilealt);
+				if (is_readable($htmlfilealt))
 	            {
-		            $content=file_get_contents($htmlfile);
+		            $content=file_get_contents($htmlfilealt);
 	            	$isutf8=utf8_check($content);
 		            if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content);
 		            elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content);
 		            else print $content;
 		            return true;
 	            }
+	        	else dolibarr_syslog('Translate::print_file not found', LOG_DEBUG);
 	        }
 		}
 

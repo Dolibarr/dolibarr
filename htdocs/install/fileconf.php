@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  *
@@ -56,9 +56,9 @@ dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
 
 pHeader($langs->trans("ConfigurationFile"),"etape0");
 
-if ($force_install_message_doliwamp)
+if (! empty($force_install_message_doliwamp))
 {
-	print $langs->trans("KeepDefaultValues").'<br>';	
+	print $langs->trans("KeepDefaultValues").'<br>';
 }
 
 ?>
@@ -118,7 +118,7 @@ print $langs->trans("Examples").":<br>";
 <td valign="top" class="label"><b>
 <?php print $langs->trans("DocumentsDirectory"); ?>
 </b></td>
-<?php 
+<?php
 if (empty($dolibarr_main_data_root))
 {
     // Si le repertoire documents non defini, on en propose un par defaut
@@ -149,7 +149,7 @@ print $langs->trans("Examples").":<br>";
 <td valign="top" class="label"><b>
 <?php echo $langs->trans("URLRoot"); ?>
 </b></td><td valign="top" class="label"><input type="text" size="60" name="main_url" value="
-<?php 
+<?php
 if (isset($main_url) && $main_url)
   $dolibarr_main_url_root=$main_url;
 if (! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
@@ -164,7 +164,7 @@ if (! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 	}
 	# Si SCRIPT_URI, SERVER_URL, DOCUMENT_URI non d�fini (Ex: Apache 2.0.44 pour Windows)
 	else
-	{										
+	{
 		$proto='http';
 		if (! empty($_SERVER["HTTP_HOST"])) $serverport=$_SERVER["HTTP_HOST"];
 		else $serverport=$_SERVER["SERVER_NAME"];
@@ -230,7 +230,7 @@ while (($file = readdir($handle))!==false)
 		if ($type=='mysqli') { $versionbasemin=array(4,1,0); $testfunction='mysqli_connect'; }
 		if ($type=='pgsql')  { $versionbasemin=array(8,1,0); $testfunction='pg_connect'; }
 		if ($type=='mssql')  { $versionbasemin=array(2000);  $testfunction='mssql_connect'; }
-		
+
 		// Remarques
 		$note='';
 		if ($type=='mysql') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
@@ -339,7 +339,7 @@ while (($file = readdir($handle))!==false)
 <?php echo $langs->trans("CreateUser"); ?>
 </td>
 
-<td class="label" valign="top"><input type="checkbox" name="db_create_user"<?php if ($force_install_createuser) print ' checked="on"'; ?>></td>
+<td class="label" valign="top"><input type="checkbox" name="db_create_user"<?php if (! empty($force_install_createuser)) print ' checked="on"'; ?>></td>
 <td class="comment">
 <?php echo $langs->trans("CheckToCreateUser"); ?>
 </td>
@@ -379,6 +379,7 @@ while (($file = readdir($handle))!==false)
 
 <?php
 
-pFooter($err,$setuplang);
+$db->close();
 
+pFooter($err,$setuplang);
 ?>

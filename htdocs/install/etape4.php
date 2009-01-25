@@ -73,7 +73,7 @@ if ($db->ok == 1)
 	{
 		print '<br>';
 		print '<div class="error">'.$langs->trans("PasswordsMismatch").'</div>';
-		$err=1;
+		$err=0;	// We show button
 	}
 
 	if (isset($_GET["error"]) && $_GET["error"] == 2)
@@ -82,14 +82,14 @@ if ($db->ok == 1)
 		print '<div class="error">';
 		print $langs->trans("PleaseTypePassword");
 		print '</div>';
-		$err=1;
+		$err=0;	// We show button
 	}
 
 	if (isset($_GET["error"]) && $_GET["error"] == 3)
 	{
 		print '<br>';
 		print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
-		$err=1;
+		$err=0;	// We show button
 	}
 
 }

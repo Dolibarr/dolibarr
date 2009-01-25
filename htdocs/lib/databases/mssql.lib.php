@@ -224,6 +224,7 @@ class DoliDb
 	 */
 	function close()
 	{
+		dolibarr_syslog("DoliDB::disconnect",LOG_DEBUG);
 		return mssql_close($this->db);
 	}
 
@@ -371,7 +372,7 @@ class DoliDb
 
 				$result = mssql_query("SELECT @@ERROR as code", $this->db);
 				$row = mssql_fetch_array($result);
-					
+
 				$this->lasterror = $this->error();
 				$this->lasterrno = $row["code"];
 			}
@@ -557,7 +558,7 @@ class DoliDb
 		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 		return $date;
 	}
-	
+
 	/**
 	 *   \brief     Convert (by PHP) a GM Timestamp date into a GM string date to insert into a date field.
 	 *              Function to use to build INSERT, UPDATE or WHERE predica
@@ -568,7 +569,7 @@ class DoliDb
 	{
 		return adodb_strftime("%Y%m%d%H%M%S",$param,true);
 	}*/
-	
+
 	/**
 	 *	\brief  	Convert (by PHP) a GM string date into a GM Timestamps date
 	 *	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
@@ -671,7 +672,7 @@ class DoliDb
 			1217 => 'DB_ERROR_CHILD_EXISTS',
 			1451 => 'DB_ERROR_CHILD_EXISTS'
 			);
-				
+
 			if (isset($errorcode_map[$this->lasterrno]))
 			{
 				return $errorcode_map[$this->lasterrno];
