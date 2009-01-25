@@ -20,7 +20,8 @@ complete release of Dolibarr, step by step.
 - Upload NLTechno web site on web server.
 - Move links in files dir on server to point to new files.
 
-- Upload files on dolibarr.org
+- Upload file (tgz) on dolibarr.org and update exe link.
+- Upload pad files on dolibarr.org
 - Upload files on sourceforge or Dolibarr.org
 - Send mail on mailings-list
 - Send a news on OpenSource web sites (if major beta or release)
