@@ -873,6 +873,7 @@ SyslogFacility=Facility
 SyslogLevel=Niveau
 SyslogSimpleFile=Fichier
 SyslogFilename=Nom et chemin du fichier
+YouCanUseDOL_DATA_ROOT=Vous pouvez utiliser DOL_DATA_ROOT/dolibarr.log pour une log dans le répertoire 'documents' de Dolibarr.
 ErrorUnknownSyslogConstant=La constante %s n'est pas une constante syslog connue
 ##### Donations #####
 DonationsSetup=Configuration du module Dons

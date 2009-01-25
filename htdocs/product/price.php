@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -154,7 +154,7 @@ if ($conf->global->PRODUIT_MULTIPRICES)
 			print ' '.$langs->trans($product->price_base_type);
 		}
 		print '</td></tr>';
-		
+
 		// Prix minimum
 		print '<tr><td>'.$langs->trans("MinPrice").' '.$i.'</td><td>';
 		if ($product->multiprices_base_type["$i"] == 'TTC')
@@ -236,7 +236,7 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 {
 	print_fiche_titre($langs->trans("NewPrice"),'','');
 
-	if (! $conf->global->PRODUIT_MULTIPRICES)
+	if (empty($conf->global->PRODUIT_MULTIPRICES))
 	{
 		print '<form action="price.php?id='.$product->id.'" method="post">';
 		print '<input type="hidden" name="action" value="update_price">';
@@ -266,7 +266,7 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 			print '<input name="price" size="10" value="'.price($product->price).'">';
 		}
 		print '</td></tr>';
-		
+
 		print '<tr><td>' ;
 		$text=$langs->trans('MinPrice') ;
 		print $html->textwithhelp($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
@@ -325,22 +325,18 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 				print '<td><input name="price_min_'.$i.'" size="10" value="'.price($product->multiprices_min["$i"]).'">';
 			}
 			print '</td></tr>';
-			
+
 			// VAT
 			print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
 			print $html->select_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'');
 			print '</td></tr>';
-	   
+
 			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 			print '</table>';
 			print '</form>';
 		}
 
-		print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-		print '</table>';
-		print '</form>';
 	}
 }
 
@@ -406,7 +402,7 @@ if ($result)
 			print "<tr $bc[$var]>";
 			// Date
 			print "<td>".dolibarr_print_date($objp->dp,"dayhour")."</td>";
-				
+
 			// Price level
 			if ($conf->global->PRODUIT_MULTIPRICES)
 			{

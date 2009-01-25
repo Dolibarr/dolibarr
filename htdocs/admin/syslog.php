@@ -120,7 +120,9 @@ print '</td></tr>';
 
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"140\"><input ".$bc[$var]." type=\"radio\" name=\"optionlogoutput\" value=\"file\"".($syslogfile?" checked":"")."> ".$langs->trans("SyslogSimpleFile")."</td>";
-print '<td colspan="2">'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" size="60" value="'.$defaultsyslogfile.'"></td></tr>';
+print '<td colspan="2">'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" size="60" value="'.$defaultsyslogfile.'">';
+print ' '.img_info($langs->trans("YouCanUseDOL_DATA_ROOT"));
+print '</td></tr>';
 
 print "</table>\n";
 print "</form>\n";

@@ -165,6 +165,10 @@ class Product extends CommonObject
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
 		$this->libelle = trim($this->libelle);
+		$this->price_ttc=price2num($this->price_ttc);
+		$this->price=price2num($this->price);
+		$this->price_min_ttc=price2num($this->price_min_ttc);
+		$this->price_min=price2num($this->price_min);
 		if (empty($this->tva_tx))    $this->tva_tx = 0;
 		if (empty($this->price))     $this->price = 0;
 		if (empty($this->price_min)) $this->price_min = 0;
@@ -185,13 +189,12 @@ class Product extends CommonObject
 			$price_ht = price2num($this->price,'MU');
 			$price_ttc = price2num($this->price * (1 + ($this->tva_tx / 100)),'MU');
 		}
-
-		if (($this->price_min_ttc > 0)&&($this->price_base_type == 'TTC'))
+		if (($this->price_min_ttc > 0) && ($this->price_base_type == 'TTC'))
 		{
 			$price_min_ttc = price2num($this->price_min_ttc,'MU');
 			$price_min_ht = price2num($this->price_min_ttc / (1 + ($this->tva_tx / 100)),'MU');
 		}
-		if (($this->price_min > 0)&&($this->price_base_type != 'TTC'))
+		if (($this->price_min > 0) && ($this->price_base_type != 'TTC'))
 		{
 			$price_min_ht = price2num($this->price_min,'MU');
 			$price_min_ttc = price2num($this->price_min * (1 + ($this->tva_tx / 100)),'MU');
@@ -204,7 +207,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		dolibarr_syslog("Product::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Categorie : ".$this->catid);
+		dolibarr_syslog("Product::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
 
 		if ($this->ref)
 		{
@@ -795,7 +798,7 @@ class Product extends CommonObject
 	function update_price($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0)
 	{
 		global $conf,$langs;
-		
+
 		dolibarr_syslog("Product::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level, LOG_DEBUG);
 
 		if ($newvat == '') $newvat=$this->tva_tx;
@@ -990,7 +993,7 @@ class Product extends CommonObject
 					if ( $result )
 					{
 						$result = $this->db->fetch_array();
-							
+
 						$this->multiprices[$i]=$result["price"];
 						$this->multiprices_ttc[$i]=$result["price_ttc"];
 						$this->multiprices_min[$i]=$result["price_min"];
@@ -1003,7 +1006,7 @@ class Product extends CommonObject
 						return -1;
 					}
 				}
-					
+
 			}
 
 			$res=$this->load_stock();
@@ -1654,7 +1657,7 @@ class Product extends CommonObject
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur ";
 				$sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
 				$sql .= " VALUES (".$this->db->idate(mktime()).", ".$this->id.", ".$id_fourn.", '".$ref_fourn."', ".$user->id.")";
-					
+
 				if ($this->db->query($sql))
 				{
 					$this->product_fourn_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur");
@@ -2312,7 +2315,7 @@ class Product extends CommonObject
 					$this->stock_reel = $this->stock_reel + $row[0];
 					$i++;
 				}
-					
+
 				$this->no_stock = 0;
 			}
 			else
@@ -2580,10 +2583,10 @@ class Product extends CommonObject
 		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
 		$filename = eregi_replace($dir,'',$file); // Nom du fichier
-			
+
 		// On efface l'image d'origine
 		unlink($file);
-			
+
 		// Si elle existe, on efface la vignette
 		if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$filename,$regs))
 		{

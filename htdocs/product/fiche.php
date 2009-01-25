@@ -112,8 +112,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 			{
 				if($_POST["price_".$i])
 				{
-					$price = price2num($_POST["price_".$i]);
-					$product->multiprices["$i"] = $price;
+					$product->multiprices["$i"] = price2num($_POST["price_".$i],'MU');
 					$product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
 				}
 				else
@@ -128,7 +127,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 		// Produit spécifique
 		// $_POST n'est pas utilise dans la classe Product
 		// mais dans des classes qui hérite de Product
-		$id = $product->create($user, $_POST);
+		$id = $product->create($user);
 
 		if ($id > 0)
 		{
@@ -240,7 +239,7 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 
 					$_error = 1;
 					$_GET["action"] = "";
-						
+
 					$mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$product->ref).'</div>';
 					//dolibarr_print_error($product->db);
 				}
@@ -641,7 +640,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 			$html->select_array('finished',$statutarray,$_POST["finished"]);
 			print '</td></tr>';
 		}
-		
+
 		//Duration
 		if ($_GET["type"] == 1)
 		{
@@ -868,7 +867,7 @@ if ($_GET["id"] || $_GET["ref"])
 						print ' '.$langs->trans($product->price_base_type);
 					}
 					print '</td></tr>';
-					
+
 					// Prix mini
 					print '<tr><td>'.$langs->trans("MinPrice").' '.$i.'</td><td>';
 					if ($product->multiprices_base_type["$i"] == 'TTC')
@@ -879,7 +878,7 @@ if ($_GET["id"] || $_GET["ref"])
 					{
 						print price($product->multiprices_min["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
 					}
-					print '</td></tr>';					
+					print '</td></tr>';
 				}
 			}
 			else
@@ -895,7 +894,7 @@ if ($_GET["id"] || $_GET["ref"])
 					print price($product->price).' '.$langs->trans($product->price_base_type);
 				}
 				print '</td></tr>';
-				
+
 				// Prix mini
 				print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
 				if ($product->price_base_type == 'TTC')
@@ -916,7 +915,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
 			print $product->getLibStatut(2);
 			print '</td></tr>';
-				
+
 			// Description
 			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
 
@@ -927,7 +926,7 @@ if ($_GET["id"] || $_GET["ref"])
 				print $product->getLibFinished();
 				print '</td></tr>';
 			}
-				
+
 			if ($product->isservice())
 			{
 				// Duration
@@ -969,7 +968,7 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				print "</td></tr>\n";
 			}
-				
+
 			// Note
 			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';
 
@@ -1019,7 +1018,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  }
 	  print '</select>';
 	  print '</td></tr>';
-	   
+
 	  // Description (utilisé dans facture, propale...)
 	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
 	  print "\n";
