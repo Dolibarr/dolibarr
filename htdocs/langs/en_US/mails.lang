@@ -63,8 +63,8 @@ NoAttachedFiles=No attached files
 MailingModuleDescContactCompanies=Contacts of all third parties (customer, prospect, supplier, ...)
 MailingModuleDescDolibarrUsers=All Dolibarr users with emails
 MailingModuleDescFundationMembers=Fundation members with emails
-MailingModuleDescEmailsFromFile=EMails from a text file (email;name;surname)
-MailingModuleDescContactsCategories=Contacts of all third parties (by category)
+MailingModuleDescEmailsFromFile=EMails from a text file (email;name;surname;comments)
+MailingModuleDescContactsCategories=Third parties with emails (by category)
 
 LineInFile=Line %s in file
 RecipientSelectionModules=Defined requests for recipients' selection

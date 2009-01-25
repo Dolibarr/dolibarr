@@ -18,26 +18,24 @@
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 
 
-// CHANGE THIS: Class name must be called mailing_xxx with xxx=name of your selector
-
 /**
-	    \class      mailing_kiwi
-		\brief      Class to manage a list of personalised recipients for mailing feature
-*/
+ *	    \class      mailing_kiwi
+ *		\brief      Class to manage a list of personalised recipients for mailing feature
+ */
 class mailing_kiwi extends MailingTargets
 {
     // CHANGE THIS: Put here a name not already used
     var $name='ContactsCategories';
     // CHANGE THIS: Put here a description of your selector module.
-    // This label is used if no translation for MailingModuleDescXXX where XXX=name is found
-    var $desc="Contacts des tiers (par categorie)";
+    // This label is used if no translation found for key MailingModuleDescXXX where XXX=name is found
+    var $desc="Third parties (by categories)";
 	// CHANGE THIS: Set to 1 if selector is available for admin users only
     var $require_admin=0;
 
     var $require_module=array("categorie");
-    var $picto='contact';
+    var $picto='company';
     var $db;
-    
+
 
     // CHANGE THIS: Constructor name must be called mailing_xxx with xxx=name of your selector
     function mailing_categories($DB)
@@ -54,15 +52,21 @@ class mailing_kiwi extends MailingTargets
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
-        $cibles = array();
+    	global $langs;
+
+    	$cibles = array();
 
 	    // CHANGE THIS
 	    // Select the contacts from category
-		$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, llx_categorie.label, null as fk_contact, null as firstname
-		FROM llx_societe as s 
-		LEFT JOIN llx_categorie_societe ON llx_categorie_societe.fk_societe=s.rowid
-		LEFT JOIN llx_categorie ON llx_categorie.rowid = llx_categorie_societe.fk_categorie
-		WHERE llx_categorie.rowid='".$_POST['filter']."'";
+		$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname,";
+		if ($_POST['filter']) $sql.= " llx_categorie.label as label";
+		else $sql.=" null as label";
+		$sql.= " FROM llx_societe as s";
+		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie_societe ON llx_categorie_societe.fk_societe=s.rowid";
+		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie ON llx_categorie.rowid = llx_categorie_societe.fk_categorie";
+		$sql.= " WHERE s.email != ''";
+		if ($_POST['filter']) $sql.= " AND llx_categorie.rowid='".$_POST['filter']."'";
+        $sql.= " ORDER BY s.email";
 
 	        // Stocke destinataires dans cibles
         $result=$this->db->query($sql);
@@ -85,6 +89,7 @@ class mailing_kiwi extends MailingTargets
                     			'fk_contact' => $obj->fk_contact,
                     			'name' => $obj->name,
                     			'firstname' => $obj->firstname,
+                    			'other' => ($obj->label?$langs->transnoentities("Category").'='.$obj->label:''),
                     			'url' => $this->url($obj->id)
                     			);
                     $old = $obj->email;
@@ -101,11 +106,11 @@ class mailing_kiwi extends MailingTargets
             return -1;
         }
 
-		
+
         return parent::add_to_target($mailing_id, $cibles);
     }
-    
-    
+
+
     /**
 	 *		\brief		On the main mailing area, there is a box with statistics.
 	 *					If you want to add a line in this report you must provide an
@@ -116,7 +121,7 @@ class mailing_kiwi extends MailingTargets
 	function getSqlArrayForStats()
 	{
 	    // CHANGE THIS: Optionnal
-	    
+
 		//var $statssql=array();
         //$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";
 		return array();
@@ -131,9 +136,15 @@ class mailing_kiwi extends MailingTargets
      */
     function getNbOfRecipients()
     {
-        return '?'; 
+        $sql  = "SELECT count(distinct(s.email)) as nb";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+        $sql .= " WHERE s.email != ''";
+
+        // La requete doit retourner un champ "nb" pour etre comprise
+        // par parent::getNbOfRecipients
+        return parent::getNbOfRecipients($sql);
     }
-    
+
     /**
      *      \brief      This is to add a form filter to provide variant of selector
      *					If used, the HTML select must be called "filter"
@@ -142,10 +153,11 @@ class mailing_kiwi extends MailingTargets
     function formFilter()
     {
     	global $langs;
-    	
+
         $s='';
         $s.='<select name="filter" class="flat">';
-        
+		$s.='<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
+
         # Show categories
         $sql = "SELECT rowid, label, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie";
@@ -175,8 +187,8 @@ class mailing_kiwi extends MailingTargets
         return $s;
 
     }
-    
-    
+
+
     /**
      *      \brief      Can include an URL link on each record provided by selector
      *					shown on target page.
@@ -184,9 +196,11 @@ class mailing_kiwi extends MailingTargets
      */
     function url($id)
     {
-	    // CHANGE THIS: Optionnal
-
-        return '';
+    	//$companystatic=new Societe($this->db);
+    	//$companystatic->id=$id;
+    	//$companystatic->nom='';
+    	//return $companystatic->getNomUrl(1);	// Url too long
+        return '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$id.'">'.img_object('',"company").'</a>';
     }
 
 }

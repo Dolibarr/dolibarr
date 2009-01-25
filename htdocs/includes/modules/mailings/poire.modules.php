@@ -36,13 +36,13 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 class mailing_poire extends MailingTargets
 {
     var $name='ContactCompanies';                       // Identifiant du module mailing
-    var $desc='Contacts des societes';      			// Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $desc='Contacts des tiers (prospects, clients, fournisseurs...)';      			// Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
     var $require_module=array("commercial");            // Module mailing actif si modules require_module actifs
     var $require_admin=0;                               // Module mailing actif pour user admin ou non
     var $picto='contact';
-    
+
     var $db;
-    
+
 
     function mailing_poire($DB)
     {
@@ -61,8 +61,8 @@ class mailing_poire extends MailingTargets
 		return $statssql;
 	}
 
-    
-    /*
+
+    /**
      *		\brief		Return here number of distinct emails returned by your selector.
      *					For example if this selector is used to extract 500 different
      *					emails from a text file, this function must return 500.
@@ -78,10 +78,10 @@ class mailing_poire extends MailingTargets
 
         // La requete doit retourner un champ "nb" pour etre comprise
         // par parent::getNbOfRecipients
-        return parent::getNbOfRecipients($sql); 
+        return parent::getNbOfRecipients($sql);
     }
-    
-    
+
+
     /**
      *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
      *                  des destinataires de mailings
@@ -93,7 +93,7 @@ class mailing_poire extends MailingTargets
         $langs->load("companies");
         $langs->load("commercial");
         $langs->load("suppliers");
-        
+
         $s='';
         $s.='<select name="filter" class="flat">';
         $s.='<option value="all">'.$langs->trans("ContactsAllShort").'</option>';
@@ -123,8 +123,8 @@ class mailing_poire extends MailingTargets
         $s.='</select>';
         return $s;
     }
-    
-    
+
+
     /**
      *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
      *      \return     string      Url lien
@@ -133,8 +133,8 @@ class mailing_poire extends MailingTargets
     {
         return '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$id.'">'.img_object('',"contact").'</a>';
     }
-    
-    
+
+
     /**
      *    \brief      Ajoute destinataires dans table des cibles
      *    \param      mailing_id    Id du mailing concerné
@@ -143,7 +143,9 @@ class mailing_poire extends MailingTargets
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
-        $cibles = array();
+    	global $langs;
+
+    	$cibles = array();
 
 		# List prospects levels
 		$prospectlevel=array();
@@ -165,12 +167,14 @@ class mailing_poire extends MailingTargets
 		}
 		else dolibarr_print_error($this->db);
 
-		// La requete doit retourner: id, email, fk_contact, name, firstname
-        $sql = "SELECT c.rowid as id, c.email as email, c.rowid as fk_contact, c.name as name, c.firstname as firstname";
-        $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-        $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE s.rowid = c.fk_soc";
-        $sql .= " AND c.email != ''";
+		// La requete doit retourner: id, email, fk_contact, name, firstname, other
+        $sql = "SELECT c.rowid as id, c.email as email, c.rowid as fk_contact,";
+        $sql.= " c.name as name, c.firstname as firstname, c.civilite,";
+        $sql.= " s.nom as companyname";
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE s.rowid = c.fk_soc";
+        $sql.= " AND c.email != ''";
         foreach($filtersarray as $key)
         {
             if ($key == 'prospects') $sql.= " AND s.client=2";
@@ -179,7 +183,7 @@ class mailing_poire extends MailingTargets
             if ($key == 'customers') $sql.= " AND s.client=1";
             if ($key == 'suppliers') $sql.= " AND s.fournisseur=1";
         }
-        $sql .= " ORDER BY c.email";
+        $sql.= " ORDER BY c.email";
 		//print "x".$sql;
 
         // Stocke destinataires dans cibles
@@ -198,11 +202,15 @@ class mailing_poire extends MailingTargets
                 $obj = $this->db->fetch_object($result);
                 if ($old <> $obj->email)
                 {
-                    $cibles[$j] = array(
+                	$other='';
+                	if ($obj->companyname) { if ($other) $other.=';'; $other.=$langs->transnoentities("ThirdParty").'='.$obj->companyname; }
+                	if ($obj->civilite)    { if ($other) $other.=';'; $other.=$langs->transnoentities("Civility".$obj->civilite); }
+                	$cibles[$j] = array(
                     		'email' => $obj->email,
                     		'fk_contact' => $obj->fk_contact,
                     		'name' => $obj->name,
                     		'firstname' => $obj->firstname,
+                    		'other' => $other,
                     		'url' => $this->url($obj->id)
                     		);
                     $old = $obj->email;

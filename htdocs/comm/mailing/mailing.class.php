@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class Mailing extends CommonObject
 	var $error;
     var $element='mailing';
     var $table_element='mailing';
-	
+
     var $id;
 	var $statut;
 	var $titre;
@@ -225,9 +225,9 @@ class Mailing extends CommonObject
 	function createFromClone($fromid,$option1,$option2)
 	{
 		global $user,$langs;
-		
+
 		$error=0;
-		
+
 		$object=new Mailing($this->db);
 
 		$this->db->begin();
@@ -243,7 +243,7 @@ class Mailing extends CommonObject
 		// If no option copy content
 		if (empty($option1))
 		{
-			// Clear values	
+			// Clear values
 			$object->nbemail            = 0;
 			$object->titre              = $langs->trans("Draft").' '.mktime();
 			$object->sujet              = '';
@@ -265,19 +265,19 @@ class Mailing extends CommonObject
 		$result=$object->create($user);
 
 		// Other options
-		if ($result < 0) 
+		if ($result < 0)
 		{
 			$this->error=$object->error;
 			$error++;
 		}
-		
+
 		if (! $error)
 		{
-			
-			
-			
+
+
+
 		}
-		
+
 		// End
 		if (! $error)
 		{

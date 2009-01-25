@@ -162,7 +162,7 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 }
 else
 {
-	// Si non on le crée 
+	// Si non on le crée
 	dolibarr_install_syslog("check: we try to creat conf file '$conffile'");
 	$confexists=0;
 
@@ -250,7 +250,7 @@ else
 		print $langs->trans("ChooseYourSetupMode");
 
 		print '<table width="100%" cellspacing="1" cellpadding="4" border="1">';
-	  
+
 		print '<tr><td nowrap="nowrap"><b>'.$langs->trans("FreshInstall").'</b></td><td>';
 		print $langs->trans("FreshInstallDesc").'</td>';
 		print '<td align="center">';
@@ -269,7 +269,7 @@ else
 								array('from'=>'2.1.0', 'to'=>'2.2.0'),
 								array('from'=>'2.2.0', 'to'=>'2.4.0'),
 								array('from'=>'2.4.0', 'to'=>'2.5.0'),
-								//array('from'=>'2.5.0', 'to'=>'2.6.0')
+								array('from'=>'2.5.0', 'to'=>'2.6.0')
 								);
 		# Upgrade lines
 		foreach ($migrationscript as $migarray)

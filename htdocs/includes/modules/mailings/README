@@ -33,14 +33,14 @@ fill the $target PHP array with one record for each email your selector must ret
 
 You can choose the way you get data: From a file, a database. You are free,
 the only requirement is that the $target array is filled by records that are
-themselves array of: ('email', 'name', 'firstname').
+themselves array of: ('email', 'name', 'firstname', 'other').
 
 This is for example how you can fill the $target array:
 
 // ----- Your code start here -----
-$target[0]=array('email'=>'email_0','name'=>'name_0','firstname'=>'firstname_0');
+$target[0]=array('email'=>'email_0','name'=>'name_0','firstname'=>'firstname_0', 'other'=>'other_0');
 ...
-$target[n]=array('email'=>'email_n','name'=>'name_n','firstname'=>'firstname_n');
+$target[n]=array('email'=>'email_n','name'=>'name_n','firstname'=>'firstname_n', 'other'=>'other_n');
 // ----- Your code end here -----
 
 

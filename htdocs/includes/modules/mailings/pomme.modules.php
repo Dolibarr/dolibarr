@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ class mailing_pomme extends MailingTargets
 		return $statssql;
 	}
 
-    
+
     /*
      *		\brief		Return here number of distinct emails returned by your selector.
      *					For example if this selector is used to extract 500 different
@@ -77,10 +77,10 @@ class mailing_pomme extends MailingTargets
 
         // La requete doit retourner un champ "nb" pour etre comprise
         // par parent::getNbOfRecipients
-        return parent::getNbOfRecipients($sql); 
+        return parent::getNbOfRecipients($sql);
     }
 
-    
+
     /**
      *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
      *      \return     string      Url lien
@@ -90,7 +90,7 @@ class mailing_pomme extends MailingTargets
         return '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$id.'">'.img_object('',"user").'</a>';
     }
 
-    
+
     /**
      *    \brief      Ajoute destinataires dans table des cibles
      *    \param      mailing_id    Id du mailing concerné
@@ -99,13 +99,16 @@ class mailing_pomme extends MailingTargets
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
+    	global $langs;
+
         $cibles = array();
 
         // La requete doit retourner: id, email, fk_contact, name, firstname
-        $sql = "SELECT u.rowid as id, u.email as email, null as fk_contact, u.name as name, u.firstname as firstname";
-        $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-        $sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
-        $sql .= " ORDER BY u.email";
+        $sql = "SELECT u.rowid as id, u.email as email, null as fk_contact,";
+        $sql.= " u.name as name, u.firstname as firstname, u.login, u.office_phone";
+        $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+        $sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+        $sql.= " ORDER BY u.email";
 
         // Stocke destinataires dans cibles
         $result=$this->db->query($sql);
@@ -128,6 +131,7 @@ class mailing_pomme extends MailingTargets
                     			'fk_contact' => $obj->fk_contact,
                     			'name' => $obj->name,
                     			'firstname' => $obj->firstname,
+                    			'other' => $langs->transnoentities("Login").'='.$obj->login.';'.$langs->transnoentities("PhonePro").'='.$obj->office_phone,
                     			'url' => $this->url($obj->id)
                     			);
                     $old = $obj->email;

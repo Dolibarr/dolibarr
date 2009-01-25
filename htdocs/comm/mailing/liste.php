@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ require("./pre.inc.php");
 if (!$user->rights->mailing->lire) accessforbidden();
 
 // Sécurité accés client
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;
@@ -42,10 +42,16 @@ if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $_GET["page"] ;
 $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="m.date_creat";
 
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
 
+
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -67,7 +73,7 @@ if ($result)
   print_barre_liste($langs->trans("ListOfEMailings"), $page, "liste.php","",$sortfield,$sortorder,"",$num);
 
   $i = 0;
-  
+
   $addu = "&amp;sall=".$sall;
   print '<table class="liste">';
   print '<tr class="liste_titre">';
@@ -91,22 +97,22 @@ if ($result)
   print "</td>";
   print "</tr>\n";
   print '</form>';
-  
+
   $var=True;
 
   $email=new Mailing($db);
-  
+
   while ($i < min($num,$conf->liste_limit))
     {
       $obj = $db->fetch_object($result);
-      
+
       $var=!$var;
 
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$obj->rowid.'">';
       print img_object($langs->trans("ShowEMail"),"email").' '.stripslashes($obj->rowid).'</a></td>';
       print '<td>'.$obj->titre.'</td>';
-      print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
+      print '<td align="center">'.dolibarr_print_date($obj->datec,'day').'</td>';
       print '<td align="center">'.$obj->nbemail.'</td>';
       print '<td align="right">'.$email->LibStatut($obj->statut,5).'</td>';
       print "</tr>\n";

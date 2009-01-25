@@ -106,11 +106,11 @@ class mailing_peche extends MailingTargets
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
 		global $conf,$langs,$_FILES;
-		
+
 		$cibles = array();
 
 		$upload_dir=$conf->mailings->dir_temp;
-		
+
 		// Save file
 		if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
@@ -120,16 +120,16 @@ class mailing_peche extends MailingTargets
 			if ($result > 0)
 			{
 				$cpt=0;
-				
+
 				//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
 				//print_r($_FILES);
 				$file=$upload_dir . "/" . $_FILES['username']['name'];
 				$handle = @fopen($file, "r");
-				if ($handle) 
+				if ($handle)
 				{
 					$i = 0;
 		            $j = 0;
-					
+
             		$old = '';
 					while (!feof($handle))
 					{
@@ -139,6 +139,7 @@ class mailing_peche extends MailingTargets
 				        $email=$tab[0];
 				        $name=$tab[1];
 				        $firstname=$tab[2];
+				        $other=$tab[3];
 				        if (! empty($buffer))
 				        {
 			        		//print 'xx'.strlen($buffer).empty($buffer)."<br>\n";
@@ -151,13 +152,14 @@ class mailing_peche extends MailingTargets
 					                    			'email' => $email,
 					                    			'name' => $name,
 					                    			'firstname' => $firstname,
+													'other' => $other,
 					                    			'url' => $this->url($id)
 									);
 									$old = $email;
 									$j++;
 								}
 					        }
-					        else 
+					        else
 					        {
 					        	$i++;
 					        	$langs->load("errors");
@@ -166,8 +168,8 @@ class mailing_peche extends MailingTargets
 				        }
 				    }
 				    fclose($handle);
-				    
-				    if ($i > 0) 
+
+				    if ($i > 0)
 				    {
 				    	return -$i;
 				    }
@@ -177,7 +179,7 @@ class mailing_peche extends MailingTargets
 					$this->error = $langs->trans("ErrorFaildToOpenFile");
 					return -1;
 				}
-				
+
 				dolibarr_syslog(get_class($this)."::add_to_target mailing ".$cpt." targets found");
 			}
 			else if ($result < 0)

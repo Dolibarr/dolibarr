@@ -43,7 +43,7 @@ class MailingTargets
     {
         $this->db=$DB;
     }
-    
+
     /**     \brief      Renvoi un exemple de numérotation
      *      \return     string      Retourne la traduction de la clé MailingModuleDescXXX ou XXX nom du module, ou $this->desc si non trouvé
      */
@@ -52,7 +52,7 @@ class MailingTargets
         global $langs;
         $langs->load("mails");
         $transstring="MailingModuleDesc".$this->name;
-        if ($langs->trans($transstring) != $transstring) return $langs->trans($transstring); 
+        if ($langs->trans($transstring) != $transstring) return $langs->trans($transstring);
         else return $this->desc;
     }
 
@@ -93,7 +93,7 @@ class MailingTargets
     {
         return '';
     }
-    
+
     /**
      *      \brief      Met a jour nombre de destinataires
      *      \param      mailing_id          Id du mailing concerné
@@ -109,7 +109,7 @@ class MailingTargets
         {
             $obj=$this->db->fetch_object($result);
             $nb=$obj->nb;
-                    
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
             $sql .= " SET nbemail = ".$nb." WHERE rowid = ".$mailing_id;
             if (!$this->db->query($sql))
@@ -133,9 +133,9 @@ class MailingTargets
      */
     function add_to_target($mailing_id, $cibles)
     {
-        $this->db->begin();
-        
-        // Insère destinataires de cibles dans table
+    	$this->db->begin();
+
+        // Insert emailing targest from array into database
         $j = 0;
         $num = sizeof($cibles);
         for ($i = 0 ; $i < $num ; $i++)
@@ -143,12 +143,13 @@ class MailingTargets
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
             $sql .= " (fk_mailing,";
             $sql .= " fk_contact,";
-            $sql .= " nom, prenom, email, url)";
+            $sql .= " nom, prenom, email, other, url)";
             $sql .= " VALUES (".$mailing_id.",";
             $sql .= (empty($cibles[$i]['fk_contact']) ? '0' : "'".$cibles[$i]['fk_contact']."'") .",";
             $sql .= "'".addslashes($cibles[$i]['name'])."',";
             $sql .= "'".addslashes($cibles[$i]['firstname'])."',";
             $sql .= "'".addslashes($cibles[$i]['email'])."',";
+            $sql .= "'".addslashes($cibles[$i]['other'])."',";
             $sql .= "'".addslashes($cibles[$i]['url'])."')";
 
             $result=$this->db->query($sql);

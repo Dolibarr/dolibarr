@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/comm/mailing/cibles.php
-        \ingroup    mailing
-        \brief      Page des cibles de mailing
-        \version    $Id$
-*/
+ *       \file       htdocs/comm/mailing/cibles.php
+ *       \ingroup    mailing
+ *       \brief      Page des cibles de mailing
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -46,7 +46,7 @@ $offset = $conf->liste_limit * $_GET["page"] ;
 $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="nom";
+if (! $sortfield) $sortfield="email";
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_prenom=isset($_GET["search_prenom"])?$_GET["search_prenom"]:$_POST["search_prenom"];
@@ -59,15 +59,15 @@ $search_email=isset($_GET["search_email"])?$_GET["search_email"]:$_POST["search_
 if ($_GET["action"] == 'add')
 {
     $modulename=$_GET["module"];
-    
+
     // Chargement de la classe
     $file = $dirmod."/".$modulename.".modules.php";
     $classname = "mailing_".$modulename;
     require_once($file);
-    
+
     $filtersarray=array();
     if (isset($_POST["filter"])) $filtersarray[0]=$_POST["filter"];
-    
+
     $obj = new $classname($db);
     $result=$obj->add_to_target($_GET["rowid"],$filtersarray);
 
@@ -79,11 +79,11 @@ if ($_GET["action"] == 'add')
     if ($result == 0)
     {
         $mesg='<div class="warning">'.$langs->trans("WarningNoEMailsAdded").'</div>';
-    }   
+    }
     if ($result < 0)
     {
         $mesg='<div class="error">'.$obj->error.'</div>';
-    }   
+    }
     $_REQUEST["id"]=$_GET["rowid"];
 }
 
@@ -93,10 +93,10 @@ if ($_GET["action"] == 'clear')
     $file = $dirmod."/modules_mailings.php";
     $classname = "MailingTargets";
     require_once($file);
-    
+
     $obj = new $classname($db);
     $obj->clear_target($_GET["rowid"]);
-   
+
     Header("Location: cibles.php?id=".$_GET["rowid"]);
     exit;
 }
@@ -111,7 +111,7 @@ if ($_GET["action"] == 'delete')
         $file = $dirmod."/modules_mailings.php";
         $classname = "MailingTargets";
         require_once($file);
-        
+
         $obj = new $classname($db);
         $obj->update_nb($_REQUEST["id"]);
     }
@@ -141,12 +141,12 @@ $mil = new Mailing($db);
 $html = new Form($db);
 if ($mil->fetch($_REQUEST["id"]) >= 0)
 {
-    
+
     $h=0;
     $head[$h][0] = DOL_URL_ROOT."/comm/mailing/fiche.php?id=".$mil->id;
     $head[$h][1] = $langs->trans("MailCard");
     $h++;
-    
+
     $head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$mil->id;
     $head[$h][1] = $langs->trans("MailRecipients");
     $hselected = $h;
@@ -158,10 +158,10 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
     $h++;
     */
     dolibarr_fiche_head($head, $hselected, $langs->trans("Mailing"));
-    
-    
+
+
     print '<table class="border" width="100%">';
-    
+
     print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
     print '<td colspan="3">';
 	print $html->showrefnav($mil,'id');
@@ -171,14 +171,14 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
     print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
     print '<tr><td width="25%">'.$langs->trans("TotalNbOfDistinctRecipients").'</td><td colspan="3">'.($mil->nbemail?$mil->nbemail:'0').'</td></tr>';
     print '</table>';
-    
+
     print "</div>";
-    
+
     if ($mesg) print "$mesg<br>\n";
 
     $var=!$var;
 
-    // Affiche les listes de s�lection
+    // Affiche les listes de selection
     if ($mil->statut == 0)
     {
         print_titre($langs->trans("ToAddRecipientsChooseHere"));
@@ -191,19 +191,19 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         print '<td align="left">'.$langs->trans("Filter").'</td>';
         print '<td align="center" width="120">&nbsp;</td>';
         print "</tr>\n";
-        
+
         clearstatcache();
 
         $var=true;
         foreach ($conf->dol_document_root as $dirroot)
         {
         	$dir=$dirroot."/includes/modules/mailings/";
-        	
+
         	if (is_dir($dir))
         	{
 		        $handle=opendir($dir);
 				if ($handle)
-				{        
+				{
 			        while (($file = readdir($handle))!==false)
 			        {
 			            if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
@@ -212,14 +212,14 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 			                {
 			                    $modulename=$reg[1];
 			        			if ($modulename == 'example') continue;
-			        			
+
 			                    // Chargement de la classe
 			                    $file = $dir.$modulename.".modules.php";
 			                    $classname = "mailing_".$modulename;
 			                    require_once($file);
-			        
+
 			                    $obj = new $classname($db);
-			
+
 			                    $qualified=1;
 			                    foreach ($obj->require_module as $key)
 			                    {
@@ -230,20 +230,20 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 			                            break;
 			                        }
 			                    }
-			                    
-			                    // Si le module mailing est qualifi�
+
+			                    // Si le module mailing est qualifie
 			                    if ($qualified)
 			                    {
 			                        $var = !$var;
 			                        print '<tr '.$bc[$var].'>';
-			                        
+
 			                        if ($mil->statut == 0) print '<form name="'.$modulename.'" action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
-			                        
+
 			                        print '<td>';
 			                        if (! $obj->picto) $obj->picto='generic';
-			                        print img_object('',$obj->picto).' '.$obj->getDesc();
+			                        print img_object($langs->trans("Module").': '.get_class($obj),$obj->picto).' '.$obj->getDesc();
 			                        print '</td>';
-			            
+
 			                        /*
 			                        print '<td width=\"100\">';
 			                        print $modulename;
@@ -260,13 +260,13 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 			                        	print $langs->trans("Error").' '.img_error($obj->error);
 			                        }
 			                        print '</td>';
-			
+
 			                        print '<td align="left">';
 			                        $filter=$obj->formFilter();
 			                        if ($filter) print $filter;
 			                        else print $langs->trans("None");
 			                        print '</td>';
-			        
+
 			                        print '<td align="right">';
 			                        if ($mil->statut == 0)
 			                        {
@@ -278,9 +278,9 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 			                            print "&nbsp;";
 			                        }
 			                        print '</td>';
-			
+
 			                        if ($mil->statut == 0) print '</form>';
-			                        
+
 			                        print "</tr>\n";
 			                    }
 			                }
@@ -290,10 +290,10 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 				}
         	}
         }	// End foreach dir
-        
+
         print '</table>';
 		print '<br>';
-		
+
         print '<form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST">';
 		print_titre($langs->trans("ToClearAllRecipientsClickHere"));
         print '<table class="noborder" width="100%">';
@@ -304,7 +304,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		print '</form>';
         print '<br>';
     }
-    
+
 
 
     // List of selected targets
@@ -314,7 +314,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="id" value="'.$mil->id.'">';
 
-    $sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.statut, mc.date_envoi, mc.url";
+    $sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other, mc.statut, mc.date_envoi, mc.url";
     $sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
     $sql .= " WHERE mc.fk_mailing=".$mil->id;
     if ($search_nom)    $sql.= " AND mc.nom    like '%".addslashes($search_nom)."%'";
@@ -322,12 +322,12 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
     if ($search_email)  $sql.= " AND mc.email  like '%".addslashes($search_email)."%'";
     if ($sortfield) { $sql .= " ORDER BY $sortfield $sortorder"; }
     $sql .= $db->plimit($conf->liste_limit+1, $offset);
-    
+
     $resql=$db->query($sql);
     if ($resql)
     {
         $num = $db->num_rows($resql);
-    
+
         $addu = "&amp;id=".$mil->id;
         if ($search_nom)    $addu.= "&amp;search_nom=".urlencode($search_nom);
         if ($search_prenom) $addu.= "&amp;search_prenom=".urlencode($search_prenom);
@@ -338,10 +338,11 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         if ($page)			$addu.= "&amp;page=".$page;
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
+        print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"mc.email",$addu,"","",$sortfield,$sortorder);
         print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"mc.nom",$addu,"","",$sortfield,$sortorder);
         print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"mc.prenom",$addu,"","",$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"mc.email",$addu,"","",$sortfield,$sortorder);
-        print '<td align="center">&nbsp;</td>';
+        print_liste_field_titre($langs->trans("OtherInformations"),$_SERVER["PHP_SELF"],"",$addu,"","",$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"],"",$addu,"",'align="center"',$sortfield,$sortorder);
 
 		// Date
         if ($mil->statut < 2)
@@ -351,7 +352,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         else
         {
 	        print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"mc.date_envoi",$addu,'','align="center"',$sortfield,$sortorder);
-        }        
+        }
 
 		// Statut
         print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"mc.statut",$addu,'','align="right"',$sortfield,$sortorder);
@@ -360,37 +361,46 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 
 	    // Ligne des champs de filtres
 	    print '<tr class="liste_titre">';
-	    print '<td class="liste_titre">';
-	    print '<input class="flat" type="text" name="search_nom" size="12" value="'.$search_nom.'">';
-	    print '</td>';
-	    print '<td class="liste_titre">';
-	    print '<input class="flat" type="text" name="search_prenom" size="10" value="'.$search_prenom.'">';
-	    print '</td>';
+	    // EMail
 	    print '<td class="liste_titre">';
 	    print '<input class="flat" type="text" name="search_email" size="14" value="'.$search_email.'">';
 	    print '</td>';
+	    // Name
+	    print '<td class="liste_titre">';
+	    print '<input class="flat" type="text" name="search_nom" size="12" value="'.$search_nom.'">';
+	    print '</td>';
+	    // Firstname
+	    print '<td class="liste_titre">';
+	    print '<input class="flat" type="text" name="search_prenom" size="10" value="'.$search_prenom.'">';
+	    print '</td>';
+	    // Other
+	    print '<td class="liste_titre">';
+	    print '&nbsp';
+	    print '</td>';
+	    // Url
 	    print '<td class="liste_titre" align="right" colspan="3">';
 	    print '<input type="image" value="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
 	    print '&nbsp; <input type="image" value="button_removefilter" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
 	    print '</td>';
 		print '</tr>';
-		        
+
         $var = true;
         $i = 0;
-    
+
     	if ($num)
     	{
 	        while ($i < min($num,$conf->liste_limit))
 	        {
 	            $obj = $db->fetch_object($resql);
 	            $var=!$var;
-	    
+
 	            print "<tr $bc[$var]>";
+	            print '<td>'.$obj->email.'</td>';
 	            print '<td>'.$obj->nom.'</td>';
 	            print '<td>'.$obj->prenom.'</td>';
-	            print '<td>'.$obj->email.'</td>';
-	            print '<td>'.$obj->url.'</td>';
-	            
+	            print '<td>'.$obj->other.'</td>';
+	            print '<td align="center">'.$obj->url.'</td>';
+
 	            // Statut pour l'email destinataire (Attentioon != statut du mailing)
 	            if ($obj->statut == 0)
 	            {
@@ -404,30 +414,30 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	                if ($obj->statut==-1) print $langs->trans("MailingStatusError").' '.img_error();
 	                if ($obj->statut==1) print $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
 	                print '</td>';
-	            }        
+	            }
 	            print '</tr>';
-	
+
 	            $i++;
 	        }
     	}
     	else
     	{
-    		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoTargetYet").'</td></tr>';	
+    		print '<tr '.$bc[false].'><td colspan="7">'.$langs->trans("NoTargetYet").'</td></tr>';
     	}
         print "</table><br>";
-    
+
         $db->free($resql);
     }
     else
     {
         dolibarr_print_error($db);
     }
-    
+
     print '</form>';
 	print "\n<!-- Fin liste destinataires selectionnes -->\n";
-    
+
 }
-  
+
 
 $db->close();
 

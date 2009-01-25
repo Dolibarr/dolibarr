@@ -39,7 +39,7 @@ class mailing_fraise extends MailingTargets
     var $require_module=array('adherent');  // Module mailing actif si modules require_module actifs
     var $require_admin=0;                   // Module mailing actif pour user admin ou non
     var $picto='user';
-    
+
     var $db;
 
 
@@ -47,7 +47,7 @@ class mailing_fraise extends MailingTargets
     {
         $this->db=$DB;
     }
-    
+
 
 	function getSqlArrayForStats()
 	{
@@ -78,10 +78,10 @@ class mailing_fraise extends MailingTargets
 
         // La requete doit retourner un champ "nb" pour etre comprise
         // par parent::getNbOfRecipients
-        return parent::getNbOfRecipients($sql); 
+        return parent::getNbOfRecipients($sql);
     }
-    
-    
+
+
     /**
      *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
      *                  des destinataires de mailings
@@ -91,7 +91,7 @@ class mailing_fraise extends MailingTargets
     {
         global $langs;
         $langs->load("members");
-        
+
         $s='';
         $s.='<select name="filter" class="flat">';
         $s.='<option value="-1">'.$langs->trans("MemberStatusDraft").'</option>';
@@ -101,8 +101,8 @@ class mailing_fraise extends MailingTargets
         $s.='</select>';
         return $s;
     }
-    
-    
+
+
     /**
      *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
      *      \return     string      Url lien
@@ -111,8 +111,8 @@ class mailing_fraise extends MailingTargets
     {
         return '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$id.'">'.img_object('',"user").'</a>';
     }
-    
-    
+
+
     /**
      *    \brief      Ajoute destinataires dans table des cibles
      *    \param      mailing_id    Id du mailing concerné
@@ -121,10 +121,15 @@ class mailing_fraise extends MailingTargets
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
-        $cibles = array();
+    	global $langs;
+		$langs->load("members");
+
+    	$cibles = array();
 
         // La requete doit retourner: id, email, fk_contact, name, firstname
-        $sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, a.nom as name, a.prenom as firstname";
+        $sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, ";
+        $sql.= " a.nom as name, a.prenom as firstname,";
+        $sql.= " a.datefin";	// Other fields
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
         $sql.= " WHERE a.email IS NOT NULL";
         foreach($filtersarray as $key)
@@ -157,6 +162,7 @@ class mailing_fraise extends MailingTargets
                     			'fk_contact' => $obj->fk_contact,
                     			'name' => $obj->name,
                     			'firstname' => $obj->firstname,
+                    			'other' => $obj->datefin?($langs->transnoentities("DateEnd").'='.dolibarr_print_date($this->db->jdate($obj->datefin),'day')):'',
                     			'url' => $this->url($obj->id)
                     			);
                     $old = $obj->email;

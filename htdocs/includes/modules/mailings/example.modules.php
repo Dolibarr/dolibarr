@@ -29,7 +29,7 @@ class mailing_example extends MailingTargets
     // CHANGE THIS: Put here a name not already used
     var $name='example';
     // CHANGE THIS: Put here a description of your selector module.
-    // This label is used if no translation for MailingModuleDescXXX where XXX=name is found
+    // This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
     var $desc='Put here a description';
 	// CHANGE THIS: Set to 1 if selector is available for admin users only
     var $require_admin=0;
@@ -37,7 +37,7 @@ class mailing_example extends MailingTargets
     var $require_module=array();
     var $picto='';
     var $db;
-    
+
 
     // CHANGE THIS: Constructor name must be called mailing_xxx with xxx=name of your selector
     function mailing_example($DB)
@@ -60,18 +60,18 @@ class mailing_example extends MailingTargets
 	    // ----- Your code start here -----
 
 	    // You must fill the $target array with record like this
-	    // $target[0]=array('email'=>'email_0','name'=>'name_0','firstname'=>'firstname_0');
+	    // $target[0]=array('email'=>'email_0','name'=>'name_0','firstname'=>'firstname_0', 'other'=>'other_0');
 		// ...
-	    // $target[n]=array('email'=>'email_n','name'=>'name_n','firstname'=>'firstname_n');
+	    // $target[n]=array('email'=>'email_n','name'=>'name_n','firstname'=>'firstname_n', 'other'=>'other_n');
 
-		// Example: $target[0]=array('email'=>'myemail@mydomain.com','name'=>'Doe','firstname'=>'John');
+		// Example: $target[0]=array('email'=>'myemail@mydomain.com', 'name'=>'Doe', 'firstname'=>'John', 'other'=>'Other information');
 
 		// ----- Your code end here -----
-		
+
         return parent::add_to_target($mailing_id, $target);
     }
-    
-    
+
+
     /**
 	 *		\brief		On the main mailing area, there is a box with statistics.
 	 *					If you want to add a line in this report you must provide an
@@ -82,7 +82,7 @@ class mailing_example extends MailingTargets
 	function getSqlArrayForStats()
 	{
 	    // CHANGE THIS: Optionnal
-	    
+
 		//var $statssql=array();
         //$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";
 		return array();
@@ -101,9 +101,9 @@ class mailing_example extends MailingTargets
 
         // Example: return parent::getNbOfRecipients("SELECT count(*) as nb from dolibarr_table");
         // Example: return 500;
-        return '?'; 
+        return '?';
     }
-    
+
     /**
      *      \brief      This is to add a form filter to provide variant of selector
      *					If used, the HTML select must be called "filter"
@@ -116,8 +116,8 @@ class mailing_example extends MailingTargets
         $s='';
         return $s;
     }
-    
-    
+
+
     /**
      *      \brief      Can include an URL link on each record provided by selector
      *					shown on target page.

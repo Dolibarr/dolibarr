@@ -30,5 +30,7 @@ ALTER TABLE llx_bank ADD INDEX idx_bank_fk_account(fk_account);
 ALTER TABLE llx_bank ADD INDEX idx_bank_rappro(rappro);
 
 
-ALTER TABLE llx_mailing_cibles add column other           varchar(255) NULL,
+ALTER TABLE llx_mailing_cibles add column other           varchar(255) NULL;
+
+ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_email (email);
 

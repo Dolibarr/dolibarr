@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,3 +20,6 @@
 
 
 ALTER TABLE llx_mailing_cibles ADD UNIQUE uk_mailing_cibles (fk_mailing, email);
+
+ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_email (email);
+
