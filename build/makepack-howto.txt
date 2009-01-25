@@ -17,4 +17,4 @@
 - Upload NLTechno web site on web server
 - Upload files on sourceforge or Dolibarr.org
 - Send mail on mailings-list
-- Send a news on OpenSource web sites
+- Send a news on OpenSource web sites (if major beta or release)
