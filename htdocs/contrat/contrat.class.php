@@ -68,7 +68,7 @@ class Contrat extends CommonObject
 	var $fk_projet;
 
 	var $lignes=array();
-  
+
 
 	/**
 	 *    \brief      Constructeur de la classe
@@ -178,7 +178,7 @@ class Contrat extends CommonObject
 	function cloture($user,$langs='',$conf='')
 	{
 		$this->db->begin();
-		
+
 		// Load lines
 		$this->fetch_lignes();
 
@@ -199,7 +199,7 @@ class Contrat extends CommonObject
 				}
 	        }
 		}
-		
+
         if ($ok)
         {
             $this->db->commit();
@@ -368,14 +368,14 @@ class Contrat extends CommonObject
 				$ligne->fk_user_author   = $objp->fk_user_author;
 				$ligne->fk_user_ouverture= $objp->fk_user_ouverture;
 				$ligne->fk_user_cloture  = $objp->fk_user_cloture;
-				
+
 				$ligne->ref            = $objp->ref;
 				$ligne->libelle        = $objp->label;        // Label produit
 				$ligne->label          = $objp->label;        // For backward compatibility
 				$ligne->product_desc   = $objp->product_desc; // Description produit
 
 				$ligne->description    = $objp->description;
-				
+
 				$ligne->date_ouverture_prevue = $this->db->jdate($objp->date_ouverture_prevue);
 				$ligne->date_ouverture        = $this->db->jdate($objp->date_ouverture);
 				$ligne->date_fin_validite     = $this->db->jdate($objp->date_fin_validite);
@@ -385,7 +385,7 @@ class Contrat extends CommonObject
 				$ligne->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
 				$ligne->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$ligne->date_fin_reel     = $this->db->jdate($objp->date_cloture);
-				
+
 				$this->lignes[]        = $ligne;
 				//dolibarr_syslog("1 ".$ligne->desc);
 				//dolibarr_syslog("2 ".$ligne->product_desc);
@@ -428,7 +428,7 @@ class Contrat extends CommonObject
 			while ($i < $num)
 			{
 				$objp                  = $this->db->fetch_object($result);
-				
+
 				$ligne                 = new ContratLigne($this->db);
 				$ligne->id 			   = $objp->rowid;
 				$ligne->fk_contrat     = $objp->fk_contrat;
@@ -447,7 +447,7 @@ class Contrat extends CommonObject
 				$ligne->total_ttc      = $objp->total_ttc;
 				$ligne->fk_product     = 0;
 				$ligne->info_bits      = $objp->info_bits;
-				
+
 				$ligne->fk_user_author   = $objp->fk_user_author;
 				$ligne->fk_user_ouverture= $objp->fk_user_ouverture;
 				$ligne->fk_user_cloture  = $objp->fk_user_cloture;
@@ -605,13 +605,13 @@ class Contrat extends CommonObject
 			$sql.= " AND tc.element='".$this->element."'";
 			$sql.= " AND ec.element_id=".$this->id;
 			*/
-				
+
 			$sql = "SELECT ec.rowid as ecrowid";
 			$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
 			$sql.= " WHERE ec.fk_c_type_contact = tc.rowid";
 			$sql.= " AND tc.element='".$this->element."'";
 			$sql.= " AND ec.element_id=".$this->id;
-				
+
 			dolibarr_syslog("Contrat::delete element_contact sql=".$sql,LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
@@ -654,7 +654,7 @@ class Contrat extends CommonObject
 			$sql = "SELECT cdl.rowid as cdlrowid ";
 			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet_log as cdl, ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql.= " WHERE cdl.fk_contratdet=cd.rowid AND cd.fk_contrat=".$this->id;
-				
+
 			dolibarr_syslog("Contrat::delete contratdet_log sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
@@ -675,7 +675,7 @@ class Contrat extends CommonObject
 
 				$sql= "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
 				$sql.= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".implode(",",$tab_resql).")";
-					
+
 				dolibarr_syslog("Contrat::delete contratdet_log sql=".$sql, LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
@@ -706,7 +706,7 @@ class Contrat extends CommonObject
 			// Delete contrat
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat";
 			$sql.= " WHERE rowid=".$this->id;
-			 
+
 			dolibarr_syslog("Contrat::delete contrat sql=".$sql);
 			$resql=$this->db->query($sql);
 			if (! $resql)
@@ -762,7 +762,7 @@ class Contrat extends CommonObject
 		if ($this->statut == 0 || ($this->statut == 1 && $conf->global->CONTRAT_EDITWHENVALIDATED))
 		{
 			$this->db->begin();
-			 
+
 			// Clean parameters
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
@@ -781,7 +781,7 @@ class Contrat extends CommonObject
 			{
 				$pu=$pu_ttc;
 			}
-				
+
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
@@ -794,11 +794,11 @@ class Contrat extends CommonObject
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
-			$price = price2num(round($pu, 2));
+			$price = price2num(round($pu_ht, 2));
 			if (strlen($remise_percent) > 0)
 			{
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
+				$remise = round(($pu_ht * $remise_percent / 100), 2);
+				$price = $pu_ht - $remise;
 			}
 
 			// Insertion dans la base
@@ -814,7 +814,7 @@ class Contrat extends CommonObject
 			$sql.= ($fk_product>0 ? $fk_product : "null").",";
 			$sql.= " '".$qty."',";
 			$sql.= " '".$txtva."',";
-			$sql.= " ".price2num($remise_percent).",".price2num($pu).",";
+			$sql.= " ".price2num($remise_percent).",".price2num($pu_ht).",";
 			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_ttc).",";
 			$sql.= " '".$info_bits."',";
 			$sql.= " ".price2num($price).",".price2num( $remise);	// \TODO A virer
@@ -1155,7 +1155,7 @@ class Contrat extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 		$sql.= " WHERE fk_contrat =".$this->id;
 		if ($statut >= 0) $sql.= " AND statut = '$statut'";
-		 
+
 		dolibarr_syslog("Contrat::array_detail() sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1226,7 +1226,7 @@ class Contrat extends CommonObject
 		global $conf, $user;
 
 		$now=gmmktime();
-		
+
 		$this->nbtodo=$this->nbtodolate=0;
 		if ($mode == 'inactives')
 		{
@@ -1360,11 +1360,14 @@ class ContratLigne
 	var $remise_percent;
 	var $remise;
 	var $fk_remise_except;
-	var $subprice;
+
+	var $subprice;					// Unit price HT
 	var $price_ht;
+
 	var $total_ht;
 	var $total_tva;
 	var $total_ttc;
+
 	var $info_bits;
 	var $fk_user_author;
 	var $fk_user_ouverture;
@@ -1567,7 +1570,7 @@ class ContratLigne
 	function update($user, $notrigger=0)
 	{
 		global $conf, $langs;
-   
+
 		// Clean parameters
 		$this->fk_contrat=trim($this->fk_contrat);
 		$this->fk_product=trim($this->fk_product);
@@ -1589,7 +1592,7 @@ class ContratLigne
 		$this->fk_user_ouverture=trim($this->fk_user_ouverture);
 		$this->fk_user_cloture=trim($this->fk_user_cloture);
 		$this->commentaire=trim($this->commentaire);
-		 
+
 		// Check parameters
 		// Put here code to add control on parameters values
 

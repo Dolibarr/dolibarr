@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
  *       \file       htdocs/contrat/fiche.php
  *       \ingroup    contrat
@@ -44,6 +44,7 @@ $result=restrictedArea($user,'contrat',$contratid,'contrat');
 
 $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
+
 /*
  * Actions
  */
@@ -61,7 +62,7 @@ if ($_POST["action"] == 'confirm_active' && $_POST["confirm"] == 'yes' && $user-
         exit;
     }
     else {
-        $mesg=$contrat->error;   
+        $mesg=$contrat->error;
     }
 }
 
@@ -77,7 +78,7 @@ if ($_POST["action"] == 'confirm_closeline' && $_POST["confirm"] == 'yes' && $us
         exit;
     }
     else {
-        $mesg=$contrat->error;   
+        $mesg=$contrat->error;
     }
 }
 
@@ -183,7 +184,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 			exit;
 		}
 		$ret=$contrat->fetch_client();
-		
+
 		$date_start='';
 		$date_end='';
 		// Si ajout champ produit libre
@@ -211,8 +212,6 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 			}
 		}
 
-		$price_base_type = 'HT';
-		
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
 		// Ecrase $txtva par celui du produit
@@ -252,7 +251,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
 				}
 			}
-			
+
            	$desc = $prod->description;
 			$desc.= $prod->description && $_POST['desc'] ? "\n" : "";
            	$desc.= $_POST['desc'];
@@ -260,6 +259,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
         else
         {
 	        $pu_ht=$_POST['pu'];
+			$price_base_type = 'HT';
 	        $tva_tx=eregi_replace('\*','',$_POST['tva_tx']);
 			$tva_npr=eregi('\*',$_POST['tva_tx'])?1:0;
 	        $desc=$_POST['desc'];
@@ -267,7 +267,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
-       
+
 		// Insert line
 		$result = $contrat->addline(
                 $desc,
@@ -282,7 +282,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 				$pu_ttc,
 				$info_bits
                 );
-    
+
 		if ($result > 0)
 		{
 		/*
@@ -308,10 +308,10 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
     if ($contratline->fetch($_POST["elrowid"]))
     {
 		$db->begin();
-		
+
 		if ($date_start_real_update == '') $date_start_real_update=$contratline->date_ouverture;
 		if ($date_end_real_update == '')   $date_end_real_update=$contratline->date_cloture;
-		
+
 		$contratline->description=$_POST["eldesc"];
 		$contratline->price_ht=$_POST["elprice"];
 		$contratline->subprice=$_POST["elprice"];
@@ -324,7 +324,7 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
 		$contratline->date_fin_validite=$date_end_update;
         $contratline->date_cloture=$date_end_real_update;
 		$contratline->fk_user_cloture=$user->id;
-            
+
 		$result=$contratline->update($user);
         if ($result > 0)
         {
@@ -334,7 +334,7 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
         {
             dolibarr_print_error($db,'Failed to update contrat_det');
             $db->rollback();
-        }        
+        }
     }
     else
     {
@@ -471,7 +471,7 @@ if ($_GET["action"] == 'create')
 			// Ref
 			print '<tr><td>'.$langs->trans("Ref").'</td>';
 			print '<td><input type="text" maxlength="30" name="ref" size="20"></td></tr>';
-			
+
             // Customer
             print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
 
@@ -485,7 +485,7 @@ if ($_GET["action"] == 'create')
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 			print '.';
 			print '</td></tr>';
-    
+
             // Commercial suivi
             print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</td><td>';
 			print $form->select_users('','commercial_suivi_id',1,'');
@@ -507,7 +507,7 @@ if ($_GET["action"] == 'create')
                 $form->select_array("projetid",$proj->liste_array($soc->id),0,1);
                 print "</td></tr>";
             }
- 
+
             print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
             print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea></td></tr>';
 
@@ -516,7 +516,7 @@ if ($_GET["action"] == 'create')
 	            print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
 	            print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea></td></tr>';
 			}
-			
+
             print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
 
             print "</table>\n";
@@ -595,7 +595,7 @@ if ($_GET["action"] == 'create')
     {
         dolibarr_print_error($db);
     }
-    
+
     print '</div>';
 }
 else
@@ -606,7 +606,7 @@ else
 /* *************************************************************************** */
 {
 	$now=gmmktime();
-	
+
     $id = $_GET["id"];
     if ($id > 0)
     {
@@ -620,13 +620,13 @@ else
         }
 
         if ($mesg) print $mesg;
-		
+
 		$nbofservices=sizeof($contrat->lignes);
 
         $author = new User($db);
         $author->id = $contrat->user_author_id;
         $author->fetch();
-		
+
         $commercial_signature = new User($db);
         $commercial_signature->id = $contrat->commercial_signature_id;
         $commercial_signature->fetch();
@@ -741,12 +741,12 @@ else
         }
 
 		echo '<br>';
-		
+
 		$servicepos=(isset($_REQUEST["servicepos"])?$_REQUEST["servicepos"]:1);
 		$colorb='333333';
 
 		$arrayothercontracts=$contrat->getListOfContracts('others');
-		
+
 		/*
          * Lignes de contrats
          */
@@ -791,7 +791,7 @@ else
 				$var=true;
 
 				$objp = $db->fetch_object($result);
-					
+
 				$var=!$var;
 
 				if ($_GET["action"] != 'editline' || $_GET["rowid"] != $objp->rowid)
@@ -855,7 +855,7 @@ else
 						print '</a>';
 					}
 					print '</td>';
-		
+
 					print "</tr>\n";
 
 					// Dates de en service prevues et effectives
@@ -863,7 +863,7 @@ else
 					{
 						print '<tr '.$bc[$var].'>';
 						print '<td colspan="6">';
-	
+
 						// Date planned
 						print $langs->trans("DateStartPlanned").': ';
 						if ($objp->date_debut) {
@@ -879,10 +879,10 @@ else
 							if ($objp->statut == 4 && $objp->date_fin < ($now - $conf->contrat->services->inactifs->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
 						}
 						else print $langs->trans("Unknown");
-	
+
 						print '</td>';
 						print '</tr>';
-					}                  
+					}
 				}
 				// Ligne en mode update
 				else
@@ -926,21 +926,21 @@ else
 
 					print "</form>\n";
 				}
-					
+
 				$db->free($result);
 			}
 			else
 			{
 				dolibarr_print_error($db);
 			}
-			
+
 			if ($contrat->statut > 0)
 			{
 				print '<tr '.$bc[false].'>';
 				print '<td colspan="6"><hr></td>';
 				print "</tr>\n";
 			}
-			
+
 			print "</table>";
 
 
@@ -960,11 +960,11 @@ else
 				$formquestion=array(
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
 				array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
-				
+
 				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;lineid=".$_GET["rowid"],$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
 				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
-			
+
 			/*
 			 * Confirmation de la validation activation
 			 */
@@ -987,8 +987,8 @@ else
 				$dateactend   = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("CloseService"),$langs->trans("ConfirmCloseService",dolibarr_print_date($dateactend,"%A %d %B %Y")),"confirm_closeline");
 				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
-			}		
-			
+			}
+
 			// Area with activation info
 			if ($contrat->statut > 0)
 			{
@@ -1012,7 +1012,7 @@ else
 				print "</tr>\n";
 
 				print '<tr '.$bc[false].'>';
-				
+
 				print '<td>';
 				// Si pas encore active
 				if (! $objp->date_debut_reelle) {
@@ -1077,7 +1077,7 @@ else
 				print '<td>'.$langs->trans("DateEndPlanned").'</td><td>';
 				print $html->select_date($dateactend,"end",$usehm,$usehm,'',"active");
 				print '</td>';
-				
+
 				print '<td align="center" rowspan="2" valign="middle">';
 				print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"><br>';
 				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -1139,16 +1139,16 @@ else
 				print '</table>';
 
 				print '</form>';
-			}		
-			
+			}
+
 			print '</td>';	// End td if line is 1
-						
+
 			print '</tr>';
 			print '<tr><td style="border-right: 1px solid #'.$colorb.'">&nbsp;</td></tr>';
 			$cursorline++;
 		}
 		print '</table>';
-		
+
 		/*
 		 * Ajouter une ligne produit/service
 		 */
@@ -1157,7 +1157,7 @@ else
 		{
 			print '<br>';
 			print '<table class="noborder" width="100%">';	// Array with (n*2)+1 lines
-			
+
 			print "<tr class=\"liste_titre\">";
 			print '<td>'.$langs->trans("Service").'</td>';
 			print '<td align="center">'.$langs->trans("VAT").'</td>';
@@ -1191,7 +1191,7 @@ else
 			print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="'.$contrat->societe->remise_client.'">%</td>';
 			print '<td align="center" colspan="2" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>'."\n";
-			
+
 			print "<tr $bc[$var]>";
 			print '<td colspan="8">';
 			print $langs->trans("DateStartPlanned").' ';
@@ -1200,11 +1200,11 @@ else
 			$form->select_date('',"date_end",$usehm,$usehm,1,"addligne");
 			print '</td>';
 			print '</tr>';
-			
+
 			print '</form>';
 
 			$var=!$var;
-			
+
 			// Service libre
 			print '<form name="addligne_sl" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
 			print '<input type="hidden" name="action" value="addligne">';
@@ -1232,18 +1232,18 @@ else
 			$form->select_date('',"date_end_sl",$usehm,$usehm,1,"addligne_sl");
 			print '</td>';
 			print '</tr>';
-			
+
 			print '</form>';
 
 			print '</table>';
 		}
-	
 
-		
+
+
 		//print '</td><td align="center" class="tab" style="padding: 4px; border-right: 1px solid #'.$colorb.'; border-top: 1px solid #'.$colorb.'; border-bottom: 1px solid #'.$colorb.';">';
 
 		//print '</td></tr></table>';
-	
+
         print '</div>';
 
 
@@ -1279,7 +1279,7 @@ else
 				//	print '<a class="butActionRefused" href="#" title="'.$langs->trans("CloseRefusedBecauseOneServiceActive").'">'.$langs->trans("Close").'</a>';
 				//}
             }
-						
+
             // On peut supprimer entite si
 			// - Droit de creer + mode brouillon (erreur creation)
 			// - Droit de supprimer
