@@ -405,6 +405,7 @@ class Translate {
      *  \brief       Return translated value of a text string
      *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
      *               et si toujours pas trouve, il est retourne tel quel.
+     *               No convert to encoding charset of lang object is done.
      *               Parameters of this method must not contains any HTML tags.
      *  \param       key         key of string to translate
      *  \param       param1      chaine de param1
