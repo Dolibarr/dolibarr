@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - admin
+# Dolibarr language file - es_ES - admin 
 CHARSET = UTF-8
 Version = Versión
 VersionProgram = Versión programa
@@ -872,6 +872,7 @@ SyslogFacility = Facilidad
 SyslogLevel = Nivel
 SyslogSimpleFile = Archivo
 SyslogFilename = Nombre y ruta del archivo
+YouCanUseDOL_DATA_ROOT = Puede utilizar DOL_DATA_ROOT/dolibarr.log para un log en la carpeta 'documentos' de Dolibarr.
 ErrorUnknownSyslogConstant = La constante %s no es una constante syslog conocida
 ##### Donations ##### = 
 DonationsSetup = Configuración del módulo subvenciones
