@@ -26,10 +26,10 @@
 
 
 /**
-   \brief      Renvoi une version en chaine depuis une version en tableau
-   \param	   versionarray        Tableau de version (vermajeur,vermineur,autre)
-   \return     string              Chaine version
-*/
+ *  \brief      Renvoi une version en chaine depuis une version en tableau
+ *  \param	   versionarray        Tableau de version (vermajeur,vermineur,autre)
+ *  \return     string              Chaine version
+ */
 function versiontostring($versionarray)
 {
   $string='?';

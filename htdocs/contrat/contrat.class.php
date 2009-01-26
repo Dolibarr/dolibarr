@@ -769,6 +769,8 @@ class Contrat extends CommonObject
 			if (! $qty) $qty=1;
 			if (! $ventil) $ventil=0;
 			if (! $info_bits) $info_bits=0;
+			if (! $pu_ht)  $pu_ht=0;
+			if (! $pu_ttc) $pu_ttc=0;
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$txtva=price2num($txtva);

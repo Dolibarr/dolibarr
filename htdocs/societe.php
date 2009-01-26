@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -114,6 +114,7 @@ if ($mode == 'search')
 llxHeader();
 
 $form=new Form($db);
+$companystatic=new Societe($db);
 
 // Do we click on purge search criteria ?
 if (isset($_POST["button_removefilter_x"]))
@@ -215,10 +216,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows($result);
+	$num = $db->num_rows($resql);
 	$i = 0;
 
 	$params = "&amp;socname=".$socname."&amp;search_nom=".$search_nom."&amp;search_ville=".$search_ville;
@@ -226,7 +227,7 @@ if ($result)
 	$params.= '&amp;search_idprof2='.$search_idprof2;
 	$params.= '&amp;search_idprof3='.$search_idprof3;
 	$params.= '&amp;search_idprof4='.$search_idprof4;
-		
+
 	print_barre_liste($title, $page, "societe.php",$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	$langs->load("other");
@@ -243,7 +244,7 @@ if ($result)
 	}
 
 	print '<form method="post" action="societe.php" name="formfilter">';
-	
+
 	// Lignes des titres
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
@@ -292,12 +293,13 @@ if ($result)
 
 	while ($i < min($num,$conf->liste_limit))
 	{
-		$obj = $db->fetch_object();
+		$obj = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr $bc[$var]><td>";
-		print "<a href=\"".DOL_URL_ROOT."/soc.php?socid=".$obj->rowid."\">";
-		print img_object($langs->trans("ShowCompany"),"company");
-		print "</a>&nbsp;<a href=\"".DOL_URL_ROOT."/soc.php?socid=".$obj->rowid."\">".$obj->nom."</a></td>\n";
+		$companystatic->id=$obj->rowid;
+		$companystatic->nom=$obj->nom;
+		print $companystatic->getNomUrl(1,'',24);
+		print "</td>\n";
 		print "<td>".$obj->ville."</td>\n";
 		print "<td>".$obj->idprof1."</td>\n";
 		print "<td>".$obj->idprof2."</td>\n";
@@ -306,36 +308,36 @@ if ($result)
 		print '<td align="center">';
 		if ($obj->client==1)
 		{
-	  print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Customer")."</a>\n";
+	  		print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Customer")."</a>\n";
 		}
 		elseif ($obj->client==2)
 		{
-	  print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Prospect")."</a>\n";
+	  		print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Prospect")."</a>\n";
 		}
 		else
 		{
-	  print "&nbsp;";
+	  		print "&nbsp;";
 		}
 		print "</td><td align=\"center\">";
 		if ($obj->fournisseur)
 		{
-	  print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
+	  		print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
 		}
 		else
 		{
-	  print "&nbsp;";
+	  		print "&nbsp;";
 		}
 
 		print '</td></tr>'."\n";
 		$i++;
 	}
-	
-	$db->free();
-	
+
+	$db->free($resql);
+
 	print "</table>";
-	
+
 	print '</form>';
-	
+
 }
 else
 {
