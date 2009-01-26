@@ -305,6 +305,7 @@ and = i
 or = o
 Other = Altre
 Others = Altres
+OtherInformations = Altres informacions
 Quantity = Quantitat
 Qty = Qt.
 ChangedBy = Modificat per
@@ -469,6 +470,8 @@ HidePassword = Mostra comanda amb contrasenya oculta
 UnHidePassword = Mostra comanda amb contrasenya a la vista
 Root = Arrel
 Informations = Informació
+Page = Pàgina
+Notes = Notes
 # Week day =  = 
 Monday = Dillus
 Tuesday = Dimarts

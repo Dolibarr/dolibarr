@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - commercial
+# Dolibarr language file - ca_ES - commercial 
 CHARSET = UTF-8
 Commercial = Comercial
 CommercialArea = Àrea comercial
@@ -13,6 +13,7 @@ NewAction = Nova acció
 AddAction = Crear acció
 AddAnAction = Crear una acció
 AddActionRendezVous = Crear una cita
+Rendez-Vous = Cita
 ConfirmDeleteAction = Esteu segur de voler eliminar aquesta acció?
 CardAction = Fitxa acció
 PercentDone = Percentatge realitzat
