@@ -166,19 +166,22 @@ class AdherentOptions
 	}
 
 	/**
-		\brief fonction qui cr�e un label
-		\param	attrname			nom de l'atribut
-		\param	label				nom du label
-		*/
+	 *	\brief 	Fonction qui cree un label
+	 *	\param	attrname			nom de l'atribut
+	 *	\param	label				nom du label
+	 */
 	function create_label($attrname,$label='',$type='',$pos=0,$size=0)
 	{
+		// Clean parameters
+		if (empty($pos)) $pos=0;
+
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label SET ";
 			$sql .= " name='$attrname', label='".addslashes($label)."',";
 			$sql .= " type='".$type."', pos='".$pos."', size='".$size."'";
-			
+
 			dolibarr_syslog("AdherentOptions::create_label sql=".$sql);
 			if ($this->db->query($sql))
 			{
@@ -192,36 +195,36 @@ class AdherentOptions
 		}
 	}
 
-	/*!
-		\brief fonction qui supprime un attribut
-		\param	attrname			nom de l'atribut
-		*/
-
+	/**
+	 *	\brief 		Fonction qui supprime un attribut
+	 *	\param		attrname			nom de l'atribut
+	 */
 	function delete($attrname)
 	{
-		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname)){
-			$sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options DROP COLUMN $attrname";
+		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
+		{
+			$result=$this->db->DDLDropField(MAIN_DB_PREFIX."adherent_options",$attrname);
+			if ($result < 0)
+			{
+				$this->error=$this->db->lasterror();
+				dolibarr_syslog("AdherentOption::delete ".$this->error, LOG_ERR);
+			}
 
-			if ( $this->db->query( $sql) )
-			{
-				return $this->delete_label($attrname);
-			}
-			else
-			{
-				print dolibarr_print_error($this->db);
-				return 0;
-			}
-		}else{
+			$result=$this->delete_label($attrname);
+
+			return $result;
+		}
+		else
+		{
 			return 0;
 		}
 
 	}
 
-	/*!
-		\brief fonction qui supprime un label
-		\param	attrname			nom du label
-		*/
-
+	/**
+	 *	\brief 	Fonction qui supprime un label
+	 *	\param	attrname			nom du label
+	 */
 	function delete_label($attrname)
 	{
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname)){
@@ -242,13 +245,12 @@ class AdherentOptions
 
 	}
 
-	/*!
+	/**
 		\brief fonction qui modifie un attribut optionnel
 		\param	attrname			nom de l'atribut
 		\param	type					type de l'attribut
 		\param	length				longuer de l'attribut
 		*/
-
 	function update($attrname,$type='varchar',$length=255)
 	{
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname)){
@@ -333,7 +335,7 @@ class AdherentOptions
 		$array_name_label=array();
 		$sql = "SELECT name,label,type FROM ".MAIN_DB_PREFIX."adherent_options_label";
 		$sql.= " ORDER BY pos";
-		
+
 		dolibarr_syslog("Adherent_options::fetch_name_optionals_label");
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -342,10 +344,10 @@ class AdherentOptions
 			{
 				while ($tab = $this->db->fetch_object($resql))
 				{
-				    // we can add this attribute to adherent object
-				    $array_name_label[$tab->name]=$tab->label;
-				    $this->attribute_name[$tab->name]=$tab->type;
-				    $this->attribute_label[$tab->name]=$tab->label;
+					// we can add this attribute to adherent object
+					$array_name_label[$tab->name]=$tab->label;
+					$this->attribute_name[$tab->name]=$tab->type;
+					$this->attribute_label[$tab->name]=$tab->label;
 				}
 				return $array_name_label;
 			}else{
