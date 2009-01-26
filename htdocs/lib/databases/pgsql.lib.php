@@ -823,6 +823,7 @@ class DoliDb
     }
 
 
+
     /**
 	 *	\brief          Create a new database
  	 *	\param	        database		Database name to create
@@ -873,6 +874,61 @@ class DoliDb
 
 		return 1;
 	}
+
+	/**
+	 *	\brief      Insert a new field in table
+	 *	\param	    table 			Nom de la table
+	 *	\param		field_name 		Nom du champ a inserer
+	 *	\param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du param�tre]
+	 *	\param	    field_position 	Optionnel ex.: "after champtruc"
+	 *	\return	    int				<0 si KO, >0 si OK
+	 */
+	function DDLAddField($table,$field_name,$field_desc,$field_position="")
+	{
+		// cl�s recherch�es dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
+		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
+		$sql .= $field_desc['type'];
+		if( eregi("^[^ ]",$field_desc['value']))
+		$sql  .= "(".$field_desc['value'].")";
+		if( eregi("^[^ ]",$field_desc['attribute']))
+		$sql  .= " ".$field_desc['attribute'];
+		if( eregi("^[^ ]",$field_desc['null']))
+		$sql  .= " ".$field_desc['null'];
+		if( eregi("^[^ ]",$field_desc['default']))
+		if(eregi("null",$field_desc['default']))
+		$sql  .= " default ".$field_desc['default'];
+		else
+		$sql  .= " default '".$field_desc['default']."'";
+		if( eregi("^[^ ]",$field_desc['extra']))
+		$sql  .= " ".$field_desc['extra'];
+		$sql .= " ".$field_position;
+
+		dolibarr_syslog($sql,LOG_DEBUG);
+		if(! $this -> query($sql))
+		return -1;
+		else
+		return 1;
+	}
+
+	/**
+	 *	\brief      Drop a field in table
+	 *	\param	    table 			Nom de la table
+	 *	\param		field_name 		Nom du champ a inserer
+	 *	\return	    int				<0 si KO, >0 si OK
+	 */
+	function DDLDropField($table,$field_name)
+	{
+		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
+		dolibarr_syslog($sql,LOG_DEBUG);
+		if (! $this->query($sql))
+		{
+			$this->error=$this->lasterror();
+			return -1;
+		}
+		else return 1;
+	}
+
 
 	function getDefaultCharacterSetDatabase(){
 		 $resql=$this->query('SHOW SERVER_ENCODING');

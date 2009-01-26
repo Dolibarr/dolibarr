@@ -876,13 +876,13 @@ class DoliDb
 	}
 
 	/**
-		\brief      Ins�re un nouveau champ dans une table
-		\param	    table 			Nom de la table
-		\param		field_name 		Nom du champ � ins�rer
-		\param	    field_desc 		Tableau associatif de description duchamp � ins�rer[nom du param�tre][valeur du param�tre]
-		\param	    field_position 	Optionnel ex.: "after champtruc"
-		\return	    int				<0 si KO, >0 si OK
-		*/
+	 *	\brief      Insert a new field in table
+	 *	\param	    table 			Nom de la table
+	 *	\param		field_name 		Nom du champ a inserer
+	 *	\param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du param�tre]
+	 *	\param	    field_position 	Optionnel ex.: "after champtruc"
+	 *	\return	    int				<0 si KO, >0 si OK
+	 */
 	function DDLAddField($table,$field_name,$field_desc,$field_position="")
 	{
 		// cl�s recherch�es dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
@@ -910,6 +910,26 @@ class DoliDb
 		else
 		return 1;
 	}
+
+
+	/**
+	 *	\brief      Drop a field in table
+	 *	\param	    table 			Nom de la table
+	 *	\param		field_name 		Nom du champ a inserer
+	 *	\return	    int				<0 si KO, >0 si OK
+	 */
+	function DDLDropField($table,$field_name)
+	{
+		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
+		dolibarr_syslog($sql,LOG_DEBUG);
+		if (! $this->query($sql))
+		{
+			$this->error=$this->lasterror();
+			return -1;
+		}
+		else return 1;
+	}
+
 
 	/**
 	 \brief      Create a user
