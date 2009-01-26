@@ -469,6 +469,8 @@ HidePassword=Show command with password hidden
 UnHidePassword=Show real command with clear password
 Root=Root
 Informations=Informations
+Page=Page
+Notes=Notes
 # Week day
 Monday=Monday
 Tuesday=Tuesday

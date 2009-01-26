@@ -13,6 +13,7 @@ NewAction=New action/task
 AddAction=Add action/task
 AddAnAction=Add an action/task
 AddActionRendezVous=Add a Rendez-Vous task
+Rendez-Vous=Rendez-Vous
 ConfirmDeleteAction=Are you sure you want to delete this task ?
 CardAction=Action card
 PercentDone=Percentage done
