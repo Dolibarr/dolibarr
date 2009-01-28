@@ -41,10 +41,10 @@ $target=isset($_GET["target"])?$_GET["target"]:$_POST["target"];
  */
 
 if ($action == 'add' || $action == 'addproduct')
-{var_dump($_POST);
+{
 	if ($_POST["cancel"])
 	{
-		$urlsource=isset($_GET["urlsource"])?$_GET["urlsource"]:(isset($url)?$url:DOL_URL_ROOT.'/bookmarks/liste.php');
+		$urlsource=(! empty($_GET["urlsource"]))?$_GET["urlsource"]:((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/liste.php');
         header("Location: ".$urlsource);
         exit;
 	}
