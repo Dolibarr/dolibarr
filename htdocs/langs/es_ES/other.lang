@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - other
+# Dolibarr language file - es_ES - other 
 CHARSET = UTF-8
 ErrorPasswordDiffers = Las contraseñas no son identicas, vuelva a introducirlas
 ErrorForbidden = Acceso no autorizado.<br>Intenta acceder a una página, zona o función sin estar en una sesión autentificada o que no se autoriza para su cuenta de usuario.
@@ -88,8 +88,8 @@ EnableGDLibraryDesc = Debe activar o instalar la librería GD en su PHP para pod
 EnablePhpAVModuleDesc = Debe instalar un módulo PHP compatible con su antivirus. (Clamav : php4-clamavlib ó php5-clamavlib)
 ProfIdShortDesc = <b>Prof Id %s</b> es una información dependiente del país del tercero.<br>Por ejemplo, para el país  <b>%s</b>, és el código <b>%s</b>.
 DolibarrDemo = Demo de Dolibarr ERP/CRM
-StatsByNumberOfUnits = Estadísticas en unidades
-StatsByNumberOfEntities = Estadísticas en identidades
+StatsByNumberOfUnits = Estadísticas en número de unidades de producto/servicio
+StatsByNumberOfEntities = Estadísticas en número de identidades referentes
 NumberOfProposals = Número de presupuestos en los últimos 12 meses
 NumberOfCustomerOrders = Número de pedidos de clientes en los últimos 12 meses
 NumberOfCustomerInvoices = Número de facturas a clientes en los últimos 12 meses
@@ -121,7 +121,7 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink = Indicar un URL http externo o un U
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Elegir si debe abrise la página en una nueva ventana o en la actual
 BookmarksManagement = Gestión de bookmarks
 ListOfBookmarks = Listado de bookmarks
-##### Webcal ##### = undefined
+##### Webcal ##### = 
 LoginWebcal = Login Webcalendar
 ErrorWebcalLoginNotDefined = El login Webcalendar asociado a su usuario Dolibarr <b>%s</b> no está definido
 ##### Phenix ##### = 
@@ -145,7 +145,7 @@ MemberValidatedInDolibarr = Miembro %s validado en Dolibarr
 MemberResiliatedInDolibarr = Miembro %s dado de baja en Dolibarr
 MemberDeletedInDolibarr = Miembro %s eliminado de Dolibarr
 MemberSubscriptionAddedInDolibarr = Subscripción del miembro % añadida en Dolibarr
-##### Export ##### = undefined
+##### Export ##### = 
 ExportsArea = Área de exportaciones
 AvailableFormats = Formatos disponibles
 LibraryUsed = Librería utilizada
