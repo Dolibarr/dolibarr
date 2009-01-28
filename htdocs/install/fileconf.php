@@ -379,7 +379,7 @@ while (($file = readdir($handle))!==false)
 
 <?php
 
-$db->close();
+// $db->close();	Not database connexion yet
 
 pFooter($err,$setuplang);
 ?>

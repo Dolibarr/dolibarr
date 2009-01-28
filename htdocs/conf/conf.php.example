@@ -143,7 +143,7 @@ $dolibarr_main_authentication="dolibarr";
 # Default value: 0
 # Possible values: 0 or 1
 # Examples:
-# $dolibarr_main_authentication=0;
+# $dolibarr_main_force_https=0;
 #
 $dolibarr_main_force_https="0";
 
