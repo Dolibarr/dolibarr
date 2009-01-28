@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,7 +94,7 @@ class box_factures extends ModeleBoxes {
 			{
 				$num = $db->num_rows($result);
 				$now=gmmktime();
-				
+
 				$i = 0;
 				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
 
@@ -103,12 +103,12 @@ class box_factures extends ModeleBoxes {
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
 					$datec=$db->jdate($objp->datec);
-					
+
 					$picto='bill';
 					if ($objp->type == 1) $picto.='r';
 					if ($objp->type == 2) $picto.='a';
 					$late = '';
-					if($objp->paye == 0 && $datelimite < ($now - $conf->facture->warning_delay)) { $late = img_warning(sprintf($l_due_date,dolibarr_print_date($datelimite,'day')));}
+					if ($objp->paye == 0 && $objp->fk_statut != 3 && $datelimite < ($now - $conf->facture->warning_delay)) { $late = img_warning(sprintf($l_due_date,dolibarr_print_date($datelimite,'day')));}
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $picto,
