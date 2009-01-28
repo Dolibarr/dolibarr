@@ -238,51 +238,12 @@ class pdf_einstein extends ModelePDFCommandes
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=dol_htmlentitiesbr($com->lignes[$i]->libelle,1);
-					if ($com->lignes[$i]->desc && $com->lignes[$i]->desc!=$com->lignes[$i]->libelle)
-					{
-						if ($libelleproduitservice) $libelleproduitservice.="<br>";
-						if ($com->lignes[$i]->desc == '(CREDIT_NOTE)' && $com->lignes[$i]->fk_remise_except)
-						{
-							$discount=new DiscountAbsolute($this->db);
-							$discount->fetch($com->lignes[$i]->fk_remise_except);
-							$libelleproduitservice=dol_htmlentitiesbr($langs->trans("DiscountFromCreditNote",$discount->ref_facture_source),1);
-						}
-						else
-						{
-							$libelleproduitservice.=dol_htmlentitiesbr($com->lignes[$i]->desc,1);
-						}
-					}
-					// Si ligne associ�e � un code produit
-					if ($com->lignes[$i]->fk_product)
-					{
-						$prodser = new Product($this->db);
-						$prodser->fetch($com->lignes[$i]->fk_product);
-
-						// On ajoute la ref
-						if ($prodser->ref)
-						{
-							$prefix_prodserv = "";
-							if($prodser->isservice())
-							$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
-							else
-							$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
-
-							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
-						}
-
-					}
-
-					if ($com->lignes[$i]->date_start && $com->lignes[$i]->date_end)
-					{
-						// Affichage duree si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end,'',false,$outputlangs).")",1);
-					}
+					$libelleproduitservice=pdf_getlinedesc($com->lignes[$i],$outputlangs);
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
 					// Description
-					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par d�faut
 

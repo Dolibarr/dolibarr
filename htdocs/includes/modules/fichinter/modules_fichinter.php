@@ -26,7 +26,7 @@
  \version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
@@ -237,7 +237,7 @@ function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
 		$fichinter->fetch($fichinterid);
 		$fichinterref = $fichinter->ref;
 	}
-	 
+
 	if ($conf->fichinter->dir_output)
 	{
 		$fichinterref = sanitizeFileName($fichinterref);

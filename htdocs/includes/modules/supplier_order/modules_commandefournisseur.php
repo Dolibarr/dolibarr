@@ -27,6 +27,7 @@
  *                  and parent class for supplier orders numbering models
  *      \version    $Id$
  */
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 

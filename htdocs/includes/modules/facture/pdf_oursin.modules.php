@@ -84,6 +84,18 @@ class pdf_oursin extends ModelePDFFactures
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
+
+		// Defini position des colonnes
+		$this->posxdesc=$this->marge_gauche+1;
+		$this->posxtva=113;
+		$this->posxup=126;
+		$this->posxqty=145;
+		$this->posxdiscount=162;
+		$this->postotalht=174;
+
+		$this->tva=array();
+		$this->atleastoneratenotnull=0;
+		$this->atleastonediscount=0;
 	}
 
 
@@ -195,63 +207,7 @@ class pdf_oursin extends ModelePDFFactures
 					$curY = $nexY;
 
 					// Description of product line
-					$libelleproduitservice=dol_htmlentitiesbr($fac->lignes[$i]->libelle,1);
-					if ($fac->lignes[$i]->desc && $fac->lignes[$i]->desc != $fac->lignes[$i]->libelle)
-					{
-						if ($libelleproduitservice) $libelleproduitservice.="<br>";
-
-						if ($fac->lignes[$i]->desc == '(CREDIT_NOTE)' && $fac->lignes[$i]->fk_remise_except)
-						{
-							$discount=new DiscountAbsolute($this->db);
-							$discount->fetch($fac->lignes[$i]->fk_remise_except);
-							$libelleproduitservice=dol_htmlentitiesbr($langs->trans("DiscountFromCreditNote",$discount->ref_facture_source),1);
-						}
-						else
-						{
-							if ($fac->lignes[$i]->produit_id)
-							{
-								$libelleproduitservice.=dol_htmlentitiesbr($fac->lignes[$i]->desc,1);
-							}
-							else
-							{
-								//$fac->lignes[$i]->desc='�zaaaa';
-								//print dol_string_is_good_iso($fac->lignes[$i]->desc);
-								//print dol_htmlentitiesbr($fac->lignes[$i]->desc);
-								//print exit;
-								$libelleproduitservice.=dol_htmlentitiesbr($fac->lignes[$i]->desc,1);
-							}
-						}
-					}
-
-					// Si ligne associee a un code produit
-					if ($fac->lignes[$i]->produit_id)
-					{
-						$prodser = new Product($this->db);
-						$prodser->fetch($fac->lignes[$i]->produit_id);
-						// On ajoute la ref
-						if ($prodser->ref)
-						{
-							$prefix_prodserv = "";
-							if($prodser->isservice())
-							{
-								$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
-							}
-							else
-							{
-								$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
-							}
-
-							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
-						}
-
-					}
-
-					if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end)
-					{
-						// Affichage duree si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end,'',false,$outputlangs).")",1);
-					}
-					//if ($i==0) { print $libelleproduitservice; exit; }
+					$libelleproduitservice=pdf_getlinedesc($fac->lignes[$i],$outputlangs);
 
 					$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 

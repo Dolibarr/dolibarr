@@ -240,63 +240,7 @@ class pdf_crabe extends ModelePDFFactures
 					$curY = $nexY;
 
 					// Description of product line
-					$libelleproduitservice=dol_htmlentitiesbr($fac->lignes[$i]->libelle,1);
-					if ($fac->lignes[$i]->desc && $fac->lignes[$i]->desc != $fac->lignes[$i]->libelle)
-					{
-						if ($libelleproduitservice) $libelleproduitservice.="<br>";
-
-						if ($fac->lignes[$i]->desc == '(CREDIT_NOTE)' && $fac->lignes[$i]->fk_remise_except)
-						{
-							$discount=new DiscountAbsolute($this->db);
-							$discount->fetch($fac->lignes[$i]->fk_remise_except);
-							$libelleproduitservice=dol_htmlentitiesbr($langs->trans("DiscountFromCreditNote",$discount->ref_facture_source),1);
-						}
-						else
-						{
-							if ($fac->lignes[$i]->produit_id)
-							{
-								$libelleproduitservice.=dol_htmlentitiesbr($fac->lignes[$i]->desc,1);
-							}
-							else
-							{
-								//$fac->lignes[$i]->desc='�zaaaa';
-								//print dol_string_is_good_iso($fac->lignes[$i]->desc);
-								//print dol_htmlentitiesbr($fac->lignes[$i]->desc);
-								//print exit;
-								$libelleproduitservice.=dol_htmlentitiesbr($fac->lignes[$i]->desc,1);
-							}
-						}
-					}
-
-					// Si ligne associee a un code produit
-					if ($fac->lignes[$i]->produit_id)
-					{
-						$prodser = new Product($this->db);
-						$prodser->fetch($fac->lignes[$i]->produit_id);
-						// On ajoute la ref
-						if ($prodser->ref)
-						{
-							$prefix_prodserv = "";
-							if($prodser->isservice())
-							{
-								$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
-							}
-							else
-							{
-								$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
-							}
-
-							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
-						}
-
-					}
-
-					if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end)
-					{
-						// Affichage duree si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end,'',false,$outputlangs).")",1);
-					}
-					//if ($i==0) { print $libelleproduitservice; exit; }
+					$libelleproduitservice=pdf_getlinedesc($fac->lignes[$i],$outputlangs);
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);

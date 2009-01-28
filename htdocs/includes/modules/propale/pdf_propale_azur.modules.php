@@ -241,51 +241,12 @@ class pdf_propale_azur extends ModelePDFPropales
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=dol_htmlentitiesbr($propale->lignes[$i]->libelle,1);
-					if ($propale->lignes[$i]->desc && $propale->lignes[$i]->desc!=$propale->lignes[$i]->libelle)
-					{
-						if ($libelleproduitservice) $libelleproduitservice.="<br>";
-
-						if ($propale->lignes[$i]->desc == '(CREDIT_NOTE)' && $propale->lignes[$i]->fk_remise_except)
-						{
-							$discount=new DiscountAbsolute($this->db);
-							$discount->fetch($propale->lignes[$i]->fk_remise_except);
-							$libelleproduitservice=dol_htmlentitiesbr($langs->trans("DiscountFromCreditNote",$discount->ref_facture_source),1);
-						}
-						else
-						{
-							$libelleproduitservice.=dol_htmlentitiesbr($propale->lignes[$i]->desc,1);
-						}
-					}
-					// Si ligne associée à un code produit
-					if ($propale->lignes[$i]->fk_product)
-					{
-						$prodser = new Product($this->db);
-						$prodser->fetch($propale->lignes[$i]->fk_product);
-
-						// On ajoute la ref
-						if ($prodser->ref)
-						{
-							$prefix_prodserv = "";
-							if($prodser->isservice())
-							$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
-							else
-							$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
-
-							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
-						}
-
-					}
-					if ($propale->lignes[$i]->date_start && $propale->lignes[$i]->date_end)
-					{
-						// Affichage durée si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($propale->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($propale->lignes[$i]->date_end,'',false,$outputlangs).")",1);
-					}
+					$libelleproduitservice=pdf_getlinedesc($propale->lignes[$i],$outputlangs);
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
 					// Description
-					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
 					$nexY = $pdf->GetY();

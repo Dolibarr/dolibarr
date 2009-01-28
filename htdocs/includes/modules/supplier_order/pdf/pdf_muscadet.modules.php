@@ -241,26 +241,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=dol_htmlentitiesbr($com->lignes[$i]->libelle,1);
-					if ($com->lignes[$i]->desc&&$com->lignes[$i]->desc!=$com->lignes[$i]->libelle)
-					{
-						if ($libelleproduitservice) $libelleproduitservice.="<br>";
-						$libelleproduitservice.=dol_htmlentitiesbr($com->lignes[$i]->desc,1);
-					}
-					// Si ligne associ�e � un code produit
-					if ($com->lignes[$i]->fk_product)
-					{
-						$libelleproduitservice=$outputlangs->transnoentities("Product")." ".$outputlangs->convToOutputCharset($com->lignes[$i]->ref_fourn)." - ".$libelleproduitservice;
-					}
-					if ($com->lignes[$i]->date_start && $com->lignes[$i]->date_end)
-					{
-						// Affichage dur�e si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end,'',false,$outputlangs).")",1);
-					}
+					$libelleproduitservice=pdf_getlinedesc($com->lignes[$i],$outputlangs);
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
 
-					$pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+					$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par d�faut
 
@@ -268,27 +253,27 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 					// TVA
 					$pdf->SetXY ($this->posxtva, $curY);
-					$pdf->MultiCell(10, 4, ($com->lignes[$i]->tva_tx < 0 ? '*':'').abs($com->lignes[$i]->tva_tx), 0, 'R');
+					$pdf->MultiCell(10, 3, ($com->lignes[$i]->tva_tx < 0 ? '*':'').abs($com->lignes[$i]->tva_tx), 0, 'R');
 
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->posxup, $curY);
-					$pdf->MultiCell(18, 4, price($com->lignes[$i]->subprice), 0, 'R', 0);
+					$pdf->MultiCell(18, 3, price($com->lignes[$i]->subprice), 0, 'R', 0);
 
 					// Quantit�
 					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell(10, 4, $com->lignes[$i]->qty, 0, 'R');
+					$pdf->MultiCell(10, 3, $com->lignes[$i]->qty, 0, 'R');
 
 					// Remise sur ligne
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($com->lignes[$i]->remise_percent)
 					{
-						$pdf->MultiCell(14, 4, $com->lignes[$i]->remise_percent."%", 0, 'R');
+						$pdf->MultiCell(14, 3, $com->lignes[$i]->remise_percent."%", 0, 'R');
 					}
 
 					// Total HT ligne
 					$pdf->SetXY ($this->postotalht, $curY);
 					$total = price($com->lignes[$i]->total_ht);
-					$pdf->MultiCell(23, 4, $total, 0, 'R', 0);
+					$pdf->MultiCell(23, 3, $total, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$com->lignes[$i]->total_tva;

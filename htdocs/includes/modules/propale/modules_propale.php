@@ -26,7 +26,7 @@
 		\version    $Id$
 */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis car utilisé dans les classes qui héritent
 
@@ -172,7 +172,7 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
 	$file = "pdf_propale_".$modele.".modules.php";
 	if ($modele && file_exists($dir.$file)) $modelisok=1;
 
-    // Si model pas encore bon 
+    // Si model pas encore bon
 	if (! $modelisok)
 	{
 		if ($conf->global->PROPALE_ADDON_PDF) $modele = $conf->global->PROPALE_ADDON_PDF;
@@ -180,7 +180,7 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
     	if (file_exists($dir.$file)) $modelisok=1;
 	}
 
-    // Si model pas encore bon 
+    // Si model pas encore bon
 	if (! $modelisok)
 	{
 	    $liste=array();
@@ -190,7 +190,7 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
       	$file = "pdf_propale_".$modele.".modules.php";
     	if (file_exists($dir.$file)) $modelisok=1;
 	}
-	
+
 
 	// Charge le modele
     if ($modelisok)

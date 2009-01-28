@@ -27,7 +27,7 @@
 		\version    $Id$
 */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 
@@ -46,7 +46,7 @@ class ModeleDon extends FPDF
         return $this->error;
     }
 
-    /** 
+    /**
      *      \brief      Renvoi la liste des modèles actifs
      *      \param      db      Handler de base
      */
@@ -57,7 +57,7 @@ class ModeleDon extends FPDF
         $sql ="SELECT nom as id, nom as lib";
         $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
         $sql.=" WHERE type = '".$type."'";
-        
+
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -133,7 +133,7 @@ class ModeleNumRefDons
         global $langs;
         return $langs->trans("NotAvailable");
     }
-	
+
 	/**     \brief      Renvoi version du module numerotation
 	*      	\return     string      Valeur
 	*/
@@ -146,7 +146,7 @@ class ModeleNumRefDons
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
 		return $langs->trans("NotAvailable");
-	}	
+	}
 }
 
 
@@ -187,11 +187,11 @@ function don_create($db, $id, $message, $modele, $outputlangs)
         $classname = $modele;
 
         require_once($dir.$file);
-    
+
         $obj = new $classname($db);
-    
+
         $obj->message = $message;
-    
+
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
@@ -201,7 +201,7 @@ function don_create($db, $id, $message, $modele, $outputlangs)
             don_meta_create($db, $id);
             // et on supprime l'image correspondant au preview
             don_delete_preview($db, $id);
-    
+
 			$outputlangs->charset_output=$sav_charset_output;
             return 1;
         }
@@ -229,10 +229,10 @@ function don_create($db, $id, $message, $modele, $outputlangs)
 function don_meta_create($db, $donid, $message="")
 {
     global $langs,$conf;
-    
+
     $don = new Don($db);
     $don->id=$donid;
-    $don->fetch($donid);  
+    $don->fetch($donid);
 }
 
 
@@ -247,7 +247,7 @@ function don_delete_preview($db, $donid)
 
     $don = new Don($db);
     $don->id=$donid;
-    $don->fetch($donid);  
+    $don->fetch($donid);
 }
 
 ?>

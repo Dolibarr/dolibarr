@@ -48,6 +48,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
         $langs->load("main");
         $langs->load("bills");
+		$langs->load("sendings");
 
         $this->db = $db;
 		$this->name = "sirocco";
@@ -98,6 +99,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 		$outputlangs->load("deliveries");
+		$outputlangs->load("sendings");
 
 		$outputlangs->setPhpLang();
 
@@ -179,41 +181,11 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=dol_htmlentitiesbr($delivery->lignes[$i]->label,1);
-					if ($delivery->lignes[$i]->description && $delivery->lignes[$i]->description!=$delivery->lignes[$i]->label)
-					{
-						if ($libelleproduitservice) $libelleproduitservice.="<br>";
-						$libelleproduitservice.=dol_htmlentitiesbr($delivery->lignes[$i]->description,1);
-					}
-					// Si ligne associee a un code produit
-					if ($delivery->lignes[$i]->fk_product)
-					{
-						$prodser = new Product($this->db);
-						$prodser->fetch($delivery->lignes[$i]->fk_product);
-						if ($prodser->ref)
-						{
-							$prefix_prodserv = "";
-							if($prodser->isservice())
-							{
-								// Un service peur aussi etre livre
-								$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
-							}
-							else
-							{
-								$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
-							}
-							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
-						}
-					}
-					if ($delivery->lignes[$i]->date_start && $delivery->lignes[$i]->date_end)
-					{
-						// Affichage duree si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end,'',false,$outputlangs).")",1);
-					}
+					$libelleproduitservice=pdf_getlinedesc($delivery->lignes[$i],$outputlangs);
 
 					$pdf->SetXY (30, $curY );
 
-					$pdf->MultiCell(100, 5, $libelleproduitservice, 0, 'J', 0);
+					$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 'J', 0);
 
 					$nexY = $pdf->GetY();
 
@@ -272,19 +244,15 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
-		global $langs,$conf;
-		$langs->load("main");
-		$langs->load("bills");
-
 		$pdf->SetFont('Arial','',11);
 
-		$pdf->Text(30,$tab_top + 5,$langs->transnoentities("Designation"));
+		$pdf->Text(30,$tab_top + 5,$outputlangs->transnoentities("Designation"));
 
 		//		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
 		//		$pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
 
 		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-		$pdf->Text(147,$tab_top + 5,$langs->transnoentities("QtyShipped"));
+		$pdf->Text(147,$tab_top + 5,$outputlangs->transnoentities("QtyShipped"));
 
 		//		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
 		//		$pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));

@@ -26,6 +26,7 @@
  * 	\version	$Id$
  */
 
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
@@ -43,7 +44,7 @@ class methode_expedition
 		$this->description = "ERROR IN MODULE DESCRIPTION";
 	}
 
-	
+
 	/**
 	 *      \brief      Renvoi la liste des mod�les actifs
 	 *      \param      db      Handler de base
@@ -75,7 +76,7 @@ class methode_expedition
 		}
 		return $liste;
 	}
-	
+
 }
 
 ?>

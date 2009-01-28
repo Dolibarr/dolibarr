@@ -25,7 +25,8 @@
 		\version    $Id$
 */
 
-require_once(FPDFI_PATH.'fpdi_protection.php');
+require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**

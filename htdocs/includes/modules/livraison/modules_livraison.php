@@ -28,7 +28,7 @@
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
@@ -199,7 +199,7 @@ function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs=''
 		{
 			// on supprime l'image correspondant au preview
 			delivery_order_delete_preview($db, $deliveryid);
-			
+
 			$outputlangs->charset_output=$sav_charset_output;
 			return 1;
 		}

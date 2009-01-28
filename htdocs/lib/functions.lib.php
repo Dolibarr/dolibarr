@@ -368,7 +368,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 }
 
 /**
- *	\brief      Output date in a string format according to language $conf->language
+ *	\brief      Output date in a string format according to outputlang (or lang if not defined)
  *	\param	    time        	GM Timestamps date (or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' in server TZ)
  *	\param	    format      	Output date format
  *								"%d %b %Y",
@@ -2456,7 +2456,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0)
 }
 
 /**
- *	\brief		This function is called to encode a string into a HTML string
+ *	\brief		This function is called to encode a string into a HTML string. All entities except <> are converted.
  *	\param		stringtoencode		String to encode
  *	\param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
  *	\remarks	For PDF usage, you can show text by 2 ways:
@@ -2469,17 +2469,19 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 {
 	if (dol_textishtml($stringtoencode))
 	{
-		// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
-		$stringtoencode=eregi_replace('<br( [ a-zA-Z_="]*)?/?>','<br>',$stringtoencode);
-		return $stringtoencode;
+		//$trans = get_html_translation_table(HTML_ENTITIES, ENT_COMPAT); var_dump($trans);
+		$newstring=strtr($stringtoencode,array('<'=>'__lt__','>'=>'__gt__'));
+		$newstring=@htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
+		$newstring=eregi_replace('<br( [ a-zA-Z_="]*)?/?>','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
+		$newstring=strtr($newstring,array('__lt__'=>'<','__gt__'=>'>'));
 	}
 	else {
-		// We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
+		// We use @ to avoid warning on PHP4 that does not support entity encoding from UTF8;
 		$newstring=dol_nl2br(@htmlentities($stringtoencode,ENT_COMPAT,$pagecodefrom),$nl2brmode);
 		// Other substitutions that htmlentities does not do
-		$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80
-		return $newstring;
 	}
+	$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.
+	return $newstring;
 }
 
 /**

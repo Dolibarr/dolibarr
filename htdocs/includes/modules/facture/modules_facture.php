@@ -28,10 +28,10 @@
  \version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis car utilis� dans les classes qui h�ritent
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis car utilise dans les classes qui heritent
 
 
 /**
@@ -206,7 +206,7 @@ function facture_pdf_create($db, $id, $message, $modele, $outputlangs)
 			facture_meta_create($db, $id);
 			// et on supprime l'image correspondant au preview
 			facture_delete_preview($db, $id);
-			
+
 			$outputlangs->charset_output=$sav_charset_output;
 			return 1;
 		}
@@ -274,9 +274,9 @@ ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->
 		$fp = fopen ($file,"w");
 		fputs($fp,$meta);
 		fclose($fp);
-		if (! empty($conf->global->MAIN_UMASK)) 
+		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
-		
+
 	}
 }
 

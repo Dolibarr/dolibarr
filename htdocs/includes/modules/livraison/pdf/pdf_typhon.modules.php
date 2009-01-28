@@ -52,6 +52,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		$langs->load("main");
 		$langs->load("bills");
+		$langs->load("sendings");
 
 		$this->db = $db;
 		$this->name = "typhon";
@@ -122,6 +123,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 		$outputlangs->load("deliveries");
+		$outputlangs->load("sendings");
 
 		$outputlangs->setPhpLang();
 
@@ -213,41 +215,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=dol_htmlentitiesbr($delivery->lignes[$i]->label,1);
-					if ($delivery->lignes[$i]->description && $delivery->lignes[$i]->description!=$delivery->lignes[$i]->label)
-					{
-						if ($libelleproduitservice) $libelleproduitservice.="<br>";
-						$libelleproduitservice.=dol_htmlentitiesbr($delivery->lignes[$i]->description,1);
-					}
-					// Si ligne associee a un code produit
-					if ($delivery->lignes[$i]->fk_product)
-					{
-						$prodser = new Product($this->db);
-						$prodser->fetch($delivery->lignes[$i]->fk_product);
-						if ($prodser->ref)
-						{
-							$prefix_prodserv = "";
-							if($prodser->isservice())
-							{
-								// Un service peur aussi etre livre
-								$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
-							}
-							else
-							{
-								$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
-							}
-							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
-						}
-					}
-					if ($delivery->lignes[$i]->date_start && $delivery->lignes[$i]->date_end)
-					{
-						// Affichage duree si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end,'',false,$outputlangs).")",1);
-					}
+					$libelleproduitservice=pdf_getlinedesc($delivery->lignes[$i],$outputlangs);
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
-					$pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+					$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 

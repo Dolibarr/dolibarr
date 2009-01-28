@@ -26,7 +26,7 @@
  *  \version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
@@ -40,7 +40,7 @@ class ModelePdfExpedition extends FPDF
     var $error='';
 
 
-   /** 
+   /**
         \brief Renvoi le dernier message d'erreur de cr�ation de PDF de commande
     */
     function pdferror()
@@ -49,7 +49,7 @@ class ModelePdfExpedition extends FPDF
     }
 
 
-    /** 
+    /**
      *      \brief      Renvoi la liste des mod�les actifs
      *      \return    array        Tableau des modeles (cle=id, valeur=libelle)
      */
@@ -60,7 +60,7 @@ class ModelePdfExpedition extends FPDF
         $sql ="SELECT nom as id, nom as lib";
         $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
         $sql.=" WHERE type = '".$type."'";
-        
+
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -80,7 +80,7 @@ class ModelePdfExpedition extends FPDF
         }
         return $liste;
     }
- 
+
 }
 
 
@@ -95,7 +95,7 @@ function expedition_pdf_create($db, $id, $modele, $outputlangs)
 {
 	global $conf,$langs;
 	$langs->load("sendings");
-	
+
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/";
 	$modelisok=0;
 
@@ -103,7 +103,7 @@ function expedition_pdf_create($db, $id, $modele, $outputlangs)
 	$file = "pdf_expedition_".$modele.".modules.php";
 	if ($modele && file_exists($dir.$file)) $modelisok=1;
 
-    // Si model pas encore bon 
+    // Si model pas encore bon
 	if (! $modelisok)
 	{
 		if ($conf->global->EXPEDITION_ADDON_PDF) $modele = $conf->global->EXPEDITION_ADDON_PDF;
@@ -111,7 +111,7 @@ function expedition_pdf_create($db, $id, $modele, $outputlangs)
     	if (file_exists($dir.$file)) $modelisok=1;
     }
 
-    // Si model pas encore bon 
+    // Si model pas encore bon
 	if (! $modelisok)
 	{
 	    $liste=array();
@@ -121,19 +121,19 @@ function expedition_pdf_create($db, $id, $modele, $outputlangs)
       	$file = "pdf_expedition_".$modele.".modules.php";
     	if (file_exists($dir.$file)) $modelisok=1;
 	}
-	
+
 	// Charge le modele
     if ($modelisok)
 	{
 		$classname = "pdf_expedition_".$modele;
 		require_once($dir.$file);
-	
+
 		$obj = new $classname($db);
 
 		$expedition = new Expedition($db);
 		$result=$expedition->fetch($id);
 		$result=$expedition->fetch_object($expedition->origin);
-		
+
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;

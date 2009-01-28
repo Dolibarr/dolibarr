@@ -19,13 +19,14 @@
  * $Id$
  */
 
-/** 
+/**
         \file       htdocs/compta/export/ComptaJournalPdf.php
         \ingroup    compta
         \brief      Fichier de la classe export compta journal
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
@@ -34,14 +35,14 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
         \brief      Classe export compta journal
 */
 class ComptaJournalPdf extends FPDF  {
-  
+
   function Footer()
   {
     $this->SetY(-10);
     //Police Arial italique 8
     $this->SetFont('Arial','I',8);
-    
-    $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');   
+
+    $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
   }
 }
 

@@ -24,7 +24,7 @@
  \version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
@@ -67,7 +67,7 @@ class BordereauChequeBlochet extends FPDF
         // Recupere emmetteur
         $this->emetteur=$mysoc;
         if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
-		
+
         // Defini position des colonnes
         $this->line_height = 5;
 		$this->line_per_page = 25;
@@ -88,7 +88,7 @@ class BordereauChequeBlochet extends FPDF
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
-		
+
 		$outputlangs->load("main");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
@@ -116,7 +116,6 @@ class BordereauChequeBlochet extends FPDF
 		// Protection et encryption du pdf
 		if ($conf->global->PDF_SECURITY_ENCRYPTION)
 		{
-			require_once(FPDFI_PATH.'fpdi_protection.php');
 			$pdf = new FPDI_Protection('P','mm','A4');
 			$pdfrights = array('print'); // Ne permet que l'impression du document
 			$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
@@ -125,7 +124,6 @@ class BordereauChequeBlochet extends FPDF
 		}
 		else
 		{
-			require_once(FPDFI_PATH.'fpdi.php');
 			$pdf=new FPDI('P','mm',$this->format);
 		}
 
@@ -154,12 +152,12 @@ class BordereauChequeBlochet extends FPDF
 		$pdf->Output($_file);
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
-			
+
 		$langs->setPhpLang();	// On restaure langue session
 		return 1;   // Pas d'erreur
 	}
 
-	
+
 	/**
      *      \brief      Renvoi le dernier message d'erreur de création de propale
      */
@@ -167,7 +165,7 @@ class BordereauChequeBlochet extends FPDF
     {
         return $this->error;
     }
-    
+
 	/**
 	 *	\brief  Generate Header
 	 *	\param  pdf pdf object
@@ -180,7 +178,7 @@ class BordereauChequeBlochet extends FPDF
 
 		$outputlangs->load("compta");
 		$outputlangs->load("banks");
-		
+
 		$title = $outputlangs->transnoentities("CheckReceipt");
 		$pdf->SetFont('Arial','B',10);
 		$pdf->Text(10, 10, $title);
@@ -214,7 +212,7 @@ class BordereauChequeBlochet extends FPDF
 		$pdf->Text(104, 43, $this->account->cle_rib);
 
 		$pdf->SetFont('Arial','',10);
-		$pdf->Text(114, 19, $outputlangs->transnoentities("Sign"));
+		$pdf->Text(114, 19, $outputlangs->transnoentities("Signature"));
 
 		$pdf->Rect(9, 47, 192, 7);
 		$pdf->line(55, 47, 55, 54);
@@ -280,20 +278,20 @@ class BordereauChequeBlochet extends FPDF
 
 			$pdf->SetXY (10, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(20, $this->line_height, $this->lines[$j]->num_chq?$this->lines[$j]->num_chq:'', 0, 'J', 0);
-				
+
 			$pdf->SetXY (30, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(70, $this->line_height, dolibarr_trunc($outputlangs->convToOutputCharset($this->lines[$j]->bank_chq),44), 0, 'J', 0);
-				
+
 			$pdf->SetXY (100, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(80, $this->line_height, dolibarr_trunc($outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq),50), 0, 'J', 0);
-				
+
 			$pdf->SetXY (180, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', 0);
 
 			$yp = $yp + $this->line_height;
 		}
 	}
-	
+
 }
 
 ?>

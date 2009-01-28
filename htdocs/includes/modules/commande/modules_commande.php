@@ -28,7 +28,7 @@
 		\version    $Id$
 */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");	// requis car utilise par les classes qui heritent
 require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
@@ -153,7 +153,7 @@ class ModeleNumRefCommandes
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
 		return $langs->trans("NotAvailable");
-	}	
+	}
 }
 
 
