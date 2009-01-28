@@ -197,19 +197,40 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
  */
 function pdf_getlinedesc($line,$outputlangs)
 {
-	global $db;
+	global $db, $conf, $langs;
 
-	if (empty($line->libelle)) $line->libelle=$line->label;
-	if (empty($line->desc)) $line->desc=$line->description;
-	if (empty($line->produit_id)) $line->produit_id=$line->fk_product;
+	$label=$line->label;
+	$desc=$line->desc;
+	$note=$line->note;
+	$idprod=$line->fk_product;
 
-	// Description of product line
-	$libelleproduitservice=$line->libelle;
-	if ($line->desc && $line->desc != $line->libelle)
+	if (empty($label))  $label=$line->libelle;
+	if (empty($desc))   $desc=$line->description;
+	if (empty($idprod)) $idprod=$line->produit_id;
+
+	$prodser = new Product($db);
+	if ($idprod)
+	{
+		$prodser->fetch($idprod);
+		// If a predefined product and multilang and on other lang, we renamed label with label translated
+		if ($conf->global->MAIN_MULTILANGS && ($outputlangs->defaultlang != $langs->defaultlang))
+		{
+			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["libelle"]))     $label=$prodser->multilangs[$outputlangs->defaultlang]["libelle"];
+			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"])) $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
+			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]))        $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
+		}
+	}
+
+
+	// Description short of product line
+	$libelleproduitservice=$label;
+
+	// Description long of product line
+	if ($desc && $desc != $label)
 	{
 		if ($libelleproduitservice) $libelleproduitservice.="<br>";
 
-		if ($line->desc == '(CREDIT_NOTE)' && $line->fk_remise_except)
+		if ($desc == '(CREDIT_NOTE)' && $line->fk_remise_except)
 		{
 			$discount=new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
@@ -217,22 +238,20 @@ function pdf_getlinedesc($line,$outputlangs)
 		}
 		else
 		{
-			if ($line->produit_id)
+			if ($idprod)
 			{
-				$libelleproduitservice.=$line->desc;
+				$libelleproduitservice.=$desc;
 			}
 			else
 			{
-				$libelleproduitservice.=$line->desc;
+				$libelleproduitservice.=$desc;
 			}
 		}
 	}
 
 	// Si ligne associee a un code produit
-	if ($line->produit_id)
+	if ($idprod)
 	{
-		$prodser = new Product($db);
-		$prodser->fetch($line->produit_id);
 		// On ajoute la ref
 		if ($prodser->ref)
 		{

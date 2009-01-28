@@ -217,26 +217,26 @@ class pdf_oursin extends ModelePDFFactures
 					if ($this->franchise!=1)
 					{
 						$pdf->SetXY ($this->marges['g']+119, $curY);
-						$pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_tx, 0, 'C');
+						$pdf->MultiCell(10, 3, $fac->lignes[$i]->tva_tx, 0, 'C');
 					}
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->marges['g']+132, $curY);
-					$pdf->MultiCell(16, 5, price($fac->lignes[$i]->subprice), 0, 'R', 0);
+					$pdf->MultiCell(16, 3, price($fac->lignes[$i]->subprice), 0, 'R', 0);
 
 					// Quantit
 					$pdf->SetXY ($this->marges['g']+150, $curY);
-					$pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'R');
+					$pdf->MultiCell(10, 3, $fac->lignes[$i]->qty, 0, 'R');
 
 					// Remise sur ligne
 					$pdf->SetXY ($this->marges['g']+160, $curY);
 					if ($fac->lignes[$i]->remise_percent) {
-						$pdf->MultiCell(14, 5, $fac->lignes[$i]->remise_percent."%", 0, 'R');
+						$pdf->MultiCell(14, 3, $fac->lignes[$i]->remise_percent."%", 0, 'R');
 					}
 
 					// Total HT
 					$pdf->SetXY ($this->marges['g']+168, $curY);
 					$total = price($fac->lignes[$i]->total_ht);
-					$pdf->MultiCell(21, 5, $total, 0, 'R', 0);
+					$pdf->MultiCell(21, 3, $total, 0, 'R', 0);
 
 
 					if ($nexY > 200 && $i < $nblignes - 1)
