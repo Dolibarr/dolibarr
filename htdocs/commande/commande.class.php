@@ -252,7 +252,7 @@ class Commande extends CommonObject
 			if (eregi('^\(PROV', $this->ref))
 			{
 				// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
-				// afin de ne pas perdre les fichiers attachés
+				// afin de ne pas perdre les fichiers attachï¿½s
 				$comref = sanitizeFileName($this->ref);
 				$snum = sanitizeFileName($num);
 				$dirsource = $conf->commande->dir_output.'/'.$comref;
@@ -1241,8 +1241,6 @@ class Commande extends CommonObject
 					$product = new Product($this->db);
 					$product->id = $obj->fk_product;
 
-					$result=$product->ajust_stock_commande($obj->qty, 1);
-
 					// Supprime ligne
 					$ligne = new CommandeLigne($this->db);
 					$ligne->id = $idligne;
@@ -1645,69 +1643,59 @@ class Commande extends CommonObject
 			$subprice = $pu;
 			$remise = 0;
 			if ($remise_percent > 0)
-	  {
-	  	$remise = round(($pu * $remise_percent / 100),2);
-	  	$price = ($pu - $remise);
-	  }
-	  $price    = price2num($price);
-	  $subprice  = price2num($subprice);
+			{
+				$remise = round(($pu * $remise_percent / 100),2);
+				$price = ($pu - $remise);
+			}
+			$price    = price2num($price);
+			$subprice  = price2num($subprice);
 
 
-	  $LigneOld = new CommandeLigne($this->db);
-	  $LigneOld->fetch($rowid);
+			$LigneOld = new CommandeLigne($this->db);
+			$LigneOld->fetch($rowid);
 
-	  // Mise a jour ligne en base
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
-	  $sql.= " description='".addslashes($desc)."'";
-	  $sql.= ",price='".price2num($price)."'";
-	  $sql.= ",subprice='".price2num($subprice)."'";
-	  $sql.= ",remise='".price2num($remise)."'";
-	  $sql.= ",remise_percent='".price2num($remise_percent)."'";
-	  $sql.= ",tva_tx='".price2num($txtva)."'";
-	  $sql.= ",qty='".price2num($qty)."'";
-	  //if ($date_end) { $sql.= ",date_start='$date_end'"; }
-	  //else { $sql.=',date_start=null'; }
-	  //if ($date_end) { $sql.= ",date_end='$date_end'"; }
-	  //else { $sql.=',date_end=null'; }
-	  $sql.= ",info_bits='".$info_bits."'";
-	  $sql.= ",total_ht='".price2num($total_ht)."'";
-	  $sql.= ",total_tva='".price2num($total_tva)."'";
-	  $sql.= ",total_ttc='".price2num($total_ttc)."'";
+			// Mise a jour ligne en base
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
+			$sql.= " description='".addslashes($desc)."'";
+			$sql.= ",price='".price2num($price)."'";
+			$sql.= ",subprice='".price2num($subprice)."'";
+			$sql.= ",remise='".price2num($remise)."'";
+			$sql.= ",remise_percent='".price2num($remise_percent)."'";
+			$sql.= ",tva_tx='".price2num($txtva)."'";
+			$sql.= ",qty='".price2num($qty)."'";
+			//if ($date_end) { $sql.= ",date_start='$date_end'"; }
+			//else { $sql.=',date_start=null'; }
+			//if ($date_end) { $sql.= ",date_end='$date_end'"; }
+			//else { $sql.=',date_end=null'; }
+			$sql.= ",info_bits='".$info_bits."'";
+			$sql.= ",total_ht='".price2num($total_ht)."'";
+			$sql.= ",total_tva='".price2num($total_tva)."'";
+			$sql.= ",total_ttc='".price2num($total_ttc)."'";
 
-	  // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	  // Save the start and end date in the database
-	  if ($date_start) { $sql.= ",date_start='".$date_start."'"; }
-	  else { $sql.=',date_start=null'; }
-	  if ($date_end) { $sql.= ",date_end='".$date_end."'"; }
-	  else { $sql.=',date_end=null'; }
+			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+			// Save the start and end date in the database
+			if ($date_start) { $sql.= ",date_start='".$date_start."'"; }
+			else { $sql.=',date_start=null'; }
+			if ($date_end) { $sql.= ",date_end='".$date_end."'"; }
+			else { $sql.=',date_end=null'; }
 
-	  $sql.= " WHERE rowid = ".$rowid;
+			$sql.= " WHERE rowid = ".$rowid;
 
-	  $result = $this->db->query($sql);
-	  if ($result > 0)
-	  {
-	  	// Mise a jour info denormalisees au niveau facture
-	  	$this->update_price();
+			$result = $this->db->query($sql);
+			if ($result > 0)
+			{
+				// Mise a jour info denormalisees
+				$this->update_price();
 
-	  	if ($LigneOld->qty <> $qty && $LigneOld->produit_id)
-	  	{
-	  		$delta = $qty - $LigneOld->qty;
-	  		$op = ($delta > 0) ? 0 : 1;
-
-	  		$product = new Product($this->db);
-	  		$product->id = $LigneOld->produit_id;
-	  		$product->ajust_stock_commande(abs($delta), $op);
-	  	}
-
-	  	$this->db->commit();
-	  	return $result;
-	  }
-	  else
-	  {
-	  	$this->error=$this->db->error();
-	  	$this->db->rollback();
-	  	return -1;
-	  }
+				$this->db->commit();
+				return $result;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				$this->db->rollback();
+				return -1;
+			}
 		}
 		else
 		{
@@ -2274,9 +2262,9 @@ class CommandeLigne
 	}
 
 	/**
-	 *   \brief     	Insere l'objet ligne de commande en base
-	 *   \param      notrigger		1 ne declenche pas les triggers, 0 sinon
-	 *	\return		int				<0 si ko, >0 si ok
+	 *   	\brief     	Insere l'objet ligne de commande en base
+	 *   	\param      notrigger		1 ne declenche pas les triggers, 0 sinon
+	 *		\return		int				<0 si ko, >0 si ok
 	 */
 	function insert($notrigger=0)
 	{
@@ -2341,13 +2329,6 @@ class CommandeLigne
 		if ($this->date_end)   { $sql.= "'".$this->date_end."'"; }
 		else { $sql.='null'; }
 		$sql.= ')';
-
-		if ($this->fk_product)
-		{
-			$product = new Product($this->db);
-			$product->id = $this->fk_product;
-			$product->ajust_stock_commande($this->qty, 0);
-		}
 
 		dolibarr_syslog("CommandeLigne::insert sql=$sql");
 		$resql=$this->db->query($sql);

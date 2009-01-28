@@ -74,9 +74,7 @@ $title=$langs->trans("ProductsAndServices");
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
 $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte,';
-$sql.= ' p.stock_commande,';
-$sql.= ' SUM(s.reel) as stock_physique,';
-$sql.= ' (SUM(s.reel) - p.stock_commande) as stock_theorique'; //Todo: Il faudra additionner les commandes fournisseurs
+$sql.= ' SUM(s.reel) as stock_physique';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product_stock as s,';
 $sql.= ' '.MAIN_DB_PREFIX.'product as p';
 if ($catid || ($conf->categorie->enabled && ! $user->rights->categorie->voir))

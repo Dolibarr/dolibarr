@@ -399,6 +399,7 @@ class Livraison extends CommonObject
 									$obj = $this->db->fetch_object($resql);
 	
 									$mouvS = new MouvementStock($this->db);
+									// TODO Add price of product in method or '' to update PMP
 									$result=$mouvS->livraison($user, $obj->fk_product, $this->entrepot_id, $obj->qty);
 									if ($result < 0)
 									{

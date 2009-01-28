@@ -901,7 +901,7 @@ class Product extends CommonObject
 		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, envente,";
 		$sql.= " fk_product_type, duration, seuil_stock_alerte,canvas,";
-		$sql.= " stock_commande, stock_loc, weight, weight_units, volume, volume_units, barcode, fk_barcode_type, finished";
+		$sql.= " stock_loc, weight, weight_units, volume, volume_units, barcode, fk_barcode_type, finished";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
 		if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
@@ -939,7 +939,7 @@ class Product extends CommonObject
 			$this->barcode            = $result["barcode"];
 			$this->barcode_type       = $result["fk_barcode_type"];
 
-			$this->stock_in_command   = $result["stock_commande"];
+			$this->stock_in_command   = 0;	// TODO
 
 			$this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
 
@@ -2196,11 +2196,12 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief  Augmente ou r�duit la valeur de stock pour le produit
-	 *    \param  user            utilisateur qui demande l'ajustement
-	 *    \param  id_entrepot     id de l'entrepot
-	 *    \param  nbpiece         nombre de pieces
-	 *    \param  mouvement       0 = ajout, 1 = suppression
+	 *  \brief  	Augmente ou reduit la valeur de stock pour le produit
+	 *  \param  	user            utilisateur qui demande l'ajustement
+	 *  \param  	id_entrepot     id de l'entrepot
+	 *  \param  	nbpiece         nombre de pieces
+	 *  \param  	mouvement       0 = ajout, 1 = suppression
+	 * 	\remarks	Called by correct_stock
 	 */
 	function ajust_stock($user, $id_entrepot, $nbpiece, $mouvement)
 	{
@@ -2241,54 +2242,6 @@ class Product extends CommonObject
 			return -1;
 		}
 	}
-
-	/**
-	 *    \brief  Augmente ou r�duit le nombre de piece en commande a expedier
-	 *    \param  nbpiece         nombre de pieces
-	 *    \param  mouvement       0 = ajout, 1 = suppression
-	 *    \return     int             < 0 si erreur, > 0 si ok
-	 */
-	function ajust_stock_commande($nbpiece, $mouvement)
-	{
-		$op[0] = "+" . trim($nbpiece);
-		$op[1] = "-" . trim($nbpiece);
-
-		if ($this->db->begin())
-		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-			$sql .= " SET stock_commande = stock_commande ".$op[$mouvement];
-			$sql .= " WHERE rowid = '".$this->id ."';";
-
-			if ($this->db->query($sql) )
-	  {
-
-	  	$this->load_subproduct();
-
-	  	for ($i = 0 ; $i < sizeof($this->subproducts_id) ; $i++)
-	  	{
-	  		$product = new Product($this->db);
-	  		$product->id = $this->subproducts_id[$i];
-	  		$product->ajust_stock_commande($nbpiece, $mouvement);
-	  	}
-
-	  	$this->db->commit();
-	  	return 1;
-	  }
-	  else
-	  {
-	  	dolibarr_print_error($this->db);
-	  	$this->db->rollback();
-	  	return -2;
-	  }
-		}
-		else
-		{
-			dolibarr_print_error($this->db);
-			$this->db->rollback();
-			return -3;
-		}
-	}
-
 
 	/**
 	 *    \brief      Charge les informations en stock du produit

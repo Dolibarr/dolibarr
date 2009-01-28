@@ -38,8 +38,6 @@ create table llx_product
   envente            tinyint      DEFAULT 1,
   fk_product_type    integer      DEFAULT 0,
   duration           varchar(6),
-  stock_propale      integer      DEFAULT 0,
-  stock_commande     integer      DEFAULT 0,
   seuil_stock_alerte integer      DEFAULT 0,
   stock_loc          varchar(10),               -- emplacement dans le stock
   barcode            varchar(255) DEFAULT NULL,

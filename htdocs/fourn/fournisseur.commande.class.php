@@ -527,6 +527,7 @@ class CommandeFournisseur extends Commande
 						$mouvP = new MouvementStock($this->db);
 						// We decrement stock of product (and sub-products)
 						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+						// TODO Add price of product in method or '' to update PMP
 						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 						if ($result < 0) { $error++; }
 					}
@@ -915,10 +916,8 @@ class CommandeFournisseur extends Commande
 	  // Si module stock g�r� et que expedition faite depuis un entrepot
 	  if (!$error && $conf->stock->enabled && $entrepot)
 	  {
-	  	/*
-	  	 * Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
-	  	 */
 	  	$mouv = new MouvementStock($this->db);
+		// TODO Add price of product in method or '' to update PMP
 	  	$result=$mouv->reception($user, $product, $entrepot, $qty, $price);
 	  	if ($result < 0)
 	  	{

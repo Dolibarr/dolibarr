@@ -33,7 +33,7 @@ switch ( $_GET['action'] ) {
 			// Recuperation des donnees en fonction de la source (liste d�roulante ou champ texte) ...
 			if ( $_POST['hdnSource'] == 'LISTE' ) {
 
-				$res = $sql->query('SELECT fk_product, ref, stock_propale, stock_commande, price, reel, tva_tx
+				$res = $sql->query('SELECT fk_product, ref, price, reel, tva_tx
 								FROM '.MAIN_DB_PREFIX.'product
 								LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
 								WHERE fk_product = '.$_POST['selProduit'].'
@@ -41,7 +41,7 @@ switch ( $_GET['action'] ) {
 
 			} else if ( $_POST['hdnSource'] == 'REF' ) {
 
-				$res = $sql->query('SELECT fk_product, ref, stock_propale, stock_commande, price, reel, tva_tx
+				$res = $sql->query('SELECT fk_product, ref, price, reel, tva_tx
 								FROM '.MAIN_DB_PREFIX.'product
 								LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
 								WHERE ref = \''.$_POST['txtRef'].'\'
@@ -64,11 +64,11 @@ switch ( $_GET['action'] ) {
 
 				$obj_facturation->id( $tab['fk_product'] );
 				$obj_facturation->ref( $tab['ref'] );
-				$obj_facturation->stock( $tab['reel'] - $tab['stock_propale'] - $tab['stock_commande'] );
+				$obj_facturation->stock( $tab['reel']);
 				$obj_facturation->prix( $tab['price'] );
 				$obj_facturation->tva( $tab['tva_tx'] );
 
-				// Definition du filtre pour n'afficher que le produit concern�
+				// Definition du filtre pour n'afficher que le produit concerne
 				if ( $_POST['hdnSource'] == 'LISTE' ) {
 
 					$filtre = $tab['ref'];

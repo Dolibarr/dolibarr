@@ -18,14 +18,14 @@
 
 /**
         \file       htdocs/html.formactions.class.php
-        \brief      Fichier de la classe des fonctions prédéfinie de composants html actions
+        \brief      Fichier de la classe des fonctions prï¿½dï¿½finie de composants html actions
 		\version	$Id$
 */
 
 
 /**
         \class      FormActions
-        \brief      Classe permettant la génération de composants html actions
+        \brief      Classe permettant la gï¿½nï¿½ration de composants html actions
 */
 class FormActions
 {
@@ -35,7 +35,7 @@ class FormActions
 
 	/**
 	*		\brief     Constructeur
-	*		\param     DB      handler d'accès base de donnée
+	*		\param     DB      handler d'accï¿½s base de donnï¿½e
 	*/
 	function FormActions($DB)
 	{
@@ -131,7 +131,7 @@ class FormActions
 					print '<tr '.$bc[$var].'>';
 					print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
 					print '<td>'.dolibarr_print_date($objp->da,'day').'</td>';
-					print '<td>'.dolibarr_trunc($objp->label,32).'</td>';
+					print '<td title="'.dol_escape_htmltag($objp->label).'">'.dolibarr_trunc($objp->label,32).'</td>';
 					print '<td>'.$objp->login.'</td>';
 					print '</tr>';
 					$i++;
@@ -151,7 +151,7 @@ class FormActions
 	
 	/**
 	 *    \brief      Retourne la liste des types de comptes financiers
-	 *    \param      selected        Type pré-sélectionné
+	 *    \param      selected        Type prï¿½-sï¿½lectionnï¿½
 	 *    \param      htmlname        Nom champ formulaire
 	 */
 	function select_type_actions($selected='',$htmlname='actioncode')

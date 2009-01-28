@@ -1337,6 +1337,7 @@ class Facture extends CommonObject
 				{
 					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
 
+					// Loop on each line
 					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 					{
 						if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
@@ -1344,6 +1345,7 @@ class Facture extends CommonObject
 							$mouvP = new MouvementStock($this->db);
 							// We decrease stock for product
 							$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
+							// TODO Add price of product in method or '' to update PMP
 							$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 						}
 					}
@@ -1409,6 +1411,7 @@ class Facture extends CommonObject
 							$mouvP = new MouvementStock($this->db);
 							// We decrease stock for product
 							$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
+							// TODO Add price of product in method or '' to update PMP
 							$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 						}
 					}

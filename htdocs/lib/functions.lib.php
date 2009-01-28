@@ -158,6 +158,18 @@ function dol_escape_js($stringtoescape)
 }
 
 
+/**
+ *  \brief       Returns text escaped for inclusion in javascript code
+ *  \param       $stringtoescape	String to escape
+ *  \return      string      		Escaped string
+ */
+function dol_escape_htmltag($stringtoescape)
+{
+	// escape quotes and backslashes, newlines, etc.
+	return strtr($stringtoescape, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n'));
+}
+
+
 /* For backward compatiblity */
 function dolibarr_syslog($message, $level=LOG_INFO)
 {
