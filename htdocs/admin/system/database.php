@@ -88,9 +88,9 @@ else
 		if (eregi('mysql',$db->type))
 		{
 			$arraytest=array(
-				"character_set_connection"=>'UTF-8',
+//				"character_set_connection"=>'UTF-8',
 				'character_set_database'=>'dolibarr_main_db_character_set',
-				'collation_connection'=>"UTF-8",
+//				'collation_connection'=>"UTF-8",
 				'collation_database'=>'dolibarr_main_db_collation'
 			);
 		}
