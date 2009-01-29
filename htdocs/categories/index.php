@@ -114,7 +114,7 @@ print '<br>';
 // Charge tableau des categories
 $cate_arbo = $c->get_full_arbo($_GET['type']);
 
-	
+
 /*
 * Catégories en javascript
 */
@@ -142,11 +142,11 @@ if ($conf->use_javascript_ajax)
 	if (sizeof($cate_arbo))
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/includes/treemenu/TreeMenu.php');
-		
+
 		$menu  = new HTML_TreeMenu();
 		$icon         = 'folder.gif';
 		$expandedIcon = 'folder-expanded.gif';
-	
+
 		// Création noeud racine
 		$node=array();
 		$rootnode='-1';
@@ -158,7 +158,7 @@ if ($conf->use_javascript_ajax)
 			'expanded' => true)
 			//,array('onclick' => "alert('foo'); return false", 'onexpand' => "alert('Expanded')")
 		);
-	
+
 		// Ajoute id_mere sur tableau cate_arbo
 		$i=0;
 		foreach ($cate_arbo as $key => $val)
@@ -182,19 +182,22 @@ if ($conf->use_javascript_ajax)
 				if ($_GET["expand"] == 'all' || $level <= $_GET["expand"]) {
 					$newelement['expanded']=true;
 				}
-				if ($_GET["expand"] == 'none') 
+				if ($_GET["expand"] == 'none')
 				{
 					$newelement['expanded']=false;
 				}
 			}
 			//echo $nodeparent."|";
 			//print 'x'.$cate_arbo[$key]['fullpath'].'  expand='.$newelement['expanded'].'<br>';
-			$node[$cate_arbo[$key]['fullpath']]=&$node[$nodeparent]->addItem(new HTML_TreeNode($newelement));
-			//print 'Resultat: noeud '.$cate_arbo[$key]['fullpath']." créé<br>\n";
+			if (is_object($node[$nodeparent]))	// Should not happen but occurs on some users.
+			{
+				$node[$cate_arbo[$key]['fullpath']]=&$node[$nodeparent]->addItem(new HTML_TreeNode($newelement));
+				//print 'Resultat: noeud '.$cate_arbo[$key]['fullpath']." créé<br>\n";
+			}
 		}
-		
+
 		$menu->addItem($node[$rootnode]);
-		
+
 		// Affiche arbre
 		print '<script src="'.DOL_URL_ROOT.'/includes/treemenu/TreeMenu.js" language="JavaScript" type="text/javascript"></script>';
 		$treeMenu = new HTML_TreeMenu_DHTML($menu,
@@ -207,18 +210,18 @@ if ($conf->use_javascript_ajax)
 			),
 			true);
 		$treeMenu->printMenu();
-		
+
 		//$listBox  = new HTML_TreeMenu_Listbox($menu, array('linkTarget' => '_self'));
 		//$listBox->printMenu();
-	
+
 	}
 	else
 	{
-		print $langs->trans("NoneCategory");	
+		print $langs->trans("NoneCategory");
 	}
 
 	print '</td></tr>';
-	
+
 	print "</table>";
 	print '<br>';
 }
@@ -244,7 +247,7 @@ else
 				print "\t</tr>\n";
 			}
 		}
-		
+
 	}
 
 	print "</table>";
