@@ -187,12 +187,12 @@ if ($id > 0 || ! empty($ref))
 		}
 		print '</td>';
 		print '</tr>';
-			
+
 		// Third party
 		print '<tr><td>'.$langs->trans('Company').'</td>';
 		print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 		print '</tr>';
-			
+
 		// Discounts for third party
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
@@ -234,13 +234,13 @@ if ($id > 0 || ! empty($ref))
 		}
 		print '</td>';
 		print '</tr>';
-			
+
 		// Date de livraison
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('DeliveryDate');
 		print '</td>';
-			
+
 		if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
@@ -261,17 +261,17 @@ if ($id > 0 || ! empty($ref))
 		print nl2br($commande->note_public);
 		print '</td>';
 		print '</tr>';
-			
+
 		// Adresse de livraison
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('DeliveryAddress');
 		print '</td>';
-			
+
 		if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
-			
+
 		if ($_GET['action'] == 'editdelivery_adress')
 		{
 			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
@@ -281,13 +281,13 @@ if ($id > 0 || ! empty($ref))
 			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
 		}
 		print '</td></tr>';
-			
+
 		// Conditions et modes de réglement
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
-			
+
 		if ($_GET['action'] != 'editconditions' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
@@ -358,9 +358,9 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans('Status').'</td>';
 		print '<td colspan="2">'.$commande->getLibStatut(4).'</td>';
 		print '</tr>';
-			
+
 		print '</table><br>';
-			
+
 
 		/**
 		 *  Lignes de commandes avec quantité livrées et reste à livrer
@@ -376,7 +376,7 @@ if ($id > 0 || ! empty($ref))
 		// $sql.= " AND p.fk_product_type <> 1";		Why this line ?
 		$sql.= " GROUP by cd.rowid, cd.fk_product";
 		$sql.= " ORDER BY cd.rowid";
-		
+
 		//print $sql;
 		dolibarr_syslog("commande.php sql=".$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -405,9 +405,9 @@ if ($id > 0 || ! empty($ref))
 			while ($i < $num)
 			{
 				$product = new Product($db);
-				
+
 				$objp = $db->fetch_object($resql);
-					
+
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
 				if ($objp->fk_product > 0)
@@ -470,7 +470,7 @@ if ($id > 0 || ! empty($ref))
 				print "</tr>";
 
 				// associations sous produits
-				if ($objp->fk_product > 0)
+				if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $objp->fk_product > 0)
 				{
 					$product->get_sousproduits_arbo ();
 					$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
@@ -482,7 +482,7 @@ if ($id > 0 || ! empty($ref))
 						}
 					}
 				}
-				
+
 				$i++;
 			}
 			$db->free($resql);
@@ -512,11 +512,11 @@ if ($id > 0 || ! empty($ref))
 
 			// Bouton expedier sans gestion des stocks
 			if (! $conf->stock->enabled && ! $commande->brouillon)
-			{ 
+			{
 				if ($user->rights->expedition->creer)
 				{
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?action=create&amp;origin=commande&amp;object_id='.$_GET["id"].'">'.$langs->trans("NewSending").'</a>';
-					if ($reste_a_livrer_total <= 0) 
+					if ($reste_a_livrer_total <= 0)
 					{
 						print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
 					}
@@ -536,21 +536,21 @@ if ($id > 0 || ! empty($ref))
 			if ($user->rights->expedition->creer)
 			{
 				print_titre($langs->trans("NewSending"));
-	
+
 				print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/fiche.php">';
 				print '<input type="hidden" name="action" value="create">';
 				print '<input type="hidden" name="id" value="'.$commande->id.'">';
 				print '<input type="hidden" name="origin" value="commande">';
 				print '<input type="hidden" name="object_id" value="'.$commande->id.'">';
 				print '<table class="border" width="100%">';
-	
+
 				$entrepot = new Entrepot($db);
 				$langs->load("stocks");
-	
+
 				print '<tr>';
 				print '<td>'.$langs->trans("Warehouse").'</td>';
 				print '<td>';
-	
+
 				if (sizeof($user->entrepots) === 1)
 				{
 					$uentrepot = array();
@@ -561,25 +561,25 @@ if ($id > 0 || ! empty($ref))
 				{
 					$html->select_array("entrepot_id",$entrepot->list_array());
 				}
-	
+
 				if (sizeof($entrepot->list_array()) <= 0)
 				{
 					print ' &nbsp; No warehouse defined, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">add one</a>';
 				}
 				print '</td><td align="center">';
 				print '<input type="submit" class="button" named="save" value="'.$langs->trans("NewSending").'">';
-				if ($reste_a_livrer_total <= 0) 
+				if ($reste_a_livrer_total <= 0)
 				{
 					print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
 				}
 				print '</td></tr>';
-	
+
 				print "</table>";
 				print "</form>\n";
 				print '<br>';
-				
+
 				$somethingshown=1;
-		
+
 			}
 			else
 			{
