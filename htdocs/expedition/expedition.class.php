@@ -48,8 +48,9 @@ class Expedition extends CommonObject
 	var $modelpdf;
 	var $origin;
 	var $origin_id;
-
+	var $lignes;
 	var $meths;
+
 	/**
 	 * Initialisation
 	 *
@@ -76,7 +77,7 @@ class Expedition extends CommonObject
 	function create($user)
 	{
 		global $conf;
-			
+
 		require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
 		$error = 0;
 		/* On positionne en mode brouillon l'expedition */
@@ -145,7 +146,7 @@ class Expedition extends CommonObject
 		    }
 	  		}
 	  	}
-	  	 
+
 	  	if (! $error)
 	  	{
 	  		$this->db->commit();
@@ -238,7 +239,7 @@ class Expedition extends CommonObject
 			if ($this->db->num_rows($result))
 	  {
 	  	$obj = $this->db->fetch_object($result);
-	  	 
+
 	  	$this->id                   = $obj->rowid;
 	  	$this->ref                  = $obj->ref;
 	  	$this->socid                = $obj->socid;
@@ -262,10 +263,10 @@ class Expedition extends CommonObject
 		$this->trueDepth            = $obj->size;
 		$this->depth_units          = $obj->size_units;
 
-		// A denormalized value		
+		// A denormalized value
 		$this->trueSize           	= $obj->size."x".$obj->width."x".$obj->height;
 		$this->size_units           = $obj->size_units;
-	  	
+
 	  	if ($conf->commande->enabled)
 	  	{
 	  		$this->origin = "commande";
@@ -274,16 +275,16 @@ class Expedition extends CommonObject
 	  	{
 	  		$this->origin = "propal";
 	  	}
-	  	 
+
 	  	$this->db->free($result);
 
 	  	if ($this->statut == 0) $this->brouillon = 1;
-	  	 
+
 	  	$this->lignes = array();
-	  	 
+
 	  	$file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id,2) . "/" . $this->id.".pdf";
 	  	$this->pdf_filename = $file;
-	  	 
+
 	  	/*
 	  	 * Lignes
 	  	 */
@@ -292,7 +293,7 @@ class Expedition extends CommonObject
 	  	{
 	  		return -3;
 	  	}
-	  	 
+
 	  	return 1;
 	  }
 	  else
@@ -399,7 +400,7 @@ class Expedition extends CommonObject
 		    return -2;
 	  		}
 	  	}
-	  	 
+
 	  	// On efface le répertoire de pdf provisoire
 	  	$expeditionref = sanitizeFileName($provref);
 	  	if ($conf->expedition->dir_output)
@@ -421,7 +422,7 @@ class Expedition extends CommonObject
 		    }
 	  		}
 	  	}
-	  	 
+
 	  }
 	  else
 	  {
@@ -530,7 +531,7 @@ class Expedition extends CommonObject
 			if ( $this->db->query($sql) )
 			{
 				$this->db->commit();
-				 
+
 				// On efface le répertoire de pdf provisoire
 				$expref = sanitizeFileName($this->ref);
 				if ($conf->expedition->dir_output)
@@ -748,10 +749,12 @@ class Expedition extends CommonObject
 			$ligne->qty=10;
 			$ligne->qty_asked=5;
 			$ligne->qty_shipped=4;
-			$prodid = rand(1, $num_prods);
-			$ligne->fk_product=$prodids[$prodid];
+			$ligne->fk_product=$this->commande->lignes[$xnbp]->fk_product;
+
+			$this->lignes[]=$ligne;
 			$xnbp++;
 		}
+
 	}
 	/*
 	 Fetch deliveries method and return an array
@@ -773,7 +776,7 @@ class Expedition extends CommonObject
 			}
 		}
 	}
-	
+
 	/*
 	 Get id of default expedition method
 	 */
@@ -794,7 +797,7 @@ class Expedition extends CommonObject
 			}
 		}
 	}
-	
+
 	/*
 	 Get tracking url status
 	 */

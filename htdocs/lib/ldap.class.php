@@ -505,12 +505,13 @@ class Ldap
 
 		if ($result)
 		{
-			dolibarr_syslog("Ldap::add successfull");
+			dolibarr_syslog("Ldap::add successfull", LOG_DEBUG);
 			return 1;
 		}
 		else
 		{
-			dolibarr_syslog("Ldap::add failed");
+			$this->error=@ldap_error($this->connection);
+			dolibarr_syslog("Ldap::add failed: ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -723,7 +724,7 @@ class Ldap
 				{
 					$keyattributelower=strtolower($attributeArray[$j]);
 					//print " Param ".$attributeArray[$j]."=".$info[$i][$keyattributelower][0]."<br>\n";
-						
+
 					//permet de récupérer le SID avec Active Directory
 					if ($this->serverType == "activedirectory" && $keyattributelower == "objectsid")
 					{
@@ -763,7 +764,7 @@ class Ldap
 	{
 		$criteria =  '('.$this->getUserIdentifier().'='.$ldapUser.')';
 		$justthese = array("objectsid");
-		 
+
 		// if the directory is AD, then bind first with the search user first
 		if ($this->serverType == "activedirectory")
 		{
@@ -776,7 +777,7 @@ class Ldap
 		while ($i <= 2)
 		{
 			$ldapSearchResult = @ldap_search($this->connection, $searchDN, $criteria, $justthese);
-			 
+
 			if (!$ldapSearchResult)
 			{
 				$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
@@ -810,7 +811,7 @@ class Ldap
 			return '?';
 		}
 	}
-	 
+
 	/**
 	 * Returns the textual SID
 	 * Indispensable pour Active Directory
@@ -827,7 +828,7 @@ class Ldap
 		}
 		return $result;
 	}
-	 
+
 
 	/**
 	 * 	\brief 		Fonction de recherche avec filtre
@@ -892,7 +893,7 @@ class Ldap
 		while ($i <= 2)
 		{
 			$this->result = @ldap_search($this->connection, $searchDN, $filter);
-				
+
 			if ($this->result)
 			{
 				$result = @ldap_get_entries($this->connection, $this->result);
@@ -903,7 +904,7 @@ class Ldap
 				$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
 				return -1;
 			}
-				
+
 			if (!$result)
 			{
 				// Si pas de résultat on cherche dans le domaine
@@ -943,7 +944,7 @@ class Ldap
 			}
 			if (!$this->name && !$this->login) $this->pwdlastset = -1;
 			$this->badpwdtime = $this->convert_time($this->convToOutputCharset($result[0]["badpasswordtime"][0],$this->ldapcharset));
-				
+
 			// FQDN domain
 			$domain = eregi_replace('dc=','',$this->domain);
 			$domain = eregi_replace(',','.',$domain);
@@ -1098,7 +1099,7 @@ class Ldap
 		return $unixTimeStamp;
 	}
 
-	
+
 	/**
      *  \brief      Convert a string into output/memory charset
      *  \param      str            	String to convert

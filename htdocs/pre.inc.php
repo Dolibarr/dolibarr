@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      �ric Seigne          <erics@rycks.com>
+ * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
@@ -71,17 +71,6 @@ function llxHeader($head = "")
 		{
 	  $langs->load("propal");
 	  $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
-		}
-	}
-
-	if (! empty($conf->compta->enabled) || $conf->comptaexpert->enabled)
-	{
-		$langs->load("compta");
-		$menu->add(DOL_URL_ROOT."/compta/index.php", $langs->trans("MenuFinancial"));
-
-		if ($user->rights->facture->lire) {
-			$langs->load("bills");
-			$menu->add_submenu(DOL_URL_ROOT."/compta/facture.php", $langs->trans("Bills"));
 		}
 	}
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -323,10 +323,10 @@ if(is_dir($dir))
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;module='.$name.'&amp;moduleid='.$module->id.'">'.$langs->trans("Default").'</a>';
 			}
 			print '</td>';
-				
+
 			// Info
 			print '<td>&nbsp;</td>';
-				
+
 			print '</tr>';
 		}
 	}

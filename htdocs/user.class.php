@@ -46,6 +46,7 @@ class User extends CommonObject
 {
 	var $db;
 	var $error;
+	var $errors=array();
 	var $element='user';
 	var $table_element='user';
 

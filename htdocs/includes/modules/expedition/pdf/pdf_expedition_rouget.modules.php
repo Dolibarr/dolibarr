@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
 	}
 
-	/*
+	/**
 	 *   	\param      pdf     		Objet PDF
 	 *   	\param      exp     		Objet expedition
 	 *      \param      showadress      0=non, 1=oui
@@ -189,7 +189,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $this->exp, $outputlangs);
+				$this->_pagehead($pdf, $this->exp, 1, $outputlangs);
 				$pdf->SetFont('Arial','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -216,7 +216,8 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				$curY = $this->tableau_top + 4;
 				$pdf->writeHTMLCell(30, 3, 170, $curY, $outputlangs->trans("QtyToShip"), 0, 0);
 
-				$this->expe->fetch_lines();
+				if ($this->expe->ref != 'SPECIMEN') $this->expe->fetch_lines();
+
 				for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
 				{
 					$curY = $this->tableau_top + 14 + ($i * 7);

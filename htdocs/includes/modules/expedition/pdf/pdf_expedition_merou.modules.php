@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -181,7 +181,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
-				//Initialisation des coordonn�es
+				//Initialisation des coordonnees
 				$tab_top = 53;
 				$tab_height = 70;
 				$pdf->SetFillColor(240,240,240);
@@ -193,30 +193,33 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$nexY = $pdf->GetY();
 				//Generation du tableau
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+
 				//Recuperation des produits de la commande.
-				$this->expe->commande->fetch_lines(1);
+				if ($this->expe->ref != 'SPECIMEN') $this->expe->commande->fetch_lines(1);
+
 				$Produits = $this->expe->commande->lignes;
 				$nblignes = sizeof($Produits);
+
 				for ($i = 0 ; $i < $nblignes ; $i++){
 					//Generation du produit
 					$Prod = new Product($this->db);
 					$Prod->fetch($Produits[$i]->fk_product);
-					//Creation des cases � cocher
+					//Creation des cases a cocher
 					$pdf->rect(10+3, $curY+1, 3, 3);
 					$pdf->rect(20+3, $curY+1, 3, 3);
 					//Insertion de la reference du produit
 					$pdf->SetXY (30, $curY );
 					$pdf->SetFont('Arial','B', 7);
-					$pdf->MultiCell(20, 5, $Prod->ref, 0, 'L', 0);
+					$pdf->MultiCell(24, 5, $outputlangs->convToOutputCharset($Prod->ref), 0, 'L', 0);
 					//Insertion du libelle
 					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (50, $curY );
-					$pdf->MultiCell(90, 5, $Prod->libelle, 0, 'L', 0);
-					//Insertion de la quantite command�e
+					$pdf->MultiCell(90, 5, $outputlangs->convToOutputCharset($Prod->libelle), 0, 'L', 0);
+					//Insertion de la quantite commandee
 					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (140, $curY );
 					$pdf->MultiCell(30, 5, $this->expe->lignes[$i]->qty_asked, 0, 'C', 0);
-					//Insertion de la quantite � envoyer
+					//Insertion de la quantite a envoyer
 					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (170, $curY );
 					$pdf->MultiCell(30, 5, $this->expe->lignes[$i]->qty_shipped, 0, 'C', 0);

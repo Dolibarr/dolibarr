@@ -36,7 +36,7 @@ class InterfaceLdapsynchro
     var $db;
     var $error;
 
-    
+
     /**
      *   \brief      Constructeur.
      *   \param      DB      Handler d'accès base
@@ -44,13 +44,13 @@ class InterfaceLdapsynchro
     function InterfaceLdapsynchro($DB)
     {
         $this->db = $DB ;
-    
+
         $this->name = eregi_replace('Interface','',get_class($this));
         $this->family = "ldap";
         $this->description = "Triggers of this module allows to synchronize Dolibarr toward a LDAP database.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     }
-    
+
     /**
      *   \brief      Renvoi nom du lot de triggers
      *   \return     string      Nom du lot de triggers
@@ -59,7 +59,7 @@ class InterfaceLdapsynchro
     {
         return $this->name;
     }
-    
+
     /**
      *   \brief      Renvoi descriptif du lot de triggers
      *   \return     string      Descriptif du lot de triggers
@@ -83,7 +83,7 @@ class InterfaceLdapsynchro
         elseif ($this->version) return $this->version;
         else return $langs->trans("Unknown");
     }
-    
+
     /**
      *      \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
      *                  D'autres fonctions run_trigger peuvent etre présentes dans includes/triggers
@@ -98,15 +98,15 @@ class InterfaceLdapsynchro
     {
         // Mettre ici le code à exécuter en réaction de l'action
         // Les données de l'action sont stockées dans $object
-    
+
         if (! $conf->ldap->enabled) return 0;     // Module non actif
 
         if (! function_exists('ldap_connect'))
         {
         	dolibarr_syslog("Warning, module LDAP is enabled but LDAP functions not available in this PHP", LOG_WARNING);
-        	return 0;	
+        	return 0;
         }
-        
+
         // Users
         if ($action == 'USER_CREATE')
         {
@@ -118,9 +118,12 @@ class InterfaceLdapsynchro
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-				
+
 	    	    $result=$ldap->add($dn,$info,$user);
-				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				if ($result < 0)
+				{
+					$this->error="ErrorLDAP"." ".$ldap->error;
+				}
 				return $result;
     		}
         }
@@ -134,9 +137,12 @@ class InterfaceLdapsynchro
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-				
+
 	    	    $result=$ldap->update($dn,$info,$user);
-				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				if ($result < 0)
+				{
+					$this->error="ErrorLDAP"." ".$ldap->error;
+				}
 				return $result;
     		}
         }
@@ -158,9 +164,12 @@ class InterfaceLdapsynchro
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-				
+
 	    	    $result=$ldap->delete($dn,$info,$user);
-				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				if ($result < 0)
+				{
+					$this->error="ErrorLDAP"." ".$ldap->error;
+				}
 				return $result;
     		}
         }
@@ -175,9 +184,12 @@ class InterfaceLdapsynchro
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-				
+
 	    	    $result=$ldap->add($dn,$info,$user);
-				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				if ($result < 0)
+				{
+					$this->error="ErrorLDAP"." ".$ldap->error;
+				}
 				return $result;
     		}
 		}
@@ -190,9 +202,12 @@ class InterfaceLdapsynchro
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-				
+
 	    	    $result=$ldap->update($dn,$info,$user);
-				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				if ($result < 0)
+				{
+					$this->error="ErrorLDAP"." ".$ldap->error;
+				}
 				return $result;
     		}
 		}
@@ -205,13 +220,16 @@ class InterfaceLdapsynchro
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-				
+
 	    	    $result=$ldap->delete($dn,$info,$user);
-				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				if ($result < 0)
+				{
+					$this->error="ErrorLDAP"." ".$ldap->error;
+				}
 				return $result;
     		}
 		}
-		
+
         // Contacts
         elseif ($action == 'CONTACT_CREATE')
         {
@@ -223,9 +241,12 @@ class InterfaceLdapsynchro
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-				
+
 	    	    $result=$ldap->add($dn,$info,$user);
-				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				if ($result < 0)
+				{
+					$this->error="ErrorLDAP"." ".$ldap->error;
+				}
 				return $result;
     		}
         }
@@ -239,9 +260,12 @@ class InterfaceLdapsynchro
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-				
+
 	    	    $result=$ldap->update($dn,$info,$user);
-				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				if ($result < 0)
+				{
+					$this->error="ErrorLDAP"." ".$ldap->error;
+				}
 				return $result;
     		}
         }
@@ -252,13 +276,16 @@ class InterfaceLdapsynchro
 	    	{
 	    		$ldap=new Ldap();
 	    		$ldap->connect_bind();
-	
+
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-				
+
 	    	    $result=$ldap->delete($dn,$info,$user);
-				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
-				return $result;
+				if ($result < 0)
+				{
+					$this->error="ErrorLDAP"." ".$ldap->error;
+				}
+	    	    return $result;
 			}
         }
 
@@ -270,13 +297,16 @@ class InterfaceLdapsynchro
         	{
         		$ldap=new Ldap();
         		$ldap->connect_bind();
-				
+
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-				
+
 	    	    $result=$ldap->add($dn,$info,$user);
-				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
-				return $result;
+				if ($result < 0)
+				{
+					$this->error="ErrorLDAP"." ".$ldap->error;
+				}
+	    	    return $result;
     		}
         }
         elseif ($action == 'MEMBER_VALIDATE')
@@ -292,10 +322,13 @@ class InterfaceLdapsynchro
 
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
-					
+
 		    	    $result=$ldap->update($dn,$info,$user);
-					if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
-					return $result;
+					if ($result < 0)
+					{
+						$this->error="ErrorLDAP"." ".$ldap->error;
+					}
+		    	    return $result;
 				}
 			}
         }
@@ -316,10 +349,13 @@ class InterfaceLdapsynchro
 
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
-					
+
 		    	    $result=$ldap->update($dn,$info,$user);
-					if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
-					return $result;
+					if ($result < 0)
+					{
+						$this->error="ErrorLDAP"." ".$ldap->error;
+					}
+		    	    return $result;
 				}
 			}
         }
@@ -333,10 +369,13 @@ class InterfaceLdapsynchro
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-				
+
 	    	    $result=$ldap->update($dn,$info,$user);
-				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
-				return $result;
+				if ($result < 0)
+				{
+					$this->error="ErrorLDAP"." ".$ldap->error;
+				}
+	    	    return $result;
     		}
         }
         elseif ($action == 'MEMBER_NEW_PASSWORD')
@@ -352,10 +391,13 @@ class InterfaceLdapsynchro
 
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
-					
+
 		    	    $result=$ldap->update($dn,$info,$user);
-					if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
-					return $result;
+					if ($result < 0)
+					{
+						$this->error="ErrorLDAP"." ".$ldap->error;
+					}
+		    	    return $result;
 				}
 			}
 		}
@@ -372,10 +414,13 @@ class InterfaceLdapsynchro
 
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
-					
+
 		    	    $result=$ldap->update($dn,$info,$user);
-					if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
-					return $result;
+					if ($result < 0)
+					{
+						$this->error="ErrorLDAP"." ".$ldap->error;
+					}
+		    	    return $result;
 				}
 			}
         }
@@ -391,7 +436,10 @@ class InterfaceLdapsynchro
 				$dn=$object->_load_ldap_dn($info);
 
 				$result=$ldap->delete($dn,$info,$user);
-				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				if ($result < 0)
+				{
+					$this->error="ErrorLDAP"." ".$ldap->error;
+				}
 				return $result;
 			}
         }

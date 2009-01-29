@@ -2071,6 +2071,7 @@ class Commande extends CommonObject
 			$ligne->total_tva=19.6;
 			$prodid = rand(1, $num_prods);
 			$ligne->produit_id=$prodids[$prodid];
+			$ligne->fk_product=$prodids[$prodid];
 			$this->lignes[$xnbp]=$ligne;
 			$xnbp++;
 		}
