@@ -195,37 +195,37 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 
 				//Recuperation des produits de la commande.
-				if ($this->expe->ref != 'SPECIMEN') $this->expe->commande->fetch_lines(1);
-
 				$Produits = $this->expe->commande->lignes;
 				$nblignes = sizeof($Produits);
 
-				for ($i = 0 ; $i < $nblignes ; $i++){
-					//Generation du produit
-					$Prod = new Product($this->db);
-					$Prod->fetch($Produits[$i]->fk_product);
+				for ($i = 0 ; $i < $nblignes ; $i++)
+				{
+					// Description de la ligne produit
+					$libelleproduitservice=pdf_getlinedesc($this->expe->commande->lignes[$i],$outputlangs);
+					//if ($i==1) { print $this->expe->commande->lignes[$i]->libelle.' - '.$libelleproduitservice; exit; }
+
 					//Creation des cases a cocher
 					$pdf->rect(10+3, $curY+1, 3, 3);
 					$pdf->rect(20+3, $curY+1, 3, 3);
 					//Insertion de la reference du produit
-					$pdf->SetXY (30, $curY );
+					$pdf->SetXY (30, $curY+1 );
 					$pdf->SetFont('Arial','B', 7);
-					$pdf->MultiCell(24, 5, $outputlangs->convToOutputCharset($Prod->ref), 0, 'L', 0);
+					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($this->expe->commande->lignes[$i]->ref), 0, 'L', 0);
 					//Insertion du libelle
 					$pdf->SetFont('Arial','', 7);
-					$pdf->SetXY (50, $curY );
-					$pdf->MultiCell(90, 5, $outputlangs->convToOutputCharset($Prod->libelle), 0, 'L', 0);
+					$pdf->SetXY (50, $curY+1 );
+					$pdf->writeHTMLCell(90, 3, 50, $curY+1, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 'L', 0);
 					//Insertion de la quantite commandee
 					$pdf->SetFont('Arial','', 7);
-					$pdf->SetXY (140, $curY );
-					$pdf->MultiCell(30, 5, $this->expe->lignes[$i]->qty_asked, 0, 'C', 0);
+					$pdf->SetXY (140, $curY+1 );
+					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_asked, 0, 'C', 0);
 					//Insertion de la quantite a envoyer
 					$pdf->SetFont('Arial','', 7);
-					$pdf->SetXY (170, $curY );
-					$pdf->MultiCell(30, 5, $this->expe->lignes[$i]->qty_shipped, 0, 'C', 0);
+					$pdf->SetXY (170, $curY+1 );
+					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_shipped, 0, 'C', 0);
 
 					//Generation de la page 2
-					$curY += 4;
+					$curY += (dol_nboflines_bis($libelleproduitservice)*3+1);
 					$nexY = $curY;
 					if ($nexY > ($tab_top+$tab_height-10) && $i < $nblignes - 1)
 					{
@@ -233,7 +233,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 						$this->_pagefoot($pdf, $outputlangs);
 						$pdf->AliasNbPages();
 
-						$nexY = $iniY;
+						$curY = $iniY;
 
 						// New page
 						$pdf->AddPage();
@@ -348,24 +348,24 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
-		else $pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+		else $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 		//*********************Entete****************************
 		//Nom du Document
-		$Xoff = 94;
+		$Xoff = 90;
 		$Yoff = 0;
 		$pdf->SetXY($Xoff,7);
 		$pdf->SetFont('Arial','B',12);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $outputlangs->transnoentities("SendingSheet"), '' , 'L');	// Bordereau expedition
+		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("SendingSheet"), '' , 'L');	// Bordereau expedition
 		//Num Expedition
 		$Yoff = $Yoff+7;
-		$Xoff = 160;
+		$Xoff = 154;
 		//		$pdf->rect($Xoff, $Yoff, 85, 8);
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($exp->ref), '' , 'L');
+		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($exp->ref), '' , 'L');
 		//$this->Code39($Xoff+43, $Yoff+1, $this->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Num Commande
 		$Yoff = $Yoff+4;
@@ -373,7 +373,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $outputlangs->transnoentities("RefOrder").': '.$outputlangs->convToOutputCharset($exp->commande->ref), '' , 'L');
+		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefOrder").': '.$outputlangs->convToOutputCharset($exp->commande->ref), '' , 'L');
 
 		//$this->Code39($Xoff+43, $Yoff+1, $exp->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Definition Emplacement du bloc Societe

@@ -216,8 +216,6 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				$curY = $this->tableau_top + 4;
 				$pdf->writeHTMLCell(30, 3, 170, $curY, $outputlangs->trans("QtyToShip"), 0, 0);
 
-				if ($this->expe->ref != 'SPECIMEN') $this->expe->fetch_lines();
-
 				for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
 				{
 					$curY = $this->tableau_top + 14 + ($i * 7);

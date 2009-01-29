@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -295,7 +295,7 @@ if ($_GET["action"] == 'create')
 			{
 				print '<tr><td colspan="3">'.$langs->trans("NotePrivate").': '.nl2br($object->note)."</td></tr>";
 			}
-			
+
 			print '<tr><td>';
 			print $langs->trans("Weight");
 			print '</td><td><input name="weight" size="4" value=""></td><td>';
@@ -325,9 +325,9 @@ if ($_GET["action"] == 'create')
 			print '<td colspan="3">';
 			print '<input name="tracking_number" size="20">';
 			print "</td></tr>\n";
-				
+
 			print "</table>";
-				
+
 			/*
 			 * Lignes de commandes
 			 *
@@ -370,7 +370,7 @@ if ($_GET["action"] == 'create')
 				$ligne = $object->lignes[$indiceAsked];
 				$var=!$var;
 				print "<tr ".$bc[$var].">\n";
-				
+
 				// Desc
 				if ($ligne->fk_product > 0)
 				{
@@ -474,7 +474,7 @@ if ($_GET["action"] == 'create')
 				print "</tr>\n";
 
 				// Show subproducts of product
-				if ($ligne->fk_product > 0)
+				if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $ligne->fk_product > 0)
 				{
 					$product->get_sousproduits_arbo ();
 					$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
@@ -783,9 +783,16 @@ else
 
 			if (! eregi('^(valid|delete)',$_REQUEST["action"]))
 			{
-				if ($expedition->statut == 0 && $user->rights->expedition->valider && $num_prod > 0)
+				if ($expedition->statut == 0 && $num_prod > 0)
 				{
-					print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+					if ($user->rights->expedition->valider)
+					{
+						print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+					}
+					else
+					{
+						print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
+					}
 				}
 
 				if ($conf->livraison_bon->enabled && $expedition->statut == 1 && $user->rights->expedition->livraison->creer && !$expedition->livraison_id)
@@ -816,7 +823,7 @@ else
 
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$expedition->id;
 
-			$genallowed=$user->rights->expedition->lire && ($expedition->statut > 0);
+			$genallowed=$user->rights->expedition->lire;
 			$delallowed=$user->rights->expedition->supprimer;
 			//$genallowed=1;
 			//$delallowed=0;
@@ -824,7 +831,7 @@ else
 			$somethingshown=$formfile->show_documents('expedition',$expeditionref,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf);
 			if ($genallowed && ! $somethingshown) $somethingshown=1;
 		}
-			
+
 		print '</td><td valign="top" width="50%">';
 
 		// Rien a droite

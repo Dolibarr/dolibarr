@@ -785,7 +785,7 @@ class Commande extends CommonObject
 	  $this->lines[] = $line;
 
 	  /** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
-	   if($conf->global->PRODUIT_SOUSPRODUITS == 1)
+	   if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
 	   {
 	   $prod = new Product($this->db, $idproduct);
 	   $prod -> get_sousproduits_arbo ();
@@ -990,9 +990,9 @@ class Commande extends CommonObject
 
 
 	/**
-	 *      \brief      Reinitialise le tableau lignes
-	 *		\param		only_product	Ne renvoie que ligne liees a des produits physiques predefinis
-	 *		\return		array			Tableau de CommandeLigne
+	 *      \brief      Reinitialize array lignes
+	 *		\param		only_product	Return only physical products
+	 *		\return		array			Array of CommandeLigne
 	 */
 	function fetch_lines($only_product=0)
 	{
@@ -1008,7 +1008,7 @@ class Commande extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
-		if ($only_product==1) $sql .= ' AND p.fk_product_type = 0';
+		if ($only_product) $sql .= ' AND p.fk_product_type = 0';
 		$sql .= ' ORDER BY l.rang';
 
 		dolibarr_syslog("Commande::fetch_lines sql=".$sql,LOG_DEBUG);
@@ -1023,8 +1023,8 @@ class Commande extends CommonObject
 				$objp = $this->db->fetch_object($result);
 
 				$ligne = new CommandeLigne($this->db);
-				$ligne->rowid            = $objp->rowid;
-				$ligne->id               = $objp->rowid;				// \deprecated
+				$ligne->rowid            = $objp->rowid;				// \deprecated
+				$ligne->id               = $objp->rowid;
 				$ligne->fk_commande      = $objp->fk_commande;
 				$ligne->commande_id      = $objp->fk_commande;		// \deprecated
 				$ligne->desc             = $objp->description;  // Description ligne
@@ -1057,6 +1057,7 @@ class Commande extends CommonObject
 				$i++;
 			}
 			$this->db->free($result);
+
 			return 1;
 		}
 		else

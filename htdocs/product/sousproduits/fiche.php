@@ -145,8 +145,6 @@ dolibarr_fiche_head($head, 'subproduct', $titre);
  */
 if ($id || $ref)
 {
-
-	
 	if ( $result )
 	{
 
@@ -253,7 +251,7 @@ if ($id || $ref)
 		print '<tr><td colspan="2"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 		print '</form>';
 		print '<tr><td colspan="2"><br>';
-			
+
 		if($action == 'search')
 		{
 			print '<table class="border">';
@@ -314,7 +312,7 @@ if ($id || $ref)
 					}
 					$i++;
 				}
-					
+
 			}
 			else
 			{
@@ -325,7 +323,7 @@ if ($id || $ref)
 			print '<tr><td colspan="2"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td></tr>';
 			print '</table>';
 		}
-			
+
 		print '</form></td></tr>';
 		print '</td></tr>';
 		print '</table>';

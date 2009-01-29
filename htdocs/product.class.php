@@ -1993,12 +1993,13 @@ class Product extends CommonObject
 	 */
 	function get_sousproduits_arbo ()
 	{
-
 		$peres = $this -> get_pere();
 		foreach($peres as $k=>$v)
 		{
 			foreach($this -> get_fils_arbo($v[0]) as $kf=>$vf)
-	  $peres[$k][$kf] = $vf;
+			{
+	 		 	$peres[$k][$kf] = $vf;
+			}
 		}
 		// on concat�ne tout �a
 		foreach($peres as $k=>$v)

@@ -1576,7 +1576,7 @@ function dol_print_error($db='',$error='')
 		print $langs->trans("DolibarrHasDetectedError").".<br>\n";
 		if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 			print "You use an experimental level of features, so please do NOT report any bugs, anywhere, until going back to MAIN_FEATURES_LEVEL = 0.<br>\n";
-		print $langs->trans("InformationToHelpDiagnose").":<br><br>\n";
+		print $langs->trans("InformationToHelpDiagnose").":<br>\n";
 
 		print "<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";;
 		print "<b>".$langs->trans("Date").":</b> ".dolibarr_print_date(time(),'dayhourlog')."<br>\n";;
@@ -1585,6 +1585,7 @@ function dol_print_error($db='',$error='')
 		print "<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
 		print "<b>".$langs->trans("Referer").":</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
 		print "<b>".$langs->trans("MenuManager").":</b> ".$conf->left_menu.'/'.$conf->top_menu."<br>\n";
+		print "<br>\n";
 		$syslog.="url=".$_SERVER["REQUEST_URI"];
 		$syslog.=", query_string=".$_SERVER["QUERY_STRING"];
 	}
@@ -2457,6 +2458,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0)
 
 /**
  *	\brief		This function is called to encode a string into a HTML string. All entities except <> are converted.
+ * 				This function also remove last CR/BR.
  *	\param		stringtoencode		String to encode
  *	\param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
  *	\remarks	For PDF usage, you can show text by 2 ways:
@@ -2470,9 +2472,10 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 	if (dol_textishtml($stringtoencode))
 	{
 		//$trans = get_html_translation_table(HTML_ENTITIES, ENT_COMPAT); var_dump($trans);
-		$newstring=strtr($stringtoencode,array('<'=>'__lt__','>'=>'__gt__'));
+		$newstring=eregi_replace('<br( [ a-zA-Z_="]*)?/?>','<br>',$stringtoencode);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
+		$newstring=eregi_replace('<br>$','',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
+		$newstring=strtr($newstring,array('<'=>'__lt__','>'=>'__gt__'));
 		$newstring=@htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
-		$newstring=eregi_replace('<br( [ a-zA-Z_="]*)?/?>','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		$newstring=strtr($newstring,array('__lt__'=>'<','__gt__'=>'>'));
 		// If already HTML, CR should be <br> so we don't change \n
 	}
@@ -2572,7 +2575,7 @@ function dol_nboflines_bis($texte,$maxlinesize=0)
 	$texte = strtr($texte, $repTable);
 	$pattern = '/(<[^>]+>)/Uu';
 	$a = preg_split($pattern, $texte, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-	$nblines = ((count($a)+1)/2);
+	$nblines = floor((count($a)+1)/2);
 	// count possible auto line breaks
 	if($maxlinesize)
 	{

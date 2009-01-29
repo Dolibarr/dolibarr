@@ -90,12 +90,12 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-  		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (ref, date_creation, fk_user_author, date_expedition,";
- 		$sql.= " fk_soc, fk_expedition_methode, tracking_number, weight, size, width, height, weight_units, size_units";
-  		$sql.= ")";
-  		$sql.= " VALUES ('(PROV)', now(), $user->id, ".$this->db->idate($this->date_expedition);
- 		$sql.= ", ".$this->socid.",'". $this->expedition_method_id."','". $this->tracking_number."',".$this->weight.",".$this->sizeS.",".$this->sizeW.",".$this->sizeH.",".$this->weight_units.",".$this->size_units;
-  		$sql.= ")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (ref, date_creation, fk_user_author, date_expedition,";
+		$sql.= " fk_soc, fk_expedition_methode, tracking_number, weight, size, width, height, weight_units, size_units";
+		$sql.= ")";
+		$sql.= " VALUES ('(PROV)', now(), $user->id, ".$this->db->idate($this->date_expedition);
+		$sql.= ", ".$this->socid.",'". $this->expedition_method_id."','". $this->tracking_number."',".$this->weight.",".$this->sizeS.",".$this->sizeW.",".$this->sizeH.",".$this->weight_units.",".$this->size_units;
+		$sql.= ")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -232,76 +232,76 @@ class Expedition extends CommonObject
 		if ($conf->livraison_bon->enabled) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON e.rowid = l.fk_expedition";
 		$sql.= " WHERE e.rowid = ".$id;
 
+		dolibarr_syslog("Expedition::fetch sql=".$sql);
 		$result = $this->db->query($sql) ;
-
 		if ($result)
 		{
 			if ($this->db->num_rows($result))
-	  {
-	  	$obj = $this->db->fetch_object($result);
+			{
+				$obj = $this->db->fetch_object($result);
 
-	  	$this->id                   = $obj->rowid;
-	  	$this->ref                  = $obj->ref;
-	  	$this->socid                = $obj->socid;
-	  	$this->statut               = $obj->fk_statut;
-	  	$this->origin_id            = $obj->origin_id;
-	  	$this->livraison_id         = $obj->livraison_id;
-	  	$this->user_author_id       = $obj->fk_user_author;
-	  	$this->date                 = $obj->date_expedition;
-	  	$this->adresse_livraison_id = $obj->fk_adresse_livraison;
-	  	$this->modelpdf             = $obj->model_pdf;
-	  	$this->expedition_method_id = $obj->fk_expedition_methode;
-	  	$this->tracking_number      = $obj->tracking_number;
+				$this->id                   = $obj->rowid;
+				$this->ref                  = $obj->ref;
+				$this->socid                = $obj->socid;
+				$this->statut               = $obj->fk_statut;
+				$this->origin_id            = $obj->origin_id;
+				$this->livraison_id         = $obj->livraison_id;
+				$this->user_author_id       = $obj->fk_user_author;
+				$this->date                 = $obj->date_expedition;
+				$this->adresse_livraison_id = $obj->fk_adresse_livraison;
+				$this->modelpdf             = $obj->model_pdf;
+				$this->expedition_method_id = $obj->fk_expedition_methode;
+				$this->tracking_number      = $obj->tracking_number;
 
-	  	$this->trueWeight           = $obj->weight;
-		$this->weight_units         = $obj->weight_units;
+				$this->trueWeight           = $obj->weight;
+				$this->weight_units         = $obj->weight_units;
 
-		$this->trueWidth            = $obj->width;
-		$this->width_units          = $obj->size_units;
-		$this->trueHeight           = $obj->height;
-		$this->height_units         = $obj->size_units;
-		$this->trueDepth            = $obj->size;
-		$this->depth_units          = $obj->size_units;
+				$this->trueWidth            = $obj->width;
+				$this->width_units          = $obj->size_units;
+				$this->trueHeight           = $obj->height;
+				$this->height_units         = $obj->size_units;
+				$this->trueDepth            = $obj->size;
+				$this->depth_units          = $obj->size_units;
 
-		// A denormalized value
-		$this->trueSize           	= $obj->size."x".$obj->width."x".$obj->height;
-		$this->size_units           = $obj->size_units;
+				// A denormalized value
+				$this->trueSize           	= $obj->size."x".$obj->width."x".$obj->height;
+				$this->size_units           = $obj->size_units;
 
-	  	if ($conf->commande->enabled)
-	  	{
-	  		$this->origin = "commande";
-	  	}
-	  	else
-	  	{
-	  		$this->origin = "propal";
-	  	}
+				if ($conf->commande->enabled)
+				{
+					$this->origin = "commande";
+				}
+				else
+				{
+					$this->origin = "propal";
+				}
 
-	  	$this->db->free($result);
+				$this->db->free($result);
 
-	  	if ($this->statut == 0) $this->brouillon = 1;
+				if ($this->statut == 0) $this->brouillon = 1;
 
-	  	$this->lignes = array();
+				$this->lignes = array();
 
-	  	$file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id,2) . "/" . $this->id.".pdf";
-	  	$this->pdf_filename = $file;
+				$file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id,2) . "/" . $this->id.".pdf";
+				$this->pdf_filename = $file;
 
-	  	/*
-	  	 * Lignes
-	  	 */
-	  	$result=$this->fetch_lines();
-	  	if ($result < 0)
-	  	{
-	  		return -3;
-	  	}
+				/*
+				 * Lignes
+				 */
+				$result=$this->fetch_lines();
+				if ($result < 0)
+				{
+					return -3;
+				}
 
-	  	return 1;
-	  }
-	  else
-	  {
-	  	dolibarr_syslog('Expedition::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
-	  	$this->error='Delivery with id '.$rowid.' not found sql='.$sql;
-	  	return -2;
-	  }
+				return 1;
+			}
+			else
+			{
+				dolibarr_syslog('Expedition::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
+				$this->error='Delivery with id '.$rowid.' not found sql='.$sql;
+				return -2;
+			}
 		}
 		else
 		{

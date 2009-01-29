@@ -1,5 +1,6 @@
 # Dolibarr language file - fr_FR - errors
 CHARSET=UTF-8
+MenuManager=Gestionnaire de menu
 ErrorLoginAlreadyExists=Le login %s existe déjà.
 ErrorGroupAlreadyExists=Le groupe %s existe déjà.
 ErrorDuplicateTrigger=Un fichier trigger de classe '<b>%s</b>' est present plusieurs fois. Supprimer le doublon du répertoire '<b>%s</b>'.
