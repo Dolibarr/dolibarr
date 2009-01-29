@@ -114,7 +114,7 @@ class CommActionRapport
 			}
 
 			$pdf->Open();
-
+			$pagenb=0;
 			$pdf->SetDrawColor(128,128,128);
             $pdf->SetFillColor(220,220,220);
 

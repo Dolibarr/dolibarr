@@ -175,8 +175,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				}
 
 				$pdf->Open();
-				$pdf->AddPage();
-
+				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($delivery->ref));
@@ -188,6 +187,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
+
 				/*
 				 // Positionne $this->atleastonediscount si on a au moins une remise
 				 for ($i = 0 ; $i < $nblignes ; $i++)
@@ -198,9 +198,15 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				 }
 				 }
 				 */
-				$this->_pagehead($pdf, $delivery, 1, $outputlangs);
 
-				$pagenb = 1;
+				// New page
+				$pdf->AddPage();
+				$pagenb++;
+				$this->_pagehead($pdf, $delivery, 1, $outputlangs);
+				$pdf->SetFont('Arial','', 9);
+				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+				$pdf->SetTextColor(0,0,0);
+
 				$tab_top = 90;
 				$tab_top_newpage = 50;
 				$tab_height = 150;
@@ -262,14 +268,15 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
 						$this->_pagefoot($pdf, $outputlangs);
 
-						// Nouvelle page
+						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $delivery, 0, $outputlangs);
+						$this->_pagehead($pdf, $delivery, 1, $outputlangs);
+						$pdf->SetFont('Arial','', 9);
+						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+						$pdf->SetTextColor(0,0,0);
 
 						$nexY = $tab_top_newpage + 8;
-						$pdf->SetTextColor(0,0,0);
-						$pdf->SetFont('Arial','', 10);
 					}
 
 				}

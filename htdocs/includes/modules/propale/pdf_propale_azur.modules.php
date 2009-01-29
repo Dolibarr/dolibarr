@@ -175,8 +175,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				}
 
 				$pdf->Open();
-				$pdf->AddPage();
-
+				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($propale->ref));
@@ -198,10 +197,14 @@ class pdf_propale_azur extends ModelePDFPropales
 					}
 				}
 
-				// Tete de page
+				// New page
+				$pdf->AddPage();
+				$pagenb++;
 				$this->_pagehead($pdf, $propale, 1, $outputlangs);
+				$pdf->SetFont('Arial','', 9);
+				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
+				$pdf->SetTextColor(0,0,0);
 
-				$pagenb = 1;
 				$tab_top = 90;
 				$tab_top_newpage = 50;
 				$tab_height = 110;
@@ -215,7 +218,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($propale->note_public), 0, 'J');
+					$pdf->MultiCell(190, 4, $outputlangs->convToOutputCharset($propale->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -246,18 +249,19 @@ class pdf_propale_azur extends ModelePDFPropales
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
 					// Description
-					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 4, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
 					$nexY = $pdf->GetY();
+print $nexY; exit;
 
 					// TVA
 					$pdf->SetXY ($this->posxtva, $curY);
-					$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($propale->lignes[$i]->tva_tx,1,$propale->lignes[$i]->info_bits), 0, 'R');
+					$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, vatrate($propale->lignes[$i]->tva_tx,1,$propale->lignes[$i]->info_bits), 0, 'R');
 
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($propale->lignes[$i]->subprice), 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty-$this->posxup-1, 4, price($propale->lignes[$i]->subprice), 0, 'R', 0);
 
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
@@ -319,14 +323,15 @@ class pdf_propale_azur extends ModelePDFPropales
 
 						$this->_pagefoot($pdf,$outputlangs);
 
-						// Nouvelle page
+						// New page
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $propale, 0, $outputlangs);
+						$pdf->SetFont('Arial','', 9);
+						$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
+						$pdf->SetTextColor(0,0,0);
 
 						$nexY = $tab_top_newpage + 8;
-						$pdf->SetTextColor(0,0,0);
-						$pdf->SetFont('Arial','', 10);
 					}
 
 				}

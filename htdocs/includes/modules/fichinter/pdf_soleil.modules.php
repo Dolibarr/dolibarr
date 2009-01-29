@@ -139,10 +139,18 @@ class pdf_soleil extends ModelePDFFicheinter
 				}
 
 				$pdf->Open();
-				$pdf->AddPage();
+				$pagenb=0;
+				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
+
+				// New page
+				$pdf->AddPage();
+				$pagenb++;
+				$pdf->SetTextColor(0,0,0);
+				$pdf->SetFont('Arial','', 9);
+				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 4
 
 				//Affiche le filigrane brouillon - Print Draft Watermark
 				if($fichinter->statut==0 && (! empty($conf->global->FICHINTER_DRAFT_WATERMARK)) )
@@ -250,21 +258,23 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetFont('Arial','', 9);
 
+				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
 				$pdf->SetXY (10, $tab_top + 8 );
 				$desc=dol_htmlentitiesbr($fichinter->description,1);
 				//print $outputlangs->convToOutputCharset($desc); exit;
-				$pdf->writeHTMLCell(180, 1, 10, $tab_top + 8, $outputlangs->convToOutputCharset($desc), 0, 1);
+				$pdf->writeHTMLCell(180, 3, 10, $tab_top + 8, $outputlangs->convToOutputCharset($desc), 0, 1);
 				$nexY = $pdf->GetY();
-				
-				$pdf->line(10, $nexY, 200, $nexY);
-				$tab_height = $nexY - $tab_top;
-				
+
+				$tab_height = 0;
 				$tab_top=$nexY;
-				
+				$pdf->line(10, $nexY, 200, $nexY);
+
+				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 4
+
 				//dolibarr_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
 				$num = sizeof($fichinter->lignes);
 				$i=0;$j=0;
-				$height=16;
+				$height=9;
 				if ($num)
 				{
 					while ($i < $num)
@@ -275,23 +285,24 @@ class pdf_soleil extends ModelePDFFicheinter
 						if ($valide>0)
 						{
 							$pdf->SetXY (10, $tab_top + $j * $height);
-							$pdf->writeHTMLCell(0, 4, 20, $tab_top + $j * $height,
-							dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dolibarr_print_date($fichinterligne->datei,'',false,$outputlangs)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output), 0, 0, 0);
+							$pdf->writeHTMLCell(0, 4, $this->marge_gauche, $tab_top + $j * $height,
+							dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dolibarr_print_date($fichinterligne->datei,'',false,$outputlangs)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output), 0, 1, 0);
+							$tab_height+=4;
 
 							$pdf->SetXY (10, $tab_top + 4 + $j * $height);
-							$pdf->writeHTMLCell(0, 4, 20, $tab_top + 4 + $j * $height,
-							dol_htmlentitiesbr($outputlangs->convToOutputCharset($fichinterligne->desc),1), 0, 0, 0);
-							//$tab_height+=dol_nboflines_bis($fichinterligne->desc,52)*4;
-							$tab_height+=($height+4);
-							
+							$pdf->writeHTMLCell(0, 4, $this->marge_gauche, $tab_top + 4 + $j * $height,
+							dol_htmlentitiesbr($outputlangs->convToOutputCharset($fichinterligne->desc),1), 0, 1, 0);
+							$tab_height+=dol_nboflines_bis($fichinterligne->desc,52)*4;
+
 							$j++;
 						}
 						$i++;
 					}
 				}
+				$pdf->line(10, $tab_top+$tab_height, 200, $tab_top+$tab_height);
 
 				// Rectangle for title and all lines
-				$pdf->Rect(10, 100, 190, $tab_height);
+				$pdf->Rect(10, 100, 190, $tab_height+ ($tab_top - 100));
 				$pdf->SetXY (10, $pdf->GetY() + 20);
 				$pdf->MultiCell(60, 5, '', 0, 'J', 0);
 

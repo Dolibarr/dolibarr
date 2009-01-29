@@ -149,7 +149,8 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				}
 
 				$pdf->Open();
-				$pdf->AddPage();
+				$pagenb=0;
+				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($delivery->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("DeliveryOrder"));
@@ -158,9 +159,14 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($delivery->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
+				// New page
+				$pdf->AddPage();
+				$pagenb++;
 				$this->_pagehead($pdf, $delivery, $outputlangs);
+				$pdf->SetFont('Arial','', 9);
+				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+				$pdf->SetTextColor(0,0,0);
 
-				$pagenb = 1;
 				$tab_top = 100;
 				$tab_height = 140;
 
@@ -185,7 +191,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 					$pdf->SetXY (30, $curY );
 
-					$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 'J', 0);
+					$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$nexY = $pdf->GetY();
 
@@ -214,11 +220,16 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					if ($nexY > 240 && $i < $nblignes - 1)
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
-						$pdf->AddPage();
+
 						$nexY = $iniY;
+
+						// New page
+						$pdf->AddPage();
+						$pagenb++;
 						$this->_pagehead($pdf, $delivery, $outputlangs);
+						$pdf->SetFont('Arial','', 9);
+						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
-						$pdf->SetFont('Arial','', 10);
 					}
 				}
 

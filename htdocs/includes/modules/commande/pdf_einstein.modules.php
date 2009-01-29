@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
@@ -74,7 +74,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_escompte = 1;                // Affiche si il y a eu escompte
-		$this->option_credit_note = 1;             // G�re les avoirs
+		$this->option_credit_note = 1;             // Gere les avoirs
 		$this->option_freetext = 1;					// Support add of a personalised text
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
@@ -172,9 +172,9 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf=new FPDI('P','mm',$this->format);
 				}
 
-				$pdf->Open();
-				$pdf->AddPage();
 
+				$pdf->Open();
+				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($com->ref));
@@ -196,10 +196,15 @@ class pdf_einstein extends ModelePDFCommandes
 					}
 				}
 
-				// Tete de page
+				// New page
+				$pdf->AddPage();
+				$pagenb++;
 				$this->_pagehead($pdf, $com, 1, $outputlangs);
+				$pdf->SetFont('Arial','', 9);
+				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+				$pdf->SetTextColor(0,0,0);
 
-				$pagenb = 1;
+
 				$tab_top = 90;
 				$tab_top_newpage = 50;
 				$tab_height = 110;
@@ -210,7 +215,7 @@ class pdf_einstein extends ModelePDFCommandes
 				{
 					$tab_top = 88;
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($com->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
@@ -239,13 +244,12 @@ class pdf_einstein extends ModelePDFCommandes
 
 					// Description de la ligne produit
 					$libelleproduitservice=pdf_getlinedesc($com->lignes[$i],$outputlangs);
-
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
-
 					// Description
 					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+//if ($i==1) { print $outputlangs->convToOutputCharset($libelleproduitservice);exit; }
 
-					$pdf->SetFont('Arial','', 9);   // On repositionne la police par d�faut
+					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 
 					$nexY = $pdf->GetY();
 
@@ -271,7 +275,7 @@ class pdf_einstein extends ModelePDFCommandes
 					// Total HT ligne
 					$pdf->SetXY ($this->postotalht, $curY);
 					$total = price($com->lignes[$i]->total_ht);
-					$pdf->MultiCell(26, 4, $total, 0, 'R', 0);
+					$pdf->MultiCell(26, 3, $total, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$com->lignes[$i]->total_tva;
@@ -308,14 +312,15 @@ class pdf_einstein extends ModelePDFCommandes
 
 						$this->_pagefoot($pdf,$outputlangs);
 
-						// Nouvelle page
+						// New page
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $com, 0, $outputlangs);
+						$pdf->SetFont('Arial','', 9);
+						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+						$pdf->SetTextColor(0,0,0);
 
 						$nexY = $tab_top_newpage + 8;
-						$pdf->SetTextColor(0,0,0);
-						$pdf->SetFont('Arial','', 10);
 					}
 
 				}
@@ -680,7 +685,7 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	/*
-	 *   	\brief      Affiche en-t�te commande
+	 *   	\brief      Affiche en-tete commande
 	 *   	\param      pdf     		Objet PDF
 	 *   	\param      com     		Objet commande
 	 *      \param      showadress      0=non, 1=oui
@@ -761,7 +766,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dolibarr_print_date($object->date,"%d %b %Y",false,$outputlangs), '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("OrderDate")." : " . dolibarr_print_date($object->date,"%d %b %Y",false,$outputlangs), '', 'R');
 
 		if ($showadress)
 		{
@@ -771,7 +776,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY($this->marge_gauche,$posy-5);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
+			$pdf->MultiCell(66, 4, $outputlangs->transnoentities("BillFrom").":");
 
 
 			$pdf->SetXY($this->marge_gauche,$posy);
@@ -809,7 +814,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(102,$posy-5);
-			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
+			$pdf->MultiCell(80,4, $outputlangs->transnoentities("BillTo").":");
 			$object->fetch_client();
 
 			// Cadre client destinataire

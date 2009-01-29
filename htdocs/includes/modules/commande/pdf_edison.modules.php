@@ -66,7 +66,21 @@ class pdf_edison extends ModelePDFCommandes
 		$this->option_multilang = 0;               // Dispo en plusieurs langues
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
-		$this->error = "";
+		// Recupere emmetteur
+		$this->emetteur=$mysoc;
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
+
+		// Defini position des colonnes
+		$this->posxdesc=$this->marge_gauche+1;
+		$this->posxtva=113;
+		$this->posxup=126;
+		$this->posxqty=145;
+		$this->posxdiscount=162;
+		$this->postotalht=174;
+
+		$this->tva=array();
+		$this->atleastoneratenotnull=0;
+		$this->atleastonediscount=0;
 	}
 
 
@@ -151,8 +165,7 @@ class pdf_edison extends ModelePDFCommandes
 
 
 				$pdf->Open();
-				$pdf->AddPage();
-
+				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($com->ref));
@@ -165,7 +178,13 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
 
-				$this->_pagehead($pdf, $com, $outputlangs);
+				// New page
+				$pdf->AddPage();
+				$pagenb++;
+				$this->_pagehead($pdf, $com, 1, $outputlangs);
+				$pdf->SetFont('Arial','', 9);
+				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+				$pdf->SetTextColor(0,0,0);
 
 
 				$tab_top = 100;
@@ -185,24 +204,20 @@ class pdf_edison extends ModelePDFCommandes
 
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
-
 					$curY = $nexY;
 
-					$pdf->SetXY(30, $curY);
-
-					$pdf->MultiCell(100, 5, $outputlangs->convToOutputCharset($com->lignes[$i]->desc), 0, 'J', 0);
+					$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($com->lignes[$i]->desc), 0, 1);
 
 					$nexY = $pdf->GetY();
 
 					$pdf->SetXY (10, $curY);
-
 					$pdf->MultiCell(20, 5, $outputlangs->convToOutputCharset($com->lignes[$i]->ref), 0, 'C');
 
 					$pdf->SetXY (133, $curY);
-					$pdf->MultiCell(10, 5, $outputlangs->convToOutputCharset($com->lignes[$i]->tva_tx), 0, 'C');
+					$pdf->MultiCell(10, 5, vatrate($com->lignes[$i]->tva_tx), 0, 'C');
 
 					$pdf->SetXY (145, $curY);
-					$pdf->MultiCell(10, 5, $outputlangs->convToOutputCharset($com->lignes[$i]->qty), 0, 'C');
+					$pdf->MultiCell(10, 5, price2num($com->lignes[$i]->qty), 0, 'C');
 
 					$pdf->SetXY (156, $curY);
 					$pdf->MultiCell(18, 5, price($com->lignes[$i]->price), 0, 'R', 0);
@@ -211,23 +226,39 @@ class pdf_edison extends ModelePDFCommandes
 					$total = price($com->lignes[$i]->total_ht);
 					$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
 
-					$pdf->line(10, $curY, 200, $curY);
+					$nexY+=2;    // Passe espace entre les lignes
 
-					if ($nexY > 240 && $i < $nblignes - 1)
+					// cherche nombre de lignes a venir pour savoir si place suffisante
+					if ($i < ($nblignes - 1))	// If it's not last line
+					{
+						//on recupere la description du produit suivant
+						$follow_descproduitservice = $outputlangs->convToOutputCharset($com->lignes[$i+1]->desc);
+						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
+						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52)*4);
+					}
+					else	// If it's last line
+					{
+						$nblineFollowDesc = 0;
+					}
+
+					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+
+						// New page
 						$pdf->AddPage();
-						$nexY = $iniY;
-						$this->_pagehead($pdf, $com,$outputlangs);
+						$pagenb++;
+						$this->_pagehead($pdf, $com, 0, $outputlangs);
+						$pdf->SetFont('Arial','', 9);
+						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
-						$pdf->SetFont('Arial','', 10);
+
+						$nexY = $tab_top + 8;
 					}
 				}
 
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
-				/*
-				 *
-				 */
+
 				$tab2_top = 241;
 				$tab2_lh = 7;
 				$tab2_height = $tab2_lh * 4;
@@ -311,14 +342,16 @@ class pdf_edison extends ModelePDFCommandes
 		//      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 
+		$pdf->line(10, $tab_top + 8, 200, $tab_top + 8);
 
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',10);
-		$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentitiesnoconv("Currency".$conf->monnaie));
+		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
 		$pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
 	}
 
-	function _pagehead(&$pdf, $com, $outputlangs)
+
+	function _pagehead(&$pdf, $com, $showaddress=1, $outputlangs)
 	{
 		global $conf,$langs,$mysoc;
 		$langs->load("orders");
@@ -341,13 +374,36 @@ class pdf_edison extends ModelePDFCommandes
 			$pdf->_out('Q');
 		}
 
-		$pdf->SetXY(10,8);
-		if (defined("MAIN_INFO_SOCIETE_NOM"))
+
+		$posy=$this->marge_haute;
+		$pdf->SetXY($this->marge_gauche,$posy);
+
+		// Logo
+		$logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
+		if ($this->emetteur->logo)
 		{
-			$pdf->SetTextColor(0,0,200);
-			$pdf->SetFont('Arial','B',14);
-			$pdf->MultiCell(76, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
+			if (is_readable($logo))
+			{
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+			}
+			else
+			{
+				$pdf->SetTextColor(200,0,0);
+				$pdf->SetFont('Arial','B',8);
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+			}
 		}
+		else if (defined("FAC_PDF_INTITULE"))
+		{
+			$pdf->MultiCell(100, 4, FAC_PDF_INTITULE, 0, 'L');
+		}
+
+		$pdf->SetFont('Arial','B',13);
+		$pdf->SetXY(100,$posy);
+		$pdf->SetTextColor(0,0,60);
+		$pdf->SetFont('Arial','B',12);
+		$posy+=20;
 
 		// Caracteristiques emetteur
 		$carac_emetteur = '';
@@ -364,7 +420,7 @@ class pdf_edison extends ModelePDFCommandes
 		if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
 		$pdf->SetFont('Arial','',9);
-		$pdf->SetXY(12,10);
+		$pdf->SetXY(10,$posy);
 		$pdf->MultiCell(80,4, $carac_emetteur);
 
 		/*

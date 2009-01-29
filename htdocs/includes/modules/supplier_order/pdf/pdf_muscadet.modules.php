@@ -177,8 +177,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				}
 
 				$pdf->Open();
-				$pdf->AddPage();
-
+				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($com->ref));
@@ -200,9 +199,14 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					}
 				}
 
+				// New page
+				$pdf->AddPage();
+				$pagenb++;
 				$this->_pagehead($pdf, $com, 1, $outputlangs);
+				$pdf->SetFont('Arial','', 9);
+				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+				$pdf->SetTextColor(0,0,0);
 
-				$pagenb = 1;
 				$tab_top = 90;
 				$tab_top_newpage = 50;
 				$tab_height = 110;
@@ -289,14 +293,15 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
 						$this->_pagefoot($pdf, $outputlangs);
 
-						// Nouvelle page
+						// New page
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $com, 0, $outputlangs);
+						$pdf->SetFont('Arial','', 9);
+						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+						$pdf->SetTextColor(0,0,0);
 
 						$nexY = $tab_top_newpage + 8;
-						$pdf->SetTextColor(0,0,0);
-						$pdf->SetFont('Arial','', 10);
 					}
 
 				}

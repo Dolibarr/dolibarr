@@ -226,9 +226,9 @@ function pdf_getlinedesc($line,$outputlangs)
 	$libelleproduitservice=$label;
 
 	// Description long of product line
-	if ($desc && $desc != $label)
+	if ($desc && ($desc != $label))
 	{
-		if ($libelleproduitservice) $libelleproduitservice.="<br>";
+		if ($libelleproduitservice) $libelleproduitservice.="\n";
 
 		if ($desc == '(CREDIT_NOTE)' && $line->fk_remise_except)
 		{
@@ -269,7 +269,7 @@ function pdf_getlinedesc($line,$outputlangs)
 		}
 
 	}
-	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice);
+	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
 
 	if ($line->date_start || $line->date_end)
 	{

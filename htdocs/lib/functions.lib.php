@@ -2474,12 +2474,13 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 		$newstring=@htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
 		$newstring=eregi_replace('<br( [ a-zA-Z_="]*)?/?>','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		$newstring=strtr($newstring,array('__lt__'=>'<','__gt__'=>'>'));
+		// If already HTML, CR should be <br> so we don't change \n
 	}
 	else {
 		// We use @ to avoid warning on PHP4 that does not support entity encoding from UTF8;
 		$newstring=dol_nl2br(@htmlentities($stringtoencode,ENT_COMPAT,$pagecodefrom),$nl2brmode);
-		// Other substitutions that htmlentities does not do
 	}
+	// Other substitutions that htmlentities does not do
 	$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.
 	return $newstring;
 }

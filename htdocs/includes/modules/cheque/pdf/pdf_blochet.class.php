@@ -128,6 +128,8 @@ class BordereauChequeBlochet extends FPDF
 		}
 
 		$pdf->Open();
+		$pagenb=0;
+		$pdf->SetDrawColor(128,128,128);
 
 
 		$pages = intval($lignes / $this->line_per_page);

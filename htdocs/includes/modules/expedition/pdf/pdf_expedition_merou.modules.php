@@ -157,7 +157,9 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				}
 
 				$pdf->Open();
-				$pdf->AddPage();
+				$pagenb=0;
+				$pdf->SetDrawColor(128,128,128);
+
 				//Generation de l entete du fichier
 				$pdf->SetTitle($outputlangs->convToOutputCharset($this->expe->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
@@ -171,8 +173,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 				$pdf->SetFont('Arial','', 7);
 
-				//Insertion de l entete
+				// New page
+				$pdf->AddPage();
+				$pagenb++;
 				$this->_pagehead($pdf, $this->expe, $outputlangs);
+				$pdf->SetFont('Arial','', 7);
+				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+				$pdf->SetTextColor(0,0,0);
 
 				//Initialisation des coordonn�es
 				$tab_top = 53;
@@ -217,13 +224,19 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					//Generation de la page 2
 					$curY += 4;
 					$nexY = $curY;
-					if ($nexY > ($tab_top+$tab_height-10) && $i < $nblignes - 1){
+					if ($nexY > ($tab_top+$tab_height-10) && $i < $nblignes - 1)
+					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 						$this->_pagefoot($pdf, $outputlangs);
 						$pdf->AliasNbPages();
-						$pdf->AddPage();
+
 						$nexY = $iniY;
+
+						// New page
+						$pdf->AddPage();
+						$pagenb++;
 						$this->_pagehead($pdf, $this->expe, $outputlangs);
+						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 						$pdf->SetFont('Arial','', 7);
 					}

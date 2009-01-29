@@ -176,7 +176,8 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				$pdf->Open();
-				$pdf->AddPage();
+				$pagenb=0;
+				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetDrawColor(128,128,128);
 				$pdf->SetTitle($outputlangs->convToOutputCharset($fac->ref));
@@ -198,8 +199,13 @@ class pdf_crabe extends ModelePDFFactures
 					}
 				}
 
-				// Tete de page
+				// New page
+				$pdf->AddPage();
+				$pagenb++;
 				$this->_pagehead($pdf, $fac, 1, $outputlangs);
+				$pdf->SetFont('Arial','', 9);
+				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+				$pdf->SetTextColor(0,0,0);
 
 				$pagenb = 1;
 				$tab_top = 90;
@@ -313,10 +319,13 @@ class pdf_crabe extends ModelePDFFactures
 
 						$this->_pagefoot($pdf,$fac,$outputlangs);
 
-						// Nouvelle page
+						// New page
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $fac, 0, $outputlangs);
+						$pdf->SetFont('Arial','', 9);
+						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+						$pdf->SetTextColor(0,0,0);
 
 						$nexY = $tab_top_newpage + 8;
 						$pdf->SetTextColor(0,0,0);

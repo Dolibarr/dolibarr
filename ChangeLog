@@ -1,6 +1,6 @@
 English Dolibarr changelog
 
-***** Changelog for 2.5.1 compared to 2.5 *****
+***** Changelog for 2.6 compared to 2.5 *****
 
 For users:
 - New: Can add bookmarks on all pages.
@@ -21,6 +21,7 @@ For users:
 - New: Added keywords in PDF
 - New: Add hidden option MAIN_DISABLE_PDF_COMPRESSION.
 - New: Add attachments on intervention cards
+- New: Can add personalised fields in emailing selectors.
 - Fix: Author, title and topic are correctly encoded i nPDF.
 - Fix: Now HTML output is always UTF8, this solve bad PDF encoding on old users.
 - Fix: Save new model when changed on interventions.
@@ -38,6 +39,7 @@ For users:
 - Fix: Multiprices features works correctly.
 - Fix: Project module and task creation.
 - Fix: Validation of order if a file was attached.
+- Fix: A lot of fixes in PDF generators.
 
 For translators:
 - Added ca_ES language files
@@ -46,7 +48,7 @@ For translators:
   new translation.
   
 For developers:
-- Removed som deprecated files.
+- Removed some deprecated files.
 - Renamed all function dolibarr_xxx into dol_xxx to have same prefix everywhere.
 - Rewrite clone feature for supplier invoice to work like other clone features.
 - First change to manage a future feature "stock PMP value".

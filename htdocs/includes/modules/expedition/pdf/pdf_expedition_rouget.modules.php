@@ -171,8 +171,10 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				//$this->expe = &$this->expe;
 
 				$pdf->Open();
+				$pagenb=0;
+				$pdf->SetDrawColor(128,128,128);
+
 				$pdf->AliasNbPages();
-				$pdf->AddPage();
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($this->expe->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
@@ -184,9 +186,12 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
 
-				$this->_pagehead($pdf,$this->exp,0,$outputlangs);
-
-				$pdf->SetFont('Arial','', 14);
+				// New page
+				$pdf->AddPage();
+				$pagenb++;
+				$this->_pagehead($pdf, $this->exp, $outputlangs);
+				$pdf->SetFont('Arial','', 9);
+				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
@@ -222,31 +227,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					}
 
 					// Description de la ligne produit
-					$libelleproduitservice=dol_htmlentitiesbr($this->expe->lignes[$i]->description,1);
-					if ($this->expe->lignes[$i]->description && $this->expe->lignes[$i]->description!=$com->lignes[$i]->libelle)
-					{
-						if ($libelleproduitservice) $libelleproduitservice.="<br>";
-						$libelleproduitservice.=dol_htmlentitiesbr($this->expe->lignes[$i]->description,1);
-					}
-					// Si ligne associ�e � un code produit
-					if ($this->expe->lignes[$i]->fk_product)
-					{
-						$prodser = new Product($this->db);
-						$prodser->fetch($this->expe->lignes[$i]->fk_product);
-
-						// On ajoute la ref
-						if ($prodser->ref)
-						{
-							$prefix_prodserv = "";
-							if($prodser->isservice())
-							$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
-							else
-							$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
-
-							$libelleproduitservice=$prefix_prodserv.$outputlangs->convToOutputCharset($prodser->ref)." - ".$outputlangs->convToOutputCharset($libelleproduitservice);
-						}
-
-					}
+					$libelleproduitservice=pdf_getlinedesc($this->expe->lignes[$i],$outputlangs);
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
 

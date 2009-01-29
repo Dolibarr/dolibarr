@@ -156,7 +156,8 @@ class pdf_propale_jaune extends ModelePDFPropales
 				}
 
 				$pdf->Open();
-				$pdf->AddPage();
+				$pagenb=0;
+				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($propale->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("CommercialProposal"));
@@ -168,27 +169,23 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
 
-				// Tete de page
+				// New page
+				$pdf->AddPage();
+				$pagenb++;
 				$this->_pagehead($pdf, $propale, $outputlangs);
+				$pdf->SetFont('Arial','', 9);
+				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
+				$pdf->SetTextColor(0,0,0);
 
-				/*
-				 */
 				$tab_top = 100;
 				$tab_height = 150;
-				/*
-				 *
-				 */
 
 				$pdf->SetFillColor(242,239,119);
-
-				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('Arial','', 10);
-
 				$pdf->SetXY (10, $tab_top + 10 );
 
-				$iniY = $pdf->GetY();
-				$curY = $pdf->GetY();
-				$nexY = $pdf->GetY();
+				$iniY = $tab_top + 12;
+				$curY = $tab_top + 12;
+				$nexY = $tab_top + 12;
 				$nblignes = sizeof($propale->lignes);
 
 				// Loop on each lines
@@ -198,53 +195,74 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 					// Description de la ligne produit
 					$libelleproduitservice=pdf_getlinedesc($propale->lignes[$i],$outputlangs);
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
-					$pdf->SetXY (30, $curY );
-					$pdf->writeHTMLCell(102, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 'J', 0);
+					$pdf->writeHTMLCell(102, 4, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
+					$pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
 					$nexY = $pdf->GetY();
 
 					$ref=dol_htmlentitiesbr($propale->lignes[$i]->ref);
 
 					$pdf->SetXY (10, $curY );
-					$pdf->MultiCell(20, 5, $outputlangs->convToOutputCharset($ref), 0, 'C', 0);
+					$pdf->MultiCell(20, 4, $outputlangs->convToOutputCharset($ref), 0, 'L', 0);
 
 					$pdf->SetXY (132, $curY );
-					$pdf->MultiCell(12, 5, vatrate($propale->lignes[$i]->tva_tx,0,$propale->lignes[$i]->info_bits), 0, 'C', 0);
+					$pdf->MultiCell(12, 4, vatrate($propale->lignes[$i]->tva_tx,0,$propale->lignes[$i]->info_bits), 0, 'R');
 
 					$pdf->SetXY (144, $curY );
-					$pdf->MultiCell(10, 5, $propale->lignes[$i]->qty, 0, 'C', 0);
+					$pdf->MultiCell(10, 4, price($propale->lignes[$i]->qty), 0, 'R', 0);
 
 					$pdf->SetXY (154, $curY );
-					$pdf->MultiCell(22, 5, price($propale->lignes[$i]->price), 0, 'R', 0);
+					$pdf->MultiCell(22, 4, price($propale->lignes[$i]->price), 0, 'R', 0);
 
 					$pdf->SetXY (176, $curY );
-					$pdf->MultiCell(24, 5, price($propale->lignes[$i]->total_ht), 0, 'R', 0);
+					$pdf->MultiCell(24, 4, price($propale->lignes[$i]->total_ht), 0, 'R', 0);
 
-					$pdf->line(10, $curY, 200, $curY );
+					//$pdf->line(10, $curY, 200, $curY );
 
-					if ($nexY > 240 && $i < $nblignes - 1)
+					$nexY+=2;    // Passe espace entre les lignes
+
+					// cherche nombre de lignes a venir pour savoir si place suffisante
+					if ($i < ($nblignes - 1))	// If it's not last line
+					{
+						//on recupere la description du produit suivant
+						$follow_descproduitservice = $outputlangs->convToOutputCharset($propale->lignes[$i+1]->desc);
+						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
+						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52)*4);
+					}
+					else	// If it's last line
+					{
+						$nblineFollowDesc = 0;
+					}
+
+					// test si besoin nouvelle page
+					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
 						$this->_pagefoot($pdf,$propale,$outputlangs);
 
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+
+						// New page
 						$pdf->AddPage();
-						$nexY = $iniY;
+						$pagenb++;
 						$this->_pagehead($pdf, $propale, $outputlangs);
+						$pdf->SetFont('Arial','', 9);
+						$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
-						$pdf->SetFont('Arial','', 10);
+
+						$nexY = $tab_top + 8;
 					}
 				}
 
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
-				/*
-				 *
-				 */
+
+
 				$tab2_top = 254;
 				$tab2_lh = 7;
 				$tab2_height = $tab2_lh * 3;
 
-				$pdf->SetFont('Arial','', 11);
+				$pdf->SetFont('Arial','', 10);
 
 				$pdf->Rect(132, $tab2_top, 68, $tab2_height);
 

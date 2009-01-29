@@ -116,7 +116,9 @@ class pdf_paiement extends FPDF
 			$pdf=new FPDI('P','mm',$this->format);
 		}
 
-		$pdf->Open();
+				$pdf->Open();
+				$pagenb=0;
+				$pdf->SetDrawColor(128,128,128);
 
 		$sql = "SELECT ".$this->db->pdate("p.datep")." as dp, f.facnumber";
 		//$sql .= ", c.libelle as paiement_type, p.num_paiement";
@@ -182,9 +184,14 @@ class pdf_paiement extends FPDF
 		}
 		*/
 
-		$pdf->AddPage();
-
+		// New page
+		$this->AddPage();
+		$pagenb++;
 		$this->Header($pdf, 1, $pages, $outputlangs);
+		$this->SetFont('Arial','', 9);
+		$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+		$this->SetTextColor(0,0,0);
+
 
 		$this->Body($pdf, 1, $lines, $outputlangs);
 

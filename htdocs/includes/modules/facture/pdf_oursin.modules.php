@@ -175,9 +175,8 @@ class pdf_oursin extends ModelePDFFactures
 				}
 
 				$pdf->Open();
-				$pdf->AddPage();
-
-				$this->_pagehead($pdf, $fac, $outputlangs);
+				$pagenb=0;
+				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($fac->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Invoice"));
@@ -188,6 +187,14 @@ class pdf_oursin extends ModelePDFFactures
 
 				$pdf->SetMargins(10, 10, 10);
 				$pdf->SetAutoPageBreak(1,0);
+
+				// New page
+				$pdf->AddPage();
+				$pagenb++;
+				$this->_pagehead($pdf, $fac, 1, $outputlangs);
+				$pdf->SetFont('Arial','', 9);
+				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = $this->marges['h']+90;
 				$tab_height = 110;
@@ -217,7 +224,7 @@ class pdf_oursin extends ModelePDFFactures
 					if ($this->franchise!=1)
 					{
 						$pdf->SetXY ($this->marges['g']+119, $curY);
-						$pdf->MultiCell(10, 3, $fac->lignes[$i]->tva_tx, 0, 'C');
+						$pdf->MultiCell(10, 3, $fac->lignes[$i]->tva_tx, 0, 'R');
 					}
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->marges['g']+132, $curY);
@@ -242,11 +249,15 @@ class pdf_oursin extends ModelePDFFactures
 					if ($nexY > 200 && $i < $nblignes - 1)
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac, $outputlangs);
-						$pdf->AddPage();
 						$nexY = $iniY;
-						$this->_pagehead($pdf, $fac, $outputlangs);
+
+						// New page
+						$pdf->AddPage();
+						$pagenb++;
+						$this->_pagehead($pdf, $fac, 0, $outputlangs);
+						$pdf->SetFont('Arial','', 9);
+						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
-						$pdf->SetFont('Arial','', 10);
 					}
 
 				}
@@ -676,7 +687,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		$pdf->SetFont('Arial','B',10);
 
-		$pdf->Text($this->marges['g']+2,$tab_top + 5, $outputlangs->transnoentities("Designation"));
+		$pdf->Text($this->marges['g']+1,$tab_top + 5, $outputlangs->transnoentities("Designation"));
 		if ($this->franchise!=1) $pdf->Text($this->marges['g']+120, $tab_top + 5, $outputlangs->transnoentities("VAT"));
 		$pdf->Text($this->marges['g']+135, $tab_top + 5,$outputlangs->transnoentities("PriceUHT"));
 		$pdf->Text($this->marges['g']+153, $tab_top + 5, $outputlangs->transnoentities("Qty"));
@@ -702,7 +713,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *   \param      pdf     objet PDF
 	 *   \param      fac     objet facture
 	 */
-	function _pagehead(&$pdf, $fac, $outputlangs)
+	function _pagehead(&$pdf, $fac, $showadress=0, $outputlangs)
 	{
 		global $langs,$conf;
 		$langs->load("main");
