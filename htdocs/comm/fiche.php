@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
@@ -64,10 +64,10 @@ if ($_GET["action"] == 'attribute_prefix' && $user->rights->societe->creer)
     $societe = new Societe($db, $_GET["socid"]);
     $societe->attribute_prefix($db, $_GET["socid"]);
 }
-// conditions de r�glement
+// conditions de reglement
 if ($_POST["action"] == 'setconditions' && $user->rights->societe->creer)
 {
-    
+
 	$societe = new Societe($db, $_GET["socid"]);
     $societe->cond_reglement=$_POST['cond_reglement_id'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET cond_reglement='".$_POST['cond_reglement_id'];
@@ -75,7 +75,7 @@ if ($_POST["action"] == 'setconditions' && $user->rights->societe->creer)
     $result = $db->query($sql);
     if (! $result) dolibarr_print_error($result);
 }
-// mode de r�glement
+// mode de reglement
 if ($_POST["action"] == 'setmode' && $user->rights->societe->creer)
 {
     $societe = new Societe($db, $_GET["socid"]);
@@ -159,7 +159,7 @@ if ($socid > 0)
      */
     print '<table width="100%" class="notopnoleftnoright">';
     print '<tr><td valign="top" class="notopnoleft">';
-	
+
     print '<table class="border" width="100%">';
 
     print '<tr><td width="30%">'.$langs->trans("Name").'</td><td width="70%" colspan="3">';
@@ -190,7 +190,7 @@ if ($socid > 0)
 
     // Phone
     print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($objsoc->tel,$objsoc->pays_code,0,$objsoc->id,'AC_TEL').'</td>';
-    
+
     // Fax
 	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($objsoc->fax,$objsoc->pays_code,0,$objsoc->id,'AC_FAX').'</td></tr>';
 
@@ -255,7 +255,7 @@ if ($socid > 0)
     print '</td></tr></table>';
     print '</td><td colspan="3">'.($objsoc->remise_client?$objsoc->remise_client.'%':$langs->trans("DiscountNone")).'</td>';
     print '</tr>';
-    
+
     // Reductions absolues (Remises-Ristournes-Rabbais)
     print '<tr><td nowrap>';
     print '<table width="100%" class="nobordernopadding">';
@@ -291,7 +291,7 @@ if ($socid > 0)
 		print '</td><td colspan="3">'.$objsoc->price_level."</td>";
 		print '</tr>';
 	}
-	
+
 	// Adresse de livraison
 	if ($conf->expedition->enabled)
 	{
@@ -309,7 +309,7 @@ if ($socid > 0)
 		$sql = "SELECT count(rowid) as nb";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison";
 	    $sql.= " WHERE fk_societe =".$objsoc->id;
-	
+
 	    $resql = $db->query($sql);
 	    if ($resql)
 	    {
@@ -321,10 +321,10 @@ if ($socid > 0)
 	    {
 	        dolibarr_print_error($db);
 	    }
-	    
+
 		print '</td>';
 		print '</tr>';
-	}	
+	}
 
     print "</table>";
 
@@ -346,11 +346,11 @@ if ($socid > 0)
     print '<br>';
 
 	$now=gmmktime();
-	
+
     /*
-     * Dernieres propales
+     * Last proposals
      */
-    if ($conf->propal->enabled)
+    if ($conf->propal->enabled && $user->rights->propale->lire)
     {
         $propal_static=new Propal($db);
 
@@ -362,7 +362,7 @@ if ($socid > 0)
         $sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
         $sql .= " AND s.rowid = ".$objsoc->id;
         $sql .= " ORDER BY p.datep DESC";
-        
+
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -400,12 +400,12 @@ if ($socid > 0)
     }
 
     /*
-     * Dernieres commandes
+     * Last orders
      */
-    if($conf->commande->enabled)
+    if ($conf->commande->enabled && $user->rights->commande->lire)
     {
         $commande_static=new Commande($db);
-        
+
         print '<table class="noborder" width="100%">';
 
         $sql = "SELECT s.nom, s.rowid,";
@@ -450,10 +450,10 @@ if ($socid > 0)
     /*
      * Last linked contracts
      */
-    if($conf->contrat->enabled)
+    if ($conf->contrat->enabled && $user->rights->contrat->lire)
     {
         $contratstatic=new Contrat($db);
-        
+
         print '<table class="noborder" width="100%">';
 
         $sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut, ".$db->pdate("c.datec")." as dc";
@@ -478,7 +478,7 @@ if ($socid > 0)
             while ($i < $num && $i < $MAXLIST)
             {
             	$contrat=new Contrat($db);
-            	
+
                 $objp = $db->fetch_object($resql);
                 $var=!$var;
                 print "<tr $bc[$var]>";
@@ -503,11 +503,11 @@ if ($socid > 0)
         }
         print "</table>";
     }
-    
+
     /*
      * Dernieres interventions
      */
-    if ($conf->ficheinter->enabled)
+    if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire)
     {
         print '<table class="noborder" width="100%">';
 
@@ -516,7 +516,7 @@ if ($socid > 0)
         $sql .= " WHERE f.fk_soc = s.rowid";
         $sql .= " AND s.rowid = ".$objsoc->id;
         $sql .= " ORDER BY f.datei DESC";
-        
+
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -547,11 +547,11 @@ if ($socid > 0)
         }
         print "</table>";
     }
-    
+
     /*
      * Last linked projects
      */
-    if ($conf->projet->enabled)
+    if ($conf->projet->enabled && $user->rights->projet->lire)
     {
         print '<table class="noborder" width=100%>';
 
@@ -587,7 +587,7 @@ if ($socid > 0)
         }
         print "</table>";
     }
-	
+
 	/*
 	 * Last linked chronodocs
 	 */
@@ -602,7 +602,7 @@ if ($socid > 0)
             $i = 0 ;
 			//$num = sizeOf($result);
 			$num=$chronodocs_static->get_nb_chronodocs($objsoc->id);
-			
+
 			if ($num > 0) {
                 print '<tr class="liste_titre">';
                 print '<td colspan="3"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastChronodocs",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/chronodocs/index.php?socid='.$objsoc->id.'">'.$langs->trans("AllChronodocs").' ('.$num.')</td></tr></table></td>';
@@ -617,11 +617,11 @@ if ($socid > 0)
                 print "<td align=\"left\">".dolibarr_trunc($obj->title,30) ."</td>";
 				print "<td align=\"right\">".dolibarr_print_date($obj->dp,'day')."</td>\n";
 				print "</tr>";
-				
+
                 $i++;
             }
 		}
-		
+
 		print "</table>";
 	}
 
@@ -663,17 +663,17 @@ if ($socid > 0)
     {
     	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
     }
-    
+
 	if ($user->rights->societe->contact->creer)
 	{
 	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 	}
-	
+
 	if(!empty($conf->global->MAIN_MODULE_CHRONODOCS) && $user->rights->chronodocs->entries->write)
 	{
 	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/chronodocs/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddChronodoc").'</a>';
 	}
-	
+
     print '</div>';
     print '<br>';
 
@@ -686,7 +686,7 @@ if ($socid > 0)
      *      Listes des actions a faire
      */
 	show_actions_todo($conf,$langs,$db,$objsoc);
-	
+
     /*
      *      Listes des actions effectuees
      */

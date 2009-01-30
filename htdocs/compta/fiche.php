@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ if ($socid > 0)
 	{
 		dolibarr_print_error($db,$societe->error);
 	}
-	
+
 	/*
 	 * Affichage onglets
 	 */
@@ -101,14 +101,14 @@ if ($socid > 0)
     print '<tr><td valign="top" width="50%" class="notopnoleft">';
 
     print '<table class="border" width="100%">';
-    
+
     print '<tr><td width="100">'.$langs->trans("Name").'</td><td colspan="3">'.$societe->nom.'</td></tr>';
-    
+
     // Prefix
     print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
     print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
     print '</td>';
-    
+
     if ($societe->client)
     {
         print '<tr>';
@@ -118,7 +118,7 @@ if ($socid > 0)
         print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$societe->code_compta.'</td>';
         print '</tr>';
     }
-    
+
     if ($societe->fournisseur)
     {
         print '<tr>';
@@ -128,12 +128,12 @@ if ($socid > 0)
         print '<td nowrap>'.$langs->trans("SupplierAccountancyCode").'</td><td colspan="3">'.$societe->code_compta_fournisseur.'</td>';
         print '</tr>';
     }
-    
+
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse)."</td></tr>";
 
     print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$societe->cp.'</td>';
     print '<td>'.$langs->trans('Town').'</td><td>'.$societe->ville.'</td></tr>';
-    
+
 	// Country
     print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
 	if ($societe->isInEEC()) print $form->textwithhelp($societe->pays,$langs->trans("CountryIsInEEC"),1,0);
@@ -170,7 +170,7 @@ if ($socid > 0)
         print '</td></tr></table>';
         print '</td><td colspan="3">'.($societe->remise_client?price2num($societe->remise_client,'MT').'%':$langs->trans("DiscountNone")).'</td>';
         print '</tr>';
-        
+
         // R�ductions (Remises-Ristournes-Rabbais)
         print '<tr><td nowrap>';
         print '<table width="100%" class="nobordernopadding">';
@@ -191,7 +191,7 @@ if ($socid > 0)
         print '</td>';
         print '</tr>';
     }
-    
+
     print "</table>";
 
     print "</td>\n";
@@ -212,8 +212,8 @@ if ($socid > 0)
     print '</table>';
     print '<br>';
 
-    /**
-     *   Dernieres factures
+    /*
+     *   Last invoices
      */
     if ($conf->facture->enabled && $user->rights->facture->lire)
     {
@@ -280,9 +280,9 @@ if ($socid > 0)
     }
 
     /*
-     * Derniers projets associes
+     * Last project
      */
-    if ($conf->projet->enabled)
+    if ($conf->projet->enabled && $user->rights->projet->lire)
     {
         print '<table class="noborder" width="100%">';
 
@@ -339,18 +339,18 @@ if ($socid > 0)
 			$langs->load("bills");
 			print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/facture.php?action=create&socid=$societe->id\">".$langs->trans("AddBill")."</a>";
 		}
-	
+
 		if ($conf->deplacement->enabled) {
 			$langs->load("trips");
 			print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
 		}
 	}
-	
+
     if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
     {
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
     }
-    
+
 	if ($user->rights->societe->contact->creer)
 	{
 		print "<a class=\"butAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a>";
@@ -359,7 +359,7 @@ if ($socid > 0)
     print '</div>';
     print "<br>\n";
 
-    
+
 	/*
      * Liste des contacts
      */
@@ -369,7 +369,7 @@ if ($socid > 0)
      *      Listes des actions a faire
      */
 	show_actions_todo($conf,$langs,$db,$societe);
-	
+
     /*
      *      Listes des actions effectuees
      */
