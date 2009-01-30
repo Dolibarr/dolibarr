@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	  <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2008 Regis Houssin	  	  <regis@dolibarr.fr>
  *
@@ -128,12 +128,12 @@ if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($c->socid);
-		
+
 		print '<tr><td width="20%" class="notopnoleft">';
 		print $langs->trans("AssignedToTheCustomer").'</td><td>';
 		print $soc->getNomUrl(1);
 		print '</td></tr>';
-		
+
 		$catsMeres = $c->get_meres ();
 
 		if ($catsMeres < 0)
@@ -202,16 +202,18 @@ else
 	print "<table class='noborder' width='100%'>\n";
 	print "<tr class='liste_titre'><td colspan='3'>".$langs->trans("SubCats")."</td></tr>\n";
 	if (sizeof ($cats) > 0)
-	{	
+	{
 		$var=true;
 		foreach ($cats as $cat)
 		{
 			$i++;
 			$var=!$var;
 			print "\t<tr ".$bc[$var].">\n";
-			print "\t\t<td nowrap=\"nowrap\"><a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a></td>\n";
+			print "\t\t<td nowrap=\"nowrap\">";
+			print "<a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a>";
+			print "</td>\n";
 			print "\t\t<td>".$cat->description."</td>\n";
-			
+
 			if ($cat->visible == 1)
 			{
 				print "\t\t<td>".$langs->trans("ContentsVisibleByAllShort")."</td>\n";
@@ -220,7 +222,7 @@ else
 			{
 				print "\t\t<td>".$langs->trans("ContentsNotVisibleByAllShort")."</td>\n";
 			}
-			
+
 			print "\t</tr>\n";
 		}
 	}
@@ -229,19 +231,19 @@ else
 		print "<tr><td>".$langs->trans("NoSubCat")."</td></tr>";
 	}
 	print "</table>\n";
-	
+
   /*
    * Boutons actions
    */
   if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
   {
 	  print "<div class='tabsAction'>\n";
-	
+
 	  if ($user->rights->categorie->creer)
 	  {
 		  print "<a class='butAction' href='fiche.php?action=create&amp;catorigin=".$c->id."&amp;socid=".$c->socid."&amp;type=".$type."'>".$langs->trans("Create")."</a>";
 	  }
-	
+
 	  print "</div>";
   }
 }
@@ -260,7 +262,7 @@ if ($c->type == 0)
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
 		print "<tr class='liste_titre'><td colspan='3'>".$langs->trans("ProductsAndServices")."</td></tr>\n";
-		
+
 		if (sizeof ($prods) > 0)
 		{
 			$i = 0;
@@ -299,7 +301,7 @@ if ($c->type == 1)
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
 		print "<tr class='liste_titre'><td>".$langs->trans("Suppliers")."</td></tr>\n";
-		
+
 		if (sizeof ($socs) > 0)
 		{
 			$i = 0;
@@ -311,8 +313,8 @@ if ($c->type == 1)
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td nowrap="nowrap" valign="top">';
 				print img_object($langs->trans("ShowSuppliers"),"company");
-				print " <a href='".DOL_URL_ROOT."/fourn/fiche.php?socid=".$soc->id."'>".$soc->nom."</a></td>\n";
-	
+				print " <a href='".DOL_URL_ROOT."/categories/categorie.php?socid=".$soc->id."'>".$soc->nom."</a></td>\n";
+
 				print "</tr>\n";
 			}
 		}
@@ -336,7 +338,7 @@ if($c->type == 2)
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
 		print "<tr class='liste_titre'><td>".$langs->trans("Customers")."</td></tr>\n";
-		
+
 		if (sizeof ($socs) > 0)
 		{
 			$i = 0;
@@ -348,8 +350,8 @@ if($c->type == 2)
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td nowrap="nowrap" valign="top">';
 				print img_object($langs->trans("ShowCompany"),"company");
-				print " <a href='".DOL_URL_ROOT."/fourn/fiche.php?socid=".$soc->id."'>".$soc->nom."</a></td>\n";
-	
+				print " <a href='".DOL_URL_ROOT."/categories/categorie.php?socid=".$soc->id."'>".$soc->nom."</a></td>\n";
+
 				print "</tr>\n";
 			}
 		}

@@ -34,6 +34,7 @@ ALTER TABLE llx_mailing_cibles add column other           varchar(255) NULL;
 
 ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_email (email);
 
+ALTER TABLE llx_categorie ADD INDEX idx_categorie_type (type);
+
 ALTER TABLE llx_product drop column   stock_propale;
 ALTER TABLE llx_product drop column   stock_commande;
-

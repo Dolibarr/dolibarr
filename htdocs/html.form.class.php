@@ -1471,7 +1471,7 @@ class Form
 					{
 						$add = '';
 					}
-					$output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.$cate_arbo[$key]['fulllabel'].'</option>';
+					$output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.dolibarr_trunc($cate_arbo[$key]['fulllabel'],80,'middle').'</option>';
 				}
 			}
 		}

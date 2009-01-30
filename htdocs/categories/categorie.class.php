@@ -126,7 +126,7 @@ class Categorie
 	{
 		global $conf,$langs;
 		$langs->load('categories');
-		
+
 		if ($this->already_exists ())
 		{
 			$this->error=$langs->trans("ImpossibleAddCat");
@@ -188,11 +188,11 @@ class Categorie
 	function update()
 	{
 		global $conf;
-		
+
 		// Clean parameters
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
-		
+
 		$this->db->begin();
 
 		$sql = 'delete from '.MAIN_DB_PREFIX.'categorie_association';
@@ -210,7 +210,7 @@ class Categorie
 		{
 			$sql = 'insert into '.MAIN_DB_PREFIX.'categorie_association(fk_categorie_mere,fk_categorie_fille)';
 			$sql .= ' VALUES ("'.$this->id_mere.'","'.$this->id.'")';
-			
+
 			dolibarr_syslog("Categorie::update sql=".$sql);
 			if (! $this->db->query($sql))
 			{
@@ -408,11 +408,11 @@ class Categorie
 	function get_type($field,$class,$table='')
 	{
 		$objs = array();
-		
+
 		// Clean parameters
 		if (empty($table)) $table=$field;
-		
-		
+
+
 		$sql  = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
 		$sql .= " WHERE fk_categorie = ".$this->id;
 
@@ -435,8 +435,8 @@ class Categorie
 			return -1;
 		}
 	}
-	
-		
+
+
 
 
 	/**
@@ -480,7 +480,7 @@ class Categorie
 
 		return ($n[0]);
 	}
-	
+
 	/**
 	* La catégorie $fille est-elle une fille de cette catégorie ?
 	*/
@@ -512,15 +512,17 @@ class Categorie
 	*/
 	function get_full_arbo($type)
 	{
+		$this->cats = array();
+
 		// Charge tableau des meres
 		$sql = "SELECT fk_categorie_mere as id_mere, fk_categorie_fille as id_fille";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
 
-		dolibarr_syslog("Categorie::get_full_arbo sql=".$sql);
-		$resql = $this->db->query ($sql);
+		dolibarr_syslog("Categorie::get_full_arbo build motherof array sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($obj= $this->db->fetch_object($resql))
+			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->motherof[$obj->id_fille]=$obj->id_mere;
 			}
@@ -539,33 +541,21 @@ class Categorie
 		$sql.= " WHERE c.type = ".$type;
 		$sql.= " ORDER BY c.label, c.rowid";
 
-		dolibarr_syslog("Categorie::get_full_arbo sql=".$sql);
+		dolibarr_syslog("Categorie::get_full_arbo get category list sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->cats = array();
 			$i=0;
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				
 				$this->cats[$obj->rowid]['id'] = $obj->rowid;
-				$this->cats[$obj->rowid]['id_mere'] = $this->motherof[$obj->rowid];
+				if (isset($this->motherof[$obj->rowid])) $this->cats[$obj->rowid]['id_mere'] = $this->motherof[$obj->rowid];
 				$this->cats[$obj->rowid]['label'] = $obj->label;
 
 				if ($obj->rowid_fille)
 				{
-					if (is_array($this->cats[$obj->rowid]['id_children']))
-					{
-						$newelempos=sizeof($this->cats[$obj->rowid]['id_children']);
-						//print "this->cats[$i]['id_children'] est deja un tableau de $newelem elements<br>";
-						$this->cats[$obj->rowid]['id_children'][$newelempos]=$obj->rowid_fille;
-					}
-					else
-					{
-						//print "this->cats[".$obj->rowid."]['id_children'] n'est pas encore un tableau<br>";
-						$this->cats[$obj->rowid]['id_children']=array($obj->rowid_fille);
-					}
-				}				
+					$this->cats[$obj->rowid]['id_children'][]=$obj->rowid_fille;
+				}
 				$i++;
 
 			}
@@ -575,24 +565,24 @@ class Categorie
 			dolibarr_print_error ($this->db);
 			return -1;
 		}
-		
+
 		// On ajoute la propriete fullpath a tous les éléments
 		foreach($this->cats as $key => $val)
 		{
-			if (isset($motherof[$key])) continue;	
-			$this->build_path_from_id_categ($key,0);
+			if (isset($motherof[$key])) continue;
+			$this->build_path_from_id_categ($key,0);	// Process a path of a root category (no mother exists)
 		}
-		
+
+		dolibarr_syslog("Categorie::get_full_arbo dol_sort_array", LOG_DEBUG);
 		$this->cats=dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
 
 		//$this->debug_cats();
-		
+
 		return $this->cats;
 	}
 
 	/**
-	*	\brief		Calcule les propriétés fullpath et fulllabel d'une categorie
-	*				du tableau this->cats et de toutes ces enfants
+	*	\brief		For category id_categ and its child available in this->cats, define property fullpath
 	* 	\param		id_categ		id_categ entry to update
 	* 	\param		protection		Deep counter to avoid infinite loop
 	*/
@@ -608,29 +598,29 @@ class Categorie
 		}
 		else
 		{
-			$this->cats[$id_categ]['fullpath']='_'.$id_categ;			
+			$this->cats[$id_categ]['fullpath']='_'.$id_categ;
 			$this->cats[$id_categ]['fulllabel']=$this->cats[$id_categ]['label'];
 		}
 		// We count number of _ to have level
 		$this->cats[$id_categ]['level']=strlen(eregi_replace('[^_]','',$this->cats[$id_categ]['fullpath']));
-		
-		// Traite ces enfants
+
+		// Process all childs on several levels of this category
 		$protection++;
 		if ($protection > 20) return;	// On ne traite pas plus de 20 niveaux
 		if (! is_array($this->cats[$id_categ]['id_children'])) return;
-		foreach($this->cats[$id_categ]['id_children'] as $key => $val)
+		foreach($this->cats[$id_categ]['id_children'] as $key => $idchild)
 		{
-			$this->build_path_from_id_categ($val,$protection);
+			$this->build_path_from_id_categ($idchild,$protection);
 		}
 		return;
 	}
-	
+
 	/**
 	*	\brief		Affiche contenu de $this->cats
 	*/
 	function debug_cats()
 	{
-		// Affiche $this->cats				
+		// Affiche $this->cats
 		foreach($this->cats as $key => $val)
 		{
 			print 'id: '.$this->cats[$key]['id'];
@@ -643,7 +633,7 @@ class Categorie
 		}
 	}
 
-	
+
 	/**
 	* 		\brief		Retourne toutes les catégories
 	*		\return		array		Tableau d'objet Categorie
@@ -670,7 +660,7 @@ class Categorie
 			return -1;
 		}
 	}
-	
+
 	/**
 	* 	\brief		Retourne le nombre total de catégories
 	*	\return		int		Nombre de categories
@@ -826,7 +816,7 @@ class Categorie
 
 		return implode($sep, $w);
 	}
-	
+
 	/**
 	* Retourne un tableau contenant la liste des catégories mères
 	*/
@@ -838,7 +828,7 @@ class Categorie
 		$sql .= "WHERE fk_categorie_fille = ".$this->id;
 
 		$res  = $this->db->query ($sql);
-		
+
 		if ($res)
 		{
 			while ($cat = $this->db->fetch_array ($res))
@@ -940,11 +930,11 @@ class Categorie
 			return -1;
 		}
 	}
-	
-	
+
+
 	/**
 	* 	\brief	Vérifie le type de la catégorie
-	* 
+	*
 	*/
 	function verify_type($id)
 	{
@@ -1010,5 +1000,32 @@ class Categorie
 			return -1;
 		}
 	}
+
+	/**
+	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	\param		option			Sur quoi pointe le lien ('', 'withdraw')
+	 *	\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
+
+		$result='';
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->id.'">';
+		$label=$this->label;
+		$lienfin='</a>';
+
+		$picto='category';
+
+		$label=$langs->trans("ShowCategory").': '.$this->ref;
+
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}
+
 }
 ?>

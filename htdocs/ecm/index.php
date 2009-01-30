@@ -295,23 +295,23 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 		print '<br>';
 	}
 
-	// Construit liste des r�pertoires
+	// Construit liste des repertoires
 	print '<table width="100%" class="nobordernopadding">';
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">'.$langs->trans("ECMSections").'</td>';
 	print '<td class="liste_titre" colspan="5" align="right">';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.$langs->trans("Refresh").' '.img_picto($langs->trans("Refresh"),'refresh').'</a>';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>&nbsp;';
 	print '</td>';
 	print '</tr>';
 
 	if (sizeof($sectionauto))
 	{
-		// Automatic sections title line
+		// Root title line (Automatic section)
 		print '<tr>';
 		print '<td>';
 		print '<table class="nobordernopadding"><tr class="nobordernopadding">';
-		print '<td align="left" width="24px">';
+		print '<td align="left" width="24">';
 		print img_picto_common('','treemenu/base.gif');
 		print '</td><td align="left">'.$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsAuto").')';
 		print '</td>';
@@ -391,7 +391,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 		}
 	}
 
-	// Manual sections title line
+	// Root title line (Manual section)
 	print '<tr><td>';
 	print '<table class="nobordernopadding"><tr class="nobordernopadding">';
 	print '<td align="left" width="24px">';
@@ -411,10 +411,16 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	print '</td>';
 	print '</tr>';
 
+
+
 	// Load full tree
 	$fulltree=$ecmdirstatic->get_full_arbo();
 
-	// Define fullpathselected ( _x_y_z )
+	// ----- This section will show a tree from a fulltree array -----
+	// $section must also be defined
+	// ----------------------------------------------------------------
+
+	// Define fullpathselected ( _x_y_z ) of $section parameter
 	$fullpathselected='';
 	foreach($fulltree as $key => $val)
 	{
@@ -517,10 +523,11 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			if ($b == 0 || ! in_array($val['id'],$expandedsectionarray)) $n='3';
 			if (! in_array($val['id'],$expandedsectionarray)) $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop'.$n.'.gif','',1);
 			else $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/minustop'.$n.'.gif','',1);
-			$oldref=$ecmdirstatic->ref;
-			$ecmdirstatic->ref=$ref;
-			print $ecmdirstatic->getNomUrl(0,$option);
-			$ecmdirstatic->ref=$oldref;
+			if ($option == 'indexexpanded') $lien = '<a href="'.$_SERVER["PHP_SELF"].'?section='.$val['id'].'&amp;sectionexpand=false">';
+	    	if ($option == 'indexnotexpanded') $lien = '<a href="'.$_SERVER["PHP_SELF"].'?section='.$val['id'].'&amp;sectionexpand=true">';
+	    	$newref=eregi_replace('_',' ',$ref);
+	    	$lienfin='</a>';
+	    	print $lien.$newref.$lienfin;
 			if (! in_array($val['id'],$expandedsectionarray)) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/folder.gif','',1);
 			else print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/folder-expanded.gif','',1);
 			print '</td>';
@@ -585,6 +592,11 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 		print '<td colspan="5">&nbsp;</td>';
 		print '</tr>';
 	}
+
+
+	// ----- End of section -----
+	// --------------------------
+
 
 	print "</table>";
 	// Fin de zone Ajax

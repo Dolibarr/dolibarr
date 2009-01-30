@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,3 +19,5 @@
 -- ============================================================================
 
 ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label,type);
+
+ALTER TABLE llx_categorie ADD INDEX idx_categorie_type (type);

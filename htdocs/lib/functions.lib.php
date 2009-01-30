@@ -2779,7 +2779,7 @@ function stopwithmem()
  *			natural case insensitive sorting (which can be optionally case
  *			sensitive as well).
  */
-function dol_sort_array($array, $index, $order='asc', $natsort, $case_sensitive)
+function dol_sort_array(&$array, $index, $order='asc', $natsort, $case_sensitive)
 {
 	// Clean parameters
 	$order=strtolower($order);

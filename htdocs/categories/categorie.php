@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		  <patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -89,21 +89,21 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 		if ($_REQUEST["id"])  $result = $object->fetch($_REQUEST["id"]);
 		$type = 'product';
 	}
-	
+
 	$cat = new Categorie($db);
 	$result=$cat->fetch($_REQUEST["catMere"]);
 
 	$result=$cat->add_type($object,$type);
 	if ($result >= 0)
 	{
-		$mesg='<div class="ok">'.$langs->trans("WasAddedSuccessfully",$cat->label).'</div>';	
+		$mesg='<div class="ok">'.$langs->trans("WasAddedSuccessfully",$cat->label).'</div>';
 	}
 	else
 	{
 		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') $mesg='<div class="warning">'.$langs->trans("ObjectAlreadyLinkedToCategory").'</div>';
-		else $mesg='<div class="error">'.$langs->trans("Error").' '.$cat->error.'</div>';	
+		else $mesg='<div class="error">'.$langs->trans("Error").' '.$cat->error.'</div>';
 	}
-	
+
 }
 
 
@@ -120,17 +120,17 @@ if ($_GET["socid"])
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 	require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
-	
+
 	$langs->load("companies");
-	
+
 	/*
 	 * Creation de l'objet client/fournisseur correspondant au socid
 	 */
 	 $soc = new Societe($db);
 	 $result = $soc->fetch($_GET["socid"]);
 	 llxHeader("","",$langs->trans("Category"));
-	
-	
+
+
 	/*
 	* Affichage onglets
 	*/
@@ -139,7 +139,7 @@ if ($_GET["socid"])
 	dolibarr_fiche_head($head, 'category', $langs->trans("ThirdParty"));
 
 	print '<table class="border" width="100%">';
-	
+
 	print '<tr><td width="30%">'.$langs->trans("Name").'</td><td width="70%" colspan="3">';
 	print $soc->nom;
 	print '</td></tr>';
@@ -154,7 +154,7 @@ if ($_GET["socid"])
 		if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
 		print '</td></tr>';
 	}
-	
+
 	if ($soc->fournisseur)
 	{
 		print '<tr><td>';
@@ -187,13 +187,13 @@ if ($_GET["socid"])
 	print '</table>';
 
 	print '</div>';
-	
+
 	if ($mesg) print($mesg);
-	
+
 	if ($soc->client) formCategory($db,$soc,'societe',2);
-	
+
 	if ($soc->client && $soc->fournisseur) print '<br><br>';
-	
+
 	if ($soc->fournisseur) formCategory($db,$soc,'fournisseur',1);
 }
 else if ($_GET["id"] || $_GET["ref"])
@@ -203,19 +203,19 @@ else if ($_GET["id"] || $_GET["ref"])
 	*/
 	require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 	require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-  
+
 	// Produit
 	$product = new Product($db);
 	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
-	
+
 	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 
 	$head=product_prepare_head($product, $user);
 	$titre=$langs->trans("CardProduct".$product->type);
 	dolibarr_fiche_head($head, 'category', $titre);
-  
+
 
 	print '<table class="border" width="100%">';
 	print "<tr>";
@@ -249,20 +249,20 @@ else if ($_GET["id"] || $_GET["ref"])
 	print '</table>';
 
 	print '</div>';
-	
+
 	if ($mesg) print($mesg);
-	
+
 	formCategory($db,$product,'product',0);
 }
 
-	
+
 /*
 * Fonction Barre d'actions
 */
 function formCategory($db,$object,$type,$typeid)
 {
 	global $user,$langs,$html,$bc;
-	
+
 	if ($typeid == 0) $title = $langs->trans("ProductsCategoriesShort");
 	if ($typeid == 1) $title = $langs->trans("SuppliersCategoriesShort");
 	if ($typeid == 2) $title = $langs->trans("CustomersProspectsCategoriesShort");
@@ -274,7 +274,7 @@ function formCategory($db,$object,$type,$typeid)
 	{
 		$nameId = 'id';
 	}
-	
+
 	// Formulaire ajout dans une categorie
 	print '<br>';
 	print_fiche_titre($title,'','');
@@ -295,7 +295,7 @@ function formCategory($db,$object,$type,$typeid)
 	print '</form>';
 	print '<br/>';
 
-	
+
 	$c = new Categorie($db);
 	$cats = $c->containing($object->id,$type,$typeid);
 
@@ -310,14 +310,17 @@ function formCategory($db,$object,$type,$typeid)
 		$var = true;
 		foreach ($cats as $cat)
 		{
-			$ways = $cat->print_all_ways ();
+			$ways = $cat->print_all_ways();
 			foreach ($ways as $way)
 			{
 				$var = ! $var;
 				print "<tr ".$bc[$var].">";
-				
+
 				// Categorie
-				print "<td>".$way."</td>";
+				print "<td>";
+				//$c->id=;
+				//print $c->getNomUrl(1);
+				print $way."</td>";
 
 				// Lien supprimer
 				print '<td align="right">';
@@ -354,7 +357,7 @@ function formCategory($db,$object,$type,$typeid)
 		print $title;
 		print "<br/>";
 	}
-}	
+}
 
 $db->close();
 
