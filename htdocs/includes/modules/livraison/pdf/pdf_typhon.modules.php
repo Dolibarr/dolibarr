@@ -209,11 +209,35 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 				$tab_top = 90;
 				$tab_top_newpage = 50;
-				$tab_height = 150;
+				$tab_height = 110;
+				$tab_height_newpage = 150;
 
-				$iniY = $tab_top + 8;
-				$curY = $tab_top + 8;
-				$nexY = $tab_top + 8;
+				// Affiche notes
+				if (! empty($delivery->note_public))
+				{
+					$tab_top = 88;
+
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetXY ($this->posxdesc-1, $tab_top);
+					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($fac->note_public), 0, 'J');
+					$nexY = $pdf->GetY();
+					$height_note=$nexY-$tab_top;
+
+					// Rect prend une longueur en 3eme param
+					$pdf->SetDrawColor(192,192,192);
+					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
+
+					$tab_height = $tab_height - $height_note;
+					$tab_top = $nexY+6;
+				}
+				else
+				{
+					$height_note=0;
+				}
+
+				$iniY = $tab_top + 7;
+				$curY = $tab_top + 7;
+				$nexY = $tab_top + 7;
 
 				// Boucle sur les lignes
 				for ($i = 0 ; $i < $nblignes ; $i++)
@@ -263,9 +287,28 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					 */
 					$nexY+=2;    // Passe espace entre les lignes
 
-					if ($nexY > 200 && $i < ($nblignes - 1))
+					// Test if a new page is required
+					if ($pagenb == 1)
 					{
-						$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+						$tab_top_in_current_page=$tab_top;
+						$tab_height_in_current_page=$tab_height;
+					}
+					else
+					{
+						$tab_top_in_current_page=$tab_top_newpage;
+						$tab_height_in_current_page=$tab_height_newpage;
+					}
+					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1))
+					{
+						if ($pagenb == 1)
+						{
+							$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+						}
+						else
+						{
+							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+						}
+
 						$this->_pagefoot($pdf, $outputlangs);
 
 						// New page
@@ -276,12 +319,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
-						$nexY = $tab_top_newpage + 8;
+						$nexY = $tab_top_newpage + 7;
 					}
-
 				}
 
-				// Affiche cadre tableau
+				// Show square
 				if ($pagenb == 1)
 				{
 					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
@@ -289,9 +331,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top_newpage + $tab_height + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
 				}
+
 
 				/*
 				 * Pied de page

@@ -71,10 +71,12 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 * 	\brief		Load a supplier order
-	 * 	\param		Id of order to load
+	 *	\brief      Get object and lines from database
+	 * 	\param		id			Id of order to load
+	 * 	\param		ref			Ref of object
+	 *	\return     int         >0 if OK, <0 if KO
 	 */
-	function fetch($id)
+	function fetch($id,$ref='')
 	{
 		$sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
 		$sql .= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
@@ -82,7 +84,8 @@ class CommandeFournisseur extends Commande
 		$sql .= " cm.libelle as methode_commande";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
-		$sql .= " WHERE c.rowid = ".$id;
+		if ($ref) $sql.= " WHERE c.ref='".$ref."'";
+		else $sql.= " WHERE c.rowid=".$id;
 
 		dolibarr_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql) ;
@@ -1083,7 +1086,7 @@ class CommandeFournisseur extends Commande
 				$sql.= " SET fk_statut = ".$statut;
 				$sql.= " WHERE rowid = ".$this->id;
 				$sql.= " AND (fk_statut = 3 OR fk_statut = 4)";
-					
+
 				dolibarr_syslog("CommandeFournisseur::Livraison sql=".$sql);
 				$resql=$this->db->query($sql);
 				if ($resql)
@@ -1289,7 +1292,7 @@ class CommandeFournisseur extends Commande
 			{
 				// Mise a jour info denormalisees au niveau facture
 				$this->update_price();
-					
+
 				$this->db->commit();
 				return $result;
 			}

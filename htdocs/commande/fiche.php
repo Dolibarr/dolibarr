@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -1966,8 +1966,8 @@ else
 						}
 					}
 
-					// Supprimer commande
-					if ($commande->statut == 0 && $user->rights->commande->supprimer)
+					// Delete order
+					if ($user->rights->commande->supprimer)
 					{
 						print '<a class="butActionDelete" ';
 						if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)

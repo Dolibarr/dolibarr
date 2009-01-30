@@ -29,7 +29,7 @@ function facturefourn_prepare_head($fac)
 	global $langs, $conf;
 	$h = 0;
 	$head = array();
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$fac->id;
 	$head[$h][1] = $langs->trans('Card');
 	$head[$h][2] = 'card';
@@ -39,7 +39,7 @@ function facturefourn_prepare_head($fac)
 	$head[$h][1] = $langs->trans('BillContacts');
 	$head[$h][2] = 'contact';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note.php?facid='.$fac->id;
 	$head[$h][1] = $langs->trans('Notes');
 	$head[$h][2] = 'note';
@@ -69,7 +69,7 @@ function facturefourn_prepare_head($fac)
 			$h++;
 		}
 	}
-	
+
 	return $head;
 }
 
@@ -79,16 +79,19 @@ function ordersupplier_prepare_head($commande)
 	global $langs, $conf;
 	$h = 0;
 	$head = array();
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$commande->id;
 	$head[$h][1] = $langs->trans("OrderCard");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$commande->id;
-	$head[$h][1] = $langs->trans("OrderDispatch");
-	$head[$h][2] = 'dispatch';
-	$h++;
+	if ($conf->stock->enabled)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$commande->id;
+		$head[$h][1] = $langs->trans("OrderDispatch");
+		$head[$h][2] = 'dispatch';
+		$h++;
+	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$commande->id;
 	$head[$h][1] = $langs->trans("Note");
@@ -99,7 +102,7 @@ function ordersupplier_prepare_head($commande)
 	$head[$h][1] = $langs->trans("Documents");
 	$head[$h][2] = 'documents';
 	$h++;
-			
+
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$commande->id;
 	$head[$h][1] = $langs->trans("OrderFollow");
 	$head[$h][2] = 'info';
@@ -119,7 +122,7 @@ function ordersupplier_prepare_head($commande)
 			$h++;
 		}
 	}
-	
+
 	return $head;
 }
 

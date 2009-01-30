@@ -207,11 +207,10 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
-				$pagenb = 1;
 				$tab_top = 90;
 				$tab_top_newpage = 50;
 				$tab_height = 110;
-				$tab_height_newpage = 180;
+				$tab_height_newpage = 150;
 
 				// Affiche notes
 				if (! empty($fac->note_public))
@@ -236,9 +235,9 @@ class pdf_crabe extends ModelePDFFactures
 					$height_note=0;
 				}
 
-				$iniY = $tab_top + 8;
-				$curY = $tab_top + 8;
-				$nexY = $tab_top + 8;
+				$iniY = $tab_top + 7;
+				$curY = $tab_top + 7;
+				$nexY = $tab_top + 7;
 
 				// Loop on each lines
 				for ($i = 0 ; $i < $nblignes ; $i++)
@@ -305,8 +304,18 @@ class pdf_crabe extends ModelePDFFactures
 						$nblineFollowDesc = 0;
 					}
 
-					// test si besoin nouvelle page
-					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
+					// Test if a new page is required
+					if ($pagenb == 1)
+					{
+						$tab_top_in_current_page=$tab_top;
+						$tab_height_in_current_page=$tab_height;
+					}
+					else
+					{
+						$tab_top_in_current_page=$tab_top_newpage;
+						$tab_height_in_current_page=$tab_height_newpage;
+					}
+					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1))
 					{
 						if ($pagenb == 1)
 						{
@@ -327,14 +336,12 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
-						$nexY = $tab_top_newpage + 8;
-						$pdf->SetTextColor(0,0,0);
-						$pdf->SetFont('Arial','', 10);
+						$nexY = $tab_top_newpage + 7;
 					}
 
 				}
 
-				// Affiche cadre tableau
+				// Show square
 				if ($pagenb == 1)
 				{
 					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
@@ -342,8 +349,8 @@ class pdf_crabe extends ModelePDFFactures
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top_newpage + $tab_height + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
 				}
 
 				// Affiche zone infos

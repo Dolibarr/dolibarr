@@ -809,8 +809,8 @@ class Commande extends CommonObject
 
 	/**
 	 *	\brief      Get object and lines from database
-	 *	\param      rowid       id of object to load
-	 * 	\param		ref			Ref of invoice
+	 *	\param      id       	Id of object to load
+	 * 	\param		ref			Ref of object
 	 *	\return     int         >0 if OK, <0 if KO
 	 */
 	function fetch($id,$ref='')

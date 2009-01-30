@@ -476,12 +476,18 @@ $formorder = new FormOrder($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0)
+$now=gmmktime();
+
+$id = $_GET['id'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	//if ($mesg) print $mesg.'<br>';
+
 	$commande =	new	CommandeFournisseur($db);
 
-	if ($commande->fetch($id) >= 0)
+	$result=$commande->fetch($_GET['id'],$_GET['ref']);
+	if ($result >= 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($commande->socid);
@@ -583,20 +589,20 @@ if ($id > 0)
 
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="5">'.$commande->ref.'</td>';
+		print '<td colspan="2">';
+		print $html->showrefnav($commande,'ref','',1,'ref','ref');
+		print '</td>';
 		print '</tr>';
 
 		// Fournisseur
 		print '<tr><td width="20%">'.$langs->trans("Supplier")."</td>";
-		print '<td colspan="5">';
-		print '<b><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id.'">';
-		print img_object($langs->trans("ShowSupplier"),'company').'	'.$soc->nom.'</a></b></td>';
+		print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
 		print '</tr>';
 
 		// Statut
 		print '<tr>';
 		print '<td>'.$langs->trans("Status").'</td>';
-		print '<td width="50%" colspan="5">';
+		print '<td width="50%" colspan="2">';
 		print $commande->getLibStatut(4);
 		print "</td></tr>";
 
@@ -604,25 +610,22 @@ if ($id > 0)
 		if ($commande->methode_commande_id > 0)
 		{
 			print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
-
 			if ($commande->date_commande)
 			{
 				print dolibarr_print_date($commande->date_commande,"dayhourtext")."\n";
 			}
+			print "</td></tr>";
 
-			print '</td><td	width="50%"	colspan="3">';
 			if ($commande->methode_commande)
 			{
-				print $langs->trans("Method")." : " .$commande->methode_commande;
+				print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->methode_commande.'</td></tr>';
 			}
-			print "</td></tr>";
 		}
 
 		// Auteur
 		print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
 		print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
-		print '<td colspan="3" width="50%">';
-		print "&nbsp;</td></tr>";
+		print '</tr>';
 
 		// Projet
 		if ($conf->projet->enabled)
@@ -643,19 +646,20 @@ if ($id > 0)
 			{
 				$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->projet_id, 'none');
 			}
-			print '</td></tr>';
+			print '</td>';
+			print '</tr>';
 		}
 
 		// Ligne de	3 colonnes
 		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td	colspan="3">&nbsp;</td></tr>';
+		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
-		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td	colspan="3">&nbsp;</td></tr>';
+		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
-		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td	colspan="3">&nbsp;</td></tr>';
+		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 		print "</table>";
 

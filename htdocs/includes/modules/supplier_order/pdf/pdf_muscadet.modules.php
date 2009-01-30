@@ -210,7 +210,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$tab_top = 90;
 				$tab_top_newpage = 50;
 				$tab_height = 110;
-				$tab_height_newpage = 180;
+				$tab_height_newpage = 150;
 
 				// Affiche notes
 				if (! empty($com->note_public))
@@ -235,9 +235,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$height_note=0;
 				}
 
-				$iniY = $tab_top + 8;
-				$curY = $tab_top + 8;
-				$nexY = $tab_top + 8;
+				$iniY = $tab_top + 7;
+				$curY = $tab_top + 7;
+				$nexY = $tab_top + 7;
 
 				// Boucle sur les lignes
 				for ($i = 0 ; $i < $nblignes ; $i++)
@@ -288,9 +288,28 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 					$nexY+=2;    // Passe espace entre les lignes
 
-					if ($nexY > 200 && $i < ($nblignes - 1))
+					// Test if a new page is required
+					if ($pagenb == 1)
 					{
-						$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+						$tab_top_in_current_page=$tab_top;
+						$tab_height_in_current_page=$tab_height;
+					}
+					else
+					{
+						$tab_top_in_current_page=$tab_top_newpage;
+						$tab_height_in_current_page=$tab_height_newpage;
+					}
+					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1))
+					{
+						if ($pagenb == 1)
+						{
+							$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+						}
+						else
+						{
+							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+						}
+
 						$this->_pagefoot($pdf, $outputlangs);
 
 						// New page
@@ -301,11 +320,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
-						$nexY = $tab_top_newpage + 8;
+						$nexY = $tab_top_newpage + 7;
 					}
 
 				}
-				// Affiche cadre tableau
+
+				// Show square
 				if ($pagenb == 1)
 				{
 					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
@@ -313,20 +333,19 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top_newpage + $tab_height + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
 				}
-
-				$deja_regle = "";
 
 				$posy=$this->_tableau_tot($pdf, $com, $deja_regle, $bottomlasttab, $outputlangs);
 
-				if ($deja_regle) {
+				if ($deja_regle)
+				{
 					$this->_tableau_versements($pdf, $fac, $posy);
 				}
 
 				/*
-				 * Mode de r�glement
+				 * Mode de reglement
 				 */
 				if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER))
 				{

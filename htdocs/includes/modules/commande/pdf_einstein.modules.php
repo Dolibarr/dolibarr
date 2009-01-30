@@ -123,7 +123,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		if ($conf->commande->dir_output)
 		{
-			// D�finition de l'objet $com (pour compatibilite ascendante)
+			// Definition de l'objet $com (pour compatibilite ascendante)
 			if (! is_object($com))
 			{
 				$id = $com;
@@ -208,7 +208,7 @@ class pdf_einstein extends ModelePDFCommandes
 				$tab_top = 90;
 				$tab_top_newpage = 50;
 				$tab_height = 110;
-				$tab_height_newpage = 180;
+				$tab_height_newpage = 150;
 
 				// Affiche notes
 				if (! empty($com->note_public))
@@ -221,7 +221,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect prend une longueur en 3eme et 4eme param
 					$pdf->SetDrawColor(192,192,192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -233,9 +233,9 @@ class pdf_einstein extends ModelePDFCommandes
 					$height_note=0;
 				}
 
-				$iniY = $tab_top + 8;
-				$curY = $tab_top + 8;
-				$nexY = $tab_top + 8;
+				$iniY = $tab_top + 7;
+				$curY = $tab_top + 7;
+				$nexY = $tab_top + 7;
 
 				// Boucle sur les lignes
 				for ($i = 0 ; $i < $nblignes ; $i++)
@@ -247,7 +247,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 					// Description
 					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
-//if ($i==1) { print $outputlangs->convToOutputCharset($libelleproduitservice);exit; }
+					//if ($i==1) { print $outputlangs->convToOutputCharset($libelleproduitservice);exit; }
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 
@@ -298,8 +298,18 @@ class pdf_einstein extends ModelePDFCommandes
 						$nblineFollowDesc = 0;
 					}
 
-					// test si besoin nouvelle page
-					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
+					// Test if a new page is required
+					if ($pagenb == 1)
+					{
+						$tab_top_in_current_page=$tab_top;
+						$tab_height_in_current_page=$tab_height;
+					}
+					else
+					{
+						$tab_top_in_current_page=$tab_top_newpage;
+						$tab_height_in_current_page=$tab_height_newpage;
+					}
+					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1))
 					{
 						if ($pagenb == 1)
 						{
@@ -320,12 +330,12 @@ class pdf_einstein extends ModelePDFCommandes
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
-						$nexY = $tab_top_newpage + 8;
+						$nexY = $tab_top_newpage + 7;
 					}
 
 				}
 
-				// Affiche cadre tableau
+				// Show square
 				if ($pagenb == 1)
 				{
 					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
@@ -333,8 +343,8 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top_newpage + $tab_height + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
 				}
 
 				// Affiche zone infos
@@ -638,7 +648,7 @@ class pdf_einstein extends ModelePDFCommandes
 	{
 		global $conf;
 
-		// Montants exprim�s en     (en tab_top - 1)
+		// Montants exprimes en     (en tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
@@ -646,9 +656,9 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$pdf->SetDrawColor(128,128,128);
 
-		// Rect prend une longueur en 3eme param
+		// Rect prend une longueur en 3eme et 4eme param
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
-		// line prend une position y en 3eme param
+		// line prend une position y en 3eme et 4eme param
 		$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
 
 		$pdf->SetFont('Arial','',9);
