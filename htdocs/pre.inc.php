@@ -69,8 +69,8 @@ function llxHeader($head = "")
 
 		if ($user->rights->propale->lire)
 		{
-	  $langs->load("propal");
-	  $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
+	  		$langs->load("propal");
+	  		$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
 		}
 	}
 

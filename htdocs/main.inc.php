@@ -309,7 +309,6 @@ if (! isset($_SESSION["dol_login"]))
 		session_name($sessionname);
 		session_start();
 
-		$langs->load('main');
 		if ($resultFetchUser == 0)
 		{
 			$langs->load('main');
@@ -350,7 +349,6 @@ else
 		session_name($sessionname);
 		session_start();
 
-		$langs->load('main');
 		if ($resultFetchUser == 0)
 		{
 			$langs->load('main');
@@ -901,13 +899,13 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 	{
 		print $form_search;
 	}
-	
+
 	// Zone d'affichage permanente des marque pages
 	if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
 	{
 		include_once (DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php');
 		$langs->load("bookmarks");
-		
+
 		$ret=printBookmarksList($db, $langs);
 		print "\n";
 		print "<!-- Begin Bookmarks -->\n";

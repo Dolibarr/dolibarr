@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,28 +17,27 @@
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_all_Logevents.class.php
-        \ingroup    core
-        \brief      Trigger file for 
-		\version	$Id$
+ *      \file       htdocs/includes/triggers/interface_all_Logevents.class.php
+ *      \ingroup    core
+ *      \brief      Trigger file for
+ *		\version	$Id$
 */
 
 
 /**
-        \class      InterfaceLogevents
-        \brief      Classe des fonctions triggers des actions agenda
-*/
-
+ *      \class      InterfaceLogevents
+ *      \brief      Classe des fonctions triggers des actions agenda
+ */
 class InterfaceLogevents
 {
     var $db;
     var $error;
-    
+
     var $date;
     var $duree;
     var $texte;
     var $desc;
-    
+
     /**
      *   \brief      Constructeur.
      *   \param      DB      Handler d'acces base
@@ -46,7 +45,7 @@ class InterfaceLogevents
     function InterfaceLogevents($DB)
     {
         $this->db = $DB ;
-    
+
         $this->name = eregi_replace('^Interface','',get_class($this));
         $this->family = "core";
         $this->description = "Triggers of this module allows to add security event records inside Dolibarr.";
@@ -61,7 +60,7 @@ class InterfaceLogevents
     {
         return $this->name;
     }
-    
+
     /**
      *   \brief      Renvoi descriptif du lot de triggers
      *   \return     string      Descriptif du lot de triggers
@@ -103,35 +102,33 @@ class InterfaceLogevents
 		$key='MAIN_LOGEVENTS_'.$action;
 		//dolibarr_syslog("xxxxxxxxxxx".$key);
 		if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
-		
+
         // Actions
         if ($action == 'USER_LOGIN')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
-		
+
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("UserLogged",$object->login);
-            $this->desc=$langs->transnoentities("UserLogged",$object->login);
-		}
+            $this->texte="(UserLogged,".$object->login.")";
+            $this->desc="(UserLogged,".$object->login.")";
+        }
         if ($action == 'USER_LOGIN_FAILED')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
-		
+
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
             $this->texte=$object->trigger_mesg;	// Message direct
             $this->desc=$object->trigger_mesg;	// Message direct
-		}
+        }
         if ($action == 'USER_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
-		
+
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
@@ -255,7 +252,7 @@ class InterfaceLogevents
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
-            
+
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
@@ -337,7 +334,7 @@ class InterfaceLogevents
             $this->desc=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }
-        
+
         // Invoices
 		elseif ($action == 'BILL_VALIDATE')
         {
@@ -500,7 +497,7 @@ class InterfaceLogevents
         if ($this->date)
         {
 			include_once(DOL_DOCUMENT_ROOT.'/core/events.class.php');
-			
+
 			$event=new Events($this->db);
             $event->type=$action;
             $event->dateevent=$this->date;

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,14 @@
         \brief      List of security events
         \version    $Id$
 */
- 
+
 require_once("./pre.inc.php");
 
 if (! $user->admin)
   accessforbidden();
 
 // Sécurité accés client
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;
@@ -103,7 +103,7 @@ if ($result)
 		$form->form_confirm($_SERVER["PHP_SELF"], $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'), 'confirm_purge');
 		print '<br>';
 	}
-	
+
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"e.dateevent","","",'align="left"',$sortfield,$sortorder);
@@ -140,7 +140,7 @@ if ($result)
 	print '<td align="right" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
 	print '</td>';
-	
+
 	print "</tr>\n";
 	print '</form>';
 
@@ -149,11 +149,11 @@ if ($result)
 	while ($i < min($num,$conf->liste_limit))
 	{
 		$obj = $db->fetch_object();
-		
+
 		$var=!$var;
 
 		print "<tr $bc[$var]>";
-	
+
 		// Date
 		print '<td align="left" nowrap="nowrap">'.dolibarr_print_date($obj->dateevent,'%Y-%m-%d %H:%M:%S').'</td>';
 
@@ -175,14 +175,22 @@ if ($result)
 		print '</td>';
 
 		// Description
-		print '<td>'.$obj->description.'</td>';
-		
+		print '<td>';
+		$text=$langs->trans($obj->description);
+		if (eregi('\((.*)\)',$obj->description,$reg))
+		{
+			$val=split(',',$reg[1]);
+			$text=$langs->trans($val[0], isset($val[1])?$val[1]:'', isset($val[2])?$val[2]:'', isset($val[3])?$val[3]:'', isset($val[4])?$val[4]:'');
+		}
+		print $text;
+		print '</td>';
+
 		print '<td>&nbsp;</td>';
 
 		print "</tr>\n";
 		$i++;
 	}
-	
+
 	if ($num == 0)
 	{
 		if ($usefilter) print '<tr><td colspan="6">'.$langs->trans("NoEventFoundWithCriteria").'</td></tr>';
@@ -190,7 +198,7 @@ if ($result)
 	}
 	print "</table>";
 	$db->free();
-	
+
 	if ($num && $_GET["action"] != 'purge')
 	{
 	    print '<div class="tabsAction">';

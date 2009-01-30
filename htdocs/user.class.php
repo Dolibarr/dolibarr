@@ -1086,15 +1086,15 @@ class User extends CommonObject
 	 */
 	function update_last_login_date()
 	{
-		dolibarr_syslog ("Mise a jour date derniere connexion pour user->id=".$this->id);
-
-		$now=time();
+		$now=gmmktime();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
 		$sql.= " datepreviouslogin = datelastlogin,";
 		$sql.= " datelastlogin = ".$this->db->idate($now).",";
 		$sql.= " tms = tms";    // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
 		$sql.= " WHERE rowid = ".$this->id;
+
+		dolibarr_syslog ("Update last login date for user->id=".$this->id." ".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

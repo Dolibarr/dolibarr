@@ -167,7 +167,7 @@ class Translate {
     /**
 	 *  \brief      Load in a memory array, translation key-value for a particular file.
      *              If data for file already loaded, do nothing.
-     * 				All data in translation array are stored in ISO-8859-1 format.
+     * 				All data in translation array are stored in UTF-8 format.
      *  \param      domain      File name to load (.lang file). Use @ before value if domain is in a module directory.
      *  \param      alt         Use alternate file even if file in target language is found
 	 *	\return		int			<0 if KO, >0 if OK
@@ -176,7 +176,7 @@ class Translate {
 	 */
     function Load($domain,$alt=0)
     {
-    	// dolibarr_syslog("Translate::Load domain=".$domain." alt=".$alt);
+    	dolibarr_syslog("Translate::Load domain=".$domain." alt=".$alt);
 
 		// Check parameters
 		if (empty($domain))
@@ -302,6 +302,16 @@ class Translate {
 		return 1;
     }
 
+
+    /**
+	 *  \brief      Mark domain as not loaded to be able to load it again.
+     *  \param      domain      File name to load (.lang file). Use @ before value if domain is in a module directory.
+	 */
+    function UnLoad($domain)
+    {
+    	dolibarr_syslog("Translate::UnLoad domain=".$domain." marked as not loaded", LOG_DEBUG);
+		$this->tab_loaded[$domain]=0;
+    }
 
     /**
      *	\brief      Retourne la liste des domaines charg�es en memoire
