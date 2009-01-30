@@ -253,7 +253,6 @@ class pdf_propale_azur extends ModelePDFPropales
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
 					$nexY = $pdf->GetY();
-print $nexY; exit;
 
 					// TVA
 					$pdf->SetXY ($this->posxtva, $curY);
