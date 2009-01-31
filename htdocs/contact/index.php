@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,12 +61,12 @@ $langs->load("companies");
 $titre=$langs->trans("ListOfContacts");
 if ($type == "c")
 {
-	$titre=$langs->trans("ListOfContacts").'  ('.$langs->trans("ThirdPartyCustomers").')'; 
+	$titre=$langs->trans("ListOfContacts").'  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche="fiche.php";
 }
 if ($type == "p")
 {
-	$titre=$langs->trans("ListOfContacts").'  ('.$langs->trans("ThirdPartyProspects").')'; 
+	$titre=$langs->trans("ListOfContacts").'  ('.$langs->trans("ThirdPartyProspects").')';
 	$urlfiche="prospect/fiche.php";
 }
 if ($type == "f") {
@@ -96,10 +96,9 @@ if ($search_priv < 0) $search_priv='';
 
 
 /*
- * Affichage liste
- *
+ * View
  */
- 
+
 llxHeader();
 
 $form=new Form($db);
@@ -174,13 +173,13 @@ if ($socid)
 {
     $sql .= " AND s.rowid = ".$socid;
 }
-// Count total nb of records 
-$nbtotalofrecords = 0; 
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) 
-{ 
-    $result = $db->query($sql); 
-    $nbtotalofrecords = $db->num_rows($result); 
-} 
+// Count total nb of records
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
 // Add order and limit
 if($_GET["view"] == "recent")
 {
@@ -198,13 +197,13 @@ $result = $db->query($sql);
 if ($result)
 {
 	$contactstatic=new Contact($db);
-	
+
     $begin=$_GET["begin"];
-    
+
     $num = $db->num_rows($result);
     $i = 0;
 
-    print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num,$nbtotalofrecords); 
+    print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num,$nbtotalofrecords);
 
     print '<form method="post" action="index.php">';
     print '<input type="hidden" name="view" value="'.$view.'">';
@@ -215,7 +214,7 @@ if ($result)
     {
         print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
     }
-    
+
     print '<table class="liste" width="100%">';
 
 	$param="&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email";
@@ -236,7 +235,7 @@ if ($result)
     {
         print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, $param, '', $sortfield,$sortorder);
     }
-    print_liste_field_titre($langs->trans("DateModification"),"index.php","p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateModificationShort"),"index.php","p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ContactVisibility"),"index.php","p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print '<td class="liste_titre">&nbsp;</td>';
     print "</tr>\n";
@@ -269,7 +268,7 @@ if ($result)
         print '</td>';
     }
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre" align="center">';
 	$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
 	$form->select_array('search_priv',$selectarray,$search_priv,1);
 	print '</td>';
@@ -287,36 +286,36 @@ if ($result)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        
+
 		// Name
 		print '<td valign="center">';
 		$contactstatic->name=$obj->name;
 		$contactstatic->firstname='';
 		$contactstatic->id=$obj->cidp;
-		print $contactstatic->getNomUrl(1);
+		print $contactstatic->getNomUrl(1,'',20);
         print '</td>';
-        
+
 		// Firstname
-        print '<td>'.$obj->firstname.'</td>';
-        
+        print '<td>'.dolibarr_trunc($obj->firstname,20).'</td>';
+
 		// Company
 		print '<td>';
         if ($obj->socid)
         {
             print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
-            print img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,24).'</a>';
+            print img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,20).'</a>';
         }
         else
-        {   
+        {
             print '&nbsp;';
         }
         print '</td>';
-		
+
 		// Phone
         print '<td>';
 		print dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL');
     	print '</td>';
-		
+
         if ($_GET["view"] == 'phone')
         {
             print '<td>'.dol_print_phone($obj->phone_mobile,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
@@ -330,7 +329,7 @@ if ($result)
 
 		// Date
 		print '<td align="center">'.dolibarr_print_date($obj->tms,"day").'</td>';
-				
+
 		// Private/Public
 		print '<td align="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
 
@@ -343,9 +342,9 @@ if ($result)
         print "</tr>\n";
         $i++;
     }
-    
-    if ($num > $limit) print_barre_liste('' ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num,$nbtotalofrecords, ''); 
-    
+
+    if ($num > $limit) print_barre_liste('' ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num,$nbtotalofrecords, '');
+
     print "</table>";
 
     print '</form>';

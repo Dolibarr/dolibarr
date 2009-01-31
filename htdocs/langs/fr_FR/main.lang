@@ -171,6 +171,7 @@ DateStart=Date début
 DateEnd=Date fin
 DateCreation=Date création
 DateModification=Date modification
+DateModificationShort=Date modif.
 DateLastModification=Date dernière modification
 DateValidation=Date validation
 DateClosing=Date clôture
