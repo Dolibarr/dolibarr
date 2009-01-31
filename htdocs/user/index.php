@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
         \file       htdocs/user/index.php
         \brief      Page d'accueil de la gestion des utilisateurs
@@ -46,6 +46,9 @@ if (! $sortorder) $sortorder="ASC";
 $userstatic=new User($db);
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -62,7 +65,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
 $sql.= " WHERE 1=1";
 if ($_POST["search_user"])
 {
-    $sql.= " AND (u.name like '%".$_POST["search_user"]."%' OR u.firstname like '%".$_POST["search_user"]."%')";
+    $sql.= " AND (u.login like '%".$_POST["search_user"]."%' OR u.name like '%".$_POST["search_user"]."%' OR u.firstname like '%".$_POST["search_user"]."%')";
 }
 if ($sall) $sql.= " AND (u.login like '%".$sall."%' OR u.name like '%".$sall."%' OR u.firstname like '%".$sall."%' OR u.email like '%".$sall."%' OR u.note like '%".$sall."%')";
 if ($sortfield) $sql.=" ORDER BY $sortfield $sortorder";
@@ -94,7 +97,7 @@ if ($result)
 
         print "<tr $bc[$var]>";
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
-        if ($obj->admin) 
+        if ($obj->admin)
         {
           	print img_picto($langs->trans("Administrator"),'star');
         }
@@ -112,7 +115,7 @@ if ($result)
         }
         else print $langs->trans("InternalUser");
         print '</td>';
-        
+
         // Date creation
         print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($obj->datec,"day").'</td>';
 
