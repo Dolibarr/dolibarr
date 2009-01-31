@@ -64,14 +64,14 @@ function printBookmarksList ($aDb, $aLangs)
 	// Menu with all bookmarks
 	if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
 	{
-		$sql = "SELECT rowid, title, url FROM ".MAIN_DB_PREFIX."bookmark";
+		$sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
 		if (! $user->admin) $sql.= " WHERE (fk_user = ".$user->id." OR fk_user is NULL OR fk_user = 0)";
 		if ($resql = $db->query($sql) )
 		{
 			$i=0;
 			while ($i < $conf->global->BOOKMARKS_SHOW_IN_MENU && $obj = $db->fetch_object($resql))
 			{
-				$ret.='<div class="menu_contenu"><a class="vsmenu" title="'.$obj->title.'" href="'.$obj->url.'">';
+				$ret.='<div class="menu_contenu"><a class="vsmenu" title="'.$obj->title.'" href="'.$obj->url.'"'.($obj->target == 1?' target="_blank"':'').'>';
 				$ret.=' '.img_object($langs->trans("BookmarkThisPage"),'bookmark').' ';
 				$ret.= dolibarr_trunc($obj->title, 20).'</a><br></div>';
 				$i++;
