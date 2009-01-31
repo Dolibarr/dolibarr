@@ -18,10 +18,12 @@ For users:
 - New: Added product label in invoice exports fields.
 - New: Add VAT number in export fields.
 - New: Upgrade FPDF to 1.6
-- New: Added keywords in PDF
+- New: Added keywords in PDF.
 - New: Add hidden option MAIN_DISABLE_PDF_COMPRESSION.
-- New: Add attachments on intervention cards
+- New: Add attachments on intervention cards.
 - New: Can add personalised fields in emailing selectors.
+- New: Customer code and supplier code can be defined automatically.
+- New: Emailing feature can extract civility from contacts.
 - Fix: Author, title and topic are correctly encoded i nPDF.
 - Fix: Now HTML output is always UTF8, this solve bad PDF encoding on old users.
 - Fix: Save new model when changed on interventions.
@@ -40,6 +42,7 @@ For users:
 - Fix: Project module and task creation.
 - Fix: Validation of order if a file was attached.
 - Fix: A lot of fixes in PDF generators.
+- Fix: Bad line/pagebreak with long description of products on PDF.
 
 For translators:
 - Added 10 more new language files.
@@ -49,6 +52,7 @@ For translators:
   
 For developers:
 - Removed some deprecated files.
+- Removed treemenu library.
 - Renamed all function dolibarr_xxx into dol_xxx to have same prefix everywhere.
 - Rewrite clone feature for supplier invoice to work like other clone features.
 - First change to manage a future feature "stock PMP value".
