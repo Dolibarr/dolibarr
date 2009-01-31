@@ -65,7 +65,7 @@ function printBookmarksList ($aDb, $aLangs)
 	if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
 	{
 		$sql = "SELECT rowid, title, url FROM ".MAIN_DB_PREFIX."bookmark";
-		if (! $user->admin) $sql.= " WHERE (fk_user = ".$user->id." OR fk_user is NULL)";
+		if (! $user->admin) $sql.= " WHERE (fk_user = ".$user->id." OR fk_user is NULL OR fk_user = 0)";
 		if ($resql = $db->query($sql) )
 		{
 			$i=0;

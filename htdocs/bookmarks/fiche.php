@@ -57,35 +57,6 @@ if ($action == 'add' || $action == 'addproduct')
     $bookmark->url=$url;
     $bookmark->target=$target;
 
-    // TODO Remove because this test is now always false
-    if ($action == 'add' && $_GET["socid"])    // Link to third party card
-    {
-        require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
-        $langs->load("companies");
-        $societe=new Societe($db);
-        $societe->fetch($_GET["socid"]);
-        $bookmark->url=DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
-        $bookmark->target='0';
-        $bookmark->title=$langs->trans("ThirdParty").' '.$societe->nom;
-        //$bookmark->title=$societe->nom;
-        $title=$bookmark->title;
-       	$url=$bookmark->url;
-    }
-    // TODO Remove because this test is now always false
-    if ($action == 'addproduct' && $_GET["id"])    // Link to product card
-    {
-        require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-        $langs->load("products");
-        $product=new Product($db);
-        $product->fetch($_GET["id"]);
-        $bookmark->url=DOL_URL_ROOT.'/product/fiche.php?id='.$product->id;
-        $bookmark->target='0';
-        $bookmark->title=($product->type != 1 ?$langs->trans("Product"):$langs->trans("Service")).' '.$product->ref;
-        //$bookmark->title=$product->ref;
-        $title=$bookmark->title;
-       	$url=$bookmark->url;
-    }
-
     if (! $title) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("BookmarkTitle"));
     if (! $url) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("UrlOrLink"));
 
@@ -168,9 +139,9 @@ if ($action == 'create')
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans("BookmarkTitle").'</td><td><input class="flat" name="title" size="30" value="'.$title.'"></td><td>'.$langs->trans("SetHereATitleForLink").'</td></tr>';
-    print '<tr><td width="20%">'.$langs->trans("UrlOrLink").'</td><td><input class="flat" name="url" size="50" value="'.$url.'"></td><td>'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
-    print '<tr><td width="20%">'.$langs->trans("BehaviourOnClick").'</td><td>';
+    print '<tr><td width="25%">'.$langs->trans("BookmarkTitle").'</td><td><input class="flat" name="title" size="30" value="'.$title.'"></td><td>'.$langs->trans("SetHereATitleForLink").'</td></tr>';
+    print '<tr><td>'.$langs->trans("UrlOrLink").'</td><td><input class="flat" name="url" size="50" value="'.$url.'"></td><td>'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
+    print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
     $liste=array(1=>$langs->trans("OpenANewWindow"),0=>$langs->trans("ReplaceWindow"));
     $html->select_array('target',$liste,1);
     print '</td><td>'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
@@ -199,13 +170,29 @@ if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans("BookmarkTitle").'</td><td>'.$bookmark->title.'</td></tr>';
-    print '<tr><td width="20%">'.$langs->trans("UrlOrLink").'</td><td>';
+    print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>'.$bookmark->ref.'</td></tr>';
+    print '<tr><td>'.$langs->trans("BookmarkTitle").'</td><td>'.$bookmark->title.'</td></tr>';
+    print '<tr><td>'.$langs->trans("UrlOrLink").'</td><td>';
     print '<a href="'.(eregi('^http',$bookmark->url)?$bookmark->url:DOL_URL_ROOT.$bookmark->url).'" target="'.($bookmark->target?"":"newlink").'">'.$bookmark->url.'</a></td></tr>';
-    print '<tr><td width="20%">'.$langs->trans("BehaviourOnClick").'</td><td>';
+    print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
     if ($bookmark->target == 0) print $langs->trans("OpenANewWindow");
     if ($bookmark->target == 1) print $langs->trans("ReplaceWindow");
     print '</td></tr>';
+    print '<tr><td>'.$langs->trans("Owner").'</td><td>';
+    if ($bookmark->fk_user)
+    {
+	    $fuser=new User($db);
+	    $fuser->id=$bookmark->fk_user;
+	    $fuser->fetch();
+	    //$fuser->nom=$fuser->login; $fuser->prenom='';
+	    print $fuser->getNomUrl(1);
+	}
+	else
+	{
+		print $langs->trans("Public");
+	}
+    print '</td></tr>';
+    print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.dolibarr_print_date($bookmark->datec,'dayhour').'</td></tr>';
     print '</table>';
 
     print "</div>\n";

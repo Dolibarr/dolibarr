@@ -61,23 +61,25 @@ class Bookmark
      */
     function fetch($id)
     {
-        $sql = "SELECT rowid, fk_user, ".$this->db->pdate("dateb").", url, target,";
+        $sql = "SELECT rowid, fk_user, ".$this->db->pdate("dateb")." as datec, url, target,";
         $sql.= " title, favicon";
         $sql.= " FROM ".MAIN_DB_PREFIX."bookmark";
         $sql.= " WHERE rowid = ".$id;
 
+		dolibarr_syslog("Bookmark::fetch sql=".$sql, LOG_DEBUG);
         $resql  = $this->db->query ($sql);
-
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
 
             $this->id	   = $obj->rowid;
+            $this->ref	   = $obj->rowid;
+
             $this->fk_user = $obj->fk_user;
             $this->datec   = $obj->datec;
             $this->url     = $obj->url;
             $this->target  = $obj->target;
-            $this->title   = stripslashes($obj->title);
+            $this->title   = $obj->title;
             $this->favicon = $obj->favicon;
 
             $this->db->free($resql);
@@ -97,7 +99,7 @@ class Bookmark
     function create()
     {
     	$this->db->begin();
-    	
+
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_user,dateb,url,target";
         $sql.= " ,title,favicon";
         if ($this->fk_soc) $sql.=",fk_soc";
@@ -170,7 +172,7 @@ class Bookmark
     {
         $sql  = "DELETE FROM ".MAIN_DB_PREFIX."bookmark";
         $sql .= " WHERE rowid = ".$id;
-        
+
         $resql=$this->db->query ($sql);
         if ($resql)
         {
