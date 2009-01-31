@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,19 +36,19 @@ $langs->load("other");
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-	'disablemodules'=>'banque,barcode,bookmark,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock,tax',
+	'disablemodules'=>'banque,barcode,bookmark,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,ficheinter,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock,tax',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-	'disablemodules'=>'barcode,boutique,bookmark,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock',
+	'disablemodules'=>'barcode,boutique,bookmark,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,ficheinter,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
 	'disablemodules'=>'adherent,barcode,boutique,bookmark,cashdesk,don,expedition,prelevement,projet,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
 	array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-	'disablemodules'=>'adherent,boutique,bookmark,don,prelevement,produit,stock',
+	'disablemodules'=>'adherent,boutique,bookmark,don,ficheinter,prelevement,produit,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 	array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
-	'disablemodules'=>'adherent,boutique,bookmark,cashdesk,don,prelevement,service',
+	'disablemodules'=>'adherent,boutique,bookmark,cashdesk,don,ficheinter,prelevement,service',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 	array('default'=>'0', 'key'=>'profdemoall','label'=>'DemoCompanyAll',
 	'disablemodules'=>'adherent,boutique,bookmark,cashdesk,don',
