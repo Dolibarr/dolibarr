@@ -42,7 +42,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	var $version;		// 'development', 'experimental', 'dolibarr'
 	var $code_auto; // Numerotation automatique
 
-	
+
 	/**		\brief      Constructeur classe
 	*/
 	function mod_codeclient_lion()
@@ -56,13 +56,13 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 		$this->code_auto = 0;
 	}
 
-	
+
 	/**		\brief      Renvoi la description du module
 	*      	\return     string      Texte descripif
 	*/
 	function info($langs)
 	{
-		return "Verifie si le code client est de la forme numerique 999 et sur au moins 3 chiffres. Verification mais pas de generation automatique.";
+		return "Verifie si le code client/fournisseur est de la forme numerique 999 et sur au moins 3 chiffres. Verification mais pas de generation automatique.";
 	}
 
 
@@ -87,14 +87,14 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 		$result=0;
 		$code = strtoupper(trim($code));
 
-		if (! $code && $this->code_null) 
+		if (! $code && $this->code_null)
 		{
 			$result=0;
 		}
 		else
 		{
 			if ($this->verif_syntax($code) >= 0)
-			{	
+			{
 				$is_dispo = $this->verif_dispo($db, $code, $soc);
 				if ($is_dispo <> 0)
 				{
@@ -121,7 +121,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 		return $result;
 	}
 
-	
+
 	/**
 	*		\brief		Renvoi une valeur correcte
 	*		\param		$db			Handler acces base
@@ -131,11 +131,11 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	function get_correct($db, $code)
 	{
 		$return='001';
-		
+
 		$sql = "SELECT MAX(code_client) as maxval FROM ".MAIN_DB_PREFIX."societe";
 		$resql=$db->query($sql);
 		if ($resql)
-		{	
+		{
 			$obj=$db->fetch_object($resql);
 			if ($obj)
 			{
@@ -150,7 +150,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 		}
 	}
 
-	
+
 	/**
 	*		\brief		Renvoi si un code est pris ou non (par autre tiers)
 	*		\param		$db			Handler acces base
@@ -192,7 +192,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	function verif_syntax($code)
 	{
 		$res = 0;
-		
+
 		if (strlen($code) < 3)
 		{
 			$res = -1;
@@ -201,13 +201,13 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 		{
 			if (eregi('[0-9][0-9][0-9]+',$code))
 			{
-				$res = 0;	
+				$res = 0;
 			}
 			else
 			{
 				$res = -2;
 			}
-			
+
 		}
 		return $res;
 	}
@@ -229,7 +229,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 				$ok++;
 			}
 		}
-		
+
 		return $ok;
 	}
 

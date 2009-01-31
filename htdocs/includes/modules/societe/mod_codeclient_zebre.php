@@ -42,7 +42,7 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 	var $version;		// 'development', 'experimental', 'dolibarr'
 	var $code_auto; 	// Numerotation automatique
 
-	
+
 	/**		\brief      Constructeur classe
 	*/
 	function mod_codeclient_zebre()
@@ -56,17 +56,17 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 		$this->code_auto = 0;
 	}
 
-	
+
 	/**
 	*		\brief      Renvoie la description du module
 	*		\return     string      Texte descripif
 	*/
 	function info($langs)
 	{
-		return "Verifie si le code client est de la forme CCCC9999. Les quatres premieres lettres etant une representation mnemotechnique, suivi du code postal en 2 chiffres et un numero d'ordre pour la prise en compte des doublons. Verification mais pas de generation automatique.";
+		return "Verifie si le code client/fournisseur est de la forme CCCC9999. Les quatres premieres lettres etant une representation mnemotechnique, suivi du code postal en 2 chiffres et un numero d'ordre pour la prise en compte des doublons. Verification mais pas de generation automatique.";
 	}
 
-	
+
 	/**		\brief      Renvoi la description du module
 	*      	\return     string      Texte descripif
 	*/
@@ -75,7 +75,7 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 		return "ABCD7501";
 	}
 
-	
+
 	/**
 	* 		\brief		V�rifie la validit� du code
 	*		\param		$db			Handler acces base
@@ -84,29 +84,29 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 	*		\return		int			<0 si KO, 0 si OK
 	*/
 	function verif($db, &$code, $soc)
-	{ 
+	{
 		$result=0;
 		$code = strtoupper(trim($code));
 
-		if (! $code && $this->code_null) 
+		if (! $code && $this->code_null)
 		{
 			$result=0;
 		}
 		else
 		{
 			if ($this->verif_syntax($code) == 0)
-			{	  
+			{
 				$i = 1;
 
 				$is_dispo = $this->verif_dispo($db, $code, $soc);
 				while ($is_dispo <> 0 && $i < 99)
 				{
 					$arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-					
+
 					$code = substr($code,0,6) . substr("00".$i, -2);
-					
+
 					$is_dispo = $this->verif_dispo($db, $code, $soc);
-					
+
 					$i++;
 				}
 
@@ -139,9 +139,9 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 	*		\return		string		Code correct, <0 si KO
 	*/
 	function get_correct($db, $code)
-	{ 
+	{
 		if ($this->verif_syntax($code) == 0)
-		{	  
+		{
 			$i = 1;
 
 			$is_dispo = $this->verif_dispo($db, $code, $soc);
@@ -149,11 +149,11 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 			while ( $is_dispo <> 0 && $i < 99)
 			{
 				$arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-				
+
 				$code = substr($code,0,6) . substr("00".$i, -2);
-				
+
 				$is_dispo = $this->verif_dispo($db, $code, $soc);
-				
+
 				$i++;
 			}
 
@@ -167,7 +167,7 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 
 	}
 
-	
+
 	/**
 	*		\brief		Renvoi si un code est pris ou non (par autre tiers)
 	*		\param		$db			Handler acces base
@@ -208,7 +208,7 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 	function verif_syntax(&$code)
 	{
 		$res = 0;
-		
+
 		if (strlen($code) <> 8)
 		{
 			$res = -1;
@@ -217,13 +217,13 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 		{
 			if ($this->is_alpha(substr($code,0,4)) == 0 && $this->is_num(substr($code,4,4)) == 0 )
 			{
-				$res = 0;	      
+				$res = 0;
 			}
 			else
 			{
-				$res = -2; 
+				$res = -2;
 			}
-			
+
 		}
 		return $res;
 	}
@@ -234,7 +234,7 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 		$ok = 0;
 		// Je n'ai pas trouv� de fonction pour tester une chaine alpha sans les caract�re accentu�s
 		// dommage
-		$alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';      
+		$alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 		for ($i = 0 ; $i < 4 ; $i++)
 		{
@@ -243,11 +243,11 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 				$ok++;
 			}
 		}
-		
+
 		return $ok;
 	}
 
-	
+
 	function is_num($str)
 	{
 		$ok = 0;
@@ -261,7 +261,7 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 				$ok++;
 			}
 		}
-		
+
 		return $ok;
 	}
 
