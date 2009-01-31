@@ -57,10 +57,10 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	{
 		$this->nom = "Leopard";
 		$this->version = "dolibarr";
+		$this->code_null = 1;
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
 		$this->code_modifiable_null = 1;
-		$this->code_null = 1;
 		$this->code_auto = 0;
 	}
 
@@ -81,7 +81,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	*		\param		$code		Code a v�rifier
 	*		\param		$soc		Objet societe
 	*/
-	function verif($db, $code, $soc)
+	function verif($db, &$code, $soc)
 	{
 		$code = strtoupper(trim($code));
 

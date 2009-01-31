@@ -262,6 +262,6 @@ FiscalYearInformation=Information sur l'année fiscale
 FiscalMonthStart=Mois de début d'exercice
 
 # Monkey
-MonkeyNumRefModelDesc=Vérifie que le code client/fournisseur est un nombre sur 6 chiffres, sans ruptures.
+MonkeyNumRefModelDesc=Renvoie le numéro sous la forme %syymm-nnnn pour les codes clients et %syymm-nnnn pour les codes fournisseurs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0.
 # Leopard
 LeopardNumRefModelDesc=Code client/fournisseur libre sans vérification. Peut-etre modifié à tout moment.

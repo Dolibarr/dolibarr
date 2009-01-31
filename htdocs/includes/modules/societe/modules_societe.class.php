@@ -76,8 +76,9 @@ class ModeleThirdPartyCode
     /**     \brief      Renvoi prochaine valeur attribuée
      *      \return     string      Valeur
      */
-    function getNextValue($langs)
+    function getNextValue($objsoc=0,$type=-1)
     {
+    	global $langs;
         return $langs->trans("NotAvailable");
     }
 
@@ -148,10 +149,16 @@ class ModeleThirdPartyCode
 		$s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,1).'<br>';
 		$s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,1).'<br>';
 		$s.='<br>';
-		if ($type == 0 || $type == -1)  $s.=$langs->trans("NextValue").': <b>'.$this->getExample($langs,$soc,0).'</b><br>';
-		if ($type == 1 || $type == -1)  $s.=$langs->trans("NextValue").': <b>'.$this->getExample($langs,$soc,1).'</b>';
+		if ($type == 0 || $type == -1)  $s.=$langs->trans("NextValue").': <b>'.$this->getNextValue($soc,0).'</b><br>';
+		if ($type == 1 || $type == -1)  $s.=$langs->trans("NextValue").': <b>'.$this->getNextValue($soc,1).'</b>';
 		return $s;
 	}
+
+	function verif_prefixIsUsed()
+	{
+		return false;
+	}
+
 }
 
 

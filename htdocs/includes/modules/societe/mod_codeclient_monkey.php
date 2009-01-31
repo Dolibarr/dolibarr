@@ -42,18 +42,20 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	var $version;		// 'development', 'experimental', 'dolibarr'
 	var $code_auto; // Numerotation automatique
 
+	var $prefixcustomer='CU';
+	var $prefixsupplier='SU';
 
 	/**		\brief      Constructeur classe
 	*/
 	function mod_codeclient_monkey()
 	{
 		$this->nom = "Monkey";
-		$this->version = "experimental";
-		$this->code_modifiable = 0;
+		$this->version = "dolibarr";
+		$this->code_null = 1;
+		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
 		$this->code_modifiable_null = 1;
-		$this->code_null = 0;
-		$this->code_auto = 0;
+		$this->code_auto = 1;
 	}
 
 
@@ -62,16 +64,73 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	*/
 	function info($langs)
 	{
-		return $langs->trans("MonkeyNumRefModelDesc");
+		return $langs->trans("MonkeyNumRefModelDesc",$this->prefixcustomer,$this->prefixsupplier);
 	}
 
 
 	/**		\brief      Renvoi la description du module
 	*      	\return     string      Texte descripif
 	*/
-	function getExample($langs)
+	function getExample($langs,$objsoc=0,$type=-1)
 	{
-		return "000001";
+		return $this->prefixcustomer.'0901-0001<br>'.$this->prefixsupplier.'0901-0001';
+	}
+
+
+	/**		\brief      Return next value
+	 *     	\param      objsoc      Object third party
+	 *	    \param      $type       Client ou fournisseur (1:client, 2:fournisseur)
+	 *     	\return     string      Value if OK, '' if module not configured, <0 if KO
+	 */
+	function getNextValue($objsoc=0,$type=-1)
+	{
+		global $db, $conf;
+
+		$return='000001';
+
+		$field='';$where='';
+		if ($type == 0)
+		{
+			$field = 'code_client';
+			//$where = ' AND client in (1,2)';
+		}
+		else if ($type == 1)
+		{
+			$field = 'code_fournisseur';
+			//$where = ' AND fournisseur = 1';
+		}
+		else return -1;
+
+
+		if ($type == 0) $prefix=$this->prefixcustomer;
+		if ($type == 1) $prefix=$this->prefixsupplier;
+
+        // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+        $posindice=8;
+        $sql = "SELECT MAX(0+SUBSTRING(".$field.",".$posindice.")) as max";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql.= " WHERE ".$field." LIKE '".$prefix."%'";
+
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $obj = $db->fetch_object($resql);
+            if ($obj) $max = $obj->max;
+            else $max=0;
+        }
+        else
+        {
+        	dolibarr_syslog("mod_codeclient_monkey::getNextValue sql=".$sql);
+        	return -1;
+        }
+
+        //$date=time();
+        $date=gmmktime();
+        $yymm = strftime("%y%m",$date);
+        $num = sprintf("%04s",$max+1);
+
+        dolibarr_syslog("mod_codeclient_monkey::getNextValue return ".$prefix.$yymm."-".$num);
+        return $prefix.$yymm."-".$num;
 	}
 
 
@@ -123,35 +182,6 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 
 	/**
-	*		\brief		Renvoi une valeur correcte
-	*		\param		$db			Handler acces base
-	*		\param		$code		Code reference eventuel
-	*		\return		string		Code correct, <0 si KO
-	*/
-	function get_correct($db, $code)
-	{
-		$return='001';
-
-		$sql = "SELECT MAX(code_client) as maxval FROM ".MAIN_DB_PREFIX."societe";
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$obj=$db->fetch_object($resql);
-			if ($obj)
-			{
-				$newval=$obj->maxval+1;
-				$return=sprintf('%03d',$newval);
-				return $return;
-			}
-		}
-		else
-		{
-			return -1;
-		}
-	}
-
-
-	/**
 	*		\brief		Renvoi si un code est pris ou non (par autre tiers)
 	*		\param		$db			Handler acces base
 	*		\param		$code		Code a verifier
@@ -193,44 +223,15 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	{
 		$res = 0;
 
-		if (strlen($code) < 3)
+		if (strlen($code) < 11)
 		{
 			$res = -1;
 		}
 		else
 		{
-			if (eregi('[0-9][0-9][0-9]+',$code))
-			{
-				$res = 0;
-			}
-			else
-			{
-				$res = -2;
-			}
-
+			$res = 0;
 		}
 		return $res;
-	}
-
-
-	/**
-	*	Renvoi 0 si numerique, sinon renvoi nb de car non numerique
-	*/
-	function is_num($str)
-	{
-		$ok = 0;
-
-		$alpha = '0123456789';
-
-		for ($i = 0 ; $i < length($str) ; $i++)
-		{
-			if (strpos($alpha, substr($str,$i, 1)) === false)
-			{
-				$ok++;
-			}
-		}
-
-		return $ok;
 	}
 
 }

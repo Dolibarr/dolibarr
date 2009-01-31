@@ -259,6 +259,6 @@ FiscalYearInformation=Information on the fiscal year
 FiscalMonthStart=Starting month of the fiscal year
 
 # Monkey
-MonkeyNumRefModelDesc=Check that customer/supplier code contains 6 numbers.
+MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for supplier code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
 # Leopard
 LeopardNumRefModelDesc=Customer/supplier code is free. This code can be modified at any time.

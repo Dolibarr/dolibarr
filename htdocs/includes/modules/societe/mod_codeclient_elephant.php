@@ -54,10 +54,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	{
 		$this->nom = "Elephant";
 		$this->version = "dolibarr";
+		$this->code_null = 0;
 		$this->code_modifiable = 0;
 		$this->code_modifiable_invalide = 1;
 		$this->code_modifiable_null = 1;
-		$this->code_null = 0;
 		$this->code_auto = 1;
 		$this->prefixIsRequired = 0;
 	}
@@ -233,18 +233,6 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		dolibarr_syslog("mod_codeclient_elephant::verif type=".$type." result=".$result);
 		return $result;
-	}
-
-
-	/**
-	 *		\brief		Renvoi une valeur correcte
-	 *		\param		$db			Handler acces base
-	 *		\param		$code		Code reference eventuel
-	 *		\return		string		Code correct, <0 si KO
-	 */
-	function get_correct($db, $code)
-	{
-
 	}
 
 
