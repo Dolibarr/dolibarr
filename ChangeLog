@@ -42,7 +42,7 @@ For users:
 - Fix: A lot of fixes in PDF generators.
 
 For translators:
-- Added ca_ES language files
+- Added 10 more new language files.
 - Added autotranslator tool. A tool to build/update automatically
   languages files using Google API for a new language. Wonderfull to start a
   new translation.
