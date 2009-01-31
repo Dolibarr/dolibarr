@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -116,15 +116,15 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user-
 {
 	$projet = new Project($db);
 	$projet->id = $_GET["id"];
-	if ($projet->delete($user) == 0)
+	$result=$projet->delete($user);
+	if ($result >= 0)
 	{
 		Header("Location: index.php");
 		exit;
 	}
 	else
 	{
-		Header("Location: fiche.php?id=".$projet->id);
-		exit;
+		$mesg='<div class="error">'.$langs->trans("CantRemoveProject").'</div>';
 	}
 }
 
@@ -191,11 +191,9 @@ else
 
 	$projet = new Project($db);
 	$projet->fetch($_GET["id"],$_GET["ref"]);
-	$projet->societe->fetch($projet->societe->id);
-	if ($projet->user_resp_id > 0)
-	{
-		$result=$projet->fetch_user($projet->user_resp_id);
-	}
+
+	if ($projet->societe->id > 0)  $result=$projet->societe->fetch($projet->societe->id);
+	if ($projet->user_resp_id > 0) $result=$projet->fetch_user($projet->user_resp_id);
 
 	$head=project_prepare_head($projet);
 	dolibarr_fiche_head($head, 'project', $langs->trans("Project"));

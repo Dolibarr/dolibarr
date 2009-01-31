@@ -50,3 +50,4 @@ ActivityOnProjectThisYear=Activité sur les projets cette année
 ChildOfTaks=Fille du projet/tâche
 NotOwnerOfProject=Non responsable de ce projet privé
 AffectedTo=Affecté à
+CantRemoveProject=Ce projet ne peut être supprimé car il est référencé par de nombreux objets (factures, commandes ou autre). voir la liste sur l'onglet Reférents.

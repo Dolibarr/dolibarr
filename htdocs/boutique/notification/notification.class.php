@@ -29,7 +29,7 @@ class Editeur {
   function Editeur($DB, $id=0) {
     $this->db = $DB;
     $this->id = $id ;
-  }  
+  }
   /*
    *
    *
@@ -38,17 +38,17 @@ class Editeur {
   function create($user) {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."editeur (fk_user_author) VALUES (".$user->id.")";
-    
+
     if ($this->db->query($sql) )
       {
 	$id = $this->db->last_insert_id(MAIN_DB_PREFIX."editeur");
-	
+
 	if ( $this->update($id, $user) )
 	  {
 	    return $id;
 	  }
       }
-    
+
   }
 
   /*
@@ -64,14 +64,14 @@ class Editeur {
     if ($this->db->query($sql) )
       {
 	$nump = $this->db->num_rows();
-	
+
 	if ($nump)
 	  {
 	    $i = 0;
 	    while ($i < $nump)
 	      {
 		$obj = $this->db->fetch_object();
-		
+
 		$ga[$obj->rowid] = $obj->nom;
 		$i++;
 	      }
@@ -82,7 +82,7 @@ class Editeur {
       {
 	print $this->db->error();
       }
-    
+
   }
   /*
    *
@@ -109,7 +109,7 @@ class Editeur {
    *
    */
   function fetch ($id) {
-    
+
     $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."editeur WHERE rowid = $id";
 
     $result = $this->db->query($sql) ;
@@ -120,14 +120,14 @@ class Editeur {
 
 	$this->id      = $result["rowid"];
 	$this->nom     = stripslashes($result["nom"]);
-	
+
 	$this->db->free();
       }
     else
       {
 	print $this->db->error();
       }
-    
+
     return $result;
   }
 
@@ -138,15 +138,17 @@ class Editeur {
    */
   function delete($user) {
 
-    $sql = "DELETE FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products WHERE products_id = $idosc ";
+  	global $conf;
 
-    $sql = "DELETE FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_to_categories WHERE products_id = $idosc";
+    $sql = "DELETE FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products WHERE products_id = $idosc ";
 
-    $sql = "DELETE FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_description WHERE products_id = $idosc";
-	      
+    $sql = "DELETE FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_to_categories WHERE products_id = $idosc";
+
+    $sql = "DELETE FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_description WHERE products_id = $idosc";
+
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."livre WHERE rowid = $id";
-	    
-    
+
+
   }
 
 

@@ -45,9 +45,9 @@ $offset = $limit * $page ;
 
 print_barre_liste("Critiques", $page, "index.php");
 
-$sql = "SELECT r.reviews_id, r.reviews_rating, d.reviews_text, p.products_name FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."reviews as r, ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."reviews_description as d, ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_description as p";
+$sql = "SELECT r.reviews_id, r.reviews_rating, d.reviews_text, p.products_name FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."reviews as r, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."reviews_description as d, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_description as p";
 $sql .= " WHERE r.reviews_id = d.reviews_id AND r.products_id=p.products_id";
-$sql .= " AND p.language_id = ".OSC_LANGUAGE_ID. " AND d.languages_id=".OSC_LANGUAGE_ID;
+$sql .= " AND p.language_id = ".$conf->global->OSC_LANGUAGE_ID. " AND d.languages_id=".$conf->global->OSC_LANGUAGE_ID;
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $dbosc->plimit( $limit ,$offset);
 

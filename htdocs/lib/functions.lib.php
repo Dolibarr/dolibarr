@@ -1599,11 +1599,11 @@ function dol_print_error($db='',$error='')
 	{
 		if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
 		{
-			print "<br>\n";
 			print "<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
 			print "<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
 			print "<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."<br>\n";
 			print "<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
+			print "<br>\n";
 		}
 		else                            // Mode CLI
 		{

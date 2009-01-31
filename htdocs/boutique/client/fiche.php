@@ -20,7 +20,7 @@
  * $Id$
  * $Source$
  */
- 
+
 /**
 	    \file       htdocs/boutique/client/fiche.php
 		\ingroup    boutique
@@ -44,25 +44,25 @@ if ($action == 'update' && !$cancel) {
  */
 if ($_GET['id'])
 {
-  
+
   $client = new Client($dbosc);
   $result = $client->fetch($_GET['id']);
   if ( $result )
-    { 
+    {
       print '<div class="titre">Fiche Client : '.$client->name.'</div><br>';
 
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
       print "<tr>";
       print '<td width="20%">Nom</td><td width="80%">'.$client->name.'</td></tr>';
       print "</table>";
-      
-      
+
+
       /*
        * Commandes
        *
        */
       $sql = "SELECT o.orders_id, o.customers_id,".$dbosc->pdate("date_purchased")." as date_purchased, t.value as total";
-      $sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders as o, ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders_total as t";
+      $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
       $sql .= " WHERE o.customers_id = " . $client->id;
       $sql .= " AND o.orders_id = t.orders_id AND t.class = 'ot_total'";
       if ( $dbosc->query($sql) )
@@ -77,9 +77,9 @@ if ($_GET['id'])
 	    $objp = $dbosc->fetch_object();
 	    $var=!$var;
 	    print "<tr $bc[$var]>";
-	    
+
 	    print '<td><a href="'.DOL_URL_ROOT.'/boutique/commande/fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche">&nbsp;';
-	    
+
 	    print dolibarr_print_date($objp->date_purchased,'dayhour')."</a>\n";
 	    print $objp->total . "</a></TD>\n";
 	    print "</tr>\n";
@@ -93,15 +93,15 @@ if ($_GET['id'])
 	  print "<p>ERROR 1</p>\n";
 	  dolibarr_print_error($dbosc);
 	}
-      
+
     }
   else
     {
       print "<p>ERROR 1</p>\n";
       dolibarr_print_error($dbosc);
     }
-  
-  
+
+
 }
 else
 {
@@ -111,9 +111,9 @@ else
 
 
 /* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
+/*                                                                            */
+/* Barre d'action                                                             */
+/*                                                                            */
 /* ************************************************************************** */
 
 // Pas d'action

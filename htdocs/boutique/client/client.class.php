@@ -27,7 +27,7 @@
 		\version    $Revision$
 */
 
-/** 
+/**
         \class      Client
 		\brief      Classe permettant de gèrer des clients de la boutique online
 */
@@ -52,8 +52,9 @@ class Client
 
     function fetch ($id)
     {
+		global $conf;
 
-        $sql = "SELECT customers_id, customers_lastname, customers_firstname FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."customers WHERE customers_id = $id";
+        $sql = "SELECT customers_id, customers_lastname, customers_firstname FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."customers WHERE customers_id = $id";
 
         $result = $this->db->query($sql) ;
 

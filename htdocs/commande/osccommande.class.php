@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -26,17 +26,17 @@
 class OscCommande
 {
 	var $db ;
-	
+
 	var $id ;
 	var $client_name ;
 
-	
+
 	function OscCommande($DB, $id=0)
 	{
 		$this->db = $DB;
 		$this->id   = $id ;
-	}  
-	
+	}
+
 
 	/*
 	 *
@@ -45,23 +45,25 @@ class OscCommande
 	 */
 	function fetch ($id)
 	{
-		$sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders as o";
+		global $conf;
+
+		$sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o";
 		$sql .= " WHERE o.orders_id = $id";
-	
+
 		$result = $this->db->query($sql) ;
-	
+
 		if ( $result )
 		{
 			$result = $this->db->fetch_array();
-	
+
 			$this->id          = $result["rowid"];
 			$this->client_name = $result["customers_name"];
 		}
 		$this->db->free();
-	
+
 		return $result;
 	}
-    
+
 
   /*
    *
@@ -78,14 +80,14 @@ class OscCommande
     if ($this->db->query($sql) )
       {
 	$nump = $this->db->num_rows();
-	
+
 	if ($nump)
 	  {
 	    $i = 0;
 	    while ($i < $nump)
 	      {
 		$obj = $this->db->fetch_object();
-		
+
 		$ga[$obj->rowid] = $obj->title;
 		$i++;
 	      }
@@ -95,7 +97,7 @@ class OscCommande
     else
       {
 	print $this->db->error();
-      }    
+      }
   }
   /*
    *

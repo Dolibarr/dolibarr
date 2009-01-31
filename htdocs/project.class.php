@@ -266,17 +266,19 @@ class Project extends CommonObject
 	 */
 	function delete($user)
 	{
-
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql.= " WHERE rowid=".$this->id;
 
+		dolibarr_syslog("Project::delete sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			return 0;
+			return 1;
 		}
 		else
 		{
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("Project::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

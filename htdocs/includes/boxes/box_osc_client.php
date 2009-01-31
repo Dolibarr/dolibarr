@@ -57,28 +57,28 @@ class box_osc_clients extends ModeleBoxes {
      */
     function loadBox($max=5)
     {
-        global $user, $langs, $db;
+        global $conf, $user, $langs, $db;
         $langs->load("boxes");
 
 		$this->max=$max;
-        
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleNbOfCustomers",$max));
 
         if ($user->rights->boutique->lire)
         {
-            $sql = "SELECT count(*) as cus FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."customers";
-    
+            $sql = "SELECT count(*) as cus FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."customers";
+
             $resql = $db->query($sql);
             if ($resql)
             {
                 $num = $db->num_rows($resql);
-    
+
                 $i = 0;
-    
+
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($resql);
-    
+
                     $this->info_box_contents[$i][0] = array('td' => 'align="center" width="16"',
                     'logo' => $this->boximg,
                     'url' => DOL_URL_ROOT."/boutique/client/index.php");
@@ -96,7 +96,7 @@ class box_osc_clients extends ModeleBoxes {
             $this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
-        
+
     }
 
     function showBox()

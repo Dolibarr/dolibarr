@@ -41,22 +41,22 @@ class Critique {
   function Critique($DB, $id=0) {
     $this->db = $DB;
     $this->id = $id ;
-  }  
+  }
   /*
    *
    *
    *
    */
   function fetch ($id) {
-    
-    
+	global $conf;
+
     $sql = "SELECT r.reviews_id, r.reviews_rating, d.reviews_text, p.products_name";
 
-    $sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."reviews as r, ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."reviews_description as d";
-    $sql .= " ,".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_description as p";
+    $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."reviews as r, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."reviews_description as d";
+    $sql .= " ,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_description as p";
 
     $sql .= " WHERE r.reviews_id = d.reviews_id AND r.products_id=p.products_id";
-    $sql .= " AND p.language_id = ".OSC_LANGUAGE_ID. " AND d.languages_id=".OSC_LANGUAGE_ID;
+    $sql .= " AND p.language_id = ".$conf->global->OSC_LANGUAGE_ID. " AND d.languages_id=".$conf->global->OSC_LANGUAGE_ID;
     $sql .= " AND r.reviews_id=$id";
 
     $result = $this->db->query($sql) ;
@@ -68,7 +68,7 @@ class Critique {
 	$this->id           = $result["reviews_id"];
 	$this->product_name = stripslashes($result["products_name"]);
 	$this->text         = stripslashes($result["reviews_text"]);
-	
+
 	$this->db->free();
       }
     else
@@ -76,7 +76,7 @@ class Critique {
 	print $this->db->error();
 	print "<p>$sql";
       }
-    
+
     return $result;
   }
 

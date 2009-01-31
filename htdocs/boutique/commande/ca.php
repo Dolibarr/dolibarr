@@ -51,9 +51,9 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td>';
 print '<td align="right">'.$langs->trans("Lastname").'</td></tr>';
 
 $sql = "SELECT sum(t.value) as value";
-$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders_total as t";
+$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
 $sql .= " WHERE t.class = 'ot_subtotal'";
- 
+
 if ( $dbosc->query($sql) )
 {
   $num = $dbosc->num_rows();
@@ -79,9 +79,9 @@ else
 }
 
 $sql = "SELECT sum(t.value) as value";
-$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders_total as t";
+$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
 $sql .= " WHERE t.class = 'ot_shipping'";
- 
+
 if ( $dbosc->query($sql) )
 {
   $num = $dbosc->num_rows();

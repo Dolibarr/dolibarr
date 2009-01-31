@@ -49,13 +49,13 @@ $offset = $limit * $page ;
 print_barre_liste("Liste des notifications", $page, "index.php");
 
 $sql = "SELECT c.customers_id, c.customers_lastname, c.customers_firstname, p.products_name, p.products_id";
-$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_notifications as n,".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_description as p";
-$sql .= ",".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."customers as c";
+$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_notifications as n,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_description as p";
+$sql .= ",".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."customers as c";
 $sql .= " WHERE n.customers_id = c.customers_id AND p.products_id=n.products_id";
-$sql .= " AND p.language_id = ".OSC_LANGUAGE_ID;
+$sql .= " AND p.language_id = ".$conf->global->OSC_LANGUAGE_ID;
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $dbosc->plimit( $limit ,$offset);
- 
+
 if ( $dbosc->query($sql) )
 {
   $num = $dbosc->num_rows();

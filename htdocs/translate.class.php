@@ -176,7 +176,7 @@ class Translate {
 	 */
     function Load($domain,$alt=0)
     {
-    	dolibarr_syslog("Translate::Load domain=".$domain." alt=".$alt);
+    	//dolibarr_syslog("Translate::Load domain=".$domain." alt=".$alt);
 
 		// Check parameters
 		if (empty($domain))

@@ -39,10 +39,10 @@ if ($_GET['id'])
 {
   $commande = new Commande($db);
   $result = $commande->fetch($_GET['id']);
-  
+
   if ( $result )
-    { 
-      
+    {
+
       print '<div class="titre">Fiche Commande : '.$commande->id.'</div><br>';
 
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
@@ -60,13 +60,13 @@ if ($_GET['id'])
       print "</table>";
 
       print "<br />";
-      
+
       /*
        * Produits
        *
        */
       $sql = "SELECT orders_id, products_id, products_model, products_name, products_price, final_price, products_quantity";
-      $sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders_products";
+      $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_products";
       $sql .= " WHERE orders_id = " . $commande->id;
 
       if ( $dbosc->query($sql) )
@@ -78,21 +78,21 @@ if ($_GET['id'])
 	  print '<td align="center">'.$langs->trans("Number").'</td><td align="right">'.$langs->trans("Price").'</td><td align="right">Prix final</td>';
 	  print "</tr>\n";
 	  $var=True;
-	  while ($i < $num) 
+	  while ($i < $num)
 	    {
 	      $objp = $dbosc->fetch_object();
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
 	      print '<td align="left" width="40%">';
 	      print '<a href="fiche.php?id='.$objp->products_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" width="16" height="16" alt="Fiche livre"></a>';
-	    
+
 	      print '<a href="fiche.php?id='.$objp->products_id.'">'.$objp->products_name.'</a>';
 	      print "</td>";
 
 	      print '<td align="center"><a href="fiche.php?id='.$objp->rowid."\">$objp->products_quantity</a></TD>\n";
 	      print "<td align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->products_price)."</a></TD>\n";
 	      print "<td align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->final_price)."</a></TD>\n";
-	    
+
 	      print "</tr>\n";
 	      $i++;
 	    }
@@ -116,8 +116,8 @@ if ($_GET['id'])
       print '<td width="20%">'.$langs->trans("Lastname").'</td><td width="80%">'.price($commande->total_ot_total).' EUR</td></tr>';
       print "</table>";
 
-      
-      
+
+
     }
   else
     {
@@ -131,17 +131,17 @@ else
 
 
 /* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
+/*                                                                            */
+/* Barre d'action                                                             */
+/*                                                                            */
 /* ************************************************************************** */
 
 print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';    
-print '<td width="20%" align="center">-</td>';    
+print '<td width="20%" align="center">-</td>';
+print '<td width="20%" align="center">-</td>';
 print '</table><br>';
 
 
