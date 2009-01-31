@@ -595,14 +595,14 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		// Fournisseur
-		print '<tr><td width="20%">'.$langs->trans("Supplier")."</td>";
+		print '<tr><td>'.$langs->trans("Supplier")."</td>";
 		print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
 		print '</tr>';
 
 		// Statut
 		print '<tr>';
 		print '<td>'.$langs->trans("Status").'</td>';
-		print '<td width="50%" colspan="2">';
+		print '<td colspan="2">';
 		print $commande->getLibStatut(4);
 		print "</td></tr>";
 

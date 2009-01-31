@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,13 +37,13 @@ if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
 /*
  * Actions
- */	
+ */
 
 if ($_POST["action"] == 'updatenote' && $user->rights->fournisseur->commande->creer)
 {
 	$commande = new CommandeFournisseur($db);
 	$commande->fetch($_GET["id"]);
-	
+
 	$result = $commande->UpdateNote($user, $_POST["note"], $_POST["note_public"]);
 	if ($result >= 0)
 	{
@@ -53,6 +53,9 @@ if ($_POST["action"] == 'updatenote' && $user->rights->fournisseur->commande->cr
 }
 
 
+/*
+ * View
+ */
 
 llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
@@ -63,11 +66,16 @@ $html = new Form($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-  
-if ($_GET["id"] > 0)
+
+$now=gmmktime();
+
+$id = $_GET['id'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	$commande = new CommandeFournisseur($db);
-	if ( $commande->fetch($_GET["id"]) >= 0)
+	$result=$commande->fetch($_GET["id"],$_GET['ref']);
+	if ($result >= 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($commande->socid);
@@ -77,7 +85,7 @@ if ($_GET["id"] > 0)
 		$author->fetch();
 
 		$head = ordersupplier_prepare_head($commande);
-		
+
 		$title=$langs->trans("SupplierOrder");
 		dolibarr_fiche_head($head, 'note', $title);
 
@@ -92,41 +100,46 @@ if ($_GET["id"] > 0)
 
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="3">'.$commande->ref.'</td>';
+		print '<td colspan="2">';
+		print $html->showrefnav($commande,'ref','',1,'ref','ref');
+		print '</td>';
 		print '</tr>';
 
 		// Fournisseur
-		print '<tr><td width="20%">'.$langs->trans("Supplier").'</td>';
-		print '<td colspan="3">';
-		print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id.'">'.img_object($langs->trans("ShowSupplier"),'company').' '.$soc->nom.'</a></td>';
+		print '<tr><td>'.$langs->trans("Supplier")."</td>";
+		print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
 		print '</tr>';
 
+		// Statut
 		print '<tr>';
 		print '<td>'.$langs->trans("Status").'</td>';
-		print '<td colspan="3">';
+		print '<td colspan="2">';
 		print $commande->getLibStatut(4);
 		print "</td></tr>";
 
+		// Date
 		if ($commande->methode_commande_id > 0)
 		{
-			print '<tr><td>'.$langs->trans("Date").'</td>';
-			print '<td colspan="2">';
-
+			print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
 			if ($commande->date_commande)
 			{
-				print dolibarr_print_date($commande->date_commande,'dayhourtext')."\n";
-			}
-
-			print '&nbsp;</td><td width="50%">';
-			if ($commande->methode_commande)
-			{
-				print "Méthode : " .$commande->methode_commande;
+				print dolibarr_print_date($commande->date_commande,"dayhourtext")."\n";
 			}
 			print "</td></tr>";
+
+			if ($commande->methode_commande)
+			{
+				print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->methode_commande.'</td></tr>';
+			}
 		}
 
+		// Auteur
+		print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
+		print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
+		print '</tr>';
+
 		print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
-		print '<td colspan="3">';
+		print '<td colspan="2">';
 		if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_4.'" name="note_public">';
 		print nl2br($commande->note_public);
 		if ($user->rights->fournisseur->commande->creer) print '</textarea>';
@@ -135,26 +148,28 @@ if ($_GET["id"] > 0)
 		if (! $user->societe_id)
 		{
 			print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
-			print '<td colspan="3">';
+			print '<td colspan="2">';
 			if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_6.'" name="note">';
 			print nl2br($commande->note);
 			if ($user->rights->fournisseur->commande->creer) print '</textarea>';
 			print '</td></tr>';
 		}
-		
+
 		if ($user->rights->fournisseur->commande->creer)
 		{
-			print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+			print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 		}
 
 		print "</table></form>";
+
+		print "</div>\n";
 	}
 	else
 	{
 		/* Commande non trouvée */
 		print "Commande inexistante";
 	}
-} 
+}
 
 
 $db->close();

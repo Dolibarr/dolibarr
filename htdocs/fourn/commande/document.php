@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
  *
@@ -71,11 +71,13 @@ $pagenext = $page + 1;
 
 
 $commande = new CommandeFournisseur($db);
-if ($commande->fetch($id) < 0)
+if ($commande->fetch($_GET['id'],$_GET['ref']) < 0)
 {
 	dolibarr_print_error($db);
 	exit;
 }
+
+
 
 /*
  * Actions
@@ -114,16 +116,25 @@ if ($action=='delete')
 
 
 /*
- * Affichage
+ * View
  */
-if ($id > 0)
+
+$html =	new	Form($db);
+
+$id = $_GET['id'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	llxHeader();
 
 	$upload_dir = $conf->fournisseur->commande->dir_output.'/'.sanitizeFileName($commande->ref);
 
-	$societe = new Societe($db);
-	$societe->fetch($commande->socid);
+	$soc = new Societe($db);
+	$soc->fetch($commande->socid);
+
+		$author = new User($db);
+		$author->id = $commande->user_author_id;
+		$author->fetch();
 
 	$head = ordersupplier_prepare_head($commande);
 
@@ -142,20 +153,49 @@ if ($id > 0)
 	print '<table class="border"width="100%">';
 
 	// Ref
-	print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$commande->ref.'</td></tr>';
+	print '<tr><td width="35%">'.$langs->trans("Ref").'</td>';
+	print '<td colspan="2">';
+	print $html->showrefnav($commande,'ref','',1,'ref','ref');
+	print '</td>';
+	print '</tr>';
 
-	print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
+	// Fournisseur
+	print '<tr><td>'.$langs->trans("Supplier")."</td>";
+	print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
+	print '</tr>';
 
 	// Statut
 	print '<tr>';
 	print '<td>'.$langs->trans("Status").'</td>';
-	print '<td colspan="3">';
+	print '<td colspan="2">';
 	print $commande->getLibStatut(4);
 	print "</td></tr>";
+
+	// Date
+	if ($commande->methode_commande_id > 0)
+	{
+		print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
+		if ($commande->date_commande)
+		{
+			print dolibarr_print_date($commande->date_commande,"dayhourtext")."\n";
+		}
+		print "</td></tr>";
+
+		if ($commande->methode_commande)
+		{
+			print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->methode_commande.'</td></tr>';
+		}
+	}
+
+	// Auteur
+	print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
+	print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
+	print '</tr>';
 
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 	print "</table>\n";
+
 	print "</div>\n";
 
 	if ($mesg) { print $mesg."<br>"; }

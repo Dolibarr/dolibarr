@@ -21,11 +21,11 @@
  *
  */
 
-/**    
-       \file   	htdocs/fourn/commande/pre.inc.php
-       \ingroup    compta
-       \brief  	Fichier gestionnaire du menu commandes fournisseurs
-*/
+/**
+ \file   	htdocs/fourn/commande/pre.inc.php
+ \ingroup    compta
+ \brief  	Fichier gestionnaire du menu commandes fournisseurs
+ */
 
 require("../../main.inc.php");
 $langs->load("orders");
@@ -37,38 +37,36 @@ require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
 
 function llxHeader($head = "", $title = "", $help_url='', $addons='')
 {
-  global $user, $langs;
-  $langs->load("orders");
-  /*
-   *
-   *
-   */
-  top_menu($head, $title);
+	global $user, $langs;
+	$langs->load("orders");
 
-  $menu = new Menu();
 
-  if (is_array($addons))
-    {
-      $menu->add($addons[0][0], $addons[0][1]);
-    }
-if ($user->societe_id == 0 && $user->rights->societe->lire)
-{
-  $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
-  $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
-}
+	top_menu($head, $title);
 
-  $langs->load("bills");
-if ($user->rights->fournisseur->facture->lire)
-{
-  $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
-}
-if ($user->rights->fournisseur->commande->lire)
-{
-  $menu->add(DOL_URL_ROOT."/fourn/commande/", $langs->trans("Orders"));
-  $menu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php", $langs->trans("List"));
-}
+	$menu = new Menu();
 
-  left_menu($menu->liste,$help_url);
+	if (is_array($addons))
+	{
+		$menu->add($addons[0][0], $addons[0][1]);
+	}
+	if ($user->societe_id == 0 && $user->rights->societe->lire)
+	{
+		$menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
+		$menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
+	}
+
+	$langs->load("bills");
+	if ($user->rights->fournisseur->facture->lire)
+	{
+		$menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
+	}
+	if ($user->rights->fournisseur->commande->lire)
+	{
+		$menu->add(DOL_URL_ROOT."/fourn/commande/", $langs->trans("Orders"));
+		$menu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php", $langs->trans("List"));
+	}
+
+	left_menu($menu->liste,$help_url);
 }
 
 ?>

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,18 +36,23 @@ $langs->load('stocks');
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue                                                                    */
-/*                                                                             */
-/* *************************************************************************** */
+/*
+ * View
+ */
 
-if ($_GET["id"] > 0)
+$html =	new	Form($db);
+
+$now=gmmktime();
+
+$id = $_GET['id'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	$soc = new Societe($db);
 	$commande = new CommandeFournisseur($db);
 
-	if ( $commande->fetch($_GET["id"]) >= 0)
+	$result=$commande->fetch($_GET["id"],$_GET['ref']);
+	if ($result >= 0)
 	{
 		$soc->fetch($commande->socid);
 
@@ -55,10 +60,7 @@ if ($_GET["id"] > 0)
 		$author->id = $commande->user_author_id;
 		$author->fetch();
 
-		$addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
-		$addons[0][1] = $soc->nom;
-
-		llxHeader('',$langs->trans("History"),"CommandeFournisseur",$addons);
+		llxHeader('',$langs->trans("History"),"CommandeFournisseur");
 
 		$head = ordersupplier_prepare_head($commande);
 
@@ -74,26 +76,43 @@ if ($_GET["id"] > 0)
 
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="3">'.$commande->ref.'</td>';
+		print '<td colspan="2">';
+		print $html->showrefnav($commande,'ref','',1,'ref','ref');
+		print '</td>';
 		print '</tr>';
 
 		// Fournisseur
-		print '<tr><td width="20%">'.$langs->trans("Supplier")."</td>";
-		print '<td colspan="3">';
-		print '<b><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id.'">'.img_object($langs->trans("ShowSupplier"),'company').' '.$soc->nom.'</a></b></td>';
+		print '<tr><td>'.$langs->trans("Supplier")."</td>";
+		print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
 		print '</tr>';
 
-		print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
+		// Statut
+		print '<tr>';
+		print '<td>'.$langs->trans("Status").'</td>';
+		print '<td colspan="2">';
 		print $commande->getLibStatut(4);
 		print "</td></tr>";
 
+		// Date
 		if ($commande->methode_commande_id > 0)
 		{
-			print '<tr><td>'.$langs->trans("Date").'</td>';
-			print '<td colspan="2">'.dolibarr_print_date($commande->date_commande,"dayhourtext")."</td>\n";
-			print '<td width="50%">&nbsp;';
+			print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
+			if ($commande->date_commande)
+			{
+				print dolibarr_print_date($commande->date_commande,"dayhourtext")."\n";
+			}
 			print "</td></tr>";
+
+			if ($commande->methode_commande)
+			{
+				print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->methode_commande.'</td></tr>';
+			}
 		}
+
+		// Auteur
+		print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
+		print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
+		print '</tr>';
 
 		print "</table>\n";
 		print "<br>";
@@ -157,7 +176,7 @@ if ($_GET["id"] > 0)
 		/* Commande non trouvée */
 		print "Commande inexistante ou accés refusé";
 	}
-}  
+}
 
 $db->close();
 
