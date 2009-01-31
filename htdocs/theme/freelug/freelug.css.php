@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net> 
+/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,18 +58,18 @@ a:visited { font-family: helvetica, verdana, arial, sans-serif; font-weight: bol
 a:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
 input
-{ 
+{
 	font-size: 12px;
-    font-family: helvetica, verdana, arial, sans-serif; 
+    font-family: helvetica, verdana, arial, sans-serif;
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 input.flat
-{ 
+{
 	font-size: 12px;
-    font-family: helvetica, verdana, arial, sans-serif; 
+    font-family: helvetica, verdana, arial, sans-serif;
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
@@ -105,7 +105,7 @@ select.flat
 	font-size: 11px;
 	font-family: arial,verdana,heletica, sans-serif;
     padding: 0px 2px 0px 2px;
-    margin: 0px 0px 0px 0px; 
+    margin: 0px 0px 0px 0px;
 	border-left: 1px solid #cccccc;
 	border-right: 1px solid #aaaaaa;
 	border-top: 1px solid #dddddd;
@@ -118,7 +118,7 @@ select.flat
 	font-size: 11px;
 	font-family: arial,verdana,heletica, sans-serif;
     padding: 0px 2px 0px 2px;
-    margin: 0px 0px 0px 0px; 
+    margin: 0px 0px 0px 0px;
 	border-left: 1px solid #cccccc;
 	border-right: 1px solid #aaaaaa;
 	border-top: 1px solid #dddddd;
@@ -169,8 +169,8 @@ div.tmenu
     font-weight: bold;
     font-size: 12px;
     height: 20px;
-    background: #dddddd; 
-    color: #000000; 
+    background: #dddddd;
+    color: #000000;
     text-decoration: none;
 }
 
@@ -209,11 +209,11 @@ table.tmenu
     margin: 0px 0px 0px 6px;
 }
 
-.menu 
-{ 
-  background: #ccccb3; 
+.menu
+{
+  background: #ccccb3;
   font-size: 12px;
-  color: #000000; 
+  color: #000000;
   text-decoration: none;
 }
 
@@ -247,7 +247,7 @@ a.tmenu:hover
 }
 
 a.tmenusel
-{ 
+{
   color: #202020;
   background: #bbbbcc;
   padding: 0px 8px;
@@ -265,7 +265,7 @@ div.tmenu ul {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
-	
+
 }
 div.tmenu li {
 	float: left;
@@ -311,7 +311,7 @@ div.tmenu li a:active
 }
 div.tmenu li a:link
 {
-	
+
 	font-weight: normal;
 }
 
@@ -372,12 +372,12 @@ a.help:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:
 a.help:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 
 div.blockvmenupair
-{ 
+{
 	border-right: 1px solid #555555;
 	border-bottom: 1px solid #555555;
 	background: #dddddd;
 	font-family: helvetica, verdana, arial, sans-serif;
-	color: #202020; 
+	color: #202020;
 	text-align:left;
 	text-decoration: none;
     padding: 3px;
@@ -390,7 +390,7 @@ div.blockvmenuimpair
 	border-bottom: 1px solid #555555;
 	background: #dddddd;
 	font-family: helvetica, verdana, arial, sans-serif;
-	color: #202020; 
+	color: #202020;
 	text-align:left;
 	text-decoration: none;
     padding: 3px;
@@ -410,24 +410,24 @@ div.help
     margin: 1px 0px 0px 0px;
 }
 
-td.barre { 
+td.barre {
            border-right: 1px solid #000000;
            border-bottom: 1px solid #000000;
            background: #DDDDDD;
 		   font-size: 12px;
-           font-family: helvetica, verdana; 
-           color: #000000; 
+           font-family: helvetica, verdana;
+           color: #000000;
            text-align:left;
            text-decoration: none
 }
 
 td.barre_select {
-           background: #b3cccc; 
-           color: #000000 
+           background: #b3cccc;
+           color: #000000
 }
 
 td.photo {
-	background: #FCFCFC; 
+	background: #FCFCFC;
 	color: #000000;
     border: 1px solid #b3c5cc;
 }
@@ -521,39 +521,39 @@ a.butAction:hover   { font-family: helvetica, verdana, arial, sans-serif; backgr
 .butActionRefused         { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #AAAAAA; color: #AAAAAA !important; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none !important; white-space: nowrap; cursor: not-allowed; }
 
 a.butActionDelete:link    { font-family: helvetica, verdana, arial, sans-serif;
-                      background: white; 
-                      border: 1px solid #997777; 
-                      color: #436976; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      background: white;
+                      border: 1px solid #997777;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
 a.butActionDelete:active    { font-family: helvetica, verdana, arial, sans-serif;
-                      background: white; 
-                      border: 1px solid #997777; 
-                      color: #436976; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      background: white;
+                      border: 1px solid #997777;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
 a.butActionDelete:visited    { font-family: helvetica, verdana, arial, sans-serif;
-                      background: white; 
-                      border: 1px solid #997777; 
-                      color: #436976; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      background: white;
+                      border: 1px solid #997777;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
 a.butActionDelete:hover    { font-family: helvetica, verdana, arial, sans-serif;
-                      background: #FFe7ec; 
-                      border: 1px solid #997777; 
-                      color: #436976; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      background: #FFe7ec;
+                      border: 1px solid #997777;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
 
@@ -623,14 +623,14 @@ width: 100%;
 
 /*
  *  Tableaux
- */ 
+ */
 
 
 
 
 
 
-td.border { 
+td.border {
             border-top: 1px solid #000000;
             border-right: 1px solid #000000;
             border-bottom: 1px solid #000000;
@@ -654,7 +654,7 @@ div.warning {
 }
 
 div.error {
-  color: #550000; font-weight: bold; 
+  color: #550000; font-weight: bold;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #969090;
@@ -692,22 +692,22 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 div.titre {
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
-    color: #777799; 
+    color: #777799;
     text-decoration: none
 }
 
 
 /*
  * Widgets standard
- */ 
-input.liste_titre { 
+ */
+input.liste_titre {
     background: #777799;
     border: 0px;
 }
 
-tr.liste_titre { 
+tr.liste_titre {
     color: #FFFFFF;
-    background: #777799; 
+    background: #777799;
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
     border-left: 1px solid #FFFFFF;
@@ -717,9 +717,9 @@ tr.liste_titre {
     white-space: nowrap;
 }
 
-td.liste_titre { 
+td.liste_titre {
     color: #FFFFFF;
-    background: #777799; 
+    background: #777799;
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
     border-top: 1px solid #FFFFFF;
@@ -728,9 +728,9 @@ td.liste_titre {
 }
 
 .liste_titre_sel
-{ 
+{
     color: #DCCCBB;
-    background: #777799; 
+    background: #777799;
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
     border-top: 1px solid #FFFFFF;
@@ -745,9 +745,9 @@ tr.liste_total td {
     border-top: 1px solid #888888;
 }
 
-th { 
+th {
     color: #FFFFFF;
-    background: #777799; 
+    background: #777799;
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
     border-left: 1px solid #FFFFFF;
@@ -759,40 +759,40 @@ th {
 }
 
 
-.pair { 
-    background: #dcdcd0; 
-    font-size: 12px; 
+.pair {
+    background: #dcdcd0;
+    font-size: 12px;
     }
 
-.impair { 
-    background: #eeeedd;           
-    font-size: 12px; 
+.impair {
+    background: #eeeedd;
+    font-size: 12px;
     }
 
 /*
  *  Boxes
  */
-tr.box_titre { 
+tr.box_titre {
                color: #FFFFFF;
                background: #777799;
                font-family: Helvetica, Verdana;
                font-size: 1.0em;
                font-weight: bold; }
 
-tr.box_pair { 
-              background: #dcdcd0; 
+tr.box_pair {
+              background: #dcdcd0;
               font-size: 0.95em; }
 
-tr.box_impair { 
-                background: #eeeedd; 
+tr.box_impair {
+                background: #eeeedd;
                 font-family: Helvetica, Verdana;
                 font-size: 0.95em; }
 
-tr.fiche { 
+tr.fiche {
            font-family: Helvetica, Verdana;
            font-size: 0.6em; }
 
-td.delete { 
+td.delete {
   background: red;
   font-weight: bold;
   }
@@ -850,7 +850,7 @@ padding: 2px;
 #dhtmltooltip
 {
 position: absolute;
-width: 420px;
+width: 450px;
 border-top: solid 1px #BBBBBB;
 border-left: solid 1px #BBBBBB;
 border-right: solid 1px #444444;
@@ -881,7 +881,7 @@ table.dp {
 }
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
 /* Barre titre */
-.dpHead,.tpHead,.tpHour td:Hover .tpHead{ 
+.dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
 	background-color:#777799;
 	color:white;

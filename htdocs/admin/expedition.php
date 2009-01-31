@@ -439,11 +439,11 @@ if(is_dir($dir))
 			print '</td>';
 
 			// Info
-			$htmltooltip =    '<b>'.$langs->trans("Name").'</b>: '.$module->name;
-			$htmltooltip.='<br><b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
-			$htmltooltip.='<br><b>'.$langs->trans("Width").'/'.$langs->trans("Height").'</b>: '.$module->page_largeur.'/'.$module->page_hauteur;
-			$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
-			$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
+			$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+			$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+			$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+			$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+			$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 			print '<td align="center">';
 			print $html->textwithhelp('',$htmltooltip,1,0);
 			print '</td>';

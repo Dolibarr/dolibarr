@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net> 
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ if (! isset($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_
 /* ============================================================================== */
 
 body {
-  background: #ebebe0; 
-  font-size: 12px; 
+  background: #ebebe0;
+  font-size: 12px;
   font-family: helvetica, verdana, arial, sans-serif;
   margin-top: 0;
   margin-bottom: 0;
@@ -55,15 +55,15 @@ a:visited { font-family: helvetica, verdana, arial, sans-serif; font-weight: bol
 a:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
 input
-{ 
+{
 	font-size: 12px;
-    font-family: helvetica, verdana, arial, sans-serif; 
+    font-family: helvetica, verdana, arial, sans-serif;
     border: 1px solid #cccccc;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 input.flat
-{ 
+{
 	font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
     border: 1px solid #cccccc;
@@ -94,7 +94,7 @@ select.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-.button 
+.button
 {
 	font-family: arial,verdana,helvetica, sans-serif;
 	font-size: 100%;
@@ -156,8 +156,8 @@ div.tmenu
     font-weight: bold;
     font-size: 12px;
     height: 20px;
-    background: #dcdcb3; 
-    color: #000000; 
+    background: #dcdcb3;
+    color: #000000;
     text-decoration: none;
 }
 a.tmenudisabled
@@ -221,7 +221,7 @@ a.tmenu:hover
 }
 
 a.tmenusel
-{ 
+{
   color: #234046;
   background: #eeeecc;
   padding: 0px 5px;
@@ -349,7 +349,7 @@ div.blockvmenupair
 	border-bottom: 1px solid #555555;
 	background: #dcdcb3;
 	font-family: helvetica, verdana, arial, sans-serif;
-	color: #000000; 
+	color: #000000;
 	text-align:left;
 	text-decoration: none;
     padding-left: 3px;
@@ -366,7 +366,7 @@ div.blockvmenuimpair
 	border-bottom: 1px solid #555555;
 	background: #dcdcb3;
 	font-family: helvetica, verdana, arial, sans-serif;
-	color: #000000; 
+	color: #000000;
 	text-align:left;
 	text-decoration: none;
     padding-left: 3px;
@@ -383,7 +383,7 @@ div.help
 	border-bottom: 1px solid #000000;
 	background: #f0f0f0;
 	font-family: helvetica, verdana, arial, sans-serif;
-	color: #000000; 
+	color: #000000;
 	text-align:left;
 	text-decoration: none;
     padding-left: 3px;
@@ -393,23 +393,23 @@ div.help
     margin: 1px 0px 0px 0px;
 }
 
-td.barre { 
+td.barre {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #b3c5cc;
 	font-family: helvetica, verdana, arial, sans-serif;
-	color: #000000; 
+	color: #000000;
 	text-align:left;
 	text-decoration: none
 }
 
-td.barre_select { 
-	background: #b3c5cc; 
-	color: #000000 
+td.barre_select {
+	background: #b3c5cc;
+	color: #000000
 }
-td.photo { 
-	background: #FFFFFF; 
-	color: #000000 
+td.photo {
+	background: #FFFFFF;
+	color: #000000
 }
 
 
@@ -506,8 +506,8 @@ a.butActionDelete:link    { font-family: helvetica, verdana, arial, sans-serif; 
 a.butActionDelete:active  { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butActionDelete:visited { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butActionDelete:hover   { font-family: helvetica, verdana, arial, sans-serif; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-                      
-                  
+
+
 
 /* ============================================================================== */
 /* Tables                                                                         */
@@ -574,15 +574,15 @@ background: #ddddcc;
 }
 
 
-td.border { 
+td.border {
             border-top: 1px solid #000000;
             border-right: 1px solid #000000;
             border-bottom: 1px solid #000000;
             border-left: 1px solid #000000;
             }
 
-div.menus { 
-            background: #eeeecc; 
+div.menus {
+            background: #eeeecc;
             color: #bbbb88;
             font-size: 0.95em;
             border-top:    1px dashed #ccccb3;
@@ -592,15 +592,15 @@ div.menus {
             }
 
 
-a.leftmenu { 
-             font-weight: bold; 
+a.leftmenu {
+             font-weight: bold;
              color: #202020;
              }
 
 
 
-div.leftmenu { 
-               background: #ccccb3; 
+div.leftmenu {
+               background: #ccccb3;
                text-align: left;
                border-right: 1px solid #000000;
                border-bottom: 1px solid #000000;
@@ -626,7 +626,7 @@ div.warning {
 }
 
 div.error {
-  color: #550000; font-weight: bold; 
+  color: #550000; font-weight: bold;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #000000;
@@ -644,7 +644,7 @@ div.info {
  *   Liens Payes/Non payes
  */
 
-a.normal:link { font-weight: normal } 
+a.normal:link { font-weight: normal }
 a.normal:visited { font-weight: normal }
 a.normal:active { font-weight: normal }
 a.normal:hover { font-weight: normal }
@@ -661,22 +661,22 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 /*
  *  ???
  */
-div.titre { 
+div.titre {
 	font-family: helvetica, verdana, arial, sans-serif;
-            font-weight: bold; 
-            color: #666633; 
+            font-weight: bold;
+            color: #666633;
             text-decoration: none }
 
 /*
  *  Tableaux
- */ 
+ */
 
-input.liste_titre { 
+input.liste_titre {
     background: #BBBB88;
     border: 0px;
 }
 
-tr.liste_titre { 
+tr.liste_titre {
     background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
@@ -684,7 +684,7 @@ tr.liste_titre {
     white-space: nowrap;
 }
 
-td.liste_titre { 
+td.liste_titre {
     background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
@@ -694,24 +694,24 @@ td.liste_titre {
 }
 
 .liste_titre_sel
-{ 
+{
     color: #fcfffc;
     background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold; 
+    font-weight: bold;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
 }
 
-tr.liste_total td { 
+tr.liste_total td {
     background: #F0F0F0;
     font-weight: bold;
     white-space: nowrap;
     border-top: 1px solid #888888;
 }
 
-th { 
+th {
     background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
@@ -723,52 +723,52 @@ th {
     font-size: 1.0em;
 }
 
-.pair { 
-    background: #eeeecc; 
-    font-size: 1.0em; 
+.pair {
+    background: #eeeecc;
+    font-size: 1.0em;
 }
 
-.impair { 
-    background: #dcdcb3;           
-    font-size: 1.0em; 
+.impair {
+    background: #dcdcb3;
+    font-size: 1.0em;
 }
 
 
 /*
  *  Boxes
  */
-tr.box_titre { 
+tr.box_titre {
                background: #BBBB88;
                font-family: Helvetica, Verdana;
                font-size: 1.0em;
                font-weight: bold; }
 
-tr.box_pair { 
-              background: #dcdcb3; 
+tr.box_pair {
+              background: #dcdcb3;
               font-size: 0.95em; }
 
-tr.box_impair { 
-                background: #eeeecc; 
+tr.box_impair {
+                background: #eeeecc;
                 font-family: Helvetica, Verdana;
                 font-size: 0.95em; }
 
-tr.fiche { 
+tr.fiche {
            font-family: Helvetica, Verdana;
            font-size: 0.6em; }
 /*
  * Widgets standard
  */
 
-td.delete { 
+td.delete {
             background: red;
             font-weight: bold;
             }
 
-td.small { 
+td.small {
            font-size: 10px;
            }
 
-tr.nonpayed { 
+tr.nonpayed {
            font-weight: bold;
            }
 
@@ -803,7 +803,7 @@ table.valid {
 #dhtmltooltip
 {
 position: absolute;
-width: 420px;
+width: 450px;
 border: 1px solid #444444;
 padding: 2px;
 background-color: lightyellow;
@@ -815,13 +815,13 @@ z-index: 100;
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
-.bodyline { 
+.bodyline {
 	-moz-border-radius:8px;
-	border: 1px #ECECE4 outset; 
+	border: 1px #ECECE4 outset;
 	padding:0px;
 	margin-bottom:5px;
 }
-table.dp { 
+table.dp {
     width: 180px;
     background-color: #FFFFFF;
     border-top: solid 2px #DDDDDD;
@@ -831,19 +831,19 @@ table.dp {
 }
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
 /* Barre titre */
-.dpHead,.tpHead,.tpHour td:Hover .tpHead{ 
+.dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
 	background-color:#ccc5b3;
-	color:black; 
+	color:black;
 	font-size:11px;
 	cursor:auto;
 }
 /* Barre navigation */
 .dpButtons,.tpButtons {
 	text-align:center;
-	background-color:#dcdcb3;color:#000000; font-weight:bold; 
+	background-color:#dcdcb3;color:#000000; font-weight:bold;
 	border: 1px outset black;
-	cursor:pointer;	
+	cursor:pointer;
 }
 .dpButtons:Active,.tpButtons:Active{border: 1px outset black;}
 .dpDayNames td,.dpExplanation {background-color:#D9DBE1; font-weight:bold; text-align:center; font-size:11px;}
@@ -964,7 +964,7 @@ div.autocomplete ul li {
       cursor:pointer;
     }
 
-	
+
 /* ============================================================================== */
 /*  Ajax - In place editor                                                        */
 /* ============================================================================== */
@@ -1000,7 +1000,7 @@ form.inplaceeditor-form a { /* The cancel link */
 }
 
 
-    
+
 /* ============================================================================== */
 /* Admin Menu                                                                     */
 /* ============================================================================== */

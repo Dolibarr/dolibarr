@@ -286,9 +286,6 @@ MarsNumRefModelDesc1=Numéro de facture sous la forme, PREF-10-2004-005, qui cor
 MarsNumRefModelDesc2=Le nombre final est formaté sur 3 chiffres ou plus.
 MarsNumRefModelDesc3=Si la constante FACTURE_MARS_DELTA est définie, un offset est appliqué sur le compteur
 
-# mercure
-MercureNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la quinzième facture ayant le numéro 15, le numéro est préfixé par la lettre F, ce module peut être utilisé avec dans le cas d'une numérotaion double.
-
 # neptune
 NeptuneNumRefModelDesc1=Renvoie le numéro de facture sous une forme du préfix FA suivi de l'année sur 2 chiffres et d'un compteur simple sur 4 chiffres.
 NeptuneNumRefModelDesc2=Si la constante FACTURE_NEPTUNE_DELTA est définie, un offset est appliqué sur le compteur

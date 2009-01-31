@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -81,7 +81,7 @@ class ModeleThirdPartyCode
         return $langs->trans("NotAvailable");
     }
 
-    
+
 	/**     \brief      Renvoi version du module numerotation
 	*      	\return     string      Valeur
 	*/
@@ -94,9 +94,9 @@ class ModeleThirdPartyCode
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
 		return $langs->trans("NotAvailable");
-	}	
+	}
 
-	/** 
+	/**
      *      \brief      Renvoi la liste des modèles actifs
      *      \param      db      Handler de base
      */
@@ -104,7 +104,7 @@ class ModeleThirdPartyCode
     {
         $liste=array();
         $sql ="";
-        
+
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -124,7 +124,7 @@ class ModeleThirdPartyCode
         return $liste;
     }
 
-    /** 
+    /**
      *      \brief      Return description of module parameters
      *      \param      langs      	Output language
 	 *		\param		soc			Third party object
@@ -134,20 +134,22 @@ class ModeleThirdPartyCode
     function getToolTip($langs,$soc,$type)
     {
 		$s='';
+		$s.=$langs->trans("Name").': <b>'.$this->nom.'</b><br>';
 		$s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
 		if ($type == 0)  $s.=$langs->trans("CustomerCodeDesc").'<br>';
 		if ($type == 1)  $s.=$langs->trans("SupplierCodeDesc").'<br>';
 		if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
 		$s.='<br>';
-		$s.='<u>'.$langs->trans("ThisIsModuleRules").'</u>:<br>';
-		if ($type == 0)  $s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$this->code_null).'</b><br>';
-		if ($type == 1)  $s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$this->code_null).'</b><br>';
-		if ($type == -1) $s.=$langs->trans("Required").': <b>'.yn(!$this->code_null).'</b><br>';
-		$s.=$langs->trans("CanBeModifiedIfOk").': <b>'.yn($this->code_modifiable).'</b><br>';
-		$s.=$langs->trans("CanBeModifiedIfKo").': <b>'.yn($this->code_modifiable_invalide).'</b><br>';
-		$s.=$langs->trans("AutomaticCode").': <b>'.yn($this->code_auto).'</b><br>';
-		if ($type == 0) $s.=$langs->trans("Example").': <b>'.$this->getExample($langs,$soc,0).'</b>';
-		if ($type == 1) $s.=$langs->trans("Example").': <b>'.$this->getExample($langs,$soc,1).'</b>';
+		$s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
+		if ($type == 0)  $s.=$langs->trans("RequiredIfCustomer").': '.yn(!$this->code_null,1,1).'<br>';
+		if ($type == 1)  $s.=$langs->trans("RequiredIfSupplier").': '.yn(!$this->code_null,1,1).'<br>';
+		if ($type == -1) $s.=$langs->trans("Required").': '.yn(!$this->code_null,1,1).'<br>';
+		$s.=$langs->trans("CanBeModifiedIfOk").': '.yn($this->code_modifiable,1,1).'<br>';
+		$s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,1).'<br>';
+		$s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,1).'<br>';
+		$s.='<br>';
+		if ($type == 0 || $type == -1)  $s.=$langs->trans("NextValue").': <b>'.$this->getExample($langs,$soc,0).'</b><br>';
+		if ($type == 1 || $type == -1)  $s.=$langs->trans("NextValue").': <b>'.$this->getExample($langs,$soc,1).'</b>';
 		return $s;
 	}
 }

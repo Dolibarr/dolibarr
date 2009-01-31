@@ -82,9 +82,9 @@ class Societe extends CommonObject
 	var $mode_reglement;
 	var $cond_reglement;
 
-	var $client;
-	var $prospect;
-	var $fournisseur;
+	var $client;					// 0=no customer, 1=customer, 2=prospect
+	var $prospect;					// 0=no prospect, 1=prospect
+	var $fournisseur;				// =0no supplier, 1=supplier
 
 	var $prefixCustomerIsRequired;
 	var $prefixSupplierIsRequired;
@@ -145,8 +145,8 @@ class Societe extends CommonObject
 
 		$this->db->begin();
 
-		// Pour code automatique
-		if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
+		// For automatic creation during create action (not used by Dolibarr)
+		if ($this->code_client == -1)      $this->get_codeclient($this->prefix_comm,0);
 		if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
 
 		$result = $this->verify();
@@ -154,7 +154,7 @@ class Societe extends CommonObject
 		if ($result >= 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat)";
-			$sql.= " VALUES ('".addslashes($this->nom)."', ".$this->db->idate(mktime()).", ".$this->db->idate(mktime()).",";
+			$sql.= " VALUES ('".addslashes($this->nom)."', ".$this->db->idate(gmmktime()).", ".$this->db->idate(gmmktime()).",";
 			$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null");
 			$sql.= ")";
 
@@ -348,7 +348,7 @@ class Societe extends CommonObject
 		//Gencod
         $this->gencod=trim($this->gencod);
 
-		// Pour code client/fournisseur automatique
+		// For automatic creation (not used by Dolibarr)
 		if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
 		if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
 
@@ -401,8 +401,7 @@ class Societe extends CommonObject
 
 			if ($allowmodcodeclient)
 			{
-				// Attention check_codeclient peut modifier le code suivant le module utilise
-				$this->check_codeclient();
+				//$this->check_codeclient();
 
 				$sql .= ", code_client = ".($this->code_client?"'".addslashes($this->code_client)."'":"null");
 
@@ -414,8 +413,7 @@ class Societe extends CommonObject
 
 			if ($allowmodcodefournisseur)
 			{
-				// Attention check_codefournisseur peut modifier le code suivant le module utilise
-				$this->check_codefournisseur();
+				//$this->check_codefournisseur();
 
 				$sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".addslashes($this->code_fournisseur)."'":"null");
 
@@ -1516,7 +1514,7 @@ class Societe extends CommonObject
 
 	/**
 	 *    \brief      Verifie code client
-	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilis�
+	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilise
 	 */
 	function check_codeclient()
 	{
@@ -1541,7 +1539,7 @@ class Societe extends CommonObject
 
 	/**
 	 *    \brief      Verifie code fournisseur
-	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilis�
+	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilise
 	 */
 	function check_codefournisseur()
 	{

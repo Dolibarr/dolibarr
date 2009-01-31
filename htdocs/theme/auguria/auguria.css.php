@@ -377,7 +377,7 @@ div.blockvmenupair
 	border-spacing: 0px;
 	padding: 0px;
 	width: 166px;
-    border : 0px solid #68ACCF;	
+    border : 0px solid #68ACCF;
 }
 div.blockvmenuimpair
 {
@@ -385,7 +385,7 @@ div.blockvmenuimpair
 	border-spacing: 0px;
 	padding: 0px;
 	width: 166px;
-    border : 0px solid #68ACCF;	
+    border : 0px solid #68ACCF;
 }
 
 
@@ -442,7 +442,7 @@ div.menu_contenu {
 div.menu_fin {
 	background: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/bg-bas-rubrique.png' ?>);
 	margin: 0px;
-	padding: 0px;	
+	padding: 0px;
 	height:6px;
     width:165px;
     background-repeat:no-repeat;
@@ -850,7 +850,7 @@ border: 0px;
 table.box {
 margin: 2px;
 }
- 
+
 tr.box_titre {
 background: #68ACCF;
 color: #FFFFFF;
@@ -1090,7 +1090,7 @@ div.menuFleche
 #dhtmltooltip
 {
 position: absolute;
-width: 420px;
+width: 450px;
 border: 1px solid #444444;
 padding: 2px;
 background-color: #FFFFE0;
@@ -1128,7 +1128,7 @@ table.dp {
 	text-align:center;
 	background-color:#617389;color:#FFFFFF; font-weight:bold;
 	border: 1px outset black;
-	cursor:pointer;	
+	cursor:pointer;
 }
 .dpButtons:Active,.tpButtons:Active{border: 1px outset black;}
 .dpDayNames td,.dpExplanation {background-color:#D9DBE1; font-weight:bold; text-align:center; font-size:11px;}
@@ -1149,7 +1149,7 @@ table.dp {
 .tpMinute {margin-top:5px;}
 .tpMinute td:Hover {background-color:black; color:white; }
 .tpMinute td {background-color:#D9DBE1; text-align:center; cursor:pointer;}
-	
+
 .dpInvisibleButtons
 {
 border-style:none;

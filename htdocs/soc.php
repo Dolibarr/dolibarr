@@ -131,28 +131,12 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 
 	if (! $error)
 	{
-		// On vérifie si un tiers devient client ou fournisseur pour l'obtention d'un code automatiqe
-		if ($soc->client && $soc->code_client == -1)
-		{
-			$soc->code_client = -1;
-		}
-		else if ($_POST['code_auto'])
-		{
-			$soc->code_client = '';
-		}
-
-		if ($soc->fournisseur && $soc->code_fournisseur == -1)
-		{
-			$soc->code_fournisseur = -1;
-		}
-		else if ($_POST['code_auto'])
-		{
-			$soc->code_fournisseur = '';
-		}
-
 		if ($_POST["action"] == 'add')
 		{
 			$db->begin();
+
+			if (empty($soc->client))      $soc->code_client='';
+			if (empty($soc->fournisseur)) $soc->code_fournisseur='';
 
 			$result = $soc->create($user);
 			if ($result >= 0)
@@ -222,6 +206,10 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 
 			$oldsoc=new Societe($db);
 			$result=$oldsoc->fetch($socid);
+
+			// To not set code if third party is not concerned. But if it had values, we keep them.
+			if (empty($soc->client) && empty($oldsoc->code_client))          $soc->code_client='';
+			if (empty($soc->fournisseur)&& empty($oldsoc->code_fournisseur)) $soc->code_fournisseur='';
 
 			$result = $soc->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
 			if ($result >= 0)
@@ -408,15 +396,9 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 
 		print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
 		print '<table class="nobordernopadding"><tr><td>';
-		if ($modCodeClient->code_auto)
-		{
-			print '<input type="hidden" name="code_client" value="-1">';
-			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
-		}
-		else
-		{
-			print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
-		}
+		$tmpcode=$soc->code_client;
+		if ($modCodeClient->code_auto) $tmpcode=$modCodeClient->getNextValue($soc,0);
+		print '<input type="text" name="code_client" size="16" value="'.$tmpcode.'" maxlength="15">';
 		print '</td><td>';
 		$s=$modCodeClient->getToolTip($langs,$soc,0);
 		print $form->textwithhelp('',$s,1);
@@ -431,15 +413,9 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '</td>';
 		print '<td>'.$langs->trans('SupplierCode').'</td><td>';
 		print '<table class="nobordernopadding"><tr><td>';
-		if ($modCodeFournisseur->code_auto)
-		{
-			print '<input type="hidden" name="code_fournisseur" value="-1">';
-			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
-		}
-		else
-		{
-			print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
-		}
+		$tmpcode=$soc->code_fournisseur;
+		if ($modCodeFournisseur->code_auto) $tmpcode=$modCodeFournisseur->getNextValue($soc,1);
+		print '<input type="text" name="code_fournisseur" size="16" value="'.$tmpcode.'" maxlength="15">';
 		print '</td><td>';
 		$s=$modCodeFournisseur->getToolTip($langs,$soc,1);
 		print $form->textwithhelp('',$s,1);
@@ -752,8 +728,9 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '<table class="nobordernopadding"><tr><td>';
 		if ((!$soc->code_client || $soc->code_client == -1) && $modCodeClient->code_auto)
 		{
-			print '<input type="hidden" name="code_client" value="-1">';
-			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
+			$tmpcode=$soc->code_client;
+			if (empty($tmpcode) && $modCodeClient->code_auto) $tmpcode=$modCodeClient->getNextValue($soc,0);
+			print '<input type="text" name="code_client" size="16" value="'.$tmpcode.'" maxlength="15">';
 		}
 		else if ($soc->codeclient_modifiable())
 		{
@@ -781,8 +758,9 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '<table class="nobordernopadding"><tr><td>';
 		if ((!$soc->code_fournisseur || $soc->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
 		{
-			print '<input type="hidden" name="code_fournisseur" value="-1">';
-			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
+			$tmpcode=$soc->code_fournisseur;
+			if (empty($tmpcode) && $modCodeFournisseur->code_auto) $tmpcode=$modCodeFournisseur->getNextValue($soc,1);
+			print '<input type="text" name="code_fournisseur" size="16" value="'.$tmpcode.'" maxlength="15">';
 		}
 		else if ($soc->codefournisseur_modifiable())
 		{

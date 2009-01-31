@@ -47,7 +47,7 @@ if ($_GET["action"] == 'setcodeclient')
 	}
 	else
 	{
-		dolibarr_print_error($db);	
+		dolibarr_print_error($db);
 	}
 }
 
@@ -60,7 +60,7 @@ if ($_GET["action"] == 'setcodecompta')
 	}
 	else
 	{
-		dolibarr_print_error($db);	
+		dolibarr_print_error($db);
 	}
 }
 
@@ -80,8 +80,8 @@ if ($_POST["action"] == 'usesearchtoselectcompany')
 // define constants for tigre model
 if ($_POST["action"] == 'updateMask')
 {
-	dolibarr_set_const($db, "CODE_TIGRE_MASK_CUSTOMER",$_POST["maskcustomer"]);
-	dolibarr_set_const($db, "CODE_TIGRE_MASK_SUPPLIER",$_POST["masksupplier"]);
+	dolibarr_set_const($db, "COMPANY_ELEPHANT_MASK_CUSTOMER",$_POST["maskcustomer"]);
+	dolibarr_set_const($db, "COMPANY_ELEPHANT_MASK_SUPPLIER",$_POST["masksupplier"]);
 }
 
 
@@ -120,7 +120,7 @@ $handle = opendir($dir);
 if ($handle)
 {
 	$var = true;
-	
+
 	// Loop on each module find in opened directory
 	while (($file = readdir($handle))!==false)
     {
@@ -141,7 +141,7 @@ if ($handle)
 	  print $modCodeTiers->info($langs);
 	  print "</td>\n";
 	  print '<td nowrap="nowrap">'.$modCodeTiers->getExample($langs)."</td>\n";
-	  
+
 	  if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
 	    {
 	      print "<td align=\"center\">\n";
@@ -157,7 +157,7 @@ if ($handle)
   		$s=$modCodeTiers->getToolTip($langs,$soc,-1);
 		print $form->textwithhelp('',$s,1);
 		print '</td>';
-		
+
 	  print '</tr>';
 	}
     }
@@ -205,7 +205,7 @@ if ($handle)
 	  print $modCodeCompta->info($langs);
 	  print '</td>';
 	  print '<td nowrap="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
-	  
+
 	  if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
 	    {
 	      print '<td align="center">';
@@ -224,7 +224,7 @@ if ($handle)
   closedir($handle);
 }
 print "</table>\n";
-	
+
 print '<br>';
 
 
@@ -246,7 +246,7 @@ print '<td width="80%">'.$langs->trans("UseSearchToSelectCompany").'</td>';
 if (! $conf->use_javascript_ajax)
 {
   print '<td nowrap="nowrap" align="right" colspan="2">';
-  print $langs->trans("NotAvailableWhenAjaxDisabled");	
+  print $langs->trans("NotAvailableWhenAjaxDisabled");
   print "</td>";
 }
 else

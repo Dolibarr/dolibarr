@@ -14,7 +14,7 @@
 ***********************************************/
 
 var offsetxpoint=-60 //Customize x offset of tooltip
-var offsetypoint=20 //Customize y offset of tooltip
+var offsetypoint=18 //Customize y offset of tooltip
 var ie=document.all
 var ns6=document.getElementById && !document.all
 var enabletip=false
@@ -47,7 +47,8 @@ function positiontip(e)
 		var bottomedge=ie&&!window.opera? ietruebody().clientHeight-event.clientY-offsetypoint : window.innerHeight-e.clientY-offsetypoint-20
 		
 		var leftedge=(offsetxpoint<0)? offsetxpoint*(-1) : -1000
-		
+		//alert('curX='+curX+' curY='+curY+' rightedge='+rightedge+' bottomedge='+bottomedge+' leftedge='+leftedge+' tipobj.offsetHeight='+tipobj.offsetHeight);
+				
 		//if the horizontal distance isn't enough to accomodate the width of the context menu
 		if (rightedge<tipobj.offsetWidth)
 		//move the horizontal position of the menu to the left by it's width

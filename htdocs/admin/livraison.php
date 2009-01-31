@@ -43,7 +43,7 @@ if (!$user->admin) accessforbidden();
 /*
  * Actions
  */
- 
+
 if ($_POST["action"] == 'updateMask')
 {
 	$maskconstdelivery=$_POST['maskconstdelivery'];
@@ -111,7 +111,7 @@ if ($_GET["action"] == 'del')
 if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
-	
+
     if (dolibarr_set_const($db, "LIVRAISON_ADDON_PDF",$_GET["value"]))
     {
         $conf->global->LIVRAISON_ADDON_PDF = $_GET["value"];
@@ -124,7 +124,7 @@ if ($_GET["action"] == 'setdoc')
     $result1=$db->query($sql_del);
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
     $result2=$db->query($sql);
-    if ($result1 && $result2) 
+    if ($result1 && $result2)
     {
 		$db->commit();
     }
@@ -224,10 +224,10 @@ if ($handle)
 				print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
 				print $module->info();
 				print '</td>';
-	
+
 				// Affiche example
 				print '<td nowrap="nowrap">'.$module->getExample().'</td>';
-				
+
 				print '<td align="center">';
 				if ($conf->global->LIVRAISON_ADDON == "$file")
 				{
@@ -238,18 +238,18 @@ if ($handle)
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
 				}
 				print '</td>';
-				
+
 				$livraison=new Livraison($db);
 				$livraison->initAsSpecimen();
-				
+
 				// Info
 				$htmltooltip='';
-				$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
+				$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 				$facture->type=0;
 		        $nextval=$module->getNextValue($mysoc,$livraison);
 				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 				{
-					$htmltooltip.='<b>'.$langs->trans("NextValue").'</b>: ';
+					$htmltooltip.=''.$langs->trans("NextValue").': ';
 			        if ($nextval)
 					{
 						$htmltooltip.=$nextval.'<br>';
@@ -259,11 +259,11 @@ if ($handle)
 						$htmltooltip.=$langs->trans($module->error).'<br>';
 					}
 				}
-	
+
 				print '<td align="center">';
 				print $html->textwithhelp('',$htmltooltip,1,0);
 				print '</td>';
-				
+
 				print '</tr>';
 		    }
 		}
@@ -373,11 +373,10 @@ if(is_dir($dir))
 			print '</td>';
 
 			// Info
-			$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
-			$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$module->page_largeur;
-			$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$module->page_hauteur;
+			$htmltooltip =    ''.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+			$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 			$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
-			$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
+			$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 	    	print '<td align="center">';
 	    	print $html->textwithhelp('',$htmltooltip,1,0);
 	    	print '</td>';

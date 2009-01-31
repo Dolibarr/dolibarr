@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
  */
- 
+
 /**
  *       \file       htdocs/includes/modules/societe/mod_codeclient_leopard.class.php
  *       \ingroup    societe
@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.
 class mod_codeclient_leopard extends ModeleThirdPartyCode
 {
 	/*
-	* Attention ce module est utilise par defaut si aucun module n'a 
+	* Attention ce module est utilise par defaut si aucun module n'a
 	* ete definit dans la configuration
 	*
 	* Le fonctionnement de celui-ci doit dont rester le plus ouvert
@@ -50,7 +50,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	var $version;		// 'development', 'experimental', 'dolibarr'
 	var $code_auto; // Numerotation automatique
 
-	
+
 	/**		\brief      Constructeur classe
 	*/
 	function mod_codeclient_leopard()
@@ -64,17 +64,17 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 		$this->code_auto = 0;
 	}
 
-	
+
 	/**
 	*		\brief      Renvoie la description du module
 	*		\return     string      Texte descripif
 	*/
 	function info($langs)
 	{
-		return "Renvoie toujours ok, pour ceux qui ne veulent pas faire de test. Verification mais pas de generation automatique.";
+		return $langs->trans("LeopardNumRefModelDesc");
 	}
 
-	
+
 	/**
 	* 		\brief		V�rifie la validit� du code
 	*		\param		$db			Handler acces base

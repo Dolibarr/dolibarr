@@ -39,7 +39,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
 	var $nom = 'Saphir';
-	
+
 
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
@@ -49,23 +49,29 @@ class mod_propale_saphir extends ModeleNumRefPropales
     	global $conf,$langs;
 
 		$langs->load("bills");
-		
+
 		$form = new Form($db);
-    	
+
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstpropal" value="PROPALE_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
-		
-		// Parametrage du prefix des factures
+
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Proposal"));
+		$tooltip.=$langs->trans("GenericMaskCodes2");
+		$tooltip.=$langs->trans("GenericMaskCodes3");
+		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Proposal"),$langs->transnoentities("Proposal"));
+		$tooltip.=$langs->trans("GenericMaskCodes5");
+
+		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskpropal" value="'.$conf->global->PROPALE_SAPHIR_MASK.'">',$langs->trans("GenericMaskCodes",$langs->transnoentities("Proposal"),$langs->transnoentities("Proposal"),$langs->transnoentities("Proposal")),1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskpropal" value="'.$conf->global->PROPALE_SAPHIR_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
-		
+
 		$texte.= '</table>';
 		$texte.= '</form>';
 
@@ -78,12 +84,12 @@ class mod_propale_saphir extends ModeleNumRefPropales
     function getExample()
     {
      	global $conf,$langs,$mysoc;
-    	
+
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
      	$numExample = $this->getNextValue($mysoc,'');
 		$mysoc->code_client=$old_code_client;
-     	
+
 		if (! $numExample)
 		{
 			$numExample = $langs->trans('NotConfigured');
@@ -101,20 +107,20 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		global $db,$conf;
 
 		require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
-		
+
 		// On défini critere recherche compteur
 		$mask=$conf->global->PROPALE_SAPHIR_MASK;
-		
-		if (! $mask) 
+
+		if (! $mask)
 		{
 			$this->error='NotConfigured';
 			return 0;
 		}
 
 		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc->code_client,$propal->date);
-		
+
 		return  $numFinal;
 	}
 
-}    
+}
 ?>

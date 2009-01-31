@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-208 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**	
+/**
  *      \file       htdocs/admin/dons.php
  *		\ingroup    dons
  *		\brief      Page d'administration/configuration du module Dons
@@ -71,12 +71,12 @@ if ($_GET["action"] == 'specimen')
 		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
 		dolibarr_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
-} 
+}
 
 if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
-	
+
     if (dolibarr_set_const($db, "DON_ADDON_MODEL",$_GET["value"]))
     {
         $conf->global->DON_ADDON_MODEL = $_GET["value"];
@@ -89,7 +89,7 @@ if ($_GET["action"] == 'setdoc')
     $result1=$db->query($sql_del);
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
     $result2=$db->query($sql);
-    if ($result1 && $result2) 
+    if ($result1 && $result2)
     {
 		$db->commit();
     }
@@ -184,7 +184,7 @@ while (($file = readdir($handle))!==false)
         $var = !$var;
         $name = substr($file, 0, strlen($file) -12);
         $classname = substr($file, 0, strlen($file) -12);
-	
+
 		require_once($dir.'/'.$file);
 		$module=new $classname($db);
 
@@ -200,7 +200,7 @@ while (($file = readdir($handle))!==false)
 	        print '<td>';
 	        print $module->description;
 	        print '</td>';
-	
+
 			// Active
 			if (in_array($name, $def))
 			{
@@ -223,7 +223,7 @@ while (($file = readdir($handle))!==false)
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
 				print "</td>";
 			}
-	
+
 			// Defaut
 			print "<td align=\"center\">";
 			if ($conf->global->DON_ADDON_MODEL == "$name")
@@ -235,21 +235,21 @@ while (($file = readdir($handle))!==false)
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
 			}
 			print '</td>';
-			
+
 			// Info
-	    	$htmltooltip =    '<b>'.$langs->trans("Name").'</b>: '.$module->name;
-	    	$htmltooltip.='<br><b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
-	    	$htmltooltip.='<br><b>'.$langs->trans("Height").'/'.$langs->trans("Width").'</b>: '.$module->page_hauteur.'/'.$module->page_largeur;
-	    	$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
-	    	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
-	    	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
+	    	$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+	    	$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+	    	$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+	    	$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+	    	$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+	    	$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
 	    	print '<td align="center">';
 	    	print $html->textwithhelp('',$htmltooltip,1,0);
 	    	print '</td>';
 	    	print '<td align="center">';
 	    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
 	    	print '</td>';
-	    	
+
 	        print "</tr>\n";
 	    }
     }

@@ -38,7 +38,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
 	var $nom = 'Artic';
-	
+
 	/**   \brief      Constructeur
 	*/
 	function mod_arctic()
@@ -54,23 +54,29 @@ class mod_arctic extends ModeleNumRefFicheinter
     	global $conf,$langs;
 
 		$langs->load("bills");
-		
+
 		$form = new Form($db);
-    	
+
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconst" value="FICHINTER_ARTIC_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
-		
-		// Parametrage du prefix des factures
+
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("InterventionCard"));
+		$tooltip.=$langs->trans("GenericMaskCodes2");
+		$tooltip.=$langs->trans("GenericMaskCodes3");
+		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("InterventionCard"),$langs->transnoentities("InterventionCard"));
+		$tooltip.=$langs->trans("GenericMaskCodes5");
+
+		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->FICHINTER_ARTIC_MASK.'">',$langs->trans("GenericMaskCodes",$langs->transnoentities("InterventionCard"),$langs->transnoentities("InterventionCard"),$langs->transnoentities("InterventionCard")),1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->FICHINTER_ARTIC_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
-		
+
 		$texte.= '</table>';
 		$texte.= '</form>';
 
@@ -83,12 +89,12 @@ class mod_arctic extends ModeleNumRefFicheinter
     function getExample()
     {
      	global $conf,$langs,$mysoc;
-    	
+
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
      	$numExample = $this->getNextValue($mysoc,'');
 		$mysoc->code_client=$old_code_client;
-     	
+
 		if (! $numExample)
 		{
 			$numExample = $langs->trans('NotConfigured');
@@ -106,22 +112,22 @@ class mod_arctic extends ModeleNumRefFicheinter
 		global $db,$conf;
 
 		require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
-		
+
 		// On défini critere recherche compteur
 		$mask=$conf->global->FICHINTER_ARTIC_MASK;
-		
-		if (! $mask) 
+
+		if (! $mask)
 		{
 			$this->error='NotConfigured';
 			return 0;
 		}
 
 		$numFinal=get_next_value($db,$mask,'fichinter','ref','',$objsoc->code_client,$ficheinter->date);
-		
+
 		return  $numFinal;
   }
-    
-  
+
+
 	/**		\brief      Return next free value
     *      	\param      objsoc      Object third party
 	* 		\param		objforref	Object for number to search
@@ -132,6 +138,6 @@ class mod_arctic extends ModeleNumRefFicheinter
         return $this->getNextValue($objsoc,$objforref);
     }
 
-}    
+}
 
 ?>

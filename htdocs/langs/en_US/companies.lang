@@ -258,5 +258,7 @@ AutomaticallyGenerated=Automatically generated
 FiscalYearInformation=Information on the fiscal year
 FiscalMonthStart=Starting month of the fiscal year
 
-# Tigre
-TigreNumRefModelDesc1=Return a customizable customer/supplier number according to a defined mask. 
+# Monkey
+MonkeyNumRefModelDesc=Check that customer/supplier code contains 6 numbers.
+# Leopard
+LeopardNumRefModelDesc=Customer/supplier code is free. This code can be modified at any time.

@@ -229,10 +229,11 @@ if ($handle)
 
 				// Info
 				$htmltooltip='';
+				$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 				$nextval=$module->getNextValue($mysoc,$ficheinter);
 				if ($nextval != $langs->trans("NotAvailable"))
 				{
-					$htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
+					$htmltooltip.=''.$langs->trans("NextValue").': '.$nextval;
 				}
 				print '<td align="center">';
 				print $html->textwithhelp('',$htmltooltip,1,0);
@@ -342,15 +343,15 @@ while (($file = readdir($handle))!==false)
 		print '</td>';
 
 		// Info
-		$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
-		$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$module->page_largeur;
-		$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$module->page_hauteur;
-		$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
-		$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
-		$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
-		$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
-		$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
-		$htmltooltip.='<br><b>'.$langs->trans("WatermarkOnDraftOrders").'</b>: '.yn($module->option_draft_watermark);
+		$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+		$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
 		print '<td align="center">';
 		print $html->textwithhelp('',$htmltooltip,1,0);
 		print '</td>';

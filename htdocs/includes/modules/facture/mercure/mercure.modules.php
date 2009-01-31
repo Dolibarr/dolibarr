@@ -39,7 +39,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
 
-	
+
     /**     \brief      Renvoi la description du modele de numerotation
      *      \return     string      Texte descripif
      */
@@ -48,47 +48,53 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		global $conf,$langs;
 
 		$langs->load("bills");
-		
+
 		$form = new Form($db);
-		
+
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstinvoice" value="FACTURE_MERCURE_MASK_INVOICE">';
 		$texte.= '<input type="hidden" name="maskconstcredit" value="FACTURE_MERCURE_MASK_CREDIT">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
-		
-		// Parametrage du prefix des factures
+
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Invoice"));
+		$tooltip.=$langs->trans("GenericMaskCodes2");
+		$tooltip.=$langs->trans("GenericMaskCodes3");
+		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"));
+		$tooltip.=$langs->trans("GenericMaskCodes5");
+
+		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->FACTURE_MERCURE_MASK_INVOICE.'">',$langs->trans("GenericMaskCodes",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice")),1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->FACTURE_MERCURE_MASK_INVOICE.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
-		
+
 		// Parametrage du prefix des avoirs
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$langs->trans("GenericMaskCodes",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice")),1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$tooltip,1,1).'</td>';
 		$texte.= '</tr>';
-		
+
 		$texte.= '</table>';
 		$texte.= '</form>';
 
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de numerotation
+    /**     \brief      Return an example of number value
      *      \return     string      Example
      */
     function getExample()
     {
     	global $conf,$langs,$mysoc;
-    	
+
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
     	$numExample = $this->getNextValue($mysoc,'');
 		$mysoc->code_client=$old_code_client;
-        
+
 		if (! $numExample)
 		{
 			$numExample = $langs->trans('NotConfigured');
@@ -106,12 +112,12 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		global $db,$conf;
 
 		require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
-		
-		// On defini critere recherche compteur
+
+		// Get Mask value
+		$mask = '';
 		if (is_object($facture) && $facture->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
 		else $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
-		
-		if (! $mask) 
+		if (! $mask)
 		{
 			$this->error='NotConfigured';
 			return 0;
@@ -120,13 +126,13 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$where='';
 		if ($facture->type == 2) $where.= " AND type = 2";
 		else $where.=" AND type != 2";
-		
+
 		$numFinal=get_next_value($db,$mask,'facture','facnumber',$where,$objsoc->code_client,$facture->date);
-		
+
 		return  $numFinal;
 	}
-    
-  
+
+
 	/**		\brief      Return next free value
     *      	\param      objsoc      Object third party
 	* 		\param		objforref	Object for number to search
@@ -136,6 +142,6 @@ class mod_facture_mercure extends ModeleNumRefFactures
     {
         return $this->getNextValue($objsoc,$objforref);
     }
-	
-}    
+
+}
 ?>

@@ -63,13 +63,13 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
 /**
  * Return next value for a mask
  *
- * @param unknown_type $db
- * @param 	$mask
- * @param unknown_type $table
- * @param unknown_type $field
- * @param unknown_type $where			To add a filter on selection (for exemple to filter for invoice types)
- * @param unknown_type $valueforccc
- * @param unknown_type $date
+ * @param unknown_type 	$db				Database handler
+ * @param 				$mask			Mask to use
+ * @param unknown_type 	$table			Table containing field with counter
+ * @param unknown_type 	$field			Field containing already used values of counter
+ * @param unknown_type 	$where			To add a filter on selection (for exemple to filter on invoice types)
+ * @param unknown_type 	$valueforccc
+ * @param unknown_type 	$date
  * @return 	string		New value
  */
 function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date='')
@@ -265,6 +265,102 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 
 	dolibarr_syslog("functions2::get_next_value return ".$numFinal,LOG_DEBUG);
 	return $numFinal;
+}
+
+
+/**
+ * Check value
+ *
+ * @param unknown_type 	$db				Database handler
+ * @param 				$mask			Mask to use
+ * @param unknown_type 	$table			Table containing field with counter
+ * @param unknown_type 	$field			Field containing already used values of counter
+ * @param unknown_type 	$where			To add a filter on selection (for exemple to filter on invoice types)
+ * @param unknown_type 	$valueforccc
+ * @param unknown_type 	$date
+ * @return		int			<0 if KO, 0 if OK
+ */
+function check_value($mask,$value)
+{
+	$result=0;
+
+	// Extract value for mask counter, mask raz and mask offset
+	if (! eregi('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$mask,$reg)) return 'ErrorBadMask';
+	$masktri=$reg[1].$reg[2].$reg[3];
+	$maskcounter=$reg[1];
+	$maskraz=-1;
+	$maskoffset=0;
+	if (strlen($maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
+
+	// Extract value for third party mask counter
+	if (eregi('\{(c+)(0*)\}',$mask,$regClientRef))
+	{
+		$maskrefclient=$regClientRef[1].$regClientRef[2];
+		$maskrefclient_maskclientcode=$regClientRef[1];
+		$maskrefclient_maskcounter=$regClientRef[2];
+		$maskrefclient_maskoffset=0; //default value of maskrefclient_counter offset
+		$maskrefclient_clientcode=substr($valueforccc,0,strlen($maskrefclient_maskclientcode));//get n first characters of client code to form maskrefclient_clientcode
+		$maskrefclient_clientcode=str_pad($maskrefclient_clientcode,strlen($maskrefclient_maskclientcode),"#",STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
+		$maskrefclient_clientcode=dol_string_nospecial($maskrefclient_clientcode);//sanitize maskrefclient_clientcode for sql insert and sql select like
+		if (strlen($maskrefclient_maskcounter) > 0 && strlen($maskrefclient_maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
+	}
+	else $maskrefclient='';
+
+	$maskwithonlyymcode=$mask;
+	$maskwithonlyymcode=eregi_replace('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$maskcounter,$maskwithonlyymcode);
+	$maskwithonlyymcode=eregi_replace('\{dd\}','dd',$maskwithonlyymcode);
+	$maskwithonlyymcode=eregi_replace('\{(c+)(0*)\}',$maskrefclient,$maskwithonlyymcode);
+	$maskwithnocode=$maskwithonlyymcode;
+	$maskwithnocode=eregi_replace('\{yyyy\}','yyyy',$maskwithnocode);
+	$maskwithnocode=eregi_replace('\{yy\}','yy',$maskwithnocode);
+	$maskwithnocode=eregi_replace('\{y\}','y',$maskwithnocode);
+	$maskwithnocode=eregi_replace('\{mm\}','mm',$maskwithnocode);
+	// Now maskwithnocode = 0000ddmmyyyyccc for example
+	// and maskcounter    = 0000 for example
+	//print "maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
+
+	// If an offset is asked
+	if (! empty($reg[2]) && eregi('^\+',$reg[2])) $maskoffset=eregi_replace('^\+','',$reg[2]);
+	if (! empty($reg[3]) && eregi('^\+',$reg[3])) $maskoffset=eregi_replace('^\+','',$reg[3]);
+
+	// Define $sqlwhere
+
+	// If a restore to zero after a month is asked we check if there is already a value for this year.
+	if (! empty($reg[2]) && eregi('^@',$reg[2]))  $maskraz=eregi_replace('^@','',$reg[2]);
+	if (! empty($reg[3]) && eregi('^@',$reg[3]))  $maskraz=eregi_replace('^@','',$reg[3]);
+	if ($maskraz >= 0)
+	{
+		if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
+
+		// Define reg
+		if ($maskraz > 1 && ! eregi('^(.*)\{(y+)\}\{(m+)\}',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+		if ($maskraz <= 1 && ! eregi('^(.*)\{(y+)\}',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
+		//print "x".$maskwithonlyymcode." ".$maskraz;
+	}
+	//print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
+
+	// Check we have a number in ($posnumstart+1).', '.strlen($maskcounter)
+	//
+
+	// Check length
+	$len=strlen($maskwithnocode);
+	if (strlen($value) != $len) $result=-1;
+
+	// Define $maskLike
+	$maskLike = dol_string_nospecial($mask);
+	$maskLike = str_replace("%","_",$maskLike);
+	// Replace protected special codes with matching number of _ as wild card caracter
+	$maskLike = str_replace(dol_string_nospecial('{yyyy}'),'____',$maskLike);
+	$maskLike = str_replace(dol_string_nospecial('{yy}'),'__',$maskLike);
+	$maskLike = str_replace(dol_string_nospecial('{y}'),'_',$maskLike);
+	$maskLike = str_replace(dol_string_nospecial('{mm}'),'__',$maskLike);
+	$maskLike = str_replace(dol_string_nospecial('{dd}'),'__',$maskLike);
+	$maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",strlen($maskcounter),"_"),$maskLike);
+	if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",strlen($maskrefclient),"_"),$maskLike);
+
+
+	dolibarr_syslog("functions2::check_value result=".$result,LOG_DEBUG);
+	return $result;
 }
 
 

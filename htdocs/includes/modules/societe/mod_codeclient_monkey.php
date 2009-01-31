@@ -29,10 +29,10 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.
 
 
 /**
-        \class 		mod_codeclient_lion
-        \brief 		Classe permettant la gestion lion des codes tiers
+        \class 		mod_codeclient_monkey
+        \brief 		Classe permettant la gestion monkey des codes tiers
 */
-class mod_codeclient_lion extends ModeleThirdPartyCode
+class mod_codeclient_monkey extends ModeleThirdPartyCode
 {
 	var $nom;							// Nom du modele
 	var $code_modifiable;				// Code modifiable
@@ -45,10 +45,10 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 
 	/**		\brief      Constructeur classe
 	*/
-	function mod_codeclient_lion()
+	function mod_codeclient_monkey()
 	{
-		$this->nom = "Lion";
-		$this->version = "dolibarr";
+		$this->nom = "Monkey";
+		$this->version = "experimental";
 		$this->code_modifiable = 0;
 		$this->code_modifiable_invalide = 1;
 		$this->code_modifiable_null = 1;
@@ -62,7 +62,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	*/
 	function info($langs)
 	{
-		return "Verifie si le code client/fournisseur est de la forme numerique 999 et sur au moins 3 chiffres. Verification mais pas de generation automatique.";
+		return $langs->trans("MonkeyNumRefModelDesc");
 	}
 
 
@@ -71,14 +71,14 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	*/
 	function getExample($langs)
 	{
-		return "001";
+		return "000001";
 	}
 
 
 	/**
-	* 		\brief		V�rifie la validit� du code
+	* 		\brief		Verifie la validite du code
 	*		\param		$db			Handler acces base
-	*		\param		$code		Code a v�rifier/corriger
+	*		\param		$code		Code a verifier/corriger
 	*		\param		$soc		Objet societe
 	*		\return		int			<0 si KO, 0 si OK
 	*/
@@ -117,7 +117,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 				}
 			}
 		}
-		dolibarr_syslog("mod_codeclient_lion::verif result=".$result);
+		dolibarr_syslog("mod_codeclient_monkey::verif result=".$result);
 		return $result;
 	}
 

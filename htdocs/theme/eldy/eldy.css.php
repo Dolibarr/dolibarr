@@ -220,7 +220,7 @@ a.tmenu:link
   color: #234046;
   padding: 0px 5px 0px 5px;
   margin: 0px 1px 2px 1px;
-  font-size: 12px; 
+  font-size: 12px;
   font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
 }
@@ -230,7 +230,7 @@ a.tmenu:visited
   padding: 0px 5px 0px 5px;
   margin: 0px 1px 2px 1px;
   border: 0px solid #b3c5cc;
-  font-size: 12px; 
+  font-size: 12px;
   font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
 }
@@ -303,7 +303,7 @@ div.tmenu ul {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
-	
+
 }
 div.tmenu li {
 	float: left;
@@ -777,7 +777,7 @@ padding-bottom: 4px;
 margin: 0px 0px;
 }
 
-   
+
 table.border {
 border: 1px solid #9CACBB;
 border-collapse: collapse;
@@ -907,7 +907,7 @@ tr.box_titre {
 background: #7699A9;
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
-font-size: 12px; 
+font-size: 12px;
 font-family: arial, helvetica, verdana, sans-serif;
 font-weight: bold;
 border-bottom: 1px solid #FDFFFF;
@@ -918,13 +918,13 @@ white-space: nowrap;
 
 tr.box_impair {
 background: #e6ebed;
-font-size: 12px; 
+font-size: 12px;
 font-family: arial, helvetica, verdana, sans-serif;
 }
 
 tr.box_pair {
 background: #d0d4d7;
-font-size: 12px; 
+font-size: 12px;
 font-family: arial, helvetica, verdana, sans-serif;
 }
 
@@ -1044,7 +1044,7 @@ padding: 2px;
 #dhtmltooltip
 {
 position: absolute;
-width: 420px;
+width: 450px;
 border-top: solid 1px #BBBBBB;
 border-left: solid 1px #BBBBBB;
 border-right: solid 1px #444444;
@@ -1252,7 +1252,7 @@ div.autocomplete ul li {
       cursor:pointer;
     }
 
-	
+
 /* ============================================================================== */
 /*  Ajax - In place editor                                                        */
 /* ============================================================================== */
@@ -1288,7 +1288,7 @@ form.inplaceeditor-form a { /* The cancel link */
 }
 
 
-    
+
 /* ============================================================================== */
 /* Admin Menu                                                                     */
 /* ============================================================================== */

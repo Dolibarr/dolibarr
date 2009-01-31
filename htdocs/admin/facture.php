@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008 	Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -288,12 +288,12 @@ while (($file = readdir($handle))!==false)
 
 				// Example for standard invoice
 				$htmltooltip='';
-				$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
+				$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 				$facture->type=0;
 		        $nextval=$module->getNextValue($mysoc,$facture);
 				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 				{
-					$htmltooltip.='<b>'.$langs->trans("NextValueForInvoices").'</b>: ';
+					$htmltooltip.=$langs->trans("NextValueForInvoices").': ';
 			        if ($nextval)
 					{
 						$htmltooltip.=$nextval.'<br>';
@@ -308,7 +308,7 @@ while (($file = readdir($handle))!==false)
 		        $nextval=$module->getNextValue($mysoc,$facture);
 				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 				{
-					$htmltooltip.='<b>'.$langs->trans("NextValueForCreditNotes").'</b>: ';
+					$htmltooltip.=$langs->trans("NextValueForCreditNotes").': ';
 					if ($nextval)
 					{
 						$htmltooltip.=$nextval;
@@ -428,17 +428,17 @@ while (($file = readdir($handle))!==false)
 		print '</td>';
 
 		// Info
-    	$htmltooltip =    '<b>'.$langs->trans("Name").'</b>: '.$module->name;
-    	$htmltooltip.='<br><b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
-    	$htmltooltip.='<br><b>'.$langs->trans("Height").'/'.$langs->trans("Width").'</b>: '.$module->page_hauteur.'/'.$module->page_largeur;
-    	$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
-    	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo,1,1);
-    	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg,1,1);
-    	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg,1,1);
-    	$htmltooltip.='<br><b>'.$langs->trans("Escompte").'</b>: '.yn($module->option_escompte,1,1);
-    	$htmltooltip.='<br><b>'.$langs->trans("CreditNote").'</b>: '.yn($module->option_credit_note,1,1);
-    	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang,1,1);
-		$htmltooltip.='<br><b>'.$langs->trans("WatermarkOnDraftInvoices").'</b>: '.yn($module->option_draft_watermark,1,1);
+    	$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+    	$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+    	$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+    	$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+    	$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+    	$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+    	$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+    	$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
+    	$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
+    	$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftInvoices").': '.yn($module->option_draft_watermark,1,1);
 
 
     	print '<td align="center">';
