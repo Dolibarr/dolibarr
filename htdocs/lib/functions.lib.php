@@ -2457,7 +2457,8 @@ function dol_nl2br($stringtoencode,$nl2brmode=0)
 }
 
 /**
- *	\brief		This function is called to encode a string into a HTML string. All entities except <> are converted.
+ *	\brief		This function is called to encode a string into a HTML string.
+ * 				All entities except &,<,> are converted. This permits to encode special chars to entities with no double encoded for already encoded HTML strings.
  * 				This function also remove last CR/BR.
  *	\param		stringtoencode		String to encode
  *	\param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
@@ -2474,9 +2475,9 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 		//$trans = get_html_translation_table(HTML_ENTITIES, ENT_COMPAT); var_dump($trans);
 		$newstring=eregi_replace('<br( [ a-zA-Z_="]*)?/?>','<br>',$stringtoencode);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		$newstring=eregi_replace('<br>$','',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
-		$newstring=strtr($newstring,array('<'=>'__lt__','>'=>'__gt__'));
+		$newstring=strtr($newstring,array('&'=>'__and__','<'=>'__lt__','>'=>'__gt__','"'=>'__dquot__'));
 		$newstring=@htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
-		$newstring=strtr($newstring,array('__lt__'=>'<','__gt__'=>'>'));
+		$newstring=strtr($newstring,array('__and__'=>'&','__lt__'=>'<','__gt__'=>'>','__dquot__'=>'"'));
 		// If already HTML, CR should be <br> so we don't change \n
 	}
 	else {

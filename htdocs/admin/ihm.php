@@ -38,6 +38,7 @@ $langs->load("members");
 if (!$user->admin)
   accessforbidden();
 
+
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
 $dirtheme = "../theme";
@@ -60,22 +61,22 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_CONFIRM_AJAX",       $_POST["main_confirm_ajax"]);
 	dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["main_popup_calendar"]);
 	dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS",   $_POST["main_use_preview_tabs"]);
-	
+
 	dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["main_show_bugtrack_link"]);
 	dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD",     $_POST["main_show_workboard"]);
-	
+
 	dolibarr_set_const($db, "MAIN_THEME",              $_POST["main_theme"]);
-	
+
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT", $_POST["MAIN_SEARCHFORM_CONTACT"]);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE", $_POST["MAIN_SEARCHFORM_SOCIETE"]);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["MAIN_SEARCHFORM_PRODUITSERVICE"]);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_ADHERENT",$_POST["MAIN_SEARCHFORM_ADHERENT"]);
-	
+
 	dolibarr_set_const($db, "MAIN_MOTD",               $_POST["main_motd"]);
 	dolibarr_set_const($db, "MAIN_HOME",               $_POST["main_home"]);
-	
+
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
-	
+
 	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
@@ -130,7 +131,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-	
+
 	/*
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
@@ -147,7 +148,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-    
+
     // Confirmation par popup ajax
     if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{
@@ -159,7 +160,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '<td width="20">'.$html->textwithhelp('',$langs->trans("FeatureDevelopment")).'</td>';
 		print '</tr>';
 	}
-	
+
     // Desactiver le calendrier popup
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
@@ -185,7 +186,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '<td width="20">&nbsp;</td>';
 		print '</tr>';
 	}
-	
+
     print '</table><br>';
 
 
@@ -277,7 +278,7 @@ else
 
     /*
 	$var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';   
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
     print yn($conf->global->MAIN_SHOW_BUGTRACK_LINK)."</td>";
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
@@ -285,25 +286,25 @@ else
 
     // Disable javascript/ajax
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';   
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td>";
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
-    
+
     // Confirm ajax
     if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{
 	    $var=!$var;
-	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';   
+	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
 	    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
 	    else print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td>";
 		print '<td width="20">'.$html->textwithhelp('',$langs->trans("FeatureDevelopment")).'</td>';
 		print "</tr>";
 	}
-	
+
     // Calendrier en popup
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';   
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
     if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
     else print ($conf->global->MAIN_POPUP_CALENDAR?$langs->trans("Yes"):$langs->trans("No"));
     print "</td>";
@@ -319,7 +320,7 @@ else
 		print '<td width="20">&nbsp;</td>';
 		print "</tr>";
 	}
-	
+
     print '</table><br>';
 
 
@@ -347,7 +348,7 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>';
     print nl2br($conf->global->MAIN_MOTD);
     print '</td></tr>';
-    
+
 	// Message login
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td>';

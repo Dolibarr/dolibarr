@@ -33,15 +33,15 @@
 class DolEditor
 {
 	var $editor;
-	
-	
+
+
     /**
             \brief 	DolEditor
             \param 	htmlname		        Nom formulaire html WYSIWIG
             \param 	content			        Contenu édition WYSIWIG
             \param 	height			        Hauteur en pixel de la zone édition
             \param 	toolbarname		        Nom barre de menu éditeur
-            \param  toolbarlocation       	Emplacement de la barre de menu : 
+            \param  toolbarlocation       	Emplacement de la barre de menu :
                                           	'In' chaque fenêtre d'édition a ça propre barre d'outils
                                           	'Out:nom' partage de la barre d'outils où 'nom' est le nom du DIV qui affiche la barre
             \param  toolbarstartexpanded  	visible ou non au démarrage
@@ -50,13 +50,15 @@ class DolEditor
     function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true)
     {
     	global $conf,$langs;
-    	
+
     	dolibarr_syslog("DolEditor::DolEditor modulepart=".$modulepart);
-		
+
     	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
 
+
 		$content=dol_htmlentitiesbr($content);	// If content is not HTML, we convert to HTML.
-		
+		//print "\n".$conf->global->MAIN_MOTD."\n".$content;exit;
+
     	$this->editor = new FCKeditor($htmlname);
     	$this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/' ;
     	$this->editor->Value	= $content;
@@ -65,7 +67,7 @@ class DolEditor
     	$this->editor->Config['AutoDetectLanguage'] = 'true';
     	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
     	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
-    	
+
 		// Rem: Le forcage de ces 2 parametres ne semble pas fonctionner.
 		// Dolibarr utilise toujours liens avec modulepart='fckeditor' quelque soit modulepart.
 		// Ou se trouve donc cette valeur /viewimage.php?modulepart=fckeditor&file=' ?
