@@ -52,10 +52,13 @@ function printBookmarksList ($aDb, $aLangs)
 	$ret.= '<table class="nobordernopadding" width="100%"><tr class="no"><td>';
 	$ret.= '<a class="vmenu" href="'.DOL_URL_ROOT.'/bookmarks/liste.php">'.$langs->trans('Bookm').'</a>';
 	$ret.= '</td><td align="right">';
-	$ret.= '<a class="vsmenu" href="'.DOL_URL_ROOT.'/bookmarks/fiche.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url).'">';
-	//$ret.=img_picto($langs->trans('AddThisPageToBookmarks'),'edit_add').' ';
-	$ret.=img_object($langs->trans('AddThisPageToBookmarks'),'bookmark');
-	$ret.= '</a>';
+	if ($user->rights->bookmark->creer)
+	{
+		$ret.= '<a class="vsmenu" href="'.DOL_URL_ROOT.'/bookmarks/fiche.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url).'">';
+		//$ret.=img_picto($langs->trans('AddThisPageToBookmarks'),'edit_add').' ';
+		$ret.=img_object($langs->trans('AddThisPageToBookmarks'),'bookmark');
+		$ret.= '</a>';
+	}
 	$ret.= '</td></tr></table>';
 	$ret.= '</div>';
 	// Menu with all bookmarks
