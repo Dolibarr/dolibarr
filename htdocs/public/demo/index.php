@@ -36,22 +36,22 @@ $langs->load("other");
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-	'disablemodules'=>'banque,barcode,bookmark,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,ficheinter,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock,tax',
+	'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,ficheinter,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock,tax',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-	'disablemodules'=>'barcode,boutique,bookmark,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,ficheinter,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock',
+	'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,ficheinter,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-	'disablemodules'=>'adherent,barcode,boutique,bookmark,cashdesk,don,expedition,prelevement,projet,stock',
+	'disablemodules'=>'adherent,barcode,boutique,cashdesk,don,expedition,prelevement,projet,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
 	array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-	'disablemodules'=>'adherent,boutique,bookmark,don,ficheinter,prelevement,produit,stock',
+	'disablemodules'=>'adherent,boutique,don,ficheinter,prelevement,produit,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 	array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
-	'disablemodules'=>'adherent,boutique,bookmark,cashdesk,don,ficheinter,prelevement,service',
+	'disablemodules'=>'adherent,boutique,cashdesk,don,ficheinter,prelevement,service',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 	array('default'=>'0', 'key'=>'profdemoall','label'=>'DemoCompanyAll',
-	'disablemodules'=>'adherent,boutique,bookmark,cashdesk,don',
+	'disablemodules'=>'adherent,boutique,cashdesk,don',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
 	);
 
