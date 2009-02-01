@@ -113,11 +113,6 @@ if ($socid > 0)
 	print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td><td>Fax</td><td>'.dol_print_phone($societe->fax,$societe->pays_code).'</td></tr>';
 	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a></td></tr>";
 
-	if ($societe->rubrique)
-	{
-		print "<tr><td>Rubrique</td><td colspan=\"3\">".$societe->rubrique."</td></tr>";
-	}
-
 	print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$societe->forme_juridique.'</td></tr>';
 
 	// Level

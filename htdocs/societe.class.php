@@ -503,7 +503,7 @@ class Societe extends CommonObject
 		$sql .= ','. $this->db->pdate('s.tms').' as date_update';
 		$sql .= ', s.tel, s.fax, s.email, s.url, s.cp, s.ville, s.note, s.client, s.fournisseur';
 		$sql .= ', s.siren, s.siret, s.ape, s.idprof4';
-		$sql .= ', s.capital, s.tva_intra, s.rubrique';
+		$sql .= ', s.capital, s.tva_intra';
 		$sql .= ', s.fk_typent as typent_id';
 		$sql .= ', s.fk_effectif as effectif_id';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
@@ -600,7 +600,6 @@ class Societe extends CommonObject
 				$this->client      = $obj->client;
 				$this->fournisseur = $obj->fournisseur;
 
-				$this->rubrique = $obj->rubrique;
 				$this->note = $obj->note;
 				// multiprix
 				$this->price_level = $obj->price_level;

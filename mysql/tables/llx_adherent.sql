@@ -35,6 +35,7 @@ create table llx_adherent
   fk_adherent_type smallint,
   morphy           varchar(3) NOT NULL, -- personne morale / personne physique
   societe          varchar(50),
+  fk_soc           integer NULL,		-- Link to third party linked to member
   adresse          text,
   cp               varchar(30),
   ville            varchar(50),
@@ -54,6 +55,5 @@ create table llx_adherent
   tms              timestamp, -- date de modification
   fk_user_author   integer NOT NULL,
   fk_user_mod      integer,
-  fk_user_valid    integer, 
-  UNIQUE INDEX(login)
+  fk_user_valid    integer 
 )type=innodb;

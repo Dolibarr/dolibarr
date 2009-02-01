@@ -39,6 +39,11 @@ ALTER TABLE llx_categorie ADD INDEX idx_categorie_type (type);
 ALTER TABLE llx_product drop column   stock_propale;
 ALTER TABLE llx_product drop column   stock_commande;
 
+ALTER TABLE llx_adherent drop index login;
+ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_login (login);
+ALTER TABLE llx_adherent add column fk_soc           integer NULL after societe;
+
+ALTER TABLE llx_societe drop column rubrique;
 
 -- SAINT PIERRE ET MIQUELON
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1931,193,  '0','0','No VAT in SPM',1);

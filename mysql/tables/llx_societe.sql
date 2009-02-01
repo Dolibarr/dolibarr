@@ -62,8 +62,7 @@ create table llx_societe
   customer_bad       tinyint        DEFAULT 0,            -- mauvais payeur 0/1
   customer_rate      real           DEFAULT 0,            -- taux fiabilié client (0 à 1)
   supplier_rate      real           DEFAULT 0,            -- taux fiabilié fournisseur (0 à 1)
-  rubrique           varchar(255),                        -- champ rubrique libre
-  fk_user_creat      integer,                             -- utilisateur qui a créé l'info
+  fk_user_creat      integer NULL,                        -- utilisateur qui a créé l'info
   fk_user_modif      integer,                             -- utilisateur qui a modifié l'info
   remise_client      real           DEFAULT 0,            -- remise systématique pour le client
   mode_reglement     tinyint, 					          -- mode de réglement

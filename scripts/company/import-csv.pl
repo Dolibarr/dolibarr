@@ -52,7 +52,7 @@ $dbh = DBI->connect() || die $DBI::errstr;
 my $file = "/tmp/importf.csv";
 my @line;
 my $i = 0;
-my ($civ, $rubrique,$civilite,$nom,$prenom,$num,$type,$voie,$complement,$cp,$ville,$tel,$fax,$mobile,$email,$web,$commentaire);
+my ($civ,$civilite,$nom,$prenom,$num,$type,$voie,$complement,$cp,$ville,$tel,$fax,$mobile,$email,$web,$commentaire);
 open (FH, "<$file") || die "can't open $file: $!";
 while (<FH>) 
 {
@@ -61,27 +61,26 @@ while (<FH>)
 
     s|\'|\\\'|g;
     @line = split /\t/, $_;
-    $rubrique    = $line[0];
-    $civilite    = $line[1];
-    $nom         = $line[2];
-    $prenom      = $line[3];
-    $num         = $line[4];
-    $type        = $line[5];
-    $voie        = $line[6];
-    $complement  = $line[7];
-    $cp          = $line[8];
-    $ville       = $line[9];
-    $tel         = $line[10];
-    $fax         = $line[11];
-    $mobile      = $line[12];
-    $email       = $line[13];
-    $web         = $line[14];
-    $commentaire = $line[15];
+    $civilite    = $line[0];
+    $nom         = $line[1];
+    $prenom      = $line[2];
+    $num         = $line[3];
+    $type        = $line[4];
+    $voie        = $line[5];
+    $complement  = $line[6];
+    $cp          = $line[7];
+    $ville       = $line[8];
+    $tel         = $line[9];
+    $fax         = $line[10];
+    $mobile      = $line[11];
+    $email       = $line[12];
+    $web         = $line[13];
+    $commentaire = $line[14];
 
     if ($i > 0 )
     {	
-	my $sql = "INSERT INTO llx_societe (datec, client, nom, address,cp,ville,tel,fax,url,note,rubrique,fk_user_creat) ";
-	$sql .= "VALUES (now(),2,'$nom $prenom','$num $type $voie\n$complement','$cp','$ville','$tel','$fax','$web','$commentaire','$rubrique',1)";
+	my $sql = "INSERT INTO llx_societe (datec, client, nom, address,cp,ville,tel,fax,url,note,fk_user_creat) ";
+	$sql .= "VALUES (now(),2,'$nom $prenom','$num $type $voie\n$complement','$cp','$ville','$tel','$fax','$web','$commentaire',1)";
 
 	$stha = $dbh->prepare($sql);
 	$stha->execute;
