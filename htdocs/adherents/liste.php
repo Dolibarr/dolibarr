@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/** 
+/**
  *      \file       htdocs/adherents/liste.php
  *      \ingroup    adherent
  *		\brief      Page to list all members of fundation
@@ -77,7 +77,7 @@ $sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 $sql.= " t.libelle as type, t.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " WHERE d.fk_adherent_type = t.rowid ";
-if ($sall) 
+if ($sall)
 {
     $sql.=" AND (d.prenom like '%".$sall."%' OR d.nom like '%".$sall."%' OR d.societe like '%".$sall."%'";
     $sql.=" OR d.email like '%".$sall."%' OR d.login like '%".$sall."%' OR d.adresse like '%".$sall."%'";
@@ -88,7 +88,7 @@ if ($_REQUEST["type"] > 0)
     $sql.=" AND t.rowid=".$_REQUEST["type"];
 }
 if (isset($_GET["statut"]))
-{   
+{
     $sql.=" AND d.statut in ($statut)";     // Peut valoir un nombre ou liste de nombre s�par�s par virgules
 }
 if ( $_POST["action"] == 'search')
@@ -117,19 +117,19 @@ if ($filter == 'outofdate')
 {
     $sql.=" AND datefin < ".$db->idate(mktime());
 }
-// Count total nb of records 
-$nbtotalofrecords = 0; 
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) 
-{ 
-    $result = $db->query($sql); 
-    $nbtotalofrecords = $db->num_rows($result); 
-} 
+// Count total nb of records
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
 // Add order and limit
 $sql.= " ".$db->order($sortfield,$sortorder);
 $sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
-if ($resql) 
+if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
@@ -148,7 +148,7 @@ if ($resql)
         $titre=$langs->trans("MembersListQualified");
     }
 
-    if ($_REQUEST["type"] > 0) 
+    if ($_REQUEST["type"] > 0)
     {
 		$membertype=new AdherentType($db);
         $result=$membertype->fetch($_REQUEST["type"]);
@@ -167,7 +167,7 @@ if ($resql)
     {
         print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
     }
-    
+
     print "<table class=\"noborder\" width=\"100%\">";
 
     print '<tr class="liste_titre">';
@@ -190,7 +190,7 @@ if ($resql)
 
 	print '<td align="left">';
 	print '<input class="flat" type="text" name="search_login" value="'.$_REQUEST["search_login"].'" size="8"></td>';
-	
+
 	print '<td class="liste_titre">';
     $listetype=$membertypestatic->liste_array();
     $form->select_array("type", $listetype, $_REQUEST["type"], 1, 0, 0, 0, '', 0, 12);
@@ -229,7 +229,7 @@ if ($resql)
         {
             print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.$objp->prenom." ".$objp->nom."</a></td>\n";
         }
-        
+
         // Login
         print "<td>".$objp->login."</td>\n";
 
@@ -239,13 +239,13 @@ if ($resql)
         $membertypestatic->libelle=$objp->type;
         print $membertypestatic->getNomUrl(1,12);
         print '</td>';
-        
+
         // Moral/Physique
         print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
 
         // EMail
         print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
-        
+
         // Statut
         print "<td>";
         print $adh->LibStatut($objp->statut,$objp->cotisation,$objp->datefin,2);

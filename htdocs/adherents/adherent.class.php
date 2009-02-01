@@ -1101,11 +1101,11 @@ class Adherent extends CommonObject
 		if ($this->statut == 1)
 		{
 			dolibarr_syslog("Adherent::validate statut of member does not allow this", LOG_WARNING);
-			return 0;	
+			return 0;
 		}
-		
+
 		$this->db->begin();
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql.= " statut=1, datevalid = ".$this->db->idate(mktime()).",";
 		$sql.= " fk_user_valid=".$user->id;
@@ -1150,9 +1150,9 @@ class Adherent extends CommonObject
 		if ($this->statut == 0)
 		{
 			dolibarr_syslog("Adherent::resiliate statut of member does not allow this", LOG_WARNING);
-			return 0;	
+			return 0;
 		}
-		
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
@@ -1603,25 +1603,25 @@ class Adherent extends CommonObject
 		}
 		if ($mode == 1)
 		{
-			if ($statut == -1) return $langs->trans("MemberStatusDraft");
+			if ($statut == -1) return $langs->trans("MemberStatusDraftShort");
 			if ($statut >= 1)
 			{
 				if (! $date_end_subscription)            return $langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
 				else                                     return $langs->trans("MemberStatusPayedShort");
 			}
-			if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
+			if ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
 		}
 		if ($mode == 2)
 		{
-			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
+			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraftShort");
 			if ($statut >= 1)
 			{
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
 				else                                     return img_picto($langs->trans('MemberStatusPayed'),'statut4').' '.$langs->trans("MemberStatusPayedShort");
 			}
-			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliated");
+			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
 		}
 		if ($mode == 3)
 		{
@@ -1700,7 +1700,7 @@ class Adherent extends CommonObject
 		global $conf;
 
 		$now=gmmktime();
-		
+
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$this->nbtodo=$this->nbtodolate=0;
@@ -1848,7 +1848,7 @@ class Adherent extends CommonObject
 		$sql.= ' a.fk_user_author, a.fk_user_valid, a.fk_user_mod';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
 		$sql.= ' WHERE a.rowid = '.$id;
-		
+
 		dolibarr_syslog("Adherent::info sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
