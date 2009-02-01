@@ -167,7 +167,7 @@ if ($action == 'create')
 
     if ($message) { print $message."<br>"; }
 
-    print '<form action="fiche.php" method="post">';
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="action" value="add">';
 
     print '<table class="border" width="100%">';
@@ -211,7 +211,7 @@ else
 		 * Affichage onglets
 		 */
 		$head = group_prepare_head($group);
-	
+
 		dolibarr_fiche_head($head, 'group', $langs->trans("Group").": ".$group->nom);
 
 
@@ -232,67 +232,67 @@ else
         if ($action != 'edit')
         {
             print '<table class="border" width="100%">';
-            
+
             // Nom
             print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
             print '<td width="75%" class="valeur">'.$group->nom.'</td>';
             print "</tr>\n";
-            
+
             // Note
             print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
             print '<td class="valeur">'.nl2br($group->note).'&nbsp;</td>';
             print "</tr>\n";
             print "</table>\n";
-    
+
             print '</div>';
-    
+
             /*
              * Barre d'actions
              */
             print '<div class="tabsAction">';
-    
+
             if ($caneditperms)
             {
                 print '<a class="butAction" href="fiche.php?id='.$group->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
             }
-    
+
             if ($candisableperms)
             {
                 print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$group->id.'">'.$langs->trans("DeleteGroup").'</a>';
             }
-    
+
             print "</div>\n";
             print "<br>\n";
-    
+
 
 			if ($message) { print $message."<br>"; }
 
-    
+
             /*
              * Liste des utilisateurs dans le groupe
              */
-    
+
             print_fiche_titre($langs->trans("ListOfUsersInGroup"),'','');
-            
+
             // On sélectionne les users qui ne sont pas déjà dans le groupe
             $uss = array();
-    
+
             $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin";
             $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
             #      $sql .= " LEFT JOIN llx_usergroup_user ug ON u.rowid = ug.fk_user";
             #      $sql .= " WHERE ug.fk_usergroup IS NULL";
             $sql .= " ORDER BY u.name";
-    
+
             $result = $db->query($sql);
             if ($result)
             {
                 $num = $db->num_rows($result);
                 $i = 0;
-    
+
                 while ($i < $num)
                 {
                     $obj = $db->fetch_object($result);
-    
+
                     $uss[$obj->rowid] = ucfirst(stripslashes($obj->name)).' '.ucfirst(stripslashes($obj->firstname));
                     if ($obj->login) $uss[$obj->rowid].=' ('.$obj->login.')';
                     $i++;
@@ -301,7 +301,7 @@ else
             else {
                 dolibarr_print_error($db);
             }
-    
+
             if ($caneditperms)
             {
                 $form = new Form($db);
@@ -318,7 +318,7 @@ else
                 print '</table></form>'."\n";
                 print '<br>';
             }
-    
+
             /*
              * Membres du groupe
              */
@@ -328,13 +328,13 @@ else
             $sql.= " WHERE ug.fk_user = u.rowid";
             $sql.= " AND ug.fk_usergroup = ".$group->id;
             $sql.= " ORDER BY u.name";
-    
+
             $result = $db->query($sql);
             if ($result)
             {
                 $num = $db->num_rows($result);
                 $i = 0;
-    
+
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td class="liste_titre" width="25%">'.$langs->trans("Login").'</td>';
@@ -348,7 +348,7 @@ else
                     {
                         $obj = $db->fetch_object($result);
                         $var=!$var;
-        
+
                         print "<tr $bc[$var]>";
                         print '<td>';
                         print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
@@ -357,10 +357,10 @@ else
                         print '<td>'.ucfirst(stripslashes($obj->name)).'</td>';
                         print '<td>'.ucfirst(stripslashes($obj->firstname)).'</td>';
                         print '<td>&nbsp;</td><td>';
-                                
+
                         if ($user->admin)
                         {
-        
+
                             print '<a href="fiche.php?id='.$group->id.'&amp;action=removeuser&amp;user='.$obj->rowid.'">';
                             print img_delete($langs->trans("RemoveFromGroup"));
                         }
@@ -374,7 +374,7 @@ else
                 }
                 else
                 {
-                    print '<tr><td colspan=2>'.$langs->trans("None").'</td></tr>';    
+                    print '<tr><td colspan=2>'.$langs->trans("None").'</td></tr>';
                 }
                 print "</table>";
                 print "<br>";
@@ -416,7 +416,7 @@ else
             print '<tr><td align="center" colspan="2"><input class="button" value="'.$langs->trans("Save").'" type="submit"></td></tr>';
             print "</table>\n";
             print '</form>';
-    
+
             print '</div>';
         }
 

@@ -34,17 +34,18 @@ $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $title=isset($_GET["title"])?$_GET["title"]:$_POST["title"];
 $url=isset($_GET["url"])?$_GET["url"]:$_POST["url"];
 $target=isset($_GET["target"])?$_GET["target"]:$_POST["target"];
+$userid=isset($_GET["userid"])?$_GET["userid"]:$_POST["userid"];
 
 
 /*
  * Actions
  */
 
-if ($action == 'add' || $action == 'addproduct')
+if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 {
 	if ($_POST["cancel"])
 	{
-		$urlsource=(! empty($_GET["urlsource"]))?$_GET["urlsource"]:((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/liste.php');
+		$urlsource=(! empty($_REQUEST["urlsource"]))?urldecode($_REQUEST["urlsource"]):((! empty($url))?urldecode($url):DOL_URL_ROOT.'/bookmarks/liste.php');
         header("Location: ".$urlsource);
         exit;
 	}
@@ -52,22 +53,25 @@ if ($action == 'add' || $action == 'addproduct')
     $mesg='';
 
     $bookmark=new Bookmark($db);
-    $bookmark->fk_user=$user->id;
+    if ($action == 'update') $bookmark->fetch($_POST["id"]);
+    $bookmark->fk_user=$userid;
     $bookmark->title=$title;
     $bookmark->url=$url;
     $bookmark->target=$target;
 
     if (! $title) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("BookmarkTitle"));
-    if (! $url) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("UrlOrLink"));
+    if (! $url)   $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("UrlOrLink"));
 
     if (! $mesg)
     {
         $bookmark->favicon='none';
 
-        $res=$bookmark->create();
+        if ($action == 'update') $res=$bookmark->update();
+        else $res=$bookmark->create();
+
         if ($res > 0)
         {
-			$urlsource=isset($_GET["urlsource"])?$_GET["urlsource"]:DOL_URL_ROOT.'/bookmarks/liste.php';
+			$urlsource=isset($_REQUEST["urlsource"])?urldecode($_REQUEST["urlsource"]):DOL_URL_ROOT.'/bookmarks/liste.php';
             header("Location: ".$urlsource);
             exit;
         }
@@ -90,7 +94,6 @@ if ($action == 'add' || $action == 'addproduct')
         $mesg='<div class="error">'.$mesg.'</div>';
         $action='create';
     }
-
 }
 
 if ($_GET["action"] == 'delete')
@@ -140,11 +143,17 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
     print '<tr><td width="25%">'.$langs->trans("BookmarkTitle").'</td><td><input class="flat" name="title" size="30" value="'.$title.'"></td><td>'.$langs->trans("SetHereATitleForLink").'</td></tr>';
+
     print '<tr><td>'.$langs->trans("UrlOrLink").'</td><td><input class="flat" name="url" size="50" value="'.$url.'"></td><td>'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
+
     print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
-    $liste=array(1=>$langs->trans("OpenANewWindow"),0=>$langs->trans("ReplaceWindow"));
+    $liste=array(0=>$langs->trans("ReplaceWindow"),1=>$langs->trans("OpenANewWindow"));
     $html->select_array('target',$liste,1);
     print '</td><td>'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
+
+    print '<tr><td>'.$langs->trans("Owner").'</td><td>';
+    $html->select_users(isset($_POST['userid'])?$_POST['userid']:$user->id,'userid',1);
+    print '</td><td>&nbsp;</td></tr>';
 
     print '<tr><td colspan="3" align="center">';
     print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
@@ -160,7 +169,7 @@ if ($action == 'create')
 if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
 {
     /*
-     * Fiche bookmark en mode edition
+     * Fiche bookmark en mode visu ou edition
      */
     $bookmark=new Bookmark($db);
     $bookmark->fetch($_GET["id"]);
@@ -168,39 +177,86 @@ if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
 
     dolibarr_fiche_head($head, $hselected, $langs->trans("Bookmark"));
 
+    if ($_GET["action"] == 'edit')
+    {
+    	print '<form name="edit" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    	print '<input type="hidden" name="action" value="update">';
+    	print '<input type="hidden" name="id" value="'.$bookmark->id.'">';
+    	print '<input type="hidden" name="urlsource" value="'.urlencode(DOL_URL_ROOT.'/bookmarks/fiche.php?id='.$bookmark->id).'">';
+    }
+
     print '<table class="border" width="100%">';
 
     print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>'.$bookmark->ref.'</td></tr>';
-    print '<tr><td>'.$langs->trans("BookmarkTitle").'</td><td>'.$bookmark->title.'</td></tr>';
+
+    print '<tr><td>'.$langs->trans("BookmarkTitle").'</td><td>';
+    if ($_GET["action"] == 'edit') print '<input class="flat" name="title" size="30" value="'.(isset($_POST["title"])?$_POST["title"]:$bookmark->title).'">';
+    else print $bookmark->title;
+    print '</td></tr>';
+
     print '<tr><td>'.$langs->trans("UrlOrLink").'</td><td>';
-    print '<a href="'.(eregi('^http',$bookmark->url)?$bookmark->url:DOL_URL_ROOT.$bookmark->url).'" target="'.($bookmark->target?"":"newlink").'">'.$bookmark->url.'</a></td></tr>';
+    if ($_GET["action"] == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"])?$_POST["url"]:$bookmark->url).'">';
+    else print '<a href="'.(eregi('^http',$bookmark->url)?$bookmark->url:DOL_URL_ROOT.$bookmark->url).'"'.($bookmark->target?' target="_blank"':'').'>'.$bookmark->url.'</a>';
+    print '</td></tr>';
+
     print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
-    if ($bookmark->target == 0) print $langs->trans("OpenANewWindow");
-    if ($bookmark->target == 1) print $langs->trans("ReplaceWindow");
-    print '</td></tr>';
-    print '<tr><td>'.$langs->trans("Owner").'</td><td>';
-    if ($bookmark->fk_user)
+    if ($_GET["action"] == 'edit')
     {
-	    $fuser=new User($db);
-	    $fuser->id=$bookmark->fk_user;
-	    $fuser->fetch();
-	    //$fuser->nom=$fuser->login; $fuser->prenom='';
-	    print $fuser->getNomUrl(1);
-	}
-	else
-	{
-		print $langs->trans("Public");
-	}
+	    $liste=array(1=>$langs->trans("OpenANewWindow"),0=>$langs->trans("ReplaceWindow"));
+	    $html->select_array('target',$liste,isset($_POST["target"])?$_POST["target"]:$bookmark->target);
+   	}
+    else
+    {
+    	if ($bookmark->target == 0) print $langs->trans("ReplaceWindow");
+    	if ($bookmark->target == 1) print $langs->trans("OpenANewWindow");
+    }
     print '</td></tr>';
+
+    print '<tr><td>'.$langs->trans("Owner").'</td><td>';
+    if ($_GET["action"] == 'edit' && $user->admin)
+    {
+	    $html->select_users(isset($_POST['userid'])?$_POST['userid']:($bookmark->fk_user?$bookmark->fk_user:$user->id),'userid',1);
+    }
+    else
+    {
+	    if ($bookmark->fk_user)
+	    {
+		    $fuser=new User($db);
+		    $fuser->id=$bookmark->fk_user;
+		    $fuser->fetch();
+		    //$fuser->nom=$fuser->login; $fuser->prenom='';
+		    print $fuser->getNomUrl(1);
+		}
+		else
+		{
+			print $langs->trans("Public");
+		}
+    }
+    print '</td></tr>';
+
     print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.dolibarr_print_date($bookmark->datec,'dayhour').'</td></tr>';
+
+    if ($_GET["action"] == 'edit') print '<tr><td colspan="2" align="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+
+
     print '</table>';
+
+    if ($_GET["action"] == 'edit') print '</form>';
 
     print "</div>\n";
 
+
+
     print "<div class=\"tabsAction\">\n";
 
-    // Supprimer
-    if ($user->rights->bookmark->supprimer)
+    // Edit
+    if ($user->rights->bookmark->creer && $_GET["action"] != 'edit')
+    {
+        print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?id=".$bookmark->id."&amp;action=edit\">".$langs->trans("Edit")."</a>\n";
+    }
+
+    // Remove
+    if ($user->rights->bookmark->supprimer && $_GET["action"] != 'edit')
     {
         print "  <a class=\"butActionDelete\" href=\"liste.php?bid=".$bookmark->id."&amp;action=delete\">".$langs->trans("Delete")."</a>\n";
     }
