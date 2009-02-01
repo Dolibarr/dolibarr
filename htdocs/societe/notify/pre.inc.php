@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,25 +31,25 @@ require ("../../main.inc.php");
 function llxHeader($head = "")
 {
 	global $langs, $user, $conf;
-	
+
 	top_menu($head);
-	
+
 	$menu = new Menu();
-	
+
 	if ($conf->societe->enabled)
 	{
-		$menu->add(DOL_URL_ROOT."/societe.php", $langs->trans("Companies"),"company");
-	
+		$menu->add(DOL_URL_ROOT."/societe.php", $langs->trans("ThirdParties"),"company");
+
 		if ($conf->rights->societe->creer)
 		{
-			$menu->add_submenu(DOL_URL_ROOT."/soc.php?&action=create", $langs->trans("NewCompany"));
+			$menu->add_submenu(DOL_URL_ROOT."/soc.php?&action=create", $langs->trans("NewThirdParty"));
 		}
-	
+
 		$menu->add_submenu(DOL_URL_ROOT."/contact.php", $langs->trans("Contacts"));
-	
+
 		$menu->add_submenu("index.php", $langs->trans("Notifications"));
 	}
-	
+
 	left_menu($menu->liste);
 }
 

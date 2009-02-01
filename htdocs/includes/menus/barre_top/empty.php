@@ -30,33 +30,32 @@ class MenuTop {
 
     var $require_left=array("empty");   // If this top menu handler must be used with a particular left menu handler
     var $hideifnotallowed=false;		// Put 0 for back office menu, 1 for front office menu
-    
+
     var $atarget="";               		// To store arget to use in menu links
 
-    
+
     /**
      *    \brief      Constructor
      *    \param      db      Dabatase handler
      */
     function MenuTop($db)
     {
-        global $langs;
         $this->db=$db;
     }
-    
-    
+
+
     /**
      *    \brief      Show menu
      */
     function showmenu()
     {
         global $user,$conf,$langs,$dolibarr_main_db_name;;
-        
+
         print '<table class="tmenu"><tr class="tmenu">';
 
 		// Menu Home
 	    print '<td class="tmenu"><a href="'.DOL_URL_ROOT.'/index.php?mainmenu=home">'.$langs->trans("Home").'</a></td>';
-	    
+
 	    // Put here top menu entries
 	    // ***** START *****
 
@@ -65,7 +64,7 @@ class MenuTop {
 	    // ...
 
 	    // ***** END *****
-	    
+
 	    /*
 		// Code to show personalized menus
        	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
@@ -95,13 +94,13 @@ class MenuTop {
 	        	{
 	        		if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$tabMenu[$i]['titre'].'</a></td>';
 	        	}
-			}      	
+			}
         }
         */
-	    
+
         print '</tr></table>';
     }
-    
+
 }
 
 ?>

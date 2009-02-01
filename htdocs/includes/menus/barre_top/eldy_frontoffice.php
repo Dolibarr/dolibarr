@@ -47,11 +47,7 @@ class MenuTop {
      */
     function MenuTop($db)
     {
-        global $langs;
         $this->db=$db;
-
-        $langs->setTransFromTab("Company",$langs->trans("ThirdParty"));
-        $langs->setTransFromTab("NewCompany",$langs->trans("NewThirdParty"));
     }
 
 

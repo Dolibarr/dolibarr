@@ -39,17 +39,13 @@ function llxHeader($head = "")
 	if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 	{
 		$langs->load("companies");
-		$menu->add(DOL_URL_ROOT."/societe.php", $langs->trans("Companies"));
+		$menu->add(DOL_URL_ROOT."/societe.php", $langs->trans("ThirdParties"));
 
 		if ($user->rights->societe->creer)
 		{
-	  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", $langs->trans("MenuNewCompany"));
+	  		$menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", $langs->trans("MenuNewThirdParty"));
 		}
 
-		if(is_dir("societe/groupe"))
-		{
-	  $menu->add_submenu(DOL_URL_ROOT."/societe/groupe/index.php", $langs->trans("MenuSocGroup"));
-		}
 		$menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
 	}
 

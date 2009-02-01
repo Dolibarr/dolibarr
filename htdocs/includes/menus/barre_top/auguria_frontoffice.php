@@ -24,7 +24,7 @@
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
         \remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
         \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
-		\remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a> 
+		\remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a>
 */
 
 
@@ -38,41 +38,37 @@ class MenuTop {
     var $require_left=array("auguria_backoffice");     // Si doit etre en phase avec un gestionnaire de menu gauche particulier
     var $atarget="";                                // Valeur du target a utiliser dans les liens
 
-    
+
     /**
      *    \brief      Constructeur
      *    \param      db      Handler d'acc�s base de donn�e
      */
     function MenuTop($db)
     {
-        global $langs;
         $this->db=$db;
-        
-        $langs->setTransFromTab("Company",$langs->trans("ThirdParty"));
-        $langs->setTransFromTab("NewCompany",$langs->trans("NewThirdParty"));
     }
-    
-    
+
+
     /**
      *    \brief      Affiche le menu
      */
     function showmenu()
     {
        	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
-       
+
         global $user,$conf,$langs,$dolibarr_main_db_name;;
-        
+
         // On sauve en session le menu principal choisi
 		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
 		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
         $_SESSION["leftmenuopened"]="";
 
-        
+
         $menuArbo = new Menubase($this->db,'auguria','top');
  		$tabMenu = $menuArbo->menuTopCharger(1,$_SESSION['mainmenu'], 'auguria');
 
         print '<ul>';
-        
+
         for($i=0; $i<count($tabMenu); $i++)
         {
         	if ($tabMenu[$i]['enabled'] == true)
@@ -97,7 +93,7 @@ class MenuTop {
 	        	}
         	}
         }
- 
+
         print '</ul>';
     }
 
