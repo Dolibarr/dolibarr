@@ -1244,6 +1244,12 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (10
 
 -- Pour les DOM-TOM, il faut utiliser le pays FRANCE (Sinon pb avec regles de TVA et autres regles propres aux pays et europe)
 
+-- SAINT PIERRE ET MIQUELON
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1931,193,  '0','0','No VAT in SPM',1);
+
+-- SAINT MARTIN
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2461,246,  '0','0','VAT Rate 0',1);
+
 
 --
 -- Les types de contact d'un element

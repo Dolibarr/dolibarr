@@ -38,3 +38,11 @@ ALTER TABLE llx_categorie ADD INDEX idx_categorie_type (type);
 
 ALTER TABLE llx_product drop column   stock_propale;
 ALTER TABLE llx_product drop column   stock_commande;
+
+
+-- SAINT PIERRE ET MIQUELON
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1931,193,  '0','0','No VAT in SPM',1);
+
+-- SAINT MARTIN
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2461,246,  '0','0','VAT Rate 0',1);
+
