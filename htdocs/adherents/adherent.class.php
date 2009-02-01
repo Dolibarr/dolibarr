@@ -57,6 +57,7 @@ class Adherent extends CommonObject
 	var $login;
 	var $pass;
 	var $societe;
+	var $fk_soc;
 	var $adresse;
 	var $cp;
 	var $ville;
@@ -362,6 +363,7 @@ class Adherent extends CommonObject
 		$sql.= ", nom="     .($this->nom?"'".addslashes($this->nom)."'":"null");
 		$sql.= ", login="   .($this->login?"'".addslashes($this->login)."'":"null");
 		$sql.= ", societe=" .($this->societe?"'".addslashes($this->societe)."'":"null");
+		$sql.= ", fk_soc="  .($this->fk_soc > 0?"'".$this->fk_soc."'":"null");
 		$sql.= ", adresse=" .($this->adresse?"'".addslashes($this->adresse)."'":"null");
 		$sql.= ", cp="      .($this->cp?"'".addslashes($this->cp)."'":"null");
 		$sql.= ", ville="   .($this->ville?"'".addslashes($this->ville)."'":"null");
@@ -790,7 +792,7 @@ class Adherent extends CommonObject
 	{
 		global $langs;
 
-		$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.note,";
+		$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.fk_soc, d.statut, d.public, d.adresse, d.cp, d.ville, d.note,";
 		$sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
 		$sql.= " d.photo, d.fk_adherent_type, d.morphy,";
 		$sql.= " ".$this->db->pdate("d.datec")." as datec,";
@@ -824,6 +826,7 @@ class Adherent extends CommonObject
 				$this->login          = $obj->login;
 				$this->pass           = $obj->pass;
 				$this->societe        = $obj->societe;
+				$this->fk_soc         = $obj->fk_soc;
 				$this->adresse        = $obj->adresse;
 				$this->cp             = $obj->cp;
 				$this->ville          = $obj->ville;
