@@ -188,23 +188,29 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *      \brief      Ins�re ligne de log
-	 *      \param      user        Utilisateur qui modifie la commande
-	 *      \param      statut      Statut de la commande
-	 *      \param      datelog     Date de modification
-	 *      \return     int         <0 si ko, >0 si ok
+	 *      \brief      Add a line in log table
+	 *      \param      user        User making action
+	 *      \param      statut      Status of order
+	 *      \param      datelog     Date of change
+	 *      \return     int         <0 if KO, >0 if OK
 	 */
-	function log($user, $statut, $datelog)
+	function log($user, $statut, $datelog, $comment='')
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_log (datelog, fk_commande, fk_statut, fk_user)";
-		$sql.= " VALUES (".$this->db->idate($datelog).",".$this->id.", $statut, ".$user->id.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_log (datelog, fk_commande, fk_statut, fk_user, comment)";
+		$sql.= " VALUES (".$this->db->idate($datelog).",".$this->id.", ".$statut.", ";
+		$sql.= $user->id.", ";
+		$sql.= ($comment?"'".addslashes($comment)."'":'null');
+		$sql.= ")";
 
+		dolibarr_syslog("FournisseurCommande::log sql=".$sql, LOG_DEBUG);
 		if ( $this->db->query($sql) )
 		{
 			return 1;
 		}
 		else
 		{
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("FournisseurCommande::log ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1065,13 +1071,13 @@ class CommandeFournisseur extends Commande
 	 *	\param		date		Date of reception
 	 *	\param		type		Type of receipt
 	 */
-	function Livraison($user, $date, $type)
+	function Livraison($user, $date, $type, $comment)
 	{
 		$result = 0;
 
 		dolibarr_syslog("CommandeFournisseur::Livraison");
 
-		if ($user->rights->fournisseur->commande->receptionner && $date < time())
+		if ($user->rights->fournisseur->commande->receptionner && $date < gmmktime())
 		{
 			if ($type == 'tot')	$statut = 5;
 			if ($type == 'par') $statut = 4;
@@ -1092,7 +1098,7 @@ class CommandeFournisseur extends Commande
 				if ($resql)
 				{
 					$result = 0;
-					$result=$this->log($user, $statut, $date);
+					$result=$this->log($user, $statut, $date, $comment);
 
 					$this->db->commit();
 				}

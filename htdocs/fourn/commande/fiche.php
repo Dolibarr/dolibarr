@@ -215,7 +215,7 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
-			supplier_order_pdf_create($db, $commande->id,	$commande->modelpdf, $outputlangs);
+			supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 	}
 	else
 	{
@@ -310,7 +310,7 @@ if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->rec
 	{
 		$date_liv = dolibarr_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 
-		$result	= $commande->Livraison($user, $date_liv, $_POST["type"]);
+		$result	= $commande->Livraison($user, $date_liv, $_POST["type"], $_POST["comment"]);
 		if ($result > 0)
 		{
 			Header("Location: fiche.php?id=".$id);
@@ -327,7 +327,6 @@ if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->rec
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Delivery")).'</div>';
 	}
 }
-
 
 if ($_POST["action"] ==	'confirm_cancel' &&	$_POST["confirm"] == yes &&	$user->rights->fournisseur->commande->annuler)
 {
@@ -968,9 +967,9 @@ if ($id > 0 || ! empty($ref))
 		print '<table width="100%"><tr><td width="50%" valign="top">';
 		print '<a name="builddoc"></a>'; // ancre
 
+
 		/*
 		 * Documents	generes
-		 *
 		 */
 		$comfournref = sanitizeFileName($commande->ref);
 		$file =	$conf->fournisseur->commande->dir_output . '/' . $comfournref .	'/'	. $comfournref . '.pdf';
@@ -986,17 +985,14 @@ if ($id > 0 || ! empty($ref))
 		print '</td><td	width="50%"	valign="top">';
 
 
-		/*
-		 *
-		 *
-		 */
 		if ( $user->rights->fournisseur->commande->commander && $commande->statut == 2)
 		{
 			/**
-			 * Commander
+			 * Commander (action=commande)
 			 */
 			print '<br>';
 			print '<form name="commande" action="fiche.php?id='.$commande->id.'&amp;action=commande" method="post">';
+			print '<input type="hidden"	name="action" value="commande">';
 			print '<table class="border" width="100%">';
 			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
@@ -1007,20 +1003,16 @@ if ($id > 0 || ! empty($ref))
 			$formorder->select_methodes_commande('',"methodecommande",1);
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="commentaire"></td></tr>';
+			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="comment"></td></tr>';
 			print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
 			print '</table>';
 			print '</form>';
 		}
 
-		/*
-		 *
-		 *
-		 */
 		if ( $user->rights->fournisseur->commande->receptionner	&& ($commande->statut == 3 ||$commande->statut == 4	))
 		{
 			/**
-			 * Receptionner
+			 * Receptionner (action=livraison)
 			 */
 			print '<br>';
 			print '<form action="fiche.php?id='.$commande->id.'" method="post">';
@@ -1033,7 +1025,7 @@ if ($id > 0 || ! empty($ref))
 
 			print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
 			$liv = array();
-			$liv['']	    = '&nbsp;';
+			$liv[''] = '&nbsp;';
 			$liv['tot']	= $langs->trans("TotalWoman");
 			$liv['par']	= $langs->trans("PartialWoman");
 			$liv['nev']	= $langs->trans("NeverReceived");
@@ -1041,9 +1033,8 @@ if ($id > 0 || ! empty($ref))
 
 			print $html->select_array("type",$liv);
 
-
 			print '</td></tr>';
-			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30"	type="text"	name="commentaire"></td></tr>';
+			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="comment"></td></tr>';
 			print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
 			print "</table>\n";
 			print "</form>\n";

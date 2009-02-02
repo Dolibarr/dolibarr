@@ -159,7 +159,7 @@ function dol_escape_js($stringtoescape)
 
 
 /**
- *  \brief       Returns text escaped for inclusion in javascript code
+ *  \brief       Returns text escaped for inclusion in HTML alt or title tags
  *  \param       $stringtoescape	String to escape
  *  \return      string      		Escaped string
  */

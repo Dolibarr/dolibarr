@@ -56,3 +56,6 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (24
 
 
 alter table llx_user_param drop column page;
+
+alter table llx_commande_fournisseur_log add column comment varchar(255) NULL;
+

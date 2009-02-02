@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,5 +26,6 @@ create table llx_commande_fournisseur_log
   datelog          datetime NOT NULL,
   fk_commande      integer NOT NULL,
   fk_statut        smallint NOT NULL,
-  fk_user          integer NOT NULL
+  fk_user          integer NOT NULL,
+  comment          varchar(255) NULL
 )type=innodb;

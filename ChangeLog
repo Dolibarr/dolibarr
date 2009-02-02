@@ -24,7 +24,9 @@ For users:
 - New: Can add personalised fields in emailing selectors.
 - New: Customer code and supplier code can be defined automatically.
 - New: Emailing feature can extract civility from contacts.
-- Fix: Author, title and topic are correctly encoded i nPDF.
+- New: Can creat a third party from a member of fundation module.
+- Fix: Handle correctly the comment in status changing of supplier orders.
+- Fix: Author, title and topic are correctly encoded in PDF.
 - Fix: Now HTML output is always UTF8, this solve bad PDF encoding on old users.
 - Fix: Save new model when changed on interventions.
 - Fix: Failed to go on the future view of bank transaction if there is no 

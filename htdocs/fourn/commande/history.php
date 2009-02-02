@@ -126,10 +126,11 @@ if ($id > 0 || ! empty($ref))
 		print '<tr class="liste_titre"><td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("Status").'</td>';
 		print '<td align="center">'.$langs->trans("Author").'</td>';
+		print '<td align="left">'.$langs->trans("Comment").'</td>';
 		print '</tr>';
 
-		$sql = "SELECT l.fk_statut, ".$db->pdate("l.datelog") ."as dl, u.rowid, u.login, u.firstname, u.name";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_log as l ";
+		$sql = "SELECT l.fk_statut, l.datelog as dl, l.comment, u.rowid, u.login, u.firstname, u.name";
+		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_log as l";
 		$sql .= " , ".MAIN_DB_PREFIX."user as u ";
 		$sql .= " WHERE l.fk_commande = ".$commande->id." AND u.rowid = l.fk_user";
 		$sql .= " ORDER BY l.rowid DESC";
@@ -148,7 +149,7 @@ if ($id > 0 || ! empty($ref))
 				$obj = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
 
-				print '<td width="20%">'.dolibarr_print_date($obj->dl,"dayhour")."</td>\n";
+				print '<td width="20%">'.dolibarr_print_date($db->jdate($obj->dl),"dayhour")."</td>\n";
 
 				// Statut
 				print '<td width="100px" nowrap="1">'.$commande->LibStatut($obj->fk_statut,4)."</td>\n";
@@ -156,6 +157,9 @@ if ($id > 0 || ! empty($ref))
 				// User
 				print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
 				print img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+
+				// Comment
+				print '<td width="100px" nowrap="1" title="'.dol_escape_htmltag($obj->comment).'">'.dolibarr_trunc($obj->comment,48)."</td>\n";
 
 				print '</tr>';
 
