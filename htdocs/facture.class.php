@@ -1559,7 +1559,6 @@ class Facture extends CommonObject
 
 			// Insert line
 			$ligne=new FactureLigne($this->db);
-
 			$ligne->fk_facture=$facid;
 			$ligne->desc=$desc;
 			$ligne->qty=$qty;
@@ -2882,9 +2881,9 @@ class FactureLigne
 		$sql.= " ".price2num($this->remise).",";
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
-		if ($this->date_start) { $sql.= "'".$this->date_start."',"; }
+		if ($this->date_start) { $sql.= "'".$this->db->idate($this->date_start)."',"; }
 		else { $sql.='null,'; }
-		if ($this->date_end)   { $sql.= "'".$this->date_end."',"; }
+		if ($this->date_end)   { $sql.= "'".$this->db->idate($this->date_end)."',"; }
 		else { $sql.='null,'; }
 		$sql.= ' '.$this->fk_code_ventilation.',';
 		$sql.= ' '.$this->fk_export_compta.',';
@@ -2996,9 +2995,9 @@ class FactureLigne
 		else $sql.= ",fk_remise_except=null";
 		$sql.= ",tva_taux=".price2num($this->tva_tx)."";
 		$sql.= ",qty=".price2num($this->qty)."";
-		if ($this->date_start) { $sql.= ",date_start='".$this->date_start."'"; }
+		if ($this->date_start) { $sql.= ",date_start='".$this->db->idate($this->date_start)."'"; }
 		else { $sql.=',date_start=null'; }
-		if ($this->date_end) { $sql.= ",date_end='".$this->date_end."'"; }
+		if ($this->date_end) { $sql.= ",date_end='".$this->db->idate($this->date_end)."'"; }
 		else { $sql.=',date_end=null'; }
 		$sql.= ",rang='".$this->rang."'";
 		$sql.= ",info_bits='".$this->info_bits."'";

@@ -627,15 +627,9 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 				{
 					if ($_POST['idprod'.$i])
 					{
-						$startday='';
-						$endday='';
-						if ($_POST['date_start'.$i.'year'] && $_POST['date_start'.$i.'month'] && $_POST['date_start'.$i.'day']) {
-							$startday=$_POST['date_start'.$i.'year'].'-'.$_POST['date_start'.$i.'month'].'-'.$_POST['date_start'.$i.'day'];
-						}
-						if ($_POST['date_end'.$i.'year'] && $_POST['date_end'.$i.'month'] && $_POST['date_end'.$i.'day']) {
-							$endday=$_POST['date_end'.$i.'year'].'-'.$_POST['date_end'.$i.'month'].'-'.$_POST['date_end'.$i.'day'];
-						}
-						$facture->add_product($_POST['idprod'.$i],$_POST['qty'.$i],$_POST['remise_percent'.$i],$startday,$endday);
+						$startday=dolibarr_mktime(12, 0 , 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
+						$endday=dolibarr_mktime(12, 0 , 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
+						$facture->add_product($_POST['idprod'.$i], $_POST['qty'.$i], $_POST['remise_percent'.$i], $startday, $endday);
 					}
 				}
 
@@ -660,6 +654,12 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							{
 								$desc=($prop->lignes[$i]->desc?$prop->lignes[$i]->desc:$prop->lignes[$i]->libelle);
 
+								// Dates
+								$date_start=$prop->lignes[$i]->date_debut_prevue;
+								if ($prop->lignes[$i]->date_debut_reel) $date_start=$prop->lignes[$i]->date_debut_reel;
+								$date_end=$prop->lignes[$i]->date_fin_prevue;
+								if ($prop->lignes[$i]->date_fin_reel) $date_end=$prop->lignes[$i]->date_fin_reel;
+								
 								$result = $facture->addline(
 								$facid,
 								$desc,
@@ -668,8 +668,8 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 								$prop->lignes[$i]->tva_tx,
 								$prop->lignes[$i]->fk_product,
 								$prop->lignes[$i]->remise_percent,
-									'',
-									'',
+								$date_start,
+								$date_end,
 								0,
 								$prop->lignes[$i]->info_bits,
 								$prop->lignes[$i]->fk_remise_except
@@ -712,6 +712,10 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							{
 								$desc=($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 
+								// Dates
+								$date_start=$comm->lignes[$i]->date_start;
+								$date_end=$comm->lignes[$i]->date_end;
+
 								// Should use a function using total_ht, total_ttc and total_vat
 								$result = $facture->addline(
 								$facid,
@@ -721,8 +725,8 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 								$lines[$i]->tva_tx,
 								$lines[$i]->fk_product,
 								$lines[$i]->remise_percent,
-									'',
-									'',
+								$date_start,
+								$date_end,
 								0,
 								$lines[$i]->info_bits,
 								$lines[$i]->fk_remise_except
@@ -765,7 +769,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							{
 								$desc=($contrat->lignes[$i]->desc?$contrat->lignes[$i]->desc:$contrat->lignes[$i]->libelle);
 
-								// Plage de dates
+								// Dates
 								$date_start=$contrat->lignes[$i]->date_debut_prevue;
 								if ($contrat->lignes[$i]->date_debut_reel) $date_start=$contrat->lignes[$i]->date_debut_reel;
 								$date_end=$contrat->lignes[$i]->date_fin_prevue;
@@ -842,22 +846,8 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 		$ret=$fac->fetch_client();
 
 		$suffixe = $_POST['idprod'] ? '_predef' : '';
-		$date_start='';
-		$date_end='';
-		if ($_POST['date_start'.$suffixe.'year'] && $_POST['date_start'.$suffixe.'month'] && $_POST['date_start'.$suffixe.'day'])
-		{
-			$date_start=$_POST['date_start'.$suffixe.'year'].'-'.$_POST['date_start'.$suffixe.'month'].'-'.$_POST['date_start'.$suffixe.'day'];
-			// If hour/minute are specified, append them
-			if (($_POST['date_start'.$suffixe.'hour']) && ($_POST['date_start'.$suffixe.'min']))
-			$date_start.=' '.$_POST['date_start'.$suffixe.'hour'].':'.$_POST['date_start'.$suffixe.'min'];
-		}
-		if ($_POST['date_end'.$suffixe.'year'] && $_POST['date_end'.$suffixe.'month'] && $_POST['date_end'.$suffixe.'day'])
-		{
-			$date_end=$_POST['date_end'.$suffixe.'year'].'-'.$_POST['date_end'.$suffixe.'month'].'-'.$_POST['date_end'.$suffixe.'day'];
-			// If hour/minute are specified, append them
-			if (($_POST['date_end'.$suffixe.'hour']) && ($_POST['date_end'.$suffixe.'min']))
-			$date_end.=' '.$_POST['date_end'.$suffixe.'hour'].':'.$_POST['date_end'.$suffixe.'min'];
-		}
+		$date_start=dol_mktime($_POST['date_start'.$suffixe.'hour'],$_POST['date_start'.$suffixe.'min'],$_POST['date_start'.$suffixe.'sec'],$_POST['date_start'.$suffixe.'month'],$_POST['date_start'.$suffixe.'day'],$_POST['date_start'.$suffixe.'year']);
+		$date_end=dol_mktime($_POST['date_end'.$suffixe.'hour'],$_POST['date_end'.$suffixe.'min'],$_POST['date_end'.$suffixe.'sec'],$_POST['date_end'.$suffixe.'month'],$_POST['date_end'.$suffixe.'day'],$_POST['date_end'.$suffixe.'year']);
 
 		$price_base_type = 'HT';
 
@@ -969,23 +959,9 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 
 	$date_start='';
 	$date_end='';
-	// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	// Retrieve start and end date (for product/service lines or customizable lines)
-	if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday'])
-	{
-		$date_start=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
-		// If hour/minute are specified, append them
-		if (($_POST['date_starthour']) && ($_POST['date_startmin']))
-		$date_start.=' '.$_POST['date_starthour'].':'.$_POST['date_startmin'];
-	}
-	if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
-	{
-		$date_end=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
-		// If hour/minute are specified, append them
-		if (($_POST['date_endhour']) && ($_POST['date_endmin']))
-		$date_end.=' '.$_POST['date_endhour'].':'.$_POST['date_endmin'];
-	}
-
+	$date_start=dol_mktime($_POST['date_start'.$suffixe.'hour'],$_POST['date_start'.$suffixe.'min'],$_POST['date_start'.$suffixe.'sec'],$_POST['date_start'.$suffixe.'month'],$_POST['date_start'.$suffixe.'day'],$_POST['date_start'.$suffixe.'year']);
+	$date_end=dol_mktime($_POST['date_end'.$suffixe.'hour'],$_POST['date_end'.$suffixe.'min'],$_POST['date_end'.$suffixe.'sec'],$_POST['date_end'.$suffixe.'month'],$_POST['date_end'.$suffixe.'day'],$_POST['date_end'.$suffixe.'year']);
+	
 	// Define info_bits
 	$info_bits=0;
 	if (eregi('\*',$_POST['tva_tx'])) $info_bits |= 0x01;
@@ -995,7 +971,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	$vat_rate=eregi_replace('\*','',$vat_rate);
 
 	// On vérifie que le prix minimum est respecté
-	if($_POST['productid']!=''){
+	if($_POST['productid']!='')
+	{
 		$productid = $_POST['productid'] ;
 		$pruduct = new Product($db) ;
 		$pruduct->fetch($productid) ;
@@ -1014,7 +991,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		$date_start,
 		$date_end,
 		$vat_rate,
-			'HT',
+		'HT',
 		$info_bits
 		);
 
@@ -1771,7 +1748,7 @@ if ($_GET['action'] == 'create')
 	{
 		$title=$langs->trans('Products');
 
-		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.fk_remise_except, pt.remise_percent, pt.description, pt.info_bits,';
+		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.fk_remise_except, pt.remise_percent, pt.description, pt.info_bits, pt.date_start as date_debut_prevue, pt.date_end as date_fin_prevue,';
 		$sql.= ' p.label as product, p.ref, p.rowid as prodid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
@@ -1816,6 +1793,12 @@ if ($_GET['action'] == 'create')
 			{
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
+
+				$date_start=$objp->date_debut_prevue;
+				if ($objp->date_debut_reel) $date_start=$objp->date_debut_reel;
+				$date_end=$objp->date_fin_prevue;
+				if ($objp->date_fin_reel) $date_end=$objp->date_fin_reel;
+
 				print '<tr '.$bc[$var].'><td>';
 				if (($objp->info_bits & 2) == 2)
 				{
@@ -1827,19 +1810,19 @@ if ($_GET['action'] == 'create')
 				{
 					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(''),'service').' '.$objp->ref.'</a>';
 					print $objp->product?' - '.$objp->product:'';
-					// Plage de dates si contrat
-					if ($_GET['contratid'])
+					// Dates
+					if ($date_start || $date_end)
 					{
-						$date_start=$objp->date_debut_prevue;
-						if ($objp->date_debut_reel) $date_start=$objp->date_debut_reel;
-						$date_end=$objp->date_fin_prevue;
-						if ($objp->date_fin_reel) $date_end=$objp->date_fin_reel;
 						print_date_range($date_start,$date_end);
 					}
 				}
 				else
 				{
-					print '&nbsp;';
+					// Dates
+					if ($date_start || $date_end)
+					{
+						print_date_range($date_start,$date_end);
+					}
 				}
 				print "</td>\n";
 				print '<td>';

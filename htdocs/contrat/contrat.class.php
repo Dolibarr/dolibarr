@@ -385,7 +385,6 @@ class Contrat extends CommonObject
 				$ligne->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
 				$ligne->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$ligne->date_fin_reel     = $this->db->jdate($objp->date_cloture);
-
 				$this->lignes[]        = $ligne;
 				//dolibarr_syslog("1 ".$ligne->desc);
 				//dolibarr_syslog("2 ".$ligne->product_desc);
