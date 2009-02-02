@@ -21,10 +21,8 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_categorie_association ADD INDEX idx_categorie_association_fk_categorie_mere (fk_categorie_mere);
-ALTER TABLE llx_categorie_association ADD INDEX idx_categorie_association_fk_categorie_fille (fk_categorie_fille);
-
 ALTER TABLE llx_categorie_association ADD UNIQUE INDEX uk_categorie_association (fk_categorie_mere, fk_categorie_fille);
+ALTER TABLE llx_categorie_association ADD UNIQUE INDEX uk_categorie_association_fk_categorie_fille (fk_categorie_fille);
 
 ALTER TABLE llx_categorie_association ADD CONSTRAINT fk_categorie_asso_fk_categorie_mere  FOREIGN KEY (fk_categorie_mere) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_association ADD CONSTRAINT fk_categorie_asso_fk_categorie_fille FOREIGN KEY (fk_categorie_fille) REFERENCES llx_categorie (rowid);

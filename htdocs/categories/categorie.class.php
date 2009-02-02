@@ -533,7 +533,7 @@ class Categorie
 			return -1;
 		}
 
-		// Charge tableau des categories
+		// Init $this->cats array
 		$sql = "SELECT c.rowid, c.label as label, ca.fk_categorie_fille as rowid_fille";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
@@ -570,7 +570,7 @@ class Categorie
 		dolibarr_syslog("Categorie::get_full_arbo call to build_path_from_id_categ", LOG_DEBUG);
 		foreach($this->cats as $key => $val)
 		{
-			if (isset($motherof[$key])) continue;
+			if (isset($this->motherof[$key])) continue;
 			$this->build_path_from_id_categ($key,0);	// Process a path of a root category (no parent exists)
 		}
 
@@ -591,12 +591,12 @@ class Categorie
 	{
 		dolibarr_syslog("Categorie::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
 
-		if (! empty($this->cats[$id_categ]['fullpath']))
-		{
+		//if (! empty($this->cats[$id_categ]['fullpath']))
+		//{
 			// Already defined
-			dolibarr_syslog("Categorie::build_path_from_id_categ fullpath and fulllabel already defined", LOG_WARNING);
-			return;
-		}
+		//	dolibarr_syslog("Categorie::build_path_from_id_categ fullpath and fulllabel already defined", LOG_WARNING);
+		//	return;
+		//}
 
 		// Define fullpath and fulllabel
 		if (isset($this->cats[$id_categ]['id_mere']))
@@ -616,7 +616,7 @@ class Categorie
 
 		// Process all childs on several levels of this category
 		$protection++;
-		if ($protection > 20) return;	// On ne traite pas plus de 20 niveaux
+		if ($protection > 10) return;	// On ne traite pas plus de 10 niveaux de profondeurs
 		if (! is_array($this->cats[$id_categ]['id_children'])) return;
 		foreach($this->cats[$id_categ]['id_children'] as $key => $idchild)
 		{
