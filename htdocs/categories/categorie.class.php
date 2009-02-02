@@ -566,11 +566,12 @@ class Categorie
 			return -1;
 		}
 
-		// On ajoute la propriete fullpath a tous les éléments
+		// We add the fulpath property to each elements of first level (no parent exists)
+		dolibarr_syslog("Categorie::get_full_arbo call to build_path_from_id_categ", LOG_DEBUG);
 		foreach($this->cats as $key => $val)
 		{
 			if (isset($motherof[$key])) continue;
-			$this->build_path_from_id_categ($key,0);	// Process a path of a root category (no mother exists)
+			$this->build_path_from_id_categ($key,0);	// Process a path of a root category (no parent exists)
 		}
 
 		dolibarr_syslog("Categorie::get_full_arbo dol_sort_array", LOG_DEBUG);
@@ -588,6 +589,8 @@ class Categorie
 	*/
 	function build_path_from_id_categ($id_categ,$protection=0)
 	{
+		dolibarr_syslog("Categorie::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
+
 		// Defini fullpath
 		if (isset($this->cats[$id_categ]['id_mere']))
 		{
@@ -610,6 +613,13 @@ class Categorie
 		if (! is_array($this->cats[$id_categ]['id_children'])) return;
 		foreach($this->cats[$id_categ]['id_children'] as $key => $idchild)
 		{
+			// Protection when a category has itself as a child (should not happen)
+			if ($idchild == $id_categ)
+			{
+				dolibarr_syslog("Categorie::build_path_from_id_categ bad couple (".$idchild.",".$id_categ.") in association table: An entry should not have itself has child", LOG_WARNING);
+				continue;
+			}
+
 			$this->build_path_from_id_categ($idchild,$protection);
 		}
 		return;
