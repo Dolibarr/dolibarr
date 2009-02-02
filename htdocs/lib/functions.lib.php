@@ -186,7 +186,8 @@ function dolibarr_syslog($message, $level=LOG_INFO)
  *				Si SYSLOG_FILE_NO_ERROR defini, on ne gere pas erreur ecriture log
  * 	\param      message		    	Line to log. Ne doit pas etre traduit si level = LOG_ERR
  *	\param      level           	Log level
- *	\remarks	Cette fonction n'a un effet que si le module syslog est active.
+ *	\remarks	This function works only if syslog module is enabled.
+ * 	\remarks	This must must not use any call to other function calling dol_syslog (avoid infinite loop).
  *	\remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=LOG_DEBUG=6
  *				On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  */
@@ -225,8 +226,10 @@ function dol_syslog($message, $level=LOG_INFO)
 			$filelog=eregi_replace('DOL_DATA_ROOT',DOL_DATA_ROOT,$filelog);
 			if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen($filelog,"a+");
 			else $file=fopen($filelog,"a+");
+
 			if ($file)
 			{
+
 				$ip='unknown_ip';
 				if (! empty($_SERVER["REMOTE_ADDR"])) $ip=$_SERVER["REMOTE_ADDR"];
 
@@ -250,8 +253,8 @@ function dol_syslog($message, $level=LOG_INFO)
 			}
 			elseif (! defined("SYSLOG_FILE_NO_ERROR"))
 			{
-				$langs->load("main");
-				print $langs->trans("ErrorFailedToOpenFile",$filelog);
+				// Do not use call to functions that make call to dol_syslog, so no call to langs.
+				print "Error, failed to open file ".$filelog."\n";
 			}
 		}
 		else

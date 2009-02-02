@@ -228,13 +228,10 @@ class User extends CommonObject
 		}
 
 		// Recupere parametrage global propre a l'utilisateur
-		// \TODO a stocker/recuperer en session pour eviter ce select a chaque page
-		// \TODO Remove where on page and remove page field in databse (not used)
 		if ($loadpersonalconf)
 		{
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
 			$sql.= " WHERE fk_user = ".$this->id;
-			$sql.= " AND page = ''";
 			$result=$this->db->query($sql);
 			if ($result)
 			{
@@ -868,7 +865,7 @@ class User extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql.= " SET fk_member=".$member->id;
 			$sql.= " WHERE rowid=".$this->id;
-			
+
 			dolibarr_syslog("User::create_from_member sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)

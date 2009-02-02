@@ -54,3 +54,5 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (19
 -- SAINT MARTIN
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2461,246,  '0','0','VAT Rate 0',1);
 
+
+alter table llx_user_param drop column page;

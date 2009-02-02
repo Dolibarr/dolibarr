@@ -145,6 +145,7 @@ if ($conf->main_force_https)
 	}
 }
 
+
 // Chargement des includes complementaires de presentation
 if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");			// Need 11ko memory (11ko in 2.2)
 if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");	// Need 690ko memory (800ko in 2.2)
@@ -340,6 +341,7 @@ else
 	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifies
 	$login=$_SESSION["dol_login"];
 	$resultFetchUser=$user->fetch($login);
+
 	dolibarr_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
 	if ($resultFetchUser <= 0)
 	{
