@@ -583,7 +583,7 @@ class Categorie
 	}
 
 	/**
-	*	\brief		For category id_categ and its child available in this->cats, define property fullpath
+	*	\brief		For category id_categ and its child available in this->cats, define property fullpath and fulllabel
 	* 	\param		id_categ		id_categ entry to update
 	* 	\param		protection		Deep counter to avoid infinite loop
 	*/
@@ -591,7 +591,14 @@ class Categorie
 	{
 		dolibarr_syslog("Categorie::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
 
-		// Defini fullpath
+		if (! empty($this->cats[$id_categ]['fullpath']))
+		{
+			// Already defined
+			dolibarr_syslog("Categorie::build_path_from_id_categ fullpath and fulllabel already defined", LOG_WARNING);
+			return;
+		}
+
+		// Define fullpath and fulllabel
 		if (isset($this->cats[$id_categ]['id_mere']))
 		{
 			$this->cats[$id_categ]['fullpath'] =$this->cats[$this->cats[$id_categ]['id_mere']]['fullpath'];
