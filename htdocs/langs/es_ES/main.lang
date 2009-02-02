@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - main 
+# Dolibarr language file - es_ES - main
 CHARSET = UTF-8
 DatabaseConnection = Conexión a la base de datos
 SeparatorDecimal = ,
@@ -171,6 +171,7 @@ DateStart = Fecha inicio
 DateEnd = Fecha fin
 DateCreation = Fecha creación
 DateModification = Fecha modificación
+DateModificationShort = Fecha modif.
 DateLastModification = Fecha última modificación
 DateValidation = Fecha validación
 DateClosing = Fecha cierre
@@ -470,8 +471,8 @@ HidePassword = Mostrar comando con contraseña oculta
 UnHidePassword = Mostrar comando con contraseña a la vista
 Root = Raíz
 Informations = Información
-Page=Página
-Notes=Notas
+Page = Página
+Notes = Notas
 # Week day = 
 Monday = Lunes
 Tuesday = Martes
