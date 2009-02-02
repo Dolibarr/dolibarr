@@ -41,7 +41,10 @@ ALTER TABLE llx_product drop column   stock_commande;
 
 ALTER TABLE llx_adherent drop index login;
 ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_login (login);
+
 ALTER TABLE llx_adherent add column fk_soc           integer NULL after societe;
+ALTER TABLE llx_adherent ADD INDEX idx_adherent_fk_soc (fk_soc);
+ALTER TABLE llx_adherent ADD CONSTRAINT adherent_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 
 ALTER TABLE llx_societe drop column rubrique;
 

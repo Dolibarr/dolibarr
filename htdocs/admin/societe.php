@@ -20,11 +20,11 @@
  */
 
 /**
-    	\file       htdocs/admin/societe.php
-		\ingroup    company
-		\brief      Page d'administration/configuration du module Societe
-		\version    $Id$
-*/
+ \file       htdocs/admin/societe.php
+ \ingroup    company
+ \brief      Page d'administration/configuration du module Societe
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 $langs->load("admin");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 
 /*
@@ -66,15 +66,15 @@ if ($_GET["action"] == 'setcodecompta')
 
 if ($_POST["action"] == 'usesearchtoselectcompany')
 {
-  if (dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectcompany"]))
-  {
-  	Header("Location: ".$_SERVER["PHP_SELF"]);
-  	exit;
-  }
-  else
-  {
-  	dolibarr_print_error($db);
-  }
+	if (dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectcompany"]))
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
 }
 
 // define constants for tigre model
@@ -123,9 +123,9 @@ if ($handle)
 
 	// Loop on each module find in opened directory
 	while (($file = readdir($handle))!==false)
-    {
-      if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php')
 	{
+		if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php')
+		{
 	  $file = substr($file, 0, strlen($file)-4);
 
 	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
@@ -143,25 +143,25 @@ if ($handle)
 	  print '<td nowrap="nowrap">'.$modCodeTiers->getExample($langs)."</td>\n";
 
 	  if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
-	    {
-	      print "<td align=\"center\">\n";
-    	  print img_tick();
-	      print "</td>\n";
-	    }
+	  {
+	  	print "<td align=\"center\">\n";
+	  	print img_tick();
+	  	print "</td>\n";
+	  }
 	  else
-	    {
-	      print '<td align="center"><a href="societe.php?action=setcodeclient&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
-	    }
+	  {
+	  	print '<td align="center"><a href="societe.php?action=setcodeclient&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
+	  }
 
-		print '<td align="center">';
-  		$s=$modCodeTiers->getToolTip($langs,$soc,-1);
-		print $form->textwithhelp('',$s,1);
-		print '</td>';
+	  print '<td align="center">';
+	  $s=$modCodeTiers->getToolTip($langs,$soc,-1);
+	  print $form->textwithhelp('',$s,1);
+	  print '</td>';
 
 	  print '</tr>';
+		}
 	}
-    }
-  closedir($handle);
+	closedir($handle);
 }
 print '</table>';
 
@@ -188,11 +188,11 @@ $dir = "../includes/modules/societe/";
 $handle = opendir($dir);
 if ($handle)
 {
-  $var = true;
-  while (($file = readdir($handle))!==false)
-    {
-      if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php')
+	$var = true;
+	while (($file = readdir($handle))!==false)
 	{
+		if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php')
+		{
 	  $file = substr($file, 0, strlen($file)-4);
 
 	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
@@ -207,21 +207,21 @@ if ($handle)
 	  print '<td nowrap="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
 
 	  if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
-	    {
-	      print '<td align="center">';
-    	  print img_tick();
-	      print '</td>';
-	    }
+	  {
+	  	print '<td align="center">';
+	  	print img_tick();
+	  	print '</td>';
+	  }
 	  else
-	    {
-	      print '<td align="center"><a href="societe.php?action=setcodecompta&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
+	  {
+	  	print '<td align="center"><a href="societe.php?action=setcodecompta&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
 
-	    }
-      print '<td>&nbsp;</td>';
+	  }
+	  print '<td>&nbsp;</td>';
 	  print "</tr>\n";
+		}
 	}
-    }
-  closedir($handle);
+	closedir($handle);
 }
 print "</table>\n";
 
@@ -245,17 +245,17 @@ print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("UseSearchToSelectCompany").'</td>';
 if (! $conf->use_javascript_ajax)
 {
-  print '<td nowrap="nowrap" align="right" colspan="2">';
-  print $langs->trans("NotAvailableWhenAjaxDisabled");
-  print "</td>";
+	print '<td nowrap="nowrap" align="right" colspan="2">';
+	print $langs->trans("NotAvailableWhenAjaxDisabled");
+	print "</td>";
 }
 else
 {
-  print '<td width="60" align="right">';
-  print $html->selectyesno("activate_usesearchtoselectcompany",$conf->global->COMPANY_USE_SEARCH_TO_SELECT,1);
-  print '</td><td align="right">';
-  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-  print "</td>";
+	print '<td width="60" align="right">';
+	print $html->selectyesno("activate_usesearchtoselectcompany",$conf->global->COMPANY_USE_SEARCH_TO_SELECT,1);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</td>";
 }
 print '</tr>';
 print '</form>';

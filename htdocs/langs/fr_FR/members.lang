@@ -134,3 +134,5 @@ DescADHERENT_CARD_TEXT=Texte imprimé sur les cartes adhérents
 DescADHERENT_CARD_FOOTER_TEXT=Texte imprimé sur le bas des cartes adhérents
 ShowTypeCard=Voir type '%s'
 HTPasswordExport=Generation fichier htpassword
+NoThirdPartyAssociatedToMember=Pas de tiers associé à cet adhérent
+ThirdPartyDolibarr=Tiers Dolibarr

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/adherents/fiche.php
-        \ingroup    adherent
-        \brief      Page d'ajout, edition, suppression d'une fiche adherent
-        \version    $Id$
-*/
+ *       \file       htdocs/adherents/fiche.php
+ *       \ingroup    adherent
+ *       \brief      Page d'ajout, edition, suppression d'une fiche adherent
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
@@ -67,7 +67,7 @@ $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
  * 	Actions
  */
 
-// Create user from a memeber
+// Create user from a member
 if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
 {
 	// Recuperation contact actuel
@@ -84,6 +84,30 @@ if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $
 		{
 			$langs->load("errors");
 			$msg=$langs->trans($nuser->error);
+		}
+	}
+	else
+	{
+		$msg=$adh->error;
+	}
+}
+
+// Create third party from a member
+if ($_POST["action"] == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes' && $user->rights->societe->creer)
+{
+	$adh = new Adherent($db);
+	$result = $adh->fetch($_GET["rowid"]);
+
+	if ($result > 0)
+	{
+		// Creation user
+		$company = new Societe($db);
+		$result=$company->create_from_member($adh,$_POST["name"]);
+
+		if ($result < 0)
+		{
+			$langs->load("errors");
+			$msg=$langs->trans($company->error);
 		}
 	}
 	else
@@ -826,18 +850,41 @@ if ($rowid && $action != 'edit')
 		$formquestion=array(
 		array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
 
-		$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
+		$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateLogin"),"confirm_create_user",$formquestion);
 		print '<br>';
 	}
 
-    // Confirm remove member
+	// Confirm create third party
+	if ($_GET["action"] == 'create_thirdparty')
+	{
+		$name =$adh->nom;
+		if ($adh->nom && $adh->prenom) $name.=' ';
+		$name.=$adh->prenom;
+		if (! empty($name))
+		{
+			if ($adh->societe) $name.=' ('.$adh->societe.')';
+		}
+		else 
+		{
+			$name=$adh->societe;
+		}
+		
+		// Create a form array
+		$formquestion=array(
+		array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
+
+		$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion);
+		print '<br>';
+	}
+
+	// Confirm remove member
     if ($action == 'delete')
     {
         $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete");
         print '<br>';
     }
 
-    // Confirm validate memeber
+    // Confirm validate member
     if ($action == 'valid')
     {
 		// Cree un tableau formulaire
@@ -930,32 +977,32 @@ if ($rowid && $action != 'edit')
     // Morphy
     print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$adh->getmorphylib().'</td></tr>';
 
-    // Tiers
-    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
+    // Company
+    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'</td></tr>';
 
-	// Adresse
-    print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
+    // Adresse
+    print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'</td></tr>';
 
     // CP / Ville
-    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'</td></tr>';
 
     // Pays
     print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.getCountryLabel($adh->pays_id).'</td></tr>';
 
     // Tel pro.
-    print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.dol_print_phone($adh->phone,$adh->pays_code).'</td></tr>';
+    print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.dol_print_phone($adh->phone,$adh->pays_code,0,$adh->fk_soc,1).'</td></tr>';
 
     // Tel perso
-    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td class="valeur">'.dol_print_phone($adh->phone_perso,$adh->pays_code).'</td></tr>';
+    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td class="valeur">'.dol_print_phone($adh->phone_perso,$adh->pays_code,0,$adh->fk_soc,1).'</td></tr>';
 
     // Tel mobile
-    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.dol_print_phone($adh->phone_mobile,$adh->pays_code).'</td></tr>';
+    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.dol_print_phone($adh->phone_mobile,$adh->pays_code,0,$adh->fk_soc,1).'</td></tr>';
 
     // EMail
-    print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($adh->email,0,0,1).'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($adh->email,0,$adh->fk_soc,1).'</td></tr>';
 
 	// Date naissance
-    print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dolibarr_print_date($adh->naiss,'day').'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dolibarr_print_date($adh->naiss,'day').'</td></tr>';
 
     // Public
     print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($adh->public).'</td></tr>';
@@ -975,7 +1022,23 @@ if ($rowid && $action != 'edit')
 	else print $langs->trans("NoDolibarrAccess");
 	print '</td></tr>';
 
-
+	// Third party Dolibarr
+    if ($conf->societe->enabled)
+    {
+	    print '<tr><td>'.$langs->trans("ThirdPartyDolibarr").'</td><td class="valeur">';
+	    if ($adh->fk_soc)
+	    {
+	    	$company=new Societe($db);
+	    	$result=$company->fetch($adh->fk_soc);
+	    	print $company->getNomUrl(1);
+	    }
+	    else
+	    {
+	    	print $langs->trans("NoThirdPartyAssociatedToMember");
+	    }
+	    print '</td></tr>';
+    }
+	
     // Other attributs
     foreach($adho->attribute_label as $key=>$value)
     {
@@ -1069,7 +1132,20 @@ if ($rowid && $action != 'edit')
 		}
 	}
 
-    // Supprimer
+	// Create third party
+	if ($conf->societe->enabled && ! $adh->fk_soc)
+	{
+		if ($user->rights->societe->creer)
+		{
+			print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
+		}
+		else
+		{
+			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("CreateDolibarrThirdParty")."</font>";
+		}
+	}
+	
+	// Supprimer
     if ($user->rights->adherent->supprimer)
     {
         print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";

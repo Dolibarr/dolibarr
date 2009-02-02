@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -688,7 +688,7 @@ class Societe extends CommonObject
 	{
 		global $user,$langs,$conf;
 
-		dolibarr_syslog("Societe::Delete");
+		dolibarr_syslog("Societe::Delete", LOG_DEBUG);
 		$sqr = 0;
 
 		// Check if third party can be deleted
@@ -746,6 +746,7 @@ class Societe extends CommonObject
 			// Remove contacts
 			$sql = "DELETE from ".MAIN_DB_PREFIX."socpeople";
 			$sql.= " WHERE fk_soc = " . $id;
+			dolibarr_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				$sqr++;
@@ -756,8 +757,24 @@ class Societe extends CommonObject
 				dolibarr_syslog("Societe::Delete erreur -1 ".$this->error);
 			}
 
+			// Update link in member table
+			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
+			$sql.= " SET fk_soc = NULL where fk_soc = " . $id;
+			dolibarr_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
+			if ($this->db->query($sql))
+			{
+				$sqr++;
+			}
+			else
+			{
+				$this->error .= $this->db->lasterror();
+				dolibarr_syslog("Societe::Delete erreur -1 ".$this->error);
+			}
+			
+			// Remove ban
 			$sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib";
 			$sql.= " WHERE fk_soc = " . $id;
+			dolibarr_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				$sqr++;
@@ -768,8 +785,10 @@ class Societe extends CommonObject
 				dolibarr_syslog("Societe::Delete erreur -2 ".$this->error);
 			}
 
+			// Remove third party
 			$sql = "DELETE from ".MAIN_DB_PREFIX."societe";
 			$sql.= " WHERE rowid = " . $id;
+			dolibarr_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				$sqr++;
@@ -780,7 +799,7 @@ class Societe extends CommonObject
 				dolibarr_syslog("Societe::Delete erreur -3 ".$this->error);
 			}
 
-			if ($sqr == 3)
+			if ($sqr == 4)
 			{
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
@@ -1935,6 +1954,68 @@ class Societe extends CommonObject
 
 		print '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
 	}
+	
+	/**
+	 *      \brief      Cree en base un utilisateur depuis l'objet adherent
+	 *      \param      member	Objet adherent source
+	 * 		\param		login	Login to force
+	 *      \return     int		Si erreur <0, si ok renvoie id compte cree
+	 */
+	function create_from_member($member,$login='')
+	{
+		global $conf,$user,$langs;
+
+		$name=$member->societe;
+		if (empty($name)) $name=strtolower($member->nom.' '.$member->prenom);
+
+		// Positionne parametres
+		$this->email = $member->email;
+		$this->nom = $name;
+		$this->code_client = -1;
+		$this->code_fournisseur = -1;
+		$this->adresse=$member->adresse;
+		$this->cp=$member->cp;
+		$this->ville=$member->ville;
+		$this->pays_code=$member->pays_code;
+		$this->pays_id=$member->pays_id;
+		$this->tel=$member->phone;				// Prof phone		
+		
+		$this->db->begin();
+
+		// Cree et positionne $this->id
+		$result=$this->create($user);
+		if ($result >= 0)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
+			$sql.= " SET fk_soc=".$this->id;
+			$sql.= " WHERE rowid=".$member->id;
+			
+			dolibarr_syslog("Societe::create_from_member sql=".$sql, LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->db->commit();
+				return $this->id;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog("Societe::create_from_member - 1 - ".$this->error, LOG_ERR);
+
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			// $this->error deja positionne
+			dolibarr_syslog("Societe::create_from_member - 2 - ".$this->error, LOG_ERR);
+
+			$this->db->rollback();
+			return $result;
+		}
+	}
+	
 }
 
 ?>

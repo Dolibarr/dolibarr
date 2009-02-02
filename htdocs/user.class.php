@@ -868,9 +868,9 @@ class User extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql.= " SET fk_member=".$member->id;
 			$sql.= " WHERE rowid=".$this->id;
-			$resql=$this->db->query($sql);
-
+			
 			dolibarr_syslog("User::create_from_member sql=".$sql, LOG_DEBUG);
+			$resql=$this->db->query($sql);
 			if ($resql)
 			{
 				$this->db->commit();
@@ -878,8 +878,8 @@ class User extends CommonObject
 			}
 			else
 			{
-				$this->error=$this->db->error()." - ".$sql;
-				dolibarr_syslog("User::create_from_member - ".$this->error, LOG_ERR);
+				$this->error=$this->db->error();
+				dolibarr_syslog("User::create_from_member - 1 - ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -1;

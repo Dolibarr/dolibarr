@@ -23,21 +23,21 @@
 /**
 	    \file       htdocs/includes/modules/societe/modules_societe.class.php
 		\ingroup    societe
-		\brief      Fichier contenant la classe mère de module de generation societes
+		\brief      Fichier contenant la classe mï¿½re de module de generation societes
 		\version    $Id$
 */
 
 
 /**
 	    \class      ModeleThirdPartyCode
-		\brief  	Classe mère des modèles de numérotation des codes tiers
+		\brief  	Classe mï¿½re des modï¿½les de numï¿½rotation des codes tiers
 */
 
 class ModeleThirdPartyCode
 {
     var $error='';
 
-    /**     \brief      Renvoi la description par defaut du modele de numérotation
+    /**     \brief      Renvoi la description par defaut du modele de numï¿½rotation
      *      \return     string      Texte descripif
      */
     function info($langs)
@@ -55,7 +55,7 @@ class ModeleThirdPartyCode
     }
 
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numï¿½rotation
      *      \return     string      Example
      */
     function getExample($langs)
@@ -64,8 +64,8 @@ class ModeleThirdPartyCode
         return $langs->trans("NoExample");
     }
 
-    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numérotation de fonctionner.
+    /**     \brief      Test si les numï¿½ros dï¿½jï¿½ en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numï¿½rotation de fonctionner.
      *      \return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
@@ -73,7 +73,7 @@ class ModeleThirdPartyCode
         return true;
     }
 
-    /**     \brief      Renvoi prochaine valeur attribuée
+    /**     \brief      Renvoi prochaine valeur attribuï¿½e
      *      \return     string      Valeur
      */
     function getNextValue($objsoc=0,$type=-1)
@@ -98,7 +98,7 @@ class ModeleThirdPartyCode
 	}
 
 	/**
-     *      \brief      Renvoi la liste des modèles actifs
+     *      \brief      Renvoi la liste des modï¿½les actifs
      *      \param      db      Handler de base
      */
     function liste_modeles($db)
@@ -142,12 +142,12 @@ class ModeleThirdPartyCode
 		if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
 		$s.='<br>';
 		$s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
-		if ($type == 0)  $s.=$langs->trans("RequiredIfCustomer").': '.yn(!$this->code_null,1,1).'<br>';
-		if ($type == 1)  $s.=$langs->trans("RequiredIfSupplier").': '.yn(!$this->code_null,1,1).'<br>';
-		if ($type == -1) $s.=$langs->trans("Required").': '.yn(!$this->code_null,1,1).'<br>';
-		$s.=$langs->trans("CanBeModifiedIfOk").': '.yn($this->code_modifiable,1,1).'<br>';
-		$s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,1).'<br>';
-		$s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,1).'<br>';
+		if ($type == 0)  $s.=$langs->trans("RequiredIfCustomer").': '.yn(!$this->code_null,1,2).'<br>';
+		if ($type == 1)  $s.=$langs->trans("RequiredIfSupplier").': '.yn(!$this->code_null,1,2).'<br>';
+		if ($type == -1) $s.=$langs->trans("Required").': '.yn(!$this->code_null,1,2).'<br>';
+		$s.=$langs->trans("CanBeModifiedIfOk").': '.yn($this->code_modifiable,1,2).'<br>';
+		$s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,2).'<br>';
+		$s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,2).'<br>';
 		$s.='<br>';
 		if ($type == 0 || $type == -1)  $s.=$langs->trans("NextValue").': <b>'.$this->getNextValue($soc,0).'</b><br>';
 		if ($type == 1 || $type == -1)  $s.=$langs->trans("NextValue").': <b>'.$this->getNextValue($soc,1).'</b>';
@@ -164,14 +164,14 @@ class ModeleThirdPartyCode
 
 /**
 		\class		ModeleAccountancyCode
-		\brief  	Classe mère des modèles de numérotation des codes compta
+		\brief  	Classe mï¿½re des modï¿½les de numï¿½rotation des codes compta
 */
 
 class ModeleAccountancyCode
 {
     var $error='';
 
-    /**     \brief      Renvoi la description par defaut du modele de numérotation
+    /**     \brief      Renvoi la description par defaut du modele de numï¿½rotation
      *      \return     string      Texte descripif
      */
     function info($langs)
@@ -180,7 +180,7 @@ class ModeleAccountancyCode
         return $langs->trans("NoDescription");
     }
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numï¿½rotation
      *      \return     string      Example
      */
     function getExample($langs)
@@ -189,8 +189,8 @@ class ModeleAccountancyCode
         return $langs->trans("NoExample");
     }
 
-    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numérotation de fonctionner.
+    /**     \brief      Test si les numï¿½ros dï¿½jï¿½ en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numï¿½rotation de fonctionner.
      *      \return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
@@ -198,7 +198,7 @@ class ModeleAccountancyCode
         return true;
     }
 
-    /**     \brief      Renvoi prochaine valeur attribuée
+    /**     \brief      Renvoi prochaine valeur attribuï¿½e
      *      \return     string      Valeur
      */
     function getNextValue($langs)

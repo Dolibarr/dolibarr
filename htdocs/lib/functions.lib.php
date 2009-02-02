@@ -789,11 +789,12 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 			$newphone='<a href="'.$url.'">'.$newphone.'</a>';
 		}
 
-		if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
+		//if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
+		if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
 		{
 			$type='AC_TEL';
 			if ($addlink == 'AC_FAX') $type='AC_FAX';
-			$link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
+			$link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode='.$type.($cid?'&amp;contactid='.$cid:'').($socid?'&amp;socid='.$socid:'').'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
 			$newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>&nbsp;'.$link.'</td></tr></table>';
 		}
 	}
@@ -2265,10 +2266,10 @@ function get_default_npr($societe_vendeuse, $societe_acheteuse, $taux_produit)
 
 
 /**
- \brief  Renvoie oui ou non dans la langue choisie
- \param	yesno			Variable pour test si oui ou non
- \param	case			1=Yes/No, 0=yes/no
- \param	color			0=texte only, 1=Text is format with a color font style
+ *	\brief  Renvoie oui ou non dans la langue choisie
+ *	\param	yesno			Variable pour test si oui ou non
+ *	\param	case			1=Yes/No, 0=yes/no
+ *	\param	color			0=texte only, 1=Text is formated with a color font style (red or blue), 2=Text is formated with blue color.
  */
 function yn($yesno, $case=1, $color=0)
 {
@@ -2282,7 +2283,8 @@ function yn($yesno, $case=1, $color=0)
 	elseif ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false')
 	{
 		$result=($case?$langs->trans("No"):$langs->trans("no"));
-		$class='error';
+		if ($color == 2) $class='ok';
+		else $class='error';
 	}
 	if ($color) return '<font class="'.$class.'">'.$result.'</font>';
 	return $result;
