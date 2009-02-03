@@ -27,6 +27,7 @@
 
 require_once DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php";
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 
 /**
@@ -195,8 +196,8 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$height_note = 200;
-				$pdf->Rect($this->marge_gauche, 80, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 210);
+				$height_note = 180;
+				$pdf->Rect($this->marge_gauche, $tab_top-10, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+10);
 				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note);
 				if ($this->barcode->enabled)
 				{
@@ -216,9 +217,11 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				$curY = $this->tableau_top + 4;
 				$pdf->writeHTMLCell(30, 3, 170, $curY, $outputlangs->trans("QtyToShip"), 0, 0);
 
+				$nexY = $this->tableau_top + 14;
+
 				for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
 				{
-					$curY = $this->tableau_top + 14 + ($i * 7);
+					$curY = $nexY;
 
 					if ($this->barcode->enabled)
 					{
@@ -229,20 +232,30 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					$libelleproduitservice=pdf_getlinedesc($this->expe->lignes[$i],$outputlangs);
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
-
 					$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+
+					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
+					$nexY = $pdf->GetY();
 
 					$pdf->SetXY (160, $curY);
 					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_asked);
 
 					$pdf->SetXY (186, $curY);
 					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_shipped);
+
+					$nexY+=2;    // Passe espace entre les lignes
 				}
+
+
+				// Pied de page
+				$this->_pagefoot($pdf,$this->expe,$outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
 
 				$pdf->Output($file);
+				if (! empty($conf->global->MAIN_UMASK))
+				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;
@@ -264,6 +277,20 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$langs->setPhpLang();	// On restaure langue session
 		return 0;   // Erreur par defaut
 	}
+
+
+	/**
+	 *   	\brief      Show footer of page
+	 *   	\param      pdf     		Object PDF
+	 * 		\param		object			Object invoice
+	 *      \param      outputlang		Object lang for output
+	 * 		\remarks	Need this->emetteur object
+	 */
+	function _pagefoot(&$pdf,$object,$outputlangs)
+	{
+		return pdf_pagefoot($pdf,$outputlangs,'SENDING_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+	}
+
 }
 
 ?>

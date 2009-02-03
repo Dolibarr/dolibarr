@@ -702,8 +702,6 @@ class Commande extends CommonObject
 			$ligne->price=$price;
 			$ligne->remise=$remise;
 
-			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-			// Save the start and end date of the new line in the object
 			$ligne->date_start=$date_start;
 			$ligne->date_end=$date_end;
 
@@ -2310,8 +2308,8 @@ class CommandeLigne
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
 		else { $sql.='null,'; }
 		$sql.= " '".price2num($this->remise_percent)."',";
-		$sql.= " '".price2num($this->subprice)."',";
-		$sql.= " '".price2num($this->price)."',";
+		$sql.= " ".($this->subprice!=''?"'".price2num($this->subprice)."'":"null").",";
+		$sql.= " ".($this->price!=''?"'".price2num($this->price)."'":"null").",";
 		$sql.= " '".price2num($this->remise)."',";
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
@@ -2326,9 +2324,9 @@ class CommandeLigne
 		// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 		// Insert in the database the start and end dates
 		$sql.= " '".price2num($this->total_ttc)."',";
-		if ($this->date_start) { $sql.= "'".$this->date_start."',"; }
+		if ($this->date_start) { $sql.= "'".$this->db->idate($this->date_start)."',"; }
 		else { $sql.='null,'; }
-		if ($this->date_end)   { $sql.= "'".$this->date_end."'"; }
+		if ($this->date_end)   { $sql.= "'".$this->db->idate($this->date_end)."'"; }
 		else { $sql.='null'; }
 		$sql.= ')';
 

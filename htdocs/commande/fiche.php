@@ -301,25 +301,8 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		$ret=$commande->fetch_client();
 
 		$suffixe = $_POST['idprod'] ? '_prod' : '';
-		// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-		// Retrieve start and end date (for product/service lines or customizable lines)
-		$date_start='';
-		$date_end='';
-		if ($_POST['date_start'.$suffixe.'year'] && $_POST['date_start'.$suffixe.'month'] && $_POST['date_start'.$suffixe.'day'])
-		{
-			$date_start=$_POST['date_start'.$suffixe.'year'].'-'.$_POST['date_start'.$suffixe.'month'].'-'.$_POST['date_start'.$suffixe.'day'];
-			// If hour/minute are specified, append them
-			if (($_POST['date_start'.$suffixe.'hour']) && ($_POST['date_start'.$suffixe.'min']))
-			$date_start.=' '.$_POST['date_start'.$suffixe.'hour'].':'.$_POST['date_start'.$suffixe.'min'];
-		}
-		if ($_POST['date_end'.$suffixe.'year'] && $_POST['date_end'.$suffixe.'month'] && $_POST['date_end'.$suffixe.'day'])
-		{
-			$date_end=$_POST['date_end'.$suffixe.'year'].'-'.$_POST['date_end'.$suffixe.'month'].'-'.$_POST['date_end'.$suffixe.'day'];
-			// If hour/minute are specified, append them
-			if (($_POST['date_end'.$suffixe.'hour']) && ($_POST['date_end'.$suffixe.'min']))
-			$date_end.=' '.$_POST['date_end'.$suffixe.'hour'].':'.$_POST['date_end'.$suffixe.'min'];
-		}
-
+		$date_start=dolibarr_mktime(0, 0, 0, $_POST['date_start'.$suffixe.'month'], $_POST['date_start'.$suffixe.'day'], $_POST['date_start'.$suffixe.'year']);
+		$date_end=dolibarr_mktime(0, 0, 0, $_POST['date_end'.$suffixe.'month'], $_POST['date_end'.$suffixe.'day'], $_POST['date_end'.$suffixe.'year']);
 		$price_base_type = 'HT';
 
 		// Ecrase $pu par celui du produit
@@ -362,7 +345,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			}
 
 			$desc = $prod->description;
-			$desc.= $prod->description && $_POST['np_desc'] ? "\n" : "";
+			$desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br>":"\n") : "";
 			$desc.= $_POST['np_desc'];
 		}
 		else
@@ -395,8 +378,6 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			0,
 			$price_base_type,
 			$pu_ttc,
-			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-			// Add the start and end dates
 			$date_start,
 			$date_end
 			);
@@ -427,25 +408,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	$commande = new Commande($db,'',$_POST['id']);
 	if (! $commande->fetch($_POST['id']) > 0) dolibarr_print_error($db);
 
-
-	$date_start='';
-	$date_end='';
-	// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	// Retrieve start and end date (for product/service lines or customizable lines)
-	if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday'])
-	{
-		$date_start=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
-		// If hour/minute are specified, append them
-		if (($_POST['date_starthour']) && ($_POST['date_startmin']))
-		$date_start.=' '.$_POST['date_starthour'].':'.$_POST['date_startmin'];
-	}
-	if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
-	{
-		$date_end=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
-		// If hour/minute are specified, append them
-		if (($_POST['date_endhour']) && ($_POST['date_endmin']))
-		$date_end.=' '.$_POST['date_endhour'].':'.$_POST['date_endmin'];
-	}
+	$date_start=dolibarr_mktime(0, 0, 0, $_POST['date_start'.$suffixe.'month'], $_POST['date_start'.$suffixe.'day'], $_POST['date_start'.$suffixe.'year']);
+	$date_end=dolibarr_mktime(0, 0, 0, $_POST['date_end'.$suffixe.'month'], $_POST['date_end'.$suffixe.'day'], $_POST['date_end'.$suffixe.'year']);
 
 	// Define info_bits
 	$info_bits=0;
@@ -469,8 +433,6 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 		$vat_rate,
 		'HT',
 		$info_bits,
-		// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-		// Add the start and end dates
 		$date_start,
 		$date_end
 		);
