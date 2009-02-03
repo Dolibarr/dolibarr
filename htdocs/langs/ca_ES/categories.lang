@@ -6,6 +6,7 @@ Rubrique = Carpeta
 Rubriques = Carpetes
 categories = Categoria(es)
 TheCategorie = La categoria
+NoCategoryYet = Cap categoria d'aquest tipus creada
 In = En
 AddIn = Afegir en
 modify = Modificar
