@@ -403,13 +403,14 @@ if ($_GET["action"] == 'create')
 	 * Mode creation
 	 * Creation d'une nouvelle fiche d'intervention
 	 */
+
+	$societe=new Societe($db);
 	if ($_GET["socid"] > 0)
 	{
-		$societe=new Societe($db);
 		$societe->fetch($_GET["socid"]);
 	}
 
-	print_titre($langs->trans("AddIntervention"));
+	print_fiche_titre($langs->trans("AddIntervention"));
 
 	if ($mesg) print $mesg.'<br>';
 
@@ -429,7 +430,7 @@ if ($_GET["action"] == 'create')
 	$modFicheinter = new $obj;
 	$numpr = $modFicheinter->getNextValue($societe,$ficheinter);
 
-	if ($_GET["socid"])
+	if ($_GET["socid"] > 0)
 	{
 		print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
 

@@ -371,17 +371,22 @@ class Translate {
 		{
 			// Translation is not available
 			$newstr=$key;
-			if (ereg('CurrencyShort([A-Z]+)$',$key,$reg))
+			if (eregi('CurrencyShort([A-Z]+)$',$key,$reg))
 			{
 				global $db;
 				//$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','labelshort');
 				$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','code');
 			}
-			else if (ereg('Currency([A-Z]+)$',$key,$reg))
+			else if (eregi('Currency([A-Z]+)$',$key,$reg))
 			{
 				global $db;
 				$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
 				//print "xxx".$key."-".$value."\n";
+			}
+			else if (eregi('SendingMethod([0-9A-Z]+)$',$key,$reg))
+			{
+				global $db;
+				$newstr=$this->getLabelFromKey($db,$reg[1],'expedition_methode','code','libelle');
 			}
 			return $this->convToOutputCharset($newstr);
 		}
@@ -533,7 +538,6 @@ class Translate {
     {
     	global $conf;
 
-
         // Test if file is in lang directory
 		foreach($this->dir as $searchdir)
 		{
@@ -575,11 +579,13 @@ class Translate {
     /**
      *      \brief      Return a label for a key. Store key-label in a cache.
      * 		\param		db			Database handler
-     * 		\param		key			Key to get label
+     * 		\param		key			Key to get label (key in language file)
      * 		\param		tablename	Table name without prefix
      * 		\param		fieldkey	Field for key
      * 		\param		fieldlabel	Field for label
+     * 		\param		fieldval	Value to find record
      *      \return     string		Label
+     *		\remarks	This function can be used to get label in database but more often to get code from key id.
      */
     function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel)
     {

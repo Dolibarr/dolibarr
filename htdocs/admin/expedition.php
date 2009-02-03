@@ -206,8 +206,9 @@ if ($_GET["action"] == 'setmod')
 
 
 /*
- * Affiche page
+ * Viewe
  */
+
 $dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/";
 $html=new Form($db);
 
@@ -242,107 +243,11 @@ if ($conf->global->MAIN_SUBMODULE_LIVRAISON)
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
-// M�thode de livraison
-$mods=array();
-$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode WHERE statut = 1";
-$resql = $db->query($sql);
-if ($resql)
-{
-	$i = 0;
-	$num = $db->num_rows($resql);
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($resql);
-		$mods[$i]=$obj->rowid;
-		$i++;
-	}
-}
-
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td width="140">'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Action").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
-print "</tr>\n";
-
-if(is_dir($dir))
-{
-	$handle=opendir($dir);
-	$var=true;
-
-	while (($file = readdir($handle))!==false)
-	{
-		if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,19) == 'methode_expedition_')
-		{
-			$name = substr($file, 19, strlen($file) - 31);
-			$classname = substr($file, 0, strlen($file) - 12);
-
-			require_once($dir.$file);
-
-			$module = new $classname();
-
-			$var=!$var;
-			print "<tr $bc[$var]><td>";
-			print $module->name;
-			print "</td><td>\n";
-
-			print $module->description;
-
-			print '</td><td align="center">';
-
-			if (in_array($module->id, $mods))
-			{
-				if ($conf->global->EXPEDITION_ADDON != $name)
-				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmethod&amp;statut=0&amp;module='.$name.'&amp;moduleid='.$module->id.'">';
-					print img_tick($langs->trans("Disable"));
-					print '</a>';
-				}
-				else
-				{
-					print img_tick($langs->trans("Activated"));
-				}
-
-			}
-			else
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmethod&amp;statut=1&amp;module='.$name.'&amp;moduleid='.$module->id.'">'.$langs->trans("Activate").'</a>';
-			}
-
-			print '</td>';
-
-			// Default
-			print '<td align="center">';
-			if ($conf->global->EXPEDITION_ADDON == $name)
-			{
-				print img_tick($langs->trans("Activate"));
-			}
-			else
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;module='.$name.'&amp;moduleid='.$module->id.'">'.$langs->trans("Default").'</a>';
-			}
-			print '</td>';
-
-			// Info
-			print '<td>&nbsp;</td>';
-
-			print '</tr>';
-		}
-	}
-	closedir($handle);
-}
-else
-{
-	print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
-}
-print '</table>';
 
 
 /*
  *  Modeles de documents
  */
-print '<br>';
 print_titre($langs->trans("SendingsReceiptModel"));
 
 // Defini tableau def de modele invoice

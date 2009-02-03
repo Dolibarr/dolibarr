@@ -31,8 +31,8 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande
 
 
 /**
- \class      Expedition
- \brief      Classe de gestion des expeditions
+ *	\class      Expedition
+ *	\brief      Classe de gestion des expeditions
  */
 class Expedition extends CommonObject
 {
@@ -80,21 +80,23 @@ class Expedition extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
 		$error = 0;
-		/* On positionne en mode brouillon l'expedition */
-		$this->brouillon = 1;
 
+		// Clean parameters
+		$this->brouillon = 1;
+		$this->tracking_number = sanitizeFileName($this->tracking_number);
+		
 		$this->user = $user;
 
-		$this->expedition_method = sanitizeFileName($this->expedition_method);
-		$this->tracking_number = sanitizeFileName($this->tracking_number);
 
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (ref, date_creation, fk_user_author, date_expedition,";
 		$sql.= " fk_soc, fk_expedition_methode, tracking_number, weight, size, width, height, weight_units, size_units";
 		$sql.= ")";
-		$sql.= " VALUES ('(PROV)', now(), $user->id, ".$this->db->idate($this->date_expedition);
-		$sql.= ", ".$this->socid.",'". $this->expedition_method_id."','". $this->tracking_number."',".$this->weight.",".$this->sizeS.",".$this->sizeW.",".$this->sizeH.",".$this->weight_units.",".$this->size_units;
+		$sql.= " VALUES ('(PROV)', ".$this->db->idate(gmmktime()).", ".$user->id.", ".$this->db->idate($this->date_expedition).",";
+		$sql.= " ".$this->socid.",";
+		$sql.= " ".($this->expedition_method_id>0?$this->expedition_method_id:"null").",";
+		$sql.= " '". $this->tracking_number."',".$this->weight.",".$this->sizeS.",".$this->sizeW.",".$this->sizeH.",".$this->weight_units.",".$this->size_units;
 		$sql.= ")";
 
 		$resql=$this->db->query($sql);
@@ -110,7 +112,7 @@ class Expedition extends CommonObject
 	  	{
 	  		if (! $this->create_line($this->lignes[$i]->entrepot_id, $this->lignes[$i]->origin_line_id, $this->lignes[$i]->qty) > 0)
 	  		{
-		    $error++;
+			    $error++;
 	  		}
 	  	}
 
@@ -118,32 +120,32 @@ class Expedition extends CommonObject
 	  	{
 	  		if ($conf->commande->enabled)
 	  		{
-		    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_exp (fk_expedition, fk_commande) VALUES ('.$this->id.','.$this->origin_id.')';
-		    if (!$this->db->query($sql))
-		    {
-		    	$error++;
-		    }
-
-		    $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->origin_id;
-		    if (! $this->db->query($sql))
-		    {
-		    	$error++;
-		    }
+			    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_exp (fk_expedition, fk_commande) VALUES ('.$this->id.','.$this->origin_id.')';
+			    if (!$this->db->query($sql))
+			    {
+			    	$error++;
+			    }
+	
+			    $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->origin_id;
+			    if (! $this->db->query($sql))
+			    {
+			    	$error++;
+			    }
 	  		}
 	  		else
 	  		{
-		    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'pr_exp (fk_expedition, fk_propal) VALUES ('.$this->id.','.$this->origin_id.')';
-		    if (!$this->db->query($sql))
-		    {
-		    	$error++;
-		    }
-
-		    //Todo: definir un statut
-		    $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 9 WHERE rowid=".$this->origin_id;
-		    if (! $this->db->query($sql))
-		    {
-		    	$error++;
-		    }
+			    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'pr_exp (fk_expedition, fk_propal) VALUES ('.$this->id.','.$this->origin_id.')';
+			    if (!$this->db->query($sql))
+			    {
+			    	$error++;
+			    }
+	
+			    //Todo: definir un statut
+			    $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 9 WHERE rowid=".$this->origin_id;
+			    if (! $this->db->query($sql))
+			    {
+			    	$error++;
+			    }
 	  		}
 	  	}
 
@@ -777,29 +779,8 @@ class Expedition extends CommonObject
 		}
 	}
 
-	/*
-	 Get id of default expedition method
-	 */
-	function GetIdOfDefault()
-	{
-		global $conf;
-
-		$sql = "SELECT em.rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."expedition_methode as em";
-		$sql.= " WHERE em.code = '".strtoupper($conf->global->EXPEDITION_ADDON)."'";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($obj = $this->db->fetch_object($resql))
-			{
-				$this->default_method_id = $obj->rowid;
-			}
-		}
-	}
-
-	/*
-	 Get tracking url status
+	/**
+	 *	Get tracking url status
 	 */
 	function GetUrlTrackingStatus()
 	{

@@ -316,8 +316,7 @@ if ($_GET["action"] == 'create')
 			print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
 			print '<td colspan="3">';
 			$expe->fetch_delivery_methods();
-			$expe->GetIdOfDefault();
-			$html->select_array("expedition_method_id",$expe->meths,$expe->default_method_id,0,0,0,0,"",1);
+			$html->select_array("expedition_method_id",$expe->meths,'',1,0,0,0,"",1);
 			print "</td></tr>\n";
 
 			// Tracking number
@@ -524,7 +523,8 @@ else
 			$typeobject = $expedition->origin;
 			$expedition->fetch_object();
 
-			if (strlen($expedition->tracking_number) && strlen($expedition->expedition_method_id)) {
+			if (strlen($expedition->tracking_number))
+			{
 				$expedition->GetUrlTrackingStatus();
 			}
 
@@ -686,6 +686,15 @@ else
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td>';
 			print '<td colspan="3">'.$expedition->getLibStatut(4)."</td>\n";
+			print '</tr>';
+
+			// Sending method
+			print '<tr><td>'.$langs->trans("SendingMethod").'</td>';
+			print '<td colspan="3">';
+			// Get code using getLabelFromKey
+			$code=$langs->getLabelFromKey($db,$expedition->expedition_method_id,'expedition_methode','rowid','code');
+			print $langs->trans("SendingMethod".strtoupper($code));
+			print '</td>';
 			print '</tr>';
 
 			// Tracking Number
