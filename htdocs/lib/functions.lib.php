@@ -405,12 +405,15 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 	// If date undefined or "", we return ""
 	if (strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
 
-	// Analyse de la date (deprecated)
-	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg))
+	//print 'x'.$time;
+	
+	// Analyse de la date (deprecated)   Ex: 19700101, 19700101010000
+	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg)
+	 || eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$',$time,$reg))
 	{
 		// This part of code should not be used.
 		dolibarr_syslog("Functions.lib::dolibarr_print_date function call with deprecated parameter in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
-		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
 		$syear = $reg[1];
 		$smonth = $reg[2];
 		$sday = $reg[3];
@@ -423,7 +426,11 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 	else
 	{
 		// Date is a timestamps
-		$ret=adodb_strftime($format,$time,$to_gmt);
+		if ($time < 100000000000)	// Protection against bad date values
+		{
+			$ret=adodb_strftime($format,$time,$to_gmt);
+		}
+		else $ret='Bad value '.$time.' for date';
 	}
 
 	// What is page code of texts from strftime functions ?
