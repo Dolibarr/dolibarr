@@ -998,11 +998,8 @@ class Commande extends CommonObject
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
 		$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits,';
-		$sql.= ' l.total_ht, l.total_ttc, l.total_tva,';
+		$sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.date_start, l.date_end,';
 		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
-		// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-		// Load from the database the start and end date
-		$sql.= ','.$this->db->pdate('l.date_start').' as date_start,'.$this->db->pdate('l.date_end').' as date_end';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
@@ -1048,8 +1045,8 @@ class Commande extends CommonObject
 
 				// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 				// Save the start and end date of the line in the object
-				$ligne->date_start       = $objp->date_start;
-				$ligne->date_end         = $objp->date_end;
+				$ligne->date_start       = $this->db->idate($objp->date_start);
+				$ligne->date_end         = $this->db->idate($objp->date_end);
 
 				$this->lignes[$i] = $ligne;
 				$i++;
@@ -1673,9 +1670,9 @@ class Commande extends CommonObject
 
 			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 			// Save the start and end date in the database
-			if ($date_start) { $sql.= ",date_start='".$date_start."'"; }
+			if ($date_start) { $sql.= ",date_start='".$this->db->idate($date_start)."'"; }
 			else { $sql.=',date_start=null'; }
-			if ($date_end) { $sql.= ",date_end='".$date_end."'"; }
+			if ($date_end) { $sql.= ",date_end='".$this->db->idate($date_end)."'"; }
 			else { $sql.=',date_end=null'; }
 
 			$sql.= " WHERE rowid = ".$rowid;
