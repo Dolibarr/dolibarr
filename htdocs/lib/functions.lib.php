@@ -412,7 +412,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 	 || eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$',$time,$reg))
 	{
 		// This part of code should not be used.
-		dolibarr_syslog("Functions.lib::dolibarr_print_date function call with deprecated parameter in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+		dolibarr_syslog("Functions.lib::dolibarr_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
 		$syear = $reg[1];
 		$smonth = $reg[2];
