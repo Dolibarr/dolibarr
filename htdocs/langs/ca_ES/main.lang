@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - main 
+# Dolibarr language file - ca_ES - main
 CHARSET = UTF-8
 DatabaseConnection = Connexió a la base de dades
 SeparatorDecimal = ,
@@ -171,6 +171,7 @@ DateStart = Data inici
 DateEnd = Data fi
 DateCreation = Data de creació
 DateModification = Data modificació
+DateModificationShort = Data modif.
 DateLastModification = Data última modificació
 DateValidation = Data validació
 DateClosing = Data tancament
