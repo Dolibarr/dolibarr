@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - stocks 
+# Dolibarr language file - fr_FR - stocks = 
 CHARSET = UTF-8
 WarehouseCard = Ficha almacén
 Warehouse = Almacén
@@ -39,7 +39,7 @@ PMPValue = Valor (PMP)
 EnhancedValueOfWarehouses = Valor de stocks
 UserWarehouseAutoCreate = Crear existencias automáticamente en la creación de un usuario
 QtyDispatched = Cantidad desglosada
-OrderDispatch = Desglose pedido
+OrderDispatch = Recepción de stocks
 RuleForStockManagementDecrease = Regla de gestión de decrementos de stock
 RuleForStockManagementIncrease = Regla de gestión de incrementos de stock
 DeStockOnBill = Decrementar los stocks físicos sobre las facturas/abonos (atención, en esta versión, todavía se realiza el ajuste sobre el almacén número 1)
