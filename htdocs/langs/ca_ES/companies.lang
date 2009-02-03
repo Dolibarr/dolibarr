@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - soc
+# Dolibarr language file - ca_ES - companies
 CHARSET = UTF-8
 ErrorBadEMail = e-mail %s incorrecte
 ErrorCompanyNameAlreadyExists = El nom de l'empresa %s ja existeix. Indiqui altre.
@@ -72,11 +72,11 @@ WrongSupplierCode = Códi proveïdor incorrecte
 CustomerCodeModel = Model de codi client
 SupplierCodeModel = Model de codi proveïdor
 Gencod = Codi de barra
+##### Professionnal ID ##### = undefined = undefined
 ProfId1Short = Prof. id 1
 ProfId2Short = Prof. id 2
 ProfId3Short = Prof. id 3
 ProfId4Short = Prof. id 4
-##### Professionnal ID ##### = undefined
 ProfId1 = ID profesional 1
 ProfId2 = ID profesional 2
 ProfId3 = ID profesional 3
@@ -260,6 +260,7 @@ Organization = Organisme
 AutomaticallyGenerated = Generat automàticament
 FiscalYearInformation = Informació de l'any fiscal
 FiscalMonthStart = Mes d'inici d'exercici
-# Tigre = undefined
-TigreNumRefModelDesc1 = Retorna un codi client/proveïdor personalitzable segons una màscara que s'ha de definir.
-TigreMaskCodes = Vostè pot indicar una màscara de numeració. En aquesta màscara, pot utilitzar les etiquetes: <br><b> (000000) </b> correspon a un nombre que s'incrementa en cada codi de client/proveïdor. Indiqui tants zeros com a mesura desitgi en el comptador. El mesurador es completarà amb 0 a l'esquerra per tenir tants zeros com en la màscara.<br><b>(dd) </b> dia de creació del codi de client/proveïdor (01 a 31).<br>< b>(mm)</b> mes de creació del codi de client/proveïdor (01 a 12).<br><b> (yy) </ b> i / o (yyyy) any, amb 2 o 4 xifres , de la creació del codi de cliente/proveedor.
+# Monkey =  = 
+MonkeyNumRefModelDesc = Retorna un número sota el format %syymm-nnnn per als codis de clients  i %syymm-nnnn per als codis dels proveïdors, on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0.
+# Leopard =  = 
+LeopardNumRefModelDesc = Codi de client/proveïdor lliure sense verificació. Pot ser modificat en qualsevol moment.
