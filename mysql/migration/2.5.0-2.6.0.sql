@@ -63,6 +63,6 @@ delete from llx_categorie_association where fk_categorie_mere = fk_categorie_fil
 
 
 -- Put at the end. Cas have duplicate values
-ALTER TABLE llx_categorie_association drop index idx_categorie_association_fk_categorie_fille
+ALTER TABLE llx_categorie_association drop index idx_categorie_association_fk_categorie_fille;
 ALTER TABLE llx_categorie_association ADD UNIQUE INDEX uk_categorie_association (fk_categorie_mere, fk_categorie_fille);
 ALTER TABLE llx_categorie_association ADD UNIQUE INDEX uk_categorie_association_fk_categorie_fille (fk_categorie_fille);
