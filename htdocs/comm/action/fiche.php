@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -63,7 +63,7 @@ if ($_POST["action"] == 'add_action')
     {
         $result=$contact->fetch($_POST["contactid"]);
     }
-	
+
     if ($_POST['cancel'])
 	{
 		$backtopage='';
@@ -74,7 +74,7 @@ if ($_POST["action"] == 'add_action')
 			else $backtopage=DOL_URL_ROOT.'/comm/action/index.php';
 		}
 		header("Location: ".$backtopage);
-		exit;	
+		exit;
 	}
 
 	// Clean parameters
@@ -111,14 +111,14 @@ if ($_POST["action"] == 'add_action')
                    $_POST["a2day"],
                    $_POST["a2year"]);
 	*/
-                   
+
 	if (! $datep2 && $_POST["percentage"] == 100)
 	{
 		$error=1;
 	   	$_GET["action"] = 'create';
 	   	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd")).'</div>';
 	}
-                   
+
 	// Initialisation objet cactioncomm
     if (! $_POST["actioncode"])
     {
@@ -126,11 +126,11 @@ if ($_POST["action"] == 'add_action')
 		$_GET["action"] = 'create';
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Type")).'</div>';
     }
-	else 
+	else
 	{
 		$result=$cactioncomm->fetch($_POST["actioncode"]);
 	}
-	
+
 	// Initialisation objet actioncomm
 	$actioncomm->type_id = $cactioncomm->id;
 	$actioncomm->type_code = $cactioncomm->code;
@@ -187,7 +187,7 @@ if ($_POST["action"] == 'add_action')
 		$userdone->fetch();
 	}
 	$actioncomm->userdone = $userdone;
-	
+
 	$actioncomm->note = trim($_POST["note"]);
 	if (isset($_POST["contactid"])) $actioncomm->contact = $contact;
 	if (isset($_REQUEST["socid"]) && $_REQUEST["socid"] > 0)
@@ -204,17 +204,17 @@ if ($_POST["action"] == 'add_action')
 	// Check parameters
 	if ($actioncomm->type_code == 'AC_RDV' && ($datep == '' || $datep2 == ''))
 	{
-		$error=1;	
+		$error=1;
 		$_GET["action"] = 'create';
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")).'</div>';
 	}
 	if ($datea && $_POST["percentage"] == 0)
 	{
-		$error=1;	
+		$error=1;
 		$_GET["action"] = 'create';
         $mesg='<div class="error">'.$langs->trans("ErrorStatusCantBeZeroIfStarted").'</div>';
 	}
-	
+
  	if (! $_POST["apyear"] && ! $_POST["adyear"])
  	{
     	$error=1;
@@ -316,7 +316,7 @@ if ($_POST["action"] == 'update')
                                    $_POST["apmonth"],
                                    $_POST["apday"],
                                    $_POST["apyear"]);
- 
+
 		$datep2=dolibarr_mktime($_POST["p2hour"],
 	                   $_POST["p2min"],
 	                   0,
@@ -336,7 +336,7 @@ if ($_POST["action"] == 'update')
 	                   $_POST["a2day"],
 	                   $_POST["a2year"]);
 		*/
-	                   
+
 		//print $_POST["apmonth"].",".$_POST["apday"].",".$_POST["apyear"].",".$_POST["aphour"].",".$_POST["apmin"]."<br>\n";
 		//print $actioncomm->datep;
 	    //print 'dddd'.$datep;
@@ -377,7 +377,7 @@ if ($_POST["action"] == 'update')
 			$db->begin();
 
 			$result=$actioncomm->update($user);
-			
+
 			if ($result > 0)
 			{
 				$db->commit();
@@ -385,7 +385,7 @@ if ($_POST["action"] == 'update')
 			else
 			{
 				$db->rollback();
-			}	
+			}
 		}
     }
 
@@ -443,9 +443,9 @@ if ($_GET["action"] == 'create')
 
 	if ($mesg) print $mesg.'<br>';
 	else print "<br>";
-	
+
 	print '<table class="border" width="100%">';
-	
+
 	// Type d'action actifs
 	print '<tr><td width="30%"><b>'.$langs->trans("Type").'*</b></td><td>';
 	if ($_GET["actioncode"])
@@ -462,10 +462,10 @@ if ($_GET["action"] == 'create')
 
 	// Title
 	print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="60" value="'.$actioncomm->label.'"></td></tr>';
-	
+
 	// Location
 	print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" size="60" value="'.$actioncomm->location.'"></td></tr>';
-	
+
 	// Societe, contact
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
 	if ($_REQUEST["socid"] > 0)
@@ -482,7 +482,7 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 
 	// Si la societe est imposee, on propose ces contacts
-	
+
 	// If company is forced propose contacts
 	if ($_REQUEST["socid"] > 0 && !($_REQUEST['contactid'] > 0))
 	{
@@ -494,7 +494,7 @@ if ($_GET["action"] == 'create')
 	print '</table>';
 	print '<br>';
 	print '<table class="border" width="100%">';
-	
+
 	// Affecte a
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 //	$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:$actioncomm->usertodo,'affectedto',1);
@@ -509,8 +509,8 @@ if ($_GET["action"] == 'create')
 	print '</table>';
 	print '<br>';
 	print '<table class="border" width="100%">';
-	
-	if (! empty($_GET["datep"]) && eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$',$_GET["datep"],$reg)) 
+
+	if (! empty($_GET["datep"]) && eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$',$_GET["datep"],$reg))
 	{
 		$actioncomm->datep=dolibarr_mktime(0,0,0,$reg[2],$reg[3],$reg[1]);
 	}
@@ -546,7 +546,7 @@ if ($_GET["action"] == 'create')
 
 	// Priority
 	print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
-	print '<input type="text" name="priority" value="'.$act->priority.'" size="5">';
+	print '<input type="text" name="priority" value="'.($_POST["priority"]?$_POST["priority"]:$actioncomm->priority).'" size="5">';
 	print '</td></tr>';
 
 	add_row_for_calendar_link();
@@ -557,12 +557,12 @@ if ($_GET["action"] == 'create')
 	{
 		// Editeur wysiwyg
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('note','',280,'dolibarr_notes','In',true);
+		$doleditor=new DolEditor('note',($_POST["note"]?$_POST["note"]:$actioncomm->note),280,'dolibarr_notes','In',true);
 		$doleditor->Create();
 	}
 	else
 	{
-		print '<textarea name="note" cols="90" rows="'.ROWS_7.'"></textarea>';
+		print '<textarea name="note" cols="90" rows="'.ROWS_7.'">'.($_POST["note"]?$_POST["note"]:$actioncomm->note).'</textarea>';
 	}
 	print '</td></tr>';
 
@@ -595,7 +595,7 @@ if ($_GET["id"])
     $act = new ActionComm($db);
     $result=$act->fetch($_GET["id"]);
 	if ($result < 0) dolibarr_print_error($db,$act->error);
-	
+
 	$societe = new Societe($db);
 	if ($act->societe->id)
 	{
@@ -638,7 +638,7 @@ if ($_GET["id"])
 
     $now=gmmktime();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
-    
+
     // Confirmation suppression action
     if ($_GET["action"] == 'delete')
     {
@@ -658,16 +658,16 @@ if ($_GET["id"])
 
         // Ref
         print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
-        
+
         // Type
         print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-        
+
         // Title
         print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
-        
+
         // Location
         print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$act->location.'"></td></tr>';
-        
+
         // Company
         print '<tr><td>'.$langs->trans("Company").'</td>';
         print '<td>';
@@ -675,7 +675,7 @@ if ($_GET["id"])
 		print '</td>';
 
         print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
-        $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);	
+        $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
         print '</td></tr>';
 
 		print '</table><br><table class="border" width="100%">';
@@ -763,10 +763,10 @@ if ($_GET["id"])
 
 		// Title
         print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
-        
+
 		// Location
         print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
-        
+
         // Societe - contact
         print '<tr><td>'.$langs->trans("Company").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None"));
 		if ($act->societe->id && $act->type_code == 'AC_TEL')
@@ -775,7 +775,7 @@ if ($_GET["id"])
 			{
 				print "<br>".dol_print_phone($act->societe->tel);
 			}
-		}	
+		}
         print '</td>';
         print '<td>'.$langs->trans("Contact").'</td>';
         print '<td>';
@@ -788,7 +788,7 @@ if ($_GET["id"])
 				{
 					print "<br>".dol_print_phone($act->contact->phone_pro);
 				}
-			}	
+			}
         }
         else
         {
@@ -894,9 +894,9 @@ function add_row_for_calendar_link()
   	if ($conf->global->PHPWEBCALENDAR_SYNCRO != 'never')
     {
     	$langs->load("other");
-    	
+
     	print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry","Webcalendar").'</td>';
-    	
+
       if (! $user->webcal_login)
       {
         print '<td><input type="checkbox" disabled name="add_webcal">';
@@ -920,15 +920,15 @@ function add_row_for_calendar_link()
         }
       }
     }
-    
+
   if ($conf->phenix->enabled)
   {
   	if ($conf->global->PHPPHENIX_SYNCRO != 'never')
     {
     	$langs->load("other");
-    	
+
     	print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry","Phenix").'</td>';
-      
+
       if (! $user->phenix_login)
       {
         print '<td><input type="checkbox" disabled name="add_phenix">';
