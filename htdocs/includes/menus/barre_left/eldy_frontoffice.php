@@ -584,6 +584,10 @@ class MenuLeft {
 							$newmenu->add_submenu(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0&amp;canvas=livre", $langs->trans("BookList"), 1, $user->rights->produit->creer);
 						}
 					}
+					if ($conf->propal->enabled)
+					{
+						$newmenu->add_submenu(DOL_URL_ROOT."/product/popuprop.php?leftmenu=stats&amp;type=0", $langs->trans("Popularity"), 1, $user->rights->propale->lire);
+					}
 					if ($conf->stock->enabled)
 					{
 						$newmenu->add_submenu(DOL_URL_ROOT."/product/reassort.php?type=0", $langs->trans("Stocks"), 1, $user->rights->stock->lire);
@@ -598,6 +602,10 @@ class MenuLeft {
 					{
 						$newmenu->add_submenu(DOL_URL_ROOT."/product/fiche.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->rights->produit->creer);
 					}
+					if ($conf->propal->enabled)
+					{
+						$newmenu->add_submenu(DOL_URL_ROOT."/product/popuprop.php?leftmenu=stats&amp;type=1", $langs->trans("Popularity"), 1, $user->rights->propale->lire);
+					}
 					$newmenu->add_submenu(DOL_URL_ROOT."/product/liste.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->rights->produit->lire);
 				}
 
@@ -611,13 +619,6 @@ class MenuLeft {
 						$newmenu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=0", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
 					}
 					//if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
-				}
-
-				// Statistics
-				$newmenu->add(DOL_URL_ROOT."/product/stats/index.php?leftmenu=stats", $langs->trans("Statistics"), 0, $user->rights->produit->lire);
-				if ($conf->propal->enabled)
-				{
-					$newmenu->add_submenu(DOL_URL_ROOT."/product/popuprop.php?leftmenu=stats", $langs->trans("Popularity"), 1, $user->rights->propale->lire);
 				}
 
 				// Stocks

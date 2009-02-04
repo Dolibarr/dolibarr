@@ -47,7 +47,7 @@ $type=trim($type);
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-if (! $sortfield) $sortfield="stock_theorique";
+if (! $sortfield) $sortfield="stock_physique";
 if (! $sortorder) $sortorder="ASC";
 $page = $_GET["page"];
 $limit = $conf->liste_limit;
