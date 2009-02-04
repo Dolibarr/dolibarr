@@ -6,6 +6,6 @@ Note: All files in this directory are in CVS only and are not
 provided with a standard release.
 
 
-There is also some documentation (in French) on Dolibarr
-Wiki: http://wiki.dolibarr.org/
+There is also some documentation on Dolibarr Wiki:
+http://wiki.dolibarr.org/
 
