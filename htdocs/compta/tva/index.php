@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 function tva_coll($db,$y,$m)
 {
 	global $conf;
-	
+
     if ($conf->compta->mode == "CREANCES-DETTES")
     {
         // Si on paye la tva sur les factures dues (non brouillon)
@@ -69,13 +69,13 @@ function tva_coll($db,$y,$m)
     else
     {
         // Si on paye la tva sur les payments
-    
+
         // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
         // n'est pas stocké dans la table des payments.
         // Seul le module compta expert peut résoudre ce problème.
         // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
         // detail part tva et part ht).
-        
+
 /*
         // Tva sur factures payés
         $sql = "SELECT sum(f.tva) as amount";
@@ -124,20 +124,20 @@ function tva_paye($db, $y,$m)
     else
     {
         // Si on paye la tva sur les payments
-    
+
         // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
         // n'est pas stocké dans la table des payments.
         // Seul le module compta expert peut résoudre ce problème.
         // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
         // detail part tva et part ht).
-        
+
 /*
 
         // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
         // n'est pas stocké dans la table des payments.
         // Il faut quand un payment a lieu, stocker en plus du montant du paiement le
         // detail part tva et part ht.
-        
+
         // Tva sur factures payés
         $sql = "SELECT sum(f.total_tva) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -221,9 +221,9 @@ print_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." 
 
 echo '<table width="100%" class="nobordernopadding">';
 echo '<tr><td>';
-print_fiche_titre($langs->trans("VATSummary"));
+print_titre($langs->trans("VATSummary"));
 echo '</td><td width="5">&nbsp;</td><td>';
-print_fiche_titre($langs->trans("VATPayed"));
+print_titre($langs->trans("VATPayed"));
 echo '</td></tr>';
 
 echo '<tr><td width="50%" valign="top">';
@@ -240,8 +240,8 @@ print "</tr>\n";
 if ($conf->compta->mode == "CREANCES-DETTES")
 {
 	$y = $year_current ;
-	
-	
+
+
 	$var=True;
 	$total = 0;  $subtotal = 0;
 	$i=0;
@@ -250,21 +250,21 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 		$var=!$var;
 		print "<tr $bc[$var]>";
 		print '<td nowrap>'.dolibarr_print_date(dolibarr_mktime(0,0,0,$m,1,$y),"%b %Y").'</td>';
-	
+
 		$x_coll = tva_coll($db, $y, $m);
 		print "<td nowrap align=\"right\">".price($x_coll)."</td>";
-	
+
 		$x_paye = tva_paye($db, $y, $m);
 		print "<td nowrap align=\"right\">".price($x_paye)."</td>";
-	
+
 		$diff = $x_coll - $x_paye;
 		$total = $total + $diff;
 		$subtotal = $subtotal + $diff;
-	
+
 		print "<td nowrap align=\"right\">".price($diff)."</td>\n";
 		print "<td>&nbsp;</td>\n";
 		print "</tr>\n";
-	
+
 		$i++;
 		if ($i > 2) {
 			print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("SubTotal").':</td><td nowrap align="right">'.price($subtotal).'</td><td>&nbsp;</td></tr>';
@@ -284,11 +284,11 @@ else
 }
 
 print '</table>';
-	
-	
+
+
 echo '</td><td>&nbsp;</td><td valign="top" width="50%">';
-	
-	
+
+
 /*
 * Réglée
 */

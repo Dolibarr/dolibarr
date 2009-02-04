@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Yannick Warnier      <ywarnier@beeznest.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,7 +94,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
-	
+
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("Description");
 	$amountcust=$langs->trans("AmountHT");
@@ -117,7 +117,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
-	
+
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("Description");
 	$amountcust=$langs->trans("AmountHT");
@@ -135,7 +135,7 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 // VAT Received
 
 print "<br>";
-print_fiche_titre($vatcust);
+print_titre($vatcust);
 
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
@@ -205,7 +205,7 @@ print '</table>';
 // VAT Payed
 
 print "<br>";
-print_fiche_titre($vatsup);
+print_titre($vatsup);
 
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
@@ -272,7 +272,7 @@ else
 }
 
 print '</table>';
-	
+
 
 $db->close();
 

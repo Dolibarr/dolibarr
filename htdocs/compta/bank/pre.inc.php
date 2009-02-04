@@ -33,9 +33,9 @@ $langs->load("banks");
 function llxHeader($head = "")
 {
 	global $db, $user, $conf, $langs;
-	
+
 	top_menu($head);
-	
+
 	$menu = new Menu();
 	if ($user->rights->banque->lire)
 	{
@@ -47,7 +47,7 @@ function llxHeader($head = "")
 		{
 			$numr = $db->num_rows($resql);
 			$i = 0;
-	
+
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
@@ -62,8 +62,10 @@ function llxHeader($head = "")
 		}
 		$db->free($resql);
 	}
+
+
 	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
-	
+
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/fiche.php?action=create",$langs->trans("MenuNewFinancialAccount"),1,$user->rights->banque->configurer);
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/categ.php",$langs->trans("Rubriques"),1,$user->rights->banque->configurer);
 
@@ -74,22 +76,22 @@ function llxHeader($head = "")
 	{
 		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
 	}
-	
+
 	if ($conf->global->COMPTA_ONLINE_PAYMENT_BPLC)
 	{
 		$menu->add(DOL_URL_ROOT."/compta/bank/bplc.php","Transactions BPLC");
 	}
-	
+
 	// Gestion cheques
 	if ($conf->facture->enabled && $conf->banque->enabled)
 	{
 		$langs->load("bills");
-		
+
 		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque);
 		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=bank&amp;mainmenu=bank&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
 		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
 	}
-	
+
 	left_menu($menu->liste);
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ llxHeader();
 
 $tva_static = new Tva($db);
 
-print_titre($langs->trans("VATPayments"));
+print_fiche_titre($langs->trans("VATPayments"));
 
 $sql = "SELECT rowid, amount, label, ".$db->pdate("f.datev")." as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."tva as f ";
@@ -55,7 +55,7 @@ $result = $db->query($sql);
 if ($result)
 {
     $num = $db->num_rows($result);
-    $i = 0; 
+    $i = 0;
     $total = 0 ;
     print '<br>';
     print '<table class="noborder" width="100%">';
@@ -71,22 +71,22 @@ if ($result)
         $obj = $db->fetch_object($result);
         $var=!$var;
         print "<tr $bc[$var]>";
-		
+
 		$tva_static->id=$obj->rowid;
 		$tva_static->ref=$obj->rowid;
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
         print '<td align="left">'.dolibarr_print_date($obj->dm,'day')."</td>\n";
         print "<td>".$obj->label."</td>\n";
         $total = $total + $obj->amount;
-        
+
         print "<td align=\"right\">".price($obj->amount)."</td>";
         print "</tr>\n";
-        
+
         $i++;
     }
     print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").'</td>';
     print "<td align=\"right\"><b>".price($total)."</b></td></tr>";
-    
+
     print "</table>";
     $db->free($result);
 }
@@ -94,7 +94,7 @@ else
 {
     dolibarr_print_error($db);
 }
-  
+
 
 $db->close();
 

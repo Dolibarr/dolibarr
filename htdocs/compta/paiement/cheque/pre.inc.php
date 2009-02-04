@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +30,12 @@ $langs->load("bills");
 $langs->load("compta");
 $langs->load("banks");
 
-function llxHeader($head = "", $title="") 
+function llxHeader($head = "", $title="")
 {
 	global $db, $user, $conf, $langs;
-	
+
 	top_menu($head);
-	
+
 	$menu = new Menu();
 	if ($user->rights->banque->lire)
 	{
@@ -47,7 +47,7 @@ function llxHeader($head = "", $title="")
 		{
 			$numr = $db->num_rows($resql);
 			$i = 0;
-	
+
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
@@ -62,34 +62,37 @@ function llxHeader($head = "", $title="")
 		}
 		$db->free($resql);
 	}
-	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
-	
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/fiche.php?action=create",$langs->trans("MenuNewFinancialAccount"),1,$user->rights->banque->configurer);
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/categ.php",$langs->trans("Categories"),1,$user->rights->banque->configurer);
 
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("SearchTransaction"),1,$user->rights->banque->lire);
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ByRubriques"),1,$user->rights->banque->lire);
+
+
+	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
+
+	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/fiche.php?action=create",$langs->trans("MenuNewFinancialAccount"),1,$user->rights->banque->configurer);
+	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/categ.php",$langs->trans("Rubriques"),1,$user->rights->banque->configurer);
+
+	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("ListTransactions"),1,$user->rights->banque->lire);
+	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ListTransactionsByCategory"),1,$user->rights->banque->lire);
 
 	if ($user->rights->banque->transfer)
 	{
 		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
 	}
-	
+
 	if ($conf->global->COMPTA_ONLINE_PAYMENT_BPLC)
 	{
 		$menu->add(DOL_URL_ROOT."/compta/bank/bplc.php","Transactions BPLC");
 	}
-	
+
 	// Gestion cheques
 	if ($conf->facture->enabled && $conf->banque->enabled)
 	{
 		$langs->load("bills");
-		
+
 		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque);
 		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=bank&amp;mainmenu=bank&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
 		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
 	}
-	
+
 	left_menu($menu->liste);
 }
 
