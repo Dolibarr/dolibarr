@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
@@ -365,7 +365,7 @@ else
 
 		$expedition=new Expedition($db);
 		$result = $expedition->fetch($livraison->expedition_id);
-		
+
 		if ($livraison->origin_id)
 		{
 			$object = $livraison->origin;
@@ -399,7 +399,7 @@ else
 			if ($_GET["action"] == 'delete')
 			{
 				$expedition_id = $_GET["expid"];
-				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id.'&amp;expid='.$expedition_id,'Supprimer le bon de livraison','Etes-vous s�r de vouloir supprimer ce bon de livraison ?','confirm_delete');
+				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id.'&amp;expid='.$expedition_id,$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm"),'confirm_delete');
 				print '<br>';
 			}
 
@@ -475,52 +475,71 @@ else
 				print '</tr>';
 			}
 
-			print "</table>\n";
+			print "</table><br>\n";
 
 			/*
 			 * Lignes produits
 			 */
-			print '<br><table class="noborder" width="100%">';
 
 			$num_prod = sizeof($livraison->lignes);
+			$i = 0; $total = 0;
+
+			print '<table class="noborder" width="100%">';
 
 			if ($num_prod)
 			{
 				$i = 0;
-					
+
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Products").'</td>';
 				print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
 				print "</tr>\n";
-					
-				$var=true;
-				while ($i < $num_prod)
+			}
+			$var=true;
+			while ($i < $num_prod)
+			{
+				$var=!$var;
+
+				print "<tr $bc[$var]>";
+				if ($livraison->lignes[$i]->fk_product > 0)
 				{
-					$var=!$var;
-					print "<tr $bc[$var]>";
-					if ($livraison->lignes[$i]->fk_product > 0)
+					$product = new Product($db);
+					$product->fetch($livraison->lignes[$i]->fk_product);
+
+					print '<td>';
+
+					// Affiche ligne produit
+					$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$livraison->lignes[$i]->fk_product.'">';
+					if ($livraison->lignes[$i]->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
+					else $text.= img_object($langs->trans('ShowProduct'),'product');
+					$text.= ' '.$livraison->lignes[$i]->ref.'</a>';
+					$text.= ' - '.$livraison->lignes[$i]->label;
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($livraison->lignes[$i]->description));
+					//print $description;
+					print $html->textwithtooltip($text,$description,3,'','',$i);
+					print_date_range($livraison->lignes[$i]->date_start,$livraison->lignes[$i]->date_end);
+					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{
-						$product = new Product($db);
-						$product->fetch($livraison->lignes[$i]->fk_product);
-							
-						print '<td>';
-						print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$livraison->lignes[$i]->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
-						if ($livraison->lignes[$i]->description) print '<br>'.$livraison->lignes[$i]->description;
-						print '</td>';
+						print ($livraison->lignes[$i]->description && $livraison->lignes[$i]->description!=$livraison->lignes[$i]->label)?'<br>'.dol_htmlentitiesbr($livraison->lignes[$i]->description):'';
 					}
-					else
-					{
-						print "<td>".$livraison->lignes[$i]->description."</td>\n";
-					}
-
-					print '<td align="center">'.$livraison->lignes[$i]->qty_asked.'</td>';
-					print '<td align="center">'.$livraison->lignes[$i]->qty_shipped.'</td>';
-
-					print "</tr>";
-
-					$i++;
 				}
+				else
+				{
+					print "<td>";
+					if ($livraison->lignes[$i]->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
+					else $text = img_object($langs->trans('Product'),'product');
+					print $text.' '.nl2br($livraison->lignes[$i]->description);
+					print_date_range($objp->date_start,$objp->date_end);
+					print "</td>\n";
+				}
+
+				print '<td align="center">'.$livraison->lignes[$i]->qty_asked.'</td>';
+				print '<td align="center">'.$livraison->lignes[$i]->qty_shipped.'</td>';
+
+				print "</tr>";
+
+				$i++;
 			}
 
 			print "</table>\n";
@@ -535,7 +554,7 @@ else
 			if ($user->societe_id == 0)
 			{
 				print '<div class="tabsAction">';
-					
+
 				if (! eregi('^(valid|delete)',$_REQUEST["action"]))
 				{
 					if ($livraison->statut == 0 && $user->rights->expedition->livraison->valider && $num_prod > 0)
@@ -555,7 +574,7 @@ else
 						}
 					}
 				}
-					
+
 				print '</div>';
 			}
 			print "\n";
@@ -579,7 +598,7 @@ else
 			print '</td><td valign="top" width="50%">';
 
 			// Rien a droite
-			
+
 			print '</td></tr></table>';
 
 			print '<br>';

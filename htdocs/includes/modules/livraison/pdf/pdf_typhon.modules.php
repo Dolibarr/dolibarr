@@ -53,6 +53,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$langs->load("main");
 		$langs->load("bills");
 		$langs->load("sendings");
+		$langs->load("companies");
 
 		$this->db = $db;
 		$this->name = "typhon";
@@ -79,8 +80,6 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
 
-		$this->tva=array();
-
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
 		$this->posxcomm=120;
@@ -90,6 +89,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$this->posxdiscount=162;
 		$this->postotalht=177;
 
+		$this->tva=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
 	}
@@ -115,6 +115,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
+		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
@@ -252,8 +253,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
-
 					$nexY = $pdf->GetY();
+
 					/*
 					 // TVA
 					 $pdf->SetXY ($this->posxtva, $curY);
@@ -265,19 +266,19 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					 */
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell(30, 4, $delivery->lignes[$i]->qty_shipped, 0, 'R');
+					$pdf->MultiCell(30, 3, $delivery->lignes[$i]->qty_shipped, 0, 'R');
 					/*
 					 // Remise sur ligne
 					 $pdf->SetXY ($this->posxdiscount, $curY);
 					 if ($delivery->lignes[$i]->remise_percent)
 					 {
-					 $pdf->MultiCell(14, 4, $delivery->lignes[$i]->remise_percent."%", 0, 'R');
+					 $pdf->MultiCell(14, 3, $delivery->lignes[$i]->remise_percent."%", 0, 'R');
 					 }
 
 					 // Total HT ligne
 					 $pdf->SetXY ($this->postotalht, $curY);
 					 $total = price($delivery->lignes[$i]->price * $delivery->lignes[$i]->qty);
-					 $pdf->MultiCell(23, 4, $total, 0, 'R', 0);
+					 $pdf->MultiCell(23, 3, $total, 0, 'R', 0);
 
 					 // Collecte des totaux par valeur de tva
 					 // dans le tableau tva["taux"]=total_tva
@@ -286,6 +287,19 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					 $this->tva[ (string)$delivery->lignes[$i]->tva_tx ] += $tvaligne;
 					 */
 					$nexY+=2;    // Passe espace entre les lignes
+
+					// Cherche nombre de lignes a venir pour savoir si place suffisante
+					if ($i < ($nblignes - 1))	// If it's not last line
+					{
+						//on récupère la description du produit suivant
+						$follow_descproduitservice = $delivery->lignes[$i+1]->desc;
+						//on compte le nombre de ligne afin de vérifier la place disponible (largeur de ligne 52 caracteres)
+						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52)*4);
+					}
+					else	// If it's last line
+					{
+						$nblineFollowDesc = 0;
+					}
 
 					// Test if a new page is required
 					if ($pagenb == 1)
@@ -314,7 +328,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $delivery, 1, $outputlangs);
+						$this->_pagehead($pdf, $delivery, 0, $outputlangs);
 						$pdf->SetFont('Arial','', 9);
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
@@ -363,7 +377,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 
 	/*
-	 *   \brief      Affiche la grille des lignes de propales
+	 *   \brief      Affiche la grille des lignes
 	 *   \param      pdf     objet PDF
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
@@ -413,9 +427,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 	/**
 	 *   	\brief      Affiche en-tete bon livraison
-	 *   	\param      pdf     objet PDF
-	 *   	\param      fac     objet propale
-	 *      \param      showadress      0=non, 1=oui
+	 *   	\param      pdf     	objet PDF
+	 *   	\param      delivery    object delivery
+	 *      \param      showadress  0=non, 1=oui
 	 */
 	function _pagehead(&$pdf, $delivery, $showadress=1, $outputlangs)
 	{

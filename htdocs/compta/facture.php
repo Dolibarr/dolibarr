@@ -659,7 +659,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 								if ($prop->lignes[$i]->date_debut_reel) $date_start=$prop->lignes[$i]->date_debut_reel;
 								$date_end=$prop->lignes[$i]->date_fin_prevue;
 								if ($prop->lignes[$i]->date_fin_reel) $date_end=$prop->lignes[$i]->date_fin_reel;
-								
+
 								$result = $facture->addline(
 								$facid,
 								$desc,
@@ -961,7 +961,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	$date_end='';
 	$date_start=dol_mktime($_POST['date_start'.$suffixe.'hour'],$_POST['date_start'.$suffixe.'min'],$_POST['date_start'.$suffixe.'sec'],$_POST['date_start'.$suffixe.'month'],$_POST['date_start'.$suffixe.'day'],$_POST['date_start'.$suffixe.'year']);
 	$date_end=dol_mktime($_POST['date_end'.$suffixe.'hour'],$_POST['date_end'.$suffixe.'min'],$_POST['date_end'.$suffixe.'sec'],$_POST['date_end'.$suffixe.'month'],$_POST['date_end'.$suffixe.'day'],$_POST['date_end'.$suffixe.'year']);
-	
+
 	// Define info_bits
 	$info_bits=0;
 	if (eregi('\*',$_POST['tva_tx'])) $info_bits |= 0x01;
@@ -2605,7 +2605,7 @@ else
 							}
 							else
 							{
-								if ($objp->product_type==1) $text = img_object($langs->trans('Service'),'service');
+								if ($objp->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
 								else $text = img_object($langs->trans('Product'),'product');
 								print $text.' '.nl2br($objp->description);
 								print_date_range($objp->date_start,$objp->date_end);

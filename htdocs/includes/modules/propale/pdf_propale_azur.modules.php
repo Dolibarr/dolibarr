@@ -202,7 +202,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				$pagenb++;
 				$this->_pagehead($pdf, $propale, 1, $outputlangs);
 				$pdf->SetFont('Arial','', 9);
-				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
+				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 4
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;

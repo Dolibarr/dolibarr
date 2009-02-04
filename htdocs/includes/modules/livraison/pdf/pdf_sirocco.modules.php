@@ -49,6 +49,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
         $langs->load("main");
         $langs->load("bills");
 		$langs->load("sendings");
+		$langs->load("companies");
 
         $this->db = $db;
 		$this->name = "sirocco";
@@ -68,7 +69,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
         $this->emetteur=$mysoc;
         if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
 
-		$this->error = "";
+		$this->tva=array();
 	}
 
 
@@ -93,6 +94,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
+		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
@@ -117,6 +119,8 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					dolibarr_print_error($db,$delivery->error);
 				}
 			}
+
+			$nblignes = sizeof($delivery->lignes);
 
 			$deliveryref = sanitizeFileName($delivery->ref);
 			$dir = $conf->livraison_bon->dir_output;
@@ -159,28 +163,25 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($delivery->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
+				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+				$pdf->SetAutoPageBreak(1,0);
+
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $delivery, $outputlangs);
+				$this->_pagehead($pdf, $delivery, 1, $outputlangs);
 				$pdf->SetFont('Arial','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 100;
+				$tab_top_newpage = 50;
 				$tab_height = 140;
+				$tab_height_newpage = 190;
 
-				$pdf->SetFillColor(220,220,220);
-
-				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('Arial','', 10);
-
-				$pdf->SetXY (10, $tab_top + 10 );
-
-				$iniY = $pdf->GetY();
-				$curY = $pdf->GetY();
-				$nexY = $pdf->GetY();
-				$nblignes = sizeof($delivery->lignes);
+				$iniY = $tab_top + 7;
+				$curY = $tab_top + 7;
+				$nexY = $tab_top + 7;
 
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
@@ -189,51 +190,107 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					// Description de la ligne produit
 					$libelleproduitservice=pdf_getlinedesc($delivery->lignes[$i],$outputlangs);
 
-					$pdf->SetXY (30, $curY );
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
 					$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 					$nexY = $pdf->GetY();
 
 					$pdf->SetXY (10, $curY );
 
-					$pdf->MultiCell(20, 5, $outputlangs->convToOutputCharset($delivery->lignes[$i]->ref), 0, 'C');
+					$pdf->MultiCell(20, 3, $outputlangs->convToOutputCharset($delivery->lignes[$i]->ref), 0, 'C');
 
 					// \TODO Field not yet saved in database
 					//$pdf->SetXY (133, $curY );
 					//$pdf->MultiCell(10, 5, $delivery->lignes[$i]->tva_tx, 0, 'C');
 
 					$pdf->SetXY (145, $curY );
-					$pdf->MultiCell(10, 5, $delivery->lignes[$i]->qty_shipped, 0, 'C');
+					$pdf->MultiCell(10, 3, $delivery->lignes[$i]->qty_shipped, 0, 'C');
 
 					// \TODO Field not yet saved in database
 					//$pdf->SetXY (156, $curY );
-					//$pdf->MultiCell(18, 5, price($delivery->lignes[$i]->price), 0, 'R', 0);
+					//$pdf->MultiCell(18, 3, price($delivery->lignes[$i]->price), 0, 'R', 0);
 
 					// \TODO Field not yet saved in database
 					//$pdf->SetXY (174, $curY );
 					//$total = price($delivery->lignes[$i]->price * $delivery->lignes[$i]->qty_shipped);
-					//$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+					//$pdf->MultiCell(26, 3, $total, 0, 'R', 0);
 
-					$pdf->line(10, $curY, 200, $curY );
+					$pdf->line(10, $curY-1, 200, $curY-1);
 
-					if ($nexY > 240 && $i < $nblignes - 1)
+
+					$nexY+=2;    // Passe espace entre les lignes
+
+					// Cherche nombre de lignes a venir pour savoir si place suffisante
+					if ($i < ($nblignes - 1))	// If it's not last line
 					{
-						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+						//on récupère la description du produit suivant
+						$follow_descproduitservice = $delivery->lignes[$i+1]->desc;
+						//on compte le nombre de ligne afin de vérifier la place disponible (largeur de ligne 52 caracteres)
+						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52)*4);
+					}
+					else	// If it's last line
+					{
+						$nblineFollowDesc = 0;
+					}
 
-						$nexY = $iniY;
+					// Test if a new page is required
+					if ($pagenb == 1)
+					{
+						$tab_top_in_current_page=$tab_top;
+						$tab_height_in_current_page=$tab_height;
+					}
+					else
+					{
+						$tab_top_in_current_page=$tab_top_newpage;
+						$tab_height_in_current_page=$tab_height_newpage;
+					}
+
+					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1))
+					{
+						if ($pagenb == 1)
+						{
+							$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+						}
+						else
+						{
+							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+						}
+
+						$this->_pagefoot($pdf, $outputlangs);
 
 						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $delivery, $outputlangs);
+						$this->_pagehead($pdf, $delivery, 0, $outputlangs);
 						$pdf->SetFont('Arial','', 9);
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
+
+						$nexY = $tab_top_newpage + 7;
 					}
 				}
 
-				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+				// Show square
+				if ($pagenb == 1)
+				{
+					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top + $tab_height + 1;
+				}
+				else
+				{
+					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
+				}
+
+				/*
+				 * Pied de page
+				 */
+				$this->_pagefoot($pdf,$outputlangs);
+				$pdf->AliasNbPages();
+
+				$pdf->Close();
 
 				$pdf->Output($file);
 				if (! empty($conf->global->MAIN_UMASK))
@@ -250,7 +307,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	}
 
 	/**
-	 *   \brief      Affiche la grille des lignes de propales
+	 *   \brief      Affiche la grille des lignes
 	 *   \param      pdf     objet PDF
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
@@ -283,17 +340,22 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	}
 
 	/**
-	 *   	\brief      Affiche en-tete propale
-	 *   	\param      pdf     objet PDF
-	 *   	\param      fac     objet propale
+	 *   	\brief      Affiche en-tete
+	 *   	\param      pdf     		objet PDF
+	 *   	\param      delivery    	object delivery
 	 *      \param      showadress      0=non, 1=oui
 	 */
-	function _pagehead(&$pdf, $delivery, $outputlangs)
+	function _pagehead(&$pdf, $delivery, $showadress=1, $outputlangs)
 	{
 		global $langs;
 
-		$outputlangs->load("deliveries");
-		$pdf->SetXY(10,5);
+		$pdf->SetTextColor(0,0,60);
+		$pdf->SetFont('Arial','B',13);
+
+		$posy=$this->marge_haute;
+
+		$pdf->SetXY($this->marge_gauche,$posy);
+
 		if (defined("MAIN_INFO_SOCIETE_NOM"))
 		{
 			$pdf->SetTextColor(0,0,200);
@@ -316,7 +378,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
 		$pdf->SetFont('Arial','',9);
-		$pdf->SetXY(10,10);
+		$pdf->SetXY($this->marge_gauche,$posy+4);
 		$pdf->MultiCell(80,3, $carac_emetteur);
 
 		/*

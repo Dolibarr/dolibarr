@@ -742,16 +742,34 @@ else
 			for ($i = 0 ; $i < $num_prod ; $i++)
 			{
 				print "<tr ".$bc[$var].">";
+
 				if ($lignes[$i]->fk_product > 0)
 				{
 					print '<td>';
-					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$lignes[$i]->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$lignes[$i]->ref.'</a> - '.$lignes[$i]->libelle;
-					if ($lignes[$i]->description) print '<br>'.nl2br($lignes[$i]->description);
-					print '</td>';
+
+					// Affiche ligne produit
+					$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$lignes[$i]->fk_product.'">';
+					if ($lignes[$i]->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
+					else $text.= img_object($langs->trans('ShowProduct'),'product');
+					$text.= ' '.$lignes[$i]->ref.'</a>';
+					$text.= ' - '.$lignes[$i]->label;
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($lignes[$i]->description));
+					//print $description;
+					print $html->textwithtooltip($text,$description,3,'','',$i);
+					print_date_range($lignes[$i]->date_start,$lignes[$i]->date_end);
+					if ($conf->global->PRODUIT_DESC_IN_FORM)
+					{
+						print ($lignes[$i]->description && $lignes[$i]->description!=$lignes[$i]->product)?'<br>'.dol_htmlentitiesbr($lignes[$i]->description):'';
+					}
 				}
 				else
 				{
-					print "<td>".nl2br($lignes[$i]->description)."</td>\n";
+					print "<td>";
+					if ($lignes[$i]->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
+					else $text = img_object($langs->trans('Product'),'product');
+					print $text.' '.nl2br($lignes[$i]->description);
+					print_date_range($lignes[$i]->date_start,$lignes[$i]->date_end);
+					print "</td>\n";
 				}
 
 				// Qte commande

@@ -84,7 +84,7 @@ class Expedition extends CommonObject
 		// Clean parameters
 		$this->brouillon = 1;
 		$this->tracking_number = sanitizeFileName($this->tracking_number);
-		
+
 		$this->user = $user;
 
 
@@ -125,7 +125,7 @@ class Expedition extends CommonObject
 			    {
 			    	$error++;
 			    }
-	
+
 			    $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->origin_id;
 			    if (! $this->db->query($sql))
 			    {
@@ -139,7 +139,7 @@ class Expedition extends CommonObject
 			    {
 			    	$error++;
 			    }
-	
+
 			    //Todo: definir un statut
 			    $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 9 WHERE rowid=".$this->origin_id;
 			    if (! $this->db->query($sql))
@@ -592,7 +592,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.qty as qty_asked";
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
-		$sql.= ", p.ref, p.label, p.weight, p.weight_units, p.volume, p.volume_units";
+		$sql.= ", p.ref, p.fk_product_type, p.label, p.weight, p.weight_units, p.volume, p.volume_units";
 		$sql.= " FROM (".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON (p.rowid = cd.fk_product)";
@@ -612,7 +612,9 @@ class Expedition extends CommonObject
 				$ligne->origin_line_id = $obj->fk_origin_line;
 				$ligne->entrepot_id    = $obj->fk_entrepot;
 				$ligne->fk_product     = $obj->fk_product;
+				$ligne->fk_product_type= $obj->fk_product_type;
 				$ligne->ref            = $obj->ref;
+				$ligne->label          = $obj->label;		// deprecated
 				$ligne->libelle        = $obj->label;
 				$ligne->description    = $obj->description;
 				$ligne->qty_asked      = $obj->qty_asked;
