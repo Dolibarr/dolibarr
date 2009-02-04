@@ -258,7 +258,7 @@ print "</table><br />";
 /* Affichage de la liste des projets du mois */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.strftime("%B %Y", $now).'</td>';
+print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.dolibarr_print_date($now,"%B %Y").'</td>';
 print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 

@@ -70,11 +70,14 @@ $userstatic = new User($db);
 $staticsoc=new Societe($db);
 
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, ".$db->pdate("p.dateo")." as do, p.fk_user_resp,";
+$sql .= " u.login,";
 $sql .= " s.nom, s.rowid as socid, s.client";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM (".MAIN_DB_PREFIX."projet as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= ") LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = p.fk_soc";
+$sql .= ")";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on p.fk_user_resp = u.rowid";
 $sql .= " WHERE 1 = 1 ";
 if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -165,7 +168,7 @@ if ($resql)
 
 		// Title
 		$userstatic->id=$objp->fk_user_resp;
-		$userstatic->nom=$objp->fk_user_resp;
+		$userstatic->nom=$objp->login;
 		print '<td align="left">';
 		if ($objp->fk_user_resp > 0) print $userstatic->getNomUrl(1);
 		else print $langs->trans("SharedProject");

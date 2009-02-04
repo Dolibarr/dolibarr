@@ -242,15 +242,6 @@ function PLines(&$inc, $parent, $lines, &$level, $var, $showproject=1)
 
 			print "<tr ".$bc[$var].">\n";
 
-			if ($showproject)
-			{
-				print "<td>";
-				$projectstatic->id=$lines[$i]->projectid;
-				$projectstatic->ref=$lines[$i]->projectref;
-				print $projectstatic->getNomUrl(1);
-				print "</td>";
-			}
-
 			print "<td>".$lines[$i]->id."</td>";
 
 			print "<td>";
@@ -261,10 +252,18 @@ function PLines(&$inc, $parent, $lines, &$level, $var, $showproject=1)
 
 			print '<a href="task.php?id='.$lines[$i]->id.'">'.$lines[$i]->title."</a></td>\n";
 
+			if ($showproject)
+			{
+				print "<td>";
+				$projectstatic->id=$lines[$i]->projectid;
+				$projectstatic->ref=$lines[$i]->projectref;
+				print $projectstatic->getNomUrl(1);
+				print "</td>";
+			}
+
 			$heure = intval($lines[$i]->duration);
 			$minutes = round((($lines[$i]->duration - $heure) * 60),0);
 			$minutes = substr("00"."$minutes", -2);
-
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 
 			print "</tr>\n";

@@ -41,36 +41,39 @@ $result = restrictedArea($user, 'projet', $projetid);
  * Actions
  */
 
-if ($_POST["action"] == 'createtask' && empty($_POST["cancel"]) && $user->rights->projet->creer)
+if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 {
 	$error=0;
 
-	if (empty($_POST['task_parent']))
+	if (empty($_POST["cancel"]))
 	{
-		$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTaks"));
-		$_GET["action"]='create';
-		$error++;
-	}
+		if (empty($_POST['task_parent']))
+		{
+			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTaks"));
+			$_GET["action"]='create';
+			$error++;
+		}
 
-	if (! $error)
-	{
-		$tmparray=split('_',$_POST['task_parent']);
-		$projectid=$tmparray[0];
-		$task_parent=$tmparray[1];
-		if (empty($task_parent)) $task_parent=0;	// If task_parent is ''
+		if (! $error)
+		{
+			$tmparray=split('_',$_POST['task_parent']);
+			$projectid=$tmparray[0];
+			$task_parent=$tmparray[1];
+			if (empty($task_parent)) $task_parent=0;	// If task_parent is ''
 
-		//print $_POST['task_parent'].'-'.$projectid.'-'.$task_parent;exit;
-		$project = new Project($db);
-		$result = $project->fetch($projectid);
+			//print $_POST['task_parent'].'-'.$projectid.'-'.$task_parent;exit;
+			$project = new Project($db);
+			$result = $project->fetch($projectid);
 
-		$result=$project->CreateTask($user, $_POST["task_name"], $task_parent, $_POST["userid"]);
+			$result=$project->CreateTask($user, $_POST["task_name"], $task_parent, $_POST["userid"]);
+		}
 	}
 
 	if (! $error)
 	{
 		if (empty($projetid))
 		{
-			Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php');
+			Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($_REQUEST["mode"])?'':'?mode='.$_REQUEST["mode"]));
 			exit;
 		}
 		else
@@ -150,16 +153,21 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("ChildOfTaks").'</td><td>';
-	print $htmlother->selectProjectTasks($projet->id, 'task_parent', 1, 0);
+	print $htmlother->selectProjectTasks($projet->id, 'task_parent', $user->admin?0:1, 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	print $form->select_users($user->id,'userid',1);
 	print '</td></tr>';
 
+	$project=new Project($db);
+	$tasksarray=$project->getTasksArray(0, $user, 1);
 	print '<tr><td colspan="2" align="center">';
-	print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
-	print ' &nbsp; &nbsp; ';
+	if (sizeof($tasksarray))
+	{
+		print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
+		print ' &nbsp; &nbsp; ';
+	}
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</td></tr>';
 

@@ -62,6 +62,10 @@ alter table llx_commande_fournisseur_log add column comment varchar(255) NULL;
 delete from llx_categorie_association where fk_categorie_mere = fk_categorie_fille;
 
 
+-- V4.1 delete from llx_projet_task where fk_projet not in (select rowid from llx_projet);
+-- V4.1 ALTER TABLE llx_projet_task ADD CONSTRAINT fk_projet_task_fk_projet FOREIGN KEY (fk_projet)    REFERENCES llx_projet (rowid);
+
+
 -- Put at the end. Cas have duplicate values
 ALTER TABLE llx_categorie_association drop index idx_categorie_association_fk_categorie_fille;
 ALTER TABLE llx_categorie_association ADD UNIQUE INDEX uk_categorie_association (fk_categorie_mere, fk_categorie_fille);

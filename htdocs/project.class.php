@@ -74,7 +74,8 @@ class Project extends CommonObject
 		$sql.= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."',";
 		$sql.= " ".($this->socid > 0?$this->socid:"null").",";
 		$sql.= " ".$user->id.",";
-		$sql.= " ".$this->user_resp_id.", ".$this->db->idate(mktime()).", 0)";
+		$sql.= " ".($this->user_resp_id>0?$this->user_resp_id:'null').",";
+		$sql.= " ".$this->db->idate(mktime()).", 0)";
 
 		dolibarr_syslog("Project::create sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -227,6 +228,7 @@ class Project extends CommonObject
 		if ($type == 'propal')           $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE fk_projet=".$this->id;
 		if ($type == 'order')            $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande WHERE fk_projet=".$this->id;
 		if ($type == 'invoice')          $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE fk_projet=".$this->id;
+		if ($type == 'invoice_predefined') $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture_rec WHERE fk_projet=".$this->id;
 		if ($type == 'order_supplier')   $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE fk_projet=".$this->id;
 		if ($type == 'invoice_supplier') $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn WHERE fk_projet=".$this->id;
 		if ($type == 'contract')         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."contrat WHERE fk_projet=".$this->id;
@@ -449,9 +451,10 @@ class Project extends CommonObject
 	 * Sort order is on project, TODO then of position of task, and last on title of first level task
 	 * @param	usert	Object user to limit task affected to a particular user
 	 * @param	userp	Object user to limit projects of a particular user
+	 * @param	mode	0=Return list of tasks and their projects, 1=Return projects and tasks if exists
 	 * @return 	array	Array of tasks
 	 */
-	function getTasksArray($usert=0,$userp=0)
+	function getTasksArray($usert=0, $userp=0, $mode=0)
 	{
 		$tasks = array();
 
@@ -461,24 +464,41 @@ class Project extends CommonObject
 		$sql = "SELECT p.rowid as projectid, p.ref, p.title as ptitle,";
 		$sql.= " t.rowid, t.title, t.fk_task_parent, t.duration_effective,";
 		$sql.= " up.name, up.firstname";
-		$sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
-		if (is_object($usert))	// Limit to task affected to a user
+		if ($mode == 0)
 		{
-			$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-			$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as ta";
+			$sql.= " FROM (".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."projet_task as t";
+			if (is_object($usert))	// Limit to task affected to a user
+			{
+				$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as ta";
+			}
 			$sql.= ")";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as up on p.fk_user_resp = up.rowid";
+			$sql.= " WHERE t.fk_projet = p.rowid";
+			if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
+			if (is_object($usert)) $sql .= " AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
+			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
 		}
-		else
+		if ($mode == 1)
 		{
-			$sql.= ")";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+			$sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
+			if (is_object($usert))	// Limit to task affected to a user
+			{
+				$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+				$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as ta";
+				$sql.= ")";
+			}
+			else
+			{
+				$sql.= ")";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+			}
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as up on p.fk_user_resp = up.rowid";
+			$sql.= " WHERE 1 = 1";
+			if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
+			if (is_object($usert)) $sql .= " AND t.fk_projet = p.rowid AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
+			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
+			$sql.= " ORDER BY p.ref, t.title";
 		}
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as up on p.fk_user_resp = up.rowid";
-		$sql.= " WHERE 1 = 1";
-		if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
-		if (is_object($usert)) $sql .= " AND t.fk_projet = p.rowid AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
-		if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
-		$sql.= " ORDER BY p.ref, t.title";
 
 		dolibarr_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);

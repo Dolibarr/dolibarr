@@ -28,6 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->facture->enabled)     require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+if ($conf->facture->enabled)     require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture-rec.class.php");
 if ($conf->commande->enabled)    require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
 if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
@@ -113,6 +114,10 @@ $listofreferent=array(
 	'title'=>"ListInvoicesAssociatedProject",
 	'class'=>'Facture',
 	'test'=>$conf->facture->enabled),
+'invoice_predefined'=>array(
+	'title'=>"ListPredefinedInvoicesAssociatedProject",
+	'class'=>'FactureRec',
+	'test'=>$conf->facture->enabled && $conf->global->FACTURE_ENABLE_RECUR),
 'order_supplier'=>array(
 	'title'=>"ListSupplierOrdersAssociatedProject",
 	'class'=>'CommandeFournisseur',

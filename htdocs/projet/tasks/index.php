@@ -85,9 +85,9 @@ $tasksarray=$projet->getTasksArray($_GET["mode"]=='mine'?$user:0);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("Task").'</td>';
 print '<td>'.$langs->trans("Label").'</td>';
+print '<td>'.$langs->trans("Project").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print "</tr>\n";
 

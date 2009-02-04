@@ -40,7 +40,7 @@ class FactureRec extends Facture
 	var $table_element='facture_rec';
 	var $table_element_line='facturedet_rec';
 	var $fk_element='fk_facture';
-	
+
 	var $id ;
 
 	var $socid;		// Id client
@@ -69,7 +69,7 @@ class FactureRec extends Facture
         $this->db = $DB ;
         $this->facid = $facid;
     }
-    
+
     /**
      * 		\brief		Créé la facture recurrente/modele
      *		\return		int			<0 si ko, id facture rec crée si ok
@@ -77,9 +77,9 @@ class FactureRec extends Facture
     function create($user)
     {
     	global $langs;
-    	
+
     	$error=0;
-    	
+
 		// Nettoyage parametere
 		$this->titre=trim($this->titre);
 
@@ -91,7 +91,7 @@ class FactureRec extends Facture
 		}
 
 		$this->db->begin();
-		
+
     	// Charge facture modele
     	$facsrc=new Facture($this->db);
     	$result=$facsrc->fetch($this->facid);
@@ -127,7 +127,7 @@ class FactureRec extends Facture
                     	$error++;
                     }
                 }
-	
+
                 if ($error)
                 {
 					$this->db->rollback();
@@ -189,7 +189,7 @@ class FactureRec extends Facture
 
 				$this->id                     = $rowid;
 				$this->titre                  = $obj->titre;
-				$this->ref                    = $obj->facnumber;
+				$this->ref                    = $obj->titre;
 				$this->ref_client             = $obj->ref_client;
 				$this->type                   = $obj->type;
 				$this->datep                  = $obj->dp;
@@ -362,14 +362,14 @@ class FactureRec extends Facture
         }
     }
 
- 
+
 	/**
 	 *		\brief		Ajoute une ligne de facture
 	 */
 	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-		
+
 		if ($this->brouillon)
 		{
 			if (strlen(trim($qty))==0)
@@ -379,7 +379,7 @@ class FactureRec extends Facture
 			$remise = 0;
 			$price = $pu;
 			$subprice = $price;
-			
+
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
@@ -388,13 +388,13 @@ class FactureRec extends Facture
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
-			
+
 			if (trim(strlen($remise_percent)) > 0)
 			{
 				$remise = round(($pu * $remise_percent / 100), 2);
 				$price = $pu - $remise;
 			}
-	
+
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, total_ht, total_tva, total_ttc)";
 			$sql .= " VALUES ('".$facid."', '".addslashes($desc)."'";
 			$sql .= ",".price2num($price);
@@ -407,7 +407,7 @@ class FactureRec extends Facture
 			$sql .= ",'".price2num($total_ht)."'";
 			$sql .= ",'".price2num($total_tva)."'";
 			$sql .= ",'".price2num($total_ttc)."') ;";
-	
+
 			dolibarr_syslog("Facture-rec::addline sql=".$sql, LOG_DEBUG);
 			if ($this->db->query( $sql))
 			{
@@ -423,8 +423,8 @@ class FactureRec extends Facture
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 *		\brief		Rend la facture automatique
 	 *
@@ -433,13 +433,13 @@ class FactureRec extends Facture
 	{
 		if ($user->rights->facture->creer)
 		{
-	
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec ";
 			$sql .= " SET frequency = '".$freq."', last_gen='".$courant."'";
 			$sql .= " WHERE rowid = ".$this->facid.";";
-	
+
 			$resql = $this->db->query($sql);
-	
+
 			if ($resql)
 			{
 				$this->frequency 	= $freq;
@@ -457,5 +457,31 @@ class FactureRec extends Facture
 			return -2;
 		}
 	}
+
+	/**
+	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	\param		option			Sur quoi pointe le lien ('', 'withdraw')
+	 *	\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
+
+		$result='';
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id.'">';
+		$lienfin='</a>';
+
+		$picto='bill';
+
+		$label=$langs->trans("ShowInvoice").': '.$this->ref;
+
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}
+
 }
 ?>

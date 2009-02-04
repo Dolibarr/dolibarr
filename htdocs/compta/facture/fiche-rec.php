@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/compta/facture/fiche-rec.php
-        \ingroup    facture
-		\brief      Page d'affichage d'une facture récurrent
-		\version    $Id$
-*/
+ \file       htdocs/compta/facture/fiche-rec.php
+ \ingroup    facture
+ \brief      Page d'affichage d'une facture récurrent
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once("./facture-rec.class.php");
@@ -30,14 +30,14 @@ require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 if (!$user->rights->facture->lire)
-  accessforbidden();
+accessforbidden();
 
 $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 if ($page == -1)
 {
-$page = 0 ;
+	$page = 0 ;
 }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -50,16 +50,16 @@ $sortfield="f.datef";
 
 
 // Sécurité accés client
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$action = '';
+	$socid = $user->societe_id;
 }
 
 
 /*
  * Actions
- */	
+ */
 
 // Ajout
 if ($_POST["action"] == 'add')
@@ -99,16 +99,16 @@ llxHeader('',$langs->trans("RepeatableInvoices"),'ch-facture.html#s-fac-facture-
 $html = new Form($db);
 
 /*********************************************************************
-*
-* Mode creation
-*
-************************************************************************/
+ *
+ * Mode creation
+ *
+ ************************************************************************/
 if ($_GET["action"] == 'create')
 {
 	print_titre($langs->trans("CreateRepeatableInvoice"));
 
 	if ($mesg) print $mesg.'<br>';
-	
+
 	$facture = new Facture($db);
 
 	if ($facture->fetch($_GET["facid"]) > 0)
@@ -152,15 +152,15 @@ if ($_GET["action"] == 'create')
 
 		print '<br>';
 		if ($conf->service->enabled) {
-		   print_titre($langs->trans("ProductsAndServices"));
+			print_titre($langs->trans("ProductsAndServices"));
 		} else {
-		   print_titre($langs->trans("Products"));
+			print_titre($langs->trans("Products"));
 		}
 
 		/*
-		* Lignes de factures
-		*
-		*/
+		 * Lignes de factures
+		 *
+		 */
 		print '<table class="noborder" width="100%">';
 		print '<tr><td colspan="3">';
 
@@ -293,10 +293,10 @@ else
 
 			print_titre($langs->trans("PredefinedInvoices").': '.$fac->titre);
 			print '<br>';
-			
+
 			/*
-			*   Facture
-			*/
+			 *   Facture
+			 */
 			print '<table class="border" width="100%">';
 			print '<tr><td>'.$langs->trans("Customer").'</td>';
 			print "<td colspan=\"3\">";
@@ -336,9 +336,9 @@ else
 
 			print "</table><br>";
 			/*
-			* Lignes
-			*
-			*/
+			 * Lignes
+			 *
+			 */
 			print_titre($langs->trans("Products"));
 
 			print '<table class="noborder" width="100%">';
@@ -380,8 +380,8 @@ else
 
 
 			/**
-			* Barre d'actions
-			*/
+			 * Barre d'actions
+			 */
 			print '<div class="tabsAction">';
 
 			if ($fac->statut == 0 && $user->rights->facture->supprimer)
@@ -393,95 +393,94 @@ else
 		}
 		else
 		{
-			/* Facture non trouvée */
-			print "Facture inexistante ou accés refusé";
+			print $langs->trans("ErrorRecordNotFound");
 		}
-		} else {
-			/***************************************************************************
+	} else {
+		/***************************************************************************
 			*                                                                         *
 			*                      Mode Liste                                         *
 			*                                                                         *
 			*                                                                         *
 			***************************************************************************/
 
-			if ($user->rights->facture->lire)
+		if ($user->rights->facture->lire)
+		{
+
+			$sql = "SELECT s.nom, s.rowid as socid, f.titre, f.total, f.rowid as facid";
+			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
+			$sql.= " WHERE f.fk_soc = s.rowid";
+
+			if ($socid)
+			$sql .= " AND s.rowid = ".$socid;
+
+			//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
+			//	$sql .= $db->plimit($limit + 1,$offset);
+
+			$result = $db->query($sql);
+		}
+		if ($result)
+		{
+			$num = $db->num_rows($result);
+			print_barre_liste($langs->trans("RepeatableInvoices"),$page,"fiche-rec.php","&socid=$socid",$sortfield,$sortorder,'',$num);
+
+			$i = 0;
+			print "<table class=\"noborder\" width=\"100%\">";
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("Ref").'</td>';
+			print_liste_field_titre($langs->trans("Company"),"fiche-rec.php","s.nom","","&socid=$socid","",$sortfiled,$sortorder);
+			print '</td><td align="right">'.$langs->trans("Amount").'</td>';
+			print '<td>&nbsp;</td>';
+			print "</td>\n";
+
+			if ($num > 0)
 			{
-
-				$sql = "SELECT s.nom, s.rowid as socid, f.titre, f.total, f.rowid as facid";
-				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
-				$sql.= " WHERE f.fk_soc = s.rowid";
-
-				if ($socid)
-				$sql .= " AND s.rowid = ".$socid;
-
-				//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
-				//	$sql .= $db->plimit($limit + 1,$offset);
-
-				$result = $db->query($sql);
-			}
-			if ($result)
-			{
-				$num = $db->num_rows($result);
-				print_barre_liste($langs->trans("RepeatableInvoices"),$page,"fiche-rec.php","&socid=$socid",$sortfield,$sortorder,'',$num);
-
-				$i = 0;
-				print "<table class=\"noborder\" width=\"100%\">";
-				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans("Ref").'</td>';
-				print_liste_field_titre($langs->trans("Company"),"fiche-rec.php","s.nom","","&socid=$socid","",$sortfiled,$sortorder);
-				print '</td><td align="right">'.$langs->trans("Amount").'</td>';
-				print '<td>&nbsp;</td>';
-				print "</td>\n";
-
-				if ($num > 0)
+				$var=True;
+				while ($i < min($num,$limit))
 				{
-					$var=True;
-					while ($i < min($num,$limit))
+					$objp = $db->fetch_object($result);
+					$var=!$var;
+
+					print "<tr $bc[$var]>";
+
+					print '<td><a href="fiche-rec.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
+					print "</a></td>\n";
+					print '<td><a href="../fiche.php?socid='.$objp->socid.'">'.$objp->nom.'</a></td>';
+
+					print "<td align=\"right\">".price($objp->total)."</td>\n";
+
+					if (! $objp->paye)
 					{
-						$objp = $db->fetch_object($result);
-						$var=!$var;
-
-						print "<tr $bc[$var]>";
-
-						print '<td><a href="fiche-rec.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
-						print "</a></td>\n";
-						print '<td><a href="../fiche.php?socid='.$objp->socid.'">'.$objp->nom.'</a></td>';
-
-						print "<td align=\"right\">".price($objp->total)."</td>\n";
-
-						if (! $objp->paye)
+						if ($objp->fk_statut == 0)
 						{
-							if ($objp->fk_statut == 0)
-							{
-								print '<td align="center">brouillon</td>';
-							}
-							else
-							{
-								print '<td align="center"><a href="facture.php?filtre=paye:0,fk_statut:1">impayée</a></td>';
-							}
+							print '<td align="center">brouillon</td>';
 						}
 						else
 						{
-							print '<td>&nbsp;</td>';
+							print '<td align="center"><a href="facture.php?filtre=paye:0,fk_statut:1">impayée</a></td>';
 						}
-
-						print "</tr>\n";
-						$i++;
 					}
+					else
+					{
+						print '<td>&nbsp;</td>';
+					}
+
+					print "</tr>\n";
+					$i++;
 				}
+			}
 
-				print "</table>";
-				$db->free();
-			}
-			else
-			{
-				dolibarr_print_error($db);
-			}
+			print "</table>";
+			$db->free();
 		}
-
+		else
+		{
+			dolibarr_print_error($db);
+		}
 	}
 
-	$db->close();
+}
 
-	llxFooter('$Date$ - $Revision$');
-	?>
+$db->close();
+
+llxFooter('$Date$ - $Revision$');
+?>
