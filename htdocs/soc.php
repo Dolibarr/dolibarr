@@ -373,18 +373,21 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
 		print '<table class="border" width="100%">';
-
-		print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td>';
-		print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
-
+		
 		if ($soc->particulier)
 		{
+			print '<tr><td>'.$langs->trans('LastName').'</td><td><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td>';
+			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
 			print '<tr><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$soc->firstname.'"></td>';
 			print '<td colspan=2>&nbsp;</td></tr>';
-
 			print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
 			print $formcompany->select_civilite($contact->civilite_id).'</td>';
 			print '<td colspan=2>&nbsp;</td></tr>';
+		}
+		else
+		{
+			print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td>';
+			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';		
 		}
 
 		// Client / Prospect
