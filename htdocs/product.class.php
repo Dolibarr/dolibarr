@@ -940,6 +940,7 @@ class Product extends CommonObject
 			$this->barcode_type       = $result["fk_barcode_type"];
 
 			$this->stock_in_command   = 0;	// TODO
+			$this->stock_in_propal    = 0;	// TODO
 
 			$this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
 
@@ -2110,68 +2111,25 @@ class Product extends CommonObject
 		return '';
 	}
 
-	/**
-	 *    \brief  Entre un nombre de piece du produit en stock dans un entrep�t
-	 *    \param  id_entrepot     id de l'entrepot
-	 *    \param  nbpiece         nombre de pieces
-	 */
-	function create_stock($id_entrepot, $nbpiece)
-	{
-		global $user;
-
-		$op[0] = "+".trim($nbpiece);
-		$op[1] = "-".trim($nbpiece);
-		$mouvement=0;	// We add pieces
-
-		$this->db->begin();
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock ";
-		$sql .= " (fk_product, fk_entrepot, reel)";
-		$sql .= " VALUES ($this->id, $id_entrepot, $nbpiece)";
-
-		dolibarr_syslog("Product::create_stock sql=".$sql);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
-			$sql .= " VALUES (".$this->db->idate(mktime()).", ".$this->id.", ".$id_entrepot.", ".$nbpiece.", 0, ".$user->id.")";
-
-			dolibarr_syslog("Product::create_stock sql=".$sql);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$this->db->commit();
-				return 1;
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-				$this->db->rollback();
-				return -2;
-			}
-		}
-		else
-		{
-			dolibarr_print_error($this->db);
-			return -1;
-		}
-	}
-
 
 	/**
-	 *    \brief  Ajuste le stock d'un entrepot pour le produit a une valeure donnee
-	 *    \param  user            utilisateur qui demande l'ajustement
-	 *    \param  id_entrepot     id de l'entrepot
-	 *    \param  nbpiece         nombre de pieces
-	 *    \param  mouvement       0 = ajout, 1 = suppression
+	 *  \brief  	Ajuste le stock d'un entrepot pour le produit d'un delta donne
+	 *  \param  	user            utilisateur qui demande l'ajustement
+	 *  \param  	id_entrepot     id de l'entrepot
+	 *  \param  	nbpiece         nombre de pieces
+	 *  \param  	mouvement       0 = ajout, 1 = suppression
+	 * 	\return     int     		<0 if KO, >0 if OK
 	 */
 	function correct_stock($user, $id_entrepot, $nbpiece, $mouvement)
 	{
 		if ($id_entrepot)
 		{
+			$this->db->begin();
+
 			$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."product_stock";
 			$sql .= " WHERE fk_product = ".$this->id." AND fk_entrepot = ".$id_entrepot;
 
+			dol_syslog("Product::correct_stock sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -2179,13 +2137,19 @@ class Product extends CommonObject
 				if ($row->nb > 0)
 				{
 					// Record already exists, we make an update
-					return $this->ajust_stock($user, $id_entrepot, $nbpiece, $mouvement);
+					$result=$this->ajust_stock($user, $id_entrepot, $nbpiece, $mouvement);
 				}
 				else
 				{
 					// Record not yet available, we make an insert
-					return $this->create_stock($id_entrepot, $nbpiece);
+					$result=$this->create_stock($user, $id_entrepot, $nbpiece, $mouvement);
 				}
+			}
+
+			if ($result >= 0)
+			{
+				$this->db->commit();
+				return 1;
 			}
 			else
 			{
@@ -2201,51 +2165,47 @@ class Product extends CommonObject
 	 *  \param  	user            utilisateur qui demande l'ajustement
 	 *  \param  	id_entrepot     id de l'entrepot
 	 *  \param  	nbpiece         nombre de pieces
-	 *  \param  	mouvement       0 = ajout, 1 = suppression
+	 *  \param  	movement        0 = ajout, 1 = suppression
+	 *  \return     int     		<0 if KO, >0 if OK
 	 * 	\remarks	Called by correct_stock
 	 */
-	function ajust_stock($user, $id_entrepot, $nbpiece, $mouvement)
+	function ajust_stock($user, $id_entrepot, $nbpiece, $movement)
 	{
+		require_once(DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php");
+
 		$op[0] = "+".trim($nbpiece);
 		$op[1] = "-".trim($nbpiece);
 
-		$this->db->begin();
+		$movementstock=new MouvementStock($this->db);
+		$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],0,0);
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock";
-		$sql.= " SET reel = reel ".$op[$mouvement];
-		$sql.= " WHERE fk_product = ".$this->id." AND fk_entrepot = ".$id_entrepot;
-
-		dolibarr_syslog("Product::ajust_stock sql=".$sql);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
-			$sql .= " VALUES (".$this->db->idate(mktime()).", ".$this->id.", ".$id_entrepot.", ".$op[$mouvement].", 0, ".$user->id.")";
-
-			dolibarr_syslog("Product::ajust_stock sql=".$sql);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$this->db->commit();
-				return 1;
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-				$this->db->rollback();
-				return -2;
-			}
-		}
-		else
-		{
-			dolibarr_print_error($this->db);
-			$this->db->rollback();
-			return -1;
-		}
+		return $result;
 	}
 
 	/**
-	 *    \brief      Charge les informations en stock du produit
+	 *  \brief  	Entre un nombre de piece du produit en stock dans un entrepot
+	 * 	\param  	user            utilisateur qui demande l'ajustement
+	 * 	\param  	id_entrepot     id de l'entrepot
+	 *  \param  	nbpiece         nombre de pieces
+	 *  \param  	movement        0 = ajout, 1 = suppression
+	 *  \return     int     		<0 if KO, >0 if OK
+	 * 	\remarks	Called by correct_stock
+	 */
+	function create_stock($user, $id_entrepot, $nbpiece, $movement=0)
+	{
+		require_once(DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php");
+
+		$op[0] = "+".trim($nbpiece);
+		$op[1] = "-".trim($nbpiece);
+
+		$movementstock=new MouvementStock($this->db);
+		$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],0,0);
+
+		return $result;
+	}
+
+	/**
+	 *    \brief      Charge les informations en stock du produit dans stock_entrepot[] et stock_reel
 	 *    \return     int             < 0 si erreur, > 0 si ok
 	 */
 	function load_stock()
@@ -2255,6 +2215,8 @@ class Product extends CommonObject
 		$sql = "SELECT reel, fk_entrepot";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock";
 		$sql.= " WHERE fk_product = '".$this->id."'";
+
+		dol_syslog("Product::load_stock sql=".$sql);
 		$result = $this->db->query($sql) ;
 		if ($result)
 		{
@@ -2288,11 +2250,11 @@ class Product extends CommonObject
 
 
 	/**
-	 *    \brief      D�place fichier upload� sous le nom $files dans le r�pertoire sdir
-	 *    \param      sdir        R�pertoire destination finale
-	 *    \param      $file       Nom du fichier upload�
-	 *    \param      maxWidth    Largeur maximum que dois faire la miniature (160 par d�faut)
-	 *    \param      maxHeight   Hauteur maximum que dois faire la miniature (120 par d�faut)
+	 *    \brief      Deplace fichier uploade sous le nom $files dans le repertoire sdir
+	 *    \param      sdir        Repertoire destination finale
+	 *    \param      $file       Nom du fichier uploade
+	 *    \param      maxWidth    Largeur maximum que dois faire la miniature (160 par defaut)
+	 *    \param      maxHeight   Hauteur maximum que dois faire la miniature (120 par defaut)
 	 */
 	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
 	{
@@ -2301,7 +2263,7 @@ class Product extends CommonObject
 
 		if (! file_exists($dir))
 		{
-			dolibarr_syslog("Product Create $dir");
+			dol_syslog("Product Create $dir");
 			create_exdir($dir);
 		}
 
@@ -2350,7 +2312,7 @@ class Product extends CommonObject
 
 		if (! file_exists($dir))
 		{
-			dolibarr_syslog("Product Create $dir");
+			dol_syslog("Product Create $dir");
 			create_exdir($dir);
 		}
 
@@ -2553,7 +2515,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      R�cup�re la taille de l'image
+	 *    \brief      Recupere la taille de l'image
 	 *    \param      file        Chemin de l'image
 	 */
 	function get_image_size($file)
@@ -2603,7 +2565,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Mise � jour du code barre
+	 *    \brief      Mise a jour du code barre
 	 *    \param      user        Utilisateur qui fait la modification
 	 */
 	function update_barcode($user)
@@ -2612,7 +2574,7 @@ class Product extends CommonObject
 		$sql .= " SET barcode = '".$this->barcode."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Product::update_barcode sql=".$sql);
+		dol_syslog("Product::update_barcode sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2626,7 +2588,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Mise � jour du type de code barre
+	 *    \brief      Mise a jour du type de code barre
 	 *    \param      user        Utilisateur qui fait la modification
 	 */
 	function update_barcode_type($user)
@@ -2635,7 +2597,7 @@ class Product extends CommonObject
 		$sql .= " SET fk_barcode_type = '".$this->barcode_type."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Product::update_barcode_type sql=".$sql);
+		dol_syslog("Product::update_barcode_type sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

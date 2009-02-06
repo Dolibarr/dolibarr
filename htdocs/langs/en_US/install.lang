@@ -186,3 +186,5 @@ MigrationShipmentOrderMatching=Sendings receipt update
 MigrationDeliveryOrderMatching=Delivery receipt update
 MigrationDeliveryDetail=Delivery update
 
+# Migration stock
+MigrationStockDetail=Update stock value of products

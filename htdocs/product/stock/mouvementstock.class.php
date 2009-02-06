@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class MouvementStock
 	}
 
 	/**
-	 *      \brief      Add a mouvement in stock (in one direction only)
+	 *      \brief      Add a movement in stock (in one direction only)
 	 * 		\param		type	Direction of movement: 2=output (stock decrease), 3=input (stock increase)
 	 *      \return     int     <0 if KO, >0 if OK
 	 */
@@ -47,17 +47,15 @@ class MouvementStock
 		global $conf;
 
 		$error = 0;
-		dolibarr_syslog("MouvementStock::_Create $user->id, $fk_product, $entrepot_id, qty=$qty, type=$type, $price");
+		dolibarr_syslog("MouvementStock::_create $user->id, $fk_product, $entrepot_id, qty=$qty, type=$type, $price");
 
 		$this->db->begin();
 
-		// $nbOfSubproduct=$this->nbOfSubProdcuts();
-
-		if (1 == 1)	// Always change stock for current product
+		if (1 == 1)	// Always change stock for current product, change for subproduct done after
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
 			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, price)";
-			$sql.= " VALUES (".$this->db->idate(mktime()).", ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.", ".$user->id;
+			$sql.= " VALUES (".$this->db->idate(gmmktime()).", ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.", ".$user->id;
 			$sql.= ",'".price2num($price)."')";
 
 			dolibarr_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
@@ -67,7 +65,7 @@ class MouvementStock
 			}
 			else
 			{
-				dolibarr_syslog("MouvementStock::_Create ".$this->error);
+				dolibarr_syslog("MouvementStock::_create ".$this->error);
 				$error = -1;
 			}
 
@@ -85,12 +83,12 @@ class MouvementStock
 				}
 				else
 				{
-					dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
+					dolibarr_syslog("MouvementStock::_create echec update ".$this->error);
 					$error = -2;
 				}
 			}
 
-			// Update value
+			// Update denormalized value of stock in product_stock and product
 			if ($error == 0)
 			{
 				if ($num > 0)
@@ -105,16 +103,29 @@ class MouvementStock
 					$sql.= " (".$qty.",".$entrepot_id.",".$fk_product.")";
 				}
 
-				dolibarr_syslog("MouvementStock::_Create sql=".$sql, LOG_DEBUG);
+				dolibarr_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
 				if ($this->db->query($sql))
 				{
-					// TODO
-					// Update value of PMP in product_stock
-					
+					$sql = "UPDATE ".MAIN_DB_PREFIX."product SET stock = stock + ".$qty;
+					$sql.= " WHERE rowid = ".$fk_product;
+
+					dolibarr_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
+					if ($this->db->query($sql))
+					{
+
+						// TODO
+						// Update value of PMP in product_stock
+					}
+					else
+					{
+						dolibarr_syslog("MouvementStock::_create ".$this->error, LOG_ERR);
+						$error = -4;
+					}
+
 				}
 				else
 				{
-					dolibarr_syslog("MouvementStock::_Create ".$this->error, LOG_ERR);
+					dolibarr_syslog("MouvementStock::_create ".$this->error, LOG_ERR);
 					$error = -3;
 				}
 			}
@@ -144,7 +155,7 @@ class MouvementStock
 		{
 			$error = $this->_createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, $price=0);
 		}
-			
+
 		if ($error == 0)
 		{
 			$this->db->commit();
@@ -153,8 +164,8 @@ class MouvementStock
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->error();
-			dolibarr_syslog("MouvementStock::_Create ".$this->error);
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("MouvementStock::_create ".$this->error);
 			return -2;
 		}
 	}
@@ -202,15 +213,13 @@ class MouvementStock
 		return $error;
 	}
 
-	
+
 	/**
 	 *      \brief      Crée un mouvement en base pour toutes les compositions de produits
 	 *      \return     int     <0 si ko, 0 si ok
 	 */
 	function _createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
 	{
-
-
 		dolibarr_syslog("MouvementStock::_createComposition $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
 		$products_compo = array();
 
@@ -242,7 +251,7 @@ class MouvementStock
 		return 0;
 	}
 
-	
+
 	/**
 	 *	\brief		Decrease stock for product and subproducts
 	 *	\return		int		<0 if KO, >0 if OK
@@ -283,7 +292,7 @@ class MouvementStock
 		$this->db->free($resql);
 		return $nbSP;
 	}
-	
+
 	/**
 	 *      \brief      Calcul ???
 	 *      \return     int    		<0 si ko, >0 si ok
@@ -302,7 +311,7 @@ class MouvementStock
 			{
 				$sql = "SELECT valo_pmp,".$this->db->pdate("date_calcul")." FROM ".MAIN_DB_PREFIX."entrepot_valorisation";
 				$sql.= " WHERE fk_entrepot = $entrepot_id ORDER BY date_calcul DESC LIMIT 1;";
-				 
+
 				if ($this->db->query($sql))
 				{
 					while ($row = $this->db->fetch_row($resql) )
@@ -339,7 +348,7 @@ class MouvementStock
 					$sql.= " VALUES (".$this->db->idate(mktime()).", ".$entrepot_id;
 					$sql.= ",'".price2num($new_value)."')";
 				}
-				 
+
 				if ($this->db->query($sql))
 				{
 
@@ -356,7 +365,7 @@ class MouvementStock
 				$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot";
 				$sql.= " SET valo_pmp='".price2num($new_value)."'";
 				$sql.= " WHERE rowid = $entrepot_id ";
-				 
+
 				if ($this->db->query($sql))
 				{
 
@@ -449,7 +458,7 @@ class MouvementStock
 
 			$new_stock_qty = $qty_stock + $qty;
 			$new_stock_value_pmp = $stock_value_pmp + $value_ope;
-			
+
 			// Fin calcul
 			if ($error === 0)
 			{

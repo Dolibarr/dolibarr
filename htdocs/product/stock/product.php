@@ -52,7 +52,7 @@ if ($_POST["action"] == "create_stock" && ! $_POST["cancel"])
 {
 	$product = new Product($db);
 	$product->id = $_GET["id"];
-	$product->create_stock($_POST["id_entrepot"], $_POST["nbpiece"]);
+	$product->create_stock($user, $_POST["id_entrepot"], $_POST["nbpiece"]);
 }
 
 if ($_POST["action"] == "correct_stock" && ! $_POST["cancel"])
@@ -74,19 +74,30 @@ if ($_POST["action"] == "transfert_stock" && ! $_POST["cancel"])
 	{
 		if (is_numeric($_POST["nbpiece"]))
 		{
-			 
-	  $product = new Product($db);
-	  $product->id = $_GET["id"];
+			$product = new Product($db);
+			$product->id = $_GET["id"];
 
-	  $product->correct_stock($user,
-	  $_POST["id_entrepot_source"],
-	  $_POST["nbpiece"],
-	  1);
+			$db->begin();
 
-	  $product->correct_stock($user,
-	  $_POST["id_entrepot_destination"],
-	  $_POST["nbpiece"],
-	  0);
+			$result1=$product->correct_stock($user,
+			$_POST["id_entrepot_source"],
+			$_POST["nbpiece"],
+			1);
+
+			$result2=$product->correct_stock($user,
+			$_POST["id_entrepot_destination"],
+			$_POST["nbpiece"],
+			0);
+
+			if ($result1 >= 0 && $result2 >= 0)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$mesg=$product->error;
+				$db->rollback();
+			}
 		}
 	}
 }
@@ -152,11 +163,11 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<td>'.$product->stock_reel.'</td>';
 		print '</tr>';
 
-		// Calculating a theorical value of stock if stock increment is done on real sending			
+		// Calculating a theorical value of stock if stock increment is done on real sending
 		if ($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 		{
 			$stock_commande_client=$stock_commande_fournisseur=0;
-	
+
 			if ($conf->commande->enabled)
 			{
 				$result=$product->load_stats_commande(0,'1,2');
@@ -169,9 +180,9 @@ if ($_GET["id"] || $_GET["ref"])
 				if ($result < 0) dolibarr_print_error($db,$product->error);
 				$stock_commande_fournisseur=$product->stats_commande_fournisseur['qty'];
 			}
-			 
+
 			$product->stock_theorique=$product->stock_reel-($stock_commande_client+$stock_sending_client)+$stock_commande_fournisseur;
-			 
+
 			// Stock theorique
 			print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
 			print "<td>".$product->stock_theorique;
@@ -181,7 +192,7 @@ if ($_GET["id"] || $_GET["ref"])
 			}
 			print '</td>';
 			print '</tr>';
-	
+
 			print '<tr><td>';
 			if ($product->stock_theorique != $product->stock_reel) print $langs->trans("StockDiffPhysicTeoric");
 			else print $langs->trans("RunningOrders");
@@ -189,7 +200,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<td>';
 
 			$found=0;
-				
+
 			// Nbre de commande clients en cours
 			if ($conf->commande->enabled)
 			{
@@ -213,7 +224,7 @@ if ($_GET["id"] || $_GET["ref"])
 			}
 			print '</td></tr>';
 		}
-	
+
 		// Stock
 		print '<tr><td>'.$langs->trans("StockLimit").'</td>';
 		print '<td>'.$product->seuil_stock_alerte.'</td>';
@@ -336,7 +347,7 @@ print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</t
 print '<td align="right">'.$langs->trans("NumberOfUnit").'</td></tr>';
 
 $sql = "SELECT e.rowid, e.label, ps.reel FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps";
-$sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = ".$product->id;
+$sql .= " WHERE ps.reel != 0 AND ps.fk_entrepot = e.rowid AND ps.fk_product = ".$product->id;
 $sql .= " ORDER BY lower(e.label)";
 
 $entrepotstatic=new Entrepot($db);

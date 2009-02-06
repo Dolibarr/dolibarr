@@ -195,6 +195,10 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		migrate_module_menus($db,$langs,$conf);
 
 
+		// Script pour V2.5 -> V2.6
+		migrate_stocks($db,$langs,$conf);
+
+
 		// On commit dans tous les cas.
 		// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
 		$db->commit();
@@ -1886,6 +1890,76 @@ function migrate_detail_livraison($db,$langs,$conf)
 	}
 	print '</td></tr>';
 }
+
+
+
+/*
+ * Migration du champ stock dans produits
+ */
+function migrate_stocks($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationStockDetail')."</b><br>\n";
+
+	$error = 0;
+
+	$db->begin();
+
+	$sql = "SELECT SUM(reel) as total, fk_product";
+	$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+	$sql.= " GROUP BY fk_product";
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
+				$sql.= " stock = '".$obj->total."'";
+				$sql.= " WHERE rowid=".$obj->fk_product;
+
+				$resql2=$db->query($sql);
+				if ($resql2)
+				{
+
+				}
+				else
+				{
+					$error++;
+					dolibarr_print_error($db);
+				}
+				print ". ";
+				$i++;
+			}
+
+		}
+
+		if ($error == 0)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dolibarr_print_error($db);
+		$db->rollback();
+	}
+
+	print '</td></tr>';
+}
+
 
 /* A faire egalement: Modif statut paye et fk_facture des factures payes completement
 

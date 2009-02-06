@@ -187,3 +187,7 @@ MigrationShipmentOrderMatching=Mise a jour bon expedition
 MigrationDeliveryOrderMatching=Mise a jour bon reception
 MigrationDeliveryDetail=Mise a jour bon reception
 
+# Migration stock
+MigrationStockDetail=Mise a jour valeur en stock des produits
+
+

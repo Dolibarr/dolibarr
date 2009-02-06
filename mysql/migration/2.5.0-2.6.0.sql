@@ -38,6 +38,7 @@ ALTER TABLE llx_categorie ADD INDEX idx_categorie_type (type);
 
 ALTER TABLE llx_product drop column   stock_propale;
 ALTER TABLE llx_product drop column   stock_commande;
+ALTER TABLE llx_product add column   stock              integer after import_key;
 
 ALTER TABLE llx_adherent drop index login;
 ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_login (login);
