@@ -375,7 +375,6 @@ class Product extends CommonObject
 		$this->volume_units = trim($this->volume_units);
 		if (empty($this->tva_tx))    			$this->tva_tx = 0;
 		if (empty($this->finished))  			$this->finished = 0;
-		if (empty($this->seuil_stock_alerte))  	$this->seuil_stock_alerte = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 		$sql .= " SET label = '" . addslashes($this->libelle) ."'";
@@ -387,7 +386,7 @@ class Product extends CommonObject
 		$sql .= ",weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
 		$sql .= ",volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
 		$sql .= ",volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
-		$sql .= ",seuil_stock_alerte = " . ($this->seuil_stock_alerte!='' ? $this->seuil_stock_alerte : "null");
+		$sql .= ",seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
 		$sql .= ",description = '" . addslashes($this->description) ."'";
 		$sql .= ",stock_loc   = '" . addslashes($this->stock_loc) ."'";
 		$sql .= ",note = '" .        addslashes($this->note) ."'";

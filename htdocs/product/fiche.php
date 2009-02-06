@@ -779,7 +779,7 @@ if ($_GET["id"] || $_GET["ref"])
 			$product->assign_smarty_values($smarty,$_GET["action"]);
 		}
 	}
-	// END TODO RODO FINISH THIS PART
+
 
 	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
@@ -1054,7 +1054,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  }
 	  else
 	  {
-	  	print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+	  	print '<input name="seuil_stock_alerte" type="hidden" value="'.$product->seuil_stock_alerte.'">';
 	  }
 
 	  if ($product->isservice())
@@ -1081,6 +1081,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  	print '<input name="weight" size="5" value="'.$product->weight.'"> ';
 	  	print $formproduct->select_measuring_units("weight_units", "weight", $product->weight_units);
 	  	print '</td></tr>';
+
 	  	print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 	  	print '<input name="volume" size="5" value="'.$product->volume.'"> ';
 	  	print $formproduct->select_measuring_units("volume_units", "volume", $product->volume_units);
