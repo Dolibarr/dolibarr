@@ -26,25 +26,24 @@
  */
 
 /**
- \file       htdocs/includes/modules/modProduit.class.php
- \ingroup    produit
- \brief      Fichier de description et activation du module Produit
+ *	\file       htdocs/includes/modules/modProduit.class.php
+ *	\ingroup    produit
+ *	\brief      Fichier de description et activation du module Produit
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- \class      modProduit
- \brief      Classe de description et activation du module Produit
+ *	\class      modProduit
+ *	\brief      Classe de description et activation du module Produit
  */
-
 class modProduit extends DolibarrModules
 {
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acc�s base
+	 *   \param      DB      handler d'acces base
 	 */
 	function modProduit($DB)
 	{
@@ -141,8 +140,11 @@ class modProduit extends DolibarrModules
 		$this->export_label[$r]="ProductsOrServices";	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("produit","export"));
 		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"Price",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
+		if (! empty($conf->stock->enabled)) $this->export_fields_array[$r]=array_merge ($this->export_fields_array[$r],array('p.stock'=>'Stock'));	
 		$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product",'p.datec'=>'product','p.tms'=>'product');
+		if (! empty($conf->stock->enabled)) $this->export_entities_array[$r]=array_merge ($this->export_entities_array[$r],array('p.stock'=>'product'));	
 		$this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration",'p.datec'=>'datecreation','p.tms'=>'datemodification');
+		if (! empty($conf->stock->enabled)) $this->export_alias_array[$r]=array_merge ($this->export_alias_array[$r],array('p.stock'=>'stock'));	
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
 
