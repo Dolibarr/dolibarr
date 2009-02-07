@@ -380,8 +380,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
  *								"%d/%m/%Y %H:%M:%S",
  *								"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
  * 	\param		to_gmt			false=output string if for local server TZ users, true=output string is for GMT users
- *	\param		outputlangs		Object lang that contains charset_output property to define output
- * 								This means output is encoded in UTF-8 in default case.
+ *	\param		outputlangs		Object lang that contains language for text translation.
  * 	\return     string      	Formated date or '' if time is null
  */
 function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
@@ -442,12 +441,6 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 		else $ret='Bad value '.$time.' for date';
 	}
 
-	// What is page code of texts from strftime functions ?
-//	$pagecodefrom='ISO-8859-1';
-//	$localtime=setlocale(LC_TIME,0);
-	//print $localtime;
-//	if (eregi('UTF',$localtime)) $pagecodefrom='UTF-8';
-
 	if (! is_object($outputlangs)) $outputlangs=$langs;
 
 	if (eregi('__b__',$format))
@@ -463,7 +456,6 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 		//return $ret;
 	}
 
-//	return $outputlangs->convToOutputCharset($ret,$pagecodefrom);
 	return $ret;
 }
 

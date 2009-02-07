@@ -69,14 +69,12 @@ $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_ALL")."</td><td>".setlocale(LC_ALL,0)."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_NUMERIC")."</td><td>".setlocale(LC_NUMERIC,0)."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_TIME")."</td><td>".setlocale(LC_TIME,0)."</td></tr>\n";
 //$var=!$var;
 //print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var].'><td width="300">=> price2num(1234.56)</td><td>'.price2num(1233.56+1,'2')."</td></tr>";
 $var=!$var;
-print "<tr ".$bc[$var].'><td width="300">=> dolibarr_print_date(0,"dayhourtext")</td><td>'.dolibarr_print_date(0,"dayhourtext")."</td>";
+print "<tr ".$bc[$var].'><td width="300">=> dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext")."</td>";
 // Thousands
 $var=!$var;
 $thousand=$langs->trans("SeparatorThousand");
