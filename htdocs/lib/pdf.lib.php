@@ -161,7 +161,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	//print 'e'.$ligne.'t'.dol_nboflines($ligne);exit;
 	$posy=$marge_basse + ($nbofligne*3) + ($ligne1?3:0) + ($ligne2?3:0);
 
-	if ($ligne)
+	if ($ligne)	// Free text
 	{
 		$pdf->SetXY($marge_gauche,-$posy);
 		$pdf->MultiCell(190, 3, $ligne, 0, 'L', 0);
@@ -191,7 +191,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 
 
 /**
- *   	\brief      Return line description translated in outputlangs but encoded in UTF8
+ *   	\brief      Return line description translated in outputlangs and encoded in UTF8
  *		\param		line			Line to format
  *      \param      outputlang		Object lang for output
  */
@@ -256,30 +256,42 @@ function pdf_getlinedesc($line,$outputlangs)
 		if ($prodser->ref)
 		{
 			$prefix_prodserv = "";
-			if($prodser->isservice())
+			if ($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS)	// In standard mode, we do not show this
 			{
-				$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
+				if($prodser->isservice())
+				{
+					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
+				}
+				else
+				{
+					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
+				}
 			}
-			else
-			{
-				$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
-			}
-
+			
 			$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
 		}
-
 	}
 	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
 
 	if ($line->date_start || $line->date_end)
 	{
-		// Affichage duree si il y en a une
-		$period="(";
-		if ($line->date_start) $period.=$outputlangs->transnoentitiesnoconv("From")." ".dolibarr_print_date($line->date_start,'',false);
-		if ($period) $period.=" ";
-		if ($line->date_end) $period.=$outputlangs->transnoentitiesnoconv("to")." ".dolibarr_print_date($line->date_end,'',false);
+		// Show duration if exists
+		if ($line->date_start && $line->date_end)
+		{
+			$period='('.$outputlangs->transnoentitiesnoconv('DateFromTo',dolibarr_print_date($line->date_start, $format, false, $outputlangs),dolibarr_print_date($line->date_end, $format, false, $outputlangs)).')';
+		}
+		if ($line->date_start && ! $line->date_end)
+		{
+			$period='('.$outputlangs->transnoentitiesnoconv('DateFrom',dolibarr_print_date($line->date_start, $format, false, $outputlangs)).')';
+		}
+		if (! $line->date_start && $line->date_end)
+		{
+			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dolibarr_print_date($line->date_end, $format, false, $outputlangs)).')';
+		}
 		$period.=")";
+		//print '>'.$outputlangs->charset_output.','.$period;
 		$libelleproduitservice.="<br>".dol_htmlentitiesbr($period,1);
+		//print $libelleproduitservice;
 	}
 	return $libelleproduitservice;
 }

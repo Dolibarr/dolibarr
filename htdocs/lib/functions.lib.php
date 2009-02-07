@@ -371,7 +371,8 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 }
 
 /**
- *	\brief      Output date in a string format according to outputlang (or lang if not defined)
+ *	\brief      Output date in a string format according to outputlangs (or langs if not defined).
+ * 				But return charset is always UTF-8.
  *	\param	    time        	GM Timestamps date (or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' in server TZ)
  *	\param	    format      	Output date format
  *								"%d %b %Y",
@@ -380,7 +381,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
  *								"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
  * 	\param		to_gmt			false=output string if for local server TZ users, true=output string is for GMT users
  *	\param		outputlangs		Object lang that contains charset_output property to define output
- * 								This means output is endoded in UTF-8 in default case.
+ * 								This means output is encoded in UTF-8 in default case.
  * 	\return     string      	Formated date or '' if time is null
  */
 function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
@@ -390,22 +391,29 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 	// Si format non defini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
 	if (! $format) $format=(isset($conf->format_date_text_short) ? $conf->format_date_text_short : '%Y-%m-%d %H:%M:%S');
 
-	if ($format == 'day')          $format=$conf->format_date_short;
-	if ($format == 'hour')         $format=$conf->format_hour_short;
-	if ($format == 'daytext')      $format=$conf->format_date_text;
-	if ($format == 'daytextshort') $format=$conf->format_date_text_short;
-	if ($format == 'dayhour')      $format=$conf->format_date_hour_short;
-	if ($format == 'dayhourtext')  $format=$conf->format_date_hour_text;
+	if ($format == 'day')               $format=$conf->format_date_short;
+	if ($format == 'hour')              $format=$conf->format_hour_short;
+	if ($format == 'daytext')           $format=$conf->format_date_text;
+	if ($format == 'daytextshort')      $format=$conf->format_date_text_short;
+	if ($format == 'dayhour')           $format=$conf->format_date_hour_short;
+	if ($format == 'dayhourtext')       $format=$conf->format_date_hour_text;
 	if ($format == 'dayhourtextshort')  $format=$conf->format_date_hour_text_short;
 
-	if ($format == 'dayhourlog')   $format='%Y%m%d%H%M%S';
-	if ($format == 'dayhourldap')  $format='%Y%m%d%H%M%SZ';
-	if ($format == 'dayhourxcard') $format='%Y%m%dT%H%M%SZ';
+	if ($format == 'dayhourlog')        $format='%Y%m%d%H%M%S';
+	if ($format == 'dayhourldap')       $format='%Y%m%d%H%M%SZ';
+	if ($format == 'dayhourxcard')      $format='%Y%m%dT%H%M%SZ';
 
 	// If date undefined or "", we return ""
 	if (strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
 
 	//print 'x'.$time;
+	
+	if (eregi('%b',$format))		// There is some text to translate
+	{
+		// We inhibate translation to text made by strftime functions. We will use trans instead later.
+		$format=ereg_replace('%b','__b__',$format);		
+		$format=ereg_replace('%B','__B__',$format);		
+	}
 	
 	// Analyse de la date (deprecated)   Ex: 19700101, 19700101010000
 	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg)
@@ -421,7 +429,8 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 		$smin = $reg[5];
 		$ssec = $reg[6];
 
-		$ret=adodb_strftime($format,dolibarr_mktime($shour,$smin,$ssec,$smonth,$sday,$syear),$to_gmt);
+		$time=dolibarr_mktime($shour,$smin,$ssec,$smonth,$sday,$syear);
+		$ret=adodb_strftime($format,$time,$to_gmt);
 	}
 	else
 	{
@@ -434,14 +443,28 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 	}
 
 	// What is page code of texts from strftime functions ?
-	$pagecodefrom='ISO-8859-1';
-	$localtime=setlocale(LC_TIME,0);
+//	$pagecodefrom='ISO-8859-1';
+//	$localtime=setlocale(LC_TIME,0);
 	//print $localtime;
-	if (eregi('UTF',$localtime)) $pagecodefrom='UTF-8';
+//	if (eregi('UTF',$localtime)) $pagecodefrom='UTF-8';
 
 	if (! is_object($outputlangs)) $outputlangs=$langs;
 
-	return $outputlangs->convToOutputCharset($ret,$pagecodefrom);
+	if (eregi('__b__',$format))
+	{
+		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
+		$month=adodb_strftime('%m',$time);
+		$monthtext=$outputlangs->transnoentitiesnoconv('Month'.$month);
+		$monthtextshort=$outputlangs->transnoentitiesnoconv('MonthShort'.$month);
+		//print 'monthtext='.$monthtext.' monthtextshort='.$monthtextshort;
+		$ret=ereg_replace('__b__',$monthtextshort,$ret);
+		$ret=ereg_replace('__B__',$monthtext,$ret);
+		//print 'x'.$outputlangs->charset_output.'-'.$ret.'x';
+		//return $ret;
+	}
+
+//	return $outputlangs->convToOutputCharset($ret,$pagecodefrom);
+	return $ret;
 }
 
 
@@ -2684,15 +2707,15 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 
 	if ($date_start && $date_end)
 	{
-		print ' ('.$langs->trans('DateFromTo',dolibarr_print_date($date_start, $format, false, $outputlangs),dolibarr_print_date($date_end, $format, false, $outputlangs)).')';
+		print ' ('.$outputlangs->trans('DateFromTo',dolibarr_print_date($date_start, $format, false, $outputlangs),dolibarr_print_date($date_end, $format, false, $outputlangs)).')';
 	}
 	if ($date_start && ! $date_end)
 	{
-		print ' ('.$langs->trans('DateFrom',dolibarr_print_date($date_start, $format, false, $outputlangs)).')';
+		print ' ('.$outputlangs->trans('DateFrom',dolibarr_print_date($date_start, $format, false, $outputlangs)).')';
 	}
 	if (! $date_start && $date_end)
 	{
-		print ' ('.$langs->trans('DateUntil',dolibarr_print_date($date_end, $format, false, $outputlangs)).')';
+		print ' ('.$outputlangs->trans('DateUntil',dolibarr_print_date($date_end, $format, false, $outputlangs)).')';
 	}
 }
 

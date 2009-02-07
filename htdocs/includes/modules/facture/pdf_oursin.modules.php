@@ -361,13 +361,13 @@ class pdf_oursin extends ModelePDFFactures
 				$invoice->fetch($obj->fk_facture_source);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
-				$pdf->MultiCell(20, 4,'', 0, 'L', 0);
+				$pdf->MultiCell(20, 3,'', 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
-				$pdf->MultiCell(20, 4, price($obj->amount_ttc), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, price($obj->amount_ttc), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
-				$pdf->MultiCell(20, 4, $outputlangs->trans("CreditNote"), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $outputlangs->trans("CreditNote"), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+60, $tab3_top+$y);
-				$pdf->MultiCell(20, 4, $invoice->ref, 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $invoice->ref, 0, 'L', 0);
 
 				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
 
@@ -397,9 +397,9 @@ class pdf_oursin extends ModelePDFFactures
 				$row = $this->db->fetch_row($resql);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
-				$pdf->MultiCell(20, 4, dolibarr_print_date($row[0],'day',false,$outputlangs), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dolibarr_print_date($row[0],'day',false,$outputlangs), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
-				$pdf->MultiCell(20, 4, price($row[1]), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, price($row[1]), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
 				switch ($row[2])
 				{
@@ -425,9 +425,9 @@ class pdf_oursin extends ModelePDFFactures
 						$oper = 'CHQ';
 						break;
 				}
-				$pdf->MultiCell(20, 4, $oper, 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+60, $tab3_top+$y);
-				$pdf->MultiCell(20, 4, $row[3], 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $row[3], 0, 'L', 0);
 
 				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
 
@@ -577,7 +577,7 @@ class pdf_oursin extends ModelePDFFactures
 
 
 	/**
-	 *   \brief      Affiche le total � payer
+	 *   \brief      Affiche le total a payer
 	 *   \param      pdf         objet PDF
 	 *   \param      fac         objet facture
 	 *   \param      deja_regle  montant deja regle

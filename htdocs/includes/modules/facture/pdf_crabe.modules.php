@@ -269,13 +269,13 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($fac->lignes[$i]->remise_percent)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dol_print_reduction($fac->lignes[$i]->remise_percent,$outputlangs), 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, dol_print_reduction($fac->lignes[$i]->remise_percent,$outputlangs), 0, 'R');
 					}
 
 					// Total HT ligne
 					$pdf->SetXY ($this->postotalht, $curY);
 					$total = price($fac->lignes[$i]->total_ht);
-					$pdf->MultiCell(26, 4, $total, 0, 'R', 0);
+					$pdf->MultiCell(26, 3, $total, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$fac->lignes[$i]->total_tva;
@@ -289,7 +289,7 @@ class pdf_crabe extends ModelePDFFactures
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
-						//on r�cup�re la description du produit suivant
+						//on recupere la description du produit suivant
 						$follow_descproduitservice = $fac->lignes[$i+1]->desc;
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = dol_nboflines_bis($follow_descproduitservice,52)*4;
@@ -416,16 +416,17 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetXY ($tab3_posx, $tab3_top - 5);
 		$pdf->MultiCell(60, 5, $outputlangs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
 
-		$pdf->Rect($tab3_posx, $tab3_top-1, $tab3_width, $tab3_height);
+		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
 
-		$pdf->SetXY ($tab3_posx, $tab3_top-1 );
-		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
-		$pdf->SetXY ($tab3_posx+21, $tab3_top-1 );
-		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
-		$pdf->SetXY ($tab3_posx+41, $tab3_top-1 );
-		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Type"), 0, 'L', 0);
-		$pdf->SetXY ($tab3_posx+60, $tab3_top-1 );
-		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Num"), 0, 'L', 0);
+		$pdf->SetFont('Arial','',6);
+		$pdf->SetXY ($tab3_posx, $tab3_top );
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
+		$pdf->SetXY ($tab3_posx+21, $tab3_top );
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
+		$pdf->SetXY ($tab3_posx+41, $tab3_top );
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
+		$pdf->SetXY ($tab3_posx+60, $tab3_top );
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', 0);
 
 		$y=0;
 
@@ -450,13 +451,13 @@ class pdf_crabe extends ModelePDFFactures
 				$invoice->fetch($obj->fk_facture_source);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
-				$pdf->MultiCell(20, 4,'', 0, 'L', 0);
+				$pdf->MultiCell(20, 3,'', 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
-				$pdf->MultiCell(20, 4, price($obj->amount_ttc), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, price($obj->amount_ttc), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
-				$pdf->MultiCell(20, 4, $outputlangs->trans("CreditNote"), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $outputlangs->trans("CreditNote"), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+60, $tab3_top+$y);
-				$pdf->MultiCell(20, 4, $invoice->ref, 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $invoice->ref, 0, 'L', 0);
 
 				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
 
@@ -485,9 +486,9 @@ class pdf_crabe extends ModelePDFFactures
 				$row = $this->db->fetch_row($resql);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
-				$pdf->MultiCell(20, 4, dolibarr_print_date($row[0],'day',false,$outputlangs), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dolibarr_print_date($row[0],'day',false,$outputlangs), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
-				$pdf->MultiCell(20, 4, price($row[1]), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, price($row[1]), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
 				switch ($row[2])
 				{
@@ -513,9 +514,9 @@ class pdf_crabe extends ModelePDFFactures
 						$oper = 'CHQ';
 						break;
 				}
-				$pdf->MultiCell(20, 4, $oper, 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+60, $tab3_top+$y);
-				$pdf->MultiCell(20, 4, $row[3], 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $row[3], 0, 'L', 0);
 
 				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
 
