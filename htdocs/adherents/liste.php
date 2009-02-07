@@ -189,7 +189,7 @@ if ($resql)
 	print '<input class="flat" type="text" name="search_nom" value="'.$_REQUEST["search_nom"].'" size="12"></td>';
 
 	print '<td align="left">';
-	print '<input class="flat" type="text" name="search_login" value="'.$_REQUEST["search_login"].'" size="8"></td>';
+	print '<input class="flat" type="text" name="search_login" value="'.$_REQUEST["search_login"].'" size="7"></td>';
 
 	print '<td class="liste_titre">';
     $listetype=$membertypestatic->liste_array();
@@ -223,11 +223,11 @@ if ($resql)
         print "<tr $bc[$var]>";
         if ($objp->societe != '')
         {
-            print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></td>\n";
+            print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.$objp->prenom." ".dol_trunc($objp->nom,12)." / ".dol_trunc($objp->societe,12)."</a></td>\n";
         }
         else
         {
-            print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.$objp->prenom." ".$objp->nom."</a></td>\n";
+            print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.$objp->prenom." ".dol_trunc($objp->nom)."</a></td>\n";
         }
 
         // Login
