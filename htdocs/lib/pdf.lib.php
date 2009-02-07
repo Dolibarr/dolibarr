@@ -288,7 +288,6 @@ function pdf_getlinedesc($line,$outputlangs)
 		{
 			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dolibarr_print_date($line->date_end, $format, false, $outputlangs)).')';
 		}
-		$period.=")";
 		//print '>'.$outputlangs->charset_output.','.$period;
 		$libelleproduitservice.="<br>".dol_htmlentitiesbr($period,1);
 		//print $libelleproduitservice;
