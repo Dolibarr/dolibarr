@@ -194,7 +194,11 @@ if ($socid > 0)
     // Fax
 	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($objsoc->fax,$objsoc->pays_code,0,$objsoc->id,'AC_FAX').'</td></tr>';
 
-    print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\" target=\"_blank\">".$objsoc->url."</a>&nbsp;</td></tr>";
+    // EMail
+	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($objsoc->email,0,$objsoc->id,'AC_EMAIL').'</td></tr>';
+
+	// Web
+    print '<tr><td>'.$langs->trans("Web").'</td><td colspan="3">'.dol_print_url($objsoc->url,'_blank').'</td></tr>';
 
 	// Assujeti TVA ou pas
 	print '<tr>';
