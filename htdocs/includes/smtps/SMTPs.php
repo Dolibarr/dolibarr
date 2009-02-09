@@ -523,7 +523,48 @@ class SMTPs
     var $_debug = false;
 
 
+
+    // DOL_CHANGE LDR
+    var $log = '';
+    var $_errorsTo = '';
+    var $_deliveryReceipt = 0;
+
+    function setDeliveryReceipt( $_val = 0 )
+    {
+        $this->_deliveryReceipt = $_val;
+    }
+
+    function getDeliveryReceipt()
+    {
+        return $this->_deliveryReceipt;
+    }
+
+    function setErrorsTo ( $_strErrorsTo )
+    {
+        if ( $_strErrorsTo )
+            $this->_errorsTo = $this->_strip_email ( $_strErrorsTo );
+    }
+
+    function getErrorsTo ( $_part = true )
+    {
+        $_retValue = '';
+
+        if ( $_part === true )
+             $_retValue = $this->_errorsTo;
+        else
+             $_retValue = $this->_errorsTo[$_part];
+
+        return $_retValue;
+    }
+
+
+
 // =============================================================
+    function setDebug ( $_vDebug = false )
+    {
+        $this->_debug = $_vDebug;
+    }
+
 // ** Class methods
 
    /**
@@ -1340,6 +1381,7 @@ class SMTPs
         return $_retValue;
     }
 
+
    /**
     * Method private array _buildAddrList( void )
     *
@@ -1820,7 +1862,15 @@ class SMTPs
         if ( $this->_msgPriority != 3 )
             $_header .= $this->getPriority();
 
-        $_header .= 'X-Mailer: SMTPs/PHP Mailer'                   . "\r\n"
+
+        // DOL_CHANGE LDR
+		if ( $this->getDeliveryReceipt() )
+			$_header .= 'Disposition-Notification-To: '.$this->getFrom('addr') . "\r\n";
+		if ( $this->getErrorsTo() )
+			$_header .= 'Errors-To: '.$this->getErrorsTo('addr') . "\r\n";
+
+
+			$_header .= 'X-Mailer: Dolibarr version ' . DOL_VERSION .' (using SMTPs Mailer)'                   . "\r\n"
                  .  'Mime-Version: 1.0'                            . "\r\n";
 
         return $_header;
@@ -2311,7 +2361,9 @@ class SMTPs
 
     function socket_send_str ( $_strSend, $_returnCode = null, $CRLF = "\r\n" )
     {
+    	if ($this->_debug) $this->log.=$_strSend . ":&nbsp;";
         fputs($this->socket, $_strSend . $CRLF);
+        if ($this->_debug) $this->log.=$_returnCode . "<br>";
 
         if ( $_returnCode )
             return $this->server_parse($this->socket, $_returnCode);
@@ -2383,6 +2435,9 @@ class SMTPs
 
  /**
   * $Log$
+  * Revision 1.2  2009/02/09 00:04:35  eldy
+  * Added support for SMTPS protocol
+  *
   * Revision 1.1  2008/04/16 23:11:45  eldy
   * New: Add action "Test server connectivity"
   *

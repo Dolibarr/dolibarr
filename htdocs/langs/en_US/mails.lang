@@ -87,6 +87,7 @@ ToAddRecipientsChooseHere=To add recipients, choose in those lists
 NbOfEMailingsReceived=Mass emailings received
 IdRecord=ID record
 DeliveryReceipt=Delivery Receipt
+YouCanUseCommaSeparatorForSeveralRecipients=You can use the <b>comma</b> separator to specify several recipients.
 
 # Module Notifications
 Notifications=Notifications

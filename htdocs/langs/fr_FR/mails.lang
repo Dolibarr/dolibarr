@@ -87,6 +87,7 @@ ToAddRecipientsChooseHere=Pour ajouter des destinataires, choisir dans les liste
 NbOfEMailingsReceived=Mailings de masse reçus
 IdRecord=ID enregistrement
 DeliveryReceipt=Accusé de réception
+YouCanUseCommaSeparatorForSeveralRecipients=Vous pouvez utiliser le caractère de séparation <b>virgule</b> pour spécifier plusieurs destinataires.
 
 # Module Notifications
 Notifications=Notifications

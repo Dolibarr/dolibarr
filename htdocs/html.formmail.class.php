@@ -34,14 +34,14 @@ require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
 class FormMail
 {
 	var $db;
-	
+
 	var $fromname;
 	var $frommail;
 	var $replytoname;
 	var $replytomail;
 	var $toname;
 	var $tomail;
-	
+
 	var $withsubstit;			// Show substitution array
 	var $withfrom;
 	var $withto;
@@ -49,7 +49,7 @@ class FormMail
 	var $withtopic;
 	var $withfile;				// 0=No attaches files, 1=Show attached files, 2=Can add new attached files
 	var $withbody;
-	
+
 	var $withfromreadonly;
 	var $withreplytoreadonly;
 	var $withtoreadonly;
@@ -57,13 +57,13 @@ class FormMail
 	var $withtopicreadonly;
 	var $withdeliveryreceipt;
 	var $withcancel;
-	
+
 	var $substit=array();
 	var $param=array();
-	
+
 	var $error;
 
-  
+
 	/**
 		\brief     Constructeur
 	    \param     DB      handler d'acc�s base de donn�e
@@ -71,7 +71,7 @@ class FormMail
 	function FormMail($DB)
 	{
 		$this->db = $DB;
-		
+
 		$this->withfrom=1;
 		$this->withto=1;
 		$this->withtocc=1;
@@ -80,7 +80,7 @@ class FormMail
 		$this->withtopic=1;
 		$this->withfile=0;
 		$this->withbody=1;
-		
+
 		$this->withfromreadonly=1;
 		$this->withreplytoreadonly=1;
 		$this->withtoreadonly=0;
@@ -89,7 +89,7 @@ class FormMail
 		$this->withtopicreadonly=0;
 		$this->withbodyreadonly=0;
 		$this->withdeliveryreceiptreadonly=0;
-		
+
 		return 1;
 	}
 
@@ -97,18 +97,18 @@ class FormMail
 	 * Clear list of attached files in send mail form (stored in session)
 	 */
 	function clear_attached_files()
-	{	
+	{
 		global $conf,$user;
-		
+
 		$conf->users->dir_tmp=DOL_DATA_ROOT."/users/".$user->id;
 		$upload_dir = $conf->users->dir_tmp.'/temp';
 		if (is_dir($upload_dir)) dol_delete_dir_recursive($upload_dir);
-		
+
 		unset($_SESSION["listofpaths"]);
 		unset($_SESSION["listofnames"]);
 		unset($_SESSION["listofmimes"]);
 	}
-	
+
 	/**
 	 * Add a file into the list of attached files (stored in SECTION array)
 	 *
@@ -150,30 +150,30 @@ class FormMail
 		if (! empty($_SESSION["listofmimes"])) $listofmimes=split(';',$_SESSION["listofmimes"]);
 		return array('paths'=>$listofpaths, 'names'=>$listofnames, 'mimes'=>$listofmimes);
 	}
-		
+
 	/**
 	 *	\brief  		Affiche la partie de formulaire pour saisie d'un mail en fonction des propri�t�s
-	 *	\param			addfileaction		Name of action when posting file attachments	
+	 *	\param			addfileaction		Name of action when posting file attachments
 	 * 	\remarks		this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
 	 */
 	function show_form($addfileaction='addfile')
 	{
 		global $conf, $langs, $user;
-	
+
 		$langs->load("other");
 		$langs->load("mails");
-	
-		// Define list of attached files		
+
+		// Define list of attached files
 		$listofpaths=array();
 		$listofnames=array();
 		$listofmimes=array();
 		if (! empty($_SESSION["listofpaths"])) $listofpaths=split(';',$_SESSION["listofpaths"]);
 		if (! empty($_SESSION["listofnames"])) $listofnames=split(';',$_SESSION["listofnames"]);
 		if (! empty($_SESSION["listofmimes"])) $listofmimes=split(';',$_SESSION["listofmimes"]);
-		
-		
+
+
 		$form=new Form($DB);
-	
+
 		print "\n<!-- Debut form mail -->\n";
 		print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
 		foreach ($this->param as $key=>$value)
@@ -181,7 +181,7 @@ class FormMail
 			print "<input type=\"hidden\" name=\"$key\" value=\"$value\">\n";
 		}
 		print "<table class=\"border\" width=\"100%\">\n";
-	
+
 		// Substitution array
 		if ($this->withsubstit)
 		{
@@ -194,7 +194,7 @@ class FormMail
 			print $form->textwithhelp($langs->trans("EMailTestSubstitutionReplacedByGenericValues"),$help);
 			print "</td></tr>\n";
 		}
-		
+
 		// From
 		if ($this->withfrom)
 		{
@@ -211,7 +211,7 @@ class FormMail
 					$fuser->fetch();
 					print $fuser->getNomUrl(1);
 				}
-				else 
+				else
 				{
 					print $this->fromname;
 				}
@@ -239,7 +239,7 @@ class FormMail
 				print "</td></tr>\n";
 			}
 		}
-	
+
 		// Replyto
 		if ($this->withreplyto)
 		{
@@ -270,18 +270,20 @@ class FormMail
 				print "</td></tr>\n";
 			}
 		}
-		
+
 		// To
 		if ($this->withto || is_array($this->withto))
 		{
-			print '<tr><td width="180">'.$langs->trans("MailTo").'</td><td>';
+			print '<tr><td width="180">';
+			print $form->textwithhelp($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+			print '</td><td>';
 			if ($this->withtoreadonly)
 			{
 				print (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
 			}
 			else
 			{
-				print "<input size=\"30\" name=\"sendto\" value=\"".(! is_array($this->withto) && ! is_numeric($this->withto)?$this->withto:"")."\">";
+				print "<input size=\"".(is_array($this->withto)?"30":"60")."\" name=\"sendto\" value=\"".(! is_array($this->withto) && ! is_numeric($this->withto)?$this->withto:"")."\">";
 				if (is_array($this->withto))
 				{
 					print " ".$langs->trans("or")." ";
@@ -290,18 +292,20 @@ class FormMail
 			}
 			print "</td></tr>\n";
 		}
-	
+
 		// CC
 		if ($this->withtocc || is_array($this->withtocc))
 		{
-			print '<tr><td width="180">'.$langs->trans("MailCC").'</td><td>';
+			print '<tr><td width="180">';
+			print $form->textwithhelp($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+			print '</td><td>';
 			if ($this->withtoccreadonly)
 			{
 				print (! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"";
 			}
 			else
 			{
-				print "<input size=\"30\" name=\"sendtocc\" value=\"".((! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"")."\">";
+				print "<input size=\"".(is_array($this->withtocc)?"30":"60")."\" name=\"sendtocc\" value=\"".((! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"")."\">";
 				if (is_array($this->withtocc))
 				{
 					print " ".$langs->trans("or")." ";
@@ -314,14 +318,16 @@ class FormMail
 		// CCC
 		if ($this->withtoccc || is_array($this->withtoccc))
 		{
-			print '<tr><td width="180">'.$langs->trans("MailCCC").'</td><td>';
+			print '<tr><td width="180">';
+			print $form->textwithhelp($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+			print '</td><td>';
 			if ($this->withtocccreadonly)
 			{
 				print (! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"";
 			}
 			else
 			{
-				print "<input size=\"30\" name=\"sendtocc\" value=\"".((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"")."\">";
+				print "<input size=\"".(is_array($this->withtoccc)?"30":"60")."\" name=\"sendtoccc\" value=\"".((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"")."\">";
 				if (is_array($this->withtoccc))
 				{
 					print " ".$langs->trans("or")." ";
@@ -330,7 +336,7 @@ class FormMail
 			}
 			print "</td></tr>\n";
 		}
-		
+
 		// Ask delivery receipt
 		if ($this->withdeliveryreceipt)
 		{
@@ -434,7 +440,7 @@ class FormMail
 					print $defaultmessage;
 					print '</textarea>';
 				}
-				
+
 			}
 			print "</td></tr>\n";
 		}
@@ -477,7 +483,7 @@ class FormMail
 	print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"\">";
 	print "</td></tr>";
       }
-    
+
     // Message
     if ($withbody)
       {
@@ -489,7 +495,7 @@ class FormMail
 	print "</textarea>";
 	print "</td></tr>";
       }
-    	
+
     // Si fichier joint
     if ($withfile)
       {
@@ -499,7 +505,7 @@ class FormMail
 	print "<input type=\"file\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
 	print "</td></tr>";
       }
-    
+
     print "</table>";
   }
 

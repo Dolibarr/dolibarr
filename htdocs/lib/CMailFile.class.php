@@ -52,45 +52,34 @@ class CMailFile
 	var $atleastonefile=0;
 	var $error='';
 
+	var $smtps;				// Contains SMTPs object (if this method is used)
+
 
 	/**
-	 \brief 	CMailFile
-	 \param 	subject             sujet
-	 \param 	to                  email destinataire (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
-	 \param 	from                email emetteur     (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
-	 \param 	msg                 message
-	 \param 	filename_list       tableau de fichiers attaches
-	 \param 	mimetype_list       tableau des types des fichiers attaches
-	 \param 	mimefilename_list   tableau des noms des fichiers attaches
-	 \param 	addr_cc             email cc
-	 \param 	addr_bcc            email bcc
-	 \param 	deliveryreceipt		demande accuse reception
-	 \param	msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
+	 *	\brief 	CMailFile
+	 *	\param 	subject             Topic/Subject of mail
+	 *	\param 	to                  Recipients emails (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+	 *	\param 	from                Sender email      (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+	 *	\param 	msg                 Message
+	 *	\param 	filename_list       List of files to attach (full path of filename on file system)
+	 *	\param 	mimetype_list       List of MIME type of attached files
+	 *	\param 	mimefilename_list   List of attached file name in message
+	 *	\param 	addr_cc             Email cc
+	 *	\param 	addr_bcc            Email bcc
+	 *	\param 	deliveryreceipt		Ask a delivery receipt
+	 *	\param	msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
 	 */
 	function CMailFile($subject,$to,$from,$msg,
-	$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
-	$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='')
+		$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
+		$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='')
 	{
-		dolibarr_syslog("CMailFile::CMailfile: from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to");
-		dolibarr_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml");
+		global $conf;
 
-		// Define if there is at least one file
-		foreach ($filename_list as $i => $val)
-		{
-			if ($filename_list[$i])
-			{
-				$this->atleastonefile=1;
-				dolibarr_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i]);
-			}
-		}
+		// If ending method not defined
+		if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';
 
-		// On defini mime_boundary
-		$this->mime_boundary = md5(uniqid("dolibarr"));
-
-		// On definit fin de ligne
-		$this->eol="\n";
-		if (eregi('^win',PHP_OS)) $this->eol="\r\n";
-		if (eregi('^mac',PHP_OS)) $this->eol="\r";
+		dolibarr_syslog("CMailFile::CMailfile: MAIN_MAIL_SENDMODE=".$conf->global->MAIN_MAIL_SENDMODE." charset=".$conf->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to", LOG_DEBUG);
+		dolibarr_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml", LOG_DEBUG);
 
 		// Detect if message is HTML (use fast method)
 		if ($msgishtml == -1)
@@ -103,51 +92,257 @@ class CMailFile
 			$this->msgishtml = $msgishtml;
 		}
 
-		$smtp_headers = "";
-		$mime_headers = "";
-		$text_body = "";
-		$text_encoded = "";
-
-		// En-tete dans $smtp_headers
-		$this->subject = $subject;
-		$this->addr_from = $from;
-		$this->errors_to = $errors_to;
-		$this->addr_to = $to;
-		$this->addr_cc = $addr_cc;
-		$this->addr_bcc = $addr_bcc;
-		$this->deliveryreceipt = $deliveryreceipt;
-		$smtp_headers = $this->write_smtpheaders();
-
-		// En-tete suite dans $mime_headers
-		if ($this->atleastonefile)
+		// Define if there is at least one file
+		foreach ($filename_list as $i => $val)
 		{
-			$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
+			if ($filename_list[$i])
+			{
+				$this->atleastonefile=1;
+				dolibarr_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i], LOG_DEBUG);
+			}
 		}
 
-		// Corps message dans $text_body
-		$text_body = $this->write_body($msg, $filename_list);
-
-		// Corps message suite (fichiers attaches) dans $text_encoded
-		if ($this->atleastonefile)
+		// Action according to choosed sending method
+		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 		{
-			$text_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
+			// Use mail php function (default PHP method)
+			// ------------------------------------------
+
+			// On defini mime_boundary
+			$this->mime_boundary = md5(uniqid("dolibarr"));
+
+			// On definit fin de ligne
+			$this->eol="\n";
+			if (eregi('^win',PHP_OS)) $this->eol="\r\n";
+			if (eregi('^mac',PHP_OS)) $this->eol="\r";
+
+			$smtp_headers = "";
+			$mime_headers = "";
+			$text_body = "";
+			$text_encoded = "";
+
+			// En-tete dans $smtp_headers
+			$this->subject = $subject;
+			$this->addr_from = $from;
+			$this->errors_to = $errors_to;
+			$this->addr_to = $to;
+			$this->addr_cc = $addr_cc;
+			$this->addr_bcc = $addr_bcc;
+			$this->deliveryreceipt = $deliveryreceipt;
+			$smtp_headers = $this->write_smtpheaders();
+
+			// En-tete suite dans $mime_headers
+			if ($this->atleastonefile)
+			{
+				$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
+			}
+
+			// Corps message dans $text_body
+			$text_body = $this->write_body($msg, $filename_list);
+
+			// Corps message suite (fichiers attaches) dans $text_encoded
+			if ($this->atleastonefile)
+			{
+				$text_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
+			}
+
+			// On defini $this->headers et $this->message
+			$this->headers = $smtp_headers . $mime_headers;
+			$this->message = $text_body . $text_encoded;
+
+			// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
+			// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees
+			// comme des injections mail par les serveurs de messagerie.
+			$this->headers = eregi_replace("[\r\n]+$","",$this->headers);
+		}
+		else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+		{
+			// Use SMTPS library
+			// ------------------------------------------
+
+			require_once(DOL_DOCUMENT_ROOT."/includes/smtps/SMTPs.php");
+			$smtps = new SMTPs();
+			$smtps->setCharSet($conf->character_set_client);
+			$smtps->setSubject($subject);
+			$smtps->setTO($to);
+			$smtps->setFrom($from);
+			if ($this->msgishtml) $smtps->setBodyContent($msg,'html');
+			else $smtps->setBodyContent($msg,'plain');
+
+			if ($this->atleastonefile)
+			{
+				foreach ($filename_list as $i => $val)
+				{
+					$content=file_get_contents($filename_list[$i]);
+					$smtps->setAttachment($content,$mimefilename_list[$i],$mimetype_list[$i]);
+				}
+			}
+
+			$smtps->setCC($sentocc);
+			$smtps->setBCC($sentoccc);
+			$smtps->setErrorsTo($errors_to);
+			$smtps->setDeliveryReceipt($deliveryreceipt);
+
+			$this->smtps=$smtps;
+		}
+		else
+		{
+			// Send mail method not correctly defined
+			// --------------------------------------
+
+			return 'Bad value for MAIN_MAIL_SENDMODE constant';
 		}
 
-		// On defini $this->headers et $this->message
-		$this->headers = $smtp_headers . $mime_headers;
-		$this->message = $text_body . $text_encoded;
-
-		// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
-		// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees
-		// comme des injections mail par les serveurs de messagerie.
-		$this->headers = eregi_replace("[\r\n]+$","",$this->headers);
 	}
 
 
 	/**
-	 \brief      Permet d'encoder un fichier
-	 \param      sourcefile
-	 \return     <0 si erreur, fichier encode si ok
+	 *	\brief     Send mail that was prepared by constructor
+	 *	\return    boolean     True if mail sent, false otherwise
+	 */
+	function sendfile()
+	{
+		global $conf;
+
+		$errorlevel=error_reporting();
+		error_reporting($errorlevel ^ E_WARNING);   // Desactive warnings
+
+		$res=false;
+
+		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS))
+		{
+			// Action according to choosed sending method
+			if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+			{
+
+				// Use mail php function (default PHP method)
+				// ------------------------------------------
+				dolibarr_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject, LOG_DEBUG);
+				dolibarr_syslog("CMailFile::sendfile header=\n".$this->headers, LOG_DEBUG);
+				//dolibarr_syslog("CMailFile::sendfile message=\n".$message);
+
+
+				if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
+
+
+				// Si Windows, addr_from doit obligatoirement etre defini
+				if (isset($_SERVER["WINDIR"]))
+				{
+					if (empty($this->addr_from)) $this->addr_from = 'robot@mydomain.com';
+					@ini_set('sendmail_from',getValidAddress($this->addr_from,2));
+				}
+
+				// Forcage parametres
+				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER)) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
+				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT))   ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
+
+				$dest=getValidAddress($this->addr_to,2);
+				if (! $dest)
+				{
+					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
+					dolibarr_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
+				}
+				else
+				{
+					dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
+					//dolibarr_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
+
+					$bounce = '';
+					if ($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F)
+					{
+						// le return-path dans les header ne fonctionne pas avec tous les MTA
+						// Le passage par -f est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
+						// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
+						$bounce = $this->addr_from != '' ? "-f {$this->addr_from}" : "";
+					}
+
+					$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers, $bounce);
+
+					if (! $res)
+					{
+						$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
+						dolibarr_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
+					}
+					else
+					{
+						dolibarr_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
+					}
+				}
+
+				if (isset($_SERVER["WINDIR"]))
+				{
+					@ini_restore('sendmail_from');
+				}
+
+				// Forcage parametres
+				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER))	ini_restore('SMTP');
+				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT)) 	ini_restore('smtp_port');
+			}
+			else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+			{
+
+				// Use SMTPS library
+				// ------------------------------------------
+				$this->smtps->setTransportType(0);	// Only this method is coded in SMTPs library
+
+				// Forcage parametres
+				if (empty($conf->global->MAIN_MAIL_SMTP_SERVER)) $conf->global->MAIN_MAIL_SMTP_SERVER=ini_get('SMTP');
+				if (empty($conf->global->MAIN_MAIL_SMTP_PORT))   $conf->global->MAIN_MAIL_SMTP_PORT=ini_get('smtp_port');
+
+				$this->smtps->setHost($conf->global->MAIN_MAIL_SMTP_SERVER);
+			    $this->smtps->setPort($conf->global->MAIN_MAIL_SMTP_PORT); //587 or 25;
+
+			    if (! empty($conf->global->MAIN_MAIL_SMTPS_ID)) $this->smtps->setID($conf->global->MAIN_MAIL_SMTPS_ID);
+			    if (! empty($conf->global->MAIN_MAIL_SMTPS_PW)) $this->smtps->setPW($conf->global->MAIN_MAIL_SMTPS_PW);
+			    //$smtps->_msgReplyTo  = 'reply@web.com';
+
+				$dest=$this->smtps->getFrom('org');
+				if (! $dest)
+				{
+					$this->error="Failed to send mail to SMTP=".$conf->global->MAIN_MAIL_SMTP_SERVER.", PORT=".$conf->global->MAIN_MAIL_SMTP_PORT."<br>Recipient address '$dest' invalid";
+					dolibarr_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
+				}
+				else
+				{
+			    	if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->smtps->setDebug(true);
+					$result=$this->smtps->sendMsg();
+					//print $resultvalue;
+				}
+
+				if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
+
+				$result=$this->smtps->getErrors();
+				if (empty($this->error) && empty($result)) $res=true;
+				else $res=false;
+
+			}
+			else
+			{
+
+				// Send mail method not correctly defined
+				// --------------------------------------
+
+				return 'Bad value for MAIN_MAIL_SENDMODE constant';
+			}
+
+		}
+		else
+		{
+			$this->error='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+			dolibarr_syslog("CMailFile::sendfile: ".$this->error);
+		}
+
+		error_reporting($errorlevel);              // Reactive niveau erreur origine
+
+		return $res;
+	}
+
+
+
+	/**
+	 *	\brief      Permet d'encoder un fichier
+	 *	\param      sourcefile
+	 *	\return     <0 si erreur, fichier encode si ok
 	 */
 	function _encode_file($sourcefile)
 	{
@@ -162,93 +357,9 @@ class CMailFile
 		else
 		{
 			$this->error="Error: Can't read file '$sourcefile'";
-			dolibarr_syslog("CMailFile::encode_file: ".$this->error);
+			dolibarr_syslog("CMailFile::encode_file: ".$this->error, LOG_ERR);
 			return -1;
 		}
-	}
-
-	/**
-	 \brief     Envoi le mail
-	 \return    boolean     true si mail envoye, false sinon
-	 */
-	function sendfile()
-	{
-		global $conf;
-
-		dolibarr_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject);
-		dolibarr_syslog("CMailFile::sendfile header=\n".$this->headers);
-		//dolibarr_syslog("CMailFile::sendfile message=\n".$message);
-		//$this->dump_mail();
-
-		$errorlevel=error_reporting();
-		error_reporting($errorlevel ^ E_WARNING);   // Desactive warnings
-
-		$res=false;
-
-		if (! $conf->global->MAIN_DISABLE_ALL_MAILS)
-		{
-			// Si Windows, addr_from doit obligatoirement etre defini
-			if (isset($_SERVER["WINDIR"]))
-			{
-				if (empty($this->addr_from)) $this->addr_from = 'robot@mydomain.com';
-				@ini_set('sendmail_from',getValidAddress($this->addr_from,2));
-			}
-
-			// Forcage parametres
-			if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER)) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
-			if (! empty($conf->global->MAIN_MAIL_SMTP_PORT))   ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
-				
-			$dest=getValidAddress($this->addr_to,2);
-			if (! $dest)
-			{
-				$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
-				dolibarr_syslog("CMailFile::sendfile: mail end error=".$this->error);
-			}
-			else
-			{
-				dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'));
-				//dolibarr_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
-
-				$bounce = '';
-				if ($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F)
-				{
-					// le return-path dans les header ne fonctionne pas avec tous les MTA
-					// Le passage par -f est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
-					// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
-					$bounce = $this->addr_from != '' ? "-f {$this->addr_from}" : "";
-				}
-
-				$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers, $bounce);
-
-				if (! $res)
-				{
-					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
-					dolibarr_syslog("CMailFile::sendfile: mail end error=".$this->error);
-				}
-				else
-				{
-					dolibarr_syslog("CMailFile::sendfile: mail end success");
-				}
-			}
-				
-			if (isset($_SERVER["WINDIR"]))
-			{
-				@ini_restore('sendmail_from');
-			}
-
-			// Forcage parametres
-			if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER))	ini_restore('SMTP');
-			if (! empty($conf->global->MAIN_MAIL_SMTP_PORT)) 	ini_restore('smtp_port');
-		}
-		else
-		{
-			$this->error='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
-			dolibarr_syslog("CMailFile::sendfile: ".$this->error);
-		}
-
-		error_reporting($errorlevel);              // Reactive niveau erreur origine
-
-		return $res;
 	}
 
 
@@ -257,18 +368,26 @@ class CMailFile
 	 */
 	function dump_mail()
 	{
-		global $dolibarr_main_data_root;
-		 
+		global $conf,$dolibarr_main_data_root;
+
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
 		{
-			$fp = fopen($dolibarr_main_data_root."/dolibarr_mail","w");
-			fputs($fp, $this->headers);
-			fputs($fp, $this->eol);			// This eol is added by the mail function, so we add it in log
-			fputs($fp, $this->message);
+			$fp = fopen($dolibarr_main_data_root."/dolibarr_mail.log","w");
+
+			if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+			{
+				fputs($fp, $this->headers);
+				fputs($fp, $this->eol);			// This eol is added by the mail function, so we add it in log
+				fputs($fp, $this->message);
+			}
+			elseif ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+			{
+				fputs($fp, $this->smtps->log);
+			}
+
 			fclose($fp);
 			if (! empty($conf->global->MAIN_UMASK))
 			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			 
 		}
 	}
 
@@ -295,9 +414,9 @@ class CMailFile
 		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".getValidAddress($this->addr_from,2).$this->eol;
 
 		//$out .= "X-Priority: 3".$this->eol;
-		$out .= "X-Mailer: Dolibarr version " . DOL_VERSION .$this->eol;
+		$out .= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol;
 		$out .= "MIME-Version: 1.0".$this->eol;
-		 
+
 		if ($this->msgishtml)
 		{
 			if (! $this->atleastonefile) $out.= "Content-Type: text/html; charset=".$conf->character_set_client.$this->eol;
@@ -309,7 +428,7 @@ class CMailFile
 			$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 		}
 
-		dolibarr_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
+		dolibarr_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out, LOG_DEBUG);
 		return $out;
 	}
 
@@ -337,14 +456,14 @@ class CMailFile
 			}
 		}
 		//$out.= $this->eol;
-		dolibarr_syslog("CMailFile::write_mimeheaders mime_header=\n".$out);
+		dolibarr_syslog("CMailFile::write_mimeheaders mime_header=\n".$out, LOG_DEBUG);
 		return $out;
 	}
 
 	/**
-	 \brief 		Permet d'ecrire le corps du message
-	 \param 		msgtext
-	 \param 		filename_list
+	 *	\brief 		Permet d'ecrire le corps du message
+	 *	\param 		msgtext
+	 *	\param 		filename_list
 	 */
 	function write_body($msgtext, $filename_list)
 	{
@@ -370,7 +489,7 @@ class CMailFile
 			// Check if html header already in message
 			$htmlalreadyinmsg=0;
 			if (eregi('^[ \t]*<html',$msgtext)) $htmlalreadyinmsg=1;
-				
+
 			if (! $htmlalreadyinmsg) $out .= "<html><head><title></title></head><body>";
 			$out.= $msgtext;
 			if (! $htmlalreadyinmsg) $out .= "</body></html>";
