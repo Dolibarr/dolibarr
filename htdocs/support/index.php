@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@ $langs->load("other");
 
 pHeader("Dolibarr Help Service Center",$_SERVER["PHP_SELF"]);
 
-print "This area can be used to get a Help service support.<br>\n";
-print "This service is available in <b>english only</b>.<br><br>";
+print $langs->trans("HelpCenterDesc1")."<br>\n";
+print $langs->trans("HelpCenterDesc2")."<br>\n";
 
-print '<br><br>';
+print '<br><br><br>';
 
 print '<table border="1">';
 
@@ -52,19 +52,37 @@ print '</td>';
 print '</tr>';
 
 
-// Logo of possible services
+// Area of support cells
 print '<tr>';
-print '<td>';
-print $langs->trans("FeatureNotYetAvailable").'.';
+print '<td width="33%" align="center" valign="top">';
+
+print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
+print img_picto('','/theme/common/who.png','',1);
+print '</td></tr><tr><td align="center">';
+print '<br>'.$langs->trans("ForDocumentationSeeWiki",'http://wiki.dolibarr.org','http://wiki.dolibarr.org').'<br>';
+print '<br>'.$langs->trans("ForAnswersSeeForum",'http://www.dolibarr.org','http://www.dolibarr.org').'<br>';
+print '</td></tr></table>';
+
 print '</td>';
-print '<td>';
-print $langs->trans("FeatureNotYetAvailable").'.';
+print '<td width="34%" align="center" valign="top">';
+
+print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
+print img_picto('','/theme/common/pagemaster.png','',1);
+print '</td></tr><tr><td align="center">';
+print '<br>'.$langs->trans("FeatureNotYetAvailable").'.';
+print '</td></tr></table>';
+
 print '</td>';
-print '<td>';
-print $langs->trans("FeatureNotYetAvailable").'.';
+print '<td width="33%" align="center" valign="top">';
+
+print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
+print img_picto('','/theme/common/internet.png','',1);
+print '</td></tr><tr><td align="center">';
+print '<br>'.$langs->trans("FeatureNotYetAvailable").'.';
+print '</td></tr></table>';
+
 print '</td>';
 print '</tr>';
-
 
 
 

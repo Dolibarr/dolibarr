@@ -170,6 +170,12 @@ OtherDeveloppers=Autres développeurs/contributeurs
 OfficialWebSite=Site web officiel internationnal
 OfficialWebSiteFr=Site web officiel francophone
 OfficialWikiFr=Wiki francophone
+OfficialWiki=Wiki Dolibarr
+OfficialDemo=Démo en ligne Dolibarr
+ForDocumentationSeeWiki=Pour la documentation utilisateur, développeur ou les FAQs (questions-réponses fréquentes), consultez le wiki Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
+ForAnswersSeeForum=Pour d'autres questions ou poser vos propres questions, vous pouvez utiliser le forum Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
+HelpCenterDesc1=Cet espace permet de vous aider à obtenir un service de support sur Dolibarr.
+HelpCenterDesc2=Certain de ces services ne sont disponibles qu'en <b>anglais</b>.
 CurrentTopMenuHandler=Gestionnaire menu haut courant
 CurrentLeftMenuHandler=Gestionnaire menu gauche courant
 MeasuringUnit=Unité de mesure
@@ -223,6 +229,7 @@ DoTestSendHTML=Tester envoi HTML
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Erreur, ne peut utiliser l'option @ si la séquence {yy}{mm} ou {yyyy}{mm} n'est pas dans le masque.
 UMask=Paramètre UMask des nouveaux fichiers sous Unix/Linux/BSD.
 UMaskExplanation=Ce paramètre permet de définir les droits des fichiers créés sur le serveur par Dolibarr (lors d'upload par exemple).<br>Ce doit être la valeur octal (par exemple 0666 signifie lecture/ecriture pour tous).<br>Ce paramètre n'a aucun effet sur un serveur Windows.
+SeeWikiForAllTeam=Voir le wiki pour le détail de tous les acteurs et leur organisation
 
 # Modules
 Module0Name=Utilisateurs & groupes

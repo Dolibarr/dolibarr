@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo    <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
  *
@@ -53,17 +53,12 @@ print "<br>\n";
 
 print $langs->trans("Developpers").':';
 print '<ul>';
-print '<li><a target="blank" href="http://rodolphe.quiedeville.org">Rodolphe Quiedeville</a> ('.$langs->trans("Author").')';
-print '<li><a target="blank" href="http://www.ipsyn.net">Jean-Louis Bergamo</a></li>';
-print '<li><a target="blank" href="http://www.destailleur.fr/">Laurent Destailleur</a> ('.$langs->trans("DolibarrProjectLeader").')</li>';
-print '<li>Eric Seigne</li>';
-print '<li>Benoit Mortier</li>';
-print '<li>Regis Houssin</li>';
+print '<li>'.$langs->trans("SeeWikiForAllTeam").': <a href="http://wiki.dolibarr.org/index.php/DolibarrProject" target="_blank">http://wiki.dolibarr.org/index.php/DolibarrProject</a></li>';
 print '</ul>';
 
 print "<br>\n";
 
-print $langs->trans("Informations").':';
+print $langs->trans("OtherInformations").':';
 
 print '<ul>';
 print '<li>';
@@ -75,12 +70,12 @@ if (eregi('^fr_',$langs->getDefaultLang()))
 	print '<li>';
 	print '<a target="blank" href="http://www.dolibarr.fr/">'.$langs->trans("OfficialWebSiteFr").'</a>';
 	print '</li>';
-	print '<li>';
-	print '<a target="blank" href="http://wiki.dolibarr.org/">'.$langs->trans("OfficialWikiFr").'</a>';
-	print '</li>';
 }
 print '<li>';
-print '<a target="blank" href="http://freshmeat.net/projects/dolibarr/">Freshmeat</a>';
+print '<a target="blank" href="http://wiki.dolibarr.org/">'.$langs->trans("OfficialWiki").'</a>';
+print '</li>';
+print '<li>';
+print '<a target="blank" href="http://demo.dolibarr.org/public/demo">'.$langs->trans("OfficialDemo").'</a>';
 print '</li>';
 
 if (eregi('^fr_',$langs->getDefaultLang()))
@@ -88,11 +83,11 @@ if (eregi('^fr_',$langs->getDefaultLang()))
 	print '<li>';
 	print 'Les taches en cours de realisation sur Dolibarr sont consultables dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projet</a> sur Savannah.';
 	print '</li>';
-	
+
 	print '<li>';
 	print 'Si vous trouvez un bogue dans Dolibarr, vous pouvez en informer les developpeurs sur le <a target="blank" href="http://savannah.nongnu.org/bugs/?group=dolibarr">systeme de gestion des bogues</a> de Savannah.';
 	print '</li>';
-	
+
 	print '<li>';
 	print 'Le code source de Dolibarr est consultable par l\'<a target="blank" href="http://savannah.nongnu.org/cgi-bin/viewcvs/dolibarr/dolibarr/">interface web du cvs</a>.';
 	print '</li>';

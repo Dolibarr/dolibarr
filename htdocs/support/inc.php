@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -65,10 +65,10 @@ $charset="UTF-8";	// If not output format found in any conf file
 if (! defined('DONOTLOADCONF') && file_exists($conffile))
 {
 	$result=include_once($conffile);	// Load conf file
-	if ($result) 
+	if ($result)
 	{
-		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility 
-		
+		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+
 		// Remove last / or \ on directories or url value
 		if (! empty($dolibarr_main_document_root) && ! ereg('^[\\\/]+$',$dolibarr_main_document_root)) $dolibarr_main_document_root=ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
 		if (! empty($dolibarr_main_url_root)      && ! ereg('^[\\\/]+$',$dolibarr_main_url_root))      $dolibarr_main_url_root=ereg_replace('[\\\/]+$','',$dolibarr_main_url_root);
@@ -97,16 +97,16 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 		}
 		else
 		{
-			$includeconferror='ErrorBadValueForDolibarrMainDocumentRoot';			
+			$includeconferror='ErrorBadValueForDolibarrMainDocumentRoot';
 		}
 	}
 	else
 	{
-		$includeconferror='ErrorBadFormatForConfFile';	
+		$includeconferror='ErrorBadFormatForConfFile';
 	}
 }
 
-if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
 define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
 if (empty($conf->character_set_client))     	  $conf->character_set_client=$charset;
@@ -172,12 +172,8 @@ function conf($dolibarr_main_document_root)
 	$conf->db->user = trim($dolibarr_main_db_user);
 	$conf->db->pass = trim($dolibarr_main_db_pass);
 
-	if (empty($character_set_client)) $character_set_client=$charset;
-	$conf->character_set_client=strtoupper($character_set_client);
-	if (empty($dolibarr_main_db_charset)) $dolibarr_main_db_charset='latin1'; 
-	$conf->db->character_set=$dolibarr_main_db_charset;
-	if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';
-	$conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
+	if (empty($conf->character_set_client))     	  $conf->character_set_client="UTF-8";
+	if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
 
 	return 1;
 }
@@ -219,10 +215,10 @@ function pFooter($nonext=0,$setuplang='')
     global $langs;
     $langs->load("main");
     $langs->load("admin");
-    
+
     print '</td></tr></table>'."\n";
     print '</td></tr></table>'."\n";
-    
+
     print '</form>'."\n";
     print '</body>'."\n";
     print '</html>'."\n";
