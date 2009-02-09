@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,8 +72,8 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["MAIN_SEARCHFORM_PRODUITSERVICE"]);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_ADHERENT",$_POST["MAIN_SEARCHFORM_ADHERENT"]);
 
-	dolibarr_set_const($db, "MAIN_MOTD",               $_POST["main_motd"]);
-	dolibarr_set_const($db, "MAIN_HOME",               $_POST["main_home"]);
+	dolibarr_set_const($db, "MAIN_MOTD",               dol_htmlcleanlastbr($_POST["main_motd"]));
+	dolibarr_set_const($db, "MAIN_HOME",               dol_htmlcleanlastbr($_POST["main_home"]));
 
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
