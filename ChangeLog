@@ -28,6 +28,8 @@ For users:
 - New: Can set a limit for stock alert to 0.
 - New: Support SMTPS.
 - New: Added a page /support to provide a help center service on Dolibarr.
+- New: Distinct status "running not expired" from "running expired" in lines 
+  contract status.
 - Fix: Handle correctly the comment in status changing of supplier orders.
 - Fix: Author, title and topic are correctly encoded in PDF.
 - Fix: Now HTML output is always UTF8, this solve bad PDF encoding on old users.

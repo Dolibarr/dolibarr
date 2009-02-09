@@ -18,11 +18,11 @@
  */
 
 /**
-	    \file       htdocs/contrat/index.php
-        \ingroup    contrat
-		\brief      Page liste des contrats
-		\version    $Revision$
-*/
+ *	    \file       htdocs/contrat/index.php
+ *      \ingroup    contrat
+ *		\brief      Page liste des contrats
+ *		\version    $Revision$
+ */
 
 require("./pre.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
@@ -50,6 +50,8 @@ $staticcontratligne=new ContratLigne($db);
 /*
  * View
  */
+
+$now = gmmktime();
 
 llxHeader();
 
@@ -84,7 +86,8 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ServicesLegend").'</td></tr>';
 print '<tr '.$bc[$var].'><td nowrap>';
 print $staticcontratligne->LibStatut(0,4).'<br />';
-print $staticcontratligne->LibStatut(4,4).'<br />';
+print $staticcontratligne->LibStatut(4,4,false).'<br />';
+print $staticcontratligne->LibStatut(4,4,true).'<br />';
 print $staticcontratligne->LibStatut(5,4).'<br />';
 print '</td></tr>';
 print '</table>';
@@ -164,8 +167,9 @@ print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
 $max=5;
 $sql = 'SELECT ';
 $sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
-$sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > ".$db->idate(gmmktime()),1,0).') as nb_running,';
-$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= ".$db->idate(gmmktime()).")",1,0).') as nb_late,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= ".$db->idate($now).")",1,0).') as nb_running,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < ".$db->idate($now).")",1,0).') as nb_expired,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < ".$db->idate($now - $conf->contrat->services->expires->warning_delay).")",1,0).') as nb_late,';
 $sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
 $sql.= " c.rowid as cid, c.ref, c.datec, c.tms, c.statut, s.nom, s.rowid as socid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -192,7 +196,7 @@ if ($result)
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastContracts",5).'</td>';
     print '<td align="center">'.$langs->trans("DateModification").'</td>';
     //print '<td align="left">'.$langs->trans("Status").'</td>';
-    print '<td align="right" width="80" colspan="3">'.$langs->trans("Services").'</td>';
+    print '<td align="right" width="80" colspan="4">'.$langs->trans("Services").'</td>';
     print "</tr>\n";
 
     $var=True;
@@ -216,8 +220,9 @@ if ($result)
         print '<td align="center">'.dolibarr_print_date($obj->tms,'dayhour').'</td>';
         //print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
         print '<td align="right" width="32">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0,3):'').'</td>';
-        print '<td align="right" width="32">'.($obj->nb_running+$obj->nb_late>0 ? ($obj->nb_running+$obj->nb_late).$staticcontratligne->LibStatut(4,3):'').'</td>';
-        print '<td align="right" width="32">'.($obj->nb_closed>0 ? $obj->nb_closed.$staticcontratligne->LibStatut(5,3):'').'</td>';
+        print '<td align="right" width="32">'.($obj->nb_running>0 ? $obj->nb_running.$staticcontratligne->LibStatut(4,3,false):'').'</td>';
+        print '<td align="right" width="32">'.($obj->nb_expired>0 ? $obj->nb_expired.$staticcontratligne->LibStatut(4,3,true):'').'</td>';
+        print '<td align="right" width="32">'.($obj->nb_closed>0  ? $obj->nb_closed.$staticcontratligne->LibStatut(5,3):'').'</td>';
         print "</tr>\n";
         $i++;
     }
@@ -235,7 +240,7 @@ print '<br>';
 
 
 // Not activated services
-$sql = "SELECT cd.rowid as cid, c.ref, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
+$sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat, s.nom";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -298,7 +303,7 @@ print '<br>';
 $max=5;
 
 $sql = "SELECT c.ref, c.fk_soc, ";
-$sql.= " cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat,";
+$sql.= " cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat, cd.date_fin_validite,";
 $sql.= " s.nom";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
@@ -340,7 +345,8 @@ if ($resql)
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
         print '<td nowrap="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
-        print $staticcontratligne->LibStatut($obj->statut,5);
+        $dateend=$db->jdate($obj->date_fin_validite);
+        print $staticcontratligne->LibStatut($obj->statut,5, ($dateend && $dateend < $now));
         print '</a></td>';
         print "</tr>\n";
         $i++;

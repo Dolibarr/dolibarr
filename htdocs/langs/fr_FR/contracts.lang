@@ -14,6 +14,7 @@ ContractStatusClosed=Clôturé
 ServiceStatusInitial=Inactif
 ServiceStatusRunning=En service
 ServiceStatusLate=En service, expiré
+ServiceStatusLateShort=Expiré
 ServiceStatusClosed=Fermé
 ServicesLegend=Légende pour les services
 Contracts=Contrats

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * This program is free software; you can redistribute it and/or modify
@@ -319,7 +319,10 @@ class Contrat extends CommonObject
 	{
 		$this->nbofserviceswait=0;
 		$this->nbofservicesopened=0;
+		$this->nbofservicesexpired=0;
 		$this->nbofservicesclosed=0;
+
+		$now=gmmktime();
 
 		// Selectionne les lignes contrats liees a un produit
 		$sql = "SELECT p.label, p.description as product_desc, p.ref,";
@@ -390,7 +393,8 @@ class Contrat extends CommonObject
 				//dolibarr_syslog("2 ".$ligne->product_desc);
 
 				if ($ligne->statut == 0) $this->nbofserviceswait++;
-				if ($ligne->statut == 4) $this->nbofservicesopened++;
+				if ($ligne->statut == 4 && (empty($ligne->date_fin_prevue) || $ligne->date_fin_prevue >= $now)) $this->nbofservicesopened++;
+				if ($ligne->statut == 4 && $ligne->date_fin_prevue < $now) $this->nbofservicesexpired++;
 				if ($ligne->statut == 5) $this->nbofservicesclosed++;
 
 				$i++;
@@ -464,7 +468,8 @@ class Contrat extends CommonObject
 				$ligne->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
 				if ($ligne->statut == 0) $this->nbofserviceswait++;
-				if ($ligne->statut == 4) $this->nbofservicesopened++;
+				if ($ligne->statut == 4 && (empty($ligne->date_fin_prevue) || $ligne->date_fin_prevue >= $now)) $this->nbofservicesopened++;
+				if ($ligne->statut == 4 && $ligne->date_fin_prevue < $now) $this->nbofservicesexpired++;
 				if ($ligne->statut == 5) $this->nbofservicesclosed++;
 
 				$this->lignes[]        = $ligne;
@@ -1050,17 +1055,14 @@ class Contrat extends CommonObject
 		if ($mode == 4)
 		{
 			$line=new ContratLigne($this->db);
-			$text=($this->nbofserviceswait+$this->nbofservicesopened+$this->nbofservicesclosed);
+			$text=($this->nbofserviceswait+$this->nbofservicesopened+$this->nbofservicesexpired+$this->nbofservicesclosed);
 			$text.=' '.$langs->trans("Services");
 			$text.=': &nbsp; &nbsp; ';
 			$text.=$this->nbofserviceswait.' '.$line->LibStatut(0,3).' &nbsp; ';
-			$text.=$this->nbofservicesopened.' '.$line->LibStatut(4,3).' &nbsp; ';
+			$text.=$this->nbofservicesopened.' '.$line->LibStatut(4,3,false).' &nbsp; ';
+			$text.=$this->nbofservicesexpired.' '.$line->LibStatut(4,3,true).' &nbsp; ';
 			$text.=$this->nbofservicesclosed.' '.$line->LibStatut(5,3);
 			return $text;
-
-			if ($statut == 0) { return img_picto($langs->trans('ContractStatusDraft'),'statut0').' '.$langs->trans("ContractStatusDraft"); }
-			if ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'),'statut4').' '.$langs->trans("ContractStatusValidated"); }
-			if ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'),'statut6').' '.$langs->trans("ContractStatusClosed"); }
 		}
 		if ($mode == 5)
 		{
@@ -1387,59 +1389,66 @@ class ContratLigne
 
 
 	/**
-	 *    	\brief      Retourne le libelle du statut de la ligne de contrat
+	 *    	\brief      Return label of this contract line status
 	 *		\param      mode        	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *    	\return     string      	Libelle
 	 */
 	function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut,$mode,(isset($this->date_fin_validite) && $this->date_fin_validite < gmmktime()));
 	}
 
 	/**
-	 *    	\brief      Renvoi le libelle d'un statut donne
+	 *    	\brief      Return label of a contract line status
 	 *    	\param      statut      id statut
 	 *		\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *		\param		expired		true=Expired
 	 *    	\return     string      Libelle
 	 */
-	function LibStatut($statut,$mode)
+	function LibStatut($statut,$mode,$expired=false)
 	{
 		global $langs;
 		$langs->load("contracts");
 		if ($mode == 0)
 		{
 			if ($statut == 0) { return $langs->trans("ServiceStatusInitial"); }
-			if ($statut == 4) { return $langs->trans("ServiceStatusRunning"); }
+			if ($statut == 4 && ! $expired) { return $langs->trans("ServiceStatusRunning"); }
+			if ($statut == 4 && $expired)   { return $langs->trans("ServiceStatusLate"); }
 			if ($statut == 5) { return $langs->trans("ServiceStatusClosed");  }
 		}
 		if ($mode == 1)
 		{
 			if ($statut == 0) { return $langs->trans("ServiceStatusInitial"); }
-			if ($statut == 4) { return $langs->trans("ServiceStatusRunning"); }
+			if ($statut == 4 && ! $expired) { return $langs->trans("ServiceStatusRunning"); }
+			if ($statut == 4 && $expired)   { return $langs->trans("ServiceStatusLateShort"); }
 			if ($statut == 5) { return $langs->trans("ServiceStatusClosed");  }
 		}
 		if ($mode == 2)
 		{
 			if ($statut == 0) { return img_picto($langs->trans('ServiceStatusInitial'),'statut0').' '.$langs->trans("ServiceStatusInitial"); }
-			if ($statut == 4) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4').' '.$langs->trans("ServiceStatusRunning"); }
+			if ($statut == 4 && ! $expired) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4').' '.$langs->trans("ServiceStatusRunning"); }
+			if ($statut == 4 && $expired)   { return img_picto($langs->trans('ServiceStatusLate'),'statut3').' '.$langs->trans("ServiceStatusLateShort"); }
 			if ($statut == 5) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6') .' '.$langs->trans("ServiceStatusClosed"); }
 		}
 		if ($mode == 3)
 		{
 			if ($statut == 0) { return img_picto($langs->trans('ServiceStatusInitial'),'statut0'); }
-			if ($statut == 4) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4'); }
+			if ($statut == 4 && ! $expired) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4'); }
+			if ($statut == 4 && $expired)   { return img_picto($langs->trans('ServiceStatusLate'),'statut3'); }
 			if ($statut == 5) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6'); }
 		}
 		if ($mode == 4)
 		{
 			if ($statut == 0) { return img_picto($langs->trans('ServiceStatusInitial'),'statut0').' '.$langs->trans("ServiceStatusInitial"); }
-			if ($statut == 4) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4').' '.$langs->trans("ServiceStatusRunning"); }
+			if ($statut == 4 && ! $expired) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4').' '.$langs->trans("ServiceStatusRunning"); }
+			if ($statut == 4 && $expired)   { return img_picto($langs->trans('ServiceStatusLate'),'statut3').' '.$langs->trans("ServiceStatusLate"); }
 			if ($statut == 5) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6') .' '.$langs->trans("ServiceStatusClosed"); }
 		}
 		if ($mode == 5)
 		{
 			if ($statut == 0) { return $langs->trans("ServiceStatusInitial").' '.img_picto($langs->trans('ServiceStatusInitial'),'statut0'); }
-			if ($statut == 4) { return $langs->trans("ServiceStatusRunning").' '.img_picto($langs->trans('ServiceStatusRunning'),'statut4'); }
+			if ($statut == 4 && ! $expired) { return $langs->trans("ServiceStatusRunning").' '.img_picto($langs->trans('ServiceStatusRunning'),'statut4'); }
+			if ($statut == 4 && $expired)   { return $langs->trans("ServiceStatusLateShort").' '.img_picto($langs->trans('ServiceStatusLate'),'statut3'); }
 			if ($statut == 5) { return $langs->trans("ServiceStatusClosed").' '.img_picto($langs->trans('ServiceStatusClosed'),'statut6'); }
 		}
 	}

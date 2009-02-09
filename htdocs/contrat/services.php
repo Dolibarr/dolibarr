@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ $companystatic=new Societe($db);
  * View
  */
 
-$now=mktime();
+$now=gmmktime();
 
 $form=new Form($db);
 
@@ -119,7 +119,7 @@ if ($resql)
     if (! empty($_REQUEST['filter_op2']) && $_REQUEST['filter_op2'] != -1) $param.='&amp;filter_op2='.urlencode($_REQUEST['filter_op2']);
     if ($filter_date1 != '') $param.='&amp;op1day='.$_REQUEST['op1day'].'&amp;op1month='.$_REQUEST['op1month'].'&amp;op1year='.$_REQUEST['op1year'];
     if ($filter_date2 != '') $param.='&amp;op2day='.$_REQUEST['op2day'].'&amp;op2month='.$_REQUEST['op2month'].'&amp;op2year='.$_REQUEST['op2year'];
-    
+
     print_barre_liste($langs->trans("ListOfServices"), $page, "services.php", $param, $sortfield, $sortorder,'',$num);
 
     print '<table class="liste" width="100%">';
@@ -179,9 +179,9 @@ if ($resql)
         $contractstatic=new Contrat($db);
         $contractstatic->id=$obj->cid;
         $contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
-        print $contractstatic->getNomUrl(1); 
+        print $contractstatic->getNomUrl(1);
         print '</td>';
-        
+
         // Service
         print '<td>';
         if ($obj->pid)
@@ -193,7 +193,7 @@ if ($resql)
         	print dolibarr_trunc($obj->description,20);
     	}
         print '</td>';
-        
+
         // Third party
         print '<td>';
         $companystatic->id=$obj->socid;
@@ -201,7 +201,7 @@ if ($resql)
         $companystatic->client=1;
 		print $companystatic->getNomUrl(1,'customer',32);
 		print '</td>';
-		
+
         // Start date
         if ($mode == "0") {
             print '<td align="center">';
@@ -222,12 +222,12 @@ if ($resql)
         print '<td align="right" nowrap="nowrap">';
         if ($obj->cstatut == 0)
         {
-        	print $contractstatic->LibStatut(0,5);
+        	print $contractstatic->LibStatut(0,5,($obj->date_fin_validite && $obj->date_fin_validite < $now));
         }
         else
         {
         	print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->cid.'&line='.$obj->rowid.'">';
-			print $staticcontratligne->LibStatut($obj->statut,5);
+			print $staticcontratligne->LibStatut($obj->statut,5,($obj->date_fin_validite && $obj->date_fin_validite < $now));
         	print '</a>';
         }
         print '</td>';

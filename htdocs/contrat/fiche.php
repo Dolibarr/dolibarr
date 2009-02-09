@@ -869,14 +869,14 @@ else
 						if ($objp->date_debut) {
 							print dolibarr_print_date($objp->date_debut);
 							// Warning si date prevu passee et pas en service
-							if ($objp->statut == 0 && $objp->date_debut < ($now - $conf->contrat->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
+							if ($objp->statut == 0 && $objp->date_debut < ($now - $conf->contrat->services->inactifs->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
 						}
 						else print $langs->trans("Unknown");
 						print ' &nbsp;-&nbsp; ';
 						print $langs->trans("DateEndPlanned").': ';
 						if ($objp->date_fin) {
 							print dolibarr_print_date($objp->date_fin);
-							if ($objp->statut == 4 && $objp->date_fin < ($now - $conf->contrat->services->inactifs->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
+							if ($objp->statut == 4 && $objp->date_fin < ($now - $conf->contrat->services->expires->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
 						}
 						else print $langs->trans("Unknown");
 

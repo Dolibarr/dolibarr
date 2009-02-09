@@ -404,7 +404,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 	print "\n";
 }
 
-// Nbre services actifs (à renouveler)
+// Nbre services actifs (expired)
 if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
 	$langs->load("contracts");
@@ -415,9 +415,9 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Contract"),"contract").'</td><td>'.$langs->trans("BoardRunningServices").'</td>';
-	print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=4">'.$board->nbtodo.'</a></td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=4&filter=expired">'.$board->nbtodo.'</a></td>';
 	print '<td align="right">';
-	print '<a href="'.DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=4">';
+	print '<a href="'.DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=4&filter=expired">';
 	print $board->nbtodolate;
 	print '</a></td><td nowrap align="right">';
 	print ' (>'.ceil($conf->contrat->services->expires->warning_delay/60/60/24).' '.$langs->trans("days").')';

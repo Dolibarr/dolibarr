@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,12 +60,15 @@ $staticcontratligne=new ContratLigne($db);
  * View
  */
 
+$now=gmmktime();
+
 llxHeader();
 
 $sql = 'SELECT';
 $sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
-$sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > ".$db->idate(mktime()),1,0).') as nb_running,';
-$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= ".$db->idate(mktime()).")",1,0).') as nb_late,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= ".$db->idate($now).")",1,0).') as nb_running,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < ".$db->idate($now).")",1,0).') as nb_expired,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < ".$db->idate($now - $conf->contrat->services->expires->warning_delay).")",1,0).') as nb_late,';
 $sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
 $sql.= " c.rowid as cid, c.ref, c.datec, c.date_contrat, c.statut,";
 $sql.= " s.nom, s.rowid as socid";
@@ -103,7 +106,8 @@ if ($resql)
     print_liste_field_titre($langs->trans("DateContract"), $_SERVER["PHP_SELF"], "c.date_contrat","","$param",'align="center"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.statut","","$param",'align="center"',$sortfield,$sortorder);
     print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(0,3).'</td>';
-    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3).'</td>';
+    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3,false).'</td>';
+    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3,true).'</td>';
     print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
     print "</tr>\n";
 
@@ -117,12 +121,11 @@ if ($resql)
     print '</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     //print '<td class="liste_titre">&nbsp;</td>';
-    print '<td colspan="3" class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+    print '<td colspan="4" class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
     print "</td>";
     print "</tr>\n";
     print '</form>';
 
-    $now=mktime();
     $var=True;
     while ($i < min($num,$limit))
     {
@@ -138,8 +141,9 @@ if ($resql)
         print '<td align="center">'.dolibarr_print_date($obj->date_contrat).'</td>';
         //print '<td align="center">'.$staticcontrat->LibStatut($obj->statut,3).'</td>';
         print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
-        print '<td align="center">'.($obj->nb_running+$obj->nb_late>0?$obj->nb_running+$obj->nb_late:'').'</td>';
-        print '<td align="center">'.($obj->nb_closed>0?$obj->nb_closed:'').'</td>';
+        print '<td align="center">'.($obj->nb_running>0?$obj->nb_running:'').'</td>';
+        print '<td align="center">'.($obj->nb_expired>0?$obj->nb_expired:'').'</td>';
+        print '<td align="center">'.($obj->nb_closed>0 ?$obj->nb_closed:'').'</td>';
         print "</tr>\n";
         $i++;
     }
