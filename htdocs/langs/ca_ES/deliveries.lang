@@ -12,8 +12,11 @@ QtyDelivered = Cant. enviada
 SetDeliveryDate = Indicar la data d'enviament
 ValidateDeliveryReceipt = Validar la nota de lliurament
 ValidateDeliveryReceiptConfirm = Esteu segur que voleu validar aquesta entrega?
+DeleteDeliveryReceipt = Eliminar la nota de lliurament
+DeleteDeliveryReceiptConfirm = Esteu segur de voler eliminar aquesta nota de lliurament?
 DeliveryMethod = Mètode d'enviament
 TrackingNumber = Nº de tracking
+# merou PDF model						    =  = 
 NameAndSignature = Nom i signatura:
 ToAndDate = En___________________________________ a ____/_____/__________
 GoodStatusDeclaration = He rebut la mercaderia en bon estat,
