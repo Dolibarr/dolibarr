@@ -36,6 +36,7 @@ TotalStock = Total en stock
 StockTooLow = Stock insuficiente
 EnhancedValue = Valor
 PMPValue = Valor (PMP)
+PMPValueShort = PMP
 EnhancedValueOfWarehouses = Valor de stocks
 UserWarehouseAutoCreate = Crear existencias automáticamente en la creación de un usuario
 QtyDispatched = Cantidad desglosada
