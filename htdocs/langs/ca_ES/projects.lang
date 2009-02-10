@@ -41,6 +41,7 @@ Time = Temps
 ListProposalsAssociatedProject = Llistat de pressupostos associats al projecte
 ListOrdersAssociatedProject = Llistat de comandes associades al projecte
 ListInvoicesAssociatedProject = Llistat de factures associades al projecte
+ListPredefinedInvoicesAssociatedProject = Llistat de factures a clients predefinides associades al projecte
 ListSupplierOrdersAssociatedProject = Llistat de comandes a proveïdors associades al projecte
 ListSupplierInvoicesAssociatedProject = Llistat de factures de proveïdor associades al projecte
 ListContractAssociatedProject = Llistatde contractes associats al projecte
