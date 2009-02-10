@@ -229,7 +229,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     // Server
     $var=!$var;
-    if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE != 'smtps')
+    if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
     {
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
     }
@@ -240,7 +240,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     // Port
     $var=!$var;
-    if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE != 'smtps')
+    if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
     {
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
     }
