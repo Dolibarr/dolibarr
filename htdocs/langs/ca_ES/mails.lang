@@ -58,7 +58,7 @@ YouCanAddYourOwnPredefindedListHere = Per crear el seu mòdul de selecció e-mai
 EMailTestSubstitutionReplacedByGenericValues = En mode prova, les variables de substitució són substituïdes per valors genèrics
 MailingAddFile = Adjuntar aquest arxiu
 NoAttachedFiles = Sense fitxers adjunts
-# Libelle des modules de liste de destinataires mailing = undefined = undefined
+# Libelle des modules de liste de destinataires mailing =  = 
 MailingModuleDescContactCompanies = Contactes de tercers (clients potencials, clients, proveïdors ...)
 MailingModuleDescDolibarrUsers = Usuaris de Dolibarr que tenen e-mail
 MailingModuleDescFundationMembers = Membres que tenen e-mail
@@ -85,7 +85,8 @@ ToAddRecipientsChooseHere = Per afegir destinataris, escolliu els que figuren en
 NbOfEMailingsReceived = Mailings en massa rebuts
 IdRecord = ID registre
 DeliveryReceipt = Justificant de recepció
-# Module Notifications = undefined = undefined
+YouCanUseCommaSeparatorForSeveralRecipients = Podeu usar el caràcter de separació <b>coma</b> per especificar múltiples destinataris.
+# Module Notifications =  = 
 Notifications = Notificacions
 NoNotificationsWillBeSent = Cap notificació per e-mail està prevista per a aquest esdeveniment i empresa
 ANotificationsWillBeSent = 1 notificació serà enviada per e-mail

@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - mails 
+# Dolibarr language file - es_ES - mails
 CHARSET = UTF-8
 Mailing = Mailing
 EMailing = Mailing
@@ -58,12 +58,11 @@ YouCanAddYourOwnPredefindedListHere = Para crear su módulo de selección e-mail
 EMailTestSubstitutionReplacedByGenericValues = En modo prueba, las variables de sustitución son sustituidas por valores genéricos
 MailingAddFile = Adjuntar este archivo
 NoAttachedFiles = Sin ficheros adjuntos
-# Libelle des modules de liste de destinataires mailing = undefined
+# Libelle des modules de liste de destinataires mailing = 
 MailingModuleDescContactCompanies = Contactos de terceros (clientes potenciales, clientes, proveedores...)
 MailingModuleDescDolibarrUsers = Usuarios de Dolibarr que tienen e-mail
 MailingModuleDescFundationMembers = Miembros que tienen e-mail
 MailingModuleDescEmailsFromFile = E-Mails de un archivo (e-mail;nombre;varios)
-
 MailingModuleDescContactsCategories = Terceros con e-mail (por categoría)
 LineInFile = Línea %s en archivo
 RecipientSelectionModules = Módulos de selección de los destinatarios
@@ -86,7 +85,8 @@ ToAddRecipientsChooseHere = Para añadir destinatarios, escoja los que figuran e
 NbOfEMailingsReceived = Mailings en masa recibidos
 IdRecord = ID registro
 DeliveryReceipt = Acuso de recibo
-# Module Notifications = undefined
+YouCanUseCommaSeparatorForSeveralRecipients = Puede usar el carácter de separación <b>coma </b> para especificar múltiples destinatarios.
+# Module Notifications = 
 Notifications = Notificaciones
 NoNotificationsWillBeSent = Ninguna notificación por e-mail está prevista para este evento y empresa
 ANotificationsWillBeSent = 1 notificación va a ser enviada por e-mail
