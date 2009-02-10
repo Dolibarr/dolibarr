@@ -223,13 +223,13 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 	$listofmethods=array();
 	$listofmethods['mail']='PHP mail function';
-	if ($conf->global->MAIN_FEATURES_LEVEL > 0) $listofmethods['smtps']='SMTPS library ('.$langs->trans("Experimental").')';
+	$listofmethods['smtps']='SMTP/SMTPS socket library';
 	print $html->select_array('MAIN_MAIL_SENDMODE',$listofmethods,$conf->global->MAIN_MAIL_SENDMODE);
     print '</td></tr>';
 
     // Server
     $var=!$var;
-    if ($linuxlike)
+    if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE != 'smtps')
     {
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
     }
@@ -240,7 +240,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     // Port
     $var=!$var;
-    if ($linuxlike)
+    if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE != 'smtps')
     {
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
     }
