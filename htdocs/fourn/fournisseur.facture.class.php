@@ -333,20 +333,21 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 * \brief     Supprime la facture
-	 * \param     rowid      id de la facture � supprimer
+	 * \brief     	Delete invoice in database
+	 * \param     	rowid      	Id of invoice to delete
+	 * \return		int			<0 if KO, >0 if OK
 	 */
 	function delete($rowid)
 	{
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
-		dolibarr_syslog("FactureFournisseur sql=".$sql);
+		dolibarr_syslog("FactureFournisseur sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid.' AND fk_statut = 0';
-				dolibarr_syslog("FactureFournisseur sql=".$sql);
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
+				dolibarr_syslog("FactureFournisseur sql=".$sql, LOG_DEBUG);
 				$resql2 = $this->db->query($sql);
 				if ($resql2)
 				{
@@ -357,14 +358,16 @@ class FactureFournisseur extends Facture
 				{
 					$this->db->rollback();
 					$this->error=$this->db->lasterror();
-					dolibarr_syslog("FactureFournisseur::delete ".$this->error);
+					dolibarr_syslog("FactureFournisseur::delete ".$this->error, LOG_ERR);
+					return -1;
 				}
 		}
 		else
 		{
 			$this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("FactureFournisseur::delete ".$this->error);
+			dolibarr_syslog("FactureFournisseur::delete ".$this->error, LOG_ERR);
+			return -1;
 		}
 	}
 

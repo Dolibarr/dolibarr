@@ -96,9 +96,16 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 	{
 		$facturefourn = new FactureFournisseur($db);
 		$factfournid = $_GET['facid'];
-		$facturefourn->delete($factfournid);
-		Header('Location: index.php');
-		exit;
+		$result=$facturefourn->delete($factfournid);
+		if ($result > 0)
+		{
+			Header('Location: index.php');
+			exit;
+		}
+		else
+		{
+			$mesg='<div class="error">'.$facturefourn->error.'</div>';
+		}
 	}
 }
 
