@@ -660,43 +660,43 @@ if (sizeof($boxarray))
 
 	print "</td></tr>";
 	print "</table>";
-}
 
-if ($conf->use_javascript_ajax)
-{
-	print "\n";
-	print '<script type="text/javascript" language="javascript">
-	function updateOrder(){
-    var left_list = cleanSerialize(Sortable.serialize(\'left\'));
-    var right_list = cleanSerialize(Sortable.serialize(\'right\'));
-    var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
-    //alert( \'boxorder=\' + boxorder );
-    var userid = \''.$user->id.'\';
-    var url = "ajaxbox.php";
-    o_options = new Object();
-    o_options = {asynchronous:true,method: \'get\',parameters: \'boxorder=\' + boxorder + \'&userid=\' + userid};
-    var myAjax = new Ajax.Request(url, o_options);
-  }'."\n";
-	print '// <![CDATA['."\n";
+	if ($conf->use_javascript_ajax)
+	{
+		print "\n";
+		print '<script type="text/javascript" language="javascript">
+		function updateOrder(){
+	    var left_list = cleanSerialize(Sortable.serialize(\'left\'));
+	    var right_list = cleanSerialize(Sortable.serialize(\'right\'));
+	    var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
+	    //alert( \'boxorder=\' + boxorder );
+	    var userid = \''.$user->id.'\';
+	    var url = "ajaxbox.php";
+	    o_options = new Object();
+	    o_options = {asynchronous:true,method: \'get\',parameters: \'boxorder=\' + boxorder + \'&userid=\' + userid};
+	    var myAjax = new Ajax.Request(url, o_options);
+	  }'."\n";
+		print '// <![CDATA['."\n";
 
-	print 'Sortable.create(\'left\', {'."\n";
-	print 'tag:\'div\', '."\n";
-	print 'containment:["left","right"], '."\n";
-	print 'constraint:false, '."\n";
-	print "handle: 'boxhandle',"."\n";
-	print 'onUpdate:updateOrder';
-	print "});\n";
+		print 'Sortable.create(\'left\', {'."\n";
+		print 'tag:\'div\', '."\n";
+		print 'containment:["left","right"], '."\n";
+		print 'constraint:false, '."\n";
+		print "handle: 'boxhandle',"."\n";
+		print 'onUpdate:updateOrder';
+		print "});\n";
 
-	print 'Sortable.create(\'right\', {'."\n";
-	print 'tag:\'div\', '."\n";
-	print 'containment:["right","left"], '."\n";
-	print 'constraint:false, '."\n";
-	print "handle: 'boxhandle',"."\n";
-	print 'onUpdate:updateOrder';
-	print "});\n";
+		print 'Sortable.create(\'right\', {'."\n";
+		print 'tag:\'div\', '."\n";
+		print 'containment:["right","left"], '."\n";
+		print 'constraint:false, '."\n";
+		print "handle: 'boxhandle',"."\n";
+		print 'onUpdate:updateOrder';
+		print "});\n";
 
-	print '// ]]>'."\n";
-	print '</script>'."\n";
+		print '// ]]>'."\n";
+		print '</script>'."\n";
+	}
 }
 
 // Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
