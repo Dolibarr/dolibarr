@@ -25,5 +25,5 @@ create table llx_user_param
   param         varchar(64)  NOT NULL,
   value         varchar(255) NOT NULL,
 
-  UNIQUE (fk_user,page,param)
+  UNIQUE (fk_user,param)
 )type=innodb;
