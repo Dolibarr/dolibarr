@@ -55,7 +55,7 @@ class html_cerfafr extends ModeleDon
     	    \brief      Renvoi derni�re erreur
             \return     string      Derni�re erreur
     */
-    function pdferror() 
+    function pdferror()
     {
     	return $this->error;
     }
@@ -68,24 +68,26 @@ class html_cerfafr extends ModeleDon
 	{
 		return true;
 	}
-	
-	
+
+
     /**
-    		\brief      Fonction g�n�rant le recu sur le disque
-    		\param	    id	        Id du recu � g�n�rer
+    		\brief      Fonction generant le recu sur le disque
+    		\param	    id	        Id du recu a generer
     		\return	    int         >0 si ok, <0 si ko
     */
     function write_file($don,$outputlangs)
     {
 		global $user,$conf,$langs,$mysoc;
 
+		$now=gmmktime();
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
-    	
+
 		$langs->load("main");
-        
+
         if ($conf->don->dir_output)
         {
-			// D�finition de l'objet $don (pour compatibilite ascendante)
+			// Definition de l'objet $don (pour compatibilite ascendante)
         	if (! is_object($don))
         	{
 	            $id = $don;
@@ -93,7 +95,7 @@ class html_cerfafr extends ModeleDon
 	            $ret=$don->fetch($id);
 			}
 
-			// D�finition de $dir et $file
+			// Definition de $dir et $file
 			if ($don->specimen)
 			{
 				$dir = $conf->don->dir_output;
@@ -105,7 +107,7 @@ class html_cerfafr extends ModeleDon
 				$dir = $conf->don->dir_output . "/" . get_exdir($donref,2);
 				$file = $dir . "/" . $donref . ".html";
 			}
-			
+
 	        if (! file_exists($dir))
 	        {
 	            if (create_exdir($dir) < 0)
@@ -114,17 +116,17 @@ class html_cerfafr extends ModeleDon
 	                return -1;
 	            }
 	        }
-	
+
             if (file_exists($dir))
             {
 		        // Defini contenu
 		        $donmodel=DOL_DOCUMENT_ROOT ."/includes/modules/dons/html_cerfafr.html";
 		        $html = implode('', file($donmodel));
 		        $html = eregi_replace('__REF__',$id,$html);
-		        $html = eregi_replace('__DATE__',dolibarr_print_date($don->date,'',false,$outputlangs),$html);
+		        $html = eregi_replace('__DATE__',dol_print_date($don->date,'day',false,$outputlangs),$html);
 		        $html = eregi_replace('__IP__',$user->ip,$html);
 		        $html = eregi_replace('__AMOUNT__',$don->amount,$html);
-		        $html = eregi_replace('__CURRENCY__',$outputlangs->trans("Currency".$conf->monnaie),$html);
+		        $html = eregi_replace('__CURRENCY__',$outputlangs->transnoconv("Currency".$conf->monnaie),$html);
 		        $html = eregi_replace('__CURRENCYCODE__',$conf->monnaie,$html);
 		        $html = eregi_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->nom,$html);
 		        $html = eregi_replace('__MAIN_INFO_SOCIETE_ADRESSE__',$mysoc->adresse,$html);
@@ -135,16 +137,16 @@ class html_cerfafr extends ModeleDon
 		        $html = eregi_replace('__DONATOR_ZIP__',$don->cp,$html);
 		        $html = eregi_replace('__DONATOR_TOWN__',$don->ville,$html);
 		        $html = eregi_replace('__PAYMENTMODE_LIB__ ',$don->modepaiement,$html);
-		        $html = eregi_replace('__NOW__',dolibarr_print_date(time(),'',false,$outputlangs),$html);
-		        
+		        $html = eregi_replace('__NOW__',dol_print_date($now,'',false,$outputlangs),$html);
+
 		        // Sauve fichier sur disque
 		        dolibarr_syslog("html_cerfafr::write_file $file");
-		        $handle=fopen($file,"w");        
+		        $handle=fopen($file,"w");
 		        fwrite($handle,$html);
 		        fclose($handle);
-				if (! empty($conf->global->MAIN_UMASK)) 
+				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
-		        
+
 		        return 1;
             }
             else
@@ -163,7 +165,7 @@ class html_cerfafr extends ModeleDon
         $this->error=$langs->trans("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
         return 0;   // Erreur par defaut
-	        
+
     }
 
 }

@@ -286,7 +286,7 @@ class pdf_soleil extends ModelePDFFicheinter
 						{
 							$pdf->SetXY (10, $tab_top + $j * $height);
 							$pdf->writeHTMLCell(0, 4, $this->marge_gauche, $tab_top + $j * $height,
-							dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dolibarr_print_date($fichinterligne->datei,'',false,$outputlangs)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output), 0, 1, 0);
+							dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($fichinterligne->datei,'',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output), 0, 1, 0);
 							$tab_height+=4;
 
 							$pdf->SetXY (10, $tab_top + 4 + $j * $height);

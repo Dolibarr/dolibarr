@@ -185,6 +185,7 @@ DateRequest=Date demande
 DateProcess=Date traitement
 DatePlanShort=Date planif.
 DateRealShort=Date réal.
+DateBuild=Date génération du rapport
 DurationYear=an
 DurationMonth=mois
 DurationWeek=semaine

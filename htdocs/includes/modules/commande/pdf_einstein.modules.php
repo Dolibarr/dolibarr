@@ -132,7 +132,7 @@ class pdf_einstein extends ModelePDFCommandes
 			}
 			$deja_regle = "";
 
-			// D�finition de $dir et $file
+			// Definition de $dir et $file
 			if ($com->specimen)
 			{
 				$dir = $conf->commande->dir_output;
@@ -776,7 +776,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("OrderDate")." : " . dolibarr_print_date($object->date,"%d %b %Y",false,$outputlangs), '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date,"%d %b %Y",false,$outputlangs,true), '', 'R');
 
 		if ($showadress)
 		{

@@ -100,7 +100,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$pdf->SetFont('Arial','', 14);
 		$pdf->Text($posx, 16, $outputlangs->transnoentities("SendingSheet"));	// Bordereau expedition
 		$pdf->Text($posx, 22, $outputlangs->transnoentities("Ref") ." : ".$this->expe->ref);
-		$pdf->Text($posx, 28, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date($this->expe->date,"%d %b %Y",false,$outputlangs));
+		$pdf->Text($posx, 28, $outputlangs->transnoentities("Date")." : ".dol_print_date($this->expe->date,"%d %b %Y",false,$outputlangs,true));
 		$pdf->Text($posx, 34, $outputlangs->transnoentities("Page")." : ".$pdf->PageNo() ."/{nb}", 0);
 
 		if ($conf->barcode->enabled)
@@ -113,7 +113,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$pdf->SetFont('Arial','', 14);
 		$pdf->Text($posx, 48, $outputlangs->transnoentities("Order"));
 		$pdf->Text($posx, 54, $outputlangs->transnoentities("Ref") ." : ".$this->expe->commande->ref);
-		$pdf->Text($posx, 60, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date($this->expe->commande->date,"%d %b %Y"));
+		$pdf->Text($posx, 60, $outputlangs->transnoentities("Date")." : ".dol_print_date($this->expe->commande->date,"%d %b %Y",false,$outputlangs,true));
 	}
 
 

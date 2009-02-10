@@ -73,7 +73,7 @@ if ($_POST["action"] == 'gen')
 		dolibarr_syslog("Erreur dans commande_pdf_create");
 		dolibarr_print_error($db,$obj->pdferror());
 	}
-		
+
 	$year = $_POST["reyear"];
 }
 
@@ -127,6 +127,7 @@ print '<br>';
 clearstatcache();
 
 // Affiche lien sur autres années
+$linkforyear=array();
 $found=0;
 if (is_dir($dir))
 {

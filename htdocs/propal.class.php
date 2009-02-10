@@ -521,8 +521,8 @@ class Propal extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price,";
 		$sql.= " remise, remise_percent, remise_absolue,";
 		$sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite,";
-		$sql.= " fk_cond_reglement, fk_mode_reglement, ref_client";
-		if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $sql.= ", date_livraison";
+		$sql.= " fk_cond_reglement, fk_mode_reglement, ref_client,";
+		$sql.= " date_livraison";
 		$sql.= ") ";
 		$sql.= " VALUES (".$this->socid.", 0,";
 		$sql.= " ".$this->remise.", ".($this->remise_percent?$this->remise_percent:'null').", ".($this->remise_absolue?$this->remise_absolue:'null').",";
@@ -532,8 +532,8 @@ class Propal extends CommonObject
 		$sql.= "'".addslashes($this->note_public)."',";
 		$sql.= "'".$this->modelpdf."',".$this->db->idate($this->fin_validite).",";
 		$sql.= " ".$this->cond_reglement_id.", ".$this->mode_reglement_id.",";
-		$sql.= "'".addslashes($this->ref_client)."'";
-		if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $sql.= ", ".($this->date_livraison?$this->db->idate($this->date_livraison):'null');
+		$sql.= "'".addslashes($this->ref_client)."',";
+		$sql.= " ".($this->date_livraison!=''?$this->db->idate($this->date_livraison):'null');
 		$sql.= ")";
 
 		dolibarr_syslog("Propal::create sql=".$sql, LOG_DEBUG);
@@ -2105,13 +2105,11 @@ class PropaleLigne
 		$sql.= ' total_ht, total_tva, total_ttc, marge_tx, marque_tx, special_code, rang)';
 		$sql.= " VALUES (".$this->fk_propal.",";
 		$sql.= " '".addslashes($this->desc)."',";
-		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
-		else { $sql.='null,'; }
-		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
-		else $sql.= 'null,';
+		$sql.= " ".($this->fk_product?"'".$this->fk_product."'":"null").",";
+		$sql.= " ".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
 		$sql.= " ".price2num($this->qty).",";
 		$sql.= " ".price2num($this->tva_tx).",";
-		$sql.= " ".price2num($this->subprice).",";
+		$sql.= " ".($this->subprice?price2num($this->subprice):'null').",";
 		$sql.= " ".price2num($this->remise_percent).",";
 		$sql.= " '".$this->info_bits."',";
 		$sql.= " ".price2num($this->total_ht).",";

@@ -407,7 +407,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($blSocX,$blSocY+20);
 		$pdf->SetFont('Arial','B',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($exp->date,'day',false,$outputlangs), '' , 'L');
+		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Date")." : " . dol_print_date($exp->date,'day',false,$outputlangs,true), '' , 'L');
 		//Date Expedition
 		$pdf->SetXY($blSocX2,$blSocY+20);
 		$pdf->SetFont('Arial','B',8);

@@ -372,7 +372,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 
 /**
  *	\brief      Output date in a string format according to outputlangs (or langs if not defined).
- * 				But return charset is always UTF-8.
+ * 				Return charset is always UTF-8, except if encodetoouput is defined. In this cas charset is output charset.
  *	\param	    time        	GM Timestamps date (or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' in server TZ)
  *	\param	    format      	Output date format
  *								"%d %b %Y",
@@ -383,7 +383,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
  *	\param		outputlangs		Object lang that contains language for text translation.
  * 	\return     string      	Formated date or '' if time is null
  */
-function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
+function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodetooutput=false)
 {
 	global $conf,$langs;
 
@@ -406,14 +406,14 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 	if (strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
 
 	//print 'x'.$time;
-	
+
 	if (eregi('%b',$format))		// There is some text to translate
 	{
 		// We inhibate translation to text made by strftime functions. We will use trans instead later.
-		$format=ereg_replace('%b','__b__',$format);		
-		$format=ereg_replace('%B','__B__',$format);		
+		$format=ereg_replace('%b','__b__',$format);
+		$format=ereg_replace('%B','__B__',$format);
 	}
-	
+
 	// Analyse de la date (deprecated)   Ex: 19700101, 19700101010000
 	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg)
 	 || eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$',$time,$reg))
@@ -447,8 +447,16 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 	{
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
 		$month=adodb_strftime('%m',$time);
-		$monthtext=$outputlangs->transnoentitiesnoconv('Month'.$month);
-		$monthtextshort=$outputlangs->transnoentitiesnoconv('MonthShort'.$month);
+		if ($encodetooutput)
+		{
+			$monthtext=$outputlangs->transnoentities('Month'.$month);
+			$monthtextshort=$outputlangs->transnoentities('MonthShort'.$month);
+		}
+		else
+		{
+			$monthtext=$outputlangs->transnoentitiesnoconv('Month'.$month);
+			$monthtextshort=$outputlangs->transnoentitiesnoconv('MonthShort'.$month);
+		}
 		//print 'monthtext='.$monthtext.' monthtextshort='.$monthtextshort;
 		$ret=ereg_replace('__b__',$monthtextshort,$ret);
 		$ret=ereg_replace('__B__',$monthtext,$ret);

@@ -977,7 +977,7 @@ class Product extends CommonObject
 				}
 			}
 
-			// multiprix
+			// Load multiprices array
 			if ($conf->global->PRODUIT_MULTIPRICES)
 			{
 				for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
@@ -988,7 +988,6 @@ class Product extends CommonObject
 					$sql.= " where price_level=".$i." and";
 					$sql.= " fk_product = '".$this->id."'";
 					$sql.= " order by date_price DESC limit 1";
-
 					$result = $this->db->query($sql) ;
 					if ( $result )
 					{
@@ -1006,7 +1005,6 @@ class Product extends CommonObject
 						return -1;
 					}
 				}
-
 			}
 
 			$res=$this->load_stock();

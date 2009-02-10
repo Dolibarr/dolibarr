@@ -162,7 +162,7 @@ class mailing_fraise extends MailingTargets
                     			'fk_contact' => $obj->fk_contact,
                     			'name' => $obj->name,
                     			'firstname' => $obj->firstname,
-                    			'other' => $obj->datefin?($langs->transnoentities("DateEnd").'='.dolibarr_print_date($this->db->jdate($obj->datefin),'day')):'',
+                    			'other' => $obj->datefin?($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin),'day')):'',
                     			'url' => $this->url($obj->id)
                     			);
                     $old = $obj->email;

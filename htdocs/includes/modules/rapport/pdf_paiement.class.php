@@ -100,7 +100,7 @@ class pdf_paiement extends FPDF
 
 		$month = sprintf("%02d",$month);
 		$year = sprintf("%04d",$year);
-		$_file = $dir . "/payments-".$month."-".$year.".pdf";
+		$file = $dir . "/payments-".$month."-".$year.".pdf";
 
 		// Protection et encryption du pdf
 		if ($conf->global->PDF_SECURITY_ENCRYPTION)
@@ -116,9 +116,6 @@ class pdf_paiement extends FPDF
 			$pdf=new FPDI('P','mm',$this->format);
 		}
 
-				$pdf->Open();
-				$pagenb=0;
-				$pdf->SetDrawColor(128,128,128);
 
 		$sql = "SELECT ".$this->db->pdate("p.datep")." as dp, f.facnumber";
 		//$sql .= ", c.libelle as paiement_type, p.num_paiement";
@@ -147,7 +144,7 @@ class pdf_paiement extends FPDF
 				$var=!$var;
 
 				$lines[$i][0] = $objp->facnumber;
-				$lines[$i][1] = dolibarr_print_date($objp->dp,"%d %B %Y",false,$outputlangs);
+				$lines[$i][1] = dol_print_date($objp->dp,"%d %B %Y",false,$outputlangs,true);
 				//$lines[$i][2] = $objp->paiement_type ;
 				$lines[$i][2] = $langs->transnoentities("PaymentTypeShort".$objp->paiement_code);
 				$lines[$i][3] = $objp->num_paiement;
@@ -175,27 +172,37 @@ class pdf_paiement extends FPDF
 			// force to build at least one page if report has no line
 			$pages = 1;
 		}
-		/*
-		for ($i = 0 ; $i < $pages ; $i++)
-		{
-		$pdf->AddPage();
-		$this->Header($pdf, $i+1, $pages, $outputlangs);
-		$this->Body($pdf, $i+1, $lines, $outputlangs);
-		}
-		*/
+
+		$pdf->Open();
+		$pagenb=0;
+		$pdf->SetDrawColor(128,128,128);
+
+		$pdf->SetTitle($outputlangs->transnoentities("Payments"));
+		$pdf->SetSubject($outputlangs->transnoentities("Payments"));
+		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+		//$pdf->SetKeyWords();
+		if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+
+		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+		$pdf->SetAutoPageBreak(1,0);
 
 		// New page
-		$this->AddPage();
+		$pdf->AddPage();
 		$pagenb++;
-		$this->Header($pdf, 1, $pages, $outputlangs);
-		$this->SetFont('Arial','', 9);
+		$this->_pagehead($pdf, $pages, 1, $outputlangs);
+		$pdf->SetFont('Arial','', 9);
 		$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
-		$this->SetTextColor(0,0,0);
+		$pdf->SetTextColor(0,0,0);
 
 
 		$this->Body($pdf, 1, $lines, $outputlangs);
 
-		$pdf->Output($_file);
+		$pdf->AliasNbPages();
+
+		$pdf->Close();
+
+		$pdf->Output($file);
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
@@ -209,17 +216,17 @@ class pdf_paiement extends FPDF
 	 *	\param  page current page number
 	 *	\param  pages number of pages
 	 */
-	function Header(&$pdf, $page, $pages, $outputlangs)
+	function _pagehead(&$pdf, $page, $showadress=1, $outputlangs)
 	{
 		global $langs;
 
 		$title=$outputlangs->transnoentities("ListOfCustomerPayments");
-		$title.=' - '.dolibarr_print_date(dolibarr_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs);
+		$title.=' - '.dol_print_date(dolibarr_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs,true);
 		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(76, 10, $title);
+		$pdf->Text(70, 10, $title);
 
-		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(11, 16, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date(time(),"day",false,$outputlangs));
+		$pdf->SetFont('Arial','',12);
+		$pdf->Text(11, 16, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(time(),"day",false,$outputlangs,true));
 
 		$pdf->SetFont('Arial','',12);
 		$pdf->Text(11, 22, $outputlangs->transnoentities("Page")." : ".$page);
@@ -266,7 +273,7 @@ class pdf_paiement extends FPDF
 				{
 					$page++;
 					$pdf->AddPage();
-					$this->Header($pdf, $page, $pages, $outputlangs);
+					$this->_pagehead($pdf, $page, 0, $outputlangs);
 					$pdf->SetFont('Arial','', 9);
 					$yp = 0;
 				}

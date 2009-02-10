@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Régis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -94,8 +94,8 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 		$product->tva_tx             = $_POST["tva_tx"];
 		$product->type               = $_POST["type"];
 		$product->status             = $_POST["statut"];
-		$product->description        = $_POST["desc"];
-		$product->note               = $_POST["note"];
+		$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
+		$product->note               = dol_htmlcleanlastbr($_POST["note"]);
 		$product->duration_value     = $_POST["duration_value"];
 		$product->duration_unit      = $_POST["duration_unit"];
 		$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
@@ -154,8 +154,8 @@ $user->rights->produit->creer)
 	{
 		$product->ref                = $_POST["ref"];
 		$product->libelle            = $_POST["libelle"];
-		$product->description        = $_POST["desc"];
-		$product->note               = $_POST["note"];
+		$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
+		$product->note               = dol_htmlcleanlastbr($_POST["note"]);
 		$product->status             = $_POST["statut"];
 		$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
 		$product->stock_loc          = $_POST["stock_loc"];

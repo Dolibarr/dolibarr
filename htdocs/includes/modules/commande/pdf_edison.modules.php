@@ -441,7 +441,7 @@ class pdf_edison extends ModelePDFCommandes
 
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($com->date,'day',false,$outputlangs));
+		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dol_print_date($com->date,'day',false,$outputlangs));
 		$pdf->Text(11, 94, $outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($com->ref));
 	}
 

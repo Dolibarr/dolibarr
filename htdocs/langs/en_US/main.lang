@@ -186,6 +186,7 @@ DateRequest=Request date
 DateProcess=Process date
 DatePlanShort=Date planed
 DateRealShort=Date real.
+DateBuild=Report build date
 DurationYear=year
 DurationMonth=month
 DurationDay=day

@@ -226,10 +226,10 @@ function facture_pdf_create($db, $id, $message, $modele, $outputlangs)
 }
 
 /**
- \brief       Crï¿½ï¿½ un meta fichier ï¿½ cï¿½tï¿½ de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payï¿½e ou compliquï¿½e ï¿½ gï¿½rer ... avec un rgrep c'est vite fait bien fait [eric seigne
- \param	    db  		Objet base de donnï¿½e
- \param	    facid		Id de la facture ï¿½ crï¿½er
- \param       message     Message
+ *	\brief      Cree un meta fichier a coté de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payï¿½e ou compliquï¿½e ï¿½ gï¿½rer ... avec un rgrep c'est vite fait bien fait [eric seigne
+ *	\param	    db  		Objet base de donnee
+ *	\param	    facid		Id de la facture a creer
+ *	\param      message     Message
  */
 function facture_meta_create($db, $facid, $message="")
 {
@@ -255,7 +255,7 @@ function facture_meta_create($db, $facid, $message="")
 			$nblignes = sizeof($fac->lignes);
 			$client = $fac->client->nom . " " . $fac->client->adresse . " " . $fac->client->cp . " " . $fac->client->ville;
 			$meta = "REFERENCE=\"" . $fac->ref . "\"
-DATE=\"" . dolibarr_print_date($fac->date) . "\"
+DATE=\"" . dol_print_date($fac->date,'') . "\"
 NB_ITEMS=\"" . $nblignes . "\"
 CLIENT=\"" . $client . "\"
 TOTAL_HT=\"" . $fac->total_ht . "\"

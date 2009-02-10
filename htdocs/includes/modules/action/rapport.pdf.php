@@ -197,7 +197,7 @@ class CommActionRapport
 		        $y++;
 
                 $pdf->SetXY($this->marge_gauche, $y);
-                $pdf->MultiCell(22, $height, dolibarr_print_date($obj->dp,"day")."\n".dolibarr_print_date($obj->dp,"hour"), 0, 'L', 0);
+                $pdf->MultiCell(22, $height, dol_print_date($obj->dp,"day")."\n".dolibarr_print_date($obj->dp,"hour"), 0, 'L', 0);
                 $y0 = $pdf->GetY();
 
                 $pdf->SetXY(26, $y);

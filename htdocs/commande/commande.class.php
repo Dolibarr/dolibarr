@@ -1043,10 +1043,8 @@ class Commande extends CommonObject
 				$ligne->product_desc     = $objp->product_desc; 		// Description produit
 				$ligne->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 
-				// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-				// Save the start and end date of the line in the object
-				$ligne->date_start       = $this->db->idate($objp->date_start);
-				$ligne->date_end         = $this->db->idate($objp->date_end);
+				$ligne->date_start       = $this->db->jdate($objp->date_start);
+				$ligne->date_end         = $this->db->jdate($objp->date_end);
 
 				$this->lignes[$i] = $ligne;
 				$i++;

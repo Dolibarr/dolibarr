@@ -201,7 +201,7 @@ class BordereauChequeBlochet extends FPDF
 		$pdf->Text(32, 19, $this->number);
 
 		$pdf->SetFont('Arial','B',10);
-		$pdf->Text(32, 27, dolibarr_print_date($this->date,"day",false,$outputlangs));
+		$pdf->Text(32, 27, dol_print_date($this->date,"day",false,$outputlangs));
 
 
 		$pdf->SetFont('Arial','',10);

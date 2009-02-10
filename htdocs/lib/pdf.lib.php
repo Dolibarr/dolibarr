@@ -267,7 +267,7 @@ function pdf_getlinedesc($line,$outputlangs)
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 				}
 			}
-			
+
 			$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
 		}
 	}

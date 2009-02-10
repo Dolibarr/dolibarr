@@ -471,7 +471,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetTextColor(0,0,60);
 		if ($delivery->date_valid)
 		{
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y",false,$outputlangs), '', 'R');
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($delivery->date_valid,"%d %b %Y",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{

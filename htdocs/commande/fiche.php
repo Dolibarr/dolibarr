@@ -300,6 +300,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		}
 		$ret=$commande->fetch_client();
 
+		// Clean parameters
 		$suffixe = $_POST['idprod'] ? '_prod' : '';
 		$date_start=dolibarr_mktime(0, 0, 0, $_POST['date_start'.$suffixe.'month'], $_POST['date_start'.$suffixe.'day'], $_POST['date_start'.$suffixe.'year']);
 		$date_end=dolibarr_mktime(0, 0, 0, $_POST['date_end'.$suffixe.'month'], $_POST['date_end'.$suffixe.'day'], $_POST['date_end'.$suffixe.'year']);
@@ -355,6 +356,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			$tva_npr=eregi('\*',$_POST['tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
 		}
+		$desc=dol_htmlcleanlastbr($desc);
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
@@ -408,6 +410,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	$commande = new Commande($db,'',$_POST['id']);
 	if (! $commande->fetch($_POST['id']) > 0) dolibarr_print_error($db);
 
+	// Clean parameters
+	$description=dol_htmlcleanlastbr($_POST['eldesc']);
 	$date_start=dolibarr_mktime(0, 0, 0, $_POST['date_start'.$suffixe.'month'], $_POST['date_start'.$suffixe.'day'], $_POST['date_start'.$suffixe.'year']);
 	$date_end=dolibarr_mktime(0, 0, 0, $_POST['date_end'.$suffixe.'month'], $_POST['date_end'.$suffixe.'day'], $_POST['date_end'.$suffixe.'year']);
 
@@ -426,7 +430,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	else
 	{
 		$result = $commande->updateline($_POST['elrowid'],
-		$_POST['eldesc'],
+		$description,
 		$_POST['pu'],
 		$_POST['qty'],
 		$_POST['elremise_percent'],
@@ -1505,7 +1509,7 @@ else
 								print nl2br($objp->description);
 								// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 								// Print the start and end dates
-								print_date_range($objp->date_start,$objp->date_end,'dayhour');
+								print_date_range($objp->date_start,$objp->date_end);
 							}
 							print '</td>';
 						}

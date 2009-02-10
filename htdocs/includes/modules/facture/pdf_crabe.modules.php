@@ -486,7 +486,7 @@ class pdf_crabe extends ModelePDFFactures
 				$row = $this->db->fetch_row($resql);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
-				$pdf->MultiCell(20, 3, dolibarr_print_date($row[0],'day',false,$outputlangs), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dol_print_date($row[0],'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($row[1]), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
@@ -975,7 +975,7 @@ class pdf_crabe extends ModelePDFFactures
 			$posy+=5;
 			$pdf->SetXY(100,$posy);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEcheance")." : " . dolibarr_print_date($object->date_lim_reglement,"day",false,$outputlangs), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEcheance")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), '', 'R');
 		}
 
 		if ($showadress)

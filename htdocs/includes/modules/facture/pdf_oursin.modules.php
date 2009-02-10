@@ -397,7 +397,7 @@ class pdf_oursin extends ModelePDFFactures
 				$row = $this->db->fetch_row($resql);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
-				$pdf->MultiCell(20, 3, dolibarr_print_date($row[0],'day',false,$outputlangs), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dol_print_date($row[0],'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($row[1]), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
@@ -896,7 +896,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY($this->marges['g'],$posy);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Bill").' '.$outputlangs->transnoentities("Of").' '.dolibarr_print_date($fac->date,"%d %B %Y",false,$outputlangs), '' , 'L');
+		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Bill").' '.$outputlangs->transnoentities("Of").' '.dolibarr_print_date($fac->date,"%d %B %Y",false,$outputlangs,true), '' , 'L');
 		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY($this->marges['g'],$posy+6);
 		$pdf->SetTextColor(22,137,210);
