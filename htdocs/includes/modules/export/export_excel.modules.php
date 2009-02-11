@@ -112,16 +112,17 @@ class ExportExcel extends ModeleExports
 	 */
 	function open_file($file,$outputlangs)
 	{
-		global $langs;
-   
+		global $conf,$langs;
+
 		$outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
-   
+
 		dolibarr_syslog("ExportExcel::open_file file=".$file);
 
 		$ret=1;
 
 		$outputlangs->load("exports");
 		$this->workbook = &new writeexcel_workbookbig($file);
+		$this->workbook->set_tempdir($conf->export->dir_temp);			// Set temporary directory
 		$this->workbook->set_sheetname($outputlangs->trans("Sheet"));
 		$this->worksheet = &$this->workbook->addworksheet();
 
@@ -136,7 +137,7 @@ class ExportExcel extends ModeleExports
 	function write_header($outputlangs)
 	{
 		$outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
-   
+
 		return 0;
 	}
 
@@ -147,7 +148,7 @@ class ExportExcel extends ModeleExports
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs)
 	{
 		$outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
-   
+
 		// Create a format for the column headings
 		$formatheader =$this->workbook->addformat();
 		$formatheader->set_bold();
@@ -155,7 +156,7 @@ class ExportExcel extends ModeleExports
 		//$formatheader->set_size(12);
 		//$formatheader->set_font("Courier New");
 		//$formatheader->set_align('center');
-   
+
 		//$this->worksheet->insert_bitmap('A1', 'php.bmp', 16, 8);
 
 		$this->col=0;
@@ -177,7 +178,7 @@ class ExportExcel extends ModeleExports
 	function write_record($array_alias,$array_selected_sorted,$objp,$outputlangs)
 	{
 		$outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
-   
+
 		$formatdate=$this->workbook->addformat();
 		$formatdate->set_num_format('yyyy-mm-dd');
 		//$formatdate->set_num_format(0x0f);
@@ -185,8 +186,8 @@ class ExportExcel extends ModeleExports
 		$formatdatehour=$this->workbook->addformat();
 		$formatdatehour->set_num_format('yyyy-mm-dd hh:mm:ss');
 		//$formatdatehour->set_num_format(0x0f);
-   
-   
+
+
 		$this->col=0;
 		foreach($array_selected_sorted as $code => $value)
 		{
@@ -242,7 +243,7 @@ class ExportExcel extends ModeleExports
 		return 0;
 	}
 
-	
+
 	/**
      * Clean a cell to respect rules of Excel file cells
      * @param 	newvalue	String to clean
@@ -252,7 +253,7 @@ class ExportExcel extends ModeleExports
     {
 		// Rule Dolibarr: No HTML
     	$newvalue=dol_string_nohtmltag($newvalue);
-    	
+
     	return $newvalue;
     }
 }
