@@ -224,9 +224,9 @@ if ($nboftargetok) {
     		unlink $FILENAMETGZ.tgz;
 #    		unlink $BUILDROOT/$FILENAMETGZ.tgz;
     		print "Compress $BUILDROOT/htdocs into $FILENAMETGZ.tgz...\n";
-   		    $cmd="tar --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" htdocs";
+   		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" htdocs";
    		    $ret=`$cmd`;
-#        	$cmd="tar --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" htdocs\n";
+#        	$cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" htdocs\n";
 #        	$ret=`$cmd`;
             if ($OS =~ /windows/i) {
         		print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
