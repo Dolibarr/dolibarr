@@ -19,7 +19,7 @@
  */
 
 /**
-        \file       htdocs/public/adherents/priv_liste.php
+        \file       htdocs/public/members/priv_liste.php
         \brief      File sample to list members
         \version    $Id$
 */
@@ -48,8 +48,8 @@ function llxHeaderVierge($title, $head = "")
 
 function llxFooter()
 {
-	print "</body>\n";	
-	print "</html>\n";	
+	print "</body>\n";
+	print "</html>\n";
 }
 
 

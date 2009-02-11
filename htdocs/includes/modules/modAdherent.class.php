@@ -50,7 +50,7 @@ class modAdherent extends DolibarrModules
     {
         $this->db = $DB;
         $this->numero = 310 ;
-    
+
         $this->family = "hr";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
@@ -59,27 +59,26 @@ class modAdherent extends DolibarrModules
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 0;
         $this->picto='user';
-    
+
         // Dir
         //----
         $this->dirs = array();
-    
+
         // Config pages
         //-------------
         $this->config_page_url = array("adherent.php");
-    
+
         // Dependances
         //------------
         $this->depends = array();
         $this->requiredby = array();
         $this->langfiles = array("members","companies");
-    
+
         // Constantes
         //-----------
         $this->const = array();
         $this->const[0]  = array("ADHERENT_MAIL_RESIL","texte","Votre adhesion vient d'etre resiliee.\r\nNous esperons vous revoir tres bientot","Mail de resiliation");
-        $this->const[1]  = array("ADHERENT_MAIL_VALID","texte","Votre adhesion vient d'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante : \r\n%DOL_MAIN_URL_ROOT%/public/adherents/","Mail de validation");
-        $this->const[3]  = array("ADHERENT_MAIL_RESIL","texte","Votre adhesion vient d'etre resilie.\r\nNous esperons vous revoir tres bientot","Mail de resiliation");
+        $this->const[1]  = array("ADHERENT_MAIL_VALID","texte","Votre adhesion vient d'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\n","Mail de validation");
         $this->const[5]  = array("ADHERENT_MAIL_VALID_SUBJECT","chaine","Votre adhesion a ete validee","Sujet du mail de validation");
         $this->const[6]  = array("ADHERENT_MAIL_RESIL_SUBJECT","chaine","Resiliation de votre adhesion","Sujet du mail de resiliation");
         $this->const[10] = array("ADHERENT_MAILMAN_UNSUB_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&user=%EMAIL%","Url de desinscription aux listes mailman");
@@ -103,11 +102,11 @@ class modAdherent extends DolibarrModules
         $this->const[32] = array("ADHERENT_BANK_ACCOUNT","chaine","","ID du Compte banquaire utilise");
         $this->const[33] = array("ADHERENT_BANK_CATEGORIE","chaine","","ID de la categorie banquaire des cotisations");
         $this->const[34] = array("ADHERENT_ETIQUETTE_TYPE","chaine","L7163","Type d etiquette (pour impression de planche d etiquette)");
-    
+
         // Boites
         //-------
         $this->boxes = array();
-    
+
         // Permissions
         //------------
         $this->rights = array();
@@ -120,21 +119,21 @@ class modAdherent extends DolibarrModules
         // $this->rights[$r][3]     1=Permis par defaut, 0=Non permis par defaut
         // $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
         // $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
-        
+
         $r++;
         $this->rights[$r][0] = 71;
         $this->rights[$r][1] = 'Lire les fiche adherents';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;
         $this->rights[$r][4] = 'lire';
-    
+
         $r++;
         $this->rights[$r][0] = 72;
         $this->rights[$r][1] = 'Creer/modifier tous les adherents';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'creer';
-    
+
         $r++;
         $this->rights[$r][0] = 73;
         $this->rights[$r][1] = 'Creer/modifier ses propres infos adherents';
@@ -149,14 +148,14 @@ class modAdherent extends DolibarrModules
         $this->rights[$r][2] = 'd';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'supprimer';
-    
+
         $r++;
         $this->rights[$r][0] = 76;
         $this->rights[$r][1] = 'Exporter les adherents';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'export';
-    
+
         $r++;
         $this->rights[$r][0] = 75;
         $this->rights[$r][1] = 'Configurer les types et attributs des adherents';
@@ -171,7 +170,7 @@ class modAdherent extends DolibarrModules
         $this->rights[$r][3] = 1;
         $this->rights[$r][4] = 'cotisation';
         $this->rights[$r][5] = 'lire';
-    
+
         $r++;
         $this->rights[$r][0] = 79;
         $this->rights[$r][1] = 'Creer/modifier/supprimer les cotisations';
@@ -199,7 +198,7 @@ class modAdherent extends DolibarrModules
 		$this->export_entities_array[$r]=array('a.rowid'=>'member','a.nom'=>"member",'a.prenom'=>"member",'a.login'=>"member",'a.morphy'=>'member','a.adresse'=>"member",'a.cp'=>"member",'a.ville'=>"member",'a.pays'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.naiss'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member','a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type','c.dateadh'=>'subscription','c.cotisation'=>'subscription');
         $this->export_alias_array[$r]=array('a.rowid'=>'Id','a.nom'=>"lastname",'a.prenom'=>"firstname",'a.login'=>"login",'a.morphy'=>'morphy','a.adresse'=>"address",'a.cp'=>"zip",'a.ville'=>"town",'a.pays'=>"country",'a.phone'=>"phone",'a.phone_perso'=>"phone_perso",'a.phone_mobile'=>"phone_mobile",'a.email'=>"email",'a.naiss'=>"birthday",'a.statut'=>"status",'a.photo'=>'photo','a.note'=>'note','a.datec'=>'datec','a.datevalid'=>'datevalid','a.tms'=>'datem','a.datefin'=>'dateend','ta.rowid'=>'type_id','ta.libelle'=>'type_label','c.dateadh'=>'date_subscription','c.cotisation'=>'amount_subscription');
 		// On complete avec champs options
-		$sql='SELECT name, label FROM '.MAIN_DB_PREFIX.'adherent_options_label'; 
+		$sql='SELECT name, label FROM '.MAIN_DB_PREFIX.'adherent_options_label';
 		$resql=$this->db->query($sql);
 		while ($obj=$this->db->fetch_object($resql))
 		{
@@ -217,7 +216,7 @@ class modAdherent extends DolibarrModules
         $this->export_sql_end[$r] .=' WHERE a.fk_adherent_type = ta.rowid';
     }
 
-    
+
     /**
      *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
      *               Definit egalement les repertoires de donnees a creer pour ce module.
@@ -225,17 +224,17 @@ class modAdherent extends DolibarrModules
     function init()
     {
         global $conf;
-        
+
         // Dir
         $this->dirs[0] = $conf->adherent->dir_output;
         $this->dirs[1] = $conf->adherent->dir_output."/photos";
         $this->dirs[2] = $conf->adherent->dir_export;
-        
+
         $sql = array();
-        
+
         return $this->_init($sql);
     }
-    
+
     /**
      *    \brief      Fonction appelee lors de la desactivation d'un module.
      *                Supprime de la base les constantes, boites et permissions du module.
@@ -243,7 +242,7 @@ class modAdherent extends DolibarrModules
     function remove()
     {
 		$sql = array();
-    
+
 		return $this->_remove($sql);
     }
 

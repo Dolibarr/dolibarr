@@ -1,4 +1,4 @@
-#Wed Feb 11 15:08:12 CET 2009
+#Wed Feb 11 17:58:49 CET 2009
 eclipse.preferences.version=1
 encoding//dev/initdemo/initdemo.sql=UTF-8
 encoding//dev/skeletons/modMyModule.class.php=ISO-8859-1
@@ -235,6 +235,7 @@ encoding//htdocs/langs/en_US/members.lang=UTF-8
 encoding//htdocs/langs/en_US/orders.lang=UTF-8
 encoding//htdocs/langs/en_US/oscommerce.lang=UTF-8
 encoding//htdocs/langs/en_US/other.lang=UTF-8
+encoding//htdocs/langs/en_US/paybox.lang=UTF-8
 encoding//htdocs/langs/en_US/products.lang=UTF-8
 encoding//htdocs/langs/en_US/projects.lang=UTF-8
 encoding//htdocs/langs/en_US/propal.lang=UTF-8
@@ -344,6 +345,7 @@ encoding//htdocs/langs/fr_FR/members.lang=UTF-8
 encoding//htdocs/langs/fr_FR/orders.lang=UTF-8
 encoding//htdocs/langs/fr_FR/oscommerce.lang=UTF-8
 encoding//htdocs/langs/fr_FR/other.lang=UTF-8
+encoding//htdocs/langs/fr_FR/paybox.lang=UTF-8
 encoding//htdocs/langs/fr_FR/products.lang=UTF-8
 encoding//htdocs/langs/fr_FR/projects.lang=UTF-8
 encoding//htdocs/langs/fr_FR/propal.lang=UTF-8

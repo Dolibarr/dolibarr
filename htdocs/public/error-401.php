@@ -11,7 +11,7 @@
     Sorry. You are not allowed to access this resource.
 
     <br>
-    You come from <?php print $_SERVER["HTTP_REFERER"] ?>.
+    <?php print isset($_SERVER["HTTP_REFERER"])?'You come from '.$_SERVER["HTTP_REFERER"].'.':''; ?>
 
     <hr>
   </body>

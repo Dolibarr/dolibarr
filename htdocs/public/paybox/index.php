@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,34 +17,15 @@
  */
 
 /**
-	    \file       htdocs/public/dons/therm.php
-        \ingroup    donation
-		\brief      Screen with thermometer
-		\version    $Id$
-*/
+ *     	\file       htdocs/public/paybox/index.php
+ *		\ingroup    core
+ *		\brief      A redirect page to an error
+ *		\author	    Laurent Destailleur
+ *		\version    $Id$
+ */
 
 require("../../master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 
-$langs->setDefaultLang('auto');
-
-
-/*
-* 	View
-*/
-$dontherm = new Don($db);
- 
-$intentValue  = $dontherm->sum_donations(1);
-$pendingValue = $dontherm->sum_donations(2);
-$actualValue  = $dontherm->sum_donations(3);
-
-$db->close();
-
-
-/* 
-* Graph thermometer
-*/
-print moneyMeter($actualValue, $pendingValue, $intentValue);
+header("Location: ".DOL_URL_ROOT.'/public/error-404.php');
 
 ?>

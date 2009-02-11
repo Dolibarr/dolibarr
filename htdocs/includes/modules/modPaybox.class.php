@@ -31,16 +31,16 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     \class      modMyModule
+/**     \class      modPayBox
  *      \brief      Description and activation class for module MyModule
  */
-class modMyModule extends DolibarrModules
+class modPayBox extends DolibarrModules
 {
     /**
     *   \brief      Constructor. Define names, constants, directories, boxes, permissions
     *   \param      DB      Database handler
     */
-	function modMyModule($DB)
+	function modPayBox($DB)
 	{
 		$this->db = $DB;
 
@@ -48,7 +48,7 @@ class modMyModule extends DolibarrModules
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 10000;
 		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'mymodule';
+		$this->rights_class = 'paybox';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
@@ -56,16 +56,16 @@ class modMyModule extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-		$this->description = "Description of module MyModule";
+		$this->description = "Paybox module";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '1.0';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=other)
-		$this->special = 0;
+		$this->special = 1;
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
-		$this->picto='generic';
+		$this->picto='/theme/common/paybox.png';
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
@@ -76,14 +76,14 @@ class modMyModule extends DolibarrModules
 		$this->style_sheet = '';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array("mymodulesetuppage.php");
+		$this->config_page_url = array("paybox.php");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->phpmin = array(4,3);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(2,5);	// Minimum version of Dolibarr required by module
-		$this->langfiles = array("mymodule");
+		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module
+		$this->langfiles = array("paybox");
 
 		// Constants
 		$this->const = array();			// List of particular constants to add when module is enabled
@@ -91,7 +91,7 @@ class modMyModule extends DolibarrModules
 		//                            1=>array('MODULE_MY_NEW_CONST2','chaine','myvalue','This is another constant to add',0) );
 
 		// New pages on tabs
-		$this->tabs = array('entity:Title:@mymodule:/mymodule/mynewtab.php?id=__ID__');
+		$this->tabs = array();
 
 
 		// Boxes
@@ -221,7 +221,7 @@ class modMyModule extends DolibarrModules
 	*/
 	function load_tables()
 	{
-		return $this->_load_tables('/mymodule/sql/');
+		return $this->_load_tables('/paybox/sql/');
 	}
 }
 

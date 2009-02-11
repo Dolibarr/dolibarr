@@ -34,18 +34,18 @@ $sql .= " WHERE d.fk_don_projet = 1 AND d.fk_statut in (2, 3) ORDER BY d.datedon
 if ( $db->query( $sql) )
 {
   $num = $db->num_rows();
-  
+
   if ($num)
     {
-      
+
       print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
       print '<TR>';
-      print "<td>Pr�nom Nom / Soci�t�</td>";
+      print "<td>".$langs->trans("Name")." / ".$langs->trans("Company")."</td>";
       print "<td>Date</td>";
       print "<td align=\"right\">Montant</TD>";
       print "</TR>\n";
-      
+
       $var=True;
       $bc[1]='bgcolor="#f5f5f5"';
       $bc[0]='bgcolor="#f0f0f0"';

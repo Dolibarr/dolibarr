@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ function llxHeader($head = "") {
   $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"));
   $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"));
 
-  $menu->add(DOL_URL_ROOT."/public/adherents/index.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
+  $menu->add(DOL_URL_ROOT."/adherents/public.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
 
   $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Exports"));
   $menu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"));

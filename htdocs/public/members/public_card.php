@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/public/adherents/priv_fiche.php
+ *	\file       htdocs/public/members/priv_fiche.php
  *	\brief      Fichier de gestion de la popup de selection de date eldy
  *	\version    $Id$
  */
@@ -76,15 +76,15 @@ if ($rowid > 0)
 		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
-		
+
 		print '<tr><td>'.$langs->trans("Zip").' '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
-		
+
 		print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
-		
+
 		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
-		
+
 		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
-		
+
 		if (isset($adh->photo) && $adh->photo !=''){
 			print '<tr><td>URL Photo</td><td class="valeur">'."<A HREF=\"$adh->photo\"><IMG SRC=\"$adh->photo\"></A>".'&nbsp;</td></tr>';
 		}
@@ -93,7 +93,7 @@ if ($rowid > 0)
 		//  }
 
 		print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>'.nl2br($adh->note).'</td></tr>';
-		
+
 		print '</table>';
 	}
 

@@ -19,7 +19,7 @@
  */
 
 /**
- \file       htdocs/public/adherents/new.php
+ \file       htdocs/public/members/new.php
  \ingroup    adherent
  \brief      Form example to add a new member
  \version    $Id$
@@ -229,7 +229,7 @@ print "</td>\n";
 
 print '<td valign="top" rowspan="14"><textarea name="comment" wrap="soft" cols="40" rows="25">'.$comment.'</textarea></td></tr>';
 
-print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> '.$langs->trans("Surname").'</td><td><input type="text" name="prenom" size="40" value="'.$prenom.'"></td></tr>';  
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> '.$langs->trans("Surname").'</td><td><input type="text" name="prenom" size="40" value="'.$prenom.'"></td></tr>';
 
 print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> '.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.$nom.'"></td></tr>';
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td><input type="text" name="societe" size="40" value="'.$societe.'"></td></tr>';

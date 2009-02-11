@@ -18,12 +18,12 @@
  */
 
 /**
-       	\file       htdocs/public/demo/index.php
-		\ingroup    core
-		\brief      File to access demo
-		\author	    Laurent Destailleur
-		\version    $Id$
-*/
+ *     	\file       htdocs/public/demo/index.php
+ *		\ingroup    core
+ *		\brief      File to access demo
+ *		\author	    Laurent Destailleur
+ *		\version    $Id$
+ */
 
 require("../../master.inc.php");
 

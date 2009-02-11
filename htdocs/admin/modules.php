@@ -388,9 +388,22 @@ foreach ($orders as $key => $value)
             print '&nbsp;';
         }
         print "</td>\n";
+
+        // Picto
         print '  <td valign="top" width="14" align="center">';
-        print ! empty($objMod->picto)?img_object('',$objMod->picto):img_object('','generic');
-        print '</td><td valign="top">'.$objMod->getName();
+        if (! empty($objMod->picto))
+        {
+        	if (eregi('^/',$objMod->picto)) print img_picto('',$objMod->picto,'',1);
+        	else print img_object('',$objMod->picto);
+        }
+        else
+        {
+        	print img_object('','generic');
+        }
+        print '</td>';
+
+        // Name
+        print '<td valign="top">'.$objMod->getName();
         print "</td>\n  <td valign=\"top\">";
         print nl2br($objMod->getDesc());
         print "</td>\n  <td align=\"center\" valign=\"top\">";
