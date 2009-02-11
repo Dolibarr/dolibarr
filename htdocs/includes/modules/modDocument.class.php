@@ -51,12 +51,12 @@ class modDocument extends DolibarrModules
 		$this->family = "other";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
-		$this->description = "Gestion des documents";
+		$this->description = "Genération de courriers/publipostages";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 2;
+		$this->special = 3;
 		$this->picto='dir';
 
 		// Dir
@@ -68,7 +68,7 @@ class modDocument extends DolibarrModules
 
 		// Dï¿½pendances
 		$this->depends = array();
-		$this->requiredby = array();
+		$this->requiredby = array("modEditeur");
 		$this->conflictwith = array();
 		$this->langfiles = array("orders","bills","companies");
 

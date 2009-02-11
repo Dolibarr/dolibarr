@@ -14,7 +14,7 @@
   <td class="liste_titre">Case
   </td>
 
-  <td class="liste_titre" >Référence
+  <td class="liste_titre" >RÃ©fÃ©rence
   <a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=livre&amp;fourn_id=&amp;snom=&amp;sref=">
   <img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
   </a>
@@ -33,7 +33,7 @@
   </td>
 
   <td class="liste_titre" align="center">Casier</td>
-  <td class="liste_titre" align="center">Entrepôt</td>
+  <td class="liste_titre" align="center">Entrepot</td>
   <td class="liste_titre" align="center">Ventes</td>
   <td class="liste_titre">Stock</td>
   <td class="liste_titre" align="center">Pages</td>

@@ -263,10 +263,10 @@ asort($orders);
 
 // Affichage debut page
 
-if ($mode==0) print $langs->trans("ModulesDesc")."<br>\n";
-if ($mode==1) print $langs->trans("ModulesInterfaceDesc")."<br>\n";
-if ($mode==2) print $langs->trans("ModulesSpecialDesc")."<br>\n";
-if ($mode==3) print $langs->trans("ModulesJobDesc")."<br>\n";
+if ($mode==0) { $tagmode = 'common';     print $langs->trans("ModulesDesc")."<br>\n"; }
+if ($mode==2) { $tagmode = 'other';      print $langs->trans("ModulesSpecialDesc")."<br>\n"; }
+if ($mode==1) { $tagmode = 'interfaces'; print $langs->trans("ModulesInterfaceDesc")."<br>\n"; }
+if ($mode==3) { $tagmode = 'functional'; print $langs->trans("ModulesJobDesc")."<br>\n"; }
 print "<br>\n";
 
 
@@ -281,15 +281,6 @@ if (! empty($categ[$categidx]))
 	$h++;
 }
 
-$categidx=1;
-if (! empty($categ[$categidx]))
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
-	$head[$h][1] = $langs->trans("ModulesInterfaces");
-	$head[$h][2] = 'interfaces';
-	$h++;
-}
-
 $categidx=2;
 if (! empty($categ[$categidx]))
 {
@@ -299,16 +290,25 @@ if (! empty($categ[$categidx]))
 	$h++;
 }
 
+$categidx=1;
+if (! empty($categ[$categidx]))
+{
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
+	$head[$h][1] = $langs->trans("ModulesInterfaces");
+	$head[$h][2] = 'interfaces';
+	$h++;
+}
+
 $categidx=3;
 if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
-	$head[$h][1] = $langs->trans("ModulesJob");
+	$head[$h][1] = $langs->trans("ModulesSpecial");
 	$head[$h][2] = 'functional';
 	$h++;
 }
 
-dolibarr_fiche_head($head, $mode, $langs->trans("Modules"));
+dolibarr_fiche_head($head, $tagmode, $langs->trans("Modules"));
 
 
 if ($mesg) print '<div class="error">'.$mesg.'</div>';

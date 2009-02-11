@@ -110,7 +110,7 @@ function llxHeader($head = "")
 
 	if (! empty($conf->document->enabled))
 	{
-		$menu->add(DOL_URL_ROOT."/docs/index.php", $langs->trans("Documents"));
+		$menu->add(DOL_URL_ROOT."/docs/index.php", $langs->trans("DocumentsBuilder"));
 	}
 
 	if (! empty($conf->expedition->enabled) && $user->rights->expedition->lire)

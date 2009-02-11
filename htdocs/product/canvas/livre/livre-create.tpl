@@ -35,7 +35,7 @@
 
 <table class="border" width="100%">
  <tr>
-   <td width="15%">Référence</td>
+   <td width="15%">RÃ©fÃ©rence</td>
    <td colspan="2">
     <input name="ref" size="20" value="{$prod_ref}"
      class="{$class_normal_ref}" onfocus="this.className='{$class_focus_ref}';" onblur="this.className='{$class_normal_ref}';">
@@ -62,13 +62,13 @@
     {$prod_isbn}
   </td>
   <td width="15%">ISBN-13</td>
-  <td width="35%"><i>sera calculé</i>
+  <td width="35%"><i>sera calculÃ©</i>
   </td>
  </tr>
 
  <tr>
   <td width="15%">EAN</td>
-  <td colspan="3" width="85%"><i>sera calculé</i></td>
+  <td colspan="3" width="85%"><i>sera calculÃ©</i></td>
  </tr>
 
  <tr>
@@ -100,7 +100,7 @@
 </tr>
 <tr>
  <td>Prix de revient</td>
- <td><i>sera calculé</i></td>
+ <td><i>sera calculÃ©</i></td>
  <td>Prix reliure</td>
  <td>
   <input name="px_reliure" type="text" size="7" maxlength="6" value="{$prod_pxreliure}"
@@ -171,7 +171,7 @@
   </td>
  </tr>
 <tr>
- <td width="15%">Durée du contrat :</td>
+ <td width="15%">DurÃ©e du contrat :</td>
  <td width="35%">
   <input name="contrat_duree" type="text" size="7" maxlength="6" value="{$livre_contrat_duree}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
@@ -186,7 +186,7 @@
   <input name="contrat_taux" type="text" size="7" maxlength="6" value="{$livre_contrat_taux}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">%
  </td>
- <td>Quantité achetée</td>
+ <td>QuantitÃ© achetÃ©e</td>
  <td>
   <input name="contrat_quant" type="text" size="7" maxlength="6" value="{$livre_contrat_quant}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
@@ -213,7 +213,7 @@
  </tr>
  <tr>
   <td colspan="4" align="center">
-   <input type="submit" class="button" value="Créer">
+   <input type="submit" class="button" value="CrÃ©er">
   </td>
  </tr>
 

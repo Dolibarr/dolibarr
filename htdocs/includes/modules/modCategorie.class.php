@@ -45,69 +45,69 @@ class modCategorie extends DolibarrModules
 	{
 		$this->db = $DB;
 		$this->numero = 1780;
-	
+
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion des catégories (produits, clients, fournisseurs...)";
-	
+
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
-			
+
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
+		$this->special = 2;
 		$this->picto = 'generic';
-	
+
 		// Dir
 		$this->dirs = array();
-	
+
 		// Dependencies
 		$this->depends = array("modProduit");
-	
+
 		// Config pages
 		$this->config_page_url = array();
 		$this->langfiles = array("products","companies","categories");
-		
+
 		// Constantes
 		$this->const = array();
-	
+
 		// Boxes
 		$this->boxes = array();
-	
+
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'categorie';
-	
+
 		$r=0;
-	
+
 		$this->rights[$r][0] = 241; // id de la permission
 		$this->rights[$r][1] = 'Lire les categories'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
 		$this->rights[$r][4] = 'lire';
 		$r++;
-	
+
 		$this->rights[$r][0] = 242; // id de la permission
 		$this->rights[$r][1] = 'Creer/modifier les categories'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
 		$this->rights[$r][4] = 'creer';
 		$r++;
-	
+
 		$this->rights[$r][0] = 243; // id de la permission
 		$this->rights[$r][1] = 'Supprimer les categories'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
 		$this->rights[$r][4] = 'supprimer';
 		$r++;
-	
+
 		$this->rights[$r][0] = 244; // id de la permission
 		$this->rights[$r][1] = 'Voir le contenu des categories cachees'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
 		$this->rights[$r][4] = 'voir';
 		$r++;
-		
+
 		// Exports
 		//--------
 		$r=0;
@@ -135,7 +135,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_societe as cf, '.MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON s.fk_pays = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_societe = s.rowid';
 		$this->export_sql_end[$r] .=' AND u.type = 2';	// Customer/Prospect categories
-		
+
 		$r++;
 		$this->export_code[$r]='category_'.$r;
 		$this->export_label[$r]='List of products categories';
@@ -158,9 +158,9 @@ class modCategorie extends DolibarrModules
 	{
 		// Permissions
 		$this->remove();
-	
+
 		$sql = array();
-	
+
 		return $this->_init($sql);
 	}
 
@@ -171,7 +171,7 @@ class modCategorie extends DolibarrModules
 	function remove()
 	{
 		$sql = array();
-	
+
 		return $this->_remove($sql);
 	}
 

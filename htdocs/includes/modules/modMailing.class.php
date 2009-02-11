@@ -54,7 +54,7 @@ class modMailing extends DolibarrModules
 		$this->description = "Gestion des EMailings";
 		$this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 1;
+		$this->special = 0;
 		$this->picto='email';
 
 		// Dir
@@ -113,7 +113,7 @@ class modMailing extends DolibarrModules
 	{
 		// Permissions
 		$this->remove();
-		 
+
 		return $this->_init($sql);
 	}
 

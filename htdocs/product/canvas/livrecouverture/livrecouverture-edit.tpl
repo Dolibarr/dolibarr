@@ -7,7 +7,7 @@
 
 <table class="border" width="100%">
  <tr>
-   <td width="15%">Réf.</td>
+   <td width="15%">RÃ©f.</td>
    <td colspan="2">
     <input name="ref" size="20" value="{$prod_ref}"
      class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
@@ -131,7 +131,7 @@
 
 <table class="border" width="100%">
 <tr>
- <td width="15%">Durée du contrat :</td>
+ <td width="15%">DurÃ©e du contrat :</td>
  <td width="35%">
   <input name="contrat_duree" type="text" size="7" maxlength="6" value="{$prod_contrat_duree}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
@@ -149,7 +149,7 @@
   <input name="contrat_taux" type="text" size="7" maxlength="6" value="{$prod_contrat_taux}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">%
  </td>
- <td>Quantité achetée</td>
+ <td>QuantitÃ© achetÃ©e</td>
  <td>
   <input name="contrat_quant" type="text" size="7" maxlength="6" value="{$prod_contrat_quant}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">

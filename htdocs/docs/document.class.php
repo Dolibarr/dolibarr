@@ -37,7 +37,9 @@ class Document
   {
     $this->db = $db;
   }
-  
+
+
+
   /**
      \brief Génère le document
      \return int 0= ok, <> 0 = ko
@@ -46,31 +48,11 @@ class Document
   {
     $errno = 0;
 
-    dolibarr_syslog("Document::Generate id=$id", LOG_DEBUG );	
+    dolibarr_syslog("Document::Generate id=$id", LOG_DEBUG );
     $this->id = $id;
-    
-    // On récupère données du mail
-    $sql = "SELECT classfile,class";
-    $sql .= " FROM ".MAIN_DB_PREFIX."document_generator";
-    $sql .= " WHERE rowid = '".$this->id."';";
-    
-    $resql=$this->db->query($sql);
-    if ($resql) 
-      {
-	while ($obj = $this->db->fetch_object($resql) )
-	  {
-	    $class = $obj->class;
-	    $classfile = $obj->classfile;
-	  }   
-	$this->db->free($resql);
-      }
-    else
-      {
-	print $this->db->error();	    
-	print "$sql\n";
-      }
-    
-    
+    $class = $id;
+    $classfile = 'docs/class/'.$class.'.class.php';
+
     require DOL_DOCUMENT_ROOT.'/'.$classfile;
     $obj = new $class($this->db);
 
@@ -78,19 +60,19 @@ class Document
 
     $sql = "DELETE FROM  ".MAIN_DB_PREFIX."document";
     $sql.= " WHERE name='".$obj->name."';";
-    
+
     $resql=$this->db->query($sql);
-    
+
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document";
     $sql.= " (name,file_name,file_extension,date_generation) VALUES";
     $sql.= " ('".$obj->name."','".$obj->file."','".$obj->extension."',".$this->db->idate(mktime()).")";
-    
+
     $resql=$this->db->query($sql);
-    
+
     $id = $this->db->last_insert_id(MAIN_DB_PREFIX."document");
-    
+
     $err = $obj->Generate($id);
-        
+
     if ($err === 0)
       {
 	$this->db->commit();
@@ -101,7 +83,7 @@ class Document
 	$this->db->rollback();
 	dolibarr_syslog("Document::Generate ROLLBACK", LOG_ERR );
       }
-    
+
     return $errno;
   }
 

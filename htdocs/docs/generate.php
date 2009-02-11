@@ -14,39 +14,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-   \file       htdocs/docs/index.php
-   \ingroup    document
-   \brief      Page d'accueil module document
-   \version    $Revision$
-*/
+ \file       htdocs/docs/index.php
+ \ingroup    document
+ \brief      Page d'accueil module document
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 
+
+
 /*
- * 	Affichage page configuration module societe
- *
+ * 	Actions
  */
 
-if ($_GET["id"] > 0)
+if ($_GET["id"])
 {
-  require_once(DOL_DOCUMENT_ROOT.'/docs/document.class.php');
-  $doc = new Document($db);
-  if ($doc->Generate($_GET["id"]) == 0)
-    {
-      Header("Location: index.php");
-    }
+	require_once(DOL_DOCUMENT_ROOT.'/docs/document.class.php');
+	$doc = new Document($db);
+	if ($doc->Generate($_GET["id"]) == 0)
+	{
+		Header("Location: index.php");
+		exit;
+	}
+
 }
+
+
+/*
+ * View
+ */
 
 llxHeader();
 
 
-print_titre($langs->trans("Documents"));
+print_titre($langs->trans("DocumentsBuilder"));
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
@@ -54,30 +59,18 @@ print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT dg.rowid,dg.name, dg.classfile, dg.class";
-$sql.= " FROM ".MAIN_DB_PREFIX."document_generator as dg";
-$sql.= " ORDER BY dg.name ASC;";
+// TODO: Scan class that are in docs/class directory to find generator availables
+$listofmodules=array('pdf_courrier_droit_editeur');
 
-$resql = $db->query($sql);
-if ($resql)
+$var=true;
+foreach ($listofmodules as $val)
 {
-  $var=True;
-  while ($obj = $db->fetch_object($resql) )
-    {
-      
-      $var=!$var;
-      
-      print "<tr $bc[$var]>";
-      print '<td><a href="generate.php?id='.$obj->rowid.'">'.stripslashes($obj->name).'</a></td>';
-      print '<td>&nbsp;</td>';
-      print "</tr>\n";
-    }
+	$var=!$var;
 
-    $db->free($resql);
-}
-else
-{
-  dolibarr_print_error($db);
+	print "<tr $bc[$var]>";
+	print '<td><a href="generate.php?id='.urlencode($val).'">'.$val.'</a></td>';
+	print '<td>&nbsp;</td>';
+	print "</tr>\n";
 }
 
 

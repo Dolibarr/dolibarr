@@ -14,27 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/docs/index.php
    \ingroup    document
    \brief      Page d'accueil module document
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
 
+
 /*
- * 	Affichage page configuration module societe
- *
+ * 	View
  */
+
 llxHeader();
 
-print_titre($langs->trans("Documents"));
+print_titre($langs->trans("DocumentsBuilder"));
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
@@ -52,9 +50,9 @@ if ($resql)
 {
   $var=True;
   while ($obj = $db->fetch_object($resql) )
-    {      
+    {
       $var=!$var;
-      
+
       print "<tr $bc[$var]>";
       print '<td>';
       $loc = get_exdir($obj->rowid).$obj->rowid.".pdf";

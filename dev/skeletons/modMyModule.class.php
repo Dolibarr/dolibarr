@@ -43,60 +43,61 @@ class modMyModule extends DolibarrModules
 	function modMyModule($DB)
 	{
 		$this->db = $DB;
-		
+
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 10000;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'mymodule';
-		
+
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
-		// It is used to group modules in module setup page 
-		$this->family = "other";		
+		// It is used to group modules in module setup page
+		$this->family = "other";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Description of module MyModule";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '1.0';    
+		$this->version = '1.0';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=other)
 		$this->special = 0;
 		// Name of png file (without png) used for this module.
-		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png. 
+		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
 		$this->picto='generic';
-		
+
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
 		//$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
         //$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
- 		
+
 		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
 		$this->style_sheet = '';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
 		$this->config_page_url = array("mymodulesetuppage.php");
-		
+
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("mymodule");
-		
+
 		// Constants
 		$this->const = array();			// List of particular constants to add when module is enabled
-		
-		
+		//Example: $this->const=array(0=>array('MODULE_MY_NEW_CONST1','chaine','myvalue','This is a constant to add',0),
+		//                            1=>array('MODULE_MY_NEW_CONST2','chaine','myvalue','This is another constant to add',0) );
+
 		// New pages on tabs
 		$this->tabs = array('entity:Title:@mymodule:/mymodule/mynewtab.php?id=__ID__');
-		
-		
+
+
 		// Boxes
-		$this->boxes = array();			// List of boxes 
+		$this->boxes = array();			// List of boxes
 		$r=0;
-		
+
 		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
 		// Example:
         //$this->boxes[$r][1] = "myboxa.php";
@@ -104,11 +105,11 @@ class modMyModule extends DolibarrModules
         //$this->boxes[$r][1] = "myboxb.php";
     	//$r++;
 
-		
+
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
-		
+
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
 		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
@@ -118,11 +119,11 @@ class modMyModule extends DolibarrModules
 		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $r++;
 
-		
+
 		// Main menu entries
 		$this->menus = array();			// List of menus to add
 		$r=0;
-		
+
 		// Add here entries to declare new menus
 		// Example to declare the Top Menu entry:
 		// $this->menu[$r]=array(	'fk_menu'=>0,			// Put 0 if this is a top menu
@@ -163,11 +164,11 @@ class modMyModule extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
-		
-		
+
+
 		// Exports
         $r=1;
-    	
+
         // Example:
         // $this->export_code[$r]=$this->rights_class.'_'.$r;
         // $this->export_label[$r]='CustomersInvoicesAndInvoiceLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
@@ -191,9 +192,9 @@ class modMyModule extends DolibarrModules
 	function init()
   	{
     	$sql = array();
-    
+
 		$result=$this->load_tables();
-	
+
     	return $this->_init($sql);
   	}
 
@@ -210,7 +211,7 @@ class modMyModule extends DolibarrModules
     	return $this->_remove($sql);
   	}
 
-	
+
 	/**
 	*		\brief		Create tables and keys required by module
 	* 					Files mymodule.sql and mymodule.key.sql with create table and create keys

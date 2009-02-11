@@ -1,4 +1,4 @@
-#Fri Jan 23 00:49:24 CET 2009
+#Wed Feb 11 15:08:12 CET 2009
 eclipse.preferences.version=1
 encoding//dev/initdemo/initdemo.sql=UTF-8
 encoding//dev/skeletons/modMyModule.class.php=ISO-8859-1
@@ -614,6 +614,14 @@ encoding//htdocs/lib/product.lib.php=ISO-8859-1
 encoding//htdocs/main.inc.php=ISO-8859-1
 encoding//htdocs/master.inc.php=ISO-8859-1
 encoding//htdocs/paiement.class.php=ISO-8859-1
+encoding//htdocs/product/canvas/livre/liste.tpl=UTF-8
+encoding//htdocs/product/canvas/livre/livre-create.tpl=UTF-8
+encoding//htdocs/product/canvas/livre/livre-edit.tpl=UTF-8
+encoding//htdocs/product/canvas/livre/livre-view.tpl=UTF-8
+encoding//htdocs/product/canvas/livrecontrat/livrecontrat-edit.tpl=UTF-8
+encoding//htdocs/product/canvas/livrecontrat/livrecontrat-view.tpl=UTF-8
+encoding//htdocs/product/canvas/livrecouverture/livrecouverture-edit.tpl=UTF-8
+encoding//htdocs/product/canvas/livrecouverture/livrecouverture-view.tpl=UTF-8
 encoding//htdocs/product/fiche.php=ISO-8859-1
 encoding//htdocs/product/reassort.php=ISO-8859-1
 encoding//htdocs/product/stats/fiche.php=ISO-8859-1

@@ -52,22 +52,31 @@ class modDroitPret  extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion du droit de prets";
-		$this->version = 'experimental';    // 'development' or 'experimental' or 'dolibarr' or version
+		$this->version = 'development';    // 'development' or 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 2;
+		$this->special = 3;
 
 		// Dir
-		$this->dirs = array();
+		global $dolibarr_smarty_compile;
+		global $dolibarr_smarty_cache;
+		$this->dirs = array($dolibarr_smarty_compile,
+							$dolibarr_smarty_cache);
 
-		// D�pendances
+		// Dependances
 		$this->depends = array();
 		$this->requiredby = array();
+		$this->conflictwith = array();
+		$this->needleftmenu = array();
+		$this->needtotopmenu = array();
+		$this->langfiles = array("orders","bills","companies");
 
 		// Config pages
 		$this->config_page_url = array("droitpret.php");
 
 		// Constantes
-		$this->const = array();
+		$this->const=array(0=>array('PRODUCT_CANVAS_ABILITY','chaine',1,'This is a constant',1),
+						   1=>array('MAIN_NEED_SMARTY','chaine',1,'Need smarty',0)
+						   );
 
 		// Boxes
 		$this->boxes = array();

@@ -29,14 +29,14 @@
 <table width="100%" border="0" class="notopnoleftnoright">
 <tr>
 	<td class="notopnoleftnoright" valign="middle">
-    	<div class="titre">Éditer Livre</div>
+    	<div class="titre">Ã‰diter Livre</div>
 	</td>
 </tr>
 </table>
 
 <table class="border" width="100%">
  <tr>
-   <td width="15%">Réf.</td>
+   <td width="15%">RÃ©f.</td>
    <td colspan="2">
     <input name="ref" size="20" value="{$prod_ref}"
      class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
@@ -182,7 +182,7 @@
  <td>Saisi par</td><td>{$livre_contrat_user_fullname}</td>
 </tr>
 <tr>
- <td width="15%">Durée du contrat :</td>
+ <td width="15%">DurÃ©e du contrat :</td>
  <td width="35%">
   <input name="contrat_duree" type="text" size="7" maxlength="6" value="{$livre_contrat_duree}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
@@ -198,7 +198,7 @@
   <input name="contrat_taux" type="text" size="7" maxlength="6" value="{$livre_contrat_taux}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">%
  </td>
- <td>Quantité achetée</td>
+ <td>QuantitÃ© achetÃ©e</td>
  <td>
   <input name="contrat_quant" type="text" size="7" maxlength="6" value="{$livre_contrat_quant}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
@@ -220,7 +220,7 @@
  <td>Saisi par</td><td>{$livre_contrat_user_fullname}</td>
 </tr>
 <tr>
- <td width="15%">Durée du contrat : </td>
+ <td width="15%">DurÃ©e du contrat : </td>
  <td width="35%">{$livre_contrat_duree}</td>
  <td width="15%">Date d'application</td>
  <td width="35%">{$livre_contrat_date_app|date_format:"%d %B %Y"}</td>
@@ -228,7 +228,7 @@
 <tr>
  <td>Taux conclu</td>
  <td>{$livre_contrat_taux} %</td>
- <td>Quantité achetée</td>
+ <td>QuantitÃ© achetÃ©e</td>
  <td>{$livre_contrat_quant}</td>
 </tr>
 {/if}

@@ -53,43 +53,37 @@ class modEditeur extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion des editeurs";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
-		
+		$this->version = 'development';
+
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 3;
 		$this->picto='book';
 
 		// Dir
-		$this->dirs = array();
+		global $dolibarr_smarty_compile;
+		global $dolibarr_smarty_cache;
+		$this->dirs = array($dolibarr_smarty_compile,
+							$dolibarr_smarty_cache);
 
 		// Config pages
 		$this->config_page_url = array("editeur.php");
 
-		// D�pendances
-		$this->depends = array();
+		// Dependances
+		$this->depends = array("modDocument");
 		$this->requiredby = array();
 		$this->conflictwith = array();
-		$this->needleftmenu = array('default.php');
+		$this->needleftmenu = array('rodolphe.php');
 		$this->needtotopmenu = array();
 		$this->langfiles = array("orders","bills","companies");
 
 		// Constantes
-
-		$this->const = array();
+		$this->const=array();
 
 		// Boites
 		$this->boxes = array();
 
-		// Documents
-		$this->docs = array();
-		$this->docs[0][0] = 1;
-		$this->docs[0][1] = 'Courrier des droits';
-		$this->docs[0][2] = 'docs/class/courrier-droit-editeur.class.php';
-		$this->docs[0][3] = 'pdf_courrier_droit_editeur';
-
 		// Permissions
 		$this->rights = array();
-
 	}
 
 
@@ -101,8 +95,6 @@ class modEditeur extends DolibarrModules
 	{
 		global $conf;
 
-		$sql = array();
-
 		return $this->_init($sql);
 	}
 
@@ -113,7 +105,7 @@ class modEditeur extends DolibarrModules
 	 */
 	function remove()
 	{
-		$sql = array();
+		global $conf;
 
 		return $this->_remove($sql);
 	}

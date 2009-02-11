@@ -24,7 +24,7 @@
 
 <table class="border" width="100%">
 <tr>
- <td width="15%">Référence</td>
+ <td width="15%">RÃ©fÃ©rence</td>
  <td width="35%" style="font-weight: bold;">{$prod_ref}</td>
  <td width="50%" colspan="2" align="right">
   {$fiche_cursor_prev}{$fiche_cursor_next}
@@ -96,7 +96,7 @@
 </tr>
 
 <tr>
- <td width="15%">Stock réel</td>
+ <td width="15%">Stock rÃ©el</td>
  <td width="35%">{$prod_stock_reel}</td>
  <td width="15%">Exemplaires en commande</td>
  <td width="35%">{$prod_stock_in_command}</td>
@@ -125,7 +125,7 @@
  </tr>
 
 <tr>
- <td width="15%">Durée du contrat : </td>
+ <td width="15%">DurÃ©e du contrat : </td>
  <td width="35%">{$livre_contrat_duree}</td>
  <td width="15%">Date d'application</td>
  <td width="35%">{$livre_contrat_date_app|date_format:"%d %B %Y"}</td>
@@ -134,7 +134,7 @@
 <tr>
  <td>Taux conclu</td>
  <td>{$livre_contrat_taux} %</td>
- <td>Quantité achetée</td>
+ <td>QuantitÃ© achetÃ©e</td>
  <td>{$livre_contrat_quant}</td>
 </tr>
 

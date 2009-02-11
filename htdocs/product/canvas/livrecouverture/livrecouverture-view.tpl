@@ -1,7 +1,7 @@
 <!-- BEGIN SMARTY TEMPLATE -->
 <table class="border" width="100%">
 <tr>
- <td width="15%">Référence</td>
+ <td width="15%">RÃ©f</td>
  <td width="35%" style="font-weight: bold;">{$livre_ref}</td>
  <td width="50%" align="right">
 	&nbsp;
@@ -26,7 +26,7 @@
 </tr>
 
 <tr>
- <td width="15%">Stock réel</td>
+ <td width="15%">Stock rÃ©el</td>
  <td width="35%">{$prod_stock_reel}</td>
  <td width="15%">Exemplaires en commande</td>
  <td width="35%">{$prod_stock_in_command}</td>

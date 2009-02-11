@@ -118,27 +118,6 @@ class DolibarrModules
 			}
 		}
 
-		// Cree les documents generables
-		if (is_array($this->docs))
-		{
-			foreach ($this->docs as $key => $doc)
-			{
-				if (! $err)
-				{
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_generator (rowid,name,classfile,class) VALUES ";
-					$sql .= "(".$doc[0].",'".addslashes($doc[1])."','".$doc[2]."','".$doc[3]."');";
-
-					$result=$this->db->query($sql);
-					if (! $result)
-					{
-						$this->error=$this->db->error();
-						dolibarr_syslog("DolibarrModules::_init Error sql=".$sql." - ".$this->error, LOG_ERR);
-						$err++;
-					}
-				}
-			}
-		}
-
 		// Cree les repertoires
 		if (is_array($this->dirs))
 		{
@@ -197,9 +176,6 @@ class DolibarrModules
 
 		// Supprime les menus apportes par le module
 		$err+=$this->delete_menus();
-
-		// Supprime les documents generables
-		$err+=$this->delete_docs();
 
 		// Execute les requetes sql complementaires
 		for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
@@ -531,37 +507,6 @@ class DolibarrModules
 			}
 		}
 
-		return $err;
-	}
-
-
-
-	/**
-	 *	\brief      Supprime les documents
-	 *	\return     int     Nombre d'erreurs (0 si ok)
-	 */
-	function delete_docs()
-	{
-		$err=0;
-
-		// Supprime les documents generables
-		if (is_array($this->docs))
-		{
-			foreach ($this->docs as $key => $doc)
-			{
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_generator ";
-				$sql .= "WHERE name= '".addslashes($doc[0])."' AND classfile='".$doc[1]."'AND class='".$doc[2]."';";
-
-				dolibarr_syslog("DolibarrModules::delete_docs sql=".$sql);
-				$result=$this->db->query($sql);
-				if (! $result)
-				{
-					dolibarr_syslog("DolibarrModules::delete_docs Error sql=".$sql." - ".$this->db->error());
-					$err++;
-				}
-
-			}
-		}
 		return $err;
 	}
 
