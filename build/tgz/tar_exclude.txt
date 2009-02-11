@@ -1,8 +1,8 @@
 build
 dev/fpdf
+dev/initdemo
 dev/ldap
-dev/purgedemo
-dev/generate*
+dev/load
 dev/skeletons/*socpeople*
 doc/dev/dolibarr-phpdoc
 doc/dev/barcode
