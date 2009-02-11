@@ -425,7 +425,7 @@ class DolibarrModules
 				$ok = 0;
 
 				// Run llx_mytable.sql files
-				$handle=opendir($dir);
+				$handle=@opendir($dir);			// Dir may not exists
 				if ($handle)
 				{
 					while (($file = readdir($handle))!==false)
@@ -439,7 +439,7 @@ class DolibarrModules
 				}
 
 				// Run llx_mytable.key.sql files
-				$handle=opendir($dir);
+				$handle=@opendir($dir);			// Dir may not exist
 				if ($handle)
 				{
 					while (($file = readdir($handle))!==false)
