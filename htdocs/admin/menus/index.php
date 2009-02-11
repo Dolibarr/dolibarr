@@ -60,11 +60,11 @@ if (isset($_GET["action"]) && ($_GET["action"] == 'up'))
 {
 	$sql = "SELECT m.rowid, m.position FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
-	$result = $db->query($sql);	
-	
+	$result = $db->query($sql);
+
 	$num = $db->num_rows($result);
 	$i = 0;
-	
+
 	while($i < $num)
 	{
 		$obj = $db->fetch_object($result);
@@ -72,16 +72,16 @@ if (isset($_GET["action"]) && ($_GET["action"] == 'up'))
 		$precedent['order'] = $obj->position;
 		$i++;
 	}
-	
+
 	// Menu top
 	$sql = "SELECT m.rowid, m.position FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE m.position = ".($precedent['order'] - 1)." AND m.type = 'top'";
 	$sql.= " AND menu_handler='".$menu_handler_top."'";
-	$result = $db->query($sql);	
-	
+	$result = $db->query($sql);
+
 	$num = $db->num_rows($result);
 	$i = 0;
-	
+
 	while($i < $num)
 	{
 		$obj = $db->fetch_object($result);
@@ -89,26 +89,26 @@ if (isset($_GET["action"]) && ($_GET["action"] == 'up'))
 		$suivant['order'] = $obj->position;
 		$i++;
 	}
-	
+
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " SET m.position = ".$suivant['order'];
 	$sql.= " WHERE m.rowid = ".$precedent['rowid'].""; // Monte celui select
-	$db->query($sql);	
+	$db->query($sql);
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " SET m.position = ".$precedent['order'];
 	$sql.= " WHERE m.rowid = ".$suivant['rowid'].""; // Descend celui du dessus
-	$db->query($sql);		
+	$db->query($sql);
 }
 
 if (isset($_GET["action"]) && $_GET["action"] == 'down')
 {
 
 	$sql = "SELECT m.rowid, m.position FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET["menuId"];
-	$result = $db->query($sql);	
-	
+	$result = $db->query($sql);
+
 	$num = $db->num_rows($result);
 	$i = 0;
-	
+
 	while($i < $num)
 	{
 		$obj = $db->fetch_object($result);
@@ -116,15 +116,15 @@ if (isset($_GET["action"]) && $_GET["action"] == 'down')
 		$precedent['order'] = $obj->position;
 		$i++;
 	}
-	
+
 	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE m.position = ".($precedent['order'] + 1)." AND type='top'";
-	$result = $db->query($sql);	
-	
+	$result = $db->query($sql);
+
 	$num = $db->num_rows($result);
 	$i = 0;
-	
+
 	while($i < $num)
 	{
 		$obj = $db->fetch_object($result);
@@ -132,17 +132,17 @@ if (isset($_GET["action"]) && $_GET["action"] == 'down')
 		$suivant['order'] = $obj->position;
 		$i++;
 	}
-	
+
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m SET m.position = ".$suivant['order']." WHERE m.rowid = ".$precedent['rowid'].""; // Monte celui select
-	$db->query($sql);	
+	$db->query($sql);
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m SET m.position = ".$precedent['order']." WHERE m.rowid = ".$suivant['rowid'].""; // Descend celui du dessus
-	$db->query($sql);		
-}    
+	$db->query($sql);
+}
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
 	$db->begin();
-	
+
 	$sql = "SELECT c.rowid, c.fk_constraint FROM ".MAIN_DB_PREFIX."menu_const as c WHERE c.fk_menu = ".$_GET['menuId'];
 	$res  = $db->query($sql);
 	if ($res)
@@ -151,16 +151,16 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_const WHERE rowid = ".$obj->rowid;
 			$db->query($sql);
-			
+
 			$sql = "SELECT count(rowid) as countId FROM ".MAIN_DB_PREFIX."menu_const WHERE fk_constraint = ".$obj->fk_constraint;
 			$result = $db->query($sql);
 			$objc = $db->fetch_object($result);
-			
+
 			if($objc->countId == 0)
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_constraint WHERE rowid = ".$obj->fk_constraint;
 				$db->query($sql);
-			}	
+			}
 		}
 	}
 
@@ -220,7 +220,7 @@ if ($_GET["action"] == 'delete')
 	$sql = "SELECT m.titre FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET['menuId'];
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
-    
+
     $html = new Form($db);
     $html->form_confirm("index.php?menu_handler=".$menu_handler."&menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
     print "<br>\n";
@@ -245,7 +245,7 @@ print '</tr>';
 print '<tr>';
 print '<td>';
 
-// ARBORESCENCE	
+// ARBORESCENCE
 
 $rangLast = 0;
 $idLast = -1;
@@ -261,7 +261,7 @@ if ($conf->use_javascript_ajax)
 	  - l'index de l'élément
 	  - l'index de l'élément parent
 	  - la chaîne à afficher
-	ie: data[]= array (index, index parent, chaine )    
+	ie: data[]= array (index, index parent, chaine )
 	*/
 	//il faut d'abord déclarer un élément racine de l'arbre
 
@@ -283,10 +283,10 @@ if ($conf->use_javascript_ajax)
 		$i = 1;
 		while ($menu = $db->fetch_array ($res))
 		{
-			$langs->load($menu['langs']);
+			if (! empty($menu['langs'])) $langs->load($menu['langs']);
 			$titre = $langs->trans($menu['titre']);
 			$data[] = array($menu['rowid'],$menu['fk_menu'],$titre);
-			$i++;		
+			$i++;
 		}
 	}
 
