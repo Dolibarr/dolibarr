@@ -65,7 +65,7 @@ class modPayBox extends DolibarrModules
 		$this->special = 1;
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
-		$this->picto='/theme/common/paybox.png';
+		$this->picto=DOL_URL_ROOT.'/theme/common/paybox.png';
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
