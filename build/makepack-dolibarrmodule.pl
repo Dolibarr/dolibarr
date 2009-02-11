@@ -196,7 +196,7 @@ if ($nboftargetok) {
     	if ($target eq 'TGZ') {
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $BUILDROOT/* into $FILENAMETGZ.tgz...\n";
-   		    $cmd="tar --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" .";
+   		    $cmd="tar --exclude-vcs --exclude=.cvsignore --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" .";
    		    $ret=`$cmd`;
             if ($OS =~ /windows/i) {
         		print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
