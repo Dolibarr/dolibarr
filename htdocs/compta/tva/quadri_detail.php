@@ -98,7 +98,7 @@ if ($modetax==1)	// Caluclate on invoice for goods and services
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
-	
+
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("ProductOrService");
 	$amountcust=$langs->trans("AmountHT");
@@ -203,8 +203,8 @@ else
 		$x_both[$my_paye_rate]['paye']['totalht'] = $x_paye[$my_paye_rate]['totalht'];
 		$x_both[$my_paye_rate]['paye']['vat'] = $x_paye[$my_paye_rate]['vat'];
 		if(!isset($x_both[$my_paye_rate]['coll']['totalht'])){
-			$x_both[$my_paye_rate]['coll']['totalht'] = 0;		
-			$x_both[$my_paye_rate]['coll']['vat'] = 0;		
+			$x_both[$my_paye_rate]['coll']['totalht'] = 0;
+			$x_both[$my_paye_rate]['coll']['vat'] = 0;
 		}
 		$x_both[$my_paye_rate]['paye']['links'] = '';
 		$x_both[$my_paye_rate]['paye']['detail'] = array();
@@ -248,7 +248,7 @@ else
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$elementcust.'</td>';
 	print '<td align="left">'.$productcust.'</td>';
-	if ($modetax == 0) 
+	if ($modetax == 0)
 	{
 		print '<td align="right">'.$amountcust.'</td>';
 		print '<td align="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
@@ -309,7 +309,7 @@ else
 				{
 					if ($fields['payment_amount'] && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
 					print '<td nowrap align="right">';
-					if ($fields['payment_amount'] && $fields['ftotal_ttc']) 
+					if ($fields['payment_amount'] && $fields['ftotal_ttc'])
 					{
 						$payment_static->rowid=$fields['payment_id'];
 						print $payment_static->getNomUrl(2);
@@ -330,7 +330,7 @@ else
 				//print price($fields['vat']);
 				print '</td>';
 				print '</tr>';
-				
+
 				$subtot_coll_total_ht += $temp_ht;
 				$subtot_coll_vat      += $temp_vat;
 				$x_coll_sum           += $temp_vat;
@@ -357,10 +357,10 @@ else
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$elementsup.'</td>';
 	print '<td align="left">'.$productsup.'</td>';
-	if ($modetax == 0) 
+	if ($modetax == 0)
 	{
 		print '<td align="right">'.$amountsup.'</td>';
-		print '<td align="right">'.$langs->trans("Payment").' (% of invoice)</td>';
+		print '<td align="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
 	}
 	print '<td align="right">'.$langs->trans("AmountHTVATRealPayed").'</td>';
 	print '<td align="right">'.$vatsup.'</td>';
@@ -416,7 +416,7 @@ else
 				{
 					if ($fields['payment_amount'] && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
 					print '<td nowrap align="right">';
-					if ($fields['payment_amount'] && $fields['ftotal_ttc']) 
+					if ($fields['payment_amount'] && $fields['ftotal_ttc'])
 					{
 						$paymentfourn_static->rowid=$fields['payment_id'];
 						print $paymentfourn_static->getNomUrl(2);
@@ -437,13 +437,13 @@ else
 				//print price($fields['vat']);
 				print '</td>';
 				print '</tr>';
-				
+
 				$subtot_paye_total_ht += $temp_ht;
 				$subtot_paye_vat      += $temp_vat;
 				$x_paye_sum           += $temp_vat;
 			}
 		}
-		
+
 		print '<tr class="liste_total">';
 		print '<td>&nbsp;</td>';
 		print '<td align="right">'.$langs->trans("Total").':</td>';
@@ -455,7 +455,7 @@ else
 		print '<td align="right">'.price(price2num($subtot_paye_total_ht,'MT')).'</td>';
 		print '<td nowrap align="right">'.price(price2num($subtot_paye_vat,'MT')).'</td>';
 		print '</tr>';
-	}		
+	}
 
 	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
 
