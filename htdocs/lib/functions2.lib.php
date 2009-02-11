@@ -548,12 +548,10 @@ function weight_convert($weight,&$from_unit,$to_unit)
  *	\brief      Save personnal parameter
  *	\param	    db          Handler database
  *	\param	    user        Object user
- *	\param	    url         Si defini, on sauve parametre du tableau tab dont cle = (url avec sortfield, sortorder, begin et page)
- *							Si non defini on sauve tous parametres du tableau tab
  *	\param	    tab         Tableau (cle=>valeur) des parametres a sauvegarder
- *	\return     int         <0 si ko, >0 si ok
+ *	\return     int         <0 if KO, >0 if OK
  */
-function dol_set_user_page_param($db, &$user, $url='', $tab)
+function dol_set_user_param($db, &$user, $tab)
 {
 	// Verification parametres
 	if (sizeof($tab) < 1) return -1;
@@ -563,8 +561,6 @@ function dol_set_user_page_param($db, &$user, $url='', $tab)
 	// We remove old parameters for all keys in $tab
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
 	$sql.= " WHERE fk_user = ".$user->id;
-	if ($url) $sql.=" AND page='".$url."'";
-	else $sql.=" AND page=''";	// Page ne peut etre null
 	$sql.= " AND param in (";
 	$i=0;
 	foreach ($tab as $key => $value)
@@ -574,14 +570,14 @@ function dol_set_user_page_param($db, &$user, $url='', $tab)
 		$i++;
 	}
 	$sql.= ")";
-	dolibarr_syslog("functions2.lib::dol_set_user_page_param $sql");
+	dolibarr_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
 
 	$resql=$db->query($sql);
 	if (! $resql)
 	{
 		dolibarr_print_error($db);
 		$db->rollback();
-		exit;
+		return -1;
 	}
 
 	foreach ($tab as $key => $value)
@@ -589,19 +585,17 @@ function dol_set_user_page_param($db, &$user, $url='', $tab)
 		// Set new parameters
 		if ($value && (! $url || in_array($key,array('sortfield','sortorder','begin','page'))))
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,param,value)";
 			$sql.= " VALUES (".$user->id.",";
-			if ($url) $sql.= " '".urlencode($url)."',";
-			else $sql.= " '',";
 			$sql.= " '".$key."','".addslashes($value)."');";
-			dolibarr_syslog("functions2.lib::dol_set_user_page_param $sql");
+			dolibarr_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
 
 			$result=$db->query($sql);
 			if (! $result)
 			{
 				dolibarr_print_error($db);
 				$db->rollback();
-				exit;
+				return -1;
 			}
 
 			$user->page_param[$key] = $value;

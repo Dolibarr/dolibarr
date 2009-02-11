@@ -74,30 +74,30 @@ if ($_POST["action"] == 'update' && ($caneditfield  || $user->admin))
     {
         $_GET["id"]=$_POST["id"];
     }
-    else 
+    else
     {
         $tabparam=array();
-        
+
         if ($_POST["check_MAIN_LANG_DEFAULT"]=="on") $tabparam["MAIN_LANG_DEFAULT"]=$_POST["main_lang_default"];
         else $tabparam["MAIN_LANG_DEFAULT"]='';
-        
+
         $tabparam["MAIN_MENU_BARRETOP"]=$_POST["main_menu_barretop"];
         $tabparam["MAIN_MENU_BARRELEFT"]=$_POST["main_menu_barreleft"];
-    
+
         if ($_POST["check_SIZE_LISTE_LIMIT"]=="on") $tabparam["MAIN_SIZE_LISTE_LIMIT"]=$_POST["main_size_liste_limit"];
         else $tabparam["MAIN_SIZE_LISTE_LIMIT"]='';
-    
+
         if ($_POST["check_MAIN_THEME"]=="on") $tabparam["MAIN_THEME"]=$_POST["main_theme"];
         else $tabparam["MAIN_THEME"]='';
 
         $tabparam["MAIN_SEARCHFORM_CONTACT"]=$_POST["main_searchform_contact"];
         $tabparam["MAIN_SEARCHFORM_SOCIETE"]=$_POST["main_searchform_societe"];
         $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
-    
-        dol_set_user_page_param($db, $fuser, '', $tabparam);
+
+        $result=dol_set_user_param($db, $fuser, $tabparam);
 
         $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
-    
+
         Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST["id"]);
         exit;
     }
@@ -146,7 +146,7 @@ if ($_GET["action"] == 'edit')
 
     clearstatcache();
     $var=true;
-    
+
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
@@ -185,7 +185,7 @@ if ($_GET["action"] == 'edit')
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</center>';
     print '</form>';
-    
+
 }
 else
 {
@@ -228,9 +228,9 @@ else
 	   	else
 		{
 			print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
-		}			
+		}
 	}
-   
+
     print '</div>';
 
 }

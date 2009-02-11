@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2007      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /**
-        \file       htdocs/ajaxbox.php
-        \brief      Fichier de reponse sur evenement Ajax deplacement boxes
-        \version    $Id$
-*/
+ *       \file       htdocs/ajaxbox.php
+ *       \brief      Fichier de reponse sur evenement Ajax deplacement boxes
+ *       \version    $Id$
+ */
 
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,44 +21,44 @@
  */
 
 /**
-	    \file       htdocs/boxes.php
-		\brief      Fichier de la classe boxes
-		\author     Rodolphe Qiedeville
-		\author	    Laurent Destailleur
-		\version    $Revision$
-*/
+ \file       htdocs/boxes.php
+ \brief      Fichier de la classe boxes
+ \author     Rodolphe Qiedeville
+ \author	    Laurent Destailleur
+ \version    $Revision$
+ */
 
 
 
 /**
-        \class      InfoBox
-		\brief      Classe permettant la gestion des boxes sur une page
-*/
+ \class      InfoBox
+ \brief      Classe permettant la gestion des boxes sur une page
+ */
 
-class InfoBox 
+class InfoBox
 {
-    var $db;
+	var $db;
 
-    /**
-     *      \brief      Constructeur de la classe
-     *      \param      $DB         Handler d'acc�s base
-     */
-    function InfoBox($DB)
-    {
-        $this->db=$DB;
-    }
-    
+	/**
+	 *      \brief      Constructeur de la classe
+	 *      \param      $DB         Handler d'acc�s base
+	 */
+	function InfoBox($DB)
+	{
+		$this->db=$DB;
+	}
 
-    /**
-     *      \brief      Retourne tableau des boites elligibles pour la zone et le user
-     *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
-     *      \param      $user		Objet user
-     *      \return     array       Tableau d'objet box
-     */
+
+	/**
+	 *      \brief      Retourne tableau des boites elligibles pour la zone et le user
+	 *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
+	 *      \param      $user		Objet user
+	 *      \return     array       Tableau d'objet box
+	 */
 	function listBoxes($zone,$user)
 	{
 		global $conf;
-		
+
 		$boxes=array();
 
 		$confuserzone='MAIN_BOXES_'.$zone;
@@ -72,7 +72,7 @@ class InfoBox
 			$sql.= " AND b.position = ".$zone;
 			$sql.= " AND b.fk_user = ".$user->id;
 			$sql.= " ORDER BY b.box_order";
-		
+
 			dolibarr_syslog("InfoBox::listBoxes get user box list sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
@@ -95,8 +95,8 @@ class InfoBox
 					{
 						foreach($box->depends as $module)
 						{
-//							print $module.'<br>';
-							if (empty($conf->$module->enabled)) $enabled=false;						
+							//							print $module.'<br>';
+							if (empty($conf->$module->enabled)) $enabled=false;
 						}
 					}
 					if ($enabled) $boxes[]=$box;
@@ -142,8 +142,8 @@ class InfoBox
 					{
 						foreach($box->depends as $module)
 						{
-//							print $module.'<br>';
-							if (empty($conf->$module->enabled)) $enabled=false;						
+							//							print $module.'<br>';
+							if (empty($conf->$module->enabled)) $enabled=false;
 						}
 					}
 					if ($enabled) $boxes[]=$box;
@@ -156,46 +156,46 @@ class InfoBox
 				return array();
 			}
 		}
-		
+
 		return $boxes;
 	}
 
 
-    /**
-     *      \brief      Sauvegarde sequencement des boites pour la zone et le user
-     *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
-     *      \param      $boxorder   Liste des boites dans le bon ordre 'A:123,456,...-B:789,321...'
-     *      \param      $userid     Id du user
-     *      \return     int         <0 si ko, >= 0 si ok
-     */
+	/**
+	 *      \brief      Sauvegarde sequencement des boites pour la zone et le user
+	 *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
+	 *      \param      $boxorder   Liste des boites dans le bon ordre 'A:123,456,...-B:789,321...'
+	 *      \param      $userid     Id du user
+	 *      \return     int         <0 si ko, >= 0 si ok
+	 */
 	function saveboxorder($zone,$boxorder,$userid=0)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-		
+
 		dolibarr_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);
 
 		if (! $userid || $userid == 0) return 0;
-		
+
 		$user = new User($this->db,$userid);
 
 		$this->db->begin();
 
-		// Sauve parametre indiquant que le user a une 
+		// Sauve parametre indiquant que le user a une
 		$confuserzone='MAIN_BOXES_'.$zone;
 		$tab[$confuserzone]=1;
- 		if (! dol_set_user_page_param($this->db, $user, '', $tab))
- 		{
-			$this->error=$this->db->error();
+		if (dol_set_user_param($this->db, $user, $tab) < 0)
+		{
+			$this->error=$this->db->lasterror();
 			$this->db->rollback();
 			return -3;
- 		}
-		
+		}
+
 		$sql ="DELETE FROM ".MAIN_DB_PREFIX."boxes";
 		$sql.=" WHERE fk_user = ".$userid;
 		$sql.=" AND position = ".$zone;
-		$result = $this->db->query($sql);
-		
+
 		dolibarr_syslog("InfoBox::saveboxorder sql=".$sql);
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$colonnes=split('-',$boxorder);
@@ -205,7 +205,7 @@ class InfoBox
 				$colonne=$part[0];
 				$list=$part[1];
 				dolibarr_syslog('InfoBox::saveboxorder colonne='.$colonne.' list='.$list);
-				
+
 				$i=0;
 				$listarray=split(',',$list);
 				foreach ($listarray as $id)
@@ -216,22 +216,22 @@ class InfoBox
 						$i++;
 						$ii=sprintf('%02d',$i);
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
-				    $sql.= "(box_id, position, box_order, fk_user)";
-				    $sql.= " values (";
-				    $sql.= " ".$id.",";
-				    $sql.= " ".$zone.",";
-				    $sql.= " '".$colonne.$ii."',";
-				    $sql.= " ".$userid;
-				    $sql.= ")";
-				    
-				    dolibarr_syslog("InfoBox::saveboxorder sql=".$sql);
-				    $result = $this->db->query($sql);
-				    if ($result < 0)
-				    {
-				    	$error++;
-				    	break;
-				    }
-				  }
+						$sql.= "(box_id, position, box_order, fk_user)";
+						$sql.= " values (";
+						$sql.= " ".$id.",";
+						$sql.= " ".$zone.",";
+						$sql.= " '".$colonne.$ii."',";
+						$sql.= " ".$userid;
+						$sql.= ")";
+
+						dolibarr_syslog("InfoBox::saveboxorder sql=".$sql);
+						$result = $this->db->query($sql);
+						if ($result < 0)
+						{
+							$error++;
+							break;
+						}
+					}
 				}
 			}
 			if ($error)
@@ -252,6 +252,6 @@ class InfoBox
 			$this->db->rollback();
 			return -1;
 		}
-	} 
+	}
 }
 ?>

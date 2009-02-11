@@ -611,10 +611,11 @@ if (sizeof($boxarray))
 	// If no box on left, we add an invisible empty box
 	if ($ii==0)
 	{
-		$box->box_id='A';
-		$box->info_box_head=array();
-		$box->info_box_contents=array();
-		$box->showBox();
+		$emptybox=new ModeleBoxes($db);
+		$emptybox->box_id='A';
+		$emptybox->info_box_head=array();
+		$emptybox->info_box_contents=array();
+		$emptybox->showBox(array(),array());
 	}
 
 	print "</div>\n";
@@ -628,7 +629,6 @@ if (sizeof($boxarray))
 	print '<div id="right">'."\n";
 
 	$ii=0;
-	$boxarray=$infobox->listboxes("0",$user);       // on régénère la liste pour éviter les erreurs avec les empty box
 	foreach ($boxarray as $key => $box)
 	{
 		if (eregi('^B',$box->box_order)) // colonne B
@@ -646,10 +646,11 @@ if (sizeof($boxarray))
 	// If no box on right, we show add an invisible empty box
 	if ($ii==0)
 	{
-		$box->box_id='B';
-		$box->info_box_head=array();
-		$box->info_box_contents=array();
-		$box->showBox();
+		$emptybox=new ModeleBoxes($db);
+		$emptybox->box_id='B';
+		$emptybox->info_box_head=array();
+		$emptybox->info_box_contents=array();
+		$emptybox->showBox(array(),array());
 	}
 
 	print "</div>\n";
