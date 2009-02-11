@@ -534,7 +534,7 @@ class Categorie
 		}
 
 		// Init $this->cats array
-		$sql = "SELECT c.rowid, c.label as label, ca.fk_categorie_fille as rowid_fille";
+		$sql = "SELECT DISTINCT c.rowid, c.label as label, ca.fk_categorie_fille as rowid_fille";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
 		$sql.= " ON c.rowid=ca.fk_categorie_mere";
@@ -629,6 +629,7 @@ class Categorie
 
 			$this->build_path_from_id_categ($idchild,$protection);
 		}
+
 		return;
 	}
 
@@ -660,7 +661,6 @@ class Categorie
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
 
 		$res = $this->db->query ($sql);
-
 		if ($res)
 		{
 			$cats = array ();
@@ -918,61 +918,6 @@ class Categorie
 			return -1;
 		}
 	}
-
-	/**
-	* Retourne les catégories contenant le produit $ref
-	*/
-	function containing_ref ($ref,$type)
-	{
-		$cats = array ();
-
-		$sql = "SELECT c.fk_categorie, c.fk_".$type.", p.rowid, p.ref";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as c, ".MAIN_DB_PREFIX.$type." as p";
-		$sql.= " WHERE  p.ref = '".$ref."' AND c.fk_".$type." = p.rowid";
-
-		$res = $this->db->query ($sql);
-
-		if ($res)
-		{
-			while ($cat = $this->db->fetch_array ($res))
-			{
-				$cats[] = new Categorie ($this->db, $cat['fk_categorie']);
-			}
-
-			return $cats;
-		}
-		else
-		{
-			dolibarr_print_error ($this->db);
-			return -1;
-		}
-	}
-
-
-	/**
-	* 	\brief	Vérifie le type de la catégorie
-	*
-	*/
-	function verify_type($id)
-	{
-		$sql  = "SELECT type FROM ".MAIN_DB_PREFIX."categorie ";
-		$sql .= "WHERE rowid = ".$id." ";
-
-		$result = $this->db->query ($sql);
-		if ($result)
-		{
-			$obj = $this->db->fetch_object($result);
-
-			return $obj->type;
-		}
-		else
-		{
-			$this->error=$this->db->error().' sql='.$sql;
-			dolibarr_print_error('',$this->error);
-			return -1;
-		}
-	}
-
 
 
 	/**
