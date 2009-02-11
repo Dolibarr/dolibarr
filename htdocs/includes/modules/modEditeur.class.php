@@ -51,7 +51,7 @@ class modEditeur extends DolibarrModules
 		$this->family = "other";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
-		$this->description = "Gestion des editeurs";
+		$this->description = "Gestion des livres et editeurs";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 
@@ -69,15 +69,16 @@ class modEditeur extends DolibarrModules
 		$this->config_page_url = array("editeur.php");
 
 		// Dependances
-		$this->depends = array("modDocument");
+		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
-		$this->needleftmenu = array('rodolphe.php');
+		$this->needleftmenu = array();
 		$this->needtotopmenu = array();
 		$this->langfiles = array("orders","bills","companies");
 
 		// Constantes
-		$this->const=array();
+		$this->const=array(0=>array('PRODUCT_CANVAS_ABILITY','chaine',1,'This is a constant',1),
+						   1=>array('MAIN_NEED_SMARTY','chaine',1,'Need smarty',0));
 
 		// Boites
 		$this->boxes = array();
