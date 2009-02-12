@@ -126,9 +126,9 @@ print '<input type="hidden" name="action" value="addtime">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
+print '<td>'.$langs->trans("Project").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
 print "</tr>\n";

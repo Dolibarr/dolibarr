@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/projet/tasks/task.php
  *	\ingroup    projet
- *	\brief      Fiche tâches d'un projet
+ *	\brief      Fiche tï¿½ches d'un projet
  *	\version    $Id$
  */
 
@@ -112,7 +112,7 @@ if ($_GET["id"] > 0)
 		else print '&nbsp;';
 		print '</td></tr>';
 
-		/* Liste des tâches */
+		/* List of time spent */
 
 		$sql = "SELECT t.task_date, t.task_duration, t.fk_user, u.login, u.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
@@ -163,16 +163,25 @@ if ($_GET["id"] > 0)
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-		print '<td align="right">'.$langs->trans("User").'</td>';
+		print '<td align="right">'.$langs->trans("By").'</td>';
 		print "</tr>\n";
 
 		foreach ($tasks as $task_time)
 		{
 			$var=!$var;
   		    print "<tr ".$bc[$var].">";
-		    print '<td>'.dolibarr_print_date($db->jdate($task_time->task_date),'day').'</td>';
-		    print '<td align="right">'.$task_time->task_duration.'</td>';
-		    $user->id=$task_time->rowid;
+		    
+  		    // Date
+  		    print '<td>'.dolibarr_print_date($db->jdate($task_time->task_date),'day').' '.dolibarr_print_date($db->jdate($task_time->task_date),'%A').'</td>';
+
+		    // Time spent
+		    $heure = intval($task_time->task_duration);
+			$minutes = round((($task_time->task_duration - $heure) * 60),0);
+			$minutes = substr("00"."$minutes", -2);
+			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
+		    
+			// User
+			$user->id=$task_time->rowid;
 		    $user->nom=$task_time->login;
 		    print '<td align="right">'.$user->getNomUrl(1).'</td>';
 		    print "</tr>\n";

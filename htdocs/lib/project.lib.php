@@ -156,14 +156,10 @@ function PLinesb(&$inc, $parent, $lines, &$level, $tasksrole)
 			$var = !$var;
 			print "<tr $bc[$var]>\n";
 
-			print "<td>";
-			$projectstatic->id=$lines[$i]->projectid;
-			$projectstatic->ref=$lines[$i]->projectref;
-			print $projectstatic->getNomUrl(1);
-			print "</td>";
+			// Ref
+			print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'">'.$lines[$i]->id.'</a></td>';
 
-			print "<td>".$lines[$i]->id."</td>";
-
+			// Label task
 			print "<td>";
 
 			for ($k = 0 ; $k < $level ; $k++)
@@ -171,22 +167,29 @@ function PLinesb(&$inc, $parent, $lines, &$level, $tasksrole)
 				print "&nbsp;&nbsp;&nbsp;";
 			}
 
-			print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'">'.$lines[$i]->title."</a></td>\n";
+			print $lines[$i]->title;
+			print "</td>\n";
+
+			// Project
+			print "<td>";
+			$projectstatic->id=$lines[$i]->projectid;
+			$projectstatic->ref=$lines[$i]->projectref;
+			print $projectstatic->getNomUrl(1);
+			print "</td>";
 
 			$heure = intval($lines[$i]->duration);
 			$minutes = round((($lines[$i]->duration - $heure) * 60),0);
 			$minutes = substr("00"."$minutes", -2);
-
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 
 			if ($tasksrole[$lines[$i]->id] == 'admin')
 			{
-				print '<td>';
-				print '<input size="4" type="text" class="flat" name="task'.$lines[$i]->id.'" value="">';
-				print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-				print '</td>';
-				print "<td>";
+				print '<td nowrap="nowrap">';
 				print $form->select_date('',$lines[$i]->id,'','','',"addtime");
+				print '&nbsp;<input size="4" type="text" class="flat" name="task'.$lines[$i]->id.'" value="">';
+				print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+				print '</td>';
+				print "<td>&nbsp;";
 				print '</td>';
 			}
 			else
@@ -242,15 +245,15 @@ function PLines(&$inc, $parent, $lines, &$level, $var, $showproject=1)
 
 			print "<tr ".$bc[$var].">\n";
 
-			print "<td>".$lines[$i]->id."</td>";
+			print '<td><a href="task.php?id='.$lines[$i]->id.'">'.$lines[$i]->id.'</a></td>';
 
 			print "<td>";
 			for ($k = 0 ; $k < $level ; $k++)
 			{
 				print "&nbsp;&nbsp;&nbsp;";
 			}
-
-			print '<a href="task.php?id='.$lines[$i]->id.'">'.$lines[$i]->title."</a></td>\n";
+			print $lines[$i]->title;
+			print "</td>\n";
 
 			if ($showproject)
 			{
@@ -264,7 +267,7 @@ function PLines(&$inc, $parent, $lines, &$level, $var, $showproject=1)
 			$heure = intval($lines[$i]->duration);
 			$minutes = round((($lines[$i]->duration - $heure) * 60),0);
 			$minutes = substr("00"."$minutes", -2);
-			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
+			print '<td align="right"><a href="task.php?id='.$lines[$i]->id.'">'.$heure."&nbsp;h&nbsp;".$minutes.'</a></td>';
 
 			print "</tr>\n";
 
