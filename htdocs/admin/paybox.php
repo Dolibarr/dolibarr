@@ -133,7 +133,7 @@ $firstpart=eregi_replace($regex,'',$firstpart);
 //print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=order&ref=<i>orderref</i>&tag=<i>ATAGOFYOURCHOICE</i>'."<br>\n";
 //print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=invoice&ref=<i>invoiceref</i>&tag=<i>ATAGOFYOURCHOICE</i>'."<br>\n";
 //print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=contractline&ref=<i>contractlineref</i>&tag=<i>ATAGOFYOURCHOICE</i>'."<br>\n";
-print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>value</i>&tag=<i>ATAGOFYOURCHOICE</i>'."<br>\n";
+print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>ATAGOFYOURCHOICE</i>'."<br>\n";
 
 
 $db->close();

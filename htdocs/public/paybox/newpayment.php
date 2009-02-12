@@ -128,7 +128,7 @@ if ($urllogo)
 
 print '<tr><td align="center"><br>'.$langs->trans("WelcomeOnPaymentPage").'<br></td></tr>'."\n";
 
-print '<tr><td align="left"><br>'.$langs->trans("ThisScreenAllowsYouToPay",$mysoc->nom).'<br><br></td></tr>'."\n";
+print '<tr><td align="center"><br>'.$langs->trans("ThisScreenAllowsYouToPay",$mysoc->nom).'<br><br></td></tr>'."\n";
 
 print '<tr><td align="center">';
 print '<table with="100%">';
