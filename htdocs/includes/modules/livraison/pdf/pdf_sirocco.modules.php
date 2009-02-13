@@ -98,6 +98,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
+		$outputlangs->load("dict");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 		$outputlangs->load("deliveries");
@@ -225,9 +226,9 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
-						//on récupère la description du produit suivant
+						//on rï¿½cupï¿½re la description du produit suivant
 						$follow_descproduitservice = $delivery->lignes[$i+1]->desc;
-						//on compte le nombre de ligne afin de vérifier la place disponible (largeur de ligne 52 caracteres)
+						//on compte le nombre de ligne afin de vï¿½rifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52)*4);
 					}
 					else	// If it's last line

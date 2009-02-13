@@ -20,11 +20,11 @@
  */
 
 /**
- \file       htdocs/includes/modules/facture/pdf_crabe.modules.php
- \ingroup    facture
- \brief      File of class to generate invoices from crab model
- \author	    Laurent Destailleur
- \version    $Id$
+ *	\file       htdocs/includes/modules/facture/pdf_crabe.modules.php
+ *	\ingroup    facture
+ *	\brief      File of class to generate invoices from crab model
+ *	\author	    Laurent Destailleur
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
@@ -84,7 +84,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -254,8 +254,11 @@ class pdf_crabe extends ModelePDFFactures
 					$nexY = $pdf->GetY();
 
 					// TVA
-					$pdf->SetXY ($this->posxtva, $curY);
-					$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($fac->lignes[$i]->tva_tx,1,$fac->lignes[$i]->info_bits), 0, 'R');
+					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+					{
+						$pdf->SetXY ($this->posxtva, $curY);
+						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($fac->lignes[$i]->tva_tx,1,$fac->lignes[$i]->info_bits), 0, 'R');
+					}
 
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->posxup, $curY);
@@ -677,6 +680,8 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
+		global $conf;
+
 		$tab2_top = $posy;
 		$tab2_hl = 5;
 		$tab2_height = $tab2_hl * 4;
@@ -685,6 +690,7 @@ class pdf_crabe extends ModelePDFFactures
 		// Tableau total
 		$lltot = 200; $col1x = 120; $col2x = 170; $largcol2 = $lltot - $col2x;
 
+		$useborder=0;
 		$index = 0;
 
 		// Total HT
@@ -694,51 +700,57 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetXY ($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
 
-		// Affichage des totaux de TVA par taux (conformement a la reglementation)
+		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
 
-		foreach( $this->tva as $tvakey => $tvaval )
+		$this->atleastoneratenotnull=0;
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
-			if ($tvakey)    // On affiche pas taux 0
+			foreach( $this->tva as $tvakey => $tvaval )
 			{
-				$this->atleastoneratenotnull++;
-
+				if ($tvakey)    // On affiche pas taux 0
+				{
+					$this->atleastoneratenotnull++;
+	
+					$index++;
+					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+					$tvacompl='';
+					if (eregi('\*',$tvakey))
+					{
+						$tvakey=eregi_replace('\*','',$tvakey);
+						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+					}
+					$totalvat =$outputlangs->transnoentities("TotalVAT").' ';
+					$totalvat.=vatrate($tvakey,1).$tvacompl;
+					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+				}
+			}
+			
+			if (! $this->atleastoneratenotnull)	// If no vat at all
+			{
 				$index++;
 				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-				$tvacompl='';
-				if (eregi('\*',$tvakey))
-				{
-					$tvakey=eregi_replace('\*','',$tvakey);
-					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-				}
-				$totalvat =$outputlangs->transnoentities("TotalVAT").' ';
-				$totalvat.=vatrate($tvakey,1).$tvacompl;
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
 				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
 			}
 		}
-		if (! $this->atleastoneratenotnull)	// If not vat at all
+			
+		// Total TTC
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
 			$index++;
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->SetFillColor(224,224,224);
+			$text=$outputlangs->transnoentities("TotalTTC");
+			if ($object->type == 2) $text=$outputlangs->transnoentities("TotalTTCToYourCredit");
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $text, $useborder, 'L', 1);
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
 		}
-
-		$useborder=0;
-
-		// Total TTC
-		$index++;
-		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFillColor(224,224,224);
-		$text=$outputlangs->transnoentities("TotalTTC");
-		if ($object->type == 2) $text=$outputlangs->transnoentities("TotalTTCToYourCredit");
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $text, $useborder, 'L', 1);
-		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
 		$pdf->SetTextColor(0,0,0);
 
 		$creditnoteamount=$object->getSommeCreditNote();
@@ -824,10 +836,13 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
 		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 
-		$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxtva-1, $tab_top+2);
-		$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
-
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+		{
+			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
+			$pdf->SetXY ($this->posxtva-1, $tab_top+2);
+			$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
+		}
+		
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxup-1, $tab_top+2);
 		$pdf->MultiCell(18,2, $outputlangs->transnoentities("PriceUHT"),'','C');

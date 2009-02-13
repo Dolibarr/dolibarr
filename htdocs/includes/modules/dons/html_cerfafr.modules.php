@@ -83,8 +83,12 @@ class html_cerfafr extends ModeleDon
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 
-		$langs->load("main");
-
+		$outputlangs->load("main");
+		$outputlangs->load("dict");
+		$outputlangs->load("companies");
+		$outputlangs->load("bills");
+		$outputlangs->load("products");
+		
         if ($conf->don->dir_output)
         {
 			// Definition de l'objet $don (pour compatibilite ascendante)

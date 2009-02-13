@@ -86,10 +86,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
+		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
-		$outputlangs->load("propal");
 		$outputlangs->load("products");
+		$outputlangs->load("propal");
 		$outputlangs->load("sendings");
 
 		$outputlangs->setPhpLang();

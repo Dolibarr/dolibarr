@@ -108,6 +108,7 @@ class pdf_edison extends ModelePDFCommandes
 		$outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
+		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");

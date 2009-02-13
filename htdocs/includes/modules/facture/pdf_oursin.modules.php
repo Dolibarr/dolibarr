@@ -114,6 +114,7 @@ class pdf_oursin extends ModelePDFFactures
 		$outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
+		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
@@ -221,11 +222,15 @@ class pdf_oursin extends ModelePDFFactures
 					$nexY = $pdf->GetY();
 
 					// TVA
-					if ($this->franchise!=1)
+					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
-						$pdf->SetXY ($this->marges['g']+119, $curY);
-						$pdf->MultiCell(10, 3, $fac->lignes[$i]->tva_tx, 0, 'R');
+						if ($this->franchise!=1)
+						{
+							$pdf->SetXY ($this->marges['g']+119, $curY);
+							$pdf->MultiCell(10, 3, $fac->lignes[$i]->tva_tx, 0, 'R');
+						}
 					}
+
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->marges['g']+132, $curY);
 					$pdf->MultiCell(16, 3, price($fac->lignes[$i]->subprice), 0, 'R', 0);
@@ -584,7 +589,8 @@ class pdf_oursin extends ModelePDFFactures
 	 */
 	function _tableau_tot(&$pdf, $fac, $deja_regle, $posy, $outputlangs)
 	{
-		global $langs;
+		global $conf,$langs;
+		
 		$langs->load("main");
 		$langs->load("bills");
 
@@ -593,6 +599,10 @@ class pdf_oursin extends ModelePDFFactures
 		$tab2_height = $tab2_hl * 4;
 		$pdf->SetFont('Arial','', 9);
 
+		// Tableau total
+		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
+		$lltot = 200; $largcol2 = $lltot - $col2x;
+		
 		$pdf->SetXY ($this->marges['g'], $tab2_top + 0);
 
 		/*
@@ -603,32 +613,66 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->MultiCell(100, $tab2_hl, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 		}
 
+		$useborder=0;
 		$index = 0;
 
-		// Total TTC
-		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
+		// Total HT
 		$pdf->SetXY ($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 0);
 		$pdf->SetXY ($col2x, $tab2_top + 0);
-		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
 
-		// Total VAT
-		$index++;
-		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 0);
-		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
+		// Show VAT by rates and total
+		$pdf->SetFillColor(248,248,248);
+
+		$this->atleastoneratenotnull=0;
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+		{
+			foreach( $this->tva as $tvakey => $tvaval )
+			{
+				if ($tvakey)    // On affiche pas taux 0
+				{
+					$this->atleastoneratenotnull++;
+	
+					$index++;
+					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+					$tvacompl='';
+					if (eregi('\*',$tvakey))
+					{
+						$tvakey=eregi_replace('\*','',$tvakey);
+						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+					}
+					$totalvat =$outputlangs->transnoentities("TotalVAT").' ';
+					$totalvat.=vatrate($tvakey,1).$tvacompl;
+					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+				}
+			}
+			
+			if (! $this->atleastoneratenotnull)	// If no vat at all
+			{
+				$index++;
+				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
+				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
+			}
+		}
 
 		// Total TTC
-		$index++;
-		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->SetTextColor(22,137,210);
-		$pdf->SetFont('Arial','B', 11);
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), 0, 'L', 0);
-		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 0);
-		$pdf->SetTextColor(0,0,0);
-
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+		{
+			$index++;
+			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetTextColor(22,137,210);
+			$pdf->SetFont('Arial','B', 11);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), 0, 'L', 0);
+			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_ttc), 0, 'R', 0);
+			$pdf->SetTextColor(0,0,0);
+		}
+		
 		$creditnoteamount=$fac->getSommeCreditNote();
 		$resteapayer = $fac->total_ttc - $deja_regle - $creditnoteamount;
 		if ($object->paye) $resteapayer=0;
@@ -642,7 +686,7 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPayed"), 0, 'L', 0);
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
 			// Credit note
 			if ($creditnoteamount)
@@ -664,7 +708,7 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), 0, 'L', 0);
 			$pdf->SetFillColor(224,224,224);
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 0);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 0);
 			$pdf->SetTextColor(0,0,0);
 		}
 
@@ -678,7 +722,7 @@ class pdf_oursin extends ModelePDFFactures
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $fac, $outputlangs)
 	{
-		global $langs;
+		global $conf,$langs;
 		$langs->load("main");
 		$langs->load("bills");
 
@@ -688,7 +732,10 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetFont('Arial','B',10);
 
 		$pdf->Text($this->marges['g']+1,$tab_top + 5, $outputlangs->transnoentities("Designation"));
-		if ($this->franchise!=1) $pdf->Text($this->marges['g']+120, $tab_top + 5, $outputlangs->transnoentities("VAT"));
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+		{
+			if ($this->franchise!=1) $pdf->Text($this->marges['g']+120, $tab_top + 5, $outputlangs->transnoentities("VAT"));
+		}
 		$pdf->Text($this->marges['g']+135, $tab_top + 5,$outputlangs->transnoentities("PriceUHT"));
 		$pdf->Text($this->marges['g']+153, $tab_top + 5, $outputlangs->transnoentities("Qty"));
 
@@ -896,7 +943,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY($this->marges['g'],$posy);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Bill").' '.$outputlangs->transnoentities("Of").' '.dolibarr_print_date($fac->date,"%d %B %Y",false,$outputlangs,true), '' , 'L');
+		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Bill").' '.$outputlangs->transnoentities("Of").' '.dol_print_date($fac->date,"%d %B %Y",false,$outputlangs,true), '' , 'L');
 		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY($this->marges['g'],$posy+6);
 		$pdf->SetTextColor(22,137,210);
