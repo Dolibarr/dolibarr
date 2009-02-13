@@ -2937,7 +2937,7 @@ else
 						}
 					}
 
-					// Valider
+					// Validate
 					if ($fac->statut == 0 && $num_lignes > 0 && (($fac->type < 2 && $fac->total_ttc >= 0) || ($fac->type == 2 && $fac->total_ttc <= 0)))
 					{
 						if ($user->rights->facture->valider)
@@ -2959,7 +2959,7 @@ else
 						}
 					}
 
-					// Envoyer
+					// Send by mail
 					if (($fac->statut == 1 || $fac->statut == 2) && $user->rights->facture->envoyer)
 					{
 						if ($facidnext)
@@ -2972,19 +2972,22 @@ else
 						}
 					}
 
-					// Envoyer une relance
-					if (($fac->statut == 1 || $fac->statut == 2) && $resteapayer > 0 && $user->rights->facture->envoyer)
+					if ($conf->global->FACTURE_SHOW_SEND_REMINDER)
 					{
-						if ($facidnext)
+						// Envoyer une relance
+						if (($fac->statut == 1 || $fac->statut == 2) && $resteapayer > 0 && $user->rights->facture->envoyer)
 						{
-							print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendRemindByMail').'</span>';
-						}
-						else
-						{
-							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=prerelance&amp;mode=init">'.$langs->trans('SendRemindByMail').'</a>';
+							if ($facidnext)
+							{
+								print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendRemindByMail').'</span>';
+							}
+							else
+							{
+								print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=prerelance&amp;mode=init">'.$langs->trans('SendRemindByMail').'</a>';
+							}
 						}
 					}
-
+					
 					// Emettre paiement
 					if ($fac->type != 2 && $fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
 					{
