@@ -1,7 +1,7 @@
 <?php
 /* ***************************************************************************
  * Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
- * Copyright (C) 2004-2008 Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Destailleur Laurent <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class Translate {
     var $cache_labels=array();		// Cache for labels
 
     var $charset_inputfile=array();	// To store charset encoding used for language
-	var $charset_output='UTF-8';	// Codage used by default for "trans" method output if $conf->character_set_client not defined (should never happen)
+	var $charset_output='UTF-8';	// Codage used by "trans" method outputs
 
 
     /**

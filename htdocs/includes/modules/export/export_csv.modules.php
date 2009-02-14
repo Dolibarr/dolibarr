@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,17 @@
 /**
  *		\file       htdocs/includes/modules/export/export_csv.modules.php
  *		\ingroup    export
- *		\brief      Fichier de la classe permettant de g�n�rer les export au format CSV
+ *		\brief      File to build exports with CSV format
  *		\author	    Laurent Destailleur
  *		\version    $Id$
-*/
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/export/modules_export.php");
 
 
 /**
  *	    \class      ExportCsv
- *		\brief      Classe permettant de g�n�rer les factures au mod�le Crabe
+ *		\brief      Classe permettant de generer les factures au modele Crabe
  */
 class ExportCsv extends ModeleExports
 {
@@ -42,15 +42,15 @@ class ExportCsv extends ModeleExports
     var $label_lib;
     var $version_lib;
 
-    var $separator=',';
+    var $separator;
     
     var $handle;    // Handle fichier
 
     
     /**
-    		\brief      Constructeur
-    		\param	    db      Handler acc�s base de donn�e
-    */
+     *		\brief      Constructeur
+     *		\param	    db      Handler acces base de donnee
+     */
     function ExportCsv($db)
     {
         global $conf;
@@ -65,6 +65,9 @@ class ExportCsv extends ModeleExports
         // If driver use an external library, put its name here
         $this->label_lib='Dolibarr';            
         $this->version_lib=DOL_VERSION;
+        
+        $this->separator=',';
+        if (! empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE)) $this->separator=$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
     }
 
     function getDriverId()
@@ -99,10 +102,10 @@ class ExportCsv extends ModeleExports
 
 
     /**
-	*	\brief		Open output file
-	*	\param		file		Path of filename
-	*	\return		int			<0 if KO, >=0 if OK
-	*/
+ 	 *	\brief		Open output file
+	 *	\param		file		Path of filename
+	 *	\return		int			<0 if KO, >=0 if OK
+	 */
 	function open_file($file,$outputlangs)
     {
     	global $langs;
@@ -139,6 +142,9 @@ class ExportCsv extends ModeleExports
 	 */
     function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs)
     {
+    	global $conf;
+    	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) $outputlangs->charset_output=$conf->global->EXPORT_CSV_FORCE_CHARSET;
+    	
         foreach($array_selected_sorted as $code => $value)
         {
             $newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);
@@ -156,12 +162,15 @@ class ExportCsv extends ModeleExports
 	 */
     function write_record($array_alias,$array_selected_sorted,$objp,$outputlangs)
     {
-		$this->col=0;
+    	global $conf;
+    	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) $outputlangs->charset_output=$conf->global->EXPORT_CSV_FORCE_CHARSET;
+
+    	$this->col=0;
  		foreach($array_selected_sorted as $code => $value)
         {
             $alias=$array_alias[$code];
             if (empty($alias)) dolibarr_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
-			$newvalue=$objp->$alias;
+			$newvalue=$outputlangs->convToOutputCharset($objp->$alias);
 
             // Translation newvalue
 			if (eregi('^\((.*)\)$',$newvalue,$reg))
