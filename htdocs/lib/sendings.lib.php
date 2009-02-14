@@ -92,7 +92,7 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 
 					print '<td>';
 					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.dolibarr_trunc($product->libelle,20);
-					if ($objp->description) print dol_htmlentitiesbr(dolibarr_trunc($objp->description,24));
+					if ($objp->description) print '<br>'.dol_htmlentitiesbr(dolibarr_trunc($objp->description,24));
 					print '</td>';
 				}
 				else
