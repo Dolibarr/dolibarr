@@ -377,7 +377,7 @@ if ($_GET["action"] == 'create')
 
 					print '<td>';
 					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
-					if ($ligne->desc) print dol_nl2br(dol_htmlcleanlastbr($ligne->desc),1);
+					if ($ligne->desc) print '<br>'.dol_nl2br(dol_htmlcleanlastbr($ligne->desc),1);
 					print '</td>';
 				}
 				else
