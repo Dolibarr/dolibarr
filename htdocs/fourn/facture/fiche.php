@@ -188,7 +188,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 		$facfou->libelle       = $_POST['libelle'];
 		$facfou->date          = $datefacture;
 		$facfou->date_echeance = $datedue;
-		$facfou->note          = $_POST['note'];
+		$facfou->note_public   = $_POST['note'];
 
 		$facid = $facfou->create($user);
 

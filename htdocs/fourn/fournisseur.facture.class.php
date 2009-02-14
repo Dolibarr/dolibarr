@@ -67,6 +67,7 @@ class FactureFournisseur extends Facture
 	var $total_tva;
 	var $total_ttc;
 	var $note;
+	var $note_public;
 	var $propalid;
 	var $lignes;
 	var $fournisseur;
@@ -120,9 +121,13 @@ class FactureFournisseur extends Facture
 		if (! $remise) $remise = 0 ;
 		$totalht = ($amount - $remise);
 
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author, date_lim_reglement) ';
-		$sql .= " VALUES ('".addslashes($number)."','".addslashes($this->libelle)."',";
-		$sql .= $this->socid.", ".$this->db->idate(mktime()).",'".$this->db->idate($this->date)."','".addslashes($this->note)."', ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn (facnumber, libelle, fk_soc, datec, datef,';
+		$sql.= ' note, note_public, fk_user_author, date_lim_reglement) ';
+		$sql.= " VALUES ('".addslashes($number)."','".addslashes($this->libelle)."',";
+		$sql.= " ".$this->socid.", ".$this->db->idate(gmmktime()).",'".$this->db->idate($this->date)."',";
+		$sql.= " '".addslashes($this->note)."',";
+		$sql.= " '".addslashes($this->note_public)."',";
+		$sql.= " ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
 
 		dolibarr_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
