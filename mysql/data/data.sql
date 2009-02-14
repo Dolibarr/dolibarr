@@ -662,6 +662,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'27','Paroi
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'29','Autre groupement de droit privé non doté de la personnalité morale');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'31','Personne morale de droit étranger, immatriculée au RCS');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'32','Personne morale de droit étranger, non immatriculée au RCS');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'35','Régime auto-entrepreneur');
                                                                      
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'41','Établissement public ou régie à caractère industriel ou commercial');
                                                                      

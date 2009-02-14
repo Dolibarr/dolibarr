@@ -56,6 +56,9 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (19
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2461,246,  '0','0','VAT Rate 0',1);
 
 
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'35','Régime auto-entrepreneur');
+
+
 alter table llx_user_param drop column page;
 
 alter table llx_commande_fournisseur_log add column comment varchar(255) NULL;

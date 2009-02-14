@@ -365,9 +365,9 @@ function dol_time_plus_duree($time,$duration_value,$duration_unit)
 
 
 /* For backward compatibility */
-function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
+function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodetooutput=false)
 {
-	return dol_print_date($time,$format,$to_gmt,$outputlangs);
+	return dol_print_date($time,$format,$to_gmt,$outputlangs,$encodetooutput);
 }
 
 /**
