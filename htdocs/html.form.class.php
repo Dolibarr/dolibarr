@@ -941,7 +941,7 @@ class Form
 		if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		if (! empty($filtre)) $sql.=" ".$filtre;
-		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
+		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '%".$ajaxkeysearch."%' OR p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
 		$sql.= " ORDER BY pf.ref_fourn DESC";
 
 		dolibarr_syslog("Form::select_produits_fournisseurs_do sql=".$sql,LOG_DEBUG);

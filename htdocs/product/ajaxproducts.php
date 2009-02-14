@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
  */
 
 /**
-        \file       htdocs/product/ajaxproducts.php
-        \brief      Fichier de reponse sur evenement Ajax
-        \version    $Id$
-*/
+ *       \file       htdocs/product/ajaxproducts.php
+ *       \brief      Fichier de reponse sur evenement Ajax
+ *       \version    $Id$
+ */
 
 require('../main.inc.php');
 

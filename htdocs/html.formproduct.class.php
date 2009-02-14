@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
 
 /**
  *	\file       htdocs/html.formproduct.class.php
- *	\brief      Fichier de la classe des fonctions prédéfinie de composants html
+ *	\brief      Fichier de la classe des fonctions prï¿½dï¿½finie de composants html
  *	\version	$Id$
  */
 
 
 /**
  *	\class      FormProduct
- *	\brief      Classe permettant la génération de composants html
+ *	\brief      Class with static methods for buildinf HTML components related to products
  *	\remarks	Only common components must be here.
  */
 class FormProduct
@@ -41,8 +41,8 @@ class FormProduct
 
 
 	/**
-	 \brief     Constructeur
-	 \param     DB      handler d'accès base de donnée
+	 *	\brief     Constructeur
+	 *	\param     DB      Database handler
 	 */
 	function FormProduct($DB)
 	{
@@ -91,7 +91,7 @@ class FormProduct
 
 	/**
 	 *      \brief      Retourne la liste des modes de paiements possibles
-	 *      \param      selected        Id du mode de paiement pré-sélectionné
+	 *      \param      selected        Id du mode de paiement prï¿½-sï¿½lectionnï¿½
 	 *      \param      htmlname        Nom de la zone select
 	 *      \param      filtertype      Pour filtre
 	 *      \param      empty			1=peut etre vide, 0 sinon
@@ -123,7 +123,7 @@ class FormProduct
 	 *  \brief      Selection des unites de mesure
 	 *  \param      name                Nom champ html
 	 *  \param      measuring_style     Le style de mesure : weight, volume,...
-	 *  \param      default             Forçage de l'unite
+	 *  \param      default             Forï¿½age de l'unite
 	 *  \remarks pour l'instant on ne definit pas les unites dans la base
 	 */
 	function select_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
