@@ -26,6 +26,8 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
+$service='PayBox';
+
 $langs->load("admin");
 $langs->load("paybox");
 
@@ -132,9 +134,14 @@ $regex=DOL_URL_ROOT.'$';
 $firstpart=eregi_replace($regex,'',$firstpart);
 //print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=order&ref=<i>orderref</i>&tag=<i>ATAGOFYOURCHOICE</i>'."<br>\n";
 //print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=invoice&ref=<i>invoiceref</i>&tag=<i>ATAGOFYOURCHOICE</i>'."<br>\n";
-print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=contractline&ref=<i>contractlineref</i>&tag=<i>ATAGOFYOURCHOICE</i>'."<br>\n";
-print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>ATAGOFYOURCHOICE</i>'."<br>\n";
-
+print '<br>';
+print $langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$service).':<br>';
+print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=contractline&ref=<i>contractlineref</i>'."<br>\n";
+print '<br>';
+print $langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$service).':<br>';
+print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>yourfreetag</i>'."<br>\n";
+print '<br>';
+print $langs->trans("YouCanAddTagOnUrl");
 
 $db->close();
 

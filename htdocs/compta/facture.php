@@ -863,7 +863,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 			$tva_tx = get_default_tva($mysoc,$fac->client,$prod->tva_tx);
 			$tva_npr = get_default_npr($mysoc,$fac->client,$prod->tva_tx);
 
-			// On defini prix unitaire
+			// We define price for product
 			if ($conf->global->PRODUIT_MULTIPRICES)
 			{
 				$pu_ht = $prod->multiprices[$fac->client->price_level];
@@ -2987,7 +2987,7 @@ else
 							}
 						}
 					}
-					
+
 					// Emettre paiement
 					if ($fac->type != 2 && $fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
 					{

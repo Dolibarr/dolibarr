@@ -28,6 +28,7 @@
 require("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paybox/paybox.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
 $langs->setDefaultLang($langcode);
@@ -136,49 +137,16 @@ print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Thi
 
 $found=false;
 $var=false;
-if (is_numeric($_REQUEST["amount"]))
-{
-	$found=true;
-	$tag=$_REQUEST["tag"];
-	
-	// Creditor
-	$var=!$var;
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$mysoc->nom.'</b></td></tr>'."\n";
-	// Amount
-	$var=!$var;
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
-	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
-	else {
-		print '<b>'.price($amount).'</b>';
-		print '<input type="hidden" name="newamount" value="'.$amount.'">';
-	}
-	print '</td></tr>'."\n";
-	// Currency
-	$var=!$var;
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Currency");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>EUR</b></td></tr>'."\n";
-	// Tag
-	$var=!$var;
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$tag.'</b></td></tr>'."\n";
-	// EMail
-	$var=!$var;
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
-	print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
-}
 
 if ($_REQUEST["amount"] == 'contractline')
 {
 	$found=true;
+	$langs->load("contracts");
 
 	require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 	$contractline=new ContratLigne($db);
-	$result=$contractline->fetch('',$_GET["ref"]);
+	$result=$contractline->fetch('',$_REQUEST["ref"]);
 	if ($result < 0)
 	{
 		$mesg=$contractline->error;
@@ -189,7 +157,11 @@ if ($_REQUEST["amount"] == 'contractline')
 		{
 			$contract=new Contrat($db);
 			$result=$contract->fetch($contractline->fk_contrat);
-			if ($result < 0)
+			if ($result > 0)
+			{
+				$result=$contract->fetch_client($contract->socid);
+			}
+			else
 			{
 				$mesg=$contract->error;
 			}
@@ -199,31 +171,100 @@ if ($_REQUEST["amount"] == 'contractline')
 			$mesg='ErrorRecordNotFound';
 		}
 	}
+
 	$amount=$contractline->total_ttc;
+	if ($contractline->fk_product)
+	{
+		$product=new Product($db);
+		$result=$product->fetch($contractline->fk_product);
+
+		// We define price for product (TODO Put this in a method in product class)
+		if ($conf->global->PRODUIT_MULTIPRICES)
+		{
+			$pu_ht = $product->multiprices[$contract->client->price_level];
+			$pu_ttc = $product->multiprices_ttc[$contract->client->price_level];
+			$price_base_type = $product->multiprices_base_type[$contract->client->price_level];
+		}
+		else
+		{
+			$pu_ht = $product->price;
+			$pu_ttc = $product->price_ttc;
+			$price_base_type = $product->price_base_type;
+		}
+
+		$amount=$pu_ttc;
+		if (empty($amount))
+		{
+			dolibarr_print_error('','ErrorNoPriceDefinedForThisProduct');
+			exit;
+		}
+	}
+
 	$tag='';
-	if (! empty($_REQUEST["tag"])) $tag=$_REQUEST["tag"].'-';
-	$tag.='thirdparty='.$contract->socid.'-contractref='.$contract->ref.'-contractlineref='.$contractline->ref;
+	$tag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->client->id.'.TP='.strtr($contract->client->nom,"-"," ");
+	if (! empty($_REQUEST["tag"])) $tag.='.TAG='.$_REQUEST["tag"];
+	$tag=dol_string_unaccent($tag);
+
 	$qty=1;
 	if (isset($_REQUEST["qty"])) $qty=$_REQUEST["qty"];
-	
-	// Object
-	$var=!$var;
-	$text=$langs->trans("PaymentRenewContractId",$contractline->ref,$contract->id);
-	if ($contractline->description) $text.='<br>'.dol_htmlentitiesbr($contractline->description);
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$text.'</b></td></tr>'."\n";
-	// Quantity
-	$var=!$var;
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Quantity");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
-	print $qty;
-	print '<input type="hidden" name="newqty" value="'.$qty.'">';
-	print '</b></td></tr>'."\n";
 
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$mysoc->nom.'</b></td></tr>'."\n";
+
+	// Debitor
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$contract->client->nom.'</b>';
+
+	// Object
+	$var=!$var;
+	$text='<b>'.$langs->trans("PaymentRenewContractId",$contract->ref,$contractline->ref).'</b>';
+	if ($contractline->fk_product)
+	{
+		$text.='<br>'.$product->ref.($product->libelle?' - '.$product->libelle:'');
+	}
+	if ($contractline->description) $text.='<br>'.dol_htmlentitiesbr($contractline->description);
+	//if ($contractline->date_fin_validite) {
+	//	$text.='<br>'.$langs->trans("DateEndPlanned").': ';
+	//	$text.=dolibarr_print_date($contractline->date_fin_validite);
+	//}
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="ref" value="'.$contractline->ref.'">';
+	print '</td></tr>'."\n";
+
+	// Quantity
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Quantity");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$qty.'</b>';
+	if ($contractline->fk_product)
+	{
+		if ($product->duration_value > 0)
+		{
+			// TODO Put this in a global method
+			if ($product->duration_value > 1)
+			{
+				$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("DurationDays"),"w"=>$langs->trans("DurationWeeks"),"m"=>$langs->trans("DurationMonths"),"y"=>$langs->trans("DurationYears"));
+			}
+			else
+			{
+				$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("DurationDay"),"w"=>$langs->trans("DurationWeek"),"m"=>$langs->trans("DurationMonth"),"y"=>$langs->trans("DurationYear"));
+			}
+			$duration=' ('.$product->duration_value.' '.$dur[$product->duration_unit];
+			print $duration;
+			if ($contractline->date_fin_validite)
+			{
+				$dateactend = dol_time_plus_duree ($contractline->date_fin_validite, $product->duration_value, $product->duration_unit);
+				print ', '.$langs->trans("DateEndPlanned").': '.dolibarr_print_date($contractline->date_fin_validite);
+			}
+			print ')';
+		}
+	}
+	print '<input type="hidden" name="newqty" value="'.$qty.'">';
+	print '</b></td></tr>'."\n";
+
 	// Amount
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
@@ -235,14 +276,19 @@ if ($_REQUEST["amount"] == 'contractline')
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	print '</td></tr>'."\n";
+
 	// Currency
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Currency");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>EUR</b></td></tr>'."\n";
+
 	// Tag
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$tag.'</b></td></tr>'."\n";
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$tag.'</b>';
+	print '<input type="hidden" name="tag" value="'.$tag.'">';
+	print '</td></tr>'."\n";
+
 	// EMail
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
@@ -251,14 +297,57 @@ if ($_REQUEST["amount"] == 'contractline')
 
 }
 
+if (is_numeric($_REQUEST["amount"]))
+{
+	$found=true;
+	$tag=$_REQUEST["tag"];
+
+	// Creditor
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$mysoc->nom.'</b></td></tr>'."\n";
+
+	// Amount
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
+	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
+	print '</td><td class="CTableRow'.($var?'1':'2').'">';
+	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
+	else {
+		print '<b>'.price($amount).'</b>';
+		print '<input type="hidden" name="newamount" value="'.$amount.'">';
+	}
+	print '</td></tr>'."\n";
+
+	// Currency
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Currency");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>EUR</b></td></tr>'."\n";
+
+	// Tag
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$tag.'</b>';
+	print '<input type="hidden" name="tag" value="'.$tag.'">';
+	print '</td></tr>'."\n";
+
+	// EMail
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
+	print ' ('.$langs->trans("ToComplete").')';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+}
+
 
 if (! $found && ! $mesg) $mesg=$langs->trans("ErrorBadParameters");
 
 if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>';
 
-print '<tr><td align="center" colspan="2"><br><input class="none" type="submit" name="dopayment" value="'.$langs->trans("PayBoxDoPayment").'"></td></tr>';
-print '<tr><td align="center" colspan="2">'.$langs->trans("YouWillBeRedirectedOnPayBox").'...</td></tr>';
-
+if ($found)
+{
+	print '<tr><td align="center" colspan="2"><br><input class="none" type="submit" name="dopayment" value="'.$langs->trans("PayBoxDoPayment").'"></td></tr>';
+	//print '<tr><td align="center" colspan="2">'.$langs->trans("YouWillBeRedirectedOnPayBox").'...</td></tr>';
+}
 
 print '</table>';
 print '</td></tr>';

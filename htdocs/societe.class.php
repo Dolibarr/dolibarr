@@ -499,7 +499,7 @@ class Societe extends CommonObject
 		}
 
 		$sql = 'SELECT s.rowid, s.nom, s.address,'.$this->db->pdate('s.datec').' as dc, s.prefix_comm';
-		if($conf->global->PRODUIT_MULTIPRICES) $sql .= ', s.price_level';
+		$sql .= ', s.price_level';
 		$sql .= ','. $this->db->pdate('s.tms').' as date_update';
 		$sql .= ', s.tel, s.fax, s.email, s.url, s.cp, s.ville, s.note, s.client, s.fournisseur';
 		$sql .= ', s.siren, s.siret, s.ape, s.idprof4';
@@ -524,6 +524,7 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' WHERE s.rowid = '.$socid;
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -770,7 +771,7 @@ class Societe extends CommonObject
 				$this->error .= $this->db->lasterror();
 				dolibarr_syslog("Societe::Delete erreur -1 ".$this->error);
 			}
-			
+
 			// Remove ban
 			$sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib";
 			$sql.= " WHERE fk_soc = " . $id;
@@ -1954,7 +1955,7 @@ class Societe extends CommonObject
 
 		print '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
 	}
-	
+
 	/**
 	 *      \brief      Cree en base un utilisateur depuis l'objet adherent
 	 *      \param      member	Objet adherent source
@@ -1978,8 +1979,8 @@ class Societe extends CommonObject
 		$this->ville=$member->ville;
 		$this->pays_code=$member->pays_code;
 		$this->pays_id=$member->pays_id;
-		$this->tel=$member->phone;				// Prof phone		
-		
+		$this->tel=$member->phone;				// Prof phone
+
 		$this->db->begin();
 
 		// Cree et positionne $this->id
@@ -1989,7 +1990,7 @@ class Societe extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
 			$sql.= " SET fk_soc=".$this->id;
 			$sql.= " WHERE rowid=".$member->id;
-			
+
 			dolibarr_syslog("Societe::create_from_member sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -2015,7 +2016,7 @@ class Societe extends CommonObject
 			return $result;
 		}
 	}
-	
+
 }
 
 ?>

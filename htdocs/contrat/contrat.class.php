@@ -245,11 +245,11 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *    \brief      Chargement depuis la base des donnees du contrat
-	 *    \param      id      Id du contrat a charger
-	 *    \return     int     <0 si ko, id du contrat charge si ok
+	 *    \brief      Load a contract from database
+	 *    \param      id      Id of contract to load
+	 *    \return     int     <0 if KO, id of contract if OK
 	 */
-	function fetch($id)
+	function fetch($id,$ref='')
 	{
 		$sql = "SELECT rowid, statut, ref, fk_soc, mise_en_service as datemise,";
 		$sql.= " fk_user_mise_en_service, date_contrat as datecontrat,";
@@ -257,9 +257,11 @@ class Contrat extends CommonObject
 		$sql.= " fk_projet,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql.= " note, note_public";
-		$sql.= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = ".$id;
+		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
+		if ($ref) $sql.= " WHERE ref='".$ref."'";
+		else $sql.= " WHERE rowid=".$id;
 
-		dolibarr_syslog("Contrat::fetch sql=".$sql);
+		dol_syslog("Contrat::fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql) ;
 		if ($resql)
 		{
@@ -289,8 +291,9 @@ class Contrat extends CommonObject
 
 				$this->fk_projet         = $result["fk_projet"];
 
-				$this->socid            = $result["fk_soc"];
-				$this->societe->fetch($result["fk_soc"]);	// TODO A virer car la societe doit etre charg� par appel de fetch_client()
+				$this->socid             = $result["fk_soc"];
+				$this->fk_soc            = $result["fk_soc"];
+				$this->societe->fetch($result["fk_soc"]);	// TODO A virer car la societe doit etre charge par appel de fetch_client()
 
 				$this->db->free($resql);
 
@@ -298,14 +301,14 @@ class Contrat extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog("Contrat::Fetch Erreur contrat non trouve");
+				dol_syslog("Contrat::Fetch Erreur contrat non trouve");
 				$this->error="Contrat non trouve";
 				return -2;
 			}
 		}
 		else
 		{
-			dolibarr_syslog("Contrat::Fetch Erreur lecture contrat");
+			dol_syslog("Contrat::Fetch Erreur lecture contrat");
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -340,7 +343,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = p.rowid";
 		$sql.= " ORDER by d.rowid ASC";
 
-		dolibarr_syslog("Contrat::fetch_lignes sql=".$sql);
+		dol_syslog("Contrat::fetch_lignes sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -390,8 +393,8 @@ class Contrat extends CommonObject
 				$ligne->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$ligne->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 				$this->lignes[]        = $ligne;
-				//dolibarr_syslog("1 ".$ligne->desc);
-				//dolibarr_syslog("2 ".$ligne->product_desc);
+				//dol_syslog("1 ".$ligne->desc);
+				//dol_syslog("2 ".$ligne->product_desc);
 
 				if ($ligne->statut == 0) $this->nbofserviceswait++;
 				if ($ligne->statut == 4 && (empty($ligne->date_fin_prevue) || $ligne->date_fin_prevue >= $now)) $this->nbofservicesopened++;
@@ -404,7 +407,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dolibarr_syslog("Contrat::Fetch Erreur lecture des lignes de contrats liees aux produits");
+			dol_syslog("Contrat::Fetch Erreur lecture des lignes de contrats liees aux produits");
 			return -3;
 		}
 
@@ -481,7 +484,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dolibarr_syslog("Contrat::Fetch Erreur lecture des lignes de contrat non li�es aux produits");
+			dol_syslog("Contrat::Fetch Erreur lecture des lignes de contrat non li�es aux produits");
 			$this->error=$this->db->error();
 			return -2;
 		}
@@ -561,7 +564,7 @@ class Contrat extends CommonObject
 				else
 				{
 					$this->error=$interface->error;
-					dolibarr_syslog("Contrat::create - 30 - ".$this->error);
+					dol_syslog("Contrat::create - 30 - ".$this->error);
 
 					$this->db->rollback();
 					return -3;
@@ -570,7 +573,7 @@ class Contrat extends CommonObject
 			else
 			{
 				$this->error="Failed to add contact";
-				dolibarr_syslog("Contrat::create - 20 - ".$this->error);
+				dol_syslog("Contrat::create - 20 - ".$this->error);
 
 				$this->db->rollback();
 				return -2;
@@ -579,7 +582,7 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$langs->trans("UnknownError: ".$this->db->error()." - sql=".$sql);
-			dolibarr_syslog("Contrat::create - 10 - ".$this->error);
+			dol_syslog("Contrat::create - 10 - ".$this->error);
 
 			$this->db->rollback();
 			return -1;
@@ -617,7 +620,7 @@ class Contrat extends CommonObject
 			$sql.= " AND tc.element='".$this->element."'";
 			$sql.= " AND ec.element_id=".$this->id;
 
-			dolibarr_syslog("Contrat::delete element_contact sql=".$sql,LOG_DEBUG);
+			dol_syslog("Contrat::delete element_contact sql=".$sql,LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -638,7 +641,7 @@ class Contrat extends CommonObject
 				$sql= "DELETE FROM ".MAIN_DB_PREFIX."element_contact ";
 				$sql.= " WHERE ".MAIN_DB_PREFIX."element_contact.rowid IN (".implode(",",$tab_resql).")";
 
-				dolibarr_syslog("Contrat::delete element_contact sql=".$sql,LOG_DEBUG);
+				dol_syslog("Contrat::delete element_contact sql=".$sql,LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
@@ -660,7 +663,7 @@ class Contrat extends CommonObject
 			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet_log as cdl, ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql.= " WHERE cdl.fk_contratdet=cd.rowid AND cd.fk_contrat=".$this->id;
 
-			dolibarr_syslog("Contrat::delete contratdet_log sql=".$sql, LOG_DEBUG);
+			dol_syslog("Contrat::delete contratdet_log sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -681,7 +684,7 @@ class Contrat extends CommonObject
 				$sql= "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
 				$sql.= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".implode(",",$tab_resql).")";
 
-				dolibarr_syslog("Contrat::delete contratdet_log sql=".$sql, LOG_DEBUG);
+				dol_syslog("Contrat::delete contratdet_log sql=".$sql, LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
@@ -697,7 +700,7 @@ class Contrat extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
 			$sql.= " WHERE fk_contrat=".$this->id;
 
-			dolibarr_syslog("Contrat::delete contratdet sql=".$sql, LOG_DEBUG);
+			dol_syslog("Contrat::delete contratdet sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -712,7 +715,7 @@ class Contrat extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat";
 			$sql.= " WHERE rowid=".$this->id;
 
-			dolibarr_syslog("Contrat::delete contrat sql=".$sql);
+			dol_syslog("Contrat::delete contrat sql=".$sql);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -736,7 +739,7 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Contrat::delete ERROR ".$this->error);
+			dol_syslog("Contrat::delete ERROR ".$this->error);
 			$this->db->rollback();
 			return -1;
 		}
@@ -762,7 +765,7 @@ class Contrat extends CommonObject
 	{
 		global $langs, $conf;
 
-		dolibarr_syslog("Contrat::addline $desc, $pu_ht, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
+		dol_syslog("Contrat::addline $desc, $pu_ht, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
 
 		if ($this->statut == 0 || ($this->statut == 1 && $conf->global->CONTRAT_EDITWHENVALIDATED))
 		{
@@ -829,7 +832,7 @@ class Contrat extends CommonObject
 			if ($date_end > 0) { $sql.= ",".$this->db->idate($date_end); }
 			$sql.= ")";
 
-			dolibarr_syslog("Contrat::addline sql=".$sql);
+			dol_syslog("Contrat::addline sql=".$sql);
 
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -842,7 +845,7 @@ class Contrat extends CommonObject
 				}
 				else
 				{
-					dolibarr_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
+					dol_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
 					$this->db->rollback();
 					return -1;
 				}
@@ -851,13 +854,13 @@ class Contrat extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->error()." sql=".$sql;
-				dolibarr_syslog("Contrat::addline ".$this->error,LOG_ERR);
+				dol_syslog("Contrat::addline ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}
 		else
 		{
-			dolibarr_syslog("Contrat::addline ErrorTryToAddLineOnValidatedContract", LOG_ERR);
+			dol_syslog("Contrat::addline ErrorTryToAddLineOnValidatedContract", LOG_ERR);
 			return -2;
 		}
 	}
@@ -898,7 +901,7 @@ class Contrat extends CommonObject
 			$remise_percent=0;
 		}
 
-		dolibarr_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $date_debut_reel, $date_fin_reel, $tvatx");
+		dol_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $date_debut_reel, $date_fin_reel, $tvatx");
 
 		$this->db->begin();
 
@@ -920,7 +923,7 @@ class Contrat extends CommonObject
 		else { $sql.=",date_cloture=null"; }
 		$sql .= " WHERE rowid = ".$rowid;
 
-		dolibarr_syslog("Contrat::UpdateLine sql=".$sql);
+		dol_syslog("Contrat::UpdateLine sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -933,7 +936,7 @@ class Contrat extends CommonObject
 			else
 			{
 				$this->db->rollback();
-				dolibarr_syslog("Contrat::UpdateLigne Erreur -2");
+				dol_syslog("Contrat::UpdateLigne Erreur -2");
 				return -2;
 			}
 		}
@@ -941,7 +944,7 @@ class Contrat extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dolibarr_syslog("Contrat::UpdateLigne Erreur -1");
+			dol_syslog("Contrat::UpdateLigne Erreur -1");
 			return -1;
 		}
 	}
@@ -962,12 +965,12 @@ class Contrat extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
 			$sql.= " WHERE rowid=".$idline;
 
-			dolibarr_syslog("Contratdet::delete sql=".$sql);
+			dol_syslog("Contratdet::delete sql=".$sql);
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
 				$this->error="Error ".$this->db->lasterror();
-				dolibarr_syslog("Contratdet::delete ".$this->error, LOG_ERR);
+				dol_syslog("Contratdet::delete ".$this->error, LOG_ERR);
 				return -1;
 			}
 
@@ -1160,7 +1163,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE fk_contrat =".$this->id;
 		if ($statut >= 0) $sql.= " AND statut = '$statut'";
 
-		dolibarr_syslog("Contrat::array_detail() sql=".$sql,LOG_DEBUG);
+		dol_syslog("Contrat::array_detail() sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1195,7 +1198,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE fk_soc =".$this->socid;
 		if ($option == 'others') $sql.= " AND c.rowid != ".$this->id;
 
-		dolibarr_syslog("Contrat::getOtherContracts() sql=".$sql,LOG_DEBUG);
+		dol_syslog("Contrat::getOtherContracts() sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1486,7 +1489,7 @@ class ContratLigne
 	function fetch($id, $ref='')
 	{
 		global $langs,$user;
-		
+
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
 
@@ -1520,7 +1523,7 @@ class ContratLigne
 		if ($id)  $sql.= " WHERE t.rowid = ".$id;
 		if ($ref) $sql.= " WHERE t.rowid = '".$ref."'";
 
-		dolibarr_syslog("Contratdet::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("Contratdet::fetch sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1530,7 +1533,7 @@ class ContratLigne
 
 				$this->id    = $obj->rowid;
 				$this->ref   = $obj->rowid;
-				
+
 				$this->tms = $obj->tms;
 				$this->fk_contrat = $obj->fk_contrat;
 				$this->fk_product = $obj->fk_product;
@@ -1566,7 +1569,7 @@ class ContratLigne
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dolibarr_syslog("ContratLigne::fetch ".$this->error, LOG_ERR);
+			dol_syslog("ContratLigne::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1636,7 +1639,7 @@ class ContratLigne
 		$sql.= " commentaire='".addslashes($this->commentaire)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dolibarr_syslog("ContratLigne::update sql=".$sql, LOG_DEBUG);
+		dol_syslog("ContratLigne::update sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1647,7 +1650,7 @@ class ContratLigne
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dolibarr_syslog("ContratLigne::update ".$this->error, LOG_ERR);
+			dol_syslog("ContratLigne::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -1681,7 +1684,7 @@ class ContratLigne
 		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dolibarr_syslog("ContratLigne::update_total sql=".$sql);
+		dol_syslog("ContratLigne::update_total sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1692,7 +1695,7 @@ class ContratLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("ContratLigne::update_total Error ".$this->error);
+			dol_syslog("ContratLigne::update_total Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}

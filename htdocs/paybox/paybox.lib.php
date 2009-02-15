@@ -68,7 +68,7 @@ function llxFooterPayBox()
  *		\brief  	Create a redirect form to paybox form
  *		\return 	int				1 if OK, -1 if ERROR
  */
-function print_paybox_redirect($PRICE,$EMAIL,$urlok,$urlko,$DOLSTRING,$ID=0)
+function print_paybox_redirect($PRICE,$EMAIL,$urlok,$urlko,$TAG,$ID=0)
 {
 	global $conf, $langs, $db;
 
@@ -112,24 +112,24 @@ function print_paybox_redirect($PRICE,$EMAIL,$urlok,$urlko,$DOLSTRING,$ID=0)
 
     dol_syslog("Paypal.lib::print_paybox_redirect PRICE: ".$PRICE, LOG_DEBUG);
 
+    $langsiso=new Translate('',$conf);
+    $langsiso=$langs;
+    $langsiso->charset_output='ISO-8859-1';
+
 	// Definition des parametres vente produit pour paybox
-    $IBS_CMD=$DOLSTRING;
+    $IBS_CMD=$TAG;
     $IBS_TOTAL=$PRICE*100;     	# En centimes
-
     $IBS_MODE=1;            	# Mode formulaire
-
     $IBS_PORTEUR=$EMAIL;
-	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   # Format des param�tres du get de validation en reponse (url a definir sous paybox)
-    $IBS_TXT="<center><b>".$langs->trans("YouWillBeRedirectedOnPayBox")."</b><br><i>".$langs->trans("PleaseBePatient")."...</i><br></center>";
+	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   # Format des parametres du get de validation en reponse (url a definir sous paybox)
+    $IBS_TXT="<center><b>".$langsiso->trans("YouWillBeRedirectedOnPayBox")."</b><br><i>".$langsiso->trans("PleaseBePatient")."...</i><br></center>";
     $IBS_EFFECTUE=$urlok;
     $IBS_ANNULE=$urlko;
     $IBS_REFUSE=$urlko;
-    $IBS_BOUTPI=$langs->trans("Continue");
+    $IBS_BOUTPI=$langsiso->trans("Continue");
     $IBS_BKGD="#FFFFFF";
     $IBS_WAIT="4000";
-
-	$IBS_LANG="ENG";
-    if (eregi('^FR',$langs->defaultlang)) $IBS_LANG="FRA";
+	$IBS_LANG="ENG"; if (eregi('^FR',$langs->defaultlang)) $IBS_LANG="FRA";
 
     dol_syslog("Soumission Paybox", LOG_DEBUG);
     dol_syslog("IBS_MODE: $IBS_MODE", LOG_DEBUG);
@@ -147,31 +147,43 @@ function print_paybox_redirect($PRICE,$EMAIL,$urlok,$urlko,$DOLSTRING,$ID=0)
     dol_syslog("IBS_WAIT: $IBS_WAIT", LOG_DEBUG);
     dol_syslog("IBS_LANG: $IBS_LANG", LOG_DEBUG);
 
-    print '<html><body>';
+    header("Content-type: text/html; charset=".$conf->character_set_client);
+
+    print '<html>'."\n";
+    print '<head>'."\n";
+    print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->character_set_client."\">\n";
+    print '</head>'."\n";
+    print '<body>'."\n";
     print "\n";
-    print '<form action="'.$URLPAYBOX.'" NAME="Submit" method="POST">';
-    print '<input type="hidden" name="IBS_MODE" value="'.$IBS_MODE.'">';
-    print '<input type="hidden" name="IBS_SITE" value="'.$IBS_SITE.'">';
-    print '<input type="hidden" name="IBS_RANG" value="'.$IBS_RANG.'">';
-    print '<input type="hidden" name="IBS_TOTAL" value="'.$IBS_TOTAL.'">';
-    print '<input type="hidden" name="IBS_DEVISE" value="'.$IBS_DEVISE.'">';
-    print '<input type="hidden" name="IBS_CMD" value="'.$IBS_CMD.'">';
-    print '<input type="hidden" name="IBS_PORTEUR" value="'.$IBS_PORTEUR.'">';
-    print '<input type="hidden" name="IBS_RETOUR" value="'.$IBS_RETOUR.'">';
-    print '<input type="hidden" name="IBS_EFFECTUE" value="'.$IBS_EFFECTUE.'">';
-    print '<input type="hidden" name="IBS_ANNULE" value="'.$IBS_ANNULE.'">';
-    print '<input type="hidden" name="IBS_REFUSE" value="'.$IBS_REFUSE.'">';
-    print '<input type="hidden" name="IBS_TXT" value="'.$IBS_TXT.'">';
-    print '<input type="hidden" name="IBS_BKGD" value="'.$IBS_BKGD.'">';
-    print '<input type="hidden" name="IBS_WAIT" value="'.$IBS_WAIT.'">';
-    print '<input type="hidden" name="IBS_LANG" value="'.$IBS_LANG.'">';
-    print '</form>';
+
+    // Formulaire pour module Paybox v1 (IBS_xxx)
+    print '<form action="'.$URLPAYBOX.'" NAME="Submit" method="POST">'."\n";
+    print '<input type="hidden" name="IBS_MODE" value="'.$IBS_MODE.'">'."\n";
+    print '<input type="hidden" name="IBS_SITE" value="'.$IBS_SITE.'">'."\n";
+    print '<input type="hidden" name="IBS_RANG" value="'.$IBS_RANG.'">'."\n";
+    print '<input type="hidden" name="IBS_TOTAL" value="'.$IBS_TOTAL.'">'."\n";
+    print '<input type="hidden" name="IBS_DEVISE" value="'.$IBS_DEVISE.'">'."\n";
+    print '<input type="hidden" name="IBS_CMD" value="'.$IBS_CMD.'">'."\n";
+    print '<input type="hidden" name="IBS_PORTEUR" value="'.$IBS_PORTEUR.'">'."\n";
+    print '<input type="hidden" name="IBS_RETOUR" value="'.$IBS_RETOUR.'">'."\n";
+    print '<input type="hidden" name="IBS_EFFECTUE" value="'.$IBS_EFFECTUE.'">'."\n";
+    print '<input type="hidden" name="IBS_ANNULE" value="'.$IBS_ANNULE.'">'."\n";
+    print '<input type="hidden" name="IBS_REFUSE" value="'.$IBS_REFUSE.'">'."\n";
+    print '<input type="hidden" name="IBS_TXT" value="'.$IBS_TXT.'">'."\n";
+    print '<input type="hidden" name="IBS_BKGD" value="'.$IBS_BKGD.'">'."\n";
+    print '<input type="hidden" name="IBS_WAIT" value="'.$IBS_WAIT.'">'."\n";
+    print '<input type="hidden" name="IBS_LANG" value="'.$IBS_LANG.'">'."\n";
+    print '</form>'."\n";
+
+    // Formulaire pour module Paybox v2 (PBX_xxx)
+
+
     print "\n";
-    print '<script type="text/javascript" language="javascript">';
-    print '	document.Submit.submit();';
-    print '</script>';
+    print '<script type="text/javascript" language="javascript">'."\n";
+//    print '	document.Submit.submit();'."\n";
+    print '</script>'."\n";
     print "\n";
-    print '</body></html>';
+    print '</body></html>'."\n";
     print "\n";
 
 	return;

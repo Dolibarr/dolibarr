@@ -10,7 +10,11 @@ ToComplete=A compléter
 YourEMail=Email de confirmation du paiement
 Creditor=Bénéficiaire
 PaymentCode=Code de paiement
-PayBoxDoPayment=Poursuivre le paiement
+PayBoxDoPayment=Poursuivre le paiement par carte
 YouWillBeRedirectedOnPayBox=Vous serez redirigé vers la page sécurisée Paybox de saisie de votre carte bancaire
 PleaseBePatient=Merci de patientez quelques secondes
-Continue=Continuer 
+Continue=Continuer
+ToOfferALinkForOnlinePaymentOnContractLine=URL offrant une interface de paiement en ligne %s sur la base du montant d'une ligne de contrat
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL offrant une interface de paiement en ligne %s pour un montant libre
+YouCanAddTagOnUrl=Vous pouvez de plus ajouter le paramètre url <b>&tag=<i>value</i></b> à n'importe quelle de ces URL pour voir votre propre tag au code commentaire de paiement.
+ 

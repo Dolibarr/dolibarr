@@ -608,10 +608,11 @@ else
 	$now=gmmktime();
 
     $id = $_GET["id"];
-    if ($id > 0)
+	$ref= $_GET['ref'];
+	if ($id > 0 || ! empty($ref))
     {
         $contrat = new Contrat($db);
-        $result=$contrat->fetch($id);
+        $result=$contrat->fetch($_GET['id'],$_GET['ref']);
         if ($result > 0) $result=$contrat->fetch_lignes();
         if ($result < 0)
         {
@@ -683,7 +684,7 @@ else
 
         // Ref du contrat
         print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-        print $contrat->ref;
+		print $html->showrefnav($contrat,'ref','',1,'ref','ref','');
         print "</td></tr>";
 
         // Customer

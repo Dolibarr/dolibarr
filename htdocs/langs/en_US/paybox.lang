@@ -14,3 +14,6 @@ PayBoxDoPayment=Go on payment
 YouWillBeRedirectedOnPayBox=You will be redirected on secured Paybox page to input you credit card informations
 PleaseBePatient=Please, be patient
 Continue=Next
+ToOfferALinkForOnlinePaymentOnContractLine=URL to offer an %s online payment user interface for a contract line
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer an %s online payment user interface for a free amount
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL to add your own tag to the payment comment code.
