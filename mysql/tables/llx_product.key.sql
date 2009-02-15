@@ -21,4 +21,7 @@
 
 
 ALTER TABLE llx_product ADD UNIQUE uk_product_ref (ref);
+ALTER TABLE llx_product ADD INDEX idx_product_barcode (barcode);
+ALTER TABLE llx_product ADD INDEX idx_product_import_key (import_key);
+
 
