@@ -139,8 +139,9 @@ $var=false;
 if (is_numeric($_REQUEST["amount"]))
 {
 	$found=true;
-
-	// Currency
+	$tag=$_REQUEST["tag"];
+	
+	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$mysoc->nom.'</b></td></tr>'."\n";
@@ -162,7 +163,86 @@ if (is_numeric($_REQUEST["amount"]))
 	// Tag
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$_REQUEST["tag"].'</b></td></tr>'."\n";
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$tag.'</b></td></tr>'."\n";
+	// EMail
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
+	print ' ('.$langs->trans("ToComplete").')';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+}
+
+if ($_REQUEST["amount"] == 'contractline')
+{
+	$found=true;
+
+	require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+
+	$contractline=new ContratLigne($db);
+	$result=$contractline->fetch('',$_GET["ref"]);
+	if ($result < 0)
+	{
+		$mesg=$contractline->error;
+	}
+	else
+	{
+		if ($contractline->fk_contrat > 0)
+		{
+			$contract=new Contrat($db);
+			$result=$contract->fetch($contractline->fk_contrat);
+			if ($result < 0)
+			{
+				$mesg=$contract->error;
+			}
+		}
+		else
+		{
+			$mesg='ErrorRecordNotFound';
+		}
+	}
+	$amount=$contractline->total_ttc;
+	$tag='';
+	if (! empty($_REQUEST["tag"])) $tag=$_REQUEST["tag"].'-';
+	$tag.='thirdparty='.$contract->socid.'-contractref='.$contract->ref.'-contractlineref='.$contractline->ref;
+	$qty=1;
+	if (isset($_REQUEST["qty"])) $qty=$_REQUEST["qty"];
+	
+	// Object
+	$var=!$var;
+	$text=$langs->trans("PaymentRenewContractId",$contractline->ref,$contract->id);
+	if ($contractline->description) $text.='<br>'.dol_htmlentitiesbr($contractline->description);
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$text.'</b></td></tr>'."\n";
+	// Quantity
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Quantity");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
+	print $qty;
+	print '<input type="hidden" name="newqty" value="'.$qty.'">';
+	print '</b></td></tr>'."\n";
+
+	// Creditor
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$mysoc->nom.'</b></td></tr>'."\n";
+	// Amount
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
+	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
+	print '</td><td class="CTableRow'.($var?'1':'2').'">';
+	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
+	else {
+		print '<b>'.price($amount).'</b>';
+		print '<input type="hidden" name="newamount" value="'.$amount.'">';
+	}
+	print '</td></tr>'."\n";
+	// Currency
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Currency");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>EUR</b></td></tr>'."\n";
+	// Tag
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$tag.'</b></td></tr>'."\n";
 	// EMail
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
@@ -172,8 +252,7 @@ if (is_numeric($_REQUEST["amount"]))
 }
 
 
-
-if (! $found) $mesg=$langs->trans("ErrorBadParameters");
+if (! $found && ! $mesg) $mesg=$langs->trans("ErrorBadParameters");
 
 if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>';
 

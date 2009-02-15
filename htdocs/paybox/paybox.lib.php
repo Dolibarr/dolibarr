@@ -25,7 +25,6 @@
  */
 
 
-
 function llxHeaderPaybox($title, $head = "")
 {
 	global $user, $conf, $langs;
@@ -120,7 +119,7 @@ function print_paybox_redirect($PRICE,$EMAIL,$urlok,$urlko,$DOLSTRING,$ID=0)
     $IBS_MODE=1;            	# Mode formulaire
 
     $IBS_PORTEUR=$EMAIL;
-	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   # Format des paramètres du get de validation en reponse (url a definir sous paybox)
+	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   # Format des paramï¿½tres du get de validation en reponse (url a definir sous paybox)
     $IBS_TXT="<center><b>".$langs->trans("YouWillBeRedirectedOnPayBox")."</b><br><i>".$langs->trans("PleaseBePatient")."...</i><br></center>";
     $IBS_EFFECTUE=$urlok;
     $IBS_ANNULE=$urlko;

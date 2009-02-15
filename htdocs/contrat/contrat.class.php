@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/contrat/contrat.class.php
- \ingroup    contrat
- \brief      Fichier de la classe des contrats
- \version    $Id$
+ *	\file       htdocs/contrat/contrat.class.php
+ *	\ingroup    contrat
+ *	\brief      Fichier de la classe des contrats
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
@@ -31,8 +31,8 @@ require_once(DOL_DOCUMENT_ROOT."/lib/price.lib.php");
 
 
 /**
- \class      Contrat
- \brief      Classe permettant la gestion des contrats
+ *	\class      Contrat
+ *	\brief      Classe permettant la gestion des contrats
  */
 class Contrat extends CommonObject
 {
@@ -72,7 +72,7 @@ class Contrat extends CommonObject
 
 	/**
 	 *    \brief      Constructeur de la classe
-	 *    \param      DB          handler acc�s base de donn�es
+	 *    \param      DB          Databse handler
 	 */
 	function Contrat($DB)
 	{
@@ -353,6 +353,7 @@ class Contrat extends CommonObject
 
 				$ligne                 = new ContratLigne($this->db);
 				$ligne->id             = $objp->rowid;
+				$ligne->ref            = $objp->rowid;
 				$ligne->fk_contrat     = $objp->fk_contrat;
 				$ligne->desc           = $objp->description;  // Description ligne
 				$ligne->qty            = $objp->qty;
@@ -1333,10 +1334,9 @@ class Contrat extends CommonObject
 
 
 /**
- \class      ContratLigne
- \brief      Classe permettant la gestion des lignes de contrats
+ *	\class      ContratLigne
+ *	\brief      Classe permettant la gestion des lignes de contrats
  */
-
 class ContratLigne
 {
 	var $db;							//!< To store db handler
@@ -1346,7 +1346,7 @@ class ContratLigne
 	//var $table_element='contratdet';	//!< Name of table without prefix where object is stored
 
 	var $id;
-
+	var $ref;
 	var $tms;
 	var $fk_contrat;
 	var $fk_product;
@@ -1477,15 +1477,16 @@ class ContratLigne
 		return $result;
 	}
 
-	/*
-	 *    \brief      Load object in memory from database
-	 *    \param      id          id object
-	 *    \param      user        User that load
-	 *    \return     int         <0 if KO, >0 if OK
+	/**
+	 *    	\brief      Load object in memory from database
+	 *    	\param      id          id object
+	 * 		\param		ref			Ref of contract
+	 *    	\return     int         <0 if KO, >0 if OK
 	 */
-	function fetch($id, $user=0)
+	function fetch($id, $ref='')
 	{
-		global $langs;
+		global $langs,$user;
+		
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
 
@@ -1515,9 +1516,9 @@ class ContratLigne
 		$sql.= " t.fk_user_ouverture,";
 		$sql.= " t.fk_user_cloture,";
 		$sql.= " t.commentaire";
-
 		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as t";
-		$sql.= " WHERE t.rowid = ".$id;
+		if ($id)  $sql.= " WHERE t.rowid = ".$id;
+		if ($ref) $sql.= " WHERE t.rowid = '".$ref."'";
 
 		dolibarr_syslog("Contratdet::fetch sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -1528,7 +1529,8 @@ class ContratLigne
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id    = $obj->rowid;
-
+				$this->ref   = $obj->rowid;
+				
 				$this->tms = $obj->tms;
 				$this->fk_contrat = $obj->fk_contrat;
 				$this->fk_product = $obj->fk_product;
@@ -1555,7 +1557,6 @@ class ContratLigne
 				$this->fk_user_ouverture = $obj->fk_user_ouverture;
 				$this->fk_user_cloture = $obj->fk_user_cloture;
 				$this->commentaire = $obj->commentaire;
-
 
 			}
 			$this->db->free($resql);
