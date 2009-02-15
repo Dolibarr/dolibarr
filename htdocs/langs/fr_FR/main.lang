@@ -126,6 +126,7 @@ Group=Groupe
 Groups=Groupes
 Password=Mot de passe
 PasswordRetype=Retaper le mot de passe
+NoteSomeFeaturesAreDisabled=Attention, seules quelques modules/fonctionnalités ont été activés dans cette démo.
 Name=Nom
 Parameter=Paramètre
 Parameters=Paramètres
