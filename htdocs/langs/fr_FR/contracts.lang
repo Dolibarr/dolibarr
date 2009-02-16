@@ -76,6 +76,7 @@ MoveToAnotherContract=Déplacer le service vers un autre contrat de ce tiers.
 ConfirmMoveToAnotherContract=J'ai choisi le contrat cible et confirme le déplacement du service dans ce contrat.
 ConfirmMoveToAnotherContractQuestion=Choisissez vers quel autre contrat de ce même tiers, vous voulez déplacer ce service ?
 PaymentRenewContractId=Renouvellement service (numéro %s)
+ExpiredSince=Expiré depuis le
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat
 TypeContact_contrat_internal_SALESREPFOLL=Commercial suivi du contrat

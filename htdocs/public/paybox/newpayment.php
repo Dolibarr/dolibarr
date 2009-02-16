@@ -375,6 +375,13 @@ if ($_REQUEST["amount"] == 'contractline')
 	//	$text.='<br>'.$langs->trans("DateEndPlanned").': ';
 	//	$text.=dolibarr_print_date($contractline->date_fin_validite);
 	//}
+	if ($contractline->date_fin_validite)
+	{
+		//$dateactend = dol_time_plus_duree ($contractline->date_fin_validite, $product->duration_value, $product->duration_unit);
+		//print ', '.$langs->trans("DateEndPlanned").': '.dolibarr_print_date($contractline->date_fin_validite);
+		$text.='<br>'.$langs->trans("ExpiredSince").': '.dolibarr_print_date($contractline->date_fin_validite);
+	}
+
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="ref" value="'.$contractline->ref.'">';
@@ -382,12 +389,15 @@ if ($_REQUEST["amount"] == 'contractline')
 
 	// Quantity
 	$var=!$var;
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Quantity");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$qty.'</b>';
+	$label=$langs->trans("Quantity");
+	$qty=1;
+	$duration='';
 	if ($contractline->fk_product)
 	{
-		if ($product->duration_value > 0)
+		if ($product->isservice() && $product->duration_value > 0)
 		{
+			$label=$langs->trans("Duration");
+
 			// TODO Put this in a global method
 			if ($product->duration_value > 1)
 			{
@@ -397,16 +407,11 @@ if ($_REQUEST["amount"] == 'contractline')
 			{
 				$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("DurationDay"),"w"=>$langs->trans("DurationWeek"),"m"=>$langs->trans("DurationMonth"),"y"=>$langs->trans("DurationYear"));
 			}
-			$duration=' ('.$product->duration_value.' '.$dur[$product->duration_unit];
-			print $duration;
-			if ($contractline->date_fin_validite)
-			{
-				$dateactend = dol_time_plus_duree ($contractline->date_fin_validite, $product->duration_value, $product->duration_unit);
-				print ', '.$langs->trans("DateEndPlanned").': '.dolibarr_print_date($contractline->date_fin_validite);
-			}
-			print ')';
+			$duration=$product->duration_value.' '.$dur[$product->duration_unit];
 		}
 	}
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$label.'</td>';
+	print '<td class="CTableRow'.($var?'1':'2').'"><b>'.($duration?$duration:$qty).'</b>';
 	print '<input type="hidden" name="newqty" value="'.$qty.'">';
 	print '</b></td></tr>'."\n";
 
