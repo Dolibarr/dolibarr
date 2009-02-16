@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
         \brief      Page accueil de la zone mailing
         \version    $Id$
 */
- 
+
 require("./pre.inc.php");
 
 $langs->load("commercial");
@@ -31,12 +31,12 @@ $langs->load("orders");
 
 if (! $user->rights->mailing->lire || $user->societe_id > 0)
   accessforbidden();
-	  
+
 
 /*
  *	View
  */
-  
+
 llxHeader('','Mailing');
 
 print_fiche_titre($langs->trans("MailingArea"));
@@ -82,7 +82,7 @@ while (($file = readdir($handle))!==false)
             $classname = "mailing_".$modulename;
             require_once($file);
             $mailmodule = new $classname($db);
-            
+
             $qualified=1;
             foreach ($mailmodule->require_module as $key)
             {
@@ -99,38 +99,38 @@ while (($file = readdir($handle))!==false)
             {
                 $var = !$var;
 
-                foreach ($mailmodule->getSqlArrayForStats() as $sql) 
+                foreach ($mailmodule->getSqlArrayForStats() as $sql)
                 {
                     print '<tr '.$bc[$var].'>';
-        
+
                     $result=$db->query($sql);
-                    if ($result) 
+                    if ($result)
                     {
                       $num = $db->num_rows($result);
-                    
+
                       $i = 0;
-                    
-                      while ($i < $num ) 
+
+                      while ($i < $num )
                         {
                           $obj = $db->fetch_object($result);
                           print '<td>'.img_object('',$mailmodule->picto).' '.$obj->label.'</td><td align="right">'.$obj->nb.'<td>';
                           $i++;
                         }
-                    
+
                       $db->free($result);
-                    } 
+                    }
                     else
                     {
                       dolibarr_print_error($db);
                     }
                     print '</tr>';
                 }
-            }            
+            }
         }
     }
 }
 closedir($handle);
- 
+
 
 
 print "</table><br>";
@@ -139,35 +139,38 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*
- * Liste des derniers mailings
+ * List of last emailings
  */
-
-$sql  = "SELECT m.rowid, m.titre, m.nbemail, m.statut";
-$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-$sql .= " LIMIT 10";
+$limit=10;
+$sql  = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat";
+$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
+$sql.= " ORDER BY m.date_creat DESC";
+$sql.= " LIMIT ".$limit;
 $result=$db->query($sql);
-if ($result) 
+if ($result)
 {
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print '<td colspan="2">'.$langs->trans("LastMailings",10).'</td>';
+  print '<td colspan="2">'.$langs->trans("LastMailings",$limit).'</td>';
+  print '<td align="center">'.$langs->trans("DateCreation").'</td>';
   print '<td align="center">'.$langs->trans("NbOfEMails").'</td>';
-  print '<td align="right">'.$langs->trans("Status").'</td></tr>';
+  print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
 
   $num = $db->num_rows($result);
   if ($num > 0)
-    { 
+    {
       $var = true;
       $i = 0;
-      
-      while ($i < $num ) 
+
+      while ($i < $num )
 	{
 	  $obj = $db->fetch_object($result);
 	  $var=!$var;
-	  
+
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
 	  print '<td>'.dolibarr_trunc($obj->titre,40).'</td>';
+	  print '<td align="center">'.dolibarr_print_date($obj->date_creat).'</td>';
 	  print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
 	  $mailstatic=new Mailing($db);
 	  print '<td align="right">'.$mailstatic->LibStatut($obj->statut,5).'</td>';
@@ -176,13 +179,13 @@ if ($result)
 	}
 
     }
-  else 
+  else
     {
-     print '<tr><td>'.$langs->trans("None").'</td></tr>';   
+     print '<tr><td>'.$langs->trans("None").'</td></tr>';
     }
   print "</table><br>";
   $db->free($result);
-} 
+}
 else
 {
   dolibarr_print_error($db);
@@ -201,7 +204,7 @@ if ($langs->file_exists("html/spam.html",0)) {
     print '<div style="padding: 4px; background: #FAFAFA; border: 1px solid #BBBBBB;" >';
     $langs->print_file("html/spam.html",0);
     print '</div>';
-    
+
     print '<br>';
  }
 
