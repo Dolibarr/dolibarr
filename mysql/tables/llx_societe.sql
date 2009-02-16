@@ -68,5 +68,6 @@ create table llx_societe
   mode_reglement     tinyint, 					          -- mode de réglement
   cond_reglement     tinyint, 							  -- condition de réglement
   tva_assuj          tinyint        DEFAULT 1,	          -- assujeti ou non à la TVA
-  gencod			 varchar(255)						  --
+  gencod			 varchar(255),						  -- barcode
+  price_level        tinyint(4) NULL					  -- level of price for multiprices
 )type=innodb;
