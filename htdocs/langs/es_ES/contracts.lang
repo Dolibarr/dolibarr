@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - contracts
+# Dolibarr language file - es_ES - contracts 
 CHARSET = UTF-8
 ContractsArea = Área contratos
 ListOfContracts = Listado de contratos
@@ -74,7 +74,8 @@ CloseAllContracts = cerrar todos los contratos
 MoveToAnotherContract = Mover el servicio a otro contrato de este tercero.
 ConfirmMoveToAnotherContract = He elegido el contrato y confirmo el cambio de servicio en el presente contrato.
 ConfirmMoveToAnotherContractQuestion = Elija cualquier otro contrato del mismo tercero, ¿desea mover este servicio?
-##### Types de contacts ##### = undefined
+PaymentRenewContractId = Renovación servicio (número %s)
+##### Types de contacts ##### = 
 TypeContact_contrat_internal_SALESREPSIGN = Comercial firmante del contrato
 TypeContact_contrat_internal_SALESREPFOLL = Comercial seguimiento del contrato
 TypeContact_contrat_external_BILLING = Contacto cliente de facturación del contrato
