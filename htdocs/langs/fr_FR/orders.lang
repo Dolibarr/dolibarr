@@ -99,6 +99,7 @@ AuthorRequest=Auteur/Demandeur
 UseCustomerContactAsOrderRecipientIfExist=Utiliser adresse contact suivi client si défini plutot que adresse tiers comme destinataire des commandes
 RunningOrders=Commandes en cours
 UserWithApproveOrderGrant=Utilisateurs habilités à approuver les commandes
+PaymentOrderRef=Paiement commande %s
 
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON non définie
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON non définie

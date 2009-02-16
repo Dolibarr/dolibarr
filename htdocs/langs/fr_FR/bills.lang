@@ -321,6 +321,8 @@ CreditNoteConvertedIntoDiscount=Cet avoir a été converti en %s
 UsBillingContactAsIncoiveRecipientIfExist=Utiliser l'adresse du contact facturation client de la facture plutot que l'adresse du tiers comme destinataire des factures
 ShowUnpayedAll=Afficher tous les impayés
 ShowUnpayedLateOnly=Afficher impayés en retard uniquement
+PaymentInvoiceRef=Paiement facture %s
+
 # oursin PDF model
 Of=du
 

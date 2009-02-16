@@ -318,7 +318,7 @@ ChequeDeposits=Cheques deposits
 Cheques=Cheques
 CreditNoteConvertedIntoDiscount=This credit note has been converted into %s
 UsBillingContactAsIncoiveRecipientIfExist=Use customer billing contact address instead of third party address as recipient for invoices
-
+PaymentInvoiceRef=Payment invoice %s
 # oursin PDF model
 Of=du
 

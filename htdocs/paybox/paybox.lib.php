@@ -68,7 +68,7 @@ function llxFooterPayBox()
  *		\brief  	Create a redirect form to paybox form
  *		\return 	int				1 if OK, -1 if ERROR
  */
-function print_paybox_redirect($PRICE,$EMAIL,$urlok,$urlko,$TAG,$ID=0)
+function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 {
 	global $conf, $langs, $db;
 
@@ -79,14 +79,13 @@ function print_paybox_redirect($PRICE,$EMAIL,$urlok,$urlko,$TAG,$ID=0)
 	if ($conf->global->PAYBOX_IBS_SITE) $IBS_SITE=$conf->global->PAYBOX_IBS_SITE;
 	$IBS_RANG="99";         # Rang test
 	if ($conf->global->PAYBOX_IBS_RANG) $IBS_RANG=$conf->global->PAYBOX_IBS_RANG;
-	$IBS_DEVISE="978";			# Euro
-	if ($conf->global->PAYBOX_IBS_DEVISE) $IBS_DEVISE=$conf->global->PAYBOX_IBS_DEVISE;
+	$IBS_DEVISE="";			# Currency
+	if ($CURRENCY == 'EUR') $IBS_DEVISE="978";
 
 
-	$ModulePaybox="module_linux.cgi";
-    if ($_SERVER["WINDIR"] && eregi("windows",$_SERVER["WINDIR"])) { $ModulePaybox="module_NT_2000.cgi"; }
-	$URLPAYBOX=URL_ROOT.'/cgi-bin/'.$ModulePaybox;
-	if ($conf->global->PAYBOX_CGI_URL) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL;
+	$URLPAYBOX="";
+	if ($conf->global->PAYBOX_CGI_URL_V1) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V1;
+	//if ($conf->global->PAYBOX_CGI_URL_V2) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V2;
 
 	if (empty($IBS_DEVISE))
 	{
@@ -95,7 +94,7 @@ function print_paybox_redirect($PRICE,$EMAIL,$urlok,$urlko,$TAG,$ID=0)
 	}
 	if (empty($URLPAYBOX))
 	{
-		dol_print_error('',"Paybox setup param PAYBOX_CGI_URL not defined");
+		dol_print_error('',"Paybox setup param PAYBOX_CGI_URL_V1 and PAYBOX_CGI_URL_V2 undefined");
 		return -1;
 	}
 	if (empty($IBS_SITE))
@@ -109,27 +108,27 @@ function print_paybox_redirect($PRICE,$EMAIL,$urlok,$urlko,$TAG,$ID=0)
 		return -1;
 	}
 
-
-    dol_syslog("Paypal.lib::print_paybox_redirect PRICE: ".$PRICE, LOG_DEBUG);
-
-    $langsiso=new Translate('',$conf);
-    $langsiso=$langs;
-    $langsiso->charset_output='ISO-8859-1';
-
 	// Definition des parametres vente produit pour paybox
     $IBS_CMD=$TAG;
     $IBS_TOTAL=$PRICE*100;     	# En centimes
     $IBS_MODE=1;            	# Mode formulaire
     $IBS_PORTEUR=$EMAIL;
 	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   # Format des parametres du get de validation en reponse (url a definir sous paybox)
-    $IBS_TXT="<center><b>".$langsiso->trans("YouWillBeRedirectedOnPayBox")."</b><br><i>".$langsiso->trans("PleaseBePatient")."...</i><br></center>";
+    //$IBS_TXT="<center><b>".$langsiso->trans("YouWillBeRedirectedOnPayBox")."</b><br><i>".$langsiso->trans("PleaseBePatient")."...</i><br></center>";
+    $IBS_TXT=' ';	// Use a space
+    $IBS_BOUTPI=$langs->trans("Wait");
+    //$IBS_BOUTPI='';
     $IBS_EFFECTUE=$urlok;
     $IBS_ANNULE=$urlko;
     $IBS_REFUSE=$urlko;
-    $IBS_BOUTPI=$langsiso->trans("Continue");
     $IBS_BKGD="#FFFFFF";
-    $IBS_WAIT="4000";
-	$IBS_LANG="ENG"; if (eregi('^FR',$langs->defaultlang)) $IBS_LANG="FRA";
+    $IBS_WAIT="2000";
+	$IBS_LANG="GBR"; 	// FRA, GBR, ESP, ITA et DEU
+	if (eregi('^FR',$langs->defaultlang)) $IBS_LANG="FRA";
+	if (eregi('^ES',$langs->defaultlang)) $IBS_LANG="ESP";
+	if (eregi('^IT',$langs->defaultlang)) $IBS_LANG="ITA";
+	if (eregi('^DE',$langs->defaultlang)) $IBS_LANG="DEU";
+	$IBS_OUTPUT='E';
 
     dol_syslog("Soumission Paybox", LOG_DEBUG);
     dol_syslog("IBS_MODE: $IBS_MODE", LOG_DEBUG);
@@ -146,6 +145,7 @@ function print_paybox_redirect($PRICE,$EMAIL,$urlok,$urlko,$TAG,$ID=0)
     dol_syslog("IBS_BKGD: $IBS_BKGD", LOG_DEBUG);
     dol_syslog("IBS_WAIT: $IBS_WAIT", LOG_DEBUG);
     dol_syslog("IBS_LANG: $IBS_LANG", LOG_DEBUG);
+    dol_syslog("IBS_OUTPUT: $IBS_OUTPUT", LOG_DEBUG);
 
     header("Content-type: text/html; charset=".$conf->character_set_client);
 
@@ -180,7 +180,7 @@ function print_paybox_redirect($PRICE,$EMAIL,$urlok,$urlko,$TAG,$ID=0)
 
     print "\n";
     print '<script type="text/javascript" language="javascript">'."\n";
-//    print '	document.Submit.submit();'."\n";
+    print '	document.Submit.submit();'."\n";
     print '</script>'."\n";
     print "\n";
     print '</body></html>'."\n";

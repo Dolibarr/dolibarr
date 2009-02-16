@@ -26,7 +26,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
-$service='PayBox';
+$servicename='PayBox';
 
 $langs->load("admin");
 $langs->load("paybox");
@@ -37,8 +37,9 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'setvalue' && $user->admin)
 {
-	$result=dolibarr_set_const($db, "PAYBOX_IBS_DEVISE",$_POST["PAYBOX_IBS_DEVISE"]);
-	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL",$_POST["PAYBOX_CGI_URL"]);
+	//$result=dolibarr_set_const($db, "PAYBOX_IBS_DEVISE",$_POST["PAYBOX_IBS_DEVISE"]);
+	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V1",$_POST["PAYBOX_CGI_URL_V1"]);
+	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V2",$_POST["PAYBOX_CGI_URL_V2"]);
 	$result=dolibarr_set_const($db, "PAYBOX_CSS_URL",$_POST["PAYBOX_CSS_URL"]);
 	$result=dolibarr_set_const($db, "PAYBOX_IBS_SITE",$_POST["PAYBOX_IBS_SITE"]);
 	$result=dolibarr_set_const($db, "PAYBOX_IBS_RANG",$_POST["PAYBOX_IBS_RANG"]);
@@ -87,25 +88,34 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
+/*
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("PAYBOX_IBS_DEVISE").'</td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_DEVISE" value="'.$conf->global->PAYBOX_IBS_DEVISE.'">';
 print '<br>'.$langs->trans("Example").': 978 (EUR)';
 print '</td></tr>';
-
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PAYBOX_CGI_URL").'</td><td>';
-print '<input size="64" type="text" name="PAYBOX_CGI_URL" value="'.$conf->global->PAYBOX_CGI_URL.'">';
-print '<br>'.$langs->trans("Example").': http://mysite/cgi-bin/module_linux.cgi';
-print '</td></tr>';
+*/
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("PAYBOX_CSS_URL").'</td><td>';
 print '<input size="64" type="text" name="PAYBOX_CSS_URL" value="'.$conf->global->PAYBOX_CSS_URL.'">';
 print '<br>'.$langs->trans("Example").': http://mysite/mycss.css';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PAYBOX_CGI_URL_V1").'</td><td>';
+print '<input size="64" type="text" name="PAYBOX_CGI_URL_V1" value="'.$conf->global->PAYBOX_CGI_URL_V1.'">';
+print '<br>'.$langs->trans("Example").': http://mysite/cgi-bin/module_linux.cgi';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PAYBOX_CGI_URL_V2").'</td><td>';
+print '<input size="64" type="text" name="PAYBOX_CGI_URL_V2" value="'.$conf->global->PAYBOX_CGI_URL_V2.'">';
+print '<br>'.$langs->trans("Example").': http://mysite/cgi-bin/modulev2_redhat72.cgi';
 print '</td></tr>';
 
 $var=!$var;
@@ -132,14 +142,19 @@ print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 $firstpart=$dolibarr_main_url_root;
 $regex=DOL_URL_ROOT.'$';
 $firstpart=eregi_replace($regex,'',$firstpart);
-//print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=order&ref=<i>orderref</i>&tag=<i>ATAGOFYOURCHOICE</i>'."<br>\n";
-//print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=invoice&ref=<i>invoiceref</i>&tag=<i>ATAGOFYOURCHOICE</i>'."<br>\n";
 print '<br>';
-print $langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$service).':<br>';
-print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=contractline&ref=<i>contractlineref</i>'."<br>\n";
+print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
+print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=order&ref=<i>orderref</i></b>'."<br>\n";
 print '<br>';
-print $langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$service).':<br>';
-print $firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>yourfreetag</i>'."<br>\n";
+print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
+print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=invoice&ref=<i>invoiceref</i></b>'."<br>\n";
+//print $langs->trans("SetupPayBoxToHavePaymentCreatedAutomatically",$langs->transnoentitiesnoconv("FeatureNotYetAvailable"))."<br>\n";
+print '<br>';
+print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
+print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=contractline&ref=<i>contractlineref</i></b>'."<br>\n";
+print '<br>';
+print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
+print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>yourfreetag</i></b>'."<br>\n";
 print '<br>';
 print $langs->trans("YouCanAddTagOnUrl");
 
