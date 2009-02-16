@@ -624,7 +624,7 @@ class pdf_crabe extends ModelePDFFactures
 
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('Arial','B',8);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$outputlangs->convToOutputCharset($account->proprio)).':',0,'L',0);
+						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 						$pdf->SetXY($this->marge_gauche, $posy);
@@ -711,7 +711,7 @@ class pdf_crabe extends ModelePDFFactures
 				if ($tvakey)    // On affiche pas taux 0
 				{
 					$this->atleastoneratenotnull++;
-	
+
 					$index++;
 					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 					$tvacompl='';
@@ -727,7 +727,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 				}
 			}
-			
+
 			if (! $this->atleastoneratenotnull)	// If no vat at all
 			{
 				$index++;
@@ -737,7 +737,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
 			}
 		}
-			
+
 		// Total TTC
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
@@ -842,7 +842,7 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetXY ($this->posxtva-1, $tab_top+2);
 			$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
 		}
-		
+
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxup-1, $tab_top+2);
 		$pdf->MultiCell(18,2, $outputlangs->transnoentities("PriceUHT"),'','C');

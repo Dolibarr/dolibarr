@@ -536,7 +536,7 @@ class pdf_oursin extends ModelePDFFactures
 
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('Arial','B',8);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$outputlangs->convToOutputCharset($account->proprio)).':',0,'L',0);
+						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 						$pdf->SetXY($this->marge_gauche, $posy);
@@ -590,7 +590,7 @@ class pdf_oursin extends ModelePDFFactures
 	function _tableau_tot(&$pdf, $fac, $deja_regle, $posy, $outputlangs)
 	{
 		global $conf,$langs;
-		
+
 		$langs->load("main");
 		$langs->load("bills");
 
@@ -602,7 +602,7 @@ class pdf_oursin extends ModelePDFFactures
 		// Tableau total
 		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
 		$lltot = 200; $largcol2 = $lltot - $col2x;
-		
+
 		$pdf->SetXY ($this->marges['g'], $tab2_top + 0);
 
 		/*
@@ -633,7 +633,7 @@ class pdf_oursin extends ModelePDFFactures
 				if ($tvakey)    // On affiche pas taux 0
 				{
 					$this->atleastoneratenotnull++;
-	
+
 					$index++;
 					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 					$tvacompl='';
@@ -649,7 +649,7 @@ class pdf_oursin extends ModelePDFFactures
 					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 				}
 			}
-			
+
 			if (! $this->atleastoneratenotnull)	// If no vat at all
 			{
 				$index++;
@@ -672,7 +672,7 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_ttc), 0, 'R', 0);
 			$pdf->SetTextColor(0,0,0);
 		}
-		
+
 		$creditnoteamount=$fac->getSommeCreditNote();
 		$resteapayer = $fac->total_ttc - $deja_regle - $creditnoteamount;
 		if ($object->paye) $resteapayer=0;
