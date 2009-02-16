@@ -837,7 +837,7 @@ class CommonObject
 	function update_price()
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-		
+
 		$err=0;
 
 		// List lines to sum
@@ -855,7 +855,7 @@ class CommonObject
 			$this->total_ht  = 0;
 			$this->total_tva = 0;
 			$this->total_ttc = 0;
-			
+
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
@@ -878,7 +878,7 @@ class CommonObject
 			if ($this->element == 'facture_fourn') $fieldtva='total_tva';
 			$fieldttc='total_ttc';
 			if ($this->element == 'propal') $fieldttc='total';
-			
+
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
 			$sql .= " ".$fieldht."='".price2num($this->total_ht)."',";
 			$sql .= " ".$fieldtva."='".price2num($this->total_tva)."',";
@@ -905,7 +905,7 @@ class CommonObject
 			dolibarr_syslog("CommonObject::update_price error=".$this->error,LOG_ERR);
 			return -1;
 		}
-	}	
+	}
 }
 
 ?>

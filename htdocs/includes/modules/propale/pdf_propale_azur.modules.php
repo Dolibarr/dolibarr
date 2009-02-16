@@ -501,7 +501,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('Arial','B',8);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$outputlangs->convToOutputCharset($account->proprio)).':',0,'L',0);
+						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 						$pdf->SetXY($this->marge_gauche, $posy);
@@ -828,17 +828,24 @@ class pdf_propale_azur extends ModelePDFPropales
 
 			$pdf->SetXY($this->marge_gauche+2,$posy+3);
 
-			// Customer name
+			// Sender name
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('Arial','B',11);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
-			// Customer properties
+			// Sended properties
 			$carac_emetteur = '';
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
 			$carac_emetteur .= "\n";
-			// Tel
+		 	// Add internal contact of proposal if defined
+			$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
+		 	if (sizeof($arrayidcontact) > 0)
+		 	{
+		 		$object->fetch_user($arrayidcontact[0]);
+		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->fullname);
+		 	}
+		 	// Tel
 			if ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($this->emetteur->tel);
 			// Fax
 			if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($this->emetteur->fax);
@@ -849,14 +856,14 @@ class pdf_propale_azur extends ModelePDFPropales
 
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY($this->marge_gauche+2,$posy+8);
-			$pdf->MultiCell(80,4, $carac_emetteur);
+			$pdf->MultiCell(80,3, $carac_emetteur);
 
 			// Client destinataire
 			$posy=42;
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(102,$posy-5);
-			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
+			$pdf->MultiCell(80,4, $outputlangs->transnoentities("BillTo").":");
 			$object->fetch_client();
 
 			// Cadre client destinataire

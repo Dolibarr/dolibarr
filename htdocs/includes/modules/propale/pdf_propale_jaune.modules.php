@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -172,7 +172,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $propale, $outputlangs);
+				$this->_pagehead($pdf, $propale, 1, $outputlangs);
 				$pdf->SetFont('Arial','', 9);
 				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -246,7 +246,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $propale, $outputlangs);
+						$this->_pagehead($pdf, $propale, 0, $outputlangs);
 						$pdf->SetFont('Arial','', 9);
 						$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
@@ -343,12 +343,12 @@ class pdf_propale_jaune extends ModelePDFPropales
 	}
 
 
-	function _pagehead(&$pdf, $propale, $outputlangs)
+	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
 	{
 		global $conf,$langs;
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
-		if($propale->statut==0 && defined("PROPALE_DRAFT_WATERMARK") )
+		if($object->statut==0 && defined("PROPALE_DRAFT_WATERMARK") )
 		{
 			$watermark_angle=deg2rad(55);
 			$watermark_x=5;
@@ -365,13 +365,27 @@ class pdf_propale_jaune extends ModelePDFPropales
 			$pdf->_out('Q');
 		}
 
-		$pdf->SetTextColor(0,0,0);
+		$posy=42;
 
-		// Caracteristiques emetteur
+		$pdf->SetXY($this->marge_gauche+2,$posy);
+
+		// Sender name
+		$pdf->SetTextColor(0,0,00);
+		$pdf->SetFont('Arial','B',11);
+		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+
+		// Sender properties
 		$carac_emetteur = '';
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
 		$carac_emetteur .= "\n";
+	 	// Add internal contact of proposal if defined
+		$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
+	 	if (sizeof($arrayidcontact) > 0)
+	 	{
+	 		$object->fetch_user($arrayidcontact[0]);
+	 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->fullname);
+	 	}
 		// Tel
 		if ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($this->emetteur->tel);
 		// Fax
@@ -382,7 +396,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
 		$pdf->SetFont('Arial','',9);
-		$pdf->SetXY(12,42);
+		$pdf->SetXY($this->marge_gauche+2,$posy+4);
 		$pdf->MultiCell(80,3, $carac_emetteur);
 
 
@@ -403,14 +417,13 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->rect(110, 90, 90, 10);
 
 		$pdf->SetXY(10,90);
-		$pdf->MultiCell(110, 10, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($propale->ref));
+		$pdf->MultiCell(110, 10, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref));
 		$pdf->SetXY(110,90);
-		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Date")." : " . dol_print_date($propale->date,'day',false,$outputlangs,true));
+		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs,true));
 
 
 		$posy=39;
 
-		$object=$propale;
 		$object->fetch_client();
 
 

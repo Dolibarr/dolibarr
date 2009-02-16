@@ -358,60 +358,6 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				}
 
 				/*
-				 * Propose mode r�glement par CHQ
-				 */
-				/*
-				 if (defined("FACTURE_CHQ_NUMBER"))
-				 {
-				 if (FACTURE_CHQ_NUMBER > 0)
-				 {
-				 $account = new Account($this->db);
-				 $account->fetch(FACTURE_CHQ_NUMBER);
-
-				 $pdf->SetXY ($this->marge_gauche, 227);
-				 $pdf->SetFont('Arial','B',8);
-				 $pdf->MultiCell(90, 3, "R�glement par ch�que � l'ordre de ".$account->proprio." envoy� �:",0,'L',0);
-				 $pdf->SetXY ($this->marge_gauche, 231);
-				 $pdf->SetFont('Arial','',8);
-				 $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
-				 }
-				 }
-				 */
-
-				/*
-				 * Propose mode reglement par RIB
-				 */
-				/*
-				 if (defined("FACTURE_RIB_NUMBER"))
-				 {
-				 if (FACTURE_RIB_NUMBER > 0)
-				 {
-				 $account = new Account($this->db);
-				 $account->fetch(FACTURE_RIB_NUMBER);
-
-				 $curx=$this->marge_gauche;
-				 $cury=242;
-
-				 pdf_bank($pdf,$outputlangs,$curx,$cury,$account);
-				 }
-				 }
-				 */
-
-				/*
-				 * Conditions de r�glements
-				 */
-				/* Pour l'instant les conditions de r�glement ne sont pas g�r�es sur les propales */
-				/*
-				 $pdf->SetFont('Arial','B',10);
-				 $pdf->SetXY($this->marge_gauche, 217);
-				 $titre = "Conditions de r�glement:";
-				 $pdf->MultiCell(80, 5, $titre, 0, 'L');
-				 $pdf->SetFont('Arial','',10);
-				 $pdf->SetXY(54, 217);
-				 $pdf->MultiCell(80, 5, $prop->cond_reglement_facture,0,'L');
-				 */
-
-				/*
 				 * Pied de page
 				 */
 				$this->_pagefoot($pdf, $outputlangs);
