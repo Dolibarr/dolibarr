@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - admin
+# Dolibarr language file - ca_ES - admin 
 CHARSET = UTF-8
 Version = Versió
 VersionProgram = Versió programa
@@ -69,11 +69,10 @@ OtherSetup = Varis
 CurrentValueSeparatorDecimal = Separador decimal
 CurrentValueSeparatorThousand = eparador milers
 Modules = Mòduls
-ModulesCommon = Mòduls estàndard
+ModulesCommon = Mòduls principals
+ModulesOther = Mòduls complementaris
 ModulesInterfaces = Mòduls interface
-ModulesOther = Altres mòduls
-ModulesJob = Mòduls ofici
-ModulesSpecial = Mòduls especials
+ModulesSpecial = Mòduls específics
 ParameterInDolibarr = Variable %s
 LanguageParameter = Variable idioma %s
 LanguageBrowserParameter = Variable %s
