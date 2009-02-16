@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - main
+# Dolibarr language file - ca_ES - main 
 CHARSET = UTF-8
 DatabaseConnection = Connexió a la base de dades
 SeparatorDecimal = ,
@@ -126,6 +126,7 @@ Group = Grup
 Groups = Grups
 Password = Contrasenya
 PasswordRetype = Repetir contrasenya
+NoteSomeFeaturesAreDisabled = Atenció, només uns pocs mòduls/funcionalitats han estat activats en aquesta demo.
 Name = Nom
 Parameter = Paràmetre
 Parameters = Paràmetres
@@ -185,6 +186,7 @@ DateRequest = Data consulta
 DateProcess = Data procés
 DatePlanShort = Data Planif.
 DateRealShort = Data real
+DateBuild = Data generació de l'informe
 DurationYear = any
 DurationMonth = mes
 DurationWeek = setmana
