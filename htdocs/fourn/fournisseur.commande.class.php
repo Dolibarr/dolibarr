@@ -170,7 +170,7 @@ class CommandeFournisseur extends Commande
 				}
 				$this->db->free($result);
 
-				return 0;
+				return 1;
 			}
 			else
 			{

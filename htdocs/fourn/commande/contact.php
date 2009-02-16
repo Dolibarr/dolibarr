@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
+ * Copyright (C) 2005-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,73 +18,74 @@
  */
 
 /**
-        \file       htdocs/fichinter/contact.php
-        \ingroup    fichinter
-        \brief      Onglet de gestion des contacts de fiche d'intervention
+        \file       htdocs/commande/contact.php
+        \ingroup    commande
+        \brief      Onglet de gestion des contacts de commande
         \version    $Id$
 */
 
 require ("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
+require_once DOL_DOCUMENT_ROOT."/lib/fourn.lib.php";
 
-$langs->load("interventions");
+$langs->load("facture");
+$langs->load("orders");
 $langs->load("sendings");
 $langs->load("companies");
 
-$fichinterid = isset($_GET["id"])?$_GET["id"]:'';
+$commandeid = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
+$result = restrictedArea($user, 'commande_fournisseur', $commandeid);
 
 
 /*
  * Ajout d'un nouveau contact
  */
 
-if ($_POST["action"] == 'addcontact' && $user->rights->ficheinter->creer)
+if ($_POST["action"] == 'addcontact' && $user->rights->commande->creer)
 {
 
 	$result = 0;
-	$fichinter = new Fichinter($db);
-	$result = $fichinter->fetch($_GET["id"]);
+	$commande = new CommandeFournisseur($db);
+	$result = $commande->fetch($_GET["id"]);
 
     if ($result > 0 && $_GET["id"] > 0)
     {
-  		$result = $fichinter->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+  		$result = $commande->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?id=".$fichinter->id);
+		Header("Location: contact.php?id=".$commande->id);
 		exit;
 	}
 	else
 	{
-		if ($fichinter->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+		if ($commande->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
 		}
 		else
 		{
-			$mesg = '<div class="error">'.$fichinter->error.'</div>';
+			$mesg = '<div class="error">'.$commande->error.'</div>';
 		}
 	}
 }
 // modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateligne' && $user->rights->ficheinter->creer)
+if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer)
 {
-	$fichinter = new Fichinter($db);
-	if ($fichinter->fetch($_GET["id"]))
+	$commande = new CommandeFournisseur($db);
+	if ($commande->fetch($_GET["id"]))
 	{
-		$contact = $fichinter->detail_contact($_POST["elrowid"]);
+		$contact = $commande->detail_contact($_POST["elrowid"]);
 		$type = $_POST["type"];
 		$statut = $contact->statut;
 
-		$result = $fichinter->update_contact($_POST["elrowid"], $statut, $type);
+		$result = $commande->update_contact($_POST["elrowid"], $statut, $type);
 		if ($result >= 0)
 		{
 			$db->commit();
@@ -100,16 +101,16 @@ if ($_POST["action"] == 'updateligne' && $user->rights->ficheinter->creer)
 }
 
 // bascule du statut d'un contact
-if ($_GET["action"] == 'swapstatut' && $user->rights->ficheinter->creer)
+if ($_GET["action"] == 'swapstatut' && $user->rights->commande->creer)
 {
-	$fichinter = new Fichinter($db);
-	if ($fichinter->fetch($_GET["id"]))
+	$commande = new CommandeFournisseur($db);
+	if ($commande->fetch($_GET["id"]))
 	{
-		$contact = $fichinter->detail_contact($_GET["ligne"]);
+		$contact = $commande->detail_contact($_GET["ligne"]);
 		$id_type_contact = $contact->fk_c_type_contact;
 		$statut = ($contact->statut == 4) ? 5 : 4;
 
-		$result = $fichinter->update_contact($_GET["ligne"], $statut, $id_type_contact);
+		$result = $commande->update_contact($_GET["ligne"], $statut, $id_type_contact);
 		if ($result >= 0)
 		{
 			$db->commit();
@@ -125,15 +126,15 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->ficheinter->creer)
 }
 
 // Efface un contact
-if ($_GET["action"] == 'deleteline' && $user->rights->ficheinter->creer)
+if ($_GET["action"] == 'deleteline' && $user->rights->commande->creer)
 {
-	$fichinter = new Fichinter($db);
-	$fichinter->fetch($_GET["id"]);
-	$result = $fichinter->delete_contact($_GET["lineid"]);
+	$commande = new CommandeFournisseur($db);
+	$commande->fetch($_GET["id"]);
+	$result = $commande->delete_contact($_GET["lineid"]);
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?id=".$fichinter->id);
+		Header("Location: contact.php?id=".$commande->id);
 		exit;
 	}
 	else {
@@ -142,7 +143,12 @@ if ($_GET["action"] == 'deleteline' && $user->rights->ficheinter->creer)
 }
 
 
-llxHeader();
+
+/*
+ * View
+ */
+
+llxHeader('', $langs->trans("Order"), "Commande");
 
 $html = new Form($db);
 $contactstatic=new Contact($db);
@@ -155,36 +161,39 @@ $contactstatic=new Contact($db);
 /* *************************************************************************** */
 if (isset($mesg)) print $mesg;
 
-$id = $_GET["id"];
-if ($id > 0)
+$id = $_GET['id'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
-	$fichinter = New Fichinter($db);
-	if ($fichinter->fetch($_GET['id']) > 0)
+	$langs->trans("OrderCard");
+	$commande = new CommandeFournisseur($db);
+	if ( $commande->fetch($_GET['id'],$_GET['ref']) > 0)
 	{
-		$soc = new Societe($db, $fichinter->socid);
-		$soc->fetch($fichinter->socid);
+		$soc = new Societe($db, $commande->socid);
+		$soc->fetch($commande->socid);
 
 
-		$head = fichinter_prepare_head($fichinter);
-		dolibarr_fiche_head($head, 'contact', $langs->trans("InterventionCard"));
+		$head = ordersupplier_prepare_head($commande);
+		dolibarr_fiche_head($head, 'contact', $langs->trans("SupplierOrder"));
 
 
 		/*
-		*   Fiche intervention synthese pour rappel
+		*   Facture synthese pour rappel
 		*/
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $fichinter->ref;
-		print "</td></tr>";
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+		print '<td colspan="2">';
+		print $html->showrefnav($commande,'ref','',1,'ref','ref');
+		print '</td>';
+		print '</tr>';
 
-		// Customer
-		if ( is_null($fichinter->client) )
-			$fichinter->fetch_client();
+		// Fournisseur
+		print '<tr><td>'.$langs->trans("Supplier")."</td>";
+		print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
+		print '</tr>';
 
-		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$fichinter->client->getNomUrl(1).'</td></tr>';
 		print "</table>";
 
 		print '</div>';
@@ -198,8 +207,10 @@ if ($id > 0)
 		* Ajouter une ligne de contact
 		* Non affiché en mode modification de ligne
 		*/
-		if ($_GET["action"] != 'editline' && $user->rights->ficheinter->creer)
+		if ($_GET["action"] != 'editline' && $user->rights->fournisseur->facture->creer)
 		{
+			// TODO All contacts page should use same code
+
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
 			print '<td>'.$langs->trans("Company").'</td>';
@@ -218,7 +229,7 @@ if ($id > 0)
 			// Ligne ajout pour contact interne
 			print "<tr $bc[$var]>";
 
-			print '<td nowrap="nowrap">';
+			print '<td nowrap="0">';
 			print img_object('','user').' '.$langs->trans("Users");
 			print '</td>';
 
@@ -228,11 +239,11 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			// On récupère les id des users déjà sélectionnés
-			//$userAlreadySelected = $fichinter->getListContactId('internal'); 	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
+			//$userAlreadySelected = $commande->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
-			$fichinter->selectTypeContact($fichinter, '', 'type','internal');
+			$commande->selectTypeContact($commande, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -253,18 +264,18 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$fichinter->client->id;
-			$selectedCompany = $fichinter->selectCompaniesForNewContact($fichinter, 'id', $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$commande->client->id;
+			$selectedCompany = $commande->selectCompaniesForNewContact($commande, 'id', $selectedCompany, $htmlname = 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
 			// On récupère les id des contacts déjà sélectionnés
-			//$contactAlreadySelected = $fichinter->getListContactId('external');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
+			// $contactAlreadySelected = $commande->getListContactId('external');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$nbofcontacts=$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
-			$fichinter->selectTypeContact($fichinter, '', 'type','external');
+			$commande->selectTypeContact($commande, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
 			if (! $nbofcontacts) print ' disabled="true"';
@@ -291,7 +302,7 @@ if ($id > 0)
 
 		foreach(array('internal','external') as $source)
 		{
-			$tab = $fichinter->liste_contact(-1,$source);
+			$tab = $commande->liste_contact(-1,$source);
 			$num=sizeof($tab);
 
 			$i = 0;
@@ -345,17 +356,17 @@ if ($id > 0)
 				// Statut
 				print '<td align="center">';
 				// Activation desativation du contact
-				if ($fichinter->statut >= 0) print '<a href="contact.php?id='.$fichinter->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+				if ($commande->statut >= 0)	print '<a href="contact.php?id='.$commande->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
 				print $contactstatic->LibStatut($tab[$i]['status'],3);
-				if ($fichinter->statut >= 0) print '</a>';
+				if ($commande->statut >= 0)	print '</a>';
 				print '</td>';
 
 				// Icon update et delete
 				print '<td align="center" nowrap>';
-				if ($fichinter->statut < 5 && $user->rights->ficheinter->creer)
+				if ($commande->statut < 5 && $user->rights->commande->creer)
 				{
 					print '&nbsp;';
-					print '<a href="contact.php?id='.$fichinter->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
+					print '<a href="contact.php?id='.$commande->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
 					print img_delete();
 					print '</a>';
 				}
@@ -370,8 +381,8 @@ if ($id > 0)
 	}
 	else
 	{
-		// Fiche intervention non trouvée
-		print "Fiche intervention inexistante ou accès refusé";
+		// Contrat non trouv
+		print "ErrorRecordNotFound";
 	}
 }
 

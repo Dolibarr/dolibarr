@@ -45,7 +45,7 @@ $result = restrictedArea($user, 'fournisseur', $facid, '', 'facture');
 
 if ($_POST["action"] == 'addcontact' && $user->rights->fournisseur->facture->creer)
 {
-	
+
 	$result = 0;
 	$facture = new FactureFournisseur($db);
 	$result = $facture->fetch($_GET["facid"]);
@@ -54,7 +54,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->fournisseur->facture->cre
     {
   		$result = $facture->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
-    
+
 	if ($result >= 0)
 	{
 		Header("Location: contact.php?facid=".$facture->id);
@@ -164,7 +164,7 @@ if ($id > 0)
 	if ($facture->fetch($_GET['facid'], $user->societe_id) > 0)
 	{
 		$facture->fetch_client();
-		
+
 		$head = facturefourn_prepare_head($facture);
 
 		dolibarr_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'));
@@ -218,11 +218,11 @@ if ($id > 0)
 
             // Ligne ajout pour contact interne
 			print "<tr $bc[$var]>";
-			
-			print '<td>';
-			print $langs->trans("Internal");
-            print '</td>';			
-			
+
+			print '<td nowrap="nowrap">';
+			print img_object('','user').' '.$langs->trans("Users");
+			print '</td>';
+
 			print '<td colspan="1">';
 			print $mysoc->nom;
 			print '</td>';
@@ -248,11 +248,11 @@ if ($id > 0)
             // Ligne ajout pour contact externe
 			$var=!$var;
 			print "<tr $bc[$var]>";
-			
-			print '<td>';
-			print $langs->trans("External");
-            print '</td>';			
-			
+
+			print '<td nowrap="nowrap">';
+			print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
+			print '</td>';
+
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$facture->client->id;
 			$selectedCompany = $facture->selectCompaniesForNewContact($facture, 'facid', $selectedCompany, $htmlname = 'newcompany');
@@ -271,7 +271,7 @@ if ($id > 0)
 			if (! $nbofcontacts) print ' disabled="true"';
 			print '></td>';
 			print '</tr>';
-			
+
 			print "</form>";
 
             print '<tr><td colspan="6">&nbsp;</td></tr>';
@@ -304,10 +304,10 @@ if ($id > 0)
 
                 // Source
 				print '<td align="left">';
-				if ($tab[$i]['source']=='internal') print $langs->trans("Internal");
-				if ($tab[$i]['source']=='external') print $langs->trans("External");
+				if ($tab[$i]['source']=='internal') print $langs->trans("User");
+				if ($tab[$i]['source']=='external') print $langs->trans("ThirdPartyContact");
                 print '</td>';
-                
+
 				// Societe
 				print '<td align="left">';
 				if ($tab[$i]['socid'] > 0)
@@ -322,7 +322,7 @@ if ($id > 0)
                 }
 				if (! $tab[$i]['socid'])
                 {
-                    print '&nbsp;';   
+                    print '&nbsp;';
                 }
 				print '</td>';
 

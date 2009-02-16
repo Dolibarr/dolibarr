@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
- * Copyright (C) 2005-2007 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ $result = restrictedArea($user, 'propale', $propalid, 'propal');
 
 if ($_POST["action"] == 'addcontact' && $user->rights->propale->creer)
 {
-	
+
 	$result = 0;
 	$propal = new Propal($db);
 	$result = $propal->fetch($_GET["propalid"]);
@@ -56,7 +56,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->propale->creer)
     {
   		$result = $propal->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
-    
+
 	if ($result >= 0)
 	{
 		Header("Location: contact.php?propalid=".$propal->id);
@@ -230,8 +230,8 @@ if ($id > 0)
 			// Ligne ajout pour contact interne
 			print "<tr $bc[$var]>";
 
-			print '<td>';
-			print $langs->trans("Internal");
+			print '<td nowrap="nowrap">';
+			print img_object('','user').' '.$langs->trans("Users");
 			print '</td>';
 
 			print '<td colspan="1">';
@@ -260,8 +260,8 @@ if ($id > 0)
 			$var=!$var;
 			print "<tr $bc[$var]>";
 
-			print '<td>';
-			print $langs->trans("External");
+			print '<td nowrap="nowrap">';
+			print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
 			print '</td>';
 
 			print '<td colspan="1">';
@@ -315,8 +315,8 @@ if ($id > 0)
 
 				// Source
 				print '<td align="left">';
-				if ($tab[$i]['source']=='internal') print $langs->trans("Internal");
-				if ($tab[$i]['source']=='external') print $langs->trans("External");
+				if ($tab[$i]['source']=='internal') print $langs->trans("User");
+				if ($tab[$i]['source']=='external') print $langs->trans("ThirdPartyContact");
 				print '</td>';
 
 				// Societe

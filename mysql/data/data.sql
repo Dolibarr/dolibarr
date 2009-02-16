@@ -1287,11 +1287,11 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (72, 'facture_fourn', 'external', 'SHIPPING',      'Contact fournisseur livraison', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (73, 'facture_fourn', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
 
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (140,'commande_fourn','internal', 'SALESREPFOLL',  'Responsable suivi de la commande', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (141,'commande_fourn','internal', 'SHIPPING',      'Responsable réception de la commande', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (142,'commande_fourn','external', 'BILLING',       'Contact fournisseur facturation commande', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (143,'commande_fourn','external', 'CUSTOMER',      'Contact fournisseur suivi commande', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (145,'commande_fourn','external', 'SHIPPING',      'Contact fournisseur livraison commande', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (140,'order_supplier','internal', 'SALESREPFOLL',  'Responsable suivi de la commande', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (141,'order_supplier','internal', 'SHIPPING',      'Responsable réception de la commande', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (142,'order_supplier','external', 'BILLING',       'Contact fournisseur facturation commande', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (143,'order_supplier','external', 'CUSTOMER',      'Contact fournisseur suivi commande', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (145,'order_supplier','external', 'SHIPPING',      'Contact fournisseur livraison commande', 1);
 
 
 --

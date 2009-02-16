@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,16 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
- 
+
 /**
-	    \file       htdocs/fourn/contact.php
-        \ingroup    fournisseur
-		\brief      Liste des contacts fournisseurs
-		\version    $Revision$
-*/
+ *	    \file       htdocs/fourn/contact.php
+ *      \ingroup    fournisseur
+ *		\brief      Liste des contacts fournisseurs
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -36,7 +34,7 @@ llxHeader();
 /*
  * Sécurité accés client
  */
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;
@@ -88,9 +86,9 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 $result = $db->query($sql);
 if ($result) {
   $num = $db->num_rows($result);
-  
+
   print_barre_liste($langs->trans("ListOfContacts")." (".$langs->trans("Suppliers").")",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
-    
+
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Lastname"),"contact.php","p.name", $begin, "", "", $sortfield,$sortorder);
@@ -104,7 +102,7 @@ if ($result) {
   while ($i < min($num,$limit))
     {
       $obj = $db->fetch_object($result);
-    
+
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -114,7 +112,7 @@ if ($result) {
       print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
       print '<td>'.$obj->email.'</td>';
       print '<td>'.$obj->phone.'</td>';
-      
+
       print "</tr>\n";
       $i++;
     }

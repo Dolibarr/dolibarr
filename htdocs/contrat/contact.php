@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
- * Copyright (C) 2005-2007 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->contrat->creer)
     {
   		$result = $contrat->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
-    
+
 	if ($result >= 0)
 	{
 		Header("Location: contact.php?id=".$contrat->id);
@@ -105,7 +105,7 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->contrat->creer)
 	if ($contrat->fetch($_GET["id"]))
 	{
 		$db->begin();
-		
+
 		$contact = $contrat->detail_contact($_GET["ligne"]);
 		$id_type_contact = $contact->fk_c_type_contact;
 
@@ -167,7 +167,7 @@ if ($id > 0)
 		$soc->fetch($contrat->socid);
 
 	    $head = contract_prepare_head($contrat);
-		
+
 		$hselected=1;
 
 		dolibarr_fiche_head($head, $hselected, $langs->trans("Contract"));
@@ -231,11 +231,11 @@ if ($id > 0)
 
             // Ligne ajout pour contact interne
 			print "<tr $bc[$var]>";
-			
-			print '<td>';
-			print $langs->trans("Internal");
-            print '</td>';			
-			
+
+			print '<td nowrap="nowrap">';
+			print img_object('','user').' '.$langs->trans("Users");
+			print '</td>';
+
 			print '<td colspan="1">';
 			print $conf->global->MAIN_INFO_SOCIETE_NOM;
 			print '</td>';
@@ -261,11 +261,11 @@ if ($id > 0)
             // Ligne ajout pour contact externe
 			$var=!$var;
 			print "<tr $bc[$var]>";
-			
-			print '<td>';
-			print $langs->trans("External");
-            print '</td>';			
-			
+
+			print '<td nowrap="nowrap">';
+			print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
+			print '</td>';
+
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$contrat->societe->id;
 			$selectedCompany = $contrat->selectCompaniesForNewContact($contrat, 'id', $selectedCompany, $htmlname = 'newcompany');
@@ -284,13 +284,13 @@ if ($id > 0)
 			if (! $nbofcontacts) print ' disabled="true"';
 			print '></td>';
 			print '</tr>';
-			
+
 			print "</form>";
 
 		}
 
         print '<tr><td colspan="6">&nbsp;</td></tr>';
-        
+
 		// Liste des contacts liés
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
@@ -318,10 +318,10 @@ if ($id > 0)
 
                 // Source
 				print '<td align="left">';
-				if ($tab[$i]['source']=='internal') print $langs->trans("Internal");
-				if ($tab[$i]['source']=='external') print $langs->trans("External");
+				if ($tab[$i]['source']=='internal') print $langs->trans("User");
+				if ($tab[$i]['source']=='external') print $langs->trans("ThirdPartyContact");
                 print '</td>';
-                
+
 				// Societe
 				print '<td align="left">';
 				if ($tab[$i]['socid'] > 0)
@@ -336,7 +336,7 @@ if ($id > 0)
                 }
 				if (! $tab[$i]['socid'])
                 {
-                    print '&nbsp;';   
+                    print '&nbsp;';
                 }
 				print '</td>';
 

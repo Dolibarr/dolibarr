@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      �ric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,12 +126,12 @@ if ($socid) {
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
-if ($resql) 
+if ($resql)
 {
   $num = $db->num_rows($resql);
-  
+
   print_barre_liste($langs->trans("ListOfContacts").($label?" (".$label.")":""),$page, $_SERVER["PHP_SELF"], "&amp;type=$type",$sortfield,$sortorder,"",$num);
-  
+
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin,"&amp;type=$type","",$sortfield,$sortorder);
@@ -156,21 +156,21 @@ if ($resql)
   while ($i < min($num,$limit))
     {
       $obj = $db->fetch_object($resql);
-    
+
       $var=!$var;
 
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"),"contact");
       print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->name.'</a></td>';
       print "<td>$obj->firstname</TD>";
-      
+
       print '<td><a href="'.$_SERVER["PHP_SELF"].'?type='.$type.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
       print "<a href=\"".$urlfiche."?socid=".$obj->rowid."\">$obj->nom</a></td>\n";
-      
+
       print '<td>'.dol_print_phone($obj->email,$obj->cidp,$obj->rowid,'AC_EMAIL').'</td>';
-      
+
       print '<td>'.dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->rowid,'AC_TEL').'&nbsp;</td>';
-      
+
       print "</tr>\n";
       $i++;
     }

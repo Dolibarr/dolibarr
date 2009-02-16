@@ -81,17 +81,23 @@ function ordersupplier_prepare_head($commande)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$commande->id;
-	$head[$h][1] = $langs->trans("OrderCard");
+	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
 
 	if ($conf->stock->enabled)
 	{
+		$langs->load("stocks");
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$commande->id;
 		$head[$h][1] = $langs->trans("OrderDispatch");
 		$head[$h][2] = 'dispatch';
 		$h++;
 	}
+
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/contact.php?id='.$commande->id;
+	$head[$h][1] = $langs->trans('OrderContact');
+	$head[$h][2] = 'contact';
+	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$commande->id;
 	$head[$h][1] = $langs->trans("Note");

@@ -47,7 +47,7 @@ $result = restrictedArea($user, 'commande', $commandeid);
 
 if ($_POST["action"] == 'addcontact' && $user->rights->commande->creer)
 {
-	
+
 	$result = 0;
 	$commande = new Commande($db);
 	$result = $commande->fetch($_GET["id"]);
@@ -56,7 +56,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->commande->creer)
     {
   		$result = $commande->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
-    
+
 	if ($result >= 0)
 	{
 		Header("Location: contact.php?id=".$commande->id);
@@ -192,11 +192,11 @@ if ($id > 0 || ! empty($ref))
 		print $commande->ref_client;
 		print '</td>';
 		print '</tr>';
-		
+
 		// Customer
 		if ( is_null($commande->client) )
 			$commande->fetch_client();
-			
+
 		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">'.$commande->client->getNomUrl(1).'</td></tr>';
 		print "</table>";
@@ -232,8 +232,8 @@ if ($id > 0 || ! empty($ref))
 			// Ligne ajout pour contact interne
 			print "<tr $bc[$var]>";
 
-			print '<td>';
-			print $langs->trans("Internal");
+			print '<td nowrap="nowrap">';
+			print img_object('','user').' '.$langs->trans("Users");
 			print '</td>';
 
 			print '<td colspan="1">';
@@ -262,8 +262,8 @@ if ($id > 0 || ! empty($ref))
 			$var=!$var;
 			print "<tr $bc[$var]>";
 
-			print '<td>';
-			print $langs->trans("External");
+			print '<td nowrap="nowrap">';
+			print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
 			print '</td>';
 
 			print '<td colspan="1">';
@@ -273,7 +273,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '<td colspan="1">';
 			// On récupère les id des contacts déjà sélectionnés
-			// $contactAlreadySelected = $commande->getListContactId('external');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type	
+			// $contactAlreadySelected = $commande->getListContactId('external');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$nbofcontacts=$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
@@ -317,8 +317,8 @@ if ($id > 0 || ! empty($ref))
 
 				// Source
 				print '<td align="left">';
-				if ($tab[$i]['source']=='internal') print $langs->trans("Internal");
-				if ($tab[$i]['source']=='external') print $langs->trans("External");
+				if ($tab[$i]['source']=='internal') print $langs->trans("User");
+				if ($tab[$i]['source']=='external') print $langs->trans("ThirdPartyContact");
 				print '</td>';
 
 				// Societe
