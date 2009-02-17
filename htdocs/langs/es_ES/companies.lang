@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - companies
+# Dolibarr language file - es_ES - companies 
 CHARSET = UTF-8
 ErrorBadEMail = e-mail %s no correcto
 ErrorCompanyNameAlreadyExists = El nombre de la emprea %s ya existe. Indique otro.
@@ -25,6 +25,10 @@ IdThirdParty = ID tercero
 IdCompany = Id empresa
 IdContact = Id contacto
 Contacts = Contactos
+ThirdPartyContacts = Contactos terceros
+ThirdPartyContact = Contacto tercero
+StatusContactValidated = Estado del contacto
+CustomerContact = Contacto  cliente
 Company = Empresa
 CompanyName = Razón social
 Companies = Empresas
@@ -72,7 +76,7 @@ WrongSupplierCode = Código proveedor incorrecto
 CustomerCodeModel = Modelo de código cliente
 SupplierCodeModel = Modelo de código proveedor
 Gencod = Código de barra
-##### Professionnal ID ##### = undefined
+##### Professionnal ID ##### = 
 ProfId1Short = Prof. id 1
 ProfId2Short = Prof. id 2
 ProfId3Short = Prof. id 3
