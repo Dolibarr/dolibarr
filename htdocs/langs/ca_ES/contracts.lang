@@ -75,6 +75,7 @@ MoveToAnotherContract = Moure el servei a un altre contracte d'aquest tercer.
 ConfirmMoveToAnotherContract = He triat el contracte i confirmo el canvi de servei en aquest contracte
 ConfirmMoveToAnotherContractQuestion = Escolliu qualsevol altre contracte del mateix tercer, voleu moure aquest servei?
 PaymentRenewContractId = Renovació servei (número %s)
+ExpiredSince = Expirat des del
 ##### Types de contacts ##### =  = 
 TypeContact_contrat_internal_SALESREPSIGN = Comercial signant del contracte
 TypeContact_contrat_internal_SALESREPFOLL = Comercial seguiment del contracte
