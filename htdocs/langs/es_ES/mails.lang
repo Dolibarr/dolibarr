@@ -1,10 +1,11 @@
-# Dolibarr language file - es_ES - mails
+# Dolibarr language file - es_ES - mails 
 CHARSET = UTF-8
 Mailing = Mailing
 EMailing = Mailing
 Mailings = Mailings
 EMailings = Mailings
 MailCard = Ficha mailing
+AllEMailings = Todos los  E-Mailings
 MailTargets = Destinatarios
 MailRecipients = Dsetinatarios
 MailRecipient = Destinatario
