@@ -60,6 +60,11 @@ if (is_numeric($amount) && empty($_REQUEST["tag"]))
 	dolibarr_print_error('','ErrorBadParameters');
 	exit;
 }
+if (! is_numeric($amount) && empty($_REQUEST["ref"]))
+{
+	dolibarr_print_error('','ErrorBadParameters');
+	exit;
+}
 
 
 

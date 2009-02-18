@@ -1490,6 +1490,9 @@ class ContratLigne
 	{
 		global $langs,$user;
 
+		// Check parameters
+		if (empty($id) && empty($ref)) return -1;
+
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
 

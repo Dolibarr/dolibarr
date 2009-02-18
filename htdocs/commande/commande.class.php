@@ -813,6 +813,9 @@ class Commande extends CommonObject
 	 */
 	function fetch($id,$ref='')
 	{
+		// Check parameters
+		if (empty($id) && empty($ref)) return -1;
+
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut';
 		$sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.fk_cond_reglement, c.fk_mode_reglement';
 		$sql.= ', '.$this->db->pdate('c.date_commande').' as date_commande';
@@ -829,7 +832,7 @@ class Commande extends CommonObject
 		if ($ref) $sql.= " WHERE c.ref='".$ref."'";
 		else $sql.= " WHERE c.rowid=".$id;
 
-		dolibarr_syslog("Commande::fetch sql=$sql");
+		dolibarr_syslog("Commande::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql) ;
 		if ($result)
 		{
