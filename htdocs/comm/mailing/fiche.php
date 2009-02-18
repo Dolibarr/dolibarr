@@ -44,6 +44,8 @@ $substitutionarray=array(
 '__OTHER1__' => 'Other1',
 '__OTHER2__' => 'Other2',
 '__OTHER3__' => 'Other3',
+'__OTHER4__' => 'Other4',
+'__OTHER5__' => 'Other5'
 );
 $substitutionarrayfortest=array(
 '__ID__' => 'TESTIdRecord',
@@ -52,7 +54,9 @@ $substitutionarrayfortest=array(
 '__FIRSTNAME__' => 'TESTFirstname',
 '__OTHER1__' => 'TESTOther1',
 '__OTHER2__' => 'TESTOther2',
-'__OTHER3__' => 'TESTOther3'
+'__OTHER3__' => 'TESTOther3',
+'__OTHER4__' => 'TESTOther4',
+'__OTHER5__' => 'TESTOther5'
 );
 
 
@@ -160,6 +164,8 @@ if ($_POST["action"] == 'sendallconfirmed')
 					$other1=$other[0];
 					$other2=$other[1];
 					$other3=$other[3];
+					$other4=$other[4];
+					$other5=$other[5];
 					$substitutionarray=array(
 						'__ID__' => $obj->rowid,
 						'__EMAIL__' => $obj->email,
@@ -167,7 +173,9 @@ if ($_POST["action"] == 'sendallconfirmed')
 						'__FIRSTNAME__' => $obj->prenom,
 						'__OTHER1__' => $other1,
 						'__OTHER2__' => $other2,
-						'__OTHER3__' => $other3
+						'__OTHER3__' => $other3,
+						'__OTHER4__' => $other4,
+						'__OTHER5__' => $other5
 					);
 
 					$substitutionisok=true;
