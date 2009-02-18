@@ -176,7 +176,7 @@ class mailing_kiwi extends MailingTargets
                 $type='';
                 if ($obj->type == 1) $type=$langs->trans("Supplier");
                 if ($obj->type == 2) $type=$langs->trans("Customer");
-                $s.='<option value="'.$obj->rowid.'">'.$obj->label;
+                $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label,48,'middle');
                 if ($type) $s.=' ('.$type.')';
                 $s.='</option>';
 				$i++;
