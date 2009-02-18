@@ -53,7 +53,7 @@ print_titre($langs->trans("NewProp"));
 
 $html=new Form($db);
 
-// Récupération de l'id de projet
+// Rï¿½cupï¿½ration de l'id de projet
 $projetid = 0;
 if ($_GET["projetid"])
 {
@@ -141,51 +141,45 @@ if ($_GET["action"] == 'create')
 
 	print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td colspan="2"><input name="duree_validite" size="5" value="'.$conf->global->PROPALE_VALIDITY_DURATION.'"> '.$langs->trans("days").'</td></tr>';
 
-	// Conditions de règlement
+	// Conditions de rï¿½glement
 	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
 	print '</td></tr>';
 
-	// Mode de règlement
+	// Mode de rï¿½glement
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';
 
 	// Date de livraison (ou de fabrication)
-	if ($conf->expedition->enabled)
+	print '<tr><td>'.$langs->trans("DeliveryDate").'</td>';
+	print '<td colspan="2">';
+	if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "")
 	{
-		if ($conf->global->PROPALE_ADD_SHIPPING_DATE)
-		{
-			print '<tr><td>'.$langs->trans("DeliveryDate").'</td>';
-			print '<td colspan="2">';
-			if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "")
-			{
-				$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-				$syear = date("Y", $tmpdte);
-				$smonth = date("m", $tmpdte);
-				$sday = date("d", $tmpdte);
-				$html->select_date($syear."-".$smonth."-".$sday,'liv_','','','',"addprop");
-			}
-			else
-			{
-				$datepropal=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;				
-				$html->select_date($datepropal,'liv_','','','',"addprop");
-			}
-			print '</td></tr>';
-		}
+		$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+		$syear = date("Y", $tmpdte);
+		$smonth = date("m", $tmpdte);
+		$sday = date("d", $tmpdte);
+		$html->select_date($syear."-".$smonth."-".$sday,'liv_','','','',"addprop");
+	}
+	else
+	{
+		$datepropal=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;				
+		$html->select_date($datepropal,'liv_','','','',"addprop");
+	}
+	print '</td></tr>';
 
-		// Adresse de livraison
-		if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
+	// Adresse de livraison
+	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
+	{
+		print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
+		print '<td colspan="3">';
+		$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socid'],'adresse_livraison_id',1);
+		if ($numaddress==0)
 		{
-			print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
-			print '<td colspan="3">';
-			$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socid'],'adresse_livraison_id',1);
-			if ($numaddress==0)
-			{
-				print ' &nbsp; <a href=../comm/adresse_livraison.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';
-			}
-			print '</td></tr>';
+			print ' &nbsp; <a href=../comm/adresse_livraison.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';
 		}
+		print '</td></tr>';
 	}
 
 	// Model

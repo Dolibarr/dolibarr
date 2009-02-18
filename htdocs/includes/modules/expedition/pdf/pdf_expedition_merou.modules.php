@@ -41,8 +41,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 
 	/**
-	 \brief  Constructeur
-	 \param	db		Handler acc�s base de donn�e
+	 *	\brief  Constructor
+	 *	\param	db		Database handler
 	 */
 	function pdf_expedition_merou($db=0)
 	{
@@ -50,13 +50,10 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		$this->db = $db;
 		$this->name = "Merou";
-		$this->description = "Modele Merou 2xA5 \n
-	Attention !! Il est necessaire de creer 4 nouveaux types de contact : \n
+		$this->description = "Modele Merou 2*A5\n
+	Attention !! Il est possible de creer 2 nouveaux types de contact : \n
 	 |element->commande,source->internal,code->LIVREUR \n
-	 |element->commande,source->external,code->LIVREUR \n
-	 |element->commande,source->external,code->EXPEDITEUR \n
-	 |element->commande,source->external,code->DESTINATAIRE \n
-";
+	 |element->commande,source->external,code->EXPEDITEUR";
 
 		$this->type = 'pdf';
 		$this->page_largeur = 148.5;
@@ -67,7 +64,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
 	}
 
 
@@ -106,12 +103,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			$soc->fetch($this->expe->commande->socid);
 
 			//Creation de l expediteur
-			$this->expediteur = $soc;
+			$this->expediteur = $mysoc;
+			
 			//Creation du destinataire
 			$this->destinataire = new Contact($this->db);
 			//		$pdf->expe->commande->fetch($pdf->commande->id);
 			//print_r($pdf->expe);
-			$idcontact = $this->expe->commande->getIdContact('external','DESTINATAIRE');
+			$idcontact = $this->expe->commande->getIdContact('external','SHIPPING');
 			$this->destinataire->fetch($idcontact[0]);
 
 			//Creation du livreur
@@ -120,7 +118,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			if ($idcontact[0]) $this->livreur->fetch();
 
 
-			// D�finition de $dir et $file
+			// Definition de $dir et $file
 			if ($this->expe->specimen)
 			{
 				$dir = $conf->expedition_bon->dir_output;
@@ -321,19 +319,27 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	}
 
 
-	//********************************
-	// Generation de l entete
-	//********************************
-	function _pagehead(&$pdf, $exp, $outputlangs)
+	/**
+	 *   	\brief      Show header of page
+	 *      \param      pdf             Object PDF
+	 *      \param      object          Object invoice
+	 *      \param      showadress      0=no, 1=yes
+	 *      \param      outputlang		Object lang for output
+	 */
+	function _pagehead(&$pdf, $object, $outputlangs)
 	{
 		global $conf, $langs;
 
+		$Xoff = 90;
+		$Yoff = 0;
+		
 		$tab4_top = 60;
 		$tab4_hl = 6;
 		$tab4_sl = 4;
 		$ligne = 2;
 
 		//*********************LOGO****************************
+		$pdf->SetXY(11,7);
 		$logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
 		if ($this->emetteur->logo)
 		{
@@ -353,8 +359,6 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		//*********************Entete****************************
 		//Nom du Document
-		$Xoff = 90;
-		$Yoff = 0;
 		$pdf->SetXY($Xoff,7);
 		$pdf->SetFont('Arial','B',12);
 		$pdf->SetTextColor(0,0,0);
@@ -366,7 +370,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($exp->ref), '' , 'L');
+		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($object->ref), '' , 'L');
 		//$this->Code39($Xoff+43, $Yoff+1, $this->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Num Commande
 		$Yoff = $Yoff+4;
@@ -374,17 +378,22 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefOrder").': '.$outputlangs->convToOutputCharset($exp->commande->ref), '' , 'L');
+		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefOrder").': '.$outputlangs->convToOutputCharset($object->commande->ref), '' , 'L');
 
-		//$this->Code39($Xoff+43, $Yoff+1, $exp->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
+		//$this->Code39($Xoff+43, $Yoff+1, $object->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Definition Emplacement du bloc Societe
-		$Xoff = 115;
+		$Xoff = 110;
 		$blSocX=11;
-		$blSocY=25;
+		$blSocY=21;
 		$blSocW=50;
 		$blSocX2=$blSocW+$blSocXs;
-		$pdf->SetTextColor(0,0,0);
 
+		// Nom emetteur
+		$pdf->SetTextColor(0,0,60);
+		$pdf->SetXY($blSocX,$blSocY);
+		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+		$pdf->SetTextColor(0,0,0);
+		
 		// Caracteristiques emetteur
 		$carac_emetteur = '';
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
@@ -405,12 +414,12 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		//Date Expedition
 		$Yoff = $Yoff+7;
-		$pdf->SetXY($blSocX,$blSocY+20);
+		$pdf->SetXY($blSocX,$blSocY+24);
 		$pdf->SetFont('Arial','B',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Date")." : " . dol_print_date($exp->date,'day',false,$outputlangs,true), '' , 'L');
+		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs,true), '' , 'L');
 		//Date Expedition
-		$pdf->SetXY($blSocX2,$blSocY+20);
+		$pdf->SetXY($blSocX2,$blSocY+24);
 		$pdf->SetFont('Arial','B',8);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($livreur->fullname), '' , 'L');
@@ -447,44 +456,101 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($blExpX,$Yoff+$blSocY);
 		$pdf->MultiCell($blW,5, $outputlangs->convToOutputCharset($this->expediteur->cp) . " " . $outputlangs->convToOutputCharset($this->expediteur->ville),  0, 'L');
 		$blSocY+=4;
-		//Tel Client
-		$pdf->SetXY($blExpX,$Yoff+$blSocY);
-		$pdf->SetFont('Arial','',7);
-		$pdf->MultiCell($blW,3, $outputlangs->transnoentities("Tel")." : ".$outputlangs->convToOutputCharset($this->expediteur->tel), 0, 'L');
+		//Tel
+		if ($this->expediteur->tel)
+		{
+			$pdf->SetXY($blExpX,$Yoff+$blSocY);
+			$pdf->SetFont('Arial','',7);
+			$pdf->MultiCell($blW,3, $outputlangs->transnoentities("Tel")." : ".$outputlangs->convToOutputCharset($this->expediteur->tel), 0, 'L');
+		}
+		
+		
+		$object->fetch_client();
+		
+		/**********************************/
+		//Emplacement Informations Destinataire
+		/**********************************/
+		$usecontact=false;
+		//if ($conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT)
+		//{
+			$arrayidcontact=$object->commande->getIdContact('external','SHIPPING');
+			if (sizeof($arrayidcontact) > 0)
+			{
+				$usecontact=true;
+				$result=$object->fetch_contact($arrayidcontact[0]);
+			}
+		//}
+		if ($usecontact)
+		{
+			// On peut utiliser le nom de la societe du contact
+			//if ($conf->global->FACTURE_USE_COMPANY_NAME_OF_BILL_CONTACT) $socname = $object->contact->socname;
+			//else
+			$socname = $object->client->nom;
+			$carac_client_name=$outputlangs->convToOutputCharset($socname);
 
-		/**********************************/
-		//Emplacement Informations Destinataire (Contact livraison)
-		/**********************************/
+			// Customer name
+			$carac_client = $object->contact->getFullName($outputlangs,1,1);
+
+			// Customer properties
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
+			//Pays si different de l'emetteur
+			if ($this->emetteur->pays_code != $object->contact->pays_code)
+			{
+				$carac_client.=$outputlangs->convToOutputCharset($object->contact->pays)."\n";
+			}
+		}
+		else
+		{
+			// Nom client
+			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+
+			// Nom du contact facturation si c'est une societe
+			$arrayidcontact = $object->getIdContact('external','SHIPPING');
+			if (sizeof($arrayidcontact) > 0)
+			{
+				$object->fetch_contact($arrayidcontact[0]);
+				// On verifie si c'est une societe ou un particulier
+				if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
+				{
+					$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
+				}
+			}
+
+			// Caracteristiques client
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->adresse);
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
+
+			//Pays si different de l'emetteur
+			if ($this->emetteur->pays_code != $object->client->pays_code)
+			{
+				$carac_client.=$outputlangs->convToOutputCharset($object->client->pays)."\n";
+			}
+		}
+		// Numero TVA intracom
+		if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
+		
+		
 		$blDestX=$blExpX+55;
 		$blW=50;
-		$Yoff = $Ydef;
-		$blSocY = 1;
+		$Yoff = $Ydef +1;
+
+		$pdf->Rect($blDestX, $Yoff-1, $blW, 20);
+		
 		//Titre
-		$pdf->SetXY($blDestX,$Yoff-3);
 		$pdf->SetFont('Arial','B',7);
+		$pdf->SetXY($blDestX,$Yoff-4);
 		$pdf->MultiCell($blW,3, $outputlangs->transnoentities("Recipient"), 0, 'L');
-		$pdf->Rect($blDestX, $Yoff, $blW, 20);
-		//Nom Client
-		$pdf->SetXY($blDestX,$Yoff+$blSocY);
+
+		// Show customer/recipient
 		$pdf->SetFont('Arial','B',7);
-		$pdf->MultiCell($blW,3, $outputlangs->convToOutputCharset($this->destinataire->fullname), 0, 'C');
+		$pdf->SetXY($blDestX,$Yoff);
+		$pdf->MultiCell($blW,3, $carac_client_name, 0, 'L');
+
 		$pdf->SetFont('Arial','',7);
-		$blSocY+=3;
-		//Adresse Client
-		//Gestion des Retours chariots
-		$Out=split("\n",$outputlangs->convToOutputCharset($this->destinataire->address));
-		for ($i=0;$i<count($Out);$i++) {
-			$pdf->SetXY($blDestX,$Yoff+$blSocY);
-			$pdf->MultiCell($blW,5,urldecode($Out[$i]),  0, 'L');
-			$blSocY+=3;
-		}
-		$pdf->SetXY($blDestX,$Yoff+$blSocY);
-		$pdf->MultiCell($blW,5, $outputlangs->convToOutputCharset($this->destinataire->cp) . " " . $outputlangs->convToOutputCharset($this->destinataire->ville),  0, 'L');
-		$blSocY+=4;
-		//Tel Client
-		$pdf->SetXY($blDestX,$Yoff+$blSocY);
-		$pdf->SetFont('Arial','',7);
-		$pdf->MultiCell($blW,3, $outputlangs->transnoentities("Tel")." : ".$this->destinataire->phone_pro, 0, 'L');
+		//$posy=$pdf->GetY(); //Auto Y coord readjust for multiline name
+		$pdf->SetXY($blDestX,$Yoff+3);
+		$pdf->MultiCell($blW,3, $carac_client);
 	}
 }
 ?>

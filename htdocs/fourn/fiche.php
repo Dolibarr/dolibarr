@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/fourn/fiche.php
- \ingroup    fournisseur, facture
- \brief      Page de fiche fournisseur
- \version	$Id$
+ *	\file       htdocs/fourn/fiche.php
+ *	\ingroup    fournisseur, facture
+ *	\brief      Page de fiche fournisseur
+ *	\version	$Id$
  */
 
 require('./pre.inc.php');
@@ -47,6 +47,7 @@ $result = restrictedArea($user, 'societe',$socid,'');
 /*
  * View
  */
+
 $societe = new Fournisseur($db);
 $contactstatic = new Contact($db);
 $form = new Form($db);
@@ -94,8 +95,16 @@ if ( $societe->fetch($socid) )
 	else print $societe->pays;
 	print '</td></tr>';
 
+	// Phone
 	print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td>';
+	
+	// Fax
 	print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($societe->fax,$societe->pays_code,0,$societe->id,'AC_FAX').'</td></tr>';
+	
+    // EMail
+	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($societe->email,0,$societe->id,'AC_EMAIL').'</td></tr>';
+
+	// Web
 	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
 	// Assujetti a TVA ou pas

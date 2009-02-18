@@ -12,6 +12,7 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (143,'order_supplier','external', 'CUSTOMER',      'Contact fournisseur suivi commande', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (145,'order_supplier','external', 'SHIPPING',      'Contact fournisseur livraison commande', 1);
 
+update llx_const set visible = 1 where name = 'PROPALE_ADD_DELIVERY_ADDRESS';
 
 alter table llx_expedition_methode change statut active tinyint DEFAULT 1;
 

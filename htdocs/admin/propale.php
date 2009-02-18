@@ -108,15 +108,12 @@ if ($_POST["action"] == 'setdefaultduration')
     dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION",$_POST["value"]);
 }
 
-if ($_POST["action"] == 'setaddshippingdate')
-{
-    dolibarr_set_const($db, "PROPALE_ADD_SHIPPING_DATE",$_POST["value"]);
-}
-
+/*
 if ($_POST["action"] == 'setadddeliveryaddress')
 {
     dolibarr_set_const($db, "PROPALE_ADD_DELIVERY_ADDRESS",$_POST["value"]);
 }
+*/
 
 /*
 if ($_POST["action"] == 'setuseoptionline')
@@ -446,16 +443,7 @@ print '<td align="right"><input type="submit" class="button" value="'.$langs->tr
 print '</tr>';
 print '</form>';
 
-$var=!$var;
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print "<input type=\"hidden\" name=\"action\" value=\"setaddshippingdate\">";
-print "<tr ".$bc[$var].">";
-print '<td>'.$langs->trans("AddShippingDateAbility").'</td>';
-print '<td width="60" align="center">'.$html->selectyesno('value',$conf->global->PROPALE_ADD_SHIPPING_DATE,1).'</td>';
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-print '</tr>';
-print '</form>';
-
+/*
 $var=!$var;
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print "<input type=\"hidden\" name=\"action\" value=\"setadddeliveryaddress\">";
@@ -465,6 +453,7 @@ print '<td width="60" align="center">'.$html->selectyesno('value',$conf->global-
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
+*/
 
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

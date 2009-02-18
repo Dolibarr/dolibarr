@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Andre Cianfarani     <acianfa@free.fr>
@@ -411,8 +411,9 @@ print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 $var=true;
 
-// Valider la commande apr�s cloture de la propale
+// Valider la commande apres cloture de la propale
 // permet de na pas passer par l'option commande provisoire
+/*
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="setvalidorder">';
@@ -422,8 +423,10 @@ print '<td width="60" align="center">'.$html->selectyesno("validorder",$conf->gl
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
+*/
 
 // Ajouter une ligne de frais port indiquant le poids de la commande
+/*
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="deliverycostline">';
@@ -433,6 +436,7 @@ print '<td width="60" align="center">'.$html->selectyesno("addline",$conf->globa
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
+*/
 
 // Utiliser le contact de la commande dans le document
 $var=! $var;
