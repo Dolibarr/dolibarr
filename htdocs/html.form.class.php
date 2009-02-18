@@ -1614,7 +1614,7 @@ class Form
 				$projet = new Project($this->db);
 				$projet->fetch($selected);
 				//print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$selected.'">'.$projet->title.'</a>';
-				print $projet->getNomUrl(1);
+				print $projet->getNomUrl(0);
 			} else {
 				print "&nbsp;";
 			}

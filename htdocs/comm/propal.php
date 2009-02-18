@@ -786,6 +786,7 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 	}
 }
 
+// Set project
 if ($_POST['action'] == 'classin')
 {
 	$propal = new Propal($db);
@@ -1050,7 +1051,7 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 	print '</tr>';
 
-
+	// Delivery date
 	$langs->load('deliveries');
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1097,7 +1098,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 	}
 
-	// Conditions et modes de reglement
+	// Payment term
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
@@ -1116,7 +1117,7 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 	print '</tr>';
 
-	// Mode paiement
+	// Payment mode
 	print '<tr>';
 	print '<td width="25%">';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1142,9 +1143,9 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Project').'</td>';
-		if ($propal->statut == 0 && $user->rights->propale->creer)
+		if ($user->rights->propale->creer)
 		{
-			if ($_GET['action'] != 'classer' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'classer')
@@ -1166,7 +1167,7 @@ if ($id > 0 || ! empty($ref))
 				$proj = new Project($db);
 				$proj->fetch($propal->projetidp);
 				print '<a href="../projet/fiche.php?id='.$propal->projetidp.'" title="'.$langs->trans('ShowProject').'">';
-				print $proj->title;
+				print $proj->ref;
 				print '</a>';
 				print '</td>';
 			}

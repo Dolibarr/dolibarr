@@ -45,7 +45,7 @@ $langs->load('stocks');
 if (!$user->rights->commande->lire)
 accessforbidden();
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0)
 {
 	$action = '';
@@ -148,12 +148,12 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET["action"] == 'cloture')
 		{
-			$html->form_confirm("commande.php?id=".$_GET["id"],"Clôturer la commande","Etes-vous sûr de vouloir clôturer cette commande ?","confirm_cloture");
+			$html->form_confirm("commande.php?id=".$_GET["id"],"Clï¿½turer la commande","Etes-vous sï¿½r de vouloir clï¿½turer cette commande ?","confirm_cloture");
 			print "<br />";
 		}
 
 		// Onglet commande
-		$nbrow=8;
+		$nbrow=7;
 		if ($conf->projet->enabled) $nbrow++;
 
 		print '<table class="border" width="100%">';
@@ -262,27 +262,30 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr>';
 
-		// Adresse de livraison
-		print '<tr><td height="10">';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('DeliveryAddress');
-		print '</td>';
-
-		if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="2">';
-
-		if ($_GET['action'] == 'editdelivery_adress')
+		if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
 		{
-			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
+			// Adresse de livraison
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DeliveryAddress');
+			print '</td>';
+	
+			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+	
+			if ($_GET['action'] == 'editdelivery_adress')
+			{
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
+			}
+			else
+			{
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
+			}
+			print '</td></tr>';
 		}
-		else
-		{
-			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
-		}
-		print '</td></tr>';
-
-		// Conditions et modes de réglement
+		
+		// Conditions et modes de rï¿½glement
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
@@ -363,8 +366,8 @@ if ($id > 0 || ! empty($ref))
 
 
 		/**
-		 *  Lignes de commandes avec quantité livrées et reste à livrer
-		 *  Les quantités livrées sont stockées dans $commande->expeditions[fk_product]
+		 *  Lignes de commandes avec quantitï¿½ livrï¿½es et reste ï¿½ livrer
+		 *  Les quantitï¿½s livrï¿½es sont stockï¿½es dans $commande->expeditions[fk_product]
 		 */
 		print '<table class="liste" width="100%">';
 
@@ -595,7 +598,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		/* Commande non trouvée */
+		/* Commande non trouvï¿½e */
 		print "Commande inexistante";
 	}
 }

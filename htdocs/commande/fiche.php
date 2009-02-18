@@ -1184,7 +1184,7 @@ else
 			/*
 			 *   Commande
 			 */
-			$nbrow=8;
+			$nbrow=7;
 			if ($conf->projet->enabled) $nbrow++;
 
 			print '<table class="border" width="100%">';
@@ -1268,35 +1268,34 @@ else
 			print '</tr>';
 
 			// Date de livraison
-			if ($conf->expedition->enabled)
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DeliveryDate');
+			print '</td>';
+
+			if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+			if ($_GET['action'] == 'editdate_livraison')
 			{
-				print '<tr><td height="10">';
-				print '<table class="nobordernopadding" width="100%"><tr><td>';
-				print $langs->trans('DeliveryDate');
-				print '</td>';
+				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
+				print '<input type="hidden" name="action" value="setdate_livraison">';
+				$html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
+				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+			}
+			else
+			{
+				print $commande->date_livraison ? dolibarr_print_date($commande->date_livraison,'daytext') : '&nbsp;';
+			}
+			print '</td>';
+			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
+			print nl2br($commande->note_public);
+			print '</td>';
+			print '</tr>';
 
-				if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
-				print '</tr></table>';
-				print '</td><td colspan="2">';
-				if ($_GET['action'] == 'editdate_livraison')
-				{
-					print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
-					print '<input type="hidden" name="action" value="setdate_livraison">';
-					$html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
-					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-					print '</form>';
-				}
-				else
-				{
-					print $commande->date_livraison ? dolibarr_print_date($commande->date_livraison,'daytext') : '&nbsp;';
-				}
-				print '</td>';
-				print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-				print nl2br($commande->note_public);
-				print '</td>';
-				print '</tr>';
-
-
+			if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
+			{
 				// Adresse de livraison
 				print '<tr><td height="10">';
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1337,23 +1336,14 @@ else
 			}
 			print '</td>';
 
-			//Note public lorsque le module expedition n'est pas active
-			if (!$conf->projet->enabled) $nbrow--;
-			if (!$conf->expedition->enabled)
-			{
-				$nbrow--;
-				if ($conf->projet->enabled) $nbrow--;
-				print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-				print nl2br($commande->note_public);
-				print '</td>';
-			}
-
 			print '</tr>';
+
+			// Payment mode
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');
 			print '</td>';
-			if ($_GET['action'] != 'editmode' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+			if ($_GET['action'] != 'editmode') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editmode')
@@ -1374,7 +1364,7 @@ else
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $langs->trans('Project');
 				print '</td>';
-				if ($_GET['action'] != 'classer' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+				if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 				print '</tr></table>';
 				print '</td><td colspan="2">';
 				if ($_GET['action'] == 'classer')
