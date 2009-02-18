@@ -23,12 +23,12 @@
  */
 
 /**
- \file       htdocs/propal.class.php
- \brief      Fichier de la classe des propales
- \author     Rodolphe Qiedeville
- \author	    Eric Seigne
- \author	    Laurent Destailleur
- \version    $Id$
+ *	\file       htdocs/propal.class.php
+ *	\brief      Fichier de la classe des propales
+ *	\author     Rodolphe Qiedeville
+ *	\author	    Eric Seigne
+ *	\author	    Laurent Destailleur
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
@@ -663,7 +663,7 @@ class Propal extends CommonObject
 		$object->datep              = gmmktime();
 		$object->fin_validite       = '';
 		$object->ref_client         = '';
-		$object->products = $object->lignes;	// Tant que products encore utilisé
+		$object->products = $object->lignes;	// Tant que products encore utilisï¿½
 
 		// Create clone
 		$result=$object->create($user);
@@ -916,7 +916,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Dï¿½finit une date de livraison
+	 *      \brief      Set delivery date
 	 *      \param      user        		Objet utilisateur qui modifie
 	 *      \param      date_livraison      date de livraison
 	 *      \return     int         		<0 si ko, >0 si ok
@@ -926,8 +926,8 @@ class Propal extends CommonObject
 		if ($user->rights->propale->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
-			$sql.= " SET date_livraison = ".$this->db->idate($date_livraison);
-			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+			$sql.= " SET date_livraison = ".($date_livraison!=''?$this->db->idate($date_livraison):'null');
+			$sql.= " WHERE rowid = ".$this->id;
 
 			if ($this->db->query($sql))
 			{
