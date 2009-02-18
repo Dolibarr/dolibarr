@@ -24,17 +24,17 @@
  * !!! Envoi mailing !!!
  *
  * L'utilisation d'adresses de courriers �lectroniques dans les op�rations
- * de prospection commerciale est subordonn�e au recueil du consentement 
+ * de prospection commerciale est subordonn�e au recueil du consentement
  * pr�alable des personnes concern�es.
  *
- * Le dispositif juridique applicable a �t� introduit par l'article 22 de 
+ * Le dispositif juridique applicable a �t� introduit par l'article 22 de
  * la loi du 21 juin 2004  pour la confiance dans l'�conomie num�rique.
  *
- * Les dispositions applicables sont d�finies par les articles L. 34-5 du 
- * code des postes et des t�l�communications et L. 121-20-5 du code de la 
- * consommation. L'application du principe du consentement pr�alable en 
- * droit fran�ais r�sulte de la transposition de l'article 13 de la Directive 
- * europ�enne du 12 juillet 2002 � Vie priv�e et communications �lectroniques �. 
+ * Les dispositions applicables sont d�finies par les articles L. 34-5 du
+ * code des postes et des t�l�communications et L. 121-20-5 du code de la
+ * consommation. L'application du principe du consentement pr�alable en
+ * droit fran�ais r�sulte de la transposition de l'article 13 de la Directive
+ * europ�enne du 12 juillet 2002 � Vie priv�e et communications �lectroniques �.
  */
 
 
@@ -53,7 +53,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-    print "Usage:  mailing-send.php ID_MAILING\n";   
+    print "Usage:  mailing-send.php ID_MAILING\n";
     exit;
 }
 $id=$argv[1];
@@ -78,7 +78,7 @@ $sql .= " AND m.rowid= ".$id;
 $sql .= " LIMIT 1";
 
 $resql=$db->query($sql);
-if ($resql) 
+if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
@@ -97,8 +97,8 @@ if ($resql)
 
 		// Le message est-il en html
 		$msgishtml=-1;	// Inconnu par defaut
-		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
-		
+		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;
+
 		$i++;
 	}
 }
@@ -117,7 +117,7 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
 
-    if ($num) 
+    if ($num)
     {
         dolibarr_syslog("mailing-send: nb of targets = ".$num, LOG_DEBUG);
 
@@ -128,37 +128,48 @@ if ($resql)
         {
             dolibarr_print_error($db);
         }
-    
+
         // Boucle sur chaque adresse et envoie le mail
         $i = 0;
         while ($i < $num)
         {
             $res=1;
-            
+
             $obj = $db->fetch_object($resql);
 
             // sendto en RFC2822
-            $sendto = stripslashes($obj->prenom). " ".stripslashes($obj->nom) ." <".$obj->email.">";
+            $sendto = eregi_replace(',',' ',$obj->prenom." ".$obj->nom) ." <".$obj->email.">";
 
-			// Pratique les substitutions sur le sujet et message
-			$substitutionarray=array(	
+			// Make subtsitutions on topic and body
+			$other=split(';',$obj->other);
+			$other1=$other[0];
+			$other2=$other[1];
+			$other3=$other[2];
+			$other4=$other[3];
+			$other5=$other[4];
+			$substitutionarray=array(
 				'__ID__' => $obj->rowid,
 				'__EMAIL__' => $obj->email,
 				'__LASTNAME__' => $obj->nom,
-				'__FIRSTNAME__' => $obj->prenom
+				'__FIRSTNAME__' => $obj->prenom,
+				'__OTHER1__' => $other1,
+				'__OTHER2__' => $other2,
+				'__OTHER3__' => $other3,
+				'__OTHER4__' => $other4,
+				'__OTHER5__' => $other5
 			);
 
 			$substitutionisok=true;
 			$newsubject=make_substitutions($subject,$substitutionarray);
 			$newmessage=make_substitutions($message,$substitutionarray);
-			
+
             // Fabrication du mail
-            $mail = new CMailFile($newsubject, $sendto, $from, $newmessage, 
+            $mail = new CMailFile($newsubject, $sendto, $from, $newmessage,
             						array(), array(), array(),
             						'', '', 0, $msgishtml);
             $mail->errors_to = $errorsto;
-			
-            						
+
+
 			if ($mail->error)
 			{
 				$res=0;
@@ -174,12 +185,12 @@ if ($resql)
 			{
     			$res=$mail->sendfile();
 			}
-			
+
             if ($res)
             {
                 // Mail envoye avec succes
                 $nbok++;
-    
+
 		        dolibarr_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
                 $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
@@ -187,14 +198,14 @@ if ($resql)
                 $resql2=$db->query($sql);
                 if (! $resql2)
                 {
-                    dolibarr_print_error($db);   
+                    dolibarr_print_error($db);
                 }
             }
             else
             {
                 // Mail en echec
                 $nbko++;
-    
+
 		        dolibarr_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
                 $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
@@ -202,10 +213,10 @@ if ($resql)
                 $resql2=$db->query($sql);
                 if (! $resql2)
                 {
-                    dolibarr_print_error($db);   
+                    dolibarr_print_error($db);
                 }
             }
-    
+
             $i++;
         }
     }
