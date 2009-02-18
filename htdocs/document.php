@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ else
 	if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 	if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 	if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
-	
+
 	// Pour autre que companylogo, on charge environnement + info issus de logon comme le user
 	require("./main.inc.php");
 	// master.inc.php is included in main.inc.php
@@ -60,7 +60,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 // C'est un wrapper, donc header vierge
 function llxHeader() { }
 
-// Default encoding for HTTP output if no encoding can be found for file to download 
+// Default encoding for HTTP output if no encoding can be found for file to download
 //$encoding='ISO-8859-1';
 
 $action = $_GET["action"];
@@ -111,7 +111,7 @@ if ($modulepart)
         $original_file=$conf->facture->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='$refname'";
     }
-    
+
 	if ($modulepart == 'unpayed')
     {
         $user->getrights('facture');
@@ -169,7 +169,7 @@ if ($modulepart)
         $original_file=$conf->commande->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='$refname'";
     }
-    
+
     // Wrapping pour les commandes fournisseurs
     if ($modulepart == 'commande_fournisseur')
     {
@@ -181,7 +181,7 @@ if ($modulepart)
         $original_file=$conf->fournisseur->commande->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='$refname'";
     }
-    
+
     // Wrapping pour les factures fournisseurs
     if ($modulepart == 'facture_fournisseur')
     {
@@ -241,7 +241,7 @@ if ($modulepart)
         $original_file=$conf->expedition_bon->dir_output.'/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
     }
-    
+
     // Wrapping pour les bons de livraison
     if ($modulepart == 'livraison')
     {
@@ -335,7 +335,7 @@ if ($modulepart)
         }
         $original_file= DOL_DATA_ROOT.'/ecm/'.$original_file;
     }
-	
+
     // Wrapping pour les dons
     if ($modulepart == 'donation')
     {
@@ -356,7 +356,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-	
+
         $original_file=DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir(basename($original_file,".pdf")).$original_file;
 		$sqlprotectagainstexternals = '';
     }
@@ -370,7 +370,7 @@ if ($modulepart)
         $original_file=$conf->export->dir_temp.'/'.$user->id.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
     }
-    
+
     // Wrapping pour l'editeur wysiwyg
     if ($modulepart == 'editor')
     {
@@ -417,7 +417,7 @@ if (! $accessallowed)
 }
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans 
+// On interdit les remontees de repertoire ainsi que les pipe dans
 // les noms de fichiers.
 if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
 {
@@ -434,14 +434,14 @@ if ($action == 'remove_file')
 	/*
 	 * Suppression fichier
 	 */
-	clearstatcache(); 
+	clearstatcache();
 	$filename = basename($original_file);
-	
+
 	dolibarr_syslog("document.php remove $original_file $filename $urlsource", LOG_DEBUG);
 
-	if (! file_exists($original_file)) 
+	if (! file_exists($original_file))
 	{
-	    dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"])); 
+	    dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
 	    exit;
 	}
 	unlink($original_file);
@@ -457,28 +457,29 @@ else
 	/*
 	 * Open and return file
 	 */
-	clearstatcache(); 
+	clearstatcache();
 	$filename = basename($original_file);
-	
+
 	dolibarr_syslog("document.php download $original_file $filename content-type=$type");
-	
-	if (! file_exists($original_file)) 
+
+	if (! file_exists($original_file))
 	{
-	    dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file)); 
+	    dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
 	    exit;
 	}
-	
-	
+
+
 	// Les drois sont ok et fichier trouve, on l'envoie
-	
+
 	if ($encoding)   header('Content-Encoding: '.$encoding);
 	if ($type)       header('Content-Type: '.$type);
 	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-	
+	else header('Content-Disposition: inline; filename="'.$filename.'"');
+
 	// Ajout directives pour resoudre bug IE
 	header('Cache-Control: Public, must-revalidate');
 	header('Pragma: public');
-	 
+
 	readfile($original_file);
 }
 
