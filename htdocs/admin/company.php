@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 		if (eregi('([^\\\/:]+)$',$_FILES["logo"]["name"],$reg))
 		{
 			$original_file=$reg[1];
-				
+
 			$isimage=image_format_supported($original_file);
 			if ($isimage >= 0)
 			{
@@ -70,7 +70,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 				if (dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->societe->dir_logos.'/'.$original_file,1) > 0)
 				{
 					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file);
-						
+
 					// Create thumbs of logo
 					if ($isimage > 0)
 					{
@@ -143,7 +143,7 @@ if ($_GET["action"] == 'addthumb')
 				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall);
 			}
 			else dolibarr_syslog($imgThumbSmall);
-				
+
 			// Création de la vignette de la page "Société/Institution"
 			$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$_GET["file"], 100, 30, '_mini',80);
 			if (image_format_supported($imgThumbSmall) >= 0 && eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
@@ -274,11 +274,14 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<table width="100%" class="notopnoleftnoright"><tr><td valign="center">';
 	print '<input type="file" class="flat" name="logo" size="50">';
 	print '</td><td valign="middle" align="right">';
-	if ($mysoc->logo_mini && file_exists($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini))
+	if ($mysoc->logo_mini)
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
-		print ' &nbsp; ';
-		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
+		if (file_exists($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini))
+		{
+			print ' &nbsp; ';
+			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
+		}
 	}
 	else
 	{

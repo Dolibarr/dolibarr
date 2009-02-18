@@ -59,6 +59,7 @@ class ModelePDFPropales extends FPDF
         $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
         $sql.=" WHERE type = '".$type."'";
 
+        dolibarr_syslog("modules_propale::liste_modeles sql=".$sql, LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {

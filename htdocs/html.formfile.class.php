@@ -58,23 +58,23 @@ class FormFile
 		global $conf,$langs;
 
 		print "\n\n<!-- Start form attach new file -->\n";
-			
+
 		if (! $titre) $titre=$langs->trans("AttachANewFile");
 		print_titre($titre);
 
 		print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
 		print '<input type="hidden" name="section" value="'.$sectionid.'">';
-			
+
 		print '<table width="100%" class="noborder">';
 		print '<tr><td width="50%" valign="top">';
-			
+
 		$max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
 		$maxphp=@ini_get('upload_max_filesize');	// En inconnu
 		if (eregi('m$',$maxphp)) $maxphp=$maxphp*1024;
 		if (eregi('k$',$maxphp)) $maxphp=$maxphp;
 		// Now $max and $maxphp are in Kb
 		if ($maxphp > 0) $max=min($max,$maxphp);
-			
+
 		if ($max > 0)
 		{
 			print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
@@ -86,13 +86,13 @@ class FormFile
 		print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
 		print (empty($conf->global->MAIN_UPLOAD_DOC)?' disabled="true"':'');
 		print '>';
-			
+
 		if ($addcancel)
 		{
 			print ' &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
-		
+
 		if (! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
 			print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
@@ -108,7 +108,7 @@ class FormFile
 
 		print '</form>';
 		if (empty($sectionid)) print '<br>';
-			
+
 		print "\n<!-- End form attach new file -->\n\n";
 
 		return 1;
@@ -128,7 +128,7 @@ class FormFile
 	 *      \param      forcenomultilang	N'affiche pas option langue meme si MAIN_MULTILANGS defini
 	 *      \param      iconPDF             N'affiche que l'icone PDF avec le lien (1/0)
 	 * 		\param		maxfilenamelength	Max length for filename shown
-	 * 		\param		noform				Do not output html form start and end 
+	 * 		\param		noform				Do not output html form start and end
 	 * 		\param		param				More param on http links
 	 *      \remarks    Le fichier de facture detaillee est de la forme
 	 *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
@@ -138,7 +138,7 @@ class FormFile
 	{
 		// filedir = conf->...dir_ouput."/".get_exdir(id)
 		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
-		
+
 		global $langs,$bc,$conf;
 		$var=true;
 
@@ -273,7 +273,7 @@ class FormFile
 			else if ($modulepart == 'unpayed')
 			{
 				$modellist='';
-			}			
+			}
 			else
 			{
 				dolibarr_print_error($this->db,'Bad value for modulepart');
@@ -284,10 +284,10 @@ class FormFile
 
 			$html = new Form($db);
 			$texte=$langs->trans('Generate');
-			
+
 			if (empty($noform)) print '<form action="'.$urlsource.'#builddoc" method="post">';
 			print '<input type="hidden" name="action" value="builddoc">';
-			 
+
 			print_titre($langs->trans("BuildDocuments"));
 			print '<table class="border" width="100%">';
 
@@ -343,7 +343,7 @@ class FormFile
 		foreach($file_list as $i => $file)
 		{
 			$var=!$var;
-			
+
 			// Defini chemin relatif par rapport au module pour lien download
 			$relativepath=$file["name"];								// Cas general
 			if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
@@ -417,7 +417,7 @@ class FormFile
 		global $user, $conf, $langs;
 		global $bc;
 		global $sortfield, $sortorder;
-		 
+
 		// Affiche liste des documents existant
 		if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));
 		else { $bc[true]=''; $bc[false]=''; };
@@ -466,7 +466,7 @@ class FormFile
 				print "</td></tr>\n";
 			}
 		}
-		if (sizeof($filearray) == 0) 
+		if (sizeof($filearray) == 0)
 		{
 			print '<tr '.$bc[$var].'><td colspan="4">';
 			if (empty($textifempty)) print $langs->trans("NoFileFound");

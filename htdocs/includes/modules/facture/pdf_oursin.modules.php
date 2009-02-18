@@ -810,9 +810,10 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->MultiCell(80, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
 		}
-		else if (defined("FAC_PDF_INTITULE"))
+		else
 		{
-			$pdf->MultiCell(80, 6, FAC_PDF_INTITULE, 0, 'L');
+			$text=$this->emetteur->nom;
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
 

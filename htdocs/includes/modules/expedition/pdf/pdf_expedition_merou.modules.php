@@ -355,7 +355,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
-		else $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+		else
+		{
+			$text=$this->emetteur->nom;
+			$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($text), 0, 'L');
+		}
 
 		//*********************Entete****************************
 		//Nom du Document

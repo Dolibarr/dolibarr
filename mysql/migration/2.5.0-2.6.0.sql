@@ -79,6 +79,8 @@ delete from llx_categorie_association where fk_categorie_mere = fk_categorie_fil
 
 alter table llx_societe add price_level tinyint(4) NULL;
 
+delete from llx_document_model where nom = 'huitre' and type = 'invoice';
+
 
 -- V4.1 delete from llx_projet_task where fk_projet not in (select rowid from llx_projet);
 -- V4.1 ALTER TABLE llx_projet_task ADD CONSTRAINT fk_projet_task_fk_projet FOREIGN KEY (fk_projet)    REFERENCES llx_projet (rowid);

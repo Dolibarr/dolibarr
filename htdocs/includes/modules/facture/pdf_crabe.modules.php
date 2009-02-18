@@ -925,9 +925,10 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
 		}
-		else if (defined("FAC_PDF_INTITULE"))
+		else
 		{
-			$pdf->MultiCell(100, 4, FAC_PDF_INTITULE, 0, 'L');
+			$text=$this->emetteur->nom;
+			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
 		$pdf->SetFont('Arial','B',13);
