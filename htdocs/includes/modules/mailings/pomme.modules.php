@@ -82,6 +82,25 @@ class mailing_pomme extends MailingTargets
 
 
     /**
+     *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
+     *                  des destinataires de mailings
+     *      \return     string      Retourne zone select
+     */
+    function formFilter()
+    {
+        global $langs;
+        $langs->load("users");
+
+        $s='';
+        $s.='<select name="filter" class="flat">';
+        $s.='<option value="1">'.$langs->trans("Enabled").'</option>';
+        $s.='<option value="0">'.$langs->trans("Disabled").'</option>';
+        $s.='</select>';
+        return $s;
+    }
+
+
+	/**
      *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
      *      \return     string      Url lien
      */
@@ -108,6 +127,11 @@ class mailing_pomme extends MailingTargets
         $sql.= " u.name as name, u.firstname as firstname, u.login, u.office_phone";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+        foreach($filtersarray as $key)
+        {
+            if ($key == '1') $sql.= " AND u.statut=1";
+            if ($key == '0') $sql.= " AND u.statut=0";
+        }
         $sql.= " ORDER BY u.email";
 
         // Stocke destinataires dans cibles

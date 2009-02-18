@@ -3,6 +3,7 @@ English Dolibarr changelog
 ***** Changelog for 2.6 compared to 2.5 *****
 
 For users:
+- New: Add filter on statut in emailing selector for dolibarr users.
 - New: Can add bookmarks on all pages.
 - New: Enhance bank transactions reportings.
 - New: When creating a contact from a third party, informations from third party card
