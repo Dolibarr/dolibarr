@@ -129,6 +129,7 @@ if ($_POST["action"] == 'sendallconfirmed')
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
 
+		dolibarr_syslog("fiche.php: select targets sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -136,7 +137,7 @@ if ($_POST["action"] == 'sendallconfirmed')
 
 		    if ($num)
 		    {
-		        dolibarr_syslog("mailing-send: nb of targets = ".$num, LOG_DEBUG);
+		        dolibarr_syslog("fiche.php: nb of targets = ".$num, LOG_DEBUG);
 
 		        // Positionne date debut envoi
 		        $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$id;
@@ -157,15 +158,15 @@ if ($_POST["action"] == 'sendallconfirmed')
 		            $obj = $db->fetch_object($resql);
 
 		            // sendto en RFC2822
-		            $sendto = $obj->prenom." ".$obj->nom." <".$obj->email.">";
+		            $sendto = eregi_replace(',',' ',$obj->prenom." ".$obj->nom)." <".$obj->email.">";
 
-					// Pratique les substitutions sur le sujet et message
+					// Make subtsitutions on topic and body
 					$other=split(';',$obj->other);
 					$other1=$other[0];
 					$other2=$other[1];
-					$other3=$other[3];
-					$other4=$other[4];
-					$other5=$other[5];
+					$other3=$other[2];
+					$other4=$other[3];
+					$other5=$other[4];
 					$substitutionarray=array(
 						'__ID__' => $obj->rowid,
 						'__EMAIL__' => $obj->email,
@@ -387,7 +388,8 @@ if ($_POST["action"] == 'confirm_valide')
 	}
 }
 
-if ($_POST["action"] == 'confirm_approve')
+// Resend
+if ($_POST["action"] == 'confirm_reset')
 {
 	if ($_POST["confirm"] == 'yes')
 	{
@@ -395,10 +397,25 @@ if ($_POST["action"] == 'confirm_approve')
 
 		if ($mil->fetch($_GET["id"]) >= 0)
 		{
-			$mil->approve($user);
+			$db->begin();
 
-			Header("Location: fiche.php?id=".$mil->id);
-			exit;
+			$result=$mil->valid($user);
+			if ($result > 0)
+			{
+				$result=$mil->reset_targets_status($user);
+			}
+
+			if ($result > 0)
+			{
+				$db->commit();
+				Header("Location: fiche.php?id=".$mil->id);
+				exit;
+			}
+			else
+			{
+				$mesg=$mil->error;
+				$db->rollback();
+			}
 		}
 		else
 		{
@@ -513,7 +530,14 @@ else
             print '<br>';
         }
 
-        // Confirmation de la suppression
+        // Confirm reset
+        if ($_GET["action"] == 'reset')
+        {
+            $html->form_confirm("fiche.php?id=".$mil->id,$langs->trans("ResetMailing"),$langs->trans("ConfirmResetMailing",$mil->ref),"confirm_reset");
+            print '<br>';
+        }
+
+        // Confirm delete
         if ($_GET["action"] == 'delete')
         {
             $html->form_confirm("fiche.php?id=".$mil->id,$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete");
@@ -653,7 +677,12 @@ else
                     print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&amp;object=emailing&amp;id='.$mil->id.'">'.$langs->trans("ToClone").'</a>';
                 }
 
-                if ($mil->statut <= 1 && $user->rights->mailing->supprimer)
+                if (($mil->statut == 2 || $mil->statut == 3) && $user->rights->mailing->valider)
+                {
+                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=reset&amp;id='.$mil->id.'">'.$langs->trans("ResetMailing").'</a>';
+                }
+
+                if (($mil->statut <= 1 && $user->rights->mailing->creer) || $user->rights->mailing->supprimer)
                 {
                     print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$mil->id.'">'.$langs->trans("DeleteMailing").'</a>';
                 }
@@ -722,7 +751,11 @@ else
             print '__EMAIL__ = '.$langs->trans("EMail").'<br>';
             print '__LASTNAME__ = '.$langs->trans("Lastname").'<br>';
             print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
-            print '__OTHER1__ = '.$langs->trans("Other").'<br>';
+            print '__OTHER1__ = '.$langs->trans("Other").'1<br>';
+            print '__OTHER2__ = '.$langs->trans("Other").'2<br>';
+            print '__OTHER3__ = '.$langs->trans("Other").'3<br>';
+            print '__OTHER4__ = '.$langs->trans("Other").'4<br>';
+            print '__OTHER5__ = '.$langs->trans("Other").'5<br>';
             print '</i></td>';
             print '<td colspan="3">';
             // Editeur wysiwyg

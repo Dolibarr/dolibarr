@@ -35,10 +35,10 @@ class Mailing extends CommonObject
 {
 	var $db;
 	var $error;
-    var $element='mailing';
-    var $table_element='mailing';
+	var $element='mailing';
+	var $table_element='mailing';
 
-    var $id;
+	var $id;
 	var $statut;
 	var $titre;
 	var $sujet;
@@ -292,40 +292,78 @@ class Mailing extends CommonObject
 	}
 
 	/**
-	 *    \brief     Valide le mailing
-	 *    \param     user      objet user qui valide
+	 *    	\brief     	Validate emailing
+	 *    	\param     	user      	Objet user qui valide
+	 * 		\return		int			<0 if KO, >0 if OK
 	 */
 	function valid($user)
 	{
-		dolibarr_syslog("Mailing::Valid");
-
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 1, date_valid = ".$this->db->idate(mktime()).", fk_user_valid=".$user->id;
-		$sql .= " WHERE rowid = ".$this->id." AND statut = 0 ;";
+		$sql .= " SET statut = 1, date_valid = ".$this->db->idate(gmmktime()).", fk_user_valid=".$user->id;
+		$sql .= " WHERE rowid = ".$this->id;
 
-		if ($this->db->query($sql) )
+		dol_syslog("Mailing::valid sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
 		{
-	  return 0;
+			return 1;
 		}
 		else
 		{
-	  dolibarr_syslog("Mailing::Valid Erreur -1");
-	  return -1;
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("Mailing::Valid ".$this->error, LOG_ERR);
+			return -1;
 		}
 	}
 
+
 	/**
-	 *    \brief      Supprime le mailing
+	 *    \brief      Delete emailing
 	 *    \param      rowid       id du mailing a supprimer
 	 *    \return     int         1 en cas de succes
 	 */
 	function delete($rowid)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing";
-		$sql .= " WHERE rowid = ".$rowid;
+		$sql.= " WHERE rowid = ".$rowid;
 
-		$this->db->query($sql);
-		return 1;
+		dol_syslog("Mailing::delete sql=".$sql, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("Mailing::Valid ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+
+
+	/**
+	 *    	\brief      Change status of each recipient
+	 *		\param     	user      	Objet user qui valide
+	 *    	\return     int         <0 if KO, >0 if OK
+	 */
+	function reset_targets_status($user)
+	{
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql.= " SET statut = 0";
+		$sql.= " WHERE fk_mailing = ".$this->id;
+
+		dol_syslog("Mailing::reset_targets_status sql=".$sql, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
+			return -1;
+		}
 	}
 
 
