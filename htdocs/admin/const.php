@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-    	\file       htdocs/admin/const.php
-		\ingroup    setup
-		\brief      Page d'administration/configuration des constantes autres
-		\version    $Id$
-*/
+ \file       htdocs/admin/const.php
+ \ingroup    setup
+ \brief      Page d'administration/configuration des constantes autres
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 $langs->load("admin");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 
 
@@ -40,7 +40,7 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
 	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:''));
 	{
-	  	print $db->error();
+		print $db->error();
 	}
 }
 
@@ -48,7 +48,7 @@ if ($_GET["action"] == 'delete')
 {
 	if (! dolibarr_del_const($db, $_GET["rowid"]));
 	{
-	  	print $db->error();
+		print $db->error();
 	}
 }
 
@@ -65,7 +65,6 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
-print '<td>'.$langs->trans("Type").'</td>';
 print '<td>'.$langs->trans("Note").'</td>';
 print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
@@ -81,11 +80,9 @@ print '<input type="hidden" name="action" value="add">';
 
 print "<tr $bc[$var] class=value><td><input type=\"text\" class=\"flat\" size=\"24\" name=\"constname\" value=\"\"></td>\n";
 print '<td>';
-print '<input type="text" class="flat" size="24" name="constvalue" value="">';
+print '<input type="text" class="flat" size="30" name="constvalue" value="">';
 print '</td><td>';
-$form->select_array('consttype',array('yesno','texte','chaine'),2);
-print '</td><td>';
-print '<input type="text" class="flat" size="32" name="constnote" value="">';
+print '<input type="text" class="flat" size="40" name="constnote" value="">';
 print '</td><td align="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="Button"><br>';
 print "</td>\n";
@@ -96,63 +93,44 @@ print '</form>';
 
 # Affiche lignes des constantes
 if ($all==1){
-  $sql = "SELECT rowid, name, value, type, note FROM llx_const ORDER BY name ASC";
+	$sql = "SELECT rowid, name, value, note FROM llx_const ORDER BY name ASC";
 }else{
-  $sql = "SELECT rowid, name, value, type, note FROM llx_const WHERE visible = 1 ORDER BY name ASC";
+	$sql = "SELECT rowid, name, value, note FROM llx_const WHERE visible = 1 ORDER BY name ASC";
 }
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0;
-  $var=false;
+	$num = $db->num_rows($result);
+	$i = 0;
+	$var=false;
 
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object($result);
-      $var=!$var;
-
-      print '<form action="const.php" method="POST">';
-      print '<input type="hidden" name="action" value="update">';
-      print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-      print '<input type="hidden" name="constname" value="'.$obj->name.'">';
-
-      print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
-
-      // Type
-      print '<td>';
-      if ($obj->type == 'yesno')
+	while ($i < $num)
 	{
-	  print $form->selectyesno('constvalue',$obj->value,1);
-	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte','chaine'),0);
-	}
-      elseif ($obj->type == 'texte')
-	{
-	  print '<textarea name="constvalue" cols="32" rows="3" wrap="soft">';
-	  print $obj->value;
-	  print "</textarea>\n";
-	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte','chaine'),1);
-	}
-      else
-	{
-	  print '<input type="text" class="flat" size="24" name="constvalue" value="'.stripslashes($obj->value).'">';
-	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte','chaine'),2);
-	}
-      print '</td><td>';
+		$obj = $db->fetch_object($result);
+		$var=!$var;
 
-      // Note
-      print '<input type="text" class="flat" size="32" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
-      print '</td><td align="center">';
-      print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button"> &nbsp; ';
-      print '<a href="const.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
-      print "</td></tr>\n";
+		print '<form action="const.php" method="POST">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+		print '<input type="hidden" name="constname" value="'.$obj->name.'">';
 
-      print '</form>';
-      $i++;
-    }
+		print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
+
+		// Value
+		print '<td>';
+		print '<input type="text" class="flat" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
+		print '</td><td>';
+
+		// Note
+		print '<input type="text" class="flat" size="40" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
+		print '</td><td align="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button"> &nbsp; ';
+		print '<a href="const.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
+		print "</td></tr>\n";
+
+		print '</form>';
+		$i++;
+	}
 }
 
 
