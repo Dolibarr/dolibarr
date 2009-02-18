@@ -454,7 +454,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	{
 		// We removed all expanded sections that are child of the closed section
 		$oldexpandedsectionarray=$expandedsectionarray;
-		$expandedsectionarray=array();
+		$expandedsectionarray=array();	// Reset
 		foreach($oldexpandedsectionarray as $sectioncursor)
 		{
 			// is_in_subtree(fulltree,sectionparent,sectionchild)
