@@ -28,6 +28,7 @@ require ("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');
 
 
 $langs->load("contracts");
@@ -143,10 +144,14 @@ if ($_GET["action"] == 'deleteline' && $user->rights->contrat->creer)
 }
 
 
+/*
+ * View
+ */
 
 llxHeader('', $langs->trans("ContractCard"), "Contrat");
 
 $html = new Form($db);
+$formcompany= new FormCompany($db);
 $contactstatic=new Contact($db);
 
 
@@ -210,7 +215,7 @@ if ($id > 0)
 
 		/*
 		 * Ajouter une ligne de contact
-		 * Non affiché en mode modification de ligne
+		 * Non affichï¿½ en mode modification de ligne
 		 */
 		if ($_GET["action"] != 'editline' && $user->rights->contrat->creer)
 		{
@@ -241,12 +246,11 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On récupère les id des users déjà sélectionnés
 			//$userAlreadySelected = $contrat->getListContactId('internal'); 	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
-			$contrat->selectTypeContact($contrat, '', 'type','internal');
+			$formcompany->selectTypeContact($contrat, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -268,17 +272,16 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$contrat->societe->id;
-			$selectedCompany = $contrat->selectCompaniesForNewContact($contrat, 'id', $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($contrat, 'id', $selectedCompany, 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On récupère les id des contacts déjà sélectionnés
 			//$contactAlreadySelected = $contrat->getListContactId('external');		// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$nbofcontacts=$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
-			$contrat->selectTypeContact($contrat, '', 'type','external');
+			$formcompany->selectTypeContact($contrat, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
 			if (! $nbofcontacts) print ' disabled="true"';
@@ -291,7 +294,7 @@ if ($id > 0)
 
         print '<tr><td colspan="6">&nbsp;</td></tr>';
 
-		// Liste des contacts liés
+		// Liste des contacts liï¿½s
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("Company").'</td>';
@@ -365,9 +368,9 @@ if ($id > 0)
 				if ($contrat->statut >= 0) print '</a>';
 				print '</td>';
 
-				// Icon update et delete (statut contrat 0=brouillon,1=validé,2=fermé)
+				// Icon delete
 				print '<td align="center" nowrap>';
-				if ($contrat->statut == 0 && $user->rights->contrat->creer)
+				if ($user->rights->contrat->creer)
 				{
 					print '&nbsp;';
 					print '<a href="contact.php?id='.$contrat->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
@@ -387,8 +390,7 @@ if ($id > 0)
 	}
 	else
 	{
-		// Contrat non trouvé
-		print "Contrat inexistant ou accés refusé";
+		print "ErrorRecordNotFound";
 	}
 }
 

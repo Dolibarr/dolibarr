@@ -20,11 +20,11 @@
  */
 
 /**
-        \file       htdocs/fourn/fiche.php
-        \ingroup    fournisseur, facture
-        \brief      Page de fiche fournisseur
-		\version	$Id$
-*/
+ \file       htdocs/fourn/fiche.php
+ \ingroup    fournisseur, facture
+ \brief      Page de fiche fournisseur
+ \version	$Id$
+ */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -46,89 +46,89 @@ $result = restrictedArea($user, 'societe',$socid,'');
 
 /*
  * View
- */  
+ */
 $societe = new Fournisseur($db);
 $contactstatic = new Contact($db);
 $form = new Form($db);
 
 if ( $societe->fetch($socid) )
 {
-  $addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
-  $addons[0][1] = $societe->nom;
-  
-  llxHeader('',$langs->trans('SupplierCard').' : '.$societe->nom, $addons);
-  
-  /*
-   * Affichage onglets
-   */
-  $head = societe_prepare_head($societe);
-  
-  dolibarr_fiche_head($head, 'supplier', $langs->trans("ThirdParty"));
-  
-  
-  print '<table width="100%" class="notopnoleftnoright">';
-  print '<tr><td valign="top" width="50%" class="notopnoleft">';
-  
-  print '<table width="100%" class="border">';
-  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
-  
-  print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
-  
-  if ($societe->fournisseur)
-    {
-      print '<tr><td nowrap="nowrap">';
-      print $langs->trans('SupplierCode').'</td><td colspan="3">';
-      print $societe->code_fournisseur;
-      if ($societe->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
-      print '</td></tr>';
-    }
-  
-  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse).'</td></tr>';
-  
-  print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
-  print '<td>'.$langs->trans("Town").'</td><td>'.$societe->ville.'</td></tr>';
-  
-  	// Country
-  	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-  	if ($societe->isInEEC()) print $form->textwithhelp($societe->pays,$langs->trans("CountryIsInEEC"),1,0);
-	else print $societe->pays;
-  	print '</td></tr>';
+	$addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
+	$addons[0][1] = $societe->nom;
 
-  print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td>';
-  print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($societe->fax,$societe->pays_code,0,$societe->id,'AC_FAX').'</td></tr>';
-  print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
-  
-  // Assujetti a TVA ou pas
-  print '<tr>';
-  print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
-  print yn($societe->tva_assuj);
-  print '</td>';
-  print '</tr>';
-  
-  print '</table>';
-  
-  
-  print '</td><td valign="top" width="50%" class="notopnoleftnoright">';
-  $var=true;
-  
-  $MAXLIST=5;
-  
-  // Lien recap
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$societe->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
-  print '</tr>';
-  print '</table>';
-  print '<br>';
-  
-  /*
-   * Liste des commandes associees
-   */
-  $orderstatic = new CommandeFournisseur($db);
-  
-  $sql  = "SELECT p.rowid,p.ref,".$db->pdate("p.date_commande")." as dc, p.fk_statut";
-  $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
+	llxHeader('',$langs->trans('SupplierCard').' : '.$societe->nom, $addons);
+
+	/*
+	 * Affichage onglets
+	 */
+	$head = societe_prepare_head($societe);
+
+	dolibarr_fiche_head($head, 'supplier', $langs->trans("ThirdParty"));
+
+
+	print '<table width="100%" class="notopnoleftnoright">';
+	print '<tr><td valign="top" width="50%" class="notopnoleft">';
+
+	print '<table width="100%" class="border">';
+	print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
+
+	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+
+	if ($societe->fournisseur)
+	{
+		print '<tr><td nowrap="nowrap">';
+		print $langs->trans('SupplierCode').'</td><td colspan="3">';
+		print $societe->code_fournisseur;
+		if ($societe->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
+		print '</td></tr>';
+	}
+
+	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse).'</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
+	print '<td>'.$langs->trans("Town").'</td><td>'.$societe->ville.'</td></tr>';
+
+	// Country
+	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
+	if ($societe->isInEEC()) print $form->textwithhelp($societe->pays,$langs->trans("CountryIsInEEC"),1,0);
+	else print $societe->pays;
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td>';
+	print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($societe->fax,$societe->pays_code,0,$societe->id,'AC_FAX').'</td></tr>';
+	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
+
+	// Assujetti a TVA ou pas
+	print '<tr>';
+	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+	print yn($societe->tva_assuj);
+	print '</td>';
+	print '</tr>';
+
+	print '</table>';
+
+
+	print '</td><td valign="top" width="50%" class="notopnoleftnoright">';
+	$var=true;
+
+	$MAXLIST=5;
+
+	// Lien recap
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$societe->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
+	print '</tr>';
+	print '</table>';
+	print '<br>';
+
+	/*
+	 * Liste des commandes associees
+	 */
+	$orderstatic = new CommandeFournisseur($db);
+
+	$sql  = "SELECT p.rowid,p.ref,".$db->pdate("p.date_commande")." as dc, p.fk_statut";
+	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
 	$sql.= " WHERE p.fk_soc =".$societe->id;
 	$sql.= " ORDER BY p.date_commande DESC";
 	$sql.= " ".$db->plimit($MAXLIST);
@@ -268,10 +268,10 @@ if ( $societe->fetch($socid) )
 	}
 
 	if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-    {
+	{
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddAction").'</a>';
-    }
-    
+	}
+
 	if ($user->rights->societe->contact->creer)
 	{
 		print "<a class=\"butAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a>";
@@ -281,18 +281,18 @@ if ( $societe->fetch($socid) )
 	print '<br>';
 
 	/*
-     * Liste des contacts
-     */
+	 * Liste des contacts
+	 */
 	show_contacts($conf,$langs,$db,$societe);
 
-    /*
-     *      Listes des actions a faire
-     */
+	/*
+	 *      Listes des actions a faire
+	 */
 	show_actions_todo($conf,$langs,$db,$societe);
-	
-    /*
-     *      Listes des actions effectuees
-     */
+
+	/*
+	 *      Listes des actions effectuees
+	 */
 	show_actions_done($conf,$langs,$db,$societe);
 }
 else

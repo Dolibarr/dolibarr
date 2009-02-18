@@ -28,6 +28,7 @@ require ("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');
 
 $langs->load("facture");
 $langs->load("companies");
@@ -144,6 +145,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->facture->creer)
 llxHeader('', $langs->trans("Bill"), "Facture");
 
 $html = new Form($db);
+$formcompany = new FormCompany($db);
 $contactstatic=new Contact($db);
 
 
@@ -182,6 +184,7 @@ if ($id > 0)
 
 		print '</div>';
 
+
 		/*
 		 * Lignes de contacts
 		 */
@@ -189,7 +192,7 @@ if ($id > 0)
 
 		/*
 		 * Ajouter une ligne de contact
-		 * Non affiché en mode modification de ligne
+		 * Non affichï¿½ en mode modification de ligne
 		 */
 		if ($_GET["action"] != 'editline' && $user->rights->facture->creer)
 		{
@@ -220,12 +223,12 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On récupère les id des users déjà sélectionnés
+			// On rï¿½cupï¿½re les id des users dï¿½jï¿½ sï¿½lectionnï¿½s
 			//$userAlreadySelected = $facture->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
-			$facture->selectTypeContact($facture, '', 'type','internal');
+			$formcompany->selectTypeContact($facture, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -247,17 +250,16 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$facture->client->id;
-			$selectedCompany = $facture->selectCompaniesForNewContact($facture, 'facid', $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($facture, 'facid', $selectedCompany, $htmlname = 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On récupère les id des contacts déjà sélectionnés
-			//$contactAlreadySelected = $facture->getListContactId('external');		// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
+			//$contactAlreadySelected = $facture->getListContactId('external');		// On ne doit pas desactiver un contact deja selectionne car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid', 0, $contactAlreadySelected);
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
-			$facture->selectTypeContact($facture, '', 'type','external');
+			$formcompany->selectTypeContact($facture, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
 			if (! $nbofcontacts) print ' disabled="true"';
@@ -269,7 +271,7 @@ if ($id > 0)
             print '<tr><td colspan="6">&nbsp;</td></tr>';
 		}
 
-		// Liste des contacts liés
+		// List of linked contacts
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("Company").'</td>';
@@ -300,7 +302,7 @@ if ($id > 0)
 				if ($tab[$i]['source']=='external') print $langs->trans("ThirdPartyContact");
                 print '</td>';
 
-				// Societe
+				// Third party
 				print '<td align="left">';
 				if ($tab[$i]['socid'] > 0)
 				{
@@ -332,18 +334,18 @@ if ($id > 0)
                 }
 				print '</td>';
 
-				// Type de contact
+				// Type of contact
 				print '<td>'.$tab[$i]['libelle'].'</td>';
 
-				// Statut
+				// Status
 				print '<td align="center">';
-				// Activation desativation du contact
+				// Activate/Unactivate contact
 				if ($facture->statut >= 0) print '<a href="contact.php?facid='.$facture->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
 				print $contactstatic->LibStatut($tab[$i]['status'],3);
 				if ($facture->statut >= 0) print '</a>';
 				print '</td>';
 
-				// Icon update et delete (statut contrat 0=brouillon,1=validé,2=fermé)
+				// Icon update et delete
 				print '<td align="center" nowrap>';
 				if ($user->rights->facture->creer)
 				{
@@ -363,8 +365,8 @@ if ($id > 0)
 	}
 	else
 	{
-		// Contrat non trouvé
-		print "Contrat inexistant ou accés refusé";
+		// Record not found
+		print "ErrorRecordNotFound";
 	}
 }
 

@@ -51,7 +51,7 @@ $comclientid = isset($_GET["comid"])?$_GET["comid"]:'';
 $id = isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 
 // Securite	acces client
-$socid=0;
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id >	0)
 {
 	$action	= '';
@@ -140,7 +140,7 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 				$_POST['idprodfournprice'],
 				$prodfournprice->fourn_ref,
 				$_POST['remise_percent'],
-					'HT'
+				'HT'
 					);
 
 			}
@@ -209,13 +209,13 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 
 	if ($result	>= 0)
 	{
-			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 	}
 	else
 	{
@@ -431,11 +431,12 @@ if ($action=='remove_file')
 if ($_GET["action"]	== 'create')
 {
 	$fourn = new Fournisseur($db);
-	$fourn->fetch($_GET["socid"]);
+	$result=$fourn->fetch($_GET["socid"]);
 
 	$db->begin();
 
 	$orderid=$fourn->create_commande($user);
+
 	if ($orderid > 0)
 	{
 		$idc = $fourn->single_open_commande;
@@ -447,6 +448,7 @@ if ($_GET["action"]	== 'create')
 		}
 
 		$id=$orderid;
+		$_GET['id']=$id;
 		$_GET['action']='edit';
 		$db->commit();
 	}

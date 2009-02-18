@@ -28,6 +28,7 @@ require ("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');
 
 $langs->load("facture");
 $langs->load("orders");
@@ -143,9 +144,14 @@ if ($_GET["action"] == 'deleteline' && $user->rights->propale->creer)
 }
 
 
+/*
+ * View
+ */
+
 llxHeader('', $langs->trans("Proposal"), "Propal");
 
 $html = new Form($db);
+$formcompany= new FormCompany($db);
 $contactstatic=new Contact($db);
 
 
@@ -208,7 +214,7 @@ if ($id > 0)
 
 		/*
 		* Ajouter une ligne de contact
-		* Non affiché en mode modification de ligne
+		* Non affichï¿½ en mode modification de ligne
 		*/
 		if ($_GET["action"] != 'editline' && $user->rights->propale->creer)
 		{
@@ -239,12 +245,12 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On récupère les id des users déjà sélectionnés
+			// On rï¿½cupï¿½re les id des users dï¿½jï¿½ sï¿½lectionnï¿½s
 			//$userAlreadySelected = $propal->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
-			$propal->selectTypeContact($propal, '', 'type','internal');
+			$formcompany->selectTypeContact($propal, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -266,17 +272,16 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$propal->client->id;
-			$selectedCompany = $propal->selectCompaniesForNewContact($propal, 'propalid', $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($propal, 'propalid', $selectedCompany, $htmlname = 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On récupère les id des contacts déjà sélectionnés
 			//$contactAlreadySelected = $propal->getListContactId('external');		// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$nbofcontacts=$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
-			$propal->selectTypeContact($propal, '', 'type','external');
+			$formcompany->selectTypeContact($propal, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
 			if (! $nbofcontacts) print ' disabled="true"';
@@ -288,7 +293,7 @@ if ($id > 0)
 			print '<tr><td colspan="6">&nbsp;</td></tr>';
 		}
 
-		// Liste des contacts liés
+		// Liste des contacts liï¿½s
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("Company").'</td>';
@@ -382,8 +387,7 @@ if ($id > 0)
 	}
 	else
 	{
-		// Propale non trouvée
-		print "Propale inexistante ou accès refusé";
+		print "ErrorRecordNotFound";
 	}
 }
 

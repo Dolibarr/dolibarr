@@ -28,6 +28,7 @@ require ("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once DOL_DOCUMENT_ROOT."/lib/fourn.lib.php";
+require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');
 
 $langs->load("facture");
 $langs->load("orders");
@@ -151,6 +152,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->commande->creer)
 llxHeader('', $langs->trans("Order"), "Commande");
 
 $html = new Form($db);
+$formcompany = new FormCompany($db);
 $contactstatic=new Contact($db);
 
 
@@ -205,7 +207,7 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		* Ajouter une ligne de contact
-		* Non affiché en mode modification de ligne
+		* Non affichï¿½ en mode modification de ligne
 		*/
 		if ($_GET["action"] != 'editline' && $user->rights->fournisseur->facture->creer)
 		{
@@ -238,12 +240,11 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On récupère les id des users déjà sélectionnés
 			//$userAlreadySelected = $commande->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
-			$commande->selectTypeContact($commande, '', 'type','internal');
+			$formcompany->selectTypeContact($commande, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -265,17 +266,16 @@ if ($id > 0 || ! empty($ref))
 
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$commande->client->id;
-			$selectedCompany = $commande->selectCompaniesForNewContact($commande, 'id', $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($commande, 'id', $selectedCompany, 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On récupère les id des contacts déjà sélectionnés
 			// $contactAlreadySelected = $commande->getListContactId('external');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$nbofcontacts=$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
-			$commande->selectTypeContact($commande, '', 'type','external');
+			$formcompany->selectTypeContact($commande, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
 			if (! $nbofcontacts) print ' disabled="true"';
@@ -287,7 +287,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr><td colspan="6">&nbsp;</td></tr>';
 		}
 
-		// Liste des contacts liés
+		// List of linked contacts
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("Company").'</td>';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
 
 /**
  *	\file       htdocs/html.formcompany.class.php
- *	\brief      Fichier de la classe des fonctions pr�d�finie de composants html
+ *	\brief      File of class to build HTML component for third parties management
  *	\version	$Id$
  */
 
 
 /**
  *	\class      FormCompany
- *	\brief      Classe permettant la g�n�ration de composants html
+ *	\brief      Class to build HTML component for third parties management
  *	\remarks	Only common components must be here.
  */
 class FormCompany
@@ -256,7 +256,7 @@ class FormCompany
 		}
 	}
 
-	
+
 	/**
 	 *    \brief      Retourne la liste d�roulante des regions actives dont le pays est actif
 	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entr�e pour
@@ -309,13 +309,13 @@ class FormCompany
 			}
 			print '</select>';
 		}
-		else 
+		else
 		{
 			dolibarr_print_error($this->db);
 		}
 	}
 
-	
+
 	/**
 	 *    \brief      Retourne la liste d�roulante des civilite actives
 	 *    \param      selected    civilite pr�-s�lectionn�e
@@ -435,6 +435,109 @@ class FormCompany
 			dolibarr_print_error($this->db);
 		}
 	}
+
+
+	/**
+	 *    \brief      Return list of third parties
+	 *    \param      object          Object we try to find contacts
+	 *    \param      var_id          Name of id field
+	 *    \param      selected        Pre-selected third party
+	 *    \param      htmlname        Name of HTML form
+	 */
+	function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany')
+	{
+		global $conf, $langs;
+
+		// On recherche les societes
+		$sql = "SELECT s.rowid, s.nom FROM";
+		$sql .= " ".MAIN_DB_PREFIX."societe as s";
+		if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
+		{
+			$sql.= " WHERE rowid = ".$selected;
+		}
+		$sql .= " ORDER BY nom ASC";
+
+		$resql = $object->db->query($sql);
+		if ($resql)
+		{
+			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
+			{
+				$langs->load("companies");
+				$obj = $this->db->fetch_object($resql);
+				$socid = $obj->rowid?$obj->rowid:'';
+				$javaScript = "window.location=\'./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=\' + document.getElementById(\'newcompany_id\').value;";
+
+				// On applique un delai d'execution pour le bon fonctionnement
+				$htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\')"';
+
+				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<td class="nobordernopadding">';
+				print '<div>';
+				if ($obj->rowid == 0)
+				{
+					print '<input type="text" size="30" id="newcompany" name="newcompany" value="'.$langs->trans("SelectCompany").'" '.$htmloption.' />';
+				}
+				else
+				{
+					print '<input type="text" size="30" id="newcompany" name="newcompany" value="'.$obj->nom.'" '.$htmloption.' />';
+				}
+				print ajax_autocompleter($socid,'newcompany','/societe/ajaxcompanies.php','');
+				print '</td>';
+				print '<td class="nobordernopadding" align="left" width="16">';
+				print ajax_indicator($htmlname,'working');
+				print '</td></tr>';
+				print '</table>';
+				return $socid;
+			}
+			else
+			{
+				$javaScript = "window.location='./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
+				print '<select class="flat" name="'.$htmlname.'" onChange="'.$javaScript.'">';
+				$num = $object->db->num_rows($resql);
+				$i = 0;
+				if ($num)
+				{
+					while ($i < $num)
+					{
+						$obj = $object->db->fetch_object($resql);
+						if ($i == 0) $firstCompany = $obj->rowid;
+						if ($selected > 0 && $selected == $obj->rowid)
+						{
+							print '<option value="'.$obj->rowid.'" selected="true">'.dolibarr_trunc($obj->nom,24).'</option>';
+							$firstCompany = $obj->rowid;
+						}
+						else
+						{
+							print '<option value="'.$obj->rowid.'">'.dolibarr_trunc($obj->nom,24).'</option>';
+						}
+						$i ++;
+					}
+				}
+				print "</select>\n";
+				return $firstCompany;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($object->db);
+		}
+	}
+
+
+	/**
+	 *
+	 */
+	function selectTypeContact($object, $defValue, $htmlname = 'type', $source)
+	{
+	 $lesTypes = $object->liste_type_contact($source);
+	 print '<select class="flat" name="'.$htmlname.'">';
+	 foreach($lesTypes as $key=>$value)
+	 {
+		 print '<option value="'.$key.'">'.$value.'</option>';
+	 }
+	 print "</select>\n";
+	}
+
 
 }
 

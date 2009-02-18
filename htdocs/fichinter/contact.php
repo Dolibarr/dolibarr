@@ -18,16 +18,17 @@
  */
 
 /**
-        \file       htdocs/fichinter/contact.php
-        \ingroup    fichinter
-        \brief      Onglet de gestion des contacts de fiche d'intervention
-        \version    $Id$
-*/
+ *       \file       htdocs/fichinter/contact.php
+ *       \ingroup    fichinter
+ *       \brief      Onglet de gestion des contacts de fiche d'intervention
+ *       \version    $Id$
+ */
 
 require ("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');
 
 $langs->load("interventions");
 $langs->load("sendings");
@@ -142,9 +143,14 @@ if ($_GET["action"] == 'deleteline' && $user->rights->ficheinter->creer)
 }
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 $html = new Form($db);
+$formcompany = new FormCompany($db);
 $contactstatic=new Contact($db);
 
 
@@ -196,7 +202,7 @@ if ($id > 0)
 
 		/*
 		* Ajouter une ligne de contact
-		* Non affiché en mode modification de ligne
+		* Non affiche en mode modification de ligne
 		*/
 		if ($_GET["action"] != 'editline' && $user->rights->ficheinter->creer)
 		{
@@ -227,12 +233,11 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On récupère les id des users déjà sélectionnés
 			//$userAlreadySelected = $fichinter->getListContactId('internal'); 	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
-			$fichinter->selectTypeContact($fichinter, '', 'type','internal');
+			$formcompany->selectTypeContact($fichinter, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -254,17 +259,16 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$fichinter->client->id;
-			$selectedCompany = $fichinter->selectCompaniesForNewContact($fichinter, 'id', $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($fichinter, 'id', $selectedCompany, $htmlname = 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On récupère les id des contacts déjà sélectionnés
 			//$contactAlreadySelected = $fichinter->getListContactId('external');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$nbofcontacts=$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
-			$fichinter->selectTypeContact($fichinter, '', 'type','external');
+			$formcompany->selectTypeContact($fichinter, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
 			if (! $nbofcontacts) print ' disabled="true"';
@@ -276,7 +280,7 @@ if ($id > 0)
 			print '<tr><td colspan="6">&nbsp;</td></tr>';
 		}
 
-		// Liste des contacts liés
+		// Liste des contacts liï¿½s
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("Company").'</td>';
@@ -370,8 +374,7 @@ if ($id > 0)
 	}
 	else
 	{
-		// Fiche intervention non trouvée
-		print "Fiche intervention inexistante ou accès refusé";
+		print "ErrorRecordNotFound";
 	}
 }
 

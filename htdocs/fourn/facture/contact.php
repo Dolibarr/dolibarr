@@ -28,6 +28,7 @@ require ("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');
 
 $langs->load("facture");
 $langs->load("companies");
@@ -148,6 +149,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->fournisseur->facture->cree
 llxHeader('', $langs->trans("Bill"), "Facture");
 
 $html = new Form($db);
+$formcompany = new FormCompany($db);
 $contactstatic=new Contact($db);
 
 
@@ -228,12 +230,11 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On r�cup�re les id des users d�j� s�lectionn�s
 			//$userAlreadySelected = $facture->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
-			$facture->selectTypeContact($facture, '', 'type','internal');
+			$formcompany->selectTypeContact($facture, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -255,17 +256,16 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$facture->client->id;
-			$selectedCompany = $facture->selectCompaniesForNewContact($facture, 'facid', $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($facture, 'facid', $selectedCompany, $htmlname = 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On r�cup�re les id des contacts d�j� s�lectionn�s
 			//$contactAlreadySelected = $facture->getListContactId('external');		// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid', 0, $contactAlreadySelected);
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
-			$facture->selectTypeContact($facture, '', 'type','external');
+			$formcompany->selectTypeContact($facture, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
 			if (! $nbofcontacts) print ' disabled="true"';
@@ -277,7 +277,7 @@ if ($id > 0)
             print '<tr><td colspan="6">&nbsp;</td></tr>';
 		}
 
-		// Liste des contacts lies
+		// List of linked contacts
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("Company").'</td>';
@@ -371,7 +371,7 @@ if ($id > 0)
 	}
 	else
 	{
-		print "Object not found";
+		print "ErrorRecordNotFound";
 	}
 }
 
