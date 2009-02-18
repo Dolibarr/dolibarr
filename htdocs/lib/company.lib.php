@@ -364,8 +364,9 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 		$sql.= " sp.name, sp.firstname";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-		$sql.= " WHERE a.fk_soc = ".$objsoc->id;
-		$sql.= " AND u.rowid = a.fk_user_author";
+		$sql.= " WHERE u.rowid = a.fk_user_author";
+		if ($objsoc->id) $sql.= " AND a.fk_soc = ".$objsoc->id;
+		if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
 		$sql.= " AND c.id=a.fk_action AND a.percent < 100";
 		$sql.= " ORDER BY a.datep DESC, a.id DESC";
 
@@ -485,8 +486,8 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 		$sql.= " WHERE u.rowid = a.fk_user_author";
-		if ($objsoc->id)  $sql.= " AND a.fk_soc = ".$objsoc->id;
-		if ($objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
+		if ($objsoc->id) $sql.= " AND a.fk_soc = ".$objsoc->id;
+		if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
 		$sql.= " AND c.id=a.fk_action";
 		$sql.= " AND a.percent = 100";
 		$sql.= " ORDER BY a.datea DESC, a.id DESC";
