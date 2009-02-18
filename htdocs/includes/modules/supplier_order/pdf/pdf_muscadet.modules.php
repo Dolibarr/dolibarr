@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
@@ -263,7 +263,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf->SetXY ($this->posxup, $curY);
 					$pdf->MultiCell(18, 3, price($com->lignes[$i]->subprice), 0, 'R', 0);
 
-					// Quantit�
+					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
 					$pdf->MultiCell(10, 3, $com->lignes[$i]->qty, 0, 'R');
 
@@ -638,12 +638,13 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 
 
-			$pdf->SetXY($this->marge_gauche+2,$posy+3);
 
 			// Nom emetteur
+			$carac_emetteur_name=$outputlangs->convToOutputCharset($mysoc->nom);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('Arial','B',11);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($mysoc->nom), 0, 'L');
+			$pdf->SetXY($this->marge_gauche+2,$posy+3);
+			$pdf->MultiCell(80, 4, $carac_emetteur_name, 0, 'L');
 
 			// Caracteristiques emetteur
 			$carac_emetteur = '';
@@ -668,7 +669,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(100,$posy-5);
-			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
+			$pdf->MultiCell(96,5, $outputlangs->transnoentities("BillTo").":");
 			//
 			$client = new Societe($this->db);
 			$client->fetch($object->socid);
@@ -682,6 +683,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			$carac_client=$outputlangs->convToOutputCharset($object->client->adresse);
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
+			if ($object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->trans("Country".$object->client->pays_code)."\n";
 
 			// Numero TVA intracom
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
@@ -692,9 +694,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
 
 			$pdf->SetFont('Arial','',9);
-			$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
-			$pdf->SetXY(102,$posy+6);
-			$pdf->MultiCell(86,4, $carac_client);
+			$pdf->SetXY(102,$posy+8);
+			$pdf->MultiCell(96,4, $carac_client);
 		}
 	}
 

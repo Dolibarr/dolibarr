@@ -557,12 +557,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			// Caracteristiques client
 			$carac_client=$outputlangs->convToOutputCharset($delivery->client->adresse)."\n";
 			$carac_client.=$outputlangs->convToOutputCharset($delivery->client->cp) . " " . $outputlangs->convToOutputCharset($delivery->client->ville)."\n";
-
-			// Pays si different de l'emetteur
-			if ($this->emetteur->pays_code != $delivery->client->pays_code)
-			{
-				$carac_client.=$delivery->client->pays."\n";
-			}
+			if ($object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->trans("Country".$object->client->pays_code)."\n";
 
 			// Tva intracom
 			if ($delivery->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$delivery->client->tva_intra;

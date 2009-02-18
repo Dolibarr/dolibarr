@@ -104,7 +104,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 			//Creation de l expediteur
 			$this->expediteur = $mysoc;
-			
+
 			//Creation du destinataire
 			$this->destinataire = new Contact($this->db);
 			//		$pdf->expe->commande->fetch($pdf->commande->id);
@@ -332,7 +332,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		$Xoff = 90;
 		$Yoff = 0;
-		
+
 		$tab4_top = 60;
 		$tab4_hl = 6;
 		$tab4_sl = 4;
@@ -393,7 +393,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($blSocX,$blSocY);
 		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 		$pdf->SetTextColor(0,0,0);
-		
+
 		// Caracteristiques emetteur
 		$carac_emetteur = '';
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
@@ -463,10 +463,10 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			$pdf->SetFont('Arial','',7);
 			$pdf->MultiCell($blW,3, $outputlangs->transnoentities("Tel")." : ".$outputlangs->convToOutputCharset($this->expediteur->tel), 0, 'L');
 		}
-		
-		
+
+
 		$object->fetch_client();
-		
+
 		/**********************************/
 		//Emplacement Informations Destinataire
 		/**********************************/
@@ -494,11 +494,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			// Customer properties
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
-			//Pays si different de l'emetteur
-			if ($this->emetteur->pays_code != $object->contact->pays_code)
-			{
-				$carac_client.=$outputlangs->convToOutputCharset($object->contact->pays)."\n";
-			}
+			if ($object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->trans("Country".$object->client->pays_code)."\n";
 		}
 		else
 		{
@@ -529,14 +525,14 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		}
 		// Numero TVA intracom
 		if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
-		
-		
+
+
 		$blDestX=$blExpX+55;
 		$blW=50;
 		$Yoff = $Ydef +1;
 
 		$pdf->Rect($blDestX, $Yoff-1, $blW, 20);
-		
+
 		//Titre
 		$pdf->SetFont('Arial','B',7);
 		$pdf->SetXY($blDestX,$Yoff-4);
