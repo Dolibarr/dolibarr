@@ -192,6 +192,7 @@ class CommandeFournisseur extends Commande
 	 *      \param      user        User making action
 	 *      \param      statut      Status of order
 	 *      \param      datelog     Date of change
+	 * 		\param		comment		Comment
 	 *      \return     int         <0 if KO, >0 if OK
 	 */
 	function log($user, $statut, $datelog, $comment='')
@@ -652,33 +653,32 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * Envoie la commande au fournisseur
-	 *
-	 *
+	 * 	Send a supplier order to supplier
 	 */
-	function commande($user, $date, $methode)
+	function commande($user, $date, $methode, $comment='')
 	{
 		dolibarr_syslog("CommandeFournisseur::Commande");
 		$result = 0;
 		if ($user->rights->fournisseur->commande->commander)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 3, fk_methode_commande=".$methode.",date_commande=".$this->db->idate("$date");
-			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 2 ;";
+			$sql .= " WHERE rowid = ".$this->id;
 
-			if ($this->db->query($sql) )
-	  {
-	  	$result = 0;
-	  	$this->log($user, 3, $date);
-	  }
-	  else
-	  {
-	  	dolibarr_syslog("CommandeFournisseur::Commande Error -1");
-	  	$result = -1;
-	  }
+			dol_syslog("CommandeFournisseur::Commande sql=".$sql, LOG_DEBUG);
+			if ($this->db->query($sql))
+			{
+				$result = 0;
+				$this->log($user, 3, $date, $comment);
+			}
+			else
+			{
+				dolibarr_syslog("CommandeFournisseur::Commande Error -1", LOG_ERR);
+				$result = -1;
+			}
 		}
 		else
 		{
-			dolibarr_syslog("CommandeFournisseur::Commande Not Authorized");
+			dolibarr_syslog("CommandeFournisseur::Commande User not Authorized", LOG_ERR);
 		}
 		return $result ;
 	}
@@ -926,7 +926,7 @@ class CommandeFournisseur extends Commande
 	  if (!$error && $conf->stock->enabled && $entrepot)
 	  {
 	  	$mouv = new MouvementStock($this->db);
-		// TODO Add price of product in method or '' to update PMP
+	  	// TODO Add price of product in method or '' to update PMP
 	  	$result=$mouv->reception($user, $product, $entrepot, $qty, $price);
 	  	if ($result < 0)
 	  	{

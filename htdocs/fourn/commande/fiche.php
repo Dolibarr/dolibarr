@@ -288,7 +288,7 @@ if ($_POST['action'] ==	'confirm_commande' && $_POST['confirm']	== 'yes' &&	$use
 {
 	$commande =	new	CommandeFournisseur($db);
 	$commande->fetch($id);
-	$result	= $commande->commande($user, $_GET["datecommande"],	$_GET["methode"]);
+	$result	= $commande->commande($user, $_GET["datecommande"],	$_GET["methode"], $_GET['comment']);
 }
 
 
@@ -567,7 +567,7 @@ if ($id > 0 || ! empty($ref))
 		if ($_GET["action"]	== 'commande')
 		{
 			$date_com = dolibarr_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
-			$html->form_confirm("fiche.php?id=".$commande->id."&amp;datecommande=".$date_com."&amp;methode=".$_POST["methodecommande"],
+			$html->form_confirm("fiche.php?id=".$commande->id."&amp;datecommande=".$date_com."&amp;methode=".$_POST["methodecommande"]."&amp;comment=".urlencode($_POST["comment"]),
 			$langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dolibarr_print_date($date_com,'day')),"confirm_commande");
 			print '<br />';
 		}
@@ -987,7 +987,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td><td	width="50%"	valign="top">';
 
 
-		if ( $user->rights->fournisseur->commande->commander && $commande->statut == 2)
+		if ( $user->rights->fournisseur->commande->commander && ($commande->statut == 2 || $commande->statut == 6))
 		{
 			/**
 			 * Commander (action=commande)
@@ -998,14 +998,15 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="border" width="100%">';
 			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
-			print $html->select_date('','','','','',"commande");
+			$date_com = dolibarr_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+			print $html->select_date($date_com,'','','','',"commande");
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
-			$formorder->select_methodes_commande('',"methodecommande",1);
+			$formorder->select_methodes_commande($_POST["methodecommande"],"methodecommande",1);
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="comment"></td></tr>';
+			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
 			print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
 			print '</table>';
 			print '</form>';
