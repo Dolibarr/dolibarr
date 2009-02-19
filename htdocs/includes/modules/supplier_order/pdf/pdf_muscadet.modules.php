@@ -609,7 +609,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
-		else $pdf->MultiCell(100, 4, $this->emetteur->nom, 0, 'L');
+		else
+		{
+			$text=$this->emetteur->nom;
+			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+		}
 
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY(100,$posy);
