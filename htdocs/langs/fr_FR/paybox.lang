@@ -18,6 +18,6 @@ ToOfferALinkForOnlinePaymentOnOrder=URL offrant une interface de paiement en lig
 ToOfferALinkForOnlinePaymentOnInvoice=URL offrant une interface de paiement en ligne %s sur la base du montant d'une facture
 ToOfferALinkForOnlinePaymentOnContractLine=URL offrant une interface de paiement en ligne %s sur la base du montant d'une ligne de contrat
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL offrant une interface de paiement en ligne %s pour un montant libre
-YouCanAddTagOnUrl=Vous pouvez de plus ajouter le paramètre url <b>&tag=<i>value</i></b> à n'importe quelles de ces URL (obligatoire pour le paiement libre uniquement) pour voir votre propre "code commentaire" du paiement.
+YouCanAddTagOnUrl=Vous pouvez de plus ajouter le paramètre url <b>&tag=<i>value</i></b> à n'importe quelles de ces URL (obligatoire pour le paiement libre uniquement) pour ajouter votre propre "code commentaire" du paiement.
 SetupPayBoxToHavePaymentCreatedAutomatically=Configurez votre url PayBox à <b>%s</b> pour avoir le paiement créé automatiquement si validé.
  
