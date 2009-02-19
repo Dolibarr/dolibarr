@@ -28,6 +28,7 @@
 require("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paybox/paybox.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);

@@ -27,6 +27,44 @@
 
 
 /**
+ *	\brief      Return true if email syntax is ok
+ *	\param	    address     email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	\return     boolean     true if email ok, false if ko
+ */
+function ValidEmail($address)
+{
+	if (eregi(".*<(.+)>", $address, $regs)) {
+		$address = $regs[1];
+	}
+	if (eregi("^[^@  ]+@([a-zA-Z0-9\-]+\.)+([a-zA-Z0-9\-]{2}|asso|aero|biz|com|coop|edu|gov|info|int|mil|name|net|org|pro)\$",$address))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/**
+ *	\brief      Renvoi vrai si l'email a un nom de domaine qui r�soud via dns
+ *	\param	    mail        adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	\return     boolean     true si email valide, false sinon
+ */
+function CheckMailDomain($mail)
+{
+	list($user, $domain) = split("@", $mail, 2);
+	if (checkdnsrr($domain, "MX"))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/**
  * 	\brief		Return lines of an html table from an array
  * 	\remarks	Used by array2table function only
  */

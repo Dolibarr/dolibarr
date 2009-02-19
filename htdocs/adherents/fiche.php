@@ -28,6 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
@@ -864,11 +865,11 @@ if ($rowid && $action != 'edit')
 		{
 			if ($adh->societe) $name.=' ('.$adh->societe.')';
 		}
-		else 
+		else
 		{
 			$name=$adh->societe;
 		}
-		
+
 		// Create a form array
 		$formquestion=array(
 		array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
@@ -1038,7 +1039,7 @@ if ($rowid && $action != 'edit')
 	    }
 	    print '</td></tr>';
     }
-	
+
     // Other attributs
     foreach($adho->attribute_label as $key=>$value)
     {
@@ -1144,7 +1145,7 @@ if ($rowid && $action != 'edit')
 			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("CreateDolibarrThirdParty")."</font>";
 		}
 	}
-	
+
 	// Supprimer
     if ($user->rights->adherent->supprimer)
     {

@@ -17,27 +17,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
  \file       htdocs/telephonie/client/new.php
  \ingroup    telephonie
  \brief      Creation d'un nouveau client
- \version    $Revision$
+ \version    $Id$
  */
 
 require("pre.inc.php");
-
-if (!$user->rights->telephonie->ligne->creer) accessforbidden();
-
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/companybankaccount.class.php');
 require_once(DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once(DOL_DOCUMENT_ROOT."/telephonie/telephonie.contrat.class.php");
+
+if (!$user->rights->telephonie->ligne->creer) accessforbidden();
 
 $user->getrights('societe');
 $langs->load("companies");
@@ -143,7 +139,7 @@ if ($_POST["action"] == 'add')
 			$verif = "nok";
 		}
 
-		if (!check_mail(trim($contact->email))  && $verif == 'ok')
+		if (!CheckMailDomain(trim($contact->email))  && $verif == 'ok')
 		{
 			$mesg = "Email invalide (domaine invalide)";
 			$verif = "nok";
@@ -248,7 +244,7 @@ if ($_POST["action"] == 'add')
 				$verif = "nok";
 				$mesg .= "Tarif France Invalide : $temporel > 0.04 !";
 			}
-			 
+
 			if ($temporel < 0.016 )
 			{
 				$error = 1031;
@@ -396,7 +392,7 @@ if ($_POST["action"] == 'add')
 
 	  if ( $ligne->create($user, $_POST["mode_paiement"]) == 0)
 	  {
-	  	 
+
 	  }
 	  else
 	  {
@@ -431,7 +427,7 @@ if ($_POST["action"] == 'add')
 	  	$ligne->concurrent      = $_POST["concurrent"];
 	  	$ligne->remise          = "0";
 	  	$ligne->note            = $_POST["note"];
-	  	 
+
 	  	if ( $ligne->create($user, $_POST["mode_paiement"]) == 0)
 	  	{
 
@@ -469,7 +465,7 @@ if ($_POST["action"] == 'add')
 
 	  if ( $ligne->create($user, $_POST["mode_paiement"]) == 0)
 	  {
-	  	 
+
 	  }
 	  else
 	  {
@@ -501,7 +497,7 @@ if ($_POST["action"] == 'add')
 
 	  if ( $ligne->create($user, $_POST["mode_paiement"]) == 0)
 	  {
-	  	 
+
 	  }
 	  else
 	  {
@@ -562,25 +558,25 @@ if ($_POST["action"] == 'add')
 	  if (!$error)
 	  {
 	  	$db->begin();
-	  	 
+
 	  	$sql = "REPLACE INTO ".MAIN_DB_PREFIX."telephonie_tarif_client";
 	  	$sql .= " (fk_tarif, fk_client, temporel, fixe, fk_user) VALUES ";
 	  	$sql .= " (".$mobil_id.",".$soc->id.",'".$temporel."','0',".$user->id.")";
-	  	 
+
 	  	if (! $db->query($sql) )
 	  	{
 	  		$error++;
 	  	}
-	  	 
+
 	  	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_client_log";
 	  	$sql .= " (fk_tarif, fk_client, temporel, fixe, fk_user, datec) VALUES ";
 	  	$sql .= " (".$mobil_id.",".$soc->id.",'".$temporel."','0',".$user->id.",now())";
-	  	 
+
 	  	if (! $db->query($sql) )
 	  	{
 	  		$error++;
 	  	}
-	  	 
+
 	  	if ( $error == 0 )
 	  	{
 	  		$db->commit();

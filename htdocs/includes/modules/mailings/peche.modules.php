@@ -25,6 +25,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
 /**
