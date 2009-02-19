@@ -955,6 +955,7 @@ UserWarehouse=Use user personal stocks
 ##### Menu #####
 MenuDeleted=Menu deleted
 TreeMenu=Tree menus
+Menus=Menus
 TreeMenuPersonalized=Personalized menus
 NewMenu=New menu
 MenuConf=Menus setup

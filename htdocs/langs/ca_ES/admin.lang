@@ -135,7 +135,7 @@ NameColumn = Nom de les columnes
 ExtendedInsert = Instruccions INSERT esteses
 DelayedInsert = Insercions amb retard
 EncodeBinariesInHexa = Codificar els camps binaris en hexacesimal
-Yes = Si
+Yes = Sí
 No = No
 AutoDetectLang = Autodetecció (navegador)
 FeatureDisabledInDemo = Opció deshabilitada en demo
@@ -144,8 +144,8 @@ BoxesDesc = Les caixes són zones d'informació reduïdes que hi ha en algunes p
 OnlyActiveElementsAreShown = Només els elements de <a href="modules.php"> mòduls activats</a> són mostrats
 ModulesDesc = Els mòduls Dolibarr defineixen les funcionalitats disponibles en l'aplicació. Alguns mòduls requereixen drets que hauran d'indicar als usuaris perquè puguin accedir a les seves funcionalitats.
 ModulesInterfaceDesc = Els mòduls de interface són mòduls que permeten vincular Dolibarr amb sistemes, aplicacions o serveis externs.
-ModulesSpecialDesc = Els mòduls especials són mòduls d'ús molt específic o menys corrent que els mòduls normals.
-ModulesJobDesc = Els mòduls oficis permeten una prèvia simplificada de Dolibarr per un ofici específic.
+ModulesSpecialDesc = Els mòduls complementaris són mòduls d'ús molt específic o menys corrent que els mòduls normals.
+ModulesJobDesc = Els mòduls específics permeten una preconfiguració simplificada de Dolibarr per a un negoci en concret.
 BoxesAvailable = Caixes disponibles
 BoxesActivated = Caixes activades
 ActivateOn = Activar sobre
@@ -960,6 +960,7 @@ mailDroitPret = Adreça de correu a les que s'envien les declaracions
 ##### Menu ##### =  = 
 MenuDeleted = Menú eliminat
 TreeMenu = Estructura dels menús
+Menus=Menús
 TreeMenuPersonalized = Menús personalitzats
 NewMenu = Nou menú
 MenuConf = Configuració dels menús

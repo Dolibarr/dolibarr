@@ -963,6 +963,7 @@ MenuDeleted=Menu supprimé
 TreeMenu=Arborescence des menus
 TreeMenuPersonalized=Menus personnalisés
 NewMenu=Nouveau menu
+Menus=Menus
 MenuConf=Configuration des menus
 Menu=Sélection des menus
 MenuHandler=Gestionnaire de menu
