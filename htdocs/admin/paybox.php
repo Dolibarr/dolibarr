@@ -43,6 +43,7 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
 	$result=dolibarr_set_const($db, "PAYBOX_CSS_URL",$_POST["PAYBOX_CSS_URL"]);
 	$result=dolibarr_set_const($db, "PAYBOX_IBS_SITE",$_POST["PAYBOX_IBS_SITE"]);
 	$result=dolibarr_set_const($db, "PAYBOX_IBS_RANG",$_POST["PAYBOX_IBS_RANG"]);
+	$result=dolibarr_set_const($db, "PAYBOX_PBX_IDENTIFIANT",$_POST["PAYBOX_PBX_IDENTIFIANT"]);
 
 	if ($result >= 0)
   	{
@@ -131,6 +132,13 @@ print $langs->trans("PAYBOX_IBS_RANG").'</td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_RANG" value="'.$conf->global->PAYBOX_IBS_RANG.'">';
 print '<br>'.$langs->trans("Example").': 99 ('.$langs->trans("Test").')';
 print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PAYBOX_PBX_IDENTIFIANT").'</td><td>';
+print '<input size="32" type="text" name="PAYBOX_PBX_IDENTIFIANT" value="'.$conf->global->PAYBOX_PBX_IDENTIFIANT.'">';
+print '</td></tr>';
+
 
 print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
