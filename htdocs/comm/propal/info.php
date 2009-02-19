@@ -26,6 +26,7 @@
 */
 
 require('./pre.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 
@@ -62,7 +63,7 @@ dol_print_object_info($propal);
 print '</td></tr></table>';
 
 print '</div>';
- 
+
 // Juste pour �viter bug IE qui r�organise mal div pr�c�dents si celui-ci absent
 print '<div class="tabsAction">';
 print '</div>';

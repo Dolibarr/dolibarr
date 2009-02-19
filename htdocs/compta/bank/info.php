@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
 $langs->load("banks");
@@ -46,12 +47,12 @@ $h=0;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$_GET["rowid"];
 $head[$h][1] = $langs->trans("Card");
-$h++;      
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$_GET["rowid"];
 $head[$h][1] = $langs->trans("Info");
 $hselected = $h;
-$h++;      
+$h++;
 
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("LineRecord"));

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,25 +24,20 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 $langs->load("stocks");
 
-llxHeader();
-
-
 /*
- * Visualisation de la fiche
- *
+ * View
  */
+
+llxHeader();
 
 $entrepot = new Entrepot($db);
 $entrepot->fetch($_GET["id"]);
 $entrepot->info($_GET["id"]);
 
-
-/*
- * Affichage onglets
- */
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;

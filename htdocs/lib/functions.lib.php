@@ -610,47 +610,6 @@ function dol_date($fmt, $timestamp, $gm=0)
 
 
 /**
- *	\brief  Affiche les informations d'un objet
- *	\param	object			objet a afficher
- */
-function dol_print_object_info($object)
-{
-	global $langs;
-	$langs->load("other");
-
-	if (isset($object->user_creation) && $object->user_creation->fullname)
-	print $langs->trans("CreatedBy")." : " . $object->user_creation->fullname . '<br>';
-
-	if (isset($object->date_creation))
-	print $langs->trans("DateCreation")." : " . dolibarr_print_date($object->date_creation,"dayhourtext") . '<br>';
-
-	if (isset($object->user_modification) && $object->user_modification->fullname)
-	print $langs->trans("ModifiedBy")." : " . $object->user_modification->fullname . '<br>';
-
-	if (isset($object->date_modification))
-	print $langs->trans("DateLastModification")." : " . dolibarr_print_date($object->date_modification,"dayhourtext") . '<br>';
-
-	if (isset($object->user_validation) && $object->user_validation->fullname)
-	print $langs->trans("ValidatedBy")." : " . $object->user_validation->fullname . '<br>';
-
-	if (isset($object->date_validation))
-	print $langs->trans("DateValidation")." : " . dolibarr_print_date($object->date_validation,"dayhourtext") . '<br>';
-
-	if (isset($object->user_cloture) && $object->user_cloture->fullname )
-	print $langs->trans("ClosedBy")." : " . $object->user_cloture->fullname . '<br>';
-
-	if (isset($object->date_cloture))
-	print $langs->trans("DateClosing")." : " . dolibarr_print_date($object->date_cloture,"dayhourtext") . '<br>';
-
-	if (isset($object->user_rappro) && $object->user_rappro->fullname )
-	print $langs->trans("ConciliatedBy")." : " . $object->user_rappro->fullname . '<br>';
-
-	if (isset($object->date_rappro))
-	print $langs->trans("DateConciliating")." : " . dolibarr_print_date($object->date_rappro,"dayhourtext") . '<br>';
-}
-
-
-/**
  * \brief		Return string with formated size
  * \param		size		Size to print
  * \return		string		Link

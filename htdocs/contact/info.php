@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 
@@ -64,12 +65,12 @@ dolibarr_fiche_head($head, 'info', $langs->trans("Contact"));
 print '<table width="100%"><tr><td>';
 $contact->info($_GET["id"]);
 print '</td></tr></table>';
-  
+
 if ($contact->socid > 0)
 {
   $societe = new Societe($db);
   $societe->fetch($contact->socid);
-  
+
   print $langs->trans("Company").' : '.$societe->getNomUrl(0).'<br>';
 }
 

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005-2007  Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2005-2007  Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
 */
 
 require('./pre.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
 
@@ -58,7 +60,7 @@ dol_print_object_info($fichinter);
 print '</td></tr></table>';
 
 print '</div>';
- 
+
 // Juste pour �viter bug IE qui r�organise mal div pr�c�dents si celui-ci absent
 print '<div class="tabsAction">';
 print '</div>';

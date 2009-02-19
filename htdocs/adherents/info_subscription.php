@@ -25,6 +25,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
@@ -55,7 +56,7 @@ $result=$subscription->fetch($rowid);
 
 $h = 0;
 $head = array();
- 
+
 $head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$subscription->id;
 $head[$h][1] = $langs->trans("SubscriptionCard");
 $head[$h][2] = 'general';

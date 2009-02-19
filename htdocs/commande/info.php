@@ -15,19 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/commande/info.php
         \ingroup    commande
 		\brief      Page des informations d'une commande
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 
@@ -61,7 +59,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-// Juste pour �viter bug IE qui r�organise mal div pr�c�dents si celui-ci absent
+// Juste pour eviter bug IE qui reorganise mal div precedents si celui-ci absent
 print '<div class="tabsAction">';
 print '</div>';
 
