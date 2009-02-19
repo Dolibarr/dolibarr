@@ -1,5 +1,7 @@
+#!/usr/bin/php
 <?PHP
 /* Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,13 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
- *
  */
-require_once("../../../htdocs/master.inc.php");
+
+/**
+ *  \file       scripts/books/droits-editeurs.php
+ *  \ingroup    editeurs
+ *  \brief      Script de generation des courriers pour les editeurs
+ * 	\version	$Id$
+ */
+
+require_once("../../htdocs/master.inc.php");
 require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");
 require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
 
@@ -162,7 +167,7 @@ if ($db->query($sql))
 	  $page->write_formula($j,14,"=M$k*I$k",$fdroits);
 	}
 
-      $j++;     
+      $j++;
       $i++;
 
     }

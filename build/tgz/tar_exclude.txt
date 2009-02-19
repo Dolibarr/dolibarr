@@ -48,6 +48,7 @@ htdocs/telephonie
 htdocs/voyage
 mssql
 scripts/addons
+scripts/books
 scripts/courrier
 scripts/lolix
 CVS

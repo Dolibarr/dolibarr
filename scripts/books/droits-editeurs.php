@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?PHP
 /* Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,26 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
-   \file       scripts/courrier/droits-editeurs.php
-   \ingroup    editeurs
-   \brief      Script de generation des courriers pour les editeurs
-*/
+ *  \file       scripts/books/droits-editeurs.php
+ *  \ingroup    editeurs
+ *  \brief      Script de generation des courriers pour les editeurs
+ * 	\version	$Id$
+ */
 
 require_once("../../htdocs/master.inc.php");
 require_once(FPDF_PATH.'fpdf.php');
-require_once("../../htdocs/product.class.php");
-require_once("../../htdocs/product/canvas/product.livre.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/canvas/product.livre.class.php");
+
 $error = 0;
 $year = strftime("%Y", time());
 
-// 
+//
 $sql = "SELECT s.rowid as socid, s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 //$sql .= " , ".MAIN_DB_PREFIX."categorie_fournisseur as cf";
@@ -43,17 +42,17 @@ $sql .= " WHERE s.fournisseur = 1 ";
 //$sql .= " AND cf.fk_categorie = 2";
 
 $resql=$db->query($sql);
-if ($resql) 
+if ($resql)
 {
   while ($obj = $db->fetch_object($resql) )
     {
       $id       = $obj->socid;
-      
+
       dolibarr_syslog("droits-editeurs.php id:$id", LOG_DEBUG );
-      
+
       $coupdf = new pdf_courrier_editeur($db, $langs);
       $coupdf->write($id, $year);
-    }   
+    }
 }
 else
 {
@@ -61,7 +60,7 @@ else
   print $sql;
 }
 
-class pdf_courrier_editeur 
+class pdf_courrier_editeur
 {
 
   /**
@@ -71,9 +70,9 @@ class pdf_courrier_editeur
   function pdf_courrier_editeur ($db=0, $langs)
   {
     $this->langs = $langs;
-    
+
     $this->db = $db;
-    
+
     // Dimension page pour format A4
     $this->type = 'pdf';
     $this->page_largeur = 210;
@@ -85,7 +84,7 @@ class pdf_courrier_editeur
     $this->marge_basse=10;
 
   }
-  
+
   /**
      \brief      Fonction générant la fiche d'intervention sur le disque
      \param	    id		id de la fiche intervention à générer
@@ -95,12 +94,12 @@ class pdf_courrier_editeur
   {
     $soc = new Societe($this->db);
     $soc->fetch($id);
-    
+
     $fichref = $year;
 
     $dir = DOL_DATA_ROOT."/societe/courrier/" . get_exdir($id);
     $file = $dir . $fichref . ".pdf";
-	
+
     if (! file_exists($dir))
       {
 	if (create_exdir($dir) < 0)
@@ -136,7 +135,7 @@ class pdf_courrier_editeur
 	$sql .= " GROUP BY p.rowid";
 
 	$resql=$this->db->query($sql);
-	if ($resql) 
+	if ($resql)
 	  {
 	    $i = 0;
 	    while ($obj = $this->db->fetch_object($resql) )
@@ -147,13 +146,13 @@ class pdf_courrier_editeur
 		$books[$i]['taux'] = $obj->taux;
 		$books[$i]['qty'] = $obj->quantite;
 
-		$i++;           
-	      }   
+		$i++;
+	      }
 	    $this->db->free($resql);
 	  }
 	else
 	  {
-	    print $this->db->error();	    
+	    print $this->db->error();
 	    print "$sql\n";
 	  }
 
@@ -165,7 +164,7 @@ class pdf_courrier_editeur
 	  $pdf->AddPage();
 	  $qtycontrat = $value['qty'];
 	  /*
-	   * Adresse 
+	   * Adresse
 	   */
 
 
@@ -183,22 +182,22 @@ class pdf_courrier_editeur
 	  // Caractéristiques client
 	  $carac_client=$soc->adresse;
 	  $carac_client.="\n".$soc->cp . " " . $soc->ville."\n";
-	  $carac_client.=$soc->pays."\n";	
+	  $carac_client.=$soc->pays."\n";
 
 	  $pdf->SetFont('Arial','',9);
 	  $pdf->SetXY(102,$posy+8);
-	  $pdf->MultiCell(86,4, $carac_client);	    	  
+	  $pdf->MultiCell(86,4, $carac_client);
 	  /*
 	   *
 	   *
 	   */
 	  $pdf->SetTextColor(0,0,0);
 	  $pdf->SetFont('Arial','',10);
-	  
+
 	  $pdf->SetXY(10,100);
-	  
+
 	  $pdf->MultiCell(190,5,"Je vous prie de trouver ci-dessous le récapitulatif des ventes du titre cité pour la période du 1er janvier au 31 décembre $year_data.");
-	  
+
 	  $pdf->SetXY(10,120);
 	  $pdf->MultiCell(25,5,"Nom du titre : ");
 	  $pdf->SetFont('Arial','B',10);
@@ -208,11 +207,11 @@ class pdf_courrier_editeur
 	  $pdf->SetFont('Arial','',10);
 	  $pdf->SetXY(10,140);
 	  $pdf->MultiCell(46,5,"Quantité signée au contrat : ");
-	  
+
 	  $pdf->SetFont('Arial','B',10);
 	  $pdf->SetXY(56,140);
-	  $pdf->MultiCell(14,5,$qtycontrat,0,'R');	       	
-	  	  
+	  $pdf->MultiCell(14,5,$qtycontrat,0,'R');
+
 	  $sql = "SELECT p.label, sum(fd.qty), date_format(f.datef,'%Y')";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	  $sql .= " , ".MAIN_DB_PREFIX."facturedet as fd";
@@ -222,35 +221,35 @@ class pdf_courrier_editeur
 	  $sql .= " AND fd.fk_product = p.rowid";
 	  $sql .= " AND p.canvas = 'livre'";
 	  $sql .= " GROUP BY p.rowid, date_format(f.datef,'%Y') ORDER BY date_format(f.datef,'%Y') ASC";
-	  	  
+
 	  $resql=$this->db->query($sql);
 
 	  $qtysell = 0;
 
-	  if ($resql) 
+	  if ($resql)
 	    {
 	      $i = 0;
 	      while ($row = $this->db->fetch_row($resql) )
 		{
 		  $i++;
-		  
+
 		  $pdf->SetFont('Arial','',10);
 		  $pdf->SetXY(10,140 + ($i * 8) );
 		  $pdf->MultiCell(44,5,"Quantité vendue en ".$row[2]." : ",0);
 		  $pdf->SetFont('Arial','B',10);
 		  $pdf->SetXY(54,140 + ($i * 8) );
 		  $pdf->MultiCell(16,5,$row[1],0,'R');
-		  
+
 		  $qtysell += $row[1];
-		  
-		}   
+
+		}
 	      $this->db->free($resql);
 	    }
 	  else
 	    {
-	      print $this->db->error();	    
+	      print $this->db->error();
 	    }
-	  
+
 
 	  $pdf->SetFont('Arial','',10);
 	  $pdf->SetXY(100,140 + ($i * 8) );
@@ -295,14 +294,14 @@ class pdf_courrier_editeur
 	  $pdf->SetFont('Arial','',10);
 	  $pdf->SetXY(10,150 + ($i * 10) + 20);
 	  $pdf->MultiCell(190,5,"Nous restons à votre entière disposition pour de plus amples renseignements dont vous pouvez avoir besoin et vous remercions de la confiance que vous nous avez accordée.");
-	  
+
 
 	}
-		
+
 	$pdf->Close();
-	
+
 	$pdf->Output($file);
-	dolibarr_syslog("droits-editeurs.php write $file", LOG_DEBUG );	
+	dolibarr_syslog("droits-editeurs.php write $file", LOG_DEBUG );
 	return 0;
       }
     else
@@ -312,7 +311,7 @@ class pdf_courrier_editeur
       }
   }
 
-  
+
 }
 
 ?>

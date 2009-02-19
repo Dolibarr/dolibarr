@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,31 +18,30 @@
  */
 
 /**
- \defgroup   	editeur     Module editeur
- \brief      	Module pour gerer le suivi des editeurs
- \version		$Id$
+ *	\defgroup   	editeur     Module editeur
+ *	\brief      	Module pour gerer les livres et editeurs
+ *	\version		$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modEditeur.class.php
- \ingroup    editeur
- \brief      Fichier de description et activation du module Editeur
+ *	\file       htdocs/includes/modules/modEditeur.class.php
+ *	\ingroup    editeur
+ *	\brief      Fichier de description et activation du module Editeur
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- \class      modEditeur
- \brief      Classe de description et activation du module Editeur
+ *	\class      modEditeur
+ *	\brief      Classe de description et activation du module Editeur
  */
-
 class modEditeur extends DolibarrModules
 {
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acc�s base
+	 *   \param      DB      Database handler
 	 */
 	function modEditeur($DB)
 	{
