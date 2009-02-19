@@ -76,7 +76,7 @@ MoveToAnotherContract=Move service into another contract.
 ConfirmMoveToAnotherContract=I choosed new target contract and confirm I want to move this service into this contract.
 ConfirmMoveToAnotherContractQuestion=Choose in which existing contract (of same third party), you want to move this service to ?
 PaymentRenewContractId=Renew contract line (number %s)
-ExpiredSince=Expired since
+ExpiredSince=Expiration date
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sales representative signing contract
 TypeContact_contrat_internal_SALESREPFOLL=Sales representative following-up contract
