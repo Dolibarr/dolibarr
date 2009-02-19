@@ -38,9 +38,10 @@ if (!$user->admin)
 if ($_POST["action"] == 'setvalue' && $user->admin)
 {
 	//$result=dolibarr_set_const($db, "PAYBOX_IBS_DEVISE",$_POST["PAYBOX_IBS_DEVISE"]);
+	$result=dolibarr_set_const($db, "PAYBOX_CSS_URL",$_POST["PAYBOX_CSS_URL"]);
+	$result=dolibarr_set_const($db, "PAYBOX_CREDITOR",$_POST["PAYBOX_CREDITOR"]);
 	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V1",$_POST["PAYBOX_CGI_URL_V1"]);
 	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V2",$_POST["PAYBOX_CGI_URL_V2"]);
-	$result=dolibarr_set_const($db, "PAYBOX_CSS_URL",$_POST["PAYBOX_CSS_URL"]);
 	$result=dolibarr_set_const($db, "PAYBOX_IBS_SITE",$_POST["PAYBOX_IBS_SITE"]);
 	$result=dolibarr_set_const($db, "PAYBOX_IBS_RANG",$_POST["PAYBOX_IBS_RANG"]);
 	$result=dolibarr_set_const($db, "PAYBOX_PBX_IDENTIFIANT",$_POST["PAYBOX_PBX_IDENTIFIANT"]);
@@ -107,36 +108,46 @@ print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PAYBOX_CREDITOR").'</td><td>';
+print '<input size="64" type="text" name="PAYBOX_CREDITOR" value="'.$conf->global->PAYBOX_CREDITOR.'">';
+print '<br>'.$langs->trans("Example").': '.$mysoc->nom;
+print '</td></tr>';
+
+/*
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
 print $langs->trans("PAYBOX_CGI_URL_V1").'</td><td>';
 print '<input size="64" type="text" name="PAYBOX_CGI_URL_V1" value="'.$conf->global->PAYBOX_CGI_URL_V1.'">';
 print '<br>'.$langs->trans("Example").': http://mysite/cgi-bin/module_linux.cgi';
 print '</td></tr>';
+*/
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PAYBOX_CGI_URL_V2").'</td><td>';
+print $langs->trans("PAYBOX_CGI_URL_V2").'*</td><td>';
 print '<input size="64" type="text" name="PAYBOX_CGI_URL_V2" value="'.$conf->global->PAYBOX_CGI_URL_V2.'">';
 print '<br>'.$langs->trans("Example").': http://mysite/cgi-bin/modulev2_redhat72.cgi';
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PAYBOX_IBS_SITE").'</td><td>';
+print $langs->trans("PAYBOX_PBX_SITE").'*</td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_SITE" value="'.$conf->global->PAYBOX_IBS_SITE.'">';
 print '<br>'.$langs->trans("Example").': 1999888 ('.$langs->trans("Test").')';
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PAYBOX_IBS_RANG").'</td><td>';
+print $langs->trans("PAYBOX_PBX_RANG").'*</td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_RANG" value="'.$conf->global->PAYBOX_IBS_RANG.'">';
 print '<br>'.$langs->trans("Example").': 99 ('.$langs->trans("Test").')';
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PAYBOX_PBX_IDENTIFIANT").'</td><td>';
+print $langs->trans("PAYBOX_PBX_IDENTIFIANT").'*</td><td>';
 print '<input size="32" type="text" name="PAYBOX_PBX_IDENTIFIANT" value="'.$conf->global->PAYBOX_PBX_IDENTIFIANT.'">';
+print '<br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')';
 print '</td></tr>';
 
 

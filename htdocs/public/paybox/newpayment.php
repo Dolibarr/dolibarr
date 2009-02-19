@@ -102,6 +102,11 @@ if ($_REQUEST["action"] == 'dopayment')
 llxHeaderPayBox($langs->trans("PaymentForm"));
 
 
+// Common variables
+$creditor=$mysoc->nom;
+if (! empty($conf->global->PAYBOX_CREDITOR)) $creditor=$conf->global->PAYBOX_CREDITOR;
+
+
 print '<center>';
 print '<form name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="action" value="dopayment">';
@@ -134,7 +139,7 @@ if ($urllogo)
 
 print '<tr><td align="center"><br>'.$langs->trans("WelcomeOnPaymentPage").'<br></td></tr>'."\n";
 
-print '<tr><td align="center"><br>'.$langs->trans("ThisScreenAllowsYouToPay",$mysoc->nom).'<br><br></td></tr>'."\n";
+print '<tr><td align="center"><br>'.$langs->trans("ThisScreenAllowsYouToPay",$creditor).'<br><br></td></tr>'."\n";
 
 print '<tr><td align="center">';
 print '<table with="100%">';
@@ -142,6 +147,7 @@ print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Thi
 
 $found=false;
 $var=false;
+
 
 // Payment on customer order
 if ($_REQUEST["amount"] == 'order')
@@ -171,7 +177,7 @@ if ($_REQUEST["amount"] == 'order')
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$mysoc->nom.'</b></td></tr>'."\n";
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
 
 	// Debitor
 	$var=!$var;
@@ -244,7 +250,7 @@ if ($_REQUEST["amount"] == 'invoice')
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$mysoc->nom.'</b></td></tr>'."\n";
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
 
 	// Debitor
 	$var=!$var;
@@ -361,7 +367,7 @@ if ($_REQUEST["amount"] == 'contractline')
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$mysoc->nom.'</b></td></tr>'."\n";
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
 
 	// Debitor
 	$var=!$var;
@@ -460,7 +466,7 @@ if (is_numeric($_REQUEST["amount"]))
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$mysoc->nom.'</b></td></tr>'."\n";
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
 
 	// Amount
 	$var=!$var;

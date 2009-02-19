@@ -75,17 +75,19 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 	dol_syslog("Paypal.lib::print_paybox_redirect", LOG_DEBUG);
 
 	// Clean parameters
+	$PBX_IDENTIFIANT="2";	# Identifiant pour v2 test
+	if ($conf->global->PAYBOX_PBX_IDENTIFIANT) $PBX_IDENTIFIANT=$conf->global->PAYBOX_PBX_IDENTIFIANT;
 	$IBS_SITE="1999888";    # Site test
 	if ($conf->global->PAYBOX_IBS_SITE) $IBS_SITE=$conf->global->PAYBOX_IBS_SITE;
 	$IBS_RANG="99";         # Rang test
 	if ($conf->global->PAYBOX_IBS_RANG) $IBS_RANG=$conf->global->PAYBOX_IBS_RANG;
-	$IBS_DEVISE="";			# Currency
+	$IBS_DEVISE="840";			# Currency (Dollar US by default)
 	if ($CURRENCY == 'EUR') $IBS_DEVISE="978";
-
+	if ($CURRENCY == 'USD') $IBS_DEVISE="840";
 
 	$URLPAYBOX="";
 	if ($conf->global->PAYBOX_CGI_URL_V1) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V1;
-	//if ($conf->global->PAYBOX_CGI_URL_V2) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V2;
+	if ($conf->global->PAYBOX_CGI_URL_V2) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V2;
 
 	if (empty($IBS_DEVISE))
 	{
@@ -123,12 +125,16 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     $IBS_REFUSE=$urlko;
     $IBS_BKGD="#FFFFFF";
     $IBS_WAIT="2000";
-	$IBS_LANG="GBR"; 	// FRA, GBR, ESP, ITA et DEU
+	$IBS_LANG="GBR"; 	// By default GBR=english (FRA, GBR, ESP, ITA et DEU...)
 	if (eregi('^FR',$langs->defaultlang)) $IBS_LANG="FRA";
 	if (eregi('^ES',$langs->defaultlang)) $IBS_LANG="ESP";
 	if (eregi('^IT',$langs->defaultlang)) $IBS_LANG="ITA";
 	if (eregi('^DE',$langs->defaultlang)) $IBS_LANG="DEU";
+	if (eregi('^NL',$langs->defaultlang)) $IBS_LANG="NLD";
+	if (eregi('^SE',$langs->defaultlang)) $IBS_LANG="SWE";
 	$IBS_OUTPUT='E';
+	$PBX_SOURCE='HTML';
+	$PBX_TYPEPAIEMENT='CARTE';
 
     dol_syslog("Soumission Paybox", LOG_DEBUG);
     dol_syslog("IBS_MODE: $IBS_MODE", LOG_DEBUG);
@@ -146,6 +152,9 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     dol_syslog("IBS_WAIT: $IBS_WAIT", LOG_DEBUG);
     dol_syslog("IBS_LANG: $IBS_LANG", LOG_DEBUG);
     dol_syslog("IBS_OUTPUT: $IBS_OUTPUT", LOG_DEBUG);
+    dol_syslog("PBX_IDENTIFIANT: $PBX_IDENTITIANT", LOG_DEBUG);
+    dol_syslog("PBX_SOURCE: $PBX_SOURCE", LOG_DEBUG);
+    dol_syslog("PBX_TYPEPAIEMENT: $PBX_TYPEPAIEMENT", LOG_DEBUG);
 
     header("Content-type: text/html; charset=".$conf->character_set_client);
 
@@ -156,8 +165,12 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     print '<body>'."\n";
     print "\n";
 
-    // Formulaire pour module Paybox v1 (IBS_xxx)
+    // Formulaire pour module Paybox
     print '<form action="'.$URLPAYBOX.'" NAME="Submit" method="POST">'."\n";
+
+    // For Paybox V1 (IBS_xxx)
+    /*
+    print '<!-- Param for Paybox v1 -->'."\n";
     print '<input type="hidden" name="IBS_MODE" value="'.$IBS_MODE.'">'."\n";
     print '<input type="hidden" name="IBS_SITE" value="'.$IBS_SITE.'">'."\n";
     print '<input type="hidden" name="IBS_RANG" value="'.$IBS_RANG.'">'."\n";
@@ -173,6 +186,31 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     print '<input type="hidden" name="IBS_BKGD" value="'.$IBS_BKGD.'">'."\n";
     print '<input type="hidden" name="IBS_WAIT" value="'.$IBS_WAIT.'">'."\n";
     print '<input type="hidden" name="IBS_LANG" value="'.$IBS_LANG.'">'."\n";
+    print '<input type="hidden" name="IBS_OUTPUT" value="'.$IBS_OUTPUT.'">'."\n";
+	*/
+
+    // For Paybox V2 (PBX_xxx)
+    print '<!-- Param for Paybox v2 -->'."\n";
+    print '<input type="hidden" name="PBX_IDENTIFIANT" value="'.$PBX_IDENTIFIANT.'">'."\n";
+    print '<input type="hidden" name="PBX_MODE" value="'.$IBS_MODE.'">'."\n";
+    print '<input type="hidden" name="PBX_SITE" value="'.$IBS_SITE.'">'."\n";
+    print '<input type="hidden" name="PBX_RANG" value="'.$IBS_RANG.'">'."\n";
+    print '<input type="hidden" name="PBX_TOTAL" value="'.$IBS_TOTAL.'">'."\n";
+    print '<input type="hidden" name="PBX_DEVISE" value="'.$IBS_DEVISE.'">'."\n";
+    print '<input type="hidden" name="PBX_CMD" value="'.$IBS_CMD.'">'."\n";
+    print '<input type="hidden" name="PBX_PORTEUR" value="'.$IBS_PORTEUR.'">'."\n";
+    print '<input type="hidden" name="PBX_RETOUR" value="'.$IBS_RETOUR.'">'."\n";
+    print '<input type="hidden" name="PBX_EFFECTUE" value="'.$IBS_EFFECTUE.'">'."\n";
+    print '<input type="hidden" name="PBX_ANNULE" value="'.$IBS_ANNULE.'">'."\n";
+    print '<input type="hidden" name="PBX_REFUSE" value="'.$IBS_REFUSE.'">'."\n";
+    print '<input type="hidden" name="PBX_TXT" value="'.$IBS_TXT.'">'."\n";
+    print '<input type="hidden" name="PBX_BKGD" value="'.$IBS_BKGD.'">'."\n";
+    print '<input type="hidden" name="PBX_WAIT" value="'.$IBS_WAIT.'">'."\n";
+    print '<input type="hidden" name="PBX_LANG" value="'.$IBS_LANG.'">'."\n";
+    print '<input type="hidden" name="PBX_OUTPUT" value="'.$IBS_OUTPUT.'">'."\n";
+    print '<input type="hidden" name="PBX_SOURCE" value="'.$PBX_SOURCE.'">'."\n";
+    print '<input type="hidden" name="PBX_TYPEPAIEMENT" value="'.$PBX_TYPEPAIEMENT.'">'."\n";
+
     print '</form>'."\n";
 
     // Formulaire pour module Paybox v2 (PBX_xxx)
