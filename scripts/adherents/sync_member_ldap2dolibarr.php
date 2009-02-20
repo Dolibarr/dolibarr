@@ -121,7 +121,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 	exit;
 }
 
@@ -277,7 +277,7 @@ if ($result >= 0)
 			if ($datelast)
 			{
 				// Cree derniere cotisation et met a jour datefin dans adherent
-				//print "yy".dolibarr_print_date($datelast)."\n";
+				//print "yy".dol_print_date($datelast)."\n";
 				$crowid=$member->cotisation($datelast, $pricelast, 0);
 			}
 			
@@ -296,13 +296,13 @@ if ($result >= 0)
 	}
 	else
 	{
-		dolibarr_print_error('',$ldap->error);
+		dol_print_error('',$ldap->error);
 		$error++;
 	}
 }
 else
 {
-	dolibarr_print_error('',$ldap->error);
+	dol_print_error('',$ldap->error);
 	$error++;
 }
 		

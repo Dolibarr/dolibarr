@@ -251,7 +251,7 @@ function migrate_paiements($db,$langs,$conf)
 		}
 	}
 	else {
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	if ($num)
@@ -341,7 +341,7 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 		}
 	}
 	else {
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	if (sizeof($row))
@@ -449,7 +449,7 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 		}
 	}
 	else {
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	if (sizeof($row))
@@ -585,7 +585,7 @@ function migrate_contracts_det($db,$langs,$conf)
 				}
 				else
 				{
-					dolibarr_print_error($db);
+					dol_print_error($db);
 					$nberr++;
 				}
 
@@ -611,7 +611,7 @@ function migrate_contracts_det($db,$langs,$conf)
 	else
 	{
 		print $langs->trans('MigrationContractsFieldDontExist')."<br>\n";
-		//    dolibarr_print_error($db);
+		//    dol_print_error($db);
 	}
 
 	print '</td></tr>';
@@ -663,7 +663,7 @@ function migrate_links_transfert($db,$langs,$conf)
 
 				if (! $db->query($sql))
 				{
-					dolibarr_print_error($db);
+					dol_print_error($db);
 					$nberr++;
 				}
 
@@ -688,7 +688,7 @@ function migrate_links_transfert($db,$langs,$conf)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	print '</td></tr>';
@@ -707,7 +707,7 @@ function migrate_contracts_date1($db,$langs,$conf)
 
 	$sql="update llx_contrat set date_contrat=tms where date_contrat is null";
 	$resql = $db->query($sql);
-	if (! $resql) dolibarr_print_error($db);
+	if (! $resql) dol_print_error($db);
 	if ($db->affected_rows($resql) > 0)
 	print $langs->trans('MigrationContractsEmptyDatesUpdateSuccess')."<br>\n";
 	else
@@ -715,7 +715,7 @@ function migrate_contracts_date1($db,$langs,$conf)
 
 	$sql="update llx_contrat set datec=tms where datec is null";
 	$resql = $db->query($sql);
-	if (! $resql) dolibarr_print_error($db);
+	if (! $resql) dol_print_error($db);
 	if ($db->affected_rows($resql) > 0)
 	print $langs->trans('MigrationContractsEmptyCreationDatesUpdateSuccess')."<br>\n";
 	else
@@ -765,7 +765,7 @@ function migrate_contracts_date2($db,$langs,$conf)
 					$sql.=" SET date_contrat='".$obj->datemin."'";
 					$sql.=" WHERE rowid=".$obj->cref;
 					$resql2=$db->query($sql);
-					if (! $resql2) dolibarr_print_error($db);
+					if (! $resql2) dol_print_error($db);
 
 					$nbcontratsmodifie++;
 				}
@@ -782,7 +782,7 @@ function migrate_contracts_date2($db,$langs,$conf)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	print '</td></tr>';
@@ -801,7 +801,7 @@ function migrate_contracts_date3($db,$langs,$conf)
 
 	$sql="update llx_contrat set datec=date_contrat where datec is null or datec > date_contrat";
 	$resql = $db->query($sql);
-	if (! $resql) dolibarr_print_error($db);
+	if (! $resql) dol_print_error($db);
 	if ($db->affected_rows() > 0)
 	print $langs->trans('MigrationContractsIncoherentCreationDateUpdateSuccess')."<br>\n";
 	else
@@ -824,7 +824,7 @@ function migrate_contracts_open($db,$langs,$conf)
 	$sql = "SELECT c.rowid as cref FROM llx_contrat as c, llx_contratdet as cd";
 	$sql.= " WHERE cd.statut = 4 AND c.statut=2 AND c.rowid=cd.fk_contrat";
 	$resql = $db->query($sql);
-	if (! $resql) dolibarr_print_error($db);
+	if (! $resql) dol_print_error($db);
 	if ($db->affected_rows() > 0) {
 		$i = 0;
 		$row = array();
@@ -844,7 +844,7 @@ function migrate_contracts_open($db,$langs,$conf)
 				$sql.=" SET statut=1";
 				$sql.=" WHERE rowid=".$obj->cref;
 				$resql2=$db->query($sql);
-				if (! $resql2) dolibarr_print_error($db);
+				if (! $resql2) dol_print_error($db);
 
 				$nbcontratsmodifie++;
 
@@ -1367,7 +1367,7 @@ function migrate_price_commande($db,$langs,$conf)
 		$resql=$db->query($sql);
 		if (! $resql)
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		$db->commit();
@@ -1478,7 +1478,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 		$resql=$db->query($sql);
 		if (! $resql)
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		$db->commit();
@@ -1515,7 +1515,7 @@ function migrate_modeles($db,$langs,$conf)
 			// Aucun model par defaut.
 			$sql=" insert into llx_document_model(nom,type) values('crabe','invoice')";
 			$resql = $db->query($sql);
-			if (! $resql) dolibarr_print_error($db);
+			if (! $resql) dol_print_error($db);
 		}
 	}
 
@@ -1529,7 +1529,7 @@ function migrate_modeles($db,$langs,$conf)
 			// Aucun model par defaut.
 			$sql=" insert into llx_document_model(nom,type) values('einstein','order')";
 			$resql = $db->query($sql);
-			if (! $resql) dolibarr_print_error($db);
+			if (! $resql) dol_print_error($db);
 		}
 	}
 
@@ -1543,7 +1543,7 @@ function migrate_modeles($db,$langs,$conf)
 			// Aucun model par defaut.
 			$sql=" insert into llx_document_model(nom,type) values('rouget','shipping')";
 			$resql = $db->query($sql);
-			if (! $resql) dolibarr_print_error($db);
+			if (! $resql) dol_print_error($db);
 		}
 	}
 
@@ -1658,7 +1658,7 @@ function migrate_commande_expedition($db,$langs,$conf)
 					if (!$resql2)
 					{
 						$error++;
-						dolibarr_print_error($db);
+						dol_print_error($db);
 					}
 					print ". ";
 					$i++;
@@ -1679,7 +1679,7 @@ function migrate_commande_expedition($db,$langs,$conf)
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 			$db->rollback();
 		}
 	}
@@ -1738,13 +1738,13 @@ function migrate_commande_livraison($db,$langs,$conf)
 						if (!$resql3)
 						{
 							$error++;
-							dolibarr_print_error($db);
+							dol_print_error($db);
 						}
 					}
 					else
 					{
 						$error++;
-						dolibarr_print_error($db);
+						dol_print_error($db);
 					}
 					print ". ";
 					$i++;
@@ -1765,7 +1765,7 @@ function migrate_commande_livraison($db,$langs,$conf)
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 			$db->rollback();
 		}
 	}
@@ -1839,19 +1839,19 @@ function migrate_detail_livraison($db,$langs,$conf)
 							if (!$resql4)
 							{
 								$error++;
-								dolibarr_print_error($db);
+								dol_print_error($db);
 							}
 						}
 						else
 						{
 							$error++;
-							dolibarr_print_error($db);
+							dol_print_error($db);
 						}
 					}
 					else
 					{
 						$error++;
-						dolibarr_print_error($db);
+						dol_print_error($db);
 					}
 					print ". ";
 					$i++;
@@ -1873,7 +1873,7 @@ function migrate_detail_livraison($db,$langs,$conf)
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 			$db->rollback();
 		}
 	}
@@ -1934,7 +1934,7 @@ function migrate_stocks($db,$langs,$conf)
 				else
 				{
 					$error++;
-					dolibarr_print_error($db);
+					dol_print_error($db);
 				}
 				print ". ";
 				$i++;
@@ -1953,7 +1953,7 @@ function migrate_stocks($db,$langs,$conf)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 		$db->rollback();
 	}
 

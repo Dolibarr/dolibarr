@@ -19,11 +19,11 @@
  */
 
 /**
-      \file       htdocs/compta/index.php
-      \ingroup    compta
-      \brief      Page accueil zone comptabilité
-      \version    $Id$
-*/
+ \file       htdocs/compta/index.php
+ \ingroup    compta
+ \brief      Page accueil zone comptabilité
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
@@ -48,8 +48,8 @@ if ($conf->commande->enabled) $langs->load("orders");
 $socid='';
 if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$action = '';
+	$socid = $user->societe_id;
 }
 
 
@@ -59,22 +59,22 @@ if ($user->societe_id > 0)
 
 if (isset($_GET["action"]) && $_GET["action"] == 'add_bookmark')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socid." AND fk_user=".$user->id;
-  if (! $db->query($sql) )
-    {
-      dolibarr_print_error($db);
-    }
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$socid.", ".$db->idate(mktime()).",".$user->id.");";
-  if (! $db->query($sql) )
-    {
-      dolibarr_print_error($db);
-    }
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socid." AND fk_user=".$user->id;
+	if (! $db->query($sql) )
+	{
+		dol_print_error($db);
+	}
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$socid.", ".$db->idate(mktime()).",".$user->id.");";
+	if (! $db->query($sql) )
+	{
+		dol_print_error($db);
+	}
 }
 
 if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"];
-  $result = $db->query($sql);
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"];
+	$result = $db->query($sql);
 }
 
 
@@ -197,7 +197,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -270,7 +270,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -279,58 +279,58 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
  */
 if ($conf->tax->enabled)
 {
-    if ($user->societe_id == 0)
-    {
+	if ($user->societe_id == 0)
+	{
 		$chargestatic=new ChargeSociales($db);
 
-        $sql = "SELECT c.rowid, c.amount, ".$db->pdate("c.date_ech")." as date_ech,";
+		$sql = "SELECT c.rowid, c.amount, ".$db->pdate("c.date_ech")." as date_ech,";
 		$sql.= " cc.libelle";
-        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc";
-        $sql.= " WHERE c.fk_type = cc.id AND c.paye=0";
+		$sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc";
+		$sql.= " WHERE c.fk_type = cc.id AND c.paye=0";
 
-        $resql = $db->query($sql);
-        if ( $resql )
-        {
-            $var = false;
+		$resql = $db->query($sql);
+		if ( $resql )
+		{
+			$var = false;
 			$num = $db->num_rows($resql);
 
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td colspan="2">'.$langs->trans("ContributionsToPay").($num?' ('.$num.')':'').'</td></tr>';
-            if ($num)
-            {
-                $i = 0;
-                $tot_ttc=0;
-                while ($i < $num)
-                {
-                    $obj = $db->fetch_object($resql);
-                    print "<tr $bc[$var]>";
+			if ($num)
+			{
+				$i = 0;
+				$tot_ttc=0;
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
+					print "<tr $bc[$var]>";
 					$chargestatic->id=$obj->rowid;
-                    $chargestatic->lib=$obj->libelle;
-                    print '<td>'.$chargestatic->getNomUrl(1).'</td>';
-                    print '<td align="right">'.price($obj->amount).'</td>';
-                    print '</tr>';
-                    $tot_ttc+=$obj->amount;
-                    $var = !$var;
-                    $i++;
-                }
+					$chargestatic->lib=$obj->libelle;
+					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
+					print '<td align="right">'.price($obj->amount).'</td>';
+					print '</tr>';
+					$tot_ttc+=$obj->amount;
+					$var = !$var;
+					$i++;
+				}
 
-                print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
-                print '<td align="right">'.price($tot_ttc).'</td>';
-                print '</tr>';
-            }
+				print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
+				print '<td align="right">'.price($tot_ttc).'</td>';
+				print '</tr>';
+			}
 			else
 			{
 				print '<tr colspan="2" '.$bc[$var].'><td>'.$langs->trans("None").'</td></tr>';
 			}
 			print "</table><br>";
-            $db->free($resql);
-        }
-        else
-        {
-            dolibarr_print_error($db);
-        }
-    }
+			$db->free($resql);
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
 }
 
 
@@ -384,12 +384,12 @@ if ($user->societe->enabled && $user->rights->societe->lire)
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				print '<td>'.$customerstatic->getNomUrl(1).'</td>';
-				print '<td align="right">'.dolibarr_print_date($objp->dc,'day').'</td>';
+				print '<td align="right">'.dol_print_date($objp->dc,'day').'</td>';
 				print '</tr>';
 
 				$i++;
 			}
-			
+
 		}
 		else
 		{
@@ -444,12 +444,12 @@ if ($user->fournisseur->enabled && $user->rights->societe->lire)
 				$customerstatic->nom=$objp->nom;
 				print '<tr '.$bc[$var].'>';
 				print '<td>'.$customerstatic->getNomUrl(1).'</td>';
-				print '<td align="right">'.dolibarr_print_date($objp->dc,'day').'</td>';
+				print '<td align="right">'.dol_print_date($objp->dc,'day').'</td>';
 				print '</tr>';
 				$var=!$var;
 				$i++;
 			}
-			
+
 		}
 		else
 		{
@@ -458,7 +458,7 @@ if ($user->fournisseur->enabled && $user->rights->societe->lire)
 		print '</table><br>';
 	}
 }
-	
+
 /*
  * Commandes clients à facturer
  */
@@ -491,7 +491,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 	{
 		$var=false;
 		$num = $db->num_rows($resql);
-		
+
 		if ($num)
 		{
 			$i = 0;
@@ -509,10 +509,10 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 				$obj = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
 				print '<td nowrap="nowrap">';
-				
+
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
-				
+
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
 				print $commandestatic->getNomUrl(1);
@@ -526,11 +526,11 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
 				print '</td></tr></table>';
-				
+
 				print '</td>';
 
 				print '<td align="left"><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
-				print '<a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,44).'</a></td>';
+				print '<a href="fiche.php?socid='.$obj->socid.'">'.dol_trunc($obj->nom,44).'</a></td>';
 				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td>';
@@ -556,7 +556,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -604,7 +604,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 
 				print '<tr '.$bc[$var].'>';
 				print '<td nowrap="nowrap">';
-				
+
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
 				$facturestatic->ref=$obj->facnumber;
@@ -621,9 +621,9 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
 				$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
 				print '</td></tr></table>';
-				
+
 				print '</td>';
-				print '<td align="left"><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+				print '<td align="left"><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dol_trunc($obj->nom,44).'</a></td>';
 				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
@@ -655,7 +655,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -704,7 +704,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				$facstatic->id=$obj->rowid;
 				print $facstatic->getNomUrl(1,'');
 				print '</td>';
-				print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+				print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dol_trunc($obj->nom,44).'</a></td>';
 				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
@@ -734,7 +734,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -744,22 +744,22 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 $resql = 0;
 if ($resql)
 {
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("TasksToDo").'</td>';
-  print "</tr>\n";
-  $var = True;
-  $i = 0;
-  while ($i < $db->num_rows($resql))
-    {
-      $obj = $db->fetch_object($resql);
-      $var=!$var;
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("TasksToDo").'</td>';
+	print "</tr>\n";
+	$var = True;
+	$i = 0;
+	while ($i < $db->num_rows($resql))
+	{
+		$obj = $db->fetch_object($resql);
+		$var=!$var;
 
-      print "<tr $bc[$var]><td>".dolibarr_print_date($obj->da,"day")."</td>";
-      print "<td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
-      $i++;
-    }
-  $db->free($resql);
-  print "</table><br>";
+		print "<tr $bc[$var]><td>".dol_print_date($obj->da,"day")."</td>";
+		print "<td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
+		$i++;
+	}
+	$db->free($resql);
+	print "</table><br>";
 }
 
 print '</td></tr>';

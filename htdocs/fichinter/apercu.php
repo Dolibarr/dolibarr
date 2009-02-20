@@ -73,7 +73,7 @@ if ($_GET["id"] > 0) {
 
 
 		$head = fichinter_prepare_head($fichinter);
-    dolibarr_fiche_head($head, 'preview', $langs->trans("InterventionCard"));
+    dol_fiche_head($head, 'preview', $langs->trans("InterventionCard"));
 
 
 		/*
@@ -135,7 +135,7 @@ if ($_GET["id"] > 0) {
 
 					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=ficheinter&file='.urlencode($relativepath).'">'.$fichinter->ref.'.pdf</a></td>';
 					print '<td align="right">'.filesize($file). ' bytes</td>';
-					print '<td align="right">'.dolibarr_print_date(filemtime($file),'dayhour').'</td>';
+					print '<td align="right">'.dol_print_date(filemtime($file),'dayhour').'</td>';
 					print '</tr>';
 
 					// Si fichier detail PDF existe
@@ -144,7 +144,7 @@ if ($_GET["id"] > 0) {
 
 						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=ficheinter&file='.urlencode($relativepathdetail).'">'.$fichinter->ref.'-detail.pdf</a></td>';
 						print '<td align="right">'.filesize($filedetail). ' bytes</td>';
-						print '<td align="right">'.dolibarr_print_date(filemtime($filedetail),'dayhour').'</td>';
+						print '<td align="right">'.dol_print_date(filemtime($filedetail),'dayhour').'</td>';
 						print '</tr>';
 					}
 					print "</table>\n";
@@ -194,13 +194,13 @@ if ($_GET["id"] > 0) {
 
 		        // Date
 		        print '<tr><td>'.$langs->trans("Date").'</td>';
-		        print "<td colspan=\"2\">".dolibarr_print_date($fichinter->date,"daytext")."</td>\n";
+		        print "<td colspan=\"2\">".dol_print_date($fichinter->date,"daytext")."</td>\n";
 		        print '</tr>';
 
 				print '</table>';
 			}
 		} else {
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	} else {
 	// Intervention non trouvée

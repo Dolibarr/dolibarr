@@ -70,8 +70,8 @@ if ($_POST["action"] == 'gen')
 	else
 	{
 		$outputlangs->charset_output=$sav_charset_output;
-		dolibarr_syslog("Erreur dans commande_pdf_create");
-		dolibarr_print_error($db,$obj->pdferror());
+		dol_syslog("Erreur dans commande_pdf_create");
+		dol_print_error($db,$obj->pdferror());
 	}
 
 	$year = $_POST["reyear"];
@@ -98,11 +98,11 @@ for ($month = 1 ; $month < 13 ; $month++)
 {
 	if ($month == $cmonth)
 	{
-		print "<option value=\"$month\" selected=\"true\">" . dolibarr_print_date(mktime(0,0,0,$month),"%B");
+		print "<option value=\"$month\" selected=\"true\">" . dol_print_date(mktime(0,0,0,$month),"%B");
 	}
 	else
 	{
-		print "<option value=\"$month\">" . dolibarr_print_date(mktime(0,0,0,$month),"%B");
+		print "<option value=\"$month\">" . dol_print_date(mktime(0,0,0,$month),"%B");
 	}
 }
 print "</select>";
@@ -171,7 +171,7 @@ if ($year)
 	  	$relativepath = $year.'/'.$file;
 	  	print "<tr $bc[$var]>".'<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
 	  	print '<td align="right">'.filesize($tfile). ' '.$langs->trans("Bytes").'</td>';
-	  	print '<td align="right">'.dolibarr_print_date(filemtime($tfile),"dayhour").'</td></tr>';
+	  	print '<td align="right">'.dol_print_date(filemtime($tfile),"dayhour").'</td></tr>';
 	  }
 		}
 		print '</table>';

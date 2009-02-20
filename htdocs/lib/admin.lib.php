@@ -89,7 +89,7 @@ function run_sql($sqlfile,$silent=1)
 {
 	global $db, $conf, $langs, $user;
 
-	dolibarr_syslog("Admin.lib::run_sql run sql file ".$sqlfile, LOG_DEBUG);
+	dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile, LOG_DEBUG);
 
 	$ok=0;
 	$error=0;
@@ -174,7 +174,7 @@ function run_sql($sqlfile,$silent=1)
 				$from='__+MAX_'.$table.'__';
 				$to='+'.$listofmaxrowid[$table];
 				$newsql=str_replace($from,$to,$newsql);
-				dolibarr_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
 
 				$arraysql[$i]=$newsql;
 			}
@@ -192,7 +192,7 @@ function run_sql($sqlfile,$silent=1)
 
 			// Ajout trace sur requete (eventuellement ? commenter si beaucoup de requetes)
 			if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$newsql."'</td></tr>\n";
-			dolibarr_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+			dol_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
 
 			if (eregi('insert into ([^ ]+)',$newsql,$reg))
 			{
@@ -215,7 +215,7 @@ function run_sql($sqlfile,$silent=1)
 				$from='__'.$cursor.'__';
 				$to=$listofinsertedrowid[$cursor];
 				$newsql=str_replace($from,$to,$newsql);
-				dolibarr_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
 			}
 
 			$result=$db->query($newsql);
@@ -227,7 +227,7 @@ function run_sql($sqlfile,$silent=1)
 					$table=eregi_replace('[^a-zA-Z_]+','',$reg[1]);
 					$insertedrowid=$db->last_insert_id($table);
 					$listofinsertedrowid[$cursorinsert]=$insertedrowid;
-					dolibarr_syslog('Admin.lib::run_sql Insert nb '.$cursorinsert.', done in table '.$table.', rowid is '.$listofinsertedrowid[$cursorinsert], LOG_DEBUG);
+					dol_syslog('Admin.lib::run_sql Insert nb '.$cursorinsert.', done in table '.$table.', rowid is '.$listofinsertedrowid[$cursorinsert], LOG_DEBUG);
 				}
 				// 	          print '<td align="right">OK</td>';
 			}
@@ -255,7 +255,7 @@ function run_sql($sqlfile,$silent=1)
 					if (! $silent) print '<tr><td valign="top" colspan="2">';
 					if (! $silent) print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div></td>";
 					if (! $silent) print '</tr>';
-					dolibarr_syslog('Admin.lib::run_sql Request '.($i+1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);
+					dol_syslog('Admin.lib::run_sql Request '.($i+1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);
 					$error++;
 				}
 			}
@@ -295,7 +295,7 @@ function dolibarr_del_const($db, $name)
 	$sql = "DELETE FROM llx_const";
 	$sql.=" WHERE name='".addslashes($name)."' or rowid='".addslashes($name)."'";
 
-    dolibarr_syslog("admin.lib::dolibarr_del_const sql=".$sql);
+    dol_syslog("admin.lib::dolibarr_del_const sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -323,7 +323,7 @@ function dolibarr_get_const($db, $name)
     $sql.=" FROM llx_const";
     $sql.=" WHERE name = '".addslashes($name)."'";
 
-    dolibarr_syslog("admin.lib::dolibarr_get_const sql=".$sql);
+    dol_syslog("admin.lib::dolibarr_get_const sql=".$sql);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -351,15 +351,15 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
     if (empty($name))
     {
-    	dolibarr_print_error("Error: Call to function dolibarr_set_const with wrong parameters", LOG_ERR);
+    	dol_print_error("Error: Call to function dolibarr_set_const with wrong parameters", LOG_ERR);
     	exit;
     }
 
     $db->begin();
 
-    //dolibarr_syslog("dolibarr_set_const name=$name, value=$value");
+    //dol_syslog("dolibarr_set_const name=$name, value=$value");
     $sql = "DELETE FROM llx_const WHERE name = '".addslashes($name)."';";
-    dolibarr_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
+    dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 
     if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
@@ -367,7 +367,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 	    $sql = "INSERT INTO llx_const(name,value,type,visible,note)";
 	    $sql.= " VALUES ('".$name."','".addslashes($value)."','".$type."',".$visible.",'".addslashes($note)."')";
 
-		dolibarr_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
+		dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 	    $resql=$db->query($sql);
     }
 
@@ -380,7 +380,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     else
     {
     	$this->error=$db->lasterror();
-    	dolibarr_syslog("admin.lib::dolibarr_set_const ".$this->error, LOG_ERR);
+    	dol_syslog("admin.lib::dolibarr_set_const ".$this->error, LOG_ERR);
     	$db->rollback();
         return -1;
     }

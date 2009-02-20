@@ -77,7 +77,7 @@ class ModelePDFFactures extends FPDF
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 			return -1;
 		}
 		return $liste;
@@ -213,14 +213,14 @@ function facture_pdf_create($db, $id, $message, $modele, $outputlangs)
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dolibarr_print_error($db,"facture_pdf_create Error: ".$obj->error);
+			dol_print_error($db,"facture_pdf_create Error: ".$obj->error);
 			return -1;
 		}
 
 	}
 	else
 	{
-		dolibarr_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file));
+		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file));
 		return -1;
 	}
 }

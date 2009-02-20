@@ -578,7 +578,7 @@ else
 	      $previous_ref = $ligne->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?id='.$ligne->ref_previous.'">'.img_previous().'</a>':'';
 	      $next_ref     = $ligne->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?id='.$ligne->ref_next.'">'.img_next().'</a>':'';
 
-	      dolibarr_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
+	      dol_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
 
 	      print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">Fiche Ligne '.$mesg.'</td>';
 	      print '<td class="nobordernopadding"><a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
@@ -591,7 +591,7 @@ else
 		{		  
 		  $html = new Form($db);
 
-		  $html->form_confirm("fiche.php"."?id=".$_GET["id"],"Suppression de ligne","Etes-vous s�r de vouloir supprimer la ligne : ".dolibarr_print_phone($ligne->numero,0,0,true)." ?","confirm_delete");
+		  $html->form_confirm("fiche.php"."?id=".$_GET["id"],"Suppression de ligne","Etes-vous s�r de vouloir supprimer la ligne : ".dol_print_phone($ligne->numero,0,0,true)." ?","confirm_delete");
 		  print '<br />';
 		}
 
@@ -618,7 +618,7 @@ else
 	      print $client_comm->nom.'</a></td><td>'.$client_comm->code_client;
 	      print '</td></tr>';
 
-	      print '<tr><td width="20%">Num�ro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
+	      print '<tr><td width="20%">Num�ro</td><td>'.dol_print_phone($ligne->numero).'</td>';
 	      //print " ".$ligne->support.
 
 	      print '<td>Factur�e : '.$ligne->facturable.'</td></tr>';
@@ -940,7 +940,7 @@ else
 	      $head[$h][1] = $langs->trans('Conso');
 	      $h++;
 	      
-	      dolibarr_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
+	      dol_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
 
 	      print_fiche_titre('Edition de la ligne', $mesg);
 	      
@@ -965,7 +965,7 @@ else
 	      else
 		{
 		  print '<input type="hidden" name="numero" value="'.$ligne->numero.'">';
-		  print dolibarr_print_phone($ligne->numero);
+		  print dol_print_phone($ligne->numero);
 		}
 	      print '</td></tr>';
 

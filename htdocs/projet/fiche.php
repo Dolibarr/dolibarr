@@ -196,7 +196,7 @@ else
 	if ($projet->user_resp_id > 0) $result=$projet->fetch_user($projet->user_resp_id);
 
 	$head=project_prepare_head($projet);
-	dolibarr_fiche_head($head, 'project', $langs->trans("Project"));
+	dol_fiche_head($head, 'project', $langs->trans("Project"));
 
 	if ($_GET["action"] == 'delete')
 	{

@@ -185,7 +185,7 @@ if ($result)
 
       print "<tr $bc[$var]><td>";
 
-      print dolibarr_print_phone($obj->numero,0,0,true)."</td>\n";
+      print dol_print_phone($obj->numero,0,0,true)."</td>\n";
       print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
 
       print '<td align="center"><a href="'.DOL_URL_ROOT.'/telephonie/ligne/numdata.php?action=delete&amp;id='.$obj->rowid.'">';

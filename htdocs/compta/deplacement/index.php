@@ -108,7 +108,7 @@ if ($resql)
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->rowid.'</a></td>';
       print '<td>'.$langs->trans($objp->type).'</td>';
-      print '<td>'.dolibarr_print_date($objp->dd,'day').'</td>';
+      print '<td>'.dol_print_date($objp->dd,'day').'</td>';
       if ($objp->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
       else print '<td>&nbsp;</td>';
       print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->firstname.' '.$objp->name.'</a></td>';
@@ -123,7 +123,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 $db->close();
 

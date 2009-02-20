@@ -131,10 +131,10 @@ if ($result)
 		$var=!$var;
 		print "<tr $bc[$var]>";
 		print "<td><a href=\"fiche.php?id=".$objp->fichid."\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
-		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44)."</a></td>\n";
-		print '<td>'.dol_htmlentitiesbr(dolibarr_trunc($objp->description,20)).'</td>';
-		print '<td>'.dol_htmlentitiesbr(dolibarr_trunc($objp->descriptiondetail,20)).'</td>';
-		print '<td align="center">'.dolibarr_print_date($objp->dp,'dayhour')."</td>\n";
+		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44)."</a></td>\n";
+		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
+		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
+		print '<td align="center">'.dol_print_date($objp->dp,'dayhour')."</td>\n";
 		print '<td align="right">'.ConvertSecondToTime($objp->duree).'</td>';
 		print '<td align="right">'.$fichinter_static->LibStatut($objp->fk_statut,5).'</td>';
 
@@ -153,7 +153,7 @@ if ($result)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 $db->close();

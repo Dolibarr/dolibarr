@@ -86,25 +86,25 @@ if ($_POST["action"] == 'add_action')
 	//if ($_POST["admin"] == -1) $_POST["admin"]='0';
 	//if ($_POST["a2hour"] == -1) $_POST["a2hour"]='0';
 	//if ($_POST["a2min"] == -1) $_POST["a2min"]='0';
-	$datep=dolibarr_mktime($_POST["aphour"],
+	$datep=dol_mktime($_POST["aphour"],
                    $_POST["apmin"],
                    0,
                    $_POST["apmonth"],
                    $_POST["apday"],
                    $_POST["apyear"]);
-	$datep2=dolibarr_mktime($_POST["p2hour"],
+	$datep2=dol_mktime($_POST["p2hour"],
                    $_POST["p2min"],
                    0,
                    $_POST["p2month"],
                    $_POST["p2day"],
                    $_POST["p2year"]);
-	/*$datea=dolibarr_mktime($_POST["adhour"],	// deprecated
+	/*$datea=dol_mktime($_POST["adhour"],	// deprecated
                    $_POST["admin"],
                    0,
                    $_POST["admonth"],
                    $_POST["adday"],
                    $_POST["adyear"]);
-	$datea2=dolibarr_mktime($_POST["a2hour"],	// deprecated
+	$datea2=dol_mktime($_POST["a2hour"],	// deprecated
                    $_POST["a2min"],
                    0,
                    $_POST["a2month"],
@@ -236,7 +236,7 @@ if ($_POST["action"] == 'add_action')
                 $db->commit();
                 if ($_POST["from"])
                 {
-					dolibarr_syslog("Back to ".$_POST["from"]);
+					dol_syslog("Back to ".$_POST["from"]);
                 	Header("Location: ".$_POST["from"]);
                 }
                 elseif($idaction)
@@ -310,26 +310,26 @@ if ($_POST["action"] == 'update')
         $actioncomm = new Actioncomm($db);
         $actioncomm->fetch($_POST["id"]);
 
-    	$datep=dolibarr_mktime($_POST["aphour"],
+    	$datep=dol_mktime($_POST["aphour"],
                                    $_POST["apmin"],
                                    0,
                                    $_POST["apmonth"],
                                    $_POST["apday"],
                                    $_POST["apyear"]);
 
-		$datep2=dolibarr_mktime($_POST["p2hour"],
+		$datep2=dol_mktime($_POST["p2hour"],
 	                   $_POST["p2min"],
 	                   0,
 	                   $_POST["p2month"],
 	                   $_POST["p2day"],
 	                   $_POST["p2year"]);
-    	/*$datea=dolibarr_mktime($_POST["adhour"],
+    	/*$datea=dol_mktime($_POST["adhour"],
                                    $_POST["admin"],
                                    0,
                                    $_POST["admonth"],
                                    $_POST["adday"],
                                    $_POST["adyear"]);
-		$datea2=dolibarr_mktime($_POST["a2hour"],
+		$datea2=dol_mktime($_POST["a2hour"],
 	                   $_POST["a2min"],
 	                   0,
 	                   $_POST["a2month"],
@@ -512,7 +512,7 @@ if ($_GET["action"] == 'create')
 
 	if (! empty($_GET["datep"]) && eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$',$_GET["datep"],$reg))
 	{
-		$actioncomm->datep=dolibarr_mktime(0,0,0,$reg[2],$reg[3],$reg[1]);
+		$actioncomm->datep=dol_mktime(0,0,0,$reg[2],$reg[3],$reg[1]);
 	}
 
 	// Date start
@@ -594,7 +594,7 @@ if ($_GET["id"])
 
     $act = new ActionComm($db);
     $result=$act->fetch($_GET["id"]);
-	if ($result < 0) dolibarr_print_error($db,$act->error);
+	if ($result < 0) dol_print_error($db,$act->error);
 
 	$societe = new Societe($db);
 	if ($act->societe->id)
@@ -634,7 +634,7 @@ if ($_GET["id"])
 	$head[$h][1] = $langs->trans('Info');
 	$h++;
 
-    dolibarr_fiche_head($head, $hselected, $langs->trans("Action"));
+    dol_fiche_head($head, $hselected, $langs->trans("Action"));
 
     $now=gmmktime();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
@@ -819,13 +819,13 @@ if ($_GET["id"])
 
         // Date debut
 		print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-		print dolibarr_print_date($act->datep,'dayhour');
+		print dol_print_date($act->datep,'dayhour');
 		if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
         // Date fin
         print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		print dolibarr_print_date($act->datef,'dayhour');
+		print dol_print_date($act->datef,'dayhour');
 		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 

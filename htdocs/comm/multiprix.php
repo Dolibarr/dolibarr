@@ -82,7 +82,7 @@ if ($_socid > 0)
 
 	$head = societe_prepare_head($objsoc);
 
-	dolibarr_fiche_head($head, 'customer', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"));
 
 
 	print '<form method="POST" action="multiprix.php?id='.$objsoc->id.'">';
@@ -146,7 +146,7 @@ if ($_socid > 0)
 			$obj = $db->fetch_object($resql);
 			$tag = !$tag;
 			print '<tr '.$bc[$tag].'>';
-			print '<td>'.dolibarr_print_date($obj->dc,"dayhour").'</td>';
+			print '<td>'.dol_print_date($obj->dc,"dayhour").'</td>';
 			print '<td>'.$obj->price_level.' </td>';
 			$userstatic->id=$obj->uid;
 			$userstatic->nom=$obj->login;
@@ -159,7 +159,7 @@ if ($_socid > 0)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 }

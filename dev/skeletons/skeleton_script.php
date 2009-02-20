@@ -70,37 +70,37 @@ $myobject=new Skeleton_class($db);
 
 // Example for inserting creating object in database
 /*
-dolibarr_syslog($script_file." CREATE", LOG_DEBUG);
+dol_syslog($script_file." CREATE", LOG_DEBUG);
 $myobject->prop1='value_prop1';
 $myobject->prop2='value_prop2';
 $id=$myobject->create($user);
-if ($id < 0) dolibarr_print_error($db,$myobject->error);
+if ($id < 0) dol_print_error($db,$myobject->error);
 else print "Object created with id=".$id."\n";
 */
 
 // Example for reading object from database
 /*
-dolibarr_syslog($script_file." FETCH", LOG_DEBUG);
+dol_syslog($script_file." FETCH", LOG_DEBUG);
 $result=$myobject->fetch($id);
-if ($result < 0) dolibarr_print_error($db,$myobject->error);
+if ($result < 0) dol_print_error($db,$myobject->error);
 else print "Object with id=".$id." loaded\n";
 */
 
 // Example for updating object in database ($myobject must have been loaded by a fetch before)
 /*
-dolibarr_syslog($script_file." UPDATE", LOG_DEBUG);
+dol_syslog($script_file." UPDATE", LOG_DEBUG);
 $myobject->prop1='newvalue_prop1';
 $myobject->prop2='newvalue_prop2';
 $result=$myobject->update($user);
-if ($result < 0) dolibarr_print_error($db,$myobject->error);
+if ($result < 0) dol_print_error($db,$myobject->error);
 else print "Object with id ".$myobject->id." updated\n";
 */
 
 // Example for deleting object in database ($myobject must have been loaded by a fetch before)
 /*
-dolibarr_syslog($script_file." DELETE", LOG_DEBUG);
+dol_syslog($script_file." DELETE", LOG_DEBUG);
 $result=$myobject->delete($user);
-if ($result < 0) dolibarr_print_error($db,$myobject->error);
+if ($result < 0) dol_print_error($db,$myobject->error);
 else print "Object with id ".$myobject->id." deleted\n";
 */
 
@@ -112,7 +112,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
 $sql.= " WHERE field3 = 'xxx'";
 $sql.= " ORDER BY field1 ASC";
 
-dolibarr_syslog($script_file." sql=".$sql, LOG_DEBUG);
+dol_syslog($script_file." sql=".$sql, LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -135,7 +135,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 	exit;
 }
 */

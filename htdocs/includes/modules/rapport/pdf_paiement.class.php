@@ -130,7 +130,7 @@ class pdf_paiement extends FPDF
 		$sql .= " AND date_format(p.datep, '%Y%m') = " . sprintf("%04d%02d",$year,$month);
 		$sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 
-		dolibarr_syslog("pdf_paiement::write_file sql=".$sql);
+		dol_syslog("pdf_paiement::write_file sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -157,7 +157,7 @@ class pdf_paiement extends FPDF
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 
 		$pages = intval($lignes / $this->line_per_page);
@@ -221,7 +221,7 @@ class pdf_paiement extends FPDF
 		global $langs;
 
 		$title=$outputlangs->transnoentities("ListOfCustomerPayments");
-		$title.=' - '.dol_print_date(dolibarr_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs,true);
+		$title.=' - '.dol_print_date(dol_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs,true);
 		$pdf->SetFont('Arial','B',12);
 		$pdf->Text(70, 10, $title);
 

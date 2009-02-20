@@ -182,7 +182,7 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 		}
 		else
 		{
-			dolibarr_syslog("Error ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined"), LOG_ERR);
+			dol_syslog("Error ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined"), LOG_ERR);
 			print "Error ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined");
 			return 0;
 		}
@@ -197,7 +197,7 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 
 		$obj = new $classname($db);
 
-		dolibarr_syslog("fichinter_create build PDF", LOG_DEBUG);
+		dol_syslog("fichinter_create build PDF", LOG_DEBUG);
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
@@ -210,7 +210,7 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dolibarr_print_error($db,$obj->pdferror());
+			dol_print_error($db,$obj->pdferror());
 			return 0;
 		}
 	}

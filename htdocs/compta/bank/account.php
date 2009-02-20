@@ -75,7 +75,7 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user-
         $amount = - price2num($_POST["debit"]);
     }
 
-    $dateop = dolibarr_mktime(12,0,0,$_POST["opmonth"],$_POST["opday"],$_POST["opyear"]);
+    $dateop = dol_mktime(12,0,0,$_POST["opmonth"],$_POST["opday"],$_POST["opyear"]);
     $operation=$_POST["operation"];
     $num_chq=$_POST["num_chq"];
     $label=$_POST["label"];
@@ -96,7 +96,7 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user-
 	    }
 	    else
 	    {
-	        dolibarr_print_error($db,$acct->error);
+	        dol_print_error($db,$acct->error);
 	    }
 	}
 	else
@@ -209,7 +209,7 @@ if ($account || $_GET["ref"])
 	$sql.= " WHERE b.fk_account=".$acct->id;
 	$sql.= $sql_rech;
 
-	dolibarr_syslog("account.php count transactions - sql=".$sql);
+	dol_syslog("account.php count transactions - sql=".$sql);
 	$result=$db->query($sql);
 	if ($result)
 	{
@@ -229,7 +229,7 @@ if ($account || $_GET["ref"])
 		$db->free($result);
 	}
 	else {
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	if ($page > 0)
@@ -249,7 +249,7 @@ if ($account || $_GET["ref"])
 
 	// Onglets
 	$head=bank_prepare_head($acct);
-	dolibarr_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0);
+	dol_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0);
 
 	print '<table class="border" width="100%">';
 
@@ -439,7 +439,7 @@ if ($account || $_GET["ref"])
 	$sql.= " ORDER BY b.datev ASC";
 	$sql.= $db->plimit($limitsql, 0);
 
-	dolibarr_syslog("account.php get transactions - sql=".$sql);
+	dol_syslog("account.php get transactions - sql=".$sql);
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -470,9 +470,9 @@ if ($account || $_GET["ref"])
 
 	            print "<tr $bc[$var]>";
 
-	            print "<td nowrap>".dolibarr_print_date($objp->do,"day")."</td>\n";
+	            print "<td nowrap>".dol_print_date($objp->do,"day")."</td>\n";
 
-	            print "<td nowrap>&nbsp;".dolibarr_print_date($objp->dv,"day")."</td>\n";
+	            print "<td nowrap>&nbsp;".dol_print_date($objp->dv,"day")."</td>\n";
 
 	            print "<td nowrap>&nbsp;".$langs->trans($objp->fk_type)." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
 
@@ -498,7 +498,7 @@ if ($account || $_GET["ref"])
 					}
 					else
 					{
-		            	print dolibarr_trunc($objp->label,60);
+		            	print dol_trunc($objp->label,60);
 		            }
 	            }
 
@@ -671,7 +671,7 @@ if ($account || $_GET["ref"])
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 

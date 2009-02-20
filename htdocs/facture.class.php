@@ -894,7 +894,7 @@ class Facture extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -1048,7 +1048,7 @@ class Facture extends CommonObject
 				$mois += 1;
 			}
 			// On se déplace au début du mois suivant, et on retire un jour
-			$datelim=dolibarr_mktime(12,0,0,$mois,1,$annee);
+			$datelim=dol_mktime(12,0,0,$mois,1,$annee);
 			$datelim -= (3600 * 24);
 		}
 
@@ -1294,7 +1294,7 @@ class Facture extends CommonObject
 			else
 			{
 				dol_syslog("Facture::set_valid() Echec update - 10 - sql=".$sql, LOG_DEBUG);
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 				$error++;
 			}
 
@@ -1910,7 +1910,7 @@ class Facture extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 		return $idarray;
 	}
@@ -2129,7 +2129,7 @@ class Facture extends CommonObject
 	  }
 	  else
 	  {
-	  	dolibarr_print_error($db,"Facture::getNextNumRef ".$obj->error);
+	  	dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
 	  	return "";
 	  }
 		}
@@ -2178,7 +2178,7 @@ class Facture extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -2559,7 +2559,7 @@ class Facture extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -2694,7 +2694,7 @@ class Facture extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -2817,7 +2817,7 @@ class FactureLigne
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -2855,7 +2855,7 @@ class FactureLigne
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 				$this->db->rollback();
 				return -1;
 			}

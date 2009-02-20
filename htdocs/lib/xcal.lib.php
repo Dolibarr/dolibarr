@@ -38,7 +38,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 {
 	global $langs;
 	
-	dolibarr_syslog("xcal.lib.php::build_calfile Build cal file ".$outputfile." to format ".$format);
+	dol_syslog("xcal.lib.php::build_calfile Build cal file ".$outputfile." to format ".$format);
 
 	if (empty($outputfile)) return -1;
 	
@@ -143,11 +143,11 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					//fwrite($calfileh,"CLASS:PUBLIC\n");				// PUBLIC, PRIVATE, CONFIDENTIAL
 
 					// Date must be GMT dates 
-					fwrite($calfileh,"DTSTAMP:".dolibarr_print_date($now,'dayhourxcard',true)."\n");
-					$startdatef = dolibarr_print_date($startdate,'dayhourxcard',true);
+					fwrite($calfileh,"DTSTAMP:".dol_print_date($now,'dayhourxcard',true)."\n");
+					$startdatef = dol_print_date($startdate,'dayhourxcard',true);
 					fwrite($calfileh,"DTSTART:".$startdatef."\n");
 					if (empty($enddate)) $enddate=$startdate+$duration;
-					$enddatef = dolibarr_print_date($enddate,'dayhourxcard',true);
+					$enddatef = dol_print_date($enddate,'dayhourxcard',true);
 					fwrite($calfileh,"DTEND:".$enddatef."\n");
 
 					if (! empty($transparency)) fwrite($calfileh,"TRANSP:".$transparency."\n");
@@ -181,7 +181,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					fwrite($calfileh,"LOCATION:".$location."\n");
 					fwrite($calfileh,"TRANSP:OPAQUE\n");
 					fwrite($calfileh,"CLASS:CONFIDENTIAL\n");
-					fwrite($calfileh,"DTSTAMP:".dolibarr_print_date($startdatef,'dayhourxcard',true)."\n");
+					fwrite($calfileh,"DTSTAMP:".dol_print_date($startdatef,'dayhourxcard',true)."\n");
 
 					fwrite($calfileh,"END:VJOURNAL\n");
 				}
@@ -192,7 +192,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				$comment=array();
 				$comment ['eid']			= $eid;
 				$comment ['url']			= $linktoevent;
-				$comment ['date']			= dolibarr_mktime($evttime,"Ymd");
+				$comment ['date']			= dol_mktime($evttime,"Ymd");
 				$comment ['duration']		= $duration;
 				$comment ['startdate']		= $startdate;
 				$comment ['enddate']		= $enddate;
@@ -211,7 +211,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 	}
 	else
 	{
-		dolibarr_syslog("xcal.lib.php::build_cal_file Failed to open file ".$outputfile." for writing");
+		dol_syslog("xcal.lib.php::build_cal_file Failed to open file ".$outputfile." for writing");
 		return -2;
 	}
 }
@@ -232,7 +232,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 	global $user,$conf,$langs;
 	global $dolibarr_main_url_root;
 	
-	dolibarr_syslog("xcal.lib.php::build_rssfile Build rss file ".$outputfile." to format ".$format);
+	dol_syslog("xcal.lib.php::build_rssfile Build rss file ".$outputfile." to format ".$format);
 
 	if (empty($outputfile)) return -1;
 	

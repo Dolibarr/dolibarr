@@ -60,7 +60,7 @@ $adh->id = $rowid;
 $result=$adh->fetch($rowid);
 if (! $result)
 {
-	dolibarr_print_error($db,"Failed to get adherent: ".$adh->error);
+	dol_print_error($db,"Failed to get adherent: ".$adh->error);
 	exit;
 }
 $adh->fetch_optionals($rowid);
@@ -69,7 +69,7 @@ $adht = new AdherentType($db);
 $result=$adht->fetch($adh->typeid);
 if (! $result)
 {
-	dolibarr_print_error($db,"Failed to get type of adherent: ".$adht->error);
+	dol_print_error($db,"Failed to get type of adherent: ".$adht->error);
 	exit;
 }
 
@@ -80,7 +80,7 @@ if (! $result)
  */
 $head = member_prepare_head($adh);
 
-dolibarr_fiche_head($head, 'ldap', $langs->trans("Member"));
+dol_fiche_head($head, 'ldap', $langs->trans("Member"));
 
 
 /*
@@ -190,7 +190,7 @@ if ($result > 0)
 }
 else
 {
-	dolibarr_print_error('',$ldap->error);
+	dol_print_error('',$ldap->error);
 }
 
 

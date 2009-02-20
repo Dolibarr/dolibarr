@@ -45,7 +45,7 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
   	}
   	else
   	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
     }
 }
 

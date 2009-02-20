@@ -209,12 +209,12 @@ if ($user->rights->fournisseur->facture->lire)
 				if ($objp->datelimite < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 				print "</td>\n";
 
-				print "<td nowrap>".dolibarr_trunc($objp->facnumber,12)."</td>\n";
+				print "<td nowrap>".dol_trunc($objp->facnumber,12)."</td>\n";
 
-				print "<td nowrap align=\"center\">".dolibarr_print_date($objp->df)."</td>\n";
-				print "<td nowrap align=\"center\">".dolibarr_print_date($objp->datelimite)."</td>\n";
+				print "<td nowrap align=\"center\">".dol_print_date($objp->df)."</td>\n";
+				print "<td nowrap align=\"center\">".dol_print_date($objp->datelimite)."</td>\n";
 
-				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,32).'</a></td>';
+				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,32).'</a></td>';
 
 				print "<td align=\"right\">".price($objp->total_ht)."</td>";
 				print "<td align=\"right\">".price($objp->total_ttc)."</td>";
@@ -247,7 +247,7 @@ if ($user->rights->fournisseur->facture->lire)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 }

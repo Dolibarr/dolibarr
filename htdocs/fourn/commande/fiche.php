@@ -99,7 +99,7 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 		$ret=$commande->fetch($id);
 		if ($ret < 0)
 		{
-			dolibarr_print_error($db,$commande->error);
+			dol_print_error($db,$commande->error);
 			exit;
 		}
 
@@ -197,7 +197,7 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['save'] == $langs->trans('Save'))
 {
 	$commande =	new	CommandeFournisseur($db,"",$id);
-	if ($commande->fetch($id) < 0) dolibarr_print_error($db);
+	if ($commande->fetch($id) < 0) dol_print_error($db);
 
 	$result	= $commande->updateline($_POST['elrowid'],
 	$_POST['eldesc'],
@@ -219,7 +219,7 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 	}
 	else
 	{
-		dolibarr_print_error($db,$commande->error);
+		dol_print_error($db,$commande->error);
 		exit;
 	}
 }
@@ -308,7 +308,7 @@ if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->rec
 
 	if ($_POST["type"])
 	{
-		$date_liv = dolibarr_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+		$date_liv = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 
 		$result	= $commande->Livraison($user, $date_liv, $_POST["type"], $_POST["comment"]);
 		if ($result > 0)
@@ -318,7 +318,7 @@ if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->rec
 		}
 		else
 		{
-			dolibarr_print_error($db,$commande->error);
+			dol_print_error($db,$commande->error);
 			exit;
 		}
 	}
@@ -400,7 +400,7 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
 	$result=supplier_order_pdf_create($db, $commande->id,$commande->modelpdf,$outputlangs);
 	if ($result	<= 0)
 	{
-		dolibarr_print_error($db,$result);
+		dol_print_error($db,$result);
 		exit;
 	}
 	else
@@ -500,7 +500,7 @@ if ($id > 0 || ! empty($ref))
 		$head = ordersupplier_prepare_head($commande);
 
 		$title=$langs->trans("SupplierOrder");
-		dolibarr_fiche_head($head, 'card', $title);
+		dol_fiche_head($head, 'card', $title);
 
 		/*
 		 * Confirmation de la suppression de	la commande
@@ -566,9 +566,9 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET["action"]	== 'commande')
 		{
-			$date_com = dolibarr_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+			$date_com = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 			$html->form_confirm("fiche.php?id=".$commande->id."&amp;datecommande=".$date_com."&amp;methode=".$_POST["methodecommande"]."&amp;comment=".urlencode($_POST["comment"]),
-			$langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dolibarr_print_date($date_com,'day')),"confirm_commande");
+			$langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dol_print_date($date_com,'day')),"confirm_commande");
 			print '<br />';
 		}
 
@@ -613,7 +613,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
 			if ($commande->date_commande)
 			{
-				print dolibarr_print_date($commande->date_commande,"dayhourtext")."\n";
+				print dol_print_date($commande->date_commande,"dayhourtext")."\n";
 			}
 			print "</td></tr>";
 
@@ -998,7 +998,7 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="border" width="100%">';
 			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
-			$date_com = dolibarr_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+			$date_com = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 			print $html->select_date($date_com,'','','','',"commande");
 			print '</td></tr>';
 
@@ -1047,7 +1047,7 @@ if ($id > 0 || ! empty($ref))
 	else
 	{
 		// Commande	non	trouvee
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 

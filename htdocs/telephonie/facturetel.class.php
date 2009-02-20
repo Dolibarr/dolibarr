@@ -58,7 +58,7 @@ class FactureTel {
 	    }
 	  else
 	    {
-	      dolibarr_syslog("FactureTel::Fetch() Error aucune facture avec cet id=$id", LOG_ERR);
+	      dol_syslog("FactureTel::Fetch() Error aucune facture avec cet id=$id", LOG_ERR);
 	      $result = -2;
 	    }
 
@@ -67,7 +67,7 @@ class FactureTel {
       else
 	{
 	  /* Erreur select SQL */
-	  dolibarr_syslog("FactureTel::Fetch() Error SQL id=$id", LOG_ERR);
+	  dol_syslog("FactureTel::Fetch() Error SQL id=$id", LOG_ERR);
 	  $result = -1;
 	}
 
@@ -94,7 +94,7 @@ class FactureTel {
     else
       {
 	/* Erreur select SQL */
-	dolibarr_syslog("FactureTel::affect_num_facture_compta() Error SQL id=$facid", LOG_ERR);
+	dol_syslog("FactureTel::affect_num_facture_compta() Error SQL id=$facid", LOG_ERR);
 	$result = -1;
 	return 1;
       }

@@ -73,11 +73,11 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 	$datesubend=0;
 	if ($_POST["reyear"] && $_POST["remonth"] && $_POST["reday"])
 	{
-		$datecotisation=dolibarr_mktime(0, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		$datecotisation=dol_mktime(0, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	}
 	if ($_POST["endyear"] && $_POST["endmonth"] && $_POST["endday"])
 	{
-		$datesubend=dolibarr_mktime(0, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+		$datesubend=dol_mktime(0, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 	}
 	$cotisation=$_POST["cotisation"];	// Amount of subscription
 	$label=$_POST["label"];
@@ -186,7 +186,7 @@ $adho->fetch_optionals();
  */
 $head = member_prepare_head($adh);
 
-dolibarr_fiche_head($head, 'subscription', $langs->trans("Member"));
+dol_fiche_head($head, 'subscription', $langs->trans("Member"));
 
 print '<form action="fiche.php" method="post">';
 print '<table class="border" width="100%">';
@@ -310,8 +310,8 @@ if ($result)
 		$cotisationstatic->ref=$objp->crowid;
 		$cotisationstatic->id=$objp->crowid;
 		print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
-		print '<td align="center">'.dolibarr_print_date($objp->dateadh,'day')."</td>\n";
-		print '<td align="center">'.dolibarr_print_date($objp->datef,'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($objp->dateadh,'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($objp->datef,'day')."</td>\n";
 		print '<td align="right">'.price($objp->cotisation).'</td>';
 		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 		{
@@ -335,7 +335,7 @@ if ($result)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 print '</td><td valign="top">';
@@ -350,12 +350,12 @@ if ($adh->datefin)
 {
 	if ($adh->datefin < time())
 	{
-		print dolibarr_print_date($adh->datefin,'day');
+		print dol_print_date($adh->datefin,'day');
 		if ($adh->statut > 0) print " ".img_warning($langs->trans("Late"));	// Affiche picto retard uniquement si non brouillon et non resilie
 	}
 	else
 	{
-		print dolibarr_print_date($adh->datefin,'day');
+		print dol_print_date($adh->datefin,'day');
 	}
 }
 else
@@ -392,7 +392,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	print '<tr><td>'.$langs->trans("DateSubscription").'</td><td>';
 	if ($_POST["reday"])
 	{
-		$datefrom=dolibarr_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+		$datefrom=dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	}
 	if (! $datefrom)
 	{
@@ -411,7 +411,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	// Date end subscription
 	if ($_POST["endday"])
 	{
-		$dateto=dolibarr_mktime(0,0,0,$_POST["endmonth"],$_POST["endday"],$_POST["endyear"]);
+		$dateto=dol_mktime(0,0,0,$_POST["endmonth"],$_POST["endday"],$_POST["endyear"]);
 	}
 	if (! $dateto)
 	{
@@ -430,7 +430,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td>';
 		print '<td><input name="label" type="text" size="32" value="'.$langs->trans("Subscription").' ';
-		print dolibarr_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
+		print dol_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
 		
 		// Bank account
 		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)

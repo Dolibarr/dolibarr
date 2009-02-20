@@ -115,7 +115,7 @@ if ($_GET["facid"] > 0)
 		}
 
 		$head = facture_prepare_head($fac);
-		dolibarr_fiche_head($head, 'standingorders', $langs->trans('InvoiceCustomer'));
+		dol_fiche_head($head, 'standingorders', $langs->trans('InvoiceCustomer'));
 
 		/*
 		 *   Facture
@@ -135,8 +135,8 @@ if ($_GET["facid"] > 0)
 
 		// Dates
 		print '<tr><td>'.$langs->trans("Date").'</td>';
-		print '<td colspan="3">'.dolibarr_print_date($fac->date,"daytext").'</td>';
-		print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"daytext");
+		print '<td colspan="3">'.dol_print_date($fac->date,"daytext").'</td>';
+		print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dol_print_date($fac->date_lim_reglement,"daytext");
 		if ($fac->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans("Late"));
 		print "</td></tr>";
 
@@ -223,7 +223,7 @@ if ($_GET["facid"] > 0)
 				$var=!$var;
 
 				print "<tr $bc[$var]>";
-				print '<td align="left">'.dolibarr_print_date($obj->date_demande,'day')."</td>\n";
+				print '<td align="left">'.dol_print_date($obj->date_demande,'day')."</td>\n";
 				print '<td align="center">En attente de traitement</td>';
 				print '<td align="center">'.price($obj->amount).'</td>';
 				print '<td align="center">-</td>';
@@ -241,7 +241,7 @@ if ($_GET["facid"] > 0)
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		$sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
@@ -268,9 +268,9 @@ if ($_GET["facid"] > 0)
 
 				print "<tr $bc[$var]>";
 
-				print '<td align="center">'.dolibarr_print_date($obj->date_demande)."</td>\n";
+				print '<td align="center">'.dol_print_date($obj->date_demande)."</td>\n";
 
-				print '<td align="center">'.dolibarr_print_date($obj->date_traite)."</td>\n";
+				print '<td align="center">'.dol_print_date($obj->date_traite)."</td>\n";
 
 				print '<td align="center">'.price($obj->amount).'</td>';
 
@@ -291,7 +291,7 @@ if ($_GET["facid"] > 0)
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		print "</table>";

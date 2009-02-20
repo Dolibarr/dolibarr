@@ -139,7 +139,7 @@ if ($result)
 	}
       else
 	{
-	  print dolibarr_print_phone($obj->ligne,0,0,true);
+	  print dol_print_phone($obj->ligne,0,0,true);
 	  $ok_commande = 1;
 	}
 

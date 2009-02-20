@@ -111,7 +111,7 @@ if ($result)
     $db->free($result);
 }
 else {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 // On ajoute les paiements anciennes version, non liés par paiement_facture
@@ -140,7 +140,7 @@ if ($modecompta != 'CREANCES-DETTES') {
         }
     }
     else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 }
 
@@ -177,12 +177,12 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
     $var=!$var;
     print "<tr $bc[$var]>";
 
-    print "<td>".dolibarr_print_date(dolibarr_mktime(12,0,0,$mois,1,2000),"%b")."</td>";
+    print "<td>".dol_print_date(dol_mktime(12,0,0,$mois,1,2000),"%b")."</td>";
     for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
-        $casenow = dolibarr_print_date(mktime(),"%Y-%m");
-        $case = dolibarr_print_date(dolibarr_mktime(1,1,1,$mois,1,$annee),"%Y-%m");
-        $caseprev = dolibarr_print_date(dolibarr_mktime(1,1,1,$mois,1,$annee-1),"%Y-%m");
+        $casenow = dol_print_date(mktime(),"%Y-%m");
+        $case = dol_print_date(dol_mktime(1,1,1,$mois,1,$annee),"%Y-%m");
+        $caseprev = dol_print_date(dol_mktime(1,1,1,$mois,1,$annee-1),"%Y-%m");
 
         if ($annee == $year_current) {
             $total_CA += $cum[$case];
@@ -338,7 +338,7 @@ if ($modecompta != 'CREANCES-DETTES')
     }
   else
     {
-      dolibarr_print_error($db);
+      dol_print_error($db);
     }  
 */
 
@@ -388,7 +388,7 @@ En attendant correction.
     }
   else
     {
-      dolibarr_print_error($db);
+      dol_print_error($db);
     }  
   print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Total CA prévisionnel : </i></td><td align=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug ici car bug sur les 2 précédents</td></tr>";
 }

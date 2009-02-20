@@ -175,7 +175,7 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
 	    $result=$com->add_product($prodids[$prodid],rand(1,11),rand(1,6),rand(0,20));
 		if ($result < 0)
 		{
-			dolibarr_print_error($db,$propal->error);
+			dol_print_error($db,$propal->error);
 		}
 		$xnbp++;
 	}
@@ -187,12 +187,12 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
 		if ($result) print " OK";
 		else
 		{
-			dolibarr_print_error($db,$com->error);
+			dol_print_error($db,$com->error);
 		}
 	}
 	else
 	{
-		dolibarr_print_error($db,$facture->error);
+		dol_print_error($db,$facture->error);
 	}
 
 	print "\n";

@@ -144,7 +144,7 @@ if ($resql)
         print "<td align=\"center\" width=\"100\">";
         if ($obj->dc)
         {
-            print dolibarr_print_date($obj->dc,"day");
+            print dol_print_date($obj->dc,"day");
         }
         else
         {
@@ -165,7 +165,7 @@ if ($resql)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 $db->close();

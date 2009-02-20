@@ -85,7 +85,7 @@ class DoliDb
         	$this->connected = 0;
         	$this->ok = 0;
             $this->error="Pgsql PHP functions are not available in this version of PHP";
-        	dolibarr_syslog("DoliDB::DoliDB : Pgsql PHP functions are not available in this version of PHP",LOG_ERR);
+        	dol_syslog("DoliDB::DoliDB : Pgsql PHP functions are not available in this version of PHP",LOG_ERR);
             return $this->ok;
         }
 
@@ -94,7 +94,7 @@ class DoliDb
         	$this->connected = 0;
         	$this->ok = 0;
             $this->error=$langs->trans("ErrorWrongHostParameter");
-        	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
+        	dol_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
             return $this->ok;
         }
 
@@ -112,7 +112,7 @@ class DoliDb
             $this->connected = 0;
             $this->ok = 0;
 			$this->error='Host, login or password incorrect';
-            dolibarr_syslog("DoliDB::DoliDB : Erreur Connect ".$this->error,LOG_ERR);
+            dol_syslog("DoliDB::DoliDB : Erreur Connect ".$this->error,LOG_ERR);
         }
 
         // Si connexion serveur ok et si connexion base demand�e, on essaie connexion base
@@ -130,7 +130,7 @@ class DoliDb
                 $this->database_name = '';
                 $this->ok = 0;
                 $this->error=$this->error();
-                dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
+                dol_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
             }
         }
         else
@@ -412,7 +412,7 @@ class DoliDb
     */
     function close()
     {
-		dolibarr_syslog("DoliDB::disconnect",LOG_DEBUG);
+		dol_syslog("DoliDB::disconnect",LOG_DEBUG);
     	return pg_close($this->db);
     }
 
@@ -429,7 +429,7 @@ class DoliDb
             if ($ret)
 			{
 				$this->transaction_opened++;
-				dolibarr_syslog("BEGIN Transaction",LOG_DEBUG);
+				dol_syslog("BEGIN Transaction",LOG_DEBUG);
 			}
             return $ret;
         }
@@ -452,7 +452,7 @@ class DoliDb
 			if ($ret)
 			{
 				$this->transaction_opened=0;
-				dolibarr_syslog("COMMIT Transaction",LOG_DEBUG);
+				dol_syslog("COMMIT Transaction",LOG_DEBUG);
 			}
             return $ret;
         }
@@ -473,7 +473,7 @@ class DoliDb
         {
             $ret=$this->query("ROLLBACK;");
 			$this->transaction_opened=0;
-			dolibarr_syslog("ROLLBACK Transaction",LOG_DEBUG);
+			dol_syslog("ROLLBACK Transaction",LOG_DEBUG);
             return $ret;
         }
         else
@@ -680,7 +680,7 @@ class DoliDb
 	{
 		$string=eregi_replace('[^0-9]','',$string);
 		$tmp=$string.'000000';
-		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
+		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 		return $date;
 	}
 
@@ -705,7 +705,7 @@ class DoliDb
 	{
 		$string=eregi_replace('[^0-9]','',$string);
 		$tmp=$string.'000000';
-		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
+		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
 		return $date;
 	}*/
 
@@ -865,7 +865,7 @@ class DoliDb
 	{
 		$sql = "create user \"".$dolibarr_main_db_user."\" with password '".$dolibarr_main_db_pass."'";
 
-		dolibarr_syslog("pgsql.lib::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
+		dol_syslog("pgsql.lib::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
 		if (! $resql)
 		{
@@ -904,7 +904,7 @@ class DoliDb
 		$sql  .= " ".$field_desc['extra'];
 		$sql .= " ".$field_position;
 
-		dolibarr_syslog($sql,LOG_DEBUG);
+		dol_syslog($sql,LOG_DEBUG);
 		if(! $this -> query($sql))
 		return -1;
 		else
@@ -920,7 +920,7 @@ class DoliDb
 	function DDLDropField($table,$field_name)
 	{
 		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
-		dolibarr_syslog($sql,LOG_DEBUG);
+		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))
 		{
 			$this->error=$this->lasterror();

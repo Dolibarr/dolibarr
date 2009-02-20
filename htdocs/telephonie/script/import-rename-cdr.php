@@ -55,12 +55,12 @@ if (is_dir($file))
 	  if (is_file($file.$xfile) && substr($xfile, -4) == ".csv")
 	    {
 	      $files[$i] = $file.$xfile;
-	      dolibarr_syslog($file.$xfile." ajouté");
+	      dol_syslog($file.$xfile." ajouté");
 	      $i++;
 	    }
 	  else
 	    {
-	      dolibarr_syslog($file.$xfile." ignoré");
+	      dol_syslog($file.$xfile." ignoré");
 	    }
 	}
       
@@ -68,7 +68,7 @@ if (is_dir($file))
     }
   else
     {
-      dolibarr_syslog("Impossible de libre $file");
+      dol_syslog("Impossible de libre $file");
       exit ;
     }
 }
@@ -78,7 +78,7 @@ elseif (is_file($file))
 }
 else
 {
-  dolibarr_syslog("Impossible de libre $file");
+  dol_syslog("Impossible de libre $file");
   exit ;
 }
 

@@ -68,7 +68,7 @@ class ChargeSociales extends CommonObject
         $sql.= " WHERE cs.fk_type = c.id";
         $sql.= " AND cs.rowid = ".$id;
 
-		dolibarr_syslog("ChargesSociales::fetch sql=".$sql);
+		dol_syslog("ChargesSociales::fetch sql=".$sql);
         $resql=$this->db->query($sql);
 		if ($resql)
         {
@@ -126,13 +126,13 @@ class ChargeSociales extends CommonObject
 		$sql.= " ".price2num($newamount);
 		$sql.= ")";
 		
-		dolibarr_syslog("ChargesSociales::create sql=".$sql);
+		dol_syslog("ChargesSociales::create sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."chargesociales");
 
-			//dolibarr_syslog("ChargesSociales::create this->id=".$this->id);
+			//dol_syslog("ChargesSociales::create this->id=".$this->id);
 			$this->db->commit();
 			return $this->id;
 		}
@@ -154,7 +154,7 @@ class ChargeSociales extends CommonObject
     {
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$this->id."'";
 
-		dolibarr_syslog("ChargesSociales::delete sql=".$sql);
+		dol_syslog("ChargesSociales::delete sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -183,7 +183,7 @@ class ChargeSociales extends CommonObject
 		$sql.= " periode='".$this->periode."'";
 		$sql.= " WHERE rowid=".$this->id;
 		
-		dolibarr_syslog("ChargesSociales::update sql=".$sql);
+		dol_syslog("ChargesSociales::update sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -309,7 +309,7 @@ class ChargeSociales extends CommonObject
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowSocialContribution"),'bill').$lienfin.' ');
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.($maxlen?dolibarr_trunc($this->lib,$maxlen):$this->lib).$lienfin;
+		if ($withpicto != 2) $result.=$lien.($maxlen?dol_trunc($this->lib,$maxlen):$this->lib).$lienfin;
 		return $result;
 	}
 
@@ -326,7 +326,7 @@ class ChargeSociales extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$table;
 		$sql.= ' WHERE '.$field.' = '.$this->id;
 
-		dolibarr_syslog("ChargeSociales::getSommePaiement sql=".$sql, LOG_DEBUG);
+		dol_syslog("ChargeSociales::getSommePaiement sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -401,7 +401,7 @@ class PaiementCharge
 			$sql.= ", ".$this->paiementtype.", '".$this->num_paiement."', '".addslashes($this->note)."', ".$user->id.",";
 			$sql.= "0)";
 
-			dolibarr_syslog("PaiementCharge::create sql=".$sql);
+			dol_syslog("PaiementCharge::create sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -422,7 +422,7 @@ class PaiementCharge
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("PaiementCharges::create ".$this->error, LOG_ERR);
+			dol_syslog("PaiementCharges::create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -437,7 +437,7 @@ class PaiementCharge
 	{
         $sql = "UPDATE llx_paiementcharge set fk_bank = ".$id_bank." where rowid = ".$this->id;
 		
-        dolibarr_syslog("PaiementCharge::update_fk_bank sql=".$sql);
+        dol_syslog("PaiementCharge::update_fk_bank sql=".$sql);
         $result = $this->db->query($sql);
         if ($result) 
         {	    
@@ -446,7 +446,7 @@ class PaiementCharge
         else
         {
             $this->error=$this->db->error();
-			dolibarr_syslog("PaiementCharges::update_fk_bank ".$this->error, LOG_ERR);
+			dol_syslog("PaiementCharges::update_fk_bank ".$this->error, LOG_ERR);
             return 0;
         }
     }

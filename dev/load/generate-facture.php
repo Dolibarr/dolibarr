@@ -119,12 +119,12 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 		if ($result) print " OK";
 		else
 		{
-			dolibarr_print_error($db,$facture->error);
+			dol_print_error($db,$facture->error);
 		}
 	}
 	else
 	{
-		dolibarr_print_error($db,$facture->error);
+		dol_print_error($db,$facture->error);
 	}
 	
 	print "\n";

@@ -207,7 +207,7 @@ class ProcessGraphContrats
       }
     else 
       {
-	dolibarr_syslog("Error");
+	dol_syslog("Error");
       }
   }
 

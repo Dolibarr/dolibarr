@@ -63,14 +63,14 @@ if ($_POST["action"] == 'infotrans')
 
       if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name'],1) > 0)
 	{
-	  $dt = dolibarr_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+	  $dt = dol_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	  
 	  $bon->set_infotrans($user, $dt, $_POST["methode"]);
 	}
     }
   else
     {
-      dolibarr_syslog("Fichier invalide",LOG_WARNING);
+      dol_syslog("Fichier invalide",LOG_WARNING);
     }
 
   Header("Location: fiche.php?id=".$_GET["id"]);
@@ -136,7 +136,7 @@ if ($_GET["id"])
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
-      dolibarr_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
+      dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
 
       if (isset($_GET["error"]))
 	{
@@ -154,7 +154,7 @@ if ($_GET["id"])
       print '<table class="border" width="100%">';
 
       print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
-      print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dolibarr_print_date($bon->datec,'dayhour').'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'dayhour').'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 
@@ -174,7 +174,7 @@ if ($_GET["id"])
 	  $muser->fetch();
 
 	  print '<tr><td width="20%">Date Transmission / Par</td><td>';
-	  print dolibarr_print_date($bon->date_trans,'dayhour');
+	  print dol_print_date($bon->date_trans,'dayhour');
 	  print ' par '.$muser->fullname.'</td></tr>';
 	  print '<tr><td width="20%">Methode Transmission</td><td>';
 	  print $bon->methodes_trans[$bon->method_trans];
@@ -183,7 +183,7 @@ if ($_GET["id"])
       if($bon->date_credit <> 0)
 	{
 	  print '<tr><td width="20%">Credit on</td><td>';
-	  print dolibarr_print_date($bon->date_credit,'dayhour');
+	  print dol_print_date($bon->date_credit,'dayhour');
 	  print '</td></tr>';
 	}
 
@@ -227,7 +227,7 @@ if ($_GET["id"])
     }
   else
     {
-      dolibarr_print_error($db);
+      dol_print_error($db);
     }
 }
 

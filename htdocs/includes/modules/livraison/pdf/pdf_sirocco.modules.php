@@ -117,7 +117,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$delivery->id = $id;
 				if ($result < 0)
 				{
-					dolibarr_print_error($db,$delivery->error);
+					dol_print_error($db,$delivery->error);
 				}
 			}
 

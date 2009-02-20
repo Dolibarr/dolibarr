@@ -62,7 +62,7 @@ class ModeleBoxes
 		$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b";
 		$sql.= " WHERE b.rowid = ".$rowid;
-		dolibarr_syslog("ModeleBoxes::fetch rowid=".$rowid);
+		dol_syslog("ModeleBoxes::fetch rowid=".$rowid);
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -103,7 +103,7 @@ class ModeleBoxes
 		$bcx[1] = 'class="box_impair"';
 		$var = true;
 
-		dolibarr_syslog("modules_box::showBox ".get_Class($this));
+		dol_syslog("modules_box::showBox ".get_Class($this));
 
 		// Define nbcol and nblines of the box to show
 		$nbcol=0;
@@ -128,7 +128,7 @@ class ModeleBoxes
 			}
 			if (! empty($head['text']))
 			{
-				$s=dolibarr_trunc($head['text'],isset($head['limit'])?$head['limit']:$MAXLENGTHBOX);
+				$s=dol_trunc($head['text'],isset($head['limit'])?$head['limit']:$MAXLENGTHBOX);
 				print $s;
 			}
 			if (! empty($head['sublink']))
@@ -198,7 +198,7 @@ class ModeleBoxes
 						$maxlength=$MAXLENGTHBOX;
 						if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
-						if ($maxlength) $textewithnotags=dolibarr_trunc($textewithnotags,$maxlength);
+						if ($maxlength) $textewithnotags=dol_trunc($textewithnotags,$maxlength);
 						if (eregi('^<img',$texte)) print $texte;	// show text with no html cleaning
 						else print $textewithnotags;				// show text with html cleaning
 

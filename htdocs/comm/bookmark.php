@@ -130,7 +130,7 @@ if ($resql)
       //print "<td>" . ($i + 1 + ($limit * $page)) . "</td>";
       print "<td align=\"center\"><b>".$obj->bid."</b></td>";
       print "<td><a href='".DOL_URL_ROOT."/user/fiche.php?id=".$obj->fk_user."'>".img_object($langs->trans("ShowUser"),"user").' '.$obj->name." ".$obj->firstname."</a></td>\n";
-      print '<td align="center">'.dolibarr_print_date($obj->dateb) ."</td>";
+      print '<td align="center">'.dol_print_date($obj->dateb) ."</td>";
       print "<td><a href=\"index.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
       print '<td align="center">'.$obj->url."</td>";
       print '<td align="center">'.$obj->target."</td>";
@@ -143,7 +143,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 

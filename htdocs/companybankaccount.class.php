@@ -126,7 +126,7 @@ class CompanyBankAccount
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return 0;
 		}
 	}
@@ -167,7 +167,7 @@ class CompanyBankAccount
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 

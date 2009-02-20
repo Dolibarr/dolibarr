@@ -80,7 +80,7 @@ if ($_GET["id"] > 0) {
 
 
 		$head = commande_prepare_head($commande);
-        dolibarr_fiche_head($head, 'preview', $langs->trans("CustomerOrder"));
+        dol_fiche_head($head, 'preview', $langs->trans("CustomerOrder"));
 
 
 		/*
@@ -161,7 +161,7 @@ if ($_GET["id"] > 0) {
 
 					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
 					print '<td align="right">'.filesize($file). ' bytes</td>';
-					print '<td align="right">'.dolibarr_print_date(filemtime($file),'dayhour').'</td>';
+					print '<td align="right">'.dol_print_date(filemtime($file),'dayhour').'</td>';
 					print '</tr>';
 
 					// Si fichier detail PDF existe
@@ -170,7 +170,7 @@ if ($_GET["id"] > 0) {
 
 						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepathdetail).'">'.$commande->ref.'-detail.pdf</a></td>';
 						print '<td align="right">'.filesize($filedetail). ' bytes</td>';
-						print '<td align="right">'.dolibarr_print_date(filemtime($filedetail),'dayhour').'</td>';
+						print '<td align="right">'.dol_print_date(filemtime($filedetail),'dayhour').'</td>';
 						print '</tr>';
 					}
 					print "</table>\n";
@@ -220,7 +220,7 @@ if ($_GET["id"] > 0) {
 
 		        // Date
 		        print '<tr><td>'.$langs->trans("Date").'</td>';
-		        print "<td colspan=\"2\">".dolibarr_print_date($commande->date,"daytext")."</td>\n";
+		        print "<td colspan=\"2\">".dol_print_date($commande->date,"daytext")."</td>\n";
 		        print '</tr>';
 
 				// ligne 6
@@ -237,7 +237,7 @@ if ($_GET["id"] > 0) {
 				print '</table>';
 			}
 		} else {
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	} else {
 	// Commande non trouvée

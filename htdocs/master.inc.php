@@ -33,6 +33,10 @@
 define('DOL_VERSION','2.6-beta');	// Also defined in htdocs/install/inc.php
 define('EURO',chr(128));
 
+// Add Xdebug coverage of code
+//define('XDEBUGCOVERAGE',1);
+if (defined('XDEBUGCOVERAGE')) { xdebug_start_code_coverage(); }
+
 // La fonction clearstatcache ne doit pas etre appelée de manière globale car ralenti.
 // Elle doit etre appelée uniquement par les pages qui ont besoin d'un cache fichier vidé
 // comme par exemple document.php

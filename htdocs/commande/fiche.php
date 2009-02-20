@@ -125,8 +125,8 @@ if ($_POST['action'] == 'classin')
 if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 {
 	$datecommande='';
-	$datecommande  = dolibarr_mktime(12, 0, 0, $_POST['remonth'],  $_POST['reday'],  $_POST['reyear']);
-	$datelivraison = dolibarr_mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
+	$datecommande  = dol_mktime(12, 0, 0, $_POST['remonth'],  $_POST['reday'],  $_POST['reyear']);
+	$datelivraison = dol_mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
 
 	$commande = new Commande($db);
 	$commande->socid=$_POST['socid'];
@@ -226,7 +226,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->commande->creer)
 		}
 		else
 		{
-	  dolibarr_print_error($db,$com->error);
+	  dol_print_error($db,$com->error);
 		}
 	}
 }
@@ -234,7 +234,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->commande->creer)
 if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 {
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-	$datelivraison=dolibarr_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+	$datelivraison=dol_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
@@ -257,7 +257,7 @@ if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
 	$result=$commande->mode_reglement($_POST['mode_reglement_id']);
-	if ($result < 0) dolibarr_print_error($db,$commande->error);
+	if ($result < 0) dol_print_error($db,$commande->error);
 }
 
 if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
@@ -265,7 +265,7 @@ if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
 	$result=$commande->cond_reglement($_POST['cond_reglement_id']);
-	if ($result < 0) dolibarr_print_error($db,$commande->error);
+	if ($result < 0) dol_print_error($db,$commande->error);
 }
 
 if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
@@ -295,15 +295,15 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		$ret=$commande->fetch($_POST['id']);
 		if ($ret < 0)
 		{
-			dolibarr_print_error($db,$commande->error);
+			dol_print_error($db,$commande->error);
 			exit;
 		}
 		$ret=$commande->fetch_client();
 
 		// Clean parameters
 		$suffixe = $_POST['idprod'] ? '_prod' : '';
-		$date_start=dolibarr_mktime(0, 0, 0, $_POST['date_start'.$suffixe.'month'], $_POST['date_start'.$suffixe.'day'], $_POST['date_start'.$suffixe.'year']);
-		$date_end=dolibarr_mktime(0, 0, 0, $_POST['date_end'.$suffixe.'month'], $_POST['date_end'.$suffixe.'day'], $_POST['date_end'.$suffixe.'year']);
+		$date_start=dol_mktime(0, 0, 0, $_POST['date_start'.$suffixe.'month'], $_POST['date_start'.$suffixe.'day'], $_POST['date_start'.$suffixe.'year']);
+		$date_end=dol_mktime(0, 0, 0, $_POST['date_end'.$suffixe.'month'], $_POST['date_end'.$suffixe.'day'], $_POST['date_end'.$suffixe.'year']);
 		$price_base_type = 'HT';
 
 		// Ecrase $pu par celui du produit
@@ -408,12 +408,12 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
 {
 	$commande = new Commande($db,'',$_POST['id']);
-	if (! $commande->fetch($_POST['id']) > 0) dolibarr_print_error($db);
+	if (! $commande->fetch($_POST['id']) > 0) dol_print_error($db);
 
 	// Clean parameters
 	$description=dol_htmlcleanlastbr($_POST['eldesc']);
-	$date_start=dolibarr_mktime(0, 0, 0, $_POST['date_start'.$suffixe.'month'], $_POST['date_start'.$suffixe.'day'], $_POST['date_start'.$suffixe.'year']);
-	$date_end=dolibarr_mktime(0, 0, 0, $_POST['date_end'.$suffixe.'month'], $_POST['date_end'.$suffixe.'day'], $_POST['date_end'.$suffixe.'year']);
+	$date_start=dol_mktime(0, 0, 0, $_POST['date_start'.$suffixe.'month'], $_POST['date_start'.$suffixe.'day'], $_POST['date_start'.$suffixe.'year']);
+	$date_end=dol_mktime(0, 0, 0, $_POST['date_end'.$suffixe.'month'], $_POST['date_end'.$suffixe.'day'], $_POST['date_end'.$suffixe.'year']);
 
 	// Define info_bits
 	$info_bits=0;
@@ -453,7 +453,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 		}
 		else
 		{
-			dolibarr_print_error($db,$commande->error);
+			dol_print_error($db,$commande->error);
 			exit;
 		}
 	}
@@ -582,7 +582,7 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 	$result=commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$result);
+		dol_print_error($db,$result);
 		exit;
 	}
 	else
@@ -746,7 +746,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 
 						if ($error)
 						{
-							dolibarr_print_error($db);
+							dol_print_error($db);
 						}
 						else
 						{
@@ -777,21 +777,21 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 				$langs->load("other");
 				$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
 				$_GET["action"]='presend';
-				dolibarr_syslog('Recipient email is empty');
+				dol_syslog('Recipient email is empty');
 			}
 		}
 		else
 		{
 			$langs->load("other");
 			$mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
-			dolibarr_syslog('Failed to read file: '.$file);
+			dol_syslog('Failed to read file: '.$file);
 		}
 	}
 	else
 	{
 		$langs->load("other");
 		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
-		dolibarr_syslog('Impossible de lire les donnees de la facture. Le fichier facture n\'a peut-etre pas ete genere.');
+		dol_syslog('Impossible de lire les donnees de la facture. Le fichier facture n\'a peut-etre pas ete genere.');
 	}
 }
 
@@ -1083,7 +1083,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				}
 				else
 				{
-					dolibarr_print_error($db);
+					dol_print_error($db);
 				}
 
 				print '</table>';
@@ -1092,7 +1092,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 else
@@ -1122,7 +1122,7 @@ else
 			$author->fetch();
 
 			$head = commande_prepare_head($commande);
-			dolibarr_fiche_head($head, 'order', $langs->trans("CustomerOrder"));
+			dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"));
 
 			/*
 			 * Confirmation de la suppression de la commande
@@ -1255,7 +1255,7 @@ else
 
 			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td>';
-			print '<td colspan="2">'.dolibarr_print_date($commande->date,'daytext').'</td>';
+			print '<td colspan="2">'.dol_print_date($commande->date,'daytext').'</td>';
 			print '<td width="50%">'.$langs->trans('Source').' : '.$commande->getLabelSource();
 			if ($commande->source == 0 && $conf->propal->enabled && $commande->propale_id)
 			{
@@ -1286,7 +1286,7 @@ else
 			}
 			else
 			{
-				print $commande->date_livraison ? dolibarr_print_date($commande->date_livraison,'daytext') : '&nbsp;';
+				print $commande->date_livraison ? dol_print_date($commande->date_livraison,'daytext') : '&nbsp;';
 			}
 			print '</td>';
 			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
@@ -1661,7 +1661,7 @@ else
 			}
 			else
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 
 			/*
@@ -1992,7 +1992,7 @@ else
 							$var=!$var;
 							print '<tr '.$bc[$var].'>';
 							print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->facnumber.'</a></td>';
-							print '<td align="center">'.dolibarr_print_date($objp->df,'day').'</td>';
+							print '<td align="center">'.dol_print_date($objp->df,'day').'</td>';
 							print '<td align="right">'.$objp->total_ttc.'</td></tr>';
 							$i++;
 						}
@@ -2001,7 +2001,7 @@ else
 				}
 				else
 				{
-					dolibarr_print_error($db);
+					dol_print_error($db);
 				}
 				print '</td><td valign="top" width="50%">';
 
@@ -2074,7 +2074,7 @@ else
 		else
 		{
 			// Commande non trouvee
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 }

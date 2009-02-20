@@ -51,7 +51,7 @@ if ($_POST["action"] == 'add')
     $sql.= " FROM ".MAIN_DB_PREFIX."boxes";
     $sql.= " WHERE fk_user=0 AND box_id=".$_POST["boxid"]." AND position=".$_POST["pos"];
     $resql = $db->query($sql);
-    dolibarr_syslog("boxes.php::search if box active sql=".$sql);
+    dol_syslog("boxes.php::search if box active sql=".$sql);
 	if ($resql)
     {
 	    $num = $db->num_rows($resql);
@@ -61,13 +61,13 @@ if ($_POST["action"] == 'add')
 
 			// Si la boite n'est pas deja active, insert with box_order=''
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, box_order, fk_user) values (".$_POST["boxid"].",".$_POST["pos"].", '', 0)";
-			dolibarr_syslog("boxes.php activate box sql=".$sql);
+			dol_syslog("boxes.php activate box sql=".$sql);
 	        $resql = $db->query($sql);
 
 		    // Remove all personalized setup when a box is activated or disabled
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
 		    $sql.= " WHERE param like 'MAIN_BOXES_%'";
-			dolibarr_syslog("boxes.php delete user_param sql=".$sql);
+			dol_syslog("boxes.php delete user_param sql=".$sql);
 		    $resql = $db->query($sql);
 
 			$db->commit();
@@ -78,7 +78,7 @@ if ($_POST["action"] == 'add')
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -114,11 +114,11 @@ if ($_GET["action"] == 'switch')
         $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order='".$objto->box_order."' WHERE rowid=".$objfrom->rowid;
 		//print "xx".$sql;
         $resultupdatefrom = $db->query($sql);
-        if (! $resultupdatefrom) { dolibarr_print_error($db); }
+        if (! $resultupdatefrom) { dol_print_error($db); }
         $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order='".$objfrom->box_order."' WHERE rowid=".$objto->rowid;
 		//print "xx".$sql;
         $resultupdateto = $db->query($sql);
-        if (! $resultupdateto) { dolibarr_print_error($db); }
+        if (! $resultupdateto) { dol_print_error($db); }
     }
 
     if ($resultupdatefrom && $resultupdateto)

@@ -149,7 +149,7 @@ $sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit( $limit + 1, $offset);
 //print $sql;
 
-dolibarr_syslog("comm/action/listactions.php sql=".$sql);
+dol_syslog("comm/action/listactions.php sql=".$sql);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -266,11 +266,11 @@ if ($resql)
 
         // Titre
         //print '<td>';
-       	//print dolibarr_trunc($obj->label,12);
+       	//print dol_trunc($obj->label,12);
         //print '</td>';
 
        	print '<td align="center" nowrap="nowrap">';
-		print dolibarr_print_date($db->jdate($obj->dp),"day");
+		print dol_print_date($db->jdate($obj->dp),"day");
 		$late=0;
 		if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
 		if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
@@ -280,7 +280,7 @@ if ($resql)
 		print '</td>';
 
 		print '<td align="center" nowrap="nowrap">';
-		print dolibarr_print_date($db->jdate($obj->dp2),"day");
+		print dol_print_date($db->jdate($obj->dp2),"day");
 		print '</td>';
 
         // Third party
@@ -358,7 +358,7 @@ if ($resql)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 

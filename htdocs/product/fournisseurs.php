@@ -188,7 +188,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 			$head=product_prepare_head($product, $user);
 			$titre=$langs->trans("CardProduct".$product->type);
-			dolibarr_fiche_head($head, 'suppliers', $titre);
+			dol_fiche_head($head, 'suppliers', $titre);
 
 
 			print '<table class="border" width="100%">';
@@ -399,7 +399,7 @@ if ($_GET["id"] || $_GET["ref"])
 					$db->free($resql);
 				}
 				else {
-					dolibarr_print_error($db);
+					dol_print_error($db);
 				}
 				
 				print '</table>';

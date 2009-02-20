@@ -72,7 +72,7 @@ class Interfaces
 				if (in_array($modName,$modules))
 				{
 					$langs->load("errors");
-					dolibarr_syslog("Interface::run_triggers ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
+					dol_syslog("Interface::run_triggers ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
 					continue;
 				}
 
@@ -92,18 +92,18 @@ class Interfaces
 
 				if (! $qualified)
 				{
-					dolibarr_syslog("Interfaces::run_triggers Triggers for file '".$file."' need module to be enabled",LOG_INFO);
+					dol_syslog("Interfaces::run_triggers Triggers for file '".$file."' need module to be enabled",LOG_INFO);
 					continue;
 				}
 
-				dolibarr_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
+				dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
 				include_once($this->dir."/".$file);
 				$objMod = new $modName($this->db);
 				$i=0;
 				if ($objMod)
 				{
 					$modules[$i] = $modName;
-					//dolibarr_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
+					//dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
 					$result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
 					if ($result > 0)
 					{
@@ -129,12 +129,12 @@ class Interfaces
 		}
 		if ($nbko)
 		{
-			dolibarr_syslog("Interfaces::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_ERR);
+			dol_syslog("Interfaces::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_ERR);
 			return -$nbko;
 		}
 		else
 		{
-			//dolibarr_syslog("Interfaces::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_DEBUG);
+			//dol_syslog("Interfaces::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_DEBUG);
 			return $nbok;
 		}
 	}

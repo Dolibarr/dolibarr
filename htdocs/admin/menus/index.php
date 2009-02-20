@@ -212,7 +212,7 @@ $head[$h][1] = $langs->trans("MenuAdmin");
 $head[$h][2] = 'editor';
 $h++;
 
-dolibarr_fiche_head($head, 'editor', $langs->trans("Menus"));
+dol_fiche_head($head, 'editor', $langs->trans("Menus"));
 
 // Confirmation de la suppression menu
 if ($_GET["action"] == 'delete')

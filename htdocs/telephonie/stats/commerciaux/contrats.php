@@ -46,7 +46,7 @@ $head[$h][1] = "Contrats";
 $hselected = $h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, "Commerciaux");
+dol_fiche_head($head, $hselected, "Commerciaux");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 

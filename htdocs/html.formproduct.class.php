@@ -66,7 +66,7 @@ class FormProduct
 		$sql .= " WHERE statut = 1";
 		$sql .= " ORDER BY e.label";
 
-		dolibarr_syslog('FormProduct::loadWarehouses sql='.$sql,LOG_DEBUG);
+		dol_syslog('FormProduct::loadWarehouses sql='.$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -84,7 +84,7 @@ class FormProduct
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -100,7 +100,7 @@ class FormProduct
 	{
 		global $langs,$user;
 
-		dolibarr_syslog("Form::selectWarehouses $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
+		dol_syslog("Form::selectWarehouses $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
 
 		$this->loadWarehouses();
 

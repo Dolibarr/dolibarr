@@ -110,7 +110,7 @@ $paiement = new Paiement($db);
 $result=$paiement->fetch($_GET['id']);
 if ($result <= 0)
 {
-	dolibarr_print_error($db,'Payement '.$_GET['id'].' not found in database');
+	dol_print_error($db,'Payement '.$_GET['id'].' not found in database');
 	exit;
 }
 
@@ -128,7 +128,7 @@ $head[$h][1] = $langs->trans("Info");
 $h++;      
 
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"));
+dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"));
 
 /*
  * Confirmation de la suppression du paiement
@@ -159,7 +159,7 @@ print '<table class="border" width="100%">';
 print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
 
 // Date
-print '<tr><td valign="top" width="120">'.$langs->trans('Date').'</td><td colspan="3">'.dolibarr_print_date($paiement->date,'day').'</td></tr>';
+print '<tr><td valign="top" width="120">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($paiement->date,'day').'</td></tr>';
 
 // Mode
 print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$paiement->type_code).'</td></tr>';
@@ -253,7 +253,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);   
+	dol_print_error($db);   
 }
 
 print '</div>';

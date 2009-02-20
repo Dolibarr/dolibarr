@@ -90,7 +90,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 $sql = "SELECT sum(f.amount), date_format(f.dateo,'%Y-%m') as dm";
@@ -112,13 +112,13 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 
 // Onglets
 $head=bank_prepare_head($acct);
-dolibarr_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0);
+dol_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0);
 
 $title=$langs->trans("FinancialAccount")." : ".$acct->label;
 $lien=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
@@ -192,7 +192,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 {
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
-	print "<td>".dolibarr_print_date(dolibarr_mktime(1,1,1,$mois,1,2000),"%B")."</td>";
+	print "<td>".dol_print_date(dol_mktime(1,1,1,$mois,1,2000),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
 		$case = sprintf("%04s-%02s",$annee,$mois);
@@ -245,7 +245,7 @@ if ($resql)
 	if ($obj) $balance=$obj->total;
 }
 else {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 print '<tr class="liste_total"><td><b>'.$langs->trans("CurrentBalance")."</b></td>";
 print '<td colspan="'.($nbcol).'" align="right">'.price($balance).'</td>';

@@ -99,7 +99,7 @@ if ($_GET["facid"])
     $soc->fetch($fac->socid);
 
     $head = facture_prepare_head($fac);
-    dolibarr_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"));
+    dol_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"));
 
 
     print '<table class="border" width="100%">';

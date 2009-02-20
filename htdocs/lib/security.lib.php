@@ -219,7 +219,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
  */
 function makesalt($type=CRYPT_SALT_LENGTH)
 {
-	dolibarr_syslog("security.lib.php::makesalt type=".$type);
+	dol_syslog("security.lib.php::makesalt type=".$type);
 	switch($type)
 	{
 	case 12:	// 8 + 4
@@ -234,7 +234,7 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 	while(strlen($salt) < $saltlen) $salt.=chr(rand(64,126));
 
 	$result=$saltprefix.$salt.$saltsuffix;
-	dolibarr_syslog("security.lib.php::makesalt return=".$result);
+	dol_syslog("security.lib.php::makesalt return=".$result);
 	return $result;
 }
 
@@ -245,7 +245,7 @@ function makesalt($type=CRYPT_SALT_LENGTH)
  */
 function encodedecode_dbpassconf($level=0)
 {
-	dolibarr_syslog("security.lib::encodedecode_dbpassconf level=".$level, LOG_DEBUG);
+	dol_syslog("security.lib::encodedecode_dbpassconf level=".$level, LOG_DEBUG);
 	$config = '';
 
 	if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','r'))
@@ -287,13 +287,13 @@ function encodedecode_dbpassconf($level=0)
 		}
 		else
 		{
-			dolibarr_syslog("security.lib::encodedecode_dbpassconf Failed to open conf.php file for writing", LOG_WARNING);
+			dol_syslog("security.lib::encodedecode_dbpassconf Failed to open conf.php file for writing", LOG_WARNING);
 			return -1;
 		}
 	}
 	else
 	{
-		dolibarr_syslog("security.lib::encodedecode_dbpassconf Failed to read conf.php", LOG_ERR);
+		dol_syslog("security.lib::encodedecode_dbpassconf Failed to read conf.php", LOG_ERR);
 		return -2;
 	}
 }

@@ -149,7 +149,7 @@ if ($resql)
 
 		// Title
 		print '<td>';
-		print dolibarr_trunc($objp->title,24);
+		print dol_trunc($objp->title,24);
 		print '</td>';
 
 		// Company
@@ -184,7 +184,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 print "</table>";

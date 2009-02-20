@@ -87,7 +87,7 @@ if ($_GET["id"] || $_GET["ref"])
          */
       $head=product_prepare_head($product,$user);
       $titre=$langs->trans("CardProduct".$product->type);
-      dolibarr_fiche_head($head, 'referers', $titre);
+      dol_fiche_head($head, 'referers', $titre);
 
       print '<table class="border" width="100%">';
 
@@ -180,10 +180,10 @@ if ($_GET["id"] || $_GET["ref"])
                     print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowContract"),"contract").' ';
                     print $objp->rowid;
                     print "</a></td>\n";
-                    print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
                     print "<td>".$objp->code_client."</td>\n";
                     print "<td align=\"center\">";
-                    print dolibarr_print_date($objp->date)."</td>";
+                    print dol_print_date($objp->date)."</td>";
                     //print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
                     //print '<td align="right">';
                     print '<td align="center">'.($objp->nb_initial>0?$objp->nb_initial:'').'</td>';
@@ -197,7 +197,7 @@ if ($_GET["id"] || $_GET["ref"])
         }
         else
         {
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
         print "</table>";
         print '<br>';
@@ -206,7 +206,7 @@ if ($_GET["id"] || $_GET["ref"])
 }
 else
 {
-    dolibarr_print_error();
+    dol_print_error();
 }
 
 $db->close();

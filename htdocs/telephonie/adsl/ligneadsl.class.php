@@ -120,14 +120,14 @@ class LigneAdsl {
 	    if ($lex->fetch($this->numero) == 1)
 	      {
 		$this->error_message = "Echec de la création de la ligne, cette ligne existe déjà !";
-		dolibarr_syslog("LigneAdsl::Create Error -3");
+		dol_syslog("LigneAdsl::Create Error -3");
 		return -3;
 	      }
 	    else
 	      {
 		$this->error_message = "Echec de la création de la ligne";
-		dolibarr_syslog("LigneAdsl::Create Error -1");
-		dolibarr_syslog("LigneAdsl::Create $sql");
+		dol_syslog("LigneAdsl::Create Error -1");
+		dol_syslog("LigneAdsl::Create $sql");
 		return -1;
 	      }
 	  }
@@ -135,7 +135,7 @@ class LigneAdsl {
     else
       {
 	$this->error_message = "Echec de la création de la ligne, le numéro de la ligne est incorrect !";
-	dolibarr_syslog("LigneAdsl::Create Error -2");
+	dol_syslog("LigneAdsl::Create Error -2");
 	return -2;
       }
   }
@@ -165,13 +165,13 @@ class LigneAdsl {
 	    }
 	  else
 	    {
-	      dolibarr_syslog("LigneAdsl::Delete Error -1");
+	      dol_syslog("LigneAdsl::Delete Error -1");
 	      return -1;
 	    }
 	}
       else
 	{
-	  dolibarr_syslog("LigneAdsl::Delete Error -2");
+	  dol_syslog("LigneAdsl::Delete Error -2");
 	  return -2;
 	}
     }

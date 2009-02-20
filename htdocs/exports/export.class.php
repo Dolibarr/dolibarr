@@ -67,7 +67,7 @@ class Export
     {
         global $langs,$conf;
         
-        dolibarr_syslog("Export::load_arrays user=".$user->id." filter=".$filter);
+        dol_syslog("Export::load_arrays user=".$user->id." filter=".$filter);
 
         $dir=DOL_DOCUMENT_ROOT."/includes/modules";
         $handle=opendir($dir);
@@ -151,7 +151,7 @@ class Export
 	                            $this->array_export_sql_end[$i]=$module->export_sql_end[$r];
 	                            //$this->array_export_sql[$i]=$module->export_sql[$r];
 	
-	                            dolibarr_syslog("Export loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".sizeof($module->export_fields_code[$r]));
+	                            dol_syslog("Export loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".sizeof($module->export_fields_code[$r]));
 	                            $i++;
 //	                        }
 	                    }            
@@ -178,7 +178,7 @@ class Export
         $indice=0;
         asort($array_selected);
         
-        dolibarr_syslog("Export::build_file $model, $datatoexport, $array_selected");
+        dol_syslog("Export::build_file $model, $datatoexport, $array_selected");
         
         // Creation de la classe d'export du model ExportXXX
         $dir = DOL_DOCUMENT_ROOT . "/includes/modules/export/";
@@ -204,7 +204,7 @@ class Export
         $sql.=$this->array_export_sql_end[$indice];
 	
 		// Run the sql
-		dolibarr_syslog("Export::build_file sql=".$sql);
+		dol_syslog("Export::build_file sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -265,14 +265,14 @@ class Export
 			else
 			{
 	            $this->error=$objmodel->error;
-	            dolibarr_syslog("Error: ".$this->error);
+	            dol_syslog("Error: ".$this->error);
 	            return -1;
 			}
         }
         else
         {
             $this->error=$this->db->error()." - sql=".$sql;
-            dolibarr_syslog("Error: ".$this->error);
+            dol_syslog("Error: ".$this->error);
             return -1;
         }
     }
@@ -285,7 +285,7 @@ class Export
 	{
 		global $conf;
 		
-		dolibarr_syslog("Export.class.php::create");
+		dol_syslog("Export.class.php::create");
 		
 		$this->db->begin();
 		
@@ -293,7 +293,7 @@ class Export
 		$sql.= 'label, type, field)';
 		$sql.= " VALUES ('".$this->model_name."', '".$this->datatoexport."', '".$this->hexa."')";
 		
-		dolibarr_syslog("Export::create sql=".$sql, LOG_DEBUG);
+		dol_syslog("Export::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -304,7 +304,7 @@ class Export
 		{
 			$this->error=$this->db->lasterror();
 			$this->errno=$this->db->lasterrno();
-			dolibarr_syslog("Export::create error ".$this->error, LOG_ERR);
+			dol_syslog("Export::create error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -320,7 +320,7 @@ class Export
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'export_model as em';
 		$sql.= ' WHERE em.rowid = '.$id;
 		
-		dolibarr_syslog("Export::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("Export::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql) ;
 		if ($result)
 		{
@@ -342,7 +342,7 @@ class Export
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -3;
 		}
 	}
@@ -364,7 +364,7 @@ class Export
 	
 		$this->db->begin();
 		
-		dolibarr_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete sql=".$sql);
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		
@@ -389,7 +389,7 @@ class Export
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dolibarr_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}	
 			$this->db->rollback();

@@ -76,7 +76,7 @@ function factures ($db, $year, $month, $paye)
 	print "<TD><a href=\"comp.php?socid=".$objp->socid."\">".$objp->nom."</a></TD>\n";
 	print "<TD><a href=\"facture.php?facid=".$objp->facid."\">".$objp->facnumber."</a></TD>\n";
 	if ($objp->df > 0 ) {
-	  print "<TD align=\"right\">".dolibarr_print_date($objp->df)."</TD>\n";
+	  print "<TD align=\"right\">".dol_print_date($objp->df)."</TD>\n";
 	} else {
 	  print "<TD align=\"right\"><b>!!!</b></TD>\n";
 	}
@@ -123,7 +123,7 @@ function pt ($db, $sql, $year) {
       if ($obj->dm > $month ) {
         	for ($b = $month ; $b < $obj->dm ; $b++) {
         	  print "<tr $bc[$var]>";
-        	  print "<td>".dolibarr_print_date(dolibarr_mktime(12,0,0,$b, 1, $year),"%b")."</td>\n";
+        	  print "<td>".dol_print_date(dol_mktime(12,0,0,$b, 1, $year),"%b")."</td>\n";
         	  print "<td align=\"right\">0</td>\n";	  
         	  print "</tr>\n";
         	  $var=!$var;
@@ -134,7 +134,7 @@ function pt ($db, $sql, $year) {
       if ($obj->sum > 0) {
 	print "<tr $bc[$var]>";
 	print "<td>";
-	print dolibarr_print_date(dolibarr_mktime(12,0,0,$obj->dm, 1, $year),"%b")."</td>\n";
+	print dol_print_date(dol_mktime(12,0,0,$obj->dm, 1, $year),"%b")."</td>\n";
 	print "<td align=\"right\">".price($obj->sum)."</td>\n";
 	
 	print "</tr>\n";
@@ -155,7 +155,7 @@ function pt ($db, $sql, $year) {
       for ($b = $beg + 1 ; $b < 13 ; $b++) {
 	$var=!$var;
 	print "<tr $bc[$var]>";
-	print "<td>".dolibarr_print_date(dolibarr_mktime(12,0,0,$b, 1, $year),"%b")."</td>\n";
+	print "<td>".dol_print_date(dol_mktime(12,0,0,$b, 1, $year),"%b")."</td>\n";
 	print "<td align=\"right\">0</td>\n";	  
 	print "</tr>\n";
 	$ca[$b] = 0;
@@ -234,7 +234,7 @@ function ppt ($db, $year, $socid)
       $delta = $ca[$b] - $prev[$b];
       $deltat = $deltat + $delta ;
       print "<TR $bc[$var]>";
-      print "<TD>".dolibarr_print_date(dolibarr_mktime(12,0,0,$b, 1, $year),"%b")."</TD>\n";
+      print "<TD>".dol_print_date(dol_mktime(12,0,0,$b, 1, $year),"%b")."</TD>\n";
       print "<TD align=\"right\">".price($delta)."</TD>\n";
       print "<TD align=\"right\">".price($deltat)."</TD>\n";
       print "</TR>\n";

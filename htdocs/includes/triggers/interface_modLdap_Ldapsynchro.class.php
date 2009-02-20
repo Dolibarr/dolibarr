@@ -103,14 +103,14 @@ class InterfaceLdapsynchro
 
         if (! function_exists('ldap_connect'))
         {
-        	dolibarr_syslog("Warning, module LDAP is enabled but LDAP functions not available in this PHP", LOG_WARNING);
+        	dol_syslog("Warning, module LDAP is enabled but LDAP functions not available in this PHP", LOG_WARNING);
         	return 0;
         }
 
         // Users
         if ($action == 'USER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
         	{
         		$ldap=new Ldap();
@@ -129,7 +129,7 @@ class InterfaceLdapsynchro
         }
         elseif ($action == 'USER_MODIFY')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
         	{
         		$ldap=new Ldap();
@@ -148,15 +148,15 @@ class InterfaceLdapsynchro
         }
         elseif ($action == 'USER_NEW_PASSWORD')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'USER_ENABLEDISABLE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'USER_DELETE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
         	{
         		$ldap=new Ldap();
@@ -233,7 +233,7 @@ class InterfaceLdapsynchro
         // Contacts
         elseif ($action == 'CONTACT_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 	      	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
         	{
         		$ldap=new Ldap();
@@ -252,7 +252,7 @@ class InterfaceLdapsynchro
         }
         elseif ($action == 'CONTACT_MODIFY')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
         	{
         		$ldap=new Ldap();
@@ -271,7 +271,7 @@ class InterfaceLdapsynchro
         }
         elseif ($action == 'CONTACT_DELETE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 	    	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
 	    	{
 	    		$ldap=new Ldap();
@@ -292,7 +292,7 @@ class InterfaceLdapsynchro
         // Members
         elseif ($action == 'MEMBER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
         		$ldap=new Ldap();
@@ -311,7 +311,7 @@ class InterfaceLdapsynchro
         }
         elseif ($action == 'MEMBER_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
 				# If status field is setup to be synchronized
@@ -334,7 +334,7 @@ class InterfaceLdapsynchro
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
 				# If subscriptions fields are setup to be synchronized
@@ -361,7 +361,7 @@ class InterfaceLdapsynchro
         }
         elseif ($action == 'MEMBER_MODIFY')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
         		$ldap=new Ldap();
@@ -380,7 +380,7 @@ class InterfaceLdapsynchro
         }
         elseif ($action == 'MEMBER_NEW_PASSWORD')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
 				# If password field is setup to be synchronized
@@ -403,7 +403,7 @@ class InterfaceLdapsynchro
 		}
         elseif ($action == 'MEMBER_RESILIATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
 				# If status field is setup to be synchronized
@@ -426,7 +426,7 @@ class InterfaceLdapsynchro
         }
         elseif ($action == 'MEMBER_DELETE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
 			{
 				$ldap=new Ldap();
@@ -448,7 +448,7 @@ class InterfaceLdapsynchro
 /*
         else
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
+            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return -1;
         }
 */

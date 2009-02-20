@@ -178,7 +178,7 @@ if ($_REQUEST['action'] == 'builddoc')
 	$result=don_create($db, $donation->id, '', $donation->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$result);
+		dol_print_error($db,$result);
 		exit;
 	}
 	else
@@ -273,7 +273,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 	$hselected=$h;
 	$h++;
 
-	dolibarr_fiche_head($head, $hselected, $langs->trans("Ref"));
+	dol_fiche_head($head, $hselected, $langs->trans("Ref"));
 
 	print '<form name="update" action="fiche.php" method="post">';
 	print '<table class="border" width="100%">';
@@ -317,7 +317,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 		print "</select><br>";
 		print "</td></tr>\n";
@@ -373,7 +373,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 	$hselected=$h;
 	$h++;
 
-	dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").": ".$_GET["rowid"]);
+	dol_fiche_head($head, $hselected, $langs->trans("Ref").": ".$_GET["rowid"]);
 
 	print "<form action=\"fiche.php\" method=\"post\">";
 	print '<table class="border" width="100%">';
@@ -386,7 +386,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
 	// Date
 	print "<tr><td>".$langs->trans("Date")."</td><td>";
-	print dolibarr_print_date($don->date,"day");
+	print dol_print_date($don->date,"day");
 	print "</td>";
 
 	$nbrows=12;

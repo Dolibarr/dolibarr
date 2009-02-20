@@ -156,7 +156,7 @@ if ($result)
       print '</a>&nbsp;';
 
       print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.$obj->nom."</a></td>\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?numero='.$obj->ligne.'">'.dolibarr_print_phone($obj->ligne,0,0,true)."</a></td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?numero='.$obj->ligne.'">'.dol_print_phone($obj->ligne,0,0,true)."</a></td>\n";
       print '<td align="center">'.$obj->date."</td>\n";
       print '<td align="right">'.sprintf("%01.4f",$obj->cout_vente)."</td>\n";
 

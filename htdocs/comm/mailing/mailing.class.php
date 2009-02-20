@@ -103,7 +103,7 @@ class Mailing extends CommonObject
 			$this->titre = $langs->trans("NoTitle");
 		}
 
-		dolibarr_syslog("Mailing::Create sql=".$sql);
+		dol_syslog("Mailing::Create sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -124,7 +124,7 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Mailing::Create ".$this->error, LOG_ERR);
+			dol_syslog("Mailing::Create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -143,7 +143,7 @@ class Mailing extends CommonObject
 		$sql .= " , email_from = '".$this->email_from."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Mailing::Update sql=".$sql);
+		dol_syslog("Mailing::Update sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -152,7 +152,7 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Mailing::Update ".$this->error, LOG_ERR);
+			dol_syslog("Mailing::Update ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -174,7 +174,7 @@ class Mailing extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 		$sql .= " WHERE m.rowid = ".$rowid;
 
-		dolibarr_syslog("Mailing.class::fetch sql=".$sql);
+		dol_syslog("Mailing.class::fetch sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -205,13 +205,13 @@ class Mailing extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog("Mailing::Fetch Erreur -1");
+				dol_syslog("Mailing::Fetch Erreur -1");
 				return -1;
 			}
 		}
 		else
 		{
-			dolibarr_syslog("Mailing::Fetch Erreur -2");
+			dol_syslog("Mailing::Fetch Erreur -2");
 			return -2;
 		}
 	}
@@ -310,7 +310,7 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Mailing::Valid ".$this->error, LOG_ERR);
+			dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -335,7 +335,7 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Mailing::Valid ".$this->error, LOG_ERR);
+			dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

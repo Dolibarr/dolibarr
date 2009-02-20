@@ -125,7 +125,7 @@ if ($facid > 0)
 		$societe->fetch($facture->socid);
 
 		$head = facture_prepare_head($facture);
-		dolibarr_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'));
+		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'));
 
 
 		// Construit liste des fichiers
@@ -166,7 +166,7 @@ if ($facid > 0)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 else

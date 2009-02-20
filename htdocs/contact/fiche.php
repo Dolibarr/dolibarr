@@ -203,7 +203,7 @@ if ($_GET["id"] > 0)
 	$return=$contact->fetch($_GET["id"], $user);
 	if ($return <= 0)
 	{
-		dolibarr_print_error('',$contact->error);
+		dol_print_error('',$contact->error);
 		$_GET["id"]=0;
 	}
 
@@ -212,7 +212,7 @@ if ($_GET["id"] > 0)
 	 */
 	$head = contact_prepare_head($contact);
 
-	dolibarr_fiche_head($head, 'general', $langs->trans("Contact"));
+	dol_fiche_head($head, 'general', $langs->trans("Contact"));
 }
 
 

@@ -111,7 +111,7 @@ class GraphCommNbMensuel extends GraphBar{
       }
     else 
       {
-	dolibarr_syslog("Error");
+	dol_syslog("Error");
       }
   }
 }  

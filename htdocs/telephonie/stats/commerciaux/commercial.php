@@ -60,7 +60,7 @@ if ($_GET["commid"])
   $head[$h][1] = "Prises d'ordres";
   $h++;
 
-  dolibarr_fiche_head($head, $hselected, "Commerciaux");
+  dol_fiche_head($head, $hselected, "Commerciaux");
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 

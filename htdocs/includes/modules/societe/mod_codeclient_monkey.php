@@ -120,7 +120,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
         }
         else
         {
-        	dolibarr_syslog("mod_codeclient_monkey::getNextValue sql=".$sql);
+        	dol_syslog("mod_codeclient_monkey::getNextValue sql=".$sql);
         	return -1;
         }
 
@@ -129,7 +129,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
         $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
 
-        dolibarr_syslog("mod_codeclient_monkey::getNextValue return ".$prefix.$yymm."-".$num);
+        dol_syslog("mod_codeclient_monkey::getNextValue return ".$prefix.$yymm."-".$num);
         return $prefix.$yymm."-".$num;
 	}
 
@@ -176,7 +176,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 				}
 			}
 		}
-		dolibarr_syslog("mod_codeclient_monkey::verif result=".$result);
+		dol_syslog("mod_codeclient_monkey::verif result=".$result);
 		return $result;
 	}
 

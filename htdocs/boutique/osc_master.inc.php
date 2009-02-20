@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
 $dbosc = new DoliDb($conf->db->type,$conf->global->OSC_DB_HOST,$conf->global->OSC_DB_USER,$conf->global->OSC_DB_PASS,$conf->global->OSC_DB_NAME,$conf->global->OSC_DB_PORT);
 if (! $dbosc->connected)
 {
-    dolibarr_syslog($dbosc,"host=".$conf->global->OSC_DB_HOST.", user=".$conf->global->OSC_DB_USER.", databasename=".$conf->global->OSC_DB_NAME.", ".$db->error,LOG_ERR);
+    dol_syslog($dbosc,"host=".$conf->global->OSC_DB_HOST.", user=".$conf->global->OSC_DB_USER.", databasename=".$conf->global->OSC_DB_NAME.", ".$db->error,LOG_ERR);
 
 	llxHeader("",$langs->trans("OSCommerceShop"),"");
 	print '<div class="error">Failed to connect to oscommerce database. Check your module setup</div>';

@@ -116,7 +116,7 @@ class ExportExcel extends ModeleExports
 
 		$outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
 
-		dolibarr_syslog("ExportExcel::open_file file=".$file);
+		dol_syslog("ExportExcel::open_file file=".$file);
 
 		$ret=1;
 
@@ -164,7 +164,7 @@ class ExportExcel extends ModeleExports
 		{
 			$alias=$array_export_fields_label[$code];
 			//print "dd".$alias;
-			if (empty($alias)) dolibarr_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+			if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
 			$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
 			$this->col++;
 		}

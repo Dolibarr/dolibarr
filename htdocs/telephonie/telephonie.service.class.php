@@ -120,7 +120,7 @@ class TelephonieService {
       {
 	
 	$this->error_message = "Echec de la création du service !";
-	dolibarr_syslog("TelephonieService::Create Error -1");
+	dol_syslog("TelephonieService::Create Error -1");
 	return -1;
       }
   }

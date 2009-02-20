@@ -85,7 +85,7 @@ if ($modetax==1)	// Caluclate on invoice for goods and services
 {
     $nom=$langs->trans("VATReportByQuartersInDueDebtMode");
     $nom.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&q='.$q.'&modetax=0">','</a>').')';
-    $period=$year_start.' - '.$langs->trans("Quadri")." $q (".dolibarr_print_date(dolibarr_mktime(12,0,0,(($q-1)*3)+1,1,$year_start),"%b %Y").' - '.dolibarr_print_date(dolibarr_mktime(12,0,0,($q*3),1,$year_start),"%b %Y").")";
+    $period=$year_start.' - '.$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(12,0,0,(($q-1)*3)+1,1,$year_start),"%b %Y").' - '.dol_print_date(dol_mktime(12,0,0,($q*3),1,$year_start),"%b %Y").")";
 	$prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) $prevquarter--;
 	else { $prevquarter=4; $prevyear--; }
@@ -114,7 +114,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 {
     $nom=$langs->trans("VATReportByQuartersInInputOutputMode");
     $nom.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&q='.$q.'&modetax=1">','</a>').')';
-    $period=$year_start.' - '.$langs->trans("Quadri")." $q (".dolibarr_print_date(dolibarr_mktime(12,0,0,(($q-1)*3)+1,1,$year_start),"%b %Y").' - '.dolibarr_print_date(dolibarr_mktime(12,0,0,($q*3),1,$year_start),"%b %Y").")";
+    $period=$year_start.' - '.$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(12,0,0,(($q-1)*3)+1,1,$year_start),"%b %Y").' - '.dol_print_date(dol_mktime(12,0,0,($q*3),1,$year_start),"%b %Y").")";
 	$prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) $prevquarter--;
 	else { $prevquarter=4; $prevyear--; }
@@ -289,7 +289,7 @@ else
 					else $text = img_object($langs->trans('Product'),'product');
 					print $text.' ';
 				}
-				print dolibarr_trunc($fields['descr'],16).'</td>';
+				print dol_trunc($fields['descr'],16).'</td>';
 				// Amount line
 				if ($modetax == 0)
 				{
@@ -396,7 +396,7 @@ else
 					else $text = img_object($langs->trans('Product'),'product');
 					print $text.' ';
 				}
-				print dolibarr_trunc($fields['descr'],24).'</td>';
+				print dol_trunc($fields['descr'],24).'</td>';
 				// Amount line
 				if ($modetax == 0)
 				{

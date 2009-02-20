@@ -78,13 +78,13 @@ if ($_GET["action"] == 'specimen')
 		else
 		{
 			$mesg='<div class="error">'.$module->error.'</div>';
-			dolibarr_syslog($module->error, LOG_ERR);
+			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
-		dolibarr_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
 
@@ -318,7 +318,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 $dir = "../includes/modules/propale/";

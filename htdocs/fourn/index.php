@@ -95,7 +95,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 
@@ -216,7 +216,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -262,7 +262,7 @@ if ($resql)
 		print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
 		print "&nbsp;<a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
-		print '<td align="right">'.dolibarr_print_date($obj->tms,'day').'</td>';
+		print '<td align="right">'.dol_print_date($obj->tms,'day').'</td>';
 		print "</tr>\n";
 	}
 	print "</table>\n";
@@ -271,7 +271,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 

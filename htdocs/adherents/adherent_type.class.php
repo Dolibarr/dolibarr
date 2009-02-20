@@ -86,7 +86,7 @@ class AdherentType extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (libelle)";
 		$sql.= " VALUES ('".addslashes($this->libelle)."')";
 
-		dolibarr_syslog("Adherent_type::create sql=".$sql);
+		dol_syslog("Adherent_type::create sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -170,7 +170,7 @@ class AdherentType extends CommonObject
 		$sql = "SELECT d.rowid, d.libelle, d.statut, d.cotisation, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".$rowid;
-		dolibarr_syslog("Adherent_type::fetch sql=".$sql);
+		dol_syslog("Adherent_type::fetch sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -255,7 +255,7 @@ class AdherentType extends CommonObject
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$lien.($maxlen?dolibarr_trunc($this->libelle,$maxlen):$this->libelle).$lienfin;
+		$result.=$lien.($maxlen?dol_trunc($this->libelle,$maxlen):$this->libelle).$lienfin;
 		return $result;
 	}
 

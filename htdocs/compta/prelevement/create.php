@@ -71,7 +71,7 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php';
 $head[$h][1] = $langs->trans("NewStandingOrder");
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("StandingOrders"));
+dol_fiche_head($head, $hselected, $langs->trans("StandingOrders"));
 
 
 $nb=$bprev->NbFactureAPrelever();
@@ -79,7 +79,7 @@ $nb1=$bprev->NbFactureAPrelever(1);
 $nb11=$bprev->NbFactureAPrelever(1,1);
 if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
 {
-	dolibarr_print_error($bprev->error);
+	dol_print_error($bprev->error);
 }
 print '<table class="border" width="100%">';
 
@@ -159,7 +159,7 @@ if ($result)
 		$bprev->ref=$obj->ref;
 		print $bprev->getNomUrl(1);
 		print "</td>\n";
-		print '<td align="center">'.dolibarr_print_date($obj->datec,'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($obj->datec,'day')."</td>\n";
 
 		print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->monnaie)."</td>\n";
 
@@ -171,7 +171,7 @@ if ($result)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 
@@ -226,7 +226,7 @@ if ( $db->query($sql) )
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 

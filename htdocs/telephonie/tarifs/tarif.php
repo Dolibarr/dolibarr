@@ -41,7 +41,7 @@ $head[$h][1] = $langs->trans("Historique");
 $head[$h][2] = 'history';
 $h++;
 
-dolibarr_fiche_head($head, 'card', $langs->trans("Tarif"));
+dol_fiche_head($head, 'card', $langs->trans("Tarif"));
 
 /*
  *

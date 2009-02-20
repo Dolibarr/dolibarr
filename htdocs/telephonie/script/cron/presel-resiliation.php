@@ -95,7 +95,7 @@ if ($resql)
 function ResiliationPreselection($db, $user, $host, $user_login, $user_passwd, $ligne_num, $id_person, $verbose)
 {  
   if ($verbose)
-    dolibarr_syslog("Appel de DeletePreselection($host, $user_login, ****, $ligne_num, $id_person)");
+    dol_syslog("Appel de DeletePreselection($host, $user_login, ****, $ligne_num, $id_person)");
 
   $url = "/AzurApp_websvc_b3gdb/account.asmx/UpdatePreselection?";
 
@@ -106,20 +106,20 @@ function ResiliationPreselection($db, $user, $host, $user_login, $user_passwd, $
   $url .= "&okPreselection=false";
 
   if ($verbose > 2)
-    dolibarr_syslog("$host");
+    dol_syslog("$host");
 
   if ($verbose > 2)
-    dolibarr_syslog("$url");
+    dol_syslog("$url");
 
   $fp = fsockopen($host, 80, $errno, $errstr, 30);
   if (!$fp)
     {
-      dolibarr_syslog("$errstr ($errno)");
+      dol_syslog("$errstr ($errno)");
     }
   else
     {
       if ($verbose > 2)
-	dolibarr_syslog("Socket Opened send data");
+	dol_syslog("Socket Opened send data");
 
       $out = "GET $url HTTP/1.1\r\n";
       $out .= "Host: $host\r\n";
@@ -128,7 +128,7 @@ function ResiliationPreselection($db, $user, $host, $user_login, $user_passwd, $
       fwrite($fp, $out);
       
       if ($verbose > 2)
-	dolibarr_syslog("Data sent, waiting for response");
+	dol_syslog("Data sent, waiting for response");
 
       $parse = 0;
       $result = "error";
@@ -140,14 +140,14 @@ function ResiliationPreselection($db, $user, $host, $user_login, $user_passwd, $
 	  $line = fgets($fp, 1024);
 	  
 	  if ($verbose > 2)
-	    dolibarr_syslog($line);
+	    dol_syslog($line);
 
 	  if ($parse == 1)
 	    {
 	      preg_match('/^<string xmlns=".*">(.*)<\/string>$/', $line, $results);
 	      
 	      $result = $results[1];
-	      //dolibarr_syslog($line);
+	      //dol_syslog($line);
 	      $parse = 0;
 	    }
 	  
@@ -163,12 +163,12 @@ function ResiliationPreselection($db, $user, $host, $user_login, $user_passwd, $
     }
   
   if ($verbose > 1)
-    dolibarr_syslog("result = ".$result);
+    dol_syslog("result = ".$result);
 
   if (substr($result,0,2) == "OK")
     {
       if ($verbose)
-	dolibarr_syslog("Resiliation r贳sie ligne ".$ligne_num." id client ".$id_person." $result\n");
+	dol_syslog("Resiliation r贳sie ligne ".$ligne_num." id client ".$id_person." $result\n");
 
       $ligne = new LigneTel($db);
       $ligne->fetch($ligne_num);
@@ -178,7 +178,7 @@ function ResiliationPreselection($db, $user, $host, $user_login, $user_passwd, $
     }
   else
     {
-      dolibarr_syslog("Resiliation 袨ou裠ligne ".$ligne_num." id client ".$id_person." $result\n");
+      dol_syslog("Resiliation 袨ou裠ligne ".$ligne_num." id client ".$id_person." $result\n");
 
       $fp = fopen("/tmp/$ligne.delete","w");
       if ($fp)

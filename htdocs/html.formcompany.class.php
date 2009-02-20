@@ -62,7 +62,7 @@ class FormCompany
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_typent";
 		$sql.= " WHERE active = 1";
 		$sql.= " ORDER by id";
-		dolibarr_syslog('Form::typent_array sql='.$sql,LOG_DEBUG);
+		dol_syslog('Form::typent_array sql='.$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -100,7 +100,7 @@ class FormCompany
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
 		$sql.= " WHERE active = 1";
 		$sql .= " ORDER BY id ASC";
-		dolibarr_syslog('Form::effectif_array sql='.$sql,LOG_DEBUG);
+		dol_syslog('Form::effectif_array sql='.$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -141,7 +141,7 @@ class FormCompany
 		print '<select class="flat" name="'.$htmlname.'">';
 		if ($empty) print '<option value="">&nbsp;</option>';
 
-		dolibarr_syslog('Form::form_prospect_level',LOG_DEBUG);
+		dol_syslog('Form::form_prospect_level',LOG_DEBUG);
 		$sql = "SELECT code, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 		$sql.= " WHERE active > 0";
@@ -166,7 +166,7 @@ class FormCompany
 				$i++;
 			}
 		}
-		else dolibarr_print_error($this->db);
+		else dol_print_error($this->db);
 		print '</select>';
 
 		print '</td>';
@@ -188,7 +188,7 @@ class FormCompany
 	{
 		global $conf,$langs,$user;
 			
-		dolibarr_syslog("Form::select_departement selected=$selected, pays_code=$pays_code",LOG_DEBUG);
+		dol_syslog("Form::select_departement selected=$selected, pays_code=$pays_code",LOG_DEBUG);
 			
 		$langs->load("dict");
 
@@ -202,7 +202,7 @@ class FormCompany
 		if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
 		$sql .= " ORDER BY p.code, d.code_departement";
 
-		dolibarr_syslog("Form::select_departement sql=".$sql);
+		dol_syslog("Form::select_departement sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -210,7 +210,7 @@ class FormCompany
 			if ($pays_code) print '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			dolibarr_syslog("Form::select_departement num=$num",LOG_DEBUG);
+			dol_syslog("Form::select_departement num=$num",LOG_DEBUG);
 			if ($num)
 			{
 				$pays='';
@@ -252,7 +252,7 @@ class FormCompany
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -272,7 +272,7 @@ class FormCompany
 		$sql = "SELECT r.rowid, r.code_region as code, r.nom as libelle, r.active, p.libelle as libelle_pays FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p";
 		$sql .= " WHERE r.fk_pays=p.rowid AND r.active = 1 and p.active = 1 ORDER BY libelle_pays, libelle ASC";
 
-		dolibarr_syslog("Form::select_region sql=".$sql);
+		dol_syslog("Form::select_region sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
@@ -311,7 +311,7 @@ class FormCompany
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -328,7 +328,7 @@ class FormCompany
 		$sql = "SELECT rowid, code, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
 		$sql .= " WHERE active = 1";
 
-		dolibarr_syslog("Form::select_civilite sql=".$sql);
+		dol_syslog("Form::select_civilite sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			print '<select class="flat" name="civilite_id">';
@@ -359,7 +359,7 @@ class FormCompany
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -383,7 +383,7 @@ class FormCompany
 		if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
 		$sql .= " ORDER BY p.code, f.code";
 
-		dolibarr_syslog("Form::select_forme_juridique sql=".$sql);
+		dol_syslog("Form::select_forme_juridique sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -432,7 +432,7 @@ class FormCompany
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -503,12 +503,12 @@ class FormCompany
 						if ($i == 0) $firstCompany = $obj->rowid;
 						if ($selected > 0 && $selected == $obj->rowid)
 						{
-							print '<option value="'.$obj->rowid.'" selected="true">'.dolibarr_trunc($obj->nom,24).'</option>';
+							print '<option value="'.$obj->rowid.'" selected="true">'.dol_trunc($obj->nom,24).'</option>';
 							$firstCompany = $obj->rowid;
 						}
 						else
 						{
-							print '<option value="'.$obj->rowid.'">'.dolibarr_trunc($obj->nom,24).'</option>';
+							print '<option value="'.$obj->rowid.'">'.dol_trunc($obj->nom,24).'</option>';
 						}
 						$i ++;
 					}
@@ -519,7 +519,7 @@ class FormCompany
 		}
 		else
 		{
-			dolibarr_print_error($object->db);
+			dol_print_error($object->db);
 		}
 	}
 

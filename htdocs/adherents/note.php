@@ -77,7 +77,7 @@ if ($id)
 {
 	$head = member_prepare_head($adh);
 	
-	dolibarr_fiche_head($head, 'note', $langs->trans("Member"));
+	dol_fiche_head($head, 'note', $langs->trans("Member"));
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 

@@ -166,7 +166,7 @@ class User extends CommonObject
 			$sql .= " WHERE u.rowid = ".$this->id;
 		}
 
-		dolibarr_syslog("User::Fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("User::Fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -214,7 +214,7 @@ class User extends CommonObject
 			else
 			{
 				$this->error="USERNOTFOUND";
-				dolibarr_syslog("User::fetch user not found", LOG_DEBUG);
+				dol_syslog("User::fetch user not found", LOG_DEBUG);
 
 				$this->db->free($result);
 				return 0;
@@ -223,7 +223,7 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("User::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql, LOG_ERR);
+			dol_syslog("User::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql, LOG_ERR);
 			return -1;
 		}
 
@@ -249,7 +249,7 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("User::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql, LOG_ERR);
+				dol_syslog("User::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql, LOG_ERR);
 				return -2;
 			}
 		}
@@ -266,7 +266,7 @@ class User extends CommonObject
 	 */
 	function addrights($rid,$allmodule='',$allperms='')
 	{
-		dolibarr_syslog("User::addrights $rid, $allmodule, $allperms");
+		dol_syslog("User::addrights $rid, $allmodule, $allperms");
 		$err=0;
 		$whereforadd='';
 
@@ -290,7 +290,7 @@ class User extends CommonObject
 			}
 			else {
 				$err++;
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 			}
 
 			// Where pour la liste des droits a ajouter
@@ -336,7 +336,7 @@ class User extends CommonObject
 			else
 			{
 				$err++;
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 			}
 		}
 
@@ -384,7 +384,7 @@ class User extends CommonObject
 			}
 			else {
 				$err++;
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 			}
 
 			// Where pour la liste des droits a supprimer
@@ -427,7 +427,7 @@ class User extends CommonObject
 			else
 			{
 				$err++;
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 			}
 		}
 
@@ -480,7 +480,7 @@ class User extends CommonObject
 		$sql.= " WHERE r.id = ur.fk_id AND ur.fk_user= ".$this->id." AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".addslashes($moduletag)."'";
 
-		dolibarr_syslog('User::getRights sql='.$sql, LOG_DEBUG);
+		dol_syslog('User::getRights sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -522,7 +522,7 @@ class User extends CommonObject
 		$sql.= " WHERE r.id = gr.fk_id AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = ".$this->id." AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".addslashes($moduletag)."'";
 
-		dolibarr_syslog('User::getRights sql='.$sql, LOG_DEBUG);
+		dol_syslog('User::getRights sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -587,7 +587,7 @@ class User extends CommonObject
 		$sql.= " WHERE rowid = ".$this->id;
 		$result = $this->db->query($sql);
 
-		dolibarr_syslog("User::setstatus sql=".$sql);
+		dol_syslog("User::setstatus sql=".$sql);
 		if ($result)
 		{
 			// Appel des triggers
@@ -676,7 +676,7 @@ class User extends CommonObject
 		// Nettoyage parametres
 		$this->login = trim($this->login);
 
-		dolibarr_syslog("User::Create login=".$this->login.", user=".(is_object($user)?$user->id:''), LOG_DEBUG);
+		dol_syslog("User::Create login=".$this->login.", user=".(is_object($user)?$user->id:''), LOG_DEBUG);
 
 		$error=0;
 		$this->db->begin();
@@ -684,7 +684,7 @@ class User extends CommonObject
 		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE login ='".addslashes($this->login)."'";
 
-		dolibarr_syslog("User::Create sql=".$sql, LOG_DEBUG);
+		dol_syslog("User::Create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -703,7 +703,7 @@ class User extends CommonObject
 				$sql.= " VALUES(".$this->db->idate(mktime()).",'".addslashes($this->login)."','".$this->ldap_sid."')";
 				$result=$this->db->query($sql);
 
-				dolibarr_syslog("User::Create sql=".$sql, LOG_DEBUG);
+				dol_syslog("User::Create sql=".$sql, LOG_DEBUG);
 				if ($result)
 				{
 					$table =  "".MAIN_DB_PREFIX."user";
@@ -753,7 +753,7 @@ class User extends CommonObject
 					else
 					{
 						$this->error=$interface->error;
-						dolibarr_syslog("User::Create ".$this->error, LOG_ERR);
+						dol_syslog("User::Create ".$this->error, LOG_ERR);
 						$this->db->rollback();
 						return -3;
 					}
@@ -761,7 +761,7 @@ class User extends CommonObject
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dolibarr_syslog("User::Create ".$this->error, LOG_ERR);
+					dol_syslog("User::Create ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -2;
 				}
@@ -770,7 +770,7 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("User::Create ".$this->error, LOG_ERR);
+			dol_syslog("User::Create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -808,7 +808,7 @@ class User extends CommonObject
 			$sql.= " WHERE rowid=".$this->id;
 			$resql=$this->db->query($sql);
 
-			dolibarr_syslog("User::create_from_contact sql=".$sql, LOG_DEBUG);
+			dol_syslog("User::create_from_contact sql=".$sql, LOG_DEBUG);
 			if ($resql)
 			{
 				$this->db->commit();
@@ -817,7 +817,7 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("User::create_from_contact ".$this->error, LOG_ERR);
+				dol_syslog("User::create_from_contact ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -1;
@@ -826,7 +826,7 @@ class User extends CommonObject
 		else
 		{
 			// $this->error deja positionne
-			dolibarr_syslog("User::create_from_contact - 0");
+			dol_syslog("User::create_from_contact - 0");
 
 			$this->db->rollback();
 			return $result;
@@ -866,7 +866,7 @@ class User extends CommonObject
 			$sql.= " SET fk_member=".$member->id;
 			$sql.= " WHERE rowid=".$this->id;
 
-			dolibarr_syslog("User::create_from_member sql=".$sql, LOG_DEBUG);
+			dol_syslog("User::create_from_member sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -876,7 +876,7 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("User::create_from_member - 1 - ".$this->error, LOG_ERR);
+				dol_syslog("User::create_from_member - 1 - ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -1;
@@ -885,7 +885,7 @@ class User extends CommonObject
 		else
 		{
 			// $this->error deja positionne
-			dolibarr_syslog("User::create_from_member - 2 - ".$this->error);
+			dol_syslog("User::create_from_member - 2 - ".$this->error);
 
 			$this->db->rollback();
 			return $result;
@@ -943,7 +943,7 @@ class User extends CommonObject
 		$nbrowsaffected=0;
 		$error=0;
 
-		dolibarr_syslog("User::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember);
+		dol_syslog("User::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember);
 
 		// Nettoyage parametres
 		$this->nom          = trim($this->nom);
@@ -982,7 +982,7 @@ class User extends CommonObject
 		$sql.= ", note = '".addslashes($this->note)."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("User::update sql=".$sql, LOG_DEBUG);
+		dol_syslog("User::update sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1032,7 +1032,7 @@ class User extends CommonObject
 						if ($result < 0)
 						{
 							$this->error=$luser->error;
-							dolibarr_syslog("User::update ".$this->error,LOG_ERR);
+							dol_syslog("User::update ".$this->error,LOG_ERR);
 							$error++;
 						}
 					}
@@ -1070,7 +1070,7 @@ class User extends CommonObject
 			$this->db->rollback();
 
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("User::update ".$this->error,LOG_ERR);
+			dol_syslog("User::update ".$this->error,LOG_ERR);
 			return -1;
 		}
 
@@ -1091,7 +1091,7 @@ class User extends CommonObject
 		$sql.= " tms = tms";    // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog ("Update last login date for user->id=".$this->id." ".$sql, LOG_DEBUG);
+		dol_syslog ("Update last login date for user->id=".$this->id." ".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1122,7 +1122,7 @@ class User extends CommonObject
 
 		$error=0;
 
-		dolibarr_syslog("User::setPassword user=".$user->id." password=".eregi_replace('.','*',$password)." changelater=".$changelater." notrigger=".$notrigger, LOG_DEBUG);
+		dol_syslog("User::setPassword user=".$user->id." password=".eregi_replace('.','*',$password)." changelater=".$changelater." notrigger=".$notrigger, LOG_DEBUG);
 
 		// Si nouveau mot de passe non communique, on genere par module
 		if (! $password)
@@ -1151,8 +1151,8 @@ class User extends CommonObject
 			}
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dolibarr_syslog("User::setPassword sql=hidden", LOG_DEBUG);
-			//dolibarr_syslog("User::Password sql=".$sql);
+			dol_syslog("User::setPassword sql=hidden", LOG_DEBUG);
+			//dol_syslog("User::Password sql=".$sql);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -1177,7 +1177,7 @@ class User extends CommonObject
 							if ($result < 0)
 							{
 								$this->error=$adh->error;
-								dolibarr_syslog("User::setPassword ".$this->error,LOG_ERR);
+								dol_syslog("User::setPassword ".$this->error,LOG_ERR);
 								$error++;
 							}
 						}
@@ -1207,7 +1207,7 @@ class User extends CommonObject
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 				return -1;
 			}
 		}
@@ -1219,7 +1219,7 @@ class User extends CommonObject
 			$sql.= " SET pass_temp = '".addslashes($password)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dolibarr_syslog("User::setPassword sql=hidden", LOG_DEBUG);	// No log
+			dol_syslog("User::setPassword sql=hidden", LOG_DEBUG);	// No log
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -1227,7 +1227,7 @@ class User extends CommonObject
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 				return -3;
 			}
 		}
@@ -1288,7 +1288,7 @@ class User extends CommonObject
 			$url = "http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".md5($password);
 			$mesg.= $url."\n\n";
 			$mesg.= "If you didn't ask anything, just forget this email\n\n";
-			dolibarr_syslog("User::send_password url=".$url);
+			dol_syslog("User::send_password url=".$url);
 		}
 		$mailfile = new CMailFile($subject,$this->email,$conf->notification->email_from,$mesg,
 		array(),array(),array(),'', '', 0, $msgishtml);
@@ -1689,7 +1689,7 @@ class User extends CommonObject
 		else
 		{
 			$err++;
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 		return $err;
 	}
@@ -1725,7 +1725,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 

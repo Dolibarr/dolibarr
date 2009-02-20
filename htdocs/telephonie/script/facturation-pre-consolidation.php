@@ -39,8 +39,8 @@ $resql = $db->query($sql);
 if (! $resql )
 {
   $error = 1;
-  dolibarr_syslog("Erreur ".$error);
-  dolibarr_syslog($db->error());
+  dol_syslog("Erreur ".$error);
+  dol_syslog($db->error());
 }
 
 $sql = "UPDATE ";
@@ -52,8 +52,8 @@ $resql = $db->query($sql);
 if (! $resql )
 {
   $error = 1;
-  dolibarr_syslog("Erreur ".$error);
-  dolibarr_syslog($db->error());
+  dol_syslog("Erreur ".$error);
+  dol_syslog($db->error());
 }
 
 $db->close();

@@ -173,7 +173,7 @@ class ActionComm
         $sql.= ($this->orderrowid?$this->orderrowid:"null");
         $sql.= ")";
     
-        dolibarr_syslog("ActionComm::add sql=".$sql);
+        dol_syslog("ActionComm::add sql=".$sql);
         $resql=$this->db->query($sql);
 		if ($resql)
         {
@@ -226,7 +226,7 @@ class ActionComm
 		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
 		$sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
 	
-		dolibarr_syslog("ActionComm::fetch sql=".$sql);
+		dol_syslog("ActionComm::fetch sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -307,7 +307,7 @@ class ActionComm
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
         $sql.= " WHERE id=".$this->id;
 
-        dolibarr_syslog("ActionComm::delete sql=".$sql, LOG_DEBUG);
+        dol_syslog("ActionComm::delete sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             return 1;
@@ -363,7 +363,7 @@ class ActionComm
 		$sql.= ", fk_user_done=".($this->userdone->id > 0 ? "'".$this->userdone->id."'":"null");
         $sql.= " WHERE id=".$this->id;
     
-		dolibarr_syslog("ActionComm::update sql=".$sql);
+		dol_syslog("ActionComm::update sql=".$sql);
         if ($this->db->query($sql))
         {
             return 1;
@@ -371,7 +371,7 @@ class ActionComm
         else
         {
         	$this->error=$this->db->error();
-			dolibarr_syslog("ActionComm::update ".$this->error,LOG_ERR);
+			dol_syslog("ActionComm::update ".$this->error,LOG_ERR);
         	return -1;
     	}
     }
@@ -429,7 +429,7 @@ class ActionComm
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 		$sql.= ' WHERE a.id = '.$id;
 
-		dolibarr_syslog("ActionComm::info sql=".$sql);
+		dol_syslog("ActionComm::info sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -457,7 +457,7 @@ class ActionComm
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -546,7 +546,7 @@ class ActionComm
         else
         {
         	$libelle=$this->libelle;
-        	$libelleshort=dolibarr_trunc($this->libelle,$maxlength);
+        	$libelleshort=dol_trunc($this->libelle,$maxlength);
         }
 		
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAction").': '.$libelle,'task').$lienfin);
@@ -571,7 +571,7 @@ class ActionComm
 
 		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
 
-		dolibarr_syslog("ActionComm::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
+		dol_syslog("ActionComm::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
 
 		// Check parameters
 		if (empty($format)) return -1;
@@ -658,7 +658,7 @@ class ActionComm
 			//$sql.= " AND a.datep != 'null'";	// To exclude corrupted events and avoid errors in lightning/sunbird import
 			$sql.= " ORDER by datep";
 
-			dolibarr_syslog("ActionComm::build_exportfile select events sql=".$sql);
+			dol_syslog("ActionComm::build_exportfile select events sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -702,7 +702,7 @@ class ActionComm
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dolibarr_syslog("ActionComm::build_exportfile ".$this->db->lasterror(), LOG_ERR);
+				dol_syslog("ActionComm::build_exportfile ".$this->db->lasterror(), LOG_ERR);
 				return -1;
 			}
 			

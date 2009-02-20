@@ -141,7 +141,7 @@ if ($result)
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
       print '<td><a href="fiche.php?id='.$obj->rowid.'">'.$obj->nom."</a></td>\n";
-      print '<td align="center">'.dolibarr_print_date($obj->datec,'day')."</td>\n";
+      print '<td align="center">'.dol_print_date($obj->datec,'day')."</td>\n";
       print '<td align="right">'.price($obj->amount)."</td>\n";
       print '<td align="center"><a href="fiche.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
       print '<td>&nbsp;</td>';
@@ -154,7 +154,7 @@ if ($result)
 }
 else 
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 $db->close();

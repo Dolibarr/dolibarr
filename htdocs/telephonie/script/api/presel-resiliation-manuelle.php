@@ -86,7 +86,7 @@ function ActivationPreselection($host, $user_login, $user_passwd, $ligne, $id_pe
   $fp = fsockopen($host, 80, $errno, $errstr, 30);
   if (!$fp)
     {
-      dolibarr_syslog("$errstr ($errno)");
+      dol_syslog("$errstr ($errno)");
     }
   else
     {
@@ -97,7 +97,7 @@ function ActivationPreselection($host, $user_login, $user_passwd, $ligne, $id_pe
       fwrite($fp, $out);
       
       if ($verbose > 2)
-	dolibarr_syslog("Data sent, waiting for response");
+	dol_syslog("Data sent, waiting for response");
 
       $parse = 0;
       $result = "error";
@@ -109,7 +109,7 @@ function ActivationPreselection($host, $user_login, $user_passwd, $ligne, $id_pe
 	  $line = fgets($fp, 1024);
 	  
 	  if ($verbose > 2)
-	    dolibarr_syslog($line);
+	    dol_syslog($line);
 
 	  if ($parse == 1)
 	    {
@@ -132,12 +132,12 @@ function ActivationPreselection($host, $user_login, $user_passwd, $ligne, $id_pe
   
   if (substr($result,0,2) == "OK")
     {
-      dolibarr_syslog("Resiliation r贳sie ligne ".$ligne." id client ".$id_person." $result\n");
+      dol_syslog("Resiliation r贳sie ligne ".$ligne." id client ".$id_person." $result\n");
       return 0;
     }
   else
     {
-      dolibarr_syslog("Resiliation 袨ou裠ligne ".$ligne." id client ".$id_person." $result\n");
+      dol_syslog("Resiliation 袨ou裠ligne ".$ligne." id client ".$id_person." $result\n");
 
       return -1;
     }

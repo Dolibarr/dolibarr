@@ -117,7 +117,7 @@ if ($_socid > 0)
 	 */
 	$head = societe_prepare_head($objsoc);
 
-	dolibarr_fiche_head($head, 'absolutediscount', $objsoc->nom);
+	dol_fiche_head($head, 'absolutediscount', $objsoc->nom);
 
 
     print '<form method="POST" action="remx.php?id='.$objsoc->id.'">';
@@ -141,7 +141,7 @@ if ($_socid > 0)
     }
     else
     {
-    	dolibarr_print_error($db);
+    	dol_print_error($db);
     }
 
     print '<tr><td width="38%">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
@@ -208,7 +208,7 @@ if ($_socid > 0)
             $obj = $db->fetch_object($resql);
             $var = !$var;
             print "<tr $bc[$var]>";
-            print '<td>'.dolibarr_print_date($obj->dc,'dayhour').'</td>';
+            print '<td>'.dol_print_date($obj->dc,'dayhour').'</td>';
             print '<td>';
 			if ($obj->description == '(CREDIT_NOTE)')
 			{
@@ -238,7 +238,7 @@ if ($_socid > 0)
     }
     else
     {
-    	dolibarr_print_error($db);
+    	dol_print_error($db);
     }
 
     print '<br>';
@@ -327,7 +327,7 @@ if ($_socid > 0)
             $obj = array_shift($tab_sqlobj);
             $var = !$var;
             print "<tr $bc[$var]>";
-            print '<td>'.dolibarr_print_date($obj->dc,'dayhour').'</td>';
+            print '<td>'.dol_print_date($obj->dc,'dayhour').'</td>';
             print '<td>';
 			if ($obj->description == '(CREDIT_NOTE)')
 			{
@@ -356,7 +356,7 @@ if ($_socid > 0)
     }
     else
     {
-        print dolibarr_print_error($db);
+        print dol_print_error($db);
     }
 
 }

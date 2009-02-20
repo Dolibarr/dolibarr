@@ -52,7 +52,7 @@ if ($_POST["action"] == 'add')
     $account->account_number  = trim($_POST["account_number"]);
     
     $account->solde           = $_POST["solde"];
-    $account->date_solde      = dolibarr_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+    $account->date_solde      = dol_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
     $account->country_code    = trim($_POST["account_country_code"]);
@@ -275,7 +275,7 @@ else
 
 		// Onglets
 		$head=bank_prepare_head($account);
-		dolibarr_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"));
+		dol_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"));
 	
 		/*
 		* Confirmation de la suppression

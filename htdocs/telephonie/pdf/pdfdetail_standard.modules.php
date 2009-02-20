@@ -223,8 +223,8 @@ class pdfdetail_standard {
 		}
 	      else
 		{
-		  dolibarr_syslog("Erreur SQl");
-		  dolibarr_syslog($this->db->error());
+		  dol_syslog("Erreur SQl");
+		  dol_syslog($this->db->error());
 		}
 	      /*
 	       * Appels les plus important
@@ -459,7 +459,7 @@ class pdfdetail_standard {
 		}
 	      else
 		{
-		  dolibarr_syslog("Erreur lecture des communications");
+		  dol_syslog("Erreur lecture des communications");
 		}
 
 	      /*
@@ -471,7 +471,7 @@ class pdfdetail_standard {
 
 	      $this->filename = $file;
 
-	      dolibarr_syslog("Write $file");
+	      dol_syslog("Write $file");
 
 	      if(file_exists($file_graph))
 		{

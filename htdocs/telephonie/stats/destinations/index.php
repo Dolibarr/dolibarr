@@ -45,7 +45,7 @@ $head[$h][1] = "Destinations";
 $hselected = $h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, "Destinations");
+dol_fiche_head($head, $hselected, "Destinations");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 

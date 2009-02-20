@@ -116,7 +116,7 @@ if ($resql)
 		print '</td>';
 
         // Date
-        print '<td align="center">'.dolibarr_print_date($objp->dp,'day').'</td>';
+        print '<td align="center">'.dol_print_date($objp->dp,'day').'</td>';
 
         // Banque
         print '<td>';
@@ -141,7 +141,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 $db->close();

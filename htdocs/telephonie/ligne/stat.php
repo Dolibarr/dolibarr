@@ -87,7 +87,7 @@ if ($_GET["id"] or $_GET["numero"])
 	  $previous_ref = $ligne->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?id='.$ligne->ref_previous.'">'.img_previous().'</a>':'';
 	  $next_ref     = $ligne->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?id='.$ligne->ref_next.'">'.img_next().'</a>':'';
 
-	  dolibarr_fiche_head($head, $hselected, 'Statistiques ligne');
+	  dol_fiche_head($head, $hselected, 'Statistiques ligne');
 
 	  print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">Statistiques '.$mesg.'</td>';
 	  print '<td class="nobordernopadding"><a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
@@ -95,7 +95,7 @@ if ($_GET["id"] or $_GET["numero"])
 	        
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-	  print '<tr><td width="25%">Num�ro</td><td>'.dolibarr_print_phone($ligne->numero,0,0,true).'</td>';
+	  print '<tr><td width="25%">Num�ro</td><td>'.dol_print_phone($ligne->numero,0,0,true).'</td>';
 	  print '<td>Factur�e : '.$ligne->facturable.'</td><td>&nbsp;</td></tr>';
 	      	     
 	  $client = new Societe($db, $ligne->client_id);

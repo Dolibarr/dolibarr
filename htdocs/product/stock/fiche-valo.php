@@ -49,7 +49,7 @@ if ($_GET["id"])
 	$result = $entrepot->fetch($_GET["id"]);
 	if ($result < 0)
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	/*
@@ -84,7 +84,7 @@ if ($_GET["id"])
 	$head[$h][1] = $langs->trans("Info");
 	$h++;
 
-	dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse"));
+	dol_fiche_head($head, $hselected, $langs->trans("Warehouse"));
 
 	print '<table class="border" width="100%">';
 

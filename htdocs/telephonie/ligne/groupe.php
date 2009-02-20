@@ -162,7 +162,7 @@ if ($result)
       print img_file();      
       print '</a>&nbsp;';
 
-      print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne,0,0,true)."</a></td>\n";
+      print '<a href="fiche.php?id='.$obj->rowid.'">'.dol_print_phone($obj->ligne,0,0,true)."</a></td>\n";
 
       print '<td>'.$obj->nom.'</td>';
       print '<td>'.$obj->nom_facture.'</td>';

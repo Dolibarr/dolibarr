@@ -93,7 +93,7 @@ $fuser->getrights();
  */
 $head = user_prepare_head($fuser);
 
-dolibarr_fiche_head($head, 'rights', $langs->trans("User"));
+dol_fiche_head($head, 'rights', $langs->trans("User"));
 
 
 $db->begin();
@@ -154,7 +154,7 @@ if ($result)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 // Lecture des droits groupes
@@ -181,7 +181,7 @@ if ($result)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 

@@ -87,7 +87,7 @@ if ($id > 0 || ! empty($ref))
 		$head = ordersupplier_prepare_head($commande);
 
 		$title=$langs->trans("SupplierOrder");
-		dolibarr_fiche_head($head, 'note', $title);
+		dol_fiche_head($head, 'note', $title);
 
 
 		/*
@@ -123,7 +123,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
 			if ($commande->date_commande)
 			{
-				print dolibarr_print_date($commande->date_commande,"dayhourtext")."\n";
+				print dol_print_date($commande->date_commande,"dayhourtext")."\n";
 			}
 			print "</td></tr>";
 

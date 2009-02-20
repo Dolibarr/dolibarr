@@ -48,7 +48,7 @@ $contrat->info($_GET["id"]);
 
 $head = contract_prepare_head($contrat);
 
-dolibarr_fiche_head($head, 'info', $langs->trans("Contract"));
+dol_fiche_head($head, 'info', $langs->trans("Contract"));
 
 
 print '<table width="100%"><tr><td>';

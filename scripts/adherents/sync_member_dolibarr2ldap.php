@@ -109,13 +109,13 @@ if ($resql)
 		$result=$member->fetch($obj->rowid);
 		if ($result < 0)
 		{
-			dolibarr_print_error($db,$member->error);
+			dol_print_error($db,$member->error);
 			exit;
 		}
 		$result=$member->fetch_subscriptions();
 		if ($result < 0)
 		{
-			dolibarr_print_error($db,$member->error);
+			dol_print_error($db,$member->error);
 			exit;
 		}
 		
@@ -144,7 +144,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 return $error;

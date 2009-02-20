@@ -104,7 +104,7 @@ class Commande extends CommonObject
 	 */
 	function create_from_propale($user, $propale_id)
 	{
-		dolibarr_syslog("Commande::create_from_propale propale_id=$propale_id");
+		dol_syslog("Commande::create_from_propale propale_id=$propale_id");
 
 		$propal = new Propal($this->db);
 		$propal->fetch($propale_id);
@@ -181,7 +181,7 @@ class Commande extends CommonObject
 				}
 				else
 				{
-					dolibarr_print_error($db,"Commande::getNextNumRef ".$obj->error);
+					dol_print_error($db,"Commande::getNextNumRef ".$obj->error);
 					return "";
 				}
 			}
@@ -342,7 +342,7 @@ class Commande extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 0";
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Commande::set_draft sql=".$sql, LOG_DEBUG);
+		dol_syslog("Commande::set_draft sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			// If stock is decremented on validate order, we must reincrement it
@@ -380,7 +380,7 @@ class Commande extends CommonObject
 		{
 			$this->error=$this->db->error();
 			$this->db->rollback();
-			dolibarr_syslog($this->error, LOG_ERR);
+			dol_syslog($this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -409,7 +409,7 @@ class Commande extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog($this->error, LOG_ERR);
+				dol_syslog($this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -461,7 +461,7 @@ class Commande extends CommonObject
 			{
 				$this->error=$this->db->error();
 				$this->db->rollback();
-				dolibarr_syslog($this->error, LOG_ERR);
+				dol_syslog($this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -478,13 +478,13 @@ class Commande extends CommonObject
 		// Nettoyage parametres
 		$this->brouillon = 1;		// On positionne en mode brouillon la commande
 
-		dolibarr_syslog("Commande::create");
+		dol_syslog("Commande::create");
 
 		// Verification parametres
 		if (! empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
-			dolibarr_syslog("Commande::create ".$this->error, LOG_ERR);
+			dol_syslog("Commande::create ".$this->error, LOG_ERR);
 			return -1;
 		}
 		if (! $remise) $remise=0;
@@ -495,7 +495,7 @@ class Commande extends CommonObject
 		if ($result < 0)
 		{
 			$this->error="Failed to fetch company";
-			dolibarr_syslog("Commande::create ".$this->error, LOG_ERR);
+			dol_syslog("Commande::create ".$this->error, LOG_ERR);
 			return -2;
 		}
 
@@ -516,7 +516,7 @@ class Commande extends CommonObject
 		$sql.= " ".($this->remise_absolue>0?$this->remise_absolue:'NULL').",";
 		$sql.= " '".$this->remise_percent."')";
 
-		dolibarr_syslog("Commande::create sql=".$sql);
+		dol_syslog("Commande::create sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -551,7 +551,7 @@ class Commande extends CommonObject
 					if ($resql < 0)
 					{
 		    $this->error=$this->db->error;
-		    dolibarr_print_error($this->db);
+		    dol_print_error($this->db);
 		    break;
 					}
 	  	}
@@ -606,7 +606,7 @@ class Commande extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->db->rollback();
 			return -1;
 		}
@@ -637,7 +637,7 @@ class Commande extends CommonObject
 	 */
 	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='')
 	{
-		dolibarr_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end", LOG_DEBUG);
+		dol_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		// Clean parameters
@@ -719,7 +719,7 @@ class Commande extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog("Error sql=$sql, error=".$this->error);
+					dol_syslog("Error sql=$sql, error=".$this->error);
 					$this->db->rollback();
 					return -1;
 				}
@@ -832,7 +832,7 @@ class Commande extends CommonObject
 		if ($ref) $sql.= " WHERE c.ref='".$ref."'";
 		else $sql.= " WHERE c.rowid=".$id;
 
-		dolibarr_syslog("Commande::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("Commande::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql) ;
 		if ($result)
 		{
@@ -902,14 +902,14 @@ class Commande extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog('Commande::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
+				dol_syslog('Commande::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
 				$this->error='Order with id '.$rowid.' not found sql='.$sql;
 				return -2;
 			}
 		}
 		else
 		{
-			dolibarr_syslog('Commande::Fetch Error rowid='.$rowid.' Erreur dans fetch de la commande');
+			dol_syslog('Commande::Fetch Error rowid='.$rowid.' Erreur dans fetch de la commande');
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -1009,7 +1009,7 @@ class Commande extends CommonObject
 		if ($only_product) $sql .= ' AND p.fk_product_type = 0';
 		$sql .= ' ORDER BY l.rang';
 
-		dolibarr_syslog("Commande::fetch_lines sql=".$sql,LOG_DEBUG);
+		dol_syslog("Commande::fetch_lines sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1059,7 +1059,7 @@ class Commande extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog('Commande::fetch_lines: Error '.$this->error);
+			dol_syslog('Commande::fetch_lines: Error '.$this->error);
 			return -3;
 		}
 	}
@@ -1102,7 +1102,7 @@ class Commande extends CommonObject
 		$sql.= ' GROUP BY cd.rowid, cd.fk_product';
 		//print $sql;
 
-		dolibarr_syslog("Commande::loadExpeditions sql=".$sql,LOG_DEBUG);
+		dol_syslog("Commande::loadExpeditions sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1120,7 +1120,7 @@ class Commande extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Commande::loadExpeditions ".$this->error,LOG_ERR);
+			dol_syslog("Commande::loadExpeditions ".$this->error,LOG_ERR);
 			return -1;
 		}
 
@@ -1337,7 +1337,7 @@ class Commande extends CommonObject
 			$sql.= ' SET remise_absolue = '.$remise;
 			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
 
-			dolibarr_syslog("Commande::set_remise_absolue sql=$sql");
+			dol_syslog("Commande::set_remise_absolue sql=$sql");
 
 			if ($this->db->query($sql))
 	  {
@@ -1368,7 +1368,7 @@ class Commande extends CommonObject
 			$sql.= " SET date_livraison = ".($date_livraison ? $this->db->idate($date_livraison) : 'null');
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-			dolibarr_syslog("Commande::set_date_livraison sql=$sql",LOG_DEBUG);
+			dol_syslog("Commande::set_date_livraison sql=$sql",LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -1378,7 +1378,7 @@ class Commande extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("Commande::set_date_livraison ".$this->error,LOG_ERR);
+				dol_syslog("Commande::set_date_livraison ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}
@@ -1409,7 +1409,7 @@ class Commande extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("Commande::set_adresse_livraison Erreur SQL");
+				dol_syslog("Commande::set_adresse_livraison Erreur SQL");
 				return -1;
 			}
 		}
@@ -1476,7 +1476,7 @@ class Commande extends CommonObject
 	 */
 	function cond_reglement($cond_reglement_id)
 	{
-		dolibarr_syslog('Commande::cond_reglement('.$cond_reglement_id.')');
+		dol_syslog('Commande::cond_reglement('.$cond_reglement_id.')');
 		if ($this->statut >= 0)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
@@ -1489,14 +1489,14 @@ class Commande extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog('Commande::cond_reglement Erreur '.$sql.' - '.$this->db->error());
+				dol_syslog('Commande::cond_reglement Erreur '.$sql.' - '.$this->db->error());
 				$this->error=$this->db->error();
 				return -1;
 			}
 		}
 		else
 		{
-			dolibarr_syslog('Commande::cond_reglement, etat commande incompatible');
+			dol_syslog('Commande::cond_reglement, etat commande incompatible');
 			$this->error='Etat commande incompatible '.$this->statut;
 			return -2;
 		}
@@ -1510,7 +1510,7 @@ class Commande extends CommonObject
 	 */
 	function mode_reglement($mode_reglement_id)
 	{
-		dolibarr_syslog('Commande::mode_reglement('.$mode_reglement_id.')');
+		dol_syslog('Commande::mode_reglement('.$mode_reglement_id.')');
 		if ($this->statut >= 0)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
@@ -1523,14 +1523,14 @@ class Commande extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog('Commande::mode_reglement Erreur '.$sql.' - '.$this->db->error());
+				dol_syslog('Commande::mode_reglement Erreur '.$sql.' - '.$this->db->error());
 				$this->error=$this->db->error();
 				return -1;
 			}
 		}
 		else
 		{
-			dolibarr_syslog('Commande::mode_reglement, etat facture incompatible');
+			dol_syslog('Commande::mode_reglement, etat facture incompatible');
 			$this->error='Etat commande incompatible '.$this->statut;
 			return -2;
 		}
@@ -1546,7 +1546,7 @@ class Commande extends CommonObject
 	{
 		if ($user->rights->commande->creer)
 		{
-			dolibarr_syslog('Commande::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
+			dol_syslog('Commande::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET ref_client = '.(empty($ref_client) ? 'NULL' : '\''.addslashes($ref_client).'\'');
 			$sql.= ' WHERE rowid = '.$this->id;
@@ -1558,7 +1558,7 @@ class Commande extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog('Commande::set_ref_client Erreur '.$this->error.' - '.$sql);
+				dol_syslog('Commande::set_ref_client Erreur '.$this->error.' - '.$sql);
 				return -2;
 			}
 		}
@@ -1591,7 +1591,7 @@ class Commande extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -1612,7 +1612,7 @@ class Commande extends CommonObject
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='')
 	{
-		dolibarr_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $date_start, $date_end");
+		dol_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $date_start, $date_end");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
@@ -1994,7 +1994,7 @@ class Commande extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -2007,7 +2007,7 @@ class Commande extends CommonObject
 	{
 		global $user,$langs;
 
-		dolibarr_syslog("Commande::initAsSpecimen");
+		dol_syslog("Commande::initAsSpecimen");
 
 		// Charge tableau des id de societe socids
 		$socids = array();
@@ -2109,7 +2109,7 @@ class Commande extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -2223,7 +2223,7 @@ class CommandeLigne
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -2238,7 +2238,7 @@ class CommandeLigne
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->id."';";
 
-		dolibarr_syslog("CommandeLigne::delete sql=".$sql);
+		dol_syslog("CommandeLigne::delete sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2254,7 +2254,7 @@ class CommandeLigne
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("CommandeLigne::delete ".$this->error);
+			dol_syslog("CommandeLigne::delete ".$this->error);
 			return -1;
 		}
 	}
@@ -2268,7 +2268,7 @@ class CommandeLigne
 	{
 		global $langs, $conf, $user;
 
-		dolibarr_syslog("CommandeLigne::insert rang=".$this->rang);
+		dol_syslog("CommandeLigne::insert rang=".$this->rang);
 		$this->db->begin();
 
 		$rangtouse=$this->rang;
@@ -2285,7 +2285,7 @@ class CommandeLigne
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 				$this->db->rollback();
 				return -1;
 			}
@@ -2328,7 +2328,7 @@ class CommandeLigne
 		else { $sql.='null'; }
 		$sql.= ')';
 
-		dolibarr_syslog("CommandeLigne::insert sql=$sql");
+		dol_syslog("CommandeLigne::insert sql=$sql");
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2350,7 +2350,7 @@ class CommandeLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("CommandeLigne::insert Error ".$this->error);
+			dol_syslog("CommandeLigne::insert Error ".$this->error);
 			$this->db->rollback();
 			return -2;
 		}
@@ -2372,7 +2372,7 @@ class CommandeLigne
 		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dolibarr_syslog("CommandeLigne::update_total sql=$sql");
+		dol_syslog("CommandeLigne::update_total sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2383,7 +2383,7 @@ class CommandeLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("CommandeLigne::update_total Error ".$this->error);
+			dol_syslog("CommandeLigne::update_total Error ".$this->error);
 			$this->db->rollback();
 			return -2;
 		}

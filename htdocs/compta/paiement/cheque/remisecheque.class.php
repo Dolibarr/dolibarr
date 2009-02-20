@@ -72,7 +72,7 @@ class RemiseCheque extends CommonObject
 		if ($id)  $sql.= " WHERE bc.rowid = ".$id;
 		if ($ref) $sql.= " WHERE bc.number = '".addslashes($ref)."'";
 
-		dolibarr_syslog("RemiseCheque::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("RemiseCheque::fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -124,7 +124,7 @@ class RemiseCheque extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_cheque (datec, date_bordereau, fk_user_author, fk_bank_account, amount, number, nbcheque)";
 		$sql.= " VALUES (".$this->db->idate(mktime()).",".$this->db->idate(mktime()).",".$user->id.",".$account_id.",0,0,0)";
 
-		dolibarr_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+		dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ( $resql )
 		{
@@ -132,7 +132,7 @@ class RemiseCheque extends CommonObject
 			if ($this->id == 0)
 			{
 				$this->errno = -1024;
-				dolibarr_syslog("Remisecheque::Create Erreur Lecture ID ($this->errno)", LOG_ERR);
+				dol_syslog("Remisecheque::Create Erreur Lecture ID ($this->errno)", LOG_ERR);
 			}
 
 			if ($this->id > 0 && $this->errno == 0)
@@ -141,12 +141,12 @@ class RemiseCheque extends CommonObject
 				$sql.= " SET number='(PROV".$this->id.")'";
 				$sql.= " WHERE rowid='".$this->id."';";
 
-				dolibarr_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+				dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if (! $resql)
 				{
 					$this->errno = -1025;
-					dolibarr_syslog("RemiseCheque::Create ERREUR UPDATE ($this->errno)", LOG_ERR);
+					dol_syslog("RemiseCheque::Create ERREUR UPDATE ($this->errno)", LOG_ERR);
 				}
 			}
 
@@ -159,7 +159,7 @@ class RemiseCheque extends CommonObject
 				$sql.= " AND b.fk_bordereau = 0 AND b.fk_account='".$account_id."'";
 				$sql.= " LIMIT 40"; // On limite a 40 pour ne g�n�rer des PDF que d'une page
 
-				dolibarr_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+				dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -172,7 +172,7 @@ class RemiseCheque extends CommonObject
 				else
 				{
 					$this->errno = -1026;
-					dolibarr_syslog("RemiseCheque::Create Error ($this->errno)", LOG_ERR);
+					dol_syslog("RemiseCheque::Create Error ($this->errno)", LOG_ERR);
 				}
 			}
 
@@ -184,12 +184,12 @@ class RemiseCheque extends CommonObject
 					$sql.= " SET fk_bordereau = ".$this->id;
 					$sql.= " WHERE rowid = ".$lineid;
 
-					dolibarr_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+					dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if (!$resql)
 					{
 						$this->errno = -18;
-						dolibarr_syslog("RemiseCheque::Create Error update bank ($this->errno)", LOG_ERR);
+						dol_syslog("RemiseCheque::Create Error update bank ($this->errno)", LOG_ERR);
 					}
 				}
 			}
@@ -199,7 +199,7 @@ class RemiseCheque extends CommonObject
 				if ($this->UpdateAmount() <> 0)
 				{
 					$this->errno = -1027;
-					dolibarr_syslog("RemiseCheque::Create ERREUR ($this->errno)");
+					dol_syslog("RemiseCheque::Create ERREUR ($this->errno)");
 				}
 			}
 		}
@@ -208,7 +208,7 @@ class RemiseCheque extends CommonObject
 			$result = -1;
 			$this->error=$this->db->lasterror();
 			$this->errno=$this->db->lasterrno();
-			dolibarr_syslog("RemiseCheque::Create Erreur $result INSERT Mysql");
+			dol_syslog("RemiseCheque::Create Erreur $result INSERT Mysql");
 		}
 
 
@@ -220,7 +220,7 @@ class RemiseCheque extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			dolibarr_syslog("RemiseCheque::Create ROLLBACK ($this->errno)");
+			dol_syslog("RemiseCheque::Create ROLLBACK ($this->errno)");
 			return $this->errno;
 		}
 
@@ -246,7 +246,7 @@ class RemiseCheque extends CommonObject
 			if ($num <> 1)
 	  {
 	  	$this->errno = -2;
-	  	dolibarr_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
+	  	dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
 	  }
 
 	  if ( $this->errno === 0)
@@ -258,7 +258,7 @@ class RemiseCheque extends CommonObject
 	  	if (!$resql)
 	  	{
 	  		$this->errno = -1028;
-	  		dolibarr_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
+	  		dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
 	  	}
 	  }
 		}
@@ -270,7 +270,7 @@ class RemiseCheque extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			dolibarr_syslog("RemiseCheque::Delete ROLLBACK ($this->errno)");
+			dol_syslog("RemiseCheque::Delete ROLLBACK ($this->errno)");
 		}
 
 		return $this->errno;
@@ -296,7 +296,7 @@ class RemiseCheque extends CommonObject
 			$sql.= " SET statut=1, number='".$num."'";
 			$sql .= " WHERE rowid = $this->id AND statut=0;";
 
-			dolibarr_syslog("RemiseCheque::Validate sql=".$sql, LOG_DEBUG);
+			dol_syslog("RemiseCheque::Validate sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ( $resql )
 			{
@@ -309,13 +309,13 @@ class RemiseCheque extends CommonObject
 				else
 				{
 					$this->errno = -1029;
-					dolibarr_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
+					dol_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
 				}
 			}
 			else
 			{
 				$this->errno = -1033;
-				dolibarr_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
+				dol_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
 			}
 		}
 
@@ -327,7 +327,7 @@ class RemiseCheque extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			dolibarr_syslog("RemiseCheque::Validate ".$this->errno, LOG_ERR);
+			dol_syslog("RemiseCheque::Validate ".$this->errno, LOG_ERR);
 		}
 
 		return $this->errno;
@@ -346,7 +346,7 @@ class RemiseCheque extends CommonObject
 		// We use +0 to convert varchar to number
 		$sql = "SELECT MAX(number+0) FROM ".MAIN_DB_PREFIX."bordereau_cheque";
 
-		dolibarr_syslog("Remisecheque::getNextNumber sql=".$sql);
+		dol_syslog("Remisecheque::getNextNumber sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -357,7 +357,7 @@ class RemiseCheque extends CommonObject
 		else
 		{
 			$this->errno = -1034;
-			dolibarr_syslog("Remisecheque::Validate Erreur SELECT ($this->errno)", LOG_ERR);
+			dol_syslog("Remisecheque::Validate Erreur SELECT ($this->errno)", LOG_ERR);
 		}
 
 		$num++;
@@ -396,7 +396,7 @@ class RemiseCheque extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -414,7 +414,7 @@ class RemiseCheque extends CommonObject
 		
 		if (empty($model)) $model='blochet';
 		
-		dolibarr_syslog("RemiseCheque::GeneratePdf model=".$model, LOG_DEBUG);
+		dol_syslog("RemiseCheque::GeneratePdf model=".$model, LOG_DEBUG);
 
 		$dir=DOL_DOCUMENT_ROOT ."/includes/modules/cheque/pdf/";
 
@@ -435,7 +435,7 @@ class RemiseCheque extends CommonObject
 			$sql.= " AND bc.rowid = ".$this->id;
 			$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
 
-			dolibarr_syslog("RemiseCheque::GeneratePdf sql=".$sql, LOG_DEBUG);
+			dol_syslog("RemiseCheque::GeneratePdf sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -471,8 +471,8 @@ class RemiseCheque extends CommonObject
 			else
 			{
 				$outputlangs->charset_output=$sav_charset_output;
-				dolibarr_syslog("Error");
-				dolibarr_print_error($db,$pdf->pdferror());
+				dol_syslog("Error");
+				dol_print_error($db,$pdf->pdferror());
 				return 0;
 			}
 		}
@@ -516,13 +516,13 @@ class RemiseCheque extends CommonObject
 	  if (!$resql)
 	  {
 	  	$this->errno = -1030;
-	  	dolibarr_syslog("RemiseCheque::UpdateAmount ERREUR UPDATE ($this->errno)");
+	  	dol_syslog("RemiseCheque::UpdateAmount ERREUR UPDATE ($this->errno)");
 	  }
 		}
 		else
 		{
 			$this->errno = -1031;
-			dolibarr_syslog("RemiseCheque::UpdateAmount ERREUR SELECT ($this->errno)");
+			dol_syslog("RemiseCheque::UpdateAmount ERREUR SELECT ($this->errno)");
 		}
 
 		if ($this->errno === 0)
@@ -532,7 +532,7 @@ class RemiseCheque extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			dolibarr_syslog("RemiseCheque::UpdateAmount ROLLBACK ($this->errno)");
+			dol_syslog("RemiseCheque::UpdateAmount ROLLBACK ($this->errno)");
 		}
 
 		return $this->errno;
@@ -560,7 +560,7 @@ class RemiseCheque extends CommonObject
 	  else
 	  {
 	  	$this->errno = -1032;
-	  	dolibarr_syslog("RemiseCheque::RemoveCheck ERREUR UPDATE ($this->errno)");
+	  	dol_syslog("RemiseCheque::RemoveCheck ERREUR UPDATE ($this->errno)");
 	  }
 		}
 		return 0;

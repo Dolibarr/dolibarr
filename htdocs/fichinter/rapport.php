@@ -93,7 +93,7 @@ $sql .= " ORDER BY $sortfield $sortorder ";
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
-  $title = $langs->trans("Report")." ".dolibarr_print_date(strtotime($start),"%B %Y");
+  $title = $langs->trans("Report")." ".dol_print_date(strtotime($start),"%B %Y");
   print_barre_liste($title, $page, "rapport.php","&socid=$socid",$sortfield,$sortorder,'',$num);
 
   $i = 0;
@@ -124,7 +124,7 @@ if ( $db->query($sql) )
         print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->rowid.$filter."\">".$objp->nom."</a></TD>\n";
       }
       print '<td>'.nl2br($objp->description).'</td>';
-      print "<td>".dolibarr_print_date($objp->dp,"%d %B %Y")."</td>\n";
+      print "<td>".dol_print_date($objp->dp,"%d %B %Y")."</td>\n";
       print '<td align="center">'.sprintf("%.1f",$objp->duree).'</td>';
       $DureeTotal += $objp->duree;
       print "</tr>\n";
@@ -137,7 +137,7 @@ if ( $db->query($sql) )
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 $db->close();
 

@@ -147,18 +147,18 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	  else
             {
 	      $msg='<div class="error">'.$langs->trans("ErrorMailRecipientIsEmpty").'</div>';
-	      dolibarr_syslog("Le mail du destinataire est vide");
+	      dol_syslog("Le mail du destinataire est vide");
             }
 
         }
       else
         {
-	  dolibarr_syslog("Impossible de lire :".$file);
+	  dol_syslog("Impossible de lire :".$file);
         }
     }
     else
       {
-        dolibarr_syslog("Impossible de lire les données de la facture. Le fichier facture n'a peut-être pas été généré.");
+        dol_syslog("Impossible de lire les données de la facture. Le fichier facture n'a peut-être pas été généré.");
       }
 }
 
@@ -202,7 +202,7 @@ if ($_GET["facid"] > 0)
 	  $hselected = $h;
 	  $h++;
 	  
-	  dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
+	  dol_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
 	  
 	  /*
 	   *   Facture
@@ -215,8 +215,8 @@ if ($_GET["facid"] > 0)
 	  print "<td>Conditions de réglement</td><td>" . $fac->cond_reglement ."</td></tr>";
 	  
 	  print '<tr><td>'.$langs->trans("Date").'</td>';
-	  print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"dayhourtext")."</td>\n";
-	  print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"dayhourtext");
+	  print "<td colspan=\"3\">".dol_print_date($fac->date,"dayhourtext")."</td>\n";
+	  print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dol_print_date($fac->date_lim_reglement,"dayhourtext");
 	  print "</td></tr>";
 	  
 	  print '<tr>';
@@ -294,7 +294,7 @@ if ($_GET["facid"] > 0)
 	  print "</table>";
 	  $db->free($result);
 	} else {
-	  dolibarr_print_error($db);
+	  dol_print_error($db);
 	}
 
       print "</td></tr>";
@@ -387,17 +387,17 @@ if ($_GET["facid"] > 0)
 		      if ($objp->fk_product_type==1) print img_object($langs->trans("ShowService"),"service");
 		      else print img_object($langs->trans("ShowProduct"),"product");
 		      print ' '.stripslashes(nl2br($objp->description)).'</a>';
-		      if ($objp->date_start && $objp->date_end) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
-		      if ($objp->date_start && ! $objp->date_end) { print " (A partir du ".dolibarr_print_date($objp->date_start).")"; }
-		      if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dolibarr_print_date($objp->date_end).")"; }
+		      if ($objp->date_start && $objp->date_end) { print " (Du ".dol_print_date($objp->date_start)." au ".dol_print_date($objp->date_end).")"; }
+		      if ($objp->date_start && ! $objp->date_end) { print " (A partir du ".dol_print_date($objp->date_start).")"; }
+		      if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dol_print_date($objp->date_end).")"; }
 		      print '</td>';
 		    }
 		  else
 		    {
 		      print "<td>".stripslashes(nl2br($objp->description));
-		      if ($objp->date_start && $objp->date_end) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
-		      if ($objp->date_start && ! $objp->date_end) { print " (A partir du ".dolibarr_print_date($objp->date_start).")"; }
-		      if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dolibarr_print_date($objp->date_end).")"; }
+		      if ($objp->date_start && $objp->date_end) { print " (Du ".dol_print_date($objp->date_start)." au ".dol_print_date($objp->date_end).")"; }
+		      if ($objp->date_start && ! $objp->date_end) { print " (A partir du ".dol_print_date($objp->date_start).")"; }
+		      if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dol_print_date($objp->date_end).")"; }
 		      print "</td>\n";
 		    }
 		  
@@ -454,7 +454,7 @@ if ($_GET["facid"] > 0)
 	}
       else
 	{
-	  dolibarr_print_error($db);
+	  dol_print_error($db);
 	}
       /*
        * Ajouter une ligne
@@ -566,7 +566,7 @@ if ($_GET["facid"] > 0)
 		  $var=!$var;
 		  print "<tr $bc[$var]>";
 		  print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>';
-		  print "<td>".dolibarr_print_date($objp->dp)."</td>\n";
+		  print "<td>".dol_print_date($objp->dp)."</td>\n";
 		  print '<td align="right">'.price($objp->price).'</td>';
 		  print "</tr>";
 		  $total = $total + $objp->price;
@@ -578,7 +578,7 @@ if ($_GET["facid"] > 0)
 	}
       else
 	{
-	  dolibarr_print_error($db);
+	  dol_print_error($db);
 	}
 
 
@@ -616,7 +616,7 @@ if ($_GET["facid"] > 0)
 		  $var=!$var;
 		  print "<tr $bc[$var]>";
 		  print '<td>'.img_object($langs->trans("ShowTask"),"task").' '.$objp->id.'</td>';
-		  print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
+		  print '<td>'.dol_print_date($objp->da)."</td>\n";
 		  print '<td>'.stripslashes($objp->label).'</td>';
 		  print '<td>'.$objp->login.'</td>';
 		  print "</tr>\n";
@@ -627,7 +627,7 @@ if ($_GET["facid"] > 0)
 	}
       else
 	{
-	  dolibarr_print_error($db);
+	  dol_print_error($db);
 	}
 
       print "</td></tr></table>";

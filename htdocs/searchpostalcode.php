@@ -63,7 +63,7 @@ function run_request($table)
     $result=$db->query($sql);
     if (!$result)
     {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
     //  print $sql;
 }

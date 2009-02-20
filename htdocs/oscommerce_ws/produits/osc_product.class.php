@@ -76,7 +76,7 @@ class Osc_product
 		global $conf;
 	
 		$this->error = '';
-		dolibarr_syslog("Osc_product::fetch $id=$id ref=$ref");
+		dol_syslog("Osc_product::fetch $id=$id ref=$ref");
       	// Verification parametres
       	if (! $id && ! $ref)
         {
@@ -166,7 +166,7 @@ class Osc_product
 		}
         else
         {
-            dolibarr_syslog("osc_product::transcode echec suppression");
+            dol_syslog("osc_product::transcode echec suppression");
 //            $this->db->rollback();
 //            return -1;
 		}
@@ -178,7 +178,7 @@ class Osc_product
 		}
         else
         {
-            dolibarr_syslog("osc_product::transcode echec insert");
+            dol_syslog("osc_product::transcode echec insert");
 //            $this->db->rollback();
 //            return -1;
 		}

@@ -89,7 +89,7 @@ class box_osc_clients extends ModeleBoxes {
                 }
             }
             else {
-                dolibarr_print_error($db);
+                dol_print_error($db);
             }
         }
         else {

@@ -99,7 +99,7 @@ if (! isset($_GET["num"]))
 
 		// Onglets
 		$head=bank_prepare_head($acct);
-		dolibarr_fiche_head($head,'statement',$langs->trans("FinancialAccount"),0);
+		dol_fiche_head($head,'statement',$langs->trans("FinancialAccount"),0);
 
 		print '<table class="border" width="100%">';
 
@@ -146,7 +146,7 @@ if (! isset($_GET["num"]))
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 else
@@ -264,13 +264,13 @@ else
 			print "<tr $bc[$var]>";
 
 			// Date operation
-			print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($objp->do,"day").'</td>';
+			print '<td nowrap="nowrap" align="center">'.dol_print_date($objp->do,"day").'</td>';
 
 			// Date de valeur
 			print '<td align="center" valign="center" nowrap="nowrap">';
 			print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
 			print img_previous().'</a> ';
-			print dolibarr_print_date($objp->dv,"day") .' ';
+			print dol_print_date($objp->dv,"day") .' ';
 			print '<a href="releve.php?action=dvnext&amp;num='.$num.'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
 			print img_next().'</a>';
 			print "</td>\n";
@@ -313,7 +313,7 @@ else
 				elseif ($links[$key]['type']=='company') {
 					print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('ShowCustomer'),'company').' ';
-					print dolibarr_trunc($links[$key]['label'],24);
+					print dol_trunc($links[$key]['label'],24);
 					print '</a>';
 					$newline=0;
 				}
@@ -374,7 +374,7 @@ else
 				}
 				else
 				{
-					dolibarr_print_error($db);
+					dol_print_error($db);
 				}
 			}
 

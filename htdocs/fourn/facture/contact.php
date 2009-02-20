@@ -90,12 +90,12 @@ if ($_POST["action"] == 'updateligne' && $user->rights->fournisseur->facture->cr
 			$db->commit();
 		} else
 		{
-			dolibarr_print_error($db, "result=$result");
+			dol_print_error($db, "result=$result");
 			$db->rollback();
 		}
 	} else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -115,12 +115,12 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->fournisseur->facture->cree
 			$db->commit();
 		} else
 		{
-			dolibarr_print_error($db, "result=$result");
+			dol_print_error($db, "result=$result");
 			$db->rollback();
 		}
 	} else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -137,7 +137,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->fournisseur->facture->cree
 		exit;
 	}
 	else {
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -169,7 +169,7 @@ if ($id > 0)
 
 		$head = facturefourn_prepare_head($facture);
 
-		dolibarr_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'));
+		dol_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'));
 
 		/*
 		 *   Facture synthese pour rappel

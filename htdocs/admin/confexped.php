@@ -95,7 +95,7 @@ if ($conf->global->MAIN_SUBMODULE_LIVRAISON)
 	$h++;
 }
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
  * Formulaire parametres divers

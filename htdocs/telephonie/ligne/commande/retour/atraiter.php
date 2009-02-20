@@ -78,7 +78,7 @@ if ($resql)
 	print "<tr $bc[$var]><td>";
 	print '<img src="'.DOL_URL_ROOT.'/telephonie/ligne/graph'.$ligne->statut.'.png">&nbsp;';
 	print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?numero='.$obj->cli.'">';
-	print dolibarr_print_phone($obj->cli,0,0,true)."</a></td>\n";
+	print dol_print_phone($obj->cli,0,0,true)."</a></td>\n";
 	print '<td>'.$obj->mode."</td>\n";
 	print '<td align="center">'.$obj->situation."</td>\n";
 	print '<td align="center">'.$obj->date_mise_service."</td>\n";

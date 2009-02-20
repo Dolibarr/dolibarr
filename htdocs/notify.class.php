@@ -90,7 +90,7 @@ class Notify
         $sql.= " AND n.fk_action = ".$action;
         $sql.= " AND s.rowid = ".$socid;
 
-		dolibarr_syslog("Notify.class::countDefinedNotifications $action, $socid");
+		dol_syslog("Notify.class::countDefinedNotifications $action, $socid");
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -120,7 +120,7 @@ class Notify
         $sql .= " AND n.fk_soc = s.rowid AND n.fk_action = ".$action;
         $sql .= " AND s.rowid = ".$socid;
 
-		dolibarr_syslog("Notify.class::send $action, $socid, $texte, $objet_type, $objet_id, $file");
+		dol_syslog("Notify.class::send $action, $socid, $texte, $objet_type, $objet_id, $file");
 
         $result = $this->db->query($sql);
         if ($result)
@@ -160,7 +160,7 @@ class Notify
                         $sql.= " VALUES (".$this->db->idate(mktime()).", ".$action." ,".$obj->rowid." , '".$objet_type."', ".$objet_id.");";
                         if (! $this->db->query($sql) )
                         {
-                            dolibarr_print_error($db);
+                            dol_print_error($db);
                         }
                     }
                     else

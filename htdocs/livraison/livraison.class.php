@@ -79,7 +79,7 @@ class Livraison extends CommonObject
 	{
 		global $conf;
 
-		dolibarr_syslog("Livraison::create");
+		dol_syslog("Livraison::create");
 
 		$error = 0;
 
@@ -99,7 +99,7 @@ class Livraison extends CommonObject
 		if ($this->expedition_id) $sql.= ", $this->expedition_id";
 		$sql.= ")";
 
-		dolibarr_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
+		dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -109,7 +109,7 @@ class Livraison extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
 			$sql.= "SET ref='".addslashes($numref)."' WHERE rowid=".$this->id;
 
-			dolibarr_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
+			dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -141,7 +141,7 @@ class Livraison extends CommonObject
 					$sql.= " SET fk_statut = 2";
 					$sql.= " WHERE rowid=".$this->commande_id;
 
-					dolibarr_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
+					dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
 					$resql=$this->db->query($sql);
 					if (! $resql)
 					{
@@ -158,7 +158,7 @@ class Livraison extends CommonObject
 				{
 					$error++;
 					$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
-					dolibarr_syslog("Livraison::create Error -3 ".$this->error);
+					dol_syslog("Livraison::create Error -3 ".$this->error);
 					$this->db->rollback();
 					return -3;
 				}
@@ -167,7 +167,7 @@ class Livraison extends CommonObject
 			{
 				$error++;
 				$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
-				dolibarr_syslog("Livraison::create Error -2 ".$this->error);
+				dol_syslog("Livraison::create Error -2 ".$this->error);
 				$this->db->rollback();
 				return -2;
 			}
@@ -176,7 +176,7 @@ class Livraison extends CommonObject
 		{
 			$error++;
 			$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
-			dolibarr_syslog("Livraison::create Error -1 ".$this->error);
+			dol_syslog("Livraison::create Error -1 ".$this->error);
 			$this->db->rollback();
 			return -1;
 		}
@@ -199,7 +199,7 @@ class Livraison extends CommonObject
 		$sql.= " ".($description?"'".addslashes($description)."'":"null").",";
 		$sql.= $qty.")";
 
-		dolibarr_syslog("Livraison::create_line sql=".$sql, LOG_DEBUG);
+		dol_syslog("Livraison::create_line sql=".$sql, LOG_DEBUG);
 		if (! $this->db->query($sql) )
 		{
 			$error++;
@@ -240,7 +240,7 @@ class Livraison extends CommonObject
 		}
 		$sql.= " WHERE l.rowid = ".$id;
 
-		dolibarr_syslog("Livraison::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("Livraison::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql) ;
 		if ($result)
 		{
@@ -298,13 +298,13 @@ class Livraison extends CommonObject
 			else
 			{
 				$this->error='Delivery with id '.$rowid.' not found sql='.$sql;
-				dolibarr_syslog('Livraison::Fetch Error '.$this->error);
+				dol_syslog('Livraison::Fetch Error '.$this->error);
 				return -2;
 			}
 		}
 		else
 		{
-			dolibarr_syslog('Livraison::Fetch Error '.$this->error);
+			dol_syslog('Livraison::Fetch Error '.$this->error);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -319,7 +319,7 @@ class Livraison extends CommonObject
 	{
 		global $conf;
 
-		dolibarr_syslog("livraison.class.php::valid begin");
+		dol_syslog("livraison.class.php::valid begin");
 
 		$this->db->begin();
 
@@ -374,7 +374,7 @@ class Livraison extends CommonObject
 							//Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
 
 
-							dolibarr_syslog("livraison.class.php::valid enregistrement des mouvements");
+							dol_syslog("livraison.class.php::valid enregistrement des mouvements");
 
 							$sql = "SELECT cd.fk_product, ld.qty ";
 							$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
@@ -387,7 +387,7 @@ class Livraison extends CommonObject
 								$i=0;
 								while($i < $num)
 								{
-									dolibarr_syslog("livraison.class.php::valid movment $i");
+									dol_syslog("livraison.class.php::valid movment $i");
 
 									$obj = $this->db->fetch_object($resql);
 
@@ -398,7 +398,7 @@ class Livraison extends CommonObject
 									{
 										$this->db->rollback();
 										$this->error=$this->db->error()." - sql=$sql";
-										dolibarr_syslog("livraison.class.php::valid ".$this->error);
+										dol_syslog("livraison.class.php::valid ".$this->error);
 										return -3;
 									}
 									$i++;
@@ -409,7 +409,7 @@ class Livraison extends CommonObject
 							{
 								$this->db->rollback();
 								$this->error=$this->db->error()." - sql=$sql";
-								dolibarr_syslog("livraison.class.php::valid ".$this->error);
+								dol_syslog("livraison.class.php::valid ".$this->error);
 								return -2;
 
 							}
@@ -439,13 +439,13 @@ class Livraison extends CommonObject
 							}
 						}
 
-						dolibarr_syslog("livraison.class.php::valid ok");
+						dol_syslog("livraison.class.php::valid ok");
 					}
 					else
 					{
 						$this->db->rollback();
 						$this->error=$this->db->error()." - sql=$sql";
-						dolibarr_syslog("livraison.class.php::valid ".$this->error);
+						dol_syslog("livraison.class.php::valid ".$this->error);
 						return -1;
 					}
 				}
@@ -454,12 +454,12 @@ class Livraison extends CommonObject
 		else
 		{
 			$this->error="Non autorise";
-			dolibarr_syslog("livraison.class.php::valid ".$this->error);
+			dol_syslog("livraison.class.php::valid ".$this->error);
 			return -1;
 		}
 
 		$this->db->commit();
-		dolibarr_syslog("livraison.class.php::valid commit");
+		dol_syslog("livraison.class.php::valid commit");
 		return 1;
 	}
 
@@ -633,7 +633,7 @@ class Livraison extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
 		$sql.= " WHERE ld.fk_origin_line = cd.rowid AND ld.fk_livraison = ".$this->id;
 
-		dolibarr_syslog("Livraison::fetch_lignes sql=".$sql);
+		dol_syslog("Livraison::fetch_lignes sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

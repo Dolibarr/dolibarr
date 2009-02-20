@@ -108,7 +108,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
         }
         else
         {
-        	dolibarr_syslog("mod_commande_marbre::getNextValue sql=".$sql);
+        	dol_syslog("mod_commande_marbre::getNextValue sql=".$sql);
         	return -1;
         }
     
@@ -117,7 +117,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
         $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
         
-        dolibarr_syslog("mod_commande_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
+        dol_syslog("mod_commande_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
         return $this->prefix.$yymm."-".$num;
     }
 

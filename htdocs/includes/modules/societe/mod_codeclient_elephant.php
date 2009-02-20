@@ -231,7 +231,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			$result=check_value($mask,$code);
 		}
 
-		dolibarr_syslog("mod_codeclient_elephant::verif type=".$type." result=".$result);
+		dol_syslog("mod_codeclient_elephant::verif type=".$type." result=".$result);
 		return $result;
 	}
 

@@ -53,7 +53,7 @@ $soc->info($socid);
  */
 $head = societe_prepare_head($soc);
 
-dolibarr_fiche_head($head, 'info', $langs->trans("ThirdParty"));
+dol_fiche_head($head, 'info', $langs->trans("ThirdParty"));
 
 
 

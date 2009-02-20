@@ -71,7 +71,7 @@ if ($_GET["action"] == 'create')
 	$result=$soc->fetch($_GET["socid"]);
 	if ($result < 0)
 	{
-		dolibarr_print_error($db,$soc->error);
+		dol_print_error($db,$soc->error);
 		exit;
 	}
 
@@ -238,7 +238,7 @@ if ($_GET["action"] == 'create')
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 	print '</td></tr>';
 

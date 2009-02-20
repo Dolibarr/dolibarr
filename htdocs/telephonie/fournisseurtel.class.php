@@ -140,13 +140,13 @@ class FournisseurTelephonie {
 	    }
 	  else
 	    {
-	      dolibarr_syslog("FournisseurTelephonie::Fetch Erreur id=".$this->id);
+	      dol_syslog("FournisseurTelephonie::Fetch Erreur id=".$this->id);
 	      return -1;
 	    }
 	}
       else
 	{
-	  dolibarr_syslog("FournisseurTelephonie::Fetch Erreur SQL id=".$this->id);
+	  dol_syslog("FournisseurTelephonie::Fetch Erreur SQL id=".$this->id);
 	  return -2;
 	}
     }
@@ -255,7 +255,7 @@ class FournisseurTelephonie {
    */
   function CreateCommande($user)
   {
-    dolibarr_syslog("FournisseurTelephonie::CreateCommande User:$user->id");
+    dol_syslog("FournisseurTelephonie::CreateCommande User:$user->id");
 
     $fileclass = $this->classdir.'commande.'.$this->class_commande.'.class.php';
 
@@ -263,7 +263,7 @@ class FournisseurTelephonie {
 
     $classname = "CommandeMethode".ucfirst($this->class_commande);
 
-    dolibarr_syslog("FournisseurTelephonie::CreateCommande user $classname");
+    dol_syslog("FournisseurTelephonie::CreateCommande user $classname");
 
     $ct = new $classname($this->db, $user, $this);
 	

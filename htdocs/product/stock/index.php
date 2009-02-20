@@ -89,7 +89,7 @@ if ($result)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 print '</td><td valign="top" width="70%" class="notopnoleft">';
@@ -113,7 +113,7 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 $sql .= " ORDER BY datem DESC";
 $sql .= $db->plimit($max,0);
 
-dolibarr_syslog("Index:list stock movements sql=".$sql, LOG_DEBUG);
+dol_syslog("Index:list stock movements sql=".$sql, LOG_DEBUG);
 $resql = $db->query($sql) ;
 if ($resql)
 {
@@ -134,7 +134,7 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print '<td>'.dolibarr_print_date($objp->datem,'dayhour').'</td>';
+		print '<td>'.dol_print_date($objp->datem,'dayhour').'</td>';
 		print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
 		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
 		print "</a></td>\n";

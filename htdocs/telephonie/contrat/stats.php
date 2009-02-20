@@ -74,7 +74,7 @@ if ($_GET["id"])
 	  $head[$h][1] = $langs->trans("Infos");
 	  $h++;
 	  
-	  dolibarr_fiche_head($head, $hselected, 'Contrat : '.$contrat->ref);
+	  dol_fiche_head($head, $hselected, 'Contrat : '.$contrat->ref);
 	  
 	  print_fiche_titre('Fiche Contrat', $mesg);
 

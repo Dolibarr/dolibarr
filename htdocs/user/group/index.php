@@ -84,7 +84,7 @@ if ($resql)
 
         print "<tr $bc[$var]>";
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a></td>';
-        print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"day").'</td>';
+        print '<td width="100" align="center">'.dol_print_date($obj->datec,"day").'</td>';
         print "</tr>\n";
         $i++;
     }
@@ -93,7 +93,7 @@ if ($resql)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 $db->close();

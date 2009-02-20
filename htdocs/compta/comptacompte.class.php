@@ -84,31 +84,31 @@ class ComptaCompte
 		      else
 			{
 			  $result = -2;
-			  dolibarr_syslog("ComptaCompte::Create Erreur $result lecture ID");
+			  dol_syslog("ComptaCompte::Create Erreur $result lecture ID");
 			}
 		    }
 		  else
 		    {
 		      $result = -1;
-		      dolibarr_syslog("ComptaCompte::Create Erreur $result INSERT Mysql");
+		      dol_syslog("ComptaCompte::Create Erreur $result INSERT Mysql");
 		    }
 		}
 	      else
 		{
 		  $result = -3;
-		  dolibarr_syslog("ComptaCompte::Create Erreur $result SELECT Mysql");
+		  dol_syslog("ComptaCompte::Create Erreur $result SELECT Mysql");
 		}
 	    }
 	  else
 	    {
 	      $result = -5;
-	      dolibarr_syslog("ComptaCompte::Create Erreur $result SELECT Mysql");
+	      dol_syslog("ComptaCompte::Create Erreur $result SELECT Mysql");
 	    }
 	}
       else
 	{
 	  $result = -4;
-	  dolibarr_syslog("ComptaCompte::Create Erreur  $result Valeur Manquante");
+	  dol_syslog("ComptaCompte::Create Erreur  $result Valeur Manquante");
 	}
 
       return $result;

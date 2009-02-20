@@ -150,14 +150,14 @@ class AdherentOptions
 					break;
 			}
 
-			dolibarr_syslog("AdherentOptions::create sql=".$sql, LOG_DEBUG);
+			dol_syslog("AdherentOptions::create sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				return 1;
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 				return 0;
 			}
 		}else{
@@ -182,14 +182,14 @@ class AdherentOptions
 			$sql .= " name='$attrname', label='".addslashes($label)."',";
 			$sql .= " type='".$type."', pos='".$pos."', size='".$size."'";
 
-			dolibarr_syslog("AdherentOptions::create_label sql=".$sql);
+			dol_syslog("AdherentOptions::create_label sql=".$sql);
 			if ($this->db->query($sql))
 			{
 				return 1;
 			}
 			else
 			{
-				print dolibarr_print_error($this->db);
+				print dol_print_error($this->db);
 				return 0;
 			}
 		}
@@ -207,7 +207,7 @@ class AdherentOptions
 			if ($result < 0)
 			{
 				$this->error=$this->db->lasterror();
-				dolibarr_syslog("AdherentOption::delete ".$this->error, LOG_ERR);
+				dol_syslog("AdherentOption::delete ".$this->error, LOG_ERR);
 			}
 
 			$result=$this->delete_label($attrname);
@@ -236,7 +236,7 @@ class AdherentOptions
 			}
 			else
 			{
-				print dolibarr_print_error($this->db);
+				print dol_print_error($this->db);
 				return 0;
 			}
 		}else{
@@ -277,7 +277,7 @@ class AdherentOptions
 			}
 			else
 			{
-				print dolibarr_print_error($this->db);
+				print dol_print_error($this->db);
 				return 0;
 			}
 		}else{
@@ -308,7 +308,7 @@ class AdherentOptions
 			}
 			else
 			{
-				print dolibarr_print_error($this->db);
+				print dol_print_error($this->db);
 				return 0;
 			}
 		}else{
@@ -336,7 +336,7 @@ class AdherentOptions
 		$sql = "SELECT name,label,type FROM ".MAIN_DB_PREFIX."adherent_options_label";
 		$sql.= " ORDER BY pos";
 
-		dolibarr_syslog("Adherent_options::fetch_name_optionals_label");
+		dol_syslog("Adherent_options::fetch_name_optionals_label");
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -354,7 +354,7 @@ class AdherentOptions
 				return array();
 			}
 		}else{
-			print dolibarr_print_error($this->db);
+			print dol_print_error($this->db);
 			return array() ;
 		}
 

@@ -470,7 +470,7 @@ class pdf_crabe extends ModelePDFFactures
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog($this->db,$this->error);
+			dol_syslog($this->db,$this->error);
 			return -1;
 		}
 
@@ -529,7 +529,7 @@ class pdf_crabe extends ModelePDFFactures
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog($this->db,$this->error);
+			dol_syslog($this->db,$this->error);
 			return -1;
 		}
 
@@ -984,7 +984,7 @@ class pdf_crabe extends ModelePDFFactures
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateInvoice")." : " . dolibarr_print_date($object->date,"day",false,$outpulangs), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateInvoice")." : " . dol_print_date($object->date,"day",false,$outpulangs), '', 'R');
 
 		if ($object->type != 2)
 		{

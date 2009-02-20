@@ -107,7 +107,7 @@ class FormActions
 		if ($typeelement == 'propal')  $sql.= ' AND a.propalrowid = '.$object->id;
 		if ($typeelement == 'order')   $sql.= ' AND a.fk_commande = '.$object->id;
 
-		dolibarr_syslog("FormActions::showactions sql=".$sql);
+		dol_syslog("FormActions::showactions sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -130,8 +130,8 @@ class FormActions
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
 					print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-					print '<td>'.dolibarr_print_date($objp->da,'day').'</td>';
-					print '<td title="'.dol_escape_htmltag($objp->label).'">'.dolibarr_trunc($objp->label,32).'</td>';
+					print '<td>'.dol_print_date($objp->da,'day').'</td>';
+					print '<td title="'.dol_escape_htmltag($objp->label).'">'.dol_trunc($objp->label,32).'</td>';
 					print '<td>'.$objp->login.'</td>';
 					print '</tr>';
 					$i++;
@@ -143,7 +143,7 @@ class FormActions
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}

@@ -139,7 +139,7 @@ class Propal extends CommonObject
 
 		if (! $qty) $qty = 1;
 
-		dolibarr_syslog("Propal::add_product $idproduct, $qty, $remise_percent");
+		dol_syslog("Propal::add_product $idproduct, $qty, $remise_percent");
 		if ($idproduct > 0)
 		{
 			$prod=new Product($this->db);
@@ -267,7 +267,7 @@ class Propal extends CommonObject
 	{
 		global $conf;
 
-		dolibarr_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits");
+		dol_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->statut == 0)
@@ -357,7 +357,7 @@ class Propal extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
+					dol_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
 					$this->db->rollback();
 					return -1;
 				}
@@ -388,7 +388,7 @@ class Propal extends CommonObject
 	{
 		global $conf;
 
-		dolibarr_syslog("Propal::UpdateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
+		dol_syslog("Propal::UpdateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->statut == 0)
@@ -455,13 +455,13 @@ class Propal extends CommonObject
 			{
 				$this->error=$this->db->error();
 				$this->db->rollback();
-				dolibarr_syslog("Propal::UpdateLine Erreur sql=$sql, error=".$this->error);
+				dol_syslog("Propal::UpdateLine Erreur sql=$sql, error=".$this->error);
 				return -1;
 			}
 		}
 		else
 		{
-			dolibarr_syslog("Propal::UpdateLigne Erreur -2 Propal en mode incompatible pour cette action");
+			dol_syslog("Propal::UpdateLigne Erreur -2 Propal en mode incompatible pour cette action");
 			return -2;
 		}
 	}
@@ -536,7 +536,7 @@ class Propal extends CommonObject
 		$sql.= " ".($this->date_livraison!=''?$this->db->idate($this->date_livraison):'null');
 		$sql.= ")";
 
-		dolibarr_syslog("Propal::create sql=".$sql, LOG_DEBUG);
+		dol_syslog("Propal::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -563,7 +563,7 @@ class Propal extends CommonObject
 						if ($resql < 0)
 						{
 							$this->error=$this->db->error;
-							dolibarr_print_error($this->db);
+							dol_print_error($this->db);
 							break;
 						}
 				}
@@ -596,13 +596,13 @@ class Propal extends CommonObject
 						// Fin appel triggers
 
 						$this->db->commit();
-						dolibarr_syslog("Propal::ass::Create done id=".$this->id);
+						dol_syslog("Propal::ass::Create done id=".$this->id);
 						return $this->id;
 					}
 					else
 					{
 						$this->error=$this->db->error();
-						dolibarr_syslog("Propal::Create -2 ".$this->error);
+						dol_syslog("Propal::Create -2 ".$this->error);
 						$this->db->rollback();
 						return -2;
 					}
@@ -612,13 +612,13 @@ class Propal extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Propal::Create -1 ".$this->error);
+			dol_syslog("Propal::Create -1 ".$this->error);
 			$this->db->rollback();
 			return -1;
 		}
 
 		$this->db->commit();
-		dolibarr_syslog("Propal::Create done id=".$this->id);
+		dol_syslog("Propal::Create done id=".$this->id);
 		return $this->id;
 	}
 
@@ -724,7 +724,7 @@ class Propal extends CommonObject
 		if ($ref) $sql.= " AND p.ref='".$ref."'";
 		else $sql.= " AND p.rowid=".$rowid;
 
-		dolibarr_syslog("Propal::fecth sql=".$sql, LOG_DEBUG);
+		dol_syslog("Propal::fecth sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -822,7 +822,7 @@ class Propal extends CommonObject
 						$ligne->ref              = $objp->ref;
 
 						$this->lignes[$i]        = $ligne;
-						//dolibarr_syslog("1 ".$ligne->fk_product);
+						//dol_syslog("1 ".$ligne->fk_product);
 						//print "xx $i ".$this->lignes[$i]->fk_product;
 						$i++;
 					}
@@ -831,7 +831,7 @@ class Propal extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog("Propal::Fetch Error ".$this->error, LOG_ERR);
+					dol_syslog("Propal::Fetch Error ".$this->error, LOG_ERR);
 					return -1;
 				}
 
@@ -844,7 +844,7 @@ class Propal extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Propal::Fetch Error ".$this->error, LOG_ERR);
+			dol_syslog("Propal::Fetch Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -909,7 +909,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("Propal::set_echeance Erreur SQL");
+				dol_syslog("Propal::set_echeance Erreur SQL");
 				return -1;
 			}
 		}
@@ -937,7 +937,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("Propal::set_date_livraison Erreur SQL");
+				dol_syslog("Propal::set_date_livraison Erreur SQL");
 				return -1;
 			}
 		}
@@ -964,7 +964,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("Propal::set_adresse_livraison Erreur SQL");
+				dol_syslog("Propal::set_adresse_livraison Erreur SQL");
 				return -1;
 			}
 		}
@@ -980,7 +980,7 @@ class Propal extends CommonObject
 	{
 		if ($user->rights->propale->creer)
 		{
-			dolibarr_syslog('Propale::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
+			dol_syslog('Propale::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET ref_client = '.(empty($ref_client) ? 'NULL' : '\''.addslashes($ref_client).'\'');
 			$sql.= ' WHERE rowid = '.$this->id;
@@ -992,7 +992,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog('Propale::set_ref_client Erreur '.$this->error.' - '.$sql);
+				dol_syslog('Propale::set_ref_client Erreur '.$this->error.' - '.$sql);
 				return -2;
 			}
 		}
@@ -1028,7 +1028,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("Propal::set_remise_percent Error sql=$sql");
+				dol_syslog("Propal::set_remise_percent Error sql=$sql");
 				return -1;
 			}
 		}
@@ -1062,7 +1062,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("Propal::set_remise_absolue Error sql=$sql");
+				dol_syslog("Propal::set_remise_absolue Error sql=$sql");
 				return -1;
 			}
 		}
@@ -1159,7 +1159,7 @@ class Propal extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -1305,7 +1305,7 @@ class Propal extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -1384,12 +1384,12 @@ class Propal extends CommonObject
 
 		//$sql = "SELECT fk_facture FROM ".MAIN_DB_PREFIX."fa_pr as fp";
 		//$sql .= " WHERE fk_propal = " . $id;
-		dolibarr_syslog("Propal::InvoiceArrayList sql=".$sql);
+		dol_syslog("Propal::InvoiceArrayList sql=".$sql);
 		$resql=$this->db->query($sql);
 		$resql2=null;
 		if ($resql)
 		{
-			dolibarr_syslog("Propal::InvoiceArrayList sql2=".$sql2);
+			dol_syslog("Propal::InvoiceArrayList sql2=".$sql2);
 			$resql2=$this->db->query($sql2);
 		}
 		if ($resql2)
@@ -1482,7 +1482,7 @@ class Propal extends CommonObject
 					}
 				}
 
-				dolibarr_syslog("Suppression de la proposition $this->id par $user->id", LOG_DEBUG);
+				dol_syslog("Suppression de la proposition $this->id par $user->id", LOG_DEBUG);
 				$this->db->commit();
 				return 1;
 			}
@@ -1507,7 +1507,7 @@ class Propal extends CommonObject
 	 */
 	function cond_reglement($cond_reglement_id)
 	{
-		dolibarr_syslog('Propale::cond_reglement('.$cond_reglement_id.')');
+		dol_syslog('Propale::cond_reglement('.$cond_reglement_id.')');
 		if ($this->statut >= 0)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
@@ -1520,14 +1520,14 @@ class Propal extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog('Propale::cond_reglement Erreur '.$sql.' - '.$this->db->error());
+				dol_syslog('Propale::cond_reglement Erreur '.$sql.' - '.$this->db->error());
 				$this->error=$this->db->error();
 				return -1;
 			}
 		}
 		else
 		{
-			dolibarr_syslog('Propale::cond_reglement, etat propale incompatible');
+			dol_syslog('Propale::cond_reglement, etat propale incompatible');
 			$this->error='Etat propale incompatible '.$this->statut;
 			return -2;
 		}
@@ -1541,7 +1541,7 @@ class Propal extends CommonObject
 	 */
 	function mode_reglement($mode_reglement_id)
 	{
-		dolibarr_syslog('Propale::mode_reglement('.$mode_reglement_id.')');
+		dol_syslog('Propale::mode_reglement('.$mode_reglement_id.')');
 		if ($this->statut >= 0)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
@@ -1554,14 +1554,14 @@ class Propal extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog('Propale::mode_reglement Erreur '.$sql.' - '.$this->db->error());
+				dol_syslog('Propale::mode_reglement Erreur '.$sql.' - '.$this->db->error());
 				$this->error=$this->db->error();
 				return -1;
 			}
 		}
 		else
 		{
-			dolibarr_syslog('Propale::mode_reglement, etat propale incompatible');
+			dol_syslog('Propale::mode_reglement, etat propale incompatible');
 			$this->error='Etat facture incompatible '.$this->statut;
 			return -2;
 		}
@@ -1619,7 +1619,7 @@ class Propal extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -1849,7 +1849,7 @@ class Propal extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -1908,7 +1908,7 @@ class Propal extends CommonObject
 			}
 			else
 			{
-				dolibarr_print_error($db,"Propale::getNextNumRef ".$obj->error);
+				dol_print_error($db,"Propale::getNextNumRef ".$obj->error);
 				return "";
 			}
 		}
@@ -2059,7 +2059,7 @@ class PropaleLigne
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -2069,7 +2069,7 @@ class PropaleLigne
 	 */
 	function insert()
 	{
-		dolibarr_syslog("PropaleLigne::insert rang=".$this->rang);
+		dol_syslog("PropaleLigne::insert rang=".$this->rang);
 		$this->db->begin();
 
 		// Nettoyage parameteres
@@ -2091,7 +2091,7 @@ class PropaleLigne
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 				$this->db->rollback();
 				return -1;
 			}
@@ -2124,7 +2124,7 @@ class PropaleLigne
 		$sql.= ' '.$rangtouse;
 		$sql.= ')';
 
-		dolibarr_syslog("PropaleLigne::insert sql=$sql");
+		dol_syslog("PropaleLigne::insert sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2136,7 +2136,7 @@ class PropaleLigne
 		else
 		{
 			$this->error=$this->db->error()." sql=".$sql;
-			dolibarr_syslog("PropaleLigne::insert Error ".$this->error);
+			dol_syslog("PropaleLigne::insert Error ".$this->error);
 			$this->db->rollback();
 			return -1;
 		}
@@ -2171,7 +2171,7 @@ class PropaleLigne
 		$sql.= ",marque_tx='".$this->marque_tx."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dolibarr_syslog("PropaleLigne::update sql=$sql");
+		dol_syslog("PropaleLigne::update sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2182,7 +2182,7 @@ class PropaleLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("PropaleLigne::update Error ".$this->error);
+			dol_syslog("PropaleLigne::update Error ".$this->error);
 			$this->db->rollback();
 			return -2;
 		}
@@ -2204,7 +2204,7 @@ class PropaleLigne
 		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dolibarr_syslog("PropaleLigne::update_total sql=$sql");
+		dol_syslog("PropaleLigne::update_total sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2215,7 +2215,7 @@ class PropaleLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("PropaleLigne::update_total Error ".$this->error);
+			dol_syslog("PropaleLigne::update_total Error ".$this->error);
 			$this->db->rollback();
 			return -2;
 		}

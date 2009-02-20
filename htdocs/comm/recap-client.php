@@ -59,7 +59,7 @@ if ($socid > 0)
      */
 	$head = societe_prepare_head($societe);
 	
-    dolibarr_fiche_head($head, 'customer', $langs->trans("ThirdParty"));
+    dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"));
 
 
     print "<table width=\"100%\">\n";
@@ -86,7 +86,7 @@ if ($socid > 0)
 }
 else
 {
-  	dolibarr_print_error($db);
+  	dol_print_error($db);
 }
 
 

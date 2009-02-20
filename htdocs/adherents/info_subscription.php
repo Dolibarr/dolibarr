@@ -68,7 +68,7 @@ $head[$h][2] = 'info';
 $h++;
 
 
-dolibarr_fiche_head($head, 'info', $langs->trans("Subscription"));
+dol_fiche_head($head, 'info', $langs->trans("Subscription"));
 
 $subscription->info($rowid);
 

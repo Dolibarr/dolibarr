@@ -116,7 +116,7 @@ class Stats
 	{
 		$result = array();
 		
-		dolibarr_syslog("Stats::_getNbByYear sql=".$sql);
+		dol_syslog("Stats::_getNbByYear sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -131,7 +131,7 @@ class Stats
 			$this->db->free($resql);
 		}
 		else {
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 		return $result;
 	}
@@ -145,7 +145,7 @@ class Stats
 	{
 		$result = array();
 		
-		dolibarr_syslog("Stats::_getAllByYear sql=".$sql);
+		dol_syslog("Stats::_getAllByYear sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -163,7 +163,7 @@ class Stats
 			$this->db->free($resql);
 		}
 		else {
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 		return $result;
 	}	
@@ -176,7 +176,7 @@ class Stats
 	{
 		$result = array();
 
-		dolibarr_syslog("Stats::_getNbByMonth sql=".$sql);
+		dol_syslog("Stats::_getNbByMonth sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -193,7 +193,7 @@ class Stats
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 		
 		for ($i = 1 ; $i < 13 ; $i++)
@@ -205,7 +205,7 @@ class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$month=dolibarr_print_date(dolibarr_mktime(12,0,0,$i,1,$year),"%b");
+			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b");
 			$month=dol_substr($month,0,3);
 			$data[$i-1] = array(ucfirst($month), $res[$i]);
 		}
@@ -222,7 +222,7 @@ class Stats
 	{
 		$result = array();
 
-		dolibarr_syslog("Stats::_getAmountByMonth sql=".$sql);
+		dol_syslog("Stats::_getAmountByMonth sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -247,7 +247,7 @@ class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$month=dolibarr_print_date(dolibarr_mktime(12,0,0,$i,1,$year),"%b");
+			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b");
 			$month=dol_substr($month,0,3);
 			$data[$i-1] = array(ucfirst($month), $res[$i]);
 		}
@@ -263,7 +263,7 @@ class Stats
 	{
 		$result = array();
 
-		dolibarr_syslog("Stats::_getAverageByMonth sql=".$sql);
+		dol_syslog("Stats::_getAverageByMonth sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

@@ -43,7 +43,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 	
 	if (! function_exists("ldap_connect"))
 	{
-		dolibarr_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP. LDAP functions are disabled on this PHP");
+		dol_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP. LDAP functions are disabled on this PHP");
 		sleep(1);
 		$langs->load('main');
 		$langs->load('other');
@@ -95,7 +95,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		*/
 		// Fin code pour compatiblite
 
-		dolibarr_syslog("functions_ldap::check_user_password_ldap usertotest=".$usertotest." admin_login=".$ldapadminlogin);
+		dol_syslog("functions_ldap::check_user_password_ldap usertotest=".$usertotest." admin_login=".$ldapadminlogin);
 		
 		require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 		$ldap=new Ldap();
@@ -106,7 +106,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		$ldap->searchUser=$ldapadminlogin;
 		$ldap->searchPassword=$ldapadminpass;
 		
-		if ($ldapdebug) dolibarr_syslog("functions_ldap::check_user_password_ldap Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
+		if ($ldapdebug) dol_syslog("functions_ldap::check_user_password_ldap Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
 		
 		$resultCheckUserDN=false;
 
@@ -121,7 +121,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 				// On stop si le mot de passe ldap doit etre modifie sur le domaine
 				if ($resultFetchLdapUser == 1 && $ldap->pwdlastset == 0)
 				{
-					dolibarr_syslog('functions_ldap::check_user_password_ldap '.$_POST["username"].' must change password next logon');
+					dol_syslog('functions_ldap::check_user_password_ldap '.$_POST["username"].' must change password next logon');
 					if ($ldapdebug) print "DEBUG: User ".$_POST["username"]." must change password<br>\n";
 					$ldap->close();
 					sleep(1);
@@ -149,7 +149,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		{
 			if ($result == 2)
 			{
-				dolibarr_syslog("functions_ldap::check_user_password_ldap Authentification ok");
+				dol_syslog("functions_ldap::check_user_password_ldap Authentification ok");
 				$login=$_POST["username"];
 
 				// ldap2dolibarr synchronisation
@@ -160,8 +160,8 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 					$ldap->fetch($login);
 					
 					if ($ldapdebug) print "DEBUG: UACF = ".join(',',$ldap->uacf)."<br>\n";
-					if ($ldapdebug) print "DEBUG: pwdLastSet = ".dolibarr_print_date($ldap->pwdlastset,'day')."<br>\n";
-					if ($ldapdebug) print "DEBUG: badPasswordTime = ".dolibarr_print_date($ldap->badpwdtime,'day')."<br>\n";
+					if ($ldapdebug) print "DEBUG: pwdLastSet = ".dol_print_date($ldap->pwdlastset,'day')."<br>\n";
+					if ($ldapdebug) print "DEBUG: badPasswordTime = ".dol_print_date($ldap->badpwdtime,'day')."<br>\n";
 					
 					// On recherche le user dolibarr en fonction de son SID ldap
 					$sid = $ldap->getObjectSid($login);
@@ -184,7 +184,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 			}
 			if ($result == 1)
 			{
-				dolibarr_syslog("functions_ldap::check_user_password_ldap Authentification ko bad user/password for '".$_POST["username"]."'");
+				dol_syslog("functions_ldap::check_user_password_ldap Authentification ko bad user/password for '".$_POST["username"]."'");
 				sleep(1);
 				$langs->load('main');
 				$langs->load('other');
@@ -193,7 +193,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		}
 		else
 		{
-			dolibarr_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP for '".$_POST["username"]."'");
+			dol_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP for '".$_POST["username"]."'");
 			sleep(1);
 			$langs->load('main');
 			$langs->load('other');

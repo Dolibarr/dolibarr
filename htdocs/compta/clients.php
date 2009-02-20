@@ -202,7 +202,7 @@ if ($result)
 		print '<td>'.$obj->ville.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_client.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
-		print '<td align="right">'.dolibarr_print_date($obj->datec).'</td>';
+		print '<td align="right">'.dol_print_date($obj->datec).'</td>';
 		print "</tr>\n";
 		$i++;
 	}
@@ -214,7 +214,7 @@ if ($result)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 $db->close();

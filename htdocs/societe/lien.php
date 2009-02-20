@@ -96,7 +96,7 @@ if($_GET["socid"])
     
     $head=societe_prepare_head2($soc);
     
-    dolibarr_fiche_head($head, 'links', $langs->trans("ThirdParty"));
+    dol_fiche_head($head, 'links', $langs->trans("ThirdParty"));
     
     /*
      * Fiche soci�t� en mode visu
@@ -270,7 +270,7 @@ if($_GET["socid"])
             }
             else
             {
-                dolibarr_print_error($db);
+                dol_print_error($db);
             }
         }
     }

@@ -92,7 +92,7 @@ $form = new Form($db);
  */
 $head = user_prepare_head($fuser);
 
-dolibarr_fiche_head($head, 'ldap', $langs->trans("User"));
+dol_fiche_head($head, 'ldap', $langs->trans("User"));
 
 
 
@@ -225,7 +225,7 @@ if ($result > 0)
 }
 else
 {
-	dolibarr_print_error('',$ldap->error);
+	dol_print_error('',$ldap->error);
 }
 
 print '</table>';

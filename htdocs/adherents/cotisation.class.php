@@ -76,7 +76,7 @@ class Cotisation extends CommonObject
 		$sql.= " ".$this->db->idate($this->datef).",";
 		$sql.= " ".$this->amount.",'".$this->note."')";
 
-		dolibarr_syslog("Cotisation::create sql=".$sql);
+		dol_syslog("Cotisation::create sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -85,7 +85,7 @@ class Cotisation extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog($this->error);
+			dol_syslog($this->error);
 			return -1;
 		}
 	}
@@ -106,7 +106,7 @@ class Cotisation extends CommonObject
 		$sql.=" FROM ".MAIN_DB_PREFIX."cotisation";
 		$sql.="	WHERE rowid=".$rowid;
 
-		dolibarr_syslog("Cotisation::fetch sql=".$sql);
+		dol_syslog("Cotisation::fetch sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -160,7 +160,7 @@ class Cotisation extends CommonObject
 		$sql .= " fk_bank = ".($this->fk_bank ? $this->fk_bank : 'null');
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Cotisation::update sql=".$sql);
+		dol_syslog("Cotisation::update sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -175,7 +175,7 @@ class Cotisation extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dolibarr_syslog("Cotisation::update ".$this->error);
+			dol_syslog("Cotisation::update ".$this->error);
 			return -1;
 		}
 	}
@@ -198,7 +198,7 @@ class Cotisation extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid = ".$this->id;
-		dolibarr_syslog("Cotisation::delete sql=".$sql);
+		dol_syslog("Cotisation::delete sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -293,7 +293,7 @@ class Cotisation extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}	
 }

@@ -170,7 +170,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 		$societe->fetch($_GET["socid"]);
 		$head = societe_prepare_head($societe);
 		
-		dolibarr_fiche_head($head, 'customer', $societe->nom);
+		dol_fiche_head($head, 'customer', $societe->nom);
 
         if ($_POST["label"] && $_POST["nom"])
         {
@@ -197,7 +197,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             }
             else
             {
-                dolibarr_print_error($db);
+                dol_print_error($db);
             }
             $livraison->pays_code=$obj->code;
             $livraison->pays=$obj->libelle;
@@ -266,7 +266,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
   $societe->fetch($_GET["socid"]);
 	$head = societe_prepare_head($societe);
 		
-	dolibarr_fiche_head($head, 'customer', $societe->nom);
+	dol_fiche_head($head, 'customer', $societe->nom);
 
   print_titre($langs->trans("EditDeliveryAddress"));
   print "<br>\n";
@@ -303,7 +303,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
                 }
                 else
                 {
-                    dolibarr_print_error($db);
+                    dol_print_error($db);
                 }
                 $livraison->pays_code=$obj->code;
                 $livraison->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
@@ -368,7 +368,7 @@ else
 	$result=$livraison->fetch($socid);
 	if ($result < 0)
 	{
-		dolibarr_print_error($db,$livraison->error);
+		dol_print_error($db,$livraison->error);
 		exit;
 	}
 
@@ -376,7 +376,7 @@ else
 	$societe->fetch($livraison->socid);
 	$head = societe_prepare_head($societe);
 	
-	dolibarr_fiche_head($head, 'customer', $societe->nom);
+	dol_fiche_head($head, 'customer', $societe->nom);
 
 
 	// Confirmation de la suppression de la facture

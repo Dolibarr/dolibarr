@@ -86,7 +86,7 @@ class LignePrelevement
 	else
 	  {
 	    $result++;
-	    dolibarr_syslog("LignePrelevement::Fetch rowid=$rowid numrows=0");
+	    dol_syslog("LignePrelevement::Fetch rowid=$rowid numrows=0");
 	  }
 
 	$this->db->free();
@@ -94,8 +94,8 @@ class LignePrelevement
     else
       {
 	$result++;
-	dolibarr_syslog("LignePrelevement::Fetch rowid=$rowid");
-	dolibarr_syslog($this->db->error());
+	dol_syslog("LignePrelevement::Fetch rowid=$rowid");
+	dol_syslog($this->db->error());
       }
 
     return $result;

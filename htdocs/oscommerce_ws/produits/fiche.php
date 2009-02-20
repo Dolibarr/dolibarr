@@ -62,7 +62,7 @@ if ($action == '' && !$cancel) {
 		else
 		{
 	  print "<p>ERROR 1</p>\n";
-	  dolibarr_print_error('',"erreur webservice ".$osc_prod->error);
+	  dol_print_error('',"erreur webservice ".$osc_prod->error);
 		}
 	}
 	else

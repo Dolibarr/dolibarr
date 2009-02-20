@@ -249,14 +249,14 @@ foreach($fulltree as $key => $val)
 		// Show link
 		print '<td valign="middle">';
 		if ($section == $val['id']) print ' <u>';
-		print dolibarr_trunc($val['label'],28);
+		print dol_trunc($val['label'],28);
 		if ($section == $val['id']) print '</u>';
 		print '</td>';
 		print '</tr></table>';
 		print "</td>\n";
 
 		print '<td>';
-		print dolibarr_trunc($categstatic->get_desc($val['id']),48);
+		print dol_trunc($categstatic->get_desc($val['id']),48);
 		print '</td>';
 
 		// Edit link

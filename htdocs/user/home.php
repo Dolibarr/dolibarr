@@ -111,7 +111,7 @@ if ($resql)
         }
         else print $langs->trans("InternalUser");
         print '</td>';
-        print "<td align=\"right\">".dolibarr_print_date($obj->datec,'dayhour')."</td>";
+        print "<td align=\"right\">".dol_print_date($obj->datec,'dayhour')."</td>";
         print '</tr>';
         $i++;
     }
@@ -121,7 +121,7 @@ if ($resql)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 
@@ -150,7 +150,7 @@ if ( $db->query($sql) )
 
         print "<tr $bc[$var]>";
         print "<td><a href=\"".DOL_URL_ROOT."/user/group/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowGroup"),"group")." ".$obj->nom."</a></td>";
-        print "<td width=\"80\" align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
+        print "<td width=\"80\" align=\"center\">".dol_print_date($obj->datec)."</td>";
         print '</tr>';
         $i++;
     }
@@ -160,7 +160,7 @@ if ( $db->query($sql) )
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 

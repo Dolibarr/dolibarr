@@ -76,7 +76,7 @@ print "<br>\n";
 
 $head=agenda_prepare_head();
 
-dolibarr_fiche_head($head, 'xcal', $langs->trans("Agenda"));
+dol_fiche_head($head, 'xcal', $langs->trans("Agenda"));
 
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';

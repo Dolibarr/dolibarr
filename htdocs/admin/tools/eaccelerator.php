@@ -67,7 +67,7 @@ if (isset($_POST['caching'])) {
 }
 $info = eaccelerator_info();
 if (!is_array($info)) {
-	dolibarr_print_error('','An error occured getting eAccelerator information, this is caused if eAccelerator isn\'t initalised properly');
+	dol_print_error('','An error occured getting eAccelerator information, this is caused if eAccelerator isn\'t initalised properly');
 	exit;
 }
 
@@ -151,8 +151,8 @@ function revcompare($x, $y)
 
           foreach($list as $script) { ?>
         <tr <?php $var = ! $var; print $bc[$var]; ?>>
-            <td><?php print dolibarr_trunc($script['file'],80,'left'); ?></td>
-            <td align="center" nowrap="nowrap"><?php print dolibarr_print_date($script['mtime'],'dayhour'); ?></td>
+            <td><?php print dol_trunc($script['file'],80,'left'); ?></td>
+            <td align="center" nowrap="nowrap"><?php print dol_print_date($script['mtime'],'dayhour'); ?></td>
             <td align="right" nowrap="nowrap"><?php print number_format($script['size'] / 1024, 2); ?> KB</td>
             <td align="right" nowrap="nowrap"><?php print $script['reloads']; ?> (<?php print $script['usecount']; ?>)</td>
             <td align="right" nowrap="nowrap"><?php print $script['hits']; ?></td>
@@ -180,8 +180,8 @@ function create_key_table($list)
     foreach($list as $key) {
 ?>
         <tr <?php $var = ! $var; print $bc[$var]; ?>>
-            <td><?php print dolibarr_trunc($key['name'],80,'left'); ?></td>
-            <td align="center" nowrap="nowrap"><?php dolibarr_print_date($key['created'],'dayhour'); ?></td>
+            <td><?php print dol_trunc($key['name'],80,'left'); ?></td>
+            <td align="center" nowrap="nowrap"><?php dol_print_date($key['created'],'dayhour'); ?></td>
             <td align="right" nowrap="nowrap"><?php print number_format($key['size']/1024, 3); ?> KB</td>
             <td align="right" nowrap="nowrap"><?php
                 if ($key['ttl'] == -1) {
@@ -189,7 +189,7 @@ function create_key_table($list)
                 } elseif ($key['ttl'] == 0) {
                     print 'none';
                 } else {
-                    print dolibarr_print_date($key['ttl'],'dayhour');
+                    print dol_print_date($key['ttl'],'dayhour');
                 }
             ?></td>
         </tr>

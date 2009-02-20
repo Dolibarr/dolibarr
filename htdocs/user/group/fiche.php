@@ -212,7 +212,7 @@ else
 		 */
 		$head = group_prepare_head($group);
 
-		dolibarr_fiche_head($head, 'group', $langs->trans("Group").": ".$group->nom);
+		dol_fiche_head($head, 'group', $langs->trans("Group").": ".$group->nom);
 
 
         /*
@@ -299,7 +299,7 @@ else
                 }
             }
             else {
-                dolibarr_print_error($db);
+                dol_print_error($db);
             }
 
             if ($caneditperms)
@@ -381,7 +381,7 @@ else
                 $db->free($result);
             }
             else {
-                dolibarr_print_error($db);
+                dol_print_error($db);
             }
         }
 

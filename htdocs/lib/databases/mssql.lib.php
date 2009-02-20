@@ -93,7 +93,7 @@ class DoliDb
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error="Mssql PHP functions for using MSSql driver are not available in this version of PHP";
-			dolibarr_syslog("DoliDB::DoliDB : MSsql PHP functions for using MSsql driver are not available in this version of PHP",LOG_ERR);
+			dol_syslog("DoliDB::DoliDB : MSsql PHP functions for using MSsql driver are not available in this version of PHP",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -102,7 +102,7 @@ class DoliDb
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
-			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
+			dol_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -121,7 +121,7 @@ class DoliDb
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=mssql_get_last_message();
-			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mssql_get_last_message=".$this->error,LOG_ERR);
+			dol_syslog("DoliDB::DoliDB : Erreur Connect mssql_get_last_message=".$this->error,LOG_ERR);
 		}
 
 		// Si connexion serveur ok et si connexion base demand�e, on essaie connexion base
@@ -139,7 +139,7 @@ class DoliDb
 				$this->database_name = '';
 				$this->ok = 0;
 				$this->error=$this->error();
-				dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
+				dol_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
 			}
 		}
 		else
@@ -183,7 +183,7 @@ class DoliDb
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
-		dolibarr_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
+		dol_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
 		$newhost=$host;
 		if ($port) $newhost.=':'.$port;
 		$this->db  = @mssql_connect($newhost, $login, $passwd);
@@ -224,7 +224,7 @@ class DoliDb
 	 */
 	function close()
 	{
-		dolibarr_syslog("DoliDB::disconnect",LOG_DEBUG);
+		dol_syslog("DoliDB::disconnect",LOG_DEBUG);
 		return mssql_close($this->db);
 	}
 
@@ -241,7 +241,7 @@ class DoliDb
 			if ($ret)
 			{
 				$this->transaction_opened++;
-				dolibarr_syslog("BEGIN Transaction",LOG_DEBUG);
+				dol_syslog("BEGIN Transaction",LOG_DEBUG);
 			}
 			return $ret;
 		}
@@ -264,7 +264,7 @@ class DoliDb
 			if ($ret)
 			{
 				$this->transaction_opened=0;
-				dolibarr_syslog("COMMIT Transaction",LOG_DEBUG);
+				dol_syslog("COMMIT Transaction",LOG_DEBUG);
 			}
 			return $ret;
 		}
@@ -285,7 +285,7 @@ class DoliDb
 		{
 			$ret=$this->query("ROLLBACK TRANSACTION");
 			$this->transaction_opened=0;
-			dolibarr_syslog("ROLLBACK Transaction",LOG_DEBUG);
+			dol_syslog("ROLLBACK Transaction",LOG_DEBUG);
 			return $ret;
 		}
 		else
@@ -555,7 +555,7 @@ class DoliDb
 	{
 		$string=eregi_replace('[^0-9]','',$string);
 		$tmp=$string.'000000';
-		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
+		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 		return $date;
 	}
 
@@ -580,7 +580,7 @@ class DoliDb
 	{
 		$string=eregi_replace('[^0-9]','',$string);
 		$tmp=$string.'000000';
-		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
+		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
 		return $date;
 	}*/
 
@@ -837,7 +837,7 @@ class DoliDb
 		$sql .= ",".implode(',',$sqlk);
 		$sql .=") type=".$type;
 
-		dolibarr_syslog($sql);
+		dol_syslog($sql);
 		if(! $this -> query($sql))
 		return -1;
 		else
@@ -854,7 +854,7 @@ class DoliDb
 	{
 		$sql="DESC ".$table." ".$field;
 
-		dolibarr_syslog($sql);
+		dol_syslog($sql);
 		$this->results = $this->query($sql);
 		return $this->results;
 	}
@@ -904,7 +904,7 @@ class DoliDb
 	function DDLDropField($table,$field_name)
 	{
 		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
-		dolibarr_syslog($sql,LOG_DEBUG);
+		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))
 		{
 			$this->error=$this->lasterror();

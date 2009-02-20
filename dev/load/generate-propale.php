@@ -149,7 +149,7 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 			$result=$propal->addline($propal->id, 'Description '.$xnbp, '100', rand(1,5), '19.6', $prodids[$prodid], 0);
 			if ($result < 0)
 			{
-				dolibarr_print_error($db,$propal->error);
+				dol_print_error($db,$propal->error);
 			}
 			$xnbp++;
 		}
@@ -157,7 +157,7 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 	}
 	else
 	{
-		dolibarr_print_error($db,$propal->error);
+		dol_print_error($db,$propal->error);
 	}
 
 	print "\n";

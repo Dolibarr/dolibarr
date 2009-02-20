@@ -65,7 +65,7 @@ if ($_GET["id"])
       $h++;
     }
 
-  dolibarr_fiche_head($head, $hselected, "Distributeur");
+  dol_fiche_head($head, $hselected, "Distributeur");
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 

@@ -34,7 +34,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 {
 	global $_POST,$db,$conf,$langs;
 	
-	dolibarr_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest);
+	dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest);
 
 	$login='';
 	
@@ -48,7 +48,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 		$sql.=' from '.$table;
 		$sql.=' where '.$usernamecol." = '".addslashes($_POST["username"])."'";
 
-		dolibarr_syslog("functions_dolibarr::check_user_password_dolibarr sql=".$sql);
+		dol_syslog("functions_dolibarr::check_user_password_dolibarr sql=".$sql);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -72,7 +72,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 					if (md5($passtyped) == $passcrypted) 
 					{
 						$passok=true;
-						dolibarr_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - ".$cryptType." of pass is ok");
+						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - ".$cryptType." of pass is ok");
 					}
 				}
 
@@ -83,7 +83,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 						&& ($passtyped == $passclear)) 
 					{
 						$passok=true;
-						dolibarr_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - found pass in database");
+						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - found pass in database");
 					}
 				}
 				
@@ -94,7 +94,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 				}
 				else
 				{
-					dolibarr_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password pour '".$_POST["username"]."'");
+					dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password pour '".$_POST["username"]."'");
 					sleep(1);
 					$langs->load('main');
 					$langs->load('other');
@@ -103,7 +103,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 			}
 			else
 			{
-				dolibarr_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko user not found pour '".$_POST["username"]."'");
+				dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko user not found pour '".$_POST["username"]."'");
 				sleep(1);
 				$langs->load('main');
 				$langs->load('other');
@@ -112,7 +112,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 		}
 		else
 		{
-			dolibarr_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko db error pour '".$_POST["username"]."' error=".$db->lasterror());
+			dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko db error pour '".$_POST["username"]."' error=".$db->lasterror());
 			sleep(1);
 			$_SESSION["dol_loginmesg"]=$db->lasterror();
 		}

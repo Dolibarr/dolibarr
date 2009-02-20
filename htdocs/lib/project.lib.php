@@ -100,7 +100,7 @@ function select_projects($socid, $selected='', $htmlname='projectid')
 	$sql.= " WHERE (fk_soc='".$socid."' or fk_soc IS NULL)";
 	$sql.= " ORDER BY p.title ASC";
 
-	dolibarr_syslog("project.lib::select_projects sql=".$sql);
+	dol_syslog("project.lib::select_projects sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -115,11 +115,11 @@ function select_projects($socid, $selected='', $htmlname='projectid')
 				$obj = $db->fetch_object($resql);
 				if (!empty($selected) && $selected == $obj->rowid)
 				{
-					print '<option value="'.$obj->rowid.'" selected="true">'.dolibarr_trunc($obj->ref,12).' - '.dolibarr_trunc($obj->title,12).'</option>';
+					print '<option value="'.$obj->rowid.'" selected="true">'.dol_trunc($obj->ref,12).' - '.dol_trunc($obj->title,12).'</option>';
 				}
 				else
 				{
-					print '<option value="'.$obj->rowid.'">'.dolibarr_trunc($obj->ref,12).' - '.dolibarr_trunc($obj->title,12).'</option>';
+					print '<option value="'.$obj->rowid.'">'.dol_trunc($obj->ref,12).' - '.dol_trunc($obj->title,12).'</option>';
 				}
 				$i++;
 			}
@@ -130,7 +130,7 @@ function select_projects($socid, $selected='', $htmlname='projectid')
 	}
 	else
 	{
-		dolibarr_print_error($this->db);
+		dol_print_error($this->db);
 		return -1;
 	}
 }
@@ -312,7 +312,7 @@ function clean_orphelins($db)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	if (sizeof($listofid))

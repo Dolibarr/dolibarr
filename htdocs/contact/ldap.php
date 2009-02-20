@@ -57,7 +57,7 @@ $contact->fetch($_GET["id"], $user);
  */
 $head = contact_prepare_head($contact);
 
-dolibarr_fiche_head($head, 'ldap', $langs->trans("Contact"));
+dol_fiche_head($head, 'ldap', $langs->trans("Contact"));
 
 
 /*
@@ -156,7 +156,7 @@ if ($result > 0)
 }
 else
 {
-	dolibarr_print_error('',$ldap->error);
+	dol_print_error('',$ldap->error);
 }
 
 

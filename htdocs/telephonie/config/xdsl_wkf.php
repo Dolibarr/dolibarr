@@ -78,7 +78,7 @@ $hselected = $h;
 $h++;
 
 
-dolibarr_fiche_head($head, $hselected, "Configuration des liens xDSL");
+dol_fiche_head($head, $hselected, "Configuration des liens xDSL");
 
 print_titre("Workflow");
 print '<form method="post" action="xdsl_wkf.php?action=add">';

@@ -59,13 +59,13 @@ class FournisseurXdsl {
 	  }
 	else
 	  {
-	    dolibarr_syslog("FournisseurXdsl::Create Error -3");
+	    dol_syslog("FournisseurXdsl::Create Error -3");
 	    return -3;	    
 	  }
       }
     else
       {
-	dolibarr_syslog("FournisseurXdsl::Create Error -2");
+	dol_syslog("FournisseurXdsl::Create Error -2");
 	return -2;
       }
   }
@@ -86,7 +86,7 @@ class FournisseurXdsl {
       }
     else
       {
-	dolibarr_syslog("FournisseurXdsl::SwithCommandeActive Error -20", LOG_ERR);
+	dol_syslog("FournisseurXdsl::SwithCommandeActive Error -20", LOG_ERR);
 	return -20;
       }
 
@@ -117,7 +117,7 @@ class FournisseurXdsl {
       }
     else 
       {
-	dolibarr_print_error($this->db);
+	dol_print_error($this->db);
 	$this->error=$this->db->error();
 
       }

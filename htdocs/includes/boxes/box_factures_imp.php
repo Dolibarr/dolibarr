@@ -103,7 +103,7 @@ class box_factures_imp extends ModeleBoxes {
 					$datelimite=$db->jdate($objp->datelimite);
 					
                     $late='';
-                    if ($datelimite < ($now - $conf->facture->warning_delay)) $late = img_warning(sprintf($l_due_date,dolibarr_print_date($datelimite,'day')));
+                    if ($datelimite < ($now - $conf->facture->warning_delay)) $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
 
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
@@ -120,7 +120,7 @@ class box_factures_imp extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
                     $this->info_box_contents[$i][3] = array('td' => 'align="right"',
-                    'text' => dolibarr_print_date($datelimite,'day'),
+                    'text' => dol_print_date($datelimite,'day'),
                     );
 
                     $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',

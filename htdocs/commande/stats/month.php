@@ -140,7 +140,7 @@ $data = array();
 
 for ($i = 1 ; $i < 13 ; $i++)
 {
-  $data[$i-1] = array(ucfirst(substr(dolibarr_print_date(dolibarr_mktime(12,0,0,$i,1,$year),"%b"),0,3)), $res[$i]);
+  $data[$i-1] = array(ucfirst(substr(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"),0,3)), $res[$i]);
 }
 
 if (!$user->rights->societe->client->voir || $user->societe_id)

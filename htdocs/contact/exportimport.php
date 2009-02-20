@@ -53,7 +53,7 @@ $contact->fetch($_GET["id"], $user);
  */
 $head = contact_prepare_head($contact);
 
-dolibarr_fiche_head($head, 'exportimport', $langs->trans("Contact"));
+dol_fiche_head($head, 'exportimport', $langs->trans("Contact"));
 
 
 /*

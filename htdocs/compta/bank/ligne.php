@@ -63,7 +63,7 @@ if ($_POST["action"] == 'confirm_delete_categ' && $_POST["confirm"] == "yes")
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = $rowid AND fk_categ = ".$_GET["cat1"];
 	if (! $db->query($sql))
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -72,13 +72,13 @@ if ($_POST["action"] == 'class')
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = $rowid AND fk_categ = ".$_POST["cat1"];
 	if (! $db->query($sql))
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$_GET["rowid"].", ".$_POST["cat1"].")";
 	if (! $db->query($sql))
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -114,7 +114,7 @@ if ($_POST["action"] == "update")
 	else
 	{
 		$db->rollback();
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -156,7 +156,7 @@ if ($user->rights->banque->consolidate && $_POST["action"] == 'num_releve')
 	else
 	{
 		$db->rollback();
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -200,7 +200,7 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$_GET["rowid"];
 $head[$h][1] = $langs->trans("Info");
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans('LineRecord'));
+dol_fiche_head($head, $hselected, $langs->trans('LineRecord'));
 
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro,";
@@ -279,7 +279,7 @@ if ($result)
 		else
 		{
 			print '<td colspan="4">';
-			print dolibarr_print_date($objp->do);
+			print dol_print_date($objp->do);
 		}
 		print '</td></tr>';
 
@@ -300,7 +300,7 @@ if ($result)
 		else
 		{
 			print '<td colspan="4">';
-			print dolibarr_print_date($objp->dv,"day");
+			print dol_print_date($objp->dv,"day");
 			print '</td>';
 		}
 		print "</tr>";

@@ -107,7 +107,7 @@ class ExportTsv extends ModeleExports
     {
         global $langs;
         
-        dolibarr_syslog("ExportTsv::open_file file=".$file);
+        dol_syslog("ExportTsv::open_file file=".$file);
 
 		$ret=1;
 		
@@ -160,7 +160,7 @@ class ExportTsv extends ModeleExports
  		foreach($array_selected_sorted as $code => $value)
         {
             $alias=$array_alias[$code];
-            if (empty($alias)) dolibarr_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+            if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
             $newvalue=$objp->$alias;
 
             // Translation newvalue

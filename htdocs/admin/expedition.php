@@ -70,13 +70,13 @@ if ($_GET["action"] == 'specimen')
 		else
 		{
 			$mesg='<div class="error">'.$obj->error.'</div>';
-			dolibarr_syslog($obj->error, LOG_ERR);
+			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
-		dolibarr_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
 
@@ -172,7 +172,7 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 		}
 		else
 		{
-			//dolibarr_print_error($db);
+			//dol_print_error($db);
 			$db->rollback();
 		}
 	}
@@ -241,7 +241,7 @@ if ($conf->global->MAIN_SUBMODULE_LIVRAISON)
 	$h++;
 }
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 
 
@@ -270,7 +270,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 print '<table class="noborder" width="100%">';

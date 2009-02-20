@@ -137,8 +137,8 @@ if ($resql)
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';
         print '<td><a href="../comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-        //print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
-        print '<td align="center">'.dolibarr_print_date($obj->date_contrat).'</td>';
+        //print '<td align="center">'.dol_print_date($obj->datec).'</td>';
+        print '<td align="center">'.dol_print_date($obj->date_contrat).'</td>';
         //print '<td align="center">'.$staticcontrat->LibStatut($obj->statut,3).'</td>';
         print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
         print '<td align="center">'.($obj->nb_running>0?$obj->nb_running:'').'</td>';
@@ -154,7 +154,7 @@ if ($resql)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 

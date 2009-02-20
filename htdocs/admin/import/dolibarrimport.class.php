@@ -46,7 +46,7 @@ class DolibarrImport
 		$this->nb_import_ko = 0;
 		$this->nb_import = 0;
 
-		dolibarr_syslog("DolibarrImport::ImportClients($file)", LOG_DEBUG);
+		dol_syslog("DolibarrImport::ImportClients($file)", LOG_DEBUG);
 
 		$this->ReadFile($file);
 
@@ -65,12 +65,12 @@ class DolibarrImport
 
 			if ( $societe->create($user) == 0)
 	  {
-	  	dolibarr_syslog("DolibarrImport::ImportClients ".$societe->nom." SUCCESS", LOG_DEBUG);
+	  	dol_syslog("DolibarrImport::ImportClients ".$societe->nom." SUCCESS", LOG_DEBUG);
 	  	$this->nb_import_ok++;
 	  }
 	  else
 	  {
-	  	dolibarr_syslog("DolibarrImport::ImportClients ".$societe->nom." ERROR", LOG_ERR);
+	  	dol_syslog("DolibarrImport::ImportClients ".$societe->nom." ERROR", LOG_ERR);
 	  	$this->nb_import_ko++;
 	  }
 		}
@@ -106,7 +106,7 @@ class DolibarrImport
 
 		if (is_readable($file))
 		{
-			dolibarr_syslog("DolibarrImport::ReadFile Lecture du fichier $file", LOG_DEBUG);
+			dol_syslog("DolibarrImport::ReadFile Lecture du fichier $file", LOG_DEBUG);
 
 			$line = 0;
 			$hf = fopen ($file, "r");
@@ -150,7 +150,7 @@ class DolibarrImport
 			umask(0);
 			if (! mkdir($upload_dir, 0755))
 		  {
-		  	dolibarr_syslog("DolibarrImport::ReadFile Impossible de créer $upload_dir",LOG_ERR);
+		  	dol_syslog("DolibarrImport::ReadFile Impossible de créer $upload_dir",LOG_ERR);
 		  }
 		}
 
@@ -161,7 +161,7 @@ class DolibarrImport
 			umask(0);
 			if (! mkdir($upload_dir, 0755))
 		  {
-		  	dolibarr_syslog("DolibarrImport::ReadFile Impossible de créer $upload_dir",LOG_ERR);
+		  	dol_syslog("DolibarrImport::ReadFile Impossible de créer $upload_dir",LOG_ERR);
 		  }
 		}
 
@@ -172,7 +172,7 @@ class DolibarrImport
 			umask(0);
 			if (! mkdir($upload_dir, 0755))
 		  {
-		  	dolibarr_syslog("DolibarrImport::ReadFile Impossible de créer $upload_dir",LOG_ERR);
+		  	dol_syslog("DolibarrImport::ReadFile Impossible de créer $upload_dir",LOG_ERR);
 		  }
 		}
 

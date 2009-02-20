@@ -103,7 +103,7 @@ class ProcessGraphLignes
   
   function go($ligne)
   {
-    dolibarr_syslog("go $ligne");
+    dol_syslog("go $ligne");
     $this->ligne = $ligne;
 
     /* Lecture des donnees */
@@ -211,7 +211,7 @@ class ProcessGraphLignes
       }
     else 
       {
-	dolibarr_syslog("Error");
+	dol_syslog("Error");
       }
   }
 }

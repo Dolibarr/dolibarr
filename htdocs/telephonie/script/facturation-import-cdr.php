@@ -50,18 +50,18 @@ if ($db->query($sql))
   if ($num == 1)
     {
       $row = $db->fetch_row();
-      dolibarr_syslog ("facturation-import-cdr.php Import fichier ".$file);
-      dolibarr_syslog("facturation-import-cdr.php Fournisseur [".$row[0]."] ".$row[1]);
+      dol_syslog ("facturation-import-cdr.php Import fichier ".$file);
+      dol_syslog("facturation-import-cdr.php Fournisseur [".$row[0]."] ".$row[1]);
     }
   else
     {
-      dolibarr_syslog("facturation-import-cdr.php Erreur Fournisseur inexistant : ".$id_fourn);
+      dol_syslog("facturation-import-cdr.php Erreur Fournisseur inexistant : ".$id_fourn);
       exit ;
     }
 }
 else
 {
-  dolibarr_syslog("facturation-import-cdr.php Erreur recherche fournisseur");
+  dol_syslog("facturation-import-cdr.php Erreur recherche fournisseur");
   exit ;
 }
 
@@ -83,20 +83,20 @@ if ($db->query($sql))
       $row = $db->fetch_row();
       if ($row[0] > 0)
 	{
-	  dolibarr_syslog ("facturation-import-cdr.php Fichier ".$file." déjà chargé dans import-log");
+	  dol_syslog ("facturation-import-cdr.php Fichier ".$file." déjà chargé dans import-log");
 
 	  exit ;
 	}
     }
   else
     {
-      dolibarr_syslog("facturation-import-cdr.php Erreur vérif du fichier");
+      dol_syslog("facturation-import-cdr.php Erreur vérif du fichier");
       exit ;
     }
 }
 else
 {
-  dolibarr_syslog("facturation-import-cdr.php Erreur SQL vérification du fichier");
+  dol_syslog("facturation-import-cdr.php Erreur SQL vérification du fichier");
   exit ;
 }
 
@@ -118,20 +118,20 @@ if ($db->query($sql))
       $row = $db->fetch_row();
       if ($row[0] > 0)
 	{
-	  dolibarr_syslog ("facturation-import-cdr.php Fichier ".$file." déjà traité");
+	  dol_syslog ("facturation-import-cdr.php Fichier ".$file." déjà traité");
 	  exit ;
 	}
     }
   else
     {
-      dolibarr_syslog("facturation-import-cdr.php Erreur vérif du fichier dans les comm");
+      dol_syslog("facturation-import-cdr.php Erreur vérif du fichier dans les comm");
       exit ;
     }
 }
 else
 {
-  dolibarr_syslog("facturation-import-cdr.php Erreur SQL vérification du fichier dans les comm");
-  dolibarr_syslog("facturation-import-cdr.php ".$sql);
+  dol_syslog("facturation-import-cdr.php Erreur SQL vérification du fichier dans les comm");
+  dol_syslog("facturation-import-cdr.php ".$sql);
   exit ;
 }
 
@@ -148,7 +148,7 @@ $resql = $db->query($sql);
 if ($resql)
 {  
   $num = $db->num_rows($resql);
-  dolibarr_syslog ("facturation-import-cdr.php ".$num." lignes chargées");
+  dol_syslog ("facturation-import-cdr.php ".$num." lignes chargées");
   $i = 0;
   $ligneids = array();
 
@@ -161,8 +161,8 @@ if ($resql)
 }
 else
 {
-  dolibarr_syslog("facturation-import-cdr.php Erreur chargement des lignes");
-  dolibarr_syslog($sql);
+  dol_syslog("facturation-import-cdr.php Erreur chargement des lignes");
+  dol_syslog($sql);
   exit ;
 }
 
@@ -173,7 +173,7 @@ else
 
 if (is_readable($file))
 {
-  dolibarr_syslog("facturation-import-cdr.php Lecture du fichier $file");
+  dol_syslog("facturation-import-cdr.php Lecture du fichier $file");
   
   $error = 0;
   $line = 0;
@@ -233,9 +233,9 @@ if (is_readable($file))
 			    }
 			  else
 			    {
-			      dolibarr_syslog("facturation-import-cdr.php Erreur de traitement de ligne $index");
-			      dolibarr_syslog("facturation-import-cdr.php ".$db->error());
-			      dolibarr_syslog("facturation-import-cdr.php ".$sql);
+			      dol_syslog("facturation-import-cdr.php Erreur de traitement de ligne $index");
+			      dol_syslog("facturation-import-cdr.php ".$db->error());
+			      dol_syslog("facturation-import-cdr.php ".$sql);
 			      $error++;
 			    }
 			}
@@ -247,32 +247,32 @@ if (is_readable($file))
 		    }
 		  else
 		    {
-		      dolibarr_syslog("facturation-import-cdr.php Ligne : $ligne ignorée!");
+		      dol_syslog("facturation-import-cdr.php Ligne : $ligne ignorée!");
 		      $error++;
 		    }
 		  
 		}
 	      else
 		{
-		  dolibarr_syslog("facturation-import-cdr.php Mauvais format de fichier ligne $line");
+		  dol_syslog("facturation-import-cdr.php Mauvais format de fichier ligne $line");
 		  $error++;
 		}
 	    }
 	  $line++;
 	}
       
-      dolibarr_syslog("facturation-import-cdr.php ".($line -1 )." lignes traitées dans le fichier");
-      dolibarr_syslog("facturation-import-cdr.php ".$line_inserted." insert effectués");
+      dol_syslog("facturation-import-cdr.php ".($line -1 )." lignes traitées dans le fichier");
+      dol_syslog("facturation-import-cdr.php ".$line_inserted." insert effectués");
       
       if ($error == 0)
 	{	  
 	  $db->query("COMMIT");
-	  dolibarr_syslog("facturation-import-cdr.php COMMIT");
+	  dol_syslog("facturation-import-cdr.php COMMIT");
 	}
       else
 	{
 	  $db->query("ROLLBACK");
-	  dolibarr_syslog("facturation-import-cdr.php ROLLBACK");
+	  dol_syslog("facturation-import-cdr.php ROLLBACK");
 	}
       
     }
@@ -282,7 +282,7 @@ if (is_readable($file))
 else
 {
   print "Erreur lecture : $file";
-  dolibarr_syslog("facturation-import-cdr.php ".$file." not readable");
+  dol_syslog("facturation-import-cdr.php ".$file." not readable");
 }
 
 

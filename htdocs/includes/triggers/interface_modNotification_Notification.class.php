@@ -102,7 +102,7 @@ class InterfaceNotification
 
 		if ($action == 'BILL_VALIDATE')
 		{
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$action_notify = 2;
             $ref = sanitizeFileName($object->ref);
@@ -115,7 +115,7 @@ class InterfaceNotification
 
 		elseif ($action == 'FICHEINTER_VALIDATE')
 		{
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$action_notify = 1;
             $ref = sanitizeFileName($object->ref);
@@ -128,7 +128,7 @@ class InterfaceNotification
 
 		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
 		{
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$action_notify = 3;
             $ref = sanitizeFileName($object->ref);
@@ -143,7 +143,7 @@ class InterfaceNotification
 /*
         else
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
+            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return -1;
         }
 */

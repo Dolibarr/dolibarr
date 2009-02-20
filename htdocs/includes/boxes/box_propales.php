@@ -115,11 +115,11 @@ class box_propales extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
                     
                     $this->info_box_contents[$i][2] = array('td' => 'align="left"',
-                    'text' => dolibarr_trunc($objp->nom,40),
+                    'text' => dol_trunc($objp->nom,40),
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
                     
                     $this->info_box_contents[$i][3] = array('td' => 'align="right"',
-                    'text' => dolibarr_print_date($datec,'day'));
+                    'text' => dol_print_date($datec,'day'));
 
                     $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
                     'text' => $propalstatic->LibStatut($objp->fk_statut,3));
@@ -131,7 +131,7 @@ class box_propales extends ModeleBoxes {
             }
             else 
             {
-                dolibarr_print_error($db);
+                dol_print_error($db);
             }
         }
         else {

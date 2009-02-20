@@ -282,10 +282,10 @@ class BordereauChequeBlochet extends FPDF
 			$pdf->MultiCell(20, $this->line_height, $this->lines[$j]->num_chq?$this->lines[$j]->num_chq:'', 0, 'J', 0);
 
 			$pdf->SetXY (30, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(70, $this->line_height, dolibarr_trunc($outputlangs->convToOutputCharset($this->lines[$j]->bank_chq),44), 0, 'J', 0);
+			$pdf->MultiCell(70, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->bank_chq),44), 0, 'J', 0);
 
 			$pdf->SetXY (100, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(80, $this->line_height, dolibarr_trunc($outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq),50), 0, 'J', 0);
+			$pdf->MultiCell(80, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq),50), 0, 'J', 0);
 
 			$pdf->SetXY (180, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', 0);

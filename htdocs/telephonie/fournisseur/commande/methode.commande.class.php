@@ -50,14 +50,14 @@ class CommandeMethode
 	    if (! $this->db->query($sql) )
 	      {
 		$error++;
-		dolibarr_syslog($sql);
+		dol_syslog($sql);
 	      }
 	  }
       }
     else
       {
 	$error++;
-	dolibarr_syslog($sql);
+	dol_syslog($sql);
       }
 
     return $error;

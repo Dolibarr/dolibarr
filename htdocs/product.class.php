@@ -207,7 +207,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		dolibarr_syslog("Product::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
+		dol_syslog("Product::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
 
 		if ($this->ref)
 		{
@@ -242,7 +242,7 @@ class Product extends CommonObject
 					$sql.= "'".$this->canvas."',";
 					$sql.= " ".$this->finished.")";
 
-					dolibarr_syslog("Product::Create sql=".$sql);
+					dol_syslog("Product::Create sql=".$sql);
 					$result = $this->db->query($sql);
 					if ( $result )
 					{
@@ -335,7 +335,7 @@ class Product extends CommonObject
 	function _setErrNo($func, $num, $error='')
 	{
 		$this->errno = $num;
-		dolibarr_syslog(get_class($this)."::".$func." - ERRNO(".$this->errno.")".($error?' - '.$error:''), LOG_ERR);
+		dol_syslog(get_class($this)."::".$func." - ERRNO(".$this->errno.")".($error?' - '.$error:''), LOG_ERR);
 	}
 
 	/**
@@ -393,7 +393,7 @@ class Product extends CommonObject
 		$sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
 		$sql .= " WHERE rowid = " . $id;
 
-		dolibarr_syslog("Product::update sql=".$sql);
+		dol_syslog("Product::update sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -665,12 +665,12 @@ class Product extends CommonObject
 		$sql.= " ".$this->price_min.",".$this->price_min_ttc;
 		$sql.= ")";
 
-		dolibarr_syslog("Product::_log_price sql=".$sql);
+		dol_syslog("Product::_log_price sql=".$sql);
 		$resql=$this->db->query($sql);
 		if(! $resql)
 		{
 			$this->error=$this->db->error();
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 		else
@@ -691,7 +691,7 @@ class Product extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price";
 		$sql.= " WHERE rowid=".$rowid;
 
-		dolibarr_syslog("Product::log_price_delete sql=".$sql, LOG_DEBUG);
+		dol_syslog("Product::log_price_delete sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -723,7 +723,7 @@ class Product extends CommonObject
 		$sql.= " AND pfp.rowid = ".$prodfournprice;
 		$sql.= " AND pfp.quantity <= ".$qty;
 
-		dolibarr_syslog("Product::get_buyprice sql=".$sql);
+		dol_syslog("Product::get_buyprice sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -749,7 +749,7 @@ class Product extends CommonObject
 				$sql.= " ORDER BY pfp.quantity DESC";
 				$sql.= " LIMIT 1";
 
-				dolibarr_syslog("Product::get_buyprice sql=".$sql);
+				dol_syslog("Product::get_buyprice sql=".$sql);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -798,7 +798,7 @@ class Product extends CommonObject
 	{
 		global $conf,$langs;
 
-		dolibarr_syslog("Product::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level, LOG_DEBUG);
+		dol_syslog("Product::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level, LOG_DEBUG);
 
 		if ($newvat == '') $newvat=$this->tva_tx;
 
@@ -853,7 +853,7 @@ class Product extends CommonObject
 			$sql.= " tva_tx='".price2num($newvat)."'";
 			$sql.= " WHERE rowid = " . $id;
 
-			dolibarr_syslog("Product::update_price sql=".$sql);
+			dol_syslog("Product::update_price sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -868,7 +868,7 @@ class Product extends CommonObject
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 			}
 		}
 
@@ -887,13 +887,13 @@ class Product extends CommonObject
 		global $langs;
 		global $conf;
 
-		dolibarr_syslog("Product::fetch id=$id ref=$ref");
+		dol_syslog("Product::fetch id=$id ref=$ref");
 
 		// Verification parametres
 		if (! $id && ! $ref)
 		{
 			$this->error=$langs->trans('ErrorWrongParameters');
-			dolibarr_print_error("Product::fetch ".$this->error);
+			dol_print_error("Product::fetch ".$this->error);
 			return -1;
 		}
 
@@ -905,7 +905,7 @@ class Product extends CommonObject
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
 		if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
 
-		dolibarr_syslog("Product::fetch sql=".$sql);
+		dol_syslog("Product::fetch sql=".$sql);
 		$result = $this->db->query($sql);
 		if ( $result )
 		{
@@ -971,7 +971,7 @@ class Product extends CommonObject
 					}
 					else
 					{
-						dolibarr_print_error($this->db);
+						dol_print_error($this->db);
 						return -1;
 					}
 				}
@@ -1001,7 +1001,7 @@ class Product extends CommonObject
 					}
 					else
 					{
-						dolibarr_print_error($this->db);
+						dol_print_error($this->db);
 						return -1;
 					}
 				}
@@ -1013,7 +1013,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -1343,7 +1343,7 @@ class Product extends CommonObject
 
 		for ($j = 0 ; $j < 12 ; $j++)
 		{
-			$idx=ucfirst(substr(dolibarr_print_date(dolibarr_mktime(12,0,0,$month,1,$year),"%b"),0,3) );
+			$idx=ucfirst(substr(dol_print_date(dol_mktime(12,0,0,$month,1,$year),"%b"),0,3) );
 			$monthnum=sprintf("%02s",$month);
 
 			$result[$j] = array($idx,isset($tab[$year.$month])?$tab[$year.$month]:0);
@@ -1482,7 +1482,7 @@ class Product extends CommonObject
 		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
 		if (! $this->db->query($sql))
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 		else
@@ -1491,7 +1491,7 @@ class Product extends CommonObject
 			$sql .= ' WHERE fk_product_pere  = "'.$id_fils.'" and fk_product_fils = "'.$id_pere.'"';
 			if (! $this->db->query($sql))
 			{
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 				return -1;
 			}
 			else
@@ -1511,7 +1511,7 @@ class Product extends CommonObject
 						$sql .= ' VALUES ("'.$id_pere.'","'.$id_fils.'","'.$qty.'")';
 						if (! $this->db->query($sql))
 						{
-							dolibarr_print_error($this->db);
+							dol_print_error($this->db);
 							return -1;
 						}
 						else
@@ -1536,7 +1536,7 @@ class Product extends CommonObject
 		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
 		if (! $this->db->query($sql))
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 		else
@@ -1555,7 +1555,7 @@ class Product extends CommonObject
 		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
 		if (! $this->db->query($sql))
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 		else
@@ -1619,7 +1619,7 @@ class Product extends CommonObject
 			$sql .= ' VALUES ("'.$this->id.'","'.$id_sub.'")';
 			if (! $this->db->query($sql))
 	  {
-	  	dolibarr_print_error($this->db);
+	  	dol_print_error($this->db);
 	  	return -1;
 	  }
 	  else
@@ -1730,7 +1730,7 @@ class Product extends CommonObject
 		$list = $this->list_suppliers();
 		if (sizeof($list) > 0)
 		{
-			dolibarr_syslog("Product::fastappro");
+			dol_syslog("Product::fastappro");
 			$fournisseur = new Fournisseur($this->db);
 			$fournisseur->fetch($this->fourn_appro_open);
 
@@ -1758,7 +1758,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -1952,7 +1952,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -1981,7 +1981,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -2030,7 +2030,7 @@ class Product extends CommonObject
 			$lienfin='</a>';
 		}
 		$newref=$this->ref;
-		if ($maxlength) $newref=dolibarr_trunc($newref,$maxlength,'middle');
+		if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
 
 		if ($withpicto) {
 			if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct").' '.$this->ref,'product').$lienfin.' ');
@@ -2150,7 +2150,7 @@ class Product extends CommonObject
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 				$this->db->rollback();
 				return -1;
 			}
@@ -2555,7 +2555,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -2579,7 +2579,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -2602,7 +2602,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}

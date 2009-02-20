@@ -100,7 +100,7 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		if ($option=='late') $filename.='_'.strtolower(sanitizeFileName($langs->transnoentities("Late")));
 		if ($pagecount)
 		{
-			$file=$diroutputpdf.'/'.$filename.'_'.dolibarr_print_date(mktime(),'dayhourlog').'.pdf';
+			$file=$diroutputpdf.'/'.$filename.'_'.dol_print_date(mktime(),'dayhourlog').'.pdf';
 			$pdf->Output($file);
 			if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -346,10 +346,10 @@ if ($result)
 
 			print "</td>\n";
 
-			print "<td nowrap align=\"center\">".dolibarr_print_date($objp->df)."</td>\n";
-			print "<td nowrap align=\"center\">".dolibarr_print_date($objp->datelimite)."</td>\n";
+			print "<td nowrap align=\"center\">".dol_print_date($objp->df)."</td>\n";
+			print "<td nowrap align=\"center\">".dol_print_date($objp->datelimite)."</td>\n";
 
-			print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,32).'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,32).'</a></td>';
 
 			print "<td align=\"right\">".price($objp->total_ht)."</td>";
 			print "<td align=\"right\">".price($objp->total_ttc)."</td>";

@@ -205,8 +205,8 @@ function supplier_order_pdf_create($db, $comid, $modele,$outputlangs)
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dolibarr_syslog("Erreur dans supplier_order_pdf_create");
-			dolibarr_print_error($db,$obj->pdferror());
+			dol_syslog("Erreur dans supplier_order_pdf_create");
+			dol_print_error($db,$obj->pdferror());
 			return 0;
 		}
 	}

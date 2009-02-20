@@ -64,7 +64,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 
 	if ($error)
 	{
-		dolibarr_print_error($db->error());
+		dol_print_error($db->error());
 	}
 }
 
@@ -89,7 +89,7 @@ if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
 
 
-dolibarr_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"));
+dol_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"));
 
 $var=true;
 $html=new Form($db);

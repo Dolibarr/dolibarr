@@ -83,7 +83,7 @@ if ($_GET["id"] || $_GET["ref"])
          */
 		$head=product_prepare_head($product, $user);
 		$titre=$langs->trans("CardProduct".$product->type);
-		dolibarr_fiche_head($head, 'referers', $titre);
+		dol_fiche_head($head, 'referers', $titre);
 
 
         print '<table class="border" width="100%">';
@@ -171,10 +171,10 @@ if ($_GET["id"] || $_GET["ref"])
                     $supplierinvoicestatic->ref=$objp->facnumber;
 					print $supplierinvoicestatic->getNomUrl(1);
                     print "</td>\n";
-                    print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
                     print "<td>".$objp->code_client."</td>\n";
                     print "<td align=\"center\">";
-                    print dolibarr_print_date($objp->date)."</td>";
+                    print dol_print_date($objp->date)."</td>";
                     print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
                     $fac=new Facture($db);
                     print '<td align="right">'.$fac->LibStatut($objp->paye,$objp->statut,5).'</td>';
@@ -185,7 +185,7 @@ if ($_GET["id"] || $_GET["ref"])
         }
         else
         {
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
         print "</table>";
         print '<br>';
@@ -194,7 +194,7 @@ if ($_GET["id"] || $_GET["ref"])
 }
 else
 {
-    dolibarr_print_error();
+    dol_print_error();
 }
 
 $db->close();

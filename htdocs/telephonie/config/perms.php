@@ -93,7 +93,7 @@ $head[$h][1] = $langs->trans("Specials");
 $hselected = $h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, "Definitions des permissions");
+dol_fiche_head($head, $hselected, "Definitions des permissions");
 
 print_titre("Actions speciales");
 

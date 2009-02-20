@@ -47,7 +47,7 @@ if ($_POST["action"] == 'set')
 	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT",$_POST["CASHDESK_ID_BANKACCOUNT"]);
 	dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",$_POST["CASHDESK_ID_WAREHOUSE"]);
 	
-	dolibarr_syslog("admin/cashdesk: level ".$_POST["level"]);
+	dol_syslog("admin/cashdesk: level ".$_POST["level"]);
 }
 
 

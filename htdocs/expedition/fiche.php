@@ -184,7 +184,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	$result=expedition_pdf_create($db,$expedition->id,$expedition->modelpdf,$outputlangs);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$result);
+		dol_print_error($db,$result);
 		exit;
 	}
 }
@@ -279,7 +279,7 @@ if ($_GET["action"] == 'create')
 
 			// Date
 			print "<tr><td>".$langs->trans("Date")."</td>";
-			print '<td colspan="3">'.dolibarr_print_date($object->date,"day")."</td></tr>\n";
+			print '<td colspan="3">'.dol_print_date($object->date,"day")."</td></tr>\n";
 
 			// Warehouse (id forced)
 			if ($conf->stock->enabled && $_GET["entrepot_id"])
@@ -495,7 +495,7 @@ if ($_GET["action"] == 'create')
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 }
@@ -512,7 +512,7 @@ else
 		$result = $expedition->fetch($_GET["id"]);
 		if ($result < 0)
 		{
-			dolibarr_print_error($db,$expedition->error);
+			dol_print_error($db,$expedition->error);
 			exit -1;
 		}
 		$lignes = $expedition->lignes;
@@ -544,7 +544,7 @@ else
 				$h++;
 			}
 
-			dolibarr_fiche_head($head, $hselected, $langs->trans("Sending"));
+			dol_fiche_head($head, $hselected, $langs->trans("Sending"));
 
 			if ($mesg) print $mesg;
 
@@ -633,7 +633,7 @@ else
 
 			// Date
 			print '<tr><td>'.$langs->trans("Date").'</td>';
-			print '<td colspan="3">'.dolibarr_print_date($expedition->date,"daytext")."</td>\n";
+			print '<td colspan="3">'.dol_print_date($expedition->date,"daytext")."</td>\n";
 			print '</tr>';
 
 			// Weight

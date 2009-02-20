@@ -91,7 +91,7 @@ llxHeader();
 
 $head=societe_prepare_head2($soc);
 
-dolibarr_fiche_head($head, 'rib', $langs->trans("ThirdParty"));
+dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"));
 
 $account = new CompanyBankAccount($db);
 $account->socid=$soc->id;

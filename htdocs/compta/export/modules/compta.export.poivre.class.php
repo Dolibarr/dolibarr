@@ -57,8 +57,8 @@ class ComptaExportPoivre extends ComptaExport
    */
   function Agregate($line_in)
   {
-    dolibarr_syslog("ComptaExportPoivre::Agregate");
-    dolibarr_syslog("ComptaExportPoivre::Agregate " . sizeof($line_in) . " lignes en entrées");
+    dol_syslog("ComptaExportPoivre::Agregate");
+    dol_syslog("ComptaExportPoivre::Agregate " . sizeof($line_in) . " lignes en entrées");
     $i = 0;
     $j = 0;
     $n = sizeof($line_in);
@@ -84,7 +84,7 @@ class ComptaExportPoivre extends ComptaExport
 	  }	
         }
     
-    dolibarr_syslog("ComptaExportPoivre::Agregate " . sizeof($this->line_out) . " lignes en sorties");
+    dol_syslog("ComptaExportPoivre::Agregate " . sizeof($this->line_out) . " lignes en sorties");
     
     return 0;
   }
@@ -96,8 +96,8 @@ class ComptaExportPoivre extends ComptaExport
   {
     $error = 0;
     
-    dolibarr_syslog("ComptaExportPoivre::Export");
-    dolibarr_syslog("ComptaExportPoivre::Export " . sizeof($linec) . " lignes en entrées");
+    dol_syslog("ComptaExportPoivre::Export");
+    dol_syslog("ComptaExportPoivre::Export " . sizeof($linec) . " lignes en entrées");
     
     $this->Agregate($linec);
     
@@ -118,7 +118,7 @@ class ComptaExportPoivre extends ComptaExport
 	else
 	  {
 	    $error++;
-	    dolibarr_syslog("ComptaExportPoivre::Export Erreur Select");
+	    dol_syslog("ComptaExportPoivre::Export Erreur Select");
 	  }
 	
 	
@@ -136,7 +136,7 @@ class ComptaExportPoivre extends ComptaExport
 	    else
 	      {
 		$error++;
-		dolibarr_syslog("ComptaExportPoivre::Export Erreur INSERT");
+		dol_syslog("ComptaExportPoivre::Export Erreur INSERT");
 	      }
 	  }
       }
@@ -157,14 +157,14 @@ class ComptaExportPoivre extends ComptaExport
 	else
 	  {
 	    $error++;
-	    dolibarr_syslog("ComptaExportPoivre::Export Erreur Select");
+	    dol_syslog("ComptaExportPoivre::Export Erreur Select");
 	  }
       }
     
     
     if (!$error)
       {
-	dolibarr_syslog("ComptaExportPoivre::Export ref : ".$this->ref);
+	dol_syslog("ComptaExportPoivre::Export ref : ".$this->ref);
 	
 	$fxname = $dir . "/".$this->ref.".xls";
 	
@@ -358,12 +358,12 @@ class ComptaExportPoivre extends ComptaExport
     if (!$error)
       {
 	$this->db->commit();
-	dolibarr_syslog("ComptaExportPoivre::Export COMMIT");
+	dol_syslog("ComptaExportPoivre::Export COMMIT");
       }
     else
       {
 	$this->db->rollback();
-	dolibarr_syslog("ComptaExportPoivre::Export ROLLBACK");
+	dol_syslog("ComptaExportPoivre::Export ROLLBACK");
       }
     
     return 0;

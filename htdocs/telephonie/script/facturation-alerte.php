@@ -70,7 +70,7 @@ if ( $resql )
 else
 {
   $error = 1;
-  dolibarr_syslog("Erreur ".$error);
+  dol_syslog("Erreur ".$error);
 }
 
 /*
@@ -85,7 +85,7 @@ $error = 0;
 
 $fname = $dir . "alertes-factures.xls";
 
-dolibarr_syslog("Open $fname");
+dol_syslog("Open $fname");
     
 $workbook = &new writeexcel_workbook($fname);
 
@@ -184,7 +184,7 @@ if (!$error)
   else
     {
       $error = 2;
-      dolibarr_syslog("Erreur $error ".$db->error());
+      dol_syslog("Erreur $error ".$db->error());
     }
 }
 /*
@@ -306,7 +306,7 @@ if (!$error)
   else
     {
       $error = 2;
-      dolibarr_syslog("Erreur $error ".$db->error());
+      dol_syslog("Erreur $error ".$db->error());
     }
 }
 

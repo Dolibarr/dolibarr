@@ -51,7 +51,7 @@ $result = $client->call("get_Order",$parameters );
 //		echo '<h2>Result</h2><pre>'; print_r($result); echo '</pre>';
 
 if ($client->fault) {
-  		dolibarr_print_error('',"erreur de connexion ");
+  		dol_print_error('',"erreur de connexion ");
 }
 elseif (!($err = $client->getError()) )
 {
@@ -98,11 +98,11 @@ elseif (!($err = $client->getError()) )
 		print "</table></p>";
 	}
 	else {
-  		dolibarr_print_error('',"Aucune commande trouvée");
+  		dol_print_error('',"Aucune commande trouvée");
 	}
 }
 else {
-	dolibarr_print_error('',"Erreur service web ".$err); 
+	dol_print_error('',"Erreur service web ".$err); 
 }
 
 print "</TABLE>";

@@ -140,7 +140,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 			&& isset($_POST["naissmonth"]) && $_POST["naissmonth"]
 			&& isset($_POST["naissyear"]) && $_POST["naissyear"])
 		{
-			$datenaiss=dolibarr_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+			$datenaiss=dol_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
 		}
 		//print $_POST["naissmonth"].", ".$_POST["naissday"].", ".$_POST["naissyear"]." ".$datenaiss." ".adodb_strftime('%Y-%m-%d %H:%M:%S',$datenaiss);
 
@@ -236,12 +236,12 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
 		&& isset($_POST["naissmonth"]) && $_POST["naissmonth"]
 		&& isset($_POST["naissyear"]) && $_POST["naissyear"])
 	{
-		$datenaiss=dolibarr_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+		$datenaiss=dol_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
 	}
 	$datecotisation='';
 	if (isset($_POST["reday"]) && isset($_POST["remonth"]) && isset($_POST["reyear"]))
     {
-		$datecotisation=dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		$datecotisation=dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	}
 
     $type=$_POST["type"];
@@ -352,7 +352,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
                     $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"], '', $user);
                     if ($insertid == '')
                     {
-                        dolibarr_print_error($db);
+                        dol_print_error($db);
                     }
                     else
                     {
@@ -366,7 +366,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
                         }
                         else
                         {
-                            dolibarr_print_error($db);
+                            dol_print_error($db);
                         }
                     }
                 }
@@ -573,7 +573,7 @@ if ($action == 'edit')
 	 */
 	$head = member_prepare_head($adh);
 
-	dolibarr_fiche_head($head, 'general', $langs->trans("Member"));
+	dol_fiche_head($head, 'general', $langs->trans("Member"));
 
 
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
@@ -837,7 +837,7 @@ if ($rowid && $action != 'edit')
 	 */
 	$head = member_prepare_head($adh);
 
-	dolibarr_fiche_head($head, 'general', $langs->trans("Member"));
+	dol_fiche_head($head, 'general', $langs->trans("Member"));
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
@@ -1003,7 +1003,7 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($adh->email,0,$adh->fk_soc,1).'</td></tr>';
 
 	// Date naissance
-    print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dolibarr_print_date($adh->naiss,'day').'</td></tr>';
+    print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($adh->naiss,'day').'</td></tr>';
 
     // Public
     print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($adh->public).'</td></tr>';

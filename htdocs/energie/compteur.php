@@ -86,7 +86,7 @@ if ($_GET["action"] == 'create')
   $h++;
   $a = 0;
 
-  dolibarr_fiche_head($head, $a, $soc->nom);
+  dol_fiche_head($head, $a, $soc->nom);
 
   $html = new Form($db);
   $compteur = new EnergieCompteur($db, $user);
@@ -143,7 +143,7 @@ else
 	  $head[$h][1] = "Groupe";
 	  $h++;
 
-	  dolibarr_fiche_head($head, $a, $soc->nom);
+	  dol_fiche_head($head, $a, $soc->nom);
 	  
 	  
 	  print '<table class="border" width="100%">';
@@ -197,7 +197,7 @@ else
 		  $obj = $db->fetch_object($resql);
 		  $var=!$var;
 		  print "<tr $bc[$var]><td>";
-		  print dolibarr_print_date($obj->date_releve,'%a %d %B %Y');
+		  print dol_print_date($obj->date_releve,'%a %d %B %Y');
 		  print '</td><td>'.$obj->valeur.'</td>';
 
 		  $i++;

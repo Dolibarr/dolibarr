@@ -79,7 +79,7 @@ if ($_GET["facid"] > 0)
         }
         
 		$head = facture_prepare_head($fac);
-        dolibarr_fiche_head($head, 'preview', $langs->trans("InvoiceCustomer"));
+        dol_fiche_head($head, 'preview', $langs->trans("InvoiceCustomer"));
 
 
         /*
@@ -98,8 +98,8 @@ if ($_GET["facid"] > 0)
 
         // Dates
         print '<tr><td>'.$langs->trans("Date").'</td>';
-        print '<td colspan="3">'.dolibarr_print_date($fac->date,"daytext").'</td>';
-        print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"daytext");
+        print '<td colspan="3">'.dol_print_date($fac->date,"daytext").'</td>';
+        print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dol_print_date($fac->date_lim_reglement,"daytext");
         if ($fac->paye == 0 && $fac->date_lim_reglement < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
         print "</td></tr>";
 
@@ -163,7 +163,7 @@ if ($_GET["facid"] > 0)
 
             print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepath).'">'.$fac->ref.'.pdf</a></td>';
             print '<td align="right">'.filesize($file). ' bytes</td>';
-            print '<td align="right">'.dolibarr_print_date(filemtime($file),'dayhour').'</td>';
+            print '<td align="right">'.dol_print_date(filemtime($file),'dayhour').'</td>';
             print '</tr>';
 
             // Si fichier detail PDF existe
@@ -173,7 +173,7 @@ if ($_GET["facid"] > 0)
 
                 print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$fac->ref.'-detail.pdf</a></td>';
                 print '<td align="right">'.filesize($filedetail). ' bytes</td>';
-                print '<td align="right">'.dolibarr_print_date(filemtime($filedetail),"%d %b %Y %H:%M:%S").'</td>';
+                print '<td align="right">'.dol_print_date(filemtime($filedetail),"%d %b %Y %H:%M:%S").'</td>';
                 print '</tr>';
             }
 

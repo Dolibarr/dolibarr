@@ -114,7 +114,7 @@ class TelephonieTarifGrille {
 	  }
 	else
 	  {
-	    dolibarr_syslog($this->db->error());
+	    dol_syslog($this->db->error());
 	    $result = -1;
 	  }
 	
@@ -152,7 +152,7 @@ class TelephonieTarifGrille {
       }
     else
       {
-	dolibarr_syslog($this->db->error());
+	dol_syslog($this->db->error());
       }
 
     if (sizeof($tarifs) > 0)    
@@ -185,8 +185,8 @@ class TelephonieTarifGrille {
 	  }
 	else
 	  {
-	    dolibarr_syslog($this->db->error());
-	    dolibarr_syslog($sql);
+	    dol_syslog($this->db->error());
+	    dol_syslog($sql);
 	    $result = -1;
 	  }
 
@@ -195,7 +195,7 @@ class TelephonieTarifGrille {
 	
 	if (! $this->db->query($sql) )
 	  {
-	    dolibarr_syslog($this->db->error());
+	    dol_syslog($this->db->error());
 	    $result = -1;
 	  }
 
@@ -204,7 +204,7 @@ class TelephonieTarifGrille {
 	
 	if (! $this->db->query($sql) )
 	  {
-	    dolibarr_syslog($this->db->error());
+	    dol_syslog($this->db->error());
 	    $result = -1;
 	  }
 
@@ -217,7 +217,7 @@ class TelephonieTarifGrille {
 	  }
 	else
 	  {
-	    dolibarr_syslog($this->db->error());
+	    dol_syslog($this->db->error());
 	    $result = -1;
 	  }
 
@@ -327,7 +327,7 @@ class TelephonieTarifGrille {
       }
       else
       {
-      dolibarr_syslog($this->db->error());
+      dol_syslog($this->db->error());
       }
             
       foreach($tarifs_linked as $tarif)
@@ -359,7 +359,7 @@ class TelephonieTarifGrille {
       }
     else
       {
-	dolibarr_syslog($this->db->error());
+	dol_syslog($this->db->error());
       }
     
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_montant_log";
@@ -376,7 +376,7 @@ class TelephonieTarifGrille {
       }
     else
       {
-	dolibarr_syslog($this->db->error());
+	dol_syslog($this->db->error());
       }
            
     

@@ -98,7 +98,7 @@ print "<br>\n";
 
 $head=agenda_prepare_head();
 
-dolibarr_fiche_head($head, 'autoactions', $langs->trans("Agenda"));
+dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"));
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

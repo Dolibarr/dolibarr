@@ -41,14 +41,14 @@ $error = 0;
 
 $puser = new user($db, PRELEVEMENT_USER);
 $puser->fetch();
-dolibarr_syslog("Prélèvements effectués par ".$puser->fullname." [".PRELEVEMENT_USER."]");
+dol_syslog("Prélèvements effectués par ".$puser->fullname." [".PRELEVEMENT_USER."]");
 
-dolibarr_syslog("Raison sociale : ".PRELEVEMENT_RAISON_SOCIALE);
-dolibarr_syslog("Numéro Nation Emetteur : ".PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR);
+dol_syslog("Raison sociale : ".PRELEVEMENT_RAISON_SOCIALE);
+dol_syslog("Numéro Nation Emetteur : ".PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR);
 
-dolibarr_syslog("Code etablissement : ".PRELEVEMENT_CODE_BANQUE);
-dolibarr_syslog("Code guichet       : ". PRELEVEMENT_CODE_GUICHET);
-dolibarr_syslog("Numero compte      : ".PRELEVEMENT_NUMERO_COMPTE);
+dol_syslog("Code etablissement : ".PRELEVEMENT_CODE_BANQUE);
+dol_syslog("Code guichet       : ". PRELEVEMENT_CODE_GUICHET);
+dol_syslog("Numero compte      : ".PRELEVEMENT_NUMERO_COMPTE);
 
 /*
  *
@@ -88,13 +88,13 @@ if (!$error)
 	  $i++;
 	}            
       $db->free();
-      dolibarr_syslog("$i factures à prélever");
+      dol_syslog("$i factures à prélever");
     }
   else
     {
       $error = 1;
-      dolibarr_syslog("Erreur -1");
-      dolibarr_syslog($db->error());
+      dol_syslog("Erreur -1");
+      dol_syslog($db->error());
     }
 }
 
@@ -111,7 +111,7 @@ if (!$error)
    *
    */
   $i = 0;
-  dolibarr_syslog("Début vérification des RIB");
+  dol_syslog("Début vérification des RIB");
 
   if (sizeof($factures) > 0)
     {      
@@ -134,27 +134,27 @@ if (!$error)
 		    }
 		  else
 		    {
-		      dolibarr_syslog("Erreur de RIB societe $fact->socid $soc->nom");
+		      dol_syslog("Erreur de RIB societe $fact->socid $soc->nom");
 		    }
 		}
 	      else
 		{
-		  dolibarr_syslog("Impossible de lire la société");
+		  dol_syslog("Impossible de lire la société");
 		}
 	    }
 	  else
 	    {
-	      dolibarr_syslog("Impossible de lire la facture");
+	      dol_syslog("Impossible de lire la facture");
 	    }
 	}
     }
   else
     {
-      dolibarr_syslog("Aucune factures a traiter");
+      dol_syslog("Aucune factures a traiter");
     }
 }
 
-dolibarr_syslog(sizeof($factures_prev)." factures sur ".sizeof($factures)." seront prélevées");
+dol_syslog(sizeof($factures_prev)." factures sur ".sizeof($factures)." seront prélevées");
 
 $db->close();
 

@@ -81,7 +81,7 @@ if ($_GET["id"])
 	  $head[$h][1] = $langs->trans("Tarifs (".$row[0].")");	       
 	  $h++;
 	  	
-	  dolibarr_fiche_head($head, $hselected, 'Client : '.$soc->nom);
+	  dol_fiche_head($head, $hselected, 'Client : '.$soc->nom);
 
 	  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
 	  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td>';

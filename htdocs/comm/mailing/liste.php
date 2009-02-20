@@ -112,7 +112,7 @@ if ($result)
       print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$obj->rowid.'">';
       print img_object($langs->trans("ShowEMail"),"email").' '.stripslashes($obj->rowid).'</a></td>';
       print '<td>'.$obj->titre.'</td>';
-      print '<td align="center">'.dolibarr_print_date($obj->datec,'day').'</td>';
+      print '<td align="center">'.dol_print_date($obj->datec,'day').'</td>';
       print '<td align="center">'.$obj->nbemail.'</td>';
       print '<td align="right">'.$email->LibStatut($obj->statut,5).'</td>';
       print "</tr>\n";
@@ -123,7 +123,7 @@ if ($result)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 $db->close();

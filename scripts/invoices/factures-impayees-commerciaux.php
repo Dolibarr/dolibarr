@@ -62,7 +62,7 @@ if ( $db->query($sql) )
     $oldemail = '';
     $message = '';
     $total = '';
-    dolibarr_syslog("factures-impayees-commerciaux: ");
+    dol_syslog("factures-impayees-commerciaux: ");
 
     if ($num)
     {
@@ -84,7 +84,7 @@ if ( $db->query($sql) )
             $message .= "Facture ".$obj->facnumber." : ".price($obj->total_ttc)." : ".$obj->nom."\n";
             $total += $obj->total_ttc;
     
-            dolibarr_syslog("factures-impayees-commerciaux: ".$obj->email);
+            dol_syslog("factures-impayees-commerciaux: ".$obj->email);
             $i++;
         }
 
@@ -101,8 +101,8 @@ if ( $db->query($sql) )
 }
 else
 {
-    dolibarr_print_error($db);
-    dolibarr_syslog("factures-impayees-commerciaux: Error");
+    dol_print_error($db);
+    dol_syslog("factures-impayees-commerciaux: Error");
 }
 
 
@@ -116,7 +116,7 @@ function envoi_mail($oldemail,$message,$total)
 	$msgishtml = 0;
 	
     print "Envoi mail pour $oldemail, total: $total\n";
-    dolibarr_syslog("factures-impayees-commerciaux: send mail to $oldemail");
+    dol_syslog("factures-impayees-commerciaux: send mail to $oldemail");
 
     $allmessage = "Liste des factures impayées à ce jour\n";
     $allmessage .= "Cette liste ne comporte que les factures des sociétés dont vous êtes référencés comme commercial.\n";

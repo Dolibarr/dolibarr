@@ -64,13 +64,13 @@ if (! $sortfield) $sortfield="label";
 $fileid=$_REQUEST["fileid"];
 if (! $fileid)
 {
-	dolibarr_print_error('',"ErrorParamNotDefined");
+	dol_print_error('',"ErrorParamNotDefined");
 	exit;
 }
 $section=$_REQUEST["section"];
 if (! $section)
 {
-	dolibarr_print_error('',"ErrorSectionParamNotDefined");
+	dol_print_error('',"ErrorSectionParamNotDefined");
 	exit;
 }
 
@@ -83,7 +83,7 @@ if (! empty($_GET["fileid"]))
 	$result=$ecmfile->fetch($_GET["fileid"]);
 	if (! $result > 0)
 	{
-		dolibarr_print_error($db,$ecmfile->error);
+		dol_print_error($db,$ecmfile->error);
 		exit;
 	}
 }
@@ -114,7 +114,7 @@ $formecm=new FormEcm($db);
 
 
 $head = ecm_prepare_head($ecmdir);
-dolibarr_fiche_head($head, 'card', $langs->trans("ECMSectionManual"));
+dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"));
 
 if ($_GET["action"] == 'edit')
 {
@@ -168,7 +168,7 @@ $userecm->fetch();
 print $userecm->getNomUrl(1);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>';
-print dolibarr_print_date($ecmdir->date_c,'dayhour');
+print dol_print_date($ecmdir->date_c,'dayhour');
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
 //print $conf->ecm->dir_output;

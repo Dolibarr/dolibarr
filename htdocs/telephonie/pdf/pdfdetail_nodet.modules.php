@@ -243,8 +243,8 @@ class pdfdetail_nodet {
 		}
 	      else
 		{
-		  dolibarr_syslog("Erreur SQl");
-		  dolibarr_syslog($this->db->error());
+		  dol_syslog("Erreur SQl");
+		  dol_syslog($this->db->error());
 		}
 
 	      $h = floor($total_duree / 3600);
@@ -413,7 +413,7 @@ class pdfdetail_nodet {
 		{
 		  $pdf->Close();	      
 		  $pdf->Output($file);
-		  dolibarr_syslog("Write $file");
+		  dol_syslog("Write $file");
 		}
 	      $this->filename = $file;
 

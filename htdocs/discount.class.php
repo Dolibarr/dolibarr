@@ -84,7 +84,7 @@ class DiscountAbsolute
 		if ($rowid) $sql.= " sr.rowid=".$rowid;
 		if ($fk_facture_source) $sql.= " sr.fk_facture_source=".$fk_facture_source;
 
-		dolibarr_syslog("DiscountAbsolute::fetch sql=".$sql);
+		dol_syslog("DiscountAbsolute::fetch sql=".$sql);
  		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -149,7 +149,7 @@ class DiscountAbsolute
 		$sql.= " ".($this->fk_facture_source?"'".$this->fk_facture_source."'":"null");
 		$sql.= ")";
 
-	   	dolibarr_syslog("DiscountAbsolute::create sql=".$sql);
+	   	dol_syslog("DiscountAbsolute::create sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -159,7 +159,7 @@ class DiscountAbsolute
 		else
 		{
             $this->error=$this->db->lasterror().' - sql='.$sql;
-            dolibarr_syslog("DiscountAbsolute::create ".$this->error);
+            dol_syslog("DiscountAbsolute::create ".$this->error);
             return -1;
 		}
     }
@@ -178,7 +178,7 @@ class DiscountAbsolute
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except ";
 		$sql.= " WHERE rowid = ".$this->id." AND (fk_facture_line IS NULL or fk_facture IS NULL)";
 
-	   	dolibarr_syslog("DiscountAbsolute::delete Delete discount sql=".$sql);
+	   	dol_syslog("DiscountAbsolute::delete Delete discount sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -189,7 +189,7 @@ class DiscountAbsolute
 				$sql.=" set paye=0, fk_statut=1";
 				$sql.=" WHERE type = 2 AND rowid=".$this->fk_facture_source;
 
-			   	dolibarr_syslog("DiscountAbsolute::delete Update credit note statut sql=".$sql);
+			   	dol_syslog("DiscountAbsolute::delete Update credit note statut sql=".$sql);
 				$result=$this->db->query($sql);
 				if ($result)
 				{
@@ -244,7 +244,7 @@ class DiscountAbsolute
 		if ($rowidinvoice) $sql.=" SET fk_facture = ".$rowidinvoice;
 		$sql.=" WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("DiscountAbsolute::link_to_invoice sql=".$sql,LOG_DEBUG);
+		dol_syslog("DiscountAbsolute::link_to_invoice sql=".$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -253,7 +253,7 @@ class DiscountAbsolute
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("DiscountAbsolute::link_to_invoice ".$this->error,LOG_ERR);
+			dol_syslog("DiscountAbsolute::link_to_invoice ".$this->error,LOG_ERR);
 			return -3;
 		}
 	}
@@ -272,7 +272,7 @@ class DiscountAbsolute
 		$sql.=" SET fk_facture_line = NULL, fk_facture = NULL";
 		$sql.=" WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("DiscountAbsolute::unlink_invoice sql=".$sql,LOG_DEBUG);
+		dol_syslog("DiscountAbsolute::unlink_invoice sql=".$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -281,7 +281,7 @@ class DiscountAbsolute
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("DiscountAbsolute::link_to_invoice ".$this->error,LOG_ERR);
+			dol_syslog("DiscountAbsolute::link_to_invoice ".$this->error,LOG_ERR);
 			return -3;
 		}
 	}
@@ -306,7 +306,7 @@ class DiscountAbsolute
         if ($filter)   $sql.=' AND '.$filter;
         if ($maxvalue) $sql.=' AND rc.amount_ttc <= '.price2num($maxvalue);
 
-        dolibarr_syslog("DiscountAbsolute::getAvailableDiscounts sql=".$sql,LOG_DEBUG);
+        dol_syslog("DiscountAbsolute::getAvailableDiscounts sql=".$sql,LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -332,7 +332,7 @@ class DiscountAbsolute
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
 		$sql.= ' WHERE rc.fk_facture = '.$invoice->id;
 
-        dolibarr_syslog("DiscountAbsolute::getSommeCreditNote sql=".$sql,LOG_DEBUG);
+        dol_syslog("DiscountAbsolute::getSommeCreditNote sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

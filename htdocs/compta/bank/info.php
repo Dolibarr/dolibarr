@@ -55,7 +55,7 @@ $hselected = $h;
 $h++;
 
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("LineRecord"));
+dol_fiche_head($head, $hselected, $langs->trans("LineRecord"));
 
 print '<table width="100%"><tr><td>';
 dol_print_object_info($line);

@@ -196,7 +196,7 @@ else
 		$result = $entrepot->fetch($_GET["id"]);
 		if ($result < 0)
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		/*
@@ -237,7 +237,7 @@ else
 			$head[$h][1] = $langs->trans("Info");
 			$h++;
 
-			dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse"));
+			dol_fiche_head($head, $hselected, $langs->trans("Warehouse"));
 
 			print '<table class="border" width="100%">';
 
@@ -282,11 +282,11 @@ else
 			}
 			else
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 
 			print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
-			print '<a href="mouvement.php?id='.$entrepot->id.'">'.dolibarr_print_date($row[0]).'</a>';
+			print '<a href="mouvement.php?id='.$entrepot->id.'">'.dol_print_date($row[0]).'</a>';
 			print "</td></tr>";
 
 			print "</table>";
@@ -373,7 +373,7 @@ else
 					}
 
 					$var=!$var;
-					//print '<td>'.dolibarr_print_date($objp->datem).'</td>';
+					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print "<tr $bc[$var]>";
 					print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
 					print img_object($langs->trans("ShowProduct"),"product").' '.$objp->ref;
@@ -405,7 +405,7 @@ else
 			}
 			else
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 			print "</table>\n";
 		}

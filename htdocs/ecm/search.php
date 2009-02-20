@@ -62,7 +62,7 @@ print_fiche_titre($langs->trans("Search"));
 //$head = societe_prepare_head($societe);
 
 
-//dolibarr_fiche_head($head, 'document', $societe->nom);
+//dol_fiche_head($head, 'document', $societe->nom);
 
 
 

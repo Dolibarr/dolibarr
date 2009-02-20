@@ -644,7 +644,7 @@ else
 	      $head[$h][1] = $langs->trans('Historique');
 	      $h++;
 
-	      dolibarr_fiche_head($head, $hselected, 'Liaison ADSL : '.$ligne->numero);
+	      dol_fiche_head($head, $hselected, 'Liaison ADSL : '.$ligne->numero);
 
 	      print_fiche_titre('Fiche Liaison ADSL', $mesg);
       
@@ -659,7 +659,7 @@ else
 	      print $client->nom.'</a></td><td>'.$client->code_client;
 	      print '</td></tr>';
 
-	      print '<tr><td width="20%">Num�ro</td><td>'.dolibarr_print_phone($ligne->numero,0,0,true).'</td>';
+	      print '<tr><td width="20%">Num�ro</td><td>'.dol_print_phone($ligne->numero,0,0,true).'</td>';
 	      print '<td>&nbsp;</td></tr>';
 
 	      print '<tr><td width="20%">D�bit de la liaison</td><td>'.$ligne->type.'</td>';

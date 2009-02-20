@@ -105,14 +105,14 @@ class CommunicationTelephonique {
 	/* Fin Numeros speciaux */
 	if ($tarif_achat->cout($num, $this->cout_temp_achat, $this->cout_fixe_achat, $tarif_libelle_achat) == 0)
 	  {
-	    dolibarr_syslog("CommunicationTelephonique::Cout Tarif achat manquant pour $num");
+	    dol_syslog("CommunicationTelephonique::Cout Tarif achat manquant pour $num");
 	    array_push($this->messages, array('warning',"Tarif achat manquant pour le numero $this->numero"));
 	    //$error++;
 	  }
 	
 	if ($tarif_vente->cout($num, $this->cout_temp_vente, $this->cout_fixe_vente, $this->tarif_libelle_vente) == 0)
 	  {
-	    dolibarr_syslog("CommunicationTelephonique::Cout Tarif vente manquant pour $num");
+	    dol_syslog("CommunicationTelephonique::Cout Tarif vente manquant pour $num");
 	    array_push($this->messages, array('error',"Tarif vente manquant pour le numero $this->numero"));
 	    $error++;
 	  }
@@ -196,8 +196,8 @@ class CommunicationTelephonique {
 
     if (! $db->query($sql))
       {
-	dolibarr_syslog("CommunicationTelephonique::logsql Erreur");
-	dolibarr_syslog("CommunicationTelephonique::logsql ".$db->error());
+	dol_syslog("CommunicationTelephonique::logsql Erreur");
+	dol_syslog("CommunicationTelephonique::logsql ".$db->error());
 	return 1;
       }
     else

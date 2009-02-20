@@ -400,7 +400,7 @@ class DolGraph
 		if (! is_array($this->data) || sizeof($this->data) < 1)
 		{
 			$this->error="Call to draw method was made but SetData was not called or called with an empty dataset for parameters";
-			dolibarr_syslog("DolGraph::draw ".$this->error, LOG_ERR);
+			dol_syslog("DolGraph::draw ".$this->error, LOG_ERR);
 			return -1;
 		}
 		$call = "draw_".$this->library;
@@ -414,7 +414,7 @@ class DolGraph
 	 */
 	function draw_artichow($file)
 	{
-		dolibarr_syslog("DolGraph.class::draw_artichow this->type=".$this->type);
+		dol_syslog("DolGraph.class::draw_artichow this->type=".$this->type);
 
 		if (! defined('SHADOW_RIGHT_TOP'))  define('SHADOW_RIGHT_TOP',3);
 		if (! defined('LEGEND_BACKGROUND')) define('LEGEND_BACKGROUND',2);

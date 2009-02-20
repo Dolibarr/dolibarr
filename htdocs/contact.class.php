@@ -102,7 +102,7 @@ class Contact extends CommonObject
         $sql.= $this->priv;
         $sql.= ")";
 
-        dolibarr_syslog("Contact::create sql=".$sql);
+        dol_syslog("Contact::create sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -127,7 +127,7 @@ class Contact extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dolibarr_syslog("Contact::create ".$this->error);
+            dol_syslog("Contact::create ".$this->error);
             return -1;
         }
     }
@@ -177,12 +177,12 @@ class Contact extends CommonObject
         $sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"null");
         $sql .= " WHERE rowid=".$id;
 
-        dolibarr_syslog("Contact::update sql=".$sql,LOG_DEBUG);
+        dol_syslog("Contact::update sql=".$sql,LOG_DEBUG);
         $result = $this->db->query($sql);
         if (! $result)
         {
             $this->error=$this->db->lasterror().' sql='.$sql;
-			dolibarr_syslog("Contact::update Error ".$this->error,LOG_ERR);
+			dol_syslog("Contact::update Error ".$this->error,LOG_ERR);
             return -1;
         }
 
@@ -312,7 +312,7 @@ class Contact extends CommonObject
         if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql .= " WHERE rowid=".$id;
 		//print "update_perso: ".$this->birthday.'-'.$this->db->idate($this->birthday);
-		dolibarr_syslog("Contact::update_perso this->birthday=".$this->birthday." - sql=".$sql);
+		dol_syslog("Contact::update_perso this->birthday=".$this->birthday." - sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
@@ -379,7 +379,7 @@ class Contact extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
         $sql.= " WHERE c.rowid = ". $id;
 
-    	dolibarr_syslog("Contact::fetch sql=".$sql);
+    	dol_syslog("Contact::fetch sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -444,7 +444,7 @@ class Contact extends CommonObject
 	            else
 	            {
 	           	    $this->error=$this->db->error();
-	                dolibarr_syslog("Contact::fetch ".$this->error, LOG_ERR);
+	                dol_syslog("Contact::fetch ".$this->error, LOG_ERR);
 	                return -1;
 	            }
 
@@ -469,7 +469,7 @@ class Contact extends CommonObject
 	                else
 	                {
 		           	    $this->error=$this->db->error();
-		                dolibarr_syslog("Contact::fetch ".$this->error, LOG_ERR);
+		                dol_syslog("Contact::fetch ".$this->error, LOG_ERR);
 	                    return -1;
 	                }
 	            }
@@ -485,7 +485,7 @@ class Contact extends CommonObject
         else
         {
 			$this->error=$this->db->error();
-			dolibarr_syslog("Contact::fetch ".$this->error, LOG_ERR);
+			dol_syslog("Contact::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -508,7 +508,7 @@ class Contact extends CommonObject
         $sql.=" AND fk_socpeople = ". $this->id;
         $sql.=" GROUP BY tc.element";
 
-        dolibarr_syslog("Contact::load_ref_elements sql=".$sql);
+        dol_syslog("Contact::load_ref_elements sql=".$sql);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -529,7 +529,7 @@ class Contact extends CommonObject
         else
         {
 	        $this->error=$this->db->error()." - ".$sql;
-	        dolibarr_syslog("Contact::load_ref_elements Error ".$this->error);
+	        dol_syslog("Contact::load_ref_elements Error ".$this->error);
 	        return -1;
         }
     }
@@ -558,7 +558,7 @@ class Contact extends CommonObject
 			$sql.= " WHERE ec.fk_socpeople=".$this->id;
 			$sql.= " AND ec.fk_c_type_contact=tc.rowid";
 			$sql.= " AND tc.source='external'";
-			dolibarr_syslog("Contact::delete sql=".$sql);
+			dol_syslog("Contact::delete sql=".$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -571,7 +571,7 @@ class Contact extends CommonObject
 
 					$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 					$sqldel.=" WHERE rowid = ".$obj->rowid;
-					dolibarr_syslog("Contact::delete sql=".$sqldel);
+					dol_syslog("Contact::delete sql=".$sqldel);
 					$result = $this->db->query($sqldel);
 					if (! $result)
 					{
@@ -593,7 +593,7 @@ class Contact extends CommonObject
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
 			$sql .= " WHERE rowid=".$this->id;
-			dolibarr_syslog("Contact::delete sql=".$sql);
+			dol_syslog("Contact::delete sql=".$sql);
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
@@ -721,7 +721,7 @@ class Contact extends CommonObject
 		}
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact").': '.$this->getFullName($langs),'contact').$lienfin.' ');
-		$result.=$lien.($maxlen?dolibarr_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$lienfin;
+		$result.=$lien.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$lienfin;
 		return $result;
 	}
 

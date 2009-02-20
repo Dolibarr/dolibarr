@@ -62,7 +62,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 			$isimage=image_format_supported($original_file);
 			if ($isimage >= 0)
 			{
-				dolibarr_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->societe->dir_logos.'/'.$original_file);
+				dol_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->societe->dir_logos.'/'.$original_file);
 				if (! is_dir($conf->societe->dir_logos))
 				{
 					create_exdir($conf->societe->dir_logos);
@@ -82,7 +82,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 							$imgThumbSmall = $reg[1];
 							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall);
 						}
-						else dolibarr_syslog($imgThumbSmall);
+						else dol_syslog($imgThumbSmall);
 
 						// Création de la vignette de la page "Société/Institution"
 						$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$original_file, 100, 30, '_mini', $quality);
@@ -91,9 +91,9 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 							$imgThumbMini = $reg[1];
 							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini);
 						}
-						else dolibarr_syslog($imgThumbMini);
+						else dol_syslog($imgThumbMini);
 					}
-					else dolibarr_syslog($langs->trans("ErrorImageFormatNotSupported"),LOG_WARNING);
+					else dol_syslog($langs->trans("ErrorImageFormatNotSupported"),LOG_WARNING);
 				}
 				else
 				{
@@ -142,7 +142,7 @@ if ($_GET["action"] == 'addthumb')
 				$imgThumbSmall = $reg[1];
 				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall);
 			}
-			else dolibarr_syslog($imgThumbSmall);
+			else dol_syslog($imgThumbSmall);
 
 			// Création de la vignette de la page "Société/Institution"
 			$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$_GET["file"], 100, 30, '_mini',80);
@@ -151,7 +151,7 @@ if ($_GET["action"] == 'addthumb')
 				$imgThumbMini = $reg[1];
 				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini);
 			}
-			else dolibarr_syslog($imgThumbMini);
+			else dol_syslog($imgThumbMini);
 
 			Header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
@@ -159,13 +159,13 @@ if ($_GET["action"] == 'addthumb')
 		else
 		{
 			$message .= '<div class="error">'.$langs->trans("ErrorImageFormatNotSupported").'</div>';
-			dolibarr_syslog($langs->transnoentities("ErrorImageFormatNotSupported"),LOG_WARNING);
+			dol_syslog($langs->transnoentities("ErrorImageFormatNotSupported"),LOG_WARNING);
 		}
 	}
 	else
 	{
 		$message .= '<div class="error">'.$langs->trans("ErrorFileDoesNotExists",$_GET["file"]).'</div>';
-		dolibarr_syslog($langs->transnoentities("ErrorFileDoesNotExists",$_GET["file"]),LOG_WARNING);
+		dol_syslog($langs->transnoentities("ErrorFileDoesNotExists",$_GET["file"]),LOG_WARNING);
 	}
 }
 
@@ -320,7 +320,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 			if ($obj->code) $code_pays=$obj->code;
 		}
 		else {
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 
@@ -579,7 +579,7 @@ else
 			if ($obj->code) $code_pays=$obj->code;
 		}
 		else {
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 

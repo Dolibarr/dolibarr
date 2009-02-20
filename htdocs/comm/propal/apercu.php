@@ -68,7 +68,7 @@ if ($_GET["propalid"] > 0)
 		$soc->fetch($propal->socid);
 
 		$head = propal_prepare_head($propal);
-		dolibarr_fiche_head($head, 'preview', $langs->trans('Proposal'));
+		dol_fiche_head($head, 'preview', $langs->trans('Proposal'));
 
 
 		/*
@@ -124,7 +124,7 @@ if ($_GET["propalid"] > 0)
 				// ligne
 				// partie Gauche
 				print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-				print dolibarr_print_date($propal->date,'daytext');
+				print dol_print_date($propal->date,'daytext');
 				print '</td>';
 
 				// partie Droite sur $rowspan lignes
@@ -159,7 +159,7 @@ if ($_GET["propalid"] > 0)
 
 					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$propal->ref.'.pdf</a></td>';
 					print '<td align="right">'.filesize($file). ' bytes</td>';
-					print '<td align="right">'.dolibarr_print_date(filemtime($file),'dayhour').'</td>';
+					print '<td align="right">'.dol_print_date(filemtime($file),'dayhour').'</td>';
 					print '</tr>';
 
 					// Si fichier detail PDF existe
@@ -168,7 +168,7 @@ if ($_GET["propalid"] > 0)
 
 						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepathdetail).'">'.$propal->ref.'-detail.pdf</a></td>';
 						print '<td align="right">'.filesize($filedetail). ' bytes</td>';
-						print '<td align="right">'.dolibarr_print_date(filemtime($filedetail),'dayhour').'</td>';
+						print '<td align="right">'.dol_print_date(filemtime($filedetail),'dayhour').'</td>';
 						print '</tr>';
 					}
 					print "</table>\n";
@@ -210,7 +210,7 @@ if ($_GET["propalid"] > 0)
 				print '</table>';
 			}
 		} else {
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	} else {
 	// Propal non trouvée

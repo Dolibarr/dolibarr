@@ -52,7 +52,7 @@ if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 	{
 		$deplacement = new Deplacement($db);
 
-		$deplacement->date = dolibarr_mktime(12, 0, 0,
+		$deplacement->date = dol_mktime(12, 0, 0,
 		$_POST["remonth"],
 		$_POST["reday"],
 		$_POST["reyear"]);
@@ -89,7 +89,7 @@ if ($_POST["action"] == 'update' && $user->rights->deplacement->creer)
 		$deplacement = new Deplacement($db);
 		$result = $deplacement->fetch($_POST["id"]);
 
-		$deplacement->date = dolibarr_mktime(12, 0 , 0,
+		$deplacement->date = dol_mktime(12, 0 , 0,
 		$_POST["remonth"],
 		$_POST["reday"],
 		$_POST["reyear"]);
@@ -183,7 +183,7 @@ else
 				$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
 				$head[$h][1] = $langs->trans("Card");
 
-				dolibarr_fiche_head($head, $hselected, $langs->trans("TripCard"));
+				dol_fiche_head($head, $hselected, $langs->trans("TripCard"));
 
 				print "<form name='update' action=\"fiche.php\" method=\"post\">\n";
 				print '<input type="hidden" name="action" value="update">';
@@ -230,7 +230,7 @@ else
 				$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
 				$head[$h][1] = $langs->trans("Card");
 
-				dolibarr_fiche_head($head, $hselected, $langs->trans("TripCard"));
+				dol_fiche_head($head, $hselected, $langs->trans("TripCard"));
 
 				/*
 				 * Confirmation de la suppression du déplacement
@@ -268,7 +268,7 @@ else
 				print '</td></tr>';
 				
 				print '<tr><td>'.$langs->trans("Date").'</td><td>';
-				print dolibarr_print_date($deplacement->date);
+				print dol_print_date($deplacement->date);
 				print '</td></tr>';
 				
 				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td>'.$deplacement->km.'</td></tr>';
@@ -281,7 +281,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 }

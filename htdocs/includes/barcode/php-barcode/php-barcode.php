@@ -85,7 +85,7 @@ else
 	//$genbarcode_loc = "/usr/local/bin/genbarcode";
 	$genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
 }
-//dolibarr_syslog("genbarcode_loc=".$genbarcode_loc);
+//dol_syslog("genbarcode_loc=".$genbarcode_loc);
 
 
 /* CONFIGURATION ENDS HERE */
@@ -438,7 +438,7 @@ function barcode_encode($code,$encoding){
  *    array[text]     : text-positioning info
  */
 function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png" ){
-	dolibarr_syslog("$code $encoding $scale $mode");
+	dol_syslog("$code $encoding $scale $mode");
 	$bars=barcode_encode($code,$encoding);
     if (!$bars) return;
     if (!$mode) $mode="png";

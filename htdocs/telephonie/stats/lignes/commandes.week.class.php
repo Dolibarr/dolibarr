@@ -73,7 +73,7 @@ class GraphLignesCommandesWeek extends GraphBarAcc {
       }
     else 
       {
-	dolibarr_syslog($this->db->error());
+	dol_syslog($this->db->error());
       }
 
     /* Lignes rejetées */
@@ -108,7 +108,7 @@ class GraphLignesCommandesWeek extends GraphBarAcc {
       }
     else 
       {
-	dolibarr_syslog($this->db->error());
+	dol_syslog($this->db->error());
       }
 
     /* == */

@@ -99,7 +99,7 @@ class Events // extends CommonObject
 
 		$sql.= ")";
 
-	   	dolibarr_syslog("Events::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog("Events::create sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -110,7 +110,7 @@ class Events // extends CommonObject
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Events::create ".$this->error, LOG_ERR);
+            dol_syslog("Events::create ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -145,12 +145,12 @@ class Events // extends CommonObject
 
         $sql.= " WHERE rowid=".$this->id;
 
-        dolibarr_syslog("Events::update sql=".$sql, LOG_DEBUG);
+        dol_syslog("Events::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Events::update ".$this->error, LOG_ERR);
+            dol_syslog("Events::update ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -179,7 +179,7 @@ class Events // extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."events as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-    	dolibarr_syslog("Events::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog("Events::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -203,7 +203,7 @@ class Events // extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Events::fetch ".$this->error, LOG_ERR);
+            dol_syslog("Events::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -221,12 +221,12 @@ class Events // extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
 		$sql.= " WHERE rowid=".$this->id;
 
-	   	dolibarr_syslog("Events::delete sql=".$sql);
+	   	dol_syslog("Events::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Events::delete ".$this->error, LOG_ERR);
+            dol_syslog("Events::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 

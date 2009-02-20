@@ -163,7 +163,7 @@ $dir = "/tmp/";
 $fname = $dir . "facturation-analyse.xls";
 
 if ($verbose > 0)
-  dolibarr_syslog("Open $fname");
+  dol_syslog("Open $fname");
     
 $workbook = &new writeexcel_workbook($fname);
 

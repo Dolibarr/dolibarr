@@ -50,7 +50,7 @@ class CdrFormatFructidor
   function ReadFile($file)
   {
     $this->messages = array();
-    dolibarr_syslog("CdrFormatFructidor::ReadFile($file)", LOG_DEBUG);
+    dol_syslog("CdrFormatFructidor::ReadFile($file)", LOG_DEBUG);
     $badformat = 0;
     $error = 0;
     $i = 0;
@@ -85,7 +85,7 @@ class CdrFormatFructidor
 	      }	  
 	    else
 	      {
-		dolibarr_syslog("CdrFormatFructidor::ReadFile Mauvais format de fichier ligne $line", LOG_ERR);
+		dol_syslog("CdrFormatFructidor::ReadFile Mauvais format de fichier ligne $line", LOG_ERR);
 		$badformat++;
 	      }  
 	    $line++;
@@ -99,7 +99,7 @@ class CdrFormatFructidor
 	array_push($this->messages,array('error',"$badformat lignes ont un mauvais format dans le fichier"));
       }
 
-    dolibarr_syslog("CdrFormatFructidor::ReadFile read $i lines", LOG_DEBUG);
+    dol_syslog("CdrFormatFructidor::ReadFile read $i lines", LOG_DEBUG);
 
     return $error;
   }

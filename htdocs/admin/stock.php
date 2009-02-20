@@ -76,7 +76,7 @@ if ($_POST["action"] == 'STOCK_CALCULATE_ON_BILL'
 	else
 	{
 		$db->rollback();
-		dolibarr_print_error("Error in some requests", LOG_ERR);
+		dol_print_error("Error in some requests", LOG_ERR);
 	}
 }
 // Mode of stock decrease
@@ -98,7 +98,7 @@ if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_BILL'
 	else
 	{
 		$db->rollback();
-		dolibarr_print_error("Error in some requests", LOG_ERR);
+		dol_print_error("Error in some requests", LOG_ERR);
 	}
 }
 

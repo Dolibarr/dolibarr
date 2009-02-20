@@ -615,7 +615,7 @@ $form = new Form($db);
 if ($user->rights->telephonie->ligne->creer)
 {
 
-	dolibarr_fiche_head($head, $hselected, 'Nouveau client');
+	dol_fiche_head($head, $hselected, 'Nouveau client');
 	/*
 
 	*/
@@ -663,7 +663,7 @@ if ($user->rights->telephonie->ligne->creer)
 		}
 		else
 		{
-	  dolibarr_print_error($db);
+	  dol_print_error($db);
 		}
 		$soc->pays_code=$obj->code;
 		$soc->pays=$obj->libelle;

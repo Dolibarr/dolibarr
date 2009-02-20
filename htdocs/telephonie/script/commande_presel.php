@@ -163,20 +163,20 @@ function CreatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
     }
 
   if ($verbose > 2)
-    dolibarr_syslog("$host");
+    dol_syslog("$host");
 
   if ($verbose > 2)
-    dolibarr_syslog("$url");
+    dol_syslog("$url");
 
   $fp = fsockopen($host, 80, $errno, $errstr, 30);
   if (!$fp)
     {
-      dolibarr_syslog("$errstr ($errno)");
+      dol_syslog("$errstr ($errno)");
     }
   else
     {
       if ($verbose > 2)
-	dolibarr_syslog("Socket Opened send data");
+	dol_syslog("Socket Opened send data");
 
       $out = "GET $url HTTP/1.1\r\n";
       $out .= "Host: $host\r\n";
@@ -185,7 +185,7 @@ function CreatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
       fwrite($fp, $out);
       
       if ($verbose > 2)
-	dolibarr_syslog("Data sent, waiting for response");
+	dol_syslog("Data sent, waiting for response");
 
       $parse = 0;
       $result = "error";
@@ -197,14 +197,14 @@ function CreatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
 	  $line = fgets($fp, 1024);
 	  
 	  if ($verbose > 2)
-	    dolibarr_syslog($line);
+	    dol_syslog($line);
 
 	  if ($parse == 1)
 	    {
 	      preg_match('/^<string xmlns=".*">(.*)<\/string>$/', $line, $results);
 	      
 	      $result = $results[1];
-	      //dolibarr_syslog($line);
+	      //dol_syslog($line);
 	      $parse = 0;
 	    }
 	  
@@ -220,18 +220,18 @@ function CreatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
     }
   
   if ($verbose > 1)
-    dolibarr_syslog("result = ".$result);
+    dol_syslog("result = ".$result);
 
   if (substr($result,0,2) == "OK")
     {
       if ($verbose > 1)
-	dolibarr_syslog("Presel OK  ".$lint->numero." ".$lint->support." id client ".$id_person." $result\n");
+	dol_syslog("Presel OK  ".$lint->numero." ".$lint->support." id client ".$id_person." $result\n");
       return 0;
     }
   else
     {
       if ($verbose > 1)
-	dolibarr_syslog("Presel ERR ".$lint->numero." ".$lint->support." id client ".$id_person." $result\n");
+	dol_syslog("Presel ERR ".$lint->numero." ".$lint->support." id client ".$id_person." $result\n");
 
       $fp = fopen("/tmp/".$lint->numero.".presel","w");
       if ($fp)
@@ -246,7 +246,7 @@ function CreatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
 
 function GetNumAbonne($db, $socid, $fournid)
 {
-  //dolibarr_syslog("Appel de GetNumAbonne($socid, $fournid)");
+  //dol_syslog("Appel de GetNumAbonne($socid, $fournid)");
 
   $sql = "SELECT fourn_id";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_fournid";
@@ -269,7 +269,7 @@ function GetNumAbonne($db, $socid, $fournid)
     }
   else
     {
-      dolibarr_syslog("Erreur dans GetNumAbonne($socid, $fournid)");
+      dol_syslog("Erreur dans GetNumAbonne($socid, $fournid)");
       return -1;
     }
 }
@@ -288,7 +288,7 @@ function SetNumAbonne($db, $socid, $soc_fourn_id, $fournid)
     }
   else
     {
-      dolibarr_syslog("Erreur dans SetNumAbonne($socid, $soc_fourn_id, $fournid)");
+      dol_syslog("Erreur dans SetNumAbonne($socid, $soc_fourn_id, $fournid)");
       return -1;
     }
 }
@@ -316,7 +316,7 @@ function CreateAbonne($host, $user_login, $user_passwd, $user_contract, $societe
   $fp = fsockopen($host, 80, $errno, $errstr, 30);
   if (!$fp)
     {
-      dolibarr_syslog("$errstr ($errno)");
+      dol_syslog("$errstr ($errno)");
     }
   else
     {
@@ -341,7 +341,7 @@ function CreateAbonne($host, $user_login, $user_passwd, $user_contract, $societe
 	      $result = $results[1];
 	      $client_id = $results[2];
 	      if ($verbose > 1)
-		dolibarr_syslog($line);
+		dol_syslog($line);
 	    }
 	  
 	  if (substr($line,0,38) == '<?xml version="1.0" encoding="utf-8"?>')
@@ -353,12 +353,12 @@ function CreateAbonne($host, $user_login, $user_passwd, $user_contract, $societe
     }
   
   if ($verbose > 1)
-    dolibarr_syslog("$result:$client_id");
+    dol_syslog("$result:$client_id");
 
   if ($result == "OK")
     {
       if ($verbose > 1)
-	dolibarr_syslog("Commande r贳sie id client ".$client_id);
+	dol_syslog("Commande r贳sie id client ".$client_id);
       return $client_id;
     }
   else

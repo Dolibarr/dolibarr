@@ -59,7 +59,7 @@ if ($_POST["action"] == 'multiprix')
 			// on ajoute le champ price_level dans la table societe
 			if ($db->DDLAddField(MAIN_DB_PREFIX."societe","price_level",$field_desc) < 0)
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 				exit;
 			}
 		}
@@ -68,7 +68,7 @@ if ($_POST["action"] == 'multiprix')
 	}
 	else
 	{
-		dolibarr_syslog("Table definition for ".MAIN_DB_PREFIX."societe already ok");
+		dol_syslog("Table definition for ".MAIN_DB_PREFIX."societe already ok");
 		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
 		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
 	}
@@ -86,7 +86,7 @@ else if ($_POST["action"] == 'sousproduits')
 		$keys['idx_product_association_fk_product_fils'] = "fk_product_fils" ;
 		if ($db->DDLCreateTable($table,$fields,"","InnoDB","","",$keys) < 0)
 		{
-	  dolibarr_print_error($db);
+	  dol_print_error($db);
 	  exit;
 		}
 		else
@@ -96,7 +96,7 @@ else if ($_POST["action"] == 'sousproduits')
 	}
 	else
 	{
-		dolibarr_syslog("Table definition already ok");
+		dol_syslog("Table definition already ok");
 		dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
 	}
 }

@@ -55,7 +55,7 @@ $hselected = $h;
 $h++;
 
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"));
+dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"));
 
 print '<table class="border" width="100%">';
 

@@ -141,7 +141,7 @@ class Societe extends CommonObject
 		// clean parameters
 		$this->nom=trim($this->nom);
 
-		dolibarr_syslog("Societe::create ".$this->nom);
+		dol_syslog("Societe::create ".$this->nom);
 
 		$this->db->begin();
 
@@ -158,7 +158,7 @@ class Societe extends CommonObject
 			$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null");
 			$sql.= ")";
 
-			dolibarr_syslog("Societe::create sql=".$sql);
+			dol_syslog("Societe::create sql=".$sql);
 			$result=$this->db->query($sql);
 			if ($result)
 			{
@@ -191,13 +191,13 @@ class Societe extends CommonObject
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 
-					dolibarr_syslog("Societe::Create success id=".$this->id);
+					dol_syslog("Societe::Create success id=".$this->id);
 					$this->db->commit();
 					return 0;
 				}
 				else
 				{
-					dolibarr_syslog("Societe::Create echec update");
+					dol_syslog("Societe::Create echec update");
 					$this->db->rollback();
 					return -3;
 				}
@@ -211,7 +211,7 @@ class Societe extends CommonObject
 				}
 				else
 				{
-					dolibarr_syslog("Societe::Create echec insert sql=".$sql);
+					dol_syslog("Societe::Create echec insert sql=".$sql);
 				}
 				$this->db->rollback();
 				return -2;
@@ -221,7 +221,7 @@ class Societe extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			dolibarr_syslog("Societe::Create echec verify sql=".$sql);
+			dol_syslog("Societe::Create echec verify sql=".$sql);
 			return -1;
 		}
 	}
@@ -311,7 +311,7 @@ class Societe extends CommonObject
 	{
 		global $langs,$conf;
 
-		dolibarr_syslog("Societe::Update id=".$id." call_trigger=".$call_triger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
+		dol_syslog("Societe::Update id=".$id." call_trigger=".$call_triger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
 		// Clean parameters
 		$this->id=$id;
@@ -358,7 +358,7 @@ class Societe extends CommonObject
 
 		if ($result >= 0)
 		{
-			dolibarr_syslog("Societe::Update verify ok");
+			dol_syslog("Societe::Update verify ok");
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
 			$sql.= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
@@ -426,7 +426,7 @@ class Societe extends CommonObject
 			$sql .= " WHERE rowid = '" . $id ."'";
 
 
-			dolibarr_syslog("Societe::update sql=".$sql);
+			dol_syslog("Societe::update sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -457,7 +457,7 @@ class Societe extends CommonObject
 				{
 
 					$this->error = $langs->trans("Error sql=".$sql);
-					dolibarr_syslog("Societe::Update echec sql=".$sql);
+					dol_syslog("Societe::Update echec sql=".$sql);
 					$result =  -2;
 				}
 			}
@@ -609,7 +609,7 @@ class Societe extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog('Erreur Societe::Fetch aucune societe avec id='.$this->id.' - '.$sql);
+				dol_syslog('Erreur Societe::Fetch aucune societe avec id='.$this->id.' - '.$sql);
 				$this->error='Erreur Societe::Fetch aucune societe avec id='.$this->id.' - '.$sql;
 				$result = -2;
 			}
@@ -618,8 +618,8 @@ class Societe extends CommonObject
 		}
 		else
 		{
-			dolibarr_syslog('Erreur Societe::Fetch echec sql='.$sql);
-			dolibarr_syslog('Erreur Societe::Fetch '.$this->db->error());
+			dol_syslog('Erreur Societe::Fetch echec sql='.$sql);
+			dol_syslog('Erreur Societe::Fetch '.$this->db->error());
 			$this->error=$this->db->error();
 			$result = -3;
 		}
@@ -689,7 +689,7 @@ class Societe extends CommonObject
 	{
 		global $user,$langs,$conf;
 
-		dolibarr_syslog("Societe::Delete", LOG_DEBUG);
+		dol_syslog("Societe::Delete", LOG_DEBUG);
 		$sqr = 0;
 
 		// Check if third party can be deleted
@@ -710,7 +710,7 @@ class Societe extends CommonObject
 		else
 		{
 			$this->error .= $this->db->lasterror();
-			dolibarr_syslog("Societe::Delete erreur -1 ".$this->error);
+			dol_syslog("Societe::Delete erreur -1 ".$this->error);
 			return -1;
 		}
 
@@ -747,7 +747,7 @@ class Societe extends CommonObject
 			// Remove contacts
 			$sql = "DELETE from ".MAIN_DB_PREFIX."socpeople";
 			$sql.= " WHERE fk_soc = " . $id;
-			dolibarr_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
+			dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				$sqr++;
@@ -755,13 +755,13 @@ class Societe extends CommonObject
 			else
 			{
 				$this->error .= $this->db->lasterror();
-				dolibarr_syslog("Societe::Delete erreur -1 ".$this->error);
+				dol_syslog("Societe::Delete erreur -1 ".$this->error);
 			}
 
 			// Update link in member table
 			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
 			$sql.= " SET fk_soc = NULL where fk_soc = " . $id;
-			dolibarr_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
+			dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				$sqr++;
@@ -769,13 +769,13 @@ class Societe extends CommonObject
 			else
 			{
 				$this->error .= $this->db->lasterror();
-				dolibarr_syslog("Societe::Delete erreur -1 ".$this->error);
+				dol_syslog("Societe::Delete erreur -1 ".$this->error);
 			}
 
 			// Remove ban
 			$sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib";
 			$sql.= " WHERE fk_soc = " . $id;
-			dolibarr_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
+			dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				$sqr++;
@@ -783,13 +783,13 @@ class Societe extends CommonObject
 			else
 			{
 				$this->error = $this->db->lasterror();
-				dolibarr_syslog("Societe::Delete erreur -2 ".$this->error);
+				dol_syslog("Societe::Delete erreur -2 ".$this->error);
 			}
 
 			// Remove third party
 			$sql = "DELETE from ".MAIN_DB_PREFIX."societe";
 			$sql.= " WHERE rowid = " . $id;
-			dolibarr_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
+			dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				$sqr++;
@@ -797,7 +797,7 @@ class Societe extends CommonObject
 			else
 			{
 				$this->error = $this->db->lasterror();
-				dolibarr_syslog("Societe::Delete erreur -3 ".$this->error);
+				dol_syslog("Societe::Delete erreur -3 ".$this->error);
 			}
 
 			if ($sqr == 4)
@@ -897,19 +897,19 @@ class Societe extends CommonObject
 						}
 						else
 						{
-							dolibarr_print_error($this->db);
+							dol_print_error($this->db);
 						}
 					}
 				}
 				else
 				{
-					dolibarr_print_error($this->db);
+					dol_print_error($this->db);
 				}
 			}
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 		return $prefix;
 	}
@@ -986,7 +986,7 @@ class Societe extends CommonObject
 			return -2;
 		}
 
-		dolibarr_syslog("Societe::set_remise_client ".$remise.", ".$note.", ".$user->id);
+		dol_syslog("Societe::set_remise_client ".$remise.", ".$note.", ".$user->id);
 
 		if ($this->id)
 		{
@@ -1144,7 +1144,7 @@ class Societe extends CommonObject
 
 			if (! $this->db->query($sql) )
 	  {
-	  	dolibarr_print_error($this->db);
+	  	dol_print_error($this->db);
 	  }
 
 		}
@@ -1169,7 +1169,7 @@ class Societe extends CommonObject
 
 			if (! $this->db->query($sql) )
 	  {
-	  	dolibarr_syslog("Societe::add_commercial Erreur");
+	  	dol_syslog("Societe::add_commercial Erreur");
 	  }
 
 		}
@@ -1189,7 +1189,7 @@ class Societe extends CommonObject
 
 			if (! $this->db->query($sql) )
 	  {
-	  	dolibarr_syslog("Societe::del_commercial Erreur");
+	  	dol_syslog("Societe::del_commercial Erreur");
 	  }
 
 		}
@@ -1240,7 +1240,7 @@ class Societe extends CommonObject
 			$lienfin='</a>';
 		}
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->nom,'company').$lienfin.' ');
-		$result.=$lien.($maxlen?dolibarr_trunc($this->nom,$maxlen):$this->nom).$lienfin;
+		$result.=$lien.($maxlen?dol_trunc($this->nom,$maxlen):$this->nom).$lienfin;
 
 		return $result;
 	}
@@ -1268,7 +1268,7 @@ class Societe extends CommonObject
 			$this->db->free();
 		}
 		else {
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 
 	}
@@ -1286,7 +1286,7 @@ class Societe extends CommonObject
 		if ($this->email)
 		{
 			// TODO: Tester si email non deja present dans tableau contact
-			$contact_email[-1]=$langs->trans("ThirdParty").': '.dolibarr_trunc($this->nom,16)." &lt;".$this->email."&gt;";
+			$contact_email[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->nom,16)." &lt;".$this->email."&gt;";
 		}
 		return $contact_email;
 	}
@@ -1319,7 +1319,7 @@ class Societe extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 		return $contact_email;
 	}
@@ -1351,7 +1351,7 @@ class Societe extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 		return $contacts;
 	}
@@ -1382,7 +1382,7 @@ class Societe extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 
 	}
@@ -1450,7 +1450,7 @@ class Societe extends CommonObject
 			$this->code_client = $mod->getNextValue($objsoc,$type);
 			$this->prefixCustomerIsRequired = $mod->prefixIsRequired;
 
-			dolibarr_syslog("Societe::get_codeclient code_client=".$this->code_client." module=".$var);
+			dol_syslog("Societe::get_codeclient code_client=".$this->code_client." module=".$var);
 		}
 	}
 
@@ -1470,7 +1470,7 @@ class Societe extends CommonObject
 			$this->code_fournisseur = $mod->getNextValue($objsoc,$type);
 			$this->prefixSupplierIsRequired = $mod->prefixIsRequired;
 
-			dolibarr_syslog("Societe::get_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
+			dol_syslog("Societe::get_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
 		}
 	}
 
@@ -1490,7 +1490,7 @@ class Societe extends CommonObject
 
 			$mod = new $var;
 
-			dolibarr_syslog("Societe::codeclient_modifiable code_client=".$this->code_client." module=".$var);
+			dol_syslog("Societe::codeclient_modifiable code_client=".$this->code_client." module=".$var);
 			if ($mod->code_modifiable_null && ! $this->code_client) return 1;
 			if ($mod->code_modifiable_invalide && $this->check_codeclient() < 0) return 1;
 			if ($mod->code_modifiable) return 1;	// A mettre en dernier
@@ -1518,7 +1518,7 @@ class Societe extends CommonObject
 
 			$mod = new $var;
 
-			dolibarr_syslog("Societe::codefournisseur_modifiable code_founisseur=".$this->code_fournisseur." module=".$var);
+			dol_syslog("Societe::codefournisseur_modifiable code_founisseur=".$this->code_fournisseur." module=".$var);
 			if ($mod->code_modifiable_null && ! $this->code_fournisseur) return 1;
 			if ($mod->code_modifiable_invalide && $this->check_codefournisseur() < 0) return 1;
 			if ($mod->code_modifiable) return 1;	// A mettre en dernier
@@ -1546,7 +1546,7 @@ class Societe extends CommonObject
 
 			$mod = new $var;
 
-			dolibarr_syslog("Societe::check_codeclient code_client=".$this->code_client." module=".$var);
+			dol_syslog("Societe::check_codeclient code_client=".$this->code_client." module=".$var);
 			$result = $mod->verif($this->db, $this->code_client, $this, 0);
 			return $result;
 		}
@@ -1571,7 +1571,7 @@ class Societe extends CommonObject
 
 			$mod = new $var;
 
-			dolibarr_syslog("Societe::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
+			dol_syslog("Societe::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
 			$result = $mod->verif($this->db, $this->code_fournisseur, $this ,1);
 			return $result;
 		}
@@ -1813,7 +1813,7 @@ class Societe extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -1991,7 +1991,7 @@ class Societe extends CommonObject
 			$sql.= " SET fk_soc=".$this->id;
 			$sql.= " WHERE rowid=".$member->id;
 
-			dolibarr_syslog("Societe::create_from_member sql=".$sql, LOG_DEBUG);
+			dol_syslog("Societe::create_from_member sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -2001,7 +2001,7 @@ class Societe extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("Societe::create_from_member - 1 - ".$this->error, LOG_ERR);
+				dol_syslog("Societe::create_from_member - 1 - ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -1;
@@ -2010,7 +2010,7 @@ class Societe extends CommonObject
 		else
 		{
 			// $this->error deja positionne
-			dolibarr_syslog("Societe::create_from_member - 2 - ".$this->error, LOG_ERR);
+			dol_syslog("Societe::create_from_member - 2 - ".$this->error, LOG_ERR);
 
 			$this->db->rollback();
 			return $result;

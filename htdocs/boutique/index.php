@@ -84,7 +84,7 @@ if ($result)
 }
 else
 {
-  dolibarr_print_error($dbosc);
+  dol_print_error($dbosc);
 }
 
 /* mensuel
@@ -113,7 +113,7 @@ if ( $dbosc->query($sql) )
 }
 else
 {
-  dolibarr_print_error($dbosc);
+  dol_print_error($dbosc);
 }
 */
 
@@ -155,7 +155,7 @@ if ( $dbosc->query($sql) )
 }
 else
 {
-  dolibarr_print_error($dbosc);
+  dol_print_error($dbosc);
 }
 
 /*
@@ -189,7 +189,7 @@ if ( $dbosc->query($sql) )
 }
 else
 {
-  dolibarr_print_error($dbosc);
+  dol_print_error($dbosc);
 }
 
 /*
@@ -223,7 +223,7 @@ if ( $dbosc->query($sql) )
 }
 else
 {
-  dolibarr_print_error($dbosc);
+  dol_print_error($dbosc);
 }
 
 
@@ -260,7 +260,7 @@ if ( $dbosc->query($sql) )
 }
 else
 {
-  dolibarr_print_error($dbosc);
+  dol_print_error($dbosc);
 }
 print '</tr></table>';
 

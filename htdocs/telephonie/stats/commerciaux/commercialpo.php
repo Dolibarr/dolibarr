@@ -67,7 +67,7 @@ if ($_GET["commid"])
   $hselected = $h;
   $h++;
 
-  dolibarr_fiche_head($head, $hselected, "Commerciaux");
+  dol_fiche_head($head, $hselected, "Commerciaux");
   
   if ($page == -1) { $page = 0 ; }
 

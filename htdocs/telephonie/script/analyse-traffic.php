@@ -69,7 +69,7 @@ if ($resql)
     }
   $db->free($resql);
 }
-dolibarr_syslog(sizeof($lignes)." lignes actives");
+dol_syslog(sizeof($lignes)." lignes actives");
 /*
  * Lecture des comms
  *
@@ -90,7 +90,7 @@ if ($resql)
     }
   $db->free($resql);
 }
-dolibarr_syslog(sizeof($lignes_traffic)." lignes avec traffic");
+dol_syslog(sizeof($lignes_traffic)." lignes avec traffic");
 
 /*
  * Croisement des données

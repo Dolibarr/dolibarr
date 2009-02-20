@@ -122,7 +122,7 @@ if ($contrat->id)
 
 	$head=contract_prepare_head($contrat, $user);
 
-	dolibarr_fiche_head($head, 'documents',  $langs->trans("Contract"));
+	dol_fiche_head($head, 'documents',  $langs->trans("Contract"));
 
 
 	// Construit liste des fichiers

@@ -43,7 +43,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 	global $conf,$langs;
 
-	dolibarr_syslog("functions.inc::vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality);
+	dol_syslog("functions.inc::vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality);
 
 	// Clean parameters
 	$file=trim($file);
@@ -84,7 +84,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight)
 	{
 		// On cree toujours les vignettes
-		dolibarr_syslog("File size is smaller than thumb size",LOG_DEBUG);
+		dol_syslog("File size is smaller than thumb size",LOG_DEBUG);
 		//return 'Le fichier '.$file.' ne necessite pas de creation de vignette';
 	}
 
@@ -208,7 +208,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	}
 	if (function_exists("imagefill")) imagefill($imgThumb, 0, 0, $trans_colour);
 
-	dolibarr_syslog("vignette: convert image from ($imgWidth x $imgHeight) to ($thumbWidth x $thumbHeight) as $extImg, newquality=$newquality");
+	dol_syslog("vignette: convert image from ($imgWidth x $imgHeight) to ($thumbWidth x $thumbHeight) as $extImg, newquality=$newquality");
 	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
 	imagecopyresampled($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
 

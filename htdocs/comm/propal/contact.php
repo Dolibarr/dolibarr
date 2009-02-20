@@ -92,12 +92,12 @@ if ($_POST["action"] == 'updateligne' && $user->rights->propale->creer)
 			$db->commit();
 		} else
 		{
-			dolibarr_print_error($db, "result=$result");
+			dol_print_error($db, "result=$result");
 			$db->rollback();
 		}
 	} else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -117,12 +117,12 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->propale->creer)
 			$db->commit();
 		} else
 		{
-			dolibarr_print_error($db, "result=$result");
+			dol_print_error($db, "result=$result");
 			$db->rollback();
 		}
 	} else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -139,7 +139,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->propale->creer)
 		exit;
 	}
 	else {
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -173,7 +173,7 @@ if ($id > 0)
 
 
 		$head = propal_prepare_head($propal);
-		dolibarr_fiche_head($head, 'contact', $langs->trans("Proposal"));
+		dol_fiche_head($head, 'contact', $langs->trans("Proposal"));
 
 
 		/*

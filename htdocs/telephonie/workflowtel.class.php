@@ -53,7 +53,7 @@ class WorkflowTelephonie {
       }
     else
       {
-	dolibarr_syslog("WorkflowTelephonie::Create ".$this->db->error,LOG_ERR);
+	dol_syslog("WorkflowTelephonie::Create ".$this->db->error,LOG_ERR);
 	$res = -1;
       }
 
@@ -62,7 +62,7 @@ class WorkflowTelephonie {
 
   function Notify($module, $statut_id, $numero, $commentaire='')
   {
-    dolibarr_syslog("WorkflowTelephonie::Notify statut_id=$statut_id",LOG_DEBUG);
+    dol_syslog("WorkflowTelephonie::Notify statut_id=$statut_id",LOG_DEBUG);
 
 
     $sql = "SELECT u.rowid";
@@ -79,14 +79,14 @@ class WorkflowTelephonie {
       }       
     else
       {
-	dolibarr_syslog("WorkflowTelephonie::SendMail ".$this->db->error,LOG_ERR);
+	dol_syslog("WorkflowTelephonie::SendMail ".$this->db->error,LOG_ERR);
       }
   }
   
   
   function SendMail($user_id, $statut_id, $numero, $commentaire='')
   {
-    dolibarr_syslog("WorkflowTelephonie::SendMail user_id=$user_id,statut_id=$statut_id",LOG_DEBUG);
+    dol_syslog("WorkflowTelephonie::SendMail user_id=$user_id,statut_id=$statut_id",LOG_DEBUG);
 
     $comm = new User($this->db,$user_id);
     $comm->fetch();
@@ -135,7 +135,7 @@ class WorkflowTelephonie {
       }
     else
       {
-	dolibarr_syslog("WorkflowTelephonie::Delete ".$this->db->error,LOG_ERR);
+	dol_syslog("WorkflowTelephonie::Delete ".$this->db->error,LOG_ERR);
 	$res = -1;
       }
 

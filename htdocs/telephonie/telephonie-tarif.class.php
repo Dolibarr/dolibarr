@@ -104,8 +104,8 @@ class TelephonieTarif {
       }
     else
       {
-	dolibarr_syslog("TelephonieTarif::_load_tarif Erreur 1");
-	dolibarr_syslog($this->db->error());
+	dol_syslog("TelephonieTarif::_load_tarif Erreur 1");
+	dol_syslog($this->db->error());
       }
 
     /*

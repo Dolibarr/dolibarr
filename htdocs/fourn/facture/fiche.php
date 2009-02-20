@@ -158,8 +158,8 @@ if ($_POST['action'] == 'update' && ! $_POST['cancel'])
  */
 if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 {
-	$datefacture=dolibarr_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
-	$datedue=dolibarr_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
+	$datefacture=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
+	$datedue=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
 
 	if ($datefacture == '')
 	{
@@ -289,7 +289,7 @@ if ($_GET['action'] == 'add_ligne')
 	$ret=$facfou->fetch($_GET['facid']);
 	if ($ret < 0)
 	{
-		dolibarr_print_error($db,$facfou->error);
+		dol_print_error($db,$facfou->error);
 		exit;
 	}
 
@@ -376,8 +376,8 @@ if ($_GET['action'] == 'create')
 		$societe->fetch($_GET['socid']);
 	}
 
-	$datefacture=dolibarr_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
-	$datedue=dolibarr_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
+	$datefacture=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
+	$datedue=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
 
 	$dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
 
@@ -566,7 +566,7 @@ else
 			 */
 			$head = facturefourn_prepare_head($fac);
 			$titre=$langs->trans('SupplierInvoice');
-			dolibarr_fiche_head($head, 'card', $titre);
+			dol_fiche_head($head, 'card', $titre);
 
 			if ($mesg) { print $mesg.'<br>'; }
 
@@ -642,11 +642,11 @@ else
 			print '</tr>';
 
 			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3" nowrap="nowrap">';
-			print dolibarr_print_date($fac->datep,'daytext').'</td></tr>';
+			print dol_print_date($fac->datep,'daytext').'</td></tr>';
 
 			print '<tr>';
 			print '<td>'.$langs->trans('DateEcheance').'</td><td colspan="3">';
-			print dolibarr_print_date($fac->date_echeance,'daytext');
+			print dol_print_date($fac->date_echeance,'daytext');
 	        if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 			print '</td></tr>';
 
@@ -730,7 +730,7 @@ else
 					$objp = $db->fetch_object($result);
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
-					print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('Payment'),'payment').'</a> '.dolibarr_print_date($objp->dp,'day')."</td>\n";
+					print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('Payment'),'payment').'</a> '.dol_print_date($objp->dp,'day')."</td>\n";
 					print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
 					print '<td align="right">'.price($objp->amount).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td>';
 
@@ -762,7 +762,7 @@ else
 			}
 			else
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 			print '</td></tr>';
 			print '</table>';

@@ -43,7 +43,7 @@ function report_header($nom,$variante='',$period,$periodlink,$description,$build
 	$h=0;
 	$head[$h][0] = $_SERVER["PHP_SELF"];
 	$head[$h][1] = $langs->trans("Report");
-	dolibarr_fiche_head($head, $hselected, $societe->nom);
+	dol_fiche_head($head, $hselected, $societe->nom);
 	
 	print '<table width="100%" class="border">';
 
@@ -78,7 +78,7 @@ function report_header($nom,$variante='',$period,$periodlink,$description,$build
 	print '<td>'.$langs->trans("GeneratedOn").'</td>';
 	if (! $exportlink) print '<td colspan="3">';
 	else print '<td>';
-	print dolibarr_print_date($builddate);
+	print dol_print_date($builddate);
 	if ($exportlink) print '</td><td>'.$langs->trans("Export").'</td><td>'.$exportlink;
 	print '</td></tr>';
 	

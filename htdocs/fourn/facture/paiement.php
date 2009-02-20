@@ -57,7 +57,7 @@ if ($action == 'add_paiement')
 {
 	$error = 0;
 
-	$datepaye = dolibarr_mktime(12, 0 , 0,
+	$datepaye = dol_mktime(12, 0 , 0,
 	$_POST['remonth'],
 	$_POST['reday'],
 	$_POST['reyear']);
@@ -199,7 +199,7 @@ if ($action == 'create' || $action == 'add_paiement')
 	$facture = new FactureFournisseur($db);
 	$facture->fetch($facid);
 
-	$datefacture=dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+	$datefacture=dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 	$dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
 
 	$sql = 'SELECT s.nom, s.rowid as socid,';
@@ -296,7 +296,7 @@ if ($action == 'create' || $action == 'add_paiement')
 						if ($objp->df > 0 )
 						{
 							print '<td align="center">';
-							print dolibarr_print_date($objp->df).'</td>';
+							print dol_print_date($objp->df).'</td>';
 						}
 						else
 						{
@@ -331,7 +331,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			}
 			else
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 
 			/*
@@ -408,18 +408,18 @@ if (! $_GET['action'] && ! $_POST['action'])
 	  print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
 
 	  // Ref invoice
-	  print '<td nowrap="nowrap">'.dolibarr_trunc($objp->facnumber,12).'</td>';
+	  print '<td nowrap="nowrap">'.dol_trunc($objp->facnumber,12).'</td>';
 
 	  // Date
-	  print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($objp->dp,'day')."</td>\n";
+	  print '<td nowrap="nowrap" align="center">'.dol_print_date($objp->dp,'day')."</td>\n";
 
 	  print '<td>';
-	  if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dolibarr_trunc($objp->nom,32).'</a>';
+	  if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->nom,32).'</a>';
 	  else print '&nbsp;';
 	  print '</td>';
-	  print '<td>'.dolibarr_trunc($objp->paiement_type.' '.$objp->num_paiement,32)."</td>\n";
+	  print '<td>'.dol_trunc($objp->paiement_type.' '.$objp->num_paiement,32)."</td>\n";
 	  print '<td>';
-	  if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dolibarr_trunc($objp->label,24).'</a>';
+	  if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';
 	  else print '&nbsp;';
 	  print '</td>';
 	  print '<td align="right">'.price($objp->pamount).'</td><td>&nbsp;</td>';
@@ -430,7 +430,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 

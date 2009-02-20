@@ -166,7 +166,7 @@ class CommActionRapport
         $sql.= " AND date_format(a.datep, '%Y') = ".$this->year;
         $sql.= " ORDER BY a.datep DESC";
 
-        dolibarr_syslog("Rapport.pdf::_page sql=".$sql);
+        dol_syslog("Rapport.pdf::_page sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -181,7 +181,7 @@ class CommActionRapport
 		        $y = max($y, $pdf->GetY(), $y0, $y1, $y2, $y3);
 
 		        // Calculate height of text
-        		$text=dolibarr_trunc(dol_htmlentitiesbr_decode($obj->note),150);
+        		$text=dol_trunc(dol_htmlentitiesbr_decode($obj->note),150);
 		        //print 'd'.$text; exit;
         		$nboflines=dol_nboflines($text);
 		        $heightlinemax=max(2*$height,$nboflines*$height);
@@ -197,15 +197,15 @@ class CommActionRapport
 		        $y++;
 
                 $pdf->SetXY($this->marge_gauche, $y);
-                $pdf->MultiCell(22, $height, dol_print_date($obj->dp,"day")."\n".dolibarr_print_date($obj->dp,"hour"), 0, 'L', 0);
+                $pdf->MultiCell(22, $height, dol_print_date($obj->dp,"day")."\n".dol_print_date($obj->dp,"hour"), 0, 'L', 0);
                 $y0 = $pdf->GetY();
 
                 $pdf->SetXY(26, $y);
-                $pdf->MultiCell(32, $height, dolibarr_trunc($outputlangs->convToOutputCharset($obj->societe),32), 0, 'L', 0);
+                $pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($obj->societe),32), 0, 'L', 0);
                 $y1 = $pdf->GetY();
 
                 $pdf->SetXY(60,$y);
-                $pdf->MultiCell(32, $height, dolibarr_trunc($outputlangs->convToOutputCharset($obj->libelle),32), 0, 'L', 0);
+                $pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($obj->libelle),32), 0, 'L', 0);
                 $y2 = $pdf->GetY();
 
                 $pdf->SetXY(106,$y);

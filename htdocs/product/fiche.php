@@ -241,12 +241,12 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 					$_GET["action"] = "";
 
 					$mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$product->ref).'</div>';
-					//dolibarr_print_error($product->db);
+					//dol_print_error($product->db);
 				}
 				else
 				{
 					$db->rollback();
-					dolibarr_print_error($product->db);
+					dol_print_error($product->db);
 				}
 			}
 		}
@@ -254,7 +254,7 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 	else
 	{
 		$db->rollback();
-		dolibarr_print_error($product->db);
+		dol_print_error($product->db);
 	}
 }
 
@@ -289,7 +289,7 @@ if ($_POST["action"] == 'addinpropal')
 	$result=$propal->fetch($_POST["propalid"]);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$propal->error);
+		dol_print_error($db,$propal->error);
 		exit;
 	}
 
@@ -297,7 +297,7 @@ if ($_POST["action"] == 'addinpropal')
 	$result=$soc->fetch($propal->socid,$user);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$soc->error);
+		dol_print_error($db,$soc->error);
 		exit;
 	}
 
@@ -305,7 +305,7 @@ if ($_POST["action"] == 'addinpropal')
 	$result=$prod->fetch($_GET['id']);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$prod->error);
+		dol_print_error($db,$prod->error);
 		exit;
 	}
 
@@ -370,7 +370,7 @@ if ($_POST["action"] == 'addincommande')
 	$result=$commande->fetch($_POST["commandeid"]);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$commande->error);
+		dol_print_error($db,$commande->error);
 		exit;
 	}
 
@@ -378,7 +378,7 @@ if ($_POST["action"] == 'addincommande')
 	$result=$soc->fetch($commande->socid,$user);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$soc->error);
+		dol_print_error($db,$soc->error);
 		exit;
 	}
 
@@ -386,7 +386,7 @@ if ($_POST["action"] == 'addincommande')
 	$result=$prod->fetch($_GET['id']);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$prod->error);
+		dol_print_error($db,$prod->error);
 		exit;
 	}
 
@@ -450,7 +450,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 	$result=$facture->fetch($_POST["factureid"]);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$facture->error);
+		dol_print_error($db,$facture->error);
 		exit;
 	}
 
@@ -458,7 +458,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 	$soc->fetch($facture->socid,$user);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$soc->error);
+		dol_print_error($db,$soc->error);
 		exit;
 	}
 
@@ -466,7 +466,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 	$result = $prod->fetch($_GET["id"]);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$prod->error);
+		dol_print_error($db,$prod->error);
 		exit;
 	}
 
@@ -789,7 +789,7 @@ if ($_GET["id"] || $_GET["ref"])
 		{
 			$head=product_prepare_head($product, $user);
 			$titre=$langs->trans("CardProduct".$product->type);
-			dolibarr_fiche_head($head, 'card', $titre);
+			dol_fiche_head($head, 'card', $titre);
 			print "\n<!-- CUT HERE -->\n";
 			// Confirmation de la suppression de la facture
 			if ($_GET["action"] == 'delete')
@@ -1234,8 +1234,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	  		print "<td nowrap>";
 	  		print '<input type="hidden" name="action" value="addinpropal">';
 	  		print "<a href=\"../comm/propal.php?propalid=".$objp->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a></td>\n";
-	  		print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dolibarr_trunc($objp->nom,18)."</a></td>\n";
-	  		print "<td nowrap=\"nowrap\">".dolibarr_print_date($objp->dp,"%d %b")."</td>\n";
+	  		print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,18)."</a></td>\n";
+	  		print "<td nowrap=\"nowrap\">".dol_print_date($objp->dp,"%d %b")."</td>\n";
 	  		print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
 	  		print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
 	  		print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
@@ -1347,8 +1347,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	  		print "<td nowrap>";
 	  		print '<input type="hidden" name="action" value="addincommande">';
 	  		print "<a href=\"../commande/fiche.php?id=".$objc->commandeid."\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
-	  		print "<td><a href=\"../comm/fiche.php?socid=".$objc->socid."\">".dolibarr_trunc($objc->nom,18)."</a></td>\n";
-	  		print "<td nowrap=\"nowrap\">".dolibarr_print_date($objc->dc,"%d %b")."</td>\n";
+	  		print "<td><a href=\"../comm/fiche.php?socid=".$objc->socid."\">".dol_trunc($objc->nom,18)."</a></td>\n";
+	  		print "<td nowrap=\"nowrap\">".dol_print_date($objc->dc,"%d %b")."</td>\n";
 	  		print '<td><input type="hidden" name="commandeid" value="'.$objc->commandeid.'">';
 	  		print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
 	  		print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
@@ -1456,8 +1456,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	  		print "<td nowrap>";
 	  		print '<input type="hidden" name="action" value="addinfacture">';
 	  		print "<a href=\"../compta/facture.php?facid=".$objp->factureid."\">".img_object($langs->trans("ShowBills"),"bill")." ".$objp->facnumber."</a></td>\n";
-	  		print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dolibarr_trunc($objp->nom,18)."</a></td>\n";
-	  		print "<td nowrap=\"nowrap\">".dolibarr_print_date($objp->df,"%d %b")."</td>\n";
+	  		print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,18)."</a></td>\n";
+	  		print "<td nowrap=\"nowrap\">".dol_print_date($objp->df,"%d %b")."</td>\n";
 	  		print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
 	  		print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
 	  		print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
@@ -1479,7 +1479,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		}
 		else
 		{
-	  dolibarr_print_error($db);
+	  dol_print_error($db);
 		}
 
 		print '</td>';
@@ -1512,7 +1512,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
 		    print "<tr $bc[$var]>";
 		    print "<td><a href=\"../compta/facture.php?facid=".$objp->factureid."\">$objp->facnumber</a></td>\n";
-		    print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dolibarr_trunc($objp->nom,24)."</a></td>\n";
+		    print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,24)."</a></td>\n";
 		    print "<td colspan=\"2\">".$langs->trans("Qty");
 		    print '<input type="hidden" name="action" value="addinfacture">';
 		    print "</td>";
@@ -1537,7 +1537,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	  }
 	  else
 	  {
-	  	dolibarr_print_error($db);
+	  	dol_print_error($db);
 	  }
 		}
 

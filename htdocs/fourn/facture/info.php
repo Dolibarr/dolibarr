@@ -46,7 +46,7 @@ $soc->fetch($fac->socid);
 
 $head = facturefourn_prepare_head($fac);
 $titre=$langs->trans('SupplierInvoice');
-dolibarr_fiche_head($head, 'info', $langs->trans('SupplierInvoice'));
+dol_fiche_head($head, 'info', $langs->trans('SupplierInvoice'));
 
 print '<table width="100%"><tr><td>';
 dol_print_object_info($fac);

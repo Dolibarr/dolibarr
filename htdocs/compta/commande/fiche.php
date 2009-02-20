@@ -70,7 +70,7 @@ if ($_POST['action'] == 'set_ref_client' && $user->rights->commande->creer)
 if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 {
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-	$datelivraison=dolibarr_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+	$datelivraison=dol_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
@@ -93,7 +93,7 @@ if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
 	$result=$commande->mode_reglement($_POST['mode_reglement_id']);
-	if ($result < 0) dolibarr_print_error($db,$commande->error);
+	if ($result < 0) dol_print_error($db,$commande->error);
 }
 
 if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
@@ -101,7 +101,7 @@ if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
 	$result=$commande->cond_reglement($_POST['cond_reglement_id']);
-	if ($result < 0) dolibarr_print_error($db,$commande->error);
+	if ($result < 0) dol_print_error($db,$commande->error);
 }
 
 
@@ -129,7 +129,7 @@ if ($id > 0 || ! empty($ref))
 		$author->fetch();
 
 		$head = commande_prepare_head($commande);
-		dolibarr_fiche_head($head, 'accountancy', $langs->trans("CustomerOrder"));
+		dol_fiche_head($head, 'accountancy', $langs->trans("CustomerOrder"));
 
 		/*
 		 *   Commande
@@ -205,7 +205,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Date
 		print '<tr><td>'.$langs->trans('Date').'</td>';
-		print '<td colspan="2">'.dolibarr_print_date($commande->date,'daytext').'</td>';
+		print '<td colspan="2">'.dol_print_date($commande->date,'daytext').'</td>';
 		print '<td width="50%">'.$langs->trans('Source').' : '.$commande->getLabelSource();
 		if ($commande->source == 0 && $conf->propal->enabled)
 		{
@@ -236,7 +236,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		else
 		{
-			print dolibarr_print_date($commande->date_livraison,'daytext');
+			print dol_print_date($commande->date_livraison,'daytext');
 		}
 		print '</td>';
 		print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
@@ -468,7 +468,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		print '</table>';
@@ -543,7 +543,7 @@ if ($id > 0 || ! empty($ref))
 					$var=!$var;
 					print "<tr $bc[$var]>";
 					print '<td><a href="../facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
-					print '<td align="center">'.dolibarr_print_date($objp->df).'</td>';
+					print '<td align="center">'.dol_print_date($objp->df).'</td>';
 					print '<td align="right">'.$objp->total_ttc.'</td></tr>';
 					$i++;
 				}
@@ -552,7 +552,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		print '</td><td valign="top" width="50%">';

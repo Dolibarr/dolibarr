@@ -79,7 +79,7 @@ class Osc_order
 		global $conf;
 	
 		$this->error = '';
-		dolibarr_syslog("Osc_order::fetch $id=$id ");
+		dol_syslog("Osc_order::fetch $id=$id ");
       // Verification parametres
       if (! $id )
         {
@@ -208,7 +208,7 @@ class Osc_order
         else
         {
 //			print "suppression rate ".$sql."  * ".$result;
-            dolibarr_syslog("osc_order::transcode echec suppression");
+            dol_syslog("osc_order::transcode echec suppression");
 //            $this->db->rollback();
 //            return -1;
 		}
@@ -222,7 +222,7 @@ class Osc_order
         else
         {
 //			print "insertion rate ".$sql." , ".$result;
-            dolibarr_syslog("osc_product::transcode echec insert");
+            dol_syslog("osc_product::transcode echec insert");
 //            $this->db->rollback();
 //            return -1;
 		}

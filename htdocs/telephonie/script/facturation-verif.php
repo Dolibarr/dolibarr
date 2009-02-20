@@ -24,7 +24,7 @@
 
 require ("../../master.inc.php");
 
-dolibarr_syslog("facturation-verif.php BEGIN"); 
+dol_syslog("facturation-verif.php BEGIN"); 
 
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
@@ -39,7 +39,7 @@ $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
 if ( $db->query($sql) )
 {
   $row = $db->fetch_row();
-  dolibarr_syslog("facturation-verif.php ".$row[0]." lignes de communications a verifier");
+  dol_syslog("facturation-verif.php ".$row[0]." lignes de communications a verifier");
 }
 
 /*******************************************************************************
@@ -51,7 +51,7 @@ $grille_vente = TELEPHONIE_GRILLE_VENTE_DEFAUT_ID;
 
 $tarif_vente = new TelephonieTarif($db, $grille_vente, "vente");
 
-dolibarr_syslog("facturation-verif.php Grille : $grille contient ".$tarif_vente->num_tarifs." tarifs");
+dol_syslog("facturation-verif.php Grille : $grille contient ".$tarif_vente->num_tarifs." tarifs");
 
 $sql = "SELECT distinct(num) FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
 
@@ -99,7 +99,7 @@ if ( $resql )
     }
   $db->free($resql);
 }
-dolibarr_syslog($error ." erreurs trouvées"); 
+dol_syslog($error ." erreurs trouvées"); 
 
-dolibarr_syslog("facturation-verif.php END"); 
+dol_syslog("facturation-verif.php END"); 
 ?>

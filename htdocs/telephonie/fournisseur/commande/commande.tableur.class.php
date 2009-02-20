@@ -32,7 +32,7 @@ class CommandeMethodeTableur extends CommandeMethode
 
   function CommandeMethodeTableur ($DB, $USER=0, $fourn=0)
   {
-    dolibarr_syslog("CommandeMethodeTableur::CommandeMethodeTableur");
+    dol_syslog("CommandeMethodeTableur::CommandeMethodeTableur");
 
 
     $this->nom = "Méthode Tableur joint";
@@ -48,8 +48,8 @@ class CommandeMethodeTableur extends CommandeMethode
 
   function Create()
   {
-    dolibarr_syslog("CommandeMethodeTableur::Create Fournisseur id : ".$this->fourn->id);
-    dolibarr_syslog("CommandeMethodeTableur::Create Fournisseur email : ".$this->fourn->email_commande);
+    dol_syslog("CommandeMethodeTableur::Create Fournisseur id : ".$this->fourn->id);
+    dol_syslog("CommandeMethodeTableur::Create Fournisseur email : ".$this->fourn->email_commande);
 
     $this->date = time();
 
@@ -75,7 +75,7 @@ class CommandeMethodeTableur extends CommandeMethode
 	$res = $res + $this->MailFile($fname);
       }
 
-    dolibarr_syslog("CommandeMethodeTableur::CommandeMethodeTableur Return $res");
+    dol_syslog("CommandeMethodeTableur::CommandeMethodeTableur Return $res");
 
     return $res;
   }
@@ -133,7 +133,7 @@ class CommandeMethodeTableur extends CommandeMethode
       }
     else
       {
-	dolibarr_syslog("CommandeMethodeTableur::MailFile Erreur send");
+	dol_syslog("CommandeMethodeTableur::MailFile Erreur send");
       }
 
   }
@@ -275,7 +275,7 @@ class CommandeMethodeTableur extends CommandeMethode
       }
     else 
       {
-	dolibarr_syslog("CommandeMethodeTableur::CreateFile Erreur SQL 1");
+	dol_syslog("CommandeMethodeTableur::CreateFile Erreur SQL 1");
       }
 
     /*
@@ -324,7 +324,7 @@ class CommandeMethodeTableur extends CommandeMethode
       }
     else 
       {
-	dolibarr_syslog("CommandeMethodeTableur::CreateFile Erreur SQL 2");
+	dol_syslog("CommandeMethodeTableur::CreateFile Erreur SQL 2");
       }
    
     $workbook->close();

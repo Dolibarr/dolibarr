@@ -71,7 +71,7 @@ if ($_GET["id"])
   $head[$h][1] = "Statistiques";
   $h++;
 
-  dolibarr_fiche_head($head, $hselected, "Distributeur");
+  dol_fiche_head($head, $hselected, "Distributeur");
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr><td width="40%" valign="top">';  

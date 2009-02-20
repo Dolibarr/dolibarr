@@ -50,7 +50,7 @@ $soc = new Societe($db, $commande->socid);
 $soc->fetch($commande->socid);
 
 $head = commande_prepare_head($commande);
-dolibarr_fiche_head($head, 'info', $langs->trans("CustomerOrder"));
+dol_fiche_head($head, 'info', $langs->trans("CustomerOrder"));
 
 
 print '<table width="100%"><tr><td>';

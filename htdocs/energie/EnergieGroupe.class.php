@@ -57,7 +57,7 @@ class EnergieGroupe
       }
     else
       {
-	dolibarr_syslog("EnergieGroupe::fetch Erreur");
+	dol_syslog("EnergieGroupe::fetch Erreur");
 	return -1;
       }
   }
@@ -86,8 +86,8 @@ class EnergieGroupe
       }
     else
       {
-	dolibarr_syslog("EnergieGroupe::Create Erreur 1");
-	dolibarr_syslog($this->db->error());
+	dol_syslog("EnergieGroupe::Create Erreur 1");
+	dol_syslog($this->db->error());
 	return -1;
       }
   }

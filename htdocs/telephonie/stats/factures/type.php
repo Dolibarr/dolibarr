@@ -57,7 +57,7 @@ $h++;
 //$head[$h][1] = "3 derniers mois";
 //$h++;
 
-dolibarr_fiche_head($head, $hselected, "Satistiques Factures");
+dol_fiche_head($head, $hselected, "Satistiques Factures");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 

@@ -108,7 +108,7 @@ if ($result)
       print "<td>".stripslashes($objp->prenom)."</td>\n";
       print "<td>".stripslashes($objp->nom)."</td>\n";
       print "<td>".stripslashes($objp->societe)."</td>\n";
-      print '<td align="center">'.dolibarr_print_date($objp->datedon).'</td>';
+      print '<td align="center">'.dol_print_date($objp->datedon).'</td>';
       if ($conf->projet->enabled) {
           print "<td>$objp->projet</td>\n";
       }
@@ -122,7 +122,7 @@ if ($result)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 

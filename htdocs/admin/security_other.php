@@ -40,7 +40,7 @@ if ($_GET["action"] == 'set_main_upload_doc')
 {
 	if (! dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"]))
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 	else
 	{
@@ -104,7 +104,7 @@ print "<br>\n";
 
 $head=security_prepare_head();
 
-dolibarr_fiche_head($head, 'misc', $langs->trans("Security"));
+dol_fiche_head($head, 'misc', $langs->trans("Security"));
 
 
 $var=false;

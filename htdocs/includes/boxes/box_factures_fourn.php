@@ -104,7 +104,7 @@ class box_factures_fourn extends ModeleBoxes {
 					$datec=$db->jdate($objp->datec);
 
                     $late = '';
-                    if ($objp->paye == 0 && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dolibarr_print_date($datelimite,'day')));
+                    if ($objp->paye == 0 && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
 
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
@@ -120,7 +120,7 @@ class box_factures_fourn extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-                    'text' => dolibarr_print_date($datec,'day'));
+                    'text' => dol_print_date($datec,'day'));
 
                     $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
                     'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
@@ -131,7 +131,7 @@ class box_factures_fourn extends ModeleBoxes {
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpayedCustomerBills"));
             }
             else {
-                dolibarr_print_error($db);
+                dol_print_error($db);
             }
         }
         else {

@@ -56,7 +56,7 @@ if ($cats != -1)
       $var = ! $var;
       print "\t<tr ".$bc[$var].">\n";
       print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
-      print "\t\t<td>".dolibarr_trunc($cat->description,36)."</td>\n";
+      print "\t\t<td>".dol_trunc($cat->description,36)."</td>\n";
       print '<td align="right">';
 	  if ($cat->type == 0) print $langs->trans("Product");
 	  elseif ($cat->type == 1) print $langs->trans("Supplier");
@@ -69,7 +69,7 @@ if ($cats != -1)
 }
 else
 {
-  dolibarr_print_error();
+  dol_print_error();
 }
 
 print '</td></tr></table>';

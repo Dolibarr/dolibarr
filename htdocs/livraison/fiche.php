@@ -152,7 +152,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	$result=delivery_order_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$result);
+		dol_print_error($db,$result);
 		exit;
 	}
 }
@@ -217,7 +217,7 @@ if ($_GET["action"] == 'create')
 		print "</td></tr>";
 
 		print "<tr><td>".$langs->trans("Date")."</td>";
-		print "<td>".dolibarr_print_date($commande->date,'dayhourtext')."</td>\n";
+		print "<td>".dol_print_date($commande->date,'dayhourtext')."</td>\n";
 
 		print '<td>'.$langs->trans("Order").'</td><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a>';
 		print "</td></tr>\n";
@@ -347,7 +347,7 @@ if ($_GET["action"] == 'create')
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 else
@@ -390,7 +390,7 @@ else
 			$hselected = $h;
 			$h++;
 
-			dolibarr_fiche_head($head, $hselected, $langs->trans("Sending"));
+			dol_fiche_head($head, $hselected, $langs->trans("Sending"));
 
 			/*
 			 * Confirmation de la suppression
@@ -457,7 +457,7 @@ else
 
 			// Date
 			print '<tr><td>'.$langs->trans("Date").'</td>';
-			print '<td colspan="3">'.dolibarr_print_date($livraison->date_creation,'dayhourtext')."</td>\n";
+			print '<td colspan="3">'.dol_print_date($livraison->date_creation,'dayhourtext')."</td>\n";
 			print '</tr>';
 
 			// Statut

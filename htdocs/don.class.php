@@ -294,7 +294,7 @@ class Don extends CommonObject
 		$sql .= " ".($this->projetid > 0?$this->projetid:"null").",";
 		$sql .= " '".addslashes($this->note)."', ".$user->id.", null, '$this->date','$this->email')";
 
-		dolibarr_syslog("Don::create sql=".$sql, LOG_DEBUG);
+		dol_syslog("Don::create sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -302,7 +302,7 @@ class Don extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -343,7 +343,7 @@ class Don extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -370,7 +370,7 @@ class Don extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 	 	 return -1;
 		}
 	}
@@ -422,7 +422,7 @@ class Don extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 
@@ -452,7 +452,7 @@ class Don extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 	  return 0;
 		}
 	}
@@ -485,7 +485,7 @@ class Don extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return 0;
 		}
 	}
@@ -514,7 +514,7 @@ class Don extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return 0;
 		}
 	}

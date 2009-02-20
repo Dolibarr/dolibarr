@@ -87,7 +87,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	 */
 	// Onglets
 	$head=bank_prepare_head($acct);
-	dolibarr_fiche_head($head,'cash',$langs->trans("FinancialAccount"),0);
+	dol_fiche_head($head,'cash',$langs->trans("FinancialAccount"),0);
 
 	print '<table class="border" width="100%">';
 
@@ -293,7 +293,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			$solde += $total_ttc;
 
 			print "<tr $bc[$var]>";
-			print '<td>'.dolibarr_print_date($obj->dlr,"day")."</td>";
+			print '<td>'.dol_print_date($obj->dlr,"day")."</td>";
 			print "<td>".$ref."</td>";
 			print "<td>".$refcomp."</td>";
 			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price($total_ttc)."</td><td>&nbsp;</td>"; };
@@ -305,7 +305,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	// Solde actuel

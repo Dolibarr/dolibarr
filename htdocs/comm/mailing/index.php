@@ -122,7 +122,7 @@ while (($file = readdir($handle))!==false)
                     }
                     else
                     {
-                      dolibarr_print_error($db);
+                      dol_print_error($db);
                     }
                     print '</tr>';
                 }
@@ -170,8 +170,8 @@ if ($result)
 
 	  print "<tr $bc[$var]>";
 	  print '<td nowrap="nowrap"><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
-	  print '<td>'.dolibarr_trunc($obj->titre,38).'</td>';
-	  print '<td align="center">'.dolibarr_print_date($obj->date_creat,'day').'</td>';
+	  print '<td>'.dol_trunc($obj->titre,38).'</td>';
+	  print '<td align="center">'.dol_print_date($obj->date_creat,'day').'</td>';
 	  print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
 	  $mailstatic=new Mailing($db);
 	  print '<td align="right">'.$mailstatic->LibStatut($obj->statut,5).'</td>';
@@ -189,7 +189,7 @@ if ($result)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 

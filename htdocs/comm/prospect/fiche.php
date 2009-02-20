@@ -62,7 +62,7 @@ if ($_POST["action"] == 'setprospectlevel' && $user->rights->societe->creer)
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_prospectlevel='".$_POST['prospect_level_id'];
 	$sql.= "' WHERE rowid='".$_GET["socid"]."'";
 	$result = $db->query($sql);
-	if (! $result) dolibarr_print_error($result);
+	if (! $result) dol_print_error($result);
 }
 
 
@@ -84,7 +84,7 @@ if ($socid > 0)
 	$result = $societe->fetch($socid);
 	if ($result < 0)
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 		exit;
 	}
 
@@ -93,7 +93,7 @@ if ($socid > 0)
 	 */
 	$head = societe_prepare_head($societe);
 
-	dolibarr_fiche_head($head, 'prospect', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'prospect', $langs->trans("ThirdParty"));
 
 	print '<table width="100%" class="notopnoleftnoright">';
 	print '<tr><td valign="top" width="50%" class="notopnoleft">';
@@ -209,7 +209,7 @@ if ($socid > 0)
 				{
 					print " ".img_warning();
 				}
-				print "</td><td align=\"right\">".dolibarr_print_date($objp->dp,"day")."</td>\n";
+				print "</td><td align=\"right\">".dol_print_date($objp->dp,"day")."</td>\n";
 				print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 				print "<td align=\"right\">".$propal_static->LibStatut($objp->fk_statut,5)."</td></tr>\n";
 				$i++;
@@ -218,7 +218,7 @@ if ($socid > 0)
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		print "</table>";

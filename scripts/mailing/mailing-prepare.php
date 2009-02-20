@@ -58,8 +58,8 @@ if ( $db->query($sql) )
     {
       $row = $db->fetch_row();
 
-      dolibarr_syslog("mailing-prepare: mailing $row[0]");
-      dolibarr_syslog("mailing-prepare: mailing module $row[1]");
+      dol_syslog("mailing-prepare: mailing $row[0]");
+      dol_syslog("mailing-prepare: mailing module $row[1]");
 
       require_once(DOL_DOCUMENT_ROOT.'/includes/modules/mailings/'.$row[1].'.modules.php');
 

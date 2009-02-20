@@ -37,7 +37,7 @@
  */
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
 {
-	dolibarr_syslog("files.lib.php::dol_dir_list $path");
+	dol_syslog("files.lib.php::dol_dir_list $path");
 
 	$loaddate=$mode?true:false;
 	$loadsize=$mode?true:false;

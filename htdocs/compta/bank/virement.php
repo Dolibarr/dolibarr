@@ -41,7 +41,7 @@ if ($_POST["action"] == 'add')
 	$langs->load("errors");
 	
 	$mesg='';
-	$dateo = dolibarr_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+	$dateo = dol_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	$label = $_POST["label"];
 	$amount= $_POST["amount"];
 

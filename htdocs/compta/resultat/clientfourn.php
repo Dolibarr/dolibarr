@@ -124,7 +124,7 @@ if ($result) {
     }
     $db->free($result);
 } else {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 // On ajoute les paiements clients anciennes version, non lie par paiement_facture
@@ -162,7 +162,7 @@ if ($modecompta != 'CREANCES-DETTES')
         }
         $db->free($result);
     } else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 }
 
@@ -246,7 +246,7 @@ if ($result) {
 
   $db->free($result);
 } else {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
@@ -311,7 +311,7 @@ if ($result) {
         print '</tr>';
     }
 } else {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
@@ -375,7 +375,7 @@ if ($result) {
         print '</tr>';
     }
 } else {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
@@ -437,7 +437,7 @@ if ($modecompta == 'CREANCES-DETTES')
           }
         }
     } else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
     print "<tr $bc[$var]><td>&nbsp;</td>";
     print "<td>".$langs->trans("VATToPay")."</td>\n";
@@ -475,7 +475,7 @@ if ($modecompta == 'CREANCES-DETTES')
           }
         }
     } else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
     print "<tr $bc[$var]><td>&nbsp;</td>";
     print "<td>".$langs->trans("VATToCollect")."</td>\n";
@@ -515,7 +515,7 @@ else
         }
         $db->free($result);
     } else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
     print "<tr $bc[$var]><td>&nbsp;</td>";
     print "<td>".$langs->trans("VATPayed")."</td>\n";
@@ -553,7 +553,7 @@ else
         }
         $db->free($result);
     } else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
     print "<tr $bc[$var]><td>&nbsp;</td>";
     print "<td>".$langs->trans("VATCollected")."</td>\n";

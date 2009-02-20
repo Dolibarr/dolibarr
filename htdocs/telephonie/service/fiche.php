@@ -147,7 +147,7 @@ else
 	      $head[$h][1] = "Contrats";
 	      $h++;
 
-	      dolibarr_fiche_head($head, $hselected, 'Service : '.$service->id);
+	      dol_fiche_head($head, $hselected, 'Service : '.$service->id);
 
 	      print_fiche_titre('Fiche Service', $mesg);
       
@@ -179,7 +179,7 @@ else
 	      $hselected = $h;
 	      $h++;
 
-	      dolibarr_fiche_head($head, $hselected, 'Service : '.$service->numero);
+	      dol_fiche_head($head, $hselected, 'Service : '.$service->numero);
 
 	      print_fiche_titre('Edition du service', $mesg);
 	      

@@ -103,7 +103,7 @@ if ($_GET["id"])
 
     $hselected = 2;
 
-    dolibarr_fiche_head($head, 'note', $langs->trans("Contract"));
+    dol_fiche_head($head, 'note', $langs->trans("Contract"));
 
 
     print '<table class="border" width="100%">';

@@ -131,7 +131,7 @@ class DistributeurTelephonie {
 	    }
 	  else
 	    {
-	      dolibarr_syslog("DistributeurTelephonie::Create");
+	      dol_syslog("DistributeurTelephonie::Create");
 	      $this->error_string["prelev"] = "Erreur SQL : $sql";
 	      $this->error_string["autre"] = $this->db->error();
 	      $error++;
@@ -177,13 +177,13 @@ class DistributeurTelephonie {
 	    }
 	  else
 	    {
-	      dolibarr_syslog("DistributeurTelephonie::Fetch Erreur id=".$this->id);
+	      dol_syslog("DistributeurTelephonie::Fetch Erreur id=".$this->id);
 	      return -1;
 	    }
 	}
       else
 	{
-	  dolibarr_syslog("DistributeurTelephonie::Fetch Erreur SQL id=".$this->id);
+	  dol_syslog("DistributeurTelephonie::Fetch Erreur SQL id=".$this->id);
 	  return -2;
 	}
     }

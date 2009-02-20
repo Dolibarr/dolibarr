@@ -317,7 +317,7 @@ function pFooter($nonext=0,$setuplang='')
 function dolibarr_install_syslog($message, $level=LOG_DEBUG)
 {
 	if (! defined('LOG_DEBUG')) define('LOG_DEBUG',6);
-	dolibarr_syslog($message,$level);
+	dol_syslog($message,$level);
 }
 
 ?>

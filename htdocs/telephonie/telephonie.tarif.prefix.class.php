@@ -61,7 +61,7 @@ class TelephonieTarifPrefix {
 	  }
 	else
 	  {
-	    dolibarr_syslog($this->db->error());
+	    dol_syslog($this->db->error());
 	  }
       }
     else
@@ -80,7 +80,7 @@ class TelephonieTarifPrefix {
 	      }
 	    else
 	      {
-		dolibarr_syslog($this->db->error());
+		dol_syslog($this->db->error());
 	      }
 	  }
       }

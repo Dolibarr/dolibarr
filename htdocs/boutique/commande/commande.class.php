@@ -75,7 +75,7 @@ class Commande
 
 			$this->payment_method = stripslashes($array["payment_method"]);
 
-			$this->date = dolibarr_print_date($array["date_purchased"],'dayhour');
+			$this->date = dol_print_date($array["date_purchased"],'dayhour');
 
 			$this->delivery_adr->name = stripslashes($array["delivery_name"]);
 			$this->delivery_adr->street = stripslashes($array["delivery_street_address"]);

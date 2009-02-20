@@ -48,7 +48,7 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 	$sql.= " AND ed.fk_expedition = e.rowid";
 	$sql.= " ORDER BY obj.fk_product";
 
-	dolibarr_syslog("show_list_sending_receive sql=".$sql, LOG_DEBUG);
+	dol_syslog("show_list_sending_receive sql=".$sql, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -91,13 +91,13 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 					$product->fetch($objp->fk_product);
 
 					print '<td>';
-					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.dolibarr_trunc($product->libelle,20);
-					if ($objp->description) print '<br>'.dol_htmlentitiesbr(dolibarr_trunc($objp->description,24));
+					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.dol_trunc($product->libelle,20);
+					if ($objp->description) print '<br>'.dol_htmlentitiesbr(dol_trunc($objp->description,24));
 					print '</td>';
 				}
 				else
 				{
-					print "<td>".dol_htmlentitiesbr(dolibarr_trunc($objp->description,24))."</td>\n";
+					print "<td>".dol_htmlentitiesbr(dol_trunc($objp->description,24))."</td>\n";
 				}
 
 				//print '<td align="center">'.$objp->qty_asked.'</td>';
@@ -107,14 +107,14 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 
 				print '<td align="center">'.$objp->qty_shipped.'</td>';
 				
-				print '<td align="center" nowrap="nowrap">'.dolibarr_print_date($objp->date_expedition,'dayhour').'</td>';
+				print '<td align="center" nowrap="nowrap">'.dol_print_date($objp->date_expedition,'dayhour').'</td>';
 				if ($conf->livraison_bon->enabled)
 				{
 					if ($objp->livraison_id)
 					{
 						print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->livraison_ref.'<a></td>';
 						print '<td align="center">'.$objp->qty_received.'</td>';
-						print '<td>'.dolibarr_print_date($objp->date_delivery,'dayhour').'</td>';
+						print '<td>'.dol_print_date($objp->date_delivery,'dayhour').'</td>';
 					}
 					else
 					{
@@ -133,7 +133,7 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	return 1;

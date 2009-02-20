@@ -138,7 +138,7 @@ if ($mesg) {
 
 $head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);
-dolibarr_fiche_head($head, 'subproduct', $titre);
+dol_fiche_head($head, 'subproduct', $titre);
 
 /*
  * Fiche produit
@@ -316,7 +316,7 @@ if ($id || $ref)
 			}
 			else
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 			print '<input type="hidden" name="max_prod" value="'.$i.'">';
 			if($num > 0)

@@ -466,7 +466,7 @@ else
 		  if($plugin->tabs($head,$h))
 		    $h++;
 		  else
-		    dolibarr_syslog("$var::tabs error");
+		    dol_syslog("$var::tabs error");
 		}
 	      
 	      $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/stats.php?id=".$contrat->id;
@@ -480,7 +480,7 @@ else
 	      $contrat->load_previous_next_id();
 	      $previous_ref = $contrat->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?id='.$contrat->ref_previous.'">'.img_previous().'</a>':'';
 	      $next_ref     = $contrat->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?id='.$contrat->ref_next.'">'.img_next().'</a>':'';
-	      dolibarr_fiche_head($head, $hselected, 'Contrat : '.$contrat->ref);
+	      dol_fiche_head($head, $hselected, 'Contrat : '.$contrat->ref);
 
 	      //print_fiche_titre('Fiche Contrat', $mesg);
 
@@ -644,7 +644,7 @@ else
 			  
 			  print '</a>&nbsp;';
 			  
-			  print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne,0,0,true)."</a></td>\n";
+			  print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">'.dol_print_phone($obj->ligne,0,0,true)."</a></td>\n";
 			  
 			  print '<td>'.$obj->code_client."&nbsp;".$obj->agence."</td>\n";
 			  print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
@@ -749,7 +749,7 @@ else
 	      $hselected = $h;
 	      $h++;
 	      
-	      dolibarr_fiche_head($head, $hselected, 'Contrat : '.$contrat->ref);
+	      dol_fiche_head($head, $hselected, 'Contrat : '.$contrat->ref);
 
 	      print_fiche_titre('Edition du contrat', $mesg);
 	      

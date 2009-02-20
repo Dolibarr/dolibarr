@@ -43,7 +43,7 @@ $hselected = $h;
 $h++;
 
 
-dolibarr_fiche_head($head, $hselected, "Fournisseurs");
+dol_fiche_head($head, $hselected, "Fournisseurs");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">'."\n";
 

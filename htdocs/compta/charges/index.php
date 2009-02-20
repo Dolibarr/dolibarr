@@ -104,7 +104,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 print '</table>';
 
@@ -147,7 +147,7 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 	        $obj = $db->fetch_object($result);
 	        $var=!$var;
 	        print "<tr $bc[$var]>";
-	        print '<td align="left">'.dolibarr_print_date($obj->dm,'day')."</td>\n";
+	        print '<td align="left">'.dol_print_date($obj->dm,'day')."</td>\n";
 	        print "<td>".$obj->label."</td>\n";
 	        $total = $total + $obj->amount;
 	        
@@ -164,7 +164,7 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 	}
 	else
 	{
-	    dolibarr_print_error($db);
+	    dol_print_error($db);
 	}
 }
 

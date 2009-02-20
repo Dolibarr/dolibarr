@@ -81,7 +81,7 @@ if ($_GET["action"] == 'del')
 	$result=$accline->delete();
     if ($result < 0)
 	{
-        dolibarr_print_error($db,$accline->error);
+        dol_print_error($db,$accline->error);
     }
 }
 
@@ -159,7 +159,7 @@ if ($resql)
     }
     else
     {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 
     print '<table class="border" width="100%">';
@@ -188,13 +188,13 @@ if ($resql)
         print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
 
         // Date op
-        print '<td align="center" nowrap="nowrap">'.dolibarr_print_date($objp->do,"day").'</td>';
+        print '<td align="center" nowrap="nowrap">'.dol_print_date($objp->do,"day").'</td>';
         
         // Date value
 		if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
 		{
 			print '<td align="center" nowrap="nowrap">';
-			print dolibarr_print_date($objp->dv,"day");
+			print dol_print_date($objp->dv,"day");
 			print ' &nbsp; ';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
@@ -205,7 +205,7 @@ if ($resql)
 		else
 		{
 			print '<td align="center">';
-			print dolibarr_print_date($objp->dv,"day");
+			print dol_print_date($objp->dv,"day");
 			print '</td>';
 		}
         
@@ -255,7 +255,7 @@ if ($resql)
             elseif ($links[$key]['type']=='company') {
                 print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
                 print img_object($langs->trans('ShowCustomer'),'company').' ';
-                print dolibarr_trunc($links[$key]['label'],24);
+                print dol_trunc($links[$key]['label'],24);
                 print '</a>';
                 $newline=0;
             }
@@ -369,7 +369,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 $db->close();

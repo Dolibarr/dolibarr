@@ -474,7 +474,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 

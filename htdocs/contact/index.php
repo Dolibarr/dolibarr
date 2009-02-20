@@ -192,7 +192,7 @@ else
 	$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 }
 
-dolibarr_syslog("contact/index.php sql=".$sql);
+dol_syslog("contact/index.php sql=".$sql);
 $result = $db->query($sql);
 if ($result)
 {
@@ -296,14 +296,14 @@ if ($result)
         print '</td>';
 
 		// Firstname
-        print '<td>'.dolibarr_trunc($obj->firstname,20).'</td>';
+        print '<td>'.dol_trunc($obj->firstname,20).'</td>';
 
 		// Company
 		print '<td>';
         if ($obj->socid)
         {
             print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
-            print img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,20).'</a>';
+            print img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,20).'</a>';
         }
         else
         {
@@ -328,7 +328,7 @@ if ($result)
         }
 
 		// Date
-		print '<td align="center">'.dolibarr_print_date($obj->tms,"day").'</td>';
+		print '<td align="center">'.dol_print_date($obj->tms,"day").'</td>';
 
 		// Private/Public
 		print '<td align="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
@@ -353,7 +353,7 @@ if ($result)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 print '<br>';

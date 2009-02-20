@@ -50,8 +50,8 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     
     $db->begin();
     
-    $datev=dolibarr_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-    $datep=dolibarr_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+    $datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
+    $datep=dol_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
     
     $tva->accountid=$_POST["accountid"];
     $tva->paymenttype=$_POST["paiementtype"];
@@ -134,7 +134,7 @@ if ($id)
 	$result = $vatpayment->fetch($id);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 		exit;
 	}
 }
@@ -200,7 +200,7 @@ if ($id)
 	$head[$h][2] = 'card';
 	$h++;
 
-	dolibarr_fiche_head($head, 'card', $langs->trans("VATPayment"));
+	dol_fiche_head($head, 'card', $langs->trans("VATPayment"));
 
 
 	print '<table class="border" width="100%">';
@@ -212,11 +212,11 @@ if ($id)
 
 	print "<tr>";
 	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
-	print dolibarr_print_date($vatpayment->datep,'day');
+	print dol_print_date($vatpayment->datep,'day');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("DateValue").'</td><td colspan="3">';
-	print dolibarr_print_date($vatpayment->datev,'day');
+	print dol_print_date($vatpayment->datev,'day');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($vatpayment->amount).'</td></tr>';

@@ -165,7 +165,7 @@ class mailing_poire extends MailingTargets
 				$i++;
 			}
 		}
-		else dolibarr_print_error($this->db);
+		else dol_print_error($this->db);
 
 		// La requete doit retourner: id, email, fk_contact, name, firstname, other
         $sql = "SELECT c.rowid as id, c.email as email, c.rowid as fk_contact,";
@@ -194,7 +194,7 @@ class mailing_poire extends MailingTargets
             $i = 0;
             $j = 0;
 
-            dolibarr_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
+            dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
 
             $old = '';
             while ($i < $num)
@@ -222,7 +222,7 @@ class mailing_poire extends MailingTargets
         }
         else
         {
-            dolibarr_syslog($this->db->error());
+            dol_syslog($this->db->error());
             $this->error=$this->db->error();
             return -1;
         }

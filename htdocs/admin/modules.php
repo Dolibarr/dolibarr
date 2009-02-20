@@ -161,7 +161,7 @@ function UnActivate($value,$requiredby=1)
 			$genericMod->style_sheet=1;
 			$genericMod->rights_class=strtolower(eregi_replace('^mod','',$modName));
 			$genericMod->const_name='MAIN_MODULE_'.strtoupper(eregi_replace('^mod','',$modName));
-			dolibarr_syslog("modules::UnActivate Failed to find module file, we use generic function with name ".$genericMod->name);
+			dol_syslog("modules::UnActivate Failed to find module file, we use generic function with name ".$genericMod->name);
 			$genericMod->_remove();
 		}
 	}
@@ -308,7 +308,7 @@ if (! empty($categ[$categidx]))
 	$h++;
 }
 
-dolibarr_fiche_head($head, $tagmode, $langs->trans("Modules"));
+dol_fiche_head($head, $tagmode, $langs->trans("Modules"));
 
 
 if ($mesg) print '<div class="error">'.$mesg.'</div>';

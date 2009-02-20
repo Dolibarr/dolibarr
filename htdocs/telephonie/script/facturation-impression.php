@@ -83,14 +83,14 @@ $sql .= " AND date_format(f.date,'%m%Y') = '".$month.$year."'";
 
 $resql = $db->query($sql);
   
-dolibarr_syslog("Impression des factures de ".$month.$year);
+dol_syslog("Impression des factures de ".$month.$year);
 
 if ( $resql )
 {
   $num = $db->num_rows($resql);
   $i = 0;
 
-  dolibarr_syslog("$num factures a imprimer");
+  dol_syslog("$num factures a imprimer");
 
   $pdf = new FPDI_Protection('P','mm','A4');
                  		
@@ -164,17 +164,17 @@ if ( $resql )
 
   $pdf->Close();	      
   $pdf->Output($file);
-  dolibarr_syslog("Generation de ".$pages_facture." envois");
-  dolibarr_syslog("Generation de ".$pages." pages");
-  dolibarr_syslog("Generation de ".$total_feuilles." feuilles");
-  dolibarr_syslog("Ecriture de : ".$file);
+  dol_syslog("Generation de ".$pages_facture." envois");
+  dol_syslog("Generation de ".$pages." pages");
+  dol_syslog("Generation de ".$total_feuilles." feuilles");
+  dol_syslog("Ecriture de : ".$file);
   $db->free($resql);
 }
 else
 {
   $error = 1;
-  dolibarr_syslog("Erreur ".$error);
-  dolibarr_syslog($db->error());
+  dol_syslog("Erreur ".$error);
+  dol_syslog($db->error());
 }
 
 $db->close();
@@ -198,14 +198,14 @@ $sql .= " AND date_format(f.date,'%m%Y') = '".$month.$year."'";
 
 $resql = $db->query($sql);
   
-dolibarr_syslog("Impression des factures de ".$month.$year);
+dol_syslog("Impression des factures de ".$month.$year);
 
 if ( $resql )
 {
   $num = $db->num_rows($resql);
   $i = 0;
 
-  dolibarr_syslog("$num factures a imprimer");
+  dol_syslog("$num factures a imprimer");
 
   while ($i < $num)
     {
@@ -215,7 +215,7 @@ if ( $resql )
 
       if (! copy($file,"/tmp/facture/".$row[1].".pdf"))
 	{
-	  dolibarr_syslog("Error copy $file");
+	  dol_syslog("Error copy $file");
 	}
 
       $i++;
@@ -226,8 +226,8 @@ if ( $resql )
 else
 {
   $error = 1;
-  dolibarr_syslog("Erreur ".$error);
-  dolibarr_syslog($db->error());
+  dol_syslog("Erreur ".$error);
+  dol_syslog($db->error());
 }
 
 $db->close();

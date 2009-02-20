@@ -51,7 +51,7 @@ class DolEditor
     {
     	global $conf,$langs;
 
-    	dolibarr_syslog("DolEditor::DolEditor modulepart=".$modulepart);
+    	dol_syslog("DolEditor::DolEditor modulepart=".$modulepart);
 
     	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
 

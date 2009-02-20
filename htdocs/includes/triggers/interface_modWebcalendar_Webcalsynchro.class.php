@@ -109,7 +109,7 @@ class InterfaceWebcalsynchro
         // Actions
         if ($action == 'ACTION_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             // Initialisation donnees (date,duree,texte,desc)
@@ -138,7 +138,7 @@ class InterfaceWebcalsynchro
 		// Third parties
         elseif ($action == 'COMPANY_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             
             // Initialisation donnees (date,duree,texte,desc)
@@ -155,7 +155,7 @@ class InterfaceWebcalsynchro
 		// Contracts
         elseif ($action == 'CONTRACT_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             // Initialisation donnees (date,duree,texte,desc)
@@ -169,7 +169,7 @@ class InterfaceWebcalsynchro
 		// Proposals
         elseif ($action == 'PROPAL_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -180,7 +180,7 @@ class InterfaceWebcalsynchro
         }
         elseif ($action == 'PROPAL_CLOSE_SIGNED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -191,7 +191,7 @@ class InterfaceWebcalsynchro
         }
         elseif ($action == 'PROPAL_CLOSE_REFUSED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -204,7 +204,7 @@ class InterfaceWebcalsynchro
         // Invoices
 		elseif ($action == 'BILL_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -215,7 +215,7 @@ class InterfaceWebcalsynchro
         }
         elseif ($action == 'BILL_PAYED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -226,7 +226,7 @@ class InterfaceWebcalsynchro
         }
         elseif ($action == 'BILL_CANCELED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -239,7 +239,7 @@ class InterfaceWebcalsynchro
         // Payments
         elseif ($action == 'PAYMENT_CUSTOMER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -251,7 +251,7 @@ class InterfaceWebcalsynchro
         }
         elseif ($action == 'PAYMENT_SUPPLIER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -265,7 +265,7 @@ class InterfaceWebcalsynchro
         // Members
         elseif ($action == 'MEMBER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -279,7 +279,7 @@ class InterfaceWebcalsynchro
         }
         elseif ($action == 'MEMBER_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -293,7 +293,7 @@ class InterfaceWebcalsynchro
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -304,12 +304,12 @@ class InterfaceWebcalsynchro
             $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
-            $this->desc.="\n".$langs->transnoentities("Period").': '.dolibarr_print_date($object->last_subscription_date_start,'day').' - '.dolibarr_print_date($object->last_subscription_date_end,'day');
+            $this->desc.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }
         elseif ($action == 'MEMBER_MODIFY')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -323,7 +323,7 @@ class InterfaceWebcalsynchro
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -337,7 +337,7 @@ class InterfaceWebcalsynchro
         }
         elseif ($action == 'MEMBER_DELETE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -354,7 +354,7 @@ class InterfaceWebcalsynchro
 /*
         else
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
+            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return 0;
         }
 */
@@ -372,7 +372,7 @@ class InterfaceWebcalsynchro
                 $error.="La mise a jour Webcalendar a été ignorée.";
                 $this->error=$error;
     
-                //dolibarr_syslog("interface_webcal.class.php: ".$this->error);
+                //dol_syslog("interface_webcal.class.php: ".$this->error);
                 return -1;
             }
 
@@ -392,7 +392,7 @@ class InterfaceWebcalsynchro
                 $error.="La mise a jour Webcalendar a été ignorée.";
                 $this->error=$error;
 
-                //dolibarr_syslog("interface_webcal.class.php: ".$this->error);
+                //dol_syslog("interface_webcal.class.php: ".$this->error);
                 return -2;
             }
         }

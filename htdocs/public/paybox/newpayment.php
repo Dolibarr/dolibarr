@@ -52,18 +52,18 @@ if (empty($_REQUEST["currency"])) $currency=$conf->global->MAIN_MONNAIE;
 else $currency=$_REQUEST["currency"];
 if (empty($_REQUEST["amount"]))
 {
-	dolibarr_print_error('','ErrorBadParameters');
+	dol_print_error('','ErrorBadParameters');
 	exit;
 }
 $amount=$_REQUEST["amount"];
 if (is_numeric($amount) && empty($_REQUEST["tag"]))
 {
-	dolibarr_print_error('','ErrorBadParameters');
+	dol_print_error('','ErrorBadParameters');
 	exit;
 }
 if (! is_numeric($amount) && empty($_REQUEST["ref"]))
 {
-	dolibarr_print_error('','ErrorBadParameters');
+	dol_print_error('','ErrorBadParameters');
 	exit;
 }
 
@@ -353,7 +353,7 @@ if ($_REQUEST["amount"] == 'contractline')
 		$amount=$pu_ttc;
 		if (empty($amount))
 		{
-			dolibarr_print_error('','ErrorNoPriceDefinedForThisProduct');
+			dol_print_error('','ErrorNoPriceDefinedForThisProduct');
 			exit;
 		}
 	}
@@ -385,13 +385,13 @@ if ($_REQUEST["amount"] == 'contractline')
 	if ($contractline->description) $text.='<br>'.dol_htmlentitiesbr($contractline->description);
 	//if ($contractline->date_fin_validite) {
 	//	$text.='<br>'.$langs->trans("DateEndPlanned").': ';
-	//	$text.=dolibarr_print_date($contractline->date_fin_validite);
+	//	$text.=dol_print_date($contractline->date_fin_validite);
 	//}
 	if ($contractline->date_fin_validite)
 	{
 		//$dateactend = dol_time_plus_duree ($contractline->date_fin_validite, $product->duration_value, $product->duration_unit);
-		//print ', '.$langs->trans("DateEndPlanned").': '.dolibarr_print_date($contractline->date_fin_validite);
-		$text.='<br>'.$langs->trans("ExpiredSince").': '.dolibarr_print_date($contractline->date_fin_validite);
+		//print ', '.$langs->trans("DateEndPlanned").': '.dol_print_date($contractline->date_fin_validite);
+		$text.='<br>'.$langs->trans("ExpiredSince").': '.dol_print_date($contractline->date_fin_validite);
 	}
 
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");

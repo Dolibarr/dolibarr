@@ -144,7 +144,7 @@ if ($objectid > 0)
 		$head[$h][1] = $langs->trans('Info');
 		$h++;
 		
-		dolibarr_fiche_head($head, $hselected, $langs->trans("Action"));
+		dol_fiche_head($head, $hselected, $langs->trans("Action"));
 	
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%"';
@@ -202,7 +202,7 @@ if ($objectid > 0)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}	
 }
 else

@@ -278,15 +278,15 @@ function pdf_getlinedesc($line,$outputlangs)
 		// Show duration if exists
 		if ($line->date_start && $line->date_end)
 		{
-			$period='('.$outputlangs->transnoentitiesnoconv('DateFromTo',dolibarr_print_date($line->date_start, $format, false, $outputlangs),dolibarr_print_date($line->date_end, $format, false, $outputlangs)).')';
+			$period='('.$outputlangs->transnoentitiesnoconv('DateFromTo',dol_print_date($line->date_start, $format, false, $outputlangs),dol_print_date($line->date_end, $format, false, $outputlangs)).')';
 		}
 		if ($line->date_start && ! $line->date_end)
 		{
-			$period='('.$outputlangs->transnoentitiesnoconv('DateFrom',dolibarr_print_date($line->date_start, $format, false, $outputlangs)).')';
+			$period='('.$outputlangs->transnoentitiesnoconv('DateFrom',dol_print_date($line->date_start, $format, false, $outputlangs)).')';
 		}
 		if (! $line->date_start && $line->date_end)
 		{
-			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dolibarr_print_date($line->date_end, $format, false, $outputlangs)).')';
+			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($line->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
 		$libelleproduitservice.="<br>".dol_htmlentitiesbr($period,1);

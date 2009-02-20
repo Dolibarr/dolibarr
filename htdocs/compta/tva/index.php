@@ -96,7 +96,7 @@ function tva_coll($db,$y,$m)
     }
     else
     {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 }
 
@@ -158,7 +158,7 @@ function tva_paye($db, $y,$m)
     }
     else
     {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 }
 
@@ -249,7 +249,7 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 	{
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print '<td nowrap>'.dolibarr_print_date(dolibarr_mktime(0,0,0,$m,1,$y),"%b %Y").'</td>';
+		print '<td nowrap>'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</td>';
 
 		$x_coll = tva_coll($db, $y, $m);
 		print "<td nowrap align=\"right\">".price($x_coll)."</td>";

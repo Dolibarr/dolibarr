@@ -223,10 +223,10 @@ if ($resql)
 		print '<td>'.$objp->ref_client.'</td>';
 		
 		// Date
-		$y = dolibarr_print_date($objp->date_commande,'%Y');
-		$m = dolibarr_print_date($objp->date_commande,'%m');
-		$ml = dolibarr_print_date($objp->date_commande,'%B');
-		$d = dolibarr_print_date($objp->date_commande,'%d');
+		$y = dol_print_date($objp->date_commande,'%Y');
+		$m = dol_print_date($objp->date_commande,'%m');
+		$ml = dol_print_date($objp->date_commande,'%B');
+		$d = dol_print_date($objp->date_commande,'%d');
 		print '<td align="right">';
 		print $d;
 		print ' <a href="liste.php?year='.$y.'&amp;month='.$m.'">'.$ml.'</a>';
@@ -243,7 +243,7 @@ if ($resql)
 }
 else
 {
-	print dolibarr_print_error($db);
+	print dol_print_error($db);
 }
 
 $db->close();

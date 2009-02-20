@@ -67,7 +67,7 @@ class ProductFournisseur extends Product
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
 		$sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
 
-		dolibarr_syslog("ProductFournisseur::remove_fournisseur sql=".$sql);
+		dol_syslog("ProductFournisseur::remove_fournisseur sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -77,12 +77,12 @@ class ProductFournisseur extends Product
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 				$sql.= " WHERE fk_product_fournisseur = ".$obj->rowid;
 				
-				dolibarr_syslog("ProductFournisseur::remove_fournisseur sql=".$sql);
+				dol_syslog("ProductFournisseur::remove_fournisseur sql=".$sql);
 				$resql2=$this->db->query($sql);
 				if (! $resql2)
 				{
 					$this->error=$this->db->lasterror();
-					dolibarr_syslog("ProductFournisseur::remove_fournisseur ".$this->error, LOG_ERR);
+					dol_syslog("ProductFournisseur::remove_fournisseur ".$this->error, LOG_ERR);
 					$ok=0;
 				}
 			}
@@ -91,12 +91,12 @@ class ProductFournisseur extends Product
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur";
 			$sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
 			
-			dolibarr_syslog("ProductFournisseur::remove_fournisseur sql=".$sql);
+			dol_syslog("ProductFournisseur::remove_fournisseur sql=".$sql);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
 				$this->error=$this->db->lasterror();
-				dolibarr_syslog("ProductFournisseur::remove_fournisseur ".$this->error, LOG_ERR);
+				dol_syslog("ProductFournisseur::remove_fournisseur ".$this->error, LOG_ERR);
 				$ok=0;
 			}
 			
@@ -114,7 +114,7 @@ class ProductFournisseur extends Product
 		else
 		{
 			$this->db->rollback();
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -2;
 		}
 	}
@@ -125,7 +125,7 @@ class ProductFournisseur extends Product
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur";
 		$sql.= " WHERE rowid = ".$rowid;
 
-		dolibarr_syslog("ProductFournisseur::remove_product_fournisseur sql=".$sql);
+		dol_syslog("ProductFournisseur::remove_product_fournisseur sql=".$sql);
 		$resql = $this->db->query($sql);  
 		if ($resql)
 		{
@@ -148,7 +148,7 @@ class ProductFournisseur extends Product
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE rowid = ".$rowid;
-		dolibarr_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
+		dol_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
 		$resql = $this->db->query($sql);  
 		if ($resql) 
 		{
@@ -157,7 +157,7 @@ class ProductFournisseur extends Product
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur as pf";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pfp.fk_product_fournisseur = pf.rowid";
 			$sql.= " WHERE pfp.rowid IS NULL";
-			dolibarr_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
+			dol_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
 			$resql = $this->db->query($sql);  
 			if ($resql)
 			{
@@ -169,12 +169,12 @@ class ProductFournisseur extends Product
 	
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur";
 					$sql.= " WHERE rowid = ".$rowidpf;
-					dolibarr_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
+					dol_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
 					$resql2 = $this->db->query($sql);  
 					if (! $resql2)
 					{
 						$this->error=$this->db->lasterror();
-						dolibarr_syslog("ProductFournisseur::remove_product_fournisseur_price ".$this->error,LOG_ERR);
+						dol_syslog("ProductFournisseur::remove_product_fournisseur_price ".$this->error,LOG_ERR);
 						$ok=0;
 					}
 				}
@@ -193,7 +193,7 @@ class ProductFournisseur extends Product
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dolibarr_syslog("ProductFournisseur::remove_product_fournisseur_price ".$this->error,LOG_ERR);
+				dol_syslog("ProductFournisseur::remove_product_fournisseur_price ".$this->error,LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -201,7 +201,7 @@ class ProductFournisseur extends Product
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("ProductFournisseur::remove_product_fournisseur_price ".$this->error,LOG_ERR);
+			dol_syslog("ProductFournisseur::remove_product_fournisseur_price ".$this->error,LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -277,7 +277,7 @@ class ProductFournisseur extends Product
 			$sql.= " ,quantity = ".$qty;
 			$sql.= " ,unitprice = ".$unitBuyPrice;
 
-			dolibarr_syslog("ProductFournisseur::update_buyprice sql=".$sql);
+			dol_syslog("ProductFournisseur::update_buyprice sql=".$sql);
 			if (! $this->db->query($sql))
 			{
 				$error++;
@@ -365,7 +365,7 @@ class ProductFournisseur extends Product
 		$sql.= " WHERE fk_product = ".$this->id;
 		$sql.= " AND fk_soc = ".$fournid;
 
-		dolibarr_syslog("Product::fetch_fourn_data sql=".$sql);
+		dol_syslog("Product::fetch_fourn_data sql=".$sql);
 		$result = $this->db->query($sql) ;
 		if ($result)
 		{
@@ -377,7 +377,7 @@ class ProductFournisseur extends Product
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Product::fetch_fourn_data error=".$this->error);
+			dol_syslog("Product::fetch_fourn_data error=".$this->error);
 			return -1;
 		}
 	}
@@ -394,7 +394,7 @@ class ProductFournisseur extends Product
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 		$sql.= " WHERE pfp.rowid = ".$rowid." AND pf.rowid = pfp.fk_product_fournisseur";
 
-		dolibarr_syslog("Product::fetch_product_fournisseur_price sql=".$sql, LOG_DEBUG);
+		dol_syslog("Product::fetch_product_fournisseur_price sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql) ;
 		if ($resql)
 		{
@@ -419,7 +419,7 @@ class ProductFournisseur extends Product
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Product::fetch_product_fournisseur_price error=".$this->error, LOG_ERR);
+			dol_syslog("Product::fetch_product_fournisseur_price error=".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

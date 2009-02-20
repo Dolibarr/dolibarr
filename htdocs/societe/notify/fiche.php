@@ -66,12 +66,12 @@ if ($_POST["action"] == 'add')
 	}
       else
 	{
-      dolibarr_print_error($db);
+      dol_print_error($db);
 	}
     }
   else
     {
-      dolibarr_print_error($db);
+      dol_print_error($db);
     }
 }
 
@@ -102,7 +102,7 @@ if ( $soc->fetch($soc->id) )
 	 */
 	$head = societe_prepare_head($soc);
 
-	dolibarr_fiche_head($head, 'notify', $soc->nom);
+	dol_fiche_head($head, 'notify', $soc->nom);
 
     
     print '<table class="border"width="100%">';
@@ -125,7 +125,7 @@ if ( $soc->fetch($soc->id) )
         }
     }
     else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
     print $nb;
     print '</td></tr>';
@@ -170,7 +170,7 @@ if ( $soc->fetch($soc->id) )
 	    }
 	    else
 	    {
-	        dolibarr_print_error($db);
+	        dol_print_error($db);
 	    }
 	    
 	    $var=false;
@@ -234,7 +234,7 @@ if ( $soc->fetch($soc->id) )
     }
     else
     {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
     
     print '</table>';

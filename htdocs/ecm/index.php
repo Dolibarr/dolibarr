@@ -67,7 +67,7 @@ if (! empty($_REQUEST["section"]))
 	$result=$ecmdir->fetch($_REQUEST["section"]);
 	if (! $result > 0)
 	{
-		dolibarr_print_error($db,$ecmdir->error);
+		dol_print_error($db,$ecmdir->error);
 		exit;
 	}
 }
@@ -85,7 +85,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	$result=$ecmdir->fetch($_REQUEST["section"]);
 	if (! $result > 0)
 	{
-		dolibarr_print_error($db,$ecmdir->error);
+		dol_print_error($db,$ecmdir->error);
 		exit;
 	}
 	$relativepath=$ecmdir->getRelativePath();
@@ -133,7 +133,7 @@ if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
 	$result=$ecmdir->fetch($_REQUEST["section"]);
 	if (! $result > 0)
 	{
-		dolibarr_print_error($db,$ecmdir->error);
+		dol_print_error($db,$ecmdir->error);
 		exit;
 	}
 	$relativepath=$ecmdir->getRelativePath();
@@ -226,7 +226,7 @@ if ($mesg) { print $mesg."<br>"; }
 $selected='file_manager';
 if (eregi('search',$action)) $selected='search_form';
 $head = ecm_prepare_head_fm($fac);
-dolibarr_fiche_head($head, $selected, '', 1);
+dol_fiche_head($head, $selected, '', 1);
 
 
 print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
@@ -563,7 +563,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
 			$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
 			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1).'<br>';
-			$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dolibarr_print_date($val['date_c'],"dayhour").'<br>';
+			$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_c'],"dayhour").'<br>';
 			$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
 			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
 			if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;

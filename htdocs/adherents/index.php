@@ -214,7 +214,7 @@ if ($resql)
 			$statictype->libelle=$obj->libelle;
 			print '<td>'.$staticmember->getNomUrl(1).'</td>';
 			print '<td>'.$statictype->getNomUrl(1).'</td>';
-			print '<td>'.dolibarr_print_date($obj->datem,'dayhour').'</td>';
+			print '<td>'.dol_print_date($obj->datem,'dayhour').'</td>';
 			print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$obj->date_end_subscription,5).'</td>';
 			print '</tr>';
 			$i++;
@@ -224,7 +224,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 
@@ -250,7 +250,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
-		$year=dolibarr_print_date($objp->dateadh,"%Y");
+		$year=dol_print_date($objp->dateadh,"%Y");
 		$Total[$year]=(isset($Total[$year])?$Total[$year]:0)+$objp->cotisation;
 		$Number[$year]=(isset($Number[$year])?$Number[$year]:0)+1;
 		$tot+=$objp->cotisation;

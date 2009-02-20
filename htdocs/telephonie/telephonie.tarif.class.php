@@ -84,7 +84,7 @@ class TelephonieTarif {
       }
     else
       {
-	dolibarr_syslog($this->db->error());
+	dol_syslog($this->db->error());
       }
                   
     return $result;
@@ -181,8 +181,8 @@ class TelephonieTarif {
       }
     else
       {
-	dolibarr_syslog("TelephonieTarif::_load_tarif Erreur SQL 1 (type=$type)", LOG_ERR);
-	dolibarr_syslog($sql, LOG_DEBUG);
+	dol_syslog("TelephonieTarif::_load_tarif Erreur SQL 1 (type=$type)", LOG_ERR);
+	dol_syslog($sql, LOG_DEBUG);
       }
     /*
      * Tarif Spécifique
@@ -219,8 +219,8 @@ class TelephonieTarif {
 	  }
 	else
 	  {
-	    dolibarr_syslog("TelephonieTarif::_load_tarif Erreur 59");
-	    dolibarr_syslog($this->db->error());
+	    dol_syslog("TelephonieTarif::_load_tarif Erreur 59");
+	    dol_syslog($this->db->error());
 	  }
       }
     /*

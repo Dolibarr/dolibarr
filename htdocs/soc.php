@@ -143,7 +143,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 			{
 				if ($soc->particulier)
 				{
-					dolibarr_syslog("This thirdparty is a personal people",LOG_DEBUG);
+					dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
 					$contact=new Contact($db);
 
 					$contact->civilite_id = $soc->civilite_id;
@@ -339,7 +339,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 			}
 			else
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 			$soc->pays_code=$obj->code;
 			$soc->pays=$obj->libelle;
@@ -689,7 +689,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 				}
 				else
 				{
-					dolibarr_print_error($db);
+					dol_print_error($db);
 				}
 				$soc->pays_code=$obj->code;
 				$soc->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
@@ -938,13 +938,13 @@ else
 	$result=$soc->fetch($socid);
 	if ($result < 0)
 	{
-		dolibarr_print_error($db,$soc->error);
+		dol_print_error($db,$soc->error);
 		exit;
 	}
 
 	$head = societe_prepare_head($soc);
 
-	dolibarr_fiche_head($head, 'company', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'company', $langs->trans("ThirdParty"));
 
 
 	// Confirmation de la suppression de la facture
@@ -1203,7 +1203,7 @@ else
 		print $obj->nb?($obj->nb):$langs->trans("NoSalesRepresentativeAffected");
 	}
 	else {
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 	print '</td></tr>';
 

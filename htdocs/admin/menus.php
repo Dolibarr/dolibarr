@@ -107,7 +107,7 @@ $head[$h][2] = 'editor';
 $h++;
 
 
-dolibarr_fiche_head($head, 'handler', $langs->trans("Menus"));
+dol_fiche_head($head, 'handler', $langs->trans("Menus"));
 
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')

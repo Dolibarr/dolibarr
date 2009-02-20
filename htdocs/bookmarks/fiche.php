@@ -175,7 +175,7 @@ if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
     $bookmark->fetch($_GET["id"]);
 
 
-    dolibarr_fiche_head($head, $hselected, $langs->trans("Bookmark"));
+    dol_fiche_head($head, $hselected, $langs->trans("Bookmark"));
 
     if ($_GET["action"] == 'edit')
     {
@@ -234,7 +234,7 @@ if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
     }
     print '</td></tr>';
 
-    print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.dolibarr_print_date($bookmark->datec,'dayhour').'</td></tr>';
+    print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.dol_print_date($bookmark->datec,'dayhour').'</td></tr>';
 
     if ($_GET["action"] == 'edit') print '<tr><td colspan="2" align="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 

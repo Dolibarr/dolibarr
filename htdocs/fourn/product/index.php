@@ -142,7 +142,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_print_error();
+  dol_print_error();
 }
 
 print '</td></tr></table>';

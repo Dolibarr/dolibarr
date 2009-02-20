@@ -79,7 +79,7 @@ if ($result)
   print "</table></form>";
 
 } else {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 

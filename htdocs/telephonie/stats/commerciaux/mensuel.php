@@ -43,7 +43,7 @@ $head[$h][1] = "Mensuel";
 $hselected = $h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, "Commerciaux");
+dol_fiche_head($head, $hselected, "Commerciaux");
 
 if (strlen($_GET["month"]) == 0)
 {

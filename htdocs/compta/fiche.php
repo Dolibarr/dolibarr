@@ -86,7 +86,7 @@ if ($socid > 0)
     $societe->fetch($socid, $to);  // si $to='next' ajouter " AND s.rowid > $socid ORDER BY idp ASC LIMIT 1";
 	if ($societe->id <= 0)
 	{
-		dolibarr_print_error($db,$societe->error);
+		dol_print_error($db,$societe->error);
 	}
 
 	/*
@@ -94,7 +94,7 @@ if ($socid > 0)
 	 */
 	$head = societe_prepare_head($societe);
 
-	dolibarr_fiche_head($head, 'compta', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'compta', $langs->trans("ThirdParty"));
 
 
     print '<table width="100%" class="notopnoleftnoright">';
@@ -193,7 +193,7 @@ if ($socid > 0)
         print '</td>';
         print '<td colspan="3">';
 		$amount_discount=$societe->getAvailableDiscounts();
-		if ($amount_discount < 0) dolibarr_print_error($db,$societe->error);
+		if ($amount_discount < 0) dol_print_error($db,$societe->error);
         if ($amount_discount > 0) print price($amount_discount).'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
         else print $langs->trans("DiscountNone");
         print '</td>';
@@ -266,7 +266,7 @@ if ($socid > 0)
                 print '</td>';
                 if ($objp->df > 0)
                 {
-                    print "<td align=\"right\">".dolibarr_print_date($objp->df)."</td>\n";
+                    print "<td align=\"right\">".dol_print_date($objp->df)."</td>\n";
                 }
                 else
                 {
@@ -282,7 +282,7 @@ if ($socid > 0)
         }
         else
         {
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
         print "</table>";
     }
@@ -318,14 +318,14 @@ if ($socid > 0)
                 print "<tr $bc[$var]>";
                 print '<td><a href="../projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),"project")." ".$obj->title.'</a></td>';
 
-                print "<td align=\"right\">".dolibarr_print_date($obj->do,"day") ."</td></tr>";
+                print "<td align=\"right\">".dol_print_date($obj->do,"day") ."</td></tr>";
                 $i++;
             }
             $db->free();
         }
         else
         {
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
         print "</table>";
     }
@@ -385,7 +385,7 @@ if ($socid > 0)
 }
 else
 {
-    dolibarr_print_error($db,'Bad value for socid parameter');
+    dol_print_error($db,'Bad value for socid parameter');
 }
 $db->close();
 

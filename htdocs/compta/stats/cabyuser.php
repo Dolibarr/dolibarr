@@ -118,7 +118,7 @@ if ($result)
     }
 }
 else {
-    dolibarr_print_error($db);   
+    dol_print_error($db);   
 }
 
 // On ajoute les paiements anciennes version, non lies par paiement_facture
@@ -147,7 +147,7 @@ if ($modecompta != 'CREANCES-DETTES')
         }
     }
     else {
-        dolibarr_print_error($db);   
+        dol_print_error($db);   
     }
 }
 

@@ -421,9 +421,9 @@ if (! $accessallowed)
 // les noms de fichiers.
 if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
 {
-	dolibarr_syslog("Refused to deliver file ".$original_file);
+	dol_syslog("Refused to deliver file ".$original_file);
 	// Do no show plain path in shown error message
-	dolibarr_print_error(0,$langs->trans("ErrorFileNameInvalid",$_GET["file"]));
+	dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$_GET["file"]));
 	exit;
 }
 
@@ -437,16 +437,16 @@ if ($action == 'remove_file')
 	clearstatcache();
 	$filename = basename($original_file);
 
-	dolibarr_syslog("document.php remove $original_file $filename $urlsource", LOG_DEBUG);
+	dol_syslog("document.php remove $original_file $filename $urlsource", LOG_DEBUG);
 
 	if (! file_exists($original_file))
 	{
-	    dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
+	    dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
 	    exit;
 	}
 	unlink($original_file);
 
-	dolibarr_syslog("document.php back to ".urldecode($urlsource), LOG_DEBUG);
+	dol_syslog("document.php back to ".urldecode($urlsource), LOG_DEBUG);
 
 	header("Location: ".urldecode($urlsource));
 
@@ -460,11 +460,11 @@ else
 	clearstatcache();
 	$filename = basename($original_file);
 
-	dolibarr_syslog("document.php download $original_file $filename content-type=$type");
+	dol_syslog("document.php download $original_file $filename content-type=$type");
 
 	if (! file_exists($original_file))
 	{
-	    dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+	    dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
 	    exit;
 	}
 

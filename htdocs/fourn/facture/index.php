@@ -210,10 +210,10 @@ if ($resql)
 		print $facturestatic->getNomUrl(1);
         if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
         print "</td>\n";
-        print '<td nowrap>'.dolibarr_trunc($obj->facnumber,10)."</td>";
-        print '<td align="center" nowrap="1">'.dolibarr_print_date($obj->datef,'day').'</td>';
-        print '<td align="center" nowrap="1">'.dolibarr_print_date($obj->date_echeance,'day').'</td>';
-        print '<td>'.dolibarr_trunc($obj->libelle,36).'</td>';
+        print '<td nowrap>'.dol_trunc($obj->facnumber,10)."</td>";
+        print '<td align="center" nowrap="1">'.dol_print_date($obj->datef,'day').'</td>';
+        print '<td align="center" nowrap="1">'.dol_print_date($obj->date_echeance,'day').'</td>';
+        print '<td>'.dol_trunc($obj->libelle,36).'</td>';
         print '<td>';
         $supplierstatic->id=$obj->socid;
 		$supplierstatic->nom=$obj->nom;
@@ -251,7 +251,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 $db->close();

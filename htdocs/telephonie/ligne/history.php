@@ -93,13 +93,13 @@ llxHeader("","","Historique Ligne");
 	      $head[$h][1] = $langs->trans('Stats');
 	      $h++;
 
-	      dolibarr_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
+	      dol_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
 
 	      print_fiche_titre('Fiche Ligne', $mesg);
       
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-	      print '<tr><td width="20%">Num�ro</td><td colspan="3">'.dolibarr_print_phone($ligne->numero,0,0,true).'</td></tr>';
+	      print '<tr><td width="20%">Num�ro</td><td colspan="3">'.dol_print_phone($ligne->numero,0,0,true).'</td></tr>';
 	      	     
 	      $client = new Societe($db, $ligne->client_id);
 	      $client->fetch($ligne->client_id);

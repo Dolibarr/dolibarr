@@ -156,7 +156,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -184,7 +184,7 @@ $sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.rowid";
 $sql.= " ORDER BY c.tms DESC";
 $sql.= " LIMIT ".$max;
 
-dolibarr_syslog("contrat/index.php sql=".$sql, LOG_DEBUG);
+dol_syslog("contrat/index.php sql=".$sql, LOG_DEBUG);
 $result=$db->query($sql);
 if ($result)
 {
@@ -217,7 +217,7 @@ if ($result)
 		$staticcompany->nom=$obj->nom;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
-        print '<td align="center">'.dolibarr_print_date($obj->tms,'dayhour').'</td>';
+        print '<td align="center">'.dol_print_date($obj->tms,'dayhour').'</td>';
         //print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
         print '<td align="right" width="32">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0,3):'').'</td>';
         print '<td align="right" width="32">'.($obj->nb_running>0 ? $obj->nb_running.$staticcontratligne->LibStatut(4,3,false):'').'</td>';
@@ -233,7 +233,7 @@ if ($result)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 print '<br>';
@@ -274,8 +274,8 @@ if ( $db->query($sql) )
 		print '</td>';
         print '<td nowrap="1">';
 		print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
-        if ($obj->label) print ' '.dolibarr_trunc($obj->label,20).'</a></td>';
-        else print '</a> '.dolibarr_trunc($obj->note,20).'</td>';
+        if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a></td>';
+        else print '</a> '.dol_trunc($obj->note,20).'</td>';
         print '<td>';
 		$staticcompany->id=$obj->fk_soc;
 		$staticcompany->nom=$obj->nom;
@@ -294,7 +294,7 @@ if ( $db->query($sql) )
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 print '<br>';
@@ -337,8 +337,8 @@ if ($resql)
         //if (1 == 1) print img_warning($langs->trans("Late"));
         print '</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
-        if ($obj->label) print ' '.dolibarr_trunc($obj->label,20).'</a></td>';
-        else print '</a> '.dolibarr_trunc($obj->note,20).'</td>';
+        if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a></td>';
+        else print '</a> '.dol_trunc($obj->note,20).'</td>';
         print '<td>';
 		$staticcompany->id=$obj->fk_soc;
 		$staticcompany->nom=$obj->nom;
@@ -358,7 +358,7 @@ if ($resql)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 print '</td></tr></table>';

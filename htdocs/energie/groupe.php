@@ -66,7 +66,7 @@ if ($_GET["action"] == 'create')
   $h++;
   $a = 0;
 
-  dolibarr_fiche_head($head, $a, $soc->nom);
+  dol_fiche_head($head, $a, $soc->nom);
 
   $html = new Form($db);
 
@@ -104,7 +104,7 @@ else
 	  $h++;
 	  $a = 0;
 
-	  dolibarr_fiche_head($head, $a, $soc->nom);
+	  dol_fiche_head($head, $a, $soc->nom);
 	  	  
 	  print '<table class="border" width="100%">';
 	  print "<tr><td>".$langs->trans("Groupe")."</td>";

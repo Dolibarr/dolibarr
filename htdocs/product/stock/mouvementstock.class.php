@@ -47,7 +47,7 @@ class MouvementStock
 		global $conf;
 
 		$error = 0;
-		dolibarr_syslog("MouvementStock::_create $user->id, $fk_product, $entrepot_id, qty=$qty, type=$type, $price");
+		dol_syslog("MouvementStock::_create $user->id, $fk_product, $entrepot_id, qty=$qty, type=$type, $price");
 
 		$this->db->begin();
 
@@ -58,14 +58,14 @@ class MouvementStock
 			$sql.= " VALUES (".$this->db->idate(gmmktime()).", ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.", ".$user->id;
 			$sql.= ",'".price2num($price)."')";
 
-			dolibarr_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
+			dol_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
 			if ($resql = $this->db->query($sql))
 			{
 				$mvid = $this->db->last_insert_id($resql);
 			}
 			else
 			{
-				dolibarr_syslog("MouvementStock::_create ".$this->error);
+				dol_syslog("MouvementStock::_create ".$this->error);
 				$error = -1;
 			}
 
@@ -83,7 +83,7 @@ class MouvementStock
 				}
 				else
 				{
-					dolibarr_syslog("MouvementStock::_create echec update ".$this->error);
+					dol_syslog("MouvementStock::_create echec update ".$this->error);
 					$error = -2;
 				}
 			}
@@ -103,13 +103,13 @@ class MouvementStock
 					$sql.= " (".$qty.",".$entrepot_id.",".$fk_product.")";
 				}
 
-				dolibarr_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
+				dol_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
 				if ($this->db->query($sql))
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."product SET stock = stock + ".$qty;
 					$sql.= " WHERE rowid = ".$fk_product;
 
-					dolibarr_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
+					dol_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
 					if ($this->db->query($sql))
 					{
 
@@ -118,14 +118,14 @@ class MouvementStock
 					}
 					else
 					{
-						dolibarr_syslog("MouvementStock::_create ".$this->error, LOG_ERR);
+						dol_syslog("MouvementStock::_create ".$this->error, LOG_ERR);
 						$error = -4;
 					}
 
 				}
 				else
 				{
-					dolibarr_syslog("MouvementStock::_create ".$this->error, LOG_ERR);
+					dol_syslog("MouvementStock::_create ".$this->error, LOG_ERR);
 					$error = -3;
 				}
 			}
@@ -165,7 +165,7 @@ class MouvementStock
 		{
 			$this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("MouvementStock::_create ".$this->error);
+			dol_syslog("MouvementStock::_create ".$this->error);
 			return -2;
 		}
 	}
@@ -185,7 +185,7 @@ class MouvementStock
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere = ".$idProduct;
 
-		dolibarr_syslog("MouvementStock::_createSubProduct sql=".$sql, LOG_DEBUG);
+		dol_syslog("MouvementStock::_createSubProduct sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -200,7 +200,7 @@ class MouvementStock
 		}
 		else
 		{
-			dolibarr_syslog("MouvementStock::_createSubProduct ".$this->error, LOG_ERR);
+			dol_syslog("MouvementStock::_createSubProduct ".$this->error, LOG_ERR);
 			$error = -2;
 		}
 
@@ -220,7 +220,7 @@ class MouvementStock
 	 */
 	function _createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
 	{
-		dolibarr_syslog("MouvementStock::_createComposition $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
+		dol_syslog("MouvementStock::_createComposition $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
 		$products_compo = array();
 
 		$sql = "SELECT fk_product_composition, qte, etat_stock";
@@ -239,7 +239,7 @@ class MouvementStock
 		}
 		else
 		{
-			dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
+			dol_syslog("MouvementStock::_Create echec update ".$this->error);
 			return -1;
 		}
 
@@ -301,7 +301,7 @@ class MouvementStock
 	function CalculateEntrepotValoPmp($user, $entrepot_id, $valo_mouvement)
 	{
 		$error = 0;
-		dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp $user->id, $entrepot_id, $valo_mouvement");
+		dol_syslog("MouvementStock::CalculateEntrepotValoPmp $user->id, $entrepot_id, $valo_mouvement");
 
 		if ( $valo_mouvement <> 0 )
 		{
@@ -324,7 +324,7 @@ class MouvementStock
 				else
 				{
 					$error = -26;
-					dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
+					dol_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
 				}
 			}
 
@@ -356,7 +356,7 @@ class MouvementStock
 				else
 				{
 					$error = -27;
-					dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
+					dol_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
 				}
 			}
 
@@ -373,7 +373,7 @@ class MouvementStock
 				else
 				{
 					$error = -28;
-					dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
+					dol_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
 				}
 			}
 
@@ -383,7 +383,7 @@ class MouvementStock
 			}
 			else
 			{
-				dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp RETURN IN ERROR[$error]");
+				dol_syslog("MouvementStock::CalculateEntrepotValoPmp RETURN IN ERROR[$error]");
 				return $error;
 			}
 		}
@@ -407,7 +407,7 @@ class MouvementStock
 	function CalculateValoPmp($mvid, $fk_product, $qty, $price=0, &$value_ope)
 	{
 		$error = 0;
-		dolibarr_syslog("MouvementStock::CalculateValoPmp $mvid, $fk_product, $qty, $price");
+		dol_syslog("MouvementStock::CalculateValoPmp $mvid, $fk_product, $qty, $price");
 
 		if ( $qty <> 0 )
 		{
@@ -432,7 +432,7 @@ class MouvementStock
 				}
 				else
 				{
-					dolibarr_syslog("MouvementStock::CalculateValoPmp ERRORSQL[1] ".$this->error);
+					dol_syslog("MouvementStock::CalculateValoPmp ERRORSQL[1] ".$this->error);
 					$error = -16;
 				}
 			}
@@ -478,7 +478,7 @@ class MouvementStock
 				}
 				else
 				{
-					dolibarr_syslog("MouvementStock::CalculateValoPmp ERRORSQL[2] insert ".$this->error);
+					dol_syslog("MouvementStock::CalculateValoPmp ERRORSQL[2] insert ".$this->error);
 					$error = -17;
 				}
 			}
@@ -489,7 +489,7 @@ class MouvementStock
 			}
 			else
 			{
-				dolibarr_syslog("MouvementStock::CalculateValoPmp ERROR : $error");
+				dol_syslog("MouvementStock::CalculateValoPmp ERROR : $error");
 				return -21;
 			}
 		}

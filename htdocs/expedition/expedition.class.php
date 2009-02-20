@@ -234,7 +234,7 @@ class Expedition extends CommonObject
 		if ($conf->livraison_bon->enabled) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON e.rowid = l.fk_expedition";
 		$sql.= " WHERE e.rowid = ".$id;
 
-		dolibarr_syslog("Expedition::fetch sql=".$sql);
+		dol_syslog("Expedition::fetch sql=".$sql);
 		$result = $this->db->query($sql) ;
 		if ($result)
 		{
@@ -300,14 +300,14 @@ class Expedition extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog('Expedition::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
+				dol_syslog('Expedition::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
 				$this->error='Delivery with id '.$rowid.' not found sql='.$sql;
 				return -2;
 			}
 		}
 		else
 		{
-			dolibarr_syslog('Expedition::Fetch Error rowid='.$rowid.' Erreur dans fetch de l\'expedition');
+			dol_syslog('Expedition::Fetch Error rowid='.$rowid.' Erreur dans fetch de l\'expedition');
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -324,7 +324,7 @@ class Expedition extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
 
-		dolibarr_syslog("Expedition::valid");
+		dol_syslog("Expedition::valid");
 
 		$this->db->begin();
 
@@ -344,7 +344,7 @@ class Expedition extends CommonObject
 	  	$num = $this->db->num_rows($resql);
 	  	if ($num > 0)
 	  	{
-	  		dolibarr_syslog("Expedition::valid already validated", LOG_WARNING);
+	  		dol_syslog("Expedition::valid already validated", LOG_WARNING);
 	  		$this->db->rollback();
 	  		return 0;
 	  	}
@@ -354,7 +354,7 @@ class Expedition extends CommonObject
 	  $sql.= " SET ref='".$this->ref."', fk_statut = 1, date_valid = ".$this->db->idate(mktime()).", fk_user_valid = ".$user->id;
 	  $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-	  dolibarr_syslog("Expedition::valid update expedition sql=".$sql);
+	  dol_syslog("Expedition::valid update expedition sql=".$sql);
 	  $resql=$this->db->query($sql);
 	  if ($resql)
 	  {
@@ -368,7 +368,7 @@ class Expedition extends CommonObject
 	  		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."expeditiondet as ed";
 	  		$sql.= " WHERE ed.fk_expedition = $this->id AND cd.rowid = ed.fk_origin_line";
 
-	  		dolibarr_syslog("Expedition::valid select details sql=".$sql);
+	  		dol_syslog("Expedition::valid select details sql=".$sql);
 	  		$resql=$this->db->query($sql);
 	  		if ($resql)
 	  		{
@@ -376,7 +376,7 @@ class Expedition extends CommonObject
 		    $i=0;
 		    while($i < $num)
 		    {
-		    	dolibarr_syslog("Expedition::valid movment nb ".$i);
+		    	dol_syslog("Expedition::valid movment nb ".$i);
 
 		    	$obj = $this->db->fetch_object($resql);
 
@@ -386,7 +386,7 @@ class Expedition extends CommonObject
 		    	{
 		    		$this->db->rollback();
 		    		$this->error=$this->db->error()." - sql=$sql";
-		    		dolibarr_syslog("Expedition::valid ".$this->error);
+		    		dol_syslog("Expedition::valid ".$this->error);
 		    		return -3;
 		    	}
 
@@ -398,7 +398,7 @@ class Expedition extends CommonObject
 	  		{
 		    $this->db->rollback();
 		    $this->error=$this->db->error()." - sql=$sql";
-		    dolibarr_syslog("Expedition::valid ".$this->error);
+		    dol_syslog("Expedition::valid ".$this->error);
 		    return -2;
 	  		}
 	  	}
@@ -430,7 +430,7 @@ class Expedition extends CommonObject
 	  {
 	  	$this->db->rollback();
 	  	$this->error=$this->db->error();
-	  	dolibarr_syslog("Expedition::valid ".$this->error);
+	  	dol_syslog("Expedition::valid ".$this->error);
 	  	return -1;
 	  }
 		}
@@ -438,12 +438,12 @@ class Expedition extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error="Non autorise";
-			dolibarr_syslog("Expedition::valid ".$this->error);
+			dol_syslog("Expedition::valid ".$this->error);
 			return -1;
 		}
 
 		$this->db->commit();
-		//dolibarr_syslog("Expedition::valid commit");
+		//dol_syslog("Expedition::valid commit");
 		return 1;
 	}
 
@@ -633,7 +633,7 @@ class Expedition extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog('Expedition::fetch_lines: Error '.$this->error);
+			dol_syslog('Expedition::fetch_lines: Error '.$this->error);
 			return -3;
 		}
 	}
@@ -687,7 +687,7 @@ class Expedition extends CommonObject
 	{
 		global $user,$langs;
 
-		dolibarr_syslog("Expedition::initAsSpecimen");
+		dol_syslog("Expedition::initAsSpecimen");
 
 		// Charge tableau des id de société socids
 		$socids = array();

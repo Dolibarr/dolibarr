@@ -106,7 +106,7 @@ class Contrat extends CommonObject
 		$sql.= " date_cloture = null";
 		$sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3 OR statut = 5)";
 
-		dolibarr_syslog("Contrat::active_line sql=".$sql);
+		dol_syslog("Contrat::active_line sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -123,7 +123,7 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Contrat::active_line error ".$this->error);
+			dol_syslog("Contrat::active_line error ".$this->error);
 			$this->db->rollback();
 			return -1;
 		}
@@ -206,7 +206,7 @@ class Contrat extends CommonObject
         }
         else
         {
-            dolibarr_print_error($db,'Failed to update contrat_det');
+            dol_print_error($db,'Failed to update contrat_det');
             $this->db->rollback();
         }
 	}
@@ -1098,7 +1098,7 @@ class Contrat extends CommonObject
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.($maxlength?dolibarr_trunc($this->ref,$maxlength):$this->ref).$lienfin;
+		if ($withpicto != 2) $result.=$lien.($maxlength?dol_trunc($this->ref,$maxlength):$this->ref).$lienfin;
 		return $result;
 	}
 
@@ -1145,7 +1145,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -1271,7 +1271,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -1306,7 +1306,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}

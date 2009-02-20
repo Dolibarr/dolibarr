@@ -75,7 +75,7 @@ if ($result)
 		$tva_static->id=$obj->rowid;
 		$tva_static->ref=$obj->rowid;
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
-        print '<td align="left">'.dolibarr_print_date($obj->dm,'day')."</td>\n";
+        print '<td align="left">'.dol_print_date($obj->dm,'day')."</td>\n";
         print "<td>".$obj->label."</td>\n";
         $total = $total + $obj->amount;
 
@@ -92,7 +92,7 @@ if ($result)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 

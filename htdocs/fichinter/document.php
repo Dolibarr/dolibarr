@@ -125,7 +125,7 @@ if ($object->id)
 
 	$head=fichinter_prepare_head($object, $user);
 
-	dolibarr_fiche_head($head, 'documents',  $langs->trans("InterventionCard"));
+	dol_fiche_head($head, 'documents',  $langs->trans("InterventionCard"));
 
 
 	// Construit liste des fichiers

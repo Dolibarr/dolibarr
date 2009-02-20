@@ -276,7 +276,7 @@ class FormFile
 			}
 			else
 			{
-				dolibarr_print_error($this->db,'Bad value for modulepart');
+				dol_print_error($this->db,'Bad value for modulepart');
 				return -1;
 			}
 
@@ -358,7 +358,7 @@ class FormFile
 			print '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">';
 			if (!$iconPDF)
 			{
-				print img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dolibarr_trunc($file["name"],$maxfilenamelength);
+				print img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
 			}
 			else
 			{
@@ -369,7 +369,7 @@ class FormFile
 			// Affiche taille fichier
 			if (!$iconPDF) print '<td align="right">'.filesize($filedir."/".$file["name"]). ' bytes</td>';
 			// Affiche date fichier
-			if (!$iconPDF) print '<td align="right">'.dolibarr_print_date(filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
+			if (!$iconPDF) print '<td align="right">'.dol_print_date(filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
 
 			if ($delallowed)
 			{
@@ -456,7 +456,7 @@ class FormFile
 				print '</a>';
 				print "</td>\n";
 				print '<td align="right">'.dol_print_size($file['size']).'</td>';
-				print '<td align="center">'.dolibarr_print_date($file['date'],"dayhour").'</td>';
+				print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
 				print '<td align="right">';
 				//print '&nbsp;';
 				if ($permtodelete)

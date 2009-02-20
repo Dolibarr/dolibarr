@@ -129,7 +129,7 @@ class FactureFournisseur extends Facture
 		$sql.= " '".addslashes($this->note_public)."',";
 		$sql.= " ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
 
-		dolibarr_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
+		dol_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -139,7 +139,7 @@ class FactureFournisseur extends Facture
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
 				$sql .= ' VALUES ('.$this->id.');';
 
-				dolibarr_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
+				dol_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
 				$resql_insert=$this->db->query($sql);
 				if ($resql_insert)
 				{
@@ -201,7 +201,7 @@ class FactureFournisseur extends Facture
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 		$sql.= ' WHERE f.rowid='.$rowid.' AND f.fk_soc = s.rowid';
 
-		dolibarr_syslog("FactureFournisseur::Fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("FactureFournisseur::Fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -246,24 +246,24 @@ class FactureFournisseur extends Facture
 				if ($result < 0)
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog('FactureFournisseur::Fetch Error '.$this->error, LOG_ERR);
+					dol_syslog('FactureFournisseur::Fetch Error '.$this->error, LOG_ERR);
 					return -3;
 				}
 				return 1;
 			}
 			else
 			{
-				dolibarr_syslog('FactureFournisseur::Fetch rowid='.$rowid.' numrows=0 sql='.$sql);
+				dol_syslog('FactureFournisseur::Fetch rowid='.$rowid.' numrows=0 sql='.$sql);
 				$this->error='Bill with id '.$rowid.' not found sql='.$sql;
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 				return -2;
 			}
 		}
 		else
 		{
-			dolibarr_syslog('FactureFournisseur::Fetch rowid='.$rowid.' Erreur dans fetch de la facture fournisseur');
+			dol_syslog('FactureFournisseur::Fetch rowid='.$rowid.' Erreur dans fetch de la facture fournisseur');
 			$this->error=$this->db->error();
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -284,7 +284,7 @@ class FactureFournisseur extends Facture
 		//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur as pf ON f.fk_product = pf.fk_product';
 		$sql.= ' WHERE fk_facture_fourn='.$this->id;
 
-		dolibarr_syslog("FactureFournisseur::fetch_lines sql=".$sql, LOG_DEBUG);
+		dol_syslog("FactureFournisseur::fetch_lines sql=".$sql, LOG_DEBUG);
 		$resql_rows = $this->db->query($sql);
 		if ($resql_rows)
 		{
@@ -320,7 +320,7 @@ class FactureFournisseur extends Facture
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog('FactureFournisseur::fetch_lines: Error '.$this->error,LOG_ERR);
+			dol_syslog('FactureFournisseur::fetch_lines: Error '.$this->error,LOG_ERR);
 			return -3;
 		}
 	}
@@ -347,12 +347,12 @@ class FactureFournisseur extends Facture
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
-		dolibarr_syslog("FactureFournisseur sql=".$sql, LOG_DEBUG);
+		dol_syslog("FactureFournisseur sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
-				dolibarr_syslog("FactureFournisseur sql=".$sql, LOG_DEBUG);
+				dol_syslog("FactureFournisseur sql=".$sql, LOG_DEBUG);
 				$resql2 = $this->db->query($sql);
 				if ($resql2)
 				{
@@ -363,7 +363,7 @@ class FactureFournisseur extends Facture
 				{
 					$this->db->rollback();
 					$this->error=$this->db->lasterror();
-					dolibarr_syslog("FactureFournisseur::delete ".$this->error, LOG_ERR);
+					dol_syslog("FactureFournisseur::delete ".$this->error, LOG_ERR);
 					return -1;
 				}
 		}
@@ -371,7 +371,7 @@ class FactureFournisseur extends Facture
 		{
 			$this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("FactureFournisseur::delete ".$this->error, LOG_ERR);
+			dol_syslog("FactureFournisseur::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -391,7 +391,7 @@ class FactureFournisseur extends Facture
 		if (! $resql)
 		{
 			$this->error=$this->db->error();
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
             return -1;
 		}
         return 1;
@@ -413,7 +413,7 @@ class FactureFournisseur extends Facture
         $sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("FactureFournisseur::set_valid sql=".$sql, LOG_DEBUG);
+		dol_syslog("FactureFournisseur::set_valid sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -488,7 +488,7 @@ class FactureFournisseur extends Facture
 	*/
 	function addline($desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT')
 	{
-		dolibarr_syslog("FactureFourn::Addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits", LOG_DEBUG);
+		dol_syslog("FactureFourn::Addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		$this->db->begin();
@@ -500,7 +500,7 @@ class FactureFournisseur extends Facture
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
 		$sql .= ' VALUES ('.$this->id.');';
-		dolibarr_syslog("Fournisseur.facture::addline sql=".$sql);
+		dol_syslog("Fournisseur.facture::addline sql=".$sql);
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -516,7 +516,7 @@ class FactureFournisseur extends Facture
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("Error sql=$sql, error=".$this->error);
+				dol_syslog("Error sql=$sql, error=".$this->error);
 				$this->db->rollback();
 				return -1;
 			}
@@ -585,7 +585,7 @@ class FactureFournisseur extends Facture
 		$sql.= ', product_type='.$product_type;
 		$sql.= ' WHERE rowid = '.$id;
 
-		dolibarr_syslog("Fournisseur.facture::updateline sql=".$sql);
+		dol_syslog("Fournisseur.facture::updateline sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -595,7 +595,7 @@ class FactureFournisseur extends Facture
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Fournisseur.facture::updateline error=".$this->error);
+			dol_syslog("Fournisseur.facture::updateline error=".$this->error);
 			return -1;
 		}
 	}
@@ -612,7 +612,7 @@ class FactureFournisseur extends Facture
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 		// Mise a jour prix facture
 		$this->update_price();
@@ -657,7 +657,7 @@ class FactureFournisseur extends Facture
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -694,7 +694,7 @@ class FactureFournisseur extends Facture
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}

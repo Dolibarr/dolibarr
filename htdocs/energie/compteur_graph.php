@@ -51,7 +51,7 @@ if ($_GET["id"] > 0)
       $head[$h][1] = "Groupe";
       $h++;
       
-      dolibarr_fiche_head($head, $a, $soc->nom);	  
+      dol_fiche_head($head, $a, $soc->nom);	  
       
       print '<table class="border" width="100%">';
       print "<tr><td>".$langs->trans("Compteur")."</td>";

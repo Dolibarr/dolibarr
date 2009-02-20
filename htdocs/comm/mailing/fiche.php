@@ -105,7 +105,7 @@ if ($_POST["action"] == 'sendallconfirmed')
 
 		if ($mil->statut == 0)
 		{
-			dolibarr_print_error('','ErrorMailIsNotValidated');
+			dol_print_error('','ErrorMailIsNotValidated');
 			exit;
 		}
 
@@ -129,7 +129,7 @@ if ($_POST["action"] == 'sendallconfirmed')
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
 
-		dolibarr_syslog("fiche.php: select targets sql=".$sql, LOG_DEBUG);
+		dol_syslog("fiche.php: select targets sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -137,14 +137,14 @@ if ($_POST["action"] == 'sendallconfirmed')
 
 		    if ($num)
 		    {
-		        dolibarr_syslog("fiche.php: nb of targets = ".$num, LOG_DEBUG);
+		        dol_syslog("fiche.php: nb of targets = ".$num, LOG_DEBUG);
 
 		        // Positionne date debut envoi
 		        $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$id;
 		        $resql2=$db->query($sql);
 		        if (! $resql2)
 		        {
-		            dolibarr_print_error($db);
+		            dol_print_error($db);
 		        }
 
 		        // Boucle sur chaque adresse et envoie le mail
@@ -211,14 +211,14 @@ if ($_POST["action"] == 'sendallconfirmed')
 		                // Mail envoye avec succes
 		                $nbok++;
 
-				        dolibarr_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
+				        dol_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 		                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 						$sql.=" SET statut=1, date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$obj->rowid;
 		                $resql2=$db->query($sql);
 		                if (! $resql2)
 		                {
-		                    dolibarr_print_error($db);
+		                    dol_print_error($db);
 		                }
 		            }
 		            else
@@ -226,14 +226,14 @@ if ($_POST["action"] == 'sendallconfirmed')
 		                // Mail en echec
 		                $nbko++;
 
-				        dolibarr_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
+				        dol_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 		                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 						$sql.=" SET statut=-1, date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$obj->rowid;
 		                $resql2=$db->query($sql);
 		                if (! $resql2)
 		                {
-		                    dolibarr_print_error($db);
+		                    dol_print_error($db);
 		                }
 		            }
 
@@ -253,17 +253,17 @@ if ($_POST["action"] == 'sendallconfirmed')
 		    }
 
 		    $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
-		    dolibarr_syslog("mailing-send: update global status sql=".$sql, LOG_DEBUG);
+		    dol_syslog("mailing-send: update global status sql=".$sql, LOG_DEBUG);
 		    $resql2=$db->query($sql);
 		    if (! $resql2)
 		    {
-		        dolibarr_print_error($db);
+		        dol_print_error($db);
 		    }
 		}
 		else
 		{
-		    dolibarr_syslog($db->error());
-		    dolibarr_print_error($db);
+		    dol_syslog($db->error());
+		    dol_print_error($db);
 		}
 		$message='';
 		$_GET["action"] = '';
@@ -378,7 +378,7 @@ if ($_POST["action"] == 'confirm_valide')
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 	else
@@ -419,7 +419,7 @@ if ($_POST["action"] == 'confirm_reset')
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 	else
@@ -521,7 +521,7 @@ else
         $head[$h][1] = $langs->trans("MailHistory");
         $h++;
 */
-        dolibarr_fiche_head($head, $hselected, $langs->trans("Mailing"));
+        dol_fiche_head($head, $hselected, $langs->trans("Mailing"));
 
         // Confirmation de la validation du mailing
         if ($_GET["action"] == 'valide')
@@ -586,7 +586,7 @@ else
             $uc->fetch();
             print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>'.$uc->getNomUrl(1).'</td>';
             print '<td>'.$langs->trans("Date").'</td>';
-            print '<td>'.dolibarr_print_date($mil->date_creat,"dayhour").'</td></tr>';
+            print '<td>'.dol_print_date($mil->date_creat,"dayhour").'</td></tr>';
 
             if ($mil->statut > 0)
             {
@@ -594,14 +594,14 @@ else
                 $uv->fetch();
                 print '<tr><td>'.$langs->trans("ValidatedBy").'</td><td>'.$uv->getNomUrl(1).'</td>';
                 print '<td>'.$langs->trans("Date").'</td>';
-                print '<td>'.dolibarr_print_date($mil->date_valid,"dayhour").'</td></tr>';
+                print '<td>'.dol_print_date($mil->date_valid,"dayhour").'</td></tr>';
             }
 
             if ($mil->statut > 1)
             {
                 print '<tr><td>'.$langs->trans("SentBy").'</td><td>'.$langs->trans("Unknown").'</td>';
                 print '<td>'.$langs->trans("Date").'</td>';
-                print '<td>'.dolibarr_print_date($mil->date_envoi,"dayhour").'</td></tr>';
+                print '<td>'.dol_print_date($mil->date_envoi,"dayhour").'</td></tr>';
             }
 
             // Sujet

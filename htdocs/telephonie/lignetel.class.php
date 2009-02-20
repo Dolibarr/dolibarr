@@ -180,7 +180,7 @@ class LigneTel {
 
 	if (!$this->db->begin())
 	  {
-	    dolibarr_syslog("LigneTel::SetRemise Error -5");
+	    dol_syslog("LigneTel::SetRemise Error -5");
 	    $error++;
 	  }
 
@@ -194,7 +194,7 @@ class LigneTel {
 	    
 	    if (! $this->db->query($sql) )
 	      {
-		dolibarr_syslog("LigneTel::SetRemise Error -3");
+		dol_syslog("LigneTel::SetRemise Error -3");
 		$error++;
 	      }
 	  }
@@ -207,7 +207,7 @@ class LigneTel {
 	    
 	    if (! $this->db->query($sql) )
 	      {
-		dolibarr_syslog("LigneTel::SetRemise Error -4");
+		dol_syslog("LigneTel::SetRemise Error -4");
 		$error++;
 	      }
 	  }
@@ -225,7 +225,7 @@ class LigneTel {
       }
     else
       {
-	dolibarr_syslog("LigneTel::SetRemise Error -2");
+	dol_syslog("LigneTel::SetRemise Error -2");
 	return -2;
       }
   }
@@ -274,15 +274,15 @@ class LigneTel {
 	    if ($lex->fetch($this->numero) == 1)
 	      {
 		$this->error_message = "Echec de la création de la ligne, cette ligne existe déjà !";
-		dolibarr_syslog("LigneTel::Create Error -3");
+		dol_syslog("LigneTel::Create Error -3");
 		return -3;
 	      }
 	    else
 	      {
 		$this->error_message = "Echec de la création de la ligne";
-		dolibarr_syslog("LigneTel::Create Error -1");
-		dolibarr_syslog("LigneTel::Create ".$this->db->error());
-		dolibarr_syslog("LigneTel::Create $sql");
+		dol_syslog("LigneTel::Create Error -1");
+		dol_syslog("LigneTel::Create ".$this->db->error());
+		dol_syslog("LigneTel::Create $sql");
 		return -1;
 	      }
 	  }
@@ -290,7 +290,7 @@ class LigneTel {
     else
       {
 	$this->error_message = "Echec de la création de la ligne, le numéro de la ligne est incorrect !";
-	dolibarr_syslog("LigneTel::Create Error -2 ($this->numero)");
+	dol_syslog("LigneTel::Create Error -2 ($this->numero)");
 	return -2;
       }
   }
@@ -325,8 +325,8 @@ class LigneTel {
 	    
 	    if (!$resqlu)
 	      {
-		dolibarr_syslog("LigneTel::DefineClientOption Error");
-		dolibarr_syslog("LigneTel::DefineClientOption $sqlu");
+		dol_syslog("LigneTel::DefineClientOption Error");
+		dol_syslog("LigneTel::DefineClientOption $sqlu");
 	      }
 	
 
@@ -335,7 +335,7 @@ class LigneTel {
       }
     else
       {
-	dolibarr_syslog("LigneTel::DefineClientOption Error");
+	dol_syslog("LigneTel::DefineClientOption Error");
       }
   }
   /*
@@ -564,9 +564,9 @@ class LigneTel {
 
 	if (!$this->db->query($sql))
 	  {
-	    dolibarr_syslog("LigneTel::set_statut Error -5");
-	    dolibarr_syslog($this->db->error());
-	    dolibarr_syslog($sql);
+	    dol_syslog("LigneTel::set_statut Error -5");
+	    dol_syslog($this->db->error());
+	    dol_syslog($sql);
 	  }
 	/* 
 	 * Mise à jour des logs
@@ -594,9 +594,9 @@ class LigneTel {
 
 	if (!$this->db->query($sql))
 	  {
-	    dolibarr_syslog("LigneTel::set_statut Error -6");
-	    dolibarr_syslog($this->db->error());
-	    dolibarr_syslog($sql);
+	    dol_syslog("LigneTel::set_statut Error -6");
+	    dol_syslog($this->db->error());
+	    dol_syslog($sql);
 	  }
       }
 
@@ -760,7 +760,7 @@ class LigneTel {
 	
 	    if (!$this->db->query($sql))
 	      {
-		dolibarr_syslog("LigneTel::Delete Error -5");
+		dol_syslog("LigneTel::Delete Error -5");
 		$error++;
 	      }
 
@@ -769,7 +769,7 @@ class LigneTel {
 	
 	    if (!$this->db->query($sql))
 	      {
-		dolibarr_syslog("LigneTel::Delete Error -4");
+		dol_syslog("LigneTel::Delete Error -4");
 		$error++;
 	      }
 
@@ -778,7 +778,7 @@ class LigneTel {
 	
 	    if (!$this->db->query($sql))
 	      {
-		dolibarr_syslog("LigneTel::Delete Error -3");
+		dol_syslog("LigneTel::Delete Error -3");
 		$error++;
 	      }
 
@@ -787,7 +787,7 @@ class LigneTel {
 	    
 	    if (!$this->db->query($sql))
 	      {
-		dolibarr_syslog("LigneTel::Delete Error -2");
+		dol_syslog("LigneTel::Delete Error -2");
 		$error++;
 	      }
 	    
@@ -924,7 +924,7 @@ class LigneTel {
       }
     else 
       {
-	dolibarr_print_error($this->db);
+	dol_print_error($this->db);
 	$this->error=$this->db->error();
 	return -1;
       }    

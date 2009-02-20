@@ -80,7 +80,7 @@ class Osc_Categorie
         $sql.= " '".$this->dolicatid."',";
         $sql.= " '".$this->osccatid."'";
 		$sql.= ")";
-	   	dolibarr_syslog("Osc_Categorie.class::create sql=".$sql);
+	   	dol_syslog("Osc_Categorie.class::create sql=".$sql);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -109,7 +109,7 @@ class Osc_Categorie
         {
             $this->error=$this->db->lasterror();
             $this->error .= "erreur ".$sql;
-            dolibarr_syslog("Osc_Categorie.class::create ".$this->error);
+            dol_syslog("Osc_Categorie.class::create ".$this->error);
             return -1;
         }
     }
@@ -133,7 +133,7 @@ class Osc_Categorie
         $sql.= " dolicatid='".addslashes($this->dolicatid)."',";
         $sql.= " osccatid='".addslashes($this->osccatid)."'";
         $sql.= " WHERE rowid=".$this->id;
-        dolibarr_syslog("Osc_Categorie.class::update sql=".$sql,LOG_DEBUG);
+        dol_syslog("Osc_Categorie.class::update sql=".$sql,LOG_DEBUG);
     
         $resql = $this->db->query($sql);
         if (! $resql)
@@ -169,7 +169,7 @@ class Osc_Categorie
         $sql.= " FROM ".MAIN_DB_PREFIX."osc_categories as t";
         $sql.= " WHERE c.rowid = ".$id;
     
-    	dolibarr_syslog("Osc_Categorie.class::fetch sql=".$sql);
+    	dol_syslog("Osc_Categorie.class::fetch sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -188,7 +188,7 @@ class Osc_Categorie
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Osc_Categorie.class::fetch ".$this->error);
+            dol_syslog("Osc_Categorie.class::fetch ".$this->error);
             return -1;
         }
     }
@@ -206,7 +206,7 @@ class Osc_Categorie
         $sql.= " FROM ".MAIN_DB_PREFIX."osc_categories as t";
         $sql.= " WHERE t.osccatid = ".$oscid;
     
-    	dolibarr_syslog("Osc_Categorie.class::fetch_osccat sql=".$sql);
+    	dol_syslog("Osc_Categorie.class::fetch_osccat sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -227,7 +227,7 @@ class Osc_Categorie
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Osc_Categorie.class::fetch_osccat ".$this->error);
+            dol_syslog("Osc_Categorie.class::fetch_osccat ".$this->error);
             return -1;
         }
     } 
@@ -245,7 +245,7 @@ class Osc_Categorie
         $sql.= " FROM ".MAIN_DB_PREFIX."osc_categories as t";
         $sql.= " WHERE t.dolicatid = ".$doliid;
     
-    	dolibarr_syslog("Osc_Categorie.class::fetch_dolicat sql=".$sql);
+    	dol_syslog("Osc_Categorie.class::fetch_dolicat sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -264,7 +264,7 @@ class Osc_Categorie
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Osc_Categorie.class::fetch_dolicat ".$this->error);
+            dol_syslog("Osc_Categorie.class::fetch_dolicat ".$this->error);
             return -1;
         }
     }
@@ -281,7 +281,7 @@ class Osc_Categorie
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_categories";
 		$sql.= " WHERE rowid=".$this->id;
 	
-	   	dolibarr_syslog("Osc_Categorie.class::delete sql=".$sql);
+	   	dol_syslog("Osc_Categorie.class::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{

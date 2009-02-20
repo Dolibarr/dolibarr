@@ -65,7 +65,7 @@ if ($action == '' && !$cancel) {
 	{
 	  	print "\n<div class=\"tabsAction\">\n";
 		  print "<p>ERROR 1c</p>\n";
-	  	  dolibarr_print_error('',"erreur webservice ".$osc_cust->error);
+	  	  dol_print_error('',"erreur webservice ".$osc_cust->error);
     	  print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 		print "\n</div><br>\n";
 	}

@@ -48,7 +48,7 @@ else
   print "Errir";
 }
 
-dolibarr_syslog("Update contrats ".sizeof($contrats));
+dol_syslog("Update contrats ".sizeof($contrats));
 
 for ($i = 0 ; $i < sizeof($contrats) ; $i++)
 {  
@@ -83,11 +83,11 @@ for ($i = 0 ; $i < sizeof($contrats) ; $i++)
       
       if (!$db->query($sql))
 	{
-	  dolibarr_syslog("Erreur ");
+	  dol_syslog("Erreur ");
 	}
       else
 	{
-	  dolibarr_syslog("Update contrat ".$contrats[$i]);
+	  dol_syslog("Update contrat ".$contrats[$i]);
 	}
     }
   else

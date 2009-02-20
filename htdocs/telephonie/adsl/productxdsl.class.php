@@ -59,13 +59,13 @@ class ProductXdsl {
 	  }
 	else
 	  {
-	    dolibarr_syslog("ProductXdsl::Create Error -3");
+	    dol_syslog("ProductXdsl::Create Error -3");
 	    return -3;	    
 	  }
       }
     else
       {
-	dolibarr_syslog("ProductXdsl::Create Error -2");
+	dol_syslog("ProductXdsl::Create Error -2");
 	return -2;
       }
   }
@@ -86,7 +86,7 @@ class ProductXdsl {
       }
     else
       {
-	dolibarr_syslog("ProductXdsl::SwithCommandeActive Error -20", LOG_ERR);
+	dol_syslog("ProductXdsl::SwithCommandeActive Error -20", LOG_ERR);
 	return -20;
       }
 
@@ -117,7 +117,7 @@ class ProductXdsl {
       }
     else 
       {
-	dolibarr_print_error($this->db);
+	dol_print_error($this->db);
 	$this->error=$this->db->error();
 
       }

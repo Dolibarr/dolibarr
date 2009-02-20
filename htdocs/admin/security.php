@@ -47,7 +47,7 @@ if ($_GET["action"] == 'setgeneraterule')
 {
 	if (! dolibarr_set_const($db, 'USER_PASSWORD_GENERATED',$_GET["value"]))
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 	else
 	{
@@ -78,7 +78,7 @@ if ($_GET["action"] == 'activate_encrypt')
 	else
 	{
 		$db->rollback();
-		dolibarr_print_error($db,'');
+		dol_print_error($db,'');
 	}
 }
 else if ($_GET["action"] == 'disable_encrypt')
@@ -169,7 +169,7 @@ print "<br>\n";
 
 $head=security_prepare_head();
 
-dolibarr_fiche_head($head, 'passwords', $langs->trans("Security"));
+dol_fiche_head($head, 'passwords', $langs->trans("Security"));
 
 
 $var=false;

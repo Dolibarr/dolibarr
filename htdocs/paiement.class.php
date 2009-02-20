@@ -77,7 +77,7 @@ class Paiement
 		$sql.= ' WHERE p.fk_paiement = c.id';
 		$sql.= ' AND p.rowid = '.$id;
 
-		dolibarr_syslog("Paiement::fetch sql=".$sql);
+		dol_syslog("Paiement::fetch sql=".$sql);
 		$result = $this->db->query($sql);
 		
 		if ($result)
@@ -108,7 +108,7 @@ class Paiement
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -144,7 +144,7 @@ class Paiement
 			$sql.= ' VALUES ('.$this->db->idate(mktime()).', '.$this->db->idate($this->datepaye).', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.addslashes($this->note).'\', '.$user->id.')';
 			$resql = $this->db->query($sql);
 
-			dolibarr_syslog("Paiement::Create insert paiement sql=".$sql);
+			dol_syslog("Paiement::Create insert paiement sql=".$sql);
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'paiement');
@@ -159,18 +159,18 @@ class Paiement
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount)';
 						$sql .= ' VALUES ('.$facid.','. $this->id.',\''.$amount.'\')';
 
-						dolibarr_syslog("Paiement::Create insert paiement_facture sql=".$sql);
+						dol_syslog("Paiement::Create insert paiement_facture sql=".$sql);
 						$resql=$this->db->query($sql);
 						if (! $resql)
 						{
 							$this->error=$this->db->error();
-							dolibarr_syslog('Paiement::Create insert paiement_facture error='.$this->error, LOG_ERR);
+							dol_syslog('Paiement::Create insert paiement_facture error='.$this->error, LOG_ERR);
 							$error++;
 						}
 					}
 					else
 					{
-						dolibarr_syslog('Paiement::Create Montant non numérique');
+						dol_syslog('Paiement::Create Montant non numérique');
 					}
 				}
 				
@@ -187,7 +187,7 @@ class Paiement
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog('Paiement::Create insert paiement error='.$this->error, LOG_ERR);
+				dol_syslog('Paiement::Create insert paiement error='.$this->error, LOG_ERR);
 				$error++;
 			}
 		}
@@ -305,7 +305,7 @@ class Paiement
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return 0;
 		}
 	}
@@ -318,7 +318,7 @@ class Paiement
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'paiement SET statut = 1 WHERE rowid = '.$this->id;
 
-		dolibarr_syslog('Paiement::valide sql='.$sql);
+		dol_syslog('Paiement::valide sql='.$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -326,7 +326,7 @@ class Paiement
 		}
 		else
 		{
-			dolibarr_syslog('Paiement::valide Error -1');
+			dol_syslog('Paiement::valide Error -1');
 			return -1;
 		}
 	}
@@ -342,7 +342,7 @@ class Paiement
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as c';
 		$sql .= ' WHERE c.rowid = '.$id;
 
-		dolibarr_syslog('Paiement::info sql='.$sql);
+		dol_syslog('Paiement::info sql='.$sql);
 		$result = $this->db->query($sql);
 		
 		if ($result)
@@ -370,7 +370,7 @@ class Paiement
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 	
@@ -404,7 +404,7 @@ class Paiement
 		else
 		{
             $this->error=$this->db->error();
-			dolibarr_syslog('Paiement::getBillsArray Error '.$this->error.' - sql='.$sql);
+			dol_syslog('Paiement::getBillsArray Error '.$this->error.' - sql='.$sql);
 			return -1;
 		}
 	}

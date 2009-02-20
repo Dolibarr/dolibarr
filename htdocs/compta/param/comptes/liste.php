@@ -109,7 +109,7 @@ if ($resql)
       print '<td>'.$obj->numero.'</td>'."\n";
       print '<td>'.$obj->intitule.'</td>';
       print '<td align="right" width="100">';
-      print dolibarr_print_date($obj->dc);
+      print dol_print_date($obj->dc);
 
       print '</td>';
       print "</tr>\n";
@@ -120,7 +120,7 @@ if ($resql)
 }
 else 
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 $db->close();

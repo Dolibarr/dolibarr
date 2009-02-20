@@ -76,14 +76,14 @@ class Webcal {
 	{
         global $langs;
         
-        dolibarr_syslog("Webcal::add user=".$user->id);
+        dol_syslog("Webcal::add user=".$user->id);
 
         // Test si login webcal défini pour le user
         if (! $user->webcal_login)
 		{
 			$langs->load("other");
             $this->error=$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
-			dolibarr_syslog("Webcal::add ERROR ".$this->error);
+			dol_syslog("Webcal::add ERROR ".$this->error);
             return -4; 
         }
         
@@ -112,7 +112,7 @@ class Webcal {
             $sql = "INSERT INTO webcal_entry (cal_id, cal_create_by,cal_date,cal_time,cal_mod_date, cal_mod_time,cal_duration,cal_priority,cal_type, cal_access, cal_name,cal_description)";
             $sql.= " VALUES ($cal_id, '$cal_create_by', '$cal_date', '$cal_time', '$cal_mod_date', '$cal_mod_time', $cal_duration, $cal_priority, '$cal_type', '$cal_access', '$cal_name','$cal_description')";
 
-			dolibarr_syslog("Webcal::add sql=".$sql);
+			dol_syslog("Webcal::add sql=".$sql);
 			$resql=$this->localdb->query($sql);
             if ($resql)
            	{
@@ -130,7 +130,7 @@ class Webcal {
         		{
                     $this->localdb->rollback();
         		    $this->error = $this->localdb->error() . '<br>' .$sql;
-					dolibarr_syslog("Webcal::add ERROR ".$this->error);
+					dol_syslog("Webcal::add ERROR ".$this->error);
                     return -1;
         		}
         	}
@@ -138,7 +138,7 @@ class Webcal {
         	{
                 $this->localdb->rollback();
             	$this->error = $this->localdb->error() . '<br>' .$sql;
-				dolibarr_syslog("Webcal::add ERROR ".$this->error);
+				dol_syslog("Webcal::add ERROR ".$this->error);
                 return -2;
         	}
         }
@@ -146,7 +146,7 @@ class Webcal {
         {
             $this->localdb->rollback();
         	$this->error = $this->localdb->error() . '<br>' .$sql;
-			dolibarr_syslog("Webcal::add ERROR ".$this->error);
+			dol_syslog("Webcal::add ERROR ".$this->error);
             return -3;
         }
     }
@@ -189,7 +189,7 @@ class Webcal {
 		
 		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
 
-		dolibarr_syslog("webcal::build_calfile Build cal file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
+		dol_syslog("webcal::build_calfile Build cal file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
 
 		// Check parameters
 		if (empty($format)) return -1;
@@ -223,7 +223,7 @@ class Webcal {
 			$sql.= " FROM webcal_entry";
 			$sql.= " order by cal_date";
 
-			dolibarr_syslog("Webcal::build_vcal select events sql=".$sql);
+			dol_syslog("Webcal::build_vcal select events sql=".$sql);
 			$resql=$this->localdb->query($sql);
 			if ($resql)
 			{
@@ -252,7 +252,7 @@ class Webcal {
 						$min=sprintf("%02d",$reg[2]);
 						$sec=sprintf("%02d",$reg[3]);
 					}
-					$datestart=dolibarr_mktime($hour,$min,$sec,$month,$day,$year);
+					$datestart=dol_mktime($hour,$min,$sec,$month,$day,$year);
 					$event['startdate']=$datestart;
 					//$event['duration']=$obj->cal_duration;	// Not required with type 'journal'
 					//$event['enddate']='';						// Not required with type 'journal'
@@ -273,7 +273,7 @@ class Webcal {
 			}
 			else
 			{
-				dolibarr_syslog("webcal::build_calfile ".$this->localdb->lasterror());
+				dol_syslog("webcal::build_calfile ".$this->localdb->lasterror());
 				return -1;
 			}
 			

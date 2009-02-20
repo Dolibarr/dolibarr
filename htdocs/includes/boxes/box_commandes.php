@@ -111,7 +111,7 @@ class box_commandes extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
                     $this->info_box_contents[$i][3] = array('td' => 'align="right"',
-                    'text' => dolibarr_print_date($datem,'day'),
+                    'text' => dol_print_date($datem,'day'),
                     );
                     
                     $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
@@ -123,7 +123,7 @@ class box_commandes extends ModeleBoxes {
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedOrders"));
             }
             else {
-                dolibarr_print_error($db);
+                dol_print_error($db);
             }
         }
         else {

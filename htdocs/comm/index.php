@@ -64,12 +64,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add_bookmark')
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$_GET["socid"]." AND fk_user=".$user->id;
 	if (! $db->query($sql) )
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$_GET["socid"].", ".$db->idate(mktime()).",".$user->id.");";
 	if (! $db->query($sql) )
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -163,7 +163,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 				print '<tr '.$bc[$var].'><td  nowrap="nowrap">'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref.'</a></td>';
-				print '<td nowrap="nowrap"><a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
+				print '<td nowrap="nowrap"><a href="fiche.php?socid='.$obj->socid.'">'.dol_trunc($obj->nom,18).'</a></td>';
 				print '<td align="right" nowrap="nowrap">'.price($obj->total_ht).'</td></tr>';
 				$i++;
 				$total += $obj->price;
@@ -215,7 +215,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
 				print '<tr '.$bc[$var].'><td nowrap="nowrap"><a href="../commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
-				print '<td nowrap="nowrap"><a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
+				print '<td nowrap="nowrap"><a href="fiche.php?socid='.$obj->socid.'">'.dol_trunc($obj->nom,18).'</a></td>';
 				print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td></tr>';
 				$i++;
 				$total += $obj->total_ttc;
@@ -295,7 +295,7 @@ if ($user->rights->societe->lire)
 				if ($objp->client == 1) print $langs->trans("Customer");
 				if ($objp->client == 2) print $langs->trans("Prospect");
 				print "</td>";
-				print '<td align="right" nowrap>'.dolibarr_print_date($objp->datec,'day')."</td>";
+				print '<td align="right" nowrap>'.dol_print_date($objp->datec,'day')."</td>";
 				print '</tr>';
 				$i++;
 				$var=!$var;
@@ -360,7 +360,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // \todo A REF
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -423,9 +423,9 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 
 				print "</td>";
 
-				print "<td align=\"left\"><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,44)."</a></td>\n";
+				print "<td align=\"left\"><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company")." ".dol_trunc($obj->nom,44)."</a></td>\n";
 				print "<td align=\"right\">";
-				print dolibarr_print_date($obj->dp,'day')."</td>\n";
+				print dol_print_date($obj->dp,'day')."</td>\n";
 				print "<td align=\"right\">".price($obj->total_ttc)."</td>";
 				print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
 				print "</tr>\n";
@@ -440,7 +440,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -500,9 +500,9 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 
 			print '</td>';
 
-			print '<td align="left"><a href="fiche.php?socid='.$objp->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
+			print '<td align="left"><a href="fiche.php?socid='.$objp->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
 			print "<td align=\"right\">";
-			print dolibarr_print_date($objp->dp,'day')."</td>\n";
+			print dol_print_date($objp->dp,'day')."</td>\n";
 			print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 			print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
 			print "</tr>\n";

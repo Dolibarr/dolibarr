@@ -104,7 +104,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$result=$fichinter->fetch($id);
 				if ($result < 0)
 				{
-					dolibarr_print_error($db,$fichinter->error);
+					dol_print_error($db,$fichinter->error);
 				}
 			}
 
@@ -271,7 +271,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 4
 
-				//dolibarr_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
+				//dol_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
 				$num = sizeof($fichinter->lignes);
 				$i=0;$j=0;
 				$height=9;

@@ -103,7 +103,7 @@ if ($_GET["id"])
       }
 
 
-      dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+      dol_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
       print($mesg);
       print '<table class="border" width="100%">';

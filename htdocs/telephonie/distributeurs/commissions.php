@@ -70,7 +70,7 @@ if ($_GET["id"])
   $head[$h][1] = "Statistiques";
   $h++;
 
-  dolibarr_fiche_head($head, $hselected, "Distributeur");
+  dol_fiche_head($head, $hselected, "Distributeur");
 
 
   /* Conso */

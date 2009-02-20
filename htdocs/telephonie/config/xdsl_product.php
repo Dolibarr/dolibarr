@@ -76,7 +76,7 @@ $head[$h][1] = $langs->trans("Workflow");
 $h++;
 
 
-dolibarr_fiche_head($head, $hselected, "Configuration des liens xDSL");
+dol_fiche_head($head, $hselected, "Configuration des liens xDSL");
 $form = new Form($db);
 print_titre($langs->trans("Products"));
 print '<form method="post" action="xdsl_product.php?action=addproduct">';

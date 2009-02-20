@@ -83,7 +83,7 @@ if ($resql)
 }
 else 
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 print '</td><td valign="top" width="50%">'."\n";

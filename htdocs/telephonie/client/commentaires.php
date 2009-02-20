@@ -107,15 +107,15 @@ if ($_GET["id"])
 	  $h++;
 	}
       
-      dolibarr_fiche_head($head, $hselected, 'Client : '.$soc->nom);
+      dol_fiche_head($head, $hselected, 'Client : '.$soc->nom);
       
       print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
       print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td><td>'.$langs->trans('Code client').'</td><td>'.$soc->code_client.'</td></tr>';
       
       print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
       
-      print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel,$soc->pays_code,0,$soc->id).'</td>';
-      print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax,$soc->pays_code,0,$soc->id).'</td></tr>';
+      print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->pays_code,0,$soc->id).'</td>';
+      print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->pays_code,0,$soc->id).'</td></tr>';
       
       print '<tr><td><a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit() ."</a>&nbsp;";
       print $langs->trans('RIB').'</td><td colspan="3">';

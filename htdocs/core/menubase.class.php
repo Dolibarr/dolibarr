@@ -129,7 +129,7 @@ class Menubase
 		$sql.= " '".$this->user."'";
 		$sql.= ")";
 
-	   	dolibarr_syslog("Menubase::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog("Menubase::create sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -140,7 +140,7 @@ class Menubase
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Menubase::create ".$this->error, LOG_ERR);
+            dol_syslog("Menubase::create ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -193,12 +193,12 @@ class Menubase
 		$sql.= " user='".$this->user."'";
         $sql.= " WHERE rowid=".$this->id;
 
-        dolibarr_syslog("Menubase::update sql=".$sql, LOG_DEBUG);
+        dol_syslog("Menubase::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Menubase::update ".$this->error, LOG_ERR);
+            dol_syslog("Menubase::update ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -236,7 +236,7 @@ class Menubase
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-    	dolibarr_syslog("Menubase::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog("Menubase::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -269,7 +269,7 @@ class Menubase
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Menubase::fetch ".$this->error, LOG_ERR);
+            dol_syslog("Menubase::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -287,12 +287,12 @@ class Menubase
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 		$sql.= " WHERE rowid=".$this->id;
 
-	   	dolibarr_syslog("Menubase::delete sql=".$sql);
+	   	dol_syslog("Menubase::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Menubase::delete ".$this->error, LOG_ERR);
+            dol_syslog("Menubase::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -358,7 +358,7 @@ class Menubase
 		// If type_user == 2, no test requires
 		$sql.= " ORDER BY m.position, m.rowid";
 
-		dolibarr_syslog("Menubase::menuLeftCharger sql=".$sql);
+		dol_syslog("Menubase::menuLeftCharger sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -428,7 +428,7 @@ class Menubase
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 
 		// Get menutopid
@@ -547,7 +547,7 @@ class Menubase
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 
 		return $overwritemenufor;
@@ -579,7 +579,7 @@ class Menubase
 		// If type_user == 2, no test requires
 		$sql.= " ORDER BY m.position";
 
-		dolibarr_syslog("Menubase::menuTopCharger sql=".$sql);
+		dol_syslog("Menubase::menuTopCharger sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -652,7 +652,7 @@ class Menubase
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 
 		return $tabMenu;

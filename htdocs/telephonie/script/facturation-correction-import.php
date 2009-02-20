@@ -52,7 +52,7 @@ if ( $resql )
 } 
 else
 {
-  dolibarr_syslog("Erreur SQL");
+  dol_syslog("Erreur SQL");
 }
 
 ?>

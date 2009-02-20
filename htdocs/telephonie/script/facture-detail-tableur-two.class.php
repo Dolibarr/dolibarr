@@ -51,7 +51,7 @@ class FactureDetailTableurTwo {
     
     $fname = $dir . $contrat_id . "-$month-$year-detail.xls";
     
-    dolibarr_syslog("Open ".$fname);
+    dol_syslog("Open ".$fname);
     
     $workbook = &new writeexcel_workbook($fname);
     
@@ -98,7 +98,7 @@ class FactureDetailTableurTwo {
       {    
 	$num = $this->db->num_rows($resql);
 	$total = 0;
-	dolibarr_syslog($num." lignes trouvées");
+	dol_syslog($num." lignes trouvées");
 	$xx = 1;
 	while ($row = $this->db->fetch_row($resql))
 	  {
@@ -115,7 +115,7 @@ class FactureDetailTableurTwo {
 		$i = 0;
 		$numsq = $this->db->num_rows($resq);
 		$total = $total + $numsq;
-		dolibarr_syslog("Ligne : ".$row[1] . " : ".$numsq . " Total : ".$total);
+		dol_syslog("Ligne : ".$row[1] . " : ".$numsq . " Total : ".$total);
 		
 		while ($i < $numsq)
 		  {
@@ -135,12 +135,12 @@ class FactureDetailTableurTwo {
 	      }
 	    else
 	      {
-		dolibarr_syslog($this->db->error());
+		dol_syslog($this->db->error());
 	      }
 	  }
 	
 	$workbook->close();
-	//dolibarr_syslog("Close $fname");
+	//dol_syslog("Close $fname");
       }
     
     return $error;

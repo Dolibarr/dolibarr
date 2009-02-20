@@ -114,7 +114,7 @@ class MailingTargets
             $sql .= " SET nbemail = ".$nb." WHERE rowid = ".$mailing_id;
             if (!$this->db->query($sql))
             {
-                dolibarr_syslog($this->db->error());
+                dol_syslog($this->db->error());
                 $this->error=$this->db->error();
                 return -1;
             }
@@ -162,7 +162,7 @@ class MailingTargets
                 if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
                 {
                     // Si erreur autre que doublon
-                    dolibarr_syslog($this->db->error());
+                    dol_syslog($this->db->error());
                     $this->error=$this->db->error();
                     $this->db->rollback();
                     return -1;
@@ -170,7 +170,7 @@ class MailingTargets
             }
         }
 
-        dolibarr_syslog("MailingTargets::add_to_target: mailing ".$j." targets added");
+        dol_syslog("MailingTargets::add_to_target: mailing ".$j." targets added");
 
         $this->update_nb($mailing_id);
 
@@ -189,7 +189,7 @@ class MailingTargets
 
         if (! $this->db->query($sql))
         {
-            dolibarr_syslog($this->db->error());
+            dol_syslog($this->db->error());
         }
 
         $this->update_nb($mailing_id);

@@ -50,7 +50,7 @@ $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/contrats.php';
 $head[$h][1] = "Contrats";
 $h++;
 
-dolibarr_fiche_head($head, $hselected, "Commerciaux");
+dol_fiche_head($head, $hselected, "Commerciaux");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td width="30%" valign="top">';

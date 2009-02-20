@@ -91,13 +91,13 @@ if ( $resql )
 
   $batch_id = $row[0];
 
-  dolibarr_syslog("Traitement du batch ".$batch_id);
+  dol_syslog("Traitement du batch ".$batch_id);
   $db->free($resql);
 }
 else
 {
   $error = 1;
-  dolibarr_syslog("Erreur ".$error);
+  dol_syslog("Erreur ".$error);
 }
 
 /*
@@ -114,7 +114,7 @@ if (!$error)
    *
    ***************************************************************/
 
-  dolibarr_syslog("Lecture des contrats");
+  dol_syslog("Lecture des contrats");
       
   $sql = "SELECT distinct(c.rowid)";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
@@ -130,7 +130,7 @@ if (!$error)
   if (strlen($optcontrat) >  0)
     {
       $sql .= " AND c.rowid=".$optcontrat;
-      dolibarr_syslog("Limite sur le contrat : ".$optcontrat);
+      dol_syslog("Limite sur le contrat : ".$optcontrat);
     }
   else
     {
@@ -157,7 +157,7 @@ if (!$error)
   else
     {
       $error = 2;
-      dolibarr_syslog("Erreur $error");
+      dol_syslog("Erreur $error");
     }
 }
 /*
@@ -166,7 +166,7 @@ if (!$error)
  */
 if (!$error)
 { 
-  dolibarr_syslog("Nombre de contrats à facturer ".sizeof($contrats));
+  dol_syslog("Nombre de contrats à facturer ".sizeof($contrats));
   
   $xcli = 0;
   $xclis = sizeof($contrats);
@@ -176,7 +176,7 @@ if (!$error)
       $xcli++;
       
       /* Lecture des factures téléphoniques du contrat */
-      dolibarr_syslog($xcli."/".$xclis." Contrat à facturer id=".$contrat." (".memory_get_usage() .")");
+      dol_syslog($xcli."/".$xclis." Contrat à facturer id=".$contrat." (".memory_get_usage() .")");
 
       $sql = "SELECT f.rowid, s.rowid as socid";    
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
@@ -212,7 +212,7 @@ if (!$error)
 	    }            
 	  $db->free();
 	  
-	  dolibarr_syslog("Contrat $contrat : $i factures trouvées à générer");
+	  dol_syslog("Contrat $contrat : $i factures trouvées à générer");
 
 	  $factures_prev = array();
 	  $factures_a_mailer = array();
@@ -271,7 +271,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
       else
 	{
 	  $error++;
-	  dolibarr_syslog("Impossible de lire le contrat");	  
+	  dol_syslog("Impossible de lire le contrat");	  
 	}
     }
 
@@ -283,7 +283,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 
       if ($soc->fetch($contrat->client_facture_id) )
 	{
-	  if ($verbose) dolibarr_syslog($soc->nom);
+	  if ($verbose) dol_syslog($soc->nom);
 	}
       else
 	{
@@ -297,7 +297,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
    */	      
   if (!$error)
     {
-      if ($verbose) dolibarr_syslog("Création facture pour $soc->nom");
+      if ($verbose) dol_syslog("Création facture pour $soc->nom");
 
       $fac = new Facture($db, $soc->id);
       $cancel_facture = 1;
@@ -313,7 +313,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	}
       else
 	{
-	  dolibarr_syslog("Erreur création objet facture erreur : $facid");
+	  dol_syslog("Erreur création objet facture erreur : $facid");
 	  $error = 16;
 	}		  
     }
@@ -335,7 +335,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	    }
 	  else
 	    {
-	      dolibarr_syslog("ERREUR lecture facture téléphonique $factel_id");
+	      dol_syslog("ERREUR lecture facture téléphonique $factel_id");
 	      $error = 17;
 	    }
 	  
@@ -348,7 +348,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	    }
 	  else
 	    {
-	      dolibarr_syslog("ERREUR lecture ligne $factel->ligne");
+	      dol_syslog("ERREUR lecture ligne $factel->ligne");
 	      $error = 18;
 	    }
 	  
@@ -457,7 +457,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
       else
 	{
 	  $error = 20;
-	  dolibarr_syslog("Erreur $error");
+	  dol_syslog("Erreur $error");
 	}
     }
      
@@ -503,8 +503,8 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
       else
 	{
 	  $error = 21;
-	  dolibarr_syslog($db->error());
-	  dolibarr_syslog("Erreur rejet prelevement");
+	  dol_syslog($db->error());
+	  dol_syslog("Erreur rejet prelevement");
 	}
     }
 
@@ -535,8 +535,8 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
       else
 	{
 	  $error = 32;
-	  dolibarr_syslog("Erreur remise exceptionnelle");
-	  dolibarr_syslog($sql);
+	  dol_syslog("Erreur remise exceptionnelle");
+	  dol_syslog($sql);
 	}
       
       print "remise $remise_exceptionnelle \n";
@@ -664,7 +664,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
   
   if (!$error && !$cancel_facture)
     {
-      if ($verbose) dolibarr_syslog("Validation de la facture : $fac->id");
+      if ($verbose) dol_syslog("Validation de la facture : $fac->id");
       
       $y = substr($year, -1);
       $m = substr("00".$month, -2);
@@ -699,7 +699,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	    }
 	  else
 	    {
-	      dolibarr_syslog("ERREUR lecture facture téléphonique $factel_id");
+	      dol_syslog("ERREUR lecture facture téléphonique $factel_id");
 	      $error = 17;
 	    }
 	  
@@ -712,7 +712,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	    }
 	  else
 	    {
-	      dolibarr_syslog("ERREUR lecture ligne $factel->ligne");
+	      dol_syslog("ERREUR lecture ligne $factel->ligne");
 	      $error = 18;
 	    }
 
@@ -741,7 +741,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 		}
 	      else
 		{
-		  dolibarr_syslog("ERREUR lors de Génération du pdf détaillé");
+		  dol_syslog("ERREUR lors de Génération du pdf détaillé");
 		  $error = 19;
 		} 
 	    }
@@ -784,7 +784,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
   
   if (!$error && !$cancel_facture && $valid_ok == 1)
     {
-      if ($verbose) dolibarr_syslog("Génération du pdf facture : $facid");
+      if ($verbose) dol_syslog("Génération du pdf facture : $facid");
       
       $fac->fetch($facid);
       $fac->fetch_client();
@@ -798,7 +798,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	  $message .= $fac->client->bank_account->number."\n";
 	}
       
-      if ($verbose) dolibarr_syslog("Création du pdf facture : $facid");
+      if ($verbose) dol_syslog("Création du pdf facture : $facid");
       
       if (! facture_pdf_create($db, $facid, $message))
 	{
@@ -825,11 +825,11 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	    }
 	  else
 	    {
-	      dolibarr_syslog("facture $facid non preleve, RIB incorrect");
+	      dol_syslog("facture $facid non preleve, RIB incorrect");
 	    }	  
 	}
       
-      if ($verbose) dolibarr_syslog("Commit de la transaction");;
+      if ($verbose) dol_syslog("Commit de la transaction");;
     }
   else
     {
@@ -846,8 +846,8 @@ function _prelevements($db, $user, $factures_prev)
    *                                                                  *
    *                                                                  *
    ********************************************************************/  
-  //dolibarr_syslog("[PR] Debut demande de prelevement");
-  //dolibarr_syslog("[PR] Nombre de factures ".sizeof($factures_prev)); 
+  //dol_syslog("[PR] Debut demande de prelevement");
+  //dol_syslog("[PR] Nombre de factures ".sizeof($factures_prev)); 
   if (sizeof($factures_prev) > 0)
     {
       foreach ($factures_prev as $fac)
@@ -858,7 +858,7 @@ function _prelevements($db, $user, $factures_prev)
 	  $fact->demande_prelevement($user);
 	}
     }
-  //dolibarr_syslog("[PR] Fin demande de prelevement");
+  //dol_syslog("[PR] Fin demande de prelevement");
 }
 
 
@@ -901,7 +901,7 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 	      $sendto = substr($sendto,0,strlen($sendto) - 1);
 
 
-	      dolibarr_syslog("[EM] Envoi email à ".html_entity_decode($sendto) );
+	      dol_syslog("[EM] Envoi email à ".html_entity_decode($sendto) );
 
 	      $subject = ereg_replace("#FACREF#",$fact->ref,TELEPHONIE_MAIL_FACTURATION_SUJET);
 	      $subject = ereg_replace("#CONTRAT#",$contrat->ref, $subject);
@@ -998,7 +998,7 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 	    }
 	  else
 	    {
-	      dolibarr_syslog("Aucun email trouvé");
+	      dol_syslog("Aucun email trouvé");
 	    }
 	}
     }
@@ -1010,6 +1010,6 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 
 $db->close();
 
-dolibarr_syslog("Conso mémoire ".memory_get_usage() );
+dol_syslog("Conso mémoire ".memory_get_usage() );
 
 ?>

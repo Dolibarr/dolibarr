@@ -54,11 +54,11 @@ if ($_GET["id"])
       $hselected = $h;
       $h++;
 	  
-      dolibarr_fiche_head($head, $hselected, 'Liaison ADSL : '.$ligne->numero);
+      dol_fiche_head($head, $hselected, 'Liaison ADSL : '.$ligne->numero);
 
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-      print '<tr><td width="20%">Num�ro de support</td><td colspan="2">'.dolibarr_print_phone($ligne->numero,0,0,true).'</td></tr>';
+      print '<tr><td width="20%">Num�ro de support</td><td colspan="2">'.dol_print_phone($ligne->numero,0,0,true).'</td></tr>';
 
 	      	     
       $client = new Societe($db, $ligne->client_id);

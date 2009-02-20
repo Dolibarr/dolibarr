@@ -89,7 +89,7 @@ class FormOrder
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
 		$sql.= " WHERE active = 1";
 
-		dolibarr_syslog("Form::select_methodes_commande sql=".$sql);
+		dol_syslog("Form::select_methodes_commande sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -104,7 +104,7 @@ class FormOrder
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 

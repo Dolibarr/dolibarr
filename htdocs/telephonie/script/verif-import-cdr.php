@@ -57,7 +57,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_syslog("Erreur recherche fournisseur");
+  dol_syslog("Erreur recherche fournisseur");
   exit ;
 }
 

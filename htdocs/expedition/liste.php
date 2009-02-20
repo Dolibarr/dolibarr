@@ -149,10 +149,10 @@ if ($resql)
     }
     
     print "<td align=\"right\">";
-    $y = dolibarr_print_date($objp->date_expedition,"%Y");
-    $m = dolibarr_print_date($objp->date_expedition,"%m");
-    $mt = dolibarr_print_date($objp->date_expedition,"%b");
-    $d = dolibarr_print_date($objp->date_expedition,"%d");
+    $y = dol_print_date($objp->date_expedition,"%Y");
+    $m = dol_print_date($objp->date_expedition,"%m");
+    $mt = dol_print_date($objp->date_expedition,"%b");
+    $d = dol_print_date($objp->date_expedition,"%d");
     print $d."\n";
     print " <a href=\"propal.php?year=$y&amp;month=$m\">";
     print $b."</a>\n";
@@ -170,7 +170,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 $db->close();

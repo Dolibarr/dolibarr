@@ -83,7 +83,7 @@ if ($_GET["id"])
       $hselected = $h;
       $h++;
       
-      dolibarr_fiche_head($head, $hselected, 'Service : '.$service->id);
+      dol_fiche_head($head, $hselected, 'Service : '.$service->id);
       
       
       $sql = "SELECT s.rowid as socid, s.nom as nom_facture";

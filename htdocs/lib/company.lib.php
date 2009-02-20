@@ -173,7 +173,7 @@ function getCountryLabel($id,$withcode=0)
 	$sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
 	$sql.= " WHERE rowid=".$id;
 
-	dolibarr_syslog("Company.lib::getCountryLabel sql=".$sql);
+	dol_syslog("Company.lib::getCountryLabel sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -207,7 +207,7 @@ function getFormeJuridiqueLabel($code)
 	$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
 	$sql.= " WHERE code='$code'";
 
-	dolibarr_syslog("Company.lib::getFormeJuridiqueLabel sql=".$sql);
+	dol_syslog("Company.lib::getFormeJuridiqueLabel sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -370,7 +370,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 		$sql.= " AND c.id=a.fk_action AND a.percent < 100";
 		$sql.= " ORDER BY a.datep DESC, a.id DESC";
 
-		dolibarr_syslog("company.lib::show_actions_todo sql=".$sql);
+		dol_syslog("company.lib::show_actions_todo sql=".$sql);
 		$result=$db->query($sql);
 		if ($result)
 		{
@@ -387,7 +387,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 					$obj = $db->fetch_object($result);
 					print "<tr ".$bc[$var].">";
 
-					print '<td width="100" align="left">'.dolibarr_print_date($obj->dp,'dayhour')."</td>\n";
+					print '<td width="100" align="left">'.dol_print_date($obj->dp,'dayhour')."</td>\n";
 
 					// Picto warning
 					print '<td width="16">';
@@ -448,7 +448,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 		print "</table>\n";
 
@@ -492,7 +492,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		$sql.= " AND a.percent = 100";
 		$sql.= " ORDER BY a.datea DESC, a.id DESC";
 
-		dolibarr_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
+		dol_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -513,7 +513,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 
@@ -532,7 +532,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		$sql.= " AND mc.fk_mailing=m.rowid";
 		$sql.= " ORDER BY mc.date_envoi DESC, m.rowid DESC";
 
-		dolibarr_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
+		dol_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -552,7 +552,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 
@@ -581,7 +581,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 			print "<tr ".$bc[$var].">";
 
 			// Champ date
-			print '<td width="100" align="left">'.dolibarr_print_date($histo[$key]['date'],'dayhour')."</td>\n";
+			print '<td width="100" align="left">'.dol_print_date($histo[$key]['date'],'dayhour')."</td>\n";
 
 			// Picto
 			print '<td width="16">&nbsp;</td>';
@@ -600,12 +600,12 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 				print '<a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
 				$transcode=$langs->trans("Action".$histo[$key]['acode']);
 				$libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
-				print dolibarr_trunc($libelle,30);
+				print dol_trunc($libelle,30);
 			}
 			print '</td>';
 
 			// Note
-			print '<td>'.dolibarr_trunc($histo[$key]['note'], 30).'</td>';
+			print '<td>'.dol_trunc($histo[$key]['note'], 30).'</td>';
 
 			// Objet lie
 			print '<td>';

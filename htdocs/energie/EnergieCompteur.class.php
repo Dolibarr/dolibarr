@@ -81,7 +81,7 @@ class EnergieCompteur
       }
     else
       {
-	dolibarr_syslog("");
+	dol_syslog("");
 	return -1;
       }
   }
@@ -111,8 +111,8 @@ class EnergieCompteur
       }
     else
       {
-	dolibarr_syslog("EnergieCompteur::Create Erreur 1");
-	dolibarr_syslog($this->db->error());
+	dol_syslog("EnergieCompteur::Create Erreur 1");
+	dol_syslog($this->db->error());
 	return -1;
       }
   }
@@ -140,8 +140,8 @@ class EnergieCompteur
       }
     else
       {
-	dolibarr_syslog("EnergieCompteur::AjoutReleve Erreur 1");
-	dolibarr_syslog($this->db->error());
+	dol_syslog("EnergieCompteur::AjoutReleve Erreur 1");
+	dol_syslog($this->db->error());
 	return -1;
       }
   }
@@ -162,8 +162,8 @@ class EnergieCompteur
       }
     else
       {
-	dolibarr_syslog("EnergieCompteur::AjoutReleve Erreur 1");
-	dolibarr_syslog($this->db->error());
+	dol_syslog("EnergieCompteur::AjoutReleve Erreur 1");
+	dol_syslog($this->db->error());
 	return -1;
       }
   }
@@ -185,8 +185,8 @@ class EnergieCompteur
       }
     else
       {
-	dolibarr_syslog("EnergieCompteur::AddGroup Erreur 1");
-	dolibarr_syslog($this->db->error());
+	dol_syslog("EnergieCompteur::AddGroup Erreur 1");
+	dol_syslog($this->db->error());
 	return -1;
       }
   }
@@ -221,7 +221,7 @@ class EnergieCompteur
       }
     else
       {
-	dolibarr_syslog("");
+	dol_syslog("");
 	return -1;
       }
   }

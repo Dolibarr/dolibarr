@@ -32,7 +32,7 @@ llxHeader('','Telephonie - Statistiques - Contrats');
  */
 
 include "./onglets.php";
-dolibarr_fiche_head($head, $hselected, "Contrats");
+dol_fiche_head($head, $hselected, "Contrats");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 

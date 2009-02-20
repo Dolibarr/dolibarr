@@ -94,15 +94,15 @@ if ($search_nom)      $sql.= " AND s.nom like '%".addslashes($search_nom)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".addslashes($search_contract)."'";
 if ($search_service)  $sql.= " AND (p.ref like '%".addslashes($search_service)."%' OR p.description like '%".addslashes($search_service)."%')";
 if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
-$filter_date1=dolibarr_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_REQUEST['op1year']);
-$filter_date2=dolibarr_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUEST['op2year']);
+$filter_date1=dol_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_REQUEST['op1year']);
+$filter_date2=dol_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUEST['op2year']);
 if (! empty($_REQUEST['filter_op1']) && $_REQUEST['filter_op1'] != -1 && $filter_date1 != '') $sql.= " AND date_ouverture_prevue ".$_REQUEST['filter_op1']." ".$db->idate($filter_date1);
 if (! empty($_REQUEST['filter_op2']) && $_REQUEST['filter_op2'] != -1 && $filter_date2 != '') $sql.= " AND date_fin_validite ".$_REQUEST['filter_op2']." ".$db->idate($filter_date2);
 $sql .= $db->order($sortfield,$sortorder);
 $sql .= $db->plimit($limit + 1 ,$offset);
 
 //print $sql;
-dolibarr_syslog("contrat/services.php sql=".$sql);
+dol_syslog("contrat/services.php sql=".$sql);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -154,14 +154,14 @@ if ($resql)
     $arrayofoperators=array('<'=>'<','>'=>'>');
 	print $form->select_array('filter_op1',$arrayofoperators,$_REQUEST['filter_op1'],1);
     print ' ';
-    $filter_date1=dolibarr_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_REQUEST['"op1year']);
+    $filter_date1=dol_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_REQUEST['"op1year']);
     print $form->select_date($filter_date1,'op1',0,0,1);
     print '</td>';
     print '<td class="liste_titre" align="center">';
     $arrayofoperators=array('<'=>'<','>'=>'>');
     print $form->select_array('filter_op2',$arrayofoperators,$_REQUEST['filter_op2'],1);
     print ' ';
-    $filter_date2=dolibarr_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUEST['op2year']);
+    $filter_date2=dol_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUEST['op2year']);
     print $form->select_date($filter_date2,'op2',0,0,1);
     print '</td>';
     print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
@@ -186,11 +186,11 @@ if ($resql)
         print '<td>';
         if ($obj->pid)
         {
-        	print '<a href="../product/fiche.php?id='.$obj->pid.'">'.img_object($langs->trans("ShowService"),"service").' '.dolibarr_trunc($obj->label,20).'</a>';
+        	print '<a href="../product/fiche.php?id='.$obj->pid.'">'.img_object($langs->trans("ShowService"),"service").' '.dol_trunc($obj->label,20).'</a>';
         }
         else
         {
-        	print dolibarr_trunc($obj->description,20);
+        	print dol_trunc($obj->description,20);
     	}
         print '</td>';
 
@@ -205,16 +205,16 @@ if ($resql)
         // Start date
         if ($mode == "0") {
             print '<td align="center">';
-            print ($obj->date_ouverture_prevue?dolibarr_print_date($obj->date_ouverture_prevue):'&nbsp;');
+            print ($obj->date_ouverture_prevue?dol_print_date($obj->date_ouverture_prevue):'&nbsp;');
             if ($obj->date_ouverture_prevue && ($obj->date_ouverture_prevue < ($now - $conf->contrat->services->inactifs->warning_delay)))
             print img_picto($langs->trans("Late"),"warning");
             else print '&nbsp;&nbsp;&nbsp;&nbsp;';
             print '</td>';
         }
-        if ($mode == "" || $mode > 0) print '<td align="center">'.($obj->date_ouverture?dolibarr_print_date($obj->date_ouverture):'&nbsp;').'</td>';
+        if ($mode == "" || $mode > 0) print '<td align="center">'.($obj->date_ouverture?dol_print_date($obj->date_ouverture):'&nbsp;').'</td>';
         // Date fin
-        if ($mode == "" || $mode < 5) print '<td align="center">'.($obj->date_fin_validite?dolibarr_print_date($obj->date_fin_validite):'&nbsp;');
-        else print '<td align="center">'.dolibarr_print_date($obj->date_cloture);
+        if ($mode == "" || $mode < 5) print '<td align="center">'.($obj->date_fin_validite?dol_print_date($obj->date_fin_validite):'&nbsp;');
+        else print '<td align="center">'.dol_print_date($obj->date_cloture);
         // Icone warning
         if ($obj->date_fin_validite && $obj->date_fin_validite < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) print img_warning($langs->trans("Late"));
         else print '&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -241,7 +241,7 @@ if ($resql)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 

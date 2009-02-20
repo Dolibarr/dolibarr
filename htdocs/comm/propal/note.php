@@ -107,7 +107,7 @@ if ($_GET['propalid'])
 		if ( $societe->fetch($propal->socid) )
 		{
 			$head = propal_prepare_head($propal);
-			dolibarr_fiche_head($head, 'note', $langs->trans('Proposal'));
+			dol_fiche_head($head, 'note', $langs->trans('Proposal'));
 
             print '<table class="border" width="100%">';
 
@@ -129,7 +129,7 @@ if ($_GET['propalid'])
     
 			// Date
             print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-            print dolibarr_print_date($propal->date,'daytext');
+            print dol_print_date($propal->date,'daytext');
             print '</td>';
     		print '</tr>';
     		
@@ -138,7 +138,7 @@ if ($_GET['propalid'])
             print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
             if ($propal->fin_validite)
             {
-                print dolibarr_print_date($propal->fin_validite,'daytext');
+                print dol_print_date($propal->fin_validite,'daytext');
                 if ($propal->statut == 1 && $propal->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
             }
             else

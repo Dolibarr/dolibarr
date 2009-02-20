@@ -92,7 +92,7 @@ if ( $resql )
 else
 {
   $error = 1;
-  dolibarr_syslog("Verification Erreur ".$error);
+  dol_syslog("Verification Erreur ".$error);
 }
 
 print "lignes : $lignes\n";

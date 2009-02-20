@@ -161,7 +161,7 @@ class FactureRec extends Facture
 	*/
 	function fetch($rowid, $societe_id=0)
 	{
-		dolibarr_syslog("Facture::Fetch rowid=".$rowid.", societe_id=".$societe_id, LOG_DEBUG);
+		dol_syslog("Facture::Fetch rowid=".$rowid.", societe_id=".$societe_id, LOG_DEBUG);
 
 		$sql = 'SELECT f.titre,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
@@ -248,7 +248,7 @@ class FactureRec extends Facture
 				if ($result < 0)
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog('Facture::Fetch Error '.$this->error);
+					dol_syslog('Facture::Fetch Error '.$this->error);
 					return -3;
 				}
 				return 1;
@@ -256,14 +256,14 @@ class FactureRec extends Facture
 			else
 			{
 				$this->error='Bill with id '.$rowid.' not found sql='.$sql;
-				dolibarr_syslog('Facture::Fetch Error '.$this->error);
+				dol_syslog('Facture::Fetch Error '.$this->error);
 				return -2;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog('Facture::Fetch Error '.$this->error);
+			dol_syslog('Facture::Fetch Error '.$this->error);
 			return -1;
 		}
 	}
@@ -283,7 +283,7 @@ class FactureRec extends Facture
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
 
-		dolibarr_syslog('Facture::fetch_lines', LOG_DEBUG);
+		dol_syslog('Facture::fetch_lines', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -328,7 +328,7 @@ class FactureRec extends Facture
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog('Facture::fetch_lines: Error '.$this->error);
+			dol_syslog('Facture::fetch_lines: Error '.$this->error);
 			return -3;
 		}
 	}
@@ -408,7 +408,7 @@ class FactureRec extends Facture
 			$sql .= ",'".price2num($total_tva)."'";
 			$sql .= ",'".price2num($total_ttc)."') ;";
 
-			dolibarr_syslog("Facture-rec::addline sql=".$sql, LOG_DEBUG);
+			dol_syslog("Facture-rec::addline sql=".$sql, LOG_DEBUG);
 			if ($this->db->query( $sql))
 			{
 				$this->id=$facid;	// \TODO A virer
@@ -418,7 +418,7 @@ class FactureRec extends Facture
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dolibarr_syslog("Facture-rec::addline sql=".$this->error, LOG_ERR);
+				dol_syslog("Facture-rec::addline sql=".$this->error, LOG_ERR);
 				return -1;
 			}
 		}

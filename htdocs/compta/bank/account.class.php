@@ -110,7 +110,7 @@ class Account extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (fk_bank, url_id, url, label, type)";
 		$sql .= " VALUES ('".$line_id."', '".$url_id."', '".$url."', '".addslashes($label)."', '".$type."')";
 
-		dolibarr_syslog("Account::add_url_line sql=".$sql);
+		dol_syslog("Account::add_url_line sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			$rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_url");
@@ -235,7 +235,7 @@ class Account extends CommonObject
 		$sql.= " ".($banque?"'".addslashes($banque)."'":"null");
 		$sql.= ")";
 
-		dolibarr_syslog("Account::addline sql=".$sql);
+		dol_syslog("Account::addline sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			$rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");
@@ -256,7 +256,7 @@ class Account extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Account::addline ".$this->error, LOG_ERR);
+			dol_syslog("Account::addline ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -294,7 +294,7 @@ class Account extends CommonObject
 		$sql.= "'".addslashes($this->comment)."'";
 		$sql.= ")";
 
-		dolibarr_syslog("Account::create sql=".$sql);
+		dol_syslog("Account::create sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -315,12 +315,12 @@ class Account extends CommonObject
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$this->error=$langs->trans("ErrorBankLabelAlreadyExists");
-				dolibarr_syslog($this->error);
+				dol_syslog($this->error);
 				return -1;
 			}
 			else {
 				$this->error=$this->db->error()." sql=".$sql;
-				dolibarr_syslog($this->error);
+				dol_syslog($this->error);
 				return -2;
 			}
 		}
@@ -342,7 +342,7 @@ class Account extends CommonObject
 		if (! $this->ref)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
-			dolibarr_syslog("Account::update ".$this->error);
+			dol_syslog("Account::update ".$this->error);
 			return -1;
 		}
 		if (! $this->label) $this->label = "???";
@@ -366,7 +366,7 @@ class Account extends CommonObject
 
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Account::update sql=".$sql);
+		dol_syslog("Account::update sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -375,7 +375,7 @@ class Account extends CommonObject
 		else
 		{
 			$this->error=$this->db.' sql='.$sql;
-			dolibarr_print_error($this->error);
+			dol_print_error($this->error);
 			return -1;
 		}
 	}
@@ -393,7 +393,7 @@ class Account extends CommonObject
 		// Chargement librairie pour acces fonction controle RIB
 		require_once(DOL_DOCUMENT_ROOT.'/lib/bank.lib.php');
 
-		dolibarr_syslog("Account::update_bban $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban");
+		dol_syslog("Account::update_bban $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban");
 
 		// Check parameters
 		if (! $this->ref)
@@ -415,7 +415,7 @@ class Account extends CommonObject
 		$sql .= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Account::update_bban sql=$sql");
+		dol_syslog("Account::update_bban sql=$sql");
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -425,7 +425,7 @@ class Account extends CommonObject
 		else
 		{
 			$this->error=$this->db.' sql='.$sql;
-			dolibarr_print_error($this->error);
+			dol_print_error($this->error);
 			return -1;
 		}
 	}
@@ -447,7 +447,7 @@ class Account extends CommonObject
 		if ($id)  $sql.= " WHERE rowid  = ".$id;
 		if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
 
-		dolibarr_syslog("Account::fetch sql=".$sql);
+		dol_syslog("Account::fetch sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -493,7 +493,7 @@ class Account extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -507,13 +507,13 @@ class Account extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql .= " WHERE rowid  = ".$this->rowid;
 
-		dolibarr_syslog("Account::delete sql=".$sql);
+		dol_syslog("Account::delete sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result) {
 			return 1;
 		}
 		else {
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -590,7 +590,7 @@ class Account extends CommonObject
 			if ($obj->nb <= 1) $can_be_deleted=true;    // Juste le solde
 		}
 		else {
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 		return $can_be_deleted;
 	}
@@ -650,7 +650,7 @@ class Account extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return 0;
 		}
 	}
@@ -677,7 +677,7 @@ class Account extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return 0;
 		}
 	}
@@ -717,7 +717,7 @@ class Account extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -834,7 +834,7 @@ class AccountLine
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid AND b.rowid  = ".$rowid;
 
-		dolibarr_syslog("AccountLine::fetch sql=".$sql);
+		dol_syslog("AccountLine::fetch sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -870,7 +870,7 @@ class AccountLine
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -895,17 +895,17 @@ class AccountLine
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".$this->rowid;
-		dolibarr_syslog("AccountLine::delete sql=".$sql);
+		dol_syslog("AccountLine::delete sql=".$sql);
 		$result = $this->db->query($sql);
 		if (! $result) $nbko++;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=".$this->rowid;
-		dolibarr_syslog("AccountLine::delete sql=".$sql);
+		dol_syslog("AccountLine::delete sql=".$sql);
 		$result = $this->db->query($sql);
 		if (! $result) $nbko++;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=".$this->rowid;
-		dolibarr_syslog("AccountLine::delete sql=".$sql);
+		dol_syslog("AccountLine::delete sql=".$sql);
 		$result = $this->db->query($sql);
 		if (! $result) $nbko++;
 
@@ -1036,7 +1036,7 @@ class AccountLine
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 

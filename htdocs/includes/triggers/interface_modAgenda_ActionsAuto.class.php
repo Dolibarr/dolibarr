@@ -99,7 +99,7 @@ class InterfaceActionsAuto
     function run_trigger($action,$object,$user,$langs,$conf)
     {
 		$key='MAIN_AGENDA_ACTIONAUTO_'.$action;
-		//dolibarr_syslog("xxxxxxxxxxx".$key);
+		//dol_syslog("xxxxxxxxxxx".$key);
 		if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
 		
 		// Following properties must be filled:
@@ -118,7 +118,7 @@ class InterfaceActionsAuto
 		// Actions
 		if ($action == 'COMPANY_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("agenda");
 
@@ -137,7 +137,7 @@ class InterfaceActionsAuto
         }
         elseif ($action == 'CONTRACT_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("contracts");
             $langs->load("agenda");
@@ -153,7 +153,7 @@ class InterfaceActionsAuto
 		}
 		elseif ($action == 'PROPAL_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("propal");
             $langs->load("agenda");
 
@@ -169,7 +169,7 @@ class InterfaceActionsAuto
 		}
         elseif ($action == 'PROPAL_SENTBYMAIL')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("propal");
             $langs->load("agenda");
 			$ok=1;
@@ -178,7 +178,7 @@ class InterfaceActionsAuto
 		}
 		elseif ($action == 'PROPAL_CLOSE_SIGNED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("propal");
             $langs->load("agenda");
 
@@ -194,7 +194,7 @@ class InterfaceActionsAuto
 		}
 		elseif ($action == 'PROPAL_CLOSE_REFUSED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("propal");
             $langs->load("agenda");
 
@@ -210,7 +210,7 @@ class InterfaceActionsAuto
 		}		
 		elseif ($action == 'ORDER_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("orders");
             $langs->load("agenda");
 			
@@ -226,7 +226,7 @@ class InterfaceActionsAuto
 		}
         elseif ($action == 'ORDER_SENTBYMAIL')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("orders");
             $langs->load("agenda");
 			$ok=1;
@@ -235,7 +235,7 @@ class InterfaceActionsAuto
 		}
 		elseif ($action == 'BILL_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("bills");
             $langs->load("agenda");
@@ -252,7 +252,7 @@ class InterfaceActionsAuto
 		}
         elseif ($action == 'BILL_SENTBYMAIL')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("bills");
             $langs->load("agenda");
@@ -262,7 +262,7 @@ class InterfaceActionsAuto
 		}
 		elseif ($action == 'BILL_PAYED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("bills");
             $langs->load("agenda");
@@ -279,7 +279,7 @@ class InterfaceActionsAuto
 		}
 		elseif ($action == 'BILL_CANCELED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("bills");
             $langs->load("agenda");
@@ -296,7 +296,7 @@ class InterfaceActionsAuto
 		}
 		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("orders");
             $langs->load("agenda");
 			
@@ -312,7 +312,7 @@ class InterfaceActionsAuto
 		}
 		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("bills");
             $langs->load("agenda");
@@ -331,7 +331,7 @@ class InterfaceActionsAuto
         // Members
         elseif ($action == 'MEMBER_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
             $langs->load("agenda");
@@ -350,7 +350,7 @@ class InterfaceActionsAuto
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
             $langs->load("agenda");
@@ -361,7 +361,7 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
             $object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
-            $object->actionmsg.="\n".$langs->transnoentities("Period").': '.dolibarr_print_date($object->last_subscription_date_start,'day').' - '.dolibarr_print_date($object->last_subscription_date_end,'day');
+            $object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
             
 			$object->sendtoid=0;
@@ -370,11 +370,11 @@ class InterfaceActionsAuto
         }
         elseif ($action == 'MEMBER_MODIFY')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
             $langs->load("agenda");
@@ -392,7 +392,7 @@ class InterfaceActionsAuto
         }
         elseif ($action == 'MEMBER_DELETE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
             $langs->load("agenda");
@@ -413,7 +413,7 @@ class InterfaceActionsAuto
 /*
         else
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
+            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return 0;
         }
 */
@@ -453,7 +453,7 @@ class InterfaceActionsAuto
                 $error ="Failed to insert : ".$actioncomm->error." ";
                 $this->error=$error;
 
-                dolibarr_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error);
+                dol_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error);
                 return -1;
 			}
 		}

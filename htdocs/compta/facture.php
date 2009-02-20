@@ -218,25 +218,25 @@ if ($_POST['action'] == 'setmode')
 	$facture = new Facture($db);
 	$facture->fetch($_GET['facid']);
 	$result=$facture->mode_reglement($_POST['mode_reglement_id']);
-	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
+	if ($result < 0) dol_print_error($facture->db,$facture->error);
 }
 
 if ($_POST['action'] == 'setpaymentterm')
 {
 	$facture = new Facture($db);
 	$facture->fetch($_GET['facid']);
-	$date_lim_reglement=dolibarr_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
+	$date_lim_reglement=dol_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
 	$result=$facture->cond_reglement($facture->cond_reglement_id,$date_lim_reglement);
-	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
+	if ($result < 0) dol_print_error($facture->db,$facture->error);
 }
 
 if ($_POST['action'] == 'setinvoicedate')
 {
 	$facture = new Facture($db);
 	$facture->fetch($_GET['facid']);
-	$facture->date=dolibarr_mktime(12,0,0,$_POST['invoicedatemonth'],$_POST['invoicedateday'],$_POST['invoicedateyear']);
+	$facture->date=dol_mktime(12,0,0,$_POST['invoicedatemonth'],$_POST['invoicedateday'],$_POST['invoicedateyear']);
 	$result=$facture->update($user);
-	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
+	if ($result < 0) dol_print_error($facture->db,$facture->error);
 }
 
 if ($_POST['action'] == 'setconditions')
@@ -244,7 +244,7 @@ if ($_POST['action'] == 'setconditions')
 	$facture = new Facture($db);
 	$facture->fetch($_GET['facid']);
 	$result=$facture->cond_reglement($_POST['cond_reglement_id']);
-	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
+	if ($result < 0) dol_print_error($facture->db,$facture->error);
 }
 
 if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
@@ -273,7 +273,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 		}
 		else
 		{
-			dolibarr_print_error($db,$fac->error);
+			dol_print_error($db,$fac->error);
 		}
 	}
 	if (! empty($_POST["remise_id_for_payment"]))
@@ -491,7 +491,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 	// Replacement invoice
 	if ($_POST['type'] == 1)
 	{
-		$datefacture = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		if (empty($datefacture))
 		{
 			$error=1;
@@ -537,7 +537,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("CorrectInvoice")).'</div>';
 		}
 
-		$datefacture = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		if (empty($datefacture))
 		{
 			$error=1;
@@ -547,7 +547,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		if (! $error)
 		{
 			// Si facture avoir
-			$datefacture = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
 			//$result=$facture->fetch($_POST['fac_avoir']);
 
@@ -575,7 +575,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 	if ($_POST['type'] == 0 && $_POST['fac_rec'] > 0)
 	{
 		// Si facture récurrente
-		$datefacture = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
 		$facture->socid 		 = $_POST['socid'];
 		$facture->type           = $_POST['type'];
@@ -595,7 +595,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 
 	if ($_POST['type'] == 0 && $_POST['fac_rec'] <= 0)
 	{
-		$datefacture = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		if (empty($datefacture))
 		{
 			$error=1;
@@ -627,8 +627,8 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 				{
 					if ($_POST['idprod'.$i])
 					{
-						$startday=dolibarr_mktime(12, 0 , 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
-						$endday=dolibarr_mktime(12, 0 , 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
+						$startday=dol_mktime(12, 0 , 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
+						$endday=dol_mktime(12, 0 , 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
 						$facture->add_product($_POST['idprod'.$i], $_POST['qty'.$i], $_POST['remise_percent'.$i], $startday, $endday);
 					}
 				}
@@ -840,7 +840,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 		$ret=$fac->fetch($_POST['facid']);
 		if ($ret < 0)
 		{
-			dolibarr_print_error($db,$fac->error);
+			dol_print_error($db,$fac->error);
 			exit;
 		}
 		$ret=$fac->fetch_client();
@@ -955,7 +955,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST['save'] == $langs->trans('Save'))
 {
 	$fac = new Facture($db,'',$_POST['facid']);
-	if (! $fac->fetch($_POST['facid']) > 0) dolibarr_print_error($db);
+	if (! $fac->fetch($_POST['facid']) > 0) dol_print_error($db);
 
 	$date_start='';
 	$date_end='';
@@ -1205,7 +1205,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 
 						if ($error)
 						{
-							dolibarr_print_error($db);
+							dol_print_error($db);
 						}
 						else
 						{
@@ -1236,21 +1236,21 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 			{
 				$langs->load("other");
 				$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
-				dolibarr_syslog('Recipient email is empty');
+				dol_syslog('Recipient email is empty');
 			}
 		}
 		else
 		{
 			$langs->load("other");
 			$mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
-			dolibarr_syslog('Failed to read file: '.$file);
+			dol_syslog('Failed to read file: '.$file);
 		}
 	}
 	else
 	{
 		$langs->load("other");
 		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
-		dolibarr_syslog('Impossible de lire les données de la facture. Le fichier facture n\'a peut-être pas été généré.');
+		dol_syslog('Impossible de lire les données de la facture. Le fichier facture n\'a peut-être pas été généré.');
 	}
 }
 
@@ -1276,7 +1276,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	$result=facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$result);
+		dol_print_error($db,$result);
 		exit;
 	}
 	else
@@ -1424,7 +1424,7 @@ if ($_GET['action'] == 'create')
 			}
 			else
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 		}
 	}
@@ -1440,7 +1440,7 @@ if ($_GET['action'] == 'create')
 	$facids=$facturestatic->list_replacable_invoices($soc->id);
 	if ($facids < 0)
 	{
-		dolibarr_print_error($db,$facturestatic);
+		dol_print_error($db,$facturestatic);
 		exit;
 	}
 	$options="";
@@ -1456,7 +1456,7 @@ if ($_GET['action'] == 'create')
 	$facids=$facturestatic->list_qualified_avoir_invoices($soc->id);
 	if ($facids < 0)
 	{
-		dolibarr_print_error($db,$facturestatic);
+		dol_print_error($db,$facturestatic);
 		exit;
 	}
 	$optionsav="";
@@ -1836,7 +1836,7 @@ if ($_GET['action'] == 'create')
 					}
 					else
 					{
-						print dolibarr_trunc($objp->description,60);
+						print dol_trunc($objp->description,60);
 					}
 				}
 				print '</td>';
@@ -1854,7 +1854,7 @@ if ($_GET['action'] == 'create')
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		print '</table>';
@@ -1915,7 +1915,7 @@ else
 
 			$head = facture_prepare_head($fac);
 
-			dolibarr_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'));
+			dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'));
 
 			// Confirmation de la conversion de l'avoir en reduc
 			if ($_GET['action'] == 'converttoreduc')
@@ -2076,7 +2076,7 @@ else
 			}
 			if ($result < 0)
 			{
-				dolibarr_print_error('',$discount->error);
+				dol_print_error('',$discount->error);
 			}
 			print $html->showrefnav($fac,'ref','',1,'facnumber','ref',$morehtmlref);
 			print '</td></tr>';
@@ -2209,7 +2209,7 @@ else
 				}
 				else
 				{
-					print dolibarr_print_date($fac->date,'daytext');
+					print dol_print_date($fac->date,'daytext');
 				}
 			}
 			else
@@ -2259,7 +2259,7 @@ else
 						$var=!$var;
 						print '<tr '.$bc[$var].'><td>';
 						print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
-						print dolibarr_print_date($objp->dp,'day').'</a></td>';
+						print dol_print_date($objp->dp,'day').'</a></td>';
 						print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
 						print '<td align="right">'.price($objp->amount).'</td>';
 						print '<td>&nbsp;</td>';
@@ -2304,7 +2304,7 @@ else
 					}
 					else
 					{
-						dolibarr_print_error($db);
+						dol_print_error($db);
 					}
 
 					// Payé partiellement 'escompte'
@@ -2359,7 +2359,7 @@ else
 			}
 			else
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 
 			print '</td></tr>';
@@ -2380,7 +2380,7 @@ else
 				}
 				else
 				{
-					print dolibarr_print_date($fac->date_lim_reglement,'daytext');
+					print dol_print_date($fac->date_lim_reglement,'daytext');
 					if ($fac->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans('Late'));
 				}
 			}
@@ -2759,7 +2759,7 @@ else
 			}
 			else
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 
 			/*
@@ -3111,7 +3111,7 @@ else
 				$sql .= ", ".MAIN_DB_PREFIX."fa_pr as fp";
 				$sql .= " WHERE fp.fk_propal = p.rowid AND fp.fk_facture = ".$fac->id;
 
-				dolibarr_syslog("facture.php: sql=".$sql);
+				dol_syslog("facture.php: sql=".$sql);
 				$resql = $db->query($sql);
 				if ($resql)
 				{
@@ -3138,7 +3138,7 @@ else
 							print '<tr '.$bc[$var].'>';
 							print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref.'</a></td>';
 							print '<td>'.$objp->ref_client.'</td>';
-							print '<td align="center">'.dolibarr_print_date($objp->dp,'day').'</td>';
+							print '<td align="center">'.dol_print_date($objp->dp,'day').'</td>';
 							print '<td align="right">'.price($objp->total_ht).'</td>';
 							print '</tr>';
 							$total = $total + $objp->total_ht;
@@ -3154,7 +3154,7 @@ else
 				}
 				else
 				{
-					dolibarr_print_error($db);
+					dol_print_error($db);
 				}
 
 				/*
@@ -3191,7 +3191,7 @@ else
 								print '<tr '.$bc[$var].'><td>';
 								print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
 								print '<td>'.$objp->ref_client.'</td>';
-								print '<td align="center">'.dolibarr_print_date($objp->date_commande,'day').'</td>';
+								print '<td align="center">'.dol_print_date($objp->date_commande,'day').'</td>';
 								print '<td align="right">'.price($objp->total_ht).'</td>';
 								print "</tr>\n";
 								$total = $total + $objp->total_ht;
@@ -3207,7 +3207,7 @@ else
 					}
 					else
 					{
-						dolibarr_print_error($db);
+						dol_print_error($db);
 					}
 				}
 
@@ -3243,7 +3243,7 @@ else
 					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
 					if ($result <= 0)
 					{
-						dolibarr_print_error($db,$result);
+						dol_print_error($db,$result);
 						exit;
 					}
 				}
@@ -3310,7 +3310,7 @@ else
 					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
 					if ($result <= 0)
 					{
-						dolibarr_print_error($db,$result);
+						dol_print_error($db,$result);
 						exit;
 					}
 				}
@@ -3359,7 +3359,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db,$fac->error);
+			dol_print_error($db,$fac->error);
 		}
 	}
 	else
@@ -3553,10 +3553,10 @@ else
 
 					if ($objp->df > 0)
 					{
-						$y = dolibarr_print_date($objp->df,'%Y');
-						$m = dolibarr_print_date($objp->df,'%m');
-						$mt = dolibarr_print_date($objp->df,'%b');
-						$d = dolibarr_print_date($objp->df,'%d');
+						$y = dol_print_date($objp->df,'%Y');
+						$m = dol_print_date($objp->df,'%m');
+						$mt = dol_print_date($objp->df,'%b');
+						$d = dol_print_date($objp->df,'%d');
 						print '<td align="center" nowrap>';
 						print $d;
 						print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
@@ -3568,7 +3568,7 @@ else
 					{
 						print '<td align="center"><b>!!!</b></td>';
 					}
-					print '<td><a href="fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dolibarr_trunc($objp->nom,48).'</a></td>';
+					print '<td><a href="fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->nom,48).'</a></td>';
 					print '<td align="right">'.price($objp->total).'</td>';
 					print '<td align="right">'.price($objp->total_ttc).'</td>';
 					print '<td align="right">'.price($objp->am).'</td>';
@@ -3604,7 +3604,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 }

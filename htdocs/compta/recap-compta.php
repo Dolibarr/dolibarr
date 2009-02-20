@@ -57,7 +57,7 @@ if ($socid > 0)
      */
 	$head = societe_prepare_head($societe);
 
-    dolibarr_fiche_head($head, 'compta', $langs->trans("ThirdParty"));
+    dol_fiche_head($head, 'compta', $langs->trans("ThirdParty"));
 
     print "<table width=\"100%\">\n";
     print '<tr><td valign="top" width="50%">';
@@ -134,7 +134,7 @@ if ($socid > 0)
                 $var=!$var;
                 print "<tr $bc[$var]>";
 
-                print "<td align=\"center\">".dolibarr_print_date($fac->date)."</td>\n";
+                print "<td align=\"center\">".dol_print_date($fac->date)."</td>\n";
                 print "<td><a href=\"../compta/facture.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
 
     			print '<td aling="left">'.$fac->getLibStatut(2,$totalpaye).'</td>';
@@ -169,7 +169,7 @@ if ($socid > 0)
                         $objp = $db->fetch_object($resqlp);
                         //$var=!$var;
                         print "<tr $bc[$var]>";
-                        print '<td align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
+                        print '<td align="center">'.dol_print_date($objp->dp)."</td>\n";
                         print '<td>';
                         print '&nbsp; &nbsp; &nbsp; '; // Décalage
                         print '<a href="paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
@@ -191,13 +191,13 @@ if ($socid > 0)
                 }
                 else
                 {
-                	dolibarr_print_error($db);
+                	dol_print_error($db);
                 }
             }
         }
         else
         {
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
         print "</table>";
         print "<br>";
@@ -205,7 +205,7 @@ if ($socid > 0)
 }
 else
 {
-  	dolibarr_print_error($db);
+  	dol_print_error($db);
 }
 
 

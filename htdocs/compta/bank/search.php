@@ -181,13 +181,13 @@ if ($resql)
 		print '</td>';
 
 		// Date
-		print '<td align="left" nowrap="nowrap">'.dolibarr_print_date($db->jdate($objp->do),"day")." &nbsp; </td>\n";
+		print '<td align="left" nowrap="nowrap">'.dol_print_date($db->jdate($objp->do),"day")." &nbsp; </td>\n";
 
 		print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">";
 		$reg=array();
 		eregi('\((.+)\)',$objp->label,$reg);	// Si texte entouré de parenthèe on tente recherche de traduction
 		if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
-		else print dolibarr_trunc($objp->label,40);
+		else print dol_trunc($objp->label,40);
 		print "</a>&nbsp;";
 
 		// Third party
@@ -234,7 +234,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 // Si accès issu d'une recherche et rien de trouvé

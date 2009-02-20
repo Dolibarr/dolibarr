@@ -278,7 +278,7 @@ class Adherent extends CommonObject
 		$sql.= " '".$user->id."',null,null,'".$this->morphy."'";
 		$sql.= ")";
 
-		dolibarr_syslog("Adherent::create sql=".$sql);
+		dol_syslog("Adherent::create sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -348,7 +348,7 @@ class Adherent extends CommonObject
 		$nbrowsaffected=0;
 		$error=0;
 
-		dolibarr_syslog("Adherent::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", email=".$this->email);
+		dol_syslog("Adherent::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", email=".$this->email);
 
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
@@ -385,7 +385,7 @@ class Adherent extends CommonObject
 		$sql.= ", fk_user_mod=".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Adherent::update sql=".$sql);
+		dol_syslog("Adherent::update sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -394,7 +394,7 @@ class Adherent extends CommonObject
 			if (sizeof($this->array_options) > 0)
 			{
 				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$this->id;
-				dolibarr_syslog("Adherent::update sql=".$sql_del);
+				dol_syslog("Adherent::update sql=".$sql_del);
 				$this->db->query($sql_del);
 
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid";
@@ -418,7 +418,7 @@ class Adherent extends CommonObject
 				}
 				$sql.=")";
 
-				dolibarr_syslog("Adherent::update sql=".$sql);
+				dol_syslog("Adherent::update sql=".$sql);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -427,7 +427,7 @@ class Adherent extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog("Adherent::update ".$this->error,LOG_ERR);
+					dol_syslog("Adherent::update ".$this->error,LOG_ERR);
 					$this->db->rollback();
 					return -2;
 				}
@@ -477,7 +477,7 @@ class Adherent extends CommonObject
 						if ($result < 0)
 						{
 							$this->error=$luser->error;
-							dolibarr_syslog("Adherent::update ".$this->error,LOG_ERR);
+							dol_syslog("Adherent::update ".$this->error,LOG_ERR);
 							$error++;
 						}
 					}
@@ -519,7 +519,7 @@ class Adherent extends CommonObject
 			$this->db->rollback();
 
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Adherent::update ".$this->error,LOG_ERR);
+			dol_syslog("Adherent::update ".$this->error,LOG_ERR);
 			return -1;
 		}
 	}
@@ -544,7 +544,7 @@ class Adherent extends CommonObject
 		$sql.= " WHERE fk_adherent='".$this->id."'";
 		$sql.= " ORDER by dateadh DESC";	// Sort by start subscription date
 
-		dolibarr_syslog("Adherent::update_end_date sql=".$sql);
+		dol_syslog("Adherent::update_end_date sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -555,7 +555,7 @@ class Adherent extends CommonObject
 			$sql.= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dolibarr_syslog("Adherent::update_end_date sql=".$sql);
+			dol_syslog("Adherent::update_end_date sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -571,7 +571,7 @@ class Adherent extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Adherent::update_end_date ".$this->error, LOG_ERR);
+			dol_syslog("Adherent::update_end_date ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -593,17 +593,17 @@ class Adherent extends CommonObject
 		// Suppression options
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$rowid;
 
-		dolibarr_syslog("Adherent::delete sql=".$sql);
+		dol_syslog("Adherent::delete sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
-			dolibarr_syslog("Adherent::delete sql=".$sql);
+			dol_syslog("Adherent::delete sql=".$sql);
 			$resql=$this->db->query( $sql);
 			if ($resql)
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
-				dolibarr_syslog("Adherent::delete sql=".$sql);
+				dol_syslog("Adherent::delete sql=".$sql);
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -669,7 +669,7 @@ class Adherent extends CommonObject
 
 		$error=0;
 
-		dolibarr_syslog("Adherent::Password user=".$user->id." password=".eregi_replace('.','*',$password)." isencrypted=".$isencrypted);
+		dol_syslog("Adherent::Password user=".$user->id." password=".eregi_replace('.','*',$password)." isencrypted=".$isencrypted);
 
 		// Si nouveau mot de passe non communique, on genere par module
 		if (! $password)
@@ -695,8 +695,8 @@ class Adherent extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET pass = '".addslashes($password_indatabase)."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
-		//dolibarr_syslog("Adherent::Password sql=hidden");
-		dolibarr_syslog("Adherent::Password sql=".$sql);
+		//dol_syslog("Adherent::Password sql=hidden");
+		dol_syslog("Adherent::Password sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -723,7 +723,7 @@ class Adherent extends CommonObject
 						if ($result < 0)
 						{
 							$this->error=$luser->error;
-							dolibarr_syslog("Adherent::password ".$this->error,LOG_ERR);
+							dol_syslog("Adherent::password ".$this->error,LOG_ERR);
 							$error++;
 						}
 					}
@@ -753,7 +753,7 @@ class Adherent extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -779,7 +779,7 @@ class Adherent extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -810,7 +810,7 @@ class Adherent extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid";
 		$sql.= " AND d.rowid = ".$rowid;
-		dolibarr_syslog("Adherent::fetch sql=".$sql);
+		dol_syslog("Adherent::fetch sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -898,7 +898,7 @@ class Adherent extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."cotisation as c";
 		$sql.= " WHERE c.fk_adherent = ".$this->id;
 		$sql.= " ORDER BY c.dateadh";
-		dolibarr_syslog("Adherent::fetch_subscriptions sql=".$sql);
+		dol_syslog("Adherent::fetch_subscriptions sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -939,7 +939,7 @@ class Adherent extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent_options";
 		$sql.= " WHERE adhid=".$rowid;
 
-		dolibarr_syslog("Adherent::fetch_optionals sql=".$sql, LOG_DEBUG);
+		dol_syslog("Adherent::fetch_optionals sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query( $sql);
 		if ($result)
 		{
@@ -959,7 +959,7 @@ class Adherent extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 
 	}
@@ -1038,7 +1038,7 @@ class Adherent extends CommonObject
 							// Met a jour la table cotisation
 							$sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid." WHERE rowid=".$rowid;
 
-							dolibarr_syslog("Adherent::cotisation sql=".$sql);
+							dol_syslog("Adherent::cotisation sql=".$sql);
 							$resql = $this->db->query($sql);
 							if (! $resql)
 							{
@@ -1104,7 +1104,7 @@ class Adherent extends CommonObject
 
 		if ($this->statut == 1)
 		{
-			dolibarr_syslog("Adherent::validate statut of member does not allow this", LOG_WARNING);
+			dol_syslog("Adherent::validate statut of member does not allow this", LOG_WARNING);
 			return 0;
 		}
 
@@ -1115,7 +1115,7 @@ class Adherent extends CommonObject
 		$sql.= " fk_user_valid=".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Adherent::validate sql=".$sql);
+		dol_syslog("Adherent::validate sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1153,7 +1153,7 @@ class Adherent extends CommonObject
 
 		if ($this->statut == 0)
 		{
-			dolibarr_syslog("Adherent::resiliate statut of member does not allow this", LOG_WARNING);
+			dol_syslog("Adherent::resiliate statut of member does not allow this", LOG_WARNING);
 			return 0;
 		}
 
@@ -1276,7 +1276,7 @@ class Adherent extends CommonObject
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
 
-		dolibarr_syslog("Adherent::add_to_spip");
+		dol_syslog("Adherent::add_to_spip");
 
 		if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
 		defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
@@ -1388,7 +1388,7 @@ class Adherent extends CommonObject
 	{
 		global $conf,$langs;
 
-		dolibarr_syslog("Adherent::add_to_mailman");
+		dol_syslog("Adherent::add_to_mailman");
 
 		if (! function_exists("curl_init"))
 		{
@@ -1437,7 +1437,7 @@ class Adherent extends CommonObject
 				//--- Start buffering
 				//ob_start();
 				$result=curl_exec ($ch);
-				dolibarr_syslog($result);
+				dol_syslog($result);
 				//--- End buffering and clean output
 				//ob_end_clean();
 				if (curl_error($ch) > 0)
@@ -1505,7 +1505,7 @@ class Adherent extends CommonObject
 				//--- Start buffering
 				//ob_start();
 				$result=curl_exec ($ch);
-				dolibarr_syslog($result);
+				dol_syslog($result);
 				//--- End buffering and clean output
 				//ob_end_clean();
 				if (curl_error($ch) > 0)
@@ -1567,7 +1567,7 @@ class Adherent extends CommonObject
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$lien.($maxlen?dolibarr_trunc($this->ref,$maxlen):$this->ref).$lienfin;
+		$result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
 		return $result;
 	}
 
@@ -1687,7 +1687,7 @@ class Adherent extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -1723,7 +1723,7 @@ class Adherent extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -1826,14 +1826,14 @@ class Adherent extends CommonObject
 		if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	      $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
 		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
-		if ($this->naiss && $conf->global->LDAP_FIELD_BIRTHDATE)  $info[$conf->global->LDAP_FIELD_BIRTHDATE] = dolibarr_print_date($this->naiss,'dayhourldap');
+		if ($this->naiss && $conf->global->LDAP_FIELD_BIRTHDATE)  $info[$conf->global->LDAP_FIELD_BIRTHDATE] = dol_print_date($this->naiss,'dayhourldap');
 		if (isset($this->statut) && $conf->global->LDAP_FIELD_MEMBER_STATUS)  $info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
-		if ($this->datefin && $conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)  $info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dolibarr_print_date($this->datefin,'dayhourldap');
+		if ($this->datefin && $conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)  $info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin,'dayhourldap');
 
 		// Subscriptions
-		if ($this->firstsubscription_date && $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)     $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]  = dolibarr_print_date($this->firstsubscription_date,'dayhourldap');
+		if ($this->firstsubscription_date && $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)     $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]  = dol_print_date($this->firstsubscription_date,'dayhourldap');
 		if (isset($this->firstsubscription_amount) && $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT) $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT] = $this->firstsubscription_amount;
-		if ($this->lastsubscription_date && $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)       $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]   = dolibarr_print_date($this->lastsubscription_date,'dayhourldap');
+		if ($this->lastsubscription_date && $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)       $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]   = dol_print_date($this->lastsubscription_date,'dayhourldap');
 		if (isset($this->lastsubscription_amount) && $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT)   $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT] = $this->lastsubscription_amount;
 
 		return $info;
@@ -1853,7 +1853,7 @@ class Adherent extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
 		$sql.= ' WHERE a.rowid = '.$id;
 
-		dolibarr_syslog("Adherent::info sql=".$sql, LOG_DEBUG);
+		dol_syslog("Adherent::info sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -1892,7 +1892,7 @@ class Adherent extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 

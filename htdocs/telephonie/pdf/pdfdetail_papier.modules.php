@@ -266,7 +266,7 @@ class pdfdetail_papier {
 		}
 	      else
 		{
-		  dolibarr_syslog("Erreur lecture des communications");
+		  dol_syslog("Erreur lecture des communications");
 		}
 
 	      /*

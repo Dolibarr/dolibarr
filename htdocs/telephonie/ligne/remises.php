@@ -66,13 +66,13 @@ if ($result == 1 && $client_comm->perm_read)
       $hselected=$h;
       $h++;
       
-      dolibarr_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
+      dol_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
       
       print_fiche_titre('Fiche Ligne', $mesg);
       
       print '<table class="border" width="100%">';
 
-      print '<tr><td width="20%">Num�ro</td><td colspan="2">'.dolibarr_print_phone($ligne->numero,0,0,true).'</td></tr>';
+      print '<tr><td width="20%">Num�ro</td><td colspan="2">'.dol_print_phone($ligne->numero,0,0,true).'</td></tr>';
 	      	     
       $client = new Societe($db, $ligne->client_id);
       $client->fetch($ligne->client_id);

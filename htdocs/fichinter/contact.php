@@ -91,12 +91,12 @@ if ($_POST["action"] == 'updateligne' && $user->rights->ficheinter->creer)
 			$db->commit();
 		} else
 		{
-			dolibarr_print_error($db, "result=$result");
+			dol_print_error($db, "result=$result");
 			$db->rollback();
 		}
 	} else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -116,12 +116,12 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->ficheinter->creer)
 			$db->commit();
 		} else
 		{
-			dolibarr_print_error($db, "result=$result");
+			dol_print_error($db, "result=$result");
 			$db->rollback();
 		}
 	} else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -138,7 +138,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->ficheinter->creer)
 		exit;
 	}
 	else {
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -172,7 +172,7 @@ if ($id > 0)
 
 
 		$head = fichinter_prepare_head($fichinter);
-		dolibarr_fiche_head($head, 'contact', $langs->trans("InterventionCard"));
+		dol_fiche_head($head, 'contact', $langs->trans("InterventionCard"));
 
 
 		/*

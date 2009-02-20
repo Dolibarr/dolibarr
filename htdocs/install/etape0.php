@@ -137,7 +137,7 @@ if (! $error)
 			//print $_POST["db_type"].",".$_POST["db_host"].",$userroot,$passroot,$databasefortest,".$_POST["db_port"];
 			$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest,$_POST["db_port"]);
 
-			dolibarr_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
+			dol_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
 			//print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
 
 			if (empty($_POST["db_create_database"]) && $db->connected && ! $db->database_selected)

@@ -273,7 +273,7 @@ function dol_fiche_head($links, $active='0', $title='', $notab=0)
 		print '<a class="tabTitle">';
 		print
 		((!defined('MAIN_USE_SHORT_TITLE')) || (defined('MAIN_USE_SHORT_TITLE') &&  MAIN_USE_SHORT_TITLE))
-		? dolibarr_trunc($title,$limittitle)
+		? dol_trunc($title,$limittitle)
 		: $title;
 		print '</a>';
 	}
@@ -380,7 +380,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 	 || eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$',$time,$reg))
 	{
 		// This part of code should not be used.
-		dol_syslog("Functions.lib::dolibarr_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
 		$syear = $reg[1];
 		$smonth = $reg[2];
@@ -389,7 +389,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 		$smin = $reg[5];
 		$ssec = $reg[6];
 
-		$time=dolibarr_mktime($shour,$smin,$ssec,$smonth,$sday,$syear);
+		$time=dol_mktime($shour,$smin,$ssec,$smonth,$sday,$syear);
 		$ret=adodb_strftime($format,$time,$to_gmt);
 	}
 	else
@@ -460,7 +460,7 @@ function dol_stringtotime($string)
 
 	$string=eregi_replace('[^0-9]','',$string);
 	$tmp=$string.'000000';
-	$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
+	$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
 	return $date;
 }
 
@@ -637,7 +637,7 @@ function dol_print_url($url,$target='_blank',$max=32)
 	$link.=$url;
 	if ($target) $link.='" target="'.$target.'">';
 	if (! eregi('^http',$url)) $link.='http://';
-	$link.=dolibarr_trunc($url,$max);
+	$link.=dol_trunc($url,$max);
 	$link.='</a>';
 	return $link;
 }
@@ -1531,7 +1531,7 @@ function dol_print_error($db='',$error='')
 		print $langs->trans("InformationToHelpDiagnose").":<br>\n";
 
 		print "<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";;
-		print "<b>".$langs->trans("Date").":</b> ".dolibarr_print_date(time(),'dayhourlog')."<br>\n";;
+		print "<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";;
 		if (isset($conf->global->MAIN_FEATURES_LEVEL)) print "<b>".$langs->trans("LevelOfFeature").":</b> ".$conf->global->MAIN_FEATURES_LEVEL."<br>\n";;
 		print "<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
 		print "<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
@@ -2625,15 +2625,15 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 
 	if ($date_start && $date_end)
 	{
-		print ' ('.$outputlangs->trans('DateFromTo',dolibarr_print_date($date_start, $format, false, $outputlangs),dolibarr_print_date($date_end, $format, false, $outputlangs)).')';
+		print ' ('.$outputlangs->trans('DateFromTo',dol_print_date($date_start, $format, false, $outputlangs),dol_print_date($date_end, $format, false, $outputlangs)).')';
 	}
 	if ($date_start && ! $date_end)
 	{
-		print ' ('.$outputlangs->trans('DateFrom',dolibarr_print_date($date_start, $format, false, $outputlangs)).')';
+		print ' ('.$outputlangs->trans('DateFrom',dol_print_date($date_start, $format, false, $outputlangs)).')';
 	}
 	if (! $date_start && $date_end)
 	{
-		print ' ('.$outputlangs->trans('DateUntil',dolibarr_print_date($date_end, $format, false, $outputlangs)).')';
+		print ' ('.$outputlangs->trans('DateUntil',dol_print_date($date_end, $format, false, $outputlangs)).')';
 	}
 }
 

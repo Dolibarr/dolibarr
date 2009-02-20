@@ -73,7 +73,7 @@ if ( $dbosc->query($sql) )
 
       print '<td><a href="fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche">&nbsp;';
       print $objp->orders_id ."</a></td><td>";
-      print dolibarr_print_date($objp->date_purchased,'dayhour').'</td>';
+      print dol_print_date($objp->date_purchased,'dayhour').'</td>';
       print '<td><a href="../client/fiche.php?id='.$objp->customers_id.'">'.$objp->customers_name."</a></TD>\n";
       print '<td align="right">'.price($objp->value).'</td>';
       print "</tr>\n";
@@ -84,7 +84,7 @@ if ( $dbosc->query($sql) )
 }
 else
 {
-  dolibarr_print_error($dbosc);
+  dol_print_error($dbosc);
 }
 
 $dbosc->close();

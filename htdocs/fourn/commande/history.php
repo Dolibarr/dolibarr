@@ -65,7 +65,7 @@ if ($id > 0 || ! empty($ref))
 		$head = ordersupplier_prepare_head($commande);
 
 		$title=$langs->trans("SupplierOrder");
-		dolibarr_fiche_head($head, 'info', $title);
+		dol_fiche_head($head, 'info', $title);
 
 
 		/*
@@ -99,7 +99,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
 			if ($commande->date_commande)
 			{
-				print dolibarr_print_date($commande->date_commande,"dayhourtext")."\n";
+				print dol_print_date($commande->date_commande,"dayhourtext")."\n";
 			}
 			print "</td></tr>";
 
@@ -149,7 +149,7 @@ if ($id > 0 || ! empty($ref))
 				$obj = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
 
-				print '<td width="20%">'.dolibarr_print_date($db->jdate($obj->dl),"dayhour")."</td>\n";
+				print '<td width="20%">'.dol_print_date($db->jdate($obj->dl),"dayhour")."</td>\n";
 
 				// Statut
 				print '<td width="100px" nowrap="1">'.$commande->LibStatut($obj->fk_statut,4)."</td>\n";
@@ -159,7 +159,7 @@ if ($id > 0 || ! empty($ref))
 				print img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
 				// Comment
-				print '<td width="100px" nowrap="1" title="'.dol_escape_htmltag($obj->comment).'">'.dolibarr_trunc($obj->comment,48)."</td>\n";
+				print '<td width="100px" nowrap="1" title="'.dol_escape_htmltag($obj->comment).'">'.dol_trunc($obj->comment,48)."</td>\n";
 
 				print '</tr>';
 
@@ -169,7 +169,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 		print "</table>";
 

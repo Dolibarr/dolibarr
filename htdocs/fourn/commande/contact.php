@@ -92,12 +92,12 @@ if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer)
 			$db->commit();
 		} else
 		{
-			dolibarr_print_error($db, "result=$result");
+			dol_print_error($db, "result=$result");
 			$db->rollback();
 		}
 	} else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -117,12 +117,12 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->commande->creer)
 			$db->commit();
 		} else
 		{
-			dolibarr_print_error($db, "result=$result");
+			dol_print_error($db, "result=$result");
 			$db->rollback();
 		}
 	} else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -139,7 +139,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->commande->creer)
 		exit;
 	}
 	else {
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -176,7 +176,7 @@ if ($id > 0 || ! empty($ref))
 
 
 		$head = ordersupplier_prepare_head($commande);
-		dolibarr_fiche_head($head, 'contact', $langs->trans("SupplierOrder"));
+		dol_fiche_head($head, 'contact', $langs->trans("SupplierOrder"));
 
 
 		/*

@@ -59,7 +59,7 @@ class ModelePDFPropales extends FPDF
         $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
         $sql.=" WHERE type = '".$type."'";
 
-        dolibarr_syslog("modules_propale::liste_modeles sql=".$sql, LOG_DEBUG);
+        dol_syslog("modules_propale::liste_modeles sql=".$sql, LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -214,8 +214,8 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dolibarr_syslog("modules_propale::propale_pdf_create error");
-			dolibarr_print_error($db,$obj->pdferror());
+			dol_syslog("modules_propale::propale_pdf_create error");
+			dol_print_error($db,$obj->pdferror());
 			return 0;
 		}
 	}

@@ -137,7 +137,7 @@ if ($_POST['action'] == 'builddoc' && $user->rights->banque)
 	$result = $remisecheque->GeneratePdf($_POST["model"], $outputlangs);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$remisecheque->error);
+		dol_print_error($db,$remisecheque->error);
 		exit;
 	}
 	else
@@ -165,7 +165,7 @@ if ($_GET['action'] == 'new')
 	$hselected = $h;
 	$h++;
 
-	dolibarr_fiche_head($head, $hselected, $langs->trans("Cheques"));
+	dol_fiche_head($head, $hselected, $langs->trans("Cheques"));
 }
 else
 {
@@ -190,7 +190,7 @@ else
 	//  $head[$h][1] = $langs->trans("Info");
 	//  $h++;
 
-	dolibarr_fiche_head($head, $hselected, $langs->trans("Cheques"));
+	dol_fiche_head($head, $hselected, $langs->trans("Cheques"));
 
 	/*
 	 * Confirmation de la suppression du bordereau
@@ -223,7 +223,7 @@ if ($_GET['action'] == 'new')
 	$now=time();
 
 	print '<table class="border" width="100%">';
-	print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dolibarr_print_date($now,'day').'</td></tr>';
+	print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	print '</table><br />';
 
 	$sql = "SELECT ba.rowid as bid, ".$db->pdate("b.dateo")." as date,";
@@ -278,7 +278,7 @@ if ($_GET['action'] == 'new')
 			$accounts[$objp->bid] += 1;
 
 			print "<tr ".$bc[$var].">";
-			print '<td width="120">'.dolibarr_print_date($value["date"],'day').'</td>';
+			print '<td width="120">'.dol_print_date($value["date"],'day').'</td>';
 			print '<td>'.$value["numero"]."</td>\n";
 			print '<td>'.$value["emetteur"]."</td>\n";
 			print '<td>'.$value["banque"]."</td>\n";
@@ -318,7 +318,7 @@ else
 	print "</td>";
 	print "</tr>\n";
 
-	print '<tr><td>'.$langs->trans('DateCreation').'</td><td colspan="2">'.dolibarr_print_date($remisecheque->date_bordereau,'day').'</td></tr>';
+	print '<tr><td>'.$langs->trans('DateCreation').'</td><td colspan="2">'.dol_print_date($remisecheque->date_bordereau,'day').'</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
 	print $accountstatic->getNomUrl(1);
@@ -374,8 +374,8 @@ else
 			print "<tr $bc[$var]>";
 			print '<td align="center" width="24">'.$i.'</td>';
 			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';
-			print '<td>'.dolibarr_trunc($objp->emetteur,24).'</td>';
-			print '<td>'.dolibarr_trunc($objp->banque,24).'</td>';
+			print '<td>'.dol_trunc($objp->emetteur,24).'</td>';
+			print '<td>'.dol_trunc($objp->banque,24).'</td>';
 			print '<td align="right">'.price($objp->amount).'</td>';
 			print '<td align="center">';
 			$accountlinestatic->rowid=$objp->rowid;
@@ -388,7 +388,7 @@ else
 				print '&nbsp;';
 			}
 			print '</td>';
-			print '<td align="center">'.dolibarr_print_date($objp->datec,'day').'</td>';
+			print '<td align="center">'.dol_print_date($objp->datec,'day').'</td>';
 			if($remisecheque->statut == 0)
 			{
 				print '<td align="right"><a href="fiche.php?id='.$remisecheque->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';
@@ -405,7 +405,7 @@ else
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 }

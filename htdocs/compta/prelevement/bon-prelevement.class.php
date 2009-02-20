@@ -104,19 +104,19 @@ class BonPrelevement extends CommonObject
                 else
                 {
                     $result = -1;
-                    dolibarr_syslog("BonPrelevement::AddFacture Erreur $result");
+                    dol_syslog("BonPrelevement::AddFacture Erreur $result");
                 }
             }
             else
             {
                 $result = -2;
-                dolibarr_syslog("BonPrelevement::AddFacture Erreur $result");
+                dol_syslog("BonPrelevement::AddFacture Erreur $result");
             }
         }
         else
         {
             $result = -3;
-            dolibarr_syslog("BonPrelevement::AddFacture Erreur $result");
+            dol_syslog("BonPrelevement::AddFacture Erreur $result");
         }
 
         return $result;
@@ -175,7 +175,7 @@ class BonPrelevement extends CommonObject
             }
             else
             {
-                dolibarr_syslog("BonPrelevement::AddLigne Erreur -2");
+                dol_syslog("BonPrelevement::AddLigne Erreur -2");
                 $result = -2;
             }
 
@@ -213,7 +213,7 @@ class BonPrelevement extends CommonObject
         $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
         $sql .= " WHERE p.rowid=".$rowid;
 
-        dolibarr_syslog("Bon-prelevement::fetch sql=".$sql, LOG_DEBUG);
+        dol_syslog("Bon-prelevement::fetch sql=".$sql, LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -243,14 +243,14 @@ class BonPrelevement extends CommonObject
             }
             else
             {
-                dolibarr_syslog("BonPrelevement::Fetch Erreur aucune ligne retourn�e");
+                dol_syslog("BonPrelevement::Fetch Erreur aucune ligne retourn�e");
                 return -1;
             }
         }
         else
         {
-            dolibarr_syslog("BonPrelevement::Fetch Erreur ");
-            dolibarr_syslog($sql);
+            dol_syslog("BonPrelevement::Fetch Erreur ");
+            dol_syslog($sql);
             return -2;
         }
     }
@@ -274,7 +274,7 @@ class BonPrelevement extends CommonObject
             $result=$this->db->query($sql);
             if (! $result)
             {
-                dolibarr_syslog("bon-prelevement::set_credite Erreur 1");
+                dol_syslog("bon-prelevement::set_credite Erreur 1");
                 $error++;
             }
 
@@ -286,7 +286,7 @@ class BonPrelevement extends CommonObject
                 for ($i = 0 ; $i < sizeof($facs) ; $i++)
                 {
                     /* Tag la facture comme impay�e */
-                    dolibarr_syslog("BonPrelevement::set_credite set_payed fac ".$facs[$i]);
+                    dol_syslog("BonPrelevement::set_credite set_payed fac ".$facs[$i]);
                     $fac = new Facture($this->db);
                     $fac->fetch($facs[$i]);
                     $result = $fac->set_payed($user);
@@ -302,7 +302,7 @@ class BonPrelevement extends CommonObject
 
                 if (! $this->db->query($sql))
                 {
-                    dolibarr_syslog("BonPrelevement::set_credite Erreur 1");
+                    dol_syslog("BonPrelevement::set_credite Erreur 1");
                     $error++;
                 }
             }
@@ -320,7 +320,7 @@ class BonPrelevement extends CommonObject
             {
 
                 $this->db->rollback();
-                dolibarr_syslog("BonPrelevement::set_credite ROLLBACK ");
+                dol_syslog("BonPrelevement::set_credite ROLLBACK ");
 
                 return -1;
             }
@@ -330,7 +330,7 @@ class BonPrelevement extends CommonObject
         else
         {
 
-            dolibarr_syslog("BonPrelevement::set_credite Ouverture transaction SQL impossible ");
+            dol_syslog("BonPrelevement::set_credite Ouverture transaction SQL impossible ");
             return -2;
         }
     }
@@ -361,13 +361,13 @@ class BonPrelevement extends CommonObject
                         $subject = "Cr�dit pr�l�vement ".$this->ref." � la banque";
                         $message = "Le bon de pr�l�vement ".$this->ref;
                         $message .= " a �t� cr�dit� par la banque.\n";
-                        $message .= "Date cr�dit : ".dolibarr_print_date($date,'dayhour');
+                        $message .= "Date cr�dit : ".dol_print_date($date,'dayhour');
 
                         $this->Notify($user, "cr", $subject, $message);
                     }
                     else
                     {
-                        dolibarr_syslog("BonPrelevement::set_infocredit Erreur 1");
+                        dol_syslog("BonPrelevement::set_infocredit Erreur 1");
                         $error++;
                     }
 
@@ -383,19 +383,19 @@ class BonPrelevement extends CommonObject
                     else
                     {
                         $this->db->rollback();
-                        dolibarr_syslog("bon-prelevment::set_infocredit ROLLBACK ");
+                        dol_syslog("bon-prelevment::set_infocredit ROLLBACK ");
                         return -1;
                     }
                 }
                 else
                 {
-                    dolibarr_syslog("bon-prelevement::set_infocredit Ouverture transaction SQL impossible ");
+                    dol_syslog("bon-prelevement::set_infocredit Ouverture transaction SQL impossible ");
                     return -1025;
                 }
             }
             else
             {
-                dolibarr_syslog("bon-prelevment::set_infocredit 1027 Date de credit < Date de trans ");
+                dol_syslog("bon-prelevment::set_infocredit 1027 Date de credit < Date de trans ");
                 return -1027;
             }
         }
@@ -412,7 +412,7 @@ class BonPrelevement extends CommonObject
     function set_infotrans($user, $date, $method)
     {
         $error == 0;
-        dolibarr_syslog("bon-prelevement::set_infotrans Start",LOG_INFO);
+        dol_syslog("bon-prelevement::set_infotrans Start",LOG_INFO);
         if ($this->db->begin())
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
@@ -433,14 +433,14 @@ class BonPrelevement extends CommonObject
                 $message .= "\n\n";
                 $message .= "\nMontant : ".price($this->amount);
                 $message .= "\nM�thode : ".$this->methodes_trans[$this->method_trans];
-                $message .= "\nDate  : ".dolibarr_print_date($date,'day');
+                $message .= "\nDate  : ".dol_print_date($date,'day');
 
                 $this->Notify($user,"tr", $subject, $message, 1);
             }
             else
             {
-                dolibarr_syslog("bon-prelevement::set_infotrans Erreur 1", LOG_ERR);
-                dolibarr_syslog($this->db->error());
+                dol_syslog("bon-prelevement::set_infotrans Erreur 1", LOG_ERR);
+                dol_syslog($this->db->error());
                 $error++;
             }
 
@@ -456,7 +456,7 @@ class BonPrelevement extends CommonObject
             else
             {
                 $this->db->rollback();
-                dolibarr_syslog("BonPrelevement::set_infotrans ROLLBACK", LOG_ERR);
+                dol_syslog("BonPrelevement::set_infotrans ROLLBACK", LOG_ERR);
 
                 return -1;
             }
@@ -464,7 +464,7 @@ class BonPrelevement extends CommonObject
         else
         {
 
-            dolibarr_syslog("BonPrelevement::set_infotrans Ouverture transaction SQL impossible", LOG_CRIT);
+            dol_syslog("BonPrelevement::set_infotrans Ouverture transaction SQL impossible", LOG_CRIT);
             return -2;
         }
     }
@@ -559,7 +559,7 @@ class BonPrelevement extends CommonObject
         }
         else
         {
-            dolibarr_syslog("Bon-Prelevement::_get_list_factures Erreur");
+            dol_syslog("Bon-Prelevement::_get_list_factures Erreur");
         }
 
         return $arr;
@@ -595,8 +595,8 @@ class BonPrelevement extends CommonObject
         else
         {
             $error = 1;
-            dolibarr_syslog("BonPrelevement::SommeAPrelever Erreur -1");
-            dolibarr_syslog($this->db->error());
+            dol_syslog("BonPrelevement::SommeAPrelever Erreur -1");
+            dol_syslog($this->db->error());
         }
     }
 
@@ -641,7 +641,7 @@ class BonPrelevement extends CommonObject
         else
         {
             $this->error="BonPrelevement::SommeAPrelever Erreur -1 sql=".$this->db->error();
-            dolibarr_syslog($this->error);
+            dol_syslog($this->error);
             return -1;
         }
     }
@@ -655,7 +655,7 @@ class BonPrelevement extends CommonObject
     {
         global $conf;
         
-        dolibarr_syslog("BonPrelevement::Create banque=$banque guichet=$guichet");
+        dol_syslog("BonPrelevement::Create banque=$banque guichet=$guichet");
 
         require_once (DOL_DOCUMENT_ROOT."/compta/prelevement/bon-prelevement.class.php");
         require_once (DOL_DOCUMENT_ROOT."/facture.class.php");
@@ -704,7 +704,7 @@ class BonPrelevement extends CommonObject
                 $sql .= " AND sr.code_guichet = '".PRELEVEMENT_CODE_GUICHET."'";
             }
 
-            dolibarr_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
+            dol_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -718,13 +718,13 @@ class BonPrelevement extends CommonObject
                     $i++;
                 }
                 $this->db->free($resql);
-                dolibarr_syslog($i." invoices to withdraw");
+                dol_syslog($i." invoices to withdraw");
             }
             else
             {
                 $error = 1;
-                dolibarr_syslog("Erreur -1");
-                dolibarr_syslog($this->db->error());
+                dol_syslog("Erreur -1");
+                dol_syslog($this->db->error());
             }
         }
 
@@ -732,7 +732,7 @@ class BonPrelevement extends CommonObject
         {
             // Check RIB
         	$i = 0;
-            dolibarr_syslog("Start RIB check");
+            dol_syslog("Start RIB check");
 
             if (sizeof($factures) > 0)
             {
@@ -754,30 +754,30 @@ class BonPrelevement extends CommonObject
                             }
                             else
                             {
-                                dolibarr_syslog("Erreur de RIB societe $fact->socid $soc->nom", LOG_ERR);
+                                dol_syslog("Erreur de RIB societe $fact->socid $soc->nom", LOG_ERR);
                                 $facture_errors[$fac[0]]="Erreur de RIB societe $fact->socid $soc->nom";
                             }
                         }
                         else
                         {
-                            dolibarr_syslog("Failed to read company", LOG_ERR);
+                            dol_syslog("Failed to read company", LOG_ERR);
                         }
                     }
                     else
                     {
-                        dolibarr_syslog("Impossible de lire la facture", LOG_ERR);
+                        dol_syslog("Impossible de lire la facture", LOG_ERR);
                     }
                 }
             }
             else
             {
-                dolibarr_syslog("Aucune factures a traiter");
+                dol_syslog("Aucune factures a traiter");
             }
         }
 
 
         // Withdraw invoices in factures_prev array
-        dolibarr_syslog(sizeof($factures_prev)." invoices will be withdrawed");
+        dol_syslog(sizeof($factures_prev)." invoices will be withdrawed");
 
         if (sizeof($factures_prev) > 0)
         {
@@ -802,7 +802,7 @@ class BonPrelevement extends CommonObject
                 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."prelevement_bons";
                 $sql .= " WHERE ref LIKE '$ref%'";
 
-            	dolibarr_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
+            	dol_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
                 $resql = $this->db->query($sql);
 
                 if ($resql)
@@ -812,7 +812,7 @@ class BonPrelevement extends CommonObject
                 else
                 {
                     $error++;
-                    dolibarr_syslog("Erreur recherche reference");
+                    dol_syslog("Erreur recherche reference");
                 }
 
                 $ref = $ref . substr("00".($row[0]+1), -2);
@@ -823,7 +823,7 @@ class BonPrelevement extends CommonObject
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (ref,datec)";
                 $sql .= " VALUES ('".$ref."',".$this->db->idate(mktime()).")";
 
-            	dolibarr_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
+            	dol_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
                 $resql = $this->db->query($sql);
 
                 if ($resql)
@@ -840,7 +840,7 @@ class BonPrelevement extends CommonObject
                 else
                 {
                     $error++;
-                    dolibarr_syslog("Erreur creation du bon de prelevement");
+                    dol_syslog("Erreur creation du bon de prelevement");
                 }
             }
 
@@ -850,7 +850,7 @@ class BonPrelevement extends CommonObject
              */
             if (!$error)
             {
-                dolibarr_syslog("Start generation payments for the ".sizeof($factures_prev)." invoices");
+                dol_syslog("Start generation payments for the ".sizeof($factures_prev)." invoices");
 
                 if (sizeof($factures_prev) > 0)
                 {
@@ -872,7 +872,7 @@ class BonPrelevement extends CommonObject
                         if ($pai->create($user, 1) < 0)  // on appelle en no_commit
                         {
                             $error++;
-                            dolibarr_syslog("Erreur creation paiement facture ".$fac[0]);
+                            dol_syslog("Erreur creation paiement facture ".$fac[0]);
                         }
                         else
                         {
@@ -911,7 +911,7 @@ class BonPrelevement extends CommonObject
                             $sql .= ", fk_prelevement_bons = ".$prev_id;
                             $sql .= " WHERE rowid=".$fac[1];
 
-            				dolibarr_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
+            				dol_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
                             if ($this->db->query($sql))
                             {
 
@@ -919,15 +919,15 @@ class BonPrelevement extends CommonObject
                             else
                             {
                                 $error++;
-                                dolibarr_syslog("Erreur mise a jour des demandes");
-                                dolibarr_syslog($this->db->error());
+                                dol_syslog("Erreur mise a jour des demandes");
+                                dol_syslog($this->db->error());
                             }
 
                         }
                     }
                 }
 
-                dolibarr_syslog("Fin des paiements");
+                dol_syslog("Fin des paiements");
             }
 
             if (!$error)
@@ -938,8 +938,8 @@ class BonPrelevement extends CommonObject
                  *
                  */
 
-                dolibarr_syslog("Debut prelevement");
-                dolibarr_syslog("Nombre de factures ".sizeof($factures_prev));
+                dol_syslog("Debut prelevement");
+                dol_syslog("Nombre de factures ".sizeof($factures_prev));
 
                 if (sizeof($factures_prev) > 0)
                 {
@@ -958,8 +958,8 @@ class BonPrelevement extends CommonObject
 
                     $bonprev->generate();
                 }
-                dolibarr_syslog( $filebonprev ) ;
-                dolibarr_syslog("Fin prelevement");
+                dol_syslog( $filebonprev ) ;
+                dol_syslog("Fin prelevement");
             }
 
             /*
@@ -971,12 +971,12 @@ class BonPrelevement extends CommonObject
             $sql .= " SET amount = ".price2num($bonprev->total);
             $sql .= " WHERE rowid = ".$prev_id;
 
-            dolibarr_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
+            dol_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
             {
                 $error++;
-                dolibarr_syslog("Erreur mise a jour du total - $sql");
+                dol_syslog("Erreur mise a jour du total - $sql");
             }
 
             /*
@@ -1092,7 +1092,7 @@ class BonPrelevement extends CommonObject
             else
             {
                 $result = -1;
-                dolibarr_syslog("BonPrelevement::AddNotification Erreur $result");
+                dol_syslog("BonPrelevement::AddNotification Erreur $result");
             }
         }
 

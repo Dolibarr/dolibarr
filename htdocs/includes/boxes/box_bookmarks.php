@@ -111,7 +111,7 @@ class box_bookmarks extends ModeleBoxes {
             }
             else
             {
-                dolibarr_print_error($db);
+                dol_print_error($db);
             }
         }
         else {

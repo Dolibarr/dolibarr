@@ -38,7 +38,7 @@ $head[$h][1] = "Liste";
 $hselected = $h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, "Distributeurs");
+dol_fiche_head($head, $hselected, "Distributeurs");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 

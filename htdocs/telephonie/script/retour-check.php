@@ -44,14 +44,14 @@ if (! file_exists($dirback))
   umask(0);
   if (! @mkdir($dirback, 0755))
     {
-      dolibarr_syslog("Erreur: creation '$dir'");
+      dol_syslog("Erreur: creation '$dir'");
     }
 }
 
 
 $handle=opendir($dir);
 
-if ($verbose) dolibarr_syslog("Lecture repertoire $dir");
+if ($verbose) dol_syslog("Lecture repertoire $dir");
 
 while (($file = readdir($handle))!==false)
 {
@@ -59,14 +59,14 @@ while (($file = readdir($handle))!==false)
     {
       if (is_readable($dir.$file))
 	{	  
-	  if ($verbose) dolibarr_syslog("Lecture $file");	  
+	  if ($verbose) dol_syslog("Lecture $file");	  
 	  
 	  if (! file_exists($dirdone))
 	    {
 	      umask(0);
 	      if (! @mkdir($dirdone, 0755))
 		{
-		  dolibarr_syslog("Erreur: creation '$dirdone'");
+		  dol_syslog("Erreur: creation '$dirdone'");
 		}
 	    }
 	  
@@ -77,7 +77,7 @@ while (($file = readdir($handle))!==false)
 	}
       else
 	{
-	  dolibarr_syslog("Erreur Lecture $file permissions insuffisante");
+	  dol_syslog("Erreur Lecture $file permissions insuffisante");
 	}
     }
 }

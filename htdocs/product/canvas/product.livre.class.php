@@ -184,7 +184,7 @@ class ProductLivre extends Product
 		else
 		{
 			$this->db->rollback();
-			dolibarr_syslog("ProductLivre::Create ROLLBACK ERRNO (".$this->errno.")");
+			dol_syslog("ProductLivre::Create ROLLBACK ERRNO (".$this->errno.")");
 			return -1;
 		}
 	}
@@ -256,7 +256,7 @@ class ProductLivre extends Product
 	 */
 	function UpdateCanvas($datas)
 	{
-		dolibarr_syslog("ProductLivre::UpdateCanvas ID : ".$this->id, LOG_DEBUG);
+		dol_syslog("ProductLivre::UpdateCanvas ID : ".$this->id, LOG_DEBUG);
 
 		$isbna = trim($datas["isbna"]);
 		$isbnb = trim($datas["isbnb"]);
@@ -290,17 +290,17 @@ class ProductLivre extends Product
 		$sql.= " SET isbn = '$isbn'";
 		$sql.= " , ean = '$ean'";
 		$sql.= " , pages         = '".$this->pages."'";
-		$sql.= " , px_feuillet   = '".$this->px_feuillet."'";
-		$sql.= " , px_revient    = '".price2num($this->px_revient)."'";
-		$sql.= " , px_reliure = '".price2num($this->px_reliure)."'";
-		$sql.= " , px_couverture = '".price2num($this->px_couverture)."'";
+		$sql.= " , px_feuillet   = ".($this->px_feuillet?price2num($this->px_feuillet):'null');
+		$sql.= " , px_revient    = ".($this->px_revient?price2num($this->px_revient):'null');
+		$sql.= " , px_reliure    = ".($this->px_reliure?price2num($this->px_reliure):'null');
+		$sql.= " , px_couverture = ".($this->px_couverture?price2num($this->px_couverture):'null');
 		$sql.= " , fk_couverture = '".$this->couverture->id."'";
 		$sql.= " , fk_contrat    = '".$this->contrat->id."'";
 		$sql.= " , fk_auteur     = '".$datas["auteur"]."'";
 		$sql.= " , format        = '$format'";
 		$sql.= " WHERE rowid = " . $this->id;
 
-		dolibarr_syslog("ProductLivre::UpdateCanvas sql=".$sql, LOG_DEBUG);
+		dol_syslog("ProductLivre::UpdateCanvas sql=".$sql, LOG_DEBUG);
 		if ( $this->db->query($sql) )
 		{
 			$this->errno = 0;
@@ -328,7 +328,7 @@ class ProductLivre extends Product
 	 */
 	function _calculate_prix_revient($pages, $couv, $feuil, $price_ht, $reliure, $taux)
 	{
-		dolibarr_syslog("ProductLivre::UpdateCanvas $pages, $couv, $feuil, $price_ht, $taux", LOG_DEBUG);
+		dol_syslog("ProductLivre::UpdateCanvas $pages, $couv, $feuil, $price_ht, $taux", LOG_DEBUG);
 
 		$cost = ($pages / 2 * $feuil) + $couv + $reliure + ($price_ht * $taux / 100);
 

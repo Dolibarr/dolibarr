@@ -83,8 +83,8 @@ class box_external_rss extends ModeleBoxes {
         $rss=fetch_rss($url);
         if (! is_object($rss))
         {
-        	dolibarr_syslog("FETCH_RSS site=".$site);
-        	dolibarr_syslog("FETCH_RSS url=".$url);
+        	dol_syslog("FETCH_RSS site=".$site);
+        	dol_syslog("FETCH_RSS url=".$url);
         	return -1;
         }
         
@@ -96,13 +96,13 @@ class box_external_rss extends ModeleBoxes {
         if ($rss->ERROR)
         {
             // Affiche warning car il y a eu une erreur
-            $title.=" ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate",(isset($rss->date)?dolibarr_print_date($rss->date,"dayhourtext"):$langs->trans("Unknown"))));
+            $title.=" ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate",(isset($rss->date)?dol_print_date($rss->date,"dayhourtext"):$langs->trans("Unknown"))));
             $this->info_box_head = array('text' => $title,'limit' => 0);
         }
         else
         {         
         	$this->info_box_head = array('text' => $title,
-        		'sublink' => $link, 'subtext'=>$langs->trans("LastRefreshDate").': '.(isset($rss->date)?dolibarr_print_date($rss->date,"dayhourtext"):$langs->trans("Unknown")), 'subpicto'=>'object_bookmark');
+        		'sublink' => $link, 'subtext'=>$langs->trans("LastRefreshDate").': '.(isset($rss->date)?dol_print_date($rss->date,"dayhourtext"):$langs->trans("Unknown")), 'subpicto'=>'object_bookmark');
 		}
 
 		// INFO sur le élements
@@ -129,7 +129,7 @@ class box_external_rss extends ModeleBoxes {
 				//$item['modified']
 				//$item['atom_content']
 			}
-			if (is_numeric($date)) $date=dolibarr_print_date($date,"dayhour");
+			if (is_numeric($date)) $date=dol_print_date($date,"dayhour");
 			
 			$isutf8 = utf8_check($title);
 	        if (! $isutf8 && $conf->character_set_client == 'UTF-8') $title=utf8_encode($title); 

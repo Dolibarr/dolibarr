@@ -86,7 +86,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db,$sql);
+	dol_print_error($db,$sql);
 }
 
 $now = time();
@@ -99,7 +99,7 @@ for ($i = 0 ; $i < strftime('%j',$now) ; $i++)
 		$values[$key][$i] = 0;
 	}
 	$values[0][$i] = 0;
-	$legends[$i] = strftime('%b',dolibarr_mktime(12,0,0,1,1,2006) + ($i * 3600 * 24));
+	$legends[$i] = strftime('%b',dol_mktime(12,0,0,1,1,2006) + ($i * 3600 * 24));
 	//print $legends[$i].strftime('%j',$now);
 }
 
@@ -144,7 +144,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db,$sql);
+	dol_print_error($db,$sql);
 }
 
 for ($i = $max_day + 1 ; $i < ($day + 1) ; $i++)

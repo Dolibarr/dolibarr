@@ -110,7 +110,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
         }
         else
         {
-        	dolibarr_syslog("mod_propale_marbre::getNextValue sql=".$sql);
+        	dol_syslog("mod_propale_marbre::getNextValue sql=".$sql);
         	return -1;
         }
 
@@ -119,7 +119,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
         $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
         
-        dolibarr_syslog("mod_propale_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
+        dol_syslog("mod_propale_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
         return $this->prefix.$yymm."-".$num;
     }
 

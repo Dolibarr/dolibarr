@@ -35,7 +35,7 @@ class ServiceFactureTableur
 
   Function Process($contrat)
     {
-      dolibarr_syslog("ServiceFactureTableur::Process Contrat ".$contrat->id);
+      dol_syslog("ServiceFactureTableur::Process Contrat ".$contrat->id);
 
       $facids = array();
 
@@ -56,7 +56,7 @@ class ServiceFactureTableur
 	  $j = 0;
 	  $num2 = $contrat->db->num_rows($resql2);
 	  
-	  dolibarr_syslog("ServiceFactureTableur::Process Nb factures ".$num2);
+	  dol_syslog("ServiceFactureTableur::Process Nb factures ".$num2);
 	  
 	  while ($j < $num2)
 	    {
@@ -176,14 +176,14 @@ class ServiceFactureTableur
 		}
 	      else
 		{
-		  dolibarr_syslog($contrat->db->error());
+		  dol_syslog($contrat->db->error());
 		}
 	    }
 	  
 	  $workbook->close();
-	  dolibarr_syslog("Close $fname");
+	  dol_syslog("Close $fname");
 	  	  	  
-	  dolibarr_syslog("Conso mémoire ".memory_get_usage() );
+	  dol_syslog("Conso mémoire ".memory_get_usage() );
 	}           
     }
 }

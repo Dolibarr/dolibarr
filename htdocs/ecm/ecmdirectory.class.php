@@ -111,7 +111,7 @@ class EcmDirectory // extends CommonObject
 		if ($pathfound)
 		{
 	        $this->error="ErrorDirAlreadyExists";
-	        dolibarr_syslog("EcmDirectories::create ".$this->error, LOG_WARNING);
+	        dol_syslog("EcmDirectories::create ".$this->error, LOG_WARNING);
 			return -1;			
 		}
 		else
@@ -135,7 +135,7 @@ class EcmDirectory // extends CommonObject
 			$sql.= " '".$this->fk_user_c."'";
 			$sql.= ")";
 	
-		   	dolibarr_syslog("EcmDirectories::create sql=".$sql, LOG_DEBUG);
+		   	dol_syslog("EcmDirectories::create sql=".$sql, LOG_DEBUG);
 	        $resql=$this->db->query($sql);
 	        if ($resql)
 	        {
@@ -165,7 +165,7 @@ class EcmDirectory // extends CommonObject
 	        else
 	        {
 	            $this->error="Error ".$this->db->lasterror();
-	            dolibarr_syslog("EcmDirectories::create ".$this->error, LOG_ERR);
+	            dol_syslog("EcmDirectories::create ".$this->error, LOG_ERR);
 	        	$this->db->rollback();
 	            return -1;
 	        }
@@ -202,13 +202,13 @@ class EcmDirectory // extends CommonObject
 		$sql.= " description='".addslashes($this->description)."'";
         $sql.= " WHERE rowid=".$this->id;
 
-        dolibarr_syslog("EcmDirectories::update sql=".$sql, LOG_DEBUG);
+        dol_syslog("EcmDirectories::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $error++;
         	$this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("EcmDirectories::update ".$this->error, LOG_ERR);
+            dol_syslog("EcmDirectories::update ".$this->error, LOG_ERR);
         }
 
 		if (! $error && ! $notrigger)
@@ -249,12 +249,12 @@ class EcmDirectory // extends CommonObject
 		$sql.= " cachenbofdoc = cachenbofdoc ".$sign." 1";
         $sql.= " WHERE rowid = ".$this->id;
 
-        dolibarr_syslog("EcmDirectories::changeNbOfFiles sql=".$sql, LOG_DEBUG);
+        dol_syslog("EcmDirectories::changeNbOfFiles sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("EcmDirectories::changeNbOfFiles ".$this->error, LOG_ERR);
+            dol_syslog("EcmDirectories::changeNbOfFiles ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -282,7 +282,7 @@ class EcmDirectory // extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
         $sql.= " WHERE t.rowid = ".$id;
     
-    	dolibarr_syslog("EcmDirectories::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog("EcmDirectories::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -309,7 +309,7 @@ class EcmDirectory // extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("EcmDirectories::fetch ".$this->error, LOG_ERR);
+            dol_syslog("EcmDirectories::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -327,12 +327,12 @@ class EcmDirectory // extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_directories";
 		$sql.= " WHERE rowid=".$this->id;
 	
-	   	dolibarr_syslog("EcmDirectories::delete sql=".$sql);
+	   	dol_syslog("EcmDirectories::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("EcmDirectories::delete ".$this->error, LOG_ERR);
+            dol_syslog("EcmDirectories::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 	
@@ -446,7 +446,7 @@ class EcmDirectory // extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories";
 		$sql.= " WHERE fk_parent != 0";
 		
-		dolibarr_syslog("EcmDirectory::get_full_arbo sql=".$sql);
+		dol_syslog("EcmDirectory::get_full_arbo sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -458,7 +458,7 @@ class EcmDirectory // extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -505,7 +505,7 @@ class EcmDirectory // extends CommonObject
 		$sql.= " WHERE c.fk_user_c = u.rowid";
 		$sql.= " ORDER BY c.label, c.rowid";
 
-		dolibarr_syslog("EcmDirectory::get_full_arbo sql=".$sql);
+		dol_syslog("EcmDirectory::get_full_arbo sql=".$sql);
 		$resql = $this->db->query ($sql);
 		if ($resql)
 		{
@@ -542,7 +542,7 @@ class EcmDirectory // extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 		
@@ -617,7 +617,7 @@ class EcmDirectory // extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		$sql.= " cachenbofdoc='".sizeof($filelist)."'";
         $sql.= " WHERE rowid=".$this->id;
-        dolibarr_syslog("EcmDirectories::refreshcachenboffile sql=".$sql, LOG_DEBUG);
+        dol_syslog("EcmDirectories::refreshcachenboffile sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -627,7 +627,7 @@ class EcmDirectory // extends CommonObject
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("EcmDirectories::refreshcachenboffile ".$this->error, LOG_ERR);
+            dol_syslog("EcmDirectories::refreshcachenboffile ".$this->error, LOG_ERR);
             return -1;
         }
 	}	

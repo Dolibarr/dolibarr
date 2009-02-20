@@ -110,8 +110,8 @@ class TelephonieContrat {
     else
       {
 	$this->error_message = "Echec de la création du contrat";
-	dolibarr_syslog("TelephonieContrat::Create Error -1");
-	dolibarr_syslog($this->db->error());
+	dol_syslog("TelephonieContrat::Create Error -1");
+	dol_syslog($this->db->error());
 	return -1;
       }
   }
@@ -126,7 +126,7 @@ class TelephonieContrat {
     if (!$this->db->begin())
       {
 	$error++;
-	dolibarr_syslog("TelephonieContrat::Update Error -1");
+	dol_syslog("TelephonieContrat::Update Error -1");
       }
 
     if (!$error)
@@ -146,7 +146,7 @@ class TelephonieContrat {
 	if (! $this->db->query($sql) )
 	  {
 	    $error++;
-	    dolibarr_syslog("TelephonieContrat::Update Error -2");
+	    dol_syslog("TelephonieContrat::Update Error -2");
 	  }
       }
 
@@ -164,7 +164,7 @@ class TelephonieContrat {
 	if (! $this->db->query($sql) )
 	  {
 	    $error++;
-	    dolibarr_syslog("TelephonieContrat::Update Error -3");
+	    dol_syslog("TelephonieContrat::Update Error -3");
 	  }
       }
 
@@ -238,7 +238,7 @@ class TelephonieContrat {
 	  }
 	else
 	  {
-	    dolibarr_syslog("TelephonieContrat::Fecth Erreur -2");
+	    dol_syslog("TelephonieContrat::Fecth Erreur -2");
 	    $result = -2;
 	  }
 	
@@ -249,7 +249,7 @@ class TelephonieContrat {
 	/* Erreur select SQL */
 	print $this->db->error();
 	$result = -1;
-	dolibarr_syslog("TelephonieContrat::Fecth Erreur -1");
+	dol_syslog("TelephonieContrat::Fecth Erreur -1");
       }
     
     $sql = "SELECT libelle";
@@ -485,7 +485,7 @@ class TelephonieContrat {
       }
     else
       {
-	dolibarr_syslog($sql);
+	dol_syslog($sql);
       }
     return $po;
   }
@@ -555,7 +555,7 @@ class TelephonieContrat {
 	      }
 	    else
 	      {
-		dolibarr_syslog($sql);
+		dol_syslog($sql);
 	      }
 	  }
 	else
@@ -574,7 +574,7 @@ class TelephonieContrat {
 	      }
 	    else
 	      {
-		dolibarr_syslog($sql);
+		dol_syslog($sql);
 	      }	    	    
 	  }
       }
@@ -635,7 +635,7 @@ class TelephonieContrat {
       }
     else
       {
-	dolibarr_syslog("Telephonie::Contrat Error". $sql);
+	dol_syslog("Telephonie::Contrat Error". $sql);
       }
   }
   /*

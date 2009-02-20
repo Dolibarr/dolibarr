@@ -86,7 +86,7 @@ if ($_GET["id"] > 0)
 
 		$head=task_prepare_head($task);
 
-		dolibarr_fiche_head($head, 'tasks', $langs->trans("Task"));
+		dol_fiche_head($head, 'tasks', $langs->trans("Task"));
 
 		if ($mesg) print $mesg.'<br>';
 
@@ -138,7 +138,7 @@ if ($_GET["id"] > 0)
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		print '</table></form>';
@@ -172,7 +172,7 @@ if ($_GET["id"] > 0)
   		    print "<tr ".$bc[$var].">";
 		    
   		    // Date
-  		    print '<td>'.dolibarr_print_date($db->jdate($task_time->task_date),'day').' '.dolibarr_print_date($db->jdate($task_time->task_date),'%A').'</td>';
+  		    print '<td>'.dol_print_date($db->jdate($task_time->task_date),'day').' '.dol_print_date($db->jdate($task_time->task_date),'%A').'</td>';
 
 		    // Time spent
 		    $heure = intval($task_time->task_duration);

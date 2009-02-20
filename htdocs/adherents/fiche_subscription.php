@@ -72,8 +72,8 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 			}
 			else
 			{
-				$accountline->datev=dolibarr_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
-				$accountline->dateo=dolibarr_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
+				$accountline->datev=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
+				$accountline->dateo=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
 				$accountline->amount=$_POST["amount"];
 				$result=$accountline->update($user);
 				if ($result < 0)
@@ -86,8 +86,8 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 		if (! $errmsg)
 		{
 			// Modifie valeures
-			$subscription->dateh=dolibarr_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
-			$subscription->datef=dolibarr_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
+			$subscription->dateh=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
+			$subscription->datef=dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
 			$subscription->note=$_POST["note"];
 			$subscription->amount=$_POST["amount"];
 			//print 'datef='.$subscription->datef.' '.$_POST['datesubendday'];
@@ -187,7 +187,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	$head[$h][2] = 'info';
 	$h++;
 
-	dolibarr_fiche_head($head, 'general', $langs->trans("Subscription"));
+	dol_fiche_head($head, 'general', $langs->trans("Subscription"));
 
 	print "\n";
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -286,7 +286,7 @@ if ($rowid && $action != 'edit')
 	$head[$h][2] = 'info';
 	$h++;
 
-	dolibarr_fiche_head($head, 'general', $langs->trans("Subscription"));
+	dol_fiche_head($head, 'general', $langs->trans("Subscription"));
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
@@ -318,12 +318,12 @@ if ($rowid && $action != 'edit')
 
     // Date subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dolibarr_print_date($subscription->dateh,'dayhour').'</td>';
+	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->dateh,'dayhour').'</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="3">'.dolibarr_print_date($subscription->datef,'day').'</td>';
+	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->datef,'day').'</td>';
     print '</tr>';
 
     // Amount

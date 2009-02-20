@@ -110,7 +110,7 @@ class InterfacePhenixsynchro
         // Actions
         if ($action == 'ACTION_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             // Initialisation donnees (date,duree,texte,desc)
@@ -139,7 +139,7 @@ class InterfacePhenixsynchro
 		// Third parties
         elseif ($action == 'COMPANY_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             
             // Initialisation donnees (date,duree,texte,desc)
@@ -156,7 +156,7 @@ class InterfacePhenixsynchro
 		// Contracts
         elseif ($action == 'CONTRACT_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             // Initialisation donnees (date,duree,texte,desc)
@@ -168,7 +168,7 @@ class InterfacePhenixsynchro
         }
         elseif ($action == 'CONTRACT_CANCEL')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -179,7 +179,7 @@ class InterfacePhenixsynchro
         }
         elseif ($action == 'CONTRACT_CLOSE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -192,7 +192,7 @@ class InterfacePhenixsynchro
 		// Proposals
         elseif ($action == 'PROPAL_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -203,7 +203,7 @@ class InterfacePhenixsynchro
         }
         elseif ($action == 'PROPAL_CLOSE_SIGNED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -214,7 +214,7 @@ class InterfacePhenixsynchro
         }
         elseif ($action == 'PROPAL_CLOSE_REFUSED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -227,7 +227,7 @@ class InterfacePhenixsynchro
         // Invoices
 		elseif ($action == 'BILL_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -238,7 +238,7 @@ class InterfacePhenixsynchro
         }
         elseif ($action == 'BILL_PAYED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -249,7 +249,7 @@ class InterfacePhenixsynchro
         }
         elseif ($action == 'BILL_CANCELED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -262,7 +262,7 @@ class InterfacePhenixsynchro
         // Payments
         elseif ($action == 'PAYMENT_CUSTOMER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -274,7 +274,7 @@ class InterfacePhenixsynchro
         }
         elseif ($action == 'PAYMENT_SUPPLIER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -288,7 +288,7 @@ class InterfacePhenixsynchro
         // Members
         elseif ($action == 'MEMBER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -302,7 +302,7 @@ class InterfacePhenixsynchro
         }
         elseif ($action == 'MEMBER_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -316,7 +316,7 @@ class InterfacePhenixsynchro
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -327,12 +327,12 @@ class InterfacePhenixsynchro
             $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
-            $this->desc.="\n".$langs->transnoentities("Period").': '.dolibarr_print_date($object->last_subscription_date_start,'day').' - '.dolibarr_print_date($object->last_subscription_date_end,'day');
+            $this->desc.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }
         elseif ($action == 'MEMBER_MODIFY')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -346,7 +346,7 @@ class InterfacePhenixsynchro
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -360,7 +360,7 @@ class InterfacePhenixsynchro
         }
         elseif ($action == 'MEMBER_DELETE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -377,7 +377,7 @@ class InterfacePhenixsynchro
 /*
         else
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
+            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return 0;
         }
 */
@@ -395,7 +395,7 @@ class InterfacePhenixsynchro
                 $error.="La mise a jour Webcalendar a été ignorée.";
                 $this->error=$error;
     
-                //dolibarr_syslog("interface_phenix.class.php: ".$this->error);
+                //dol_syslog("interface_phenix.class.php: ".$this->error);
                 return -1;
             }
 
@@ -415,7 +415,7 @@ class InterfacePhenixsynchro
                 $error.="La mise a jour Phenix a été ignorée.";
                 $this->error=$error;
 
-                //dolibarr_syslog("interface_phenix.class.php: ".$this->error);
+                //dol_syslog("interface_phenix.class.php: ".$this->error);
                 return -2;
             }
         }

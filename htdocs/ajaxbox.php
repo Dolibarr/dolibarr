@@ -36,7 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 // Enregistrement de la position des boxes
 if((isset($_GET['boxorder']) && !empty($_GET['boxorder'])) && (isset($_GET['userid']) && !empty($_GET['userid'])))
 {
-	dolibarr_syslog("AjaxBox boxorder=".$_GET['boxorder']." userid=".$_GET['userid'], LOG_DEBUG);
+	dol_syslog("AjaxBox boxorder=".$_GET['boxorder']." userid=".$_GET['userid'], LOG_DEBUG);
 
 	$infobox=new InfoBox($db);
 	$result=$infobox->saveboxorder("0",$_GET['boxorder'],$_GET['userid']);

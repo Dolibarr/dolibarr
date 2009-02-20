@@ -38,7 +38,7 @@ require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/pdfdetail_ibreizh.modules.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/dolibarrmail.class.php");
 
-dolibarr_syslog("Debut envoie de mail");
+dol_syslog("Debut envoie de mail");
 
 $clientid = 52;
 $contactid = 151;
@@ -62,7 +62,7 @@ $resql = $db->query($sql);
 if ($resql)
 {
   $row = $db->fetch_row($resql);
-  dolibarr_syslog($row[0]);
+  dol_syslog($row[0]);
 
   array_push($emails, $row[0]);
 
@@ -94,7 +94,7 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
   $i = 0;
-  dolibarr_syslog($num . " Factures");
+  dol_syslog($num . " Factures");
 
   while ($i < $num)
     {
@@ -133,7 +133,7 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
   $i = 0;
-  dolibarr_syslog($num . " Factures");
+  dol_syslog($num . " Factures");
 
   while ($i < $num)
     {
@@ -160,8 +160,8 @@ if (sizeof($factures_a_mailer) > 0)
     {
       $fact = new Facture($db);
 
-      dolibarr_syslog("Facture ".$factures_a_mailer[$i]);
-      dolibarr_syslog("ligne ".$factures_lignes[$factures_a_mailer[$i]]);
+      dol_syslog("Facture ".$factures_a_mailer[$i]);
+      dol_syslog("ligne ".$factures_lignes[$factures_a_mailer[$i]]);
 
       if ($fact->fetch($factures_a_mailer[$i]) == 1)
 	{
@@ -178,7 +178,7 @@ if (sizeof($factures_a_mailer) > 0)
 		}
 	      $sendto = substr($sendto,0,strlen($sendto) - 1);
 	      
-	      dolibarr_syslog("Envoi email à ".html_entity_decode($sendto) );
+	      dol_syslog("Envoi email à ".html_entity_decode($sendto) );
 	      
 	      
 	      $subject = "Facture ibreizh ";
@@ -273,7 +273,7 @@ if (sizeof($factures_a_mailer) > 0)
 	  else
 	    {
 	      print  "Aucun email trouvé\n";
-	      dolibarr_syslog("import.php aucun email trouvé");
+	      dol_syslog("import.php aucun email trouvé");
 	    }
 	}
     }

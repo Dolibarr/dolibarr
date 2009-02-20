@@ -128,7 +128,7 @@ if ( $db->query($sql) )
 	  print "<tr $bc[$var]>";
 	  print '<td nowrap="nowrap">';
 	  print "<a href=\"commande.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,20).'</a></td></tr>';
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.dol_trunc($obj->nom,20).'</a></td></tr>';
 	  $i++;
 	}
       print "</table><br>";

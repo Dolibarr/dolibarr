@@ -111,7 +111,7 @@ if ( $resql )
 else
 {
   $error = 1;
-  dolibarr_syslog("Verification Erreur ".$error);
+  dol_syslog("Verification Erreur ".$error);
 }
 
 /********************************************************
@@ -120,7 +120,7 @@ else
  *
  *
  ********************************************************/
-dolibarr_syslog("Calcul avance");
+dol_syslog("Calcul avance");
 $sql = "SELECT rowid, fk_distributeur, fk_contrat, datepo, montant";
 $sql .= " , avance_pourcent, rem_pour_prev, rem_pour_autr, mode_paiement";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
@@ -167,9 +167,9 @@ if ( $resql )
       if (! $db->query($sqli))
 	{
 	  $error = 2;
-	  dolibarr_syslog("Calcul avance Erreur ");
-	  dolibarr_syslog($db->error());
-	  dolibarr_syslog("$sqli");
+	  dol_syslog("Calcul avance Erreur ");
+	  dol_syslog($db->error());
+	  dol_syslog("$sqli");
 	}
       
       $i++;
@@ -179,7 +179,7 @@ if ( $resql )
 else
 {
   $error = 3;
-  dolibarr_syslog("Erreur ".$db->error());
+  dol_syslog("Erreur ".$db->error());
 }
  
 
@@ -255,12 +255,12 @@ if ( $resql )
       if (! $db->query($sqli))
 	{
 	  $error = 4;
-	  dolibarr_syslog("Calcul conso Erreur");
-	  dolibarr_syslog($db->error());
-	  dolibarr_syslog("$sqli");
+	  dol_syslog("Calcul conso Erreur");
+	  dol_syslog($db->error());
+	  dol_syslog("$sqli");
 	}
 
-      //dolibarr_syslog("Conso po : ".$obj->rowid . " ".$comm);
+      //dol_syslog("Conso po : ".$obj->rowid . " ".$comm);
               
       $i++;
     }
@@ -269,7 +269,7 @@ if ( $resql )
 else
 {
   $error = 5;
-  dolibarr_syslog("Erreur ".$db->error());
+  dol_syslog("Erreur ".$db->error());
 }
 
 /********************************************************
@@ -305,7 +305,7 @@ if ( $resql )
 else
 {
   $error = 6;
-  dolibarr_syslog("Erreur regul avances ".$error);
+  dol_syslog("Erreur regul avances ".$error);
 }
 
 $avan_regul = array();
@@ -331,7 +331,7 @@ foreach ($distri_av as $distributeur_id)
       while ($ia < $numa)
 	{
 	  $rowa = $db->fetch_row($resqla);
- 	  dolibarr_syslog("* Regul des avances de la po " .$rowa[0] . " ".strftime("%Y%m",$rowa[1]));
+ 	  dol_syslog("* Regul des avances de la po " .$rowa[0] . " ".strftime("%Y%m",$rowa[1]));
 	  $ia++;
 
 	  /* Calcul des sommes avancées */
@@ -347,7 +347,7 @@ foreach ($distri_av as $distributeur_id)
 	  if ( $resql )
 	    {
 	      $num = $db->num_rows($resql);
-	      dolibarr_syslog("* Regul des avances de la po ".$rowa[0]." ".strftime("%Y%m",$rowa[1]).", $num avances");
+	      dol_syslog("* Regul des avances de la po ".$rowa[0]." ".strftime("%Y%m",$rowa[1]).", $num avances");
 	      $i = 0;	      
 	      while ($i < $num)
 		{
@@ -369,18 +369,18 @@ foreach ($distri_av as $distributeur_id)
 		  if (!$resqlir)
 		    {
 		      $error = 32;
-		      dolibarr_syslog("Erreur insertion regul avances (error $error)");
-		      dolibarr_syslog($sqlir);
+		      dol_syslog("Erreur insertion regul avances (error $error)");
+		      dol_syslog($sqlir);
 		    }
 
-		  dolibarr_syslog("* Avance ".$row[0] . " statut : ".$row[2]);
+		  dol_syslog("* Avance ".$row[0] . " statut : ".$row[2]);
 		  
 		  /* Communications relatives */
 		  $datup = $year_prev.$month_prev;
 		  $datdo = strftime("%Y%m",$rowa[1]);
 		  if ($row[2] <> 6)
 		    {
-		      dolibarr_syslog("* Communications <= $datup >= $datdo ");
+		      dol_syslog("* Communications <= $datup >= $datdo ");
 		      $sqlc = "SELECT sum(montant)";
 		      $sqlc .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso";
 		      $sqlc .= " WHERE fk_contrat = ". $row[1];
@@ -393,7 +393,7 @@ foreach ($distri_av as $distributeur_id)
 			  while ($rowc = $db->fetch_row($resqlc))
 			    {
 			      $comm_regul[$distributeur_id] = $comm_regul[$distributeur_id] + $rowc[0];
-			      dolibarr_syslog("* Conso générée ".$rowc[0]);
+			      dol_syslog("* Conso générée ".$rowc[0]);
 
 			      $sqlir = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission_regul";
 			      $sqlir .= " (date, fk_distributeur, fk_contrat, montant, type)";
@@ -405,8 +405,8 @@ foreach ($distri_av as $distributeur_id)
 			      if (!$resqlir)
 				{
 				  $error = 31;
-				  dolibarr_syslog("Erreur insertion regul avances conso (error $error)");
-				  dolibarr_syslog($sqlir);
+				  dol_syslog("Erreur insertion regul avances conso (error $error)");
+				  dol_syslog($sqlir);
 				}
 			    }
 			  $db->free($resqlc);
@@ -414,7 +414,7 @@ foreach ($distri_av as $distributeur_id)
 		      else
 			{
 			  $error = 10;
-			  dolibarr_syslog("Erreur regul avances conso ".$error);
+			  dol_syslog("Erreur regul avances conso ".$error);
 			}
 		    }
 		  else
@@ -436,7 +436,7 @@ foreach ($distri_av as $distributeur_id)
 		      if (! $resqlc )
 			{
 			  $error = 11;
-			  dolibarr_syslog("Erreur regul avances conso ".$error);
+			  dol_syslog("Erreur regul avances conso ".$error);
 			}
 		    }
 		  
@@ -447,15 +447,15 @@ foreach ($distri_av as $distributeur_id)
 	  else
 	    {
 	      $error = 12;
-	      dolibarr_syslog("Erreur regul avances ".$db->error());
+	      dol_syslog("Erreur regul avances ".$db->error());
 	    }	  	  	  	 	  
 	}
     }
   else
     {
       $error = 13;
-      dolibarr_syslog("Erreur regul avances aaaa".$db->error());
-      dolibarr_syslog($sqla);
+      dol_syslog("Erreur regul avances aaaa".$db->error());
+      dol_syslog($sqla);
     }
 }
 
@@ -484,7 +484,7 @@ if ( $resql )
 else
 {
   $error = 14;
-  dolibarr_syslog("Erreur calcul des commission sur conso ".$error);
+  dol_syslog("Erreur calcul des commission sur conso ".$error);
 }
 
 $comm_conso = array();
@@ -508,14 +508,14 @@ foreach ($distri_co as $distributeur_id)
       while ($ia < $numa)
 	{
 	  $rowa = $db->fetch_row($resqla);
-	  dolibarr_syslog("** Calcul des consos po " .$rowa[0] . " ".strftime("%Y%m",$rowa[1]));
+	  dol_syslog("** Calcul des consos po " .$rowa[0] . " ".strftime("%Y%m",$rowa[1]));
 	  $ia++;
 
 	  /* Communications relatives */
 
 	  $datup = $year_prev.$month_prev;
 	  
-	  dolibarr_syslog("** Communications  $datup");
+	  dol_syslog("** Communications  $datup");
 		  
 	  $sqlc = "SELECT sum(montant)";
 	  $sqlc .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso";
@@ -529,27 +529,27 @@ foreach ($distri_co as $distributeur_id)
 	      if ( $rowc = $db->fetch_row($resqlc) )
 		{
 		  $comm_conso[$distributeur_id] = $comm_conso[$distributeur_id] + $rowc[0];		  
-		  dolibarr_syslog("** Conso générée ".$rowc[0]);
+		  dol_syslog("** Conso générée ".$rowc[0]);
 		}
 	      else
 		{
 		  $error = 151;
-		  dolibarr_syslog("Erreur regul conso");
+		  dol_syslog("Erreur regul conso");
 		}
 	      $db->free($resqlc);
 	    }
 	  else
 	    {
 	      $error = 15;
-	      dolibarr_syslog("Erreur regul conso");
+	      dol_syslog("Erreur regul conso");
 	    }
 	}	  		      
     }
   else
     {
       $error = 16;
-      dolibarr_syslog("Erreur regul conso".$db->error());
-      dolibarr_syslog($sqla);
+      dol_syslog("Erreur regul conso".$db->error());
+      dol_syslog($sqla);
     }
 }
 
@@ -564,7 +564,7 @@ foreach ($distributeurs as $distributeur_id)
   $distributeur = new DistributeurTelephonie($db);
   $distributeur->fetch($distributeur_id);
 
-  dolibarr_syslog($distributeur->nom . " : ".$month_prev."-".$year_prev);
+  dol_syslog($distributeur->nom . " : ".$month_prev."-".$year_prev);
 
   $amount = 0;
 
@@ -616,10 +616,10 @@ foreach ($distributeurs as $distributeur_id)
 	  if (! $db->query($sqli))
 	    {
 	      $error = 17;
-	      dolibarr_syslog("Erreur insertion Commission finale");
+	      dol_syslog("Erreur insertion Commission finale");
 	    }
 
-	  dolibarr_syslog("Commission finale ".$amount);
+	  dol_syslog("Commission finale ".$amount);
 
 	  fputs($fp, "DIS : ".$distributeur_id);
 	  fputs($fp, " Comm final : ".substr($space.$amount,-15)."\n");
@@ -627,27 +627,27 @@ foreach ($distributeurs as $distributeur_id)
       else
 	{
 	  $error = 18;
-	  dolibarr_syslog("Erreur lecture avances");
+	  dol_syslog("Erreur lecture avances");
 	}
       $db->free($resql);
     }
   else
     {
       $error = 19;
-      dolibarr_syslog("Erreur ".$error);
+      dol_syslog("Erreur ".$error);
     }
 }
 
 if ($error == 0)
 {
   $db->commit();
-  dolibarr_syslog("Commit");
+  dol_syslog("Commit");
 }
 else
 {
   $db->rollback();
-  dolibarr_syslog("Rollback", LOG_ERR);
+  dol_syslog("Rollback", LOG_ERR);
 }
-dolibarr_syslog("----------------");
+dol_syslog("----------------");
 fclose($fp);
 ?>

@@ -45,7 +45,7 @@ $h++;
 
 require_once DOL_DOCUMENT_ROOT."/telephonie/telephonie.tarif.grille.class.php";
 
-dolibarr_fiche_head($head, $hselected, "Grille de tarif");
+dol_fiche_head($head, $hselected, "Grille de tarif");
 
 $grille = new TelephonieTarifGrille($db);
 $grille->fetch($_GET["id"]);

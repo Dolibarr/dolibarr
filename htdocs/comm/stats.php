@@ -55,14 +55,14 @@ $msq = '' ;
 // Date de début du graphe
 $date_debut = time() ;
 $annees = "" ;
-if ($conf->global->SOCIETE_FISCAL_MONTH_START < dolibarr_date("m",time()) ){
+if ($conf->global->SOCIETE_FISCAL_MONTH_START < dol_date("m",time()) ){
 	// Si le mois actuel est plus grand, l'année de départ est là même que l'année actuelle
-	$date_debut = mktime(0,0,0,$conf->global->SOCIETE_FISCAL_MONTH_START,1,dolibarr_date("Y",time())) ;
-	$annees = dolibarr_date("Y",time()) ;
+	$date_debut = mktime(0,0,0,$conf->global->SOCIETE_FISCAL_MONTH_START,1,dol_date("Y",time())) ;
+	$annees = dol_date("Y",time()) ;
 } else {
 	// Sinon le début de l'année comptable était l'année d'avant
-	$date_debut = mktime(0,0,0,$conf->global->SOCIETE_FISCAL_MONTH_START,1,dolibarr_date("Y",time())-1) ;
-	$annees = (dolibarr_date("Y",time())-1).' - '.(dolibarr_date("Y",time())) ;
+	$date_debut = mktime(0,0,0,$conf->global->SOCIETE_FISCAL_MONTH_START,1,dol_date("Y",time())-1) ;
+	$annees = (dol_date("Y",time())-1).' - '.(dol_date("Y",time())) ;
 }
 
 /**********************************************
@@ -85,7 +85,7 @@ $recapMoisMR = array() ;
 if($result){
 	if($db->num_rows($result)>0){
 		while($obj = $db->fetch_object($result)){
-			if($obj->date != dolibarr_date("Ym",time())){
+			if($obj->date != dol_date("Ym",time())){
 				$recapAnneeCA[] = array( $obj->month, $obj->CAMois ) ;
 				$recapAnneeMR[] = array( $obj->month, $obj->MRMois ) ;
 			}else{
@@ -113,12 +113,12 @@ $graphfiles=array(
 		),
 		'recapMoisCA'         =>array(
 			'file' => 'recapMoisCA.png', 
-			'label' => $langs->trans('CAOrder').' '.$langs->trans('FromTo',dolibarr_date("01/m/Y",time()),dolibarr_date("d/m/Y",time())),
+			'label' => $langs->trans('CAOrder').' '.$langs->trans('FromTo',dol_date("01/m/Y",time()),dol_date("d/m/Y",time())),
 			'data' => $recapMoisCA
 		),
 		'recapMoisMR'=>array(
 			'file' => 'recapMoisMR.png', 
-			'label' => $langs->trans('MargeOrder').' '.$langs->trans('FromTo',dolibarr_date("01/m/Y",time()),dolibarr_date("d/m/Y",time())),
+			'label' => $langs->trans('MargeOrder').' '.$langs->trans('FromTo',dol_date("01/m/Y",time()),dol_date("d/m/Y",time())),
 			'data' => $recapMoisMR
 		)
 ) ;
@@ -151,7 +151,7 @@ if (! $mesg)
 			}
 			else
 			{
-				dolibarr_print_error($db,'Error for calculating graph on key='.$key.' - '.$product->error);
+				dol_print_error($db,'Error for calculating graph on key='.$key.' - '.$product->error);
 			}
 	}
 	
@@ -164,7 +164,7 @@ if (! $mesg)
  ************/
 // en-tête
 if($mesg) print '<div class="error">'.$mesg.'</div>' ;
-dolibarr_fiche_head(array(array('stats.php',$langs->trans("Commercial"))), 0, $langs->trans("Stats"));
+dol_fiche_head(array(array('stats.php',$langs->trans("Commercial"))), 0, $langs->trans("Stats"));
 /*****************************
  * Rappel Infos du Commercial
  *****************************/
@@ -180,7 +180,7 @@ print '<table class="border" width="100%">
 	</tr>
 </table>' ;
 
-print "</div>" ; // Fin de dolibarr_fiche_head
+print "</div>" ; // Fin de dol_fiche_head
 
 /***************************
  * Affichage des Graphiques
@@ -189,7 +189,7 @@ print "</div>" ; // Fin de dolibarr_fiche_head
 foreach($graphfiles as $graph){
 	// données
 	$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_comm&file='.urlencode($user->id .'/'.$graph['file']);
-	$generateOn = (file_exists($dir."/".$graph['file']))? $langs->trans("GeneratedOn",dolibarr_print_date(filemtime($dir."/".$graph['file']),"dayhour")) : "" ;
+	$generateOn = (file_exists($dir."/".$graph['file']))? $langs->trans("GeneratedOn",dol_print_date(filemtime($dir."/".$graph['file']),"dayhour")) : "" ;
 	
 	// html
 	print '<table class="border" style="float:left;margin:5px;width:48%;min-width:400px;">

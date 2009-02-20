@@ -93,7 +93,7 @@ if ($qualified)
 }
 else
 {
-	dolibarr_print_error('','ErrorBadParameters');
+	dol_print_error('','ErrorBadParameters');
 }
 
 
@@ -104,7 +104,7 @@ function xyzToUnixTimestamp($mysqldate){
 	$year=substr($mysqldate,0,4);
 	$month=substr($mysqldate,4,2);
 	$day=substr($mysqldate,6,2);
-	$unixtimestamp=dolibarr_mktime(12,0,0,$month,$day,$year);
+	$unixtimestamp=dol_mktime(12,0,0,$month,$day,$year);
 	return $unixtimestamp;
 }
 
@@ -112,14 +112,14 @@ function displayBox($selectedDate,$month,$year){
 	global $dolibarr_main_url_root,$langs,$conf;
 	
 	//print "$selectedDate,$month,$year";
-	$thedate=dolibarr_mktime(12,0,0,$month,1,$year);
+	$thedate=dol_mktime(12,0,0,$month,1,$year);
 	//print "thedate=$thedate";
 	$today=mktime();
 	$todayArray=dol_getdate($today);
 	if($selectedDate != "00000000")
 	{ 
 		$selDate=xyzToUnixTimestamp($selectedDate);
-		$xyz=dolibarr_date("Ymd",$selDate);
+		$xyz=dol_date("Ymd",$selDate);
 	}
 	else
 	{
@@ -131,8 +131,8 @@ function displayBox($selectedDate,$month,$year){
 	<tr>
 		<td colspan="6" class="dpHead">
 		<?php
-		$selectMonth = dolibarr_date("F", $thedate);
-		$selectYear = dolibarr_date("Y", $thedate);
+		$selectMonth = dol_date("F", $thedate);
+		$selectYear = dol_date("Y", $thedate);
 		echo $langs->trans($selectMonth).", ".$selectYear;
 		?>
 		</td>
@@ -141,7 +141,7 @@ function displayBox($selectedDate,$month,$year){
 	<tr>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo $month?>','<?php echo $year-1?>','<?php echo $xyz ?>')">&lt;&lt;</td>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php if($month==1) echo "12"; else echo $month-1?>','<?php if($month==1) echo $year-1; else echo $year?>','<?php echo $xyz ?>')">&lt;</td>
-		<td colspan="3" class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo dolibarr_date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>')"><?php echo $langs->trans("MonthOfDay") ?></td>
+		<td colspan="3" class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo dol_date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>')"><?php echo $langs->trans("MonthOfDay") ?></td>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php if($month==12) echo "1"; else echo $month+1?>','<?php if($month==12) echo $year+1; else echo $year;?>','<?php echo $xyz ?>')">&gt;</td>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo $month?>','<?php echo $year+1?>','<?php echo $xyz ?>')">&gt;&gt;</td>
 	</tr>
@@ -189,8 +189,8 @@ function displayBox($selectedDate,$month,$year){
 			
 			// Sur click dans calendrier, appelle fonction dpClickDay
 			echo "<TD class=\"".$dayclass."\"";
-			echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",".dolibarr_date("n",$thedate).",".$mydate["mday"].",tradMonths)\"";
-			echo " onClick=\"dpClickDay(".$mydate["year"].",".dolibarr_date("n",$thedate).",".$mydate["mday"].",'".$conf->format_date_short_java."')\"";
+			echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",".dol_date("n",$thedate).",".$mydate["mday"].",tradMonths)\"";
+			echo " onClick=\"dpClickDay(".$mydate["year"].",".dol_date("n",$thedate).",".$mydate["mday"].",'".$conf->format_date_short_java."')\"";
 			echo ">".sprintf("%02s",$mydate["mday"])."</TD>";
 			$cols++;
 			
@@ -198,7 +198,7 @@ function displayBox($selectedDate,$month,$year){
 			
 			//$thedate=strtotime("tomorrow",$thedate);
 			$day++;
-			$thedate=dolibarr_mktime(12,0,0,$month,$day,$year);
+			$thedate=dol_mktime(12,0,0,$month,$day,$year);
 			if ($thedate == '')
 			{
 				$stoploop=1;

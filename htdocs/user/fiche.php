@@ -750,7 +750,7 @@ else
 		 */
 		$head = user_prepare_head($fuser);
 
-		dolibarr_fiche_head($head, 'user', $langs->trans("User"));
+		dol_fiche_head($head, 'user', $langs->trans("User"));
 
 
 		/*
@@ -924,7 +924,7 @@ else
 				$contact->fetch($fuser->contact_id);
 				if ($fuser->societe_id > 0) print ' / ';
 				else print '<br>';
-				print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->getFullName($langs),32).'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dol_trunc($contact->getFullName($langs),32).'</a>';
 			}
 			print '</td>';
 			print "</tr>\n";
@@ -953,11 +953,11 @@ else
 			print '</td></tr>';
 
 			print '<tr><td width="25%" valign="top">'.$langs->trans("LastConnexion").'</td>';
-			print '<td>'.dolibarr_print_date($fuser->datelastlogin,"dayhour").'</td>';
+			print '<td>'.dol_print_date($fuser->datelastlogin,"dayhour").'</td>';
 			print "</tr>\n";
 
 			print '<tr><td width="25%" valign="top">'.$langs->trans("PreviousConnexion").'</td>';
-			print '<td>'.dolibarr_print_date($fuser->datepreviouslogin,"dayhour").'</td>';
+			print '<td>'.dol_print_date($fuser->datepreviouslogin,"dayhour").'</td>';
 			print "</tr>\n";
 
 			// Autres caracteristiques issus des autres modules
@@ -1092,7 +1092,7 @@ else
 				}
 			}
 			else {
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 			$db->free($resql);
 
@@ -1322,7 +1322,7 @@ else
 				{
 					$contact = new Contact($db);
 					$contact->fetch($fuser->contact_id);
-					print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->getFullName($langs),32).'</a>';
+					print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dol_trunc($contact->getFullName($langs),32).'</a>';
 				}
 			}
 			else

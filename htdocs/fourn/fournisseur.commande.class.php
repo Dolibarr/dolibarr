@@ -87,7 +87,7 @@ class CommandeFournisseur extends Commande
 		if ($ref) $sql.= " WHERE c.ref='".$ref."'";
 		else $sql.= " WHERE c.rowid=".$id;
 
-		dolibarr_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
+		dol_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql) ;
 		if ($resql)
 		{
@@ -133,7 +133,7 @@ class CommandeFournisseur extends Commande
 			$sql.= " ORDER BY l.rowid";
 			//print $sql;
 
-			dolibarr_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
+			dol_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -164,8 +164,8 @@ class CommandeFournisseur extends Commande
 					$ligne->ref_fourn           = $objp->ref_fourn;    // Reference supplier
 
 					$this->lignes[$i]      = $ligne;
-					//dolibarr_syslog("1 ".$ligne->desc);
-					//dolibarr_syslog("2 ".$ligne->product_desc);
+					//dol_syslog("1 ".$ligne->desc);
+					//dol_syslog("2 ".$ligne->product_desc);
 					$i++;
 				}
 				$this->db->free($result);
@@ -175,14 +175,14 @@ class CommandeFournisseur extends Commande
 			else
 			{
 				$this->error=$this->db->error()." sql=".$sql;
-				dolibarr_syslog("CommandeFournisseur::Fetch ".$this->error, LOG_ERR);
+				dol_syslog("CommandeFournisseur::Fetch ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->error()." sql=".$sql;
-			dolibarr_syslog("CommandeFournisseur::Fetch ".$this->error, LOG_ERR);
+			dol_syslog("CommandeFournisseur::Fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -203,7 +203,7 @@ class CommandeFournisseur extends Commande
 		$sql.= ($comment?"'".addslashes($comment)."'":'null');
 		$sql.= ")";
 
-		dolibarr_syslog("FournisseurCommande::log sql=".$sql, LOG_DEBUG);
+		dol_syslog("FournisseurCommande::log sql=".$sql, LOG_DEBUG);
 		if ( $this->db->query($sql) )
 		{
 			return 1;
@@ -211,7 +211,7 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("FournisseurCommande::log ".$this->error, LOG_ERR);
+			dol_syslog("FournisseurCommande::log ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -226,7 +226,7 @@ class CommandeFournisseur extends Commande
 
 		$error=0;
 
-		dolibarr_syslog("CommandeFournisseur::Valid");
+		dol_syslog("CommandeFournisseur::Valid");
 		$result = 0;
 		if ($user->rights->fournisseur->commande->valider)
 		{
@@ -282,7 +282,7 @@ class CommandeFournisseur extends Commande
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dolibarr_syslog("CommandeFournisseur::valid ".$this->error);
+				dol_syslog("CommandeFournisseur::valid ".$this->error);
 				$this->db->rollback();
 				return -1;
 			}
@@ -290,7 +290,7 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			$this->error='Not Authorized';
-			dolibarr_syslog("CommandeFournisseur::valid ".$this->error);
+			dol_syslog("CommandeFournisseur::valid ".$this->error);
 			return -1;
 		}
 	}
@@ -304,7 +304,7 @@ class CommandeFournisseur extends Commande
 	{
 		global $langs,$conf;
 
-		//dolibarr_syslog("CommandeFournisseur::Cancel");
+		//dol_syslog("CommandeFournisseur::Cancel");
 		$result = 0;
 		if ($user->rights->fournisseur->commande->annuler)
 		{
@@ -341,7 +341,7 @@ class CommandeFournisseur extends Commande
 			}
 			else
 			{
-				dolibarr_syslog("CommandeFournisseur::Cancel Error -1");
+				dol_syslog("CommandeFournisseur::Cancel Error -1");
 				$this->db->rollback();
 				$this->error=$this->db->lasterror();
 				return -1;
@@ -349,7 +349,7 @@ class CommandeFournisseur extends Commande
 		}
 		else
 		{
-			dolibarr_syslog("CommandeFournisseur::Cancel Not Authorized");
+			dol_syslog("CommandeFournisseur::Cancel Not Authorized");
 			return -1;
 		}
 	}
@@ -486,7 +486,7 @@ class CommandeFournisseur extends Commande
 				}
 				else
 				{
-					dolibarr_print_error($db,"CommandeFournisseur::getNextNumRef ".$obj->error);
+					dol_print_error($db,"CommandeFournisseur::getNextNumRef ".$obj->error);
 					return -1;
 				}
 			}
@@ -513,7 +513,7 @@ class CommandeFournisseur extends Commande
 
 		$error=0;
 
-		dolibarr_syslog("CommandeFournisseur::Approve");
+		dol_syslog("CommandeFournisseur::Approve");
 
 		if ($user->rights->fournisseur->commande->approuver)
 		{
@@ -580,13 +580,13 @@ class CommandeFournisseur extends Commande
 			{
 				$this->db->rollback();
 				$this->error=$this->db->lasterror();
-				dolibarr_syslog("CommandeFournisseur::Approve Error ",$this->error, LOG_ERR);
+				dol_syslog("CommandeFournisseur::Approve Error ",$this->error, LOG_ERR);
 				return -1;
 			}
 		}
 		else
 		{
-			dolibarr_syslog("CommandeFournisseur::Approve Not Authorized", LOG_ERR);
+			dol_syslog("CommandeFournisseur::Approve Not Authorized", LOG_ERR);
 		}
 		return -1;
 	}
@@ -598,7 +598,7 @@ class CommandeFournisseur extends Commande
 	 */
 	function refuse($user)
 	{
-		dolibarr_syslog("CommandeFournisseur::Refuse");
+		dol_syslog("CommandeFournisseur::Refuse");
 		$result = 0;
 		if ($user->rights->fournisseur->commande->approuver)
 		{
@@ -618,13 +618,13 @@ class CommandeFournisseur extends Commande
 	  }
 	  else
 	  {
-	  	dolibarr_syslog("CommandeFournisseur::Refuse Error -1");
+	  	dol_syslog("CommandeFournisseur::Refuse Error -1");
 	  	$result = -1;
 	  }
 		}
 		else
 		{
-			dolibarr_syslog("CommandeFournisseur::Refuse Not Authorized");
+			dol_syslog("CommandeFournisseur::Refuse Not Authorized");
 		}
 		return $result ;
 	}
@@ -657,7 +657,7 @@ class CommandeFournisseur extends Commande
 	 */
 	function commande($user, $date, $methode, $comment='')
 	{
-		dolibarr_syslog("CommandeFournisseur::Commande");
+		dol_syslog("CommandeFournisseur::Commande");
 		$result = 0;
 		if ($user->rights->fournisseur->commande->commander)
 		{
@@ -672,13 +672,13 @@ class CommandeFournisseur extends Commande
 			}
 			else
 			{
-				dolibarr_syslog("CommandeFournisseur::Commande Error -1", LOG_ERR);
+				dol_syslog("CommandeFournisseur::Commande Error -1", LOG_ERR);
 				$result = -1;
 			}
 		}
 		else
 		{
-			dolibarr_syslog("CommandeFournisseur::Commande User not Authorized", LOG_ERR);
+			dol_syslog("CommandeFournisseur::Commande User not Authorized", LOG_ERR);
 		}
 		return $result ;
 	}
@@ -692,7 +692,7 @@ class CommandeFournisseur extends Commande
 	{
 		global $langs,$conf;
 
-		dolibarr_syslog("CommandeFournisseur::Create soc id=".$this->socid);
+		dol_syslog("CommandeFournisseur::Create soc id=".$this->socid);
 
 		$this->db->begin();
 
@@ -721,14 +721,14 @@ class CommandeFournisseur extends Commande
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 
-				dolibarr_syslog("CommandeFournisseur::Create : Success");
+				dol_syslog("CommandeFournisseur::Create : Success");
 				$this->db->commit();
 				return 1;
 			}
 			else
 			{
 				$this->error=$this->db->error()." - ".$sql;
-				dolibarr_syslog("CommandeFournisseur::Create: Failed -2 - ".$this->error);
+				dol_syslog("CommandeFournisseur::Create: Failed -2 - ".$this->error);
 				$this->db->rollback();
 				return -2;
 			}
@@ -736,7 +736,7 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			$this->error=$this->db->error()." - ".$sql;
-			dolibarr_syslog("CommandeFournisseur::Create: Failed -1 - ".$this->error);
+			dol_syslog("CommandeFournisseur::Create: Failed -1 - ".$this->error);
 			$this->db->rollback();
 			return -1;
 		}
@@ -757,7 +757,7 @@ class CommandeFournisseur extends Commande
 	{
 		global $langs,$mysoc;
 
-		dolibarr_syslog("FournisseurCommande::addline $desc, $pu_ht, $qty, $txtva, $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc");
+		dol_syslog("FournisseurCommande::addline $desc, $pu_ht, $qty, $txtva, $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		// Clean parameters
@@ -804,14 +804,14 @@ class CommandeFournisseur extends Commande
 					{
 						$this->error="No price found for this quantity. Quantity may be too low ?";
 						$this->db->rollback();
-						dolibarr_syslog("FournisseurCommande::addline result=".$result." - ".$this->error, LOG_DEBUG);
+						dol_syslog("FournisseurCommande::addline result=".$result." - ".$this->error, LOG_DEBUG);
 						return -1;
 					}
 					if ($result < -1)
 					{
 						$this->error=$prod->error;
 						$this->db->rollback();
-						dolibarr_syslog("Fournisseur.commande::addline result=".$result." - ".$this->error, LOG_ERR);
+						dol_syslog("Fournisseur.commande::addline result=".$result." - ".$this->error, LOG_ERR);
 						return -1;
 					}
 				}
@@ -856,7 +856,7 @@ class CommandeFournisseur extends Commande
 			$sql.= "'".price2num($total_ttc)."'";
 			$sql.= ")";
 
-			dolibarr_syslog('FournisseurCommande::addline sql='.$sql);
+			dol_syslog('FournisseurCommande::addline sql='.$sql);
 			$resql=$this->db->query($sql);
 			//print $sql;
 			if ($resql)
@@ -870,7 +870,7 @@ class CommandeFournisseur extends Commande
 			{
 				$this->error=$this->db->error();
 				$this->db->rollback();
-				dolibarr_syslog('FournisseurCommande::addline '.$this->error, LOG_ERR);
+				dol_syslog('FournisseurCommande::addline '.$this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -907,7 +907,7 @@ class CommandeFournisseur extends Commande
 		$error = 0;
 		require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
 
-		dolibarr_syslog("CommandeFournisseur::DispatchProduct");
+		dol_syslog("CommandeFournisseur::DispatchProduct");
 
 		if ( ($this->statut == 3 || $this->statut == 4 || $this->statut == 5) && $qty > 0)
 		{
@@ -931,7 +931,7 @@ class CommandeFournisseur extends Commande
 	  	if ($result < 0)
 	  	{
 	  		$this->error=$this->db->error()." - sql=$sql";
-	  		dolibarr_syslog("CommandeFournisseur::DispatchProduct".$this->error);
+	  		dol_syslog("CommandeFournisseur::DispatchProduct".$this->error);
 	  		$error = -2;
 	  	}
 	  	$i++;
@@ -964,7 +964,7 @@ class CommandeFournisseur extends Commande
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idligne;
 			$resql=$this->db->query($sql);
 
-			dolibarr_syslog("Fournisseur.commande.class::delete_line sql=".$sql);
+			dol_syslog("Fournisseur.commande.class::delete_line sql=".$sql);
 			if ($resql)
 	  {
 	  	$result=$this->update_price();
@@ -1024,7 +1024,7 @@ class CommandeFournisseur extends Commande
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 
-			dolibarr_syslog("CommandeFournisseur::delete : Success");
+			dol_syslog("CommandeFournisseur::delete : Success");
 			$this->db->commit();
 			return 1;
 		}
@@ -1075,7 +1075,7 @@ class CommandeFournisseur extends Commande
 	{
 		$result = 0;
 
-		dolibarr_syslog("CommandeFournisseur::Livraison");
+		dol_syslog("CommandeFournisseur::Livraison");
 
 		if ($user->rights->fournisseur->commande->receptionner && $date < gmmktime())
 		{
@@ -1093,7 +1093,7 @@ class CommandeFournisseur extends Commande
 				$sql.= " WHERE rowid = ".$this->id;
 				$sql.= " AND (fk_statut = 3 OR fk_statut = 4)";
 
-				dolibarr_syslog("CommandeFournisseur::Livraison sql=".$sql);
+				dol_syslog("CommandeFournisseur::Livraison sql=".$sql);
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -1106,19 +1106,19 @@ class CommandeFournisseur extends Commande
 				{
 					$this->db->rollback();
 					$this->error=$this->db->lasterror();
-					dolibarr_syslog("CommandeFournisseur::Livraison Error ".$this->error, LOG_ERR);
+					dol_syslog("CommandeFournisseur::Livraison Error ".$this->error, LOG_ERR);
 					$result = -1;
 				}
 			}
 			else
 			{
-				dolibarr_syslog("CommandeFournisseur::Livraison Error -2", LOG_ERR);
+				dol_syslog("CommandeFournisseur::Livraison Error -2", LOG_ERR);
 				$result = -2;
 			}
 		}
 		else
 		{
-			dolibarr_syslog("CommandeFournisseur::Livraison Not Authorized");
+			dol_syslog("CommandeFournisseur::Livraison Not Authorized");
 		}
 		return $result ;
 	}
@@ -1167,7 +1167,7 @@ class CommandeFournisseur extends Commande
 	 */
 	function UpdateNote($user, $note, $note_public)
 	{
-		dolibarr_syslog("CommandeFournisseur::UpdateNote");
+		dol_syslog("CommandeFournisseur::UpdateNote");
 
 		$result = 0;
 
@@ -1184,7 +1184,7 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("CommandeFournisseur::UpdateNote "+$this->error);
+			dol_syslog("CommandeFournisseur::UpdateNote "+$this->error);
 			$result = -1;
 		}
 
@@ -1224,7 +1224,7 @@ class CommandeFournisseur extends Commande
 		}
 		else
 		{
-			dolibarr_syslog("ReadApprobators Erreur");
+			dol_syslog("ReadApprobators Erreur");
 		}
 	}
 
@@ -1242,7 +1242,7 @@ class CommandeFournisseur extends Commande
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0)
 	{
-		dolibarr_syslog("CommandeFournisseur::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva");
+		dol_syslog("CommandeFournisseur::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
@@ -1292,7 +1292,7 @@ class CommandeFournisseur extends Commande
 			$sql.= ",total_ttc='".price2num($total_ttc)."'";
 			$sql.= " WHERE rowid = ".$rowid;
 
-			dolibarr_syslog("CommandeFournisseur::updateline sql=".$sql);
+			dol_syslog("CommandeFournisseur::updateline sql=".$sql);
 			$result = $this->db->query( $sql);
 			if ($result > 0)
 			{
@@ -1305,7 +1305,7 @@ class CommandeFournisseur extends Commande
 			else
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("CommandeFournisseur::updateline ".$this->error);
+				dol_syslog("CommandeFournisseur::updateline ".$this->error);
 				$this->db->rollback();
 				return -1;
 			}
@@ -1313,7 +1313,7 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			$this->error="Order status makes operation forbidden";
-			dolibarr_syslog("CommandeFournisseur::updateline ".$this->error);
+			dol_syslog("CommandeFournisseur::updateline ".$this->error);
 			return -2;
 		}
 	}
@@ -1327,7 +1327,7 @@ class CommandeFournisseur extends Commande
 	{
 		global $user,$langs;
 
-		dolibarr_syslog("CommandeFournisseur::initAsSpecimen");
+		dol_syslog("CommandeFournisseur::initAsSpecimen");
 
 		// Charge tableau des id de soci�t� socids
 		$socids = array();
@@ -1464,7 +1464,7 @@ class CommandeFournisseurLigne extends CommandeLigne
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -1483,7 +1483,7 @@ class CommandeFournisseurLigne extends CommandeLigne
 		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dolibarr_syslog("CommandeFournisseurLigne.class.php::update_total sql=$sql");
+		dol_syslog("CommandeFournisseurLigne.class.php::update_total sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1494,7 +1494,7 @@ class CommandeFournisseurLigne extends CommandeLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("CommandeFournisseurLigne.class.php::update_total Error ".$this->error);
+			dol_syslog("CommandeFournisseurLigne.class.php::update_total Error ".$this->error);
 			$this->db->rollback();
 			return -2;
 		}

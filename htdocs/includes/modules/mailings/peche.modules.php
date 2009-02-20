@@ -80,7 +80,7 @@ class mailing_peche extends MailingTargets
 	{
 		global $langs;
 		return $langs->trans('LineInFile',$id);
-		//' - '.$langs->trans("File").' '.dolibarr_trunc( ,12);
+		//' - '.$langs->trans("File").' '.dol_trunc( ,12);
 	}
 
 
@@ -181,7 +181,7 @@ class mailing_peche extends MailingTargets
 					return -1;
 				}
 
-				dolibarr_syslog(get_class($this)."::add_to_target mailing ".$cpt." targets found");
+				dol_syslog(get_class($this)."::add_to_target mailing ".$cpt." targets found");
 			}
 			else if ($result < 0)
 			{

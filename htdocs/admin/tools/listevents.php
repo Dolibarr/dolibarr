@@ -155,7 +155,7 @@ if ($result)
 		print "<tr $bc[$var]>";
 
 		// Date
-		print '<td align="left" nowrap="nowrap">'.dolibarr_print_date($obj->dateevent,'%Y-%m-%d %H:%M:%S').'</td>';
+		print '<td align="left" nowrap="nowrap">'.dol_print_date($obj->dateevent,'%Y-%m-%d %H:%M:%S').'</td>';
 
 		// Code
 		print '<td>'.$obj->type.'</td>';
@@ -208,7 +208,7 @@ if ($result)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 $db->close();

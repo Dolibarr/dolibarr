@@ -94,7 +94,7 @@ if ($_GET["id"])
       $head[$h][1] = $langs->trans("CommercialCard");
       $h++;
       	      
-      dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+      dol_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
       print($mesg);
       print '<table class="border" width="100%">';
@@ -160,7 +160,7 @@ if ($_GET["id"])
                 print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
 
                 print '</a>';
-                print '<br>'.$langs->trans("File").': '.dolibarr_trunc($filename,16);
+                print '<br>'.$langs->trans("File").': '.dol_trunc($filename,16);
                 if ($user->rights->produit->creer)
                 {
                     print '<br>'.'<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$filename).'">'.img_delete().'</a>';

@@ -63,7 +63,7 @@ if ( $db->query( $sql) )
 	    {
 	      print "<td>Anonyme Anonyme</td>\n";
 	    }
-	  print "<td>".dolibarr_print_date($objp->datedon)."</td>\n";
+	  print "<td>".dol_print_date($objp->datedon)."</td>\n";
 	  print '<td align="right">'.number_format($objp->amount,2,'.',' ').' '.$langs->trans("Currency".$conf->monnaie).'</td>';
 	  print "</tr>";
 	  $i++;
@@ -78,7 +78,7 @@ if ( $db->query( $sql) )
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 $db->close();

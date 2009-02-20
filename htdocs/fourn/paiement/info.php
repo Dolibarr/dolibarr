@@ -44,7 +44,7 @@ $head[$h][1] = $langs->trans("Info");
 $hselected = $h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("SupplierPayment"));
+dol_fiche_head($head, $hselected, $langs->trans("SupplierPayment"));
 
 
 /*

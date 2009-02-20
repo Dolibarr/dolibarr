@@ -54,7 +54,7 @@ $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/type.php';
 $head[$h][1] = "Méthode de paiement";
 $h++;
 
-dolibarr_fiche_head($head, $hselected, "Satistiques Factures $year");
+dol_fiche_head($head, $hselected, "Satistiques Factures $year");
 print '<div class="onglet_inf">';
 print '<a class="onglet_inf" href="marge.php?year=2004">2004</a>';
 print '<a class="onglet_inf" href="marge.php?year=2005">2005</a>';

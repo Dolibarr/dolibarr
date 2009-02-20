@@ -100,7 +100,7 @@ if ($allowinsertbankafter && $_POST["action"] == '2bank' && $_POST["rowid"] !=''
 				$insertid=$acct->addline($dateop, $_POST["paymenttypeid"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE,$user);
 				if ($insertid < 0)
 				{
-					dolibarr_print_error($db,$acct->error);
+					dol_print_error($db,$acct->error);
 				}
 				else
 				{
@@ -111,7 +111,7 @@ if ($allowinsertbankafter && $_POST["action"] == '2bank' && $_POST["rowid"] !=''
 					$sql.=" SET fk_bank=".$insertid.",";
 					$sql.=" note='".addslashes($_POST["label"])."'";
 					$sql.=" WHERE rowid=".$_POST["rowid"];
-					dolibarr_syslog("cotisations sql=".$sql);
+					dol_syslog("cotisations sql=".$sql);
 					$result = $db->query($sql);
 					if ($result)
 					{
@@ -121,14 +121,14 @@ if ($allowinsertbankafter && $_POST["action"] == '2bank' && $_POST["rowid"] !=''
 					else
 					{
 						$db->rollback();
-						dolibarr_print_error($db);
+						dol_print_error($db);
 					}
 				}
 	        }
 	        else
 	        {
 				$db->rollback();
-	            dolibarr_print_error($db,$cotisation->error);
+	            dol_print_error($db,$cotisation->error);
 	        }
 		}
     }
@@ -226,14 +226,14 @@ if ($result)
 		print '<td>';
         if ($allowinsertbankafter && $user->rights->banque->modifier && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
 		{
-			print "<input name=\"label\" type=\"text\" class=\"flat\" size=\"30\" value=\"".$langs->trans("Subscriptions").' '.dolibarr_print_date($objp->dateadh,"%Y")."\" >\n";
+			print "<input name=\"label\" type=\"text\" class=\"flat\" size=\"30\" value=\"".$langs->trans("Subscriptions").' '.dol_print_date($objp->dateadh,"%Y")."\" >\n";
 	                //	print "<td><input name=\"debit\" type=\"text\" size=8></td>";
 	                //	print "<td><input name=\"credit\" type=\"text\" size=8></td>";
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 		}
 		else
 		{
-			print dolibarr_trunc($objp->note,32);
+			print dol_trunc($objp->note,32);
 		}
 		print '</td>';
 
@@ -269,10 +269,10 @@ if ($result)
         }
 
 		// Date start
-		print '<td align="center">'.dolibarr_print_date($objp->dateadh,'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($objp->dateadh,'day')."</td>\n";
         
 		// Date end
-		print '<td align="center">'.dolibarr_print_date($objp->datef,'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($objp->datef,'day')."</td>\n";
 
 		// Price
 		print '<td align="right">'.price($objp->cotisation).'</td>';
@@ -308,7 +308,7 @@ if ($result)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 

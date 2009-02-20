@@ -72,7 +72,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$i = 0;
 		$this->db = $DB;
 
-		dolibarr_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".$societe->nom);
+		dol_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".$societe->nom);
 
 		// Regle gestion compte compta
 		$codetouse='';
@@ -106,7 +106,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 			// Pour retour
 			$this->code=$codetouse;
 		}
-		dolibarr_syslog("mod_codecompta_aquarium::get_code found code=".$this->code);
+		dol_syslog("mod_codecompta_aquarium::get_code found code=".$this->code);
 		return $is_dispo;
 	}
 
@@ -136,19 +136,19 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		{
 			if ($db->num_rows($resql) == 0)
 			{
-				dolibarr_syslog("mod_codecompta_aquarium::verif code '".$code."' available");
+				dol_syslog("mod_codecompta_aquarium::verif code '".$code."' available");
 				return 1;	// Dispo
 			}
 			else
 			{
-				dolibarr_syslog("mod_codecompta_aquarium::verif code '".$code."' not available");
+				dol_syslog("mod_codecompta_aquarium::verif code '".$code."' not available");
 				return 0;	// Non dispo
 			}
 		}
 		else
 		{
 			$this->error=$db->error()." sql=".$sql;
-			dolibarr_syslog("mod_codecompta_aquarium::verif error".$this->error);
+			dol_syslog("mod_codecompta_aquarium::verif error".$this->error);
 			return -1;		// Erreur
 		}
 	}

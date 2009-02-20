@@ -77,7 +77,7 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 				$project = new Project($db);
 				$result = $project->fetch($task->fk_projet);
 
-		  		$date = dolibarr_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
+		  		$date = dol_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
 		  		$project->TaskAddTime($user, $id , $post, $date);
 		  	}
 		  	else

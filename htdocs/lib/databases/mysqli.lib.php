@@ -99,7 +99,7 @@ class DoliDb
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error="Mysqli PHP functions for using Mysqli driver are not available in this version of PHP. Try to use another driver.";
-			dolibarr_syslog("DoliDB::DoliDB : Mysqli PHP functions for using Mysqli driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
+			dol_syslog("DoliDB::DoliDB : Mysqli PHP functions for using Mysqli driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -108,7 +108,7 @@ class DoliDb
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
-			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
+			dol_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -127,7 +127,7 @@ class DoliDb
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=mysqli_connect_error();
-			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysqli_connect_error=".$this->error,LOG_ERR);
+			dol_syslog("DoliDB::DoliDB : Erreur Connect mysqli_connect_error=".$this->error,LOG_ERR);
 		}
 
 		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
@@ -155,7 +155,7 @@ class DoliDb
 				$this->database_name = '';
 				$this->ok = 0;
 				$this->error=$this->error();
-				dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
+				dol_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
 			}
 		}
 		else
@@ -198,7 +198,7 @@ class DoliDb
 	 */
 	function select_db($database)
 	{
-		dolibarr_syslog("DoliDB::select_db database=".$database, LOG_DEBUG);
+		dol_syslog("DoliDB::select_db database=".$database, LOG_DEBUG);
 		return mysqli_select_db($this->db,$database);
 	}
 
@@ -215,7 +215,7 @@ class DoliDb
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
-		dolibarr_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name",LOG_DEBUG);
+		dol_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name",LOG_DEBUG);
 
 		$newhost=$host;
 		$newport=$port;
@@ -275,7 +275,7 @@ class DoliDb
 	 */
 	function close()
 	{
-		dolibarr_syslog("DoliDB::disconnect",LOG_DEBUG);
+		dol_syslog("DoliDB::disconnect",LOG_DEBUG);
 		return mysqli_close($this->db);
 	}
 
@@ -292,7 +292,7 @@ class DoliDb
 			if ($ret)
 			{
 				$this->transaction_opened++;
-				dolibarr_syslog("BEGIN Transaction",LOG_DEBUG);
+				dol_syslog("BEGIN Transaction",LOG_DEBUG);
 			}
 			return $ret;
 		}
@@ -316,7 +316,7 @@ class DoliDb
 			if ($ret)
 			{
 				$this->transaction_opened=0;
-				dolibarr_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
+				dol_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
 			}
 			return $ret;
 		}
@@ -338,7 +338,7 @@ class DoliDb
 		{
 			$ret=$this->query("ROLLBACK");
 			$this->transaction_opened=0;
-			dolibarr_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
+			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
 			return $ret;
 		}
 		else
@@ -560,7 +560,7 @@ class DoliDb
 	{
 		$string=eregi_replace('[^0-9]','',$string);
 		$tmp=$string.'000000';
-		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
+		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 		return $date;
 	}
 
@@ -585,7 +585,7 @@ class DoliDb
 	{
 		$string=eregi_replace('[^0-9]','',$string);
 		$tmp=$string.'000000';
-		$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
+		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
 		return $date;
 	}
 	*/
@@ -750,14 +750,14 @@ class DoliDb
 		$sql = 'CREATE DATABASE '.$database;
 		$sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
 
-		dolibarr_syslog($sql,LOG_DEBUG);
+		dol_syslog($sql,LOG_DEBUG);
 		$ret=$this->query($sql);
 		if (! $ret)
 		{
 			// We try again for compatibility with Mysql < 4.1.1
 			$sql = 'CREATE DATABASE '.$database;
 			$ret=$this->query($sql);
-			dolibarr_syslog($sql,LOG_DEBUG);
+			dol_syslog($sql,LOG_DEBUG);
 		}
 		return $ret;
 	}
@@ -853,7 +853,7 @@ class DoliDb
 		$sql .= ",".implode(',',$sqlk);
 		$sql .=") type=".$type;
 
-		dolibarr_syslog($sql,LOG_DEBUG);
+		dol_syslog($sql,LOG_DEBUG);
 		if(! $this -> query($sql))
 		return -1;
 		else
@@ -870,7 +870,7 @@ class DoliDb
 	{
 		$sql="DESC ".$table." ".$field;
 
-		dolibarr_syslog($sql,LOG_DEBUG);
+		dol_syslog($sql,LOG_DEBUG);
 		$this->results = $this->query($sql);
 		return $this->results;
 	}
@@ -904,7 +904,7 @@ class DoliDb
 		$sql  .= " ".$field_desc['extra'];
 		$sql .= " ".$field_position;
 
-		dolibarr_syslog($sql,LOG_DEBUG);
+		dol_syslog($sql,LOG_DEBUG);
 		if(! $this -> query($sql))
 		return -1;
 		else
@@ -921,7 +921,7 @@ class DoliDb
 	function DDLDropField($table,$field_name)
 	{
 		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
-		dolibarr_syslog($sql,LOG_DEBUG);
+		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))
 		{
 			$this->error=$this->lasterror();
@@ -946,7 +946,7 @@ class DoliDb
 		$sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_user',password('$dolibarr_main_db_pass')";
 		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
 
-		dolibarr_syslog("mysqli.lib::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
+		dol_syslog("mysqli.lib::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
 		if (! $resql)
 		{
@@ -958,7 +958,7 @@ class DoliDb
 		$sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_name','$dolibarr_main_db_user'";
 		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
 
-		dolibarr_syslog("mysqli.lib::DDLCreateUser sql=".$sql);
+		dol_syslog("mysqli.lib::DDLCreateUser sql=".$sql);
 		$resql=$this->query($sql);
 		if (! $resql)
 		{
@@ -967,7 +967,7 @@ class DoliDb
 
 		$sql="FLUSH Privileges";
 
-		dolibarr_syslog("mysqli.lib::DDLCreateUser sql=".$sql);
+		dol_syslog("mysqli.lib::DDLCreateUser sql=".$sql);
 		$resql=$this->query($sql);
 
 		return 1;

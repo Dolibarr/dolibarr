@@ -120,7 +120,7 @@ class Task // extends CommonObject
 
 		$this->db->begin();
 		
-	   	dolibarr_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         
@@ -147,7 +147,7 @@ class Task // extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dolibarr_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}	
 			$this->db->rollback();
@@ -184,7 +184,7 @@ class Task // extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
         $sql.= " WHERE t.rowid = ".$id;
     
-    	dolibarr_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -211,7 +211,7 @@ class Task // extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -259,7 +259,7 @@ class Task // extends CommonObject
 
 		$this->db->begin();
         
-		dolibarr_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         
@@ -284,7 +284,7 @@ class Task // extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dolibarr_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}	
 			$this->db->rollback();
@@ -313,7 +313,7 @@ class Task // extends CommonObject
 		
 		if ($this->hasChildren() > 0)
 		{
-			dolibarr_syslog(get_class($this)."::delete Can't delete record as it has some child", LOG_WARNING);
+			dol_syslog(get_class($this)."::delete Can't delete record as it has some child", LOG_WARNING);
 			$this->error='ErrorRecordHasChildren';
 			$this->db->rollback();
 			return 0;
@@ -322,7 +322,7 @@ class Task // extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task";
 		$sql.= " WHERE rowid=".$this->id;
 		
-		dolibarr_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete sql=".$sql);
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		
@@ -347,7 +347,7 @@ class Task // extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dolibarr_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}	
 			$this->db->rollback();
@@ -371,7 +371,7 @@ class Task // extends CommonObject
 		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."projet_task";
 		$sql.= " WHERE fk_task_parent=".$this->id;
 		
-		dolibarr_syslog(get_class($this)."::hasChildren sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::hasChildren sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		else

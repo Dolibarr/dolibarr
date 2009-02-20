@@ -84,7 +84,7 @@ class CommercialTelephonie {
 		}
 	      else
 		{
-		  dolibarr_syslog("DistributeurTelephonie::Create");
+		  dol_syslog("DistributeurTelephonie::Create");
 		  $this->error_string["prenom"] = "Erreur SQL : $sql";
 		  $this->error_string["nom"] = $this->db->error();
 		  $error++;

@@ -46,7 +46,7 @@ $soc = new Societe($db, $fac->socid);
 $soc->fetch($fac->socid);
 
 $head = facture_prepare_head($fac);
-dolibarr_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"));
+dol_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"));
 
 
 print '<table width="100%"><tr><td>';

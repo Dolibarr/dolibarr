@@ -1005,7 +1005,7 @@ foreach ($groupes as $keygroupe => $groupe)
     }
 
   $workbook->close();
-  dolibarr_syslog("Close $fname");
+  dol_syslog("Close $fname");
 
 }
 

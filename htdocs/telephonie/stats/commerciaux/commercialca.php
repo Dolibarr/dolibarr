@@ -61,7 +61,7 @@ if ($_GET["commid"])
   $head[$h][1] = "Lignes";
   $h++;
 
-  dolibarr_fiche_head($head, $hselected, "Commerciaux");
+  dol_fiche_head($head, $hselected, "Commerciaux");
   stat_year_bar($year);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';

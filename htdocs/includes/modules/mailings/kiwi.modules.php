@@ -76,7 +76,7 @@ class mailing_kiwi extends MailingTargets
             $i = 0;
             $j = 0;
 
-            dolibarr_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
+            dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
 
             $old = '';
             while ($i < $num)
@@ -101,7 +101,7 @@ class mailing_kiwi extends MailingTargets
         }
         else
         {
-            dolibarr_syslog($this->db->error());
+            dol_syslog($this->db->error());
             $this->error=$this->db->error();
             return -1;
         }

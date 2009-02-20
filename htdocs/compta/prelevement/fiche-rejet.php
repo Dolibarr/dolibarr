@@ -67,7 +67,7 @@ if ($_GET["id"])
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
-      dolibarr_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
+      dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
 
       print '<table class="border" width="100%">';
       print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
@@ -156,7 +156,7 @@ if ($resql)
 }
 else 
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 $db->close();

@@ -100,7 +100,7 @@ class box_fournisseurs extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
 
                     $this->info_box_contents[$i][2] = array('td' => 'align="right"',
-					'text' => dolibarr_print_date($datem, "day"));
+					'text' => dol_print_date($datem, "day"));
 
                     $i++;
                 }
@@ -108,7 +108,7 @@ class box_fournisseurs extends ModeleBoxes {
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedSuppliers"));
             }
             else {
-                dolibarr_print_error($db);
+                dol_print_error($db);
             }
         }
         else {

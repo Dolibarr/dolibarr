@@ -131,7 +131,7 @@ if ($_GET["action"] == 'delete')
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -171,7 +171,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	 $head[$h][1] = $langs->trans("MailHistory");
 	 $h++;
 	 */
-	dolibarr_fiche_head($head, $hselected, $langs->trans("Mailing"));
+	dol_fiche_head($head, $hselected, $langs->trans("Mailing"));
 
 
 	print '<table class="border" width="100%">';
@@ -444,7 +444,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	print '</form>';

@@ -112,7 +112,7 @@ llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 $head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);
-dolibarr_fiche_head($head, 'price', $titre);
+dol_fiche_head($head, 'price', $titre);
 
 
 print '<table class="border" width="100%">';
@@ -401,7 +401,7 @@ if ($result)
 			$var=!$var;
 			print "<tr $bc[$var]>";
 			// Date
-			print "<td>".dolibarr_print_date($objp->dp,"dayhour")."</td>";
+			print "<td>".dol_print_date($objp->dp,"dayhour")."</td>";
 
 			// Price level
 			if ($conf->global->PRODUIT_MULTIPRICES)
@@ -443,7 +443,7 @@ if ($result)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 

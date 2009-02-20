@@ -87,7 +87,7 @@ $as["week"] = 1;
 $as["month"] = 2;
 $as["year"] = 3;
 
-dolibarr_fiche_head($head, $as[$period], $soc->nom);	  
+dol_fiche_head($head, $as[$period], $soc->nom);	  
 
 print '<table class="noborder" width="100%">';
 

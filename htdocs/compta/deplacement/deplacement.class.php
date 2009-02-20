@@ -80,7 +80,7 @@ class Deplacement extends CommonObject
 		$sql.= " (datec, fk_user_author, fk_user, type)";
 		$sql.= " VALUES (".$this->db->idate(mktime()).", ".$user->id.", ".$this->fk_user.", '".$this->type."')";
 
-		dolibarr_syslog("Deplacement::create sql=".$sql, LOG_DEBUG);
+		dol_syslog("Deplacement::create sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -138,7 +138,7 @@ class Deplacement extends CommonObject
 		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Deplacement::update sql=".$sql, LOG_DEBUG);
+		dol_syslog("Deplacement::update sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -160,7 +160,7 @@ class Deplacement extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " WHERE rowid = ".$id;
 
-		dolibarr_syslog("Deplacement::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("Deplacement::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql) ;
 		if ( $result )
 		{

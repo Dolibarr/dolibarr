@@ -77,7 +77,7 @@ $head[$h][1] = $title;
 $head[$h][2] = 'tasks';
 $h++;
 
-dolibarr_fiche_head($head, 'tasks', $title);
+dol_fiche_head($head, 'tasks', $title);
 
 $projet = new Project($db);
 $tasksarray=$projet->getTasksArray($_GET["mode"]=='mine'?$user:0);

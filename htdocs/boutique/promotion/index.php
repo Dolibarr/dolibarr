@@ -103,7 +103,7 @@ if ($resql)
 	  print '<img src="/theme/'.$conf->theme.'/img/icon_status_green_light.png" border="0"></a></td>';
 	  print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_red.png" border="0" alt="inactif"></td>';
 	}
-      print "<td>".dolibarr_print_date($objp->fin,'day')."</td>";
+      print "<td>".dol_print_date($objp->fin,'day')."</td>";
       print '<td align="right">'.price($objp->products_price)."</td>";
       print '<td align="right">'.price($objp->specials_new_products_price)."</td>";
       print "</tr>";
@@ -114,7 +114,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($dbosc);
+	dol_print_error($dbosc);
 }
 $dbosc->close();
 

@@ -121,20 +121,20 @@ class Fournisseur extends Societe
 	 */
 	function create_commande($user)
 	{
-		dolibarr_syslog("Fournisseur::Create_Commande");
+		dol_syslog("Fournisseur::Create_Commande");
 		$comm = new CommandeFournisseur($this->db);
 		$comm->socid = $this->id;
 
 		if ($comm->create($user) > 0)
 		{
-			dolibarr_syslog("Fournisseur::Create_Commande : Success");
+			dol_syslog("Fournisseur::Create_Commande : Success");
 			$this->single_open_commande = $comm->id;
 
 			return $comm->id;
 		}
 		else
 		{
-			dolibarr_syslog("Fournisseur::Create_Commande : Failed");
+			dol_syslog("Fournisseur::Create_Commande : Failed");
 			return -1;
 		}
 	}
@@ -149,7 +149,7 @@ class Fournisseur extends Societe
 
 		$nbc = $this->nb_open_commande();
 
-		dolibarr_syslog("Fournisseur::ProductCommande : nbc = ".$nbc);
+		dol_syslog("Fournisseur::ProductCommande : nbc = ".$nbc);
 
 		if ($nbc == 0)
 		{
@@ -206,7 +206,7 @@ class Fournisseur extends Societe
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -221,7 +221,7 @@ class Fournisseur extends Societe
 	 */
 	function CreateCategory($user, $name)
 	{
-		dolibarr_syslog("Fournisseur::CreateCategory");
+		dol_syslog("Fournisseur::CreateCategory");
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label,visible,type)";
 		$sql.= " VALUES ";
@@ -231,12 +231,12 @@ class Fournisseur extends Societe
 
 		if ($result == 1)
 		{
-			dolibarr_syslog("Fournisseur::CreateCategory : Success");
+			dol_syslog("Fournisseur::CreateCategory : Success");
 			return 0;
 		}
 		else
 		{
-			dolibarr_syslog("Fournisseur::CreateCategory : Failed (".$this->db->error().")");
+			dol_syslog("Fournisseur::CreateCategory : Failed (".$this->db->error().")");
 			return -1;
 		}
 	}
@@ -269,7 +269,7 @@ class Fournisseur extends Societe
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$this->error=$this->db->error();
 
 		}

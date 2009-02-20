@@ -809,8 +809,8 @@ function top_menu($head, $title='', $target='')
 	$htmltext.='<br><b>'.$langs->trans("Type").'</b>: '.($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
 	$htmltext.='<br>';
 	$htmltext.='<br><u>'.$langs->trans("Connection").'</u>';
-	$htmltext.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"dayhour");
-	$htmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dolibarr_print_date($user->datepreviouslogin,"dayhour");
+	$htmltext.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dol_print_date($user->datelastlogin,"dayhour");
+	$htmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dol_print_date($user->datepreviouslogin,"dayhour");
 	$htmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
 	$htmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
 	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.$langs->getDefaultLang();
@@ -1048,6 +1048,10 @@ function llxFooter($foot='',$limitIEbug=1)
 
 	print "\n";
     if ($foot) print '<!-- '.$foot.' -->'."\n";
+
+    // Add Xdebug coverage of code
+    if (defined('XDEBUGCOVERAGE')) { var_dump(xdebug_get_code_coverage()); }
+
 	print "</body>\n";
 	print "</html>\n";
 }

@@ -52,7 +52,7 @@ $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/type.php';
 $head[$h][1] = "Méthode de paiement";
 $h++;
 
-dolibarr_fiche_head($head, $hselected, "Satistiques Factures");
+dol_fiche_head($head, $hselected, "Satistiques Factures");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 

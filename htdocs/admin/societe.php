@@ -47,7 +47,7 @@ if ($_GET["action"] == 'setcodeclient')
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -60,7 +60,7 @@ if ($_GET["action"] == 'setcodecompta')
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -73,7 +73,7 @@ if ($_POST["action"] == 'usesearchtoselectcompany')
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 

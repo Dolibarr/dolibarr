@@ -138,7 +138,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 				if ($result < 0)
 				{
-					dolibarr_print_error($db,$delivery->error);
+					dol_print_error($db,$delivery->error);
 				}
 			}
 

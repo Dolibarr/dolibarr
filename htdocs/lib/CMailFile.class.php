@@ -78,8 +78,8 @@ class CMailFile
 		// If ending method not defined
 		if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';
 
-		dolibarr_syslog("CMailFile::CMailfile: MAIN_MAIL_SENDMODE=".$conf->global->MAIN_MAIL_SENDMODE." charset=".$conf->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to", LOG_DEBUG);
-		dolibarr_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml", LOG_DEBUG);
+		dol_syslog("CMailFile::CMailfile: MAIN_MAIL_SENDMODE=".$conf->global->MAIN_MAIL_SENDMODE." charset=".$conf->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to", LOG_DEBUG);
+		dol_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml", LOG_DEBUG);
 
 		// Detect if message is HTML (use fast method)
 		if ($msgishtml == -1)
@@ -98,7 +98,7 @@ class CMailFile
 			if ($filename_list[$i])
 			{
 				$this->atleastonefile=1;
-				dolibarr_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i], LOG_DEBUG);
+				dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i], LOG_DEBUG);
 			}
 		}
 
@@ -217,9 +217,9 @@ class CMailFile
 
 				// Use mail php function (default PHP method)
 				// ------------------------------------------
-				dolibarr_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject, LOG_DEBUG);
-				dolibarr_syslog("CMailFile::sendfile header=\n".$this->headers, LOG_DEBUG);
-				//dolibarr_syslog("CMailFile::sendfile message=\n".$message);
+				dol_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject, LOG_DEBUG);
+				dol_syslog("CMailFile::sendfile header=\n".$this->headers, LOG_DEBUG);
+				//dol_syslog("CMailFile::sendfile message=\n".$message);
 
 
 				if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
@@ -240,12 +240,12 @@ class CMailFile
 				if (! $dest)
 				{
 					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
-					dolibarr_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
+					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
 				}
 				else
 				{
-					dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
-					//dolibarr_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
+					dol_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
+					//dol_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
 
 					$bounce = '';
 					if ($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F)
@@ -261,11 +261,11 @@ class CMailFile
 					if (! $res)
 					{
 						$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
-						dolibarr_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
+						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
 					}
 					else
 					{
-						dolibarr_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
+						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 					}
 				}
 
@@ -300,7 +300,7 @@ class CMailFile
 				if (! $dest)
 				{
 					$this->error="Failed to send mail to SMTP=".$conf->global->MAIN_MAIL_SMTP_SERVER.", PORT=".$conf->global->MAIN_MAIL_SMTP_PORT."<br>Recipient address '$dest' invalid";
-					dolibarr_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
+					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
 				}
 				else
 				{
@@ -329,7 +329,7 @@ class CMailFile
 		else
 		{
 			$this->error='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
-			dolibarr_syslog("CMailFile::sendfile: ".$this->error);
+			dol_syslog("CMailFile::sendfile: ".$this->error);
 		}
 
 		error_reporting($errorlevel);              // Reactive niveau erreur origine
@@ -357,7 +357,7 @@ class CMailFile
 		else
 		{
 			$this->error="Error: Can't read file '$sourcefile'";
-			dolibarr_syslog("CMailFile::encode_file: ".$this->error, LOG_ERR);
+			dol_syslog("CMailFile::encode_file: ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -428,7 +428,7 @@ class CMailFile
 			$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 		}
 
-		dolibarr_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out, LOG_DEBUG);
+		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out, LOG_DEBUG);
 		return $out;
 	}
 
@@ -456,7 +456,7 @@ class CMailFile
 			}
 		}
 		//$out.= $this->eol;
-		dolibarr_syslog("CMailFile::write_mimeheaders mime_header=\n".$out, LOG_DEBUG);
+		dol_syslog("CMailFile::write_mimeheaders mime_header=\n".$out, LOG_DEBUG);
 		return $out;
 	}
 
@@ -517,7 +517,7 @@ class CMailFile
 		{
 			if ($filename_list[$i])
 			{
-				dolibarr_syslog("CMailFile::write_files: i=$i");
+				dol_syslog("CMailFile::write_files: i=$i");
 				$encoded = $this->_encode_file($filename_list[$i]);
 				if ($encoded >= 0)
 				{

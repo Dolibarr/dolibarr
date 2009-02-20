@@ -89,7 +89,7 @@ class box_actions extends ModeleBoxes {
 			$sql.= " ORDER BY a.datec DESC";
 			$sql.= $db->plimit($max, 0);
 
-			dolibarr_syslog("Box_actions::loadBox sql=".$sql, LOG_DEBUG);
+			dol_syslog("Box_actions::loadBox sql=".$sql, LOG_DEBUG);
 			$result = $db->query($sql);
 			if ($result)
 			{
@@ -113,16 +113,16 @@ class box_actions extends ModeleBoxes {
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left" nowrap="1"',
-					'text' => dolibarr_trunc($label,12),
+					'text' => dol_trunc($label,12),
 					'text2'=> $late,
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
-					'text' => dolibarr_trunc($objp->nom,20),
+					'text' => dol_trunc($objp->nom,20),
 					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-					'text' => dolibarr_print_date($datelimite, "dayhour"));
+					'text' => dol_print_date($datelimite, "dayhour"));
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
 					'text' => $objp->percentage. "%");
@@ -136,7 +136,7 @@ class box_actions extends ModeleBoxes {
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoActionsToDo"));
 			}
 			else {
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 		}
 		else {

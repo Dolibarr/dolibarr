@@ -54,9 +54,9 @@ if (! empty($_GET["lib"])) $conf->global->MAIN_GRAPH_LIBRARY=$_GET["lib"];
 
 
 $datetime = time();
-$year = dolibarr_print_date($datetime, "%Y");
-$month = dolibarr_print_date($datetime, "%m");
-$day = dolibarr_print_date($datetime, "%d");
+$year = dol_print_date($datetime, "%Y");
+$month = dol_print_date($datetime, "%m");
+$day = dol_print_date($datetime, "%d");
 if (! empty($_GET["year"]))  $year=sprintf("%04d",$_GET["year"]);
 if (! empty($_GET["month"])) $month=sprintf("%02d",$_GET["month"]);
 
@@ -100,10 +100,10 @@ else
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 	$log="graph.php: min=".$min." max=".$max;
-	dolibarr_syslog($log);
+	dol_syslog($log);
 
 
 	// Tableau 1
@@ -135,7 +135,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		// Calcul de $solde avant le debut du graphe
@@ -153,7 +153,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		// Chargement de labels et datas pour tableau 1
@@ -162,7 +162,7 @@ else
 		$datamin = array();
 
 		$subtotal = 0;
-		$day = dolibarr_mktime(12,0,0,$month,1,$year);
+		$day = dol_mktime(12,0,0,$month,1,$year);
 		$textdate = strftime("%Y%m%d",$day);
 		$xyear = substr($textdate,0,4);
 		$xday = substr($textdate,6,2);
@@ -261,7 +261,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		// Calcul de $solde avant le debut du graphe
@@ -279,7 +279,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		// Chargement de labels et datas pour tableau 2
@@ -289,7 +289,7 @@ else
 
 		$subtotal = 0;
 		$now = time();
-		$day = dolibarr_mktime(12,0,0,1,1,$year);
+		$day = dol_mktime(12,0,0,1,1,$year);
 		$textdate = strftime("%Y%m%d",$day);
 		$xyear = substr($textdate,0,4);
 		$xday = substr($textdate,6,2);
@@ -309,7 +309,7 @@ else
 			$datamin[$i] = $acct->min_desired;
 			if ($xday == '15')
 			{
-				$labels[$i] = dolibarr_print_date($day,"%b");
+				$labels[$i] = dol_print_date($day,"%b");
 			}
 			$day += 86400;
 			$textdate = strftime("%Y%m%d",$day);
@@ -378,7 +378,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		// Calcul de $solde avant le debut du graphe
@@ -481,7 +481,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 		$sql = "SELECT date_format(datev,'%d'), sum(amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
@@ -503,7 +503,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 
@@ -579,7 +579,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 		$sql = "SELECT date_format(datev,'%m'), sum(amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
@@ -599,7 +599,7 @@ else
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 
@@ -611,7 +611,7 @@ else
 		{
 			$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
 			$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
-			$labels[$i] = dolibarr_print_date(dolibarr_mktime(12,0,0,$i+1,1,2000),"%b");
+			$labels[$i] = dol_print_date(dol_mktime(12,0,0,$i+1,1,2000),"%b");
 			$datamin[$i] = $acct->min_desired;
 		}
 
@@ -650,7 +650,7 @@ else
 
 // Onglets
 $head=bank_prepare_head($acct);
-dolibarr_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0);
+dol_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0);
 
 if ($mesg) print $mesg.'<br>';
 

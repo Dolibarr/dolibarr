@@ -108,8 +108,8 @@ class GraphCommNbMinutes extends GraphBar{
       }
     else 
       {
-	dolibarr_syslog("Error in GraphCommNbMinutes");
-	dolibarr_syslog($sql);
+	dol_syslog("Error in GraphCommNbMinutes");
+	dol_syslog($sql);
       }
   }
 }  

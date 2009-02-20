@@ -51,7 +51,7 @@ $fuser->info($_GET["id"]);
 
 $head = user_prepare_head($fuser);
 
-dolibarr_fiche_head($head, 'info', $langs->trans("User"));
+dol_fiche_head($head, 'info', $langs->trans("User"));
 
 
 print '<table width="100%"><tr><td>';

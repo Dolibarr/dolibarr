@@ -48,7 +48,7 @@ class CdrFormatMessidor
 
   function ReadFile($file)
   {
-    dolibarr_syslog("CdrFormatMessidor::ReadFile($file)", LOG_DEBUG);
+    dol_syslog("CdrFormatMessidor::ReadFile($file)", LOG_DEBUG);
     
     $error = 0;
     $i = 0;
@@ -77,13 +77,13 @@ class CdrFormatMessidor
 	      }	  
 	    else
 	      {
-		dolibarr_syslog("CdrFormatMessidor::ReadFile Mauvais format de fichier ligne $line");
+		dol_syslog("CdrFormatMessidor::ReadFile Mauvais format de fichier ligne $line");
 	      }  
 	  }
 	$line++;
       }
     fclose($hf);
     array_push($this->messages,array('info',"Fichier ".basename($file)." : $line lignes lues dans le fichier"));
-    dolibarr_syslog("CdrFormatMessidor::ReadFile read $i lines", LOG_DEBUG);
+    dol_syslog("CdrFormatMessidor::ReadFile read $i lines", LOG_DEBUG);
   }
 }

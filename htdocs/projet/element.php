@@ -71,7 +71,7 @@ if ($projet->user_resp_id > 0)
 }
 
 $head=project_prepare_head($projet);
-dolibarr_fiche_head($head, 'element', $langs->trans("Project"));
+dol_fiche_head($head, 'element', $langs->trans("Project"));
 
 
 print '<table class="border" width="100%">';
@@ -169,7 +169,7 @@ foreach ($listofreferent as $key => $value)
 		        $date=$element->date;
 				if (empty($date)) $date=$element->datep;
 				if (empty($date)) $date=$element->date_contrat;
-				print '<td>'.dolibarr_print_date($date,'day').'</td>';
+				print '<td>'.dol_print_date($date,'day').'</td>';
 		        print '<td align="right">'.(isset($element->total_ht)?price($element->total_ht):'&nbsp;').'</td>';
 		        print '<td align="right">'.$element->getLibStatut(5).'</td>';
 		        print '</tr>';

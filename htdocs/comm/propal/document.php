@@ -125,7 +125,7 @@ if ($propalid > 0)
         $societe->fetch($propal->socid);
 
 		$head = propal_prepare_head($propal);
-		dolibarr_fiche_head($head, 'document', $langs->trans('Proposal'));
+		dol_fiche_head($head, 'document', $langs->trans('Proposal'));
 
 		
 		// Construit liste des fichiers
@@ -166,7 +166,7 @@ if ($propalid > 0)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 else

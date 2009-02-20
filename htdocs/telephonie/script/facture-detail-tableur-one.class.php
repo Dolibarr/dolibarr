@@ -53,12 +53,12 @@ class FactureDetailTableurOne {
 	  }
 	else
 	  {
-	    //dolibarr_syslog("Pas de facture pour ".$this->ligne->id);
+	    //dol_syslog("Pas de facture pour ".$this->ligne->id);
 	  }
       }
     else
       {
-	dolibarr_syslog("Error");
+	dol_syslog("Error");
       }
 
 
@@ -76,7 +76,7 @@ class FactureDetailTableurOne {
 
 	$fname = $dir . $facid . "-detail.xls";
 	
-	dolibarr_syslog("Open ".$facid."-detail.xls");
+	dol_syslog("Open ".$facid."-detail.xls");
 	
 	$workbook = &new writeexcel_workbook($fname);
 	
@@ -123,7 +123,7 @@ class FactureDetailTableurOne {
 	    $i = 0;
 	    $numsql = $this->db->num_rows($resql);
 	    
-	    dolibarr_syslog("Ligne : ".$this->ligne->id . " : ".$numsql);
+	    dol_syslog("Ligne : ".$this->ligne->id . " : ".$numsql);
 	    
 	    while ($i < $numsql)
 	      {
@@ -144,11 +144,11 @@ class FactureDetailTableurOne {
 	  }
 	else
 	  {
-	    dolibarr_syslog($this->db->error());
+	    dol_syslog($this->db->error());
 	  }
 	
 	$workbook->close();
-	//dolibarr_syslog("Close $fname");
+	//dol_syslog("Close $fname");
       }
     
     return $error;

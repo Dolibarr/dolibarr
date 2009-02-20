@@ -152,7 +152,7 @@ if ($resql)
       print "<td>".$obj->ville."</td>\n";       
       print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
       print '<td align="left">'.$obj->code_compta_fournisseur.'&nbsp;</td>';
-      print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
+      print '<td align="center">'.dol_print_date($obj->datec).'</td>';
       print "<td>&nbsp;</td>\n";       
       print "</tr>\n";
       $i++;
@@ -163,7 +163,7 @@ if ($resql)
 }
 else 
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 $db->close();

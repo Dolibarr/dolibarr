@@ -80,7 +80,7 @@ if ($_GET['id'])
 
 	    print '<td><a href="'.DOL_URL_ROOT.'/boutique/commande/fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche">&nbsp;';
 
-	    print dolibarr_print_date($objp->date_purchased,'dayhour')."</a>\n";
+	    print dol_print_date($objp->date_purchased,'dayhour')."</a>\n";
 	    print $objp->total . "</a></TD>\n";
 	    print "</tr>\n";
 	    $i++;
@@ -91,14 +91,14 @@ if ($_GET['id'])
       else
 	{
 	  print "<p>ERROR 1</p>\n";
-	  dolibarr_print_error($dbosc);
+	  dol_print_error($dbosc);
 	}
 
     }
   else
     {
       print "<p>ERROR 1</p>\n";
-      dolibarr_print_error($dbosc);
+      dol_print_error($dbosc);
     }
 
 

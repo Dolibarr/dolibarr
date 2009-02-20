@@ -227,7 +227,7 @@ class Service
         }
         else 
         {
-            dolibarr_print_error($this->db);
+            dol_print_error($this->db);
             $this->error=$this->db->error();
             return -1;
         }

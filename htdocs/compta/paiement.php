@@ -53,7 +53,7 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 {
 	$error = 0;
 
-	$datepaye = dolibarr_mktime(12, 0 , 0,
+	$datepaye = dol_mktime(12, 0 , 0,
 	$_POST['remonth'],
 	$_POST['reday'],
 	$_POST['reyear']);
@@ -130,7 +130,7 @@ if ($_POST['action'] == 'add_paiement')
  */
 if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 {
-	$datepaye = dolibarr_mktime(12, 0 , 0,
+	$datepaye = dol_mktime(12, 0 , 0,
 	$_POST['remonth'],
 	$_POST['reday'],
 	$_POST['reyear']);
@@ -280,7 +280,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 
 		// Date payment
 		print '<tr><td>'.$langs->trans('Date').'</td><td>';
-		$datepayment = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$datepayment = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		$datepayment= ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0) : $datepayment);
 		$html->select_date($datepayment,'','','',0,"add_paiement");
 		print '</td>';
@@ -385,7 +385,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					print "</td>\n";
 
 					// Date
-					print '<td align="center">'.dolibarr_print_date($objp->df,'day')."</td>\n";
+					print '<td align="center">'.dol_print_date($objp->df,'day')."</td>\n";
 
 					// Prix
 					print '<td align="right">'.price($objp->total_ttc).'</td>';
@@ -441,7 +441,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 
@@ -523,7 +523,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td><a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
-			print '<td>'.dolibarr_print_date($objp->dp)."</td>\n";
+			print '<td>'.dol_print_date($objp->dp)."</td>\n";
 			print '<td>'.$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
 			print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';
 			print '</tr>';

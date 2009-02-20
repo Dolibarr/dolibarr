@@ -42,7 +42,7 @@ $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/clients/alerte.php';
 $head[$h][1] = "Alerte";
 $h++;
 
-dolibarr_fiche_head($head, $hselected, "Clients");
+dol_fiche_head($head, $hselected, "Clients");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 

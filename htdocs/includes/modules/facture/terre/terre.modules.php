@@ -134,7 +134,7 @@ class mod_facture_terre extends ModeleNumRefFactures
         }
         else
         {
-        	dolibarr_syslog("mod_facture_terre::getNextValue sql=".$sql);
+        	dol_syslog("mod_facture_terre::getNextValue sql=".$sql);
         	return -1;
         }
 
@@ -143,7 +143,7 @@ class mod_facture_terre extends ModeleNumRefFactures
         $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
         
-        dolibarr_syslog("mod_facture_terre::getNextValue return ".$prefix.$yymm."-".$num);
+        dol_syslog("mod_facture_terre::getNextValue return ".$prefix.$yymm."-".$num);
         return $prefix.$yymm."-".$num;
     }
     

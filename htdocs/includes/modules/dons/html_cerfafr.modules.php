@@ -144,7 +144,7 @@ class html_cerfafr extends ModeleDon
 		        $html = eregi_replace('__NOW__',dol_print_date($now,'',false,$outputlangs),$html);
 
 		        // Sauve fichier sur disque
-		        dolibarr_syslog("html_cerfafr::write_file $file");
+		        dol_syslog("html_cerfafr::write_file $file");
 		        $handle=fopen($file,"w");
 		        fwrite($handle,$html);
 		        fclose($handle);

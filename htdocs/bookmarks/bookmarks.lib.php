@@ -73,13 +73,13 @@ function printBookmarksList ($aDb, $aLangs)
 			{
 				$ret.='<div class="menu_contenu"><a class="vsmenu" title="'.$obj->title.'" href="'.$obj->url.'"'.($obj->target == 1?' target="_blank"':'').'>';
 				$ret.=' '.img_object($langs->trans("BookmarkThisPage"),'bookmark').' ';
-				$ret.= dolibarr_trunc($obj->title, 20).'</a><br></div>';
+				$ret.= dol_trunc($obj->title, 20).'</a><br></div>';
 				$i++;
 			}
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 

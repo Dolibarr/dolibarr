@@ -82,7 +82,7 @@ class AdresseLivraison
         $this->nom=trim($this->nom);
         $this->label=trim($this->label);
 
-        dolibarr_syslog("societe.class.php::create delivery adress ".$this->label);
+        dol_syslog("societe.class.php::create delivery adress ".$this->label);
 
         $this->db->begin();
         
@@ -102,13 +102,13 @@ class AdresseLivraison
 
                 if ($ret >= 0)
                 {
-                    dolibarr_syslog("Societe::Create delivery adress success id=".$this->id);
+                    dol_syslog("Societe::Create delivery adress success id=".$this->id);
                     $this->db->commit();
 		            return 0;
                 }
                 else
                 {
-                    dolibarr_syslog("Societe::Create delivery adress echec update");
+                    dol_syslog("Societe::Create delivery adress echec update");
                     $this->db->rollback();
                     return -3;
                 }
@@ -123,7 +123,7 @@ class AdresseLivraison
                 }
                 else
                 {
-                    dolibarr_syslog("Societe::Create echec insert sql=$sql");
+                    dol_syslog("Societe::Create echec insert sql=$sql");
                 }
                 $this->db->rollback();
                 return -2;
@@ -133,7 +133,7 @@ class AdresseLivraison
         else
         {
             $this->db->rollback();
-            dolibarr_syslog("Societe::Create echec verify sql=$sql");
+            dol_syslog("Societe::Create echec verify sql=$sql");
             return -1;
         }
     }
@@ -167,7 +167,7 @@ class AdresseLivraison
     {
         global $langs;
 
-        dolibarr_syslog("Societe::Update");
+        dol_syslog("Societe::Update");
 
 		// Nettoyage des paramètres
 		
@@ -190,7 +190,7 @@ class AdresseLivraison
 
         if ($result >= 0)
         {
-            dolibarr_syslog("Societe::Update delivery adress verify ok");
+            dol_syslog("Societe::Update delivery adress verify ok");
         
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe_adresse_livraison";
             $sql.= " SET label = '" . addslashes($this->label) ."'"; // Champ obligatoire
@@ -232,7 +232,7 @@ class AdresseLivraison
                 {
         
                     $this->error = $langs->trans("Error sql=$sql");
-                    dolibarr_syslog("Societe::Update delivery adress echec sql=$sql");
+                    dol_syslog("Societe::Update delivery adress echec sql=$sql");
                     $result =  -2;
                 }
             }
@@ -320,19 +320,19 @@ class AdresseLivraison
                  }
                  else
                  {
-                 	dolibarr_syslog('Erreur AdresseLivraison::Fetch aucune adresse dde livraison');
+                 	dol_syslog('Erreur AdresseLivraison::Fetch aucune adresse dde livraison');
                  	return -1;
 			           }
 		          }
 		          else
 		          {
-			          dolibarr_syslog('AdresseLivraison::Societe inconnue');
+			          dol_syslog('AdresseLivraison::Societe inconnue');
 			          return -2;
 		          }
 	       }
 	       else
 	       {
-	       	dolibarr_syslog('Erreur Societe::Fetch '.$this->db->error());
+	       	dol_syslog('Erreur Societe::Fetch '.$this->db->error());
 			    $this->error=$this->db->error();
 			  }
      }
@@ -387,7 +387,7 @@ class AdresseLivraison
 			}
 			else
 			{
-				dolibarr_syslog('Erreur Societe::Fetch aucune adresse de livraison avec id='.$this->id.' - '.$sql);
+				dol_syslog('Erreur Societe::Fetch aucune adresse de livraison avec id='.$this->id.' - '.$sql);
 				$this->error='Erreur Societe::Fetch aucune adresse de livraison avec id='.$this->id.' - '.$sql;
 				$result = -2;
 			}
@@ -396,8 +396,8 @@ class AdresseLivraison
 		}
 		else
 		{
-			dolibarr_syslog('Erreur Societe::Fetch echec sql='.$sql);
-			dolibarr_syslog('Erreur Societe::Fetch '.$this->db->error());
+			dol_syslog('Erreur Societe::Fetch echec sql='.$sql);
+			dol_syslog('Erreur Societe::Fetch '.$this->db->error());
 			$this->error=$this->db->error();
 			$result = -3;
 		}
@@ -412,7 +412,7 @@ class AdresseLivraison
      */
     function delete($idl,$socid)
     {
-      dolibarr_syslog("Societe::Delete delivery adress");
+      dol_syslog("Societe::Delete delivery adress");
 
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_adresse_livraison";
       $sql .= " WHERE rowid=".$idl." AND fk_societe = ".$socid;
@@ -467,7 +467,7 @@ class AdresseLivraison
         }
         else
         {
-            dolibarr_print_error($this->db);
+            dol_print_error($this->db);
         }
     }
 

@@ -95,7 +95,7 @@ if ($_POST["action"] == 'confirm_delete')
 
 if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 {
-	$dateech=@dolibarr_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
+	$dateech=@dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
 	if (! $dateech)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
@@ -136,7 +136,7 @@ if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 
 if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->creer)
 {
-	$dateech=@dolibarr_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
+	$dateech=@dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
 	if (! $dateech)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
@@ -252,7 +252,7 @@ if ($chid > 0)
 		$head[$h][2] = 'card';
 		$h++;
 
-		dolibarr_fiche_head($head, 'card', $langs->trans("SocialContribution"));
+		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"));
 
 		/*
 		* Confirmation de la suppression de la charge
@@ -284,11 +284,11 @@ if ($chid > 0)
 		print "<td>";
 		if ($cha->paye==0 && $_GET['action'] == 'edit')
 		{
-			print "<input type=\"text\" name=\"period\" value=\"".dolibarr_print_date($cha->periode,"%Y%m%d")."\"> (YYYYMMDD)";
+			print "<input type=\"text\" name=\"period\" value=\"".dol_print_date($cha->periode,"%Y%m%d")."\"> (YYYYMMDD)";
 		}
 		else
 		{
-			print dolibarr_print_date($cha->periode,"%Y");
+			print dol_print_date($cha->periode,"%Y");
 		}
 		print "</td>";
 		
@@ -320,7 +320,7 @@ if ($chid > 0)
 				$var=!$var;
 				print "<tr $bc[$var]><td>";
 				print img_object($langs->trans("Payment"),"payment").' ';
-				print dolibarr_print_date($objp->dp)."</td>\n";
+				print dol_print_date($objp->dp)."</td>\n";
 				print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
 				print '<td align="right">'.price($objp->amount)."</td><td>".$langs->trans("Currency".$conf->monnaie)."</td>\n";
 				print "</tr>";
@@ -343,7 +343,7 @@ if ($chid > 0)
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 		print "</td>";
 
@@ -360,7 +360,7 @@ if ($chid > 0)
 		}
 		else {
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$cha->lib.'</td></tr>';
-			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dolibarr_print_date($cha->date_ech,'day')."</td></tr>";
+			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($cha->date_ech,'day')."</td></tr>";
 		}
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($cha->amount).'</td></tr>';
 	
@@ -419,7 +419,7 @@ if ($chid > 0)
 	else
 	{
 		/* Charge non trouvé */
-		dolibarr_print_error('',$cha->error);
+		dol_print_error('',$cha->error);
 	}
 }
 

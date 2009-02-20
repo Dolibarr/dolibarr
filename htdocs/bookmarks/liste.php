@@ -112,8 +112,8 @@ if ($resql)
         print '</td>';
 
         $lieninterne=0;
-        $title=dolibarr_trunc($obj->title,24);
-        $lien=dolibarr_trunc($obj->url,24);
+        $title=dol_trunc($obj->title,24);
+        $lien=dol_trunc($obj->url,24);
 
         // Title
         print "<td>";
@@ -165,7 +165,7 @@ if ($resql)
         print "</td>\n";
 
         // Date creation
-        print '<td align="center">'.dolibarr_print_date($obj->dateb,'day') ."</td>";
+        print '<td align="center">'.dol_print_date($obj->dateb,'day') ."</td>";
 
         // Actions
         print "<td>";
@@ -186,7 +186,7 @@ if ($resql)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 

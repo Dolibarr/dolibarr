@@ -117,10 +117,10 @@ if ($result)
         print '</td>';
 
         // Date creation
-        print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($obj->datec,"day").'</td>';
+        print '<td nowrap="nowrap" align="center">'.dol_print_date($obj->datec,"day").'</td>';
 
         // Date last login
-        print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($obj->datelastlogin,"dayhour").'</td>';
+        print '<td nowrap="nowrap" align="center">'.dol_print_date($obj->datelastlogin,"dayhour").'</td>';
 
 		// Statut
 		$userstatic->statut=$obj->statut;
@@ -133,7 +133,7 @@ if ($result)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 $db->close();

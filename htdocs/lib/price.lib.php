@@ -44,7 +44,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_pe
 
 	$result=array();
 
-	//dolibarr_syslog("price.lib::calcul_price_total $qty, $pu, $remise_percent_ligne, $txtva, $price_base_type $info_bits");
+	//dol_syslog("price.lib::calcul_price_total $qty, $pu, $remise_percent_ligne, $txtva, $price_base_type $info_bits");
 	if ($price_base_type == 'HT')
 	{
 		// On travaille par defaut en partant du prix HT

@@ -90,13 +90,13 @@ if (!$error)
 	  $i++;
 	}            
       $db->free();
-      dolibarr_syslog("$i factures à prélever");
+      dol_syslog("$i factures à prélever");
     }
   else
     {
       $error = 1;
-      dolibarr_syslog("Erreur -1");
-      dolibarr_syslog($db->error());
+      dol_syslog("Erreur -1");
+      dol_syslog($db->error());
     }
 }
 
@@ -113,7 +113,7 @@ if (!$error)
    *
    */
   $i = 0;
-  dolibarr_syslog("Début vérification des RIB");
+  dol_syslog("Début vérification des RIB");
 
   if (sizeof($factures) > 0)
     {      
@@ -135,23 +135,23 @@ if (!$error)
 		    }
 		  else
 		    {
-		      dolibarr_syslog("Erreur de RIB societe $fact->socid $soc->nom");
+		      dol_syslog("Erreur de RIB societe $fact->socid $soc->nom");
 		    }
 		}
 	      else
 		{
-		  dolibarr_syslog("Impossible de lire la société");
+		  dol_syslog("Impossible de lire la société");
 		}
 	    }
 	  else
 	    {
-	      dolibarr_syslog("Impossible de lire la facture");
+	      dol_syslog("Impossible de lire la facture");
 	    }
 	}
     }
   else
     {
-      dolibarr_syslog("Aucune factures a traiter");
+      dol_syslog("Aucune factures a traiter");
     }
 }
 
@@ -161,7 +161,7 @@ if (!$error)
  *
  */
 
-dolibarr_syslog(sizeof($factures_prev)." factures seront prélevées");
+dol_syslog(sizeof($factures_prev)." factures seront prélevées");
 
 if (sizeof($factures_prev) > 0)
 {
@@ -198,7 +198,7 @@ if (sizeof($factures_prev) > 0)
       else
 	{
 	  $error++;
-	  dolibarr_syslog("Erreur recherche reference");
+	  dol_syslog("Erreur recherche reference");
 	}
 
       $ref = $ref . substr("00".($row[0]+1), -2);
@@ -223,7 +223,7 @@ if (sizeof($factures_prev) > 0)
       else
 	{
 	  $error++;
-	  dolibarr_syslog("Erreur création du bon de prelevement");
+	  dol_syslog("Erreur création du bon de prelevement");
 	}
       
     }
@@ -235,8 +235,8 @@ if (sizeof($factures_prev) > 0)
    */
   if (!$error)
     {      
-      dolibarr_syslog("Début génération des paiements");
-      dolibarr_syslog("Nombre de factures ".sizeof($factures_prev));
+      dol_syslog("Début génération des paiements");
+      dol_syslog("Nombre de factures ".sizeof($factures_prev));
       
       if (sizeof($factures_prev) > 0)
 	{
@@ -256,7 +256,7 @@ if (sizeof($factures_prev) > 0)
 	      if ($pai->create($user, 1) == -1)  // on appelle en no_commit
 		{
 		  $error++;
-		  dolibarr_syslog("Erreur creation paiement facture ".$fac[0]);
+		  dol_syslog("Erreur creation paiement facture ".$fac[0]);
 		}
 	      else
 		{
@@ -302,15 +302,15 @@ if (sizeof($factures_prev) > 0)
 		  else
 		    {
 		      $error++;
-		      dolibarr_syslog("Erreur mise a jour des demandes");
-		      dolibarr_syslog($db->error());
+		      dol_syslog("Erreur mise a jour des demandes");
+		      dol_syslog($db->error());
 		    }
 
 		}
 	    }
 	}
   
-      dolibarr_syslog("Fin des paiements");
+      dol_syslog("Fin des paiements");
     }
 
   if (!$error)
@@ -321,8 +321,8 @@ if (sizeof($factures_prev) > 0)
        *
        */
 
-      dolibarr_syslog("Debut prelevement");
-      dolibarr_syslog("Nombre de factures ".sizeof($factures_prev));
+      dol_syslog("Debut prelevement");
+      dol_syslog("Nombre de factures ".sizeof($factures_prev));
 
       if (sizeof($factures_prev) > 0)
 	{
@@ -342,8 +342,8 @@ if (sizeof($factures_prev) > 0)
       
 	  $bonprev->generate();  
 	}
-      dolibarr_syslog( $filebonprev ) ;
-      dolibarr_syslog("Fin prelevement");
+      dol_syslog( $filebonprev ) ;
+      dol_syslog("Fin prelevement");
     }
 
   /*
@@ -358,8 +358,8 @@ if (sizeof($factures_prev) > 0)
   if (!$db->query($sql))
     {
       $error++;
-      dolibarr_syslog("Erreur mise à jour du total");
-      dolibarr_syslog($sql);
+      dol_syslog("Erreur mise à jour du total");
+      dol_syslog($sql);
     }
 
   /*
@@ -369,12 +369,12 @@ if (sizeof($factures_prev) > 0)
   if (!$error)
     {
       $db->query("COMMIT");
-      dolibarr_syslog("COMMIT");
+      dol_syslog("COMMIT");
     }
   else
     {
       $db->query("ROLLBAK");
-      dolibarr_syslog("ROLLBACK");
+      dol_syslog("ROLLBACK");
     }
 }
 

@@ -136,7 +136,7 @@ if ($_GET["socid"])
 	*/
 	$head = societe_prepare_head($soc);
 
-	dolibarr_fiche_head($head, 'category', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'category', $langs->trans("ThirdParty"));
 
 	print '<table class="border" width="100%">';
 
@@ -214,7 +214,7 @@ else if ($_GET["id"] || $_GET["ref"])
 
 	$head=product_prepare_head($product, $user);
 	$titre=$langs->trans("CardProduct".$product->type);
-	dolibarr_fiche_head($head, 'category', $titre);
+	dol_fiche_head($head, 'category', $titre);
 
 
 	print '<table class="border" width="100%">';

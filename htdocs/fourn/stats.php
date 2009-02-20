@@ -89,7 +89,7 @@ $sql .= " AND ca.year > (date_format(".$db->idate(mktime()).",'%Y') - 5)";
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
-dolibarr_syslog("fourn/stats.php sql=".$sql);
+dol_syslog("fourn/stats.php sql=".$sql);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -111,7 +111,7 @@ if ($resql)
 }
 else 
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 

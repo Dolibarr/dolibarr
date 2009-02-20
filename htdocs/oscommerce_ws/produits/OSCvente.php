@@ -87,7 +87,7 @@ if ($_GET["action"] == 'vendre' )
 		{
 			if ($img[0]['photo_vignette']) $filename=$img[0]['photo_vignette'];
 		   else $filename=$img[0]['photo']; 
-		   $prod['image'] = dolibarr_trunc($filename,16);
+		   $prod['image'] = dol_trunc($filename,16);
 		}
 
 //		print_r($prod);

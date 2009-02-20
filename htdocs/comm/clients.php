@@ -129,7 +129,7 @@ if ($result)
 		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->rowid.'">'.stripslashes($obj->nom).'</a></td>';
 		print '<td>'.$obj->ville.'</td>';
 		print '<td>'.$obj->code_client.'</td>';
-		print '<td align="right">'.dolibarr_print_date($obj->datec).'</td>';
+		print '<td align="right">'.dol_print_date($obj->datec).'</td>';
 		print "</tr>\n";
 		$i++;
 	}
@@ -140,7 +140,7 @@ if ($result)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 $db->close();

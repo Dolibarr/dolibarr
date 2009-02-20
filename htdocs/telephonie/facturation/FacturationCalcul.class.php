@@ -88,13 +88,13 @@ class FacturationCalcul {
 	$num = $this->db->num_rows($resql);
 	$row = $this->db->fetch_row($resql);
 	
-	dolibarr_syslog("FacturationCalcul::Calcul Communications a traiter ".$row[0],LOG_INFO);
+	dol_syslog("FacturationCalcul::Calcul Communications a traiter ".$row[0],LOG_INFO);
 	$this->db->free($resql);
       }
     else
       {
 	$error = 1;
-	dolibarr_syslog("FacturationCalcul Erreur ".$error);
+	dol_syslog("FacturationCalcul Erreur ".$error);
       }
     
     /**********************************************************
@@ -111,13 +111,13 @@ class FacturationCalcul {
       {
 	$row = $this->db->fetch_row($resql);
 	
-	dolibarr_syslog("FacturationCalcul Max rowid avant facture ".$row[0]);
+	dol_syslog("FacturationCalcul Max rowid avant facture ".$row[0]);
 	$this->db->free($resql);
       }
     else
       {
 	$error = 2;
-	dolibarr_syslog("FacturationCalcul Erreur ".$error);
+	dol_syslog("FacturationCalcul Erreur ".$error);
       }
     
     /**
@@ -145,12 +145,12 @@ class FacturationCalcul {
 		$i++;
 	      }            
 	    $this->db->free($resql);
-	    dolibarr_syslog(sizeof($lines_keys)." lignes trouvees");
+	    dol_syslog(sizeof($lines_keys)." lignes trouvees");
 	  }
 	else
 	  {
 	    $error = 3;
-	    dolibarr_syslog("FacturationCalcul Erreur ".$error);
+	    dol_syslog("FacturationCalcul Erreur ".$error);
 	  }
       }
 
@@ -170,12 +170,12 @@ class FacturationCalcul {
 	  {
 	    $batch_id = $this->db->last_insert_id(MAIN_DB_PREFIX."telephonie_facturation_batch");
 	    
-	    dolibarr_syslog("FacturationCalcul Batch ID ".$batch_id);
+	    dol_syslog("FacturationCalcul Batch ID ".$batch_id);
 	  }
 	else
 	  {
 	    $error = 20;
-	    dolibarr_syslog("FacturationCalcul Erreur ".$error);
+	    dol_syslog("FacturationCalcul Erreur ".$error);
 	  }  
       }
     
@@ -200,14 +200,14 @@ class FacturationCalcul {
 		    if ($ligne->socid == 0)
 		      {
 			$error = 4;
-			dolibarr_syslog("FacturationCalcul Error ($error)");
+			dol_syslog("FacturationCalcul Error ($error)");
 		      }	  	  
 		  }
 		else
 		  {
 		    
 		    $error = 5;	  
-		    dolibarr_syslog("FacturationCalcul Error ($error): Aucune societe rattachee a la ligne : $line_key");
+		    dol_syslog("FacturationCalcul Error ($error): Aucune societe rattachee a la ligne : $line_key");
 		  }
 		
 		
@@ -225,7 +225,7 @@ class FacturationCalcul {
 		    else
 		      {
 			$error = 6;
-			dolibarr_syslog("FacturationCalcul FacturationCalcul Error ($error)");
+			dol_syslog("FacturationCalcul FacturationCalcul Error ($error)");
 		      }
 		  }
 		
@@ -260,9 +260,9 @@ class FacturationCalcul {
 		    else
 		      {
 			$error++;
-			dolibarr_syslog("FacturationCalcul Erreur d'insertion dans llx_telephonie_facture");
-			dolibarr_syslog($this->db->error());
-			dolibarr_syslog($sql);
+			dol_syslog("FacturationCalcul Erreur d'insertion dans llx_telephonie_facture");
+			dol_syslog($this->db->error());
+			dol_syslog($sql);
 		      }
 		  }	 
 		/*
@@ -279,7 +279,7 @@ class FacturationCalcul {
 		    if ($this->CalculateBill($this->db, $ligne, $facid, $total_achat, $total_vente, $total_fourn) <> 0)
 		      {
 			$error++;
-			dolibarr_syslog("FacturationCalcul Erreur de calcul de la facture pour la ligne $line_key $ligne->numero");
+			dol_syslog("FacturationCalcul Erreur de calcul de la facture pour la ligne $line_key $ligne->numero");
 			array_push($this->messages, array('error',"Erreur de calcul de la facture pour la ligne $ligne->numero (id=$line_key)"));
 		      }	  
 		  }	  
@@ -323,9 +323,9 @@ class FacturationCalcul {
 		    else
 		      {
 			$error++;
-			dolibarr_syslog("FacturationCalcul Erreur de mise a jour dans llx_telephonie_facture");
-			dolibarr_syslog($this->db->error());
-			dolibarr_syslog($sql);
+			dol_syslog("FacturationCalcul Erreur de mise a jour dans llx_telephonie_facture");
+			dol_syslog($this->db->error());
+			dol_syslog($sql);
 		      }
 		  }
 	  
@@ -342,7 +342,7 @@ class FacturationCalcul {
 		    if (! $this->db->query($sql))
 		      {
 			$error++;
-			dolibarr_syslog("FacturationCalcul Erreur de suppression dans llx_telephonie_import_cdr");
+			dol_syslog("FacturationCalcul Erreur de suppression dans llx_telephonie_import_cdr");
 		      }
 		  }
 	  
@@ -355,18 +355,18 @@ class FacturationCalcul {
 		  {
 		    $this->db->query("COMMIT");
 		    $nbcommit++;
-		    dolibarr_syslog("FacturationCalcul Ligne $ligne->numero - COMMIT");
+		    dol_syslog("FacturationCalcul Ligne $ligne->numero - COMMIT");
 		    array_push($this->messages, "Facturation ligne ".$ligne->numero." reussie");
 		  }
 		else
 		  {
 		    $this->db->query("ROLLBACK");
-		    dolibarr_syslog("FacturationCalcul Ligne $ligne->numero - ROLLBACK de la transaction");	      
+		    dol_syslog("FacturationCalcul Ligne $ligne->numero - ROLLBACK de la transaction");	      
 		  }
 	      }
 	    else
 	      {
-		dolibarr_syslog("FacturationCalcul Erreur ouverture Transaction SQL");
+		dol_syslog("FacturationCalcul Erreur ouverture Transaction SQL");
 	      }
 	  } /* fin de la boucle */
 
@@ -389,7 +389,7 @@ class FacturationCalcul {
       {
 	$row = $this->db->fetch_row($resql);
 
-	dolibarr_syslog("FacturationCalcul Max rowid après facture ".$row[0]);
+	dol_syslog("FacturationCalcul Max rowid après facture ".$row[0]);
 	$this->db->free($resql);
       }
     else
@@ -403,7 +403,7 @@ class FacturationCalcul {
      *
      ***********************************************************/
 
-    dolibarr_syslog($nbcommit." facture emises");
+    dol_syslog($nbcommit." facture emises");
 
     /**********************************************************
      *
@@ -418,7 +418,7 @@ class FacturationCalcul {
       {
 	$row = $this->db->fetch_row($resql);
 
-	dolibarr_syslog($row[0]. " communications restantes dans la table d'import");
+	dol_syslog($row[0]. " communications restantes dans la table d'import");
 	$this->db->free($resql);
       }
     else
@@ -426,7 +426,7 @@ class FacturationCalcul {
 	$error++;
       }
 
-    dolibarr_syslog("FacturationCalcul Fin Batch ID ".$batch_id);
+    dol_syslog("FacturationCalcul Fin Batch ID ".$batch_id);
   }
   /******************************************************************************
    *
@@ -471,7 +471,7 @@ class FacturationCalcul {
 
     $fournisseur_id = $ligne->fournisseur_id;
     
-    dolibarr_syslog("FacturationCalcul::CalculateBill Utilisation du tarif ".$tarif_spec." pour la ligne ".$ligne->id);
+    dol_syslog("FacturationCalcul::CalculateBill Utilisation du tarif ".$tarif_spec." pour la ligne ".$ligne->id);
     
     $tarif_achat = new TelephonieTarif($db, $tarif_spec, "achat", $fournisseur_id);
     $tarif_vente = new TelephonieTarif($db, $tarif_spec, "vente", $tarif_spec, $ligne->client_comm_id);
@@ -519,7 +519,7 @@ class FacturationCalcul {
     else
       {
 	$error++;
-	dolibarr_syslog("FacturationCalcul::CalculateBill Erreur dans Calcul() Probleme SQL");
+	dol_syslog("FacturationCalcul::CalculateBill Erreur dans Calcul() Probleme SQL");
       }
 
     for ($ii = 0 ; $ii < $num_sql ; $ii++)
@@ -542,7 +542,7 @@ class FacturationCalcul {
 
 
 
-    dolibarr_syslog("FacturationCalcul::CalculateBill return $error", LOG_DEBUG);
+    dol_syslog("FacturationCalcul::CalculateBill return $error", LOG_DEBUG);
     return $error;
   }
 

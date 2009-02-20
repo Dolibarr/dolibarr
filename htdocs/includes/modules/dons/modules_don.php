@@ -208,8 +208,8 @@ function don_create($db, $id, $message, $modele, $outputlangs)
         else
         {
 			$outputlangs->charset_output=$sav_charset_output;
-        	dolibarr_syslog("Erreur dans don_create");
-            dolibarr_print_error($db,$obj->pdferror());
+        	dol_syslog("Erreur dans don_create");
+            dol_print_error($db,$obj->pdferror());
             return 0;
         }
     }

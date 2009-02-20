@@ -203,7 +203,7 @@ class Form
 		}
 		$sql.= " ORDER BY code ASC";
 
-		dolibarr_syslog("Form::select_pays sql=".$sql);
+		dol_syslog("Form::select_pays sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -277,7 +277,7 @@ class Form
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return 1;
 		}
 	}
@@ -331,7 +331,7 @@ class Form
 		$sql.= " WHERE active = 1";
 		$sql.= " ORDER BY c.libelle ASC";
 
-		dolibarr_syslog("Form::select_type_socialcontrib sql=".$sql, LOG_DEBUG);
+		dol_syslog("Form::select_type_socialcontrib sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -352,7 +352,7 @@ class Form
 		}
 		else
 		{
-			dolibarr_print_error($db,$db->lasterror());
+			dol_print_error($db,$db->lasterror());
 		}
 	}
 
@@ -425,7 +425,7 @@ class Form
 		}
 		$sql.= " ORDER BY nom ASC";
 
-		dolibarr_syslog("Form::select_societes sql=".$sql);
+		dol_syslog("Form::select_societes sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -482,7 +482,7 @@ class Form
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -507,7 +507,7 @@ class Form
 		if ($filter) $sql.= " AND ".$filter;
 		$sql.= " ORDER BY re.description ASC";
 
-		dolibarr_syslog("Form::select_remises sql=".$sql);
+		dol_syslog("Form::select_remises sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -523,7 +523,7 @@ class Form
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$desc=dolibarr_trunc($obj->description,40);
+					$desc=dol_trunc($obj->description,40);
 					if ($desc=='(CREDIT_NOTE)')
 					{
 						$desc=$langs->trans("CreditNote");
@@ -549,7 +549,7 @@ class Form
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -579,7 +579,7 @@ class Form
 		if (is_array($exclude) && $excludeContacts) $sql.= " AND s.rowid NOT IN ('".$excludeContacts."')";
 		$sql.= " ORDER BY s.name ASC";
 
-		dolibarr_syslog("Form::select_contacts sql=".$sql);
+		dol_syslog("Form::select_contacts sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -621,7 +621,7 @@ class Form
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -649,7 +649,7 @@ class Form
 		if (is_array($exclude) && $excludeUsers) $sql.= " WHERE u.rowid NOT IN ('".$excludeUsers."')";
 		$sql.= " ORDER BY u.name ASC";
 
-		dolibarr_syslog("Form::select_users sql=".$sql);
+		dol_syslog("Form::select_users sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			print '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
@@ -677,7 +677,7 @@ class Form
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -768,9 +768,9 @@ class Form
 		$sql.= " ORDER BY p.ref";
 		if ($limit) $sql.= " LIMIT $limit";
 
-		dolibarr_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
+		dol_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query($sql);
-		if (! $result) dolibarr_print_error($this->db);
+		if (! $result) dol_print_error($this->db);
 
 		// Multilang : on construit une liste des traductions des produits listés
 		if ($conf->global->MAIN_MULTILANGS)
@@ -780,7 +780,7 @@ class Form
 			$sqld.= " WHERE d.fk_product=p.rowid AND p.envente=1 AND d.lang='". $langs->getDefaultLang() ."'";
 			$sqld.= " ORDER BY p.ref";
 
-			dolibarr_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
+			dol_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
 			$resultd = $this->db->query($sqld);
 			if ( $resultd ) $objtp = $this->db->fetch_object($resultd);
 		}
@@ -825,7 +825,7 @@ class Form
 					}
 				}
 				$opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
-				$opt.= dolibarr_trunc($objp->label,32).' - ';
+				$opt.= dol_trunc($objp->label,32).' - ';
 
 				// Multiprix
 				if ($price_level > 1)
@@ -835,7 +835,7 @@ class Form
 					$sql.= "where fk_product='".$objp->rowid."' and price_level=".$price_level;
 					$sql.= " order by date_price DESC limit 1";
 
-					dolibarr_syslog("Form::select_produits_do sql=".$sql);
+					dol_syslog("Form::select_produits_do sql=".$sql);
 					$result2 = $this->db->query($sql);
 					$objp2 = $this->db->fetch_object($result2);
 					if ($objp2)
@@ -888,7 +888,7 @@ class Form
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 
@@ -944,7 +944,7 @@ class Form
 		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '%".$ajaxkeysearch."%' OR p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
 		$sql.= " ORDER BY pf.ref_fourn DESC";
 
-		dolibarr_syslog("Form::select_produits_fournisseurs_do sql=".$sql,LOG_DEBUG);
+		dol_syslog("Form::select_produits_fournisseurs_do sql=".$sql,LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -980,7 +980,7 @@ class Form
 				if ($selected == $objp->idprodfournprice) $opt.= ' selected="true"';
 				if ($objp->fprice == '') $opt.=' disabled="disabled"';
 				$opt.= '>'.$objp->ref.' ('.$objp->ref_fourn.') - ';
-				$opt.= dolibarr_trunc($objp->label,18).' - ';
+				$opt.= dol_trunc($objp->label,18).' - ';
 				if ($objp->fprice != '') 	// Keep != ''
 				{
 					$opt.= price($objp->fprice);
@@ -1000,7 +1000,7 @@ class Form
 						$opt.=")";
 					}
 					if ($objp->duration) $opt .= " - ".$objp->duration;
-					if (! $socid) $opt .= " - ".dolibarr_trunc($objp->nom,8);
+					if (! $socid) $opt .= " - ".dol_trunc($objp->nom,8);
 				}
 				else
 				{
@@ -1017,7 +1017,7 @@ class Form
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 
@@ -1044,7 +1044,7 @@ class Form
 		$sql.= " AND p.rowid = ".$productid;
 		$sql.= " ORDER BY s.nom, pf.ref_fourn DESC";
 
-		dolibarr_syslog("Form::select_product_fourn_price sql=".$sql,LOG_DEBUG);
+		dol_syslog("Form::select_product_fourn_price sql=".$sql,LOG_DEBUG);
 		$result=$this->db->query($sql);
 
 		if ($result)
@@ -1104,7 +1104,7 @@ class Form
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 
@@ -1121,7 +1121,7 @@ class Form
 		$sql .= " WHERE a.fk_societe = ".$socid;
 		$sql .= " ORDER BY a.label ASC";
 
-		dolibarr_syslog("Form::select_adresse_livraison sql=".$sql);
+		dol_syslog("Form::select_adresse_livraison sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
@@ -1150,7 +1150,7 @@ class Form
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -1169,7 +1169,7 @@ class Form
 		$sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
 		$sql.= " WHERE active=1";
 		$sql.= " ORDER BY sortorder";
-		dolibarr_syslog('Form::load_cache_conditions_paiements sql='.$sql,LOG_DEBUG);
+		dol_syslog('Form::load_cache_conditions_paiements sql='.$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1188,7 +1188,7 @@ class Form
 			return 1;
 		}
 		else {
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -1207,7 +1207,7 @@ class Form
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
 		$sql.= " WHERE active > 0";
 		$sql.= " ORDER BY id";
-		dolibarr_syslog('Form::load_cache_types_paiements sql='.$sql,LOG_DEBUG);
+		dol_syslog('Form::load_cache_types_paiements sql='.$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1227,7 +1227,7 @@ class Form
 			return $num;
 		}
 		else {
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -1279,7 +1279,7 @@ class Form
 	{
 		global $langs,$user;
 
-		dolibarr_syslog("Form::select_type_paiements $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
+		dol_syslog("Form::select_type_paiements $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
 
 		$filterarray=array();
 		if ($filtertype == 'CRDT')  	$filterarray=array(0,2);
@@ -1350,7 +1350,7 @@ class Form
 		$sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
 		$sql .= " WHERE active = 1";
 
-		dolibarr_syslog("Form::select_propal_statut sql=".$sql);
+		dol_syslog("Form::select_propal_statut sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			print '<select class="flat" name="propal_statut">';
@@ -1381,7 +1381,7 @@ class Form
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -1404,7 +1404,7 @@ class Form
 		if ($filtre) $sql.=" AND ".$filtre;
 		$sql.= " ORDER BY rowid";
 
-		dolibarr_syslog("Form::select_comptes sql=".$sql);
+		dol_syslog("Form::select_comptes sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1434,7 +1434,7 @@ class Form
 			print "</select>";
 		}
 		else {
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -1471,7 +1471,7 @@ class Form
 					{
 						$add = '';
 					}
-					$output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.dolibarr_trunc($cate_arbo[$key]['fulllabel'],80,'middle').'</option>';
+					$output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.dol_trunc($cate_arbo[$key]['fulllabel'],80,'middle').'</option>';
 				}
 			}
 		}
@@ -1905,7 +1905,7 @@ class Form
 			return 0;
 		}
 		else {
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return 1;
 		}
 	}
@@ -2100,7 +2100,7 @@ class Form
 				//print "e".$set_time." t ".$conf->format_date_short;
 				if (strval($set_time) != '' && $set_time != -1)
 				{
-					$formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
+					$formated_date=dol_print_date($set_time,$conf->format_date_short);
 				}
 
 				// Calendrier popup version eldy
@@ -2189,7 +2189,7 @@ class Form
 				for ($month = 1 ; $month <= 12 ; $month++)
 				{
 					print '<option value="'.$month.'"'.($month == $smonth?' selected="true"':'').'>';
-					print dolibarr_print_date(mktime(1,1,1,$month,1,2000),"%b");
+					print dol_print_date(mktime(1,1,1,$month,1,2000),"%b");
 					print "</option>";
 				}
 				print "</select>";
@@ -2401,13 +2401,13 @@ class Form
 				if ($key_in_label)
 				{
 					$newval=($translate?$langs->trans($value):$value);
-					$selectOptionValue = $key.' - '.($maxlen?dolibarr_trunc($newval,$maxlen):$newval);
+					$selectOptionValue = $key.' - '.($maxlen?dol_trunc($newval,$maxlen):$newval);
 					print $selectOptionValue;
 				}
 				else
 				{
 					$newval=($translate?$langs->trans($value):$value);
-					$selectOptionValue = ($maxlen?dolibarr_trunc($newval,$maxlen):$newval);
+					$selectOptionValue = ($maxlen?dol_trunc($newval,$maxlen):$newval);
 					if ($value == '' || $value == '-') { $selectOptionValue='&nbsp;'; }
 					print $selectOptionValue;
 				}
@@ -2497,7 +2497,7 @@ class Form
 			print "</select>";
 		}
 		else {
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 

@@ -58,7 +58,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 
 	if ($error)
 	{
-		dolibarr_print_error($db->error());
+		dol_print_error($db->error());
 	}
 }
 
@@ -81,7 +81,7 @@ if (! function_exists("ldap_connect"))
 if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
 
-dolibarr_fiche_head($head, 'groups', $langs->trans("LDAPSetup"));
+dol_fiche_head($head, 'groups', $langs->trans("LDAPSetup"));
 
 
 print $langs->trans("LDAPDescGroups").'<br>';

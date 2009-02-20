@@ -351,7 +351,7 @@ class Translate {
         {
             // Translation is available
             $str=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
-            if ($maxsize) $str=dolibarr_trunc($str,$maxsize);
+            if ($maxsize) $str=dol_trunc($str,$maxsize);
             // On remplace les tags HTML par __xx__ pour eviter traduction par htmlentities
             $newstr=ereg_replace('<','__lt__',$str);
             $newstr=ereg_replace('>','__gt__',$newstr);

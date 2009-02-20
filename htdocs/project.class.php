@@ -66,7 +66,7 @@ class Project extends CommonObject
 		if (! trim($this->ref))
 		{
 			$this->error='ErrorFieldsRequired';
-			dolibarr_syslog("Project::Create error -1 ref null");
+			dol_syslog("Project::Create error -1 ref null");
 			return -1;
 		}
 
@@ -77,7 +77,7 @@ class Project extends CommonObject
 		$sql.= " ".($this->user_resp_id>0?$this->user_resp_id:'null').",";
 		$sql.= " ".$this->db->idate(mktime()).", 0)";
 
-		dolibarr_syslog("Project::create sql=".$sql,LOG_DEBUG);
+		dol_syslog("Project::create sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -86,7 +86,7 @@ class Project extends CommonObject
 		}
 		else
 		{
-			dolibarr_syslog("Project::Create error -2");
+			dol_syslog("Project::Create error -2");
 			$this->error=$this->db->error();
 			$result = -2;
 		}
@@ -106,20 +106,20 @@ class Project extends CommonObject
 			$sql.= ", fk_user_resp = ".$this->user_resp_id;
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dolibarr_syslog("Project::update sql=".$sql,LOG_DEBUG);
+			dol_syslog("Project::update sql=".$sql,LOG_DEBUG);
 			if ($this->db->query($sql) )
 			{
 				$result = 0;
 			}
 			else
 			{
-				dolibarr_syslog($this->db->error());
+				dol_syslog($this->db->error());
 				$result = -2;
 			}
 		}
 		else
 		{
-			dolibarr_syslog("Project::Update ref null");
+			dol_syslog("Project::Update ref null");
 			$result = -1;
 		}
 
@@ -140,7 +140,7 @@ class Project extends CommonObject
 		if ($ref) $sql.= " WHERE ref='".$ref."'";
 		else $sql.= " WHERE rowid=".$id;
 
-		dolibarr_syslog("Project::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("Project::fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -234,7 +234,7 @@ class Project extends CommonObject
 		if ($type == 'contract')         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."contrat WHERE fk_projet=".$this->id;
 		if (! $sql) return -1;
 
-		dolibarr_syslog("Project::get_element_list sql=".$sql);
+		dol_syslog("Project::get_element_list sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -258,7 +258,7 @@ class Project extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -271,7 +271,7 @@ class Project extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dolibarr_syslog("Project::delete sql=".$sql, LOG_DEBUG);
+		dol_syslog("Project::delete sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -280,7 +280,7 @@ class Project extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Project::delete ".$this->error, LOG_ERR);
+			dol_syslog("Project::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -305,7 +305,7 @@ class Project extends CommonObject
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (fk_projet, title, fk_user_creat, fk_task_parent, duration_effective)";
 			$sql.= " VALUES (".$this->id.",'".addslashes($title)."', ".$user->id.",".($parent>0?$parent:'0').", 0)";
 
-			dolibarr_syslog("Project::CreateTask sql=".$sql, LOG_DEBUG);
+			dol_syslog("Project::CreateTask sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
@@ -314,7 +314,7 @@ class Project extends CommonObject
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dolibarr_syslog("Project::CreateTask error -1 ".$this->error, LOG_ERR);
+				dol_syslog("Project::CreateTask error -1 ".$this->error, LOG_ERR);
 				$result = -1;
 			}
 
@@ -325,7 +325,7 @@ class Project extends CommonObject
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_actors (fk_projet_task, fk_user)";
 					$sql.= " VALUES (".$task_id.",".($id_resp>0?$id_resp:'null').")";
 
-					dolibarr_syslog("Project::CreateTask sql=".$sql,LOG_DEBUG);
+					dol_syslog("Project::CreateTask sql=".$sql,LOG_DEBUG);
 					if ($this->db->query($sql) )
 					{
 						$this->db->commit();
@@ -334,7 +334,7 @@ class Project extends CommonObject
 					else
 					{
 						$this->error=$this->db->lasterror();
-						dolibarr_syslog("Project::CreateTask error -3 ".$this->error,LOG_ERR);
+						dol_syslog("Project::CreateTask error -3 ".$this->error,LOG_ERR);
 						$this->db->rollback();
 						return -3;
 					}
@@ -347,14 +347,14 @@ class Project extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog("Project::CreateTask error -2 ".$this->error,LOG_ERR);
+				dol_syslog("Project::CreateTask error -2 ".$this->error,LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
 		}
 		else
 		{
-			dolibarr_syslog("Project::CreateTask error -1 ref null");
+			dol_syslog("Project::CreateTask error -1 ref null");
 			$result = -1;
 		}
 
@@ -375,7 +375,7 @@ class Project extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (fk_task, task_date, task_duration, fk_user)";
 		$sql .= " VALUES (".$task.",'".$this->db->idate($date)."',".$time.", ".$user->id.")";
 
-		dolibarr_syslog("Project::TaskAddTime sql=".$sql, LOG_DEBUG);
+		dol_syslog("Project::TaskAddTime sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql) )
 		{
 			$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
@@ -383,7 +383,7 @@ class Project extends CommonObject
 		}
 		else
 		{
-			dolibarr_syslog("Project::TaskAddTime error -2",LOG_ERR);
+			dol_syslog("Project::TaskAddTime error -2",LOG_ERR);
 			$this->error=$this->db->error();
 			$result = -2;
 		}
@@ -394,14 +394,14 @@ class Project extends CommonObject
 			$sql .= " SET duration_effective = duration_effective + '".price2num($time)."'";
 			$sql .= " WHERE rowid = '".$task."';";
 
-			dolibarr_syslog("Project::TaskAddTime sql=".$sql, LOG_DEBUG);
+			dol_syslog("Project::TaskAddTime sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql) )
 			{
 				$result = 0;
 			}
 			else
 			{
-				dolibarr_syslog("Project::TaskAddTime error -3",LOG_ERR);
+				dol_syslog("Project::TaskAddTime error -3",LOG_ERR);
 				$this->error=$this->db->error();
 				$result = -2;
 			}
@@ -440,7 +440,7 @@ class Project extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 
 		return $tasksrole;
@@ -500,7 +500,7 @@ class Project extends CommonObject
 			$sql.= " ORDER BY p.ref, t.title";
 		}
 
-		dolibarr_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
+		dol_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -524,7 +524,7 @@ class Project extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 
 		return $tasks;

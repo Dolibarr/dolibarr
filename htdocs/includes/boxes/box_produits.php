@@ -131,7 +131,7 @@ class box_produits extends ModeleBoxes {
                     'text' => $price_base_type);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-                    'text' => dolibarr_print_date($datem,'day'));
+                    'text' => dol_print_date($datem,'day'));
 
 					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
                     'text' => $productstatic->LibStatut($objp->envente,3));
@@ -140,7 +140,7 @@ class box_produits extends ModeleBoxes {
 				}
 			}
 			else {
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 		}
 		else {

@@ -66,7 +66,7 @@ class RejetPrelevement
     $this->id = $id;
     $this->bon_id = $bonid;
     
-    dolibarr_syslog("RejetPrelevement::Create id $id");
+    dol_syslog("RejetPrelevement::Create id $id");
     
     $facs = $this->_get_list_factures();
     
@@ -86,8 +86,8 @@ class RejetPrelevement
     
     if (!$result)
       {
-	dolibarr_syslog("RejetPrelevement::create Erreur 4");
-	dolibarr_syslog("RejetPrelevement::create Erreur 4 $sql");
+	dol_syslog("RejetPrelevement::create Erreur 4");
+	dol_syslog("RejetPrelevement::create Erreur 4 $sql");
 	$error++;
       }
     
@@ -99,7 +99,7 @@ class RejetPrelevement
     
     if (! $this->db->query($sql))
       {
-	dolibarr_syslog("RejetPrelevement::create Erreur 5");
+	dol_syslog("RejetPrelevement::create Erreur 5");
 	$error++;
       }
     
@@ -126,7 +126,7 @@ class RejetPrelevement
 	if ($pai->create($this->user, 1) == -1)  // on appelle en no_commit
 	  {
 	    $error++;
-	    dolibarr_syslog("RejetPrelevement::Create Erreur creation paiement facture ".$facs[$i]);
+	    dol_syslog("RejetPrelevement::Create Erreur creation paiement facture ".$facs[$i]);
 	  }       
   
 	/* Valide le paiement */
@@ -134,11 +134,11 @@ class RejetPrelevement
 	if ($pai->valide() < 0)
 	  {
 	    $error++;
-	    dolibarr_syslog("RejetPrelevement::Create Erreur validation du paiement");
+	    dol_syslog("RejetPrelevement::Create Erreur validation du paiement");
 	  }
 
 	/* Tag la facture comme impayée */
-	dolibarr_syslog("RejetPrelevement::Create set_unpayed fac ".$fac->ref);
+	dol_syslog("RejetPrelevement::Create set_unpayed fac ".$fac->ref);
 	$fac->set_unpayed($fac->id, $user);
 
 	/* Envoi un email à l'emetteur de la demande de prev */
@@ -147,12 +147,12 @@ class RejetPrelevement
 
     if ($error == 0)
       {
-	dolibarr_syslog("RejetPrelevement::Create Commit");
+	dol_syslog("RejetPrelevement::Create Commit");
 	$this->db->commit();
       }
     else
       {
-	dolibarr_syslog("RejetPrelevement::Create Rollback");
+	dol_syslog("RejetPrelevement::Create Rollback");
 	$this->db->rollback();
       }
 
@@ -183,7 +183,7 @@ class RejetPrelevement
         }
         else
         {
-            dolibarr_syslog("RejetPrelevement::_send_email Erreur lecture user");
+            dol_syslog("RejetPrelevement::_send_email Erreur lecture user");
         }
     
         if ($userid > 0)
@@ -216,16 +216,16 @@ class RejetPrelevement
             $result=$mailfile->sendfile();
             if ($result)
             {
-                dolibarr_syslog("RejetPrelevement::_send_email email envoyé");
+                dol_syslog("RejetPrelevement::_send_email email envoyé");
             }
             else
             {
-                dolibarr_syslog("RejetPrelevement::_send_email Erreur envoi email");
+                dol_syslog("RejetPrelevement::_send_email Erreur envoi email");
             }
         }
         else
         {
-            dolibarr_syslog("RejetPrelevement::_send_email Userid invalide");
+            dol_syslog("RejetPrelevement::_send_email Userid invalide");
         }
     }
 
@@ -269,7 +269,7 @@ class RejetPrelevement
       }
     else
       {
-	dolibarr_syslog("RejetPrelevement Erreur");
+	dol_syslog("RejetPrelevement Erreur");
       }
 
     return $arr;
@@ -307,13 +307,13 @@ class RejetPrelevement
 	  }
 	else
 	  {
-	    dolibarr_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid numrows=0");
+	    dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid numrows=0");
 	    return -1;
 	  }
       }
     else
       {
-	dolibarr_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid");
+	dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid");
 	return -2;
       }
   }

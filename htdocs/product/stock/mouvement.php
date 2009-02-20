@@ -77,7 +77,7 @@ if ($resql)
 		$result = $entrepot->fetch($_GET["id"]);
 		if ($result < 0)
 		{
-	  		dolibarr_print_error($db);
+	  		dol_print_error($db);
 		}
 	}
 
@@ -121,7 +121,7 @@ if ($resql)
 		$head[$h][1] = $langs->trans("Info");
 		$h++;
 
-		dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse"));
+		dol_fiche_head($head, $hselected, $langs->trans("Warehouse"));
 
 		print '<table class="border" width="100%">';
 
@@ -159,7 +159,7 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print '<td>'.dolibarr_print_date($objp->datem,'dayhour').'</td>';
+		print '<td>'.dol_print_date($objp->datem,'dayhour').'</td>';
 		print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
 		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
 		print "</a></td>\n";
@@ -179,7 +179,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 

@@ -68,7 +68,7 @@ if (! empty($_GET["section"]))
 	$result=$ecmdir->fetch($_GET["section"]);
 	if (! $result > 0)
 	{
-		dolibarr_print_error($db,$ecmdir->error);
+		dol_print_error($db,$ecmdir->error);
 		exit;
 	}
 }

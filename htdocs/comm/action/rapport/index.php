@@ -112,7 +112,7 @@ if ($resql)
 			if (file_exists($file))
 			{
 				print '<td align="center"><a href="'.DOL_URL_ROOT.'/document.php?page='.$page.'&amp;file='.urlencode($relativepath).'&amp;modulepart=actionsreport">'.img_pdf().'</a></td>';
-				print '<td align="center">'.dolibarr_print_date(filemtime($file),'dayhour').'</td>';
+				print '<td align="center">'.dol_print_date(filemtime($file),'dayhour').'</td>';
 				print '<td align="center">'.filesize($file). ' '.$langs->trans("Bytes").'</td>';
 			}
 			else {
@@ -130,7 +130,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 

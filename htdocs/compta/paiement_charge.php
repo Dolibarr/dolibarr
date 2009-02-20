@@ -51,7 +51,7 @@ if ($_POST["action"] == 'add_paiement')
 		exit;
 	}
 
-    $datepaye = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+    $datepaye = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	
     if (! $_POST["paiementtype"] > 0)
     {
@@ -182,9 +182,9 @@ if ($_GET["action"] == 'create')
       print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2">';
       print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid.'">'.$chid.'</a></td></tr>';
 	  print '<tr><td>'.$langs->trans("Type")."</td><td colspan=\"2\">".$charge->type_libelle."</td></tr>\n";
-	  print '<tr><td>'.$langs->trans("Period")."</td><td colspan=\"2\">".dolibarr_print_date($charge->periode,'day')."</td></tr>\n";
+	  print '<tr><td>'.$langs->trans("Period")."</td><td colspan=\"2\">".dol_print_date($charge->periode,'day')."</td></tr>\n";
 	  print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$charge->lib."</td></tr>\n";
-	  print '<tr><td>'.$langs->trans("DateDue")."</td><td colspan=\"2\">".dolibarr_print_date($charge->date_ech,'day')."</td></tr>\n";
+	  print '<tr><td>'.$langs->trans("DateDue")."</td><td colspan=\"2\">".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
 
       print '<tr><td>'.$langs->trans("AmountTTC")."</td><td colspan=\"2\"><b>".price($charge->amount).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	  
@@ -260,7 +260,7 @@ if ($_GET["action"] == 'create')
 		      
 		      if ($objp->date_ech > 0)
 			{
-			  print "<td align=\"left\">".dolibarr_print_date($objp->date_ech,'day')."</td>\n";
+			  print "<td align=\"left\">".dol_print_date($objp->date_ech,'day')."</td>\n";
 			}
 		      else
 			{

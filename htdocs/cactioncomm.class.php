@@ -115,7 +115,7 @@ class CActionComm {
 			$sql.=" WHERE active=".$active;
 		}
 	
-		dolibarr_syslog("CActionComm::liste_array sql=".$sql);
+		dol_syslog("CActionComm::liste_array sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

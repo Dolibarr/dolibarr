@@ -102,7 +102,7 @@ class box_clients extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
-					'text' => dolibarr_print_date($datem, "day"));
+					'text' => dol_print_date($datem, "day"));
 
 					$i++;
 				}
@@ -110,7 +110,7 @@ class box_clients extends ModeleBoxes {
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedCustomers"));
 			}
 			else {
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 		}
 		else {

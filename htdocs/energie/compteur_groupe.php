@@ -70,7 +70,7 @@ if ($_GET["id"] > 0)
       $a = $h;
       $h++;
       
-      dolibarr_fiche_head($head, $a, $soc->nom);
+      dol_fiche_head($head, $a, $soc->nom);
       
       
       print '<table class="border" width="100%">';

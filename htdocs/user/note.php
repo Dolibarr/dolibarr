@@ -82,7 +82,7 @@ if ($id)
 {
 	$head = user_prepare_head($fuser);
 	
-	dolibarr_fiche_head($head, 'note', $langs->trans("User"));
+	dol_fiche_head($head, 'note', $langs->trans("User"));
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 

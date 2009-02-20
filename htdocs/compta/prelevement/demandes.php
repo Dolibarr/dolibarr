@@ -137,7 +137,7 @@ if ( $db->query($sql) )
 		print $thirdpartystatic->getNomUrl(1,'customer');
 		print '</td>';
 
-		print '<td align="center">'.dolibarr_print_date($obj->date_demande,'day').'</td>';
+		print '<td align="center">'.dol_print_date($obj->date_demande,'day').'</td>';
 
 		if (!array_key_exists($obj->fk_user_demande,$users))
 		{
@@ -159,7 +159,7 @@ if ( $db->query($sql) )
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 

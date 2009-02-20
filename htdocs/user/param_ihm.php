@@ -113,7 +113,7 @@ llxHeader();
  */
 $head = user_prepare_head($fuser);
 
-dolibarr_fiche_head($head, 'guisetup', $langs->trans("User"));
+dol_fiche_head($head, 'guisetup', $langs->trans("User"));
 
 
 print '<table class="border" width="100%">';

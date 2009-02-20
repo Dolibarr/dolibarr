@@ -144,7 +144,7 @@ if ($resql)
 		print '<a href="charges.php?id='.$obj->id.'">'.img_file().' '.$obj->id.'</a>';
 		print '</td>';
 
-		print '<td width="110">'.dolibarr_print_date($obj->de, 'day').'</td>';
+		print '<td width="110">'.dol_print_date($obj->de, 'day').'</td>';
 		
 		print '<td align="center">';
 		if ($obj->periode) 
@@ -157,9 +157,9 @@ if ($resql)
 		}
 		print '</td>';
 
-		print '<td>'.dolibarr_trunc($obj->type_lib,16).'</td>';
+		print '<td>'.dol_trunc($obj->type_lib,16).'</td>';
 		
-		print '<td>'.dolibarr_trunc($obj->libelle,42).'</td>';
+		print '<td>'.dol_trunc($obj->libelle,42).'</td>';
 		
 		print '<td align="right" width="100">'.price($obj->amount).'</td>';
 
@@ -171,7 +171,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 print '</table>';

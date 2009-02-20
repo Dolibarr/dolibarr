@@ -72,7 +72,7 @@ for ($i = 1; $i < sizeof($GLOBALS["argv"]); $i++)
 }
 
  
-dolibarr_syslog("Mois $month Année $year");  
+dol_syslog("Mois $month Année $year");  
 
 /*
  * Lectures de différentes lignes
@@ -105,7 +105,7 @@ if (!$error)
   else
     {
       $error = 1;
-      dolibarr_syslog($db->error());
+      dol_syslog($db->error());
     }
 }
 
@@ -123,7 +123,7 @@ if (!$error)
 	      
       if ($resg <> 0)
 	{
-	  dolibarr_syslog("ERREUR lors de Génération du détail tableur two");
+	  dol_syslog("ERREUR lors de Génération du détail tableur two");
 	  $error = 19;
 	}
 
@@ -150,7 +150,7 @@ if (!$error)
 	      
 	      if ($resg <> 0)
 		{
-		  dolibarr_syslog("ERREUR lors de Génération du détail tableur one");
+		  dol_syslog("ERREUR lors de Génération du détail tableur one");
 		  $error = 19;
 		}
 	      
@@ -161,12 +161,12 @@ if (!$error)
       else
 	{
 	  $error = 1;
-	  dolibarr_syslog($db->error());
+	  dol_syslog($db->error());
 	}           
     }
 }
 
 $db->close();
 
-dolibarr_syslog("Conso mémoire ".memory_get_usage() );
+dol_syslog("Conso mémoire ".memory_get_usage() );
 ?>

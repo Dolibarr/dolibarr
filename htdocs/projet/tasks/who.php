@@ -63,7 +63,7 @@ if ($_GET["id"] > 0)
 
 		$head=task_prepare_head($task);
 
-		dolibarr_fiche_head($head, 'who', $langs->trans("Task"));
+		dol_fiche_head($head, 'who', $langs->trans("Task"));
 
 		if ($mesg) print $mesg.'<br>';
 
@@ -112,7 +112,7 @@ if ($_GET["id"] > 0)
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 
 		print '</table></form>';

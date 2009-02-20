@@ -179,7 +179,7 @@ if ($resql)
     }
 
   $workbook->close();
-  dolibarr_syslog("Close $fname");
+  dol_syslog("Close $fname");
   
 }
 

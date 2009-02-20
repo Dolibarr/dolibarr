@@ -67,7 +67,7 @@ $ref= $_GET['ref'];
 $commande = new Commande($db);
 if (! $commande->fetch($_GET['id'],$_GET['ref']) > 0) 
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 
@@ -123,7 +123,7 @@ if ($id > 0 || ! empty($ref))
 	$societe->fetch($commande->socid);
 
 	$head = commande_prepare_head($commande);
-	dolibarr_fiche_head($head, 'documents', $langs->trans('CustomerOrder'));
+	dol_fiche_head($head, 'documents', $langs->trans('CustomerOrder'));
 
 
 	// Construit liste des fichiers

@@ -122,7 +122,7 @@ if ($_GET["id"] || $_GET["ref"])
 	{
 		$head=product_prepare_head($product, $user);
 		$titre=$langs->trans("CardProduct".$product->type);
-		dolibarr_fiche_head($head, 'stock', $titre);
+		dol_fiche_head($head, 'stock', $titre);
 
 		$html = new Form($db);
 
@@ -171,13 +171,13 @@ if ($_GET["id"] || $_GET["ref"])
 			if ($conf->commande->enabled)
 			{
 				$result=$product->load_stats_commande(0,'1,2');
-				if ($result < 0) dolibarr_print_error($db,$product->error);
+				if ($result < 0) dol_print_error($db,$product->error);
 				$stock_commande_client=$product->stats_commande['qty'];
 			}
 			if ($conf->fournisseur->enabled)
 			{
 				$result=$product->load_stats_commande_fournisseur(0,'3');
-				if ($result < 0) dolibarr_print_error($db,$product->error);
+				if ($result < 0) dol_print_error($db,$product->error);
 				$stock_commande_fournisseur=$product->stats_commande_fournisseur['qty'];
 			}
 
@@ -207,7 +207,7 @@ if ($_GET["id"] || $_GET["ref"])
 				if ($found) print '<br>'; else $found=1;
 				print $langs->trans("CustomersOrdersRunning").': '.($stock_commande_client+$stock_sending_client);
 				$result=$product->load_stats_commande(0,'0');
-				if ($result < 0) dolibarr_print_error($db,$product->error);
+				if ($result < 0) dol_print_error($db,$product->error);
 				print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';
 				//print '<br>';
 				//print $langs->trans("CustomersSendingRunning").': '.$stock_sending_client;
@@ -219,7 +219,7 @@ if ($_GET["id"] || $_GET["ref"])
 				if ($found) print '<br>'; else $found=1;
 				print $langs->trans("SuppliersOrdersRunning").': '.$stock_commande_fournisseur;
 				$result=$product->load_stats_commande_fournisseur(0,'0,1,2');
-				if ($result < 0) dolibarr_print_error($db,$product->error);
+				if ($result < 0) dol_print_error($db,$product->error);
 				print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
 			}
 			print '</td></tr>';
@@ -310,7 +310,7 @@ if ($_GET["id"] || $_GET["ref"])
 }
 else
 {
-	dolibarr_print_error();
+	dol_print_error();
 }
 
 

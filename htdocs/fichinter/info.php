@@ -51,7 +51,7 @@ $societe = new Societe($db);
 $societe->fetch($fichinter->socid);
 
 $head = fichinter_prepare_head($fichinter);
-dolibarr_fiche_head($head, 'info', $langs->trans('InterventionCard'));
+dol_fiche_head($head, 'info', $langs->trans('InterventionCard'));
 
 $fichinter->info($fichinter->id);
 

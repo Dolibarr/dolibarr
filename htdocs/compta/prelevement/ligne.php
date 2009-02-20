@@ -50,8 +50,8 @@ if ($_POST["action"] == 'confirm_rejet')
 	    }
 	  else
 	    {
-	      dolibarr_syslog("Motif : ".$_POST["motif"]);
-	      dolibarr_syslog("$daterej $time ");
+	      dol_syslog("Motif : ".$_POST["motif"]);
+	      dol_syslog("$daterej $time ");
 	      Header("Location: ligne.php?id=".$_GET["id"]."&action=rejet");
 	    }
 	}
@@ -80,7 +80,7 @@ if ($_GET["id"])
       $bon = new BonPrelevement($db);
       $bon->fetch($lipre->bon_rowid);
 
-      dolibarr_fiche_head($head, $hselected, 'Prélèvement : '. $lipre->bon_ref);
+      dol_fiche_head($head, $hselected, 'Prélèvement : '. $lipre->bon_ref);
       
       print '<table class="border" width="100%">';
       
@@ -106,7 +106,7 @@ if ($_GET["id"])
 		}
 	      else
 		{
-		  print dolibarr_print_date($rej->date_rejet,'day');
+		  print dol_print_date($rej->date_rejet,'day');
 		}
 	      print '</td></tr>';
 	    }
@@ -263,7 +263,7 @@ if ($_GET["id"])
     }
   else 
     {
-      dolibarr_print_error($db);
+      dol_print_error($db);
     }
 
   $db->close();

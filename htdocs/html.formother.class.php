@@ -97,7 +97,7 @@ class FormOther
 			print "</select>";
 		}
 		else {
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -148,7 +148,7 @@ class FormOther
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return 1;
 		}
 	}

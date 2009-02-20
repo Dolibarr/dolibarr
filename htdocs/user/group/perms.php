@@ -74,7 +74,7 @@ if ($_GET["id"])
 	 */
 	$head = group_prepare_head($fgroup);
 
-	dolibarr_fiche_head($head, 'rights', $langs->trans("Group").": ".$fgroup->nom);
+	dol_fiche_head($head, 'rights', $langs->trans("Group").": ".$fgroup->nom);
 
 
     $db->begin();
@@ -130,7 +130,7 @@ if ($_GET["id"])
     }
     else
     {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 
 

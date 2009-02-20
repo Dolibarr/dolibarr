@@ -48,7 +48,7 @@ class pdf_courrier_droit_editeur
 		$this->marge_haute=10;
 		$this->marge_basse=10;
 
-		$this->name = "Courrier des droits ".dolibarr_print_date(time(),"%Y");
+		$this->name = "Courrier des droits ".dol_print_date(time(),"%Y");
 		$this->file = '1'.strftime("%Y", time()).'.pdf';
 	}
 
@@ -63,7 +63,7 @@ class pdf_courrier_droit_editeur
 		$this->file = $numero.strftime("%Y", time());
 		$this->extension = "pdf";
 
-		dolibarr_syslog("pdf_courrier_droit_editeur::Generate ", LOG_DEBUG );
+		dol_syslog("pdf_courrier_droit_editeur::Generate ", LOG_DEBUG );
 
 		require_once(FPDF_PATH.'fpdf.php');
 		require_once(DOL_DOCUMENT_ROOT."/product.class.php");
@@ -106,7 +106,7 @@ class pdf_courrier_droit_editeur
 			{
 				$id = $obj->rowid;
 				 
-				dolibarr_syslog("droits-editeurs.php id:$id", LOG_DEBUG );
+				dol_syslog("droits-editeurs.php id:$id", LOG_DEBUG );
 				 
 				$coupdf = new pdf_courrier_droit_editeur($this->db, $langs);
 
@@ -136,17 +136,17 @@ class pdf_courrier_droit_editeur
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 				 
-				dolibarr_syslog("droits-editeurs.php write $file", LOG_DEBUG );
+				dol_syslog("droits-editeurs.php write $file", LOG_DEBUG );
 			}
 
 			$pdf_all->Close();
 			$pdf_all->Output($file_all);
-			dolibarr_syslog("droits-editeurs.php write $fileall", LOG_DEBUG );
+			dol_syslog("droits-editeurs.php write $fileall", LOG_DEBUG );
 
 		}
 		else
 		{
-			dolibarr_syslog("pdf_courrier_droit_editeur::Generate ".$db->error(), LOG_ERR );
+			dol_syslog("pdf_courrier_droit_editeur::Generate ".$db->error(), LOG_ERR );
 		}
 
 		return 0;
@@ -159,7 +159,7 @@ class pdf_courrier_droit_editeur
   */
 	function Write($id, $dir, $year, &$pdf)
 	{
-		dolibarr_syslog("pdf_courrier_droit_editeur::Write $id,$year ", LOG_DEBUG );
+		dol_syslog("pdf_courrier_droit_editeur::Write $id,$year ", LOG_DEBUG );
 		$soc = new Societe($this->db);
 		$soc->fetch($id);
    

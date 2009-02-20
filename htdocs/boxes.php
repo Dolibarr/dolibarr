@@ -73,7 +73,7 @@ class InfoBox
 			$sql.= " AND b.fk_user = ".$user->id;
 			$sql.= " ORDER BY b.box_order";
 
-			dolibarr_syslog("InfoBox::listBoxes get user box list sql=".$sql, LOG_DEBUG);
+			dol_syslog("InfoBox::listBoxes get user box list sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -105,7 +105,7 @@ class InfoBox
 			}
 			else {
 				$this->error=$this->db->error();
-				dolibarr_syslog("InfoBox::listBoxes Error ".$this->error, LOG_ERR);
+				dol_syslog("InfoBox::listBoxes Error ".$this->error, LOG_ERR);
 				return array();
 			}
 		}
@@ -120,7 +120,7 @@ class InfoBox
 			$sql.= " AND b.fk_user = 0";
 			$sql.= " ORDER BY b.box_order";
 
-			dolibarr_syslog("InfoBox::listBoxes get default box list sql=".$sql, LOG_DEBUG);
+			dol_syslog("InfoBox::listBoxes get default box list sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -152,7 +152,7 @@ class InfoBox
 			}
 			else {
 				$this->error=$this->db->error();
-				dolibarr_syslog("InfoBox::listBoxes Error ".$this->error, LOG_ERR);
+				dol_syslog("InfoBox::listBoxes Error ".$this->error, LOG_ERR);
 				return array();
 			}
 		}
@@ -172,7 +172,7 @@ class InfoBox
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
-		dolibarr_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);
+		dol_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);
 
 		if (! $userid || $userid == 0) return 0;
 
@@ -194,7 +194,7 @@ class InfoBox
 		$sql.=" WHERE fk_user = ".$userid;
 		$sql.=" AND position = ".$zone;
 
-		dolibarr_syslog("InfoBox::saveboxorder sql=".$sql);
+		dol_syslog("InfoBox::saveboxorder sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -204,7 +204,7 @@ class InfoBox
 				$part=split(':',$collist);
 				$colonne=$part[0];
 				$list=$part[1];
-				dolibarr_syslog('InfoBox::saveboxorder colonne='.$colonne.' list='.$list);
+				dol_syslog('InfoBox::saveboxorder colonne='.$colonne.' list='.$list);
 
 				$i=0;
 				$listarray=split(',',$list);
@@ -212,7 +212,7 @@ class InfoBox
 				{
 					if (is_numeric($id))
 					{
-						//dolibarr_syslog("aaaaa".sizeof($listarray));
+						//dol_syslog("aaaaa".sizeof($listarray));
 						$i++;
 						$ii=sprintf('%02d',$i);
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
@@ -224,7 +224,7 @@ class InfoBox
 						$sql.= " ".$userid;
 						$sql.= ")";
 
-						dolibarr_syslog("InfoBox::saveboxorder sql=".$sql);
+						dol_syslog("InfoBox::saveboxorder sql=".$sql);
 						$result = $this->db->query($sql);
 						if ($result < 0)
 						{

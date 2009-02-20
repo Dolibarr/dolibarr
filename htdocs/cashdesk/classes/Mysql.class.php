@@ -52,7 +52,7 @@ class Sql implements intSql {
 		* @return Ressource vers la requ�te venant d'�tre effectu�e
 		*/
 	public function query ($aRequete) {
-		dolibarr_syslog("cashdesk query sql=".$aRequete, LOG_DEBUG);
+		dol_syslog("cashdesk query sql=".$aRequete, LOG_DEBUG);
 		return mysql_query($aRequete);
 
 	}

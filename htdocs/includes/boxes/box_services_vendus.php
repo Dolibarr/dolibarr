@@ -137,7 +137,7 @@ class box_services_vendus extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-                    'text' => dolibarr_print_date($datem,'day'));
+                    'text' => dol_print_date($datem,'day'));
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
                     'text' => $contratlignestatic->LibStatut($objp->statut,3)
@@ -148,7 +148,7 @@ class box_services_vendus extends ModeleBoxes {
 			}
 			else 
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 		}
 		else {

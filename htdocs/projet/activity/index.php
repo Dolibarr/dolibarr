@@ -106,7 +106,7 @@ if ( $resql )
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 print "</table>";
 
@@ -150,7 +150,7 @@ if ( $resql )
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
@@ -198,7 +198,7 @@ if ( $resql )
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
@@ -247,7 +247,7 @@ if ( $resql )
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
@@ -258,7 +258,7 @@ print "</table><br />";
 /* Affichage de la liste des projets du mois */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.dolibarr_print_date($now,"%B %Y").'</td>';
+print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.dol_print_date($now,"%B %Y").'</td>';
 print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
@@ -292,7 +292,7 @@ if ( $resql )
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 print "</table>";
 
@@ -333,7 +333,7 @@ if ( $resql )
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 print "</table>";
 

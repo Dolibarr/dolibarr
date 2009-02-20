@@ -99,7 +99,7 @@ if ($_GET["facid"])
 
 	$head = facturefourn_prepare_head($fac);
 	$titre=$langs->trans('SupplierInvoice');
-	dolibarr_fiche_head($head, 'note', $titre);
+	dol_fiche_head($head, 'note', $titre);
 
 
     print '<table class="border" width="100%">';

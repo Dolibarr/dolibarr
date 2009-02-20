@@ -73,7 +73,7 @@ $pagenext = $page + 1;
 $commande = new CommandeFournisseur($db);
 if ($commande->fetch($_GET['id'],$_GET['ref']) < 0)
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 	exit;
 }
 
@@ -138,7 +138,7 @@ if ($id > 0 || ! empty($ref))
 
 	$head = ordersupplier_prepare_head($commande);
 
-	dolibarr_fiche_head($head, 'documents', $langs->trans('SupplierOrder'));
+	dol_fiche_head($head, 'documents', $langs->trans('SupplierOrder'));
 
 
 	// Construit liste des fichiers
@@ -177,7 +177,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
 		if ($commande->date_commande)
 		{
-			print dolibarr_print_date($commande->date_commande,"dayhourtext")."\n";
+			print dol_print_date($commande->date_commande,"dayhourtext")."\n";
 		}
 		print "</td></tr>";
 

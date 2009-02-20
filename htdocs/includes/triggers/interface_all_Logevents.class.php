@@ -100,13 +100,13 @@ class InterfaceLogevents
         if (! empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) return 0;	// Log events is disabled (hidden features)
 
 		$key='MAIN_LOGEVENTS_'.$action;
-		//dolibarr_syslog("xxxxxxxxxxx".$key);
+		//dol_syslog("xxxxxxxxxxx".$key);
 		if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
 
         // Actions
         if ($action == 'USER_LOGIN')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
@@ -116,7 +116,7 @@ class InterfaceLogevents
         }
         if ($action == 'USER_LOGIN_FAILED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
@@ -126,7 +126,7 @@ class InterfaceLogevents
         }
         if ($action == 'USER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
@@ -137,7 +137,7 @@ class InterfaceLogevents
 		}
         elseif ($action == 'USER_MODIFY')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
@@ -148,7 +148,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'USER_NEW_PASSWORD')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
@@ -159,7 +159,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'USER_ENABLEDISABLE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
@@ -177,7 +177,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'USER_DELETE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
@@ -189,7 +189,7 @@ class InterfaceLogevents
 		// Groupes
         elseif ($action == 'GROUP_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
@@ -199,7 +199,7 @@ class InterfaceLogevents
 		}
         elseif ($action == 'GROUP_MODIFY')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
@@ -209,7 +209,7 @@ class InterfaceLogevents
 		}
         elseif ($action == 'GROUP_DELETE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
@@ -221,7 +221,7 @@ class InterfaceLogevents
 		// Actions
         if ($action == 'ACTION_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             // Initialisation donnees (date,duree,texte,desc)
@@ -250,7 +250,7 @@ class InterfaceLogevents
 		// Third parties
         elseif ($action == 'COMPANY_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             // Initialisation donnees (date,duree,texte,desc)
@@ -267,7 +267,7 @@ class InterfaceLogevents
 		// Contracts
         elseif ($action == 'CONTRACT_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             // Initialisation donnees (date,duree,texte,desc)
@@ -279,7 +279,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'CONTRACT_CANCEL')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -290,7 +290,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'CONTRACT_CLOSE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -303,7 +303,7 @@ class InterfaceLogevents
 		// Proposals
         elseif ($action == 'PROPAL_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -314,7 +314,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'PROPAL_CLOSE_SIGNED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -325,7 +325,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'PROPAL_CLOSE_REFUSED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -338,7 +338,7 @@ class InterfaceLogevents
         // Invoices
 		elseif ($action == 'BILL_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -349,7 +349,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'BILL_PAYED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -360,7 +360,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'BILL_CANCELED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -373,7 +373,7 @@ class InterfaceLogevents
         // Payments
         elseif ($action == 'PAYMENT_CUSTOMER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -385,7 +385,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'PAYMENT_SUPPLIER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -399,7 +399,7 @@ class InterfaceLogevents
         // Members
         elseif ($action == 'MEMBER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -413,7 +413,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'MEMBER_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -427,7 +427,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -438,12 +438,12 @@ class InterfaceLogevents
             $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
-            $this->desc.="\n".$langs->transnoentities("Period").': '.dolibarr_print_date($object->last_subscription_date_start,'day').' - '.dolibarr_print_date($object->last_subscription_date_end,'day');
+            $this->desc.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }
         elseif ($action == 'MEMBER_MODIFY')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -457,7 +457,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -471,7 +471,7 @@ class InterfaceLogevents
         }
         elseif ($action == 'MEMBER_DELETE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             $langs->load("members");
 
@@ -488,7 +488,7 @@ class InterfaceLogevents
 /*
         else
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
+            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return 0;
         }
 */
@@ -514,7 +514,7 @@ class InterfaceLogevents
                 $error ="Failed to insert security event: ".$event->error;
                 $this->error=$error;
 
-                dolibarr_syslog("interface_all_Logevents.class.php: ".$this->error);
+                dol_syslog("interface_all_Logevents.class.php: ".$this->error);
                 return -1;
             }
         }

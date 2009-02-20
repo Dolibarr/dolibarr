@@ -66,7 +66,7 @@ $form=new Form($db);
       $result = $entrepot->fetch($_GET["id"]);
       if ($result < 0)
         {
-	  dolibarr_print_error($db);
+	  dol_print_error($db);
         }
       
       /*
@@ -101,7 +101,7 @@ $form=new Form($db);
 	  $head[$h][1] = $langs->trans("Info");
 	  $h++;
 
-	  dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
+	  dol_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
 	  
 	  print '<table class="border" width="100%">';
 	  
@@ -190,7 +190,7 @@ $form=new Form($db);
             }
 	  else
             {
-	      dolibarr_print_error($db);
+	      dol_print_error($db);
             }
 	  print "</table>\n";
         }

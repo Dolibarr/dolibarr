@@ -48,7 +48,7 @@ if ($resql)
     {
       $id       = $obj->socid;
 
-      dolibarr_syslog("droits-editeurs.php id:$id", LOG_DEBUG );
+      dol_syslog("droits-editeurs.php id:$id", LOG_DEBUG );
 
       $coupdf = new pdf_courrier_editeur($db, $langs);
       $coupdf->write($id, $year);
@@ -301,7 +301,7 @@ class pdf_courrier_editeur
 	$pdf->Close();
 
 	$pdf->Output($file);
-	dolibarr_syslog("droits-editeurs.php write $file", LOG_DEBUG );
+	dol_syslog("droits-editeurs.php write $file", LOG_DEBUG );
 	return 0;
       }
     else

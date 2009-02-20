@@ -124,7 +124,7 @@ if ($socid > 0)
 		
 		$html=new Form($db);
 		
-		dolibarr_fiche_head($head, 'document', $langs->trans("ThirdParty"));
+		dol_fiche_head($head, 'document', $langs->trans("ThirdParty"));
 		
 
 		// Construit liste des fichiers
@@ -218,7 +218,7 @@ if ($socid > 0)
 					print "</td>\n";
 
 					print '<td align="right">'.filesize($courrier_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
-					print '<td align="center">'.dolibarr_print_date(filemtime($courrier_dir."/".$file),"dayhour").'</td>';
+					print '<td align="center">'.dol_print_date(filemtime($courrier_dir."/".$file),"dayhour").'</td>';
 					print "</tr>\n";
 				}
 			}
@@ -227,12 +227,12 @@ if ($socid > 0)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 else
 {
-	dolibarr_print_error();
+	dol_print_error();
 }
 
 $db->close();

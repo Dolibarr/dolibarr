@@ -96,7 +96,7 @@ else
 }
 
 // Select every potentiels, and note each potentiels which fit in search parameters
-dolibarr_syslog('prospects::prospects_prospect_level',LOG_DEBUG);
+dol_syslog('prospects::prospects_prospect_level',LOG_DEBUG);
 $sql = "SELECT code, label, sortorder, ".$sortwhere;
 $sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 $sql.= " WHERE active > 0";
@@ -129,7 +129,7 @@ if ($resql)
 	// If no paramters was set, $search_levels will be empty
 	$search_levels = implode(',', $search_levels);
 }
-else dolibarr_print_error($db);
+else dol_print_error($db);
 
 // Load sale and categ filters
 $search_sale = isset($_GET["search_sale"])?$_GET["search_sale"]:$_POST["search_sale"];
@@ -309,7 +309,7 @@ if ($resql)
  		}
  		else
  		{
- 			dolibarr_print_error($db);
+ 			dol_print_error($db);
  		}
  		print '</select> &nbsp;  &nbsp;  &nbsp; ';
  	}
@@ -426,7 +426,7 @@ if ($resql)
 		print "<td>".$obj->ville."&nbsp;</td>";
 		print "<td align=\"center\">$obj->departement</td>";
 		// Creation date
-		print "<td align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
+		print "<td align=\"center\">".dol_print_date($obj->datec)."</td>";
 		// Level
 		print "<td align=\"center\">";
 		print $prospectstatic->LibLevel($obj->fk_prospectlevel);
@@ -463,7 +463,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 $db->close();

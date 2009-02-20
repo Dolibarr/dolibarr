@@ -81,7 +81,7 @@ if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
 $head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);
-dolibarr_fiche_head($head, 'barcode', $titre);
+dol_fiche_head($head, 'barcode', $titre);
 
 
 print '<table class="border" width="100%">';

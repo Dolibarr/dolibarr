@@ -107,7 +107,7 @@ $head[$h][1] = $langs->trans('Info');
 $h++;
 
 
-dolibarr_fiche_head($head, $hselected, $langs->trans('SupplierPayment'));
+dol_fiche_head($head, $hselected, $langs->trans('SupplierPayment'));
 
 /*
  * Confirmation de la suppression du paiement
@@ -139,7 +139,7 @@ if (!empty($_POST['action']) && $_POST['action'] == 'update_num' && !empty($_POS
 
 if (!empty($_POST['action']) && $_POST['action'] == 'update_date' && !empty($_POST['reday']))
 {
-	$datepaye = dolibarr_mktime(12, 0 , 0,
+	$datepaye = dol_mktime(12, 0 , 0,
 	$_POST['remonth'],
 	$_POST['reday'],
 	$_POST['reyear']);
@@ -185,7 +185,7 @@ if (empty($_GET['action']) || $_GET['action']!='edit_date')
 	if ($paiement->statut == 0 && $_GET['action'] != 'edit_date') print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_date">'.img_edit($langs->trans('Modify')).'</a></td>';
 	print '</tr></table>';
 	print '</td>';
-	print '<td colspan="3">'.dolibarr_print_date($paiement->date,'day').'</td></tr>';
+	print '<td colspan="3">'.dol_print_date($paiement->date,'day').'</td></tr>';
 }
 else
 {
@@ -194,7 +194,7 @@ else
 	print '<td colspan="3">';
 	print '<form name="formsoc" method="post" action="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'"><input type="hidden" name="action" value="update_date" />';
 	if (!empty($_POST['remonth']) && !empty($_POST['reday']) && !empty($_POST['reyear']))
-	$sel_date=dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+	$sel_date=dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 	else
 	$sel_date=$paiement->date;
 	$html->select_date($sel_date,'','','','',"addpaiement");
@@ -307,7 +307,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 print '</div>';

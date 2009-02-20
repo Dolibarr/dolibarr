@@ -156,7 +156,7 @@ class DolibarrMail
       }
     else
       {
-	dolibarr_syslog("DolibarrMail::encode_file Erreur");
+	dol_syslog("DolibarrMail::encode_file Erreur");
       }
     return $encoded;
   }
@@ -178,12 +178,12 @@ class DolibarrMail
 
     if ($this->errors_to)
       {
-	//dolibarr_syslog("DolibarrMail::sendfile with errorsto : ".$this->errors_to);
+	//dol_syslog("DolibarrMail::sendfile with errorsto : ".$this->errors_to);
 	$res = mail($this->addr_to,$this->subject,stripslashes($message_comp),$headers,"-f".$this->errors_to);
       }
     else
       {
-	//dolibarr_syslog("DolibarrMail::sendfile without errorsto");
+	//dol_syslog("DolibarrMail::sendfile without errorsto");
 	$res = mail($this->addr_to,$this->subject,stripslashes($message_comp),$headers);
       }
 
@@ -226,7 +226,7 @@ class DolibarrMail
       }
     else
       {
-	//dolibarr_syslog("DolibarrMail::write_body");
+	//dol_syslog("DolibarrMail::write_body");
       }
 
     $out = $out . $this->message . "\n\n";

@@ -87,31 +87,31 @@ function dol_print_object_info($object)
 	print $langs->trans("CreatedBy")." : " . $object->user_creation->fullname . '<br>';
 
 	if (isset($object->date_creation))
-	print $langs->trans("DateCreation")." : " . dolibarr_print_date($object->date_creation,"dayhourtext") . '<br>';
+	print $langs->trans("DateCreation")." : " . dol_print_date($object->date_creation,"dayhourtext") . '<br>';
 
 	if (isset($object->user_modification) && $object->user_modification->fullname)
 	print $langs->trans("ModifiedBy")." : " . $object->user_modification->fullname . '<br>';
 
 	if (isset($object->date_modification))
-	print $langs->trans("DateLastModification")." : " . dolibarr_print_date($object->date_modification,"dayhourtext") . '<br>';
+	print $langs->trans("DateLastModification")." : " . dol_print_date($object->date_modification,"dayhourtext") . '<br>';
 
 	if (isset($object->user_validation) && $object->user_validation->fullname)
 	print $langs->trans("ValidatedBy")." : " . $object->user_validation->fullname . '<br>';
 
 	if (isset($object->date_validation))
-	print $langs->trans("DateValidation")." : " . dolibarr_print_date($object->date_validation,"dayhourtext") . '<br>';
+	print $langs->trans("DateValidation")." : " . dol_print_date($object->date_validation,"dayhourtext") . '<br>';
 
 	if (isset($object->user_cloture) && $object->user_cloture->fullname )
 	print $langs->trans("ClosedBy")." : " . $object->user_cloture->fullname . '<br>';
 
 	if (isset($object->date_cloture))
-	print $langs->trans("DateClosing")." : " . dolibarr_print_date($object->date_cloture,"dayhourtext") . '<br>';
+	print $langs->trans("DateClosing")." : " . dol_print_date($object->date_cloture,"dayhourtext") . '<br>';
 
 	if (isset($object->user_rappro) && $object->user_rappro->fullname )
 	print $langs->trans("ConciliatedBy")." : " . $object->user_rappro->fullname . '<br>';
 
 	if (isset($object->date_rappro))
-	print $langs->trans("DateConciliating")." : " . dolibarr_print_date($object->date_rappro,"dayhourtext") . '<br>';
+	print $langs->trans("DateConciliating")." : " . dol_print_date($object->date_rappro,"dayhourtext") . '<br>';
 }
 
 
@@ -316,7 +316,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 		$obj = $db->fetch_object($resql);
 		$counter = $obj->val;
 	}
-	else dolibarr_print_error($db);
+	else dol_print_error($db);
 	if (empty($counter) || eregi('[^0-9]',$counter)) $counter=$maskoffset;
 	$counter++;
 
@@ -359,7 +359,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 			$maskrefclient_obj = $db->fetch_object($maskrefclient_resql);
 			$maskrefclient_counter = $maskrefclient_obj->val;
 		}
-		else dolibarr_print_error($db);
+		else dol_print_error($db);
 		if (empty($maskrefclient_counter) || eregi('[^0-9]',$maskrefclient_counter)) $maskrefclient_counter=$maskrefclient_maskoffset;
 		$maskrefclient_counter++;
 	}
@@ -702,7 +702,7 @@ function dol_set_user_param($db, &$user, $tab)
 	$resql=$db->query($sql);
 	if (! $resql)
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 		$db->rollback();
 		return -1;
 	}
@@ -720,7 +720,7 @@ function dol_set_user_param($db, &$user, $tab)
 			$result=$db->query($sql);
 			if (! $result)
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 				$db->rollback();
 				return -1;
 			}

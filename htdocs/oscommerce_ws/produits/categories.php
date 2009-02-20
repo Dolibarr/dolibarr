@@ -241,7 +241,7 @@ else
 
 	print_barre_liste("Correspondance des catégories", $page, "categories.php");
 
-	dolibarr_syslog("Osc_Categorie.class::get_Osccat sql=".$sql);
+	dol_syslog("Osc_Categorie.class::get_Osccat sql=".$sql);
    $resql=$db->query($sql);
    if ($resql)
 	{
@@ -275,7 +275,7 @@ else
 	}
 	else
 	{
-  		dolibarr_print_error();
+  		dol_print_error();
 	}
 }	
 	//WebService Client.
@@ -294,7 +294,7 @@ $result = $client->call("get_categorylist",$parameters );
 
 if ($client->fault) {
 	if ($client->faultcode == 'Server') print '<p>Il n\'y a pas de catégorie fille pour la catégorie '.$catid.'</p>';
-	else dolibarr_print_error('',"erreur de connexion ".$client->getError());
+	else dol_print_error('',"erreur de connexion ".$client->getError());
   		
 }
 elseif ( !($err = $client->getError()) )

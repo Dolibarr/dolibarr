@@ -106,7 +106,7 @@ class PaiementFourn
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			$error = -1;
 		}
 		return $error;
@@ -144,7 +144,7 @@ class PaiementFourn
 			$sql.= ' VALUES ('.$this->db->idate(mktime()).',';
 			$sql.= " ".$this->db->idate($this->datepaye).", '".$this->total."', ".$this->paiementid.", '".$this->num_paiement."', '".addslashes($this->note)."', ".$user->id.", 0)";
 			
-			dolibarr_syslog("PaiementFourn::create sql=".$sql);
+			dol_syslog("PaiementFourn::create sql=".$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -161,13 +161,13 @@ class PaiementFourn
 						$sql .= ' VALUES ('.$facid.','. $this->id.',\''.$amount.'\')';
 						if (! $this->db->query($sql) )
 						{
-							dolibarr_syslog('Paiement::Create Erreur INSERT dans paiement_facture '.$facid);
+							dol_syslog('Paiement::Create Erreur INSERT dans paiement_facture '.$facid);
 							$error++;
 						}
 					}
 					else
 					{
-						dolibarr_syslog('PaiementFourn::Create Montant non numerique',LOG_ERR);
+						dol_syslog('PaiementFourn::Create Montant non numerique',LOG_ERR);
 					}
 				}
 
@@ -184,21 +184,21 @@ class PaiementFourn
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dolibarr_syslog('PaiementFourn::Create Error '.$this->error, LOG_ERR);
+				dol_syslog('PaiementFourn::Create Error '.$this->error, LOG_ERR);
 				$error++;
 			}
 		}
 		else
 		{
 			$this->error="ErrorTotalIsNull";
-			dolibarr_syslog('PaiementFourn::Create Error '.$this->error, LOG_ERR);
+			dol_syslog('PaiementFourn::Create Error '.$this->error, LOG_ERR);
 			$error++;
 		}
 
 		if ($this->total <> 0 && $error == 0) // On accepte les montants negatifs
 		{
 			$this->db->commit();
-			dolibarr_syslog('PaiementFourn::Create Ok Total = '.$this->total);
+			dol_syslog('PaiementFourn::Create Ok Total = '.$this->total);
 			return $this->id;
 		}
 		else
@@ -308,7 +308,7 @@ class PaiementFourn
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return 0;
 		}
 	}
@@ -321,7 +321,7 @@ class PaiementFourn
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'paiementfourn SET statut = 1 WHERE rowid = '.$this->id;
 
-		dolibarr_syslog("PaiementFourn::valide sql=".$sql);
+		dol_syslog("PaiementFourn::valide sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -330,7 +330,7 @@ class PaiementFourn
 		else
 		{
 			$this->error='Paiement::Valide Error -1 '.$this->db->error();
-			dolibarr_syslog('PaiementFourn::valide error '.$this->error);
+			dol_syslog('PaiementFourn::valide error '.$this->error);
 			return -1;
 		}
 	}
@@ -373,7 +373,7 @@ class PaiementFourn
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -407,7 +407,7 @@ class PaiementFourn
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog('PaiementFourn::getBillsArray Error '.$this->error.' - sql='.$sql);
+			dol_syslog('PaiementFourn::getBillsArray Error '.$this->error.' - sql='.$sql);
 			return -1;
 		}
 	}
@@ -498,7 +498,7 @@ class PaiementFourn
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'paiementfourn SET num_paiement = \''.$this->db->escape($num).'\' WHERE rowid = '.$this->id;
     
-            dolibarr_syslog("PaiementFourn::update_num sql=".$sql);
+            dol_syslog("PaiementFourn::update_num sql=".$sql);
             $result = $this->db->query($sql);
             if ($result)
             {
@@ -508,7 +508,7 @@ class PaiementFourn
             else
             {
                 $this->error='PaiementFourn::update_num Error -1 '.$this->db->error();
-                dolibarr_syslog('PaiementFourn::update_num error '.$this->error);
+                dol_syslog('PaiementFourn::update_num error '.$this->error);
                 return -1;
             }
         }
@@ -524,7 +524,7 @@ class PaiementFourn
         if(!empty($date) && $this->statut!=1)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'paiementfourn SET datep = '.$this->db->idate($date).' WHERE rowid = '.$this->id;
-            dolibarr_syslog("PaiementFourn::update_date sql=".$sql);
+            dol_syslog("PaiementFourn::update_date sql=".$sql);
             $result = $this->db->query($sql);
             if ($result)
             {
@@ -535,7 +535,7 @@ class PaiementFourn
             else
             {
                 $this->error='PaiementFourn::update_date Error -1 '.$this->db->error();
-                dolibarr_syslog('PaiementFourn::update_date error '.$this->error);
+                dol_syslog('PaiementFourn::update_date error '.$this->error);
                 return -1;
             }
         }

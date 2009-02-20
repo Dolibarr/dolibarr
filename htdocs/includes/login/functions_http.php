@@ -32,7 +32,7 @@
 */
 function check_user_password_http($usertotest,$passwordtotest)
 {
-	dolibarr_syslog("functions_http::check_user_password_http _SERVER[REMOTE_USER]=".$_SERVER["REMOTE_USER"]);
+	dol_syslog("functions_http::check_user_password_http _SERVER[REMOTE_USER]=".$_SERVER["REMOTE_USER"]);
 
 	$login='';
 	if (! empty($_SERVER["REMOTE_USER"]))

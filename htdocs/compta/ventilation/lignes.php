@@ -123,8 +123,8 @@ if ($result)
 		else print '&nbsp;';
 		print '</td>';
 
-		print '<td>'.dolibarr_trunc($objp->product_label,24).'</td>';
-		print '<td>'.nl2br(dolibarr_trunc($objp->description,32)).'</td>';
+		print '<td>'.dol_trunc($objp->product_label,24).'</td>';
+		print '<td>'.nl2br(dol_trunc($objp->description,32)).'</td>';
 		print '<td align="left">'.price($objp->price).'</td>';
 		print '<td align="left">'.$codeCompta.'</td>';
 

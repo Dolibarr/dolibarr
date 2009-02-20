@@ -48,7 +48,7 @@ class Document
   {
     $errno = 0;
 
-    dolibarr_syslog("Document::Generate id=$id", LOG_DEBUG );
+    dol_syslog("Document::Generate id=$id", LOG_DEBUG );
     $this->id = $id;
     $class = $id;
     $classfile = 'docs/class/'.$class.'.class.php';
@@ -76,12 +76,12 @@ class Document
     if ($err === 0)
       {
 	$this->db->commit();
-	dolibarr_syslog("Document::Generate COMMIT", LOG_DEBUG );
+	dol_syslog("Document::Generate COMMIT", LOG_DEBUG );
       }
     else
       {
 	$this->db->rollback();
-	dolibarr_syslog("Document::Generate ROLLBACK", LOG_ERR );
+	dol_syslog("Document::Generate ROLLBACK", LOG_ERR );
       }
 
     return $errno;

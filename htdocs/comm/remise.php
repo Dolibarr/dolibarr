@@ -88,7 +88,7 @@ if ($_socid > 0)
 	 */
 	$head = societe_prepare_head($objsoc);
 
-	dolibarr_fiche_head($head, 'relativediscount', $objsoc->nom);
+	dol_fiche_head($head, 'relativediscount', $objsoc->nom);
 
 
     /*
@@ -153,7 +153,7 @@ if ($_socid > 0)
 	    $obj = $db->fetch_object($resql);
 	    $tag = !$tag;
 	    print '<tr '.$bc[$tag].'>';
-	    print '<td>'.dolibarr_print_date($obj->dc,"dayhour").'</td>';
+	    print '<td>'.dol_print_date($obj->dc,"dayhour").'</td>';
 	    print '<td align="center">'.$obj->remise_client.' %</td>';
 	    print '<td align="left">'.$obj->note.'</td>';
 	    print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
@@ -165,7 +165,7 @@ if ($_socid > 0)
       }
     else
       {
-	dolibarr_print_error($db);
+	dol_print_error($db);
       }
 
 }

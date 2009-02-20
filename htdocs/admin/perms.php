@@ -59,7 +59,7 @@ print "<br>\n";
 
 $head=security_prepare_head();
 
-dolibarr_fiche_head($head, 'default', $langs->trans("Security"));
+dol_fiche_head($head, 'default', $langs->trans("Security"));
 
 print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 

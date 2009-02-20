@@ -99,7 +99,7 @@ if ($_GET['id'])
 		if ( $societe->fetch($fichinter->socid) )
 		{
 			$head = fichinter_prepare_head($fichinter);
-			dolibarr_fiche_head($head, 'note', $langs->trans('InterventionCard'));
+			dol_fiche_head($head, 'note', $langs->trans('InterventionCard'));
 
 			print '<table class="border" width="100%">';
 

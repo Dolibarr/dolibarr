@@ -119,16 +119,16 @@ $next = dol_get_next_month($month, $year);
 $next_year  = $next['year'];
 $next_month = $next['month'];
 
-$max_day_in_prev_month = date("t",dolibarr_mktime(0,0,0,$prev_month,1,$prev_year));	// Nb of days in previous month
-$max_day_in_month = date("t",dolibarr_mktime(0,0,0,$month,1,$year));				// Nb of days in next month
-$tmpday = -date("w",dolibarr_mktime(0,0,0,$month,1,$year))+2;
+$max_day_in_prev_month = date("t",dol_mktime(0,0,0,$prev_month,1,$prev_year));	// Nb of days in previous month
+$max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));				// Nb of days in next month
+$tmpday = -date("w",dol_mktime(0,0,0,$month,1,$year))+2;
 if ($tmpday >= 1) $tmpday -= 7;
-$firstdaytoshow=dolibarr_mktime(0,0,0,$prev_month,$max_day_in_prev_month+$tmpday,$prev_year);
+$firstdaytoshow=dol_mktime(0,0,0,$prev_month,$max_day_in_prev_month+$tmpday,$prev_year);
 $next_day=7-($max_day_in_month+1-$tmpday)%7;
 if ($next_day < 6) $next_day+=7;
-$lastdaytoshow=dolibarr_mktime(0,0,0,$next_month,$next_day,$next_year);
-//print dolibarr_print_date($firstdaytoshow,'day');
-//print dolibarr_print_date($lastdaytoshow,'day');
+$lastdaytoshow=dol_mktime(0,0,0,$next_month,$next_day,$next_year);
+//print dol_print_date($firstdaytoshow,'day');
+//print dol_print_date($lastdaytoshow,'day');
 
 $title=$langs->trans("DoneAndToDoActions");
 if ($status == 'done') $title=$langs->trans("DoneActions");
@@ -147,7 +147,7 @@ if (! empty($_REQUEST["type"]))   $param.="&type=".$_REQUEST["type"];
 
 // Show navigation bar
 $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;region=".$region.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
-$nav.=" <span id=\"month_name\">".dolibarr_print_date(dolibarr_mktime(0,0,0,$month,1,$year),"%b");
+$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,1,$year),"%b");
 $nav.=" ".$year;
 $nav.=" </span>\n";
 $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
@@ -220,14 +220,14 @@ $sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'c_actioncomm 
 $sql.= ' WHERE a.fk_action = ca.id';
 if ($_GET["action"] == 'show_day')
 {
-	$sql.= ' AND datep BETWEEN '.$db->idate(dolibarr_mktime(0,0,0,$month,$_GET["day"],$year));
-	$sql.= ' AND '.$db->idate(dolibarr_mktime(23,59,59,$month,$_GET["day"],$year));
+	$sql.= ' AND datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
+	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year));
 }
 else
 {
 	// To limit array
-    $sql.= ' AND datep BETWEEN '.$db->idate(dolibarr_mktime(0,0,0,$month,1,$year)-(60*60*24*7));	// Start 7 days before
-    $sql.= ' AND '.$db->idate(dolibarr_mktime(0,0,0,$month,28,$year)+(60*60*24*10));	// End 7 days after + 3 to go from 28 to 31
+    $sql.= ' AND datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));	// Start 7 days before
+    $sql.= ' AND '.$db->idate(dol_mktime(0,0,0,$month,28,$year)+(60*60*24*10));	// End 7 days after + 3 to go from 28 to 31
 }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
@@ -290,7 +290,7 @@ if ($resql)
 		$jour = date('d',$daycursor);
 
 		$loop=true;
-		$daykey=dolibarr_mktime(0,0,0,$mois,$jour,$annee);
+		$daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
 		do
 		{
 			$actionarray[$daykey][]=$action;
@@ -303,7 +303,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 if ($showbirthday)
@@ -338,7 +338,7 @@ if ($showbirthday)
 			$datebirth=dol_stringtotime($obj->birthday);
 			//print 'ee'.$obj->birthday.'-'.$datebirth;
 			$datearray=dol_getdate($datebirth,true);
-			$action->datep=dolibarr_mktime(0,0,0,$datearray['mon'],$datearray['mday'],$year);
+			$action->datep=dol_mktime(0,0,0,$datearray['mon'],$datearray['mday'],$year);
 			$action->datef=$action->datep;
 			$action->type_code='BIRTHDAY';
 			$action->libelle=$langs->trans("Birthday").' '.$obj->firstname.' '.$obj->name;
@@ -355,7 +355,7 @@ if ($showbirthday)
 			$jour = date('d',$daycursor);
 	
 			$loop=true;
-			$daykey=dolibarr_mktime(0,0,0,$mois,$jour,$annee);
+			$daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
 			do
 			{
 				$actionarray[$daykey][]=$action;
@@ -368,7 +368,7 @@ if ($showbirthday)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -423,7 +423,7 @@ if ($_GET["action"] != 'show_day')
 			/* Show days of the current month */
 			elseif(($tmpday <= $max_day_in_month))
 			{
-				$curtime = dolibarr_mktime (0, 0, 0, $month, $tmpday, $year);
+				$curtime = dol_mktime (0, 0, 0, $month, $tmpday, $year);
 
 				if ($curtime < $now)
 				$style='cal_current_month';
@@ -454,8 +454,8 @@ else
 {
 	// Code to show just one day
 	$style='cal_current_month';
-	$timestamp=dolibarr_mktime(12,0,0,$month,$_GET["day"],$year);
-	$arraytimestamp=adodb_getdate(dolibarr_mktime(12,0,0,$month,$_GET["day"],$year));
+	$timestamp=dol_mktime(12,0,0,$month,$_GET["day"],$year);
+	$arraytimestamp=adodb_getdate(dol_mktime(12,0,0,$month,$_GET["day"],$year));
 	$dayname=array('0'=>'Sunday','1'=>'Monday','2'=>'Tuesday','3'=>'Wednesday','4'=>'Thursday','5'=>'Friday','6'=>'Saturday');
 	echo '<table width="100%" class="nocellnopadd">';
 	echo ' <tr class="liste_titre">';
@@ -497,11 +497,11 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 	{
 		$maxPrint=0;
 	}
-	$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
+	$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
 
 	print '<table class="nobordernopadding" width="100%">';
 	print '<tr style="background: #EEEEEE"><td align="left" nowrap="nowrap">';
-	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.$month.'&year='.$year.'">'.dolibarr_print_date($curtime,'%a %d').'</a>';
+	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.$month.'&year='.$year.'">'.dol_print_date($curtime,'%a %d').'</a>';
 	print '</td><td align="right" nowrap="nowrap">';
 	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).'">';
 	print img_picto($langs->trans("NewAction"),'edit_add.png');
@@ -509,7 +509,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 	print '</td></tr>';
 	print '<tr height="60"><td valign="top" colspan="2" nowrap="nowrap">';	// Minimum 60px height
 
-	//$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
+	//$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
 	$i=0;
 	
 	foreach ($actionarray as $daykey => $notused)
@@ -543,7 +543,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 						// Hour start
 						if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour)
 						{
-							print dolibarr_print_date($action->date_start_in_calendar,'%H:%M');
+							print dol_print_date($action->date_start_in_calendar,'%H:%M');
 							if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
 							{
 								if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend)
@@ -563,7 +563,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 						if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
 						{
 							if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
-							print dolibarr_print_date($action->date_end_in_calendar,'%H:%M');
+							print dol_print_date($action->date_end_in_calendar,'%H:%M');
 						}
 						print '<br>';
 						print $action->getNomUrl(0,$nbofchartoshow,'cal_event');

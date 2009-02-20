@@ -54,7 +54,7 @@ $societe = new Societe($db);
 $societe->fetch($propal->socid);
 
 $head = propal_prepare_head($propal);
-dolibarr_fiche_head($head, 'info', $langs->trans('Proposal'));
+dol_fiche_head($head, 'info', $langs->trans('Proposal'));
 
 $propal->info($propal->id);
 

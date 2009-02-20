@@ -138,7 +138,7 @@ $sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit($limit + 1 ,$offset);
 
 
-dolibarr_syslog("fourn/product/liste: sql=".$sql);
+dol_syslog("fourn/product/liste: sql=".$sql);
 
 $resql = $db->query($sql) ;
 if ($resql)
@@ -250,7 +250,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 

@@ -83,7 +83,7 @@ if ($_GET["action"] == 'create_commercial')
   $hselected = $h;
   $h++;
   
-  dolibarr_fiche_head($head, $hselected, $distri->nom);
+  dol_fiche_head($head, $hselected, $distri->nom);
 
   print '<form method="POST" action="fiche.php?distri='.$_GET["distri"].'">';
   print '<input type="hidden" name="action" value="add_commercial"></td></tr>';
@@ -117,7 +117,7 @@ $head[$h][1] = "Nouveau distributeur";
 $hselected = $h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, "Distributeurs");
+dol_fiche_head($head, $hselected, "Distributeurs");
 
   print '<form method="POST" action="fiche.php">';
   print '<input type="hidden" name="action" value="add"></td></tr>';

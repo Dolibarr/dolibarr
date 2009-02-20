@@ -166,10 +166,10 @@ if ($resql)
         print "</td>";
 
         print "<td align=\"center\">";
-        $y = dolibarr_print_date($objp->date_commande,"%Y");
-        $m = dolibarr_print_date($objp->date_commande,"%m");
-        $mt = dolibarr_print_date($objp->date_commande,"%b");
-        $d = dolibarr_print_date($objp->date_commande,"%d");
+        $y = dol_print_date($objp->date_commande,"%Y");
+        $m = dol_print_date($objp->date_commande,"%m");
+        $mt = dol_print_date($objp->date_commande,"%b");
+        $d = dol_print_date($objp->date_commande,"%d");
         print $d."\n";
         print " <a href=\"liste.php?year=$y&amp;month=$m\">";
         print $mt."</a>\n";
@@ -190,7 +190,7 @@ if ($resql)
 }
 else
 {
-    print dolibarr_print_error($db);
+    print dol_print_error($db);
 }
 
 

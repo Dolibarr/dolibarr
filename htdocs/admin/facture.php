@@ -81,13 +81,13 @@ if ($_GET["action"] == 'specimen')
 		else
 		{
 			$mesg='<div class="error">'.$obj->error.'</div>';
-			dolibarr_syslog($obj->error, LOG_ERR);
+			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
-		dolibarr_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
 
@@ -181,7 +181,7 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
 	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''));
 	{
-	   dolibarr_print_error($db);
+	   dol_print_error($db);
 	}
 }
 
@@ -189,7 +189,7 @@ if ($_GET["action"] == 'delete')
 {
   if (! dolibarr_del_const($db, $_GET["rowid"]));
   {
-    dolibarr_print_error($db);
+    dol_print_error($db);
   }
 }
 
@@ -223,7 +223,7 @@ $head[$h][1] = $langs->trans("Invoices");
 $hselected=$h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
  *  Module numerotation
@@ -358,7 +358,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 print '<table class="noborder" width="100%">';

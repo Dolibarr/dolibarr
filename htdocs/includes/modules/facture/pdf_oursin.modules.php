@@ -382,7 +382,7 @@ class pdf_oursin extends ModelePDFFactures
 		else
 		{
 			$this->error=$outputlangs->trans("ErrorSQL")." sql=".$sql;
-			dolibarr_syslog($this->db,$this->error, LOG_ERR);
+			dol_syslog($this->db,$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -442,7 +442,7 @@ class pdf_oursin extends ModelePDFFactures
 		else
 		{
 			$this->error=$outputlangs->trans("ErrorSQL")." sql=".$sql;
-			dolibarr_syslog($this->db,$this->error, LOG_ERR);
+			dol_syslog($this->db,$this->error, LOG_ERR);
 			return -1;
 		}
 

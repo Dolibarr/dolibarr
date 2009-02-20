@@ -70,7 +70,7 @@ class UserGroup
         $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
         $sql.= " WHERE g.rowid = ".$this->id;
 
-        dolibarr_syslog("Usergroup::fetch sql=".$sql);
+        dol_syslog("Usergroup::fetch sql=".$sql);
 		$result = $this->db->query($sql);
         if ($result)
         {
@@ -90,7 +90,7 @@ class UserGroup
         else
         {
         	$this->error=$this->db->lasterror();
-        	dolibarr_syslog("UserGroup::Fetch ".$this->error, LOG_ERR);
+        	dol_syslog("UserGroup::Fetch ".$this->error, LOG_ERR);
 			return -1;
         }
 
@@ -112,7 +112,7 @@ class UserGroup
         $sql.= " AND ug.fk_user = ".$usertosearch->id;
         $sql.= " ORDER BY g.nom";
         
-        dolibarr_syslog("UserGroup::listGroupsForUser sql=".$sql,LOG_DEBUG);
+        dol_syslog("UserGroup::listGroupsForUser sql=".$sql,LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -132,7 +132,7 @@ class UserGroup
 	    else
         {
         	$this->error=$this->db->lasterror();
-        	dolibarr_syslog("UserGroup::listGroupsForUser ".$this->error, LOG_ERR);
+        	dol_syslog("UserGroup::listGroupsForUser ".$this->error, LOG_ERR);
 			return -1;
         }		
 		return $ret;
@@ -170,7 +170,7 @@ class UserGroup
             }
             else {
                 $err++;
-                dolibarr_print_error($this->db);
+                dol_print_error($this->db);
             }
 
             // Where pour la liste des droits à ajouter
@@ -218,7 +218,7 @@ class UserGroup
             else
             {
                 $err++;
-                dolibarr_print_error($this->db);
+                dol_print_error($this->db);
             }
         }
 
@@ -266,7 +266,7 @@ class UserGroup
             }
             else {
                 $err++;
-                dolibarr_print_error($this->db);
+                dol_print_error($this->db);
             }
 
             // Where pour la liste des droits à supprimer
@@ -312,7 +312,7 @@ class UserGroup
             else
             {
                 $err++;
-                dolibarr_print_error($this->db);
+                dol_print_error($this->db);
             }
         }
 
@@ -416,7 +416,7 @@ class UserGroup
 		else
 		{
 			$this->db->rollback();
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -451,7 +451,7 @@ class UserGroup
 		}
 		else
 		{
-			dolibarr_syslog("UserGroup::Create");
+			dol_syslog("UserGroup::Create");
 			return -1;
 		}
 	}
@@ -494,7 +494,7 @@ class UserGroup
         }
         else
         {
-            dolibarr_print_error($this->db);
+            dol_print_error($this->db);
             return -2;
         }
 	}

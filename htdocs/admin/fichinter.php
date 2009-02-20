@@ -81,13 +81,13 @@ if ($_GET["action"] == 'specimen')
 		else
 		{
 			$mesg='<div class="error">'.$obj->error.'</div>';
-			dolibarr_syslog($obj->error, LOG_ERR);
+			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
-		dolibarr_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
 
@@ -272,7 +272,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 

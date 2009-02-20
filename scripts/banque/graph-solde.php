@@ -146,7 +146,7 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 //	print strftime("%Y%m%d",$max);
 
@@ -173,7 +173,7 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	// Calcul de $solde avant le debut du graphe
@@ -190,7 +190,7 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	// Chargement de labels et datas pour tableau 1
@@ -267,7 +267,7 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 	
 	// Calcul de $solde avant le debut du graphe
@@ -284,7 +284,7 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	// Chargement de labels et datas pour tableau 2
@@ -360,7 +360,7 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	// Calcul de $solde avant le debut du graphe
@@ -440,7 +440,7 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	$sql = "SELECT date_format(datev,'%m'), sum(amount)";
@@ -460,7 +460,7 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	// Chargement de labels et data_xxx pour tableau 4

@@ -133,9 +133,9 @@ if (function_exists('date_default_timezone_get'))
 	print "</td></tr>\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 }
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("PHPServerOffsetWithGreenwich")."</td><td>".(- dolibarr_mktime(0,0,0,1,1,1970))."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("PHPServerOffsetWithGreenwich")."</td><td>".(- dol_mktime(0,0,0,1,1,1970))."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CurrentHour")."</td><td>".dolibarr_print_date(time(),'dayhour')."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CurrentHour")."</td><td>".dol_print_date(time(),'dayhour')."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var].'><td width="300">=> dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext")."</td>";
 print '</table>';

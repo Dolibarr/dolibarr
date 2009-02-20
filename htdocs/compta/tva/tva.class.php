@@ -118,7 +118,7 @@ class Tva extends CommonObject
         
 		$sql.= ")";
 
-	   	dolibarr_syslog("Tva::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog("Tva::create sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -136,7 +136,7 @@ class Tva extends CommonObject
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Tva::create ".$this->error, LOG_ERR);
+            dol_syslog("Tva::create ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -181,12 +181,12 @@ class Tva extends CommonObject
         
         $sql.= " WHERE rowid=".$this->id;
 
-        dolibarr_syslog("Tva::update sql=".$sql, LOG_DEBUG);
+        dol_syslog("Tva::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Tva::update ".$this->error, LOG_ERR);
+            dol_syslog("Tva::update ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -233,7 +233,7 @@ class Tva extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
         $sql.= " WHERE t.rowid = ".$id;
     
-    	dolibarr_syslog("Tva::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog("Tva::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -263,7 +263,7 @@ class Tva extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Tva::fetch ".$this->error, LOG_ERR);
+            dol_syslog("Tva::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -281,12 +281,12 @@ class Tva extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tva";
 		$sql.= " WHERE rowid=".$this->id;
 	
-	   	dolibarr_syslog("Tva::delete sql=".$sql);
+	   	dol_syslog("Tva::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Tva::delete ".$this->error, LOG_ERR);
+            dol_syslog("Tva::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 	
@@ -509,7 +509,7 @@ class Tva extends CommonObject
         $sql.=", '".$user->id."', NULL";
         $sql.= ")";
 
-		dolibarr_syslog("Tva::addPayment sql=".$sql);
+		dol_syslog("Tva::addPayment sql=".$sql);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -524,7 +524,7 @@ class Tva extends CommonObject
 
                     $acc = new Account($this->db);
 					$result=$acc->fetch($this->accountid);
-					if ($result <= 0) dolibarr_print_error($db);
+					if ($result <= 0) dol_print_error($db);
 									
                     $bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
             	  
@@ -590,7 +590,7 @@ class Tva extends CommonObject
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}

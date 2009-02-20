@@ -51,7 +51,7 @@ if ($result)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 if ($_POST["action"] == 'add' || $_POST["modify"])
@@ -76,7 +76,7 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 			$resql=$db->query($sql);
 			if (! $resql)
 	        {
-				dolibarr_print_error($db,"sql=$sql");
+				dol_print_error($db,"sql=$sql");
 				exit;
 	        }
 */
@@ -88,7 +88,7 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 			$sql.= " VALUES ('box_external_rss.php','".addslashes($_POST["norss"].' ('.$_POST[$external_rss_title]).")')";
 	        if (! $db->query($sql))
 	        {
-	        	dolibarr_print_error($db);
+	        	dol_print_error($db);
 	            $err++;
 	        }
 		}
@@ -106,7 +106,7 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
         else
         {
             $db->rollback();
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
     }
 }
@@ -141,7 +141,7 @@ if ($_POST["delete"])
 				if (! $resql)
 				{
 					$db->rollback();
-					dolibarr_print_error($db,"sql=$sql");
+					dol_print_error($db,"sql=$sql");
 					exit;
 				}
 				
@@ -153,7 +153,7 @@ if ($_POST["delete"])
 		else
 		{
 			$db->rollback();
-			dolibarr_print_error($db,"sql=$sql");
+			dol_print_error($db,"sql=$sql");
 			exit;
         }
 
@@ -171,7 +171,7 @@ if ($_POST["delete"])
         else
         {
             $db->rollback();
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
     }
 }
@@ -227,7 +227,7 @@ $sql ="select rowid, file, note from ".MAIN_DB_PREFIX."boxes_def";
 $sql.=" WHERE file = 'box_external_rss.php'";
 $sql.=" ORDER BY note";
 
-dolibarr_syslog("external_rss select rss boxes sql=".$sql,LOG_DEBUG);
+dol_syslog("external_rss select rss boxes sql=".$sql,LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -311,7 +311,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 ?>
 

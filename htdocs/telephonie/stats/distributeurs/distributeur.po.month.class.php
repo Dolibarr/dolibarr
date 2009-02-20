@@ -71,7 +71,7 @@ class GraphDistributeurPoMensuel extends GraphBar {
       }
     else 
       {
-	dolibarr_syslog($this->db->error());
+	dol_syslog($this->db->error());
       }
 
     if (sizeof($datas) > 0)

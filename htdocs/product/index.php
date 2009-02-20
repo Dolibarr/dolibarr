@@ -184,9 +184,9 @@ if ($result)
 	  $staticproduct->type=$objp->fk_product_type;
 	  print $staticproduct->getNomUrl(1,'',16);
 	  print "</td>\n";
-	  print '<td>'.dolibarr_trunc($objp->label,32).'</td>';
+	  print '<td>'.dol_trunc($objp->label,32).'</td>';
 	  print "<td>";
-	  print dolibarr_print_date($objp->datem,'day');
+	  print dol_print_date($objp->datem,'day');
 	  print "</td>";
 	  print '<td align="right" nowrap="nowrap">';
 	  print $staticproduct->LibStatut($objp->envente,5);
@@ -202,7 +202,7 @@ if ($result)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 print '</td></tr></table>';

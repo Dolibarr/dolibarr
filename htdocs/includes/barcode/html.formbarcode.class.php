@@ -131,7 +131,7 @@ class FormBarCode
             print "</select>";
         }
         else {
-            dolibarr_print_error($this->db);
+            dol_print_error($this->db);
         }
     }
     

@@ -62,7 +62,7 @@ $fgroup->getrights();
  */
 $head = group_prepare_head($fgroup);
 
-dolibarr_fiche_head($head, 'ldap', $langs->trans("Group").": ".$fgroup->nom);
+dol_fiche_head($head, 'ldap', $langs->trans("Group").": ".$fgroup->nom);
 
 
 
@@ -144,7 +144,7 @@ if ($result > 0)
 }
 else
 {
-	dolibarr_print_error('',$ldap->error);
+	dol_print_error('',$ldap->error);
 }
 
 print '</table>';

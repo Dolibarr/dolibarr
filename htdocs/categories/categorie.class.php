@@ -76,7 +76,7 @@ class Categorie
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE rowid = ".$id;
 
-		dolibarr_syslog("Categorie::fetch sql=".$sql);
+		dol_syslog("Categorie::fetch sql=".$sql);
 		$resql  = $this->db->query ($sql);
 		if ($resql)
 		{
@@ -93,7 +93,7 @@ class Categorie
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 
@@ -101,7 +101,7 @@ class Categorie
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
 		$sql.= " WHERE fk_categorie_fille = '".$id."'";
 
-		dolibarr_syslog("Categorie::fetch sql=".$sql);
+		dol_syslog("Categorie::fetch sql=".$sql);
 		$resql  = $this->db->query ($sql);
 		if ($resql)
 		{
@@ -111,7 +111,7 @@ class Categorie
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -174,7 +174,7 @@ class Categorie
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -198,11 +198,11 @@ class Categorie
 		$sql = 'delete from '.MAIN_DB_PREFIX.'categorie_association';
 		$sql .= ' WHERE fk_categorie_fille = "'.$this->id.'"';
 
-		dolibarr_syslog("Categorie::update sql=".$sql);
+		dol_syslog("Categorie::update sql=".$sql);
 		if (! $this->db->query($sql))
 		{
 			$this->db->rollback();
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 
@@ -211,11 +211,11 @@ class Categorie
 			$sql = 'insert into '.MAIN_DB_PREFIX.'categorie_association(fk_categorie_mere,fk_categorie_fille)';
 			$sql .= ' VALUES ("'.$this->id_mere.'","'.$this->id.'")';
 
-			dolibarr_syslog("Categorie::update sql=".$sql);
+			dol_syslog("Categorie::update sql=".$sql);
 			if (! $this->db->query($sql))
 			{
 				$this->db->rollback();
-				dolibarr_print_error($this->db);
+				dol_print_error($this->db);
 				return -1;
 			}
 		}
@@ -233,7 +233,7 @@ class Categorie
 		$sql .= ", visible = '".$this->visible."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Categorie::update sql=".$sql);
+		dol_syslog("Categorie::update sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			$this->db->commit();
@@ -242,7 +242,7 @@ class Categorie
 		else
 		{
 			$this->db->rollback();
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -260,7 +260,7 @@ class Categorie
 
 		if (!$this->db->query($sql))
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 
@@ -270,7 +270,7 @@ class Categorie
 
 		if (!$this->db->query($sql))
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 
@@ -279,7 +279,7 @@ class Categorie
 
 		if (!$this->db->query($sql))
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 		else
@@ -309,7 +309,7 @@ class Categorie
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -416,7 +416,7 @@ class Categorie
 		$sql  = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
 		$sql .= " WHERE fk_categorie = ".$this->id;
 
-		dolibarr_syslog("Categorie::get_type sql=".$sql);
+		dol_syslog("Categorie::get_type sql=".$sql);
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
@@ -431,7 +431,7 @@ class Categorie
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dolibarr_syslog("Categorie::get_type ".$this->error, LOG_ERR);
+			dol_syslog("Categorie::get_type ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -461,7 +461,7 @@ class Categorie
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -518,7 +518,7 @@ class Categorie
 		$sql = "SELECT fk_categorie_mere as id_mere, fk_categorie_fille as id_fille";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
 
-		dolibarr_syslog("Categorie::get_full_arbo build motherof array sql=".$sql, LOG_DEBUG);
+		dol_syslog("Categorie::get_full_arbo build motherof array sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -529,7 +529,7 @@ class Categorie
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 
@@ -541,7 +541,7 @@ class Categorie
 		$sql.= " WHERE c.type = ".$type;
 		$sql.= " ORDER BY c.label, c.rowid";
 
-		dolibarr_syslog("Categorie::get_full_arbo get category list sql=".$sql, LOG_DEBUG);
+		dol_syslog("Categorie::get_full_arbo get category list sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -562,19 +562,19 @@ class Categorie
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 
 		// We add the fulpath property to each elements of first level (no parent exists)
-		dolibarr_syslog("Categorie::get_full_arbo call to build_path_from_id_categ", LOG_DEBUG);
+		dol_syslog("Categorie::get_full_arbo call to build_path_from_id_categ", LOG_DEBUG);
 		foreach($this->cats as $key => $val)
 		{
 			if (isset($this->motherof[$key])) continue;
 			$this->build_path_from_id_categ($key,0);	// Process a path of a root category (no parent exists)
 		}
 
-		dolibarr_syslog("Categorie::get_full_arbo dol_sort_array", LOG_DEBUG);
+		dol_syslog("Categorie::get_full_arbo dol_sort_array", LOG_DEBUG);
 		$this->cats=dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
 
 		//$this->debug_cats();
@@ -589,12 +589,12 @@ class Categorie
 	*/
 	function build_path_from_id_categ($id_categ,$protection=0)
 	{
-		dolibarr_syslog("Categorie::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
+		dol_syslog("Categorie::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
 
 		//if (! empty($this->cats[$id_categ]['fullpath']))
 		//{
 			// Already defined
-		//	dolibarr_syslog("Categorie::build_path_from_id_categ fullpath and fulllabel already defined", LOG_WARNING);
+		//	dol_syslog("Categorie::build_path_from_id_categ fullpath and fulllabel already defined", LOG_WARNING);
 		//	return;
 		//}
 
@@ -623,7 +623,7 @@ class Categorie
 			// Protection when a category has itself as a child (should not happen)
 			if ($idchild == $id_categ)
 			{
-				dolibarr_syslog("Categorie::build_path_from_id_categ bad couple (".$idchild.",".$id_categ.") in association table: An entry should not have itself has child", LOG_WARNING);
+				dol_syslog("Categorie::build_path_from_id_categ bad couple (".$idchild.",".$id_categ.") in association table: An entry should not have itself has child", LOG_WARNING);
 				continue;
 			}
 
@@ -673,7 +673,7 @@ class Categorie
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -694,7 +694,7 @@ class Categorie
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -724,7 +724,7 @@ class Categorie
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 
@@ -856,7 +856,7 @@ class Categorie
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -914,7 +914,7 @@ class Categorie
 		}
 		else
 		{
-			dolibarr_print_error ($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -957,8 +957,8 @@ class Categorie
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			//dolibarr_syslog($this->error);
-			dolibarr_print_error('',$this->error);
+			//dol_syslog($this->error);
+			dol_print_error('',$this->error);
 			return -1;
 		}
 	}

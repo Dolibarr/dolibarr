@@ -57,7 +57,7 @@ class ModeleExports
 	 */
 	function liste_modeles($db)
 	{
-		dolibarr_syslog("ModeleExport::loadFormat");
+		dol_syslog("ModeleExport::loadFormat");
 
 		$dir=DOL_DOCUMENT_ROOT."/includes/modules/export/";
 		$handle=opendir($dir);
@@ -136,7 +136,7 @@ class ModeleExports
 	{
 		global $langs;
 
-		dolibarr_syslog("Export::build_file $model, $datatoexport, $array_selected");
+		dol_syslog("Export::build_file $model, $datatoexport, $array_selected");
 
 		// Creation de la classe d'export du model ExportXXX
 		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/export/";
@@ -168,7 +168,7 @@ class ModeleExports
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Error: sql=$sql ".$this->error);
+			dol_syslog("Error: sql=$sql ".$this->error);
 			return -1;
 		}
 	}

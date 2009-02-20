@@ -323,9 +323,9 @@ if (! $accessallowed)
 if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
 {
 	$langs->load("main");
-	dolibarr_syslog("Refused to deliver file ".$original_file);
+	dol_syslog("Refused to deliver file ".$original_file);
 	// Do no show plain path in shown error message
-	dolibarr_print_error(0,$langs->trans("ErrorFileNameInvalid",$_GET["file"]));
+	dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$_GET["file"]));
 	exit;
 }
 
@@ -358,12 +358,12 @@ else
 	// Output files on disk
 	$filename = basename($original_file);
 
-	dolibarr_syslog("viewimage.php return file $original_file $filename content-type=$type");
+	dol_syslog("viewimage.php return file $original_file $filename content-type=$type");
 
 	if (! file_exists($original_file))
 	{
 		$langs->load("main");
-		dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
+		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
 		exit;
 	}
 

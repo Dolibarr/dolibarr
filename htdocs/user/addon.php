@@ -53,7 +53,7 @@ if ($_GET["id"])
 	 */
 	$head = user_prepare_head($fuser);
 
-	dolibarr_fiche_head($head, 'other', $langs->trans("User"));
+	dol_fiche_head($head, 'other', $langs->trans("User"));
 
 
     /*

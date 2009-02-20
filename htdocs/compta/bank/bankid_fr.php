@@ -112,7 +112,7 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 		*/
 	// Onglets
 	$head=bank_prepare_head($account);
-	dolibarr_fiche_head($head, 'bankid', $langs->trans("FinancialAccount"));
+	dol_fiche_head($head, 'bankid', $langs->trans("FinancialAccount"));
 
 	/*
 		* Confirmation de la suppression

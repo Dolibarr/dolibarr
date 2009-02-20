@@ -95,7 +95,7 @@ if ($resql)
 function DeletePreselection($host, $user_login, $user_passwd, $ligne, $id_person)
 {  
   global $verbose;
-  //dolibarr_syslog("Appel de DeletePreselection($host, $user_login, ****, $ligne, $id_person)");
+  //dol_syslog("Appel de DeletePreselection($host, $user_login, ****, $ligne, $id_person)");
 
   $url = "/AzurApp_websvc_b3gdb/account.asmx/DeletePreselection?";
 
@@ -104,20 +104,20 @@ function DeletePreselection($host, $user_login, $user_passwd, $ligne, $id_person
   $url .= "&telnum=".$ligne;
 
   if ($verbose > 2)
-    dolibarr_syslog("$host");
+    dol_syslog("$host");
 
   if ($verbose > 2)
-    dolibarr_syslog("$url");
+    dol_syslog("$url");
 
   $fp = fsockopen($host, 80, $errno, $errstr, 30);
   if (!$fp)
     {
-      dolibarr_syslog("$errstr ($errno)");
+      dol_syslog("$errstr ($errno)");
     }
   else
     {
       if ($verbose > 2)
-	dolibarr_syslog("Socket Opened send data");
+	dol_syslog("Socket Opened send data");
 
       $out = "GET $url HTTP/1.1\r\n";
       $out .= "Host: $host\r\n";
@@ -126,7 +126,7 @@ function DeletePreselection($host, $user_login, $user_passwd, $ligne, $id_person
       fwrite($fp, $out);
       
       if ($verbose > 2)
-	dolibarr_syslog("Data sent, waiting for response");
+	dol_syslog("Data sent, waiting for response");
 
       $parse = 0;
       $result = "error";
@@ -138,14 +138,14 @@ function DeletePreselection($host, $user_login, $user_passwd, $ligne, $id_person
 	  $line = fgets($fp, 1024);
 	  
 	  if ($verbose > 2)
-	    dolibarr_syslog($line);
+	    dol_syslog($line);
 
 	  if ($parse == 1)
 	    {
 	      preg_match('/^<string xmlns=".*">(.*)<\/string>$/', $line, $results);
 	      
 	      $result = $results[1];
-	      //dolibarr_syslog($line);
+	      //dol_syslog($line);
 	      $parse = 0;
 	    }
 	  
@@ -161,16 +161,16 @@ function DeletePreselection($host, $user_login, $user_passwd, $ligne, $id_person
     }
   
   if ($verbose > 1)
-    dolibarr_syslog("result = ".$result);
+    dol_syslog("result = ".$result);
 
   if (substr($result,0,2) == "OK")
     {
-      dolibarr_syslog("Delete r贳si ligne ".$ligne." id client ".$id_person." $result\n");
+      dol_syslog("Delete r贳si ligne ".$ligne." id client ".$id_person." $result\n");
       return 0;
     }
   else
     {
-      dolibarr_syslog("Delete 袨ou矬igne ".$ligne." id client ".$id_person." $result\n");
+      dol_syslog("Delete 袨ou矬igne ".$ligne." id client ".$id_person." $result\n");
 
       $fp = fopen("/tmp/$ligne.delete","w");
       if ($fp)

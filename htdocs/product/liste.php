@@ -287,10 +287,10 @@ if ($resql)
 			print "</td>\n";
 
 			// Label
-			print '<td>'.dolibarr_trunc($objp->label,40).'</td>';
+			print '<td>'.dol_trunc($objp->label,40).'</td>';
 			
 			// Date
-			print '<td align="center">'.dolibarr_print_date($objp->datem,'day')."</td>\n";
+			print '<td align="center">'.dol_print_date($objp->datem,'day')."</td>\n";
 
 			// Duration
 			if ($conf->service->enabled && $type != 0) 
@@ -359,7 +359,7 @@ if ($resql)
 }
 else
 {
-	dolibarr_print_error($db);
+	dol_print_error($db);
 }
 
 

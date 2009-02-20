@@ -201,8 +201,8 @@ if ($resql_c)
 	    }
 	  else
 	    {
-	      dolibarr_syslog("Erreur SQL");
-	      dolibarr_syslog("$sql");
+	      dol_syslog("Erreur SQL");
+	      dol_syslog("$sql");
 	    }
 	  $i_c++;
 	}
@@ -210,7 +210,7 @@ if ($resql_c)
 }
 else
 {
-  dolibarr_syslog("Erreur SQL");
-  dolibarr_syslog($db->error($resql_c));
+  dol_syslog("Erreur SQL");
+  dol_syslog($db->error($resql_c));
 }
 ?>

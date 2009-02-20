@@ -79,14 +79,14 @@ class AccountancyAccount
 			{
 				$result = -2;
 				$this->error="AccountancyAccount::Create Erreur $result";
-				dolibarr_syslog($this->error);
+				dol_syslog($this->error);
 			}
 		}
 		else
 		{
 			$result = -1;
 			$this->error="AccountancyAccount::Create Erreur $result";
-			dolibarr_syslog($this->error);
+			dol_syslog($this->error);
 		}
 
 		return $result;

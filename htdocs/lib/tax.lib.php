@@ -116,7 +116,7 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 	if ($sql && $sql=='TODO') return -2;
 	if ($sql && $sql!='TODO')
 	{
-		dolibarr_syslog("Client::vat_by_customer sql=".$sql);
+		dol_syslog("Client::vat_by_customer sql=".$sql);
 	    $resql = $db->query($sql);
 	    if ($resql)
 	    {
@@ -129,7 +129,7 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 	    }
 	    else
 	    {
-	        dolibarr_print_error($db);
+	        dol_print_error($db);
 			return -3;
 	    }
 	}
@@ -245,7 +245,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	if ($sql && $sql=='TODO') return -2;
 	if ($sql && $sql!='TODO')
 	{
-		dolibarr_syslog("Client::vat_by_quarter sql=".$sql);
+		dol_syslog("Client::vat_by_quarter sql=".$sql);
 	    $resql = $db->query($sql);
 	    if ($resql)
 	    {
@@ -285,7 +285,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	    }
 	    else
 	    {
-	        dolibarr_print_error($db);
+	        dol_print_error($db);
 			return -3;
 	    }
 	}
@@ -364,7 +364,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	if ($sql && $sql=='TODO') return -2;
 	if ($sql && $sql!='TODO')
 	{
-		dolibarr_syslog("Client::vat_by_quarter sql=".$sql);
+		dol_syslog("Client::vat_by_quarter sql=".$sql);
 	    $resql = $db->query($sql);
 	    if ($resql)
 	    {
@@ -404,7 +404,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	    }
 	    else
 	    {
-	        dolibarr_print_error($db);
+	        dol_print_error($db);
 			return -3;
 	    }
 	}

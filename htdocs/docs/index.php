@@ -58,7 +58,7 @@ if ($resql)
       $loc = get_exdir($obj->rowid).$obj->rowid.".pdf";
       $file = stripslashes($obj->name);
       echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=ged&type=application/binary&file='.urlencode($loc).'">'.$file.'</a></td>';
-      print '<td>'.dolibarr_print_date($obj->date_generation,'dayhour').'</td>';
+      print '<td>'.dol_print_date($obj->date_generation,'dayhour').'</td>';
 
       print "</tr>\n";
     }
@@ -67,7 +67,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 

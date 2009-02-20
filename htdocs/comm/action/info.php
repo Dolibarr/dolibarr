@@ -67,7 +67,7 @@ $head[$h][1] = $langs->trans('Info');
 $hselected=$h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("Action"));
+dol_fiche_head($head, $hselected, $langs->trans("Action"));
 
 
 print '<table width="100%"><tr><td>';

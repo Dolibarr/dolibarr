@@ -43,7 +43,7 @@ $head[$h][1] = "Alerte";
 $hselected = $h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, "Clients");
+dol_fiche_head($head, $hselected, "Clients");
 
 if ($_GET["marge"] > 0)
 {

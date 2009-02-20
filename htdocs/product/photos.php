@@ -97,7 +97,7 @@ if ($_GET["id"] || $_GET["ref"])
        */
        $head=product_prepare_head($product, $user);
        $titre=$langs->trans("CardProduct".$product->type);
-       dolibarr_fiche_head($head, 'photos', $titre);
+       dol_fiche_head($head, 'photos', $titre);
        
        /*
         * Confirmation de la suppression de photo

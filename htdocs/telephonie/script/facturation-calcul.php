@@ -82,13 +82,13 @@ if ( $resql )
   $num = $db->num_rows($resql);
   $row = $db->fetch_row($resql);
 
-  dolibarr_syslog("Communications à traiter ".$row[0]);
+  dol_syslog("Communications à traiter ".$row[0]);
   $db->free($resql);
 }
 else
 {
   $error = 1;
-  dolibarr_syslog("Erreur ".$error);
+  dol_syslog("Erreur ".$error);
 }
 
 /**********************************************************
@@ -105,13 +105,13 @@ if ( $resql )
 {
   $row = $db->fetch_row($resql);
 
-  dolibarr_syslog("Max rowid avant facture ".$row[0]);
+  dol_syslog("Max rowid avant facture ".$row[0]);
   $db->free($resql);
 }
 else
 {
   $error = 2;
-  dolibarr_syslog("Erreur ".$error);
+  dol_syslog("Erreur ".$error);
 }
 
 /**
@@ -145,12 +145,12 @@ if (!$error)
 	  $i++;
 	}            
       $db->free();
-      dolibarr_syslog(sizeof($lines_keys)." lignes trouvées");
+      dol_syslog(sizeof($lines_keys)." lignes trouvées");
     }
   else
     {
       $error = 3;
-      dolibarr_syslog("Erreur ".$error);
+      dol_syslog("Erreur ".$error);
     }
 }
 
@@ -173,12 +173,12 @@ if (sizeof($lines_keys) > 0)
     {
       $batch_id = $db->last_insert_id(MAIN_DB_PREFIX."telephonie_facturation_batch");
       
-      dolibarr_syslog("Batch ID ".$batch_id);
+      dol_syslog("Batch ID ".$batch_id);
     }
   else
     {
       $error = 20;
-      dolibarr_syslog("Erreur ".$error);
+      dol_syslog("Erreur ".$error);
     }  
 }
 
@@ -204,14 +204,14 @@ if (!$error)
 	      if ($ligne->socid == 0)
 		{
 		  $error = 4;
-		  dolibarr_syslog("Error ($error)");
+		  dol_syslog("Error ($error)");
 		}	  	  
 	    }
 	  else
 	    {
 
 	      $error = 5;	  
-	      dolibarr_syslog("Error ($error): Aucune société rattachée à la ligne : $line_key");
+	      dol_syslog("Error ($error): Aucune société rattachée à la ligne : $line_key");
 	    }
 
 	  
@@ -229,7 +229,7 @@ if (!$error)
 	      else
 		{
 		  $error = 6;
-		  dolibarr_syslog("Error ($error)");
+		  dol_syslog("Error ($error)");
 		}
 	    }
 	  
@@ -264,9 +264,9 @@ if (!$error)
 	      else
 		{
 		  $error++;
-		  dolibarr_syslog("Erreur d'insertion dans llx_telephonie_facture");
-		  dolibarr_syslog($db->error());
-		  dolibarr_syslog($sql);
+		  dol_syslog("Erreur d'insertion dans llx_telephonie_facture");
+		  dol_syslog($db->error());
+		  dol_syslog($sql);
 		}
 	    }	 
 	  /*
@@ -283,7 +283,7 @@ if (!$error)
 	      if (calcul($db, $ligne, $facid, $total_achat, $total_vente, $total_fourn) <> 0)
 		{
 		  $error++;
-		  dolibarr_syslog("Erreur de calcul de la facture pour la ligne $line_key $ligne->numero");
+		  dol_syslog("Erreur de calcul de la facture pour la ligne $line_key $ligne->numero");
 		}	  
 	    }	  
 	  
@@ -326,9 +326,9 @@ if (!$error)
 	      else
 		{
 		  $error++;
-		  dolibarr_syslog("Erreur de mise à jour dans llx_telephonie_facture");
-		  dolibarr_syslog($db->error());
-		  dolibarr_syslog($sql);
+		  dol_syslog("Erreur de mise à jour dans llx_telephonie_facture");
+		  dol_syslog($db->error());
+		  dol_syslog($sql);
 		}
 	    }
 	  
@@ -345,7 +345,7 @@ if (!$error)
 	      if (! $db->query($sql))
 		{
 		  $error++;
-		  dolibarr_syslog("Erreur de suppression dans llx_telephonie_import_cdr");
+		  dol_syslog("Erreur de suppression dans llx_telephonie_import_cdr");
 		}
 	    }
 	  
@@ -358,17 +358,17 @@ if (!$error)
 	    {
 	      $db->query("COMMIT");
 	      $nbcommit++;
-	      dolibarr_syslog("Ligne $ligne->numero - COMMIT");
+	      dol_syslog("Ligne $ligne->numero - COMMIT");
 	    }
 	  else
 	    {
 	      $db->query("ROLLBACK");
-	      dolibarr_syslog("Ligne $ligne->numero - ROLLBACK de la transaction");	      
+	      dol_syslog("Ligne $ligne->numero - ROLLBACK de la transaction");	      
 	    }
 	}
       else
 	{
-	  dolibarr_syslog("Erreur ouverture Transaction SQL");
+	  dol_syslog("Erreur ouverture Transaction SQL");
 	}
     } /* fin de la boucle */
 
@@ -391,7 +391,7 @@ if ( $resql )
 {
   $row = $db->fetch_row($resql);
 
-  dolibarr_syslog("Max rowid après facture ".$row[0]);
+  dol_syslog("Max rowid après facture ".$row[0]);
   $db->free($resql);
 }
 else
@@ -405,7 +405,7 @@ else
 *
 ***********************************************************/
 
-dolibarr_syslog($nbcommit." facture émises");
+dol_syslog($nbcommit." facture émises");
 
 /**********************************************************
 *
@@ -420,7 +420,7 @@ if ( $resql )
 {
   $row = $db->fetch_row($resql);
 
-  dolibarr_syslog($row[0]. " communications restantes dans la table d'import");
+  dol_syslog($row[0]. " communications restantes dans la table d'import");
   $db->free($resql);
 }
 else
@@ -431,7 +431,7 @@ else
 
 $db->close();
 
-dolibarr_syslog("Fin Batch ID ".$batch_id);
+dol_syslog("Fin Batch ID ".$batch_id);
 
 // FIN
 
@@ -479,7 +479,7 @@ function calcul($db, $ligne, $facture_id, &$total_cout_achat, &$total_cout_vente
       $db->free($resql);
     }
   
-  dolibarr_syslog("Utilisation du tarif ".$tarif_spec." pour la ligne ".$ligne->id);
+  dol_syslog("Utilisation du tarif ".$tarif_spec." pour la ligne ".$ligne->id);
 
   $tarif_achat = new TelephonieTarif($db, $tarif_spec, "achat", $fournisseur_id);
   $tarif_vente = new TelephonieTarif($db, $tarif_spec, "vente", $tarif_spec, $ligne->client_comm_id);
@@ -527,7 +527,7 @@ function calcul($db, $ligne, $facture_id, &$total_cout_achat, &$total_cout_vente
   else
     {
       $error++;
-      dolibarr_syslog("Erreur dans Calcul() Problème SQL");
+      dol_syslog("Erreur dans Calcul() Problème SQL");
     }
 
   for ($ii = 0 ; $ii < $num_sql ; $ii++)

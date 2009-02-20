@@ -70,7 +70,7 @@ if ($_GET["id"] || $_GET["ref"])
 	{
 		$head=product_prepare_head($product, $user);
 		$titre=$langs->trans("CardProduct".$product->type);
-		dolibarr_fiche_head($head, 'stats', $titre);
+		dol_fiche_head($head, 'stats', $titre);
 
 
 		print '<table class="border" width="100%">';
@@ -199,7 +199,7 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				else
 				{
-					dolibarr_print_error($db,'Error for calculating graph on key='.$key.' - '.$product->error);
+					dol_print_error($db,'Error for calculating graph on key='.$key.' - '.$product->error);
 				}
 			}
 		}
@@ -239,7 +239,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<tr>';
 			if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file']) && ! $px->isGraphKo())
 			{
-				print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"dayhour")).'</td>';
+				print '<td>'.$langs->trans("GeneratedOn",dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"dayhour")).'</td>';
 			}
 			else
 			{
@@ -269,7 +269,7 @@ if ($_GET["id"] || $_GET["ref"])
 }
 else
 {
-	dolibarr_print_error();
+	dol_print_error();
 }
 
 

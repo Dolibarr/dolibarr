@@ -162,7 +162,7 @@ function show_stats_for_company($product,$socid)
 	if ($conf->propal->enabled && $user->rights->propale->lire)
 	{
 		$ret=$product->load_stats_propale($socid);
-		if ($ret < 0) dolibarr_print_error($db);
+		if ($ret < 0) dol_print_error($db);
 		$langs->load("propal");
 		print '<tr><td>';
 		print '<a href="propal.php?id='.$product->id.'">'.img_object('','propal').' '.$langs->trans("Proposals").'</a>';
@@ -179,7 +179,7 @@ function show_stats_for_company($product,$socid)
 	if ($conf->commande->enabled && $user->rights->commande->lire)
 	{
 		$ret=$product->load_stats_commande($socid);
-		if ($ret < 0) dolibarr_print_error($db);
+		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
 		print '<tr><td>';
 		print '<a href="commande.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("CustomersOrders").'</a>';
@@ -196,7 +196,7 @@ function show_stats_for_company($product,$socid)
 	if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire)
 	{
 		$ret=$product->load_stats_commande_fournisseur($socid);
-		if ($ret < 0) dolibarr_print_error($db);
+		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
 		print '<tr><td>';
 		print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("SuppliersOrders").'</a>';
@@ -213,7 +213,7 @@ function show_stats_for_company($product,$socid)
 	if ($conf->contrat->enabled && $user->rights->contrat->lire)
 	{
 		$ret=$product->load_stats_contrat($socid);
-		if ($ret < 0) dolibarr_print_error($db);
+		if ($ret < 0) dol_print_error($db);
 		$langs->load("contracts");
 		print '<tr><td>';
 		print '<a href="contrat.php?id='.$product->id.'">'.img_object('','contract').' '.$langs->trans("Contracts").'</a>';
@@ -230,7 +230,7 @@ function show_stats_for_company($product,$socid)
 	if ($conf->facture->enabled && $user->rights->facture->lire)
 	{
 		$ret=$product->load_stats_facture($socid);
-		if ($ret < 0) dolibarr_print_error($db);
+		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
 		print '<tr><td>';
 		print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("CustomersInvoices").'</a>';
@@ -247,7 +247,7 @@ function show_stats_for_company($product,$socid)
 	if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 	{
 		$ret=$product->load_stats_facture_fournisseur($socid);
-		if ($ret < 0) dolibarr_print_error($db);
+		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
 		print '<tr><td>';
 		print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("SuppliersInvoices").'</a>';

@@ -35,7 +35,7 @@ $sessionname="DOLSESSID_".$dolibarr_main_db_name;
 if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
 session_name($sessionname);
 session_start();
-dolibarr_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"].", ".ini_get("session.gc_maxlifetime"));
+dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"].", ".ini_get("session.gc_maxlifetime"));
 
 $user->getrights('user');
 
@@ -71,7 +71,7 @@ if ($_GET["action"] == 'validatenewpassword' && $_GET["username"] && $_GET["pass
 		if (md5($edituser->pass_temp) == $_GET["passwordmd5"])
 		{
 			$newpassword=$edituser->setPassword($user,$edituser->pass_temp,0);
-			dolibarr_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
+			dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
 			//session_start();
 			//$_SESSION["loginmesg"]=$langs->trans("PasswordChanged");
 			header("Location: ".DOL_URL_ROOT.'/');

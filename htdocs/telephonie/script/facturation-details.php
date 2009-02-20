@@ -59,7 +59,7 @@ else
   $error++;
 }
 
-dolibarr_syslog("Génère les factures détaillées pour : ".$date);
+dol_syslog("Génère les factures détaillées pour : ".$date);
 
 /*
  * Lectures de différentes factures
@@ -91,12 +91,12 @@ if (!$error)
 	  $i++;
 	}            
       $db->free($resql);
-      dolibarr_syslog("$i lignes trouvées");
+      dol_syslog("$i lignes trouvées");
     }
   else
     {
       $error = 1;
-      dolibarr_syslog($db->error());
+      dol_syslog($db->error());
     }
 }
 
@@ -137,15 +137,15 @@ if (!$error && sizeof($factures))
 		}
 	      else
 		{
-		  dolibarr_syslog("ERREUR lors de Génération du pdf détaillé");
+		  dol_syslog("ERREUR lors de Génération du pdf détaillé");
 		  $error = 19;
 		}
 	    }
 	}
     }
 
-   dolibarr_syslog(sizeof($factures)." factures traitées");
-   dolibarr_syslog($facok." factures générées");
+   dol_syslog(sizeof($factures)." factures traitées");
+   dol_syslog($facok." factures générées");
 }
 
 $db->close();

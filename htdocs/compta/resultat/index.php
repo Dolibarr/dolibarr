@@ -115,7 +115,7 @@ if ($result)
     $db->free($result);
 }
 else {
-	dolibarr_print_error($db);	
+	dol_print_error($db);	
 }
 
 // On ajoute les paiements clients anciennes version, non li�s par paiement_facture
@@ -149,7 +149,7 @@ if ($modecompta != 'CREANCES-DETTES') {
         }
     }
     else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 }
 /*
@@ -157,7 +157,7 @@ print "<br>Facture clients: subtotal_ht=".$subtotal_ht.' - subtotal_ttc='.$subto
 for ($mois = 1 ; $mois <= 12 ; $mois++)
 {
 	$annee = 2007;
-	$case = strftime("%Y-%m",dolibarr_mktime(12,0,0,$mois,1,$annee));
+	$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
 	print 'Mois '.$mois.': '.$decaiss_ttc[$case].' ';
 	print 'Mois '.$mois.': '.$encaiss_ttc[$case].' ';
 }
@@ -209,14 +209,14 @@ if ($result)
     $db->free($result);
 }
 else {
-	dolibarr_print_error($db);	
+	dol_print_error($db);	
 }
 /*
 print "<br>Facture fournisseurs: subtotal_ht=".$subtotal_ht.' - subtotal_ttc='.$subtotal_ttc."<br>\n";
 for ($mois = 1 ; $mois <= 12 ; $mois++)
 {
 	$annee = 2007;
-	$case = strftime("%Y-%m",dolibarr_mktime(12,0,0,$mois,1,$annee));
+	$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
 	print 'Mois '.$mois.': '.$decaiss_ttc[$case].' ';
 	print 'Mois '.$mois.': '.$encaiss_ttc[$case].' ';
 }
@@ -249,7 +249,7 @@ if ($modecompta == 'CREANCES-DETTES') {
           }
         }
     } else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
     // TVA � r�cup�rer
     $sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
@@ -272,7 +272,7 @@ if ($modecompta == 'CREANCES-DETTES') {
           }
         }
     } else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 }
 else {
@@ -303,7 +303,7 @@ else {
           }
         }
     } else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
     // TVA r�cup�r�e
     $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
@@ -332,7 +332,7 @@ else {
           }
         }
     } else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 }
 /*
@@ -340,7 +340,7 @@ print "<br>TVA: subtotal_ht=".$subtotal_ht.' - subtotal_ttc='.$subtotal_ttc."<br
 for ($mois = 1 ; $mois <= 12 ; $mois++)
 {
 	$annee = 2007;
-	$case = strftime("%Y-%m",dolibarr_mktime(12,0,0,$mois,1,$annee));
+	$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
 	print 'Mois '.$mois.': '.$decaiss_ttc[$case].' ';
 	print 'Mois '.$mois.': '.$encaiss_ttc[$case].' ';
 }
@@ -393,14 +393,14 @@ if ($result) {
       }
     }
 } else {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 /*
 print "<br>Charges sociales non deduc: subtotal_ht=".$subtotal_ht.' - subtotal_ttc='.$subtotal_ttc."<br>\n";
 for ($mois = 1 ; $mois <= 12 ; $mois++)
 {
 	$annee = 2007;
-	$case = strftime("%Y-%m",dolibarr_mktime(12,0,0,$mois,1,$annee));
+	$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
 	print 'Mois '.$mois.': '.$decaiss_ttc[$case].' ';
 	print 'Mois '.$mois.': '.$encaiss_ttc[$case].' ';
 }
@@ -454,14 +454,14 @@ if ($result) {
         }
     }
 } else {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 /*
 print "<br>Charges sociales deduc: subtotal_ht=".$subtotal_ht.' - subtotal_ttc='.$subtotal_ttc."<br>\n";
 for ($mois = 1 ; $mois <= 12 ; $mois++)
 {
 	$annee = 2007;
-	$case = strftime("%Y-%m",dolibarr_mktime(12,0,0,$mois,1,$annee));
+	$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
 	print 'Mois '.$mois.': '.$decaiss_ttc[$case].' ';
 	print 'Mois '.$mois.': '.$encaiss_ttc[$case].' ';
 }
@@ -495,10 +495,10 @@ for ($mois = 1 ; $mois <= 12 ; $mois++)
 {
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
-	print "<td>".dolibarr_print_date(dolibarr_mktime(12,0,0,$mois,1,$annee),"%b")."</td>";
+	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois,1,$annee),"%b")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
-		$case = strftime("%Y-%m",dolibarr_mktime(12,0,0,$mois,1,$annee));
+		$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
 
 		print '<td align="right">&nbsp;';
 		if ($decaiss_ttc[$case] != 0)

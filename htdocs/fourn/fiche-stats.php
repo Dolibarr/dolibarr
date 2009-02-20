@@ -65,7 +65,7 @@ if ( $societe->fetch($socid) )
    */
   $head = societe_prepare_head($societe);
 
-  dolibarr_fiche_head($head, 'supplierstat', $langs->trans("ThirdParty"));
+  dol_fiche_head($head, 'supplierstat', $langs->trans("ThirdParty"));
 
   
   print '<table class="border" width="100%">';
@@ -102,7 +102,7 @@ if ( $societe->fetch($socid) )
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 $db->close();
 

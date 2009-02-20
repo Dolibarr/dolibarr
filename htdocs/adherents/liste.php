@@ -257,11 +257,11 @@ if ($resql)
 	        print '<td align="center">';
             if ($objp->datefin < time() && $objp->statut > 0)
             {
-                print dolibarr_print_date($objp->datefin)." ".img_warning($langs->trans("SubscriptionLate"));
+                print dol_print_date($objp->datefin)." ".img_warning($langs->trans("SubscriptionLate"));
             }
             else
             {
-                print dolibarr_print_date($objp->datefin);
+                print dol_print_date($objp->datefin);
             }
             print '</td>';
         }
@@ -306,7 +306,7 @@ if ($resql)
 }
 else
 {
-    dolibarr_print_error($db);
+    dol_print_error($db);
 }
 
 

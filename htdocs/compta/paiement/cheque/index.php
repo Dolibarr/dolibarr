@@ -79,7 +79,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 
@@ -123,7 +123,7 @@ if ($resql)
 		print "<tr $bc[$var]>\n";
 
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
-		print '<td>'.dolibarr_print_date($objp->db,'day').'</td>';
+		print '<td>'.dol_print_date($objp->db,'day').'</td>';
 		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$objp->nbcheque.'</td>';
 		print '<td align="right">'.price($objp->amount).'</td>';
@@ -136,7 +136,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 print "</td></tr>\n";

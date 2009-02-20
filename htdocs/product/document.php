@@ -125,7 +125,7 @@ if ($product->id)
 
 	$head=product_prepare_head($product, $user);
 	$titre=$langs->trans("CardProduct".$product->type);
-	dolibarr_fiche_head($head, 'documents', $titre);
+	dol_fiche_head($head, 'documents', $titre);
 
 
 	// Construit liste des fichiers

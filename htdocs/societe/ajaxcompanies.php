@@ -46,7 +46,7 @@ if (! empty($_POST['newcompany']) || ! empty($_POST['socid']) || ! empty($_POST[
 	if (! empty($_GET["filter"])) $sql.= " AND ".$_GET["filter"]; // Add other filters
 	$sql.= " ORDER BY nom ASC";
 	
-	//dolibarr_syslog("ajaxcompanies sql=".$sql);
+	//dol_syslog("ajaxcompanies sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{

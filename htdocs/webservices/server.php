@@ -29,7 +29,7 @@ require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 
 
-dolibarr_syslog("Call Dolibarr webservices interfaces");
+dol_syslog("Call Dolibarr webservices interfaces");
 
 
 // Create the soap Object
@@ -63,7 +63,7 @@ $server->service($HTTP_RAW_POST_DATA);
 // Full methods code
 function getVersions()
 {
-	dolibarr_syslog("Function: getVersions");
+	dol_syslog("Function: getVersions");
 	
 	$versions_array=array();
 	

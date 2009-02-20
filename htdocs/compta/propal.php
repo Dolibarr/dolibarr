@@ -96,12 +96,12 @@ if ( $action == 'delete' )
 		}
 		else
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 	$propalid = 0;
 	$brouillon = 1;
@@ -146,7 +146,7 @@ if ($_GET["propalid"] > 0)
 	$societe->fetch($propal->socid);
 
 	$head = propal_prepare_head($propal);
-	dolibarr_fiche_head($head, 'compta', $langs->trans('Proposal'));
+	dol_fiche_head($head, 'compta', $langs->trans('Proposal'));
 
 
 	/*
@@ -192,7 +192,7 @@ if ($_GET["propalid"] > 0)
 
 	// Dates
 	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-	print dolibarr_print_date($propal->date,'daytext');
+	print dol_print_date($propal->date,'daytext');
 	print '</td>';
 
 	if ($conf->projet->enabled) $rowspan++;
@@ -206,7 +206,7 @@ if ($_GET["propalid"] > 0)
 	print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
 	if ($propal->fin_validite)
 	{
-		print dolibarr_print_date($propal->fin_validite,'daytext');
+		print dol_print_date($propal->fin_validite,'daytext');
 		if ($propal->statut == 1 && $propal->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 	}
 	else
@@ -364,15 +364,15 @@ if ($_GET["propalid"] > 0)
 					print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
 					if ($objp->date_start && $objp->date_end)
 					{
-						print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
+						print ' (Du '.dol_print_date($objp->date_start).' au '.dol_print_date($objp->date_end).')';
 					}
 					if ($objp->date_start && ! $objp->date_end)
 					{
-						print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
+						print ' (A partir du '.dol_print_date($objp->date_start).')';
 					}
 					if (! $objp->date_start && $objp->date_end)
 					{
-						print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
+						print " (Jusqu'au ".dol_print_date($objp->date_end).')';
 					}
 					print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
 					print '</td>';
@@ -405,15 +405,15 @@ if ($_GET["propalid"] > 0)
 						print nl2br($objp->description);
 						if ($objp->date_start && $objp->date_end)
 						{
-							print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
+							print ' (Du '.dol_print_date($objp->date_start).' au '.dol_print_date($objp->date_end).')';
 						}
 						if ($objp->date_start && ! $objp->date_end)
 						{
-							print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
+							print ' (A partir du '.dol_print_date($objp->date_start).')';
 						}
 						if (! $objp->date_start && $objp->date_end)
 						{
-							print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
+							print " (Jusqu'au ".dol_print_date($objp->date_end).')';
 						}
 					}
 					print "</td>\n";
@@ -451,7 +451,7 @@ if ($_GET["propalid"] > 0)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	print '</table>';
@@ -524,7 +524,7 @@ if ($_GET["propalid"] > 0)
 				$var=!$var;
 				print '<tr '.$bc[$var].'><td>';
 				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
-				print '<td align="center">'.dolibarr_print_date($coms[$i]->date,'day').'</td>';
+				print '<td align="center">'.dol_print_date($coms[$i]->date,'day').'</td>';
 				print '<td align="right">'.price($coms[$i]->total_ttc).'</td>';
 				print '<td align="right">'.$coms[$i]->getLibStatut(3).'</td>';
 				print "</tr>\n";
@@ -550,12 +550,12 @@ if ($_GET["propalid"] > 0)
 	$sql2.= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
 	$sql2.= " WHERE cp.fk_propale = ".$propal->id." AND cf.fk_commande = cp.fk_commande AND cf.fk_facture = f.rowid";
 
-	dolibarr_syslog("propal.php::liste factures sql=".$sql);
+	dol_syslog("propal.php::liste factures sql=".$sql);
 	$resql=$db->query($sql);
 	$resql2=null;
 	if ($resql)
 	{
-		dolibarr_syslog("propal.php::liste factures sql2=".$sql2);
+		dol_syslog("propal.php::liste factures sql2=".$sql2);
 		$resql2=$db->query($sql2);
 	}
 	if ($resql2)
@@ -607,7 +607,7 @@ if ($_GET["propalid"] > 0)
 			$var=!$var;
 			print "<tr $bc[$var]>";
 			print '<td><a href="../compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
-			print '<td align="center">'.dolibarr_print_date($objp->df,'day').'</td>';
+			print '<td align="center">'.dol_print_date($objp->df,'day').'</td>';
 			print '<td align="right">'.price($objp->total).'</td>';
 			print '<td align="right">'.$staticfacture->LibStatut($objp->paye,$objp->fk_statut,3).'</td>';
 			print "</tr>";
@@ -778,10 +778,10 @@ else
 
 			// Date
 			print "<td align=\"right\">";
-			$y = dolibarr_print_date($objp->dp,"%Y");
-			$m = dolibarr_print_date($objp->dp,"%m");
-			$mt = dolibarr_print_date($objp->dp,"%b");
-			$d = dolibarr_print_date($objp->dp,"%d");
+			$y = dol_print_date($objp->dp,"%Y");
+			$m = dol_print_date($objp->dp,"%m");
+			$mt = dol_print_date($objp->dp,"%b");
+			$d = dol_print_date($objp->dp,"%d");
 			print $d."\n";
 			print " <a href=\"propal.php?year=$y&month=$m\">";
 			print $b."</a>\n";
@@ -802,7 +802,7 @@ else
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 $db->close();

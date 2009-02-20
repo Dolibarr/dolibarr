@@ -73,7 +73,7 @@ if ($_POST["action"] == 'setconditions' && $user->rights->societe->creer)
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET cond_reglement='".$_POST['cond_reglement_id'];
 	$sql.= "' WHERE rowid='".$_GET["socid"]."'";
     $result = $db->query($sql);
-    if (! $result) dolibarr_print_error($result);
+    if (! $result) dol_print_error($result);
 }
 // mode de reglement
 if ($_POST["action"] == 'setmode' && $user->rights->societe->creer)
@@ -83,7 +83,7 @@ if ($_POST["action"] == 'setmode' && $user->rights->societe->creer)
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET mode_reglement='".$_POST['mode_reglement_id'];
 	$sql.= "' WHERE rowid='".$_GET["socid"]."'";
     $result = $db->query($sql);
-    if (! $result) dolibarr_print_error($result);
+    if (! $result) dol_print_error($result);
 }
 // assujetissement a la TVA
 if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
@@ -92,7 +92,7 @@ if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
     $societe->tva_assuj=$_POST['assujtva_value'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE rowid='".$socid."'";
     $result = $db->query($sql);
-    if (! $result) dolibarr_print_error($result);
+    if (! $result) dol_print_error($result);
 }
 
 
@@ -151,7 +151,7 @@ if ($socid > 0)
 
 	$head = societe_prepare_head($objsoc);
 
-    dolibarr_fiche_head($head, 'customer', $langs->trans("ThirdParty"));
+    dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"));
 
 
     /*
@@ -274,7 +274,7 @@ if ($socid > 0)
     print '</td>';
     print '<td colspan="3">';
 		$amount_discount=$objsoc->getAvailableDiscounts();
-		if ($amount_discount < 0) dolibarr_print_error($db,$societe->error);
+		if ($amount_discount < 0) dol_print_error($db,$societe->error);
         if ($amount_discount > 0) print price($amount_discount).'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
         else print $langs->trans("DiscountNone");
     print '</td>';
@@ -323,7 +323,7 @@ if ($socid > 0)
 	    }
 	    else
 	    {
-	        dolibarr_print_error($db);
+	        dol_print_error($db);
 	    }
 
 		print '</td>';
@@ -389,7 +389,7 @@ if ($socid > 0)
                 {
                     print " ".img_warning();
                 }
-                print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dp,'day')."</td>\n";
+                print '</td><td align="right" width="80">'.dol_print_date($objp->dp,'day')."</td>\n";
                 print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
                 print '<td align="right" nowrap="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
                 $var=!$var;
@@ -398,7 +398,7 @@ if ($socid > 0)
             $db->free($resql);
         }
         else {
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
         print "</table>";
     }
@@ -438,7 +438,7 @@ if ($socid > 0)
                 $var=!$var;
                 print "<tr $bc[$var]>";
                 print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
-                print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dc,'day')."</td>\n";
+                print '</td><td align="right" width="80">'.dol_print_date($objp->dc,'day')."</td>\n";
                 print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
                 print '<td align="right" width="100">'.$commande_static->LibStatut($objp->fk_statut,$objp->facture,5).'</td></tr>';
                 $i++;
@@ -446,7 +446,7 @@ if ($socid > 0)
             $db->free($resql);
         }
         else {
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
         print "</table>";
     }
@@ -491,7 +491,7 @@ if ($socid > 0)
                 $contrat->ref=$objp->ref?$objp->ref:$objp->id;
                 print $contrat->getNomUrl(1);
                 print "</td>\n";
-                print '<td align="right" width="80">'.dolibarr_print_date($objp->dc,'day')."</td>\n";
+                print '<td align="right" width="80">'.dol_print_date($objp->dc,'day')."</td>\n";
                 print '<td width="20">&nbsp;</td>';
                 print '<td align="right" nowrap="nowrap">';
                 $contrat->fetch_lignes();
@@ -503,7 +503,7 @@ if ($socid > 0)
             $db->free($resql);
         }
         else {
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
         print "</table>";
     }
@@ -539,7 +539,7 @@ if ($socid > 0)
                 $objp = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
                 print '<td nowrap><a href="'.DOL_URL_ROOT."/fichinter/fiche.php?id=".$objp->id."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a>\n";
-                print "</td><td align=\"right\">".dolibarr_print_date($objp->di,'day')."</td>\n";
+                print "</td><td align=\"right\">".dol_print_date($objp->di,'day')."</td>\n";
                 print '</tr>';
                 $var=!$var;
                 $i++;
@@ -547,7 +547,7 @@ if ($socid > 0)
             $db->free($resql);
         }
         else {
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
         print "</table>";
     }
@@ -587,7 +587,7 @@ if ($socid > 0)
         }
         else
         {
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
         print "</table>";
     }
@@ -618,8 +618,8 @@ if ($socid > 0)
                 print "<tr $bc[$var]>";
                 print '<td><a href="'.DOL_URL_ROOT.'/chronodocs/fiche.php?id='.$obj->fichid.'">'.img_object($langs->trans("ShowChronodocs"),"generic")." ".$obj->ref.'</a></td>';
 
-                print "<td align=\"left\">".dolibarr_trunc($obj->title,30) ."</td>";
-				print "<td align=\"right\">".dolibarr_print_date($obj->dp,'day')."</td>\n";
+                print "<td align=\"left\">".dol_trunc($obj->title,30) ."</td>";
+				print "<td align=\"right\">".dol_print_date($obj->dp,'day')."</td>\n";
 				print "</tr>";
 
                 $i++;
@@ -698,7 +698,7 @@ if ($socid > 0)
 }
 else
 {
-    dolibarr_print_error($db,'Bad value for socid parameter');
+    dol_print_error($db,'Bad value for socid parameter');
 }
 
 $db->close();

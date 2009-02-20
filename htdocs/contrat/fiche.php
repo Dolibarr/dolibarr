@@ -89,11 +89,11 @@ if ($_POST["mode"]=='predefined')
 	$date_end='';
 	if ($_POST["date_startmonth"] && $_POST["date_startday"] && $_POST["date_startyear"])
 	{
-		$date_start=dolibarr_mktime($_POST["date_starthour"], $_POST["date_startmin"], 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
+		$date_start=dol_mktime($_POST["date_starthour"], $_POST["date_startmin"], 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
 	}
 	if ($_POST["date_endmonth"] && $_POST["date_endday"] && $_POST["date_endyear"])
 	{
-		$date_end=dolibarr_mktime($_POST["date_endhour"], $_POST["date_endmin"], 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
+		$date_end=dol_mktime($_POST["date_endhour"], $_POST["date_endmin"], 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
 	}
 }
 
@@ -104,11 +104,11 @@ if ($_POST["mode"]=='libre')
 	$date_end_sl='';
 	if ($_POST["date_start_slmonth"] && $_POST["date_start_slday"] && $_POST["date_start_slyear"])
 	{
-		$date_start_sl=dolibarr_mktime($_POST["date_start_slhour"], $_POST["date_start_slmin"], 0, $_POST["date_start_slmonth"], $_POST["date_start_slday"], $_POST["date_start_slyear"]);
+		$date_start_sl=dol_mktime($_POST["date_start_slhour"], $_POST["date_start_slmin"], 0, $_POST["date_start_slmonth"], $_POST["date_start_slday"], $_POST["date_start_slyear"]);
 	}
 	if ($_POST["date_end_slmonth"] && $_POST["date_end_slday"] && $_POST["date_end_slyear"])
 	{
-		$date_end_sl=dolibarr_mktime($_POST["date_end_slhour"], $_POST["date_end_slmin"], 0, $_POST["date_end_slmonth"], $_POST["date_end_slday"], $_POST["date_end_slyear"]);
+		$date_end_sl=dol_mktime($_POST["date_end_slhour"], $_POST["date_end_slmin"], 0, $_POST["date_end_slmonth"], $_POST["date_end_slday"], $_POST["date_end_slyear"]);
 	}
 }
 
@@ -119,24 +119,24 @@ $date_start_real_update='';
 $date_end_real_update='';
 if ($_POST["date_start_updatemonth"] && $_POST["date_start_updateday"] && $_POST["date_start_updateyear"])
 {
-    $date_start_update=dolibarr_mktime($_POST["date_start_updatehour"], $_POST["date_start_updatemin"], 0, $_POST["date_start_updatemonth"], $_POST["date_start_updateday"], $_POST["date_start_updateyear"]);
+    $date_start_update=dol_mktime($_POST["date_start_updatehour"], $_POST["date_start_updatemin"], 0, $_POST["date_start_updatemonth"], $_POST["date_start_updateday"], $_POST["date_start_updateyear"]);
 }
 if ($_POST["date_end_updatemonth"] && $_POST["date_end_updateday"] && $_POST["date_end_updateyear"])
 {
-    $date_end_update=dolibarr_mktime($_POST["date_end_updatehour"], $_POST["date_end_updatemin"], 0, $_POST["date_end_updatemonth"], $_POST["date_end_updateday"], $_POST["date_end_updateyear"]);
+    $date_end_update=dol_mktime($_POST["date_end_updatehour"], $_POST["date_end_updatemin"], 0, $_POST["date_end_updatemonth"], $_POST["date_end_updateday"], $_POST["date_end_updateyear"]);
 }
 if ($_POST["date_start_real_updatemonth"] && $_POST["date_start_real_updateday"] && $_POST["date_start_real_updateyear"])
 {
-    $date_start_real_update=dolibarr_mktime($_POST["date_start_real_updatehour"], $_POST["date_start_real_updatemin"], 0, $_POST["date_start_real_updatemonth"], $_POST["date_start_real_updateday"], $_POST["date_start_real_updateyear"]);
+    $date_start_real_update=dol_mktime($_POST["date_start_real_updatehour"], $_POST["date_start_real_updatemin"], 0, $_POST["date_start_real_updatemonth"], $_POST["date_start_real_updateday"], $_POST["date_start_real_updateyear"]);
 }
 if ($_POST["date_end_real_updatemonth"] && $_POST["date_end_real_updateday"] && $_POST["date_end_real_updateyear"])
 {
-    $date_end_real_update=dolibarr_mktime($_POST["date_end_real_updatehour"], $_POST["date_end_real_updatemin"], 0, $_POST["date_end_real_updatemonth"], $_POST["date_end_real_updateday"], $_POST["date_end_real_updateyear"]);
+    $date_end_real_update=dol_mktime($_POST["date_end_real_updatehour"], $_POST["date_end_real_updatemin"], 0, $_POST["date_end_real_updatemonth"], $_POST["date_end_real_updateday"], $_POST["date_end_real_updateyear"]);
 }
 
 if ($_POST["action"] == 'add')
 {
-    $datecontrat = dolibarr_mktime($_POST["rehour"], $_POST["remin"], 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+    $datecontrat = dol_mktime($_POST["rehour"], $_POST["remin"], 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
     $contrat = new Contrat($db);
 
@@ -180,7 +180,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
         $ret=$contrat->fetch($_GET["id"]);
         if ($ret < 0)
 		{
-			dolibarr_print_error($db,$commande->error);
+			dol_print_error($db,$commande->error);
 			exit;
 		}
 		$ret=$contrat->fetch_client();
@@ -192,11 +192,11 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 		{
 			if ($_POST["date_start_slmonth"] && $_POST["date_start_slday"] && $_POST["date_start_slyear"])
 			{
-				$date_start=dolibarr_mktime($_POST["date_start_slhour"], $_POST["date_start_slmin"], 0, $_POST["date_start_slmonth"], $_POST["date_start_slday"], $_POST["date_start_slyear"]);
+				$date_start=dol_mktime($_POST["date_start_slhour"], $_POST["date_start_slmin"], 0, $_POST["date_start_slmonth"], $_POST["date_start_slday"], $_POST["date_start_slyear"]);
 			}
 			if ($_POST["date_end_slmonth"] && $_POST["date_end_slday"] && $_POST["date_end_slyear"])
 			{
-				$date_end=dolibarr_mktime($_POST["date_end_slhour"], $_POST["date_end_slmin"], 0, $_POST["date_end_slmonth"], $_POST["date_end_slday"], $_POST["date_end_slyear"]);
+				$date_end=dol_mktime($_POST["date_end_slhour"], $_POST["date_end_slmin"], 0, $_POST["date_end_slmonth"], $_POST["date_end_slday"], $_POST["date_end_slyear"]);
 			}
 		}
 		// Si ajout champ produit predefini
@@ -204,11 +204,11 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 		{
 			if ($_POST["date_startmonth"] && $_POST["date_startday"] && $_POST["date_startyear"])
 			{
-				$date_start=dolibarr_mktime($_POST["date_starthour"], $_POST["date_startmin"], 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
+				$date_start=dol_mktime($_POST["date_starthour"], $_POST["date_startmin"], 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
 			}
 			if ($_POST["date_endmonth"] && $_POST["date_endday"] && $_POST["date_endyear"])
 			{
-				$date_end=dolibarr_mktime($_POST["date_endhour"], $_POST["date_endmin"], 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
+				$date_end=dol_mktime($_POST["date_endhour"], $_POST["date_endmin"], 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
 			}
 		}
 
@@ -332,13 +332,13 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
         }
         else
         {
-            dolibarr_print_error($db,'Failed to update contrat_det');
+            dol_print_error($db,'Failed to update contrat_det');
             $db->rollback();
         }
     }
     else
     {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 }
 
@@ -439,7 +439,7 @@ $contratlignestatic=new ContratLigne($db);
  *********************************************************************/
 if ($_GET["action"] == 'create')
 {
-    dolibarr_fiche_head($head, $a, $langs->trans("AddContract"));
+    dol_fiche_head($head, $a, $langs->trans("AddContract"));
 
     if ($mesg) print $mesg;
 
@@ -584,7 +584,7 @@ if ($_GET["action"] == 'create')
                 }
                 else
                 {
-                    dolibarr_print_error($db);
+                    dol_print_error($db);
                 }
 
                 print '</table>';
@@ -593,7 +593,7 @@ if ($_GET["action"] == 'create')
     }
     else
     {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 
     print '</div>';
@@ -616,7 +616,7 @@ else
         if ($result > 0) $result=$contrat->fetch_lignes();
         if ($result < 0)
         {
-            dolibarr_print_error($db,$contrat->error);
+            dol_print_error($db,$contrat->error);
             exit;
         }
 
@@ -640,7 +640,7 @@ else
 
         $hselected = 0;
 
-        dolibarr_fiche_head($head, $hselected, $langs->trans("Contract"));
+        dol_fiche_head($head, $hselected, $langs->trans("Contract"));
 
 
         /*
@@ -710,7 +710,7 @@ else
 
         // Date
         print '<tr><td>'.$langs->trans("Date").'</td>';
-        print '<td colspan="3">'.dolibarr_print_date($contrat->date_contrat,"dayhour")."</td></tr>\n";
+        print '<td colspan="3">'.dol_print_date($contrat->date_contrat,"dayhour")."</td></tr>\n";
 
         // Projet
         if ($conf->projet->enabled)
@@ -868,7 +868,7 @@ else
 						// Date planned
 						print $langs->trans("DateStartPlanned").': ';
 						if ($objp->date_debut) {
-							print dolibarr_print_date($objp->date_debut);
+							print dol_print_date($objp->date_debut);
 							// Warning si date prevu passee et pas en service
 							if ($objp->statut == 0 && $objp->date_debut < ($now - $conf->contrat->services->inactifs->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
 						}
@@ -876,7 +876,7 @@ else
 						print ' &nbsp;-&nbsp; ';
 						print $langs->trans("DateEndPlanned").': ';
 						if ($objp->date_fin) {
-							print dolibarr_print_date($objp->date_fin);
+							print dol_print_date($objp->date_fin);
 							if ($objp->statut == 4 && $objp->date_fin < ($now - $conf->contrat->services->expires->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
 						}
 						else print $langs->trans("Unknown");
@@ -932,7 +932,7 @@ else
 			}
 			else
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 
 			if ($contrat->statut > 0)
@@ -972,9 +972,9 @@ else
 			if ($_REQUEST["action"] == 'active' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $contrat->lignes[$cursorline-1]->id == $_GET["ligne"])
 			{
 				//print '<br />';
-				$dateactstart = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-				$dateactend   = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dolibarr_print_date($dateactstart,"%A %d %B %Y")),"confirm_active");
+				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active");
 				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
@@ -984,9 +984,9 @@ else
 			if ($_REQUEST["action"] == 'closeline' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $contrat->lignes[$cursorline-1]->id == $_GET["ligne"])
 			{
 				//print '<br />';
-				$dateactstart = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-				$dateactend   = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("CloseService"),$langs->trans("ConfirmCloseService",dolibarr_print_date($dateactend,"%A %d %B %Y")),"confirm_closeline");
+				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("CloseService"),$langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")),"confirm_closeline");
 				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
@@ -1018,21 +1018,21 @@ else
 				// Si pas encore active
 				if (! $objp->date_debut_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					if ($objp->date_debut_reelle) print dolibarr_print_date($objp->date_debut_reelle);
+					if ($objp->date_debut_reelle) print dol_print_date($objp->date_debut_reelle);
 					else print $langs->trans("ContractStatusNotRunning");
 				}
 				// Si active et en cours
 				if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					print dolibarr_print_date($objp->date_debut_reelle);
+					print dol_print_date($objp->date_debut_reelle);
 				}
 				// Si desactive
 				if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					print dolibarr_print_date($objp->date_debut_reelle);
+					print dol_print_date($objp->date_debut_reelle);
 					print ' &nbsp;-&nbsp; ';
 					print $langs->trans("DateEndReal").': ';
-					print dolibarr_print_date($objp->date_fin_reelle);
+					print dol_print_date($objp->date_fin_reelle);
 				}
 				print '</td>';
 
@@ -1056,11 +1056,11 @@ else
 
 				// Definie date debut et fin par defaut
 				$dateactstart = $objp->date_debut;
-				if ($_POST["remonth"]) $dateactstart = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+				if ($_POST["remonth"]) $dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				elseif (! $dateactstart) $dateactstart = time();
 
 				$dateactend = $objp->date_fin;
-				if ($_POST["endmonth"]) $dateactend = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+				if ($_POST["endmonth"]) $dateactend = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				elseif (! $dateactend)
 				{
 					if ($objp->fk_product > 0)
@@ -1104,11 +1104,11 @@ else
 
 				// Definie date debut et fin par defaut
 				$dateactstart = $objp->date_debut_reelle;
-				if ($_POST["remonth"]) $dateactstart = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+				if ($_POST["remonth"]) $dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				elseif (! $dateactstart) $dateactstart = time();
 
 				$dateactend = $objp->date_fin_reelle;
-				if ($_POST["endmonth"]) $dateactend = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+				if ($_POST["endmonth"]) $dateactend = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				elseif (! $dateactend)
 				{
 					if ($objp->fk_product > 0)

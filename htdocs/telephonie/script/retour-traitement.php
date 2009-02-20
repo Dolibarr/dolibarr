@@ -30,7 +30,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/dolibarrmail.class.php");
 
-if ($verbose) dolibarr_syslog("retour-traitement");
+if ($verbose) dol_syslog("retour-traitement");
 
 $user = new User($db, 1);
 
@@ -57,7 +57,7 @@ if ($db->query($sql))
 
 $n = sizeof($row);
 
-if ($verbose) dolibarr_syslog($n . " lignes à traiter");
+if ($verbose) dol_syslog($n . " lignes à traiter");
 
 for ($i = 0 ; $i < $n ; $i++)
 { 
@@ -107,7 +107,7 @@ for ($i = 0 ; $i < $n ; $i++)
 		      
 		      if (! $db->query($sql))
 			{
-			  dolibarr_syslog("Erreur de traitement de ligne $numero");
+			  dol_syslog("Erreur de traitement de ligne $numero");
 			  $error++;
 			}
 		    }
@@ -115,19 +115,19 @@ for ($i = 0 ; $i < $n ; $i++)
 		  if ($error == 0)
 		    {
 		      $db->query("COMMIT");
-		      dolibarr_syslog("COMMIT");
+		      dol_syslog("COMMIT");
 		    }
 		  else
 		    {
 		      $db->query("ROLLBACK");
-		      dolibarr_syslog("ROLLBACK");
+		      dol_syslog("ROLLBACK");
 		    }
 		  
 		}
 	    }
 	  else
 	    {
-	      dolibarr_syslog("Ligne $numero déjà active");
+	      dol_syslog("Ligne $numero déjà active");
 	    }
 	}
       /*
@@ -163,7 +163,7 @@ for ($i = 0 ; $i < $n ; $i++)
 		      
 		      if (! $db->query($sql))
 			{
-			  dolibarr_syslog("Erreur de traitement de ligne $numero");
+			  dol_syslog("Erreur de traitement de ligne $numero");
 			  $error++;
 			}
 		    }
@@ -171,18 +171,18 @@ for ($i = 0 ; $i < $n ; $i++)
 		  if ($error == 0)
 		    {
 		      $db->query("COMMIT");
-		      dolibarr_syslog("COMMIT");
+		      dol_syslog("COMMIT");
 		    }
 		  else
 		    {
 		      $db->query("ROLLBACK");
-		      dolibarr_syslog("ROLLBACK");
+		      dol_syslog("ROLLBACK");
 		    }		  
 		}
 	    }
 	  else
 	    {
-	      dolibarr_syslog("Ligne $numero déjà active");
+	      dol_syslog("Ligne $numero déjà active");
 	    }
 	}
       
@@ -210,7 +210,7 @@ for ($i = 0 ; $i < $n ; $i++)
 		  
 		  if (! $db->query($sql))
 		    {
-		      dolibarr_syslog("Erreur de traitement de ligne $numero");
+		      dol_syslog("Erreur de traitement de ligne $numero");
 		      $error++;
 		    }
 		}
@@ -218,12 +218,12 @@ for ($i = 0 ; $i < $n ; $i++)
 	      if ($error == 0)
 		{
 		  $db->query("COMMIT");
-		  dolibarr_syslog("COMMIT");
+		  dol_syslog("COMMIT");
 		}
 	      else
 		{
 		  $db->query("ROLLBACK");
-		  dolibarr_syslog("ROLLBACK");
+		  dol_syslog("ROLLBACK");
 		}
 	      
 	    }

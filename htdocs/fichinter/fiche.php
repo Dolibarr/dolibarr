@@ -185,7 +185,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	$result=fichinter_create($db, $fichinter, $_REQUEST['model'], $outputlangs);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$result);
+		dol_print_error($db,$result);
 		exit;
 	}
 }
@@ -196,7 +196,7 @@ if ($_POST['action'] == 'classin')
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET['id']);
 	$result=$fichinter->set_project($user, $_POST['projetidp']);
-	if ($result < 0) dolibarr_print_error($db,$fichinter->error);
+	if ($result < 0) dol_print_error($db,$fichinter->error);
 }
 
 if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
@@ -216,7 +216,7 @@ if ($_POST['action'] == 'setdescription')
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET['id']);
 	$result=$fichinter->set_description($user,$_POST['description']);
-	if ($result < 0) dolibarr_print_error($db,$fichinter->error);
+	if ($result < 0) dol_print_error($db,$fichinter->error);
 }
 
 
@@ -232,7 +232,7 @@ if ($_POST['action'] == "addligne" && $user->rights->ficheinter->creer)
 		$ret=$fichinter->fetch($_POST['fichinterid']);
 
 		$desc=$_POST['np_desc'];
-		$date_intervention = dolibarr_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
+		$date_intervention = dol_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
 		$duration = ConvertTime2Seconds($_POST['durationhour'],$_POST['durationmin']);
 
 		$fichinter->addline(
@@ -260,17 +260,17 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 	$fichinterline = new FichinterLigne($db);
 	if ($fichinterline->fetch($_POST['ligne']) <= 0)
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 		exit;
 	}
 	$fichinter = new Fichinter($db);
 	if ($fichinter->fetch($fichinterline->fk_fichinter) <= 0)
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 		exit;
 	}
 	$desc=$_POST['desc'];
-	$date_intervention = dolibarr_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
+	$date_intervention = dol_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
 	$duration = ConvertTime2Seconds($_POST['durationhour'],$_POST['durationmin']);
 
 	$fichinterline->datei=$date_intervention;
@@ -296,14 +296,14 @@ if ($_GET['action'] == 'deleteline' && $user->rights->ficheinter->creer && !$con
 	$fichinterline = new FichinterLigne($db);
 	if ($fichinterline->fetch($_GET['ligne']) <= 0)
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 		exit;
 	}
 	$result=$fichinterline->delete_line();
 	$fichinter = new Fichinter($db);
 	if ($fichinter->fetch($fichinterline->fk_fichinter) <= 0)
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 		exit;
 	}
 
@@ -326,14 +326,14 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 		$fichinterline = new FichinterLigne($db);
 		if ($fichinterline->fetch($_GET['ligne']) <= 0)
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 			exit;
 		}
 		$result=$fichinterline->delete_line();
 		$fichinter = new Fichinter($db);
 		if ($fichinter->fetch($fichinterline->fk_fichinter) <= 0)
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 			exit;
 		}
 
@@ -416,7 +416,7 @@ if ($_GET["action"] == 'create')
 
 	if (! $conf->global->FICHEINTER_ADDON)
 	{
-		dolibarr_print_error($db,$langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined"));
+		dol_print_error($db,$langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined"));
 		exit;
 	}
 
@@ -518,7 +518,7 @@ elseif ($_GET["id"] > 0)
 	$result=$fichinter->fetch($_GET["id"]);
 	if (! $result > 0)
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 		exit;
 	}
 	$fichinter->fetch_client();
@@ -527,7 +527,7 @@ elseif ($_GET["id"] > 0)
 
 	$head = fichinter_prepare_head($fichinter);
 
-	dolibarr_fiche_head($head, 'card', $langs->trans("InterventionCard"));
+	dol_fiche_head($head, 'card', $langs->trans("InterventionCard"));
 
 	// Confirmation de la suppression de la fiche d'intervention
 	if ($_GET['action'] == 'delete')
@@ -694,7 +694,7 @@ elseif ($_GET["id"] > 0)
 				print nl2br($objp->description);
 
 				// Date
-				print '<td align="center" width="150">'.dolibarr_print_date($objp->date_intervention,'dayhour').'</td>';
+				print '<td align="center" width="150">'.dol_print_date($objp->date_intervention,'dayhour').'</td>';
 
 				// Duration
 				print '<td align="right" width="150">'.ConvertSecondToTime($objp->duree).'</td>';
@@ -845,7 +845,7 @@ elseif ($_GET["id"] > 0)
 			// Date intervention
 			print '<td align="center" nowrap="nowrap">';
 			$timearray=dol_getdate(mktime());
-			$timewithnohour=dolibarr_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
+			$timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
 			$html->select_date($timewithnohour,'di',1,1,0,"addinter");
 			print '</td>';
 
@@ -866,7 +866,7 @@ elseif ($_GET["id"] > 0)
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	print '</div>';

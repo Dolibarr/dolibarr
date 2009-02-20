@@ -30,7 +30,7 @@ require("./pre.inc.php");
 
 if ($_REQUEST['id'] == "")
 {
-  dolibarr_print_error('','Missing parameter id');
+  dol_print_error('','Missing parameter id');
   exit();
 }
 
@@ -92,7 +92,7 @@ if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
 if ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
 if ($type == 2) $title=$langs->trans("CustomersCategoryShort");
 
-dolibarr_fiche_head($head, 'card', $title);
+dol_fiche_head($head, 'card', $title);
 
 
 /*
@@ -138,7 +138,7 @@ if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 
 		if ($catsMeres < 0)
 		{
-			dolibarr_print_error();
+			dol_print_error();
 		}
 		else if (count($catsMeres) > 0)
 		{
@@ -194,7 +194,7 @@ print "</div>";
 $cats = $c->get_filles ();
 if ($cats < 0)
 {
-	dolibarr_print_error();
+	dol_print_error();
 }
 else
 {
@@ -255,7 +255,7 @@ if ($c->type == 0)
 	$prods = $c->get_type ("product","Product");
 	if ($prods < 0)
 	{
-	  dolibarr_print_error();
+	  dol_print_error();
 	}
 	else
 	{
@@ -294,7 +294,7 @@ if ($c->type == 1)
 	$socs = $c->get_type ("societe","Fournisseur","fournisseur");
 	if ($socs < 0)
 	{
-	  dolibarr_print_error();
+	  dol_print_error();
 	}
 	else
 	{
@@ -331,7 +331,7 @@ if($c->type == 2)
 	$socs = $c->get_type ("societe","Societe");
 	if ($socs < 0)
 	{
-	  dolibarr_print_error();
+	  dol_print_error();
 	}
 	else
 	{

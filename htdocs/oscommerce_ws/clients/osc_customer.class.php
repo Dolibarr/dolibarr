@@ -80,7 +80,7 @@ class Osc_customer
 		global $conf;
 	
 		$this->error = '';
-		dolibarr_syslog("Osc_customer::fetch $id=$id ref=$ref");
+		dol_syslog("Osc_customer::fetch $id=$id ref=$ref");
       // Verification parametres
       if (! $id )
         {
@@ -149,7 +149,7 @@ class Osc_customer
         else
         {
 //			print "suppression rate ".$sql."  * ".$result;
-            dolibarr_syslog("osc_customer::transcode echec suppression");
+            dol_syslog("osc_customer::transcode echec suppression");
 //            $this->db->rollback();
 //            return -1;
 		}
@@ -163,7 +163,7 @@ class Osc_customer
         else
         {
 //			print "insertion rate ".$sql." , ".$result;
-            dolibarr_syslog("osc_customer::transcode echec insert");
+            dol_syslog("osc_customer::transcode echec insert");
 //            $this->db->rollback();
 //            return -1;
 		}

@@ -179,15 +179,15 @@ if ($_POST['action'] == 'setecheance')
 {
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
-	$result=$propal->set_echeance($user,dolibarr_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
-	if ($result < 0) dolibarr_print_error($db,$propal->error);
+	$result=$propal->set_echeance($user,dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
+	if ($result < 0) dol_print_error($db,$propal->error);
 }
 if ($_POST['action'] == 'setdate_livraison')
 {
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
-	$result=$propal->set_date_livraison($user,dolibarr_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
-	if ($result < 0) dolibarr_print_error($db,$propal->error);
+	$result=$propal->set_date_livraison($user,dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
+	if ($result < 0) dol_print_error($db,$propal->error);
 }
 
 if ($_POST['action'] == 'setdeliveryadress' && $user->rights->propale->creer)
@@ -195,7 +195,7 @@ if ($_POST['action'] == 'setdeliveryadress' && $user->rights->propale->creer)
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
 	$result=$propal->set_adresse_livraison($user,$_POST['adresse_livraison_id']);
-	if ($result < 0) dolibarr_print_error($db,$propal->error);
+	if ($result < 0) dol_print_error($db,$propal->error);
 }
 
 // Positionne ref client
@@ -222,8 +222,8 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	{
 		if ($propal->fetch($_POST['copie_propal']) > 0)
 		{
-			$propal->datep = dolibarr_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-			$propal->date_livraison = dolibarr_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+			$propal->datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$propal->date_livraison = dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 			$propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
 			$propal->duree_validite = $_POST['duree_validite'];
 			$propal->cond_reglement_id = $_POST['cond_reglement_id'];
@@ -248,8 +248,8 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	}
 	else
 	{
-		$propal->datep = dolibarr_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		$propal->date_livraison = dolibarr_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+		$propal->datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$propal->date_livraison = dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 		$propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
 		$propal->duree_validite = $_POST['duree_validite'];
 		$propal->cond_reglement_id = $_POST['cond_reglement_id'];
@@ -309,7 +309,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			propale_pdf_create($db, $id, $_REQUEST['model'], $outputlangs);
-			dolibarr_syslog('Redirect to '.$_SERVER["PHP_SELF"].'?propalid='.$id);
+			dol_syslog('Redirect to '.$_SERVER["PHP_SELF"].'?propalid='.$id);
 			Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$id);
 			exit;
 		}
@@ -320,7 +320,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	}
 	else
 	{
-		dolibarr_print_error($db,$propal->error);
+		dol_print_error($db,$propal->error);
 		$db->rollback();
 		exit;
 	}
@@ -493,7 +493,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 
 						if ($error)
 						{
-							dolibarr_print_error($db);
+							dol_print_error($db);
 						}
 						else
 						{
@@ -524,21 +524,21 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 			{
 				$langs->load("other");
 				$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
-				dolibarr_syslog('Recipient email is empty');
+				dol_syslog('Recipient email is empty');
 			}
 		}
 		else
 		{
 			$langs->load("other");
 			$mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
-			dolibarr_syslog('Failed to read file: '.$file);
+			dol_syslog('Failed to read file: '.$file);
 		}
 	}
 	else
 	{
 		$langs->load("other");
 		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Proposal")).'</div>';
-		dolibarr_syslog('Impossible de lire les donnees de la facture. Le fichier propal n\'a peut-etre pas ete genere.');
+		dol_syslog('Impossible de lire les donnees de la facture. Le fichier propal n\'a peut-etre pas ete genere.');
 	}
 }
 
@@ -587,7 +587,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
 		}
 		else
 		{
-			dolibarr_print_error($db,$prop->error);
+			dol_print_error($db,$prop->error);
 		}
 	}
 }
@@ -603,7 +603,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 		$ret=$propal->fetch($_POST['propalid']);
 		if ($ret < 0)
 		{
-			dolibarr_print_error($db,$propal->error);
+			dol_print_error($db,$propal->error);
 			exit;
 		}
 		$ret=$propal->fetch_client();
@@ -711,7 +711,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 	$propal = new Propal($db);
 	if (! $propal->fetch($_POST['propalid']) > 0)
 	{
-		dolibarr_print_error($db,$propal->error);
+		dol_print_error($db,$propal->error);
 		exit;
 	}
 
@@ -776,7 +776,7 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 	$result=propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$result);
+		dol_print_error($db,$result);
 		exit;
 	}
 	else
@@ -895,7 +895,7 @@ if ($id > 0 || ! empty($ref))
 	$societe->fetch($propal->socid);
 
 	$head = propal_prepare_head($propal);
-	dolibarr_fiche_head($head, 'comm', $langs->trans('Proposal'));
+	dol_fiche_head($head, 'comm', $langs->trans('Proposal'));
 
 	// Clone confirmation
 	if ($_GET["action"] == 'clone')
@@ -1009,7 +1009,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Dates
 	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-	print dolibarr_print_date($propal->date,'daytext');
+	print dol_print_date($propal->date,'daytext');
 	print '</td>';
 
 	if ($conf->projet->enabled) $rowspan++;
@@ -1040,7 +1040,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		if ($propal->fin_validite)
 		{
-			print dolibarr_print_date($propal->fin_validite,'daytext');
+			print dol_print_date($propal->fin_validite,'daytext');
 			if ($propal->statut == 1 && $propal->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 		}
 		else
@@ -1070,7 +1070,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		print dolibarr_print_date($propal->date_livraison,'daytext');
+		print dol_print_date($propal->date_livraison,'daytext');
 	}
 	print '</td>';
 	print '</tr>';
@@ -1528,7 +1528,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 
 	/*
@@ -1829,7 +1829,7 @@ if ($id > 0 || ! empty($ref))
 					$var=!$var;
 					print '<tr '.$bc[$var].'><td>';
 					print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
-					print '<td align="center">'.dolibarr_print_date($coms[$i]->date,'day').'</td>';
+					print '<td align="center">'.dol_print_date($coms[$i]->date,'day').'</td>';
 					print '<td align="right">'.price($coms[$i]->total_ttc).'</td>';
 					print '<td align="right">'.$coms[$i]->getLibStatut(3).'</td>';
 					print "</tr>\n";
@@ -2075,10 +2075,10 @@ else
 
 			// Date propale
 			print '<td align="center">';
-			$y = dolibarr_print_date($objp->dp,'%Y');
-			$m = dolibarr_print_date($objp->dp,'%m');
-			$mt= dolibarr_print_date($objp->dp,'%b');
-			$d = dolibarr_print_date($objp->dp,'%d');
+			$y = dol_print_date($objp->dp,'%Y');
+			$m = dol_print_date($objp->dp,'%m');
+			$mt= dol_print_date($objp->dp,'%b');
+			$d = dol_print_date($objp->dp,'%d');
 			print $d."\n";
 			print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
 			print $mt."</a>\n";
@@ -2088,7 +2088,7 @@ else
 			// Date fin validite
 			if ($objp->dfv)
 			{
-				print '<td align="center">'.dolibarr_print_date($objp->dfv,'day');
+				print '<td align="center">'.dol_print_date($objp->dfv,'day');
 				print '</td>';
 			}
 			else
@@ -2112,7 +2112,7 @@ else
 	}
 	else
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 $db->close();

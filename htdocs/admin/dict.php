@@ -277,7 +277,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
                 $newid=($obj->newid + 1);
                         
             } else {
-                dolibarr_print_error($db);
+                dol_print_error($db);
             }
         }
     
@@ -302,7 +302,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
         }
         $sql.=",1)";
 
-	     dolibarr_syslog("dict actionadd sql=".$sql);
+	     dol_syslog("dict actionadd sql=".$sql);
         $result = $db->query($sql);
         if (!$result)
         {
@@ -310,7 +310,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
                 $msg=$langs->trans("ErrorRecordAlreadyExists").'<br>';
             }
             else {
-                dolibarr_print_error($db);
+                dol_print_error($db);
             }
         }
     }
@@ -338,7 +338,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
         }
         $sql.= " WHERE ".$rowidcol." = '".$_POST["rowid"]."'";
 
-		dolibarr_syslog("dict actionmodify sql=".$sql);
+		dol_syslog("dict actionmodify sql=".$sql);
 		//print $sql;
         $resql = $db->query($sql);
         if (! $resql)
@@ -363,7 +363,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')       //
 
     $sql = "DELETE from ".$tabname[$_GET["id"]]." WHERE ".$rowidcol."='".$_GET["rowid"]."'";
 
-	dolibarr_syslog("dict delete sql=".$sql);
+	dol_syslog("dict delete sql=".$sql);
     $result = $db->query($sql);
     if (! $result)
     {
@@ -373,7 +373,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')       //
         }
         else 
         {
-            dolibarr_print_error($db);
+            dol_print_error($db);
         }
     }
 }
@@ -393,7 +393,7 @@ if ($_GET["action"] == $acts[0])       // activate
     $result = $db->query($sql);
     if (!$result)
     {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 }
 
@@ -412,7 +412,7 @@ if ($_GET["action"] == $acts[1])       // disable
     $result = $db->query($sql);
     if (!$result)
     {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 }
 
@@ -551,7 +551,7 @@ if ($_GET["id"])
     }
 
     // Affiche table des valeurs
-	dolibarr_syslog("htdocs/admin/dict sql=".$sql, LOG_DEBUG);
+	dol_syslog("htdocs/admin/dict sql=".$sql, LOG_DEBUG);
     $resql=$db->query($sql);
 	if ($resql)
     {
@@ -664,7 +664,7 @@ if ($_GET["id"])
           }
       }
       else {
-        dolibarr_print_error($db);
+        dol_print_error($db);
     }
 
     print '</table>';

@@ -99,7 +99,7 @@ function checkBanForAccount($account)
 	if (empty($account->number)) $account->number=$account->num_compte;
 	if (empty($account->cle))    $account->cle=$account->cle_rib;
 	
-	dolibarr_syslog("Bank.lib::checkBanForAccount account->code_banque=".$account->code_banque." account->code_guichet=".$account->code_guichet." account->number=".$account->number." account->cle=".$account->cle." account->iban=".$account->iban." country_code=".$country_code, LOG_DEBUG);
+	dol_syslog("Bank.lib::checkBanForAccount account->code_banque=".$account->code_banque." account->code_guichet=".$account->code_guichet." account->number=".$account->number." account->cle=".$account->cle." account->iban=".$account->iban." country_code=".$country_code, LOG_DEBUG);
 	
 	if ($country_code == 'FR')	// France rules
 	{

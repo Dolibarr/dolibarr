@@ -162,7 +162,7 @@ if ($db->query($sql))
       $socf->fetch($obj->sfidp);
 
       print "<tr $bc[$var]>";
-      print '<td><a href="../fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne,0,0,true)."</a></td>\n";
+      print '<td><a href="../fiche.php?id='.$obj->rowid.'">'.dol_print_phone($obj->ligne,0,0,true)."</a></td>\n";
       print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
       print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
       print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.$obj->sfnom.'</a></td>';

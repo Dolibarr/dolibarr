@@ -83,7 +83,7 @@ class Entrepot extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author, label)";
 		$sql .= " VALUES (".$this->db->idate(mktime()).",".$user->id.",'".addslashes($this->libelle)."')";
 
-		dolibarr_syslog("Entrepot::create sql=".$sql);
+		dol_syslog("Entrepot::create sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -99,21 +99,21 @@ class Entrepot extends CommonObject
 				}
 				else
 				{
-					dolibarr_syslog("Entrepot::Create return -3");
+					dol_syslog("Entrepot::Create return -3");
 					$this->db->rollback();
 					return -3;
 				}
 			}
 			else {
 				$this->error="Failed to get insert id";
-				dolibarr_syslog("Entrepot::Create return -2");
+				dol_syslog("Entrepot::Create return -2");
 				return -2;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Entrepot::Create Error ".$this->db->error());
+			dol_syslog("Entrepot::Create Error ".$this->db->error());
 			$this->db->rollback();
 			return -1;
 		}
@@ -154,8 +154,8 @@ class Entrepot extends CommonObject
 		else
 		{
 	  $this->error=$this->db->error()." sql=$sql";;
-	  dolibarr_syslog("Entrepot::Update return -1");
-	  dolibarr_syslog("Entrepot::Update ".$this->error);
+	  dol_syslog("Entrepot::Update return -1");
+	  dol_syslog("Entrepot::Update ".$this->error);
 	  return -1;
 		}
 	}
@@ -197,7 +197,7 @@ class Entrepot extends CommonObject
 	  	}
 	  	else
 	  	{
-	  		dolibarr_print_error($db);
+	  		dol_print_error($db);
 	  	}
 	  	$this->pays=$objp->libelle;
 	  }
@@ -256,7 +256,7 @@ class Entrepot extends CommonObject
 		}
 		else
 		{
-	  dolibarr_print_error($this->db);
+	  dol_print_error($this->db);
 		}
 	}
 

@@ -73,7 +73,7 @@ if ($_GET["propalid"])
   $head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
   $head[$h][1] = "Info";
 
-  dolibarr_fiche_head($head, $a, $societe->nom);
+  dol_fiche_head($head, $a, $societe->nom);
 
   $price = $propal->price + $propal->remise;
 

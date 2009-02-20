@@ -82,7 +82,7 @@ if ($_GET["id"])
       $hselected = $h;
       $h++;
 	  
-      dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+      dol_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
       
       print '<table class="border" width="100%">';
       
@@ -152,7 +152,7 @@ if ($_GET["id"])
 	      $objp = $db->fetch_object($resql);
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
-	      print '<td>'.dolibarr_print_date($objp->date_releve).'</td>';
+	      print '<td>'.dol_print_date($objp->date_releve).'</td>';
 	      print '<td align="right">'.price($objp->price).'</td>';
 	      print '<td align="center">'.$objp->quantity.'</td></tr>';
 	      

@@ -58,7 +58,7 @@ class ComptaExport
   {
     global $langs;
     
-    dolibarr_syslog("ComptaExport::ReadLines id=".$id);
+    dol_syslog("ComptaExport::ReadLines id=".$id);
     
     $error = 0;
     
@@ -134,7 +134,7 @@ class ComptaExport
   
   function ReadLinesPayment($id=0)
   {
-    dolibarr_syslog("ComptaExport::ReadLinesPayment id=".$id);
+    dol_syslog("ComptaExport::ReadLinesPayment id=".$id);
     $error = 0;
     
     $sql = "SELECT p.rowid as paymentid, f.facnumber";
@@ -209,13 +209,13 @@ class ComptaExport
   {
     $error = 0;
 
-    dolibarr_syslog("ComptaExport::Export");
+    dol_syslog("ComptaExport::Export");
 
     $error += $this->ReadLines($id);
     $error += $this->ReadLinesPayment($id);
 
-    dolibarr_syslog("ComptaExport::Export Lignes de factures  : ".sizeof($this->linec));
-    dolibarr_syslog("ComptaExport::Export Lignes de paiements : ".sizeof($this->linep));
+    dol_syslog("ComptaExport::Export Lignes de factures  : ".sizeof($this->linec));
+    dol_syslog("ComptaExport::Export Lignes de paiements : ".sizeof($this->linep));
 
     if (!$error && (sizeof($this->linec) > 0 || sizeof($this->linep) > 0))
       {

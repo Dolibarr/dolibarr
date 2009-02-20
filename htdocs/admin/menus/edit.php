@@ -477,7 +477,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	$sql.= ' WHERE c.rowid = mc.fk_constraint';
 	$sql.= ' AND mc.fk_menu = '.$_GET['menuId'];
 
-	dolibarr_syslog("Edit: sql=".$sql, LOG_DEBUG);
+	dol_syslog("Edit: sql=".$sql, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -542,7 +542,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		while ($i < $num)
 		{
 			$objc = $db->fetch_object($resql);
-			print '<option value="'.$objc->rowid.'">'.dolibarr_trunc($objc->action,70).'</option>';
+			print '<option value="'.$objc->rowid.'">'.dol_trunc($objc->action,70).'</option>';
 			$i++;
 			
 		}

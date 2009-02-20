@@ -50,18 +50,18 @@ if ($db->query($sql))
   if ($num == 1)
     {
       $row = $db->fetch_row();
-      dolibarr_syslog ("Import fichier ".$file);
-      dolibarr_syslog("Fournisseur [".$row[0]."] ".$row[1]);
+      dol_syslog ("Import fichier ".$file);
+      dol_syslog("Fournisseur [".$row[0]."] ".$row[1]);
     }
   else
     {
-      dolibarr_syslog("Erreur Fournisseur inexistant : ".$id_fourn);
+      dol_syslog("Erreur Fournisseur inexistant : ".$id_fourn);
       exit ;
     }
 }
 else
 {
-  dolibarr_syslog("Erreur recherche fournisseur");
+  dol_syslog("Erreur recherche fournisseur");
   exit ;
 }
 
@@ -83,20 +83,20 @@ if ($db->query($sql))
       $row = $db->fetch_row();
       if ($row[0] > 0)
 	{
-	  dolibarr_syslog ("Fichier ".$file." déjà chargé dans import-log");
+	  dol_syslog ("Fichier ".$file." déjà chargé dans import-log");
 
 	  exit ;
 	}
     }
   else
     {
-      dolibarr_syslog("Erreur vérif du fichier");
+      dol_syslog("Erreur vérif du fichier");
       exit ;
     }
 }
 else
 {
-  dolibarr_syslog("Erreur SQL vérification du fichier");
+  dol_syslog("Erreur SQL vérification du fichier");
   exit ;
 }
 
@@ -118,20 +118,20 @@ if ($db->query($sql))
       $row = $db->fetch_row();
       if ($row[0] > 0)
 	{
-	  dolibarr_syslog ("Fichier ".$file." déjà traité");
+	  dol_syslog ("Fichier ".$file." déjà traité");
 	  exit ;
 	}
     }
   else
     {
-      dolibarr_syslog("Erreur vérif du fichier dans les comm");
+      dol_syslog("Erreur vérif du fichier dans les comm");
       exit ;
     }
 }
 else
 {
-  dolibarr_syslog("Erreur SQL vérification du fichier dans les comm");
-  dolibarr_syslog($sql);
+  dol_syslog("Erreur SQL vérification du fichier dans les comm");
+  dol_syslog($sql);
   exit ;
 }
 
@@ -148,7 +148,7 @@ $resql = $db->query($sql);
 if ($resql)
 {  
   $num = $db->num_rows($resql);
-  dolibarr_syslog ($num . " lignes chargées");
+  dol_syslog ($num . " lignes chargées");
   $i = 0;
   $ligneids = array();
 
@@ -161,8 +161,8 @@ if ($resql)
 }
 else
 {
-  dolibarr_syslog("Erreur chargement des lignes");
-  dolibarr_syslog($sql);
+  dol_syslog("Erreur chargement des lignes");
+  dol_syslog($sql);
   exit ;
 }
 
@@ -175,7 +175,7 @@ else
 if (is_readable($file))
 {
   
-  dolibarr_syslog("Lecture du fichier $file");
+  dol_syslog("Lecture du fichier $file");
   
   $error = 0;
   $line = 0;
@@ -235,9 +235,9 @@ if (is_readable($file))
 			    }
 			  else
 			    {
-			      dolibarr_syslog("Erreur de traitement de ligne $index");
-			      dolibarr_syslog($db->error());
-			      dolibarr_syslog($sql);
+			      dol_syslog("Erreur de traitement de ligne $index");
+			      dol_syslog($db->error());
+			      dol_syslog($sql);
 			      $error++;
 			    }
 			}
@@ -249,32 +249,32 @@ if (is_readable($file))
 		    }
 		  else
 		    {
-		      dolibarr_syslog("Ligne : $ligne ignorée!");
+		      dol_syslog("Ligne : $ligne ignorée!");
 		      $error++;
 		    }
 		  
 		}
 	      else
 		{
-		  dolibarr_syslog("Mauvais format de fichier ligne $line");
+		  dol_syslog("Mauvais format de fichier ligne $line");
 		  $error++;
 		}
 	    }
 	  $line++;
 	}
       
-      dolibarr_syslog(($line -1 )." lignes traitées dans le fichier");
-      dolibarr_syslog($line_inserted." insert effectués");
+      dol_syslog(($line -1 )." lignes traitées dans le fichier");
+      dol_syslog($line_inserted." insert effectués");
       
       if ($error == 0)
 	{	  
 	  $db->query("COMMIT");
-	  dolibarr_syslog("COMMIT");
+	  dol_syslog("COMMIT");
 	}
       else
 	{
 	  $db->query("ROLLBACK");
-	  dolibarr_syslog("ROLLBACK");
+	  dol_syslog("ROLLBACK");
 	}
       
     }
@@ -284,7 +284,7 @@ if (is_readable($file))
 else
 {
   print "Erreur lecture : $file";
-  dolibarr_syslog($file . " not readable");
+  dol_syslog($file . " not readable");
 }
 
 

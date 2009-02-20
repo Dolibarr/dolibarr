@@ -161,7 +161,7 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
     }
     else
     {
-      dolibarr_print_error($db);
+      dol_print_error($db);
     }
 
 
@@ -256,7 +256,7 @@ if ($rowid > 0)
         $head[$h][2] = 'card';
         $h++;
 
-        dolibarr_fiche_head($head, 'card', $langs->trans("MemberType"));
+        dol_fiche_head($head, 'card', $langs->trans("MemberType"));
 
 
         print '<table class="border" width="100%">';
@@ -328,7 +328,7 @@ if ($rowid > 0)
         $head[$h][2] = 'card';
         $h++;
 
-        dolibarr_fiche_head($head, 'card', $langs->trans("MemberType"));
+        dol_fiche_head($head, 'card', $langs->trans("MemberType"));
 
 
         print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'">';

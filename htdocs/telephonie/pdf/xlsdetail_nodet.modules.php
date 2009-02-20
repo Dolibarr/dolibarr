@@ -38,7 +38,7 @@ class xlsdetail_nodet {
     $dir = FAC_OUTPUTDIR . "/" . $fac->ref . "/" ;
     $fname = $dir . $fac->ref . "-".$ligne->numero."-".$ligne->code_analytique."-detail.xls";
 
-    //dolibarr_syslog("Open file : $fname");
+    //dol_syslog("Open file : $fname");
     
     $workbook = &new writeexcel_workbook($fname);
 
@@ -83,7 +83,7 @@ class xlsdetail_nodet {
 	$i = 0;
 	$numsql = $this->db->num_rows($resql);
 
-	//dolibarr_syslog($this->ligne->numero . " : ".$numsql);
+	//dol_syslog($this->ligne->numero . " : ".$numsql);
 
 	while ($i < $numsql)
 	  {
@@ -104,11 +104,11 @@ class xlsdetail_nodet {
       }
     else
       {
-	dolibarr_syslog($this->db->error());
+	dol_syslog($this->db->error());
       }
     
     $workbook->close();
-    //dolibarr_syslog("Close $fname");
+    //dol_syslog("Close $fname");
 
     return $error;
   }

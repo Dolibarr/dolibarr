@@ -81,14 +81,14 @@ class Phenix {
     {
     	global $langs;
         
-      dolibarr_syslog("Phenix::add user=".$user->id);
+      dol_syslog("Phenix::add user=".$user->id);
       
       // Test si login phenix défini pour le user
       if (! $user->phenix_login)
       {
       	$langs->load("other");
       	$this->error=$langs->transnoentities("ErrorPhenixLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
-      	dolibarr_syslog("Phenix::add ERROR ".$this->error);
+      	dol_syslog("Phenix::add ERROR ".$this->error);
       	return -4; 
       }
       
@@ -117,7 +117,7 @@ class Phenix {
         $sql = "INSERT INTO px_agenda (age_id, age_createur_id, cal_date, cal_time, cal_mod_date, cal_mod_time, cal_duration, cal_priority, cal_type, cal_access, cal_name,cal_description)";
         $sql.= " VALUES ($age_id, '$age_createur_id', '$cal_date', '$cal_time', '$cal_mod_date', '$cal_mod_time', $cal_duration, $cal_priority, '$cal_type', '$cal_access', '$cal_name','$cal_description')";
         
-        dolibarr_syslog("Phenix::add sql=".$sql);
+        dol_syslog("Phenix::add sql=".$sql);
         $resql=$this->localdb->query($sql);
         if ($resql)
         {
@@ -135,7 +135,7 @@ class Phenix {
         	{
         		$this->localdb->rollback();
         		$this->error = $this->localdb->error() . '<br>' .$sql;
-        		dolibarr_syslog("Phenix::add ERROR ".$this->error);
+        		dol_syslog("Phenix::add ERROR ".$this->error);
         		return -1;
         	}
         }
@@ -143,7 +143,7 @@ class Phenix {
         {
         	$this->localdb->rollback();
           $this->error = $this->localdb->error() . '<br>' .$sql;
-          dolibarr_syslog("Phenix::add ERROR ".$this->error);
+          dol_syslog("Phenix::add ERROR ".$this->error);
           return -2;
         }
       }
@@ -151,7 +151,7 @@ class Phenix {
       {
       	$this->localdb->rollback();
         $this->error = $this->localdb->error() . '<br>' .$sql;
-        dolibarr_syslog("Phenix::add ERROR ".$this->error);
+        dol_syslog("Phenix::add ERROR ".$this->error);
         return -3;
       }
     }

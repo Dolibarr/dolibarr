@@ -264,7 +264,7 @@ if ($step == 1 || ! $datatoexport)
     $h++;
     */
     
-    dolibarr_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
 
 
     print '<table class="notopnoleftnoright" width="100%">';
@@ -336,7 +336,7 @@ if ($step == 2 && $datatoexport)
     $hselected=$h;
     $h++;
     
-    dolibarr_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
 
     print '<table width="100%" class="border">';
 
@@ -479,7 +479,7 @@ if ($step == 3 && $datatoexport)
     $hselected=$h;
     $h++;
     
-    dolibarr_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
 
     print '<table width="100%" class="border">';
 
@@ -619,7 +619,7 @@ if ($step == 3 && $datatoexport)
 			}
 		}
 		else {
-			dolibarr_print_error($this->db);
+			dol_print_error($this->db);
 		}
 		        
         print '</table>';
@@ -656,7 +656,7 @@ if ($step == 4 && $datatoexport)
     $hselected=$h;
     $h++;
     
-    dolibarr_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
 
     print '<table width="100%" class="border">';
 

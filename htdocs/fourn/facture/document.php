@@ -129,7 +129,7 @@ if ($facid > 0)
 		$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
 
 		$head = facturefourn_prepare_head($facture);
-		dolibarr_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'));
+		dol_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'));
 
 
 		// Construit liste des fichiers
@@ -177,7 +177,7 @@ if ($facid > 0)
 	else
 	{
 		print 'facid='.$facid.'<br>';
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 else

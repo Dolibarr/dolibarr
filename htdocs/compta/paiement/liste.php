@@ -159,7 +159,7 @@ if ($resql)
 		print $paymentstatic->getNomUrl(1);
 		print '</td>';
 
-		print '<td align="center">'.dolibarr_print_date($objp->dp,'day').'</td>';
+		print '<td align="center">'.dol_print_date($objp->dp,'day').'</td>';
 
 		// Company
 		print '<td>';
@@ -202,7 +202,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_print_error($db);
+  dol_print_error($db);
 }
 
 $db->close();

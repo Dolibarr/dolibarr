@@ -153,7 +153,7 @@ class ProductLivreContrat extends Product
    */
   function UpdateCanvas($datas)
   {
-    dolibarr_syslog("ProductLivreContrat::UpdateCanvas");
+    dol_syslog("ProductLivreContrat::UpdateCanvas");
 
     $taux   = ereg_replace(',','.',trim($datas["contrat_taux"]));
     $quant  = trim($datas["contrat_quant"]);

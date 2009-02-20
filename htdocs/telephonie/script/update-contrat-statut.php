@@ -49,7 +49,7 @@ else
   die ("Error $sql");
 }
 
-dolibarr_syslog("Update contrats ".sizeof($contrats));
+dol_syslog("Update contrats ".sizeof($contrats));
 
 for ($i = 0 ; $i < sizeof($contrats) ; $i++)
 {  

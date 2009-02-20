@@ -63,7 +63,7 @@ if ($result)
     }
   $db->free($result);
 } else {
-    dolibarr_print_error($db);   
+    dol_print_error($db);   
 }
 
 print_fiche_titre($langs->trans("DonationsArea"));

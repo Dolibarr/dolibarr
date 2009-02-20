@@ -160,7 +160,7 @@ if ($what == 'mysql')
 
 	if ($handle)
 	{	
-		dolibarr_syslog("Run command ".$fullcommandcrypted);
+		dol_syslog("Run command ".$fullcommandcrypted);
 		$handlein = popen($fullcommandclear, 'r');
 		while (!feof($handlein))
 		{
@@ -179,7 +179,7 @@ if ($what == 'mysql')
 	else
 	{
 		$langs->load("errors");
-		dolibarr_syslog("Failed to open file $outputfile",LOG_ERR);
+		dol_syslog("Failed to open file $outputfile",LOG_ERR);
 		$errormsg=$langs->trans("ErrorFailedToWriteInDir");
 	}
 	// Get errorstring
