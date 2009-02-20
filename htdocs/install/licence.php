@@ -25,6 +25,7 @@
 */
 
 include_once("./inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
@@ -45,12 +46,12 @@ pHeader($langs->trans("License"),"fileconf");
 
 
 //print '<pre style="align: center; font-size: 12px">';
-$result=$langs->print_file("html/gpl.html",1);
+$result=dol_print_file($langs,"html/gpl.html",1);
 if (! $result)
 {
 	print '<center>'."\n";
 	print '<textarea readonly="1" rows="26" cols="80">';
-	$result=$langs->print_file("html/gpl.txt",1);
+	dol_print_file($langs,"html/gpl.txt",1);
 	print '</textarea>';
 	print '</center>'."\n";
 }

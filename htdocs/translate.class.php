@@ -98,7 +98,7 @@ class Translate {
      */
     function setDefaultLang($srclang='fr_FR')
     {
-        //dolibarr_syslog("Translate::setDefaultLang ".$this->defaultlang,LOG_DEBUG);
+        //dol_syslog("Translate::setDefaultLang ".$this->defaultlang,LOG_DEBUG);
 
     	$this->origlang=$srclang;
 
@@ -145,7 +145,7 @@ class Translate {
     */
     function setPhpLang()
     {
-        //dolibarr_syslog("Translate::setPhpLang ".$this->defaultlang,LOG_DEBUG);
+        //dol_syslog("Translate::setPhpLang ".$this->defaultlang,LOG_DEBUG);
 		return;
 /*
         $code_lang_tiret=ereg_replace('_','-',$this->defaultlang);
@@ -177,12 +177,12 @@ class Translate {
 	 */
     function Load($domain,$alt=0)
     {
-    	//dolibarr_syslog("Translate::Load domain=".$domain." alt=".$alt);
+    	//dol_syslog("Translate::Load domain=".$domain." alt=".$alt);
 
 		// Check parameters
 		if (empty($domain))
 		{
-			dolibarr_print_error('',"Translate::Load ErrorWrongParameters");
+			dol_print_error('',"Translate::Load ErrorWrongParameters");
 			exit;
 		}
 
@@ -285,7 +285,7 @@ class Translate {
 		                if (! $newalt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
 		                {
 		                    // This function must not contains call to syslog
-		                	dolibarr_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$domain.".lang file)", LOG_DEBUG);
+		                	dol_print_error("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$domain.".lang file)", LOG_DEBUG);
 		                    $this->load($domain,1);
 		                }
 
@@ -312,7 +312,7 @@ class Translate {
 	 */
     function UnLoad($domain)
     {
-    	dolibarr_syslog("Translate::UnLoad domain=".$domain." marked as not loaded", LOG_DEBUG);
+    	dol_syslog("Translate::UnLoad domain=".$domain." marked as not loaded", LOG_DEBUG);
 		$this->tab_loaded[$domain]=0;
     }
 
@@ -530,54 +530,6 @@ class Translate {
     }
 
 
-   /**
-     *  \brief      Renvoi le fichier $filename dans la version de la langue courante, sinon alternative
-     *  \param      filename        nom du fichier a rechercher
-     *  \param      searchalt       cherche aussi dans langue alternative
-	 *	\return		boolean
-     */
-    function print_file($filename,$searchalt=0)
-    {
-    	global $conf;
-
-        // Test if file is in lang directory
-		foreach($this->dir as $searchdir)
-		{
-	        $htmlfile=($searchdir."/langs/".$this->defaultlang."/".$filename);
-			dolibarr_syslog('Translate::print_file search file '.$htmlfile, LOG_DEBUG);
-	        if (is_readable($htmlfile))
-	        {
-	        	$content=file_get_contents($htmlfile);
-	            $isutf8=utf8_check($content);
-		        if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content);
-		        elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content);
-		        else print $content;
-	            return true;
-	        }
-	        else dolibarr_syslog('Translate::print_file not found', LOG_DEBUG);
-
-	        if ($searchalt) {
-	            // Test si fichier dans repertoire de la langue alternative
-	            if ($this->defaultlang != "en_US") $htmlfilealt = $searchdir."/langs/en_US/".$filename;
-	            else $htmlfilealt = $searchdir."/langs/fr_FR/".$filename;
-				dolibarr_syslog('Translate::print_file search alt file '.$htmlfilealt, LOG_DEBUG);
-    			//print 'getcwd='.getcwd().' htmlfilealt='.$htmlfilealt.' X '.file_exists(getcwd().'/'.$htmlfilealt);
-				if (is_readable($htmlfilealt))
-	            {
-		            $content=file_get_contents($htmlfilealt);
-	            	$isutf8=utf8_check($content);
-		            if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content);
-		            elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content);
-		            else print $content;
-		            return true;
-	            }
-	        	else dolibarr_syslog('Translate::print_file not found', LOG_DEBUG);
-	        }
-		}
-
-        return false;
-    }
-
     /**
      *      \brief      Return a label for a key. Store key-label in a cache.
      * 		\param		db			Database handler
@@ -609,7 +561,7 @@ class Translate {
         $sql = "SELECT ".$fieldlabel." as label";
         $sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
         $sql.= " WHERE ".$fieldkey." = '".$key."'";
-        dolibarr_syslog('Translate::getLabelFromKey sql='.$sql,LOG_DEBUG);
+        dol_syslog('Translate::getLabelFromKey sql='.$sql,LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -622,7 +574,7 @@ class Translate {
         else
         {
 			$this->error=$db->lasterror();
-			dolibarr_syslog("Translate::getLabelFromKey error=".$this->error,LOG_ERR);
+			dol_syslog("Translate::getLabelFromKey error=".$this->error,LOG_ERR);
             return -1;
         }
     }

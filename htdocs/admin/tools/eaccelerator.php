@@ -1,8 +1,5 @@
-<?php 
+<?php
 /* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- *
- * $Id$
- * $Source$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +19,7 @@
 /**
         \file       htdocs/admin/tools/eaccelerator.php
 		\brief      Page administration de eaccelerator
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -34,7 +31,7 @@ if (!$user->admin)
 
 
 /*
-* Affichage page
+* View
 */
 
 llxHeader();
@@ -100,13 +97,13 @@ function revcompare($x, $y)
   else
     return -1;
 }
-   
+
 
    function create_script_table($list)
 {
 	global $sortby,$bc,$langs;
 	$var=true;
-	
+
 	if (isset($_GET['order']) && ($_GET['order'] == "asc" || $_GET['order'] =="desc")) {
 		$order = $_GET['order'];
 	} else {
@@ -149,7 +146,7 @@ function revcompare($x, $y)
             default:
               $sortby = "file";
               ($order == "asc" ? uasort($list, 'compare') : uasort($list, 'revcompare'));
-              
+
           }
 
           foreach($list as $script) { ?>
@@ -162,7 +159,7 @@ function revcompare($x, $y)
         </tr>
     <?php } ?>
     </table>
-<?php 
+<?php
 }
 
 
@@ -186,7 +183,7 @@ function create_key_table($list)
             <td><?php print dolibarr_trunc($key['name'],80,'left'); ?></td>
             <td align="center" nowrap="nowrap"><?php dolibarr_print_date($key['created'],'dayhour'); ?></td>
             <td align="right" nowrap="nowrap"><?php print number_format($key['size']/1024, 3); ?> KB</td>
-            <td align="right" nowrap="nowrap"><?php 
+            <td align="right" nowrap="nowrap"><?php
                 if ($key['ttl'] == -1) {
                     print 'expired';
                 } elseif ($key['ttl'] == 0) {
@@ -216,7 +213,7 @@ $var=true;
 <table class="noborder">
 <tr class="liste_titre"><td colspan="2">Information</td></tr>
 <tr <?php $var = ! $var; print $bc[$var]; ?>>
-    <td>Caching enabled</td> 
+    <td>Caching enabled</td>
     <td align="right"><?php print $info['cache'] ? 'yes':'no' ?></td>
 </tr>
 <tr <?php $var = ! $var; print $bc[$var]; ?>>
@@ -225,7 +222,7 @@ $var=true;
 </tr>
 <tr <?php $var = ! $var; print $bc[$var]; ?>>
     <td>Memory usage</td>
-    <td align="right"><?php print number_format(100 * $info['memoryAllocated'] / $info['memorySize'], 2); ?>% 
+    <td align="right"><?php print number_format(100 * $info['memoryAllocated'] / $info['memorySize'], 2); ?>%
         (<?php print number_format($info['memoryAllocated'] / (1024*1024), 2); ?> MB /
         <?php print number_format($info['memorySize'] / (1024*1024), 2); ?> MB)</td>
 </tr>
@@ -238,7 +235,7 @@ $var=true;
     <td align="right"><?php print $info['cachedScripts']; ?></td>
 </tr>
 <tr <?php $var = ! $var; print $bc[$var]; ?>>
-    <td>Removed scripts</td> 
+    <td>Removed scripts</td>
     <td align="right"><?php print $info['removedScripts']; ?></td>
 </tr>
 <tr <?php $var = ! $var; print $bc[$var]; ?>>
@@ -287,7 +284,7 @@ $res=eaccelerator_cached_scripts();			// If success return an array
 if (is_array($res)) create_script_table($res);
 else print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is "._FILE;
 ?>
- 
+
 <br><br>
 <b>Removed scripts</b><br>
 <table>

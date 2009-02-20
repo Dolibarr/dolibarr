@@ -122,7 +122,7 @@ if ($conf->main_force_https)
 		{
 			$newurl=eregi_replace('^http:','https:',$_SERVER["SCRIPT_URI"]);
 
-			dolibarr_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl,LOG_DEBUG);
+			dol_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl,LOG_DEBUG);
 			header("Location: ".$newurl);
 			exit;
 		}
@@ -138,7 +138,7 @@ if ($conf->main_force_https)
 
 			$newurl='https://'.$domaineport.$_SERVER["REQUEST_URI"];
 			//print 'eee'.$newurl; 	exit;
-			dolibarr_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl,LOG_DEBUG);
+			dol_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl,LOG_DEBUG);
 			header("Location: ".$newurl);
 			exit;
 		}
@@ -157,7 +157,7 @@ $sessionname="DOLSESSID_".$dolibarr_main_db_name;
 if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
 session_name($sessionname);
 session_start();
-dolibarr_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".(isset($_SESSION["dol_login"])?$_SESSION["dol_login"]:'').", ".ini_get("session.gc_maxlifetime"));
+dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".(isset($_SESSION["dol_login"])?$_SESSION["dol_login"]:'').", ".ini_get("session.gc_maxlifetime"));
 
 // Disable modules (this must be after session_start)
 if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
@@ -192,7 +192,7 @@ $authmode=split(',',$dolibarr_main_authentication);
 if (! sizeof($authmode))
 {
 	$langs->load('main');
-	dolibarr_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
+	dol_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
 	exit;
 }
 
@@ -218,7 +218,7 @@ if (! isset($_SESSION["dol_login"]))
 		// Verifie code
 		if (! $object->check('dol_antispam_value',$_POST['code'],true))
 		{
-			dolibarr_syslog('Bad value for code, connexion refused');
+			dol_syslog('Bad value for code, connexion refused');
 			$langs->load('main');
 			$langs->load('other');
 
@@ -265,7 +265,7 @@ if (! isset($_SESSION["dol_login"]))
 				}
 				else
 				{
-					dolibarr_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
+					dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
 					sleep(1);
 					$langs->load('main');
 					$langs->load('other');
@@ -276,7 +276,7 @@ if (! isset($_SESSION["dol_login"]))
 
 		if (! $login)
 		{
-			dolibarr_syslog('Bad password, connexion refused',LOG_DEBUG);
+			dol_syslog('Bad password, connexion refused',LOG_DEBUG);
 			$langs->load('main');
 			$langs->load('other');
 
@@ -305,7 +305,7 @@ if (! isset($_SESSION["dol_login"]))
 	$resultFetchUser=$user->fetch($login);
 	if ($resultFetchUser <= 0)
 	{
-		dolibarr_syslog('User not found, connexion refused');
+		dol_syslog('User not found, connexion refused');
 		session_destroy();
 		session_name($sessionname);
 		session_start();
@@ -342,11 +342,11 @@ else
 	$login=$_SESSION["dol_login"];
 	$resultFetchUser=$user->fetch($login);
 
-	dolibarr_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
+	dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
 	if ($resultFetchUser <= 0)
 	{
 		// Account has been removed after login
-		dolibarr_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
+		dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
 		session_destroy();
 		session_name($sessionname);
 		session_start();
@@ -385,7 +385,7 @@ if (! isset($_SESSION["dol_login"]))
 	// Nouvelle session pour ce login
 	$_SESSION["dol_login"]=$user->login;
 	$_SESSION["dol_authmode"]=$conf->authmode;
-	dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
+	dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
 	$db->begin();
 
@@ -402,7 +402,7 @@ if (! isset($_SESSION["dol_login"]))
 	{
 		$db->rollback();
 		session_destroy();
-		dolibarr_print_error($db,'Error in some triggers on action USER_LOGIN',LOG_ERR);
+		dol_print_error($db,'Error in some triggers on action USER_LOGIN',LOG_ERR);
 		exit;
 	}
 	else
@@ -543,7 +543,7 @@ if ($conf->global->MAIN_NEED_SMARTY)
 	}
 	else
 	{
-		dolibarr_print_error('',"Library Smarty ".$smarty_libs." not found. Check parameter dolibarr_smarty_libs_dir in conf file.");
+		dol_print_error('',"Library Smarty ".$smarty_libs." not found. Check parameter dolibarr_smarty_libs_dir in conf file.");
 	}
 }
 
@@ -556,13 +556,13 @@ if ($user->statut < 1)
 {
 	// Si non actif, on delogue le user
 	$langs->load("other");
-	dolibarr_syslog ("Authentification ko car login desactive");
+	dol_syslog ("Authentification ko car login desactive");
 	accessforbidden($langs->trans("ErrorLoginDisabled"));
 	exit;
 }
 
 
-dolibarr_syslog("Access to ".$_SERVER["PHP_SELF"],LOG_INFO);
+dol_syslog("Access to ".$_SERVER["PHP_SELF"],LOG_INFO);
 
 // For backward compatibility
 if (! defined('MAIN_INFO_SOCIETE_PAYS')) define('MAIN_INFO_SOCIETE_PAYS','1');

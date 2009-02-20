@@ -27,6 +27,54 @@
 
 
 /**
+ *  \brief      Renvoi le fichier $filename dans la version de la langue courante, sinon alternative
+ *  \param      filename        nom du fichier a rechercher
+ *  \param      searchalt       cherche aussi dans langue alternative
+ *	\return		boolean
+ */
+function dol_print_file($langs,$filename,$searchalt=0)
+{
+	global $conf;
+
+	// Test if file is in lang directory
+	foreach($langs->dir as $searchdir)
+	{
+		$htmlfile=($searchdir."/langs/".$langs->defaultlang."/".$filename);
+		dol_syslog('Translate::print_file search file '.$htmlfile, LOG_DEBUG);
+		if (is_readable($htmlfile))
+		{
+			$content=file_get_contents($htmlfile);
+			$isutf8=utf8_check($content);
+			if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content);
+			elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content);
+			else print $content;
+			return true;
+		}
+		else dol_syslog('Translate::print_file not found', LOG_DEBUG);
+
+		if ($searchalt) {
+			// Test si fichier dans repertoire de la langue alternative
+			if ($langs->defaultlang != "en_US") $htmlfilealt = $searchdir."/langs/en_US/".$filename;
+			else $htmlfilealt = $searchdir."/langs/fr_FR/".$filename;
+			dol_syslog('Translate::print_file search alt file '.$htmlfilealt, LOG_DEBUG);
+			//print 'getcwd='.getcwd().' htmlfilealt='.$htmlfilealt.' X '.file_exists(getcwd().'/'.$htmlfilealt);
+			if (is_readable($htmlfilealt))
+			{
+				$content=file_get_contents($htmlfilealt);
+				$isutf8=utf8_check($content);
+				if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content);
+				elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content);
+				else print $content;
+				return true;
+			}
+			else dol_syslog('Translate::print_file not found', LOG_DEBUG);
+		}
+	}
+
+	return false;
+}
+
+/**
  *	\brief  Show informations on an object
  *	\param	object			Objet to show
  */
@@ -155,7 +203,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 {
 	// Clean parameters
 	if ($date == '') $date=mktime();	// We use local year and month of PHP server to search numbers
-										// but we should use local year and month of user
+	// but we should use local year and month of user
 
 	// Extract value for mask counter, mask raz and mask offset
 	if (! eregi('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$mask,$reg)) return 'ErrorBadMask';
@@ -261,7 +309,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
 	//print $sql;
-	dolibarr_syslog("functions2::get_next_value sql=".$sql, LOG_DEBUG);
+	dol_syslog("functions2::get_next_value sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -304,7 +352,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 		if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
 		$maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode,$maskrefclient)+1).', '.strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
 
-		dolibarr_syslog("functions2::get_next_value maskrefclient_sql=".$maskrefclient_sql, LOG_DEBUG);
+		dol_syslog("functions2::get_next_value maskrefclient_sql=".$maskrefclient_sql, LOG_DEBUG);
 		$maskrefclient_resql=$db->query($maskrefclient_sql);
 		if ($maskrefclient_resql)
 		{
@@ -342,7 +390,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 		$numFinal = str_replace($maskrefclient_maskbefore,$maskrefclient_maskafter,$numFinal);
 	}
 
-	dolibarr_syslog("functions2::get_next_value return ".$numFinal,LOG_DEBUG);
+	dol_syslog("functions2::get_next_value return ".$numFinal,LOG_DEBUG);
 	return $numFinal;
 }
 
@@ -438,7 +486,7 @@ function check_value($mask,$value)
 	if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",strlen($maskrefclient),"_"),$maskLike);
 
 
-	dolibarr_syslog("functions2::check_value result=".$result,LOG_DEBUG);
+	dol_syslog("functions2::check_value result=".$result,LOG_DEBUG);
 	return $result;
 }
 
@@ -607,15 +655,15 @@ function weight_convert($weight,&$from_unit,$to_unit)
 	{
 		if ($from_unit > $to_unit)
 		{
-		  $weight = $weight * 10;
-		  $from_unit = $from_unit - 1;
-		  $weight = weight_convert($weight,$from_unit, $to_unit);
+			$weight = $weight * 10;
+			$from_unit = $from_unit - 1;
+			$weight = weight_convert($weight,$from_unit, $to_unit);
 		}
 		if ($from_unit < $to_unit)
 		{
-		  $weight = $weight / 10;
-		  $from_unit = $from_unit + 1;
-		  $weight = weight_convert($weight,$from_unit, $to_unit);
+			$weight = $weight / 10;
+			$from_unit = $from_unit + 1;
+			$weight = weight_convert($weight,$from_unit, $to_unit);
 		}
 	}
 
@@ -649,7 +697,7 @@ function dol_set_user_param($db, &$user, $tab)
 		$i++;
 	}
 	$sql.= ")";
-	dolibarr_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
+	dol_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
 
 	$resql=$db->query($sql);
 	if (! $resql)
@@ -667,7 +715,7 @@ function dol_set_user_param($db, &$user, $tab)
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,param,value)";
 			$sql.= " VALUES (".$user->id.",";
 			$sql.= " '".$key."','".addslashes($value)."');";
-			dolibarr_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
+			dol_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
 
 			$result=$db->query($sql);
 			if (! $result)

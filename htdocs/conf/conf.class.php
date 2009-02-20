@@ -49,12 +49,12 @@ class Conf
 	var $css;		// Used to store current css (from theme)
 	var $top_menu;
 	var $left_menu;
-	
+
 	var $css_modules=array();
 	var $tabs_modules=array();
-	
+
 	var $logbuffer=array();
-	 
+
 
 	/**
 	*      \brief      Positionne toutes les variables de configuration
@@ -63,7 +63,7 @@ class Conf
 	*/
 	function setValues($db)
 	{
-		dolibarr_syslog("Conf::setValues");
+		dol_syslog("Conf::setValues");
 
 		// Par defaut, a oui
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;
@@ -79,7 +79,7 @@ class Conf
 		{
 			$numr = $db->num_rows($result);
 			$i = 0;
-			
+
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($result);
@@ -101,7 +101,7 @@ class Conf
 						$this->tabs_modules[$params[0]][]=$value;
 						//print 'xxx'.$params[0].'-'.$value;
 					}
-					// If this is a module constant 
+					// If this is a module constant
 					if (eregi('^MAIN_MODULE_([A-Z]+)$',$key,$reg) && $value)
 					{
 						$module=strtolower($reg[1]);
@@ -114,7 +114,7 @@ class Conf
 		}
 		$db->free($result);
 
-		
+
 		// On reprend parametres du fichier de config conf.php
 		// \TODO Mettre tous les param de conf DB dans une propriete de la classe
 
@@ -139,13 +139,13 @@ class Conf
 
 		// Other global parameters
 		$this->users->dir_output=DOL_DATA_ROOT."/users";
-		
+
 		// For backward compatibility
 		$this->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
 		$this->compta->enabled=defined("MAIN_MODULE_COMPTABILITE")?MAIN_MODULE_COMPTABILITE:0;
 		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
 		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
-		
+
 		// Module agenda
 		$this->agenda->dir_temp=DOL_DATA_ROOT."/agenda/temp";
 
@@ -214,7 +214,7 @@ class Conf
 		// Module service
 		$this->service->dir_output=DOL_DATA_ROOT."/produit";
 		$this->service->dir_temp  =DOL_DATA_ROOT."/produit/temp";
-		
+
 		// Module droipret
 		$this->droitpret->cat=defined('DROITPRET_CAT')?DROITPRET_CAT:'';
 		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
@@ -286,7 +286,7 @@ class Conf
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
 		// Module Barcode
 		$this->barcode->dir_temp=DOL_DATA_ROOT."/barcode/temp";
-		
+
 		/*
 		 * Modification de quelques variable de conf en fonction des Constantes
 		 */
@@ -305,7 +305,7 @@ class Conf
 		// conf->box_max_lines
 		$this->box_max_lines=5;
 		if (isset($this->global->MAIN_BOXES_MAXLINES)) $this->box_max_lines=$this->global->MAIN_BOXES_MAXLINES;
-		
+
 		// conf->use_preview_tabs
 		$this->use_preview_tabs=0;
 		if (isset($this->global->MAIN_USE_PREVIEW_TABS)) $this->use_preview_tabs=$this->global->MAIN_USE_PREVIEW_TABS;
@@ -314,7 +314,7 @@ class Conf
 		$this->use_javascript_ajax=1;
 		if (isset($this->global->MAIN_DISABLE_JAVASCRIPT)) $this->use_javascript_ajax=! $this->global->MAIN_DISABLE_JAVASCRIPT;
 		// If no javascript_ajax, Ajax features are disabled.
-		if (! $this->use_javascript_ajax) 
+		if (! $this->use_javascript_ajax)
 		{
 			$this->global->PRODUIT_USE_SEARCH_TO_SELECT=0;
 			$this->global->MAIN_CONFIRM_AJAX=0;
@@ -357,7 +357,7 @@ class Conf
 		if (empty($this->global->MAIN_THEME)) $this->global->MAIN_THEME="eldy";
 		$this->theme=$this->global->MAIN_THEME;
 		$this->css  = "theme/".$this->theme."/".$this->theme.".css";
-		
+
 		// $this->email_from = email pour envoi par dolibarr des mails automatiques
 		$this->email_from = "dolibarr-robot@domain.com";
 		if (! empty($this->global->MAIN_MAIL_EMAIL_FROM))
@@ -383,7 +383,7 @@ class Conf
 		{
 			$this->global->MAIN_GRAPH_LIBRARY = 'artichow';
 		}
-		
+
 		// Format de la date
 		// \todo Mettre les 4 formats dans fichier langue
 		$this->format_date_short="%d/%m/%Y";
@@ -393,7 +393,7 @@ class Conf
 		$this->format_date_hour_short="%d/%m/%Y %H:%M";
 		$this->format_date_hour_text_short="%d %b %Y %H:%M";
 		$this->format_date_hour_text="%d %B %Y %H:%M";
-		
+
 		$this->format_date_short_java="dd/MM/yyyy";
 
 		// Limites decimales si non definie (peuvent etre egale a 0)
@@ -403,7 +403,7 @@ class Conf
 
 		// Define umask
 		if (empty($conf->global->MAIN_UMASK)) $conf->global->MAIN_UMASK='0664';
-		
+
 		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de desactiver la fonction TVA
 		 * (pour particuliers ou liberaux en franchise)
 		 * En attendant, valeur forcee a 1 car toujours interessant a avoir meme ceux qui veulent pas.

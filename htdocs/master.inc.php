@@ -187,7 +187,7 @@ if (! defined('NOREQUIREDB'))
 
 	if ($db->error)
 	{
-		dolibarr_print_error($db,"host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
+		dol_print_error($db,"host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
 		exit;
 	}
 }
@@ -272,7 +272,7 @@ if (! defined('NOREQUIRESOC'))
 	        $mysoc->pays_code=$obj->code;
 	    }
 	    else {
-	        dolibarr_print_error($db);
+	        dol_print_error($db);
 	    }
 	}
 	// Si dans MAIN_INFO_SOCIETE_PAYS on a deja un code, tout est fait

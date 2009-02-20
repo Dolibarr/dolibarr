@@ -25,6 +25,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 $langs->load("commercial");
 $langs->load("orders");
@@ -202,7 +203,7 @@ $db->close();
 if ($langs->file_exists("html/spam.html",0)) {
     print "<br><br><br><br>".$langs->trans("Note")."<br>";
     print '<div style="padding: 4px; background: #FAFAFA; border: 1px solid #BBBBBB;" >';
-    $langs->print_file("html/spam.html",0);
+    dol_print_file($langs,"html/spam.html",0);
     print '</div>';
 
     print '<br>';

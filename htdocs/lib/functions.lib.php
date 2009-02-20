@@ -380,7 +380,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 	 || eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$',$time,$reg))
 	{
 		// This part of code should not be used.
-		dolibarr_syslog("Functions.lib::dolibarr_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+		dol_syslog("Functions.lib::dolibarr_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
 		$syear = $reg[1];
 		$smonth = $reg[2];
@@ -444,7 +444,7 @@ function dol_stringtotime($string)
 	if (eregi('^([0-9]+)\/([0-9]+)\/([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$string,$reg))
 	{
 		// This part of code should not be used.
-		dolibarr_syslog("Functions.lib::dol_stringtotime call to function with deprecated parameter", LOG_WARN);
+		dol_syslog("Functions.lib::dol_stringtotime call to function with deprecated parameter", LOG_WARN);
 		// Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
 		// Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
 		$sday = $reg[1];
@@ -1450,7 +1450,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			}
 			else
 			{
-				dolibarr_syslog("functions.lib::restrictedArea sql=".$sql, LOG_ERR);
+				dol_syslog("functions.lib::restrictedArea sql=".$sql, LOG_ERR);
 				accessforbidden();
 			}
 		}
@@ -1591,7 +1591,7 @@ function dol_print_error($db='',$error='')
 		}
 	}
 
-	dolibarr_syslog("Error ".$syslog, LOG_ERR);
+	dol_syslog("Error ".$syslog, LOG_ERR);
 }
 
 
@@ -1630,7 +1630,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	// les noms de fichiers.
 	if (eregi('^\.',$src_file) || eregi('\.\.',$src_file) || eregi('[<>|]',$src_file))
 	{
-		dolibarr_syslog("Refused to deliver file ".$src_file);
+		dol_syslog("Refused to deliver file ".$src_file);
 		return -1;
 	}
 
@@ -1639,7 +1639,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	// les noms de fichiers.
 	if (eregi('^\.',$dest_file) || eregi('\.\.',$dest_file) || eregi('[<>|]',$dest_file))
 	{
-		dolibarr_syslog("Refused to deliver file ".$dest_file);
+		dol_syslog("Refused to deliver file ".$dest_file);
 		return -1;
 	}
 
@@ -1648,7 +1648,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	{
 		if (file_exists($file_name))
 		{
-			dolibarr_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." already exists", LOG_WARNING);
+			dol_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." already exists", LOG_WARNING);
 			return -2;
 		}
 	}
@@ -1658,12 +1658,12 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	if ($return)
 	{
 		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name, octdec($conf->global->MAIN_UMASK));
-		dolibarr_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
+		dol_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
 		return 1;
 	}
 	else
 	{
-		dolibarr_syslog("Functions.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);
+		dol_syslog("Functions.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);
 		return -3;
 	}
 }
@@ -1898,8 +1898,8 @@ function dol_delete_file($file)
 	foreach (glob($file) as $filename)
 	{
 		$ok=unlink($filename);
-		if ($ok) dolibarr_syslog("Removed file $filename",LOG_DEBUG);
-		else dolibarr_syslog("Failed to remove file $filename",LOG_ERR);
+		if ($ok) dol_syslog("Removed file $filename",LOG_DEBUG);
+		else dol_syslog("Failed to remove file $filename",LOG_ERR);
 	}
 	return $ok;
 }
@@ -2157,7 +2157,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $
 	if (!is_object($societe_vendeuse)) return -1;
 	if (!is_object($societe_acheteuse)) return -1;
 
-	dolibarr_syslog("get_default_tva vendeur_assujeti=".$societe_vendeuse->tva_assuj." pays_vendeur=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", pays_acheteur=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", taux_produit(deprecated)=".$taux_produit.", idprod=".$idprod);
+	dol_syslog("get_default_tva vendeur_assujeti=".$societe_vendeuse->tva_assuj." pays_vendeur=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", pays_acheteur=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", taux_produit(deprecated)=".$taux_produit.", idprod=".$idprod);
 
 	// Si vendeur non assujeti a TVA (tva_assuj vaut 0/1 ou franchise/reel)
 	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
@@ -2267,7 +2267,7 @@ function create_exdir($dir)
 {
 	global $conf;
 
-	dolibarr_syslog("functions.lib::create_exdir: dir=".$dir,LOG_INFO);
+	dol_syslog("functions.lib::create_exdir: dir=".$dir,LOG_INFO);
 
 	if (@is_dir($dir)) return 0;
 
@@ -2288,7 +2288,7 @@ function create_exdir($dir)
 		{
 			if (! @is_dir($ccdir))
 			{
-				dolibarr_syslog("functions.lib::create_exdir: Directory '".$ccdir."' does not exists or is outside open_basedir PHP setting.",LOG_DEBUG);
+				dol_syslog("functions.lib::create_exdir: Directory '".$ccdir."' does not exists or is outside open_basedir PHP setting.",LOG_DEBUG);
 
 				umask(0);
 				$dirmaskdec=octdec('0755');
@@ -2297,12 +2297,12 @@ function create_exdir($dir)
 				if (! @mkdir($ccdir, $dirmaskdec))
 				{
 					// Si le is_dir a renvoye une fausse info, alors on passe ici.
-					dolibarr_syslog("functions.lib::create_exdir: Fails to create directory '".$ccdir."' or directory already exists.",LOG_WARNING);
+					dol_syslog("functions.lib::create_exdir: Fails to create directory '".$ccdir."' or directory already exists.",LOG_WARNING);
 					$nberr++;
 				}
 				else
 				{
-					dolibarr_syslog("functions.lib::create_exdir: Directory '".$ccdir."' created",LOG_DEBUG);
+					dol_syslog("functions.lib::create_exdir: Directory '".$ccdir."' created",LOG_DEBUG);
 					$nberr=0;	// On remet a zero car si on arrive ici, cela veut dire que les �checs pr�c�dents peuvent etre ignor�s
 					$nbcreated++;
 				}

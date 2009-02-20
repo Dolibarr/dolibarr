@@ -33,34 +33,37 @@ function llxHeader($head = "", $urlp = "")
 
     $langs->load("admin");
 
-	
+
 	top_menu($head);
-       
+
     $menu = new Menu();
-    
+
     $menu->add(DOL_URL_ROOT."/admin/system/index.php", $langs->trans("Summary"));
-    
+
     // Dolibarr
     $menu->add(DOL_URL_ROOT."/admin/system/dolibarr.php", "Dolibarr");
     $menu->add_submenu(DOL_URL_ROOT."/admin/system/constall.php", $langs->trans("AllParameters"));
 	$menu->add_submenu(DOL_URL_ROOT."/admin/system/modules.php", $langs->trans("Modules"));
     $menu->add_submenu(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
     $menu->add_submenu(DOL_URL_ROOT."/about.php", $langs->trans("About"));
-    
+
     // OS
     $menu->add(DOL_URL_ROOT."/admin/system/os.php", $langs->trans("OS"));
-    
+
     // Web server
     $menu->add(DOL_URL_ROOT."/admin/system/web.php", $langs->trans("WebServer"));
-    
+
     // PHP
     $menu->add(DOL_URL_ROOT."/admin/system/phpinfo.php", $langs->trans("Php"));
-    
-	// Database
+
+    // XDebug
+    //$menu->add(DOL_URL_ROOT."/admin/system/xdebug.php", $langs->trans("XDebug"));
+
+    // Database
     $menu->add(DOL_URL_ROOT."/admin/system/database.php", $langs->trans("Database"));
     $menu->add_submenu(DOL_URL_ROOT."/admin/system/database-tables.php", $langs->trans("Tables"));
     $menu->add_submenu(DOL_URL_ROOT."/admin/system/database-tables-contraintes.php", $langs->trans("Constraints"));
-    
+
     left_menu($menu->liste);
 }
 
