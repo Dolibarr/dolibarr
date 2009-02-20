@@ -205,9 +205,7 @@ print '<br>';
     </div>
 
     <div class="formelementrow">
-        <input type="checkbox" name="disable_fk" value="yes"
-            id="checkbox_disable_fk" checked="true"
-             />
+        <input type="checkbox" name="disable_fk" value="yes" id="checkbox_disable_fk" checked="true" />
         <label for="checkbox_disable_fk">
             <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?></label>
     </div>

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -283,23 +283,19 @@ $var=true;
 $res=eaccelerator_cached_scripts();			// If success return an array
 if (is_array($res)) create_script_table($res);
 else print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is "._FILE;
-?>
 
-<br><br>
-<b>Removed scripts</b><br>
-<table>
-<?php
+print '<br><br>';
+print '<b>Removed scripts</b><br>';
+
 $res=eaccelerator_removed_scripts();
 if (is_array($res)) create_script_table($res);
 else print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is "._FILE;
 
 
-if (function_exists('eaccelerator_get')) {
-?>
-	<br><br>
-	<b>Cached keys</b><br>
-	<table>
-<?php
+if (function_exists('eaccelerator_get'))
+{
+	print '<br><br>';
+	print '<b>Cached keys</b><br>';
     $res=eaccelerator_list_keys();
 	create_key_table($res);
 }
@@ -308,7 +304,7 @@ if (function_exists('eaccelerator_get')) {
 <br /><br />
 <hr />
 <table>
-    <tr><td class="center">
+	<tr><td class="center">
     <strong>Eaccelerator is created by the eAccelerator team, <a href="http://eaccelerator.net">http://eaccelerator.net</a></strong><br /><br />
     </td></tr>
 </table>

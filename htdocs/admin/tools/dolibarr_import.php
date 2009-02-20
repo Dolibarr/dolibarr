@@ -122,9 +122,8 @@ print '<br>';
 
 	if (empty($_GET["showpass"])) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
 	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
-	print '</div>';
-
 	?>
+	</div>
 
 	<script type="text/javascript" language="javascript">
 //<![CDATA[
