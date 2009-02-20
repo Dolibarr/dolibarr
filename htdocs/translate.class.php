@@ -215,6 +215,7 @@ class Translate {
 				if ($this->defaultlang == "en_US") $scandiralt = $searchdir."/fr_FR";
 	            elseif (eregi('^fr',$this->defaultlang) && $this->defaultlang != 'fr_FR') $scandiralt = $searchdir."/fr_FR";
 	            elseif (eregi('^en',$this->defaultlang) && $this->defaultlang != 'en_US') $scandiralt = $searchdir."/en_US";
+	            elseif (eregi('^es',$this->defaultlang) && $this->defaultlang != 'es_ES') $scandiralt = $searchdir."/es_ES";
 	            else $scandiralt = $searchdir."/en_US";
 
 	            $file_lang = $scandiralt . "/".$domain.".lang";
