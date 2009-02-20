@@ -1,5 +1,7 @@
 # Dolibarr language file - pt_PT - principal
 CHARSET=UTF-8
+SeparatorDecimal=,
+SeparatorThousand= 
 Error=Erro
 ErrorFieldRequired=O campo '%s' é obrigatório
 ErrorFileDoesNotExists=O ficheiro %s não existe
@@ -192,14 +194,7 @@ Photos=Imagens
 AddPhoto=Adicionar imagem
 
 
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
-CHARSET=ISO-8859-1
 DatabaseConnection=Database conexão
-SeparatorDecimal=.
-SeparatorThousand=,
 ErrorFieldFormat=Domínio &#39;% s&#39; tem um valor negativo
 ErrorFailedToOpenFile=Falha ao abrir o arquivo% s
 ErrorCanNotReadDir=Não é possível ler dir% s

@@ -9,9 +9,9 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
+SeparatorDecimal=,
+SeparatorThousand= 
 DatabaseConnection=Database-tilkobling
-SeparatorDecimal=.
-SeparatorThousand=,
 Error=Feil
 ErrorFieldRequired=Feltet &#39;% s&#39; er nødvendig
 ErrorFieldFormat=Feltet &#39;% s&#39; har en dårlig verdi

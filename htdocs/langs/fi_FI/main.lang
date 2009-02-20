@@ -9,9 +9,9 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-DatabaseConnection=Tietokannan yhteydessä
 SeparatorDecimal=.
-SeparatorThousand=,
+SeparatorThousand= 
+DatabaseConnection=Tietokannan yhteydessä
 Error=Virhe
 ErrorFieldRequired=Kenttä &#39;% s&#39; on
 ErrorFieldFormat=Kenttä &quot;% s \&quot; on huono arvo

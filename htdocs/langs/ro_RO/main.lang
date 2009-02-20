@@ -9,9 +9,9 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
+SeparatorDecimal=,
+SeparatorThousand=
 DatabaseConnection=Baza de date de conectare
-SeparatorDecimal=.
-SeparatorThousand=,
 Error=Eroare
 ErrorFieldRequired=Câmp &quot;% s&quot; este necesar
 ErrorFieldFormat=Câmp &quot;% s&quot; are o valoare de rău

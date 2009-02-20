@@ -141,11 +141,13 @@ class Translate {
     		\brief      Positionne environnement PHP en fonction du langage
     		\remarks    Le code langue long (fr_FR, en_US, ...) doit avoir etre positionne par setDefaultLang
     		\return     int             >0 si ok, <0 so ko
+			\deprecated
     */
     function setPhpLang()
     {
         //dolibarr_syslog("Translate::setPhpLang ".$this->defaultlang,LOG_DEBUG);
-
+		return;
+/*
         $code_lang_tiret=ereg_replace('_','-',$this->defaultlang);
         //print 'code_lang_tiret='.$code_lang_tiret;
         setlocale(LC_ALL, $this->defaultlang);    	// Some OS (Windows) need local with _
@@ -159,7 +161,8 @@ class Translate {
         	$res_lc_monetary=setlocale(LC_MONETARY, MAIN_FORCE_SETLOCALE_LC_MONETARY.'UTF-8', MAIN_FORCE_SETLOCALE_LC_MONETARY);
         //print 'x'.$res_lc_all;
         return 1;
-    }
+*/
+        }
 
 
     /**

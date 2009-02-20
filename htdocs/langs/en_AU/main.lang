@@ -1,6 +1,8 @@
 # Dolibarr language file - en_AU - main
 # This file contains only line that must differs from en_US file
 CHARSET=UTF-8
+SeparatorDecimal=.
+SeparatorThousand=,
 UnitPrice=Unit price
 UnitPriceHT=Unit price (excl GST)
 UnitPriceTTC=Unit price

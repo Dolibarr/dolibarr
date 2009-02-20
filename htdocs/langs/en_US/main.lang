@@ -1,8 +1,8 @@
 # Dolibarr language file - en_US - main
 CHARSET=UTF-8
-DatabaseConnection=Database connection
 SeparatorDecimal=.
 SeparatorThousand=,
+DatabaseConnection=Database connection
 Error=Error
 ErrorFieldRequired=Field '%s' is required
 ErrorFieldFormat=Field '%s' has a bad value

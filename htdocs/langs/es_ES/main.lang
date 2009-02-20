@@ -1,8 +1,8 @@
 # Dolibarr language file - es_ES - main 
 CHARSET = UTF-8
-DatabaseConnection = Conexión a la base de datos
 SeparatorDecimal = ,
 SeparatorThousand =  
+DatabaseConnection = Conexión a la base de datos
 Error = Error
 ErrorFieldRequired = El campo '%s' es obligatorio
 ErrorFieldFormat = El campo '%s' tiene un valor incorrecto

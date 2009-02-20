@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,20 +31,21 @@ $langs->load("other");
 
 if (!$user->admin)
   accessforbidden();
- 
-  
+
+
 /*
  * View
  */
 
 $form=new Form($db);
-  
+
 llxHeader();
 
 print_fiche_titre("Dolibarr",'','setup');
 
 print "<br>\n";
 
+// Version
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
@@ -57,13 +58,35 @@ print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("VersionLastUpgrade")
 print '</table>';
 print '<br>';
 
-// Language
+// Session
+$var=true;
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Session").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("SessionId").'</td><td colspan="2">'.session_id()."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentSessionTimeOut").'</td><td>'.ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
+print '</td><td align="right">';
+print $form->textwithhelp('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
+print "</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTheme").'</td><td colspan="2">'.$conf->theme."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTopMenuHandler").'</td><td colspan="2">'.$conf->top_menu."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentLeftMenuHandler").'</td><td colspan="2">'.$conf->left_menu."</td></tr>\n";
+print '</table>';
+print '<br>';
+
+// Localisation
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("LocalisationDolibarrParameters").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageBrowserParameter","HTTP_ACCEPT_LANGUAGE")."</td><td>".$_SERVER["HTTP_ACCEPT_LANGUAGE"]."</td></tr>\n";
 $var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentUserLanguage").'</td><td colspan="2">'.$langs->getDefaultLang()."</td></tr>\n";
+/*$var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageBrowserParameter","LANG")."</td><td>".$_ENV["LANG"]."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_ALL")."</td><td>".setlocale(LC_ALL,0)."</td></tr>\n";
@@ -71,10 +94,7 @@ $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_NUMERIC")."</td><td>".setlocale(LC_NUMERIC,0)."</td></tr>\n";
 //$var=!$var;
 //print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var].'><td width="300">=> price2num(1234.56)</td><td>'.price2num(1233.56+1,'2')."</td></tr>";
-$var=!$var;
-print "<tr ".$bc[$var].'><td width="300">=> dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext")."</td>";
+*/
 // Thousands
 $var=!$var;
 $thousand=$langs->trans("SeparatorThousand");
@@ -84,6 +104,9 @@ print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentValueSeparato
 $var=!$var;
 $dec=$langs->trans("SeparatorDecimal");
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentValueSeparatorDecimal")."</td><td>".$dec."</td></tr>\n";
+// Show results of functions to see if everything works
+$var=!$var;
+print "<tr ".$bc[$var].'><td width="300">=> price2num(1233.56+1)</td><td>'.price2num(1233.56+1,'2')."</td></tr>";
 $var=!$var;
 print "<tr ".$bc[$var].'><td width=\"300\">=> price2num('."'1".$thousand."234".$dec."56')</td><td>".price2num("1".$thousand."234".$dec."56",'2')."</td>";
 if (($thousand != ',' && $thousand != '.') || ($thousand != ' '))
@@ -92,6 +115,8 @@ if (($thousand != ',' && $thousand != '.') || ($thousand != ' '))
 	print "<tr ".$bc[$var].'><td width=\"300\">=> price2num('."'1 234.56')</td><td>".price2num("1 234.56",'2')."</td>";
 	print "</tr>\n";
 }
+$var=!$var;
+print "<tr ".$bc[$var].'><td width="300">=> price(1234.56)</td><td>'.price(1234.56)."</td>";
 //print '<tr class="liste_titre"><td>'.$langs->trans("TimeZone").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 // Timezone
 $var=!$var;
@@ -111,27 +136,8 @@ $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("PHPServerOffsetWithGreenwich")."</td><td>".(- dolibarr_mktime(0,0,0,1,1,1970))."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CurrentHour")."</td><td>".dolibarr_print_date(time(),'dayhour')."</td></tr>\n";
-print '</table>';
-print '<br>';
-
-$var=true;
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Session").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("SessionId").'</td><td colspan="2">'.session_id()."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentSessionTimeOut").'</td><td>'.ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
-print '</td><td align="right">';
-print $form->textwithhelp('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
-print "</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTheme").'</td><td colspan="2">'.$conf->theme."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTopMenuHandler").'</td><td colspan="2">'.$conf->top_menu."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentLeftMenuHandler").'</td><td colspan="2">'.$conf->left_menu."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentUserLanguage").'</td><td colspan="2">'.$langs->getDefaultLang()."</td></tr>\n";
+print "<tr ".$bc[$var].'><td width="300">=> dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext")."</td>";
 print '</table>';
 print '<br>';
 

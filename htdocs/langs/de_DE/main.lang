@@ -9,9 +9,9 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-DatabaseConnection=Datenbank-Verbindung
 SeparatorDecimal=.
 SeparatorThousand=,
+DatabaseConnection=Datenbank-Verbindung
 Error=Fehler
 ErrorFieldRequired=Feld &#39;% s&#39; ist erforderlich
 ErrorFieldFormat=Feld &#39;% s&#39; hat einen schlechten Wert

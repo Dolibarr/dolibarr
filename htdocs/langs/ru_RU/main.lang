@@ -9,9 +9,9 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
+SeparatorDecimal=,
+SeparatorThousand= 
 DatabaseConnection=Подключение к базе данных
-SeparatorDecimal=.
-SeparatorThousand=,
 Error=Ошибка
 ErrorFieldRequired=Поле &#39;% S&#39; требуется
 ErrorFieldFormat=Поле &#39;% S&#39; имеет значения плохо

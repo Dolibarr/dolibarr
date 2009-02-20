@@ -1,8 +1,8 @@
 # Dolibarr language file - it_IT - main                    
 CHARSET							   =ISO-8859-1
-DatabaseConnection					   =Connessione al database
 SeparatorDecimal					   =,
 SeparatorThousand					   =
+DatabaseConnection					   =Connessione al database
 Error							   =Errore
 ErrorFieldRequired					   =Il campo '%s' è necessaria
 ErrorFieldFormat					   =Il campo '%s' ha un valore cattivo

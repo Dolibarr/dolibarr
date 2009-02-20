@@ -11,9 +11,9 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
+SeparatorDecimal=,
+SeparatorThousand= 
 DatabaseConnection=Połączenia z bazą danych
-SeparatorDecimal=.
-SeparatorThousand=,
 Error=Błąd
 ErrorFieldRequired=Pole &#39;% s&#39; jest wymagane
 ErrorFieldFormat=Pole &#39;% s&#39; ma złe wartości
