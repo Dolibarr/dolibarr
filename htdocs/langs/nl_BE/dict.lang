@@ -32,11 +32,6 @@ CivilityMME=Meneer
 CivilityMR=Mevrouw
 CivilityMLE=Jufrrouw
 CivilityMTRE=Meester
-
-
-// Date 2009-01-18 19:49:33
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
 CountryPT=Portugal
 CountryAU=Australië
 CountryAF=Afghanistan
@@ -269,5 +264,3 @@ CurrencyTND=TND
 CurrencyUSD=Dollar US
 CurrencyXAF=CFA Frank BEAC
 CurrencyXOF=FCFA BCEAO
-// Date 2009-01-18 19:49:33
-// STOP - Lines generated via parser

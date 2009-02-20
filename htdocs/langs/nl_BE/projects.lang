@@ -1,30 +1,25 @@
 # Dolibarr language file - nl_BE - projects
 CHARSET=UTF-8
 Projects=Projecten
-
-
-// Date 2009-01-18 19:49:33
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
 Project=Project
 SharedProject=Gezamenlijk project
 Myprojects=Mijn projecten
 ProjectsArea=Projecten gebied
 NewProject=Nieuw project
-AddProject=Toevoegen project
-DeleteAProject=Verwijderen van een project
-DeleteATask=Verwijderen van een taak
-ConfirmDeleteAProject=Weet u zeker dat u wilt verwijderen dit project?
-ConfirmDeleteATask=Weet u zeker dat u wilt verwijderen van deze taak?
-OfficerProject=Project officer
-LastProjects=Last% s projecten
+AddProject=Project toevoegen
+DeleteAProject=Verwijder een project
+DeleteATask=Verwijder een taak
+ConfirmDeleteAProject=Weet u zeker dat u dit project wilt verwijderen?
+ConfirmDeleteATask=Weet u zeker dat u deze taak wilt verwijderen?
+OfficerProject=Projectleider
+LastProjects=Laatste % projecten
 AllProjects=Alle projecten
 ProjectsList=Lijst van projecten
 ShowProject=Toon project
-SetProject=Stel project
+SetProject=Instellen project
 NoProject=Geen enkel project gedefinieerd
-NbOpenTasks=Nb geopend van taken
-NbOfProjects=Nb van projecten
+NbOpenTasks=Aantal open taken
+NbOfProjects=Aantal projecten
 TimeSpent=Bestede tijd
 RefTask=Ref. taak
 LabelTask=Label taak
@@ -35,7 +30,7 @@ Tasks=Taken
 Task=Taak
 NewTask=Nieuwe taak
 AddTask=Toevoegen taak
-AddDuration=Voeg duur
+AddDuration=Tijd toevoegen
 Activity=Activiteit
 Activities=Taken / activiteiten
 MyActivity=Mijn activiteit
@@ -43,17 +38,15 @@ MyActivities=Mijn taken / activiteiten
 DurationEffective=Effectieve looptijd
 MyProjects=Mijn projecten
 Time=Tijd
-ListProposalsAssociatedProject=Lijsten van de commerciële voorstellen in verband met het project
-ListOrdersAssociatedProject=Lijsten van de orders in verband met het project
-ListInvoicesAssociatedProject=Lijsten van de facturen in verband met het project
-ListSupplierOrdersAssociatedProject=Lijst van de leveranciers orders in verband met het project
-ListSupplierInvoicesAssociatedProject=Lijst van de leveranciers facturen in verband met het project
+ListProposalsAssociatedProject=Lijst van de commerciële voorstellen in verband met het project
+ListOrdersAssociatedProject=Lijst van de orders in verband met het project
+ListInvoicesAssociatedProject=Lijst van de facturen in verband met het project
+ListSupplierOrdersAssociatedProject=Lijst van de bestellingen bij leveranciers in verband met het project
+ListSupplierInvoicesAssociatedProject=Lijst van de facturen bij leveranciers in verband met het project
 ListContractAssociatedProject=Lijst van opdrachten in verband met het project
-ActivityOnProjectThisWeek=Activiteit op project deze week
-ActivityOnProjectThisMonth=Activiteit op project deze maand
-ActivityOnProjectThisYear=Activiteit op project dit jaar
-ChildOfTaks=Kind van het project / taak
-NotOwnerOfProject=Geen eigenaar van dit prive-project
-AffectedTo=Beïnvloed in
-// Date 2009-01-18 19:49:33
-// STOP - Lines generated via parser
+ActivityOnProjectThisWeek=Activiteiten op project(en) van deze week
+ActivityOnProjectThisMonth=Activiteiten op project(en) van deze maand
+ActivityOnProjectThisYear=Activiteiten op projecten van dit jaar
+ChildOfTaks=Uitvoering in project / taak
+NotOwnerOfProject=Geen eigenaar van dit project
+AffectedTo=Uitgevoerd door

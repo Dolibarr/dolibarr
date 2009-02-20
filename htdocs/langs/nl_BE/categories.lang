@@ -1,15 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_BE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 19:49:33
- */
-
-
-// Date 2009-01-18 19:49:33
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_BE - categories
 CHARSET=UTF-8
 Category=Categorie
 Categories=Categorieën
@@ -20,76 +9,74 @@ TheCategorie=De categorie
 In=In
 AddIn=Voeg in
 modify=wijzigen
-Classify=Classify
+Classify=Classificeer
 CategoriesArea=Categorieën gebied
-ProductsCategoriesArea=Producten / Diensten &#39;categorieën gebied
+ProductsCategoriesArea=Producten / Diensten' categorieën gebied
 SuppliersCategoriesArea=Leveranciers categorieën gebied
 CustomersCategoriesArea=Klanten categorieën gebied
-ThirdPartyCategoriesArea=Derden &quot;categorieën gebied
+ThirdPartyCategoriesArea=Derde partijen' categorieën gebied
 MainCats=Belangrijkste categorieën
 SubCats=Subcategorieën
 CatStatistics=Statistieken
-CatList=Lijst van catgories
+CatList=Lijst van catgorieën
 AllCats=Alle categorieën
 ViewCat=Bekijk categorie
-NewCat=Toevoegen categorie
+NewCat=Categorie toevoegen
 NewCategory=Nieuwe categorie
 ModifCat=Wijzigen categorie
 CatCreated=Categorie aangemaakt
 CreateCat=Maak categorie
 CreateThisCat=Maak deze categorie
-ValidateFields=Valideren van de velden
+ValidateFields=Valideer velden
 NoSubCat=Geen subcategorie.
 SubCatOf=Subcategorie
 FoundCats=Gevonden categorieën
 FoundCatsForName=Categorieën gevonden voor de naam:
 FoundSubCatsIn=Subcategorieën gevonden in de categorie
-ErrSameCatSelected=U geselecteerde dezelfde categorie meerdere malen
-ErrForgotCat=Je vergat te kiezen voor de categorie
-ErrForgotField=Je vergat om de velden
+ErrSameCatSelected=U heeft dezelfde categorie meerdere malen geselecteerd
+ErrForgotCat=U vergat uw categorie te kiezen
+ErrForgotField=Je vergat om de velden te kiezen
 ErrCatAlreadyExists=Deze naam wordt al gebruikt
 AddProductToCat=Voeg dit product naar een categorie?
-ImpossibleAddCat=Onmogelijk om de categorie
-ImpossibleAssociateCategory=Onmogelijk om de categorie
-WasAddedSuccessfully=<b>% s</b> is succesvol toegevoegd.
-ObjectAlreadyLinkedToCategory=Element is al gekoppeld aan deze categorie.
-CategorySuccessfullyCreated=Deze categorie% s is toegevoegd met succes.
-ProductIsInCategories=Product / dienst is eigenaar van de volgende categorieën
-SupplierIsInCategories=Derde partij is eigenaar van de volgende categorieën leveranciers
-CompanyIsInCustomersCategories=Deze derde partij is eigenaar van de volgende klanten / prospects categorieën
-CompanyIsInSuppliersCategories=Deze derde partij is eigenaar van de volgende categorieën leveranciers
-ProductHasNoCategory=Dit product / service is niet in alle categorieën
-SupplierHasNoCategory=Deze leverancier is op geen enkele categorieën
-CompanyHasNoCategory=Dit bedrijf is niet in alle categorieën
-ClassifyInCategory=Classificeren in categorie
+ImpossibleAddCat=Onmogelijk om de categorie toe te voegen
+ImpossibleAssociateCategory=Onmogelijk om de categorie toe te wijzen aan
+WasAddedSuccessfully=<b>%s</b> is succesvol toegevoegd.
+ObjectAlreadyLinkedToCategory=Dit element is gekoppeld aan deze categorie.
+CategorySuccessfullyCreated=De categorie %s is met succes toegevoegd.
+ProductIsInCategories=Dit product / dienst zit in de volgende categorieën
+SupplierIsInCategories=Deze leverancier zit in de volgende categorieën
+CompanyIsInCustomersCategories=Dit bedrijf zit in de volgende categorieën van klanten / potentiële klanten
+CompanyIsInSuppliersCategories=Dit bedrijf zit in de volgende categorieën van leveranciers
+ProductHasNoCategory=Dit product / dienst zit in geen enkele categorie
+SupplierHasNoCategory=Deze leverancier zit in geen enkele categorie
+CompanyHasNoCategory=Dit bedrijf zit in geen enkele categorie
+ClassifyInCategory=Classificeer in categorie
 NoneCategory=Geen
-CategoryExistsAtSameLevel=Deze categorie bestaat al op dezelfde plaats
+CategoryExistsAtSameLevel=Deze categorie bestaat al op diezelfde plaats
 ReturnInProduct=Terug naar product / dienst-kaart
-ReturnInSupplier=Terug naar leverancier kaart
-ReturnInCompany=Terug naar de klant / prospect kaart
-ContentsVisibleByAll=De inhoud wordt zichtbaar door alle
-ContentsVisibleByAllShort=Inhoud zichtbaar door alle
-ContentsNotVisibleByAllShort=Inhoud niet zichtbaar is door alle
+ReturnInSupplier=Terug naar leverancierskaart
+ReturnInCompany=Terug naar de klant of potentiël klantenkaart
+ContentsVisibleByAll=De inhoud zichtbaar door iedereen
+ContentsVisibleByAllShort=Inhoud zichtbaar door iedereen
+ContentsNotVisibleByAllShort=Inhoud niet zichtbaar door iedereen
 CategoriesTree=Categorieën boom
 DeleteCategory=Verwijderen categorie
-ConfirmDeleteCategory=Weet u zeker dat u wilt verwijderen deze categorie?
-RemoveFromCategory=Verwijder de band met de categorie
-RemoveFromCategoryConfirm=Weet u zeker dat u wilt verwijderen verband tussen de transactie en de categorie?
-NoCategoriesDefined=Geen gedefinieerde categorie
+ConfirmDeleteCategory=Weet u zeker dat u deze categorie wilt verwijderen?
+RemoveFromCategory=Verwijder de link met de categorie
+RemoveFromCategoryConfirm=Weet u zeker dat u de link tussen de transactie en de categorie wilt verwijderen?
+NoCategoriesDefined=Geen gedefiniëerde categorie
 SuppliersCategoryShort=Leveranciers categorie
-CustomersCategoryShort=Klanten categorie
-ProductsCategoryShort=Producten categorie
-SuppliersCategoriesShort=Leveranciers categorieën
-CustomersCategoriesShort=Klanten categorieën
-CustomersProspectsCategoriesShort=Custo. / Prosp. categorieën
-ProductsCategoriesShort=Producten categorieën
+CustomersCategoryShort=Categorie klanten
+ProductsCategoryShort=Categorie producten
+SuppliersCategoriesShort=Categorieën leveranciers
+CustomersCategoriesShort=Categorieën klanten
+CustomersProspectsCategoriesShort=Categorieën <br>Klanten / Potentiële klanten
+ProductsCategoriesShort=Categorieën producten
 ThisCategoryHasNoProduct=Deze categorie bevat geen producten.
 ThisCategoryHasNoSupplier=Deze categorie bevat geen enkele leverancier.
 ThisCategoryHasNoCustomer=Deze categorie bevat geen klant.
 AssignedToCustomer=Toegewezen aan een klant
 AssignedToTheCustomer=Toegewezen aan de klant
-InternalCategory=Inernal categorie
+InternalCategory=Interne categorie
 CategoryContents=Categorie inhoud
-CategId=Categorie-id
-// Date 2009-01-18 19:49:33
-// STOP - Lines generated via parser
+CategId=Categorie id

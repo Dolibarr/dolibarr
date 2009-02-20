@@ -2,16 +2,12 @@
 CHARSET=UTF-8
 Members=Leden
 Attributs=Eigenschappen
-
-// Date 2009-01-18 19:49:33
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-MembersArea=Members Area
+MembersArea=Leden gebied
 PublicMembersArea=Openbare leden gebied
-MemberCard=Lid kaart
-SubscriptionCard=Inschrijvings-kaart
+MemberCard=Lidkaart
+SubscriptionCard=Inschrijvingskaart
 Member=Lid
-MemberAccount=Lid logon
+MemberAccount=Lid account
 ShowMember=Toon lidkaart
 UserNotLinkedToMember=Gebruiker niet gekoppeld aan een lid
 MembersTickets=Leden Tickets
@@ -137,6 +133,4 @@ DescADHERENT_CARD_HEADER_TEXT=Tekst op de top van de Lid-kaarten
 DescADHERENT_CARD_TEXT=Tekst op member kaarten
 DescADHERENT_CARD_FOOTER_TEXT=Tekst op bodem van lid kaarten
 ShowTypeCard=Toon type &#39;% s&#39;
-HTPasswordExport=htpassword bestand generatie
-// Date 2009-01-18 19:49:33
-// STOP - Lines generated via parser
+

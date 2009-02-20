@@ -1,46 +1,35 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_BE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 19:49:33
- */
-
-
-// Date 2009-01-18 19:49:33
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_BE - propal
 CHARSET=UTF-8
 Proposals=Commerciële voorstellen
-Proposal=Commerciële voorstel
+Proposal=Commerciëel voorstel
 ProposalsDraft=Ontwerp commerciële voorstellen
-ProposalDraft=Ontwerp-commercieel voorstel
-ProposalsOpened=Geopend commerciële voorstellen
+ProposalDraft=Ontwerp commerciëel voorstel
+ProposalsOpened=Geopende commerciële voorstellen
 Prop=Commerciële voorstellen
-CommercialProposal=Commerciële voorstel
+CommercialProposal=Commerciëel voorstel
 CommercialProposals=Commerciële voorstellen
 ProposalContact=Voorstel contact
-NewProp=Nieuwe commerciële voorstel
-NewProposal=Nieuwe commerciële voorstel
+NewProp=Nieuw commerciëel voorstel
+NewProposal=Nieuw commerciëel voorstel
 NewPropal=Nieuw voorstel
-Prospect=Prospect
-ProspectList=Prospect lijst
-DeleteProp=Verwijderen commerciële voorstel
-ValidateProp=Valideer commerciële voorstel
+Prospect=Potentiële klant
+ProspectList=Lijst potentiële klanten
+DeleteProp=Verwijderen commerciëel voorstel
+ValidateProp=Valideer commerciëel voorstel
 AddProp=Toevoegen voorstel
-ConfirmDeleteProp=Weet u zeker dat u wilt verwijderen commerciële voorstel?
-ConfirmValidateProp=Weet u zeker dat u wilt valideren deze commerciële voorstel?
-LastPropals=Last% s voorstellen
-LastClosedProposals=Last% s gesloten voorstellen
+ConfirmDeleteProp=Weet u zeker dat u dit commerciëel voorstel wilt verwijderen?
+ConfirmValidateProp=Weet u zeker dat u dit commerciëel voorstel wilt valideren?
+LastPropals=Laatste %s voorstellen
+LastClosedProposals=Laatste %s gesloten voorstellen
 AllPropals=Alle voorstellen
 LastProposals=Laatste voorstellen
 SearchAProposal=Zoek een voorstel
-ProposalsStatistics=Commerciële voorstellen &quot;statistieken
+ProposalsStatistics=Statistieken commerciële voorstellen
 NumberOfProposalsByMonth=Aantal per maand
 AmountOfProposalsByMonthHT=Bedrag per maand (exclusief BTW)
 NbOfProposals=Aantal commerciële voorstellen
 ShowPropal=Toon voorstel
-PropalsDraft=Concepten
+PropalsDraft=Ontwerpen
 PropalsOpened=Geopend
 PropalsNotBilled=Gesloten niet gefactureerd
 PropalStatusDraft=Ontwerp (moet worden gevalideerd)
@@ -54,40 +43,38 @@ PropalStatusDraftShort=Ontwerp
 PropalStatusValidatedShort=Gevalideerd
 PropalStatusOpenedShort=Geopend
 PropalStatusClosedShort=Gesloten
-PropalStatusSignedShort=Ondertekening
+PropalStatusSignedShort=Ondertekend
 PropalStatusNotSignedShort=Niet ondertekend
 PropalStatusBilledShort=Gefactureerd
 PropalsToClose=Commerciële voorstellen te sluiten
-PropalsToBill=Ondertekend commerciële voorstellen tot factuur
+PropalsToBill=Onderteken commerciële voorstellen tot factuur
 ListOfProposals=Lijst van commerciële voorstellen
 ActionsOnPropal=Acties op voorstel
 NoOpenedPropals=Nr. geopend commerciële voorstellen
-NoOtherOpenedPropals=Geen enkel ander geopend commerciële voorstellen
-RefProposal=Commerciële voorstel ref
-SendPropalByMail=Stuur commerciële voorstel per mail
+NoOtherOpenedPropals=Geen andere geopende commerciële voorstellen
+RefProposal=Commerciëel voorstel ref
+SendPropalByMail=Stuur commerciëel voorstel per mail
 FileNotUploaded=Het dossier is niet geüpload
 FileUploaded=Het bestand is geüpload
 AssociatedDocuments=Documenten in verband met het voorstel:
-ErrorCantOpenDir=Cannot open directory
-DateEndPropal=Datum einde geldigheid
-DateEndPropalShort=Datum einde
-ValidityDuration=Geldigheid duur
+ErrorCantOpenDir=Kan directory niet openen
+DateEndPropal=Vervaldatum
+DateEndPropalShort=Vervaldatum
+ValidityDuration=Geldigheidsduur
 CloseAs=Sluiten met status
-ClassifyBilled=Classify gefactureerd
-BuildBill=Build-factuur
-RelatedBill=Betrokken factuur
-RelatedBills=Betrokken facturen
-ErrorPropalNotFound=Propal% s niet gevonden
+ClassifyBilled=Classificeer gefactureerd
+BuildBill=Maak factuur
+RelatedBill=Gelinkte factuur
+RelatedBills=Gelinkte facturen
+ErrorPropalNotFound=Voorstel %s niet gevonden
 Estimate=Raming:
 EstimateShort=Raming
 OtherPropals=Andere voorstellen
-CopyPropalFrom=Maak commerciële voorstel door het kopiëren van bestaande voorstel
-CreateEmptyPropal=Maak leeg commerciële voorstellen vierge of uit de lijst van producten / diensten
-DefaultProposalDurationValidity=Standaard commerciële voorstel geldigheid duur (in dagen)
-UseCustomerContactAsPropalRecipientIfExist=Gebruik het contact met klanten adres als gedefinieerd in plaats van derde adres als voorstel ontvangstadres
-ClonePropal=Clone commerciële voorstel
-ConfirmClonePropal=Weet u zeker dat u wilt kloon deze commerciële <b>voorstel% s?</b>
-DocModelAzurDescription=Een complete voorstel model (logo. ..)
+CopyPropalFrom=Maak commerciëel voorstel door het kopiëren van bestaande voorstel
+CreateEmptyPropal=Maak commerciëel voorstel/ leeg of uit de lijst van producten / diensten
+DefaultProposalDurationValidity=Geldigheidsduur standaard commerciëel voorstel (in dagen)
+UseCustomerContactAsPropalRecipientIfExist=Gebruik klant contactadres indien ingesteld, in de plaats van het adres van derde partijen als begunstigde voor voorstellen
+ClonePropal=Kloon commerciëel voorstel
+ConfirmClonePropal=Weet u zeker dat u het commerciëel voorstel <b>%s</b> wilt klonen?
+DocModelAzurDescription=Een compleet voorstel model (logo. ..)
 DocModelJauneDescription=Jaune voorstel model
-// Date 2009-01-18 19:49:33
-// STOP - Lines generated via parser

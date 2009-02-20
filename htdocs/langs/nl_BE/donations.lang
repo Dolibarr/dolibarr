@@ -1,15 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_BE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 19:49:33
- */
-
-
-// Date 2009-01-18 19:49:33
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_BE - donations
 CHARSET=UTF-8
 Donation=Donatie
 Donationss=Donaties
@@ -34,5 +23,3 @@ DonationStatusPayedShort=Ontvangen
 ValidPromise=Valideer belofte
 BuildDonationReceipt=Build-ontvangst
 DonationsModels=Documenten modellen voor donatie ontvangsten
-// Date 2009-01-18 19:49:33
-// STOP - Lines generated via parser

@@ -1,21 +1,10 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_BE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 19:49:33
- */
-
-
-// Date 2009-01-18 19:49:33
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_BE - mails
 CHARSET=UTF-8
-Mailing=E-mailen
-EMailing=E-mailen
-Mailings=EMailings
-EMailings=EMailings
-MailCard=E-mailen kaart
+Mailing=Mailing
+EMailing=E-mailing
+Mailings=Mailings
+EMailings=E-mailings
+MailCard=E-mail kaart
 MailTargets=Doelen
 MailRecipients=Ontvangers
 MailRecipient=Ontvanger
@@ -23,83 +12,81 @@ MailTitle=Titel
 MailFrom=Afzender
 MailErrorsTo=Fouten
 MailReply=Antwoord op
-MailTo=Ontvanger (s)
+MailTo=Ontvanger(s)
 MailCC=Kopiëren naar
 MailCCC=Cached kopie aan
 MailTopic=EMail onderwerp
 MailText=Bericht
 MailFile=Bijgevoegde bestanden
-MailMessage=EMail lichaam
-ShowEMailing=Toon e-mailen
-ListOfEMailings=Lijst van emailings
-NewMailing=Nieuwe e-mailen
-EditMailing=Aanmaken e-mailen
-DeleteMailing=Delete e-mailen
-DeleteAMailing=Verwijder een e-mail te sturen
-PreviewMailing=Voorbeeld e-mailen
-PrepareMailing=Bereid emailen
-CreateMailing=Maak e-mailen
-MailingDesc=Deze pagina kunt u sturen emailings tot een groep van mensen.
-MailingResult=E-mails verzenden resultaat
-TestMailing=Test e-mailen
-ValidMailing=Geldig e-mailen
-ApproveMailing=Bevestig e-mailen
+MailMessage=EMail bericht
+ShowEMailing=Toon mailing
+ListOfEMailings=Lijst van mailings
+NewMailing=Nieuwe mailing
+EditMailing=Bewerk mailing
+DeleteMailing=Verwijder mailing
+DeleteAMailing=Verwijder een mailing
+PreviewMailing=Voorbeeld mailing
+PrepareMailing=Mailing voorbereiden
+CreateMailing=Maak mailing
+MailingDesc=Deze pagina laat u toe om een mailing te sturen naar een groep van mensen.
+MailingResult=Resultaat verzonden E-mails
+TestMailing=Test mailing
+ValidMailing=Bevestig mailing
+ApproveMailing=Mailing goedkeuren
 MailingStatusDraft=Ontwerp
 MailingStatusValidated=Gevalideerd
 MailingStatusApproved=Goedgekeurd
 MailingStatusSent=Verstuurd
-MailingStatusSentPartialy=Verzonden gedeeltelijk
-MailingStatusSentCompletely=Verzonden volledig
+MailingStatusSentPartialy=Gedeeltelijk verzonden
+MailingStatusSentCompletely=Volledig verzonden
 MailingStatusError=Fout
 MailingStatusNotSent=Niet verzonden
-MailSuccessfulySent=E-mailadres successfuly verzonden (van% s naar% s)
+MailSuccessfulySent=E-mail succesvol verzonden (van %s naar %s)
 ErrorMailRecipientIsEmpty=E-mailadres ontvanger is leeg
-WarningNoEMailsAdded=Geen nieuwe E-mailadres toe te voegen aan de ontvanger van de lijst.
-ConfirmValidMailing=Weet u zeker dat u wilt valideren van deze e-mail te sturen?
-ConfirmDeleteMailing=Weet u zeker dat u wilt verwijderen emailling?
+WarningNoEMailsAdded=Geen nieuwe E-mail toe te voegen aan de ontvangerslijst.
+ConfirmValidMailing=Weet u zeker dat u deze mailing wilt valideren om te verzenden?
+ConfirmDeleteMailing=Weet u zeker dat u deze mailing wilt verwijderen?
 NbOfRecipients=Aantal ontvangers
-NbOfUniqueEMails=Nb unieke e-mails
-NbOfEMails=Nb van e-mails
+NbOfUniqueEMails=Aantal unieke e-mails
+NbOfEMails=Aantal e-mails
 TotalNbOfDistinctRecipients=Aantal afzonderlijke ontvangers
-NoTargetYet=Geen ontvangers gedefinieerd nog (Ga op het tabblad &#39;Ontvangers&#39;)
+NoTargetYet=Nog geen ontvangers gedefiniëerd (Ga op het tabblad "Ontvangers")
 AddRecipients=Ontvangers toevoegen
 RemoveRecipient=Verwijder ontvanger
-CommonSubstitutions=Gemeenschappelijk substituties
-YouCanAddYourOwnPredefindedListHere=Om uw email selector module, zie htdocs / includes / modules / mailings / README.
-EMailTestSubstitutionReplacedByGenericValues=Bij gebruik van test-modus, substituties variabelen worden vervangen door algemene waarden
-MailingAddFile=Bevestig dit bestand
+CommonSubstitutions=Common substitutions
+YouCanAddYourOwnPredefindedListHere=Om uw email selector module te creëren, zie htdocs/includes/modules/mailings/README.
+EMailTestSubstitutionReplacedByGenericValues=Bij het gebruik van test-modus, substituties variabelen worden vervangen door algemene waarden
+MailingAddFile=Bestand toevoegen
 NoAttachedFiles=Geen bijgevoegde bestanden
-MailingModuleDescContactCompanies=Contacten van alle derden (klant, prospect, leverancier, ...)
+MailingModuleDescContactCompanies=Contacten van alle derde partijen (klant, potentiële klant, leverancier, ...)
 MailingModuleDescDolibarrUsers=Alle Dolibarr gebruikers met e-mails
 MailingModuleDescFundationMembers=Fundation leden met e-mails
-MailingModuleDescEmailsFromFile=E-mails van een tekstbestand (e-mail, naam, achternaam)
-MailingModuleDescContactsCategories=Contacten van alle derden (per categorie)
-LineInFile=Regel% s in bestand
+MailingModuleDescEmailsFromFile=E-mails van een tekstbestand (e-mail, naam, achternaam, commentaar)
+MailingModuleDescContactsCategories=Derde partijen met e-mails (per categorie)
+LineInFile=Regel %s in bestand
 RecipientSelectionModules=Omschreven verzoeken om ontvangers te selecteren
 MailSelectedRecipients=Geselecteerde ontvangers
-MailingArea=EMailings gebied
-LastMailings=Last% s emailings
-TargetsStatistics=Doelen statistieken
-NbOfCompaniesContacts=Uniek contacten van bedrijven
-MailNoChangePossible=Ontvangers voor gevalideerde e-mailen kan niet worden gewijzigd
-SearchAMailing=Zoeken mailinglijst
-SendMailing=Stuur e-mailen
+MailingArea=Mailing gebied
+LastMailings=Laatste %s mailings
+TargetsStatistics=Statistieken ontvangers
+NbOfCompaniesContacts=Unieke contacten van bedrijven
+MailNoChangePossible=Ontvangers voor een gevalideerde mailing kan niet meer worden gewijzigd
+SearchAMailing=Zoek een mailing
+SendMailing=Stuur mailing
 SendMail=Stuur een e-mailbericht
 SentBy=Verzonden door
-MailingNeedCommand=Voor effecten die reden, het sturen van een e-mail te sturen kan alleen worden uitgevoerd vanaf command-line. Vraag uw systeembeheerder om de volgende opdracht voor het verzenden van het e-mail te sturen naar alle geadresseerden:
-MailingNeedCommand2=U kunt echter sturen ze online door toevoeging parameter MAILING_LIMIT_SENDBYWEB met een waarde van maximaal aantal e-mails die u wilt verzenden per sessie.
-ConfirmSendingEmailing=Weet u zeker dat u wilt verzenden mailinglijst? <br> On line verzenden van emailings beperkt zijn voor de veiligheid reden <b>om% s</b> ontvangers sturen sessie.
-TargetsReset=Duidelijke lijst
-ToClearAllRecipientsClickHere=Als u ontvangers&#39; lijst voor deze e-mail te sturen, klik op de knop
-ToAddRecipientsChooseHere=Geadresseerden toe te voegen, kiest u in deze lijsten
-NbOfEMailingsReceived=Massa emailings ontvangen
-IdRecord=ID-record
+MailingNeedCommand=Om veiligheidsredenen kan het verzendenvan een mailing enkel uitgevoerd worden vanaf command-line. Vraag aan de administrator voor deze mailing naar alle ontvangers te versturen:
+MailingNeedCommand2=U kunt ze echter online sturen door het toevoegen van parameter MAILING_LIMIT_SENDBYWEB met een maximale waarde van het aantal e-mails die u wilt verzenden per sessie.
+ConfirmSendingEmailing=Weet u zeker dat u deze mailing wilt verzenden? <br> Online verzenden van mailings zijn door veiligheidredenen beperkt om naar <b>%s</b> ontvangers sturen per sessie.
+TargetsReset=Verwijder lijst
+ToClearAllRecipientsClickHere=Als u de lijst van ontvangers van deze mailing wilt verwijderen, klik op de knop
+ToAddRecipientsChooseHere=Om ontvangers toe te voegen, kiest u in deze lijsten
+NbOfEMailingsReceived=Massa mailings ontvangen
+IdRecord=Record ID
 DeliveryReceipt=Ontvangstbewijs
-Notifications=Notificaties
-NoNotificationsWillBeSent=Geen e-mail meldingen staan gepland voor dit evenement en bedrijf
-ANotificationsWillBeSent=1 aanmelding zal worden verzonden per e-mail
-SomeNotificationsWillBeSent=% s aanmeldingen worden verzonden per e-mail
-AddNewNotification=Activeren van een nieuwe kennisgeving verzoek
-ListOfActiveNotifications=Een lijst van alle actieve aanmeldingen verzoeken
-// Date 2009-01-18 19:49:33
-// STOP - Lines generated via parser
+Notifications=Berichtgevingen
+NoNotificationsWillBeSent=Geen e-mail berichtgevingen staan gepland voor dit evenement en bedrijf
+ANotificationsWillBeSent=1 berichtgeving zal worden verzonden per e-mail
+SomeNotificationsWillBeSent=%s berichtgevingen worden verzonden per e-mail
+AddNewNotification=Activeer een nieuw verzoek van berichtgeving
+ListOfActiveNotifications=Lijst van alle actieve berichtgevingen

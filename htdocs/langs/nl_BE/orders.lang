@@ -1,10 +1,10 @@
 # Dolibarr language file - nl_NL - orders
 CHARSET=UTF-8
-OrdersArea=Bestellingsgebuer
+OrdersArea=Bestellings gebied
 OrderCard=Bestellingskaart
 Order=Bestelling
 Orders=Bestellingen
-OrderFollow=Follow up
+OrderFollow=Opvolging
 OrderContact=Bestellings contact
 OrderDate=Bestellingsdatum
 NewOrder=Nieuwe bestelling
@@ -47,7 +47,7 @@ Sending=Verzending
 Sendings=Verzendingen
 ShipProduct=Verzend product
 Discount=Korting
-CreateOrder=Creer bestelling
+CreateOrder=Creëer bestelling
 RefuseOrder=Weiger bestelling
 ApproveOrder=Accepteer bestelling
 ValidateOrder=Valideer bestelling
@@ -69,12 +69,12 @@ OrdersStatistics=Bestellingstatistieken
 NumberOfOrdersByMonth=Aantal bestellingen per maand
 ListOfOrders=Lijst van bestellingen
 CloseOrder=Afsluiten bestelling
-ConfirmCloseOrder=Bent u zeker dat u deze bestelling wil afsluiten ? Eens een bestelling is afgesloten, kan deze enkel nog gefactureerd worden.
-ConfirmCloseOrderIfSending=Bent u zeker dat u deze bestelling wil afsluiten ? Sluit een bestelling enkel af als alle verzendingen gedaan zijn.
+ConfirmCloseOrder=Bent u zeker dat u deze bestelling wil afsluiten? Eens een bestelling is afgesloten, kan deze enkel nog gefactureerd worden.
+ConfirmCloseOrderIfSending=Bent u zeker dat u deze bestelling wil afsluiten? Sluit een bestelling enkel af als alle verzendingen gedaan zijn.
 ConfirmDeleteOrder=Bent u zeker dat u deze bestelling wil verwijderen ?
-ConfirmValidateOrder=Bent u zeker dat u deze bestelling onder naam <b>%s</b> wil valideren ?
-ConfirmCancelOrder=Bent u zeker dat u deze bestelling wil annuleren ?
-ConfirmMakeOrder=Bent u zeker dat u wil bevestigen dat u deze bestelling hebt gemaakt op <b>%s</b> ?
+ConfirmValidateOrder=Bent u zeker dat u deze bestelling onder naam <b>%ss</b> wil valideren?
+ConfirmCancelOrder=Bent u zeker dat u deze bestelling wil annuleren?
+ConfirmMakeOrder=Bent u zeker dat u deze bestelling gemaakt op <b>%ss</b> wil bevestigen?
 GenerateBill=Genereer factuur
 ClassifyBilled=Classify "Billed"
 ComptaCard=Accountancy card
@@ -84,16 +84,16 @@ OnProcessOrders=Bestellingen in uitvoering
 RefOrder=Ref. bestelling
 RefCustomerOrder=Ref. klant bestelling
 CustomerOrder=Klant bestelling
-RefCustomerOrderShort=Ref. cust. bestelling
+RefCustomerOrderShort=Ref. klant bestelling
 SendOrderByMail=Verzend bestelling via mail
 ActionsOnOrder=Acties op bestelling
 NoArticleOfTypeProduct=Geen artikel van het type 'product' dus geen verzendbaar artikel voor deze bestelling
 OrderMode=Bestellingswijze
-AuthorRequest=Request author
+AuthorRequest=Verzoek auteur
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON niet gedefinieerd
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON niet gedefinieerd
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Kan module file '%s' niet laden
-Error_FailedToLoad_COMMANDE_ADDON_File=Kan module file '%s' niet laden
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Kan module file '%ss' niet laden
+Error_FailedToLoad_COMMANDE_ADDON_File=Kan module file '%ss' niet laden
 # Sources
 OrderSource0=Commercieel voorstel
 OrderSource1=Internet
@@ -104,21 +104,14 @@ OrderSource5=Commercieel
 OrderSource6=Winkel
 QtyOrdered=Hoeveelheid besteld
 AddDeliveryCostLine=Voeg een lijn 'Leveringskost' toe, duidend op het gewicht van de bestelling
-
-
-// Date 2009-01-18 19:49:33
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
 SuppliersOrdersArea=Leveranciers bestellingen gebied
-CustomersOrdersAndOrdersLines=Klant orders en orders&#39; lijnen
+CustomersOrdersAndOrdersLines=Klant bestelling en bestellingen' lijnen
 StatusOrderToProcessShort=Te verwerken
 DraftOrWaitingShipped=Ontwerp of gevalideerd nog niet verzonden
-OrdersStatisticsSuppliers=Leverancier bestellingen &quot;statistieken
+OrdersStatisticsSuppliers=Leverancier bestellingen' statistieken
 AmountOfOrdersByMonthHT=bedrag van de bestellingen per maand (exclusief BTW)
 UseCustomerContactAsOrderRecipientIfExist=Gebruik het contact met klanten adres als gedefinieerd in plaats van derden adres Om ontvangstadres
-RunningOrders=Orders op proces
+RunningOrders=Lopende bestellingen
 UserWithApproveOrderGrant=Useres verleend met &quot;goed te keuren bestellingen&quot; toestemming.
 PDFEinsteinDescription=Een complete order model (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn ou jj est l&#39;annee, mm le mois et nnnn un compteur sequentiel sans breuk et sans remise e 0
-// Date 2009-01-18 19:49:33
-// STOP - Lines generated via parser
+MarbreNumRefDesc=Renvoie le numro sous la forme%s syymm-nnnn ou jj est l&#39;annee, mm le mois et nnnn un compteur sequentiel sans breuk et sans remise e 0

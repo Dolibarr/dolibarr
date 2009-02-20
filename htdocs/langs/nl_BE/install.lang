@@ -1,44 +1,33 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_BE
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 19:49:33
- */
-
-
-// Date 2009-01-18 19:49:33
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_BE - install
 CHARSET=UTF-8
 InstallEasy=We hebben geprobeerd om de Dolibarr installatie zo eenvoudig mogelijk. Volg de instructies stap voor stap.
 MiscellanousChecks=Vereisten controleren
 DolibarrWelcome=Welkom bij Dolibarr
-ConfFileExists=<b>Configuratiebestand% s</b> bestaat.
-ConfFileDoesNotExists=<b>Configuratiebestand% s</b> bestaat niet!
-ConfFileDoesNotExistsAndCouldNotBeCreated=<b>Configuratiebestand% s</b> bestaat niet en kan niet worden gemaakt!
-ConfFileCouldBeCreated=<b>Configuratiebestand% s</b> kan worden gecreëerd.
-ConfFileIsNotWritable=<b>Configuratiebestand% s</b> is niet schrijfbaar. Check machtigingen. Voor het eerst installeert, wordt uw web-server moet worden verleend om te kunnen schrijven in dit dossier tijdens de configuratie proces ( &quot;chmod 666&quot; bijvoorbeeld op Unix zoals OS).
-ConfFileIsWritable=<b>Configuratiebestand% s</b> is schrijfbaar.
+ConfFileExists=<b>Configuratiebestand %s</b> bestaat.
+ConfFileDoesNotExists=<b>Configuratiebestand %s</b> bestaat niet!
+ConfFileDoesNotExistsAndCouldNotBeCreated=<b>Configuratiebestand %s</b> bestaat niet en kan niet worden gemaakt!
+ConfFileCouldBeCreated=<b>Configuratiebestand %s</b> kan worden gecreëerd.
+ConfFileIsNotWritable=<b>Configuratiebestand %s</b> is niet schrijfbaar. Check machtigingen. Voor het eerst installeert, wordt uw web-server moet worden verleend om te kunnen schrijven in dit dossier tijdens de configuratie proces ( &quot;chmod 666&quot; bijvoorbeeld op Unix zoals OS).
+ConfFileIsWritable=<b>Configuratiebestand %s</b> is schrijfbaar.
 PHPSupportSessions=Dit PHP ondersteunt sessies.
 PHPSupportPOSTGETOk=Dit PHP ondersteunt variabelen POST en GET.
 PHPSupportPOSTGETKo=Het is mogelijk uw PHP configuratie ondersteunt geen POST variabelen en / of GET. Controleer uw <b>variables_order</b> parameter in php.ini.
 PHPSupportGD=Dit PHP ondersteuning GD grafische functies.
 PHPSupportUTF8=Dit PHP ondersteuning UTF8 functies.
-PHPMemoryOK=Uw PHP max. zitting geheugen is ingesteld <b>op% s.</b> Dit moet genoeg zijn.
-PHPMemoryTooLow=Uw PHP max. zitting geheugen is ingesteld <b>op% s</b> bytes. Dit dient te worden te laag. Verander je <b>php.ini</b> instellen <b>memory_limit</b> parameter ten <b>minste% s</b> bytes.
+PHPMemoryOK=Uw PHP max. zitting geheugen is ingesteld <b>op %s.</b> Dit moet genoeg zijn.
+PHPMemoryTooLow=Uw PHP max. zitting geheugen is ingesteld <b>op %s</b> bytes. Dit dient te worden te laag. Verander je <b>php.ini</b> instellen <b>memory_limit</b> parameter ten <b>minste %s</b> bytes.
 Recheck=Klik hier voor een meer significative test
 ErrorPHPDoesNotSupportSessions=Uw PHP installatie ondersteunt geen sessies. Deze functie is vereist om Dolibarr werken. Controleer uw PHP installatie.
 ErrorPHPDoesNotSupportGD=Uw PHP installatie biedt geen ondersteuning voor grafische functie GD. Geen grafiek beschikbaar zal zijn.
 ErrorPHPDoesNotSupportUTF8=Uw PHP installatie biedt geen ondersteuning voor UTF8 functies. Dolibarr kan niet goed werken. Lossen dit voordat u Dolibarr.
-ErrorDirDoesNotExists=Map% s niet bestaat.
+ErrorDirDoesNotExists=Map %s niet bestaat.
 ErrorGoBackAndCorrectParameters=Ga naar achteren en correcte verkeerde parameters.
-ErrorWrongValueForParameter=Mogelijk bent u hebt getypt een verkeerde waarde voor parameter &#39;% s&#39;.
-ErrorFailedToCreateDatabase=Failed to create database &#39;% s&#39;.
-ErrorFailedToConnectToDatabase=Kan geen verbinding maken met database &#39;% s&#39;.
-ErrorPHPVersionTooLow=PHP versie te oud. Versie% s is vereist.
-ErrorConnectedButDatabaseNotFound=Verbinding maken met server succesvol maar database &#39;% s&#39; niet gevonden.
-ErrorDatabaseAlreadyExists=Database &#39;% s&#39; bestaat reeds.
+ErrorWrongValueForParameter=Mogelijk bent u hebt getypt een verkeerde waarde voor parameter &#39; %s&#39;.
+ErrorFailedToCreateDatabase=Failed to create database &#39; %s&#39;.
+ErrorFailedToConnectToDatabase=Kan geen verbinding maken met database &#39; %s&#39;.
+ErrorPHPVersionTooLow=PHP versie te oud. Versie %s is vereist.
+ErrorConnectedButDatabaseNotFound=Verbinding maken met server succesvol maar database &#39; %s&#39; niet gevonden.
+ErrorDatabaseAlreadyExists=Database &#39; %s&#39; bestaat reeds.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Als database niet bestaat, ga terug en vink de optie &quot;Create database&quot;.
 IfDatabaseExistsGoBackAndCheckCreate=Als database bestaat al, ga terug en verwijder het vinkje bij &quot;Create database&quot; optie.
 PHPVersion=PHP versie
@@ -80,8 +69,8 @@ UserCreation=Gebruiker creëren
 CreateDatabaseObjects=Database-objecten creëren
 ReferenceDataLoading=Referentie gegevens laden
 TablesAndPrimaryKeysCreation=Tabellen en primaire sleutels oprichting
-CreateTableAndPrimaryKey=Maak tabel% s
-CreateOtherKeysForTable=Maak vreemde sleutels en indexen voor tabel% s
+CreateTableAndPrimaryKey=Maak tabel %s
+CreateOtherKeysForTable=Maak vreemde sleutels en indexen voor tabel %s
 OtherKeysCreation=Vreemde sleutels en indexen oprichting
 FunctionsCreation=Functies creëren
 AdminAccountCreation=Administrator login oprichting
@@ -92,7 +81,7 @@ SetupEnd=Einde van de setup
 SystemIsInstalled=Deze installatie is voltooid.
 SystemIsUpgraded=Dolibarr is opgewaardeerd met succes.
 YouNeedToPersonalizeSetup=U moet configureren Dolibarr om aan uw behoeften (uiterlijk, de functies, ...). Om dit te doen, volgt u de onderstaande link:
-AdminLoginCreatedSuccessfuly=Dolibarr beheerder inloggen <b>&#39;% s&#39; is</b> gemaakt successfuly.
+AdminLoginCreatedSuccessfuly=Dolibarr beheerder inloggen <b>&#39; %s&#39; is</b> gemaakt successfuly.
 GoToSetupArea=Ga naar Dolibarr (setup gebied)
 Examples=Voorbeelden
 WithNoSlashAtTheEnd=Zonder de schuine streep &#39;/&#39; aan het eind
@@ -100,9 +89,9 @@ DirectoryRecommendation=Het wordt aanbevolen je dit directry out van de webpagin
 LoginAlreadyExists=Bestaat al
 DolibarrAdminLogin=Dolibarr admin login
 FailedToCreateAdminLogin=Mislukt om Dolibarr administator account.
-AdminLoginAlreadyExists=Dolibarr administrator account <b>&#39;% s&#39;</b> bestaat reeds.
+AdminLoginAlreadyExists=Dolibarr administrator account <b>&#39; %s&#39;</b> bestaat reeds.
 WarningRemoveInstallDir=Waarschuwing, om veiligheidsredenen, nadat de installatie of upgrade is voltooid, moet u de <b>install directory of hernoemen naar install.lock om te voorkomen dat de schadelijke gebruik.</b>
-ThisPHPDoesNotSupportTypeBase=Deze PHP-systeem biedt geen ondersteuning voor enig interface om toegang te krijgen tot database type% s
+ThisPHPDoesNotSupportTypeBase=Deze PHP-systeem biedt geen ondersteuning voor enig interface om toegang te krijgen tot database type %s
 FunctionNotAvailableInThisPHP=Niet beschikbaar op deze PHP
 MigrateScript=Migreer script
 ChoosedMigrateScript=Gekozen migreren script
@@ -117,7 +106,7 @@ UpgradeDesc=Gebruik deze modus als u vervangen oud Dolibarr bestanden met bestan
 Start=Start
 InstallNotAllowed=Setup niet toegestaan door <b>conf.php</b> machtigingen
 NotAvailable=Niet beschikbaar
-YouMustCreateWithPermission=U moet bestand% s en schrijf permissies op het voor web-server tijdens het installatieproces.
+YouMustCreateWithPermission=U moet bestand %s en schrijf permissies op het voor web-server tijdens het installatieproces.
 CorrectProblemAndReloadPage=Gelieve het probleem op te lossen en druk op F5 to reload page.
 AlreadyDone=Al gemigreerd
 DatabaseVersion=Database versie
@@ -130,15 +119,15 @@ CollationConnection=Teken sorteervolgorde
 CollationConnectionComment=Kies pagina code die omschrijft karakter van de sorteervolgorde gebruikt door database. Deze parameter wordt ook wel &#39;verzamelen&#39; van sommige databanken. <br/> Deze parameter kan niet worden gedefinieerd als database al bestaat.
 CharacterSetDatabase=Tekenset voor database
 CharacterSetDatabaseComment=Kies tekenset wilde voor database te creëren. <br/> Deze parameter kan niet worden gedefinieerd als database al bestaat.
-YouAskDatabaseCreationSoDolibarrNeedToConnect=U vraagt om <b>database% s,</b> maar voor dit Dolibarr nodig om verbinding te maken met <b>server% s</b> met super <b>gebruiker% s</b> machtigingen.
-YouAskLoginCreationSoDolibarrNeedToConnect=U vraagt om database <b>login% s,</b> maar voor dit Dolibarr nodig om verbinding te maken met <b>server% s</b> met super <b>gebruiker% s</b> machtigingen.
+YouAskDatabaseCreationSoDolibarrNeedToConnect=U vraagt om <b>database %s,</b> maar voor dit Dolibarr nodig om verbinding te maken met <b>server %s</b> met super <b>gebruiker %s</b> machtigingen.
+YouAskLoginCreationSoDolibarrNeedToConnect=U vraagt om database <b>login %s,</b> maar voor dit Dolibarr nodig om verbinding te maken met <b>server %s</b> met super <b>gebruiker %s</b> machtigingen.
 BecauseConnectionFailedParametersMayBeWrong=Als verbinding mislukt, host of super user parameters moeten worden verkeerd.
-OrphelinsPaymentsDetectedByMethod=Orphelins betaling gedetecteerd door methode% s
+OrphelinsPaymentsDetectedByMethod=Orphelins betaling gedetecteerd door methode %s
 RemoveItManuallyAndPressF5ToContinue=Verwijder deze handmatig in en druk op F5 om verder te gaan.
 KeepDefaultValues=U gebruikt de wizard voor het instellen van Doliwamp, dus waarden die hier zijn al geoptimaliseerd. Verander ze alleen als je weet wat je doet.
 FieldRenamed=Veld naam
 IfLoginDoesNotExistsCheckCreateUser=Als login niet bestaat nog niet, moet u controleren of de optie &quot;Maak gebruiker&quot;
-ErrorConnection=Server <b>&quot;% s&quot;,</b> database naam <b>&quot;% s&quot;,</b> login <b>&quot;% s&quot;,</b> of database wachtwoord kan worden verkeerde of PHP client versie kan worden te oud vergeleken met de database versie.
+ErrorConnection=Server <b>&quot; %s&quot;,</b> database naam <b>&quot; %s&quot;,</b> login <b>&quot; %s&quot;,</b> of database wachtwoord kan worden verkeerde of PHP client versie kan worden te oud vergeleken met de database versie.
 MigrationOrder=Data migratie voor klanten orders
 MigrationSupplierOrder=Data migratie voor leveranciers orders
 MigrationProposal=Data migratie voor commerciële voorstellen
@@ -147,13 +136,13 @@ MigrationContract=Data migratie voor contracten
 MigrationSuccessfullUpdate=Upgrade succesvol
 MigrationUpdateFailed=Falied upgrade proces
 MigrationPaymentsUpdate=Betaling gegevens correctie
-MigrationPaymentsNumberToUpdate=% s (en) te actualiseren
-MigrationProcessPaymentUpdate=Update betaling (s)% s
+MigrationPaymentsNumberToUpdate= %s (en) te actualiseren
+MigrationProcessPaymentUpdate=Update betaling (s) %s
 MigrationPaymentsNothingToUpdate=Niet meer dingen te doen
 MigrationPaymentsNothingUpdatable=Niet meer de betalingen die kunnen worden gecorrigeerd
 MigrationContractsUpdate=Contract gegevens correctie
-MigrationContractsNumberToUpdate=% s overeenkomst (en) te actualiseren
-MigrationContractsLineCreation=Maak contract voor contract ref% s
+MigrationContractsNumberToUpdate= %s overeenkomst (en) te actualiseren
+MigrationContractsLineCreation=Maak contract voor contract ref %s
 MigrationContractsNothingToUpdate=Niet meer dingen te doen
 MigrationContractsFieldDontExist=Veld fk_facture geen sprake meer. Niets te doen.
 MigrationContractsEmptyDatesUpdate=Contract lege datum correctie
@@ -161,20 +150,18 @@ MigrationContractsEmptyDatesUpdateSuccess=Contract emtpy datum correctie gedaan 
 MigrationContractsEmptyDatesNothingToUpdate=Geen contract lege datum te corrigeren
 MigrationContractsEmptyCreationDatesNothingToUpdate=Geen contract aanmaakdatum te corrigeren
 MigrationContractsInvalidDatesUpdate=Bad valutadatum contract correctie
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Juiste opdracht% s (Contract date =% s, Begin datum min =% s)
-MigrationContractsInvalidDatesNumber=% s contracten gemodificeerde
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Juiste opdracht %s (Contract date = %s, Begin datum min = %s)
+MigrationContractsInvalidDatesNumber= %s contracten gemodificeerde
 MigrationContractsInvalidDatesNothingToUpdate=Geen datum met slechte waarde te corrigeren
 MigrationContractsIncoherentCreationDateUpdate=Onjuiste waarde contract aanmaakdatum correctie
 MigrationContractsIncoherentCreationDateUpdateSuccess=Onjuiste waarde contract aanmaakdatum correctie gedaan succes
 MigrationContractsIncoherentCreationDateNothingToUpdate=Geen slechte waarde voor de totstandkoming van contracten datum te corrigeren
 MigrationReopeningContracts=Open contract gesloten door fout
-MigrationReopenThisContract=Heropenen opdracht% s
-MigrationReopenedContractsNumber=% s contracten gemodificeerde
+MigrationReopenThisContract=Heropenen opdracht %s
+MigrationReopenedContractsNumber= %s contracten gemodificeerde
 MigrationReopeningContractsNothingToUpdate=Geen gesloten contract te openen
 MigrationBankTransfertsUpdate=Update banden tussen bank transactie en een bank transfer
 MigrationBankTransfertsNothingToUpdate=Alle links zijn up-to-date
 MigrationShipmentOrderMatching=Verzendingen ontvangst update
 MigrationDeliveryOrderMatching=Ontvangstbewijs update
 MigrationDeliveryDetail=Bezorging update
-// Date 2009-01-18 19:49:33
-// STOP - Lines generated via parser
