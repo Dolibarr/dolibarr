@@ -249,7 +249,7 @@ class Translate {
 		                    if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#")
 		                    {
 		                        $tab=split('=',$ligne,2);
-		                        $key=trim($tab[0]); $value='';
+		                        $key=trim($tab[0]);
 		                        //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
 		                        //if (! $this->getTransFromTab($key))
 		                        if (empty($this->tab_translate[$key]) && isset($tab[1]))
@@ -383,7 +383,6 @@ class Translate {
 			{
 				global $db;
 				$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
-				//print "xxx".$key."-".$value."\n";
 			}
 			else if (eregi('SendingMethod([0-9A-Z]+)$',$key,$reg))
 			{
