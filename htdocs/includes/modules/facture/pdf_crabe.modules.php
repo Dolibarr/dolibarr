@@ -947,8 +947,8 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
 
-		$posy+=1;
-		$pdf->SetFont('Arial','',10);
+		$posy+=2;
+		$pdf->SetFont('Arial','',9);
 
 		$facidnext=$object->getIdReplacingInvoice('validated');
 		if ($object->type == 0 && $facidnext)
@@ -956,7 +956,7 @@ class pdf_crabe extends ModelePDFFactures
 			$objectreplacing=new Facture($this->db);
 			$objectreplacing->fetch($facidnext);
 
-			$posy+=5;
+			$posy+=4;
 			$pdf->SetXY(100,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ReplacementByInvoice").' : '.$outputlangs->convToOutputCharset($objectreplacing->ref), '', 'R');
@@ -966,7 +966,7 @@ class pdf_crabe extends ModelePDFFactures
 			$objectreplaced=new Facture($this->db);
 			$objectreplaced->fetch($object->fk_facture_source);
 
-			$posy+=5;
+			$posy+=4;
 			$pdf->SetXY(100,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ReplacementInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
@@ -976,20 +976,20 @@ class pdf_crabe extends ModelePDFFactures
 			$objectreplaced=new Facture($this->db);
 			$objectreplaced->fetch($object->fk_facture_source);
 
-			$posy+=5;
+			$posy+=4;
 			$pdf->SetXY(100,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CorrectionInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
 		}
 
-		$posy+=5;
+		$posy+=4;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateInvoice")." : " . dol_print_date($object->date,"day",false,$outpulangs), '', 'R');
 
 		if ($object->type != 2)
 		{
-			$posy+=5;
+			$posy+=4;
 			$pdf->SetXY(100,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEcheance")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), '', 'R');
@@ -997,7 +997,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		if ($object->client->code_client)
 		{
-			$posy+=5;
+			$posy+=4;
 			$pdf->SetXY(100,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $object->client->code_client, '', 'R');
