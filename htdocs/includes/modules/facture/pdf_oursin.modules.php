@@ -131,7 +131,7 @@ class pdf_oursin extends ModelePDFFactures
 				$ret=$fac->fetch($id);
 			}
 			$fac->fetch_client();
-			
+
 			$deja_regle = $fac->getSommePaiement();
 			$amount_credit_not_included = $fac->getSommeCreditNote();
 
@@ -931,21 +931,59 @@ class pdf_oursin extends ModelePDFFactures
 		/*
 		 * ref facture
 		 */
-		$posy=65;
+		$posy=70;
 		$pdf->SetFont('Arial','B',13);
-		$pdf->SetXY($this->marges['g'],$posy);
+		$pdf->SetXY($this->marges['g'],$posy-5);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Bill").' '.$outputlangs->transnoentities("Of").' '.dol_print_date($fac->date,"%d %B %Y",false,$outputlangs,true), '' , 'L');
+		$title=$outputlangs->transnoentities("Invoice");
+		if ($object->type == 1) $title=$outputlangs->transnoentities("InvoiceReplacement");
+		if ($object->type == 2) $title=$outputlangs->transnoentities("InvoiceAvoir");
+		if ($object->type == 3) $title=$outputlangs->transnoentities("InvoiceDeposit");
+		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProFormat");
+		$pdf->MultiCell(100, 10, $title.' '.$outputlangs->transnoentities("Of").' '.dol_print_date($fac->date,"day",false,$outputlangs,true), '' , 'L');
 		$pdf->SetFont('Arial','B',11);
-		$pdf->SetXY($this->marges['g'],$posy+5);
+		$pdf->SetXY($this->marges['g'],$posy);
 		$pdf->SetTextColor(22,137,210);
 		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("RefBill")." : " . $outputlangs->transnoentities($fac->ref), '', 'L');
 		$pdf->SetTextColor(0,0,0);
-		
+		$posy+=4;
+
+		$facidnext=$object->getIdReplacingInvoice('validated');
+		if ($object->type == 0 && $facidnext)
+		{
+			$objectreplacing=new Facture($this->db);
+			$objectreplacing->fetch($facidnext);
+
+			$posy+=4;
+			$pdf->SetXY($this->marges['g'],$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ReplacementByInvoice").' : '.$outputlangs->convToOutputCharset($objectreplacing->ref), '', 'L');
+		}
+		if ($object->type == 1)
+		{
+			$objectreplaced=new Facture($this->db);
+			$objectreplaced->fetch($object->fk_facture_source);
+
+			$posy+=4;
+			$pdf->SetXY($this->marges['g'],$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ReplacementInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'L');
+		}
+		if ($object->type == 2)
+		{
+			$objectreplaced=new Facture($this->db);
+			$objectreplaced->fetch($object->fk_facture_source);
+
+			$posy+=4;
+			$pdf->SetXY($this->marges['g'],$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CorrectionInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'L');
+		}
+
 		if ($object->type != 2)
 		{
-			$posy+=8;
-			$pdf->SetXY($this->marges['g'],$posy+5);
+			$posy+=5;
+			$pdf->SetXY($this->marges['g'],$posy);
 			$pdf->SetFont('Arial','',9);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEcheance")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), '', 'L');
 		}
@@ -953,12 +991,12 @@ class pdf_oursin extends ModelePDFFactures
 		if ($object->client->code_client)
 		{
 			$posy+=4;
-			$pdf->SetXY($this->marges['g'],$posy+5);
+			$pdf->SetXY($this->marges['g'],$posy);
 			$pdf->SetFont('Arial','',9);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $object->client->code_client, '', 'L');
 		}
-		
-		
+
+
 		/*
 		 * ref propal
 		 */
@@ -975,7 +1013,7 @@ class pdf_oursin extends ModelePDFFactures
 				if ($objp->ref)
 				{
 					$posy+=4;
-					$pdf->SetXY($this->marges['g'],$posy+5);
+					$pdf->SetXY($this->marges['g'],$posy);
 					$pdf->SetFont('Arial','',9);
 					$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefProposal")." : ".$objp->ref);
 				}

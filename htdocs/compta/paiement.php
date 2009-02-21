@@ -76,7 +76,7 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 				$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' Attention, le montant de paiement pour une ou plusieurs facture est superieur au reste a payer.';
 				$formquestion['text'].='<br>Corriger votre saisie, sinon, confirmer et penser a creer un avoir du trop percu lors de la fermeture de chacune des factures surpayees.';
 			}
-			 
+
 			$formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);
 		}
 	}
@@ -134,11 +134,11 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 	$_POST['remonth'],
 	$_POST['reday'],
 	$_POST['reyear']);
-	
+
 	if (! $error)
 	{
 		$db->begin();
-		 
+
 		// Creation de la ligne paiement
 		$paiement = new Paiement($db);
 		$paiement->datepaye     = $datepaye;
@@ -166,7 +166,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 				$user,
 				$_POST['chqemetteur'],
 				$_POST['chqbank']);
-				 
+
 				// Mise a jour fk_bank dans llx_paiement.
 				// On connait ainsi le paiement qui a g�n�r� l'�criture bancaire
 				if ($bank_line_id > 0)
@@ -201,7 +201,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 		{
 			$error++;
 		}
-		 
+
 		if ($error == 0)
 		{
 			$loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
@@ -260,7 +260,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		if ($_POST["action"] == 'add_paiement')
 		{
 			$i=0;
-				
+
 			$formquestion[$i++]=array('type' => 'hidden','name' => 'facid', 'value' => $facture->id);
 			$formquestion[$i++]=array('type' => 'hidden','name' => 'socid', 'value' => $facture->socid);
 			$formquestion[$i++]=array('type' => 'hidden','name' => 'type',  'value' => $facture->type);
@@ -324,7 +324,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print '<td><input name="chqbank" size="30" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
 
 		/*
-		 * Liste factures impayees
+		 * List of unpayed invoices
 		 */
 		$sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.type, ';
 		$sql.= $db->pdate('f.datef').' as df, ';
@@ -333,14 +333,14 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 		$sql.= ' WHERE f.fk_soc = '.$facture->socid;
 		$sql.= ' AND f.paye = 0';
-		$sql.= ' AND f.fk_statut = 1'; // Statut=0 => non valid�e, Statut=2 => annul�e
+		$sql.= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
 		if ($facture->type != 2)
 		{
-			$sql .= ' AND type in (0,1)';	// Facture standard ou de remplacement
+			$sql .= ' AND type in (0,1,3)';	// Standard invoice, replacement, deposit
 		}
 		else
 		{
-			$sql .= ' AND type = 2';
+			$sql .= ' AND type = 2';		// If paying back a credit note, we show all credit notes
 		}
 		$sql .= ' GROUP BY f.facnumber';
 		$resql = $db->query($sql);
@@ -375,9 +375,9 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					$facturestatic->ref=$objp->facnumber;
 					$facturestatic->id=$objp->facid;
 					$facturestatic->type=$objp->type;
-					
+
 					$creditnote=$facturestatic->getSommeCreditNote();
-					
+
 					print '<tr '.$bc[$var].'>';
 
 					print '<td>';
@@ -389,12 +389,12 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 
 					// Prix
 					print '<td align="right">'.price($objp->total_ttc).'</td>';
-						
+
 					// Recu
 					print '<td align="right">'.price($objp->am);
 					if ($creditnote) print '+'.price($creditnote);
 					print '</td>';
-						
+
 					// Reste a payer
 					print '<td align="right">'.price(price2num($objp->total_ttc - $objp->am - $creditnote,'MT')).'</td>';
 
@@ -411,8 +411,8 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 						print ' '.img_warning($langs->trans("PaymentHigherThanReminderToPay"));
 					}
 					print '</td>';
-						
-						
+
+
 					print "</tr>\n";
 
 					$total+=$objp->total;
@@ -425,7 +425,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 				{
 					// Print total
 					print '<tr class="liste_total">';
-					print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').':</td>';
+					print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').'</td>';
 					print '<td align="right"><b>'.price($total_ttc).'</b></td>';
 					print '<td align="right"><b>'.price($totalrecu);
 					if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
@@ -476,7 +476,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 
 
 /**
- *  \brief      Affichage de la liste des paiement
+ *  \brief      Affichage de la liste des paiements
  */
 if (! $_GET['action'] && ! $_POST['action'])
 {
@@ -491,7 +491,6 @@ if (! $_GET['action'] && ! $_POST['action'])
 	$sql .=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
 	$sql .= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
-
 	if ($socid)
 	{
 		$sql .= ' AND f.fk_soc = '.$socid;

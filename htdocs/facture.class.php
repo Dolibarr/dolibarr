@@ -52,7 +52,7 @@ class Facture extends CommonObject
 	var $id;
 	//! Id client
 	var $socid;
-	//! Objet societe client (à charger par fetch_client)
+	//! Objet societe client (to load with fetch_client method)
 	var $client;
 	var $number;
 	var $author;
@@ -62,7 +62,7 @@ class Facture extends CommonObject
 	var $date_validation;
 	var $ref;
 	var $ref_client;
-	//! 0=Facture normale, 1=Facture remplacement, 2=Facture avoir, 3=Facture récurrente
+	//! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proformat invoice
 	var $type;
 	var $amount;
 	var $remise;
@@ -77,7 +77,7 @@ class Facture extends CommonObject
 	var $statut;
 	//! 1 si facture payée COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
 	var $paye;
-	//! id facture source si facture de remplacement ou avoir
+	//! id of source invoice if replacement invoice or credit note
 	var $fk_facture_source;
 	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
 	//! Fermeture alors que aucun paiement: replaced (si remplacé), abandon
@@ -134,7 +134,7 @@ class Facture extends CommonObject
 	{
 		global $langs,$conf,$mysoc;
 
-		// Nettoyage paramètres
+		// Clean parameters
 		if (! $this->type) $this->type = 0;
 		$this->ref_client=trim($this->ref_client);
 		$this->note=trim($this->note);
@@ -182,7 +182,7 @@ class Facture extends CommonObject
 		// Definition de la date limite
 		$datelim=$this->calculate_date_lim_reglement();
 
-		// Insertion dans la base
+		// Insert into database
 		$socid  = $this->socid;
 		$amount = $this->amount;
 		$remise = $this->remise;
@@ -198,7 +198,7 @@ class Facture extends CommonObject
 		$sql.= ' fk_facture_source, fk_user_author, fk_projet,';
 		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf)';
 		$sql.= ' VALUES (';
-		$sql.= "'(PROV)', '".$this->type."', '".$socid."', ".$this->db->idate(mktime()).", '".$totalht."'";
+		$sql.= "'(PROV)', '".$this->type."', '".$socid."', ".$this->db->idate(gmmktime()).", '".$totalht."'";
 		$sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
 		$sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
 		$sql.= ",".$this->db->idate($this->date);
@@ -470,12 +470,14 @@ class Facture extends CommonObject
 		}
 
 		$picto='bill';
-		if ($this->type == 1) $picto.='r';
-		if ($this->type == 2) $picto.='a';
+		if ($this->type == 1) $picto.='r';	// Replacement invoice
+		if ($this->type == 2) $picto.='a';	// Credit note
+		if ($this->type == 3) $picto.='d';	// Deposit invoice
 
 		$label=$langs->trans("ShowInvoice").': '.$this->ref;
 		if ($this->type == 1) $label=$langs->trans("ShowInvoiceReplace").': '.$this->ref;
 		if ($this->type == 2) $label=$langs->trans("ShowInvoiceAvoir").': '.$this->ref;
+		if ($this->type == 3) $label=$langs->trans("ShowInvoiceDeposit").': '.$this->ref;
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
@@ -1965,6 +1967,7 @@ class Facture extends CommonObject
 		if ($this->type == 0) return $langs->trans("InvoiceStandard");
 		if ($this->type == 1) return $langs->trans("InvoiceReplacement");
 		if ($this->type == 2) return $langs->trans("InvoiceAvoir");
+		if ($this->type == 3) return $langs->trans("InvoiceDeposit");
 		return $langs->trans("Unknown");
 	}
 
@@ -2008,6 +2011,7 @@ class Facture extends CommonObject
 			else
 			{
 				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPayedBackOrConverted');
+				elseif ($type == 3) return $langs->trans('Bill'.$prefix.'StatusConverted');
 				else return $langs->trans('Bill'.$prefix.'StatusPayed');
 			}
 		}
@@ -2025,6 +2029,7 @@ class Facture extends CommonObject
 			else
 			{
 				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPayedBackOrConverted');
+				elseif ($type == 3) return $langs->trans('Bill'.$prefix.'StatusConverted');
 				else return $langs->trans('Bill'.$prefix.'StatusPayed');
 			}
 		}
@@ -2042,6 +2047,7 @@ class Facture extends CommonObject
 			else
 			{
 				if ($type == 2) return img_picto($langs->trans('BillStatusPayedBackOrConverted'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPayedBackOrConverted');
+				elseif ($type == 3) return img_picto($langs->trans('BillStatusConverted'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusConverted');
 				else return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPayed');
 			}
 		}
@@ -2059,6 +2065,7 @@ class Facture extends CommonObject
 			else
 			{
 				if ($type == 2) return img_picto($langs->trans('BillStatusPayedBackOrConverted'),'statut6');
+				elseif ($type == 3) return img_picto($langs->trans('BillStatusConverted'),'statut6');
 				else return img_picto($langs->trans('BillStatusPayed'),'statut6');
 			}
 		}
@@ -2075,6 +2082,7 @@ class Facture extends CommonObject
 			else
 			{
 				if ($type == 2) return img_picto($langs->trans('BillStatusPayedBackOrConverted'),'statut6').' '.$langs->trans('BillStatusPayedBackOrConverted');
+				elseif ($type == 3) return img_picto($langs->trans('BillStatusConverted'),'statut6').' '.$langs->trans('BillStatusConverted');
 				else return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('BillStatusPayed');
 			}
 		}
@@ -2092,6 +2100,7 @@ class Facture extends CommonObject
 			else
 			{
 				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPayedBackOrConverted').' '.img_picto($langs->trans('BillStatusPayedBackOrConverted'),'statut6');
+				elseif ($type == 3) return $langs->trans('Bill'.$prefix.'StatusConverted').' '.img_picto($langs->trans('BillStatusConverted'),'statut6');
 				else return $langs->trans('Bill'.$prefix.'StatusPayed').' '.img_picto($langs->trans('BillStatusPayed'),'statut6');
 			}
 		}
@@ -2628,7 +2637,7 @@ class Facture extends CommonObject
 	  }
 		}
 
-		// Initialise paramètres
+		// Initialize parameters
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;

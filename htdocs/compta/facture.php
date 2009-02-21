@@ -572,9 +572,9 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		}
 	}
 
+	// Predefined invoice
 	if ($_POST['type'] == 0 && $_POST['fac_rec'] > 0)
 	{
-		// Si facture récurrente
 		$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
 		$facture->socid 		 = $_POST['socid'];
@@ -593,7 +593,8 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		$facid = $facture->create($user);
 	}
 
-	if ($_POST['type'] == 0 && $_POST['fac_rec'] <= 0)
+	// Standard or deposit or proformat invoice
+	if (($_POST['type'] == 0 || $_POST['type'] == 3 || $_POST['type'] == 4) && $_POST['fac_rec'] <= 0)
 	{
 		$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		if (empty($datefacture))
@@ -605,7 +606,6 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		if (! $error)
 		{
 			// Si facture standard
-
 			$facture->socid 		 = $_POST['socid'];
 			$facture->type           = $_POST['type'];
 			$facture->number         = $_POST['facnumber'];
@@ -615,12 +615,13 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->ref_client     = $_POST['ref_client'];
 			$facture->modelpdf       = $_POST['model'];
 			$facture->projetid          = $_POST['projetid'];
-			$facture->cond_reglement_id = $_POST['cond_reglement_id'];
+			$facture->cond_reglement_id = ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
 			$facture->mode_reglement_id = $_POST['mode_reglement_id'];
 			$facture->amount            = $_POST['amount'];
 			$facture->remise_absolue    = $_POST['remise_absolue'];
 			$facture->remise_percent    = $_POST['remise_percent'];
 
+			// If invoices lines already known
 			if (! $_POST['propalid'] && ! $_POST['commandeid'] && ! $_POST['contratid'])
 			{
 				for ($i = 1; $i <= $NBLINES; $i++)
@@ -637,9 +638,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			}
 			else
 			{
-				/*
-				 * Si creation depuis propale
-				 */
+				// If creation from proposal
 				if ($_POST['propalid'])
 				{
 					$facture->propalid = $_POST['propalid'];
@@ -693,9 +692,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					}
 				}
 
-				/*
-				 * Si création depuis commande
-				 */
+				// If creation from order
 				if ($_POST['commandeid'])
 				{
 					$facture->commandeid = $_POST['commandeid'];
@@ -750,9 +747,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					}
 				}
 
-				/*
-				 * Si création depuis contrat
-				 */
+				// If creation from contract
 				if ($_POST['contratid'])
 				{
 					$facture->contratid = $_POST['contratid'];
@@ -1368,7 +1363,7 @@ if ($_GET['action'] == 'create')
 		$dateinvoice=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
-
+	if (empty($cond_reglement_id)) $cond_reglement_id=1;
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="action" value="add">';
@@ -1395,7 +1390,6 @@ if ($_GET['action'] == 'create')
 	}
 
 	// Factures prédéfinnies
-	// TODO Use instead invoice in llx_facture table with a particular status
 	if ($conf->global->FACTURE_ENABLE_RECUR)
 	{
 		if ($_GET['propalid'] == 0 && $_GET['commandeid'] == 0 && $_GET['contratid'] == 0)
@@ -1472,18 +1466,38 @@ if ($_GET['action'] == 'create')
 		$optionsav.='</option>';
 	}
 
-	// Type
 	print '<tr><td valign="top">'.$langs->trans('Type').'</td><td colspan="2">';
 	print '<table class="nobordernopadding">'."\n";
 
-	print '<tr><td width="16px" valign="middle">';
+	// Standard invoice
+	print '<tr height="18"><td width="16px" valign="middle">';
 	print '<input type="radio" name="type" value="0"'.($_POST['type']==0?' checked="true"':'').'>';
 	print '</td><td valign="middle">';
 	$desc=$html->textwithhelp($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
 	print $desc;
 	print '</td></tr>'."\n";
 
-	print '<tr><td valign="middle">';
+	// Deposit
+	print '<tr height="18"><td width="16px" valign="middle">';
+	print '<input type="radio" name="type" value="3"'.($_POST['type']==3?' checked="true"':'').'>';
+	print '</td><td valign="middle">';
+	$desc=$html->textwithhelp($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
+	print $desc;
+	print '</td></tr>'."\n";
+
+	// Proformat
+	if ($conf->global->FACTURE_USE_PROFORMAT)
+	{
+		print '<tr height="18"><td width="16px" valign="middle">';
+		print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked="true"':'').'>';
+		print '</td><td valign="middle">';
+		$desc=$html->textwithhelp($langs->trans("InvoiceProformat"),$langs->transnoentities("InvoiceProformatDesc"),1);
+		print $desc;
+		print '</td></tr>'."\n";
+	}
+
+	// Replacement
+	print '<tr height="18"><td valign="middle">';
 	print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked=true':'');
 	if (! $options) print ' disabled="true"';
 	print '>';
@@ -1506,7 +1520,8 @@ if ($_GET['action'] == 'create')
 	print $desc;
 	print '</td></tr>'."\n";
 
-	print '<tr><td valign="middle">';
+	// Credit note
+	print '<tr height="18"><td valign="middle">';
 	print '<input type="radio" name="type" value="2"'.($_POST['type']==2?' checked=true':'');
 	if (! $optionsav) print ' disabled="true"';
 	print '>';
@@ -1549,14 +1564,14 @@ if ($_GET['action'] == 'create')
 	$html->select_date($dateinvoice,'','','','',"add");
 	print '</td></tr>';
 
-	// Conditions de règlement
+	// Payment term
 	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-	$html->select_conditions_paiements($cond_reglement_id,'cond_reglement_id');
+	$html->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
 	print '</td></tr>';
 
-	// Mode de règlement
+	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$html->select_types_paiements($mode_reglement_id,'mode_reglement_id');
+	$html->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 
 	// Project
@@ -2938,7 +2953,9 @@ else
 					}
 
 					// Validate
-					if ($fac->statut == 0 && $num_lignes > 0 && (($fac->type < 2 && $fac->total_ttc >= 0) || ($fac->type == 2 && $fac->total_ttc <= 0)))
+					if ($fac->statut == 0 && $num_lignes > 0 &&
+					 (($fac->type == 0 || $fac->type == 1 || $fac->type == 3 || $fac->type == 4) && $fac->total_ttc >= 0)
+					 || ($fac->type == 2 && $fac->total_ttc <= 0))
 					{
 						if ($user->rights->facture->valider)
 						{
@@ -2972,7 +2989,7 @@ else
 						}
 					}
 
-					if ($conf->global->FACTURE_SHOW_SEND_REMINDER)
+					if ($conf->global->FACTURE_SHOW_SEND_REMINDER)	// For backward compatibility
 					{
 						// Envoyer une relance
 						if (($fac->statut == 1 || $fac->statut == 2) && $resteapayer > 0 && $user->rights->facture->envoyer)
@@ -2988,7 +3005,7 @@ else
 						}
 					}
 
-					// Emettre paiement
+					// Create payment
 					if ($fac->type != 2 && $fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
 					{
 						if ($facidnext)
@@ -3008,28 +3025,34 @@ else
 						}
 					}
 
-					// Emettre remboursement ou Convertir en reduc
-					if ($fac->type == 2)
+					// Reverse back money or convert to reduction
+					if ($fac->type == 2 || $fac->type == 3)
 					{
-						if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
+						// For credit note only
+						if ($fac->type == 2 && $fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
 						{
 							print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a>';
 						}
-
-						if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->creer && $fac->getSommePaiement() == 0)
+						// For credit note
+						if ($fac->type == 2 && $fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->creer && $fac->getSommePaiement() == 0)
+						{
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
+						}
+						// For deposit invoice
+						if ($fac->type == 3 && $fac->statut == 1 && $resteapayer == 0 && $user->rights->facture->creer)
 						{
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
 						}
 					}
 
-					// Classer 'payé'
+					// Classify payed (if not deposit and not credit note. Such invoice are "converted")
 					if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement &&
-					(($fac->type != 2 && $resteapayer <= 0) || ($fac->type == 2 && $resteapayer >= 0)) )
+					(($fac->type != 2 && $fac->type != 3 && $resteapayer <= 0) || ($fac->type == 2 && $resteapayer >= 0)) )
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
 					}
 
-					// Classer 'fermée' (possible si validée et pas encore classée payée)
+					// Classift 'closed not completely payed' (possible si validée et pas encore classée payée)
 					if ($fac->statut == 1 && $fac->paye == 0 && $resteapayer > 0
 					&& $user->rights->facture->paiement)
 					{
@@ -3052,13 +3075,13 @@ else
 					}
 
 					// Clone
-					if ($fac->type == 0 && $user->rights->facture->creer)
+					if (($fac->type == 0 || $fac->type == 3 || $fac->type == 4) && $user->rights->facture->creer)
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=clone&amp;object=invoice">'.$langs->trans("ToClone").'</a>';
 					}
 
 					// Clone as predefined
-					if ($conf->global->FACTURE_ENABLE_RECUR && $fac->type == 0 && $fac->statut == 0 && $user->rights->facture->creer)
+					if ($conf->global->FACTURE_ENABLE_RECUR && ($fac->type == 0 || $fac->type == 3 || $fac->type == 4) && $fac->statut == 0 && $user->rights->facture->creer)
 					{
 						if (! $facidnext)
 						{

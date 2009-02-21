@@ -938,6 +938,8 @@ class pdf_crabe extends ModelePDFFactures
 		$title=$outputlangs->transnoentities("Invoice");
 		if ($object->type == 1) $title=$outputlangs->transnoentities("InvoiceReplacement");
 		if ($object->type == 2) $title=$outputlangs->transnoentities("InvoiceAvoir");
+		if ($object->type == 3) $title=$outputlangs->transnoentities("InvoiceDeposit");
+		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProFormat");
 		$pdf->MultiCell(100, 4, $title, '' , 'R');
 
 		$pdf->SetFont('Arial','B',12);
