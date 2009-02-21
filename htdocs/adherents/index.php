@@ -46,9 +46,10 @@ $var=True;
 
 $Adherents=array();
 $AdherentsAValider=array();
+$MemberUpToDate=array();
 $AdherentsResilies=array();
+
 $AdherentType=array();
-$Cotisants=array();
 
 # Liste les adherents
 $sql = "SELECT t.rowid, t.libelle, t.cotisation,";
@@ -57,6 +58,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d ON t.rowid = d.fk_adherent_type";
 $sql.= " GROUP BY t.rowid, t.libelle, t.cotisation, d.statut";
 
+dol_syslog("index.php::select nb of members by type sql=".$sql, LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -72,30 +74,27 @@ if ($result)
 		$adhtype->libelle=$objp->libelle;
 		$AdherentType[$objp->rowid]=$adhtype;
 
-		if ($objp->statut == -1) { $AdherentsAValider[$objp->rowid]=$objp->somme; }
-		if ($objp->statut == 1)  { $Adherents[$objp->rowid]=$objp->somme; }
-		if ($objp->statut == 0)  { $AdherentsResilies[$objp->rowid]=$objp->somme; }
+		if ($objp->statut == -1) { $MemberToValidate[$objp->rowid]=$objp->somme; }
+		if ($objp->statut == 1)  { $MembersValidated[$objp->rowid]=$objp->somme; }
+		if ($objp->statut == 0)  { $MembersResiliated[$objp->rowid]=$objp->somme; }
 
-		if ($objp->cotisation != 'yes')
-		{
-			$Cotisants[$objp->rowid]=$Adherents[$objp->rowid]=$objp->somme;
-		}
-		else
-		{
-			$Cotisants[$objp->rowid]=0;	// Calcule plus loin
-		}
 		$i++;
 	}
 	$db->free($result);
 }
 
 
-# Liste les cotisants a jour
+// List members up to date 
+// current rule: uptodate = the end date is in future whatever is type
+// old rule: uptodate = if type does not need payment, that end date is null, if type need payment that end date is in future)
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
-$sql.= " WHERE d.statut = 1 AND d.datefin >= ".$db->idate(mktime());
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
+//$sql.= " WHERE d.statut = 1 AND ((t.cotisation = 0 AND d.datefin IS NULL) OR d.datefin >= ".$db->idate(gmmktime()).')';
+$sql.= " WHERE d.statut = 1 AND d.datefin >= ".$db->idate(gmmktime());
+$sql.= " AND t.rowid = d.fk_adherent_type";
 $sql.= " GROUP BY d.fk_adherent_type";
 
+dol_syslog("index.php::select nb of uptodate members by type sql=".$sql, LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -104,7 +103,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
-		$Cotisants[$objp->fk_adherent_type]=$objp->somme;
+		$MemberUpToDate[$objp->fk_adherent_type]=$objp->somme;
 		$i++;
 	}
 	$db->free();
@@ -145,7 +144,7 @@ $SommeD=0;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Type").'</td>';
+print '<td>'.$langs->trans("MembersTypes").'</td>';
 print '<td align=right>'.$langs->trans("MembersStatusToValid").'</td>';
 print '<td align=right>'.$langs->trans("MenuMembersNotUpToDate").'</td>';
 print '<td align=right>'.$langs->trans("MenuMembersUpToDate").'</td>';
@@ -157,21 +156,21 @@ foreach ($AdherentType as $key => $adhtype)
 	$var=!$var;
 	print "<tr $bc[$var]>";
 	print '<td><a href="type.php?rowid='.$adhtype->id.'">'.img_object($langs->trans("ShowType"),"group").' '.$adhtype->libelle.'</a></td>';
-	print '<td align="right">'.(isset($AdherentsAValider[$key]) && $AdherentsAValider[$key] > 0?$AdherentsAValider[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
-	print '<td align="right">'.(isset($Adherents[$key]) && ($Adherents[$key]-$Cotisants[$key] > 0) ? $Adherents[$key]-$Cotisants[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
-	print '<td align="right">'.(isset($Cotisants[$key]) && $Cotisants[$key] > 0 ? $Cotisants[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,mktime(),3).'</td>';
-	print '<td align="right">'.(isset($AdherentsResilies[$key]) && $AdherentsResilies[$key]> 0 ?$AdherentsResilies[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
+	print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
+	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-$MemberUpToDate[$key] > 0) ? $MembersValidated[$key]-$MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
+	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,gmmktime(),3).'</td>';
+	print '<td align="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key]> 0 ?$MembersResiliated[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
 	print "</tr>\n";
-	$SommeA+=isset($AdherentsAValider[$key])?$AdherentsAValider[$key]:0;
-	$SommeB+=isset($Adherents[$key])?$Adherents[$key]-$Cotisants[$key]:0;
-	$SommeC+=isset($Cotisants[$key])?$Cotisants[$key]:0;
-	$SommeD+=isset($AdherentsResilies[$key])?$AdherentsResilies[$key]:0;
+	$SommeA+=isset($MemberToValidate[$key])?$MemberToValidate[$key]:0;
+	$SommeB+=isset($MembersValidated[$key])?$MembersValidated[$key]-$MemberUpToDate[$key]:0;
+	$SommeC+=isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0;
+	$SommeD+=isset($MembersResiliated[$key])?$MembersResiliated[$key]:0;
 }
 print '<tr class="liste_total">';
 print '<td> <b>'.$langs->trans("Total").'</b> </td>';
 print '<td align="right"><b>'.$SommeA.' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</b></td>';
 print '<td align="right"><b>'.$SommeB.' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</b></td>';
-print '<td align="right"><b>'.$SommeC.' '.$staticmember->LibStatut(1,$adhtype->cotisation,mktime(),3).'</b></td>';
+print '<td align="right"><b>'.$SommeC.' '.$staticmember->LibStatut(1,$adhtype->cotisation,gmmktime(),3).'</b></td>';
 print '<td align="right"><b>'.$SommeD.' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</b></td>';
 print '</tr>';
 
@@ -229,7 +228,7 @@ else
 
 
 
-// Tableau r�sum� par an
+// List of subscription by year
 $Total=array();
 $Number=array();
 $tot=0;
@@ -261,7 +260,7 @@ if ($result)
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Year").'</td>';
+print '<td>'.$langs->trans("Subscriptions").'</td>';
 print '<td align="right">'.$langs->trans("Number").'</td>';
 print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="right">'.$langs->trans("AmountAverage").'</td>';

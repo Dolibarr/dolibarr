@@ -166,7 +166,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 			$adh->email       = trim($_POST["email"]);
 			$adh->naiss       = $datenaiss;
 
-			$adh->typeid      = $_POST["type"];
+			$adh->typeid      = $_POST["typeid"];
 			$adh->note        = trim($_POST["comment"]);
 			$adh->morphy      = $_POST["morphy"];
 
@@ -244,7 +244,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
 		$datecotisation=dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	}
 
-    $type=$_POST["type"];
+    $typeid=$_POST["typeid"];
     $nom=$_POST["nom"];
     $prenom=$_POST["prenom"];
     $societe=$_POST["societe"];
@@ -279,7 +279,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
     $adh->pass        = $pass;
     $adh->naiss       = $datenaiss;
     $adh->photo       = $photo;
-    $adh->typeid      = $type;
+    $adh->typeid      = $typeid;
     $adh->note        = $comment;
     $adh->morphy      = $morphy;
     foreach($_POST as $key => $value){
@@ -291,12 +291,12 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
     }
 
     // Test validite des parametres
-    if(!isset($type) || $type==''){
+    if (empty($typeid)) {
         $error++;
         $errmsg .= $langs->trans("ErrorMemberTypeNotDefined")."<br>\n";
     }
     // Test si le login existe deja
-    if(!isset($login) || $login==''){
+    if (empty($login)) {
         $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Login"))."<br>\n";
     }
@@ -312,7 +312,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
             $errmsg .= $langs->trans("ErrorLoginAlreadyExists",$login)."<br>\n";
         }
     }
-    if (!isset($nom) || $nom=='') {
+    if (empty($nom)) {
         $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname"))."<br>\n";
     }
@@ -324,7 +324,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
         $error++;
         $errmsg .= $langs->trans("ErrorBadEMail",$email)."<br>\n";
     }
-    if (!isset($pass) || $pass == '' ) {
+    if (empty($pass)) {
         $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Password"))."<br>\n";
     }
@@ -627,12 +627,12 @@ if ($action == 'edit')
 	print '<tr><td>'.$langs->trans("Type").'*</td><td>';
 	if ($user->rights->adherent->creer)	// If $user->rights->adherent->self->creer, we do not allow.
 	{
-		$htmls->select_array("type",  $adht->liste_array(), $adh->typeid);
+		$htmls->select_array("typeid",  $adht->liste_array(), $adh->typeid);
 	}
 	else
 	{
 		print $adht->getNomUrl(1);
-		print '<input type="hidden" name="type" value="'.$adh->typeid.'">';
+		print '<input type="hidden" name="typeid" value="'.$adh->typeid.'">';
 	}
 	print "</td></tr>";
 
@@ -748,7 +748,7 @@ if ($action == 'create')
     $listetype=$adht->liste_array();
     if (sizeof($listetype))
     {
-        $htmls->select_array("type", $listetype, $typeid);
+        $htmls->select_array("typeid", $listetype, $typeid);
     } else {
         print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
     }

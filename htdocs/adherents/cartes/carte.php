@@ -26,9 +26,9 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/PDF_card.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/adherents/cartes/PDF_card.class.php");
 
 
 // liste des patterns remplacable dans le texte a imprimer
@@ -48,14 +48,6 @@ $patterns = array (
 '/%ID%/',
 '/%ANNEE%/'
 		   );
-
-/*
- *-------------------------------------------------
- * Pour cr�er l'objet on a 2 moyens :
- * Soit on donne les valeurs en les passant dans un tableau (sert pour un format personnel)
- * Soit on donne le type d'�tiquette au format AVERY
- *-------------------------------------------------
- */
 
 		   
 $dir = $conf->adherent->dir_tmp;
@@ -88,7 +80,7 @@ $sql.= " t.libelle as type,";
 $sql.= " p.libelle as pays";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
-$sql.= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1 AND datefin >= ".$db->idate(mktime());
+$sql.= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
 $sql.= " ORDER BY d.rowid ASC";
 
 $result = $db->query($sql);
@@ -132,16 +124,22 @@ if ($result)
 	
 	$db->close();
 
-	// Output file
-	$type = 'application/octet-stream';
-
-	if ($type)       header('Content-Type: '.$type);
-	header('Content-Disposition: attachment; filename="tmpcard.pdf"');
+	clearstatcache();
+		
+	$attachment=true;
+	if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
+	$filename='tmpcards.pdf';
+	$type=dol_mimetype($filename);
 	
+	if ($encoding)   header('Content-Encoding: '.$encoding);
+	if ($type)       header('Content-Type: '.$type);
+	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+	else header('Content-Disposition: inline; filename="'.$filename.'"');
+
 	// Ajout directives pour resoudre bug IE
 	header('Cache-Control: Public, must-revalidate');
 	header('Pragma: public');
-	 
+
 	readfile($file);
 }
 else
