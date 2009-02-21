@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
@@ -132,8 +132,9 @@ class pdf_propale_azur extends ModelePDFPropales
 				$propale = new Propal($this->db,"",$id);
 				$ret=$propale->fetch($id);
 			}
+			$propale->fetch_client();
 			$deja_regle = "";
-
+			
 			// Définition de $dir et $file
 			if ($propale->specimen)
 			{
@@ -811,6 +812,14 @@ class pdf_propale_azur extends ModelePDFPropales
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : " . dol_print_date($object->fin_validite,"day",false,$outputlangs,true), '', 'R');
 
+		if ($object->client->code_client)
+		{
+			$posy+=5;
+			$pdf->SetXY(100,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $object->client->code_client, '', 'R');
+		}
+				
 		if ($showadress)
 		{
 			// Emetteur
@@ -865,7 +874,6 @@ class pdf_propale_azur extends ModelePDFPropales
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(102,$posy-5);
 			$pdf->MultiCell(80,4, $outputlangs->transnoentities("BillTo").":");
-			$object->fetch_client();
 
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);

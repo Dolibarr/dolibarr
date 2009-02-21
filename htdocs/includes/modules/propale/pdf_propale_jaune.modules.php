@@ -116,7 +116,9 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$propale = new Propal($this->db,"",$id);
 				$ret=$propale->fetch($id);
 			}
-
+			$propale->fetch_client();
+			$deja_regle = "";
+			
 			// Definition de $dir et $file
 			if ($propale->specimen)
 			{
@@ -199,7 +201,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 					$pdf->writeHTMLCell(102, 4, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
-					$pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
+					$pdf->SetFont('Arial','', 9);   // On repositionne la police par dï¿½faut
 					$nexY = $pdf->GetY();
 
 					$ref=dol_htmlentitiesbr($propale->lignes[$i]->ref);
@@ -421,10 +423,21 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetXY(110,90);
 		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs,true));
 
+		$posy=20;
+		$posy+=5;
+		$pdf->SetXY(100,$posy);
+		$pdf->SetTextColor(0,0,60);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : " . dol_print_date($object->fin_validite,"day",false,$outputlangs,true), '', 'R');
 
+		if ($object->client->code_client)
+		{
+			$posy+=5;
+			$pdf->SetXY(100,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $object->client->code_client, '', 'R');
+		}
+		
 		$posy=39;
-
-		$object->fetch_client();
 
 
 		// If BILLING contact defined, we use it
@@ -449,7 +462,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 			// Nom client
 			$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
 
-			// Caractéristiques client
+			// Caractï¿½ristiques client
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
 			if ($object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->trans("Country".$object->contact->pays_code)."\n";
@@ -461,24 +474,24 @@ class pdf_propale_jaune extends ModelePDFPropales
 			$pdf->SetFont('Arial','B',11);
 			$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($object->client->nom), 0, 'L');
 
-			// Nom du contact suivi propal si c'est une société
+			// Nom du contact suivi propal si c'est une sociï¿½tï¿½
 			$arrayidcontact = $object->getIdContact('external','CUSTOMER');
 			if (sizeof($arrayidcontact) > 0)
 			{
 				$object->fetch_contact($arrayidcontact[0]);
-				// On vérifie si c'est une société ou un particulier
+				// On vï¿½rifie si c'est une sociï¿½tï¿½ ou un particulier
 				if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 				{
 					$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
 				}
 			}
 
-			// Caractéristiques client
+			// Caractï¿½ristiques client
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->adresse);
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
 			if ($object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->trans("Country".$object->client->pays_code)."\n";
 		}
-		// Numéro TVA intracom
+		// Numï¿½ro TVA intracom
 		if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
 		$pdf->SetFont('Arial','',9);
 		$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
