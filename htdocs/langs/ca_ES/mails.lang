@@ -24,6 +24,7 @@ ShowEMailing = Mostrar E-Mailing
 ListOfEMailings = Llistat de E-Mailings
 NewMailing = Nou E-Mailing
 EditMailing = Editar E-Mailing
+ResetMailing = Nou enviament
 DeleteMailing = Eliminar E-Mailing
 DeleteAMailing = Eliminar un E-Mailing
 PreviewMailing = Previsualitzar un E-Mailing
@@ -46,6 +47,7 @@ MailSuccessfulySent = E-mail enviat correctament (de %s a %s)
 ErrorMailRecipientIsEmpty = L'adreça del destinatari és buida
 WarningNoEMailsAdded = Cap nou e-mail a afegir a la llista destinataris.
 ConfirmValidMailing = Confirmeu la validació del E-Mailing?
+ConfirmResetMailing = Atenció, en el reinici de l'E-Mailing <b>%s</b>, autoritza de nou la seva emissió en massa. És això el que vol fer?
 ConfirmDeleteMailing = Confirmeu l'eliminació del E-Mailing?
 NbOfRecipients = Nombre de destinataris
 NbOfUniqueEMails = Nº d'e-mails únics
@@ -59,7 +61,7 @@ YouCanAddYourOwnPredefindedListHere = Per crear el seu mòdul de selecció e-mai
 EMailTestSubstitutionReplacedByGenericValues = En mode prova, les variables de substitució són substituïdes per valors genèrics
 MailingAddFile = Adjuntar aquest arxiu
 NoAttachedFiles = Sense fitxers adjunts
-# Libelle des modules de liste de destinataires E-Mailing =  = 
+# Libelle des modules de liste de destinataires mailing =  = 
 MailingModuleDescContactCompanies = Contactes de tercers (clients potencials, clients, proveïdors ...)
 MailingModuleDescDolibarrUsers = Usuaris de Dolibarr que tenen e-mail
 MailingModuleDescFundationMembers = Membres que tenen e-mail
