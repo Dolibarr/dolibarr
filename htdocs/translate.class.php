@@ -284,8 +284,8 @@ class Translate {
 		                // Pour les langues aux fichiers parfois incomplets, on charge la langue alternative
 		                if (! $newalt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
 		                {
-		                    // This function must not contains call to syslog
-		                	dol_print_error("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$domain.".lang file)", LOG_DEBUG);
+		                    // This function MUST NOY contains call to syslog
+		                	//dol_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$domain.".lang file)", LOG_DEBUG);
 		                    $this->load($domain,1);
 		                }
 

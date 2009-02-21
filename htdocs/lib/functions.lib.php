@@ -374,6 +374,12 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 		$format=ereg_replace('%b','__b__',$format);
 		$format=ereg_replace('%B','__B__',$format);
 	}
+	if (eregi('%a',$format))		// There is some text to translate
+	{
+		// We inhibate translation to text made by strftime functions. We will use trans instead later.
+		$format=ereg_replace('%a','__a__',$format);
+		$format=ereg_replace('%A','__A__',$format);
+	}
 
 	// Analyse de la date (deprecated)   Ex: 19700101, 19700101010000
 	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg)
@@ -423,6 +429,13 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 		$ret=ereg_replace('__B__',$monthtext,$ret);
 		//print 'x'.$outputlangs->charset_output.'-'.$ret.'x';
 		//return $ret;
+	}
+	if (eregi('__a__',$format))
+	{
+		$w=adodb_strftime('%w',$time);
+		$dayweek=$outputlangs->transnoentitiesnoconv('Day'.$w);
+		$ret=ereg_replace('__A__',$dayweek,$ret);
+		$ret=ereg_replace('__a__',dol_substr($dayweek,0,3),$ret);
 	}
 
 	return $ret;
@@ -1520,8 +1533,8 @@ function dol_print_error($db='',$error='')
 	{
 		require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
 		$langs = new Translate("", $conf);
+		$langs->load("main");
 	}
-	$langs->load("main");
 
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
@@ -1534,8 +1547,8 @@ function dol_print_error($db='',$error='')
 		print "<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";;
 		if (isset($conf->global->MAIN_FEATURES_LEVEL)) print "<b>".$langs->trans("LevelOfFeature").":</b> ".$conf->global->MAIN_FEATURES_LEVEL."<br>\n";;
 		print "<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
-		print "<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
 		print "<b>".$langs->trans("Referer").":</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
+		print "<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
 		print "<b>".$langs->trans("MenuManager").":</b> ".$conf->left_menu.'/'.$conf->top_menu."<br>\n";
 		print "<br>\n";
 		$syslog.="url=".$_SERVER["REQUEST_URI"];

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -324,7 +324,7 @@ if ($showbirthday)
 	// Sort on date
 	$sql .= ' ORDER BY birthday';
 	//print $sql;
-	
+
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -343,17 +343,17 @@ if ($showbirthday)
 			$action->type_code='BIRTHDAY';
 			$action->libelle=$langs->trans("Birthday").' '.$obj->firstname.' '.$obj->name;
 			$action->percentage=100;
-	
+
 			$action->date_start_in_calendar=$action->datep;
 			$action->date_end_in_calendar=$action->datef;
 			$action->ponctuel=0;
-	
+
 			// Add an entry in actionarray for each day
 			$daycursor=$action->date_start_in_calendar;
 			$annee = date('Y',$daycursor);
 			$mois = date('m',$daycursor);
 			$jour = date('d',$daycursor);
-	
+
 			$loop=true;
 			$daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
 			do
@@ -396,15 +396,15 @@ if ($_GET["action"] != 'show_day')
 {
 	echo '<table width="100%" class="nocellnopadd">';
 	echo ' <tr class="liste_titre">';
-	echo '  <td align="center">'.$langs->trans("Monday")."</td>\n";
-	echo '  <td align="center">'.$langs->trans("Tuesday")."</td>\n";
-	echo '  <td align="center">'.$langs->trans("Wednesday")."</td>\n";
-	echo '  <td align="center">'.$langs->trans("Thursday")."</td>\n";
-	echo '  <td align="center">'.$langs->trans("Friday")."</td>\n";
-	echo '  <td align="center">'.$langs->trans("Saturday")."</td>\n";
-	echo '  <td align="center">'.$langs->trans("Sunday")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Day1")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Day2")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Day3")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Day4")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Day5")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Day6")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Day0")."</td>\n";
 	echo " </tr>\n";
-	
+
 	// In loops, tmpday contains day nb in current month (can be negative for days of previous month)
 	for($iter_week = 0; $iter_week < 6 ; $iter_week++)
 	{
@@ -456,7 +456,13 @@ else
 	$style='cal_current_month';
 	$timestamp=dol_mktime(12,0,0,$month,$_GET["day"],$year);
 	$arraytimestamp=adodb_getdate(dol_mktime(12,0,0,$month,$_GET["day"],$year));
-	$dayname=array('0'=>'Sunday','1'=>'Monday','2'=>'Tuesday','3'=>'Wednesday','4'=>'Thursday','5'=>'Friday','6'=>'Saturday');
+	$dayname=array( '0'=>'Sunday',
+					'1'=>'Monday',
+					'2'=>'Tuesday',
+					'3'=>'Wednesday',
+					'4'=>'Thursday',
+					'5'=>'Friday',
+					'6'=>'Saturday');
 	echo '<table width="100%" class="nocellnopadd">';
 	echo ' <tr class="liste_titre">';
 	echo '  <td align="center">'.$langs->trans($dayname[$arraytimestamp['wday']])."</td>\n";
@@ -511,7 +517,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 
 	//$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
 	$i=0;
-	
+
 	foreach ($actionarray as $daykey => $notused)
 	{
 		$annee = date('Y',$daykey);
@@ -532,7 +538,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 					//print "x".$color;
 					print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; " width="100%"><tr>';
 					print '<td nowrap="nowrap">';
-					if ($action->type_code != 'BIRTHDAY') 
+					if ($action->type_code != 'BIRTHDAY')
 					{
 						$tmpyearstart  = date('Y',$action->date_start_in_calendar);
 						$tmpmonthstart = date('m',$action->date_start_in_calendar);
@@ -582,7 +588,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 				else
 				{
 					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=maxPrint&month='.$month.'&year='.$year.'">'.img_picto("all","1downarrow_selected.png").' ...';
-					print ' +'.(sizeof($actionarray[$daykey])-$maxPrint);			
+					print ' +'.(sizeof($actionarray[$daykey])-$maxPrint);
 					print '</a>';
 					break;
 					//$ok=false;		// To avoid to show twice the link
