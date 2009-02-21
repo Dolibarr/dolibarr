@@ -36,6 +36,9 @@ if (! empty($_SERVER['DOL_TUNING']))
 {
 	list($usec, $sec) = explode(" ", microtime());
 	$micro_start_time=((float)$usec + (float)$sec);
+	// Add Xdebug coverage of code
+	//define('XDEBUGCOVERAGE',1);
+	if (defined('XDEBUGCOVERAGE')) { xdebug_start_code_coverage(); }
 }
 
 
@@ -1015,13 +1018,22 @@ function llxFooter($foot='',$limitIEbug=1)
 		print "\n".'<script type="text/javascript">window.status="Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
 		if (function_exists("memory_get_usage"))
 		{
-			print ' - Memory usage: '.memory_get_usage();
+			print ' - Mem: '.memory_get_usage();
+		}
+		if (function_exists("xdebug_memory_usage"))
+		{
+			print ' - XDebug time: '.ceil(1000*xdebug_time_index()).' ms';
+			print ' - XDebug mem: '.xdebug_memory_usage();
+			print ' - XDebug mem peak: '.xdebug_peak_memory_usage();
 		}
 		if (function_exists("zend_loader_file_encoded"))
 		{
 			print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
 		}
 		print '"</script>'."\n";
+
+	    // Add Xdebug coverage of code
+	    if (defined('XDEBUGCOVERAGE')) { var_dump(xdebug_get_code_coverage()); }
 	}
 
 	if ($conf->use_javascript_ajax)
@@ -1030,7 +1042,7 @@ function llxFooter($foot='',$limitIEbug=1)
 	}
 
 	// Juste pour eviter bug IE qui reorganise mal div precedents si celui-ci absent
-	if ($limitIEbug && empty($conf->browser->firefox)) print "\n".'<div class="tabsAction">&nbsp;</div>'."\n";
+	//if ($limitIEbug && empty($conf->browser->firefox)) print "\n".'<div class="tabsAction">&nbsp;</div>'."\n";
 
 	// If there is some logs in buffer to show
     if (sizeof($conf->logbuffer))
@@ -1048,9 +1060,6 @@ function llxFooter($foot='',$limitIEbug=1)
 
 	print "\n";
     if ($foot) print '<!-- '.$foot.' -->'."\n";
-
-    // Add Xdebug coverage of code
-    if (defined('XDEBUGCOVERAGE')) { var_dump(xdebug_get_code_coverage()); }
 
 	print "</body>\n";
 	print "</html>\n";

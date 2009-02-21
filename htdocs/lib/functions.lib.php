@@ -1603,6 +1603,13 @@ function dol_print_error($db='',$error='')
 			$syslog.=", msg=".$msg;
 		}
 	}
+	if ($_SERVER['DOCUMENT_ROOT'] && function_exists('xdebug_call_file'))
+	{
+		print '<b>XDebug informations:</b>'."<br>\n";
+		print 'File: '.xdebug_call_file()."<br>\n";
+		print 'Line: '.xdebug_call_line()."<br>\n";
+		print "<br>\n";
+	}
 
 	dol_syslog("Error ".$syslog, LOG_ERR);
 }
