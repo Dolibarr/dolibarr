@@ -129,6 +129,21 @@ if ( $societe->fetch($socid) )
 	print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$societe->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
 	print '</tr>';
 	print '</table>';
+
+	/*
+	 * List of products
+	 */
+	if ($conf->produit->enabled || $conf->service->enabled)
+	{
+		$langs->load("products");
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
+		print '<a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("All").' ('.$societe->NbProduct().')';
+		print '</a></td></tr></table>';
+	}
+
+	
 	print '<br>';
 
 	/*
@@ -179,7 +194,7 @@ if ( $societe->fetch($socid) )
 		$db->free($resql);
 		if ($num > 0)
 		{
-			print "</table><br>";
+			print "</table>";
 		}
 	}
 	else
@@ -230,25 +245,12 @@ if ( $societe->fetch($socid) )
 		$db->free($resql);
 		if ($num > 0)
 		{
-			print '</table><br>';
+			print '</table>';
 		}
 	}
 	else
 	{
 		dol_print_error($db);
-	}
-
-	/*
-	 * Liste des produits
-	 */
-	if ($conf->produit->enabled || $conf->service->enabled)
-	{
-		$langs->load("products");
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
-		print '<a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("All").' ('.$societe->NbProduct().')';
-		print '</a></td></tr></table>';
 	}
 
 	print '</td></tr>';
