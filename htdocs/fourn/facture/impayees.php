@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      �ric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
  */
 
 /**
-		\file       htdocs/fourn/facture/impayees.php
-		\ingroup    facture
-		\brief      Page de liste des factures fournisseurs impay�es
-		\version    $Id$
-*/
+ *		\file       htdocs/fourn/facture/impayees.php
+ *		\ingroup    facture
+ *		\brief      Page to list all unpayed invoices
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
@@ -39,7 +39,7 @@ $langs->load("bills");
 
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 
-// S�curit� acc�s client
+// Security check
 if ($user->societe_id > 0)
 {
 	$action = '';
@@ -55,7 +55,10 @@ $now=gmmktime();
 
 llxHeader('',$langs->trans("BillsSuppliersUnpayed"));
 
+$facturestatic=new FactureFournisseur($db);
+$companystatic=new Societe($db);
 
+		
 /***************************************************************************
 *                                                                         *
 *                      Mode Liste                                         *
@@ -185,9 +188,6 @@ if ($user->rights->fournisseur->facture->lire)
 		print '</form>';
 
 
-		$facturestatic=new FactureFournisseur($db);
-
-
 		if ($num > 0)
 		{
 			$var=True;
@@ -204,17 +204,24 @@ if ($user->rights->fournisseur->facture->lire)
 				print "<tr $bc[$var]>";
 				$class = "impayee";
 
-				print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill")."</a> ";
-				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.$objp->ref.'</a>';
-				if ($objp->datelimite < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+				print '<td nowrap>';
+				$facturestatic->id=$objp->facid;
+				$facturestatic->ref=$objp->ref;
+				print $facturestatic->getNomUrl(1);
 				print "</td>\n";
 
 				print "<td nowrap>".dol_trunc($objp->facnumber,12)."</td>\n";
 
 				print "<td nowrap align=\"center\">".dol_print_date($objp->df)."</td>\n";
-				print "<td nowrap align=\"center\">".dol_print_date($objp->datelimite)."</td>\n";
+				print "<td nowrap align=\"center\">".dol_print_date($objp->datelimite);
+				if ($objp->datelimite < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+				print "</td>\n";
 
-				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,32).'</a></td>';
+				print '<td>';
+				$companystatic->id=$objp->socid;
+				$companystatic->nom=$objp->nom;
+				print $companystatic->getNomUrl(1,'supplier',32);
+				print '</td>';
 
 				print "<td align=\"right\">".price($objp->total_ht)."</td>";
 				print "<td align=\"right\">".price($objp->total_ttc)."</td>";
