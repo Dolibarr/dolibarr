@@ -131,7 +131,8 @@ class pdf_crabe extends ModelePDFFactures
 				$fac = new Facture($this->db,"",$id);
 				$ret=$fac->fetch($id);
 			}
-
+			$fac->fetch_client();
+			
 			$deja_regle = $fac->getSommePaiement();
 			$amount_credit_not_included = $fac->getSommeCreditNote();
 
@@ -994,6 +995,14 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEcheance")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), '', 'R');
 		}
 
+		if ($object->client->code_client)
+		{
+			$posy+=5;
+			$pdf->SetXY(100,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $object->client->code_client, '', 'R');
+		}
+		
 		if ($showadress)
 		{
 			// Emetteur
@@ -1041,7 +1050,6 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(102,$posy-5);
 			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
-			$object->fetch_client();
 
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);

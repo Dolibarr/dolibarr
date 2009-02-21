@@ -130,7 +130,8 @@ class pdf_oursin extends ModelePDFFactures
 				$fac = new Facture($this->db,"",$id);
 				$ret=$fac->fetch($id);
 			}
-
+			$fac->fetch_client();
+			
 			$deja_regle = $fac->getSommePaiement();
 			$amount_credit_not_included = $fac->getSommeCreditNote();
 
@@ -865,7 +866,6 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetXY($this->marges['g']+100,$posy-5);
 		$pdf->SetFont('Arial','B',11);
-		$fac->fetch_client();
 
 		$object=$fac;
 
@@ -937,22 +937,28 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Bill").' '.$outputlangs->transnoentities("Of").' '.dol_print_date($fac->date,"%d %B %Y",false,$outputlangs,true), '' , 'L');
 		$pdf->SetFont('Arial','B',11);
-		$pdf->SetXY($this->marges['g'],$posy+6);
+		$pdf->SetXY($this->marges['g'],$posy+5);
 		$pdf->SetTextColor(22,137,210);
 		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("RefBill")." : " . $outputlangs->transnoentities($fac->ref), '', 'L');
 		$pdf->SetTextColor(0,0,0);
-
-		/*
-		 * ref projet
-		 */
-		if ($fac->projetid > 0)
+		
+		if ($object->type != 2)
 		{
-			$projet = New Project($fac->db);
-			$projet->fetch($fac->projetid);
+			$posy+=8;
+			$pdf->SetXY($this->marges['g'],$posy+5);
 			$pdf->SetFont('Arial','',9);
-			$pdf->MultiCell(60, 4, $outputlangs->transnoentities("Project")." : ".$projet->title);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEcheance")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), '', 'L');
 		}
 
+		if ($object->client->code_client)
+		{
+			$posy+=4;
+			$pdf->SetXY($this->marges['g'],$posy+5);
+			$pdf->SetFont('Arial','',9);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $object->client->code_client, '', 'L');
+		}
+		
+		
 		/*
 		 * ref propal
 		 */
@@ -966,8 +972,13 @@ class pdf_oursin extends ModelePDFFactures
 			if ($result)
 			{
 				$objp = $fac->db->fetch_object();
-				$pdf->SetFont('Arial','',9);
-				$pdf->MultiCell(60, 4, $outputlangs->transnoentities("RefProposal")." : ".$objp->ref);
+				if ($objp->ref)
+				{
+					$posy+=4;
+					$pdf->SetXY($this->marges['g'],$posy+5);
+					$pdf->SetFont('Arial','',9);
+					$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefProposal")." : ".$objp->ref);
+				}
 			}
 		}
 
