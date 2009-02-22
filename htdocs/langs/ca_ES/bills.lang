@@ -14,6 +14,12 @@ BillsStatisticsSuppliers = Estadístiques factures de proveïdors
 InvoiceStandard = Factura estàndard
 InvoiceStandardAsk = Factura estàndard
 InvoiceStandardDesc = Aquest tipus de factura és la factura tradicional. També es coneix com <b>factura de dèbit</ b> (del verb deure).
+InvoiceDeposit = Factura d'acompte
+InvoiceDepositAsk = Factura d'acompte
+InvoiceDepositDesc = La <b>factura d'acompte</b> es el tipus de factura que es crea a la recepció d'un acopmte.
+InvoiceProFormat = 
+InvoiceProFormatAsk = 
+InvoiceProFormatDesc = La <b>factura proforma</b> es l'imatge d'una factura definitiva, pero que no té cap valor comptable.
 InvoiceReplacement = Factura rectificativa
 InvoiceReplacementAsk = Factura rectificativa de la factura
 InvoiceReplacementDesc = La <b>factura rectificativa</ b> serveix per a cancel·lar i per substituir una factura existent sobre la qual encara no hi ha pagaments.<br>Nota: Només una factura sense cap pagament pot rectificarse. Si aquesta última no està tancada, passarà automàticament al estad 'abandonada'.
@@ -87,6 +93,7 @@ BillStatus = Estat de la factura
 BillStatusDraft = Esborrany (a validar)
 BillStatusPayed = Pagada
 BillStatusPayedBackOrConverted = Reemborsada o convertida en reducció
+BillStatusConverted = Convertida en reducció
 BillStatusCanceled = Abandonada
 BillStatusValidated = Validada (a pagar)
 BillStatusStarted = Pagada parcialment
@@ -159,6 +166,7 @@ ShowBill = Veure factura
 ShowInvoice = Veure factura
 ShowInvoiceReplace = Veure factura rectificativa
 ShowInvoiceAvoir = Veure abonament
+ShowInvoiceDeposit = Mostrar factura d'acompte
 ShowPayment = Veure pagament
 File = Fitxer
 AlreadyPayed = Ja pagat
@@ -244,7 +252,7 @@ CloneInvoice = Clonar factura
 CloneMainAttributes = Clonar l'objecte amb els seus atributs principals
 ConfirmCloneInvoice = Esteu segur de voler clonar aquesta factura?
 DisabledBecauseReplacedInvoice = Acció desactivada perquè és una factura reemplaçada
-# PaymentConditions = undefined = undefined
+# PaymentConditions =  = 
 PaymentConditionShortRECEP = A la recepció
 PaymentConditionRECEP = A la recepció de la factura
 PaymentConditionShort30D = 30 dies
@@ -255,7 +263,7 @@ PaymentConditionShort60D = 60 dies
 PaymentCondition60D = Pagament als 60 dies
 PaymentConditionShort60DENDMONTH = 60 dies a fi de mes
 PaymentCondition60DENDMONTH = Pagament als 60 dies a fi de mes
-# PaymentType = undefined = undefined
+# PaymentType =  = 
 PaymentTypeVIR = Transferència bancària
 PaymentTypeShortVIR = Transferència
 PaymentTypePRE = Domiciliació bancària
@@ -319,21 +327,21 @@ UsBillingContactAsIncoiveRecipientIfExist = Utilitzar l'adreça del contacte de 
 ShowUnpayedAll = Mostrar tots els pendents
 ShowUnpayedLateOnly = Mostrar els pendents en retard només
 PaymentInvoiceRef = Pagament factura %s
-# oursin PDF model = undefined = undefined
+# oursin PDF model =  = 
 Of = de
-# bernique PDF model = undefined = undefined
+# bernique PDF model =  = 
 PDFBerniqueDescription = Model per a les factures amb diversos tipus d'IVA, inclòs també el nombre d'IVA Intracomunitari
-# bigorneau PDF Model = undefined = undefined
+# bigorneau PDF Model =  = 
 PDFBigorneauDescription = Model de factura sense informacions de pagament
-# bulot PDF Model = undefined = undefined
+# bulot PDF Model =  = 
 PDFBulotDescription = Model de factura amb descomptes i informació de pagament
-# crabe PDF Model = undefined = undefined
+# crabe PDF Model =  = 
 PDFCrabeDescription = Model de factura complet (IVA, mètode de pagament a mostrar, logotip ...)
-# huitre PDF Model = undefined = undefined
+# huitre PDF Model =  = 
 PDFHuitreDescription = Model de factura amb descompte i informació de pagament
-# oursin PDF Model = undefined = undefined
+# oursin PDF Model =  = 
 PDFOursinDescription = Model de factura complet (IVA, mètodes de pagament, lliuraments, nom del projecte, referències de pressupost, logotip ...)
-# tourteau PDF Model = undefined = undefined
+# tourteau PDF Model =  = 
 PDFTourteauDescription = Model de factura sense descompte
 # NumRef Modules =  = 
 TerreNumRefModelDesc1 = Retorna el nombre sota el format %syymm-nnnn per a les factures i %syymm-nnnn per als abonaments on yy és l'any, mm. el mes i nnnn un comptador seqüencial sense ruptura i sense permanència a 0
