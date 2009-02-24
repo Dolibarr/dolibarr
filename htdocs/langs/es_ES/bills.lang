@@ -227,6 +227,7 @@ GlobalDiscount = Descuento fijo
 CreditNote = Abono
 CreditNotes = Abonos
 DiscountFromCreditNote = Descuento resultante del abono %s
+DiscountFromDeposit = Pagos de la factura de anticipo %s
 NewGlobalDiscount = Nuevo descuento fijo
 NoteReason = Nota/Motivo
 ReasonDiscount = Motivo

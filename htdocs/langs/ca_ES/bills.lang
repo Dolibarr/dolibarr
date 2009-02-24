@@ -227,6 +227,7 @@ GlobalDiscount = Descompte fixe
 CreditNote = Abonament
 CreditNotes = Abonaments
 DiscountFromCreditNote = Descompte resultant del abonament %s
+DiscountFromDeposit = Pagaments de la factura de bestreta %s
 NewGlobalDiscount = Nou descompte fixe
 NoteReason = Nota/Motiu
 ReasonDiscount = Motiu
