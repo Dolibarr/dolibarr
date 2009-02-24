@@ -935,9 +935,21 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		$langs->load("help");
 
 		$helpbaseurl='';
-		if ($langs->defaultlang == "fr_FR") $helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
-
-		$helppage=$langs->trans($helppagename);
+		if (eregi('^http',$helppagename))
+		{
+			// If complete URL
+			$helpbaseurl='%s';
+			$helppage=$helppagename;
+		}
+		else
+		{
+			// If relatvie URL
+			if ($langs->defaultlang == "fr_FR")
+			{
+				$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
+			}
+			$helppage=$langs->trans($helppagename);
+		}
 
 		if ($helpbaseurl)
 		{
