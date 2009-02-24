@@ -1,96 +1,83 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pt_PT
- * Automatic generated via language parser
- * Generation date 2009-01-18 18:56:33
- */
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
+# Dolibarr language file - pt_PT - categories
 CHARSET=UTF-8
 Category=Categoria
-Categories=Categorias
-Rubrique=Categoria
-Rubriques=Categorias
-categories=categorias
+Categories=Pategoría(s)
+Rubrique=Pasta
+Rubriques=Pastas
+categories=Categorias
 TheCategorie=A categoria
-In=Em
+NoCategoryYet=Nenhuma Categoria Deste Tipo Criada
+In=em
 AddIn=Adicionar em
-modify=modificar
+modify=Modificar
 Classify=Classificar
-CategoriesArea=Categorias área
-ProductsCategoriesArea=Produtos / Serviços&#39; categorias área
-SuppliersCategoriesArea=Fornecedores&#39; categorias área
-CustomersCategoriesArea=Clientes&#39; categorias área
-ThirdPartyCategoriesArea=Terceiros&#39; categorias área
-MainCats=Principais categorias
-SubCats=Subcategorias
+CategoriesArea=Área Categorias
+ProductsCategoriesArea=Área Categorias de Produtos e Serviços
+SuppliersCategoriesArea=Área Categorias Fornecedores
+CustomersCategoriesArea=Área Categorias Clientes
+ThirdPartyCategoriesArea=Área Categorias de Terceiros
+MainCats=Categorias Principais
+SubCats=Sub-Categorias
 CatStatistics=Estatísticas
-CatList=Lista de catgories
-AllCats=Todas as categorias
-ViewCat=Ver categoria
-NewCat=Adicionar categoria
-NewCategory=Nova categoria
-ModifCat=Modificar categoria
-CatCreated=Criar Categoria
-CreateCat=Criar categoria
-CreateThisCat=Criar esta categoria
-ValidateFields=Validar os campos
-NoSubCat=Não subcategoria.
+CatList=Lista de Categorias
+AllCats=Todas as Categorias
+ViewCat=Ver Categoria
+NewCat=Nova Categoria
+NewCategory=Nova Categoria
+ModifCat=Modificar uma Categoria
+CatCreated=Categoria Criada
+CreateCat=Adicionar uma Categoria
+CreateThisCat=Adicionar esta Categoria
+ValidateFields=Confirmar os campos
+NoSubCat=Esta categoria não contem Nenhuma subcategoria.
 SubCatOf=Subcategoria
-FoundCats=Encontrado categorias
-FoundCatsForName=Categorias encontrada para o nome:
+FoundCats=categorias encontradas
+FoundCatsForName=categorias encontradas com o Nome:
 FoundSubCatsIn=Subcategorias encontradas na categoria
-ErrSameCatSelected=Você selecionou várias vezes na mesma categoria
-ErrForgotCat=Você esqueceu-se de escolher a categoria
-ErrForgotField=Você esqueceu de informar os campos
-ErrCatAlreadyExists=Este nome já está sendo utilizado
-AddProductToCat=Adicione este produto a uma categoria?
-ImpossibleAddCat=Impossível adicionar a categoria
-ImpossibleAssociateCategory=Impossível associar a categoria para a
-WasAddedSuccessfully=<b>% s</b> foi adicionado com sucesso.
-ObjectAlreadyLinkedToCategory=Elemento já está ligada a esta categoria.
-CategorySuccessfullyCreated=Esta categoria% s foi adicionado com sucesso.
-ProductIsInCategories=Produto / serviço possui as seguintes categorias
-SupplierIsInCategories=Terceira parte possui a seguinte fornecedores categorias
-CompanyIsInCustomersCategories=Esta terceira parte possui a seguinte clientes / perspectivas categorias
-CompanyIsInSuppliersCategories=Esta terceira parte possui a seguinte fornecedores categorias
-ProductHasNoCategory=Este produto / serviço não está em nenhuma categoria
-SupplierHasNoCategory=Este fornecedor não está em nenhuma categoria
-CompanyHasNoCategory=Esta empresa não está em nenhuma categoria
-ClassifyInCategory=Classificar na categoria
-NoneCategory=Nenhum
-CategoryExistsAtSameLevel=Esta categoria já existe no mesmo local
-ReturnInProduct=Voltar ao produto / serviço de cartão
-ReturnInSupplier=Voltar ao fornecedor cartão
-ReturnInCompany=Voltar ao cliente / perspectiva cartão
-ContentsVisibleByAll=O conteúdo será visível por todos
-ContentsVisibleByAllShort=Sumário visível por todos
-ContentsNotVisibleByAllShort=Sumário não é visível por todos
-CategoriesTree=Categorias árvore
-DeleteCategory=Apagar categoria
-ConfirmDeleteCategory=Tem certeza de que deseja apagar esta categoria?
-RemoveFromCategory=Remover Link com categoria
-RemoveFromCategoryConfirm=Tem certeza de que deseja remover a ligação entre a operação e da categoria?
-NoCategoriesDefined=Não categoria definida
-SuppliersCategoryShort=Fornecedores categoria
-CustomersCategoryShort=Clientes categoria
-ProductsCategoryShort=Produtos categoria
-SuppliersCategoriesShort=Fornecedores categorias
-CustomersCategoriesShort=Clientes categorias
-CustomersProspectsCategoriesShort=Custo. / prosp. categorias
-ProductsCategoriesShort=Produtos Categorias
-ThisCategoryHasNoProduct=Esta categoria não contém qualquer produto.
-ThisCategoryHasNoSupplier=Esta categoria não contém qualquer fornecedor.
-ThisCategoryHasNoCustomer=Esta categoria não contém qualquer cliente.
-AssignedToCustomer=Atribuído a um cliente
-AssignedToTheCustomer=Atribuído ao cliente
-InternalCategory=Inernal categoria
-CategoryContents=Categoria conteúdo
-CategId=ID da categoria
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+ErrSameCatSelected=Selecionou a mesma categoria varias veces
+ErrForgotCat=Esqueceu-se escojer a categoria
+ErrForgotField=Esqueceu-se reatribuir um campo
+ErrCatAlreadyExists=Este Nome esta ser utilizado
+AddProductToCat=¿Adicionar este produto a uma categoria?
+ImpossibleAddCat=Impossivel Adicionar a categoria
+ImpossibleAssociateCategory=Impossivel associar a categoria
+WasAddedSuccessfully=Foi adicionado com éxito.
+ObjectAlreadyLinkedToCategory=O elemento já está emparelhado a esta categoria
+CategorySuccessfullyCreated=A Categoria %s foi inserida com sucesso
+ProductIsInCategories=Este produto/serviço encontra-se nas seguintes categorias
+SupplierIsInCategories=Este fornecedor encontra-se nas seguintes categorias
+CompanyIsInCustomersCategories=Esta empresa encontra-se nas seguintes categorias
+CompanyIsInSuppliersCategories=Esta empresa encontra-se nas seguintes caterogrias de Fornecedores
+ProductHasNoCategory=Este produto/serviço não se encontra em nenhuma categoria em particular
+SupplierHasNoCategory=Este fornecedor não se encontra em Nenhuma categoria em particular
+CompanyHasNoCategory=Esta empresa não se encontra em Nenhuma categoria em particular
+ClassifyInCategory=Esta categoria não contem clientes
+NoneCategory=Nenhuma
+CategoryExistsAtSameLevel=Esta categoria já existe na mesma localização
+ReturnInProduct=Voltar à ficha produto/serviço
+ReturnInSupplier=Voltar à ficha fornecedor
+ReturnInCompany=Voltar à ficha cliente/cliente potencial
+ContentsVisibleByAll=O Conteudo Será Visivel por Todos?
+ContentsVisibleByAllShort=Conteudo visivel por todos
+ContentsNotVisibleByAllShort=Conteudo não visivel por todos
+CategoriesTree=Árvore de categorias
+DeleteCategory=Eliminar categoria
+ConfirmDeleteCategory=¿Está seguro de querer eliminar esta categoria?
+RemoveFromCategory=Eliminar link com categoria
+RemoveFromCategoryConfirm=¿Está seguro de querer eliminar o link entre a transação e a categoria?
+NoCategoriesDefined=Nenhuma Categoria Definida
+SuppliersCategoryShort=Categoria Fornecedores
+CustomersCategoryShort=Categoria Clientes
+ProductsCategoryShort=Categoria Produtos
+SuppliersCategoriesShort=Categorias Fornecedores
+CustomersCategoriesShort=Categorias Clientes
+CustomersProspectsCategoriesShort=Cat. Clientes/Potenciais
+ProductsCategoriesShort=Categorias Produtos
+ThisCategoryHasNoProduct=Esta categoria não contem nenhum produto.
+ThisCategoryHasNoSupplier=Esta categoria não contem a nenhum fornecedor.
+ThisCategoryHasNoCustomer=Esta categoria não contem a nenhum cliente.
+AssignedToCustomer=Atribuir a um cliente
+AssignedToTheCustomer=Atribuido a um cliente
+InternalCategory=Categoria Interna
+CategoryContents=Conteudo da Categoria
+CategId=Id Categoria

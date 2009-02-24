@@ -1,60 +1,46 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pt_PT
- * Automatic generated via language parser
- * Generation date 2009-01-18 18:56:33
- */
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
+# Dolibarr language file - pt_PT - sendings
 CHARSET=UTF-8
-RefSending=Ref. enviar
-Sending=Enviar
-Sendings=Sendings
-Receivings=Receivings
-SendingsArea=Sendings área
-ListOfSendings=Lista de sendings
-SendingMethod=Enviando método
-SendingReceipt=Enviando recepção
-LastSendings=Última% s sendings
-SearchASending=Procurar um envio
-StatisticsOfSendings=Estatísticas do sendings
-NbOfSendings=Número de sendings
-SendingCard=Enviar cartão
-NewSending=Novo envio
-CreateASending=Criar um envio
-CreateSending=Criar envio
-QtyOrdered=Qtd ordenados
-QtyShipped=Qtd expedidos
-QtyToShip=Qtd de navio
-QtyReceived=Qtd recebidas
-KeepToShip=Mantenha-navio
-OtherSendingsForSameOrder=Outros sendings para este fim
-DateSending=Data de envio ordem
-DateSendingShort=Data de envio ordem
-SendingsForSameOrder=Sendings para este fim
-SendingsAndReceivingForSameOrder=Sendings e receivings para este fim
-SendingsToValidate=Enviando para validar
+RefSending=Ref. envío
+Sending=Envío
+Sendings=Envíos
+Receivings=Recepções
+SendingsArea=Área envíos
+ListOfSendings=Lista de Envíos
+SendingMethod=Método de Envío
+SendingReceipt=Entrega
+LastSendings=Os %s Ultimos Envíos
+SearchASending=Procurar Envío
+StatisticsOfSendings=Estatísticas de Envíos
+NbOfSendings=Número de Envíos
+SendingCard=Ficha de Envío
+NewSending=Novo Envío
+CreateASending=Criar um Envío
+CreateSending=Criar Envío
+QtyOrdered=Quant. Pedida
+QtyShipped=Quant. Enviada
+QtyToShip=Quant. a Enviar
+QtyReceived=Quant. Recibida
+KeepToShip=Fica por Enviar
+OtherSendingsForSameOrder=Outros Envíos deste Pedido
+DateSending=Data de Expedição
+DateSendingShort=Data de Expedição
+SendingsForSameOrder=Expedições deste Pedido
+SendingsAndReceivingForSameOrder=Envíos e Recepções deste pedido
+SendingsToValidate=Envíos a Confirmar
 StatusSendingDraft=Rascunho
-StatusSendingValidated=Validado (produtos para os navios ou já expedidos)
+StatusSendingValidated=Validado (produtos a enviar o enviados)
 StatusSendingDraftShort=Rascunho
 StatusSendingValidatedShort=Validado
-SendingSheet=Enviar Ficha
-Carriers=Transportadoras
-Carrier=Transportadora
-CarriersArea=Transportadoras área
-NewCarrier=Novo transportadora
-ConfirmDeleteSending=Tem certeza de que deseja excluir este envio?
-ConfirmValidateSending=Tem certeza de que deseja valdate este envio?
-ConfirmCancelSending=Tem certeza de que deseja cancelar o envio?
-GenericTransport=Genérico transporte
-Enlevement=Quecido por cliente
-DocumentModelSimple=Simples documento modelo
-WarningNoQtyLeftToSend=Atenção, nenhum produto à espera de ser enviados.
-NumRefModelJade=Retorna um número de referência com formato BLYY00001, ... onde YY é o ano. Número no final nunca é reposto a zero.
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+SendingSheet=Ficha de envío
+Carriers=Transportistas
+Carrier=Transportista
+CarriersArea=Área transportistas
+NewCarrier=Novo transportista
+ConfirmDeleteSending=¿Está seguro de querer eliminar esta expedição?
+ConfirmValidateSending=¿Está seguro de querer Confirmar esta expedição?
+ConfirmCancelSending=¿Está seguro de querer anular esta expedição?
+GenericTransport=Transporte genérico
+Enlevement=Pick-up por o cliente
+DocumentModelSimple=Modelo simples
+WarningNoQtyLeftToSend=Atenção, nenhum produto à espera de ser enviado.
+NumRefModelJade=Devolve um número de referencia em formato l BLYY00001 ... donde AA é o ano. o incremento para o ano seguinte não se restablece ao inicio de ano.

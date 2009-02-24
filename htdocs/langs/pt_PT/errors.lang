@@ -1,56 +1,49 @@
-# Dolibarr language file - pt_PT - errors          
+# Dolibarr language file - pt_PT - errors
 CHARSET=UTF-8
-ErrorLoginAlreadyExists=Login %s já existe.
-ErrorGroupAlreadyExists=Grupo %s já existe.
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
-ErrorDuplicateTrigger=Um arquivo com a classe acionar nam <b>&#39;% s&#39;</b> está presente sevaral vezes. Remover duplicado acionar arquivo no diretório <b>&#39;% s&#39;.</b>
-ErrorFailToDeleteFile=Falha ao remover o arquivo <b>&#39;% s&#39;.</b>
-ErrorFailToCreateFile=Falha ao criar arquivo <b>&#39;% s&#39;.</b>
-ErrorFailToRenameDir=Falha ao renomear diretório <b>&#39;% s&#39; em&#39;% s&#39;.</b>
-ErrorFailToCreateDir=Falha ao criar diretório <b>&#39;% s&#39;.</b>
-ErrorFailToDeleteDir=Falha ao excluir Diretório <b>&#39;% s&#39;.</b>
-ErrorFailedToDeleteJoinedFiles=Não é possível excluir entidade porque há alguns aderiram arquivos. Remover juntar ficheiros em primeiro lugar.
-ErrorThisContactIsAlreadyDefinedAsThisType=Este contacto já está definido para este tipo de contacto.
-ErrorCashAccountAcceptsOnlyCashMoney=Esta é uma conta bancária, dinheiro em conta, por isso aceita pagamentos em dinheiro somente do tipo.
-ErrorFromToAccountsMustDiffers=Fonte metas e contas bancárias devem ser diferentes.
-ErrorBadThirdPartyName=Valor inválido para o terceiro nome
-ErrorBadCustomerCodeSyntax=Bad sintaxe de código cliente
-ErrorCustomerCodeRequired=Cliente código exigido
-ErrorCustomerCodeAlreadyUsed=Cliente código já utilizado
-ErrorPrefixRequired=Prefixo exigido
-ErrorBadSupplierCodeSyntax=Bad sintaxe do código fornecedor
-ErrorSupplierCodeRequired=Fornecedor código exigido
-ErrorSupplierCodeAlreadyUsed=Fornecedor código já utilizado
-ErrorBadParameters=Bad parâmetros
-ErrorFailedToWriteInDir=Falha ao gravar no diretório% s
-ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Encontrado sintaxe incorreta e-mail para% s linhas do arquivo (exemplo e-mail com a linha% s =% s)
-ErrorUserCannotBeDelete=O usuário não pode ser suprimido. Pode ser que é associada, em Dolibarr entidades.
-ErrorFieldsRequired=Alguns campos obrigatórios não foram preenchidos.
-ErrorFailedToCreateDir=Falha ao criar um diretório. Verifique se servidor Web usuário tem permissões para escrever em documentos Dolibarr diretório. Se parâmetro <b>safe_mode</b> está ativada nesse PHP, verificar que Dolibarr php possui arquivos para servidor web utilizador (ou grupo).
-ErrorNoMailDefinedForThisUser=Não definido mail para este usuário
-ErrorFeatureNeedJavascript=Este recurso deve ser precisa de Javascript activado para o trabalho. Alterar esta configuração em - visor.
-ErrorTopMenuMustHaveAParentWithId0=Um menu do tipo &#39;Top&#39; não pode ter uma mãe menu. Coloque 0 na mãe menu ou escolher um menu do tipo &quot;esquerda&quot;.
-ErrorLeftMenuMustHaveAParentId=Um menu do tipo &quot;esquerda&quot; tem de ter um pai id.
-ErrorGenbarCodeNotfound=Arquivo não encontrado (Bad caminho, permissões erradas ou o acesso foi negado pelo openbasedir parâmetro)
-ErrorFunctionNotAvailableInPHP=<b>Função% s</b> é necessária para esta função, mas não está disponível nesta versão / configuração do PHP.
-ErrorDirAlreadyExists=Um diretório com esse nome já existe.
-ErrorFieldCanNotContainSpecialCharacters=<b>Campo% s</b> não contém caracteres especiais.
-WarningAllowUrlFopenMustBeOn=Parâmetro <b>allow_url_fopen</b> deve ser definida <b>para, em</b> filer <b>php.ini</b> para ter este módulo trabalha completamente. Você deve modificar este arquivo manualmente.
-WarningBuildScriptNotRunned=<b>Script% s</b> não foi ainda correu para construir gráficos, ou não há dados que comprovem.
-WarningBookmarkAlreadyExists=Uma ficha com este título ou este objectivo (URL) já existe.
-WarningPassIsEmpty=Atenção, banco de dados senha está vazio. Este é um buraco na segurança. Você deve adicionar uma senha para o seu banco de dados e altere seu conf.php arquivo para refletir isso.
-ErrorNoAccountancyModuleLoaded=Não contabilidade módulo activado
-ErrorExportDuplicateProfil=Profil Este nome já existe para esta exportação set.
-ErrorLDAPSetupNotComplete=Dolibarr-LDAP correspondência não é completa.
-ErrorLDAPMakeManualTest=A. LDIF arquivo foi gerado no diretório% s. Tente carregá-lo manualmente a partir de linha de comando para ter mais informações sobre os erros.
-ErrorCantSaveADoneUserWithZeroPercentage=Não é possível salvar uma acção com o &quot;estatuto não começou&quot; se campo &quot;feita por&quot; também está cheia.
-ErrorBillRefAlreadyExists=Ref utilizado para criação já existe.
-ErrorPleaseTypeBankTransactionReportName=Por favor escreva nome recepção banco onde é relatada transacção (Formato AAAAMM ou AAAAMMDD)
-ErrorRecordHasChildren=Falha ao excluir registros, uma vez que tem alguma criança.
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+MenuManager=Gestor de menu
+ErrorLoginAlreadyExists=o login %s já existe.
+ErrorGroupAlreadyExists=o grupo %s já existe.
+ErrorDuplicateTrigger=um Ficheiro trigger de Nome '<b>%s</b>' está utilizado. Elimine o duplicado da pasta '<b>%s</b>'.
+ErrorFailToCreateFile=Erro ao criar o ficheiro '<b<%s</b>'
+ErrorFailToDeleteFile=Error à eliminar o Ficheiro '<b>%s</b>'.
+ErrorFailToRenameDir=Error à renombar a pasta '<b>%s</b>' a '<b>%s</b>'.
+ErrorFailToCreateDir=Erro ao criar a pasta '<b>%s</b>'
+ErrorFailToDeleteDir=Error à eliminar a pasta '<b>%s</b>'.
+ErrorFailedToDeleteJoinedFiles=impossivel eliminar a entidade já que tem Ficheiros anexos. Elimine antes os Ficheiros anexos
+ErrorThisContactIsAlreadyDefinedAsThisType=Este contacto já está definido como contacto para este tipo.
+ErrorCashAccountAcceptsOnlyCashMoney=Esta conta bancaria é de tipo Caixa e só aceita o método de pagamento de tipo <b>especie</b>.
+ErrorFromToAccountsMustDiffers=a conta origem e destino devem ser diferentes.
+ErrorBadThirdPartyName=Nome de Terceiro incorrecto
+ErrorBadCustomerCodeSyntax=a sintaxis do código cliente é incorrecta
+ErrorCustomerCodeRequired=Código cliente obrigatório
+ErrorCustomerCodeAlreadyUsed=Código de cliente já utilizado
+ErrorPrefixRequired=Prefixo obrigatório
+ErrorBadSupplierCodeSyntax=a sintaxis do código fornecedor é incorrecta
+ErrorSupplierCodeRequired=Código fornecedor obrigatório
+ErrorSupplierCodeAlreadyUsed=Código de fornecedor já utilizado
+ErrorBadParameters=parâmetros incorrectos
+ErrorFailedToWriteInDir=impossivel escribir na pasta %s
+ErrorFoundBadEmailInFile=Encontrada sintaxis incorrecta em email em %s linhas em Ficheiro (Exemplo linha %s com email=%s)
+ErrorUserCannotBeDelete=o utilizador não pode ser eliminado. Quizá esé asociado a elementos de Dolibarr.
+ErrorFieldsRequired=não se indicaron Alguns campos obrigatórios
+ErrorFailedToCreateDir= Error en la creaciÃ³n de una carpeta. Compruebe que el usuario del servidor Web tiene derechos de escritura en las carpetas de documentos de Dolibarr. Si el  parÃ¡metro <b>safe_mode</b> estÃ¡ activo en este PHP, Compruebe que los archivos php dolibarr pertenecen al usuario del servidor Web.
+ErrorNoMailDefinedForThisUser=E-Mail não definido para este utilizador
+ErrorFeatureNeedJavascript=Esta Funcionalidade precisa de javascript activo para funcionar. Modifique em configuração->entorno.
+ErrorTopMenuMustHaveAParentWithId0=um menu do tipo 'Superior' não pode ter um menu pai. Coloque 0 ao ID pai o busque um menu do tipo 'esquerdo'
+ErrorLeftMenuMustHaveAParentId=um menu do tipo 'esquerdo' deve de ter um ID de pai
+ErrorGenbarCodeNotfound=Ficheiro não encontrado (Rota incorrecta, permissões incorrectos o acesso prohibido por o parâmetro openbasedir)
+ErrorFunctionNotAvailableInPHP=a função  <b>%s</b> é requerida por esta Funcionalidade, mas não se encuetra disponivel em esta Versão/Instalação de PHP.
+ErrorDirAlreadyExists=já existe uma pasta com ese Nome.
+ErrorFieldCanNotContainSpecialCharacters=o campo <b>%s</b> não deve contener carácteres especiais
+WarningAllowUrlFopenMustBeOn=o parâmetro <b>allow_url_fopen</b> deve ser especificado a <b>on</b> ao Ficheiro <b>php.ini</b> para discolocar deste módulo completamente activo. deve modificar este Ficheiro manualmente
+WarningBuildScriptNotRunned=o script <b>%s</b> ainda não ha ejecutado a construcción de gráficos.
+WarningBookmarkAlreadyExists=já existe um marcador com este título o esta URL.
+WarningPassIsEmpty=Atenção: a palavra-passe da base de dados está vazia. Esto é buraco na segurança. deve agregar uma palavra-passe e a sua base de dados e alterar a sua Ficheiro conf.php para reflejar esto. 
+ErrorNoAccountancyModuleLoaded=Módulo de Contabilidade não activado
+ErrorExportDuplicateProfil=o Nome do perfil já existe para este lote de exportação
+ErrorLDAPSetupNotComplete=a configuração Dolibarr-LDAP é incompleta.
+ErrorLDAPMakeManualTest=foi criado unn Ficheiro .ldif na pasta %s. Trate de gastor manualmente este Ficheiro desde a linha de comandos para Obter mais detalles acerca do error.
+ErrorCantSaveADoneUserWithZeroPercentage=No se puede cambiar una acciÃ³n al estado no comenzada si tiene un usuario realizante de  la acciÃ³n.
+ErrorBillRefAlreadyExists=a referencia utilizada para a criação já existe
+ErrorPleaseTypeBankTransactionReportName=Introduzca o Nome do registo bancario sobre a qual o escrito está constatado (formato AAAAMM ó AAAMMJJ)
+ErrorRecordHasChildren=não se pode eliminar o registo porque tem hijos.

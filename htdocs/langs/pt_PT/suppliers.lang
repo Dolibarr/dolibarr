@@ -1,43 +1,35 @@
-# Dolibarr language file - pt_PT - fornecedores
+# Dolibarr language file - pt_PT - suppliers
 CHARSET=UTF-8
 Suppliers=Fornecedores
 Supplier=Fornecedor
 AddSupplier=Adicionar Fornecedor
-SupplierRemoved=Fornecedor removido
-NewSupplier=Novo fornecedor
-History=História
-OrderCard=Cartão de encomenda
-ListOfSuppliers=Lista de fornecedores
-ShowSupplier=Mostrar fonecedor
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
-SuppliersInvoice=Fornecedores factura
-SuppliersInvoices=Fornecedores facturas
-OrderDate=Ordenar data
-BuyingPrice=Comprando preço
-AddSupplierPrice=Adicionar fornecedor preço
-ChangeSupplierPrice=Mudar de fornecedor preço
-ErrorQtyTooLowForThisSupplier=Quantidade muito baixa para esse fornecedor ou sem preço definido sobre este produto para este fornecedor
-ErrorSupplierCountryIsNotDefined=País para este fornecedor não está definido. Corrigir esta primeira.
-ProductHasAlreadyReferenceInThisSupplier=Este produto já uma referência neste fornecedor
-NoRecordedSuppliers=Não fornecedores registrados
-SupplierPayment=Fornecedor pagamento
-SuppliersArea=Fornecedores área
+SupplierRemoved=Fornecedor Eliminado
+SuppliersInvoice=Factura a Fornecedor
+SuppliersInvoices=Facturas de Fornecedores
+NewSupplier=Novo Fornecedor
+History=Histórico
+ListOfSuppliers=Lista de Fornecedores
+ShowSupplier=Mostrar Fornecedor
+OrderDate=Data Pedido
+BuyingPrice=Preço de Compra
+AddSupplierPrice=Adicionar preço de fornecedor
+ChangeSupplierPrice=Modificar preço de fornecedor
+ErrorQtyTooLowForThisSupplier=Quantidade insuficiente para este fornecedor
+ErrorSupplierCountryIsNotDefined=O país deste fornecedor não está definido, corrija na sua ficha
+ProductHasAlreadyReferenceInThisSupplier=Este producto já tem uma referencia em este fornecedor
+NoRecordedSuppliers=Sem Fornecedores registados
+SupplierPayment=Pagamento a Fornecedor
+SuppliersArea=Área Fornecedores
 RefSupplierShort=Ref. fornecedor
-ExportDataset_fournisseur_1=Fornecedor lista facturas e facturas «linhas
-ExportDataset_fournisseur_2=Fornecedor facturas e pagamentos
-ApproveThisOrder=Aprovar este fim
-ConfirmApproveThisOrder=Tem certeza de que deseja aprovar esta ordem?
-DenyingThisOrder=Negar este fim
-ConfirmDenyingThisOrder=Tem certeza que pretende negar essa ordem?
-ConfirmCancelThisOrder=Tem certeza de que deseja cancelar esse pedido?
-AddCustomerOrder=Criar cliente fim
-AddCustomerInvoice=Criar cliente factura
-AddSupplierOrder=Criar fornecedor fim
-AddSupplierInvoice=Criar fornecedor factura
-ListOfSupplierProductForSupplier=Lista dos produtos e dos preços de <b>fornecedor% s</b>
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+ExportDataset_fournisseur_1=Facturas de Fornecedores e linhas de factura
+ExportDataset_fournisseur_2=Facturas Fornecedores e pagamentos
+ApproveThisOrder=Aprovar este pedido
+ConfirmApproveThisOrder=¿Está seguro de querer Aprovar este pedido?
+DenyingThisOrder=Negar este pedido
+ConfirmDenyingThisOrder=¿Está seguro de querer negar este pedido?
+ConfirmCancelThisOrder=¿Está seguro de querer cancelar este pedido?
+AddCustomerOrder=Criar pedido de cliente
+AddCustomerInvoice=Criar factura a cliente
+AddSupplierOrder=Criar pedido a fornecedor
+AddSupplierInvoice=Criar factura de fornecedor
+ListOfSupplierProductForSupplier=Listado de produtos e preços do fornecedor <b>%s</b>

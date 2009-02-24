@@ -1,50 +1,36 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pt_PT
- * Automatic generated via language parser
- * Generation date 2009-01-18 18:56:33
- */
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
+# Dolibarr language file - pt_PT - exports
 CHARSET=UTF-8
-ExportsArea=Exportações área
-ImportArea=Importar área
-NewExport=Nova exportação
-NewImport=Nova importação
-ExportableDatas=Exportable dados
-ImportableDatas=Importável dados
-SelectExportDataSet=Escolha de dados que pretende exportar ...
-SelectExportFields=Escolha campos que deseja exportar, ou selecionar um perfil predefinido exportação
-SaveExportModel=Guarde este perfil exportação, se pretender reutilizá-la mais tarde ...
-ExportModelName=Exportação nome do perfil
-ExportModelSaved=Exportação perfil guardado em <b>nome% s.</b>
-ExportableFields=Exportable campos
-ExportedFields=Exported campos
-DatasetToExport=Dataset para exportação
-Dataset=Dataset
-ChooseFieldsOrdersAndTitle=Escolha campos fim ...
-FieldsOrder=Campos fim
-FieldsTitle=Campos título
-ChooseExportFormat=Escolha exportação formato
-NowClickToGenerateToBuildExportFile=Agora, clique em &quot;Gerar&quot; para construir exportar o arquivo ...
-AvailableFormats=Formatos disponíveis
-LibraryUsed=Librairie
+ExportsArea=Área de Exportação
+ImportArea=Área de Importação
+NewExport=Nova Exportação
+NewImport=Nova Importação
+ExportableDatas=Conjunto de dados exportaveis
+ImportableDatas=Conjunto de dados importaveis
+SelectExportDataSet=Escolha um conjunto predefinido de dados que deseje exportar...
+SelectExportFields=Escolha Os campos que devem exportarse, ou escolha um perfil de exportação predefinido
+SaveExportModel=Guardar este perfil de exportação assim reutilizarlo posteriormente...
+ExportModelName=Nome do perfil de exportação
+ExportModelSaved=Perfil de exportação guardado com o nome de <b>%s</b>.
+ExportableFields=Campos exportaveis
+ExportedFields=Campos a exportar
+DatasetToExport=Conjunto de dados a exportar
+Dataset=Conjunto de dados
+ChooseFieldsOrdersAndTitle=Escolha a ordem dos campos...
+FieldsOrder=Ordem dos campos
+FieldsTitle=Título campos
+ChooseExportFormat=Escolha o formato de exportação
+NowClickToGenerateToBuildExportFile=Ahora, faça click "Gerar" para Gerar o fichero exportação...
+AvailableFormats=Formatos disponiveis
+LibraryUsed=Libraria utilizada
 LibraryVersion=Versão
-Step=Etapa
-FormatedImport=Importar assistente
-FormatedImportDesc1=Esta área permite a importação de dados personalizados, utilizando um assistente para ajudá-lo no processo, sem conhecimento técnico.
-FormatedImportDesc2=Primeiro passo é escolher um rei de dados que você deseja carregar e, em seguida, arquivo para carregar e, em seguida, para escolher as áreas que você deseja carregar.
-FormatedExport=Assistente Exportação
-FormatedExportDesc1=Esta área permite a exportação de dados personalizados, utilizando um assistente para ajudá-lo no processo, sem conhecimento técnico.
-FormatedExportDesc2=Primeiro passo é escolher um conjunto de dados previamente definidos e, em seguida, para escolher as áreas que você deseja inserir em seu resultado arquivos, e que a ordem.
-FormatedExportDesc3=Quando os dados são selecionados para a exportação, você pode definir o formato do arquivo de saída que você deseja exportar seus dados para.
+Step=Passo
+FormatedImport=Assistente de Importação
+FormatedImportDesc1=Esta área permite realizar importações personalizadas de dados mediante um ajudante que evita ter conhecimentos técnicos de Dolibarr.
+FormatedImportDesc2=O primeiro passo consiste em escolher o tipo de dado que deve importarse, logo o ficheiro e a continuação escolher os campos que deseja importar.
+FormatedExport=Assistente de Exportação
+FormatedExportDesc1=Esta área permite realizar exportações personalizadas dos dados mediante um ajudante que evita ter conhecimentos técnicos de Dolibarr.
+FormatedExportDesc2=O primeiro passo consiste em escolher um dos conjuntos de dados predefinidos, a continuação escolher os campos que quer exportar para o ficheiro e em que ordem.
+FormatedExportDesc3=Uma vez seleccionados os dados, é possivel escolher o formato do ficheiro de exportação gerado.
 Sheet=Folha
-NoImportableData=Não importável dados (nenhum módulo com as definições para permitir a importação de dados)
-FileSuccessfullyBuilt=Exportar arquivo gerado
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+NoImportableData=Não existe tipo de dados importavel (não existe nenhum módulo com definições de dados importavel activado)
+FileSuccessfullyBuilt=Ficheiro de exportação gerado

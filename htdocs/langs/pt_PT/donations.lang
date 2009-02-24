@@ -1,32 +1,25 @@
-# Dolibarr language file - pt_PT - donativos
+# Dolibarr language file - pt_PT - donations
 CHARSET=UTF-8
-Donation=Donativo
-Donationss=Donativos
-AddDonation=Adicionar um donativo
-DonationPromise=Promessa de presente
-PromisesNotValid=Sem promessas válidas
-PromisesValid=Promessas válidas
-DonationsPayed=Donativos pagos
-DonationsReceived=Donativos recebidos
-PublicDonation=Donativos públicos
-DonationsNumber=Nr. do donativo
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
-Donor=Doador
-Donors=Doadores
+Donation=Doação
+Donationss=Doações
+Donor=Donante
+Donors=Donantes
+AddDonation=Adicionar Doação
 NewDonation=Nova doação
-DonationsArea=Donativos área
-DonationStatusPromiseNotValidated=Projecto de promessa
-DonationStatusPromiseValidated=Validado promessa
-DonationStatusPayed=Doação recebida
-DonationStatusPromiseNotValidatedShort=Rascunho
-DonationStatusPromiseValidatedShort=Validado
-DonationStatusPayedShort=Recebidos
-ValidPromise=Validar promessa
-BuildDonationReceipt=Construa recepção
-DonationsModels=Documentos modelos de recibos doação
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+DonationPromise=Promessa de Doação
+PromisesNotValid=Promessas não validadas
+PromisesValid=Promessas validadas
+DonationsPayed=Doações pagas
+DonationsReceived=Doações ingresadas
+PublicDonation=Doação pública
+DonationsNumber=Número de Doações
+DonationsArea=Área de Doações
+DonationStatusPromiseNotValidated=Promessa não validada
+DonationStatusPromiseValidated=Promessa validada
+DonationStatusPayed=Doação paga
+DonationStatusPromiseNotValidatedShort=Não validada
+DonationStatusPromiseValidatedShort=Validada
+DonationStatusPayedShort=Paga
+ValidPromise=Confirmar Promessa
+BuildDonationReceipt=Criar recibo
+DonationsModels=Modelo de documento de recepção de Doação

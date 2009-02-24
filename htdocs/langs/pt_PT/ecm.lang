@@ -1,67 +1,53 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pt_PT
- * Automatic generated via language parser
- * Generation date 2009-01-18 18:56:33
- */
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
+# Dolibarr language file - pt_PT - ecm
 CHARSET=UTF-8
 MenuECM=Documentos
 DocsMine=Meus documentos
 DocsGenerated=Documentos gerados
-DocsElements=Elementos documentos
-DocsThirdParties=Documentos terceiros
+DocsElements=Documentos elementos
+DocsThirdParties=Documentos Terceiros
 DocsContracts=Documentos contratos
-DocsProposals=Documentos propostas
-DocsOrders=Documentos encomendas
+DocsProposals=Documentos Orçamentos
+DocsOrders=Documentos pedidos
 DocsInvoices=Documentos facturas
-ECMNbOfDocs=Nb de documentos no diretório
-ECMNbOfDocsSmall=Nb do doc.
-ECMSection=Directory
-ECMSectionManual=Manual diretório
-ECMSectionAuto=Automático Diretório
-ECMSectionsManual=Manual de diretórios
-ECMSectionsAuto=Automático diretórios
-ECMSections=Diretórios
-ECMRoot=Raiz
-ECMNewSection=Novo diretório
-ECMAddSection=Adicionar um manual diretório
-ECMNewSection=Novo manual diretório
+ECMNbOfDocs=Nº de documentos
+ECMNbOfDocsSmall=Nº Docs.
+ECMSection=Pasta
+ECMSectionManual=Pasta manual
+ECMSectionAuto=Pasta automática
+ECMSectionsManual=Pastas manuais
+ECMSectionsAuto=Pastas automáticas
+ECMSections=Pastas
+ECMRoot=Raíz
+ECMNewSection=Nova Pasta Manual
+ECMAddSection=Adicionar Pasta Manual
+ECMNewSection=Nova Pasta Manual
 ECMNewDocument=Novo documento
-ECMCreationDate=Data de criação
-ECMNbOfFilesInDir=Número de arquivos no diretório
-ECMNbOfSubDir=Número de sub-diretórios
-ECMNbOfFilesInSubDir=Nunber de iles em sub-diretórios
+ECMCreationDate=Data criação
+ECMNbOfFilesInDir=Número de Ficheiros na pasta
+ECMNbOfSubDir=Número de subpastas
+ECMNbOfFilesInSubDir=Número de Ficheiros em subpastas
 ECMCreationUser=Criador
-ECMArea=ECM área
-ECMAreaDesc=O ECM (Electronic Content Management) permite-lhe espaço para guardar, partilhar e pesquisar rapidamente todos os tipos de documentos em Dolibarr.
-ECMAreaDesc2=* Automático diretórios são preenchidos automaticamente quando adicionar documentos do cartão de um elemento. <br> * Manual de diretórios pode ser usado para guardar documentos não estejam ligados a um determinado elemento.
-ECMSectionWasRemoved=<b>Directory% s</b> foi eliminada.
-ECMDocumentsSection=Documento do diretório
-ECMSearchByKeywords=Busca por palavras-chave
-ECMSearchByEntity=Procura por objeto
-ECMSectionOfDocuments=Listas de documentos
+ECMArea=Área GED
+ECMAreaDesc=A área GED (Gestão Electrónica de Documentos) permite controlar rápidamente os documentos em Dolibarr.
+ECMAreaDesc2=Pode criar pastas manuais e Adicionar os documentos<br>as pastas automáticas são preenchidas automáticamente na além de um documento em uma ficha.
+ECMSectionWasRemoved=A pasta <b>%s</b> foi eliminada
+ECMDocumentsSection=Documento da secção
+ECMSearchByKeywords=Procurar por palabras Chave
+ECMSearchByEntity=Procurar por objecto
+ECMSectionOfDocuments=Pastas de documetos
 ECMTypeManual=Manual
 ECMTypeAuto=Automático
-ECMDocsByThirdParties=Documentos ligados a terceiros
-ECMDocsByProposals=Documentos ligados ao propostas
-ECMDocsByOrders=Documentos ligados aos clientes encomendas
-ECMDocsByContracts=Documentos ligados aos contratos
-ECMDocsByInvoices=Documentos ligados aos clientes facturas
-ECMDocsByProducts=Documentos relacionados com produtos
-ECMNoDirecotyYet=Não diretório criado
-ShowECMSection=Mostrar o diretório
-DeleteSection=Remover diretório
-ConfirmDeleteSection=Pode confirmar que deseja apagar o <b>diretório% s?</b>
-ECMDirectoryForFiles=Relativa diretório de arquivos
-CannotRemoveDirectoryContainsFiles=Removido não é possível porque ele contém alguns ficheiros
-ECMFileManager=Gestor de ficheiros
-ECMSelectASection=Selecione um diretório na árvore à esquerda ...
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+ECMDocsByThirdParties=Documentos associados a Terceiros
+ECMDocsByProposals=Documentos asoicados a Orçamentos
+ECMDocsByOrders=Documentos associados a pedidos
+ECMDocsByContracts=Documentos associados a contratos
+ECMDocsByInvoices=Documentos associados a facturas
+ECMDocsByProducts=Documentos ligados a produtos
+ECMNoDirecotyYet=Não foi criada a pasta
+ShowECMSection=Mostrar pasta
+DeleteSection=Apagar pasta
+ConfirmDeleteSection=¿Confirma o eliminar da pasta <b>%s</b>?
+ECMDirectoryForFiles=Pasta relativa para ficheiros
+CannotRemoveDirectoryContainsFiles=Não se pode eliminar porque contem Ficheiros
+ECMFileManager=Explorador de Ficheiros
+ECMSelectASection=Seleccione uma pasta ao árvore da esquerda

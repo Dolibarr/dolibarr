@@ -1,18 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pt_PT
- * Automatic generated via language parser
- * Generation date 2009-01-18 18:56:33
- */
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
+# Dolibarr language file - pt_PT - domains
 CHARSET=UTF-8
-DomainNames=Os nomes de domínio
-NewDomain=Novo nome de domínio
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+DomainNames=Nomes de dominios
+NewDomain=Novo dominio

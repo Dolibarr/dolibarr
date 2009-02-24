@@ -44,13 +44,6 @@ YouNeedToPersonalizeSetup=Agora necessita de configurar o Dolibarr por forma a c
 AdminLoginCreatedSuccessfuly=Login de Administrador criado com sucesso.
 GoToSetupArea=Prosseguir para a área de configuração
 Examples=Exemplos
-WithNoSlashAtTheEnd=Sem a barra "/" no final
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
-CHARSET=ISO-8859-1
 MiscellanousChecks=Pré-requisitos check
 ConfFileDoesNotExists=Ficheiro de <b>configuração% s</b> não existe!
 ConfFileDoesNotExistsAndCouldNotBeCreated=Ficheiro de <b>configuração% s</b> não existe e não poderia ser criado!
@@ -137,7 +130,7 @@ FieldRenamed=Campo renomeado
 IfLoginDoesNotExistsCheckCreateUser=Se login não existe ainda, você deve verificar a opção &quot;Criar usuário&quot;
 ErrorConnection=Servidor <b>&quot;% s&quot;,</b> nome do banco de dados <b>&quot;% s&quot;,</b> login <b>&quot;% s&quot;,</b> ou banco de dados senha pode estar errado ou PHP versão cliente pode ser muito velho para comparação de dados versão.
 MigrationOrder=Migração de dados para os clientes &quot;ordens
-MigrationSupplierOrder=Migração de dados de fornecedores&#39; ordens
+MigrationSupplierOrder=Migração de dados de Fornecedores&#39; ordens
 MigrationProposal=Migração de dados de propostas comerciais
 MigrationInvoice=Migração de dados para os clientes &quot;facturas
 MigrationContract=Migração de dados para os contratos
@@ -173,5 +166,3 @@ MigrationBankTransfertsNothingToUpdate=Todas as ligações são até à data
 MigrationShipmentOrderMatching=Sendings recepção atualização
 MigrationDeliveryOrderMatching=Entrega recepção atualização
 MigrationDeliveryDetail=Delivery update
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser

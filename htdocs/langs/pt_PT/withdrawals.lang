@@ -1,49 +1,35 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pt_PT
- * Automatic generated via language parser
- * Generation date 2009-01-18 18:56:33
- */
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
+# Dolibarr language file - pt_PT - withdrawals
 CHARSET=UTF-8
-StandingOrdersArea=Permanente ordens área
-CustomersStandingOrdersArea=Os clientes permanentes área
-StandingOrders=Permanente encomendas
-StandingOrder=Permanente encomendas
-NewStandingOrder=Nova ordem permanente
-Withdrawals=Retiradas
-Withdrawal=Retirada
-WithdrawalsReceipts=Retiradas recibos
-WithdrawalReceipt=Retirada recepção
-WithdrawalReceiptShort=Recibo
-LastWithdrawalReceipts=Última% s retirada recibos
-WithdrawedBills=Withdrawed facturas
-WithdrawalsLines=Retiradas linhas
-RequestStandingOrderToTreat=Pedido de permanentes para tratar
-RequestStandingOrderTreated=Pedido de permanentes tratados
-CustomersStandingOrders=Cliente permanentes
-CustomerStandingOrder=Cliente ordem permanente
-NbOfInvoiceToWithdraw=Nb retirar pedido de uma factura com
-InvoiceWaitingWithdraw=Factura esperando para retirar
-AmountToWithdraw=Montante a retirar
-WithdrawsRefused=Retire recusada
-NoInvoiceToWithdraw=Nenhum cliente fatura no modo de pagamento &quot;retirar&quot; está à espera. Vá em &quot;Retirar&quot; guia na factura cartão para fazer um pedido.
-ResponsibleUser=Responsável usuário
-WithdrawalsSetup=Retirada setup
-WithdrawStatistics=Retire «estatísticas
-WithdrawRejectStatistics=Retirar rejeita «estatísticas
-LastWithdrawalReceipt=Última% s retirando receitas
-MakeWithdrawRequest=Faça um pedido retirar
-ThirdPartyBankCode=Terceiro código bancário
-ThirdPartyDeskCode=Terceiro secretária código
-NoInvoiceCouldBeWithdrawed=Não factura withdrawed com sucesso. Verifique se a factura são as empresas com um válido BAN.
-ClassCredited=Classificar creditado
-ClassCreditedConfirm=Tem certeza de que deseja classificar esta retirada recepção como creditado em sua conta bancária?
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+StandingOrdersArea=Área Débitos Directos
+CustomersStandingOrdersArea=Área Débitos Directos de Clientes
+StandingOrders=Débitos Directos
+StandingOrder=Débitos Directos
+NewStandingOrder=Novo Débito Directo
+Withdrawals=Levantamentos
+Withdrawal=Levantamento
+WithdrawalsReceipts=Ordens de Levantamento
+WithdrawalReceipt=Ordem de Levantamento
+WithdrawalReceiptShort=Ordem
+LastWithdrawalReceipts=As %s últimas ordens de levantamento
+WithdrawedBills=Facturas de Levantamentos
+WithdrawalsLines=Linhas de Levantamento
+RequestStandingOrderToTreat=Pedidos de Débitos Directos a Tratar
+RequestStandingOrderTreated=Pedidos de Débitos Directos Processados
+CustomersStandingOrders=Débitos Directos de Clientes
+CustomerStandingOrder=Débito Directo de Cliente
+NbOfInvoiceToWithdraw=Nº de Facturas Pendentes de Levantamento
+InvoiceWaitingWithdraw=Facturas em Espera de Levantamento
+AmountToWithdraw=Quantidade a Levantar
+WithdrawsRefused=Débitos Directos Rejeitados
+NoInvoiceToWithdraw=Nenhuma factura a cliente com modo de pagamento 'Débito Directo' em espera. Ir ao separador 'Débito Directo' na ficha da factura para fazer um pedido.
+ResponsibleUser=Utilizador Responsável dos Débitos Directos
+WithdrawalsSetup=Configuração dos Débitos Directos
+WithdrawStatistics=Estatísticas de Débitos Directos
+WithdrawRejectStatistics=Estatísticas de Débitos Directos Rejeitados
+LastWithdrawalReceipt=Os %s Ultimos Débitos Directos Recebidos
+MakeWithdrawRequest=Realizar um Pedido de Débito Directo
+ThirdPartyBankCode=Código Banco do Terceiro
+ThirdPartyDeskCode=Código da Escritório do Terceiro
+NoInvoiceCouldBeWithdrawed=Não há factura de débito directo com sucesso. Verifique se a factura da empresa tem um válido BAN.
+ClassCredited=Classificar Acreditados
+ClassCreditedConfirm=¿Está seguro de querer classificar este débito directo como realizada sobre a sua conta bancaria?

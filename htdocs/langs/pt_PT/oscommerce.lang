@@ -1,23 +1,9 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pt_PT
- * Automatic generated via language parser
- * Generation date 2009-01-18 18:56:33
- */
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
+# Dolibarr language file - pt_PT - oscommerce
 CHARSET=UTF-8
 OSCommerce=OS Commerce
-OSCommerceSetup=OS Commerce módulo configuração
-OSCommerceSetupSaved=OS Commerce configuração salva
-OSCommerceServer=OS Commerce servidor host / ip
-OSCommerceDatabaseName=OS Commerce nome do banco de dados
-OSCommercePrefix=OS Commerce quadros prefixo
-OSCommerceUser=OS Commerce base login
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+OSCommerceSetup=Configuração do módulo OS Commerce
+OSCommerceSetupSaved=Configuração OS Commerce guardada
+OSCommerceServer=Nome/IP servidor da base de dados OS commerce
+OSCommerceDatabaseName=Nome da base de dados OS Commerce
+OSCommercePrefix=Prefixo Tabelas OS Commerce 
+OSCommerceUser=Utilizador da base de dados OS Commerce

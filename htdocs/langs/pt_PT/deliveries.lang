@@ -1,36 +1,25 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pt_PT
- * Automatic generated via language parser
- * Generation date 2009-01-18 18:56:33
- */
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
+# Dolibarr language file - pt_PT - deliveries
 CHARSET=UTF-8
-Delivery=Entrega
-Deliveries=Entregas
-DeliveryCard=Entrega cartão
-DeliveryOrder=Entrega fim
-DeliveryOrders=Entrega encomendas
-DeliveryDate=Data de entrega
-DeliveryDateShort=Deliv. data
-CreateDeliveryOrder=Gere entrega ordem
-QtyDelivered=Qtd entregues
-SetDeliveryDate=Definir a data marítimo
-ValidateDeliveryReceipt=Validar recibo de entrega
-ValidateDeliveryReceiptConfirm=Tem certeza de que deseja validar esta entrega recibo?
-DeliveryMethod=Método de entrega
-TrackingNumber=Número de rastreamento
-NameAndSignature=Nome e Assinatura:
-ToAndDate=To___________________________________ em ____ / _____ / __________
-GoodStatusDeclaration=Ter recebido as mercadorias acima em bom estado,
-Deliverer=Entregador:
-Sender=Remetente
-Recipient=Recipiente
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+Delivery=Envío
+Deliveries=Envíos
+DeliveryCard=Ficha envío
+DeliveryOrder=Ordem de envío
+DeliveryOrders=Ordens de envío
+DeliveryDate=Data de envío
+DeliveryDateShort=Data envío
+CreateDeliveryOrder=Gerar ordem de entrega
+QtyDelivered=Cant. enviada
+SetDeliveryDate=Indicar a data de envío
+ValidateDeliveryReceipt=Confirmar a nota de entrega
+ValidateDeliveryReceiptConfirm=¿Está seguro de que deseja Confirmar esta entrega?
+DeleteDeliveryReceipt=Eliminar a nota de entrega
+DeleteDeliveryReceiptConfirm=¿Está seguro de querer eliminar esta nota de entrega?
+DeliveryMethod=Método de envío
+TrackingNumber=Nº de tracking
+# merou PDF model						   =
+NameAndSignature=Nome e assinatura :
+ToAndDate=En___________________________________ a ____/_____/__________
+GoodStatusDeclaration=Recebi a mercadoria em bom estado, 
+Deliverer=Destinatario :
+Sender=Origem
+Recipient=Destinatario

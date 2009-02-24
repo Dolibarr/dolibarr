@@ -1,26 +1,19 @@
-# Dolibarr language file - pt_PT - viagens
+# Dolibarr language file - pt_PT - trips
 CHARSET=UTF-8
-Trip=Viagem
-Trips=Viagens
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
-TripsAndExpenses=Viagens e gastos
-TripCard=Cartão de visita
-AddTrip=Adicionar visita
-ListOfTrips=Lista de viagens
-ListOfFees=Lista das comissões
-NewTrip=Nova viagem
-CompanyVisited=Empresa / Fundação visitados
-Kilometers=Kilometers
-FeesKilometersOrAmout=Montante ou quilômetros
-DeleteTrip=Apagar viagem
-ConfirmDeleteTrip=Tem certeza de que deseja apagar esta viagem?
+Trip=Deslocação
+Trips=Deslocações
+TripsAndExpenses=Deslocações e Despesas
+TripId=Id Deslocação
+TripCard=Ficha de Deslocação
+AddTrip=Adicionar Deslocação
+ListOfTrips=Lista de Deslocações
+ListOfFees=Lista de Taxas
+NewTrip=Nova Deslocação
+CompanyVisited=Empresa/Instituição visitada
+Kilometers=Kilometros
+FeesKilometersOrAmout=Quantidade de kilómetros
+DeleteTrip=Eliminar Deslocação
+ConfirmDeleteTrip=¿Está seguro de querer eliminar esta deslocação?
 TF_OTHER=Outro
-TF_LUNCH=Almoço
+TF_LUNCH=Alimentação
 TF_TRIP=Viagem
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser

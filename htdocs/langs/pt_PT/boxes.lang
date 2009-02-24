@@ -1,59 +1,52 @@
-# Dolibarr language file - pt_PT - caixas
+# Dolibarr language file - pt_PT - boxes 
 CHARSET=UTF-8
-BoxLastRssInfos=Informações Rss
-BoxLastProducts=Produtos/serviços recentes
-BoxLastProductsInContract=Produtos/serviços contratados recentes
-BoxLastSupplierBills=Contas de fornecedores recentes
-BoxLastCustomerBills=Contas de clientes mais recentes
-BoxOldestUnpayedCustomerBills=Contas de clientes por pagar antigas
-BoxOldestUnpayedSupplierBills=Contas de fonecedores por pagar antigas
-BoxLastProposals=Propostas comerciais recentes
-BoxLastProspects=Possibilidades de venda recentes
-BoxLastCustomers=Lista de clientes recentes
-BoxLastCustomerOrders=Lista de compras de clientes recentes
-BoxLastSuppliers=Lista de fonecedores recentes
-BoxLastBooks=Lista de livros recentes
-BoxTitleLastBooks=Lista de livros registados %s 
-BoxTitleNbOfCustomers=Nome do cliente
-BoxTitleLastRssInfos=Lista de últimas notícias %s de %s
-BoxTitleLastProducts=Lista mais recente de produtos/serviços registados %s
-BoxTitleLastCustomerOrders=Últimas compras de clientes %s
-BoxTitleLastSuppliers=Últimos fonecedores registados %s
-BoxTitleLastCustomers=Lista dos clientes registados recentemente %s
-BoxTitleLastPropals=Últimas propostas registadas %s
-BoxTitleLastCustomerBills=Últimas contas de clientes %s
-BoxTitleLastSupplierBills=Últimas contas de fornecedores %s
-BoxTitleLastProspects=Últimas possibilidades de venda %s
-BoxTitleLastProductsInContract=Últimos produtos/serviços contractados %s
-BoxTitleOldestUnpayedCustomerBills=Contas de clientes por pagar mais antigas %s
-BoxTitleOldestUnpayedSupplierBills=Contas de fornecedores por pagar mais antigas %s
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
-BoxLastActions=Última acções
-BoxCurrentAccounts=Saldo de contas correntes
-BoxSalesTurnover=Volume de negócios
-BoxTotalUnpayedCustomerBills=Total unpayed do cliente facturas
-BoxTotalUnpayedSuppliersBills=Total unpayed do fornecedor de facturas
-BoxTitleLastCustomersOrProspects=Última% s gravado clientes ou perspectivas
-BoxTitleCurrentAccounts=Saldos da conta corrente
-BoxTitleSalesTurnover=Volume de negócios
-BoxTitleTotalUnpayedCustomerBills=Unpayed do cliente facturas
-BoxTitleTotalUnpayedSuppliersBills=Unpayed do fornecedor de facturas
-BoxMyLastBookmarks=Meus últimos% s favoritos
-FailedToRefreshDataInfoNotUpToDate=Falha ao atualizar fluxo RSS. Última atualização êxito data:% s
-NoRecordedBookmarks=No bookmarks defined. Click <a href=Não favoritos definidos. Clique <a href="%s">aqui</a> para adicionar marcadores.
-NoRecordedCustomers=Não clientes registados
-BoxTitleLastActionsToDo=Última% s acções que fazer
-NoActionsToDo=Nenhuma ação de fazer
-NoRecordedOrders=Não gravado ordens do cliente
-NoRecordedProposals=Não gravado propostas
-NoRecordedInvoices=Não gravados do cliente facturas
-NoUnpayedCustomerBills=Não unpayed do cliente facturas
-NoRecordedSupplierInvoices=Não gravado facturas do fornecedor
-NoUnpayedSupplierBills=Não unpayed do fornecedor de facturas
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+BoxLastRssInfos=Links de informação RSS
+BoxLastProducts=Últimos produtos/serviços
+BoxLastProductsInContract=Últimos produtos/serviços contratados
+BoxLastSupplierBills=Últimas facturas de Fornecedores
+BoxLastCustomerBills=Últimas facturas a clientes
+BoxOldestUnpayedCustomerBills=Facturas a clientes mais antiguas Pendentes de pagamento
+BoxOldestUnpayedSupplierBills=Facturas de Fornecedores mais antiguas Pendentes de pagamento
+BoxLastProposals=Últimos Orçamentos
+BoxLastProspects=Últimos clientes potenciais
+BoxLastCustomers=Últimos clientes
+BoxLastCustomerOrders=Últimos pedidos
+BoxLastSuppliers=Últimos Fornecedores
+BoxLastBooks=Últimos books
+BoxLastActions=Últimas acções
+BoxCurrentAccounts=Saldos contas correntes
+BoxSalesTurnover=Volume de negocio
+BoxTotalUnpayedCustomerBills=Total facturas a clientes Pendentes de pagamento
+BoxTotalUnpayedSuppliersBills=Total facturas de Fornecedores Pendentes de Pagamento
+BoxTitleLastBooks=Os %s últimos Favoritos registados
+BoxTitleNbOfCustomers=Número de clientes
+BoxTitleLastRssInfos=As %s Ultimas Infos de %s
+BoxTitleLastProducts=Os %s Ultimos Produtos/Serviços Registados
+BoxTitleLastCustomerOrders=Os %s últimos pedidos de clientes modificados
+BoxTitleLastSuppliers=Os %s últimos Fornecedores modificados
+BoxTitleLastCustomers=Os %s últimos clientes modificados
+BoxTitleLastCustomersOrProspects=Os %s últimos clientes ou clientes potenciais registados
+BoxTitleLastPropals=Os %s últimos Orçamentos registados
+BoxTitleLastCustomerBills=As %s últimas facturas a clientes registadas
+BoxTitleLastSupplierBills=As %s últimas facturas de Fornecedores registadas
+BoxTitleLastProspects=Os %s últimos clientes potenciais modificados
+BoxTitleLastProductsInContract=Os %s últimos produtos/serviços contratados
+BoxTitleOldestUnpayedCustomerBills=As %s facturas mais antiguas a clientes Pendentes de cobrança
+BoxTitleOldestUnpayedSupplierBills=As %s facturas mais antiguas de Fornecedores Pendentes de pagamento
+BoxTitleCurrentAccounts=Saldos das contas correntes
+BoxTitleSalesTurnover=Volume de negocio realizado
+BoxTitleTotalUnpayedCustomerBills=Pendente de clientes
+BoxTitleTotalUnpayedSuppliersBills=Pendente a Fornecedores
+BoxMyLastBookmarks=Os meus ultimos Favoritos
+FailedToRefreshDataInfoNotUpToDate=Erro ao  refresco do flujo RSS. data do último refresco: %s
+LastRefreshDate=Data última actualização
+NoRecordedBookmarks=Não existem favoritos pessoais. Click aqui para adicionar.
+NoRecordedCustomers=Nenhum cliente registado
+BoxTitleLastActionsToDo=As %s últimas acções a realizar
+NoActionsToDo=Sem acções a realizar
+NoRecordedOrders=Sem pedidos de clientes registados
+NoRecordedProposals=Sem Orçamentos registados
+NoRecordedInvoices=Sem facturas a clientes registados
+NoUnpayedCustomerBills=Sem facturas a clientes Pendentes de pagamento
+NoRecordedSupplierInvoices=Sem facturas de Fornecedores
+NoUnpayedSupplierBills=Sem facturas de Fornecedores Pendentes de Pagamento

@@ -1,59 +1,54 @@
-# Dolibarr language file - pt_PT - projectos
+# Dolibarr language file - pt_PT - projects
 CHARSET=UTF-8
 Project=Projecto
 Projects=Projectos
-NewProject=Novo projecto
-AddProject=Adicionar projecto
-DeleteAProject=Apagar projecto
-ConfirmDeleteAProject=Têm a certeza que quer apagar este projecto ?
-LastProjects=Últimos %s projectos
-AllProjects=Todos os projectos
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
 SharedProject=Projecto partilhado
-Myprojects=Meus projetos
-ProjectsArea=Projetos área
-DeleteATask=Excluir uma tarefa
-ConfirmDeleteATask=Tem certeza de que deseja eliminar esta tarefa?
-OfficerProject=Officer projecto
-ProjectsList=Lista dos projectos
-ShowProject=Visualizar projeto
-SetProject=Definir projeto
-NoProject=Não projecto definido
-NbOpenTasks=Nb abertura de tarefas
-NbOfProjects=Nb de projectos
-TimeSpent=Tempo gasto
-RefTask=Ref. tarefa
-LabelTask=Label tarefa
-NewTimeSpent=Novo tempo gasto
-MyTimeSpent=O meu tempo gasto
-MyTasks=Minhas tarefas
+Myprojects=Os Meus Projectos
+ProjectsArea=Área de Projectos
+NewProject=Novo Projecto
+AddProject=Criar Projecto
+DeleteAProject=Eliminar um projecto
+DeleteATask=Eliminar uma tarefa
+ConfirmDeleteAProject=¿Está seguro de querer eliminar este projecto?
+ConfirmDeleteATask=¿Está seguro de querer eliminar esta tarefa?
+OfficerProject=Responsável do projecto
+LastProjects=Os %s últimos projectos
+AllProjects=Todos os projectos
+ProjectsList=Lista de projectos
+ShowProject=Adicionar projecto
+SetProject=Definir projecto
+NoProject=Nenhum projecto definido
+NbOpenTasks=Nº Tarefas Abertas
+NbOfProjects=Nº de Projectos
+TimeSpent=Tempo dedicado
+RefTask=Ref. Tarefa
+LabelTask=Etiqueta de Tarefa
+NewTimeSpent=Novo Tempo Dedicado
+MyTimeSpent=O Meu Tempo Dedicado
+MyTasks=As minhas tarefas
 Tasks=Tarefas
 Task=Tarefa
-NewTask=Nova tarefa
-AddTask=Adicionar tarefa
-AddDuration=Adicionar duração
-Activity=Atividade
-Activities=Tarefas / atividades
-MyActivity=Minha atividade
-MyActivities=Minhas tarefas / actividades
-DurationEffective=Duração efectiva
-MyProjects=Meus projetos
-Time=Timne
-ListProposalsAssociatedProject=Lista de propostas comerciais associados ao projecto
-ListOrdersAssociatedProject=Listas das ordens associadas ao projecto
-ListInvoicesAssociatedProject=Listas das facturas associadas ao projecto
-ListSupplierOrdersAssociatedProject=Lista de fornecedores, associadas com o projeto
-ListSupplierInvoicesAssociatedProject=Lista de fornecedores facturas relacionadas com o projecto
-ListContractAssociatedProject=Lista de contratos relacionados com o projecto
-ActivityOnProjectThisWeek=Atividade no projeto esta semana
-ActivityOnProjectThisMonth=Atividade no projeto este mês
-ActivityOnProjectThisYear=Atividade no projeto deste ano
-ChildOfTaks=Criança de projecto / tarefa
-NotOwnerOfProject=Não proprietário deste projecto privado,
-AffectedTo=Visado para
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+NewTask=Nova Tarefa
+AddTask=Adicionar Tarefa
+AddDuration=Indicar Duração
+Activity=Actividade
+Activities=Tarefas/Actividades
+MyActivity=A Minha Actividade
+MyActivities=As Tarefas/Actividades
+DurationEffective=Duração Efectiva
+MyProjects=Os Meus Projectos
+Time=Tempo
+ListProposalsAssociatedProject=Lista de orçamentos associados ao projecto
+ListOrdersAssociatedProject=Lista de pedidos associados ao projecto
+ListInvoicesAssociatedProject=Lista de facturas associadas ao projecto
+ListPredefinedInvoicesAssociatedProject=Lista de facturas a clientes predefinidas associadas ao projecto
+ListSupplierOrdersAssociatedProject=Lista de pedidos a Fornecedores associados ao projecto
+ListSupplierInvoicesAssociatedProject=Lista de facturas de fornecedor associados ao projecto
+ListContractAssociatedProject=Lista de contratos associados ao projecto
+ActivityOnProjectThisWeek=Actividade ao projecto esta semana
+ActivityOnProjectThisMonth=Actividade ao projecto este mês
+ActivityOnProjectThisYear=Actividade ao projecto este ano
+ChildOfTaks=Link da tarefa
+NotOwnerOfProject=Não é responsável deste projecto privado
+AffectedTo=Atribuido a
+CantRemoveProject=Este projecto não pode ser eliminado porque está referenciado por muito objectos (facturas, pedidos e outros). ver a lista no separador referencias.

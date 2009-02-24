@@ -24,11 +24,6 @@ CountryCI=Costa do Marfim
 CountrySN=Senegal
 CountryAR=Argentina
 CountryCM=Camarões
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
 CountryPT=Portugal
 CountrySA=Arábia Saudita
 CountryMC=Mônaco
@@ -253,8 +248,8 @@ CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
 CivilityMME=Sra.
 CivilityMR=Sr.
-CivilityMLE=Ms.
-CivilityMTRE=Mestre
+CivilityMLE=Dr.
+CivilityMTRE=Eng.
 Currencyeuros=Euros
 CurrencyAUD=Dólar UA
 CurrencyCAD=Dólar CAN
@@ -268,5 +263,3 @@ CurrencyTND=TND
 CurrencyUSD=Dólar E.U.
 CurrencyXAF=Francos CFA BEAC
 CurrencyXOF=Francos CFA BCEAO
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser

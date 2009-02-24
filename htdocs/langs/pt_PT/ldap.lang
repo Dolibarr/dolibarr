@@ -1,41 +1,27 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pt_PT
- * Automatic generated via language parser
- * Generation date 2009-01-18 18:56:33
- */
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
+# Dolibarr language file - pt_PT - ldap
 CHARSET=UTF-8
-DomainPassword=Senha para o domínio
-YouMustChangePassNextLogon=Senha para o <b>usuário% s</b> sobre o <b>domínio% s</b> devem ser alteradas.
-UserMustChangePassNextLogon=Usuário deve alterar senha no domínio% s
-LdapUacf_NORMAL_ACCOUNT=Conta de utilizador
-LdapUacf_DONT_EXPIRE_PASSWORD=Senha nunca expira
-LdapUacf_ACCOUNTDISABLE=Conta desativada no domínio% s
-LDAPInformationsForThisContact=Informações em LDAP base de dados para este contato
-LDAPInformationsForThisUser=Informações na base de dados para esse usuário LDAP
-LDAPInformationsForThisGroup=Informações em LDAP base de dados para este grupo
-LDAPInformationsForThisMember=Informações em LDAP base de dados para este membro
+DomainPassword=Palavra-passe do dominio
+YouMustChangePassNextLogon=A palavra-passe de <b>%s</b> ao dominio <b>%s</b> deve de ser modificada.
+UserMustChangePassNextLogon=O utilizador deve alterar de palavra-passe na próxima ligação
+LdapUacf_NORMAL_ACCOUNT=Conta utilizador
+LdapUacf_DONT_EXPIRE_PASSWORD=A palavra-passe não caduca
+LdapUacf_ACCOUNTDISABLE=A conta está desactivada ao dominio
+LDAPInformationsForThisContact=Informação da base de dados LDAP deste contacto
+LDAPInformationsForThisUser=Informação da base de dados LDAP deste utilizador
+LDAPInformationsForThisGroup=Informação da base de dados LDAP deste grupo
+LDAPInformationsForThisMember=Informação da base de dados LDAP deste membro
 LDAPAttribute=Atributo LDAP
-LDAPAttributes=LDAP attributes
-LDAPCard=LDAP cartão
-LDAPRecordNotFound=O registo não foi encontrado na base de dados LDAP
-LDAPUsers=Os usuários na base de dados LDAP
-LDAPGroups=Grupos de LDAP database
-LDAPFieldStatus=Status
-LDAPFieldFirstSubscriptionDate=Primeira assinatura data
-LDAPFieldFirstSubscriptionAmount=Fist subscrição montante
-LDAPFieldLastSubscriptionDate=Última data subscrição
-LDAPFieldLastSubscriptionAmount=Última subscrição montante
-SynchronizeDolibarr2Ldap=Sincronizar usuário (Dolibarr -&gt; LDAP)
-UserSynchronized=Usuário sincronizado
-ForceSynchronize=Força sincronização Dolibarr -&gt; LDAP
-ErrorFailedToReadLDAP=Falha ao ler dados LDAP. Verifique LDAP módulo de dados de configuração e acessibilidade.
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+LDAPAttributes=Atributos LDAP
+LDAPCard=Ficha LDAP
+LDAPRecordNotFound=Registo não encontrado na base de dados LDAP
+LDAPUsers=Utilizadores na base de dados LDAP
+LDAPGroups=Grupos na base de dados LDAP
+LDAPFieldStatus=Estatuto
+LDAPFieldFirstSubscriptionDate=Data primeira adesão
+LDAPFieldFirstSubscriptionAmount=Montante primeira adesão
+LDAPFieldLastSubscriptionDate=Data da última adesão
+LDAPFieldLastSubscriptionAmount=Montante última adesão
+SynchronizeDolibarr2Ldap=Sincronizar utilizador (Dolibarr -> LDAP)
+UserSynchronized=Utilizador sincronizado
+ForceSynchronize=forçar sincronização Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Erro na leitura do anuario LDAP. Verificar a configuração do módulo LDAP e a acessibilidade do anuario.

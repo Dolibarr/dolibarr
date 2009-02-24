@@ -1,0 +1,5 @@
+# Dolibarr language file - pt_PT - energy
+CHARSET=UTF-8
+Energy=Energía
+NewCounter=Novo contador
+NewGroup=Novo grupo

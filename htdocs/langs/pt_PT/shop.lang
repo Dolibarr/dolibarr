@@ -1,25 +1,11 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pt_PT
- * Automatic generated via language parser
- * Generation date 2009-01-18 18:56:33
- */
-
-
-
-// Date 2009-01-18 18:56:33
-// START - Lines generated via parser
-// Reference language: en_US
+# Dolibarr language file - pt_PT - shop
 CHARSET=UTF-8
 Shop=Loja
-ShopWeb=Web Shop
-LastOrders=Últimos pedidos
+ShopWeb=Loja web
+LastOrders=Ultimos pedidos
 OnStandBy=Em espera
-TreatmentInProgress=Tratamento em andamento
-LastCustomers=Última clientes
-OSCommerceShop=OSCommerce loja
+TreatmentInProgress=Em progresso
+LastCustomers=Ultimos clientes
+OSCommerceShop=Loja OS Commerce
 OSCommerce=OSCommerce
-AddProd=Venda on-line
-// Date 2009-01-18 18:56:33
-// STOP - Lines generated via parser
+AddProd=Venda em linha
