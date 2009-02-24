@@ -41,10 +41,10 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 
 	$loaddate=$mode?true:false;
 	$loadsize=$mode?true:false;
-	
+
 	// Clean parameters
 	$path=eregi_replace('[\\/]+$','',$path);
-	
+
 	if (! is_dir($path)) return array();
 
 	if ($dir = opendir($path))
@@ -53,11 +53,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 		while (false !== ($file = readdir($dir)))
 		{
 			$qualified=1;
-			
+
 			// Check if file is qualified
 			if (eregi('^\.',$file)) $qualified=0;
 			if ($excludefilter && eregi($excludefilter,$file)) $qualified=0;
-			
+
 			if ($qualified)
 			{
 				// Check whether this is a file or directory and whether we're interested in that type
@@ -66,7 +66,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 					// Add entry into file_list array
 					if ($loaddate || $sortcriteria == 'date') $filedate=filemtime($path."/".$file);
 					if ($loadsize || $sortcriteria == 'size') $filesize=filesize($path."/".$file);
-					
+
 					if (! $filter || eregi($filter,$path.'/'.$file))
 					{
 						$file_list[] = array(
@@ -76,7 +76,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 						"size" => $filesize
 						);
 					}
-					
+
 					// if we're in a directory and we want recursive behavior, call this function again
 					if ($recursive)
 					{
@@ -101,7 +101,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 			}
 		}
 		closedir($dir);
-		
+
 		// Obtain a list of columns
 		$myarray=array();
 		foreach ($file_list as $key => $row)
@@ -110,7 +110,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 		}
 		// Sort the data
 		array_multisort($myarray, $sortorder, $file_list);
-		
+
 		return $file_list;
 	}
 	else
@@ -121,7 +121,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 
 /**
  * \brief	Compare 2 files
- * 
+ *
  * @param 	unknown_type $a		File 1
  * @param 	unknown_type $b		File 2
  * @return 	int					1, 0, 1
@@ -130,12 +130,12 @@ function dol_compare_file($a, $b)
 {
 	global $sortorder;
 	global $sortfield;
-	
+
 	$sortorder=strtoupper($sortorder);
-	
+
 	if ($sortorder == 'ASC') { $retup=-1; $retdown=1; }
 	else { $retup=1; $retdown=-1; }
-	
+
 	if ($sortfield == 'name')
 	{
 		if ($a->name == $b->name) return 0;
@@ -176,6 +176,7 @@ function dol_mimetype($file)
 	if (eregi('\.tiff$',$file))       $mime='image/tiff';
 	if (eregi('\.vcs$',$file))        $mime='text/calendar';
 	if (eregi('\.ics$',$file))        $mime='text/calendar';
+	if (eregi('\.torrent$',$file))    $mime='application/x-bittorrent';
 	if (eregi('\.(mp3|ogg|au)$',$file))           $mime='audio';
 	if (eregi('\.(avi|mvw|divx|xvid)$',$file))    $mime='video';
 	if (eregi('\.(zip|rar|gz|tgz|z|cab|bz2)$',$file)) $mime='archive';
@@ -202,7 +203,7 @@ function dol_dir_is_emtpy($folder)
 		return true;
 		else
 		return false;
-			
+
 		closedir($handle);
 	}
 	else

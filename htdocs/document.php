@@ -398,7 +398,9 @@ if ($modulepart)
     if ($modulepart == 'bittorrent')
     {
         $accessallowed=1;
-        $original_file=DOL_DATA_ROOT.'/bittorrent/files/'.$original_file;
+        $dir='files';
+        if ($type == 'application/x-bittorrent') $dir='torrents';
+        $original_file=DOL_DATA_ROOT.'/bittorrent/'.$dir.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
     }
 }
