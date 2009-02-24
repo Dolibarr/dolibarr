@@ -229,6 +229,7 @@ GlobalDiscount=Global discount
 CreditNote=Credit note
 CreditNotes=Credit notes
 DiscountFromCreditNote=Discount from credit note %s
+DiscountFromDeposit=Payments from deposit invoice %s
 NewGlobalDiscount=New discount
 NoteReason=Note/Reason
 ReasonDiscount=Reason
@@ -324,7 +325,7 @@ ChequesReceipts=Cheques receipts
 ChequesArea=Cheques deposits area
 ChequeDeposits=Cheques deposits
 Cheques=Cheques
-CreditNoteConvertedIntoDiscount=This credit note has been converted into %s
+CreditNoteConvertedIntoDiscount=This credit note or deposit invoice has been converted into %s
 UsBillingContactAsIncoiveRecipientIfExist=Use customer billing contact address instead of third party address as recipient for invoices
 PaymentInvoiceRef=Payment invoice %s
 # oursin PDF model

@@ -834,16 +834,60 @@ function top_menu($head, $title='', $target='')
  *  \brief      Affiche barre de menu gauche
  *  \param      menu_array      Tableau des entrees de menu
  *  \param      helppagename    Url pour le lien aide ('' par defaut)
- *  \param      form_search     Formulaire de recherche permanant supplementaire
+ *  \param      moresearchform     Formulaire de recherche permanant supplementaire
  */
-function left_menu($menu_array, $helppagename='', $form_search='')
+function left_menu($menu_array, $helppagename='', $moresearchform='')
 {
 	global $user, $conf, $langs, $db;
+
+	$searchform='';
+	$bookmarks='';
 
 	//    print '<div class="vmenuplusfiche">'."\n";
 	print '<table width="100%" class="notopnoleftnoright"><tr><td class="vmenu" valign="top">';
 
 	print "\n";
+
+
+	// Define $searchform
+	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
+	{
+		$langs->load("companies");
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/societe.php', DOL_URL_ROOT.'/societe.php',
+		img_object($langs->trans("List"),'company').' '.$langs->trans("Companies"), 'soc', 'socname');
+	}
+
+	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
+	{
+		$langs->load("companies");
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/index.php', DOL_URL_ROOT.'/contact/index.php',
+		img_object($langs->trans("List"),'contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
+	}
+
+	if (($conf->produit->enabled || $conf->service->enabled) && $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE && $user->rights->produit->lire)
+	{
+		$langs->load("products");
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/index.php',
+		img_object($langs->trans("List"),'product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
+	}
+
+	if ($conf->adherent->enabled && $conf->global->MAIN_SEARCHFORM_ADHERENT && $user->rights->adherent->lire)
+	{
+		$langs->load("members");
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php',
+		img_object($langs->trans("List"),'user').' '.$langs->trans("Members"), 'member', 'sall');
+	}
+
+	// Define $bookmarks
+	if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
+	{
+		include_once (DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php');
+		$langs->load("bookmarks");
+
+		$bookmarks=printBookmarksList($db, $langs);
+	}
+
+
 
 	// Colonne de gauche
 	print '<!-- Begin left vertical menu -->'."\n";
@@ -859,63 +903,28 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 	$menuleft=new MenuLeft($db,$menu_array);
 	$menuleft->showmenu();
 
-	// Affichage des zones de recherche permanantes
-	$ret='';
-	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
-	{
-		$langs->load("companies");
-		$ret.=printSearchForm(DOL_URL_ROOT.'/societe.php', DOL_URL_ROOT.'/societe.php',
-		img_object($langs->trans("List"),'company').' '.$langs->trans("Companies"), 'soc', 'socname');
-	}
 
-	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
-	{
-		$langs->load("companies");
-		$ret.=printSearchForm(DOL_URL_ROOT.'/contact/index.php', DOL_URL_ROOT.'/contact/index.php',
-		img_object($langs->trans("List"),'contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
-	}
-
-	if (($conf->produit->enabled || $conf->service->enabled) && $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE && $user->rights->produit->lire)
-	{
-		$langs->load("products");
-		$ret.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/index.php',
-		img_object($langs->trans("List"),'product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
-	}
-
-	if ($conf->adherent->enabled && $conf->global->MAIN_SEARCHFORM_ADHERENT && $user->rights->adherent->lire)
-	{
-		$langs->load("members");
-		$ret.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php',
-		img_object($langs->trans("List"),'user').' '.$langs->trans("Members"), 'member', 'sall');
-	}
-
-	if ($ret)
+	if ($searchform)
 	{
 		print "\n";
 		print "<!-- Begin SearchForm -->\n";
 		print '<div class="blockvmenupair">'."\n";
-		print $ret;
+		print $searchform;
 		print '</div>'."\n";
 		print "<!-- End SearchForm -->\n";
 	}
 
-	// Zone de recherche supplementaire
-	if ($form_search)
+	if ($moresearchform)
 	{
-		print $form_search;
+		print $moresearchform;
 	}
 
-	// Zone d'affichage permanente des marque pages
-	if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
+	if ($bookmarks)
 	{
-		include_once (DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php');
-		$langs->load("bookmarks");
-
-		$ret=printBookmarksList($db, $langs);
 		print "\n";
 		print "<!-- Begin Bookmarks -->\n";
 		print '<div class="blockvmenupair">'."\n";
-		print $ret;
+		print $bookmarks;
 		print '</div>'."\n";
 		print "<!-- End Bookmarks -->\n";
 	}

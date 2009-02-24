@@ -1,8 +1,8 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -21,7 +21,7 @@
 /**
  *	    \file       htdocs/comm/remx.php
  *      \ingroup    commercial, invoice
- *		\brief      Onglet de définition des avoirs
+ *		\brief      Page to edit absolute discounts for a customer
  *		\version    $Id$
  */
 
@@ -35,7 +35,7 @@ $langs->load("companies");
 
 // Sécurité si un client essaye d'accéder à une autre fiche que la sienne
 $_socid = $_GET["id"];
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $_socid = $user->societe_id;
 }
@@ -49,7 +49,7 @@ if ($_POST["action"] == 'setremise')
 {
 	if (price2num($_POST["amount_ht"]) > 0)
 	{
-		if (! $_POST["desc"]) 
+		if (! $_POST["desc"])
 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ReasonDiscount")).'</div>';
 		}
@@ -57,7 +57,7 @@ if ($_POST["action"] == 'setremise')
 		$soc = new Societe($db);
 		$soc->fetch($_GET["id"]);
 		$soc->set_remise_except($_POST["amount_ht"],$user,$_POST["desc"],$_POST["tva_tx"]);
-		
+
 		if ($result > 0)
 		{
 			Header("Location: remx.php?id=".$_GET["id"]);
@@ -77,7 +77,7 @@ if ($_POST["action"] == 'setremise')
 if ($_GET["action"] == 'remove')
 {
 	$db->begin();
-	
+
 	$soc = new Societe($db);
 	$soc->fetch($_GET["id"]);
 	$result=$soc->del_remise_except($_GET["remid"]);
@@ -100,18 +100,18 @@ if ($_GET["action"] == 'remove')
 
 $form=new Form($db);
 $facturestatic=new Facture($db);
- 
+
 llxHeader();
 
 if ($_socid > 0)
 {
 	if ($mesg) print $mesg."<br>";
-	
+
 	// On recupere les donnees societes par l'objet
 	$objsoc = new Societe($db);
 	$objsoc->id=$_socid;
 	$objsoc->fetch($_socid,$to);
-	
+
 	/*
 	 * Affichage onglets
 	 */
@@ -151,7 +151,7 @@ if ($_socid > 0)
     print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
     print "</table>";
 	print '<br>';
-	
+
     print '<table class="border" width="100%">';
     print '<tr><td width="38%">'.$langs->trans("NewGlobalDiscount").'</td>';
     print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
@@ -161,14 +161,14 @@ if ($_socid > 0)
 	print '</td></tr>';
     print '<tr><td>'.$langs->trans("NoteReason").'</td>';
     print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
-    
+
     print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("AddGlobalDiscount").'"></td></tr>';
-        
+
     print "</table></form>";
 
-    print "</div>\n";    
+    print "</div>\n";
 
-    print '<br>';        
+    print '<br>';
 
 
     /*
@@ -216,6 +216,13 @@ if ($_socid > 0)
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
 				print $langs->trans("CreditNote").' '.$facturestatic->getNomURl(1);
+			}
+			elseif ($obj->description == '(DEPOSIT)')
+			{
+				$facturestatic->id=$obj->fk_facture_source;
+				$facturestatic->ref=$obj->ref;
+				$facturestatic->type=$obj->type;
+				print $langs->trans("InvoiceDeposit").' '.$facturestatic->getNomURl(1);
 			}
 			else
 			{
@@ -278,14 +285,14 @@ if ($_socid > 0)
     $sql2.= " WHERE rc.fk_soc =". $objsoc->id;
     $sql2.= " AND rc.fk_facture = f.rowid";
     $sql2.= " AND rc.fk_user = u.rowid";
-	
+
 	$sql2.= " ORDER BY dc DESC";
 
     $resql=$db->query($sql);
 	$resql2=null;
     if ($resql) $resql2=$db->query($sql2);
 	if ($resql2)
-    { 
+    {
         print_titre($langs->trans("DiscountAlreadyCounted"));
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre"><td width="120">'.$langs->trans("Date").'</td>';
@@ -308,8 +315,8 @@ if ($_socid > 0)
 			$tab_sqlobj[] = $sqlobj;
 			$tab_sqlobjOrder[]=$sqlobj->dc;
 			}
-		$db->free($resql);	
-		
+		$db->free($resql);
+
 		$num = $db->num_rows($resql2);
 		for ($i = 0;$i < $num;$i++)
 			{
@@ -319,7 +326,7 @@ if ($_socid > 0)
 			}
 		$db->free($resql2);
 		array_multisort ($tab_sqlobjOrder,SORT_DESC,$tab_sqlobj);
-		
+
 		$num = sizeOf($tab_sqlobj);
 		$i = 0 ;
         while ($i < $num )

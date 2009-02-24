@@ -1997,6 +1997,7 @@ class Facture extends CommonObject
 		global $langs;
 		$langs->load('bills');
 
+		//print "$paye,$statut,$mode,$alreadypayed,$type";
 		if ($mode == 0)
 		{
 			$prefix='';

@@ -429,9 +429,14 @@ if ($_POST['action'] == 'confirm_converttoreduc' && $_POST['confirm'] == 'yes' &
 			$i++;
 		}
 
-		// Insère une remise par famille de taux tva
+		// Insert one discount by VAT rate category
 		$discount = new DiscountAbsolute($db);
-		$discount->desc='(CREDIT_NOTE)';
+		if ($fac->type == 2)     $discount->desc='(CREDIT_NOTE)';
+		elseif ($fac->type == 3) $discount->desc='(DEPOSIT)';
+		else {
+			$this->error="CantConvertToReducAnInvoiceOfThisType";
+			return -1;
+		}
 		$discount->tva_tx=abs($fac->total_ttc);
 		$discount->fk_soc=$fac->socid;
 		$discount->fk_facture_source=$fac->id;
@@ -1849,6 +1854,12 @@ if ($_GET['action'] == 'create')
 						$discount->fetch($objp->fk_remise_except);
 						print $langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
 					}
+					elseif ($obj->description == '(DEPOSIT)')
+					{
+						$discount=new DiscountAbsolute($db);
+						$discount->fetch($objp->fk_remise_except);
+						print $langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
+					}
 					else
 					{
 						print dol_trunc($objp->description,60);
@@ -2611,6 +2622,12 @@ else
 										$discount=new DiscountAbsolute($db);
 										$discount->fetch($objp->fk_remise_except);
 										print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+									}
+									elseif ($objp->description == '(DEPOSIT)')
+									{
+										$discount=new DiscountAbsolute($db);
+										$discount->fetch($objp->fk_remise_except);
+										print ' - '.$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
 									}
 									else
 									{

@@ -23,7 +23,8 @@
  *	\file       htdocs/document.php
  *  \brief      Wrapper to download data files
  *  \version    $Id$
- *  \remarks    L'appel est document.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
+ *  \remarks    Call of this wrapper is mad with URL:
+ * 				document.php?modulepart=repfichierconcerne&file=pathrelatifdufichier
  */
 
 $original_file = urldecode($_GET["file"]);
@@ -32,6 +33,7 @@ $type = isset($_GET["type"]) ? urldecode($_GET["type"]) : '';
 
 // Define if we need master or master+main
 $needmasteronly=false;
+if ($modulepart == 'bittorrent') $needmasteronly=true;
 //if ($modulepart == 'webcal') $needmasteronly=true;
 //if ($modulepart == 'agenda') $needmasteronly=true;
 
@@ -389,6 +391,14 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=DOL_DATA_ROOT.'/admin/temp/'.$original_file;
+		$sqlprotectagainstexternals = '';
+    }
+
+    // Wrapping pour BitTorrent
+    if ($modulepart == 'bittorrent')
+    {
+        $accessallowed=1;
+        $original_file=DOL_DATA_ROOT.'/bittorrent/files/'.$original_file;
 		$sqlprotectagainstexternals = '';
     }
 }
