@@ -1929,11 +1929,13 @@ else
 	$pagenext = $page + 1;
 
 	$sql = 'SELECT s.nom, s.rowid, s.client, ';
-	$sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+	$sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv,';
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
+	$sql.= ' u.login';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 	$sql.= ' WHERE p.fk_soc = s.rowid';
 
 	if (!$user->rights->societe->client->voir && !$socid) //restriction
@@ -1981,7 +1983,8 @@ else
 	if ($result)
 	{
 		$propalstatic=new Propal($db);
-
+		$userstatic=new User($db);
+		
 		$num = $db->num_rows($result);
 
 		$param='&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut;
@@ -1997,6 +2000,7 @@ else
 		print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','',$param, 'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','',$param, 'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
 		print '<td class="liste_titre">&nbsp;</td>';
 		print "</tr>\n";
@@ -2008,7 +2012,7 @@ else
 		print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
 		print '</td>';
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="40" name="search_societe" value="'.$_GET['search_societe'].'">';
+		print '<input class="flat" type="text" size="28" name="search_societe" value="'.$_GET['search_societe'].'">';
 		print '</td>';
 		print '<td class="liste_titre" colspan="1" align="right">';
 		print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
@@ -2022,6 +2026,7 @@ else
 		print '<td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
 		print '</td>';
+		print '<td>&nbsp;</td>';
 		print '<td align="right">';
 		$html->select_propal_statut($viewstatut);
 		print '</td>';
@@ -2097,9 +2102,15 @@ else
 			}
 
 			print '<td align="right">'.price($objp->total_ht)."</td>\n";
-			$propal=New Propal($db);
-			print '<td align="right">'.$propal->LibStatut($objp->fk_statut,5)."</td>\n";
-			print "<td>&nbsp;</td>";
+
+			$userstatic->id=$objp->fk_user_author;
+			$userstatic->login=$objp->login;
+			print '<td align="center">'.$userstatic->getLoginUrl(1)."</td>\n";
+			
+			print '<td align="right">'.$propalstatic->LibStatut($objp->fk_statut,5)."</td>\n";
+			
+			print '<td>&nbsp;</td>';
+			
 			print "</tr>\n";
 
 			$total = $total + $objp->total_ht;
