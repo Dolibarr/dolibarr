@@ -2189,7 +2189,7 @@ else
 			print '. ';
 			if ($absolute_discount > 0)
 			{
-				if ($fac->statut > 0 || $fac->type == 2)
+				if ($fac->statut > 0 || $fac->type == 2 || $fac->type == 3)
 				{
 					print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
 				}
@@ -2204,7 +2204,7 @@ else
 			if ($absolute_creditnote > 0)
 			{
 				// If validated, we show link "add credit note to payment"
-				if ($fac->statut != 1 || $fac->type == 2)
+				if ($fac->statut != 1 || $fac->type == 2 || $fac->type == 3)
 				{
 					print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
 				}
@@ -2376,7 +2376,7 @@ else
 				}
 				else
 				{
-					// Solde avoir
+					// Sold credit note
 					print '<tr><td colspan="2" align="right">'.$langs->trans('TotalTTCToYourCredit').' :</td>';
 					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price(abs($fac->total_ttc)).'</b></td><td>&nbsp;</td></tr>';
 				}
@@ -2971,8 +2971,10 @@ else
 
 					// Validate
 					if ($fac->statut == 0 && $num_lignes > 0 &&
+					 (
 					 (($fac->type == 0 || $fac->type == 1 || $fac->type == 3 || $fac->type == 4) && $fac->total_ttc >= 0)
 					 || ($fac->type == 2 && $fac->total_ttc <= 0))
+					 )
 					{
 						if ($user->rights->facture->valider)
 						{
@@ -3069,7 +3071,7 @@ else
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
 					}
 
-					// Classift 'closed not completely payed' (possible si validée et pas encore classée payée)
+					// Classify 'closed not completely payed' (possible si validée et pas encore classée payée)
 					if ($fac->statut == 1 && $fac->paye == 0 && $resteapayer > 0
 					&& $user->rights->facture->paiement)
 					{

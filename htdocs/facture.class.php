@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
@@ -33,6 +33,7 @@
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/client.class.php");
+
 
 /**
  *	\class      Facture

@@ -33,7 +33,7 @@ $langs->load("orders");
 $langs->load("bills");
 $langs->load("companies");
 
-// Sécurité si un client essaye d'accéder à une autre fiche que la sienne
+// Sï¿½curitï¿½ si un client essaye d'accï¿½der ï¿½ une autre fiche que la sienne
 $_socid = $_GET["id"];
 if ($user->societe_id > 0)
 {
@@ -251,7 +251,7 @@ if ($_socid > 0)
     print '<br>';
 
     /*
-     * Liste ristournes appliquées (=liees a une ligne de facture ou facture)
+     * Liste ristournes appliquï¿½es (=liees a une ligne de facture ou facture)
      */
     // Remises liees a lignes de factures
     $sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";

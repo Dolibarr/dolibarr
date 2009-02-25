@@ -187,9 +187,9 @@ class DiscountAbsolute
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
 				$sql.=" set paye=0, fk_statut=1";
-				$sql.=" WHERE type = 2 AND rowid=".$this->fk_facture_source;
+				$sql.=" WHERE (type = 2 or type = 3) AND rowid=".$this->fk_facture_source;
 
-			   	dol_syslog("DiscountAbsolute::delete Update credit note statut sql=".$sql);
+			   	dol_syslog("DiscountAbsolute::delete Update credit note or deposit invoice statut sql=".$sql);
 				$result=$this->db->query($sql);
 				if ($result)
 				{
