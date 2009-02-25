@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - domains
+﻿# Dolibarr language file - pt_PT - domains
 CHARSET=UTF-8
-DomainNames=Nomes de dominios
-NewDomain=Novo dominio
+DomainNames=Nomes de Dominios
+NewDomain=Novo Dominio

@@ -1,9 +1,9 @@
 # Dolibarr language file - pt_PT - ldap
 CHARSET=UTF-8
-DomainPassword=Palavra-passe do dominio
+DomainPassword=Palavra-passe do Dominio
 YouMustChangePassNextLogon=A palavra-passe de <b>%s</b> ao dominio <b>%s</b> deve de ser modificada.
 UserMustChangePassNextLogon=O utilizador deve alterar de palavra-passe na próxima ligação
-LdapUacf_NORMAL_ACCOUNT=Conta utilizador
+LdapUacf_NORMAL_ACCOUNT=Conta de Utilizador
 LdapUacf_DONT_EXPIRE_PASSWORD=A palavra-passe não caduca
 LdapUacf_ACCOUNTDISABLE=A conta está desactivada ao dominio
 LDAPInformationsForThisContact=Informação da base de dados LDAP deste contacto

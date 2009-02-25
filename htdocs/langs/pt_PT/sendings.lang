@@ -1,10 +1,10 @@
-# Dolibarr language file - pt_PT - sendings
+﻿# Dolibarr language file - pt_PT - sendings
 CHARSET=UTF-8
-RefSending=Ref. envío
+RefSending=Ref. Envío
 Sending=Envío
 Sendings=Envíos
 Receivings=Recepções
-SendingsArea=Área envíos
+SendingsArea=Área Envíos
 ListOfSendings=Lista de Envíos
 SendingMethod=Método de Envío
 SendingReceipt=Entrega
@@ -34,13 +34,13 @@ StatusSendingValidatedShort=Validado
 SendingSheet=Ficha de envío
 Carriers=Transportistas
 Carrier=Transportista
-CarriersArea=Área transportistas
-NewCarrier=Novo transportista
+CarriersArea=Área Transportistas
+NewCarrier=Novo Transportista
 ConfirmDeleteSending=¿Está seguro de querer eliminar esta expedição?
 ConfirmValidateSending=¿Está seguro de querer Confirmar esta expedição?
 ConfirmCancelSending=¿Está seguro de querer anular esta expedição?
-GenericTransport=Transporte genérico
-Enlevement=Pick-up por o cliente
-DocumentModelSimple=Modelo simples
+GenericTransport=Transporte Genérico
+Enlevement=Pick-up por o Cliente
+DocumentModelSimple=Modelo Simples
 WarningNoQtyLeftToSend=Atenção, nenhum produto à espera de ser enviado.
 NumRefModelJade=Devolve um número de referencia em formato l BLYY00001 ... donde AA é o ano. o incremento para o ano seguinte não se restablece ao inicio de ano.

@@ -2,7 +2,7 @@
 CHARSET=UTF-8
 ContractsArea=Área contratos
 ListOfContracts=Lista de contratos
-LastContracts=Os % últimos contratos
+LastContracts=Os Ultimos %s Contractos Modificados
 AllContracts=Todos os contratos
 ContractCard=Ficha contrato
 ContractStatus=Estado do contrato
@@ -49,6 +49,7 @@ ListOfRunningContractsLines=Lista de linhas de contratos em serviço
 ListOfRunningServices=Lista de serviços activos
 NotActivatedServices=Serviços não activados (com os contratos validados)
 BoardNotActivatedServices=Serviços a activar com os contratos validados
+LastContracts=Os % últimos contratos
 LastActivatedServices=Os %s últimos serviços activados
 LastModifiedServices=Os %s últimos sevicios modificados
 EditServiceLine=Edição linha do serviço

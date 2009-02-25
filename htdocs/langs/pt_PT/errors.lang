@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - errors
+﻿# Dolibarr language file - pt_PT - errors
 CHARSET=UTF-8
 MenuManager=Gestor de menu
 ErrorLoginAlreadyExists=o login %s já existe.

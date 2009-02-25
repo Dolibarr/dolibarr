@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - bills
+﻿# Dolibarr language file - pt_PT - bills
 CHARSET=UTF-8
 Bill=Factura
 Bills=Facturas
@@ -29,8 +29,7 @@ ReplaceInvoice=Rectificar a Factura %s
 ReplacementInvoice=Substituição da Factura 
 ReplacedByInvoice=Substituído por Factura %s
 ReplacementByInvoice=Substituído por Factura
-CorrectInvoice=Factura Correcta %s
-CorrectInvoice=Factura Correcta %s
+CorrectInvoice=Correcção de Factura %s
 CorrectionInvoice=Correcção de Factura
 NoReplacableInvoice=Sem Facturas Retificaveis
 NoInvoiceToCorrect=Sem Facturas a Corregir
@@ -63,13 +62,13 @@ ReceivedCustomersPaymentsToValid=pagamentos recibidos de cliente a Confirmar
 PaymentsReportsForYear=Relatórios de pagamentos de %s
 PaymentsReports=Relatórios de pagamentos
 PaymentsAlreadyDone=pagamentos efectuados
-PaymentRule=
+PaymentRule=Estado do Pagamento
 PaymentMode=Forma de Pagamento
 PaymentConditions=Tipo de Pagamento
 PaymentConditionsShort=Tipo de Pagamento
 PaymentAmount=Montante a Pagar
 PaymentHigherThanReminderToPay=pagamento superior à resto a pagar
-ClassifyPayed=classificar 'Pago'
+ClassifyPayed=Classificar 'Pago'
 ClassifyPayedPartially=Classificar 'Pago Parcialmente'
 ClassifyCanceled=Classificar 'Abandonado'
 ClassifyClosed=Classificar 'Fechado'
@@ -105,26 +104,26 @@ BillShortStatusPayed=paga
 BillShortStatusPayedBackOrConverted=Processada
 BillShortStatusCanceled=Abandonada
 BillShortStatusValidated=Validada
-BillShortStatusStarted=Empezada
+BillShortStatusStarted=Iniciada
 BillShortStatusNotPayed=Pendente de cobrança
 BillShortStatusClosedUnpayed=fechadaBillShortStatusClosedPayedPartially=paga
 BillShortStatusClosedPayedPartially=Pagamento (parcial)
 PaymentStatusToValidShort=A Confirmar
 ErrorVATIntraNotConfigured=Número de IVA intracomunitario ainda não configurado
 ErrorNoPaiementModeConfigured=não existe definido modo de pagamento por defeito. Corregir desde o módulo factura
-ErrorCreateBankAccount=
+ErrorCreateBankAccount=Criar uma conta bancária e em seguida, vá para configuração do painel do modulo de factura para definir modos de pagamento
 ErrorBillNotFound=Factura %s inexistente
 ErrorInvoiceAlreadyReplaced=erro, quer Confirmar uma factura que rectifica a factura %s. mas esta última já está rectificada por a factura %s.
 ErrorDiscountAlreadyUsed=erro, a remesa está já assignada
 ErrorInvoiceAvoirMustBeNegative=erro, uma factura de tipo deposito deve ter um Montante negativo
 ErrorInvoiceOfThisTypeMustBePositive=erro, uma factura deste tipo deve ter um Montante positivo
-ErrorCantCancelIfReplacementInvoiceNotValidated=
+ErrorCantCancelIfReplacementInvoiceNotValidated=Erro, não pode cancelar uma factura que tenha sido substituída por uma outra factura e que está ainda em projecto de estatuto
 BillFrom=Emissor
 BillTo=Enviar a
 ActionsOnBill=acções sobre a factura
 NewBill=Nova factura
-PrÃ©lÃ¨vements=
-PrÃ©lÃ¨vements=Pedidos Permanentes
+Prélèvement=Pedido Permanente
+Prélèvements=Pedidos Permanentes
 LastBills=as %s últimas facturas
 LastCustomersBills=as %s últimas facturas a clientes
 LastSuppliersBills=as %s últimas facturas de Fornecedores
@@ -159,9 +158,9 @@ ConfirmCustomerPayment=¿Confirma o processo  deste pagamento de <b>%s</b> %s ?
 ConfirmValidatePayment=¿Está seguro de querer Confirmar este pagamento (Nenhuma modificação é possivel uma vez o pagamento esté validado)?
 ValidateBill=Confirmar factura
 NumberOfBills=Nº de facturas
-NumberOfBillsByMonthHT=
+NumberOfBillsByMonthHT=Nº de facturas por mês (Sem de Impostos)
 AmountOfBills=Montante das facturas
-AmountOfBillsByMonth=
+AmountOfBillsByMonth=Quantidade de facturas por mês
 ShowSocialContribution=Mostrar contribución social
 ShowBill=Ver factura
 ShowInvoice=Ver factura
@@ -170,10 +169,10 @@ ShowInvoiceAvoir=Ver deposito
 ShowInvoiceDeposit=Ver Factura Depositada
 ShowPayment=Ver pagamento
 File=Fichero
-AlreadyPayed=já pago
+AlreadyPayed=Já e
 Abandoned=Abandonada
-RemainderToPay=Queda por pagar
-RemainderToTake=Queda por cobrar
+RemainderToPay=Falta por Pagar
+RemainderToTake=Falta por Pobrar
 AmountExpected=Montante reclamado
 ExcessReceived=Recibido em exceso
 EscompteOffered=Desconto (Pronto pagamento)
@@ -211,7 +210,7 @@ Repeatable=Em Massa
 Repeatables=Em Massa
 ChangeIntoRepeatableInvoice=Modificar em Massa
 CreateRepeatableInvoice=Criar Factura Predefinida
-CreateFromRepeatableInvoice=
+CreateFromRepeatableInvoice=Criar a partir de uma factura pré-definida
 CustomersInvoicesAndInvoiceLines=Facturas a clientes e linhas de facturas
 CustomersInvoicesAndPayments=Facturas a clientes e pagamentos
 ExportDataset_invoice_1=Facturas a clientes e linhas de factura
@@ -229,6 +228,7 @@ GlobalDiscount=Desconto fixo
 CreditNote=deposito
 CreditNotes=recibos
 DiscountFromCreditNote=Desconto resultante do deposito %s
+DiscountFromDeposit=Pagamentos a partir de depósito na factura %s
 NewGlobalDiscount=Novo Desconto fixo
 NoteReason=Nota/Motivo
 ReasonDiscount=Motivo
@@ -254,10 +254,6 @@ CloneMainAttributes=Clonar o objecto com as suas atributos principais
 ConfirmCloneInvoice=¿Está seguro de querer clonar esta factura?
 DisabledBecauseReplacedInvoice=acção desactivada porque é uma factura substituida
 # PaymentConditions
-
-
-
-
 PaymentConditionShortRECEP=Pronto Pagamento
 PaymentConditionRECEP=Pronto Pagamento
 PaymentConditionShort30D=30 días
@@ -269,10 +265,6 @@ PaymentCondition60D=pagamento a os 60 días
 PaymentConditionShort60DENDMONTH=60 días a fim de mês
 PaymentCondition60DENDMONTH=pagamento a os 60 días a fim de mês
 # PaymentType
-
-
-
-
 PaymentTypeVIR=Transferencia bancaria
 PaymentTypeShortVIR=Transferencia
 PaymentTypePRE=domiciliação bancaria
@@ -333,68 +325,36 @@ ChequeDeposits=Depósito de cheques
 Cheques=Cheques
 CreditNoteConvertedIntoDiscount=Este deposito se convirtió em %s
 UsBillingContactAsIncoiveRecipientIfExist=Utilizar a direcção do contacto de cliente de facturação da factura em vez de lla direcção do Terceiro como destinatario das facturas
-PaymentInvoiceRef=
+PaymentInvoiceRef=Pagamento Factura %s
 # oursin PDF model
-
-
-
-
 Of=de
 # bernique PDF model
-
-
-
-
-PDFBerniqueDescription=Modelo para as facturas com Vários tipos de IVA, incluido também o número de IVA Intracomunitario
+PDFBerniqueDescription=Modelo para las facturas con varios tipos de IVA, incluido también el número de IVA Intracomunitario
 # bigorneau PDF Model
-
-
-
-
-PDFBigorneauDescription=Modelo de factura sem Informações de pagamento
+PDFBigorneauDescription=Modelo de factura sin informaciones de pago
 # bulot PDF Model
-
-
-
-
-PDFBulotDescription=Modelo de factura com Descontos e informação de pagamento
+PDFBulotDescription=Modelo de factura con descuentos e información de pago
 # crabe PDF Model
-
-
-
-
-PDFCrabeDescription=Modelo de factura completo (IVA,  método de pagamento a mostrar, logotipo...)
+PDFCrabeDescription=Modelo de factura completo (IVA,  método de pago a mostrar, logotipo...)
 # huitre PDF Model
-
-
-
-
-PDFHuitreDescription=Modelo de factura com Desconto e informação de pagamento
+PDFHuitreDescription=Modelo de factura con descuento e información de pago
 # oursin PDF Model
-
-
-
-
-PDFOursinDescription=Modelo de factura completo (IVA, métodos de pagamento, data, Nome do projecto, referencias de orçamento, logotipo...)
+PDFOursinDescription=Modelo de factura completo (IVA, métodos de pago, entregas, nombre del proyecto, referencias de presupuesto, logotipo...)
 # tourteau PDF Model
-
-
-
-
-PDFTourteauDescription=Modelo de factura sem Desconto
-# terre
-
-
-
-
-TerreNumRefModelDesc1=Devolve o número baixo o formato %syymm-nnnn para as facturas e %syymm-nnnn para os recibos donde yy é o ano, mm. o mês e nnnn um contador sequêncial sem ruptura e sem permanencia a 0
-TerreNumRefModelError=uma factura que começa por $$syymm existe em base é incompativel com esta numeração. Elimine-a ou renomea-la para activar este módulo.
-OrionNumRefModelDesc1=
-OrionNumRefModelDesc2=
-OrionNumRefModelDesc3=
-OrionNumRefModelDesc4=
-TitanNumRefModelDesc1=
-TitanNumRefModelDesc2=
-TitanNumRefModelDesc3=
-TitanNumRefModelDesc4=
-PlutonNumRefModelDesc1=
+PDFTourteauDescription=Modelo de factura sin descuento
+# NumRef Modules
+TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
+# Deprecated
+# orion
+OrionNumRefModelDesc1=Return the number under the format FAYYNNNNN where YY is the year and NNNNN the increment number starting at 1.
+OrionNumRefModelDesc2=The year is increased by 1 WITHOUT an initialisation to zero at the start of the fiscal year.
+OrionNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
+OrionNumRefModelDesc4=In this example, we shall have on the 1st of September 2006 an invoice named FA700354.
+# titan
+TitanNumRefModelDesc1=Return the number with format FAYYNNNNN where YY is the year and NNNNN is the increment number starting from 1.
+TitanNumRefModelDesc2=The year is incremented by 1 and the increment number is initialized to zero at the start of the fiscal year. 
+TitanNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
+TitanNumRefModelDesc4=In this example, we shall have on the 1st September 2006 an invoice named FA0700001
+# pluton
+PlutonNumRefModelDesc1=Return a customizable invoice number according to a defined mask.

@@ -1,7 +1,7 @@
-# Dolibarr language file - pt_PT - withdrawals
+﻿# Dolibarr language file - pt_PT - withdrawals
 CHARSET=UTF-8
-StandingOrdersArea=Área Débitos Directos
-CustomersStandingOrdersArea=Área Débitos Directos de Clientes
+StandingOrdersArea=Área de Débitos Directos
+CustomersStandingOrdersArea=Área de Débitos Directos de Clientes
 StandingOrders=Débitos Directos
 StandingOrder=Débitos Directos
 NewStandingOrder=Novo Débito Directo
@@ -30,6 +30,6 @@ LastWithdrawalReceipt=Os %s Ultimos Débitos Directos Recebidos
 MakeWithdrawRequest=Realizar um Pedido de Débito Directo
 ThirdPartyBankCode=Código Banco do Terceiro
 ThirdPartyDeskCode=Código da Escritório do Terceiro
-NoInvoiceCouldBeWithdrawed=Não há factura de débito directo com sucesso. Verifique se a factura da empresa tem um válido BAN.
+NoInvoiceCouldBeWithdrawed=Não há factura de débito directo com sucesso. Verifique se a factura da empresa tem um válido IBAN.
 ClassCredited=Classificar Acreditados
-ClassCreditedConfirm=¿Está seguro de querer classificar este débito directo como realizada sobre a sua conta bancaria?
+ClassCreditedConfirm=¿Está seguro de querer classificar este débito directo como realizado sobre a sua conta bancaria?

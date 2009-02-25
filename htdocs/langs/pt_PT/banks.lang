@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - banks
+﻿# Dolibarr language file - pt_PT - banks
 CHARSET=UTF-8
 Bank=Banco
 Banks=Bancos
@@ -134,7 +134,8 @@ PaymentNumberUpdateSucceeded=Numero de pagamento modificado
 PaymentNumberUpdateFailed=Numero de pagamento não foi possivel modificar
 PaymentDateUpdateSucceeded=Data de pagamento modificada
 PaymentDateUpdateFailed=Data de pagamento não pudo ser modificada
-BankTransactionLine=Transancción bancaria
+Transactions=Transação
+BankTransactionLine=Transação Bancária
 AllAccounts=Todas as Contas bancarias/de Caixa
 BackToAccount=Voltar e a Conta
 ShowAllAccounts=Mostrar para todas as Contas

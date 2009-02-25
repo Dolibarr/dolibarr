@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - other 
+﻿# Dolibarr language file - pt_PT - other 
 CHARSET=UTF-8
 ErrorPasswordDiffers=As Palavras-Passe não são identicas, volte a introduzi-las
 ErrorForbidden=acesso não autorizado.<br>Intenta acceder a uma página, zona o função sem estar em uma Sessão autentificada o que não se autoriza para a sua conta de utilizador.

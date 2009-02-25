@@ -1,25 +1,23 @@
-# Dolibarr language file - pt_PT - deliveries
+﻿# Dolibarr language file - pt_PT - deliveries
 CHARSET=UTF-8
-Delivery=Envío
-Deliveries=Envíos
-DeliveryCard=Ficha envío
-DeliveryOrder=Ordem de envío
-DeliveryOrders=Ordens de envío
-DeliveryDate=Data de envío
-DeliveryDateShort=Data envío
-CreateDeliveryOrder=Gerar ordem de entrega
-QtyDelivered=Cant. enviada
-SetDeliveryDate=Indicar a data de envío
-ValidateDeliveryReceipt=Confirmar a nota de entrega
-ValidateDeliveryReceiptConfirm=¿Está seguro de que deseja Confirmar esta entrega?
-DeleteDeliveryReceipt=Eliminar a nota de entrega
-DeleteDeliveryReceiptConfirm=¿Está seguro de querer eliminar esta nota de entrega?
-DeliveryMethod=Método de envío
+Delivery=Envio
+Deliveries=Envios
+DeliveryCard=Ficha Envio
+DeliveryOrder=Ordem de Envio
+DeliveryOrders=Ordens de Envio
+DeliveryDate=Data de Envio
+DeliveryDateShort=Data Envio
+CreateDeliveryOrder=Gerar Ordem de Entrega
+QtyDelivered=Quant. Enviada
+SetDeliveryDate=Indicar a Data de Envío
+ValidateDeliveryReceipt=Confirmar a Nota de Entrega
+ValidateDeliveryReceiptConfirm=¿Está seguro de que deseja confirmar esta entrega?
+DeliveryMethod=Método de Envio
 TrackingNumber=Nº de tracking
-# merou PDF model						   =
-NameAndSignature=Nome e assinatura :
-ToAndDate=En___________________________________ a ____/_____/__________
+# merou PDF model
+NameAndSignature=Nome e assinatura:
+ToAndDate=Em___________________________________ a ____/_____/__________
 GoodStatusDeclaration=Recebi a mercadoria em bom estado, 
-Deliverer=Destinatario :
+Deliverer=Destinatario:
 Sender=Origem
-Recipient=Destinatario
+Recipient=Destinatário

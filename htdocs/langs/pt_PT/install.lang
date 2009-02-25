@@ -44,6 +44,13 @@ YouNeedToPersonalizeSetup=Agora necessita de configurar o Dolibarr por forma a c
 AdminLoginCreatedSuccessfuly=Login de Administrador criado com sucesso.
 GoToSetupArea=Prosseguir para a área de configuração
 Examples=Exemplos
+WithNoSlashAtTheEnd=Sem a barra "/" no final
+
+
+// Date 2009-01-18 18:56:33
+// START - Lines generated via parser
+// Reference language: en_US
+CHARSET=ISO-8859-1
 MiscellanousChecks=Pré-requisitos check
 ConfFileDoesNotExists=Ficheiro de <b>configuração% s</b> não existe!
 ConfFileDoesNotExistsAndCouldNotBeCreated=Ficheiro de <b>configuração% s</b> não existe e não poderia ser criado!
@@ -166,3 +173,5 @@ MigrationBankTransfertsNothingToUpdate=Todas as ligações são até à data
 MigrationShipmentOrderMatching=Sendings recepção atualização
 MigrationDeliveryOrderMatching=Entrega recepção atualização
 MigrationDeliveryDetail=Delivery update
+// Date 2009-01-18 18:56:33
+// STOP - Lines generated via parser
