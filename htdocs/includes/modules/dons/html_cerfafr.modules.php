@@ -130,7 +130,7 @@ class html_cerfafr extends ModeleDon
 		        $html = eregi_replace('__DATE__',dol_print_date($don->date,'day',false,$outputlangs),$html);
 		        $html = eregi_replace('__IP__',$user->ip,$html);
 		        $html = eregi_replace('__AMOUNT__',$don->amount,$html);
-		        $html = eregi_replace('__CURRENCY__',$outputlangs->transnoconv("Currency".$conf->monnaie),$html);
+		        $html = eregi_replace('__CURRENCY__',$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie),$html);
 		        $html = eregi_replace('__CURRENCYCODE__',$conf->monnaie,$html);
 		        $html = eregi_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->nom,$html);
 		        $html = eregi_replace('__MAIN_INFO_SOCIETE_ADRESSE__',$mysoc->adresse,$html);
