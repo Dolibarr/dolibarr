@@ -569,7 +569,7 @@ class MenuLeft {
 					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php?leftmenu=ca","Compte de résultat",2,$user->rights->compta->resultat->lire);
 					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php?leftmenu=ca","Bilan",2,$user->rights->compta->resultat->lire);
 					*/
-					if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca","Chiffre d'affaire",1,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
+					if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca",$langs->trans("ReportTurnover"),1,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
 
 					/*
 					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php?leftmenu=ca","Cumulé",2,$user->rights->compta->resultat->lire);

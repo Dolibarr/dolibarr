@@ -18,6 +18,7 @@ BillsForSuppliers=Bills for suppliers
 Income=Income
 Outcome=Outcome
 ReportInOut=Income / Outcome
+ReportTurnover=Turnover
 PaymentsNotLinkedToInvoice=Payments not linked to any invoice, so not linked to any third party
 PaymentsNotLinkedToUser=Payments not linked to any user
 Profit=Profit

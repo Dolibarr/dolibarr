@@ -18,6 +18,7 @@ BillsForSuppliers=Factures des fournisseurs
 Income=Recettes
 Outcome=Dépenses
 ReportInOut=Résultat / Exercice
+ReportTurnover=Chiffre d'affaire
 PaymentsNotLinkedToInvoice=Paiements liés à aucune facture, donc aucun tiers
 PaymentsNotLinkedToUser=Paiements non liés à un utilisateur
 Profit=Bénéfice

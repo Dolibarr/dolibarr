@@ -18,6 +18,7 @@ BillsForSuppliers = Factures de proveïdors
 Income = Ingressos
 Outcome = Despeses
 ReportInOut = Resultat / Exercici
+ReportTurnover = Volum de negoci
 PaymentsNotLinkedToInvoice = Pagaments vinculats a cap factura, per la qual cosa sense tercer
 PaymentsNotLinkedToUser = Pagaments no vinculats a un usuari
 Profit = Benefici
