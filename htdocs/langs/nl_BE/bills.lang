@@ -15,9 +15,9 @@ InvoiceStandardDesc=Dit soort factuur is de standaard factuur.
 InvoiceReplacement=Vervangingsfactuur. Moet factuur vervangen met referentie
 InvoiceReplacementAsk=Vervangingsfactuur voor factuur
 InvoiceReplacementDesc=<b>Vervangingsfactuur</b> wordt gebruikt om een factuur waarvoor nog geen betaling is ontvangen te annuleren en volledige te vervangen. <br>Nota: Alleen een factuur met geen betaling kan worden vervangen. Als het niet gesloten is zal het automatisch worden gesloten naar 'abandonned'. 
-InvoiceAvoir=Kredietnota
-InvoiceAvoirAsk=Kredietnota ter correctie van factuur
-InvoiceAvoirDesc=De <b>kredietnota</b> is een negatieve factuur gebruikt om gevallen op te lossen waar een factuur een hoger bedrag heeft dan is of zal betaald worden (voor alle mogelijke redenen).
+InvoiceAvoir=Creditnota
+InvoiceAvoirAsk=Creditnota ter correctie van factuur
+InvoiceAvoirDesc=De <b>Creditnota</b> is een negatieve factuur gebruikt om gevallen op te lossen waar een factuur een hoger bedrag heeft dan is of zal betaald worden (voor alle mogelijke redenen).
 ReplaceInvoice=Vervangingsfactuur %s
 ReplacedByInvoice=Vervangen door factuur %s
 CorrectInvoice=Correcte factuur %s
@@ -56,6 +56,8 @@ ClassifyClosed=Classifiseer 'Afgesloten'
 CreateBill=Maak factuur
 AddBill=Factuur toevoegen
 DeleteBill=Factuur verwijderen
+SearchACustomerInvoice=Zoek een factuur van klant
+SearchASupplierInvoice=Zoek een factuur van leverancier
 SearchABill=Zoek een factuur
 CancelBill=Annuleer een factuur
 SendByMail=EMail
@@ -104,6 +106,8 @@ LastSuppliersBills=Laatste %s facturen leveranciers
 AllBills=Alle facturen
 OtherBills=Andere facturen
 DraftBills=Klad facturen
+CustomersDraftInvoices=Klad facturen klanten
+SuppliersDraftInvoices=Klad facturen leveranciers
 Unpayed=Onbetaald
 ConfirmDeleteBill=Bent u zeker dat u deze factuur wil verwijderen?
 ConfirmValidateBill=Bent u zeker dat u deze factuur met referentie <b>%s</b> wil valideren?
@@ -126,10 +130,11 @@ ConfirmCustomerPayment=Bevestigt u de betaling van <b>%s</b> %s?
 ValidateBill=Valideer factuur
 NumberOfBills=Aantal facturen
 NumberOfBillsByMonth=Aantal facturen per maand
+AmountOfBillsByMonthHT=Bedrag van de facturen per maand (excl. BTW)
 ShowBill=Toon factuur
 ShowInvoice=Toon factuur
 ShowInvoiceReplace=Toon vervangingsfactuur
-ShowInvoiceAvoir=Toon kredietnota
+ShowInvoiceAvoir=Toon creditnota
 ShowPayment=Toon betaling
 File=Bestand
 AlreadyPayed=Reeds betaald
@@ -189,6 +194,7 @@ DiscountOfferedBy=Verleend door
 DiscountStillRemaining=Korting nog steeds geldig / nog niet gerekend
 DiscountAlreadyCounted=Korting al gerekend
 BillAddress=Facturatieadres
+WatermarkOnDraftBill=Watermerk over klad facturen (geen indien leeg)
 HelpEscompte=Deze korting wordt verleend aan klanten waarvan de betaling voor de verstreken termijn is uitgevoerd.
 # PaymentConditions
 PaymentConditionShortRECEP=Onmiddelijk
@@ -249,6 +255,7 @@ LawApplicationPart3=vendeur jusqu'à complet encaissement de
 LawApplicationPart4=leurs prix.
 LimitedLiabilityCompanyCapital=SARL au Capital de
 UseDiscount=Gebruik korting
+UsBillingContactAsIncoiveRecipientIfExist=Gebruik de klant zijn contactadres indien ingesteld, in de plaats van het adres van derde partijen als begunstigde voor facturen
 
 # oursin PDF model
 Of=du
@@ -293,23 +300,25 @@ NeptuneNumRefModelDesc1=Renvoie le numéro de facture sous une forme du préfix 
 NeptuneNumRefModelDesc2=Si la constante FACTURE_NEPTUNE_DELTA est définie, un offset est appliqué sur le compteur
 
 # orion
-OrionNumRefModelDesc1=Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.
-OrionNumRefModelDesc2=L'année s'incrémente de 1 SANS remise à zero en début d'année d'exercice.
-OrionNumRefModelDesc3=Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.
-OrionNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2006 une facture nommée FA0700354.
+OrionNumRefModelDesc1=Return the number under the format FAYYNNNNN where YY is the year and NNNNN the increment number starting at 1.
+OrionNumRefModelDesc2=The year is increased by 1 WITHOUT an initialisation to zero at the start of the fiscal year.
+OrionNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
+OrionNumRefModelDesc4=In this example, we shall have on the 1st of September 2006 an invoice named FA700354.
 
 # terre
 TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
 TerreNumRefModelError=Une facture commençant par $fayymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.
 
 # titan
-TitanNumRefModelDesc1=Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.
-TitanNumRefModelDesc2=L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.
-TitanNumRefModelDesc3=Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.
-TitanNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2006 une facture nommée FA0700001.
+TitanNumRefModelDesc1=Return the number with format FAYYNNNNN where YY is the year and NNNNN is the increment number starting from 1.
+TitanNumRefModelDesc2=The year is incremented by 1 and the increment number is initialized to zero at the start of the fiscal year.
+TitanNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
+TitanNumRefModelDesc4=In this example, we shall have on the 1st September 2006 an invoice named FA0700001
 
 # uranus
 UranusNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique simple, préfixé par l'année sur un seul chiffre
 
 # venus
 VenusNumRefModelDesc1=Renvoie le numéro de facture sous la forme, FA-PREF-030202, où PREF est le préfixe commercial de la société, et est suivi de la date sur un format de 6 digits avec Année, Mois et Jour
+
+MarbreNumRefModelDesc=Model Marbre

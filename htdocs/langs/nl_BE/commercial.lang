@@ -1,10 +1,10 @@
 # Dolibarr language file - nl_BE - commercial
 CHARSET=UTF-8
-Commercial=Commercieel
+Commercial=Commerciëel
 Customer=Klant
 Customers=Klanten
-Prospect=Het vooruitzicht
-Prospects=Vooruitzichten
+Prospect=Potentiële klant
+Prospects=Potentiële klanten
 CommercialArea=Commerciële ruimte
 CommercialCard=Commerciële kaart
 CustomerArea=Klanten ruimte

@@ -1,18 +1,19 @@
-# Dolibarr language file - nl_BE - trips
+﻿# Dolibarr language file - nl_BE - trips
 CHARSET=UTF-8
-Trip=Reis
-Trips=Uitstapjes
-TripsAndExpenses=Uitstapjes en lasten
-TripCard=Reiskaart
-AddTrip=Toevoegen reis
-ListOfTrips=Lijst van excursies
+Trip=Verplaatsing
+Trips=Verplaatsingen
+TripsAndExpenses=Verplaatsingen en kosten
+TripCard=Verplaatsingskaart
+AddTrip=Verplaatsing toevoegen
+ListOfTrips=Lijst van verplaatsingen
 ListOfFees=Lijst van de vergoedingen
-NewTrip=Nieuwe tocht
+NewTrip=Nieuwe verplaatsing
 CompanyVisited=Bedrijf / partikulier bezocht
 Kilometers=Kilometers
 FeesKilometersOrAmout=Bedrag of kilometers
-DeleteTrip=Verwijderen reis
-ConfirmDeleteTrip=Weet u zeker dat u deze reis wilt verwijderen?
+DeleteTrip=Verwijderen verplaatsing
+ConfirmDeleteTrip=Weet u zeker dat u deze verplaatsing wilt verwijderen?
+Person=Persoon
 TF_OTHER=Ander
 TF_LUNCH=Lunch
-TF_TRIP=Reis
+TF_TRIP=Verplaatsing

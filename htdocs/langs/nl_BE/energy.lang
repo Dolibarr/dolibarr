@@ -1,0 +1,5 @@
+# Dolibarr language file - nl_BE - energy
+CHARSET=UTF-8
+Energy=Energie
+NewCounter=Nieuwe teller
+NewGroup=Nieuwe groep
