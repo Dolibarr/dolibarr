@@ -236,6 +236,8 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
  */
 function html_print_footer($fromcompany,$langs)
 {
+	global $conf;
+
 	// Juridical status
 	$ligne1="";
 	if ($fromcompany->forme_juridique_code)

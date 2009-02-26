@@ -18,5 +18,6 @@ ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interf
 ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment user interface for an invoice
 ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment user interface for a contract line
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment user interface for a free amount
+ToOfferALinkForOnlinePaymentOnMemberSubscriptionURL to offer a %s online payment user interface for a member subscription
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (required only for free payment) to add your own payment comment tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your PayBox with url <b>%s</b> to have payment created automatically when validated by paybox. 

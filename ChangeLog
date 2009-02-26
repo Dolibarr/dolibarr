@@ -33,6 +33,7 @@ For users:
   contract status.
 - New: Add a first version of a module for Paybox.
 - New: Can add contact to suppliers orders.
+- New: Changements to support the external BitTorrent module.
 - Fix: Handle correctly the comment in status changing of supplier orders.
 - Fix: Author, title and topic are correctly encoded in PDF.
 - Fix: Now HTML output is always UTF8, this solve bad PDF encoding on old users.

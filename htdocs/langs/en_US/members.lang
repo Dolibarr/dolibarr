@@ -63,6 +63,7 @@ MembersStatusNotPayedShort=Out of date
 MembersStatusResiliated=Resiliated members
 MembersStatusResiliatedShort=Resiliated members
 NewCotisation=New contribution
+PaymentSubscription=New contribution payment
 EditMember=Edit member
 SubscriptionEndDate=Subscription's end date
 NewAttribute=New attribut

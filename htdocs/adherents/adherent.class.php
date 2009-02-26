@@ -785,11 +785,12 @@ class Adherent extends CommonObject
 
 
 	/**
-	 *	\brief 		Fonction qui recupere l'adherent en donnant son rowid
-	 *	\param		rowid
-	 *	\return		int			<0 si KO, >0 si OK
+	 *	\brief 		Load member from database
+	 *	\param      rowid       id of object to load
+	 * 	\param		ref			Ref of invoice
+	 *	\return     int         >0 if OK, <0 if KO
 	 */
-	function fetch($rowid)
+	function fetch($rowid,$ref='')
 	{
 		global $langs;
 
@@ -809,7 +810,8 @@ class Adherent extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid";
-		$sql.= " AND d.rowid = ".$rowid;
+		if ($ref) $sql.= " AND d.rowid='".$ref."'";
+		else $sql.= " AND d.rowid=".$rowid;
 		dol_syslog("Adherent::fetch sql=".$sql);
 
 		$resql=$this->db->query($sql);

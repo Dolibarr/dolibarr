@@ -63,6 +63,7 @@ MembersStatusNotPayedShort=Non à jour
 MembersStatusResiliated=Adhérents résiliés
 MembersStatusResiliatedShort=Adhérents résiliés
 NewCotisation=Nouvelle adhésion
+PaymentSubscription=Paiement cotisation
 EditMember=Édition adhérent
 SubscriptionEndDate=Date de fin adhésion
 NewAttribute=Nouvel attribut

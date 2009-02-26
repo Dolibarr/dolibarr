@@ -150,6 +150,49 @@ $found=false;
 $var=false;
 
 
+
+// Free payment
+if (is_numeric($_REQUEST["amount"]))
+{
+	$found=true;
+	$tag=$_REQUEST["tag"];
+	$newtag=$tag;
+
+	// Creditor
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
+
+	// Amount
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
+	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
+	print '</td><td class="CTableRow'.($var?'1':'2').'">';
+	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
+	else {
+		print '<b>'.price($amount).'</b>';
+		print '<input type="hidden" name="newamount" value="'.$amount.'">';
+	}
+	print ' <b>'.$langs->trans("Currency".$conf->monnaie).'</b>';
+	print '<input type="hidden" name="currency" value="'.$conf->monnaie.'">';
+	print '</td></tr>'."\n";
+
+	// Tag
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$newtag.'</b>';
+	print '<input type="hidden" name="tag" value="'.$tag.'">';
+	print '<input type="hidden" name="newtag" value="'.$newtag.'">';
+	print '</td></tr>'."\n";
+
+	// EMail
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
+	print ' ('.$langs->trans("ToComplete").')';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+}
+
+
 // Payment on customer order
 if ($_REQUEST["amount"] == 'order')
 {
@@ -457,17 +500,50 @@ if ($_REQUEST["amount"] == 'contractline')
 
 }
 
-// Free payment
-if (is_numeric($_REQUEST["amount"]))
+// Payment on member subscription
+if ($_REQUEST["amount"] == 'membersubscription')
 {
 	$found=true;
-	$tag=$_REQUEST["tag"];
-	$newtag=$tag;
+	$langs->load("members");
+
+	require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
+
+	$member=new Adherent($db);
+	$result=$member->fetch('',$_REQUEST["ref"]);
+	if ($result < 0)
+	{
+		$mesg=$member->error;
+	}
+	else
+	{
+		$subscription=new Cotisation($db);
+		//$result=$subscription->fetch();
+	}
+
+	$amount=$subscription->total_ttc;
+
+	$newtag='MID='.$member->id.'.M='.strtr($member->fullname,"-"," ");
+	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
+	$newtag=dol_string_unaccent($newtag);
 
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
+
+	// Debitor
+	$var=!$var;
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$member->fullname.'</b>';
+
+	// Object
+	$var=!$var;
+	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
+	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="ref" value="'.$member->ref.'">';
+	print '</td></tr>'."\n";
 
 	// Amount
 	$var=!$var;
@@ -499,13 +575,15 @@ if (is_numeric($_REQUEST["amount"]))
 }
 
 
+
+
 if (! $found && ! $mesg) $mesg=$langs->trans("ErrorBadParameters");
 
 if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>';
 
 if ($found)
 {
-	print '<tr><td align="center" colspan="2"><br><input class="none" type="submit" name="dopayment" value="'.$langs->trans("PayBoxDoPayment").'"></td></tr>';
+	print '<tr><td align="center" colspan="2"><br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PayBoxDoPayment").'"></td></tr>';
 	//print '<tr><td align="center" colspan="2">'.$langs->trans("YouWillBeRedirectedOnPayBox").'...</td></tr>';
 }
 

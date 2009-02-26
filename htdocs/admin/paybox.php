@@ -162,19 +162,34 @@ $firstpart=$dolibarr_main_url_root;
 $regex=DOL_URL_ROOT.'$';
 $firstpart=eregi_replace($regex,'',$firstpart);
 print '<br>';
-print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
-print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=order&ref=<i>orderref</i></b>'."<br>\n";
-print '<br>';
-print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
-print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=invoice&ref=<i>invoiceref</i></b>'."<br>\n";
-//print $langs->trans("SetupPayBoxToHavePaymentCreatedAutomatically",$langs->transnoentitiesnoconv("FeatureNotYetAvailable"))."<br>\n";
-print '<br>';
-print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
-print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=contractline&ref=<i>contractlineref</i></b>'."<br>\n";
-print '<br>';
 print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
-print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>yourfreetag</i></b>'."<br>\n";
+print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag</i></b>'."<br>\n";
 print '<br>';
+if ($conf->commande->enabled)
+{
+	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
+	print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=order&ref=<i>order_ref</i></b>'."<br>\n";
+	print '<br>';
+}
+if ($conf->facture->enabled)
+{
+	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
+	print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=invoice&ref=<i>invoice_ref</i></b>'."<br>\n";
+//	print $langs->trans("SetupPayBoxToHavePaymentCreatedAutomatically",$langs->transnoentitiesnoconv("FeatureNotYetAvailable"))."<br>\n";
+	print '<br>';
+}
+if ($conf->contract->enabled)
+{
+	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
+	print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=contractline&ref=<i>contractline_ref</i></b>'."<br>\n";
+	print '<br>';
+}
+if ($conf->adherent->enabled)
+{
+	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
+	print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
+	print '<br>';
+}
 print $langs->trans("YouCanAddTagOnUrl");
 
 $db->close();
