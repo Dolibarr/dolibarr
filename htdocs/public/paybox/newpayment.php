@@ -583,7 +583,7 @@ if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.
 
 if ($found)
 {
-	print '<tr><td align="center" colspan="2"><br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PayBoxDoPayment").'"></td></tr>';
+	print '<tr><td align="center" colspan="2"><br><input class="none" type="submit" name="dopayment" value="'.$langs->trans("PayBoxDoPayment").'"></td></tr>';
 	//print '<tr><td align="center" colspan="2">'.$langs->trans("YouWillBeRedirectedOnPayBox").'...</td></tr>';
 }
 
