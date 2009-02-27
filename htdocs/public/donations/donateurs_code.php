@@ -29,7 +29,7 @@ $langs->load("donations");
 
 $sql = "SELECT ".$db->pdate("d.datedon")." as datedon, d.nom, d.prenom, d.amount, d.public, d.societe";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d";
-$sql .= " WHERE d.fk_don_projet = 1 AND d.fk_statut in (2, 3) ORDER BY d.datedon DESC";
+$sql .= " WHERE d.fk_statut in (2, 3) ORDER BY d.datedon DESC";
 
 if ( $db->query( $sql) )
 {
@@ -43,7 +43,7 @@ if ( $db->query( $sql) )
       print '<TR>';
       print "<td>".$langs->trans("Name")." / ".$langs->trans("Company")."</td>";
       print "<td>Date</td>";
-      print "<td align=\"right\">Montant</TD>";
+      print "<td align=\"right\">".$langs->trans("Amount")."</TD>";
       print "</TR>\n";
 
       $var=True;

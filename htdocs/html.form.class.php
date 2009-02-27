@@ -524,11 +524,8 @@ class Form
 				{
 					$obj = $this->db->fetch_object($resql);
 					$desc=dol_trunc($obj->description,40);
-					if ($desc=='(CREDIT_NOTE)')
-					{
-						$desc=$langs->trans("CreditNote");
-						//$desc.=$obj->fk_facture_source;
-					}
+					if ($desc=='(CREDIT_NOTE)') $desc=$langs->trans("CreditNote");
+					if ($desc=='(DEPOSIT)')     $desc=$langs->trans("Deposit");
 
 					$selectstring='';
 					if ($selected > 0 && $selected == $obj->rowid) $selectstring=' selected="true"';

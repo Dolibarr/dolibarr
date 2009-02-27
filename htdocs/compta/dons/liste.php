@@ -58,8 +58,8 @@ $donstatic=new Don($db);
 // Genere requete de liste des dons
 $sql = "SELECT d.rowid, ".$db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe,";
 $sql.= " d.amount, d.fk_statut as statut, ";
-$sql.= " p.libelle as projet";
-$sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."don_projet AS p";
+$sql.= " p.title as projet";
+$sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
 $sql.= " ON p.rowid = d.fk_don_projet WHERE 1 = 1";
 if ($statut >= 0)
 {

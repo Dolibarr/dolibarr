@@ -66,6 +66,7 @@ $NBLINES=4;
 $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 
+
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
@@ -2182,7 +2183,7 @@ else
 			}
 			print '</td></tr>';
 
-			// Ligne info remises tiers
+			// Discount
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
@@ -2317,7 +2318,9 @@ else
 						{
 							$obj = $db->fetch_object($resql);
 							$invoice->fetch($obj->fk_facture_source);
-							print '<tr><td colspan="2" align="right">'.$langs->trans("CreditNote").' ';
+							print '<tr><td colspan="2" align="right">';
+							if ($invoice->type == 2) print $langs->trans("CreditNote").' ';
+							if ($invoice->type == 3) print $langs->trans("Deposit").' ';
 							print $invoice->getNomUrl(0);
 							print ' :</td>';
 							print '<td align="right" style="border: 1px solid;">'.price($obj->amount_ttc).'</td>';

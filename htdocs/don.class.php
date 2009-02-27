@@ -60,7 +60,7 @@ class Don extends CommonObject
 
 	/**
 	 *    \brief  Constructeur
-	 *    \param  DB          	Handler d'accès base
+	 *    \param  DB          	Handler d'accï¿½s base
 	 */
 	function Don($DB)
 	{
@@ -80,8 +80,8 @@ class Don extends CommonObject
 
 
 	/**
-	 *    \brief      Retourne le libellé du statut d'un don (brouillon, validée, abandonnée, payée)
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \brief      Retourne le libellï¿½ du statut d'un don (brouillon, validï¿½e, abandonnï¿½e, payï¿½e)
+	 *    \param      mode          0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -90,10 +90,10 @@ class Don extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\brief      Renvoi le libellï¿½ d'un statut donnï¿½
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string        	Libellé du statut
+	 *    	\param      mode          	0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string        	Libellï¿½ du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -137,14 +137,14 @@ class Don extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise le don avec valeurs fictives aléatoire
-	 *					Sert à générer une recu de don pour l'aperu des modèles ou demo
+	 *		\brief		Initialise le don avec valeurs fictives alï¿½atoire
+	 *					Sert ï¿½ gï¿½nï¿½rer une recu de don pour l'aperu des modï¿½les ou demo
 	 */
 	function initAsSpecimen()
 	{
 		global $user,$langs;
 
-		// Charge tableau des id de société socids
+		// Charge tableau des id de sociï¿½tï¿½ socids
 		$socids = array();
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
 		$resql = $this->db->query($sql);
@@ -161,7 +161,7 @@ class Don extends CommonObject
 			}
 		}
 
-		// Initialise paramètres
+		// Initialise paramï¿½tres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
@@ -206,7 +206,7 @@ class Don extends CommonObject
 		{
 			if ((strlen(trim($this->nom)) + strlen(trim($this->prenom))) == 0)
 			{
-				$error_string[$err] = "Vous devez saisir vos nom et prénom ou le nom de votre société.";
+				$error_string[$err] = "Vous devez saisir vos nom et prï¿½nom ou le nom de votre sociï¿½tï¿½.";
 				$err++;
 			}
 		}
@@ -242,7 +242,7 @@ class Don extends CommonObject
 		{
 			if (!isset($map[substr($this->amount, $i, 1)] ))
 			{
-				$error_string[$err] = "Le montant du don contient un/des caractère(s) invalide(s)";
+				$error_string[$err] = "Le montant du don contient un/des caractï¿½re(s) invalide(s)";
 				$err++;
 				$amount_invalid = 1;
 				break;
@@ -279,9 +279,9 @@ class Don extends CommonObject
 	}
 
 	/**
-	 *    \brief      Création du don en base
-	 *    \param      user          Objet utilisateur qui crée le don
-	 *    \return     int           Id don crée si ok, <0 si ko
+	 *    \brief      Crï¿½ation du don en base
+	 *    \param      user          Objet utilisateur qui crï¿½e le don
+	 *    \return     int           Id don crï¿½e si ok, <0 si ko
 	 */
 	function create($user)
 	{
@@ -308,8 +308,8 @@ class Don extends CommonObject
 	}
 
 	/**
-	 *    \brief      Mise à jour du don
-	 *    \param      user        Objet utilisateur qui met à jour le don
+	 *    \brief      Mise ï¿½ jour du don
+	 *    \param      user        Objet utilisateur qui met ï¿½ jour le don
 	 *    \return     int         >0 si ok, <0 si ko
 	 */
 	function update($user)
@@ -328,7 +328,7 @@ class Don extends CommonObject
 		$sql .= ",ville='".$this->ville."'";
 		$sql .= ",pays='".$this->pays."'";
 		$sql .= ",public=".$this->public;
-		if ($this->projetid) {    $sql .= ",fk_don_projet=".$this->projetid; }
+		$sql .= ",fk_don_projet=".($this->projetid>0?$this->projetid:'null');
 		$sql .= ",note='".$this->note."'";
 		$sql .= ",datedon='".$this->date."'";
 		$sql .= ",email='".$this->email."'";
@@ -336,6 +336,7 @@ class Don extends CommonObject
 
 		$sql .= " WHERE rowid = $this->id";
 
+		dol_syslog("Don::update sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -350,7 +351,7 @@ class Don extends CommonObject
 
 	/*
 	 *    \brief  Suppression du don de la base
-	 *    \param  rowid   id du don à supprimer
+	 *    \param  rowid   id du don ï¿½ supprimer
 	 */
 	function delete($rowid)
 	{
@@ -376,20 +377,22 @@ class Don extends CommonObject
 	}
 
 	/*
-	 *      \brief      Charge l'objet don en mémoire depuis la base de donnée
-	 *      \param      rowid       Id du don à charger
+	 *      \brief      Charge l'objet don en mï¿½moire depuis la base de donnï¿½e
+	 *      \param      rowid       Id du don ï¿½ charger
 	 *      \return     int         <0 si ko, >0 si ok
 	 */
 	function fetch($rowid)
 	{
 		$sql = "SELECT d.rowid, ".$this->db->pdate("d.datec")." as datec,";
 		$sql.= " ".$this->db->pdate("d.datedon")." as datedon,";
-		$sql.= " d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet";
+		$sql.= " d.prenom, d.nom, d.societe, d.amount, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet,";
+		$sql.= " p.title as projet"; 
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."don as d";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."don_projet as p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p";
 		$sql.= " ON p.rowid = d.fk_don_projet";
 		$sql.= " WHERE cp.id = d.fk_paiement AND d.rowid = ".$rowid;
 
+		dol_syslog("Don::fetch sql=".$sql);
 		if ( $this->db->query( $sql) )
 		{
 			if ($this->db->num_rows())
@@ -430,7 +433,7 @@ class Don extends CommonObject
 
 	/*
 	 *    \brief  Valide une promesse de don
-	 *    \param  rowid   id du don à modifier
+	 *    \param  rowid   id du don ï¿½ modifier
 	 *    \param  userid  utilisateur qui valide la promesse
 	 *
 	 */
@@ -458,8 +461,8 @@ class Don extends CommonObject
 	}
 
 	/*
-	 *    \brief  Classe le don comme payé, le don a été recu
-	 *    \param  rowid           id du don à modifier
+	 *    \brief  Classe le don comme payï¿½, le don a ï¿½tï¿½ recu
+	 *    \param  rowid           id du don ï¿½ modifier
 	 *    \param  modepaiementd   mode de paiement
 	 */
 	function set_paye($rowid, $modepaiement='')
@@ -492,8 +495,8 @@ class Don extends CommonObject
 
 
 	/*
-	 *    \brief  Classe le don comme encaissé
-	 *    \param  rowid   id du don à modifier
+	 *    \brief  Classe le don comme encaissï¿½
+	 *    \param  rowid   id du don ï¿½ modifier
 	 *
 	 */
 	function set_encaisse($rowid)
@@ -521,7 +524,7 @@ class Don extends CommonObject
 
 	/**
 	 *    	\brief		Somme des dons
-	 *		\param		param	1=promesses de dons validées , 2=xxx, 3=encaissés
+	 *		\param		param	1=promesses de dons validï¿½es , 2=xxx, 3=encaissï¿½s
 	 */
 	function sum_donations($param)
 	{

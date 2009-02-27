@@ -40,7 +40,7 @@ print_fiche_titre($langs->trans("Statistics"));
 
 
 $sql = "SELECT d.amount";
-$sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."don_projet as p";
+$sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet as p";
 $sql .= " ON p.rowid = d.fk_don_projet";
 
 $result = $db->query($sql);

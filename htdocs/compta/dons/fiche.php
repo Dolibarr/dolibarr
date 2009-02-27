@@ -59,7 +59,7 @@ if ($_POST["action"] == 'update')
 		$don->cp          = $_POST["cp"];
 		$don->ville       = $_POST["ville"];
 		$don->email       = $_POST["email"];
-		$don->date        = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		$don->date        = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 		$don->note        = $_POST["note"];
 		$don->pays        = $_POST["pays"];
 		$don->public      = $_POST["public"];
@@ -75,7 +75,7 @@ if ($_POST["action"] == 'update')
 	}
 	else
 	{
-		$mesg="Montant non défini";
+		$mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
 	}
 }
 
@@ -93,7 +93,7 @@ if ($_POST["action"] == 'add')
 		$don->cp          = $_POST["cp"];
 		$don->ville       = $_POST["ville"];
 		$don->email       = $_POST["email"];
-		$don->date        = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		$don->date        = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 		$don->note        = $_POST["note"];
 		$don->pays        = $_POST["pays"];
 		$don->public      = $_POST["public"];
@@ -157,7 +157,7 @@ if ($_GET["action"] == 'set_encaisse')
 }
 
 /*
- * Générer ou regénérer le document
+ * Build doc
  */
 if ($_REQUEST['action'] == 'builddoc')
 {
@@ -201,7 +201,7 @@ $formfile = new FormFile($db);
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Création d'une fiche don                                                   */
+/* Creation                                                                   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,6 +209,8 @@ if ($_GET["action"] == 'create')
 {
 	print_fiche_titre($langs->trans("AddDonation"));
 
+	if ($mesg) print '<div class="error">'.$mesg.'</div>';
+	
 	print '<form name="add" action="fiche.php" method="post">';
 	print '<table class="border" width="100%">';
 
@@ -301,26 +303,10 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 	// Project
 	if ($conf->projet->enabled)
 	{
-		print "<tr><td>".$langs->trans("Project")."</td><td><select name=\"projetid\">\n";
-		$sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."don_projet";
-		$sql.= " ORDER BY rowid";
-		if ($db->query($sql))
-		{
-			$num = $db->num_rows();
-			$i = 0;
-			while ($i < $num)
-			{
-				$objopt = $db->fetch_object();
-				print "<option value=\"$objopt->rowid\">$objopt->libelle</option>\n";
-				$i++;
-			}
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-		print "</select><br>";
-		print "</td></tr>\n";
+		$langs->load('projects');
+		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
+		select_projects($soc->id, isset($_POST["projetid"])?$_POST["projetid"]:$don->projetid, 'projetid');
+		print '</td></tr>';
 	}
 
 	print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
@@ -424,7 +410,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
 	print "</div>";
 
-	// \TODO Gérer action émettre paiement
+	// \TODO Gï¿½rer action ï¿½mettre paiement
 	$resteapayer = 0;
 
 
@@ -440,7 +426,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 		print '<a class="butAction" href="fiche.php?rowid='.$don->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a>';
 	}
 
-	// \TODO Gérer action émettre paiement
+	// \TODO Gï¿½rer action ï¿½mettre paiement
 	if ($don->statut == 1 && $resteapayer > 0)
 	{
 		print "<a class=\"butAction\" href=\"paiement.php?facid=$facid&action=create\">".$langs->trans("DoPayment")."</a>";
@@ -466,7 +452,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 	print '<table width="100%"><tr><td width="50%" valign="top">';
 
 	/*
-	 * Documents générés
+	 * Documents gï¿½nï¿½rï¿½s
 	 */
 	$filename=sanitizeFileName($don->id);
 	$filedir=$conf->don->dir_output . '/' . get_exdir($filename,2);
