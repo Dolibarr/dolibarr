@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - bills 
+# Dolibarr language file - es_ES - bills
 CHARSET = UTF-8
 Bill = Factura
 Bills = Facturas
@@ -226,6 +226,8 @@ RelativeDiscount = Descuento relativo
 GlobalDiscount = Descuento fijo
 CreditNote = Abono
 CreditNotes = Abonos
+Deposit = Anticipo
+Deposits = Anticipos
 DiscountFromCreditNote = Descuento resultante del abono %s
 DiscountFromDeposit = Pagos de la factura de anticipo %s
 NewGlobalDiscount = Nuevo descuento fijo
@@ -314,7 +316,7 @@ LawApplicationPart3 = vendedor hasta el completo cobro de
 LawApplicationPart4 = sus precios
 LimitedLiabilityCompanyCapital = SRL con capital de
 UseDiscount = Aplicar descuento
-UseCreditNoteInInvoicePayment = Reducir el pago con este abono
+UseCreditNoteInInvoicePayment = Reducir el pago con este crédito
 MenuChequeDeposits = Ingreso de cheques
 MenuCheques = Gestión cheques
 MenuChequesReceipts = Fichas
