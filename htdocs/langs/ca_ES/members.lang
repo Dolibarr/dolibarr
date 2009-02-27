@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - members
+# Dolibarr language file - ca_ES - members 
 CHARSET = UTF-8
 MembersArea = Àrea membres
 PublicMembersArea = Àrea pública dels membres
@@ -63,6 +63,7 @@ MembersStatusNotPayedShort = No al dia
 MembersStatusResiliated = Membres donats de baixa
 MembersStatusResiliatedShort = Membres donats de baixa
 NewCotisation = Nova afiliació
+PaymentSubscription = Pagament de quotes
 EditMember = Edició membre
 SubscriptionEndDate = Data fi afiliació
 NewAttribute = Nou atribut
