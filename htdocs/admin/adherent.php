@@ -281,7 +281,7 @@ function form_constantes($tableau)
 				print '<td>';
 				// List of possible labels. Values must exists in 
 				// file htdocs/adherents/PDF_Card.class.php
-				require_once(DOL_DOCUMENT_ROOT.'/adherents/cartes/PDF_card.class.php');
+				require_once(DOL_DOCUMENT_ROOT.'/includes/modules/member/PDF_card.class.php');
 				$pdfcard=new PDF_card('5160',1,1,'mm');
 				$arrayoflabels=array_keys($pdfcard->_Avery_Labels);
 				
