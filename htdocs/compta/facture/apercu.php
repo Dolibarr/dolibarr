@@ -40,7 +40,7 @@ $langs->load("bills");
 
 
 // S�curit� acc�s client
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;
@@ -77,7 +77,7 @@ if ($_GET["facid"] > 0)
             $author->id = $fac->user_author;
             $author->fetch();
         }
-        
+
 		$head = facture_prepare_head($fac);
         dol_fiche_head($head, 'preview', $langs->trans("InvoiceCustomer"));
 
@@ -87,7 +87,7 @@ if ($_GET["facid"] > 0)
          */
         print '<table class="border" width="100%">';
 		$rowspan=3;
-        
+
         // Reference
         print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
 
@@ -254,11 +254,11 @@ if ($_GET["facid"] > 0)
         // Facture non trouv�e
         print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
     }
-} 
+}
 
 // Si fichier png PDF d'1 page trouv�
 if (file_exists($fileimage))
-{	  
+{
   print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($relativepathimage).'">';
 }
 // Si fichier png PDF de plus d'1 page trouv�
@@ -269,7 +269,7 @@ elseif (file_exists($fileimagebis))
 		for ($i = 0; $i < 20; $i++)
 		{
 			$preview = $multiple.$i;
-			
+
 			if (file_exists($dir_output.$preview))
       {
       	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($preview).'"><p>';
@@ -278,11 +278,6 @@ elseif (file_exists($fileimagebis))
 }
 
 
-print '</div>';
-
-
-// Juste pour �viter bug IE qui r�organise mal div pr�c�dents si celui-ci absent
-print '<div class="tabsAction">';
 print '</div>';
 
 

@@ -172,7 +172,7 @@ if ($_GET["propalid"] > 0)
 						print '</tr>';
 					}
 					print "</table>\n";
-					
+
 					// Conversion du PDF en image png si fichier png non existant
 					if (! file_exists($fileimage) && ! file_exists($fileimagebis))
 					{
@@ -200,7 +200,7 @@ if ($_GET["propalid"] > 0)
 						}
 					}
 				}
-				
+
 				print "</td>";
 				print '</tr>';
 
@@ -231,7 +231,7 @@ elseif (file_exists($fileimagebis))
 		for ($i = 0; $i < 20; $i++)
 		{
 			$preview = $multiple.$i;
-			
+
 			if (file_exists($dir_output.$preview))
       {
       	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($preview).'"><p>';
@@ -242,10 +242,6 @@ elseif (file_exists($fileimagebis))
 
 print '</div>';
 
-
-// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
-print '<div class="tabsAction">';
-print '</div>';
 
 
 $db->close();

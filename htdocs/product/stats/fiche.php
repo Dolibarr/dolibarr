@@ -101,14 +101,14 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2);
 		print '</td></tr>';
 
-		
+
 		// Graphs additionels generes pas le script product-graph.php
 		$year = strftime('%Y',time());
-		$file = get_exdir($product->id, 3) . "ventes-".$year."-".$product->id.".png";	
+		$file = get_exdir($product->id, 3) . "ventes-".$year."-".$product->id.".png";
 		if (file_exists (DOL_DATA_ROOT.'/product/temp/'.$file) )
 		{
 			print '<tr><td>Ventes</td><td>';
-			
+
 			$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_product&amp;file='.$file;
 			print '<img src="'.$url.'" alt="Ventes">';
 			$file = get_exdir($product->id, 3) . "ventes-".$product->id.".png";
@@ -117,11 +117,11 @@ if ($_GET["id"] || $_GET["ref"])
 			print '</td></tr>';
 		}
 
-		
+
 		print '</table>';
 		print '</div>';
-		
-		
+
+
 		// Choice of stats
 		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&mode=byunit">';
 		else print img_picto('','tick').' ';
@@ -132,9 +132,9 @@ if ($_GET["id"] || $_GET["ref"])
 		else print img_picto('','tick').' ';
 		print $langs->trans("StatsByNumberOfEntities");
 		if ($mode == 'byunit') print '</a>';
-		
+
 		print '<br><br>';
-		
+
 		print '<table width="100%">';
 
 		// Generation des graphs
@@ -148,26 +148,26 @@ if ($_GET["id"] || $_GET["ref"])
 				$mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
 			}
 		}
-		
+
 		$graphfiles=array(
-		'propal'           =>array('modulepart'=>'productstats_proposals', 
-		'file' => $product->id.'/propal12m.png', 
+		'propal'           =>array('modulepart'=>'productstats_proposals',
+		'file' => $product->id.'/propal12m.png',
 		'label' => ($mode=='byunit'?$langs->trans("NumberOfUnitsProposals"):$langs->trans("NumberOfProposals"))),
-		'orders'           =>array('modulepart'=>'productstats_orders', 
-		'file' => $product->id.'/orders12m.png', 
+		'orders'           =>array('modulepart'=>'productstats_orders',
+		'file' => $product->id.'/orders12m.png',
 		'label' => ($mode=='byunit'?$langs->trans("NumberOfUnitsCustomerOrders"):$langs->trans("NumberOfCustomerOrders"))),
-		'invoices'         =>array('modulepart'=>'productstats_invoices', 
-		'file' => $product->id.'/invoices12m.png', 
+		'invoices'         =>array('modulepart'=>'productstats_invoices',
+		'file' => $product->id.'/invoices12m.png',
 		'label' => ($mode=='byunit'?$langs->trans("NumberOfUnitsCustomerInvoices"):$langs->trans("NumberOfCustomerInvoices"))),
-		'invoicessuppliers'=>array('modulepart'=>'productstats_invoicessuppliers', 
-		'file' => $product->id.'/invoicessuppliers12m.png', 
+		'invoicessuppliers'=>array('modulepart'=>'productstats_invoicessuppliers',
+		'file' => $product->id.'/invoicessuppliers12m.png',
 		'label' => ($mode=='byunit'?$langs->trans("NumberOfUnitsSupplierInvoices"):$langs->trans("NumberOfSupplierInvoices"))),
 
 		//			'orderssuppliers'  =>array('modulepart'=>'productstats_orderssuppliers', 'file' => $product->id.'/orderssuppliers12m.png', 'label' => $langs->trans("Nombre commande fournisseurs sur les 12 derniers mois")),
 		//			'contracts'        =>array('modulepart'=>'productstats_contracts', 'file' => $product->id.'/contracts12m.png', 'label' => $langs->trans("Nombre contrats sur les 12 derniers mois")),
 
 		);
-		
+
 		$px = new DolGraph();
 		$mesg = $px->isGraphKo();
 		if (! $mesg)
@@ -175,9 +175,9 @@ if ($_GET["id"] || $_GET["ref"])
 			foreach($graphfiles as $key => $val)
 			{
 				if (! $graphfiles[$key]['file']) continue;
-				
+
 				$graph_data = array();
-				
+
 				// \todo Test si deja existant et recent, on ne genere pas
 				if ($key == 'propal')            $graph_data = $product->get_nb_propal($socid,$mode);
 				if ($key == 'orders')            $graph_data = $product->get_nb_order($socid,$mode);
@@ -203,26 +203,26 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 			}
 		}
-		
+
 		$mesg = $langs->trans("ChartGenerated");
-		
+
 		// Affichage graphs
 		$i=0;
 		foreach($graphfiles as $key => $val)
 		{
 			if (! $graphfiles[$key]['file']) continue;
-			
+
 			if ($graphfiles == 'propal' && ! $user->right->propale->lire) continue;
 			if ($graphfiles == 'order' && ! $user->right->commande->lire) continue;
 			if ($graphfiles == 'invoices' && ! $user->right->facture->lire) continue;
 			if ($graphfiles == 'invoices_suppliers' && ! $user->right->fournisseur->facture->lire) continue;
-			
-			
+
+
 			if ($i % 2 == 0) print '<tr>';
-			
+
 			// Show graph
 			print '<td width="50%" align="center">';
-			
+
 			print '<table class="border" width="100%">';
 			// Label
 			print '<tr class="liste_titre"><td colspan="2">';
@@ -248,23 +248,22 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<td align="center"><a href="fiche.php?id='.$product->id.'&amp;action=recalcul&amp;mode='.$mode.'">'.img_picto($langs->trans("ReCalculate"),'refresh').'</a></td>';
 			print '</tr>';
 			print '</table>';
-			
+
 			print '</td>';
-			
+
 			if ($i % 2 == 1) print '</tr>';
-			
-			
+
+
 			$i++;
 		}
-		
+
 		if ($i % 2 == 1) print '<td>&nbsp;</td></tr>';
-		
+
 		print '</table>';
-		
-		// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent en fin de page
+
 		print '<div class="tabsAction">';
 		print '</div>';
-		
+
 	}
 }
 else
@@ -276,5 +275,4 @@ else
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
 ?>

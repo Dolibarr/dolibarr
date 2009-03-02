@@ -59,10 +59,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
-// Juste pour eviter bug IE qui reorganise mal div precedents si celui-ci absent
-print '<div class="tabsAction">';
-print '</div>';
-
 
 $db->close();
 

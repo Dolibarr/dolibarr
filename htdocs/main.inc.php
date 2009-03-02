@@ -1022,9 +1022,8 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
  *		\brief   	Show HTML footer DIV + BODY + HTML
  *		\remarks	Close 2 div
  * 		\param   	foot    		A text to add in HTML generated page
- * 		\param		limitIEbug		Not used
  */
-function llxFooter($foot='',$limitIEbug=1)
+function llxFooter($foot='')
 {
 	global $conf, $dolibarr_auto_user, $micro_start_time;
 
@@ -1061,9 +1060,6 @@ function llxFooter($foot='',$limitIEbug=1)
 	{
 		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>'."\n";
 	}
-
-	// Juste pour eviter bug IE qui reorganise mal div precedents si celui-ci absent
-	//if ($limitIEbug && empty($conf->browser->firefox)) print "\n".'<div class="tabsAction">&nbsp;</div>'."\n";
 
 	// If there is some logs in buffer to show
     if (sizeof($conf->logbuffer))

@@ -45,7 +45,7 @@ $langs->load('sendings');
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 
-if ($conf->projet->enabled) 
+if ($conf->projet->enabled)
 {
 	require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 }
@@ -118,7 +118,7 @@ if ($_GET["id"] > 0) {
 		            print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
 		        }
 		        print "</td></tr>";
-		
+
 		        // Ref cde client
 				print '<tr><td>';
 		        print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
@@ -174,7 +174,7 @@ if ($_GET["id"] > 0) {
 						print '</tr>';
 					}
 					print "</table>\n";
-					
+
 					// Conversion du PDF en image png si fichier png non existant
 					if (! file_exists($fileimage) && ! file_exists($fileimagebis))
 					{
@@ -204,7 +204,7 @@ if ($_GET["id"] > 0) {
 				}
 
 				print "</td></tr>";
-				
+
 
 		        // Client
 		        print "<tr><td>".$langs->trans("Customer")."</td>";
@@ -258,7 +258,7 @@ elseif (file_exists($fileimagebis))
 		for ($i = 0; $i < 20; $i++)
 		{
 			$preview = $multiple.$i;
-			
+
 			if (file_exists($dir_output.$preview))
       {
       	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($preview).'"><p>';
@@ -269,10 +269,6 @@ elseif (file_exists($fileimagebis))
 
 print '</div>';
 
-
-// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
-print '<div class="tabsAction">';
-print '</div>';
 
 
 $db->close();

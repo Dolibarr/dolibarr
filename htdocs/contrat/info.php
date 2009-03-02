@@ -57,10 +57,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
-// Juste pour �viter bug IE qui r�organise mal div pr�c�dents si celui-ci absent
-print '<div class="tabsAction">';
-print '</div>';
-
 $db->close();
 
 llxFooter('$Date$ - $Revision$');

@@ -219,10 +219,6 @@ foreach ($listofreferent as $key => $value)
 	}
 }
 
-// Juste pour eviter bug IE qui reorganise mal div pr�c�dents si celui-ci absent
-print '<div class="tabsAction">';
-print '</div>';
-
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
