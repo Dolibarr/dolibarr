@@ -1867,15 +1867,36 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie montant TTC des avoirs utilises par la facture
-	 *		\return		int			<0 if KO, Credit note amount otherwise
+	 *    	\brief      Return amount (with tax) of all credit notes and deposits invoices used by invoice
+	 *		\return		int			<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
-	function getSommeCreditNote()
+	function getSumCreditNotesUsed()
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 
 		$discountstatic=new DiscountAbsolute($this->db);
-		$result=$discountstatic->getSommeCreditNote($this);
+		$result=$discountstatic->getSumCreditNotesUsed($this);
+		if ($result >= 0)
+		{
+			return $result;
+		}
+		else
+		{
+			$this->error=$discountstatic->error;
+			return -1;
+		}
+	}
+
+	/**
+	 *    	\brief      Return amount (with tax) of all deposits invoices used by invoice
+	 *		\return		int			<0 if KO, Sum of deposits amount otherwise
+	 */
+	function getSumDepositsUsed()
+	{
+		require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+
+		$discountstatic=new DiscountAbsolute($this->db);
+		$result=$discountstatic->getSumDepositsUsed($this);
 		if ($result >= 0)
 		{
 			return $result;

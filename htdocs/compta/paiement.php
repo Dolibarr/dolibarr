@@ -366,6 +366,8 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 				$var=True;
 				$total=0;
 				$totalrecu=0;
+				$totalrecucreditnote=0;
+				$totalrecudeposits=0;
 
 				while ($i < $num)
 				{
@@ -376,7 +378,8 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					$facturestatic->id=$objp->facid;
 					$facturestatic->type=$objp->type;
 
-					$creditnote=$facturestatic->getSommeCreditNote();
+					$creditnotes=$facturestatic->getSumCreditNotesUsed();
+					$deposits=$facturestatic->getSumDepositsUsed();
 
 					print '<tr '.$bc[$var].'>';
 
@@ -392,11 +395,12 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 
 					// Recu
 					print '<td align="right">'.price($objp->am);
-					if ($creditnote) print '+'.price($creditnote);
+					if ($creditnotes) print '+'.price($creditnotes);
+					if ($deposits) print '+'.price($deposits);
 					print '</td>';
 
 					// Reste a payer
-					print '<td align="right">'.price(price2num($objp->total_ttc - $objp->am - $creditnote,'MT')).'</td>';
+					print '<td align="right">'.price(price2num($objp->total_ttc - $objp->am - $creditnotes - $deposits,'MT')).'</td>';
 
 					// Montant
 					print '<td align="right">';
@@ -418,7 +422,8 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					$total+=$objp->total;
 					$total_ttc+=$objp->total_ttc;
 					$totalrecu+=$objp->am;
-					$totalrecucreditnote+=$creditnote;
+					$totalrecucreditnote+=$creditnotes;
+					$totalrecudeposits+=$deposits;
 					$i++;
 				}
 				if ($i > 1)
@@ -429,8 +434,9 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					print '<td align="right"><b>'.price($total_ttc).'</b></td>';
 					print '<td align="right"><b>'.price($totalrecu);
 					if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
+					if ($totalrecudeposits) print '+'.price($totalrecudeposits);
 					print '</b></td>';
-					print '<td align="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote,'MT')).'</b></td>';
+					print '<td align="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
 					print '<td align="center">&nbsp;</td>';
 					print '<td align="center">&nbsp;</td>';
 					print "</tr>\n";

@@ -132,11 +132,12 @@ class pdf_crabe extends ModelePDFFactures
 				$ret=$fac->fetch($id);
 			}
 			$fac->fetch_client();
-			
-			$deja_regle = $fac->getSommePaiement();
-			$amount_credit_not_included = $fac->getSommeCreditNote();
 
-			// D�finition de $dir et $file
+			$deja_regle = $fac->getSommePaiement();
+			$amount_credit_notes_included = $fac->getSumCreditNotesUsed();
+			$amount_deposits_included = $fac->getSumDepositsUsed();
+
+			// Definition of $dir and $file
 			if ($fac->specimen)
 			{
 				$dir = $conf->facture->dir_output;
@@ -364,7 +365,7 @@ class pdf_crabe extends ModelePDFFactures
 				$posy=$this->_tableau_tot($pdf, $fac, $deja_regle, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
-				if ($deja_regle || $amount_credit_not_included)
+				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
 					$posy=$this->_tableau_versements($pdf, $fac, $posy, $outputlangs);
 				}
@@ -436,11 +437,12 @@ class pdf_crabe extends ModelePDFFactures
 
 		$pdf->SetFont('Arial','',6);
 
-		// Loop on each credit note included
+		// Loop on each deposits and credit notes included
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-		$sql.= " re.description, re.fk_facture_source, re.fk_facture_source";
-		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
-		$sql.= " WHERE fk_facture = ".$fac->id;
+		$sql.= " re.description, re.fk_facture_source, re.fk_facture_source,";
+		$sql.= " f.type, f.datef";
+		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re, ".MAIN_DB_PREFIX ."facture as f";
+		$sql.= " WHERE re.fk_facture_source = f.rowid AND re.fk_facture = ".$fac->id;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -452,14 +454,18 @@ class pdf_crabe extends ModelePDFFactures
 				$y+=3;
 				$obj = $this->db->fetch_object($resql);
 
+				if ($obj->type == 2) $text=$outputlangs->trans("CreditNote");
+				elseif ($obj->type == 3) $text=$outputlangs->trans("Deposit");
+				else $text=$outputlangs->trans("UnknownType");
+
 				$invoice->fetch($obj->fk_facture_source);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
-				$pdf->MultiCell(20, 3,'', 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dol_print_date($obj->datef,'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($obj->amount_ttc), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
-				$pdf->MultiCell(20, 3, $outputlangs->trans("CreditNote"), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $text, 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+60, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, $invoice->ref, 0, 'L', 0);
 
@@ -754,18 +760,20 @@ class pdf_crabe extends ModelePDFFactures
 		}
 		$pdf->SetTextColor(0,0,0);
 
-		$creditnoteamount=$object->getSommeCreditNote();
-		$resteapayer = $object->total_ttc - $deja_regle - $creditnoteamount;
+		$creditnoteamount=$object->getSumCreditNotesUsed();
+		$depositsamount=$object->getSumDepositsUsed();
+		//print "x".$creditnoteamount."-".$depositsamount;exit;
+		$resteapayer = price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
 		if ($object->paye) $resteapayer=0;
 
-		if ($deja_regle > 0 || $creditnoteamount > 0)
+		if ($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0)
 		{
-			// Already payed
+			// Already payed + Deposits
 			$index++;
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPayed"), 0, 'L', 0);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("Payed"), 0, 'L', 0);
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount), 0, 'R', 0);
 
 			// Credit note
 			if ($creditnoteamount)
@@ -777,9 +785,6 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount), 0, 'R', 0);
 			}
 
-			$resteapayer = $object->total_ttc - $deja_regle - $creditnoteamount;
-			if ($object->paye) $resteapayer=0;
-
 			// Escompte
 			if ($object->close_code == 'discount_vat')
 			{
@@ -789,7 +794,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOffered"), $useborder, 'L', 1);
 				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle), $useborder, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount), $useborder, 'R', 1);
 
 				$resteapayer=0;
 			}
@@ -1004,7 +1009,7 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $object->client->code_client, '', 'R');
 		}
-		
+
 		if ($showadress)
 		{
 			// Emetteur

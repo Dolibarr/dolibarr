@@ -133,10 +133,10 @@ class pdf_oursin extends ModelePDFFactures
 			$fac->fetch_client();
 
 			$deja_regle = $fac->getSommePaiement();
-			$amount_credit_not_included = $fac->getSommeCreditNote();
+			$amount_credit_notes_included = $fac->getSumCreditNotesUsed();
+			$amount_deposits_included = $fac->getSumDepositsUsed();
 
-
-			// D�finition de $dir et $file
+			// Definition of $dir and $file
 			if ($fac->specimen)
 			{
 				$dir = $conf->facture->dir_output;
@@ -277,7 +277,7 @@ class pdf_oursin extends ModelePDFFactures
 				$posy=$this->_tableau_tot($pdf, $fac, $deja_regle, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
-				if ($deja_regle || $amount_credit_not_included)
+				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
 					$posy=$this->_tableau_versements($pdf, $fac, $posy, $outputlangs);
 				}
@@ -350,9 +350,10 @@ class pdf_oursin extends ModelePDFFactures
 
 		// Loop on each credit note included
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-		$sql.= " re.description, re.fk_facture_source, re.fk_facture_source";
-		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
-		$sql.= " WHERE fk_facture = ".$fac->id;
+		$sql.= " re.description, re.fk_facture_source, re.fk_facture_source,";
+		$sql.= " f.type, f.datef";
+		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re, ".MAIN_DB_PREFIX ."facture as f";
+		$sql.= " WHERE re.fk_facture_source = f.rowid AND re.fk_facture = ".$fac->id;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -364,14 +365,18 @@ class pdf_oursin extends ModelePDFFactures
 				$y+=3;
 				$obj = $this->db->fetch_object($resql);
 
+				if ($obj->type == 2) $text=$outputlangs->trans("CreditNote");
+				elseif ($obj->type == 3) $text=$outputlangs->trans("Deposit");
+				else $text=$outputlangs->trans("UnknownType");
+
 				$invoice->fetch($obj->fk_facture_source);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
-				$pdf->MultiCell(20, 3,'', 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dol_print_date($obj->datef,'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($obj->amount_ttc), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
-				$pdf->MultiCell(20, 3, $outputlangs->trans("CreditNote"), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $text, 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+60, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, $invoice->ref, 0, 'L', 0);
 
@@ -583,12 +588,15 @@ class pdf_oursin extends ModelePDFFactures
 
 
 	/**
-	 *   \brief      Affiche le total a payer
-	 *   \param      pdf         objet PDF
-	 *   \param      fac         objet facture
-	 *   \param      deja_regle  montant deja regle
+	 *	\brief      Affiche le total a payer
+	 *	\param      pdf             Objet PDF
+	 *	\param      object          Objet facture
+	 *	\param      deja_regle      Montant deja regle
+	 *	\param		posy			Position depart
+	 *	\param		outputlangs		Objet langs
+	 *	\return     y               Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $fac, $deja_regle, $posy, $outputlangs)
+	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		global $conf,$langs;
 
@@ -621,7 +629,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetXY ($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 0);
 		$pdf->SetXY ($col2x, $tab2_top + 0);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 0);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
@@ -670,24 +678,25 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->SetFont('Arial','B', 11);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), 0, 'L', 0);
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_ttc), 0, 'R', 0);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), 0, 'R', 0);
 			$pdf->SetTextColor(0,0,0);
 		}
 
-		$creditnoteamount=$fac->getSommeCreditNote();
-		$resteapayer = $fac->total_ttc - $deja_regle - $creditnoteamount;
+		$creditnoteamount=$object->getSumCreditNotesUsed();
+		$depositsamount=$object->getSumDepositsUsed();
+		$resteapayer = price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
 		if ($object->paye) $resteapayer=0;
 
-		if ($deja_regle > 0 || $creditnoteamount > 0)
+		if ($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0)
 		{
 			$pdf->SetFont('Arial','', 10);
 
-			// Already payed
+			// Already payed + Deposits
 			$index++;
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPayed"), 0, 'L', 0);
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount), 0, 'R', 0);
 
 			// Credit note
 			if ($creditnoteamount)
@@ -699,17 +708,30 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount), 0, 'R', 0);
 			}
 
-			$resteapayer = $object->total_ttc - $deja_regle - $creditnoteamount;
-			if ($object->paye) $resteapayer=0;
+			// Escompte
+			if ($object->close_code == 'discount_vat')
+			{
+				$index++;
+				$pdf->SetFillColor(255,255,255);
+
+				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOffered"), $useborder, 'L', 1);
+				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount), $useborder, 'R', 1);
+
+				$resteapayer=0;
+			}
 
 			$index++;
 			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('Arial','B', 11);
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), 0, 'L', 0);
 			$pdf->SetFillColor(224,224,224);
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 0);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer), 0, 'R', 0);
+
+			// Fin
+			$pdf->SetFont('Arial','B', 11);
 			$pdf->SetTextColor(0,0,0);
 		}
 
@@ -721,7 +743,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *   \brief      Affiche la grille des lignes de factures
 	 *   \param      pdf     objet PDF
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $fac, $outputlangs)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $object, $outputlangs)
 	{
 		global $conf,$langs;
 		$langs->load("main");
@@ -740,10 +762,10 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->Text($this->marges['g']+135, $tab_top + 5,$outputlangs->transnoentities("PriceUHT"));
 		$pdf->Text($this->marges['g']+153, $tab_top + 5, $outputlangs->transnoentities("Qty"));
 
-		$nblignes = sizeof($fac->lignes);
+		$nblignes = sizeof($object->lignes);
 		$rem=0;
 		for ($i = 0 ; $i < $nblignes ; $i++)
-		if ($fac->lignes[$i]->remise_percent)
+		if ($object->lignes[$i]->remise_percent)
 		{
 			$rem=1;
 		}
@@ -761,7 +783,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *   \param      pdf     objet PDF
 	 *   \param      fac     objet facture
 	 */
-	function _pagehead(&$pdf, $fac, $showadress=0, $outputlangs)
+	function _pagehead(&$pdf, $object, $showadress=0, $outputlangs)
 	{
 		global $langs,$conf;
 		$langs->load("main");
@@ -770,7 +792,7 @@ class pdf_oursin extends ModelePDFFactures
 		$langs->load("companies");
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
-		if($fac->statut==0 && (! empty($conf->global->FACTURE_DRAFT_WATERMARK)) )
+		if($object->statut==0 && (! empty($conf->global->FACTURE_DRAFT_WATERMARK)) )
 		{
 			$watermark_angle=atan($this->page_hauteur/$this->page_largeur);
 			$watermark_x=5;
@@ -867,8 +889,6 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetXY($this->marges['g']+100,$posy-5);
 		$pdf->SetFont('Arial','B',11);
 
-		$object=$fac;
-
 		// If BILLING contact defined on invoice, we use it
 		$usecontact=false;
 		if ($conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT)
@@ -940,11 +960,11 @@ class pdf_oursin extends ModelePDFFactures
 		if ($object->type == 2) $title=$outputlangs->transnoentities("InvoiceAvoir");
 		if ($object->type == 3) $title=$outputlangs->transnoentities("InvoiceDeposit");
 		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProFormat");
-		$pdf->MultiCell(100, 10, $title.' '.$outputlangs->transnoentities("Of").' '.dol_print_date($fac->date,"day",false,$outputlangs,true), '' , 'L');
+		$pdf->MultiCell(100, 10, $title.' '.$outputlangs->transnoentities("Of").' '.dol_print_date($object->date,"day",false,$outputlangs,true), '' , 'L');
 		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY($this->marges['g'],$posy);
 		$pdf->SetTextColor(22,137,210);
-		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("RefBill")." : " . $outputlangs->transnoentities($fac->ref), '', 'L');
+		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("RefBill")." : " . $outputlangs->transnoentities($object->ref), '', 'L');
 		$pdf->SetTextColor(0,0,0);
 		$posy+=4;
 
@@ -1004,12 +1024,12 @@ class pdf_oursin extends ModelePDFFactures
 		{
 			$outputlangs->load('propal');
 
-			$sql = "SELECT ".$fac->db->pdate("p.datep")." as dp, p.ref, p.rowid as propalid";
-			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $fac->id";
-			$result = $fac->db->query($sql);
+			$sql = "SELECT ".$object->db->pdate("p.datep")." as dp, p.ref, p.rowid as propalid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $object->id";
+			$result = $object->db->query($sql);
 			if ($result)
 			{
-				$objp = $fac->db->fetch_object();
+				$objp = $object->db->fetch_object();
 				if ($objp->ref)
 				{
 					$posy+=4;
@@ -1032,7 +1052,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *   \param      pdf     objet PDF
 	 *   \param      fac     objet facture
 	 */
-	function _pagefoot(&$pdf, $fac, $outputlangs)
+	function _pagefoot(&$pdf, $object, $outputlangs)
 	{
 		return pdf_pagefoot($pdf,$outputlangs,'FACTURE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
 	}

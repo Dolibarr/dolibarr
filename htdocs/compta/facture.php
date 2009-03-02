@@ -1916,13 +1916,15 @@ else
 			$soc->fetch($fac->socid);
 
 			$totalpaye  = $fac->getSommePaiement();
-			$totalavoir = $fac->getSommeCreditNote();
+			$totalcreditnotes = $fac->getSumCreditNotesUsed();
+			$totaldeposits = $fac->getSumDepositsUsed();
+			//print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
 
 			// We cal also use bcadd to avoid pb with floating points
 			// For example print 239.2 - 229.3 - 9.9; does not return 0.
 			//$resteapayer=bcadd($fac->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 			//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-			$resteapayer = price2num($fac->total_ttc - $totalpaye - $totalavoir,'MT');
+			$resteapayer = price2num($fac->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
 
 			if ($fac->paye) $resteapayer=0;
 			$resteapayeraffiche=$resteapayer;
@@ -2091,7 +2093,7 @@ else
 
 			print '<table class="border" width="100%">';
 
-			// Reference
+			// Ref
 			print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
 			print '<td colspan="5">';
 			$morehtmlref='';
@@ -2255,7 +2257,7 @@ else
 			}
 			else
 			{
-				print '&nbsp;';
+				print dol_print_date($fac->date,'daytext');
 			}
 			print '</td>';
 
@@ -2293,59 +2295,59 @@ else
 			$resql=$db->query($sql);
 			if ($resql)
 			{
-				$numdeposits = $db->num_rows($resql);
-				$i = 0;
-				$invoice=new Facture($db);
-				// Loop on each deposit applied
-				while ($i < $numdeposits)
-				{
-					$objinvoice = $db->fetch_object($resql);
-					$invoice->fetch($objinvoice->fk_facture_source);
-					if ($invoice->type != 3) continue;	// only deposits
+			$numdeposits = $db->num_rows($resql);
+			$i = 0;
+			$invoice=new Facture($db);
+			// Loop on each deposit applied
+			while ($i < $numdeposits)
+			{
+			$objinvoice = $db->fetch_object($resql);
+			$invoice->fetch($objinvoice->fk_facture_source);
+			if ($invoice->type != 3) continue;	// only deposits
 
-					// For each deposits, get payments
-					$sql = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
-					$sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
-					$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
-					$sql.= ' WHERE pf.fk_facture = '.$invoice->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
-					$sql.= ' ORDER BY dp, tms';
+			// For each deposits, get payments
+			$sql = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
+			$sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
+			$sql.= ' WHERE pf.fk_facture = '.$invoice->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
+			$sql.= ' ORDER BY dp, tms';
 
-					$resqlpayment = $db->query($sql);
-					if ($resqlpayment)
-					{
-						$numpayments = $db->num_rows($resqlpayment);
-						$j = 0;
-						while ($j < $numpayments)
-						{
-							$objpayment = $db->fetch_object($resqlpayement);
-							$var=!$var;
+			$resqlpayment = $db->query($sql);
+			if ($resqlpayment)
+			{
+			$numpayments = $db->num_rows($resqlpayment);
+			$j = 0;
+			while ($j < $numpayments)
+			{
+			$objpayment = $db->fetch_object($resqlpayement);
+			$var=!$var;
 
-							print '<tr '.$bc[$var].'><td>';
-							print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objpayment->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
-							print dol_print_date($objpayment->dp,'day').'</a>';
+			print '<tr '.$bc[$var].'><td>';
+			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objpayment->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
+			print dol_print_date($objpayment->dp,'day').'</a>';
 
-							print ' ('.$langs->trans("Deposit").' ';
-							print $invoice->getNomUrl(0).')';
+			print ' ('.$langs->trans("Deposit").' ';
+			print $invoice->getNomUrl(0).')';
 
-							print '</td>';
-							print '<td>'.$objpayment->paiement_type.' '.$objpayement->num_paiement.'</td>';
-							print '<td align="right">'.price($objpayment->amount).'</td>';
-							// Remove deposit invoice
-							print '<td align="right">';
-							print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&action=unlinkdiscount&discountid='.$objinvoice->rowid.'">'.img_delete().'</a>';
-							print '</td>';
-							print '</tr>';
+			print '</td>';
+			print '<td>'.$objpayment->paiement_type.' '.$objpayement->num_paiement.'</td>';
+			print '<td align="right">'.price($objpayment->amount).'</td>';
+			// Remove deposit invoice
+			print '<td align="right">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&action=unlinkdiscount&discountid='.$objinvoice->rowid.'">'.img_delete().'</a>';
+			print '</td>';
+			print '</tr>';
 
-							$j++;
-							$depositamount += $obj->amount;
-						}
-					}
-					$i++;
-				}
+			$j++;
+			$depositamount += $obj->amount;
+			}
+			}
+			$i++;
+			}
 			}
 			else
 			{
-				dol_print_error($db);
+			dol_print_error($db);
 			}
 			*/
 
@@ -3173,7 +3175,7 @@ else
 					if ($fac->statut == 1 && $fac->paye == 0 && $resteapayer > 0
 					&& $user->rights->facture->paiement)
 					{
-						if ($totalpaye > 0 || $totalavoir > 0)
+						if ($totalpaye > 0 || $totalcreditnotes > 0)
 						{
 							// If one payment or one credit note was linked to this invoice
 							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayedPartially').'</a>';

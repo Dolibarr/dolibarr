@@ -33,7 +33,7 @@ class DiscountAbsolute
 {
 	var $db;
 	var $error;
-	
+
 	var $id;					// Id remise
 	var $amount_ht;				//
 	var $amount_tva;			//
@@ -46,7 +46,7 @@ class DiscountAbsolute
 	var $fk_facture;			// Id invoice when a discoutn linked to invoice
 	var $fk_facture_source;		// Id facture avoir � l'origine de la remise
 	var $ref_facture_source;	// Ref facture avoir � l'origine de la remise
-	
+
 	/**
 	 *    \brief  Constructeur de la classe
 	 *    \param  DB          handler acc�s base de donn�es
@@ -91,7 +91,7 @@ class DiscountAbsolute
 			if ($this->db->num_rows($resql))
 			{
 				$obj = $this->db->fetch_object($resql);
-	
+
 				$this->id = $obj->rowid;
 				$this->fk_soc = $obj->fk_soc;
 				$this->amount_ht = $obj->amount_ht;
@@ -105,7 +105,7 @@ class DiscountAbsolute
 				$this->ref_facture_source = $obj->ref_facture_source;	// Ref avoir source
 				$this->description = $obj->description;
 				$this->datec = $obj->datec;
-	
+
 				$this->db->free($resql);
 				return 1;
 			}
@@ -131,13 +131,13 @@ class DiscountAbsolute
     function create($user)
     {
     	global $conf, $langs;
-    	
+
 		// Nettoyage parametres
 		$this->amount_ht=price2num($this->amount_ht);
 		$this->amount_tva=price2num($this->amount_tva);
 		$this->amount_ttc=price2num($this->amount_ttc);
 		$this->tva_tx=price2num($this->tva_tx);
-		
+
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
 		$sql.= " (datec, fk_soc, fk_user, description,";
@@ -172,9 +172,9 @@ class DiscountAbsolute
 	function delete()
 	{
 		global $conf, $langs;
-	
+
 		$this->db->begin();
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except ";
 		$sql.= " WHERE rowid = ".$this->id." AND (fk_facture_line IS NULL or fk_facture IS NULL)";
 
@@ -216,9 +216,9 @@ class DiscountAbsolute
 			return -1;
 		}
 	}
-	
 
-	
+
+
 	/**
 	*		\brief		Link the discount to a particular invoice line or a particular invoice
 	*		\param		rowidline		Invoice line id
@@ -228,17 +228,17 @@ class DiscountAbsolute
 	function link_to_invoice($rowidline,$rowidinvoice)
 	{
 		// Check parameters
-		if (! $rowidline && ! $rowidinvoice) 
+		if (! $rowidline && ! $rowidinvoice)
 		{
 			$this->error='ErrorBadParameters';
 			return -1;
 		}
-		if ($rowidline && $rowidinvoice) 
+		if ($rowidline && $rowidinvoice)
 		{
 			$this->error='ErrorBadParameters';
 			return -2;
 		}
-		
+
 		$sql ="UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
 		if ($rowidline)    $sql.=" SET fk_facture_line = ".$rowidline;
 		if ($rowidinvoice) $sql.=" SET fk_facture = ".$rowidinvoice;
@@ -257,7 +257,7 @@ class DiscountAbsolute
 			return -3;
 		}
 	}
-	
+
 
 	/**
 	*		\brief		Link the discount to a particular invoice line or a particular invoice
@@ -321,18 +321,19 @@ class DiscountAbsolute
 		return -1;
 	}
 
-	
+
 	/**
-	 *    	\brief      Renvoie montant TTC des avoirs utilises par la facture
-	 *		\return		int			<0 if KO, Credit note amount otherwise
+	 *    	\brief      Return amount (with tax) of all credit notes and deposits invoices used by invoice
+	 *		\return		int			<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
-	function getSommeCreditNote($invoice)
+	function getSumCreditNotesUsed($invoice)
 	{
 		$sql = 'SELECT sum(rc.amount_ttc) as amount';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
-		$sql.= ' WHERE rc.fk_facture = '.$invoice->id;
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
+		$sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
+		$sql.= ' AND f.type = 2';
 
-        dol_syslog("DiscountAbsolute::getSommeCreditNote sql=".$sql,LOG_DEBUG);
+        dol_syslog("DiscountAbsolute::getSumCreditNotesUsed sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -342,22 +343,45 @@ class DiscountAbsolute
 		else
 		{
 			return -1;
-		}	
+		}
 	}
 
+	/**
+	 *    	\brief      Return amount (with tax) of all deposits invoices used by invoice
+	 *		\return		int			<0 if KO, Sum of credit notes and deposits amount otherwise
+	 */
+	function getSumDepositsUsed($invoice)
+	{
+		$sql = 'SELECT sum(rc.amount_ttc) as amount';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
+		$sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
+		$sql.= ' AND f.type = 3';
+
+        dol_syslog("DiscountAbsolute::getSumDepositsUsed sql=".$sql,LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			return $obj->amount;
+		}
+		else
+		{
+			return -1;
+		}
+	}
 
 	/**
-		\brief      Renvoie nom clicable (avec eventuellement le picto)
-		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-		\param		option			Sur quoi pointe le lien
-		\return		string			Chaine avec URL
-	*/
+	 *	\brief      Return clicable ref of object (with picto or not)
+	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	\param		option			Sur quoi pointe le lien
+	 *	\return		string			Chaine avec URL
+	 */
 	function getNomUrl($withpicto,$option='invoice')
 	{
 		global $langs;
-		
+
 		$result='';
-		
+
 		if ($option == 'invoice')
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->fk_facture_source.'">';
@@ -374,13 +398,13 @@ class DiscountAbsolute
 			$ref=$langs->trans("Discount");
 			$picto='generic';
 		}
-		
-		
+
+
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$lien.$ref.$lienfin;
 		return $result;
 	}
-	
+
 }
 ?>
