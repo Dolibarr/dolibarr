@@ -145,12 +145,12 @@ class Form
 	}
 
 	/**
-	 \brief     Affiche un texte avec picto help qui affiche un tooltip
-	 \param     text				Texte à afficher
-	 \param     htmltooltip     	Contenu html du tooltip
-	 \param		direction			1=Le picto est après, -1=le picto est avant
-	 \param		usehelpcursor		1=Utilise curseur help, 0=Curseur par defaut
-	 \return	string				Code html du texte,picto
+	 *	\brief     Affiche un texte avec picto help qui affiche un tooltip
+	 *	\param     text				Texte à afficher
+	 *	\param     htmltooltip     	Contenu html du tooltip
+	 *	\param		direction			1=Le picto est après, -1=le picto est avant
+	 *	\param		usehelpcursor		1=Utilise curseur help, 0=Curseur par defaut
+	 *	\return	string				Code html du texte,picto
 	 */
 	function textwithhelp($text,$htmltext,$direction=1,$usehelpcursor=1)
 	{
@@ -161,17 +161,19 @@ class Form
 	}
 
 	/**
-	 \brief     Affiche un texte avec picto warning qui affiche un tooltip
-	 \param     text				Texte à afficher
-	 \param     htmltooltip     	Contenu html du tooltip
-	 \param		direction			1=Le picto est après, -1=le picto est avant
-	 \return	string				Code html du texte,picto
+	 *	\brief     Affiche un texte avec picto warning qui affiche un tooltip
+	 *	\param     text				Texte à afficher
+	 *	\param     htmltooltip     	Contenu html du tooltip
+	 *	\param		direction			1=Le picto est après, -1=le picto est avant
+	 *	\return	string				Code html du texte,picto
 	 */
 	function textwithwarning($text,$htmltext,$direction=1)
 	{
-		return $this->textwithtooltip($text,$htmltext,2,$direction,img_warning(""));
+		global $conf;
+		$alt='';
+		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';
+		return $this->textwithtooltip($text,$htmltext,2,$direction,img_warning($alt));
 	}
-
 
 
 	/**

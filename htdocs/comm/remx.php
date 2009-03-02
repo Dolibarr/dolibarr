@@ -343,6 +343,13 @@ if ($_socid > 0)
 				$facturestatic->type=$obj->type;
 				print $langs->trans("CreditNote").' '.$facturestatic->getNomURl(1);
 			}
+			elseif ($obj->description == '(DEPOSIT)')
+			{
+				$facturestatic->id=$obj->fk_facture_source;
+				$facturestatic->ref=$obj->ref;
+				$facturestatic->type=$obj->type;
+				print $langs->trans("InvoiceDeposit").' '.$facturestatic->getNomURl(1);
+			}
 			else
 			{
 				print $obj->description;

@@ -2140,7 +2140,7 @@ else
 				print '</tr>';
 			}
 
-			// Tiers Société
+			// Third party
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td colspan="5">'.$soc->getNomUrl(1,'compta').'</td>';
 			print '</tr>';
@@ -2207,7 +2207,8 @@ else
 				// If validated, we show link "add credit note to payment"
 				if ($fac->statut != 1 || $fac->type == 2 || $fac->type == 3)
 				{
-					print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
+					$text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie));
+					print $html->textwithhelp($text,$langs->trans("CreditNoteDepositUse"));
 				}
 				else
 				{
