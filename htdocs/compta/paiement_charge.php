@@ -32,7 +32,7 @@ $langs->load("bills");
 $chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 
 // Sécurité accés client
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;
@@ -52,7 +52,7 @@ if ($_POST["action"] == 'add_paiement')
 	}
 
     $datepaye = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-	
+
     if (! $_POST["paiementtype"] > 0)
     {
         $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
@@ -63,7 +63,7 @@ if ($_POST["action"] == 'add_paiement')
         $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Date"));
         $error++;
     }
-	
+
     if (! $error)
     {
         $paiement_id = 0;
@@ -114,7 +114,7 @@ if ($_POST["action"] == 'add_paiement')
             if ($bank_line_id > 0)
             {
                 $paiement->update_fk_bank($bank_line_id);
-                
+
                 // Mise a jour liens (pour chaque charge concernée par le paiement)
                 foreach ($paiement->amounts as $key => $value)
                 {
@@ -138,7 +138,7 @@ if ($_POST["action"] == 'add_paiement')
             $mesg = "Echec de la création du paiement: paiement_id=$paiement_id ".$db->error();
         }
     }
-    
+
 	$_GET["action"]='create';
 }
 
@@ -155,7 +155,7 @@ $html=new Form($db);
 /*
  * Formulaire de creation d'un paiement de charge
  */
-if ($_GET["action"] == 'create') 
+if ($_GET["action"] == 'create')
 {
 
       $charge = new ChargeSociales($db);
@@ -163,7 +163,7 @@ if ($_GET["action"] == 'create')
 
 	  $total = $charge->amount;
 
-	  print_titre($langs->trans("DoPayment"));
+	  print_fiche_titre($langs->trans("DoPayment"));
       print "<br>\n";
 
 	if ($mesg)
@@ -187,7 +187,7 @@ if ($_GET["action"] == 'create')
 	  print '<tr><td>'.$langs->trans("DateDue")."</td><td colspan=\"2\">".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
 
       print '<tr><td>'.$langs->trans("AmountTTC")."</td><td colspan=\"2\"><b>".price($charge->amount).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-	  
+
       $sql = "SELECT sum(p.amount) as total";
       $sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
       $sql.= " WHERE p.fk_charge = ".$chid;
@@ -204,18 +204,18 @@ if ($_GET["action"] == 'create')
       print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Payment").'</td>';
 
 	  print "<input type=\"hidden\" name=\"chid\" value=\"$chid\">";
-	  
+
 	  print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	  $datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 	  $html->select_date($datepayment,'','','','',"add_paiement");
 	  print "</td>";
 	  print '<td>'.$langs->trans("Comments").'</td></tr>';
-	  
+
 	  print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
       $html->select_types_paiements($charge->paiementtype, "paiementtype");
 	  print "</td>\n";
 
-	  print '<td rowspan="3" valign="top"><textarea name="comment" wrap="soft" cols="40" rows="'.ROWS_3.'"></textarea></td></tr>';	  
+	  print '<td rowspan="3" valign="top"><textarea name="comment" wrap="soft" cols="40" rows="'.ROWS_3.'"></textarea></td></tr>';
 
 		print '<tr>';
 		print '<td>'.$langs->trans('AccountToCredit').'</td>';
@@ -237,27 +237,27 @@ if ($_GET["action"] == 'create')
 		  print '<tr class="liste_titre">';
 		  //print '<td>'.$langs->trans("SocialContribution").'</td>';
 		  print '<td align="left">'.$langs->trans("DateDue").'</td>';
-		  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';	      
+		  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		  print '<td align="right">'.$langs->trans("AlreadyPayed").'</td>';
 		  print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
 		  print '<td align="right">'.$langs->trans("Amount").'</td>';
 		  print "</tr>\n";
-	      
+
 		  $var=True;
 		  $total=0;
 		  $totalrecu=0;
-		  
+
 		  while ($i < $num)
 		    {
 		      //$objp = $db->fetch_object($result);
 		      $objp = $charge;
-		      
+
 		      $var=!$var;
-		      
+
 		      print "<tr $bc[$var]>";
-		  
+
 		      //print '<td>'.$charge->getNomUrl(1)."</td>\n";
-		      
+
 		      if ($objp->date_ech > 0)
 			{
 			  print "<td align=\"left\">".dol_print_date($objp->date_ech,'day')."</td>\n";
@@ -266,11 +266,11 @@ if ($_GET["action"] == 'create')
 			{
 			  print "<td align=\"center\"><b>!!!</b></td>\n";
 			}
-		      
+
 		      print '<td align="right">'.price($objp->amount)."</td>";
 
 		      print '<td align="right">'.price($sumpayed)."</td>";
-		      
+
 		      print '<td align="right">'.price($objp->amount-$sumpayed)."</td>";
 
 		      print '<td align="right">';
@@ -304,7 +304,7 @@ if ($_GET["action"] == 'create')
 		    }
 		  print "</table></td></tr>\n";
 //		}
-//	      $db->free();	
+//	      $db->free();
 //	    }
 //	  else
 //	    {
@@ -320,9 +320,9 @@ if ($_GET["action"] == 'create')
 	  print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	  print '</td></tr>';
 	  print "</table>";
-	  print "</form>\n";	  
+	  print "</form>\n";
 //    }
-} 
+}
 
 
 $db->close();
