@@ -965,7 +965,7 @@ else
 	print '<form name="formsoc" method="post">';
 	print '<table class="border" width="100%">';
 
-	//
+	// Name
 	print '<tr><td width="20%">'.$langs->trans('Name').'</td>';
 	print '<td colspan="3">';
 	print $form->showrefnav($soc,'socid','',1,'rowid','nom');

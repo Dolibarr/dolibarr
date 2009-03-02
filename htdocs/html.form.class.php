@@ -490,7 +490,7 @@ class Form
 
 
 	/**
-	 *    	\brief      Retourne la liste déroulante des remises fixes
+	 *    	\brief      Return HTML combo list of absolute discounts
 	 *    	\param      selected        Id remise fixe pré-sélectionnée
 	 *    	\param      htmlname        Nom champ formulaire
 	 *    	\param      filter          Criteres optionnels de filtre
@@ -1750,10 +1750,10 @@ class Form
 			print '<td align="left">';
 			if ($nbqualifiedlines > 0)
 			{
-				print ' <input type="submit" class="button" value="';
+				print ' &nbsp; <input type="submit" class="button" value="';
 				if (! $filter || $filter=='fk_facture_source IS NULL') print $langs->trans("UseDiscount");
-				else print $langs->trans("UseCreditNoteInInvoicePayment");
-				print '">';
+				else print $langs->trans("UseCredit");
+				print '" title="'.$langs->trans("UseCreditNoteInInvoicePayment").'">';
 			}
 			print '</td>';
 			print '</tr></table></form>';

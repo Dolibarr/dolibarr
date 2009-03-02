@@ -46,7 +46,7 @@ $mesg='';
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$db->begin();
-	
+
 	$paiement = new Paiement($db);
 	$paiement->fetch($_GET['id']);
 	$result = $paiement->delete();
@@ -72,7 +72,7 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 	if ($paiement->valide() > 0)
 	{
 		$db->commit();
-		
+
 		// \TODO Boucler sur les facture liées à ce paiement et régénèrer le pdf
 		$factures=array();
 		foreach($factures as $id)
@@ -121,11 +121,11 @@ $h=0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
-$h++;      
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/info.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Info");
-$h++;      
+$h++;
 
 
 dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"));
@@ -180,15 +180,15 @@ print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2b
 // Bank account
 if ($conf->banque->enabled)
 {
-    if ($paiement->bank_account) 
+    if ($paiement->bank_account)
     {
     	$bankline=new AccountLine($db);
     	$bankline->fetch($paiement->bank_line);
-    
+
     	print '<tr>';
     	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
-		print $bankline->getNomUrl(1,0,'showall');			
+		print $bankline->getNomUrl(1,0,'showall');
     	print '</td>';
     	print '</tr>';
     }
@@ -201,15 +201,15 @@ print '</table>';
  * Liste des factures
  */
 $allow_delete = 1 ;
-$sql = 'SELECT f.facnumber, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom, s.rowid as socid';
+$sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom, s.rowid as socid';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
 $sql .= ' WHERE pf.fk_facture = f.rowid AND f.fk_soc = s.rowid';
 $sql .= ' AND pf.fk_paiement = '.$paiement->id;
-$resql=$db->query($sql); 			
+$resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
-  
+
 	$i = 0;
 	$total = 0;
 	print '<br><table class="noborder" width="100%">';
@@ -219,11 +219,11 @@ if ($resql)
 	print '<td>'.$langs->trans('Company').'</td>';
 	print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
 	print "</tr>\n";
-  
-	if ($num > 0) 
+
+	if ($num > 0)
 	{
 		$var=True;
-      
+
 		$facturestatic=new Facture($db);
 
 		while ($i < $num)
@@ -231,9 +231,12 @@ if ($resql)
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
-			print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
-			print $objp->facnumber;
-			print "</a></td>\n";
+			print '<td>';
+			$facturestatic->id=$objp->facid;
+			$facturestatic->ref=$objp->facnumber;
+			$facturestatic->type=$objp->type;
+			print $facturestatic->getNomUrl(1);
+			print "</td>\n";
 			print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 			print '<td align="right">'.price($objp->amount).'</td>';
@@ -244,16 +247,16 @@ if ($resql)
 			}
 			$total = $total + $objp->amount;
 			$i++;
-		}		        
+		}
 	}
 	$var=!$var;
 
 	print "</table>\n";
-	$db->free($resql);	
+	$db->free($resql);
 }
 else
 {
-	dol_print_error($db);   
+	dol_print_error($db);
 }
 
 print '</div>';
@@ -283,7 +286,7 @@ if ($user->societe_id == 0 && $allow_delete && $_GET['action'] == '')
 	}
 }
 
-print '</div>';      
+print '</div>';
 
 $db->close();
 

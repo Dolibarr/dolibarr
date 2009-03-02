@@ -117,13 +117,19 @@ if ($_socid > 0)
 	 */
 	$head = societe_prepare_head($objsoc);
 
-	dol_fiche_head($head, 'absolutediscount', $objsoc->nom);
+	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"));
 
 
     print '<form method="POST" action="remx.php?id='.$objsoc->id.'">';
     print '<input type="hidden" name="action" value="setremise">';
 
     print '<table class="border" width="100%">';
+
+    // Name
+	print '<tr><td width="38%">'.$langs->trans('Name').'</td>';
+	print '<td>';
+	print $form->showrefnav($objsoc,'id','',1,'rowid','nom');
+	print '</td></tr>';
 
 	// Calcul avoirs en cours
     $remise_all=$remise_user=0;
@@ -191,12 +197,14 @@ if ($_socid > 0)
     {
         print_titre($langs->trans("DiscountStillRemaining"));
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td width="120">'.$langs->trans("Date").'</td>';
-        print '<td>'.$langs->trans("ReasonDiscount").'</td>';
+        print '<tr class="liste_titre">';
+        print '<td width="110" align="left">'.$langs->trans("Date").'</td>';
+        print '<td align="left">'.$langs->trans("ReasonDiscount").'</td>';
+        print '<td align="left" nowrap="nowrap">'.$langs->trans("ConsumedBy").'</td>';
         print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
         print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
         print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
-        print '<td align="center" width="100">'.$langs->trans("DiscountOfferedBy").'</td>';
+        print '<td width="100" align="center">'.$langs->trans("DiscountOfferedBy").'</td>';
         print '<td width="20">&nbsp;</td>';
         print '</tr>';
 
@@ -209,33 +217,38 @@ if ($_socid > 0)
             $var = !$var;
             print "<tr $bc[$var]>";
             print '<td>'.dol_print_date($obj->dc,'dayhour').'</td>';
-            print '<td>';
 			if ($obj->description == '(CREDIT_NOTE)')
 			{
+            	print '<td nowrap="nowrap">';
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
 				print $langs->trans("CreditNote").' '.$facturestatic->getNomURl(1);
+				print '</td>';
 			}
 			elseif ($obj->description == '(DEPOSIT)')
 			{
+            	print '<td nowrap="nowrap">';
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
 				print $langs->trans("InvoiceDeposit").' '.$facturestatic->getNomURl(1);
+				print '</td>';
 			}
 			else
 			{
+            	print '<td>';
 				print $obj->description;
+				print '</td>';
 			}
-			print '</td>';
-            print '<td align="right">'.price($obj->amount_ht).'</td>';
+            print '<td align="left" nowrap="nowrap">'.$langs->trans("NotConsumed").'</td>';
+			print '<td align="right">'.price($obj->amount_ht).'</td>';
             print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
             print '<td align="right">'.price($obj->amount_ttc).'</td>';
             print '<td align="center">';
-			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login;
+			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>';
 			print '</td>';
-			if ($obj->user_id == $user->id) print '<td><a href="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&amp;action=remove&amp;remid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveDiscount")).'</td>';
+			if ($obj->user_id == $user->id) print '<td><a href="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&amp;action=remove&amp;remid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveDiscount")).'</a></td>';
             else print '<td>&nbsp;</td>';
             print '</tr>';
             $i++;
@@ -251,8 +264,9 @@ if ($_socid > 0)
     print '<br>';
 
     /*
-     * Liste ristournes appliqu�es (=liees a une ligne de facture ou facture)
+     * Liste ristournes appliquees (=liees a une ligne de facture ou facture)
      */
+
     // Remises liees a lignes de factures
     $sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
 	$sql.= $db->pdate("rc.datec")." as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
@@ -295,13 +309,14 @@ if ($_socid > 0)
     {
         print_titre($langs->trans("DiscountAlreadyCounted"));
         print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td width="120">'.$langs->trans("Date").'</td>';
-        print '<td>'.$langs->trans("ReasonDiscount").'</td>';
-        print '<td align="left">'.$langs->trans("Invoice").'</td>';
+        print '<tr class="liste_titre">';
+        print '<td width="110" align="left">'.$langs->trans("Date").'</td>';
+        print '<td align="left">'.$langs->trans("ReasonDiscount").'</td>';
+        print '<td align="left" nowrap="nowrap">'.$langs->trans("ConsumedBy").'</td>';
         print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
         print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
         print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
-        print '<td align="center" width="100">'.$langs->trans("Author").'</td>';
+        print '<td width="100" align="center">'.$langs->trans("Author").'</td>';
         print '<td width="20">&nbsp;</td>';
         print '</tr>';
 
@@ -335,32 +350,36 @@ if ($_socid > 0)
             $var = !$var;
             print "<tr $bc[$var]>";
             print '<td>'.dol_print_date($obj->dc,'dayhour').'</td>';
-            print '<td>';
 			if ($obj->description == '(CREDIT_NOTE)')
 			{
+            	print '<td nowrap="nowrap">';
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
 				print $langs->trans("CreditNote").' '.$facturestatic->getNomURl(1);
+				print '</td>';
 			}
 			elseif ($obj->description == '(DEPOSIT)')
 			{
+            	print '<td nowrap="nowrap">';
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
 				print $langs->trans("InvoiceDeposit").' '.$facturestatic->getNomURl(1);
+				print '</td>';
 			}
 			else
 			{
+            	print '<td>';
 				print $obj->description;
+				print '</td>';
 			}
-			print '</td>';
-            print '<td align="left"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
+            print '<td align="left" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
             print '<td align="right">'.price($obj->amount_ht).'</td>';
             print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
             print '<td align="right">'.price($obj->amount_ttc).'</td>';
             print '<td align="center">';
-			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login;
+			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>';
 			print '</td>';
             print '<td>&nbsp;</td>';
             print '</tr>';
