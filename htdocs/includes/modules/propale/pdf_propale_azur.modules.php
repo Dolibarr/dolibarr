@@ -134,7 +134,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			}
 			$propale->fetch_client();
 			$deja_regle = "";
-			
+
 			// Définition de $dir et $file
 			if ($propale->specimen)
 			{
@@ -819,7 +819,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $object->client->code_client, '', 'R');
 		}
-				
+
 		if ($showadress)
 		{
 			// Emetteur
@@ -904,7 +904,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				// Caractéristiques client
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
-				if ($object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->trans("Country".$object->contact->pays_code)."\n";
+				if ($object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
 			}
 			else
 			{
@@ -926,7 +926,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				// Caractéristiques client
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->adresse);
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
-				if ($object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->trans("Country".$object->client->pays_code)."\n";
+				if ($object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
 			}
 			// Numéro TVA intracom
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;

@@ -854,11 +854,7 @@ class pdf_einstein extends ModelePDFCommandes
 				// Customer properties
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
-				//Pays si different de l'emetteur
-				if ($this->emetteur->pays_code != $object->contact->pays_code)
-				{
-					$carac_client.=$outputlangs->convToOutputCharset($carac_client.=$object->contact->pays)."\n";
-				}
+				if ($object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
 			}
 			else
 			{
@@ -880,7 +876,7 @@ class pdf_einstein extends ModelePDFCommandes
 				// Caracteristiques client
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->adresse);
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
-				if ($object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->trans("Country".$object->client->pays_code)."\n";
+				if ($object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
 			}
 			// Numero TVA intracom
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);

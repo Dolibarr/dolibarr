@@ -430,7 +430,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *   	\param      delivery    object delivery
 	 *      \param      showadress  0=non, 1=oui
 	 */
-	function _pagehead(&$pdf, $delivery, $showadress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -462,15 +462,15 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($delivery->ref), '' , 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
 		$pdf->SetFont('Arial','',12);
 
 		$posy+=6;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		if ($delivery->date_valid)
+		if ($object->date_valid)
 		{
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($delivery->date_valid,"%d %b %Y",false,$outputlangs,true), '', 'R');
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_valid,"%d %b %Y",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{
@@ -483,7 +483,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$commande = new Commande ($this->db);
-		if ($commande->fetch($delivery->origin_id) >0) {
+		if ($commande->fetch($object->origin_id) >0) {
 			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->convToOutputCharset($commande->ref), '' , 'R');
 		}
 
@@ -542,25 +542,60 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if ($commande->adresse_livraison_id > 0) {
 				$client->fetch_adresse_livraison($commande->adresse_livraison_id);
 			} else {
-				$client->fetch($delivery->socid);
+				$client->fetch($object->socid);
 			}
-			$delivery->client = $client;
+			$object->client = $client;
 
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);
 
-			// Nom client
+			// If DELIVERY contact defined, we use it
+			$usecontact=false;
+			if ($usecontact)
+			{
+				// On peut utiliser le nom de la societe du contact facturation
+				if ($conf->global->XXX) $socname = $object->contact->socname;
+				else $socname = $object->client->nom;
+				$carac_client_name=$outputlangs->convToOutputCharset($socname);
+
+				// Customer name
+				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
+
+				// Customer properties
+				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
+				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
+				if ($object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
+			}
+			else
+			{
+				// Nom client
+				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+
+				// Nom du contact facturation si c'est une societe
+				$arrayidcontact = $object->getIdContact('external','BILLING');
+				if (sizeof($arrayidcontact) > 0)
+				{
+					$object->fetch_contact($arrayidcontact[0]);
+					// On verifie si c'est une societe ou un particulier
+					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
+					{
+						$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
+					}
+				}
+
+				// Caracteristiques client
+				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->adresse);
+				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
+				if ($object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
+			}
+			// Tva intracom
+			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
+
+			// Show customer/recipient
 			$pdf->SetXY(102,$posy+3);
 			$pdf->SetFont('Arial','B',11);
-			$pdf->MultiCell(106,4, $outputlangs->convToOutputCharset($delivery->client->nom), 0, 'L');
+			$pdf->MultiCell(106,4, $carac_client_name, 0, 'L');
 
-			// Caracteristiques client
-			$carac_client=$outputlangs->convToOutputCharset($delivery->client->adresse)."\n";
-			$carac_client.=$outputlangs->convToOutputCharset($delivery->client->cp) . " " . $outputlangs->convToOutputCharset($delivery->client->ville)."\n";
-			if ($object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->trans("Country".$object->client->pays_code)."\n";
-
-			// Tva intracom
-			if ($delivery->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$delivery->client->tva_intra;
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY(102,$posy+8);
 			$pdf->MultiCell(86,4, $carac_client);
