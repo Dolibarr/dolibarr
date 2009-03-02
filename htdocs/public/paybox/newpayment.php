@@ -66,6 +66,7 @@ if (! is_numeric($amount) && empty($_REQUEST["ref"]))
 	dol_print_error('','ErrorBadParameters');
 	exit;
 }
+$suffix=$_REQUEST["suffix"];
 
 
 
@@ -105,30 +106,39 @@ llxHeaderPayBox($langs->trans("PaymentForm"));
 
 // Common variables
 $creditor=$mysoc->nom;
-if (! empty($conf->global->PAYBOX_CREDITOR)) $creditor=$conf->global->PAYBOX_CREDITOR;
-
+$paramcreditor='PAYBOX_CREDITOR_'.$suffix;
+if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
+else if (! empty($conf->global->PAYBOX_CREDITOR)) $creditor=$conf->global->PAYBOX_CREDITOR;
 
 print '<center>';
 print '<form name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="action" value="dopayment">';
 print '<input type="hidden" name="amount" value="'.$_REQUEST["amount"].'">';
 print '<input type="hidden" name="tag" value="'.$_REQUEST["tag"].'">';
+print '<input type="hidden" name="suffix" value="'.$_REQUEST["suffix"].'">';
 print "\n";
 
 print '<table style="font-size:14px;" summary="Logo" width="80%">'."\n";
 
-// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
+// Show logo (search order: logo defined by PAYBOX_LOGO_suffix, then PAYBOX_LOGO, then small company logo, large company logo, theme logo, common logo)
 $width=0;
+// Define logo and logosmall
+$logosmall=$mysoc->logo_small; $logo=$mysoc->logo;
+$paramlogo='PAYBOX_LOGO_'.$suffix;
+if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
+else if (! empty($conf->global->PAYBOX_LOGO)) $logosmall=$conf->global->PAYBOX_LOGO;
+// Define urllogo
 $urllogo='';
-if (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small))
+if (! empty($logosmall) && is_readable($conf->societe->dir_logos.'/thumbs/'.$logosmall))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$logosmall);
 }
-elseif (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/'.$mysoc->logo))
+elseif (! empty($logo) && is_readable($conf->societe->dir_logos.'/'.$logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($logo);
 	$width=96;
 }
+// Output html code for logo
 if ($urllogo)
 {
 	print '<tr>';
@@ -583,7 +593,7 @@ if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.
 
 if ($found)
 {
-	print '<tr><td align="center" colspan="2"><br><input class="none" type="submit" name="dopayment" value="'.$langs->trans("PayBoxDoPayment").'"></td></tr>';
+	print '<tr><td align="center" colspan="2"><br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PayBoxDoPayment").'"></td></tr>';
 	//print '<tr><td align="center" colspan="2">'.$langs->trans("YouWillBeRedirectedOnPayBox").'...</td></tr>';
 }
 
