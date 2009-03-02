@@ -1,4 +1,4 @@
-# Dolibarr language file - fr_FR - companies =  = 
+# Dolibarr language file - ca_ES - companies 
 CHARSET = UTF-8
 ErrorBadEMail = e-mail %s incorrecte
 ErrorCompanyNameAlreadyExists = El nom de l'empresa %s ja existeix. Indiqui altre.
@@ -130,7 +130,7 @@ CustomerAbsoluteDiscountShort = Descompte fixe
 CompanyHasRelativeDiscount = Aquest client té un descompte per defecte de <b>%s%%</b>
 CompanyHasNoRelativeDiscount = Aquest client no té descomptes relatius per defecte
 CompanyHasAbsoluteDiscount = Aquest client té <b>%s %s</b> descomptes fixes disponibles
-CompanyHasCreditNote = Aquest client té <b>%s %s</b> abonaments o bestretes disponibles
+CompanyHasCreditNote = Aquest client té <b>%s %s</b> abonaments/bestretes disponibles
 CompanyHasNoAbsoluteDiscount = Aquest client no té més descomptes fixos disponibles
 CustomerAbsoluteDiscountAllUsers = Descomptes fixos en curs (acordat per tots els usuaris)
 CustomerAbsoluteDiscountMy = Descomptes fixos en curs (acordats personalment)
