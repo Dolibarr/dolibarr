@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ if ($_POST["action"] == 'confirm_delete')
 	}
 }
 
-	
+
 /*
  * Ajout d'une charge sociale
  */
@@ -114,13 +114,13 @@ if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 	else
 	{
 		$chargesociales=new ChargeSociales($db);
-		
+
 		$chargesociales->type=$_POST["actioncode"];
 		$chargesociales->lib=$_POST["label"];
 		$chargesociales->date_ech=$dateech;
 		$chargesociales->periode=$_POST["period"];
 		$chargesociales->amount=$_POST["amount"];
-		
+
 		$chid=$chargesociales->create($user);
 		if ($chid > 0)
 		{
@@ -151,11 +151,11 @@ if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->cha
 	{
 		$chargesociales=new ChargeSociales($db);
 		$result=$chargesociales->fetch($_GET["id"]);
-		
+
 		$chargesociales->lib=$_POST["label"];
 		$chargesociales->date_ech=$dateech;
 		$chargesociales->periode=$_POST["period"];
-		
+
 		$result=$chargesociales->update($user);
 		if ($result > 0)
 		{
@@ -167,7 +167,7 @@ if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->cha
 		}
 	}
 }
- 
+
 llxHeader();
 
 $html = new Form($db);
@@ -180,9 +180,9 @@ if ($_GET["action"] == 'create')
 {
 	print_fiche_titre($langs->trans("NewSocialContribution"));
 	print "<br>\n";
-	
+
 	if ($mesg) print $mesg.'<br>';
-	
+
     $var=false;
 
     print '<form name="charge" method="post" action="'.DOL_URL_ROOT.'/compta/sociales/charges.php">';
@@ -245,7 +245,7 @@ if ($chid > 0)
 	if ($cha->fetch($chid) > 0)
 	{
 		if ($mesg) print $mesg.'<br>';
-	
+
 		$h = 0;
 		$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$cha->id;
 		$head[$h][1] = $langs->trans('Card');
@@ -291,7 +291,7 @@ if ($chid > 0)
 			print dol_print_date($cha->periode,"%Y");
 		}
 		print "</td>";
-		
+
 		print '<td rowspan="5" valign="top">';
 
 		/*
@@ -363,10 +363,10 @@ if ($chid > 0)
 			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($cha->date_ech,'day')."</td></tr>";
 		}
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($cha->amount).'</td></tr>';
-	
+
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$cha->getLibStatut(4).'</td></tr>';
 
-		if ($_GET['action'] == 'edit') 
+		if ($_GET['action'] == 'edit')
 		{
 			print '<tr><td colspan="3" align="center">';
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -374,7 +374,7 @@ if ($chid > 0)
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 		}
-		
+
 		print '</table>';
 
 		if ($_GET['action'] == 'edit') print "</form>\n";

@@ -323,8 +323,11 @@ class Form
 	 *		\brief      Return list of social contributions
 	 *		\param      selected        Preselected type
 	 *		\param      htmlname        Name of field in form
+	 * 		\param		useempty		Set to 1 if we want an empty value
+	 * 		\param		maxlen			Max length of text in combo box
+	 * 		\param		help			Add or not the admin help picto
 	 */
-	function select_type_socialcontrib($selected='',$htmlname='actioncode')
+	function select_type_socialcontrib($selected='',$htmlname='actioncode', $useempty=0, $maxlen=40, $help=1)
 	{
 		global $db,$langs,$user;
 
@@ -341,16 +344,18 @@ class Form
 			$num = $db->num_rows($resql);
 			$i = 0;
 
+			if ($useempty) print '<option value="0">&nbsp;</option>';
+
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
 				print '<option value="'.$obj->id.'"';
 				if ($obj->id == $selected) print ' selected="true"';
-				print '>'.$obj->type;
+				print '>'.dol_trunc($obj->type,$maxlen);
 				$i++;
 			}
 			print '</select>';
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		}
 		else
 		{

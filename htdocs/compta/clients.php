@@ -45,6 +45,9 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -67,11 +70,6 @@ if ($action == 'note')
 	$result = $db->query($sql);
 }
 
-
-/*
- * Recherche
- *
- */
 if ($mode == 'search') {
 	if ($mode-search == 'soc') {
 		$sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
@@ -155,7 +153,7 @@ if ($result)
 	}
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-	
+
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 
@@ -209,7 +207,7 @@ if ($result)
 	print "</table>";
 
 	print '</form>';
-	
+
 	$db->free();
 }
 else

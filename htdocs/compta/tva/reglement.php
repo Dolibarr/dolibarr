@@ -57,7 +57,7 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
     $total = 0 ;
-    print '<br>';
+
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td nowrap align="left">'.$langs->trans("Ref").'</td>';

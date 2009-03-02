@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-    	\file       htdocs/compta/sociales/index.php
-		\ingroup    tax
-		\brief      Ecran des charges sociales
-		\version    $Id$
-*/
+ *   	\file       htdocs/compta/sociales/index.php
+ *		\ingroup    tax
+ *		\brief      Ecran des charges sociales
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
@@ -50,7 +50,20 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 //if (! $year) { $year=date("Y", time()); }
 
-
+if (empty($_REQUEST['typeid']))
+{
+	$newfiltre=eregi_replace('filtre=','',$filtre);
+	$filterarray=split('-',$newfiltre);
+	foreach($filterarray as $val)
+	{
+		$part=split(':',$val);
+		if ($part[0] == 's.fk_type') $typeid=$part[1];
+	}
+}
+else
+{
+	$typeid=$_REQUEST['typeid'];
+}
 
 
 /*
@@ -58,6 +71,8 @@ $offset = $limit * $page ;
  */
 
 llxHeader();
+
+$html = new Form($db);
 
 
 $sql = "SELECT s.rowid as id, s.fk_type as type, ";
@@ -68,15 +83,18 @@ $sql.= " WHERE s.fk_type = c.id";
 if ($year > 0)
 {
     $sql .= " AND (";
-    // Si period renseign� on l'utilise comme critere de date, sinon on prend date �ch�ance,
-    // ceci afin d'etre compatible avec les cas ou la p�riode n'etait pas obligatoire
+    // Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
+    // ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
     $sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = $year) ";
     $sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = $year)";
     $sql .= ")";
 }
 if ($filtre) {
     $filtre=ereg_replace(":","=",$filtre);
-    $sql .= " AND $filtre";
+    $sql .= " AND ".$filtre;
+}
+if ($typeid) {
+    $sql .= " AND s.fk_type=".$typeid;
 }
 if ($_GET["sortfield"]) {
     $sql .= " ORDER BY ".$_GET["sortfield"];
@@ -103,8 +121,9 @@ if ($resql)
 	$var=true;
 
 	$param='';
-	if ($year) $param.='&amp;year='.$year;
-	
+	if ($year)   $param.='&amp;year='.$year;
+	if ($typeid) $param.='&amp;typeid='.$typeid;
+
 	if ($year)
 	{
 		print_fiche_titre($langs->trans("SocialContributions"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
@@ -113,15 +132,16 @@ if ($resql)
 	{
 		print_barre_liste($langs->trans("SocialContributions"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines);
 	}
-	print "<br>\n";
-	
+
 	if ($mesg)
 	{
 	    print $mesg."<br>";
 	}
-	
+
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+
 	print "<table class=\"noborder\" width=\"100%\">";
-	
+
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),"index.php","id","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),"index.php","de","",$param,"",$sortfield,$sortorder);
@@ -129,9 +149,22 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Type"),"index.php","type","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
-		
+
+	print "<tr class=\"liste_titre\">";
+	print '<td>&nbsp;</td>';
+	print '<td>&nbsp;</td>';
+	print '<td>&nbsp;</td>';
+	print '<td align="left">';
+    $html->select_type_socialcontrib($typeid,'typeid',1,16,0);
+    print '</td>';
+	print '<td>&nbsp;</td>';
+	print '<td>&nbsp;</td>';
+	print '<td align="right">';
+	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
+	print '</td>';
+	print "</tr>\n";
 
 	while ($i < min($num,$limit))
 	{
@@ -139,28 +172,28 @@ if ($resql)
 
 		$var = !$var;
 		print "<tr $bc[$var]>";
-		
+
 		print '<td width="60">';
 		print '<a href="charges.php?id='.$obj->id.'">'.img_file().' '.$obj->id.'</a>';
 		print '</td>';
 
 		print '<td width="110">'.dol_print_date($obj->de, 'day').'</td>';
-		
+
 		print '<td align="center">';
-		if ($obj->periode) 
+		if ($obj->periode)
 		{
 			print '<a href="index.php?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a>';
 		}
-		else 
+		else
 		{
 			print '&nbsp;';
 		}
 		print '</td>';
 
 		print '<td>'.dol_trunc($obj->type_lib,16).'</td>';
-		
+
 		print '<td>'.dol_trunc($obj->libelle,42).'</td>';
-		
+
 		print '<td align="right" width="100">'.price($obj->amount).'</td>';
 
 		print '<td align="right" nowrap="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5).'</a></td>';
@@ -168,13 +201,16 @@ if ($resql)
 		print '</tr>';
 		$i++;
 	}
+
+	print '</table>';
+
+	print '</form>';
 }
 else
 {
 	dol_print_error($db);
 }
 
-print '</table>';
 
 
 
