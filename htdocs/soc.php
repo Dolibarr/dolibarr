@@ -345,7 +345,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 			$soc->pays=$obj->libelle;
 		}
 
-		print_titre($langs->trans("NewCompany"));
+		print_fiche_titre($langs->trans("NewCompany"));
 
 		if ($conf->use_javascript_ajax)
 		{

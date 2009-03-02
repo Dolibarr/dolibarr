@@ -39,7 +39,7 @@ if (!$user->rights->produit->lire) accessforbidden();
 
 llxHeader("","",$langs->trans("ProductsAndServices"));
 
-print_titre($langs->trans("ProductsAndServicesArea"));
+print_fiche_titre($langs->trans("ProductsAndServicesArea"));
 
 print '<table border="0" width="100%">';
 
@@ -117,7 +117,7 @@ if ($resql)
       print '<table class="noborder" width="100%">';
 
       print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastProducts").'</td></tr>';
-    
+
       $var=True;
       while ($i < $num)
 	{

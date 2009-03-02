@@ -162,7 +162,7 @@ llxHeader('',$langs->trans("GroupCard"));
 
 if ($action == 'create')
 {
-    print_titre($langs->trans("NewGroup"));
+    print_fiche_titre($langs->trans("NewGroup"));
     print "<br>";
 
     if ($message) { print $message."<br>"; }

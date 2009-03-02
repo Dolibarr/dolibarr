@@ -18,7 +18,7 @@
  *
  * $Id$
  */
- 
+
 /**
         \file       htdocs/user/group/index.php
         \brief      Page d'accueil de la gestion des groupes
@@ -41,14 +41,18 @@ if ($page < 0) $page = 0;
 
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-  
+
 if (! $sortfield) $sortfield="g.nom";
 if (! $sortorder) $sortorder="ASC";
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
-print_titre($langs->trans("ListOfGroups"));
+print_fiche_titre($langs->trans("ListOfGroups"));
 
 $sql = "SELECT g.rowid, g.nom, ".$db->pdate("g.datec")." as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";

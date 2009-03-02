@@ -814,7 +814,7 @@ $formorder = new FormOrder($db);
  *********************************************************************/
 if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 {
-	print_titre($langs->trans('CreateOrder'));
+	print_fiche_titre($langs->trans('CreateOrder'));
 
 	if ($mesg) print $mesg.'<br>';
 

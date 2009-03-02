@@ -710,7 +710,7 @@ if ($action == 'create')
     $htmls = new Form($db);
     $adht = new AdherentType($db);
 
-    print_titre($langs->trans("NewMember"));
+    print_fiche_titre($langs->trans("NewMember"));
 
 	print '<form name="add" action="fiche.php" method="post" enctype="multipart/form-data">';
     print '<input type="hidden" name="action" value="add">';

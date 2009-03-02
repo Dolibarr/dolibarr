@@ -21,24 +21,22 @@
  */
 require("./pre.inc.php");
 
-/*
- * Sécurité accés
- */
+// Security check
 if (!$user->admin && $user->societe_id > 0)
   accessforbidden();
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
-print_titre("Paiements");
-/*
- *
- *
- */
+print_fiche_titre("Payments");
 
 
 
 $db->close();
- 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
 ?>

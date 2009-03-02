@@ -365,7 +365,7 @@ llxHeader('','','');
 // Mode creation
 if ($_GET['action'] == 'create')
 {
-	print_titre($langs->trans('NewBill'));
+	print_fiche_titre($langs->trans('NewBill'));
 
 	if ($mesg) { print $mesg.'<br>'; }
 
@@ -471,7 +471,7 @@ else
 
 		if ($_GET['action'] == 'edit')
 		{
-			print_titre($langs->trans('SupplierInvoice'));
+			print_fiche_titre($langs->trans('SupplierInvoice'));
 
 			print '<form name="update" action="fiche.php?facid='.$fac->id.'" method="post">';
 			print '<input type="hidden" name="action" value="update">';

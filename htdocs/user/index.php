@@ -52,7 +52,7 @@ $userstatic=new User($db);
 
 llxHeader();
 
-print_titre($langs->trans("ListOfUsers"));
+print_fiche_titre($langs->trans("ListOfUsers"));
 
 $sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.fk_societe, u.login,";
 $sql.= " ".$db->pdate("u.datec")." as datec,";

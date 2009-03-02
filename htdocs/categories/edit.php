@@ -32,9 +32,9 @@ require "./pre.inc.php";
 
 if (!$user->rights->categorie->lire)
   accessforbidden();
-  
+
 $type=$_REQUEST['type'];
-  
+
 // If socid provided by ajax company selector
 if (! empty($_POST['socid_id']))
 {
@@ -47,17 +47,17 @@ if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 {
 	$categorie = new Categorie ($db);
 	$result=$categorie->fetch($_REQUEST['id']);
-	
+
 	$categorie->label          = $_POST["nom"];
 	$categorie->description    = $_POST["description"];
 	$categorie->socid          = ($_POST["socid"] ? $_POST["socid"] : 'null');
 	$categorie->visible        = $_POST["visible"];
-	
+
 	if($_POST['catMere'] != "-1")
 		$categorie->id_mere = $_POST['catMere'];
 	else
 		$categorie->id_mere = "";
-	
+
 
 	if (! $categorie->label)
 	{
@@ -95,8 +95,8 @@ if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 
 llxHeader("","",$langs->trans("Categories"));
 
-print_titre($langs->trans("ModifCat"));
-print "<br>";
+print_fiche_titre($langs->trans("ModifCat"));
+
 
 if ($mesg)
 {
@@ -156,13 +156,13 @@ else
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 	print $html->select_all_categories($categorie->type,$categorie->id_mere);
 	print '</td></tr>';
-	
+
 	print '<tr><td>'.$langs->trans("ContentsVisibleByAll").'</td><td>';
 	print $html->selectyesno("visible",$categorie->visible,1);
 	print '</td></tr>';
 	print '<input type="hidden" name="socid" value="'.$categorie->socid.'">';
 }
-		
+
 print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td></tr>';
 print '</table></form>';

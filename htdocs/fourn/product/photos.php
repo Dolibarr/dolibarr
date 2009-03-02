@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/fourn/product/photos.php
-        \ingroup    product
-        \brief      Page de la fiche produit
-        \version    $Id$
-*/
+ \file       htdocs/fourn/product/photos.php
+ \ingroup    product
+ \brief      Page de la fiche produit
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
@@ -37,13 +37,13 @@ if (!$user->rights->produit->lire) accessforbidden();
 
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-  if ($_GET["id"])
-    {           
-      $product = new Product($db);
-      $result = $product->fetch($_GET["id"]);
+	if ($_GET["id"])
+	{
+		$product = new Product($db);
+		$result = $product->fetch($_GET["id"]);
 
-      $product->add_photo($conf->produit->dir_output, $_FILES['photofile']);
-    }
+		$product->add_photo($conf->produit->dir_output, $_FILES['photofile']);
+	}
 }
 /*
  *
@@ -55,161 +55,161 @@ llxHeader("","",$langs->trans("CardProduct0"));
  */
 if ($_GET["id"])
 {
-  $product = new Product($db);
-  $result = $product->fetch($_GET["id"]);
+	$product = new Product($db);
+	$result = $product->fetch($_GET["id"]);
 
-  if ( $result )
-    { 
-      /*
-       *  En mode visu
-       */
-	  
-      $h=0;
-          
-      $head[$h][0] = DOL_URL_ROOT."/fourn/product/fiche.php?id=".$product->id;
-      $head[$h][1] = $langs->trans("Card");
-      $h++;
-	  
-	  
-      if ($conf->stock->enabled)
+	if ( $result )
 	{
+		/*
+		 *  En mode visu
+		 */
+
+		$h=0;
+
+		$head[$h][0] = DOL_URL_ROOT."/fourn/product/fiche.php?id=".$product->id;
+		$head[$h][1] = $langs->trans("Card");
+		$h++;
+
+
+		if ($conf->stock->enabled)
+		{
 	  $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
 	  $head[$h][1] = $langs->trans("Stock");
 	  $h++;
-	}
-     
-      $head[$h][0] = DOL_URL_ROOT."/fourn/product/photos.php?id=".$product->id;
-      $head[$h][1] = $langs->trans("Photos");
-      $hselected = $h;	      
-      $h++;
+		}
 
-      //Affichage onglet Catégories
-      if ($conf->categorie->enabled){
-	$head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id;
-	$head[$h][1] = $langs->trans('Categories');
-	$h++;
-      }
+		$head[$h][0] = DOL_URL_ROOT."/fourn/product/photos.php?id=".$product->id;
+		$head[$h][1] = $langs->trans("Photos");
+		$hselected = $h;
+		$h++;
 
-      $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
-      $head[$h][1] = $langs->trans("CommercialCard");
-      $h++;
-      	      
-      dol_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+		//Affichage onglet Catégories
+		if ($conf->categorie->enabled){
+			$head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id;
+			$head[$h][1] = $langs->trans('Categories');
+			$h++;
+		}
 
-      print($mesg);
-      print '<table class="border" width="100%">';
-      print "<tr>";
-      print '<td>'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
-      print '<td colspan="2">';
+		$head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+		$head[$h][1] = $langs->trans("CommercialCard");
+		$h++;
+
+		dol_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+
+		print($mesg);
+		print '<table class="border" width="100%">';
+		print "<tr>";
+		print '<td>'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
+		print '<td colspan="2">';
 		print $product->getLibStatut(2);
-      print '</td></tr>';
-      print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
-      print '<td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td></tr>';
-      print "</table><br>\n";
+		print '</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+		print '<td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td></tr>';
+		print "</table><br>\n";
 
-      /*
-       * Ajouter une photo
-       *
-       */
-      if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
-	{
-	  print_titre($langs->trans("AddPhoto"));
-	  
-	  print '<form name="userfile" action="photos.php?id='.$product->id.'" enctype="multipart/form-data" METHOD="POST">';      
-	  print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-	  
-	  print '<table class="border" width="100%"><tr>';
-	  print '<td>'.$langs->trans("File").'</td>';
-	  print '<td><input type="file" name="photofile"></td></tr>';
-	  
-	  print '<tr><td colspan="4" align="center">';
-	  print '<input type="submit" name="sendit" value="'.$langs->trans("Save").'">&nbsp;';
-	  
-	  
-	  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-	  print '</table>';
-	  print '</form><br />';
+		/*
+		 * Ajouter une photo
+		 *
+		 */
+		if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
+		{
+			print_titre($langs->trans("AddPhoto"));
+
+			print '<form name="userfile" action="photos.php?id='.$product->id.'" enctype="multipart/form-data" METHOD="POST">';
+			print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
+
+			print '<table class="border" width="100%"><tr>';
+			print '<td>'.$langs->trans("File").'</td>';
+			print '<td><input type="file" name="photofile"></td></tr>';
+
+			print '<tr><td colspan="4" align="center">';
+			print '<input type="submit" name="sendit" value="'.$langs->trans("Save").'">&nbsp;';
+
+
+			print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+			print '</table>';
+			print '</form><br />';
+		}
+
+
+		// Affiche photos
+		if ($_GET["action"] != 'ajout_photo')
+		{
+			$nbphoto=0;
+			$nbbyrow=5;
+
+			$pdir = get_exdir($product->id,2) . $product->id ."/photos/";
+			$dir = $conf->produit->dir_output . '/'. $pdir;
+
+			print '<br><table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+
+			foreach ($product->liste_photos($dir) as $obj)
+			{
+				$nbphoto++;
+
+				//                if ($nbbyrow && $nbphoto == 1) print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+
+				if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
+				if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+
+				print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$obj['photo']).'" alt="Taille origine" target="_blank">';
+
+				// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
+				if ($obj['photo_vignette']) $filename=$obj['photo_vignette'];
+				else $filename=$obj['photo'];
+				print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
+
+				print '</a>';
+				print '<br>'.$langs->trans("File").': '.dol_trunc($filename,16);
+				if ($user->rights->produit->creer)
+				{
+					print '<br>'.'<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$filename).'">'.img_delete().'</a>';
+				}
+				if ($nbbyrow) print '</td>';
+				if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
+			}
+
+			// Ferme tableau
+			while ($nbphoto % $nbbyrow)
+			{
+				print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+				$nbphoto++;
+			}
+
+			if ($nbphoto < 1)
+			{
+				print '<tr align=center valign=middle border=1><td class="photo">';
+				print "<br>".$langs->trans("NoPhotoYet")."<br><br>";
+				print '</td></tr></table>';
+			}
+
+			print '</table>';
+		}
+
+
+		print "</div>\n";
+
 	}
 
+	print "\n<div class=\"tabsAction\">\n";
 
-        // Affiche photos
-        if ($_GET["action"] != 'ajout_photo')
-        {
-            $nbphoto=0;
-            $nbbyrow=5;
-            
-            $pdir = get_exdir($product->id,2) . $product->id ."/photos/";
-            $dir = $conf->produit->dir_output . '/'. $pdir;
-
-            print '<br><table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
-            
-            foreach ($product->liste_photos($dir) as $obj)
-            {
-                $nbphoto++;
-
-//                if ($nbbyrow && $nbphoto == 1) print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
-
-                if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
-                if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
-                
-                print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$obj['photo']).'" alt="Taille origine" target="_blank">';
-
-                // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
-                if ($obj['photo_vignette']) $filename=$obj['photo_vignette'];
-                else $filename=$obj['photo'];
-                print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
-
-                print '</a>';
-                print '<br>'.$langs->trans("File").': '.dol_trunc($filename,16);
-                if ($user->rights->produit->creer)
-                {
-                    print '<br>'.'<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$filename).'">'.img_delete().'</a>';
-                }
-                if ($nbbyrow) print '</td>';
-                if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
-            }
-            
-            // Ferme tableau
-            while ($nbphoto % $nbbyrow)
-            {
-                print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
-                $nbphoto++;
-            }
-            
-            if ($nbphoto < 1)
-            {
-                print '<tr align=center valign=middle border=1><td class="photo">';
-                print "<br>".$langs->trans("NoPhotoYet")."<br><br>";
-                print '</td></tr></table>';
-            }
-
-           print '</table>';
-        }
-        
-
-      print "</div>\n";
-
-    }
-
-  print "\n<div class=\"tabsAction\">\n";
-  
-  if ($_GET["action"] == '')
-    {            
-      if ( $user->rights->produit->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
+	if ($_GET["action"] == '')
 	{
+		if ( $user->rights->produit->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
+		{
 	  print '<a class="butAction" href="photos.php?action=ajout_photo&amp;id='.$product->id.'">';
 	  print $langs->trans("AddPhoto").'</a>';
-	}      
-}
+		}
+	}
 
-print "\n</div>\n";
+	print "\n</div>\n";
 
 
 
 }
 else
 {
-  print $langs->trans("ErrorUnknown");
+	print $langs->trans("ErrorUnknown");
 }
 
 
