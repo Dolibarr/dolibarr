@@ -192,13 +192,6 @@ insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON_PDF', 
 
 
 --
--- Forcer les locales
---
-insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_ALL',      '', 'chaine', 1, 'Pour forcer LC_ALL si pb de locale');
-insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_MONETARY', '', 'chaine', 1, 'Pour forcer LC_MONETARY si pb de locale');
-insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_NUMERIC',  '', 'chaine', 1, 'Mettre la valeur C si problème de centimes');
-
---
 -- Duree de validite des propales
 --
 insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDITY_DURATION',      '15', 'chaine', 0, 'Durée de validitée des propales');
