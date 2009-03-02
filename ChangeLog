@@ -19,6 +19,7 @@ For users:
 - New: Added product label in invoice exports fields.
 - New: Add VAT number in export fields.
 - New: Upgrade FPDF to 1.6
+- New: Upgrade Scriptaculous to 1.8.2 and Prototype to 1.6.0.3
 - New: Added keywords in PDF.
 - New: Add hidden option MAIN_DISABLE_PDF_COMPRESSION.
 - New: Add attachments on intervention cards.

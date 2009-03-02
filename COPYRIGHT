@@ -23,9 +23,9 @@ FPDI_Protection   1.0.2    Apache Software License 2.0 No GPL3 only     PDF encr
 MagPieRss         0.72     GPL 2.0                     Yes              Load RSS
 NuSoap            0.6.5    LGPL 2.1                    Yes              Interfaces with third tools
 PHP_WriteExcel    0.3.0    LGPL 2.1                    Yes              Excel files generation
-Prototype         1.6.0.2  MIT License                 Yes              Ajax library
+Prototype         1.6.0.3  MIT License                 Yes              Ajax library
 PWC               1.3      MIT License                 Yes              Ajax library
-Scriptaculous     1.8.1    MIT License                 Yes              Ajax library
+Scriptaculous     1.8.2    MIT License                 Yes              Ajax library
 VCard             2.0      GPL 2.0                     Yes              Fonctions vcard
 
 For licenses compatibility informations:
