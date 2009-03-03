@@ -203,7 +203,7 @@ foreach ($conf->dol_document_root as $dirroot)
 
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
-	$handle=opendir($dir);
+	$handle=@opendir($dir);
 	if ($handle)
 	{
 		while (($file = readdir($handle))!==false)
@@ -254,6 +254,10 @@ foreach ($conf->dol_document_root as $dirroot)
 		    }
 		}
 		closedir($handle);
+	}
+	else
+	{
+		dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);	
 	}
 }
 
