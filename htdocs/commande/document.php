@@ -65,7 +65,7 @@ $pagenext = $page + 1;
 $id = $_GET['id'];
 $ref= $_GET['ref'];
 $commande = new Commande($db);
-if (! $commande->fetch($_GET['id'],$_GET['ref']) > 0) 
+if (! $commande->fetch($_GET['id'],$_GET['ref']) > 0)
 {
 	dol_print_error($db);
 }
@@ -153,13 +153,13 @@ if ($id > 0 || ! empty($ref))
 
 	// Affiche formulaire upload
 	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/commande/document.php?id='.$commande->id);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/commande/document.php?id='.$commande->id,'',0,0,$user->rights->commande->creer);
 
 
 	// List of document
 	$param='&id='.$commande->id;
 	$formfile->list_of_documents($filearray,$commande,'commande',$param);
-	 
+
 }
 else
 {

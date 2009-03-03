@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
         \file       htdocs/contrat/document.php
         \ingroup    contrat
@@ -40,10 +40,10 @@ if (!$user->rights->contrat->lire)
 	accessforbidden();
 
 // Security check
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
 	unset($_GET["action"]);
-	$action=''; 
+	$action='';
 	$socid = $user->societe_id;
 }
 
@@ -97,7 +97,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 /*
  *
  */
- 
+
 $html = new Form($db);
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
@@ -109,7 +109,7 @@ if ($contrat->id)
     $soc->fetch($contrat->societe->id);
 
 	if ( $error_msg )
-	{ 
+	{
 		echo '<div class="error">'.$error_msg.'</div><br>';
 	}
 
@@ -132,8 +132,8 @@ if ($contrat->id)
 	{
 		$totalsize+=$file['size'];
 	}
-	
-    
+
+
     print '<table class="border" width="100%">';
 
     // Reference
@@ -152,11 +152,11 @@ if ($contrat->id)
 
     // Affiche formulaire upload
    	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/contrat/document.php?id='.$contrat->id);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/contrat/document.php?id='.$contrat->id,'',0,0,$user->rights->contrat->creer);
 
-	
+
 	// List of document
-	$param='&id='.$contrat->id;	
+	$param='&id='.$contrat->id;
 	$formfile->list_of_documents($filearray,$contrat,'contract',$param);
 
 }

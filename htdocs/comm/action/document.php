@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
         \file       htdocs/comm/action/document.php
         \ingroup    agenda
@@ -43,10 +43,10 @@ if (isset($_GET["error"])) $error=$_GET["error"];
 $objectid = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
 	unset($_GET["action"]);
-	$action=''; 
+	$action='';
 	$socid = $user->societe_id;
 }
 
@@ -118,7 +118,7 @@ if ($objectid > 0)
 		$company=new Societe($db);
 		$company->fetch($act->societe->id);
 		$act->societe=$company;
-		
+
 		$author=new User($db);
 		$author->id=$act->author->id;
 		$author->fetch();
@@ -127,37 +127,37 @@ if ($objectid > 0)
 		$contact=new Contact($db);
 		$contact->fetch($act->contact->id);
 		$act->contact=$contact;
-	
+
 		$h=0;
-	
+
 		$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objectid;
 		$head[$h][1] = $langs->trans("CardAction");
 		$hselected=$h;
 		$h++;
-	
+
 		$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$objectid;
 		$head[$h][1] = $langs->trans('Documents');
 		$hselected=$h;
 		$h++;
-	
+
 		$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$objectid;
 		$head[$h][1] = $langs->trans('Info');
 		$h++;
-		
+
 		dol_fiche_head($head, $hselected, $langs->trans("Action"));
-	
+
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%"';
-	
+
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
-	
+
 		// Type
 		print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-	
+
 		// Libelle
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
-	
+
 		// Societe - contact
 		print '<tr><td>'.$langs->trans("Company").'</td><td>'.$act->societe->getNomUrl(1).'</td>';
 		print '<td>'.$langs->trans("Contact").'</td>';
@@ -170,9 +170,9 @@ if ($objectid > 0)
 		{
 			print $langs->trans("None");
 		}
-		
+
 		print '</td></tr>';
-		
+
 		// Construit liste des fichiers
 		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
 		$totalsize=0;
@@ -180,22 +180,22 @@ if ($objectid > 0)
 		{
 			$totalsize+=$file['size'];
 		}
-		
-		
+
+
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 		print '</table>';
-	
+
 		print '</div>';
-	
+
 		if ($mesg) { print $mesg."<br>"; }
-	
-		
+
+
 		// Affiche formulaire upload
 	   	$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id);
-		
-		
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id,'',0,0,($user->rights->agenda->myactions->create||$user->rights->agenda->actions->create));
+
+
 		// List of document
 		$param='&id='.$act->id;
 		$formfile->list_of_documents($filearray,$act,'actions',$param);
@@ -203,7 +203,7 @@ if ($objectid > 0)
 	else
 	{
 		dol_print_error($db);
-	}	
+	}
 }
 else
 {

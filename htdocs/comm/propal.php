@@ -1984,7 +1984,7 @@ else
 	{
 		$propalstatic=new Propal($db);
 		$userstatic=new User($db);
-		
+
 		$num = $db->num_rows($result);
 
 		$param='&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut;
@@ -2012,7 +2012,7 @@ else
 		print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
 		print '</td>';
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="28" name="search_societe" value="'.$_GET['search_societe'].'">';
+		print '<input class="flat" type="text" size="16" name="search_societe" value="'.$_GET['search_societe'].'">';
 		print '</td>';
 		print '<td class="liste_titre" colspan="1" align="right">';
 		print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
@@ -2105,12 +2105,15 @@ else
 
 			$userstatic->id=$objp->fk_user_author;
 			$userstatic->login=$objp->login;
-			print '<td align="center">'.$userstatic->getLoginUrl(1)."</td>\n";
-			
+			print '<td align="center">';
+			if ($userstatic->id) print $userstatic->getLoginUrl(1);
+			else print '&nbsp;';
+			print "</td>\n";
+
 			print '<td align="right">'.$propalstatic->LibStatut($objp->fk_statut,5)."</td>\n";
-			
+
 			print '<td>&nbsp;</td>';
-			
+
 			print "</tr>\n";
 
 			$total = $total + $objp->total_ht;

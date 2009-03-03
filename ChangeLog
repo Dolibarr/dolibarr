@@ -35,6 +35,9 @@ For users:
 - New: Add a first version of a module for Paybox.
 - New: Can add contact to suppliers orders.
 - New: Changements to support the external BitTorrent module.
+- New: Can filter on social contribution type in list.
+- New: Upload of joined files need create/modify permissions to work.
+- Fix: Partial payment on social contributions not shown on main page.
 - Fix: Handle correctly the comment in status changing of supplier orders.
 - Fix: Author, title and topic are correctly encoded in PDF.
 - Fix: Now HTML output is always UTF8, this solve bad PDF encoding on old users.

@@ -51,9 +51,10 @@ class FormFile
 	 *    	\param      titre			Titre zone
 	 *    	\param      addcancel		1=Ajoute un bouton 'Annuler'
 	 *		\param		sectionid		If upload must be done inside a particular ECM section
+	 * 		\param		perm			Value of permission ot allow upload
 	 * 		\return		int				<0 si ko, >0 si ok
 	 */
-	function form_attach_new_file($url,$titre='',$addcancel=0, $sectionid=0)
+	function form_attach_new_file($url,$titre='',$addcancel=0, $sectionid=0, $perm=1)
 	{
 		global $conf,$langs;
 
@@ -80,11 +81,11 @@ class FormFile
 			print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
 		}
 		print '<input class="flat" type="file" name="userfile" size="70"';
-		print (empty($conf->global->MAIN_UPLOAD_DOC)?' disabled="true"':'');
+		print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="true"':'');
 		print '>';
 		print ' &nbsp; ';
 		print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
-		print (empty($conf->global->MAIN_UPLOAD_DOC)?' disabled="true"':'');
+		print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="true"':'');
 		print '>';
 
 		if ($addcancel)
@@ -95,9 +96,12 @@ class FormFile
 
 		if (! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
-			print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
-			print ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
-			print ')';
+			if ($perm)
+			{
+				print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
+				print ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
+				print ')';
+			}
 		}
 		else
 		{

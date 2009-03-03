@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
  *
@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     
+/**
         \file       htdocs/fourn/facture/document.php
         \ingroup    facture, fournisseur
         \brief      Page de gestion des documents attachées à une facture fournisseur
@@ -44,10 +44,10 @@ $facid=empty($_GET['facid']) ? 0 : intVal($_GET['facid']);
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
 // Security check
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
 	unset($_GET["action"]);
-	$action=''; 
+	$action='';
 	$socid = $user->societe_id;
 }
 
@@ -68,7 +68,7 @@ $pagenext = $page + 1;
 /*
  * Actions
  */
- 
+
 // Envoi fichier
 if ($_POST['sendit'] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
@@ -78,7 +78,7 @@ if ($_POST['sendit'] && ! empty($conf->global->MAIN_UPLOAD_DOC))
         $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
 
         if (! is_dir($upload_dir)) create_exdir($upload_dir);
-    
+
         if (is_dir($upload_dir))
         {
             if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . '/' . $_FILES['userfile']['name'],0) > 0)
@@ -116,7 +116,7 @@ if ($action=='delete')
 /*
  * Affichage
  */
- 
+
 llxHeader();
 
 if ($facid > 0)
@@ -139,7 +139,7 @@ if ($facid > 0)
 		{
 			$totalsize+=$file['size'];
 		}
-		
+
 
         print '<table class="border"width="100%">';
 
@@ -163,16 +163,16 @@ if ($facid > 0)
 
         if ($mesg) { print $mesg.'<br>'; }
 
-        
+
         // Affiche formulaire upload
        	$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$facture->id);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$facture->id,'',0,0,$user->rights->fournisseur->facture->creer);
 
 
 		// List of document
 		$param='&facid='.$facture->id;
 		$formfile->list_of_documents($filearray,$facture,'facture_fournisseur',$param);
-		
+
 	}
 	else
 	{

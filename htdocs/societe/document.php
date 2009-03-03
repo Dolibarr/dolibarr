@@ -37,10 +37,10 @@ $mesg = "";
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:(! empty($_GET["id"])?$_GET["id"]:'');
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
 	unset($_GET["action"]);
-	$action=''; 
+	$action='';
 	$socid = $user->societe_id;
 }
 $result = restrictedArea($user, 'societe', $socid);
@@ -74,7 +74,7 @@ $courrier_dir = $conf->societe->dir_output . "/courrier/" . get_exdir($socid) ;
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
   if (! is_dir($upload_dir)) create_exdir($upload_dir);
-  
+
   if (is_dir($upload_dir))
   {
   	$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
@@ -121,11 +121,11 @@ if ($socid > 0)
 		* Affichage onglets
 		*/
 		$head = societe_prepare_head($societe);
-		
+
 		$html=new Form($db);
-		
+
 		dol_fiche_head($head, 'document', $langs->trans("ThirdParty"));
-		
+
 
 		// Construit liste des fichiers
 		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
@@ -134,28 +134,28 @@ if ($socid > 0)
 		{
 			$totalsize+=$file['size'];
 		}
-		  
-		
+
+
 		print '<table class="border"width="100%">';
-		
+
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Name").'</td><td colspan="3">'.$societe->nom.'</td></tr>';
 
 		// Prefix
 		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
-		
+
 		// Nbre fichiers
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
-		
+
 		//Total taille
 		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-		
+
 		print '</table>';
-		
+
 		print '</div>';
-		
+
 		if ($mesg) { print "$mesg<br>"; }
-		
+
 		  /*
 		   * Confirmation de la suppression d'une ligne produit
 		   */
@@ -164,27 +164,27 @@ if ($socid > 0)
 		    $html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$_GET["id"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 		    print '<br>';
 		  }
-		
-		
+
+
 		// Affiche formulaire upload
        	$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/societe/document.php?socid='.$socid);
-		
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/societe/document.php?socid='.$socid,'',0,0,$user->rights->societe->creer);
+
 
 		// List of document
 		$param='&socid='.$societe->id;
 		$formfile->list_of_documents($filearray,$societe,'societe',$param);
-		
-		
+
+
 		print "<br><br>";
-		
+
 		// Courriers
 		// Les courriers sont des documents speciaux generes par des scripts
 		// situes dans scripts/courrier.
 		// Voir Rodo
 		if ($conf->global->MAIN_MODULE_EDITEUR)
 		{
-			$filearray=array();	
+			$filearray=array();
 			$errorlevel=error_reporting();
 			error_reporting(0);
 			$handle=opendir($courrier_dir);
@@ -201,7 +201,7 @@ if ($socid > 0)
 					}
 				}
 				closedir($handle);
-			}       	       
+			}
 
 			print '<table width="100%" class="noborder">';
 			print '<tr class="liste_titre"><td>'.$langs->trans("Courriers").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td></tr>';

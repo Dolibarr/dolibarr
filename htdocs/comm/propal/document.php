@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
  *
@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     
+/**
         \file       htdocs/comm/propal/document.php
         \ingroup    propale
         \brief      Page de gestion des documents attachées à une proposition commerciale
@@ -40,10 +40,10 @@ $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action'
 $propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
 // Security check
-if ($user->societe_id) 
+if ($user->societe_id)
 {
 	unset($_GET["action"]);
-	$action=''; 
+	$action='';
 	$socid = $user->societe_id;
 }
 $result = restrictedArea($user, 'propale', $propalid, 'propal');
@@ -64,7 +64,7 @@ $pagenext = $page + 1;
 /*
  * Actions
  */
- 
+
 // Envoi fichier
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
@@ -74,7 +74,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
     {
         $upload_dir = $conf->propal->dir_output . "/" . sanitizeFileName($propal->ref);
         if (! is_dir($upload_dir)) create_exdir($upload_dir);
-    
+
         if (is_dir($upload_dir))
         {
             if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0) > 0)
@@ -111,7 +111,7 @@ if ($action=='delete')
 /*
  * Affichage
  */
- 
+
 llxHeader();
 
 if ($propalid > 0)
@@ -127,7 +127,7 @@ if ($propalid > 0)
 		$head = propal_prepare_head($propal);
 		dol_fiche_head($head, 'document', $langs->trans('Proposal'));
 
-		
+
 		// Construit liste des fichiers
 		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
 		$totalsize=0;
@@ -135,7 +135,7 @@ if ($propalid > 0)
 		{
 			$totalsize+=$file['size'];
 		}
-		
+
 
         print '<table class="border"width="100%">';
 
@@ -156,7 +156,7 @@ if ($propalid > 0)
 
         // Affiche formulaire upload
        	$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id,'',0,0,$user->rights->propale->creer);
 
 
 		// List of document
