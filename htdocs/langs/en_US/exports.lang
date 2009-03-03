@@ -34,3 +34,4 @@ FormatedExportDesc3=When data to export are selected, you can define output file
 Sheet=Sheet
 NoImportableData=No importable data (no module with definitions to allow data imports)
 FileSuccessfullyBuilt=Export file generated
+SQLUsedForExport=SQL Request used to build export file

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
         \brief      Page d'edition d'un export
         \version    $Id$
 */
- 
+
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
@@ -78,14 +78,15 @@ $objmodelexport=new ModeleExports();
 $html = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
+$sqlusedforexport='';
 
 
 /*
  * Actions
  */
- 
+
 if ($action=='selectfield')
-{ 
+{
     if ($_GET["field"]=='all')
     {
 		$fieldsarray=$objexport->array_export_alias[0];
@@ -103,17 +104,17 @@ if ($action=='selectfield')
 	    //print_r($array_selected);
 	    $_SESSION["export_selected_fields"]=$array_selected;
     }
-    
+
 }
 if ($action=='unselectfield')
-{ 
+{
     if ($_GET["field"]=='all')
     {
 		$array_selected=array();
-		$_SESSION["export_selected_fields"]=$array_selected;		
+		$_SESSION["export_selected_fields"]=$array_selected;
     }
     else
-    {	
+    {
 	    unset($array_selected[$_GET["field"]]);
 	    // Renumber fields of array_selected (from 1 to nb_elements)
 	    asort($array_selected);
@@ -129,7 +130,7 @@ if ($action=='unselectfield')
     }
 }
 if ($action=='downfield' || $action=='upfield')
-{ 
+{
     $pos=$array_selected[$_GET["field"]];
     if ($action=='downfield') $newpos=$pos+1;
     if ($action=='upfield') $newpos=$pos-1;
@@ -169,6 +170,7 @@ if ($action == 'builddoc')
 	else
 	{
 	    $mesg='<div class="ok">'.$langs->trans("FileSuccessfullyBuilt").'</div>';
+	    $sqlusedforexport=$objexport->sqlusedforexport;
     }
 }
 
@@ -198,7 +200,7 @@ if ($action == 'add_export_model')
 	    $objexport->model_name = $export_name;
 	    $objexport->datatoexport = $datatoexport;
 	    $objexport->hexa = $hexa;
-	    
+
 	    $result = $objexport->create($user);
 		if ($result >= 0)
 		{
@@ -209,7 +211,7 @@ if ($action == 'add_export_model')
 			$langs->load("errors");
 			if ($objexport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
-				$mesg='<div class="error">'.$langs->trans("ErrorExportDuplicateProfil").'</div>';				
+				$mesg='<div class="error">'.$langs->trans("ErrorExportDuplicateProfil").'</div>';
 			}
 			else $mesg='<div class="error">'.$objexport->error.'</div>';
 		}
@@ -221,7 +223,7 @@ if ($action == 'add_export_model')
 }
 
 if ($step == 2 && $action == 'select_model')
-{   
+{
     $_SESSION["export_selected_fields"]=array();
     $array_selected=array();
     $result = $objexport->fetch($exportmodelid);
@@ -243,7 +245,7 @@ if ($step == 2 && $action == 'select_model')
  * Affichage Pages des Etapes
  */
 
- 
+
 if ($step == 1 || ! $datatoexport)
 {
     llxHeader('',$langs->trans("NewExport"));
@@ -263,14 +265,14 @@ if ($step == 1 || ! $datatoexport)
     $head[$h][1] = $langs->trans("Step")." 2";
     $h++;
     */
-    
+
     dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
 
 
     print '<table class="notopnoleftnoright" width="100%">';
 
     print $langs->trans("SelectExportDataSet").'<br>';
-    
+
     // Affiche les modules d'exports
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -307,10 +309,10 @@ if ($step == 1 || ! $datatoexport)
     {
         print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoExportableData").'</td></tr>';
     }
-    print '</table>';    
+    print '</table>';
 
     print '</table>';
-    
+
     print '</div>';
 
     if ($mesg) print $mesg;
@@ -335,7 +337,7 @@ if ($step == 2 && $datatoexport)
     $head[$h][1] = $langs->trans("Step")." 2";
     $hselected=$h;
     $h++;
-    
+
     dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
 
     print '<table width="100%" class="border">';
@@ -353,10 +355,10 @@ if ($step == 2 && $datatoexport)
     print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
     print $objexport->array_export_label[0];
     print '</td></tr>';
-    
+
     print '</table>';
     print '<br>';
-    
+
     // Liste deroulante des modeles d'export
     print '<form action="export.php" method="post">';
     print '<input type="hidden" name="action" value="select_model">';
@@ -369,7 +371,7 @@ if ($step == 2 && $datatoexport)
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</td></tr></table>';
     print '</form>';
-	
+
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -393,10 +395,10 @@ if ($step == 2 && $datatoexport)
 #    $this->array_export_fields[0]=$module->export_fields_array[$r];
 #    $this->array_export_entities[0]=$module->export_fields_entities[$r];
 #    $this->array_export_alias[0]=$module->export_fields_alias[$r];
-                                
+
     $var=true;
     $i = 0;
-    
+
     foreach($fieldsarray as $code=>$label)
     {
         $var=!$var;
@@ -450,7 +452,7 @@ if ($step == 2 && $datatoexport)
 	{
 		print '<a class="butActionRefused" href="#">'.$langs->trans("NextStep").'</a>';
 	}
-	
+
     print '</div>';
 
 }
@@ -460,7 +462,7 @@ if ($step == 3 && $datatoexport)
     asort($array_selected);
 
     llxHeader('',$langs->trans("NewExport"));
-    
+
     /*
      * Affichage onglets
      */
@@ -478,7 +480,7 @@ if ($step == 3 && $datatoexport)
     $head[$h][1] = $langs->trans("Step")." 3";
     $hselected=$h;
     $h++;
-    
+
     dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
 
     print '<table width="100%" class="border">';
@@ -509,9 +511,9 @@ if ($step == 3 && $datatoexport)
 
     print '</table>';
     print '<br>';
-    
+
     print $langs->trans("ChooseFieldsOrdersAndTitle").'<br>';
-    
+
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Entities").'</td>';
@@ -532,7 +534,7 @@ if ($step == 3 && $datatoexport)
         $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
         print '<td>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
-                    
+
         print '<td>'.$langs->trans($objexport->array_export_fields[0][$code]).' ('.$code.')</td>';
 
         print '<td align="right" width="100">';
@@ -550,12 +552,12 @@ if ($step == 3 && $datatoexport)
     }
 
     print '</table>';
-	
-    
+
+
     print '</div>';
 
     if ($mesg) print $mesg;
-    
+
     /*
      * Barre d'action
      *
@@ -569,13 +571,13 @@ if ($step == 3 && $datatoexport)
 
     print '</div>';
 
-    
+
 	// Area for profils export
 	if (sizeof($array_selected))
     {
 		print '<br>';
         print $langs->trans("SaveExportModel");
-		
+
 		print '<form class="nocellnopadd" action="export.php" method="post">';
         print '<input type="hidden" name="action" value="add_export_model">';
         print '<input type="hidden" name="step" value="'.$step.'">';
@@ -621,11 +623,11 @@ if ($step == 3 && $datatoexport)
 		else {
 			dol_print_error($this->db);
 		}
-		        
+
         print '</table>';
         print '</form>';
     }
-    
+
 }
 
 if ($step == 4 && $datatoexport)
@@ -633,7 +635,7 @@ if ($step == 4 && $datatoexport)
     asort($array_selected);
 
     llxHeader('',$langs->trans("NewExport"));
-    
+
     /*
      * Affichage onglets
      */
@@ -655,7 +657,7 @@ if ($step == 4 && $datatoexport)
     $head[$h][1] = $langs->trans("Step")." 4";
     $hselected=$h;
     $h++;
-    
+
     dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
 
     print '<table width="100%" class="border">';
@@ -686,9 +688,9 @@ if ($step == 4 && $datatoexport)
 
     print '</table>';
     print '<br>';
-    
+
     print $langs->trans("NowClickToGenerateToBuildExportFile").'<br>';
-    
+
     // Liste des formats d'exports disponibles
     $var=true;
     print '<table class="noborder" width="100%">';
@@ -704,11 +706,24 @@ if ($step == 4 && $datatoexport)
         $var=!$var;
         print '<tr '.$bc[$var].'><td>'.$objmodelexport->getDriverLabel($key).'</td><td>'.$objmodelexport->getLibLabel($key).'</td><td>'.$objmodelexport->getLibVersion($key).'</td></tr>';
     }
-    print '</table>';    
+    print '</table>';
 
     print '</div>';
 
-    if ($mesg) print $mesg;
+    print '<table width="100%">';
+    if ($mesg)
+    {
+    	print '<tr><td colspan="2">';
+    	print $mesg;
+    	print '</td></tr>';
+    }
+    if ($sqlusedforexport && $user->admin)
+    {
+    	print '<tr><td>';
+    	print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport);
+    	print '</td></tr>';
+    }
+	print '</table>';
 
     print '<table width="100%"><tr><td width="50%">';
 
@@ -717,10 +732,10 @@ if ($step == 4 && $datatoexport)
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1
     $formfile->show_documents('export','',$conf->export->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),'',1);
-    
+
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';
-    
+
 	// If external library PHPEXCELREADER is available
 	// and defined by PHPEXCELREADER constant.
     if (file_exists(PHPEXCELREADER.'excelreader.php'))
@@ -731,10 +746,10 @@ if ($step == 4 && $datatoexport)
 		//viewExcelFileContent($conf->export->dir_temp.'/1/export_member_1.xls',5,3);
 	    //viewCsvFileContent($conf->export->dir_temp.'/1/export_member_1.csv',5);
 	    //print '</td></tr></table>';
-    }    
+    }
 }
 
-   
+
 print '<br>';
 
 

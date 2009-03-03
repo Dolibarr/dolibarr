@@ -33,7 +33,7 @@
 class Export
 {
     var $db;
-	
+
 	var $array_export_code=array();             // Tableau de "idmodule_numlot"
     var $array_export_module=array();           // Tableau de "nom de modules"
     var $array_export_label=array();            // Tableau de "libelle de lots"
@@ -41,13 +41,15 @@ class Export
     var $array_export_fields=array();           // Tableau des listes de champ+libell� � exporter
     var $array_export_alias=array();            // Tableau des listes de champ+alias � exporter
     var $array_export_special=array();          // Tableau des operations speciales sur champ
-    
+
     // To store export modules
     var $hexa;
     var $datatoexport;
     var $model_name;
-    
-    
+
+    var $sqlusedforexport;
+
+
     /**
      *    \brief  Constructeur de la classe
      *    \param  DB        Handler acces base de donnees
@@ -56,8 +58,8 @@ class Export
     {
         $this->db=$DB;
     }
-        
-    
+
+
     /**
      *    \brief  Load an exportable dataset
      *    \param  user      Object user making export
@@ -66,7 +68,7 @@ class Export
     function load_arrays($user,$filter='')
     {
         global $langs,$conf;
-        
+
         dol_syslog("Export::load_arrays user=".$user->id." filter=".$filter);
 
         $dir=DOL_DOCUMENT_ROOT."/includes/modules";
@@ -80,12 +82,12 @@ class Export
             if (eregi("^(mod.*)\.class\.php",$file,$reg))
             {
                 $modulename=$reg[1];
-    
+
                 // Defined if module is enabled
                 $enabled=true;
                 $part=strtolower(eregi_replace('^mod','',$modulename));
-				if (empty($conf->$part->enabled)) $enabled=false;						
-                
+				if (empty($conf->$part->enabled)) $enabled=false;
+
 				if ($enabled)
                 {
 					// Chargement de la classe
@@ -99,7 +101,7 @@ class Export
 	                    foreach($module->export_code as $r => $value)
 	                    {
 	                        if ($filter && ($filter != $module->export_code[$r])) continue;
-	                        
+
 	                        // Test si permissions ok \todo tester sur toutes permissions
 	                        $perm=$module->export_permission[$r][0];
 	                        //print_r("$perm[0]-$perm[1]-$perm[2]<br>");
@@ -113,7 +115,7 @@ class Export
 	                        }
 	                        if ($perm[0]=='user' && $user->admin) $bool=true;
 	                        //print $bool." $perm[0]"."<br>";
-	                        
+
 	                        // Permissions ok
 //	                        if ($bool)
 //	                        {
@@ -121,12 +123,12 @@ class Export
 	                            $langtoload=$module->getLangFilesArray();
 	                            if (is_array($langtoload))
 	                            {
-	                                foreach($langtoload as $key) 
+	                                foreach($langtoload as $key)
 	                                {
 	                                    $langs->load($key);
 	                                }
 	                            }
-	
+
 	                            // Module
 	                            $this->array_export_module[$i]=$module;
 	                            // Permission
@@ -145,16 +147,16 @@ class Export
 	                            $this->array_export_alias[$i]=$module->export_alias_array[$r];
 	                            // Tableau des operations speciales sur champ
 	                            $this->array_export_special[$i]=$module->export_special_array[$r];
-	
+
 	                            // Requete sql du dataset
 	                            $this->array_export_sql_start[$i]=$module->export_sql_start[$r];
 	                            $this->array_export_sql_end[$i]=$module->export_sql_end[$r];
 	                            //$this->array_export_sql[$i]=$module->export_sql[$r];
-	
+
 	                            dol_syslog("Export loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".sizeof($module->export_fields_code[$r]));
 	                            $i++;
 //	                        }
-	                    }            
+	                    }
 	                }
                 }
             }
@@ -170,23 +172,23 @@ class Export
      *      \param      array_selected      Tableau des champs � exporter
      *      \remarks    Les tableaux array_export_xxx sont d�j� charg�es pour le bon datatoexport
      *                  aussi le parametre datatoexport est inutilis�
-     */ 
+     */
     function build_file($user, $model, $datatoexport, $array_selected)
     {
         global $conf,$langs;
-        
+
         $indice=0;
         asort($array_selected);
-        
+
         dol_syslog("Export::build_file $model, $datatoexport, $array_selected");
-        
+
         // Creation de la classe d'export du model ExportXXX
         $dir = DOL_DOCUMENT_ROOT . "/includes/modules/export/";
         $file = "export_".$model.".modules.php";
         $classname = "Export".$model;
         require_once($dir.$file);
         $objmodel = new $classname($db);
-        
+
 		// Build the sql request
         $sql=$this->array_export_sql_start[$indice];
         $i=0;
@@ -202,8 +204,9 @@ class Export
 			$sql.=$newfield;
         }
         $sql.=$this->array_export_sql_end[$indice];
-	
+
 		// Run the sql
+		$this->sqlusedforexport=$sql;
 		dol_syslog("Export::build_file sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -214,7 +217,7 @@ class Export
             $dirname=$conf->export->dir_temp.'/'.$user->id;
 
 			$outputlangs=$langs;	// Lang for output
-            
+
 			// Open file
             create_exdir($dirname);
             $result=$objmodel->open_file($dirname."/".$filename, $outputlangs);
@@ -230,7 +233,7 @@ class Export
 				while ($objp = $this->db->fetch_object($resql))
 				{
 					$var=!$var;
-	                
+
 					// Process special operations
 					if (! empty($this->array_export_special[$indice]))
 					{
@@ -252,13 +255,13 @@ class Export
 						}
 					}
 					// end of special operation processing
-					
+
 					$objmodel->write_record($this->array_export_alias[$indice],$array_selected,$objp,$outputlangs);
 	            }
-	            
+
 	            // Genere en-tete
 	            $objmodel->write_footer($outputlangs);
-	            
+
 	            // Close file
 	            $objmodel->close_file();
 			}
@@ -276,7 +279,7 @@ class Export
             return -1;
         }
     }
-    
+
 	/**
 	*  \brief	Create an export model in database
 	*  \param	user Objet utilisateur qui cree
@@ -284,15 +287,15 @@ class Export
 	function create($user)
 	{
 		global $conf;
-		
+
 		dol_syslog("Export.class.php::create");
-		
+
 		$this->db->begin();
-		
+
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'export_model (';
 		$sql.= 'label, type, field)';
 		$sql.= " VALUES ('".$this->model_name."', '".$this->datatoexport."', '".$this->hexa."')";
-		
+
 		dol_syslog("Export::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -319,7 +322,7 @@ class Export
 		$sql = 'SELECT em.rowid, em.field, em.label, em.type';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'export_model as em';
 		$sql.= ' WHERE em.rowid = '.$id;
-		
+
 		dol_syslog("Export::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql) ;
 		if ($result)
@@ -331,13 +334,13 @@ class Export
 				$this->hexa                 = $obj->field;
 				$this->model_name           = $obj->label;
 				$this->datatoexport         = $obj->type;
-				
+
 				return 1;
 			}
 			else
 			{
 				$this->error="Model not found";
-				return -2;	
+				return -2;
 			}
 		}
 		else
@@ -346,8 +349,8 @@ class Export
 			return -3;
 		}
 	}
-    
-	
+
+
  	/**
 	 *   \brief      Delete object in database
      *	\param      user        	User that delete
@@ -358,32 +361,32 @@ class Export
 	{
 		global $conf, $langs;
 		$error=0;
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."export_model";
 		$sql.= " WHERE rowid=".$this->id;
-	
+
 		$this->db->begin();
-		
+
 		dol_syslog(get_class($this)."::delete sql=".$sql);
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		
+
 		if (! $error)
 		{
 			if (! $notrigger)
 			{
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action call a trigger.
-				
+
 		        //// Call triggers
 		        //include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		        //$interface=new Interfaces($this->db);
 		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		        //// End call triggers
-			}	
+			}
 		}
-		
+
         // Commit or rollback
 		if ($error)
 		{
@@ -391,7 +394,7 @@ class Export
 			{
 	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}	
+			}
 			$this->db->rollback();
 			return -1*$error;
 		}
@@ -401,7 +404,7 @@ class Export
 			return 1;
 		}
 	}
-		
+
 }
 
 ?>

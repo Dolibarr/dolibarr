@@ -1291,9 +1291,9 @@ function img_mime($file,$alt='')
 
 
 /**
- *	\brief      Affiche info admin
+ *	\brief      Show information for admin users
  *	\param      text			Text info
- *	\param      infoonimgalt	Info is shown on alt of star picto
+ *	\param      infoonimgalt	Info is shown on alt of star picto, otherwise it is show on output
  *	\return		string			String with info text
  */
 function info_admin($texte,$infoonimgalt=0)

@@ -34,3 +34,4 @@ FormatedExportDesc3=Une fois les données sélectionnées, il est possible de ch
 Sheet=Feuille
 NoImportableData=Pas de type de données importable (aucun module contenant des définitions de données importable n'est actif)
 FileSuccessfullyBuilt=Fichier export généré
+SQLUsedForExport=Requête SQL utilisée pour construire le fichier export
