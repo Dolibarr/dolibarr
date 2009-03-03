@@ -43,8 +43,8 @@ $langs->load("agenda");
 // Security check
 if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$action = '';
+	$socid = $user->societe_id;
 }
 if (isset($_GET["error"])) $error=$_GET["error"];
 
@@ -59,12 +59,12 @@ $contact = new Contact($db);
  */
 if ($_POST["action"] == 'add_action')
 {
-    if ($_POST["contactid"])
-    {
-        $result=$contact->fetch($_POST["contactid"]);
-    }
+	if ($_POST["contactid"])
+	{
+		$result=$contact->fetch($_POST["contactid"]);
+	}
 
-    if ($_POST['cancel'])
+	if ($_POST['cancel'])
 	{
 		$backtopage='';
 		if (! empty($_POST["backtopage"])) $backtopage=$_POST["backtopage"];
@@ -87,45 +87,45 @@ if ($_POST["action"] == 'add_action')
 	//if ($_POST["a2hour"] == -1) $_POST["a2hour"]='0';
 	//if ($_POST["a2min"] == -1) $_POST["a2min"]='0';
 	$datep=dol_mktime($_POST["aphour"],
-                   $_POST["apmin"],
-                   0,
-                   $_POST["apmonth"],
-                   $_POST["apday"],
-                   $_POST["apyear"]);
+	$_POST["apmin"],
+	0,
+	$_POST["apmonth"],
+	$_POST["apday"],
+	$_POST["apyear"]);
 	$datep2=dol_mktime($_POST["p2hour"],
-                   $_POST["p2min"],
-                   0,
-                   $_POST["p2month"],
-                   $_POST["p2day"],
-                   $_POST["p2year"]);
+	$_POST["p2min"],
+	0,
+	$_POST["p2month"],
+	$_POST["p2day"],
+	$_POST["p2year"]);
 	/*$datea=dol_mktime($_POST["adhour"],	// deprecated
-                   $_POST["admin"],
-                   0,
-                   $_POST["admonth"],
-                   $_POST["adday"],
-                   $_POST["adyear"]);
-	$datea2=dol_mktime($_POST["a2hour"],	// deprecated
-                   $_POST["a2min"],
-                   0,
-                   $_POST["a2month"],
-                   $_POST["a2day"],
-                   $_POST["a2year"]);
-	*/
+	 $_POST["admin"],
+	 0,
+	 $_POST["admonth"],
+	 $_POST["adday"],
+	 $_POST["adyear"]);
+	 $datea2=dol_mktime($_POST["a2hour"],	// deprecated
+	 $_POST["a2min"],
+	 0,
+	 $_POST["a2month"],
+	 $_POST["a2day"],
+	 $_POST["a2year"]);
+	 */
 
 	if (! $datep2 && $_POST["percentage"] == 100)
 	{
 		$error=1;
-	   	$_GET["action"] = 'create';
-	   	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd")).'</div>';
+		$_GET["action"] = 'create';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd")).'</div>';
 	}
 
 	// Initialisation objet cactioncomm
-    if (! $_POST["actioncode"])
-    {
-    	$error=1;
+	if (! $_POST["actioncode"])
+	{
+		$error=1;
 		$_GET["action"] = 'create';
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Type")).'</div>';
-    }
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Type")).'</div>';
+	}
 	else
 	{
 		$result=$cactioncomm->fetch($_POST["actioncode"]);
@@ -206,68 +206,68 @@ if ($_POST["action"] == 'add_action')
 	{
 		$error=1;
 		$_GET["action"] = 'create';
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")).'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")).'</div>';
 	}
 	if ($datea && $_POST["percentage"] == 0)
 	{
 		$error=1;
 		$_GET["action"] = 'create';
-        $mesg='<div class="error">'.$langs->trans("ErrorStatusCantBeZeroIfStarted").'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorStatusCantBeZeroIfStarted").'</div>';
 	}
 
- 	if (! $_POST["apyear"] && ! $_POST["adyear"])
- 	{
-    	$error=1;
+	if (! $_POST["apyear"] && ! $_POST["adyear"])
+	{
+		$error=1;
 		$_GET["action"] = 'create';
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
- 	}
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
+	}
 
-    if (! $error)
-    {
-        $db->begin();
+	if (! $error)
+	{
+		$db->begin();
 
-        // On cree l'action
-        $idaction=$actioncomm->add($user);
+		// On cree l'action
+		$idaction=$actioncomm->add($user);
 
-        if ($idaction > 0)
-        {
-            if (! $actioncomm->error)
-            {
-                $db->commit();
-                if ($_POST["from"])
-                {
+		if ($idaction > 0)
+		{
+			if (! $actioncomm->error)
+			{
+				$db->commit();
+				if ($_POST["from"])
+				{
 					dol_syslog("Back to ".$_POST["from"]);
-                	Header("Location: ".$_POST["from"]);
-                }
-                elseif($idaction)
-                {
-                	Header("Location: ".DOL_URL_ROOT.'/comm/action/fiche.php?id='.$idaction);
-                }
-                else
-                {
-                	Header("Location: ".DOL_URL_ROOT.'/comm/action/index.php');
-                }
-                exit;
-            }
-            else
-            {
-                // Si erreur
-                $db->rollback();
-                $_GET["id"]=$idaction;
+					Header("Location: ".$_POST["from"]);
+				}
+				elseif($idaction)
+				{
+					Header("Location: ".DOL_URL_ROOT.'/comm/action/fiche.php?id='.$idaction);
+				}
+				else
+				{
+					Header("Location: ".DOL_URL_ROOT.'/comm/action/index.php');
+				}
+				exit;
+			}
+			else
+			{
+				// Si erreur
+				$db->rollback();
+				$_GET["id"]=$idaction;
 				$langs->load("errors");
-            	$error=$langs->trans($actioncomm->error);
-            }
-        }
-        else
-        {
-            $db->rollback();
-            $_GET["id"]=$idaction;
+				$error=$langs->trans($actioncomm->error);
+			}
+		}
+		else
+		{
+			$db->rollback();
+			$_GET["id"]=$idaction;
 			$langs->load("errors");
-            $error=$langs->trans($actioncomm->error);
-        }
-    }
+			$error=$langs->trans($actioncomm->error);
+		}
+	}
 
-//    print $_REQUEST["from"]."rr";
+	//    print $_REQUEST["from"]."rr";
 }
 
 /*
@@ -276,19 +276,19 @@ if ($_POST["action"] == 'add_action')
  */
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
-    $actioncomm = new ActionComm($db);
-    $actioncomm->fetch($_GET["id"]);
-    $result=$actioncomm->delete();
+	$actioncomm = new ActionComm($db);
+	$actioncomm->fetch($_GET["id"]);
+	$result=$actioncomm->delete();
 
 	if ($result >= 0)
 	{
-    	Header("Location: index.php");
-    	exit;
-    }
-    else
-    {
-    	$mesg=$actioncomm->error;
-    }
+		Header("Location: index.php");
+		exit;
+	}
+	else
+	{
+		$mesg=$actioncomm->error;
+	}
 }
 
 /*
@@ -297,9 +297,9 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
  */
 if ($_POST["action"] == 'update')
 {
-    if (! $_POST["cancel"])
-    {
-    	// Clean parameters
+	if (! $_POST["cancel"])
+	{
+		// Clean parameters
 		if ($_POST["aphour"] == -1) $_POST["aphour"]='0';
 		if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
 		if ($_POST["p2hour"] == -1) $_POST["p2hour"]='0';
@@ -307,66 +307,66 @@ if ($_POST["action"] == 'update')
 		//if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
 		//if ($_POST["admin"] == -1) $_POST["admin"]='0';
 
-        $actioncomm = new Actioncomm($db);
-        $actioncomm->fetch($_POST["id"]);
+		$actioncomm = new Actioncomm($db);
+		$actioncomm->fetch($_POST["id"]);
 
-    	$datep=dol_mktime($_POST["aphour"],
-                                   $_POST["apmin"],
-                                   0,
-                                   $_POST["apmonth"],
-                                   $_POST["apday"],
-                                   $_POST["apyear"]);
+		$datep=dol_mktime($_POST["aphour"],
+		$_POST["apmin"],
+		0,
+		$_POST["apmonth"],
+		$_POST["apday"],
+		$_POST["apyear"]);
 
 		$datep2=dol_mktime($_POST["p2hour"],
-	                   $_POST["p2min"],
-	                   0,
-	                   $_POST["p2month"],
-	                   $_POST["p2day"],
-	                   $_POST["p2year"]);
-    	/*$datea=dol_mktime($_POST["adhour"],
-                                   $_POST["admin"],
-                                   0,
-                                   $_POST["admonth"],
-                                   $_POST["adday"],
-                                   $_POST["adyear"]);
-		$datea2=dol_mktime($_POST["a2hour"],
-	                   $_POST["a2min"],
-	                   0,
-	                   $_POST["a2month"],
-	                   $_POST["a2day"],
-	                   $_POST["a2year"]);
-		*/
+		$_POST["p2min"],
+		0,
+		$_POST["p2month"],
+		$_POST["p2day"],
+		$_POST["p2year"]);
+		/*$datea=dol_mktime($_POST["adhour"],
+		 $_POST["admin"],
+		 0,
+		 $_POST["admonth"],
+		 $_POST["adday"],
+		 $_POST["adyear"]);
+		 $datea2=dol_mktime($_POST["a2hour"],
+		 $_POST["a2min"],
+		 0,
+		 $_POST["a2month"],
+		 $_POST["a2day"],
+		 $_POST["a2year"]);
+		 */
 
 		//print $_POST["apmonth"].",".$_POST["apday"].",".$_POST["apyear"].",".$_POST["aphour"].",".$_POST["apmin"]."<br>\n";
 		//print $actioncomm->datep;
-	    //print 'dddd'.$datep;
-	    $actioncomm->label       = $_POST["label"];
+		//print 'dddd'.$datep;
+		$actioncomm->label       = $_POST["label"];
 		$actioncomm->datep       = $datep;
 		$actioncomm->datef       = $datep2;
 		//$actioncomm->date        = $datea;
 		//$actioncomm->dateend     = $datea2;
-        $actioncomm->percentage  = $_POST["percentage"];
-        $actioncomm->priority    = $_POST["priority"];
+		$actioncomm->percentage  = $_POST["percentage"];
+		$actioncomm->priority    = $_POST["priority"];
 		$actioncomm->location    = isset($_POST["location"])?$_POST["location"]:'';
-        $actioncomm->societe->id = $_POST["socid"];
-        $actioncomm->contact->id = $_POST["contactid"];
-        $actioncomm->note        = $_POST["note"];
+		$actioncomm->societe->id = $_POST["socid"];
+		$actioncomm->contact->id = $_POST["contactid"];
+		$actioncomm->note        = $_POST["note"];
 
-	 	if (! $datep2 && $_POST["percentage"] == 100)
-	 	{
-	    	$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
+		if (! $datep2 && $_POST["percentage"] == 100)
+		{
+			$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
 			$_REQUEST["action"] = 'edit';
-	 	}
+		}
 
 		// Users
 		$usertodo=new User($db,$_POST["affectedto"]);
-        if ($_POST["affectedto"])
+		if ($_POST["affectedto"])
 		{
 			$usertodo->fetch();
 		}
 		$actioncomm->usertodo = $usertodo;
 		$userdone=new User($db,$_POST["doneby"]);
-        if ($_POST["doneby"])
+		if ($_POST["doneby"])
 		{
 			$userdone->fetch();
 		}
@@ -387,16 +387,16 @@ if ($_POST["action"] == 'update')
 				$db->rollback();
 			}
 		}
-    }
+	}
 
-    if ($result < 0)
-    {
+	if ($result < 0)
+	{
 		$langs->load("errors");
-    	$mesg='<div class="error">'.$langs->trans($actioncomm->error).'</div>';
-    	$_GET["id"]=$_POST["id"];
-    }
-    else
-    {
+		$mesg='<div class="error">'.$langs->trans($actioncomm->error).'</div>';
+		$_GET["id"]=$_POST["id"];
+	}
+	else
+	{
 		if (! empty($_POST["from"]))
 		{
 			header("Location: ".$_POST["from"]);
@@ -406,7 +406,7 @@ if ($_POST["action"] == 'update')
 		{
 			$_GET["id"]=$_REQUEST["id"];
 		}
-    }
+	}
 }
 
 
@@ -436,7 +436,7 @@ if ($_GET["action"] == 'create')
 
 	print '<form name="formaction" action="fiche.php" method="post">';
 	print '<input type="hidden" name="action" value="add_action">';
-    if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="backtopage" value="'.($_REQUEST["backtopage"] != 1 ? $_REQUEST["backtopage"] : $_SERVER["HTTP_REFERER"]).'">';
+	if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="backtopage" value="'.($_REQUEST["backtopage"] != 1 ? $_REQUEST["backtopage"] : $_SERVER["HTTP_REFERER"]).'">';
 
 	if ($_GET["actioncode"] == 'AC_RDV') print_titre ($langs->trans("AddActionRendezVous"));
 	else print_titre ($langs->trans("AddAnAction"));
@@ -497,7 +497,7 @@ if ($_GET["action"] == 'create')
 
 	// Affecte a
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-//	$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:$actioncomm->usertodo,'affectedto',1);
+	//	$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:$actioncomm->usertodo,'affectedto',1);
 	$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:($actioncomm->usertodo->id > 0 ? $actioncomm->usertodo : $user),'affectedto',1);
 	print '</td></tr>';
 
@@ -583,17 +583,17 @@ if ($_GET["action"] == 'create')
  */
 if ($_GET["id"])
 {
-    if ($error)
-    {
-        print '<div class="error">'.$error.'</div><br>';
-    }
-    if ($mesg)
-    {
-        print $mesg.'<br>';
-    }
+	if ($error)
+	{
+		print '<div class="error">'.$error.'</div><br>';
+	}
+	if ($mesg)
+	{
+		print $mesg.'<br>';
+	}
 
-    $act = new ActionComm($db);
-    $result=$act->fetch($_GET["id"]);
+	$act = new ActionComm($db);
+	$result=$act->fetch($_GET["id"]);
 	if ($result < 0) dol_print_error($db,$act->error);
 
 	$societe = new Societe($db);
@@ -603,80 +603,80 @@ if ($_GET["id"])
 	}
 	$act->societe = $societe;
 
-    if ($act->author->id > 0)   { $tmpuser=new User($db); $tmpuser->id=$act->author->id;   $res=$tmpuser->fetch(); $act->author=$tmpuser; }
-    if ($act->usermod->id > 0)  { $tmpuser=new User($db); $tmpuser->id=$act->usermod->id;  $res=$tmpuser->fetch(); $act->usermod=$tmpuser; }
-    if ($act->usertodo->id > 0) { $tmpuser=new User($db); $tmpuser->id=$act->usertodo->id; $res=$tmpuser->fetch(); $act->usertodo=$tmpuser; }
-    if ($act->userdone->id > 0) { $tmpuser=new User($db); $tmpuser->id=$act->userdone->id; $res=$tmpuser->fetch(); $act->userdone=$tmpuser; }
+	if ($act->author->id > 0)   { $tmpuser=new User($db); $tmpuser->id=$act->author->id;   $res=$tmpuser->fetch(); $act->author=$tmpuser; }
+	if ($act->usermod->id > 0)  { $tmpuser=new User($db); $tmpuser->id=$act->usermod->id;  $res=$tmpuser->fetch(); $act->usermod=$tmpuser; }
+	if ($act->usertodo->id > 0) { $tmpuser=new User($db); $tmpuser->id=$act->usertodo->id; $res=$tmpuser->fetch(); $act->usertodo=$tmpuser; }
+	if ($act->userdone->id > 0) { $tmpuser=new User($db); $tmpuser->id=$act->userdone->id; $res=$tmpuser->fetch(); $act->userdone=$tmpuser; }
 
 	$contact = new Contact($db);
 	if ($act->contact->id)
 	{
 		$result=$contact->fetch($act->contact->id,$user);
 	}
-    $act->contact = $contact;
+	$act->contact = $contact;
 
-    /*
-     * Affichage onglets
-     */
+	/*
+	 * Affichage onglets
+	 */
 
-    $h = 0;
+	$h = 0;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$_GET["id"];
-    $head[$h][1] = $langs->trans("CardAction");
-    $hselected=$h;
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$_GET["id"];
+	$head[$h][1] = $langs->trans("CardAction");
+	$hselected=$h;
+	$h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$_GET["id"];
-    $head[$h][1] = $langs->trans('Documents');
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$_GET["id"];
+	$head[$h][1] = $langs->trans('Documents');
+	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$_GET["id"];
 	$head[$h][1] = $langs->trans('Info');
 	$h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("Action"));
+	dol_fiche_head($head, $hselected, $langs->trans("Action"));
 
-    $now=gmmktime();
+	$now=gmmktime();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
-    // Confirmation suppression action
-    if ($_GET["action"] == 'delete')
-    {
-        $html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete");
-        print '<br>';
-    }
+	// Confirmation suppression action
+	if ($_GET["action"] == 'delete')
+	{
+		$html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete");
+		print '<br>';
+	}
 
-    if ($_REQUEST["action"] == 'edit')
-    {
-        // Fiche action en mode edition
-        print '<form name="formaction" action="fiche.php" method="post">';
-        print '<input type="hidden" name="action" value="update">';
-        print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
-        if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
+	if ($_REQUEST["action"] == 'edit')
+	{
+		// Fiche action en mode edition
+		print '<form name="formaction" action="fiche.php" method="post">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
+		if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
 
-        print '<table class="border" width="100%">';
+		print '<table class="border" width="100%">';
 
-        // Ref
-        print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
+		// Ref
+		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
 
-        // Type
-        print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+		// Type
+		print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
 
-        // Title
-        print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
+		// Title
+		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
 
-        // Location
-        print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$act->location.'"></td></tr>';
+		// Location
+		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$act->location.'"></td></tr>';
 
-        // Company
-        print '<tr><td>'.$langs->trans("Company").'</td>';
-        print '<td>';
+		// Company
+		print '<tr><td>'.$langs->trans("Company").'</td>';
+		print '<td>';
 		print $html->select_societes($act->societe->id,'socid',1,1);
 		print '</td>';
 
-        print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
-        $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
-        print '</td></tr>';
+		print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
+		$html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
+		print '</td></tr>';
 
 		print '</table><br><table class="border" width="100%">';
 
@@ -711,64 +711,64 @@ if ($_GET["id"])
 		print '</td></tr>';
 
 		// Status
-        print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+		print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
 		$percent=isset($_REQUEST["percentage"])?$_REQUEST["percentage"]:$act->percentage;
 		print $htmlactions->form_select_status_action('formaction',$percent,1);
-        print '</td></tr>';
+		print '</td></tr>';
 
 		// Priority
 		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
 		print '<input type="text" name="priority" value="'.$act->priority.'" size="5">';
 		print '</td></tr>';
 
-        // Object linked
-        if ($act->objet_url)
-        {
-            print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-            print '<td colspan="3">'.$act->objet_url.'</td></tr>';
-        }
+		// Object linked
+		if ($act->objet_url)
+		{
+			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
+			print '<td colspan="3">'.$act->objet_url.'</td></tr>';
+		}
 
-        // Note
-        print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
+		// Note
+		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
 		if ($conf->fckeditor->enabled)
-	    {
+		{
 			// Editeur wysiwyg
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 			$doleditor=new DolEditor('note',$act->note,240,'dolibarr_notes','In',true);
 			$doleditor->Create();
-	    }
-	    else
-	    {
+		}
+		else
+		{
 			print '<textarea name="note" cols="90" rows="'.ROWS_7.'">'.dol_htmlentitiesbr_decode($act->note).'</textarea>';
-	    }
+		}
 
-        print '</td></tr>';
+		print '</td></tr>';
 
-        print '<tr><td align="center" colspan="4"><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
-        print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-        print '</td></tr>';
+		print '<tr><td align="center" colspan="4"><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
+		print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</td></tr>';
 
-        print '</table></form>';
-    }
-    else
-    {
-        // Affichage fiche action en mode visu
-        print '<table class="border" width="100%">';
+		print '</table></form>';
+	}
+	else
+	{
+		// Affichage fiche action en mode visu
+		print '<table class="border" width="100%">';
 
 		// Ref
-        print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
+		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
 
 		// Type
-        print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
 
 		// Title
-        print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
 
 		// Location
-        print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
 
-        // Societe - contact
-        print '<tr><td>'.$langs->trans("Company").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None"));
+		// Societe - contact
+		print '<tr><td>'.$langs->trans("Company").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None"));
 		if ($act->societe->id && $act->type_code == 'AC_TEL')
 		{
 			if ($act->societe->fetch($act->societe->id))
@@ -776,12 +776,12 @@ if ($_GET["id"])
 				print "<br>".dol_print_phone($act->societe->tel);
 			}
 		}
-        print '</td>';
-        print '<td>'.$langs->trans("Contact").'</td>';
-        print '<td>';
-        if ($act->contact->id > 0)
-        {
-        	print $act->contact->getNomUrl(1);
+		print '</td>';
+		print '<td>'.$langs->trans("Contact").'</td>';
+		print '<td>';
+		if ($act->contact->id > 0)
+		{
+			print $act->contact->getNomUrl(1);
 			if ($act->contact->id && $act->type_code == 'AC_TEL')
 			{
 				if ($act->contact->fetch($act->contact->id))
@@ -789,13 +789,13 @@ if ($_GET["id"])
 					print "<br>".dol_print_phone($act->contact->phone_pro);
 				}
 			}
-        }
-        else
-        {
-        	print $langs->trans("None");
-        }
+		}
+		else
+		{
+			print $langs->trans("None");
+		}
 
-        print '</td></tr>';
+		print '</td></tr>';
 
 		print '</table><br><table class="border" width="100%">';
 
@@ -817,61 +817,75 @@ if ($_GET["id"])
 
 		print '</table><br><table class="border" width="100%">';
 
-        // Date debut
+		// Date debut
 		print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
 		print dol_print_date($act->datep,'dayhour');
 		if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
-        // Date fin
-        print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
+		// Date fin
+		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
 		print dol_print_date($act->datef,'dayhour');
 		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
-        // Statut
-        print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
-        print $act->getLibStatut(4);
-        print '</td></tr>';
+		// Statut
+		print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+		print $act->getLibStatut(4);
+		print '</td></tr>';
 
 		// Priority
 		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
 		print $act->priority;
 		print '</td></tr>';
 
-        // Objet lie
-        if ($act->objet_url)
-        {
-            print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-            print '<td colspan="3">'.$act->objet_url.'</td></tr>';
-        }
+		// Objet lie
+		if ($act->objet_url)
+		{
+			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
+			print '<td colspan="3">'.$act->objet_url.'</td></tr>';
+		}
 
-        // Note
-        print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
+		// Note
+		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
 		print dol_htmlentitiesbr($act->note);
-        print '</td></tr>';
+		print '</td></tr>';
 
-        print '</table>';
-    }
+		print '</table>';
+	}
 
-    print "</div>\n";
+	print "</div>\n";
 
 
-    /**
-    * Barre d'actions
-    *
-    */
+	/**
+	 * Barre d'actions
+	 *
+	 */
 
-    print '<div class="tabsAction">';
+	print '<div class="tabsAction">';
 
-    if ($_GET["action"] != 'edit' && $_GET["action"] != 'delete')
-    {
-        print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Modify").'</a>';
+	if ($_GET["action"] != 'edit' && $_GET["action"] != 'delete')
+	{
+		if ($user->rights->agenda->allactions->create)
+		{
+			print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Modify").'</a>';
+		}
+		else
+		{
+			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a>';
+		}
 
-        print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
-    }
+		if ($user->rights->agenda->allactions->create)
+		{
+			print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
+		}
+		else
+		{
+			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a>';
+		}
+	}
 
-    print '</div>';
+	print '</div>';
 }
 
 $db->close();
@@ -880,80 +894,80 @@ llxFooter('$Date$ - $Revision$');
 
 
 /**
-        \brief      Ajoute une ligne de tableau a 2 colonnes pour avoir l'option synchro calendrier
-        \return     int     Retourne le nombre de lignes ajoutees
-*/
+ \brief      Ajoute une ligne de tableau a 2 colonnes pour avoir l'option synchro calendrier
+ \return     int     Retourne le nombre de lignes ajoutees
+ */
 function add_row_for_calendar_link()
 {
 	global $conf,$langs,$user;
-  $nbtr=0;
+	$nbtr=0;
 
-  // Lien avec calendrier si module active
-  if ($conf->webcal->enabled)
-  {
-  	if ($conf->global->PHPWEBCALENDAR_SYNCRO != 'never')
-    {
-    	$langs->load("other");
+	// Lien avec calendrier si module active
+	if ($conf->webcal->enabled)
+	{
+		if ($conf->global->PHPWEBCALENDAR_SYNCRO != 'never')
+		{
+			$langs->load("other");
 
-    	print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry","Webcalendar").'</td>';
+			print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry","Webcalendar").'</td>';
 
-      if (! $user->webcal_login)
-      {
-        print '<td><input type="checkbox" disabled name="add_webcal">';
-        print ' '.$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
-        print '</td>';
-        print '</tr>';
-        $nbtr++;
-      }
-      else
-      {
-      	if ($conf->global->PHPWEBCALENDAR_SYNCRO == 'always')
-        {
-        	print '<input type="hidden" name="add_webcal" value="on">';
-        }
-        else
-        {
-          print '<td><input type="checkbox" name="add_webcal"'.(($conf->global->PHPWEBCALENDAR_SYNCRO=='always' || $conf->global->PHPWEBCALENDAR_SYNCRO=='yesbydefault')?' checked':'').'></td>';
-          print '</tr>';
-          $nbtr++;
-         }
-        }
-      }
-    }
+			if (! $user->webcal_login)
+			{
+				print '<td><input type="checkbox" disabled name="add_webcal">';
+				print ' '.$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+				print '</td>';
+				print '</tr>';
+				$nbtr++;
+			}
+			else
+			{
+				if ($conf->global->PHPWEBCALENDAR_SYNCRO == 'always')
+				{
+					print '<input type="hidden" name="add_webcal" value="on">';
+				}
+				else
+				{
+					print '<td><input type="checkbox" name="add_webcal"'.(($conf->global->PHPWEBCALENDAR_SYNCRO=='always' || $conf->global->PHPWEBCALENDAR_SYNCRO=='yesbydefault')?' checked':'').'></td>';
+					print '</tr>';
+					$nbtr++;
+				}
+			}
+		}
+	}
 
-  if ($conf->phenix->enabled)
-  {
-  	if ($conf->global->PHPPHENIX_SYNCRO != 'never')
-    {
-    	$langs->load("other");
+	if ($conf->phenix->enabled)
+	{
+		if ($conf->global->PHPPHENIX_SYNCRO != 'never')
+		{
+			$langs->load("other");
 
-    	print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry","Phenix").'</td>';
+			print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry","Phenix").'</td>';
 
-      if (! $user->phenix_login)
-      {
-        print '<td><input type="checkbox" disabled name="add_phenix">';
-        print ' '.$langs->transnoentities("ErrorPhenixLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
-        print '</td>';
-        print '</tr>';
-        $nbtr++;
-      }
-      else
-      {
-      	if ($conf->global->PHPPHENIX_SYNCRO == 'always')
-        {
-        	print '<input type="hidden" name="add_phenix" value="on">';
-        }
-        else
-        {
-          print '<td><input type="checkbox" name="add_phenix"'.(($conf->global->PHPPHENIX_SYNCRO=='always' || $conf->global->PHPPHENIX_SYNCRO=='yesbydefault')?' checked':'').'></td>';
-          print '</tr>';
-          $nbtr++;
-         }
-        }
-      }
-    }
+			if (! $user->phenix_login)
+			{
+				print '<td><input type="checkbox" disabled name="add_phenix">';
+				print ' '.$langs->transnoentities("ErrorPhenixLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+				print '</td>';
+				print '</tr>';
+				$nbtr++;
+			}
+			else
+			{
+				if ($conf->global->PHPPHENIX_SYNCRO == 'always')
+				{
+					print '<input type="hidden" name="add_phenix" value="on">';
+				}
+				else
+				{
+					print '<td><input type="checkbox" name="add_phenix"'.(($conf->global->PHPPHENIX_SYNCRO=='always' || $conf->global->PHPPHENIX_SYNCRO=='yesbydefault')?' checked':'').'></td>';
+					print '</tr>';
+					$nbtr++;
+				}
+			}
+		}
+	}
 
-    return $nbtr;
+	return $nbtr;
 }
 
 

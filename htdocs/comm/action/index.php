@@ -509,7 +509,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 	print '<tr style="background: #EEEEEE"><td align="left" nowrap="nowrap">';
 	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.$month.'&year='.$year.'">'.dol_print_date($curtime,'%a %d').'</a>';
 	print '</td><td align="right" nowrap="nowrap">';
-	if ($user->rights->agenda->myactions->create || $user->rights->agenda->actions->create)
+	if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
 	{
 		print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).'">';
 		print img_picto($langs->trans("NewAction"),'edit_add.png');
