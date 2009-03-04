@@ -60,6 +60,8 @@ class Propal extends CommonObject
 	var $ref;
 	var $ref_client;
 	var $statut;					// 0, 1, 2, 3, 4
+	var $datec;						// Date of creation
+	var $datev;						// Date of validation
 	var $date;						// Date of proposal
 	var $datep;						// Duplicate with date
 	var $date_livraison;
@@ -705,6 +707,8 @@ class Propal extends CommonObject
 	{
 		$sql = "SELECT p.rowid,ref,remise,remise_percent,remise_absolue,fk_soc";
 		$sql.= ", total, tva, total_ht";
+		$sql.= ", datec";
+		$sql.= ", date_valid as datev";
 		$sql.= ", datep as dp";
 		$sql.= ", fin_validite as dfv";
 		$sql.= ", date_livraison as date_livraison";
@@ -751,7 +755,9 @@ class Propal extends CommonObject
 				$this->statut               = $obj->fk_statut;
 				$this->statut_libelle       = $obj->statut_label;
 
-				$this->date                 = $this->db->jdate($obj->dp);
+				$this->datec                = $this->db->jdate($obj->datec);
+				$this->datev                = $this->db->jdate($obj->datev);
+				$this->date                 = $this->db->jdate($obj->dp);	// Proposal date
 				$this->datep                = $this->db->jdate($obj->dp);
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
 				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
@@ -890,10 +896,37 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      \brief      D�finit la date de fin de validit�
-	 *      \param      user        		Objet utilisateur qui modifie
-	 *      \param      date_fin_validite	Date fin
-	 *      \return     int         		<0 si ko, >0 si ok
+	 *      \brief      Define proposal date
+	 *      \param      user        		Object user that modify
+	 *      \param      date				Date
+	 *      \return     int         		<0 if KO, >0 if OK
+	 */
+	function set_date($user, $date)
+	{
+		if ($user->rights->propale->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = ".$this->db->idate($date);
+			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+			if ($this->db->query($sql) )
+			{
+				$this->date = $date;
+				$this->datep = $date;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog("Propal::set_date Erreur SQL".$this->error, LOG_ERROR);
+				return -1;
+			}
+		}
+	}
+	
+	/**
+	 *      \brief      Define end validity date
+	 *      \param      user        		Object user that modify
+	 *      \param      date_fin_validite	End of validity date
+	 *      \return     int         		<0 if KO, >0 if OK
 	 */
 	function set_echeance($user, $date_fin_validite)
 	{
@@ -909,7 +942,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Propal::set_echeance Erreur SQL");
+				dol_syslog("Propal::set_echeance Erreur SQL".$this->error, LOG_ERROR);
 				return -1;
 			}
 		}

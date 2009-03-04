@@ -38,6 +38,7 @@ For users:
 - New: Can filter on social contribution type in list.
 - New: Upload of joined files need create/modify permissions to work.
 - New: For admin users, show the SQL request in export build.
+- New: Can modify proposal date if status is draft.
 - Fix: Partial payment on social contributions not shown on main page.
 - Fix: Handle correctly the comment in status changing of supplier orders.
 - Fix: Author, title and topic are correctly encoded in PDF.

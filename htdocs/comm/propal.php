@@ -127,9 +127,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 	}
 }
 
-/*
- *  Supprime une ligne produit AVEC OU SANS confirmation
- */
+// Remove line
 if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 || ($_GET['action'] == 'deleteline' && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE))
 {
@@ -151,7 +149,7 @@ if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes
 	exit;
 }
 
-// Validation de la propale
+// Validation
 if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' && $user->rights->propale->valider)
 {
 	$propal = new Propal($db);
@@ -175,6 +173,13 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 	}
 }
 
+if ($_POST['action'] == 'setdate')
+{
+	$propal = new Propal($db);
+	$propal->fetch($_GET['propalid']);
+	$result=$propal->set_date($user,dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']));
+	if ($result < 0) dol_print_error($db,$propal->error);
+}
 if ($_POST['action'] == 'setecheance')
 {
 	$propal = new Propal($db);
@@ -1007,9 +1012,34 @@ if ($id > 0 || ! empty($ref))
 	if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 	print '</td></tr>';
 
-	// Dates
-	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-	print dol_print_date($propal->date,'daytext');
+	// Date of proposal
+	print '<tr>';
+	print '<td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('Date');
+	print '</td>';
+	if ($_GET['action'] != 'editdate' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($propal->brouillon && $_GET['action'] == 'editdate')
+	{
+		print '<form name="editdate" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
+		print '<input type="hidden" name="action" value="setdate">';
+		$html->select_date($propal->date,'re','','',0,"editdate");
+		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '</form>';
+	}
+	else
+	{
+		if ($propal->date)
+		{
+			print dol_print_date($propal->date,'daytext');
+		}
+		else
+		{
+			print '&nbsp;';
+		}
+	}
 	print '</td>';
 
 	if ($conf->projet->enabled) $rowspan++;
@@ -1027,7 +1057,7 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 	if ($_GET['action'] != 'editecheance' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editecheance&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 	print '</tr></table>';
-	print '<td colspan="3">';
+	print '</td><td colspan="3">';
 	if ($propal->brouillon && $_GET['action'] == 'editecheance')
 	{
 		print '<form name="editecheance" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
