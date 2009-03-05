@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - users
+# Dolibarr language file - es_ES - users 
 CHARSET = UTF-8
 UserCard = Ficha usuario
 ContactCard = Ficha contacto
@@ -44,7 +44,7 @@ NameNotDefined = el nombre no está definido
 ListOfUsers = Listado de usuarios
 Administrator = Administrador
 DefaultRights = Permisos por defecto
-DefaultRightsDesc = Defina aquí los permisos por defecto, es decir: los permisos que se asignarán automáticamente a un nuevo usuario en el momento de su creación.
+DefaultRightsDesc = Defina aquí los permisos <b>por defecto</b>, es decir: los permisos que se asignarán automáticamente a un nuevo usuario en el momento de su creación.
 DolibarrUsers = Usuarios Dolibarr
 LastName = Apellidos
 FirstName = Nombre

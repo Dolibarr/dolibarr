@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - compta
+# Dolibarr language file - ca_ES - compta 
 CHARSET = UTF-8
 Accountancy = Comptabilitat
 AccountancyCard = Fitxa comptable
@@ -109,6 +109,7 @@ RulesVATIn = - Per als serveis, l'informe inclou l'IVA dels pagaments efectivame
 RulesVATDue = - Per als serveis, l'informe inclou l'IVA de les factures degudes, pagades o no basant-se en la data de validació d'aquestes factures.<br>- Per als béns materials, inclou l'IVA de les factures en base a la data de validació de la factura.
 OptionVatInfoModuleComptabilite = Nota: Per als béns materials, caldria utilitzar la data de lliurament per per ser més just.
 PercentOfInvoice = %%/factura
+NotUsedForGoods = No utilitzat per als béns
 OrderStats = Estadístiques de comandes
 Dispatch = Desglossament
 Dispatched = Desglossats
