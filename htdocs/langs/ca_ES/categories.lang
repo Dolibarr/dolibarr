@@ -81,3 +81,6 @@ AssignedToTheCustomer = Assignat a un client
 InternalCategory = Categoria interna
 CategoryContents = Contingut de la categoria
 CategId = Id categoria
+CatSupList=Llista de categories proveïdors
+CatCusList=Llista de categories clients/potencials
+CatProdList=Llista de categories productes

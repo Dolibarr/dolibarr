@@ -81,3 +81,6 @@ AssignedToTheCustomer=Assigned to the customer
 InternalCategory=Inernal category
 CategoryContents=Category contents
 CategId=Category id
+CatSupList=List of supplier categories
+CatCusList=List of customer/prospect categories
+CatProdList=List of products categories

@@ -110,7 +110,7 @@ class modDeplacement extends DolibarrModules
 		
 		$r++;
 		$this->export_code[$r]='trips_'.$r;
-		$this->export_label[$r]='List of trips and expenses';
+		$this->export_label[$r]='ListTripsAndExpenses';
 		$this->export_permission[$r]=array(array("deplacement","export"));
 		$this->export_fields_array[$r]=array('d.rowid'=>"TripId",'d.type'=>"Type",'d.km'=>"FeesKilometersOrAmout",'d.note'=>'Note','s.nom'=>'ThirdParty');
 		$this->export_entities_array[$r]=array('d.rowid'=>"Trip",'d.type'=>"Trip",'d.km'=>"Trip",'d.note'=>'Trip','s.nom'=>'company');

@@ -16,3 +16,4 @@ ConfirmDeleteTrip=Are you sure you want to delete this trip ?
 TF_OTHER=Other
 TF_LUNCH=Lunch
 TF_TRIP=Trip
+ListTripsAndExpenses=List of trips and expenses

@@ -136,3 +136,4 @@ ShowTypeCard = Ver tipo '%s'
 HTPasswordExport = Generación archivo htpassword
 NoThirdPartyAssociatedToMember = Ningún tercero asociado a este miembro
 ThirdPartyDolibarr = Terceros Dolibarr
+MembersAndSubscriptions = Miembros y afiliaciones
