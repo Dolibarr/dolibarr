@@ -41,14 +41,14 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 	//print "xx".$conf->global->MAIN_MODULE_COMPTABILITEEXPERT;
 	//print "xx".$conf->global->MAIN_MODULE_COMPTABILITE;
 
-	if ($direction == 'sell') 
+	if ($direction == 'sell')
 	{
 		$invoicetable='facture';
 		$invoicedettable='facturedet';
 		$fk_facture='fk_facture';
 		$total_tva='total_tva';
 	}
-	if ($direction == 'buy') 
+	if ($direction == 'buy')
 	{
 		$invoicetable='facture_fourn';
 		$invoicedettable='facture_fourn_det';
@@ -154,7 +154,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 
 	$list=array();
 
-	if ($direction == 'sell') 
+	if ($direction == 'sell')
 	{
 		$invoicetable='facture';
 		$invoicedettable='facturedet';
@@ -165,7 +165,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		$paymenttable='paiement';
 		$paymentfacturetable='paiement_facture';
 	}
-	if ($direction == 'buy') 
+	if ($direction == 'buy')
 	{
 		$invoicetable='facture_fourn';
 		$invoicedettable='facture_fourn_det';
@@ -176,12 +176,12 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		$paymenttable='paiementfourn';
 		$paymentfacturetable='paiementfourn_facturefourn';
 	}
-	
+
     // CAS DES BIENS
-	
+
 	// Define sql request
 	$sql='';
-	if ($modetax == 1)
+	if ($modetax == 1)	// Option vat on debit
     {
         // If vat payed on due invoices (non draft)
 		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
@@ -196,9 +196,10 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-			$sql.= " f.facnumber as facnum, f.total_ttc as ftotal_ttc,";
-			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype";
-	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+			$sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
+			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+			$sql.= " 0 as payment_id, 0 as payment_amount";
+			$sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
 	        $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 	        $sql.= " WHERE ";
@@ -210,7 +211,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        $sql.= " ORDER BY d.rowid, d.".$fk_facture;
 		}
     }
-    else
+    else	// Option vat on payments
     {
         // If vat payed on payments
 		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
@@ -224,16 +225,24 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
-	        // Tva sur factures payés (should be on payment)
+	        // Tva sur factures payés (should be on shipment, done on payment instead !)
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-			$sql.= " f.facnumber as facnum, f.total_ttc as ftotal_ttc,";
-			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype";
+			$sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
+			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+			$sql.= " 0 as payment_id, 0 as payment_amount";
+//			$sql.= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount";
 	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+//	        $sql.= " ".MAIN_DB_PREFIX.$paymentfacturetable." as pf,";
+//	        $sql.= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
 	        $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 	        $sql.= " WHERE ";
 			$sql.= " f.fk_statut in (1,2)";	// Validated or payed (partially or completely)
 	        $sql.= " AND f.rowid = d.".$fk_facture;
+//	        $sql.= " AND pf.".$fk_facture2." = f.rowid";
+//	        $sql.= " AND pa.rowid = pf.".$fk_payment;
+//	        $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
+//	        $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
 	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
 	        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
 	        $sql.= " AND d.product_type = 0";		// Limit to products
@@ -267,6 +276,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 
 				$list[$assoc['rate']]['facid'][] = $assoc['facid'];
 				$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
+				$list[$assoc['rate']]['type'][] = $assoc['type'];
 				$list[$assoc['rate']]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
 				$list[$assoc['rate']]['descr'][] = $assoc['descr'];
 
@@ -279,7 +289,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 
 				$list[$assoc['rate']]['payment_id'][] = $assoc['payment_id'];
 				$list[$assoc['rate']]['payment_amount'][] = $assoc['payment_amount'];
-				
+
 	    		$rate = $assoc['rate'];
 	    	}
 	    }
@@ -292,7 +302,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 
 
 	// CAS DES SERVICES
-	
+
 	// Define sql request
 	$sql='';
 	if ($modetax == 1)	// Option vat on debit
@@ -310,8 +320,9 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-			$sql.= " f.facnumber as facnum, f.total_ttc as ftotal_ttc,";
-			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype";
+			$sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
+			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+			$sql.= " 0 as payment_id, 0 as payment_amount";
 	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
 	        $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
@@ -324,7 +335,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        $sql.= " ORDER BY d.rowid, d.".$fk_facture;
 		}
     }
-    else
+    else	// Option vat on payments
     {
         // If vat payed on payments
 		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
@@ -332,7 +343,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
 	        // n'est pas stocké dans la table des payments.
 	        // Seul le module compta expert peut résoudre ce problème.
-	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
+	        // (Il faut quand un paiement a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql='TODO';
 		}
@@ -340,7 +351,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		{
 	        // Tva sur factures payés (should be on payment)
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-			$sql.= " f.facnumber as facnum, f.total_ttc as ftotal_ttc,";
+			$sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
 			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 			$sql.= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount";
 	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
@@ -383,9 +394,10 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 				}
 				$list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
 				$list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
-				
+
 				$list[$assoc['rate']]['facid'][] = $assoc['facid'];
 				$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
+				$list[$assoc['rate']]['type'][] = $assoc['type'];
 				$list[$assoc['rate']]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
 				$list[$assoc['rate']]['descr'][] = $assoc['descr'];
 
@@ -408,7 +420,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 			return -3;
 	    }
 	}
-	
+
 	return $list;
 }
 

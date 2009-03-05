@@ -705,9 +705,10 @@ class FactureFournisseur extends Facture
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
      *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		\param		option			Sur quoi pointe le lien
-	 *		\return		string			Chaine avec URL
+	 * 		\param		max				Max length of shown ref
+	 * 		\return		string			Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option='',$max=0)
 	{
 		global $langs;
 
@@ -716,8 +717,10 @@ class FactureFournisseur extends Facture
 		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$this->id.'">';
 		$lienfin='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowInvoice"),'bill').$lienfin.' ');
-		$result.=$lien.$this->ref.$lienfin;
+		$label=$langs->trans("ShowInvoice").': '.$this->ref;
+
+		if ($withpicto) $result.=($lien.img_object($label,'bill').$lienfin.' ');
+		$result.=$lien.($max?dol_trunc($this->ref,$max):$this->ref).$lienfin;
 		return $result;
 	}
 

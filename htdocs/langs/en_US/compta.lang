@@ -109,6 +109,7 @@ RulesVATIn=For services, the report includes the VAT regulations actually receiv
 RulesVATDue=For services, the report includes VAT invoices due, paid or not, based on the date of validation of these bills.<br>- For material assets, it includes the VAT invoices, based on the date of validation of the invoice.
 OptionVatInfoModuleComptabilite=Note: For material assets, it should use the date of delivery to be more fair.
 PercentOfInvoice=%%/invoice
+NotUsedForGoods=Not used on goods
 Dispatch=Dispatching
 Dispatched=Dispatched
 ToDispatch=To dispatch

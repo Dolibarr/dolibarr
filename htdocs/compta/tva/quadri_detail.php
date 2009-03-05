@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -181,6 +181,7 @@ else
 		{
 			$invoice_customer->id=$x_coll[$my_coll_rate]['facid'][$id];
 			$invoice_customer->ref=$x_coll[$my_coll_rate]['facnum'][$id];
+			$invoice_customer->type=$x_coll[$my_coll_rate]['type'][$id];
 			$x_both[$my_coll_rate]['coll']['detail'][] = array(
 				'id'        =>$x_coll[$my_coll_rate]['facid'][$id],
 				'descr'     =>$x_coll[$my_coll_rate]['descr'][$id],
@@ -194,7 +195,7 @@ else
 				'dtype'     =>$x_coll[$my_coll_rate]['dtype'][$id],
 				'totalht'   =>$x_coll[$my_coll_rate]['totalht_list'][$id],
 				'vat'       =>$x_coll[$my_coll_rate]['vat_list'][$id],
-				'link'      =>$invoice_customer->getNomUrl(1));
+				'link'      =>$invoice_customer->getNomUrl(1,'',12));
 			//$x_both[$my_coll_rate]['coll']['links'] .= '<a href="../facture.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$x_coll[$my_coll_rate]['facnum'][$id].'">..'.substr($x_coll[$my_coll_rate]['facnum'][$id],-2).'</a> ';
 		}
 	}
@@ -213,6 +214,7 @@ else
 		{
 			$invoice_supplier->id=$x_paye[$my_paye_rate]['facid'][$id];
 			$invoice_supplier->ref=$x_paye[$my_paye_rate]['facnum'][$id];
+			$invoice_supplier->type=$x_paye[$my_paye_rate]['type'][$id];
 			$x_both[$my_paye_rate]['paye']['detail'][] = array(
 				'id'        =>$x_paye[$my_paye_rate]['facid'][$id],
 				'descr'     =>$x_paye[$my_paye_rate]['descr'][$id],
@@ -226,7 +228,7 @@ else
 				'dtype'     =>$x_paye[$my_paye_rate]['dtype'][$id],
 				'totalht'   =>$x_paye[$my_paye_rate]['totalht_list'][$id],
 				'vat'       =>$x_paye[$my_paye_rate]['vat_list'][$id],
-				'link'      =>$invoice_supplier->getNomUrl(1));
+				'link'      =>$invoice_supplier->getNomUrl(1,'',12));
 			//$x_both[$my_paye_rate]['paye']['links'] .= '<a href="../../fourn/facture/fiche.php?facid='.$x_paye[$my_paye_rate]['facid'][$id].'" title="'.$x_paye[$my_paye_rate]['facnum'][$id].'">..'.substr($x_paye[$my_paye_rate]['facnum'][$id],-2).'</a> ';
 		}
 	}
@@ -245,6 +247,7 @@ else
 
 	//print '<tr><td colspan="'.($span+1).'">'..')</td></tr>';
 
+	// Customers invoices
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$elementcust.'</td>';
 	print '<td align="left">'.$productcust.'</td>';
@@ -256,6 +259,7 @@ else
 	print '<td align="right">'.$langs->trans("AmountHTVATRealReceived").'</td>';
 	print '<td align="right">'.$vatcust.'</td>';
 	print '</tr>';
+
 	foreach(array_keys($x_coll) as $rate)
 	{
 		$subtot_coll_total_ht = 0;
@@ -263,16 +267,20 @@ else
 
 		if (is_array($x_both[$rate]['coll']['detail']))
 		{
+			// VAT Rate
 			$var=true;
 			print "<tr>";
 			print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="'.$span.'"></td>';
 			print '</tr>'."\n";
+
 			foreach($x_both[$rate]['coll']['detail'] as $index => $fields)
 			{
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
+
 				// Ref
 				print '<td nowrap align="left">'.$fields['link'].'</td>';
+
 				//Description
 				print '<td align="left">';
 				if ($fields['pid'])
@@ -289,8 +297,10 @@ else
 					else $text = img_object($langs->trans('Product'),'product');
 					print $text.' ';
 				}
-				print dol_trunc($fields['descr'],16).'</td>';
-				// Amount line
+				print dol_trunc(dol_string_nohtmltag($fields['descr']),16);
+				print '</td>';
+
+				// Total HT
 				if ($modetax == 0)
 				{
 					print '<td nowrap align="right">';
@@ -303,26 +313,35 @@ else
 					}
 					print '</td>';
 				}
+
 				// Payment
 				$ratiopaymentinvoice=1;
 				if ($modetax == 0)
 				{
 					if ($fields['payment_amount'] && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
 					print '<td nowrap align="right">';
+					//print $fields['totalht']."-".$fields['payment_amount']."-".$fields['ftotal_ttc'];
 					if ($fields['payment_amount'] && $fields['ftotal_ttc'])
 					{
 						$payment_static->rowid=$fields['payment_id'];
 						print $payment_static->getNomUrl(2);
 					}
-					print $fields['payment_amount'];
+					if ($fields['ptype'] == 0)
+					{
+						print $langs->trans("NotUsedForGoods");
+					}
+					else print $fields['payment_amount'];
 					if ($fields['payment_amount'] && $ratiopaymentinvoice) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 					print '</td>';
 				}
+
+				// Total collected
 				print '<td nowrap align="right">';
 				$temp_ht=$fields['totalht'];
 				if ($ratiopaymentinvoice) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
 				print price(price2num($temp_ht,'MT'));
 				print '</td>';
+
 				// VAT
 				print '<td nowrap align="right">';
 				$temp_vat=$fields['vat']*$ratiopaymentinvoice;
@@ -365,6 +384,7 @@ else
 	print '<td align="right">'.$langs->trans("AmountHTVATRealPayed").'</td>';
 	print '<td align="right">'.$vatsup.'</td>';
 	print '</tr>'."\n";
+
 	foreach(array_keys($x_paye) as $rate)
 	{
 		$subtot_paye_total_ht = 0;
@@ -380,7 +400,11 @@ else
 			{
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
+
+				// Ref
 				print '<td nowrap align="left">'.$fields['link'].'</td>';
+
+				//Description
 				print '<td align="left">';
 				if ($fields['pid'])
 				{
@@ -397,7 +421,8 @@ else
 					print $text.' ';
 				}
 				print dol_trunc($fields['descr'],24).'</td>';
-				// Amount line
+
+				// Total HT
 				if ($modetax == 0)
 				{
 					print '<td nowrap align="right">';
@@ -410,6 +435,7 @@ else
 					}
 					print '</td>';
 				}
+
 				// Payment
 				$ratiopaymentinvoice=1;
 				if ($modetax == 0)
@@ -421,15 +447,22 @@ else
 						$paymentfourn_static->rowid=$fields['payment_id'];
 						print $paymentfourn_static->getNomUrl(2);
 					}
-					print $fields['payment_amount'];
+					if ($fields['ptype'] == 0)
+					{
+						print $langs->trans("NotUsedForGoods");
+					}
+					else print $fields['payment_amount'];
 					if ($fields['payment_amount'] && $ratiopaymentinvoice) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 					print '</td>';
 				}
+
+				// VAT payed
 				print '<td nowrap align="right">';
 				$temp_ht=$fields['totalht'];
 				if ($ratiopaymentinvoice) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
 				print price(price2num($temp_ht,'MT'));
 				print '</td>';
+
 				// VAT
 				print '<td nowrap align="right">';
 				$temp_vat=$fields['vat']*$ratiopaymentinvoice;
@@ -460,7 +493,7 @@ else
 	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
 
 	print '<tr>';
-	print '<td colspan="'.$span.'"></td><td align="right">'.$langs->trans("TotalToPay").', '.$langs->trans("Quadri").' '.$q.':</td>';
+	print '<td colspan="'.($span-1).'"></td><td align="right" colspan="2">'.$langs->trans("TotalToPay").', '.$langs->trans("Quadri").' '.$q.':</td>';
 	print '</tr>'."\n";
 
 	$diff = $x_coll_sum - $x_paye_sum;
