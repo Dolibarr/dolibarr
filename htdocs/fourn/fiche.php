@@ -105,7 +105,7 @@ if ( $societe->fetch($socid) )
 	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($societe->email,0,$societe->id,'AC_EMAIL').'</td></tr>';
 
 	// Web
-	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
+	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\">".dol_print_url($societe->url)."</td></tr>";
 
 	// Assujetti a TVA ou pas
 	print '<tr>';
