@@ -428,10 +428,12 @@ $htmlactions = new FormActions($db);
 
 if ($_GET["action"] == 'create')
 {
-	if ($_GET["contactid"])
+	$contact = new Contact($db);
+
+	if ($_REQUEST["contactid"])
 	{
-		$contact = new Contact($db);
-		$result=$contact->fetch($_GET["contactid"]);
+		$result=$contact->fetch($_REQUEST["contactid"]);
+		if ($result < 0) dol_print_error($db,$contact->error);
 	}
 
 	print '<form name="formaction" action="fiche.php" method="post">';
@@ -481,10 +483,8 @@ if ($_GET["action"] == 'create')
 	}
 	print '</td></tr>';
 
-	// Si la societe est imposee, on propose ces contacts
-
-	// If company is forced propose contacts
-	if ($_REQUEST["socid"] > 0 && !($_REQUEST['contactid'] > 0))
+	// If company is forced, we propose contacts (may be contact is also forced)
+	if ($_REQUEST["socid"] > 0)
 	{
 		print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
 		$html->select_contacts($_REQUEST["socid"],$_REQUEST['contactid'],'contactid',1,1);
