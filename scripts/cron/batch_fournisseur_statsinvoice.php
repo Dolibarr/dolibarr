@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /**
-        \file       	scripts/cron/facture-paye-stats.php
+        \file       	scripts/cron/batch_fournisseur_statsinvoice.php
         \ingroup    	invoice
         \brief      	Script de mise a jour de la table facture_stats de statistiques
 		\deprecated		Ce script et ces tables ne sont pas utilisees.
@@ -40,6 +40,10 @@ $version='$Revision$';
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/cron/functions_cron.lib.php");
+
+print '***** '.$script_file.' ('.$version.') *****'."\n";
+print '--- start'."\n";
 
 
 $error=0;
@@ -61,43 +65,19 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
     }
 }
 
-/*
- *
- */
-$sql = "SELECT paye, count(*)";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-$sql .= " GROUP BY paye";
+$db->begin();
 
-$resql = $db->query($sql);
+$result=batch_fournisseur_statsinvoice();
 
-if ($resql)
+if ($result > 0)
 {
-  while ($row = $db->fetch_row($resql))
-    {
-      $sqli = "INSERT INTO ".MAIN_DB_PREFIX."facture_stats";
-      $sqli .= " VALUES (".$db->idate(mktime()).",".$this->db->idate(mktime()).",'paye $row[0]',$row[1])";
-     
-      $resqli = $db->query($sqli);
-    }
-  $db->free($resql);
+	$db->commit();
+	print '--- end ok'."\n";
 }
-
-$sql = "SELECT paye, sum(total)";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-$sql .= " GROUP BY paye";
-
-$resql = $db->query($sql);
-
-if ($resql)
+else
 {
-  while ($row = $db->fetch_row($resql))
-    {
-      $sqli = "INSERT INTO ".MAIN_DB_PREFIX."facture_stats";
-      $sqli .= " VALUES (".$this->db->idate(mktime()).",".$this->db->idate(mktime()).",'total $row[0]','$row[1]')";
-     
-      $resqli = $db->query($sqli);
-    }
-  $db->free($resql);
+	print '--- end error code='.$result."\n";
+	$db->rollback();
 }
 
 ?>

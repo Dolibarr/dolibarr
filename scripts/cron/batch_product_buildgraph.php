@@ -20,7 +20,7 @@
 /**
  \file       scripts/cron/product-graph.php
  \ingroup    product
- \brief      Crée les graphiques pour les produits
+ \brief      Crï¿½e les graphiques pour les produits
  \version	$Id$
  */
 
@@ -40,6 +40,10 @@ $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/cron/functions_cron.lib.php");
+
+print '***** '.$script_file.' ('.$version.') *****'."\n";
+print '--- start'."\n";
 
 
 $error=0;
@@ -207,5 +211,13 @@ foreach ( $products as $id => $fdir)
 	}
 }
 
+if (! $error)
+{
+	print '--- end ok'."\n";
+}
+else
+{
+	print '--- end error code='.$error."\n";
+}
 
 ?>

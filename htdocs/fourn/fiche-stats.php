@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/fourn/fiche.php
-        \ingroup    fournisseur, facture
-        \brief      Page de fiche fournisseur
-        \version    $Id$
-*/
+ *       \file       htdocs/fourn/fiche-stats.php
+ *       \ingroup    fournisseur, facture
+ *       \brief      Page de fiche fournisseur
+ *       \version    $Id$
+ */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -45,64 +45,73 @@ $result = restrictedArea($user, 'societe',$socid,'');
 /*
  *  Actions
  */
- 
+
 
 
 /*
  * View
- */  
+ */
 $societe = new Fournisseur($db);
 
 if ( $societe->fetch($socid) )
 {
-  $addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
-  $addons[0][1] = $societe->nom;
+	llxHeader('',$langs->trans('SupplierCard'));
 
-  llxHeader('',$langs->trans('SupplierCard').' : '.$societe->nom, $addons);
+	/*
+	 * Affichage onglets
+	 */
+	$head = societe_prepare_head($societe);
 
-  /*
-   * Affichage onglets
-   */
-  $head = societe_prepare_head($societe);
+	dol_fiche_head($head, 'supplierstat', $langs->trans("ThirdParty"));
 
-  dol_fiche_head($head, 'supplierstat', $langs->trans("ThirdParty"));
 
-  
-  print '<table class="border" width="100%">';
-  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
+	print '<table class="border" width="100%">';
+	print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
 
-  print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
 
-  print '<tr><td nowrap="nowrap">';
-  print $langs->trans('SupplierCode').'</td><td colspan="3">';
-  print $societe->code_fournisseur;
-  if ($societe->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
-  print '</td></tr>';
-  
-  print "</table><br />";
+	print '<tr><td nowrap="nowrap">';
+	print $langs->trans('SupplierCode').'</td><td colspan="3">';
+	print $societe->code_fournisseur;
+	if ($societe->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
+	print '</td></tr>';
 
-  print '<table class="border" width="100%">';
-  print '<tr><td valign="top" width="50%">';
+	print "</table><br />";
 
-  $file = get_exdir($societe->id, 3) . "ca_genere-".$societe->id.".png";
+	print '<table class="border" width="100%">';
+	print '<tr><td valign="top" width="50%">';
 
-  $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_fourn&amp;file='.$file;
-  print '<img src="'.$url.'" alt="CA genere">';
+	$file = get_exdir($societe->id, 3) . "ca_genere-".$societe->id.".png";
+	if (file_exists($file))
+	{
+		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_fourn&amp;file='.$file;
+		print '<img src="'.$url.'" alt="CA genere">';
+	}
+	else
+	{
+		print $langs->trans("NoneOrBatchFileNeverRan",'batch_fournisseur_updateturnover.php, batch_fournisseur_buildgraph.php');	
+	}
 
-  print '</td><td valign="top" width="50%">';
+	print '</td><td valign="top" width="50%">';
 
-  $file = get_exdir($societe->id, 3) . "ca_achat-".$societe->id.".png";
-
-  $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_fourn&amp;file='.$file;
-  print '<img src="'.$url.'" alt="CA">';
-
-  print '</td></tr>';
-  print '</table>' . "\n";
-  print '</div>';
+	$file = get_exdir($societe->id, 3) . "ca_achat-".$societe->id.".png";
+	if (file_exists($file))
+	{
+		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_fourn&amp;file='.$file;
+		print '<img src="'.$url.'" alt="CA">';
+	}
+	else
+	{
+		print $langs->trans("NoneOrBatchFileNeverRan",'batch_fournisseur_updateturnover.php, batch_fournisseur_buildgraph.php');	
+	}
+	
+	print '</td></tr>';
+	print '</table>' . "\n";
+	print '</div>';
 }
 else
 {
-  dol_print_error($db);
+	dol_print_error($db);
 }
 $db->close();
 

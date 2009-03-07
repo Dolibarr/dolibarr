@@ -20,7 +20,7 @@
 /**
  \file       scripts/cron/stock-graph.php
  \ingroup    stock
- \brief      Créé le graph de valorisation du stock
+ \brief      Crï¿½ï¿½ le graph de valorisation du stock
  \version	$Id$
  */
 
@@ -40,6 +40,10 @@ $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."//cron/functions_cron.lib.php");
+
+print '***** '.$script_file.' ('.$version.') *****'."\n";
+print '--- start'."\n";
 
 
 /*
@@ -157,7 +161,7 @@ for ($i = $max_day + 1 ; $i < ($day + 1) ; $i++)
 }
 
 
-// PMP = (quantités en stock x pmp ancien + nouvelles quantités x prix d'acquisition)/ (anciennes quantités + nouvelles quantités)
+// PMP = (quantitï¿½s en stock x pmp ancien + nouvelles quantitï¿½s x prix d'acquisition)/ (anciennes quantitï¿½s + nouvelles quantitï¿½s)
 
 /*
  * For each warehouse
@@ -165,7 +169,7 @@ for ($i = $max_day + 1 ; $i < ($day + 1) ; $i++)
 foreach ($entrepots as $key => $ent)
 {
 	$file = $dir ."/entrepot-".$key."-".$year.".png";
-	$title = "Valorisation PMP du stock de l'entrepôt (euros HT) sur l'année ".$year;
+	$title = "Valorisation PMP du stock de l'entrepï¿½t (euros HT) sur l'annï¿½e ".$year;
 
 	if ($total[$key] > 0)
 	graph_datas($file, $title, $values[$key], $legends);
@@ -178,7 +182,7 @@ foreach ($entrepots as $key => $ent)
  * For all warehouses
  */
 $file = $dir."/entrepot-".$year.".png";
-$title = "Valorisation PMP (Prix Moyen Pondéré) du stock global (euros HT) sur l'année ".$year;
+$title = "Valorisation PMP (Prix Moyen Pondï¿½rï¿½) du stock global (euros HT) sur l'annï¿½e ".$year;
 
 if ($total[$key] > 0)
 graph_datas($file, $title, $values[0], $legends);
@@ -222,4 +226,14 @@ function graph_datas($file, $title, $values, $legends)
 	$px->SetLabelInterval(31);
 	$px->draw($file);
 }
+
+if (! $error)
+{
+	print '--- end ok'."\n";
+}
+else
+{
+	print '--- end error code='.$error."\n";
+}
+
 ?>

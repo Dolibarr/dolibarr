@@ -54,10 +54,7 @@ $form = new Form($db);
 
 if ( $societe->fetch($socid) )
 {
-	$addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
-	$addons[0][1] = $societe->nom;
-
-	llxHeader('',$langs->trans('SupplierCard').' : '.$societe->nom, $addons);
+	llxHeader('',$langs->trans('SupplierCard'));
 
 	/*
 	 * Affichage onglets
