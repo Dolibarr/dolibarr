@@ -196,6 +196,7 @@ class Conf
 		$this->don->dir_temp  =DOL_DATA_ROOT."/dons/temp";
 		// Module fournisseur
 		$this->fournisseur->dir_output=DOL_DATA_ROOT."/fournisseur";
+		$this->fournisseur->dir_temp=DOL_DATA_ROOT."/fournisseur/temp";
 		$this->fournisseur->commande->dir_output=DOL_DATA_ROOT."/fournisseur/commande";
 		$this->fournisseur->commande->dir_temp  =DOL_DATA_ROOT."/fournisseur/commande/temp";
 		$this->fournisseur->facture->dir_output =DOL_DATA_ROOT."/fournisseur/facture";

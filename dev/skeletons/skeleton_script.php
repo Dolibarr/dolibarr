@@ -40,6 +40,8 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 // Include Dolibarr environment
 require_once($path."../../htdocs/master.inc.php");
 // After this $db is an opened handler to database. We close it at end of file.
+require_once(DOL_DOCUMENT_ROOT."/cron/functions_cron.lib.php");
+
 
 // Load main language strings
 $langs->load("main");
@@ -62,6 +64,12 @@ if (! isset($argv[1])) {
 // Show parameters
 print 'Argument 1='.$argv[1]."\n";
 print 'Argument 2='.$argv[2]."\n";
+
+print '--- start'."\n";
+
+
+// Start of transaction
+$db->begin();
 
 
 // Examples for manipulating class skeleton_class
@@ -142,6 +150,17 @@ else
 
 
 // -------------------- END OF YOUR CODE --------------------
+
+if (! $error)
+{
+	$db->commit();
+	print '--- end ok'."\n";
+}
+else
+{
+	print '--- end error code='.$error."\n";
+	$db->rollback();
+}
 
 $db->close();
 

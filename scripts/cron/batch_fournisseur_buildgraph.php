@@ -66,8 +66,7 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
 	}
 }
 
-
-$dir = DOL_DATA_ROOT."/fournisseur/temp";
+$dir = $conf->fournisseur->dir_temp;
 $result=create_exdir($dir);
 if ($result < 0)
 {

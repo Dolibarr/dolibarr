@@ -82,7 +82,7 @@ if ( $societe->fetch($socid) )
 	print '<tr><td valign="top" width="50%">';
 
 	$file = get_exdir($societe->id, 3) . "ca_genere-".$societe->id.".png";
-	if (file_exists($file))
+	if (file_exists($conf->fournisseur->dir_temp.'/'.$file))
 	{
 		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_fourn&amp;file='.$file;
 		print '<img src="'.$url.'" alt="CA genere">';
@@ -95,7 +95,7 @@ if ( $societe->fetch($socid) )
 	print '</td><td valign="top" width="50%">';
 
 	$file = get_exdir($societe->id, 3) . "ca_achat-".$societe->id.".png";
-	if (file_exists($file))
+	if (file_exists($conf->fournisseur->dir_temp.'/'.$file))
 	{
 		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_fourn&amp;file='.$file;
 		print '<img src="'.$url.'" alt="CA">';
