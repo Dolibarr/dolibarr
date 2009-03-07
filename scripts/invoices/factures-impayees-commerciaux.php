@@ -16,16 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       scripts/invoices/factures-impayees-commerciaux.php
-        \ingroup    facture
-        \brief      Script d'envoi de mails résumé des imapyées par commerciaux
-*/
+ *      \file       scripts/invoices/factures-impayees-commerciaux.php
+ *      \ingroup    facture
+ *      \brief      Script to send a mail to dolibarr users linked to companies with unpayed invoices
+ *		\version	$Id$
+ */
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
@@ -96,7 +94,7 @@ if ( $db->query($sql) )
     }
     else
     {
-        print "Aucune facture impayée avec des commerciaux directement rattachés\n";
+        print "No unpayed invoices to companies linked to a particular commercial dolibarr user\n";
     }
 }
 else
@@ -108,9 +106,9 @@ else
 
 function envoi_mail($oldemail,$message,$total)
 {
-    global $conf;
+    global $conf,$langs;
     
-    $subject = "[Dolibarr] Liste des factures impayées";
+    $subject = "[Dolibarr] List of unpayed invoices";
     $sendto = $oldemail;
     $from = $conf->global->MAIN_EMAIL_FROM;
 	$msgishtml = 0;
@@ -118,12 +116,12 @@ function envoi_mail($oldemail,$message,$total)
     print "Envoi mail pour $oldemail, total: $total\n";
     dol_syslog("factures-impayees-commerciaux: send mail to $oldemail");
 
-    $allmessage = "Liste des factures impayées à ce jour\n";
-    $allmessage .= "Cette liste ne comporte que les factures des sociétés dont vous êtes référencés comme commercial.\n";
+    $allmessage = "List of unpayed invoices\n";
+    $allmessage .= "This list contains only invoices for third parties you are linked to as commercial.\n";
     $allmessage .= "\n";
     $allmessage .= $message;
     $allmessage .= "\n";
-    $allmessage .= "Total = ".price($total)."\n";
+    $allmessage .= $langs->trans("Total")." = ".price($total)."\n";
 
     $mail = new CMailFile($subject,
     $sendto,
