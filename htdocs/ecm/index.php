@@ -347,17 +347,24 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 				print '</td>';
 
 				print '<td valign="top">';
-				$n=3;
-				$ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop'.$n.'.gif','',1);
-				$oldref=$ecmdirstatic->ref;
-				$ecmdirstatic->ref=$ref;
-				print $ecmdirstatic->getNomUrl(0,$option);
-				$ecmdirstatic->ref=$oldref;
+				if ($val['module'] == $_REQUEST["module"])
+				{
+					$n=3;
+					$ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/minustop'.$n.'.gif','',1);
+				}
+				else
+				{
+					$n=3;
+					$ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop'.$n.'.gif','',1);
+				}
+				print '<a href="'.DOL_URL_ROOT.'/ecm/index.php?module='.$val['module'].'">';
+				print $ref;
+				print '</a>';
 				print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/folder.gif','',1);
 				print '</td>';
 
 				print '<td valign="middle">';
-				print '<a href="'.DOL_URL_ROOT.'/ecm/docother.php">';
+				print '<a href="'.DOL_URL_ROOT.'/ecm/index.php?module='.$val['module'].'">';
 				print $val['label'];
 				print '</a></td></tr></table>';
 				print "</td>\n";
@@ -384,6 +391,20 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 				print '</td>';
 
 				print "</tr>\n";
+
+				// Show sublevel
+				if ($val['module'] == $_REQUEST["module"])
+				{
+					if ($val['module'] == 'xxx')
+					{
+					}
+					else
+					{
+						print '<tr><td colspan="6">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+					}
+				}
+
+
 
 				$oldvallevel=$val['level'];
 				$nbofentries++;
