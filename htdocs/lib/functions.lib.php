@@ -2407,7 +2407,7 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
 	{
 		$temp = str_replace("  "," ",$temp);
 	}
-	$CleanString = $temp;
+	$CleanString = trim($temp);
 	return $CleanString;
 }
 

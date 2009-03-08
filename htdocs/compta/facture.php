@@ -2636,7 +2636,7 @@ else
 
 
 			/*
-			 * Lignes de factures
+			 * Lines of invoice
 			 */
 			$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_taux,';
 			$sql.= ' l.fk_remise_except,';
@@ -2644,6 +2644,7 @@ else
 			$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
 			$sql.= ' '.$db->pdate('l.date_start').' as date_start,';
 			$sql.= ' '.$db->pdate('l.date_end').' as date_end,';
+			$sql.= ' l.product_type,';
 			$sql.= ' p.ref, p.fk_product_type, p.label as product,';
 			$sql.= ' p.description as product_desc';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
@@ -2657,11 +2658,12 @@ else
 				$num_lignes = $db->num_rows($resql);
 				$i = 0; $total = 0;
 
+				$product_static=new Product($db);
+
 				print '<table class="noborder" width="100%">';
 
 				if ($num_lignes)
 				{
-
 					print '<tr class="liste_titre">';
 					print '<td>'.$langs->trans('Description').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
@@ -2671,13 +2673,19 @@ else
 					print '<td align="right" width="50">'.$langs->trans('TotalHT').'</td>';
 					print '<td width="48" colspan="3">&nbsp;</td>';
 					print "</tr>\n";
-
 				}
 				$var=true;
 				while ($i < $num_lignes)
 				{
 					$objp = $db->fetch_object($resql);
 					$var=!$var;
+
+					// Show product and description
+					$type=$objp->product_type?$objp->product_type:$objp->fk_product_type;
+					// Try to enhance type detection using date_start and date_end for free lines where type
+					// was not saved.
+					if (! empty($objp->date_start)) $type=1;
+					if (! empty($objp->date_end)) $type=1;
 
 					// Ligne en mode visu
 					if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
@@ -2688,20 +2696,21 @@ else
 							print '<td>';
 							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
-							// Affiche ligne produit
-							$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-							if ($objp->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
-							else $text.= img_object($langs->trans('ShowProduct'),'product');
-							$text.= ' '.$objp->ref.'</a>';
+							// Show product and description
+							$product_static->type=$objp->fk_product_type;
+							$product_static->id=$objp->fk_product;
+							$product_static->ref=$objp->ref;
+							$product_static->libelle=$objp->product;
+							$text=$product_static->getNomUrl(1);
 							$text.= ' - '.$objp->product;
 							$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
-							//print $description;
 							print $html->textwithtooltip($text,$description,3,'','',$i);
+
+							// Show range
 							print_date_range($objp->date_start,$objp->date_end);
-							if ($conf->global->PRODUIT_DESC_IN_FORM)
-							{
-								print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-							}
+
+							// Add description in form
+							if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 
 							print '</td>';
 						}
@@ -2737,9 +2746,11 @@ else
 							}
 							else
 							{
-								if ($objp->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
+								if ($type==1) $text = img_object($langs->trans('Service'),'service');
 								else $text = img_object($langs->trans('Product'),'product');
 								print $text.' '.nl2br($objp->description);
+
+								// Show range
 								print_date_range($objp->date_start,$objp->date_end);
 							}
 							print "</td>\n";
@@ -2824,17 +2835,27 @@ else
 						print '<tr '.$bc[$var].'>';
 						print '<td>';
 						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+
+						// Show product and description
 						if ($objp->fk_product > 0)
 						{
 							print '<input type="hidden" name="productid" value="'.$objp->fk_product.'">';
-							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-							if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
-							else print img_object($langs->trans('ShowProduct'),'product');
-							print ' '.$objp->ref.'</a>';
-							print ' - '.nl2br($objp->product);
+							$product_static->type=$objp->fk_product_type;
+							$product_static->id=$objp->fk_product;
+							$product_static->ref=$objp->ref;
+							$product_static->libelle=$objp->product;
+							$text=$product_static->getNomUrl(1);
+							$text.= ' - '.$objp->product;
+							print $text;
 							print '<br>';
 						}
-						// éditeur wysiwyg
+						else
+						{
+							// TODO Select type (service or product)
+
+						}
+
+						// Description - Editor wysiwyg
 						if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 						{
 							require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -2849,10 +2870,16 @@ else
 							print '</textarea>';
 						}
 						print '</td>';
+
+						// VAT
 						print '<td align="right">';
 						print $html->select_tva('tva_tx',$objp->tva_taux,$mysoc,$soc,'',$objp->info_bits);
 						print '</td>';
+
+						// Unit price
 						print '<td align="right"><input size="6" type="text" class="flat" name="price" value="'.price($objp->subprice,0,'',0).'"></td>';
+
+
 						print '<td align="right">';
 						if (($objp->info_bits & 2) != 2)
 						{
@@ -2860,6 +2887,7 @@ else
 						}
 						else print '&nbsp;';
 						print '</td>';
+
 						print '<td align="right" nowrap>';
 						if (($objp->info_bits & 2) != 2)
 						{
@@ -2867,6 +2895,7 @@ else
 						}
 						else print '&nbsp;';
 						print '</td>';
+
 						print '<td align="center" rowspan="1" colspan="5" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 						print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 						print '</tr>' . "\n";
@@ -2910,7 +2939,7 @@ else
 				print '<td colspan="4">&nbsp;</td>';
 				print "</tr>\n";
 
-				// Ajout produit produits/services personalisés
+				// Add free products/services form
 				print '<form name="addligne" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
 				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
@@ -2918,7 +2947,9 @@ else
 				$var=true;
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
-				// éditeur wysiwyg
+				// TODO Select type (product or service)
+
+				// Editeur wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -2931,7 +2962,6 @@ else
 				}
 				print '</td>';
 				print '<td align="right">';
-
 				$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="6"></td>';
@@ -2951,7 +2981,7 @@ else
 				}
 				print '</form>';
 
-				// Ajout de produits/services prédéfinis
+				// Add predefined services/products form
 				if ($conf->produit->enabled)
 				{
 					print '<tr class="liste_titre">';

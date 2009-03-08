@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,11 +18,11 @@
  */
 
 /**
-	    \file       htdocs/lib/tax.lib.php
-        \ingroup    tax
-		\brief      Library for tax module
-		\version    $Id$
-*/
+ *	    \file       htdocs/lib/tax.lib.php
+ *      \ingroup    tax
+ *		\brief      Library for tax module
+ *		\version    $Id$
+ */
 
 
 /**
@@ -143,7 +143,7 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
  * 				This function also accounts recurrent invoices
  * 	\param		db			Database handler object
  * 	\param		y			Year
- *	\param		q			Year quarter (1-4)
+ *	\param		q			Period. If 1-4, it's year quarter.
  *	\param		modetax		0 or 1 (option vat on debit)
  *	\param		direction	'sell' or 'buy'
  * 	\return		array		List of quarters with vat
@@ -196,7 +196,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-			$sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
+			$sql.= " d.date_start as date_start, d.date_end as date_end,";
+	        $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
 			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 			$sql.= " 0 as payment_id, 0 as payment_amount";
 			$sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
@@ -207,7 +208,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        $sql.= " AND f.rowid = d.".$fk_facture;
 	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
 	        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-	        $sql.= " AND d.product_type = 0";		// Limit to products
+	        $sql.= " AND (d.product_type = 0";								// Limit to products
+	        $sql.= " AND d.date_start is null AND d.date_end IS NULL)";		// enhance detection of service
 	        $sql.= " ORDER BY d.rowid, d.".$fk_facture;
 		}
     }
@@ -227,7 +229,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		{
 	        // Tva sur factures payés (should be on shipment, done on payment instead !)
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-			$sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
+			$sql.= " d.date_start as date_start, d.date_end as date_end,";
+	        $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
 			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 			$sql.= " 0 as payment_id, 0 as payment_amount";
 //			$sql.= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount";
@@ -245,7 +248,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 //	        $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
 	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
 	        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-	        $sql.= " AND d.product_type = 0";		// Limit to products
+	        $sql.= " AND (d.product_type = 0";								// Limit to products
+	        $sql.= " AND d.date_start is null AND d.date_end IS NULL)";		// enhance detection of service
 			$sql.= " ORDER BY d.rowid, d.".$fk_facture;
 		}
     }
@@ -254,8 +258,9 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	if ($sql && $sql=='TODO') return -2;
 	if ($sql && $sql!='TODO')
 	{
-		dol_syslog("Client::vat_by_quarter sql=".$sql);
-	    $resql = $db->query($sql);
+		dol_syslog("Tax.lib.php::vat_by_quarter sql=".$sql);
+
+		$resql = $db->query($sql);
 	    if ($resql)
 	    {
 	    	$rate = -1;
@@ -273,6 +278,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 				}
 				$list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
 				$list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
+				$list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
+				$list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
 				$list[$assoc['rate']]['facid'][] = $assoc['facid'];
 				$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
@@ -320,7 +327,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-			$sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
+			$sql.= " d.date_start as date_start, d.date_end as date_end,";
+	        $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
 			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 			$sql.= " 0 as payment_id, 0 as payment_amount";
 	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
@@ -331,7 +339,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        $sql.= " AND f.rowid = d.".$fk_facture;
 	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
 	        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-	        $sql.= " AND d.product_type = 1";		// Limit to services
+	        $sql.= " AND (d.product_type = 1";								// Limit to services
+	        $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";		// enhance detection of service
 	        $sql.= " ORDER BY d.rowid, d.".$fk_facture;
 		}
     }
@@ -351,7 +360,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		{
 	        // Tva sur factures payés (should be on payment)
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-			$sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
+			$sql.= " d.date_start as date_start, d.date_end as date_end,";
+	        $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
 			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 			$sql.= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount";
 	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
@@ -366,7 +376,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        $sql.= " AND pa.rowid = pf.".$fk_payment;
 	        $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
 	        $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
-	        $sql.= " AND d.product_type = 1";		// Limit to services
+	        $sql.= " AND (d.product_type = 1";								// Limit to services
+	        $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";		// enhance detection of service
 			$sql.= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
 		}
     }
@@ -375,7 +386,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	if ($sql && $sql=='TODO') return -2;
 	if ($sql && $sql!='TODO')
 	{
-		dol_syslog("Client::vat_by_quarter sql=".$sql);
+		dol_syslog("Tax.lib.php::vat_by_quarter sql=".$sql);
 	    $resql = $db->query($sql);
 	    if ($resql)
 	    {
@@ -394,6 +405,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 				}
 				$list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
 				$list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
+				$list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
+				$list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
 				$list[$assoc['rate']]['facid'][] = $assoc['facid'];
 				$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];

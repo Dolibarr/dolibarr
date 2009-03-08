@@ -522,8 +522,7 @@ else
 			print '</form>';
 
 			/*
-			 * Lignes
-			 *
+			 * Lines of invoice
 			 */
 			print '<br>';
 			$var=true;
@@ -540,6 +539,7 @@ else
 			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 			{
 				$var=!$var;
+
 				// Affichage simple de la ligne
 				print '<tr '.$bc[$var].'><td>'.$fac->lignes[$i]->description.'</td>';
 				print '<td align="right">'.vatrate($fac->lignes[$i]->tva_taux).'%</td>';
@@ -697,7 +697,7 @@ else
 			print '<table width="100%" class="noborder">';
 
 			/*
-			 * Liste des paiements
+			 * List of payments
 			 */
 			print '<tr><td colspan="2">';
 			$sql  = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
@@ -774,7 +774,7 @@ else
 
 
 			/*
-			 * Lignes
+			 * Lines of invoice
 			 */
             print '<br>';
 			print '<table class="noborder" width="100%">';
@@ -836,7 +836,7 @@ else
 					if ($fac->lignes[$i]->fk_product)
 					{
 						$productstatic->id=$fac->lignes[$i]->fk_product;
-						$productstatic->type=1;
+						$productstatic->type=$fac->lignes[$i]->product_type;
 						//$productstatic->ref=$fac->lignes[$i]->ref;
 						//print $productstatic->getNomUrl(1).' ('.$fac->lignes[$i]->ref_fourn.') - '.$fac->lignes[$i]->libelle;
 						$productstatic->ref=$fac->lignes[$i]->libelle;
