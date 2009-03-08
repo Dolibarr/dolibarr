@@ -18,23 +18,22 @@
  */
 
 /**     \defgroup   ecm		Module ECM
-        \brief      Module for ECM (Electronic Content Management)
-		\version	$Id$
+ *      \brief      Module for ECM (Electronic Content Management)
+ *		\version	$Id$
 */
 
 /**
-        \file       htdocs/includes/modules/modECM.class.php
-        \ingroup    ecm
-        \brief      Description and activation file for module ECM
-*/
+ *       \file       htdocs/includes/modules/modECM.class.php
+ *       \ingroup    ecm
+ *       \brief      Description and activation file for module ECM
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**     \class      modECM
-        \brief      Description and activation class for module ECM
-*/
-
+ *      \brief      Description and activation class for module ECM
+ */
 class modECM extends DolibarrModules
 {
 
@@ -151,6 +150,18 @@ class modECM extends DolibarrModules
 		
 		$this->menu[$r]=array('fk_menu'=>'r=1',
 							  'type'=>'left',
+							  'titre'=>'ECMNewSection',
+							  'mainmenu'=>'ecm',
+							  'url'=>'/ecm/docdir.php?action=create',
+							  'langs'=>'ecm',
+							  'position'=>100,
+							  'perms'=>'$user->rights->ecm->setup',
+							  'target'=>'',
+							  'user'=>0);
+		$r++;
+		
+		$this->menu[$r]=array('fk_menu'=>'r=1',
+							  'type'=>'left',
 							  'titre'=>'ECMFileManager',
 							  'mainmenu'=>'ecm',
 							  'url'=>'/ecm/index.php?action=file_manager',
@@ -165,7 +176,7 @@ class modECM extends DolibarrModules
 							  'type'=>'left',
 							  'titre'=>'Search',
 							  'mainmenu'=>'ecm',
-							  'url'=>'/ecm/index.php?action=search_form',
+							  'url'=>'/ecm/search.php',
 							  'langs'=>'ecm',
 							  'position'=>103,
 							  'perms'=>'$user->rights->ecm->download',
@@ -173,18 +184,6 @@ class modECM extends DolibarrModules
 							  'user'=>0);
 		$r++;
 
-		$this->menu[$r]=array('fk_menu'=>'r=1',
-							  'type'=>'left',
-							  'titre'=>'ECMNewSection',
-							  'mainmenu'=>'ecm',
-							  'url'=>'/ecm/docdir.php?action=create',
-							  'langs'=>'ecm',
-							  'position'=>100,
-							  'perms'=>'$user->rights->ecm->setup',
-							  'target'=>'',
-							  'user'=>0);
-		$r++;
-		
 	}
 
 	/**

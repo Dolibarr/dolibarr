@@ -223,64 +223,14 @@ if ($_GET['action'] == 'delete')
 if ($mesg) { print $mesg."<br>"; }
 
 // Tool bar
-$selected='file_manager';
-if (eregi('search',$action)) $selected='search_form';
 $head = ecm_prepare_head_fm($fac);
-dol_fiche_head($head, $selected, '', 1);
+dol_fiche_head($head, 'file_manager', '', 1);
 
 
 print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
 
 // Left area
 print '<table class="nobordernopadding" width="100%"><tr><td valign="top">';
-
-if (eregi('search',$action))
-{
-	//print_fiche_titre($langs->trans("ECMSectionsManual"));
-
-	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
-	print '<table class="nobordernopadding" width="100%">';
-	print "<tr class=\"liste_titre\">";
-	print '<td colspan="2">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
-	print "<tr ".$bc[false]."><td>".$langs->trans("Ref").':</td><td align="right"><input type="text" name="search_ref" class="flat" size="14"></td></tr>';
-	print "<tr ".$bc[false]."><td>".$langs->trans("Title").':</td><td align="right"><input type="text" name="search_title" class="flat" size="14"></td></tr>';
-	print "<tr ".$bc[false]."><td>".$langs->trans("Keyword").':</td><td align="right"><input type="text" name="search_keyword" class="flat" size="14"></td></tr>';
-	print "<tr ".$bc[false].'><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
-	print "</table></form>";
-	//print $langs->trans("ECMSectionManualDesc");
-
-	//print_fiche_titre($langs->trans("ECMSectionAuto"));
-
-	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
-	print '<table class="noborder" width="100%">';
-	print "<tr class=\"liste_titre\">";
-	print '<td colspan="4">'.$langs->trans("ECMSearchByEntity").'</td></tr>';
-
-	$buthtml='<td rowspan="'.$rowspan.'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-	$butshown=0;
-	foreach($sectionauto as $sectioncur)
-	{
-		if (! $sectioncur['test']) continue;
-		//if ($butshown % 2 == 0)
-			print '<tr '. $bc[false].'>';
-		print "<td>".$sectioncur['label'].':</td>';
-		print '<td';
-		//if ($butshown % 2 == 1)
-			print ' align="right"';
-		print '>';
-		print '<input type="text" name="search_'.$sectioncur['module'].'" class="flat" size="14">';
-		print '</td>';
-		//if ($butshown % 2 == 1)
-			print '</tr>';
-		$butshown++;
-	}
-	//if ($butshown % 2 == 1)
-	//	print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
-
-	print '<tr '. $bc[false].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
-	print "</table></form>";
-	//print $langs->trans("ECMSectionAutoDesc");
-}
 
 
 if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $action == 'delete')

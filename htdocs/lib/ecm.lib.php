@@ -57,7 +57,7 @@ function ecm_prepare_head_fm($fac)
 	$head[$h][2] = 'file_manager';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/ecm/index.php?action=search_form';
+	$head[$h][0] = DOL_URL_ROOT.'/ecm/search.php';
 	$head[$h][1] = $langs->trans('Search');
 	$head[$h][2] = 'search_form';
 	$h++;

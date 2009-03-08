@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
  */
 
 /**
-		\file 		htdocs/ecm/pre.inc.php
-		\ingroup    ecm
-		\brief      File to manage left menu for ecm module
-		\version    $Id$
-*/
+ *		\file 		htdocs/ecm/pre.inc.php
+ *		\ingroup    ecm
+ *		\brief      File to manage left menu for ecm module
+ *		\version    $Id$
+ */
 
 require ("../main.inc.php");
 
@@ -42,7 +42,7 @@ function llxHeader($head = "", $title="", $help_url='', $morehtml='')
 	$menu->add_submenu(DOL_URL_ROOT."/ecm/index.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("List"),1,$user->rights->ecm->download);
 	//$menu->add_submenu(DOL_URL_ROOT."/ecm/index?mainmenu=ecm&action=create&idmenu=".$_SESSION["idmenu"], $langs->trans("ECMNewDocument"),1,$user->rights->ecm->upload);
 
-	$menu->add_submenu(DOL_URL_ROOT."/ecm/docdir.php?mainmenu=ecm&action=create&idmenu=".$_SESSION["idmenu"], $langs->trans("ECMNewSection"),1,$user->rights->ecm->setup);
+	$menu->add_submenu(DOL_URL_ROOT."/ecm/search.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("Search"),1,$user->rights->ecm->download);
 
 /*	if ($conf->societe->enabled) $menu->add_submenu(DOL_URL_ROOT."/ecm/docother.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("DocsThirdParties"),2);
 	if ($conf->contrat->enabled) $menu->add_submenu(DOL_URL_ROOT."/ecm/docother.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("DocsContracts"),2);
