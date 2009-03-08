@@ -32,5 +32,7 @@ create table llx_facture_fourn_det
   tva               double(24,8) DEFAULT 0,
   total_ttc         double(24,8) DEFAULT 0,
   product_type	    integer      DEFAULT 0,
+  date_start        datetime   DEFAULT NULL,       -- date debut si service
+  date_end          datetime   DEFAULT NULL,       -- date fin si service
   import_key        varchar(14)
 )type=innodb;
