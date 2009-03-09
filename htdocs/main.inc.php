@@ -932,7 +932,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	}
 
 	// Link to Dolibarr wiki pages
-	if ($helppagename && empty($conf->global->MAIN_DISABLE_HELP_LINKS))
+	if ($helppagename)
 	{
 		$langs->load("help");
 
