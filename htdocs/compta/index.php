@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/compta/index.php
- \ingroup    compta
- \brief      Page accueil zone comptabilité
- \version    $Id$
+ *	\file       htdocs/compta/index.php
+ *	\ingroup    compta
+ *	\brief      Main page of accountancy area
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -102,7 +102,7 @@ print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 /*
- * Zone recherche facture
+ * Find invoices
  */
 if ($conf->facture->enabled)
 {
@@ -115,7 +115,10 @@ if ($conf->facture->enabled)
 	print "<tr $bc[0]><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
 	print '</tr>';
 	print "</table></form><br>";
+}
 
+if ($conf->fournisseur->enabled)
+{
 	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/facture/index.php">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchASupplierInvoice").'</td></tr>';
@@ -129,7 +132,7 @@ if ($conf->facture->enabled)
 
 
 /**
- * Factures clients brouillons
+ * Draft customers invoices
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
@@ -202,7 +205,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 }
 
 /**
- * Factures fournisseurs brouillons
+ * Draft suppliers invoices
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
@@ -274,74 +277,15 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	}
 }
 
-/**
- * Charges a payer
- */
-if ($conf->tax->enabled)
-{
-	if ($user->societe_id == 0)
-	{
-		$chargestatic=new ChargeSociales($db);
-
-		$sql = "SELECT c.rowid, c.amount, ".$db->pdate("c.date_ech")." as date_ech,";
-		$sql.= " cc.libelle";
-		$sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc";
-		$sql.= " WHERE c.fk_type = cc.id AND c.paye=0";
-
-		$resql = $db->query($sql);
-		if ( $resql )
-		{
-			$var = false;
-			$num = $db->num_rows($resql);
-
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td colspan="2">'.$langs->trans("ContributionsToPay").($num?' ('.$num.')':'').'</td></tr>';
-			if ($num)
-			{
-				$i = 0;
-				$tot_ttc=0;
-				while ($i < $num)
-				{
-					$obj = $db->fetch_object($resql);
-					print "<tr $bc[$var]>";
-					$chargestatic->id=$obj->rowid;
-					$chargestatic->lib=$obj->libelle;
-					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
-					print '<td align="right">'.price($obj->amount).'</td>';
-					print '</tr>';
-					$tot_ttc+=$obj->amount;
-					$var = !$var;
-					$i++;
-				}
-
-				print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
-				print '<td align="right">'.price($tot_ttc).'</td>';
-				print '</tr>';
-			}
-			else
-			{
-				print '<tr colspan="2" '.$bc[$var].'><td>'.$langs->trans("None").'</td></tr>';
-			}
-			print "</table><br>";
-			$db->free($resql);
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-	}
-}
-
 
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
-// Derniers clients
-if ($user->societe->enabled && $user->rights->societe->lire)
+// Last customers
+if ($conf->societe->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
-	$max=5;
+	$max=3;
 
 	$sql = "SELECT s.nom, s.rowid, ".$db->pdate("s.datec")." as dc";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -400,11 +344,11 @@ if ($user->societe->enabled && $user->rights->societe->lire)
 }
 
 
-// Derniers fournisseurs
-if ($user->fournisseur->enabled && $user->rights->societe->lire)
+// Last suppliers
+if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
-	$max=5;
+	$max=3;
 
 	$sql = "SELECT s.nom, s.rowid, ".$db->pdate("s.datec")." as dc";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -420,7 +364,6 @@ if ($user->fournisseur->enabled && $user->rights->societe->lire)
 	$sql .= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
-
 	if ($result)
 	{
 		$var=false;
@@ -456,6 +399,80 @@ if ($user->fournisseur->enabled && $user->rights->societe->lire)
 			print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
+	}
+}
+
+
+/**
+ * Social contributions to pay
+ */
+if ($conf->tax->enabled)
+{
+	if ($user->societe_id == 0)
+	{
+		$chargestatic=new ChargeSociales($db);
+
+		$sql = "SELECT c.rowid, c.amount, c.date_ech, c.paye,";
+		$sql.= " cc.libelle,";
+		$sql.= " sum(pc.amount) as sumpayed";
+		$sql.= " FROM (".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc)";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON c.rowid = pc.fk_charge";
+		$sql.= " WHERE c.fk_type = cc.id AND c.paye=0";
+		$sql.= " GROUP BY c.rowid, c.amount, c.date_ech, c.paye, cc.libelle";
+
+		$resql = $db->query($sql);
+		if ( $resql )
+		{
+			$var = false;
+			$num = $db->num_rows($resql);
+
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("ContributionsToPay").($num?' ('.$num.')':'').'</td>';
+			print '<td align="center">'.$langs->trans("DateDue").'</td>';
+			print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
+			print '<td align="right">'.$langs->trans("Payed").'</td>';
+			print '<td>&nbsp;</td>';
+			print '</tr>';
+			if ($num)
+			{
+				$i = 0;
+				$tot_ttc=0;
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
+					print "<tr $bc[$var]>";
+					$chargestatic->id=$obj->rowid;
+					$chargestatic->lib=$obj->libelle;
+					$chargestatic->paye=$obj->paye;
+					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
+					print '<td align="center">'.dol_print_date($obj->date_ech,'day').'</td>';
+					print '<td align="right">'.price($obj->amount).'</td>';
+					print '<td align="right">'.price($obj->sumpayed).'</td>';
+					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
+					print '</tr>';
+					$tot_ttc+=$obj->amount;
+					$var = !$var;
+					$i++;
+				}
+
+				print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Total").'</td>';
+				print '<td align="right">'.price($tot_ttc).'</td>';
+				print '<td align="right"></td>';
+				print '<td align="right">&nbsp</td>';
+				print '</tr>';
+			}
+			else
+			{
+				print '<tr colspan="2" '.$bc[$var].'><td>'.$langs->trans("None").'</td></tr>';
+			}
+			print "</table><br>";
+			$db->free($resql);
+		}
+		else
+		{
+			dol_print_error($db);
+		}
 	}
 }
 
