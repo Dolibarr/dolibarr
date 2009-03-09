@@ -32,7 +32,7 @@ create table llx_adherent
   prenom           varchar(50),
   login            varchar(50) NOT NULL, -- login
   pass             varchar(50),          -- password
-  fk_adherent_type smallint,
+  fk_adherent_type integer NOT NULL,
   morphy           varchar(3) NOT NULL, -- personne morale / personne physique
   societe          varchar(50),
   fk_soc           integer NULL,		-- Link to third party linked to member

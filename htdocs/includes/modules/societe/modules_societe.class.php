@@ -73,13 +73,13 @@ class ModeleThirdPartyCode
         return true;
     }
 
-    /**     \brief      Renvoi prochaine valeur attribu�e
-     *      \return     string      Valeur
+    /**     \brief      Return next value available
+     *      \return     string      Value
      */
     function getNextValue($objsoc=0,$type=-1)
     {
     	global $langs;
-        return $langs->trans("NotAvailable");
+        return $langs->trans("Function_getNextValue_InModuleNotWorking");
     }
 
 
@@ -149,8 +149,8 @@ class ModeleThirdPartyCode
 		$s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,2).'<br>';
 		$s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,2).'<br>';
 		$s.='<br>';
-		if ($type == 0 || $type == -1)  $s.=$langs->trans("NextValue").': <b>'.$this->getNextValue($soc,0).'</b><br>';
-		if ($type == 1 || $type == -1)  $s.=$langs->trans("NextValue").': <b>'.$this->getNextValue($soc,1).'</b>';
+		if ($type == 0 || $type == -1)  $s.=$langs->trans("NextValue").' ('.$langs->trans("Customer").') : <b>'.$this->getNextValue($soc,0).'</b><br>';
+		if ($type == 1 || $type == -1)  $s.=$langs->trans("NextValue").' ('.$langs->trans("Supplier").') : <b>'.$this->getNextValue($soc,1).'</b>';
 		return $s;
 	}
 

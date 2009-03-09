@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/admin/societe.php
- \ingroup    company
- \brief      Page d'administration/configuration du module Societe
- \version    $Id$
+ *	\file       htdocs/admin/societe.php
+ *	\ingroup    company
+ *	\brief      Third party module setup page
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");

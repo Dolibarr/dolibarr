@@ -90,6 +90,10 @@ alter table llx_facture_fourn_det add column date_end          datetime   DEFAUL
 -- V4.1 delete from llx_projet_task where fk_projet not in (select rowid from llx_projet);
 -- V4.1 ALTER TABLE llx_projet_task ADD CONSTRAINT fk_projet_task_fk_projet FOREIGN KEY (fk_projet)    REFERENCES llx_projet (rowid);
 
+ALTER TABLE llx_adherent modify fk_adherent_type integer NOT NULL;
+ALTER TABLE llx_adherent ADD INDEX idx_adherent_fk_adherent_type (fk_adherent_type);
+-- V4.1 delete from llx_adherent where fk_adherent_type not in (select rowid from llx_adherent_type);
+-- V4.1 ALTER TABLE llx_adherent ADD CONSTRAINT fk_adherent_adherent_type FOREIGN KEY (fk_adherent_type)    REFERENCES llx_adherent_type (rowid);
 
 -- Put at the end. Cas have duplicate values
 ALTER TABLE llx_categorie_association drop index idx_categorie_association_fk_categorie_fille;

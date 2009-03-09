@@ -259,7 +259,7 @@ class Adherent extends CommonObject
 	{
 		global $conf,$langs;
 
-		// Verification parametres
+		// Check parameters
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
 		{
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
@@ -269,13 +269,14 @@ class Adherent extends CommonObject
 
 		$this->db->begin();
 
-		// Insertion membre
+		// Insert member
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-		$sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy)";
+		$sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type)";
 		$sql.= " VALUES (";
 		$sql.= " '".$this->db->idate($this->datec)."',";
 		$sql.= " '".addslashes($this->login)."',";
-		$sql.= " '".$user->id."',null,null,'".$this->morphy."'";
+		$sql.= " '".$user->id."',null,null,'".$this->morphy."',";
+		$sql.= " '".$this->typeid."'";
 		$sql.= ")";
 
 		dol_syslog("Adherent::create sql=".$sql);

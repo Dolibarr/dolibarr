@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	* Attention ce module est utilise par defaut si aucun module n'a
 	* ete definit dans la configuration
 	*
-	* Le fonctionnement de celui-ci doit dont rester le plus ouvert
-	* possible
+	* Le fonctionnement de celui-ci doit dont rester le plus ouvert possible
 	*/
 
 	var $nom;							// Nom du modele
@@ -48,7 +47,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	var $code_modifiable_null;			// Code modifiables si il est null
 	var $code_null;						// Code facultatif
 	var $version;		// 'development', 'experimental', 'dolibarr'
-	var $code_auto; // Numerotation automatique
+	var $code_auto; 	// Numerotation automatique
 
 
 	/**		\brief      Constructeur classe
@@ -75,10 +74,20 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	}
 
 
+	/**     \brief      Return next value available
+     *      \return     string      Value
+     */
+    function getNextValue($objsoc=0,$type=-1)
+    {
+    	global $langs;
+        return '';
+    }
+
+
 	/**
-	* 		\brief		V�rifie la validit� du code
+	* 		\brief		check validity of code
 	*		\param		$db			Handler acces base
-	*		\param		$code		Code a v�rifier
+	*		\param		$code		Code to check
 	*		\param		$soc		Objet societe
 	*/
 	function verif($db, &$code, $soc)
