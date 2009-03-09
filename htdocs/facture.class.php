@@ -1480,6 +1480,7 @@ class Facture extends CommonObject
 			$line->subprice = $price;
 			$line->remise_percent = $remise_percent;
 			$line->tva_tx = $tva_tx;
+			$line->product_type = $prod->type;
 			if ($date_start) { $line->date_start = $date_start; }
 			if ($date_end)   { $line->date_end = $date_end; }
 
@@ -1503,16 +1504,20 @@ class Facture extends CommonObject
 	 *		\param    	fk_remise_except	Id remise
 	 *		\param		price_base_type		HT or TTC
 	 * 		\param    	pu_ttc             	Prix unitaire TTC
-	 *    	\return    	int             	>0 si ok, <0 si ko
+	 * 		\param		type				Type of line (0=product, 1=service)
+	 *    	\return    	int             	>0 if OK, <0 if KO
 	 * 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
 	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
+	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0)
 	{
-		dol_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc", LOG_DEBUG);
+		dol_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+
+		// Check parameters
+		if ($type < 0) return -1;
 
 		if ($this->brouillon)
 		{
@@ -1583,6 +1588,7 @@ class Facture extends CommonObject
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
+			$ligne->product_type=$type;
 
 			// \TODO Ne plus utiliser
 			$ligne->price=$price;
@@ -1617,35 +1623,39 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *      \brief     Mets à jour une ligne de facture
-	 *      \param     rowid            Id de la ligne de facture
-	 *      \param     desc             Description de la ligne
-	 *      \param     pu               Prix unitaire (HT ou TTC selon price_base_type)
-	 *      \param     qty              Quantité
-	 *      \param     remise_percent   Pourcentage de remise de la ligne
-	 *      \param     date_start       Date de debut de validité du service
-	 *      \param     date_end         Date de fin de validité du service
-	 *      \param     tva_tx           Taux TVA
-	 * 	   \param     price_base_type  HT ou TTC
-	 * 	   \param     info_bits        Miscellanous informations
-	 *      \return    int              < 0 si erreur, > 0 si ok
+	 *      \brief     	Update line
+	 *      \param     	rowid           Id of line to update
+	 *      \param     	desc            Description of line
+	 *      \param     	pu              Prix unitaire (HT ou TTC selon price_base_type)
+	 *      \param     	qty             Quantity
+	 *      \param     	remise_percent  Pourcentage de remise de la ligne
+	 *      \param     	date_start      Date de debut de validité du service
+	 *      \param     	date_end        Date de fin de validité du service
+	 *      \param     	tva_tx          VAT Rate
+	 * 	   	\param     	price_base_type HT or TTC
+	 * 	   	\param     	info_bits       Miscellanous informations
+	 * 		\param		type			Type of line (0=product, 1=service)
+	 *      \return    	int             < 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $price_base_type='HT', $info_bits=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $price_base_type='HT', $info_bits=0, $type=0)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
-		dol_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $price_base_type, $info_bits", LOG_DEBUG);
+		dol_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $price_base_type, $info_bits, $type", LOG_DEBUG);
 
 		if ($this->brouillon)
 		{
 			$this->db->begin();
 
-			// Nettoyage paramètres
+			// Clean parameters
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
 			if (! $qty) $qty=1;
 			$pu = price2num($pu);
 			$txtva=price2num($txtva);
+
+			// Check parameters
+			if ($type < 0) return -1;
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -1685,6 +1695,7 @@ class Facture extends CommonObject
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
 			$ligne->info_bits=$info_bits;
+			$ligne->product_type=$type;
 
 			// A ne plus utiliser
 			$ligne->price=$price;
@@ -2741,9 +2752,9 @@ class Facture extends CommonObject
 
 
 /**
- \class      	FactureLigne
- \brief      	Classe permettant la gestion des lignes de factures
- \remarks		Gere des lignes de la table llx_facturedet
+ *	\class      	FactureLigne
+ *	\brief      	Classe permettant la gestion des lignes de factures
+ *	\remarks		Gere des lignes de la table llx_facturedet
  */
 class FactureLigne
 {
@@ -2756,16 +2767,16 @@ class FactureLigne
 	var $fk_facture;
 	//! Description ligne
 	var $desc;
-	var $fk_product;	// Id produit prédéfini
+	var $fk_product;		// Id of predefined product
 	var $product_type = 0;	// Type 0 = product, 1 = Service
 
-	var $qty;			// Quantité (exemple 2)
-	var $tva_tx;		// Taux tva produit/service (exemple 19.6)
-	var $subprice;      	// P.U. HT (exemple 100)
-	var $remise_percent;	// % de la remise ligne (exemple 20%)
+	var $qty;				// Quantity (example 2)
+	var $tva_tx;			// Taux tva produit/service (example 19.6)
+	var $subprice;      	// P.U. HT (example 100)
+	var $remise_percent;	// % de la remise ligne (example 20%)
 	var $rang = 0;
 
-	var $info_bits = 0;	// Liste d'options cumulables:
+	var $info_bits = 0;		// Liste d'options cumulables:
 	// Bit 0:	0 si TVA normal - 1 si TVA NPR
 	// Bit 1:	0 si ligne normal - 1 si bit discount
 
@@ -2859,9 +2870,9 @@ class FactureLigne
 
 
 	/**
-	 *   \brief     	Insère l'objet ligne de facture en base
-	 *	\param      notrigger		1 ne declenche pas les triggers, 0 sinon
-	 *	\return		int				<0 si ko, >0 si ok
+	 *	\brief     	Insert line in database
+	 *	\param      notrigger		1 no triggers
+	 *	\return		int				<0 if KO, >0 if OK
 	 */
 	function insert($notrigger=0)
 	{
@@ -2874,6 +2885,8 @@ class FactureLigne
 		if (! $this->subprice) $this->subprice=0;
 		if (! $this->price) $this->price=0;
 
+		// Check parameters
+		if ($this->product_type < 0) return -1;
 
 		$this->db->begin();
 
@@ -2951,7 +2964,7 @@ class FactureLigne
 						if ($discount->fk_facture)
 						{
 							$this->error=$langs->trans("ErrorDiscountAlreadyUsed",$discount->id);
-							dol_syslog("FactureLigne::insert Error ".$this->error);
+							dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERROR);
 							$this->db->rollback();
 							return -3;
 						}
@@ -2961,7 +2974,7 @@ class FactureLigne
 							if ($result < 0)
 							{
 								$this->error=$discount->error;
-								dol_syslog("FactureLigne::insert Error ".$this->error);
+								dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERROR);
 								$this->db->rollback();
 								return -3;
 							}
@@ -2970,7 +2983,7 @@ class FactureLigne
 					else
 					{
 						$this->error=$langs->trans("ErrorADiscountThatHasBeenRemovedIsIncluded");
-						dol_syslog("FactureLigne::insert Error ".$this->error);
+						dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERROR);
 						$this->db->rollback();
 						return -3;
 					}
@@ -2978,7 +2991,7 @@ class FactureLigne
 				else
 				{
 					$this->error=$discount->error;
-					dol_syslog("FactureLigne::insert Error ".$this->error);
+					dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERROR);
 					$this->db->rollback();
 					return -3;
 				}
@@ -3001,7 +3014,7 @@ class FactureLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("FactureLigne::insert Error ".$this->error);
+			dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERROR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -3009,13 +3022,16 @@ class FactureLigne
 
 
 	/**
-	 *    \brief     	Mise a jour de l'objet ligne de facture en base
-	 *	\return		int		<0 si ko, >0 si ok
+	 *  	\brief     	Update line in database
+	 *		\return		int		<0 if KO, >0 if OK
 	 */
 	function update()
 	{
 		// Clean parameters
 		$this->desc=trim($this->desc);
+
+		// Check parameters
+		if ($this->product_type < 0) return -1;
 
 
 		$this->db->begin();
@@ -3035,6 +3051,7 @@ class FactureLigne
 		else { $sql.=',date_start=null'; }
 		if ($this->date_end) { $sql.= ",date_end='".$this->db->idate($this->date_end)."'"; }
 		else { $sql.=',date_end=null'; }
+		$sql.= ",product_type=".$this->product_type;
 		$sql.= ",rang='".$this->rang."'";
 		$sql.= ",info_bits='".$this->info_bits."'";
 		$sql.= ",total_ht=".price2num($this->total_ht)."";

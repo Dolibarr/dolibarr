@@ -835,7 +835,20 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
  */
 if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') && $user->rights->facture->creer)
 {
-	if ($_POST['qty'] && (($_POST['pu']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
+	$result=0;
+
+	if (empty($_POST['idprod']) && $_POST["type"] < 0)
+	{
+		$fac->error = $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")) ;
+		$result = -1 ;
+	}
+	if (empty($_POST['idprod']) && empty($_POST["pu"]))
+	{
+		$fac->error = $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")) ;
+		$result = -1 ;
+	}
+
+	if ($result >= 0 && $_POST['qty'] && (($_POST['pu']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
 		$fac = new Facture($db);
 		$ret=$fac->fetch($_POST['facid']);
@@ -895,6 +908,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 			$desc = $prod->description;
 			$desc.= $prod->description && $_POST['np_desc'] ? "\n" : "";
 			$desc.= $_POST['np_desc'];
+			$type = $prod->type;
 		}
 		else
 		{
@@ -902,36 +916,40 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 			$tva_tx=eregi_replace('\*','',$_POST['tva_tx']);
 			$tva_npr=eregi('\*',$_POST['tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
+			$type=$_POST["type"];
 		}
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-
-		if($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
+		if ($result >= 0)
 		{
-			$fac->error = $langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)) ;
-			$result = -1 ;
-		}
-		else
-		{
-			// Insert line
-			$result = $fac->addline(
-			$_POST['facid'],
-			$desc,
-			$pu_ht,
-			$_POST['qty'],
-			$tva_tx,
-			$_POST['idprod'],
-			$_POST['remise_percent'],
-			$date_start,
-			$date_end,
-			0,
-			$info_bits,
-					'',
-			$price_base_type,
-			$pu_ttc
-			);
+			if($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
+			{
+				$fac->error = $langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)) ;
+				$result = -1 ;
+			}
+			else
+			{
+				// Insert line
+				$result = $fac->addline(
+				$_POST['facid'],
+				$desc,
+				$pu_ht,
+				$_POST['qty'],
+				$tva_tx,
+				$_POST['idprod'],
+				$_POST['remise_percent'],
+				$date_start,
+				$date_end,
+				0,
+				$info_bits,
+				'',
+				$price_base_type,
+				$pu_ttc,
+				$type
+				);
+			}
 		}
 	}
 
@@ -971,18 +989,38 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=eregi_replace('\*','',$vat_rate);
 
-	// On vérifie que le prix minimum est respecté
-	if($_POST['productid']!='')
+	// Check parameters
+	if (empty($_POST['productid']) && $_POST["type"] < 0)
 	{
-		$productid = $_POST['productid'] ;
-		$pruduct = new Product($db) ;
-		$pruduct->fetch($productid) ;
+		$fac->error = $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")) ;
+		$result = -1 ;
+	}
+	// Check minimum price
+	if(! empty($_POST['productid']))
+	{
+		$productid = $_POST['productid'];
+		$pruduct = new Product($db);
+		$pruduct->fetch($productid);
+		$type=$pruduct->type;
 	}
 	if($pruduct->price_min && ($_POST['productid']!='') && (price2num($_POST['price'])*(1-price2num($_POST['remise_percent'])/100) < price2num($pruduct->price_min)))
 	{
-		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($pruduct->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
+		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($pruduct->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>';
+		$result=-1;
+	}
+
+	// Define params
+	if (! empty($_POST['productid']))
+	{
+		$type=$pruduct->type;
 	}
 	else
+	{
+		$type=$_POST["type"];
+	}
+
+	// Update line
+	if ($result >= 0)
 	{
 		$result = $fac->updateline($_POST['rowid'],
 		$_POST['desc'],
@@ -993,7 +1031,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		$date_end,
 		$vat_rate,
 		'HT',
-		$info_bits
+		$info_bits,
+		$type
 		);
 
 		$outputlangs = $langs;
@@ -2862,8 +2901,7 @@ else
 						}
 						else
 						{
-							// TODO Select type (service or product)
-							print $html->select_type_of_lines($objp->fk_product_type,'type',1);
+							print $html->select_type_of_lines($objp->product_type,'type',1);
 						}
 
 						// Description - Editor wysiwyg
@@ -2958,7 +2996,8 @@ else
 				$var=true;
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
-				// TODO Select type (product or service)
+
+				print $html->select_type_of_lines(-1,'type',1);
 
 				// Editeur wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
