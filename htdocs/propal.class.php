@@ -65,11 +65,15 @@ class Propal extends CommonObject
 	var $date;						// Date of proposal
 	var $datep;						// Duplicate with date
 	var $date_livraison;
-
 	var $fin_validite;
-	var $price;						// Total net of tax
-	var $tva;						// Total VAT
-	var $total;						// Total with tax
+
+	var $total_ht;					// Total net of tax
+	var $total_tva;					// Total VAT
+	var $total_ttc;					// Total with tax
+	var $price;						// deprecated (for compatibility)
+	var $tva;						// deprecated (for compatibility)
+	var $total;						// deprecated (for compatibility)
+
 	var $cond_reglement_id;
 	var $cond_reglement_code;
 	var $mode_reglement_id;
@@ -205,13 +209,15 @@ class Propal extends CommonObject
 			$propalligne->desc=$remise->description;   	// Description ligne
 			$propalligne->tva_tx=$remise->tva_tx;
 			$propalligne->subprice=-$remise->amount_ht;
-			$propalligne->price=-$remise->amount_ht;
-			$propalligne->fk_product=0;					// Id produit pr�d�fini
+			$propalligne->fk_product=0;					// Id produit predefini
 			$propalligne->qty=1;
 			$propalligne->remise=0;
 			$propalligne->remise_percent=0;
 			$propalligne->rang=-1;
 			$propalligne->info_bits=2;
+
+			// TODO deprecated
+			$propalligne->price=-$remise->amount_ht;
 
 			$propalligne->total_ht  = -$remise->amount_ht;
 			$propalligne->total_tva = -$remise->amount_tva;
@@ -342,7 +348,7 @@ class Propal extends CommonObject
 			//if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty) $ligne->special_code=3;
 			if (empty($qty)) $ligne->special_code=3;
 
-			// \TODO Ne plus utiliser
+			// \TODO deprecated
 			$ligne->price=$price;
 			$ligne->remise=$remise;
 
@@ -810,7 +816,7 @@ class Propal extends CommonObject
 						$ligne->subprice         = $objp->subprice;
 						$ligne->fk_remise_except = $objp->fk_remise_except;
 						$ligne->remise_percent   = $objp->remise_percent;
-						$ligne->price            = $objp->price;
+						$ligne->price            = $objp->price;		// deprecated
 
 						$ligne->info_bits        = $objp->info_bits;
 						$ligne->total_ht         = $objp->total_ht;
@@ -921,7 +927,7 @@ class Propal extends CommonObject
 			}
 		}
 	}
-	
+
 	/**
 	 *      \brief      Define end validity date
 	 *      \param      user        		Object user that modify
@@ -2068,7 +2074,7 @@ class PropaleLigne
 			$this->fk_propal      = $objp->fk_propal;
 			$this->desc           = $objp->description;
 			$this->qty            = $objp->qty;
-			$this->price          = $objp->price;
+			$this->price          = $objp->price;		// deprecated
 			$this->subprice       = $objp->subprice;
 			$this->tva_tx         = $objp->tva_tx;
 			$this->remise         = $objp->remise;
@@ -2076,9 +2082,11 @@ class PropaleLigne
 			$this->fk_remise_except = $objp->fk_remise_except;
 			$this->produit_id     = $objp->fk_product;
 			$this->info_bits      = $objp->info_bits;
+
 			$this->total_ht       = $objp->total_ht;
 			$this->total_tva      = $objp->total_tva;
 			$this->total_ttc      = $objp->total_ttc;
+
 			$this->marge_tx       = $objp->marge_tx;
 			$this->marque_tx      = $objp->marque_tx;
 			$this->special_code   = $objp->special_code;

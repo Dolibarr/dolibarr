@@ -1642,7 +1642,7 @@ if ($_GET['action'] == 'create')
 	if ($_GET['propalid'] > 0)
 	{
 		print "\n<!-- Propal info -->";
-		print '<input type="hidden" name="amount"         value="'.$propal->price.'">'."\n";
+		print '<input type="hidden" name="amount"         value="'.$propal->total_ht.'">'."\n";
 		print '<input type="hidden" name="total"          value="'.$propal->total.'">'."\n";
 		print '<input type="hidden" name="tva"            value="'.$propal->tva.'">'."\n";
 		//print '<input type="hidden" name="remise_absolue" value="'.$propal->remise_absolue.'">'."\n";
@@ -1650,7 +1650,7 @@ if ($_GET['action'] == 'create')
 		print '<input type="hidden" name="propalid"       value="'.$propal->id.'">';
 
 		print '<tr><td>'.$langs->trans('Proposal').'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.img_object($langs->trans("ShowPropal"),'propal').' '.$propal->ref.'</a></td></tr>';
-		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($propal->price).'</td></tr>';
+		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($propal->total_ht).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($propal->total_tva)."</td></tr>";
 		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($propal->total)."</td></tr>";
 	}
