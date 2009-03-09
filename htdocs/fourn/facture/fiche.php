@@ -795,72 +795,121 @@ else
 					print '</tr>';
 				}
 
+				// Show product and description
+				$type=$fac->lignes[$i]->product_type?$fac->lignes[$i]->product_type:$fac->lignes[$i]->fk_product_type;
+				// Try to enhance type detection using date_start and date_end for free lines where type
+				// was not saved.
+				if (! empty($fac->lignes[$i]->date_start)) $type=1;
+				if (! empty($fac->lignes[$i]->date_end)) $type=1;
+
 				$var=!$var;
-				// Ligne en modification
+
+				// Edit line
 				if ($fac->statut == 0 && $_GET['action'] == 'mod_ligne' && $_GET['etat'] == '0' && $_GET['ligne_id'] == $fac->lignes[$i]->rowid)
 				{
 					print '<form action="fiche.php?facid='.$fac->id.'&amp;etat=1&amp;ligne_id='.$fac->lignes[$i]->rowid.'" method="post">';
 					print '<input type="hidden" name="action" value="update_line">';
 					print '<tr '.$bc[$var].'>';
+
+					// Show product and description
 					print '<td>';
 					if ($conf->produit->enabled && $fac->lignes[$i]->fk_product)
 					{
-						$product=new ProductFournisseur($db);
-						$product->fetch($fac->lignes[$i]->fk_product);
-						$product->ref=$product->libelle;	// Car sur facture fourn on met juste le libelle sur produits lies
-						print $product->getNomUrl(1);
 						print '<input type="hidden" name="idprod" value="'.$fac->lignes[$i]->fk_product.'">';
+						$product_static=new ProductFournisseur($db);
+						$product_static->fetch($fac->lignes[$i]->fk_product);
+						$text=$product_static->getNomUrl(1);
+						$text.= ' - '.$product_static->libelle;
+						print $text;
+						print '<br>';
 					}
 					else
+					{
+						// TODO Select type (service or product)
+
+					}
+
+					// Description - Editor wysiwyg
+					if (! $conf->produit->enabled || ! $fac->lignes[$i]->fk_product)
 					{
 						print '<textarea class="flat" cols="70" rows="'.ROWS_2.'" name="label">'.$fac->lignes[$i]->description.'</textarea>';
 					}
 					print '</td>';
+
+					// VAT
 					print '<td align="right">';
 					$html->select_tva('tauxtva',$fac->lignes[$i]->tva_taux,$societe,$mysoc);
 					print '</td>';
+
+					// Unit price
 					print '<td align="right" nowrap="nowrap"><input size="6" name="puht" type="text" value="'.price($fac->lignes[$i]->pu_ht).'"></td>';
+
 					print '<td align="right" nowrap="nowrap"><input size="6" name="puttc" type="text" value=""></td>';
+
 					print '<td align="right"><input size="1" name="qty" type="text" value="'.$fac->lignes[$i]->qty.'"></td>';
+
 					print '<td align="right" nowrap="nowrap">&nbsp;</td>';
+
 					print '<td align="right" nowrap="nowrap">&nbsp;</td>';
+
 					print '<td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Save').'">';
 					print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
+
 					print '</tr>';
 					print '</form>';
 				}
 				else // Affichage simple de la ligne
 				{
 					print '<tr '.$bc[$var].'>';
+
+					// Show product and description
 					print '<td>';
 					if ($fac->lignes[$i]->fk_product)
 					{
-						$productstatic->id=$fac->lignes[$i]->fk_product;
-						$productstatic->type=$fac->lignes[$i]->product_type;
-						//$productstatic->ref=$fac->lignes[$i]->ref;
-						//print $productstatic->getNomUrl(1).' ('.$fac->lignes[$i]->ref_fourn.') - '.$fac->lignes[$i]->libelle;
-						$productstatic->ref=$fac->lignes[$i]->libelle;
-						print $productstatic->getNomUrl(1);
+						$product_static=new ProductFournisseur($db);
+						$product_static->fetch($fac->lignes[$i]->fk_product);
+						$text=$product_static->getNomUrl(1);
+						$text.= ' - '.$product_static->libelle;
+						print $text;
+						print '<br>';
 					}
-					else
+
+					// Description - Editor wysiwyg
+					if (! $fac->lignes[$i]->fk_product)
 					{
-						print nl2br($fac->lignes[$i]->description);
+						if ($type==1) $text = img_object($langs->trans('Service'),'service');
+						else $text = img_object($langs->trans('Product'),'product');
+						print $text.' '.nl2br($fac->lignes[$i]->description);
+
+						// Show range
+						print_date_range($fac->lignes[$i]->date_start,$fac->lignes[$i]->date_end);
 					}
 					print '</td>';
+
+					// VAT
 					print '<td align="right">'.vatrate($fac->lignes[$i]->tva_taux).'%</td>';
+
+					// Unit price
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht,'MU').'</td>';
+
 					print '<td align="right" nowrap="nowrap">'.($fac->lignes[$i]->pu_ttc?price($fac->lignes[$i]->pu_ttc,'MU'):'&nbsp;').'</td>';
+
 					print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
+
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ht).'</td>';
+
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ttc).'</td>';
+
 					print '<td align="center" width="16">';
 					if ($fac->statut == 0) print '<a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a>';
 					else print '&nbsp;';
 					print '</td>';
+
 					print '<td align="center" width="16">';
 					if ($fac->statut == 0) print '<a href="fiche.php?facid='.$fac->id.'&amp;action=confirm_delete_line&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_delete().'</a>';
 					else print '&nbsp;';
 					print '</td>';
+
 					print '</tr>';
 				}
 

@@ -2755,7 +2755,11 @@ else
 							}
 							print "</td>\n";
 						}
+
+						// VAT
 						print '<td align="right">'.vatrate($objp->tva_taux,'%',$objp->info_bits).'</td>';
+
+						// Unit price
 						print '<td align="right">'.price($objp->subprice)."</td>\n";
 						print '<td align="right">';
 						if (($objp->info_bits & 2) != 2)
