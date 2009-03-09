@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ $date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_selec
 // pas actif c'est qu'on voulait pas d'insertion en banque.
 // si on active apres coup, on va pas modifier toutes les adhesions pour avoir une ecriture
 // en banque mais on va mettre le solde banque direct a la valeur apres toutes les adh�sions.
-$allowinsertbankafter=0;	
+$allowinsertbankafter=0;
 
 if (! $user->rights->adherent->cotisation->lire)
 	 accessforbidden();
@@ -79,18 +79,18 @@ if ($allowinsertbankafter && $_POST["action"] == '2bank' && $_POST["rowid"] !=''
 
 		// Cr�er un tiers + facture et enregistrer son paiement ? -> Non requis avec module compta expert
 		// Eventuellement offrir option a la creation adhesion
-		
+
 		if (! $msg)
 		{
 			$db->begin();
-			
+
 	        $dateop=time();
-			
+
 			$cotisation=new Cotisation($db);
 			$result=$cotisation->fetch($_POST["rowid"]);
 			$adherent=new Adherent($db);
 			$result=$adherent->fetch($cotisation->fk_adherent);
-			
+
 			if ($result > 0)
 	        {
 				$amount=$cotisation->amount;
@@ -161,13 +161,15 @@ $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
     $num = $db->num_rows($result);
     $i = 0;
 
+    $title=$langs->trans("ListOfSubscriptions");
+    if (! empty($date_select)) $title.=' ('.$langs->trans("Year").' '.$date_select.')';
     $param.="&amp;statut=$statut&amp;date_select=$date_select";
-	print_barre_liste($langs->trans("ListOfSubscriptions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
 
     print '<table class="noborder" width="100%">';
@@ -212,16 +214,16 @@ if ($result)
 			print "<form method=\"post\" action=\"cotisations.php\">";
 		}
         print "<tr $bc[$var]>";
-        
+
 		// Ref
 		print '<td>'.$cotisation->getNomUrl(1).'</td>';
-        
+
 		// Nom
 		print '<td>'.$adherent->getNomUrl(1).'</td>';
-        
+
 		// Login
 		print '<td>'.$adherent->login.'</td>';
-        
+
 		// Libelle
 		print '<td>';
         if ($allowinsertbankafter && $user->rights->banque->modifier && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
@@ -270,13 +272,13 @@ if ($result)
 
 		// Date start
 		print '<td align="center">'.dol_print_date($objp->dateadh,'day')."</td>\n";
-        
+
 		// Date end
 		print '<td align="center">'.dol_print_date($objp->datef,'day')."</td>\n";
 
 		// Price
 		print '<td align="right">'.price($objp->cotisation).'</td>';
-		
+
         print "</tr>";
         if ($allowinsertbankafter && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
 		{
@@ -300,7 +302,7 @@ if ($result)
    	print '<td>&nbsp;</td>';
    	print "<td align=\"right\">".price($total)."</td>\n";
     print "</tr>\n";
-    
+
     print "</table>";
     print "<br>\n";
 

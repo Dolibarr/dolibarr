@@ -84,7 +84,7 @@ if ($result)
 }
 
 
-// List members up to date 
+// List members up to date
 // current rule: uptodate = the end date is in future whatever is type
 // old rule: uptodate = if type does not need payment, that end date is null, if type need payment that end date is in future)
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
@@ -178,7 +178,7 @@ print "</table>\n";
 print "<br>\n";
 
 /*
- * Dernieres adherent
+ * Last modified members
  */
 $max=5;
 
@@ -211,8 +211,8 @@ if ($resql)
 			$staticmember->ref=trim($obj->prenom.' '.$obj->nom);
 			$statictype->id=$obj->typeid;
 			$statictype->libelle=$obj->libelle;
-			print '<td>'.$staticmember->getNomUrl(1).'</td>';
-			print '<td>'.$statictype->getNomUrl(1).'</td>';
+			print '<td>'.$staticmember->getNomUrl(1,24).'</td>';
+			print '<td>'.$statictype->getNomUrl(1,16).'</td>';
 			print '<td>'.dol_print_date($obj->datem,'dayhour').'</td>';
 			print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$obj->date_end_subscription,5).'</td>';
 			print '</tr>';
