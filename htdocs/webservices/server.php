@@ -34,10 +34,10 @@ dol_syslog("Call Dolibarr webservices interfaces");
 
 // Create the soap Object
 $server = new soap_server();
+$server->soap_defencoding='UTF-8';
 $ns='dolibarr';
 $server->configureWSDL('WebServicesDolibarr',$ns);
 $server->wsdl->schemaTargetNamespace=$ns;
-
 
 // Register methods available for clients
 /*
@@ -48,7 +48,7 @@ $ns);
 */
 
 $server->register('getVersions',
-// Tableau parametres entr�e
+// Tableau parametres entree
 array(),
 // Tableau parametres sortie
 array('dolibarr'=>'xsd:string','mysql'=>'xsd:string','apache'=>'xsd:string'),
@@ -64,13 +64,13 @@ $server->service($HTTP_RAW_POST_DATA);
 function getVersions()
 {
 	dol_syslog("Function: getVersions");
-	
+
 	$versions_array=array();
-	
+
 	$versions_array['dolibarr']=DOL_VERSION;
 	$versions_array['mysql']='NA';
 	$versions_array['apache']='NA';
-		
+
 	return $versions_array;
 }
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
  */
 
 /**
-        \file       htdocs/webservices/client.php
-        \brief      Page demo client appel WebServices Dolibarr
-        \version    $Id$
-*/
+ *       \file       htdocs/webservices/client.php
+ *       \brief      Page demo client appel WebServices Dolibarr
+ *       \version    $Id$
+ */
 
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
@@ -39,7 +39,7 @@ dol_syslog("Create soapclient_nusoap for URL=".$WS_DOL_URL);
 $soapclient = new soapclient_nusoap($WS_DOL_URL);
 if ($soapclient)
 {
-	
+	$soapclient->soap_defencoding='UTF-8';
 }
 
 // Call the WebService method and store its result in $result.
@@ -56,18 +56,18 @@ echo '</head>'."\n";
 
 echo '<body>'."\n";
 
-echo "<h2>Question</h2>";
+echo "<h2>Request</h2>";
 echo '<h4>Function</h4>';
 echo $WS_METHOD;
-echo '<h4>Request</h4>';
+echo '<h4>SOAP Message</h4>';
 echo '<pre>' . htmlspecialchars($soapclient->request, ENT_QUOTES) . '</pre>';
 
-echo "<h2>Réponse</h2>";
+echo "<h2>Response</h2>";
 echo '<h4>Result</h4>';
 echo '<pre>';
 print_r($result);
 echo '</pre>';
-echo '<h4>Response</h4>';
+echo '<h4>SOAP Message</h4>';
 echo '<pre>' . htmlspecialchars($soapclient->response, ENT_QUOTES) . '</pre>';
 
 echo '</body>'."\n";;
