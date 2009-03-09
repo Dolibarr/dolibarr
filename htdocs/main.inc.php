@@ -932,7 +932,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	}
 
 	// Link to Dolibarr wiki pages
-	if ($helppagename)
+	if ($helppagename && empty($conf->global->MAIN_DISABLE_HELP_LINKS))
 	{
 		$langs->load("help");
 
@@ -967,7 +967,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		if ($helpbaseurl && $helppage)
 		{
 			print '<div class="help">';
-			print '<a class="help" target="_blank" title="'.$langs->trans("GoToWikiHelp").'" href="';
+			print '<a class="help" target="_blank" title="'.$langs->trans("GoToHelpPage").'" href="';
 			print sprintf($helpbaseurl,$helppage);
 			print '">';
 			print img_help(0,'').' ';
