@@ -1,12 +1,13 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="ISO-8859-1"?>
 <definitions xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="dolibarr" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="dolibarr">
-<types><xsd:schema targetNamespace="dolibarr">
+<types><xsd:schema targetNamespace="dolibarr"
+>
  <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
  <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" />
 </xsd:schema>
 </types>
 <message name="getVersionsRequest"></message>
-<message name="getVersionsResponse"><part name="dolibarr" type="xsd:string" /><part name="mysql" type="xsd:string" /><part name="apache" type="xsd:string" /></message>
+<message name="getVersionsResponse"><part name="dolibarr" type="xsd:string" /><part name="os" type="xsd:string" /><part name="php" type="xsd:string" /><part name="webserver" type="xsd:string" /></message>
 <portType name="WebServicesDolibarrPortType"><operation name="getVersions"><input message="tns:getVersionsRequest"/><output message="tns:getVersionsResponse"/></operation></portType>
 <binding name="WebServicesDolibarrBinding" type="tns:WebServicesDolibarrPortType"><soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/><operation name="getVersions"><soap:operation soapAction="http://localhostdolibarr/webservices/server.php/getVersions" style="rpc"/><input><soap:body use="encoded" namespace="dolibarr" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="dolibarr" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation></binding>
 <service name="WebServicesDolibarr"><port name="WebServicesDolibarrPort" binding="tns:WebServicesDolibarrBinding"><soap:address location="http://localhostdolibarr/webservices/server.php"/></port></service>

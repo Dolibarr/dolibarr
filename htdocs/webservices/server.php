@@ -26,6 +26,7 @@
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once("../master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 
 
@@ -51,7 +52,7 @@ $server->register('getVersions',
 // Tableau parametres entree
 array(),
 // Tableau parametres sortie
-array('dolibarr'=>'xsd:string','mysql'=>'xsd:string','apache'=>'xsd:string'),
+array('dolibarr'=>'xsd:string','os'=>'xsd:string','php'=>'xsd:string','webserver'=>'xsd:string'),
 $ns);
 
 
@@ -67,9 +68,10 @@ function getVersions()
 
 	$versions_array=array();
 
-	$versions_array['dolibarr']=DOL_VERSION;
-	$versions_array['mysql']='NA';
-	$versions_array['apache']='NA';
+	$versions_array['dolibarr']=version_dolibarr();
+	$versions_array['os']=version_os();
+	$versions_array['php']=version_php();
+	$versions_array['webserver']=version_webserver();
 
 	return $versions_array;
 }
