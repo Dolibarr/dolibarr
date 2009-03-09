@@ -134,9 +134,11 @@ class ModeleThirdPartyCode
      */
     function getToolTip($langs,$soc,$type)
     {
+    	$langs->load("admin");
+
 		$s='';
-		$s.=$langs->trans("Name").': <b>'.$this->nom.'</b><br>';
-		$s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+		if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->nom.'</b><br>';
+		if ($type == -1) $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
 		if ($type == 0)  $s.=$langs->trans("CustomerCodeDesc").'<br>';
 		if ($type == 1)  $s.=$langs->trans("SupplierCodeDesc").'<br>';
 		if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
@@ -149,8 +151,18 @@ class ModeleThirdPartyCode
 		$s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,2).'<br>';
 		$s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,2).'<br>';
 		$s.='<br>';
-		if ($type == 0 || $type == -1)  $s.=$langs->trans("NextValue").' ('.$langs->trans("Customer").') : <b>'.$this->getNextValue($soc,0).'</b><br>';
-		if ($type == 1 || $type == -1)  $s.=$langs->trans("NextValue").' ('.$langs->trans("Supplier").') : <b>'.$this->getNextValue($soc,1).'</b>';
+		if ($type == 0 || $type == -1)
+		{
+			$nextval=$this->getNextValue($soc,0);
+			if (empty($nextval)) $nextval=$langs->trans("Undefined");
+			$s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Customer").')':'').': <b>'.$nextval.'</b><br>';
+		}
+		if ($type == 1 || $type == -1)
+		{
+			$nextval=$this->getNextValue($soc,1);
+			if (empty($nextval)) $nextval=$langs->trans("Undefined");
+			$s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Supplier").')':'').': <b>'.$nextval.'</b>';
+		}
 		return $s;
 	}
 
