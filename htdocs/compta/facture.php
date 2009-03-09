@@ -298,7 +298,7 @@ if ($_POST['action'] == 'set_ref_client')
 	$facture->set_ref_client($_POST['ref_client']);
 }
 
-// Classe à "validée"
+// Classify to validated
 if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->valider)
 {
 	$fac = new Facture($db);
@@ -1969,7 +1969,14 @@ else
 				$facref = substr($fac->ref, 1, 4);
 				if ($facref == 'PROV')
 				{
+					$savdate=$fac->date;
+					if ($conf->global->FAC_FORCE_DATE_VALIDATION)
+					{
+						$fac->date=gmmktime();
+						$fac->date_lim_reglement=$fac->calculate_date_lim_reglement();
+					}
 					$numfa = $fac->getNextNumRef($soc);
+					//$fac->date=$savdate;
 				}
 				else
 				{

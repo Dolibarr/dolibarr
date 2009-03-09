@@ -61,6 +61,7 @@ For users:
 - Fix: Validation of order if a file was attached.
 - Fix: A lot of fixes in PDF generators.
 - Fix: Bad line/pagebreak with long description of products on PDF.
+- Fix: Option force invoice date to validation date working correctly.
 
 For translators:
 - Added 10 more new language files.

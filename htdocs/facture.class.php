@@ -1267,6 +1267,12 @@ class Facture extends CommonObject
 			}
 			else if ($facref == 'PROV')
 			{
+				$savdate=$this->date;
+				if ($conf->global->FAC_FORCE_DATE_VALIDATION)	// If option enabled, we force invoice date
+				{
+					$this->date=gmmktime();
+					$this->date_lim_reglement=$this->calculate_date_lim_reglement();
+				}
 				$numfa = $this->getNextNumRef($this->client);
 			}
 			else
@@ -1279,13 +1285,10 @@ class Facture extends CommonObject
 			// Validation de la facture
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= " SET facnumber='".$numfa."', fk_statut = 1, fk_user_valid = ".$user->id;
-			if ($conf->global->FAC_FORCE_DATE_VALIDATION)
+			if ($conf->global->FAC_FORCE_DATE_VALIDATION)	// If option enabled, we force invoice date
 			{
-				// Si l'option est activée, on force la date de facture
-				$this->date=time();
-				$datelim=$this->calculate_date_lim_reglement();
 				$sql.= ', datef='.$this->db->idate($this->date);
-				$sql.= ', date_lim_reglement='.$this->db->idate($datelim);
+				$sql.= ', date_lim_reglement='.$this->db->idate($this->date_lim_reglement);
 			}
 			$sql.= ' WHERE rowid = '.$this->id;
 
