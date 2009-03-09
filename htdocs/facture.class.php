@@ -2964,7 +2964,7 @@ class FactureLigne
 						if ($discount->fk_facture)
 						{
 							$this->error=$langs->trans("ErrorDiscountAlreadyUsed",$discount->id);
-							dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERROR);
+							dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERR);
 							$this->db->rollback();
 							return -3;
 						}
@@ -2974,7 +2974,7 @@ class FactureLigne
 							if ($result < 0)
 							{
 								$this->error=$discount->error;
-								dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERROR);
+								dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERR);
 								$this->db->rollback();
 								return -3;
 							}
@@ -2983,7 +2983,7 @@ class FactureLigne
 					else
 					{
 						$this->error=$langs->trans("ErrorADiscountThatHasBeenRemovedIsIncluded");
-						dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERROR);
+						dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERR);
 						$this->db->rollback();
 						return -3;
 					}
@@ -2991,7 +2991,7 @@ class FactureLigne
 				else
 				{
 					$this->error=$discount->error;
-					dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERROR);
+					dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -3;
 				}
@@ -3014,7 +3014,7 @@ class FactureLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERROR);
+			dol_syslog("FactureLigne::insert Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}

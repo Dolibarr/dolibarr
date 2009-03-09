@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,16 @@
  */
 
 /**
-	\file       htdocs/accountancy/accountancysystem.class.php
-  	\ingroup    comptaexpert
-  	\brief      Fichier de la classe des plans de comptes comptables
-  	\version    $Id$
-*/
+ *	\file       htdocs/accountancy/accountancysystem.class.php
+ * 	\ingroup    comptaexpert
+ * 	\brief      Fichier de la classe des plans de comptes comptables
+ * 	\version    $Id$
+ */
 
 
 /**	\class 		AccountancySystem
-    \brief 		Classe permettant la gestion des plans de comptes
-*/
-
+ *	\brief 		Classe permettant la gestion des plans de comptes
+ */
 class AccountancySystem
 {
 	var $db;
@@ -79,14 +78,14 @@ class AccountancySystem
 			{
 				$result = -2;
 				$this->error="AccountancySystem::Create Erreur $result";
-				dol_syslog($this->error);
+				dol_syslog($this->error, LOG_ERR);
 			}
 		}
 		else
 		{
 			$result = -1;
 			$this->error="AccountancySystem::Create Erreur $result";
-			dol_syslog($this->error);
+			dol_syslog($this->error, LOG_ERR);
 		}
 
 		return $result;

@@ -2973,14 +2973,14 @@ else
 			}
 
 			/*
-			 * Ajouter une ligne
+			 * Form to add new line
 			 */
 			if ($fac->statut == 0 && $user->rights->facture->creer && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
 			{
 				print '<tr class="liste_titre">';
 				print '<td>';
 				print '<a name="add"></a>'; // ancre
-				print $langs->trans('Description').'</td>';
+				print $langs->trans('AddNewLine').'</td>';
 				print '<td align="right">'.$langs->trans('VAT').'</td>';
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -3036,6 +3036,7 @@ else
 				{
 					print '<tr class="liste_titre">';
 					print '<td colspan="3">';
+					print $langs->trans("AddNewLine").' - ';
 					if ($conf->service->enabled)
 					{
 						print $langs->trans('RecordedProductsAndServices');

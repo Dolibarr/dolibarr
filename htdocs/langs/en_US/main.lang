@@ -500,6 +500,7 @@ Root=Root
 Informations=Informations
 Page=Page
 Notes=Notes
+AddNewLine=Add new line
 # Week day
 Day1=Monday
 Day2=Tuesday

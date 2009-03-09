@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,16 @@
  */
 
 /**
-	\file       htdocs/accountancy/accountancyaccount.class.php
-  	\ingroup    comptaexpert
-  	\brief      Fichier de la classe des comptes comptables
-  	\version    $Id$
-*/
+ *	\file       htdocs/accountancy/accountancyaccount.class.php
+ * 	\ingroup    comptaexpert
+ * 	\brief      Fichier de la classe des comptes comptables
+ * 	\version    $Id$
+ */
 
 
 /**	\class 		AccountancyAccount
     \brief 		Classe permettant la gestion des comptes
 */
-
 class AccountancyAccount
 {
 	var $db;
@@ -63,7 +62,7 @@ class AccountancyAccount
 	{
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accountingaccount";
 		$sql.= " (date_creation, fk_user_author, numero,intitule)";
-		$sql.= " VALUES (".$this->db->idate(mktime()).",".$user->id.",'".$this->numero."','".$this->intitule."')";
+		$sql.= " VALUES (".$this->db->idate(gmmktime()).",".$user->id.",'".$this->numero."','".$this->intitule."')";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -79,18 +78,18 @@ class AccountancyAccount
 			{
 				$result = -2;
 				$this->error="AccountancyAccount::Create Erreur $result";
-				dol_syslog($this->error);
+				dol_syslog($this->error, LOG_ERR);
 			}
 		}
 		else
 		{
 			$result = -1;
 			$this->error="AccountancyAccount::Create Erreur $result";
-			dol_syslog($this->error);
+			dol_syslog($this->error, LOG_ERR);
 		}
 
 		return $result;
 	}
-	
+
 }
 ?>

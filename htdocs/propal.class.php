@@ -922,7 +922,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Propal::set_date Erreur SQL".$this->error, LOG_ERROR);
+				dol_syslog("Propal::set_date Erreur SQL".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -948,7 +948,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Propal::set_echeance Erreur SQL".$this->error, LOG_ERROR);
+				dol_syslog("Propal::set_echeance Erreur SQL".$this->error, LOG_ERR);
 				return -1;
 			}
 		}

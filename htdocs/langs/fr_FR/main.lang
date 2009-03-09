@@ -499,6 +499,7 @@ Root=Racine
 Informations=Informations
 Page=Page
 Notes=Notes
+AddNewLine=Ajout nouvelle ligne
 # Week day
 Day1=Lundi
 Day2=Mardi

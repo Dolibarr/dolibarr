@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
@@ -69,6 +69,7 @@ class FactureFournisseur extends Facture
 	var $note;
 	var $note_public;
 	var $propalid;
+
 	var $lignes;
 	var $fournisseur;
 
@@ -516,7 +517,7 @@ class FactureFournisseur extends Facture
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Error sql=$sql, error=".$this->error);
+				dol_syslog("Error sql=$sql, error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -530,26 +531,28 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 * \brief     Update line
-	 * \param     id            	Id de la ligne de facture
-	 * \param     label         	Description de la ligne
-	 * \param     pu          		Prix unitaire (HT ou TTC selon price_base_type)
-	 * \param     tauxtva       	Taux tva
-	 * \param     qty           	Quantity
-	 * \param     idproduct			Id produit
-	 * \param	  price_base_type	HT ou TTC
-	 * \param	  info_bits			Miscellanous informations of line
-	 * \return    int           	<0 si ko, >0 si ok
+	 * \brief     	Update line
+	 * \param     	id            	Id of line invoice
+	 * \param     	label         	Description of line
+	 * \param     	pu          	Prix unitaire (HT ou TTC selon price_base_type)
+	 * \param     	tauxtva       	VAT Rate
+	 * \param     	qty           	Quantity
+	 * \param     	idproduct		Id produit
+	 * \param	  	price_base_type	HT or TTC
+	 * \param	  	info_bits		Miscellanous informations of line
+	 * \param		type			Type of line (0=product, 1=service)
+	 * \return    	int           	<0 if KO, >0 if OK
 	 */
-	function updateline($id, $label, $pu, $tauxtva, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0)
+	function updateline($id, $label, $pu, $tauxtva, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		$pu = price2num($pu);
 		$qty  = price2num($qty);
 
-		// Validation
+		// Check parameters
 		if (! is_numeric($pu) || ! is_numeric($qty)) return -1;
+		if ($type < 0) return -1;
 
 		// Calcul du total TTC et de la TVA pour la ligne a partir de
 		// qty, pu, remise_percent et txtva
@@ -562,12 +565,16 @@ class FactureFournisseur extends Facture
 		$pu_ht  = $tabprice[3];
 		$pu_tva = $tabprice[4];
 		$pu_ttc = $tabprice[5];
-		$product_type = 0;
+
 		if ($idproduct)
 		{
 			$product=new Product($this->db);
 			$result=$product->fetch($idproduct);
 			$product_type=$product->type;
+		}
+		else
+		{
+			$product_type = $type;
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn_det ';
@@ -733,7 +740,7 @@ class FactureFournisseur extends Facture
 	{
 		global $user,$langs;
 
-		// Charge tableau des id de soci�t� socids
+		// Charge tableau des id de societe socids
 		$socids = array();
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE fournisseur=1 LIMIT 10";
 		$resql = $this->db->query($sql);
@@ -766,7 +773,7 @@ class FactureFournisseur extends Facture
 			}
 		}
 
-		// Initialise param�tres
+		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
@@ -789,6 +796,8 @@ class FactureFournisseur extends Facture
 			$ligne->tva_tx=19.6;
 			$prodid = rand(1, $num_prods);
 			$ligne->produit_id=$prodids[$prodid];
+			$ligne->product_type=0;
+
 			$this->lignes[$xnbp]=$ligne;
 			$xnbp++;
 		}
@@ -799,7 +808,7 @@ class FactureFournisseur extends Facture
 		$this->total_ttc      = $xnbp*119.6;
 	}
 
-		/**
+	/**
 	 *		\brief      Load an object from its id and create a new one in database
 	 *		\param      fromid     		Id of object to clone
 	 *		\param		invertdetail	Reverse sign of amounts for lines
