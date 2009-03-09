@@ -210,7 +210,7 @@ if ($_GET["action"] == 'create')
 	print_fiche_titre($langs->trans("AddDonation"));
 
 	if ($mesg) print '<div class="error">'.$mesg.'</div>';
-	
+
 	print '<form name="add" action="fiche.php" method="post">';
 	print '<table class="border" width="100%">';
 
@@ -410,7 +410,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
 	print "</div>";
 
-	// \TODO G�rer action �mettre paiement
+	// \TODO Gerer action emettre paiement
 	$resteapayer = 0;
 
 
@@ -426,7 +426,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 		print '<a class="butAction" href="fiche.php?rowid='.$don->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a>';
 	}
 
-	// \TODO G�rer action �mettre paiement
+	// \TODO Gerer action emettre paiement
 	if ($don->statut == 1 && $resteapayer > 0)
 	{
 		print "<a class=\"butAction\" href=\"paiement.php?facid=$facid&action=create\">".$langs->trans("DoPayment")."</a>";

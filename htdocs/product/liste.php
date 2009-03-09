@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,15 +31,18 @@ if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/categ
 
 $langs->load("products");
 
+// Security check
 if (!$user->rights->produit->lire)
-  accessforbidden();
+accessforbidden();
 
 
 $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
+$sbarcode=isset($_GET["sbarcode"])?$_GET["sbarcode"]:$_POST["sbarcode"];
 $snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
 $sref=trim($sref);
+$sbarcode=trim($sbarcode);
 $snom=trim($snom);
 $sall=trim($sall);
 $type=trim($type);
@@ -52,15 +55,20 @@ $page = $_GET["page"];
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
+/*
+ * Actions
+ */
+
 if (isset($_POST["button_removefilter_x"]))
 {
-  $sref="";
-  $snom="";
+	$sref="";
+	$sbarcode="";
+	$snom="";
 }
 
 if ($conf->categorie->enabled && isset($_REQUEST['catid']))
 {
-  $catid = $_REQUEST['catid'];
+	$catid = $_REQUEST['catid'];
 }
 
 
@@ -71,81 +79,76 @@ if ($conf->categorie->enabled && isset($_REQUEST['catid']))
 
 if ($_GET["canvas"] <> '' && file_exists('canvas/product.'.$_GET["canvas"].'.class.php') )
 {
-  $class = 'Product'.ucfirst($_GET["canvas"]);
-  include_once('canvas/product.'.$_GET["canvas"].'.class.php');
+	$class = 'Product'.ucfirst($_GET["canvas"]);
+	include_once('canvas/product.'.$_GET["canvas"].'.class.php');
 
-  $object = new $class($db);
-  $object->LoadListDatas($limit, $offset, $sortfield, $sortorder);
+	$object = new $class($db);
+	$object->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 }
 else
 {
-  $title=$langs->trans("ProductsAndServices");
+	$title=$langs->trans("ProductsAndServices");
 
-  if (isset($_GET["type"]) || isset($_POST["type"]))
-    {
-    	if ($type==1) { $texte = $langs->trans("Services"); }
+	if (isset($_GET["type"]) || isset($_POST["type"]))
+	{
+		if ($type==1) { $texte = $langs->trans("Services"); }
 		else { $texte = $langs->trans("Products"); }
-    } else {
-      $texte = $langs->trans("ProductsAndServices");
-    }
+	} else {
+		$texte = $langs->trans("ProductsAndServices");
+	}
 }
 
-$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.price, p.price_ttc, p.price_base_type,';
+$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
 $sql.= ' p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
 $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if ($conf->categorie->enabled && ($catid || !$user->rights->categorie->voir))
 {
-  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
 
 if ($_GET["fourn_id"] > 0)
 {
-  $fourn_id = $_GET["fourn_id"];
-  $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
+	$fourn_id = $_GET["fourn_id"];
+	$sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
 $sql .= " WHERE 1=1";
 if ($sall)
 {
-  $sql .= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
+	$sql .= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
 }
 # if the type is not 1, we show all products (type = 0,2,3)
 if (strlen($_GET["type"]) || strlen($_POST["type"]))
 {
-  if ($type==1) {
-     $sql .= " AND p.fk_product_type = '1'";
-  } else {
-     $sql .= " AND p.fk_product_type <> '1'";
-  }
+	if ($type==1) {
+		$sql .= " AND p.fk_product_type = '1'";
+	} else {
+		$sql .= " AND p.fk_product_type <> '1'";
+	}
 }
-if ($sref)
-{
-  $sql .= " AND p.ref like '%".$sref."%'";
-}
-if ($snom)
-{
-  $sql .= " AND p.label like '%".addslashes($snom)."%'";
-}
+if ($sref)     $sql .= " AND p.ref like '%".$sref."%'";
+if ($sbarcode) $sql .= " AND p.barcode like '%".$sbarcode."%'";
+if ($snom)     $sql .= " AND p.label like '%".addslashes($snom)."%'";
 if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
 {
-  $sql .= " AND p.envente = ".$_GET["envente"];
+	$sql .= " AND p.envente = ".$_GET["envente"];
 }
 if (isset($_GET["canvas"]) && strlen($_GET["canvas"]) > 0)
 {
-  $sql .= " AND p.canvas = '".mysql_escape_string($_GET["canvas"])."'";
+	$sql .= " AND p.canvas = '".mysql_escape_string($_GET["canvas"])."'";
 }
 if($catid)
 {
-  $sql .= " AND cp.fk_categorie = ".$catid;
+	$sql .= " AND cp.fk_categorie = ".$catid;
 }
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-  $sql.= ' AND IFNULL(c.visible,1)=1';
+	$sql.= ' AND IFNULL(c.visible,1)=1';
 }
 if ($fourn_id > 0)
 {
-  $sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
+	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
 }
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
@@ -157,7 +160,7 @@ if ($resql)
 
 	$i = 0;
 
-	if ($num == 1 && ($sall or $snom or $sref))
+	if ($num == 1 && ($sall || $snom || $sref || $sbarcode) && $_POST["action"] != 'list')
 	{
 		$objp = $db->fetch_object($resql);
 		Header("Location: fiche.php?id=$objp->rowid");
@@ -168,17 +171,17 @@ if ($resql)
 	{
 		$envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
 	}
-	
+
 	llxHeader("","",$texte);
 
-    // Displays product removal confirmation
-    if (!empty($_GET['delprod'])) 
-    {
-        print '<div class="warning">'.$langs->trans("ProductDeleted",$_GET['delprod']).'</div><br />';
-    }
+	// Displays product removal confirmation
+	if (!empty($_GET['delprod']))
+	{
+		print '<div class="warning">'.$langs->trans("ProductDeleted",$_GET['delprod']).'</div><br />';
+	}
 
-	$param="&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"];
-	$param.="&amp;fourn_id=".$fourn_id;
+	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"];
+	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
 	$param.=isset($type)?"&amp;type=".$type:"";
 	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
 
@@ -204,31 +207,39 @@ if ($resql)
 	else
 	{
 		print '<form action="liste.php" method="post" name="formulaire">';
+		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
 
 		print '<table class="liste" width="100%">';
-		
+
 		// Lignes des titres
 		print "<tr class=\"liste_titre\">";
 		print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref",$param,"","",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label",$param,"","",$sortfield,$sortorder);
+		if ($conf->barcode->enabled) print_liste_field_titre($langs->trans("BarCode"),"liste.php", "p.barcode",$param,"",'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("DateModification"),"liste.php", "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
 		if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"liste.php", "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price",$param,"",'align="right"',$sortfield,$sortorder);
 		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("Stock").'</td>';
 		print_liste_field_titre($langs->trans("Status"),"liste.php", "p.envente",$param,"",'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
-		
+
 		// Lignes des champs de filtre
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="sref" value="'.$sref.'">';
+		print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
 		print '</td>';
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
+		print '<input class="flat" type="text" name="snom" size="12" value="'.$snom.'">';
 		print '</td>';
+		if ($conf->barcode->enabled)
+		{
+			print '<td class="liste_titre" align="right">';
+			print '<input class="flat" type="text" name="sbarcode" size="6" value="'.$sbarcode.'">';
+			print '</td>';
+		}
 		print '<td class="liste_titre">';
 		print '&nbsp;';
 		print '</td>';
@@ -252,15 +263,15 @@ if ($resql)
 		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
 		print '</td>';
 		print '</tr>';
-		
-		
+
+
 		$product_static=new Product($db);
-		
+
 		$var=True;
 		while ($i < min($num,$limit))
 		{
 			$objp = $db->fetch_object($resql);
-			
+
 			// Multilangs
 			if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 			{
@@ -274,10 +285,10 @@ if ($resql)
 					if ($objtp->label != '') $objp->label = $objtp->label;
 				}
 			}
-			
+
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
-			
+
 			// Ref
 			print '<td nowrap="nowrap">';
 			$product_static->id = $objp->rowid;
@@ -288,12 +299,18 @@ if ($resql)
 
 			// Label
 			print '<td>'.dol_trunc($objp->label,40).'</td>';
-			
+
+			// Barcode
+			if ($conf->barcode->enabled)
+			{
+				print '<td align="right">'.$objp->barcode.'</td>';
+			}
+
 			// Date
 			print '<td align="center">'.dol_print_date($objp->datem,'day')."</td>\n";
 
 			// Duration
-			if ($conf->service->enabled && $type != 0) 
+			if ($conf->service->enabled && $type != 0)
 			{
 				print '<td align="center">';
 				if (eregi('([0-9]+)y',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
@@ -331,17 +348,17 @@ if ($resql)
 					print '<td>&nbsp;</td>';
 				}
 			}
-			
+
 			// Statut
 			print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5).'</td>';
 
 			print "</tr>\n";
 			$i++;
 		}
-		
+
 		if ($num > $conf->liste_limit)
 		{
-			if ($sref || $snom || $sall || $_POST["search"])
+			if ($sref || $snom || $sall || $sbarcode || $_POST["search"])
 			{
 				print_barre_liste('', $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
 			}
@@ -350,11 +367,11 @@ if ($resql)
 				print_barre_liste('', $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
 			}
 		}
-		
+
 		$db->free($resql);
-		
+
 		print "</table>";
-		print '</form>';    
+		print '</form>';
 	}
 }
 else

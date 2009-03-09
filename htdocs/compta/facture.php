@@ -2863,7 +2863,7 @@ else
 						else
 						{
 							// TODO Select type (service or product)
-
+							print $html->select_type_of_lines($objp->fk_product_type,'type',1);
 						}
 
 						// Description - Editor wysiwyg

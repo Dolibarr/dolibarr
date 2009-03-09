@@ -753,3 +753,47 @@ function dol_print_reduction($reduction=0,$langs)
 
 	return $string;
 }
+
+
+/**
+ * 	\brief		Return OS version
+ * 	\return		string			OS version
+ */
+function version_os()
+{
+	// Get version of OS
+	ob_start();
+	phpinfo();
+	$chaine = ob_get_contents();
+	ob_end_clean();
+	eregi('System </td><td class="v">([^\/]*)</td>',$chaine,$reg);
+	$phpversion=$reg[1];
+	return $phpversion;
+}
+
+/**
+ * 	\brief		Return PHP version
+ * 	\return		string			PHP version
+ */
+function version_php()
+{
+	return phpversion();
+}
+
+/**
+ * 	\brief		Return Dolibarr version
+ * 	\return		string			Dolibarr version
+ */
+function version_dolibarr()
+{
+	return DOL_VERSION;
+}
+
+/**
+ * 	\brief		Return web server version
+ * 	\return		string			Web server version
+ */
+function version_webserver()
+{
+	return $_SERVER["SERVER_SOFTWARE"];
+}

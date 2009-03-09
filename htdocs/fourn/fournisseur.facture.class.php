@@ -430,7 +430,7 @@ class FactureFournisseur extends Facture
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We increase stock for product
-						$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
+						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
 						// TODO Add price of product in method or '' to update PMP
 						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 						if ($result < 0) { $error++; }

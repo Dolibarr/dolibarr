@@ -364,6 +364,50 @@ class Form
 	}
 
 	/**
+	 *		\brief      Return list of types of lines (product or service)
+	 *		\param      selected        Preselected type
+	 *		\param      htmlname        Name of field in form
+	 * 		\param		showempty		Add an empty field
+	 */
+	function select_type_of_lines($selected='',$htmlname='type',$showempty=0)
+	{
+		global $db,$langs,$user,$conf;
+		$langs->load("trips");
+
+		if ($conf->produit->enabled && $conf->service->enabled)
+		{
+			print $langs->trans("Type").': ';
+			print '<select class="flat" name="'.$htmlname.'">';
+			if ($showempty)
+			{
+				print '<option value="-1"';
+				if ($selected == -1) print ' selected="true"';
+				print '>&nbsp;</option>';
+			}
+
+			print '<option value="0"';
+			if (0 == $selected) print ' selected="true"';
+			print '>'.$langs->trans("Product");
+
+			print '<option value="1"';
+			if (1 == $selected) print ' selected="true"';
+			print '>'.$langs->trans("Service");
+
+			print '</select>';
+			//if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+		}
+		if (empty($conf->produit->enabled) && $conf->service->enabled)
+		{
+			print '<input type="hidden" name="'.$htmlname.'" value="1">';
+		}
+		if ($conf->produit->enabled && empty($conf->service->enabled))
+		{
+			print '<input type="hidden" name="'.$htmlname.'" value="0">';
+		}
+
+	}
+
+	/**
 	 *		\brief      Return list of types of notes
 	 *		\param      selected        Preselected type
 	 *		\param      htmlname        Name of field in form

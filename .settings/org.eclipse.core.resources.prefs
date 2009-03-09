@@ -1,4 +1,4 @@
-#Mon Mar 09 12:23:31 CET 2009
+#Mon Mar 09 21:45:56 CET 2009
 eclipse.preferences.version=1
 encoding//dev/initdemo/initdemo.sql=UTF-8
 encoding//dev/skeletons/modMyModule.class.php=ISO-8859-1
@@ -640,6 +640,7 @@ encoding//htdocs/theme/yellow/yellow.css.php=ISO-8859-1
 encoding//htdocs/user.class.php=ISO-8859-1
 encoding//htdocs/user/modules/login.anakin.class.php=ISO-8859-1
 encoding//htdocs/user/param_ihm.php=ISO-8859-1
+encoding//htdocs/webservices/server.wsdl=UTF-8
 encoding//mysql/data/data.sql=UTF-8
 encoding//scripts/banque/graph-solde.php=ISO-8859-1
 encoding//scripts/mailing/mailing-send.php=ISO-8859-1

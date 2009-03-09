@@ -77,7 +77,7 @@ class pdf_crabe extends ModelePDFFactures
 		$this->option_escompte = 1;                // Affiche si il y a eu escompte
 		$this->option_credit_note = 1;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
-		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
+		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
 		if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
 		$this->franchise=1;

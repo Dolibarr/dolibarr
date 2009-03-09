@@ -75,8 +75,9 @@ class pdf_oursin extends ModelePDFFactures
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_escompte = 0;                // Affiche si il y a eu escompte
-		$this->option_credit_note = 1;             // Gere les avoirs
-		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
+		$this->option_credit_note = 1;             // Support credit note
+		$this->option_freetext = 1;				   // Support add of a personalised text
+		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
 		if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
 		$this->franchise=1;

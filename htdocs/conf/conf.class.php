@@ -70,7 +70,7 @@ class Conf
 
 		/*
 		 * Definition de toutes les Constantes globales d'environnement
-		 * - En constante php (\TODO a virer)
+		 * - En constante php (TODO a virer)
 		 * - En $this->global->key=value
 		 */
 		$sql = "SELECT name, value FROM ".MAIN_DB_PREFIX."const";

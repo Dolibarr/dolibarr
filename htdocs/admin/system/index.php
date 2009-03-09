@@ -24,7 +24,8 @@
 */
 
 require("./pre.inc.php");
-include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".lib.php";
+include_once(DOL_DOCUMENT_ROOT."/lib/databases/".$conf->db->type.".lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 $langs->load("admin");
 $langs->load("user");
@@ -47,20 +48,16 @@ print info_admin($langs->trans("SystemInfoDesc")).'<br>';
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">Dolibarr</td></tr>\n";
-print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" . DOL_VERSION . "</td></tr>\n";
+$dolversion=version_dolibarr();
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".$dolversion."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("OS")."</td></tr>\n";
-// Récupère la version de l'OS
-ob_start();
-phpinfo();
-$chaine = ob_get_contents();
-ob_end_clean();
-eregi('System </td><td class="v">([^\/]*)</td>',$chaine,$reg);
-print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".$reg[1]."</td></tr>\n";
+$phpversion=version_os();
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
@@ -68,7 +65,8 @@ print "<br>\n";
 // Serveur web
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("WebServer")."</td></tr>\n";
-print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
+$apacheversion=version_webserver();
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".$apacheversion."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
@@ -76,7 +74,7 @@ print "<br>\n";
 // Php
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Php")."</td></tr>\n";
-print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".phpversion()."</td></tr>\n";
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".version_php()."</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("PhpWebLink")."</td><td>".php_sapi_name()."</td></tr>\n";
 print '</table>';
 

@@ -320,8 +320,6 @@ if ($_POST["action"] == "set")
 					// If values differs, we save conf file again
 					//if ($check1 != $dolibarr_main_db_character_set) dolibarr_install_syslog('etape1: Value for character_set is not the one asked for database creation', LOG_WARNING);
 					//if ($check2 != $dolibarr_main_db_collation)     dolibarr_install_syslog('etape1: Value for collation is not the one asked for database creation', LOG_WARNING);
-					// TODO
-
 				}
 				else
 				{

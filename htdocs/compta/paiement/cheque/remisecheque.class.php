@@ -283,13 +283,13 @@ class RemiseCheque extends CommonObject
 	function Validate($user)
 	{
 		global $langs;
-	
+
 		$this->errno = 0;
 
 		$this->db->begin();
 
 		$num=$this->getNextNumber();
-			
+
 		if ($this->errno == 0 && $num)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
@@ -411,9 +411,9 @@ class RemiseCheque extends CommonObject
 	function GeneratePdf($model='blochet', $outputlangs)
 	{
 		global $langs;
-		
+
 		if (empty($model)) $model='blochet';
-		
+
 		dol_syslog("RemiseCheque::GeneratePdf model=".$model, LOG_DEBUG);
 
 		$dir=DOL_DOCUMENT_ROOT ."/includes/modules/cheque/pdf/";
@@ -608,7 +608,7 @@ class RemiseCheque extends CommonObject
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
-		global $langs;	// TODO Renvoyer le libell� anglais et faire traduction a affichage
+		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 		$result='';
 
@@ -634,14 +634,14 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libell� d'un statut donne
+	 *    	\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      status      Statut
-	 *		\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string      Libell� du statut
+	 *		\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string      Libelle du statut
 	 */
 	function LibStatut($status,$mode=0)
 	{
-		global $langs;	// TODO Renvoyer le libell� anglais et faire traduction a affichage
+		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 		$langs->load('compta');
 		if ($mode == 0)
 		{
