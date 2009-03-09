@@ -24,17 +24,17 @@
 
 require("../../main.inc.php");
 
-function llxHeader($head = "", $urlp = "")
+function llxHeader($head = '', $title='', $help_url='')
 {
     global $langs;
 
     $langs->load("admin");
 
-	
+
 	top_menu($head);
-       
+
     $menu = new Menu();
-    
+
     $menu->add(DOL_URL_ROOT."/admin/tools/index.php", "SystemTools");
     $menu->add_submenu(DOL_URL_ROOT."/admin/tools/dolibarr_export.php", $langs->trans("Backup"));
     $menu->add_submenu(DOL_URL_ROOT."/admin/tools/dolibarr_import.php", $langs->trans("Restore"));
@@ -42,8 +42,8 @@ function llxHeader($head = "", $urlp = "")
 	if (function_exists('eaccelerator_info')) $menu->add_submenu(DOL_URL_ROOT."/admin/tools/eaccelerator.php", $langs->trans("EAccelerator"));
 	$menu->add_submenu(DOL_URL_ROOT."/admin/tools/listevents.php", $langs->trans("Audit"));
 	$menu->add_submenu(DOL_URL_ROOT."/admin/tools/purge.php", $langs->trans("Purge"));
-    
-    left_menu($menu->liste);
+
+    left_menu($menu->liste, $help_url);
 }
 
 ?>

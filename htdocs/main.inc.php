@@ -832,9 +832,11 @@ function top_menu($head, $title='', $target='')
 
 /**
  *  \brief      Affiche barre de menu gauche
- *  \param      menu_array      Tableau des entrees de menu
- *  \param      helppagename    Url pour le lien aide ('' par defaut)
- *  \param      moresearchform     Formulaire de recherche permanant supplementaire
+ *  \param      menu_array      	Tableau des entrees de menu
+ *  \param      helppagename    	Name of wiki page for help ('' by default).
+ * 				Syntax is: 			EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+ * 									or http://server/url
+ *  \param      moresearchform     	Formulaire de recherche permanant supplementaire
  */
 function left_menu($menu_array, $helppagename='', $moresearchform='')
 {
@@ -929,7 +931,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		print "<!-- End Bookmarks -->\n";
 	}
 
-	// Lien vers l'aide en ligne (uniquement si langue fr_FR)
+	// Link to Dolibarr wiki pages
 	if ($helppagename)
 	{
 		$langs->load("help");
@@ -943,15 +945,27 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		}
 		else
 		{
-			// If relatvie URL
-			if ($langs->defaultlang == "fr_FR")
+			// If relative URL
+			$helppage=$langs->trans($helppagename);	// By default
+
+			if (eregi('^es',$langs->defaultlang))
 			{
 				$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
+				if (eregi('ES:([^|]+)',$helppage,$reg)) $helppage=$reg[1];
 			}
-			$helppage=$langs->trans($helppagename);
+			elseif (eregi('^fr',$langs->defaultlang))
+			{
+				$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
+				if (eregi('FR:([^|]+)',$helppage,$reg)) $helppage=$reg[1];
+			}
+			else
+			{
+				$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
+				if (eregi('EN:([^|]+)',$helppage,$reg)) $helppage=$reg[1];
+			}
 		}
 
-		if ($helpbaseurl)
+		if ($helpbaseurl && $helppage)
 		{
 			print '<div class="help">';
 			print '<a class="help" target="_blank" href="';

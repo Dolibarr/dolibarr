@@ -41,7 +41,7 @@ $formfile = new FormFile($db);
 * Affichage page
 */
 
-llxHeader();
+llxHeader('','','EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad');
 
 print_fiche_titre($langs->trans("Backup"),'','setup');
 print '<br>';

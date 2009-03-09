@@ -35,7 +35,7 @@ if (! $user->admin)
  * View
  */
 
-llxHeader();
+llxHeader('','','EN:Restores|FR:Restaurations|ES:Restauraciones');
 
 print_fiche_titre($langs->trans("Restore"),'','setup');
 print '<br>';
