@@ -106,6 +106,7 @@ BillStatusClosedPayedPartially=Payée (partiellement)
 BillShortStatusDraft=Brouillon
 BillShortStatusPayed=Payée
 BillShortStatusPayedBackOrConverted=Traité
+BillShortStatusConverted=Traité
 BillShortStatusCanceled=Abandonnée
 BillShortStatusValidated=Validée
 BillShortStatusStarted=Commencée
