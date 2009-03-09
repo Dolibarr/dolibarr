@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/fourn/facture/index.php
-        \ingroup    fournisseur,facture
-        \brief      Lsite des factures fournisseurs
-        \version    $Id$
-*/
+ *       \file       htdocs/fourn/facture/index.php
+ *       \ingroup    fournisseur,facture
+ *       \brief      List of suppliers invoices
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -34,7 +34,7 @@ $langs->load("companies");
 $socid = $_GET["socid"];
 
 // Security check
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $_GET["action"] = '';
   $socid = $user->societe_id;
@@ -43,7 +43,7 @@ if ($user->societe_id > 0)
 $page=$_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
- 
+
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -64,7 +64,7 @@ if ($_POST["mode"] == 'search')
       $sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
       $sql.= " WHERE s.nom like '%".addslashes(strtolower($socname))."%'";
     }
-      
+
   if ( $db->query($sql) )
     {
       if ( $db->num_rows() == 1)
@@ -75,17 +75,17 @@ if ($_POST["mode"] == 'search')
       $db->free();
     }
 }
-  
+
 
 
 
 /*
  * View
  */
- 
+
 $now=gmmktime();
 
-llxHeader();
+llxHeader($langs->trans("SuppliersInovices"),'','EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
 $sql = "SELECT s.rowid as socid, s.nom, ";
 $sql.= " fac.rowid as ref, fac.rowid as facid, fac.facnumber, ".$db->pdate("fac.datef")." as datef, ".$db->pdate("fac.date_lim_reglement")." as date_echeance,";
@@ -229,10 +229,10 @@ if ($resql)
 	      // \todo  le montant deja pay� obj->am n'est pas d�finie
 		print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$objp->am);
         print '</td>';
-	
+
         print "</tr>\n";
         $i++;
-	
+
         if ($i == min($num,$limit))
         {
 		  // Print total
@@ -244,7 +244,7 @@ if ($resql)
 		  print "</tr>\n";
         }
       }
-    
+
     print "</table>\n";
     print "</form>\n";
     $db->free($resql);

@@ -21,143 +21,137 @@
  */
 
 /**
-   \file   	htdocs/fourn/facture/pre.inc.php
-   \ingroup    fournisseur,facture
-   \brief  	Fichier gestionnaire du menu factures fournisseurs
-*/
+ \file   	htdocs/fourn/facture/pre.inc.php
+ \ingroup    fournisseur,facture
+ \brief  	Fichier gestionnaire du menu factures fournisseurs
+ */
 
 require("../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php";
 
-function llxHeader($head = "", $title = "", $addons='')
+function llxHeader($head = '', $title = '', $help_url='')
 {
-  global $user, $conf, $langs;
-  
-  $langs->load("suppliers");
-  $langs->load("propal");
-  
-  top_menu($head, $title);
-  
-  $menu = new Menu();
-  
-  
-  if (is_array($addons))
-    {
-      $menu->add($addons[0][0], $addons[0][1]);
-    }
-  
-  
-  if ($conf->fournisseur->enabled)
-    {
-      if ($user->rights->societe->lire)
-	{
-	  $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
-	}
-      
-      // Sécurité accés client
-      if ($user->societe_id == 0 && $user->rights->societe->creer)
-	{
-	  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&type=f",$langs->trans("NewSupplier"));
-	}
-    }
-  
-  if ($conf->societe->enabled)
-    {
-      if ($user->rights->societe->lire)
-	{
-	  $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
-	}
-    }
-  
-  
-  $langs->load("bills");
-  if ($user->rights->fournisseur->facture->creer)
-    {
-      $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"));
-    }
-  if ($user->rights->fournisseur->facture->lire)
-    {
-      $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
-      $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/impayees.php",$langs->trans("Unpayed"));
-      $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
-    }
-  
-  
-  $langs->load("orders");
-  if ($user->rights->fournisseur->commande->lire)
-    {
-      $menu->add(DOL_URL_ROOT."/fourn/commande/",$langs->trans("Orders"));
-    }
-  
-  $langs->load("products");
-  if ($conf->produit->enabled || $conf->service->enabled)
-    {
-      $menu->add(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("Products"));
-    }
-  
-  
-  $menu = new Menu();
-  
-  
-  if (is_array($addons))
-    {
-      $menu->add($addons[0][0], $addons[0][1]);
-    }
-  
-  
-  if ($conf->fournisseur->enabled) 
-    {
-      if ($user->rights->societe->lire)
-    	{
-	  $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
-	}
-      
-      // Sécurité accés client
-      if ($user->societe_id == 0 && $user->rights->societe->creer) 
-        {
-          $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=f",$langs->trans("NewSupplier"));
-        }
-    }
-  
-  if ($conf->societe->enabled)
-    {
-      if ($user->rights->societe->lire)
-    	{
-	  $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
-	}
-    }
-  
-  
-  $langs->load("bills");
-  if ($user->rights->fournisseur->facture->lire)
-    {
-      $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
-    }
-  
+	global $user, $conf, $langs;
 
-  if ($user->rights->fournisseur->facture->creer)
-    {
-      $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"));
-    }
-  if ($user->rights->fournisseur->facture->lire)
-    {
-      $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
-    }
-  
-  
-  if ($user->rights->fournisseur->commande->lire)
-    {
-      $langs->load("orders");  
-      $menu->add(DOL_URL_ROOT."/fourn/commande/",$langs->trans("Orders"));
-    }
-  
-  
-  if ($conf->produit->enabled || $conf->service->enabled)
-    {
-      $menu->add(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("Products"));
-    }
-  
-  left_menu($menu->liste);  
+	$langs->load("suppliers");
+	$langs->load("propal");
+
+	top_menu($head, $title);
+
+	$menu = new Menu();
+
+
+	if ($conf->fournisseur->enabled)
+	{
+		if ($user->rights->societe->lire)
+		{
+	  		$menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
+		}
+
+		// Sécurité accés client
+		if ($user->societe_id == 0 && $user->rights->societe->creer)
+		{
+	  		$menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&type=f",$langs->trans("NewSupplier"));
+		}
+	}
+
+	if ($conf->societe->enabled)
+	{
+		if ($user->rights->societe->lire)
+		{
+	  		$menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
+		}
+	}
+
+
+	$langs->load("bills");
+	if ($user->rights->fournisseur->facture->creer)
+	{
+		$menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"));
+	}
+	if ($user->rights->fournisseur->facture->lire)
+	{
+		$menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
+		$menu->add_submenu(DOL_URL_ROOT."/fourn/facture/impayees.php",$langs->trans("Unpayed"));
+		$menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
+	}
+
+
+	$langs->load("orders");
+	if ($user->rights->fournisseur->commande->lire)
+	{
+		$menu->add(DOL_URL_ROOT."/fourn/commande/",$langs->trans("Orders"));
+	}
+
+	$langs->load("products");
+	if ($conf->produit->enabled || $conf->service->enabled)
+	{
+		$menu->add(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("Products"));
+	}
+
+
+	$menu = new Menu();
+
+
+	if (is_array($addons))
+	{
+		$menu->add($addons[0][0], $addons[0][1]);
+	}
+
+
+	if ($conf->fournisseur->enabled)
+	{
+		if ($user->rights->societe->lire)
+		{
+	  		$menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
+		}
+
+		// Sécurité accés client
+		if ($user->societe_id == 0 && $user->rights->societe->creer)
+		{
+			$menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=f",$langs->trans("NewSupplier"));
+		}
+	}
+
+	if ($conf->societe->enabled)
+	{
+		if ($user->rights->societe->lire)
+		{
+	  		$menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
+		}
+	}
+
+
+	$langs->load("bills");
+	if ($user->rights->fournisseur->facture->lire)
+	{
+		$menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
+	}
+
+
+	if ($user->rights->fournisseur->facture->creer)
+	{
+		$menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"));
+	}
+	if ($user->rights->fournisseur->facture->lire)
+	{
+		$menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
+	}
+
+
+	if ($user->rights->fournisseur->commande->lire)
+	{
+		$langs->load("orders");
+		$menu->add(DOL_URL_ROOT."/fourn/commande/",$langs->trans("Orders"));
+	}
+
+
+	if ($conf->produit->enabled || $conf->service->enabled)
+	{
+		$menu->add(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("Products"));
+	}
+
+	left_menu($menu->liste, $help_url);
 }
 ?>
