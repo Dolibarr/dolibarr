@@ -104,12 +104,12 @@ if ($action=='delete_action')
  * View
  */
 
-llxHeader();
+llxHeader('','','EN:AgendaEn|FR:Agenda|ES:AgendaES');
 
 $form=new Form($db);
 
 //print $langs->trans("FeatureNotYetAvailable");
-$now=mktime(0,0,0);
+$now=gmmktime(0,0,0);
 
 $prev = dol_get_prev_month($month, $year);
 $prev_year  = $prev['year'];

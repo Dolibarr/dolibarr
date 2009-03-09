@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,7 @@
 require ("../main.inc.php");
 
 
-function llxHeader($head = "")
+function llxHeader($head = '', $title='', $help_url='')
 {
 	global $langs, $user, $conf;
 
@@ -52,7 +52,7 @@ function llxHeader($head = "")
 		$menu->add_submenu("notify/index.php", $langs->trans("Notifications"));
 	}
 
-	left_menu($menu->liste);
+	left_menu($menu->liste, $help_url);
 }
 
 ?>

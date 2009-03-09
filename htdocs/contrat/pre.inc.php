@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/** 
+/**
     \file       htdocs/contrat/pre.inc.php
     \ingroup    contrat
     \brief      Fichier de gestion du menu gauche de l'espace contrat
@@ -29,15 +29,15 @@
 
 require("../main.inc.php");
 
-function llxHeader($head = "", $urlp = "")
+function llxHeader($head = '', $title='', $help_url='')
 {
   global $user, $conf, $langs;
   $langs->load("contracts");
-  
+
   top_menu($head);
-  
+
   $menu = new Menu();
-  
+
   $menu->add(DOL_URL_ROOT."/contrat/index.php", $langs->trans("Contracts"));
   $menu->add_submenu(DOL_URL_ROOT."/societe.php", $langs->trans("NewContract"));
   $menu->add_submenu(DOL_URL_ROOT."/contrat/liste.php", $langs->trans("List"));
@@ -46,7 +46,7 @@ function llxHeader($head = "", $urlp = "")
   $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=4", $langs->trans("MenuRunningServices"), 2 , true);
   $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=4&filter=expired", $langs->trans("MenuExpiredServices"), 2 , true);
   $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=5", $langs->trans("MenuClosedServices"), 2 , true);
-  
-  left_menu($menu->liste);
+
+  left_menu($menu->liste, $help_url);
 }
 ?>

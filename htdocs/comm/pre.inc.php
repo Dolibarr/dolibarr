@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/** 
+/**
         \file       htdocs/comm/pre.inc.php
         \ingroup    commercial
         \brief      Fichier de gestion du menu gauche de l'espace commercial
@@ -26,7 +26,7 @@
 require("../main.inc.php");
 
 
-function llxHeader($head = "", $title = "")
+function llxHeader($head = '', $title='', $help_url='')
 {
   global $user, $conf, $langs;
 
@@ -43,22 +43,22 @@ function llxHeader($head = "", $title = "")
     {
       $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=c", $langs->trans("MenuNewCustomer"));
     }
-  
+
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
-  
-  
+
+
   // Prospects
   $menu->add(DOL_URL_ROOT."/comm/prospect/index.php", $langs->trans("Prospects"));
   if ($user->rights->societe->creer)
     {
       $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=p", $langs->trans("MenuNewProspect"));
     }
-  
+
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
-  
-  
+
+
   $menu->add(DOL_URL_ROOT."/comm/action/index.php", $langs->trans("Actions"));
-  
+
   // Propal
   if ($conf->propal->enabled && $user->rights->propale->lire)
     {
@@ -76,7 +76,7 @@ function llxHeader($head = "", $title = "")
       $menu->add(DOL_URL_ROOT."/contrat/index.php", $langs->trans("Contracts"));
     }
 
-  if ($conf->commande->enabled && $user->rights->commande->lire) 
+  if ($conf->commande->enabled && $user->rights->commande->lire)
     {
       $langs->load("orders");
       $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
@@ -88,7 +88,7 @@ function llxHeader($head = "", $title = "")
       $menu->add(DOL_URL_ROOT."/comm/mailing/", $langs->trans("EMailings"));
     }
 
-  if ($conf->ficheinter->enabled  && $user->rights->ficheinter->lire) 
+  if ($conf->ficheinter->enabled  && $user->rights->ficheinter->lire)
     {
       $langs->load("interventions");
       $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
@@ -103,13 +103,13 @@ function llxHeader($head = "", $title = "")
       if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
       $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
     }
-  
-  if ($conf->projet->enabled && $user->rights->projet->lire) 
+
+  if ($conf->projet->enabled && $user->rights->projet->lire)
     {
       $langs->load("projects");
       $menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));
     }
-  
-  left_menu($menu->liste);
+
+  left_menu($menu->liste, $help_url);
 }
 ?>

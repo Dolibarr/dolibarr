@@ -24,14 +24,14 @@
 */
 require ("../main.inc.php");
 
-function llxHeader($head = "", $title="", $help_url='')
+function llxHeader($head = '', $title='', $help_url='')
 {
 	global $langs;
-	
+
 	top_menu($head, $title);
-	
+
 	$menu = new Menu();
-	
+
 	left_menu($menu->liste, $help_url);
 }
 ?>

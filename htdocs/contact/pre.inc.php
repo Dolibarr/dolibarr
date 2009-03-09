@@ -26,7 +26,7 @@ require("../main.inc.php");
 
 
 
-function llxHeader($head = "", $urlp = "")
+function llxHeader($head = '', $title='', $help_url='')
 {
 	global $langs, $user, $conf;
 
@@ -58,8 +58,8 @@ function llxHeader($head = "", $urlp = "")
 
 		$menu->add(DOL_URL_ROOT."/contact/index.php?userid=$user->id", $langs->trans("MyContacts"));
 	}
-	
-	left_menu($menu->liste);
+
+	left_menu($menu->liste, $help_url);
 }
 
 ?>

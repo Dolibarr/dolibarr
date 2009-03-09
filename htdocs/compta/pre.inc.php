@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**   
+/**
       \file   	    htdocs/compta/pre.inc.php
       \ingroup      compta
       \brief  	    Fichier gestionnaire du menu compta
@@ -27,7 +27,7 @@
 require("../main.inc.php");
 
 
-function llxHeader($head = "", $title="", $help_url='')
+function llxHeader($head = '', $title='', $help_url='')
 {
     global $user, $conf, $langs;
 
@@ -126,7 +126,7 @@ function llxHeader($head = "", $title="", $help_url='')
 		{
 	    	$menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
 		}
-	
+
 	    if ($user->rights->compta->ventilation->parametrer)
 	    {
 	        $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));

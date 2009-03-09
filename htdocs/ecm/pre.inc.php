@@ -27,15 +27,15 @@ require ("../main.inc.php");
 
 $user->getrights('ecm');
 
-function llxHeader($head = "", $title="", $help_url='', $morehtml='')
+function llxHeader($head = '', $title='', $help_url='', $morehtml='')
 {
 	global $conf,$langs,$user;
 	$langs->load("ecm");
 	$langs->load("bills");
 	$langs->load("propal");
-	
+
 	top_menu($head, $title);
-	
+
 	$menu = new Menu();
 
 	$menu->add(DOL_URL_ROOT."/ecm/index.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("MenuECM"),0,$user->rights->ecm->download);
@@ -49,7 +49,7 @@ function llxHeader($head = "", $title="", $help_url='', $morehtml='')
 	if ($conf->propal->enabled) $menu->add_submenu(DOL_URL_ROOT."/ecm/docother.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("DocsProposals"),2);
 	if ($conf->commande->enabled) $menu->add_submenu(DOL_URL_ROOT."/ecm/docother.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("DocsOrders"),2);
 	if ($conf->facture->enabled) $menu->add_submenu(DOL_URL_ROOT."/ecm/docother.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("DocsInvoices"),2);
-*/	
+*/
 	left_menu($menu->liste, $help_url, $morehtml);
 }
 ?>

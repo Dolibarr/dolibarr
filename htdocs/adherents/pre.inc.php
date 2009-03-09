@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 
 require("../main.inc.php");
 
-function llxHeader($head = "")
+function llxHeader($head = '', $title='', $help_url='')
 {
 	global $user, $conf, $langs;
 
@@ -63,7 +63,7 @@ function llxHeader($head = "")
 	$menu->add_submenu(DOL_URL_ROOT."/adherents/type.php",$langs->trans("MembersTypes"));
 	$menu->add_submenu(DOL_URL_ROOT."/adherents/options.php",$langs->trans("MembersAttributes"));
 
-	left_menu($menu->liste);
+	left_menu($menu->liste, $help_url);
 
 }
 

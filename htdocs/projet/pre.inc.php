@@ -40,7 +40,7 @@ $langs->load("commercial");
  * @param unknown_type $title
  * @param unknown_type $help_url
  */
-function llxHeader($head = "", $title="", $help_url='')
+function llxHeader($head = '', $title='', $help_url='')
 {
 	global $langs, $user;
 

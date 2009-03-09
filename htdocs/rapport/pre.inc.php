@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,25 +22,26 @@
 
 require ("../main.inc.php");
 
-function llxHeader($head = "") {
-  global $user, $conf;
+function llxHeader($head = '', $title='', $help_url='')
+{
+	global $user, $conf;
 
-  /*
-   *
-   *
-   */
-  top_menu($head);
+	/*
+	 *
+	 *
+	 */
+	top_menu($head);
 
-  $menu = new Menu();
+	$menu = new Menu();
 
 
-  $menu->add(DOL_URL_ROOT."/rapport/presentation", "Presentation");
+	$menu->add(DOL_URL_ROOT."/rapport/presentation", "Presentation");
 
-  /*
-   *
-   */
+	/*
+	 *
+	 */
 
-  left_menu($menu->liste);
+	left_menu($menu->liste, $help_url);
 
 }
 ?>

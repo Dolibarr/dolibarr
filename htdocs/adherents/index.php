@@ -33,7 +33,11 @@ $langs->load("companies");
 $langs->load("members");
 
 
-llxHeader();
+/*
+ * View
+ */
+
+llxHeader($langs->trans("Members"),'','EN:Fundations|FR:Adherents|ES:Miembros');
 
 $staticmember=new Adherent($db);
 $statictype=new AdherentType($db);

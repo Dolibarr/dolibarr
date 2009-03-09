@@ -111,7 +111,7 @@ if ($mode == 'search')
  * View
  */
 
-llxHeader();
+llxHeader($langs->trans("ThirdParty"),'','EN:Third_Parties|FR:Tiers|ES:Empresas');
 
 $form=new Form($db);
 $companystatic=new Societe($db);

@@ -75,7 +75,7 @@ if ($_REQUEST["action"] == 'add')
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('MyPageName');
+llxHeader('MyPageName','','');
 
 $form=new Form($db);
 

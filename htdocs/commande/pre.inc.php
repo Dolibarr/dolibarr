@@ -34,23 +34,23 @@ require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 $langs->load("orders");
 
 
-function llxHeader($head = "", $title="", $help_url='')
+function llxHeader($head = '', $title='', $help_url='')
 {
 	global $user, $conf, $langs;
-	
+
 	top_menu($head, $title);
-	
+
 	$menu = new Menu();
-	
+
 	$menu->add(DOL_URL_ROOT."/commande/", $langs->trans("Orders"));
 	$menu->add_submenu(DOL_URL_ROOT."/commande/liste.php", $langs->trans("List"));
 	$menu->add_submenu(DOL_URL_ROOT."/commande/stats/", $langs->trans("Statistics"));
-	
+
 	if ($conf->expedition->enabled && $user->rights->expedition->lire)
 	{
 		$menu->add(DOL_URL_ROOT."/expedition/", $langs->trans("Sendings"));
 	}
-	
+
 	left_menu($menu->liste, $help_url);
 }
 ?>

@@ -834,8 +834,8 @@ function top_menu($head, $title='', $target='')
  *  \brief      Affiche barre de menu gauche
  *  \param      menu_array      	Tableau des entrees de menu
  *  \param      helppagename    	Name of wiki page for help ('' by default).
- * 				Syntax is: 			EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
- * 									or http://server/url
+ * 				Syntax is: 			For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+ * 									For other external page: http://server/url
  *  \param      moresearchform     	Formulaire de recherche permanant supplementaire
  */
 function left_menu($menu_array, $helppagename='', $moresearchform='')
@@ -932,7 +932,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	}
 
 	// Link to Dolibarr wiki pages
-	if ($helppagename)
+	if ($helppagename && empty($conf->global->MAIN_DISABLE_HELP_LINKS))
 	{
 		$langs->load("help");
 
@@ -946,31 +946,32 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		else
 		{
 			// If relative URL
-			$helppage=$langs->trans($helppagename);	// By default
-
+			$helppage='';
 			if (eregi('^es',$langs->defaultlang))
 			{
 				$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
-				if (eregi('ES:([^|]+)',$helppage,$reg)) $helppage=$reg[1];
+				if (eregi('ES:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
 			}
-			elseif (eregi('^fr',$langs->defaultlang))
+			if (eregi('^fr',$langs->defaultlang))
 			{
 				$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
-				if (eregi('FR:([^|]+)',$helppage,$reg)) $helppage=$reg[1];
+				if (eregi('FR:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
 			}
-			else
+			if (empty($helppage))	// If help page not already found
 			{
 				$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
-				if (eregi('EN:([^|]+)',$helppage,$reg)) $helppage=$reg[1];
+				if (eregi('EN:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
 			}
 		}
 
 		if ($helpbaseurl && $helppage)
 		{
 			print '<div class="help">';
-			print '<a class="help" target="_blank" href="';
+			print '<a class="help" target="_blank" title="'.$langs->trans("GoToWikiHelp").'" href="';
 			print sprintf($helpbaseurl,$helppage);
-			print '">'.$langs->trans("Help").'</a>';
+			print '">';
+			print img_help(0,'').' ';
+			print $langs->trans("Help").'</a>';
 			print '</div>';
 		}
 	}

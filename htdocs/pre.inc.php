@@ -28,7 +28,7 @@
 require ("./main.inc.php");
 
 
-function llxHeader($head = "")
+function llxHeader($head = '', $title='', $help_url='')
 {
 	global $user, $conf, $langs;
 
@@ -175,6 +175,6 @@ function llxHeader($head = "")
 		$menu->add(DOL_URL_ROOT."/admin/index.php", $langs->trans("Setup"));
 	}
 
-	left_menu($menu->liste);
+	left_menu($menu->liste, $help_url);
 }
 ?>

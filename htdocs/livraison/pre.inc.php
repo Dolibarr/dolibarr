@@ -36,7 +36,7 @@ $langs->load("orders");
 $langs->load("sendings");
 
 
-function llxHeader($head = "", $title="", $help_url='')
+function llxHeader($head = '', $title='', $help_url='')
 {
   global $langs;
 

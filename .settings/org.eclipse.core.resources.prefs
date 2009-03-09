@@ -1,4 +1,4 @@
-#Wed Feb 11 17:58:49 CET 2009
+#Mon Mar 09 12:23:31 CET 2009
 eclipse.preferences.version=1
 encoding//dev/initdemo/initdemo.sql=UTF-8
 encoding//dev/skeletons/modMyModule.class.php=ISO-8859-1
@@ -7,7 +7,7 @@ encoding//htdocs/adherents/adherent.class.php=ISO-8859-1
 encoding//htdocs/admin/adherent.php=ISO-8859-1
 encoding//htdocs/admin/company.php=ISO-8859-1
 encoding//htdocs/admin/fckeditor.php=ISO-8859-1
-encoding//htdocs/admin/index.php=ISO-8859-1
+encoding//htdocs/admin/index.php=UTF-8
 encoding//htdocs/admin/menus/index.php=ISO-8859-1
 encoding//htdocs/admin/security.php=ISO-8859-1
 encoding//htdocs/admin/system/database-tables-contraintes.php=ISO-8859-1

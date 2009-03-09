@@ -27,19 +27,19 @@
 require("../../main.inc.php");
 
 
-function llxHeader($head = "", $urlp = "")
+function llxHeader($head = '', $title='', $help_url='')
 {
     global $conf,$user,$langs;
-    
+
     top_menu($head);
-    
+
     $menu = new Menu();
-    
+
 	// Actions
 	if ($conf->agenda->enabled)
 	{
 		$langs->load("agenda");
-		
+
 		// Actions
 		$menu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda", $langs->trans("Actions"), 0, $user->rights->agenda->myactions->read);
 		$menu->add_submenu(DOL_URL_ROOT."/comm/action/fiche.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
@@ -64,8 +64,8 @@ function llxHeader($head = "", $urlp = "")
 		// Reports
 		$menu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?mainmenu=agenda&amp;leftmenu=agenda", $langs->trans("Reportings"), 1, $user->rights->agenda->myactions->read);
 	}
-    
-    left_menu($menu->liste);
+
+    left_menu($menu->liste, $help_url);
 }
 
 ?>

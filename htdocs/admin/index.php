@@ -18,10 +18,10 @@
  */
 
 /**
-    	\file       htdocs/admin/index.php
-		\brief      Page d'accueil de l'espace administration/configuration
-		\version    $Id$
-*/
+ *   	\file       htdocs/admin/index.php
+ *		\brief      Page d'accueil de l'espace administration/configuration
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -38,7 +38,7 @@ $mesg='';
  * View
  */
 
-llxHeader();
+llxHeader($langs->trans("Setup"),'','EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones');
 
 $form = new Form($db);
 

@@ -17,28 +17,33 @@
  */
 
 /**
-   \file       htdocs/dev/skeletons/pre.inc.php
-   \brief      File to manage left menu by default
-   \version    $Id$
-*/
+ *  \file       htdocs/dev/skeletons/pre.inc.php
+ *  \brief      File to manage left menu by default
+ *  \version    $Id$
+ */
 
 // Include environment and check authentification
 require ("../../main.inc.php");		// This include must use a relative link to the main.inc.php file
 
 
 /**
-		\brief		Function called by page to show menus (top and left)
-*/
-function llxHeader($head = "")
+ *	\brief		Function called by page to show menus (top and left)
+ *  \param		head				Text to show as head line
+ * 	\param		title				Not used
+ * 	\param      helppagename    	Name of a help page ('' by default).
+ * 				Syntax is: 			For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+ * 									For other external page: http://server/url
+ */
+function llxHeader($head = '', $title='', $help_url='')
 {
 	global $user, $conf, $langs;
 
 	top_menu($head);
 
 	$menu = new Menu();
-	
+
 	// Create default menu.
-	
+
 	// No code here is required if you already added menu entries in
 	// the module descriptor (recommanded).
 	// If not you must manually add menu entries here (not recommanded).
@@ -47,7 +52,7 @@ function llxHeader($head = "")
 	$menu->add(DOL_URL_ROOT."/mylink.php", $langs->trans("MyMenuLabel"));
 	}
 	*/
-	
-	left_menu($menu->liste);  
+
+	left_menu($menu->liste, $help_url);
 }
 ?>

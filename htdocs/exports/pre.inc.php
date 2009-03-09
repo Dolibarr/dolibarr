@@ -29,18 +29,18 @@
 require("../main.inc.php");
 
 
-function llxHeader($head = "", $title = "")
+function llxHeader($head = '', $title='', $help_url='')
 {
     global $user, $conf, $langs;
-    
+
     top_menu($head, $title);
-    
+
     $menu = new Menu();
-    
+
     $menu->add(DOL_URL_ROOT."/exports/index.php", $langs->trans("Exports"));
     $menu->add_submenu(DOL_URL_ROOT."/exports/export.php", $langs->trans("NewExport"));
-    
-    left_menu($menu->liste);
+
+    left_menu($menu->liste, $help_url);
 }
 
 ?>

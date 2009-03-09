@@ -20,7 +20,7 @@
  *
  */
 
-/** 
+/**
         \file       htdocs/bookmarks/pre.inc.php
         \ingroup    bookmark
         \brief      Fichier de gestion du menu gauche des bookmarks
@@ -30,23 +30,23 @@
 require("../main.inc.php");
 
 
-function llxHeader($head = "", $title = "")
+function llxHeader($head = '', $title='', $help_url='')
 {
     global $user, $conf, $langs;
-    $langs->load("other");    
-    
+    $langs->load("other");
+
     top_menu($head, $title);
-    
+
     $menu = new Menu();
-    
+
     // Bookmarks
-    if ($conf->bookmark->enabled) 
+    if ($conf->bookmark->enabled)
     {
         if ($user->rights->bookmark->lire) $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
         if ($user->rights->bookmark->creer) $menu->add_submenu(DOL_URL_ROOT."/bookmarks/fiche.php?action=create", $langs->trans("NewBookmark"));
         if ($user->rights->bookmark->lire) $menu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("List"));
     }
-        
+
     left_menu($menu->liste);
 }
 ?>
