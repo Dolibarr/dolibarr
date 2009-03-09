@@ -50,7 +50,7 @@ print $langs->trans("BackupDesc",DOL_DOCUMENT_ROOT).'<br><br>';
 print $langs->trans("BackupDesc2",DOL_DOCUMENT_ROOT).'<br>';
 print $langs->trans("BackupDescX").'<br><br>';
 print $langs->trans("BackupDesc3",DOL_DOCUMENT_ROOT).'<br>';
-print $langs->trans("BackupDescX").'<br><br>';
+print $langs->trans("BackupDescY").'<br><br>';
 
 if ($_GET["msg"])
 {
@@ -190,9 +190,28 @@ print '<br>';
     <legend><?php echo $langs->trans("MySqlExportParameters"); ?></legend>
 
     <div class="formelementrow">
-        <?php echo $langs->trans("FullPathToMysqldumpCommand"); ?><br />
+        <?php echo $langs->trans("FullPathToMysqldumpCommand");
+            if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP))
+            {
+				$resql=$db->query('SHOW VARIABLES LIKE \'basedir\'');
+				if ($resql)
+				{
+					$liste=$db->fetch_array($resql);
+					$basedir=$liste['Value'];
+					$fullpathofmysqldump=$basedir.'bin/mysqldump';
+				}
+				else
+				{
+					$fullpathofmysqldump='/pathtomysqldump/mysqldump';
+				}
+            }
+            else
+            {
+	            $fullpathofmysqldump=$conf->global->SYSTEMTOOLS_MYSQLDUMP;
+            }
+        ?><br />
         <input type="text" name="mysqldump" size="80"
-            value="<?php echo $conf->global->SYSTEMTOOLS_MYSQLDUMP ?>" />
+            value="<?php echo $fullpathofmysqldump; ?>" />
     </div>
 
     <div class="formelementrow">
@@ -579,7 +598,7 @@ if (window.parent.frames[1]) {
 <?php
 
 
-$result=$formfile->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1);
+$result=$formfile->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1,'','',0,0,48,0,'',$langs->trans("Files"));
 //if ($result) print '<br><br>';
 
 

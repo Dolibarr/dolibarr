@@ -42,9 +42,7 @@ print '<br>';
 
 print $langs->trans("RestoreDesc",DOL_DOCUMENT_ROOT).'<br><br>';
 print $langs->trans("RestoreDesc2",DOL_DOCUMENT_ROOT).'<br><br>';
-//print $langs->trans("BackupDescX").'<br><br>';
 print $langs->trans("RestoreDesc3",DOL_DOCUMENT_ROOT).'<br><br>';
-//print $langs->trans("BackupDescX").'<br><br>';
 
 ?>
 

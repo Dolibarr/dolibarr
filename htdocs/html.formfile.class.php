@@ -138,7 +138,7 @@ class FormFile
 	 *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
 	 *		\return		int					<0 si ko, nbre de fichiers affiches si ok
 	 */
-	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='')
+	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='')
 	{
 		// filedir = conf->...dir_ouput."/".get_exdir(id)
 		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
@@ -339,7 +339,9 @@ class FormFile
 		if (sizeof($file_list) && ! $headershown && !$iconPDF)
 		{
 			$headershown=1;
-			print_titre($langs->trans("Documents"));
+			$titletoshow=$langs->trans("Documents");
+			if (! empty($title)) $titletoshow=$title;
+			print_titre($titletoshow);
 			print '<table class="border" width="100%">';
 		}
 

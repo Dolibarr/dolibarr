@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
  */
 
 /**
-		\file 		htdocs/admin/tools/export.php
-		\brief      Page export de la base
-		\version    $Id$
-*/
+ *		\file 		htdocs/admin/tools/export.php
+ *		\brief      Page export de la base
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -37,7 +37,7 @@ if (! $user->admin)
   accessforbidden();
 
 
-if ($file && ! $what) 
+if ($file && ! $what)
 {
    //print DOL_URL_ROOT.'/dolibarr_export.php';
 	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportMethod"))));
@@ -85,13 +85,13 @@ if ($what == 'mysql')
 	{
 		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $mysqldump, $type='chaine');
 	}
-	
+
 	create_exdir(DOL_DATA_ROOT.'/admin/temp');
-	
-	// Parameteres execution	
+
+	// Parameteres execution
 	$command=$mysqldump;
 	if (eregi(" ",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
-	
+
 	//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
 	$param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
 	$param.=" -u ".$dolibarr_main_db_user;
@@ -107,7 +107,7 @@ if ($what == 'mysql')
 	}
 	else
 	{
-		$param.=" -t";	
+		$param.=" -t";
 	}
 	if ($_POST["sql_data"])
 	{
@@ -129,7 +129,7 @@ if ($what == 'mysql')
 		$paramcrypted.=" -p".eregi_replace('.','*',$dolibarr_main_db_pass);
 		$paramclear.=" -p".$dolibarr_main_db_pass;
 	}
-	
+
 	$relativepathdir='/admin/temp';
 	$relativepathfile=$relativepathdir.'/'.$file;
 	// for compression format, we add extension
@@ -139,7 +139,7 @@ if ($what == 'mysql')
 	$outputdir=DOL_DATA_ROOT.$relativepathdir;
 	$outputfile=DOL_DATA_ROOT.$relativepathfile;
 	$outputerror=DOL_DATA_ROOT.$relativepatherr;
-	
+
 	print $langs->trans("RunCommandSummary").':<br>'."\n";
 	print '<textarea rows="1" cols="120">'.$command." ".$paramcrypted.'</textarea><br>'."\n";
 
@@ -150,7 +150,7 @@ if ($what == 'mysql')
 	$errormsg='';
 
 	$result=create_exdir($outputdir);
-	
+
 	// Debut appel methode execution
 	$fullcommandcrypted=$command." ".$paramcrypted." 2>&1";
 	$fullcommandclear=$command." ".$paramclear." 2>&1";
@@ -159,7 +159,7 @@ if ($what == 'mysql')
 	if ($compression == 'bz')   $handle = bzopen($outputfile, 'w');
 
 	if ($handle)
-	{	
+	{
 		dol_syslog("Run command ".$fullcommandcrypted);
 		$handlein = popen($fullcommandclear, 'r');
 		while (!feof($handlein))
@@ -168,12 +168,12 @@ if ($what == 'mysql')
 			fwrite($handle,$read);
 		}
 		pclose($handlein);
-		
+
 		if ($compression == 'none') fclose($handle);
 		if ($compression == 'gz')   gzclose($handle);
 		if ($compression == 'bz')   bzclose($handle);
 
-		if (! empty($conf->global->MAIN_UMASK)) 
+		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 	}
 	else
@@ -195,12 +195,12 @@ if ($what == 'mysql')
 		if (eregi('^-- MySql',$errormsg)) $errormsg='';	// Pas erreur
 		else
 		{
-			// Renommer fichier sortie en fichier erreur	
+			// Renommer fichier sortie en fichier erreur
 			//print "$outputfile -> $outputerror";
 			dol_delete_file($outputerror);
 			@rename($outputfile,$outputerror);
 			// Si safe_mode on et command hors du parametre exec, on a un fichier out vide donc errormsg vide
-			if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunExternalCommand");	
+			if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunExternalCommand");
 		}
 	}
 	// Fin execution commande
@@ -227,14 +227,14 @@ if ($what)
 	}
 }
 
-$result=$formfile->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1,'',array(),0,0,48);
+$result=$formfile->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1,'',array(),0,0,48,0,'',$langs->trans("Files"));
 
 if ($result == 0)
 {
-	print $langs->trans("NoBackupFileAvailable").'<br>';	
-	print $langs->trans("ToBuildBackupFileClickHere",DOL_URL_ROOT.'/admin/tools/dolibarr_export.php').'<br>';	
+	print $langs->trans("NoBackupFileAvailable").'<br>';
+	print $langs->trans("ToBuildBackupFileClickHere",DOL_URL_ROOT.'/admin/tools/dolibarr_export.php').'<br>';
 }
-	
+
 print '<br>';
 
 $time_end = time();
