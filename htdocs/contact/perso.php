@@ -198,8 +198,8 @@ else
     {
         print '<tr><td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dol_print_date($contact->birthday,"day");
 		print ' (';
-        if ($contact->birthday_alert) print 'alerte anniversaire active';
-        else print 'alerte anniversaire inactive';
+        if ($contact->birthday_alert) print $langs->trans("BirthdayAlertOn");
+        else print $langs->trans("BirthdayAlertOff");
         print ')</td>';
     }
     else
