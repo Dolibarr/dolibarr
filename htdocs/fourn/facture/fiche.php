@@ -842,9 +842,9 @@ else
 					print '</td>';
 
 					// Unit price
-					print '<td align="right" nowrap="nowrap"><input size="6" name="puht" type="text" value="'.price($fac->lignes[$i]->pu_ht).'"></td>';
+					print '<td align="right" nowrap="nowrap"><input size="4" name="puht" type="text" value="'.price($fac->lignes[$i]->pu_ht).'"></td>';
 
-					print '<td align="right" nowrap="nowrap"><input size="6" name="puttc" type="text" value=""></td>';
+					print '<td align="right" nowrap="nowrap"><input size="4" name="puttc" type="text" value=""></td>';
 
 					print '<td align="right"><input size="1" name="qty" type="text" value="'.$fac->lignes[$i]->qty.'"></td>';
 
@@ -956,20 +956,20 @@ else
 				}
 				else
 				{
-					print '<textarea class="flat" cols="70" name="label" rows="'.ROWS_2.'"></textarea>';
+					print '<textarea class="flat" cols="60" name="label" rows="'.ROWS_2.'"></textarea>';
 				}
 				print '</td>';
-				print '<td align="center">';
+				print '<td align="right">';
 				//if($mysoc->tva_assuj == "0")
 				//print '<input type="hidden" name="tva_tx" value="0">0';
 				//else
 				print $html->select_tva('tauxtva',$conf->defaulttx,$societe,$mysoc);
 				print '</td>';
 				print '<td align="right">';
-				print '<input size="6" name="amount" type="text">';
+				print '<input size="4" name="amount" type="text">';
 				print '</td>';
 				print '<td align="right">';
-				print '<input size="6" name="amountttc" type="text">';
+				print '<input size="4" name="amountttc" type="text">';
 				print '</td>';
 				print '<td align="right">';
 				print '<input size="1" name="qty" type="text" value="1">';

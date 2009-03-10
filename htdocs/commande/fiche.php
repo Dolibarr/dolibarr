@@ -1689,7 +1689,8 @@ else
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 
-				print $html->select_type_of_lines(-1,'type',1).'<br>';
+				print $html->select_type_of_lines(-1,'type',1);
+				if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
 
 				// Editor wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
@@ -1704,9 +1705,9 @@ else
 				}
 				print '</td>';
 				print '<td align="right">';
-				//if($soc->tva_assuj == "0")
-				//print '<input type="hidden" name="tva_tx" value="0">0';
-				//else
+				if($soc->tva_assuj == "0")
+				print '<input type="hidden" name="tva_tx" value="0">0';
+				else
 				print $html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="5"></td>';

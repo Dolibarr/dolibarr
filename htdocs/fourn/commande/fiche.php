@@ -693,6 +693,13 @@ if ($id > 0 || ! empty($ref))
 			$commandline =	$commande->lignes[$i];
 			$var=!$var;
 
+			// Show product and description
+			$type=$commandline->product_type?$commandline->product_type:$commandline->fk_product_type;
+			// Try to enhance type detection using date_start and date_end for free lines where type
+			// was not saved.
+			if (! empty($commandline->date_start)) $type=1;
+			if (! empty($commandline->date_end)) $type=1;
+
 			// Ligne en mode visu
 			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $commandline->id)
 			{
@@ -775,7 +782,7 @@ if ($id > 0 || ! empty($ref))
 					print ' - '.nl2br($commandline->product);
 					print '<br>';
 				}
-				// editeur wysiwyg
+				// Editor wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -802,14 +809,14 @@ if ($id > 0 || ! empty($ref))
 		}
 
 		/*
-		 * Ajouter une ligne
+		 * Form to add new line
 		 */
 		if ($commande->statut == 0 && $user->rights->fournisseur->commande->creer && $_GET["action"] <> 'editline')
 		{
 			print '<tr class="liste_titre">';
 			print '<td>';
 			print '<a name="add"></a>'; // ancre
-			print $langs->trans('Label').'</td>';
+			print $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone").'</td>';
 			print '<td align="right">'.$langs->trans('VAT').'</td>';
 			print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 			print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -817,7 +824,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td colspan="4">&nbsp;</td>';
 			print '</tr>';
 
-			// Ajout produit produits/services personnalises
+			// Add free products/services form
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
 			print '<input type="hidden"	name="action" value="addligne">';
 			print '<input type="hidden"	name="id" value="'.$comid.'">';
@@ -825,7 +832,11 @@ if ($id > 0 || ! empty($ref))
 			$var=true;
 			print '<tr '.$bc[$var].'>';
 			print '<td>';
-			// editeur wysiwyg
+
+			print $html->select_type_of_lines(-1,'type',1);
+			if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
+
+			// Editor wysiwyg
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -838,10 +849,10 @@ if ($id > 0 || ! empty($ref))
 			}
 			print '</td>';
 			print '<td align="center">';
-			if($soc->tva_assuj == "0")
-			print '<input type="hidden" name="tva_tx" value="0">0';
-			else
-			print $html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
+			//if($soc->tva_assuj == "0")
+			//print '<input type="hidden" name="tva_tx" value="0">0';
+			//else
+			print $html->select_tva('tva_tx',$conf->defaulttx,$soc,$mysoc);
 			print '</td>';
 			print '<td align="right"><input type="text" name="pu" size="5"></td>';
 			print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
@@ -856,6 +867,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				print '<tr class="liste_titre">';
 				print '<td colspan="3">';
+				print $langs->trans("AddNewLine").' - ';
 				if ($conf->service->enabled)
 				{
 					print $langs->trans('RecordedProductsAndServices');
@@ -881,7 +893,7 @@ if ($id > 0 || ! empty($ref))
 
 				if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 
-				// editeur wysiwyg
+				// Editor wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");

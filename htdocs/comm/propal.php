@@ -1597,7 +1597,8 @@ if ($id > 0 || ! empty($ref))
 		print '<tr '.$bc[$var].">\n";
 		print '<td '.$colspan.'>';
 
-		print $html->select_type_of_lines(-1,'type',1).'<br>';
+		print $html->select_type_of_lines(-1,'type',1);
+		if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
 
 		// Editor wysiwyg
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
@@ -1612,9 +1613,9 @@ if ($id > 0 || ! empty($ref))
 		}
 		print '</td>';
 		print '<td align="right">';
-		//if ($societe->tva_assuj == "0")
-		//print '<input type="hidden" name="np_tva_tx" value="0">0';
-		//else
+		if ($societe->tva_assuj == "0")
+		print '<input type="hidden" name="np_tva_tx" value="0">0';
+		else
 		$html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $societe);
 		print "</td>\n";
 		print '<td align="right"><input type="text" size="5" name="np_price"></td>';
