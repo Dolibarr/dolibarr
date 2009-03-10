@@ -499,6 +499,8 @@ Root = Arrel
 Informations = Informació
 Page = Pàgina
 Notes = Notes
+AddNewLine = Afegir nova línia
+FreeZone = Zona lliure
 # Week day =  = 
 Day1 = Dillus
 Day2 = Dimarts

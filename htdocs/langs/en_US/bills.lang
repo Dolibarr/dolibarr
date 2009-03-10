@@ -209,6 +209,7 @@ DispenseMontantLettres=The written invoices through mecanographic procedures are
 NonPercuRecuperable=Non-recoverable
 SetConditions=Set payment conditions
 SetMode=Set payment mode
+SetDate = Set date
 Billed=Billed
 RepeatableInvoice=Pre-defined invoice
 RepeatableInvoices=Pre-defined invoices

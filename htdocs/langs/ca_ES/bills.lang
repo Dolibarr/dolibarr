@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - bills 
+# Dolibarr language file - ea_ES - bills 
 CHARSET = UTF-8
 Bill = Factura
 Bills = Factures
@@ -106,6 +106,7 @@ BillStatusClosedPayedPartially = Pagada (parcialment)
 BillShortStatusDraft = Esborrany
 BillShortStatusPayed = Pagada
 BillShortStatusPayedBackOrConverted = Processada
+BillShortStatusConverted = Tractada
 BillShortStatusCanceled = Abandonada
 BillShortStatusValidated = Validada
 BillShortStatusStarted = Començada
@@ -206,6 +207,7 @@ DispenseMontantLettres = Les factures redactactades per processos mecànics esta
 NonPercuRecuperable = No percebut recuperable
 SetConditions = Definir condicions de pagament
 SetMode = Definir mode de pagament
+SetDate = Definir data
 Billed = Facturat
 RepeatableInvoice = Factura recurrent
 RepeatableInvoices = Factures recurrents

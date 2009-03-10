@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - ecm
+# Dolibarr language file - fr_FR - ecm =  = 
 CHARSET = UTF-8
 MenuECM = Documents
 DocsMine = Els meus documents
@@ -14,8 +14,8 @@ ECMNbOfDocsSmall = Nº Docs.
 ECMSection = Carpeta
 ECMSectionManual = Carpeta manual
 ECMSectionAuto = Carpeta automàtica
-ECMSectionsManual = Carpetes manuals
-ECMSectionsAuto = Carpetes automàtiques
+ECMSectionsManual = Arbre manual
+ECMSectionsAuto = Arbre automàtic
 ECMSections = Carpetes
 ECMRoot = Arrel
 ECMNewSection = Nova carpeta manual

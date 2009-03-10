@@ -208,6 +208,7 @@ DispenseMontantLettres=Les factures rédigées par procédés mécanographiques 
 NonPercuRecuperable=Non perçue récupérable
 SetConditions=Définir conditions de règlement
 SetMode=Définir mode de règlement
+SetDate = Définir date
 Billed=Facturé
 RepeatableInvoice=Facture prédéfinie
 RepeatableInvoices=Factures prédéfinies
