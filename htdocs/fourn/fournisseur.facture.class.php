@@ -482,14 +482,15 @@ class FactureFournisseur extends Facture
 	* 		\param    	ventil          Code de ventilation comptable
 	* 		\param    	info_bits		Bits de type de lignes
 	* 		\param    	price_base_type HT ou TTC
+	* 		\param		type			Type of line (0=product, 1=service)
 	* 		\remarks	Les parametres sont deja cens� etre juste et avec valeurs finales a l'appel
 	*					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete d�fini
 	*					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
 	*					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	*/
-	function addline($desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT')
+	function addline($desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
 	{
-		dol_syslog("FactureFourn::Addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits", LOG_DEBUG);
+		dol_syslog("FactureFourn::Addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		$this->db->begin();
@@ -508,7 +509,7 @@ class FactureFournisseur extends Facture
 		{
 			$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
-			$result=$this->updateline($idligne, $desc, $pu, $txtva, $qty, $fk_product, $price_base_type);
+			$result=$this->updateline($idligne, $desc, $pu, $txtva, $qty, $fk_product, $price_base_type, $info_bits, $type);
 			if ($result > 0)
 			{
 				$this->db->commit();
@@ -602,7 +603,7 @@ class FactureFournisseur extends Facture
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Fournisseur.facture::updateline error=".$this->error);
+			dol_syslog("Fournisseur.facture::updateline error=".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

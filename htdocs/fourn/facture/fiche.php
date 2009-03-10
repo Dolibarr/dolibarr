@@ -141,15 +141,15 @@ if($_GET['action'] == 'deletepaiement')
 
 if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 {
-	$datefacture = $db->idate(mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']));
-	$date_echeance = $db->idate(mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']));
+	$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+	$date_echeance = dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
 
 	$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set ';
 	$sql .= " facnumber='".addslashes(trim($_POST['facnumber']))."'";
 	$sql .= ", libelle='".addslashes(trim($_POST['libelle']))."'";
 	$sql .= ", note='".$_POST['note']."'";
-	$sql .= ", datef = '$datefacture'";
-	$sql .= ", date_lim_reglement = '$date_echeance'";
+	$sql .= ", datef = '".$db->idate($datefacture)."'";
+	$sql .= ", date_lim_reglement = '".$db->idate($date_echeance)."'";
 	$sql .= ' WHERE rowid = '.$_GET['facid'].' ;';
 	$result = $db->query( $sql);
 }
@@ -273,13 +273,15 @@ if ($_REQUEST['action'] == 'update_line')
 			$prod = new Product($db);
 			$prod->fetch($_POST['idprod']);
 			$label = $prod->libelle;
+			$type = $prod->type;
 		}
 		else
 		{
 			$label = $_POST['label'];
+			$type = $_POST["type"]?$_POST["type"]:0;
 		}
 
-		$facfou->updateline($_GET['ligne_id'], $label, $pu, $_POST['tauxtva'], $_POST['qty'], $_POST['idprod'], $price_base_type);
+		$facfou->updateline($_GET['ligne_id'], $label, $pu, $_POST['tauxtva'], $_POST['qty'], $_POST['idprod'], $price_base_type, 0, $type);
 	}
 }
 
@@ -313,6 +315,7 @@ if ($_GET['action'] == 'add_ligne')
 			}
 
 			$tvatx=get_default_tva($societe,$mysoc,$nv_prod->tva_tx);
+			$type = $nv_prod->type;
 
 			$result=$facfou->addline($label, $nv_prod->fourn_pu, $tvatx, $_POST['qty'], $idprod);
 		}
@@ -331,16 +334,20 @@ if ($_GET['action'] == 'add_ligne')
 		}
 		else
 		{
-			if (!empty($_POST['amount']))
+			$type = $_POST["type"];
+			if (! empty($_POST['amount']))
 			{
 				$ht = price2num($_POST['amount']);
-				$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
+				$price_base_type = 'HT';
+				//$desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
+				$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
 			}
 			else
 			{
 				$ttc = price2num($_POST['amountttc']);
 				$ht = $ttc / (1 + ($tauxtva / 100));
-				$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
+				$price_base_type = 'HT';
+				$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
 			}
 		}
 	}
