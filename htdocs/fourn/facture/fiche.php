@@ -35,7 +35,7 @@ if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/project.class.php')
 
 
 if (!$user->rights->fournisseur->facture->lire)
-	accessforbidden();
+accessforbidden();
 
 $langs->load('bills');
 $langs->load('suppliers');
@@ -87,7 +87,7 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 {
 	$facturefourn=new FactureFournisseur($db);
 	$facturefourn->fetch($_GET['facid']);
-    $result = $facturefourn->set_valid($user);
+	$result = $facturefourn->set_valid($user);
 }
 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
@@ -111,20 +111,20 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 
 if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes')
 {
-    if ($user->rights->fournisseur->facture->creer)
-    {
-    	$facturefourn = new FactureFournisseur($db);
-    	$facturefourn->fetch($_GET['facid']);
-    	$facturefourn->deleteline($_GET['ligne_id']);
+	if ($user->rights->fournisseur->facture->creer)
+	{
+		$facturefourn = new FactureFournisseur($db);
+		$facturefourn->fetch($_GET['facid']);
+		$facturefourn->deleteline($_GET['ligne_id']);
 		$_GET['action'] = '';
-    }
+	}
 }
 
 if ($_REQUEST['action'] == 'confirm_payed' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->facture->creer)
 {
 	$facturefourn=new FactureFournisseur($db);
 	$facturefourn->fetch($_GET['facid']);
-    $facturefourn->set_payed($user);
+	$facturefourn->set_payed($user);
 }
 
 if($_GET['action'] == 'deletepaiement')
@@ -268,9 +268,9 @@ if ($_REQUEST['action'] == 'update_line')
 			$price_base_type='TTC';
 		}
 
-	    if ($_POST['idprod'])
-	    {
-	        $prod = new Product($db);
+		if ($_POST['idprod'])
+		{
+			$prod = new Product($db);
 			$prod->fetch($_POST['idprod']);
 			$label = $prod->libelle;
 		}
@@ -356,8 +356,8 @@ if ($_POST['action'] == 'classin')
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
 llxHeader('','','');
 
@@ -504,7 +504,7 @@ else
 
 			print '<tr><td>'.$langs->trans('DateEcheance').'</td><td nowrap="nowrap">';
 			$html->select_date($fac->date_echeance,'ech','','','',"update");
-	        if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+			if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans('AmountHT').'</td><td nowrap="nowrap"><b>'.price($fac->total_ht).'</b></td></tr>';
@@ -557,7 +557,7 @@ else
 				print '</td></tr>';
 			}
 
-            print '</table>';
+			print '</table>';
 		}
 		else
 		{
@@ -573,8 +573,8 @@ else
 			// Confirmation de la suppression d'une ligne produit
 			if ($_GET['action'] == 'confirm_delete_line')
 			{
-			 	$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
-			 	print '<br>';
+				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+				print '<br>';
 			}
 
 			// Clone confirmation
@@ -605,8 +605,8 @@ else
 			}
 
 			/*
-			* Confirmation de la suppression de la facture fournisseur
-			*/
+			 * Confirmation de la suppression de la facture fournisseur
+			 */
 			if ($_GET['action'] == 'delete')
 			{
 				$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete');
@@ -621,17 +621,17 @@ else
 			 */
 			print '<table class="border" width="100%">';
 
-            // Ref
-            print '<tr><td nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
+			// Ref
+			print '<tr><td nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
 			print $html->showrefnav($fac,'facid','',1,'rowid','ref',$morehtmlref);
-            print '</td>';
-            print "</tr>\n";
+			print '</td>';
+			print "</tr>\n";
 
-            // Ref supplier
-            print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$fac->ref_supplier.'</td>';
-            print "</tr>\n";
+			// Ref supplier
+			print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$fac->ref_supplier.'</td>';
+			print "</tr>\n";
 
-            // Societe
+			// Societe
 			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$societe->getNomUrl(1).'</td>';
 			print '<td align="right"><a href="index.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a></td>';
 			print '</tr>';
@@ -647,7 +647,7 @@ else
 			print '<tr>';
 			print '<td>'.$langs->trans('DateEcheance').'</td><td colspan="3">';
 			print dol_print_date($fac->date_echeance,'daytext');
-	        if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+			if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 			print '</td></tr>';
 
 			// Status
@@ -776,7 +776,7 @@ else
 			/*
 			 * Lines of invoice
 			 */
-            print '<br>';
+			print '<br>';
 			print '<table class="noborder" width="100%">';
 			$var=1;
 			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
@@ -915,9 +915,16 @@ else
 
 			}
 
+			/*
+			 * Form to add new line
+			 */
+
 			if ($fac->statut == 0 && $_GET['action'] != 'mod_ligne')
 			{
-				print '<tr class="liste_titre"><td>'.$langs->trans('Label').'</td>';
+				print '<tr class="liste_titre">';
+				print '<td>';
+				print '<a name="add"></a>'; // ancre
+				print $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone").'</td>';
 				print '<td align="right">'.$langs->trans('VAT').'</td>';
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
@@ -928,17 +935,35 @@ else
 				print '<td>&nbsp;</td>';
 				print '</tr>';
 
-				/* Nouvelle ligne */
-				$var=!$var;
+				// Add free products/services form
 				print '<form action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
 				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 				print '<input type="hidden" name="socid" value="'.$societe->id.'">';
+
+				$var=true;
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
-				print '<textarea class="flat" cols="70" rows="'.ROWS_2.'" name="label"></textarea>';
+
+				print $html->select_type_of_lines(-1,'type',1);
+				if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
+
+				// Editor wysiwyg
+				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+					$doleditor=new DolEditor('label','',100,'dolibarr_details');
+					$doleditor->Create();
+				}
+				else
+				{
+					print '<textarea class="flat" cols="70" name="label" rows="'.ROWS_2.'"></textarea>';
+				}
 				print '</td>';
-				print '<td align="right">';
-				$html->select_tva('tauxtva','',$societe,$mysoc);
+				print '<td align="center">';
+				//if($mysoc->tva_assuj == "0")
+				//print '<input type="hidden" name="tva_tx" value="0">0';
+				//else
+				print $html->select_tva('tauxtva',$conf->defaulttx,$societe,$mysoc);
 				print '</td>';
 				print '<td align="right">';
 				print '<input size="6" name="amount" type="text">';
@@ -954,25 +979,42 @@ else
 				print '<td align="center" valign="middle" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
 				print '</form>';
 
-	            // Ajout de produits/services predefinis
-	            if ($conf->produit->enabled)
-	            {
-	                print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
-	                print '<input type="hidden" name="socid" value="'. $fac->socid .'">';
-	                print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-	                print '<input type="hidden" name="socid" value="'.$fac->socid.'">';
-	                $var=! $var;
-	                print '<tr '.$bc[$var].'>';
-	                print '<td colspan="4">';
-	                $html->select_produits_fournisseurs($fac->socid,'','prodfournpriceid','',$filtre);
-	                print '</td>';
-	                print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
-	                print '<td>&nbsp;</td>';
-	                print '<td>&nbsp;</td>';
-	                print '<td align="center" valign="middle" rowspan="2" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-	                print '</tr>';
-	                print '</form>';
-	            }
+				// Ajout de produits/services predefinis
+				if ($conf->produit->enabled)
+				{
+					print '<tr class="liste_titre">';
+					print '<td colspan="4">';
+					print $langs->trans("AddNewLine").' - ';
+					if ($conf->service->enabled)
+					{
+						print $langs->trans('RecordedProductsAndServices');
+					}
+					else
+					{
+						print $langs->trans('RecordedProducts');
+					}
+					print '</td>';
+					print '<td align="right">'.$langs->trans('Qty').'</td>';
+					print '<td align="right">&nbsp;</td>';
+					print '<td colspan="4">&nbsp;</td>';
+					print '</tr>';
+
+					print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
+					print '<input type="hidden" name="socid" value="'. $fac->socid .'">';
+					print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+					print '<input type="hidden" name="socid" value="'.$fac->socid.'">';
+					$var=! $var;
+					print '<tr '.$bc[$var].'>';
+					print '<td colspan="4">';
+					$html->select_produits_fournisseurs($fac->socid,'','prodfournpriceid','',$filtre);
+					print '</td>';
+					print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
+					print '<td>&nbsp;</td>';
+					print '<td>&nbsp;</td>';
+					print '<td align="center" valign="middle" rowspan="2" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+					print '</tr>';
+					print '</form>';
+				}
 			}
 
 			print '</table>';
