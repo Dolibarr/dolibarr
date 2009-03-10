@@ -33,10 +33,9 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- \class      modProjet
- \brief      Classe de description et activation du module Projet
+ *	\class      modProjet
+ *	\brief      Classe de description et activation du module Projet
  */
-
 class modProjet extends DolibarrModules
 {
 
@@ -58,7 +57,7 @@ class modProjet extends DolibarrModules
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
-		$this->picto='email';
+		$this->picto='project';
 
 		// Dependancies
 		$this->depends = array();
