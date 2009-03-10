@@ -1665,14 +1665,14 @@ else
 			}
 
 			/*
-			 * Ajouter une ligne
+			 * Form to add new line
 			 */
 			if ($commande->statut == 0 && $user->rights->commande->creer && $_GET["action"] <> 'editline')
 			{
 				print '<tr class="liste_titre">';
 				print '<td>';
 				print '<a name="add"></a>'; // ancre
-				print $langs->trans('Description').'</td>';
+				print $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone").'</td>';
 				print '<td align="right">'.$langs->trans('VAT').'</td>';
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -1680,7 +1680,7 @@ else
 				print '<td colspan="4">&nbsp;</td>';
 				print '</tr>';
 
-				// Ajout produit produits/services personnalises
+				// Add free products/services form
 				print '<form action="fiche.php?id='.$id.'#add" method="post">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
@@ -1688,7 +1688,10 @@ else
 				$var=true;
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
-				// editeur wysiwyg
+
+				print $html->select_type_of_lines(-1,'type',1).'<br>';
+
+				// Editor wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1700,10 +1703,10 @@ else
 					print '<textarea class="flat" cols="70" name="dp_desc" rows="'.ROWS_2.'"></textarea>';
 				}
 				print '</td>';
-				print '<td align="center">';
-				if($soc->tva_assuj == "0")
-				print '<input type="hidden" name="tva_tx" value="0">0';
-				else
+				print '<td align="right">';
+				//if($soc->tva_assuj == "0")
+				//print '<input type="hidden" name="tva_tx" value="0">0';
+				//else
 				print $html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="5"></td>';
@@ -1727,10 +1730,11 @@ else
 				print '</form>';
 
 				// Ajout de produits/services predefinis
-				if ($conf->produit->enabled)
+				if ($conf->produit->enabled || $conf->service->enabled)
 				{
 					print '<tr class="liste_titre">';
 					print '<td colspan="3">';
+					print $langs->trans("AddNewLine").' - ';
 					if ($conf->service->enabled)
 					{
 						print $langs->trans('RecordedProductsAndServices');
@@ -1764,7 +1768,7 @@ else
 
 					if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 
-					// editeur wysiwyg
+			 		// Editor wysiwyg
 					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 					{
 						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");

@@ -873,7 +873,7 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 
 
 /*
- * Affichage page
+ * View
  */
 
 llxHeader('',$langs->trans('Proposal'),'Proposition');
@@ -1235,6 +1235,9 @@ if ($id > 0 || ! empty($ref))
 	$sql = 'SELECT pt.rowid, pt.description, pt.fk_product, pt.fk_remise_except,';
 	$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
 	$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.marge_tx, pt.marque_tx, pt.pa_ht, pt.special_code,';
+	$sql.= ' '.$db->pdate('pt.date_start').' as date_start,';
+	$sql.= ' '.$db->pdate('pt.date_end').' as date_end,';
+	$sql.= ' pt.product_type,';
 	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
 	$sql.= ' p.description as product_desc';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
@@ -1268,6 +1271,13 @@ if ($id > 0 || ! empty($ref))
 		{
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
+
+			// Show product and description
+			$type=$objp->product_type?$objp->product_type:$objp->fk_product_type;
+			// Try to enhance type detection using date_start and date_end for free lines where type
+			// was not saved.
+			if (! empty($objp->date_start)) $type=1;
+			if (! empty($objp->date_end)) $type=1;
 
 			// Ligne en mode visu
 			if ($_GET['action'] != 'editline' || $_GET['lineid'] != $objp->rowid)
@@ -1562,7 +1572,7 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	/*
-	 * Ajouter une ligne
+	 * Form to add new line
 	 */
 	if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] <> 'editline')
 	{
@@ -1570,7 +1580,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr class="liste_titre">';
 		print '<td '.$colspan.'>';
 		print '<a name="add"></a>'; // ancre
-		print $langs->trans('Description').'</td>';
+		print $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone").'</td>';
 		print '<td align="right">'.$langs->trans('VAT').'</td>';
 		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -1578,16 +1588,18 @@ if ($id > 0 || ! empty($ref))
 		print '<td colspan="4">&nbsp;</td>';
 		print "</tr>\n";
 
-		// Ajout produit produits/services personnalises
+		// Add free products/services form
 		print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#add" method="post">';
 		print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 		print '<input type="hidden" name="action" value="addligne">';
 
 		$var=true;
-
 		print '<tr '.$bc[$var].">\n";
 		print '<td '.$colspan.'>';
-		// editeur wysiwyg
+
+		print $html->select_type_of_lines(-1,'type',1).'<br>';
+
+		// Editor wysiwyg
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1599,15 +1611,11 @@ if ($id > 0 || ! empty($ref))
 			print '<textarea class="flat" cols="70" name="dp_desc" rows="'.ROWS_2.'"></textarea>';
 		}
 		print '</td>';
-		print '<td align="center">';
-		if($societe->tva_assuj == "0")
-		{
-			print '<input type="hidden" name="np_tva_tx" value="0">0';
-		}
-		else
-		{
-			$html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $societe);
-		}
+		print '<td align="right">';
+		//if ($societe->tva_assuj == "0")
+		//print '<input type="hidden" name="np_tva_tx" value="0">0';
+		//else
+		$html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $societe);
 		print "</td>\n";
 		print '<td align="right"><input type="text" size="5" name="np_price"></td>';
 		print '<td align="right"><input type="text" size="2" value="1" name="qty"></td>';
@@ -1618,7 +1626,7 @@ if ($id > 0 || ! empty($ref))
 		print '</form>';
 
 		// Ajout de produits/services predefinis
-		if ($conf->produit->enabled)
+		if ($conf->produit->enabled || $conf->service->enabled)
 		{
 			if ($conf->global->PRODUIT_USE_MARKUP)
 			{
@@ -1630,6 +1638,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			print '<tr class="liste_titre">';
 			print '<td '.$colspan.'>';
+			print $langs->trans("AddNewLine").' - ';
 			if ($conf->service->enabled)
 			{
 				print $langs->trans('RecordedProductsAndServices');
@@ -1662,7 +1671,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 
-			// editeur wysiwyg
+			// Editor wysiwyg
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");

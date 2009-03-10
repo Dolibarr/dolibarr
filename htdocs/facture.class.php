@@ -127,7 +127,7 @@ class Facture extends CommonObject
 
 	/**
 	 *	\brief     	Create invoice in database
-	 *	\param     	user       		Object uset that create
+	 *	\param     	user       		Object user that create
 	 *	\param      notrigger		1 ne declenche pas les triggers, 0 sinon
 	 *	\return		int				<0 si ko, >0 si ok
 	 */
@@ -243,23 +243,17 @@ class Facture extends CommonObject
 			}
 
 			/*
-			 *  Insertion du detail des produits dans la base,
-			 *  si tableau products défini.
+			 *  Insert lines of invoices in database
 			 */
-			for ($i = 0 ; $i < sizeof($this->products) ; $i++)
+			for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 			{
-				$result = $this->addline(
-				$this->id,
-				$this->products[$i]->desc,
-				$this->products[$i]->subprice,
-				$this->products[$i]->qty,
-				$this->products[$i]->tva_tx,
-				$this->products[$i]->fk_product,
-				$this->products[$i]->remise_percent,
-				$this->products[$i]->date_start,
-				$this->products[$i]->date_end
-				);
-
+				$newinvoiceline=new FactureLigne($this->db);
+				$newinvoiceline=$this->lignes[$i];
+				$newinvoiceline->fk_facture=$this->id;
+				if ($result >= 0 && ($newinvoiceline->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
+				{
+					$result=$newinvoiceline->insert();
+				}
 				if ($result < 0)
 				{
 					$error++;
@@ -362,6 +356,7 @@ class Facture extends CommonObject
 		$facture->amount            = $this->amount;
 		$facture->remise_absolue    = $this->remise_absolue;
 		$facture->remise_percent    = $this->remise_percent;
+
 		$facture->lignes		    = $this->lignes;	// Tableau des lignes de factures
 		$facture->products		    = $this->lignes;	// Tant que products encore utilisé
 
@@ -608,12 +603,12 @@ class Facture extends CommonObject
 
 
 	/**
-		\brief      Recupére les lignes de factures dans this->lignes
-		\return     int         1 si ok, < 0 si erreur
-		*/
+	 *	\brief      Recupére les lignes de factures dans this->lignes
+	 *	\return     int         1 si ok, < 0 si erreur
+	 */
 	function fetch_lines()
 	{
-		$sql = 'SELECT l.rowid, l.fk_product, l.description, l.price, l.qty, l.tva_taux, ';
+		$sql = 'SELECT l.rowid, l.fk_product, l.description, l.product_type, l.price, l.qty, l.tva_taux, ';
 		$sql.= ' l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' '.$this->db->pdate('l.date_start').' as date_start,'.$this->db->pdate('l.date_end').' as date_end,';
 		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
@@ -638,7 +633,7 @@ class Facture extends CommonObject
 				$faclig->desc             = $objp->description;     // Description ligne
 				$faclig->libelle          = $objp->label;           // Label produit
 				$faclig->product_desc     = $objp->product_desc;    // Description produit
-				$faclig->product_type     = $objp->fk_product_type;
+				$faclig->product_type     = $objp->product_type;	// Type of line
 				$faclig->qty              = $objp->qty;
 				$faclig->subprice         = $objp->subprice;
 				$faclig->tva_tx           = $objp->tva_taux;
@@ -646,6 +641,7 @@ class Facture extends CommonObject
 				$faclig->fk_remise_except = $objp->fk_remise_except;
 				$faclig->produit_id       = $objp->fk_product;
 				$faclig->fk_product       = $objp->fk_product;
+				$faclig->fk_product_type  = $objp->fk_product_type;
 				$faclig->date_start       = $objp->date_start;
 				$faclig->date_end         = $objp->date_end;
 				$faclig->date_start       = $objp->date_start;

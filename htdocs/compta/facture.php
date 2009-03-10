@@ -2977,10 +2977,11 @@ else
 			 */
 			if ($fac->statut == 0 && $user->rights->facture->creer && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
 			{
+				// Free zone form
 				print '<tr class="liste_titre">';
 				print '<td>';
 				print '<a name="add"></a>'; // ancre
-				print $langs->trans('AddNewLine').'</td>';
+				print $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone").'</td>';
 				print '<td align="right">'.$langs->trans('VAT').'</td>';
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -2997,9 +2998,9 @@ else
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 
-				print $html->select_type_of_lines(-1,'type',1);
+				print $html->select_type_of_lines(-1,'type',1).'<br>';
 
-				// Editeur wysiwyg
+				// Editor wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -3012,6 +3013,9 @@ else
 				}
 				print '</td>';
 				print '<td align="right">';
+				//if($soc->tva_assuj == "0")
+				//print '<input type="hidden" name="tva_tx" value="0">0';
+				//else
 				$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="6"></td>';
@@ -3031,8 +3035,9 @@ else
 				}
 				print '</form>';
 
-				// Add predefined services/products form
-				if ($conf->produit->enabled)
+
+				// Predefined services/products form
+				if ($conf->produit->enabled || $conf->service->enabled)
 				{
 					print '<tr class="liste_titre">';
 					print '<td colspan="3">';
@@ -3070,7 +3075,7 @@ else
 
 					if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 
-					// éditeur wysiwyg
+					// Editor wysiwyg
 					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 					{
 						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
