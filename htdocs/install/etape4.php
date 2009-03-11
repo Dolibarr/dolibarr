@@ -29,7 +29,7 @@
 
 include_once("./inc.php");
 require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
-require_once($dolibarr_main_document_root."/conf/conf.class.php");
+require_once($dolibarr_main_document_root."/core/conf.class.php");
 require_once($dolibarr_main_document_root."/lib/admin.lib.php");
 
 

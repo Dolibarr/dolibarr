@@ -161,7 +161,7 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_db_pass;
 	global $character_set_client;
 
-    $return=include_once($dolibarr_main_document_root."/conf/conf.class.php");
+    $return=include_once($dolibarr_main_document_root."/core/conf.class.php");
     if (! $return) return -1;
 
 	$conf=new Conf();

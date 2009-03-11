@@ -21,7 +21,7 @@
  */
 
 /**
- *	\file       	htdocs/conf/conf.class.php
+ *	\file       	htdocs/core/conf.class.php
  *	\ingroup		core
  *  \brief      	Fichier de la classe de stockage de la config courante
  *  \remarks		La config est stockee dans le fichier conf/conf.php

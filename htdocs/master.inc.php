@@ -110,7 +110,7 @@ if (! empty($dolibarr_main_db_encrypted_pass))
 }
 //print memory_get_usage();
 
-require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/conf.class.php");
 
 $conf = new Conf();
 // Identifiant propres au serveur base de donnee

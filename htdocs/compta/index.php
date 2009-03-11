@@ -245,7 +245,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				$facturesupplierstatic->ref=$obj->facnumber;
 				$facturesupplierstatic->id=$obj->rowid;
 				$facturesupplierstatic->type=$obj->type;
-				print $facturesupplierstatic->getNomUrl(1,'');
+				print $facturesupplierstatic->getNomUrl(1,'',16);
 				print '</td>';
 				print '<td>';
 				$companystatic->id=$obj->socid;

@@ -26,7 +26,7 @@
 
 include("./inc.php");
 require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
-require_once($dolibarr_main_document_root."/conf/conf.class.php");
+require_once($dolibarr_main_document_root."/core/conf.class.php");
 require_once($dolibarr_main_document_root."/lib/admin.lib.php");
 
 $etape = 2;
@@ -37,7 +37,7 @@ $ok = 0;
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);
-@set_time_limit(180);         
+@set_time_limit(180);
 error_reporting($err);
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
@@ -118,8 +118,8 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         // We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
-        $dir = "../../mysql/tables/";	
-    	
+        $dir = "../../mysql/tables/";
+
         $ok = 0;
         $handle=opendir($dir);
         dolibarr_install_syslog("Ouverture repertoire ".$dir." handle=".$handle,LOG_DEBUG);
@@ -129,7 +129,7 @@ if ($_POST["action"] == "set")
             if (eregi('\.sql$',$file) && eregi('^llx_',$file) && ! eregi('\.key\.sql$',$file))
             {
                 $tablefound++;
-                
+
             	$name = substr($file, 0, strlen($file) - 4);
                 $buffer = '';
                 $fp = fopen($dir.$file,"r");
@@ -144,21 +144,21 @@ if ($_POST["action"] == "set")
 							{
 								$buf=$db->convertSQLFromMysql($buf);
 							}
-                        	
+
                         	$buffer .= $buf;
                         }
                     }
                     fclose($fp);
 
                     $buffer=trim($buffer);
-                    
+
 	                //print "<tr><td>Creation de la table $name/td>";
 					$requestnb++;
 					if ($conf->character_set_client == "UTF-8")
 					{
 						$buffer=utf8_encode($buffer);
 					}
-					
+
 					dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
 					if ($db->query($buffer))
 	                {
@@ -208,7 +208,7 @@ if ($_POST["action"] == "set")
          }
     }
 
-    
+
     /***************************************************************************************
     *
     * Chargement fichiers tables/*.key.sql
@@ -218,7 +218,7 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         // We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
-        $dir = "../../mysql/tables/";	
+        $dir = "../../mysql/tables/";
 
         $okkeys = 0;
         $handle=opendir($dir);
@@ -249,14 +249,14 @@ if ($_POST["action"] == "set")
                             	// Version qualified, delete SQL comments
                                 $buf=eregi_replace('^-- V([0-9\.]+)','',$buf);
                                 //print "Ligne $i qualifiee par version: ".$buf.'<br>';
-                            }                      
+                            }
                         }
 
                         // Ajout ligne si non commentaire
                         if (! eregi('^--',$buf)) $buffer .= $buf;
                     }
                     fclose($fp);
-                    
+
 	                // Si plusieurs requetes, on boucle sur chaque
 	                $listesql=split(';',$buffer);
 	                foreach ($listesql as $req)
@@ -270,7 +270,7 @@ if ($_POST["action"] == "set")
 							{
 								$buffer=utf8_encode($buffer);
 							}
-							
+
 							dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
 	                        if ($db->query($buffer))
 	                        {
@@ -318,8 +318,8 @@ if ($_POST["action"] == "set")
             $okkeys = 1;
         }
     }
-    
-    
+
+
     /***************************************************************************************
     *
     * Chargement fichier functions.sql
@@ -351,9 +351,9 @@ if ($_POST["action"] == "set")
 
             // Si plusieurs requetes, on boucle sur chaque
             $listesql=split('§',eregi_replace(";';",";'§",$buffer));
-            foreach ($listesql as $buffer) {                
+            foreach ($listesql as $buffer) {
                 if (trim($buffer)) {
-    
+
                     if ($db->query(trim($buffer)))
                     {
                         $ok = 1;
@@ -385,7 +385,7 @@ if ($_POST["action"] == "set")
             }
 
         }
-    }    
+    }
 
 
     /***************************************************************************************
@@ -396,7 +396,7 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         // We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
-        $dir = "../../mysql/data/";	
+        $dir = "../../mysql/data/";
 
         // Creation donnees
         $file = "data.sql";
