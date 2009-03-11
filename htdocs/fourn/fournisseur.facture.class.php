@@ -153,7 +153,8 @@ class FactureFournisseur extends Facture
 					$this->lignes[$i]->qty,
 					$this->lignes[$i]->fk_product,
 					'HT',
-					$this->lignes[$i]->info_bits
+					$this->lignes[$i]->info_bits,
+					$this->lignes[$i]->product_type
 					);
 				}
 			}
@@ -240,9 +241,7 @@ class FactureFournisseur extends Facture
 
 				$this->db->free($resql);
 
-				/*
-				* Lignes
-				*/
+				// Lines
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
@@ -328,8 +327,7 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 * \brief     Recup�re l'objet fournisseur li� � la facture
-	 *
+	 * \brief     Load supplier
 	 */
 	function fetch_fournisseur()
 	{

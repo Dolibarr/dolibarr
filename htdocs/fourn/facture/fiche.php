@@ -822,8 +822,7 @@ else
 					print '<td>';
 					if ($conf->produit->enabled && $fac->lignes[$i]->fk_product)
 					{
-						print '<input type="hidden" name="idprod" value="'.$fac->lignes[$i]->fk_product.'">';
-						$product_static=new ProductFournisseur($db);
+						print '<input type="hidden" name="productid" value="'.$objp->fk_product.'">';
 						$product_static->fetch($fac->lignes[$i]->fk_product);
 						$text=$product_static->getNomUrl(1);
 						$text.= ' - '.$product_static->libelle;
@@ -832,8 +831,8 @@ else
 					}
 					else
 					{
-						// TODO Select type (service or product)
-
+						print $html->select_type_of_lines($fac->lignes[$i]->product_type,'type',1);
+						if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
 					}
 
 					// Description - Editor wysiwyg
@@ -873,12 +872,20 @@ else
 					print '<td>';
 					if ($fac->lignes[$i]->fk_product)
 					{
+						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+
 						$product_static=new ProductFournisseur($db);
 						$product_static->fetch($fac->lignes[$i]->fk_product);
 						$text=$product_static->getNomUrl(1);
 						$text.= ' - '.$product_static->libelle;
-						print $text;
-						print '<br>';
+						$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($fac->lignes[$i]->description));
+						print $html->textwithtooltip($text,$description,3,'','',$i);
+
+						// Show range
+						print_date_range($objp->date_start,$objp->date_end);
+
+						// Add description in form
+						if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 					}
 
 					// Description - Editor wysiwyg
