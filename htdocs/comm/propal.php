@@ -950,9 +950,11 @@ if ($id > 0 || ! empty($ref))
 
 	print '<table class="border" width="100%">';
 
+	$linkback="<a href=\"propal.php?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
+
 	// Ref
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">';
-	print $html->showrefnav($propal,'ref','',1,'ref','ref','');
+	print $html->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
 	print '</td></tr>';
 
 	// Ref client

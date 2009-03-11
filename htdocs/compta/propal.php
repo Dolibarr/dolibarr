@@ -130,17 +130,16 @@ $formfile = new FormFile($db);
 $societestatic=new Societe($db);
 $propalstatic=new Propal($db);
 
-/*
- *
- * Mode fiche
- *
- */
-if ($_GET["propalid"] > 0)
+$now=gmmktime();
+
+$id = $_GET['propalid'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	if ($mesg) print "$mesg<br>";
 
 	$propal = new Propal($db);
-	$propal->fetch($_GET['propalid']);
+	$propal->fetch($_GET['propalid'],$_GET["ref"]);
 
 	$societe = new Societe($db);
 	$societe->fetch($propal->socid);
@@ -155,11 +154,11 @@ if ($_GET["propalid"] > 0)
 	 */
 	print '<table class="border" width="100%">';
 
-	$linkback='<a href="propal.php' . "?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder" .'">'.$langs->trans("BackToList")."</a>";
+	$linkback="<a href=\"propal.php?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
 
 	// Ref
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">';
-	print $html->showrefnav($propal,'propalid',$linkback);
+	print $html->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
 	print '</td></tr>';
 
 	// Ref client
@@ -294,7 +293,7 @@ if ($_GET["propalid"] > 0)
 		}
 		print '</tr>';
 	}
-	
+
 	// Amount
 	print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
 	print '<td align="right" colspan="2"><b>'.price($propal->total_ht).'</b></td>';
