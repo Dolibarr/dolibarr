@@ -123,7 +123,7 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Contrat::active_line error ".$this->error);
+			dol_syslog("Contrat::active_line error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -564,7 +564,7 @@ class Contrat extends CommonObject
 				else
 				{
 					$this->error=$interface->error;
-					dol_syslog("Contrat::create - 30 - ".$this->error);
+					dol_syslog("Contrat::create - 30 - ".$this->error, LOG_ERR);
 
 					$this->db->rollback();
 					return -3;
@@ -573,7 +573,7 @@ class Contrat extends CommonObject
 			else
 			{
 				$this->error="Failed to add contact";
-				dol_syslog("Contrat::create - 20 - ".$this->error);
+				dol_syslog("Contrat::create - 20 - ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -2;
@@ -582,7 +582,7 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$langs->trans("UnknownError: ".$this->db->error()." - sql=".$sql);
-			dol_syslog("Contrat::create - 10 - ".$this->error);
+			dol_syslog("Contrat::create - 10 - ".$this->error, LOG_ERR);
 
 			$this->db->rollback();
 			return -1;
@@ -739,7 +739,7 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Contrat::delete ERROR ".$this->error);
+			dol_syslog("Contrat::delete ERROR ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}

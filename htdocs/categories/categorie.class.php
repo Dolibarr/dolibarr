@@ -957,8 +957,7 @@ class Categorie
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			//dol_syslog($this->error);
-			dol_print_error('',$this->error);
+			dol_syslog("Categorie::rechercher ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

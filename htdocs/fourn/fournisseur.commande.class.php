@@ -285,7 +285,7 @@ class CommandeFournisseur extends Commande
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("CommandeFournisseur::valid ".$this->error);
+				dol_syslog("CommandeFournisseur::valid ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -293,7 +293,7 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			$this->error='Not Authorized';
-			dol_syslog("CommandeFournisseur::valid ".$this->error);
+			dol_syslog("CommandeFournisseur::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -731,7 +731,7 @@ class CommandeFournisseur extends Commande
 			else
 			{
 				$this->error=$this->db->error()." - ".$sql;
-				dol_syslog("CommandeFournisseur::Create: Failed -2 - ".$this->error);
+				dol_syslog("CommandeFournisseur::Create: Failed -2 - ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -739,7 +739,7 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			$this->error=$this->db->error()." - ".$sql;
-			dol_syslog("CommandeFournisseur::Create: Failed -1 - ".$this->error);
+			dol_syslog("CommandeFournisseur::Create: Failed -1 - ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -945,7 +945,7 @@ class CommandeFournisseur extends Commande
 	  	if ($result < 0)
 	  	{
 	  		$this->error=$this->db->error()." - sql=$sql";
-	  		dol_syslog("CommandeFournisseur::DispatchProduct".$this->error);
+	  		dol_syslog("CommandeFournisseur::DispatchProduct".$this->error, LOG_ERR);
 	  		$error = -2;
 	  	}
 	  	$i++;
@@ -1198,7 +1198,7 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("CommandeFournisseur::UpdateNote "+$this->error);
+			dol_syslog("CommandeFournisseur::UpdateNote "+$this->error, LOG_ERR);
 			$result = -1;
 		}
 
@@ -1324,7 +1324,7 @@ class CommandeFournisseur extends Commande
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("CommandeFournisseur::updateline ".$this->error);
+				dol_syslog("CommandeFournisseur::updateline ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -1332,7 +1332,7 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			$this->error="Order status makes operation forbidden";
-			dol_syslog("CommandeFournisseur::updateline ".$this->error);
+			dol_syslog("CommandeFournisseur::updateline ".$this->error, LOG_ERR);
 			return -2;
 		}
 	}
@@ -1519,7 +1519,7 @@ class CommandeFournisseurLigne extends CommandeLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("CommandeFournisseurLigne.class.php::update_total Error ".$this->error);
+			dol_syslog("CommandeFournisseurLigne.class.php::update_total Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}

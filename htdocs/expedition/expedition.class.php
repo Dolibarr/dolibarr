@@ -386,7 +386,7 @@ class Expedition extends CommonObject
 		    	{
 		    		$this->db->rollback();
 		    		$this->error=$this->db->error()." - sql=$sql";
-		    		dol_syslog("Expedition::valid ".$this->error);
+		    		dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
 		    		return -3;
 		    	}
 
@@ -398,7 +398,7 @@ class Expedition extends CommonObject
 	  		{
 		    $this->db->rollback();
 		    $this->error=$this->db->error()." - sql=$sql";
-		    dol_syslog("Expedition::valid ".$this->error);
+		    dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
 		    return -2;
 	  		}
 	  	}
@@ -430,7 +430,7 @@ class Expedition extends CommonObject
 	  {
 	  	$this->db->rollback();
 	  	$this->error=$this->db->error();
-	  	dol_syslog("Expedition::valid ".$this->error);
+	  	dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
 	  	return -1;
 	  }
 		}
@@ -438,7 +438,7 @@ class Expedition extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error="Non autorise";
-			dol_syslog("Expedition::valid ".$this->error);
+			dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -633,7 +633,7 @@ class Expedition extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('Expedition::fetch_lines: Error '.$this->error);
+			dol_syslog('Expedition::fetch_lines: Error '.$this->error, LOG_ERR);
 			return -3;
 		}
 	}

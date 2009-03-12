@@ -514,7 +514,7 @@ class InterfaceLogevents
                 $error ="Failed to insert security event: ".$event->error;
                 $this->error=$error;
 
-                dol_syslog("interface_all_Logevents.class.php: ".$this->error);
+                dol_syslog("interface_all_Logevents.class.php: ".$this->error, LOG_ERR);
                 return -1;
             }
         }

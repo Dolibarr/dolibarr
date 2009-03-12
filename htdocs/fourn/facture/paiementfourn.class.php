@@ -120,7 +120,7 @@ class PaiementFourn
 	function create($user)
 	{
 		global $langs,$conf;
-		
+
 		$error = 0;
 
 		// Clean parameters
@@ -134,16 +134,16 @@ class PaiementFourn
 		}
 		$this->total = price2num($this->total);
 
-		
+
 		$this->db->begin();
-		
+
 		if ($this->total <> 0) // On accepte les montants negatifs
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
 			$sql.= 'datec, datep, amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
 			$sql.= ' VALUES ('.$this->db->idate(mktime()).',';
 			$sql.= " ".$this->db->idate($this->datepaye).", '".$this->total."', ".$this->paiementid.", '".$this->num_paiement."', '".addslashes($this->note)."', ".$user->id.", 0)";
-			
+
 			dol_syslog("PaiementFourn::create sql=".$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -330,7 +330,7 @@ class PaiementFourn
 		else
 		{
 			$this->error='Paiement::Valide Error -1 '.$this->db->error();
-			dol_syslog('PaiementFourn::valide error '.$this->error);
+			dol_syslog('PaiementFourn::valide error '.$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -431,7 +431,7 @@ class PaiementFourn
 	function LibStatut($status,$mode=0)
 	{
 		global $langs;
-		
+
 		$langs->load('compta');
 		if ($mode == 0)
 		{
@@ -465,8 +465,8 @@ class PaiementFourn
 		}
 		return $langs->trans('Unknown');
 	}
-	
-	
+
+
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
@@ -476,7 +476,7 @@ class PaiementFourn
 	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;
-		
+
 		$result='';
 
 		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$this->id.'">';
@@ -490,14 +490,14 @@ class PaiementFourn
     /**
      *      \brief      Updates the payment number
      *      \param      string          New num
-     *      \return     int             -1 on error, 0 otherwise 
+     *      \return     int             -1 on error, 0 otherwise
      */
     function update_num($num)
     {
     	if(!empty($num) && $this->statut!=1)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'paiementfourn SET num_paiement = \''.$this->db->escape($num).'\' WHERE rowid = '.$this->id;
-    
+
             dol_syslog("PaiementFourn::update_num sql=".$sql);
             $result = $this->db->query($sql);
             if ($result)
@@ -508,7 +508,7 @@ class PaiementFourn
             else
             {
                 $this->error='PaiementFourn::update_num Error -1 '.$this->db->error();
-                dol_syslog('PaiementFourn::update_num error '.$this->error);
+                dol_syslog('PaiementFourn::update_num error '.$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -517,7 +517,7 @@ class PaiementFourn
     /**
      *      \brief      Updates the payment date
      *      \param      string          New date
-     *      \return     int             -1 on error, 0 otherwise 
+     *      \return     int             -1 on error, 0 otherwise
      */
     function update_date($date)
     {
@@ -535,11 +535,11 @@ class PaiementFourn
             else
             {
                 $this->error='PaiementFourn::update_date Error -1 '.$this->db->error();
-                dol_syslog('PaiementFourn::update_date error '.$this->error);
+                dol_syslog('PaiementFourn::update_date error '.$this->error, LOG_ERR);
                 return -1;
             }
         }
         return -1; //no date given or already validated
-    }    
+    }
 }
 ?>

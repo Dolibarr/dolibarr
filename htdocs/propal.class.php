@@ -464,7 +464,7 @@ class Propal extends CommonObject
 			{
 				$this->error=$this->db->error();
 				$this->db->rollback();
-				dol_syslog("Propal::UpdateLine Erreur sql=$sql, error=".$this->error);
+				dol_syslog("Propal::UpdateLine Error=".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -611,7 +611,7 @@ class Propal extends CommonObject
 					else
 					{
 						$this->error=$this->db->error();
-						dol_syslog("Propal::Create -2 ".$this->error);
+						dol_syslog("Propal::Create -2 ".$this->error, LOG_ERR);
 						$this->db->rollback();
 						return -2;
 					}
@@ -621,13 +621,13 @@ class Propal extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Propal::Create -1 ".$this->error);
+			dol_syslog("Propal::Create -1 ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
 
 		$this->db->commit();
-		dol_syslog("Propal::Create done id=".$this->id);
+		dol_syslog("Propal::Create done id=".$this->id, LOG_ERR);
 		return $this->id;
 	}
 

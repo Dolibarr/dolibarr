@@ -710,7 +710,7 @@ class Societe extends CommonObject
 		else
 		{
 			$this->error .= $this->db->lasterror();
-			dol_syslog("Societe::Delete erreur -1 ".$this->error);
+			dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -755,7 +755,7 @@ class Societe extends CommonObject
 			else
 			{
 				$this->error .= $this->db->lasterror();
-				dol_syslog("Societe::Delete erreur -1 ".$this->error);
+				dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
 			}
 
 			// Update link in member table
@@ -769,7 +769,7 @@ class Societe extends CommonObject
 			else
 			{
 				$this->error .= $this->db->lasterror();
-				dol_syslog("Societe::Delete erreur -1 ".$this->error);
+				dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
 			}
 
 			// Remove ban
@@ -783,7 +783,7 @@ class Societe extends CommonObject
 			else
 			{
 				$this->error = $this->db->lasterror();
-				dol_syslog("Societe::Delete erreur -2 ".$this->error);
+				dol_syslog("Societe::Delete erreur -2 ".$this->error, LOG_ERR);
 			}
 
 			// Remove third party
@@ -797,7 +797,7 @@ class Societe extends CommonObject
 			else
 			{
 				$this->error = $this->db->lasterror();
-				dol_syslog("Societe::Delete erreur -3 ".$this->error);
+				dol_syslog("Societe::Delete erreur -3 ".$this->error, LOG_ERR);
 			}
 
 			if ($sqr == 4)

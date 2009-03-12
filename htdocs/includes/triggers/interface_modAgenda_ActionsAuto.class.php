@@ -19,7 +19,7 @@
 /**
         \file       htdocs/includes/triggers/interface_modAgenda_ActionsAuto.class.php
         \ingroup    core
-        \brief      Trigger file for 
+        \brief      Trigger file for
 		\version	$Id$
 */
 
@@ -33,12 +33,12 @@ class InterfaceActionsAuto
 {
     var $db;
     var $error;
-    
+
     var $date;
     var $duree;
     var $texte;
     var $desc;
-    
+
     /**
      *   \brief      Constructeur.
      *   \param      DB      Handler d'acces base
@@ -46,7 +46,7 @@ class InterfaceActionsAuto
     function InterfaceActionsAuto($DB)
     {
         $this->db = $DB ;
-    
+
         $this->name = eregi_replace('^Interface','',get_class($this));
         $this->family = "agenda";
         $this->description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
@@ -61,7 +61,7 @@ class InterfaceActionsAuto
     {
         return $this->name;
     }
-    
+
     /**
      *   \brief      Renvoi descriptif du lot de triggers
      *   \return     string      Descriptif du lot de triggers
@@ -101,7 +101,7 @@ class InterfaceActionsAuto
 		$key='MAIN_AGENDA_ACTIONAUTO_'.$action;
 		//dol_syslog("xxxxxxxxxxx".$key);
 		if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
-		
+
 		// Following properties must be filled:
 		// $object->actiontypecode;
 		// $object->actionmsg (note, long text)
@@ -112,9 +112,9 @@ class InterfaceActionsAuto
 		// $object->facid
 		// $object->propalrowid
 		// $object->orderrowid
-		
+
 		$ok=0;
-		
+
 		// Actions
 		if ($action == 'COMPANY_CREATE')
         {
@@ -173,7 +173,7 @@ class InterfaceActionsAuto
             $langs->load("propal");
             $langs->load("agenda");
 			$ok=1;
-			
+
 			// Parameters $object->xxx defined by caller
 		}
 		elseif ($action == 'PROPAL_CLOSE_SIGNED')
@@ -207,13 +207,13 @@ class InterfaceActionsAuto
 			$object->propalrowid=$object->id;
 			$object->facid=$object->orderrowid=0;
 			$ok=1;
-		}		
+		}
 		elseif ($action == 'ORDER_VALIDATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("orders");
             $langs->load("agenda");
-			
+
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
@@ -257,7 +257,7 @@ class InterfaceActionsAuto
             $langs->load("bills");
             $langs->load("agenda");
 			$ok=1;
-			
+
 			// Parameters $object->xxx defined by caller
 		}
 		elseif ($action == 'BILL_PAYED')
@@ -299,7 +299,7 @@ class InterfaceActionsAuto
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("orders");
             $langs->load("agenda");
-			
+
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
@@ -327,7 +327,7 @@ class InterfaceActionsAuto
 			$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
-		
+
         // Members
         elseif ($action == 'MEMBER_VALIDATE')
         {
@@ -342,7 +342,7 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
-            
+
 			$object->sendtoid=0;
 			$object->facid=0;	// Supplier invoice not yet supported
 			$object->orderrowid=$object->propalrowid=0;
@@ -363,7 +363,7 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
             $object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
-            
+
 			$object->sendtoid=0;
 			$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
@@ -385,7 +385,7 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
-            
+
 			$object->sendtoid=0;
 			$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
@@ -403,12 +403,12 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
-            
+
 			$object->sendtoid=0;
 			$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
         }
-        		
+
 		// If not found
 /*
         else
@@ -422,7 +422,7 @@ class InterfaceActionsAuto
         if ($ok)
         {
 			$now=time();
-			
+
 			// Insertion action
 			require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
 			require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
@@ -453,7 +453,7 @@ class InterfaceActionsAuto
                 $error ="Failed to insert : ".$actioncomm->error." ";
                 $this->error=$error;
 
-                dol_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error);
+                dol_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error, LOG_ERR);
                 return -1;
 			}
 		}

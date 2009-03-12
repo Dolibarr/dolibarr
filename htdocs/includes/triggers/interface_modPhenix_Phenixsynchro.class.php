@@ -36,12 +36,12 @@ class InterfacePhenixsynchro
 {
     var $db;
     var $error;
-    
+
     var $date;
     var $duree;
     var $texte;
     var $desc;
-    
+
     /**
      *   \brief      Constructeur.
      *   \param      DB      Handler d'accès base
@@ -49,13 +49,13 @@ class InterfacePhenixsynchro
     function InterfacePhenixsynchro($DB)
     {
         $this->db = $DB ;
-    
+
         $this->name = eregi_replace('Interface','',get_class($this));
         $this->family = "phenix";
         $this->description = "Triggers of this module allows to add an event inside Phenix calenar for each Dolibarr business event.";
         $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
     }
-    
+
     /**
      *   \brief      Renvoi nom du lot de triggers
      *   \return     string      Nom du lot de triggers
@@ -64,7 +64,7 @@ class InterfacePhenixsynchro
     {
         return $this->name;
     }
-    
+
     /**
      *   \brief      Renvoi descriptif du lot de triggers
      *   \return     string      Descriptif du lot de triggers
@@ -141,7 +141,7 @@ class InterfacePhenixsynchro
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
-            
+
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
@@ -223,7 +223,7 @@ class InterfacePhenixsynchro
             $this->desc=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }
-        
+
         // Invoices
 		elseif ($action == 'BILL_VALIDATE')
         {
@@ -394,8 +394,8 @@ class InterfacePhenixsynchro
                 $error ="Dolibarr n'a pu se connecter à la base Phenix avec les identifiants définis (host=".$conf->phenix->db->host." dbname=".$conf->phenix->db->name." user=".$conf->phenix->db->user."). ";
                 $error.="La mise a jour Webcalendar a été ignorée.";
                 $this->error=$error;
-    
-                //dol_syslog("interface_phenix.class.php: ".$this->error);
+
+                //dol_syslog("interface_phenix.class.php: ".$this->error, LOG_ERR);
                 return -1;
             }
 
@@ -415,7 +415,7 @@ class InterfacePhenixsynchro
                 $error.="La mise a jour Phenix a été ignorée.";
                 $this->error=$error;
 
-                //dol_syslog("interface_phenix.class.php: ".$this->error);
+                //dol_syslog("interface_phenix.class.php: ".$this->error, LOG_ERR);
                 return -2;
             }
         }

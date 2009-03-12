@@ -33,7 +33,7 @@
 */
 
 class Webcal {
-    
+
     var $localdb;
     var $error;
 	var $version;		/* Version string from webcalendar. Not defined in 1.0 */
@@ -41,9 +41,9 @@ class Webcal {
     var $duree = 0;     /* Secondes */
     var $texte;
     var $desc;
-    
 
-  
+
+
     /**
     		\brief      Constructeur de la classe d'interface à Webcalendar
     */
@@ -75,7 +75,7 @@ class Webcal {
     function add($user)
 	{
         global $langs;
-        
+
         dol_syslog("Webcal::add user=".$user->id);
 
         // Test si login webcal défini pour le user
@@ -83,15 +83,15 @@ class Webcal {
 		{
 			$langs->load("other");
             $this->error=$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
-			dol_syslog("Webcal::add ERROR ".$this->error);
-            return -4; 
+			dol_syslog("Webcal::add ERROR ".$this->error, LOG_ERR);
+            return -4;
         }
-        
+
         $this->localdb->begin();
 
         // Recupère l'id max+1 dans la base webcalendar
         $id = $this->get_next_id();
-        
+
         if ($id > 0)
         {
             $cal_id = $id;
@@ -118,19 +118,19 @@ class Webcal {
            	{
             	$sql = "INSERT INTO webcal_entry_user (cal_id, cal_login, cal_status)";
             	$sql .= " VALUES ($cal_id, '$cal_create_by', 'A')";
-            
+
         		$resql=$this->localdb->query($sql);
 				if ($resql)
         		{
         		    // OK
                     $this->localdb->commit();
-                    return 1;        
+                    return 1;
         		}
         		else
         		{
                     $this->localdb->rollback();
         		    $this->error = $this->localdb->error() . '<br>' .$sql;
-					dol_syslog("Webcal::add ERROR ".$this->error);
+					dol_syslog("Webcal::add ERROR ".$this->error, LOG_ERR);
                     return -1;
         		}
         	}
@@ -138,7 +138,7 @@ class Webcal {
         	{
                 $this->localdb->rollback();
             	$this->error = $this->localdb->error() . '<br>' .$sql;
-				dol_syslog("Webcal::add ERROR ".$this->error);
+				dol_syslog("Webcal::add ERROR ".$this->error, LOG_ERR);
                 return -2;
         	}
         }
@@ -146,7 +146,7 @@ class Webcal {
         {
             $this->localdb->rollback();
         	$this->error = $this->localdb->error() . '<br>' .$sql;
-			dol_syslog("Webcal::add ERROR ".$this->error);
+			dol_syslog("Webcal::add ERROR ".$this->error, LOG_ERR);
             return -3;
         }
     }
@@ -173,12 +173,12 @@ class Webcal {
         }
     }
 
-	
+
     /**
     		\brief      Export fichier cal depuis base webcalendar
 			\param		format			'ical' or 'vcal'
 			\param		type			'event' or 'journal'
-			\param		cachedelay		Do not rebuild file if date older than cachedelay seconds	
+			\param		cachedelay		Do not rebuild file if date older than cachedelay seconds
 			\param		filename		Force filename
 			\param		filters			Array of filters
     		\return     int     		<0 if error, nb of events in new file if ok
@@ -186,7 +186,7 @@ class Webcal {
 	function build_calfile($format,$type,$cachedelay,$filename,$filters)
 	{
 		global $conf,$langs;
-		
+
 		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
 
 		dol_syslog("webcal::build_calfile Build cal file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
@@ -201,22 +201,22 @@ class Webcal {
 			if ($format == 'ical') $extension='ics';
 			$filename=$format.'.'.$extension;
 		}
-		
+
 		create_exdir($conf->webcal->dir_temp);
 		$outputfile=$conf->webcal->dir_temp.'/'.$filename;
 		$result=0;
-		
+
 		$buildfile=true;
 		if ($cachedelay)
 		{
 			// \TODO Check cache
 		}
-		
+
 		if ($buildfile)
 		{
 			// Build event array
 			$eventarray=array();
-			
+
 			$sql = "SELECT cal_id, cal_create_by, ";
 			$sql.= " cal_date, cal_time, cal_mod_date,";
 			$sql.= " cal_mod_time, cal_duration, cal_priority, cal_type, cal_access, cal_name, cal_description";
@@ -230,7 +230,7 @@ class Webcal {
 				while ($obj=$this->localdb->fetch_object($resql))
 				{
 					$qualified=true;
-					
+
 					// 'eid','startdate','duration','enddate','title','summary','category','email','url','desc','author'
 					$event=array();
 					$event['uid']='dolibarrwebcal-'.$this->localdb->database_name.'-'.$obj->cal_id."@".$_SERVER["SERVER_NAME"];
@@ -264,7 +264,7 @@ class Webcal {
 					if (! eregi('\/$',$url)) $url.='/';
 					$url.='view_entry.php?id='.$obj->cal_id;
 					$event['url']=$url;
-					
+
 					if ($qualified)
 					{
 						$eventarray[$datestart]=$event;
@@ -276,15 +276,15 @@ class Webcal {
 				dol_syslog("webcal::build_calfile ".$this->localdb->lasterror());
 				return -1;
 			}
-			
+
 			// Write file
 			$title='Webcalendar events ';
 			$desc='Webcalendar events for database '.$this->localdb->database_name.' - built by Dolibarr';
 			$result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
 		}
-		
+
 		return $result;
 	}
-  
+
 }
 ?>

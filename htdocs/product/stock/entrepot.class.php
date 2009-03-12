@@ -155,7 +155,7 @@ class Entrepot extends CommonObject
 		{
 	  $this->error=$this->db->error()." sql=$sql";;
 	  dol_syslog("Entrepot::Update return -1");
-	  dol_syslog("Entrepot::Update ".$this->error);
+	  dol_syslog("Entrepot::Update ".$this->error, LOG_ERR);
 	  return -1;
 		}
 	}
@@ -175,7 +175,7 @@ class Entrepot extends CommonObject
 		if ($result)
 		{
 	  $obj=$this->db->fetch_object($result);
-	   
+
 	  $this->id             = $obj->rowid;
 	  $this->ref            = $obj->rowid;
 	  $this->libelle        = $obj->label;
@@ -186,7 +186,7 @@ class Entrepot extends CommonObject
 	  $this->cp             = $obj->cp;
 	  $this->ville          = $obj->ville;
 	  $this->pays_id        = $obj->fk_pays;
-	   
+
 	  if ($this->pays_id)
 	  {
 	  	$sqlp = "SELECT libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$this->pays_id;
@@ -201,7 +201,7 @@ class Entrepot extends CommonObject
 	  	}
 	  	$this->pays=$objp->libelle;
 	  }
-	   
+
 	  $this->db->free($result);
 	  return 1;
 		}
@@ -250,7 +250,7 @@ class Entrepot extends CommonObject
 	  	$this->date_modification = $obj->datem;
 
 	  }
-	   
+
 	  $this->db->free($result);
 
 		}
@@ -308,14 +308,14 @@ class Entrepot extends CommonObject
 		{
 			$sql.= ' AND IFNULL(c.visible,1)=1';
 		}
-		 
+
 		$result = $this->db->query($sql) ;
 
 		if ( $result )
 		{
 			$row = $this->db->fetch_row(0);
 			return $row[0];
-			 
+
 			$this->db->free();
 		}
 		else

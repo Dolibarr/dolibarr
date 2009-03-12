@@ -226,11 +226,11 @@ class Fichinter extends CommonObject
 		if ($this->statut != 0)
 		{
 			$this->db->begin();
-			
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET fk_statut = 0";
 			$sql.= " WHERE rowid = ".$this->id;
-	
+
 			dol_syslog("Fichinter::setDraft sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -245,9 +245,9 @@ class Fichinter extends CommonObject
 				dol_syslog("Fichinter::setDraft ".$this->error,LOG_ERR);
 				return -1;
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 *		\brief		Valide une fiche intervention
 	 *		\param		user		User qui valide
@@ -260,11 +260,11 @@ class Fichinter extends CommonObject
 		if ($this->statut != 1)
 		{
 			$this->db->begin();
-			
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=".$user->id;
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-	
+
 			dol_syslog("Fichinter::setValid sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -275,7 +275,7 @@ class Fichinter extends CommonObject
 				$result=$interface->run_triggers('FICHEINTER_VALIDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
-	
+
 				if (! $error)
 				{
 					$this->db->commit();
@@ -364,7 +364,7 @@ class Fichinter extends CommonObject
 			}
 		}
 	}
-	 
+
 
 	/**
 	 *      \brief      Renvoie la reference de fiche intervention suivante non utilisee en fonction du module
@@ -474,7 +474,7 @@ class Fichinter extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Fichinter::set_project Error ".$this->error);
+				dol_syslog("Fichinter::set_project Error ".$this->error, LOG_ERR);
 			}
 		}
 		else
@@ -613,19 +613,19 @@ class Fichinter extends CommonObject
 	function addline($fichinterid, $desc, $date_intervention, $duration)
 	{
 		dol_syslog("Fichinter::Addline $fichinterid, $desc, $date_intervention, $duration");
-		 
+
 		if ($this->statut == 0)
 		{
 			$this->db->begin();
-			 
+
 			// Insertion ligne
 			$ligne=new FichinterLigne($this->db);
-			 
+
 			$ligne->fk_fichinter = $fichinterid;
 			$ligne->desc         = $desc;
 			$ligne->datei        = $date_intervention;
 			$ligne->duration     = $duration;
-			 
+
 			$result=$ligne->insert();
 			if ($result > 0)
 			{
@@ -635,7 +635,7 @@ class Fichinter extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Error sql=$sql, error=".$this->error);
+				dol_syslog("Error sql=$sql, error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -813,7 +813,7 @@ class FichinterLigne
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_print_error($this->db,$this->error);
+			dol_print_error($this->db,$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -877,7 +877,7 @@ class FichinterLigne
 		else
 		{
 			$this->error=$this->db->error()." sql=".$sql;
-			dol_syslog("FichinterLigne::insert Error ".$this->error);
+			dol_syslog("FichinterLigne::insert Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -913,7 +913,7 @@ class FichinterLigne
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("FichinterLigne::update Error ".$this->error);
+				dol_syslog("FichinterLigne::update Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -921,7 +921,7 @@ class FichinterLigne
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("FichinterLigne::update Error ".$this->error);
+			dol_syslog("FichinterLigne::update Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -944,7 +944,7 @@ class FichinterLigne
 			$obj=$this->db->fetch_object($resql);
 			$total_duration=0;
 			if ($obj) $total_duration = $obj->total_duration;
-				
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET duree = ".$total_duration;
 			$sql.= " WHERE rowid = ".$this->fk_fichinter;
@@ -959,7 +959,7 @@ class FichinterLigne
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("FichinterLigne::update_total Error ".$this->error);
+				dol_syslog("FichinterLigne::update_total Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -967,7 +967,7 @@ class FichinterLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("FichinterLigne::update Error ".$this->error);
+			dol_syslog("FichinterLigne::update Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -983,7 +983,7 @@ class FichinterLigne
 		{
 			dol_syslog("FichinterLigne::delete_line lineid=".$this->rowid);
 			$this->db->begin();
-			 
+
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->rowid;
 			$resql = $this->db->query($sql);
 			dol_syslog("FichinterLigne::delete_line sql=".$sql);
@@ -1005,7 +1005,7 @@ class FichinterLigne
 			else
 			{
 				$this->error=$this->db->error()." sql=".$sql;
-				dol_syslog("FichinterLigne::delete_line Error ".$this->error);
+				dol_syslog("FichinterLigne::delete_line Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}

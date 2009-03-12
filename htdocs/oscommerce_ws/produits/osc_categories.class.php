@@ -43,23 +43,23 @@ class Osc_Categorie
     var $db;
     var $error='';
     var $errors=array();
-    
+
     var $id;
     var $dolicatid;
     var $osccatid;
 
-	
+
     /**
      *      \brief      Constructor
      *      \param      DB      Database handler
      */
-    function Osc_Categorie($DB) 
+    function Osc_Categorie($DB)
     {
         $this->db = $DB;
         return 1;
     }
 
-	
+
     /**
      *      \brief      Create in database
      *      \param      user        User that create
@@ -68,7 +68,7 @@ class Osc_Categorie
     function create($user)
     {
     	global $conf, $langs;
-    	
+
 		// Clean parameters
         $this->dolicatid=trim($this->dolicatid);
         $this->ocscatid=trim($this->ocscatid);
@@ -86,7 +86,7 @@ class Osc_Categorie
         if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."osc_categories");
-    
+
 /*            $resql=$this->update($user, 1);
             if ($resql < 0)
             {
@@ -109,7 +109,7 @@ class Osc_Categorie
         {
             $this->error=$this->db->lasterror();
             $this->error .= "erreur ".$sql;
-            dol_syslog("Osc_Categorie.class::create ".$this->error);
+            dol_syslog("Osc_Categorie.class::create ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -123,7 +123,7 @@ class Osc_Categorie
     function update($user=0, $notrigger=0)
     {
     	global $conf, $langs;
-    	
+
 		// Clean parameters
         $this->dolicatid=trim($this->dolicatid);
         $this->ocscatid=trim($this->ocscatid);
@@ -134,7 +134,7 @@ class Osc_Categorie
         $sql.= " osccatid='".addslashes($this->osccatid)."'";
         $sql.= " WHERE rowid=".$this->id;
         dol_syslog("Osc_Categorie.class::update sql=".$sql,LOG_DEBUG);
-    
+
         $resql = $this->db->query($sql);
         if (! $resql)
         {
@@ -154,8 +154,8 @@ class Osc_Categorie
 
         return 1;
     }
-  
-  
+
+
     /*
      *    \brief      Load object in memory from database
      *    \param      id          id object
@@ -168,7 +168,7 @@ class Osc_Categorie
         $sql = "SELECT t.rowid, t.dolicatid, t.osccatid";
         $sql.= " FROM ".MAIN_DB_PREFIX."osc_categories as t";
         $sql.= " WHERE c.rowid = ".$id;
-    
+
     	dol_syslog("Osc_Categorie.class::fetch sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -176,23 +176,23 @@ class Osc_Categorie
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-    
+
                 $this->id    = $obj->rowid;
                 $this->dolicatid = $obj->dolicatid;
                 $this->ocscatid = $obj->osccatid;
             }
             $this->db->free($resql);
-            
+
             return 1;
         }
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Osc_Categorie.class::fetch ".$this->error);
+            dol_syslog("Osc_Categorie.class::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
-    
+
      /*
      *    \brief      Load object in memory from database
      *    \param      id          id object
@@ -205,7 +205,7 @@ class Osc_Categorie
         $sql = "SELECT t.rowid, t.dolicatid, t.osccatid";
         $sql.= " FROM ".MAIN_DB_PREFIX."osc_categories as t";
         $sql.= " WHERE t.osccatid = ".$oscid;
-    
+
     	dol_syslog("Osc_Categorie.class::fetch_osccat sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -213,25 +213,25 @@ class Osc_Categorie
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-    
+
                 $this->id    = $obj->rowid;
                 $this->dolicatid = $obj->dolicatid;
                 $this->osccatid = $obj->osccatid;
             }
-            else 
+            else
             	$this->initAsSpecimen();
             $this->db->free($resql);
-            
+
             return 1;
         }
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Osc_Categorie.class::fetch_osccat ".$this->error);
+            dol_syslog("Osc_Categorie.class::fetch_osccat ".$this->error, LOG_ERR);
             return -1;
         }
-    } 
-    
+    }
+
         /*
      *    \brief      Load object in memory from database
      *    \param      id          id object
@@ -244,7 +244,7 @@ class Osc_Categorie
         $sql = "SELECT t.rowid, t.dolicatid, t.osccatid";
         $sql.= " FROM ".MAIN_DB_PREFIX."osc_categories as t";
         $sql.= " WHERE t.dolicatid = ".$doliid;
-    
+
     	dol_syslog("Osc_Categorie.class::fetch_dolicat sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -252,23 +252,23 @@ class Osc_Categorie
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-    
+
                 $this->id    = $obj->rowid;
                 $this->dolicatid = $obj->dolicatid;
                 $this->ocscatid = $obj->osccatid;
             }
             $this->db->free($resql);
-            
+
             return 1;
         }
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Osc_Categorie.class::fetch_dolicat ".$this->error);
+            dol_syslog("Osc_Categorie.class::fetch_dolicat ".$this->error, LOG_ERR);
             return -1;
         }
     }
-      
+
  	/*
 	*   \brief      Delete object in database
     *	\param      user        User that delete
@@ -277,10 +277,10 @@ class Osc_Categorie
 	function delete($user)
 	{
 		global $conf, $langs;
-	
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_categories";
 		$sql.= " WHERE rowid=".$this->id;
-	
+
 	   	dol_syslog("Osc_Categorie.class::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
@@ -288,7 +288,7 @@ class Osc_Categorie
 			$this->error=$this->db->lasterror().' sql='.$sql;
 			return -1;
 		}
-	
+
         // Appel des triggers
         include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
         $interface=new Interfaces($this->db);
@@ -299,7 +299,7 @@ class Osc_Categorie
 		return 1;
 	}
 
-  
+
 	/**
 	 *		\brief		Initialise object with example values
 	 *		\remarks	id must be 0 if object instance is a specimen.
@@ -310,6 +310,6 @@ class Osc_Categorie
 		$this->dolicatid=0;
 		$this->osccatid=0;
 	}
-	
+
 }
 ?>

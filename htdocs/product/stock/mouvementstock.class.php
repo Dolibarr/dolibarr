@@ -65,7 +65,7 @@ class MouvementStock
 			}
 			else
 			{
-				dol_syslog("MouvementStock::_create ".$this->error);
+				dol_syslog("MouvementStock::_create ".$this->error, LOG_ERR);
 				$error = -1;
 			}
 
@@ -83,7 +83,7 @@ class MouvementStock
 				}
 				else
 				{
-					dol_syslog("MouvementStock::_create echec update ".$this->error);
+					dol_syslog("MouvementStock::_create echec update ".$this->error, LOG_ERR);
 					$error = -2;
 				}
 			}
@@ -165,7 +165,7 @@ class MouvementStock
 		{
 			$this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dol_syslog("MouvementStock::_create ".$this->error);
+			dol_syslog("MouvementStock::_create ".$this->error, LOG_ERR);
 			return -2;
 		}
 	}
@@ -239,7 +239,7 @@ class MouvementStock
 		}
 		else
 		{
-			dol_syslog("MouvementStock::_Create echec update ".$this->error);
+			dol_syslog("MouvementStock::_Create echec update ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -432,7 +432,7 @@ class MouvementStock
 				}
 				else
 				{
-					dol_syslog("MouvementStock::CalculateValoPmp ERRORSQL[1] ".$this->error);
+					dol_syslog("MouvementStock::CalculateValoPmp ERRORSQL[1] ".$this->error, LOG_ERR);
 					$error = -16;
 				}
 			}
@@ -478,7 +478,7 @@ class MouvementStock
 				}
 				else
 				{
-					dol_syslog("MouvementStock::CalculateValoPmp ERRORSQL[2] insert ".$this->error);
+					dol_syslog("MouvementStock::CalculateValoPmp ERRORSQL[2] insert ".$this->error, LOG_ERR);
 					$error = -17;
 				}
 			}

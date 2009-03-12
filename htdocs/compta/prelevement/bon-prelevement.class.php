@@ -48,14 +48,14 @@ class BonPrelevement extends CommonObject
     var $total;
     var $_fetched;
 
-    
+
     function BonPrelevement($DB, $filename='')
     {
         $error = 0;
         $this->db = $DB;
 
         $this->filename=$filename;
-        
+
         $this->date_echeance = time();
         $this->raison_sociale = "";
         $this->reference_remise = "";
@@ -262,7 +262,7 @@ class BonPrelevement extends CommonObject
     function set_credite()
     {
         global $user;
-        
+
         $error == 0;
 
         if ($this->db->begin())
@@ -501,7 +501,7 @@ class BonPrelevement extends CommonObject
                 $arr_mime = array();
                 $arr_name = array();
                 $msgishtml=0;
-                
+
                 if ($joinfile == 1)
                 {
                     $arr_file = array(DOL_DATA_ROOT.'/prelevement/bon/'.$this->ref.'.ps');
@@ -641,12 +641,12 @@ class BonPrelevement extends CommonObject
         else
         {
             $this->error="BonPrelevement::SommeAPrelever Erreur -1 sql=".$this->db->error();
-            dol_syslog($this->error);
+            dol_syslog($this->error, LOG_ERR);
             return -1;
         }
     }
 
-    
+
     /**
      *      \brief      Create a withdraw
      *      \return     int     <0 if KO, nbre of invoice withdrawed if OK
@@ -654,7 +654,7 @@ class BonPrelevement extends CommonObject
     function Create($banque=0, $guichet=0)
     {
         global $conf;
-        
+
         dol_syslog("BonPrelevement::Create banque=$banque guichet=$guichet");
 
         require_once (DOL_DOCUMENT_ROOT."/compta/prelevement/bon-prelevement.class.php");
@@ -833,7 +833,7 @@ class BonPrelevement extends CommonObject
                     $dir=$conf->prelevement->dir_output.'/bon';
                     $file=$filebonprev;
                     if (! is_dir($dir)) create_exdir($dir);
-                    
+
                     $bonprev = new BonPrelevement($this->db, $dir."/".$file);
                     $bonprev->id = $prev_id;
                 }
@@ -1000,7 +1000,7 @@ class BonPrelevement extends CommonObject
         }
     }
 
-    
+
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 *		\param		withpicto		Inclut le picto dans le lien
@@ -1025,9 +1025,9 @@ class BonPrelevement extends CommonObject
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowWithdraw"),'payment').$lienfin.' ');
 		$result.=$lien.$this->ref.$lienfin;
 		return $result;
-	}    
-    
-    
+	}
+
+
     /**
      *
      *
@@ -1106,7 +1106,7 @@ class BonPrelevement extends CommonObject
     function Generate()
     {
     	global $conf;
-    	
+
         $result = -1;
 
         $this->file = fopen ($this->filename,"w");
@@ -1160,9 +1160,9 @@ class BonPrelevement extends CommonObject
         $this->EnregTotal($this->total);
 
         fclose($this->file);
-		if (! empty($conf->global->MAIN_UMASK)) 
+		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($this->file, octdec($conf->global->MAIN_UMASK));
-        
+
         return $result;
     }
 

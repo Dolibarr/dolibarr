@@ -158,7 +158,7 @@ class Livraison extends CommonObject
 				{
 					$error++;
 					$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
-					dol_syslog("Livraison::create Error -3 ".$this->error);
+					dol_syslog("Livraison::create Error -3 ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -3;
 				}
@@ -167,7 +167,7 @@ class Livraison extends CommonObject
 			{
 				$error++;
 				$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
-				dol_syslog("Livraison::create Error -2 ".$this->error);
+				dol_syslog("Livraison::create Error -2 ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -176,7 +176,7 @@ class Livraison extends CommonObject
 		{
 			$error++;
 			$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
-			dol_syslog("Livraison::create Error -1 ".$this->error);
+			dol_syslog("Livraison::create Error -1 ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -298,13 +298,13 @@ class Livraison extends CommonObject
 			else
 			{
 				$this->error='Delivery with id '.$rowid.' not found sql='.$sql;
-				dol_syslog('Livraison::Fetch Error '.$this->error);
+				dol_syslog('Livraison::Fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
 		}
 		else
 		{
-			dol_syslog('Livraison::Fetch Error '.$this->error);
+			dol_syslog('Livraison::Fetch Error '.$this->error, LOG_ERR);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -398,7 +398,7 @@ class Livraison extends CommonObject
 									{
 										$this->db->rollback();
 										$this->error=$this->db->error()." - sql=$sql";
-										dol_syslog("livraison.class.php::valid ".$this->error);
+										dol_syslog("livraison.class.php::valid ".$this->error, LOG_ERR);
 										return -3;
 									}
 									$i++;
@@ -409,7 +409,7 @@ class Livraison extends CommonObject
 							{
 								$this->db->rollback();
 								$this->error=$this->db->error()." - sql=$sql";
-								dol_syslog("livraison.class.php::valid ".$this->error);
+								dol_syslog("livraison.class.php::valid ".$this->error, LOG_ERR);
 								return -2;
 
 							}
@@ -445,7 +445,7 @@ class Livraison extends CommonObject
 					{
 						$this->db->rollback();
 						$this->error=$this->db->error()." - sql=$sql";
-						dol_syslog("livraison.class.php::valid ".$this->error);
+						dol_syslog("livraison.class.php::valid ".$this->error, LOG_ERR);
 						return -1;
 					}
 				}
@@ -454,7 +454,7 @@ class Livraison extends CommonObject
 		else
 		{
 			$this->error="Non autorise";
-			dol_syslog("livraison.class.php::valid ".$this->error);
+			dol_syslog("livraison.class.php::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -463,7 +463,7 @@ class Livraison extends CommonObject
 		return 1;
 	}
 
-	/**     \brief      Cr�� le bon de livraison depuis une exp�dition existante
+	/**     \brief      Cr�� le bon de livraison depuis une expedition existante
 	 *		\param      user            Utilisateur qui cr�e
 	 *		\param      sending_id      Id de l'exp�dition qui sert de mod�le
 	*/

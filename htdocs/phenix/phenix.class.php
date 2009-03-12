@@ -35,16 +35,16 @@
 */
 
 class Phenix {
-    
+
     var $localdb;
     var $error;
     var $date;
     var $duree = 0;     /* Secondes */
     var $texte;
     var $desc;
-    
 
-  
+
+
     /**
     		\brief      Constructeur de la classe d'interface à Phenix
     */
@@ -80,23 +80,23 @@ class Phenix {
     function add($user)
     {
     	global $langs;
-        
+
       dol_syslog("Phenix::add user=".$user->id);
-      
+
       // Test si login phenix défini pour le user
       if (! $user->phenix_login)
       {
       	$langs->load("other");
       	$this->error=$langs->transnoentities("ErrorPhenixLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
-      	dol_syslog("Phenix::add ERROR ".$this->error);
-      	return -4; 
+      	dol_syslog("Phenix::add ERROR ".$this->error, LOG_ERR);
+      	return -4;
       }
-      
+
       $this->localdb->begin();
 
       // Recupère l'id max+1 dans la base webcalendar
       $id = $this->get_next_id();
-        
+
       if ($id > 0)
       {
       	$age_id = $id;
@@ -116,26 +116,26 @@ class Phenix {
 
         $sql = "INSERT INTO px_agenda (age_id, age_createur_id, cal_date, cal_time, cal_mod_date, cal_mod_time, cal_duration, cal_priority, cal_type, cal_access, cal_name,cal_description)";
         $sql.= " VALUES ($age_id, '$age_createur_id', '$cal_date', '$cal_time', '$cal_mod_date', '$cal_mod_time', $cal_duration, $cal_priority, '$cal_type', '$cal_access', '$cal_name','$cal_description')";
-        
+
         dol_syslog("Phenix::add sql=".$sql);
         $resql=$this->localdb->query($sql);
         if ($resql)
         {
         	$sql = "INSERT INTO webcal_entry_user (cal_id, cal_login, cal_status)";
           $sql .= " VALUES ($cal_id, '$cal_create_by', 'A')";
-            
+
         	$resql=$this->localdb->query($sql);
         	if ($resql)
         	{
         		// OK
             $this->localdb->commit();
-            return 1;        
+            return 1;
         	}
         	else
         	{
         		$this->localdb->rollback();
         		$this->error = $this->localdb->error() . '<br>' .$sql;
-        		dol_syslog("Phenix::add ERROR ".$this->error);
+        		dol_syslog("Phenix::add ERROR ".$this->error, LOG_ERR);
         		return -1;
         	}
         }
@@ -143,7 +143,7 @@ class Phenix {
         {
         	$this->localdb->rollback();
           $this->error = $this->localdb->error() . '<br>' .$sql;
-          dol_syslog("Phenix::add ERROR ".$this->error);
+          dol_syslog("Phenix::add ERROR ".$this->error, LOG_ERR);
           return -2;
         }
       }
@@ -151,11 +151,11 @@ class Phenix {
       {
       	$this->localdb->rollback();
         $this->error = $this->localdb->error() . '<br>' .$sql;
-        dol_syslog("Phenix::add ERROR ".$this->error);
+        dol_syslog("Phenix::add ERROR ".$this->error, LOG_ERR);
         return -3;
       }
     }
-    
+
 
     /**
     		\brief      Obtient l'id suivant dans phenix
@@ -177,6 +177,6 @@ class Phenix {
         return -1;
       }
     }
-   
+
 }
 ?>

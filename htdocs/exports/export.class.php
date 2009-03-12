@@ -268,14 +268,14 @@ class Export
 			else
 			{
 	            $this->error=$objmodel->error;
-	            dol_syslog("Error: ".$this->error);
+	            dol_syslog("Export::build_file Error: ".$this->error, LOG_ERR);
 	            return -1;
 			}
         }
         else
         {
             $this->error=$this->db->error()." - sql=".$sql;
-            dol_syslog("Error: ".$this->error);
+            dol_syslog("Export::build_file Error: ".$this->error, LOG_ERR);
             return -1;
         }
     }

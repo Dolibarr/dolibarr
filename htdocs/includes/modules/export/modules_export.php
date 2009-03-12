@@ -168,7 +168,7 @@ class ModeleExports
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Error: sql=$sql ".$this->error);
+			dol_syslog("Error: sql=$sql ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

@@ -248,7 +248,7 @@ class FactureRec extends Facture
 				if ($result < 0)
 				{
 					$this->error=$this->db->error();
-					dol_syslog('Facture::Fetch Error '.$this->error);
+					dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 					return -3;
 				}
 				return 1;
@@ -256,14 +256,14 @@ class FactureRec extends Facture
 			else
 			{
 				$this->error='Bill with id '.$rowid.' not found sql='.$sql;
-				dol_syslog('Facture::Fetch Error '.$this->error);
+				dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('Facture::Fetch Error '.$this->error);
+			dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -328,7 +328,7 @@ class FactureRec extends Facture
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('Facture::fetch_lines: Error '.$this->error);
+			dol_syslog('Facture::fetch_lines: Error '.$this->error, LOG_ERR);
 			return -3;
 		}
 	}

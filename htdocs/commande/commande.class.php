@@ -726,7 +726,7 @@ class Commande extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dol_syslog("Error sql=$sql, error=".$this->error);
+					dol_syslog("Error sql=$sql, error=".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -1;
 				}
@@ -1066,7 +1066,7 @@ class Commande extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('Commande::fetch_lines: Error '.$this->error);
+			dol_syslog('Commande::fetch_lines: Error '.$this->error, LOG_ERR);
 			return -3;
 		}
 	}
@@ -2259,7 +2259,7 @@ class CommandeLigne
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("CommandeLigne::delete ".$this->error);
+			dol_syslog("CommandeLigne::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -2356,7 +2356,7 @@ class CommandeLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("CommandeLigne::insert Error ".$this->error);
+			dol_syslog("CommandeLigne::insert Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -2389,7 +2389,7 @@ class CommandeLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("CommandeLigne::update_total Error ".$this->error);
+			dol_syslog("CommandeLigne::update_total Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}

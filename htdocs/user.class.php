@@ -885,7 +885,7 @@ class User extends CommonObject
 		else
 		{
 			// $this->error deja positionne
-			dol_syslog("User::create_from_member - 2 - ".$this->error);
+			dol_syslog("User::create_from_member - 2 - ".$this->error, LOG_ERR);
 
 			$this->db->rollback();
 			return $result;

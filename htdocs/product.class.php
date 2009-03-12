@@ -893,7 +893,7 @@ class Product extends CommonObject
 		if (! $id && ! $ref)
 		{
 			$this->error=$langs->trans('ErrorWrongParameters');
-			dol_print_error("Product::fetch ".$this->error);
+			dol_print_error("Product::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 

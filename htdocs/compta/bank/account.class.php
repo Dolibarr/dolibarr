@@ -222,7 +222,7 @@ class Account extends CommonObject
 
 
 		$this->db->begin();
-			
+
 		$datev = $date;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq, fk_account, fk_type,emetteur,banque)";
@@ -315,12 +315,12 @@ class Account extends CommonObject
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$this->error=$langs->trans("ErrorBankLabelAlreadyExists");
-				dol_syslog($this->error);
+				dol_syslog($this->error, LOG_ERR);
 				return -1;
 			}
 			else {
 				$this->error=$this->db->error()." sql=".$sql;
-				dol_syslog($this->error);
+				dol_syslog($this->error, LOG_ERR);
 				return -2;
 			}
 		}
@@ -338,11 +338,11 @@ class Account extends CommonObject
 		// Check parameters
 		if (! $this->min_allowed) $this->min_allowed=0;
 		if (! $this->min_desired) $this->min_desired=0;
-		
+
 		if (! $this->ref)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
-			dol_syslog("Account::update ".$this->error);
+			dol_syslog("Account::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 		if (! $this->label) $this->label = "???";
@@ -375,7 +375,7 @@ class Account extends CommonObject
 		else
 		{
 			$this->error=$this->db.' sql='.$sql;
-			dol_print_error($this->error);
+			dol_print_error($this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -425,7 +425,7 @@ class Account extends CommonObject
 		else
 		{
 			$this->error=$this->db.' sql='.$sql;
-			dol_print_error($this->error);
+			dol_print_error($this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -604,7 +604,7 @@ class Account extends CommonObject
 		return $this->error;
 	}
 
-	/**	
+	/**
 	 * 	\brief		Return current sold
 	 * 	\param		option		1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
 	 *	\return		int			Current sold (value date <= today)
@@ -750,18 +750,18 @@ class Account extends CommonObject
 	function getCountryCode()
 	{
 		global $mysoc;
-		
+
 		if (! empty($this->iban))
 		{
 			// If IBAN defined, we can know country of account from it
 			if (eregi("^([a-zA-Z][a-zA-Z])",$this->iban,$reg)) return $reg[1];
 		}
-		
+
 		// We return country code
 		if (! empty($mysoc->pays_code)) return $mysoc->pays_code;
 
 		return '';
-	}	
+	}
 
 	/**
 	 * 	\brief		Return if a bank account is defined with detailed information (bank code, desk code, number and key)
@@ -773,10 +773,10 @@ class Account extends CommonObject
 
 		if ($country_code == 'FR') return true;
 		if ($country_code == 'ES') return true;
-		
+
 		return false;
-	}	
-	
+	}
+
 }
 
 
@@ -803,10 +803,10 @@ class AccountLine
 	var $num_releve;
 	var $num_chq;
 	var $rappro;
-	
+
 	var $bank_account_label;
-	
-	
+
+
 	/**
 	 *  Constructeur
 	 */
@@ -949,7 +949,7 @@ class AccountLine
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dol_syslog("AccountLine::update ".$this->error);
+			dol_syslog("AccountLine::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -981,12 +981,12 @@ class AccountLine
 
                 dol_syslog("AccountLine::update_conciliation sql=".$sql, LOG_DEBUG);
                 $resql = $this->db->query($sql);
-                
+
                 // No error check. Can fail if category already affected
             }
 
         	$bankline->rappro=1;
-            
+
         	$this->db->commit();
             return 1;
         }
@@ -994,9 +994,9 @@ class AccountLine
         {
             $this->db->rollback();
             return -1;
-        }	
+        }
 	}
-	
+
 	/**
 	 *      \brief     Charge les informations d'ordre info dans l'objet facture
 	 *      \param     id       Id de la facture a charger
@@ -1040,7 +1040,7 @@ class AccountLine
 		}
 	}
 
-	
+
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
@@ -1070,12 +1070,12 @@ class AccountLine
 			$result.=$accountstatic->getNomUrl(0).', ';
 			$result.=$langs->trans("BankLineConciliated").': ';
 	    	$result.=yn($this->rappro);
-	    	$result.=')';			
+	    	$result.=')';
 		}
-		
+
 		return $result;
 	}
-	
+
 }
 
 ?>

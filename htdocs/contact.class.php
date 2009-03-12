@@ -127,7 +127,7 @@ class Contact extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog("Contact::create ".$this->error);
+            dol_syslog("Contact::create ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -529,7 +529,7 @@ class Contact extends CommonObject
         else
         {
 	        $this->error=$this->db->error()." - ".$sql;
-	        dol_syslog("Contact::load_ref_elements Error ".$this->error);
+	        dol_syslog("Contact::load_ref_elements Error ".$this->error, LOG_ERR);
 	        return -1;
         }
     }

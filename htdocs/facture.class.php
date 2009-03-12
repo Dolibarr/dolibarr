@@ -316,7 +316,7 @@ class Facture extends CommonObject
 			}
 			else
 			{
-				dol_syslog("Facture::create error ".$this->error);
+				dol_syslog("Facture::create error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -324,7 +324,7 @@ class Facture extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Facture::create error ".$this->error." sql=".$sql);
+			dol_syslog("Facture::create error ".$this->error." sql=".$sql, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -581,7 +581,7 @@ class Facture extends CommonObject
 				if ($result < 0)
 				{
 					$this->error=$this->db->error();
-					dol_syslog('Facture::Fetch Error '.$this->error);
+					dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 					return -3;
 				}
 				return 1;
@@ -589,14 +589,14 @@ class Facture extends CommonObject
 			else
 			{
 				$this->error='Bill with id '.$rowid.' not found sql='.$sql;
-				dol_syslog('Facture::Fetch Error '.$this->error);
+				dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('Facture::Fetch Error '.$this->error);
+			dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -940,7 +940,7 @@ class Facture extends CommonObject
 					if (! $this->db->query($sql))
 					{
 						$this->error=$this->db->error()." sql=".$sql;
-						dol_syslog("Facture.class::delete ".$this->error);
+						dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
 						$this->db->rollback();
 						return -5;
 					}
@@ -966,7 +966,7 @@ class Facture extends CommonObject
 					else
 					{
 						$this->error=$this->db->error()." sql=".$sql;
-						dol_syslog("Facture.class::delete ".$this->error);
+						dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
 						$this->db->rollback();
 						return -6;
 					}
@@ -974,7 +974,7 @@ class Facture extends CommonObject
 				else
 				{
 					$this->error=$this->db->error()." sql=".$sql;
-					dol_syslog("Facture.class::delete ".$this->error);
+					dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -4;
 				}
@@ -982,7 +982,7 @@ class Facture extends CommonObject
 			else
 			{
 				$this->error=$this->db->error()." sql=".$sql;
-				dol_syslog("Facture.class::delete ".$this->error);
+				dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -3;
 			}
@@ -990,7 +990,7 @@ class Facture extends CommonObject
 		else
 		{
 			$this->error=$this->db->error()." sql=".$sql;
-			dol_syslog("Facture.class::delete ".$this->error);
+			dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -1746,7 +1746,7 @@ class Facture extends CommonObject
 		if (! $result)
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Facture::Deleteline Error ".$this->error);
+			dol_syslog("Facture::Deleteline Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1758,7 +1758,7 @@ class Facture extends CommonObject
 		if (! $result)
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Facture::Deleteline  Error ".$this->error);
+			dol_syslog("Facture::Deleteline  Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -2421,7 +2421,7 @@ class Facture extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Facture::list_replacable_invoices ".$this->error);
+			dol_syslog("Facture::list_replacable_invoices ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -2474,7 +2474,7 @@ class Facture extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Facture::list_avoir_invoices ".$this->error);
+			dol_syslog("Facture::list_avoir_invoices ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -3099,7 +3099,7 @@ class FactureLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("FactureLigne::update_total Error ".$this->error);
+			dol_syslog("FactureLigne::update_total Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}

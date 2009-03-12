@@ -130,7 +130,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		if ($type == 'supplier') $sql.= "code_compta_fournisseur";
 		$sql.= " = '".$code."'";
 		$sql.= " AND rowid != ".$societe->id;
-	  
+
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -148,7 +148,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		else
 		{
 			$this->error=$db->error()." sql=".$sql;
-			dol_syslog("mod_codecompta_aquarium::verif error".$this->error);
+			dol_syslog("mod_codecompta_aquarium::verif error".$this->error, LOG_ERR);
 			return -1;		// Erreur
 		}
 	}

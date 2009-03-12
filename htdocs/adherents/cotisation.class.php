@@ -45,7 +45,7 @@ class Cotisation extends CommonObject
 	var $note;
 	var $fk_bank;
 
-	
+
 	/**
 			\brief Cotisation
 			\param DB				Handler base de données
@@ -69,7 +69,7 @@ class Cotisation extends CommonObject
 			$this->error="Error: Bad value for datef or dateh";
 			return -1;
 		}
-		
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, datef, cotisation, note)";
         $sql.= " VALUES (".$this->fk_adherent.", ".$this->db->idate(mktime()).",";
 		$sql.= " ".$this->db->idate($this->dateh).",";
@@ -85,7 +85,7 @@ class Cotisation extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog($this->error);
+			dol_syslog($this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -149,7 +149,7 @@ class Cotisation extends CommonObject
 	function update($user,$notrigger=0)
 	{
 		$this->db->begin();
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."cotisation SET ";
 		$sql .= " fk_adherent = ".$this->fk_adherent.",";
 		$sql .= " note=".($this->note ? "'".addslashes($this->note)."'" : 'null').",";
@@ -175,7 +175,7 @@ class Cotisation extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dol_syslog("Cotisation::update ".$this->error);
+			dol_syslog("Cotisation::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -249,22 +249,22 @@ class Cotisation extends CommonObject
 	function getNomUrl($withpicto=0)
 	{
 		global $langs;
-		
+
 		$result='';
 
 		$lien = '<a href="'.DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$this->id.'">';
 		$lienfin='</a>';
-		
+
 		$picto='payment';
 		$label=$langs->trans("ShowSubscription");
-		
+
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$lien.$this->ref.$lienfin;
 		return $result;
 	}
-	
-	
+
+
     /**
      *      \brief     Charge les informations d'ordre info dans l'objet cotisation
      *      \param     id       Id adhesion a charger
@@ -275,7 +275,7 @@ class Cotisation extends CommonObject
 		$sql.= ' '.$this->db->pdate('c.tms').' as datem';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'cotisation as c';
 		$sql.= ' WHERE c.rowid = '.$id;
-		
+
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -295,6 +295,6 @@ class Cotisation extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
-	}	
+	}
 }
 ?>
