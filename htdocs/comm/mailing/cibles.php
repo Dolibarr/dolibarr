@@ -342,21 +342,21 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	{
 		$num = $db->num_rows($resql);
 
-		$addu = "&amp;id=".$mil->id;
-		if ($search_nom)    $addu.= "&amp;search_nom=".urlencode($search_nom);
-		if ($search_prenom) $addu.= "&amp;search_prenom=".urlencode($search_prenom);
-		if ($search_email)  $addu.= "&amp;search_email=".urlencode($search_email);
+		$parm = "&amp;id=".$mil->id;
+		if ($search_nom)    $parm.= "&amp;search_nom=".urlencode($search_nom);
+		if ($search_prenom) $parm.= "&amp;search_prenom=".urlencode($search_prenom);
+		if ($search_email)  $parm.= "&amp;search_email=".urlencode($search_email);
 
-		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$addu,$sortfield,$sortorder,"",$num,$mil->nbemail,'');
+		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$parm,$sortfield,$sortorder,"",$num,$mil->nbemail,'');
 
-		if ($page)			$addu.= "&amp;page=".$page;
+		if ($page)			$parm.= "&amp;page=".$page;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"mc.email",$addu,"","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"mc.nom",$addu,"","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"mc.prenom",$addu,"","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("OtherInformations"),$_SERVER["PHP_SELF"],"",$addu,"","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"],"",$addu,"",'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"mc.email",$parm,"","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"mc.nom",$parm,"","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"mc.prenom",$parm,"","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("OtherInformations"),$_SERVER["PHP_SELF"],"",$parm,"","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"],"",$parm,"",'align="center"',$sortfield,$sortorder);
 
 		// Date
 		if ($mil->statut < 2)
@@ -365,11 +365,11 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		}
 		else
 		{
-			print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"mc.date_envoi",$addu,'','align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"mc.date_envoi",$parm,'','align="center"',$sortfield,$sortorder);
 		}
 
 		// Statut
-		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"mc.statut",$addu,'','align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"mc.statut",$parm,'','align="right"',$sortfield,$sortorder);
 
 		print '</tr>';
 
@@ -419,7 +419,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 				if ($obj->statut == 0)
 				{
 					print '<td align="center">&nbsp;</td>';
-					print '<td align="right">'.$langs->trans("MailingStatusNotSent").' <a href="cibles.php?action=delete&id='.$mil->id.'&rowid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveRecipient")).'</td>';
+					print '<td align="right">'.$langs->trans("MailingStatusNotSent").' <a href="cibles.php?action=delete&rowid='.$obj->rowid.$parm.'">'.img_delete($langs->trans("RemoveRecipient")).'</td>';
 				}
 				else
 				{
