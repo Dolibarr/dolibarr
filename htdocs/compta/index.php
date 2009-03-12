@@ -464,7 +464,7 @@ if ($conf->tax->enabled)
 			}
 			else
 			{
-				print '<tr colspan="2" '.$bc[$var].'><td>'.$langs->trans("None").'</td></tr>';
+				print '<tr colspan="5" '.$bc[$var].'><td>'.$langs->trans("None").'</td></tr>';
 			}
 			print "</table><br>";
 			$db->free($resql);
