@@ -11,6 +11,7 @@ doc/dev/dbmodel
 doc/dev/normes
 doc/dev/html
 doc/dev/iso-normes
+doc/dev/xdebug
 doc/plaquette
 doc/wiki
 document
