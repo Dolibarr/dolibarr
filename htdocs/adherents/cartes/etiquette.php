@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ if (!isset($annee)){
 }
 
 // requete en prenant que les adherents a jour de cotisation
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin,";
+$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.datefin,";
 $sql.= " d.adresse, d.cp, d.ville, d.naiss, d.email, d.photo,";
 $sql.= " t.libelle as type,";
 $sql.= " p.libelle as pays";
@@ -80,7 +80,7 @@ if ($result)
 	{
 		$objp = $db->fetch_object($result);
 		// imprime le texte specifique sur la carte
-		$message=sprintf("%s\n%s\n%s %s\n%s", ucfirst(strtolower($objp->prenom))." ".strtoupper($objp->nom), ucwords(strtolower($objp->adresse)), $objp->cp, strtoupper($objp->ville), ucfirst(strtolower($objp->pays)));
+		$message=sprintf("%s\n%s\n%s %s\n%s", $objp->prenom." ".$objp->nom, $objp->adresse, $objp->cp, $objp->ville, $objp->pays);
 		$pdf->Add_PDF_card($message,'','',$langs);
 		$i++;
 	}
@@ -88,18 +88,18 @@ if ($result)
 	// Output to http strem
 	$pdf->Output($file);
 
-	if (! empty($conf->global->MAIN_UMASK)) 
+	if (! empty($conf->global->MAIN_UMASK))
 		@chmod($file, octdec($conf->global->MAIN_UMASK));
-		
+
 	$db->close();
 
 	clearstatcache();
-		
+
 	$attachment=true;
 	if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 	$filename='tmplabels.pdf';
 	$type=dol_mimetype($filename);
-	
+
 	if ($encoding)   header('Content-Encoding: '.$encoding);
 	if ($type)       header('Content-Type: '.$type);
 	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
