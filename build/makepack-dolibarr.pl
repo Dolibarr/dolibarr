@@ -10,8 +10,8 @@ use Cwd;
 
 $PROJECT="dolibarr";
 $MAJOR="2";
-$MINOR="5";
-$BUILD="1";				# Mettre x pour release, ou x-beta pour beta
+$MINOR="6";
+$BUILD="0-beta";				# Mettre x pour release, ou x-beta pour beta
 $RPMSUBVERSION="1";		# A incrementer au moment de la release
 
 @LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE");   # Possible packages
