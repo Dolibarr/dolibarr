@@ -138,6 +138,8 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($mesg) print "$mesg<br>";
 
+	$product_static=new Product($db);
+
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid'],$_GET["ref"]);
 
@@ -310,8 +312,7 @@ if ($id > 0 || ! empty($ref))
 	print '</table><br>';
 
 	/*
-	 * Lignes de propale
-	 *
+	 * Lines
 	 */
 	print '<table class="noborder" width="100%">';
 
@@ -350,30 +351,40 @@ if ($id > 0 || ! empty($ref))
 		{
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
+
+			// Show product and description
+			$type=$objp->product_type?$objp->product_type:$objp->fk_product_type;
+			// Try to enhance type detection using date_start and date_end for free lines where type
+			// was not saved.
+			if (! empty($objp->date_start)) $type=1;
+			if (! empty($objp->date_end)) $type=1;
+
 			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
 			{
 				print '<tr '.$bc[$var].'>';
 				if ($objp->fk_product > 0)
 				{
-					print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-					if ($objp->fk_product_type==1)
-					print img_object($langs->trans('ShowService'),'service');
-					else
-					print img_object($langs->trans('ShowProduct'),'product');
-					print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
-					if ($objp->date_start && $objp->date_end)
+					print '<td>';
+					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne;
+
+					// Show product and description
+					$product_static->type=$objp->fk_product_type;
+					$product_static->id=$objp->fk_product;
+					$product_static->ref=$objp->ref;
+					$product_static->libelle=$objp->product;
+					$text=$product_static->getNomUrl(1);
+					$text.= ' - '.$objp->product;
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
+					print $html->textwithtooltip($text,$description,3,'','',$i);
+
+					// Show range
+					print_date_range($objp->date_start,$objp->date_end);
+
+					// Add description in form
+					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{
-						print ' (Du '.dol_print_date($objp->date_start).' au '.dol_print_date($objp->date_end).')';
+						print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 					}
-					if ($objp->date_start && ! $objp->date_end)
-					{
-						print ' (A partir du '.dol_print_date($objp->date_start).')';
-					}
-					if (! $objp->date_start && $objp->date_end)
-					{
-						print " (Jusqu'au ".dol_print_date($objp->date_end).')';
-					}
-					print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
 					print '</td>';
 				}
 				else
@@ -401,19 +412,12 @@ if ($id > 0 || ! empty($ref))
 					}
 					else
 					{
-						print nl2br($objp->description);
-						if ($objp->date_start && $objp->date_end)
-						{
-							print ' (Du '.dol_print_date($objp->date_start).' au '.dol_print_date($objp->date_end).')';
-						}
-						if ($objp->date_start && ! $objp->date_end)
-						{
-							print ' (A partir du '.dol_print_date($objp->date_start).')';
-						}
-						if (! $objp->date_start && $objp->date_end)
-						{
-							print " (Jusqu'au ".dol_print_date($objp->date_end).')';
-						}
+						if ($type==1) $text = img_object($langs->trans('Service'),'service');
+						else $text = img_object($langs->trans('Product'),'product');
+						print $text.' '.nl2br($objp->description);
+
+						// Show range
+						print_date_range($objp->date_start,$objp->date_end);
 					}
 					print "</td>\n";
 				}

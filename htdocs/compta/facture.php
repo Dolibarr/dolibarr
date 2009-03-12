@@ -976,10 +976,12 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	$fac = new Facture($db,'',$_POST['facid']);
 	if (! $fac->fetch($_POST['facid']) > 0) dol_print_error($db);
 
+	// Clean parameters
 	$date_start='';
 	$date_end='';
 	$date_start=dol_mktime($_POST['date_start'.$suffixe.'hour'],$_POST['date_start'.$suffixe.'min'],$_POST['date_start'.$suffixe.'sec'],$_POST['date_start'.$suffixe.'month'],$_POST['date_start'.$suffixe.'day'],$_POST['date_start'.$suffixe.'year']);
 	$date_end=dol_mktime($_POST['date_end'.$suffixe.'hour'],$_POST['date_end'.$suffixe.'min'],$_POST['date_end'.$suffixe.'sec'],$_POST['date_end'.$suffixe.'month'],$_POST['date_end'.$suffixe.'day'],$_POST['date_end'.$suffixe.'year']);
+	$description=dol_htmlcleanlastbr($_POST['desc']);
 
 	// Define info_bits
 	$info_bits=0;
@@ -992,27 +994,27 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	// Check parameters
 	if (empty($_POST['productid']) && $_POST["type"] < 0)
 	{
-		$fac->error = $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")) ;
+		$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
 		$result = -1 ;
 	}
 	// Check minimum price
 	if(! empty($_POST['productid']))
 	{
 		$productid = $_POST['productid'];
-		$pruduct = new Product($db);
-		$pruduct->fetch($productid);
-		$type=$pruduct->type;
+		$product = new Product($db);
+		$product->fetch($productid);
+		$type=$product->type;
 	}
-	if($pruduct->price_min && ($_POST['productid']!='') && (price2num($_POST['price'])*(1-price2num($_POST['remise_percent'])/100) < price2num($pruduct->price_min)))
+	if($product->price_min && ($_POST['productid']!='') && (price2num($_POST['price'])*(1-price2num($_POST['remise_percent'])/100) < price2num($product->price_min)))
 	{
-		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($pruduct->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>';
+		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($product->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>';
 		$result=-1;
 	}
 
 	// Define params
 	if (! empty($_POST['productid']))
 	{
-		$type=$pruduct->type;
+		$type=$product->type;
 	}
 	else
 	{
@@ -1023,7 +1025,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	if ($result >= 0)
 	{
 		$result = $fac->updateline($_POST['rowid'],
-		$_POST['desc'],
+		$description,
 		$_POST['price'],
 		$_POST['qty'],
 		$_POST['remise_percent'],
@@ -2682,7 +2684,7 @@ else
 
 
 			/*
-			 * Lines of invoice
+			 * Lines
 			 */
 			$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_taux,';
 			$sql.= ' l.fk_remise_except,';

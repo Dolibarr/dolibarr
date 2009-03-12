@@ -132,6 +132,8 @@ if ($id > 0 || ! empty($ref))
 	{
 		$commande->loadExpeditions(1);
 
+		$product_static=new Product($db);
+
 		$soc = new Societe($db);
 		$soc->fetch($commande->socid);
 
@@ -225,7 +227,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans('Date').'</td>';
 		print '<td colspan="2">'.dol_print_date($commande->date,'daytext').'</td>';
 		print '<td width="50%">'.$langs->trans('Source').' : '.$commande->getLabelSource();
-		if ($commande->source == 0)
+		if ($commande->source == 0 && $conf->propal->enabled && $commande->propale_id)
 		{
 			// Si source = propal
 			$propal = new Propal($db);
@@ -269,11 +271,11 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DeliveryAddress');
 			print '</td>';
-	
+
 			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
-	
+
 			if ($_GET['action'] == 'editdelivery_adress')
 			{
 				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
@@ -284,7 +286,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			print '</td></tr>';
 		}
-		
+
 		// Conditions et modes de r�glement
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -371,14 +373,18 @@ if ($id > 0 || ! empty($ref))
 		 */
 		print '<table class="liste" width="100%">';
 
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.price, cd.tva_tx, cd.subprice,";
-		$sql.= " qty";
+		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type, cd.description, cd.price, cd.tva_tx, cd.subprice,";
+		$sql.= " cd.qty,";
+		$sql.= ' '.$db->pdate('cd.date_start').' as date_start,';
+		$sql.= ' '.$db->pdate('cd.date_end').' as date_end,';
+		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
+		$sql.= ' p.description as product_desc';
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql.= " WHERE cd.fk_commande = ".$commande->id;
 		// $sql.= " AND p.fk_product_type <> 1";		Why this line ?
 		$sql.= " GROUP by cd.rowid, cd.fk_product";
-		$sql.= " ORDER BY cd.rowid";
+		$sql.= " ORDER BY cd.rang, cd.rowid";
 
 		//print $sql;
 		dol_syslog("commande.php sql=".$sql, LOG_DEBUG);
@@ -407,28 +413,36 @@ if ($id > 0 || ! empty($ref))
 			$reste_a_livrer = array();
 			while ($i < $num)
 			{
-				$product = new Product($db);
-
 				$objp = $db->fetch_object($resql);
-
 				$var=!$var;
+
+				// Show product and description
+				$type=$objp->product_type?$objp->product_type:$objp->fk_product_type;
+				// Try to enhance type detection using date_start and date_end for free lines where type
+				// was not saved.
+				if (! empty($objp->date_start)) $type=1;
+				if (! empty($objp->date_end)) $type=1;
+
 				print "<tr ".$bc[$var].">";
 				if ($objp->fk_product > 0)
 				{
 					print '<td>';
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
-					$product->fetch($objp->fk_product);
-					// LDR Add a product line from object product
-					$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$product->id.'">';
-					if ($product->type==1) $text.= img_object($langs->trans('ShowService'),'service');
-					else $text.= img_object($langs->trans('ShowProduct'),'product');
-					$text.= ' '.$product->ref.'</a>';
-					$text.= ' - '.$product->libelle;
+					// Show product and description
+					$product_static->type=$objp->fk_product_type;
+					$product_static->id=$objp->fk_product;
+					$product_static->ref=$objp->ref;
+					$product_static->libelle=$objp->product;
+					$text=$product_static->getNomUrl(1);
+					$text.= ' - '.$objp->product;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 					print $html->textwithtooltip($text,$description,3,'','',$i);
-					// Print the start and end dates
+
+					// Show range
 					print_date_range($objp->date_start,$objp->date_end);
+
+					// Add description in form
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{
 						print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
@@ -438,7 +452,14 @@ if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					print "<td>".nl2br($objp->description)."</td>\n";
+					print "<td>";
+					if ($type==1) $text = img_object($langs->trans('Service'),'service');
+					else $text = img_object($langs->trans('Product'),'product');
+					print $text.' '.nl2br($objp->description);
+
+					// Show range
+					print_date_range($objp->date_start,$objp->date_end);
+					print "</td>\n";
 				}
 
 				print '<td align="center">'.$objp->qty.'</td>';

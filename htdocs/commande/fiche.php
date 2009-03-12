@@ -289,6 +289,19 @@ if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
  */
 if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 {
+	$result=0;
+
+	if (empty($_POST['idprod']) && $_POST["type"] < 0)
+	{
+		$fac->error = $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")) ;
+		$result = -1 ;
+	}
+	if (empty($_POST['idprod']) && empty($_POST["pu"]))
+	{
+		$fac->error = $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")) ;
+		$result = -1 ;
+	}
+
 	if ($_POST['qty'] && (($_POST['pu'] != '' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
 		$commande = new Commande($db);
@@ -348,6 +361,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			$desc = $prod->description;
 			$desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br>":"\n") : "";
 			$desc.= $_POST['np_desc'];
+			$type = $prod->type;
 		}
 		else
 		{
@@ -355,48 +369,53 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			$tva_tx=eregi_replace('\*','',$_POST['tva_tx']);
 			$tva_npr=eregi('\*',$_POST['tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
+			$type=$_POST["type"];
 		}
 		$desc=dol_htmlcleanlastbr($desc);
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		if($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
+		if ($result >= 0)
 		{
-			$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
-		}
-		else
-		{
-			// Insert line
-			$result = $commande->addline(
-			$_POST['id'],
-			$desc,
-			$pu_ht,
-			$_POST['qty'],
-			$tva_tx,
-			$_POST['idprod'],
-			$_POST['remise_percent'],
-			$info_bits,
-			0,
-			$price_base_type,
-			$pu_ttc,
-			$date_start,
-			$date_end
-			);
-
-			if ($result > 0)
+			if($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
 			{
-				$outputlangs = $langs;
-				if (! empty($_REQUEST['lang_id']))
-				{
-					$outputlangs = new Translate("",$conf);
-					$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-				}
-				commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+				$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
 			}
 			else
 			{
-				$mesg='<div class="error">'.$commande->error.'</div>';
+				// Insert line
+				$result = $commande->addline(
+				$_POST['id'],
+				$desc,
+				$pu_ht,
+				$_POST['qty'],
+				$tva_tx,
+				$_POST['idprod'],
+				$_POST['remise_percent'],
+				$info_bits,
+				0,
+				$price_base_type,
+				$pu_ttc,
+				$date_start,
+				$date_end,
+				$type
+				);
+
+				if ($result > 0)
+				{
+					$outputlangs = $langs;
+					if (! empty($_REQUEST['lang_id']))
+					{
+						$outputlangs = new Translate("",$conf);
+						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+					}
+					commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+				}
+				else
+				{
+					$mesg='<div class="error">'.$commande->error.'</div>';
+				}
 			}
 		}
 	}
@@ -411,9 +430,11 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	if (! $commande->fetch($_POST['id']) > 0) dol_print_error($db);
 
 	// Clean parameters
-	$description=dol_htmlcleanlastbr($_POST['eldesc']);
+	$date_start='';
+	$date_end='';
 	$date_start=dol_mktime(0, 0, 0, $_POST['date_start'.$suffixe.'month'], $_POST['date_start'.$suffixe.'day'], $_POST['date_start'.$suffixe.'year']);
 	$date_end=dol_mktime(0, 0, 0, $_POST['date_end'.$suffixe.'month'], $_POST['date_end'.$suffixe.'day'], $_POST['date_end'.$suffixe.'year']);
+	$description=dol_htmlcleanlastbr($_POST['eldesc']);
 
 	// Define info_bits
 	$info_bits=0;
@@ -423,11 +444,37 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=eregi_replace('\*','',$vat_rate);
 
-	if ($pruduct->price_min && ($_POST['productid']!='') && ( price2num($_POST['pu'])*(1-price2num($_POST['elremise_percent'])/100) < price2num($pruduct->price_min)))
+	// Check parameters
+	if (empty($_POST['productid']) && $_POST["type"] < 0)
 	{
-		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($pruduct->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
+		$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
+		$result = -1 ;
+	}
+	// Check minimum price
+	if(! empty($_POST['productid']))
+	{
+		$productid = $_POST['productid'];
+		$product = new Product($db);
+		$product->fetch($productid);
+		$type=$product->type;
+	}
+	if ($product->price_min && ($_POST['productid']!='') && ( price2num($_POST['pu'])*(1-price2num($_POST['elremise_percent'])/100) < price2num($product->price_min)))
+	{
+		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($product->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
+		$result=-1;
+	}
+
+	// Define params
+	if (! empty($_POST['productid']))
+	{
+		$type=$product->type;
 	}
 	else
+	{
+		$type=$_POST["type"];
+	}
+
+	if ($result >= 0)
 	{
 		$result = $commande->updateline($_POST['elrowid'],
 		$description,
@@ -438,7 +485,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 		'HT',
 		$info_bits,
 		$date_start,
-		$date_end
+		$date_end,
+		$type
 		);
 
 		if ($result >= 0)
@@ -1110,6 +1158,8 @@ else
 	{
 		if ($mesg) print $mesg.'<br>';
 
+		$product_static=new Product($db);
+
 		$commande = new Commande($db);
 		$result=$commande->fetch($_GET['id'],$_GET['ref']);
 		if ($result > 0)
@@ -1402,17 +1452,15 @@ else
 			print "\n";
 
 			/*
-			 * Lignes de commandes
+			 * Lines
 			 */
-			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, ';
+			$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.description, l.price, l.qty, l.tva_tx, ';
 			$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits,';
 			$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
+			$sql.= ' '.$db->pdate('l.date_start').' as date_start,';
+			$sql.= ' '.$db->pdate('l.date_end').' as date_end,';
 			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid, ';
 			$sql.= ' p.description as product_desc';
-			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-			// Load start and end dates
-			$sql.= ','.$db->pdate('l.date_start').' as date_start,';
-			$sql.= ' '.$db->pdate('l.date_end').' as date_end';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 			$sql.= ' WHERE l.fk_commande = '.$commande->id;
@@ -1443,6 +1491,13 @@ else
 					$objp = $db->fetch_object($resql);
 					$var=!$var;
 
+					// Show product and description
+					$type=$objp->product_type?$objp->product_type:$objp->fk_product_type;
+					// Try to enhance type detection using date_start and date_end for free lines where type
+					// was not saved.
+					if (! empty($objp->date_start)) $type=1;
+					if (! empty($objp->date_end)) $type=1;
+
 					// Ligne en mode visu
 					if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
 					{
@@ -1452,17 +1507,20 @@ else
 							print '<td>';
 							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
-							// Affiche ligne produit
-							$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-							if ($objp->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
-							else $text.= img_object($langs->trans('ShowProduct'),'product');
-							$text.= ' '.$objp->ref.'</a>';
+							// Show product and description
+							$product_static->type=$objp->fk_product_type;
+							$product_static->id=$objp->fk_product;
+							$product_static->ref=$objp->ref;
+							$product_static->libelle=$objp->product;
+							$text=$product_static->getNomUrl(1);
 							$text.= ' - '.$objp->product;
 							$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 							print $html->textwithtooltip($text,$description,3,'','',$i);
-							// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-							// Print the start and end dates
+
+							// Show range
 							print_date_range($objp->date_start,$objp->date_end);
+
+							// Add description in form
 							if ($conf->global->PRODUIT_DESC_IN_FORM)
 							{
 								print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
@@ -1496,9 +1554,11 @@ else
 							}
 							else
 							{
-								print nl2br($objp->description);
-								// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-								// Print the start and end dates
+								if ($type==1) $text = img_object($langs->trans('Service'),'service');
+								else $text = img_object($langs->trans('Product'),'product');
+								print $text.' '.nl2br($objp->description);
+
+								// Show range
 								print_date_range($objp->date_start,$objp->date_end);
 							}
 							print '</td>';
@@ -1592,17 +1652,28 @@ else
 						print '<tr '.$bc[$var].'>';
 						print '<td>';
 						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+
+
+						// Show product and description
 						if ($objp->fk_product > 0)
 						{
 							print '<input type="hidden" name="productid" value="'.$objp->fk_product.'">';
-							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-							if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
-							else print img_object($langs->trans('ShowProduct'),'product');
-							print ' '.$objp->ref.'</a>';
-							print ' - '.nl2br($objp->product);
+							$product_static->type=$objp->fk_product_type;
+							$product_static->id=$objp->fk_product;
+							$product_static->ref=$objp->ref;
+							$product_static->libelle=$objp->product;
+							$text=$product_static->getNomUrl(1);
+							$text.= ' - '.$objp->product;
+							print $text;
 							print '<br>';
 						}
-						// editeur wysiwyg
+						else
+						{
+							print $html->select_type_of_lines($objp->product_type,'type',1);
+							if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
+						}
+
+						// Editor wysiwyg
 						if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 						{
 							require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1611,7 +1682,10 @@ else
 						}
 						else
 						{
-							print '<textarea name="eldesc" class="flat" cols="70" rows="1">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
+							print '<textarea name="eldesc" class="flat" cols="70" rows="'.ROWS_2.'">';
+							//print $objp->description;
+							print dol_htmlentitiesbr_decode($objp->description);
+							print '</textarea>';
 						}
 						print '</td>';
 						print '<td align="right">';

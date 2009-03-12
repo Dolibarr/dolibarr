@@ -893,6 +893,8 @@ if ($id > 0 || ! empty($ref))
 
 	if ($mesg) print $mesg."<br>";
 
+	$product_static=new Product($db);
+
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid'],$_GET['ref']);
 
@@ -1230,7 +1232,7 @@ if ($id > 0 || ! empty($ref))
 	print '</table><br>';
 
 	/*
-	 * Lignes de propale
+	 * Lines
 	 */
 	print '<table class="noborder" width="100%">';
 
@@ -1292,15 +1294,20 @@ if ($id > 0 || ! empty($ref))
 					print '<td>';
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne;
 
-					// Affiche ligne produit
-					$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-					if ($objp->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
-					else $text.= img_object($langs->trans('ShowProduct'),'product');
-					$text.= ' '.$objp->ref.'</a>';
+					// Show product and description
+					$product_static->type=$objp->fk_product_type;
+					$product_static->id=$objp->fk_product;
+					$product_static->ref=$objp->ref;
+					$product_static->libelle=$objp->product;
+					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$objp->product;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 					print $html->textwithtooltip($text,$description,3,'','',$i);
+
+					// Show range
 					print_date_range($objp->date_start,$objp->date_end);
+
+					// Add description in form
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{
 						print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
@@ -1333,7 +1340,11 @@ if ($id > 0 || ! empty($ref))
 					}
 					else
 					{
-						print nl2br($objp->description);
+						if ($type==1) $text = img_object($langs->trans('Service'),'service');
+						else $text = img_object($langs->trans('Product'),'product');
+						print $text.' '.nl2br($objp->description);
+
+						// Show range
 						print_date_range($objp->date_start,$objp->date_end);
 					}
 					print "</td>\n";
