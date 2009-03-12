@@ -297,15 +297,15 @@ if ($_GET['action'] == 'add_ligne')
 
 	if ($_POST['prodfournpriceid'])	// > 0 or -1
 	{
-		$nv_prod = new ProductFournisseur($db);
-		$idprod=$nv_prod->get_buyprice($_POST['prodfournpriceid'], $_POST['qty']);
+		$product = new ProductFournisseur($db);
+		$idprod=$product->get_buyprice($_POST['prodfournpriceid'], $_POST['qty']);
 		if ($idprod > 0)
 		{
-			$result=$nv_prod->fetch($idprod);
+			$result=$product->fetch($idprod);
 
 			// cas special pour lequel on a les meme reference que le fournisseur
-			// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
-			$label = $nv_prod->libelle;
+			// $label = '['.$product->ref.'] - '. $product->libelle;
+			$label = $product->libelle;
 
 			$societe='';
 			if ($facfou->socid)
@@ -314,10 +314,10 @@ if ($_GET['action'] == 'add_ligne')
 				$societe->fetch($facfou->socid);
 			}
 
-			$tvatx=get_default_tva($societe,$mysoc,$nv_prod->tva_tx);
-			$type = $nv_prod->type;
+			$tvatx=get_default_tva($societe,$mysoc,$product->tva_tx);
+			$type = $product->type;
 
-			$result=$facfou->addline($label, $nv_prod->fourn_pu, $tvatx, $_POST['qty'], $idprod);
+			$result=$facfou->addline($label, $product->fourn_pu, $tvatx, $_POST['qty'], $idprod);
 		}
 		if ($idprod == -1)
 		{
@@ -781,7 +781,7 @@ else
 
 
 			/*
-			 * Lines of invoice
+			 * Lines
 			 */
 			print '<br>';
 			print '<table class="noborder" width="100%">';
@@ -836,9 +836,15 @@ else
 					}
 
 					// Description - Editor wysiwyg
-					if (! $conf->produit->enabled || ! $fac->lignes[$i]->fk_product)
+					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 					{
-						print '<textarea class="flat" cols="70" rows="'.ROWS_2.'" name="label">'.$fac->lignes[$i]->description.'</textarea>';
+						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+						$doleditor=new DolEditor('label',$fac->lignes[$i]->description,200,'dolibarr_details');
+						$doleditor->Create();
+					}
+					else
+					{
+						print '<textarea name="eldesc" class="flat" cols="70" rows="'.ROWS_2.'">'.dol_htmlentitiesbr_decode($fac->lignes[$i]->description).'</textarea>';
 					}
 					print '</td>';
 

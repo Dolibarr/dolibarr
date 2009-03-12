@@ -78,7 +78,7 @@ class CommandeFournisseur extends Commande
 	 */
 	function fetch($id,$ref='')
 	{
-		$sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
+		$sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
 		$sql .= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
 		$sql .= " c.note, c.note_public, c.model_pdf,";
 		$sql .= " cm.libelle as methode_commande";
@@ -123,10 +123,11 @@ class CommandeFournisseur extends Commande
 			// Now load lines
 			$this->lignes = array();
 
-			$sql = "SELECT l.rowid, l.ref as ref_fourn, l.fk_product, l.label, l.description, l.qty,";
+			$sql = "SELECT l.rowid, l.ref as ref_fourn, l.fk_product, l.product_type, l.label, l.description,";
+			$sql.= " l.qty,";
 			$sql.= " l.tva_tx, l.remise_percent, l.subprice,";
 			$sql.= " l.total_ht, l.total_tva, l.total_ttc,";
-			$sql.= " p.rowid as product_id, p.ref, p.label as product";
+			$sql.= " p.rowid as product_id, p.ref, p.label as label, p.description as product_desc";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 			$sql.= " WHERE l.fk_commande = ".$this->id;
@@ -148,6 +149,7 @@ class CommandeFournisseur extends Commande
 
 					$ligne->id                  = $objp->rowid;
 					$ligne->desc                = $objp->description;  // Description ligne
+					$ligne->description         = $objp->description;  // Description ligne
 					$ligne->qty                 = $objp->qty;
 					$ligne->tva_tx              = $objp->tva_tx;
 					$ligne->subprice            = $objp->subprice;
@@ -155,10 +157,11 @@ class CommandeFournisseur extends Commande
 					$ligne->total_ht            = $objp->total_ht;
 					$ligne->total_tva           = $objp->total_tva;
 					$ligne->total_ttc           = $objp->total_ttc;
+					$ligne->product_type        = $objp->product_type;
 
-					$ligne->fk_product          = $objp->product_id;   // Id du produit
+					$ligne->fk_product          = $objp->fk_product;   // Id du produit
 					$ligne->libelle             = $objp->label;        // Label produit
-					$ligne->product_desc        = $objp->description;  // Description produit
+					$ligne->product_desc        = $objp->product_desc; // Description produit
 
 					$ligne->ref                 = $objp->ref;          // Reference
 					$ligne->ref_fourn           = $objp->ref_fourn;    // Reference supplier
@@ -745,19 +748,21 @@ class CommandeFournisseur extends Commande
 	/**
 	 *      \brief      Ajoute une ligne de commande
 	 *      \param      desc            	Description
-	 *      \param      pu              	Prix unitaire
-	 *      \param      qty             	Quantit�
+	 *      \param      pu              	Unit price
+	 *      \param      qty             	Quantity
 	 *      \param      txtva           	Taux tva
 	 *      \param      fk_product      	Id produit
 	 *      \param      remise_percent  	Remise
-	 *      \param      price_base_type	HT or TTC
-	 *      \param      int             	<=0 si ko, >0 si ok
+	 *      \param      price_base_type		HT or TTC
+	 * 		\param		pu_ttc				Unit price TTC
+	 * 		\param		type				Type of line (0=product, 1=service)
+	 *      \return     int             	<=0 if KO, >0 if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0)
 	{
 		global $langs,$mysoc;
 
-		dol_syslog("FournisseurCommande::addline $desc, $pu_ht, $qty, $txtva, $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc");
+		dol_syslog("FournisseurCommande::addline $desc, $pu_ht, $qty, $txtva, $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc, $type");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		// Clean parameters
@@ -778,11 +783,14 @@ class CommandeFournisseur extends Commande
 		}
 		$desc=trim($desc);
 
+		// Check parameters
 		if ($qty < 1 && ! $fk_product)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Product"));
 			return -1;
 		}
+		if ($type < 0) return -1;
+
 
 		if ($this->statut == 0)
 		{
@@ -799,6 +807,7 @@ class CommandeFournisseur extends Commande
 						$label = $prod->libelle;
 						$pu    = $prod->fourn_pu;
 						$ref   = $prod->ref_fourn;
+						$product_type = $prod->type;
 					}
 					if ($result == 0 || $result == -1)
 					{
@@ -820,6 +829,10 @@ class CommandeFournisseur extends Commande
 					$this->error=$this->db->error();
 					return -1;
 				}
+			}
+			else
+			{
+				$product_type = $type;
 			}
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
@@ -843,13 +856,14 @@ class CommandeFournisseur extends Commande
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
 			$sql.= " (fk_commande,label, description,";
-			$sql.= " fk_product,";
+			$sql.= " fk_product, product_type,";
 			$sql.= " qty, tva_tx, remise_percent, subprice, remise, ref,";
 			$sql.= " total_ht, total_tva, total_ttc";
 			$sql.= ")";
 			$sql.= " VALUES (".$this->id.", '" . addslashes($label) . "','" . addslashes($desc) . "',";
 			if ($fk_product) { $sql.= $fk_product.","; }
 			else { $sql.= "null,"; }
+			$sql.= "'".$product_type."',";
 			$sql.= "'".$qty."', ".$txtva.", ".$remise_percent.",'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."',";
 			$sql.= "'".price2num($total_ht)."',";
 			$sql.= "'".price2num($total_tva)."',";
@@ -1230,31 +1244,35 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *      \brief     Mets � jour une ligne de commande
-	 *      \param     rowid            Id de la ligne de facture
-	 *      \param     desc             Description de la ligne
-	 *      \param     pu               Prix unitaire
-	 *      \param     qty              Quantit�
-	 *      \param     remise_percent   Pourcentage de remise de la ligne
-	 *      \param     tva_tx           Taux TVA
-	 *	  \param	 info_bits		  Miscellanous informations
-	 *      \return    int              < 0 si erreur, > 0 si ok
+	 *      \brief     	Update line
+	 *      \param     	rowid           Id de la ligne de facture
+	 *      \param     	desc            Description de la ligne
+	 *      \param     	pu              Prix unitaire
+	 *      \param     	qty             Quantity
+	 *      \param     	remise_percent  Pourcentage de remise de la ligne
+	 *      \param     	tva_tx          Taux TVA
+	 *	  	\param		info_bits		Miscellanous informations
+	 *	  	\param		type			Type of line (0=product, 1=service)
+	 *      \return    	int             < 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0, $type=0)
 	{
-		dol_syslog("CommandeFournisseur::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva");
+		dol_syslog("CommandeFournisseur::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
 		{
 			$this->db->begin();
 
-			// Nettoyage param�tres
+			// Clean parameters
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
 			if (! $qty) $qty=1;
 			$pu = price2num($pu);
 			$txtva=price2num($txtva);
+
+			// Check parameters
+			if ($type < 0) return -1;
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -1282,14 +1300,15 @@ class CommandeFournisseur extends Commande
 			$sql.= ",remise_percent='".price2num($remise_percent)."'";
 			$sql.= ",tva_tx='".price2num($txtva)."'";
 			$sql.= ",qty='".price2num($qty)."'";
-			//if ($date_end) { $sql.= ",date_start='$date_end'"; }
-			//else { $sql.=',date_start=null'; }
-			//if ($date_end) { $sql.= ",date_end='$date_end'"; }
-			//else { $sql.=',date_end=null'; }
+			if ($date_end) { $sql.= ",date_start='$date_end'"; }
+			else { $sql.=',date_start=null'; }
+			if ($date_end) { $sql.= ",date_end='$date_end'"; }
+			else { $sql.=',date_end=null'; }
 			$sql.= ",info_bits='".$info_bits."'";
 			$sql.= ",total_ht='".price2num($total_ht)."'";
 			$sql.= ",total_tva='".price2num($total_tva)."'";
 			$sql.= ",total_ttc='".price2num($total_ttc)."'";
+			$sql.= ",product_type='".$type."'";
 			$sql.= " WHERE rowid = ".$rowid;
 
 			dol_syslog("CommandeFournisseur::updateline sql=".$sql);

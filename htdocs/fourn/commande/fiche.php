@@ -108,15 +108,15 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 		// Ecrase $txtva  par celui du produit
 		if ($_POST["idprodfournprice"])	// >0 or -1
 		{
-			$prodfournprice = new ProductFournisseur($db);
-			$idprod=$prodfournprice->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);
+			$product = new ProductFournisseur($db);
+			$idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);
 			if ($idprod > 0)
 			{
-				$prodfournprice->fetch($idprod);
+				$product->fetch($idprod);
 
 				// cas special pour lequel on a les meme reference que le fournisseur
 				// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
-				$label = $prodfournprice->libelle;
+				$label = $product->libelle;
 
 				$societe='';
 				if ($commande->socid)
@@ -125,24 +125,25 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 					$societe->fetch($commande->socid);
 				}
 
-				$desc = $prodfournprice->description;
-				$desc.= $prodfournprice->description && $_POST['np_desc'] ? "\n" : "";
+				$desc = $product->description;
+				$desc.= $product->description && $_POST['np_desc'] ? "\n" : "";
 				$desc.= $_POST['np_desc'];
 
-				$tva_tx	= get_default_tva($societe,$mysoc,$prodfournprice->tva_tx,$prodfournprice->id);
+				$tva_tx	= get_default_tva($societe,$mysoc,$product->tva_tx,$product->id);
+				$type = $product->type;
 
 				$result=$commande->addline(
 				$desc,
 				$pu,
 				$_POST['qty'],
 				$tva_tx,
-				$prodfournprice->id,
+				$product->id,
 				$_POST['idprodfournprice'],
-				$prodfournprice->fourn_ref,
+				$product->fourn_ref,
 				$_POST['remise_percent'],
-				'HT'
-					);
-
+				'HT',
+				$type
+				);
 			}
 			if ($idprod == -1)
 			{
@@ -152,7 +153,9 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 		}
 		else
 		{
-			$tauxtva = price2num($_POST['tva_tx']);
+			$type=$_POST["type"];
+			$desc=$_POST['dp_desc'];
+			$tva_tx = price2num($_POST['tva_tx']);
 			if (! $_POST['dp_desc'])
 			{
 				$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
@@ -161,14 +164,16 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 			{
 				if (!empty($_POST['pu']))
 				{
+					$price_base_type = 'HT';
 					$ht = price2num($_POST['pu']);
-					$result=$commande->addline($_POST['dp_desc'], $ht, $_POST['qty'], $tauxtva);
+					$result=$commande->addline($desc, $ht, $_POST['qty'], $tva_tx, 0, 0, '', $_POST['remise_percent'], $price_base_type, 0, $type);
 				}
 				else
 				{
 					$ttc = price2num($_POST['amountttc']);
 					$ht = $ttc / (1 + ($tauxtva / 100));
-					$result=$commande->addline($_POST['dp_desc'], $ht, $_POST['qty'], $tauxtva);
+					$price_base_type = 'HT';
+					$result=$commande->addline($desc, $ht, $_POST['qty'], $tva_tx, 0, 0, '', $_POST['remise_percent'], $price_base_type, $ttc, $type);
 				}
 			}
 		}
@@ -204,7 +209,10 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 	$_POST['pu'],
 	$_POST['qty'],
 	$_POST['remise_percent'],
-	$_POST['tva_tx']
+	$_POST['tva_tx'],
+	'HT',
+	0,
+	$_POST["type"]
 	);
 
 	if ($result	>= 0)
@@ -224,12 +232,6 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 	}
 }
 
-if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['cancel'] ==	$langs->trans('Cancel'))
-{
-	Header('Location: fiche.php?id='.$id);	  // Pour reaffichage de la	fiche en cours d'edition
-	exit;
-}
-
 if ($_REQUEST['action'] == 'confirm_deleteproductline' && ($_POST['confirm'] == 'yes' || empty($conf->global->PRODUIT_CONFIRM_DELETE_LINE)))
 {
 	if ($user->rights->fournisseur->commande->creer)
@@ -246,8 +248,6 @@ if ($_REQUEST['action'] == 'confirm_deleteproductline' && ($_POST['confirm'] == 
 		}
 		supplier_order_pdf_create($db, $id, $commande->modelpdf, $outputlangs);
 	}
-	Header('Location: fiche.php?id='.$id);
-	exit;
 }
 
 if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->valider)
@@ -479,15 +479,17 @@ $formorder = new FormOrder($db);
 
 $now=gmmktime();
 
-$id = $_GET['id'];
-$ref= $_GET['ref'];
+$productstatic = new Product($db);
+
+$id = $_REQUEST['id'];
+$ref= $_REQUEST['ref'];
 if ($id > 0 || ! empty($ref))
 {
 	//if ($mesg) print $mesg.'<br>';
 
 	$commande =	new	CommandeFournisseur($db);
 
-	$result=$commande->fetch($_GET['id'],$_GET['ref']);
+	$result=$commande->fetch($_REQUEST['id'],$_REQUEST['ref']);
 	if ($result >= 0)
 	{
 		$soc = new Societe($db);
@@ -516,7 +518,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action']	== 'valid')
 		{
-			$commande->date_commande=time();
+			$commande->date_commande=gmmktime();
 
 			// We check if number is temporary number
 			if (eregi('^\(PROV',$commande->ref)) $newref = $commande->getNextNumRef($soc);
@@ -668,7 +670,7 @@ if ($id > 0 || ! empty($ref))
 		else print '<br>';
 
 		/*
-		 * Lignes de commandes
+		 * Lines
 		 */
 		print '<table class="noborder" width="100%">';
 
@@ -704,36 +706,46 @@ if ($id > 0 || ! empty($ref))
 			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $commandline->id)
 			{
 				print '<tr '.$bc[$var].'>';
+
+				// Show product and description
+				print '<td>';
 				if ($commandline->fk_product > 0)
 				{
-					print '<td>';
 					print '<a name="'.$commandline->id.'"></a>'; // ancre pour retourner sur la ligne
 
-					// Affiche ligne produit
-					$text = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$commandline->fk_product.'">';
-					$text.= img_object($langs->trans('ShowProduct'),'product');
-					$text.= ' '.$commandline->ref_fourn.'</a>';
-					$text.= ' ('.$commandline->ref.')';
-					$text.= ' - '.$commandline->libelle;
-					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($commandline->product_desc));
+					$product_static=new ProductFournisseur($db);
+					$product_static->fetch($commandline->fk_product);
+					$text=$product_static->getNomUrl(1);
+					$text.= ' - '.$product_static->libelle;
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($commandline->description));
 					print $html->textwithtooltip($text,$description,3,'','',$i);
-					if ($conf->global->PRODUIT_DESC_IN_FORM)
-					{
-						print ($commandline->product_desc && $commandline->product_desc!=$commandline->libelle)?'<br>'.dol_htmlentitiesbr($commandline->product_desc):'';
-					}
 
-					print "</td>";
+					// Show range
+					print_date_range($commandline->date_start,$commandline->date_end);
+
+					// Add description in form
+					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 				}
-				else
+
+				// Description - Editor wysiwyg
+				if (! $commandline->fk_product)
 				{
-					print '<td>';
-					print '<a name="'.$commandline->id.'"></a>'; // ancre pour retourner sur la ligne
-					print nl2br($commandline->product_desc);
-					print '</td>';
+					if ($type==1) $text = img_object($langs->trans('Service'),'service');
+					else $text = img_object($langs->trans('Product'),'product');
+					print $text.' '.nl2br($commandline->description);
+
+					// Show range
+					print_date_range($commandline->date_start,$commandline->date_end);
 				}
+
+				print '</td>';
+
 				print '<td align="right" nowrap="nowrap">'.vatrate($commandline->tva_tx).'%</td>';
+
 				print '<td align="right" nowrap="nowrap">'.price($commandline->subprice)."</td>\n";
+
 				print '<td align="right" nowrap="nowrap">'.$commandline->qty.'</td>';
+
 				if ($commandline->remise_percent >	0)
 				{
 					print '<td align="right" nowrap="nowrap">'.dol_print_reduction($commandline->remise_percent,$langs)."</td>\n";
@@ -766,14 +778,14 @@ if ($id > 0 || ! empty($ref))
 			// Ligne en mode update
 			if ($_GET["action"]	== 'editline' && $user->rights->fournisseur->commande->creer && ($_GET["rowid"] == $commandline->id))
 			{
-				print '<form action="'.$_SERVER["PHP_SELF"].'#'.$commandline->id.'" method="post">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;etat=1&amp;ligne_id='.$commandline->id.'" method="post">';
 				print '<input type="hidden" name="action" value="updateligne">';
 				print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
 				print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 				print '<a name="'.$commandline->id.'"></a>'; // ancre pour retourner sur la ligne
-				if ($commandline->fk_product > 0)
+				if ($conf->produit->enabled && $commandline->fk_product > 0)
 				{
 					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$commandline->product_id.'">';
 					print img_object($langs->trans('ShowProduct'),'product');
@@ -782,7 +794,13 @@ if ($id > 0 || ! empty($ref))
 					print ' - '.nl2br($commandline->product);
 					print '<br>';
 				}
-				// Editor wysiwyg
+				else
+				{
+					print $html->select_type_of_lines($commandline->product_type,'type',1);
+					if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
+				}
+
+				// Description - Editor wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -791,7 +809,7 @@ if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					print '<textarea name="eldesc" class="flat" cols="70" rows="1">'.dol_htmlentitiesbr_decode($commandline->description).'</textarea>';
+					print '<textarea name="eldesc" class="flat" cols="70" rows="'.ROWS_2.'">'.dol_htmlentitiesbr_decode($commandline->description).'</textarea>';
 				}
 				print '</td>';
 				print '<td>';
@@ -827,7 +845,7 @@ if ($id > 0 || ! empty($ref))
 			// Add free products/services form
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
 			print '<input type="hidden"	name="action" value="addligne">';
-			print '<input type="hidden"	name="id" value="'.$comid.'">';
+			print '<input type="hidden"	name="id" value="'.$commande->id.'">';
 
 			$var=true;
 			print '<tr '.$bc[$var].'>';
@@ -883,8 +901,8 @@ if ($id > 0 || ! empty($ref))
 				print '</tr>';
 
 				print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
-				print '<input type="hidden" name="id" value="'.$id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
+				print '<input type="hidden" name="id" value="'.$commande->id.'">';
 
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';

@@ -92,9 +92,12 @@ alter table llx_propaldet add column  product_type		  integer    DEFAULT 0 after
 alter table llx_propaldet add column  date_start         datetime   DEFAULT NULL after product_type;
 alter table llx_propaldet add column  date_end           datetime   DEFAULT NULL after date_start;
 
-alter table llx_commande_fournisseur add column  product_type	integer    DEFAULT 0 after total_ttc;
-alter table llx_commande_fournisseur add column  date_start     datetime   DEFAULT NULL after product_type;
-alter table llx_commande_fournisseur add column  date_end       datetime   DEFAULT NULL after date_start;
+alter table llx_commande_fournisseurdet add column  product_type	integer    DEFAULT 0 after total_ttc;
+alter table llx_commande_fournisseurdet add column  date_start     datetime   DEFAULT NULL after product_type;
+alter table llx_commande_fournisseurdet add column  date_end       datetime   DEFAULT NULL after date_start;
+alter table llx_commande_fournisseur drop column  product_type;
+alter table llx_commande_fournisseur drop column  date_start;
+alter table llx_commande_fournisseur drop column  date_end;
 
 -- V4.1 delete from llx_projet_task where fk_projet not in (select rowid from llx_projet);
 -- V4.1 ALTER TABLE llx_projet_task ADD CONSTRAINT fk_projet_task_fk_projet FOREIGN KEY (fk_projet)    REFERENCES llx_projet (rowid);

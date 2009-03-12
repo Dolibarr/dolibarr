@@ -35,7 +35,7 @@ create table llx_commandedet
   total_ht           double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantité et incluant remise ligne et globale
   total_tva          double(24,8) DEFAULT 0,          -- Total TVA de la ligne toute quantité et incluant remise ligne et globale
   total_ttc          double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
-  product_type		  integer    DEFAULT 0,
+  product_type		 integer      DEFAULT 0,
   date_start         datetime     DEFAULT NULL,       -- date debut si service
   date_end           datetime     DEFAULT NULL,       -- date fin si service
   info_bits          integer      DEFAULT 0,          -- TVA NPR ou non
