@@ -279,7 +279,8 @@ class PDF_card extends FPDF {
 		$_PosX = $this->_Margin_Left+($this->_COUNTX*($this->_Width+$this->_X_Space));
 		$_PosY = $this->_Margin_Top+($this->_COUNTY*($this->_Height+$this->_Y_Space));
 
-		if ($this->_Avery_Name == "CARD") {
+		if ($this->_Avery_Name == "CARD")
+		{
 			$Tformat=$this->_Avery_Labels["CARD"];
 			//$this->_Pointille($_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
 			$this->_Croix($_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,10);
@@ -305,9 +306,11 @@ class PDF_card extends FPDF {
 				$this->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
 			}
 
-		}else{
+		}
+		else
+		{
 			$this->SetXY($_PosX+3, $_PosY+3);
-			$this->MultiCell($this->_Width, $this->_Line_Height, $texte);
+			$this->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($texte));
 		}
 		$this->_COUNTY++;
 

@@ -49,7 +49,7 @@ $patterns = array (
 '/%ANNEE%/'
 		   );
 
-		   
+
 $dir = $conf->adherent->dir_tmp;
 $file = $dir . "/tmpcard.pdf";
 
@@ -61,7 +61,7 @@ if (! file_exists($dir))
 		return 0;
 	}
 }
-				
+
 $pdf = new PDF_card('CARD', 1, 1);
 
 $pdf->Open();
@@ -74,7 +74,7 @@ if (!isset($annee)){
 }
 
 // requete en prenant que les adherents a jour de cotisation
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin,";
+$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.datefin,";
 $sql.= " d.adresse, d.cp, d.ville, d.naiss, d.email, d.photo,";
 $sql.= " t.libelle as type,";
 $sql.= " p.libelle as pays";
@@ -91,16 +91,17 @@ if ($result)
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
-		// attribut a remplacer
+
+		// List of values to scan for a replacement
 		$replace = array (
-		ucfirst(strtolower($objp->prenom)),
-		strtoupper($objp->nom),
+		$objp->prenom,
+		$objp->nom,
 		"http://".$_SERVER["SERVER_NAME"]."/",
 		$objp->societe,
-		ucwords(strtolower($objp->adresse)),
+		$objp->adresse,
 		$objp->cp,
-		strtoupper($objp->ville),
-		ucfirst(strtolower($objp->pays)),
+		$objp->ville,
+		$objp->pays,
 		$objp->email,
 		$objp->naiss,
 		$objp->photo,
@@ -118,19 +119,19 @@ if ($result)
 
 	// Output to http strem
 	$pdf->Output($file);
-	
-	if (! empty($conf->global->MAIN_UMASK)) 
+
+	if (! empty($conf->global->MAIN_UMASK))
 		@chmod($file, octdec($conf->global->MAIN_UMASK));
-	
+
 	$db->close();
 
 	clearstatcache();
-		
+
 	$attachment=true;
 	if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 	$filename='tmpcards.pdf';
 	$type=dol_mimetype($filename);
-	
+
 	if ($encoding)   header('Content-Encoding: '.$encoding);
 	if ($type)       header('Content-Type: '.$type);
 	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
