@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +19,10 @@
  */
 
 /**
- \file       htdocs/compta/paiement/cheque/pdf/pdf_blochet.class.php
- \ingroup    banque
- \brief      Fichier de la classe permettant de g�n�rer les bordereau de remise de cheque
- \version    $Id$
+ *	\file       htdocs/compta/paiement/cheque/pdf/pdf_blochet.class.php
+ *	\ingroup    banque
+ *	\brief      Fichier de la classe permettant de generer les bordereau de remise de cheque
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -195,10 +196,10 @@ class BordereauChequeBlochet extends FPDF
 		$pdf->Text(10, 35, $outputlangs->transnoentities("Owner"));
 
 		$pdf->SetFont('Arial','B',10);
-		$pdf->Text(32, 35, $this->account->proprio);
+		$pdf->Text(32, 35, $outputlangs->convToOutputCharset($this->account->proprio));
 
 		$pdf->SetFont('Arial','B',10);
-		$pdf->Text(32, 19, $this->number);
+		$pdf->Text(32, 19, $outputlangs->convToOutputCharset($this->number));
 
 		$pdf->SetFont('Arial','B',10);
 		$pdf->Text(32, 27, dol_print_date($this->date,"day",false,$outputlangs));
@@ -208,10 +209,10 @@ class BordereauChequeBlochet extends FPDF
 		$pdf->Text(10, 43, $outputlangs->transnoentities("Account"));
 
 		$pdf->SetFont('Arial','B',10);
-		$pdf->Text(32, 43, $this->account->code_banque);
-		$pdf->Text(51, 43, $this->account->code_guichet);
-		$pdf->Text(68, 43, $this->account->number);
-		$pdf->Text(104, 43, $this->account->cle_rib);
+		$pdf->Text(32,  43, $outputlangs->convToOutputCharset($this->account->code_banque));
+		$pdf->Text(51,  43, $outputlangs->convToOutputCharset($this->account->code_guichet));
+		$pdf->Text(68,  43, $outputlangs->convToOutputCharset($this->account->number));
+		$pdf->Text(104, 43, $outputlangs->convToOutputCharset($this->account->cle_rib));
 
 		$pdf->SetFont('Arial','',10);
 		$pdf->Text(114, 19, $outputlangs->transnoentities("Signature"));
