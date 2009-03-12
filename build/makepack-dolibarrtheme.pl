@@ -1,10 +1,10 @@
 #!/usr/bin/perl
-#----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
 # \file         build/makepack-dolibarrtheme.pl
-# \brief        Package builder (tgz, zip, rpm, deb, exe)
+# \brief        Script to build a theme Package for Dolibarr
 # \version      $Revision$
-# \author       (c)2005 Laurent Destailleur  <eldy@users.sourceforge.net>
-#----------------------------------------------------------------------------
+# \author       (c)2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+#-----------------------------------------------------------------------------
 
 use Cwd;
 
@@ -103,7 +103,7 @@ if (-d "/usr/src/RPM") {
     $RPMDIR="/usr/src/RPM";
 }
 
-$SOURCE="$DIR/../../dolibarr";
+$SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
 
 
@@ -224,9 +224,9 @@ if ($nboftargetok) {
     		unlink $FILENAMETGZ.tgz;
 #    		unlink $BUILDROOT/$FILENAMETGZ.tgz;
     		print "Compress $BUILDROOT/htdocs into $FILENAMETGZ.tgz...\n";
-   		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" htdocs";
+   		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" htdocs";
    		    $ret=`$cmd`;
-#        	$cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" htdocs\n";
+#        	$cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" htdocs\n";
 #        	$ret=`$cmd`;
             if ($OS =~ /windows/i) {
         		print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
@@ -252,7 +252,7 @@ if ($nboftargetok) {
     		$BUILDFIC="$FILENAME.spec";
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-    		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
+    		$ret=`tar --exclude-vcs --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
 
     		print "Move $FILENAMETGZ.tgz to $RPMDIR/SOURCES/$FILENAMETGZ.tgz\n";
     		$cmd="mv \"$BUILDROOT/$FILENAMETGZ.tgz\" \"$RPMDIR/SOURCES/$FILENAMETGZ.tgz\"";
