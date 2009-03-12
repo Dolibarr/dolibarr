@@ -1426,19 +1426,24 @@ class CommandeFournisseurLigne extends CommandeLigne
 	var $tva_tx;
 	var $subprice;
 	var $remise_percent;
+	var $desc;          	// Description ligne
+	var $fk_product;		// Id of predefined product
+	var $product_type = 0;	// Type 0 = product, 1 = Service
 	var $total_ht;
 	var $total_tva;
 	var $total_ttc;
-	var $fk_product;
-	var $desc;          // Description ligne
 
 	// From llx_product
 	var $libelle;       // Label produit
 	var $product_desc;  // Description produit
 
 	// From llx_product_fournisseur
-	var $ref_fourn;     // R�f�rence fournisseur
+	var $ref_fourn;     // Ref supplier
 
+
+	/**
+	 * Constructor
+	 */
 	function CommandeFournisseurLigne($DB)
 	{
 		$this->db= $DB;
@@ -1450,7 +1455,7 @@ class CommandeFournisseurLigne extends CommandeLigne
 	 */
 	function fetch($rowid)
 	{
-		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.description, cd.qty, cd.tva_tx,';
+		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.qty, cd.tva_tx,';
 		$sql.= ' cd.remise, cd.remise_percent, cd.subprice,';
 		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
@@ -1474,6 +1479,7 @@ class CommandeFournisseurLigne extends CommandeLigne
 			$this->total_ht         = $objp->total_ht;
 			$this->total_tva        = $objp->total_tva;
 			$this->total_ttc        = $objp->total_ttc;
+			$this->product_type     = $objp->product_type;
 
 			$this->ref	            = $objp->product_ref;
 			$this->product_libelle  = $objp->product_libelle;

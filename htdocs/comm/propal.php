@@ -657,6 +657,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			$desc = $prod->description;
 			$desc.= ($prod->description && $_POST['np_desc']) ? "\n" : "";
 			$desc.= $_POST['np_desc'];
+			$type = $prod->type;
 		}
 		else
 		{
@@ -664,6 +665,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			$tva_tx=eregi_replace('\*','',$_POST['np_tva_tx']);
 			$tva_npr=eregi('\*',$_POST['np_tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
+			$type=$_POST["type"];
 		}
 
 		$info_bits=0;
@@ -686,7 +688,8 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			$_POST['remise_percent'],
 			$price_base_type,
 			$pu_ttc,
-			$info_bits
+			$info_bits,
+			$type
 			);
 
 			if ($result > 0)

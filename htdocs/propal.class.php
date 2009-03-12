@@ -253,29 +253,29 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief     	Ajout d'un produit dans la proposition, en base
+	 *    	\brief     	Add new line in database
 	 * 		\param    	propalid        	Id de la propale
 	 * 		\param    	desc            	Description de la ligne
 	 * 		\param    	pu_ht              	Prix unitaire
-	 * 		\param    	qty             	Quantit�
-	 * 		\param    	txtva           	Taux de tva forc�, sinon -1
-	 *		\param    	fk_product      	Id du produit/service pred�fini
+	 * 		\param    	qty             	Quantite
+	 * 		\param    	txtva           	Taux de tva force, sinon -1
+	 *		\param    	fk_product      	Id du produit/service predefini
 	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
 	 * 		\param    	price_base_type		HT or TTC
 	 * 		\param    	pu_ttc             	Prix unitaire TTC
 	 * 		\param    	info_bits			Bits de type de lignes
-	 *    	\return    	int             	>0 si ok, <0 si ko
+	 *    	\return    	int             	>0 if OK, <0 if KO
 	 *    	\see       	add_product
 	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete d�fini
+	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0)
+	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0)
 	{
 		global $conf;
 
-		dol_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits");
+		dol_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->statut == 0)
@@ -343,6 +343,7 @@ class Propal extends CommonObject
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
+			$ligne->product_type=$type;
 
 			// Mise en option de la ligne
 			//if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty) $ligne->special_code=3;
@@ -2008,8 +2009,9 @@ class PropaleLigne
 	// From llx_propaldet
 	var $rowid;
 	var $fk_propal;
-	var $desc;          // Description ligne
-	var $fk_product;		// Id produit pr�d�fini
+	var $desc;          	// Description ligne
+	var $fk_product;		// Id produit predefini
+	var $product_type = 0;	// Type 0 = product, 1 = Service
 
 	var $qty;
 	var $tva_tx;
@@ -2113,15 +2115,18 @@ class PropaleLigne
 		dol_syslog("PropaleLigne::insert rang=".$this->rang);
 		$this->db->begin();
 
-		// Nettoyage parameteres
+		// Clean parameters
 		if (! $this->remise) $this->remise=0;
 		if (! $this->remise_percent) $this->remise_percent=0;
 		if (! $this->info_bits) $this->info_bits=0;
 
+		// Check parameters
+		if ($this->type < 0) return -1;
+
 		$rangtouse=$this->rang;
 		if ($rangtouse == -1)
 		{
-			// R�cup�re rang max de la propale dans $rangmax
+			// Get max value for rang
 			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'propaldet';
 			$sql.= ' WHERE fk_propal ='.$this->fk_propal;
 			$resql = $this->db->query($sql);
@@ -2140,13 +2145,14 @@ class PropaleLigne
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
-		$sql.= ' (fk_propal, description, fk_product, fk_remise_except, qty, tva_tx,';
+		$sql.= ' (fk_propal, description, fk_product, product_type, fk_remise_except, qty, tva_tx,';
 		$sql.= ' subprice, remise_percent, ';
 		$sql.= ' info_bits, ';
 		$sql.= ' total_ht, total_tva, total_ttc, marge_tx, marque_tx, special_code, rang)';
 		$sql.= " VALUES (".$this->fk_propal.",";
 		$sql.= " '".addslashes($this->desc)."',";
 		$sql.= " ".($this->fk_product?"'".$this->fk_product."'":"null").",";
+		$sql.= " '".$this->product_type."',";
 		$sql.= " ".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
 		$sql.= " ".price2num($this->qty).",";
 		$sql.= " ".price2num($this->tva_tx).",";
@@ -2166,7 +2172,6 @@ class PropaleLigne
 		$sql.= ')';
 
 		dol_syslog("PropaleLigne::insert sql=$sql");
-
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2177,7 +2182,7 @@ class PropaleLigne
 		else
 		{
 			$this->error=$this->db->error()." sql=".$sql;
-			dol_syslog("PropaleLigne::insert Error ".$this->error);
+			dol_syslog("PropaleLigne::insert Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -2223,7 +2228,7 @@ class PropaleLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("PropaleLigne::update Error ".$this->error);
+			dol_syslog("PropaleLigne::update Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -2256,7 +2261,7 @@ class PropaleLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("PropaleLigne::update_total Error ".$this->error);
+			dol_syslog("PropaleLigne::update_total Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
