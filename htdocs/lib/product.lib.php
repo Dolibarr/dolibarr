@@ -23,7 +23,7 @@
  *	\brief      Ensemble de fonctions de base pour le module produit et service
  * 	\ingroup	product
  *	\version    $Id$
- * 
+ *
  * 	Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
@@ -118,7 +118,9 @@ function product_prepare_head($product, $user)
 		}
 	}
 
-	// More tabs from modules
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
 	if (is_array($conf->tabs_modules['product']))
 	{
 		$i=0;

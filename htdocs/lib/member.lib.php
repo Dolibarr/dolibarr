@@ -28,19 +28,19 @@
 function member_prepare_head($member)
 {
 	global $langs, $conf, $user;
-	
+
 	$h = 0;
 	$head = array();
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$member->id;
 	$head[$h][1] = $langs->trans("MemberCard");
 	$head[$h][2] = 'general';
 	$h++;
-	
+
 	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
 	{
 		$langs->load("ldap");
-		
+
 		$head[$h][0] = DOL_URL_ROOT.'/adherents/ldap.php?id='.$member->id;
 		$head[$h][1] = $langs->trans("LDAPCard");
 		$head[$h][2] = 'ldap';
@@ -54,7 +54,7 @@ function member_prepare_head($member)
 		$head[$h][2] = 'subscription';
 		$h++;
 	}
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/note.php?id='.$member->id;
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
@@ -65,7 +65,9 @@ function member_prepare_head($member)
 	$head[$h][2] = 'info';
 	$h++;
 
-	// More tabs from modules
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
 	if (is_array($conf->tabs_modules['member']))
 	{
 		$i=0;
@@ -79,7 +81,7 @@ function member_prepare_head($member)
 			$h++;
 		}
 	}
-	
+
 	return $head;
 }
 

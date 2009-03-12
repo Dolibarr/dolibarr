@@ -22,7 +22,7 @@
  *	\brief      Ensemble de fonctions de base pour le module propal
  *	\ingroup    propal
  *	\version    $Id$
- * 
+ *
  * 	Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
@@ -86,7 +86,9 @@ function propal_prepare_head($propal)
 	$head[$h][2] = 'info';
 	$h++;
 
-	// More tabs from modules
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
 	if (is_array($conf->tabs_modules['propal']))
 	{
 		$i=0;
@@ -100,7 +102,7 @@ function propal_prepare_head($propal)
 			$h++;
 		}
 	}
-		
+
 	return $head;
 }
 

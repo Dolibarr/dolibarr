@@ -75,6 +75,7 @@ For developers:
 - Renamed all function dolibarr_xxx into dol_xxx to have same prefix everywhere.
 - Rewrite clone feature for supplier invoice to work like other clone features.
 - First change to manage a future feature "stock PMP value".
+- A module can add a new tab in third party view tabs.
 
 
 ***** Changelog for 2.5 compared to 2.4 *****

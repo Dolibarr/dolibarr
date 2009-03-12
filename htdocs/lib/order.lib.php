@@ -90,7 +90,9 @@ function commande_prepare_head($commande)
 	$head[$h][2] = 'info';
 	$h++;
 
-	// More tabs from modules
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
 	if (is_array($conf->tabs_modules['order']))
 	{
 		$i=0;

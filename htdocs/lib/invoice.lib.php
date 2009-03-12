@@ -31,7 +31,7 @@ function facture_prepare_head($fac)
 	global $langs, $conf;
 	$h = 0;
 	$head = array();
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
 	$head[$h][1] = $langs->trans('CardBill');
 	$head[$h][2] = 'compta';
@@ -73,7 +73,9 @@ function facture_prepare_head($fac)
 	$head[$h][2] = 'info';
 	$h++;
 
-	// More tabs from modules
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
 	if (is_array($conf->tabs_modules['invoice']))
 	{
 		$i=0;
@@ -87,7 +89,7 @@ function facture_prepare_head($fac)
 			$h++;
 		}
 	}
-	
+
 	return $head;
 }
 

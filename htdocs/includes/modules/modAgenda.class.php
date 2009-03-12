@@ -60,32 +60,36 @@ class modAgenda extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 0;
         $this->picto='calendar';
-    
+
         // Dir
         //----
         $this->dirs = array();
 		//$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
         //$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
-    
+
         // Config pages
         //-------------
         $this->config_page_url = array("agenda.php");
-    
+
         // Dependancies
         //-------------
         $this->depends = array();
         $this->requiredby = array();
         $this->langfiles = array("companies");
-    
+
         // Constantes
         //-----------
         $this->const = array();
-    
-        // Boites
-        //-------
+
+		// New pages on tabs
+		// -----------------
+        $this->tabs = array();
+
+		// Boxes
+        //------
         $this->boxes = array();
         $this->boxes[0][1] = "box_actions.php";
-    
+
         // Permissions
         //------------
         $this->rights = array();
@@ -99,7 +103,7 @@ class modAgenda extends DolibarrModules
         // $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
         // $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 		// $r++;
-        
+
         $this->rights[$r][0] = 2401;
         $this->rights[$r][1] = 'Read actions/tasks linked to his account';
         $this->rights[$r][2] = 'r';
@@ -107,7 +111,7 @@ class modAgenda extends DolibarrModules
         $this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'read';
         $r++;
-       
+
         $this->rights[$r][0] = 2402;
         $this->rights[$r][1] = 'Create/modify/delete actions/tasks linked to his account';
         $this->rights[$r][2] = 'w';
@@ -115,7 +119,7 @@ class modAgenda extends DolibarrModules
         $this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'create';
         $r++;
-        
+
         $this->rights[$r][0] = 2403;
         $this->rights[$r][1] = 'Read actions/tasks of others';
         $this->rights[$r][2] = 'r';
@@ -123,7 +127,7 @@ class modAgenda extends DolibarrModules
         $this->rights[$r][4] = 'allactions';
         $this->rights[$r][5] = 'read';
         $r++;
-        
+
         $this->rights[$r][0] = 2405;
         $this->rights[$r][1] = 'Create/modify/delete actions/tasks of others';
         $this->rights[$r][2] = 'w';
@@ -135,10 +139,10 @@ class modAgenda extends DolibarrModules
         // Menus
 		//------
 		$r=0;
-		
+
 		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'Agenda','mainmenu'=>'agenda','leftmenu'=>'0','url'=>'/comm/action/index.php','langs'=>'commercial','position'=>100,'perms'=>'$user->rights->agenda->myactions->read','target'=>'','user'=>0);
 		$r++;
-		
+
 		// Exports
         //--------
         $r=0;
@@ -151,7 +155,7 @@ class modAgenda extends DolibarrModules
         // $this->export_sql[$r]           Requete sql qui offre les donnees a l'export
     }
 
-    
+
     /**
      *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
      *               Definit egalement les repertoires de donnees a creer pour ce module.
@@ -159,10 +163,10 @@ class modAgenda extends DolibarrModules
     function init()
     {
         $sql = array();
-        
+
         return $this->_init($sql);
     }
-    
+
     /**
      *    \brief      Fonction appelee lors de la desactivation d'un module.
      *                Supprime de la base les constantes, boites et permissions du module.
@@ -170,7 +174,7 @@ class modAgenda extends DolibarrModules
     function remove()
     {
 		$sql = array();
-    
+
 		return $this->_remove($sql);
     }
 

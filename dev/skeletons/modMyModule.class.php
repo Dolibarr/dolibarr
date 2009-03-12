@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,8 +90,18 @@ class modMyModule extends DolibarrModules
 		//Example: $this->const=array(0=>array('MODULE_MY_NEW_CONST1','chaine','myvalue','This is a constant to add',0),
 		//                            1=>array('MODULE_MY_NEW_CONST2','chaine','myvalue','This is another constant to add',0) );
 
-		// New pages on tabs
+		// Array to add new pages in new tabs
 		$this->tabs = array('entity:Title:@mymodule:/mymodule/mynewtab.php?id=__ID__');
+		// where entity can be
+		// 'thirdparty'       to add a tab in third party view
+		// 'intervention'     to add a tab in intervention view
+		// 'supplier_order'   to add a tab in supplier order view
+		// 'supplier_invoice' to add a tab in supplier invoice view
+		// 'invoice'          to add a tab in customer invoice view
+		// 'order'            to add a tab in customer order view
+		// 'product'          to add a tab in product view
+		// 'propal'           to add a tab in propal view
+		// 'member'           to add a tab in fundation member view
 
 
 		// Boxes

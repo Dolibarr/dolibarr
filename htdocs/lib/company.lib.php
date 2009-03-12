@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007      Patrick Raguin <patrick.raguin@gmail.com>
+ * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,10 @@
  */
 
 /**
- * Enter description here...
+ * Return array of tabs to used on pages for third parties cards.
  *
- * @param unknown_type $objsoc
- * @return unknown
+ * @param 	$objsoc		Object company shown
+ * @return 	array		Array of tabs
  */
 function societe_prepare_head($objsoc)
 {
@@ -120,12 +120,30 @@ function societe_prepare_head($objsoc)
 		$h++;
 	}
 
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
+	if (is_array($conf->tabs_modules['thirdparty']))
+    {
+        $i=0;
+        foreach ($conf->tabs_modules['thirdparty'] as $value)
+        {
+            $values=split(':',$value);
+            if ($values[2]) $langs->load($values[2]);
+            $head[$h][0] = eregi_replace('__ID__',$objsoc->id,$values[3]);
+            $head[$h][1] = $langs->trans($values[1]);
+            $head[$h][2] = 'tab'.$values[1];
+            $h++;
+        }
+    }
+
 	return $head;
 }
 
 
 /**
- * Enter description here...
+ * Return array of tabs to used on page
  *
  * @param unknown_type $objsoc
  * @return unknown
