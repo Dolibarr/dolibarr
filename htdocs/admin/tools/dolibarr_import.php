@@ -40,9 +40,9 @@ llxHeader('','','EN:Restores|FR:Restaurations|ES:Restauraciones');
 print_fiche_titre($langs->trans("Restore"),'','setup');
 print '<br>';
 
-print $langs->trans("RestoreDesc",DOL_DOCUMENT_ROOT).'<br><br>';
-print $langs->trans("RestoreDesc2",DOL_DOCUMENT_ROOT).'<br><br>';
-print $langs->trans("RestoreDesc3",DOL_DOCUMENT_ROOT).'<br><br>';
+print $langs->trans("RestoreDesc",DOL_DATA_ROOT).'<br><br>';
+print $langs->trans("RestoreDesc2",DOL_DATA_ROOT).'<br><br>';
+print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
 
 ?>
 
