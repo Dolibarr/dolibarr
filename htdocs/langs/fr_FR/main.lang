@@ -36,6 +36,7 @@ ErrorNoVATRateDefinedForSellerCountry=Erreur, aucun taux tva défini pour le pay
 ErrorFailedToSaveFile=Erreur, l'enregistrement du fichier a échoué.
 ErrorOnlyPngJpgSupported=Erreur, seuls les formats images .jpg et .png sont supportés.
 ErrorImageFormatNotSupported=Votre PHP ne supporte pas les fonctions de conversion de ce format d'image.
+GoToHelpPage=Consulter l'aide (peut nécessiter un accès internet) 
 RecordSaved=Enregistrement sauvegardé
 LevelOfFeature=Niveau de fonctionnalités
 NotDefined=Non défini

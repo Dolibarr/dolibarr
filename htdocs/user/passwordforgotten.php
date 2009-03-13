@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     
-        \file       htdocs/user/passwordforgotten.php
-        \brief      Page demande nouveau mot de passe
-        \version    $Id$
-*/
+/**
+ *       \file       htdocs/user/passwordforgotten.php
+ *       \brief      Page demande nouveau mot de passe
+ *       \version    $Id$
+ */
 
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
@@ -88,10 +88,10 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 {
 	require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
 	require_once ARTICHOW."/AntiSpam.class.php";
-	
+
 	// We create anti-spam object
 	$object = new AntiSpam();
-	
+
 	// Verify code
 	if (! $object->check('dol_antispam_value',$_POST['code'],true))
 	{
@@ -120,7 +120,7 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 			        // Failed
 			        $message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 			    }
-			    else 
+			    else
 			    {
 			        // Success
 			        if ($edituser->send_password($user,$newpassword,1) > 0)
@@ -145,7 +145,7 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 /*
  * Affichage page
  */
- 
+
 $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
 // Si feuille de style en php existe
 if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
@@ -198,7 +198,7 @@ print '<form id="login" action="'.$_SERVER["PHP_SELF"].'" method="post" name="lo
 print '<input type="hidden" name="action" value="buildnewpassword">'."\n";
 
 // Table 1
-print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="450">'."\n";
+print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="480">'."\n";
 if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 {
   print '<tr><td colspan="3" style="text-align:center;">';
@@ -217,7 +217,7 @@ if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') $disabled='';
 if ($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD) $disabled='';				// To force button enabled
 
 // Table 2
-print '<table cellpadding="2" align="center" width="450">'."\n";
+print '<table cellpadding="2" align="center" width="480">'."\n";
 
 print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
@@ -256,13 +256,13 @@ if (function_exists("imagecreatefrompng") && ! $disabled)
 	//print "Info session: ".session_name().session_id();print_r($_SESSION);
 	print '<tr><td align="left" valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
 	print '<td valign="top" nowrap="nowrap" align="left" class="e">';
-	
+
 	print '<table><tr>';
 	print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="2"></td>';
 	print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36"></td>';
 	print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>';
 	print '</tr></table>';
-	
+
 	print '</td>';
 	print '</tr>';
 }
@@ -290,7 +290,7 @@ else
 print '</td></tr></table><br>';
 
 if ($message)
-{ 
+{
 	print '<table width="90%"><tr><td align="center" style="font-size: 12px;">';
 	print $message.'</td></tr></table><br>';
 }

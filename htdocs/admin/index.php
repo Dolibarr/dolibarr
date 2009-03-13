@@ -51,14 +51,14 @@ print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo_2.png" alt="Doliba
 if ($mesg) print $mesg.'<br>';
 
 print "<br>";
-print $langs->trans("SetupDescription1")."<br>";
-print $langs->trans("AreaForAdminOnly").' '.img_picto($langs->trans("Administrator"),'star').'<br>';
+print $langs->trans("SetupDescription1").'<br>';
+print $langs->trans("AreaForAdminOnly").'<br>';
 
 print "<br>";
 print $langs->trans("SetupDescription2")."<br>";
 print "<br>";
 print img_picto('','puce').' '.$langs->trans("SetupDescription3")."<br>";
-print "<br>";
+//print "<br>";
 print img_picto('','puce').' '.$langs->trans("SetupDescription4")."<br>";
 print "<br>";
 

@@ -90,7 +90,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '</head>'."\n";
 
 	// Body
-	print '<body class="body" onload="donnefocus();">'."\n";
+	print '<body class="body" onload="donnefocus();">'."\n\n";
 
 	// Start Form
 	print '<form id="login" name="login" method="post" action="';
@@ -99,15 +99,15 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '">'."\n";
 
 	// Table 1
-	print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="450">';
 	$title='Dolibarr '.DOL_VERSION;
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
-	print '<tr class="vmenu"><td align="center">'.$title.'</td></tr>';
-	print '</table>';
-	print '<br>';
+	print '<table summary="'.$title.'" cellpadding="0" cellspacing="0" border="0" align="center" width="480">'."\n";;
+	print '<tr class="vmenu"><td align="center">'.$title.'</td></tr>'."\n";
+	print '</table>'."\n";
+	print '<br>'."\n\n";
 
 	// Table 2
-	print '<table cellpadding="2" align="center" width="450">';
+	print '<table summary="Login area" cellpadding="2" align="center" width="480">'."\n";
 
 	print '<tr><td colspan="3">&nbsp;</td></tr>';
 
@@ -117,10 +117,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<td align="left" valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
 	print '<td valign="bottom"><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="'.(isset($_REQUEST["username"])?$_REQUEST["username"]:'').'" tabindex="1" /></td>';
 
-	$title=$langs->trans("SessionName").': '.session_name();
-	if ($conf->main_authentication) $title.=", ".$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
-
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
+	$title='';
 	$width=0;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
 	if (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small))
@@ -132,11 +130,11 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
 		$width=96;
 	}
-	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
+	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
 	{
-		$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
+		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 	}
-	print '<td rowspan="2" align="center"><img title="'.$title.'" src="'.$urllogo.'"';
+	print '<td rowspan="2" align="center"><img alt="logo" title="'.$title.'" src="'.$urllogo.'"';
 	if ($width) print ' width="'.$width.'"';
 	print '></td>';
 	print '</tr>'."\n";
@@ -174,12 +172,12 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print '<tr><td colspan="3" align="center"><a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">('.$langs->trans("PasswordForgotten").')</a></td></tr>';
 	}
 
-	print '</table>';
+	print '</table>'."\n";
 
 	// Hidden fields
-	print '<input type="hidden" name="loginfunction" value="loginfunction" />';
+	print '<input type="hidden" name="loginfunction" value="loginfunction" />'."\n";
 
-	print '</form>';
+	print '</form>'."\n";
 
 	// Message
 	if (! empty($_SESSION["dol_loginmesg"]))
@@ -187,11 +185,11 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print '<center><table width="60%"><tr><td align="center" class="small"><div class="error">';
 		print $_SESSION["dol_loginmesg"];
 		$_SESSION["dol_loginmesg"]="";
-		print '</div></td></tr></table></center>';
+		print '</div></td></tr></table></center>'."\n";
 	}
 	if (! empty($conf->global->MAIN_HOME))
 	{
-		print '<center><table cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td align="center">';
+		print '<center><table summary="info" cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td align="center">';
 		$i=0;
 		while (eregi('__\(([a-zA-Z]+)\)__',$conf->global->MAIN_HOME,$reg) && $i < 100)
 		{
@@ -199,11 +197,13 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			$i++;
 		}
 		print nl2br($conf->global->MAIN_HOME);
-		print '</td></tr></table></center><br>';
+		print '</td></tr></table></center><br>'."\n";
 	}
 
 	print "\n";
-	print '<!-- urlfrom in session = '.(isset($_SESSION["urlfrom"])?$_SESSION["urlfrom"]:'').' -->';
+	print '<!-- authentication mode = '.$conf->main_authentication.' -->'."\n";
+	print '<!-- cookie name used for this session = '.session_name().' -->'."\n";
+	print '<!-- urlfrom in this session = '.(isset($_SESSION["urlfrom"])?$_SESSION["urlfrom"]:'').' -->'."\n";
 
 	// Fin entete html
 	print "\n</body>\n</html>";
