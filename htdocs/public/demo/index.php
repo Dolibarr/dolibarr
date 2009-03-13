@@ -198,7 +198,7 @@ print "\n";
 print '<table style="font-size:14px;" summary="List of Dolibarr demos">';
 
 print '<tr><td>';
-print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo_2.png" alt="Dolibarr logo"></center><br>';
+print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></center><br>';
 print '<br>';
 
 print $langs->trans("DemoDesc").'<br>';

@@ -46,7 +46,7 @@ $form = new Form($db);
 print_fiche_titre($langs->trans("SetupArea"),'','setup');
 
 print "<br>";
-print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo_2.png" alt="Dolibarr logo"></center><br>';
+print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></center><br>';
 
 if ($mesg) print $mesg.'<br>';
 

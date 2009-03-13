@@ -134,7 +134,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 	}
-	print '<td rowspan="2" align="center"><img alt="logo" title="'.$title.'" src="'.$urllogo.'"';
+	print '<td rowspan="2" align="center"><img alt="Logo" title="'.$title.'" src="'.$urllogo.'"';
 	if ($width) print ' width="'.$width.'"';
 	print '></td>';
 	print '</tr>'."\n";
