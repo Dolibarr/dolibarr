@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -159,7 +159,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
 	  $lien=img_tick().' ';
 	  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
-	  // Edition des varibales globales rattache au theme Mailman 
+	  // Edition des varibales globales rattache au theme Mailman
 	  $constantes=array('ADHERENT_MAILMAN_LISTS',
 			    'ADHERENT_MAILMAN_LISTS_COTISANT',
 			    'ADHERENT_MAILMAN_ADMINPW',
@@ -189,7 +189,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
 	  $lien=img_tick().' ';
 	  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
-	  // Edition des varibales globales rattache au theme Mailman 
+	  // Edition des varibales globales rattache au theme Mailman
 	  $constantes=array('ADHERENT_USE_SPIP_AUTO',
 			    'ADHERENT_SPIP_SERVEUR',
 			    'ADHERENT_SPIP_DB',
@@ -209,7 +209,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 }
 
 /*
- * Edition des varibales globales non rattache a un theme specifique 
+ * Edition des varibales globales non rattache a un theme specifique
  */
 $constantes=array(
 		  'ADHERENT_MAIL_VALID_SUBJECT',
@@ -231,7 +231,7 @@ print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';
 print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%,';
 //print '%INFOS%'; Deprecated
 print '<br>';
-			   
+
 form_constantes($constantes);
 
 
@@ -268,24 +268,24 @@ function form_constantes($tableau)
 			print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 			print '<input type="hidden" name="constname" value="'.$obj->name.'">';
 			print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
-			
+
 			print "<tr $bc[$var]>";
-			
+
 			// Affiche nom constante
 			print '<td>';
 			print $langs->trans("Desc".$obj->name) != ("Desc".$obj->name) ? $langs->trans("Desc".$obj->name) : $obj->note;
 			print "</td>\n";
-			
+
 			if ($obj->name == 'ADHERENT_ETIQUETTE_TYPE')
 			{
 				print '<td>';
-				// List of possible labels. Values must exists in 
+				// List of possible labels. Values must exists in
 				// file htdocs/adherents/PDF_Card.class.php
 				require_once(DOL_DOCUMENT_ROOT.'/includes/modules/member/PDF_card.class.php');
-				$pdfcard=new PDF_card('5160',1,1,'mm');
-				$arrayoflabels=array_keys($pdfcard->_Avery_Labels);
-				
-				$form->select_array('constvalue',$arrayoflabels,$obj->value);
+				$pdfcardstatic=new PDF_card('5160',1,1,'mm');
+				$arrayoflabels=array_keys($pdfcardstatic->_Avery_Labels);
+
+				$form->select_array('constvalue',$arrayoflabels,$obj->value,1,0,1);
 				print '</td><td>';
 				$form->select_array('consttype',array('yesno','texte','chaine'),1);
 			}
@@ -314,16 +314,16 @@ function form_constantes($tableau)
 				}
 				print '</td>';
 			}
-			
+
 			print '<td align="center">';
-			
+
 			print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
 			//      print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
 			print "</td></tr>\n";
-			
+
 			print '</form>';
 			$i++;
-		}    
+		}
 	}
 	print '</table>';
 }

@@ -179,18 +179,6 @@ class PDF_card extends FPDF {
 					     'width'=>99.1,
 					     'height'=>38.1,
 					     'font-size'=>10),
-			      'FREELUG'=>array('name'=>'FREELUG',
-					       'paper-size'=>'A4',
-					       'metric'=>'mm',
-					       'marginLeft'=>0,
-					       'marginTop'=>0,
-					       'NX'=>2,
-					       'NY'=>8,
-					       'SpaceX'=>0,
-					       'SpaceY'=>0,
-					       'width'=>105,
-					       'height'=>38,
-					       'font-size'=>10),
 			      'CARD'=>array('name'=>'CARD',
 					    'paper-size'=>'A4',
 					    'metric'=>'mm',
@@ -225,9 +213,13 @@ class PDF_card extends FPDF {
 			// Si c'est un format personnel alors on maj les valeurs
 			$Tformat = $format;
 		} else {
-			// Si c'est un format avery on stocke le nom de ce format selon la norme Avery.
-			// Permettra d'aller récupérer les valeurs dans le tableau _Avery_Labels
+			// If it's an Avery format, we get array that describe it from key and we store it in Tformat.
 			$Tformat = $this->_Avery_Labels[$format];
+			if (empty($Tformat))
+			{
+				dol_print_error('','Format value "'.$format.'" is not supported.');
+				exit;
+			}
 		}
 
 		parent::FPDF('P', $unit, $Tformat['paper-size']);
