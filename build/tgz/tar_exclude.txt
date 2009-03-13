@@ -4,6 +4,7 @@ dev/initdemo
 dev/ldap
 dev/load
 dev/skeletons/*socpeople*
+dev/xdebug
 doc/dev/dolibarr-phpdoc
 doc/dev/barcode
 doc/dev/compta
@@ -11,7 +12,6 @@ doc/dev/dbmodel
 doc/dev/normes
 doc/dev/html
 doc/dev/iso-normes
-doc/dev/xdebug
 doc/plaquette
 doc/wiki
 document
