@@ -70,9 +70,9 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DO
 
 insert into llx_const(name,value,type,visible,note) values('MAIN_FEATURES_LEVEL','0','chaine',1,'Level of features to show (0=stable only, 1=stable+experimental, 2=stable+experimental+development');
 
-insert into llx_const(name,value,type,visible,note) values('MAIN_SEARCHFORM_COMPANY' ,'1','yesno',0,'Show form for quick company search');
-insert into llx_const(name,value,type,visible,note) values('MAIN_SEARCHFORM_CONTACT' ,'1','yesno',0,'Show form for quick contact search');
-insert into llx_const(name,value,type,visible,note) values('MAIN_SEARCHFORM_PRODUCT' ,'1','yesno',0,'Show form for quick product search');
+insert into llx_const(name,value,type,visible,note) values('MAIN_SEARCHFORM_SOCIETE','1','yesno',0,'Show form for quick company search');
+insert into llx_const(name,value,type,visible,note) values('MAIN_SEARCHFORM_CONTACT','1','yesno',0,'Show form for quick contact search');
+insert into llx_const(name,value,type,visible,note) values('MAIN_SEARCHFORM_PRODUITSERVICE' ,'1','yesno',0,'Show form for quick product search');
 insert into llx_const(name,value,type,visible,note) values('MAIN_SEARCHFORM_ADHERENT','1','yesno',0,'Show form for quick member search');
 
 insert into llx_const(name,value,type,visible,note) values('SYSLOG_LEVEL','6','chaine',0,'Level of debug info to show');
