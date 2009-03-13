@@ -264,10 +264,13 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<input name="web" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
 	print '</td></tr>'."\n";
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("Gencod").'</td><td>';
-	print '<input name="gencod" size="40" value="'. $conf->global->MAIN_INFO_SOCIETE_GENCOD . '"></td></tr>';
-	print '</td></tr>';
+	if ($conf->barcode->enabled)
+	{
+		$var=!$var;
+		print '<tr '.$bc[$var].'><td>'.$langs->trans("Gencod").'</td><td>';
+		print '<input name="gencod" size="40" value="'. $conf->global->MAIN_INFO_SOCIETE_GENCOD . '"></td></tr>';
+		print '</td></tr>';
+	}
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
@@ -483,7 +486,13 @@ else
 	/*
 	 * Affichage des paramètres
 	 */
+
 	if ($message) print $message.'<br>';
+
+	// Actions buttons
+	//print '<div class="tabsAction">';
+	//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	//print '</div><br>';
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
@@ -524,8 +533,11 @@ else
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_SOCIETE_WEB) . '</td></tr>';
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Gencod").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_GENCOD . '</td></tr>';
+	if ($conf->barcode->enabled)
+	{
+		$var=!$var;
+		print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Gencod").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_GENCOD . '</td></tr>';
+	}
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>';
@@ -734,7 +746,7 @@ else
 	print "</table>";
 
 
-	// Boutons d'action
+	// Actions buttons
 	print '<div class="tabsAction">';
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 	print '</div>';

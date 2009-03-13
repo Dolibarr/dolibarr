@@ -73,8 +73,12 @@ print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
 print '<b>'.$langs->trans("StepNb",2).'</b>: ';
 print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
 print '<b>'.$langs->trans("StepNb",3).'</b>: ';
+print $langs->trans("RemoveLock",$dolibarrroot.'install.lock').'<br>';
+print '<b>'.$langs->trans("StepNb",4).'</b>: ';
 $fullurl='<a href="'.DOL_URL_ROOT.'/install'.'" target="_blank">'.DOL_URL_ROOT.'/install'.'</a>';
 print $langs->trans("CallUpdatePage",$fullurl).'<br>';
+print '<b>'.$langs->trans("StepNb",5).'</b>: ';
+print $langs->trans("RestoreLock",$dolibarrroot.'install.lock').'<br>';
 
 print '<br>';
 print '<br>';

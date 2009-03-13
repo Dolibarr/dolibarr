@@ -50,6 +50,8 @@ $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAI
 					$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_ADHERENT);
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),
 					$langs->trans("ProductsAndServices"),$langs->trans("Members"));
+$searchformmodule=array('Module1Name','Module1Name',
+					'Module50Name','Module310Name');
 
 
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
@@ -331,11 +333,13 @@ else
 
     // Liste des zone de recherche permanantes support�es
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td></tr>';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td><td>&nbsp;</td></tr>';
     $var=true;
     foreach ($searchform as $key => $value) {
         $var=!$var;
-        print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>' . ($searchformconst[$key]?$langs->trans("yes"):$langs->trans("no")) . '</td></tr>';
+        print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>' . ($searchformconst[$key]?$langs->trans("yes"):$langs->trans("no")).'</td>';
+		print '<td align="left">'.$langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
+        print '</td></tr>';
     }
     print '</table>';
     print '<br>';
