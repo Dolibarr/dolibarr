@@ -36,6 +36,7 @@ ErrorNoVATRateDefinedForSellerCountry = Error, cap tipus d'IVA definit per al pa
 ErrorFailedToSaveFile = Error, el registre del fitxer ha fallat.
 ErrorOnlyPngJpgSupported = Error, només estan suportats els formats d'imatge jpg i png.
 ErrorImageFormatNotSupported = El seu PHP no suporta les funcions de conversió d'aquest format d'imatge.
+GoToHelpPage=Consultar l'ajuda (pot requerir accés a Internet)
 RecordSaved = Registre guardat
 LevelOfFeature = Nivell de funcions
 NotDefined = No definida
