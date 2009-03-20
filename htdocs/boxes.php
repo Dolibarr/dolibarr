@@ -142,7 +142,7 @@ class InfoBox
 					{
 						foreach($box->depends as $module)
 						{
-							//							print $module.'<br>';
+							//print $boxname.'-'.$module.'<br>';
 							if (empty($conf->$module->enabled)) $enabled=false;
 						}
 					}

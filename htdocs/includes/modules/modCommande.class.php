@@ -43,7 +43,7 @@ class modCommande extends DolibarrModules
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acc�s base
+	 *   \param      DB      Database handler
 	 */
 	function modCommande($DB)
 	{
@@ -67,7 +67,7 @@ class modCommande extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("commande.php");
 
-		// D�pendances
+		// Dependancies
 		$this->depends = array("modCommercial");
 		$this->requiredby = array("modExpedition");
 		$this->conflictwith = array();

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -20,9 +20,9 @@
  */
 
 /**     \defgroup   commercial     Module commercial
-        \brief      Module pour gerer les fonctions commerciales
-		\version	$Id$
-*/
+ *      \brief      Module pour gerer les fonctions commerciales
+ *		\version	$Id$
+ */
 
 /**
         \file       htdocs/includes/modules/modCommercial.class.php
@@ -33,16 +33,16 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/** \class modCommercial
-        \brief      Classe de description et activation du module Commercial
-*/
+/** 	\class 		modCommercial
+ *      \brief      Classe de description et activation du module Commercial
+ */
 
 class modCommercial extends DolibarrModules
 {
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acc�s base
+    *   \param      DB      Database handler
     */
     function modCommercial($DB)
     {
@@ -64,7 +64,7 @@ class modCommercial extends DolibarrModules
         // Dir
         $this->dirs = array();
         
-        // D�pendances
+        // Dependancies
         $this->depends = array("modSociete");
         $this->requiredby = array("modPropale","modContrat","modCommande","modFicheinter");
         

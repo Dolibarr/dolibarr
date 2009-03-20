@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,11 @@
  */
 
 /**
-		\file       htdocs/includes/boxes/box_commandes.php
-		\ingroup    commande
-		\brief      Module de generation de l'affichage de la box commandes
-		\version	$Id$
-*/
+ *		\file       htdocs/includes/boxes/box_commandes.php
+ *		\ingroup    commande
+ *		\brief      Module de generation de l'affichage de la box commandes
+ *		\version	$Id$
+ */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
@@ -33,7 +33,7 @@ class box_commandes extends ModeleBoxes {
     var $boxcode="lastcustomerorders";
     var $boximg="object_order";
     var $boxlabel;
-    var $depends = array("commandes");
+    var $depends = array("commande");
 
 	var $db;
 	var $param;
