@@ -67,9 +67,10 @@ class DolibarrModules
 	/**
 	 *      \brief      Fonction d'activation. Insere en base les constantes et boites du module
 	 *      \param      array_sql       Tableau de requete sql a executer a l'activation
-	 *      \return     int             1 if OK, 0 if KO
+	 *      \param		options			Options when enabling module
+	 * 		\return     int             1 if OK, 0 if KO
 	 */
-	function _init($array_sql)
+	function _init($array_sql, $options='')
 	{
 		global $langs;
 		$err=0;
@@ -92,7 +93,7 @@ class DolibarrModules
 		if (! $err) $err+=$this->insert_const();
 
 		// Insere les boites dans llx_boxes_def
-		if (! $err) $err+=$this->insert_boxes();
+		if (! $err && $options != 'noboxes') $err+=$this->insert_boxes();
 
 		// Insere les permissions associees au module actif dans llx_rights_def
 		if (! $err) $err+=$this->insert_permissions();
@@ -134,7 +135,7 @@ class DolibarrModules
 			}
 		}
 
-		// Renvoi valeur de retour
+		// Return code
 		if (! $err)
 		{
 			$this->db->commit();
@@ -150,45 +151,60 @@ class DolibarrModules
 	/**
 	 *  \brief      Fonction de desactivation. Supprime de la base les constantes et boites du module
 	 *  \param      array_sql       tableau de requete sql a executer a la desactivation
+	 *  \param		options			Options when disabling module
 	 *  \return     int             1 if OK, 0 if KO
 	 */
-	function _remove($array_sql)
+	function _remove($array_sql, $options='')
 	{
-		$err = 0;
+		global $langs;
+		$err=0;
 
+		$this->db->begin();
+		
 		// Remove line in activation module
-		$err+=$this->_dbunactive();
+		if (! $err) $err+=$this->_dbunactive();
 
 		// Remove activation module line
-		$err+=$this->_unactive();
+		if (! $err) $err+=$this->_unactive();
 
-		// Supprime les boites de la liste des boites disponibles
-		$err+=$this->delete_style_sheet();
+		// Remove activation of module's style sheet
+		if (! $err) $err+=$this->delete_style_sheet();
 
-		// Supprime les liens de pages en onglets issus de modules
-		$err+=$this->delete_tabs();
+		// Remove activation of module's new tabs
+		if (! $err) $err+=$this->delete_tabs();
 
-		// Supprime les boites de la liste des boites disponibles
-		$err+=$this->delete_boxes();
+		// Remove list of module's available boxes
+		if (! $err && $options != 'noboxes') $err+=$this->delete_boxes();
 
-		// Supprime les droits de la liste des droits disponibles
-		$err+=$this->delete_permissions();
+		// Remove module's permissions from list of available permissions
+		if (! $err) $err+=$this->delete_permissions();
 
-		// Supprime les menus apportes par le module
-		$err+=$this->delete_menus();
+		// Remove modules's menus
+		if (! $err) $err+=$this->delete_menus();
 
-		// Execute les requetes sql complementaires
+		// Run complementary sql requests
 		for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
 		{
-			if (!$this->db->query($array_sql[$i]))
-	  		{
-	  			$err++;
-	  		}
+			if (! $err) 
+			{
+				if (!$this->db->query($array_sql[$i]))
+		  		{
+		  			$err++;
+		  		}
+			}
 		}
 
-		// Renvoi valeur de retour
-		if ($err > 0) return 0;
-		return 1;
+		// Return code
+		if (! $err)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return 0;
+		}
 	}
 
 
@@ -259,8 +275,9 @@ class DolibarrModules
 
 
 	/**
-	 *	\brief      Retourne la version en base du module.
-	 *	\return     string      Version du module
+	 *	\brief      Return version of module stored in database table.
+	 *	\return     string      Version of module
+	 * 	\remarks	This function is not used but is kept in code because it can be used later.
 	 */
 	function getDbVersion()
 	{
@@ -269,7 +286,8 @@ class DolibarrModules
 
 		$sql ="SELECT active_version FROM ".MAIN_DB_PREFIX."dolibarr_modules";
 		$sql .= " WHERE numero=".$this->numero." AND active = 1";
-
+		
+		dol_syslog("DolibarrModules::getDbVersion sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -326,8 +344,9 @@ class DolibarrModules
 
 
 	/**
-	 *	\brief      Insert line in module table
-	 *	\return     int         Nombre d'erreurs (0 si ok)
+	 *	\brief      Insert line in dolibarr_modules table.
+	 *	\return     int		Nb of errors (0 if OK)
+	 * 	\remarks	Storage is made for information only, table is not required for Dolibarr usage. 
 	 */
 	function _dbactive()
 	{
@@ -339,7 +358,7 @@ class DolibarrModules
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."dolibarr_modules (numero,active,active_date,active_version)";
 		$sql.= " VALUES (";
-		$sql.= $this->numero.",1,".$this->db->idate(mktime()).",'".$this->version."')";
+		$sql.= $this->numero.",1,".$this->db->idate(gmmktime()).",'".$this->version."')";
 		dol_syslog("DolibarrModules::_dbactive sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
 
@@ -348,15 +367,16 @@ class DolibarrModules
 
 
 	/**
-	 *	\brief      Remove line in module table
+	 *	\brief      Remove line in dolibarr_modules table
 	 *	\return     int     Nb of errors (0 if OK)
+	 * 	\remarks	Storage is made for information only, table is not required for Dolibarr usage. 
 	 */
 	function _dbunactive()
 	{
 		$err = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero;
-		dol_syslog("DolibarrModules::_dbactive sql=".$sql, LOG_DEBUG);
+		dol_syslog("DolibarrModules::_dbunactive sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
 
 		return $err;
@@ -375,8 +395,8 @@ class DolibarrModules
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-        ('".$this->const_name."','1',0)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES";
+        $sql.= " ('".$this->const_name."','1',0)";
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		if (!$this->db->query($sql))
 		{
@@ -493,7 +513,7 @@ class DolibarrModules
 						$sql.= " VALUES ('".addslashes($file)."',";
 						$sql.= $note?"'".addslashes($note)."'":"null";
 						$sql.= ")";
-						//print $sql;
+						dol_syslog("DolibarrModules::insert_boxes sql=".$sql);
 						if (! $this->db->query($sql))
 						{
 							$err++;
@@ -876,8 +896,8 @@ class DolibarrModules
 
 
 	/**
-	 \brief      Supprime les permissions
-	 \return     int     Nombre d'erreurs (0 si ok)
+	 *	\brief      Remove menus entries
+	 *	\return     int     Nombre d'erreurs (0 si ok)
 	 */
 	function delete_menus()
 	{

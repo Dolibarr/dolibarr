@@ -412,8 +412,6 @@ foreach ($orders as $key => $value)
         print nl2br($objMod->getDesc());
         print "</td>\n  <td align=\"center\" valign=\"top\">";
         print $objMod->getVersion();
-//        print "</td>\n  <td align=\"center\" valign=\"top\">";
-//        print $objMod->getDbVersion();
         print "</td>\n  <td align=\"center\" valign=\"top\">";
 
         if (! empty($conf->global->$const_name))

@@ -235,6 +235,7 @@ function migrate_paiements($db,$langs,$conf)
 	$sql .= " WHERE p.fk_facture > 0";
 	$resql = $db->query($sql);
 
+	dolibarr_install_syslog("upgrade2::migrate_paiements sql=".$sql);
 	if ($resql)
 	{
 		$i = 0;
@@ -318,6 +319,7 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 	$sql.= " AND (p.fk_facture = 0 OR p.fk_facture IS NULL)";
 	$resql = $db->query($sql);
 
+	dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_1 sql=".$sql);
 	$row = array();
 	if ($resql)
 	{
@@ -426,6 +428,7 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 	$sql.= " AND (p.fk_facture = 0 OR p.fk_facture IS NULL)";
 	$resql = $db->query($sql);
 
+	dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_2 sql=".$sql);
 	$row = array();
 	if ($resql)
 	{
@@ -548,6 +551,7 @@ function migrate_contracts_det($db,$langs,$conf)
 	$sql.= " WHERE cd.rowid IS NULL AND p.rowid IS NOT NULL";
 	$resql = $db->query($sql);
 
+	dolibarr_install_syslog("upgrade2::migrate_contracts_det sql=".$sql);
 	if ($resql)
 	{
 		$i = 0;
@@ -635,7 +639,7 @@ function migrate_links_transfert($db,$langs,$conf)
 	$sql.= " AND bu.fk_bank IS NULL";
 	$resql = $db->query($sql);
 
-	dolibarr_install_syslog("migrate_links_transfert sql=".$sql);
+	dolibarr_install_syslog("upgrade2::migrate_links_transfert sql=".$sql);
 	if ($resql)
 	{
 		$i = 0;
@@ -706,6 +710,7 @@ function migrate_contracts_date1($db,$langs,$conf)
 	print '<b>'.$langs->trans('MigrationContractsEmptyDatesUpdate')."</b><br>\n";
 
 	$sql="update llx_contrat set date_contrat=tms where date_contrat is null";
+	dolibarr_install_syslog("upgrade2::migrate_contracts_date1 sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql) dol_print_error($db);
 	if ($db->affected_rows($resql) > 0)
@@ -714,6 +719,7 @@ function migrate_contracts_date1($db,$langs,$conf)
 	print $langs->trans('MigrationContractsEmptyDatesNothingToUpdate')."<br>\n";
 
 	$sql="update llx_contrat set datec=tms where datec is null";
+	dolibarr_install_syslog("upgrade2::migrate_contracts_date1 sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql) dol_print_error($db);
 	if ($db->affected_rows($resql) > 0)
@@ -743,7 +749,8 @@ function migrate_contracts_date2($db,$langs,$conf)
 	$sql.= " WHERE c.rowid=cd.fk_contrat AND cd.date_ouverture IS NOT NULL";
 	$sql.= " GROUP BY c.rowid, c.date_contrat";
 	$resql = $db->query($sql);
-
+	
+	dolibarr_install_syslog("upgrade2::migrate_contracts_date2 sql=".$sql);
 	if ($resql)
 	{
 		$i = 0;
@@ -800,6 +807,7 @@ function migrate_contracts_date3($db,$langs,$conf)
 	print '<b>'.$langs->trans('MigrationContractsIncoherentCreationDateUpdate')."</b><br>\n";
 
 	$sql="update llx_contrat set datec=date_contrat where datec is null or datec > date_contrat";
+	dolibarr_install_syslog("upgrade2::migrate_contracts_date3 sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql) dol_print_error($db);
 	if ($db->affected_rows() > 0)
@@ -823,6 +831,7 @@ function migrate_contracts_open($db,$langs,$conf)
 
 	$sql = "SELECT c.rowid as cref FROM llx_contrat as c, llx_contratdet as cd";
 	$sql.= " WHERE cd.statut = 4 AND c.statut=2 AND c.rowid=cd.fk_contrat";
+	dolibarr_install_syslog("upgrade2::migrate_contracts_open sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql) dol_print_error($db);
 	if ($db->affected_rows() > 0) {
@@ -882,6 +891,8 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 	$select_sql  = 'SELECT rowid, fk_facture_fourn, amount ';
 	$select_sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn ';
 	$select_sql .= ' WHERE fk_facture_fourn IS NOT NULL';
+	
+	dolibarr_install_syslog("upgrade2::migrate_paiementfourn_facturefourn sql=".$sql);
 	$select_resql = $db->query($select_sql);
 	if ($select_resql)
 	{
@@ -962,8 +973,6 @@ function migrate_price_facture($db,$langs,$conf)
 {
 	$db->begin();
 
-	dolibarr_install_syslog("upgrade2: Upgrade data for invoice");
-
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -976,6 +985,8 @@ function migrate_price_facture($db,$langs,$conf)
 	$sql.= " WHERE fd.fk_facture = f.rowid";
 	$sql.= " AND (((fd.total_ttc = 0 AND fd.remise_percent != 100) or fd.total_ttc IS NULL) or f.total_ttc IS NULL)";
 	//print $sql;
+
+	dolibarr_install_syslog("upgrade2::migrate_price_facture sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -1072,8 +1083,6 @@ function migrate_price_propal($db,$langs,$conf)
 {
 	$db->begin();
 
-	dolibarr_install_syslog("upgrade2: Upgrade data for propal");
-
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -1085,6 +1094,8 @@ function migrate_price_propal($db,$langs,$conf)
 	$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as p";
 	$sql.= " WHERE pd.fk_propal = p.rowid";
 	$sql.= " AND ((pd.total_ttc = 0 AND pd.remise_percent != 100) or pd.total_ttc IS NULL)";
+
+	dolibarr_install_syslog("upgrade2::migrate_price_propal sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -1177,8 +1188,6 @@ function migrate_price_contrat($db,$langs,$conf)
 {
 	$db->begin();
 
-	dolibarr_install_syslog("upgrade2: Upgrade data for contracts");
-
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -1190,6 +1199,8 @@ function migrate_price_contrat($db,$langs,$conf)
 	$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
 	$sql.= " WHERE cd.fk_contrat = c.rowid";
 	$sql.= " AND ((cd.total_ttc = 0 AND cd.remise_percent != 100 AND cd.subprice > 0) or cd.total_ttc IS NULL)";
+
+	dolibarr_install_syslog("upgrade2::migrate_price_contrat sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -1282,8 +1293,6 @@ function migrate_price_commande($db,$langs,$conf)
 {
 	$db->begin();
 
-	dolibarr_install_syslog("upgrade2: Upgrade data for order");
-
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -1295,6 +1304,8 @@ function migrate_price_commande($db,$langs,$conf)
 	$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."commande as c";
 	$sql.= " WHERE cd.fk_commande = c.rowid";
 	$sql.= " AND ((cd.total_ttc = 0 AND cd.remise_percent != 100) or cd.total_ttc IS NULL)";
+
+	dolibarr_install_syslog("upgrade2::migrate_price_commande sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -1393,8 +1404,6 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 {
 	$db->begin();
 
-	dolibarr_install_syslog("upgrade2: Upgrade data for supplier order");
-
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -1406,6 +1415,8 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd, ".MAIN_DB_PREFIX."commande_fournisseur as c";
 	$sql.= " WHERE cd.fk_commande = c.rowid";
 	$sql.= " AND ((cd.total_ttc = 0 AND cd.remise_percent != 100) or cd.total_ttc IS NULL)";
+
+	dolibarr_install_syslog("upgrade2::migrate_price_commande_fournisseur sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -1505,6 +1516,8 @@ function migrate_modeles($db,$langs,$conf)
 	//print '<br>';
 	//print '<b>'.$langs->trans('UpdateModelsTable')."</b><br>\n";
 
+	dolibarr_install_syslog("upgrade2::migrate_modeles");
+	
 	if ($conf->facture->enabled)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
@@ -1557,6 +1570,8 @@ function migrate_delete_old_files($db,$langs,$conf)
 {
 	$result=true;
 
+	dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
+	
 	// List of files to delete
 	$filetodeletearray=array(
 	DOL_DOCUMENT_ROOT.'/includes/triggers/interface_demo.class.php',
@@ -1586,35 +1601,44 @@ function migrate_delete_old_files($db,$langs,$conf)
  */
 function migrate_module_menus($db,$langs,$conf)
 {
+	dolibarr_install_syslog("upgrade2::migrate_module_menus");
+	
 	if (! empty($conf->global->MAIN_MODULE_AGENDA))
 	{
+		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Agenda");
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modAgenda.class.php');
 		$mod=new modAgenda($db);
-		$mod->init();
+		$mod->remove('noboxes');
+		$mod->init('noboxes');
 	}
 	if (! empty($conf->global->MAIN_MODULE_PHENIX))
 	{
+		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Phenix");
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modPhenix.class.php');
 		$mod=new modPhenix($db);
 		$mod->init();
 	}
 	if (! empty($conf->global->MAIN_MODULE_WEBCALENDAR))
 	{
+		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Webcalendar");
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modWebcalendar.class.php');
 		$mod=new modWebcalendar($db);
 		$mod->init();
 	}
 	if (! empty($conf->global->MAIN_MODULE_MANTIS))
 	{
+		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Mantis");
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modMantis.class.php');
 		$mod=new modMantis($db);
 		$mod->init();
 	}
 	if (! empty($conf->global->MAIN_MODULE_SOCIETE))
 	{
+		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Societe");
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modSociete.class.php');
 		$mod=new modSociete($db);
-		$mod->init();
+		$mod->remove('noboxes');
+		$mod->init('noboxes');
 	}
 }
 
@@ -1623,6 +1647,8 @@ function migrate_module_menus($db,$langs,$conf)
  */
 function migrate_commande_expedition($db,$langs,$conf)
 {
+	dolibarr_install_syslog("upgrade2::migrate_commande_expedition");
+	
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -1695,6 +1721,8 @@ function migrate_commande_expedition($db,$langs,$conf)
  */
 function migrate_commande_livraison($db,$langs,$conf)
 {
+	dolibarr_install_syslog("upgrade2::migrate_commande_livraison");
+	
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -1781,6 +1809,8 @@ function migrate_commande_livraison($db,$langs,$conf)
  */
 function migrate_detail_livraison($db,$langs,$conf)
 {
+	dolibarr_install_syslog("upgrade2::migrate_detail_livraison");
+	
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -1898,6 +1928,8 @@ function migrate_detail_livraison($db,$langs,$conf)
  */
 function migrate_stocks($db,$langs,$conf)
 {
+	dolibarr_install_syslog("upgrade2::migrate_stocks");
+	
 	print '<tr><td colspan="4">';
 
 	print '<br>';
