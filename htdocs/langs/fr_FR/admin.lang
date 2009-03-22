@@ -761,7 +761,7 @@ TemplatePDFInterventions=Modèle de documents des fiches d'interventions
 WatermarkOnDraftInterventionCards=Filigrane sur les brouillons des fiches d'interventions (aucun si vide)
 ##### Clicktodial #####
 ClickToDialSetup=Configuration du module Click To Dial
-ClickToDialUrlDesc=Url appelée lors dun clic sur le picto téléphone. Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacé par le téléphone de l'appelé<br><b>%%2$s</b> qui sera remplacé par le téléphone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplacé par votre login clicktodial (défini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacé par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
+ClickToDialUrlDesc=Url appelée lors dun clic sur le picto téléphone. Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacé par le téléphone de l'appelé<br><b>%%2$s</b> qui sera remplacé par le téléphone de l'appelant (le votre, défini sur votre fiche utilisateur)<br><b>%%3$s</b> qui sera remplacé par votre login clicktodial (défini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacé par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
 ##### Bookmark4u #####
 Bookmark4uSetup=Configuration du module Bookmark4u
 ##### Interventions #####

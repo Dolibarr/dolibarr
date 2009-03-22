@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
  */
 
 /**
-        \file       htdocs/webservices/server.php
-        \brief      Fichier point entree des WebServices Dolibarr
-        \version    $Id$
-*/
+ *       \file       htdocs/webservices/server.php
+ *       \brief      File that is entry point to call Dolibarr WebServices
+ *       \version    $Id$
+ */
 
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
@@ -32,6 +32,7 @@ require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
+// TODO Enable and test if module web services is enabled
 
 // Create the soap Object
 $server = new soap_server();
@@ -43,7 +44,7 @@ $server->wsdl->schemaTargetNamespace=$ns;
 // Register methods available for clients
 /*
 $server->register('getVersions',
-array(),								// Tableau parametres entr�e
+array(),								// Tableau parametres entree
 array('result' => 'xsd:array'),			// Tableau parametres sortie
 $ns);
 */
