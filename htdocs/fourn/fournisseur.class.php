@@ -127,14 +127,13 @@ class Fournisseur extends Societe
 
 		if ($comm->create($user) > 0)
 		{
-			dol_syslog("Fournisseur::Create_Commande : Success");
 			$this->single_open_commande = $comm->id;
-
 			return $comm->id;
 		}
 		else
 		{
-			dol_syslog("Fournisseur::Create_Commande : Failed");
+			$this->error=$comm->error;
+			dol_syslog("Fournisseur::Create_Commande Failed ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

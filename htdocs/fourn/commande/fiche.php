@@ -426,7 +426,7 @@ if ($action=='remove_file')
 
 
 /*
- * Cree	une	commande
+ * Create an order
  */
 if ($_GET["action"]	== 'create')
 {
@@ -449,7 +449,7 @@ if ($_GET["action"]	== 'create')
 
 		$id=$orderid;
 		$_GET['id']=$id;
-		$_GET['action']='edit';
+		$_REQUEST['id']=$id;
 		$db->commit();
 	}
 	else

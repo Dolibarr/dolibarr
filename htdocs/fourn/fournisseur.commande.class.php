@@ -687,15 +687,13 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *      \brief      Cr�� la commande au statut brouillon
-	 *      \param      user        Utilisateur qui cr�e
-	 *      \return     int         <0 si ko, >0 si ok
+	 *      \brief      Create order with draft status
+	 *      \param      user        User making creation
+	 *      \return     int         <0 if KO, >0 if OK
 	 */
 	function create($user)
 	{
 		global $langs,$conf;
-
-		dol_syslog("CommandeFournisseur::Create soc id=".$this->socid);
 
 		$this->db->begin();
 
@@ -705,6 +703,7 @@ class CommandeFournisseur extends Commande
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (ref, fk_soc, date_creation, fk_user_author, fk_statut, source, model_pdf) ";
 		$sql .= " VALUES ('',".$this->socid.", ".$this->db->idate(mktime()).", ".$user->id.",0,0,'".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."')";
 
+		dol_syslog("CommandeFournisseur::Create sql=".$sql);
 		if ( $this->db->query($sql) )
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
@@ -712,6 +711,7 @@ class CommandeFournisseur extends Commande
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql.= " SET ref='(PROV".$this->id.")'";
 			$sql.= " WHERE rowid=".$this->id;
+			dol_syslog("CommandeFournisseur::Create sql=".$sql);
 			if ($this->db->query($sql))
 			{
 				// On logue creation pour historique
@@ -724,13 +724,12 @@ class CommandeFournisseur extends Commande
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 
-				dol_syslog("CommandeFournisseur::Create : Success");
 				$this->db->commit();
 				return 1;
 			}
 			else
 			{
-				$this->error=$this->db->error()." - ".$sql;
+				$this->error=$this->db->error();
 				dol_syslog("CommandeFournisseur::Create: Failed -2 - ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -738,7 +737,7 @@ class CommandeFournisseur extends Commande
 		}
 		else
 		{
-			$this->error=$this->db->error()." - ".$sql;
+			$this->error=$this->db->error();
 			dol_syslog("CommandeFournisseur::Create: Failed -1 - ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
