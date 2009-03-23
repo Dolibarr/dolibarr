@@ -760,23 +760,27 @@ class Expedition extends CommonObject
 		}
 
 	}
-	/*
-	 Fetch deliveries method and return an array
+
+	/**
+	 *	\brief	Fetch deliveries method and return an array. Load array this->meths(rowid=>label).
 	 */
 	function fetch_delivery_methods()
 	{
+		global $langs;
 		$meths = array();
 
-		$sql = "SELECT em.rowid, em.libelle";
+		$sql = "SELECT em.rowid, em.code, em.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition_methode as em";
-		$sql.= " WHERE em.active = 1 ORDER BY em.libelle ASC";
+		$sql.= " WHERE em.active = 1";
+		$sql.= " ORDER BY em.libelle ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$this->meths[$obj->rowid] = $obj->libelle;
+				$label=$langs->trans('SendingMethod'.$obj->code);
+				$this->meths[$obj->rowid] = ($label != 'SendingMethod'.$obj->code?$label:$obj->libelle);
 			}
 		}
 	}

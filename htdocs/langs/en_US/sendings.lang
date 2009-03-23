@@ -43,6 +43,10 @@ GenericTransport=Generic transport
 Enlevement=Gotten by customer
 DocumentModelSimple=Simple document model
 WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
- 
+# Sending methods
+SendingMethodCATCH=Catch by customer
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+
 # NumRef
 NumRefModelJade=Return a reference number with format BLYY00001, ... where YY is year. Number at end is never reset to zero.
