@@ -2659,16 +2659,16 @@ else
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $langs->trans('Project');
 				print '</td>';
-				if ($_GET['action'] != 'classer')
+				if ($_GET['action'] != 'classin')
 				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;facid='.$fac->id.'">';
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classin&amp;facid='.$fac->id.'">';
 					print img_edit($langs->trans('SetProject'),1);
 					print '</a></td>';
 				}
 				print '</tr></table>';
 
 				print '</td><td colspan="3">';
-				if ($_GET['action'] == 'classer')
+				if ($_GET['action'] == 'classin')
 				{
 					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->projetid,'projetid');
 				}

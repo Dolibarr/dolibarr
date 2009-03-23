@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -197,6 +197,7 @@ class Fichinter extends CommonObject
 				$this->datev        = $obj->datev;
 				$this->datem        = $obj->datem;
 				$this->projetidp    = $obj->fk_projet;
+				$this->projet_id    = $obj->fk_projet;
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->modelpdf     = $obj->model_pdf;
@@ -374,17 +375,22 @@ class Fichinter extends CommonObject
 	 */
 	function getNextNumRef($soc)
 	{
-		global $db, $langs;
+		global $conf, $db, $langs;
 		$langs->load("interventions");
 
 		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/fichinter/";
 
-		if (defined("FICHEINTER_ADDON") && FICHEINTER_ADDON)
+		if (! empty($conf->global->FICHEINTER_ADDON))
 		{
-			$file = FICHEINTER_ADDON.".php";
-
+			$file = $conf->global->FICHEINTER_ADDON.".php";
+			$classname = $conf->global->FICHEINTER_ADDON;
+			if (! file_exists($dir.$file))
+			{
+				$file='mod_'.$file;
+				$classname='mod_'.$classname;		
+			}
+			
 			// Chargement de la classe de numerotation
-			$classname = FICHEINTER_ADDON;
 			require_once($dir.$file);
 
 			$obj = new $classname();
@@ -450,36 +456,6 @@ class Fichinter extends CommonObject
 		else
 		{
 			dol_print_error($this->db);
-		}
-	}
-
-	/**
-	 *      \brief     Classe la fiche d'intervention dans un projet
-	 *      \param     project_id       Id du projet dans lequel classer la facture
-	 */
-	function set_project($user, $project_id)
-	{
-		if ($user->rights->ficheinter->creer)
-		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter';
-			$sql.= ' SET fk_projet = '.($project_id <= 0?'NULL':$project_id);
-			$sql.= ' WHERE rowid = '.$this->id;
-
-			dol_syslog("Fichinter::set_project sql=".$sql);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$this->projetidp=$project_id;
-			}
-			else
-			{
-				$this->error=$this->db->error();
-				dol_syslog("Fichinter::set_project Error ".$this->error, LOG_ERR);
-			}
-		}
-		else
-		{
-			dol_syslog("Fichinter::set_project Error Permission refused");
 		}
 	}
 

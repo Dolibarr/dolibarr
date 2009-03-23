@@ -159,7 +159,7 @@ if ($_POST["action"] == 'update')
 	$fichinter->ref = $_POST["ref"];
 
 	$fichinter->update($_POST["id"]);
-	$_GET["id"]=$_POST["id"];      // Force raffraichissement sur fiche venant d'etre cr��e
+	$_GET["id"]=$_POST["id"];      // Force raffraichissement sur fiche venant d'etre creee
 }
 
 /*
@@ -195,7 +195,7 @@ if ($_POST['action'] == 'classin')
 {
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET['id']);
-	$result=$fichinter->set_project($user, $_POST['projetidp']);
+	$result=$fichinter->setProject($_POST['projetid']);
 	if ($result < 0) dol_print_error($db,$fichinter->error);
 }
 
@@ -450,23 +450,10 @@ if ($_GET["action"] == 'create')
 			$langs->load("project");
 
 			print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
-
-			if ($_GET["socid"]) $numprojet = $societe->has_projects();
-
-			if (!$numprojet)
+			$numprojet=select_projects($societe->id,$projetid,'projetidp');
+			if ($numprojet==0)
 			{
-				print '<table class="nobordernopadding" width="100%">';
-				print '<tr><td width="130">'.$langs->trans("NoProject").'</td>';
-
-				if ($user->rights->projet->creer)
-				{
-					print '<td><a href='.DOL_URL_ROOT.'/projet/fiche.php?socid='.$societe->id.'&action=create>'.$langs->trans("Add").'</a></td>';
-				}
-				print '</tr></table>';
-			}
-			else
-			{
-				select_projects($societe->id,'','projetidp');
+				print ' &nbsp; <a href="../projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
 			}
 			print '</td></tr>';
 		}
@@ -522,7 +509,10 @@ elseif ($_GET["id"] > 0)
 		exit;
 	}
 	$fichinter->fetch_client();
-
+	
+	$societe=new Societe($db);
+	$societe->fetch($fichinter->socid);
+	
 	if ($mesg) print $mesg."<br>";
 
 	$head = fichinter_prepare_head($fichinter);
@@ -565,60 +555,33 @@ elseif ($_GET["id"] > 0)
 	// Societe
 	print "<tr><td>".$langs->trans("Company")."</td><td>".$fichinter->client->getNomUrl(1)."</td></tr>";
 
-	// Projet
+	// Project
 	if ($conf->projet->enabled)
 	{
-		$langs->load("projects");
-		print '<tr><td>';
+		$langs->load('projects');
+		print '<tr>';
+		print '<td>';
+
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Project').'</td>';
-		$societe=new Societe($db);
-		$societe->fetch($fichinter->socid);
-		$numprojet = $societe->has_projects();
-		if (! $numprojet)
+		print $langs->trans('Project');
+		print '</td>';
+		if ($_GET['action'] != 'classin')
 		{
-			print '</td></tr></table>';
-			print '<td>';
-			print $langs->trans("NoProject").'&nbsp;&nbsp;';
-			if ($fichinter->brouillon) print '<a class="butAction" href=../projet/fiche.php?socid='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
-			print '</td>';
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classin&amp;id='.$fichinter->id.'">';
+			print img_edit($langs->trans('SetProject'),1);
+			print '</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($_GET['action'] == 'classin')
+		{
+			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->projetidp,'projetid');
 		}
 		else
 		{
-			if ($fichinter->statut == 0 && $user->rights->ficheinter->creer)
-			{
-				if ($_GET['action'] != 'classer' && $fichinter->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$fichinter->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
-				print '</tr></table>';
-				print '</td><td colspan="3">';
-				if ($_GET['action'] == 'classer')
-				{
-					$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->projetidp, 'projetidp');
-				}
-				else
-				{
-					$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->projetidp, 'none');
-				}
-				print '</td></tr>';
-			}
-			else
-			{
-				if (!empty($fichinter->projetidp))
-				{
-					print '</td></tr></table>';
-					print '<td colspan="3">';
-					$proj = new Project($db);
-					$proj->fetch($fichinter->projetidp);
-					print '<a href="../projet/fiche.php?id='.$fichinter->projetidp.'" title="'.$langs->trans('ShowProject').'">';
-					print $proj->title;
-					print '</a>';
-					print '</td>';
-				}
-				else {
-					print '</td></tr></table>';
-					print '<td colspan="3">&nbsp;</td>';
-				}
-			}
+			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->projetidp,'none');
 		}
+		print '</td>';
 		print '</tr>';
 	}
 

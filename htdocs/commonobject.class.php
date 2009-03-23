@@ -484,9 +484,11 @@ class CommonObject
 		else $sql.= ' SET fk_projet = NULL';
 		$sql.= ' WHERE rowid = '.$this->id;
 
-		dol_syslog("CommonObject::set_project sql=".$sql);
+		dol_syslog("CommonObject::setProject sql=".$sql);
 		if ($this->db->query($sql))
 		{
+			$this->projet_id=$projid;
+			$this->projetidp=$projid;
 			return 1;
 		}
 		else
