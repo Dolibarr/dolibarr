@@ -21,7 +21,7 @@
  *      \ingroup    core
  *      \brief      Trigger file for
  *		\version	$Id$
-*/
+ */
 
 
 /**
@@ -109,7 +109,7 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=time();
+            $this->date=gmmktime();
             $this->duree=0;
             $this->texte="(UserLogged,".$object->login.")";
             $this->desc="(UserLogged,".$object->login.")";
@@ -119,7 +119,7 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=time();
+            $this->date=gmmktime();
             $this->duree=0;
             $this->texte=$object->trigger_mesg;	// Message direct
             $this->desc=$object->trigger_mesg;	// Message direct
@@ -130,7 +130,7 @@ class InterfaceLogevents
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=time();
+            $this->date=gmmktime();
             $this->duree=0;
             $this->texte=$langs->transnoentities("NewUserCreated",$object->login);
             $this->desc=$langs->transnoentities("NewUserCreated",$object->login);
@@ -141,7 +141,7 @@ class InterfaceLogevents
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=time();
+            $this->date=gmmktime();
             $this->duree=0;
             $this->texte=$langs->transnoentities("EventUserModified",$object->login);
             $this->desc=$langs->transnoentities("EventUserModified",$object->login);
@@ -152,7 +152,7 @@ class InterfaceLogevents
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=time();
+            $this->date=gmmktime();
             $this->duree=0;
             $this->texte=$langs->transnoentities("NewUserPassword",$object->login);
             $this->desc=$langs->transnoentities("NewUserPassword",$object->login);
@@ -162,7 +162,7 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=time();
+            $this->date=gmmktime();
             $this->duree=0;
 			if ($object->statut == 0)
 			{
@@ -180,7 +180,7 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=time();
+            $this->date=gmmktime();
             $this->duree=0;
             $this->texte=$langs->transnoentities("UserDeleted",$object->login);
             $this->desc=$langs->transnoentities("Userdeleted",$object->login);
@@ -192,7 +192,7 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=time();
+            $this->date=gmmktime();
             $this->duree=0;
             $this->texte=$langs->transnoentities("NewGroupCreated",$object->nom);
             $this->desc=$langs->transnoentities("NewGroupCreated",$object->nom);
@@ -202,7 +202,7 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=time();
+            $this->date=gmmktime();
             $this->duree=0;
             $this->texte=$langs->transnoentities("GroupModified",$object->nom);
             $this->desc=$langs->transnoentities("GroupModified",$object->nom);
@@ -212,277 +212,11 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=time();
+            $this->date=gmmktime();
             $this->duree=0;
             $this->texte=$langs->transnoentities("GroupDeleted",$object->nom);
             $this->desc=$langs->transnoentities("GroupDeleted",$object->nom);
 		}
-
-		// Actions
-        if ($action == 'ACTION_CREATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            // Initialisation donnees (date,duree,texte,desc)
-            if ($object->type_id == 5 && $object->contact->fullname)
-            {
-                $libellecal =$langs->transnoentities("TaskRDVWith",$object->contact->getFullName($langs))."\n";
-                $libellecal.=$object->note;
-            }
-            else
-            {
-                $libellecal="";
-                if ($langs->transnoentities("Action".$object->type_code) != "Action".$object->type_code)
-                {
-                    $libellecal.=$langs->transnoentities("Action".$object->type_code)."\n";
-                }
-                $libellecal.=($object->label!=$libellecal?$object->label."\n":"");
-                $libellecal.=($object->note?$object->note:"");
-            }
-
-            $this->date=$object->date ? $object->date : $object->datep;
-            $this->duree=$object->duree;
-            $this->texte=$object->societe->nom;
-            $this->desc=$libellecal;
-        }
-
-		// Third parties
-        elseif ($action == 'COMPANY_CREATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            // Initialisation donnees (date,duree,texte,desc)
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
-            $this->desc=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
-            if ($object->prefix) $this->desc.=" (".$object->prefix.")";
-            //$this->desc.="\n".$langs->transnoentities("Customer").': '.yn($object->client);
-            //$this->desc.="\n".$langs->transnoentities("Supplier").': '.yn($object->fournisseur);
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-
-		// Contracts
-        elseif ($action == 'CONTRACT_VALIDATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            // Initialisation donnees (date,duree,texte,desc)
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'CONTRACT_CANCEL')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("ContractCanceledInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("ContractCanceledInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'CONTRACT_CLOSE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("ContractClosedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("ContractClosedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-
-		// Proposals
-        elseif ($action == 'PROPAL_VALIDATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("PropalValidatedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("PropalValidatedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'PROPAL_CLOSE_SIGNED')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'PROPAL_CLOSE_REFUSED')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-
-        // Invoices
-		elseif ($action == 'BILL_VALIDATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'BILL_PAYED')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("InvoicePayedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("InvoicePayedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'BILL_CANCELED')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-
-        // Payments
-        elseif ($action == 'PAYMENT_CUSTOMER_CREATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("CustomerPaymentDoneInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("CustomerPaymentDoneInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("AmountTTC").': '.$object->total;
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'PAYMENT_SUPPLIER_CREATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("SupplierPaymentDoneInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("SupplierPaymentDoneInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("AmountTTC").': '.$object->total;
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-
-        // Members
-        elseif ($action == 'MEMBER_CREATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-            $langs->load("members");
-
-        	$this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("NewMemberCreated",$object->ref);
-            $this->desc=$langs->transnoentities("NewMemberCreated",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
-            $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'MEMBER_VALIDATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-            $langs->load("members");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("MemberValidatedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("MemberValidatedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
-            $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'MEMBER_SUBSCRIPTION')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-            $langs->load("members");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
-            $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
-            $this->desc.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
-            $this->desc.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'MEMBER_MODIFY')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-            $langs->load("members");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("MemberModifiedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("MemberModifiedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
-            $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'MEMBER_RESILIATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-            $langs->load("members");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
-            $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'MEMBER_DELETE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-            $langs->load("members");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
-            $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
 
 		// If not found
 /*

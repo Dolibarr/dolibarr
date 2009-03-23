@@ -17,18 +17,18 @@
  */
 
 /**
-        \file       htdocs/admin/tools/listevents.php
-        \ingroup    core
-        \brief      List of security events
-        \version    $Id$
-*/
+ *		\file       htdocs/admin/tools/listevents.php
+ *      \ingroup    core
+ *      \brief      List of security events
+ *      \version    $Id$
+ */
 
 require_once("./pre.inc.php");
 
 if (! $user->admin)
   accessforbidden();
 
-// Sécurité accés client
+// Security check
 if ($user->societe_id > 0)
 {
   $action = '';
@@ -77,7 +77,7 @@ $form=new Form($db);
 $userstatic=new User($db);
 $usefilter=0;
 
-$sql = "SELECT e.rowid, e.type, e.ip, ".$db->pdate("e.dateevent")." as dateevent,";
+$sql = "SELECT e.rowid, e.type, e.ip, e.dateevent,";
 $sql.= " e.fk_user, e.description,";
 $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
@@ -89,7 +89,7 @@ if ($_GET["search_user"]) { $usefilter++; $sql.=" AND u.login like '%".$_GET["se
 if ($_GET["search_desc"]) { $usefilter++; $sql.=" AND e.description like '%".$_GET["search_desc"]."%'"; }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
-
+//print $sql;
 $result = $db->query($sql);
 if ($result)
 {
@@ -155,7 +155,7 @@ if ($result)
 		print "<tr $bc[$var]>";
 
 		// Date
-		print '<td align="left" nowrap="nowrap">'.dol_print_date($obj->dateevent,'%Y-%m-%d %H:%M:%S').'</td>';
+		print '<td align="left" nowrap="nowrap">'.dol_print_date($db->jdate($obj->dateevent),'%Y-%m-%d %H:%M:%S').'</td>';
 
 		// Code
 		print '<td>'.$obj->type.'</td>';

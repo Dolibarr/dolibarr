@@ -14,6 +14,9 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 
 update llx_const set visible = 1 where name = 'PROPALE_ADD_DELIVERY_ADDRESS';
 
+delete from llx_const where name like 'MAIN_LOGEVENTS_%' and name not like 'MAIN_LOGEVENTS_USER%' and name not like 'MAIN_LOGEVENTS_GROUP%'; 
+delete from llx_events where type not like 'USER%' and type not like 'GROUP%';
+
 alter table llx_expedition_methode change statut active tinyint DEFAULT 1;
 
 update llx_actioncomm set datep = datea where datep is null;

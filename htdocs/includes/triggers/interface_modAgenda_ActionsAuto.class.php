@@ -17,18 +17,17 @@
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_modAgenda_ActionsAuto.class.php
-        \ingroup    core
-        \brief      Trigger file for
-		\version	$Id$
-*/
+ *	\file       htdocs/includes/triggers/interface_modAgenda_ActionsAuto.class.php
+ *  \ingroup    core
+ *  \brief      Trigger file for
+ *	\version	$Id$
+ */
 
 
 /**
-        \class      InterfaceActionsAuto
-        \brief      Classe des fonctions triggers des actions agenda
-*/
-
+ *	\class      InterfaceActionsAuto
+ *  \brief      Classe des fonctions triggers des actions agenda
+ */
 class InterfaceActionsAuto
 {
     var $db;
@@ -421,7 +420,7 @@ class InterfaceActionsAuto
         // Add entry in event table
         if ($ok)
         {
-			$now=time();
+			$now=gmmktime();
 
 			// Insertion action
 			require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
