@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/admin/barcode.php
- \ingroup    barcode
- \brief      Page d'administration/configuration du module Code barre
- \version    $Id$
+ *	\file       htdocs/admin/barcode.php
+ *	\ingroup    barcode
+ *	\brief      Page d'administration/configuration du module Code barre
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -65,6 +65,10 @@ else if ($_POST["action"] == 'GENBARCODE_BARCODETYPE_THIRDPARTY')
  }
  */
 
+
+/*
+ * Actions
+ */
 
 $html = new Form($db);
 $formbarcode = new FormBarCode($db);
@@ -129,6 +133,7 @@ print "</tr>\n";
 
 $sql = "SELECT rowid, code as encoding, libelle, coder, example";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+dol_syslog("admin/barcode.php sql=".$sql);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -144,14 +149,14 @@ if ($resql)
 		print $obj->libelle;
 		print "</td><td>\n";
 		print $langs->trans('BarcodeDesc'.$obj->encoding);
-		//print "L'EAN se compose de 8 caract�res, 7 chiffres plus une cl� de contr�le.<br>";
-		//print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement aupr�s d'organisme tel que GENCOD.<br>";
-		//print "Codes num�riques utilis�s exclusivement � l'identification des produits susceptibles d'�tre vendus au grand public.";
+		//print "L'EAN se compose de 8 caracteres, 7 chiffres plus une cle de controle.<br>";
+		//print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement aupres d'organisme tel que GENCOD.<br>";
+		//print "Codes numeriques utilises exclusivement a l'identification des produits susceptibles d'etre vendus au grand public.";
 		print '</td>';
 
-		// Affiche exemple
+		// Show example
 		print '<td align="center">';
-		if ($obj->coder)
+		if ($obj->coder && $obj->coder != -1)
 		{
 			// Chargement de la classe de codage
 			require_once($dir.$obj->coder.".modules.php");
