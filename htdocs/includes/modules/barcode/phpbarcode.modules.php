@@ -35,7 +35,7 @@ class modPhpbarcode extends ModeleBarCode
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error='';
-	
+
 	/**     \brief     	Return if a module can be used or not
 	*      	\return		boolean     true if module can be used
 	*/
@@ -80,7 +80,7 @@ class modPhpbarcode extends ModeleBarCode
 		if ($encoding == 'C128')  $supported=1;
 		return $supported;
 	}
-	
+
     /**
 	 *		\brief      Return an image file on output
 	 *		\param   	$code			Valeur numérique a coder
@@ -88,13 +88,13 @@ class modPhpbarcode extends ModeleBarCode
 	 *		\param   	$readable		Code lisible
      */
     function buildBarCode($code,$encoding,$readable='Y')
-    { 
+    {
 		global $_GET,$_ENV,$_SERVER;
 		global $conf;
 		global $genbarcode_loc, $bar_color, $bg_color, $text_color, $font_loc;
-		
+
 		if (! $this->encodingIsSupported($encoding)) return -1;
-		
+
 		if ($encoding == 'EAN8' || $encoding == 'EAN13') $encoding = 'EAN';
 		if ($encoding == 'C39' || $encoding == 'C128')   $encoding = substr($encoding,1);
 
@@ -118,19 +118,20 @@ class modPhpbarcode extends ModeleBarCode
 	 *		\param   	$readable		Code lisible
      */
     function writeBarCode($code,$encoding,$readable='Y')
-    { 
+    {
     	global $conf,$filebarcode;
 
 		create_exdir($conf->barcode->dir_temp);
-		
+
 		$file=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 
-		$filebarcode=$file;	// global var to be used in buildBarCode
-    	$result=$this->buildBarCode($code,$encoding,$readable);
-		    	
+		$filebarcode=$file;	// global var to be used in barcode_outimage called by barcode_print in buildBarCode
+
+		$result=$this->buildBarCode($code,$encoding,$readable);
+
 		return $result;
     }
-        
+
 }
 
 ?>
