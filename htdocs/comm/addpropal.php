@@ -49,7 +49,7 @@ $langs->load("deliveries");
 
 llxHeader();
 
-print_titre($langs->trans("NewProp"));
+print_fiche_titre($langs->trans("NewProp"));
 
 $html=new Form($db);
 
@@ -164,7 +164,7 @@ if ($_GET["action"] == 'create')
 	}
 	else
 	{
-		$datepropal=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;				
+		$datepropal=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 		$html->select_date($datepropal,'liv_','','','',"addprop");
 	}
 	print '</td></tr>';
@@ -212,40 +212,49 @@ if ($_GET["action"] == 'create')
 	/*
 	 * Combobox pour la fonction de copie
 	 */
+
 	print '<table>';
-	print '<tr>';
-	print '<td><input type="radio" name="createmode" value="copy"></td>';
-	print '<td>'.$langs->trans("CopyPropalFrom").' </td>';
-	print '<td>';
-	$liste_propal = array();
-	$liste_propal[0] = '';
-	$sql ="SELECT p.rowid as id, p.ref, s.nom";
-	$sql.=" FROM ".MAIN_DB_PREFIX."propal p, ".MAIN_DB_PREFIX."societe s";
-	$sql.=" WHERE s.rowid = p.fk_soc AND fk_statut <> 0 ORDER BY Id";
-	$resql = $db->query($sql);
-	if ($resql)
+	if (empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE))
 	{
-		$num = $db->num_rows($resql);
-		$i = 0;
-		while ($i < $num)
-		{
-			$row = $db->fetch_row($resql);
-			$propalRefAndSocName = $row[1]." - ".$row[2];
-			$liste_propal[$row[0]]=$propalRefAndSocName;
-			$i++;
-		}
-		$html->select_array("copie_propal",$liste_propal, 0);
+		print '<tr><td colspan="3"><input type="hidden" name="createmode" value="empty"></td></tr>';
 	}
 	else
 	{
-		dol_print_error($db);
+		// For backward compatibility
+		print '<tr>';
+		print '<td><input type="radio" name="createmode" value="copy"></td>';
+		print '<td>'.$langs->trans("CopyPropalFrom").' </td>';
+		print '<td>';
+		$liste_propal = array();
+		$liste_propal[0] = '';
+		$sql ="SELECT p.rowid as id, p.ref, s.nom";
+		$sql.=" FROM ".MAIN_DB_PREFIX."propal p, ".MAIN_DB_PREFIX."societe s";
+		$sql.=" WHERE s.rowid = p.fk_soc AND fk_statut <> 0 ORDER BY Id";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($resql);
+				$propalRefAndSocName = $row[1]." - ".$row[2];
+				$liste_propal[$row[0]]=$propalRefAndSocName;
+				$i++;
+			}
+			$html->select_array("copie_propal",$liste_propal, 0);
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		print '</td></tr>';
+
+		if ($conf->global->PRODUCT_SHOW_WHEN_CREATE) print '<tr><td colspan="3">&nbsp;</td></tr>';
+
+		print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked="true"></td>';
+		print '<td valign="top" colspan="2">'.$langs->trans("CreateEmptyPropal").'</td></tr>';
 	}
-	print '</td></tr>';
-
-	if ($conf->global->PRODUCT_SHOW_WHEN_CREATE) print '<tr><td colspan="3">&nbsp;</td></tr>';
-
-	print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked="true"></td>';
-	print '<td valign="top" colspan="2">'.$langs->trans("CreateEmptyPropal").'</td></tr>';
 
 	if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
 	{

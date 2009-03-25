@@ -145,7 +145,7 @@ class mailing_peche extends MailingTargets
 				        {
 			        		//print 'xx'.strlen($buffer).empty($buffer)."<br>\n";
 				        	$id=$cpt;
-					        if (ValidEMail($email))
+					        if (isValidEMail($email))
 					        {
 		   						if ($old <> $email)
 								{

@@ -133,13 +133,13 @@ if ($_POST["action"] == 'add')
 			$verif = "nok";
 		}
 
-		if (!ValidEmail(trim($contact->email))  && $verif == 'ok')
+		if (! isValidEmail(trim($contact->email)) && $verif == 'ok')
 		{
 			$mesg = "Email invalide";
 			$verif = "nok";
 		}
 
-		if (!CheckMailDomain(trim($contact->email))  && $verif == 'ok')
+		if (! isValidMailDomain(trim($contact->email)) && $verif == 'ok')
 		{
 			$mesg = "Email invalide (domaine invalide)";
 			$verif = "nok";

@@ -320,7 +320,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
 		$error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
     }
-    if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($email)) {
+    if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($email)) {
         $error++;
         $errmsg .= $langs->trans("ErrorBadEMail",$email)."<br>\n";
     }

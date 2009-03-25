@@ -63,9 +63,11 @@ if ($_POST["getsuppliercode"])
 	$_POST["code_fournisseur"]="aa";
 }
 
+// Add new third party
 if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 && ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
 {
+	require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 	$error=0;
 
 	if ($_REQUEST["private"] == 1)
@@ -88,7 +90,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->departement_id        = $_POST["departement_id"];
 	$soc->tel                   = $_POST["tel"];
 	$soc->fax                   = $_POST["fax"];
-	$soc->email                 = $_POST["email"];
+	$soc->email                 = trim($_POST["email"]);
 	$soc->url                   = $_POST["url"];
 	$soc->siren                 = $_POST["idprof1"];
 	$soc->siret                 = $_POST["idprof2"];
@@ -109,7 +111,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->effectif_id           = $_POST["effectif_id"];
 	if ($_REQUEST["private"] == 1)
 	{
-		$soc->typent_id             = 8; //todo prévoir autre méthode si le champs "particulier" change de rowid
+		$soc->typent_id             = 8; // TODO prévoir autre méthode si le champs "particulier" change de rowid
 	}
 	else
 	{
@@ -121,12 +123,22 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 
 	$soc->commercial_id         = $_POST["commercial_id"];
 
+	# A virer
+print 'ttt'.$soc->email.isValidEMail($soc->email).$_POST["action"];
+exit;
 
+	// Check parameters
+	if (! empty($soc->email) && ! isValidEMail($soc->email))
+	{
+		$error = 1;
+		$soc->error = $langs->trans("ErrorBadEMail",$soc->email);
+		$_GET["action"]= $_POST["action"]=='add'?'add':'edit';
+	}
 	if ($soc->fournisseur && ! $conf->fournisseur->enabled)
 	{
 		$error = 1;
 		$soc->error = $langs->trans("ErrorSupplierModuleNotEnabled");
-		$_GET["action"]= "create";
+		$_GET["action"]= $_POST["action"]=='add'?'add':'edit';
 	}
 
 	if (! $error)

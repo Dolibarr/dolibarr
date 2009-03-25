@@ -138,7 +138,7 @@ class Societe extends CommonObject
 	{
 		global $langs,$conf;
 
-		// clean parameters
+		// Clean parameters
 		$this->nom=trim($this->nom);
 
 		dol_syslog("Societe::create ".$this->nom);

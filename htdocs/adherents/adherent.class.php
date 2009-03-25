@@ -260,12 +260,12 @@ class Adherent extends CommonObject
 		global $conf,$langs;
 
 		// Check parameters
-		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
+		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($this->email))
 		{
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;
 		}
-		if (! $this->datec) $this->datec=time();
+		if (! $this->datec) $this->datec=gmmktime();
 
 		$this->db->begin();
 
@@ -352,7 +352,7 @@ class Adherent extends CommonObject
 		dol_syslog("Adherent::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", email=".$this->email);
 
 		// Verification parametres
-		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
+		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($this->email))
 		{
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;

@@ -83,10 +83,10 @@ if ($_REQUEST["action"] == 'dopayment')
 	$ID=$_REQUEST["id"];
 
 	$mesg='';
-	if (empty($PRICE))            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
-	elseif (empty($EMAIL))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
-	elseif (! ValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
-	elseif (empty($TAG))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+	if (empty($PRICE))              $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
+	elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
+	elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
+	elseif (empty($TAG))            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
 
 	if (empty($mesg))
 	{

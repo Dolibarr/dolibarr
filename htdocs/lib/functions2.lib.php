@@ -118,14 +118,15 @@ function dol_print_object_info($object)
 /**
  *	\brief      Return true if email syntax is ok
  *	\param	    address     email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	\return     boolean     true if email ok, false if ko
+ *	\return     boolean     true if email syntax is OK, false if KO
  */
-function ValidEmail($address)
+function isValidEmail($address)
 {
 	if (eregi(".*<(.+)>", $address, $regs)) {
 		$address = $regs[1];
 	}
-	if (eregi("^[^@  ]+@([a-zA-Z0-9\-]+\.)+([a-zA-Z0-9\-]{2}|asso|aero|biz|com|coop|edu|gov|info|int|mil|name|net|org|pro)\$",$address))
+	// 3 letters domains extensions: biz|com|edu|gov|int|mil|net|org|pro
+	if (eregi("^[^@  ]+@([a-zA-Z0-9\-]+\.)+([a-zA-Z0-9\-]{2,3}|asso|aero|coop|info|name)\$",$address))
 	{
 		return true;
 	}
@@ -136,11 +137,11 @@ function ValidEmail($address)
 }
 
 /**
- *	\brief      Renvoi vrai si l'email a un nom de domaine qui r�soud via dns
+ *	\brief      Return true if email has a domain name that can't be resolved
  *	\param	    mail        adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	\return     boolean     true si email valide, false sinon
+ *	\return     boolean     true if domain email is OK, false if KO
  */
-function CheckMailDomain($mail)
+function isValidMailDomain($mail)
 {
 	list($user, $domain) = split("@", $mail, 2);
 	if (checkdnsrr($domain, "MX"))
@@ -152,6 +153,7 @@ function CheckMailDomain($mail)
 		return false;
 	}
 }
+
 
 /**
  * 	\brief		Return lines of an html table from an array
