@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -105,7 +105,7 @@ while (($file = readdir($handle))!==false)
 				// Show modules according to features level
 				if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 				if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-	
+
 				if ($module->isEnabled())
 				{
 					$barcodelist[$filebis]=$module->info();
@@ -159,23 +159,26 @@ if ($resql)
 		if ($obj->coder && $obj->coder != -1)
 		{
 			// Chargement de la classe de codage
-			require_once($dir.$obj->coder.".modules.php");
-			$classname = "mod".ucfirst($obj->coder);
-			$module = new $classname($db);
+			$result=include_once($dir.$obj->coder.".modules.php");
+			if ($result)
+			{
+				$classname = "mod".ucfirst($obj->coder);
+				$module = new $classname($db);
 
-			if ($module->encodingIsSupported($obj->encoding))
-			{
-				// Build barcode on disk
-				$result=$module->writeBarCode($obj->example,$obj->encoding,'Y');
-				
-				// Output files with barcode generators
-				$url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($obj->coder).'&code='.urlencode($obj->example).'&encoding='.urlencode($obj->encoding);
-				//print $url;
-				print '<img src="'.$url.'" title="'.$obj->example.'" border="0">';
-			}
-			else
-			{
-				print $langs->trans("FormatNotSupportedByGenerator");
+				if ($module->encodingIsSupported($obj->encoding))
+				{
+					// Build barcode on disk
+					$result=$module->writeBarCode($obj->example,$obj->encoding,'Y');
+
+					// Output files with barcode generators
+					$url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($obj->coder).'&code='.urlencode($obj->example).'&encoding='.urlencode($obj->encoding);
+					//print $url;
+					print '<img src="'.$url.'" title="'.$obj->example.'" border="0">';
+				}
+				else
+				{
+					print $langs->trans("FormatNotSupportedByGenerator");
+				}
 			}
 		}
 		else
