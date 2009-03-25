@@ -39,6 +39,15 @@ class ModeleBarCode
 {
 	var $error='';
 
+
+	/**     \brief     	Return if a module can be used or not
+	*      	\return		boolean     true if module can be used
+	*/
+	function isEnabled()
+	{
+		return true;
+	}
+
 }
 
 ?>
