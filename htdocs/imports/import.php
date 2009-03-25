@@ -18,22 +18,22 @@
  */
 
 /**
-        \file       htdocs/exports/export.php
-        \ingroup    export
-        \brief      Page d'edition d'un export
-        \version    $Id$
-*/
+ *      \file       htdocs/imports/import.php
+ *      \ingroup    import
+ *      \brief      Page d'edition d'un import
+ *      \version    $Id$
+ */
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
-require_once(DOL_DOCUMENT_ROOT."/exports/export.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
+require_once(DOL_DOCUMENT_ROOT."/imports/import.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
 
 $langs->load("exports");
 
 
-if (! $user->admin)
+if (! $user->societe_id == 0)
   accessforbidden();
 
 $entitytoicon=array(
@@ -63,22 +63,22 @@ $entitytolang=array(		// Translation code
 	'other'=>'Other'
 	);
 
-$array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
-$datatoexport=isset($_GET["datatoexport"])? $_GET["datatoexport"] : (isset($_POST["datatoexport"])?$_POST["datatoexport"]:'');
+$array_selected=isset($_SESSION["import_selected_fields"])?$_SESSION["import_selected_fields"]:array();
+$datatoimport=isset($_GET["datatoimport"])? $_GET["datatoimport"] : (isset($_POST["datatoimport"])?$_POST["datatoimport"]:'');
 $action=isset($_GET["action"]) ? $_GET["action"] : (isset($_POST["action"])?$_POST["action"]:'');
 $step=isset($_GET["step"])? $_GET["step"] : (isset($_POST["step"])?$_POST["step"]:1);
-$export_name=isset($_POST["export_name"])? $_POST["export_name"] : '';
+$import_name=isset($_POST["import_name"])? $_POST["import_name"] : '';
 $hexa=isset($_POST["hexa"])? $_POST["hexa"] : '';
-$exportmodelid=isset($_POST["exportmodelid"])? $_POST["exportmodelid"] : '';
+$importmodelid=isset($_POST["importmodelid"])? $_POST["importmodelid"] : '';
 
-$objexport=new Export($db);
-$objexport->load_arrays($user,$datatoexport);
+$objimport=new Import($db);
+$objimport->load_arrays($user,$datatoimport);
 
-$objmodelexport=new ModeleExports();
+$objmodelimport=new ModeleImports();
 $html = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
-$sqlusedforexport='';
+$sqlusedforimport='';
 
 
 /*
@@ -89,20 +89,20 @@ if ($action=='selectfield')
 {
     if ($_GET["field"]=='all')
     {
-		$fieldsarray=$objexport->array_export_alias[0];
+		$fieldsarray=$objimport->array_import_alias[0];
 		foreach($fieldsarray as $key=>$val)
 		{
 			if (! empty($array_selected[$key])) continue;		// If already selected, select next
 			$array_selected[$key]=sizeof($array_selected)+1;
 		    //print_r($array_selected);
-		    $_SESSION["export_selected_fields"]=$array_selected;
+		    $_SESSION["import_selected_fields"]=$array_selected;
 		}
     }
     else
     {
 		$array_selected[$_GET["field"]]=sizeof($array_selected)+1;
 	    //print_r($array_selected);
-	    $_SESSION["export_selected_fields"]=$array_selected;
+	    $_SESSION["import_selected_fields"]=$array_selected;
     }
 
 }
@@ -111,7 +111,7 @@ if ($action=='unselectfield')
     if ($_GET["field"]=='all')
     {
 		$array_selected=array();
-		$_SESSION["export_selected_fields"]=$array_selected;
+		$_SESSION["import_selected_fields"]=$array_selected;
     }
     else
     {
@@ -126,7 +126,7 @@ if ($action=='unselectfield')
 	        $array_selected[$code]=$i;
 	        //print "x $code x $i y<br>";
 	    }
-	    $_SESSION["export_selected_fields"]=$array_selected;
+	    $_SESSION["import_selected_fields"]=$array_selected;
     }
 }
 if ($action=='downfield' || $action=='upfield')
@@ -149,28 +149,28 @@ if ($action=='downfield' || $action=='upfield')
     {
         $array_selected[$_GET["field"]]=$newpos;
         $array_selected[$newcode]=$pos;
-        $_SESSION["export_selected_fields"]=$array_selected;
+        $_SESSION["import_selected_fields"]=$array_selected;
     }
 }
 
 if ($step == 1 || $action == 'cleanselect')
 {
-    $_SESSION["export_selected_fields"]=array();
+    $_SESSION["import_selected_fields"]=array();
     $array_selected=array();
 }
 
 if ($action == 'builddoc')
 {
-    // Build export file
-	$result=$objexport->build_file($user, $_POST['model'], $datatoexport, $array_selected);
+    // Build import file
+	$result=$objimport->build_file($user, $_POST['model'], $datatoimport, $array_selected);
 	if ($result < 0)
 	{
-	    $mesg='<div class="error">'.$objexport->error.'</div>';
+	    $mesg='<div class="error">'.$objimport->error.'</div>';
 	}
 	else
 	{
 	    $mesg='<div class="ok">'.$langs->trans("FileSuccessfullyBuilt").'</div>';
-	    $sqlusedforexport=$objexport->sqlusedforexport;
+	    $sqlusedforimport=$objimport->sqlusedforimport;
     }
 }
 
@@ -178,14 +178,14 @@ if ($action == 'deleteprof')
 {
 	if ($_GET["id"])
 	{
-		$objexport->fetch($_GET["id"]);
-		$result=$objexport->delete($user);
+		$objimport->fetch($_GET["id"]);
+		$result=$objimport->delete($user);
 	}
 }
 
-if ($action == 'add_export_model')
+if ($action == 'add_import_model')
 {
-	if ($export_name)
+	if ($import_name)
 	{
 		asort($array_selected);
 
@@ -197,48 +197,49 @@ if ($action == 'add_export_model')
 			$hexa.=$key;
 		}
 
-	    $objexport->model_name = $export_name;
-	    $objexport->datatoexport = $datatoexport;
-	    $objexport->hexa = $hexa;
+	    $objimport->model_name = $import_name;
+	    $objimport->datatoimport = $datatoimport;
+	    $objimport->hexa = $hexa;
 
-	    $result = $objexport->create($user);
+	    $result = $objimport->create($user);
 		if ($result >= 0)
 		{
-		    $mesg='<div class="ok">'.$langs->trans("ExportModelSaved",$objexport->model_name).'</div>';
+		    $mesg='<div class="ok">'.$langs->trans("ImportModelSaved",$objimport->model_name).'</div>';
 		}
 		else
 		{
 			$langs->load("errors");
-			if ($objexport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			if ($objimport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
-				$mesg='<div class="error">'.$langs->trans("ErrorExportDuplicateProfil").'</div>';
+				$mesg='<div class="error">'.$langs->trans("ErrorImportDuplicateProfil").'</div>';
 			}
-			else $mesg='<div class="error">'.$objexport->error.'</div>';
+			else $mesg='<div class="error">'.$objimport->error.'</div>';
 		}
 	}
 	else
 	{
-	    $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportModelName")).'</div>';
+	    $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("ImportModelName")).'</div>';
 	}
 }
 
 if ($step == 2 && $action == 'select_model')
 {
-    $_SESSION["export_selected_fields"]=array();
+    $_SESSION["import_selected_fields"]=array();
     $array_selected=array();
-    $result = $objexport->fetch($exportmodelid);
+    $result = $objimport->fetch($importmodelid);
     if ($result > 0)
     {
-		$fieldsarray=split(',',$objexport->hexa);
+		$fieldsarray=split(',',$objimport->hexa);
 		$i=1;
 		foreach($fieldsarray as $val)
 		{
 			$array_selected[$val]=$i;
 			$i++;
 		}
-		$_SESSION["export_selected_fields"]=$array_selected;
+		$_SESSION["import_selected_fields"]=$array_selected;
     }
 }
+
 
 
 /*
@@ -246,16 +247,16 @@ if ($step == 2 && $action == 'select_model')
  */
 
 
-if ($step == 1 || ! $datatoexport)
+if ($step == 1 || ! $datatoimport)
 {
-    llxHeader('',$langs->trans("NewExport"));
+    llxHeader('',$langs->trans("NewImport"));
 
     /*
      * Affichage onglets
      */
     $h = 0;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
+    $head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
     $head[$h][1] = $langs->trans("Step")." 1";
     $hselected=$h;
     $h++;
@@ -266,37 +267,37 @@ if ($step == 1 || ! $datatoexport)
     $h++;
     */
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
 
 
     print '<table class="notopnoleftnoright" width="100%">';
 
-    print $langs->trans("SelectExportDataSet").'<br>';
+    print $langs->trans("SelectImportDataSet").'<br>';
 
-    // Affiche les modules d'exports
+    // Affiche les modules d'imports
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
-    print '<td>'.$langs->trans("ExportableDatas").'</td>';
+    print '<td>'.$langs->trans("ImportableDatas").'</td>';
     print '<td>&nbsp;</td>';
     print '</tr>';
     $val=true;
-    if (sizeof($objexport->array_export_code))
+    if (sizeof($objimport->array_import_code))
     {
-        foreach ($objexport->array_export_code as $key => $value)
+        foreach ($objimport->array_import_code as $key => $value)
         {
             $val=!$val;
             print '<tr '.$bc[$val].'><td nospan="nospan">';
-	        //print img_object($objexport->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
-            print $objexport->array_export_module[$key]->getName();
+	        //print img_object($objimport->array_import_module[$key]->getName(),$import->array_import_module[$key]->picto).' ';
+            print $objimport->array_import_module[$key]->getName();
             print '</td><td>';
 			//print $value;
-            print img_object($objexport->array_export_module[$key]->getName(),$objexport->array_export_icon[$key]).' ';
-            print $objexport->array_export_label[$key];
+            print img_object($objimport->array_import_module[$key]->getName(),$objimport->array_import_icon[$key]).' ';
+            print $objimport->array_import_label[$key];
             print '</td><td align="right">';
-            if ($objexport->array_export_perms[$key])
+            if ($objimport->array_import_perms[$key])
             {
-            	print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
+            	print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimprt='.$objimport->array_import_code[$key].'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
             }
             else
             {
@@ -307,7 +308,7 @@ if ($step == 1 || ! $datatoexport)
     }
     else
     {
-        print '<tr><td '.$bc[false].' colspan="3">'.$langs->trans("NoExportableData").'</td></tr>';
+        print '<tr><td '.$bc[false].' colspan="3">'.$langs->trans("NoImportableData").'</td></tr>';
     }
     print '</table>';
 
@@ -319,9 +320,9 @@ if ($step == 1 || ! $datatoexport)
 
 }
 
-if ($step == 2 && $datatoexport)
+if ($step == 2 && $datatoimport)
 {
-    llxHeader('',$langs->trans("NewExport"));
+    llxHeader('',$langs->trans("NewImport"));
 
 
     /*
@@ -329,45 +330,81 @@ if ($step == 2 && $datatoexport)
      */
     $h = 0;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
+    $head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
     $head[$h][1] = $langs->trans("Step")." 1";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport;
+    $head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
     $head[$h][1] = $langs->trans("Step")." 2";
     $hselected=$h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
 
+	
+	print '<form name="userfile" action="index.php" enctype="multipart/form-data" METHOD="POST">';      
+	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
+	
+	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	print '<tr class="liste_titre"><td>Importer un fichier clients</td></tr>';
+	
+	print "<tr $bc[1]><td>";
+	print '<input type="file"   name="userfile" size="20" maxlength="80"><br />';
+	print '<input type="submit" value="'.$langs->trans("Upload").'" name="sendit"> &nbsp; ';
+	print '<input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><br>';
+	
+	print "</tr>\n";
+	print '</table></form>';
+	
+	if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+	{
+	  $imp = new DolibarrImport($db);
+	  $imp->CreateBackupDir();  
+	  if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $imp->upload_dir . "/" . $_FILES['userfile']['name'],1) > 0)
+	    {
+	      
+	      $imp->ImportClients($imp->upload_dir . "/" . $_FILES['userfile']['name']);
+	      
+	      print "Imports : ".$imp->nb_import."<br>";
+	      print "Imports corrects : ".$imp->nb_import_ok."<br>";
+	      print "Imports erreurs : ".$imp->nb_import_ko."<br>";
+	      
+	    }
+	  else
+	    {
+	      $mesg = "Le fichier n'a pas �t� t�l�charg�";
+	    }
+	}
+
+    
     print '<table width="100%" class="border">';
 
     // Module
     print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
     print '<td>';
-    //print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
-    print $objexport->array_export_module[0]->getName();
+    //print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
+    print $objimport->array_import_module[0]->getName();
     print '</td></tr>';
 
-    // Lot de donnees a exporter
-    print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
+    // Lot de donnees a importer
+    print '<tr><td width="25%">'.$langs->trans("DatasetToImport").'</td>';
     print '<td>';
-    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
-    print $objexport->array_export_label[0];
+    print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
+    print $objimport->array_import_label[0];
     print '</td></tr>';
 
     print '</table>';
     print '<br>';
 
-    // Liste deroulante des modeles d'export
-    print '<form action="export.php" method="post">';
+    // Liste deroulante des modeles d'import
+    print '<form action="import.php" method="post">';
     print '<input type="hidden" name="action" value="select_model">';
     print '<input type="hidden" name="step" value="2">';
-    print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
+    print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
     print '<table><tr><td>';
-    print $langs->trans("SelectExportFields");
+    print $langs->trans("SelectImportFields");
 	print '</td><td>';
-    $htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
+    $htmlother->select_import_model($importmodelid,'importmodelid',$datatoimport,1);
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</td></tr></table>';
     print '</form>';
@@ -376,25 +413,25 @@ if ($step == 2 && $datatoexport)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
-    print '<td>'.$langs->trans("ExportableFields").'</td>';
+    print '<td>'.$langs->trans("ImportableFields").'</td>';
     print '<td width="12" align="middle">';
-    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
+    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoimport='.$datatoimport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
     print '/';
-    print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field=all">'.$langs->trans("None")."</a>";
+    print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoimport='.$datatoimport.'&action=unselectfield&field=all">'.$langs->trans("None")."</a>";
     print '</td>';
-    print '<td width="44%">'.$langs->trans("ExportedFields").'</td>';
+    print '<td width="44%">'.$langs->trans("ImportedFields").'</td>';
     print '</tr>';
 
-    // Champs exportables
-    $fieldsarray=$objexport->array_export_fields[0];
+    // Champs importables
+    $fieldsarray=$objimport->array_import_fields[0];
 
-#    $this->array_export_module[0]=$module;
-#    $this->array_export_code[0]=$module->export_code[$r];
-#    $this->array_export_label[0]=$module->export_label[$r];
-#    $this->array_export_sql[0]=$module->export_sql[$r];
-#    $this->array_export_fields[0]=$module->export_fields_array[$r];
-#    $this->array_export_entities[0]=$module->export_fields_entities[$r];
-#    $this->array_export_alias[0]=$module->export_fields_alias[$r];
+#    $this->array_import_module[0]=$module;
+#    $this->array_import_code[0]=$module->import_code[$r];
+#    $this->array_import_label[0]=$module->import_label[$r];
+#    $this->array_import_sql[0]=$module->import_sql[$r];
+#    $this->array_import_fields[0]=$module->import_fields_array[$r];
+#    $this->array_import_entities[0]=$module->import_fields_entities[$r];
+#    $this->array_import_alias[0]=$module->import_fields_alias[$r];
 
     $var=true;
     $i = 0;
@@ -406,7 +443,7 @@ if ($step == 2 && $datatoexport)
 
         $i++;
 
-        $entity=$objexport->array_export_entities[0][$code];
+        $entity=$objimport->array_import_entities[0][$code];
         $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
         $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
@@ -415,7 +452,7 @@ if ($step == 2 && $datatoexport)
         {
             // Selected fields
             print '<td>&nbsp;</td>';
-            print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
+            print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoimport='.$datatoimport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
             print '<td>'.$langs->trans($label).' ('.$code.')</td>';
             $bit=1;
         }
@@ -423,7 +460,7 @@ if ($step == 2 && $datatoexport)
         {
         	// Fields not selected
             print '<td>'.$langs->trans($label).' ('.$code.')</td>';
-            print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right().'</a></td>';
+            print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoimport='.$datatoimport.'&action=selectfield&field='.$code.'">'.img_right().'</a></td>';
             print '<td>&nbsp;</td>';
             $bit=0;
         }
@@ -446,7 +483,7 @@ if ($step == 2 && $datatoexport)
 
     if (sizeof($array_selected))
 	{
-		print '<a class="butAction" href="export.php?step=3&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
+		print '<a class="butAction" href="import.php?step=3&datatoimport='.$datatoimport.'">'.$langs->trans("NextStep").'</a>';
 	}
 	else
 	{
@@ -457,55 +494,55 @@ if ($step == 2 && $datatoexport)
 
 }
 
-if ($step == 3 && $datatoexport)
+if ($step == 3 && $datatoimport)
 {
     asort($array_selected);
 
-    llxHeader('',$langs->trans("NewExport"));
+    llxHeader('',$langs->trans("NewImport"));
 
     /*
      * Affichage onglets
      */
     $h = 0;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
+    $head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
     $head[$h][1] = $langs->trans("Step")." 1";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport;
+    $head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
     $head[$h][1] = $langs->trans("Step")." 2";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
+    $head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport;
     $head[$h][1] = $langs->trans("Step")." 3";
     $hselected=$h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
 
     print '<table width="100%" class="border">';
 
     // Module
     print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
     print '<td>';
-    //print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
-    print $objexport->array_export_module[0]->getName();
+    //print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
+    print $objimport->array_import_module[0]->getName();
     print '</td></tr>';
 
-    // Lot de donn�es � exporter
-    print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
+    // Lot de donn�es � importer
+    print '<tr><td width="25%">'.$langs->trans("DatasetToImport").'</td>';
     print '<td>';
-    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
-    print $objexport->array_export_label[0];
+    print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
+    print $objimport->array_import_label[0];
     print '</td></tr>';
 
-    // Nbre champs export�s
-    print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
+    // Nbre champs import�s
+    print '<tr><td width="25%">'.$langs->trans("ImportedFields").'</td>';
     $list='';
     foreach($array_selected as $code=>$value)
     {
         $list.=($list?',':'');
-        $list.=$langs->trans($objexport->array_export_fields[0][$code]);
+        $list.=$langs->trans($objimport->array_import_fields[0][$code]);
     }
     print '<td>'.$list.'</td></tr>';
 
@@ -517,7 +554,7 @@ if ($step == 3 && $datatoexport)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Entities").'</td>';
-    print '<td>'.$langs->trans("ExportedFields").'</td>';
+    print '<td>'.$langs->trans("ImportedFields").'</td>';
     print '<td align="right" colspan="2">'.$langs->trans("Position").'</td>';
     print '<td>&nbsp;</td>';
     print '<td>'.$langs->trans("FieldsTitle").'</td>';
@@ -529,24 +566,24 @@ if ($step == 3 && $datatoexport)
         $var=!$var;
         print "<tr $bc[$var]>";
 
-        $entity=$objexport->array_export_entities[0][$code];
+        $entity=$objimport->array_import_entities[0][$code];
         $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
         $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
         print '<td>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
 
-        print '<td>'.$langs->trans($objexport->array_export_fields[0][$code]).' ('.$code.')</td>';
+        print '<td>'.$langs->trans($objimport->array_import_fields[0][$code]).' ('.$code.')</td>';
 
         print '<td align="right" width="100">';
         print $value.' ';
         print '</td><td align="center" width="20">';
-        if ($value < sizeof($array_selected)) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoexport='.$datatoexport.'&action=downfield&field='.$code.'">'.img_down().'</a>';
-        if ($value > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoexport='.$datatoexport.'&action=upfield&field='.$code.'">'.img_up().'</a>';
+        if ($value < sizeof($array_selected)) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=downfield&field='.$code.'">'.img_down().'</a>';
+        if ($value > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=upfield&field='.$code.'">'.img_up().'</a>';
         print '</td>';
 
         print '<td>&nbsp;</td>';
 
-        print '<td>'.$langs->trans($objexport->array_export_fields[0][$code]).'</td>';
+        print '<td>'.$langs->trans($objimport->array_import_fields[0][$code]).'</td>';
 
         print '</tr>';
     }
@@ -566,39 +603,39 @@ if ($step == 3 && $datatoexport)
 
     if (sizeof($array_selected))
     {
-        print '<a class="butAction" href="export.php?step=4&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
+        print '<a class="butAction" href="import.php?step=4&datatoimport='.$datatoimport.'">'.$langs->trans("NextStep").'</a>';
     }
 
     print '</div>';
 
 
-	// Area for profils export
+	// Area for profils import
 	if (sizeof($array_selected))
     {
 		print '<br>';
-        print $langs->trans("SaveExportModel");
+        print $langs->trans("SaveImportModel");
 
-		print '<form class="nocellnopadd" action="export.php" method="post">';
-        print '<input type="hidden" name="action" value="add_export_model">';
+		print '<form class="nocellnopadd" action="import.php" method="post">';
+        print '<input type="hidden" name="action" value="add_import_model">';
         print '<input type="hidden" name="step" value="'.$step.'">';
-        print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
+        print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
         print '<input type="hidden" name="hexa" value="'.$hexa.'">';
 
         print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("ExportModelName").'</td>';
+		print '<td>'.$langs->trans("ImportModelName").'</td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 		$var=false;
 		print '<tr '.$bc[$var].'>';
-		print '<td><input name="export_name" size="32" value=""></td><td align="right">';
+		print '<td><input name="import_name" size="32" value=""></td><td align="right">';
         print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
         print '</td></tr>';
 
-        // List of existing export profils
+        // List of existing import profils
     	$sql = "SELECT rowid, label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."export_model";
-		$sql.= " WHERE type = '".$datatoexport."'";
+		$sql.= " FROM ".MAIN_DB_PREFIX."import_model";
+		$sql.= " WHERE type = '".$datatoimport."'";
 		$sql.= " ORDER BY rowid";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -613,7 +650,7 @@ if ($step == 3 && $datatoexport)
 				print '<tr '.$bc[$var].'><td>';
 				print $obj->label;
 				print '</td><td align="right">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=deleteprof&id='.$obj->rowid.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoimport='.$datatoimport.'&action=deleteprof&id='.$obj->rowid.'">';
 				print img_delete();
 				print '</a>';
 				print '</tr>';
@@ -630,68 +667,68 @@ if ($step == 3 && $datatoexport)
 
 }
 
-if ($step == 4 && $datatoexport)
+if ($step == 4 && $datatoimport)
 {
     asort($array_selected);
 
-    llxHeader('',$langs->trans("NewExport"));
+    llxHeader('',$langs->trans("NewImport"));
 
     /*
      * Affichage onglets
      */
     $h = 0;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
+    $head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
     $head[$h][1] = $langs->trans("Step")." 1";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport;
+    $head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
     $head[$h][1] = $langs->trans("Step")." 2";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
+    $head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport;
     $head[$h][1] = $langs->trans("Step")." 3";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=4&datatoexport='.$datatoexport;
+    $head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4&datatoimport='.$datatoimport;
     $head[$h][1] = $langs->trans("Step")." 4";
     $hselected=$h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
+    dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
 
     print '<table width="100%" class="border">';
 
     // Module
     print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
     print '<td>';
-    //print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
-    print $objexport->array_export_module[0]->getName();
+    //print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
+    print $objimport->array_import_module[0]->getName();
     print '</td></tr>';
 
-    // Lot de donnees a exporter
-    print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
+    // Lot de donnees a importer
+    print '<tr><td width="25%">'.$langs->trans("DatasetToImport").'</td>';
     print '<td>';
-    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
-    print $objexport->array_export_label[0];
+    print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
+    print $objimport->array_import_label[0];
     print '</td></tr>';
 
-    // Nbre champs exportes
-    print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
+    // Nbre champs importes
+    print '<tr><td width="25%">'.$langs->trans("ImportedFields").'</td>';
     $list='';
     foreach($array_selected as $code=>$label)
     {
         $list.=($list?',':'');
-        $list.=$langs->trans($objexport->array_export_fields[0][$code]);
+        $list.=$langs->trans($objimport->array_import_fields[0][$code]);
     }
     print '<td>'.$list.'</td></tr>';
 
     print '</table>';
     print '<br>';
 
-    print $langs->trans("NowClickToGenerateToBuildExportFile").'<br>';
+    print $langs->trans("NowClickToGenerateToBuildImportFile").'<br>';
 
-    // Liste des formats d'exports disponibles
+    // Liste des formats d'imports disponibles
     $var=true;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -700,11 +737,11 @@ if ($step == 4 && $datatoexport)
     print '<td>'.$langs->trans("LibraryVersion").'</td>';
     print '</tr>';
 
-    $liste=$objmodelexport->liste_modeles($db);
+    $liste=$objmodelimport->liste_modeles($db);
     foreach($liste as $key)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$objmodelexport->getDriverLabel($key).'</td><td>'.$objmodelexport->getLibLabel($key).'</td><td>'.$objmodelexport->getLibVersion($key).'</td></tr>';
+        print '<tr '.$bc[$var].'><td>'.$objmodelimport->getDriverLabel($key).'</td><td>'.$objmodelimport->getLibLabel($key).'</td><td>'.$objmodelimport->getLibVersion($key).'</td></tr>';
     }
     print '</table>';
 
@@ -717,21 +754,21 @@ if ($step == 4 && $datatoexport)
     	print $mesg;
     	print '</td></tr>';
     }
-    if ($sqlusedforexport && $user->admin)
+    if ($sqlusedforimport && $user->admin)
     {
     	print '<tr><td>';
-    	print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport);
+    	print info_admin($langs->trans("SQLUsedForImport").':<br> '.$sqlusedforimport);
     	print '</td></tr>';
     }
 	print '</table>';
 
     print '<table width="100%"><tr><td width="50%">';
 
-    if (! is_dir($conf->export->dir_temp)) create_exdir($conf->export->dir_temp);
+    if (! is_dir($conf->import->dir_temp)) create_exdir($conf->import->dir_temp);
 
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1
-    $formfile->show_documents('export','',$conf->export->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),'',1);
+    $formfile->show_documents('import','',$conf->import->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoimport='.$datatoimport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),'',1);
 
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';
@@ -743,8 +780,8 @@ if ($step == 4 && $datatoexport)
     	// Test d'affichage du tableau excel et csv
     	//print '<table width="100%"><tr><td>';
 	    //require_once(DOL_DOCUMENT_ROOT.'/lib/viewfiles.lib.php');
-		//viewExcelFileContent($conf->export->dir_temp.'/1/export_member_1.xls',5,3);
-	    //viewCsvFileContent($conf->export->dir_temp.'/1/export_member_1.csv',5);
+		//viewExcelFileContent($conf->import->dir_temp.'/1/import_member_1.xls',5,3);
+	    //viewCsvFileContent($conf->import->dir_temp.'/1/import_member_1.csv',5);
 	    //print '</td></tr></table>';
     }
 }

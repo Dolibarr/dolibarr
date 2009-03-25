@@ -62,6 +62,7 @@ class Commande extends CommonObject
 	var $adresse_livraison_id;
 	var $adresse;
 	var $date;				// Date commande
+	var $date_commande;		// Date commande (deprecated)
 	var $date_livraison;	// Date livraison souhaitee
 	var $fk_remise_except;
 	var $remise_percent;
@@ -71,6 +72,9 @@ class Commande extends CommonObject
 	var $remise_absolue;
 	var $modelpdf;
 	var $info_bits;
+	var $source;			// Origin of order
+
+	var $user_author_id;
 
 	var $lines = array();
 
@@ -468,19 +472,19 @@ class Commande extends CommonObject
 	}
 
 	/**
-	 *  \brief	Cree la commande
-	 *  \param	user Objet utilisateur qui cree
+	 *  \brief		Create order
+	 *  \param		user 	Objet utilisateur qui cree
 	 */
 	function create($user)
 	{
 		global $conf,$langs,$mysoc;
 
-		// Nettoyage parametres
+		// Clean parameters
 		$this->brouillon = 1;		// On positionne en mode brouillon la commande
 
 		dol_syslog("Commande::create");
 
-		// Verification parametres
+		// Check parameters
 		if (! empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
@@ -505,9 +509,9 @@ class Commande extends CommonObject
 		$sql.= ' ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client,';
 		$sql.= ' model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison,';
 		$sql.= ' remise_absolue, remise_percent)';
-		$sql.= " VALUES ('".$this->ref."',".$this->socid.", ".$this->db->idate(mktime()).", ".$user->id.', '.$this->projetid.',';
+		$sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate(gmmktime()).", ".$user->id.', '.$this->projetid.',';
 		$sql.= ' '.$this->db->idate($this->date_commande).',';
-		$sql.= ' '.($this->source>=0?$this->source:'null').', ';
+		$sql.= ' '.($this->source>=0 && $this->source != '' ?$this->source:'null').', ';
 		$sql.= " '".addslashes($this->note)."', ";
 		$sql.= " '".addslashes($this->note_public)."', ";
 		$sql.= " '".addslashes($this->ref_client)."', '".$this->modelpdf."', '".$this->cond_reglement_id."', '".$this->mode_reglement_id."',";
@@ -523,13 +527,13 @@ class Commande extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'commande');
 
 			if ($this->id)
-	  {
-	  	/*
-	  	 *  Insertion du detail des produits dans la base
-	  	 */
-	  	for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
-	  	{
-	  		$resql = $this->addline(
+			{
+				/*
+				 *  Insertion du detail des produits dans la base
+				 */
+				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+				{
+					$resql = $this->addline(
 					$this->id,
 					$this->lines[$i]->desc,
 					$this->lines[$i]->subprice,
@@ -537,77 +541,132 @@ class Commande extends CommonObject
 					$this->lines[$i]->tva_tx,
 					$this->lines[$i]->fk_product,
 					$this->lines[$i]->remise_percent,
-					$this->lines[$i]->fk_remise_except,
 					$this->lines[$i]->info_bits,
-					0,
+					$this->lines[$i]->fk_remise_except,
 					'HT',
 					0,
-					// Added by Matelli (http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-					// Add start and end dates to the new line
 					$this->lines[$i]->date_start,
 					$this->lines[$i]->date_end,
-					$this->lines[$i]->type
+					$this->lines[$i]->product_type
 					);
-
 					if ($resql < 0)
 					{
-		    $this->error=$this->db->error;
-		    dol_print_error($this->db);
-		    break;
+						$this->error=$this->db->error;
+						dol_print_error($this->db);
+						break;
 					}
-	  	}
+				}
 
-	  	// Mise a jour ref
-	  	$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
-	  	if ($this->db->query($sql))
-	  	{
-	  		if ($this->id && $this->propale_id)
-	  		{
-	  			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_pr (fk_commande, fk_propale) VALUES ('.$this->id.','.$this->propale_id.')';
-	  			$this->db->query($sql);
+				// Mise a jour ref
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+				if ($this->db->query($sql))
+				{
+					if ($this->id && $this->propale_id)
+					{
+						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_pr (fk_commande, fk_propale) VALUES ('.$this->id.','.$this->propale_id.')';
+						$this->db->query($sql);
 
-		    // On recupere les differents contact interne et externe
-		    $prop = New Propal($this->db, $this->socid, $this->propale_id);
+						// On recupere les differents contact interne et externe
+						$prop = New Propal($this->db, $this->socid, $this->propale_id);
 
-		    // On recupere le commercial suivi propale
-		    $this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
+						// On recupere le commercial suivi propale
+						$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
 
-		    if ($this->userid)
-		    {
-		    	//On passe le commercial suivi propale en commercial suivi commande
-		    	$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
-		    }
+						if ($this->userid)
+						{
+							//On passe le commercial suivi propale en commercial suivi commande
+							$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
+						}
 
-		    // On recupere le contact client suivi propale
-		    $this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
+						// On recupere le contact client suivi propale
+						$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
 
-		    if ($this->contactid)
-		    {
-		    	//On passe le contact client suivi propale en contact client suivi commande
-		    	$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
-		    }
-	  		}
+						if ($this->contactid)
+						{
+							//On passe le contact client suivi propale en contact client suivi commande
+							$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
+						}
+					}
 
-	  		// Appel des triggers
-	  		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	  		$interface=new Interfaces($this->db);
-	  		$result=$interface->run_triggers('ORDER_CREATE',$this,$user,$langs,$conf);
-	  		if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	  		// Fin appel triggers
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('ORDER_CREATE',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
 
-	  		$this->db->commit();
-	  		return $this->id;
-	  	}
-	  	else
-	  	{
-	  		$this->db->rollback();
-	  		return -1;
-	  	}
-	  }
+					$this->db->commit();
+					return $this->id;
+				}
+				else
+				{
+					$this->db->rollback();
+					return -1;
+				}
+			}
 		}
 		else
 		{
 			dol_print_error($this->db);
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *		\brief      Load an object from its id and create a new one in database
+	 *		\param      fromid     		Id of object to clone
+	 *		\param		invertdetail	Reverse sign of amounts for lines
+	 * 	 	\return		int				New id of clone
+	 */
+	function createFromClone($fromid,$invertdetail=0)
+	{
+		global $user,$langs;
+
+		$error=0;
+
+		$object=new Commande($this->db);
+
+		$this->db->begin();
+
+		// Load source object
+		$object->fetch($fromid);
+		$object->id=0;
+		$object->statut=0;
+
+		// Clear fields
+		$object->user_author_id     = $user->id;
+		$object->user_valid         = '';
+		$object->date_creation      = '';
+		$object->date_validation    = '';
+		$object->ref_client         = '';
+
+		// Create clone
+		$result=$object->create($user);
+
+		// Other options
+		if ($result < 0)
+		{
+			$this->error=$object->error;
+			$error++;
+		}
+
+		if (! $error)
+		{
+
+
+
+		}
+
+		// End
+		if (! $error)
+		{
+			$this->db->commit();
+			return $object->id;
+		}
+		else
+		{
 			$this->db->rollback();
 			return -1;
 		}
@@ -624,7 +683,7 @@ class Commande extends CommonObject
 	 *		\param    	fk_product      	Id du produit/service predefini
 	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
 	 * 		\param    	info_bits			Bits de type de lignes
-	 *		\param    	fk_remise_exscept	Id remise
+	 *		\param    	fk_remise_except	Id remise
 	 *		\param		price_base_type		HT or TTC
 	 * 		\param    	pu_ttc             	Prix unitaire TTC
 	 * 		\param    	date_start          Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
@@ -640,7 +699,7 @@ class Commande extends CommonObject
 	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0)
 	{
 		dol_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
-
+		
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		// Clean parameters
@@ -704,7 +763,7 @@ class Commande extends CommonObject
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
 			$ligne->product_type=$type;
-
+			
 			// \TODO Ne plus utiliser
 			$ligne->price=$price;
 			$ligne->remise=$remise;
@@ -856,6 +915,7 @@ class Commande extends CommonObject
 				$this->total_tva              = $obj->total_tva;
 				$this->total_ttc              = $obj->total_ttc;
 				$this->date                   = $obj->date_commande;
+				$this->date_commande          = $obj->date_commande;
 				$this->remise                 = $obj->remise;
 				$this->remise_percent         = $obj->remise_percent;
 				$this->remise_absolue         = $obj->remise_absolue;
@@ -1004,9 +1064,10 @@ class Commande extends CommonObject
 	 */
 	function fetch_lines($only_product=0)
 	{
-		$this->lignes=array();
-
-		$sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
+		$this->lignes=array();	// deprecated
+		$this->lines=array();
+		
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
 		$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits,';
 		$sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.date_start, l.date_end,';
 		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
@@ -1031,8 +1092,9 @@ class Commande extends CommonObject
 				$ligne->rowid            = $objp->rowid;				// \deprecated
 				$ligne->id               = $objp->rowid;
 				$ligne->fk_commande      = $objp->fk_commande;
-				$ligne->commande_id      = $objp->fk_commande;		// \deprecated
-				$ligne->desc             = $objp->description;  // Description ligne
+				$ligne->commande_id      = $objp->fk_commande;			// \deprecated
+				$ligne->desc             = $objp->description;  		// Description ligne
+				$ligne->product_type     = $objp->product_type;
 				$ligne->qty              = $objp->qty;
 				$ligne->tva_tx           = $objp->tva_tx;
 				$ligne->total_ht         = $objp->total_ht;
@@ -1061,6 +1123,7 @@ class Commande extends CommonObject
 			}
 			$this->db->free($result);
 
+			$this->lines = $this->lignes;	// For backward compatibility
 			return 1;
 		}
 		else
@@ -2183,10 +2246,8 @@ class CommandeLigne
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.price, cd.qty, cd.tva_tx,';
 		$sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
 		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc, cd.marge_tx, cd.marque_tx, cd.rang,';
-		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
-		// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-		// Load start and end dates from the database
-		$sql.= ','.$this->db->pdate('cd.date_start').' as date_start,'.$this->db->pdate('cd.date_end').' as date_end';
+		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
+		$sql.= ' '.$this->db->pdate('cd.date_start').' as date_start,'.$this->db->pdate('cd.date_end').' as date_end';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
 		$sql.= ' WHERE cd.rowid = '.$rowid;

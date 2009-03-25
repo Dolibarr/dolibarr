@@ -2809,8 +2809,8 @@ class FactureLigne
 	}
 
 	/**
-	 \brief     Recupére l'objet ligne de facture
-	 \param     rowid           id de la ligne de facture
+	 *	\brief     Recupére l'objet ligne de facture
+	 *	\param     rowid           id de la ligne de facture
 	 */
 	function fetch($rowid)
 	{

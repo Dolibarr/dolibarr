@@ -25,14 +25,14 @@
  *		\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/includes/modules/export/modules_export.php");
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/import/modules_import.php");
 
 
 /**
- *	    \class      ExportCsv
- *		\brief      Classe permettant de generer les fichiers exports au format CSV
+ *	    \class      ImportCsv
+ *		\brief      Classe permettant de lire les fichiers imports CSV
  */
-class ExportCsv extends ModeleExports
+class ImportCsv extends ModeleImports
 {
     var $id;
     var $label;
@@ -51,7 +51,7 @@ class ExportCsv extends ModeleExports
      *		\brief      Constructeur
      *		\param	    db      Handler acces base de donnee
      */
-    function ExportCsv($db)
+    function ImportCsv($db)
     {
         global $conf;
         $this->db = $db;
@@ -110,16 +110,16 @@ class ExportCsv extends ModeleExports
     {
     	global $langs;
     	
-        dol_syslog("ExportCsv::open_file file=".$file);
+        dol_syslog("ImportCsv::open_file file=".$file);
 
 		$ret=1;
 		
         $outputlangs->load("exports");
-		$this->handle = fopen($file, "wt");
+		$this->handle = fread($file, "wt");
         if (! $this->handle)
 		{
 			$langs->load("errors");
-			$this->error=$langs->trans("ErrorFailToCreateFile",$file);
+			$this->error=$langs->trans("ErrorFailToOpenFile",$file);
 			$ret=-1;
 		}
 		
@@ -130,37 +130,16 @@ class ExportCsv extends ModeleExports
 	 * 	\brief		Output header into file
 	 * 	\param		langs		Output language
 	 */
-    function write_header($outputlangs)
+    function read_header($outputlangs)
     {
 		return 0;
     }
 
 
 	/**
-	 * 	\brief		Output title line into file
-	 * 	\param		langs		Output language
-	 */
-    function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs)
-    {
-    	global $conf;
-    	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) $outputlangs->charset_output=$conf->global->EXPORT_CSV_FORCE_CHARSET;
-    	
-        foreach($array_selected_sorted as $code => $value)
-        {
-            $newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);
-			$newvalue=$this->csv_clean($newvalue);
-            
-			fwrite($this->handle,$newvalue.$this->separator);
-        }
-        fwrite($this->handle,"\n");
-        return 0;
-    }
-
-
-	/**
 	 * 	\brief		Output record line into file
 	 */
-    function write_record($array_alias,$array_selected_sorted,$objp,$outputlangs)
+    function read_record($array_alias,$array_selected_sorted,$objp,$outputlangs)
     {
     	global $conf;
     	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) $outputlangs->charset_output=$conf->global->EXPORT_CSV_FORCE_CHARSET;
@@ -187,15 +166,6 @@ class ExportCsv extends ModeleExports
         return 0;
     }
 
-	/**
-	 * 	\brief		Output footer into file
-	 * 	\param		outputlangs		Output language
-	 */
-    function write_footer($outputlangs)
-    {
-		return 0;
-    }
-    
 	/**
 	 * 	\brief		Close file handle
 	 */

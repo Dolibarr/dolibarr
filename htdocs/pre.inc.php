@@ -161,7 +161,15 @@ function llxHeader($head = '', $title='', $help_url='')
 	if (! empty($conf->export->enabled))
 	{
 		$langs->load("exports");
-		$menu->add(DOL_URL_ROOT."/exports/index.php", $langs->trans("Exports"));
+		$menu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("FormatedExport"),0, $user->rights->export->lire);
+		$menu->add_submenu(DOL_URL_ROOT."/exports/export.php?leftmenu=export",$langs->trans("NewExport"),1, $user->rights->export->creer);
+	}
+
+	if (! empty($conf->global->MAIN_MODULE_IMPORT))
+	{
+		$langs->load("exports");
+		$menu->add_submenu(DOL_URL_ROOT."/imports/index.php?leftmenu=import",$langs->trans("FormatedImport"),0, $user->rights->import->lire);
+		$menu->add_submenu(DOL_URL_ROOT."/imports/import.php?leftmenu=import",$langs->trans("NewImport"),1, $user->rights->import->creer);
 	}
 
 	if ($user->rights->user->user->lire || $user->admin)

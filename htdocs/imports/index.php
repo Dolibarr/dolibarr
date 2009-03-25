@@ -27,7 +27,7 @@
 */
  
 require_once("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/admin/import/dolibarrimport.class.php");
+require_once(DOL_DOCUMENT_ROOT."/imports/import.class.php");
 
 $langs->load("exports");
 
@@ -36,8 +36,8 @@ if (! $user->societe_id == 0)
 
 	  
 
-$export=new DolibarrImport($db);
-//$export->load_arrays($user);
+$import=new Import($db);
+//$import->load_arrays($user);
 
  
 llxHeader('',$langs->trans("ImportArea"));
@@ -50,10 +50,10 @@ print '<br>';
 
 print '<table class="notopnoleftnoright" width="100%">';
 
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<tr><td valign="top" width="40%" class="notopnoleft">';
 
 
-// Liste des formats d'exports disponibles
+// Liste des formats d'imports disponibles
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -62,8 +62,8 @@ print '<td>'.$langs->trans("LibraryUsed").'</td>';
 print '<td>'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
-include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
-$model=new ModeleExports();
+include_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
+$model=new ModeleImports();
 $liste=$model->liste_modeles($db);
 
 foreach($liste as $key)
@@ -79,10 +79,10 @@ foreach($liste as $key)
 print '</table>';
 
 
-print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+print '</td><td valign="top" width="60%" class="notopnoleftnoright">';
 
 
-// Affiche les modules d'exports
+// Affiche les modules d'imports
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
@@ -90,26 +90,26 @@ print '<td>'.$langs->trans("ImportableDatas").'</td>';
 //print '<td>&nbsp;</td>';
 print '</tr>';
 $val=true;
-if (sizeof($export->array_export_code))
+if (sizeof($import->array_import_code))
 {
-    foreach ($export->array_export_code as $key => $value)
+    foreach ($import->array_import_code as $key => $value)
     {
         $val=!$val;
         print '<tr '.$bc[$val].'><td>';
-        print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
-        print $export->array_export_module[$key]->getName();
+        print img_object($import->array_import_module[$key]->getName(),$import->array_import_module[$key]->picto).' ';
+        print $import->array_import_module[$key]->getName();
         print '</td><td>';
-        $string=$langs->trans($export->array_export_label[$key]);
-        print ($string!=$export->array_export_label[$key]?$string:$export->array_export_label[$key]);
+        $string=$langs->trans($import->array_import_label[$key]);
+        print ($string!=$import->array_import_label[$key]?$string:$import->array_import_label[$key]);
         print '</td>';
 //        print '<td width="24">';
-//        print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$export->array_export_code[$key].'&amp;action=cleanselect">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
+//        print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&amp;datatoimport='.$import->array_import_code[$key].'&amp;action=cleanselect">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
 //        print '</td>';
         print '</tr>';
 
     }
 
-    print '<tr class="total"><td class="total" colspan="2" align="center"><form action="'.DOL_URL_ROOT.'/admin/import.php?leftmenu=import"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"></form></td></tr>';
+    print '<tr class="total"><td class="total" colspan="2" align="center"><form action="'.DOL_URL_ROOT.'/admin/import.php?leftmenu=import"><input type="submit" class="button" value="'.$langs->trans("NewImport").'"></form></td></tr>';
 }
 else
 {

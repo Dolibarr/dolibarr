@@ -83,7 +83,7 @@ function ordersupplier_prepare_head($commande)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$commande->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("OrderCard");
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -102,7 +102,7 @@ function ordersupplier_prepare_head($commande)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$commande->id;
-	$head[$h][1] = $langs->trans("Note");
+	$head[$h][1] = $langs->trans("Notes");
 	$head[$h][2] = 'note';
 	$h++;
 

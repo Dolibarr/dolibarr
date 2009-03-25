@@ -813,8 +813,8 @@ class MenuLeft {
 				if (! empty($conf->global->MAIN_MODULE_IMPORT))
 				{
 					$langs->load("exports");
-					$newmenu->add_submenu(DOL_URL_ROOT."/admin/import/index.php?leftmenu=import",$langs->trans("FormatedImport"),0, $user->rights->import->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/admin/import/import.php?leftmenu=import",$langs->trans("NewImport"),1, $user->rights->import->creer);
+					$newmenu->add_submenu(DOL_URL_ROOT."/imports/index.php?leftmenu=import",$langs->trans("FormatedImport"),0, $user->rights->import->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/imports/import.php?leftmenu=import",$langs->trans("NewImport"),1, $user->rights->import->creer);
 				}
 
 				if (! empty($conf->global->MAIN_MODULE_DOMAIN))

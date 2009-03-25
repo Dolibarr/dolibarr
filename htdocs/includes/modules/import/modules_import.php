@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/export/modules_export.php
+ *	\file       htdocs/includes/modules/import/modules_import.php
  *	\ingroup    export
- *	\brief      File of parent class for export modules
+ *	\brief      File of parent class for import file readers
  *	\version    $Id$
  */
 
@@ -29,10 +29,10 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 
 
 /**
- *	\class      ModeleExports
- *	\brief      Parent class for export modules
+ *	\class      ModeleImports
+ *	\brief      Parent class for import file readers
  */
-class ModeleExports
+class ModeleImports
 {
 	var $error='';
 
@@ -46,7 +46,7 @@ class ModeleExports
 	/**
 	 *      \brief      Constructeur
 	 */
-	function ModeleExports()
+	function ModeleImports()
 	{
 	}
 
@@ -56,23 +56,23 @@ class ModeleExports
 	 */
 	function liste_modeles($db)
 	{
-		dol_syslog("ModeleExport::loadFormat");
+		dol_syslog("ModeleImport::loadFormat");
 
-		$dir=DOL_DOCUMENT_ROOT."/includes/modules/export/";
+		$dir=DOL_DOCUMENT_ROOT."/includes/modules/import/";
 		$handle=opendir($dir);
 
-		// Recherche des fichiers drivers exports disponibles
+		// Recherche des fichiers drivers imports disponibles
 		$var=True;
 		$i=0;
 		while (($file = readdir($handle))!==false)
 		{
-			if (eregi("^export_(.*)\.modules\.php",$file,$reg))
+			if (eregi("^import_(.*)\.modules\.php",$file,$reg))
 			{
 				$moduleid=$reg[1];
 
 				// Chargement de la classe
-				$file = $dir."/export_".$moduleid.".modules.php";
-				$classname = "Export".ucfirst($moduleid);
+				$file = $dir."/import_".$moduleid.".modules.php";
+				$classname = "Import".ucfirst($moduleid);
 
 				require_once($file);
 				$module = new $classname($db);
@@ -127,42 +127,28 @@ class ModeleExports
 
 
 	/**
-	 *      \brief      Lance la generation du fichier
-	 *      \remarks    Les tableaux array_export_xxx sont d�j� charg�es pour le bon datatoexport
-	 *                  aussi le parametre datatoexport est inutilis�
+	 *      \brief      Lance lecture fichier
+	 *      \remarks    Les tableaux array_import_xxx sont deja chargees pour le bon datatoexport
 	 */
-	function build_file($model, $datatoexport, $array_selected)
+	function load_file($model, $array_selected)
 	{
 		global $langs;
 
-		dol_syslog("Export::build_file $model, $datatoexport, $array_selected");
+		dol_syslog("Import::load_file $model, $array_selected");
 
-		// Creation de la classe d'export du model ExportXXX
-		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/export/";
-		$file = "export_".$model.".modules.php";
-		$classname = "Export".$model;
+		// Creation de la classe d'export du model ImportXXX
+		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
+		$file = "import_".$model.".modules.php";
+		$classname = "Import".$model;
 		require_once($dir.$file);
 		$obj = new $classname($db);
 
-		// Execute requete export
+		// Execute requete import
 		$sql=$this->array_export_sql[0];
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			// Genere en-tete
-			$obj->write_header();
 
-			// Genere ligne de titre
-			$obj->write_title();
-
-			while ($objp = $this->db->fetch_object($resql))
-			{
-				$var=!$var;
-				$obj->write_record($objp,$array_selected);
-			}
-
-			// Genere en-tete
-			$obj->write_footer();
 		}
 		else
 		{

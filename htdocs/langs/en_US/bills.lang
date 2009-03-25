@@ -261,7 +261,6 @@ PaymentNumber=Payment number
 RemoveDiscount=Remove discount
 WatermarkOnDraftBill=Watermark on draft invoices (nothing if empty)
 CloneInvoice=Clone invoice
-CloneMainAttributes=Clone object with its main attributes
 ConfirmCloneInvoice=Are you sure you want to clone this invoice <b>%s</b> ?
 DisabledBecauseReplacedInvoice=Action disabled because invoice has been replaced
 

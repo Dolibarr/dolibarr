@@ -70,6 +70,31 @@ if ($_GET["projetid"])
 /*                     Actions                                                */
 /******************************************************************************/
 
+// Action clone object
+if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
+{
+	if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
+	{
+		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+	}
+	else
+	{
+		$object=new Commande($db);
+		$result=$object->createFromClone($_REQUEST['id']);
+		if ($result > 0)
+		{
+			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
+			exit;
+		}
+		else
+		{
+			$mesg=$object->error;
+			$_GET['action']='';
+			$_GET['id']=$_REQUEST['id'];
+		}
+	}
+}
+
 // Suppression de la commande
 if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
@@ -680,7 +705,7 @@ if ($_POST['addfile'])
 			}
 			else
 			{
-				// Echec transfert (fichier d�passant la limite ?
+				// Echec transfert (fichier depassant la limite ?)
 				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 				// print_r($_FILES);
 			}
@@ -1231,6 +1256,19 @@ else
 				print '<br>';
 			}
 
+			// Clone confirmation
+			if ($_GET["action"] == 'clone')
+			{
+				// Create an array for form
+				$formquestion=array(
+				//'text' => $langs->trans("ConfirmClone"),
+				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
+				);
+				// Paiement incomplet. On demande si motif = escompte ou autre
+				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$commande->ref),'confirm_clone',$formquestion,'yes');
+				print '<br>';
+			}
+			
 			/*
 			 *   Commande
 			 */
@@ -1999,6 +2037,12 @@ else
 							}
 							print '>'.$langs->trans('CancelOrder').'</a>';
 						}
+					}
+
+					// Clone
+					if ($user->rights->commande->creer)
+					{
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$commande->id.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
 					}
 
 					// Delete order

@@ -100,6 +100,8 @@ UseCustomerContactAsOrderRecipientIfExist=Utiliser adresse contact suivi client 
 RunningOrders=Commandes en cours
 UserWithApproveOrderGrant=Utilisateurs habilités à approuver les commandes
 PaymentOrderRef=Paiement commande %s
+CloneOrder=Cloner commande
+ConfirmCloneOrder=Etes-vous sur de vouloir cloner cette commande <b>%s</b> ?
 
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON non définie
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON non définie
