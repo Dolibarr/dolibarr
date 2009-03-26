@@ -260,7 +260,6 @@ RemoveDiscount = Eliminar descuento
 WatermarkOnDraftBill = Marca de agua en facturas borrador (nada si está vacía)
 UnpayedNotChecked = Ninguna factura pendiente está seleccionada
 CloneInvoice = Clonar factura
-CloneMainAttributes = Clonar el objeto con sus atributos principales
 ConfirmCloneInvoice = ¿Está seguro de querer clonar esta factura?
 DisabledBecauseReplacedInvoice = Acción desactivada porque es una factura reemplazada
 # PaymentConditions = 

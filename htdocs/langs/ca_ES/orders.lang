@@ -99,11 +99,13 @@ UseCustomerContactAsOrderRecipientIfExist = Utilitzar adreça del contacte del c
 RunningOrders = Comandes en curs
 UserWithApproveOrderGrant = Usuaris habilitats per aprovar les comandes
 PaymentOrderRef = Pagament comanda %s
+CloneOrder = Clonar comanda
+ConfirmCloneOrder = Esteu segur de voler clonar aquesta comanda <b>%s</b>?
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined = Constant COMMANDE_SUPPLIER_ADDON no definida
 Error_COMMANDE_ADDON_NotDefined = Constant COMMANDE_ADDON no definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File = Error en la càrrega de l'arxiu mòdul '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File = Error en la càrrega de l'arxiu mòdul '%s'
-# Sources = undefined = 
+# Sources =  = 
 OrderSource0 = Pressupost
 OrderSource1 = Internet
 OrderSource2 = Campanya per correu

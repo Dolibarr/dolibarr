@@ -1,4 +1,4 @@
-# Dolibarr language file - ea_ES - bills 
+# Dolibarr language file - ca_ES - bills 
 CHARSET = UTF-8
 Bill = Factura
 Bills = Factures
@@ -260,7 +260,6 @@ RemoveDiscount = Eliminar descompte
 WatermarkOnDraftBill = Marca d'aigua en factures esborrany (res si està buida)
 UnpayedNotChecked = Cap factura pendent està seleccionada
 CloneInvoice = Clonar factura
-CloneMainAttributes = Clonar l'objecte amb els seus atributs principals
 ConfirmCloneInvoice = Esteu segur de voler clonar aquesta factura?
 DisabledBecauseReplacedInvoice = Acció desactivada perquè és una factura reemplaçada
 # PaymentConditions =  = 
