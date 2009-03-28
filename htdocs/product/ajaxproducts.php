@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/product/ajaxproducts.php
- *       \brief      Fichier de reponse sur evenement Ajax
+ *       \brief      File to return Ajax question of product list
  *       \version    $Id$
  */
 
@@ -36,9 +36,10 @@ print '<body class="nocellnopadd">'."\n";
 // Generation liste de produits
 if (! empty($_GET['keysearch']))
 {
+	//var_dump($_GET); exit;
+	//print $_GET["price_level"]; exit;
 	$status=-1;
 	if (isset($_GET['status'])) $status=$_GET['status'];
-
 	$form = new Form($db);
 	if (empty($_GET['mode']) || $_GET['mode'] == 1)
 	{
@@ -64,6 +65,6 @@ else if (! empty($_GET['selling']))
 	print '<input size="10" type="text" class="flat" name="cashflow'.$_GET['count'].'" value="'.$_GET['selling'].'">';
 }
 
-print "</body>"; 
-print "</html>"; 
+print "</body>";
+print "</html>";
 ?>
