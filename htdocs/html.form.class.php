@@ -731,12 +731,12 @@ class Form
 
 
 	/**
-	 *  \brief    Retourne la liste des produits en Ajax si ajax activé ou renvoie à select_produits_do
-	 *  \param    selected        Produit pré-sélectionné
-	 *  \param    htmlname        Nom de la zone select
+	 *  \brief    Return list of products for customer in Ajax if Ajax activated or go to select_produits_do
+	 *  \param    selected        Preselected products
+	 *  \param    htmlname        Name of HTML select
 	 *  \param    filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-	 *  \param    limit           Limite sur le nombre de lignes retournées
-	 *  \param    price_level     Niveau de prix en fonction du client
+	 *  \param    limit           Limit sur le nombre de lignes retournées
+	 *  \param    price_level     Level of price to show
 	 *  \param	  status		  -1=Return all products, 0=Products not on sell, 1=Products on sell
 	 *  \param	  finished     	  2=all, 1=finished, 0=raw material
 	 */
@@ -768,13 +768,13 @@ class Form
 	}
 
 	/**
-	 *	\brief      Retourne la liste des produits
-	 *	\param      selected        Produit pré-sélectionné
-	 *	\param      htmlname        Nom de la zone select
+	 *	\brief      Return list of products for a customer
+	 *	\param      selected        Preselected product
+	 *	\param      htmlname        Name of select html
 	 *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
 	 *	\param      limit           Limite sur le nombre de lignes retournées
-	 *	\param      price_level     Niveau de prix en fonction du client
-	 * 	\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
+	 *	\param      price_level     Level of price to show
+	 * 	\param      ajaxkeysearch   Filter on product if ajax is used
 	 *	\param		status			-1=Return all products, 0=Products not on sell, 1=Products on sell
 	 */
 	function select_produits_do($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$ajaxkeysearch='',$status=1,$finished=2)
@@ -875,8 +875,8 @@ class Form
 				$opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
 				$opt.= dol_trunc($objp->label,32).' - ';
 
-				// Multiprix
-				if ($price_level > 1)
+				// Multiprice
+				if ($price_level > 0)
 				{
 					$sql= "SELECT price, price_ttc, price_base_type ";
 					$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
@@ -941,12 +941,12 @@ class Form
 	}
 
 	/**
-	 *	\brief     	Retourne la liste des produits fournisseurs en Ajax si ajax activé ou renvoie à select_produits_fournisseurs_do
+	 *	\brief     	Return list of products for customer in Ajax if Ajax activated or go to select_produits_fournisseurs_do
 	 *	\param		socid			Id third party
-	 *	\param     	selected        Produit pré-sélectionné
-	 *	\param     	htmlname        Nom de la zone select
+	 *	\param     	selected        Preselected product
+	 *	\param     	htmlname        Name of HTML Select
 	 *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-	 *	\param     	filtre          Pour filtre sql
+	 *	\param     	filtre          For a SQL filter
 	 */
 	function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtertype='',$filtre)
 	{
