@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,21 +19,28 @@
  * $Id$
  * $Source$
  */
- 
-/**
-        \file       scripts/prelevement/prelevement-verif.php
-        \ingroup    prelevement
-        \brief      Vérifie que les sociétés qui doivent être prélevées ont bien un RIB correct
-*/
 
-// Test si mode batch
+/**
+ *       \file       scripts/prelevement/prelevement-verif.php
+ *       \ingroup    prelevement
+ *       \brief      Vérifie que les sociétés qui doivent être prélevées ont bien un RIB correct
+ */
+
+// Test si mode CLI
 $sapi_type = php_sapi_name();
+$script_file=__FILE__;
+if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
+
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
-    exit;
+	echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer $script_file en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+	exit;
 }
 
-require_once("../../htdocs/master.inc.php");
+// Recupere env dolibarr
+$version='$Revision$';
+$path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
+
+require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 
@@ -61,7 +68,7 @@ $factures_prev = array();
 
 if (!$error)
 {
-  
+
   $sql = "SELECT f.rowid, pfd.rowid as pfdrowid, f.fk_soc";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
   $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
@@ -72,21 +79,21 @@ if (!$error)
   $sql .= " AND pfd.traite = 0";
   $sql .= " AND f.total_ttc > 0";
   $sql .= " AND f.fk_mode_reglement = 3";
-  
+
   if ( $db->query($sql) )
     {
       $num = $db->num_rows();
-      
+
       $i = 0;
-      
+
       while ($i < $num)
 	{
 	  $row = $db->fetch_row();
-	  
+
 	  $factures[$i] = $row;
-	  
+
 	  $i++;
-	}            
+	}
       $db->free();
       dol_syslog("$i factures à prélever");
     }
@@ -114,17 +121,17 @@ if (!$error)
   dol_syslog("Début vérification des RIB");
 
   if (sizeof($factures) > 0)
-    {      
+    {
       foreach ($factures as $fac)
 	{
 	  $fact = new Facture($db);
-	  
+
 	  if ($fact->fetch($fac[0]) == 1)
 	    {
 	      $soc = new Societe($db);
 	      if ($soc->fetch($fact->socid) == 1)
 		{
-		  
+
 		  if ($soc->verif_rib() == 1)
 		    {
 

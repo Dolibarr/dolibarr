@@ -135,7 +135,7 @@ class BonPrelevement extends CommonObject
         if ($concat == 1)
         {
             /*
-             * On aggr�ge les lignes
+             * On aggrege les lignes
              */
             $sql = "SELECT rowid FROM  ".MAIN_DB_PREFIX."prelevement_lignes";
             $sql .= " WHERE fk_prelevement_bons".$this->id;
@@ -156,7 +156,7 @@ class BonPrelevement extends CommonObject
         else
         {
             /*
-             * Pas de d'agr�gation
+             * Pas de d'agregation
              */
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_lignes (fk_prelevement_bons";
             $sql .= " , fk_soc , client_nom ";
