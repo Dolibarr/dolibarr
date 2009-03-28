@@ -123,10 +123,6 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 
 	$soc->commercial_id         = $_POST["commercial_id"];
 
-	# A virer
-print 'ttt'.$soc->email.isValidEMail($soc->email).$_POST["action"];
-exit;
-
 	// Check parameters
 	if (! empty($soc->email) && ! isValidEMail($soc->email))
 	{
