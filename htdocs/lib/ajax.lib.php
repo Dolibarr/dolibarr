@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
+ */
+
+/**
+ *  \file		htdocs/lib/agenda.lib.php
+ *  \brief		Page called by Ajax request for produts
+ *  \version	$Id$
  */
 
 function ajax_indicator($htmlname,$indicator='working')
@@ -27,14 +31,14 @@ function ajax_indicator($htmlname,$indicator='working')
 }
 
 /**
-   \brief     Recupere la valeur d'un champ, effectue un traitement Ajax et affiche le resultat
-   \param	  htmlname            nom et id du champ
-   \param     keysearch           nom et id complementaire du champ de collecte
-   \param	  url                 chemin du fichier de reponse : /chemin/fichier.php
-   \param     option              champ supplementaire de recherche dans les parametres
-   \param     indicator           Nom de l'image gif sans l'extension
-   \return    script              script complet
-*/
+ *  \brief     Recupere la valeur d'un champ, effectue un traitement Ajax et affiche le resultat
+ *  \param	   htmlname            nom et id du champ
+ *  \param     keysearch           nom et id complementaire du champ de collecte
+ *  \param	   url                 chemin du fichier de reponse : /chemin/fichier.php
+ *  \param     option              champ supplementaire de recherche dans les parametres
+ *  \param     indicator           Nom de l'image gif sans l'extension
+ *  \return    script              script complet
+ */
 function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 {
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
@@ -46,7 +50,7 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
                                   Element.show(\'indicator'.$htmlname.'\');
                             }
                      },
-                     
+
                      onComplete: function() {
                             if(Ajax.activeRequestCount == 0){
                                   Element.hide(\'indicator'.$htmlname.'\');
@@ -54,6 +58,7 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
                      }
              };';
 	$script.='Ajax.Responders.register(myIndicator'.$htmlname.');';
+	//print 'param='.$keysearch.'="+$F("'.$keysearch.$htmlname.'")+"&htmlname='.$htmlname.$option; exit;
 	$script.='new Form.Element.Observer($("'.$keysearch.$htmlname.'"), 1,
 			   function(){
 				  var myAjax = new Ajax.Updater( {
@@ -65,20 +70,20 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 				   });';
 	$script.='</script>';
 	$script.='<div class="nocellnopadd" id="ajdynfield'.$htmlname.'"></div>';
-  
+
 	return $script;
 }
 
 /**
-   \brief     Récupére la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
-   \param	    htmlname            nom et id du champ
-   \param     keysearch           nom et id complémentaire du champ de collecte
-   \param     id                  ID du champ a modifier
-   \param	    url                 chemin du fichier de réponse : /chemin/fichier.php
-   \param     option              champ supplémentaire de recherche dans les paramétres
-   \param     indicator           Nom de l'image gif sans l'extension
-   \return    script              script complet
-*/
+ *	\brief     	Get value of a field, do Ajax process and show result
+ *	\param		htmlname            nom et id du champ
+ *	\param     	keysearch           nom et id complementaire du champ de collecte
+ *	\param     	id                  ID du champ a modifier
+ *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
+ *	\param     	option              champ supplementaire de recherche dans les parametres
+ *	\param     	indicator           Nom de l'image gif sans l'extension
+ *	\return    	script              script complet
+ */
 function ajax_updaterWithID($htmlname,$keysearch,$id,$url,$option='',$indicator='working')
 {
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
@@ -90,7 +95,7 @@ function ajax_updaterWithID($htmlname,$keysearch,$id,$url,$option='',$indicator=
                                   Element.show(\'indicator'.$htmlname.'\');
                             }
                      },
-                     
+
                      onComplete: function() {
                             if(Ajax.activeRequestCount == 0){
                                   Element.hide(\'indicator'.$htmlname.'\');
@@ -107,17 +112,17 @@ function ajax_updaterWithID($htmlname,$keysearch,$id,$url,$option='',$indicator=
 				 var myAjax = new Ajax.Updater(elementHTML,url,o_options);
 				 });';
 	$script.='</script>';
-  
+
 	return $script;
 }
 
 /**
-   \brief     Récupére la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
-   \param	    htmlname            nom et id du champ
-   \param	    url                 chemin du fichier de réponse : /chemin/fichier.php
-   \param     indicator           nom de l'image gif sans l'extension
-   \return    script              script complet
-*/
+ *	\brief     	Get vlaue of field, do Ajax process and return result
+ *	\param	    htmlname            nom et id du champ
+ *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
+ *	\param     	indicator           nom de l'image gif sans l'extension
+ *	\return    	script              script complet
+ */
 function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 {
 	if ($indicator) $script.= ajax_indicator($htmlname,$indicator);
@@ -132,7 +137,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 	           afterUpdateElement: ac_return
 	         });';
 	$script.= '</script>';
-	
+
 	return $script;
 }
 

@@ -18,20 +18,20 @@
  */
 
 /**
-   \file		htdocs/lib/agenda.lib.php
-   \brief		Ensemble de fonctions de base de dolibarr sous forme d'include
-   \version		$Id$
-*/
+ *  \file		htdocs/lib/agenda.lib.php
+ *  \brief		Ensemble de fonctions de base de dolibarr sous forme d'include
+ *  \version	$Id$
+ */
 
 
 /**
-   \brief      	Show actions to do array
-   \param		max		Max nb of records
-*/
+ *  \brief     	Show actions to do array
+ *  \param		max		Max nb of records
+ */
 function show_array_actions_to_do($max=5)
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
-	
+
 	include_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 	include_once(DOL_DOCUMENT_ROOT.'/client.class.php');
 
@@ -93,13 +93,13 @@ function show_array_actions_to_do($max=5)
 				if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && date("U",$obj->dp2) < time()) $late=1;
 				if ($obj->percent > 0 && $obj->percent < 100 && ! $obj->dp2 && $obj->dp && date("U",$obj->dp) < time()) $late=1;
 				if ($late) print img_warning($langs->trans("Late"));
-				print "</td>";	
+				print "</td>";
 
 				// Statut
 				print "<td align=\"center\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
 
 				print "</tr>\n";
-				
+
 	            $i++;
 	        }
 	        print "</table><br>";
@@ -120,7 +120,7 @@ function show_array_actions_to_do($max=5)
 function show_array_last_actions_done($max=5)
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
-	
+
 	$sql = "SELECT a.id, a.percent, ".$db->pdate("a.datep")." as da, ".$db->pdate("a.datep2")." as da2, a.fk_user_author, a.label,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.rowid, s.nom as sname, s.client";
@@ -160,7 +160,7 @@ function show_array_last_actions_done($max=5)
 			$var=!$var;
 
 			print "<tr $bc[$var]>";
-			
+
 			$staticaction->code=$obj->code;
 			$staticaction->libelle=$obj->libelle;
 			$staticaction->id=$obj->id;
@@ -175,7 +175,7 @@ function show_array_last_actions_done($max=5)
 
 			// Date
 			print '<td width="100" align="right">'.dol_print_date($obj->da2,'day');
-			print "</td>";	
+			print "</td>";
 
 			// Statut
 			print "<td align=\"center\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
