@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
@@ -21,11 +21,11 @@
  */
 
 /**
-        \file       htdocs/comm/action/document.php
-        \ingroup    agenda
-        \brief      Page des documents joints sur les actions
-        \version    $Id$
-*/
+ *       \file       htdocs/comm/action/document.php
+ *       \ingroup    agenda
+ *       \brief      Page des documents joints sur les actions
+ *       \version    $Id$
+ */
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -198,7 +198,7 @@ if ($objectid > 0)
 
 		// List of document
 		$param='&id='.$act->id;
-		$formfile->list_of_documents($filearray,$act,'actions',$param);
+		$formfile->list_of_documents($filearray,$act,'actions',$param,0,'',$user->rights->agenda->myactions->create);
 	}
 	else
 	{
