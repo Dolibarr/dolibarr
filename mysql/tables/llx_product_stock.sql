@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@ create table llx_product_stock
   tms             timestamp,
   fk_product      integer NOT NULL,
   fk_entrepot     integer NOT NULL,
-  reel            integer,           -- physical stock
-  pmp             double(24,8) default 0 NOT NULL		-- PMP value for product in this warehous
+  reel            real,           					-- physical stock
+  pmp             double(24,8) default 0 NOT NULL	-- PMP value for product in this warehous
 )type=innodb;
 

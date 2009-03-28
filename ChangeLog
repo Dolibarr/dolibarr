@@ -41,6 +41,7 @@ For users:
 - New: Can modify proposal date if status is draft.
 - New: The help link on some pages now links directly to the wiki web page.
 - New: Enhancements in barcode module.
+- New: Can use decimal values in stocks.
 - Fix: Partial payment on social contributions not shown on main page.
 - Fix: Handle correctly the comment in status changing of supplier orders.
 - Fix: Author, title and topic are correctly encoded in PDF.
