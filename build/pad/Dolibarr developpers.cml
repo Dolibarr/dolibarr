@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PADGEN_CML>
-	<AppVerInfo>PADGen 2.0.2.30</AppVerInfo>
+	<AppVerInfo>PADGen 3.0.1.38</AppVerInfo>
 	<Company_Info>
-		<Company_Name>Dolibarr Developpers</Company_Name>
-		<Address_1 />
+		<Company_Name>NLTechno</Company_Name>
+		<Address_1>61 Boulevard Vauban</Address_1>
 		<Address_2 />
-		<City_Town>Paris</City_Town>
+		<City_Town>Montigny-le-Bretonneux</City_Town>
 		<State_Province />
-		<Zip_Postal_Code />
+		<Zip_Postal_Code>78180</Zip_Postal_Code>
 		<Country>FRANCE</Country>
-		<Company_WebSite_URL>http://www.dolibarr.org</Company_WebSite_URL>
+		<Company_WebSite_URL>http://www.nltechno.com</Company_WebSite_URL>
 		<Contact_Info>
 			<Author_First_Name>Dolibarr team</Author_First_Name>
 			<Author_Last_Name>Dolibarr team</Author_Last_Name>

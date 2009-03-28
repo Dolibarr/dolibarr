@@ -6,7 +6,7 @@
 		<Program_Name>Dolibarr</Program_Name>
 		<Program_Version>2.6.0</Program_Version>
 		<Program_Release_Month>03</Program_Release_Month>
-		<Program_Release_Day>13</Program_Release_Day>
+		<Program_Release_Day>28</Program_Release_Day>
 		<Program_Release_Year>2009</Program_Release_Year>
 		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
