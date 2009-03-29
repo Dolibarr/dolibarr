@@ -178,7 +178,7 @@ if ($conf->facture->enabled)
 //	print $langs->trans("SetupPayBoxToHavePaymentCreatedAutomatically",$langs->transnoentitiesnoconv("FeatureNotYetAvailable"))."<br>\n";
 	print '<br>';
 }
-if ($conf->contract->enabled)
+if ($conf->contrat->enabled)
 {
 	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
 	print '<b>'.$firstpart.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=contractline&ref=<i>contractline_ref</i></b>'."<br>\n";
