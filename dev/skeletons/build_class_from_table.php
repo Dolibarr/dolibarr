@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,15 @@
  */
 
 /**
- *       \file       dev/skeletons/build_class_from_table.php
- *       \ingroup    core
- *       \brief      Create a complete class file from a table in database
- *       \version    $Id$
+ *	\file       dev/skeletons/build_class_from_table.php
+ *  \ingroup    core
+ *  \brief      Create a complete class file from a table in database
+ *  \version    $Id$
  */
 
 // Test if batch mode
 $sapi_type = php_sapi_name();
-$script_file=__FILE__; 
+$script_file=__FILE__;
 if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
