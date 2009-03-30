@@ -417,7 +417,7 @@ if ($_GET["action"] != 'show_day')
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 				echo "  </td>\n";
 			}
 			/* Show days of the current month */
@@ -433,7 +433,7 @@ if ($_GET["action"] != 'show_day')
 				$style='cal_current_month';
 
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $tmpday, $month, $year, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+				show_day_events($db, $tmpday, $month, $year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 				echo "  </td>\n";
 			}
 			/* Show days after the current month (next month) */
@@ -441,7 +441,7 @@ if ($_GET["action"] != 'show_day')
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 				echo "</td>\n";
 			}
 			$tmpday++;
@@ -469,7 +469,7 @@ else
 	echo " </tr>\n";
 	echo " <tr>\n";
 	echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-	show_day_events ($db, $_GET["day"], $month, $year, $style, $actionarray, 0, 0);
+	show_day_events ($db, $_GET["day"], $month, $year, $month, $style, $actionarray, 0, 0);
 	echo "</td>\n";
 	echo " </tr>\n";
 	echo '</table>';
@@ -489,12 +489,13 @@ llxFooter('$Date$ - $Revision$');
  * @param unknown_type $day				Day
  * @param unknown_type $month			Month
  * @param unknown_type $year			Year
+ * @param unknown_type $monthshown      Month shown in calendar view
  * @param unknown_type $style			Style to use for this day
  * @param unknown_type $actionarray		Array of actions
  * @param unknown_type $maxPrint		Nb of actions to show each day on month view (0 means non limit)
  * @param unknown_type nbofchartoshow	Nb of characters to show for event line
  */
-function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPrint=0, $nbofchartoshow=14)
+function show_day_events($db, $day, $month, $year, $monthshown, $style, $actionarray, $maxPrint=0, $nbofchartoshow=14)
 {
 	global $user, $conf, $langs;
 	global $filtera, $filtert, $filted;
@@ -590,7 +591,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 				}
 				else
 				{
-					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=maxPrint&month='.$month.'&year='.$year.'">'.img_picto("all","1downarrow_selected.png").' ...';
+					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=maxPrint&month='.$monthshown.'&year='.$year.'">'.img_picto("all","1downarrow_selected.png").' ...';
 					print ' +'.(sizeof($actionarray[$daykey])-$maxPrint);
 					print '</a>';
 					break;
