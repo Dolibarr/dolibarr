@@ -573,7 +573,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 	{
 		/*
 		 // On peut utiliser strtotime pour obtenir la traduction.
-		 // strtotime is ok for range: Vendredi 13 D�cembre 1901 20:45:54 GMT au Mardi 19 Janvier 2038 03:14:07 GMT.
+		 // strtotime is ok for range: Friday 13 December 1901 20:45:54 GMT to Tuesday 19 January 2038 03:14:07 GMT.
 		 $montharray=array(1=>'january',2=>'february',3=>'march',4=>'april',5=>'may',6=>'june',
 		 7=>'july',8=>'august',9=>'september',10=>'october',11=>'november',12=>'december');
 		 $string=$day." ".$montharray[0+$month]." ".$year." ".$hour.":".$minute.":".$second." GMT";
