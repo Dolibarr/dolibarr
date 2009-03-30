@@ -43,3 +43,12 @@ Sheet=Feuille
 NoImportableData=Pas tables de données importable (aucun module contenant des définitions de profils d'import n'est actif)
 FileSuccessfullyBuilt=Fichier export généré
 SQLUsedForExport=Requête SQL utilisée pour construire le fichier export
+LineId=Id de ligne
+LineDescription=Description de ligne
+LineUnitPrice=Prix unitaire de la ligne
+LineVATRate=Taux de TVA de la ligne
+LineQty=Quantité pour la ligne
+LineTotalHT=Montant HT de la ligne
+LineTotalTTC=Montant TTC de la ligne
+LineTotalVAT=Montant TVA de la ligne
+TypeOfLineServiceOrProduct=Type de ligne (0=produit, 1=service)
