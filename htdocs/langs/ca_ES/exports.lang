@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - exports 
+# Dolibarr language file - ca_Es - exports 
 CHARSET = UTF-8
 ExportsArea = Àrea exportació
 ImportArea = Àrea importació
@@ -43,3 +43,12 @@ Sheet = Fulla
 NoImportableData = Sense taules de dades importables (cap mòdul amb les definicions dels perfils d'importació està actiu)
 FileSuccessfullyBuilt = Arxiu d'exportació generat
 SQLUsedForExport = Consulta SQL utilitzada per construir el fitxer d'exportació
+LineId = ID de línia
+LineDescription = Descripció de línia
+LineUnitPrice = Preu unitari de la línia
+LineVATRate = Tipus d'IVA de la línia
+LineQty = Quantitat de la línia
+LineTotalHT = Import sense IVA de la línia
+LineTotalTTC = Import total de la línia
+LineTotalVAT = Import IVA de la línia
+TypeOfLineServiceOrProduct = Tipus de línia (0 = producte, 1 = servei)

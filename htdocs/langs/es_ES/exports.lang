@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - exports
+# Dolibarr language file - es_ES - exports 
 CHARSET = UTF-8
 ExportsArea = Área exportación
 ImportArea = Área importación
@@ -43,3 +43,13 @@ Sheet = Hoja
 NoImportableData = Sin tablas de datos importables (ningún módulo con las definiciones de los perfiles de importación está activo)
 FileSuccessfullyBuilt = Archivo de exportación generado
 SQLUsedForExport = Consulta SQL utilizada para construir el archivo de exportación
+LineId = ID de línea
+LineDescription = Descripción de línea
+LineUnitPrice = Precio unitario de la línea
+LineVATRate = Tipo de IVA de la línea
+LineQty = Cantidad de la línea
+LineTotalHT = Importe sin IVA de la línea
+LineTotalTTC = Importe total de la línea
+LineTotalVAT = Importe IVA de la línea
+TypeOfLineServiceOrProduct = Tipo de línea (0=producto, 1=servicio)
+
