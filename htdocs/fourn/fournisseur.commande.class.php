@@ -1180,15 +1180,18 @@ class CommandeFournisseur extends Commande
 	 */
 	function UpdateNote($user, $note, $note_public)
 	{
-		dol_syslog("CommandeFournisseur::UpdateNote");
+		// Clean parameters
+		$note=trim($note);
+		$note_public=trim($note_public);
 
 		$result = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " SET note  ='".trim($note) ."',";
-		$sql.= " note_public  ='".trim($note_public) ."'";
+		$sql.= " SET note  ='".addslashes($note)."',";
+		$sql.= " note_public  ='".addslashes($note_public)."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
+		dol_syslog("CommandeFournisseur::UpdateNote sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1197,7 +1200,7 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("CommandeFournisseur::UpdateNote "+$this->error, LOG_ERR);
+			dol_syslog("CommandeFournisseur::UpdateNote ".$this->error, LOG_ERR);
 			$result = -1;
 		}
 
@@ -1220,24 +1223,23 @@ class CommandeFournisseur extends Commande
 		$sql .= " AND ur.fk_id = 184";
 
 		$resql = $this->db->query($sql);
-
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 
 			while ($i < $num)
-	  {
-	  	$row = $this->db->fetch_row($resql);
-	  	$this->approbs[$i] = $row;
-	  	$i++;
-	  }
+			{
+				$row = $this->db->fetch_row($resql);
+				$this->approbs[$i] = $row;
+				$i++;
+			}
 
-	  $this->db->free($resql);
+			$this->db->free($resql);
 		}
 		else
 		{
-			dol_syslog("ReadApprobators Erreur");
+			dol_syslog("ReadApprobators Erreur", LOG_ERR);
 		}
 	}
 
