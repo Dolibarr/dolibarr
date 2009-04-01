@@ -141,7 +141,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 		print '<td colspan="2">';
 		if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_4.'" name="note_public">';
-		print nl2br($commande->note_public);
+		print $commande->note_public;
 		if ($user->rights->fournisseur->commande->creer) print '</textarea>';
 		print '</td></tr>';
 
@@ -150,7 +150,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 			print '<td colspan="2">';
 			if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_6.'" name="note">';
-			print nl2br($commande->note);
+			print $commande->note;
 			if ($user->rights->fournisseur->commande->creer) print '</textarea>';
 			print '</td></tr>';
 		}
