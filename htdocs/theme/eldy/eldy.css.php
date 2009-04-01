@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C)      2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -873,7 +873,7 @@ border-left: 1px solid #000000;
 }
 
 .pair	{
-background: #e8edee;
+background: #e6ebed;
 font-family: helvetica, verdana, arial, sans-serif;
 border: 0px;
 }
@@ -885,7 +885,7 @@ border: 0px;
 */
 
 .impair {
-background: #d7d8d9;
+background: #d0d4d7;
 font-family: helvetica, verdana, arial, sans-serif;
 border: 0px;
 }
