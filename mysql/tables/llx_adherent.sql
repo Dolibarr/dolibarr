@@ -1,7 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
--- Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ create table llx_adherent
   datevalid        datetime,  -- date de validation
   datec            datetime,  -- date de creation
   tms              timestamp, -- date de modification
-  fk_user_author   integer NOT NULL,
+  fk_user_author   integer,   -- can be null because member can be create by a guest
   fk_user_mod      integer,
   fk_user_valid    integer 
 )type=innodb;

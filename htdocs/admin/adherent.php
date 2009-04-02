@@ -21,11 +21,11 @@
  */
 
 /**
-    	\file       htdocs/admin/adherent.php
-		\ingroup    adherent
-		\brief      Page d'administration/configuration du module Adherent
-		\version    $Id$
-*/
+ *   	\file       htdocs/admin/adherent.php
+ *		\ingroup    adherent
+ *		\brief      Page d'administration/configuration du module Adherent
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -34,7 +34,7 @@ $langs->load("admin");
 $langs->load("members");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 
 $typeconst=array('yesno','texte','chaine');
@@ -71,12 +71,13 @@ if ($_GET["action"] == 'unset')
 }
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
-/*
- * Interface de configuration de certaines variables de la partie adherent
- */
+
 $var=True;
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -157,23 +158,23 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 	$var=!$var;
 	if ($conf->global->ADHERENT_USE_MAILMAN)
 	{
-	  $lien=img_tick().' ';
-	  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
-	  // Edition des varibales globales rattache au theme Mailman
-	  $constantes=array('ADHERENT_MAILMAN_LISTS',
+		$lien=img_tick().' ';
+		$lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
+		// Edition des varibales globales rattache au theme Mailman
+		$constantes=array('ADHERENT_MAILMAN_LISTS',
 			    'ADHERENT_MAILMAN_LISTS_COTISANT',
 			    'ADHERENT_MAILMAN_ADMINPW',
 			    'ADHERENT_MAILMAN_SERVER',
 			    'ADHERENT_MAILMAN_UNSUB_URL',
 			    'ADHERENT_MAILMAN_URL'
 			    );
-	  print_fiche_titre("Mailman - Systeme de mailing listes",$lien,'');
-	  form_constantes($constantes);
+			    print_fiche_titre("Mailman - Systeme de mailing listes",$lien,'');
+			    form_constantes($constantes);
 	}
 	else
 	{
-	  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
-	  print_fiche_titre("Mailman - Systeme de mailing listes",$lien,'');
+		$lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
+		print_fiche_titre("Mailman - Systeme de mailing listes",$lien,'');
 	}
 
 	print "<hr>\n";
@@ -187,145 +188,149 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 	$var=!$var;
 	if ($conf->global->ADHERENT_USE_SPIP)
 	{
-	  $lien=img_tick().' ';
-	  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
-	  // Edition des varibales globales rattache au theme Mailman
-	  $constantes=array('ADHERENT_USE_SPIP_AUTO',
+		$lien=img_tick().' ';
+		$lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
+		// Edition des varibales globales rattache au theme Mailman
+		$constantes=array('ADHERENT_USE_SPIP_AUTO',
 			    'ADHERENT_SPIP_SERVEUR',
 			    'ADHERENT_SPIP_DB',
 			    'ADHERENT_SPIP_USER',
 			    'ADHERENT_SPIP_PASS'
 			    );
-	  print_fiche_titre("SPIP - Systeme de publication en ligne",$lien,'');
-	  form_constantes($constantes);
+			    print_fiche_titre("SPIP - Systeme de publication en ligne",$lien,'');
+			    form_constantes($constantes);
 	}
 	else
 	{
-	  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
-	  print_fiche_titre("SPIP - Systeme de publication en ligne",$lien,'');
+		$lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
+		print_fiche_titre("SPIP - Systeme de publication en ligne",$lien,'');
 	}
 
 	print "<hr>\n";
 }
 
 /*
- * Edition des varibales globales non rattache a un theme specifique
+ * Edition des variables globales non rattache a un theme specifique
  */
 $constantes=array(
-		  'ADHERENT_MAIL_VALID_SUBJECT',
-		  'ADHERENT_MAIL_VALID',
-		  'ADHERENT_MAIL_COTIS_SUBJECT',
-		  'ADHERENT_MAIL_COTIS',
-		  'ADHERENT_MAIL_RESIL_SUBJECT',
-		  'ADHERENT_MAIL_RESIL',
-		  'ADHERENT_MAIL_FROM',
-		  'ADHERENT_CARD_HEADER_TEXT',
-		  'ADHERENT_CARD_TEXT',
-		  'ADHERENT_CARD_FOOTER_TEXT',
-		  'ADHERENT_ETIQUETTE_TYPE'
-		  );
-print_fiche_titre($langs->trans("Other"),'','');
+		'ADHERENT_AUTOREGISTER_MAIL_SUBJECT',
+		'ADHERENT_AUTOREGISTER_MAIL',
+		'ADHERENT_MAIL_VALID_SUBJECT',
+		'ADHERENT_MAIL_VALID',
+		'ADHERENT_MAIL_COTIS_SUBJECT',
+		'ADHERENT_MAIL_COTIS',
+		'ADHERENT_MAIL_RESIL_SUBJECT',
+		'ADHERENT_MAIL_RESIL',
+		'ADHERENT_MAIL_FROM',
+		'ADHERENT_CARD_HEADER_TEXT',
+		'ADHERENT_CARD_TEXT',
+		'ADHERENT_CARD_FOOTER_TEXT',
+		'ADHERENT_ETIQUETTE_TYPE'
+		);
+		print_fiche_titre($langs->trans("Other"),'','');
 
-print $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';
-print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%,';
-//print '%INFOS%'; Deprecated
-print '<br>';
+		print $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+		print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';
+		print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%,';
+		//print '%INFOS%'; Deprecated
+		print '<br>';
 
-form_constantes($constantes);
-
-
-$db->close();
-
-print '<br>';
+		form_constantes($constantes);
 
 
-llxFooter('$Date$ - $Revision$');
+		$db->close();
+
+		print '<br>';
 
 
-function form_constantes($tableau)
-{
-	// Variables globales
-	global $db,$bc,$langs;
-	$form = new Form($db);
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
-	print '<td>'.$langs->trans("Type").'</td>';
-	print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
-	print "</tr>\n";
-	$var=true;
+		llxFooter('$Date$ - $Revision$');
 
-	foreach($tableau as $const){
-		$sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const WHERE name='$const'";
-		$result = $db->query($sql);
-		if ($result && ($db->num_rows() == 1)) {
-			$obj = $db->fetch_object($result);
-			$var=!$var;
-			print '<form action="adherent.php" method="POST">';
-			print '<input type="hidden" name="action" value="update">';
-			print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-			print '<input type="hidden" name="constname" value="'.$obj->name.'">';
-			print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
 
-			print "<tr $bc[$var]>";
+		function form_constantes($tableau)
+		{
+			// Variables globales
+			global $db,$bc,$langs;
+			$form = new Form($db);
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("Description").'</td>';
+			print '<td>'.$langs->trans("Value").'</td>';
+			print '<td>'.$langs->trans("Type").'</td>';
+			print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
+			print "</tr>\n";
+			$var=true;
 
-			// Affiche nom constante
-			print '<td>';
-			print $langs->trans("Desc".$obj->name) != ("Desc".$obj->name) ? $langs->trans("Desc".$obj->name) : $obj->note;
-			print "</td>\n";
-
-			if ($obj->name == 'ADHERENT_ETIQUETTE_TYPE')
+			foreach($tableau as $const)
 			{
-				print '<td>';
-				// List of possible labels. Values must exists in
-				// file htdocs/adherents/PDF_Card.class.php
-				require_once(DOL_DOCUMENT_ROOT.'/includes/modules/member/PDF_card.class.php');
-				$pdfcardstatic=new PDF_card('5160',1,1,'mm');
-				$arrayoflabels=array_keys($pdfcardstatic->_Avery_Labels);
+				$sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const WHERE name='".$const."'";
+				$result = $db->query($sql);
+				if ($result)
+				{
+					$obj = $db->fetch_object($result);
+					$var=!$var;
+					print '<form action="adherent.php" method="POST">';
+					print '<input type="hidden" name="action" value="update">';
+					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+					print '<input type="hidden" name="constname" value="'.$obj->name.'">';
+					print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
 
-				$form->select_array('constvalue',$arrayoflabels,$obj->value,1,0,1);
-				print '</td><td>';
-				$form->select_array('consttype',array('yesno','texte','chaine'),1);
+					print "<tr $bc[$var]>";
+
+					// Affiche nom constante
+					print '<td>';
+					print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : $obj->note;
+					print "</td>\n";
+
+					if ($const == 'ADHERENT_ETIQUETTE_TYPE')
+					{
+						print '<td>';
+						// List of possible labels. Values must exists in
+						// file htdocs/adherents/PDF_Card.class.php
+						require_once(DOL_DOCUMENT_ROOT.'/includes/modules/member/PDF_card.class.php');
+						$pdfcardstatic=new PDF_card('5160',1,1,'mm');
+						$arrayoflabels=array_keys($pdfcardstatic->_Avery_Labels);
+
+						$form->select_array('constvalue',$arrayoflabels,$obj->value,1,0,1);
+						print '</td><td>';
+						$form->select_array('consttype',array('yesno','texte','chaine'),1);
+					}
+					else
+					{
+						print '<td>';
+						if ($obj->type == 'yesno')
+						{
+							print $form->selectyesno('constvalue',$obj->value,1);
+							print '</td><td>';
+							$form->select_array('consttype',array('yesno','texte','chaine'),0);
+						}
+						elseif ($obj->type == 'texte')
+						{
+							print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">';
+							print $obj->value;
+							print "</textarea>\n";
+							print '</td><td>';
+							$form->select_array('consttype',array('yesno','texte','chaine'),1);
+						}
+						else
+						{
+							print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
+							print '</td><td>';
+							$form->select_array('consttype',array('yesno','texte','chaine'),2);
+						}
+						print '</td>';
+					}
+
+					print '<td align="center">';
+
+					print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
+					//      print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
+					print "</td></tr>\n";
+
+					print '</form>';
+					$i++;
+				}
 			}
-			else
-			{
-				print '<td>';
-				if ($obj->type == 'yesno')
-				{
-					print $form->selectyesno('constvalue',$obj->value,1);
-					print '</td><td>';
-					$form->select_array('consttype',array('yesno','texte','chaine'),0);
-				}
-				elseif ($obj->type == 'texte')
-				{
-					print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">';
-					print $obj->value;
-					print "</textarea>\n";
-					print '</td><td>';
-					$form->select_array('consttype',array('yesno','texte','chaine'),1);
-				}
-				else
-				{
-					print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
-					print '</td><td>';
-					$form->select_array('consttype',array('yesno','texte','chaine'),2);
-				}
-				print '</td>';
-			}
-
-			print '<td align="center">';
-
-			print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
-			//      print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
-			print "</td></tr>\n";
-
-			print '</form>';
-			$i++;
+			print '</table>';
 		}
-	}
-	print '</table>';
-}
 
-?>
+		?>

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -136,7 +136,7 @@ class Adherent extends CommonObject
 		\remarks		%INFOS% : l'ensemble des attributs de cet adherent
 		\remarks		%SERVEUR% : URL du serveur web
 		\remarks		etc..
-		*/
+	*/
 	function send_an_email($text,$subject,
 	$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
 	$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=-1, $errors_to='')
@@ -274,8 +274,9 @@ class Adherent extends CommonObject
 		$sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type)";
 		$sql.= " VALUES (";
 		$sql.= " '".$this->db->idate($this->datec)."',";
-		$sql.= " '".addslashes($this->login)."',";
-		$sql.= " '".$user->id."',null,null,'".$this->morphy."',";
+		$sql.= " '".$this->login."',";
+		$sql.= " ".($user->id>0?$user->id:"null").",";	// Can be null because member can be create by a guest
+		$sql.= " null,null,'".$this->morphy."',";
 		$sql.= " '".$this->typeid."'";
 		$sql.= ")";
 
@@ -310,6 +311,7 @@ class Adherent extends CommonObject
 
 				if (sizeof($this->errors))
 				{
+					dol_syslog("Adherent::create ".join(',',$this->errors), LOG_ERR);
 					$this->db->rollback();
 					return -3;
 				}
@@ -322,6 +324,7 @@ class Adherent extends CommonObject
 			else
 			{
 				$this->error='Failed to get last insert id';
+				dol_syslog("Adherent::create ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -329,6 +332,7 @@ class Adherent extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
+			dol_syslog("Adherent::create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -383,7 +387,7 @@ class Adherent extends CommonObject
 		$sql.= ", naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
 		if ($this->datefin)   $sql.= ", datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifie que par effacement cotisation
 		if ($this->datevalid) $sql.= ", datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifie que par validation adherent
-		$sql.= ", fk_user_mod=".$user->id;
+		$sql.= ", fk_user_mod=".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Adherent::update sql=".$sql);

@@ -64,6 +64,7 @@ For users:
 - Fix: A lot of fixes in PDF generators.
 - Fix: Bad line/pagebreak with long description of products on PDF.
 - Fix: Option force invoice date to validation date working correctly.
+- Fix: Creation of a member from the example public page works.
 
 For translators:
 - Added 10 more new language files.

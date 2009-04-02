@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2001-2002 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/public/members/new.php
- \ingroup    adherent
- \brief      Form example to add a new member
- \version    $Id$
+ *	\file       htdocs/public/members/new.php
+ *	\ingroup    adherent
+ *	\brief      Form example to add a new member
+ *	\version    $Id$
  */
 
 require("../../master.inc.php");
@@ -31,13 +31,16 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.form.class.php");
 
+// Define lang object automatically using browser language
 $langs->setDefaultLang('auto');
 
+// Load translation files
 $langs->load("main");
 $langs->load("members");
 $langs->load("companies");
 
 
+// Function for page HTML header
 function llxHeaderVierge($title, $head = "")
 {
 	global $user, $conf, $langs;
@@ -50,6 +53,7 @@ function llxHeaderVierge($title, $head = "")
 	print "<body>\n";
 }
 
+// Function for page HTML footer
 function llxFooter()
 {
 	print "</body>\n";
@@ -57,7 +61,7 @@ function llxFooter()
 }
 
 
-$adho = new AdherentOptions($db);
+
 $errmsg='';
 $num=0;
 $error=0;
@@ -67,43 +71,53 @@ $error=0;
 /*
  * Actions
  */
+
+// Action called when submited page
 if ($_POST["action"] == 'add')
 {
 	// test si le login existe deja
 	$login=$_POST["login"];
 	if(!isset($_POST["login"]) || $_POST["login"]='')
-		{
+	{
 		$error+=1;
-		$errmsg .="Login $login vide. Veuillez en positionner un<BR>\n";
+		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Login"))."<br>\n";
 	}
 	$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$login."';";
 	$result = $db->query($sql);
-	if ($result) {
+	if ($result)
+	{
 		$num = $db->num_rows();
 	}
-	if (!isset($_POST["nom"]) || !isset($_POST["prenom"]) || $_POST["prenom"]=='' || $_POST["nom"]==''){
+	if (!isset($_POST["nom"]) || !isset($_POST["prenom"]) || $_POST["prenom"]=='' || $_POST["nom"]=='')
+	{
 		$error+=1;
-		$errmsg .="Nom et Prenom obligatoires<BR>\n";
+		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name"))."<br>\n";
 	}
-	if (!isset($_POST["email"]) || $_POST["email"] == '' || !ereg('@',$_POST["email"])){
+	if (!isset($_POST["email"]) || $_POST["email"] == '' || !ereg('@',$_POST["email"]))
+	{
 		$error+=1;
-		$errmsg .="Adresse Email invalide<BR>\n";
+		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("EMail"))."<br>\n";
 	}
-	if ($num !=0){
+	if ($num !=0)
+	{
 		$error+=1;
-		$errmsg .="Login ".$login." deja utilise. Veuillez en changer<BR>\n";
+		$errmsg .= $langs->trans("ErrorLoginAlreadyUsed")."<br>\n";
 	}
-	if (!isset($_POST["pass1"]) || !isset($_POST["pass2"]) || $_POST["pass1"] == '' || $_POST["pass2"] == '' || $_POST["pass1"]!=$_POST["pass2"]){
+	if (!isset($_POST["pass1"]) || !isset($_POST["pass2"]) || $_POST["pass1"] == '' || $_POST["pass2"] == '' || $_POST["pass1"]!=$_POST["pass2"])
+	{
 		$error+=1;
-		$errmsg .="Password invalide<BR>\n";
+		$errmsg .= $langs->trans("ErrorPasswordsMustMatch")."<br>\n";
 	}
-	if (isset($_POST["naiss"]) && $_POST["naiss"] !=''){
-		if (!preg_match("/^\d\d\d\d-\d\d-\d\d$/",$_POST["naiss"])){
+	if (isset($_POST["naiss"]) && $_POST["naiss"] !='')
+	{
+		if (!preg_match("/^\d\d\d\d-\d\d-\d\d$/",$_POST["naiss"]))
+		{
 			$error+=1;
-			$errmsg .="Date de naissance invalide (Format AAAA-MM-JJ)<BR>\n";
+			$errmsg .= $langs->trans("ErrorBadDateFormat")."<br>\n";
 		}
 	}
-	if (isset($public)){
+	if (isset($public))
+	{
 		$public=1;
 	}else{
 		$public=0;
@@ -143,59 +157,72 @@ if ($_POST["action"] == 'add')
 		{
 			if ($cotisation > 0)
 			{
-				$adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
+				$adh->cotisation(dol_mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
 			}
 
-			// Envoi d'un Email de confirmation au nouvel adherent
-			$adh->send_an_email($email,$conf->adherent->email_new,$conf->adherent->email_new_subject);
+			// Send email to say it has been created and will be validated soon...
+			if ($conf->global->ADHERENT_AUTOREGISTER_MAIL && $conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT)
+			{
+				$result=$adh->send_an_email($conf->global->ADHERENT_AUTOREGISTER_MAIL,$conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT,array(),array(),array(),"","",0,-1);
+			}
+
 			Header("Location: new.php?action=added");
 			exit;
+		}
+		else
+		{
+			$errmsg .= join('<br>',$adh->errors);
 		}
 	}
 }
 
-// On vient de s'inscrire avec succes
-if (isset($_GET["action"]) && $_GET["action"] == 'added' && $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)
+// Action called after a submited was send and member created succesfully
+if (isset($_GET["action"]) && $_GET["action"] == 'added')
 {
-	// Si conf->global->MEMBER_URL_REDIRECT_SBUSCRIPTION defini, faire redirect sur page.
-	Header("Location: ".$conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION);
-	exit;
+	if ($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)
+	{
+		// Si conf->global->MEMBER_URL_REDIRECT_SBUSCRIPTION defini, faire redirect sur page.
+		Header("Location: ".$conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION);
+		exit;
+	}
+	else
+	{
+		llxHeaderVierge("New member form");
+
+		// Si on a pas ete redirige
+		print '<br>';
+		print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+		print "<tr><td><FONT COLOR=\"blue\">Nouvel Adherent ajoute. En attente de validation</FONT></td></tr>\n";
+		print '</table>';
+
+		llxFooter('$Date$ - $Revision$');
+		exit;
+	}
 }
 
 
+
+/*
+ * View
+ */
 
 llxHeaderVierge("New member form");
 $html = new Form($db);
 
 print_titre($langs->trans("NewMember"));
 
-
-/* ************************************************************************** */
-/*                                                                            */
-/* Creation d'une fiche
- /*                                                                            */
-/* ************************************************************************** */
-
 $adht = new AdherentType($db);
+$adho = new AdherentOptions($db);
 
 // fetch optionals attributes and labels
 $adho->fetch_name_optionals_label();
-
-if (isset($_GET["action"]) && $_GET["action"] == 'added')
-{
-	// Si on a pas ete redirige
-	print '<br>';
-	print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-	print "<tr><td><FONT COLOR=\"blue\">Nouvel Adherent ajoute. En attente de validation</FONT></td></tr>\n";
-	print '</table>';
-}
 
 if ($errmsg != '')
 {
 	print '<br>';
 	print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 	print '<th>Erreur dans le formulaire</th>';
-	print "<tr><td class=\"delete\"><b>'.$errmsg.'</b></td></tr>\n";
+	print '<tr><td class="delete"><b>'.$errmsg.'</b></td></tr>'."\n";
 	//  print "<FONT COLOR=\"red\">$errmsg</FONT>\n";
 	print '</table>';
 }
@@ -213,13 +240,13 @@ print "</ul><BR>\n";
 print "<form action=\"new.php\" method=\"POST\">\n";
 print '<input type="hidden" name="action" value="add">';
 
-print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+print '<table cellspacing="0" border="1" width="100%" cellpadding="3">'."\n";
 
 print '<tr><td width="15%">'.$langs->trans("Type").'</td><td width="35%">';
 $html->select_array("type",  $adht->liste_array());
 print "</td>\n";
 
-print '<td width="50%" valign="top">'.$langs->trans("Comments").' :</td></tr>';
+print '<td width="50%" valign="top">'.$langs->trans("Comments").' :</td></tr>'."\n";
 
 $morphys["phy"] = "Physique";
 $morphys["mor"] = "Morale";
@@ -227,26 +254,26 @@ print '<tr><td>'.$langs->trans("MorPhy")."</td><td>\n";
 $html->select_array("morphy",  $morphys);
 print "</td>\n";
 
-print '<td valign="top" rowspan="14"><textarea name="comment" wrap="soft" cols="40" rows="25">'.$comment.'</textarea></td></tr>';
+print '<td valign="top" rowspan="14"><textarea name="comment" wrap="soft" cols="40" rows="25">'.$comment.'</textarea></td></tr>'."\n";
 
-print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> '.$langs->trans("Surname").'</td><td><input type="text" name="prenom" size="40" value="'.$prenom.'"></td></tr>';
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> '.$langs->trans("Surname").'</td><td><input type="text" name="prenom" size="40" value="'.$prenom.'"></td></tr>'."\n";
 
-print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> '.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.$nom.'"></td></tr>';
-print '<tr><td>'.$langs->trans("ThirdParty").'</td><td><input type="text" name="societe" size="40" value="'.$societe.'"></td></tr>';
-print '<tr><td>'.$langs->trans("Address").'</td><td>';
-print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$adresse.'</textarea></td></tr>';
-print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.$cp.'"> <input type="text" name="ville" size="40" value="'.$ville.'"></td></tr>';
-print '<tr><td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$pays.'"></td></tr>';
-print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> Email</td><td><input type="text" name="email" size="40" value="'.$email.'"></td></tr>';
-print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$login.'"></td></tr>';
-print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Password").'</td><td><input type="password" name="pass1" size="40"><BR><input type="password" name="pass2" size="40"></td></tr>';
-print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$naiss.'"></td></tr>';
-print '<tr><td><FONT COLOR="blue">*</FONT> URL Photo</td><td><input type="text" name="photo" size="40" value="'.$photo.'"></td></tr>';
-print '<tr><td>'.$langs->trans("Public").' ?</td><td><input type="checkbox" name="public" checked></td></tr>';
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> '.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.$nom.'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("ThirdParty").'</td><td><input type="text" name="societe" size="40" value="'.$societe.'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
+print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$adresse.'</textarea></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.$cp.'"> <input type="text" name="ville" size="40" value="'.$ville.'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$pays.'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> Email</td><td><input type="text" name="email" size="40" value="'.$email.'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$login.'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Password").'</td><td><input type="password" name="pass1" size="40"><BR><input type="password" name="pass2" size="40"></td></tr>'."\n";
+print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$naiss.'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="blue">*</FONT> URL Photo</td><td><input type="text" name="photo" size="40" value="'.$photo.'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Public").' ?</td><td><input type="checkbox" name="public" value="1" checked></td></tr>'."\n";
 foreach($adho->attribute_label as $key=>$value){
-	print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
+	print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>"."\n";
 }
-print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>'."\n";
 print "</table>\n";
 
 print "</form>\n";
