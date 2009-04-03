@@ -215,63 +215,63 @@ class Menubase
     function fetch($id, $user=0)
     {
     	global $langs;
-
-        $sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.menu_handler,";
-		$sql.= " t.module,";
-		$sql.= " t.type,";
-		$sql.= " t.mainmenu,";
-		$sql.= " t.fk_menu,";
-		$sql.= " t.position,";
-		$sql.= " t.url,";
-		$sql.= " t.target,";
-		$sql.= " t.titre,";
-		$sql.= " t.langs,";
-		$sql.= " t.level,";
-		$sql.= " t.leftmenu,";
-		$sql.= " t.perms,";
-		$sql.= " t.user,";
-		$sql.= " ".$this->db->pdate('t.tms')."";
-        $sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
-        $sql.= " WHERE t.rowid = ".$id;
+    	
+    	$sql = "SELECT";
+    	$sql.= " t.rowid,";
+    	$sql.= " t.menu_handler,";
+    	$sql.= " t.module,";
+    	$sql.= " t.type,";
+    	$sql.= " t.mainmenu,";
+    	$sql.= " t.fk_menu,";
+    	$sql.= " t.position,";
+    	$sql.= " t.url,";
+    	$sql.= " t.target,";
+    	$sql.= " t.titre,";
+    	$sql.= " t.langs,";
+    	$sql.= " t.level,";
+    	$sql.= " t.leftmenu,";
+    	$sql.= " t.perms,";
+    	$sql.= " t.user,";
+    	$sql.= " ".$this->db->pdate('t.tms')."";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
+    	$sql.= " WHERE t.rowid = ".$id;
 
     	dol_syslog("Menubase::fetch sql=".$sql, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
+      $resql=$this->db->query($sql);
+      if ($resql)
+      {
+      	if ($this->db->num_rows($resql))
         {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+        	$obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
-
-				$this->menu_handler = $obj->menu_handler;
-				$this->module = $obj->module;
-				$this->type = $obj->type;
-				$this->mainmenu = $obj->mainmenu;
-				$this->fk_menu = $obj->fk_menu;
-				$this->position = $obj->position;
-				$this->url = $obj->url;
-				$this->target = $obj->target;
-				$this->titre = $obj->titre;
-				$this->langs = $obj->langs;
-				$this->level = $obj->level;
-				$this->leftmenu = $obj->leftmenu;
-				$this->perms = $obj->perms;
-				$this->user = $obj->user;
-				$this->tms = $obj->tms;
-            }
-            $this->db->free($resql);
-
-            return 1;
+          $this->id    = $obj->rowid;
+          
+          $this->menu_handler = $obj->menu_handler;
+          $this->module = $obj->module;
+          $this->type = $obj->type;
+          $this->mainmenu = $obj->mainmenu;
+          $this->fk_menu = $obj->fk_menu;
+          $this->position = $obj->position;
+          $this->url = $obj->url;
+          $this->target = $obj->target;
+          $this->titre = $obj->titre;
+          $this->langs = $obj->langs;
+          $this->level = $obj->level;
+          $this->leftmenu = $obj->leftmenu;
+          $this->perms = $obj->perms;
+          $this->user = $obj->user;
+          $this->tms = $obj->tms;
         }
-        else
-        {
-      	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Menubase::fetch ".$this->error, LOG_ERR);
-            return -1;
-        }
+        $this->db->free($resql);
+        
+        return 1;
+      }
+      else
+      {
+      	$this->error="Error ".$this->db->lasterror();
+        dol_syslog("Menubase::fetch ".$this->error, LOG_ERR);
+        return -1;
+      }
     }
 
 
@@ -372,55 +372,58 @@ class Menubase
 				//$objm = $this->db->fetch_object($resql);
 				$menu = $this->db->fetch_array($resql);
 
-	            // Define $chaine
-	            $chaine="";
+	      // Define $chaine
+	      $chaine="";
 				$title = $langs->trans($menu['titre']);
-	            if ($title == $menu['titre'] && ! empty($menu['langs']))
+	      if ($title == $menu['titre'] && ! empty($menu['langs']))
 				{
 					$title = $langs->trans($menu['titre']);
 					$langs->load($menu['langs']);
 				}
 				if (eregi("/",$title))
-	        	{
-	        		$tab_titre = explode("/",$title);
-	        		$chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
-	        	}
-	        	else
-	        	{
-	        		$chaine = $langs->trans($title);
-	        	}
+	      {
+	      	$tab_titre = explode("/",$title);
+	        $chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
+	      }
+	      else
+	      {
+	      	$chaine = $langs->trans($title);
+	      }
+	      
+	      // Define $right
+	      $perms = true;
+	      if ($menu['perms'])
+	      {
+	      	$perms = $this->verifCond($menu['perms']);
+	        //print "verifCond rowid=".$menu['rowid']." ".$menu['right'].":".$perms."<br>\n";
+	      }
 
-		        // Define $right
-	        	$perms = true;
-	        	if ($menu['perms'])
-	        	{
-	        		$perms = $this->verifCond($menu['perms']);
-	        		//print "verifCond rowid=".$menu['rowid']." ".$menu['right'].":".$perms."<br>\n";
-	        	}
-
-		        // Define $constraint
-	        	$constraint = true;
-	        	if ($menu['action'])
+		    // Define $constraint
+	      $constraint = true;
+	      if ($menu['action'])
 				{
 					$constraint = $this->verifCond($menu['action']);
-	        		//print "verifCond rowid=".$menu['rowid']." ".$menu['action'].":".$constraint."<br>\n";
+	      	//print "verifCond rowid=".$menu['rowid']." ".$menu['action'].":".$constraint."<br>\n";
 				}
 
-		        if ($menu['rowid'] != $oldrowid && $oldrowid) $b++;	// Break on new entry
-		        $oldrowid=$menu['rowid'];
+		    if ($menu['rowid'] != $oldrowid && $oldrowid) $b++;	// Break on new entry
+		    $oldrowid=$menu['rowid'];
 
-		        $tabMenu[$b][0] = $menu['rowid'];
+		    $tabMenu[$b][0] = $menu['rowid'];
 				$tabMenu[$b][1] = $menu['fk_menu'];
 				$tabMenu[$b][2] = $menu['url'];
-				if (eregi('\?',$tabMenu[$b][2])) $tabMenu[$b][2].='&amp;idmenu='.$menu['rowid'];
-				else $tabMenu[$b][2].='?idmenu='.$menu['rowid'];
+				if (!valid_url($tabMenu[$b][2],1))
+				{
+					if (eregi('\?',$tabMenu[$b][2])) $tabMenu[$b][2].='&amp;idmenu='.$menu['rowid'];
+					else $tabMenu[$b][2].='?idmenu='.$menu['rowid'];
+				}
 				$tabMenu[$b][3] = $chaine;
 				$tabMenu[$b][5] = $menu['target'];
 				$tabMenu[$b][6] = $menu['leftmenu'];
-	        	if (! isset($tabMenu[$b][4])) $tabMenu[$b][4] = $perms;
-	        	else $tabMenu[$b][4] = ($tabMenu[$b][4] && $perms);
-	        	if (! isset($tabMenu[$b][7])) $tabMenu[$b][7] = $constraint;
-	        	else $tabMenu[$b][7] = ($tabMenu[$b][7] && $constraint);
+	      if (! isset($tabMenu[$b][4])) $tabMenu[$b][4] = $perms;
+	      else $tabMenu[$b][4] = ($tabMenu[$b][4] && $perms);
+	      if (! isset($tabMenu[$b][7])) $tabMenu[$b][7] = $constraint;
+	      else $tabMenu[$b][7] = ($tabMenu[$b][7] && $constraint);
 
 				$a++;
 			}
@@ -482,7 +485,7 @@ class Menubase
 					{
 //				print "x".$pere." ".$tab[$x][6];
 
-						$this->newmenu->add_submenu(DOL_URL_ROOT . $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
+						$this->newmenu->add_submenu((!valid_url($tab[$x][2],1)) ? DOL_URL_ROOT . $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
 						$this->recur($tab, $tab[$x][0], $rang +1);
 					}
 				}

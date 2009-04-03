@@ -880,9 +880,9 @@ class MenuLeft {
 			}
 
 			// Affichage des menus personnalises
-    	   	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+    	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
 
-	        $menuArbo = new Menubase($this->db,'eldy','left');
+	    $menuArbo = new Menubase($this->db,'eldy','left');
 			$this->overwritemenufor = $menuArbo->listeMainmenu();
 			// Add other mainmenu to the list of menu to overwrite pre.inc.php
 			$overwritemenumore=array('home','companies','members','products','suppliers','commercial','accountancy','agenda','project','tools','ecm');
