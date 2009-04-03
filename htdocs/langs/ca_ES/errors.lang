@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - errors
+# Dolibarr language file - ca_ES - errors 
 CHARSET = UTF-8
 MenuManager = Gestor de menú
 ErrorLoginAlreadyExists = El login %s ja existeix.
@@ -18,6 +18,7 @@ ErrorBadCustomerCodeSyntax = La sintaxi del codi client és incorrecta
 ErrorCustomerCodeRequired = Codi client obligatori
 ErrorCustomerCodeAlreadyUsed = Codi de client ja utilitzat
 ErrorPrefixRequired = Prefix obligatori
+ErrorUrlNotValid = L'adreça del lloc web és incorrecta
 ErrorBadSupplierCodeSyntax = La sintaxi del codi proveïdor és incorrecta
 ErrorSupplierCodeRequired = Codi proveïdor obligatori
 ErrorSupplierCodeAlreadyUsed = Codi de proveïdor ja utilitzat
