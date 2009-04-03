@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2007      Patrick Raguin        <patrick.raguin@gmail.com>
+/* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,45 +55,51 @@ class MenuTop {
      */
     function showmenu()
     {
-       	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
-
-        global $user,$conf,$langs,$dolibarr_main_db_name;;
-
-        // On sauve en session le menu principal choisi
-		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
-		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
-        $_SESSION["leftmenuopened"]="";
-
-
-        $menuArbo = new Menubase($this->db,'auguria','top');
- 		$tabMenu = $menuArbo->menuTopCharger(1,$_SESSION['mainmenu'], 'auguria');
-
-        print '<ul>';
-
-        for($i=0; $i<count($tabMenu); $i++)
-        {
-        	if ($tabMenu[$i]['enabled'] == true)
-        	{
-	        	if ($tabMenu[$i]['right'] == true)
+    	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+    	
+    	global $user,$conf,$langs,$dolibarr_main_db_name;
+    	
+    	// On sauve en session le menu principal choisi
+    	if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
+    	if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
+    	$_SESSION["leftmenuopened"]="";
+    	
+    	$menuArbo = new Menubase($this->db,'auguria','top');
+    	$tabMenu = $menuArbo->menuTopCharger(1,$_SESSION['mainmenu'], 'auguria');
+    	
+    	print '<ul>';
+    	
+    	for($i=0; $i<count($tabMenu); $i++)
+      {
+      	if ($tabMenu[$i]['enabled'] == true)
+      	{
+      		if ($tabMenu[$i]['right'] == true)
+      		{
+      			// Define url
+      			if (valid_url($tabMenu[$i]['url'],1))
 	        	{
-					// Define url
-					$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-					if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
-					else $url.='&';
-					$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
-					$url.="&idmenu=".$tabMenu[$i]['rowid'];
-					if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $class='class="tmenusel"';
-					else  $class='class="tmenu"';
-					// Define idsel
-					$idsel='';
-	        		print '<li><a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$tabMenu[$i]['atarget']":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
+	        		$url = $tabMenu[$i]['url'];
 	        	}
 	        	else
 	        	{
-	        		print '<li><div class="tmenudisabled">'.$tabMenu[$i]['titre'].'</div></li>';
+	        		$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
+	        		if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
+	        		else $url.='&';
+	        		$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
+	        		$url.="&idmenu=".$tabMenu[$i]['rowid'];
 	        	}
-        	}
-        }
+      			if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $class='class="tmenusel"';
+      			else  $class='class="tmenu"';
+      			// Define idsel
+      			$idsel='';
+      			print '<li><a '.$class.' '.$idsel.'href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
+      		}
+      		else
+	        {
+	        	print '<li><div class="tmenudisabled">'.$tabMenu[$i]['titre'].'</div></li>';
+	        }
+	      }
+	    }
 
         print '</ul>';
     }

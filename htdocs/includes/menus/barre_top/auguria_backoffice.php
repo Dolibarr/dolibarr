@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin        <patrick.raguin@gmail.com>
+ * Copyright (C) 2009      Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,16 +77,23 @@ class MenuTop {
       		if ($tabMenu[$i]['right'] == true)
       		{
       			// Define url
-      			$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-      			if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
-      			else $url.='&';
-      			$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
-      			$url.="&idmenu=".$tabMenu[$i]['rowid'];
+      			if (valid_url($tabMenu[$i]['url'],1))
+	        	{
+	        		$url = $tabMenu[$i]['url'];
+	        	}
+	        	else
+	        	{
+	        		$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
+	        		if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
+	        		else $url.='&';
+	        		$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
+	        		$url.="&idmenu=".$tabMenu[$i]['rowid'];
+	        	}
       			if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $class='class="tmenusel"';
       			else  $class='class="tmenu"';
       			// Define idsel
       			$idsel='';
-      			print '<li><a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
+      			print '<li><a '.$class.' '.$idsel.'href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
       		}
       		else
 	        {

@@ -637,8 +637,8 @@ class Menubase
 		        $oldrowid=$objm->rowid;
 
 		        $tabMenu[$b]['rowid'] = $objm->rowid;
-				$tabMenu[$b]['mainmenu'] = $objm->mainmenu;
-				$tabMenu[$b]['titre'] = $chaine;	// Title
+		        $tabMenu[$b]['mainmenu'] = $objm->mainmenu;
+		        $tabMenu[$b]['titre'] = $chaine;	// Title
 	        	$tabMenu[$b]['url'] = $objm->url;
 	        	$tabMenu[$b]['atarget'] = $objm->target;
 	        	if (! isset($tabMenu[$b]['right'])) $tabMenu[$b]['right'] = $perms;
