@@ -294,6 +294,11 @@ class Societe extends CommonObject
 				$result = -3;
 			}
 		}
+		if (valid_url($this->url) == 0)
+		{
+			$this->errors[] = 'ErrorUrlNotValid';
+			$result = -4;
+		}
 
 		return $result;
 	}

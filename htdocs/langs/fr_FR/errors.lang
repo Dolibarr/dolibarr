@@ -18,6 +18,7 @@ ErrorBadCustomerCodeSyntax=La syntaxe du code client est incorrect
 ErrorCustomerCodeRequired=Code client obligatoire
 ErrorCustomerCodeAlreadyUsed=Code client deja utilise
 ErrorPrefixRequired=Prefix obligatoire
+ErrorUrlNotValid=L'adresse du site web est incorrect
 ErrorBadSupplierCodeSyntax=La syntaxe du code fournisseur est incorrect
 ErrorSupplierCodeRequired=Code fournisseur obligatoire
 ErrorSupplierCodeAlreadyUsed=Code fournisseur deja utilise

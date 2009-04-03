@@ -54,48 +54,47 @@ class MenuTop {
      */
     function showmenu()
     {
-       	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+    	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
 
-        global $user,$conf,$langs,$dolibarr_main_db_name;;
-
-
-        // On sauve en session le menu principal choisi
-		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
-		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
-        $_SESSION["leftmenuopened"]="";
+      global $user,$conf,$langs,$dolibarr_main_db_name;;
 
 
-        $menuArbo = new Menubase($this->db,'auguria','top');
- 		$tabMenu = $menuArbo->menuTopCharger(0,$_SESSION['mainmenu'], 'auguria');
-
-        print '<ul>';
-
-        for($i=0; $i<count($tabMenu); $i++)
-        {
-        	if ($tabMenu[$i]['enabled'] == true)
-        	{
-        		if ($tabMenu[$i]['right'] == true)
-	        	{
-		        	// Define url
-					$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-					if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
-					else $url.='&';
-					$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
-					$url.="&idmenu=".$tabMenu[$i]['rowid'];
-					if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $class='class="tmenusel"';
-					else  $class='class="tmenu"';
-					// Define idsel
-					$idsel='';
-	        		print '<li><a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
-	        	}
-	        	else
-	        	{
-	        		print '<li><div class="tmenudisabled">'.$tabMenu[$i]['titre'].'</div></li>';
-	        	}
-        	}
-        }
-
-        print '</ul>';
+      // On sauve en session le menu principal choisi
+      if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
+      if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
+      $_SESSION["leftmenuopened"]="";
+      
+      $menuArbo = new Menubase($this->db,'auguria','top');
+      $tabMenu = $menuArbo->menuTopCharger(0,$_SESSION['mainmenu'], 'auguria');
+      
+      print '<ul>';
+      
+      for($i=0; $i<count($tabMenu); $i++)
+      {
+      	if ($tabMenu[$i]['enabled'] == true)
+      	{
+      		if ($tabMenu[$i]['right'] == true)
+      		{
+      			// Define url
+      			$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
+      			if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
+      			else $url.='&';
+      			$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
+      			$url.="&idmenu=".$tabMenu[$i]['rowid'];
+      			if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $class='class="tmenusel"';
+      			else  $class='class="tmenu"';
+      			// Define idsel
+      			$idsel='';
+      			print '<li><a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
+      		}
+      		else
+	        {
+	        	print '<li><div class="tmenudisabled">'.$tabMenu[$i]['titre'].'</div></li>';
+	        }
+	      }
+	    }
+	    
+	    print '</ul>';
     }
 
 }

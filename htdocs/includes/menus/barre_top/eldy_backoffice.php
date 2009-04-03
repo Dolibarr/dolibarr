@@ -350,31 +350,30 @@ class MenuTop {
             	if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$langs->trans("MenuMembers").'</a></td>';
         	}
         }
-
-
-		// Affichage des menus personnalises
+        
+        // Affichage des menus personnalises
        	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
 
         $menuArbo = new Menubase($this->db,'eldy','top');
- 		$tabMenu = $menuArbo->menuTopCharger(0,$_SESSION['mainmenu'],'eldy');
-
- 		for($i=0; $i<count($tabMenu); $i++)
+        $tabMenu = $menuArbo->menuTopCharger(0,$_SESSION['mainmenu'],'eldy');
+        
+        for($i=0; $i<count($tabMenu); $i++)
         {
         	if ($tabMenu[$i]['enabled'] == true)
         	{
         		$idsel=(empty($tabMenu[$i]['mainmenu'])?'id="none" ':'id="'.$tabMenu[$i]['mainmenu'].'" ');
         		if ($tabMenu[$i]['right'] == true)
 	        	{
-					$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-					if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
-					else $url.='&';
-					$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
-					$url.="&idmenu=".$tabMenu[$i]['rowid'];
-					if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $class='class="tmenusel"';
-					else $class='class="tmenu"';
-					print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>';
-					print $tabMenu[$i]['titre'];
-					print '</a></td>';
+	        		$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
+	        		if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
+	        		else $url.='&';
+	        		$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
+	        		$url.="&idmenu=".$tabMenu[$i]['rowid'];
+	        		if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $class='class="tmenusel"';
+	        		else $class='class="tmenu"';
+	        		print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>';
+	        		print $tabMenu[$i]['titre'];
+	        		print '</a></td>';
 	        	}
 	        	else
 	        	{

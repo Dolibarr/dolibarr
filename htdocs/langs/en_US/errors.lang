@@ -18,6 +18,7 @@ ErrorBadCustomerCodeSyntax=Bad syntax for customer code
 ErrorCustomerCodeRequired=Customer code required
 ErrorCustomerCodeAlreadyUsed=Customer code already used
 ErrorPrefixRequired=Prefix required
+ErrorUrlNotValid=The website address is incorrect
 ErrorBadSupplierCodeSyntax=Bad syntax for supplier code
 ErrorSupplierCodeRequired=Supplier code required
 ErrorSupplierCodeAlreadyUsed=Supplier code already used
