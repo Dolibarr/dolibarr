@@ -2379,9 +2379,9 @@ function clean_url($url,$http=1)
 		}
 
 		// On passe le nom de domaine en minuscule
-		$CleanUrl = eregi_replace('^'.$proto.$domain, $newproto.strtolower($domain), $url);
+		$url = eregi_replace('^'.$proto.$domain, $newproto.strtolower($domain), $url);
 
-		return $CleanUrl;
+		return $url;
 	}
 }
 
@@ -2400,7 +2400,6 @@ function clean_url($url,$http=1)
  */
 function valid_url($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 {
-	$ValidUrl = 0;
 	$urlregex = '';
 	
 	// SCHEME
@@ -2427,10 +2426,12 @@ function valid_url($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 	// check
 	if (eregi($urlregex, $url))
 	{
-		$ValidUrl = 1;
+		return 1;
 	}
-	
-	return $ValidUrl;
+	else
+	{
+		return 0;
+	}
 }
 
 
