@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2379,9 +2379,9 @@ function clean_url($url,$http=1)
 		}
 
 		// On passe le nom de domaine en minuscule
-		$url = eregi_replace('^'.$proto.$domain, $newproto.strtolower($domain), $url);
+		$CleanUrl = eregi_replace('^'.$proto.$domain, $newproto.strtolower($domain), $url);
 
-		return $url;
+		return $CleanUrl;
 	}
 }
 
@@ -2400,6 +2400,7 @@ function clean_url($url,$http=1)
  */
 function valid_url($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 {
+	$ValidUrl = 0;
 	$urlregex = '';
 	
 	// SCHEME
@@ -2426,12 +2427,10 @@ function valid_url($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 	// check
 	if (eregi($urlregex, $url))
 	{
-		return 1;
+		$ValidUrl = 1;
 	}
-	else
-	{
-		return 0;
-	}
+	
+	return $ValidUrl;
 }
 
 
