@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/comm/mailing/fiche.php
-        \ingroup    mailing
-        \brief      Fiche mailing, onglet g�n�ral
-        \version    $Id$
-*/
+ *       \file       htdocs/comm/mailing/fiche.php
+ *       \ingroup    mailing
+ *       \brief      Fiche mailing, onglet g�n�ral
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
@@ -87,7 +87,7 @@ if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
 }
 
 // Action envoi mailing pour tous
-if ($_POST["action"] == 'sendallconfirmed')
+if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 {
     if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
 	{
