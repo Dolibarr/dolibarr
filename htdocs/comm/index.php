@@ -86,6 +86,8 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
 
 $html = new Form($db);
 $formfile = new FormFile($db);
+$companystatic=new Societe($db);
+$propalstatic=new Propal($db);
 
 llxHeader();
 
@@ -134,7 +136,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-	$sql = "SELECT p.rowid, p.ref, p.total_ht, s.rowid as socid, s.nom";
+	$sql = "SELECT p.rowid, p.ref, p.total_ht, s.rowid as socid, s.nom, s.client";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -162,8 +164,17 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
-				print '<tr '.$bc[$var].'><td  nowrap="nowrap">'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref.'</a></td>';
-				print '<td nowrap="nowrap"><a href="fiche.php?socid='.$obj->socid.'">'.dol_trunc($obj->nom,18).'</a></td>';
+				print '<tr '.$bc[$var].'><td  nowrap="nowrap">';
+				$propalstatic->id=$obj->rowid;
+				$propalstatic->ref=$obj->ref;
+				print $propalstatic->getNomUrl(1);
+				print '</td>';
+				print '<td nowrap="nowrap">';
+				$companystatic->id=$obj->socid;
+				$companystatic->nom=$obj->nom;
+				$companystatic->client=$obj->client;
+				print $companystatic->getNomUrl(1,'customer',16);
+				print '</td>';
 				print '<td align="right" nowrap="nowrap">'.price($obj->total_ht).'</td></tr>';
 				$i++;
 				$total += $obj->price;
@@ -177,6 +188,10 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 		}
 		$db->free($resql);
 	}
+	else
+	{
+		dol_print_error($db);
+	}
 }
 
 
@@ -186,7 +201,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {
 	$langs->load("orders");
-	$sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.ref, c.total_ttc, s.rowid as socid, s.nom, s.client";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -215,7 +230,12 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
 				print '<tr '.$bc[$var].'><td nowrap="nowrap"><a href="../commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
-				print '<td nowrap="nowrap"><a href="fiche.php?socid='.$obj->socid.'">'.dol_trunc($obj->nom,18).'</a></td>';
+				print '<td nowrap="nowrap">';
+				$companystatic->id=$obj->socid;
+				$companystatic->nom=$obj->nom;
+				$companystatic->client=$obj->client;
+				print $companystatic->getNomUrl(1,'customer',16);
+				print '</td>';
 				print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td></tr>';
 				$i++;
 				$total += $obj->total_ttc;
