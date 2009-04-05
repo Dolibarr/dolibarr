@@ -59,7 +59,7 @@ if ($_GET["action"] == 'setgeneraterule')
 if ($_GET["action"] == 'activate_encrypt')
 {
 	$db->begin();
-	
+
     dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1");
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."user as u";
@@ -157,7 +157,7 @@ else if ($_GET["action"] == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
  * Affichage onglet
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Passwords"));
 
 if ($mesg) print "$mesg\n";
 
@@ -332,7 +332,7 @@ print '</td>';
 
 print '<td align="center" width="100">';
 // TODO Impossibilité de crypter le mot de passe lorsqu'il y a en a un, il affiche qu'il n'y en a pas !!
-if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) 
+if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass))
 {
 	$langs->load("errors");
 	print img_warning($langs->trans("WarningPassIsEmpty"));

@@ -48,8 +48,11 @@ if ($_GET["action"] == 'remove')
 }
 
 
+/*
+ * View
+ */
 
-llxHeader();
+llxHeader('',$langs->trans("DefaultRights"));
 
 print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 
@@ -126,7 +129,7 @@ if ($result)
         foreach($objMod->rights as $key => $val)
         {
         }
-                
+
         // Break found, it's a new module to catch
         if ($old <> $obj->module)
         {

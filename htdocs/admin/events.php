@@ -71,7 +71,7 @@ $eventstolog=array(
 	array('id'=>'MEMBER_MODIFY',          'test'=>$conf->adherent->enabled),
 	array('id'=>'MEMBER_RESILIATE',       'test'=>$conf->adherent->enabled),
 	array('id'=>'MEMBER_DELETE',          'test'=>$conf->adherent->enabled),
-*/	
+*/
 );
 
 
@@ -83,7 +83,7 @@ if ($action == "save")
     $i=0;
 
     $db->begin();
-    
+
 	foreach ($eventstolog as $key => $arr)
 	{
 		$param='MAIN_LOGEVENTS_'.$arr['id'];
@@ -91,18 +91,18 @@ if ($action == "save")
 		if (! empty($_POST[$param])) dolibarr_set_const($db,$param,$_POST[$param],'chaine',0);
 		else dolibarr_del_const($db,$param);
 	}
-	
+
     $db->commit();
     $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
 }
 
 
 
-/**
- * Affichage du formulaire de saisie
+/*
+ * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Audit"));
 
 //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("SecuritySetup"),'','setup');

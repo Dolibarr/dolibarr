@@ -472,12 +472,18 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				$reste_a_livrer[$objp->fk_product] = $objp->qty - $quantite_livree;
-				$reste_a_livrer_total = $reste_a_livrer_total + $reste_a_livrer[$objp->fk_product];
+				$reste_a_livrer_total += $reste_a_livrer[$objp->fk_product];
 				print '<td align="center">';
 				print $reste_a_livrer[$objp->fk_product];
 				print '</td>';
 
-				if ($conf->stock->enabled)
+				if ($objp->fk_product > 0)
+				{
+					$product = new Product($db);
+					$product->fetch($objp->fk_product);
+				}
+
+				if ($objp->fk_product > 0 && $conf->stock->enabled)
 				{
 					print '<td align="center">';
 					print $product->stock_reel;
@@ -491,18 +497,25 @@ if ($id > 0 || ! empty($ref))
 				{
 					print '<td>&nbsp;</td>';
 				}
-				print "</tr>";
+				print "</tr>\n";
 
-				// associations sous produits
-				if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $objp->fk_product > 0)
+				// Show subproducts details
+				if ($objp->fk_product > 0 && ! empty($conf->global->PRODUIT_SOUSPRODUITS))
 				{
-					$product->get_sousproduits_arbo ();
+					// Set tree of subproducts in product->sousprods
+					$product->get_sousproduits_arbo();
+					//var_dump($product->sousprods);exit;
+
+					// Define a new tree with quantiies recalculated
 					$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+					//var_dump($prods_arbo);
 					if(sizeof($prods_arbo) > 0)
 					{
 						foreach($prods_arbo as $key => $value)
 						{
+							print '<tr><td colspan="4">';
 							print $value[0];
+							print '</td></tr>'."\n";
 						}
 					}
 				}
@@ -619,7 +632,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		/* Commande non trouv�e */
+		/* Commande non trouvee */
 		print "Commande inexistante";
 	}
 }

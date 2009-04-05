@@ -1826,22 +1826,22 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *   \brief fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
-	 *   \return void
+	 *  \brief 		fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
+	 * 	\remarks	Define value of this->res
+	 *	\param		multiply	Because each sublevel must be multiplicated by parent nb
+	 *  \return 	void
 	 */
-	function fetch_prod_arbo($prod,$compl_path="",$multiply="")
+	function fetch_prod_arbo($prod, $compl_path="", $multiply=1, $level=1)
 	{
 		global $langs;
 
-		$this->res;
-		$this->pere_encours;
 		foreach($prod as $nom_pere => $desc_pere)
 		{
-			// on est dans une sous-categorie
-			if(is_array($desc_pere))
+			if (is_array($desc_pere))	// If this parent desc is an array, this is an array of childs
 			{
 				if($multiply)
 				{
+					//print "XXX ".$desc_pere[1]." multiply=".$multiply;
 					$img="";
 					$trueValue=$desc_pere[1]*$multiply;
 					$product = new Product($this->db);
@@ -1851,24 +1851,34 @@ class Product extends CommonObject
 					{
 						$img=img_warning($langs->trans("StockTooLow"));
 					}
-					$this->res[]= array("<tr><td>&nbsp; &nbsp; &nbsp;
+					$this->res[]= array(
+								"<tr><td>&nbsp; &nbsp; &nbsp; ->
                                 <a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$desc_pere[0]."\">".$compl_path.stripslashes($nom_pere)."
-                                </a></td><td align=\"center\"> ".$trueValue."</td><td>&nbsp</td></td><td>&nbsp</td>
-                                </td><td align=\"center\">".$this->stock_entrepot[1]." ".$img."</td></tr>",
-					$desc_pere[0]);
+                                </a> (".$desc_pere[1].")</td><td align=\"center\"> ".$trueValue."</td><td>&nbsp</td><td>&nbsp</td>
+                                <td align=\"center\">".$this->stock_entrepot[1]." ".$img."</td></tr>",
+								$desc_pere[0],
+								'fullpath' => $compl_path.$nom_pere);
 				}
 				else
 				{
-					$this->res[]= array($compl_path.$nom_pere." (".$desc_pere[1].")",$desc_pere[0]);
+					$this->res[]= array($compl_path.$nom_pere." (".$desc_pere[1].")",
+										$desc_pere[0],
+										'fullpath' => $compl_path.$nom_pere);
 				}
 			}
 			else if($nom_pere != "0" && $nom_pere != "1")
-			$this->res[]= array($compl_path.$nom_pere,$desc_pere);
-			if(sizeof($desc_pere) >1)
 			{
-				$this ->fetch_prod_arbo($desc_pere,$nom_pere." -> ");
+				$this->res[]= array($compl_path.$nom_pere,$desc_pere);
+			}
+
+			// Recursive call
+			if (is_array($desc_pere))
+			{
+				$this ->fetch_prod_arbo($desc_pere, $nom_pere." -> ", $desc_pere[1]*$multiply, $level+1);
 			}
 		}
+
+		//if ($level == 1) var_dump($this->res);
 	}
 
 	/**
@@ -1891,20 +1901,19 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *   \brief reconstruit l'arborescence des categorie sous la forme d'un tableau
-	 *   \return array $this->res
+	 *   \brief 	reconstruit l'arborescence des categorie sous la forme d'un tableau
+	 *   \return 	array 	$this->res
 	 */
-	function get_arbo_each_prod($multiply="")
+	function get_arbo_each_prod($multiply=1)
 	{
 		$this->res = array();
-		if(is_array($this -> sousprods))
+		if (is_array($this -> sousprods))
 		{
 			foreach($this -> sousprods as $nom_pere => $desc_pere)
 			{
-				if(sizeof($desc_pere) >1)
-				$this ->fetch_prod_arbo($desc_pere,"",$multiply);
+				if (is_array($desc_pere)) $this->fetch_prod_arbo($desc_pere,"",$multiply);
 			}
-			sort($this->res);
+//			dol_sort($this->res,);
 		}
 		return $this->res;
 	}
@@ -1930,8 +1939,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *   \brief Retourne les cat�gories p�res
-	 *   \return array prod
+	 *   \brief 	Return all parent products
+	 *   \return 	array prod
 	 */
 	function get_pere()
 	{
@@ -1940,15 +1949,16 @@ class Product extends CommonObject
 		$sql  .= MAIN_DB_PREFIX."product_association as pa,";
 		$sql  .= MAIN_DB_PREFIX."product as p";
 		$sql  .= " where p.rowid=pa.fk_product_pere and p.rowid = '".$this->id."'";
+
 		$res = $this->db->query ($sql);
 		if ($res)
 		{
 			$prods = array ();
 			while ($record = $this->db->fetch_array ($res))
-	  {
-	  	$prods[addslashes($record['label'])] = array(0=>$record['id']);
-	  }
-	  return $prods;
+			{
+				$prods[addslashes($record['label'])] = array(0=>$record['id']);
+			}
+			return $prods;
 		}
 		else
 		{
@@ -1958,26 +1968,26 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  \brief Retourne les fils de la cat�gorie structur�s pour l'arbo
-	 *   \return     array        prod
+	 *  \brief 		Return childs
+	 *  \return     array        prod
 	 */
 	function get_fils_arbo ($id_pere)
 	{
 		$sql  = "SELECT p.rowid, p.label as label,pa.qty as qty,pa.fk_product_fils as id FROM ";
 		$sql .= MAIN_DB_PREFIX."product as p,".MAIN_DB_PREFIX."product_association as pa";
 		$sql .= " WHERE p.rowid = pa.fk_product_fils and pa.fk_product_pere = '".$id_pere."'";
-		$res  = $this->db->query ($sql);
 
+		$res  = $this->db->query ($sql);
 		if ($res)
 		{
 			$prods = array();
 			while ($rec = $this->db->fetch_array ($res))
-	  {
-	  	$prods[addslashes($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
-	  	foreach($this -> get_fils_arbo($rec['id']) as $kf=>$vf)
-	  	$prods[addslashes($rec['label'])][$kf] = $vf;
-	  }
-	  return $prods;
+			{
+				$prods[addslashes($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
+				foreach($this -> get_fils_arbo($rec['id']) as $kf=>$vf)
+				$prods[addslashes($rec['label'])][$kf] = $vf;
+			}
+			return $prods;
 		}
 		else
 		{
@@ -1985,21 +1995,23 @@ class Product extends CommonObject
 			return -1;
 		}
 	}
+
 	/**
-	 * \brief compose l'arborescence des sousproduits, id, nom et quantit� sous la forme d'un tableau associatif
-	 *    \return    void
+	 * 	\brief 		Return tree of all subproducts for product. Tree contains id, name and quantity.
+	 * 	\remarks	Set this->sousprods
+	 *  \return    	void
 	 */
-	function get_sousproduits_arbo ()
+	function get_sousproduits_arbo()
 	{
 		$peres = $this -> get_pere();
 		foreach($peres as $k=>$v)
 		{
 			foreach($this -> get_fils_arbo($v[0]) as $kf=>$vf)
 			{
-	 		 	$peres[$k][$kf] = $vf;
+				$peres[$k][$kf] = $vf;
 			}
 		}
-		// on concat�ne tout �a
+		// concatenation
 		foreach($peres as $k=>$v)
 		{
 			$this -> sousprods[$k]=$v;

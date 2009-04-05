@@ -94,7 +94,7 @@ else if ($_GET["action"] == 'disable_avscan')
  * Affichage onglet
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Miscellanous"));
 
 print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 
