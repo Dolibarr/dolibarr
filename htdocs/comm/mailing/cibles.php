@@ -419,12 +419,12 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 				if ($obj->statut == 0)
 				{
 					print '<td align="center">&nbsp;</td>';
-					print '<td align="right">'.$langs->trans("MailingStatusNotSent").' <a href="cibles.php?action=delete&rowid='.$obj->rowid.$parm.'">'.img_delete($langs->trans("RemoveRecipient")).'</td>';
+					print '<td align="right" nowrap="nowrap">'.$langs->trans("MailingStatusNotSent").' <a href="cibles.php?action=delete&rowid='.$obj->rowid.$parm.'">'.img_delete($langs->trans("RemoveRecipient")).'</td>';
 				}
 				else
 				{
 					print '<td align="center">'.$obj->date_envoi.'</td>';
-					print '<td align="right">';
+					print '<td align="right" nowrap="nowrap">';
 					if ($obj->statut==-1) print $langs->trans("MailingStatusError").' '.img_error();
 					if ($obj->statut==1) print $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
 					print '</td>';
