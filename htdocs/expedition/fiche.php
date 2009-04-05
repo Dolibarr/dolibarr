@@ -59,6 +59,7 @@ if ($user->societe_id > 0)
 $origin     = $_GET["origin"]?$_GET["origin"]:$_POST["origin"];				// Example: commande, propal
 $origin_id  = $_GET["object_id"]?$_GET["object_id"]:$_POST["object_id"];	// Id of order or propal
 
+
 /*
  * Actions
  */
@@ -831,7 +832,7 @@ else
 					print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
 				}
 
-				if ($expedition->brouillon && $user->rights->expedition->supprimer)
+				if ($user->rights->expedition->supprimer)
 				{
 					print '<a class="butActionDelete" href="fiche.php?id='.$expedition->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}

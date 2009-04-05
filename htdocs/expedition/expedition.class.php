@@ -529,36 +529,45 @@ class Expedition extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition = ".$this->id;
 		if ( $this->db->query($sql) )
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."co_exp WHERE rowid = ".$this->id;
 			if ( $this->db->query($sql) )
 			{
-				$this->db->commit();
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition WHERE rowid = ".$this->id;
+				if ( $this->db->query($sql) )
+        		{
+	        		$this->db->commit();
 
-				// On efface le répertoire de pdf provisoire
-				$expref = sanitizeFileName($this->ref);
-				if ($conf->expedition->dir_output)
-				{
-					$dir = $conf->expedition->dir_output . "/" . $expref ;
-					$file = $conf->expedition->dir_output . "/" . $expref . "/" . $expref . ".pdf";
-					if (file_exists($file))
+					// On efface le répertoire de pdf provisoire
+					$expref = sanitizeFileName($this->ref);
+					if ($conf->expedition->dir_output)
 					{
-						if (!dol_delete_file($file))
+						$dir = $conf->expedition->dir_output . "/" . $expref ;
+						$file = $conf->expedition->dir_output . "/" . $expref . "/" . $expref . ".pdf";
+						if (file_exists($file))
 						{
-							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-							return 0;
+							if (!dol_delete_file($file))
+							{
+								$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+								return 0;
+							}
+						}
+						if (file_exists($dir))
+						{
+							if (!dol_delete_dir($dir))
+							{
+								$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+								return 0;
+							}
 						}
 					}
-					if (file_exists($dir))
-					{
-						if (!dol_delete_dir($dir))
-						{
-							$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-							return 0;
-						}
-					}
+					return 1;
 				}
-				return 1;
-			}
+				else
+				{
+					$this->db->rollback();
+					return -3;
+				}
+       		}
 			else
 			{
 				$this->db->rollback();
