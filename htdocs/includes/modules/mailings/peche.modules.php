@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /**
- \file       htdocs/includes/modules/mailings/peche.modules.php
- \ingroup    mailing
- \brief      Fichier de la classe permettant de g�n�rer la liste de destinataires Peche
- \version    $Id$
+ *	\file       htdocs/includes/modules/mailings/peche.modules.php
+ *	\ingroup    mailing
+ *	\brief      Fichier de la classe permettant de g�n�rer la liste de destinataires Peche
+ *	\version    $Id$
  */
 
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
@@ -29,8 +29,8 @@ require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
 /**
- \class      mailing_pomme
- \brief      Classe permettant de g�n�rer la liste des destinataires Pomme
+ *	\class      mailing_pomme
+ *	\brief      Classe permettant de g�n�rer la liste des destinataires Pomme
  */
 
 class mailing_peche extends MailingTargets
@@ -136,7 +136,7 @@ class mailing_peche extends MailingTargets
 					{
 						$cpt++;
 				        $buffer = trim(fgets($handle));
-			        	$tab=split(';',$buffer);
+			        	$tab=split(';',$buffer,4);
 				        $email=$tab[0];
 				        $name=$tab[1];
 				        $firstname=$tab[2];
