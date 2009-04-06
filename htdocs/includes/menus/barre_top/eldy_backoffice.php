@@ -364,7 +364,7 @@ class MenuTop {
         		$idsel=(empty($tabMenu[$i]['mainmenu'])?'id="none" ':'id="'.$tabMenu[$i]['mainmenu'].'" ');
         		if ($tabMenu[$i]['right'] == true)
 	        	{
-	        		if (valid_url($tabMenu[$i]['url'],1))
+	        		if (eregi($tabMenu[$i]['url'],"^(http:\/\/|https:\/\/)"))
 	        		{
 	        			$url = $tabMenu[$i]['url'];
 	        		}

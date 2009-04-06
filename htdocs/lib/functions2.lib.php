@@ -156,6 +156,93 @@ function isValidMailDomain($mail)
 
 
 /**
+ *	\brief   	Url string validation
+ *  \remarks  	<http[s]> :// [user[:pass]@] hostname [port] [/path] [?getquery] [anchor]
+ *	\param   	url			Url
+ *  \param   	http		1: verify http, 0: not verify http
+ *  \param   	pass		1: verify user and pass, 0: not verify user and pass
+ *  \param   	port		1: verify port, 0: not verify port
+ *  \param   	path		1: verify path, 0: not verify path
+ *  \param   	query		1: verify query, 0: not verify query
+ *  \param   	anchor		1: verify anchor, 0: not verify anchor
+ *	\return  	int			1=Check is OK, 0=Check is KO
+ */
+function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
+{
+	$ValidUrl = 0;
+	$urlregex = '';
+	
+	// SCHEME
+	if ($http) $urlregex .= "^(http:\/\/|https:\/\/)";
+	
+	// USER AND PASS
+	if ($pass) $urlregex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)";
+	
+	// HOSTNAME OR IP
+	//$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*";  // http://x = allowed (ex. http://localhost, http://routerlogin)
+	//$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)+";  // http://x.x = minimum
+	$urlregex .= "([a-z0-9+\$_-]+\.)*[a-z0-9+\$_-]{2,3}";  // http://x.xx(x) = minimum
+	//use only one of the above
+	
+	// PORT
+	if ($port) $urlregex .= "(\:[0-9]{2,5})";
+	// PATH
+	if ($path) $urlregex .= "(\/([a-z0-9+\$_-]\.?)+)*\/";
+	// GET Query
+	if ($query) $urlregex .= "(\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)";
+	// ANCHOR
+	if($anchor) $urlregex .= "(#[a-z_.-][a-z0-9+\$_.-]*)\$";
+	
+	// check
+	if (eregi($urlregex, $url))
+	{
+		$ValidUrl = 1;
+	}
+	
+	return $ValidUrl;
+}
+
+
+/**
+ *	\brief   	Clean an url string
+ *	\param   	url			Url
+ *	\param   	http		1: keep http://, 0: remove also http://
+ *	\return  	string	    Cleaned url
+ */
+function clean_url($url,$http=1)
+{
+	// Fixed by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-cleaning-url.html)
+	// To include the minus sign in a char class, we must not escape it but put it at the end of the class
+	// Also, there's no need of escape a dot sign in a class
+	if (eregi('^(https?:[\\\/]+)?([0-9A-Z.-]+\.[A-Z]{2,4})(:[0-9]+)?',$url,$regs))
+	{
+		$proto=$regs[1];
+		$domain=$regs[2];
+		$port=$regs[3];
+		//print $url." -> ".$proto." - ".$domain." - ".$port;
+		//$url = dol_string_nospecial(trim($url));
+		$url = trim($url);
+
+		// Si http: defini on supprime le http (Si https on ne supprime pas)
+		$newproto=$proto;
+		if ($http==0)
+		{
+			if (eregi('^http:[\\\/]+',$url))
+			{
+				$url = eregi_replace('^http:[\\\/]+','',$url);
+				$newproto = '';
+			}
+		}
+
+		// On passe le nom de domaine en minuscule
+		$CleanUrl = eregi_replace('^'.$proto.$domain, $newproto.strtolower($domain), $url);
+
+		return $CleanUrl;
+	}
+}
+
+
+/**
  * 	\brief		Return lines of an html table from an array
  * 	\remarks	Used by array2table function only
  */

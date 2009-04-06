@@ -227,8 +227,8 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    \brief      Verification lors de la modification
-	 *    \return     int		0 si OK, <0 si KO
+	 *    \brief      Check properties of third party are ok
+	 *    \return     int		0 if OK, <0 if KO
 	 */
 	function verify()
 	{
@@ -242,6 +242,7 @@ class Societe extends CommonObject
 			$this->errors[] = 'ErrorBadThirdPartyName';
 			$result = -2;
 		}
+		
 		if ($this->client && $this->codeclient_modifiable())
 		{
 			// On ne verifie le code client que si la societe est un client / prospect et que le code est modifiable
@@ -268,6 +269,7 @@ class Societe extends CommonObject
 				$result = -3;
 			}
 		}
+		
 		if ($this->fournisseur && $this->codefournisseur_modifiable())
 		{
 			// On ne verifie le code fournisseur que si la societe est un fournisseur et que le code est modifiable
@@ -294,12 +296,7 @@ class Societe extends CommonObject
 				$result = -3;
 			}
 		}
-		if (valid_url($this->url) == 0)
-		{
-			$this->errors[] = 'ErrorUrlNotValid';
-			$result = -4;
-		}
-
+		
 		return $result;
 	}
 
@@ -314,6 +311,8 @@ class Societe extends CommonObject
 	 */
 	function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
 	{
+		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+		
 		global $langs,$conf;
 
 		dol_syslog("Societe::Update id=".$id." call_trigger=".$call_triger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
