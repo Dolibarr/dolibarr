@@ -130,7 +130,7 @@ $lastdaytoshow=dol_mktime(0,0,0,$next_month,$next_day,$next_year);
 //print dol_print_date($firstdaytoshow,'day');
 //print dol_print_date($lastdaytoshow,'day');
 
-$title=$langs->trans("DoneAndToDoActions");
+$title=$langs->trans("Calendar");
 if ($status == 'done') $title=$langs->trans("DoneActions");
 if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
