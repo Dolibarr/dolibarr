@@ -21,6 +21,7 @@ ConfirmDeleteProp=Are you sure you want to delete this commercial proposal ?
 ConfirmValidateProp=Are you sure you want to validate this commercial proposal ?
 LastPropals=Last %s proposals
 LastClosedProposals=Last %s closed proposals
+LastModifiedProposals=Last %s modified proposals
 AllPropals=All proposals
 LastProposals=Last proposals
 SearchAProposal=Search a proposal

@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/comm/index.php
- \ingroup    commercial
- \brief      Page acceuil de la zone commercial cliente
- \version    $Id$
+ *	\file       htdocs/comm/index.php
+ *	\ingroup    commercial
+ *	\brief      Page acceuil de la zone commercial cliente
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -83,6 +83,8 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
 /*
  * View
  */
+
+$now=gmmktime();
 
 $html = new Form($db);
 $formfile = new FormFile($db);
@@ -253,28 +255,89 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
+
+$NBMAX=3;
+$max=3;
+
+
 /*
- * Actions to do
+ * Last modified proposals
  */
-if ($user->rights->agenda->myactions->read)
+
+if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-	show_array_actions_to_do(10);
+
+	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE p.fk_soc = s.rowid";
+	//$sql .= " AND p.fk_statut > 1";
+	if ($socid)
+	{
+		$sql .= " AND s.rowid = ".$socid;
+	}
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql .= " ORDER BY p.datec DESC";
+	$sql .= $db->plimit($NBMAX, 0);
+
+	if ( $db->query($sql) )
+	{
+		$num = $db->num_rows();
+
+		$i = 0;
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("LastModifiedProposals",$NBMAX).'</td></tr>';
+		$var=False;
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object();
+			print "<tr $bc[$var]>";
+
+			// Ref
+			print '<td nowrap="nowrap" width="140">';
+
+			$propalstatic->id=$objp->propalid;
+			$propalstatic->ref=$objp->ref;
+
+			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+			print '<td class="nobordernopadding" nowrap="nowrap">';
+			print $propalstatic->getNomUrl(1);
+			print '</td>';
+			print '<td width="18" class="nobordernopadding" nowrap="nowrap">';
+			if (($objp->fk_statut <= 1) && $objp->dp < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+			print '</td>';
+			print '<td width="16" align="center" class="nobordernopadding">';
+			$filename=sanitizeFileName($objp->ref);
+			$filedir=$conf->propal->dir_output . '/' . sanitizeFileName($objp->ref);
+			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
+			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+			print '</td></tr></table>';
+
+			print '</td>';
+
+			print '<td align="left"><a href="fiche.php?socid='.$objp->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+			print "<td align=\"right\">";
+			print dol_print_date($objp->dp,'day')."</td>\n";
+			print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
+			print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
+			print "</tr>\n";
+			$i++;
+			$var=!$var;
+
+		}
+
+		print "</table><br>";
+		$db->free();
+	}
 }
 
 /*
- * Last actions
- */
-if ($user->rights->agenda->myactions->read)
-{
-	show_array_last_actions_done($max);
-}
-
-/*
- * Derniers clients enregistres
+ * Last modified prospects
  */
 if ($user->rights->societe->lire)
 {
-	$sql = "SELECT s.rowid,s.nom,s.client,".$db->pdate("datec")." as datec";
+	$sql = "SELECT s.rowid,s.nom,s.client,s.tms";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -287,7 +350,7 @@ if ($user->rights->societe->lire)
 	{
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	}
-	$sql .= " ORDER BY s.datec DESC";
+	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
 	$resql = $db->query($sql);
@@ -315,7 +378,7 @@ if ($user->rights->societe->lire)
 				if ($objp->client == 1) print $langs->trans("Customer");
 				if ($objp->client == 2) print $langs->trans("Prospect");
 				print "</td>";
-				print '<td align="right" nowrap>'.dol_print_date($objp->datec,'day')."</td>";
+				print '<td align="right" nowrap>'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
 				print '</tr>';
 				$i++;
 				$var=!$var;
@@ -326,6 +389,24 @@ if ($user->rights->societe->lire)
 			$db->free($resql);
 		}
 	}
+}
+
+
+/*
+ * Last actions
+ */
+if ($user->rights->agenda->myactions->read)
+{
+	show_array_last_actions_done($max);
+}
+
+
+/*
+ * Actions to do
+ */
+if ($user->rights->agenda->myactions->read)
+{
+	show_array_actions_to_do(10);
 }
 
 
@@ -359,23 +440,23 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // \todo A REF
 
 		if ($num > 0)
 		{
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastContracts",5).'</td></tr>';
-	  $i = 0;
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastContracts",5).'</td></tr>';
+			$i = 0;
 
-	  $staticcontrat=new Contrat($db);
+			$staticcontrat=new Contrat($db);
 
-	  $var=false;
-	  while ($i < $num)
-	  {
-	  	$obj = $db->fetch_object();
-	  	print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->contratid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
-	  	print "<td><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany","company"))." ".$obj->nom."</a></td>\n";
-	  	print "<td align=\"right\">".$staticcontrat->LibStatut($obj->statut,3)."</td></tr>\n";
-	  	$var=!$var;
-	  	$i++;
-	  }
-	  print "</table><br>";
+			$var=false;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object();
+				print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->contratid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
+				print "<td><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany","company"))." ".$obj->nom."</a></td>\n";
+				print "<td align=\"right\">".$staticcontrat->LibStatut($obj->statut,3)."</td></tr>\n";
+				$var=!$var;
+				$i++;
+			}
+			print "</table><br>";
 		}
 	}
 	else
@@ -391,8 +472,6 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // \todo A REF
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$langs->load("propal");
-
-	$now=gmmktime();
 
 	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -461,78 +540,6 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	else
 	{
 		dol_print_error($db);
-	}
-}
-
-/*
- * Last closed proposals
- */
-
-if ($conf->propal->enabled && $user->rights->propale->lire)
-{
-	$NBMAX=5;
-
-	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut > 1";
-	if ($socid)
-	{
-		$sql .= " AND s.rowid = ".$socid;
-	}
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	$sql .= " ORDER BY p.rowid DESC";
-	$sql .= $db->plimit($NBMAX, 0);
-
-	if ( $db->query($sql) )
-	{
-		$num = $db->num_rows();
-
-		$i = 0;
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("LastClosedProposals",$NBMAX).'</td></tr>';
-		$var=False;
-		while ($i < $num)
-		{
-			$objp = $db->fetch_object();
-			print "<tr $bc[$var]>";
-
-			// Ref
-			print '<td nowrap="nowrap" width="140">';
-
-			$propalstatic->id=$objp->propalid;
-			$propalstatic->ref=$objp->ref;
-
-			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td class="nobordernopadding" nowrap="nowrap">';
-			print $propalstatic->getNomUrl(1);
-			print '</td>';
-			print '<td width="18" class="nobordernopadding" nowrap="nowrap">';
-			print '&nbsp;';
-			print '</td>';
-			print '<td width="16" align="center" class="nobordernopadding">';
-			$filename=sanitizeFileName($objp->ref);
-			$filedir=$conf->propal->dir_output . '/' . sanitizeFileName($objp->ref);
-			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
-			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
-			print '</td></tr></table>';
-
-			print '</td>';
-
-			print '<td align="left"><a href="fiche.php?socid='.$objp->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
-			print "<td align=\"right\">";
-			print dol_print_date($objp->dp,'day')."</td>\n";
-			print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
-			print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
-			print "</tr>\n";
-			$i++;
-			$var=!$var;
-
-		}
-
-		print "</table>";
-		$db->free();
 	}
 }
 

@@ -21,6 +21,7 @@ ConfirmDeleteProp=Êtes-vous sûr de vouloir effacer cette proposition commercia
 ConfirmValidateProp=Êtes-vous sûr de vouloir valider cette proposition commerciale ?
 LastPropals=Les %s dernières propales
 LastClosedProposals=Les %s dernières propositions commerciales fermées
+LastModifiedProposals=Les %s dernières propositions commerciales modifiées
 AllPropals=Toutes les propales
 LastProposals=Dernières propositions
 SearchAProposal=Rechercher une propale
