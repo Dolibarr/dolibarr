@@ -1760,9 +1760,8 @@ if ($id > 0 || ! empty($ref))
 
 		if ($_GET['action'] != 'statut' && $_GET['action'] <> 'editline')
 		{
-
 			// Valid
-			if ($propal->statut == 0 && $propal->total_ttc > 0 && $user->rights->propale->valider)
+			if ($propal->statut == 0 && $user->rights->propale->valider)
 			{
 				print '<a class="butAction" ';
 				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
