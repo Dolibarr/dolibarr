@@ -3702,19 +3702,23 @@ else
 				$soc->fetch($socid);
 			}
 
-			print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,'facture.php','&amp;socid='.$socid,$sortfield,$sortorder,'',$num);
+			$param='&amp;socid='.$socid;
+			if ($month) $param.='&amp;month='.$month;
+			if ($year)  $param.='&amp;year=' .$year;
+			
+			print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,'facture.php',$param,$sortfield,$sortorder,'',$num);
 
 			$i = 0;
 			print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 			print '<table class="liste" width="100%">';
 			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans('Received'),$_SERVER['PHP_SELF'],'am','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye,am','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','',$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('Received'),$_SERVER['PHP_SELF'],'am','',$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye,am','',$param,'align="right"',$sortfield,$sortorder);
 			//print '<td class="liste_titre">&nbsp;</td>';
 			print '</tr>';
 
