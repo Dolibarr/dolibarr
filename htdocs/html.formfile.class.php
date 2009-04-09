@@ -134,11 +134,13 @@ class FormFile
 	 * 		\param		maxfilenamelength	Max length for filename shown
 	 * 		\param		noform				Do not output html form start and end
 	 * 		\param		param				More param on http links
+	 * 		\param		title				Title to show on top of form
+	 * 		\param		buttonlabel			Label on submit button
 	 *      \remarks    Le fichier de facture detaillee est de la forme
 	 *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
 	 *		\return		int					<0 si ko, nbre de fichiers affiches si ok
 	 */
-	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='')
+	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='')
 	{
 		// filedir = conf->...dir_ouput."/".get_exdir(id)
 		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
@@ -287,7 +289,8 @@ class FormFile
 			$headershown=1;
 
 			$html = new Form($db);
-			$texte=$langs->trans('Generate');
+			$buttonlabeltoshow=$buttonlabel;
+			if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
 			if (empty($noform)) print '<form action="'.$urlsource.'#builddoc" method="post">';
 			print '<input type="hidden" name="action" value="builddoc">';
@@ -321,7 +324,7 @@ class FormFile
 			}
 			print '</td>';
 			print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
-			print '<input class="button" type="submit" value="'.$texte.'">';
+			print '<input class="button" type="submit" value="'.$buttonlabel.'">';
 			print '</td></tr>';
 		}
 

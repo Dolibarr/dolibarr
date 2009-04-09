@@ -503,6 +503,8 @@ Notes=Notes
 AddNewLine=Add new line
 FreeZone=Free text
 CloneMainAttributes=Clone object with its main attributes
+PDFMerge=PDF Merge
+Merge=Merge
 # Week day
 Day1=Monday
 Day2=Tuesday

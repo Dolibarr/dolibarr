@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  *
@@ -117,66 +117,66 @@ if ($action == 'add_paiement')
 		$paiement_id = $paiement->create($user);
 		if ($paiement_id > 0)
 		{
-	  if ($conf->banque->enabled)
-	  {
-	  	// Insertion dans llx_bank
-	  	$label = "(SupplierInvoicePayment)";
-	  	$acc = new Account($db, $_POST['accountid']);
-	  	//paiementid contient "CHQ ou VIR par exemple"
-	  	$bank_line_id = $acc->addline($paiement->datepaye,
-	  	$paiement->paiementid,
-	  	$label,
-	  	0.0 - $paiement->total,
-	  	$paiement->num_paiement,
-	  	'',
-	  	$user);
+			if ($conf->banque->enabled)
+			{
+				// Insertion dans llx_bank
+				$label = "(SupplierInvoicePayment)";
+				$acc = new Account($db, $_POST['accountid']);
+				//paiementid contient "CHQ ou VIR par exemple"
+				$bank_line_id = $acc->addline($paiement->datepaye,
+				$paiement->paiementid,
+				$label,
+				0.0 - $paiement->total,
+				$paiement->num_paiement,
+		  	'',
+				$user);
 
-	  	// Mise a jour fk_bank dans llx_paiement.
-	  	// On connait ainsi le paiement qui a genere l'ecriture bancaire
-	  	if ($bank_line_id > 0)
-	  	{
-	  		$paiement->update_fk_bank($bank_line_id);
-	  		// Mise a jour liens (pour chaque facture concernees par le paiement)
-	  		foreach ($paiement->amounts as $key => $value)
-	  		{
-	  			$facid = $key;
-	  			$fac = new FactureFournisseur($db);
-	  			$fac->fetch($facid);
-	  			$fac->fetch_fournisseur();
-	  			$acc->add_url_line($bank_line_id,
-					 $paiement_id,
-					 DOL_URL_ROOT.'/fourn/paiement/fiche.php?id=',
-					 '(paiement)',
-					 'payment_supplier');
-					 $acc->add_url_line($bank_line_id,
-					 $fac->fournisseur->id,
-					 DOL_URL_ROOT.'/fourn/fiche.php?socid=',
-					 $fac->fournisseur->nom,
-					 'company');
-	  		}
-	  	}
-	  	else
-	  	{
-	  		$error++;
-	  	}
-	  }
+				// Mise a jour fk_bank dans llx_paiement.
+				// On connait ainsi le paiement qui a genere l'ecriture bancaire
+				if ($bank_line_id > 0)
+				{
+					$paiement->update_fk_bank($bank_line_id);
+					// Mise a jour liens (pour chaque facture concernees par le paiement)
+					foreach ($paiement->amounts as $key => $value)
+					{
+						$facid = $key;
+						$fac = new FactureFournisseur($db);
+						$fac->fetch($facid);
+						$fac->fetch_fournisseur();
+						$acc->add_url_line($bank_line_id,
+						$paiement_id,
+						DOL_URL_ROOT.'/fourn/paiement/fiche.php?id=',
+						 '(paiement)',
+						 'payment_supplier');
+						$acc->add_url_line($bank_line_id,
+						$fac->fournisseur->id,
+						DOL_URL_ROOT.'/fourn/fiche.php?socid=',
+						$fac->fournisseur->nom,
+						 'company');
+					}
+				}
+				else
+				{
+					$error++;
+				}
+			}
 		}
 		else
 		{
-	  $mesg = '<div class="error">'.$langs->trans($paiement->error).'</div>';
-	  $error++;
+			$mesg = '<div class="error">'.$langs->trans($paiement->error).'</div>';
+			$error++;
 		}
 
 		if ($error == 0)
 		{
-	  $loc = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement_id;
-	  $db->commit();
-	  Header('Location: '.$loc);
-	  exit;
+			$loc = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement_id;
+			$db->commit();
+			Header('Location: '.$loc);
+			exit;
 		}
 		else
 		{
-	  $db->rollback();
+			$db->rollback();
 		}
 	}
 }
@@ -184,6 +184,8 @@ if ($action == 'add_paiement')
 /*
  * View
  */
+
+$invoicesupplierstatic = new FactureFournisseur($db);
 
 llxHeader();
 
@@ -389,42 +391,49 @@ if (! $_GET['action'] && ! $_POST['action'])
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans('RefPayment'),'paiement.php','rowid','','','',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Invoice'),'paiement.php','facnumber','','','',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','','','',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','','','align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('ThirdParty'),'paiement.php','s.nom','','','',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Type'),'paiement.php','c.libelle','','','',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Account'),'paiement.php','ba.label','','','',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('AmountTTC'),'paiement.php','f.amount','','','align="right"',$sortfield,$sortorder);
-		print '<td>&nbsp;</td>';
+		print_liste_field_titre($langs->trans('Amount'),'paiement.php','f.amount','','','align="right"',$sortfield,$sortorder);
+		//print_liste_field_titre($langs->trans('Invoice'),'paiement.php','facnumber','','','',$sortfield,$sortorder);
 		print "</tr>\n";
 
 		while ($i < min($num,$limit))
 		{
-	  $objp = $db->fetch_object($resql);
-	  $var=!$var;
-	  print '<tr '.$bc[$var].'>';
+			$objp = $db->fetch_object($resql);
+			$var=!$var;
+			print '<tr '.$bc[$var].'>';
 
-	  // Ref payment
-	  print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
+			// Ref payment
+			print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
 
-	  // Ref invoice
-	  print '<td nowrap="nowrap">'.dol_trunc($objp->facnumber,12).'</td>';
+			// Date
+			print '<td nowrap="nowrap" align="center">'.dol_print_date($objp->dp,'day')."</td>\n";
 
-	  // Date
-	  print '<td nowrap="nowrap" align="center">'.dol_print_date($objp->dp,'day')."</td>\n";
+			print '<td>';
+			if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->nom,32).'</a>';
+			else print '&nbsp;';
+			print '</td>';
 
-	  print '<td>';
-	  if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->nom,32).'</a>';
-	  else print '&nbsp;';
-	  print '</td>';
-	  print '<td>'.dol_trunc($objp->paiement_type.' '.$objp->num_paiement,32)."</td>\n";
-	  print '<td>';
-	  if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';
-	  else print '&nbsp;';
-	  print '</td>';
-	  print '<td align="right">'.price($objp->pamount).'</td><td>&nbsp;</td>';
-	  print '</tr>';
-	  $i++;
+			print '<td>'.dol_trunc($objp->paiement_type.' '.$objp->num_paiement,32)."</td>\n";
+
+			print '<td>';
+			if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';
+			else print '&nbsp;';
+			print '</td>';
+
+			print '<td align="right">'.price($objp->pamount).'</td>';
+
+			// Ref invoice
+			/*$invoicesupplierstatic->ref=$objp->facnumber;
+			$invoicesupplierstatic->id=$objp->facid;
+			print '<td nowrap="nowrap">';
+			print $invoicesupplierstatic->getNomUrl(1);
+			print '</td>';*/
+
+			print '</tr>';
+			$i++;
 		}
 		print "</table>";
 	}

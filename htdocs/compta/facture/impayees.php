@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans('UnpayedNotChecked').'</div>' ;
+		$mesg='<div class="error">'.$langs->trans('InvoiceNotChecked').'</div>' ;
 	}
 }
 
@@ -264,7 +264,6 @@ if ($result)
 	print '<tr class="liste_titre">';
 
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Generate"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
@@ -272,18 +271,19 @@ if ($result)
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Merge"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<tr class="liste_titre">';
+	// Ref
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_REQUEST["search_ref"].'"></td>';
-	print '<td class="liste_titre" align="center"><input type="checkbox" onclick="checkall(this.checked);"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_societe" value="'.$_REQUEST["search_societe"].'">';
+	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$_REQUEST["search_societe"].'">';
 	print '</td><td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_REQUEST["search_montant_ht"].'">';
 	print '</td><td class="liste_titre" align="right">';
@@ -291,6 +291,7 @@ if ($result)
 	print '</td><td class="liste_titre" colspan="2" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '</td>';
+	print '<td class="liste_titre" align="center"><input type="checkbox" onclick="checkall(this.checked);"></td>';
 	print "</tr>\n";
 	print '</form>';
 
@@ -323,33 +324,32 @@ if ($result)
 			$facturestatic->type=$objp->type;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+
+			// Ref
 			print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
 			print $facturestatic->getNomUrl(1);
 			print '</td>';
 
+			// Warning picto
 			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
 			if ($objp->datelimite < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 			print '</td>';
 
+			// PDF Picto
 			print '<td width="16" align="right" class="nobordernopadding">';
-
 			$filename=sanitizeFileName($objp->facnumber);
 			$filedir=$conf->facture->dir_output . '/' . sanitizeFileName($objp->facnumber);
 			$foundpdf=$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1,$param);
-			print '</td></tr></table>';
+			print '</td>';
 
-			// Checkbox
-			print '<td align="center">';
-			if ($foundpdf) print '<input id="cb'.$objp->facid.'" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
-			else print '&nbsp;';
-			print '</td>' ;
+			print '</tr></table>';
 
 			print "</td>\n";
 
-			print "<td nowrap align=\"center\">".dol_print_date($objp->df)."</td>\n";
-			print "<td nowrap align=\"center\">".dol_print_date($objp->datelimite)."</td>\n";
+			print "<td nowrap align=\"center\">".dol_print_date($objp->df,'day')."</td>\n";
+			print "<td nowrap align=\"center\">".dol_print_date($objp->datelimite,'day')."</td>\n";
 
-			print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,32).'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,28).'</a></td>';
 
 			print "<td align=\"right\">".price($objp->total_ht)."</td>";
 			print "<td align=\"right\">".price($objp->total_ttc)."</td>";
@@ -359,6 +359,12 @@ if ($result)
 			print '<td align="right" nowrap="nowrap">';
 			print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
 			print '</td>';
+
+			// Checkbox
+			print '<td align="center">';
+			if ($foundpdf) print '<input id="cb'.$objp->facid.'" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
+			else print '&nbsp;';
+			print '</td>' ;
 
 			print "</tr>\n";
 			$total_ht+=$objp->total_ht;
@@ -394,7 +400,7 @@ if ($result)
 
 	print '<br>';
 	print '<input type="hidden" name="option" value="'.$option.'">';
-	$formfile->show_documents('unpayed','',$filedir,$urlsource,$genallowed,$delallowed,'','',0,0,48,1,$param);
+	$formfile->show_documents('unpayed','',$filedir,$urlsource,$genallowed,$delallowed,'','',0,0,48,1,$param,'',$langs->trans("PDFMerge"));
 	print '</form>';
 
 	$db->free();

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
  *	\file       htdocs/compta/paiement/liste.php
  *  \ingroup    compta
@@ -50,16 +50,16 @@ llxHeader('',$langs->trans("ListPayment"));
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
- 
+
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
-  
+
 $sql = "SELECT DISTINCT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
 $sql.= " p.statut, p.num_paiement,";
 //$sql.= " c.libelle as paiement_type,";
-$sql.= " c.code as paiement_code,"; 
+$sql.= " c.code as paiement_code,";
 $sql.= " ba.rowid as bid, ba.label,";
 $sql.= " s.rowid as socid, s.nom";
 //$sql.= " f.facnumber";
@@ -119,12 +119,12 @@ if ($resql)
 	print '<form method="get" action="liste.php">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","",$paramlist,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("RefPayment"),"liste.php","p.rowid","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdParty"),"liste.php","c.nom","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("AmountTTC"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
 	//print_liste_field_titre($langs->trans("Invoices"),"","","",$paramlist,'align="left"',$sortfield,$sortorder);
 	if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
 	{
@@ -192,9 +192,9 @@ if ($resql)
 			if ($objp->statut == 0) print '</a>';
 			print '</td>';
 		}
-		
+
 		print '</tr>';
-		
+
 		$i++;
 	}
 	print "</table>\n";
