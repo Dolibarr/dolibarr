@@ -33,7 +33,7 @@ if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You ar usingr PH for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+    echo "Error: You are using PH for CGI/Web. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 

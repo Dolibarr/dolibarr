@@ -447,8 +447,8 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
  *	\param		string			Date in a string
  *				YYYYMMDD
  *				YYYYMMDDHHMMSS
- *				DD/MM/YY ou DD/MM/YYYY
- *				DD/MM/YY HH:MM:SS ou DD/MM/YYYY HH:MM:SS
+ *				DD/MM/YY or DD/MM/YYYY (this format should not be used anymore)
+ *				DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
  *	\return		date			Date
  * 	\example	19700101020000 -> 7200
  */

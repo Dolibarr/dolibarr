@@ -3836,7 +3836,7 @@ else
 				{
 					// Print total
 					print '<tr class="liste_total">';
-					print '<td class="liste_total" colspan="3" align="left">'.$langs->trans('Total').'</td>';
+					print '<td class="liste_total" colspan="4" align="left">'.$langs->trans('Total').'</td>';
 					print '<td class="liste_total" align="right">'.price($total).'</td>';
 					print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
 					print '<td class="liste_total" align="right">'.price($totalrecu).'</td>';

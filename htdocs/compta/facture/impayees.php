@@ -53,7 +53,6 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 {
 	if (is_array($_POST['toGenerate']))
 	{
-
 		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('\.pdf|',$_POST['toGenerate']).'\.pdf','\.meta$|\.png','date',SORT_DESC) ;
 
 		// liste les fichiers
@@ -95,7 +94,7 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		// Create output dir if not exists
 		create_exdir($diroutputpdf);
 
-		// enregistre le fichier pdf concatene
+		// Save merged file
 		$filename=strtolower(sanitizeFileName($langs->transnoentities("Unpayed")));
 		if ($option=='late') $filename.='_'.strtolower(sanitizeFileName($langs->transnoentities("Late")));
 		if ($pagecount)
