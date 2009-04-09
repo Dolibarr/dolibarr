@@ -3705,7 +3705,7 @@ else
 			$param='&amp;socid='.$socid;
 			if ($month) $param.='&amp;month='.$month;
 			if ($year)  $param.='&amp;year=' .$year;
-			
+
 			print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,'facture.php',$param,$sortfield,$sortorder,'',$num);
 
 			$i = 0;
@@ -3714,6 +3714,7 @@ else
 			print '<tr class="liste_titre">';
 			print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("DateEcheance"),$_SERVER['PHP_SELF'],"f.date_lim_reglement","&amp;socid=$socid","",'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','',$param,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);
@@ -3735,6 +3736,7 @@ else
 			//if ($syear == '') $syear = date("Y");
 			$html->select_year($syear,'year',1, '', $max_year);
 			print '</td>';
+			print '<td class="liste_titre" align="left">&nbsp;</td>';
 			print '<td class="liste_titre" align="left">';
 			print '<input class="flat" type="text" name="search_societe" value="'.$_GET['search_societe'].'">';
 			print '</td><td class="liste_titre" align="right">';
@@ -3767,16 +3769,12 @@ else
 					$facturestatic->type=$objp->type;
 
 					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+
 					print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
 					print $facturestatic->getNomUrl(1);
 					print $objp->increment;
 					print '</td>';
-					if ($objp->datelimite < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am)
-					{
-						print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-						print img_warning($langs->trans('Late'));
-						print '</td>';
-					}
+
 					print '<td width="16" align="right" class="nobordernopadding">';
 					$filename=sanitizeFileName($objp->facnumber);
 					$filedir=$conf->facture->dir_output . '/' . sanitizeFileName($objp->facnumber);
@@ -3787,6 +3785,7 @@ else
 
 					print "</td>\n";
 
+					// Date
 					if ($objp->df > 0)
 					{
 						$y = dol_print_date($objp->df,'%Y');
@@ -3804,9 +3803,21 @@ else
 					{
 						print '<td align="center"><b>!!!</b></td>';
 					}
+
+					// Date limit
+					print '<td align="center" nowrap="1">'.dol_print_date($objp->datelimite,'day');
+					if ($objp->datelimite < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am)
+					{
+						print img_warning($langs->trans('Late'));
+					}
+					print '</td>';
+
 					print '<td><a href="fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->nom,48).'</a></td>';
+
 					print '<td align="right">'.price($objp->total).'</td>';
+
 					print '<td align="right">'.price($objp->total_ttc).'</td>';
+
 					print '<td align="right">'.price($objp->am).'</td>';
 
 					// Affiche statut de la facture
