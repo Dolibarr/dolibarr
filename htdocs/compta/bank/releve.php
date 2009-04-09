@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
- 
+
 /**
-	    \file       htdocs/compta/bank/releve.php
-        \ingroup    banque
-		\brief      Page d'affichage d'un relev�
-		\version    $Revision$
-*/
+ *	    \file       htdocs/compta/bank/releve.php
+ *      \ingroup    banque
+ *		\brief      Page d'affichage d'un releve
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
@@ -34,19 +32,19 @@ $langs->load("banks");
 $langs->load("bills");
 
 if (!$user->rights->banque->lire)
-  accessforbidden();
+accessforbidden();
 
 
 if ($_GET["action"] == 'dvnext')
 {
-  $ac = new Account($db);
-  $ac->datev_next($_GET["dvid"]);
+	$ac = new Account($db);
+	$ac->datev_next($_GET["dvid"]);
 }
 
 if ($_GET["action"] == 'dvprev')
 {
-  $ac = new Account($db);
-  $ac->datev_previous($_GET["dvid"]);
+	$ac = new Account($db);
+	$ac->datev_previous($_GET["dvid"]);
 }
 
 
@@ -62,18 +60,22 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 $html = new Form($db);
 
 
-// R�cup�re info du compte
+// Load account
 $acct = new Account($db);
-if ($_GET["account"]) 
+if ($_GET["account"])
 {
 	$acct->fetch($_GET["account"]);
 }
-if ($_GET["ref"]) 
+if ($_GET["ref"])
 {
 	$acct->fetch(0,$_GET["ref"]);
 	$_GET["account"]=$acct->id;
@@ -82,8 +84,8 @@ if ($_GET["ref"])
 if (! isset($_GET["num"]))
 {
 	/*
-	*	Vue liste tous relev�s confondus
-	*/
+	 *	Vue liste tous releves confondus
+	 */
 	$sql = "SELECT distinct(b.num_releve) as numr";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " WHERE fk_account = ".$_GET["account"];
@@ -116,9 +118,9 @@ if (! isset($_GET["num"]))
 		print '</table>';
 
 		print '<br>';
-		
-		
-		
+
+
+
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&amp;account=".$_GET["account"], $sortfield, $sortorder,'',$numrows);
 
 		print '<table class="noborder" width="100%">';
@@ -141,7 +143,7 @@ if (! isset($_GET["num"]))
 			$i++;
 		}
 		print "</table>\n";
-		
+
 		print "\n</div>\n";
 	}
 	else
@@ -152,25 +154,28 @@ if (! isset($_GET["num"]))
 else
 {
 	/**
-	*      Affiche liste ecritures d'un releve
-	*/
+	 *      Affiche liste ecritures d'un releve
+	 */
+	$ve=$_GET["ve"];
+
+	$found=false;
 	if ($_GET["rel"] == 'prev')
 	{
 		// Recherche valeur pour num = num�ro relev� pr�c�dent
 		$sql = "SELECT distinct(num_releve) as num";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql.= " WHERE num_releve < ".$_GET["num"]." AND fk_account = ".$_GET["account"];
+		$sql.= " WHERE num_releve < '".$_GET["num"]."' AND fk_account = ".$_GET["account"];
 		$sql.= " ORDER BY num_releve DESC";
-		$result = $db->query($sql);
-		if ($result)
+		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
+		$resql = $db->query($sql);
+		if ($resql)
 		{
-			$var=True;
-			$numrows = $db->num_rows($result);
-			$i = 0;
+			$numrows = $db->num_rows($resql);
 			if ($numrows > 0)
 			{
-				$obj = $db->fetch_object($result);
+				$obj = $db->fetch_object($resql);
 				$num = $obj->num;
+				$found=true;
 			}
 		}
 	}
@@ -179,28 +184,28 @@ else
 		// Recherche valeur pour num = num�ro relev� pr�c�dent
 		$sql = "SELECT distinct(num_releve) as num";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql.= " WHERE num_releve > ".$_GET["num"]." AND fk_account = ".$_GET["account"];
+		$sql.= " WHERE num_releve > '".$_GET["num"]."' AND fk_account = ".$_GET["account"];
 		$sql.= " ORDER BY num_releve ASC";
-		$result = $db->query($sql);
-		if ($result)
+		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
+		$resql = $db->query($sql);
+		if ($resql)
 		{
-			$var=True;
-			$numrows = $db->num_rows($result);
-			$i = 0;
+			$numrows = $db->num_rows($resql);
 			if ($numrows > 0)
 			{
-				$obj = $db->fetch_object($result);
+				$obj = $db->fetch_object($resql);
 				$num = $obj->num;
+				$found=true;
 			}
 		}
 	}
 	else {
-		// On veut le relev� num
+		// On veut le releve num
 		$num=$_GET["num"];
+		$found=true;
 	}
-	$ve=$_GET["ve"];
+	if (! $found) $num=$_GET["num"];
 
-	
 	$mesprevnext ="<a href=\"releve.php?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_previous()."</a> &nbsp;";
 	$mesprevnext.= $langs->trans("AccountStatement")." $num";
 	$mesprevnext.=" &nbsp; <a href=\"releve.php?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_next()."</a>";
@@ -222,9 +227,9 @@ else
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
 
-	// Calcul du solde de d�part du relev
+	// Calcul du solde de depart du relev
 	$sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank";
-	$sql.= " WHERE num_releve < ".$num." AND fk_account = ".$acct->id;
+	$sql.= " WHERE num_releve < '".$num."' AND fk_account = ".$acct->id;
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -251,7 +256,7 @@ else
 		$numrows = $db->num_rows($result);
 		$i = 0;
 
-		// Ligne Solde d�but releve
+		// Ligne Solde debut releve
 		print "<tr><td colspan=\"4\"><a href=\"releve.php?num=$num&amp;ve=1&amp;rel=$rel&amp;account=".$acct->id."\">&nbsp;</a></td>";
 		print "<td align=\"right\" colspan=\"2\"><b>".$langs->trans("InitialBankBalance")." :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
 
@@ -287,8 +292,8 @@ else
 			print '</a>';
 
 			/*
-			* Ajout les liens (societe, company...)
-			*/
+			 * Ajout les liens (societe, company...)
+			 */
 			$newline=1;
 			$links = $acct->get_url($objp->rowid);
 			foreach($links as $key=>$val)
@@ -339,12 +344,12 @@ else
 					$newline=0;
 				}
 				else if ($links[$key]['type']=='banktransfert') {
-				/*	print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
-					print img_object($langs->trans('ShowTransaction'),'payment').' ';
-					print $langs->trans("TransactionOnTheOtherAccount");
-					print '</a>';
-					$newline=0;
-				*/
+					/*	print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
+					 print img_object($langs->trans('ShowTransaction'),'payment').' ';
+					 print $langs->trans("TransactionOnTheOtherAccount");
+					 print '</a>';
+					 $newline=0;
+					 */
 				}
 				else {
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
@@ -354,7 +359,7 @@ else
 				}
 			}
 
-			// Cat�gories
+			// Categories
 			if ($ve)
 			{
 				$sql = "SELECT label FROM ".MAIN_DB_PREFIX."bank_categ as ct, ".MAIN_DB_PREFIX."bank_class as cl";
