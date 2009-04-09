@@ -19,11 +19,11 @@
  */
 
 /**
-	    \file       htdocs/contact/index.php
-        \ingroup    societe
-		\brief      Page liste des contacts
-		\version    $Id$
-*/
+ *	    \file       htdocs/contact/index.php
+ *      \ingroup    societe
+ *		\brief      Page liste des contacts
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -288,7 +288,7 @@ if ($result)
         print "<tr $bc[$var]>";
 
 		// Name
-		print '<td valign="center">';
+		print '<td valign="middle">';
 		$contactstatic->name=$obj->name;
 		$contactstatic->firstname='';
 		$contactstatic->id=$obj->cidp;
@@ -324,7 +324,8 @@ if ($result)
         }
         else
         {
-            print '<td>'.dol_print_email($obj->email,$obj->cidp,$obj->socid,'AC_EMAIL').'</td>';
+        	// EMail
+            print '<td>'.dol_print_email($obj->email,$obj->cidp,$obj->socid,'AC_EMAIL',18).'</td>';
         }
 
 		// Date
@@ -343,11 +344,11 @@ if ($result)
         $i++;
     }
 
-    if ($num > $limit) print_barre_liste('' ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num,$nbtotalofrecords, '');
-
     print "</table>";
 
     print '</form>';
+
+    if ($num > $limit) print_barre_liste('' ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num,$nbtotalofrecords, '');
 
     $db->free($result);
 }
