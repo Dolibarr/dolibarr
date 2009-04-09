@@ -3714,7 +3714,7 @@ else
 			print '<tr class="liste_titre">';
 			print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("DateEcheance"),$_SERVER['PHP_SELF'],"f.date_lim_reglement","&amp;socid=$socid","",'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement","&amp;socid=$socid","",'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','',$param,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);

@@ -159,7 +159,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Ref"),"index.php","fac.rowid","&amp;socid=$socid","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("RefSupplier"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef","&amp;socid=$socid","",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateEcheance"),"index.php","fac.date_lim_reglement","&amp;socid=$socid","",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateDue"),"index.php","fac.date_lim_reglement","&amp;socid=$socid","",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","&amp;socid=$socid","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","&amp;socid=$socid","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","&amp;socid=$socid","",'align="right"',$sortfield,$sortorder);
@@ -171,10 +171,10 @@ if ($resql)
 
     print '<tr class="liste_titre">';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" size="8" type="text" name="search_ref" value="'.$_REQUEST["search_ref"].'">';
+    print '<input class="flat" size="6" type="text" name="search_ref" value="'.$_REQUEST["search_ref"].'">';
     print '</td>';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" size="8" type="text" name="search_ref_supplier" value="'.$_REQUEST["search_ref_supplier"].'">';
+    print '<input class="flat" size="6" type="text" name="search_ref_supplier" value="'.$_REQUEST["search_ref_supplier"].'">';
     print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
