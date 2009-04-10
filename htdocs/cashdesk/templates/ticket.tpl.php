@@ -98,21 +98,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 <div class="entete">
 	<div class="logo"><span>Logo</span></div>
 	<div class="infos">
-		<p class="adresse">NEGONAVAL<br />
-		ZONE TECHNIQUE DU PORT<br />
-		66750 SAINT CYPRIEN</p>
+		<p class="adresse">SOCIETE<br />
+		RUE DU PORT<br />
+		75000 PARIS</p>
 
 		<?php
-			// R�cup�ration et affichage de la date et de l'heure
+			// Recuperation et affichage de la date et de l'heure
 			$date = date ('d/m/Y');
 			$heure = date ('H:i');
-			echo ('<p class="date_heure">Le '.$date.' � '.$heure.'</p>');
+			echo ('<p class="date_heure">Le '.$date.' à '.$heure.'</p>');
 		?>
 	</div>
 </div>
 
 <table class="liste_articles">
-	<tr class="titres"><th>Code</th><th>Label</th><th>Qt�</th><th>Remise (%)</th><th>Tot HT</th></tr>
+	<tr class="titres"><th>Code</th><th>Label</th><th>Qté</th><th>Remise (%)</th><th>Tot HT</th></tr>
 
 	<?php
 
@@ -176,6 +176,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 </script>
 
-<a class="lien" href="#" onclick="javascript: window.close(); return(false);">Fermer cette fen�tre</a>
+<a class="lien" href="#" onclick="javascript: window.close(); return(false);">Fermer cette fenetre</a>
 
 </body>
