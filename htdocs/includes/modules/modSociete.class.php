@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
@@ -27,9 +27,9 @@
  */
 
 /**
- \file       htdocs/includes/modules/modSociete.class.php
- \ingroup    societe
- \brief      Fichier de description et activation du module Societe
+ *	\file       htdocs/includes/modules/modSociete.class.php
+ *	\ingroup    societe
+ *	\brief      Fichier de description et activation du module Societe
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -58,7 +58,7 @@ class modSociete extends DolibarrModules
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
-		
+
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->config_page_url = array("societe.php");
@@ -201,9 +201,9 @@ class modSociete extends DolibarrModules
 		$this->export_label[$r]='ExportDataset_company_2';
 		$this->export_icon[$r]='contact';
 		$this->export_permission[$r]=array(array("societe","contact","export"));
-		$this->export_fields_array[$r]=array('c.civilite'=>"CivilityCode",'c.name'=>'Lastname','c.firstname'=>'Firstname','c.datec'=>"DateCreation",'c.tms'=>"DateLastModification",'c.priv'=>"ContactPrivate",'c.address'=>"Address",'c.cp'=>"Zip",'c.ville'=>"Town",'c.phone'=>"Phone",'c.fax'=>"Fax",'c.email'=>"EMail",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.rowid'=>"IdCompany",'s.nom'=>"CompanyName",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode");
-		$this->export_entities_array[$r]=array('c.civilite'=>"contact",'c.name'=>'contact','c.firstname'=>'contact','c.datec'=>"contact",'c.tms'=>"contact",'c.priv'=>"contact",'c.address'=>"contact",'c.cp'=>"contact",'c.ville'=>"contact",'c.phone'=>"contact",'c.fax'=>"contact",'c.email'=>"contact",'p.libelle'=>"contact",'p.code'=>"contact",'s.rowid'=>"company",'s.nom'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company");
-		$this->export_alias_array[$r]=array('c.civilite'=>"civilitycode",'c.name'=>'lastname','c.firstname'=>'firstname','c.datec'=>"datecreation",'c.tms'=>"datelastmodification",'c.priv'=>"private",'c.address'=>"address",'c.cp'=>"zip",'c.ville'=>"town",'c.phone'=>"phone",'c.fax'=>"fax",'c.email'=>"email",'p.libelle'=>"country",'p.code'=>"countrycode",'s.rowid'=>"socid",'s.nom'=>"companyname",'s.code_client'=>"customercode",'s.code_fournisseur'=>"suppliercode");
+		$this->export_fields_array[$r]=array('c.rowid'=>"IdContact",'c.civilite'=>"CivilityCode",'c.name'=>'Lastname','c.firstname'=>'Firstname','c.datec'=>"DateCreation",'c.tms'=>"DateLastModification",'c.priv'=>"ContactPrivate",'c.address'=>"Address",'c.cp'=>"Zip",'c.ville'=>"Town",'c.phone'=>"Phone",'c.fax'=>"Fax",'c.email'=>"EMail",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.rowid'=>"IdCompany",'s.nom'=>"CompanyName",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode");
+		$this->export_entities_array[$r]=array('c.rowid'=>"contact",'c.civilite'=>"contact",'c.name'=>'contact','c.firstname'=>'contact','c.datec'=>"contact",'c.tms'=>"contact",'c.priv'=>"contact",'c.address'=>"contact",'c.cp'=>"contact",'c.ville'=>"contact",'c.phone'=>"contact",'c.fax'=>"contact",'c.email'=>"contact",'p.libelle'=>"contact",'p.code'=>"contact",'s.rowid'=>"company",'s.nom'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company");
+		$this->export_alias_array[$r]=array('c.rowid'=>"contactid",'c.civilite'=>"civilitycode",'c.name'=>'lastname','c.firstname'=>'firstname','c.datec'=>"datecreation",'c.tms'=>"datelastmodification",'c.priv'=>"private",'c.address'=>"address",'c.cp'=>"zip",'c.ville'=>"town",'c.phone'=>"phone",'c.fax'=>"fax",'c.email'=>"email",'p.libelle'=>"country",'p.code'=>"countrycode",'s.rowid'=>"socid",'s.nom'=>"companyname",'s.code_client'=>"customercode",'s.code_fournisseur'=>"suppliercode");
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r] =' FROM '.MAIN_DB_PREFIX.'c_pays as p, '.MAIN_DB_PREFIX.'socpeople as c LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
 		$this->export_sql_end[$r].=' WHERE c.fk_pays = p.rowid';
@@ -219,7 +219,7 @@ class modSociete extends DolibarrModules
 	{
 		global $conf;
 		$this->dirs[0] = $conf->societe->dir_output;
-		
+
 		// Prevent pb of modules not correctly disabled
 		//$this->remove($options);
 

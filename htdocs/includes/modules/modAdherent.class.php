@@ -21,16 +21,16 @@
  */
 
 /**
-        \defgroup   adherent     Module adherents
-        \brief      Module pour gerer les adherents d'une association
-*/
+ *       \defgroup   adherent     Module adherents
+ *       \brief      Module pour gerer les adherents d'une association
+ */
 
 /**
-        \file       htdocs/includes/modules/modAdherent.class.php
-        \ingroup    adherent
-        \brief      Fichier de description et activation du module adherents
-		\version	$Id$
-*/
+ *       \file       htdocs/includes/modules/modAdherent.class.php
+ *       \ingroup    adherent
+ *       \brief      Fichier de description et activation du module adherents
+ *		\version	$Id$
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
@@ -194,9 +194,9 @@ class modAdherent extends DolibarrModules
         $this->export_code[$r]=$this->rights_class.'_'.$r;
         $this->export_label[$r]='MembersAndSubscriptions';
         $this->export_permission[$r]=array(array("adherent","export"));
-        $this->export_fields_array[$r]=array('a.rowid'=>'Id','a.nom'=>"Lastname",'a.prenom'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'MorPhy','a.adresse'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.naiss'=>"Birthday",'a.statut'=>"Status",'a.photo'=>"Photo",'a.note'=>"Note",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'MemberTypeId','ta.libelle'=>'MemberTypeLabel','c.dateadh'=>'DateSubscription','c.cotisation'=>'Amount');
-		$this->export_entities_array[$r]=array('a.rowid'=>'member','a.nom'=>"member",'a.prenom'=>"member",'a.login'=>"member",'a.morphy'=>'member','a.adresse'=>"member",'a.cp'=>"member",'a.ville'=>"member",'a.pays'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.naiss'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member','a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type','c.dateadh'=>'subscription','c.cotisation'=>'subscription');
-        $this->export_alias_array[$r]=array('a.rowid'=>'Id','a.nom'=>"lastname",'a.prenom'=>"firstname",'a.login'=>"login",'a.morphy'=>'morphy','a.adresse'=>"address",'a.cp'=>"zip",'a.ville'=>"town",'a.pays'=>"country",'a.phone'=>"phone",'a.phone_perso'=>"phone_perso",'a.phone_mobile'=>"phone_mobile",'a.email'=>"email",'a.naiss'=>"birthday",'a.statut'=>"status",'a.photo'=>'photo','a.note'=>'note','a.datec'=>'datec','a.datevalid'=>'datevalid','a.tms'=>'datem','a.datefin'=>'dateend','ta.rowid'=>'type_id','ta.libelle'=>'type_label','c.dateadh'=>'date_subscription','c.cotisation'=>'amount_subscription');
+        $this->export_fields_array[$r]=array('a.rowid'=>'Id','a.nom'=>"Lastname",'a.prenom'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'MorPhy','a.adresse'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.naiss'=>"Birthday",'a.statut'=>"Status",'a.photo'=>"Photo",'a.note'=>"Note",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'MemberTypeId','ta.libelle'=>'MemberTypeLabel','c.rowid'=>'SubscriptionId','c.dateadh'=>'DateSubscription','c.cotisation'=>'Amount');
+		$this->export_entities_array[$r]=array('a.rowid'=>'member','a.nom'=>"member",'a.prenom'=>"member",'a.login'=>"member",'a.morphy'=>'member','a.adresse'=>"member",'a.cp'=>"member",'a.ville'=>"member",'a.pays'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.naiss'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member','a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type','c.rowid'=>'subscription','c.dateadh'=>'subscription','c.cotisation'=>'subscription');
+        $this->export_alias_array[$r]=array('a.rowid'=>'Id','a.nom'=>"lastname",'a.prenom'=>"firstname",'a.login'=>"login",'a.morphy'=>'morphy','a.adresse'=>"address",'a.cp'=>"zip",'a.ville'=>"town",'a.pays'=>"country",'a.phone'=>"phone",'a.phone_perso'=>"phone_perso",'a.phone_mobile'=>"phone_mobile",'a.email'=>"email",'a.naiss'=>"birthday",'a.statut'=>"status",'a.photo'=>'photo','a.note'=>'note','a.datec'=>'datec','a.datevalid'=>'datevalid','a.tms'=>'datem','a.datefin'=>'dateend','ta.rowid'=>'type_id','ta.libelle'=>'type_label','c.rowid'=>'id_subscription','c.dateadh'=>'date_subscription','c.cotisation'=>'amount_subscription');
 		// On complete avec champs options
 		$sql='SELECT name, label FROM '.MAIN_DB_PREFIX.'adherent_options_label';
 		$resql=$this->db->query($sql);

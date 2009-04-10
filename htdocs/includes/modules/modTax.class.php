@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -24,11 +24,11 @@
 */
 
 /**
-        \file       htdocs/includes/modules/modTax.class.php
-        \ingroup    tax
-        \brief      Fichier de description et activation du module Taxe
-		\version	$Id$
-*/
+ *      \file       htdocs/includes/modules/modTax.class.php
+ *      \ingroup    tax
+ *      \brief      Fichier de description et activation du module Taxe
+ *		\version	$Id$
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
@@ -47,48 +47,48 @@ class modTax extends DolibarrModules
 	function modTax($DB)
 	{
 		global $conf;
-	
+
 		$this->db = $DB ;
 		$this->numero = 500 ;
-	
+
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Gestion des taxes, charges sociales et dividendes";
-	
+
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
-			
+
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
         $this->picto='bill';
-	
+
 		// Config pages
 		$this->config_page_url = array("taxes.php");
-	
+
 		// D�pendances
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
 		$this->langfiles = array("compta","bills");
-	
+
 		// Constantes
 		$this->const = array();
-	
+
 		// R�pertoires
 		$this->dirs = array();
 		$this->dirs[0] = $conf->tax->dir_output;
 		$this->dirs[1] = $conf->tax->dir_temp;
-	
+
 		// Boites
 		$this->boxes = array();
-	
+
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'tax';
 		$r=0;
-	
+
 		$r++;
 		$this->rights[$r][0] = 91;
 		$this->rights[$r][1] = 'Lire les charges';
@@ -96,7 +96,7 @@ class modTax extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'charges';
 		$this->rights[$r][5] = 'lire';
-	
+
 		$r++;
 		$this->rights[$r][0] = 92;
 		$this->rights[$r][1] = 'Creer/modifier les charges';
@@ -104,7 +104,7 @@ class modTax extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'charges';
 		$this->rights[$r][5] = 'creer';
-	
+
 		$r++;
 		$this->rights[$r][0] = 93;
 		$this->rights[$r][1] = 'Supprimer les charges';
@@ -121,18 +121,18 @@ class modTax extends DolibarrModules
 		$this->rights[$r][4] = 'charges';
 		$this->rights[$r][5] = 'export';
 
-       
+
 	    // Exports
         //--------
         $r=0;
-    
+
         $r++;
         $this->export_code[$r]=$this->rights_class.'_'.$r;
-        $this->export_label[$r]='Taxes et charges sociales, et leurs r�glements';
+        $this->export_label[$r]='Taxes et charges sociales, et leurs reglements';
         $this->export_permission[$r]=array(array("tax","charges","export"));
-        $this->export_fields_array[$r]=array('cc.libelle'=>"Type",'c.libelle'=>"Label",'c.date_ech'=>'DateDue','c.periode'=>'Period','c.amount'=>"AmountExpected","c.paye"=>"Status",'p.datep'=>'DatePayment','p.amount'=>'AmountPayment','p.num_paiement'=>'Numero');
-        $this->export_entities_array[$r]=array('cc.libelle'=>"tax_type",'c.libelle'=>'tax','c.date_ech'=>'tax','c.periode'=>'tax','c.amount'=>"tax","c.paye"=>"tax",'p.datep'=>'payment','p.amount'=>'payment','p.num_paiement'=>'payment');
-        $this->export_alias_array[$r]=array('cc.libelle'=>"type",'c.libelle'=>'label','c.date_ech'=>'datedue','c.periode'=>'period','c.amount'=>"amount_clamed","c.paye"=>"status",'p.datep'=>'date_payment','p.amount'=>'amount_payment','p.num_paiement'=>'num_payment');
+        $this->export_fields_array[$r]=array('cc.libelle'=>"Type",'c.rowid'=>"IdSocialContribution",'c.libelle'=>"Label",'c.date_ech'=>'DateDue','c.periode'=>'Period','c.amount'=>"AmountExpected","c.paye"=>"Status",'p.rowid'=>'PaymentId','p.datep'=>'DatePayment','p.amount'=>'AmountPayment','p.num_paiement'=>'Numero');
+        $this->export_entities_array[$r]=array('cc.libelle'=>"tax_type",'c.rowid'=>"tax",'c.libelle'=>'tax','c.date_ech'=>'tax','c.periode'=>'tax','c.amount'=>"tax","c.paye"=>"tax",'p.rowid'=>'payment','p.datep'=>'payment','p.amount'=>'payment','p.num_paiement'=>'payment');
+        $this->export_alias_array[$r]=array('cc.libelle'=>"type",'c.rowid'=>"idsocialcontrib",'c.libelle'=>'label','c.date_ech'=>'datedue','c.periode'=>'period','c.amount'=>"amount_clamed","c.paye"=>"status",'p.rowid'=>'paymentid','p.datep'=>'date_payment','p.amount'=>'amount_payment','p.num_paiement'=>'num_payment');
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'c_chargesociales as cc, '.MAIN_DB_PREFIX.'chargesociales as c LEFT JOIN '.MAIN_DB_PREFIX.'paiementcharge as p ON p.fk_charge = c.rowid';
 		$this->export_sql_end[$r] .=' WHERE c.fk_type = cc.id';
@@ -146,10 +146,10 @@ class modTax extends DolibarrModules
 	function init()
 	{
 		global $conf;
-	
+
 		// Nettoyage avant activation
 		$this->remove();
-	
+
 		return $this->_init($sql);
 	}
 
@@ -160,7 +160,7 @@ class modTax extends DolibarrModules
 	function remove()
 	{
 		$sql = array();
-	
+
 		return $this->_remove($sql);
 	}
 }
