@@ -1,8 +1,8 @@
 # Dolibarr language file - fr_FR - boxes
 CHARSET=UTF-8
 BoxLastRssInfos=Fils d'informations RSS
-BoxLastProducts=Derniers produits/services
-BoxLastProductsInContract=Derniers produits/services contractés
+BoxLastProducts=Les %s derniers produits/services enregistrés
+BoxLastProductsInContract=Les %s derniers produits/services contractés
 BoxLastSupplierBills=Dernières factures fournisseurs
 BoxLastCustomerBills=Dernières factures clients
 BoxOldestUnpayedCustomerBills=Plus anciennes factures clients impayées
