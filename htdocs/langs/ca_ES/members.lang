@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - members 
+# Dolibarr language file - ca_ES - members
 CHARSET = UTF-8
 MembersArea = Àrea membres
 PublicMembersArea = Àrea pública dels membres
@@ -35,6 +35,8 @@ DateSubscription = Data afiliació
 DateNextSubscription = Data propera afiliació
 DateEndSubscription = Data fi afiliació
 EndSubscription = Fi afiliació
+SubscriptionId = ID afiliació
+MemberId = ID membre
 NewMember = Nou membre
 NewType = Nou tipus de membre
 MemberType = Tipus de membre
