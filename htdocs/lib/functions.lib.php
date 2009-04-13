@@ -2270,12 +2270,13 @@ function yn($yesno, $case=1, $color=0)
  */
 function get_exdir($num,$level=3)
 {
+	$path = '';
 	$num = eregi_replace('[^0-9]','',$num);
 	$num = substr("000".$num, -$level);
-	if ($level == 1) return substr($num,0,1).'/';
-	if ($level == 2) return substr($num,1,1).'/'.substr($num,0,1).'/';
-	if ($level == 3) return substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1).'/';
-	return '';
+	if ($level == 1) $path = substr($num,0,1).'/';
+	if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1).'/';
+	if ($level == 3) $path = substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1).'/';
+	return $path;
 }
 
 /**
