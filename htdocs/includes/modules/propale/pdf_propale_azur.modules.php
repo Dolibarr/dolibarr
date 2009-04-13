@@ -381,6 +381,13 @@ class pdf_propale_azur extends ModelePDFPropales
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				// Add external file
+				//$pdfConcat =& new concat_pdf(); 
+				//$pdfConcat->setFiles(array($file, DOL_DOCUMENT_ROOT."/includes/modules/propale/morefile.pdf")); 
+				//$pdfConcat->concat(); 
+				//$pdf->AliasNbPages(); 
+				//$pdfConcat->Output($file); 
+				
 				$outputlangs->charset_output=$sav_charset_output;
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
