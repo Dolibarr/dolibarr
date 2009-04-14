@@ -2,6 +2,7 @@
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
 -- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -33,5 +34,6 @@ create table llx_const
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
   tms         timestamp,
+  entity			integer DEFAULT 1 NOT NULL,	-- multi company id
   UNIQUE INDEX(name)
 )type=innodb;

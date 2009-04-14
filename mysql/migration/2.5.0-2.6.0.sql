@@ -120,3 +120,8 @@ ALTER TABLE llx_adherent ADD INDEX idx_adherent_fk_adherent_type (fk_adherent_ty
 ALTER TABLE llx_categorie_association drop index idx_categorie_association_fk_categorie_fille;
 ALTER TABLE llx_categorie_association ADD UNIQUE INDEX uk_categorie_association (fk_categorie_mere, fk_categorie_fille);
 ALTER TABLE llx_categorie_association ADD UNIQUE INDEX uk_categorie_association_fk_categorie_fille (fk_categorie_fille);
+
+-- Multi company
+ALTER TABLE llx_const ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER tms;
+ALTER TABLE llx_const DROP INDEX name;
+ALTER TABLE llx_const ADD UNIQUE INDEX(name, entity);

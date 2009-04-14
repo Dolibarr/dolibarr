@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,17 +285,19 @@ function run_sql($sqlfile,$silent=1)
 	\brief		Effacement d'une constante dans la base de donnees
 	\sa			dolibarr_get_const, dolibarr_sel_const
 	\param	    db          Handler d'acces base
-	\param	    name		Nom ou rowid de la constante
+	\param	    name				Nom ou rowid de la constante
+	\param	    entity			Multi company id
 	\return     int         <0 si ko, >0 si ok
 */
-function dolibarr_del_const($db, $name)
+function dolibarr_del_const($db, $name, $entity=1)
 {
 	global $conf;
 
 	$sql = "DELETE FROM llx_const";
-	$sql.=" WHERE name='".addslashes($name)."' or rowid='".addslashes($name)."'";
+	$sql.=" WHERE (name='".addslashes($name)."' OR rowid='".addslashes($name)."')";
+	$sql.= " AND entity = ".$entity;
 
-    dol_syslog("admin.lib::dolibarr_del_const sql=".$sql);
+  dol_syslog("admin.lib::dolibarr_del_const sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -312,16 +314,18 @@ function dolibarr_del_const($db, $name)
 		\brief      Recupere une constante depuis la base de donnees.
 		\sa			dolibarr_del_const, dolibarr_set_const
 		\param	    db          Handler d'acces base
-		\param	    name		Nom de la constante
+		\param	    name				Nom de la constante
+		\param	    entity			Multi company id
 		\return     string      Valeur de la constante
 */
-function dolibarr_get_const($db, $name)
+function dolibarr_get_const($db, $name, $entity=1)
 {
     $value='';
 
     $sql ="SELECT value";
     $sql.=" FROM llx_const";
     $sql.=" WHERE name = '".addslashes($name)."'";
+    $sql.= " AND entity = ".$entity;
 
     dol_syslog("admin.lib::dolibarr_get_const sql=".$sql);
     $resql=$db->query($sql);
@@ -338,52 +342,54 @@ function dolibarr_get_const($db, $name)
    \brief      	Insertion d'une constante dans la base de donnees.
    \sa			dolibarr_del_const, dolibarr_get_const
    \param	    db          Handler d'acces base
-   \param	    name		Nom de la constante
-   \param	    value		Valeur de la constante
-   \param	    type		Type de constante (chaine par defaut)
+   \param	    name				Nom de la constante
+   \param	    value				Valeur de la constante
+   \param	    type				Type de constante (chaine par defaut)
    \param	    visible	    La constante est elle visible (0 par defaut)
-   \param	    note		Explication de la constante
+   \param	    note				Explication de la constante
+   \param	    entity			Multi company id
    \return     	int         -1 if KO, 1 if OK
 */
-function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
+function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='',$entity=1)
 {
-    global $conf;
+	global $conf;
+	
+	if (empty($name))
+  {
+  	dol_print_error("Error: Call to function dolibarr_set_const with wrong parameters", LOG_ERR);
+    exit;
+  }
+  
+  $db->begin();
 
-    if (empty($name))
-    {
-    	dol_print_error("Error: Call to function dolibarr_set_const with wrong parameters", LOG_ERR);
-    	exit;
-    }
-
-    $db->begin();
-
-    //dol_syslog("dolibarr_set_const name=$name, value=$value");
-    $sql = "DELETE FROM llx_const WHERE name = '".addslashes($name)."';";
-    dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
+  //dol_syslog("dolibarr_set_const name=$name, value=$value");
+  $sql = "DELETE FROM llx_const WHERE name = '".addslashes($name)."'";
+  $sql.= " AND entity = ".$entity;
+  dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 
-    if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
-    {
-	    $sql = "INSERT INTO llx_const(name,value,type,visible,note)";
-	    $sql.= " VALUES ('".$name."','".addslashes($value)."','".$type."',".$visible.",'".addslashes($note)."')";
+  if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
+  {
+  	$sql = "INSERT INTO llx_const(name,value,type,visible,note,entity)";
+	  $sql.= " VALUES ('".$name."','".addslashes($value)."','".$type."',".$visible.",'".addslashes($note)."',".$entity.")";
 
 		dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
-	    $resql=$db->query($sql);
-    }
-
-    if ($resql)
-    {
-        $db->commit();
-        $conf->global->$name=$value;
-        return 1;
-    }
-    else
-    {
-    	$this->error=$db->lasterror();
-    	dol_syslog("admin.lib::dolibarr_set_const ".$this->error, LOG_ERR);
-    	$db->rollback();
-        return -1;
-    }
+	  $resql=$db->query($sql);
+  }
+  
+  if ($resql)
+  {
+  	$db->commit();
+    $conf->global->$name=$value;
+    return 1;
+  }
+  else
+  {
+  	$this->error=$db->lasterror();
+    dol_syslog("admin.lib::dolibarr_set_const ".$this->error, LOG_ERR);
+    $db->rollback();
+    return -1;
+  }
 }
 
 
