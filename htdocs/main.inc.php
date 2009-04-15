@@ -115,7 +115,6 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 // Set and init common variables
 require_once("master.inc.php");
 
-
 // Check if HTTPS
 if ($conf->main_force_https)
 {
@@ -264,6 +263,22 @@ if (! isset($_SESSION["dol_login"]))
 					{
 						$test=false;
 						$conf->authmode=$mode;	// This properties is defined only when login
+						// Call function to check entity
+						if ($conf->multicompany->enabled && isset($_POST["entity"]))
+						{
+							$entitytotest=$_POST["entity"];
+							
+							// Creation du cookie
+							$entityCookieName = "DOLENTITYID_dolibarr";
+							if (!isset($HTTP_COOKIE_VARS[$entityCookieName]))
+							{
+								setcookie($entityCookieName, $entitytotest, 0, "/", "", 0);
+							}
+							//$conf->entity = $_COOKIE[$entityCookieName];
+							// Reload index.php
+							$url=DOL_URL_ROOT."/index.php";
+							header("Location: ".$url);
+						}
 					}
 				}
 				else
@@ -387,6 +402,7 @@ if (! isset($_SESSION["dol_login"]))
 
 	// Nouvelle session pour ce login
 	$_SESSION["dol_login"]=$user->login;
+	
 	$_SESSION["dol_authmode"]=$conf->authmode;
 	dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 

@@ -54,6 +54,8 @@ class Conf
 	var $tabs_modules=array();
 
 	var $logbuffer=array();
+	
+	var $entity;
 
 
 	/**
@@ -63,17 +65,30 @@ class Conf
 	*/
 	function setValues($db)
 	{
+		global $conf;
+
 		dol_syslog("Conf::setValues");
 
 		// Par defaut, a oui
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;
+
+		// Load entity cookie
+		$entityCookieName = "DOLENTITYID_dolibarr";
+		if (!$_COOKIE[$entityCookieName]){
+			$conf->entity = 1;
+		}else{
+			$conf->entity = $_COOKIE[$entityCookieName];
+		}
+		
+		//$conf->entity = $conf->entity ? $conf->entity : 1;
 
 		/*
 		 * Definition de toutes les Constantes globales d'environnement
 		 * - En constante php (TODO a virer)
 		 * - En $this->global->key=value
 		 */
-		$sql = "SELECT name, value FROM ".MAIN_DB_PREFIX."const";
+		$sql = "SELECT name, value, entity FROM ".MAIN_DB_PREFIX."const ";
+		$sql.= " WHERE entity = ".$conf->entity;
 		$result = $db->query($sql);
 		if ($result)
 		{
@@ -113,7 +128,6 @@ class Conf
 			}
 		}
 		$db->free($result);
-
 
 		// On reprend parametres du fichier de config conf.php
 		// \TODO Mettre tous les param de conf DB dans une propriete de la classe

@@ -201,13 +201,13 @@ class modMultiCompany extends DolibarrModules
 	 *      \return     int             1 if OK, 0 if KO
      */
 	function init()
-  	{
-    	$sql = array();
+  {
+  	$sql = array();
 
 		$result=$this->load_tables();
 
-    	return $this->_init($sql);
-  	}
+    return $this->_init($sql);
+  }
 
 	/**
 	 *		\brief		Function called when module is disabled.

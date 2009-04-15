@@ -36,11 +36,19 @@ require_once("../main.inc.php");
 // Define url to go after disconnect
 $urlfrom=empty($_SESSION["urlfrom"])?'':$_SESSION["urlfrom"];
 
-// Module Phenix
+// Phenix module
 if ($conf->phenix->enabled && $conf->phenix->cookie)
 {
-	// Destruction du cookie
+	// Destroy cookie
 	setcookie($conf->phenix->cookie, '', 1, "/");
+}
+
+// Multi-Company module
+if ($conf->multicompany->enabled)
+{
+	// Destroy entity cookie
+	$entityCookieName = "DOLENTITYID_dolibarr";
+	setcookie($entityCookieName, '', 1, "/");
 }
 
 // Destroy session
