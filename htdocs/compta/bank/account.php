@@ -183,13 +183,13 @@ if ($account || $_GET["ref"])
 	}
 	if ($_REQUEST["req_debit"])
 	{
-		$sql_rech.=" AND amount = -".$_REQUEST["req_debit"];
+		$sql_rech.=" AND b.amount = -".$_REQUEST["req_debit"];
 		$param.='&amp;req_debit='.urlencode($_REQUEST["req_debit"]);
 		$mode_search = 1;
 	}
 	if ($_REQUEST["req_credit"])
 	{
-		$sql_rech.=" AND amount = ".$_REQUEST["req_credit"];
+		$sql_rech.=" AND b.amount = ".$_REQUEST["req_credit"];
 		$param.='&amp;req_credit='.urlencode($_REQUEST["req_credit"]);
 		$mode_search = 1;
 	}
@@ -434,7 +434,7 @@ if ($account || $_GET["ref"])
 		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='company'";
 		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu3.url_id = s.rowid";
 	}
-	$sql.= " WHERE fk_account=".$acct->id;
+	$sql.= " WHERE b.fk_account=".$acct->id;
 	$sql.= $sql_rech;
 	$sql.= " ORDER BY b.datev ASC";
 	$sql.= $db->plimit($limitsql, 0);
