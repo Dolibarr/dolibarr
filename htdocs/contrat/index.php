@@ -62,9 +62,20 @@ print '<table class="notopnoleftnoright" width="100%">';
 
 print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
-/*
- * Recherche Contrat
- */
+// Legend
+$var=false;
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ServicesLegend").'</td></tr>';
+print '<tr '.$bc[$var].'><td nowrap>';
+print $staticcontratligne->LibStatut(0,4).'<br />';
+print $staticcontratligne->LibStatut(4,4,false).'<br />';
+print $staticcontratligne->LibStatut(4,4,true).'<br />';
+print $staticcontratligne->LibStatut(5,4).'<br />';
+print '</td></tr>';
+print '</table>';
+print "<br>";
+
+// Search contract
 if ($conf->contrat->enabled)
 {
     $var=false;
@@ -79,18 +90,6 @@ if ($conf->contrat->enabled)
 	print "</table></form>\n";
 	print "<br>";
 }
-
-// Legend
-$var=false;
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ServicesLegend").'</td></tr>';
-print '<tr '.$bc[$var].'><td nowrap>';
-print $staticcontratligne->LibStatut(0,4).'<br />';
-print $staticcontratligne->LibStatut(4,4,false).'<br />';
-print $staticcontratligne->LibStatut(4,4,true).'<br />';
-print $staticcontratligne->LibStatut(5,4).'<br />';
-print '</td></tr>';
-print '</table>';
 
 /**
  * Draft contratcs
@@ -117,7 +116,6 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 		$var = false;
 		$num = $db->num_rows($resql);
 
-		print '<br>';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("DraftContracts").($num?' ('.$num.')':'').'</td></tr>';
@@ -206,7 +204,7 @@ if ($result)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        print "<td>";
+        print '<td width="80" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->cid);
 		$staticcontrat->id=$obj->cid;
 		print $staticcontrat->getNomUrl(1,16);
@@ -267,7 +265,7 @@ if ( $db->query($sql) )
         $var=!$var;
         print "<tr $bc[$var]>";
 
-        print '<td>';
+        print '<td width="80" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
@@ -330,7 +328,7 @@ if ($resql)
         $obj = $db->fetch_object($resql);
         $var=!$var;
         print "<tr $bc[$var]>";
-        print '<td nowrap="nowrap">';
+        print '<td width="80" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
@@ -346,7 +344,7 @@ if ($resql)
 		print '</td>';
         print '<td nowrap="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
         $dateend=$db->jdate($obj->date_fin_validite);
-        print $staticcontratligne->LibStatut($obj->statut,5, ($dateend && $dateend < $now));
+        print $staticcontratligne->LibStatut($obj->statut, 3, ($dateend && $dateend < $now));
         print '</a></td>';
         print "</tr>\n";
         $i++;
