@@ -108,6 +108,8 @@ alter table llx_commande_fournisseur drop column  product_type;
 alter table llx_commande_fournisseur drop column  date_start;
 alter table llx_commande_fournisseur drop column  date_end;
 
+drop table llx_models;
+
 -- V4.1 delete from llx_projet_task where fk_projet not in (select rowid from llx_projet);
 -- V4.1 ALTER TABLE llx_projet_task ADD CONSTRAINT fk_projet_task_fk_projet FOREIGN KEY (fk_projet)    REFERENCES llx_projet (rowid);
 
