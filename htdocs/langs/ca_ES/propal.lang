@@ -21,6 +21,7 @@ ConfirmDeleteProp = Esteu segur de voler eliminar aquest pressupost?
 ConfirmValidateProp = Esteu segur de voler validar aquest pressupost?
 LastPropals = Els %s darrers pressupostos
 LastClosedProposals = Els %s darrers pressupostos tancats
+LastModifiedProposals = Els %s darrers pressupostos modificats
 AllPropals = Tots els pressupostos
 LastProposals = Ultims pressupostos
 SearchAProposal = Cercar un pressupost
