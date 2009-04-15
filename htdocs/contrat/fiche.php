@@ -827,9 +827,9 @@ else
 					{
 						print '<td>&nbsp;</td>';
 					}
-					// Icon move, update et delete (statut contrat 0=brouillon,1=valid�,2=ferm�)
+					// Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
 					print '<td align="right" nowrap="nowrap">';
-					if (sizeof($arrayothercontracts) && $contrat->statut != 2  && $user->rights->contrat->creer)
+					if ($user->rights->contrat->creer && sizeof($arrayothercontracts) && ($contrat->statut == 0 || ($contrat->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED))))
 					{
 						print '<a href="fiche.php?id='.$id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"),'uparrow');
@@ -838,7 +838,7 @@ else
 					else {
 						print '&nbsp;';
 					}
-					if ($contrat->statut != 2  && $user->rights->contrat->creer)
+					if ($user->rights->contrat->creer && ($contrat->statut == 0 || ($contrat->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED))) )
 					{
 						print '<a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 						print img_edit();
@@ -847,8 +847,7 @@ else
 					else {
 						print '&nbsp;';
 					}
-					if ( ($contrat->statut == 0 || ($contrat->statut == 1 && $conf->global->CONTRAT_EDITWHENVALIDATED))
-						&& $user->rights->contrat->creer)
+					if ( $user->rights->contrat->creer && ($contrat->statut == 0 || ($contrat->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED))) )
 					{
 						print '&nbsp;';
 						print '<a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
@@ -1154,7 +1153,7 @@ else
 		 * Ajouter une ligne produit/service
 		 */
 		if ($user->rights->contrat->creer &&
-			($contrat->statut == 0 || ($contrat->statut == 1  && $conf->global->CONTRAT_EDITWHENVALIDATED)) )
+			($contrat->statut == 0 || ($contrat->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED))) )
 		{
 			print '<br>';
 			print '<table class="noborder" width="100%">';	// Array with (n*2)+1 lines

@@ -767,7 +767,7 @@ class Contrat extends CommonObject
 
 		dol_syslog("Contrat::addline $desc, $pu_ht, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
 
-		if ($this->statut == 0 || ($this->statut == 1 && $conf->global->CONTRAT_EDITWHENVALIDATED))
+		if ($this->statut == 0 || ($this->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED)))
 		{
 			$this->db->begin();
 
@@ -959,8 +959,7 @@ class Contrat extends CommonObject
 	{
 		global $conf, $langs;
 
-		if ($contrat->statut == 0 ||
-		($contrat->statut == 1 && $conf->global->CONTRAT_EDITWHENVALIDATED) )
+		if ($this->statut == 0 || ($this->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED)) )
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
 			$sql.= " WHERE rowid=".$idline;
