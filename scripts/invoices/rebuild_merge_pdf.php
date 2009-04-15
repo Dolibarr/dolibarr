@@ -66,59 +66,127 @@ if (! isset($argv[1]))
 $diroutputpdf=$conf->facture->dir_output . '/temp';
 $newmodel='';		// To force a new model
 $newlangid='en_EN';	// To force a new lang id
+$filter=array();
 $option='';
 
-// Define options
-if ($argv[1] == 'all')
+foreach ($argv as $key => $value)
 {
-	$option='all';
+	$found=false;
 
-	print 'Rebuild PDF for all invoices'."\n";
-	if ($argv[2])
+	// Define options
+	if (eregi('^lang=',$value))
 	{
-		$newlangid=$argv[2];
-		print 'Use language '.$newlangid."\n";
+		$found=true;
+		$valarray=split('=',$value);
+		$newlangid=$valarray[1];
+		print 'Use language '.$newlangid.".\n";
 	}
 
-	$sql = "SELECT DISTINCT f.rowid, f.facnumber";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql.= " ORDER BY f.facnumber ASC";
-}
+	if ($value == 'filter=all')
+	{
+		$found=true;
+		$option.='all';
+		$filter[]='all';
 
-if ($argv[1] != 'all')
-{
-	$option=$argv[1].'_'.$argv[2];
+		print 'Rebuild PDF for all invoices'."\n";
+	}
 
-	if (! isset($argv[2]))
+	if ($value == 'filter=date')
+	{
+		$found=true;
+		$option.=(empty($option)?'':'_').'date_'.$argv[$key+1].'_'.$argv[$key+2];
+		$filter[]='date';
+
+		$dateafter=dol_stringtotime($argv[$key+1]);
+		$datebefore=dol_stringtotime($argv[$key+2]);
+		print 'Rebuild PDF for invoices validated between '.dol_print_date($dateafter,'day')." and ".dol_print_date($datebefore,'day').".\n";
+	}
+
+	if ($value == 'filter=payments')
+	{
+		$found=true;
+		$option.=(empty($option)?'':'_').'payments_'.$argv[$key+1].'_'.$argv[$key+2];
+		$filter[]='payments';
+
+		$dateafter=dol_stringtotime($argv[$key+1]);
+		$datebefore=dol_stringtotime($argv[$key+2]);
+		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($dateafter,'day')." and ".dol_print_date($datebefore,'day').".\n";
+	}
+
+	if ($value == 'filter=nopayment')
+	{
+		$found=true;
+		$option.=(empty($option)?'':'_').'nopayment';
+		$filter[]='nopayment';
+
+		print 'Rebuild PDF for invoices with no payment done yet.'."\n";
+	}
+
+	if (! $found && eregi('filter=',$value))
 	{
 		usage();
 		exit;
 	}
-
-	$dateafter=dol_stringtotime($argv[1]);
-	$datebefore=dol_stringtotime($argv[2]);
-	print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($dateafter,'day')." and ".dol_print_date($datebefore,'day')."\n";
-	if ($argv[3])
-	{
-		$newlangid=$argv[3];
-		print 'Use language '.$newlangid."\n";
-	}
-
-	$sql = "SELECT DISTINCT f.rowid, f.facnumber";
-	//$sql.= " s.nom,";
-	//$sql.= " pf.amount,";
-	//$sql.= " p.datep";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
-	$sql.= " ".MAIN_DB_PREFIX."societe as s,";
-	$sql.= " ".MAIN_DB_PREFIX."paiement_facture as pf,";
-	$sql.= " ".MAIN_DB_PREFIX."paiement as p";
-	$sql.= " WHERE f.fk_soc = s.rowid";
-	$sql.= " AND f.rowid = pf.fk_facture";
-	$sql.= " AND pf.fk_paiement = p.rowid";
-	$sql.= " AND p.datep >= ".$db->idate($dateafter);
-	$sql.= " AND p.datep <= ".$db->idate($datebefore);
-	$sql.= " ORDER BY p.datep ASC";
 }
+
+// Check if an option and a filter has been provided
+if (empty($option) && sizeof($filter) <= 0)
+{
+	usage();
+	exit;
+}
+// Check if there is no uncompatible choice
+if (in_array('payments',$filter) && in_array('nopayment',$filter))
+{
+	usage();
+	exit;
+}
+
+
+// Define SQL and SQL order request to select invoices
+$sql = "SELECT DISTINCT f.rowid, f.facnumber";
+$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+$sqlwhere='';
+$sqlorder='';
+if (in_array('all',$filter))
+{
+	$sqlorder = " ORDER BY f.facnumber ASC";
+}
+if (in_array('date',$filter))
+{
+	if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+	else $sqlwhere.=" AND";
+	$sqlwhere.= " f.fk_statut > 0";
+	$sqlwhere.= " AND f.datef >= ".$db->idate($dateafter);
+	$sqlwhere.= " AND f.datef <= ".$db->idate($datebefore);
+	$sqlorder = " ORDER BY f.datef ASC";
+}
+if (in_array('nopayment',$filter))
+{
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
+	if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+	else $sqlwhere.=" AND";
+	$sqlwhere.= " f.fk_statut > 0";
+	$sqlwhere.= " AND pf.fk_paiement IS NULL";
+}
+if (in_array('payments',$filter))
+{
+	$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf,";
+	$sql.= " ".MAIN_DB_PREFIX."paiement as p";
+	if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+	else $sqlwhere.=" AND";
+	$sqlwhere.= " f.fk_statut > 0";
+	$sqlwhere.= " AND f.rowid = pf.fk_facture";
+	$sqlwhere.= " AND pf.fk_paiement = p.rowid";
+	$sqlwhere.= " AND p.datep >= ".$db->idate($dateafter);
+	$sqlwhere.= " AND p.datep <= ".$db->idate($datebefore);
+	$sqlorder = " ORDER BY p.datep ASC";
+}
+if ($sqlwhere) $sql.=$sqlwhere;
+if ($sqlorder) $sql.=$sqlorder;
+
+//print $sql; exit;
+dol_syslog("scripts/invoices/rebuild_merge.php: sql=",$sql);
 
 print '--- start'."\n";
 
@@ -264,12 +332,16 @@ function usage()
 
     print "Rebuild PDF files for some invoices and merge PDF files into one.\n";
 	print "\n";
-	print "To build/merge PDF for invoices with at least one payment in a range:\n";
-	print "Usage:   ".$script_file." datefirstpayment datelastpayment [langcode]\n";
-    print "Example: ".$script_file." 20080101 20081231 fr_FR\n";
+	print "To build/merge PDF for invoices with at least one payment in a date range:\n";
+	print "Usage:   ".$script_file." filter=payments dateafter datebefore [lang=langcode]\n";
+	print "To build/merge PDF for invoices ina date range:\n";
+	print "Usage:   ".$script_file." filter=date dateafter datebefore [lang=langcode]\n";
+	print "To build/merge PDF for all invoices, use filter=all\n";
+	print "Usage:   ".$script_file." filter=all\n";
+	print "To build/merge PDF for invoices with no payments, use filter=nopayment\n";
+	print "Usage:   ".$script_file." filter=nopayment\n";
 	print "\n";
-	print "To build/merge PDF for all invoices:\n";
-	print "Usage:   ".$script_file." all [langcode]\n";
-    print "Example: ".$script_file." all it_IT\n";
+	print "Example: ".$script_file." filter=payments 20080101 20081231 lang=fr_FR\n";
+	print "Example: ".$script_file." filter=all lang=it_IT\n";
 }
 ?>
