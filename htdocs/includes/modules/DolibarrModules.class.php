@@ -389,18 +389,18 @@ class DolibarrModules
 	 */
 	function _active()
 	{
+		global $conf;
+
 		$err = 0;
-		//TODO : define entity id
-		$entity = 1;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const ";
 		$sql.= "WHERE name = '".$this->const_name."' ";
-		$sql.= "AND entity = ".$entity;
+		$sql.= "AND entity = ".$conf->entity;
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,entity) VALUES";
-    $sql.= " ('".$this->const_name."','1',0,".$entity.")";
+    $sql.= " ('".$this->const_name."','1',0,".$conf->entity.")";
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		if (!$this->db->query($sql))
 		{
@@ -417,13 +417,13 @@ class DolibarrModules
 	 **/
 	function _unactive()
 	{
+		global $conf;
+		
 		$err = 0;
-		//TODO : define entity id
-		$entity = 1;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const ";
 		$sql.= "WHERE name = '".$this->const_name."'";
-		$sql.= "AND entity = ".$entity;
+		$sql.= "AND entity = ".$conf->entity;
 		dol_syslog("DolibarrModules::_unactive sql=".$sql);
 		$this->db->query($sql);
 

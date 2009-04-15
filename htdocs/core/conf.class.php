@@ -65,8 +65,6 @@ class Conf
 	*/
 	function setValues($db)
 	{
-		global $conf;
-
 		dol_syslog("Conf::setValues");
 
 		// Par defaut, a oui
@@ -75,12 +73,10 @@ class Conf
 		// Load entity cookie
 		$entityCookieName = "DOLENTITYID_dolibarr";
 		if (!$_COOKIE[$entityCookieName]){
-			$conf->entity = 1;
+			$this->entity = 1;
 		}else{
-			$conf->entity = $_COOKIE[$entityCookieName];
+			$this->entity = $_COOKIE[$entityCookieName];
 		}
-		
-		//$conf->entity = $conf->entity ? $conf->entity : 1;
 
 		/*
 		 * Definition de toutes les Constantes globales d'environnement
@@ -88,7 +84,7 @@ class Conf
 		 * - En $this->global->key=value
 		 */
 		$sql = "SELECT name, value, entity FROM ".MAIN_DB_PREFIX."const ";
-		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " WHERE entity = ".$this->entity;
 		$result = $db->query($sql);
 		if ($result)
 		{
