@@ -97,9 +97,9 @@ foreach ($argv as $key => $value)
 		$option.=(empty($option)?'':'_').'date_'.$argv[$key+1].'_'.$argv[$key+2];
 		$filter[]='date';
 
-		$dateafter=dol_stringtotime($argv[$key+1]);
-		$datebefore=dol_stringtotime($argv[$key+2]);
-		print 'Rebuild PDF for invoices validated between '.dol_print_date($dateafter,'day')." and ".dol_print_date($datebefore,'day').".\n";
+		$dateafterdate=dol_stringtotime($argv[$key+1]);
+		$datebeforedate=dol_stringtotime($argv[$key+2]);
+		print 'Rebuild PDF for invoices validated between '.dol_print_date($dateafterdate,'day')." and ".dol_print_date($datebeforedate,'day').".\n";
 	}
 
 	if ($value == 'filter=payments')
@@ -108,9 +108,9 @@ foreach ($argv as $key => $value)
 		$option.=(empty($option)?'':'_').'payments_'.$argv[$key+1].'_'.$argv[$key+2];
 		$filter[]='payments';
 
-		$dateafter=dol_stringtotime($argv[$key+1]);
-		$datebefore=dol_stringtotime($argv[$key+2]);
-		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($dateafter,'day')." and ".dol_print_date($datebefore,'day').".\n";
+		$paymentdateafter=dol_stringtotime($argv[$key+1]);
+		$paymentdatebefore=dol_stringtotime($argv[$key+2]);
+		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter,'day')." and ".dol_print_date($paymentdatebefore,'day').".\n";
 	}
 
 	if ($value == 'filter=nopayment')
@@ -157,8 +157,8 @@ if (in_array('date',$filter))
 	if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	else $sqlwhere.=" AND";
 	$sqlwhere.= " f.fk_statut > 0";
-	$sqlwhere.= " AND f.datef >= ".$db->idate($dateafter);
-	$sqlwhere.= " AND f.datef <= ".$db->idate($datebefore);
+	$sqlwhere.= " AND f.datef >= ".$db->idate($dateafterdate);
+	$sqlwhere.= " AND f.datef <= ".$db->idate($datebeforedate);
 	$sqlorder = " ORDER BY f.datef ASC";
 }
 if (in_array('nopayment',$filter))
@@ -178,8 +178,8 @@ if (in_array('payments',$filter))
 	$sqlwhere.= " f.fk_statut > 0";
 	$sqlwhere.= " AND f.rowid = pf.fk_facture";
 	$sqlwhere.= " AND pf.fk_paiement = p.rowid";
-	$sqlwhere.= " AND p.datep >= ".$db->idate($dateafter);
-	$sqlwhere.= " AND p.datep <= ".$db->idate($datebefore);
+	$sqlwhere.= " AND p.datep >= ".$db->idate($paymentdateafter);
+	$sqlwhere.= " AND p.datep <= ".$db->idate($paymentdatebefore);
 	$sqlorder = " ORDER BY p.datep ASC";
 }
 if ($sqlwhere) $sql.=$sqlwhere;
