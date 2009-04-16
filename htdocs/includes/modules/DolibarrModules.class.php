@@ -160,7 +160,7 @@ class DolibarrModules
 		$err=0;
 
 		$this->db->begin();
-		
+
 		// Remove line in activation module
 		if (! $err) $err+=$this->_dbunactive();
 
@@ -185,7 +185,7 @@ class DolibarrModules
 		// Run complementary sql requests
 		for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
 		{
-			if (! $err) 
+			if (! $err)
 			{
 				if (!$this->db->query($array_sql[$i]))
 		  		{
@@ -286,7 +286,7 @@ class DolibarrModules
 
 		$sql ="SELECT active_version FROM ".MAIN_DB_PREFIX."dolibarr_modules";
 		$sql .= " WHERE numero=".$this->numero." AND active = 1";
-		
+
 		dol_syslog("DolibarrModules::getDbVersion sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -346,7 +346,7 @@ class DolibarrModules
 	/**
 	 *	\brief      Insert line in dolibarr_modules table.
 	 *	\return     int		Nb of errors (0 if OK)
-	 * 	\remarks	Storage is made for information only, table is not required for Dolibarr usage. 
+	 * 	\remarks	Storage is made for information only, table is not required for Dolibarr usage.
 	 */
 	function _dbactive()
 	{
@@ -369,7 +369,7 @@ class DolibarrModules
 	/**
 	 *	\brief      Remove line in dolibarr_modules table
 	 *	\return     int     Nb of errors (0 if OK)
-	 * 	\remarks	Storage is made for information only, table is not required for Dolibarr usage. 
+	 * 	\remarks	Storage is made for information only, table is not required for Dolibarr usage.
 	 */
 	function _dbunactive()
 	{
@@ -392,8 +392,9 @@ class DolibarrModules
 		global $conf;
 
 		$err = 0;
-		
-		if ($this->family == "base") $conf->entity = 0; // Common module
+
+		// Removed because create pb of compatibility
+		// if ($this->family == "base") $conf->entity = 0; // Common module
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const ";
 		$sql.= "WHERE name = '".$this->const_name."' ";
@@ -402,7 +403,7 @@ class DolibarrModules
 		$this->db->query($sql);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,entity) VALUES";
-    $sql.= " ('".$this->const_name."','1',0,".$conf->entity.")";
+    	$sql.= " ('".$this->const_name."','1',0,".$conf->entity.")";
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		if (!$this->db->query($sql))
 		{
@@ -420,10 +421,11 @@ class DolibarrModules
 	function _unactive()
 	{
 		global $conf;
-		
+
 		$err = 0;
-		
-		if ($this->family == "base") $conf->entity = 0; // Common module
+
+		// Removed because create pb of compatibility
+		// if ($this->family == "base") $conf->entity = 0; // Common module
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const ";
 		$sql.= "WHERE name = '".$this->const_name."'";

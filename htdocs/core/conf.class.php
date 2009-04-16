@@ -45,8 +45,8 @@ class Conf
 
 	var $dol_document_root;
 
-	var $monnaie;	// Used to store current currency
-	var $css;		// Used to store current css (from theme)
+	var $monnaie;		// Used to store current currency
+	var $css;			// Used to store current css (from theme)
 	var $top_menu;
 	var $left_menu;
 
@@ -54,8 +54,8 @@ class Conf
 	var $tabs_modules=array();
 
 	var $logbuffer=array();
-	
-	var $entity;
+
+	var $entity = 1;	// By default for backward compatibility
 
 
 	/**
@@ -71,12 +71,15 @@ class Conf
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;
 
 		// Load entity cookie
+		/* TODO Removed: La classe conf est une classe de stockage de conf independante
+		de la couche presentation et de la gestion des acces IHM, donc ne doit pas acceder des cookies.
 		$entityCookieName = "DOLENTITYID_dolibarr";
 		if (!$_COOKIE[$entityCookieName]){
 			$this->entity = 1;
 		}else{
 			$this->entity = $_COOKIE[$entityCookieName];
 		}
+		*/
 
 		/*
 		 * Definition de toutes les Constantes globales d'environnement
@@ -155,7 +158,7 @@ class Conf
 		$this->compta->enabled=defined("MAIN_MODULE_COMPTABILITE")?MAIN_MODULE_COMPTABILITE:0;
 		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
 		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
-		
+
 		// Module agenda
 		$this->agenda->dir_temp=DOL_DATA_ROOT."/agenda/temp";
 

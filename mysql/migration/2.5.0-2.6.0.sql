@@ -126,4 +126,5 @@ ALTER TABLE llx_categorie_association ADD UNIQUE INDEX uk_categorie_association_
 -- Multi company
 ALTER TABLE llx_const ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER tms;
 ALTER TABLE llx_const DROP INDEX name;
-ALTER TABLE llx_const ADD UNIQUE INDEX(name, entity);
+
+ALTER TABLE llx_const ADD UNIQUE INDEX uk_const (name, entity);

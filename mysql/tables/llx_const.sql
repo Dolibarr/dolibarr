@@ -34,9 +34,8 @@ create table llx_const
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
   tms         timestamp,
-  entity			integer DEFAULT 1 NOT NULL,	-- multi company id
-  UNIQUE INDEX(name)
-)type=innodb;
+  entity      integer DEFAULT 1 NOT NULL	-- multi company id
+) type=innodb;
 
 -- 
 -- List of codes for the field entity
