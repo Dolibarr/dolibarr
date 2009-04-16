@@ -114,7 +114,7 @@ class InterfaceFraisport
     //
     if ($conf->global->COMMANDE_ADD_DELIVERY_COST_LINE)
       {
-	dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->fk_commande);
+	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->fk_commande);
 	/*
 	 * Calcul le poids du colis
 	 *
@@ -139,7 +139,7 @@ class InterfaceFraisport
 	  }
 	else
 	  {
-	    dolibarr_syslog("Trigger '".$this->name."' in action '$action' [2] SQL ERROR ");
+	    dol_syslog("Trigger '".$this->name."' in action '$action' [2] SQL ERROR ");
 	  }
 	/*
 	 *
@@ -170,7 +170,7 @@ class InterfaceFraisport
 	  }
 	else
 	  {
-	    dolibarr_syslog("Trigger '".$this->name."' in action '$action' [3] SQL ERROR $sql");
+	    dol_syslog("Trigger '".$this->name."' in action '$action' [3] SQL ERROR $sql");
 	  }
 	/*
 	 * Nombre de ligne de commande
@@ -190,7 +190,7 @@ class InterfaceFraisport
 	  }
 	else
 	  {
-	    dolibarr_syslog("Trigger '".$this->name."' in action '$action' [4] SQL ERROR ");
+	    dol_syslog("Trigger '".$this->name."' in action '$action' [4] SQL ERROR ");
 	  }
 	/*
 	 * Calcul les frais de port
@@ -221,7 +221,7 @@ class InterfaceFraisport
 	      }
 	    else
 	      {
-		dolibarr_syslog("Trigger '".$this->name."' in action '$action' [5] SQL ERROR $sql");
+		dol_syslog("Trigger '".$this->name."' in action '$action' [5] SQL ERROR $sql");
 	      }
 	  }
 	else
@@ -254,7 +254,7 @@ class InterfaceFraisport
 	      }
 	    else
 	      {
-		dolibarr_syslog("Trigger '".$this->name."' in action '$action' [5] SQL ERROR $sql");
+		dol_syslog("Trigger '".$this->name."' in action '$action' [5] SQL ERROR $sql");
 	      }
 	  }
       }

@@ -101,7 +101,7 @@ class InterfaceEditeur
     // Users
     if ($action == 'LINEBILL_INSERT')
       {
-	dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 	$sql = "SELECT fd.rowid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p,".MAIN_DB_PREFIX."facturedet as fd";
@@ -131,12 +131,12 @@ class InterfaceEditeur
 	  }
 	else
 	  {
-	    dolibarr_syslog("Trigger '".$this->name."' in action '$action' SQL ERROR ");
+	    dol_syslog("Trigger '".$this->name."' in action '$action' SQL ERROR ");
 	  }
       }
     else
       {
-	dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 	return -1;
       }
     return 0;

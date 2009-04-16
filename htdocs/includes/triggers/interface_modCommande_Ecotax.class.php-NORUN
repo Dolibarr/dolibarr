@@ -116,7 +116,7 @@ class InterfaceEcotax
 
     // Ajoute une ligne de ecotax automatiquement
     // 
-	dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->fk_commande);
+	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->fk_commande);
 
 
 	/*
@@ -151,7 +151,7 @@ class InterfaceEcotax
 	  }
 	else
 	  {
-	    dolibarr_syslog("Trigger '".$this->name."' in action '$action' [2] SQL ERROR ");
+	    dol_syslog("Trigger '".$this->name."' in action '$action' [2] SQL ERROR ");
 	  }
 	/*
 	 *
@@ -175,7 +175,7 @@ class InterfaceEcotax
 	  }
 	else
 	  {
-	    dolibarr_syslog("Trigger '".$this->name."' in action '$action' [3] SQL ERROR $sql");
+	    dol_syslog("Trigger '".$this->name."' in action '$action' [3] SQL ERROR $sql");
 	  }
 	/*
 	 * Nombre de ligne de commande
@@ -195,7 +195,7 @@ class InterfaceEcotax
 	  }
 	else
 	  {
-	    dolibarr_syslog("Trigger '".$this->name."' in action '$action' [4] SQL ERROR ");
+	    dol_syslog("Trigger '".$this->name."' in action '$action' [4] SQL ERROR ");
 	  }
 
 	/*
@@ -225,7 +225,7 @@ class InterfaceEcotax
 	      }
 	    else
 	      {
-		dolibarr_syslog("Trigger '".$this->name."' in action '$action' [5] SQL ERROR $sql");
+		dol_syslog("Trigger '".$this->name."' in action '$action' [5] SQL ERROR $sql");
 	      }
 	  }
 	else
@@ -261,7 +261,7 @@ class InterfaceEcotax
 	      }
 	    else
 	      {
-		dolibarr_syslog("Trigger '".$this->name."' in action '$action' [5] SQL ERROR $sql");
+		dol_syslog("Trigger '".$this->name."' in action '$action' [5] SQL ERROR $sql");
 	      }
 	  }
   }
