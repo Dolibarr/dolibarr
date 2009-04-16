@@ -873,7 +873,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY($this->marge_gauche+2,$posy+8);
-			$pdf->MultiCell(80,3, $carac_emetteur);
+			$pdf->MultiCell(80,4, $carac_emetteur);
 
 			// Client destinataire
 			$posy=42;
