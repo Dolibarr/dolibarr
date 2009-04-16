@@ -37,3 +37,12 @@ create table llx_const
   entity			integer DEFAULT 1 NOT NULL,	-- multi company id
   UNIQUE INDEX(name)
 )type=innodb;
+
+-- 
+-- List of codes for the field entity
+--
+-- 0 : common constant
+-- 1 : first company constant
+-- 2 : second company constant
+-- 3 : etc...
+--

@@ -84,7 +84,7 @@ class Conf
 		 * - En $this->global->key=value
 		 */
 		$sql = "SELECT name, value, entity FROM ".MAIN_DB_PREFIX."const ";
-		$sql.= " WHERE entity = ".$this->entity;
+		$sql.= " WHERE entity = 0 OR entity = ".$this->entity;
 		$result = $db->query($sql);
 		if ($result)
 		{

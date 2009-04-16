@@ -38,7 +38,7 @@ $typeconst=array('yesno','texte','chaine');
 
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
-	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:''));
+	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:'',$_POST["entity"]));
 	{
 		print $db->error();
 	}
@@ -93,10 +93,17 @@ print '</form>';
 
 # Affiche lignes des constantes
 if ($all==1){
-	$sql = "SELECT rowid, name, value, note FROM llx_const ORDER BY name ASC";
+	$sql = "SELECT rowid, name, value, note, entity ";
+	$sql.= "FROM llx_const ";
+	$sql.= "WHERE entity = 0 OR entity = ".$conf->entity." ";
+	$sql.= "ORDER BY name ASC";
 }else{
-	$sql = "SELECT rowid, name, value, note FROM llx_const WHERE visible = 1 ORDER BY name ASC";
+	$sql = "SELECT rowid, name, value, note, entity ";
+	$sql.= "FROM llx_const ";
+	$sql.= "WHERE visible = 1 AND (entity = 0 OR entity = ".$conf->entity.") ";
+	$sql.= "ORDER BY name ASC";
 }
+dol_syslog("Const::listConstant sql=".$sql,LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -113,6 +120,7 @@ if ($result)
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 		print '<input type="hidden" name="constname" value="'.$obj->name.'">';
+		print '<input type="hidden" name="entity" value="'.$obj->entity.'">';
 
 		print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
 
