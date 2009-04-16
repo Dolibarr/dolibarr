@@ -385,8 +385,8 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
   }
   else
   {
-  	$this->error=$db->lasterror();
-    dol_syslog("admin.lib::dolibarr_set_const ".$this->error, LOG_ERR);
+  	$error=$db->lasterror();
+    dol_syslog("admin.lib::dolibarr_set_const ".$error, LOG_ERR);
     $db->rollback();
     return -1;
   }

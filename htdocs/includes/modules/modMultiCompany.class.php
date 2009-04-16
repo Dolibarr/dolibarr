@@ -83,7 +83,7 @@ class modMultiCompany extends DolibarrModules
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,3);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(2,5);	// Minimum version of Dolibarr required by module
+		$this->need_dolibarr_version = array(2,6);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("multicompany");
 
 		// Constants
@@ -204,7 +204,7 @@ class modMultiCompany extends DolibarrModules
   {
   	$sql = array();
 
-		$result=$this->load_tables();
+		//$result=$this->load_tables();
 
     return $this->_init($sql);
   }
@@ -217,10 +217,12 @@ class modMultiCompany extends DolibarrModules
  	 */
 	function remove()
 	{
-    	$sql = array();
-
-    	return $this->_remove($sql);
-  	}
+		$sql = array();
+		
+		$result = $this->destroy_cookie();
+		
+		return $this->_remove($sql);
+	}
 
 
 	/**
@@ -232,7 +234,17 @@ class modMultiCompany extends DolibarrModules
 	*/
 	function load_tables()
 	{
-		return $this->_load_tables('/mymodule/sql/');
+		return $this->_load_tables('/multicompany/sql/');
+	}
+	
+	/**
+	*   \brief   Destroy a cookie
+	*/
+	function destroy_cookie()
+	{
+		// Destroy entity cookie
+		$entityCookieName = "DOLENTITYID_dolibarr";
+		setcookie($entityCookieName, '', 1, "/");
 	}
 }
 

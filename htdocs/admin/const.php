@@ -46,7 +46,7 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 
 if ($_GET["action"] == 'delete')
 {
-	if (! dolibarr_del_const($db, $_GET["rowid"]));
+	if (! dolibarr_del_const($db, $_GET["rowid"],$_GET["entity"]));
 	{
 		print $db->error();
 	}
@@ -66,6 +66,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '<td>'.$langs->trans("Note").'</td>';
+if ($conf->multicompany->enabled) print '<td>'.$langs->trans("Entity").'</td>';
 print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
@@ -83,7 +84,18 @@ print '<td>';
 print '<input type="text" class="flat" size="30" name="constvalue" value="">';
 print '</td><td>';
 print '<input type="text" class="flat" size="40" name="constnote" value="">';
-print '</td><td align="center">';
+print '</td>';
+if ($conf->multicompany->enabled)
+{
+	print '<td>';
+	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
+	print '</td>';
+}
+else
+{
+	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+}
+print '<td align="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="Button"><br>';
 print "</td>\n";
 print '</tr>';
@@ -120,7 +132,6 @@ if ($result)
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 		print '<input type="hidden" name="constname" value="'.$obj->name.'">';
-		print '<input type="hidden" name="entity" value="'.$obj->entity.'">';
 
 		print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
 
@@ -131,9 +142,23 @@ if ($result)
 
 		// Note
 		print '<input type="text" class="flat" size="40" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
-		print '</td><td align="center">';
+		print '</td>';
+		
+		// Entity
+		if ($conf->multicompany->enabled)
+		{
+			print '<td>';
+			print '<input type="text" class="flat" size="1" name="entity" value="'.$obj->entity.'">';
+			print '</td>';
+		}
+		else
+		{
+			print '<input type="hidden" name="entity" value="'.$obj->entity.'">';
+		}
+		
+		print '<td align="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button"> &nbsp; ';
-		print '<a href="const.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
+		print '<a href="const.php?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete">'.img_delete().'</a>';
 		print "</td></tr>\n";
 
 		print '</form>';
