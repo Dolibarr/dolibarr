@@ -262,18 +262,23 @@ if (! isset($_SESSION["dol_login"]))
 					if ($login)
 					{
 						$test=false;
-						$conf->authmode=$mode;	// This properties is defined only when login
+						$conf->authmode=$mode;	// This properties is defined only when logged
+
+						// TODO Should not have setting and redirection header here.
+						// Cookie add must be set at same place than "New session for this login"
+						// and header call must be removed. Also entity must be set in session.
 						// Call function to check entity
 						if ($conf->multicompany->enabled && isset($_POST["entity"]))
 						{
 							$entitytotest=$_POST["entity"];
-							
+
 							// Create entity cookie
 							$entityCookieName = "DOLENTITYID_dolibarr";
 							if (!isset($HTTP_COOKIE_VARS[$entityCookieName]))
 							{
 								setcookie($entityCookieName, $entitytotest, 0, "/", "", 0);
 							}
+
 							// Reload index.php
 							$url=DOL_URL_ROOT."/index.php";
 							header("Location: ".$url);
@@ -394,14 +399,14 @@ else
 	}
 }
 
-// Est-ce une nouvelle session
+// Is it a new session ?
 if (! isset($_SESSION["dol_login"]))
 {
 	$error=0;
 
-	// Nouvelle session pour ce login
+	// New session for this login
 	$_SESSION["dol_login"]=$user->login;
-	
+
 	$_SESSION["dol_authmode"]=$conf->authmode;
 	dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 

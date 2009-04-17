@@ -57,18 +57,18 @@ class Conf
 
 
 	/**
-	*      \brief      Positionne toutes les variables de configuration
+	*      \brief      Load setup values into conf object
 	*      \param      $db			    Handler d'acces base
 	*      \param      $entity			Id of company
-	*      \return     int         < 0 si erreur, >= 0 si succes
+	*      \return     int         		< 0 if KO, >= 0 if OK
 	*/
-	function setValues($db,$entity)
+	function setValues($db,$entity=1)
 	{
 		dol_syslog("Conf::setValues");
 
 		// Par defaut, a oui
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;
-		
+
 		$this->entity = $entity;
 
 		/*
@@ -77,7 +77,7 @@ class Conf
 		 * - En $this->global->key=value
 		 */
 		$sql = "SELECT name, value, entity FROM ".MAIN_DB_PREFIX."const ";
-		$sql.= " WHERE entity = 0 OR entity = ".$entity;
+		$sql.= " WHERE entity = 0 OR entity = ".$this->entity;
 		$result = $db->query($sql);
 		if ($result)
 		{
@@ -88,7 +88,7 @@ class Conf
 			{
 				$objp = $db->fetch_object($result);
 				$key=$objp->name;
-				$value=$objp->value; // Pas de stripslashes (ne s'applique pas sur lecture en base mais apres POST quand get_magic_quotes_gpc()==1)
+				$value=$objp->value;
 				if ($key)
 				{
 					if (! defined("$key")) define ("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE during install)
