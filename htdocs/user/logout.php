@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org> 
+/* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit         <doli@sydesy.com>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
@@ -44,6 +44,8 @@ if ($conf->phenix->enabled && $conf->phenix->cookie)
 	setcookie($conf->phenix->cookie, '', 1, "/");
 }
 
+// TODO Should remove this because entity should be saved in session
+// and is already destroyed by the session_destroy later.
 // Multi-Company module
 if ($conf->multicompany->enabled)
 {
@@ -71,7 +73,7 @@ session_unregister("dol_login");
 
 // Define url to go
 $url=DOL_URL_ROOT."/index.php";		// By default go to login page
-if ($urlfrom) 
+if ($urlfrom)
 {
 	$url=DOL_URL_ROOT.$urlfrom;
 }
