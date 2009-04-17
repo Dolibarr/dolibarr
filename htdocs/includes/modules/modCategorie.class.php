@@ -62,7 +62,7 @@ class modCategorie extends DolibarrModules
 		$this->dirs = array();
 
 		// Dependencies
-		$this->depends = array("modProduit");
+		$this->depends = array();
 
 		// Config pages
 		$this->config_page_url = array();
