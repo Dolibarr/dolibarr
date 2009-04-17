@@ -75,9 +75,6 @@ insert into llx_const(name,value,type,visible,note) values('MAIN_SEARCHFORM_CONT
 insert into llx_const(name,value,type,visible,note) values('MAIN_SEARCHFORM_PRODUITSERVICE' ,'1','yesno',0,'Show form for quick product search');
 insert into llx_const(name,value,type,visible,note) values('MAIN_SEARCHFORM_ADHERENT','1','yesno',0,'Show form for quick member search');
 
-insert into llx_const(name,value,type,visible,note) values('SYSLOG_LEVEL','6','chaine',0,'Level of debug info to show');
-
-
 --
 -- IHM
 --
