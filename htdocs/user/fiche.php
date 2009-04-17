@@ -164,9 +164,6 @@ if ($_POST["action"] == 'add' && $canadduser)
 		{
 			if (isset($_POST['password']) && trim($_POST['password']))
 			{
-				//TODO: mauvaise constante je suppose, elle active la demande de confirmation par mail
-				// de plus cette demande n'est pas envoyée, et ne devrait pas être par défaut
-				//$edituser->setPassword($user,trim($_POST['password']),$conf->global->DATABASE_PWD_ENCRYPTED);
 				$edituser->setPassword($user,trim($_POST['password']));
 			}
 
