@@ -204,8 +204,12 @@ if (! defined('NOREQUIREUSER'))
  */
 if (! defined('NOREQUIREDB'))
 {
+	// TODO Should remove this to not define entity here but later once value of entity has been read from
+	// session in main.inc.php.
+	// master.inc.php (used also by scripts) should be safe of any command that depends on screen code.
 	$entityCookieName = "DOLENTITYID_dolibarr";
-	$entity = $_COOKIE[$entityCookieName]?$_COOKIE[$entityCookieName]:1;
+	$entity = 1;	// By default;
+	if (isset($_COOKIE[$entityCookieName])) $entity=$_COOKIE[$entityCookieName]?$_COOKIE[$entityCookieName]:1;
 	$conf->setValues($db,$entity);
 }
 
