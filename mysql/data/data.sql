@@ -174,25 +174,25 @@ insert into llx_const (name, value, type, note, visible) values ('OSC_DB_HOST','
 --
 -- Modeles de numerotation et generation document
 --
-insert into llx_const (name, value, type, visible) values ('DON_ADDON_MODEL',     'html_cerfafr','chaine',0);
-insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON',       'mod_propale_marbre','chaine',0);
-insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON_PDF',   'azur','chaine',0);
-insert into llx_const (name, value, type, visible) values ('COMMANDE_ADDON',      'mod_commande_marbre','chaine',0);
-insert into llx_const (name, value, type, visible) values ('COMMANDE_ADDON_PDF',  'einstein','chaine',0);
-insert into llx_const (name, value, type, visible) values ('COMMANDE_SUPPLIER_ADDON',      'mod_commande_fournisseur_muguet','chaine',0);
-insert into llx_const (name, value, type, visible) values ('COMMANDE_SUPPLIER_ADDON_PDF',  'muscadet','chaine',0);
-insert into llx_const (name, value, type, visible) values ('EXPEDITION_ADDON',    'enlevement','chaine',0);
-insert into llx_const (name, value, type, visible) values ('EXPEDITION_ADDON_PDF','rouget','chaine',0);
-insert into llx_const (name, value, type, visible) values ('FICHEINTER_ADDON',    'pacific','chaine',0);
-insert into llx_const (name, value, type, visible) values ('FICHEINTER_ADDON_PDF','soleil','chaine',0);
-insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON',       'terre','chaine',0);
-insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON_PDF',   'crabe','chaine',0);
+insert into llx_const (name, value, type, note, visible) values ('DON_ADDON_MODEL',     'html_cerfafr','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('PROPALE_ADDON',       'mod_propale_marbre','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('PROPALE_ADDON_PDF',   'azur','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('COMMANDE_ADDON',      'mod_commande_marbre','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('COMMANDE_ADDON_PDF',  'einstein','chaine',0);
+insert into llx_const (name, value, type, note, visible) values ('COMMANDE_SUPPLIER_ADDON',      'mod_commande_fournisseur_muguet','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('COMMANDE_SUPPLIER_ADDON_PDF',  'muscadet','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('EXPEDITION_ADDON',    'enlevement','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('EXPEDITION_ADDON_PDF','rouget','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('FICHEINTER_ADDON',    'pacific','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('FICHEINTER_ADDON_PDF','soleil','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('FACTURE_ADDON',       'terre','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('FACTURE_ADDON_PDF',   'crabe','chaine','',0);
 
 
 --
 -- Duree de validite des propales
 --
-insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDITY_DURATION',      '15', 'chaine', 0, 'Durée de validitée des propales');
+insert into llx_const (name, value, type, note, visible) VALUES ('PROPALE_VALIDITY_DURATION',      '15', 'chaine', 'Durée de validitée des propales',0);
 
 
 --
@@ -200,6 +200,22 @@ insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDI
 --
 insert into llx_const (name, value, type, note, visible) values ('GENBARCODE_LOCATION','/usr/local/bin/genbarcode','chaine','location of genbarcode',0);
 
+
+--
+-- Action sur agenda
+--
+insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_COMPANY_CREATE','1','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_CONTRACT_VALIDATE','1','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_PROPAL_VALIDATE','1','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_PROPAL_SENTBYMAIL','1','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_ORDER_VALIDATE','1','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_ORDER_SENTBYMAIL','1','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_BILL_VALIDATE','1','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_BILL_PAYED','1','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_BILL_CANCELED','1','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_BILL_SENTBYMAIL','1','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_ORDER_SUPPLIER_VALIDATE','1','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_BILL_SUPPLIER_VALIDATE','1','chaine','',0);
 
 --
 -- Descriptif des plans comptables FR PCG99-ABREGE
@@ -1381,21 +1397,9 @@ insert into llx_c_type_fees (code,libelle,active) values ('TF_OTHER',    'Other'
 insert into llx_c_type_fees (code,libelle,active) values ('TF_TRIP',     'Trip',   1);
 insert into llx_c_type_fees (code,libelle,active) values ('TF_LUNCH',    'Lunch',  1);
 
-
-INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_COMPANY_CREATE','1','chaine',0,'');
-INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_CONTRACT_VALIDATE','1','chaine',0,'');
-INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_PROPAL_VALIDATE','1','chaine',0,'');
-INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_PROPAL_SENTBYMAIL','1','chaine',0,'');
-INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_ORDER_VALIDATE','1','chaine',0,'');
-INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_ORDER_SENTBYMAIL','1','chaine',0,'');
-INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_VALIDATE','1','chaine',0,'');
-INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_PAYED','1','chaine',0,'');
-INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_CANCELED','1','chaine',0,'');
-INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_SENTBYMAIL','1','chaine',0,'');
-INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_ORDER_SUPPLIER_VALIDATE','1','chaine',0,'');
-INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_SUPPLIER_VALIDATE','1','chaine',0,'');
-
-
+--
+-- Methode expedition
+--
 INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUES (1,'CATCH','Catch','Catch by client',1);
 INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUES (2,'TRANS','Transporter','Generic transporter',1);
 INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUES (3,'COLSUI','Colissimo Suivi','Colissimo Suivi',0);
