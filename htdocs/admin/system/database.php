@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ accessforbidden();
 
 
 /*
- * Afficahge page
+ * View
  */
 
 $html=new Form($db);
@@ -44,9 +44,21 @@ $html=new Form($db);
 llxHeader();
 
 print_fiche_titre($langs->trans("DatabaseConfiguration"),'','setup');
-
 print '<br>';
-print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
+
+// Database
+print '<table class="noborder" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Database")."</td></tr>\n";
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" . $db->getVersion() . "</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("DatabaseServer")."</td><td>" . $conf->db->host . "</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("DatabasePort")."</td><td>" . $conf->db->port . "</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("DriverType")."</td><td>" . $conf->db->type . "</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("Password")."</td><td>" . eregi_replace('.','*',$dolibarr_main_db_pass) . "</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("DBStoringCharset")."</td><td>" . $db->getDefaultCharacterSetDatabase() . "</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("DBSortingCharset")."</td><td>" . $db->getDefaultCollationDatabase() . "</td></tr>\n";
+print '</table>';
 
 
 $base=0;
@@ -77,7 +89,7 @@ else
 	foreach($sqls as $sql)
 	{
 		print '<br>';
-		print '<table class="noborder">';
+		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Parameter").'</td>';
 		print '<td>'.$langs->trans("Value").'</td>';

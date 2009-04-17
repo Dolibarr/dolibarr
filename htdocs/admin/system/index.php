@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /**
-   \file       htdocs/admin/system/index.php
-   \brief      Page accueil infos système
-   \version    $Id$
-*/
+ *  \file       htdocs/admin/system/index.php
+ *  \brief      Page accueil infos système
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/lib/databases/".$conf->db->type.".lib.php");
@@ -80,17 +80,10 @@ print '</table>';
 
 print "<br>\n";
 
-// Base de donnée
+// Database
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Database")."</td></tr>\n";
 print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" . $db->getVersion() . "</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("DatabaseServer")."</td><td>" . $conf->db->host . "</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("DriverType")."</td><td>" . $conf->db->type . "</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("Password")."</td><td>" . eregi_replace('.','*',$dolibarr_main_db_pass) . "</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("DBStoringCharset")."</td><td>" . $db->getDefaultCharacterSetDatabase() . "</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("DBSortingCharset")."</td><td>" . $db->getDefaultCollationDatabase() . "</td></tr>\n";
 print '</table>';
 print '<br>';
 
