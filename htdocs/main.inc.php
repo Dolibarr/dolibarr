@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Matteli
  *
  * This program is free software; you can redistribute it and/or modify
@@ -268,13 +268,12 @@ if (! isset($_SESSION["dol_login"]))
 						{
 							$entitytotest=$_POST["entity"];
 							
-							// Creation du cookie
+							// Create entity cookie
 							$entityCookieName = "DOLENTITYID_dolibarr";
 							if (!isset($HTTP_COOKIE_VARS[$entityCookieName]))
 							{
 								setcookie($entityCookieName, $entitytotest, 0, "/", "", 0);
 							}
-							//$conf->entity = $_COOKIE[$entityCookieName];
 							// Reload index.php
 							$url=DOL_URL_ROOT."/index.php";
 							header("Location: ".$url);

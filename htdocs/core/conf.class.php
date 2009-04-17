@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin      	<regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin      	<regis@dolibarr.fr>
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,31 +55,21 @@ class Conf
 
 	var $logbuffer=array();
 
-	var $entity = 1;	// By default for backward compatibility
-
 
 	/**
 	*      \brief      Positionne toutes les variables de configuration
-	*      \param      $db			Handler d'acces base
+	*      \param      $db			    Handler d'acces base
+	*      \param      $entity			Id of company
 	*      \return     int         < 0 si erreur, >= 0 si succes
 	*/
-	function setValues($db)
+	function setValues($db,$entity)
 	{
 		dol_syslog("Conf::setValues");
 
 		// Par defaut, a oui
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;
-
-		// Load entity cookie
-		/* TODO Removed: La classe conf est une classe de stockage de conf independante
-		de la couche presentation et de la gestion des acces IHM, donc ne doit pas acceder des cookies.
-		$entityCookieName = "DOLENTITYID_dolibarr";
-		if (!$_COOKIE[$entityCookieName]){
-			$this->entity = 1;
-		}else{
-			$this->entity = $_COOKIE[$entityCookieName];
-		}
-		*/
+		
+		$this->entity = $entity;
 
 		/*
 		 * Definition de toutes les Constantes globales d'environnement
@@ -87,7 +77,7 @@ class Conf
 		 * - En $this->global->key=value
 		 */
 		$sql = "SELECT name, value, entity FROM ".MAIN_DB_PREFIX."const ";
-		$sql.= " WHERE entity = 0 OR entity = ".$this->entity;
+		$sql.= " WHERE entity = 0 OR entity = ".$entity;
 		$result = $db->query($sql);
 		if ($result)
 		{
