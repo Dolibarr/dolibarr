@@ -204,9 +204,11 @@ class modMultiCompany extends DolibarrModules
   {
   	$sql = array();
 
-		//$result=$this->load_tables();
+		$init = $this->_init($sql);
+		
+		$result=$this->load_tables('/multicompany/sql/init/');
 
-    return $this->_init($sql);
+    return $init;
   }
 
 	/**
@@ -219,6 +221,7 @@ class modMultiCompany extends DolibarrModules
 	{
 		$sql = array();
 		
+		$result=$this->load_tables('/multicompany/sql/remove/');
 		$result = $this->destroy_cookie();
 		
 		return $this->_remove($sql);
@@ -232,9 +235,9 @@ class modMultiCompany extends DolibarrModules
 	*					This function is called by this->init.
 	* 		\return		int		<=0 if KO, >0 if OK
 	*/
-	function load_tables()
+	function load_tables($path)
 	{
-		return $this->_load_tables('/multicompany/sql/');
+		return $this->_load_tables($path);
 	}
 	
 	/**

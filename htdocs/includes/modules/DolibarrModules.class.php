@@ -394,9 +394,6 @@ class DolibarrModules
 
 		$err = 0;
 
-		// Removed because create pb of compatibility
-		// if ($this->family == "base") $conf->entity = 0; // Common module
-
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const ";
 		$sql.= "WHERE name = '".$this->const_name."' ";
 		$sql.= "AND entity = ".$conf->entity;
@@ -424,9 +421,6 @@ class DolibarrModules
 		global $conf;
 
 		$err = 0;
-
-		// Removed because create pb of compatibility
-		// if ($this->family == "base") $conf->entity = 0; // Common module
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const ";
 		$sql.= "WHERE name = '".$this->const_name."'";
