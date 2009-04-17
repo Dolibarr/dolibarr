@@ -197,13 +197,13 @@ begin
   // Create a page wpInstalling
   Page := CreateInputQueryPage(wpInstalling,
   'Technical parameters', '',
-  'Please specify some technical parameters. If you don''t understand, are not sure, or are doing an upgrade, just leave the default values.');
+  'If first install, please specify some technical parameters. If you don''t understand, are not sure, or are doing an upgrade, just leave the default values.');
 
   // TODO Add control differently if first install or update
-  Page.Add('SMTP server (your own or ISP SMTP server) :', False);
-  Page.Add('Apache port (common choice is 80) :', False);
-  Page.Add('Mysql port (common choice is 3306) :', False);
-  Page.Add('Mysql server and database password you want for root :', False);
+  Page.Add('SMTP server (your own or ISP SMTP server, first install only) :', False);
+  Page.Add('Apache port (common choice is 80, first install only) :', False);
+  Page.Add('Mysql port (common choice is 3306, first install only) :', False);
+  Page.Add('Mysql server and database password you want for root (first install only):', False);
 
   // Valeurs par defaut
   Page.Values[0] := smtpServer;
