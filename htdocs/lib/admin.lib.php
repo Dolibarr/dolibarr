@@ -289,13 +289,13 @@ function run_sql($sqlfile,$silent=1)
 	\param	    entity			Multi company id
 	\return     int         <0 si ko, >0 si ok
 */
-function dolibarr_del_const($db, $name, $entity=1)
+function dolibarr_del_const($db, $name)
 {
 	global $conf;
 
 	$sql = "DELETE FROM llx_const";
 	$sql.=" WHERE (name='".addslashes($name)."' OR rowid='".addslashes($name)."')";
-	$sql.= " AND entity = ".$entity;
+	$sql.= " AND entity = ".$conf->entity;
 
   dol_syslog("admin.lib::dolibarr_del_const sql=".$sql);
 	$resql=$db->query($sql);
@@ -318,14 +318,14 @@ function dolibarr_del_const($db, $name, $entity=1)
 		\param	    entity			Multi company id
 		\return     string      Valeur de la constante
 */
-function dolibarr_get_const($db, $name, $entity=1)
+function dolibarr_get_const($db, $name)
 {
     $value='';
 
     $sql ="SELECT value";
     $sql.=" FROM llx_const";
     $sql.=" WHERE name = '".addslashes($name)."'";
-    $sql.= " AND entity = ".$entity;
+    $sql.= " AND entity = ".$conf->entity;
 
     dol_syslog("admin.lib::dolibarr_get_const sql=".$sql);
     $resql=$db->query($sql);
@@ -350,7 +350,7 @@ function dolibarr_get_const($db, $name, $entity=1)
    \param	    entity			Multi company id
    \return     	int         -1 if KO, 1 if OK
 */
-function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='',$entity=1)
+function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
 {
 	global $conf;
 	
@@ -364,14 +364,14 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
   //dol_syslog("dolibarr_set_const name=$name, value=$value");
   $sql = "DELETE FROM llx_const WHERE name = '".addslashes($name)."'";
-  $sql.= " AND entity = ".$entity;
+  $sql.= " AND entity = ".$conf->entity;
   dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 
   if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
   {
   	$sql = "INSERT INTO llx_const(name,value,type,visible,note,entity)";
-	  $sql.= " VALUES ('".$name."','".addslashes($value)."','".$type."',".$visible.",'".addslashes($note)."',".$entity.")";
+	  $sql.= " VALUES ('".$name."','".addslashes($value)."','".$type."',".$visible.",'".addslashes($note)."',".$conf->entity.")";
 
 		dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 	  $resql=$db->query($sql);
