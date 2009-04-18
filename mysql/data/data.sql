@@ -178,7 +178,7 @@ insert into llx_const (name, value, type, note, visible) values ('DON_ADDON_MODE
 insert into llx_const (name, value, type, note, visible) values ('PROPALE_ADDON',       'mod_propale_marbre','chaine','',0);
 insert into llx_const (name, value, type, note, visible) values ('PROPALE_ADDON_PDF',   'azur','chaine','',0);
 insert into llx_const (name, value, type, note, visible) values ('COMMANDE_ADDON',      'mod_commande_marbre','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('COMMANDE_ADDON_PDF',  'einstein','chaine',0);
+insert into llx_const (name, value, type, note, visible) values ('COMMANDE_ADDON_PDF',  'einstein','chaine', '',0);
 insert into llx_const (name, value, type, note, visible) values ('COMMANDE_SUPPLIER_ADDON',      'mod_commande_fournisseur_muguet','chaine','',0);
 insert into llx_const (name, value, type, note, visible) values ('COMMANDE_SUPPLIER_ADDON_PDF',  'muscadet','chaine','',0);
 insert into llx_const (name, value, type, note, visible) values ('EXPEDITION_ADDON',    'enlevement','chaine','',0);
