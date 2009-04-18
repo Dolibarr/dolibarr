@@ -125,6 +125,13 @@ ALTER TABLE llx_categorie_association ADD UNIQUE INDEX uk_categorie_association_
 
 -- Multi company
 ALTER TABLE llx_const ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER tms;
+ALTER TABLE llx_user ADD COLUMN entity varchar(20) DEFAULT 1 NOT NULL AFTER lang;
+ALTER TABLE llx_usergroup ADD COLUMN entity varchar(20) DEFAULT 1 NOT NULL AFTER note;
+
 ALTER TABLE llx_const DROP INDEX name;
+ALTER TABLE llx_user DROP INDEX uk_user_login;
+ALTER TABLE llx_usergroup DROP INDEX nom;
 
 ALTER TABLE llx_const ADD UNIQUE INDEX uk_const (name, entity);
+ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_login (login, entity);
+ALTER TABLE llx_usergroup ADD UNIQUE INDEX uk_usergroup_name (nom, entity);

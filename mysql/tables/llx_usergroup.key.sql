@@ -1,7 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2007      Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2009 Regis Houssin  <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,12 +16,7 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- ===========================================================================
+-- ============================================================================
 
 
-ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_login (login, entity);
-
-ALTER TABLE llx_user ADD INDEX uk_user_fk_societe   (fk_societe);
-
-ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_fk_socpeople (fk_socpeople);
-ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_fk_member    (fk_member);
+ALTER TABLE llx_usergroup ADD UNIQUE INDEX uk_usergroup_name (nom, entity);

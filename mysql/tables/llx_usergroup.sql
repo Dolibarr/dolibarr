@@ -1,6 +1,7 @@
 -- ============================================================================
--- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,7 +25,17 @@ create table llx_usergroup
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
   datec         datetime,
   tms           timestamp,
-  nom           varchar(255) NOT NULL UNIQUE,
-  note          text
-
+  nom           varchar(255) NOT NULL,
+  note          text,
+  entity        varchar(20) DEFAULT 1 NOT NULL	-- multi company id
 )type=innodb;
+
+-- 
+-- List of codes for the field entity
+--
+-- 0 : common group
+-- 1 : first company group
+-- 2 : second company group
+-- 1,3 : first and third company group
+-- etc...
+--

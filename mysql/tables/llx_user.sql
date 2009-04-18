@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2007      Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2007-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -50,5 +50,16 @@ create table llx_user
   egroupware_id     integer,
   ldap_sid          varchar(255) DEFAULT NULL,
   statut			      tinyint DEFAULT 1,
-  lang              varchar(6)
+  lang              varchar(6),
+  entity            varchar(20) DEFAULT 1 NOT NULL	-- multi company id
 )type=innodb;
+
+-- 
+-- List of codes for the field entity
+--
+-- 0 : common user
+-- 1 : first company user
+-- 2 : second company user
+-- 1,3 : first and third company user
+-- etc...
+--

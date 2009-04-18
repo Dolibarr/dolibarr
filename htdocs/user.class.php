@@ -4,7 +4,7 @@
  * Copyright (c) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,6 +63,7 @@ class User extends CommonObject
 	var $user_mobile;
 	var $admin;
 	var $login;
+	var $entity;
 
 	//! Clear password in memory
 	var $pass;
@@ -146,7 +147,7 @@ class User extends CommonObject
 		$sql.= " u.admin, u.login, u.webcal_login, u.phenix_login, u.phenix_pass, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.ldap_sid,";
-		$sql.= " u.statut, u.lang,";
+		$sql.= " u.statut, u.lang, u.entity,";
 		$sql.= " ".$this->db->pdate("u.datec")." as datec,";
 		$sql.= " ".$this->db->pdate("u.tms")." as datem,";
 		$sql.= " ".$this->db->pdate("u.datelastlogin")." as datel,";
@@ -194,6 +195,7 @@ class User extends CommonObject
 				$this->note = $obj->note;
 				$this->statut = $obj->statut;
 				$this->lang = $obj->lang;
+				$this->entity = $obj->entity;
 
 				$this->datec  = $obj->datec;
 				$this->datem  = $obj->datem;
@@ -980,6 +982,7 @@ class User extends CommonObject
 		$sql.= ", phenix_login = '".addslashes($this->phenix_login)."'";
 		$sql.= ", phenix_pass = '".addslashes($this->phenix_pass)."'";
 		$sql.= ", note = '".addslashes($this->note)."'";
+		//$sql.= ", entity = '".$this->entity."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("User::update sql=".$sql, LOG_DEBUG);
@@ -1027,6 +1030,8 @@ class User extends CommonObject
 
 						$adh->user_id=$this->id;
 						$adh->user_login=$this->login;
+						
+						//$adh->entity=$this->entity;
 
 						$result=$adh->update($user,0,1);
 						if ($result < 0)
@@ -1702,7 +1707,7 @@ class User extends CommonObject
 	function info($id)
 	{
 		$sql = "SELECT u.rowid, u.login as ref, ".$this->db->pdate("datec")." as datec,";
-		$sql.= $this->db->pdate("u.tms")." as date_modification";
+		$sql.= $this->db->pdate("u.tms")." as date_modification, u.entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.rowid = ".$id;
 
@@ -1718,6 +1723,7 @@ class User extends CommonObject
 				$this->ref			     = (! $obj->ref) ? $obj->rowid : $obj->ref;
 				$this->date_creation     = $obj->datec;
 				$this->date_modification = $obj->date_modification;
+				$this->entity            = $obj->entity;
 			}
 
 			$this->db->free($result);

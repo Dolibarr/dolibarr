@@ -17,5 +17,33 @@
 -- $Id$
 --
 
-UPDATE llx_const SET entity=1 WHERE name='MAIN_MODULE_USER' AND entity=0;
+--
+-- Constantes communes de configuration
+--
 DELETE FROM llx_const WHERE name='MAIN_MODULE_MULTICOMPANY';
+UPDATE llx_const SET entity=1 WHERE name='MAIN_MODULE_USER' AND entity=0;
+UPDATE llx_const SET entity=1 WHERE name='MAIN_POPUP_CALENDAR' AND entity=0;
+UPDATE llx_const SET entity=1 WHERE name='MAIN_MAIL_SMTP_SERVER' AND entity=0;
+UPDATE llx_const SET entity=1 WHERE name='MAIN_MAIL_SMTP_PORT' AND entity=0;
+UPDATE llx_const SET entity=1 WHERE name='MAIN_UPLOAD_DOC' AND entity=0;
+UPDATE llx_const SET entity=1 WHERE name='MAIN_FEATURES_LEVEL' AND entity=0;
+UPDATE llx_const SET entity=1 WHERE name='MAIN_SEARCHFORM_SOCIETE' AND entity=0;
+UPDATE llx_const SET entity=1 WHERE name='MAIN_SEARCHFORM_CONTACT' AND entity=0;
+UPDATE llx_const SET entity=1 WHERE name='MAIN_SEARCHFORM_PRODUITSERVICE' AND entity=0;
+UPDATE llx_const SET entity=1 WHERE name='MAIN_SEARCHFORM_ADHERENT' AND entity=0;
+
+--
+-- IHM
+--
+UPDATE llx_const SET entity=1 WHERE name='MAIN_SIZE_LISTE_LIMIT' AND entity=0;
+UPDATE llx_const SET entity=1 WHERE name='MAIN_SHOW_WORKBOARD' AND entity=0;
+
+--
+-- Tiers
+--
+UPDATE llx_const SET entity=1 WHERE name='SOCIETE_NOLIST_COURRIER' AND entity=0;
+
+--
+-- Barcode
+--
+UPDATE llx_const SET entity=1 WHERE name='GENBARCODE_LOCATION' AND entity=0;
