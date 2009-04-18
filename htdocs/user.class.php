@@ -982,7 +982,7 @@ class User extends CommonObject
 		$sql.= ", phenix_login = '".addslashes($this->phenix_login)."'";
 		$sql.= ", phenix_pass = '".addslashes($this->phenix_pass)."'";
 		$sql.= ", note = '".addslashes($this->note)."'";
-		//$sql.= ", entity = '".$this->entity."'";
+		$sql.= ", entity = '".$this->entity."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("User::update sql=".$sql, LOG_DEBUG);
