@@ -51,7 +51,7 @@ create table llx_user
   ldap_sid          varchar(255) DEFAULT NULL,
   statut			      tinyint DEFAULT 1,
   lang              varchar(6),
-  entity            varchar(20) DEFAULT 1 NOT NULL	-- multi company id
+  entity            integer DEFAULT 1 NOT NULL	-- multi company id
 )type=innodb;
 
 -- 
@@ -60,6 +60,5 @@ create table llx_user
 -- 0 : common user
 -- 1 : first company user
 -- 2 : second company user
--- 1,3 : first and third company user
--- etc...
+-- 3 : etc...
 --

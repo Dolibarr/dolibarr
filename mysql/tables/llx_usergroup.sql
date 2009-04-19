@@ -27,7 +27,7 @@ create table llx_usergroup
   tms           timestamp,
   nom           varchar(255) NOT NULL,
   note          text,
-  entity        varchar(20) DEFAULT 1 NOT NULL	-- multi company id
+  entity        integer DEFAULT 1 NOT NULL	-- multi company id
 )type=innodb;
 
 -- 
@@ -36,6 +36,5 @@ create table llx_usergroup
 -- 0 : common group
 -- 1 : first company group
 -- 2 : second company group
--- 1,3 : first and third company group
--- etc...
+-- 3 : etc...
 --
