@@ -320,21 +320,22 @@ function dolibarr_del_const($db, $name)
 */
 function dolibarr_get_const($db, $name)
 {
-    $value='';
+	global $conf;
+  $value='';
 
-    $sql ="SELECT value";
-    $sql.=" FROM llx_const";
-    $sql.=" WHERE name = '".addslashes($name)."'";
-    $sql.= " AND entity = ".$conf->entity;
+  $sql = "SELECT value";
+  $sql.= " FROM llx_const";
+  $sql.= " WHERE name = '".addslashes($name)."'";
+  $sql.= " AND entity = ".$conf->entity;
 
-    dol_syslog("admin.lib::dolibarr_get_const sql=".$sql);
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $obj=$db->fetch_object($resql);
-        if ($obj) $value=$obj->value;
-    }
-    return $value;
+  dol_syslog("admin.lib::dolibarr_get_const sql=".$sql);
+  $resql=$db->query($sql);
+  if ($resql)
+  {
+  	$obj=$db->fetch_object($resql);
+    if ($obj) $value=$obj->value;
+  }
+  return $value;
 }
 
 
