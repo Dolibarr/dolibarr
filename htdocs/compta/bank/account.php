@@ -38,7 +38,7 @@ require_once(DOL_DOCUMENT_ROOT."/fourn/facture/paiementfourn.class.php");
 
 // Security check
 if (!$user->rights->banque->lire)
-    accessforbidden();
+accessforbidden();
 
 
 $langs->load("bills");
@@ -59,27 +59,27 @@ $mesg='';
 
 
 /*
-* Action
-*/
+ * Action
+ */
 $dateop=-1;
 
 if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user->rights->banque->modifier)
 {
 
 	if (price2num($_POST["credit"]) > 0)
-    {
-        $amount = price2num($_POST["credit"]);
-    }
-    else
-    {
-        $amount = - price2num($_POST["debit"]);
-    }
+	{
+		$amount = price2num($_POST["credit"]);
+	}
+	else
+	{
+		$amount = - price2num($_POST["debit"]);
+	}
 
-    $dateop = dol_mktime(12,0,0,$_POST["opmonth"],$_POST["opday"],$_POST["opyear"]);
-    $operation=$_POST["operation"];
-    $num_chq=$_POST["num_chq"];
-    $label=$_POST["label"];
-    $cat1=$_POST["cat1"];
+	$dateop = dol_mktime(12,0,0,$_POST["opmonth"],$_POST["opday"],$_POST["opyear"]);
+	$operation=$_POST["operation"];
+	$num_chq=$_POST["num_chq"];
+	$label=$_POST["label"];
+	$cat1=$_POST["cat1"];
 
 	if (! $dateop)    $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Date"));
 	if (! $operation) $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
@@ -87,17 +87,17 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user-
 
 	if (! $mesg)
 	{
-	    $acct=new Account($db,$account);
-	    $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
-	    if ($insertid > 0)
-	    {
-	        Header("Location: account.php?account=" . $account);
-	        exit;
-	    }
-	    else
-	    {
-	        dol_print_error($db,$acct->error);
-	    }
+		$acct=new Account($db,$account);
+		$insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
+		if ($insertid > 0)
+		{
+			Header("Location: account.php?account=" . $account);
+			exit;
+		}
+		else
+		{
+			dol_print_error($db,$acct->error);
+		}
 	}
 	else
 	{
@@ -113,8 +113,8 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"]=='yes' && $user->r
 
 
 /*
-* View
-*/
+ * View
+ */
 
 llxHeader();
 
@@ -271,8 +271,8 @@ if ($account || $_GET["ref"])
 
 
 	/**
-	* Search form
-	*/
+	 * Search form
+	 */
 
 	// Define transaction list navigation string
 	$navig='';
@@ -364,9 +364,9 @@ if ($account || $_GET["ref"])
 	}
 
 	/*
-	* Affiche tableau des transactions bancaires
-	*
-	*/
+	 * Affiche tableau des transactions bancaires
+	 *
+	 */
 
 	// Ligne de titre tableau des ecritures
 	print '<tr class="liste_titre">';
@@ -399,9 +399,9 @@ if ($account || $_GET["ref"])
 	print "</form>\n";
 
 	/* Another solution
-	* create temporary table solde type=heap select amount from llx_bank limit 100 ;
-	* select sum(amount) from solde ;
-	*/
+	 * create temporary table solde type=heap select amount from llx_bank limit 100 ;
+	 * select sum(amount) from solde ;
+	 */
 
 	$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv,";
 	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
@@ -444,53 +444,53 @@ if ($account || $_GET["ref"])
 	if ($result)
 	{
 		$total = 0;
-        $time = time();
+		$time = time();
 
-	    $var=true;
+		$var=true;
 
-	    $num = $db->num_rows($result);
-	    $i = 0; $total = 0; $sep = 0;
+		$num = $db->num_rows($result);
+		$i = 0; $total = 0; $sep = 0;
 
-	    while ($i < $num)
-	    {
-	        $objp = $db->fetch_object($result);
-	        $total = $total + $objp->amount;
-	        if ($i >= ($nbline - $viewline))
-	        {
-	            $var=!$var;
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($result);
+			$total = $total + $objp->amount;
+			if ($i >= ($nbline - $viewline))
+			{
+				$var=!$var;
 
-	            if ($objp->do > $time && !$sep)
-	            {
-	                $sep = 1 ;
-	                print "<tr><td align=\"right\" colspan=\"6\">&nbsp;</td>";
-	                print "<td align=\"right\" nowrap><b>".price($total - $objp->amount)."</b></td>";
-	                print "<td>&nbsp;</td>";
-	                print '</tr>';
-	            }
+				if ($objp->do > $time && !$sep)
+				{
+					$sep = 1 ;
+					print "<tr><td align=\"right\" colspan=\"6\">&nbsp;</td>";
+					print "<td align=\"right\" nowrap><b>".price($total - $objp->amount)."</b></td>";
+					print "<td>&nbsp;</td>";
+					print '</tr>';
+				}
 
-	            print "<tr $bc[$var]>";
+				print "<tr $bc[$var]>";
 
-	            print "<td nowrap>".dol_print_date($objp->do,"day")."</td>\n";
+				print "<td nowrap>".dol_print_date($objp->do,"day")."</td>\n";
 
-	            print "<td nowrap>&nbsp;".dol_print_date($objp->dv,"day")."</td>\n";
+				print "<td nowrap>&nbsp;".dol_print_date($objp->dv,"day")."</td>\n";
 
-	            print "<td nowrap>&nbsp;".$langs->trans($objp->fk_type)." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
+				print "<td nowrap>&nbsp;".$langs->trans($objp->fk_type)." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
 
-	            // Description
-	            print '<td>';
+				// Description
+				print '<td>';
 
-	            $links = $acct->get_url($objp->rowid);
+				$links = $acct->get_url($objp->rowid);
 
-	            $isbanktransfert=false;
-	            foreach($links as $key=>$val) { if ($val['type']=='banktransfert') $isbanktransfert=true; }
-	            $issocialcontrib=false;
-	            foreach($links as $key=>$val) { if ($val['type']=='sc') $issocialcontrib=true; }
+				$isbanktransfert=false;
+				foreach($links as $key=>$val) { if ($val['type']=='banktransfert') $isbanktransfert=true; }
+				$issocialcontrib=false;
+				foreach($links as $key=>$val) { if ($val['type']=='sc') $issocialcontrib=true; }
 
-	            $showlabel=true;
-	            //if (sizeof($links) == 0) $showlabel=true;
-	            //if ($isbanktransfert || $issocialcontrib) $showlabel=true;
-	            if ($showlabel)
-	            {
+				$showlabel=true;
+				//if (sizeof($links) == 0) $showlabel=true;
+				//if ($isbanktransfert || $issocialcontrib) $showlabel=true;
+				if ($showlabel)
+				{
 					if (eregi('^\((.*)\)$',$objp->label,$reg))
 					{
 						// Genereic description because between (). We show it after translating.
@@ -498,28 +498,29 @@ if ($account || $_GET["ref"])
 					}
 					else
 					{
-		            	print dol_trunc($objp->label,60);
-		            }
-	            }
+						print dol_trunc($objp->label,60);
+					}
+				}
 
-	            // Add links in description field
-	            foreach($links as $key=>$val)
-	            {
-	                if ($links[$key]['type']=='payment') {
-	                    $paymentstatic->id=$links[$key]['url_id'];
-	                    print ' '.$paymentstatic->getNomUrl(2);
-	                }
-	                else if ($links[$key]['type']=='payment_supplier') {
-	                	$paymentsupplierstatic->id=$links[$key]['url_id'];
-	                	$paymentsupplierstatic->ref=$links[$key]['url_id'];
-	                	print ' '.$paymentsupplierstatic->getNomUrl(2);
-	                }
-	                else if ($links[$key]['type']=='company') {
-	                }
+				// Add links in description field
+				foreach($links as $key=>$val)
+				{
+					if ($links[$key]['type']=='payment') {
+						$paymentstatic->id=$links[$key]['url_id'];
+						print ' '.$paymentstatic->getNomUrl(2);
+					}
+					else if ($links[$key]['type']=='payment_supplier') {
+						$paymentsupplierstatic->id=$links[$key]['url_id'];
+						$paymentsupplierstatic->ref=$links[$key]['url_id'];
+						print ' '.$paymentsupplierstatic->getNomUrl(2);
+					}
+					else if ($links[$key]['type']=='company') {
+					}
 					else if ($links[$key]['type']=='sc') {	// This is waiting for card to link to payment_sc
-	                	$chargestatic->id=$links[$key]['url_id'];
-	                    $chargestatic->ref=$links[$key]['url_id'];
-	                    print ' '.$chargestatic->getNomUrl(2);
+						$chargestatic->id=$links[$key]['url_id'];
+						$chargestatic->ref=$links[$key]['url_id'];
+						$chargestatic->lib=$langs->trans("SocialContribution");
+						print ' '.$chargestatic->getNomUrl(2);
 					}
 					else if ($links[$key]['type']=='payment_sc')
 					{
@@ -533,9 +534,9 @@ if ($account || $_GET["ref"])
 					}
 					else if ($links[$key]['type']=='payment_vat')
 					{
-	                    $paymentvatstatic->id=$links[$key]['url_id'];
+						$paymentvatstatic->id=$links[$key]['url_id'];
 						$paymentvatstatic->ref=$links[$key]['url_id'];
-	                    print ' '.$paymentvatstatic->getNomUrl(2);
+						print ' '.$paymentvatstatic->getNomUrl(2);
 					}
 					else if ($links[$key]['type']=='banktransfert') {
 						/* Do not show this link (avoid confusion). Can already be accessed from transaction detail */
@@ -544,7 +545,7 @@ if ($account || $_GET["ref"])
 					}
 					else {
 						//print ' - ';
-	    			    print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+						print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
 						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
 						{
 							// Label générique car entre parenthèses. On l'affiche en le traduisant
@@ -553,111 +554,111 @@ if ($account || $_GET["ref"])
 						}
 						else
 						{
-			            	print $links[$key]['label'];
-			            }
-	                	print '</a>';
-	                }
-	            }
-	            print '</td>';
+							print $links[$key]['label'];
+						}
+						print '</a>';
+					}
+				}
+				print '</td>';
 
 
-	            // Add third party column
+				// Add third party column
 				print '<td>';
 				foreach($links as $key=>$val)
-	            {
-	                if ($links[$key]['type']=='company') {
-	                    $societestatic->id=$links[$key]['url_id'];
+				{
+					if ($links[$key]['type']=='company') {
+						$societestatic->id=$links[$key]['url_id'];
 						$societestatic->nom=$links[$key]['label'];
 						print $societestatic->getNomUrl(1,'',16);
-	                }
+					}
 					/*else if ($links[$key]['type']=='sc') {
-	                    $chargestatic->id=$links[$key]['url_id'];
+					 $chargestatic->id=$links[$key]['url_id'];
 						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
 						{
-							if ($reg[1]=='socialcontribution') $reg[1]='SocialContribution';
-							$chargestatic->lib=$langs->trans($reg[1]);
+						if ($reg[1]=='socialcontribution') $reg[1]='SocialContribution';
+						$chargestatic->lib=$langs->trans($reg[1]);
 						}
 						else
 						{
-							$chargestatic->lib=$links[$key]['label'];
+						$chargestatic->lib=$links[$key]['label'];
 						}
 						print $chargestatic->getNomUrl(1,'',16);
-					}*/
+						}*/
 					else if ($links[$key]['type']=='member') {
-	                    $memberstatic->id=$links[$key]['url_id'];
+						$memberstatic->id=$links[$key]['url_id'];
 						$memberstatic->ref=$links[$key]['label'];
 						print $memberstatic->getNomUrl(1,16,'card');
 					}
-	            }
-	            print '</td>';
+				}
+				print '</td>';
 
-	            if ($objp->amount < 0)
-	            {
-	                print "<td align=\"right\" nowrap>".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
-	            }
-	            else
-	            {
-	                print "<td>&nbsp;</td><td align=\"right\" nowrap>&nbsp;".price($objp->amount)."</td>\n";
-	            }
+				if ($objp->amount < 0)
+				{
+					print "<td align=\"right\" nowrap>".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+				}
+				else
+				{
+					print "<td>&nbsp;</td><td align=\"right\" nowrap>&nbsp;".price($objp->amount)."</td>\n";
+				}
 
-	            if ($action != 'search')
-	            {
-	                if ($total >= 0)
-	                {
-	                    print '<td align="right" nowrap>&nbsp;'.price($total).'</td>';
-	                }
-	                else
-	                {
-	                    print '<td align="right" class="error" nowrap>&nbsp;'.price($total).'</td>';
-	                }
-	            }
-	            else
-	            {
-	                print '<td align="right">-</td>';
-	            }
-
-	            // Relevé rappro ou lien edition
-	            if ($objp->rappro && $acct->type != 2)  // Si non compte cash
-	            {
-	                print "<td align=\"center\" nowrap>";
-	                print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
-	                print img_view();
-	                print '</a>';
-	                print "&nbsp; ";
-	                print "<a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a>";
-	                print "</td>";
-	            }
-	            else
-	            {
-                    print '<td align="center">';
-	                if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
-	                {
-	                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
-	                    print img_edit();
-	                    print '</a>';
+				if ($action != 'search')
+				{
+					if ($total >= 0)
+					{
+						print '<td align="right" nowrap>&nbsp;'.price($total).'</td>';
 					}
 					else
 					{
-	                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
-	                    print img_view();
-	                    print '</a>';
+						print '<td align="right" class="error" nowrap>&nbsp;'.price($total).'</td>';
+					}
+				}
+				else
+				{
+					print '<td align="right">-</td>';
+				}
+
+				// Relevé rappro ou lien edition
+				if ($objp->rappro && $acct->type != 2)  // Si non compte cash
+				{
+					print "<td align=\"center\" nowrap>";
+					print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
+					print img_view();
+					print '</a>';
+					print "&nbsp; ";
+					print "<a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a>";
+					print "</td>";
+				}
+				else
+				{
+					print '<td align="center">';
+					if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
+					{
+						print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
+						print img_edit();
+						print '</a>';
+					}
+					else
+					{
+						print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
+						print img_view();
+						print '</a>';
 					}
 					print '&nbsp;';
-	                if ($user->rights->banque->modifier)
-	                {
-	                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?action=delete&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
-	                    print img_delete();
-	                    print '</a>';
-	                }
+					if ($user->rights->banque->modifier)
+					{
+						print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?action=delete&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
+						print img_delete();
+						print '</a>';
+					}
 					print '</td>';
-	            }
+				}
 
-	            print "</tr>";
+				print "</tr>";
 
-	        }
+			}
 
-	        $i++;
-	    }
+			$i++;
+		}
 
 		// Affichage total
 		if ($page == 0 && ! $mode_search)
@@ -680,8 +681,8 @@ if ($account || $_GET["ref"])
 	print "\n</div>\n";
 
 	/*
-	*  Boutons actions
-	*/
+	 *  Boutons actions
+	 */
 	if ($_GET["action"] != 'addline' && $_GET["action"] != 'delete')
 	{
 		print '<div class="tabsAction">';

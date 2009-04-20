@@ -25,6 +25,13 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/facture/paiementfourn.class.php");
 
 $langs->load("banks");
 $langs->load("bills");
@@ -54,17 +61,17 @@ if ($user->rights->banque->consolidate && $_POST["action"] == 'rappro')
 {
 	// Definition, nettoyage parametres
     $num_releve=trim($_POST["num_releve"]);
-    
+
     if ($num_releve)
     {
         $bankline=new AccountLine($db);
         $result=$bankline->fetch($_POST["rowid"]);
         $bankline->num_releve=$_POST["num_releve"];
-        
+
         $result=$bankline->update_conciliation($user,$_POST["cat"]);
         if ($result < 0) $mesg=$bankline->error;
     }
-    else 
+    else
     {
     	$langs->load("errors");
         $mesg='<div class="error">'.$langs->trans("ErrorPleaseTypeBankTransactionReportName").'</div>';
@@ -110,6 +117,13 @@ if ($resql) {
 $form=new Form($db);
 
 llxHeader();
+
+$societestatic=new Societe($db);
+$chargestatic=new ChargeSociales($db);
+$memberstatic=new Adherent($db);
+$paymentstatic=new Paiement($db);
+$paymentsupplierstatic=new PaiementFourn($db);
+$paymentvatstatic=new TVA($db);
 
 $acct = new Account($db);
 $acct->fetch($_GET["account"]);
@@ -189,7 +203,7 @@ if ($resql)
 
         // Date op
         print '<td align="center" nowrap="nowrap">'.dol_print_date($objp->do,"day").'</td>';
-        
+
         // Date value
 		if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
 		{
@@ -208,7 +222,7 @@ if ($resql)
 			print dol_print_date($objp->dv,"day");
 			print '</td>';
 		}
-        
+
 		// Number
 		print '<td nowrap="nowrap">'.$objp->type.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
 
@@ -219,7 +233,7 @@ if ($resql)
 		if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
 		else print $objp->label;
         print '</a>';
-        
+
         /*
          * Ajout les liens (societe, company...)
          */
@@ -230,26 +244,14 @@ if ($resql)
             if (! $newline) print ' - ';
             else print '<br>';
             if ($links[$key]['type']=='payment') {
-                print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-                print img_object($langs->trans('ShowPayment'),'payment').' ';
-                print $langs->trans("Payment");
-                print '</a>';
+	            $paymentstatic->id=$links[$key]['url_id'];
+	            print ' '.$paymentstatic->getNomUrl(2);
                 $newline=0;
             }
             elseif ($links[$key]['type']=='payment_supplier') {
-				print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
-				if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
-				{
-					// Label générique car entre parenthèses. On l'affiche en le traduisant	
-					if ($reg[1]=='paiement') $reg[1]='Payment';
-					print img_object($langs->trans('ShowPayment'),'payment').' ';
-					print $langs->trans($reg[1]);
-				}
-				else
-				{    
-					print $links[$key]['label'];
-				}
-				print '</a>';
+				$paymentsupplierstatic->id=$links[$key]['url_id'];
+				$paymentsupplierstatic->ref=$links[$key]['label'];
+				print ' '.$paymentsupplierstatic->getNomUrl(1);
                 $newline=0;
 			}
             elseif ($links[$key]['type']=='company') {
@@ -260,15 +262,32 @@ if ($resql)
                 $newline=0;
             }
 			else if ($links[$key]['type']=='sc') {
-				print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
-				print img_object($langs->trans('ShowBill'),'bill').' ';
-				print $langs->trans("SocialContribution");
-				print '</a>';
+				$chargestatic->id=$links[$key]['url_id'];
+				$chargestatic->ref=$links[$key]['url_id'];
+				$chargestatic->lib=$langs->trans("SocialContribution");
+				print ' '.$chargestatic->getNomUrl(1);
 			}
-			else if ($links[$key]['type']=='payment_sc') {
+			else if ($links[$key]['type']=='payment_sc')
+			{
+				//print ' - ';
+				/*
 				print '<a href="'.DOL_URL_ROOT.'/compta/sociales/xxx.php?id='.$links[$key]['url_id'].'">';
-				print img_object($langs->trans('ShowPayment'),'payment').' ';
+				//print img_object($langs->trans('ShowPayment'),'payment').' ';
 				print $langs->trans("SocialContributionPayment");
+				print '</a>';
+				*/
+			}
+			else if ($links[$key]['type']=='payment_vat')
+			{
+				$paymentvatstatic->id=$links[$key]['url_id'];
+				$paymentvatstatic->ref=$links[$key]['url_id'];
+				$paymentvatstatic->ref=$langs->trans("VATPayment");
+				print ' '.$paymentvatstatic->getNomUrl(1);
+			}
+			else if ($links[$key]['type']=='banktransfert') {
+				print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
+				print img_object($langs->trans('ShowTransaction'),'payment').' ';
+				print $langs->trans("TransactionOnTheOtherAccount");
 				print '</a>';
 			}
 			else if ($links[$key]['type']=='member') {
@@ -277,16 +296,20 @@ if ($resql)
 				print $links[$key]['label'];
 				print '</a>';
 			}
-			else if ($links[$key]['type']=='banktransfert') {
-				print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
-				print img_object($langs->trans('ShowTransaction'),'payment').' ';
-				print $langs->trans("TransactionOnTheOtherAccount");
+			else {
+				//print ' - ';
+				print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+				if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
+				{
+					// Label générique car entre parenthèses. On l'affiche en le traduisant
+					if ($reg[1]=='paiement') $reg[1]='Payment';
+					print $langs->trans($reg[1]);
+				}
+				else
+				{
+					print $links[$key]['label'];
+				}
 				print '</a>';
-			}
-            else {
-                print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-                print $links[$key]['label'];
-                print '</a>';
                 $newline=0;
             }
         }

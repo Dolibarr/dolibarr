@@ -482,11 +482,20 @@ class PaiementFourn
 		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
+		$text=$this->ref;	// Sometimes ref contains label
+		if (eregi('^\((.*)\)$',$text,$reg))
+		{
+			// Label générique car entre parenthèses. On l'affiche en le traduisant
+			if ($reg[1]=='paiement') $reg[1]='Payment';
+			$text=$langs->trans($reg[1]);
+		}
+
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"),'payment').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$lien.$text.$lienfin;
 		return $result;
 	}
+
     /**
      *      \brief      Updates the payment number
      *      \param      string          New num
