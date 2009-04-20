@@ -40,7 +40,7 @@ $version='$Revision$';
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 @set_time_limit(0);
 $error=0;
-$forcecommit=1;
+$forcecommit=0;
 
 
 require_once($path."../../htdocs/master.inc.php");
