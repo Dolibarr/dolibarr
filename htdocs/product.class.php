@@ -102,8 +102,6 @@ class Product extends CommonObject
 	var $errno = 0;
 	//! Canevas a utiliser si le produit n'est pas un produit generique
 	var $canvas;
-	//! Nombre de piece en commande, non expedie
-	var $stock_in_command;
 
 	//! Id du fournisseur
 	var $product_fourn_id;
@@ -937,9 +935,6 @@ class Product extends CommonObject
 			$this->volume_units       = $result["volume_units"];
 			$this->barcode            = $result["barcode"];
 			$this->barcode_type       = $result["fk_barcode_type"];
-
-			$this->stock_in_command   = 0;	// TODO
-			$this->stock_in_propal    = 0;	// TODO
 
 			$this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
 
