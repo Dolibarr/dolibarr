@@ -428,7 +428,7 @@ foreach ($orders as $key => $value)
         if (! empty($conf->global->$const_name))
         {
             // Module actif
-            if (! empty($objMod->always_enabled) || (! empty($objMod->core_enabled) && ($conf->entity != 1))) print $langs->trans("Required");
+            if (! empty($objMod->always_enabled)) print $langs->trans("Required");
             else print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;mode=" . $mode . "\">" . $langs->trans("Disable") . "</a></td>\n";
 
             if (! empty($objMod->config_page_url))
