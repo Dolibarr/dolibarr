@@ -1,6 +1,7 @@
 #!/usr/bin/perl
-
-# Copyright (C) 2003 Jean-Louis BERGAMO <jlb@j1b.org>
+#----------------------------------------------------------------------------
+# Copyright (C) 2003 Jean-Louis BERGAMO  <jlb@j1b.org>
+# Copyright (C) 2009 Laurent Destailleur <eldy@users.sourceforge.net>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,10 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
-# ce script prend l'intergralite des adherents valide et les mets dans
-# une mailing-liste.  ce script est utilie si l'on souhaite avoir une
-# mailing-liste avec uniquement les adherents valides.
+#---------------------------------------------------------------------------
+# This script build a file with format
+# login:password
+#---------------------------------------------------------------------------
 
 use DBI;
 use strict;
@@ -33,8 +34,8 @@ if (defined $optctl{'help'}){
   &usage();
 }
 my $host=$optctl{'host'}||'localhost';
-my $dbname=$optctl{'db'}||'dolibarr';
-my $user=$optctl{'user'}||'dolibarr';
+my $dbname=$optctl{'db'}||&usage();
+my $user=$optctl{'user'}||&usage();
 my $pass=$optctl{'pass'}||'';
 my $type=$optctl{'type'}||'mysql';
 #my $ml=$optctl{'ml'}||&usage();
@@ -64,8 +65,9 @@ while (my @row = $sth->fetchrow_array ){
 $dbh->disconnect();
 
 sub usage{
-  print "$0 [--help] [--host] [--db] [--user] [--pass] [--cotis] [--crypt]\n";
-  print " cotis : select only adherents with cotisations up-to-date\n";
+  print "Usage: $0 --db=database --user=user --pass=password [--help] [--host=host] [--cotis] [--crypt]\n";
+  print " --cotis : select only adherents with cotisations up-to-date\n";
+  print " --crypt : password is encrypted\n";
   print "\n";
   exit (1);
 }
