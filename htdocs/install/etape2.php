@@ -443,52 +443,6 @@ if ($_POST["action"] == "set")
     }
 
 
-    /***************************************************************************************
-    *
-    * Les variables qui ecrase le chemin par defaut sont redefinies
-    *
-    ***************************************************************************************/
-    if ($ok == 1)
-    {
-        $sql[0] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/facture',
-        type = 'chaine',
-        visible = 0
-        where name  ='FAC_OUTPUTDIR';" ;
-
-        $sql[1] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/propale',
-        type = 'chaine',
-        visible = 0
-        where name  = 'PROPALE_OUTPUTDIR';" ;
-
-        $sql[2] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/ficheinter',
-        type = 'chaine',
-        visible = 0
-        where name  = 'FICHEINTER_OUTPUTDIR';" ;
-
-        $sql[3] = "UPDATE llx_const SET value='".$dolibarr_main_data_root."/societe',
-        type = 'chaine',
-        visible = 0
-        where name  = 'SOCIETE_OUTPUTDIR';" ;
-
-        $sql[4] = "DELETE from llx_const where name like '%_OUTPUT_URL';";
-
-        $sql[5] = "UPDATE llx_const SET value='".$langs->defaultlang."',
-        type = 'chaine',
-        visible = 0
-        where name  = 'MAIN_LANG_DEFAULT';" ;
-
-        $result = 0;
-
-        for ($i=0; $i < sizeof($sql);$i++)
-        {
-            if ($db->query($sql[$i]))
-            {
-                $result++;
-            }
-        }
-
-    }
-
     print '</table>';
 
     $db->close();
