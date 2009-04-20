@@ -262,10 +262,16 @@ class Adherent extends CommonObject
 		// Check parameters
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($this->email))
 		{
+			$langs->load("companies");
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;
 		}
 		if (! $this->datec) $this->datec=gmmktime();
+		if (empty($this->login))
+		{
+			$this->error = $langs->trans("ErrorWrongValueForParameterX","Login");
+			return -1;
+		}
 
 		$this->db->begin();
 
@@ -275,7 +281,7 @@ class Adherent extends CommonObject
 		$sql.= " VALUES (";
 		$sql.= " '".$this->db->idate($this->datec)."',";
 		$sql.= " '".$this->login."',";
-		$sql.= " ".($user->id>0?$user->id:"null").",";	// Can be null because member can be create by a guest
+		$sql.= " ".($user->id>0?$user->id:"null").",";	// Can be null because member can be create by a guest or a script
 		$sql.= " null,null,'".$this->morphy."',";
 		$sql.= " '".$this->typeid."'";
 		$sql.= ")";
