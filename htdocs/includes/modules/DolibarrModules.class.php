@@ -394,9 +394,9 @@ class DolibarrModules
 
 		$err = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const ";
-		$sql.= "WHERE name = '".$this->const_name."' ";
-		$sql.= "AND entity = ".$conf->entity;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE name = '".$this->const_name."'";
+		$sql.= " AND entity = ".$conf->entity;
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
 
@@ -422,9 +422,9 @@ class DolibarrModules
 
 		$err = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const ";
-		$sql.= "WHERE name = '".$this->const_name."'";
-		$sql.= "AND entity = ".$conf->entity;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE name = '".$this->const_name."'";
+		$sql.= " AND entity = ".$conf->entity;
 		dol_syslog("DolibarrModules::_unactive sql=".$sql);
 		$this->db->query($sql);
 

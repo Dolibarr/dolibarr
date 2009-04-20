@@ -50,6 +50,8 @@ class Conf
 	var $top_menu;
 	var $left_menu;
 
+	var $entity=1;		// By default
+
 	var $css_modules=array();
 	var $tabs_modules=array();
 
@@ -66,8 +68,7 @@ class Conf
 	{
 		dol_syslog("Conf::setValues");
 
-		// Par defaut, a oui
-		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;
+		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;	// Par defaut, a oui
 
 		$this->entity = $entity;
 
