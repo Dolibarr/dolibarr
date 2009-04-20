@@ -879,17 +879,6 @@ class DolibarrModules
 				$result=$menu->create($user);
 				if ($result > 0)
 				{
-					if ($menu->constraint)
-					{
-						$resultConstraint=$menu->addConstraint($result,$menu->constraint);
-						if ($resultConstraint < 0)
-						{
-							$this->error=$menu->error;
-							dol_syslog('DolibarrModules::addConstraint result='.$resultConstraint." ".$this->error, LOG_ERR);
-							$err++;
-							break;
-						}
-					}
 					$this->menu[$key]['rowid']=$result;
 				}
 				else
