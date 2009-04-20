@@ -1474,10 +1474,10 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 
 
 /**
- \brief      Affiche message erreur de type acces interdit et arrete le programme
- \param		message			Force error message
- \param		printheader		Affiche avant le header
- \remarks    L'appel a cette fonction termine le code.
+ *	\brief      Affiche message erreur de type acces interdit et arrete le programme
+ *	\param		message			Force error message
+ *	\param		printheader		Affiche avant le header
+ *	\remarks    L'appel a cette fonction termine le code.
  */
 function accessforbidden($message='',$printheader=1)
 {
@@ -1508,6 +1508,12 @@ function accessforbidden($message='',$printheader=1)
 	exit(0);
 }
 
+
+/* For backward compatibility */
+function dolibarr_print_error($db='',$error='')
+{
+	return dol_print_error($db, $error);
+}
 
 /**
  *	\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remont�e des bugs.
