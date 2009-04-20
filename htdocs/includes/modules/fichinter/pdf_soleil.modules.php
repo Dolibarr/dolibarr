@@ -205,11 +205,12 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetXY($this->marge_gauche+2,$posy+3);
 
+				// Sende name
 				$pdf->SetTextColor(0,0,60);
 				$pdf->SetFont('Arial','B',11);
 				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
-				// Caracteristiques emetteur
+				// Sender properties
 				$carac_emetteur = '';
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
@@ -225,12 +226,10 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetFont('Arial','',9);
 				$pdf->SetXY($this->marge_gauche+2,$posy+9);
-				$pdf->MultiCell(80,3, $carac_emetteur);
+				$pdf->MultiCell(80, 4, $carac_emetteur);
 
 
-				/*
-				 * Adresse Client
-				 */
+				// Client destinataire
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFont('Arial','B',12);
 				$fichinter->fetch_client();
@@ -269,7 +268,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$tab_top=$nexY;
 				$pdf->line(10, $nexY, 200, $nexY);
 
-				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 4
+				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3. Then writeMultiCell must use 3 also.
 
 				//dol_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
 				$num = sizeof($fichinter->lignes);
@@ -285,12 +284,12 @@ class pdf_soleil extends ModelePDFFicheinter
 						if ($valide>0)
 						{
 							$pdf->SetXY (10, $tab_top + $j * $height);
-							$pdf->writeHTMLCell(0, 4, $this->marge_gauche, $tab_top + $j * $height,
+							$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $tab_top + $j * $height,
 							dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($fichinterligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output), 0, 1, 0);
 							$tab_height+=4;
 
 							$pdf->SetXY (10, $tab_top + 4 + $j * $height);
-							$pdf->writeHTMLCell(0, 4, $this->marge_gauche, $tab_top + 4 + $j * $height,
+							$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $tab_top + 4 + $j * $height,
 							dol_htmlentitiesbr($outputlangs->convToOutputCharset($fichinterligne->desc),1), 0, 1, 0);
 							$tab_height+=dol_nboflines_bis($fichinterligne->desc,52)*4;
 

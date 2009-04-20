@@ -650,7 +650,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->SetXY($this->marge_gauche+2,$posy+3);
 			$pdf->MultiCell(80, 4, $carac_emetteur_name, 0, 'L');
 
-			// Caracteristiques emetteur
+			// Sender properties
 			$carac_emetteur = '';
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->adresse);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->cp).' '.$outputlangs->convToOutputCharset($mysoc->ville);
@@ -666,14 +666,14 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY($this->marge_gauche+2,$posy+8);
-			$pdf->MultiCell(80,3, $carac_emetteur);
+			$pdf->MultiCell(80, 4, $carac_emetteur);
 
 			// Client destinataire
 			$posy=42;
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(100,$posy-5);
-			$pdf->MultiCell(96,5, $outputlangs->transnoentities("BillTo").":");
+			$pdf->MultiCell(96, 4, $outputlangs->transnoentities("BillTo").":");
 			//
 			$client = new Societe($this->db);
 			$client->fetch($object->socid);

@@ -392,13 +392,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$blSocW=50;
 		$blSocX2=$blSocW+$blSocXs;
 
-		// Nom emetteur
+		// Sender name
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetXY($blSocX,$blSocY);
 		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 		$pdf->SetTextColor(0,0,0);
 
-		// Caracteristiques emetteur
+		// Sender properties
 		$carac_emetteur = '';
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
@@ -414,7 +414,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		$pdf->SetFont('Arial','',7);
 		$pdf->SetXY($blSocX,$blSocY+4);
-		$pdf->MultiCell(80,2, $carac_emetteur);
+		$pdf->MultiCell(80, 2, $carac_emetteur);
 
 		//Date Expedition
 		$Yoff = $Yoff+7;

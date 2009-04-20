@@ -857,12 +857,12 @@ class pdf_oursin extends ModelePDFFactures
 
 		$pdf->SetXY($this->marges['g'],$posy+4);
 
-		// Nom emetteur
+		// Sender name
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('Arial','B',12);
 		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
-		// Caracteristiques emetteur
+		// Sender properties
 		$carac_emetteur = '';
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
@@ -878,12 +878,10 @@ class pdf_oursin extends ModelePDFFactures
 
 		$pdf->SetFont('Arial','',9);
 		$pdf->SetXY($this->marge_gauche,$posy+9);
-		$pdf->MultiCell(80,3, $carac_emetteur);
+		$pdf->MultiCell(80, 4, $carac_emetteur);
 
 
-		/*
-		 * Client
-		 */
+		// Client destinataire
 		$posy=45;
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);

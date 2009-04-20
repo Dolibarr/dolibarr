@@ -112,6 +112,7 @@ class pdf_edison extends ModelePDFCommandes
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
+        $outputlangs->load("orders");
 
 		$outputlangs->setPhpLang();
 
@@ -194,7 +195,7 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->SetFillColor(220,220,220);
 
 				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('Arial','', 10);
+				$pdf->SetFont('Arial','', 9);
 
 				$pdf->SetXY (10, $tab_top + 10 );
 
@@ -212,20 +213,20 @@ class pdf_edison extends ModelePDFCommandes
 					$nexY = $pdf->GetY();
 
 					$pdf->SetXY (10, $curY);
-					$pdf->MultiCell(20, 5, $outputlangs->convToOutputCharset($com->lignes[$i]->ref), 0, 'C');
+					$pdf->MultiCell(20, 3, $outputlangs->convToOutputCharset($com->lignes[$i]->ref), 0, 'C');
 
 					$pdf->SetXY (133, $curY);
-					$pdf->MultiCell(10, 5, vatrate($com->lignes[$i]->tva_tx), 0, 'C');
+					$pdf->MultiCell(10, 3, vatrate($com->lignes[$i]->tva_tx), 0, 'C');
 
 					$pdf->SetXY (145, $curY);
-					$pdf->MultiCell(10, 5, price2num($com->lignes[$i]->qty), 0, 'C');
+					$pdf->MultiCell(10, 3, price2num($com->lignes[$i]->qty), 0, 'C');
 
 					$pdf->SetXY (156, $curY);
-					$pdf->MultiCell(18, 5, price($com->lignes[$i]->price), 0, 'R', 0);
+					$pdf->MultiCell(18, 3, price($com->lignes[$i]->price), 0, 'R', 0);
 
 					$pdf->SetXY (174, $curY);
 					$total = price($com->lignes[$i]->total_ht);
-					$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+					$pdf->MultiCell(26, 3, $total, 0, 'R', 0);
 
 					$nexY+=2;    // Passe espace entre les lignes
 
@@ -407,7 +408,7 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->SetFont('Arial','B',12);
 		$posy+=20;
 
-		// Caracteristiques emetteur
+		// Sender properties
 		$carac_emetteur = '';
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
@@ -423,21 +424,19 @@ class pdf_edison extends ModelePDFCommandes
 
 		$pdf->SetFont('Arial','',9);
 		$pdf->SetXY(10,$posy);
-		$pdf->MultiCell(80,4, $carac_emetteur);
+		$pdf->MultiCell(80, 4, $carac_emetteur);
 
-		/*
-		 * Adresse Client
-		 */
+		// Client destinataire
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','B',12);
 		$client = new Societe($this->db);
 		$client->fetch($com->socid);
 		$com->client = $client;
 		$pdf->SetXY(102,42);
-		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($com->client->nom));
-		$pdf->SetFont('Arial','B',11);
+		$pdf->MultiCell(96, 5, $outputlangs->convToOutputCharset($com->client->nom));
+		$pdf->SetFont('Arial','',11);
 		$pdf->SetXY(102,$pdf->GetY());
-		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($com->client->adresse) . "\n" . $outputlangs->convToOutputCharset($com->client->cp) . " " . $outputlangs->convToOutputCharset($com->client->ville));
+		$pdf->MultiCell(96, 5, $outputlangs->convToOutputCharset($com->client->adresse) . "\n" . $outputlangs->convToOutputCharset($com->client->cp) . " " . $outputlangs->convToOutputCharset($com->client->ville));
 		$pdf->rect(100, 40, 100, 40);
 
 

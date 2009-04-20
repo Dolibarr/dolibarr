@@ -382,12 +382,12 @@ class pdf_propale_azur extends ModelePDFPropales
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				// Add external file
-				//$pdfConcat =& new concat_pdf(); 
-				//$pdfConcat->setFiles(array($file, DOL_DOCUMENT_ROOT."/includes/modules/propale/morefile.pdf")); 
-				//$pdfConcat->concat(); 
-				//$pdf->AliasNbPages(); 
-				//$pdfConcat->Output($file); 
-				
+				//$pdfConcat =& new concat_pdf();
+				//$pdfConcat->setFiles(array($file, DOL_DOCUMENT_ROOT."/includes/modules/propale/morefile.pdf"));
+				//$pdfConcat->concat();
+				//$pdf->AliasNbPages();
+				//$pdfConcat->Output($file);
+
 				$outputlangs->charset_output=$sav_charset_output;
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
@@ -850,7 +850,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			$pdf->SetFont('Arial','B',11);
 			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
-			// Sended properties
+			// Sender properties
 			$carac_emetteur = '';
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
@@ -873,14 +873,14 @@ class pdf_propale_azur extends ModelePDFPropales
 
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY($this->marge_gauche+2,$posy+8);
-			$pdf->MultiCell(80,4, $carac_emetteur);
+			$pdf->MultiCell(80, 4, $carac_emetteur);
 
 			// Client destinataire
 			$posy=42;
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(102,$posy-5);
-			$pdf->MultiCell(80,4, $outputlangs->transnoentities("BillTo").":");
+			$pdf->MultiCell(80, 4, $outputlangs->transnoentities("BillTo").":");
 
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);

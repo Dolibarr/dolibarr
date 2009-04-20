@@ -364,7 +364,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 			$pdf->MultiCell(76, 4, $outputlangs->convToOutputCharset(MAIN_INFO_SOCIETE_NOM), 0, 'L');
 		}
 
-		// Caracteristiques emetteur
+		// Sender properties
 		$carac_emetteur = '';
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
@@ -380,7 +380,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		$pdf->SetFont('Arial','',9);
 		$pdf->SetXY($this->marge_gauche,$posy+4);
-		$pdf->MultiCell(80,3, $carac_emetteur);
+		$pdf->MultiCell(80, 3, $carac_emetteur);
 
 		/*
 		 * Adresse Client

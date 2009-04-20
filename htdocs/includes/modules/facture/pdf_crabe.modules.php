@@ -1028,12 +1028,12 @@ class pdf_crabe extends ModelePDFFactures
 
 			$pdf->SetXY($this->marge_gauche+2,$posy+3);
 
-			// Nom emetteur
+			// Sender name
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('Arial','B',11);
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
-			// Caracteristiques emetteur
+			// Sender properties
 			$carac_emetteur = '';
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
@@ -1049,7 +1049,7 @@ class pdf_crabe extends ModelePDFFactures
 
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY($this->marge_gauche+2,$posy+8);
-			$pdf->MultiCell(80,3, $carac_emetteur);
+			$pdf->MultiCell(80, 4, $carac_emetteur);
 
 			// Client destinataire
 			$posy=42;
