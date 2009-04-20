@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
--- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -29,12 +29,12 @@ create table llx_const
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   name        varchar(255),
+  entity      integer DEFAULT 1 NOT NULL,	-- multi company id
   value       text, -- max 65535 caracteres
   type        varchar(6),
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
-  tms         timestamp,
-  entity      integer DEFAULT 1 NOT NULL	-- multi company id
+  tms         timestamp
 ) type=innodb;
 
 -- 

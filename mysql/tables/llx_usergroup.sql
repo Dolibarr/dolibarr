@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -23,11 +23,11 @@
 create table llx_usergroup
 (
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  nom           varchar(255) NOT NULL,
+  entity        integer DEFAULT 1 NOT NULL,	-- multi company id
   datec         datetime,
   tms           timestamp,
-  nom           varchar(255) NOT NULL,
-  note          text,
-  entity        integer DEFAULT 1 NOT NULL	-- multi company id
+  note          text
 )type=innodb;
 
 -- 

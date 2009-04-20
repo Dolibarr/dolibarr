@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2007-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@ create table llx_user
   datec             datetime,
   tms               timestamp,
   login             varchar(24) NOT NULL,
+  entity            integer DEFAULT 1 NOT NULL,	-- multi company id
   pass              varchar(32),
   pass_crypted      varchar(128),
   pass_temp         varchar(32),			-- temporary password when asked for forget password
@@ -49,9 +50,8 @@ create table llx_user
   datepreviouslogin datetime,
   egroupware_id     integer,
   ldap_sid          varchar(255) DEFAULT NULL,
-  statut			      tinyint DEFAULT 1,
-  lang              varchar(6),
-  entity            integer DEFAULT 1 NOT NULL	-- multi company id
+  statut			tinyint DEFAULT 1,
+  lang              varchar(6)
 )type=innodb;
 
 -- 
