@@ -18,14 +18,14 @@
  */
 
 /**
-        \file       scripts/adherents/sync_member_dolibarr2ldap.php
-        \ingroup    ldap adherent
-        \brief      Script de mise a jour des adherents dans LDAP depuis base Dolibarr
-*/
+ *       \file       scripts/adherents/sync_member_dolibarr2ldap.php
+ *       \ingroup    ldap adherent
+ *       \brief      Script de mise a jour des adherents dans LDAP depuis base Dolibarr
+ */
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
-$script_file=__FILE__; 
+$script_file=__FILE__;
 if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
 
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -50,7 +50,7 @@ $langs->load("main");
 print "***** $script_file ($version) *****\n";
 
 if (! isset($argv[1]) || ! $argv[1]) {
-    print "Usage: $script_file now\n";   
+    print "Usage: $script_file now\n";
     exit;
 }
 $now=$argv[1];
@@ -63,6 +63,7 @@ print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
 print "port=".$conf->db->port."\n";
 print "login=".$conf->db->user."\n";
+//print "pass=".eregi_replace('.','*',$conf->db->password)."\n";	// Not defined for security reasons
 print "database=".$conf->db->name."\n";
 print "\n";
 print "----- To LDAP database:\n";
@@ -83,7 +84,7 @@ $input = trim(fgets(STDIN));
 if (! $conf->global->LDAP_MEMBER_ACTIVE)
 {
 	print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
-	exit 1;	
+	exit 1;
 }
 */
 
@@ -102,7 +103,7 @@ if ($resql)
 	while ($i < $num)
 	{
 		$ldap->error="";
-		
+
 		$obj = $db->fetch_object($resql);
 
 		$member = new Adherent($db);
@@ -118,12 +119,12 @@ if ($resql)
 			dol_print_error($db,$member->error);
 			exit;
 		}
-		
+
 		print $langs->transnoentities("UpdateMember")." rowid=".$member->id." ".$member->fullname;
 
 		$info=$member->_load_ldap_info();
 		$dn=$member->_load_ldap_dn($info);
-		
+
 		$result=$ldap->update($dn,$info,$user);
 		if ($result > 0)
 		{
@@ -138,7 +139,7 @@ if ($resql)
 
 		$i++;
 	}
-	
+
 	$ldap->unbind();
 	$ldap->close();
 }

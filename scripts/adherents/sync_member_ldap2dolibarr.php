@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
  */
 
 /**
-        \file       scripts/adherents/sync_member_ldap2dolibarr.php
-        \ingroup    ldap adherent
-        \brief      Script de mise a jour des adherents dans Dolibarr depuis LDAP
-*/
+ *       \file       scripts/adherents/sync_member_ldap2dolibarr.php
+ *       \ingroup    ldap adherent
+ *       \brief      Script de mise a jour des adherents dans Dolibarr depuis LDAP
+ */
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
-$script_file=__FILE__; 
+$script_file=__FILE__;
 if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
 
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -40,6 +40,7 @@ $version='$Revision$';
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 @set_time_limit(0);
 $error=0;
+$forcecommit=1;
 
 
 require_once($path."../../htdocs/master.inc.php");
@@ -56,7 +57,7 @@ if ($argv[2]) $conf->global->LDAP_SERVER_HOST=$argv[2];
 print "***** $script_file ($version) *****\n";
 
 if (! isset($argv[1]) || ! is_numeric($argv[1])) {
-    print "Usage:  $script_file id_member_type\n";   
+    print "Usage:  $script_file id_member_type\n";
     exit;
 }
 $typeid=$argv[1];
@@ -88,7 +89,7 @@ $input = trim(fgets(STDIN));
 if (! $conf->global->LDAP_MEMBER_DN)
 {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for members not defined inside Dolibarr");
-	exit(1);	
+	exit(1);
 }
 
 
@@ -133,10 +134,10 @@ if ($result >= 0)
 {
 	$justthese=array();
 
-	
+
 	// On d�sactive la synchro Dolibarr vers LDAP
 	$conf->global->LDAP_MEMBER_ACTIVE=0;
-	
+
 	// Liste des champs a r�cup�rer de LDAP
 	$required_fields = array(
 	$conf->global->LDAP_FIELD_FULLNAME,
@@ -169,13 +170,13 @@ if ($result >= 0)
 
 	// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 	$required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
-	
+
 	$ldaprecords = $ldap->getRecords('*',$conf->global->LDAP_MEMBER_DN, $conf->global->LDAP_KEY_MEMBERS, $required_fields, 0);
 	if (is_array($ldaprecords))
 	{
 		$db->begin();
 
-		// Warning $ldapuser a une cl� en minuscule
+		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapuser)
 		{
 			$member = new Adherent($db);
@@ -221,9 +222,9 @@ if ($result >= 0)
 			$member->typeid=$typeid;
 
 			// Creation membre
-			print $langs->trans("MemberCreate").' # '.$key.': fullname='.$member->fullname;
+			print $langs->transnoentities("MemberCreate").' # '.$key.': login='.$member->login.', fullname='.$member->fullname;
 			print ', datec='.$member->datec;
-			$member_id=$member->create();
+			$member_id=$member->create($user);
 			if ($member_id > 0)
 			{
 				print ' --> Created member id='.$member_id.' login='.$member->login;
@@ -236,7 +237,7 @@ if ($result >= 0)
 			print "\n";
 
 			//print_r($member);
-			
+
 			$datefirst='';
 			if ($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)
 			{
@@ -264,8 +265,8 @@ if ($result >= 0)
 				}
 			}
 
-			
-			// Insertion premi�re adh�sion
+
+			// Insert first subscription
 			if ($datefirst)
 			{
 				// Cree premiere cotisation et met a jour datefin dans adherent
@@ -273,19 +274,20 @@ if ($result >= 0)
 				$crowid=$member->cotisation($datefirst, $pricefirst, 0);
 			}
 
-			// Insertion derni�re adh�sion
+			// Insert last subscription
 			if ($datelast)
 			{
 				// Cree derniere cotisation et met a jour datefin dans adherent
 				//print "yy".dol_print_date($datelast)."\n";
 				$crowid=$member->cotisation($datelast, $pricelast, 0);
 			}
-			
+
 		}
-		
-		if (! $error)
+
+		if (! $error || $forcecommit)
 		{
-			print $langs->transnoentities("NoErrorCommitIsDone")."\n";
+			if (! $error) print $langs->transnoentities("NoErrorCommitIsDone")."\n";
+			else print $langs->transnoentities("ErrorButCommitIsDone")."\n";
 			$db->commit();
 		}
 		else
@@ -305,7 +307,7 @@ else
 	dol_print_error('',$ldap->error);
 	$error++;
 }
-		
+
 
 return $error;
 
