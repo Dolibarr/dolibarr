@@ -873,11 +873,23 @@ class DolibarrModules
 			$menu->perms=$this->menu[$key]['perms'];
 			$menu->target=$this->menu[$key]['target'];
 			$menu->user=$this->menu[$key]['user'];
+			$menu->constraint=$this->menu[$key]['constraint'];
 			if (! $err)
 			{
 				$result=$menu->create($user);
 				if ($result > 0)
 				{
+					if ($menu->constraint)
+					{
+						$resultConstraint=$menu->addConstraint($result,$menu->constraint);
+						if ($resultConstraint < 0)
+						{
+							$this->error=$menu->error;
+							dol_syslog('DolibarrModules::addConstraint result='.$resultConstraint." ".$this->error, LOG_ERR);
+							$err++;
+							break;
+						}
+					}
 					$this->menu[$key]['rowid']=$result;
 				}
 				else

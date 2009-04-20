@@ -146,7 +146,8 @@ class modMyModule extends DolibarrModules
 		//							'position'=>100,
 		//							'perms'=>'1',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 		//							'target'=>'',
-		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+		//							'user'=>2,      // 0=Menu for internal users, 1=external users, 2=both
+		//							'constraint'=>'$conf->mymodule->enabled');			// Add constraint
 		// $r++;
 		//
 		// Example to declare a Left Menu entry:

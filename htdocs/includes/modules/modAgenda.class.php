@@ -140,7 +140,18 @@ class modAgenda extends DolibarrModules
 		//------
 		$r=0;
 
-		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'Agenda','mainmenu'=>'agenda','leftmenu'=>'0','url'=>'/comm/action/index.php','langs'=>'commercial','position'=>100,'perms'=>'$user->rights->agenda->myactions->read','target'=>'','user'=>0);
+		$this->menu[$r]=array('fk_menu'=>0,
+													'type'=>'top',
+													'titre'=>'Agenda',
+													'mainmenu'=>'agenda',
+													'leftmenu'=>'0',
+													'url'=>'/comm/action/index.php',
+													'langs'=>'commercial',
+													'position'=>100,
+													'perms'=>'$user->rights->agenda->myactions->read',
+													'target'=>'',
+													'user'=>0,
+													'constraint'=>'$conf->agenda->enabled');
 		$r++;
 
 		// Exports
