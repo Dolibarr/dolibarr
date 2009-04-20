@@ -11,7 +11,7 @@ use Cwd;
 $PROJECT="dolibarr";
 $MAJOR="2";
 $MINOR="6";
-$BUILD="0-rc";				# Mettre x pour release, x-beta pour beta, x-rc pour release candidate
+$BUILD="0";				# Mettre x pour release, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="1";		# A incrementer au moment de la release
 
 @LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE");   # Possible packages

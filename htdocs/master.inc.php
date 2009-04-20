@@ -30,7 +30,7 @@
  *  \version    $Id$
  */
 
-define('DOL_VERSION','2.6.0-rc');	// Also defined in htdocs/install/inc.php
+define('DOL_VERSION','2.6.0');	// Also defined in htdocs/install/inc.php
 define('EURO',chr(128));
 
 // Definition des constantes syslog
