@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -660,114 +659,6 @@ class Menubase
 		}
 
 		return $tabMenu;
-	}
-	
-	/**
-	 *		\brief		Add constraint menu
-	 * 		\param		menuId				Menu id
-	 * 		\param		constraint		Value or id for constraint
-	 * 		\param		type					type of constraint
-	 * 		\return		int         	<0 if KO, >0 if OK
-	 */
-	function addConstraint($menuId, $constraint, $type='')
-	{
-		if($type == 'predefined')
-		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_const(fk_menu, fk_constraint) VALUES(".$menuId.",".$constraint.")";
-		}
-		else
-		{
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."menu_constraint";
-			$sql.= " WHERE action = '".$constraint."'";
-			$resSql = $this->db->query($sql);
-			if (! $resSql)
-			{
-				$this->error="Error ".$this->db->lasterror();
-				dol_syslog("Menubase::addConstraint::4 ".$this->error, LOG_ERR);
-				return -4;
-			}
-			$num = $this->db->num_rows($resSql);
-			if ($num)
-			{
-				$obj = $this->db->fetch_object($resSql);
-				$constraintId = $obj->rowid;
-			}
-			else
-			{
-				$sql = "SELECT max(rowid) as maxId FROM ".MAIN_DB_PREFIX."menu_constraint";
-				$resultId = $this->db->query($sql);
-				if (! $resultId)
-				{
-					$this->error="Error ".$this->db->lasterror();
-					dol_syslog("Menubase::addConstraint::3 ".$this->error, LOG_ERR);
-					return -3;
-				}
-				
-				$objc = $this->db->fetch_object($resultId);
-				$constraintId = ($objc->maxId) + 1;
-				
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_constraint(rowid,action) VALUES(".$constraintId.",'".$constraint."')";
-				$result = $this->db->query($sql);
-				if (! $result)
-				{
-					$this->error="Error ".$this->db->lasterror();
-					dol_syslog("Menubase::addConstraint::2 sql = ".$sql." ".$this->error, LOG_ERR);
-					return -2;
-				}
-			}
-			
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_const(fk_menu, fk_constraint) VALUES(".$menuId.",".$constraintId.")";
-		}
-		
-		$result = $this->db->query($sql);
-		if (! $result)
-		{
-			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("Menubase::addConstraint::1 sql = ".$sql." ".$this->error, LOG_ERR);
-			return -1;
-		}
-		return 1;
-	}
-	
-  /**
-	 *		\brief		Delete constraint menu
-	 * 		\param		menuId				Menu id
-	 * 		\param		constId				Constraint id
-	 * 		\return		int         	<0 if KO, >0 if OK
-	 */
-	function delConstraint($menuId, $constId)
-	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_const WHERE fk_menu = ".$menuId." AND fk_constraint = ".$constId;
-		$result = $this->db->query($sql);
-		if (! $result)
-		{
-			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("Menubase::delConstraint::3 ".$this->error, LOG_ERR);
-			return -3;
-		}
-		
-		$sql = "SELECT count(rowid) as countId FROM ".MAIN_DB_PREFIX."menu_const WHERE fk_constraint = ".$constId;
-		$result = $this->db->query($sql);
-		if (! $result)
-		{
-			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("Menubase::delConstraint::2 ".$this->error, LOG_ERR);
-			return -2;
-		}
-			
-		$objc = $this->db->fetch_object($result);
-		if($objc->countId == 0)
-		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_constraint WHERE rowid = ".$constId;
-			$result = $this->db->query($sql);
-			if (! $result)
-			{
-				$this->error="Error ".$this->db->lasterror();
-				dol_syslog("Menubase::delConstraint::1 ".$this->error, LOG_ERR);
-				return -1;
-			}
-		}
-		return 1;
 	}
 
 }

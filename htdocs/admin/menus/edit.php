@@ -182,17 +182,26 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add')
 
 if (isset($_GET["action"]) && $_GET["action"] == 'add_const')
 {	
-	$langs->load("errors");
-	$menu = new Menubase($db);
-	$result=$menu->addConstraint($_POST['menuId'], $_POST['constraint'], $_POST['type']);
-	if ($result > 0)
+
+	if($_POST['type'] == 'prede')
 	{
-		$mesg='<div class="ok">'.$langs->trans("RecordModifiedSuccessfully").'</div>';
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_const(fk_menu, fk_constraint) VALUES(".$_POST['menuId'].",".$_POST['constraint'].")";
 	}
 	else
 	{
-		$mesg='<div class="error">'.$menu->error.'</div>';
+	
+		$sql = "SELECT max(rowid) as maxId FROM ".MAIN_DB_PREFIX."menu_constraint";
+		$result = $db->query($sql);
+		$objc = $db->fetch_object($result);
+		$constraint = ($objc->maxId)  + 1;
+	
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_constraint(rowid,action) VALUES(".$constraint.",'".$_POST['constraint']."')";
+		$db->query($sql);
+		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_const(fk_menu, fk_constraint) VALUES(".$_POST['menuId'].",".$constraint.")";
 	}
+	
+	$db->query($sql);	
 	
 	header("location:edit.php?action=edit&menuId=".$_POST['menuId']);	
 	exit;	
@@ -200,17 +209,17 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add_const')
 
 if (isset($_GET["action"]) && $_GET["action"] == 'del_const')
 {	
-	$langs->load("errors");
-	$menu = new Menubase($db);
-	$result=$menu->delConstraint($_GET['menuId'], $_GET['constId']);
-	if ($result > 0)
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_const WHERE fk_menu = ".$_GET['menuId']." AND fk_constraint = ".$_GET['constId'];
+	$db->query($sql);
+
+	$sql = "SELECT count(rowid) as countId FROM ".MAIN_DB_PREFIX."menu_const WHERE fk_constraint = ".$_GET['constId'];
+	$result = $db->query($sql);
+	$objc = $db->fetch_object($result);
+	if($objc->countId == 0)
 	{
-		$mesg='<div class="ok">'.$langs->trans("RecordModifiedSuccessfully").'</div>';
-	}
-	else
-	{
-		$mesg='<div class="error">'.$menu->error.'</div>';
-	}
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_constraint WHERE rowid = ".$_GET['constId'];
+		$db->query($sql);
+	}	
 	
 	header("location:edit.php?action=edit&menuId=".$_GET['menuId']);
 	exit;
@@ -520,7 +529,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		// Ajout de contraintes predefinis
 		print '<form action="edit.php?action=add_const" method="post">';
 		print '<input type="hidden" name="menuId" value="'.$_GET['menuId'].'">';
-		print '<input type="hidden" name="type" value="predefined">';
+		print '<input type="hidden" name="type" value="prede">';
 
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
