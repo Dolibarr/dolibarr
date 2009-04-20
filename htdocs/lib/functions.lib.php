@@ -1509,12 +1509,6 @@ function accessforbidden($message='',$printheader=1)
 }
 
 
-/* For backward compatibility */
-function dolibarr_print_error($db='',$error='')
-{
-	return dol_print_error($db, $error);
-}
-
 /**
  *	\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remont�e des bugs.
  *				On doit appeler cette fonction quand une erreur technique bloquante est rencontree.
