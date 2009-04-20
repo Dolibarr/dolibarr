@@ -374,7 +374,9 @@ class Form
 		global $db,$langs,$user,$conf;
 		$langs->load("trips");
 
-		if ($conf->produit->enabled && $conf->service->enabled)
+		// If product & services are enabled or both disabled.
+		if (($conf->produit->enabled && $conf->service->enabled)
+			|| (empty($conf->produit->enabled) && empty($conf->service->enabled)))
 		{
 			print $langs->trans("Type").': ';
 			print '<select class="flat" name="'.$htmlname.'">';
