@@ -74,7 +74,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 
 	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 	$error=0;
-	
+
 	// decode database pass if needed
 	if (! empty($dolibarr_main_db_encrypted_pass))
 	{
@@ -112,7 +112,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 			print "<tr><td nowrap>";
 			print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
 			dolibarr_install_syslog("upgrade: Database connection successfull : $dolibarr_main_db_name");
-			$ok=1;        
+			$ok=1;
 		}
 		else
 		{
@@ -132,10 +132,76 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerVersion")." : $version");
 		//print '<td align="right">'.join('.',$versionarray).'</td></tr>';
 	}
-	
-  // Force l'affichage de la progression
-	print '<tr><td>'.$langs->trans("PleaseBePatient").'</td>';
+
+  	// Force l'affichage de la progression
+	print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'</td></tr>';
 	flush();
+
+	// Delete duplicates in table categorie_association
+	$couples=array();
+	$filles=array();
+	$sql = "SELECT fk_categorie_mere, fk_categorie_fille";
+	$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
+	dolibarr_install_syslog("upgrade: search duplicate sql=".$sql);
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num=$db->num_rows($resql);
+		while ($obj=$db->fetch_object($resql))
+		{
+			if (! isset($filles[$obj->fk_categorie_fille]))	// Only one record as child (a child has only on parent).
+			{
+				if ($obj->fk_categorie_mere != $obj->fk_categorie_fille)
+				{
+					$filles[$obj->fk_categorie_fille]=1;	// Set record for this child
+					$couples[$obj->fk_categorie_mere.'_'.$obj->fk_categorie_fille]=array('mere'=>$obj->fk_categorie_mere, 'fille'=>$obj->fk_categorie_fille);
+				}
+			}
+		}
+
+		dolibarr_install_syslog("upgrade: result is num=".$num." sizeof(couples)=".sizeof($couples));
+
+		// If there is duplicates couples or child with two parents
+		if (sizeof($couples) > 0 && $num > sizeof($couples))
+		{
+			$error=0;
+
+			$db->begin();
+
+			$sql="DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
+			dolibarr_install_syslog("upgrade: delete association sql=".$sql);
+			$resqld=$db->query($sql);
+			if ($resqld)
+			{
+				foreach($couples as $key => $val)
+				{
+					$sql ="INSERT INTO ".MAIN_DB_PREFIX."categorie_association(fk_categorie_mere,fk_categorie_fille)";
+					$sql.=" VALUES(".$val['mere'].", ".$val['fille'].")";
+					dolibarr_install_syslog("upgrade: insert association sql=".$sql);
+					$resqli=$db->query($sql);
+					if (! $resqli) $error++;
+				}
+			}
+
+			if (! $error)
+			{
+				print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
+				print '<td align="right">'.$langs->trans("Success").' ('.$num.'=>'.sizeof($couples).')</td></tr>';
+				$db->commit();
+			}
+			else
+			{
+				print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
+				print '<td align="right">'.$langs->trans("Failed").'</td></tr>';
+				$db->rollback();
+			}
+		}
+	}
+	else
+	{
+		print '<div class="error">'.$langs->trans("Error").'</div>';
+	}
+
 
 	if ($ok)
 	{
@@ -155,7 +221,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 								'llx_telephonie_contact_facture',
 								'llx_telephonie_societe_ligne',
 								'llx_telephonie_tarif_client');
-*/		    
+*/
 			$listtables = $db->DDLListTables($conf->db->name,'');
 		    foreach ($listtables as $val)
 			{
@@ -201,7 +267,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 		if ($choix==1) $dir = "../../mysql/migration/";
 		elseif ($choix==2) $dir = "../../pgsql/migration/";
 		else $dir = "../../mssql/migration/";
-		
+
 		$filelist=array();
 		$i = 0;
 		$ok = 0;
@@ -235,9 +301,9 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 		{
 			print '<tr><td nowrap>';
 			print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>';
-			
+
 			$name = substr($file, 0, strlen($file) - 4);
-			
+
 			// Run sql script
 			$ok=run_sql($dir.$file, 0);
 		}
