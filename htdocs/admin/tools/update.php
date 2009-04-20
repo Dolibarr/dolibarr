@@ -34,9 +34,9 @@ if (! $user->admin)
 if ($_GET["msg"]) $message='<div class="error">'.$_GET["msg"].'</div>';
 
 
-$urldolibarr='http://dolibarr.org/component/option,com_docman/task,cat_view/gid,62/Itemid,36/';
-$urldolibarrmodules='http://dolibarr.org/component/option,com_docman/task,cat_view/gid,65/Itemid,36/';
-$urldolibarrthemes='http://dolibarr.org/';
+$urldolibarr='http://www.dolibarr.org/component/option,com_docman/task,cat_view/gid,62/Itemid,36/';
+$urldolibarrmodules='http://www.dolibarr.org/component/option,com_docman/task,cat_view/gid,65/Itemid,36/';
+$urldolibarrthemes='http://www.dolibarr.org/';
 $dolibarrroot=eregi_replace('[\\\/]+$','',DOL_DOCUMENT_ROOT);
 $dolibarrroot=eregi_replace('[^\\\/]+$','',$dolibarrroot);
 

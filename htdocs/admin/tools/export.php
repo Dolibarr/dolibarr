@@ -54,7 +54,7 @@ if ($file && ! $what)
  * View
  */
 
-llxHeader();
+llxHeader('','','EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad');
 
 $html=new Form($db);
 $formfile = new FormFile($db);
