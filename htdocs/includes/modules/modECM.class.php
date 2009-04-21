@@ -132,8 +132,7 @@ class modECM extends DolibarrModules
 							  'position'=>100,
 							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload || $user->rights->ecm->setup',
 							  'target'=>'',
-							  'user'=>0,
-							  'constraint'=>'$conf->ecm->enabled');
+							  'user'=>0);
 		$r++;
 
 		// Left menu linked to top menu

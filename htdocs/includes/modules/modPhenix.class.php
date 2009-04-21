@@ -108,8 +108,7 @@ class modPhenix extends DolibarrModules
 													'position'=>100,
 													'perms'=>'',
 													'target'=>'',
-													'user'=>0,
-													'constraint'=>'$conf->phenix->enabled');
+													'user'=>0);
 		$r++;
 	}
 

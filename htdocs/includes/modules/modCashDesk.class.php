@@ -103,8 +103,8 @@ class modCashDesk extends DolibarrModules
 									'position'=>100,
 									'perms'=>1,		// Use 'perms'=>'1' if you want your menu with no permission rules
 									'target'=>'',
-									'user'=>0,				// 0=Menu for internal users, 1=external users, 2=both
-									'constraint'=>'$conf->cashdesk->enabled');  //Constraint
+									'user'=>0);				// 0=Menu for internal users, 1=external users, 2=both
+
 		$r++;
 		
 		// This is to declare a Left Menu entry:

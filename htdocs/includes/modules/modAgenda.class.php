@@ -150,8 +150,7 @@ class modAgenda extends DolibarrModules
 													'position'=>100,
 													'perms'=>'$user->rights->agenda->myactions->read',
 													'target'=>'',
-													'user'=>0,
-													'constraint'=>'$conf->agenda->enabled');
+													'user'=>0);
 		$r++;
 
 		// Exports
