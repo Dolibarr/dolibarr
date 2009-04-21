@@ -844,7 +844,7 @@ else
 					}
 					else
 					{
-						print '<textarea name="eldesc" class="flat" cols="70" rows="'.ROWS_2.'">'.dol_htmlentitiesbr_decode($fac->lignes[$i]->description).'</textarea>';
+						print '<textarea name="label" class="flat" cols="70" rows="'.ROWS_2.'">'.dol_htmlentitiesbr_decode($fac->lignes[$i]->description).'</textarea>';
 					}
 					print '</td>';
 
@@ -965,7 +965,8 @@ else
 				print '<td>';
 
 				print $html->select_type_of_lines(-1,'type',1);
-				if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
+				if (($conf->produit->enabled && $conf->service->enabled)
+				|| (empty($conf->produit->enabled) && empty($conf->service->enabled))) print '<br>';
 
 				// Editor wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
