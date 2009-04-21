@@ -81,11 +81,11 @@ print '</li>';
 if (eregi('^fr_',$langs->getDefaultLang()))
 {
 	print '<li>';
-	print 'Les taches en cours de realisation sur Dolibarr sont consultables dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projet</a> sur Savannah.';
+	print 'Les t&acirc;ches en cours de r&eacute;alisation sur Dolibarr sont consultables dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projets</a> sur Savannah.';
 	print '</li>';
 
 	print '<li>';
-	print 'Si vous trouvez un bogue dans Dolibarr, vous pouvez en informer les developpeurs sur le <a target="blank" href="http://savannah.nongnu.org/bugs/?group=dolibarr">systeme de gestion des bogues</a> de Savannah.';
+	print 'Si vous trouvez un bogue dans Dolibarr, vous pouvez en informer les d&eacute;veloppeurs sur le <a target="blank" href="http://savannah.nongnu.org/bugs/?group=dolibarr">syst&egrave;me de gestion des bogues</a> de Savannah.';
 	print '</li>';
 
 	print '<li>';
