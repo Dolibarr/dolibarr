@@ -627,20 +627,22 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->remise_absolue    = $_POST['remise_absolue'];
 			$facture->remise_percent    = $_POST['remise_percent'];
 
-			// If invoices lines already known
+			// If some invoice's lines already known
 			if (! $_POST['propalid'] && ! $_POST['commandeid'] && ! $_POST['contratid'])
 			{
+				$facid = $facture->create($user);
+
 				for ($i = 1; $i <= $NBLINES; $i++)
 				{
 					if ($_POST['idprod'.$i])
 					{
+						$product=new Product($db);
+						$product->fetch($_POST['idprod'.$i]);
 						$startday=dol_mktime(12, 0 , 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
 						$endday=dol_mktime(12, 0 , 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
-						$facture->add_product($_POST['idprod'.$i], $_POST['qty'.$i], $_POST['remise_percent'.$i], $startday, $endday);
+						$result=$facture->addline($facid,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 					}
 				}
-
-				$facid = $facture->create($user);
 			}
 			else
 			{
@@ -652,7 +654,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 
 					if ($facid > 0)
 					{
-						$prop = New Propal($db);
+						$prop = new Propal($db);
 						if ( $prop->fetch($_POST['propalid']) )
 						{
 							for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
@@ -1733,13 +1735,16 @@ if ($_GET['action'] == 'create')
 	}
 	else
 	{
+
+		// Show deprecated optional form to add product line here
 		if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
 		{
 			print '<tr><td colspan="3">';
 
 			// Zone de choix des produits prédéfinis à la création
-			print '<table class="noborder">';
-			print '<tr><td>'.$langs->trans('ProductsAndServices').'</td>';
+			print '<table class="noborder" width="100%">';
+			print '<tr>';
+			print '<td>'.$langs->trans('ProductsAndServices').'</td>';
 			print '<td>'.$langs->trans('Qty').'</td>';
 			print '<td>'.$langs->trans('ReductionShort').'</td>';
 			print '<td> &nbsp; &nbsp; </td>';
@@ -3002,7 +3007,8 @@ else
 				print '<td>';
 
 				print $html->select_type_of_lines(-1,'type',1);
-				if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
+				if (($conf->produit->enabled && $conf->service->enabled)
+				|| (empty($conf->produit->enabled) && empty($conf->service->enabled))) print '<br>';
 
 				// Editor wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)

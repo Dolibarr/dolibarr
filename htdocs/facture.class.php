@@ -245,6 +245,7 @@ class Facture extends CommonObject
 			/*
 			 *  Insert lines of invoices in database
 			 */
+			//dol_syslog("There is ".sizeof($this->lignes)." lines");
 			for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 			{
 				$newinvoiceline=new FactureLigne($this->db);
@@ -1436,56 +1437,7 @@ class Facture extends CommonObject
 
 
 	/**
-		\brief   	Ajoute une ligne dans le tableau products
-		\param    	idproduct		Id du produit a ajouter
-		\param    	qty			Quantit
-		\param    	remise_percent		Remise relative effectuée sur le produit
-		\param    	date_start
-		\param    	date_end
-		\return   	void
-		\remarks	$this->client doit etre charg
-		\TODO		Remplacer les appels a cette fonction par generation objet Ligne
-		inséré dans tableau $this->products
-		*/
-	function add_product($idproduct, $qty, $remise_percent, $date_start='', $date_end='')
-	{
-		global $conf, $mysoc;
-
-		// Nettoyage parametres
-		if (! $qty) $qty = 1;
-
-		dol_syslog("Facture::add_product $idproduct, $qty, $remise_percent, $date_start, $date_end", LOG_DEBUG);
-
-		if ($idproduct > 0)
-		{
-			$prod=new Product($this->db);
-			$prod->fetch($idproduct);
-
-			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
-			// multiprix
-			if($conf->global->PRODUIT_MULTIPRICES)
-			$price = $prod->multiprices[$this->client->price_level];
-			else
-			$price = $prod->price;
-
-			$line=new FactureLigne($this->db);
-			$line->rowid = $idproduct;
-			$line->fk_product = $idproduct;
-			$line->desc = $prod->description;
-			$line->qty = $qty;
-			$line->subprice = $price;
-			$line->remise_percent = $remise_percent;
-			$line->tva_tx = $tva_tx;
-			$line->product_type = $prod->type;
-			if ($date_start) { $line->date_start = $date_start; }
-			if ($date_end)   { $line->date_end = $date_end; }
-
-			$this->products[]=$line;
-		}
-	}
-
-	/**
-	 * 		\brief    	Ajoute une ligne de facture (associé à un produit/service prédéfini ou non
+	 * 		\brief    	Add an invoice line into database (linked to product/service or not)
 	 * 		\param    	facid           	Id de la facture
 	 * 		\param    	desc            	Description de la ligne
 	 * 		\param    	pu_ht              	Prix unitaire HT
@@ -2837,7 +2789,7 @@ class FactureLigne
 			$this->fk_remise_except = $objp->fk_remise_except;
 			$this->produit_id     = $objp->fk_product;	// Ne plus utiliser
 			$this->fk_product     = $objp->fk_product;
-			$this->produc_type    = $objp->product_type;
+			$this->product_type   = $objp->product_type;
 			$this->date_start     = $objp->date_start;
 			$this->date_end       = $objp->date_end;
 			$this->info_bits      = $objp->info_bits;
@@ -2923,7 +2875,7 @@ class FactureLigne
 		$sql.= " ".price2num($this->remise_percent).",";
 		$sql.= " ".price2num($this->subprice).",";
 		$sql.= " ".price2num($this->price).",";
-		$sql.= " ".price2num($this->remise).",";
+		$sql.= " ".($this->remise?price2num($this->remise):'0').",";	// Deprecated
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
 		if ($this->date_start) { $sql.= "'".$this->db->idate($this->date_start)."',"; }

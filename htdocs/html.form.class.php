@@ -369,16 +369,15 @@ class Form
 	 *		\param      htmlname        Name of field in form
 	 * 		\param		showempty		Add an empty field
 	 */
-	function select_type_of_lines($selected='',$htmlname='type',$showempty=0)
+	function select_type_of_lines($selected='',$htmlname='type',$showempty=0,$hidetext=0)
 	{
 		global $db,$langs,$user,$conf;
-		$langs->load("trips");
 
 		// If product & services are enabled or both disabled.
 		if (($conf->produit->enabled && $conf->service->enabled)
 			|| (empty($conf->produit->enabled) && empty($conf->service->enabled)))
 		{
-			print $langs->trans("Type").': ';
+			if (empty($hidetext)) print $langs->trans("Type").': ';
 			print '<select class="flat" name="'.$htmlname.'">';
 			if ($showempty)
 			{

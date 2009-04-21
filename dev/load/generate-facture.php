@@ -50,7 +50,7 @@ define (GEN_NUMBER_FACTURE, 5);
 
 $sql = "SELECT min(rowid) FROM ".MAIN_DB_PREFIX."user";
 $resql = $db->query($sql);
-if ($resql) 
+if ($resql)
 {
   $row = $db->fetch_row($resql);
   $user = new User($db, $row[0]);
@@ -59,14 +59,14 @@ if ($resql)
 $socids = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
 $resql = $db->query($sql);
-if ($resql) 
+if ($resql)
 {
   $num_socs = $db->num_rows($resql);
   $i = 0;
   while ($i < $num_socs)
     {
       $i++;
-      
+
       $row = $db->fetch_row($resql);
       $socids[$i] = $row[0];
     }
@@ -75,14 +75,14 @@ if ($resql)
 $prodids = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
 $resql = $db->query($sql);
-if ($resql) 
+if ($resql)
 {
   $num_prods = $db->num_rows($resql);
   $i = 0;
   while ($i < $num_prods)
     {
       $i++;
-      
+
       $row = $db->fetch_row($resql);
       $prodids[$i] = $row[0];
     }
@@ -96,27 +96,31 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 	$socid = rand(1, $num_socs);
 
 	print "Invoice ".$i." for socid ".$socid;
-	
+
 	$facture = new Facture($db, $socids[$socid]);
 	$facture->date = time();
 	$facture->cond_reglement_id = 3;
 	$facture->mode_reglement_id = 3;
-	
-	$nbp = rand(2, 5);
-	$xnbp = 0;
-	while ($xnbp < $nbp)
-	{
-	    // \TODO Utiliser addline plutot que add_product
-		$prodid = rand(1, $num_prods);
-		$facture->add_product($prodids[$prodid], rand(1,5), 0);
-		$xnbp++;
-	}
-	
+
 	$result=$facture->create($user);
 	if ($result >= 0)
 	{
 		$result=$facture->set_valid($user,$socid);
-		if ($result) print " OK";
+		if ($result)
+		{
+			$nbp = rand(2, 5);
+			$xnbp = 0;
+			while ($xnbp < $nbp)
+			{
+				$prodid = rand(1, $num_prods);
+				$product=new Product($db);
+				$product->fetch($prodids[$prodid]);
+				$result=$facture->addline($facid,$product->description,$product->price, rand(1,5), $product->tva_tx, $prodids[$prodid], 0, '', '', 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+				$xnbp++;
+			}
+
+			print " OK";
+		}
 		else
 		{
 			dol_print_error($db,$facture->error);
@@ -126,7 +130,7 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 	{
 		dol_print_error($db,$facture->error);
 	}
-	
+
 	print "\n";
 }
 
