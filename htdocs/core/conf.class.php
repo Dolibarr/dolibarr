@@ -64,14 +64,12 @@ class Conf
 	*      \param      $entity			Id of company
 	*      \return     int         		< 0 if KO, >= 0 if OK
 	*/
-	function setValues($db,$entity=1)
+	function setValues($db)
 	{
 		dol_syslog("Conf::setValues");
 
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;	// Par defaut, a oui
-
-		$this->entity = $entity;
-
+		
 		/*
 		 * Definition de toutes les Constantes globales d'environnement
 		 * - En constante php (TODO a virer)

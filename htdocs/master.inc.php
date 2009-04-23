@@ -66,9 +66,9 @@ if (! $result && $_SERVER["GATEWAY_INTERFACE"])
 }
 if (empty($dolibarr_main_db_host))
 {
-   	print 'Error: Dolibarr setup was run but was not completed.<br>'."\n";
+	print 'Error: Dolibarr setup was run but was not completed.<br>'."\n";
 	print 'Please, run <a href="install/index.php">Dolibarr install process</a> until the end...'."\n";
-   	exit;
+  exit;
 }
 if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_data_root))
@@ -91,7 +91,7 @@ define('DOL_URL_ROOT', $pos);								// URL racine relative
  */
 if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
 {
-    print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
+  print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
 	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
 	exit;
 }
@@ -113,6 +113,10 @@ if (! empty($dolibarr_main_db_encrypted_pass))
 require_once(DOL_DOCUMENT_ROOT."/core/conf.class.php");
 
 $conf = new Conf();
+
+// Retrieve the entity
+if (isset($_SESSION["dol_entity"])) $conf->entity = $_SESSION["dol_entity"];
+
 // Identifiant propres au serveur base de donnee
 $conf->db->host   = $dolibarr_main_db_host;
 if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
@@ -204,13 +208,7 @@ if (! defined('NOREQUIREUSER'))
  */
 if (! defined('NOREQUIREDB'))
 {
-	// TODO Should remove this to not define entity here but later once value of entity has been read from
-	// session in main.inc.php.
-	// master.inc.php (used also by scripts) should be safe of any command that depends on screen code.
-	$entityCookieName = "DOLENTITYID_dolibarr";
-	$entity = 1;	// By default;
-	if (isset($_COOKIE[$entityCookieName])) $entity=$_COOKIE[$entityCookieName]?$_COOKIE[$entityCookieName]:1;
-	$conf->setValues($db,$entity);
+	$conf->setValues($db);
 }
 
 /*

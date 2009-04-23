@@ -112,6 +112,15 @@ analyse_sql_injection($_POST);
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
+// Retrieve the entity
+if (isset($_POST["entity"])) $_SESSION["dol_entity"] = $_POST["entity"];
+$entityCookieName = "DOLENTITYID_dolibarr";
+if (isset($_COOKIE[$entityCookieName]))
+{
+	$conf->entity = $_COOKIE[$entityCookieName];
+	$_SESSION["dol_entity"] = $conf->entity;
+}
+
 // Set and init common variables
 require_once("master.inc.php");
 
@@ -231,7 +240,7 @@ if (! isset($_SESSION["dol_login"]))
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
 			if ($result < 0) { $error++; }
 			// Fin appel triggers
 		}
@@ -264,24 +273,10 @@ if (! isset($_SESSION["dol_login"]))
 						$test=false;
 						$conf->authmode=$mode;	// This properties is defined only when logged
 
-						// TODO Should not have setting and redirection header here.
-						// Cookie add must be set at same place than "New session for this login"
-						// and header call must be removed. Also entity must be set in session.
-						// Call function to check entity
+						// TODO Call function to check entity
 						if ($conf->multicompany->enabled && isset($_POST["entity"]))
 						{
 							$entitytotest=$_POST["entity"];
-
-							// Create entity cookie
-							$entityCookieName = "DOLENTITYID_dolibarr";
-							if (!isset($HTTP_COOKIE_VARS[$entityCookieName]))
-							{
-								setcookie($entityCookieName, $entitytotest, 0, "/", "", 0);
-							}
-
-							// Reload index.php
-							$url=DOL_URL_ROOT."/index.php";
-							header("Location: ".$url);
 						}
 					}
 				}
@@ -309,7 +304,7 @@ if (! isset($_SESSION["dol_login"]))
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
 			if ($result < 0) { $error++; }
 			// Fin appel triggers
 		}
@@ -349,7 +344,7 @@ if (! isset($_SESSION["dol_login"]))
 		// Appel des triggers
 		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		$interface=new Interfaces($db);
-		$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+		$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
 		if ($result < 0) { $error++; }
 		// Fin appel triggers
 
@@ -363,8 +358,8 @@ else
 	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifies
 	$login=$_SESSION["dol_login"];
 	$resultFetchUser=$user->fetch($login);
-
 	dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
+	
 	if ($resultFetchUser <= 0)
 	{
 		// Account has been removed after login
@@ -390,7 +385,7 @@ else
 		// Appel des triggers
 		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		$interface=new Interfaces($db);
-		$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+		$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
 		if ($result < 0) { $error++; }
 		// Fin appel triggers
 
@@ -406,7 +401,6 @@ if (! isset($_SESSION["dol_login"]))
 
 	// New session for this login
 	$_SESSION["dol_login"]=$user->login;
-
 	$_SESSION["dol_authmode"]=$conf->authmode;
 	dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
@@ -417,7 +411,7 @@ if (! isset($_SESSION["dol_login"]))
 	// Appel des triggers
 	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	$interface=new Interfaces($db);
-	$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
+	$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf,$_POST["entity"]);
 	if ($result < 0) { $error++; }
 	// Fin appel triggers
 
@@ -431,6 +425,17 @@ if (! isset($_SESSION["dol_login"]))
 	else
 	{
 		$db->commit();
+	}
+	
+	// Create entity cookie
+	if ($conf->multicompany->enabled && isset($_POST["entity"]))
+	{
+		$entity = $_POST["entity"];
+		$entityCookieName = "DOLENTITYID_dolibarr";
+		if (!isset($HTTP_COOKIE_VARS[$entityCookieName]))
+		{
+			setcookie($entityCookieName, $entity, 0, "/", "", 0);
+		}
 	}
 
 	// Module webcalendar
