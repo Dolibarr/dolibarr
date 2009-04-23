@@ -184,8 +184,11 @@ if ($id || $ref)
 				{
 					$productstatic->id=$value[1];
 					$productstatic->type=0;
-					$productstatic->ref=$value[0];
-					print $productstatic->getNomUrl(1).'<br>';
+					//$productstatic->ref=$value[0];
+					//var_dump($value);
+					//print '<pre>'.$productstatic->ref.'</pre>';
+					//print $productstatic->getNomUrl(1).'<br>';
+					print $value[0];	// This contains a tr line.
 				}
 
 
@@ -344,7 +347,7 @@ if ($action == '')
 
 	if ( $user->rights->produit->creer)
 	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("EditAssociate").'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?action=edit&amp;id='.$id.'">'.$langs->trans("EditAssociate").'</a>';
 
 	}
 
