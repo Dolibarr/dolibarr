@@ -115,11 +115,7 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 // Retrieve the entity
 if (isset($_POST["entity"])) $_SESSION["dol_entity"] = $_POST["entity"];
 $entityCookieName = "DOLENTITYID_dolibarr";
-if (isset($_COOKIE[$entityCookieName]))
-{
-	$conf->entity = $_COOKIE[$entityCookieName];
-	$_SESSION["dol_entity"] = $conf->entity;
-}
+if (isset($_COOKIE[$entityCookieName])) $conf->entity = $_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
 
 // Set and init common variables
 require_once("master.inc.php");
