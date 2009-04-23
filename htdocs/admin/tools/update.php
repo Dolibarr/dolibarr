@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +35,8 @@ if (! $user->admin)
 if ($_GET["msg"]) $message='<div class="error">'.$_GET["msg"].'</div>';
 
 
-$urldolibarr='http://www.dolibarr.org/component/option,com_docman/task,cat_view/gid,62/Itemid,36/';
-$urldolibarrmodules='http://www.dolibarr.org/component/option,com_docman/task,cat_view/gid,65/Itemid,36/';
+$urldolibarr='http://www.dolibarr.org/downloads/cat_view/62-stable-versions';
+$urldolibarrmodules='http://www.dolibarr.org/downloads/cat_view/65-modulesaddon';
 $urldolibarrthemes='http://www.dolibarr.org/';
 $dolibarrroot=eregi_replace('[\\\/]+$','',DOL_DOCUMENT_ROOT);
 $dolibarrroot=eregi_replace('[^\\\/]+$','',$dolibarrroot);
