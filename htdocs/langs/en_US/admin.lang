@@ -910,8 +910,8 @@ ForANonAnonymousAccess=For an authenticated acces (for a write access for exampl
 ##### Products #####
 ProductSetup=Products module setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)
-ConfirmDeleteProductLineAbility=Confirmation of removal of a line produces in the forms
-ModifyProductDescAbility=Personalization of descriptions produced in the forms
+ConfirmDeleteProductLineAbility=Confirmation when removing product lines in forms
+ModifyProductDescAbility=Personalization of product descriptions in forms
 ViewProductDescInFormAbility=Visualization of product descriptions in the forms (otherwise as popup tooltip)
 UseSearchToSelectProduct=Use a search form to choose a product (intead of using a list box)
 UseEcoTaxeAbility=Support Eco-Taxe (WEEE)
