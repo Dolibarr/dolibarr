@@ -56,10 +56,10 @@ UseAvToScanUploadedFiles = Utilización de un antivirus para escanear los ficher
 ComptaSetup = Configuración del módulo Contabilidad
 UserSetup = Configuración gestión de los usuarios
 MenuSetup = Administración de los menús por base de datos
+MenuLimits = Límites y precisión
 MenuIdParent = Id del menú padre
 DetailMenuIdParent = ID del menú padre (0 para un menú superior)
 DetailPosition = Número de orden para la posición del menú
-MenuLimits = Límites y precisión
 PersonalizedMenusNotSupported = Menús personalizados no generados
 AllMenus = Todos
 NotConfigured = No configurado
@@ -165,6 +165,7 @@ MainDbPasswordFileConfEncrypted = Encriptar la contraseña de la base en el arch
 ConfigFileIsInReadOnly = El archivo conf.php es de sólo lectura, compruebe los derechos de escritura.
 ProtectAndEncryptPdfFiles = Protección y encriptación de los pdf generados
 ProtectAndEncryptPdfFilesDesc = La protección de un documento pdf deja el documento libre a la lectura y a la impresión a cualquier lector de PDF. Por el contrario, la modificación y la copia resultan imposibles.
+Feature = Función
 DolibarrLicense = Licencia
 DolibarrProjectLeader = jefe de proyecto
 Developpers = Desarrolladores/contribuidores
@@ -232,7 +233,7 @@ ErrorCantUseRazInStartedYearIfNoYearMonthInMask = Error, no se puede usar opció
 UMask = Parámetro UMask de nuevos archivos en Unix/Linux/BSD.
 UMaskExplanation = Este parámetro determina los derechos de los archivos creados en el servidor Dolibarr (durante la subida, por ejemplo).<br>Este debe ser el valor octal (por ejemplo, 0666 significa lectura / escritura para todos).<br>Este parámetro no tiene ningún efecto sobre un servidor Windows.
 SeeWikiForAllTeam = Vea el wiki para más detalles de todos los actores y de su organización
-# Modules = 
+# Modules = undefined = 
 Module0Name = Usuarios y grupos
 Module0Desc = Gestión de usuarios y grupos
 Module1Name = Terceros
@@ -325,8 +326,8 @@ Module2500Name = Gestión Electrónica de Documentos
 Module2500Desc = Permite administrar una base de documentos
 Module5000Name = Multi-empresa
 Module5000Desc = Permite gestionar varias empresas
-Module10000Name= PayBox
-Module10000Desc= Módulo para proporcionar un pago en línea con tarjeta de crédito mediante Paybox
+Module10000Name = PayBox
+Module10000Desc = Módulo para proporcionar un pago en línea con tarjeta de crédito mediante Paybox
 Module50100Name = Caja
 Module50100Desc = Caja registradora
 Permission11 = Consultar facturas
@@ -590,9 +591,9 @@ MaxSizeList = Longuitud máxima de listados
 DefaultMaxSizeList = Longuitud máxima de listados por defecto
 MessageOfDay = Mensaje del día
 MessageLogin = Mensaje del login
+PermanentLeftSearchForm = Zone de búsqueda permanente del menú izquierdo
 DefaultLanguage = Idioma por defecto a utilizar (código idioma)
 EnableMultilangInterface = Activar interface multiidioma
-PermanentLeftSearchForm = Zone de búsqueda permanente del menú izquierdo
 SystemSuccessfulyUpdated = Su sitema está actualizado
 CompanyInfo = Información de la empresa/institución
 CompanyIds = Identificación reglamentaria
@@ -674,17 +675,17 @@ BackupDescY = El archivo de volcado generado deberá guardarse en un lugar segur
 RestoreDesc = Para restaurar una copia de seguridad de Dolibarr, usted debe:
 RestoreDesc2 = * Tomar el archivo (archivo zip, por ejemplo) de la carpeta de los documentos y descomprimirlo en la carpeta de los documentos de una nueva instalación de Dolibarr directorio o en la carpeta de los documentos de esta instalación (<b>%s</b>).
 RestoreDesc3 = * Recargar el archivo de volcado guardado en la base de datos de una nueva instalación de Dolibarr o de esta instalación. Atención, una vez realizada la restauración, deberá utilizar un login/contraseña de administrador existente en el momento de la copia de seguridad para conectarse. Para restaurar la base de datos en la instalación actual, puede utilizar el asistente a continuación.
-##### Module password generation = 
+##### Module password generation = undefined = 
 PasswordGenerationStandard = Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone = No ofrece contraseñas. La contraseña se introduce manualmente.
-##### Users setup ##### = 
+##### Users setup ##### = undefined = 
 UserGroupSetup = Configuración módulo usuarios y grupos
 GeneratePassword = Proponer una contraseña generada
 RuleForGeneratedPasswords = Norma para la generación de las contraseñas propuestas
 DoNotSuggest = No proponer
 EncryptedPasswordInDatabase = Permitir encriptación de las contraseñas en la base de datos
 DisableForgetPasswordLinkOnLogonPage = No mostrar el vínculo "Contraseña olvidada" en la página de login
-##### Company setup ##### = 
+##### Company setup ##### = undefined = 
 CompanySetup = Configuración del módulo empresas
 CompanyCodeChecker = Módulo de generación e control de los códigos de terceros (clientes/proveedores)
 AccountCodeManager = Módulo de generación de los códigos contables (clientes/proveedores)
@@ -693,7 +694,7 @@ ModuleCompanyCodePanicum = Devuelve un código contable vacío.
 ModuleCompanyCodeDigitaria = Devuelve un código contable compuesto siguiendo el código de tercero. El código está formado por carácter ' C ' en primera posición seguido de los 5 primeros caracteres del código tercero.
 UseNotifications = Usar notificaciones
 NotificationsDesc = La función de las notificaciones permite enviar automáticamente un correo electrónico para un determinado evento Dolibarr en las empresas configuradas para ello
-##### Webcal setup ##### = 
+##### Webcal setup ##### = undefined = 
 WebCalSetup = Configuración de enlace con el calendario Webcalendar
 WebCalSyncro = Integrar los eventos Dolibarr en WebCalendar
 WebCalAllways = Siempre, sin consultar
@@ -717,7 +718,7 @@ WebCalAddEventOnStatusBill = Añadir evento en el calendario en el cambio de est
 WebCalAddEventOnStatusMember = Añadir evento en el calendario en el cambio de estado de los miembros
 WebCalUrlForVCalExport = Un vínculo de exportación del calendario en formato <b>%s</b> estará disponible en la url: %s
 WebCalCheckWebcalSetup = La configuración del módulo Webcal puede ser incorrecta
-##### Invoices ##### = 
+##### Invoices ##### = undefined = 
 BillsSetup = Configuración del módulo Facturas
 BillsDate = Fecha de las facturas
 BillsNumberingModule = Módulo de numeración de facturas y albaranes
@@ -734,7 +735,7 @@ SuggestPaymentByRIBOnAccount = Sugerir el pago por abono en cuenta
 SuggestPaymentByChequeToAddress = Sugerir el pago por cheque a
 FreeLegalTextOnInvoices = Texto libre en facturas
 WatermarkOnDraftInvoices = Marca de agua en las facturas borrador (en caso de estar vacío)
-##### Proposals ##### = 
+##### Proposals ##### = undefined = 
 PropalSetup = Configuración del módulo Presupuestos
 CreateForm = Creación formulario
 NumberOfProductLines = Numero de líneas de productos
@@ -750,7 +751,7 @@ AddDeliveryAddressAbility = Posibilidad de seleccionar una dirección de envío
 UseOptionLineIfNoQuantity = Una línea de producto/servicio que tiene una cantidad nula se considera como una opción
 FreeLegalTextOnProposal = Texto libre en presupuestos
 WatermarkOnDraftProposal = Marca de agua en presupuestos borrador (en caso de estar vacío)
-##### Orders ##### = 
+##### Orders ##### = undefined = 
 OrdersSetup = Configuración del módulo pedidos
 OrdersNumberingModules = Módulos de numeración de los pedidos
 OrdersModelModule = Modelos de documentos de pedidos
@@ -758,24 +759,24 @@ HideTreadedOrders = Ocultar los pedidos procesados o anulados del listado
 ValidOrderAfterPropalClosed = Validar el pedido después del cierre del presupuesto, permite no pasar por el pedido provisional
 FreeLegalTextOnOrders = Texto libre en pedidos
 WatermarkOnDraftOrders = Marca de agua en pedidos borrador (en caso de estar vacío)
-##### Fiche inter ##### = 
+##### Fiche inter ##### = undefined = 
 FicheinterNumberingModules = Módulos de numeración de las fichas de intervención
 TemplatePDFInterventions = Modelo de documentos de las fichas de intervención
 WatermarkOnDraftInterventionCards = Marca de agua en fichas de intervención (en caso de estar vacío)
-##### Clicktodial ##### = 
+##### Clicktodial ##### = undefined = 
 ClickToDialSetup = Configuración del módulo Click To Dial
 ClickToDialUrlDesc = Url de llamada haciendo click en el icono teléfono. <br>La 'url completa llamada será: URL?login=...&password=...&caller=...&called=telellamada
-##### Bookmark4u ##### = 
+##### Bookmark4u ##### = undefined = 
 Bookmark4uSetup = Configuración del módulo Bookmark4u
-##### Interventions ##### = 
+##### Interventions ##### = undefined = 
 InterventionsSetup = Configuración del módulo intervenciones
-##### Members ##### = 
+##### Members ##### = undefined = 
 MembersSetup = Configuración del módulo Asociaciones
 MemberMainOptions = Opciones principales
 AddSubscriptionIntoAccount = Registrar cotizaciones en cuenta bancaria o caja del módulo bancario
 AdherentMailRequired = E-Mail obligatorio para crear un miembro nuevo
 MemberSendInformationByMailByDefault = Casilla de verificación para enviar el correo de confirmación a los miembros es por defecto "sí"
-##### LDAP setup ##### = 
+##### LDAP setup ##### = undefined = 
 LDAPSetup = Configuracón del módulo LDAP
 LDAPGlobalParameters = Parámetros globales
 LDAPUsersSynchro = Usuarios
@@ -905,7 +906,7 @@ LDAPDescGroups = Esta página permite definir el nombre de los atributos del ár
 LDAPDescMembers = Esta página permite definir el nombre de los atributos del árbol LDAP para cada información de los miembros del módulo Asociaciones Dolibarr.
 LDAPDescValues = Los valores de ejemplos se adaptan a <b>OpenLDAP</b> con los schemas cargados: <b>core.schema, cosine.schema, inetorgperson.schema</b>). Si usted utiliza los a valores sugeridos y OpenLDAP, modifique su fichero de configuración LDAP <b>slapd.conf</b> para tener todos estos schemas activos.
 ForANonAnonymousAccess = Para un acceso autentificado
-##### Products ##### = 
+##### Products ##### = undefined = 
 ProductSetup = Configuración del módulo Productos
 NumberOfProductShowInSelect = Nº de productos max en las listas (0=sin límite)
 ConfirmDeleteProductLineAbility = Confirmación de eliminación de una línea de producido en los formularios
@@ -913,12 +914,9 @@ ModifyProductDescAbility = Personalización de las descripciones de los producto
 ViewProductDescInFormAbility = Visualización de las descripciones de los productos en los formularios
 UseSearchToSelectProduct = Utilizar un formulario de búsqueda para la selección de un producto (en vez de la lista desplegable)
 UseEcoTaxeAbility = Asumir ecotasa (DEEE)
-UseMinPrice = Utilización de un precio mínimo de venta
 SetDefaultBarcodeTypeProducts = Tipo de código de barras utilizado por defecto para los productos
 SetDefaultBarcodeTypeThirdParties = Tipo de código de barras utilizado por defecto para los terceros
-##### Suppliers ##### = 
-SuppliersSetup = Configuración del módulo de proveedor
-##### Syslog ##### = 
+##### Syslog ##### = undefined = 
 SyslogSetup = Configuración del módulo Syslog
 SyslogOutput = Salida del log
 SyslogSyslog = Syslog
@@ -928,9 +926,9 @@ SyslogSimpleFile = Archivo
 SyslogFilename = Nombre y ruta del archivo
 YouCanUseDOL_DATA_ROOT = Puede utilizar DOL_DATA_ROOT/dolibarr.log para un log en la carpeta 'documentos' de Dolibarr.
 ErrorUnknownSyslogConstant = La constante %s no es una constante syslog conocida
-##### Donations ##### = 
+##### Donations ##### = undefined = 
 DonationsSetup = Configuración del módulo subvenciones
-##### Barcode ##### = 
+##### Barcode ##### = undefined = 
 BarcodeSetup = Configuración de los códigos de barra
 PaperFormatModule = Módulos de formatos de impresión
 BarcodeEncodeModule = Módulos de codificación de los códigos de barra
@@ -944,28 +942,28 @@ BarcodeDescUPC = Códigos de barra tipo UPC
 BarcodeDescISBN = Códigos de barra tipo ISBN
 BarcodeDescC39 = Códigos de barra tipo C39
 BarcodeDescC128 = Códigos de barra tipo C128
-##### Prelevements ##### = 
+##### Prelevements ##### = undefined = 
 WithdrawalsSetup = Configuración del módulo domiciliaciones
-##### ExternalRSS ##### = 
+##### ExternalRSS ##### = undefined = 
 ExternalRSSSetup = Configuración de las importaciones del flujo RSS
 NewRSS = Sindicación de un nuevo flujo RSS
-##### Mailing ##### = 
+##### Mailing ##### = undefined = 
 MailingSetup = Configuración del módulo E-Mailing
 MailingEMailFrom = E-Mail emisor (From) de los correos enviados por E-Mailing
-##### Notification ##### = 
+##### Notification ##### = undefined = 
 NotificationSetup = Configuración del módulo notificaciones
 NotificationEMailFrom = E-Mail emisor (From) de los correos enviados a traves de notificaciones
-##### Sendings ##### = 
+##### Sendings ##### = undefined = 
 SendingsSetup = Configuración del módulos envíos
 SendingsReceiptModel = Modelo de la ficha de expedición
 SendingsAbility = Portes pagados por el cliente
 NoNeedForDeliveryReceipts = En la mayoría de los casos, los albaranes se utilizan como nota de entrega al cliente (lista de productos a enviar), se reciben y firman por el cliente. Por lo tanto, la hoja de entrega de productos es una característica duplicada y rara vez es activada.
-##### Deliveries ##### = 
+FreeLegalTextOnDeliveryReceipts = Texto libre en las notas de entrega.
+##### Deliveries ##### = undefined = 
 DeliveryOrderNumberingModules = Módulo de numeración de los envios a clientes
 DeliveryOrderModel = Modelo de orden de envío
 DeliveriesOrderAbility = Portes pagados por el cliente
-FreeLegalTextOnDeliveryReceipts = Texto libre en las notas de entrega.
-##### FCKeditor ##### = 
+##### FCKeditor ##### = undefined = 
 ActivateFCKeditor = Activar FCKeditor para :
 FCKeditorForUsers = Creación/edición WYSIWIG de la descripción y notas de los usuarios
 FCKeditorForCompany = Creación/edición WYSIWIG de la descripción y notas de los terceros
@@ -974,12 +972,12 @@ FCKeditorForMembers = Creación/edición WYSIWIG de la descripción y notas de l
 FCKeditorForProductDetails = Creación/edición WYSIWIG de las líneas de detalle de los productos (en pedidos, presupuestos, facturas, etc.)
 FCKeditorForProductDetailsPerso = Creación/edición WYSIWIG de las líneas de detalle en los productos personalizadas (en pedidos, presupuestos, facturas, etc.)
 FCKeditorForMailing = Creación/edición WYSIWIG de los E-Mails
-##### OSCommerce 1 ##### = 
+##### OSCommerce 1 ##### = undefined = 
 OSCommerceErrorConnectOkButWrongDatabase = La conexión se ha establecido, pero la base de datos no parece de OSCommerce.
 OSCommerceTestOk = La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' es correcta.
 OSCommerceTestKo1 = La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' no se pudo efectuar.
 OSCommerceTestKo2 = La conexión al servidor '%s' por el usuario '%s' ha fallado.
-##### Mantis ##### = 
+##### Mantis ##### = undefined = 
 MantisSetup = Configuración del enlace con el sitema de seguimiento Mantis
 MantisURL = Dirección (URL) de acceso a Mantis
 MantisServer = Servidor de la base de datos Mantis
@@ -990,19 +988,15 @@ MantisTestOk = La conexión al servidor '%s' sobre la base de datos  '%s' por el
 MantisTestKo1 = La conexión al servidor '%s' es correcta pero la base de datos' %s ' no pudo comprobarse.
 MantisTestKo2 = La conexión al servidor '%s' por el usuario '%s' a fallado.
 MantisErrorConnectOkButWrongDatabase = La conexión es correcta pero la base de datos no parece ser una base de datos Mantis.
-##### Stock ##### = 
+##### Stock ##### = undefined = 
 StockSetup = configuración del módulo Stock
 UserWarehouse = Utilizar los stocks personales de usuarios
-##### DroitPret ##### = 
-PretSetup = Configuración del módulo derecho de préstamo
-catActive = Categoría para los que el derecho de préstamo está activado
-mailDroitPret = Dirección de correo a las que se envían las declaraciones
-##### Menu ##### = 
+##### Menu ##### = undefined = 
 MenuDeleted = Menú eliminado
 TreeMenu = Estructura de los menús
+Menus = Menús
 TreeMenuPersonalized = Menús personalizados
 NewMenu = Nuevo menú
-Menus = Menús
 MenuConf = Configuración de los menús
 Menu = Selección de los menús
 MenuHandler = Gestor de menús
@@ -1025,24 +1019,24 @@ DeleteMenu = Eliminar entrada de menú
 ConfirmDeleteMenu = Está seguro de querer eliminar la entrada de menú <b>%s</b> ?
 DeleteLine = Eliminación de línea
 ConfirmDeleteLine = ¿Está seguro de querer eliminar esta línea?
-##### Tax ##### = 
+##### Tax ##### = undefined = 
 TaxSetup = Configuración del módulo Impuestos, cargas sociales y dividendos
 OptionVatMode = Opción de carga de IVA
 OptionVATDefault = Estandard
 OptionVATDebitOption = Opción servicios a débito
 OptionVatDefaultDesc = La carga del IVA es: <br>-en el envío de los bienes <br>-sobre el pago por los servicios
 OptionVatDebitOptionDesc = La carga del IVA es: <br>-en el envío de los bienes <br>-sobre la facturación de los servicios
-##### Agenda ##### = 
+##### Agenda ##### = undefined = 
 AgendaSetup = Módulo configuración de acciones y agenda
 PasswordTogetVCalExport = Clave de autorización vcal export link
-##### ClickToDial ##### = 
+##### ClickToDial ##### = undefined = 
 ClickToDialDesc = Este módulo permite agregar un icono después del número de teléfono de contactos Dolibarr. Un clic en este icono, Llama a un servidor con una URL que se indica a continuación. Esto puede ser usado para llamar al sistema call center de Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
-##### CashDesk ##### = 
+##### CashDesk ##### = undefined = 
 CashDeskSetup = configuración del módulo de Caja registradora
 CashDeskThirdPartyForSell = Tercero genérico a usar para la venta
 CashDeskBankAccountForSell = Cuenta de efectivo que se utilizará para las ventas
 CashDeskIdWareHouse = Almacén que se utiliza para las ventas
-##### Bookmark ##### = 
+##### Bookmark ##### = undefined = 
 BookmarkSetup = Configuración del módulo Bookmark
 BookmarkDesc = Este módulo le permite gestionar los enlaces y accesos directos. También permite añadir cualquier página de Dolibarr o enlace web en el menú de acceso rápido de la izquierda.
 NbOfBoomarkToShow = Número máximo de marcadores que se mostrará en el menú
