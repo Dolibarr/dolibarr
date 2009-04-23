@@ -112,10 +112,10 @@ analyse_sql_injection($_POST);
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-// Retrieve the entity
-if (isset($_POST["entity"])) $_SESSION["dol_entity"] = $_POST["entity"];
+// Retrieve the entity in login form, and after in the cookie
 $entityCookieName = "DOLENTITYID_dolibarr";
-if (isset($_COOKIE[$entityCookieName])) $conf->entity = $_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
+if (isset($_POST["entity"])) $_SESSION["dol_entity"] = $_POST["entity"];
+if (isset($_COOKIE[$entityCookieName])) $_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
 
 // Set and init common variables
 require_once("master.inc.php");
