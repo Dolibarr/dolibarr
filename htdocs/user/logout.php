@@ -44,16 +44,6 @@ if ($conf->phenix->enabled && $conf->phenix->cookie)
 	setcookie($conf->phenix->cookie, '', 1, "/");
 }
 
-// TODO Should remove this because entity should be saved in session
-// and is already destroyed by the session_destroy later.
-// Multi-Company module
-if ($conf->multicompany->enabled)
-{
-	// Destroy entity cookie
-	$entityCookieName = "DOLENTITYID_dolibarr";
-	setcookie($entityCookieName, '', 1, "/");
-}
-
 // Destroy session
 $sessionname="DOLSESSID_".$dolibarr_main_db_name;
 if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
