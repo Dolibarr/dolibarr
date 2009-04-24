@@ -578,25 +578,33 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		}
 	}
 
-	// Predefined invoice
+	// Standard invoice created from a predefined invoice
 	if ($_POST['type'] == 0 && $_POST['fac_rec'] > 0)
 	{
 		$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($datefacture))
+		{
+			$error=1;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
+		}
 
-		$facture->socid 		 = $_POST['socid'];
-		$facture->type           = $_POST['type'];
-		$facture->number         = $_POST['facnumber'];
-		$facture->date           = $datefacture;
-		$facture->note_public    = trim($_POST['note_public']);
-		$facture->note           = trim($_POST['note']);
-		$facture->ref_client     = $_POST['ref_client'];
-		$facture->modelpdf       = $_POST['model'];
+		if (! $error)
+		{
+			$facture->socid 		 = $_POST['socid'];
+			$facture->type           = $_POST['type'];
+			$facture->number         = $_POST['facnumber'];
+			$facture->date           = $datefacture;
+			$facture->note_public    = trim($_POST['note_public']);
+			$facture->note           = trim($_POST['note']);
+			$facture->ref_client     = $_POST['ref_client'];
+			$facture->modelpdf       = $_POST['model'];
 
-		// Propriétés particulieres a facture recurrente
-		$facture->fac_rec        = $_POST['fac_rec'];
-		$facture->type           = 0;
+			// Propriétés particulieres a facture recurrente
+			$facture->fac_rec        = $_POST['fac_rec'];
+			$facture->type           = 0;
 
-		$facid = $facture->create($user);
+			$facid = $facture->create($user);
+		}
 	}
 
 	// Standard or deposit or proformat invoice
