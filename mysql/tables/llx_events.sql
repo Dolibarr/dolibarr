@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,15 +26,20 @@
 create table llx_events
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  tms            timestamp,             -- date creation/modification
-  type			 varchar(32)  NOT NULL, -- action type
-  dateevent      datetime,              -- date event
-  fk_user        integer,               -- id user
-  description    varchar(250) NOT NULL, -- full description of action
-  ip			 varchar(32) NOT NULL,  -- ip
-  fk_object      integer                -- id of related object
+  tms            timestamp,                   -- date creation/modification
+  type           varchar(32)  NOT NULL,       -- action type
+  entity         integer DEFAULT 1 NOT NULL,	-- multi company id
+  dateevent      datetime,                    -- date event
+  fk_user        integer,                     -- id user
+  description    varchar(250) NOT NULL,       -- full description of action
+  ip             varchar(32) NOT NULL,        -- ip
+  fk_object      integer                      -- id of related object
 ) type=innodb;
 
-
-
-
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company events
+-- 2 : second company events
+-- 3 : etc...
+--

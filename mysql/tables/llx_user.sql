@@ -50,14 +50,14 @@ create table llx_user
   datepreviouslogin datetime,
   egroupware_id     integer,
   ldap_sid          varchar(255) DEFAULT NULL,
-  statut			tinyint DEFAULT 1,
+  statut            tinyint DEFAULT 1,
   lang              varchar(6)
 )type=innodb;
 
 -- 
 -- List of codes for the field entity
 --
--- 0 : common user
+-- 0 : superadmin or global user
 -- 1 : first company user
 -- 2 : second company user
 -- 3 : etc...

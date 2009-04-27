@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ class box_fournisseurs extends ModeleBoxes {
      */
     function loadBox($max=5)
     {
-        global $user, $langs, $db;
+        global $conf, $user, $langs, $db;
         $langs->load("boxes");
 
 		$this->max=$max;
@@ -67,17 +67,14 @@ class box_fournisseurs extends ModeleBoxes {
         if ($user->rights->societe->lire)
         {
             $sql = "SELECT s.nom, s.rowid as socid, s.tms";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql .= " WHERE s.fournisseur = 1";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if ($user->societe_id > 0)
-            {
-                $sql .= " AND s.rowid = ".$user->societe_id;
-            }
-            $sql .= " ORDER BY s.tms DESC ";
-            $sql .= $db->plimit($max, 0);
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql.= " WHERE s.fournisseur = 1";
+            $sql.= " AND s.entity = ".$conf->entity;
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+            $sql.= " ORDER BY s.tms DESC ";
+            $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);
             if ($result)

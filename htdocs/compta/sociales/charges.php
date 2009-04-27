@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -298,10 +299,15 @@ if ($chid > 0)
 		* Paiements
 		*/
 		$sql = "SELECT ".$db->pdate("datep")." as dp, p.amount,";
-		$sql .= "c.libelle as paiement_type, p.num_paiement, p.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p, ".MAIN_DB_PREFIX."c_paiement as c ";
-		$sql .= " WHERE p.fk_charge = ".$chid." AND p.fk_typepaiement = c.id";
-		$sql .= " ORDER BY dp DESC";
+		$sql.= "c.libelle as paiement_type, p.num_paiement, p.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
+		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
+		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
+		$sql.= " WHERE p.fk_charge = ".$chid;
+		$sql.= " AND p.fk_charge = s.rowid";
+		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND p.fk_typepaiement = c.id";
+		$sql.= " ORDER BY dp DESC";
 
 		$result = $db->query($sql);
 		if ($result)

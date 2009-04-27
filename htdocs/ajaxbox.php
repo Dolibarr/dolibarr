@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,10 @@ if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+
+// Retrieve the entity in the cookie
+$entityCookieName = "DOLENTITYID_dolibarr";
+if (isset($_COOKIE[$entityCookieName])) $_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
 
 require('master.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/boxes.php");

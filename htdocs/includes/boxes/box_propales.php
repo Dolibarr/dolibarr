@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 /**
 		\file       htdocs/includes/boxes/box_propales.php
 		\ingroup    propales
-		\brief      Module de g�n�ration de l'affichage de la box propales
+		\brief      Module de generation de l'affichage de la box propales
 		\version	$Id$
 */
 
@@ -34,9 +34,9 @@ class box_propales extends ModeleBoxes {
     var $boximg="object_propal";
     var $boxlabel;
     var $depends = array("propal");	// conf->propal->enabled
-
-	var $db;
-	var $param;
+    
+    var $db;
+    var $param;
 
     var $info_box_head = array();
     var $info_box_contents = array();
@@ -47,99 +47,96 @@ class box_propales extends ModeleBoxes {
      */
     function box_propales()
     {
-        global $langs;
-        $langs->load("boxes");
-
-        $this->boxlabel=$langs->trans("BoxLastProposals");
+    	global $langs;
+      $langs->load("boxes");
+      
+      $this->boxlabel=$langs->trans("BoxLastProposals");
     }
 
     /**
-     *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-     *      \param      $max        Nombre maximum d'enregistrements � charger
+     *      \brief      Charge les donnees en memoire pour affichage ulterieur
+     *      \param      $max        Nombre maximum d'enregistrements a charger
      */
     function loadBox($max=5)
     {
+    	global $user, $langs, $db, $conf;
+    	
+    	$this->max=$max;
+    	
+    	include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+      $propalstatic=new Propal($db);
         
-        global $user, $langs, $db, $conf;
+      $this->info_box_head = array('text' => $langs->trans("BoxTitleLastPropals",$max));
 
-		$this->max=$max;
+      if ($user->rights->propale->lire)
+      {
+      	$sql = "SELECT s.nom, s.rowid as socid,";
+        $sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+        $sql.= ", ".MAIN_DB_PREFIX."propal as p";
+        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE p.fk_soc = s.rowid";
+        $sql.= " AND s.entity = ".$conf->entity;
+        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+        $sql.= " ORDER BY p.datep DESC, p.ref DESC ";
+        $sql.= $db->plimit($max, 0);
         
-		include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-        $propalstatic=new Propal($db);
+        $result = $db->query($sql);
         
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastPropals",$max));
-
-        if ($user->rights->propale->lire)
+        if ($result)
         {
-
-            $sql = "SELECT s.nom, s.rowid as socid,";
-            $sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql .= " WHERE p.fk_soc = s.rowid";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if($user->societe_id)
-            {
-                $sql .= " AND s.rowid = ".$user->societe_id;
-            }
-            $sql .= " ORDER BY p.datep DESC, p.ref DESC ";
-            $sql .= $db->plimit($max, 0);
-
-            $result = $db->query($sql);
-
-            if ($result)
-            {
-                $num = $db->num_rows($result);
-				$now=gmmktime();
-                
-                $i = 0;
-
-                while ($i < $num)
-                {
-                    $objp = $db->fetch_object($result);
-					$datec=$db->jdate($objp->datec);
-					$dateterm=$db->jdate($objp->fin_validite);
-					$dateclose=$db->jdate($objp->date_cloture);
-					
-					$late = '';
-					if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
-					
-                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
-
-                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->ref,
-					'text2'=> $late,
-                    'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
-                    
-                    $this->info_box_contents[$i][2] = array('td' => 'align="left"',
-                    'text' => dol_trunc($objp->nom,40),
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
-                    
-                    $this->info_box_contents[$i][3] = array('td' => 'align="right"',
-                    'text' => dol_print_date($datec,'day'));
-
-                    $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
-                    'text' => $propalstatic->LibStatut($objp->fk_statut,3));
-
-                    $i++;
-                }
-                
-                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProposals"));
-            }
-            else 
-            {
-                dol_print_error($db);
-            }
+        	$num = $db->num_rows($result);
+        	$now=gmmktime();
+        	
+        	$i = 0;
+        	
+        	while ($i < $num)
+        	{
+        		$objp = $db->fetch_object($result);
+        		$datec=$db->jdate($objp->datec);
+        		$dateterm=$db->jdate($objp->fin_validite);
+        		$dateclose=$db->jdate($objp->date_cloture);
+        		
+        		$late = '';
+        		if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
+        		
+        		$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
+        		'logo' => $this->boximg,
+        		'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
+        		
+        		$this->info_box_contents[$i][1] = array('td' => 'align="left"',
+        		'text' => $objp->ref,
+        		'text2'=> $late,
+        		'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
+        		
+        		$this->info_box_contents[$i][2] = array('td' => 'align="left"',
+        		'text' => dol_trunc($objp->nom,40),
+        		'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+        		
+        		$this->info_box_contents[$i][3] = array('td' => 'align="right"',
+        		'text' => dol_print_date($datec,'day'));
+        		
+        		$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
+        		'text' => $propalstatic->LibStatut($objp->fk_statut,3));
+        		
+        		$i++;
+        	}
+        	
+        	if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProposals"));
         }
-        else {
-            $this->info_box_contents[0][0] = array('td' => 'align="left"',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
+        else 
+        {
+        	dol_print_error($db);
         }
+      }
+      else
+      {
+      	$this->info_box_contents[0][0] = array('td' => 'align="left"',
+      	'text' => $langs->trans("ReadPermissionNotAllowed"));
+      }
     }
-
+    
     function showBox()
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);

@@ -1,5 +1,6 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,20 +25,20 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
+$langs->load("withdrawals");
 $langs->load("companies");
 
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'prelevement','','','bons');
 
-if (!$user->rights->prelevement->bons->lire)
-  accessforbidden();
-
-// Sécurité accés client
-if ($user->societe_id > 0) accessforbidden();
 
 /*
  * View
  */
 
-llxHeader('','Bon de prélèvement - Rejet');
+llxHeader('',$langs->trans("WithdrawsRefused"));
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
@@ -77,20 +78,16 @@ $rej = new RejetPrelevement($db, $user);
  *
  */
 $sql = "SELECT pl.rowid, pr.motif, p.ref, pl.statut";
-$sql .= " , s.rowid as socid, s.nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " , ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE pr.fk_prelevement_lignes = pl.rowid";
-$sql .= " AND pl.fk_prelevement_bons = p.rowid";
-$sql .= " AND pl.fk_soc = s.rowid";
-
-if ($_GET["socid"])
-{
-  $sql .= " AND s.rowid = ".$_GET["socid"];
-}
-
+$sql.= " , s.rowid as socid, s.nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql.= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql.= " , ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE pr.fk_prelevement_lignes = pl.rowid";
+$sql.= " AND pl.fk_prelevement_bons = p.rowid";
+$sql.= " AND pl.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);

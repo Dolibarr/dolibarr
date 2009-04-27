@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,16 +29,19 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.product.class.php";
 
 $langs->load("products");
 $langs->load("suppliers");
 $langs->load("bills");
 
+// Security check
+$id = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit',$id,'product');
+
 $mesg = '';
 
-if (! $user->rights->produit->lire) accessforbidden();
 
 //Récupère le résultat de la recherche Ajax
 //Todo: voir pour le supprimer par la suite
@@ -341,10 +344,13 @@ if ($_GET["id"] || $_GET["ref"])
 				$sql = "SELECT s.nom, s.rowid as socid,";
 				$sql.= " pf.ref_fourn,";
 				$sql.= " pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice";
-				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
+				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+				$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql.= " ON pf.rowid = pfp.fk_product_fournisseur";
-				$sql.= " WHERE pf.fk_soc = s.rowid AND pf.fk_product = ".$product->id;
+				$sql.= " WHERE pf.fk_soc = s.rowid";
+				$sql.= " AND s.entity = ".$conf->entity;
+				$sql.= " AND pf.fk_product = ".$product->id;
 				$sql.= " ORDER BY lower(s.nom), pfp.quantity";
 
 				$resql="";

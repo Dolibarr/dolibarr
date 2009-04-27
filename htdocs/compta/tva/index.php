@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,10 +48,10 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
 /**
- * 	\brief		On cherche la tva à collecter
- *	\param		db		Handle accès base
- *	\param		y		Année
- *	\param		m		Mois
+ * 	\brief		On cherche la tva a collecter
+ *	\param		db		Handle acces base
+ *	\param		y		Year
+ *	\param		m		Month
  */
 function tva_coll($db,$y,$m)
 {
@@ -61,8 +62,10 @@ function tva_coll($db,$y,$m)
         // Si on paye la tva sur les factures dues (non brouillon)
         $sql = "SELECT sum(f.tva) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-        $sql.= " WHERE ";
-        $sql.= " f.fk_statut in (1,2)";
+        $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE f.fk_soc = s.rowid";
+        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND f.fk_statut IN (1,2)";
         $sql.= " AND date_format(f.datef,'%Y') = ".$y;
         $sql.= " AND date_format(f.datef,'%m') = ".$m;
     }
@@ -102,7 +105,7 @@ function tva_coll($db,$y,$m)
 
 
 /**
- * 	\brief		On récupère la tva à payer
+ * 	\brief		On recupere la tva à payer
  *	\param		db		Handle accès base
  *	\param		y		Année
  *	\param		m		Mois
@@ -116,8 +119,10 @@ function tva_paye($db, $y,$m)
         // Si on paye la tva sur les factures dues (non brouillon)
         $sql = "SELECT sum(f.total_tva) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-        $sql.= " WHERE ";
-        $sql.= " f.fk_statut in (1,2)";
+        $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE f.fk_soc = s.rowid";
+        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND f.fk_statut in (1,2)";
         $sql.= " AND date_format(f.datef,'%Y') = $y";
         $sql.= " AND date_format(f.datef,'%m') = $m";
     }
@@ -126,19 +131,19 @@ function tva_paye($db, $y,$m)
         // Si on paye la tva sur les payments
 
         // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-        // n'est pas stocké dans la table des payments.
-        // Seul le module compta expert peut résoudre ce problème.
+        // n'est pas stocke dans la table des payments.
+        // Seul le module compta expert peut resoudre ce probleme.
         // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
         // detail part tva et part ht).
 
 /*
 
         // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-        // n'est pas stocké dans la table des payments.
+        // n'est pas stocke dans la table des payments.
         // Il faut quand un payment a lieu, stocker en plus du montant du paiement le
         // detail part tva et part ht.
 
-        // Tva sur factures payés
+        // Tva sur factures payes
         $sql = "SELECT sum(f.total_tva) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
   //      $sql.= " WHERE ";
@@ -290,12 +295,15 @@ echo '</td><td>&nbsp;</td><td valign="top" width="50%">';
 
 
 /*
-* Réglée
+* Reglee
 */
 
 $sql = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."tva as f WHERE f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
-$sql .= " GROUP BY dm ASC";
+$sql.= " FROM ".MAIN_DB_PREFIX."tva as f";
+$sql.= " WHERE f.entity = ".$conf->entity;
+$sql.= " AND f.datev >= '$y-01-01'";
+$sql.= " AND f.datev <= '$y-12-31' ";
+$sql.= " GROUP BY dm ASC";
 
 pt($db, $sql,$langs->trans("Year")." $y");
 

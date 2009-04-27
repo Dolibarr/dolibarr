@@ -47,25 +47,25 @@ if (!$user->admin)
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
 	$error=0;
-	if (! dolibarr_set_const($db, 'LDAP_KEY_USERS',$_POST["key"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_KEY_USERS',$_POST["key"],'chaine',0,'',$conf->entity)) $error++;
 
-	if (! dolibarr_set_const($db, 'LDAP_USER_DN',$_POST["user"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_USER_OBJECT_CLASS',$_POST["objectclass"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_USER_DN',$_POST["user"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_USER_OBJECT_CLASS',$_POST["objectclass"],'chaine',0,'',$conf->entity)) $error++;
 	
-	if (! dolibarr_set_const($db, 'LDAP_FILTER_CONNECTION',$_POST["filterconnection"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',$_POST["fieldlogin"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN_SAMBA',$_POST["fieldloginsamba"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD',$_POST["fieldpassword"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD_CRYPTED',$_POST["fieldpasswordcrypted"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',$_POST["fieldmail"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',$_POST["fieldphone"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',$_POST["fielddescription"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_SID',$_POST["fieldsid"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FILTER_CONNECTION',$_POST["filterconnection"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',$_POST["fieldlogin"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN_SAMBA',$_POST["fieldloginsamba"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD',$_POST["fieldpassword"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD_CRYPTED',$_POST["fieldpasswordcrypted"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',$_POST["fieldmail"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',$_POST["fieldphone"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',$_POST["fielddescription"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_SID',$_POST["fieldsid"],'chaine',0,'',$conf->entity)) $error++;
 
 	if ($error)
 	{

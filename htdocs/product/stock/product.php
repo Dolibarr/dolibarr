@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,17 +32,18 @@ require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formproduct.class.php");
 
+if (! $user->rights->produit->lire || ! $product->type == 0 || ! $conf->stock->enabled)	accessforbidden();
+
 $langs->load("products");
 $langs->load("orders");
 $langs->load("bills");
 
+// Security check
+$id = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit',$id,'product');
+
 $mesg = '';
-
-if (! $user->rights->produit->lire || ! $product->type == 0 || ! $conf->stock->enabled)
-{
-	accessforbidden();
-}
-
 
 /*
  *	Actions
@@ -346,9 +347,14 @@ print '<br><table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</td>';
 print '<td align="right">'.$langs->trans("NumberOfUnit").'</td></tr>';
 
-$sql = "SELECT e.rowid, e.label, ps.reel FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps";
-$sql .= " WHERE ps.reel != 0 AND ps.fk_entrepot = e.rowid AND ps.fk_product = ".$product->id;
-$sql .= " ORDER BY lower(e.label)";
+$sql = "SELECT e.rowid, e.label, ps.reel";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+$sql.= ", ".MAIN_DB_PREFIX."product_stock as ps";
+$sql.= " WHERE ps.reel != 0";
+$sql.= " AND ps.fk_entrepot = e.rowid";
+$sql.= " AND e.entity = ".$conf->entity;
+$sql.= " AND ps.fk_product = ".$product->id;
+$sql.= " ORDER BY lower(e.label)";
 
 $entrepotstatic=new Entrepot($db);
 

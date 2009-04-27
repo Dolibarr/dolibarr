@@ -36,7 +36,7 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'setvalue' && $user->admin)
 {
-	dolibarr_set_const($db, "JPGRAPH_DIR",$_POST["url"]);
+	dolibarr_set_const($db, "JPGRAPH_DIR",$_POST["url"],'chaine',0,'',$conf->entity);
 }
 
 

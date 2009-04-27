@@ -1,7 +1,9 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -539,7 +541,10 @@ if ($_GET["action"] == 'create')
                 print '</tr>';
 
                 $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
-                $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
+                $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pt";
+                $sql.= ", ".MAIN_DB_PREFIX."product as p";
+                $sql.= " WHERE pt.fk_product = p.rowid";
+                $sql.= " AND pt.fk_propal = ".$propalid;
                 $sql .= " ORDER BY pt.rowid ASC";
                 $result = $db->query($sql);
                 if ($result)
@@ -562,7 +567,8 @@ if ($_GET["action"] == 'create')
                 }
                 $sql = "SELECT pt.rowid, pt.description as product, pt.price, pt.qty, pt.remise_percent";
                 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pt";
-                $sql.= " WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
+                $sql.= " WHERE  pt.fk_propal = ".$propalid;
+                $sql.= " AND pt.fk_product = 0";
                 $sql.= " ORDER BY pt.rowid ASC";
                 $result=$db->query($sql);
                 if ($result)

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,17 +39,18 @@ function show_array_actions_to_do($max=5)
 	$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, a.fk_user_author, a.percent,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.nom as sname, s.rowid, s.client";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.rowid = a.fk_soc";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)
-	{
-	    $sql .= " AND s.rowid = ".$socid;
-	}
-	$sql .= " ORDER BY a.datep DESC, a.id DESC";
-	$sql .= $db->plimit($max, 0);
+	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= ", ".MAIN_DB_PREFIX."c_actioncomm as c";
+	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE c.id = a.fk_action";
+	$sql.= " AND a.percent < 100";
+	$sql.= " AND s.rowid = a.fk_soc";
+	$sql.= " AND s.entity = ".$conf->entity;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid) $sql.= " AND s.rowid = ".$socid;
+	$sql.= " ORDER BY a.datep DESC, a.id DESC";
+	$sql.= $db->plimit($max, 0);
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -124,18 +126,16 @@ function show_array_last_actions_done($max=5)
 	$sql = "SELECT a.id, a.percent, ".$db->pdate("a.datep")." as da, ".$db->pdate("a.datep2")." as da2, a.fk_user_author, a.label,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.rowid, s.nom as sname, s.client";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE c.id = a.fk_action AND a.percent >= 100 AND s.rowid = a.fk_soc";
-	if ($socid)
-	{
-		$sql .= " AND s.rowid = ".$socid;
-	}
-	if (!$user->rights->societe->client->voir && !$socid) //restriction
-	{
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	}
+	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= ", ".MAIN_DB_PREFIX."c_actioncomm as c";
+	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE c.id = a.fk_action";
+	$sql.= " AND a.percent >= 100";
+	$sql.= " AND s.rowid = a.fk_soc";
+	$sql.= " AND s.entity = ".$conf->entity;
+	if ($socid)	$sql.= " AND s.rowid = ".$socid;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	$sql .= " ORDER BY a.datep2 DESC";
 	$sql .= $db->plimit($max, 0);
 

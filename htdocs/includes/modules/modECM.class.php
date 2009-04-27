@@ -131,6 +131,7 @@ class modECM extends DolibarrModules
 							  'langs'=>'ecm',
 							  'position'=>100,
 							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload || $user->rights->ecm->setup',
+							  'enabled'=>'$user->rights->ecm->download || $user->rights->ecm->upload || $user->rights->ecm->setup',
 							  'target'=>'',
 							  'user'=>0);
 		$r++;
@@ -144,6 +145,7 @@ class modECM extends DolibarrModules
 							  'langs'=>'ecm',
 							  'position'=>101,
 							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
+							  'enabled'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
 							  'target'=>'',
 							  'user'=>0);
 		$r++;
@@ -156,6 +158,7 @@ class modECM extends DolibarrModules
 							  'langs'=>'ecm',
 							  'position'=>100,
 							  'perms'=>'$user->rights->ecm->setup',
+							  'enabled'=>'$user->rights->ecm->setup',
 							  'target'=>'',
 							  'user'=>0);
 		$r++;
@@ -168,6 +171,7 @@ class modECM extends DolibarrModules
 							  'langs'=>'ecm',
 							  'position'=>102,
 							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
+							  'enabled'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
 							  'target'=>'',
 							  'user'=>0);
 		$r++;
@@ -180,6 +184,7 @@ class modECM extends DolibarrModules
 							  'langs'=>'ecm',
 							  'position'=>103,
 							  'perms'=>'$user->rights->ecm->download',
+							  'enabled'=>'$user->rights->ecm->download',
 							  'target'=>'',
 							  'user'=>0);
 		$r++;

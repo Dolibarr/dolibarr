@@ -2,8 +2,8 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,18 +36,12 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 $langs->load("other");
 $langs->load("products");
 
-if (!$user->rights->produit->lire)
-	accessforbidden();
-
-$action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
-
 // Security check
-if ($user->societe_id > 0)
-{
-	unset($_GET["action"]);
-	$action='';
-	$socid = $user->societe_id;
-}
+$id = isset($_GET["id"])?$_GET["id"]:'';
+$action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit',$id,'product');
+
 
 // Get parameters
 $page=$_GET["page"];

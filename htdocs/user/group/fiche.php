@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/usergroup.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 // Defini si peux lire/modifier utilisateurs et permisssions
@@ -33,6 +35,9 @@ $candisableperms=($user->admin || $user->rights->user->user->supprimer);
 
 $langs->load("users");
 $langs->load("other");
+
+// Security check
+$result = restrictedArea($user, 'usergroup',$_GET["id"]);
 
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
@@ -153,6 +158,8 @@ if ($_POST["action"] == 'update')
 
 llxHeader('',$langs->trans("GroupCard"));
 
+$html = new Form($db);
+
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -202,17 +209,19 @@ if ($action == 'create')
 /* ************************************************************************** */
 else
 {
-    if ($_GET["id"] )
-    {
-        $group = new UserGroup($db);
-        $group->fetch($_GET["id"]);
+	if ($_GET["id"] )
+  {
+  	$group = new UserGroup($db);
+    $group->fetch($_GET["id"]);
 
 		/*
 		 * Affichage onglets
 		 */
 		$head = group_prepare_head($group);
+		$title = $langs->trans("Group");
+		if (!$group->entity) $title = $langs->trans("GlobalGroup");
 
-		dol_fiche_head($head, 'group', $langs->trans("Group").": ".$group->nom);
+		dol_fiche_head($head, 'group', $title.": ".$group->nom);
 
 
         /*
@@ -233,6 +242,13 @@ else
         {
             print '<table class="border" width="100%">';
 
+            // Ref
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+            print '<td colspan="2">';
+            print $html->showrefnav($group,'id','',$user->rights->user->user->lire || $user->admin);
+            print '</td>';
+            print '</tr>';
+            
             // Nom
             print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
             print '<td width="75%" class="valeur">'.$group->nom.'</td>';
@@ -279,9 +295,8 @@ else
 
             $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin";
             $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-            #      $sql .= " LEFT JOIN llx_usergroup_user ug ON u.rowid = ug.fk_user";
-            #      $sql .= " WHERE ug.fk_usergroup IS NULL";
-            $sql .= " ORDER BY u.name";
+            $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+            $sql.= " ORDER BY u.name";
 
             $result = $db->query($sql);
             if ($result)
@@ -322,7 +337,7 @@ else
             /*
              * Membres du groupe
              */
-            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin";
+            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin, u.entity";
             $sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
             $sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
             $sql.= " WHERE ug.fk_user = u.rowid";
@@ -352,7 +367,14 @@ else
                         print "<tr $bc[$var]>";
                         print '<td>';
                         print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
-                        if ($obj->admin) print img_picto($langs->trans("Administrator"),'star');
+                        if ($obj->admin  && !$obj->entity)
+                        {
+                        	print img_picto($langs->trans("SuperAdministrator"),'redstar');
+                        }
+                        else if ($obj->admin)
+                        {
+                        	print img_picto($langs->trans("Administrator"),'star');
+                        }
                         print '</td>';
                         print '<td>'.ucfirst(stripslashes($obj->name)).'</td>';
                         print '<td>'.ucfirst(stripslashes($obj->firstname)).'</td>';

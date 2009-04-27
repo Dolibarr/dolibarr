@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,12 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
-if (!$user->rights->commande->lire) accessforbidden();
+$langs->load('companies');
+
+// Security check
+$orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'commande',$orderid,'');
 
 $begin=$_GET["begin"];
 $sortorder=$_GET["sortorder"];
@@ -42,18 +47,8 @@ if (! $sortorder) $sortorder="DESC";
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET["page"] ;
 
-// Security check
-$orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande',$orderid,'');
-
-
-$langs->load('companies');
-
-
 $html = new Form($db);
 $formfile = new FormFile($db);
-
 
 
 /*
@@ -67,37 +62,36 @@ llxHeader();
 $sql = "SELECT s.nom, s.rowid as socid,";
 $sql.= " c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande,";
 $sql.= " c.fk_statut, c.facture";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE c.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid)
-{
-    $sql .= " AND s.rowid = ".$socid;
-}
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."commande as c";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE c.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($_GET["month"] > 0)
 {
-    $sql .= " AND date_format(c.date_commande, '%Y-%m') = '".$_GET["year"]."-".$_GET["month"]."'";
+    $sql.= " AND date_format(c.date_commande, '%Y-%m') = '".$_GET["year"]."-".$_GET["month"]."'";
 }
 if ($_GET["year"] > 0)
 {
-    $sql .= " AND date_format(c.date_commande, '%Y') = '".$_GET["year"]."'";
+    $sql.= " AND date_format(c.date_commande, '%Y') = '".$_GET["year"]."'";
 }
 if (isset($_GET["status"]))
 {
-    $sql .= " AND fk_statut = ".$_GET["status"];
+    $sql.= " AND fk_statut = ".$_GET["status"];
 }
 if (isset($_GET["afacturer"]) && $_GET['afacturer'] == 1)
 {
-    $sql .= " AND fk_statut >=1	AND c.facture = 0";
+    $sql.= " AND fk_statut >=1	AND c.facture = 0";
 }
 if (strlen($_POST["sf_ref"]) > 0)
 {
-    $sql .= " AND c.ref like '%".$_POST["sf_ref"] . "%'";
+    $sql.= " AND c.ref like '%".$_POST["sf_ref"] . "%'";
 }
-$sql .= " ORDER BY $sortfield $sortorder";
-$sql .= $db->plimit($limit + 1,$offset);
+$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= $db->plimit($limit + 1,$offset);
+
 $resql = $db->query($sql);
 
 if ($resql)

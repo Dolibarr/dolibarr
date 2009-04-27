@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@ if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/propal.class.php"
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 if ($conf->stock->enabled)    require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
+if (! $user->rights->expedition->lire) accessforbidden();
+
 $langs->load("companies");
 $langs->load("bills");
 $langs->load('deliveries');
@@ -45,16 +47,11 @@ $langs->load('stocks');
 $langs->load('other');
 $langs->load('propal');
 
-if (! $user->rights->expedition->lire)
-accessforbidden();
+// Security check
+$id = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'expedition',$id,'');
 
-
-// Security customer access
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
 
 $origin     = $_GET["origin"]?$_GET["origin"]:$_POST["origin"];				// Example: commande, propal
 $origin_id  = $_GET["object_id"]?$_GET["object_id"]:$_POST["object_id"];	// Id of order or propal

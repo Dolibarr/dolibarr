@@ -46,7 +46,6 @@ ToDoActions=Uncomplete actions
 ToDoActionsFor=Uncomplete actions for %s
 SendPropalRef=Send commercial proposal %s
 SendOrderRef=Send order %s
-NoRecordedProspects=No prospect recorded
 StatusActionToDo=To do
 StatusActionDone=Done
 MyActionsAsked=Actions I have recorded

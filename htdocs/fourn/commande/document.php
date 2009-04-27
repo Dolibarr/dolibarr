@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +33,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/fourn.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php";
 
-if (!$user->rights->commande->lire)
-accessforbidden();
-
 $langs->load('orders');
 $langs->load('sendings');
 $langs->load('companies');
@@ -44,18 +41,11 @@ $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
 
-
+// Security check
 $id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
-
-// Security check
-if (!$user->rights->fournisseur->commande->lire) accessforbidden();
-if ($user->societe_id > 0)
-{
-	unset($_GET["action"]);
-	$action='';
-	$socid = $user->societe_id;
-}
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'commande_fournisseur', $id,'');
 
 // Get parameters
 $page=$_GET["page"];

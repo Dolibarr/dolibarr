@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 /**
  \file       htdocs/includes/boxes/box_clients.php
  \ingroup    societes
- \brief      Module de g�n�ration de l'affichage de la box clients
+ \brief      Module de generation de l'affichage de la box clients
  \version	$Id$
  */
 
@@ -53,12 +53,12 @@ class box_clients extends ModeleBoxes {
 	}
 
 	/**
-	 *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-	 *      \param      $max        Nombre maximum d'enregistrements � charger
+	 *      \brief      Charge les donnees en memoire pour affichage ulterieur
+	 *      \param      $max        Nombre maximum d'enregistrements a charger
 	 */
 	function loadBox($max=5)
 	{
-		global $user, $langs, $db;
+		global $user, $langs, $db, $conf;
 		$langs->load("boxes");
 
 		$this->max=$max;
@@ -68,15 +68,12 @@ class box_clients extends ModeleBoxes {
 		if ($user->rights->societe->lire)
 		{
 			$sql = "SELECT s.nom, s.rowid as socid, s.tms";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql .= " WHERE s.client = 1";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if ($user->societe_id > 0)
-			{
-				$sql .= " AND s.rowid = $user->societe_id";
-			}
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= " WHERE s.client = 1";
+			$sql.= " AND s.entity = ".$conf->entity;
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if ($user->societe_id) $sql.= " AND s.rowid = $user->societe_id";
 			$sql .= " ORDER BY s.tms DESC ";
 			$sql .= $db->plimit($max, 0);
 
@@ -110,7 +107,9 @@ class box_clients extends ModeleBoxes {
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedCustomers"));
 			}
 			else {
-				dol_print_error($db);
+				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+    	        										'maxlength'=>500,
+	            										'text' => ($db->error().' sql='.$sql));
 			}
 		}
 		else {

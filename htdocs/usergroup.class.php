@@ -32,11 +32,15 @@ if ($conf->ldap->enabled) require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php")
        \brief      Classe permettant la gestion des groupes d'utilisateur
 */
 
-class UserGroup
+class UserGroup extends CommonObject
 {
     var $db;			// Database handler
+    var $error;
+    var $errors=array();
+    var $table_element='usergroup';
 
     var $id;			// Group id
+    var $entity;  // Entity of group
     var $nom;			// Name of group
     var $note;			// Note on group
     var $datec;			// Creation date of group
@@ -64,37 +68,44 @@ class UserGroup
 	*/
     function fetch($id)
     {
-        $this->id = $id;
+    	global $conf;
+    	
+    	$this->id = $id;
 
-        $sql = "SELECT g.rowid, g.nom, g.note, g.datec, tms as datem";
-        $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-        $sql.= " WHERE g.rowid = ".$this->id;
+      $sql = "SELECT g.rowid, g.entity, g.nom, g.note, g.datec, g.tms as datem";
+      $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
+      $sql.= " WHERE g.rowid = ".$this->id;
 
-        dol_syslog("Usergroup::fetch sql=".$sql);
-		$result = $this->db->query($sql);
-        if ($result)
+      dol_syslog("Usergroup::fetch sql=".$sql);
+      $result = $this->db->query($sql);
+      if ($result)
+      {
+      	if ($this->db->num_rows($result))
         {
-            if ($this->db->num_rows($result))
-            {
-                $obj = $this->db->fetch_object($result);
+        	$obj = $this->db->fetch_object($result);
 
-                $this->id = $obj->rowid;
-                $this->nom  = $obj->nom;
-                $this->note = $obj->note;
-                $this->datec = $obj->datec;
-                $this->datem = $obj->datem;
-            }
-            $this->db->free($result);
-			return 1;
+          $this->id = $obj->rowid;
+          $this->ref = $obj->rowid;
+          $this->entity = $obj->entity;
+          $this->nom  = $obj->nom;
+          $this->note = $obj->note;
+          $this->datec = $obj->datec;
+          $this->datem = $obj->datem;
+          
+          $this->next_prev_filter = 'entity IN (0,'.$conf->entity.')';
+          
         }
-        else
-        {
-        	$this->error=$this->db->lasterror();
-        	dol_syslog("UserGroup::Fetch ".$this->error, LOG_ERR);
-			return -1;
-        }
-
+        $this->db->free($result);
+        return 1;
+      }
+      else
+      {
+      	$this->error=$this->db->lasterror();
+      	dol_syslog("UserGroup::Fetch ".$this->error, LOG_ERR);
+      	return -1;
+      }
     }
+
 
     /**
      * 	\brief		Return array of groups of a user
@@ -147,10 +158,12 @@ class UserGroup
    */
     function addrights($rid,$allmodule='',$allperms='')
     {
-        $err=0;
-        $whereforadd='';
-
-        $this->db->begin();
+    	global $conf;
+    	
+    	$err=0;
+      $whereforadd='';
+      
+      $this->db->begin();
 
         if ($rid)
         {
@@ -158,8 +171,8 @@ class UserGroup
             // les caractéristiques (module, perms et subperms) de ce droit.
             $sql = "SELECT module, perms, subperms";
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-            $sql.= " WHERE ";
-            $sql.=" id = '".$rid."'";
+            $sql.= " WHERE id = '".$rid."'";
+            $sql.= " AND entity = ".$conf->entity;
 
             $result=$this->db->query($sql);
             if ($result) {
@@ -196,6 +209,7 @@ class UserGroup
             $sql = "SELECT id";
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
             $sql.= " WHERE $whereforadd";
+            $sql.= " AND entity = ".$conf->entity;
 
             $result=$this->db->query($sql);
             if ($result)
@@ -243,10 +257,12 @@ class UserGroup
    */
     function delrights($rid,$allmodule='',$allperms='')
     {
-        $err=0;
-        $wherefordel='';
-
-        $this->db->begin();
+    	global $conf;
+    	
+    	$err=0;
+    	$wherefordel='';
+    	
+    	$this->db->begin();
 
         if ($rid)
         {
@@ -254,8 +270,8 @@ class UserGroup
             // les caractéristiques module, perms et subperms de ce droit.
             $sql = "SELECT module, perms, subperms";
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-            $sql.= " WHERE ";
-            $sql.=" id = '".$rid."'";
+            $sql.= " WHERE id = '".$rid."'";
+            $sql.= " AND entity = ".$conf->entity;
 
             $result=$this->db->query($sql);
             if ($result) {
@@ -292,6 +308,7 @@ class UserGroup
             $sql = "SELECT id";
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
             $sql.= " WHERE $wherefordel";
+            $sql.= " AND entity = ".$conf->entity;
 
             $result=$this->db->query($sql);
             if ($result)
@@ -334,6 +351,8 @@ class UserGroup
    */
   	function getrights($module='')
     {
+    	global $conf;
+    	
       if ($this->all_permissions_are_loaded)
       {
         // Si les permissions ont déja été chargées, on quitte
@@ -344,8 +363,11 @@ class UserGroup
        * Récupération des droits
        */
       $sql = "SELECT r.module, r.perms, r.subperms ";
-      $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
-      $sql .= " WHERE r.id = u.fk_id AND u.fk_usergroup= $this->id AND r.perms IS NOT NULL";
+      $sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
+      $sql.= " WHERE r.id = u.fk_id";
+      $sql.= " AND r.entity = ".$conf->entity;
+      $sql.= " AND u.fk_usergroup = ".$this->id;
+      $sql.= " AND r.perms IS NOT NULL";
       if ($this->db->query($sql))
 	{
 	  $num = $this->db->num_rows();
@@ -427,10 +449,10 @@ class UserGroup
 	*/
 	function create()
 	{
-		global $user,$conf,$langs;
+		global $user, $conf, $langs;
 		
-		$sql = "INSERT into ".MAIN_DB_PREFIX."usergroup (datec,nom)";
-		$sql .= " VALUES(".$this->db->idate(mktime()).",'".addslashes($this->nom)."')";
+		$sql = "INSERT into ".MAIN_DB_PREFIX."usergroup (datec, nom, entity)";
+		$sql .= " VALUES(".$this->db->idate(mktime()).",'".addslashes($this->nom)."',".$conf->entity.")";
 	
 		$result=$this->db->query($sql);
 		if ($result)

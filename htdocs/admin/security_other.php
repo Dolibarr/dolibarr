@@ -38,7 +38,7 @@ if (!$user->admin) accessforbidden();
  */
 if ($_GET["action"] == 'set_main_upload_doc')
 {
-	if (! dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"]))
+	if (! dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity))
 	{
 		dol_print_error($db);
 	}
@@ -51,40 +51,40 @@ if ($_GET["action"] == 'set_main_upload_doc')
 
 if ($_GET["action"] == 'activate_captcha')
 {
-	dolibarr_set_const($db, "MAIN_SECURITY_ENABLECAPTCHA", '1');
+	dolibarr_set_const($db, "MAIN_SECURITY_ENABLECAPTCHA", '1','chaine',0,'',$conf->entity);
 	Header("Location: security_other.php");
 	exit;
 }
 else if ($_GET["action"] == 'disable_captcha')
 {
-	dolibarr_del_const($db, "MAIN_SECURITY_ENABLECAPTCHA");
+	dolibarr_del_const($db, "MAIN_SECURITY_ENABLECAPTCHA",$conf->entity);
 	Header("Location: security_other.php");
 	exit;
 }
 
 if ($_GET["action"] == 'MAIN_SESSION_TIMEOUT')
 {
-	dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"]);
+	dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity);
 	Header("Location: security_other.php");
 	exit;
 }
 
 if ($_GET["action"] == 'MAIN_UMASK')
 {
-	dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"]);
+	dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity);
 	Header("Location: security_other.php");
 	exit;
 }
 
 if ($_GET["action"] == 'activate_avscan')
 {
-	dolibarr_set_const($db, "MAIN_USE_AVSCAN", '1');
+	dolibarr_set_const($db, "MAIN_USE_AVSCAN", '1','chaine',0,'',$conf->entity);
 	Header("Location: security_other.php");
 	exit;
 }
 else if ($_GET["action"] == 'disable_avscan')
 {
-	dolibarr_del_const($db, "MAIN_USE_AVSCAN");
+	dolibarr_del_const($db, "MAIN_USE_AVSCAN",$conf->entity);
 	Header("Location: security_other.php");
 	exit;
 }

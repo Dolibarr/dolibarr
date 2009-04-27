@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,20 +35,16 @@ if ($conf->produit->enabled) require_once(DOL_DOCUMENT_ROOT."/product.class.php"
 if ($conf->expedition_bon->enabled) require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 if ($conf->stock->enabled) require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
+if (!$user->rights->expedition->livraison->lire) accessforbidden();
+
 $langs->load("sendings");
 $langs->load("bills");
 $langs->load('deliveries');
 
-if (!$user->rights->expedition->livraison->lire)
-accessforbidden();
-
-
 // Security check
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
+$id = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'expedition',$id,'','livraison');
 
 
 /*

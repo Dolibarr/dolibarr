@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -684,12 +684,16 @@ class FactureFournisseur extends Facture
 
 		$this->nbtodo=$this->nbtodolate=0;
 		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin';
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= ' WHERE ff.paye=0 AND ff.fk_statut > 0';
+		$sql.= ', '.MAIN_DB_PREFIX.'societe as s';
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= ' WHERE ff.paye=0';
+		$sql.= ' AND ff.fk_statut > 0';
+		$sql.= " AND ff.fk_soc = s.rowid";
+		$sql.= " AND s.entity = ".$conf->entity;
 		if ($user->societe_id) $sql.=' AND ff.fk_soc = '.$user->societe_id;
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

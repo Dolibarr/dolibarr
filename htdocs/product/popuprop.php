@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ if ($page < 0) $page = 0;
 if (! $sortfield) $sortfield="c";
 if (! $sortorder) $sortorder="DESC";
 
-if ($page == -1) { $page = 0 ; }
+if ($page == -1) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
@@ -67,20 +67,22 @@ print_liste_field_titre("Nb. de proposition","popuprop.php", "c","","",'align="r
 print "</tr>\n";
 
 $sql  = "SELECT p.rowid, p.label, p.ref, fk_product_type, count(*) as c";
-$sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p";
+$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd";
+$sql.= ", ".MAIN_DB_PREFIX."product as p";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
   $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
-$sql .= " WHERE p.rowid = pd.fk_product";
+$sql.= " WHERE p.rowid = pd.fk_product";
+$sql.= " AND p.entity = ".$conf->entity;
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
   $sql.= ' AND IFNULL(c.visible,1)=1';
 }
-$sql .= " group by (p.rowid)";
-$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit( $limit ,$offset);
+$sql.= " group by (p.rowid)";
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit( $limit ,$offset);
 
 $result=$db->query($sql) ;
 if ($result)
@@ -96,8 +98,10 @@ if ($result)
       	  // Multilangs
 	    if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 	    {
-		    $sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
-		    $sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+		    $sql = "SELECT label";
+		    $sql.= " FROM ".MAIN_DB_PREFIX."product_det";
+		    $sql.= " WHERE fk_product=".$objp->rowid;
+		    $sql.= " AND lang='". $langs->getDefaultLang() ."'";
 		    $sql.= " LIMIT 1";
 		    $resultp = $db->query($sql);
 		    if ($resultp)

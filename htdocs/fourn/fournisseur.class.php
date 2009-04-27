@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,6 +195,8 @@ class Fournisseur extends Societe
 			$clause = "AND";
 		}
 		$sql.= " ".$clause." s.fournisseur = 1";
+		$sql.= " AND s.entity = ".$conf->entity;
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -247,14 +250,16 @@ class Fournisseur extends Societe
 	 */
 	function ListArray()
 	{
+		global $conf;
+		
 		$arr = array();
 
 		$sql = "SELECT s.rowid, s.nom";
-		if (!$this->user->rights->societe->client->voir && !$this->user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$this->user->rights->societe->client->voir && !$this->user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$this->user->rights->societe->client->voir && !$this->user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE s.fournisseur = 1";
-		if (!$this->user->rights->societe->client->voir && !$this->user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$this->user->id;
+		$sql.= " AND s.entity = ".$conf->entity;
+		if (!$this->user->rights->societe->client->voir && !$this->user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$this->user->id;
 
 		$resql=$this->db->query($sql);
 

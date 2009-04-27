@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@ create table llx_product
   datec              datetime,
   tms                timestamp,
   ref                varchar(32)  NOT NULL,
+  entity             integer DEFAULT 1 NOT NULL, -- multi company id
   label              varchar(255) NOT NULL,
   description        text,
   note               text,
@@ -47,10 +49,17 @@ create table llx_product
   weight_units       tinyint      DEFAULT NULL,
   volume             float        DEFAULT NULL,
   volume_units       tinyint      DEFAULT NULL,
-  stock              integer,		-- physical stock
+  stock              integer,                  -- physical stock
   pmp                double(24,8) default 0 NOT NULL,
   canvas             varchar(15)  DEFAULT '',
-  finished			 tinyint	  DEFAULT NULL,
+  finished           tinyint      DEFAULT NULL,
   import_key         varchar(14)
 )type=innodb;
 
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company product
+-- 2 : second company product
+-- 3 : etc...
+--

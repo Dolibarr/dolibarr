@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,7 @@ class Menubase
 	var $level;
 	var $leftmenu;		//<! 0=Left menu in pre.inc.php files must not be overwrite by database menu, 1=Must be
 	var $perms;
+	var $enabled;
 	var $user;
 	var $tms;
 
@@ -90,6 +92,7 @@ class Menubase
 		$this->level=trim($this->level);
 		$this->leftmenu=trim($this->leftmenu);
 		$this->perms=trim($this->perms);
+		$this->enabled=trim($this->enabled);
 		$this->user=trim($this->user);
 		if (! $this->level) $this->level=0;
 
@@ -99,6 +102,7 @@ class Menubase
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
 		$sql.= "menu_handler,";
+		$sql.= "entity,";
 		$sql.= "module,";
 		$sql.= "type,";
 		$sql.= "mainmenu,";
@@ -111,9 +115,11 @@ class Menubase
 		$sql.= "level,";
 		$sql.= "leftmenu,";
 		$sql.= "perms,";
+		$sql.= "enabled,";
 		$sql.= "user";
 		$sql.= ") VALUES (";
 		$sql.= " '".$this->menu_handler."',";
+		$sql.= " '".$conf->entity."',";
 		$sql.= " '".$this->module."',";
 		$sql.= " '".$this->type."',";
 		$sql.= " '".$this->mainmenu."',";
@@ -126,6 +132,7 @@ class Menubase
 		$sql.= " '".$this->level."',";
 		$sql.= " '".$this->leftmenu."',";
 		$sql.= " '".$this->perms."',";
+		$sql.= " '".$this->enabled."',";
 		$sql.= " '".$this->user."'";
 		$sql.= ")";
 
@@ -170,6 +177,7 @@ class Menubase
 		$this->level=trim($this->level);
 		$this->leftmenu=trim($this->leftmenu);
 		$this->perms=trim($this->perms);
+		$this->enabled=trim($this->enabled);
 		$this->user=trim($this->user);
 
 		// Check parameters
@@ -190,6 +198,7 @@ class Menubase
 		$sql.= " level='".$this->level."',";
 		$sql.= " leftmenu='".addslashes($this->leftmenu)."',";
 		$sql.= " perms='".addslashes($this->perms)."',";
+		$sql.= " enabled='".addslashes($this->enabled)."',";
 		$sql.= " user='".$this->user."'";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -219,6 +228,7 @@ class Menubase
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.menu_handler,";
+		$sql.= " t.entity,";
 		$sql.= " t.module,";
 		$sql.= " t.type,";
 		$sql.= " t.mainmenu,";
@@ -231,6 +241,7 @@ class Menubase
 		$sql.= " t.level,";
 		$sql.= " t.leftmenu,";
 		$sql.= " t.perms,";
+		$sql.= " t.enabled,";
 		$sql.= " t.user,";
 		$sql.= " ".$this->db->pdate('t.tms')."";
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
@@ -247,6 +258,7 @@ class Menubase
 				$this->id    = $obj->rowid;
 
 				$this->menu_handler = $obj->menu_handler;
+				$this->entity = $obj->entity;
 				$this->module = $obj->module;
 				$this->type = $obj->type;
 				$this->mainmenu = $obj->mainmenu;
@@ -259,6 +271,7 @@ class Menubase
 				$this->level = $obj->level;
 				$this->leftmenu = $obj->leftmenu;
 				$this->perms = $obj->perms;
+				$this->enabled = $obj->enabled;
 				$this->user = $obj->user;
 				$this->tms = $obj->tms;
 			}
@@ -321,6 +334,7 @@ class Menubase
 		$this->level='';
 		$this->leftmenu='';
 		$this->perms='';
+		$this->enabled='';
 		$this->user='';
 		$this->tms='';
 	}
@@ -347,12 +361,13 @@ class Menubase
 
 		$tabMenu = array ();
 
-		$sql = "SELECT m.rowid, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.target, m.mainmenu, m.leftmenu,";
-		$sql.= " mo.action";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_const as mc ON m.rowid = mc.fk_menu";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_constraint as mo ON mc.fk_constraint = mo.rowid";
+		$sql = "SELECT m.rowid, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu";
+		//$sql.= ", mo.action";
+		$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_const as mc ON m.rowid = mc.fk_menu";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_constraint as mo ON mc.fk_constraint = mo.rowid";
 		$sql.= " WHERE m.menu_handler in('".$menu_handler."','all')";
+		$sql.= " AND m.entity = ".$conf->entity;
 		if ($type_user == 0) $sql.= " AND m.user in (0,2)";
 		if ($type_user == 1) $sql.= " AND m.user in (1,2)";
 		// If type_user == 2, no test requires
@@ -397,12 +412,20 @@ class Menubase
 					$perms = $this->verifCond($menu['perms']);
 					//print "verifCond rowid=".$menu['rowid']." ".$menu['right'].":".$perms."<br>\n";
 				}
-
+/*
 				// Define $constraint
 				$constraint = true;
 				if ($menu['action'])
 				{
 					$constraint = $this->verifCond($menu['action']);
+					//print "verifCond rowid=".$menu['rowid']." ".$menu['action'].":".$constraint."<br>\n";
+				}
+*/				
+				// Define $enabled
+				$enabled = true;
+				if ($menu['enabled'])
+				{
+					$enabled = $this->verifCond($menu['enabled']);
 					//print "verifCond rowid=".$menu['rowid']." ".$menu['action'].":".$constraint."<br>\n";
 				}
 
@@ -422,8 +445,10 @@ class Menubase
 				$tabMenu[$b][6] = $menu['leftmenu'];
 				if (! isset($tabMenu[$b][4])) $tabMenu[$b][4] = $perms;
 				else $tabMenu[$b][4] = ($tabMenu[$b][4] && $perms);
-				if (! isset($tabMenu[$b][7])) $tabMenu[$b][7] = $constraint;
-				else $tabMenu[$b][7] = ($tabMenu[$b][7] && $constraint);
+				//if (! isset($tabMenu[$b][7])) $tabMenu[$b][7] = $constraint;
+				//else $tabMenu[$b][7] = ($tabMenu[$b][7] && $constraint);
+				if (! isset($tabMenu[$b][7])) $tabMenu[$b][7] = $enabled;
+				else $tabMenu[$b][7] = ($tabMenu[$b][7] && $enabled);
 
 				$a++;
 			}
@@ -440,6 +465,7 @@ class Menubase
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
 		$sql.= " WHERE m.mainmenu = '".$mainmenu."'";
 		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
+		$sql.= " AND m.entity = ".$conf->entity;
 		$sql.= " AND type = 'top'";
 		// It should have only one response
 		$resql = $this->db->query($sql);
@@ -532,11 +558,14 @@ class Menubase
 	 */
 	function listeMainmenu()
 	{
+		global $conf;
+		
 		$overwritemenufor=array();
 
 		$sql = "SELECT DISTINCT m.mainmenu";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
 		$sql.= " WHERE m.menu_handler in ('".$this->menu_handler."','all')";
+		$sql.= " AND m.entity = ".$conf->entity;
 		$sql.= " AND m.leftmenu != '0'";	// leftmenu exists in database so pre.inc.php must be overwritten
 
 		//print $sql;
@@ -570,12 +599,13 @@ class Menubase
 
 		$tabMenu=array();
 
-		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.perms, m.target,";
-		$sql.= " mo.action";
+		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.perms, m.enabled, m.target";
+		//$sql.= ", mo.action";
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_const as mc ON m.rowid = mc.fk_menu";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_constraint as mo ON mc.fk_constraint = mo.rowid";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_const as mc ON m.rowid = mc.fk_menu";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_constraint as mo ON mc.fk_constraint = mo.rowid";
 		$sql.= " WHERE m.type = 'top'";
+		$sql.= " AND m.entity = ".$conf->entity;
 		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
 		if ($type_user == 0) $sql.= " AND m.user in (0,2)";
 		if ($type_user == 1) $sql.= " AND m.user in (1,2)";
@@ -635,6 +665,13 @@ class Menubase
 				{
 					$constraint = $this->verifCond($objm->action);
 				}
+				
+				// Define $constraint
+				$enabled = true;
+				if ($objm->enabled)
+				{
+					$enabled = $this->verifCond($objm->enabled);
+				}
 
 				if ($objm->rowid != $oldrowid && $oldrowid) $b++;	// Break on new entry
 				$oldrowid=$objm->rowid;
@@ -646,8 +683,10 @@ class Menubase
 				$tabMenu[$b]['atarget'] = $objm->target;
 				if (! isset($tabMenu[$b]['right'])) $tabMenu[$b]['right'] = $perms;
 				else $tabMenu[$b]['right'] = ($tabMenu[$b]['right'] && $perms);
-				if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $constraint;
-				else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $constraint);
+				//if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $constraint;
+				//else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $constraint);
+				if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $enabled;
+				else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $enabled);
 
 				//var_dump($tabMenu);
 				$a++;

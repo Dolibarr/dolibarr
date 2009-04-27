@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2009 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio         <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier              <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,7 @@ if ($_POST["action"] == 'updateMask')
 {
 	$maskconstpropal=$_POST['maskconstpropal'];
 	$maskpropal=$_POST['maskpropal'];
-	if ($maskconstpropal)  dolibarr_set_const($db,$maskconstpropal,$maskpropal);
+	if ($maskconstpropal)  dolibarr_set_const($db,$maskconstpropal,$maskpropal,'chaine',0,'',$conf->entity);
 }
 
 if ($_GET["action"] == 'specimen')
@@ -90,46 +90,32 @@ if ($_GET["action"] == 'specimen')
 
 if ($_POST["action"] == 'set_PROPALE_DRAFT_WATERMARK')
 {
-    dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK",trim($_POST["PROPALE_DRAFT_WATERMARK"]));
+    dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK",trim($_POST["PROPALE_DRAFT_WATERMARK"]),'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'set_PROPALE_FREE_TEXT')
 {
-    dolibarr_set_const($db, "PROPALE_FREE_TEXT",trim($_POST["PROPALE_FREE_TEXT"]));
+    dolibarr_set_const($db, "PROPALE_FREE_TEXT",trim($_POST["PROPALE_FREE_TEXT"]),'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'setnbprod')
 {
-    dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$_POST["value"]);
+    dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$_POST["value"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'setdefaultduration')
 {
-    dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION",$_POST["value"]);
+    dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION",$_POST["value"],'chaine',0,'',$conf->entity);
 }
-
-/*
-if ($_POST["action"] == 'setadddeliveryaddress')
-{
-    dolibarr_set_const($db, "PROPALE_ADD_DELIVERY_ADDRESS",$_POST["value"]);
-}
-*/
-
-/*
-if ($_POST["action"] == 'setuseoptionline')
-{
-    dolibarr_set_const($db, "PROPALE_USE_OPTION_LINE",$_POST["value"]);
-}
-*/
 
 if ($_POST["action"] == 'setclassifiedinvoiced')
 {
-    dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER",$_POST["value"]);
+    dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER",$_POST["value"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'setusecustomercontactasrecipient')
 {
-    dolibarr_set_const($db, "PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["value"]);
+    dolibarr_set_const($db, "PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["value"],'chaine',0,'',$conf->entity);
 }
 
 
@@ -138,55 +124,60 @@ if ($_POST["action"] == 'setusecustomercontactasrecipient')
 if ($_GET["action"] == 'set')
 {
 	$type='propal';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
-    if ($db->query($sql))
-    {
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+  if ($db->query($sql))
+  {
 
-    }
+  }
 }
 if ($_GET["action"] == 'del')
 {
-    $type='propal';
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
-    if ($db->query($sql))
-    {
+	$type='propal';
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+  $sql.= " WHERE nom = '".$_GET["value"];
+  $sql.= " AND type = '".$type."'";
+  $sql.= " AND entity = ".$conf->entity;
+  
+  if ($db->query($sql))
+  {
 
-    }
+  }
 }
 
 if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
-
-    if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$_GET["value"]))
-    {
-        $conf->global->PROPALE_ADDON_PDF = $_GET["value"];
-    }
-
-    // On active le modele
-    $type='propal';
-    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
-    $result1=$db->query($sql_del);
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
-    $result2=$db->query($sql);
-    if ($result1 && $result2)
-    {
-		$db->commit();
-    }
-    else
-    {
-    	$db->rollback();
-    }
+	
+	if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
+  {
+  	$conf->global->PROPALE_ADDON_PDF = $_GET["value"];
+  }
+  
+  // On active le modele
+  $type='propal';
+  $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+  $sql_del.= " WHERE nom = '".$_GET["value"];
+  $sql_del.= " AND type = '".$type."'";
+  $sql_del.= " AND entity = ".$conf->entity;
+  $result1=$db->query($sql_del);
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+  $result2=$db->query($sql);
+  if ($result1 && $result2)
+  {
+  	$db->commit();
+  }
+  else
+  {
+  	$db->rollback();
+  }
 }
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre activ�
+    // \todo Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
-	dolibarr_set_const($db, "PROPALE_ADDON",$_GET["value"]);
+	dolibarr_set_const($db, "PROPALE_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);
 }
 
 
@@ -304,6 +295,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql.= " WHERE type = 'propal'";
+$sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -443,18 +435,6 @@ print '<td align="right"><input type="submit" class="button" value="'.$langs->tr
 print '</tr>';
 print '</form>';
 
-/*
-$var=!$var;
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print "<input type=\"hidden\" name=\"action\" value=\"setadddeliveryaddress\">";
-print "<tr ".$bc[$var].">";
-print '<td>'.$langs->trans("AddDeliveryAddressAbility").'</td>';
-print '<td width="60" align="center">'.$html->selectyesno('value',$conf->global->PROPALE_ADD_DELIVERY_ADDRESS,1).'</td>';
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-print '</tr>';
-print '</form>';
-*/
-
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="setusecustomercontactasrecipient">';
@@ -466,20 +446,6 @@ print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
-
-/*
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="action" value="setuseoptionline">';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("UseOptionLineIfNoQuantity");
-print '</td><td width="60" align="center">';
-print $html->selectyesno("value",$conf->global->PROPALE_USE_OPTION_LINE,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
-*/
 
 if ($conf->commande->enabled)
 {

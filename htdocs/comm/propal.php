@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -731,7 +731,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=eregi_replace('\*','',$vat_rate);
 
-	// On v�rifie que le prix minimum est respect�
+	// On verifie que le prix minimum est respecte
 	$productid = $_POST['productid'] ;
 	if ($productid)
 	{
@@ -1992,47 +1992,48 @@ else
 	if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 	$sql.= ' WHERE p.fk_soc = s.rowid';
+	$sql.= ' AND s.entity = '.$conf->entity;
 
 	if (!$user->rights->societe->client->voir && !$socid) //restriction
 	{
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	}
 	if (!empty($_GET['search_ref']))
 	{
-		$sql .= " AND p.ref LIKE '%".addslashes($_GET['search_ref'])."%'";
+		$sql.= " AND p.ref LIKE '%".addslashes($_GET['search_ref'])."%'";
 	}
 	if (!empty($_GET['search_societe']))
 	{
-		$sql .= " AND s.nom LIKE '%".addslashes($_GET['search_societe'])."%'";
+		$sql.= " AND s.nom LIKE '%".addslashes($_GET['search_societe'])."%'";
 	}
 	if (!empty($_GET['search_montant_ht']))
 	{
-		$sql .= " AND p.total_ht='".addslashes($_GET['search_montant_ht'])."'";
+		$sql.= " AND p.total_ht='".addslashes($_GET['search_montant_ht'])."'";
 	}
 	if ($sall) $sql.= " AND (s.nom like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%' OR pd.description like '%".addslashes($sall)."%')";
-	if ($socid) $sql .= ' AND s.rowid = '.$socid;
+	if ($socid) $sql.= ' AND s.rowid = '.$socid;
 	if ($viewstatut <> '')
 	{
-		$sql .= ' AND p.fk_statut in ('.$viewstatut.')';
+		$sql.= ' AND p.fk_statut in ('.$viewstatut.')';
 	}
 	if ($month > 0)
 	{
 		if ($year > 0)
-		$sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
+		$sql.= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
 		else
-		$sql .= " AND date_format(p.datep, '%m') = '$month'";
+		$sql.= " AND date_format(p.datep, '%m') = '$month'";
 	}
 	if ($year > 0)
 	{
-		$sql .= " AND date_format(p.datep, '%Y') = $year";
+		$sql.= " AND date_format(p.datep, '%Y') = $year";
 	}
 	if (strlen($_POST['sf_ref']) > 0)
 	{
-		$sql .= " AND p.ref like '%".addslashes($_POST["sf_ref"]) . "%'";
+		$sql.= " AND p.ref like '%".addslashes($_POST["sf_ref"]) . "%'";
 	}
 
-	$sql .= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
-	$sql .= $db->plimit($limit + 1,$offset);
+	$sql.= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
+	$sql.= $db->plimit($limit + 1,$offset);
 	$result=$db->query($sql);
 
 	if ($result)

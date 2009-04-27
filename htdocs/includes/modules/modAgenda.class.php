@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,6 +150,7 @@ class modAgenda extends DolibarrModules
 													'langs'=>'commercial',
 													'position'=>100,
 													'perms'=>'$user->rights->agenda->myactions->read',
+													'enabled'=>'$conf->agenda->enabled',
 													'target'=>'',
 													'user'=>0);
 		$r++;

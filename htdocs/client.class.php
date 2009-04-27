@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ class Client extends Societe
     
     /**
      *    \brief  Constructeur de la classe
-     *    \param  DB     handler accès base de données
+     *    \param  DB     handler acces base de donnees
      *    \param  id     id societe (0 par defaut)
      */
     function Client($DB, $id=0)
@@ -100,7 +101,9 @@ class Client extends Societe
         	$clause = "AND";
         }
         $sql.= " ".$clause." s.client in (1,2)";
+        $sql.= " AND s.entity = ".$conf->entity;
         $sql.= " GROUP BY s.client";
+        
         $resql=$this->db->query($sql);
         if ($resql)
         {

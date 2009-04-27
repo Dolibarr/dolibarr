@@ -46,7 +46,7 @@ $var=True;
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
 
-	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$_POST["consttype"],0,isset($_POST["constnote"])?$_POST["constnote"]:''))
+	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$_POST["consttype"],0,isset($_POST["constnote"])?$_POST["constnote"]:'',$conf->entity))
 	{
 		print $db->error();
 	}
@@ -80,7 +80,7 @@ print "</tr>\n";
 $var=true;
 $form = new Form($db);
 
-// Cat�gorie
+// Categorie
 $var=!$var;
 print '<form action="droitpret.php" method="POST">';
 print '<input type="hidden" name="action" value="update">';

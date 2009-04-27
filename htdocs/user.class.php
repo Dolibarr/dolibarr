@@ -208,6 +208,8 @@ class User extends CommonObject
 				$this->societe_id           = $obj->fk_societe;
 				$this->contact_id           = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
+				
+				$this->next_prev_filter     = 'entity IN (0,'.$conf->entity.')';
 
 				if (! $this->lang) $this->lang='fr_FR';
 
@@ -234,6 +236,7 @@ class User extends CommonObject
 		{
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
 			$sql.= " WHERE fk_user = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
 			$result=$this->db->query($sql);
 			if ($result)
 			{
@@ -268,6 +271,8 @@ class User extends CommonObject
 	 */
 	function addrights($rid,$allmodule='',$allperms='')
 	{
+		global $conf;
+		
 		dol_syslog("User::addrights $rid, $allmodule, $allperms");
 		$err=0;
 		$whereforadd='';
@@ -280,8 +285,8 @@ class User extends CommonObject
 			// les caracteristiques (module, perms et subperms) de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE ";
-			$sql.= " id = '".$rid."'";
+			$sql.= " WHERE id = '".$rid."'";
+			$sql.= " AND entity = ".$conf->entity;
 
 			$result=$this->db->query($sql);
 			if ($result) {
@@ -316,6 +321,7 @@ class User extends CommonObject
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE ".$whereforadd;
+			$sql.= " AND entity = ".$conf->entity;
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -363,6 +369,8 @@ class User extends CommonObject
 	 */
 	function delrights($rid,$allmodule='',$allperms='')
 	{
+		global $conf;
+		
 		$err=0;
 		$wherefordel='';
 
@@ -374,8 +382,8 @@ class User extends CommonObject
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE ";
-			$sql.=" id = '".$rid."'";
+			$sql.= " WHERE id = '".$rid."'";
+			$sql.= " AND entity = ".$conf->entity;
 
 			$result=$this->db->query($sql);
 			if ($result) {
@@ -409,6 +417,7 @@ class User extends CommonObject
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE $wherefordel";
+			$sql.= " AND entity = ".$conf->entity;
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -420,7 +429,8 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($result);
 					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights";
+					$sql.= " WHERE fk_user = $this->id AND fk_id=$nid";
 					if (! $this->db->query($sql)) $err++;
 
 					$i++;
@@ -462,6 +472,8 @@ class User extends CommonObject
 		*/
 	function getrights($moduletag='')
 	{
+		global $conf;
+		
 		if ($moduletag && isset($this->tab_loaded[$moduletag]) && $this->tab_loaded[$moduletag])
 		{
 			// Le fichier de ce module est deja charge
@@ -480,6 +492,7 @@ class User extends CommonObject
 		$sql = "SELECT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id AND ur.fk_user= ".$this->id." AND r.perms IS NOT NULL";
+		$sql.= " AND r.entity = ".$conf->entity;
 		if ($moduletag) $sql.= " AND r.module = '".addslashes($moduletag)."'";
 
 		dol_syslog('User::getRights sql='.$sql, LOG_DEBUG);
@@ -522,6 +535,7 @@ class User extends CommonObject
 		$sql = "SELECT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr, ".MAIN_DB_PREFIX."usergroup_user as gu, ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = gr.fk_id AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = ".$this->id." AND r.perms IS NOT NULL";
+		$sql.= " AND r.entity = ".$conf->entity;
 		if ($moduletag) $sql.= " AND r.module = '".addslashes($moduletag)."'";
 
 		dol_syslog('User::getRights sql='.$sql, LOG_DEBUG);
@@ -685,6 +699,7 @@ class User extends CommonObject
 
 		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE login ='".addslashes($this->login)."'";
+		$sql.= " AND entity IN (0,".$conf->entity.")";
 
 		dol_syslog("User::Create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -701,8 +716,8 @@ class User extends CommonObject
 			}
 			else
 			{
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid)";
-				$sql.= " VALUES(".$this->db->idate(mktime()).",'".addslashes($this->login)."','".$this->ldap_sid."')";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid,entity)";
+				$sql.= " VALUES(".$this->db->idate(mktime()).",'".addslashes($this->login)."','".$this->ldap_sid."',".$this->entity.")";
 				$result=$this->db->query($sql);
 
 				dol_syslog("User::Create sql=".$sql, LOG_DEBUG);
@@ -900,7 +915,11 @@ class User extends CommonObject
 	 */
 	function set_default_rights()
 	{
-		$sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def WHERE bydefault = 1";
+		global $conf;
+		
+		$sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def";
+		$sql.= " WHERE bydefault = 1";
+		$sql.= " AND entity = ".$conf->entity;
 
 		if ($this->db->query($sql))
 		{
@@ -982,7 +1001,7 @@ class User extends CommonObject
 		$sql.= ", phenix_login = '".addslashes($this->phenix_login)."'";
 		$sql.= ", phenix_pass = '".addslashes($this->phenix_pass)."'";
 		$sql.= ", note = '".addslashes($this->note)."'";
-		$sql.= ", entity = '".$this->entity."'";
+		//$sql.= ", entity = '".$this->entity."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("User::update sql=".$sql, LOG_DEBUG);

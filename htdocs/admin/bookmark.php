@@ -34,7 +34,7 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'setvalue' && $user->admin)
 {
-	$result=dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU",$_POST["BOOKMARKS_SHOW_IN_MENU"]);
+	$result=dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU",$_POST["BOOKMARKS_SHOW_IN_MENU"],'chaine',0,'',$conf->entity);
   	if ($result >= 0)
   	{
   		$mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';

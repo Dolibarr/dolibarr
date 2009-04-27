@@ -83,7 +83,7 @@ if ($what == 'mysql')
 	$mysqldump=$_POST["mysqldump"];
 	if ($mysqldump)
 	{
-		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $mysqldump, $type='chaine');
+		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $mysqldump,'chaine',0,'',$conf->entity);
 	}
 
 	create_exdir(DOL_DATA_ROOT.'/admin/temp');

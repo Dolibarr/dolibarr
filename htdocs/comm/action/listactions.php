@@ -109,9 +109,8 @@ $sql.= " ua.login as loginauthor, ua.rowid as useridauthor,";
 $sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
 $sql.= " ud.login as logindone, ud.rowid as useriddone,";
 $sql.= " sp.name, sp.firstname";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c,";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."actioncomm as a";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
@@ -119,22 +118,11 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON a.fk_user_author = ua.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ut ON a.fk_user_action = ut.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ud ON a.fk_user_done = ud.rowid";
 $sql.= " WHERE c.id = a.fk_action";
-if ($_GET["type"])
-{
-  $sql .= " AND c.id = ".$_GET["type"];
-}
-if ($_REQUEST["time"] == "today")
-{
-  $sql .= " AND date_format(a.datep, '%d%m%Y') = ".strftime("%d%m%Y",time());
-}
-if ($socid) 
-{
-  $sql .= " AND s.rowid = ".$socid;
-}
-if (!$user->rights->societe->client->voir && !$socid) //restriction
-{
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-}
+$sql.= " AND s.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql.= " AND s.rowid = ".$socid;
+if ($_GET["type"]) $sql.= " AND c.id = ".$_GET["type"];
+if ($_REQUEST["time"] == "today") $sql.= " AND date_format(a.datep, '%d%m%Y') = ".strftime("%d%m%Y",time());
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0) 

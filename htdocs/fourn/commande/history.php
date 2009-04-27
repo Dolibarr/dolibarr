@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +33,10 @@ $langs->load("suppliers");
 $langs->load("companies");
 $langs->load('stocks');
 
-
-if (!$user->rights->fournisseur->commande->lire) accessforbidden();
+// Security check
+$id = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'commande_fournisseur', $id,'');
 
 
 /*
@@ -44,8 +47,8 @@ $html =	new	Form($db);
 
 $now=gmmktime();
 
-$id = $_GET['id'];
 $ref= $_GET['ref'];
+
 if ($id > 0 || ! empty($ref))
 {
 	$soc = new Societe($db);
@@ -130,10 +133,11 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		$sql = "SELECT l.fk_statut, l.datelog as dl, l.comment, u.rowid, u.login, u.firstname, u.name";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_log as l";
-		$sql .= " , ".MAIN_DB_PREFIX."user as u ";
-		$sql .= " WHERE l.fk_commande = ".$commande->id." AND u.rowid = l.fk_user";
-		$sql .= " ORDER BY l.rowid DESC";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_log as l";
+		$sql.= " , ".MAIN_DB_PREFIX."user as u ";
+		$sql.= " WHERE l.fk_commande = ".$commande->id;
+		$sql.= " AND u.rowid = l.fk_user";
+		$sql.= " ORDER BY l.rowid DESC";
 
 		$resql = $db->query($sql);
 		if ($resql)

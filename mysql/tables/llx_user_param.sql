@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,8 +23,15 @@
 create table llx_user_param
 (
   fk_user       integer      NOT NULL,
+  entity        integer DEFAULT 1 NOT NULL,	-- multi company id
   param         varchar(64)  NOT NULL,
-  value         varchar(255) NOT NULL,
-
-  UNIQUE (fk_user,param)
+  value         varchar(255) NOT NULL
 )type=innodb;
+
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company param
+-- 2 : second company param
+-- 3 : etc...
+--

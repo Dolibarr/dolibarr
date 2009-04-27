@@ -60,6 +60,12 @@ dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _
 
 session_unregister("dol_login");
 
+// Destroy entity cookie
+if ($conf->multicompany->enabled)
+{
+	$entityCookieName = "DOLENTITYID_dolibarr";
+	setcookie($entityCookieName, '', 1, "/");
+}
 
 // Define url to go
 $url=DOL_URL_ROOT."/index.php";		// By default go to login page

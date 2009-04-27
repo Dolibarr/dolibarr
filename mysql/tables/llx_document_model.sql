@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,7 +26,16 @@ create table llx_document_model
 (
   	rowid         integer AUTO_INCREMENT PRIMARY KEY,
   	nom         	varchar(50),
+  	entity        integer DEFAULT 1 NOT NULL,	-- multi company id
   	type			    varchar(20) NOT NULL,
   	libelle		    varchar(255),
   	description 	text
 )type=innodb;
+
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company document model
+-- 2 : second company document model
+-- 3 : etc...
+--

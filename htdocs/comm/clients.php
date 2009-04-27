@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,23 +54,24 @@ $search_code=isset($_GET["search_code"])?$_GET["search_code"]:$_POST["search_cod
 llxHeader();
 
 
-$sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea, st.libelle as stcomm, s.prefix_comm, s.code_client";
-if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->societe->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
+$sql = "SELECT s.rowid, s.nom, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client";
+$sql.= ", ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
+if (!$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE s.fk_stcomm = st.id";
+$sql.= " AND s.client=1";
+$sql.= " AND s.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql.= " AND s.rowid = ".$socid;
 
-if ($socid)           $sql .= " AND s.rowid = ".$socid;
-if ($user->societe_id) $sql .= " AND s.rowid = " .$user->societe_id;
-if (!$user->rights->societe->client->voir) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-
-if ($search_nom)   $sql .= " AND s.nom like '%".addslashes(strtolower($search_nom))."%'";
-if ($search_ville) $sql .= " AND s.ville like '%".addslashes(strtolower($search_ville))."%'";
-if ($search_code)  $sql .= " AND s.code_client like '%".addslashes(strtolower($search_code))."%'";
+if ($search_nom)   $sql.= " AND s.nom like '%".addslashes(strtolower($search_nom))."%'";
+if ($search_ville) $sql.= " AND s.ville like '%".addslashes(strtolower($search_ville))."%'";
+if ($search_code)  $sql.= " AND s.code_client like '%".addslashes(strtolower($search_code))."%'";
 
 if ($socname)
 {
-	$sql .= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
+	$sql.= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }

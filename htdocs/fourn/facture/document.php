@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,24 +32,18 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
+if (!$user->rights->fournisseur->facture->lire) accessforbidden();
+
 $langs->load('bills');
 $langs->load('other');
 $langs->load("companies");
 
-
-if (!$user->rights->fournisseur->facture->lire)
-	accessforbidden();
-
-$facid=empty($_GET['facid']) ? 0 : intVal($_GET['facid']);
+$facid = isset($_GET["facid"])?$_GET["facid"]:'';
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
 // Security check
-if ($user->societe_id > 0)
-{
-	unset($_GET["action"]);
-	$action='';
-	$socid = $user->societe_id;
-}
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'fournisseur', $facid, '', 'facture');
 
 // Get parameters
 $page=$_GET["page"];

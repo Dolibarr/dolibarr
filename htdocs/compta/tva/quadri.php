@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Yannick Warnier      <ywarnier@beeznest.org>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,13 +64,16 @@ function tva_coll($db,$y,$q)
     {
         // if vat payed on due invoices
         $sql = "SELECT d.fk_facture as facid, f.facnumber as facnum, d.tva_taux as rate, d.total_ht as totalht, d.total_tva as amount";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ";
-        $sql.= MAIN_DB_PREFIX."facturedet as d " ;
-        $sql.= " WHERE ";
-        $sql.= " f.fk_statut in (1,2)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+        $sql.= ", ".MAIN_DB_PREFIX."facturedet as d" ;
+        $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE f.fk_soc = s.rowid";
+        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND f.fk_statut in (1,2)";
         $sql.= " AND f.rowid = d.fk_facture ";
         $sql.= " AND date_format(f.datef,'%Y') = ".$y;
-        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
+        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3);
+        $sql.= " AND date_format(f.datef,'%m') <= ".($q*3).")";
         $sql.= " ORDER BY rate, facid";
         
     }
@@ -127,13 +131,16 @@ function tva_paye($db, $y,$q)
     {
         // Si on paye la tva sur les factures dues (non brouillon)
         $sql = "SELECT d.fk_facture_fourn as facid, f.facnumber as facnum, d.tva_taux as rate, d.total_ht as totalht, d.tva as amount";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ";
-        $sql.= MAIN_DB_PREFIX."facture_fourn_det as d " ;
-        $sql.= " WHERE ";
-        $sql.= " f.fk_statut = 1 ";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+        $sql.= ", ".MAIN_DB_PREFIX."facture_fourn_det as d" ;
+        $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE f.fk_soc = s.rowid";
+        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND f.fk_statut = 1 ";
         $sql.= " AND f.rowid = d.fk_facture_fourn ";
         $sql.= " AND date_format(f.datef,'%Y') = ".$y;
-        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
+        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3);
+        $sql.= " AND date_format(f.datef,'%m') <= ".($q*3).")";
         $sql.= " ORDER BY rate, facid ";
     }
     else

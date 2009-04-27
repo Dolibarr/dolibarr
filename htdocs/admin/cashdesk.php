@@ -43,9 +43,9 @@ if ($_POST["action"] == 'set')
 	if ($_POST["CASHDESK_ID_WAREHOUSE"] < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';
 	if ($_POST["CASHDESK_ID_BANKACCOUNT"] < 0)  $_POST["CASHDESK_ID_BANKACCOUNT"]='';
 	
-	dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",$_POST["CASHDESK_ID_THIRDPARTY"]);
-	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT",$_POST["CASHDESK_ID_BANKACCOUNT"]);
-	dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",$_POST["CASHDESK_ID_WAREHOUSE"]);
+	dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",$_POST["CASHDESK_ID_THIRDPARTY"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT",$_POST["CASHDESK_ID_BANKACCOUNT"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",$_POST["CASHDESK_ID_WAREHOUSE"],'chaine',0,'',$conf->entity);
 	
 	dol_syslog("admin/cashdesk: level ".$_POST["level"]);
 }

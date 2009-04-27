@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1858,18 +1858,22 @@ class Commande extends CommonObject
 		$now=gmmktime();
 
 		$this->nbtodo=$this->nbtodolate=0;
-		$clause = "WHERE";
+		$clause = " WHERE";
 
-		$sql = 'SELECT c.rowid, c.date_creation as datec';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
+		$sql = "SELECT c.rowid, c.date_creation as datec";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
+		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
-			$clause = "AND";
+			$clause = " AND";
 		}
-		$sql.= ' '.$clause.' (c.fk_statut BETWEEN 1 AND 2 or (c.fk_statut = 3 AND c.facture = 0))';
-		if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
+		$sql.= $clause." c.fk_soc = s.rowid";
+		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND (c.fk_statut BETWEEN 1 AND 2 or (c.fk_statut = 3 AND c.facture = 0))";
+		if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2154,15 +2158,19 @@ class Commande extends CommonObject
 		global $conf, $user;
 
 		$this->nb=array();
+		$clause = "WHERE";
 
 		$sql = "SELECT count(co.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande as co";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$clause = "AND";
 		}
+		$sql.= " ".$clause." s.entity = ".$conf->entity;
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

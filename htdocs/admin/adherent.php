@@ -43,7 +43,7 @@ $typeconst=array('yesno','texte','chaine');
 // Action mise a jour ou ajout d'une constante
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
-	$result=dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:'');
+	$result=dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:'',$conf->entity);
 	if ($result < 0)
 	{
 		print $db->error();
@@ -53,7 +53,7 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 // Action activation d'un sous module du module adherent
 if ($_GET["action"] == 'set')
 {
-	$result=dolibarr_set_const($db, $_GET["name"],$_GET["value"]);
+	$result=dolibarr_set_const($db, $_GET["name"],$_GET["value"],'',0,'',$conf->entity);
 	if ($result < 0)
 	{
 		print $db->error();
@@ -63,7 +63,7 @@ if ($_GET["action"] == 'set')
 // Action desactivation d'un sous module du module adherent
 if ($_GET["action"] == 'unset')
 {
-	$result=dolibarr_del_const($db,$_GET["name"]);
+	$result=dolibarr_del_const($db,$_GET["name"],$conf->entity);
 	if ($result < 0)
 	{
 		print $db->error();

@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,11 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 
-if (!$user->rights->commande->lire)
-	accessforbidden();
+if (!$user->rights->commande->lire)	accessforbidden();
 
 $langs->load('orders');
 $langs->load('propal');
@@ -41,24 +43,12 @@ $langs->load("bills");
 $langs->load('compta');
 $langs->load('sendings');
 
+// Security check
+$socid=0;
+$comid = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'commande',$comid,'');
 
-require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
-
-if ($conf->projet->enabled)
-{
-	require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-}
-
-
-/*
- * Sécurité accés client
-*/
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
 
 llxHeader();
 
@@ -88,7 +78,8 @@ if ($_GET["id"] > 0) {
 		 */
 		$sql = 'SELECT s.nom, s.rowid, c.amount_ht, c.fk_projet, c.remise, c.tva, c.total_ttc, c.ref, c.fk_statut, '.$db->pdate('c.date_commande').' as dp, c.note,';
 		$sql.= ' c.fk_user_author, c.fk_user_valid, c.fk_user_cloture, c.date_creation, c.date_valid, c.date_cloture';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 		$sql.= ' WHERE c.fk_soc = s.rowid';
 		$sql.= ' AND c.rowid = '.$commande->id;
 		if ($socid) $sql .= ' AND s.rowid = '.$socid;

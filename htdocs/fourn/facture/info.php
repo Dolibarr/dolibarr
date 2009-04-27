@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,15 @@ require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 
-$langs->load("bills");
+if (!$user->rights->fournisseur->facture->lire) accessforbidden();
+
+$langs->load('bills');
+
+$facid = isset($_GET["facid"])?$_GET["facid"]:'';
+
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'fournisseur', $facid, '', 'facture');
 
 llxHeader();
 

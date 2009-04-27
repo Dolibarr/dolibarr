@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008 Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
+ * Copyright (C) 2005-2009 Regis Houssin          <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,39 +71,34 @@ $offset = $limit * $_GET['page'] ;
 
 $sql = 'SELECT s.nom, s.rowid as socid, c.rowid, c.ref, c.total_ht, c.ref_client,';
 $sql.= ' '.$db->pdate('c.date_commande').' as date_commande, c.fk_statut, c.facture as facturee';
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ' WHERE c.fk_soc = s.rowid';
-if (!$user->rights->societe->client->voir && !$socid) //restriction
-{
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-}
+$sql.= ' AND s.entity = '.$conf->entity;
+if ($socid)	$sql.= ' AND s.rowid = '.$socid;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($sref)
 {
-	$sql .= " AND c.ref like '%".addslashes($sref)."%'";
+	$sql.= " AND c.ref like '%".addslashes($sref)."%'";
 }
 if ($sall)
 {
-	$sql .= " AND (c.ref like '%".addslashes($sall)."%' OR c.note like '%".addslashes($sall)."%')";
-}
-if ($socid)
-{
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql.= " AND (c.ref like '%".addslashes($sall)."%' OR c.note like '%".addslashes($sall)."%')";
 }
 if ($viewstatut <> '')
 {
 	if ($viewstatut < 4 && $viewstatut > -2)
 	{
-		$sql .= ' AND c.fk_statut ='.$viewstatut; // brouillon, valid�e, en cours, annul�e
+		$sql.= ' AND c.fk_statut ='.$viewstatut; // brouillon, validee, en cours, annulee
 		if ($viewstatut == 3)
 		{
-			$sql .= ' AND c.facture = 0'; // � facturer
+			$sql.= ' AND c.facture = 0'; // a facturer
 		}
 	}
 	if ($viewstatut == 4)
 	{
-		$sql .= ' AND c.facture = 1'; // factur�e
+		$sql.= ' AND c.facture = 1'; // factur�e
 	}
 	if ($viewstatut == -2)
 	{
@@ -112,27 +107,27 @@ if ($viewstatut <> '')
 }
 if ($_GET['month'] > 0)
 {
-	$sql .= " AND date_format(c.date_commande, '%Y-%m') = '$year-$month'";
+	$sql.= " AND date_format(c.date_commande, '%Y-%m') = '$year-$month'";
 }
 if ($_GET['year'] > 0)
 {
-	$sql .= " AND date_format(c.date_commande, '%Y') = $year";
+	$sql.= " AND date_format(c.date_commande, '%Y') = $year";
 }
 if (strlen($_POST['sf_ref']) > 0)
 {
-	$sql .= " AND c.ref like '%".addslashes($_POST['sf_ref']) . "%'";
+	$sql.= " AND c.ref like '%".addslashes($_POST['sf_ref']) . "%'";
 }
 if (!empty($snom))
 {
-	$sql .= ' AND s.nom like \'%'.addslashes($snom).'%\'';
+	$sql.= ' AND s.nom like \'%'.addslashes($snom).'%\'';
 }
 if (!empty($sref_client))
 {
-	$sql .= ' AND c.ref_client like \'%'.addslashes($sref_client).'%\'';
+	$sql.= ' AND c.ref_client like \'%'.addslashes($sref_client).'%\'';
 }
 
-$sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
-$sql .= $db->plimit($limit + 1,$offset);
+$sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
+$sql.= $db->plimit($limit + 1,$offset);
 
 $resql = $db->query($sql);
 

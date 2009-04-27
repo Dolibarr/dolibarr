@@ -47,19 +47,19 @@ if ($actionsave)
 
     $db->begin();
     
-    $i+=dolibarr_set_const($db,'PHPPHENIX_URL',trim($_POST["phpphenix_url"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPPHENIX_HOST',trim($_POST["phpphenix_host"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPPHENIX_DBNAME',trim($_POST["phpphenix_dbname"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPPHENIX_USER',trim($_POST["phpphenix_user"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPPHENIX_PASS',trim($_POST["phpphenix_pass"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPPHENIX_COOKIE',trim($_POST["phpphenix_cookie"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_URL',trim($_POST["phpphenix_url"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_HOST',trim($_POST["phpphenix_host"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_DBNAME',trim($_POST["phpphenix_dbname"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_USER',trim($_POST["phpphenix_user"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_PASS',trim($_POST["phpphenix_pass"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_COOKIE',trim($_POST["phpphenix_cookie"]),'chaine',0,'',$conf->entity);
 
-    $i+=dolibarr_set_const($db,'PHPPHENIX_SYNCRO',trim($_POST["phpphenix_syncro"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPPHENIX_COMPANYCREATE',trim($_POST["phpphenix_companycreate"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPPHENIX_PROPALSTATUS',trim($_POST["phpphenix_propalstatus"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPPHENIX_CONTRACTSTATUS',trim($_POST["phpphenix_contractstatus"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPPHENIX_BILLSTATUS',trim($_POST["phpphenix_billstatus"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPPHENIX_MEMBERSTATUS',trim($_POST["phpphenix_memberstatus"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_SYNCRO',trim($_POST["phpphenix_syncro"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_COMPANYCREATE',trim($_POST["phpphenix_companycreate"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_PROPALSTATUS',trim($_POST["phpphenix_propalstatus"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_CONTRACTSTATUS',trim($_POST["phpphenix_contractstatus"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_BILLSTATUS',trim($_POST["phpphenix_billstatus"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_MEMBERSTATUS',trim($_POST["phpphenix_memberstatus"]),'chaine',0,'',$conf->entity);
 
     if ($i >= 9)
     {

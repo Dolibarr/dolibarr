@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,7 +25,8 @@ create table llx_socpeople
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   datec          datetime,
   tms            timestamp,
-  fk_soc         integer,           -- lien vers la societe
+  fk_soc         integer,                       -- lien vers la societe
+  entity         integer DEFAULT 1 NOT NULL,	  -- multi company id
   civilite       varchar(6),
   name           varchar(50),
   firstname      varchar(50),
@@ -41,8 +43,16 @@ create table llx_socpeople
   email          varchar(255),
   jabberid       varchar(255),
   priv           smallint NOT NULL DEFAULT 0,
-  fk_user_creat  integer DEFAULT 0, -- user qui a créé l'enregistrement
+  fk_user_creat  integer DEFAULT 0,             -- user qui a créé l'enregistrement
   fk_user_modif  integer,
   note           text,
   import_key     varchar(14)
 )type=innodb;
+
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company contact
+-- 2 : second company contact
+-- 3 : etc...
+--

@@ -47,14 +47,14 @@ if (!$user->admin)
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
 	$error=0;
-	if (! dolibarr_set_const($db, 'LDAP_KEY_GROUPS',$_POST["key"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_KEY_GROUPS',$_POST["key"],'chaine',0,'',$conf->entity)) $error++;
 
-	if (! dolibarr_set_const($db, 'LDAP_GROUP_DN',$_POST["group"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS',$_POST["objectclass"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_GROUP_DN',$_POST["group"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS',$_POST["objectclass"],'chaine',0,'',$conf->entity)) $error++;
 	
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',$_POST["fielddescription"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',$_POST["fielddescription"],'chaine',0,'',$conf->entity)) $error++;
 
 	if ($error)
 	{

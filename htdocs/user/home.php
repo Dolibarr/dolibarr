@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,9 +76,10 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 $max=10;
 
 $sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.fk_societe, ".$db->pdate("u.datec")." as datec,";
-$sql.= " u.ldap_sid, s.nom";
+$sql.= " u.entity, u.ldap_sid, s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
+$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 $sql.= " ORDER BY u.datec";
 $sql.= " DESC limit $max";
 
@@ -97,7 +99,14 @@ if ($resql)
 
         print "<tr $bc[$var]>";
         print "<td><a href=\"".DOL_URL_ROOT."/user/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowUser"),"user")." ".$obj->firstname." ".$obj->name."</a>";
-        if ($obj->admin) print img_picto($langs->trans("Administrator"),'star');
+        if ($obj->admin && !$obj->entity)
+        {
+        	print img_picto($langs->trans("SuperAdministrator"),'redstar');
+        }
+        else if ($obj->admin)
+        {
+        	print img_picto($langs->trans("Administrator"),'star');
+        }
         print "</td>";
         print "<td align=\"left\">".$obj->login.'</td>';
         print "<td>";
@@ -130,16 +139,17 @@ else
  */
 $max=5;
 
-$sql = "SELECT g.rowid, g.nom, g.note, ".$db->pdate("g.datec")." as datec";
-$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-$sql .= " ORDER BY g.datec DESC";
-if ($max) $sql .= " LIMIT $max";
+$sql = "SELECT g.rowid, g.nom, g.note, g.entity, ".$db->pdate("g.datec")." as datec";
+$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
+$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+$sql.= " ORDER BY g.datec DESC";
+if ($max) $sql.= " LIMIT $max";
 
 if ( $db->query($sql) )
 {
     $num = $db->num_rows();
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",$max).'</td></tr>';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
     $var = true;
     $i = 0;
 
@@ -149,9 +159,14 @@ if ( $db->query($sql) )
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        print "<td><a href=\"".DOL_URL_ROOT."/user/group/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowGroup"),"group")." ".$obj->nom."</a></td>";
+        print '<td><a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
+        if (!$obj->entity)
+        {
+        	print img_picto($langs->trans("GlobalGroup"),'redstar');
+        }
+        print "</td>";
         print "<td width=\"80\" align=\"center\">".dol_print_date($obj->datec)."</td>";
-        print '</tr>';
+        print "</tr>";
         $i++;
     }
     print "</table><br>";

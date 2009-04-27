@@ -1,6 +1,7 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,16 +28,16 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
-
-if (!$user->rights->prelevement->bons->lire)
-accessforbidden();
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 
 if ($_GET["action"] == "set" && $user->rights->prelevement->bons->configurer)
 {
 	for ($i = 1 ; $i < 7 ; $i++)
 	{
-		dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"], $type='chaine');
+		dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"],'chaine',0,'',$conf->entity);
 	}
 
 	Header("Location: config.php");
@@ -134,8 +135,10 @@ if ($user->rights->prelevement->bons->configurer)
 	print '<td align="left">';
 	print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
 	print '<select name="value6">';
-	$sql = "SELECT rowid, name, firstname";
-	$sql .= " FROM ".MAIN_DB_PREFIX."user";
+	
+	$sql = "SELECT u.rowid, u.name, u.firstname";
+	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+	$sql.= " WHERE u.entity IN (0,".$conf->entity.")"; 
 
 	if ($db->query($sql))
 	{
@@ -204,9 +207,10 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 		print '<tr class="impair"><td align="left">';
 		print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
 		print '<select name="user">';
-		$sql = "SELECT rowid, name, firstname";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user";
-		$sql .= " ORDER BY name ASC";
+		$sql = "SELECT u.rowid, u.name, u.firstname";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+		$sql.= " ORDER BY u.name ASC";
 
 		if ($db->query($sql))
 		{
@@ -235,10 +239,12 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 	}
 
 
-	$sql = "SELECT u.name, u.firstname, pn.action, pn.rowid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-	$sql .= " , ".MAIN_DB_PREFIX."prelevement_notifications as pn";
-	$sql .= " WHERE u.rowid = pn.fk_user";
+	$sql = "SELECT u.name, u.firstname";
+	$sql.= ", pn.action, pn.rowid";
+	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+	$sql.= ", ".MAIN_DB_PREFIX."prelevement_notifications as pn";
+	$sql.= " WHERE u.rowid = pn.fk_user";
+	$sql.= " AND u.entity IN (0,".$conf->entity.")"; 
 
 	$resql = $db->query($sql);
 	if ($resql)

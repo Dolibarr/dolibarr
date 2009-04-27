@@ -50,19 +50,19 @@ if ($actionsave)
 
     $db->begin();
     
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_URL',trim($_POST["phpwebcalendar_url"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_HOST',trim($_POST["phpwebcalendar_host"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_DBNAME',trim($_POST["phpwebcalendar_dbname"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_USER',trim($_POST["phpwebcalendar_user"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PASS',trim($_POST["phpwebcalendar_pass"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PASSWORD_VCALEXPORT',trim($_POST["PHPWEBCALENDAR_PASSWORD_VCALEXPORT"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_URL',trim($_POST["phpwebcalendar_url"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_HOST',trim($_POST["phpwebcalendar_host"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_DBNAME',trim($_POST["phpwebcalendar_dbname"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_USER',trim($_POST["phpwebcalendar_user"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PASS',trim($_POST["phpwebcalendar_pass"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PASSWORD_VCALEXPORT',trim($_POST["PHPWEBCALENDAR_PASSWORD_VCALEXPORT"]),'chaine',0,'',$conf->entity);
 
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_SYNCRO',trim($_POST["phpwebcalendar_syncro"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_COMPANYCREATE',trim($_POST["phpwebcalendar_companycreate"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PROPALSTATUS',trim($_POST["phpwebcalendar_propalstatus"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_CONTRACTSTATUS',trim($_POST["phpwebcalendar_contractstatus"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_BILLSTATUS',trim($_POST["phpwebcalendar_billstatus"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_MEMBERSTATUS',trim($_POST["phpwebcalendar_memberstatus"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_SYNCRO',trim($_POST["phpwebcalendar_syncro"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_COMPANYCREATE',trim($_POST["phpwebcalendar_companycreate"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PROPALSTATUS',trim($_POST["phpwebcalendar_propalstatus"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_CONTRACTSTATUS',trim($_POST["phpwebcalendar_contractstatus"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_BILLSTATUS',trim($_POST["phpwebcalendar_billstatus"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_MEMBERSTATUS',trim($_POST["phpwebcalendar_memberstatus"]),'chaine',0,'',$conf->entity);
 
     if ($i >= 9)
     {
@@ -96,7 +96,7 @@ elseif ($actiontest)
     
     if ($webcal->localdb->connected == 1 && $webcal->localdb->database_selected == 1)
     {
-        // V�rifie si bonne base
+        // Verifie si bonne base
         $sql="SELECT cal_value FROM webcal_config WHERE cal_setting='application_name'";
         $resql=$webcal->localdb->query($sql);
         if ($resql) {

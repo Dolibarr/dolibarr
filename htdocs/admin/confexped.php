@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur       <eldy@users.sourceforge.net>
- * Copyright (C) 2006      Andre Cianfarani          <acianfa@free.fr>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,25 +39,25 @@ if (!$user->admin)
 
 if ($_GET["action"] == 'activate_sending')
 {
-    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1");
+    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);
     Header("Location: confexped.php");
     exit;
 }
 else if ($_GET["action"] == 'disable_sending')
 {
-	dolibarr_del_const($db, "MAIN_SUBMODULE_EXPEDITION");
+	dolibarr_del_const($db, "MAIN_SUBMODULE_EXPEDITION",$conf->entity);
     Header("Location: confexped.php");
     exit;
 }
 else if ($_GET["action"] == 'activate_delivery')
 {
-			dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1");
+			dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1",'chaine',0,'',$conf->entity);
 			Header("Location: confexped.php");
 			exit;
 }
 else if ($_GET["action"] == 'disable_delivery')
 {
-	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON");
+	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON",$conf->entity);
     Header("Location: confexped.php");
     exit;
 }

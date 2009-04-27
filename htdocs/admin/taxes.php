@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,12 +48,12 @@ $tax_mode = defined('TAX_MODE')?TAX_MODE:0;
 if ($_POST['action'] == 'settaxmode')
 {
   $tax_mode = $_POST['tax_mode'];
-  if (! dolibarr_set_const($db, 'TAX_MODE', $tax_mode)) { print $db->error(); }
+  if (! dolibarr_set_const($db, 'TAX_MODE', $tax_mode,'chaine',0,'',$conf->entity)) { print $db->error(); }
 }
 
 if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
 {
-	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : ''));
+	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity));
 	{
 	  	print $db->error();
 	}
@@ -60,7 +61,7 @@ if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
 
 if ($_GET['action'] == 'delete')
 {
-	if (! dolibarr_del_const($db, $_GET['constname']));
+	if (! dolibarr_del_const($db, $_GET['constname'],$conf->entity));
 	{
 	  	print $db->error();
 	}

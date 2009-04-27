@@ -49,18 +49,18 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 {
 	$error=0;
 	
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_TYPE',$_POST["type"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION',$_POST["version"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST',$_POST["host"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST_SLAVE',$_POST["slave"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_PORT',$_POST["port"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_DN',$_POST["dn"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_ADMIN_DN',$_POST["admin"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_ADMIN_PASS',$_POST["pass"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_USE_TLS',$_POST["usetls"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_CONTACT_ACTIVE',$_POST["activecontact"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SYNCHRO_ACTIVE',$_POST["activesynchro"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_ACTIVE',$_POST["activemembers"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_TYPE',$_POST["type"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION',$_POST["version"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST',$_POST["host"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST_SLAVE',$_POST["slave"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_PORT',$_POST["port"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_DN',$_POST["dn"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_ADMIN_DN',$_POST["admin"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_ADMIN_PASS',$_POST["pass"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_USE_TLS',$_POST["usetls"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_ACTIVE',$_POST["activecontact"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SYNCHRO_ACTIVE',$_POST["activesynchro"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_ACTIVE',$_POST["activemembers"],'chaine',0,'',$conf->entity)) $error++;
 
 	if ($error)
 	{

@@ -3,6 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,10 +135,12 @@ $db->commit();
 // Lecture des droits utilisateurs
 $permsuser = array();
 
-$sql  = "SELECT r.id, r.libelle, r.module";
-$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
-$sql .= " ".MAIN_DB_PREFIX."user_rights as ur";
-$sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id;
+$sql = "SELECT r.id, r.libelle, r.module";
+$sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
+$sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
+$sql.= " WHERE ur.fk_id = r.id";
+$sql.= " AND r.entity = ".$conf->entity;
+$sql.= " AND ur.fk_user = ".$fuser->id;
 
 $result=$db->query($sql);
 if ($result)
@@ -160,11 +163,14 @@ else
 // Lecture des droits groupes
 $permsgroup = array();
 
-$sql  = "SELECT r.id, r.libelle, r.module";
-$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
-$sql .= " ".MAIN_DB_PREFIX."usergroup_rights as gr,";
-$sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";
-$sql .= " WHERE gr.fk_id = r.id AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = ".$fuser->id;
+$sql = "SELECT r.id, r.libelle, r.module";
+$sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
+$sql.= " ".MAIN_DB_PREFIX."usergroup_rights as gr,";
+$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu";
+$sql.= " WHERE gr.fk_id = r.id";
+$sql.= " AND r.entity = ".$conf->entity;
+$sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
+$sql.= " AND gu.fk_user = ".$fuser->id;
 
 $result=$db->query($sql);
 if ($result)
@@ -220,10 +226,11 @@ print '<td align="center" width="24">&nbsp;</td>';
 print '<td>'.$langs->trans("Permissions").'</td>';
 print '</tr>';
 
-$sql ="SELECT r.id, r.libelle, r.module";
-$sql.=" FROM ".MAIN_DB_PREFIX."rights_def as r";
-$sql.=" WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql.=" ORDER BY r.module, r.id";
+$sql = "SELECT r.id, r.libelle, r.module";
+$sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+$sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
+$sql.= " AND r.entity = ".$conf->entity;
+$sql.= " ORDER BY r.module, r.id";
 
 $result=$db->query($sql);
 if ($result)

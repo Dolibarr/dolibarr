@@ -148,8 +148,10 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if ($conf->multicompany->enabled)
 	{
 		$html = new Form($db);
+		
 		//TODO: creer class
 		$entity = array('1'=>'company1','2'=>'company2');
+		
 		print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Entity").'</b> &nbsp; </td>';
 		print '<td valign="top" nowrap="nowrap">';
 		$html->select_array('entity',$entity);

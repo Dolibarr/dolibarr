@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,8 +55,8 @@ class box_produits extends ModeleBoxes {
 	}
 
 	/**
-	 *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-	 *      \param      $max        Nombre maximum d'enregistrements � charger
+	 *      \brief      Charge les donnees en memoire pour affichage ulterieur
+	 *      \param      $max        Nombre maximum d'enregistrements a charger
 	 */
 	function loadBox($max=5)
 	{
@@ -70,16 +71,20 @@ class box_produits extends ModeleBoxes {
 
 		if ($user->rights->produit->lire)
 		{
+			$clause = " WHERE";
+			
 			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.envente";
-			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-				$sql.= " WHERE IFNULL(c.visible,1)=1";
+				$sql.= $clause." IFNULL(c.visible,1)=1";
+				$clause = " AND";
 			}
-			$sql .= " ORDER BY p.datec DESC";
-			$sql .= $db->plimit($max, 0);
+			$sql.= $clause." p.entity = ".$conf->entity;
+			$sql.= " ORDER BY p.datec DESC";
+			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
 			if ($result)
@@ -94,8 +99,10 @@ class box_produits extends ModeleBoxes {
 					// Multilangs
 					if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 					{
-						$sqld = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
-						$sqld.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+						$sqld = "SELECT label";
+						$sqld.= " FROM ".MAIN_DB_PREFIX."product_det";
+						$sqld.= " WHERE fk_product=".$objp->rowid;
+						$sqld.= " AND lang='". $langs->getDefaultLang() ."'";
 						$sqld.= " LIMIT 1";
 
 						$resultd = $db->query($sqld);
@@ -138,9 +145,13 @@ class box_produits extends ModeleBoxes {
 
 					$i++;
 				}
+				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProducts"));
 			}
-			else {
-				dol_print_error($db);
+			else
+			{
+				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+    	        										'maxlength'=>500,
+	            										'text' => ($db->error().' sql='.$sql));
 			}
 		}
 		else {

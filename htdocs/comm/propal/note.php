@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,16 +108,16 @@ if ($_GET['propalid'])
 		{
 			$head = propal_prepare_head($propal);
 			dol_fiche_head($head, 'note', $langs->trans('Proposal'));
+			
+			print '<table class="border" width="100%">';
 
-            print '<table class="border" width="100%">';
-
-	        print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref.'</td></tr>';
-
-            // Soci�t�
-            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
+	    print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref.'</td></tr>';
+	    
+	    // Societe
+      print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
             
 			// Ligne info remises tiers
-            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
+      print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 			if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			$absolute_discount=$societe->getAvailableDiscounts();
@@ -128,64 +128,64 @@ if ($_GET['propalid'])
 			print '</td></tr>';
     
 			// Date
-            print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-            print dol_print_date($propal->date,'daytext');
-            print '</td>';
-    		print '</tr>';
+      print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
+      print dol_print_date($propal->date,'daytext');
+      print '</td>';
+    	print '</tr>';
     		
-    		// Date fin propal
-            print '<tr>';
-            print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
-            if ($propal->fin_validite)
-            {
-                print dol_print_date($propal->fin_validite,'daytext');
-                if ($propal->statut == 1 && $propal->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-            }
-            else
-            {
-                print $langs->trans("Unknown");
-            }
-            print '</td>';
-            print '</tr>';
+    	// Date fin propal
+      print '<tr>';
+      print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
+      if ($propal->fin_validite)
+      {
+      	print dol_print_date($propal->fin_validite,'daytext');
+        if ($propal->statut == 1 && $propal->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+      }
+      else
+      {
+      	print $langs->trans("Unknown");
+      }
+      print '</td>';
+      print '</tr>';
 
 			// Note publique
-		    print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
+		  print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
 			print '<td valign="top" colspan="3">';
-		    if ($_GET["action"] == 'edit')
-		    {
-		        print '<form method="post" action="note.php?propalid='.$propal->id.'">';
-		        print '<input type="hidden" name="action" value="update_public">';
-		        print '<textarea name="note_public" cols="80" rows="8">'.$propal->note_public."</textarea><br>";
-		        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-		        print '</form>';
-		    }
-		    else
-		    {
-			    print ($propal->note_public?nl2br($propal->note_public):"&nbsp;");
-		    }
+		  if ($_GET["action"] == 'edit')
+		  {
+		  	print '<form method="post" action="note.php?propalid='.$propal->id.'">';
+		    print '<input type="hidden" name="action" value="update_public">';
+		    print '<textarea name="note_public" cols="80" rows="8">'.$propal->note_public."</textarea><br>";
+		    print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		    print '</form>';
+		  }
+		  else
+		  {
+		  	print ($propal->note_public?nl2br($propal->note_public):"&nbsp;");
+		  }
 			print "</td></tr>";
 		
-			// Note priv�e
+			// Note privee
 			if (! $user->societe_id)
 			{
-			    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
+				print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
 				print '<td valign="top" colspan="3">';
-			    if ($_GET["action"] == 'edit')
-			    {
-			        print '<form method="post" action="note.php?propalid='.$propal->id.'">';
-			        print '<input type="hidden" name="action" value="update">';
-			        print '<textarea name="note" cols="80" rows="8">'.$propal->note."</textarea><br>";
-			        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-			        print '</form>';
-			    }
+			  if ($_GET["action"] == 'edit')
+			  {
+			  	print '<form method="post" action="note.php?propalid='.$propal->id.'">';
+			    print '<input type="hidden" name="action" value="update">';
+			    print '<textarea name="note" cols="80" rows="8">'.$propal->note."</textarea><br>";
+			    print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			    print '</form>';
+			  }
 				else
 				{
-				    print ($propal->note?nl2br($propal->note):"&nbsp;");
+					print ($propal->note?nl2br($propal->note):"&nbsp;");
 				}
 				print "</td></tr>";
 			}
 			
-		    print "</table>";
+			print "</table>";
 
 			print '</div>';
 
@@ -200,8 +200,9 @@ if ($_GET['propalid'])
 			}
 			print '</div>';
 		}
-    }
+  }
 }
 $db->close();
+
 llxFooter('$Date$ - $Revision: 1.15 ');
 ?>

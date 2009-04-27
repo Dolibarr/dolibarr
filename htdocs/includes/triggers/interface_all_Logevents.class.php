@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,15 +94,18 @@ class InterfaceLogevents
      *      \param      user        Objet user
      *      \param      langs       Objet langs
      *      \param      conf        Objet conf
+     *      \param      entity      Entity
      *      \return     int         <0 si ko, 0 si aucune action faite, >0 si ok
      */
-    function run_trigger($action,$object,$user,$langs,$conf)
+    function run_trigger($action,$object,$user,$langs,$conf,$entity=1)
     {
-        if (! empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) return 0;	// Log events is disabled (hidden features)
-
-		$key='MAIN_LOGEVENTS_'.$action;
-		//dol_syslog("xxxxxxxxxxx".$key);
-		if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
+    	if (! empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) return 0;	// Log events is disabled (hidden features)
+    	
+    	$key='MAIN_LOGEVENTS_'.$action;
+    	//dol_syslog("xxxxxxxxxxx".$key);
+    	if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
+    	
+    	if (empty($conf->entity)) $conf->entity = $entity;  // forcing of the entity if it's not defined (ex: in login form)
 
         // Actions
         if ($action == 'USER_LOGIN')

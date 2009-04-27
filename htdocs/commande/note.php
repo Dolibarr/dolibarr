@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,19 +30,17 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/order.lib.php');
 
 $socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
 
-if (!$user->rights->commande->lire)
-accessforbidden();
+if (!$user->rights->commande->lire) accessforbidden();
 
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("orders");
 
-// Sécurité accés
-if ($user->societe_id > 0)
-{
-	unset($_GET["action"]);
-	$socid = $user->societe_id;
-}
+// Security check
+$socid=0;
+$comid = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'commande',$comid,'');
 
 
 $id = $_GET['id'];

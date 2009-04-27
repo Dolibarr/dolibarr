@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ accessforbidden();
  */
 if ($_GET["action"] == 'setcodeclient')
 {
-	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON",$_GET["value"]) > 0)
+	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON",$_GET["value"],'chaine',0,'',$conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -53,7 +53,7 @@ if ($_GET["action"] == 'setcodeclient')
 
 if ($_GET["action"] == 'setcodecompta')
 {
-	if (dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON",$_GET["value"]) > 0)
+	if (dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON",$_GET["value"],'chaine',0,'',$conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -66,7 +66,7 @@ if ($_GET["action"] == 'setcodecompta')
 
 if ($_POST["action"] == 'usesearchtoselectcompany')
 {
-	if (dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectcompany"]))
+	if (dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectcompany"],'chaine',0,'',$conf->entity))
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -80,8 +80,8 @@ if ($_POST["action"] == 'usesearchtoselectcompany')
 // define constants for tigre model
 if ($_POST["action"] == 'updateMask')
 {
-	dolibarr_set_const($db, "COMPANY_ELEPHANT_MASK_CUSTOMER",$_POST["maskcustomer"]);
-	dolibarr_set_const($db, "COMPANY_ELEPHANT_MASK_SUPPLIER",$_POST["masksupplier"]);
+	dolibarr_set_const($db, "COMPANY_ELEPHANT_MASK_CUSTOMER",$_POST["maskcustomer"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "COMPANY_ELEPHANT_MASK_SUPPLIER",$_POST["masksupplier"],'chaine',0,'',$conf->entity);
 }
 
 

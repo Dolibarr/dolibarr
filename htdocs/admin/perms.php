@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,13 +38,17 @@ if (!$user->admin)
 
 if ($_GET["action"] == 'add')
 {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1 WHERE id =".$_GET["pid"];
+    $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
+    $sql.= " WHERE id = ".$_GET["pid"];
+    $sql.= " AND entity = ".$conf->entity;
     $db->query($sql);
 }
 
 if ($_GET["action"] == 'remove')
 {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0 WHERE id =".$_GET["pid"];
+    $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
+    $sql.= " WHERE id = ".$_GET["pid"];
+    $sql.= " AND entity = ".$conf->entity;
     $db->query($sql);
 }
 
@@ -101,10 +106,11 @@ $db->commit();
 
 
 // Affiche lignes des permissions
-$sql ="SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
-$sql.=" FROM ".MAIN_DB_PREFIX."rights_def as r";
-$sql.=" WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql.=" ORDER BY r.module, r.id";
+$sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
+$sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+$sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
+$sql.= " AND entity = ".$conf->entity;
+$sql.= " ORDER BY r.module, r.id";
 
 $result = $db->query($sql);
 if ($result)

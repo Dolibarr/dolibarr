@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,8 +35,11 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 $langs->load("products");
 $langs->load("bills");
 
-if (!$user->rights->produit->lire)
-accessforbidden();
+// Security check
+$id = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit',$id,'product');
+
 
 /*
  * Actions

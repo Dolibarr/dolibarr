@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,6 +171,7 @@ if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PRE
 $sql.= ",".MAIN_DB_PREFIX."facture as f";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
 $sql.= " WHERE f.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
 $sql.= " AND f.type in (0,1) AND f.fk_statut = 1";
 $sql.= " AND f.paye = 0";
 if ($option == 'late')

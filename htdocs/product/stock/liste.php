@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,18 +48,18 @@ $offset = $limit * $page;
 
   
 $sql  = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.cp, e.ville, e.fk_pays";
-$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-$sql .= " WHERE 1=1";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+$sql.= " WHERE e.entity = ".$conf->entity;
 if ($sref)
 {
-    $sql .= " AND e.label like '%".$sref."%'";
+    $sql.= " AND e.label like '%".$sref."%'";
 }
 if ($sall)
 {
-    $sql .= " AND (e.description like '%".$sall."%' OR e.lieu like '%".$sall."%' OR e.address like '%".$sall."%' OR e.ville like '%".$sall."%')";
+    $sql.= " AND (e.description like '%".$sall."%' OR e.lieu like '%".$sall."%' OR e.address like '%".$sall."%' OR e.ville like '%".$sall."%')";
 }
-$sql .= " ORDER BY $sortfield $sortorder";
-$sql .= $db->plimit($limit + 1 ,$offset);
+$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= $db->plimit($limit + 1 ,$offset);
 
 $result = $db->query($sql) ;
 if ($result)

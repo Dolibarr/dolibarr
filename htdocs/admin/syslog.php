@@ -39,7 +39,7 @@ $langs->load("other");
  */
 if (! empty($_POST["action"]) && $_POST["action"] == 'setlevel')
 {
-	dolibarr_set_const($db,"SYSLOG_LEVEL",$_POST["level"]);
+	dolibarr_set_const($db,"SYSLOG_LEVEL",$_POST["level"],'chaine',0,'',$conf->entity);
 	dol_syslog("admin/syslog: level ".$_POST["level"]);
 }
 
@@ -53,8 +53,8 @@ if (! empty($_POST["action"]) && $_POST["action"] == 'set')
 			// Only LOG_USER supported on Windows
 			if (! empty($_SERVER["WINDIR"])) $_POST["facility"]='LOG_USER';
 
-			dolibarr_del_const($db,"SYSLOG_FILE");
-			dolibarr_set_const($db,"SYSLOG_FACILITY",$_POST["facility"]);
+			dolibarr_del_const($db,"SYSLOG_FILE",$conf->entity);
+			dolibarr_set_const($db,"SYSLOG_FACILITY",$_POST["facility"],'chaine',0,'',$conf->entity);
 			dol_syslog("admin/syslog: facility ".$_POST["facility"]);
 		}
 		else
@@ -70,8 +70,8 @@ if (! empty($_POST["action"]) && $_POST["action"] == 'set')
 		if ($file)
 		{
 			fclose($file);
-			dolibarr_del_const($db,"SYSLOG_FACILITY");
-			dolibarr_set_const($db,"SYSLOG_FILE",$_POST["filename"]);
+			dolibarr_del_const($db,"SYSLOG_FACILITY",$conf->entity);
+			dolibarr_set_const($db,"SYSLOG_FILE",$_POST["filename"],'chaine',0,'',$conf->entity);
 			dol_syslog("admin/syslog: file ".$_POST["filename"]);
 		}
 		else

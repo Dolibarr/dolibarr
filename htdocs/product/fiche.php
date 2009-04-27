@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Régis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Régis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
  *
@@ -36,13 +36,28 @@ require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
+if (!$user->rights->produit->lire) accessforbidden();
+
 $langs->load("bills");
 $langs->load("other");
 $langs->load("stocks");
 
-$mesg = '';
+// Security check
+$id = '';
+if (isset($_GET["id"]))
+{
+	$id = $_GET["id"];
+	$fieldid = 'rowid';
+}
+if (isset($_GET["ref"]))
+{
+	$id = $_GET["ref"];
+	$fieldid = 'ref';
+}
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
 
-if (!$user->rights->produit->lire) accessforbidden();
+$mesg = '';
 
 /*
  *
@@ -1212,9 +1227,12 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		print '<tr><td width="50%" valign="top">';
 
 		$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.ref,".$db->pdate("p.datep")." as dp";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-		$sql .=" WHERE p.fk_soc = s.rowid AND p.fk_statut = 0 AND p.fk_user_author = ".$user->id;
-		$sql .= " ORDER BY p.datec DESC, tms DESC";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
+		$sql.= " WHERE p.fk_soc = s.rowid";
+		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND p.fk_statut = 0";
+		$sql.= " AND p.fk_user_author = ".$user->id;
+		$sql.= " ORDER BY p.datec DESC, tms DESC";
 
 		$result=$db->query($sql);
 		if ($result)
@@ -1324,10 +1342,14 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 		// Liste de "Mes commandes"
 		print '<tr><td width="50%" valign="top">';
+		
 		$sql = "SELECT s.nom, s.rowid as socid, c.rowid as commandeid, c.ref,".$db->pdate("c.date_commande")." as dc";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-		$sql .=" WHERE c.fk_soc = s.rowid AND c.fk_statut = 0 AND c.fk_user_author = ".$user->id;
-		$sql .= " ORDER BY c.date_creation DESC";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
+		$sql.= " WHERE c.fk_soc = s.rowid";
+		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND c.fk_statut = 0";
+		$sql.= " AND c.fk_user_author = ".$user->id;
+		$sql.= " ORDER BY c.date_creation DESC";
 
 		$result=$db->query($sql);
 		if ($result)
@@ -1433,10 +1455,14 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 		// Liste de Mes factures
 		print '<tr><td width="50%" valign="top">';
+		
 		$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
-		$sql .=" WHERE f.fk_soc = s.rowid AND f.fk_statut = 0 AND f.fk_user_author = ".$user->id;
-		$sql .= " ORDER BY f.datec DESC, f.rowid DESC";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
+		$sql.= " WHERE f.fk_soc = s.rowid";
+		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND f.fk_statut = 0";
+		$sql.= " AND f.fk_user_author = ".$user->id;
+		$sql.= " ORDER BY f.datec DESC, f.rowid DESC";
 
 		$result=$db->query($sql);
 		if ($result)
@@ -1492,9 +1518,12 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	  $var=true;
 
 	  $sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
-	  $sql .=" WHERE f.fk_soc = s.rowid AND f.fk_statut = 0 AND f.fk_user_author <> ".$user->id;
-	  $sql .= " ORDER BY f.datec DESC, f.rowid DESC";
+	  $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
+	  $sql.= " WHERE f.fk_soc = s.rowid";
+	  $sql.= " AND s.entity = ".$conf->entity;
+	  $sql.= " AND f.fk_statut = 0";
+	  $sql.= " AND f.fk_user_author <> ".$user->id;
+	  $sql.= " ORDER BY f.datec DESC, f.rowid DESC";
 
 	  $result=$db->query($sql);
 	  if ($result)

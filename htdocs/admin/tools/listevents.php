@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +57,8 @@ $pagenext = $page + 1;
 // Purge audit events
 if ($_POST['action'] == 'confirm_purge' && $_POST['confirm'] == 'yes' && $user->admin)
 {
-	$sql="DELETE FROM ".MAIN_DB_PREFIX."events";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
+	$sql.= " WHERE entity = ".$conf->entity;
 	$resql = $db->query($sql);
 	if (! $resql)
 	{
@@ -82,7 +84,7 @@ $sql.= " e.fk_user, e.description,";
 $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
-$sql.= " WHERE 1=1";
+$sql.= " WHERE e.entity = ".$conf->entity;
 if ($_GET["search_code"]) { $usefilter++; $sql.=" AND e.type like '%".$_GET["search_code"]."%'"; }
 if ($_GET["search_ip"])   { $usefilter++; $sql.=" AND e.ip like '%".$_GET["search_ip"]."%'"; }
 if ($_GET["search_user"]) { $usefilter++; $sql.=" AND u.login like '%".$_GET["search_user"]."%'"; }

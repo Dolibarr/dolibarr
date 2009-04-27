@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,11 +59,11 @@ $sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.fk_societe, u.login,";
 $sql.= " ".$db->pdate("u.datec")." as datec,";
 $sql.= " ".$db->pdate("u.tms")." as datem,";
 $sql.= " ".$db->pdate("u.datelastlogin")." as datelastlogin,";
-$sql.= " u.ldap_sid, u.statut,";
+$sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
-$sql.= " WHERE 1=1";
+$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 if ($_POST["search_user"])
 {
     $sql.= " AND (u.login like '%".$_POST["search_user"]."%' OR u.name like '%".$_POST["search_user"]."%' OR u.firstname like '%".$_POST["search_user"]."%')";
@@ -85,8 +86,8 @@ if ($result)
     print_liste_field_titre($langs->trans("LastName"),"index.php","u.name",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("FirstName"),"index.php","u.firstname",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),"index.php","u.fk_societe",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("LastConnexion"),"index.php","u.datelastlogin",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec",$param,"",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("LastConnexion"),"index.php","u.datelastlogin",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),"index.php","u.status",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
     $var=True;
@@ -97,9 +98,13 @@ if ($result)
 
         print "<tr $bc[$var]>";
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
-        if ($obj->admin)
+        if ($obj->admin && !$obj->entity)
         {
-          	print img_picto($langs->trans("Administrator"),'star');
+          	print img_picto($langs->trans("SuperAdministrator"),'redstar');
+        }
+        else if ($obj->admin)
+        {
+        	print img_picto($langs->trans("Administrator"),'star');
         }
         print '</td>';
         print '<td>'.ucfirst($obj->name).'</td>';

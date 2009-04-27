@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Christophe
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,13 +68,15 @@ class box_comptes extends ModeleBoxes {
 
 		if ($user->rights->banque->lire)
 		{
-	        $sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
-	        $sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
-	        $sql.= " domiciliation, proprio, adresse_proprio,";
-	        $sql.= " account_number, currency_code,";
-	        $sql.= " min_allowed, min_desired, comment";
+	    $sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
+	    $sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
+	    $sql.= " domiciliation, proprio, adresse_proprio,";
+	    $sql.= " account_number, currency_code,";
+	    $sql.= " min_allowed, min_desired, comment";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-			$sql.= " WHERE clos = 0 AND courant = 1";
+			$sql.= " WHERE entity = ".$conf->entity;
+			$sql.= " AND clos = 0";
+			$sql.= " AND courant = 1";
 			$sql.= " ORDER BY label";
 			$sql.= $db->plimit($max, 0);
 

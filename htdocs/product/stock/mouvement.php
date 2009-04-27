@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,21 +50,26 @@ $form=new Form($db);
 $sql = "SELECT p.rowid, p.label as produit,";
 $sql.= " s.label as stock, s.rowid as entrepot_id,";
 $sql.= " m.value, ".$db->pdate("m.datem")." as datem";
-$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s, ".MAIN_DB_PREFIX."stock_mouvement as m, ".MAIN_DB_PREFIX."product as p";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s";
+$sql.= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
+$sql.= ", ".MAIN_DB_PREFIX."product as p";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
-$sql .= " WHERE m.fk_product = p.rowid AND m.fk_entrepot = s.rowid";
+$sql.= " WHERE m.fk_product = p.rowid";
+$sql.= " AND m.fk_entrepot = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
 if ($_GET["id"])
-$sql .= " AND s.rowid ='".$_GET["id"]."'";
+$sql.= " AND s.rowid ='".$_GET["id"]."'";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
 	$sql.= " AND IFNULL(c.visible,1)=1";
 }
-$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit($conf->liste_limit + 1 ,$offset);
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit($conf->liste_limit + 1 ,$offset);
+
 $resql = $db->query($sql) ;
 
 if ($resql)

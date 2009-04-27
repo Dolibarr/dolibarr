@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -379,9 +380,14 @@ class RemiseCheque extends CommonObject
 		$now=gmmktime();
 
 		$this->nbtodo=$this->nbtodolate=0;
+		
 		$sql = "SELECT b.rowid, b.datev as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= " WHERE b.fk_type = 'CHQ' AND b.fk_bordereau = 0";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity = ".$conf->entity;
+		$sql.= " AND b.fk_type = 'CHQ'";
+		$sql.= " AND b.fk_bordereau = 0";
 		$sql.= " AND b.amount > 0";
 
 		$resql=$this->db->query($sql);

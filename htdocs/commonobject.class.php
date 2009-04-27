@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ class CommonObject
 
 		dol_syslog("CommonObject::add_contact $fk_socpeople, $type_contact, $source");
 
-		// V�rification parametres
+		// Verification parametres
 		if ($fk_socpeople <= 0)
 		{
 			$this->error=$langs->trans("ErrorWrongValueForParameter","1");
@@ -162,8 +163,8 @@ class CommonObject
 	}
 
 	/**
-	 *    \brief      R�cup�re les lignes de contact de l'objet
-	 *    \param      statut        Statut des lignes detail � r�cup�rer
+	 *    \brief      Recupere les lignes de contact de l'objet
+	 *    \param      statut        Statut des lignes detail a recuperer
 	 *    \param      source        Source du contact external (llx_socpeople) ou internal (llx_user)
 	 *    \return     array         Tableau des rowid des contacts
 	 */
@@ -412,10 +413,11 @@ class CommonObject
 
 		$sql = "SELECT MAX(".$fieldid.")";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		if ($this->table_optional) $sql.= ", ".MAIN_DB_PREFIX.$this->table_optional;
 		$sql.= " WHERE ".$fieldid." < '".addslashes($this->ref)."'";
 		if (isset($filter)) $sql.=" AND ".$filter;
 
-		//print $sql;
+		//print $sql."<br>";
 		$result = $this->db->query($sql) ;
 		if (! $result)
 		{
@@ -428,11 +430,12 @@ class CommonObject
 
 		$sql = "SELECT MIN(".$fieldid.")";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		if ($this->table_optional) $sql.= ", ".MAIN_DB_PREFIX.$this->table_optional;
 		$sql.= " WHERE ".$fieldid." > '".addslashes($this->ref)."'";
 		if (isset($filter)) $sql.=" AND ".$filter;
 		// Rem: Bug in some mysql version: SELECT rowid FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
-		//print $sql;
+		//print $sql."<br>";
 		$result = $this->db->query($sql) ;
 		if (! $result)
 		{
@@ -447,7 +450,7 @@ class CommonObject
 
 
 	/**
-	 *      \brief      On r�cup�re les id de liste_contact
+	 *      \brief      On recupere les id de liste_contact
 	 *      \param      source      Source du contact external (llx_socpeople) ou internal (llx_user)
 	 *      \return     array
 	 */

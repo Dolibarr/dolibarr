@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel COUSTEIX      <etm_ltd@tiscali.co.uk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,10 +50,10 @@ if ($_GET["id"])
 	$caneditpassword=( (($user->id == $_GET["id"]) && $user->rights->user->self->password)
 	|| (($user->id != $_GET["id"]) && $user->rights->user->user->password) );
 }
-if ($user->id <> $_GET["id"] && ! $canreadperms)
-{
-	accessforbidden();
-}
+
+// Security check
+$result = restrictedArea($user, 'user',$_GET["id"]);
+if ($user->id <> $_GET["id"] && ! $canreadperms) accessforbidden();
 
 $langs->load("users");
 $langs->load("companies");
@@ -155,6 +155,7 @@ if ($_POST["action"] == 'add' && $canadduser)
 		$edituser->phenix_pass   = $_POST["phenix_pass"];
 		$edituser->note          = $_POST["note"];
 		$edituser->ldap_sid      = $_POST["ldap_sid"];
+		$edituser->entity        = $_POST["entity"];
 
 		$db->begin();
 
@@ -244,6 +245,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 		$edituser->webcal_login  = $_POST["webcal_login"];
 		$edituser->phenix_login  = $_POST["phenix_login"];
 		$edituser->phenix_pass   = $_POST["phenix_pass"];
+		$edituser->entity        = $_POST["entity"];
 
 		$ret=$edituser->update($user);
 		if ($ret < 0)
@@ -490,6 +492,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print '<form action="fiche.php" method="post" name="createuser">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($ldap_sid) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
+	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 
 	print '<table class="border" width="100%">';
 
@@ -884,7 +887,14 @@ else
 			// Administrateur
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
 			print '<td>'.yn($fuser->admin);
-			if ($fuser->admin) print ' '.img_picto($langs->trans("Administrator"),"star");
+			if ($fuser->admin && !$fuser->entity)
+			{
+				print ' '.img_picto($langs->trans("SuperAdministrator"),"redstar");
+			}
+			else if ($fuser->admin)
+			{
+				print ' '.img_picto($langs->trans("Administrator"),"star");
+			}
 			print '</td>';
 			print "</tr>\n";
 
@@ -899,9 +909,13 @@ else
 			{
 				print $langs->trans("DomainUser",$ldap->domainFQDN);
 			}
-			else
+			else if ($fuser->entity!=0)
 			{
 				print $html->textwithhelp($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
+			}
+			else
+			{
+				print $html->textwithhelp($langs->trans("SuperAdministrator"),$langs->trans("SuperAdministratorDesc"));
 			}
 			print '</td></tr>';
 
@@ -1072,10 +1086,9 @@ else
 			$uss = array();
 
 			$sql = "SELECT ug.rowid, ug.nom ";
-			$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-			#      $sql .= " LEFT JOIN llx_usergroup_user ug ON u.rowid = ug.fk_user";
-			#      $sql .= " WHERE ug.fk_usergroup IS NULL";
-			$sql .= " ORDER BY ug.nom";
+			$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
+			$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
+			$sql.= " ORDER BY ug.nom";
 
 			$resql = $db->query($sql);
 			if ($resql)
@@ -1179,6 +1192,7 @@ else
 
 			print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';
 			print '<input type="hidden" name="action" value="update">';
+			print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 			print '<table width="100%" class="border">';
 
 			$rowspan=10;
@@ -1282,7 +1296,7 @@ else
 			else
 			{
 				print '<td>';
-				if ($user->admin)
+				if ($user->admin && ($fuser->entity!=0)) // On ne modifie pas le superadmin
 				{
 					print $form->selectyesno('admin',$fuser->admin,1);
 				}
@@ -1304,9 +1318,13 @@ else
 			{
 				print $langs->trans("DomainUser");
 			}
-			else
+			else if ($fuser->entity!=0)
 			{
 				print $langs->trans("Internal");
+			}
+			else
+			{
+				print $langs->trans("SuperAdmin");
 			}
 			print '</td></tr>';
 

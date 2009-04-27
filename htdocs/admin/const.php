@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,12 +108,13 @@ print '</form>';
 if ($all==1){
 	$sql = "SELECT rowid, name, value, note, entity ";
 	$sql.= "FROM llx_const ";
-	$sql.= "WHERE entity = 0 OR entity = ".$conf->entity." ";
+	$sql.= "WHERE entity IN (0,".$conf->entity.") ";
 	$sql.= "ORDER BY name ASC";
 }else{
 	$sql = "SELECT rowid, name, value, note, entity ";
 	$sql.= "FROM llx_const ";
-	$sql.= "WHERE visible = 1 AND (entity = 0 OR entity = ".$conf->entity.") ";
+	$sql.= "WHERE visible = 1 ";
+	$sql.= "AND entity IN (0,".$conf->entity.") ";
 	$sql.= "ORDER BY name ASC";
 }
 dol_syslog("Const::listConstant sql=".$sql,LOG_DEBUG);

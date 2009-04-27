@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -699,8 +700,11 @@ class Account extends CommonObject
 
 		$this->nbtodo=$this->nbtodolate=0;
 		$sql = "SELECT b.rowid, b.datev as datefin";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
-		$sql.= " WHERE b.rappro=0 AND b.fk_account = ba.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.rappro=0";
+		$sql.= " AND b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity = ".$conf->entity;
 		$sql.= " AND (ba.rappro = 1 AND ba.courant != 2)";	// Compte rapprochable
 		if ($filteraccountid) $sql.=" AND ba.rowid = ".$filteraccountid;
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +70,7 @@ class InfoBox
 			$sql.= " d.file, d.note";
 			$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
 			$sql.= " WHERE b.box_id = d.rowid";
+			$sql.= " AND d.entity = ".$conf->entity;
 			$sql.= " AND b.position = ".$zone;
 			$sql.= " AND b.fk_user = ".$user->id;
 			$sql.= " ORDER BY b.box_order";
@@ -116,6 +118,7 @@ class InfoBox
 			$sql.= " d.file, d.note";
 			$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
 			$sql.= " WHERE b.box_id = d.rowid";
+			$sql.= " AND d.entity = ".$conf->entity;
 			$sql.= " AND b.position = ".$zone;
 			$sql.= " AND b.fk_user = 0";
 			$sql.= " ORDER BY b.box_order";
@@ -170,6 +173,8 @@ class InfoBox
 	 */
 	function saveboxorder($zone,$boxorder,$userid=0)
 	{
+		global $conf;
+		
 		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 		dol_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);
@@ -183,16 +188,19 @@ class InfoBox
 		// Sauve parametre indiquant que le user a une
 		$confuserzone='MAIN_BOXES_'.$zone;
 		$tab[$confuserzone]=1;
-		if (dol_set_user_param($this->db, $user, $tab) < 0)
+		if (dol_set_user_param($this->db, $conf, $user, $tab) < 0)
 		{
 			$this->error=$this->db->lasterror();
 			$this->db->rollback();
 			return -3;
 		}
 
-		$sql ="DELETE FROM ".MAIN_DB_PREFIX."boxes";
-		$sql.=" WHERE fk_user = ".$userid;
-		$sql.=" AND position = ".$zone;
+		$sql = "DELETE ".MAIN_DB_PREFIX."boxes";
+		$sql.= " FROM ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
+		$sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
+		$sql.= " AND ".MAIN_DB_PREFIX."boxes_def.entity = ".$conf->entity;
+		$sql.= " AND ".MAIN_DB_PREFIX."boxes.fk_user = ".$userid;
+		$sql.= " AND ".MAIN_DB_PREFIX."boxes.position = ".$zone;
 
 		dol_syslog("InfoBox::saveboxorder sql=".$sql);
 		$result = $this->db->query($sql);

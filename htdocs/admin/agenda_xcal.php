@@ -45,7 +45,7 @@ if ($actionsave)
 
     $db->begin();
     
-    $i+=dolibarr_set_const($db,'MAIN_AGENDA_XCAL_EXPORTKEY',trim($_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'MAIN_AGENDA_XCAL_EXPORTKEY',trim($_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]),'chaine',0,'',$conf->entity);
 
     if ($i > 0)
     {

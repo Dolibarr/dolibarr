@@ -1,14 +1,14 @@
 <?php
-/* Copyright (c) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2006      Marc Barilley/Ocebo  <marc@ocebo.com>
+/* Copyright (c) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
+ * Copyright (C) 2006      Marc Barilley/Ocebo   <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
- * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
+ * Copyright (C) 2007      Patrick Raguin 		   <patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -465,16 +465,10 @@ class Form
 		$sql = "SELECT s.rowid, s.nom";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE 1=1";
+		$sql.= " WHERE s.entity = ".$conf->entity;
 		if ($filter) $sql.= " AND ".$filter;
-		if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
-		{
-			$sql.= " AND rowid = ".$selected;
-		}
-		if (!$user->rights->societe->client->voir && !$user->societe_id) //restriction
-		{
-			$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-		}
+		if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)	$sql.= " AND rowid = ".$selected;
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		$sql.= " ORDER BY nom ASC";
 
 		dol_syslog("Form::select_societes sql=".$sql);
@@ -686,16 +680,16 @@ class Form
 	 */
 	function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0)
 	{
+		global $conf;
+		
 		// Permettre l'exclusion d'utilisateurs
-		if (is_array($exclude))
-		{
-			$excludeUsers = implode("','",$exclude);
-		}
+		if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
 
 		// On recherche les utilisateurs
 		$sql = "SELECT u.rowid, u.name, u.firstname FROM";
 		$sql.= " ".MAIN_DB_PREFIX ."user as u";
-		if (is_array($exclude) && $excludeUsers) $sql.= " WHERE u.rowid NOT IN ('".$excludeUsers."')";
+		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+		if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
 		$sql.= " ORDER BY u.name ASC";
 
 		dol_syslog("Form::select_users sql=".$sql);
@@ -794,20 +788,22 @@ class Form
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 		}
+		$sql.= " AND p.entity = ".$conf->entity;
+		
 		if($finished == 0)
 		{
-			$sql.= " WHERE p.finished = ".$finished;
+			$sql.= " AND p.finished = ".$finished;
 		}
 		elseif($finished == 1)
 		{
-			$sql.= " WHERE p.finished = ".$finished;
+			$sql.= " AND p.finished = ".$finished;
 			if ($status >= 0)  $sql.= " AND p.envente = ".$status;
 		}
 		elseif($status >= 0)
 		{
-			$sql.= " WHERE p.envente = ".$status;
+			$sql.= " AND p.envente = ".$status;
 		}
-		else $sql.= " WHERE 1 = 1";
+
 		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
 		{
 			$sql.= ' AND IFNULL(c.visible,1)=1';
@@ -1445,11 +1441,14 @@ class Form
 	 */
 	function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0)
 	{
-		global $langs;
+		global $langs, $conf;
+		
+		$langs->load("admin");
 
 		$sql = "SELECT rowid, label, bank";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE clos = '".$statut."'";
+		$sql.= " AND entity = ".$conf->entity;
 		if ($filtre) $sql.=" AND ".$filtre;
 		$sql.= " ORDER BY rowid";
 
@@ -1457,30 +1456,37 @@ class Form
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			print '<select class="flat" name="'.$htmlname.'">';
-			if ($useempty)
-			{
-				print '<option value="'.$obj->rowid.'">&nbsp;</option>';
-			}
-
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			while ($i < $num)
+			if ($num)
 			{
-				$obj = $this->db->fetch_object($result);
-				if ($selected == $obj->rowid)
+				print '<select class="flat" name="'.$htmlname.'">';
+				if ($useempty)
 				{
-					print '<option value="'.$obj->rowid.'" selected="true">';
+					print '<option value="'.$obj->rowid.'">&nbsp;</option>';
 				}
-				else
+				
+				while ($i < $num)
 				{
-					print '<option value="'.$obj->rowid.'">';
+					$obj = $this->db->fetch_object($result);
+					if ($selected == $obj->rowid)
+					{
+						print '<option value="'.$obj->rowid.'" selected="true">';
+					}
+					else
+					{
+						print '<option value="'.$obj->rowid.'">';
+					}
+					print $obj->label;
+					print '</option>';
+					$i++;
 				}
-				print $obj->label;
-				print '</option>';
-				$i++;
+				print "</select>";
 			}
-			print "</select>";
+			else
+			{
+				print $langs->trans("NoActiveBankAccountDefined");
+			}
 		}
 		else {
 			dol_print_error($this->db);

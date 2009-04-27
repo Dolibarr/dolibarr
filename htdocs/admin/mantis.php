@@ -52,11 +52,11 @@ if ($actionsave)
 
     $db->begin();
     
-    $i+=dolibarr_set_const($db,'PHPMANTIS_URL',trim($_POST["phpmantis_url"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPMANTIS_HOST',trim($_POST["phpmantis_host"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPMANTIS_DBNAME',trim($_POST["phpmantis_dbname"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPMANTIS_USER',trim($_POST["phpmantis_user"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'PHPMANTIS_PASS',trim($_POST["phpmantis_pass"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPMANTIS_URL',trim($_POST["phpmantis_url"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPMANTIS_HOST',trim($_POST["phpmantis_host"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPMANTIS_DBNAME',trim($_POST["phpmantis_dbname"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPMANTIS_USER',trim($_POST["phpmantis_user"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'PHPMANTIS_PASS',trim($_POST["phpmantis_pass"]),'chaine',0,'',$conf->entity);
 
     if ($i >= 5)
     {

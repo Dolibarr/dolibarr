@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,9 +54,13 @@ print $langs->trans("Ref").':</td><td><input class="flat" type="text" size="18" 
 print "<tr $bc[0]><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
 print "</table></form><br>";
 
-$sql = "SELECT e.label, e.rowid, e.statut FROM ".MAIN_DB_PREFIX."entrepot as e";
-$sql .= " WHERE statut in (0,1) ORDER BY e.statut DESC ";
-$sql .= $db->plimit(15 ,0);
+$sql = "SELECT e.label, e.rowid, e.statut";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+$sql.= " WHERE e.statut in (0,1)";
+$sql.= " AND e.entity = ".$conf->entity;
+$sql.= " ORDER BY e.statut DESC ";
+$sql.= $db->plimit(15 ,0);
+
 $result = $db->query($sql) ;
 
 if ($result)
@@ -99,19 +104,23 @@ $max=10;
 $sql = "SELECT p.rowid, p.label as produit,";
 $sql.= " s.label as stock, s.rowid as entrepot_id,";
 $sql.= " m.value, ".$db->pdate("m.datem")." as datem";
-$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s, ".MAIN_DB_PREFIX."stock_mouvement as m, ".MAIN_DB_PREFIX."product as p";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s";
+$sql.= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
+$sql.= ", ".MAIN_DB_PREFIX."product as p";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
-$sql .= " WHERE m.fk_product = p.rowid AND m.fk_entrepot = s.rowid";
+$sql.= " WHERE m.fk_product = p.rowid";
+$sql.= " AND m.fk_entrepot = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
 	$sql.= " AND IFNULL(c.visible,1)=1";
 }
-$sql .= " ORDER BY datem DESC";
-$sql .= $db->plimit($max,0);
+$sql.= " ORDER BY datem DESC";
+$sql.= $db->plimit($max,0);
 
 dol_syslog("Index:list stock movements sql=".$sql, LOG_DEBUG);
 $resql = $db->query($sql) ;

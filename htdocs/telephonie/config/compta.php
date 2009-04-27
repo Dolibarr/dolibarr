@@ -36,7 +36,7 @@ if (!$user->admin) accessforbidden();
 if ($_GET["action"] == "set")
 {
 
-  dolibarr_set_const($db, 'TELEPHONIE_COMPTE_VENTILATION', $_POST["cg"], $type='chaine');
+  dolibarr_set_const($db, 'TELEPHONIE_COMPTE_VENTILATION', $_POST["cg"],'chaine',0,'',$conf->entity);
 
 
   Header("Location: compta.php");
@@ -47,8 +47,8 @@ if ($_GET["action"] == "set")
  *
  *
  */
-llxHeader('','T�l�phonie - Configuration');
-print_titre("Configuration du module de T�l�phonie");
+llxHeader('','Telephonie - Configuration');
+print_titre("Configuration du module de Telephonie");
 
 print "<br>";
 

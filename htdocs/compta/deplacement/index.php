@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ $langs->load("users");
 $langs->load("trips");
 
 // Security check
+$socid = $_GET["socid"]?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement','','');
 
@@ -54,28 +55,19 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Sécurité accés client
-$socid = $_GET["socid"];
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socid = $user->societe_id;
-}
 
 $sql = "SELECT s.nom, s.rowid as socid,";                       // Ou
 $sql.= " d.rowid, d.type, ".$db->pdate("d.dated")." as dd, d.km, ";     // Comment
 $sql.= " u.name, u.firstname";                                  // Qui
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."deplacement as d";
+$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+$sql.= ", ".MAIN_DB_PREFIX."deplacement as d";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on d.fk_soc = s.rowid"; 
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE d.fk_user = u.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid)
-{
-  $sql .= " AND s.rowid = ".$socid;
-}
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
+$sql.= " AND s.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql.= " AND s.rowid = ".$socid;
+$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
 
 //print $sql;
 $resql=$db->query($sql);

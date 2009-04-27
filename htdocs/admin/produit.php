@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C)      2006 Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C)      2007 Auguria SARL         <info@auguria.org>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,11 +42,11 @@ accessforbidden();
 
 if ($_POST["action"] == 'nbprod')
 {
-	dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", $_POST["value"]);
+	dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", $_POST["value"],'chaine',0,'',$conf->entity);
 }
 else if ($_POST["action"] == 'multiprix_num')
 {
-	dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", $_POST["value"]);
+	dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", $_POST["value"],'chaine',0,'',$conf->entity);
 }
 if ($_POST["action"] == 'multiprix')
 {
@@ -63,14 +63,14 @@ if ($_POST["action"] == 'multiprix')
 				exit;
 			}
 		}
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
+		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"],'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6",'chaine',0,'',$conf->entity);
 	}
 	else
 	{
 		dol_syslog("Table definition for ".MAIN_DB_PREFIX."societe already ok");
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
+		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"],'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6",'chaine',0,'',$conf->entity);
 	}
 }
 else if ($_POST["action"] == 'sousproduits')
@@ -91,22 +91,22 @@ else if ($_POST["action"] == 'sousproduits')
 		}
 		else
 		{
-	  dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
+	  dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"],'chaine',0,'',$conf->entity);
 		}
 	}
 	else
 	{
 		dol_syslog("Table definition already ok");
-		dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
+		dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"],'chaine',0,'',$conf->entity);
 	}
 }
 else if ($_POST["action"] == 'viewProdDescInForm')
 {
-	dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $_POST["activate_viewProdDescInForm"]);
+	dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $_POST["activate_viewProdDescInForm"],'chaine',0,'',$conf->entity);
 }
 else if ($_POST["action"] == 'confirmDeleteProdLineInForm')
 {
-	dolibarr_set_const($db, "PRODUIT_CONFIRM_DELETE_LINE", $_POST["activate_confirmDeleteProdLineInForm"]);
+	dolibarr_set_const($db, "PRODUIT_CONFIRM_DELETE_LINE", $_POST["activate_confirmDeleteProdLineInForm"],'chaine',0,'',$conf->entity);
 }
 else if ($_POST["action"] == 'ProductCanvasAbility')
 {
@@ -114,11 +114,11 @@ else if ($_POST["action"] == 'ProductCanvasAbility')
 	if (! empty($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
 	if (! empty($dolibarr_smarty_cache))   create_exdir($dolibarr_smarty_cache);
 	
-	dolibarr_set_const($db, "MAIN_NEED_SMARTY", $_POST["ProductCanvasAbility"]);
+	dolibarr_set_const($db, "MAIN_NEED_SMARTY", $_POST["ProductCanvasAbility"],'chaine',0,'',$conf->entity);
 }
 else if ($_POST["action"] == 'usesearchtoselectproduct')
 {
-	dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectproduct"]);
+	dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectproduct"],'chaine',0,'',$conf->entity);
 }
 else if ($_GET["action"] == 'set')
 {
@@ -127,12 +127,12 @@ else if ($_GET["action"] == 'set')
 	if (! empty($dolibarr_smarty_cache))   create_exdir($dolibarr_smarty_cache);
 	
 	$const = "PRODUIT_SPECIAL_".strtoupper($_GET["spe"]);
-	if ($_GET["value"]) dolibarr_set_const($db, $const, $_GET["value"]);
-	else dolibarr_del_const($db, $const);
+	if ($_GET["value"]) dolibarr_set_const($db, $const, $_GET["value"],'chaine',0,'',$conf->entity);
+	else dolibarr_del_const($db, $const,$conf->entity);
 }
 else if ($_POST["action"] == 'useecotaxe')
 {
-	dolibarr_set_const($db, "PRODUIT_USE_ECOTAXE", $_POST["activate_useecotaxe"]);
+	dolibarr_set_const($db, "PRODUIT_USE_ECOTAXE", $_POST["activate_useecotaxe"],'chaine',0,'',$conf->entity);
 }
 
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +75,7 @@ if (!$user->rights->societe->client->voir && !$socid)
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 }
 $sql.= " WHERE p.fk_paiement = c.id";
+$sql.= " AND s.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid)
 {
 	$sql.= " AND sc.fk_user = " .$user->id;
@@ -99,7 +101,9 @@ if ($_GET["orphelins"])     // Option for debugging purpose only
   $sql.= " ".MAIN_DB_PREFIX."c_paiement as c";
   $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
   $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-  $sql.= " WHERE p.fk_paiement = c.id AND pf.rowid IS NULL";
+  $sql.= " WHERE p.fk_paiement = c.id";
+  $sql.= " AND s.entity = ".$conf->entity;
+  $sql.= " AND pf.rowid IS NULL";
 }
 $sql.= " ORDER BY ".$sortfield." ".$sortorder;
 //$sql.= ", facnumber ASC";

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,43 +79,44 @@ $sql.= ' FROM '.MAIN_DB_PREFIX.'product_stock as s,';
 $sql.= ' '.MAIN_DB_PREFIX.'product as p';
 if ($catid || ($conf->categorie->enabled && ! $user->rights->categorie->voir))
 {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
 
 if ($_GET["fourn_id"] > 0)
 {
 	$fourn_id = $_GET["fourn_id"];
-	$sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
+	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
-$sql .= " WHERE p.rowid = s.fk_product";
+$sql.= " WHERE p.rowid = s.fk_product";
+$sql.= " AND p.entity = ".$conf->entity;
 if ($sall)
 {
-	$sql .= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
+	$sql.= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
 }
 if ($type==1)
 {
-	$sql .= " AND p.fk_product_type = '1'";
+	$sql.= " AND p.fk_product_type = '1'";
 }
 else
 {
-	$sql .= " AND p.fk_product_type <> '1'";
+	$sql.= " AND p.fk_product_type <> '1'";
 }
 if ($sref)
 {
-	$sql .= " AND p.ref like '%".$sref."%'";
+	$sql.= " AND p.ref like '%".$sref."%'";
 }
 if ($snom)
 {
-	$sql .= " AND p.label like '%".addslashes($snom)."%'";
+	$sql.= " AND p.label like '%".addslashes($snom)."%'";
 }
 if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
 {
-	$sql .= " AND p.envente = ".$_GET["envente"];
+	$sql.= " AND p.envente = ".$_GET["envente"];
 }
 if($catid)
 {
-	$sql .= " AND cp.fk_categorie = ".$catid;
+	$sql.= " AND cp.fk_categorie = ".$catid;
 }
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
@@ -123,11 +124,11 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 }
 if ($fourn_id > 0)
 {
-	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
+	$sql.= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
 }
-$sql .= " GROUP BY p.rowid";
-$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit($limit + 1 ,$offset);
+$sql.= " GROUP BY p.rowid";
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit($limit + 1 ,$offset);
 $resql = $db->query($sql) ;
 
 if ($resql)
@@ -228,8 +229,10 @@ if ($resql)
 		// Multilangs
 		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 		{
-			$sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
-			$sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+			$sql = "SELECT label";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_det";
+			$sql.= " WHERE fk_product=".$objp->rowid;
+			$sql.= " AND lang='". $langs->getDefaultLang() ."'";
 			$sql.= " LIMIT 1";
 			$result = $db->query($sql);
 			if ($result)

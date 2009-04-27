@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ if ($_POST["action"] == 'updateMask')
 {
 	$maskconstdelivery=$_POST['maskconstdelivery'];
 	$maskdelivery=$_POST['maskdelivery'];
-	if ($maskconstdelivery)  dolibarr_set_const($db,$maskconstdelivery,$maskdelivery);
+	if ($maskconstdelivery)  dolibarr_set_const($db,$maskconstdelivery,$maskdelivery,'chaine',0,'',$conf->entity);
 }
 
 if ($_GET["action"] == 'specimen')
@@ -90,7 +90,7 @@ if ($_GET["action"] == 'specimen')
 if ($_GET["action"] == 'set')
 {
 	$type='delivery';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
     if ($db->query($sql))
     {
 
@@ -101,7 +101,10 @@ if ($_GET["action"] == 'del')
 {
     $type='delivery';
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+    $sql.= " WHERE nom = '".$_GET["value"];
+    $sql.= " AND type = '".$type."'";
+    $sql.= " AND entity = ".$conf->entity;
+    
     if ($db->query($sql))
     {
 
@@ -112,7 +115,7 @@ if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
 
-    if (dolibarr_set_const($db, "LIVRAISON_ADDON_PDF",$_GET["value"]))
+    if (dolibarr_set_const($db, "LIVRAISON_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
     {
         $conf->global->LIVRAISON_ADDON_PDF = $_GET["value"];
     }
@@ -120,9 +123,11 @@ if ($_GET["action"] == 'setdoc')
     // On active le modele
     $type='delivery';
     $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+    $sql_del.= " WHERE nom = '".$_GET["value"];
+    $sql_del.= " AND type = '".$type."'";
+    $sql_del.= " AND entity = ".$conf->entity;
     $result1=$db->query($sql_del);
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
     $result2=$db->query($sql);
     if ($result1 && $result2)
     {
@@ -136,7 +141,7 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_POST["action"] == 'set_DELIVERY_FREE_TEXT')
 {
-    dolibarr_set_const($db, "DELIVERY_FREE_TEXT",trim($_POST["DELIVERY_FREE_TEXT"]));
+    dolibarr_set_const($db, "DELIVERY_FREE_TEXT",trim($_POST["DELIVERY_FREE_TEXT"]),'chaine',0,'',$conf->entity);
 }
 
 if ($_GET["action"] == 'setmod')
@@ -144,7 +149,7 @@ if ($_GET["action"] == 'setmod')
     // \todo Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
-	dolibarr_set_const($db, "LIVRAISON_ADDON",$_GET["value"]);
+	dolibarr_set_const($db, "LIVRAISON_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);
 }
 
 
@@ -282,9 +287,12 @@ print_titre($langs->trans("DeliveryOrderModel"));
 // Defini tableau def de modele invoice
 $type="delivery";
 $def = array();
+
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql.= " WHERE type = '".$type."'";
+$sql.= " AND entity = ".$conf->entity;
+
 $resql=$db->query($sql);
 if ($resql)
 {

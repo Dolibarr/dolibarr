@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -390,12 +391,15 @@ class ActionComm
 
         $this->nbtodo=$this->nbtodolate=0;
         $sql = "SELECT a.id, a.datep as dp";
-        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE a.percent < 100";
+        $sql.= " AND a.fk_soc = s.rowid";
+        $sql.= " AND s.entity = ".$conf->entity;
         if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
-        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND a.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND a.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+        
         $resql=$this->db->query($sql);
         if ($resql)
         {

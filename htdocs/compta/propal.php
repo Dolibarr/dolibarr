@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -489,7 +489,7 @@ if ($id > 0 || ! empty($ref))
 	print '<table width="100%"><tr><td width="50%" valign="top">';
 
 	/*
-	 * Documents g�n�r�s
+	 * Documents generes
 	 */
 	$filename=sanitizeFileName($propal->ref);
 	$filedir=$conf->propal->dir_output . "/" . sanitizeFileName($propal->ref);
@@ -503,7 +503,7 @@ if ($id > 0 || ! empty($ref))
 
 
 	/*
-	 * Commandes rattach�es
+	 * Commandes rattachees
 	 */
 	if($conf->commande->enabled)
 	{
@@ -545,13 +545,23 @@ if ($id > 0 || ! empty($ref))
 	$sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.fk_statut, f.paye";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= ", ".MAIN_DB_PREFIX."fa_pr as fp";
-	$sql.= " WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
+	//$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql.= " WHERE fp.fk_facture = f.rowid";
+	$sql.= " AND fp.fk_propal = ".$propal->id;
+	//$sql.= " AND f.fk_soc = s.rowid";
+	//$sql.= " AND s.entity = ".$conf->entity;
 	//$sql.= " UNION ";
 	// Cas des factures lier via la commande
 	$sql2= "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.fk_statut, f.paye";
 	$sql2.= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql2.= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
-	$sql2.= " WHERE cp.fk_propale = ".$propal->id." AND cf.fk_commande = cp.fk_commande AND cf.fk_facture = f.rowid";
+	//$sql2.= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql2.= ", ".MAIN_DB_PREFIX."co_pr as cp";
+	$sql2.= ", ".MAIN_DB_PREFIX."co_fa as cf";
+	$sql2.= " WHERE cp.fk_propale = ".$propal->id;
+	$sql2.= " AND cf.fk_commande = cp.fk_commande";
+	$sql2.= " AND cf.fk_facture = f.rowid";
+	//$sql2.= " AND f.fk_soc = s.rowid";
+	//$sql2.= " AND s.entity = ".$conf->entity;
 
 	dol_syslog("propal.php::liste factures sql=".$sql);
 	$resql=$db->query($sql);
@@ -659,35 +669,36 @@ else
 	$sql.= " p.total_ht, p.tva, p.total,";
 	$sql.= $db->pdate("p.datep")." as dp, ";
 	$sql.= $db->pdate("p.fin_validite")." as dfin";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_soc = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)           $sql .= " AND s.rowid = ".$socid;
-	if ($viewstatut <> '') $sql .= " AND p.fk_statut in ($viewstatut)"; // viewstatut peut etre combinaisons s�par� par virgules
+	$sql.= " AND s.entity = ".$conf->entity;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid) $sql.= " AND s.rowid = ".$socid;
+	if ($viewstatut <> '') $sql.= " AND p.fk_statut in ($viewstatut)"; // viewstatut peut etre combinaisons separe par virgules
 	if ($month > 0)
 	{
 		if ($year > 0)
-		$sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
+		$sql.= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
 		else
-		$sql .= " AND date_format(p.datep, '%m') = '$month'";
+		$sql.= " AND date_format(p.datep, '%m') = '$month'";
 	}
 	if ($year > 0)         $sql .= " AND date_format(p.datep, '%Y') = $year";
 	if (!empty($_GET['search_ref']))
 	{
-		$sql .= " AND p.ref LIKE '%".addslashes($_GET['search_ref'])."%'";
+		$sql.= " AND p.ref LIKE '%".addslashes($_GET['search_ref'])."%'";
 	}
 	if (!empty($_GET['search_societe']))
 	{
-		$sql .= " AND s.nom LIKE '%".addslashes($_GET['search_societe'])."%'";
+		$sql.= " AND s.nom LIKE '%".addslashes($_GET['search_societe'])."%'";
 	}
 	if (!empty($_GET['search_montant_ht']))
 	{
-		$sql .= " AND p.price='".addslashes($_GET['search_montant_ht'])."'";
+		$sql.= " AND p.price='".addslashes($_GET['search_montant_ht'])."'";
 	}
-	$sql .= " ORDER BY $sortfield $sortorder, p.rowid DESC ";
-	$sql .= $db->plimit($limit + 1,$offset);
+	$sql.= " ORDER BY $sortfield $sortorder, p.rowid DESC ";
+	$sql.= $db->plimit($limit + 1,$offset);
 
 	if ( $result = $db->query($sql) )
 	{

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,19 +57,16 @@ print '<td align="right">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, count(t.rowid)";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
-$sql.= " ".MAIN_DB_PREFIX."projet as p";
-//$sql.= " , ".MAIN_DB_PREFIX."projet_task as t"; // pourquoi est-ce que c'était en commentaire ? => Si on laisse ce lien, les projet sans taches se retrouvent invisibles
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+$sql.= ", ".MAIN_DB_PREFIX."projet as p";
+//$sql.= ", ".MAIN_DB_PREFIX."projet_task as t"; // pourquoi est-ce que c'était en commentaire ? => Si on laisse ce lien, les projet sans taches se retrouvent invisibles
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
-$sql.= " WHERE 1 = 1";
+$sql.= " WHERE p.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
 if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid)
-{
-	$sql .= " AND p.fk_soc = ".$socid;
-}
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 $sql.= " GROUP BY p.rowid";
 
 $var=true;
@@ -109,17 +106,15 @@ print '<td align="right">'.$langs->trans("NbOfProjects").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT s.nom, s.rowid as socid, count(p.rowid)";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE p.fk_soc = s.rowid";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."projet as p";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE p.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
 if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid)
-{
-	$sql .= " AND s.rowid = ".$socid;
-}
-$sql .= " GROUP BY s.nom";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql.= " AND s.rowid = ".$socid;
+$sql.= " GROUP BY s.nom";
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $var=true;

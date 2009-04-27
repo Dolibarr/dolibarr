@@ -1721,9 +1721,11 @@ class Adherent extends CommonObject
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$this->nbtodo=$this->nbtodolate=0;
+		
 		$sql = "SELECT a.rowid, a.datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql.= " WHERE a.statut=1";
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

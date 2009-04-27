@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,16 +53,20 @@ class PropaleStats extends Stats
 	 */
 	function PropaleStats($DB, $socid=0)
 	{
-		global $user;
+		global $user, $conf;
 		
 		$this->db = $DB;
 
 		$object=new Propal($this->db);
-		$this->table_element=$object->table_element;
+
+		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
+		$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
+		
 		$this->field='total';
 		
 		$this->socid = $socid;
 		$this->where.= " fk_statut > 0";
+		$this->where.= " AND p.fk_soc = s.rowid AND s.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if($this->socid)
 		{
@@ -79,12 +84,11 @@ class PropaleStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(p.datep,'%m') as dm, count(*)";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE date_format(p.datep,'%Y') = ".$year;
+		$sql.= " FROM ".$this->from;
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE date_format(p.datep,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
-		$sql .= " GROUP BY dm DESC";
+		$sql.= " GROUP BY dm DESC";
 
 		return $this->_getNbByMonth($year, $sql);
 	}
@@ -98,9 +102,8 @@ class PropaleStats extends Stats
 		global $user;
 		 
 		$sql = "SELECT date_format(p.datep,'%Y') as dm, count(*)";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " FROM ".$this->from;
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm DESC";
 
@@ -115,9 +118,8 @@ class PropaleStats extends Stats
 		global $user;
 		 
 		$sql = "SELECT date_format(p.datep,'%m') as dm, sum(p.".$this->field.")";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " FROM ".$this->from;
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE date_format(p.datep,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm DESC";
@@ -133,9 +135,8 @@ class PropaleStats extends Stats
 		global $user;
 		 
 		$sql = "SELECT date_format(p.datep,'%m') as dm, avg(p.".$this->field.")";
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", sc.fk_soc, sc.fk_user";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " FROM ".$this->from;
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE date_format(p.datep,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm DESC";
@@ -153,9 +154,8 @@ class PropaleStats extends Stats
 		global $user;
 		
 		$sql = "SELECT date_format(p.datep,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", sc.fk_soc, sc.fk_user";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " FROM ".$this->from;
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year DESC";
 

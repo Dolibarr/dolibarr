@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,6 +85,7 @@ $prodser[0][0]=$prodser[0][1]=$prodser[1][0]=$prodser[1][1]=0;
 
 $sql = "SELECT COUNT(p.rowid) as total, p.fk_product_type, p.envente";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+$sql.= " WHERE p.entity = ".$conf->entity;
 $sql.= " GROUP BY p.fk_product_type, p.envente";
 $result = $db->query($sql);
 while ($objp = $db->fetch_object($result))
@@ -145,6 +146,7 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 }
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk_product_subproduct";
 $sql.= " WHERE sp.fk_product_subproduct IS NULL";
+$sql.= " AND p.entity = ".$conf->entity;
 if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= " AND IFNULL(c.visible,1)=1 ";
 if (isset($_GET["type"])) $sql.= " AND p.fk_product_type = ".$_GET["type"];
 $sql.= " ORDER BY p.tms DESC ";

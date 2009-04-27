@@ -64,20 +64,19 @@ print '<td align="right">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.rowid, p.ref, p.title, count(t.rowid) as nb";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."projet as p,";
-$sql .= " ".MAIN_DB_PREFIX."projet_task as t";
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 if ($mode == 'mine') $sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as pta";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE t.fk_projet = p.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid)
-{
-	$sql .= " AND p.fk_soc = ".$socid;
-}
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE t.fk_projet = p.rowid";
+$sql.= " AND p.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql.= " AND p.fk_soc = ".$socid;
 if ($mode == 'mine') $sql.=" AND t.rowid = pta.fk_projet_task";
 if ($mode == 'mine') $sql.=" AND pta.fk_user = ".$user->id;
-$sql .= " GROUP BY p.rowid";
+$sql.= " GROUP BY p.rowid";
 
 $var=true;
 $resql = $db->query($sql);

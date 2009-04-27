@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
+/* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,13 @@ if ($conf->banque->enabled) require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account
 $langs->load('bills');
 $langs->load('banks');
 $langs->load('companies');
+
+// Security check
+$id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+if ($user->societe_id) $socid=$user->societe_id;
+// TODO ajouter règle pour restreindre acces paiement
+//$result = restrictedArea($user, 'facture', $id,'');
 
 $mesg='';
 
@@ -202,9 +210,11 @@ print '</table>';
  */
 $allow_delete = 1 ;
 $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom, s.rowid as socid';
-$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
-$sql .= ' WHERE pf.fk_facture = f.rowid AND f.fk_soc = s.rowid';
-$sql .= ' AND pf.fk_paiement = '.$paiement->id;
+$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
+$sql.= ' WHERE pf.fk_facture = f.rowid';
+$sql.= ' AND f.fk_soc = s.rowid';
+$sql.= ' AND s.entity = '.$conf->entity;
+$sql.= ' AND pf.fk_paiement = '.$paiement->id;
 $resql=$db->query($sql);
 if ($resql)
 {

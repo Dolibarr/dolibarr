@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ class box_commandes extends ModeleBoxes {
      */
     function loadBox($max=5)
     {
-        global $user, $langs, $db;
+        global $user, $langs, $db, $conf;
             
 		$this->max=$max;
         
@@ -73,17 +73,15 @@ class box_commandes extends ModeleBoxes {
             $sql = "SELECT s.nom, s.rowid as socid,";
             $sql.= " p.ref, p.tms, p.rowid,";
             $sql.= " p.fk_statut, p.facture";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql .= " WHERE p.fk_soc = s.rowid";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if($user->societe_id)
-            {
-                $sql .= " AND s.rowid = ".$user->societe_id;
-            }
-            $sql .= " ORDER BY p.date_commande DESC, p.ref DESC ";
-            $sql .= $db->plimit($max, 0);
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+            $sql.= ", ".MAIN_DB_PREFIX."commande as p";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql.= " WHERE p.fk_soc = s.rowid";
+            $sql.= " AND s.entity = ".$conf->entity;
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+            $sql.= " ORDER BY p.date_commande DESC, p.ref DESC ";
+            $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);
 
@@ -123,7 +121,9 @@ class box_commandes extends ModeleBoxes {
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedOrders"));
             }
             else {
-                dol_print_error($db);
+                $this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+    	        										'maxlength'=>500,
+	            										'text' => ($db->error().' sql='.$sql));
             }
         }
         else {

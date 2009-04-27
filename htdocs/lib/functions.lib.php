@@ -1319,15 +1319,18 @@ function info_admin($texte,$infoonimgalt=0)
 /**
  *	\brief      Check permissions of a user to show a page and an object.
  *	\param      user      	  	User to check
- *	\param      feature			Feature to check (in most cases, it's module name)
+ *	\param      feature			    Feature to check (in most cases, it's module name)
  *	\param      objectid      	Object ID if we want to check permission on on object (optionnal)
- *	\param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnel)
- *	\param      feature2		Feature to check (second level of permission)
- *  \param      dbt_socfield    Field name for socid foreign key if not fk_soc. (optionnel)
+ *	\param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnal)
+ *	\param      feature2		    Feature to check (second level of permission)
+ *  \param      dbt_socfield    Field name for socid foreign key if not fk_soc. (optionnal)
+ *  \param      dbt_select      Field name for select if not rowid. (optionnal)
  */
-function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',$feature2='',$dbt_socfield='fk_soc')
+function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',$feature2='',$dbt_socfield='fk_soc',$dbt_select='rowid')
 {
-	global $db;
+	global $db, $conf;
+	
+	if ($dbt_select != 'rowid') $objectid = "'".$objectid."'";
 
 	//print "$user->id, $feature, $objectid, $dbtablename, ".$user->rights->societe->contact->lire;
 
@@ -1359,7 +1362,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 		if (empty($user->rights->$feature->$feature2->lire)
 		&& empty($user->rights->$feature->$feature2->read)) $readok=0;
 	}
-	else if (! empty($feature))		// This is for old permissions
+	else if (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is for old permissions
 	{
 		if (empty($user->rights->$feature->lire)
 		&& empty($user->rights->$feature->read)) $readok=0;
@@ -1414,46 +1417,76 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 	if ($objectid)
 	{
 		$sql='';
-		// Check permission for external users
-		if ($user->societe_id > 0)
+
+		// If dbtable not defined, we use same name for table than module name
+		if (!$dbtablename) $dbtablename = $feature;
+	
+		// Check permission for object with entity
+		if ($feature == 'user' || $feature == 'usergroup' || $feature == 'produit')
 		{
-			if ($feature == 'societe')
+			$sql = "SELECT dbt.".$dbt_select;
+			$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+			$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
+			$sql.= " AND dbt.entity IN (0,".$conf->entity.")";
+		}
+    else if ($feature == 'societe')
+		{
+			// Check permission for external users
+			if ($user->societe_id > 0)
 			{
 				if ($user->societe_id <> $objectid) accessforbidden();
 			}
+			// Check permission for internal users that are restricted on their objects
+			else if (! $user->rights->societe->client->voir)
+			{
+				$sql = "SELECT sc.fk_soc";
+				$sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
+				$sql.= " WHERE sc.fk_soc = ".$objectid." AND sc.fk_user = ".$user->id;
+				$sql.= " AND sc.fk_soc = s.rowid";
+				$sql.= " AND s.entity = ".$conf->entity;
+			}
+			// Check permission for entity
 			else
 			{
-				// If dbtable not defined, we use same name for table than module name
-				if (!$dbtablename) $dbtablename = $feature;
-
+				$sql = "SELECT s.rowid";
+				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+				$sql.= " WHERE s.rowid = ".$objectid;
+				$sql.= " AND s.entity = ".$conf->entity;
+			}
+		}
+		else
+		{
+			// Check permission for external users
+			if ($user->societe_id > 0)
+			{
 				$sql = "SELECT dbt.fk_soc";
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql.= " WHERE dbt.rowid = ".$objectid;
 				$sql.= " AND dbt.fk_soc = ".$user->societe_id;
 			}
-		}
-		// Check permission for internal users that are restricted on their objects
-		else if (! $user->rights->societe->client->voir)
-		{
-			if ($feature == 'societe')
+			// Check permission for internal users that are restricted on their objects
+			else if (! $user->rights->societe->client->voir)
 			{
 				$sql = "SELECT sc.fk_soc";
-				$sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-				$sql.= " WHERE sc.fk_soc = ".$objectid." AND sc.fk_user = ".$user->id;
-			}
-			else
-			{
-				if (!$dbtablename) $dbtablename = $feature;	// Si dbtable non defini, meme nom que le module
-
-				$sql = "SELECT sc.fk_soc";
-				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt, ".MAIN_DB_PREFIX."societe as s";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_socfield;
 				$sql.= " WHERE dbt.rowid = ".$objectid;
+				$sql.= " AND dbt.fk_soc = s.rowid";
+				$sql.= " AND s.entity = ".$conf->entity;
 				$sql.= " AND IFNULL(sc.fk_user, ".$user->id.") = ".$user->id;
+			}
+			// Check permission for entity
+			else
+			{
+				$sql = "SELECT dbt.".$dbt_select;
+				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt, ".MAIN_DB_PREFIX."societe as s";
+				$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
+				$sql.= " AND dbt.fk_soc = s.rowid";
+				$sql.= " AND s.entity = ".$conf->entity;
 			}
 		}
 
-		//print $sql;
+		//print $sql."<br>";
 		if ($sql)
 		{
 			$resql=$db->query($sql);

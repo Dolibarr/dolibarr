@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +59,8 @@ if ($_REQUEST["menu_handler"])    $menu_handler=$_REQUEST["menu_handler"];
 
 if (isset($_GET["action"]) && ($_GET["action"] == 'up'))
 {
-	$sql = "SELECT m.rowid, m.position FROM ".MAIN_DB_PREFIX."menu as m";
+	$sql = "SELECT m.rowid, m.position";
+	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
 	$result = $db->query($sql);
 
@@ -74,9 +76,12 @@ if (isset($_GET["action"]) && ($_GET["action"] == 'up'))
 	}
 
 	// Menu top
-	$sql = "SELECT m.rowid, m.position FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.position = ".($precedent['order'] - 1)." AND m.type = 'top'";
-	$sql.= " AND menu_handler='".$menu_handler_top."'";
+	$sql = "SELECT m.rowid, m.position";
+	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " WHERE m.position = ".($precedent['order'] - 1);
+	$sql.= " AND m.type = 'top'";
+	$sql.= " AND m.menu_handler='".$menu_handler_top."'";
+	$sql.= " AND m.entity = ".$conf->entity;
 	$result = $db->query($sql);
 
 	$num = $db->num_rows($result);
@@ -103,7 +108,9 @@ if (isset($_GET["action"]) && ($_GET["action"] == 'up'))
 if (isset($_GET["action"]) && $_GET["action"] == 'down')
 {
 
-	$sql = "SELECT m.rowid, m.position FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET["menuId"];
+	$sql = "SELECT m.rowid, m.position";
+	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
 	$result = $db->query($sql);
 
 	$num = $db->num_rows($result);
@@ -119,7 +126,9 @@ if (isset($_GET["action"]) && $_GET["action"] == 'down')
 
 	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.position = ".($precedent['order'] + 1)." AND type='top'";
+	$sql.= " WHERE m.position = ".($precedent['order'] + 1);
+	$sql.= " AND m.type='top'";
+	$sql.= " AND m.entity = ".$conf->entity;
 	$result = $db->query($sql);
 
 	$num = $db->num_rows($result);
@@ -133,9 +142,13 @@ if (isset($_GET["action"]) && $_GET["action"] == 'down')
 		$i++;
 	}
 
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m SET m.position = ".$suivant['order']." WHERE m.rowid = ".$precedent['rowid'].""; // Monte celui select
+	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " SET m.position = ".$suivant['order'];
+	$sql.= " WHERE m.rowid = ".$precedent['rowid'].""; // Monte celui select
 	$db->query($sql);
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m SET m.position = ".$precedent['order']." WHERE m.rowid = ".$suivant['rowid'].""; // Descend celui du dessus
+	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " SET m.position = ".$precedent['order'];
+	$sql.= " WHERE m.rowid = ".$suivant['rowid'].""; // Descend celui du dessus
 	$db->query($sql);
 }
 
@@ -143,16 +156,21 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
 	$db->begin();
 
-	$sql = "SELECT c.rowid, c.fk_constraint FROM ".MAIN_DB_PREFIX."menu_const as c WHERE c.fk_menu = ".$_GET['menuId'];
+	$sql = "SELECT c.rowid, c.fk_constraint";
+	$sql.= " FROM ".MAIN_DB_PREFIX."menu_const as c";
+	$sql.= " WHERE c.fk_menu = ".$_GET['menuId'];
 	$res  = $db->query($sql);
 	if ($res)
 	{
 		while ($obj = $db->fetch_object ($res))
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_const WHERE rowid = ".$obj->rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_const";
+			$sql.= " WHERE rowid = ".$obj->rowid;
 			$db->query($sql);
 
-			$sql = "SELECT count(rowid) as countId FROM ".MAIN_DB_PREFIX."menu_const WHERE fk_constraint = ".$obj->fk_constraint;
+			$sql = "SELECT count(rowid) as countId";
+			$sql.= " FROM ".MAIN_DB_PREFIX."menu_const";
+			$sql.= " WHERE fk_constraint = ".$obj->fk_constraint;
 			$result = $db->query($sql);
 			$objc = $db->fetch_object($result);
 
@@ -164,7 +182,8 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 		}
 	}
 
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".$_GET['menuId'];
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
+	$sql.= " WHERE rowid = ".$_GET['menuId'];
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -217,7 +236,9 @@ dol_fiche_head($head, 'editor', $langs->trans("Menus"));
 // Confirmation de la suppression menu
 if ($_GET["action"] == 'delete')
 {
-	$sql = "SELECT m.titre FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET['menuId'];
+	$sql = "SELECT m.titre";
+	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " WHERE m.rowid = ".$_GET['menuId'];
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
@@ -272,7 +293,8 @@ if ($conf->use_javascript_ajax)
 
 	$sql = "SELECT m.rowid, m.fk_menu, m.titre, m.langs";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE menu_handler='".$menu_handler."'";
+	$sql.= " WHERE menu_handler = '".$menu_handler."'";
+	$sql.= " AND entity = ".$conf->entity;
 	$sql.= " ORDER BY m.position, m.rowid";
 	$res  = $db->query($sql);
 

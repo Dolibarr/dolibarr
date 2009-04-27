@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,13 +22,19 @@
 create table llx_chargesociales
 (
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
-  date_ech   datetime NOT NULL, -- date d'echeance
+  date_ech   datetime NOT NULL,             -- date echeance
   libelle    varchar(80) NOT NULL,
+  entity     integer DEFAULT 1 NOT NULL,	  -- multi company id
   fk_type    integer NOT NULL,
   amount     real     default 0 NOT NULL,
   paye       smallint default 0 NOT NULL,
   periode    date
 )type=innodb;
 
-
-
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company tax
+-- 2 : second company tax
+-- 3 : etc...
+--

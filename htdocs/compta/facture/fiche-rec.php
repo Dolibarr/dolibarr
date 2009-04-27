@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +33,11 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 if (!$user->rights->facture->lire)
 accessforbidden();
 
+// Security check
 $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'facture', $facid,'facture_rec');
 
 if ($page == -1)
 {
@@ -47,14 +51,6 @@ $sortorder="DESC";
 
 if ($sortfield == "")
 $sortfield="f.datef";
-
-
-// Sécurité accés client
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
 
 
 /*
@@ -165,7 +161,9 @@ if ($_GET["action"] == 'create')
 		print '<tr><td colspan="3">';
 
 		$sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice";
-		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = $facture->id ORDER BY l.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as l";
+		$sql.= " WHERE l.fk_facture = ".$facture->id;
+		$sql.= " ORDER BY l.rowid";
 
 		$result = $db->query($sql);
 		if ($result)
@@ -409,6 +407,7 @@ else
 			$sql = "SELECT s.nom, s.rowid as socid, f.titre, f.total, f.rowid as facid";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 			$sql.= " WHERE f.fk_soc = s.rowid";
+			$sql.= " AND s.entity = ".$conf->entity;
 
 			if ($socid)
 			$sql .= " AND s.rowid = ".$socid;

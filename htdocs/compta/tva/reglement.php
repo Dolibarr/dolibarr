@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +49,9 @@ $tva_static = new Tva($db);
 print_fiche_titre($langs->trans("VATPayments"));
 
 $sql = "SELECT rowid, amount, label, ".$db->pdate("f.datev")." as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."tva as f ";
-$sql .= " ORDER BY dm DESC";
+$sql.= " FROM ".MAIN_DB_PREFIX."tva as f ";
+$sql.= " WHERE f.entity = ".$conf->entity;
+$sql.= " ORDER BY dm DESC";
 
 $result = $db->query($sql);
 if ($result)

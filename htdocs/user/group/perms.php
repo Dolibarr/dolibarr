@@ -3,6 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,8 +74,10 @@ if ($_GET["id"])
 	 * Affichage onglets
 	 */
 	$head = group_prepare_head($fgroup);
+	$title = $langs->trans("Group");
+	if (!$fgroup->entity) $title = $langs->trans("GlobalGroup");
 
-	dol_fiche_head($head, 'rights', $langs->trans("Group").": ".$fgroup->nom);
+	dol_fiche_head($head, 'rights', $title.": ".$fgroup->nom);
 
 
     $db->begin();
@@ -110,9 +113,11 @@ if ($_GET["id"])
     $permsgroup = array();
 
     $sql = "SELECT r.id, r.libelle, r.module ";
-    $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-    $sql .= ", ".MAIN_DB_PREFIX."usergroup_rights as ugr";
-    $sql .= " WHERE ugr.fk_id = r.id AND ugr.fk_usergroup = ".$fgroup->id;
+    $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+    $sql.= ", ".MAIN_DB_PREFIX."usergroup_rights as ugr";
+    $sql.= " WHERE ugr.fk_id = r.id";
+    $sql.= " AND r.entity = ".$conf->entity;
+    $sql.= " AND ugr.fk_usergroup = ".$fgroup->id;
 
     $result=$db->query($sql);
 
@@ -138,6 +143,29 @@ if ($_GET["id"])
      * Ecran ajout/suppression permission
      */
 
+    print '<table class="border" width="100%">';
+    
+    // Ref
+    print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+    print '<td colspan="2">';
+    print $form->showrefnav($fgroup,'id','',$user->rights->user->user->lire || $user->admin);
+    print '</td>';
+    print '</tr>';
+    
+    // Nom
+    print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
+    print '<td colspan="2">'.$fgroup->nom.'</td>';
+    print "</tr>\n";
+    
+    // Note
+    print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
+    print '<td class="valeur">'.nl2br($fgroup->note).'&nbsp;</td>';
+    print "</tr>\n";
+    
+    print '</table><br>';
+    
+    if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
+    
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
@@ -146,10 +174,11 @@ if ($_GET["id"])
     print '<td>'.$langs->trans("Permissions").'</td>';
     print '</tr>';
 
-    $sql ="SELECT r.id, r.libelle, r.module";
-    $sql.=" FROM ".MAIN_DB_PREFIX."rights_def as r";
-    $sql.=" WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-    $sql.=" ORDER BY r.module, r.id";
+    $sql = "SELECT r.id, r.libelle, r.module";
+    $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+    $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
+    $sql.= " AND r.entity = ".$conf->entity;
+    $sql.= " ORDER BY r.module, r.id";
 
     $result=$db->query($sql);
     if ($result)

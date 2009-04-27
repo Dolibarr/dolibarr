@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,9 +34,10 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 $langs->load("products");
 $langs->load("bills");
 
-if (!$user->rights->produit->lire)
-accessforbidden();
-
+// Security check
+$id = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit',$id,'product');
 
 
 /*
@@ -345,7 +346,8 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx,";
 $sql.= " p.price_level, p.price_min, p.price_min_ttc,";
 $sql.= " ".$db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
-$sql.= " FROM ".MAIN_DB_PREFIX."product_price as p, ".MAIN_DB_PREFIX."user as u";
+$sql.= " FROM ".MAIN_DB_PREFIX."product_price as p";
+$sql.= ", ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE fk_product = ".$product->id;
 $sql.= " AND p.fk_user_author = u.rowid";
 if ($conf->global->PRODUIT_MULTIPRICES)	$sql.= " ORDER BY p.price_level ASC, p.date_price DESC";

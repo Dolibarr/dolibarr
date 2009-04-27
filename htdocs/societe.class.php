@@ -4,8 +4,8 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008	     Patrick Raguin       <patrick.raguin@auguria.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,8 +153,8 @@ class Societe extends CommonObject
 
 		if ($result >= 0)
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat)";
-			$sql.= " VALUES ('".addslashes($this->nom)."', ".$this->db->idate(gmmktime()).", ".$this->db->idate(gmmktime()).",";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat)";
+			$sql.= " VALUES ('".addslashes($this->nom)."', ".$conf->entity.", ".$this->db->idate(gmmktime()).", ".$this->db->idate(gmmktime()).",";
 			$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null");
 			$sql.= ")";
 
@@ -502,7 +502,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		$sql = 'SELECT s.rowid, s.nom, s.address,'.$this->db->pdate('s.datec').' as dc, s.prefix_comm';
+		$sql = 'SELECT s.rowid, s.nom, s.entity, s.address,'.$this->db->pdate('s.datec').' as dc, s.prefix_comm';
 		$sql .= ', s.price_level';
 		$sql .= ','. $this->db->pdate('s.tms').' as date_update';
 		$sql .= ', s.tel, s.fax, s.email, s.url, s.cp, s.ville, s.note, s.client, s.fournisseur';
@@ -538,6 +538,7 @@ class Societe extends CommonObject
 
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
+				$this->entity = $obj->entity;
 
 				$this->date_update = $obj->date_update;
 
@@ -686,8 +687,8 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    \brief      Suppression d'une societe de la base avec ses d�pendances (contacts, rib...)
-	 *    \param      id      id de la societe � supprimer
+	 *    \brief      Suppression d'une societe de la base avec ses dependances (contacts, rib...)
+	 *    \param      id      id de la societe a supprimer
 	 */
 	function delete($id)
 	{
@@ -835,8 +836,8 @@ class Societe extends CommonObject
 
 
 	/**
-	 *    \brief     Retournes les factures impay�es de la soci�t�
-	 *    \return    array   tableau des id de factures impay�es
+	 *    \brief     Retournes les factures impayees de la societe
+	 *    \return    array   tableau des id de factures impayees
 	 *
 	 */
 	function factures_impayes()
@@ -868,11 +869,13 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    \brief      Attribut le prefix de la soci�t� en base
+	 *    \brief      Attribut le prefix de la societe en base
 	 *
 	 */
 	function attribute_prefix()
 	{
+		global $conf;
+		
 		$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE rowid = '".$this->id."'";
 		$resql=$this->db->query( $sql);
 		if ($resql)
@@ -885,7 +888,10 @@ class Societe extends CommonObject
 
 				$prefix = $this->genprefix($nom,4);
 
-				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
+				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."societe";
+				$sql.= " WHERE prefix_comm = '".$prefix."'";
+				$sql.= " AND entity = ".$conf->entity;
+				
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -919,10 +925,10 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    \brief      G�n�re le pr�fix de la soci�t�
-	 *    \param      nom         nom de la soci�t�
-	 *    \param      taille      taille du prefix � retourner
-	 *    \param      mot         l'indice du mot � utiliser
+	 *    \brief      Genere le prefix de la societe
+	 *    \param      nom         nom de la societe
+	 *    \param      taille      taille du prefix a retourner
+	 *    \param      mot         l'indice du mot a utiliser
 	 */
 	function genprefix($nom, $taille=4, $mot=0)
 	{
@@ -932,8 +938,12 @@ class Societe extends CommonObject
 		if ($mot < count($tab))
 		{
 			$prefix = strtoupper(substr($tab[$mot],0,$taille));
-			// On v�rifie que ce prefix n'a pas d�j� �t� pris ...
-			$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
+			
+			// On verifie que ce prefix n'a pas deja ete pris ...
+			$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."societe";
+			$sql.= " WHERE prefix_comm = '".$prefix."'";
+			$sql.= " AND entity = ".$conf->entity;
+			
 			$resql=$this->db->query( $sql);
 			if ($resql)
 			{
@@ -1163,7 +1173,7 @@ class Societe extends CommonObject
 		if ($this->id > 0 && $commid > 0)
 		{
 			$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
-			$sql .= " WHERE fk_soc = " . $this->id ." AND fk_user =".$commid;
+			$sql .= " WHERE fk_soc = ".$this->id." AND fk_user =".$commid;
 
 			$this->db->query($sql);
 
@@ -1189,7 +1199,7 @@ class Societe extends CommonObject
 		if ($this->id > 0 && $commid > 0)
 		{
 			$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
-			$sql .= " WHERE fk_soc = " . $this->id ." AND fk_user =".$commid;
+			$sql .= " WHERE fk_soc = ".$this->id." AND fk_user =".$commid;
 
 			if (! $this->db->query($sql) )
 	  {
@@ -1279,7 +1289,7 @@ class Societe extends CommonObject
 
 
 	/**
-	 *    \brief      Renvoie la liste des contacts emails existant pour la soci�t�
+	 *    \brief      Renvoie la liste des contacts emails existant pour la societe
 	 *    \return     array       tableau des contacts emails
 	 */
 	function thirdparty_and_contact_email_array()
@@ -1296,7 +1306,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    \brief      Renvoie la liste des contacts emails existant pour la soci�t�
+	 *    \brief      Renvoie la liste des contacts emails existant pour la societe
 	 *    \return     array       tableau des contacts emails
 	 */
 	function contact_email_array()
@@ -1330,7 +1340,7 @@ class Societe extends CommonObject
 
 
 	/**
-	 *    \brief      Renvoie la liste des contacts de cette soci�t�
+	 *    \brief      Renvoie la liste des contacts de cette societe
 	 *    \return     array      tableau des contacts
 	 */
 	function contact_array()
@@ -1439,7 +1449,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    \brief      Attribut un code client � partir du module de controle des codes.
+	 *    \brief      Attribut un code client a partir du module de controle des codes.
 	 *    \return     code_client		Code client automatique
 	 */
 	function get_codeclient($objsoc=0,$type=0)
@@ -1459,7 +1469,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    \brief      Attribut un code fournisseur � partir du module de controle des codes.
+	 *    \brief      Attribut un code fournisseur a partir du module de controle des codes.
 	 *    \return     code_fournisseur		Code fournisseur automatique
 	 */
 	function get_codefournisseur($objsoc=0,$type=1)
@@ -1587,8 +1597,8 @@ class Societe extends CommonObject
 
 	/**
 	 *    	\brief  	Renvoie un code compta, suivant le module de code compta.
-	 *            		Peut �tre identique � celui saisit ou g�n�r� automatiquement.
-	 *            		A ce jour seule la g�n�ration automatique est impl�ment�e
+	 *            		Peut etre identique a celui saisit ou genere automatiquement.
+	 *            		A ce jour seule la generation automatique est implementee
 	 *    	\param      type			Type de tiers ('customer' ou 'supplier')
 	 *		\return		string			Code compta si ok, 0 si aucun, <0 si ko
 	 */
@@ -1622,8 +1632,8 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    \brief      D�fini la soci�t� m�re pour les filiales
-	 *    \param      id      id compagnie m�re � positionner
+	 *    \brief      Defini la societe mere pour les filiales
+	 *    \param      id      id compagnie mere a positionner
 	 *    \return     int     <0 si ko, >0 si ok
 	 */
 	function set_parent($id)
@@ -1646,8 +1656,8 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    \brief      Supprime la soci�t� m�re
-	 *    \param      id      id compagnie m�re � effacer
+	 *    \brief      Supprime la societe mere
+	 *    \param      id      id compagnie mere a effacer
 	 *    \return     int     <0 si ko, >0 si ok
 	 */
 	function remove_parent($id)
@@ -1722,7 +1732,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *      \brief      Renvoi url de v�rification d'un identifiant professionnal
+	 *      \brief      Renvoi url de verification d'un identifiant professionnal
 	 *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
 	 *      \param      soc             Objet societe
 	 *      \return     string          url ou chaine vide si aucune url connue
@@ -1740,8 +1750,8 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *      \brief      Indique si la soci�t� a des projets
-	 *      \return     bool	   true si la soci�t� a des projets, false sinon
+	 *      \brief      Indique si la societe a des projets
+	 *      \return     bool	   true si la societe a des projets, false sinon
 	 */
 	function has_projects()
 	{
@@ -1822,7 +1832,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *       \brief     Renvoi si pays appartient � CEE
+	 *       \brief     Renvoi si pays appartient a CEE
 	 *       \param     boolean		true = pays dans CEE, false= pays hors CEE
 	 */
 	function isInEEC()
@@ -1916,15 +1926,15 @@ class Societe extends CommonObject
 	function set_status($id_status)
 	{
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_log (datel, fk_soc, fk_statut, fk_user, author, label)";
-		$sql.= " VALUES ('$dateaction', $socid, $id_status,";
+		$sql.= " VALUES ('".$dateaction."', ".$socid.", ".$id_status.",";
 		$sql.= "'".$user->id."',";
 		$sql.= "'".addslashes($user->login)."',";
-		$sql.= "'Change statut from $oldstcomm to $stcommid'";
+		$sql.= "'Change statut from ".$oldstcomm." to ".$stcommid."'";
 		$sql.= ")";
 		$result = $db->query($sql);
 		if ($result)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE rowid=".$socid;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$stcommid." WHERE rowid=".$socid;
 			$result = $db->query($sql);
 		}
 		else

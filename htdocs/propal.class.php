@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)   <raphael.bertrand@resultic.fr>
  *
@@ -1731,7 +1731,7 @@ class Propal extends CommonObject
 	/**
 	 *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
 	 *      \param      user        Objet user
-	 *      \param      mode        "opened" pour propal � fermer, "signed" pour propale � facturer
+	 *      \param      mode        "opened" pour propal a fermer, "signed" pour propale a facturer
 	 *      \return     int         <0 si ko, >0 si ok
 	 */
 	function load_board($user,$mode)
@@ -1741,19 +1741,23 @@ class Propal extends CommonObject
 		$now=gmmktime();
 
 		$this->nbtodo=$this->nbtodolate=0;
-		$clause = "WHERE";
+		$clause = " WHERE";
 
 		$sql ="SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin";
 		$sql.=" FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
-			$clause = "AND";
+			$clause = " AND";
 		}
-		if ($mode == 'opened') $sql.=" ".$clause." p.fk_statut = 1";
-		if ($mode == 'signed') $sql.=" ".$clause." p.fk_statut = 2";
-		if ($user->societe_id) $sql.=" AND p.fk_soc = ".$user->societe_id;
+		$sql.= $clause." p.fk_soc = s.rowid";
+		$sql.= " AND s.entity = ".$conf->entity;
+		if ($mode == 'opened') $sql.= " AND p.fk_statut = 1";
+		if ($mode == 'signed') $sql.= " AND p.fk_statut = 2";
+		if ($user->societe_id) $sql.= " AND p.fk_soc = ".$user->societe_id;
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1771,7 +1775,7 @@ class Propal extends CommonObject
 						$this->nbtodolate++;
 					}
 				}
-				// \todo Definir r�gle des propales � facturer en retard
+				// \todo Definir regle des propales a facturer en retard
 				// if ($mode == 'signed' && ! sizeof($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
 			}
 			return 1;
@@ -1869,15 +1873,19 @@ class Propal extends CommonObject
 		global $conf, $user;
 
 		$this->nb=array();
+		$clause = "WHERE";
 
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$clause = "AND";
 		}
+		$sql.= " ".$clause." s.entity = ".$conf->entity;
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

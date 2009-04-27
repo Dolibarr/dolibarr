@@ -1,6 +1,7 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,18 +27,13 @@
 
 require("./pre.inc.php");
 
-if (!$user->rights->prelevement->bons->lire)
-  accessforbidden();
-
 $langs->load("withdrawals");
 $langs->load("companies");
 
-// Sécurité accés client
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'prelevement','','','bons');
 
 
 /*
@@ -54,27 +50,28 @@ $sortfield = (empty($_GET["sortfield"])) ? "p.datec" : $_GET["sortfield"];
 $offset = $conf->liste_limit * $page ;
 
 $sql = "SELECT p.rowid, p.statut, p.ref, pl.amount,".$db->pdate("p.datec")." as datec";
-$sql .= " , s.nom, s.code_client";
-$sql .= " , pl.rowid as rowid_ligne, pl.statut as statut_ligne";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " , ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE pl.fk_prelevement_bons = p.rowid";
-$sql .= " AND s.rowid = pl.fk_soc";
-
+$sql.= " , s.nom, s.code_client";
+$sql.= " , pl.rowid as rowid_ligne, pl.statut as statut_ligne";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql.= " , ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE pl.fk_prelevement_bons = p.rowid";
+$sql.= " AND s.rowid = pl.fk_soc";
+$sql.= " AND s.entity = ".$conf->entity;
+if ($socid) $sql.= " AND pl.fk_soc = ".$socid;
 if ($_GET["search_ligne"])
 {
-  $sql .= " AND pl.rowid = '".$_GET["search_ligne"]."'";
+  $sql.= " AND pl.rowid = '".$_GET["search_ligne"]."'";
 }
 
 if ($_GET["search_bon"])
 {
-  $sql .= " AND p.ref LIKE '%".$_GET["search_bon"]."%'";
+  $sql.= " AND p.ref LIKE '%".$_GET["search_bon"]."%'";
 }
 
 if ($_GET["search_code"])
 {
-  $sql .= " AND s.code_client LIKE '%".$_GET["search_code"]."%'";
+  $sql.= " AND s.code_client LIKE '%".$_GET["search_code"]."%'";
 }
 
 if ($_GET["search_societe"])
@@ -83,7 +80,7 @@ if ($_GET["search_societe"])
   $sql .= " AND s.nom LIKE '%".$sel."%'";
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 

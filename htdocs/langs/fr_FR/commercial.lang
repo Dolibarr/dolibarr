@@ -46,7 +46,6 @@ DoneAndToDoActionsFor=Liste des actions réalisées ou à faire pour %s
 DoneAndToDoActions=Liste des actions réalisées ou à faire
 SendPropalRef=Envoi proposition commerciale %s
 SendOrderRef=Envoi commande %s
-NoRecordedProspects=Aucun prospect enregistré
 StatusActionToDo=À faire
 StatusActionDone=Réalisé
 StatusActionInProcess=En cours

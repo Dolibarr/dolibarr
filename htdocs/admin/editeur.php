@@ -33,11 +33,11 @@ if (!$user->admin)
   accessforbidden();
 
 
-// Action activation d'un sous module du module adh�rent
+// Action activation d'un sous module du module adherent
 if ($_POST["action"] == 'set')
 {
 	$name = "EDITEUR_LIVRE_FORMAT_".time();
-	$result=dolibarr_set_const($db, $name, $_POST["format"]);
+	$result=dolibarr_set_const($db, $name, $_POST["format"],'chaine',0,'',$conf->entity);
 	if ($result < 0)
 	{
 		print $db->error();

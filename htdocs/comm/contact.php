@@ -74,56 +74,52 @@ if ($type == "f")
  */
 
 $sql = "SELECT s.rowid, s.nom,  st.libelle as stcomm";
-$sql .= ", p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
+$sql.= ", p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
-$sql .= " ".MAIN_DB_PREFIX."socpeople as p";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
-$sql .= " WHERE s.fk_stcomm = st.id";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($type == "c") $sql .= " AND s.client = 1";
-if ($type == "p") $sql .= " AND s.client = 2";
-if ($type == "f") $sql .= " AND s.fournisseur = 1";
-
+$sql.= " ".MAIN_DB_PREFIX."socpeople as p";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
+$sql.= " WHERE s.fk_stcomm = st.id";
+$sql.= " AND p.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($type == "c") $sql.= " AND s.client = 1";
+if ($type == "p") $sql.= " AND s.client = 2";
+if ($type == "f") $sql.= " AND s.fournisseur = 1";
+if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 if (strlen($stcomm))
 {
-  $sql .= " AND s.fk_stcomm=$stcomm";
+  $sql.= " AND s.fk_stcomm=$stcomm";
 }
 
 if (strlen($begin)) // filtre sur la premiere lettre du nom
 {
-  $sql .= " AND upper(p.name) like '$begin%'";
+  $sql.= " AND upper(p.name) like '$begin%'";
 }
 
 if (trim($_GET["search_nom"]))
 {
-  $sql .= " AND p.name like '%".trim($_GET["search_nom"])."%'";
+  $sql.= " AND p.name like '%".trim($_GET["search_nom"])."%'";
 }
 
 if (trim($_GET["search_prenom"]))
 {
-  $sql .= " AND p.firstname like '%".trim($_GET["search_prenom"])."%'";
+  $sql.= " AND p.firstname like '%".trim($_GET["search_prenom"])."%'";
 }
 
 if (trim($_GET["search_societe"]))
 {
-  $sql .= " AND s.nom like '%".trim($_GET["search_societe"])."%'";
+  $sql.= " AND s.nom like '%".trim($_GET["search_societe"])."%'";
 }
 
 if ($_GET["contactname"]) // acces a partir du module de recherche
 {
-  $sql .= " AND ( p.name like '%".strtolower($_GET[contactname])."%' OR lower(p.firstname) like '%".strtolower($_GET[contactname])."%') ";
+  $sql.= " AND ( p.name like '%".strtolower($_GET[contactname])."%' OR lower(p.firstname) like '%".strtolower($_GET[contactname])."%') ";
   $sortfield = "p.name";
   $sortorder = "ASC";
 }
 
-if ($socid) {
-  $sql .= " AND s.rowid = ".$socid;
-}
-
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)

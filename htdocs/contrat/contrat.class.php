@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * This program is free software; you can redistribute it and/or modify
@@ -1234,27 +1235,33 @@ class Contrat extends CommonObject
 		$now=gmmktime();
 
 		$this->nbtodo=$this->nbtodolate=0;
+		
+		$this->from = " FROM ".MAIN_DB_PREFIX."contrat as c";
+		$this->from.= ", ".MAIN_DB_PREFIX."contratdet as cd";
+		$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $this->from.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		
 		if ($mode == 'inactives')
 		{
 			$sql = "SELECT cd.rowid, cd.date_ouverture_prevue as datefin";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-			$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= " WHERE c.statut = 1 AND c.rowid = cd.fk_contrat";
+			$sql.= $this->from;
+			$sql.= " WHERE c.statut = 1";
+			$sql.= " AND c.rowid = cd.fk_contrat";
 			$sql.= " AND cd.statut = 0";
 		}
 		if ($mode == 'expired')
 		{
 			$sql = "SELECT cd.rowid, cd.date_fin_validite as datefin";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-			$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= " WHERE c.statut = 1 AND c.rowid = cd.fk_contrat";
+			$sql.= $this->from;
+			$sql.= " WHERE c.statut = 1";
+			$sql.= " AND c.rowid = cd.fk_contrat";
 			$sql.= " AND cd.statut = 4";
 			$sql.= " AND cd.date_fin_validite < '".$this->db->idate(time())."'";
 		}
+		$sql.= " AND c.fk_soc = s.rowid";
+		$sql.= " AND s.entity = ".$conf->entity;
 		if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1285,15 +1292,19 @@ class Contrat extends CommonObject
 		global $conf, $user;
 
 		$this->nb=array();
+		$clause = "WHERE";
 
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if (!$user->rights->contrat->activer && !$user->societe_id)
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$clause = "AND";
 		}
+		$sql.= " ".$clause." s.entity = ".$conf->entity;
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

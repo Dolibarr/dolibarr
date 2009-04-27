@@ -37,7 +37,7 @@ if ($_GET["action"] == "set")
 {
   for ($i = 1 ; $i < 5 ; $i++)
     {
-      dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"], $type='chaine');
+      dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"],'chaine',0,'',$conf->entity);
     }
 
   Header("Location: index.php");
@@ -45,7 +45,7 @@ if ($_GET["action"] == "set")
 
 if ($_GET["action"] == "switch")
 {
-  dolibarr_set_const($db, $_GET["name"], $_GET["value"], $type='chaine');
+  dolibarr_set_const($db, $_GET["name"], $_GET["value"],'chaine',0,'',$conf->entity);
 
   Header("Location: index.php");
 }
@@ -55,8 +55,8 @@ if ($_GET["action"] == "switch")
  *
  *
  */
-llxHeader('','T�l�phonie - Configuration');
-print_titre("Configuration du module de T�l�phonie");
+llxHeader('','Telephonie - Configuration');
+print_titre("Configuration du module de Telephonie");
 
 print "<br>";
 

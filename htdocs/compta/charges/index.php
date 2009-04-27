@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +29,8 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 
 // Security check
-if (!$user->admin && !$user->rights->tax->charges->lire)
-  accessforbidden();
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $year=$_GET["year"];
 $filtre=$_GET["filtre"];
@@ -61,9 +62,11 @@ print "</tr>\n";
 
 $sql = "SELECT c.id, c.libelle as lib, s.fk_type as type,";
 $sql.=" count(s.rowid) as nb, sum(s.amount) as total, sum(pc.amount) as totalpaye";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = s.rowid";
 $sql.= " WHERE s.fk_type = c.id";
+$sql.= " AND s.entity = ".$conf->entity;
 if ($year > 0)
 {
 	$sql .= " AND (";
@@ -122,15 +125,16 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 
 	print_titre($langs->trans("VATPayments"));
 
-	$sql = "SELECT rowid, amount, label, ".$db->pdate("f.datev")." as dm";
-	$sql .= " FROM ".MAIN_DB_PREFIX."tva as f ";
+	$sql = "SELECT f.rowid, f.amount, f.label, ".$db->pdate("f.datev")." as dm";
+	$sql.= " FROM ".MAIN_DB_PREFIX."tva as f ";
+	$sql.= " WHERE f.entity = ".$conf->entity;
 	if ($year > 0)
 	{
 		// Si period renseigné on l'utilise comme critere de date, sinon on prend date échéance,
 		// ceci afin d'etre compatible avec les cas ou la période n'etait pas obligatoire
-		$sql .= " WHERE date_format(f.datev, '%Y') = ".$year;
+		$sql.= " AND date_format(f.datev, '%Y') = ".$year;
 	}
-	$sql .= " ORDER BY dm DESC";
+	$sql.= " ORDER BY dm DESC";
 
 	$result = $db->query($sql);
 	if ($result)

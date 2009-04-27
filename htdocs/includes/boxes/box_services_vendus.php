@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/includes/boxes/box_services_vendus.php
  *		\ingroup    produits,services
- *      \brief      Module de g�n�ration de l'affichage de la box services_vendus
+ *      \brief      Module de generation de l'affichage de la box services_vendus
  *		\version	$Id$
  */
 
@@ -73,23 +73,25 @@ class box_services_vendus extends ModeleBoxes {
 			$sql.= " c.rowid,";
 			$sql.= " cd.rowid as cdid, cd.tms as datem, cd.statut,";
 			$sql.= " p.rowid as pid, p.label, p.fk_product_type";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+			$sql.= ", ".MAIN_DB_PREFIX."contrat as c";
+			$sql.= ", ".MAIN_DB_PREFIX."contratdet as cd";
+			$sql.= ", ".MAIN_DB_PREFIX."product as p";
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as ca ON cp.fk_categorie = ca.rowid";
 			}
-			$sql.= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND cd.fk_product = p.rowid";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			$sql.= " WHERE s.rowid = c.fk_soc";
+			$sql.= " AND s.entity = ".$conf->entity;
+			$sql.= " AND c.rowid = cd.fk_contrat";
+			$sql.= " AND cd.fk_product = p.rowid";
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
 			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 			{
 				$sql.= ' AND IFNULL(ca.visible,1)=1';
-			}
-			if($user->societe_id)
-			{
-				$sql.= " AND s.rowid = ".$user->societe_id;
 			}
 			$sql.= " ORDER BY c.tms DESC ";
 			$sql.= $db->plimit($max, 0);
@@ -145,10 +147,13 @@ class box_services_vendus extends ModeleBoxes {
 						
 					$i++;
 				}
+				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoContractedProducts"));
 			}
 			else 
 			{
-				dol_print_error($db);
+				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+    	        										'maxlength'=>500,
+	            										'text' => ($db->error().' sql='.$sql));
 			}
 		}
 		else {

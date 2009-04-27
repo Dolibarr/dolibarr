@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,25 +166,20 @@ if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_societe";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if ($search_sale) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) $sql .= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
+if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
-$sql.= " WHERE s.fk_stcomm = st.id AND s.client = 2";
+$sql.= " WHERE s.fk_stcomm = st.id";
+$sql.= " AND s.client = 2";
+$sql.= " AND s.entity = ".$conf->entity;
+if ($user->societe_id) $sql.= " AND s.rowid = " .$user->societe_id;
 // Join for the needed table to filter by sale
-if ($search_sale) $sql .= " AND s.rowid = sc.fk_soc";
+if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";
 // Join for the needed table to filter by categ
-if ($search_categ) $sql .= " AND s.rowid = cs.fk_societe";
-
-if (isset($stcomm) && $stcomm != '')
-{
-	$sql .= " AND s.fk_stcomm=".$stcomm;
-}
-if ($user->societe_id)
-{
-	$sql .= " AND s.rowid = " .$user->societe_id;
-}
+if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";
+if (isset($stcomm) && $stcomm != '') $sql.= " AND s.fk_stcomm=".$stcomm;
 
 if ($_GET["search_nom"])   $sql .= " AND s.nom like '%".addslashes(strtolower($_GET["search_nom"]))."%'";
 if ($_GET["search_ville"]) $sql .= " AND s.ville like '%".addslashes(strtolower($_GET["search_ville"]))."%'";
@@ -287,8 +283,9 @@ if ($resql)
  		print '<option value="">'.$langs->trans('All').'</option>';
  		
  		$sql_usr = "SELECT u.rowid, u.name, u.firstname, u.login";
- 		$sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u";
- 		$sql_usr .= " ORDER BY u.name ASC ";
+ 		$sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
+ 		$sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
+ 		$sql_usr.= " ORDER BY u.name ASC ";
  	    
  		$resql_usr = $db->query($sql_usr);
  		if ($resql_usr)

@@ -83,7 +83,7 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 		}
 		else
 		{
-			// Ajoute boite box_external_rss dans d�finition des boites
+			// Ajoute boite box_external_rss dans definition des boites
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
 			$sql.= " VALUES ('box_external_rss.php','".addslashes($_POST["norss"].' ('.$_POST[$external_rss_title]).")')";
 	        if (! $db->query($sql))
@@ -93,8 +93,8 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 	        }
 		}
 		
-		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . $_POST["norss"],$_POST[$external_rss_title]);
-		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . $_POST["norss"],$_POST[$external_rss_urlrss]);
+		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . $_POST["norss"],$_POST[$external_rss_title],'chaine',0,'',$conf->entity);
+		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . $_POST["norss"],$_POST[$external_rss_urlrss],'chaine',0,'',$conf->entity);
 
         if ($result1 && $result2)
         {
@@ -117,7 +117,7 @@ if ($_POST["delete"])
     {
         $db->begin();
 
-		// Supprime boite box_external_rss de d�finition des boites
+		// Supprime boite box_external_rss de definition des boites
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def";
         $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
         
@@ -158,8 +158,8 @@ if ($_POST["delete"])
         }
 
 
-		$result1=dolibarr_del_const($db,"EXTERNAL_RSS_TITLE_" . $_POST["norss"]);
-		if ($result1) $result2=dolibarr_del_const($db,"EXTERNAL_RSS_URLRSS_" . $_POST["norss"]);
+		$result1=dolibarr_del_const($db,"EXTERNAL_RSS_TITLE_" . $_POST["norss"],$conf->entity);
+		if ($result1) $result2=dolibarr_del_const($db,"EXTERNAL_RSS_URLRSS_" . $_POST["norss"],$conf->entity);
 		
         if ($result1 && $result2)
         {

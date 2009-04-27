@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,49 +58,49 @@ class box_factures_fourn_imp extends ModeleBoxes {
      */
     function loadBox($max=5)
     {
-        global $conf, $user, $langs, $db;
+    	global $conf, $user, $langs, $db;
+    	
+    	$this->max=$max;
+    	
+    	include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
+      $facturestatic=new FactureFournisseur($db);
 
-		$this->max=$max;
+      $this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedSupplierBills",$max));
+
+      if ($user->rights->fournisseur->facture->lire)
+      {
+      	$sql = "SELECT s.nom, s.rowid as socid,";
+        $sql.= " f.facnumber, f.date_lim_reglement as datelimite,";
+        $sql.= " f.amount, f.datef as df,";
+        $sql.= " f.paye, f.fk_statut, f.rowid as facid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+        $sql.= ",".MAIN_DB_PREFIX."facture_fourn as f";
+        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE f.fk_soc = s.rowid";
+        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND f.paye=0";
+        $sql.= " AND fk_statut = 1";
+        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+        $sql.= " ORDER BY datelimite DESC, f.facnumber DESC ";
+        $sql.= $db->plimit($max, 0);
         
-		include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
-        $facturestatic=new FactureFournisseur($db);
-
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedSupplierBills",$max));
-
-        if ($user->rights->fournisseur->facture->lire)
+        $result = $db->query($sql);
+        if ($result)
         {
-            $sql = "SELECT s.nom, s.rowid as socid,";
-            $sql.= " f.facnumber, f.date_lim_reglement as datelimite,";
-			$sql.= " f.amount, f.datef as df,";
-            $sql.= " f.paye, f.fk_statut, f.rowid as facid";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql .= " WHERE f.fk_soc = s.rowid AND f.paye=0 AND fk_statut = 1";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if($user->societe_id)
-            {
-                $sql .= " AND s.rowid = ".$user->societe_id;
-            }
-            $sql .= " ORDER BY datelimite DESC, f.facnumber DESC ";
-            $sql .= $db->plimit($max, 0);
-
-            $result = $db->query($sql);
-            if ($result)
-            {
-                $num = $db->num_rows($result);
-				$now=gmmktime();
-                
-                $i = 0;
-                $l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
-                
-                while ($i < $num)
-                {
-                    $objp = $db->fetch_object($result);
-					$datelimite=$db->jdate($objp->datelimite);
-					
-                    $late='';
-                    if ($datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+        	$num = $db->num_rows($result);
+        	$now=gmmktime();
+        	
+        	$i = 0;
+        	$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
+        	
+        	while ($i < $num)
+        	{
+        		$objp = $db->fetch_object($result);
+        		$datelimite=$db->jdate($objp->datelimite);
+        		
+        		$late='';
+        		if ($datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
                     
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
@@ -126,7 +127,9 @@ class box_factures_fourn_imp extends ModeleBoxes {
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpayedSupplierBills"));
             }
             else {
-                dol_print_error($db);
+                $this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+    	        										'maxlength'=>500,
+	            										'text' => ($db->error().' sql='.$sql));
             }
         }
         else {

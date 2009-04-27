@@ -46,20 +46,20 @@ if ($_POST["action"] == 'setcoder')
 }
 else if ($_POST["action"] == 'setgenbarcodelocation')
 {
-	dolibarr_set_const($db, "GENBARCODE_LOCATION",$_POST["genbarcodelocation"]);
+	dolibarr_set_const($db, "GENBARCODE_LOCATION",$_POST["genbarcodelocation"],'chaine',0,'',$conf->entity);
 }
 else if ($_POST["action"] == 'setdefaultbarcodetype')
 {
-	dolibarr_set_const($db, "PRODUIT_DEFAULT_BARCODE_TYPE", $_POST["coder_id"]);
+	dolibarr_set_const($db, "PRODUIT_DEFAULT_BARCODE_TYPE", $_POST["coder_id"],'chaine',0,'',$conf->entity);
 }
 else if ($_POST["action"] == 'GENBARCODE_BARCODETYPE_THIRDPARTY')
 {
-	dolibarr_set_const($db, "GENBARCODE_BARCODETYPE_THIRDPARTY", $_POST["coder_id"]);
+	dolibarr_set_const($db, "GENBARCODE_BARCODETYPE_THIRDPARTY", $_POST["coder_id"],'chaine',0,'',$conf->entity);
 }
 /*
  else if ($_POST["action"] == 'setproductusebarcode')
  {
- dolibarr_set_const($db, "PRODUIT_USE_BARCODE",$_POST["value"]);
+ dolibarr_set_const($db, "PRODUIT_USE_BARCODE",$_POST["value"],'chaine',0,'',$conf->entity);
  Header("Location: barcode.php");
  exit;
  }

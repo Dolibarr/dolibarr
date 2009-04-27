@@ -1,6 +1,7 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +29,13 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
-// Sécurité accés client
-if ($user->societe_id > 0) accessforbidden();
-
+$langs->load("withdrawals");
 $langs->load("companies");
+
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'prelevement','','','bons');
 
 
 /*
@@ -51,35 +55,33 @@ $offset = $conf->liste_limit * $page ;
  *
  */
 $sql = "SELECT p.rowid, p.ref, p.statut";
-$sql .= " ,f.rowid as facid, f.facnumber, f.total_ttc";
-$sql .= " , s.rowid as socid, s.nom";
-$sql .= " , pl.statut as statut_ligne, pl.rowid as rowid_ligne";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
-$sql .= " , ".MAIN_DB_PREFIX."facture as f";
-$sql .= " , ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
-$sql .= " AND pl.fk_prelevement_bons = p.rowid";
-$sql .= " AND f.fk_soc = s.rowid";
-$sql .= " AND pf.fk_facture = f.rowid";
+$sql.= " ,f.rowid as facid, f.facnumber, f.total_ttc";
+$sql.= " , s.rowid as socid, s.nom";
+$sql.= " , pl.statut as statut_ligne, pl.rowid as rowid_ligne";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql.= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+$sql.= " , ".MAIN_DB_PREFIX."facture as f";
+$sql.= " , ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE pf.fk_prelevement_lignes = pl.rowid";
+$sql.= " AND pl.fk_prelevement_bons = p.rowid";
+$sql.= " AND f.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND pf.fk_facture = f.rowid";
 
-if ($_GET["socid"])
-{
-  $sql .= " AND s.rowid = ".$_GET["socid"];
-}
+if ($socid) $sql .= " AND s.rowid = ".$socid;
 
 if ($_GET["search_fac"])
 {
-  $sql .= " AND f.facnumber like '%".$_GET["search_fac"]."%'";
+  $sql.= " AND f.facnumber like '%".$_GET["search_fac"]."%'";
 }
 
 if ($_GET["search_nom"])
 {
-  $sql .= " AND s.nom like '%".$_GET["search_nom"]."%'";
+  $sql.= " AND s.nom like '%".$_GET["search_nom"]."%'";
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 

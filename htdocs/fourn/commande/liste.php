@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,19 +67,14 @@ $offset = $conf->liste_limit * $page ;
  */
 
 $sql = "SELECT s.rowid as socid, s.nom, ".$db->pdate("cf.date_commande")." as dc,";
-$sql .= " cf.rowid,cf.ref, cf.fk_statut";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE cf.fk_soc = s.rowid ";
-if (!$user->rights->societe->client->voir && !$socid) //restriction
-{
-  $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-}
-if ($socid)
-{
-    $sql .= " AND s.rowid = ".$socid;
-}
+$sql.= " cf.rowid,cf.ref, cf.fk_statut";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE cf.fk_soc = s.rowid ";
+$sql.= " AND s.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 if (strlen($_GET["statut"]))
 {

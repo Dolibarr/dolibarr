@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,13 @@ require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 $langs->load("bills");
 $langs->load("products");
 
+// Security check
+$id = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit',$id,'product');
+
 $mesg = '';
+
 $ref=isset($_GET["ref"])?$_GET["ref"]:$_POST["ref"];
 $key=isset($_GET["key"])?$_GET["key"]:$_POST["key"];
 $catMere=isset($_GET["catMere"])?$_GET["catMere"]:$_POST["catMere"];
@@ -51,9 +57,6 @@ if ($action <> 're-edit')
 	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 	if ($_GET["id"])  $result = $product->fetch($_GET["id"]);
 }
-
-
-if (!$user->rights->produit->lire) accessforbidden();
 
 $html = new Form($db);
 
@@ -99,19 +102,20 @@ if($action == 'search' )
 {
 	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.price';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-	$sql.= ' left join '.MAIN_DB_PREFIX.'categorie_product as cp on p.rowid=cp.fk_product';
-	$sql.= " WHERE 1=1";
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
+	$sql.= " WHERE p.entity = ".$conf->entity;
 	if($key != "")
 	{
-		$sql .= " AND (p.ref like '%".$key."%'";
-		$sql .= " OR p.label like '%".$key."%')";
+		$sql.= " AND (p.ref like '%".$key."%'";
+		$sql.= " OR p.label like '%".$key."%')";
 	}
 	if ($conf->categorie->enabled && $catMere != -1 and $catMere)
 	{
-		$sql .= " AND cp.fk_categorie ='".addslashes($catMere)."'";
+		$sql.= " AND cp.fk_categorie ='".addslashes($catMere)."'";
 	}
-	$sql .= " ORDER BY p.ref ASC ";
-	// $sql .= $db->plimit($limit + 1 ,$offset);
+	$sql.= " ORDER BY p.ref ASC ";
+	// $sql.= $db->plimit($limit + 1 ,$offset);
+	
 	$resql = $db->query($sql) ;
 }
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,19 +54,23 @@ $year = strftime("%Y",time());
  */
 
 // Affichage valorisation par entrepot
-$sql  = "SELECT e.rowid as ref, e.label, e.statut, e.lieu";
-$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-$sql .= " WHERE 1=1";
+$sql = "SELECT e.rowid as ref, e.label, e.statut, e.lieu";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+$sql.= " WHERE e.entity = ".$conf->entity;
 if ($sref)
 {
-	$sql .= " AND e.ref like '%".$sref."%'";
+	$sql.= " AND e.ref LIKE '%".$sref."%'";
 }
 if ($sall)
 {
-	$sql .= " AND (e.label like '%".addslashes($sall)."%' OR e.description like '%".addslashes($sall)."%' OR e.lieu like '%".addslashes($sall)."%' OR e.address like '%".addslashes($sall)."%' OR e.ville like '%".addslashes($sall)."%')";
+	$sql.= " AND (e.label LIKE '%".addslashes($sall)."%'";
+	$sql.= " OR e.description LIKE '%".addslashes($sall)."%'";
+	$sql.= " OR e.lieu LIKE '%".addslashes($sall)."%'";
+	$sql.= " OR e.address LIKE '%".addslashes($sall)."%'";
+	$sql.= " OR e.ville LIKE '%".addslashes($sall)."%')";
 }
-$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit($limit + 1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql) ;
 if ($result)

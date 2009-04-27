@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
-if ($conf->projet->enabled) {
-	require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-}
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 
 $langs->load('propal');
 $langs->load("bills");
@@ -76,8 +74,10 @@ if ($_GET["propalid"] > 0)
 		*/
 		$sql = 'SELECT s.nom, s.rowid, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp, p.note,';
 		$sql.= ' p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
-		$sql.= ' WHERE p.fk_soc = s.rowid AND p.rowid = '.$propal->id;
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$sql.= ', '.MAIN_DB_PREFIX.'propal as p';
+		$sql.= ' WHERE p.fk_soc = s.rowid'
+		$sql.= ' AND p.rowid = '.$propal->id;
 
 		$result = $db->query($sql);
 
@@ -239,10 +239,7 @@ elseif (file_exists($fileimagebis))
 	}
 }
 
-
 print '</div>';
-
-
 
 $db->close();
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,6 @@ $offset = $limit * $_GET["page"] ;
 
 llxHeader('',$langs->trans('ListOfSendings'));
 
-$clause = " WHERE ";
 $sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut";
 $sql.= ", s.nom as socname, s.rowid as socid";
 $sql.= ", ori.ref as oriref, ori.rowid as oriid";
@@ -70,21 +69,19 @@ else
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."propal as ori ON pe.fk_commande = ori.rowid";
 }
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
+$sql.= " WHERE s.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid)
 {
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-	$sql.= $clause." sc.fk_user = " .$user->id;
-	$clause = " AND ";
+	$sql.= " AND sc.fk_user = " .$user->id;
 }
 if ($socid)
 { 
-  $sql.= $clause." e.fk_soc = ".$socid; 
-  $clause = " AND ";
+  $sql.= " AND e.fk_soc = ".$socid; 
 }
 if ($_POST["sf_ref"])
 {
-  $sql.= $clause." e.ref like '%".addslashes($_POST["sf_ref"])."%'";
-  $clause = " AND ";
+  $sql.= " AND e.ref like '%".addslashes($_POST["sf_ref"])."%'";
 }
 
 $sql.= " ORDER BY $sortfield $sortorder";

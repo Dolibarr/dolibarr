@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,8 +79,10 @@ $html = new Form($db);
 $sql = "SELECT s.rowid as id, s.fk_type as type, ";
 $sql.= " s.amount,".$db->pdate("s.date_ech")." as de, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,";
 $sql.= " c.libelle as type_lib";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
 $sql.= " WHERE s.fk_type = c.id";
+$sql.= " AND s.entity = ".$conf->entity;
 if ($year > 0)
 {
     $sql .= " AND (";

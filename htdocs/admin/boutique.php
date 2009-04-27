@@ -45,28 +45,28 @@ if (!$user->admin)
 
 if ($_POST["save"])
 {
-    $db->begin();
+	$db->begin();
 
-    $i=0;
+  $i=0;
     
-    $i+=dolibarr_set_const($db,'OSC_DB_HOST',trim($_POST["oscommerce_dbhost"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'OSC_DB_NAME',trim($_POST["oscommerce_dbname"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'OSC_DB_USER',trim($_POST["oscommerce_dbuser"]),'chaine',0);
-    $i+=dolibarr_set_const($db,'OSC_DB_PASS',trim($_POST["oscommerce_dbpass"]),'chaine',0);
-	$i+=dolibarr_set_const($db,'OSC_DB_TABLE_PREFIX',trim($_POST["oscommerce_db_table_prefix"]),'chaine',0); 
-  	$i+=dolibarr_set_const($db,'OSC_LANGUAGE_ID',1,'chaine',0);
+  $i+=dolibarr_set_const($db,'OSC_DB_HOST',trim($_POST["oscommerce_dbhost"]),'chaine',0,'',$conf->entity);
+  $i+=dolibarr_set_const($db,'OSC_DB_NAME',trim($_POST["oscommerce_dbname"]),'chaine',0,'',$conf->entity);
+  $i+=dolibarr_set_const($db,'OSC_DB_USER',trim($_POST["oscommerce_dbuser"]),'chaine',0,'',$conf->entity);
+  $i+=dolibarr_set_const($db,'OSC_DB_PASS',trim($_POST["oscommerce_dbpass"]),'chaine',0,'',$conf->entity);
+	$i+=dolibarr_set_const($db,'OSC_DB_TABLE_PREFIX',trim($_POST["oscommerce_db_table_prefix"]),'chaine',0,'',$conf->entity); 
+  $i+=dolibarr_set_const($db,'OSC_LANGUAGE_ID',1,'chaine',0,'',$conf->entity);
   
-    if ($i >= 4)
-    {
-        $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("OSCommerceSetupSaved")."</font>";
-    }
-    else
-    {
-        $db->rollback();
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    }
+  if ($i >= 4)
+  {
+  	$db->commit();
+    $mesg = "<font class=\"ok\">".$langs->trans("OSCommerceSetupSaved")."</font>";
+  }
+  else
+  {
+  	$db->rollback();
+    header("Location: ".$_SERVER["PHP_SELF"]);
+    exit;
+  }
 }
 elseif ($_POST["test"])
 {

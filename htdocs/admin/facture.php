@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville         <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008 Laurent Destailleur          <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Eric Seigne                  <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009 Regis Houssin                <regis@dolibarr.fr>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,8 +52,8 @@ if ($_POST["action"] == 'updateMask')
 	$maskconstcredit=$_POST['maskconstcredit'];
 	$maskinvoice=$_POST['maskinvoice'];
 	$maskcredit=$_POST['maskcredit'];
-	if ($maskconstinvoice) dolibarr_set_const($db,$maskconstinvoice,$maskinvoice);
-	if ($maskconstcredit)  dolibarr_set_const($db,$maskconstcredit,$maskcredit);
+	if ($maskconstinvoice) dolibarr_set_const($db,$maskconstinvoice,$maskinvoice,'chaine',0,'',$conf->entity);
+	if ($maskconstcredit)  dolibarr_set_const($db,$maskconstcredit,$maskcredit,'chaine',0,'',$conf->entity);
 }
 
 if ($_GET["action"] == 'specimen')
@@ -94,7 +94,7 @@ if ($_GET["action"] == 'specimen')
 if ($_GET["action"] == 'set')
 {
 	$type='invoice';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
     if ($db->query($sql))
     {
 
@@ -105,7 +105,10 @@ if ($_GET["action"] == 'del')
 {
     $type='invoice';
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+    $sql.= " WHERE nom = '".$_GET["value"];
+    $sql.= " AND type = '".$type."'";
+    $sql.= " AND entity = ".$conf->entity;
+    
     if ($db->query($sql))
     {
 
@@ -116,7 +119,7 @@ if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
 
-    if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$_GET["value"]))
+    if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
     {
         $conf->global->FACTURE_ADDON_PDF = $_GET["value"];
     }
@@ -124,9 +127,11 @@ if ($_GET["action"] == 'setdoc')
     // On active le modele
     $type='invoice';
     $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del.= " WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+    $sql_del.= " WHERE nom = '".$_GET["value"];
+    $sql_del.= " AND type = '".$type."'";
+    $sql_del.= " AND entity = ".$conf->entity;
     $result1=$db->query($sql_del);
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
     $result2=$db->query($sql);
     if ($result1 && $result2)
     {
@@ -143,43 +148,43 @@ if ($_GET["action"] == 'setmod')
     // \todo Verifier si module numerotation choisi peut etre activ�
     // par appel methode canBeActivated
 
-	dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"]);
+	dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'setribchq')
 {
-    dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$_POST["rib"]);
-    dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$_POST["chq"]);
+    dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$_POST["rib"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$_POST["chq"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'set_FACTURE_DRAFT_WATERMARK')
 {
-    dolibarr_set_const($db, "FACTURE_DRAFT_WATERMARK",trim($_POST["FACTURE_DRAFT_WATERMARK"]));
+    dolibarr_set_const($db, "FACTURE_DRAFT_WATERMARK",trim($_POST["FACTURE_DRAFT_WATERMARK"]),'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'set_FACTURE_FREE_TEXT')
 {
-    dolibarr_set_const($db, "FACTURE_FREE_TEXT",trim($_POST["FACTURE_FREE_TEXT"]));
+    dolibarr_set_const($db, "FACTURE_FREE_TEXT",trim($_POST["FACTURE_FREE_TEXT"]),'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'setforcedate')
 {
-    dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$_POST["forcedate"]);
+    dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$_POST["forcedate"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'set_enable_editdelete')
 {
-    dolibarr_set_const($db, "FACTURE_ENABLE_EDITDELETE",$_POST["enable_editdelete"]);
+    dolibarr_set_const($db, "FACTURE_ENABLE_EDITDELETE",$_POST["enable_editdelete"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'set_use_bill_contact_as_recipient')
 {
-    dolibarr_set_const($db, "FACTURE_USE_BILL_CONTACT_AS_RECIPIENT",$_POST["use_bill_contact_as_recipient"]);
+    dolibarr_set_const($db, "FACTURE_USE_BILL_CONTACT_AS_RECIPIENT",$_POST["use_bill_contact_as_recipient"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
-	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''));
+	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:'',$conf->entity));
 	{
 	   dol_print_error($db);
 	}
@@ -187,20 +192,20 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 
 if ($_GET["action"] == 'delete')
 {
-  if (! dolibarr_del_const($db, $_GET["rowid"]));
+  if (! dolibarr_del_const($db, $_GET["rowid"],$conf->entity));
   {
     dol_print_error($db);
   }
 }
 
 // defini les constantes du modele pluton
-if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FACTURE_NUM_MATRICE",$_POST["matrice"]);
-if ($_POST["action"] == 'updatePrefixFacture') dolibarr_set_const($db, "FACTURE_NUM_PREFIX",$_POST["prefixfacture"]);
-if ($_POST["action"] == 'updatePrefixAvoir') dolibarr_set_const($db, "AVOIR_NUM_PREFIX",$_POST["prefixavoir"]);
-if ($_POST["action"] == 'setOffsetInvoice') dolibarr_set_const($db, "FACTURE_NUM_DELTA",$_POST["offsetinvoice"]);
-if ($_POST["action"] == 'setOffsetCreditNote') dolibarr_set_const($db, "AVOIR_NUM_DELTA",$_POST["offsetcreditnote"]);
-if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "FACTURE_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);
-if ($_POST["action"] == 'setNumWithInvoice') dolibarr_set_const($db, "AVOIR_NUM_WITH_INVOICE",$_POST["numwithinvoice"]);
+if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FACTURE_NUM_MATRICE",$_POST["matrice"],'chaine',0,'',$conf->entity);
+if ($_POST["action"] == 'updatePrefixFacture') dolibarr_set_const($db, "FACTURE_NUM_PREFIX",$_POST["prefixfacture"],'chaine',0,'',$conf->entity);
+if ($_POST["action"] == 'updatePrefixAvoir') dolibarr_set_const($db, "AVOIR_NUM_PREFIX",$_POST["prefixavoir"],'chaine',0,'',$conf->entity);
+if ($_POST["action"] == 'setOffsetInvoice') dolibarr_set_const($db, "FACTURE_NUM_DELTA",$_POST["offsetinvoice"],'chaine',0,'',$conf->entity);
+if ($_POST["action"] == 'setOffsetCreditNote') dolibarr_set_const($db, "AVOIR_NUM_DELTA",$_POST["offsetcreditnote"],'chaine',0,'',$conf->entity);
+if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "FACTURE_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"],'chaine',0,'',$conf->entity);
+if ($_POST["action"] == 'setNumWithInvoice') dolibarr_set_const($db, "AVOIR_NUM_WITH_INVOICE",$_POST["numwithinvoice"],'chaine',0,'',$conf->entity);
 
 
 /*
@@ -344,6 +349,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql.= " WHERE type = 'invoice'";
+$sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -392,7 +398,7 @@ while (($file = readdir($handle))!==false)
         print $module->description;
         print '</td>';
 
-		// Activ�
+		// Active
 		if (in_array($name, $def))
 		{
 			print "<td align=\"center\">\n";
@@ -457,7 +463,7 @@ print '</table>';
 
 
 /*
- *  Modes de r�glement
+ *  Modes de reglement
  *
  */
 print '<br>';
@@ -481,8 +487,9 @@ if ($conf->banque->enabled)
 {
     $sql = "SELECT rowid, label";
     $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-    $sql.= " where clos = 0";
-    $sql.= " and courant = 1";
+    $sql.= " WHERE clos = 0";
+    $sql.= " AND courant = 1";
+    $sql.= " AND entity = ".$conf->entity;
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -523,8 +530,9 @@ print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected="true"'
 
 $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-$sql.= " where clos = 0";
-$sql.= " and courant = 1";
+$sql.= " WHERE clos = 0";
+$sql.= " AND courant = 1";
+$sql.= " AND entity = ".$conf->entity;
 $var=True;
 $resql=$db->query($sql);
 if ($resql)

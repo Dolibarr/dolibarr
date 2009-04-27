@@ -45,7 +45,7 @@ $mesg = '';
  */
 if ($_GET["action"] == 'setgeneraterule')
 {
-	if (! dolibarr_set_const($db, 'USER_PASSWORD_GENERATED',$_GET["value"]))
+	if (! dolibarr_set_const($db, 'USER_PASSWORD_GENERATED',$_GET["value"],'chaine',0,'',$conf->entity))
 	{
 		dol_print_error($db);
 	}
@@ -60,7 +60,7 @@ if ($_GET["action"] == 'activate_encrypt')
 {
 	$db->begin();
 
-    dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1");
+    dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1",'chaine',0,'',$conf->entity);
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."user as u";
 	$sql.= " SET u.pass_crypted = MD5(u.pass), u.pass = NULL";
@@ -87,7 +87,7 @@ else if ($_GET["action"] == 'disable_encrypt')
 	//Do not allow "disable encryption" as passwords cannot be decrypted
 	if ($allow_disable_encryption)
 	{
-		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED");
+		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED",$conf->entity);
     }
 	Header("Location: security.php");
     exit;
@@ -114,7 +114,7 @@ else if ($_GET["action"] == 'disable_encryptdbpassconf')
 	if ($result > 0)
 	{
 		// database value not required
-		//dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED");
+		//dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED",$conf->entity);
 		Header("Location: security.php");
 		exit;
 	}
@@ -126,26 +126,26 @@ else if ($_GET["action"] == 'disable_encryptdbpassconf')
 
 if ($_GET["action"] == 'activate_pdfsecurity')
 {
-	dolibarr_set_const($db, "PDF_SECURITY_ENCRYPTION", "1");
+	dolibarr_set_const($db, "PDF_SECURITY_ENCRYPTION", "1",'chaine',0,'',$conf->entity);
 	Header("Location: security.php");
 	exit;
 }
 else if ($_GET["action"] == 'disable_pdfsecurity')
 {
-	dolibarr_del_const($db, "PDF_SECURITY_ENCRYPTION");
+	dolibarr_del_const($db, "PDF_SECURITY_ENCRYPTION",$conf->entity);
 	Header("Location: security.php");
 	exit;
 }
 
 if ($_GET["action"] == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 {
-	dolibarr_set_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", '1');
+	dolibarr_set_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", '1','chaine',0,'',$conf->entity);
 	Header("Location: security.php");
 	exit;
 }
 else if ($_GET["action"] == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 {
-	dolibarr_del_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK");
+	dolibarr_del_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK",$conf->entity);
 	Header("Location: security.php");
 	exit;
 }

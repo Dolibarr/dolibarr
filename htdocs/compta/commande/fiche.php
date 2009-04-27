@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,20 +32,22 @@ require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 
+if (! $user->rights->commande->lire) accessforbidden();
+
 $langs->load("orders");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load('deliveries');
 $langs->load('sendings');
 
-if (! $user->rights->commande->lire) accessforbidden();
+$id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
+$action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
-// Sécurité accès client
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
+// Security check
+$socid=0;
+$comid = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'commande',$comid,'');
 
 
 /*

@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -45,25 +45,17 @@ $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
 
-if (!$user->rights->fournisseur->commande->lire) accessforbidden();
-
 $comclientid = isset($_GET["comid"])?$_GET["comid"]:'';
-$id = isset($_GET["id"])?$_GET["id"]:$_POST["id"];
-
-// Securite	acces client
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($user->societe_id >	0)
-{
-	$action	= '';
-	$socid = $user->societe_id;
-}
+
+// Security check
+$id = isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'commande_fournisseur', $id,'');
 
 // Recuperation	de l'id	de projet
 $projetid =	0;
-if ($_GET["projetid"])
-{
-	$projetid =	$_GET["projetid"];
-}
+if ($_GET["projetid"]) $projetid =	$_GET["projetid"];
 
 $mesg='';
 

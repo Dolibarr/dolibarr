@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,8 @@ if ($action == 'note')
 if ($mode == 'search') {
 	if ($mode-search == 'soc') {
 		$sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
-		$sql .= " WHERE lower(s.nom) like '%".addslashes(strtolower($socname))."%'";
+		$sql.= " WHERE lower(s.nom) like '%".addslashes(strtolower($socname))."%'";
+		$sql.= " AND s.entity = ".$conf->entity;
 	}
 
 	if ( $db->query($sql) ) {
@@ -93,51 +95,52 @@ if ($mode == 'search') {
  */
 
 $sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
-$sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE s.fk_stcomm = st.id AND s.client=1";
+$sql.= " AND s.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if (strlen($stcomm))
 {
-	$sql .= " AND s.fk_stcomm=$stcomm";
+	$sql.= " AND s.fk_stcomm=$stcomm";
 }
 
 if ($socname)
 {
-	$sql .= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
+	$sql.= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
 
 if ($_GET["search_nom"])
 {
-	$sql .= " AND s.nom like '%".addslashes(strtolower($_GET["search_nom"]))."%'";
+	$sql.= " AND s.nom like '%".addslashes(strtolower($_GET["search_nom"]))."%'";
 }
 
 if ($_GET["search_compta"])
 {
-	$sql .= " AND s.code_compta like '%".addslashes($_GET["search_compta"])."%'";
+	$sql.= " AND s.code_compta like '%".addslashes($_GET["search_compta"])."%'";
 }
 
 if ($_GET["search_code_client"])
 {
-	$sql .= " AND s.code_client like '%".addslashes($_GET["search_code_client"])."%'";
+	$sql.= " AND s.code_client like '%".addslashes($_GET["search_code_client"])."%'";
 }
 
 if (strlen($begin))
 {
-	$sql .= " AND s.nom like '".addslashes($begin)."'";
+	$sql.= " AND s.nom like '".addslashes($begin)."'";
 }
 
 if ($socid)
 {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql.= " AND s.rowid = ".$socid;
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)

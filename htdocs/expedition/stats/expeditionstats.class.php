@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,33 +23,42 @@
 
 class ExpeditionStats 
 {
-  var $db ;
+  var $db;
 
   function ExpeditionStats($DB)
-    {
-      $this->db = $DB;
-    }
+  {
+    $this->db = $DB;
+  }
   /**
    * Renvoie le nombre de expedition par année
    *
    */
   function getNbExpeditionByYear()
   {
+  	global $conf;
+  	
     $result = array();
-    $sql = "SELECT date_format(date_expedition,'%Y') as dm, count(*)  FROM ".MAIN_DB_PREFIX."expedition GROUP BY dm DESC WHERE fk_statut > 0";
+    $sql = "SELECT count(*), date_format(e.date_expedition,'%Y') as dm";
+    $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s ";
+    $sql.= " WHERE e.fk_statut > 0";
+    $sql.= " AND e.fk_soc = s.rowid";
+    $sql.= " s.entity = ".$conf->entity;
+    $sql.= " GROUP BY dm DESC";
+    
     if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $result[$i] = $row;
-
-	    $i++;
-	  }
-	$this->db->free();
-      }
+    {
+    	$num = $this->db->num_rows();
+    	$i = 0;
+    	while ($i < $num)
+    	{
+    		$row = $this->db->fetch_row($i);
+    		$result[$i] = $row;
+    		
+    		$i++;
+    	}
+    	$this->db->free();
+    }
     return $result;
   }
   /**
@@ -57,37 +67,43 @@ class ExpeditionStats
    */
   function getNbExpeditionByMonth($year)
   {
+  	global $conf;
+  	
     $result = array();
-    $sql = "SELECT date_format(date_expedition,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."expedition";
-    $sql .= " WHERE date_format(date_expedition,'%Y') = $year AND fk_statut > 0";
-    $sql .= " GROUP BY dm DESC";
+    $sql = "SELECT count(*), date_format(e.date_expedition,'%m') as dm";
+    $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s ";
+    $sql.= " WHERE date_format(e.date_expedition,'%Y') = ".$year;
+    $sql.= " AND fk_statut > 0";
+    $sql.= " AND e.fk_soc = s.rowid";
+    $sql.= " s.entity = ".$conf->entity;
+    $sql.= " GROUP BY dm DESC";
 
     if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $j = $row[0] * 1;
-	    $result[$j] = $row[1];
-	    $i++;
-	  }
-	$this->db->free();
-      }
-    
+    {
+    	$num = $this->db->num_rows();
+    	$i = 0;
+    	while ($i < $num)
+    	{
+    		$row = $this->db->fetch_row($i);
+    		$j = $row[0] * 1;
+    		$result[$j] = $row[1];
+    		$i++;
+    	}
+    	$this->db->free();
+    }
     for ($i = 1 ; $i < 13 ; $i++)
-      {
-	$res[$i] = $result[$i] + 0;
-      }
-
+    {
+    	$res[$i] = $result[$i] + 0;
+    }
+    
     $data = array();
     
     for ($i = 1 ; $i < 13 ; $i++)
-      {
-	$data[$i-1] = array(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"), $res[$i]);
-      }
-
+    {
+    	$data[$i-1] = array(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"), $res[$i]);
+    }
+    
     return $data;
   }
 
@@ -100,11 +116,11 @@ class ExpeditionStats
     $data = array();
 
     for ($i = 1 ; $i < 13 ; $i++)
-      {
-	$data[$i-1] = array(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"), 
-			    $data1[$i][1],
-			    $data2[$i][1]);
-      }
+    {
+    	$data[$i-1] = array(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"), 
+			$data1[$i][1],
+			$data2[$i][1]);
+    }
     return $data;
   }
 

@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,34 +70,31 @@ $userstatic = new User($db);
 $staticsoc=new Societe($db);
 
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, ".$db->pdate("p.dateo")." as do, p.fk_user_resp,";
-$sql .= " u.login,";
-$sql .= " s.nom, s.rowid as socid, s.client";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM (".MAIN_DB_PREFIX."projet as p";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= ")";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on p.fk_user_resp = u.rowid";
-$sql .= " WHERE 1 = 1 ";
+$sql.= " u.login,";
+$sql.= " s.nom, s.rowid as socid, s.client";
+$sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ")";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on p.fk_user_resp = u.rowid";
+$sql.= " WHERE s.entity = ".$conf->entity;
 if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid)
-{
-	$sql .= " AND s.rowid = ".$socid;
-}
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if ($socid)	$sql.= " AND s.rowid = ".$socid;
+
 if ($_GET["search_ref"])
 {
-	$sql .= " AND p.ref LIKE '%".addslashes($_GET["search_ref"])."%'";
+	$sql.= " AND p.ref LIKE '%".addslashes($_GET["search_ref"])."%'";
 }
 if ($_GET["search_label"])
 {
-	$sql .= " AND p.title LIKE '%".addslashes($_GET["search_label"])."%'";
+	$sql.= " AND p.title LIKE '%".addslashes($_GET["search_label"])."%'";
 }
 if ($_GET["search_societe"])
 {
-	$sql .= " AND s.nom LIKE '%".addslashes($_GET["search_societe"])."%'";
+	$sql.= " AND s.nom LIKE '%".addslashes($_GET["search_societe"])."%'";
 }
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $var=true;
 $resql = $db->query($sql);

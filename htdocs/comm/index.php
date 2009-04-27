@@ -39,7 +39,7 @@ accessforbidden();
 $langs->load("commercial");
 $langs->load("orders");
 
-// S�curit� acc�s clien
+// Securite acces client
 $socid='';
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if ($user->societe_id > 0)
@@ -139,16 +139,15 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$sql = "SELECT p.rowid, p.ref, p.total_ht, s.rowid as socid, s.nom, s.client";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE p.fk_statut = 0 and p.fk_soc = s.rowid";
-	if ($socid)
-	{
-		$sql .= " AND s.rowid = ".$socid;
-	}
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-
+	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
+	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE p.fk_statut = 0";
+	$sql.= " AND p.fk_soc = s.rowid";
+	$sql.= " AND s.entity = ".$conf->entity;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid)	$sql.= " AND s.rowid = ".$socid;
+	
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -204,15 +203,14 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 {
 	$langs->load("orders");
 	$sql = "SELECT c.rowid, c.ref, c.total_ttc, s.rowid as socid, s.nom, s.client";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE c.fk_soc = s.rowid AND c.fk_statut = 0";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)
-	{
-		$sql .= " AND c.fk_soc = ".$socid;
-	}
+	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
+	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE c.fk_soc = s.rowid";
+	$sql.= " AND c.fk_statut = 0";
+	$sql.= " AND s.entity = ".$conf->entity;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid)	$sql.= " AND c.fk_soc = ".$socid;
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -268,18 +266,16 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 
 	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE p.fk_soc = s.rowid";
-	//$sql .= " AND p.fk_statut > 1";
-	if ($socid)
-	{
-		$sql .= " AND s.rowid = ".$socid;
-	}
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	$sql .= " ORDER BY p.datec DESC";
-	$sql .= $db->plimit($NBMAX, 0);
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE p.fk_soc = s.rowid";
+	$sql.= " AND s.entity = ".$conf->entity;
+	//$sql.= " AND p.fk_statut > 1";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid)	$sql.= " AND s.rowid = ".$socid;
+	$sql.= " ORDER BY p.datec DESC";
+	$sql.= $db->plimit($NBMAX, 0);
 
 	if ( $db->query($sql) )
 	{
@@ -338,18 +334,12 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 if ($user->rights->societe->lire)
 {
 	$sql = "SELECT s.rowid,s.nom,s.client,s.tms";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE s.client in (1,2)";
-	if ($socid)
-	{
-		$sql .= " AND s.rowid = $socid";
-	}
-	if (!$user->rights->societe->client->voir && !$socid) //restriction
-	{
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	}
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE s.client IN (1,2)";
+	$sql.= " AND s.entity = ".$conf->entity;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid)	$sql.= " AND s.rowid = $socid";
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -419,20 +409,17 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // \todo A REF
 	$langs->load("contracts");
 
 	$sql = "SELECT s.nom, s.rowid, c.statut, c.rowid as contratid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE c.fk_soc = s.rowid and c.fk_product = p.rowid";
-	if ($socid)
-	{
-		$sql .= " AND s.rowid = ".$socid;
-	}
-	if (!$user->rights->societe->client->voir && !$socid) //restriction
-	{
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	}
-	$sql .= " ORDER BY c.tms DESC";
-	$sql .= $db->plimit(5, 0);
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."contrat as c";
+	$sql.= ", ".MAIN_DB_PREFIX."product as p";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE c.fk_soc = s.rowid";
+	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " AND c.fk_product = p.rowid";
+	if (!$user->rights->societe->client->voir && !$socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid) $sql.= " AND s.rowid = ".$socid;
+	$sql.= " ORDER BY c.tms DESC";
+	$sql.= $db->plimit(5, 0);
 
 	if ( $db->query($sql) )
 	{
@@ -474,13 +461,15 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	$langs->load("propal");
 
 	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = 1";
-	if ($socid) $sql .= " AND s.rowid = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	$sql .= " ORDER BY p.rowid DESC";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE p.fk_soc = s.rowid";
+	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " AND p.fk_statut = 1";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid) $sql.= " AND s.rowid = ".$socid;
+	$sql.= " ORDER BY p.rowid DESC";
 
 	$result=$db->query($sql);
 	if ($result)

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,7 @@ $px = new DolGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg)
 {
-    $px->SetData($data);
+	$px->SetData($data);
 	$px->SetPrecisionY(0);
 	$i=$startyear;
 	while ($i <= $endyear)
@@ -85,11 +86,11 @@ if (! $mesg)
 		$legend[]=$i;
 		$i++;
 	}
-    $px->SetLegend($legend);
-    $px->SetMaxValue($px->GetCeilMaxValue());
+	$px->SetLegend($legend);
+  $px->SetMaxValue($px->GetCeilMaxValue());
 	$px->SetMinValue(min(0,$px->GetFloorMinValue()));
-    $px->SetWidth($WIDTH);
-    $px->SetHeight($HEIGHT);
+  $px->SetWidth($WIDTH);
+  $px->SetHeight($HEIGHT);
 	$px->SetYLabel($langs->trans("NbOfProposals"));
 	$px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
@@ -97,7 +98,7 @@ if (! $mesg)
 	$px->mode='depth';
 	$px->SetTitle($langs->trans("NumberOfProposalsByMonth"));
 
-    $px->draw($filenamenb);
+  $px->draw($filenamenb);
 }
 
 // Build graphic amount of object

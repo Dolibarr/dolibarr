@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,7 @@ class Events // extends CommonObject
 
 	var $tms;
 	var $type;
+	var $entity;
 	var $dateevent;
 	var $description;
 
@@ -72,48 +74,46 @@ class Events // extends CommonObject
     function create($user)
     {
     	global $conf, $langs;
-
-		// Clean parameters
-		$this->id=trim($this->id);
-		$this->description=trim($this->description);
-
-		// Check parameters
-		if (! $this->description) { $this->error='ErrorBadValueForParameter'; return -1; }
-
-        // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
-
-		$sql.= "type,";
-		$sql.= "ip,";
-		$sql.= "dateevent,";
-		$sql.= "fk_user,";
-		$sql.= "description";
-
-        $sql.= ") VALUES (";
-
-		$sql.= " '".$this->type."',";
-		$sql.= " '".$_SERVER['REMOTE_ADDR']."',";
-		$sql.= " ".$this->db->idate($this->dateevent).",";
-		$sql.= " ".($user->id?"'".$user->id."'":'NULL').",";
-		$sql.= " '".addslashes($this->description)."'";
-
-		$sql.= ")";
+    	
+    	// Clean parameters
+    	$this->id=trim($this->id);
+    	$this->description=trim($this->description);
+    	
+    	// Check parameters
+    	if (! $this->description) { $this->error='ErrorBadValueForParameter'; return -1; }
+    	
+    	// Insert request
+    	$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
+    	$sql.= "type,";
+    	$sql.= "entity,";
+    	$sql.= "ip,";
+    	$sql.= "dateevent,";
+    	$sql.= "fk_user,";
+    	$sql.= "description";
+    	$sql.= ") VALUES (";
+    	$sql.= " '".$this->type."',";
+    	$sql.= " ".$conf->entity.",";
+    	$sql.= " '".$_SERVER['REMOTE_ADDR']."',";
+    	$sql.= " ".$this->db->idate($this->dateevent).",";
+    	$sql.= " ".($user->id?"'".$user->id."'":'NULL').",";
+    	$sql.= " '".addslashes($this->description)."'";
+    	$sql.= ")";
 
 	   	dol_syslog("Events::create sql=".$sql, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."events");
-
-            return $this->id;
-        }
-        else
-        {
-            $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Events::create ".$this->error, LOG_ERR);
-            return -1;
-        }
+      $resql=$this->db->query($sql);
+      if ($resql)
+      {
+      	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."events");
+      	return $this->id;
+      }
+      else
+      {
+      	$this->error="Error ".$this->db->lasterror();
+        dol_syslog("Events::create ".$this->error, LOG_ERR);
+        return -1;
+      }
     }
+
 
     /*
      *      \brief      Update database
@@ -124,37 +124,31 @@ class Events // extends CommonObject
     function update($user=0, $notrigger=0)
     {
     	global $conf, $langs;
-
-		// Clean parameters
-
-		$this->id=trim($this->id);
-		$this->type=trim($this->type);
-		$this->description=trim($this->description);
-
-
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
-
-		$sql.= " type='".$this->type."',";
-		$sql.= " dateevent=".$this->db->idate($this->dateevent).",";
-		$sql.= " description='".addslashes($this->description)."'";
-
-        $sql.= " WHERE rowid=".$this->id;
-
-        dol_syslog("Events::update sql=".$sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (! $resql)
-        {
-            $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Events::update ".$this->error, LOG_ERR);
-            return -1;
-        }
-
-        return 1;
+    	
+    	// Clean parameters
+    	$this->id=trim($this->id);
+    	$this->type=trim($this->type);
+    	$this->description=trim($this->description);
+    	
+    	// Check parameters
+    	// Put here code to add control on parameters values
+    	
+    	// Update request
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
+    	$sql.= " type='".$this->type."',";
+    	$sql.= " dateevent=".$this->db->idate($this->dateevent).",";
+    	$sql.= " description='".addslashes($this->description)."'";
+    	$sql.= " WHERE rowid=".$this->id;
+    	
+    	dol_syslog("Events::update sql=".$sql, LOG_DEBUG);
+    	$resql = $this->db->query($sql);
+      if (! $resql)
+      {
+      	$this->error="Error ".$this->db->lasterror();
+        dol_syslog("Events::update ".$this->error, LOG_ERR);
+        return -1;
+      }
+      return 1;
     }
 
 
@@ -167,45 +161,42 @@ class Events // extends CommonObject
     function fetch($id, $user=0)
     {
     	global $langs;
-        $sql = "SELECT";
-		$sql.= " t.rowid,";
-
-		$sql.= " ".$this->db->pdate('t.tms').",";
-		$sql.= " t.type,";
-		$sql.= " ".$this->db->pdate('t.dateevent').",";
-		$sql.= " t.description";
-
-
-        $sql.= " FROM ".MAIN_DB_PREFIX."events as t";
-        $sql.= " WHERE t.rowid = ".$id;
+    	
+    	$sql = "SELECT";
+    	$sql.= " t.rowid,";
+    	$sql.= " ".$this->db->pdate('t.tms').",";
+    	$sql.= " t.type,";
+    	$sql.= " t.entity,";
+    	$sql.= " ".$this->db->pdate('t.dateevent').",";
+    	$sql.= " t.description";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."events as t";
+    	$sql.= " WHERE t.rowid = ".$id;
 
     	dol_syslog("Events::fetch sql=".$sql, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
+    	$resql=$this->db->query($sql);
+      if ($resql)
+      {
+      	if ($this->db->num_rows($resql))
         {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
-
-                $this->id    = $obj->rowid;
-
-				$this->tms = $obj->tms;
-				$this->type = $obj->type;
-				$this->dateevent = $obj->dateevent;
-				$this->description = $obj->description;
-
-
-            }
-            $this->db->free($resql);
-
-            return 1;
+        	$obj = $this->db->fetch_object($resql);
+        	
+        	$this->id    = $obj->rowid;
+        	$this->tms = $obj->tms;
+        	$this->type = $obj->type;
+        	$this->entity = $obj->entity;
+        	$this->dateevent = $obj->dateevent;
+        	$this->description = $obj->description;
         }
-        else
-        {
-      	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Events::fetch ".$this->error, LOG_ERR);
-            return -1;
-        }
+        $this->db->free($resql);
+        
+        return 1;
+      }
+      else
+      {
+      	$this->error="Error ".$this->db->lasterror();
+      	dol_syslog("Events::fetch ".$this->error, LOG_ERR);
+      	return -1;
+      }
     }
 
 
@@ -221,12 +212,12 @@ class Events // extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
 		$sql.= " WHERE rowid=".$this->id;
 
-	   	dol_syslog("Events::delete sql=".$sql);
+	  dol_syslog("Events::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-            dol_syslog("Events::delete ".$this->error, LOG_ERR);
+      dol_syslog("Events::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 

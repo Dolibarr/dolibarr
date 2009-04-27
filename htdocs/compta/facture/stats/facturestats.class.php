@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,22 +52,25 @@ class FactureStats extends Stats
 	 */
 	function FactureStats($DB, $socid=0, $mode)
 	{
+		global $conf;
+		
 		$this->db = $DB;
 		if ($mode == 'customer')
 		{
 			$object=new Facture($this->db);
-			$this->table_element=$object->table_element;
+			$this->from = MAIN_DB_PREFIX.$object->table_element." as p, ".MAIN_DB_PREFIX."societe as s";
 			$this->field='total';
 		}
 		if ($mode == 'supplier')
 		{
 			$object=new FactureFournisseur($this->db);
-			$this->table_element=$object->table_element;
+			$this->from = MAIN_DB_PREFIX.$object->table_element." as p, ".MAIN_DB_PREFIX."societe as s";
 			$this->field='total_ht';
 		}
 		
 		$this->socid = $socid;
 		$this->where =" fk_statut > 0";
+		$this->where.= " AND p.fk_soc = s.rowid AND s.entity = ".$conf->entity;
 		if ($mode == 'customer') $this->where.=" AND (fk_statut != 3 OR close_code != 'replaced')";	// Exclude replaced invoices
 		if ($this->socid)
 		{
@@ -83,7 +87,7 @@ class FactureStats extends Stats
 	function getNbByYear()
 	{
 		$sql = "SELECT YEAR(datef) as dm, count(*)";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " FROM ".$this->from;
 		$sql.= " GROUP BY dm DESC";
 		$sql.= " WHERE ".$this->where;
 		
@@ -99,7 +103,7 @@ class FactureStats extends Stats
 	function getNbByMonth($year)
 	{
 		$sql = "SELECT MONTH(datef) as dm, count(*)";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE YEAR(datef) = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm DESC";
@@ -118,7 +122,7 @@ class FactureStats extends Stats
 	function getAmountByMonth($year)
 	{
 		$sql = "SELECT date_format(datef,'%m') as dm, sum(".$this->field.")";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE date_format(datef,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm DESC";
@@ -136,7 +140,7 @@ class FactureStats extends Stats
 	function getAverageByMonth($year)
 	{
 		$sql = "SELECT date_format(datef,'%m') as dm, avg(".$this->field.")";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE date_format(datef,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm DESC";
@@ -151,7 +155,7 @@ class FactureStats extends Stats
 	function getAllByYear()
 	{
 		$sql = "SELECT date_format(datef,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year DESC";
 

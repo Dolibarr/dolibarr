@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +55,8 @@ class box_actions extends ModeleBoxes {
 	}
 
 	/**
-	 *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-	 *      \param      $max        Nombre maximum d'enregistrements � charger
+	 *      \brief      Charge les donnees en memoire pour affichage ulterieur
+	 *      \param      $max        Nombre maximum d'enregistrements a charger
 	 */
 	function loadBox($max=5)
 	{
@@ -74,18 +74,15 @@ class box_actions extends ModeleBoxes {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage,";
 			$sql.= " ta.code,";
 			$sql.= " s.nom, s.rowid as socid";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux AS sc, ";
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " ".MAIN_DB_PREFIX."societe_commerciaux AS sc, ";
 			$sql.= MAIN_DB_PREFIX."actioncomm AS a";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON a.fk_soc = s.rowid";
 			$sql.= " WHERE a.fk_action = ta.id";
 			$sql.= " AND a.percent <> 100";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->societe_id)
-			{
-				$sql .= " AND s.rowid = ".$user->societe_id;
-			}
+			$sql.= " AND s.entity = ".$conf->entity;
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
 			$sql.= " ORDER BY a.datec DESC";
 			$sql.= $db->plimit($max, 0);
 
@@ -136,7 +133,9 @@ class box_actions extends ModeleBoxes {
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoActionsToDo"));
 			}
 			else {
-				dol_print_error($db);
+				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+    	        										'maxlength'=>500,
+	            										'text' => ($db->error().' sql='.$sql));
 			}
 		}
 		else {

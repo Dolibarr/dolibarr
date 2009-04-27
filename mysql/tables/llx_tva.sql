@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,12 +23,21 @@ create table llx_tva
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
-  datep           date,           -- date de paiement
-  datev           date,           -- date de valeur
+  datep           date,                       -- date de paiement
+  datev           date,                       -- date de valeur
   amount          real NOT NULL DEFAULT 0,
   label           varchar(255),
+  entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   note            text,
   fk_bank         integer,  
-  fk_user_creat   integer,            -- utilisateur qui a créé l'info
-  fk_user_modif   integer             -- utilisateur qui a modifié l'info
+  fk_user_creat   integer,                    -- utilisateur qui a créé l'info
+  fk_user_modif   integer                     -- utilisateur qui a modifié l'info
 )type=innodb;
+
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company vat
+-- 2 : second company vat
+-- 3 : etc...
+--

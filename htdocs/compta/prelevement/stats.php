@@ -1,6 +1,7 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,14 +26,16 @@
 
 require("./pre.inc.php");
 
-if (!$user->rights->prelevement->bons->lire)
-  accessforbidden();
+$langs->load("withdrawals");
+$langs->load("companies");
 
-// Sécurité accés client
-if ($user->societe_id > 0) accessforbidden();
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'prelevement','','','bons');
 
 
-llxHeader('','Statistiques prélèvements');
+llxHeader('',$langs->trans("WithdrawStatistics"));
 
 /*
  *
@@ -44,7 +47,10 @@ print_titre($langs->trans("WithdrawStatistics"));
 
 
 $sql = "SELECT sum(pl.amount), count(pl.amount)";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE pl.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
 
 if ($db->query($sql))
 {
@@ -64,8 +70,11 @@ if ($db->query($sql))
  *
  */
 $sql = "SELECT sum(pl.amount), count(pl.amount), pl.statut";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " GROUP BY pl.statut";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE pl.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " GROUP BY pl.statut";
 
 if ($db->query($sql))
 {
@@ -133,8 +142,11 @@ print_titre($langs->trans("WithdrawRejectStatistics"));
 
 
 $sql = "SELECT sum(pl.amount), count(pl.amount)";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " WHERE pl.statut = 3";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE pl.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " WHERE pl.statut = 3";
 if ($db->query($sql))
 {
   $num = $db->num_rows();
@@ -153,12 +165,15 @@ if ($db->query($sql))
  *
  */
 $sql = "SELECT sum(pl.amount), count(pl.amount) as cc, pr.motif";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-$sql .= " WHERE pl.statut = 3";
-$sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
-$sql .= " GROUP BY pr.motif";
-$sql .= " ORDER BY cc DESC";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql.= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE pl.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND pl.statut = 3";
+$sql.= " AND pr.fk_prelevement_lignes = pl.rowid";
+$sql.= " GROUP BY pr.motif";
+$sql.= " ORDER BY cc DESC";
 
 if ($db->query($sql))
 {

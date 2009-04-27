@@ -77,7 +77,7 @@ if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
 
-    if (dolibarr_set_const($db, "DON_ADDON_MODEL",$_GET["value"]))
+    if (dolibarr_set_const($db, "DON_ADDON_MODEL",$_GET["value"],'chaine',0,'',$conf->entity))
     {
         $conf->global->DON_ADDON_MODEL = $_GET["value"];
     }

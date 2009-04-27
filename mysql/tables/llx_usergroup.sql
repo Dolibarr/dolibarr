@@ -33,7 +33,7 @@ create table llx_usergroup
 -- 
 -- List of codes for the field entity
 --
--- 0 : common group
+-- 0 : global group
 -- 1 : first company group
 -- 2 : second company group
 -- 3 : etc...

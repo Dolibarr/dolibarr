@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ $langs->load("companies");
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'prelevement','','');
+$result = restrictedArea($user, 'prelevement','','','bons');
 
 
 /*
@@ -67,31 +67,29 @@ if (! $sortfield) $sortfield="f.facnumber";
 $sql= "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid";
 $sql.= " , ".$db->pdate("pfd.date_demande")." as date_demande";
 $sql.= " , pfd.fk_user_demande";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
-$sql.= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.rowid = f.fk_soc";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if (! $statut) $sql.= " AND pfd.traite = 0";
+$sql.= " AND s.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+if (!$statut) $sql.= " AND pfd.traite = 0";
 if ($statut) $sql.= " AND pfd.traite = ".$statut;
 $sql.= " AND pfd.fk_facture = f.rowid";
 if (strlen(trim($_GET["search_societe"])))
 {
-	$sql .= " AND s.nom LIKE '%".$_GET["search_societe"]."%'";
+	$sql.= " AND s.nom LIKE '%".$_GET["search_societe"]."%'";
 }
-if ($socid)
-{
-	$sql .= " AND f.fk_soc = $socid";
-}
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 if ( $db->query($sql) )
 {
 	$num = $db->num_rows();
 	$i = 0;
 
-	if (! $statut)
+	if (!$statut)
 	{
 		print_barre_liste($langs->trans("RequestStandingOrderToTreat"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
 	}

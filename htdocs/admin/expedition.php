@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ if ($_GET["action"] == 'specimen')
 if ($_GET["action"] == 'set')
 {
 	$type='shipping';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
 	if ($db->query($sql))
 	{
 
@@ -94,7 +94,10 @@ if ($_GET["action"] == 'del')
 {
 	$type='shipping';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+	$sql.= " WHERE nom = '".$_GET["value"];
+	$sql.= " AND type = '".$type."'";
+	$sql.= " AND entity = ".$conf->entity;
+	
 	if ($db->query($sql))
 	{
 
@@ -105,7 +108,7 @@ if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
 
-	if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF",$_GET["value"]))
+	if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
 	{
 		$conf->global->EXPEDITION_ADDON_PDF = $_GET["value"];
 	}
@@ -113,9 +116,11 @@ if ($_GET["action"] == 'setdoc')
 	// On active le modele
 	$type='shipping';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+	$sql_del.= " WHERE nom = '".$_GET["value"];
+	$sql_del.= " AND type = '".$type."'";
+	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -139,7 +144,9 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 	$class = "methode_expedition_$module";
 	$expem = new $class($db);
 
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode WHERE rowid = ".$moduleid;
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode";
+	$sql.= " WHERE rowid = ".$moduleid;
+	
 	$resql = $db->query($sql);
 	if ($resql && ($statut == 1 || $_GET["action"] == 'setmod'))
 	{
@@ -148,6 +155,7 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 		$sqlu = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
 		$sqlu.= " SET statut=1";
 		$sqlu.= " WHERE rowid=".$moduleid;
+		
 		$result=$db->query($sqlu);
 		if ($result)
 		{
@@ -200,7 +208,7 @@ if ($_GET["action"] == 'setmod')
 	// \todo Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
-	dolibarr_set_const($db, "EXPEDITION_ADDON",$_GET["module"]);
+	dolibarr_set_const($db, "EXPEDITION_ADDON",$_GET["module"],'chaine',0,'',$conf->entity);
 }
 
 
@@ -253,9 +261,12 @@ print_titre($langs->trans("SendingsReceiptModel"));
 // Defini tableau def de modele invoice
 $type="shipping";
 $def = array();
+
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql.= " WHERE type = '".$type."'";
+$sql.= " AND entity = ".$conf->entity;
+
 $resql=$db->query($sql);
 if ($resql)
 {

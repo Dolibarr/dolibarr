@@ -767,7 +767,7 @@ function weight_convert($weight,&$from_unit,$to_unit)
  *	\param	    tab         Tableau (cle=>valeur) des parametres a sauvegarder
  *	\return     int         <0 if KO, >0 if OK
  */
-function dol_set_user_param($db, &$user, $tab)
+function dol_set_user_param($db, $conf, &$user, $tab)
 {
 	// Verification parametres
 	if (sizeof($tab) < 1) return -1;
@@ -777,6 +777,7 @@ function dol_set_user_param($db, &$user, $tab)
 	// We remove old parameters for all keys in $tab
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
 	$sql.= " WHERE fk_user = ".$user->id;
+	$sql.= " AND entity = ".$conf->entity;
 	$sql.= " AND param in (";
 	$i=0;
 	foreach ($tab as $key => $value)
@@ -801,8 +802,8 @@ function dol_set_user_param($db, &$user, $tab)
 		// Set new parameters
 		if ($value && (! $url || in_array($key,array('sortfield','sortorder','begin','page'))))
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,param,value)";
-			$sql.= " VALUES (".$user->id.",";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
+			$sql.= " VALUES (".$user->id.",".$conf->entity.",";
 			$sql.= " '".$key."','".addslashes($value)."');";
 			dol_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
 

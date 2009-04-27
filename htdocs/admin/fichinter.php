@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville         <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008 Laurent Destailleur          <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio          <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2009 Regis Houssin                <regis@dolibarr.fr>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,12 +48,12 @@ if ($_POST["action"] == 'updateMask')
 {
 	$maskconst=$_POST['maskconst'];
 	$maskvalue=$_POST['maskvalue'];
-	if ($maskconst) dolibarr_set_const($db,$maskconst,$maskvalue);
+	if ($maskconst) dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'set_FICHINTER_DRAFT_WATERMARK')
 {
-	dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK",trim($_POST["FICHINTER_DRAFT_WATERMARK"]));
+	dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK",trim($_POST["FICHINTER_DRAFT_WATERMARK"]),'chaine',0,'',$conf->entity);
 }
 
 if ($_GET["action"] == 'specimen')
@@ -94,7 +94,7 @@ if ($_GET["action"] == 'specimen')
 if ($_GET["action"] == 'set')
 {
 	$type='ficheinter';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
 	if ($db->query($sql))
 	{
 
@@ -105,7 +105,10 @@ if ($_GET["action"] == 'del')
 {
 	$type='ficheinter';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+	$sql.= " WHERE nom = '".$_GET["value"];
+	$sql.= " AND type = '".$type."'";
+	$sql.= " AND entity = ".$conf->entity;
+	
 	if ($db->query($sql))
 	{
 
@@ -116,19 +119,21 @@ if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
 
-	if (dolibarr_set_const($db, "FICHEINTER_ADDON_PDF",$_GET["value"]))
+	if (dolibarr_set_const($db, "FICHEINTER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
 	{
-		// La constante qui a �t� lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coh�rent
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
 		$conf->global->FICHEINTER_ADDON_PDF = $_GET["value"];
 	}
 
 	// On active le modele
 	$type='ficheinter';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+	$sql_del.= " WHERE nom = '".$_GET["value"];
+	$sql_del.= " AND type = '".$type."'";
+	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -142,17 +147,17 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_GET["action"] == 'setmod')
 {
-	// \todo Verifier si module numerotation choisi peut etre activ�
+	// \todo Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
-	dolibarr_set_const($db, "FICHEINTER_ADDON",$_GET["value"]);
+	dolibarr_set_const($db, "FICHEINTER_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);
 }
 
-// d�fini les constantes du mod�le arctic
-if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FICHEINTER_NUM_MATRICE",$_POST["matrice"]);
-if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "FICHEINTER_NUM_PREFIX",$_POST["prefix"]);
-if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "FICHEINTER_NUM_DELTA",$_POST["offset"]);
-if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "FICHEINTER_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);
+// defini les constantes du modele arctic
+if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FICHEINTER_NUM_MATRICE",$_POST["matrice"],'chaine',0,'',$conf->entity);
+if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "FICHEINTER_NUM_PREFIX",$_POST["prefix"],'chaine',0,'',$conf->entity);
+if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "FICHEINTER_NUM_DELTA",$_POST["offset"],'chaine',0,'',$conf->entity);
+if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "FICHEINTER_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"],'chaine',0,'',$conf->entity);
 
 
 /*
@@ -258,6 +263,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql.= " WHERE type = '".$type."'";
+$sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -307,7 +313,7 @@ while (($file = readdir($handle))!==false)
 		print $module->description;
 		print '</td>';
 
-		// Activ�
+		// Active
 		if (in_array($name, $def))
 		{
 			print "<td align=\"center\">\n";

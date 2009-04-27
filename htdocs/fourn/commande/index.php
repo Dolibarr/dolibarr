@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,14 +49,13 @@ print '<table class="notopnoleftnoright" width="100%">';
 print '<tr valign="top"><td class="notopnoleft" width="30%">';
 
 $sql = "SELECT count(cf.rowid), fk_statut";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE cf.fk_soc = s.rowid ";
-if (!$user->rights->societe->client->voir && !$socid) //restriction
-{
-  $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-}
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE cf.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
@@ -97,9 +97,15 @@ print '</td><td width="70%" valign="top" class="notopnoleft">';
 
 $sql = "SELECT u.rowid, u.name, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
-$sql.= " ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as rd";
-$sql.= " WHERE u.rowid = ur.fk_user AND ur.fk_id = rd.id";
-$sql.= " AND module='fournisseur' AND perms='commande' AND subperms='approuver'";
+$sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
+$sql.= ", ".MAIN_DB_PREFIX."rights_def as rd";
+$sql.= " WHERE u.rowid = ur.fk_user";
+$sql.= " AND (u.entity IN (0,".$conf->entity.")";
+$sql.= " AND (rd.entity =".$conf->entity.")";
+$sql.= " AND ur.fk_id = rd.id";
+$sql.= " AND module='fournisseur'";
+$sql.= " AND perms='commande'";
+$sql.= " AND subperms='approuver'";
 
 $resql = $db->query($sql);
 if ($resql)

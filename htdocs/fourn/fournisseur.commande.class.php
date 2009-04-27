@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +42,14 @@ class CommandeFournisseur extends Commande
 	var $table_element='commande_fournisseur';
 	var $table_element_line = 'commande_fournisseurdet';
 	var $fk_element = 'fk_commande';
+	var $table_optional = 'societe as s';
 
 	var $id ;
 	var $brouillon;
 
 
 	/**   \brief      Constructeur
-	 *    \param      DB      Handler d'acc�s aux bases de donn�es
+	 *    \param      DB      Handler d'acces aux bases de donnees
 	 */
 	function CommandeFournisseur($DB)
 	{
@@ -78,6 +79,8 @@ class CommandeFournisseur extends Commande
 	 */
 	function fetch($id,$ref='')
 	{
+		global $conf;
+		
 		$sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
 		$sql .= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
 		$sql .= " c.note, c.note_public, c.model_pdf,";
@@ -115,6 +118,8 @@ class CommandeFournisseur extends Commande
 			$this->note                = $obj->note;
 			$this->note_public         = $obj->note_public;
 			$this->modelpdf            = $obj->model_pdf;
+			
+			$this->next_prev_filter = 'fk_soc = s.rowid AND s.entity = '.$conf->entity;
 
 			$this->db->free();
 
@@ -453,8 +458,8 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *      \brief      Renvoie la r�f�rence de commande suivante non utilis�e en fonction du modul
-	 *                  de num�rotation actif d�fini dans COMMANDE_SUPPLIER_ADDON
+	 *      \brief      Renvoie la reference de commande suivante non utilisee en fonction du module
+	 *                  de numerotation actif defini dans COMMANDE_SUPPLIER_ADDON
 	 *      \param	    soc  		            objet societe
 	 *      \return     string                  reference libre pour la facture
 	 */

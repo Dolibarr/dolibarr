@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -456,6 +456,8 @@ class Project extends CommonObject
 	 */
 	function getTasksArray($usert=0, $userp=0, $mode=0)
 	{
+		global $conf;
+		
 		$tasks = array();
 
 		//print $usert.'-'.$userp;
@@ -471,9 +473,11 @@ class Project extends CommonObject
 			{
 				$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as ta";
 			}
-			$sql.= ")";
+			$sql.= ", ".MAIN_DB_PREFIX."societe as s)";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as up on p.fk_user_resp = up.rowid";
 			$sql.= " WHERE t.fk_projet = p.rowid";
+			$sql.= " AND p.fk_soc = s.rowid";
+			$sql.= " AND s.entity = ".$conf->entity;
 			if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
 			if (is_object($usert)) $sql .= " AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
 			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
@@ -485,15 +489,16 @@ class Project extends CommonObject
 			{
 				$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 				$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as ta";
-				$sql.= ")";
+				$sql.= ", ".MAIN_DB_PREFIX."societe as s)";
 			}
 			else
 			{
-				$sql.= ")";
+				$sql.= ", ".MAIN_DB_PREFIX."societe as s)";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
 			}
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as up on p.fk_user_resp = up.rowid";
-			$sql.= " WHERE 1 = 1";
+			$sql.= " WHERE p.fk_soc = s.rowid";
+			$sql.= " AND s.entity = ".$conf->entity;
 			if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
 			if (is_object($usert)) $sql .= " AND t.fk_projet = p.rowid AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
 			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";

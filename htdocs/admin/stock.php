@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,18 +40,18 @@ accessforbidden();
  */
 if ($_POST["action"] == 'STOCK_USERSTOCK')
 {
-	dolibarr_set_const($db, "STOCK_USERSTOCK", $_POST["STOCK_USERSTOCK"]);
+	dolibarr_set_const($db, "STOCK_USERSTOCK", $_POST["STOCK_USERSTOCK"],'chaine',0,'',$conf->entity);
 	//On desactive l'autocreation si l'option "stock personnel" est desactivee
 	if ($_POST["STOCK_USERSTOCK"] == 0)
 	{
-		dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", 0);
+		dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", 0,'chaine',0,'',$conf->entity);
 	}
 	Header("Location: stock.php");
 	exit;
 }
 elseif ($_POST["action"] == 'STOCK_USERSTOCK_AUTOCREATE')
 {
-	dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", $_POST["STOCK_USERSTOCK_AUTOCREATE"]);
+	dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", $_POST["STOCK_USERSTOCK_AUTOCREATE"],'chaine',0,'',$conf->entity);
 	Header("Location: stock.php");
 	exit;
 }
@@ -61,12 +62,12 @@ if ($_POST["action"] == 'STOCK_CALCULATE_ON_BILL'
 {
 	$count=0;
 	$db->begin();
-	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", '');
-	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", '');
-	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", '');
-	if ($_POST["action"] == 'STOCK_CALCULATE_ON_BILL')           $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", $_POST["STOCK_CALCULATE_ON_BILL"]);
-	if ($_POST["action"] == 'STOCK_CALCULATE_ON_VALIDATE_ORDER') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", $_POST["STOCK_CALCULATE_ON_VALIDATE_ORDER"]);
-	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SHIPMENT')       $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", $_POST["STOCK_CALCULATE_ON_SHIPMENT"]);
+	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", '','chaine',0,'',$conf->entity);
+	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", '','chaine',0,'',$conf->entity);
+	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", '','chaine',0,'',$conf->entity);
+	if ($_POST["action"] == 'STOCK_CALCULATE_ON_BILL')           $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", $_POST["STOCK_CALCULATE_ON_BILL"],'chaine',0,'',$conf->entity);
+	if ($_POST["action"] == 'STOCK_CALCULATE_ON_VALIDATE_ORDER') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", $_POST["STOCK_CALCULATE_ON_VALIDATE_ORDER"],'chaine',0,'',$conf->entity);
+	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SHIPMENT')       $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", $_POST["STOCK_CALCULATE_ON_SHIPMENT"],'chaine',0,'',$conf->entity);
 	if ($count == 4)
 	{
 		$db->commit();
@@ -85,10 +86,10 @@ if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_BILL'
 {
 	$count=0;
 	$db->begin();
-	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", '');
-	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", '');
-	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_BILL')           $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", $_POST["STOCK_CALCULATE_ON_SUPPLIER_BILL"]);
-	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $_POST["STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER"]);
+	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", '','chaine',0,'',$conf->entity);
+	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", '','chaine',0,'',$conf->entity);
+	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_BILL')           $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", $_POST["STOCK_CALCULATE_ON_SUPPLIER_BILL"],'chaine',0,'',$conf->entity);
+	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $_POST["STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER"],'chaine',0,'',$conf->entity);
 	if ($count == 3)
 	{
 		$db->commit();

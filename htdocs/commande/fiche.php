@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,6 +39,8 @@ if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/project.class.php')
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 
+if (!$user->rights->commande->lire) accessforbidden();
+
 $langs->load('orders');
 $langs->load('sendings');
 $langs->load('companies');
@@ -47,14 +49,11 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
 
-if (!$user->rights->commande->lire) accessforbidden();
-
-
 // Security check
 $socid=0;
-$contratid = isset($_GET["id"])?$_GET["id"]:'';
+$comid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'commande',$contratid,'commande');
+$result=restrictedArea($user,'commande',$comid,'');
 
 $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 

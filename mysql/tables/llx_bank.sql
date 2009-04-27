@@ -23,20 +23,20 @@ create table llx_bank
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   datec           datetime,
-  datev           date,           -- date de valeur
-  dateo           date,           -- date operation
+  datev           date,                      -- date de valeur
+  dateo           date,                      -- date operation
   amount          double(24,8) NOT NULL default 0,
   label           varchar(255),
   fk_account      integer,
   fk_user_author  integer,
   fk_user_rappro  integer,
-  fk_type         varchar(4),     -- CB, Virement, cheque
+  fk_type         varchar(4),                -- CB, Virement, cheque
   num_releve      varchar(50),
   num_chq         varchar(50),
   rappro          tinyint default 0,
   note            text,
   fk_bordereau    integer DEFAULT 0,
-  banque          varchar(255),   -- banque pour les cheques
-  emetteur        varchar(255),   -- emetteur du cheque
-  author          varchar(40) -- a supprimer apres migration
+  banque          varchar(255),             -- banque pour les cheques
+  emetteur        varchar(255),             -- emetteur du cheque
+  author          varchar(40)               -- a supprimer apres migration
 )type=innodb;

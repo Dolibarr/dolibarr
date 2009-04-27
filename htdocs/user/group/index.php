@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,9 +55,9 @@ llxHeader();
 
 print_fiche_titre($langs->trans("ListOfGroups"));
 
-$sql = "SELECT g.rowid, g.nom, ".$db->pdate("g.datec")." as datec";
+$sql = "SELECT g.rowid, g.nom, g.entity, ".$db->pdate("g.datec")." as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-$sql .= " WHERE 1=1";
+$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
 if ($_POST["search_group"])
 {
     $sql .= " AND (g.nom like '%".$_POST["search_group"]."%' OR g.note like '%".$_POST["search_group"]."%')";
@@ -87,7 +88,12 @@ if ($resql)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a></td>';
+        print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
+        if (!$obj->entity)
+        {
+        	print img_picto($langs->trans("GlobalGroup"),'redstar');
+        }
+        print "</td>";
         print '<td width="100" align="center">'.dol_print_date($obj->datec,"day").'</td>';
         print "</tr>\n";
         $i++;

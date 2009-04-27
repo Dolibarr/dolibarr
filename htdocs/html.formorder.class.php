@@ -25,7 +25,7 @@
 
 /**
  *	\class      FormOrder
- *	\brief      Classe permettant la g�n�ration de composants html
+ *	\brief      Classe permettant la generation de composants html
  *	\remarks	Only common components must be here.
  */
 class FormOrder
@@ -37,7 +37,7 @@ class FormOrder
 
 	/**
 	 *	\brief     Constructeur
-	 *	\param     DB      handler d'acc�s base de donn�e
+	 *	\param     DB      handler d'acces base de donnee
 	 */
 	function FormOrder($DB)
 	{
@@ -49,7 +49,7 @@ class FormOrder
 
 	/**
 	 *   	\brief      Renvoie la liste des sources de commandes
-	 *		\param      selected		Id de la source pr�-s�lectionn�e
+	 *		\param      selected		Id de la source pre-selectionnee
 	 *    	\param     	htmlname 		Nom de la liste deroulante
 	 *      \param     	addempty		0=liste sans valeur nulle, 1=ajoute valeur inconnue
 	 *      \return		array			Tableau des sources de commandes

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,12 +78,14 @@ print "</form></table><br>\n";
  * Commandes brouillons
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE c.fk_soc = s.rowid AND c.fk_statut = 0";
-if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE c.fk_soc = s.rowid";
+$sql.= " WHERE s.entity = ".$conf->entity;
+$sql.= " AND c.fk_statut = 0";
+if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if ( $db->query($sql) )
 {
@@ -113,13 +116,15 @@ if ( $db->query($sql) )
  * Commandes à traiter
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .=" FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE c.fk_soc = s.rowid AND c.fk_statut = 1";
-if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql .= " ORDER BY c.rowid DESC";
+$sql.=" FROM ".MAIN_DB_PREFIX."commande as c";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE c.fk_soc = s.rowid";
+$sql.= " WHERE s.entity = ".$conf->entity;
+$sql.= " AND c.fk_statut = 1";
+if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " ORDER BY c.rowid DESC";
 
 if ( $db->query($sql) )
 {
@@ -175,13 +180,15 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  * Commandes en cours
  */
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE c.fk_soc = s.rowid AND c.fk_statut = 2 ";
-if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql .= " ORDER BY c.rowid DESC";
+$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE c.fk_soc = s.rowid";
+$sql.= " WHERE s.entity = ".$conf->entity;
+$sql.= " AND c.fk_statut = 2 ";
+if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " ORDER BY c.rowid DESC";
 
 if ( $db->query($sql) )
 {
@@ -239,12 +246,14 @@ $max=5;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid,";
 $sql.= " ".$db->pdate("date_cloture")." as datec";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE c.fk_soc = s.rowid and c.fk_statut > 2";
+$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE c.fk_soc = s.rowid";
+$sql.= " WHERE s.entity = ".$conf->entity;
+$sql.= " AND c.fk_statut > 2";
 if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " ORDER BY c.tms DESC";
 $sql.= $db->plimit($max, 0);
 

@@ -212,6 +212,7 @@ class Service
            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
         }
         $sql.= " WHERE p.fk_product_type = 1";
+        $sql.= " AND p.entity = ".$conf->entity;
         if ($conf->categorie->enabled && !$user->rights->categorie->voir)
         {
            $sql.= " AND IFNULL(c.visible,1)=1";

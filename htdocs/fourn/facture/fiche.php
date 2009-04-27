@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.fr>
- * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,20 +33,17 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 
-
-if (!$user->rights->fournisseur->facture->lire)
-accessforbidden();
+if (!$user->rights->fournisseur->facture->lire) accessforbidden();
 
 $langs->load('bills');
 $langs->load('suppliers');
 $langs->load('companies');
 
+$facid = isset($_GET["facid"])?$_GET["facid"]:'';
+
 // Security check
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'fournisseur', $facid, '', 'facture');
 
 $html = new Form($db);
 $mesg='';

@@ -73,8 +73,8 @@ if ($action == "save")
 	{
 		$param='MAIN_AGENDA_ACTIONAUTO_'.$arr['id'];
 		//print "param=".$param." - ".$_POST[$param];
-		if (! empty($_POST[$param])) dolibarr_set_const($db,$param,$_POST[$param],'chaine',0);
-		else dolibarr_del_const($db,$param);
+		if (! empty($_POST[$param])) dolibarr_set_const($db,$param,$_POST[$param],'chaine',0,'',$conf->entity);
+		else dolibarr_del_const($db,$param,$conf->entity);
 	}
 	
     $db->commit();

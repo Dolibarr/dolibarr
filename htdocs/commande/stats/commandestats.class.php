@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ class CommandeStats extends Stats
 	 */
 	function CommandeStats($DB, $socid=0, $mode)
 	{
-		global $user;
+		global $user, $conf;
 		
 		$this->db = $DB;
 		
@@ -62,17 +63,20 @@ class CommandeStats extends Stats
 		if ($mode == 'customer')
 		{
 			$object=new Commande($this->db);
-			$this->table_element=$object->table_element;
+			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
+			$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
 			$this->field='total_ht';
 			$this->where.= " c.fk_statut > 0";
 		}
 		if ($mode == 'supplier')
 		{
 			$object=new CommandeFournisseur($this->db);
-			$this->table_element=$object->table_element;
+			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
+			$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
 			$this->field='total_ht';
 			$this->where.= " c.fk_statut >= 3 AND c.date_commande IS NOT NULL";
 		}
+		$this->where.= " AND c.fk_soc = s.rowid AND s.entity = ".$conf->entity;
 				
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if($this->socid)
@@ -92,7 +96,7 @@ class CommandeStats extends Stats
 		global $user;
 		 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, count(*) nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
+		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE date_format(c.date_commande,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
@@ -111,7 +115,7 @@ class CommandeStats extends Stats
 		global $user;
 		 
 		$sql = "SELECT date_format(c.date_commande,'%Y') as dm, count(*), sum(c.".$this->field.")";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
+		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm DESC";
@@ -129,7 +133,7 @@ class CommandeStats extends Stats
 		global $user;
 		 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, sum(c.".$this->field.")";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
+		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE date_format(c.date_commande,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
@@ -148,7 +152,7 @@ class CommandeStats extends Stats
 		global $user;
 		 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, avg(c.".$this->field.")";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
+		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE date_format(c.date_commande,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
@@ -167,8 +171,7 @@ class CommandeStats extends Stats
 		global $user;
 		
 		$sql = "SELECT date_format(c.date_commande,'%Y') as year, count(*) as nb, sum(c.".$this->field.") as total, avg(".$this->field.") as avg";
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", sc.fk_soc, sc.fk_user";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
+		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year DESC";

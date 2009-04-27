@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,9 @@ class box_factures_imp extends ModeleBoxes {
     var $boximg="object_bill";
     var $boxlabel;
     var $depends = array("facture");
-
-	var $db;
-	var $param;
+    
+    var $db;
+    var $param;
 
     var $info_box_head = array();
     var $info_box_contents = array();
@@ -48,59 +48,58 @@ class box_factures_imp extends ModeleBoxes {
      */
     function box_factures_imp()
     {
-        global $langs;
-        $langs->load("boxes");
+    	global $langs;
+      $langs->load("boxes");
 
-        $this->boxlabel=$langs->trans("BoxOldestUnpayedCustomerBills");
+      $this->boxlabel=$langs->trans("BoxOldestUnpayedCustomerBills");
     }
 
     /**
-     *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-     *      \param      $max        Nombre maximum d'enregistrements � charger
+     *      \brief      Charge les donnees en memoire pour affichage ulterieur
+     *      \param      $max        Nombre maximum d'enregistrements a charger
      */
     function loadBox($max=5)
     {
-        global $conf, $user, $langs, $db;
+    	global $conf, $user, $langs, $db;
+    	
+    	$this->max=$max;
+    	
+    	include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+    	$facturestatic=new Facture($db);
+    	
+    	$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedCustomerBills",$max));
 
-		$this->max=$max;
-        
-		include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
-		$facturestatic=new Facture($db);
+      if ($user->rights->facture->lire)
+      {
+      	$sql = "SELECT s.nom, s.rowid as socid,";
+        $sql.= " f.facnumber, f.date_lim_reglement as datelimite,";
+        $sql.= " f.amount, f.datef as df,";
+        $sql.= " f.paye, f.fk_statut, f.rowid as facid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE f.fk_soc = s.rowid";
+        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND f.paye = 0";
+        $sql.= " AND fk_statut = 1";
+        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+        //$sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
+        $sql.= " ORDER BY datelimite ASC, f.facnumber ASC ";
+        $sql.= $db->plimit($max, 0);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedCustomerBills",$max));
-
-        if ($user->rights->facture->lire)
+        $result = $db->query($sql);
+        if ($result)
         {
-            $sql = "SELECT s.nom, s.rowid as socid,";
-            $sql.= " f.facnumber, f.date_lim_reglement as datelimite,";
-            $sql.= " f.amount, f.datef as df,";
-            $sql.= " f.paye, f.fk_statut, f.rowid as facid";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql .= " WHERE f.fk_soc = s.rowid AND f.paye=0 AND fk_statut = 1";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if($user->societe_id)
-            {
-                $sql .= " AND s.rowid = ".$user->societe_id;
-            }
-            //$sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
-            $sql .= " ORDER BY datelimite ASC, f.facnumber ASC ";
-            $sql .= $db->plimit($max, 0);
+        	$num = $db->num_rows($result);
+        	$now=gmmktime();
+        	
+        	$i = 0;
+        	$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
 
-            $result = $db->query($sql);
-            if ($result)
-            {
-                $num = $db->num_rows($result);
-				$now=gmmktime();
-                
-                $i = 0;
-                $l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
-
-                while ($i < $num)
-                {
-                    $objp = $db->fetch_object($result);
-					$datelimite=$db->jdate($objp->datelimite);
+          while ($i < $num)
+          {
+          	$objp = $db->fetch_object($result);
+          	$datelimite=$db->jdate($objp->datelimite);
 					
                     $late='';
                     if ($datelimite < ($now - $conf->facture->warning_delay)) $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));

@@ -36,9 +36,9 @@ if (!$user->admin) accessforbidden();
 if ($_GET["action"] == "set")
 {
 
-  dolibarr_set_const($db, 'TELEPHONIE_MAIL_FACTURATION_SUJET', $_POST["sujet"], $type='chaine');
+  dolibarr_set_const($db, 'TELEPHONIE_MAIL_FACTURATION_SUJET', $_POST["sujet"],'chaine',0,'',$conf->entity);
 
-  dolibarr_set_const($db, 'TELEPHONIE_MAIL_FACTURATION_SIGNATURE', $_POST["signature"], $type='texte');
+  dolibarr_set_const($db, 'TELEPHONIE_MAIL_FACTURATION_SIGNATURE', $_POST["signature"],'chaine',0,'',$conf->entity);
 
   Header("Location: mail.php");
 }
@@ -48,8 +48,8 @@ if ($_GET["action"] == "set")
  *
  *
  */
-llxHeader('','T�l�phonie - Configuration');
-print_titre("Configuration du module de T�l�phonie");
+llxHeader('','Telephonie - Configuration');
+print_titre("Configuration du module de Telephonie");
 
 print "<br>";
 

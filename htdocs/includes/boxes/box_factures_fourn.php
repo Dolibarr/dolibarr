@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,8 +53,8 @@ class box_factures_fourn extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-     *      \param      $max        Nombre maximum d'enregistrements � charger
+     *      \brief      Charge les donnees en memoire pour affichage ulterieur
+     *      \param      $max        Nombre maximum d'enregistrements a charger
      */
     function loadBox($max=5)
     {
@@ -76,17 +77,15 @@ class box_factures_fourn extends ModeleBoxes {
             $sql.= ' f.datef as df,';
             $sql.= ' f.datec as datec,';
             $sql.= ' f.date_lim_reglement as datelimite ';
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql .= " WHERE f.fk_soc = s.rowid";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if($user->societe_id)
-            {
-                $sql .= " AND s.rowid = ".$user->societe_id;
-            }
-            $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
-            $sql .= $db->plimit($max, 0);
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+            $sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql.= " WHERE f.fk_soc = s.rowid";
+            $sql.= " AND s.entity = ".$conf->entity;
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+            $sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
+            $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);
             if ($result)

@@ -68,18 +68,18 @@ foreach($modules as $const => $desc)
 {
 	if ($_GET["action"] == 'activate_'.strtolower($const))
 	{
-	    dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1");
+	    dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1",'chaine',0,'',$conf->entity);
 	    // Si fckeditor est activé dans la description produit/service, on l'active dans les formulaires
 	    if ($const == 'PRODUCTDESC' && $conf->global->PRODUIT_DESC_IN_FORM)
 	    {
-	    	dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1");
+	    	dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1",'chaine',0,'',$conf->entity);
 	    }
 	    Header("Location: fckeditor.php");
 	    exit;
 	}
 	if ($_GET["action"] == 'disable_'.strtolower($const))
 	{
-		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const);
+		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const,$conf->entity);
 		Header("Location: fckeditor.php");
 		exit;
 	}

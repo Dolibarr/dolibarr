@@ -498,6 +498,8 @@ class DolibarrModules
 	 */
 	function insert_boxes()
 	{
+		global $conf;
+		
 		$err=0;
 
 		if (is_array($this->boxes))
@@ -509,7 +511,8 @@ class DolibarrModules
 				$note  = isset($this->boxes[$key][2])?$this->boxes[$key][2]:'';
 
 				$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."boxes_def";
-				$sql.= " WHERE file ='".$file."'";
+				$sql.= " WHERE file = '".$file."'";
+				$sql.= " AND entity = ".$conf->entity;
 				if ($note) $sql.=" AND note ='".addslashes($note)."'";
 
 				$result=$this->db->query($sql);
@@ -518,8 +521,9 @@ class DolibarrModules
 					$row = $this->db->fetch_row($result);
 					if ($row[0] == 0)
 					{
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file,note)";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file,entity,note)";
 						$sql.= " VALUES ('".addslashes($file)."',";
+						$sql.= $conf->entity.",";
 						$sql.= $note?"'".addslashes($note)."'":"null";
 						$sql.= ")";
 						dol_syslog("DolibarrModules::insert_boxes sql=".$sql);
@@ -546,6 +550,8 @@ class DolibarrModules
 	 */
 	function delete_boxes()
 	{
+		global $conf;
+		
 		$err=0;
 
 		if (is_array($this->boxes))
@@ -560,11 +566,13 @@ class DolibarrModules
 				$sql.= " FROM ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
 				$sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
 				$sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".addslashes($file)."'";
+				$sql.= " AND ".MAIN_DB_PREFIX."boxes_def.entity = ".$conf->entity;
 				dol_syslog("DolibarrModules::delete_boxes sql=".$sql);
 				$this->db->query($sql);
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
 				$sql.= " WHERE file = '".addslashes($file)."'";
+				$sql.= " AND entity = ".$conf->entity;
 				dol_syslog("DolibarrModules::delete_boxes sql=".$sql);
 				if (! $this->db->query($sql))
 				{
@@ -582,12 +590,15 @@ class DolibarrModules
 	 */
 	function delete_style_sheet()
 	{
+		global $conf;
+		
 		$err=0;
 
 		if ($this->style_sheet)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 			$sql.= " WHERE name = '".$this->const_name."_CSS'";
+			$sql.= " AND entity = ".$conf->entity;
 			dol_syslog("DolibarrModules::delete_style_sheet sql=".$sql);
 			if (! $this->db->query($sql))
 			{
@@ -604,10 +615,13 @@ class DolibarrModules
 	 */
 	function delete_tabs()
 	{
+		global $conf;
+		
 		$err=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE name like '".$this->const_name."_TABS_%'";
+		$sql.= " AND entity = ".$conf->entity;
 		dol_syslog("DolibarrModules::delete_tabs sql=".$sql);
 		if (! $this->db->query($sql))
 		{
@@ -623,12 +637,14 @@ class DolibarrModules
 	 */
 	function insert_style_sheet()
 	{
+		global $conf;
+		
 		$err=0;
 
 		if ($this->style_sheet)
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible)";
-			$sql.= " VALUES ('".$this->const_name."_CSS','chaine','".$this->style_sheet."','Style sheet for module ".$this->name."','0')";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
+			$sql.= " VALUES ('".$this->const_name."_CSS','chaine','".$this->style_sheet."','Style sheet for module ".$this->name."','0',".$conf->entity.")";
 			dol_syslog("DolibarrModules::insert_style_sheet sql=".$sql);
 			$resql=$this->db->query($sql);
 			/* Allow duplicate key
@@ -648,6 +664,8 @@ class DolibarrModules
 	 */
 	function insert_tabs()
 	{
+		global $conf;
+		
 		$err=0;
 
 		if (! empty($this->tabs))
@@ -657,8 +675,8 @@ class DolibarrModules
 			{
 				if ($value)
 				{
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible)";
-					$sql.= " VALUES ('".$this->const_name."_TABS_".$i."','chaine','".$value."',null,'0')";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
+					$sql.= " VALUES ('".$this->const_name."_TABS_".$i."','chaine','".$value."',null,'0',".$conf->entity.")";
 					dol_syslog("DolibarrModules::insert_tabs sql=".$sql);
 					$resql=$this->db->query($sql);
 					/* Allow duplicate key
@@ -680,6 +698,8 @@ class DolibarrModules
 	 */
 	function insert_const()
 	{
+		global $conf;
+		
 		$err=0;
 
 		foreach ($this->const as $key => $value)
@@ -690,7 +710,10 @@ class DolibarrModules
 			$note   = $this->const[$key][3];
 			$visible= $this->const[$key][4];
 
-			$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."const WHERE name ='".$name."'";
+			$sql = "SELECT count(*)";
+			$sql.= " FROM ".MAIN_DB_PREFIX."const";
+			$sql.= " WHERE name ='".$name."'";
+			$sql.= " AND entity = ".$conf->entity;
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -702,15 +725,18 @@ class DolibarrModules
 					if (! $visible) $visible='0';
 					if (strlen($note))
 					{
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible) VALUES ('$name','$type','$val','$note','$visible')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
+						$sql.= " VALUES ('".$name."','".$type."','".$val."','".$note."','".$visible."',".$conf->entity.")";
 					}
 					elseif (strlen($val))
 					{
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible) VALUES ('$name','$type','$val','$visible')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible,entity)";
+						$sql.= " VALUES ('".$name."','".$type."','".$val."','".$visible."',".$conf->entity.")";
 					}
 					else
 					{
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible) VALUES ('$name','$type','$visible')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible,entity)";
+						$sql.= " VALUES ('".$name."','".$type."','".$visible."',".$conf->entity.")";
 					}
 
 					dol_syslog("DolibarrModules::insert_const sql=".$sql);
@@ -736,12 +762,16 @@ class DolibarrModules
 	 */
 	function insert_permissions()
 	{
+		global $conf;
+		
 		$err=0;
 
 		//print $this->rights_class." ".sizeof($this->rights)."<br>";
 
 		// Test si module actif
-		$sql_del = "SELECT value FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."'";
+		$sql_del = "SELECT value FROM ".MAIN_DB_PREFIX."const";
+		$sql_del.= " WHERE name = '".$this->const_name."'";
+		$sql_del.= " AND entity IN (0,".$conf->entity.")";
 		$resql=$this->db->query($sql_del);
 		if ($resql) {
 
@@ -766,24 +796,24 @@ class DolibarrModules
 						if (strlen($r_subperms) )
 						{
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-							$sql .= " (id, libelle, module, type, bydefault, perms, subperms)";
+							$sql .= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
 							$sql .= " VALUES ";
-							$sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+							$sql .= "(".$r_id.",".$conf->entity.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
 						}
 						else
 						{
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-							$sql .= " (id, libelle, module, type, bydefault, perms)";
+							$sql .= " (id, entity, libelle, module, type, bydefault, perms)";
 							$sql .= " VALUES ";
-							$sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+							$sql .= "(".$r_id.",".$conf->entity.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
 						}
 					}
 					else
 					{
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-						$sql .= " (id, libelle, module, type, bydefault)";
+						$sql .= " (id, entity, libelle, module, type, bydefault)";
 						$sql .= " VALUES ";
-						$sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
+						$sql .= "(".$r_id.",".$conf->entity.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
 					}
 
 					dol_syslog("DolibarrModules::insert_permissions sql=".$sql, LOG_DEBUG);
@@ -809,9 +839,13 @@ class DolibarrModules
 	 */
 	function delete_permissions()
 	{
+		global $conf;
+		
 		$err=0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = '".$this->rights_class."'";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def";
+		$sql.= " WHERE module = '".$this->rights_class."'";
+		$sql.= " AND entity = ".$conf->entity;
 		dol_syslog("DolibarrModules::delete_permissions sql=".$sql);
 		if (!$this->db->query($sql))
 		{
@@ -873,7 +907,8 @@ class DolibarrModules
 			$menu->perms=$this->menu[$key]['perms'];
 			$menu->target=$this->menu[$key]['target'];
 			$menu->user=$this->menu[$key]['user'];
-			$menu->constraint=$this->menu[$key]['constraint'];
+			//$menu->constraint=$this->menu[$key]['constraint'];
+			$menu->enabled=$this->menu[$key]['enabled'];
 			if (! $err)
 			{
 				$result=$menu->create($user);
@@ -911,10 +946,13 @@ class DolibarrModules
 	 */
 	function delete_menus()
 	{
+		global $conf;
+		
 		$err=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 		$sql.= " WHERE module = '".addslashes($this->rights_class)."'";
+		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("DolibarrModules::delete_menus sql=".$sql);
 		$resql=$this->db->query($sql);

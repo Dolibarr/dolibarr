@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -329,7 +329,8 @@ else
 
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit,";
 			$sql.= " ps.reel as value";
-			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p ";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock ps";
+			$sql.= ", ".MAIN_DB_PREFIX."product p ";
 			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
@@ -342,8 +343,7 @@ else
 			{
 				$sql.= ' AND IFNULL(c.visible,1)=1';
 			}
-
-			$sql .=  " ORDER BY " . $sortfield . " " . $sortorder;
+			$sql.=  " ORDER BY " . $sortfield . " " . $sortorder;
 
 			//$sql .= $db->plimit($limit + 1 ,$offset);
 
@@ -360,8 +360,10 @@ else
 					// Multilangs
 					if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 					{
-						$sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
-						$sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+						$sql = "SELECT label";
+						$sql.= " FROM ".MAIN_DB_PREFIX."product_det";
+						$sql.= " WHERE fk_product=".$objp->rowid;
+						$sql.= " AND lang='". $langs->getDefaultLang() ."'";
 						$sql.= " LIMIT 1";
 
 						$result = $db->query($sql);

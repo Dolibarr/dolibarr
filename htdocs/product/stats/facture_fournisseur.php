@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,11 @@ $langs->load("bills");
 $langs->load("products");
 $langs->load("companies");
 
+// Security check
+$id = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit',$id,'product');
+
 $mesg = '';
 
 $page = $_GET["page"];
@@ -47,13 +52,6 @@ $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef";
-
-// Securite
-$socid = 0;
-if ($user->societe_id > 0)
-{
-    $socid = $user->societe_id;
-}
 
 
 /*
@@ -125,16 +123,17 @@ if ($_GET["id"] || $_GET["ref"])
 
         $sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, f.facnumber, f.total_ht as total_ht,";
         $sql.= " ".$db->pdate("f.datef")." as date, f.paye, f.fk_statut as statut, f.rowid as facid";
-        if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."facture_fourn_det as d";
-        if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+        $sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
+        $sql.= ", ".MAIN_DB_PREFIX."facture_fourn_det as d";
+        if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE f.fk_soc = s.rowid";
-        $sql.= " AND d.fk_facture_fourn = f.rowid AND d.fk_product =".$product->id;
-        if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-        if ($socid)
-        {
-            $sql .= " AND f.fk_soc = $socid";
-        }
+        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND d.fk_facture_fourn = f.rowid";
+        $sql.= " AND d.fk_product =".$product->id;
+        if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if ($socid) $sql.= " AND f.fk_soc = ".$socid;
         $sql.= " ORDER BY $sortfield $sortorder ";
         $sql.= $db->plimit($conf->liste_limit +1, $offset);
 

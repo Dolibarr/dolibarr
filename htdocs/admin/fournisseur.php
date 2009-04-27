@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin           <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin           <regis@dolibarr.fr>
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  *
@@ -49,7 +49,7 @@ if ($_POST["action"] == 'updateMask')
 {
 	$maskconstorder=$_POST['maskconstorder'];
 	$maskorder=$_POST['maskorder'];
-	if ($maskconstorder)  dolibarr_set_const($db,$maskconstorder,$maskorder);
+	if ($maskconstorder)  dolibarr_set_const($db,$maskconstorder,$maskorder,'chaine',0,'',$conf->entity);
 }
 
 if ($_GET["action"] == 'specimen')
@@ -90,7 +90,7 @@ if ($_GET["action"] == 'specimen')
 if ($_GET["action"] == 'set')
 {
 	$type='supplier_order';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
 	if ($db->query($sql))
 	{
 
@@ -101,7 +101,9 @@ if ($_GET["action"] == 'del')
 {
 	$type='supplier_order';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+	$sql.= " WHERE nom = '".$_GET["value"];
+	$sql.= " AND type = '".$type."'";
+	$sql.= " AND entity = ".$conf->entity;
 	if ($db->query($sql))
 	{
 
@@ -112,7 +114,7 @@ if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
 
-	if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$_GET["value"]))
+	if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
 	{
 		$conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $_GET["value"];
 	}
@@ -120,9 +122,11 @@ if ($_GET["action"] == 'setdoc')
 	// On active le modele
 	$type='supplier_order';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+	$sql_del.= " WHERE nom = '".$_GET["value"];
+	$sql_del.= " AND type = '".$type."'";
+	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -136,10 +140,10 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_GET["action"] == 'setmod')
 {
-	// \todo Verifier si module numerotation choisi peut etre activ�
+	// \todo Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
-	dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON",$_GET["value"]);
+	dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'addcat')
@@ -148,11 +152,11 @@ if ($_POST["action"] == 'addcat')
 	$fourn->CreateCategory($user,$_POST["cat"]);
 }
 
-// d�fini les constantes du mod�le orchidee
-if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_MATRICE",$_POST["matrice"]);
-if ($_POST["action"] == 'updatePrefixCommande') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_PREFIX",$_POST["prefixcommande"]);
-if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_DELTA",$_POST["offset"]);
-if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);
+// defini les constantes du modele orchidee
+if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_MATRICE",$_POST["matrice"],'chaine',0,'',$conf->entity);
+if ($_POST["action"] == 'updatePrefixCommande') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_PREFIX",$_POST["prefixcommande"],'chaine',0,'',$conf->entity);
+if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_DELTA",$_POST["offset"],'chaine',0,'',$conf->entity);
+if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"],'chaine',0,'',$conf->entity);
 
 
 /*
@@ -272,9 +276,12 @@ print_titre($langs->trans("OrdersModelModule"));
 // Defini tableau def de modele
 $type='supplier_order';
 $def = array();
+
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql.= " WHERE type = '".$type."'";
+$sql.= " AND entity = ".$conf->entity;
+
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -321,7 +328,7 @@ while (($file = readdir($handle))!==false)
 		print $module->description;
 		print "</td>\n";
 
-		// Activ�
+		// Active
 		if (in_array($name, $def))
 		{
 	  print "<td align=\"center\">\n";
@@ -377,51 +384,6 @@ while (($file = readdir($handle))!==false)
 closedir($handle);
 
 print '</table><br/>';
-
-/* Obsolete. Les categories de fournisseurs sont gerees dans la table llx_categories
- sur le meme principe que les categories clients et produits
-
- print_titre($langs->trans("Categories"));
-
- $sql = "SELECT rowid, label";
- $sql.= " FROM ".MAIN_DB_PREFIX."fournisseur_categorie";
- $sql.= " ORDER BY label ASC";
-
- $resql = $db->query($sql);
- if ($resql)
- {
- $num = $db->num_rows($resql);
- $i = 0;
-
- print '<form action="fournisseur.php" method="POST"><table class="liste" width="100%">';
- print '<input type="hidden" name="action" value="addcat">';
- print '<tr class="liste_titre"><td>';
- print $langs->trans("Num").'</td><td>'.$langs->trans("Name");
- print "</td></tr>\n";
- $var=True;
-
- print "<tr $bc[$var]><td>&nbsp;</td>";
- print '<td><input type="text" name="cat">&nbsp;';
- print '<input type="submit" value="'.$langs->trans("Add").'">';
- print "</td></tr>\n";
-
- while ($obj = $db->fetch_object($resql))
- {
- $var=!$var;
- print "<tr $bc[$var]>\n";
- print '<td width="10%">'.$obj->rowid.'</td>';
- print '<td width="90%"><a href="liste.php?cat='.$obj->rowid.'">'.stripslashes($obj->label).'</a></td>';
- print "</tr>\n";
- }
- print "</table></form>\n";
-
- $db->free($resql);
- }
- else
- {
- dol_print_error($db);
- }
- */
 
 llxFooter('$Date$ - $Revision$');
 ?>

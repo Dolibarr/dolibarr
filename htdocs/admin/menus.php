@@ -49,11 +49,11 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
 	$_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
 
-	dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"]);
-	dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"]);
+	dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"],'chaine',0,'',$conf->entity);
 	
-	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRETOP", $_POST["main_menufront_barretop"]);
-	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRELEFT",$_POST["main_menufront_barreleft"]);
+	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRETOP", $_POST["main_menufront_barretop"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRELEFT",$_POST["main_menufront_barreleft"],'chaine',0,'',$conf->entity);
 	
 	// Define list of menu handlers to initialize
  	$listofmenuhandler=array();

@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,24 +27,19 @@
 
 require("./pre.inc.php");
 
-if (!$user->rights->prelevement->bons->lire)
-  accessforbidden();
+$langs->load("widthdrawals");
+
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'prelevement','','','bons');
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
 
 
-llxHeader('','Prélèvements - Bons');
-
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
+llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
 
 if ($page == -1) { $page = 0 ; }
@@ -58,11 +54,10 @@ if (! $sortfield) $sortfield="p.datec";
  * Mode Liste
  *
  */
-$sql = "SELECT p.rowid, p.ref, p.amount,".$db->pdate("p.datec")." as datec";
-$sql .= ", p.statut";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql = "SELECT p.rowid, p.ref, p.amount, p.statut";
+$sql.= ", ".$db->pdate("p.datec")." as datec";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)

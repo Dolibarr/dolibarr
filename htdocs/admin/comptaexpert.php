@@ -45,7 +45,7 @@ $compta_mode = defined('COMPTA_MODE')?COMPTA_MODE:'RECETTES-DEPENSES';
 if ($_POST['action'] == 'setcomptamode')
 {
   $compta_mode = $_POST['compta_mode'];
-  if (! dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode)) { print $db->error(); }
+  if (! dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode,'chaine',0,'',$conf->entity)) { print $db->error(); }
 }
 
 
@@ -55,7 +55,7 @@ $typeconst=array('yesno','texte','chaine');
 
 if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
 {
-	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : ''));
+	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity));
 	{
 	  	print $db->error();
 	}
@@ -64,7 +64,7 @@ if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
 
 if ($_GET['action'] == 'delete')
 {
-	if (! dolibarr_del_const($db, $_GET['constname']));
+	if (! dolibarr_del_const($db, $_GET['constname'],$conf->entity));
 	{
 	  	print $db->error();
 	}

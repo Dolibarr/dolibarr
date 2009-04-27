@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +33,9 @@ $langs->load("companies");
 $langs->load("banks");
 $langs->load("bills");
 
-
-if (!$user->rights->prelevement->bons->creer)
-accessforbidden();
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 
 /*
@@ -64,7 +65,7 @@ $thirdpartystatic=new Societe($db);
 $invoicestatic=new Facture($db);
 $bprev = new BonPrelevement($db);
 
-llxHeader();
+llxHeader('', $langs->trans("NewStandingOrder"));
 
 $h=0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php';
@@ -129,8 +130,8 @@ print '<br>';
  */
 $limit=5;
 
-$sql = "SELECT p.rowid, p.ref, p.amount,".$db->pdate("p.datec")." as datec";
-$sql.= ", p.statut";
+$sql = "SELECT p.rowid, p.ref, p.amount, p.statut";
+$sql.= ", ".$db->pdate("p.datec")." as datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= " ORDER BY datec DESC";
 $sql.=$db->plimit($limit);
@@ -181,15 +182,14 @@ else
  *
  */
 $sql = "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-$sql .= " WHERE s.rowid = f.fk_soc";
-$sql .= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
-
-if ($socid)
-{
-	$sql .= " AND f.fk_soc = $socid";
-}
+$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql.= " WHERE s.rowid = f.fk_soc";
+$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND pfd.traite = 0";
+$sql.= " AND pfd.fk_facture = f.rowid";
+if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 
 if ( $db->query($sql) )
 {

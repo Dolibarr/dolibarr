@@ -41,18 +41,18 @@ accessforbidden();
 if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",$_POST["address"]);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VILLE",$_POST["ville"]);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_CP",$_POST["cp"]);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
-	dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"]);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL",$_POST["tel"]);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX",$_POST["fax"]);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL",$_POST["mail"]);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",$_POST["web"]);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE",$_POST["note"]);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD",$_POST["gencod"]);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",$_POST["address"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VILLE",$_POST["ville"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_CP",$_POST["cp"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL",$_POST["tel"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX",$_POST["fax"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL",$_POST["mail"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",$_POST["web"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE",$_POST["note"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD",$_POST["gencod"],'chaine',0,'',$conf->entity);
 	if ($_FILES["logo"]["tmp_name"])
 	{
 		if (eregi('([^\\\/:]+)$',$_FILES["logo"]["name"],$reg))
@@ -69,7 +69,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 				}
 				if (dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->societe->dir_logos.'/'.$original_file,1) > 0)
 				{
-					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file);
+					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file,'chaine',0,'',$conf->entity);
 
 					// Create thumbs of logo
 					if ($isimage > 0)
@@ -80,7 +80,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 						if (eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
 						{
 							$imgThumbSmall = $reg[1];
-							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall);
+							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall,'chaine',0,'',$conf->entity);
 						}
 						else dol_syslog($imgThumbSmall);
 
@@ -89,7 +89,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 						if (eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
 						{
 							$imgThumbMini = $reg[1];
-							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini);
+							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini,'chaine',0,'',$conf->entity);
 						}
 						else dol_syslog($imgThumbMini);
 					}
@@ -107,17 +107,17 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 		}
 	}
 
-	dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"]);
-	dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
-	dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
-	dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
-	dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"]);
-	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
+	dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"],'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonthstart"]);
+	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonthstart"],'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "FACTURE_TVAOPTION",$_POST["optiontva"]);
+	dolibarr_set_const($db, "FACTURE_TVAOPTION",$_POST["optiontva"],'chaine',0,'',$conf->entity);
 
 	if ($_POST['action'] != 'updateedit' && ! $message)
 	{
@@ -140,7 +140,7 @@ if ($_GET["action"] == 'addthumb')
 			if (image_format_supported($imgThumbSmall) >= 0 && eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
 			{
 				$imgThumbSmall = $reg[1];
-				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall);
+				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall,'chaine',0,'',$conf->entity);
 			}
 			else dol_syslog($imgThumbSmall);
 
@@ -149,7 +149,7 @@ if ($_GET["action"] == 'addthumb')
 			if (image_format_supported($imgThumbSmall) >= 0 && eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
 			{
 				$imgThumbMini = $reg[1];
-				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini);
+				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini,'chaine',0,'',$conf->entity);
 			}
 			else dol_syslog($imgThumbMini);
 
@@ -173,17 +173,17 @@ if ($_GET["action"] == 'removelogo')
 {
 	$logofile=$conf->societe->dir_logos.'/'.$mysoc->logo;
 	dol_delete_file($logofile);
-	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO");
+	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO",$conf->entity);
 	$mysoc->logo='';
 
 	$logosmallfile=$conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small;
 	dol_delete_file($logosmallfile);
-	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL");
+	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$conf->entity);
 	$mysoc->logo_small='';
 
 	$logominifile=$conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini;
 	dol_delete_file($logominifile);
-	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI");
+	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$conf->entity);
 	$mysoc->logo_mini='';
 }
 

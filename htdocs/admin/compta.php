@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ $compta_mode = defined('COMPTA_MODE')?COMPTA_MODE:'RECETTES-DEPENSES';
 if ($_POST['action'] == 'setcomptamode')
 {
 	$compta_mode = $_POST['compta_mode'];
-	if (! dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode)) { print $db->error(); }
+	if (! dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode,'chaine',0,'',$conf->entity)) { print $db->error(); }
 	// Note: This setup differs from TAX_MODE.
 	// TAX_MODE is used with 0=normal, 1=option vat for services is on debit
 }
@@ -54,7 +55,7 @@ $typeconst=array('yesno','texte','chaine');
 
 if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
 {
-	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : ''));
+	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity));
 	{
 		print $db->error();
 	}
@@ -63,7 +64,7 @@ if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
 
 if ($_GET['action'] == 'delete')
 {
-	if (! dolibarr_del_const($db, $_GET['constname']));
+	if (! dolibarr_del_const($db, $_GET['constname'],$conf->entity));
 	{
 		print $db->error();
 	}
@@ -113,9 +114,12 @@ print "</table>\n";
 print "<br>\n";
 
 // Cas des autres parametres COMPTA_*
-$sql ="SELECT rowid, name, value, type, note";
-$sql.=" FROM llx_const";
-$sql.=" WHERE name like 'COMPTA_%' and name not in ('COMPTA_MODE')";
+$sql = "SELECT rowid, name, value, type, note";
+$sql.= " FROM ".MAIN_DB_PREFIX."const";
+$sql.= " WHERE name LIKE 'COMPTA_%'";
+$sql.= " AND name NOT IN ('COMPTA_MODE')";
+$sql.= " AND entity = ".$conf->entity;
+
 $result = $db->query($sql);
 if ($result)
 {

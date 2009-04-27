@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 /**
  \file       htdocs/includes/boxes/box_factures.php
  \ingroup    factures
- \brief      Module de g�n�ration de l'affichage de la box factures
+ \brief      Module de generation de l'affichage de la box factures
  \version	$Id$
  */
 
@@ -53,12 +53,12 @@ class box_factures extends ModeleBoxes {
 	}
 
 	/**
-	 *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-	 *      \param      $max        Nombre maximum d'enregistrements � charger
+	 *      \brief      Charge les donnees en memoire pour affichage ulterieur
+	 *      \param      $max        Nombre maximum d'enregistrements a charger
 	 */
 	function loadBox($max=5)
 	{
-		global $user, $langs, $db;
+		global $conf, $user, $langs, $db;
 
 		$this->max=$max;
 
@@ -73,19 +73,16 @@ class box_factures extends ModeleBoxes {
 
 		if ($user->rights->facture->lire)
 		{
-			$sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.datef as df,";
-			$sql.= " f.paye, f.fk_statut, f.datec,";
-			$sql.= " s.nom, s.rowid as socid,";
-			$sql.= " f.date_lim_reglement as datelimite ";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+			$sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.datef as df";
+			$sql.= ", f.paye, f.fk_statut, f.datec";
+			$sql.= ", s.nom, s.rowid as socid";
+			$sql.= ", f.date_lim_reglement as datelimite";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE f.fk_soc = s.rowid";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->societe_id)
-			{
-				$sql.= " AND s.rowid = ".$user->societe_id;
-			}
+			$sql.= " AND s.entity = ".$conf->entity;
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
 			$sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
 			$sql.= $db->plimit($max, 0);
 

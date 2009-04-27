@@ -24,15 +24,23 @@ create table llx_entrepot
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   datec           datetime,
   tms             timestamp,
-  label           varchar(255) UNIQUE NOT NULL,
+  label           varchar(255) NOT NULL,
+  entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   description     text,
-  lieu            varchar(64),       -- résumé lieu situation
+  lieu            varchar(64),                -- résumé lieu situation
   address         varchar(255),
   cp              varchar(10),
   ville           varchar(50),
   fk_pays         integer DEFAULT 0,
-  statut          tinyint DEFAULT 1, -- 1 ouvert, 0 fermé
-  valo_pmp        float(12,4),    -- valoristaion du stock en PMP
+  statut          tinyint DEFAULT 1,          -- 1 ouvert, 0 fermé
+  valo_pmp        float(12,4),                -- valoristaion du stock en PMP
   fk_user_author  integer
 )type=innodb;
 
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company entrepot
+-- 2 : second company entrepot
+-- 3 : etc...
+--

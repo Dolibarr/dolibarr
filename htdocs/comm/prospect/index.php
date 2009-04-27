@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,12 +70,13 @@ if ($conf->propal->enabled)
 
 $sql = "SELECT count(*) as cc, st.libelle, st.id";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE s.fk_stcomm = st.id AND s.client=2";
+$sql.= " WHERE s.fk_stcomm = st.id AND s.client=2";
+$sql.= " AND s.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql .= " GROUP BY st.id";
-$sql .= " ORDER BY st.id";
+$sql.= " GROUP BY st.id";
+$sql.= " ORDER BY st.id";
 
 $resql=$db->query($sql);
 if ($resql)
@@ -111,9 +112,10 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
     $sql = "SELECT p.rowid, p.ref, p.price, s.nom";
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-    $sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
+    $sql.= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql .= " WHERE p.fk_statut = 0 and p.fk_soc = s.rowid";
+    $sql.= " WHERE p.fk_statut = 0 and p.fk_soc = s.rowid";
+    $sql.= " AND s.entity = ".$conf->entity;
     if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
     $resql=$db->query($sql);
@@ -168,13 +170,14 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
     $sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.total as total_ttc, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id AND p.fk_statut = 1";
+    $sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id AND p.fk_statut = 1";
+    $sql.= " AND s.entity = ".$conf->entity;
     if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid) $sql .= " AND s.rowid = ".$socid;
-    $sql .= " ORDER BY p.rowid DESC";
-    $sql .= $db->plimit(5, 0);
+    $sql.= " ORDER BY p.rowid DESC";
+    $sql.= $db->plimit(5, 0);
     
     $resql=$db->query($sql);
     if ($resql)
@@ -216,17 +219,18 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 }
 
 /*
- * Soci�t�s � contacter
+ * Societes a contacter
  *
  */
 $sql = "SELECT s.nom, s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE s.fk_stcomm = 1";
+$sql.= " WHERE s.fk_stcomm = 1";
+$sql.= " AND s.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql .= " ORDER BY s.tms ASC";
-$sql .= $db->plimit(15, 0);
+$sql.= " ORDER BY s.tms ASC";
+$sql.= $db->plimit(15, 0);
 
 if ( $db->query($sql) )
 {
