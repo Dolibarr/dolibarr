@@ -129,6 +129,7 @@ Password=Password
 PasswordRetype=Retype your password
 NoteSomeFeaturesAreDisabled=Note that a lot of features/modules are disabled in this demonstration.
 Name=Name
+Person=Person
 Parameter=Parameter
 Parameters=Parameters
 Value=Value

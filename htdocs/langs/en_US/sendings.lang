@@ -43,6 +43,8 @@ GenericTransport=Generic transport
 Enlevement=Gotten by customer
 DocumentModelSimple=Simple document model
 WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated
+
 # Sending methods
 SendingMethodCATCH=Catch by customer
 SendingMethodTRANS=Transporter

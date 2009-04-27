@@ -12,7 +12,6 @@ UserNotLinkedToMember=Utilisateur non lié à un adhérent
 MembersTickets=Etiquettes d'adhérents
 FundationMembers=Membres de l'association
 Attributs=Attributs
-Person=Personne
 ErrorMemberTypeNotDefined=Le type d'adhérent n'est pas choisi
 ListOfPublicMembers=Liste des adhérents publiques
 ListOfValidatedPublicMembers=Liste des adhérents publiques validés

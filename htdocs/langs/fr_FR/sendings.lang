@@ -43,6 +43,8 @@ GenericTransport=Transporteur générique
 Enlevement=Enlèvement sur place par le client
 DocumentModelSimple=Modèle simple
 WarningNoQtyLeftToSend=Alerte, aucun produit en attente de livraison.
+StatsOnShipmentsOnlyValidated=Statistiques effectuées sur les expéditions validées uniquement
+
 # Sending methods
 SendingMethodCATCH=Enlevement par le client
 SendingMethodTRANS=Transporteur
@@ -50,6 +52,7 @@ SendingMethodCOLSUI=Colissimo Suivi
 
 # NumRef
 NumRefModelJade=Renvoie un numéro de référence sous la forme numérique BLYY00001, ... où YY représente l'année. Le numéro d'incrément qui suit l'année n'est PAS remis à zéro en début d'année.
+
 # ModelDocument
 DocumentModelSirocco=Modèle de bon de réception livraison simple
 DocumentModelTyphon=Modèle de bon de réception livraison complet (logo...)

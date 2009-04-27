@@ -129,6 +129,7 @@ Password=Mot de passe
 PasswordRetype=Retaper le mot de passe
 NoteSomeFeaturesAreDisabled=Attention, seules quelques modules/fonctionnalités ont été activés dans cette démo.
 Name=Nom
+Person=Personne
 Parameter=Paramètre
 Parameters=Paramètres
 Value=Valeur
