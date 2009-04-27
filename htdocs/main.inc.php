@@ -355,7 +355,7 @@ else
 	$login=$_SESSION["dol_login"];
 	$resultFetchUser=$user->fetch($login);
 	dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
-	
+
 	if ($resultFetchUser <= 0)
 	{
 		// Account has been removed after login
@@ -422,7 +422,7 @@ if (! isset($_SESSION["dol_login"]))
 	{
 		$db->commit();
 	}
-	
+
 	// Create entity cookie
 	if ($conf->multicompany->enabled && isset($_POST["entity"]))
 	{
@@ -718,9 +718,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
 
 			// This one is required for all Ajax features
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
+			if (! defined('DISABLE_PROTOTYPE')) print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
 			// This one is required fox boxes
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
+			if (! defined('DISABLE_SCRIPTACULOUS')) print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
 
 			// Those ones are required only with option "confirm by ajax popup"
 			if ($conf->global->MAIN_CONFIRM_AJAX)
