@@ -960,7 +960,7 @@ class DolibarrModules
 	 */
 	function insert_dirs()
 	{
-		global $conf;
+		global $langs, $conf;
 		
 		$err=0;
 		
