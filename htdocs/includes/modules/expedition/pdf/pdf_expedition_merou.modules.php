@@ -96,7 +96,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$this->expe = $obj;
 
 		//Verification de la configuration
-		if ($conf->expedition_bon->dir_output)
+		if ($conf->expedition->dir_bon_expedition)
 		{
 			//Creation du Client
 			$soc = new Societe($this->db);
@@ -121,13 +121,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			// Definition de $dir et $file
 			if ($this->expe->specimen)
 			{
-				$dir = $conf->expedition_bon->dir_output;
+				$dir = $conf->expedition->dir_bon_expedition;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$expref = sanitizeFileName($this->expe->ref);
-				$dir = $conf->expedition_bon->dir_output . "/" . $expref;
+				$dir = $conf->expedition->dir_bon_expedition . "/" . $expref;
 				$file = $dir . "/" . $expref . ".pdf";
 			}
 
@@ -151,7 +151,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				{
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
+					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 

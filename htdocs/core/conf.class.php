@@ -160,12 +160,9 @@ class Conf
 
 		// Sous module bons d'expedition
 		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
-		$this->expedition_bon->dir_output=DOL_DATA_ROOT."/expedition/sending";
-		$this->expedition_bon->dir_temp  =DOL_DATA_ROOT."/expedition/sending/temp";
+		
 		// Sous module bons de livraison
 		$this->livraison_bon->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
-		$this->livraison_bon->dir_output=DOL_DATA_ROOT."/expedition/receipt";
-		$this->livraison_bon->dir_temp  =DOL_DATA_ROOT."/expedition/receipt/temp";
 
 		// Module societe
 		if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $this->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut

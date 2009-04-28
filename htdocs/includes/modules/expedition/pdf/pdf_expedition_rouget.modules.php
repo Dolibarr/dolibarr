@@ -140,20 +140,20 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 		$outputlangs->setPhpLang();
 
-		if ($conf->expedition_bon->dir_output)
+		if ($conf->expedition->dir_bon_expedition)
 		{
 			$this->expe = $obj;
 
 			// D�finition de $dir et $file
 			if ($this->expe->specimen)
 			{
-				$dir = $conf->expedition_bon->dir_output;
+				$dir = $conf->expedition->dir_bon_expedition;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$expref = sanitizeFileName($this->expe->ref);
-				$dir = $conf->expedition_bon->dir_output . "/" . $expref;
+				$dir = $conf->expedition->dir_bon_expedition . "/" . $expref;
 				$file = $dir . "/" . $expref . ".pdf";
 			}
 

@@ -106,7 +106,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		$outputlangs->setPhpLang();
 
-		if ($conf->livraison_bon->dir_output)
+		if ($conf->expedition->dir_bon_livraison)
 		{
 			// If $delivery is id instead of object
 			if (! is_object($delivery))
@@ -124,7 +124,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 			$nblignes = sizeof($delivery->lignes);
 
 			$deliveryref = sanitizeFileName($delivery->ref);
-			$dir = $conf->livraison_bon->dir_output;
+			$dir = $conf->expedition->dir_bon_livraison;
 			if (! eregi('specimen',$deliveryref)) $dir.= "/" . $deliveryref;
 			$file = $dir . "/" . $deliveryref . ".pdf";
 

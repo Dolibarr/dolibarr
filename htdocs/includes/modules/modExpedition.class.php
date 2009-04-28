@@ -64,10 +64,21 @@ class modExpedition extends DolibarrModules
 		
 		$this->dirs[$r][0] = "output";
 		$this->dirs[$r][1] = "/expedition";
-		
 		$r++;
 		$this->dirs[$r][0] = "temp";
 		$this->dirs[$r][1] = "/expedition/temp";
+		$r++
+		$this->dirs[$r][0] = "bon_expedition";
+		$this->dirs[$r][1] = "/expedition/sending";
+		$r++;
+		$this->dirs[$r][0] = "bon_expedition_temp";
+		$this->dirs[$r][1] = "/expedition/sending/temp";
+		$r++
+		$this->dirs[$r][0] = "bon_livraison";
+		$this->dirs[$r][1] = "/expedition/receipt";
+		$r++;
+		$this->dirs[$r][0] = "bon_livraison_temp";
+		$this->dirs[$r][1] = "/expedition/receipt/temp";
 
 		// Config pages
 		$this->config_page_url = array("confexped.php");
