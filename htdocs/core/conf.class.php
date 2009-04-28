@@ -168,9 +168,6 @@ class Conf
 		$this->livraison_bon->dir_temp  =DOL_DATA_ROOT."/expedition/receipt/temp";
 
 		// Module societe
-		$this->societe->dir_output=DOL_DATA_ROOT."/societe";
-		$this->societe->dir_temp  =DOL_DATA_ROOT."/societe/temp";
-		$this->societe->dir_logos =DOL_DATA_ROOT."/societe/logos";
 		if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $this->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 
 		// Module taxes et charges sociales

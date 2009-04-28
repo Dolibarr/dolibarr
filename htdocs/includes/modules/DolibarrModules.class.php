@@ -970,7 +970,7 @@ class DolibarrModules
 			{
 				$name = $this->const_name."_DIR_".strtoupper($this->dirs[$key][0]);
 				$dir  = $this->dirs[$key][1];
-				
+
 				$sql = "SELECT count(*)";
 				$sql.= " FROM ".MAIN_DB_PREFIX."const";
 				$sql.= " WHERE name ='".$name."'";
@@ -985,14 +985,14 @@ class DolibarrModules
 					{
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
 						$sql.= " VALUES ('".$name."','chaine','".$dir."','Directory for module ".$this->name."','0',".$conf->entity.")";
-						
+			
 						dol_syslog("DolibarrModules::insert_dir_output sql=".$sql);
 						$resql=$this->db->query($sql);
 						
 						if ($resql)
 						{
 							// On defini l'entite
-							$dir = DOL_DATA_ROOT."/entity_".$conf->entity."/".$dir;
+							$dir = DOL_DATA_ROOT."/entity_".$conf->entity.$dir;
 							
 							if ($dir && ! file_exists($dir))
 							{

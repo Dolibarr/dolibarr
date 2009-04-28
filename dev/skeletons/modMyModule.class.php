@@ -69,8 +69,13 @@ class modMyModule extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
-		//$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
-        //$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
+		$r=0;
+			
+		//$this->dirs[$r][0] = "mymodule";
+    //$this->dirs[$r][1] = "/mymodule";
+    //$r++;
+		//$this->dirs[$r][0] = "temp";
+    //$this->dirs[$r][1] = "/mymodule/temp";
 
 		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
 		$this->style_sheet = '';
@@ -110,10 +115,10 @@ class modMyModule extends DolibarrModules
 
 		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
 		// Example:
-        //$this->boxes[$r][1] = "myboxa.php";
-    	//$r++;
-        //$this->boxes[$r][1] = "myboxb.php";
-    	//$r++;
+    //$this->boxes[$r][1] = "myboxa.php";
+    //$r++;
+    //$this->boxes[$r][1] = "myboxb.php";
+    //$r++;
 
 
 		// Permissions
