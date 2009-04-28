@@ -62,8 +62,16 @@ class modUser extends DolibarrModules
 		$this->special = 0;
 		$this->picto='group';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/users";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/users/temp";
 
 		// Config pages
 		// $this->config_page_url = array("/user/admin/index.php");

@@ -81,7 +81,7 @@ if ($modulepart)
     elseif ($modulepart == 'userphoto')
     {
     	$accessallowed=1;
-    	$original_file=$conf->users->dir_output.'/'.$original_file;
+    	$original_file=$conf->user->dir_output.'/'.$original_file;
     }
 
     // Wrapping pour les photos adherents

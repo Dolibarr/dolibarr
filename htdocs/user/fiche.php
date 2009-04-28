@@ -272,13 +272,13 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 		if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 		{
 			// If photo is provided
-			if (! is_dir($conf->users->dir_output))
+			if (! is_dir($conf->user->dir_output))
 			{
-				create_exdir($conf->users->dir_output);
+				create_exdir($conf->user->dir_output);
 			}
-			if (is_dir($conf->users->dir_output))
+			if (is_dir($conf->user->dir_output))
 			{
-				$newfile=$conf->users->dir_output . "/" . $edituser->id . ".jpg";
+				$newfile=$conf->user->dir_output . "/" . $edituser->id . ".jpg";
 				if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
 				{
 					$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
@@ -839,7 +839,7 @@ else
 				print '<td width="50%">'.$fuser->login.'</td>';
 			}
 			print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-			if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
+			if (file_exists($conf->user->dir_output."/".$fuser->id.".jpg"))
 			{
 				print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
 			}
@@ -1245,7 +1245,7 @@ else
 			}
 			print '</td>';
 			print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-			if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
+			if (file_exists($conf->user->dir_output."/".$fuser->id.".jpg"))
 			{
 				print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
 			}
