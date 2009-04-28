@@ -104,6 +104,13 @@ class Conf
 						$this->tabs_modules[$params[0]][]=$value;
 						//print 'xxx'.$params[0].'-'.$value;
 					}
+					// If this is constant for module directories
+					if (eregi('^MAIN_MODULE_([A-Z_]+)_DIR_([A-Z_]+)$',$key,$reg) && $value)
+					{
+						$module=strtolower($reg[1]);
+						$dir_name="dir_".strtolower($reg[2]);
+						$this->$module->$dir_name = DOL_DATA_ROOT."/entity_".$this->entity."/".$value;
+					}
 					// If this is a module constant
 					if (eregi('^MAIN_MODULE_([A-Z]+)$',$key,$reg) && $value)
 					{
@@ -211,18 +218,11 @@ class Conf
 		$this->adherent->dir_output=DOL_DATA_ROOT."/adherent";
 		$this->adherent->dir_tmp=DOL_DATA_ROOT."/adherent/temp";
 		// Module produit
-		$this->produit->dir_output=DOL_DATA_ROOT."/produit";
-		$this->produit->dir_temp  =DOL_DATA_ROOT."/produit/temp";
 		$this->produit->MultiPricesEnabled=defined("PRODUIT_MULTIPRICES")?PRODUIT_MULTIPRICES:0;
-		// Module service
-		$this->service->dir_output=DOL_DATA_ROOT."/produit";
-		$this->service->dir_temp  =DOL_DATA_ROOT."/produit/temp";
-
 		// Module droipret
 		$this->droitpret->cat=defined('DROITPRET_CAT')?DROITPRET_CAT:'';
 		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
 		$this->droitpret->dir_temp=DOL_DATA_ROOT."/droitpret/temp";
-
 		// Module contrat
 		$this->contrat->dir_output=DOL_DATA_ROOT."/contracts";
 		// Module prelevement
@@ -280,15 +280,11 @@ class Conf
 		$this->ldap->dir_temp=DOL_DATA_ROOT."/ldap/temp";
 		// Module FCKeditor
 		$this->fckeditor->dir_output=DOL_DATA_ROOT."/fckeditor";
-		// Module ECM
-		$this->ecm->dir_output=DOL_DATA_ROOT."/ecm";
 		// Module emailing
 		$this->mailings->dir_temp=DOL_DATA_ROOT."/mailings/temp";
 		// Module oscommerce 1
 		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
-		// Module Barcode
-		$this->barcode->dir_temp=DOL_DATA_ROOT."/barcode/temp";
 
 		/*
 		 * Modification de quelques variable de conf en fonction des Constantes

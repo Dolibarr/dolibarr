@@ -67,7 +67,14 @@ class modECM extends DolibarrModules
 		
 		// Data directories to create when module is enabled
 		$this->dirs = array();
-		$this->dirs[0] = DOL_DATA_ROOT."/ecm";
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/ecm";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/ecm/temp";
 		
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module
 		$this->config_page_url = array();

@@ -63,8 +63,19 @@ class modService extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto='service';
+		
+		// Data directories to create when module is enabled
+		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/service";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/service/temp";
 
-		// D�pendances
+		// Dependances
 		$this->depends = array("modProduit");
 		$this->requiredby = array("modContrat");
 

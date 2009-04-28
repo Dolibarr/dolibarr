@@ -58,10 +58,18 @@ class modBarcode extends DolibarrModules
 		$this->special = 2;
 		$this->picto='barcode';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/barcode";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/barcode/temp";
 
-		// D�pendances
+		// Dependances
 		$this->depends = array("modProduit");
 		$this->requiredby = array();
 
@@ -80,28 +88,28 @@ class modBarcode extends DolibarrModules
 
 		$this->rights[1][0] = 300; // id de la permission
 		$this->rights[1][1] = 'Lire les codes barres'; // libelle de la permission
-		$this->rights[1][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[1][3] = 1; // La permission est-elle une permission par d�faut
+		$this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 301; // id de la permission
 		$this->rights[2][1] = 'Creer/modifier les codes barres'; // libelle de la permission
-		$this->rights[2][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[2][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[2][4] = 'creer';
 
 		$this->rights[4][0] = 302; // id de la permission
 		$this->rights[4][1] = 'Supprimer les codes barres'; // libelle de la permission
-		$this->rights[4][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[4][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[4][2] = 'd'; // type de la permission (deprecie a ce jour)
+		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[4][4] = 'supprimer';
 
 	}
 
 
 	/**
-	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *               Definit egalement les repertoires de donnees a creer pour ce module.
 	 */
 	function init()
 	{
@@ -114,7 +122,7 @@ class modBarcode extends DolibarrModules
 	}
 
 	/**
-	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
 	function remove()

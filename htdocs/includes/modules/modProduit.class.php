@@ -65,8 +65,16 @@ class modProduit extends DolibarrModules
 		$this->special = 0;
 		$this->picto='product';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/produit";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/produit/temp";
 
 		// Dependencies
 		$this->depends = array();
