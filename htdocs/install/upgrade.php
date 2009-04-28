@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ $etape = 2;
 $ok = 0;
 
 
-// Cette page peut etre longue. On augmente le d�lai autorise.
+// Cette page peut etre longue. On augmente le delai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);

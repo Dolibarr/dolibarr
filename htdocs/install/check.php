@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Océbo <marc@ocebo.com>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,7 +270,8 @@ else
 								array('from'=>'2.1.0', 'to'=>'2.2.0'),
 								array('from'=>'2.2.0', 'to'=>'2.4.0'),
 								array('from'=>'2.4.0', 'to'=>'2.5.0'),
-								array('from'=>'2.5.0', 'to'=>'2.6.0')
+								array('from'=>'2.5.0', 'to'=>'2.6.0'),
+								array('from'=>'2.6.0', 'to'=>'2.7.0')
 								);
 		# Upgrade lines
 		foreach ($migrationscript as $migarray)
