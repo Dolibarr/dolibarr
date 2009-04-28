@@ -84,8 +84,6 @@ class modBanque extends DolibarrModules
 	  // Constantes
 	  $this->const = array();
 
-	  $this->dirs = array();
-
 	  // Boites
 	  $this->boxes = array();
 	  $this->boxes[0][1] = "box_comptes.php";
@@ -181,8 +179,6 @@ class modBanque extends DolibarrModules
       $this->remove();
 
       $sql = array();
-
-      $this->dirs[0] = $conf->banque->dir_output;
 
       return $this->_init($sql);
     }
