@@ -50,3 +50,6 @@ NoRecordedInvoices = Sin facturas a clientes registrados
 NoUnpayedCustomerBills = Sin facturas a clientes pendientes de pago
 NoRecordedSupplierInvoices = Sin facturas de proveedores
 NoUnpayedSupplierBills = Sin facturas de proveedores pendientes de pago
+NoRecordedProducts = Sin productos/servicios registrados
+NoRecordedProspects = Sin clientes potenciales registrados
+NoContractedProducts = Sin productos/servicios contratados

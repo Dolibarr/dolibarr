@@ -1,7 +1,7 @@
 # Dolibarr language file - es_ES - main 
 CHARSET = UTF-8
 SeparatorDecimal = ,
-SeparatorThousand =  
+SeparatorThousand = 
 DatabaseConnection = Conexión a la base de datos
 Error = Error
 ErrorFieldRequired = El campo '%s' es obligatorio
@@ -129,6 +129,7 @@ Password = Contraseña
 PasswordRetype = Repetir contraseña
 NoteSomeFeaturesAreDisabled = Atención, sólo unos pocos módulos/funcionalidades han sido activados en esta demo.
 Name = Nombre
+Person = Persona
 Parameter = Parámetro
 Parameters = Parámetros
 Value = Valor

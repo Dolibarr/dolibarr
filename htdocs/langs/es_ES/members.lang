@@ -12,7 +12,6 @@ UserNotLinkedToMember = Usuario no vinculado a un miembro
 MembersTickets = Etiquetas miembros
 FundationMembers = Miembros de la asociación
 Attributs = Atributos
-Person = Persona
 ErrorMemberTypeNotDefined = No se ha indicado el tipo de miembro
 ListOfPublicMembers = Lista de miembros públicos
 ListOfValidatedPublicMembers = Lista de miembros públicos validados

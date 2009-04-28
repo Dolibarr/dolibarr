@@ -50,3 +50,6 @@ NoRecordedInvoices = Sense factures a clients registrades
 NoUnpayedCustomerBills = Sense factures a clients pendents de cobrament
 NoRecordedSupplierInvoices = Sense factures de proveïdors
 NoUnpayedSupplierBills = Sense factures de proveïdors pendents de pagament
+NoRecordedProducts = Sense productes/serveis registrats
+NoRecordedProspects = Sense clients potencials registrats
+NoContractedProducts = Sense productes/serveis contractats

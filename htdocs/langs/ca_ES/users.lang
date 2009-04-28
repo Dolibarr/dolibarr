@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - users
+# Dolibarr language file - ca_ES - users 
 CHARSET = UTF-8
 UserCard = Fitxa usuari
 ContactCard = Fitxa contacte
@@ -43,6 +43,8 @@ LoginNotDefined = L'usuari no està definit
 NameNotDefined = El nom no està definit
 ListOfUsers = Llistat d'usuaris
 Administrator = Administrador
+SuperAdministrator = Super Administrador
+SuperAdministratorDesc = Administrador principal amb tots els drets
 DefaultRights = Permisos per defecte
 DefaultRightsDesc = Definiu aquí els permisos <b>per defecte</b>, és a dir: els permisos que s'assignaran automàticament a un nou usuari en el moment de la seva creació.
 DolibarrUsers = Usuaris Dolibarr

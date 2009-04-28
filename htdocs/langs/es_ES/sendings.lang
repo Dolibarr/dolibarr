@@ -43,6 +43,7 @@ GenericTransport = Transporte genérico
 Enlevement = Pick-up por el cliente
 DocumentModelSimple = Modelo simple
 WarningNoQtyLeftToSend = Alerta, ningún producto en espera de envío.
+StatsOnShipmentsOnlyValidated = Estadísticas realizadas únicamente sobre las expediciones validadas
 # Sending methods = 
 SendingMethodCATCH = Recogido por el cliente
 SendingMethodTRANS = Transportista

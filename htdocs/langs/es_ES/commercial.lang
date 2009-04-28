@@ -46,7 +46,6 @@ DoneAndToDoActionsFor=Listado de acciones realizadas o a realizar por %s
 DoneAndToDoActions=Listado de acciones realizadas o a realizar
 SendPropalRef=Enviar presupuesto %s
 SendOrderRef=Enviar pedido %s
-NoRecordedProspects=Ningún cliente potencial registrado
 StatusActionToDo=A realizar
 StatusActionDone=Realizado
 StatusActionInProcess=En curso

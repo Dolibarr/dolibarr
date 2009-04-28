@@ -12,7 +12,6 @@ UserNotLinkedToMember = Usuari no vinculat a un membre
 MembersTickets = Etiquetes membres
 FundationMembers = Membres de l'associació
 Attributs = Atributs
-Person = Persona
 ErrorMemberTypeNotDefined = No s'ha indicat el tipus de membre
 ListOfPublicMembers = Llista de membres públics
 ListOfValidatedPublicMembers = Llista de membres públics validats
