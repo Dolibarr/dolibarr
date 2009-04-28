@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,13 +56,25 @@ class modFckeditor extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 2;
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/fckeditor";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/fckeditor/temp";
+		
+		$r++;
+		$this->dirs[$r][0] = "images";
+		$this->dirs[$r][1] = "/fckeditor/images";
 
 		// Config pages
 		$this->config_page_url = array("fckeditor.php");
 
-		// D�pendances
+		// Dependances
 		$this->depends = array();
 		$this->requiredby = array();
 
@@ -84,9 +96,6 @@ class modFckeditor extends DolibarrModules
 	function init()
 	{
 		global $conf;
-
-		// Dir
-		$this->dirs[0] = $conf->fckeditor->dir_images;
 
 		$sql = array();
 

@@ -155,9 +155,6 @@ class Conf
 		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
 		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
 
-		// Module externalrss
-		$this->externalrss->dir_temp=DOL_DATA_ROOT."/rss/temp";
-
 		// Sous module bons d'expedition
 		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
 		
@@ -170,11 +167,10 @@ class Conf
 		// Module taxes et charges sociales
 		$this->tax->dir_output=DOL_DATA_ROOT."/taxes";
 		$this->tax->dir_temp  =DOL_DATA_ROOT."/taxes/temp";
-
+		
 		// Module ficheinter
-		$this->fichinter->dir_output=DOL_DATA_ROOT."/ficheinter";
-		$this->fichinter->dir_temp  =DOL_DATA_ROOT."/ficheinter/temp";
-		if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $this->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par defaut
+		if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $this->ficheinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par defaut
+		
 		// Module produit
 		$this->produit->MultiPricesEnabled=defined("PRODUIT_MULTIPRICES")?PRODUIT_MULTIPRICES:0;
 		
@@ -224,18 +220,7 @@ class Conf
 		// Module actions
 		$this->actions->dir_output=DOL_DATA_ROOT."/action";
 		$this->actions->dir_temp  =DOL_DATA_ROOT."/action/temp";
-		// Module export
-		$this->export->dir_output=DOL_DATA_ROOT."/export";
-		$this->export->dir_temp  =DOL_DATA_ROOT."/export/temp";
-		// Module import
-		$this->import->dir_output=DOL_DATA_ROOT."/import";
-		$this->import->dir_temp  =DOL_DATA_ROOT."/import/temp";
-		// Module ldap
-		$this->ldap->dir_temp=DOL_DATA_ROOT."/ldap/temp";
-		// Module FCKeditor
-		$this->fckeditor->dir_output=DOL_DATA_ROOT."/fckeditor";
-		// Module emailing
-		$this->mailings->dir_temp=DOL_DATA_ROOT."/mailings/temp";
+		
 		// Module oscommerce 1
 		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;

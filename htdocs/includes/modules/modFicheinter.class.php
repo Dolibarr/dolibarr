@@ -65,8 +65,16 @@ class modFicheinter  extends DolibarrModules
 		$this->special = 0;
 		$this->picto = "intervention";
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/ficheinter";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/ficheinter/temp";
 
         // Dependencies
 		$this->depends = array("modSociete","modCommercial");
@@ -157,9 +165,6 @@ class modFicheinter  extends DolibarrModules
 
 		// Permissions
 		$this->remove();
-
-		// Dir
-		$this->dirs[0] = $conf->facture->dir_output;
 
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,

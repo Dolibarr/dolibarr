@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin       <regis@dolibarr.fr>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -24,40 +25,40 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
  */
 class mailing_kiwi extends MailingTargets
 {
-    // CHANGE THIS: Put here a name not already used
-    var $name='ContactsCategories';
-    // CHANGE THIS: Put here a description of your selector module.
-    // This label is used if no translation found for key MailingModuleDescXXX where XXX=name is found
-    var $desc="Third parties (by categories)";
+	// CHANGE THIS: Put here a name not already used
+  var $name='ContactsCategories';
+  // CHANGE THIS: Put here a description of your selector module.
+  // This label is used if no translation found for key MailingModuleDescXXX where XXX=name is found
+  var $desc="Third parties (by categories)";
 	// CHANGE THIS: Set to 1 if selector is available for admin users only
-    var $require_admin=0;
+  var $require_admin=0;
 
-    var $require_module=array("categorie");
-    var $picto='company';
-    var $db;
-
-
-    // CHANGE THIS: Constructor name must be called mailing_xxx with xxx=name of your selector
-    function mailing_categories($DB)
-    {
-        $this->db=$DB;
-    }
+  var $require_module=array("categorie");
+  var $picto='company';
+  var $db;
 
 
-    /**
-     *    \brief      This is the main function that returns the array of emails
-     *    \param      mailing_id    Id of mailing. No need to use it.
-     *    \param      filterarray   If you used the formFilter function. Empty otherwise.
-     *    \return     int           <0 if error, number of emails added if ok
-     */
-    function add_to_target($mailing_id,$filtersarray=array())
-    {
-    	global $langs;
+  // CHANGE THIS: Constructor name must be called mailing_xxx with xxx=name of your selector
+  function mailing_categories($DB)
+  {
+  	$this->db=$DB;
+  }
 
-    	$cibles = array();
 
-	    // CHANGE THIS
-	    // Select the contacts from category
+  /**
+   *    \brief      This is the main function that returns the array of emails
+   *    \param      mailing_id    Id of mailing. No need to use it.
+   *    \param      filterarray   If you used the formFilter function. Empty otherwise.
+   *    \return     int           <0 if error, number of emails added if ok
+   */
+  function add_to_target($mailing_id,$filtersarray=array())
+  {
+  	global $conf, $langs;
+
+    $cibles = array();
+    
+    // CHANGE THIS
+	  // Select the contacts from category
 		$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname,";
 		if ($_POST['filter']) $sql.= " llx_categorie.label as label";
 		else $sql.=" null as label";
@@ -65,26 +66,27 @@ class mailing_kiwi extends MailingTargets
 		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie_societe ON llx_categorie_societe.fk_societe=s.rowid";
 		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie ON llx_categorie.rowid = llx_categorie_societe.fk_categorie";
 		$sql.= " WHERE s.email != ''";
+		$sql.= " AND s.entity = ".$conf->entity;
 		if ($_POST['filter']) $sql.= " AND llx_categorie.rowid='".$_POST['filter']."'";
-        $sql.= " ORDER BY s.email";
+    $sql.= " ORDER BY s.email";
 
-	        // Stocke destinataires dans cibles
-        $result=$this->db->query($sql);
-        if ($result)
+	  // Stocke destinataires dans cibles
+    $result=$this->db->query($sql);
+    if ($result)
+    {
+    	$num = $this->db->num_rows($result);
+      $i = 0;
+      $j = 0;
+
+      dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
+
+      $old = '';
+      while ($i < $num)
+      {
+      	$obj = $this->db->fetch_object($result);
+        if ($old <> $obj->email)
         {
-            $num = $this->db->num_rows($result);
-            $i = 0;
-            $j = 0;
-
-            dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
-
-            $old = '';
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($result);
-                if ($old <> $obj->email)
-                {
-                    $cibles[$j] = array(
+        	$cibles[$j] = array(
                     			'email' => $obj->email,
                     			'fk_contact' => $obj->fk_contact,
                     			'name' => $obj->name,
@@ -92,23 +94,22 @@ class mailing_kiwi extends MailingTargets
                     			'other' => ($obj->label?$langs->transnoentities("Category").'='.$obj->label:''),
                     			'url' => $this->url($obj->id)
                     			);
-                    $old = $obj->email;
-                    $j++;
-                }
-
-                $i++;
-            }
+          $old = $obj->email;
+          $j++;
         }
-        else
-        {
-            dol_syslog($this->db->error());
-            $this->error=$this->db->error();
-            return -1;
-        }
-
-
-        return parent::add_to_target($mailing_id, $cibles);
+        
+        $i++;
+      }
     }
+    else
+    {
+    	dol_syslog($this->db->error());
+    	$this->error=$this->db->error();
+    	return -1;
+    }
+    
+    return parent::add_to_target($mailing_id, $cibles);
+   }
 
 
     /**
@@ -136,9 +137,10 @@ class mailing_kiwi extends MailingTargets
      */
     function getNbOfRecipients()
     {
-        $sql  = "SELECT count(distinct(s.email)) as nb";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE s.email != ''";
+        $sql = "SELECT count(distinct(s.email)) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE s.email != ''";
+        $sql.= " AND s.entity = ".$conf->entity;
 
         // La requete doit retourner un champ "nb" pour etre comprise
         // par parent::getNbOfRecipients
@@ -152,7 +154,7 @@ class mailing_kiwi extends MailingTargets
      */
     function formFilter()
     {
-    	global $langs;
+    	global $conf, $langs;
 
         $s='';
         $s.='<select name="filter" class="flat">';
@@ -162,6 +164,7 @@ class mailing_kiwi extends MailingTargets
         $sql = "SELECT rowid, label, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie";
         $sql.= " WHERE visible > 0 AND type > 0";
+        $sql.= " AND entity = ".$conf->entity;
         $sql.= " ORDER BY label";
 
         $resql = $this->db->query($sql);

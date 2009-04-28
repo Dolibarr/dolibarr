@@ -71,7 +71,7 @@ class modFournisseur extends DolibarrModules
 		$this->dirs[$r][0] = "temp";
 		$this->dirs[$r][1] = "/fournisseur/temp";
 		
-		$r++
+		$r++;
 		$this->dirs[$r][0] = "commande";
 		$this->dirs[$r][1] = "/fournisseur/commande";
 		
@@ -79,7 +79,7 @@ class modFournisseur extends DolibarrModules
 		$this->dirs[$r][0] = "commande_temp";
 		$this->dirs[$r][1] = "/fournisseur/commande/temp";
 		
-		$r++
+		$r++;
 		$this->dirs[$r][0] = "facture";
 		$this->dirs[$r][1] = "/fournisseur/facture";
 		

@@ -110,7 +110,7 @@ if ($_GET["id"] > 0) {
   			 * Documents
  				 */
 				$fichinterref = sanitizeFileName($fichinter->ref);
-				$dir_output = $conf->fichinter->dir_output . "/";
+				$dir_output = $conf->ficheinter->dir_output . "/";
 				$filepath = $dir_output . $fichinterref . "/";
 				$file = $filepath . $fichinterref . ".pdf";
 				$filedetail = $filepath . $fichinterref . "-detail.pdf";

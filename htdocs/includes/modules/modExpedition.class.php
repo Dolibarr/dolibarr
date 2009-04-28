@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,13 +68,13 @@ class modExpedition extends DolibarrModules
 		$r++;
 		$this->dirs[$r][0] = "temp";
 		$this->dirs[$r][1] = "/expedition/temp";
-		$r++
+		$r++;
 		$this->dirs[$r][0] = "bon_expedition";
 		$this->dirs[$r][1] = "/expedition/sending";
 		$r++;
 		$this->dirs[$r][0] = "bon_expedition_temp";
 		$this->dirs[$r][1] = "/expedition/sending/temp";
-		$r++
+		$r++;
 		$this->dirs[$r][0] = "bon_livraison";
 		$this->dirs[$r][1] = "/expedition/receipt";
 		$r++;

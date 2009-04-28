@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**     \defgroup   export      Module export
- *		\brief      Module g�n�rique pour r�aliser des exports de donn�es en base
+ *		\brief      Module generique pour realiser des exports de donnees en base
  * 		\version	$Id$
  */
 
@@ -55,13 +56,21 @@ class modExport extends DolibarrModules
 		$this->special = 0;
 		$this->picto='';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/export";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/export/temp";
 
 		// Config pages
 		$this->config_page_url = array();
 
-		// D�pendances
+		// Dependances
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->phpmin = array(4,2,0);

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin       <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,30 +35,34 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 
 class mailing_pomme extends MailingTargets
 {
-    var $name='DolibarrUsers';                      // Identifiant du module mailing
-    var $desc='Utilisateurs de Dolibarr avec emails';  // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
-    var $require_module=array();                    // Module mailing actif si modules require_module actifs
-    var $require_admin=1;                           // Module mailing actif pour user admin ou non
-    var $picto='user';
+	var $name='DolibarrUsers';                      // Identifiant du module mailing
+  var $desc='Utilisateurs de Dolibarr avec emails';  // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+  var $require_module=array();                    // Module mailing actif si modules require_module actifs
+  var $require_admin=1;                           // Module mailing actif pour user admin ou non
+  var $picto='user';
 
-    var $db;
+  var $db;
 
 
-    function mailing_pomme($DB)
-    {
-        $this->db=$DB;
-    }
+  function mailing_pomme($DB)
+  {
+  	$this->db=$DB;
+  }
 
 
 	function getSqlArrayForStats()
 	{
-        global $langs;
-        $langs->load("users");
-
-	    $statssql=array();
-        $sql = "SELECT '".$langs->trans("DolibarrUsers")."' as label, count(distinct(email)) as nb FROM ".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
-        $statssql[0]=$sql;
+		global $conf, $langs;
+		
+		$langs->load("users");
+		
+		$statssql=array();
+    $sql = "SELECT '".$langs->trans("DolibarrUsers")."' as label";
+    $sql.= ", count(distinct(u.email)) as nb";
+    $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+    $sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+    $sql.= " AND u.entity IN (0,".$conf->entity.")";
+    $statssql[0]=$sql;
 
 		return $statssql;
 	}
@@ -71,13 +76,16 @@ class mailing_pomme extends MailingTargets
      */
     function getNbOfRecipients()
     {
-        $sql  = "SELECT count(distinct(u.email)) as nb";
-        $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-        $sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+    	global $conf;
+    	
+    	$sql = "SELECT count(distinct(u.email)) as nb";
+      $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+      $sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+      $sql.= " AND u.entity IN (0,".$conf->entity.")";
 
-        // La requete doit retourner un champ "nb" pour etre comprise
-        // par parent::getNbOfRecipients
-        return parent::getNbOfRecipients($sql);
+      // La requete doit retourner un champ "nb" pour etre comprise
+      // par parent::getNbOfRecipients
+      return parent::getNbOfRecipients($sql);
     }
 
 
@@ -89,6 +97,7 @@ class mailing_pomme extends MailingTargets
     function formFilter()
     {
         global $langs;
+        
         $langs->load("users");
 
         $s='';
@@ -118,7 +127,7 @@ class mailing_pomme extends MailingTargets
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
-    	global $langs;
+    	global $conf, $langs;
 
         $cibles = array();
 
@@ -127,6 +136,7 @@ class mailing_pomme extends MailingTargets
         $sql.= " u.name as name, u.firstname as firstname, u.login, u.office_phone";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+        $sql.= " AND u.entity IN (0,".$conf->entity.")";
         foreach($filtersarray as $key)
         {
             if ($key == '1') $sql.= " AND u.statut=1";

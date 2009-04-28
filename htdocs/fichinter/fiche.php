@@ -903,7 +903,7 @@ elseif ($_GET["id"] > 0)
 	 * Built documents
 	 */
 	$filename=sanitizeFileName($fichinter->ref);
-	$filedir=$conf->fichinter->dir_output . "/".$fichinter->ref;
+	$filedir=$conf->ficheinter->dir_output . "/".$fichinter->ref;
 	$urlsource=$_SERVER["PHP_SELF"]."?id=".$fichinter->id;
 	$genallowed=$user->rights->ficheinter->creer;
 	$delallowed=$user->rights->ficheinter->supprimer;

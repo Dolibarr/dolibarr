@@ -53,14 +53,22 @@ class modExternalRss extends DolibarrModules
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
-		$this->description = "Ajout de files d'informations RSS dans les �crans Dolibarr";
+		$this->description = "Ajout de files d'informations RSS dans les ecrans Dolibarr";
 		$this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 1;
 		$this->picto='rss';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/rss";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/rss/temp";
 
 		// Config pages
 		$this->config_page_url = array("external_rss.php");
@@ -73,10 +81,6 @@ class modExternalRss extends DolibarrModules
 
 		// Constantes
 		$this->const = array();
-
-		// Repertoires
-		$this->dirs = array();
-		$this->dirs[0] = $conf->externalrss->dir_temp;
 
 		// Boxes
 		$this->boxes = array();
@@ -93,12 +97,15 @@ class modExternalRss extends DolibarrModules
 	 */
 	function init()
 	{
+		global $conf;
+		
 		$sql = array();
 
 		// Recherche configuration de boites
 		$this->boxes=array();
 		$sql="select name, value from ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE name like 'EXTERNAL_RSS_TITLE_%'";
+		$sql.= " AND entity = ".$conf->entity;
 		$result=$this->db->query($sql);
 		if ($result)
 		{

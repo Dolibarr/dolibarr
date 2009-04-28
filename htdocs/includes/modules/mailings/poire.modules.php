@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,28 +36,37 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 
 class mailing_poire extends MailingTargets
 {
-    var $name='ContactCompanies';                       // Identifiant du module mailing
-    var $desc='Contacts des tiers (prospects, clients, fournisseurs...)';      			// Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
-    var $require_module=array("commercial");            // Module mailing actif si modules require_module actifs
-    var $require_admin=0;                               // Module mailing actif pour user admin ou non
-    var $picto='contact';
+	var $name='ContactCompanies';                       // Identifiant du module mailing
+  var $desc='Contacts des tiers (prospects, clients, fournisseurs...)';      			// Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+  var $require_module=array("commercial");            // Module mailing actif si modules require_module actifs
+  var $require_admin=0;                               // Module mailing actif pour user admin ou non
+  var $picto='contact';
 
-    var $db;
+  var $db;
 
 
-    function mailing_poire($DB)
-    {
-        $this->db=$DB;
-    }
+  function mailing_poire($DB)
+  {
+  	$this->db=$DB;
+  }
 
 
 	function getSqlArrayForStats()
 	{
-        global $langs;
-        $langs->load("commercial");
+		global $conf, $langs;
+    
+    $langs->load("commercial");
 
-	    $statssql=array();
-        $statssql[0]="SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label, count(distinct(c.email)) as nb FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."societe as s WHERE s.rowid = c.fk_soc AND s.client = 1 AND c.email != ''";
+	  $statssql=array();
+    $statssql[0] = "SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label";
+    $statssql[0].= ", count(distinct(c.email)) as nb";
+    $statssql[0].= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+    $statssql[0].= ", ".MAIN_DB_PREFIX."societe as s";
+    $statssql[0].= " WHERE s.rowid = c.fk_soc";
+    $statssql[0].= " AND s.entity = ".$conf->entity;
+    $statssql[0].= " AND c.entity = ".$conf->entity;
+    $statssql[0].= " AND s.client = 1";
+    $statssql[0].= " AND c.email != ''";
 
 		return $statssql;
 	}
@@ -70,15 +80,19 @@ class mailing_poire extends MailingTargets
      */
     function getNbOfRecipients()
     {
-        $sql  = "SELECT count(distinct(c.email)) as nb";
-        $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-        $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE s.rowid = c.fk_soc";
-        $sql .= " AND c.email != ''";
+    	global $conf;
+    	
+    	$sql  = "SELECT count(distinct(c.email)) as nb";
+      $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+      $sql .= ", ".MAIN_DB_PREFIX."societe as s";
+      $sql .= " WHERE s.rowid = c.fk_soc";
+      $sql .= " AND c.entity = ".$conf->entity;
+      $sql .= " AND s.entity = ".$conf->entity;
+      $sql .= " AND c.email != ''";
 
-        // La requete doit retourner un champ "nb" pour etre comprise
-        // par parent::getNbOfRecipients
-        return parent::getNbOfRecipients($sql);
+      // La requete doit retourner un champ "nb" pour etre comprise
+      // par parent::getNbOfRecipients
+      return parent::getNbOfRecipients($sql);
     }
 
 
@@ -143,7 +157,7 @@ class mailing_poire extends MailingTargets
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
-    	global $langs;
+    	global $conf, $langs;
 
     	$cibles = array();
 
@@ -174,6 +188,8 @@ class mailing_poire extends MailingTargets
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
         $sql.= " ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE s.rowid = c.fk_soc";
+        $sql.= " AND c.entity = ".$conf->entity;
+        $sql.= " AND s.entity = ".$conf->entity;
         $sql.= " AND c.email != ''";
         foreach($filtersarray as $key)
         {

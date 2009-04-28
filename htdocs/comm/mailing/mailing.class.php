@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,7 @@ class Mailing extends CommonObject
 	 */
 	function create($user)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$this->db->begin();
 
@@ -95,8 +96,8 @@ class Mailing extends CommonObject
 		}
 
 		$sql = "INSERT INTO ".$this->db_table;
-		$sql .= " (date_creat, fk_user_creat)";
-		$sql .= " VALUES (".$this->db->idate(mktime()).", ".$user->id.")";
+		$sql .= " (date_creat, fk_user_creat, entity)";
+		$sql .= " VALUES (".$this->db->idate(mktime()).", ".$user->id.", ".$conf->entity.")";
 
 		if (! $this->titre)
 		{
@@ -368,8 +369,8 @@ class Mailing extends CommonObject
 
 
 	/**
-	 *    \brief      Retourne le libell� du statut d'un mailing (brouillon, valid�e, ...
-	 *    \param      mode          0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long
+	 *    \brief      Retourne le libelle du statut d'un mailing (brouillon, validee, ...
+	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -378,10 +379,10 @@ class Mailing extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libell� d'un statut donn�
+	 *    	\brief      Renvoi le libelle d'un statut donn�
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string        	Libell� du statut
+	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string        	Libelle du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{

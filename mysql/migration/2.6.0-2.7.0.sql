@@ -21,6 +21,8 @@ ALTER TABLE llx_bank_account ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER 
 ALTER TABLE llx_document_model ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER nom;
 ALTER TABLE llx_menu ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER menu_handler;
 ALTER TABLE llx_ecm_directories ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER label;
+ALTER TABLE llx_mailing ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER titre;
+ALTER TABLE llx_categorie ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER label;
 
 ALTER TABLE llx_rights_def DROP PRIMARY KEY;
 ALTER TABLE llx_user_param DROP INDEX fk_user;
@@ -31,6 +33,7 @@ ALTER TABLE llx_entrepot DROP INDEX label;
 ALTER TABLE llx_bank_account DROP INDEX uk_bank_account_label;
 ALTER TABLE llx_document_model DROP INDEX uk_document_model;
 ALTER TABLE llx_menu DROP INDEX idx_menu_uk_menu;
+ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
 
 ALTER TABLE llx_rights_def ADD PRIMARY KEY (id, entity);
 ALTER TABLE llx_user_param ADD UNIQUE INDEX uk_user_param (fk_user,param,entity);
@@ -41,3 +44,4 @@ ALTER TABLE llx_entrepot ADD UNIQUE INDEX uk_entrepot_label (label, entity);
 ALTER TABLE llx_bank_account ADD UNIQUE INDEX uk_bank_account_label (label, entity);
 ALTER TABLE llx_document_model ADD UNIQUE INDEX uk_document_model (nom, type, entity);
 ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, url, entity);
+ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label, type, entity);

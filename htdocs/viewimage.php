@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->fichinter->dir_output.'/'.$original_file;
+        $original_file=$conf->ficheinter->dir_output.'/'.$original_file;
     }
 
     // Wrapping pour les images des stats propales

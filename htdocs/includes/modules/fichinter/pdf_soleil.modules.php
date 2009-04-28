@@ -94,7 +94,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		$outputlangs->setPhpLang();
 
-		if ($conf->fichinter->dir_output)
+		if ($conf->ficheinter->dir_output)
 		{
 			// If $fichinter is id instead of object
 			if (! is_object($fichinter))
@@ -109,7 +109,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			}
 
 			$fichref = sanitizeFileName($fichinter->ref);
-			$dir = $conf->fichinter->dir_output;
+			$dir = $conf->ficheinter->dir_output;
 			if (! eregi('specimen',$fichref)) $dir.= "/" . $fichref;
 			$file = $dir . "/" . $fichref . ".pdf";
 

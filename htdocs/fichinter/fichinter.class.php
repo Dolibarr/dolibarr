@@ -480,10 +480,10 @@ class Fichinter extends CommonObject
 
 				// Remove directory with files
 				$fichinterref = sanitizeFileName($this->ref);
-				if ($conf->fichinter->dir_output)
+				if ($conf->ficheinter->dir_output)
 				{
-					$dir = $conf->fichinter->dir_output . "/" . $fichinterref ;
-					$file = $conf->fichinter->dir_output . "/" . $fichinterref . "/" . $fichinterref . ".pdf";
+					$dir = $conf->ficheinter->dir_output . "/" . $fichinterref ;
+					$file = $conf->ficheinter->dir_output . "/" . $fichinterref . "/" . $fichinterref . ".pdf";
 					if (file_exists($file))
 					{
 						fichinter_delete_preview($this->db, $this->id, $this->ref);

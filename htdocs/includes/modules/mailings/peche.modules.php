@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/includes/modules/mailings/peche.modules.php
  *	\ingroup    mailing
- *	\brief      Fichier de la classe permettant de g�n�rer la liste de destinataires Peche
+ *	\brief      Fichier de la classe permettant de generer la liste de destinataires Peche
  *	\version    $Id$
  */
 
@@ -30,13 +30,13 @@ require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 /**
  *	\class      mailing_pomme
- *	\brief      Classe permettant de g�n�rer la liste des destinataires Pomme
+ *	\brief      Classe permettant de generer la liste des destinataires Peche
  */
 
 class mailing_peche extends MailingTargets
 {
 	var $name='EmailsFromFile';              // Identifiant du module mailing
-	var $desc='EMails issus d\'un fichier';  // Libell� utilis� si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	var $desc='EMails issus d\'un fichier';  // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
 	var $require_module=array();             // Module mailing actif si modules require_module actifs
 	var $require_admin=1;                    // Module mailing actif pour user admin ou non
 	var $picto='generic';
@@ -100,7 +100,7 @@ class mailing_peche extends MailingTargets
 
 	/**
 	 *    \brief      Ajoute destinataires dans table des cibles
-	 *    \param      mailing_id    Id du mailing concern�
+	 *    \param      mailing_id    Id du mailing concerne
 	 *    \param      filterarray   Requete sql de selection des destinataires
 	 *    \return     int           < 0 si erreur, nb ajout si ok
 	 */
@@ -110,7 +110,7 @@ class mailing_peche extends MailingTargets
 
 		$cibles = array();
 
-		$upload_dir=$conf->mailings->dir_temp;
+		$upload_dir=$conf->mailing->dir_temp;
 
 		// Save file
 		if (! is_dir($upload_dir)) create_exdir($upload_dir);

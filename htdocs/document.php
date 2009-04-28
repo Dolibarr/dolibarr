@@ -132,7 +132,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->fichinter->dir_output.'/'.$original_file;
+        $original_file=$conf->ficheinter->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
     }
 

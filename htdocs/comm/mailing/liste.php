@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +59,7 @@ llxHeader();
 
 $sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
-$sql.= " WHERE 1=1";
+$sql.= " WHERE m.entity = ".$conf->entity;
 if ($sref) $sql.= " AND m.rowid = '".$sref."'";
 if ($sall) $sql.= " AND (m.titre like '%".$sall."%' OR m.sujet like '%".$sall."%' OR m.body like '%".$sall."%')";
 if (! $sortorder) $sortorder="ASC";
