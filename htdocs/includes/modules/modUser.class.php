@@ -155,7 +155,7 @@ class modUser extends DolibarrModules
 		
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';
-		$this->export_sql_end[$r] .=' WHERE u.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' WHERE u.entity IN (0,'.$conf->entity.')';
 	}
 
 

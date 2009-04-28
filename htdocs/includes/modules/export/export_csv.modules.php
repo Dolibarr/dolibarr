@@ -107,16 +107,16 @@ class ExportCsv extends ModeleExports
 	 *	\return		int			<0 if KO, >=0 if OK
 	 */
 	function open_file($file,$outputlangs)
-    {
-    	global $langs;
-    	
-        dol_syslog("ExportCsv::open_file file=".$file);
+  {
+  	global $langs;
+  	
+  	dol_syslog("ExportCsv::open_file file=".$file);
 
 		$ret=1;
 		
-        $outputlangs->load("exports");
+    $outputlangs->load("exports");
 		$this->handle = fopen($file, "wt");
-        if (! $this->handle)
+    if (! $this->handle)
 		{
 			$langs->load("errors");
 			$this->error=$langs->trans("ErrorFailToCreateFile",$file);
@@ -124,7 +124,7 @@ class ExportCsv extends ModeleExports
 		}
 		
 		return $ret;
-    }
+	}
 
 	/**
 	 * 	\brief		Output header into file
@@ -132,7 +132,7 @@ class ExportCsv extends ModeleExports
 	 */
     function write_header($outputlangs)
     {
-		return 0;
+    	return 0;
     }
 
 
@@ -143,17 +143,25 @@ class ExportCsv extends ModeleExports
     function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs)
     {
     	global $conf;
-    	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) $outputlangs->charset_output=$conf->global->EXPORT_CSV_FORCE_CHARSET;
     	
-        foreach($array_selected_sorted as $code => $value)
-        {
-            $newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);
-			$newvalue=$this->csv_clean($newvalue);
-            
-			fwrite($this->handle,$newvalue.$this->separator);
-        }
-        fwrite($this->handle,"\n");
-        return 0;
+    	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
+    	{
+    		$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
+    	}
+    	else
+    	{
+    		$outputlangs->charset_output = 'ISO-8859-1';
+    	}
+    	
+      foreach($array_selected_sorted as $code => $value)
+      {
+      	$newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);
+      	$newvalue=$this->csv_clean($newvalue);
+      	
+      	fwrite($this->handle,$newvalue.$this->separator);
+      }
+      fwrite($this->handle,"\n");
+      return 0;
     }
 
 
@@ -163,28 +171,37 @@ class ExportCsv extends ModeleExports
     function write_record($array_alias,$array_selected_sorted,$objp,$outputlangs)
     {
     	global $conf;
-    	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) $outputlangs->charset_output=$conf->global->EXPORT_CSV_FORCE_CHARSET;
+    	
+    	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
+    	{
+    		$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
+    	}
+    	else
+    	{
+    		$outputlangs->charset_output = 'ISO-8859-1';
+    	}
 
     	$this->col=0;
- 		foreach($array_selected_sorted as $code => $value)
+    	foreach($array_selected_sorted as $code => $value)
+      {
+      	$alias=$array_alias[$code];
+        if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+        $newvalue=$outputlangs->convToOutputCharset($objp->$alias);
+        
+        // Translation newvalue
+        if (eregi('^\((.*)\)$',$newvalue,$reg))
         {
-            $alias=$array_alias[$code];
-            if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
-			$newvalue=$outputlangs->convToOutputCharset($objp->$alias);
-
-            // Translation newvalue
-			if (eregi('^\((.*)\)$',$newvalue,$reg))
-			{
-				$newvalue=$outputlangs->transnoentities($reg[1]);
-			}
-			
-			$newvalue=$this->csv_clean($newvalue);
-			
-			fwrite($this->handle,$newvalue.$this->separator);
-            $this->col++;
-		}
-        fwrite($this->handle,"\n");
-        return 0;
+        	$newvalue=$outputlangs->transnoentities($reg[1]);
+        }
+        
+        $newvalue=$this->csv_clean($newvalue);
+        
+        fwrite($this->handle,$newvalue.$this->separator);
+        $this->col++;
+      }
+      
+      fwrite($this->handle,"\n");
+      return 0;
     }
 
 	/**
