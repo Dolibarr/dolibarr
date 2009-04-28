@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,10 @@ $langs->load("orders");
 $langs->load("propal");
 $langs->load("bills");
 $langs->load("contracts");
+
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'ecm','');
 
 // Load permissions
 $user->getrights('ecm');

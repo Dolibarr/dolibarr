@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@ create table llx_ecm_directories
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   label           varchar(32) NOT NULL,
+  entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   fk_parent       integer,
   description     varchar(255) NOT NULL,
   cachenbofdoc    integer NOT NULL DEFAULT 0,
@@ -32,3 +34,11 @@ create table llx_ecm_directories
   fk_user_c		  integer,
   fk_user_m		  integer
 ) type=innodb;
+
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company ecm directories
+-- 2 : second company ecm directories
+-- 3 : etc...
+--

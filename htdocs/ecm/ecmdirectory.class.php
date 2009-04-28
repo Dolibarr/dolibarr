@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +121,7 @@ class EcmDirectory // extends CommonObject
 	        // Insert request
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."ecm_directories(";
 			$sql.= "label,";
+			$sql.= "entity,";
 			$sql.= "fk_parent,";
 			$sql.= "description,";
 			$sql.= "cachenbofdoc,";
@@ -128,6 +129,7 @@ class EcmDirectory // extends CommonObject
 			$sql.= "fk_user_c";
 	        $sql.= ") VALUES (";
 			$sql.= " '".addslashes($this->label)."',";
+			$sql.= " '".$conf->entity."',";
 			$sql.= " '".$this->fk_parent."',";
 			$sql.= " '".addslashes($this->description)."',";
 			$sql.= " ".($this->cachenbofdoc).",";
@@ -184,53 +186,52 @@ class EcmDirectory // extends CommonObject
     	
     	$error=0;
     	
-		// Clean parameters
-		$this->label=trim($this->label);
-		$this->fk_parent=trim($this->fk_parent);
-		$this->description=trim($this->description);
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
-		$this->db->begin();
-		
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-        
-		$sql.= " label='".addslashes($this->label)."',";
-		$sql.= " fk_parent='".$this->fk_parent."',";
-		$sql.= " description='".addslashes($this->description)."'";
-        $sql.= " WHERE rowid=".$this->id;
-
-        dol_syslog("EcmDirectories::update sql=".$sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (! $resql)
-        {
-            $error++;
-        	$this->error="Error ".$this->db->lasterror();
-            dol_syslog("EcmDirectories::update ".$this->error, LOG_ERR);
-        }
-
-		if (! $error && ! $notrigger)
-		{
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+    	// Clean parameters
+    	$this->label=trim($this->label);
+    	$this->fk_parent=trim($this->fk_parent);
+    	$this->description=trim($this->description);
+    	
+    	// Check parameters
+    	// Put here code to add control on parameters values
+    	
+    	$this->db->begin();
+    	
+    	// Update request
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
+    	$sql.= " label='".addslashes($this->label)."',";
+    	$sql.= " fk_parent='".$this->fk_parent."',";
+    	$sql.= " description='".addslashes($this->description)."'";
+    	$sql.= " WHERE rowid=".$this->id;
+    	
+    	dol_syslog("EcmDirectories::update sql=".$sql, LOG_DEBUG);
+    	$resql = $this->db->query($sql);
+    	if (! $resql)
+      {
+      	$error++;
+      	$this->error="Error ".$this->db->lasterror();
+        dol_syslog("EcmDirectories::update ".$this->error, LOG_ERR);
+      }
+      
+      if (! $error && ! $notrigger)
+      {
+      	// Appel des triggers
+        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+        $interface=new Interfaces($this->db);
+        $result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+        if ($result < 0) { $error++; $this->errors=$interface->errors; }
+        // Fin appel triggers
     	}
-
-        if (! $error)
-        {
-        	$this->db->commit();
-        	return 1;
-        }
-        else
-        {
-        	$this->db->rollback();
-        	return -1;
-        }
+    	
+    	if (! $error)
+      {
+      	$this->db->commit();
+        return 1;
+      }
+      else
+      {
+      	$this->db->rollback();
+        return -1;
+      }
     }
   
   
@@ -243,22 +244,21 @@ class EcmDirectory // extends CommonObject
     {
     	global $conf, $langs;
     	
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-        
-		$sql.= " cachenbofdoc = cachenbofdoc ".$sign." 1";
-        $sql.= " WHERE rowid = ".$this->id;
+    	// Update request
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
+    	$sql.= " cachenbofdoc = cachenbofdoc ".$sign." 1";
+      $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog("EcmDirectories::changeNbOfFiles sql=".$sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (! $resql)
-        {
-            $this->error="Error ".$this->db->lasterror();
-            dol_syslog("EcmDirectories::changeNbOfFiles ".$this->error, LOG_ERR);
-            return -1;
-        }
+      dol_syslog("EcmDirectories::changeNbOfFiles sql=".$sql, LOG_DEBUG);
+      $resql = $this->db->query($sql);
+      if (! $resql)
+      {
+      	$this->error="Error ".$this->db->lasterror();
+        dol_syslog("EcmDirectories::changeNbOfFiles ".$this->error, LOG_ERR);
+        return -1;
+      }
 
-        return 1;
+      return 1;
     }
 
     
@@ -269,49 +269,49 @@ class EcmDirectory // extends CommonObject
      */
     function fetch($id)
     {
-        $sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.label,";
-		$sql.= " t.fk_parent,";
-		$sql.= " t.description,";
-		$sql.= " t.cachenbofdoc,";
-		$sql.= " t.fk_user_c,";
-		$sql.= " t.fk_user_m,";
-		$sql.= " ".$this->db->pdate('t.date_c')." as date_c,";
-		$sql.= " ".$this->db->pdate('t.date_m')." as date_m";
-        $sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
-        $sql.= " WHERE t.rowid = ".$id;
+    	$sql = "SELECT";
+    	$sql.= " t.rowid,";
+    	$sql.= " t.label,";
+    	$sql.= " t.fk_parent,";
+    	$sql.= " t.description,";
+    	$sql.= " t.cachenbofdoc,";
+    	$sql.= " t.fk_user_c,";
+    	$sql.= " t.fk_user_m,";
+    	$sql.= " ".$this->db->pdate('t.date_c')." as date_c,";
+    	$sql.= " ".$this->db->pdate('t.date_m')." as date_m";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
+    	$sql.= " WHERE t.rowid = ".$id;
     
     	dol_syslog("EcmDirectories::fetch sql=".$sql, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $obj = $this->db->fetch_object($resql);
-			if ($obj)
-			{    
-                $this->id    = $obj->rowid;
-                $this->ref   = $obj->rowid;
-                
-				$this->label = $obj->label;
-				$this->fk_parent = $obj->fk_parent;
-				$this->description = $obj->description;
-				$this->cachenbofdoc = $obj->cachenbofdoc;
-				$this->fk_user_m = $obj->fk_user_m;
-				$this->fk_user_c = $obj->fk_user_c;
-				$this->date_c = $obj->date_c;
-				$this->date_m = $obj->date_m;
-            }
-
-            $this->db->free($resql);
-
-            return $obj?1:0;
+      $resql=$this->db->query($sql);
+      if ($resql)
+      {
+      	$obj = $this->db->fetch_object($resql);
+      	if ($obj)
+      	{
+      		$this->id    = $obj->rowid;
+          $this->ref   = $obj->rowid;
+          
+          $this->label = $obj->label;
+          $this->fk_parent = $obj->fk_parent;
+          $this->description = $obj->description;
+          $this->cachenbofdoc = $obj->cachenbofdoc;
+          $this->fk_user_m = $obj->fk_user_m;
+          $this->fk_user_c = $obj->fk_user_c;
+          $this->date_c = $obj->date_c;
+          $this->date_m = $obj->date_m;
         }
-        else
-        {
-      	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog("EcmDirectories::fetch ".$this->error, LOG_ERR);
-            return -1;
-        }
+        
+        $this->db->free($resql);
+        
+        return $obj?1:0;
+      }
+      else
+      {
+      	$this->error="Error ".$this->db->lasterror();
+        dol_syslog("EcmDirectories::fetch ".$this->error, LOG_ERR);
+        return -1;
+      }
     }
     
     
@@ -439,12 +439,15 @@ class EcmDirectory // extends CommonObject
 	*/
 	function load_motherof()
 	{
+		global $conf;
+		
 		$this->motherof=array();
 		
 		// Charge tableau des meres
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories";
 		$sql.= " WHERE fk_parent != 0";
+		$sql.= " AND entity = ".$conf->entity;
 		
 		dol_syslog("EcmDirectory::get_full_arbo sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -465,8 +468,8 @@ class EcmDirectory // extends CommonObject
 		
 
 	/**
-	* 	\brief		Reconstruit l'arborescence des cat�gories sous la forme d'un tableau
-	*				Renvoi un tableau de tableau('id','id_mere',...) tri� selon
+	* 	\brief		Reconstruit l'arborescence des categories sous la forme d'un tableau
+	*				Renvoi un tableau de tableau('id','id_mere',...) trie selon
 	*				arbre et avec:
 	*				id = id de la categorie
 	*				id_mere = id de la categorie mere
@@ -484,6 +487,8 @@ class EcmDirectory // extends CommonObject
 	*/
 	function get_full_arbo($force=0)
 	{
+		global $conf;
+		
 		if (empty($force) && $this->full_arbo_loaded)
 		{
 			return $this->cats;
@@ -499,10 +504,12 @@ class EcmDirectory // extends CommonObject
 		$sql.= " c.date_c,";
 		$sql.= " u.login as login_c,";
 		$sql.= " ca.rowid as rowid_fille";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."ecm_directories as c";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql.= ", ".MAIN_DB_PREFIX."ecm_directories as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."ecm_directories as ca";
-		$sql.= " ON c.rowid=ca.fk_parent";
+		$sql.= " ON c.rowid = ca.fk_parent";
 		$sql.= " WHERE c.fk_user_c = u.rowid";
+		$sql.= " AND c.entity = ".$conf->entity;
 		$sql.= " ORDER BY c.label, c.rowid";
 
 		dol_syslog("EcmDirectory::get_full_arbo sql=".$sql);
@@ -560,7 +567,7 @@ class EcmDirectory // extends CommonObject
 	}
 	
 	/**
-	*	\brief		Calcule les propri�t�s fullpath et fulllabel d'une categorie
+	*	\brief		Calcule les proprietes fullpath et fulllabel d'une categorie
 	*				du tableau this->cats et de toutes ces enfants
 	* 	\param		id_categ		id_categ entry to update
 	* 	\param		protection		Deep counter to avoid infinite loop
@@ -613,23 +620,23 @@ class EcmDirectory // extends CommonObject
 		// Test if filelist is in database
 		
 		
-	    // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
+		// Update request
+    $sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		$sql.= " cachenbofdoc='".sizeof($filelist)."'";
-        $sql.= " WHERE rowid=".$this->id;
-        dol_syslog("EcmDirectories::refreshcachenboffile sql=".$sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-        	$this->cachenbofdoc=sizeof($filelist);
+    $sql.= " WHERE rowid=".$this->id;
+    dol_syslog("EcmDirectories::refreshcachenboffile sql=".$sql, LOG_DEBUG);
+    $resql = $this->db->query($sql);
+    if ($resql)
+    {
+    	$this->cachenbofdoc=sizeof($filelist);
 			return $this->cachenbofdoc;
-        }
-        else
-        {
-            $this->error="Error ".$this->db->lasterror();
-            dol_syslog("EcmDirectories::refreshcachenboffile ".$this->error, LOG_ERR);
-            return -1;
-        }
+    }
+    else
+    {
+    	$this->error="Error ".$this->db->lasterror();
+      dol_syslog("EcmDirectories::refreshcachenboffile ".$this->error, LOG_ERR);
+      return -1;
+    }
 	}	
 	
 }
