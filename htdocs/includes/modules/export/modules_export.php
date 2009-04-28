@@ -66,7 +66,7 @@ class ModeleExports
 		$i=0;
 		while (($file = readdir($handle))!==false)
 		{
-			if (eregi("^export_(.*)\.modules\.php",$file,$reg))
+			if (eregi("^export_(.*)\.modules\.php$",$file,$reg))
 			{
 				$moduleid=$reg[1];
 

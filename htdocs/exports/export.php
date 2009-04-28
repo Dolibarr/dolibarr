@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -492,14 +492,14 @@ if ($step == 3 && $datatoexport)
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
-    // Lot de donn�es � exporter
+    // Lot de donnees a exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
     print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
     print $objexport->array_export_label[0];
     print '</td></tr>';
 
-    // Nbre champs export�s
+    // Nbre champs exportes
     print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
     $list='';
     foreach($array_selected as $code=>$value)
