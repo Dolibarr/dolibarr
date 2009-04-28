@@ -240,8 +240,6 @@ class modSociete extends DolibarrModules
 	 */
 	function init($options='')
 	{
-		global $conf;
-		$this->dirs[0] = $conf->societe->dir_output;
 
 		// Prevent pb of modules not correctly disabled
 		//$this->remove($options);
