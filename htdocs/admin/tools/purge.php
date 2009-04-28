@@ -67,8 +67,15 @@ if ($_POST["action"]=='purge')
 		{
 			//print "x ".$filesarray[$key]['fullname']."<br>\n";
 			$count+=dol_delete_dir_recursive($filesarray[$key]['fullname']);
-		}		
-
+		}
+		
+		// Update cachenbofdoc
+		if ($conf->ecm->enabled && $_POST["choice"]=='allfiles')
+		{
+			require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
+			$ecmdirstatic = new ECMDirectory($db);
+			$result = $ecmdirstatic->refreshcachenboffile(1);
+		}
 	}
 
 	if ($count) $message=$langs->trans("PurgeNDirectoriesDeleted",$count);

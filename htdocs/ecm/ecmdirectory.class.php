@@ -607,9 +607,10 @@ class EcmDirectory // extends CommonObject
 	/**
 	*	\brief		Refresh value for cachenboffile
 	* 	\param		directory		Directory to scan
+	*   \param    all         0=refresh this id , 1=refresh this entity
 	* 	\return		int				<0 if KO, Nb of files in directory if OK
 	*/
-	function refreshcachenboffile()
+	function refreshcachenboffile($all=0)
 	{
 		global $conf;
 		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
@@ -622,8 +623,16 @@ class EcmDirectory // extends CommonObject
 		
 		// Update request
     $sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-		$sql.= " cachenbofdoc='".sizeof($filelist)."'";
-    $sql.= " WHERE rowid=".$this->id;
+		$sql.= " cachenbofdoc = '".sizeof($filelist)."'";
+    if (empty($all))
+    {
+    	$sql.= " WHERE rowid = ".$this->id;
+    }
+    else
+    {
+    	$sql.= " WHERE entity = ".$conf->entity;
+    }
+    
     dol_syslog("EcmDirectories::refreshcachenboffile sql=".$sql, LOG_DEBUG);
     $resql = $this->db->query($sql);
     if ($resql)
