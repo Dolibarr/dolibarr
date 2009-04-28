@@ -64,8 +64,16 @@ class modFacture extends DolibarrModules
       $this->special = 0;
       $this->picto='bill';
 
-      // Dir
-      $this->dirs = array();
+      // Data directories to create when module is enabled
+		  $this->dirs = array();
+		  $r=0;
+		
+		  $this->dirs[$r][0] = "output";
+		  $this->dirs[$r][1] = "/facture";
+		
+		  $r++;
+		  $this->dirs[$r][0] = "temp";
+		  $this->dirs[$r][1] = "/facture/temp";
 
       // Dependencies
       $this->depends = array("modSociete");

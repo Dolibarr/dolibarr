@@ -305,7 +305,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 			print '</td>';
 			print '<td width="16" align="center" class="nobordernopadding">';
 			$filename=sanitizeFileName($objp->ref);
-			$filedir=$conf->propal->dir_output . '/' . sanitizeFileName($objp->ref);
+			$filedir=$conf->propale->dir_output . '/' . sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
 			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
 			print '</td></tr></table>';
@@ -504,7 +504,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				print '</td>';
 				print '<td width="16" align="center" class="nobordernopadding">';
 				$filename=sanitizeFileName($obj->ref);
-				$filedir=$conf->propal->dir_output . '/' . sanitizeFileName($obj->ref);
+				$filedir=$conf->propale->dir_output . '/' . sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$obj->propalid;
 				$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
 				print '</td></tr></table>';

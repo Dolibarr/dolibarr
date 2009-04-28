@@ -63,6 +63,17 @@ class modBanque extends DolibarrModules
 	  $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 	  $this->special = 0;
 	  $this->picto='account';
+	  
+	  // Data directories to create when module is enabled
+		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/banque";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/banque/temp";
 
 	  // Dépendances
 	  $this->depends = array();

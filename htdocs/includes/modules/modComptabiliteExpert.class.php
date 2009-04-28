@@ -75,6 +75,25 @@ class modComptabiliteExpert extends DolibarrModules
 
 		// Constantes
 		$this->const = array();
+		
+		// Data directories to create when module is enabled
+		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/comptaexpert";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/comptaexpert/temp";
+		
+		$r++;
+		$this->dirs[$r][0] = "rapport";
+		$this->dirs[$r][1] = "/comptaexpert/rapport";
+		
+		$r++;
+		$this->dirs[$r][0] = "export";
+		$this->dirs[$r][1] = "/comptaexpert/export";
 
 		// Repertoires
 		$this->dirs = array();

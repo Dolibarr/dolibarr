@@ -58,8 +58,16 @@ class modExpedition extends DolibarrModules
 		$this->special = 0;
 		$this->picto = "sending";
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/expedition";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/expedition/temp";
 
 		// Config pages
 		$this->config_page_url = array("confexped.php");

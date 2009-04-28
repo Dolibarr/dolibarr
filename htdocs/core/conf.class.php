@@ -155,19 +155,8 @@ class Conf
 		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
 		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
 
-		// Module agenda
-		$this->agenda->dir_temp=DOL_DATA_ROOT."/agenda/temp";
-
 		// Module externalrss
 		$this->externalrss->dir_temp=DOL_DATA_ROOT."/rss/temp";
-
-		// Module commande client
-		$this->commande->dir_output=DOL_DATA_ROOT."/commande";
-		$this->commande->dir_temp  =DOL_DATA_ROOT."/commande/temp";
-
-		// Module expeditions
-		$this->expedition->dir_output=DOL_DATA_ROOT."/expedition";
-		$this->expedition->dir_temp  =DOL_DATA_ROOT."/expedition/temp";
 
 		// Sous module bons d'expedition
 		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
@@ -183,23 +172,11 @@ class Conf
 		$this->societe->dir_temp  =DOL_DATA_ROOT."/societe/temp";
 		$this->societe->dir_logos =DOL_DATA_ROOT."/societe/logos";
 		if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $this->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
-		// Module commercial
-		$this->commercial->dir_output=DOL_DATA_ROOT."/comm";
-		$this->commercial->dir_temp  =DOL_DATA_ROOT."/comm/temp";
 
 		// Module taxes et charges sociales
 		$this->tax->dir_output=DOL_DATA_ROOT."/taxes";
 		$this->tax->dir_temp  =DOL_DATA_ROOT."/taxes/temp";
 
-		// Module comptaexpert
-		$this->comptaexpert->dir_output=DOL_DATA_ROOT."/comptaexpert";
-		$this->comptaexpert->dir_temp  =DOL_DATA_ROOT."/comptaexpert/temp";
-		// Module compta
-		$this->compta->dir_output=DOL_DATA_ROOT."/compta";
-		$this->compta->dir_temp  =DOL_DATA_ROOT."/compta/temp";
-		// Module banque
-		$this->banque->dir_output=DOL_DATA_ROOT."/banque";
-		$this->banque->dir_temp  =DOL_DATA_ROOT."/banque/temp";
 		// Module don
 		$this->don->dir_output=DOL_DATA_ROOT."/dons";
 		$this->don->dir_temp  =DOL_DATA_ROOT."/dons/temp";
@@ -214,17 +191,13 @@ class Conf
 		$this->fichinter->dir_output=DOL_DATA_ROOT."/ficheinter";
 		$this->fichinter->dir_temp  =DOL_DATA_ROOT."/ficheinter/temp";
 		if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $this->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par defaut
-		// Module adherent
-		$this->adherent->dir_output=DOL_DATA_ROOT."/adherent";
-		$this->adherent->dir_tmp=DOL_DATA_ROOT."/adherent/temp";
 		// Module produit
 		$this->produit->MultiPricesEnabled=defined("PRODUIT_MULTIPRICES")?PRODUIT_MULTIPRICES:0;
 		// Module droipret
 		$this->droitpret->cat=defined('DROITPRET_CAT')?DROITPRET_CAT:'';
 		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
 		$this->droitpret->dir_temp=DOL_DATA_ROOT."/droitpret/temp";
-		// Module contrat
-		$this->contrat->dir_output=DOL_DATA_ROOT."/contracts";
+		
 		// Module prelevement
 		$this->prelevement->dir_output=DOL_DATA_ROOT."/prelevement";
 		$this->prelevement->dir_temp  =DOL_DATA_ROOT."/prelevement/temp";
@@ -251,15 +224,14 @@ class Conf
 		$this->mantis->db->user=defined('PHPMANTIS_USER')?PHPMANTIS_USER:'';
 		$this->mantis->db->pass=defined('PHPMANTIS_PASS')?PHPMANTIS_PASS:'';
 		$this->mantis->db->name=defined('PHPMANTIS_DBNAME')?PHPMANTIS_DBNAME:'';
+		
 		// Module facture
-		$this->facture->dir_output=DOL_DATA_ROOT."/facture";
-		$this->facture->dir_temp  =DOL_DATA_ROOT."/facture/temp";
 		if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $this->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par defaut
+		
 		// Module propal
 		if (! defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
-		$this->propal->dir_output=DOL_DATA_ROOT."/propale";
-		$this->propal->dir_temp  =DOL_DATA_ROOT."/propale/temp";
-		if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $this->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
+		if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $this->propale->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
+		
 		// Module telephonie
 		$this->telephonie->dir_output=DOL_DATA_ROOT."/telephonie";
 		$this->telephonie->dir_temp  =DOL_DATA_ROOT."/telephonie/temp";

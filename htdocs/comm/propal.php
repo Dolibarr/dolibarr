@@ -405,7 +405,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 	if ( $propal->fetch($_POST['propalid']) )
 	{
 		$propalref = sanitizeFileName($propal->ref);
-		$file = $conf->propal->dir_output . '/' . $propalref . '/' . $propalref . '.pdf';
+		$file = $conf->propale->dir_output . '/' . $propalref . '/' . $propalref . '.pdf';
 
 		if (is_readable($file))
 		{
@@ -1786,7 +1786,7 @@ if ($id > 0 || ! empty($ref))
 			if ($propal->statut == 1 && $user->rights->propale->envoyer)
 			{
 				$propref = sanitizeFileName($propal->ref);
-				$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
+				$file = $conf->propale->dir_output . '/'.$propref.'/'.$propref.'.pdf';
 				if (file_exists($file))
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
@@ -1850,7 +1850,7 @@ if ($id > 0 || ! empty($ref))
 		 * Documents generes
 		 */
 		$filename=sanitizeFileName($propal->ref);
-		$filedir=$conf->propal->dir_output . "/" . sanitizeFileName($propal->ref);
+		$filedir=$conf->propale->dir_output . "/" . sanitizeFileName($propal->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?propalid=".$propal->id;
 		$genallowed=$user->rights->propale->creer;
 		$delallowed=$user->rights->propale->supprimer;
@@ -1911,7 +1911,7 @@ if ($id > 0 || ! empty($ref))
 	if ($_GET['action'] == 'presend')
 	{
 		$ref = sanitizeFileName($propal->ref);
-		$file = $conf->propal->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+		$file = $conf->propale->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 		print '<br>';
 		print_titre($langs->trans('SendPropalByMail'));
@@ -2116,7 +2116,7 @@ else
 			print '<td width="16" align="right" class="nobordernopadding">';
 
 			$filename=sanitizeFileName($objp->ref);
-			$filedir=$conf->propal->dir_output . '/' . sanitizeFileName($objp->ref);
+			$filedir=$conf->propale->dir_output . '/' . sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
 			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
 

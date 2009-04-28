@@ -492,7 +492,7 @@ if ($id > 0 || ! empty($ref))
 	 * Documents generes
 	 */
 	$filename=sanitizeFileName($propal->ref);
-	$filedir=$conf->propal->dir_output . "/" . sanitizeFileName($propal->ref);
+	$filedir=$conf->propale->dir_output . "/" . sanitizeFileName($propal->ref);
 	$urlsource=$_SERVER["PHP_SELF"]."?propalid=".$propal->id;
 	$genallowed=0;
 	$delallowed=0;
@@ -774,7 +774,7 @@ else
 			print '<td width="16" align="right" class="nobordernopadding">';
 
 			$filename=sanitizeFileName($objp->ref);
-			$filedir=$conf->propal->dir_output . '/' . sanitizeFileName($objp->ref);
+			$filedir=$conf->propale->dir_output . '/' . sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
 			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
 

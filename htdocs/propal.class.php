@@ -1495,10 +1495,10 @@ class Propal extends CommonObject
 			{
 				// We remove directory
 				$propalref = sanitizeFileName($this->ref);
-				if ($conf->propal->dir_output)
+				if ($conf->propale->dir_output)
 				{
-					$dir = $conf->propal->dir_output . "/" . $propalref ;
-					$file = $conf->propal->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
+					$dir = $conf->propale->dir_output . "/" . $propalref ;
+					$file = $conf->propale->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
 					if (file_exists($file))
 					{
 						propale_delete_preview($this->db, $this->id, $this->ref);

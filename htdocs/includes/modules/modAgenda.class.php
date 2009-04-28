@@ -62,11 +62,16 @@ class modAgenda extends DolibarrModules
         $this->special = 0;
         $this->picto='calendar';
 
-        // Dir
-        //----
+        // Data directories to create when module is enabled
         $this->dirs = array();
-		//$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
-        //$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
+        $r=0;
+        
+        $this->dirs[$r][0] = "output";
+        $this->dirs[$r][1] = "/agenda";
+        
+        $r++;
+        $this->dirs[$r][0] = "temp";
+        $this->dirs[$r][1] = "/agenda/temp";
 
         // Config pages
         //-------------

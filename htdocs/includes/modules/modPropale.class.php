@@ -63,8 +63,16 @@ class modPropale extends DolibarrModules
 		$this->special = 0;
 		$this->picto='propal';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/propale";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/propale/temp";
 
 		// Dependances
 		$this->depends = array("modSociete","modCommercial");
@@ -143,8 +151,8 @@ class modPropale extends DolibarrModules
 		$this->remove();
 
 		// Repertoires
-		$this->dirs[0] = $conf->propal->dir_output;
-		$this->dirs[1] = $conf->propal->dir_temp;
+		$this->dirs[0] = $conf->propale->dir_output;
+		$this->dirs[1] = $conf->propale->dir_temp;
 
 		$sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,

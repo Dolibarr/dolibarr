@@ -66,7 +66,7 @@ class modComptabilite extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("compta.php");
 	
-		// D�pendances
+		// Dependances
 		$this->depends = array("modFacture","modBanque");
 		$this->requiredby = array();
 		$this->conflictwith = array("modComptabiliteExpert");
@@ -74,13 +74,25 @@ class modComptabilite extends DolibarrModules
 	
 		// Constantes
 		$this->const = array();
-	
-		// R�pertoires
+		
+		// Data directories to create when module is enabled
 		$this->dirs = array();
-		$this->dirs[0] = $conf->compta->dir_output;
-		$this->dirs[1] = $conf->compta->dir_output."/rapport";
-		$this->dirs[2] = $conf->compta->dir_output."/export";
-		$this->dirs[3] = $conf->compta->dir_temp;
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/compta";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/compta/temp";
+		
+		$r++;
+		$this->dirs[$r][0] = "rapport";
+		$this->dirs[$r][1] = "/compta/rapport";
+		
+		$r++;
+		$this->dirs[$r][0] = "export";
+		$this->dirs[$r][1] = "/compta/export";
 	
 		// Boites
 		$this->boxes = array();

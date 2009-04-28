@@ -43,7 +43,7 @@ class modBoutique extends DolibarrModules
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acc�s base
+	 *   \param      DB      handler d'acces base
 	 */
 	function modBoutique($DB)
 	{
@@ -65,7 +65,7 @@ class modBoutique extends DolibarrModules
 //		$this->config_page_url = array("boutique.php","osc-languages.php");
 		$this->config_page_url = array("boutique.php");
 	
-		// D�pendances
+		// Dependances
 		$this->depends = array();
 		$this->requiredby = array();
 	    $this->conflictwith = array("modOSCommerceWS");
@@ -83,8 +83,8 @@ class modBoutique extends DolibarrModules
 	}
   
    /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+    *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+    *               Definit egalement les repertoires de donnees a creer pour ce module.
     */
 	function init()
 	{
@@ -94,7 +94,7 @@ class modBoutique extends DolibarrModules
 	}
 
 	/**
-	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
 	function remove()

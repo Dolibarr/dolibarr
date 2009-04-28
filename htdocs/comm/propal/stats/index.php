@@ -51,7 +51,7 @@ llxHeader();
 
 print_fiche_titre($langs->trans("ProposalsStatistics"), $mesg);
 
-$dir=$conf->propal->dir_temp;
+$dir=$conf->propale->dir_temp;
 
 create_exdir($dir);
 

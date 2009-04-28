@@ -123,7 +123,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		$outputlangs->setPhpLang();
 
-		if ($conf->propal->dir_output)
+		if ($conf->propale->dir_output)
 		{
 			// Définition de l'objet $propale (pour compatibilite ascendante)
 			if (! is_object($propale))
@@ -138,13 +138,13 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Définition de $dir et $file
 			if ($propale->specimen)
 			{
-				$dir = $conf->propal->dir_output;
+				$dir = $conf->propale->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$propref = sanitizeFileName($propale->ref);
-				$dir = $conf->propal->dir_output . "/" . $propref;
+				$dir = $conf->propale->dir_output . "/" . $propref;
 				$file = $dir . "/" . $propref . ".pdf";
 			}
 

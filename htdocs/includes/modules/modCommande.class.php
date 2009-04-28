@@ -63,8 +63,16 @@ class modCommande extends DolibarrModules
 		$this->special = 0;
 		$this->picto='order';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/commande";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/commande/temp";
 
 		// Config pages
 		$this->config_page_url = array("commande.php");

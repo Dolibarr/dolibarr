@@ -47,7 +47,7 @@ $year = isset($_GET["year"])?$_GET["year"]:date("Y",time());
  
 llxHeader();
 
-$dir=$conf->propal->dir_temp;
+$dir=$conf->propale->dir_temp;
 
 $mesg = '<a href="month.php?year='.($year - 1).'">'.img_previous().'</a> ';
 $mesg.= $langs->trans("Year")." $year";
