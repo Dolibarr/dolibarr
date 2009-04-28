@@ -160,10 +160,6 @@ class Conf
 
 		// Module societe
 		if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $this->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
-
-		// Module taxes et charges sociales
-		$this->tax->dir_output=DOL_DATA_ROOT."/taxes";
-		$this->tax->dir_temp  =DOL_DATA_ROOT."/taxes/temp";
 		
 		// Module ficheinter
 		if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $this->ficheinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par defaut
@@ -175,10 +171,7 @@ class Conf
 		$this->droitpret->cat=defined('DROITPRET_CAT')?DROITPRET_CAT:'';
 		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
 		$this->droitpret->dir_temp=DOL_DATA_ROOT."/droitpret/temp";
-		
-		// Module prelevement
-		$this->prelevement->dir_output=DOL_DATA_ROOT."/prelevement";
-		$this->prelevement->dir_temp  =DOL_DATA_ROOT."/prelevement/temp";
+
 		// Module webcal
 		$this->webcal->db->type=defined('PHPWEBCALENDAR_TYPE')?PHPWEBCALENDAR_TYPE:'__dolibarr_main_db_type__';
 		$this->webcal->db->host=defined('PHPWEBCALENDAR_HOST')?PHPWEBCALENDAR_HOST:'';

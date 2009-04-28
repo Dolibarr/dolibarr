@@ -58,7 +58,7 @@ if ($_POST["action"] == 'infotrans')
 
 	if ($_FILES['userfile']['name'] && basename($_FILES['userfile']['name'],".ps") == $bon->ref)
 	{
-		$dir = $conf->prelevement->dir_output.'/bon/';
+		$dir = $conf->prelevement->dir_bon;
 
 		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name'],1) > 0)
 		{

@@ -62,8 +62,22 @@ class modPrelevement extends DolibarrModules
 		$this->special = 0;
 		// Name of png file (without png) used for this module
 		$this->picto='payment';
-		// Dir
+		
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/prelevement";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/prelevement/temp";
+		
+		$r++;
+		$this->dirs[$r][0] = "bon";
+		$this->dirs[$r][1] = "/prelevement/bon";
+		
 		$this->dirs[0] = $conf->prelevement->dir_output . "/bon";
 
 		// Dependancies

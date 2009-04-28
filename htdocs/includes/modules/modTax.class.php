@@ -63,12 +63,23 @@ class modTax extends DolibarrModules
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
-        $this->picto='bill';
+    $this->picto='bill';
+    
+    // Data directories to create when module is enabled
+		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/taxes";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/taxes/temp";
 
 		// Config pages
 		$this->config_page_url = array("taxes.php");
 
-		// D�pendances
+		// Dependances
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
@@ -76,11 +87,6 @@ class modTax extends DolibarrModules
 
 		// Constantes
 		$this->const = array();
-
-		// Repertoires
-		$this->dirs = array();
-		$this->dirs[0] = $conf->tax->dir_output;
-		$this->dirs[1] = $conf->tax->dir_temp;
 
 		// Boites
 		$this->boxes = array();
