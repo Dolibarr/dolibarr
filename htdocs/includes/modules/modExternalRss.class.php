@@ -41,7 +41,7 @@ class modExternalRss extends DolibarrModules
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acc�s base
+	 *   \param      DB      handler d'acces base
 	 */
 	function modExternalRss($DB)
 	{
@@ -65,7 +65,7 @@ class modExternalRss extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("external_rss.php");
 
-		// D�pendances
+		// Dependances
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->phpmin = array(4,2,0);
@@ -74,13 +74,13 @@ class modExternalRss extends DolibarrModules
 		// Constantes
 		$this->const = array();
 
-		// R�pertoires
+		// Repertoires
 		$this->dirs = array();
 		$this->dirs[0] = $conf->externalrss->dir_temp;
 
 		// Boxes
 		$this->boxes = array();
-		// Les boites sont ajout�es lors de la configuration des flux
+		// Les boites sont ajoutees lors de la configuration des flux
 
 		// Permissions
 		$this->rights = array();
@@ -88,8 +88,8 @@ class modExternalRss extends DolibarrModules
 	}
 
 	/**
-	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *               Definit egalement les repertoires de donnees a creer pour ce module.
 	 */
 	function init()
 	{
@@ -106,7 +106,7 @@ class modExternalRss extends DolibarrModules
 			{
 				if (eregi('EXTERNAL_RSS_TITLE_([0-9]+)',$obj->name,$reg))
 				{
-					// Definie la boite si on a trouv�e une ancienne configuration
+					// Definie la boite si on a trouvee une ancienne configuration
 					$this->boxes[$reg[1]][0] = "(ExternalRSSInformations)";
 					$this->boxes[$reg[1]][1] = "box_external_rss.php";
 					$this->boxes[$reg[1]][2] = $reg[1]." (".$obj->value.")";
@@ -121,7 +121,7 @@ class modExternalRss extends DolibarrModules
 	}
 
 	/**
-	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
 	function remove()

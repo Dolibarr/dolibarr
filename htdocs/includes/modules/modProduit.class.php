@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,29 +99,29 @@ class modProduit extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 31; // id de la permission
 		$this->rights[$r][1] = 'Lire les produits/services'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 32; // id de la permission
 		$this->rights[$r][1] = 'Creer modifier les produits/services'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 33; // id de la permission
 		$this->rights[$r][1] = 'Commander les produits/services'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'commander';
 
 		$r++;
 		$this->rights[$r][0] = 34; // id de la permission
 		$this->rights[$r][1] = 'Supprimer les produits/services'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
@@ -145,8 +146,10 @@ class modProduit extends DolibarrModules
 		if (! empty($conf->stock->enabled)) $this->export_entities_array[$r]=array_merge ($this->export_entities_array[$r],array('p.stock'=>'product'));	
 		$this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration",'p.datec'=>'datecreation','p.tms'=>'datemodification');
 		if (! empty($conf->stock->enabled)) $this->export_alias_array[$r]=array_merge ($this->export_alias_array[$r],array('p.stock'=>'stock'));	
+		
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
+		$this->export_sql_end[$r] .=' AND p.entity = '.$conf->entity;
 
 
 		// Imports
@@ -176,8 +179,8 @@ class modProduit extends DolibarrModules
 
 
 	/**
-	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *               Definit egalement les repertoires de donnees a creer pour ce module.
 	 */
 	function init()
 	{
@@ -190,7 +193,7 @@ class modProduit extends DolibarrModules
 	}
 
 	/**
-	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
 	function remove()

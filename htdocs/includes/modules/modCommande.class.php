@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,8 @@ class modCommande extends DolibarrModules
 	 */
 	function modCommande($DB)
 	{
+		global $conf;
+		
 		$this->db = $DB ;
 		$this->numero = 25 ;
 
@@ -170,6 +172,7 @@ class modCommande extends DolibarrModules
 		$this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd, '.MAIN_DB_PREFIX.'societe as s)';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_commande';
+		$this->export_sql_end[$r] .=' AND s.entity = '.$conf->entity;
 	}
 
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,10 +42,12 @@ class modStock extends DolibarrModules
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acc�s base
+	 *   \param      DB      handler d'acces base
 	 */
 	function modStock($DB)
 	{
+		global $conf;
+		
 		$this->db = $DB ;
 		$this->numero = 52 ;
 
@@ -126,9 +129,11 @@ class modStock extends DolibarrModules
 		$this->export_fields_array[$r]=array('e.rowid'=>'IdWarehouse','e.label'=>'LabelWareHouse','e.label'=>'DescWareHouse','e.lieu'=>'LieuWareHouse','e.address'=>'Address','e.cp'=>'Zip','e.ville'=>'Town','p.rowid'=>"ProductId",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"Price",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification','ps.reel'=>'Stock');
 		$this->export_entities_array[$r]=array('e.rowid'=>'warehouse','e.label'=>'warehouse','e.label'=>'warehouse','e.lieu'=>'warehouse','e.address'=>'warehouse','e.cp'=>'warehouse','e.ville'=>'warehouse','p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product",'p.datec'=>'product','p.tms'=>'product','ps.reel'=>'stock');
 		$this->export_alias_array[$r]=array('e.rowid'=>'idwarehouse','e.label'=>'labelwarehouse','e.label'=>'descwarehouse','e.lieu'=>'lieuwarehouse','e.address'=>'addresswarehouse','e.cp'=>'zipwarehouse','e.ville'=>'townwarehouse','p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration",'p.datec'=>'datecreation','p.tms'=>'datemodification','ps.reel'=>'quantity');
+		
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
 		$this->export_sql_end[$r] .=' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid';
+		$this->export_sql_end[$r] .=' AND e.entity = '.$conf->entity;
 	}
 
 	/**
@@ -143,7 +148,7 @@ class modStock extends DolibarrModules
 	}
 
 	/**
-	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
 	function remove()

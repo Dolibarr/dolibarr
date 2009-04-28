@@ -33,7 +33,7 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 /**
  *	\class      modDroitPret
- *	\brief      Classe de description et activation du module DroitPr�t
+ *	\brief      Classe de description et activation du module DroitPret
  */
 
 class modDroitPret  extends DolibarrModules
@@ -100,8 +100,8 @@ class modDroitPret  extends DolibarrModules
 
 
 	/**
-	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *               Definit egalement les repertoires de donnees a creer pour ce module.
 	 */
 	function init()
 	{
@@ -111,7 +111,7 @@ class modDroitPret  extends DolibarrModules
 	}
 
 	/**
-	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
 	function remove()

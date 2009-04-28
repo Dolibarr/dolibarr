@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 
 /**
  \defgroup   service     Module service
- \brief      Module pour g�rer le suivi de services pr�d�finis
+ \brief      Module pour gerer le suivi de services predefinis
  */
 
 /**
@@ -44,7 +45,7 @@ class modService extends DolibarrModules
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acc�s base
+	 *   \param      DB      handler d'acces base
 	 */
 	function modService($DB)
 	{
@@ -78,29 +79,29 @@ class modService extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'service';
 
-		/* Pour l'instant droits sur services non g�r�s
+		/* Pour l'instant droits sur services non geres
 		 $this->rights[1][0] = 331; // id de la permission
 		 $this->rights[1][1] = 'Lire les services'; // libelle de la permission
-		 $this->rights[1][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-		 $this->rights[1][3] = 1; // La permission est-elle une permission par d�faut
+		 $this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
+		 $this->rights[1][3] = 1; // La permission est-elle une permission par defaut
 		 $this->rights[1][4] = 'lire';
 
 		 $this->rights[2][0] = 332; // id de la permission
-		 $this->rights[2][1] = 'Cr�er/modifier les services'; // libelle de la permission
-		 $this->rights[2][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-		 $this->rights[2][3] = 0; // La permission est-elle une permission par d�faut
+		 $this->rights[2][1] = 'Creer/modifier les services'; // libelle de la permission
+		 $this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
+		 $this->rights[2][3] = 0; // La permission est-elle une permission par defaut
 		 $this->rights[2][4] = 'creer';
 
 		 $this->rights[3][0] = 333; // id de la permission
 		 $this->rights[3][1] = 'Commander un service'; // libelle de la permission
-		 $this->rights[3][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-		 $this->rights[3][3] = 0; // La permission est-elle une permission par d�faut
+		 $this->rights[3][2] = 'w'; // type de la permission (deprecie a ce jour)
+		 $this->rights[3][3] = 0; // La permission est-elle une permission par defaut
 		 $this->rights[3][4] = 'commander';
 
 		 $this->rights[4][0] = 334; // id de la permission
 		 $this->rights[4][1] = 'Supprimer les services'; // libelle de la permission
-		 $this->rights[4][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
-		 $this->rights[4][3] = 0; // La permission est-elle une permission par d�faut
+		 $this->rights[4][2] = 'd'; // type de la permission (deprecie a ce jour)
+		 $this->rights[4][3] = 0; // La permission est-elle une permission par defaut
 		 $this->rights[4][4] = 'supprimer';
 		 */
 
@@ -108,12 +109,12 @@ class modService extends DolibarrModules
 
 
 	/**
-	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *               Definit egalement les repertoires de donnees a creer pour ce module.
 	 */
 	function init()
 	{
-		// Permissions et valeurs par d�faut
+		// Permissions et valeurs par defaut
 		$this->remove();
 
 		$sql = array();
@@ -122,7 +123,7 @@ class modService extends DolibarrModules
 	}
 
 	/**
-	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
 	function remove()

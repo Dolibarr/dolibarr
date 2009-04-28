@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,10 +42,12 @@ class modDeplacement extends DolibarrModules
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acc�s base
+	 *   \param      DB      handler d'acces base
 	 */
 	function modDeplacement($DB)
 	{
+		global $conf;
+		
 		$this->db = $DB ;
 		$this->numero = 75 ;
 
@@ -67,7 +70,7 @@ class modDeplacement extends DolibarrModules
 		$this->config_page_url = array();
 		$this->langfiles = array("companies","trips");
 		
-		// D�pendances
+		// Dependances
 		$this->depends = array();
 		$this->requiredby = array();
 
@@ -115,16 +118,18 @@ class modDeplacement extends DolibarrModules
 		$this->export_fields_array[$r]=array('d.rowid'=>"TripId",'d.type'=>"Type",'d.km'=>"FeesKilometersOrAmout",'d.note'=>'Note','s.nom'=>'ThirdParty');
 		$this->export_entities_array[$r]=array('d.rowid'=>"Trip",'d.type'=>"Trip",'d.km'=>"Trip",'d.note'=>'Trip','s.nom'=>'company');
 		$this->export_alias_array[$r]=array('d.rowid'=>"idtrip",'d.type'=>"type",'d.km'=>"km",'d.note'=>'note','s.nom'=>'name');
+		
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'deplacement as d, '.MAIN_DB_PREFIX.'societe as s';
 		$this->export_sql_end[$r] .=' WHERE d.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .=' AND s.entity = '.$conf->entity;
 		
 	}
 
 
 	/**
-	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *               Definit egalement les repertoires de donnees a creer pour ce module.
 	 */
 	function init()
 	{
@@ -137,7 +142,7 @@ class modDeplacement extends DolibarrModules
 	}
 
 	/**
-	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
 	function remove()

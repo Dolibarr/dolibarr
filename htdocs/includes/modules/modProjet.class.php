@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ class modProjet extends DolibarrModules
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acc�s base
+	 *   \param      DB      handler d'acces base
 	 */
 	function modProjet($DB)
 	{
@@ -75,27 +76,27 @@ class modProjet extends DolibarrModules
 
 		$this->rights[1][0] = 41; // id de la permission
 		$this->rights[1][1] = 'Lire les projets'; // libelle de la permission
-		$this->rights[1][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[1][3] = 1; // La permission est-elle une permission par d�faut
+		$this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 42; // id de la permission
 		$this->rights[2][1] = 'Creer/modifier les projets'; // libelle de la permission
-		$this->rights[2][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[2][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[2][4] = 'creer';
 
 		$this->rights[3][0] = 44; // id de la permission
 		$this->rights[3][1] = 'Supprimer les projets'; // libelle de la permission
-		$this->rights[3][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[3][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[3][2] = 'd'; // type de la permission (deprecie a ce jour)
+		$this->rights[3][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[3][4] = 'supprimer';
 	}
 
 
 	/**
-	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *               Definit egalement les repertoires de donnees a creer pour ce module.
 	 */
 	function init()
 	{
@@ -106,7 +107,7 @@ class modProjet extends DolibarrModules
 	}
 
 	/**
-	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
 	function remove()
