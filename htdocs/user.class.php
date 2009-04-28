@@ -490,9 +490,12 @@ class User extends CommonObject
 
 		// D'abord les droits utilisateurs
 		$sql = "SELECT r.module, r.perms, r.subperms";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as r";
-		$sql.= " WHERE r.id = ur.fk_id AND ur.fk_user= ".$this->id." AND r.perms IS NOT NULL";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
+		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
+		$sql.= " WHERE r.id = ur.fk_id";
 		$sql.= " AND r.entity = ".$conf->entity;
+		$sql.= " AND ur.fk_user= ".$this->id;
+		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".addslashes($moduletag)."'";
 
 		dol_syslog('User::getRights sql='.$sql, LOG_DEBUG);

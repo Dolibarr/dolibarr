@@ -41,6 +41,10 @@ $langs->load("propal");
 $langs->load("bills");
 $langs->load("contracts");
 
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'ecm','');
+
 // Load permissions
 $user->getrights('ecm');
 

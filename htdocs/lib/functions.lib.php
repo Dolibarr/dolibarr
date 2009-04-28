@@ -1357,6 +1357,10 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 	{
 		if (! $user->rights->banque->cheque) $readok=0;
 	}
+	else if ($feature == 'ecm')
+	{
+		if (! $user->rights->ecm->download) $readok=0;
+	}
 	else if (! empty($feature2))	// This should be used for future changes
 	{
 		if (empty($user->rights->$feature->$feature2->lire)

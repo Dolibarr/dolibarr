@@ -426,7 +426,7 @@ class Menubase
 				if ($menu['enabled'])
 				{
 					$enabled = $this->verifCond($menu['enabled']);
-					//print "verifCond rowid=".$menu['rowid']." ".$menu['action'].":".$constraint."<br>\n";
+					//print "verifCond rowid=".$menu['rowid']." ".$menu['enabled'].":".$enabled."<br>\n";
 				}
 
 				if ($menu['rowid'] != $oldrowid && $oldrowid) $b++;	// Break on new entry
@@ -461,12 +461,14 @@ class Menubase
 
 		// Get menutopid
 		$menutopid='';
+		
 		$sql = "SELECT m.rowid, m.titre, m.type";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
 		$sql.= " WHERE m.mainmenu = '".$mainmenu."'";
 		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
 		$sql.= " AND m.entity = ".$conf->entity;
 		$sql.= " AND type = 'top'";
+		
 		// It should have only one response
 		$resql = $this->db->query($sql);
 		$menutop = $this->db->fetch_object($resql);
@@ -546,7 +548,7 @@ class Menubase
 		{
 			$rights = true;
 		}
-
+		
 		return $rights;
 	}
 
