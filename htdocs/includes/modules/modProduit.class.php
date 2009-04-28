@@ -149,7 +149,7 @@ class modProduit extends DolibarrModules
 		
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
-		$this->export_sql_end[$r] .=' AND p.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' WHERE p.entity = '.$conf->entity;
 
 
 		// Imports
