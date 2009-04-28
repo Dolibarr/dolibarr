@@ -60,10 +60,35 @@ class modFournisseur extends DolibarrModules
 		$this->special = 0;
 		$this->picto='company';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/fournisseur";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/fournisseur/temp";
+		
+		$r++
+		$this->dirs[$r][0] = "commande";
+		$this->dirs[$r][1] = "/fournisseur/commande";
+		
+		$r++;
+		$this->dirs[$r][0] = "commande_temp";
+		$this->dirs[$r][1] = "/fournisseur/commande/temp";
+		
+		$r++
+		$this->dirs[$r][0] = "facture";
+		$this->dirs[$r][1] = "/fournisseur/facture";
+		
+		$r++;
+		$this->dirs[$r][0] = "commande_temp";
+		$this->dirs[$r][1] = "/fournisseur/facture/temp";
 
-		// D�pendances
+
+		// Dependances
 		$this->depends = array("modSociete");
 		$this->requiredby = array();
 		$this->langfiles = array("bills","companies","suppliers");
@@ -256,11 +281,6 @@ class modFournisseur extends DolibarrModules
 	function init()
 	{
 		$this->remove();
-
-		// Dir
-		$this->dirs[0] = $conf->fournisseur->dir_output;
-		//$this->dirs[1] = $conf->fournisseur->commande->dir_output;
-		//$this->dirs[2] = $conf->fournisseur->facture->dir_output;
 
 		$sql = array();
 

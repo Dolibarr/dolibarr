@@ -69,7 +69,7 @@ if ($_POST['sendit'] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	$facture = new FactureFournisseur($db);
 	if ($facture->fetch($facid))
     {
-        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
+        $upload_dir = $conf->fournisseur->dir_facture.'/'.get_exdir($facture->id,2).$facture->id;
 
         if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
@@ -98,7 +98,7 @@ if ($action=='delete')
    	$facture = new FactureFournisseur($db);
 	if ($facture->fetch($facid))
     {
-        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
+        $upload_dir = $conf->fournisseur->dir_facture.'/'.get_exdir($facture->id,2).$facture->id;
 
         $file = $upload_dir . '/' . urldecode($_GET['urlfile']);
     	dol_delete_file($file);
@@ -120,7 +120,7 @@ if ($facid > 0)
     {
         $facture->fetch_fournisseur();
 
-		$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
+		$upload_dir = $conf->fournisseur->dir_facture.'/'.get_exdir($facture->id,2).$facture->id;
 
 		$head = facturefourn_prepare_head($facture);
 		dol_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'));

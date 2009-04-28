@@ -70,6 +70,10 @@ class modAdherent extends DolibarrModules
         $r++;
         $this->dirs[$r][0] = "temp";
         $this->dirs[$r][1] = "/adherent/temp";
+        
+        $r++;
+        $this->dirs[$r][0] = "photos";
+        $this->dirs[$r][1] = "/adherent/photos";
 
         // Config pages
         //-------------
@@ -230,12 +234,6 @@ class modAdherent extends DolibarrModules
      */
     function init()
     {
-        global $conf;
-
-        // Dir
-        $this->dirs[0] = $conf->adherent->dir_output;
-        $this->dirs[1] = $conf->adherent->dir_output."/photos";
-        $this->dirs[2] = $conf->adherent->dir_export;
 
         $sql = array();
 

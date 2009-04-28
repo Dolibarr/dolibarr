@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,10 +58,18 @@ class modDon  extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/dons";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/dons/temp";
 
-		// D�pendances
+		// Dependances
 		$this->depends = array();
 		$this->requiredby = array();
 

@@ -225,7 +225,7 @@ function supplier_order_delete_preview($db, $propalid)
 	$client = new Societe($db);
 	$client->fetch($comfourn->socid);
 
-	if ($conf->fournisseur->commande->dir_output)
+	if ($conf->fournisseur->dir_commande)
 	{
 		$comfournref = sanitizeFileName($comfourn->ref);
 		$dir = $conf->commande->dir_output . "/" . $comfournref ;

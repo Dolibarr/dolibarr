@@ -140,7 +140,7 @@ if ($resql_c)
 	      $height = 300;
 	      if (sizeof($gdatas) > 2)
 		{
-		  $file= DOL_DATA_ROOT."/energie/graph/day.".$obj_c->rowid.".png";
+		  $file = $conf->energie->dir_graph."/day.".$obj_c->rowid.".png";
 
 		  $group = new PlotGroup;
 		  $group->setPadding(30, 10, NULL, NULL);
@@ -176,7 +176,7 @@ if ($resql_c)
 		}
 	      if (sizeof($gmdatas))
 		{
-		  $file= DOL_DATA_ROOT."/energie/graph/month.".$obj_c->rowid.".png";
+		  $file = $conf->energie->dir_graph."/month.".$obj_c->rowid.".png";
 
 		  $group = new PlotGroup;
 		  $group->setPadding(30, 10, NULL, NULL);
@@ -213,7 +213,7 @@ if ($resql_c)
 		}
 	      if (sizeof($gwdatas))
 		{
-		  $file= DOL_DATA_ROOT."/energie/graph/week.".$obj_c->rowid.".png";
+		  $file = $conf->energie->dir_graph."/week.".$obj_c->rowid.".png";
 
 		  $group = new PlotGroup;
 		  $group->setPadding(30, 10, NULL, NULL);
@@ -252,7 +252,7 @@ if ($resql_c)
 	     
 	      if (sizeof($gydatas))
 		{
-		  $file= DOL_DATA_ROOT."/energie/graph/year.".$obj_c->rowid.".png";
+		  $file = $conf->energie->dir_graph."/year.".$obj_c->rowid.".png";
 
 		  $group = new PlotGroup;
 		  $group->setPadding(30, 10, NULL, NULL);
@@ -335,7 +335,7 @@ if ($resql_g)
 	  $height = 300;
 
 	  // Hebdo
-	  $file= DOL_DATA_ROOT."/energie/graph/groupe.week.".$row_g[0].".png";
+	  $file = $conf->energie->dir_graph."/groupe.week.".$row_g[0].".png";
 	  
 	  $group = new PlotGroup;
 	  $group->setPadding(30, 10, NULL, NULL);
@@ -379,7 +379,7 @@ if ($resql_g)
 	  //
 	  //
 	  //
-	  $file= DOL_DATA_ROOT."/energie/graph/groupe.month.".$row_g[0].".png";	  
+	  $file = $conf->energie->dir_graph."/groupe.month.".$row_g[0].".png";	  
 	  $group = new PlotGroup;
 	  $group->setPadding(30, 10, NULL, NULL);
 	  
@@ -424,7 +424,7 @@ if ($resql_g)
 	  //
 	  //
 	  //
-	  $file= DOL_DATA_ROOT."/energie/graph/groupe.year.".$row_g[0].".png";
+	  $file = $conf->energie->dir_graph."/groupe.year.".$row_g[0].".png";
 	  $group = new PlotGroup;
 	  $group->setPadding(30, 10, NULL, NULL);
 	  

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,9 +60,16 @@ class modDocument extends DolibarrModules
 		$this->special = 3;
 		$this->picto='dir';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
-		$this->dirs[0] = DOL_DATA_ROOT."/ged";
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/ged";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/ged/temp";
 
 		// Config pages
 		//$this->config_page_url = array("document.php");

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>
+/* Copyright (C) 2007      Patrick Raguin    <patrick.raguin@gmail.com>
+ * Copyright (C) 2005-2009 Regis Houssin     <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,8 +60,10 @@ class modDroitPret  extends DolibarrModules
 		// Dir
 		global $dolibarr_smarty_compile;
 		global $dolibarr_smarty_cache;
-		$this->dirs = array($dolibarr_smarty_compile,
-							$dolibarr_smarty_cache);
+		$this->dirs = array();
+		
+	  $this->dirs[0] = $dolibarr_smarty_compile;
+	  $this->dirs[1] = $dolibarr_smarty_cache;
 
 		// Dependances
 		$this->depends = array();
@@ -74,9 +77,21 @@ class modDroitPret  extends DolibarrModules
 		$this->config_page_url = array("droitpret.php");
 
 		// Constantes
-		$this->const=array(0=>array('PRODUCT_CANVAS_ABILITY','chaine',1,'This is a constant',1),
-						   1=>array('MAIN_NEED_SMARTY','chaine',1,'Need smarty',0)
-						   );
+		$this->const=array();
+		$r=0;
+		
+		$this->const[$r][0] = "PRODUCT_CANVAS_ABILITY";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = 1;
+		$this->const[$r][3] = 'This is a constant';
+		$this->const[$r][4] = 1;
+		
+		$r++;
+		$this->const[$r][0] = "MAIN_NEED_SMARTY";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = 1;
+		$this->const[$r][3] = 'Need smarty';
+		$this->const[$r][4] = 0;
 
 		// Boxes
 		$this->boxes = array();
@@ -84,18 +99,20 @@ class modDroitPret  extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'droitpret';
+		$r=0;
 
-		$this->rights[1][0] = 2200;
-		$this->rights[1][1] = 'Lire les droits de prets';
-		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
-		$this->rights[1][4] = 'lire';
-
-		$this->rights[2][0] = 2201;
-		$this->rights[2][1] = 'Creer/modifier les droits de prets';
-		$this->rights[2][2] = 'w';
-		$this->rights[2][3] = 0;
-		$this->rights[2][4] = 'creer';
+		$this->rights[$r][0] = 2200;
+		$this->rights[$r][1] = 'Lire les droits de prets';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'lire';
+		
+		$r++;
+		$this->rights[$r][0] = 2201;
+		$this->rights[$r][1] = 'Creer/modifier les droits de prets';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'creer';
 	}
 
 

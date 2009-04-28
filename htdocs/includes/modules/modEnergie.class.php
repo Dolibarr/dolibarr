@@ -62,10 +62,22 @@ class modEnergie extends DolibarrModules
 		$this->special = 3;
 		$this->picto='energie';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/energie";
+		
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/energie/temp";
+		
+		$r++;
+		$this->dirs[$r][0] = "graph";
+		$this->dirs[$r][1] = "/energie/graph";
 
-		// D�pendances
+		// Dependances
 		$this->depends = array();
 
 		// Config pages
@@ -95,7 +107,7 @@ class modEnergie extends DolibarrModules
 	function init()
 	{
 		global $conf;
-		// Permissions et valeurs par d�faut
+		// Permissions et valeurs par defaut
 		$this->remove();
 
 		$sql = array();

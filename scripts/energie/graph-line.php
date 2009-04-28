@@ -149,7 +149,7 @@ if ($resql_c)
 		  $width = 750;
 		  $height = 300;
       
-		  $file= DOL_DATA_ROOT."/energie/graph/all.".$obj_c->rowid.".png";
+		  $file = $conf->energie->dir_graph."/all.".$obj_c->rowid.".png";
 
 		  $group = new PlotGroup;
 		  $group->setPadding(30, 10, NULL, NULL);
@@ -173,7 +173,7 @@ if ($resql_c)
 
 		  $width = 300;
 		  $height = 90;
-		  $file= DOL_DATA_ROOT."/energie/graph/small-all.".$obj_c->rowid.".png";
+		  $file = $conf->energie->dir_graph."/small-all.".$obj_c->rowid.".png";
 
 		  $group = new PlotGroup;
 		  $group->setPadding(30, 10, NULL, NULL);

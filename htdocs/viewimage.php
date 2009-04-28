@@ -163,7 +163,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->fournisseur->commande->dir_temp.'/'.$original_file;
+        $original_file=$conf->fournisseur->dir_commande_temp.'/'.$original_file;
     }
     
     // Wrapping pour les images des stats factures
@@ -183,7 +183,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->fournisseur->facture->dir_temp.'/'.$original_file;
+        $original_file=$conf->fournisseur->dir_facture_temp.'/'.$original_file;
     }
     
     // Wrapping pour les images des stats expeditions
@@ -236,14 +236,14 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=DOL_DATA_ROOT.'/graph/telephonie/'.$original_file;
+        $original_file=$conf->telephonie->dir_graph.'/'.$original_file;
     }
 
     // Wrapping pour les graph energie
     elseif ($modulepart == 'energie')
     {
       $accessallowed=1;
-      $original_file=DOL_DATA_ROOT.'/energie/graph/'.$original_file;
+      $original_file=$conf->energie->dir_graph.'/'.$original_file;
     }
 
     // Wrapping pour les graph bank
@@ -278,14 +278,14 @@ if ($modulepart)
     elseif ($modulepart == 'graph_fourn')
     {
       $accessallowed=1;
-      $original_file=DOL_DATA_ROOT.'/fournisseur/temp/'.$original_file;
+      $original_file=$conf->fournisseur->dir_temp.'/'.$original_file;
     }
 
     // Wrapping pour les graph des produits
     elseif ($modulepart == 'graph_product')
     {
       $accessallowed=1;
-      $original_file=DOL_DATA_ROOT.'/product/temp/'.$original_file;
+      $original_file=$conf->produit->dir_temp.'/'.$original_file;
     }
 
     // Wrapping pour les code barre

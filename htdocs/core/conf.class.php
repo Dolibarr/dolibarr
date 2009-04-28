@@ -174,22 +174,13 @@ class Conf
 		$this->tax->dir_output=DOL_DATA_ROOT."/taxes";
 		$this->tax->dir_temp  =DOL_DATA_ROOT."/taxes/temp";
 
-		// Module don
-		$this->don->dir_output=DOL_DATA_ROOT."/dons";
-		$this->don->dir_temp  =DOL_DATA_ROOT."/dons/temp";
-		// Module fournisseur
-		$this->fournisseur->dir_output=DOL_DATA_ROOT."/fournisseur";
-		$this->fournisseur->dir_temp=DOL_DATA_ROOT."/fournisseur/temp";
-		$this->fournisseur->commande->dir_output=DOL_DATA_ROOT."/fournisseur/commande";
-		$this->fournisseur->commande->dir_temp  =DOL_DATA_ROOT."/fournisseur/commande/temp";
-		$this->fournisseur->facture->dir_output =DOL_DATA_ROOT."/fournisseur/facture";
-		$this->fournisseur->facture->dir_temp   =DOL_DATA_ROOT."/fournisseur/facture/temp";
 		// Module ficheinter
 		$this->fichinter->dir_output=DOL_DATA_ROOT."/ficheinter";
 		$this->fichinter->dir_temp  =DOL_DATA_ROOT."/ficheinter/temp";
 		if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $this->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 		// Module produit
 		$this->produit->MultiPricesEnabled=defined("PRODUIT_MULTIPRICES")?PRODUIT_MULTIPRICES:0;
+		
 		// Module droipret
 		$this->droitpret->cat=defined('DROITPRET_CAT')?DROITPRET_CAT:'';
 		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
@@ -229,9 +220,6 @@ class Conf
 		if (! defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
 		if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $this->propale->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 		
-		// Module telephonie
-		$this->telephonie->dir_output=DOL_DATA_ROOT."/telephonie";
-		$this->telephonie->dir_temp  =DOL_DATA_ROOT."/telephonie/temp";
 		// Module domaine
 		$this->domaine->enabled=0;
 		// Module voyage

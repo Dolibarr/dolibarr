@@ -85,17 +85,20 @@ class modCommande extends DolibarrModules
 
 		// Constantes
 		$this->const = array();
-		$this->const[0][0] = "COMMANDE_ADDON_PDF";
-		$this->const[0][1] = "chaine";
-		$this->const[0][2] = "einstein";
-		$this->const[0][3] = 'Nom du gestionnaire de generation des commandes en PDF';
-		$this->const[0][4] = 0;
-
-		$this->const[1][0] = "COMMANDE_ADDON";
-		$this->const[1][1] = "chaine";
-		$this->const[1][2] = "mod_commande_marbre";
-		$this->const[1][3] = 'Nom du gestionnaire de numerotation des commandes';
-		$this->const[1][4] = 0;
+		$r=0;
+		
+		$this->const[$r][0] = "COMMANDE_ADDON_PDF";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "einstein";
+		$this->const[$r][3] = 'Nom du gestionnaire de generation des commandes en PDF';
+		$this->const[$r][4] = 0;
+		
+		$r++;
+		$this->const[$r][0] = "COMMANDE_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_commande_marbre";
+		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des commandes';
+		$this->const[$r][4] = 0;
 
 		// Boites
 		$this->boxes = array();

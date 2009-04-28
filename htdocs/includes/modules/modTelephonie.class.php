@@ -21,7 +21,7 @@
 
 /**
  \defgroup   telephonie  Module telephonie
- \brief      Module pour g�rer la t�l�phonie
+ \brief      Module pour gerer la telephonie
  */
 
 /**
@@ -63,8 +63,49 @@ class modTelephonie extends DolibarrModules
 		$this->special = 3;
 		$this->picto='phoning';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/telephonie";
+		$r++;
+		$this->dirs[$r][0] = "temp";
+		$this->dirs[$r][1] = "/telephonie/temp";
+		$r++;
+		$this->dirs[$r][0] = "graph";
+		$this->dirs[$r][1] = "/telephonie/graph";
+		$r++;
+		$this->dirs[$r][0] = "logs";
+		$this->dirs[$r][1] = "/telephonie/logs";
+		$r++;
+		$this->dirs[$r][0] = "client";
+		$this->dirs[$r][1] = "/telephonie/client";
+		$r++;
+		$this->dirs[$r][0] = "rapports";
+		$this->dirs[$r][1] = "/telephonie/rapports";
+		$r++;
+		$this->dirs[$r][0] = "ligne";
+		$this->dirs[$r][1] = "/telephonie/ligne";
+		$r++;
+		$this->dirs[$r][0] = "ligne_commande";
+		$this->dirs[$r][1] = "/telephonie/ligne/commande";
+		$r++;
+		$this->dirs[$r][0] = "ligne_commande_retour";
+		$this->dirs[$r][1] = "/telephonie/ligne/commande/retour";
+		$r++;
+		$this->dirs[$r][0] = "ligne_commande_retour_traite";
+		$this->dirs[$r][1] = "/telephonie/ligne/commande/retour/traite";
+		$r++;
+		$this->dirs[$r][0] = "cdr";
+		$this->dirs[$r][1] = "/telephonie/cdr";
+		$r++;
+		$this->dirs[$r][0] = "cdr_archive";
+		$this->dirs[$r][1] = "/telephonie/cdr_archive";
+		$r++;
+		$this->dirs[$r][0] = "cdr_atraiter";
+		$this->dirs[$r][1] = "/telephonie/cdr/atraiter";
+		
 
 		// Dependances
 		$this->depends = array();
@@ -274,18 +315,6 @@ class modTelephonie extends DolibarrModules
 		// Permissions
 		$this->remove();
 
-		// Dir
-		$this->dirs[0] = $conf->telephonie->dir_output;
-		$this->dirs[1] = $conf->telephonie->dir_output."/ligne";
-		$this->dirs[2] = $conf->telephonie->dir_output."/ligne/commande" ;
-		$this->dirs[3] = $conf->telephonie->dir_output."/logs" ;
-		$this->dirs[4] = $conf->telephonie->dir_output."/client" ;
-		$this->dirs[5] = $conf->telephonie->dir_output."/rapports" ;
-		$this->dirs[6] = $conf->telephonie->dir_output."/ligne/commande/retour" ;
-		$this->dirs[7] = $conf->telephonie->dir_output."/cdr" ;
-		$this->dirs[8] = $conf->telephonie->dir_output."/cdr/archive" ;
-		$this->dirs[9] = $conf->telephonie->dir_output."/cdr/atraiter" ;
-		$this->dirs[10] = $conf->telephonie->dir_output."/ligne/commande/retour/traite" ;
 		//
 		$this->load_tables();
 		//
