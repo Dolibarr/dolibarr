@@ -168,8 +168,10 @@ class Conf
 		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
 		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
 
-		// Exception: This dir does are not the name of module. So we keep exception here
+		// Exception: Some dir are not the name of module. So we keep exception here
 		// for backward compatibility
+
+		// Module RSS
 		$this->externalrss->dir_output=$rootfordata."/rss";
 		$this->externalrss->dir_temp=$rootfordata."/rss/temp";
 
@@ -203,10 +205,6 @@ class Conf
 		$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";
 		$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 		$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
-		// Module ficheinter
-		$this->fichinter->dir_output=$rootfordata."/ficheinter";
-		$this->fichinter->dir_temp  =$rootfordata."/ficheinter/temp";
-		if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $this->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 		// Module produit
 		$this->produit->MultiPricesEnabled=defined("PRODUIT_MULTIPRICES")?PRODUIT_MULTIPRICES:0;
 		// Module service
@@ -241,11 +239,8 @@ class Conf
 		$this->mantis->db->user=defined('PHPMANTIS_USER')?PHPMANTIS_USER:'';
 		$this->mantis->db->pass=defined('PHPMANTIS_PASS')?PHPMANTIS_PASS:'';
 		$this->mantis->db->name=defined('PHPMANTIS_DBNAME')?PHPMANTIS_DBNAME:'';
-		// Module facture
-		if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $this->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par defaut
 		// Module propal
 		if (! defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
-		if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $this->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 		// Module voyage
 		$this->voyage->enabled=0;
 		// Module actions
