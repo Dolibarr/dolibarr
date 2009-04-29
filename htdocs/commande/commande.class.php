@@ -246,8 +246,13 @@ class Commande extends CommonObject
 			$num = $this->ref;
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=$user->id";
-		$sql .= " WHERE rowid = $this->id AND fk_statut = 0";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+		$sql.= " SET ref = '".$num."'";
+		$sql.= ", fk_statut = 1";
+		$sql.= ", date_valid=".$this->db->idate(mktime());
+		$sql.= ", fk_user_valid = ".$user->id;
+		$sql.= " WHERE rowid = ".$this->id;
+		$sql.= " AND fk_statut = 0";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -343,8 +348,9 @@ class Commande extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 0";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+		$sql.= " SET fk_statut = 0";
+		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Commande::set_draft sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
@@ -432,8 +438,10 @@ class Commande extends CommonObject
 		{
 			$this->db->begin();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = -1';
-			$sql .= " WHERE rowid = $this->id AND fk_statut = 1 ;";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+			$sql.= " SET fk_statut = -1";
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND fk_statut = 1";
 
 			if ($this->db->query($sql) )
 			{
@@ -505,20 +513,24 @@ class Commande extends CommonObject
 
 		$this->db->begin();
 
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
-		$sql.= ' ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client,';
-		$sql.= ' model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison,';
-		$sql.= ' remise_absolue, remise_percent)';
-		$sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate(gmmktime()).", ".$user->id.', '.$this->projetid.',';
-		$sql.= ' '.$this->db->idate($this->date_commande).',';
-		$sql.= ' '.($this->source>=0 && $this->source != '' ?$this->source:'null').', ';
-		$sql.= " '".addslashes($this->note)."', ";
-		$sql.= " '".addslashes($this->note_public)."', ";
-		$sql.= " '".addslashes($this->ref_client)."', '".$this->modelpdf."', '".$this->cond_reglement_id."', '".$this->mode_reglement_id."',";
-		$sql.= " ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null").",";
-		$sql.= " ".($this->adresse_livraison_id>0?$this->adresse_livraison_id:'NULL').",";
-		$sql.= " ".($this->remise_absolue>0?$this->remise_absolue:'NULL').",";
-		$sql.= " '".$this->remise_percent."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
+		$sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client";
+		$sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison";
+		$sql.= ", remise_absolue, remise_percent";
+		$sql.= ", entity";
+		$sql.= ")";
+		$sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate(gmmktime()).", ".$user->id.", ".$this->projetid;
+		$sql.= ", ".$this->db->idate($this->date_commande);
+		$sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
+		$sql.= ", '".addslashes($this->note)."'";
+		$sql.= ", '".addslashes($this->note_public)."'";
+		$sql.= ", '".addslashes($this->ref_client)."', '".$this->modelpdf."', '".$this->cond_reglement_id."', '".$this->mode_reglement_id."'";
+		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
+		$sql.= ", ".($this->adresse_livraison_id>0?$this->adresse_livraison_id:'NULL');
+		$sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
+		$sql.= ", '".$this->remise_percent."'";
+		$sql.= ", ".$conf->entity;
+		$sql.= ")";
 
 		dol_syslog("Commande::create sql=".$sql);
 		$resql=$this->db->query($sql);
@@ -879,6 +891,8 @@ class Commande extends CommonObject
 	 */
 	function fetch($id,$ref='')
 	{
+		global $conf;
+		
 		// Check parameters
 		if (empty($id) && empty($ref)) return -1;
 
@@ -895,8 +909,9 @@ class Commande extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON (c.fk_cond_reglement = cr.rowid)';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON (c.fk_mode_reglement = p.id)';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'co_pr as cp ON (cp.fk_commande = c.rowid)';
-		if ($ref) $sql.= " WHERE c.ref='".$ref."'";
-		else $sql.= " WHERE c.rowid=".$id;
+		$sql.= " WHERE c.entity = ".$conf->entity;
+		if ($ref) $sql.= " AND c.ref='".$ref."'";
+		else $sql.= " AND c.rowid=".$id;
 
 		dol_syslog("Commande::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql) ;
@@ -1296,7 +1311,7 @@ class Commande extends CommonObject
 
 			$sql = "SELECT fk_product, qty";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql.= " WHERE rowid = '$idligne'";
+			$sql.= " WHERE rowid = ".$idligne;
 
 			$result = $this->db->query($sql);
 			if ($result)
@@ -1493,24 +1508,22 @@ class Commande extends CommonObject
 	 */
 	function liste_array ($brouillon=0, $user='')
 	{
+		global $conf;
+		
 		$ga = array();
 
-		$sql = "SELECT rowid, ref FROM ".MAIN_DB_PREFIX."commande";
+		$sql = "SELECT rowid, ref";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande";
+		$sql.= " WHERE entity = ".$conf->entity;
 
 		if ($brouillon)
 		{
-			$sql .= " WHERE fk_statut = 0";
-			if ($user)
-			{
-				$sql .= " AND fk_user_author".$user;
-			}
+			$sql.= " AND fk_statut = 0";
+			if ($user) $sql.= " AND fk_user_author".$user;
 		}
 		else
 		{
-			if ($user)
-			{
-				$sql .= " WHERE fk_user_author".$user;
-			}
+			if ($user) $sql.= " AND fk_user_author".$user;
 		}
 
 		$sql .= " ORDER BY date_commande DESC";
@@ -1780,19 +1793,19 @@ class Commande extends CommonObject
 
 		$this->db->begin();
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = $this->id ;";
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
 		if (! $this->db->query($sql) )
 		{
 			$err++;
 		}
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = $this->id;";
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
 		if (! $this->db->query($sql) )
 		{
 			$err++;
 		}
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."co_pr WHERE fk_commande = $this->id;";
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."co_pr WHERE fk_commande = ".$this->id;
 		if (! $this->db->query($sql) )
 		{
 			$err++;
@@ -1862,15 +1875,13 @@ class Commande extends CommonObject
 
 		$sql = "SELECT c.rowid, c.date_creation as datec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = " AND";
 		}
-		$sql.= $clause." c.fk_soc = s.rowid";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= $clause." c.entity = ".$conf->entity;
 		$sql.= " AND (c.fk_statut BETWEEN 1 AND 2 or (c.fk_statut = 3 AND c.facture = 0))";
 		if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 
@@ -2074,13 +2085,19 @@ class Commande extends CommonObject
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs;
+		global $user,$langs,$conf;
 
 		dol_syslog("Commande::initAsSpecimen");
 
 		// Charge tableau des id de societe socids
 		$socids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql.= " WHERE client = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " LIMIT 10";
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2097,7 +2114,12 @@ class Commande extends CommonObject
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " WHERE envente = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2169,7 +2191,7 @@ class Commande extends CommonObject
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= " ".$clause." s.entity = ".$conf->entity;
+		$sql.= " ".$clause." co.entity = ".$conf->entity;
 
 		$resql=$this->db->query($sql);
 		if ($resql)

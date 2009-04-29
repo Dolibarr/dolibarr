@@ -56,11 +56,14 @@ class ModelePDFCommandes extends FPDF
      */
     function liste_modeles($db)
     {
+    	global $conf;
+    	
         $type='order';
         $liste=array();
-        $sql ="SELECT nom as id, nom as lib";
-        $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
-        $sql.=" WHERE type = '".$type."'";
+        $sql = "SELECT nom as id, nom as lib";
+        $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+        $sql.= " WHERE type = '".$type."'";
+        $sql.= " AND entity = ".$conf->entity;
 
         $resql = $db->query($sql);
         if ($resql)

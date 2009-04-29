@@ -538,11 +538,11 @@ class Propal extends CommonObject
 		$sql.= ", ".$this->remise.", ".($this->remise_percent?$this->remise_percent:'null').", ".($this->remise_absolue?$this->remise_absolue:'null');
 		$sql.= ", 0, 0,".$this->db->idate($this->datep).", ".$this->db->idate(mktime()).", '".$this->ref;
 		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
-		$sql.= ", '".addslashes($this->note);
-		$sql.= ", '".addslashes($this->note_public)."',";
-		$sql.= ", '".$this->modelpdf."',".$this->db->idate($this->fin_validite);
+		$sql.= ", '".addslashes($this->note)."'";
+		$sql.= ", '".addslashes($this->note_public)."'";
+		$sql.= ", '".$this->modelpdf."',".$this->db->idate($this->fin_validite)."'";
 		$sql.= ", ".$this->cond_reglement_id.", ".$this->mode_reglement_id;
-		$sql.= ", '".addslashes($this->ref_client);
+		$sql.= ", '".addslashes($this->ref_client)."'";
 		$sql.= ", ".($this->date_livraison!=''?$this->db->idate($this->date_livraison):'null');
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
@@ -995,7 +995,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      D�finit une adresse de livraison
+	 *      \brief      Definit une adresse de livraison
 	 *      \param      user        		Objet utilisateur qui modifie
 	 *      \param      adresse_livraison      Adresse de livraison
 	 *      \return     int         		<0 si ko, >0 si ok

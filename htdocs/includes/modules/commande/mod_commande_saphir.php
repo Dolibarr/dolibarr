@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008 Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
+/* Copyright (C) 2003-2007 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin               <regis@dolibarr.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 /**
 	\file       htdocs/includes/modules/commande/mod_commande_saphir.php
 	\ingroup    commande
-	\brief      Fichier contenant la classe du mod�le de num�rotation de r�f�rence de commande Saphir
+	\brief      Fichier contenant la classe du modele de numerotation de reference de commande Saphir
 	\version    $Id$
 */
 
@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php
 
 /**
 	\class      mod_commande_saphir
-	\brief      Classe du mod�le de num�rotation de r�f�rence de commande Saphir
+	\brief      Classe du modele de numerotation de reference de commande Saphir
 */
 class mod_commande_saphir extends ModeleNumRefCommandes
 {
@@ -41,7 +41,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	var $nom = 'Saphir';
 
 
-    /**     \brief      Renvoi la description du modele de num�rotation
+    /**     \brief      Renvoi la description du modele de numerotation
      *      \return     string      Texte descripif
      */
 	function info()
@@ -78,7 +78,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de num�rotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
