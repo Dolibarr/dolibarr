@@ -1150,7 +1150,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 	$result=$fac->fetch($_POST['facid']);
 	if ($result)
 	{
-		$ref = sanitizeFileName($fac->ref);
+		$ref = dol_sanitizeFileName($fac->ref);
 		$file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 		if (is_readable($file))
@@ -3338,8 +3338,8 @@ else
 				/*
 				 * Documents générés
 				 */
-				$filename=sanitizeFileName($fac->ref);
-				$filedir=$conf->facture->dir_output . '/' . sanitizeFileName($fac->ref);
+				$filename=dol_sanitizeFileName($fac->ref);
+				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($fac->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
 				$genallowed=$user->rights->facture->creer;
 				$delallowed=$user->rights->facture->supprimer;
@@ -3474,7 +3474,7 @@ else
 			 */
 			if ($_GET['action'] == 'presend')
 			{
-				$ref = sanitizeFileName($fac->ref);
+				$ref = dol_sanitizeFileName($fac->ref);
 				$file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 				// Construit PDF si non existant
@@ -3541,7 +3541,7 @@ else
 
 			if ($_GET['action'] == 'prerelance')
 			{
-				$ref = sanitizeFileName($fac->ref);
+				$ref = dol_sanitizeFileName($fac->ref);
 				$file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 				// Construit PDF si non existant
@@ -3787,8 +3787,8 @@ else
 					print '</td>';
 
 					print '<td width="16" align="right" class="nobordernopadding">';
-					$filename=sanitizeFileName($objp->facnumber);
-					$filedir=$conf->facture->dir_output . '/' . sanitizeFileName($objp->facnumber);
+					$filename=dol_sanitizeFileName($objp->facnumber);
+					$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
 					$urlsource=$_SERVER['PHP_SELF'].'?facid='.$objp->facid;
 					$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
 					print '</td>';

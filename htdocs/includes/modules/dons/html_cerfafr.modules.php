@@ -88,7 +88,7 @@ class html_cerfafr extends ModeleDon
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
-		
+
         if ($conf->don->dir_output)
         {
 			// Definition de l'objet $don (pour compatibilite ascendante)
@@ -107,7 +107,7 @@ class html_cerfafr extends ModeleDon
 			}
 			else
 			{
-				$donref = sanitizeFileName($don->ref);
+				$donref = dol_sanitizeFileName($don->ref);
 				$dir = $conf->don->dir_output . "/" . get_exdir($donref,2);
 				$file = $dir . "/" . $donref . ".html";
 			}

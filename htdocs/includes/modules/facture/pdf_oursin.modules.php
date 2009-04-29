@@ -145,7 +145,7 @@ class pdf_oursin extends ModelePDFFactures
 			}
 			else
 			{
-				$facref = sanitizeFileName($fac->ref);
+				$facref = dol_sanitizeFileName($fac->ref);
 				$dir = $conf->facture->dir_output . "/" . $facref;
 				$file = $dir . "/" . $facref . ".pdf";
 			}

@@ -41,16 +41,16 @@ if ($_POST["action"] == 'add')
 {
     // Creation compte
     $account = new Account($db,0);
-    
-    $account->ref           = sanitizeFileName(trim($_POST["ref"]));
+
+    $account->ref           = dol_sanitizeFileName(trim($_POST["ref"]));
     $account->label         = trim($_POST["label"]);
     $account->courant       = $_POST["type"];
     $account->clos          = $_POST["clos"];
     $account->rappro        = (isset($_POST["norappro"]) && $_POST["norappro"])?0:1;
     $account->url           = $_POST["url"];
-    
+
     $account->account_number  = trim($_POST["account_number"]);
-    
+
     $account->solde           = $_POST["solde"];
     $account->date_solde      = dol_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 
@@ -60,7 +60,7 @@ if ($_POST["action"] == 'add')
     $account->min_allowed     = $_POST["account_min_allowed"];
     $account->min_desired     = $_POST["account_min_desired"];
     $account->comment         = trim($_POST["account_comment"]);
-    
+
     if ($account->label)
     {
         $id = $account->create($user->id);
@@ -187,7 +187,7 @@ if ($_GET["action"] == 'create')
 		print '<input type="hidden" name="account_number" value="'.$account->account_number.'">';
 	}
 
-	// Currency		
+	// Currency
 	print '<tr><td valign="top">'.$langs->trans("Currency").'</td>';
 	print '<td colspan="3">';
 /*
@@ -199,7 +199,7 @@ if ($_GET["action"] == 'create')
 	print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
 	print '</td></tr>';
 
-	// Pays		
+	// Pays
 	print '<tr><td valign="top">'.$langs->trans("Country").'</td>';
 	print '<td colspan="3">';
 	$selectedcode=$account->account_country_code;
@@ -256,19 +256,19 @@ if ($_GET["action"] == 'create')
 /* ************************************************************************** */
 else
 {
-    if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit') 
+    if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 	{
 		$account = new Account($db);
-		if ($_GET["id"]) 
+		if ($_GET["id"])
 		{
 			$account->fetch($_GET["id"]);
 		}
-		if ($_GET["ref"]) 
+		if ($_GET["ref"])
 		{
 			$account->fetch(0,$_GET["ref"]);
 			$_GET["id"]=$account->id;
 		}
-	
+
 		/*
 		* Affichage onglets
 		*/
@@ -276,7 +276,7 @@ else
 		// Onglets
 		$head=bank_prepare_head($account);
 		dol_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"));
-	
+
 		/*
 		* Confirmation de la suppression
 		*/
@@ -285,30 +285,30 @@ else
 			$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
 			print '<br />';
 		}
-	
+
 		print '<table class="border" width="100%">';
-	
+
 		// Ref
 		print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3">';
 		print $form->showrefnav($account,'ref','',1,'ref');
 		print '</td></tr>';
-	
+
 		print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
 		print '<td colspan="3">'.$account->label.'</td></tr>';
-	
+
 		print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
 		print '<td colspan="3">'.$account->type_lib[$account->type].'</td></tr>';
-	
+
 		print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
 		print '<td colspan="3">'.$account->getLibStatut(4).'</td></tr>';
-	
+
 		print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
 		print '<td colspan="3">';
 		if ($account->type == 0 || $account->type == 1) print ($account->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' ('.$langs->trans("ConciliationDisabled").')'));
 		if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
 		print '</td></tr>';
-	
+
 		// Code compta
 		if ($conf->comptaexpert->enabled)
 		{
@@ -316,7 +316,7 @@ else
 			print '<td colspan="3">'.$account->account_number.'</td></tr>';
 		}
 
-		// Currency		
+		// Currency
 		print '<tr><td valign="top">'.$langs->trans("Currency").'</td>';
 		print '<td colspan="3">';
 	/*
@@ -327,10 +327,10 @@ else
 		print $langs->trans("Currency".$conf->monnaie);
 		print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
 		print '</td></tr>';
-	
+
 		print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';
 		print '<td colspan="3">'.$account->min_allowed.'</td></tr>';
-	
+
 		print '<tr><td valign="top">'.$langs->trans("BalanceMinimalDesired").'</td>';
 		print '<td colspan="3">'.$account->min_desired.'</td></tr>';
 
@@ -339,34 +339,34 @@ else
 		print $account->url;
 		if ($account->url) print '</a>';
 		print "</td></tr>\n";
-	
+
 		print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 		print '<td colspan="3">'.$account->comment.'</td></tr>';
-	
+
 		print '</table>';
-	
+
 		print '</div>';
-	
-	
+
+
 		/*
 		* Barre d'actions
 		*
 		*/
 		print '<div class="tabsAction">';
-	
+
 		if ($user->rights->banque->configurer)
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$account->id.'">'.$langs->trans("Modify").'</a>';
 		}
-	
+
 		$canbedeleted=$account->can_be_deleted();   // Renvoi vrai si compte sans mouvements
 		if ($user->rights->banque->configurer && $canbedeleted)
 		{
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$account->id.'">'.$langs->trans("Delete").'</a>';
 		}
-	
+
 		print '</div>';
-	
+
 	}
 
     /* ************************************************************************** */
@@ -374,46 +374,46 @@ else
     /* Edition                                                                    */
     /*                                                                            */
     /* ************************************************************************** */
-      
-    if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configurer) 
+
+    if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configurer)
     {
         $account = new Account($db, $_GET["id"]);
         $account->fetch($_GET["id"]);
-        
+
         print_titre($langs->trans("EditFinancialAccount"));
         print "<br>";
-        
+
         if ($message) { print "$message<br>\n"; }
-        
+
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$account->id.'" method="post">';
         print '<input type="hidden" name="action" value="update">';
         print '<input type="hidden" name="id" value="'.$_GET["id"].'">'."\n\n";
-        
+
         print '<table class="border" width="100%">';
-        
+
 		// Ref
 		print '<tr><td valign="top">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.$account->ref.'"></td></tr>';
 
         print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
         print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.$account->label.'"></td></tr>';
-        
+
         print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
         print '<td colspan="3">';
 		print $form->select_type_comptes_financiers($account->type,"type");
         print '</td></tr>';
-        
+
         print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
         print '<td colspan="3">';
         $form->select_array("clos",array(0=>$account->status[0],1=>$account->status[1]),$account->clos);
         print '</td></tr>';
-        
+
         print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
         print '<td colspan="3">';
         if ($account->type == 0 || $account->type == 1) print '<input type="checkbox" class="flat" name="norappro" '.($account->rappro?'':'checked="true"').'"> '.$langs->trans("DisableConciliation");
         if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
         print '</td></tr>';
-        
+
 		// Code compta
 		if ($conf->comptaexpert->enabled)
 		{
@@ -425,7 +425,7 @@ else
 	        print '<input type="hidden" name="account_number" value="'.$account->account_number.'">';
 		}
 
-		// Currency		
+		// Currency
 		print '<tr><td valign="top">'.$langs->trans("Currency");
 		print '<input type="hidden" value="'.$account->currency_code.'">';
 		print '</td>';
@@ -438,10 +438,10 @@ else
 		print $langs->trans("Currency".$conf->monnaie);
 		print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
 		print '</td></tr>';
-	
+
 		print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';
 		print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.$account->min_allowed.'"></td></tr>';
-	
+
 		print '<tr><td valign="top">'.$langs->trans("BalanceMinimalDesired").'</td>';
 		print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.$account->min_desired.'"></td></tr>';
 
@@ -466,7 +466,7 @@ else
 			print dol_htmlentitiesbr_decode($account->comment).'</textarea>';
 		}
 		print '</td></tr>';
-        
+
         print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Modify").'" type="submit" class="button">';
         print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button">';
         print '</td></tr>';
@@ -474,7 +474,7 @@ else
 
         print '</form>';
 	}
-      
+
 }
 
 

@@ -136,7 +136,7 @@ if ($_GET["facid"] > 0)
         /*
          * Documents
          */
-        $facref = sanitizeFileName($fac->ref);
+        $facref = dol_sanitizeFileName($fac->ref);
         $dir_output = $conf->facture->dir_output . "/";
 				$filepath = $dir_output . $facref . "/";
         $file = $filepath . $facref . ".pdf";

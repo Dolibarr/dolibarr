@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  *
@@ -21,11 +21,11 @@
  */
 
 /**
- \file       htdocs/includes/modules/facture/modules_facture.php
- \ingroup    facture
- \brief      Fichier contenant la classe m�re de generation des factures en PDF
- et la classe m�re de num�rotation des factures
- \version    $Id$
+ *	\file       htdocs/includes/modules/facture/modules_facture.php
+ *	\ingroup    facture
+ *	\brief      Fichier contenant la classe mere de generation des factures en PDF
+ * 				et la classe mere de numerotation des factures
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -241,7 +241,7 @@ function facture_meta_create($db, $facid, $message="")
 
 	if ($conf->facture->dir_output)
 	{
-		$facref = sanitizeFileName($fac->ref);
+		$facref = dol_sanitizeFileName($fac->ref);
 		$dir = $conf->facture->dir_output . "/" . $facref ;
 		$file = $dir . "/" . $facref . ".meta";
 
@@ -295,7 +295,7 @@ function facture_delete_preview($db, $facid)
 
 	if ($conf->facture->dir_output)
 	{
-		$facref = sanitizeFileName($fac->ref);
+		$facref = dol_sanitizeFileName($fac->ref);
 		$dir = $conf->facture->dir_output . "/" . $facref ;
 		$file = $dir . "/" . $facref . ".pdf.png";
 

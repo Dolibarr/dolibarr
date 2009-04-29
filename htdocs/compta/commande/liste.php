@@ -132,28 +132,28 @@ if ($resql)
 
         $var=!$var;
         print "<tr $bc[$var]>";
-        
+
         print '<td width="20%" nowrap="nowrap">';
-        
+
         $generic_commande->id=$objp->rowid;
         $generic_commande->ref=$objp->ref;
-        
+
         print '<table class="nobordernopadding"><tr class="nocellnopadd">';
         print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
         print $generic_commande->getNomUrl(1);
         print '</td>';
-        
+
         print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
         if (($objp->date_commande < ($now - $conf->commande->traitement->warning_delay)) && $objp->statutid == 1 ) print img_picto($langs->trans("Late"),"warning");
         print '</td>';
-        
+
         print '<td width="16" align="right" class="nobordernopadding">';
-        $filename=sanitizeFileName($objp->ref);
-        $filedir=$conf->commande->dir_output . '/' . sanitizeFileName($objp->ref);
+        $filename=dol_sanitizeFileName($objp->ref);
+        $filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($objp->ref);
         $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
         $formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
         print '</td></tr></table>';
-        
+
         print '</td>';
 
         print "<td><a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid."\">".img_object($langs->trans("ShowCompany"),"company")." ".$objp->nom."</a>";

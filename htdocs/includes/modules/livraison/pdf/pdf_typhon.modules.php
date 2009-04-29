@@ -144,7 +144,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			$nblignes = sizeof($delivery->lignes);
 
-			$deliveryref = sanitizeFileName($delivery->ref);
+			$deliveryref = dol_sanitizeFileName($delivery->ref);
 			$dir = $conf->expedition->dir_bon_livraison;
 			if (! eregi('specimen',$deliveryref)) $dir.= "/" . $deliveryref;
 			$file = $dir . "/" . $deliveryref . ".pdf";

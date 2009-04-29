@@ -96,8 +96,8 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		create_exdir($diroutputpdf);
 
 		// Save merged file
-		$filename=strtolower(sanitizeFileName($langs->transnoentities("Unpayed")));
-		if ($option=='late') $filename.='_'.strtolower(sanitizeFileName($langs->transnoentities("Late")));
+		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Unpayed")));
+		if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 		if ($pagecount)
 		{
 			$file=$diroutputpdf.'/'.$filename.'_'.dol_print_date(mktime(),'dayhourlog').'.pdf';
@@ -338,8 +338,8 @@ if ($result)
 
 			// PDF Picto
 			print '<td width="16" align="right" class="nobordernopadding">';
-			$filename=sanitizeFileName($objp->facnumber);
-			$filedir=$conf->facture->dir_output . '/' . sanitizeFileName($objp->facnumber);
+			$filename=dol_sanitizeFileName($objp->facnumber);
+			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
 			$foundpdf=$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1,$param);
 			print '</td>';
 

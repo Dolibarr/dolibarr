@@ -62,7 +62,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
     $fac = new Facture($db,"",$_POST["facid"]);
     if ( $fac->fetch($_POST["facid"]) )
     {
-      $facref = sanitizeFileName($fac->ref);
+      $facref = dol_sanitizeFileName($fac->ref);
       $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
 
       if (is_readable($file))
@@ -169,41 +169,41 @@ $html = new Form($db);
 if ($_GET["facid"] > 0)
 {
   if ($msg) print "$msg<br>";
-  
+
   $fac = New Facture($db);
   if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
-    {      
+    {
       $soc = new Societe($db, $fac->socid);
       $soc->fetch($fac->socid, $user);
-            
+
       if (!$soc->perm_read)
 	{
 	  print "Lecture non authorisée";
 	}
-      
+
       if ($soc->perm_read)
-	{      
+	{
 	  $author = new User($db);
 	  $author->id = $fac->user_author;
 	  $author->fetch();
-	  
+
 	  $h = 0;
-	  
+
 	  $head[$h][0] = DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$soc->id;
 	  $head[$h][1] = $langs->trans("Fiche client");
 	  $h++;
-	  
+
 	  $head[$h][0] = DOL_URL_ROOT.'/telephonie/client/factures.php?id='.$soc->id;
 	  $head[$h][1] = $langs->trans("Factures");
 	  $h++;
-	  
+
 	  $head[$h][0] = DOL_URL_ROOT.'/telephonie/client/facture.php?facid='.$fac->id;
 	  $head[$h][1] = $langs->trans("CardBill");
 	  $hselected = $h;
 	  $h++;
-	  
+
 	  dol_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
-	  
+
 	  /*
 	   *   Facture
 	   */
@@ -211,16 +211,16 @@ if ($_GET["facid"] > 0)
 	  print '<tr><td>'.$langs->trans("Company").'</td>';
 	  print '<td colspan="3">';
 	  print '<b><a href="fiche.php?id='.$soc->id.'">'.$soc->nom.'</a></b></td>';
-	  
+
 	  print "<td>Conditions de réglement</td><td>" . $fac->cond_reglement ."</td></tr>";
-	  
+
 	  print '<tr><td>'.$langs->trans("Date").'</td>';
 	  print "<td colspan=\"3\">".dol_print_date($fac->date,"dayhourtext")."</td>\n";
 	  print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dol_print_date($fac->date_lim_reglement,"dayhourtext");
 	  print "</td></tr>";
-	  
+
 	  print '<tr>';
-	  
+
       // Projet
       if ($conf->projet->enabled)
 	{
@@ -244,9 +244,9 @@ if ($_GET["facid"] > 0)
 	} else {
 	  print '<td height=\"10\">&nbsp;</td><td colspan="3">&nbsp;</td>';
 	}
-      
+
       print '<td rowspan="8" colspan="2" valign="top">';
-      
+
       /*
        * Paiements
        */
@@ -256,9 +256,9 @@ if ($_GET["facid"] > 0)
       $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
       $sql.= " WHERE pf.fk_facture = ".$fac->id." AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid";
       $sql.= " ORDER BY dp DESC";
-      
+
       $result = $db->query($sql);
-      
+
       if ($result)
 	{
 	  $num = $db->num_rows($result);
@@ -266,7 +266,7 @@ if ($_GET["facid"] > 0)
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Type").'</td>';
 	  print '<td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
-	  
+
 	  $var=True;
 	  while ($i < $num)
 	    {
@@ -280,14 +280,14 @@ if ($_GET["facid"] > 0)
 	      $totalpaye += $objp->amount;
 	      $i++;
 	    }
-	  
+
 	  if ($fac->paye == 0)
 	    {
 	      print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPayed")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
 	      print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" style=\"border: 1px solid;\">".price($fac->total_ttc)."</td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
-		  
+
 	      $resteapayer = $fac->total_ttc - $totalpaye;
-		  
+
 	      print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
 	      print "<td align=\"right\" style=\"border: 1px solid;\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
 	    }
@@ -298,9 +298,9 @@ if ($_GET["facid"] > 0)
 	}
 
       print "</td></tr>";
-      
+
       print "<tr><td height=\"10\">".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td></tr>";
-      
+
       print '<tr><td height=\"10\">'.$langs->trans("GlobalDiscount").'</td>';
       if ($fac->brouillon == 1 && $user->rights->facture->creer)
 	{
@@ -315,18 +315,18 @@ if ($_GET["facid"] > 0)
 	  print '<td colspan="3">'.$fac->remise_percent.'%</td>';
 	}
       print '</tr>';
-      
+
       print '<tr><td height=\"10\">'.$langs->trans("AmountHT").'</td>';
       print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
       print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-      
+
       print '<tr><td height=\"10\">'.$langs->trans("VAT").'</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
       print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
       print '<tr><td height=\"10\">'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
       print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-      
+
       print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.($fac->getLibStatut()).'</td></tr>';
-      
+
       if ($fac->note)
 	{
 	  print '<tr><td colspan="4">'.$langs->trans("Note").' : '.nl2br($fac->note)."</td></tr>";
@@ -334,9 +334,9 @@ if ($_GET["facid"] > 0)
       else {
 	print '<tr><td colspan="4">&nbsp;</td></tr>';
       }
-      
+
       print "</table><br>";
-      
+
       /*
        * Lignes de factures
        *
@@ -350,13 +350,13 @@ if ($_GET["facid"] > 0)
       $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON l.fk_product=p.rowid";
       $sql .= " WHERE l.fk_facture = ".$fac->id;
       $sql .= " ORDER BY l.rang ASC, l.rowid";
-      
+
       $resql = $db->query($sql);
       if ($resql)
 	{
 	  $num_lignes = $db->num_rows($resql);
 	  $i = 0; $total = 0;
-	  
+
 	  print '<table class="noborder" width="100%">';
 	  if ($num_lignes)
 	    {
@@ -375,11 +375,11 @@ if ($_GET["facid"] > 0)
 	    {
 	      $objp = $db->fetch_object($resql);
 	      $var=!$var;
-	      
+
 	      // Update ligne de facture
 	      if ($_GET["action"] != 'editline' || $_GET["rowid"] != $objp->rowid)
 		{
-		  
+
 		  print "<tr $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {
@@ -400,7 +400,7 @@ if ($_GET["facid"] > 0)
 		      if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dol_print_date($objp->date_end).")"; }
 		      print "</td>\n";
 		    }
-		  
+
 		  print '<td align="right">'.$objp->tva_taux.'%</td>';
 		  print '<td align="right">'.price($objp->subprice)."</td>\n";
 		  print '<td align="right">'.$objp->qty.'</td>';
@@ -497,7 +497,7 @@ if ($_GET["facid"] > 0)
        * REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
        */
 
-      $facref = sanitizeFileName($fac->ref);
+      $facref = dol_sanitizeFileName($fac->ref);
       $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
       $relativepath = "${facref}/${facref}.pdf";
 
@@ -670,7 +670,7 @@ if ($_GET["facid"] > 0)
 		{
 			$formmail->clear_attached_files();
 		}
-				
+
 	  $formmail->show_form();
 
 	  print '<br>';
@@ -711,7 +711,7 @@ if ($_GET["facid"] > 0)
 		{
 			$formmail->clear_attached_files();
 		}
-	  
+
 		$formmail->show_form();
 
 	  print '<br>';

@@ -721,7 +721,7 @@ class Propal extends CommonObject
 	function fetch($rowid,$ref='')
 	{
 		global $conf;
-		
+
 		$sql = "SELECT p.rowid,ref,remise,remise_percent,remise_absolue,fk_soc";
 		$sql.= ", total, tva, total_ht";
 		$sql.= ", datec";
@@ -1295,7 +1295,7 @@ class Propal extends CommonObject
 		{
 			if ($user) $sql.= " AND fk_user_author".$user;
 		}
-		
+
 		$sql.= " ORDER BY datep DESC";
 
 		$result=$this->db->query($sql);
@@ -1501,7 +1501,7 @@ class Propal extends CommonObject
 			if ( $this->db->query($sql) )
 			{
 				// We remove directory
-				$propalref = sanitizeFileName($this->ref);
+				$propalref = dol_sanitizeFileName($this->ref);
 				if ($conf->propale->dir_output)
 				{
 					$dir = $conf->propale->dir_output . "/" . $propalref ;
@@ -1897,7 +1897,7 @@ class Propal extends CommonObject
 			$clause = "AND";
 		}
 		$sql.= " ".$clause." p.entity = ".$conf->entity;
-		
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

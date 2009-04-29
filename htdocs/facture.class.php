@@ -1308,8 +1308,8 @@ class Facture extends CommonObject
 			{
 				// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
 				// afin de ne pas perdre les fichiers attachés
-				$facref = sanitizeFileName($this->ref);
-				$snumfa = sanitizeFileName($numfa);
+				$facref = dol_sanitizeFileName($this->ref);
+				$snumfa = dol_sanitizeFileName($numfa);
 				$dirsource = $conf->facture->dir_output.'/'.$facref;
 				$dirdest = $conf->facture->dir_output.'/'.$snumfa;
 				if (file_exists($dirsource))
@@ -2546,7 +2546,7 @@ class Facture extends CommonObject
 		$sql.= " AND s.entity = ".$conf->entity;
 		$sql.= " AND f.fk_statut = 1";
 		if ($user->societe_id) $sql.= " AND f.fk_soc = ".$user->societe_id;
-		
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2674,7 +2674,7 @@ class Facture extends CommonObject
 		global $conf, $user;
 
 		$this->nb=array();
-		
+
 		$clause = "WHERE";
 
 		$sql = "SELECT count(f.rowid) as nb";
@@ -2687,7 +2687,7 @@ class Facture extends CommonObject
 			$clause = "AND";
 		}
 		$sql.= " ".$clause." s.entity = ".$conf->entity;
-		
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

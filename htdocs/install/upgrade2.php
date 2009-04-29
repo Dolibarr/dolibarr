@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,10 +19,10 @@
  */
 
 /**
-	\file       htdocs/install/upgrade2.php
-	\brief      Effectue la migration de donnees diverses
-	\version    $Id$
-	*/
+ *	\file       htdocs/install/upgrade2.php
+ *	\brief      Effectue la migration de donnees diverses
+ *	\version    $Id$
+ */
 
 include_once('./inc.php');
 if (file_exists($conffile)) include_once($conffile);
@@ -44,7 +44,7 @@ $error = 0;
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);
-@set_time_limit(60);
+@set_time_limit(120);
 error_reporting($err);
 
 $setuplang=isset($_POST['selectlang'])?$_POST['selectlang']:(isset($_GET['selectlang'])?$_GET['selectlang']:'auto');
@@ -749,7 +749,7 @@ function migrate_contracts_date2($db,$langs,$conf)
 	$sql.= " WHERE c.rowid=cd.fk_contrat AND cd.date_ouverture IS NOT NULL";
 	$sql.= " GROUP BY c.rowid, c.date_contrat";
 	$resql = $db->query($sql);
-	
+
 	dolibarr_install_syslog("upgrade2::migrate_contracts_date2 sql=".$sql);
 	if ($resql)
 	{
@@ -891,8 +891,8 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 	$select_sql  = 'SELECT rowid, fk_facture_fourn, amount ';
 	$select_sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn ';
 	$select_sql .= ' WHERE fk_facture_fourn IS NOT NULL';
-	
-	dolibarr_install_syslog("upgrade2::migrate_paiementfourn_facturefourn sql=".$sql);
+
+	dolibarr_install_syslog("upgrade2::migrate_paiementfourn_facturefourn sql=".$select_sql);
 	$select_resql = $db->query($select_sql);
 	if ($select_resql)
 	{
@@ -1517,7 +1517,7 @@ function migrate_modeles($db,$langs,$conf)
 	//print '<b>'.$langs->trans('UpdateModelsTable')."</b><br>\n";
 
 	dolibarr_install_syslog("upgrade2::migrate_modeles");
-	
+
 	if ($conf->facture->enabled)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
@@ -1571,7 +1571,7 @@ function migrate_delete_old_files($db,$langs,$conf)
 	$result=true;
 
 	dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
-	
+
 	// List of files to delete
 	$filetodeletearray=array(
 	DOL_DOCUMENT_ROOT.'/includes/triggers/interface_demo.class.php',
@@ -1602,7 +1602,7 @@ function migrate_delete_old_files($db,$langs,$conf)
 function migrate_module_menus($db,$langs,$conf)
 {
 	dolibarr_install_syslog("upgrade2::migrate_module_menus");
-	
+
 	if (! empty($conf->global->MAIN_MODULE_AGENDA))
 	{
 		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Agenda");
@@ -1648,7 +1648,7 @@ function migrate_module_menus($db,$langs,$conf)
 function migrate_commande_expedition($db,$langs,$conf)
 {
 	dolibarr_install_syslog("upgrade2::migrate_commande_expedition");
-	
+
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -1722,7 +1722,7 @@ function migrate_commande_expedition($db,$langs,$conf)
 function migrate_commande_livraison($db,$langs,$conf)
 {
 	dolibarr_install_syslog("upgrade2::migrate_commande_livraison");
-	
+
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -1810,7 +1810,7 @@ function migrate_commande_livraison($db,$langs,$conf)
 function migrate_detail_livraison($db,$langs,$conf)
 {
 	dolibarr_install_syslog("upgrade2::migrate_detail_livraison");
-	
+
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -1929,7 +1929,7 @@ function migrate_detail_livraison($db,$langs,$conf)
 function migrate_stocks($db,$langs,$conf)
 {
 	dolibarr_install_syslog("upgrade2::migrate_stocks");
-	
+
 	print '<tr><td colspan="4">';
 
 	print '<br>';

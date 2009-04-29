@@ -42,7 +42,7 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
  * 	\param			newstr			String to replace bad chars by
  *	\return         string          String cleaned (a-zA-Z_)
  */
-function sanitizeFileName($str,$newstr='_')
+function dol_sanitizeFileName($str,$newstr='_')
 {
 	return dol_string_nospecial(dol_string_unaccent($str),$newstr);
 }
@@ -1343,7 +1343,7 @@ function info_admin($texte,$infoonimgalt=0)
 function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',$feature2='',$dbt_socfield='fk_soc',$dbt_select='rowid')
 {
 	global $db, $conf;
-	
+
 	if ($dbt_select != 'rowid') $objectid = "'".$objectid."'";
 
 	//print "user_id=".$user->id.", feature=".$feature.", feature2=".$feature2.", object_id=".$objectid;
@@ -1441,7 +1441,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 
 		// If dbtable not defined, we use same name for table than module name
 		if (!$dbtablename) $dbtablename = $feature;
-	
+
 		// Check permission for object with entity
 		if ($feature == 'user' || $feature == 'usergroup' || $feature == 'produit')
 		{

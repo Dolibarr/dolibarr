@@ -157,7 +157,7 @@ class FormFile
 			$forcenomultilang=0;
 		}
 
-		$filename = sanitizeFileName($filename);
+		$filename = dol_sanitizeFileName($filename);
 		$headershown=0;
 		$i=0;
 
@@ -451,7 +451,7 @@ class FormFile
 				// Define relative path used to store the file
 				if (! $relativepath)
 				{
-					$relativepath=sanitizeFileName($object->ref).'/';
+					$relativepath=dol_sanitizeFileName($object->ref).'/';
 					if ($modulepart == 'facture_fournisseur')	$relativepath=get_exdir($object->id,2).$relativepath;
 				}
 

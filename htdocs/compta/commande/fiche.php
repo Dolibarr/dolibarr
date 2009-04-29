@@ -526,7 +526,7 @@ if ($id > 0 || ! empty($ref))
 		 * Documents générés
 		 *
 		 */
-		$comref = sanitizeFileName($commande->ref);
+		$comref = dol_sanitizeFileName($commande->ref);
 		$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
 		$relativepath = $comref.'/'.$comref.'.pdf';
 		$filedir = $conf->commande->dir_output . '/' . $comref;

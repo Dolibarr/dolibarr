@@ -256,7 +256,7 @@ function propale_delete_preview($db, $propalid, $propalref='')
 
         if ($conf->propale->dir_output)
         {
-        	$propalref = sanitizeFileName($propalref);
+        	$propalref = dol_sanitizeFileName($propalref);
         	$dir = $conf->propale->dir_output . "/" . $propalref ;
         	$file = $dir . "/" . $propalref . ".pdf.png";
         	$multiple = $file . ".";

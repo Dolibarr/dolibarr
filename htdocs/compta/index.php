@@ -555,8 +555,8 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 				print '&nbsp;';
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding">';
-				$filename=sanitizeFileName($obj->ref);
-				$filedir=$conf->commande->dir_output . '/' . sanitizeFileName($obj->ref);
+				$filename=dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
 				print '</td></tr></table>';
@@ -651,8 +651,8 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				if ($obj->datelimite < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding">';
-				$filename=sanitizeFileName($obj->facnumber);
-				$filedir=$conf->facture->dir_output . '/' . sanitizeFileName($obj->facnumber);
+				$filename=dol_sanitizeFileName($obj->facnumber);
+				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
 				$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
 				print '</td></tr></table>';

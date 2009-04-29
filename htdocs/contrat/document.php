@@ -63,7 +63,7 @@ $pagenext = $page + 1;
 $contrat = new Contrat($db);
 $contrat->fetch($_GET["id"]);
 
-$upload_dir = $conf->contrat->dir_output.'/'.sanitizeFileName($contrat->ref);
+$upload_dir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($contrat->ref);
 $modulepart='contract';
 
 

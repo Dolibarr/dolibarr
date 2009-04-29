@@ -72,7 +72,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	if ($propal->fetch($propalid))
     {
-        $upload_dir = $conf->propale->dir_output . "/" . sanitizeFileName($propal->ref);
+        $upload_dir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
         if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
         if (is_dir($upload_dir))
@@ -100,7 +100,7 @@ if ($action=='delete')
 	$propalid=$_GET["id"];
 	if ($propal->fetch($propalid))
     {
-        $upload_dir = $conf->propale->dir_output . "/" . sanitizeFileName($propal->ref);
+        $upload_dir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
     	$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
     	dol_delete_file($file);
         $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -119,7 +119,7 @@ if ($propalid > 0)
 	$propal = new Propal($db);
 	if ($propal->fetch($propalid))
     {
-		$upload_dir = $conf->propale->dir_output.'/'.sanitizeFileName($propal->ref);
+		$upload_dir = $conf->propale->dir_output.'/'.dol_sanitizeFileName($propal->ref);
 
         $societe = new Societe($db);
         $societe->fetch($propal->socid);

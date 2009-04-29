@@ -133,7 +133,7 @@ if ($_GET["propalid"] > 0)
 				/*
   				 * Documents
  				 */
-				$propalref = sanitizeFileName($propal->ref);
+				$propalref = dol_sanitizeFileName($propal->ref);
 				$dir_output = $conf->propale->dir_output . "/";
 				$filepath = $dir_output . $propalref . "/";
 				$file = $filepath . $propalref . ".pdf";

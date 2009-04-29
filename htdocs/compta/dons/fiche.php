@@ -454,7 +454,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 	/*
 	 * Documents g�n�r�s
 	 */
-	$filename=sanitizeFileName($don->id);
+	$filename=dol_sanitizeFileName($don->id);
 	$filedir=$conf->don->dir_output . '/' . get_exdir($filename,2);
 	$urlsource=$_SERVER['PHP_SELF'].'?rowid='.$don->id;
 	//            $genallowed=($fac->statut == 1 && ($fac->paye == 0 || $user->admin) && $user->rights->facture->creer);

@@ -83,7 +83,7 @@ class Expedition extends CommonObject
 
 		// Clean parameters
 		$this->brouillon = 1;
-		$this->tracking_number = sanitizeFileName($this->tracking_number);
+		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
 
 		$this->user = $user;
 
@@ -404,7 +404,7 @@ class Expedition extends CommonObject
 	  	}
 
 	  	// On efface le répertoire de pdf provisoire
-	  	$expeditionref = sanitizeFileName($provref);
+	  	$expeditionref = dol_sanitizeFileName($provref);
 	  	if ($conf->expedition->dir_output)
 	  	{
 	  		$dir = $conf->expedition->dir_output . "/" . $expeditionref;
@@ -538,7 +538,7 @@ class Expedition extends CommonObject
 	        		$this->db->commit();
 
 					// On efface le répertoire de pdf provisoire
-					$expref = sanitizeFileName($this->ref);
+					$expref = dol_sanitizeFileName($this->ref);
 					if ($conf->expedition->dir_output)
 					{
 						$dir = $conf->expedition->dir_output . "/" . $expref ;

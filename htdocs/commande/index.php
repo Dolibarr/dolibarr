@@ -157,8 +157,8 @@ if ( $db->query($sql) )
 			print '</td>';
 
 			print '<td width="16" align="right" class="nobordernopadding">';
-			$filename=sanitizeFileName($obj->ref);
-			$filedir=$conf->commande->dir_output . '/' . sanitizeFileName($obj->ref);
+			$filename=dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
 			print '</td></tr></table>';
@@ -193,7 +193,7 @@ $sql.= " ORDER BY c.rowid DESC";
 if ( $db->query($sql) )
 {
 	$num = $db->num_rows();
-	
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">'.$langs->trans("OnProcessOrders").' ('.$num.')</td></tr>';
@@ -222,8 +222,8 @@ if ( $db->query($sql) )
 			print '</td>';
 
 			print '<td width="16" align="right" class="nobordernopadding">';
-			$filename=sanitizeFileName($obj->ref);
-			$filedir=$conf->commande->dir_output . '/' . sanitizeFileName($obj->ref);
+			$filename=dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
 			print '</td></tr></table>';
@@ -290,8 +290,8 @@ if ($resql)
 			print '</td>';
 
 			print '<td width="16" align="right" class="nobordernopadding">';
-			$filename=sanitizeFileName($obj->ref);
-			$filedir=$conf->commande->dir_output . '/' . sanitizeFileName($obj->ref);
+			$filename=dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
 			print '</td></tr></table>';

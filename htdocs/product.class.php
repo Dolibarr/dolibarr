@@ -131,7 +131,7 @@ class Product extends CommonObject
 	 */
 	function check()
 	{
-		$this->ref = sanitizeFileName(stripslashes($this->ref));
+		$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
 
 		$err = 0;
 		if (strlen(trim($this->ref)) == 0)
@@ -940,7 +940,7 @@ class Product extends CommonObject
 			$this->stock_in_propal    = 0;	// TODO
 
 			$this->next_prev_filter = 'entity = '.$conf->entity;
-			
+
 			$this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
 
 			$this->db->free();
@@ -1209,7 +1209,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		//$sql.= " AND c.statut != 0";
 		if ($socid > 0)	$sql.= " AND c.fk_soc = ".$socid;
-		
+
 		$result = $this->db->query($sql) ;
 		if ( $result )
 		{

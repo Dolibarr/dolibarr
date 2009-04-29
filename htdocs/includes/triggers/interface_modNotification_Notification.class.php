@@ -32,7 +32,7 @@
 class InterfaceNotification
 {
     var $db;
-    
+
     /**
      *   \brief      Constructeur.
      *   \param      DB      Handler d'accès base
@@ -40,13 +40,13 @@ class InterfaceNotification
     function InterfaceNotification($DB)
     {
         $this->db = $DB ;
-    
+
         $this->name = eregi_replace('Interface','',get_class($this));
         $this->family = "notification";
         $this->description = "Triggers of this module send email notifications according to Notification module setup.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     }
-    
+
     /**
      *   \brief      Renvoi nom du lot de triggers
      *   \return     string      Nom du lot de triggers
@@ -55,7 +55,7 @@ class InterfaceNotification
     {
         return $this->name;
     }
-    
+
     /**
      *   \brief      Renvoi descriptif du lot de triggers
      *   \return     string      Descriptif du lot de triggers
@@ -79,7 +79,7 @@ class InterfaceNotification
         elseif ($this->version) return $this->version;
         else return $langs->trans("Unknown");
     }
-    
+
     /**
      *      \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
      *                  D'autres fonctions run_trigger peuvent etre présentes dans includes/triggers
@@ -94,7 +94,7 @@ class InterfaceNotification
     {
         // Mettre ici le code à exécuter en réaction de l'action
         // Les données de l'action sont stockées dans $object
-    
+
 		// Si module notification non actif, on ne fait rien
 		if (! $conf->notification->enabled) return 0;
 
@@ -105,11 +105,11 @@ class InterfaceNotification
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$action_notify = 2;
-            $ref = sanitizeFileName($object->ref);
+            $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             $mesg = 'La facture '.$object->ref." a été validée.\n";
 
-            $notify = new Notify($this->db); 
+            $notify = new Notify($this->db);
             $notify->send($action_notify, $object->socid, $mesg, 'facture', $object->id, $filepdf);
 		}
 
@@ -118,11 +118,11 @@ class InterfaceNotification
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$action_notify = 1;
-            $ref = sanitizeFileName($object->ref);
+            $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             $mesg = 'La fiche intervention '.$object->ref." a été validée.\n";
 
-            $notify = new Notify($this->db); 
+            $notify = new Notify($this->db);
             $notify->send($action_notify, $object->socid, $mesg, 'ficheinter', $object->id, $filepdf);
 		}
 
@@ -131,11 +131,11 @@ class InterfaceNotification
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$action_notify = 3;
-            $ref = sanitizeFileName($object->ref);
+            $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->fournisseur->dir_commande . '/' . $ref . '/' . $ref . '.pdf';
             $mesg = 'La commande fournisseur '.$object->ref." a été validée.\n";
 
-            $notify = new Notify($this->db); 
+            $notify = new Notify($this->db);
             $notify->send($action_notify, $object->socid, $mesg, 'order_supplier', $object->id, $filepdf);
 		}
 

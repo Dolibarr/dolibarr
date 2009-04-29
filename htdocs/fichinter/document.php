@@ -64,7 +64,7 @@ $pagenext = $page + 1;
 $object = new Fichinter($db);
 $object->fetch($_GET["id"]);
 
-$upload_dir = $conf->ficheinter->dir_output.'/'.sanitizeFileName($object->ref);
+$upload_dir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart='fichinter';
 
 

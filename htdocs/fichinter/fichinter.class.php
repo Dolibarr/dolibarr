@@ -387,9 +387,9 @@ class Fichinter extends CommonObject
 			if (! file_exists($dir.$file))
 			{
 				$file='mod_'.$file;
-				$classname='mod_'.$classname;		
+				$classname='mod_'.$classname;
 			}
-			
+
 			// Chargement de la classe de numerotation
 			require_once($dir.$file);
 
@@ -479,7 +479,7 @@ class Fichinter extends CommonObject
 			{
 
 				// Remove directory with files
-				$fichinterref = sanitizeFileName($this->ref);
+				$fichinterref = dol_sanitizeFileName($this->ref);
 				if ($conf->ficheinter->dir_output)
 				{
 					$dir = $conf->ficheinter->dir_output . "/" . $fichinterref ;

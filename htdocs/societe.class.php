@@ -242,7 +242,7 @@ class Societe extends CommonObject
 			$this->errors[] = 'ErrorBadThirdPartyName';
 			$result = -2;
 		}
-		
+
 		if ($this->client && $this->codeclient_modifiable())
 		{
 			// On ne verifie le code client que si la societe est un client / prospect et que le code est modifiable
@@ -269,7 +269,7 @@ class Societe extends CommonObject
 				$result = -3;
 			}
 		}
-		
+
 		if ($this->fournisseur && $this->codefournisseur_modifiable())
 		{
 			// On ne verifie le code fournisseur que si la societe est un fournisseur et que le code est modifiable
@@ -296,7 +296,7 @@ class Societe extends CommonObject
 				$result = -3;
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -312,7 +312,7 @@ class Societe extends CommonObject
 	function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-		
+
 		global $langs,$conf;
 
 		dol_syslog("Societe::Update id=".$id." call_trigger=".$call_triger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
@@ -341,7 +341,7 @@ class Societe extends CommonObject
 		$this->prefix_comm=trim($this->prefix_comm);
 
 		$this->tva_assuj=trim($this->tva_assuj);
-		$this->tva_intra=sanitizeFileName($this->tva_intra,'');
+		$this->tva_intra=dol_sanitizeFileName($this->tva_intra,'');
 
 		$this->capital=trim($this->capital);
 		if (strlen($this->capital) == 0) $this->capital = 0;
@@ -875,7 +875,7 @@ class Societe extends CommonObject
 	function attribute_prefix()
 	{
 		global $conf;
-		
+
 		$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE rowid = '".$this->id."'";
 		$resql=$this->db->query( $sql);
 		if ($resql)
@@ -891,7 +891,7 @@ class Societe extends CommonObject
 				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."societe";
 				$sql.= " WHERE prefix_comm = '".$prefix."'";
 				$sql.= " AND entity = ".$conf->entity;
-				
+
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -938,12 +938,12 @@ class Societe extends CommonObject
 		if ($mot < count($tab))
 		{
 			$prefix = strtoupper(substr($tab[$mot],0,$taille));
-			
+
 			// On verifie que ce prefix n'a pas deja ete pris ...
 			$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."societe";
 			$sql.= " WHERE prefix_comm = '".$prefix."'";
 			$sql.= " AND entity = ".$conf->entity;
-			
+
 			$resql=$this->db->query( $sql);
 			if ($resql)
 			{

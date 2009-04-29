@@ -143,7 +143,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			}
 			else
 			{
-				$propref = sanitizeFileName($propale->ref);
+				$propref = dol_sanitizeFileName($propale->ref);
 				$dir = $conf->propale->dir_output . "/" . $propref;
 				$file = $dir . "/" . $propref . ".pdf";
 			}

@@ -416,7 +416,7 @@ class Livraison extends CommonObject
 						}
 
 						// On efface le repertoire de pdf provisoire
-						$livraisonref = sanitizeFileName($this->ref);
+						$livraisonref = dol_sanitizeFileName($this->ref);
 						if ($conf->expedition->dir_output)
 						{
 							$dir = $conf->livraison->dir_output . "/" . $livraisonref ;
@@ -555,7 +555,7 @@ class Livraison extends CommonObject
 				$this->db->commit();
 
 				// On efface le repertoire de pdf provisoire
-				$livref = sanitizeFileName($this->ref);
+				$livref = dol_sanitizeFileName($this->ref);
 				if ($conf->livraison->dir_output)
 				{
 					$dir = $conf->livraison->dir_output . "/" . $livref ;

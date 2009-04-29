@@ -199,14 +199,14 @@ if ($resql)
 		print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
 		print $generic_commande->getNomUrl(1,$objp->fk_statut);
 		print '</td>';
-		 
+
 		print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
 		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $objp->date_commande < ($now - $conf->commande->traitement->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 
 		print '<td width="16" align="right" class="nobordernopadding">';
-		$filename=sanitizeFileName($objp->ref);
-		$filedir=$conf->commande->dir_output . '/' . sanitizeFileName($objp->ref);
+		$filename=dol_sanitizeFileName($objp->ref);
+		$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
 		$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
 		print '</td></tr></table>';
@@ -214,9 +214,9 @@ if ($resql)
 		print '</td>';
 
 		print '<td><a href="../comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
-		
+
 		print '<td>'.$objp->ref_client.'</td>';
-		
+
 		// Date
 		$y = dol_print_date($objp->date_commande,'%Y');
 		$m = dol_print_date($objp->date_commande,'%m');

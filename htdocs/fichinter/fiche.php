@@ -509,10 +509,10 @@ elseif ($_GET["id"] > 0)
 		exit;
 	}
 	$fichinter->fetch_client();
-	
+
 	$societe=new Societe($db);
 	$societe->fetch($fichinter->socid);
-	
+
 	if ($mesg) print $mesg."<br>";
 
 	$head = fichinter_prepare_head($fichinter);
@@ -902,7 +902,7 @@ elseif ($_GET["id"] > 0)
 	/*
 	 * Built documents
 	 */
-	$filename=sanitizeFileName($fichinter->ref);
+	$filename=dol_sanitizeFileName($fichinter->ref);
 	$filedir=$conf->ficheinter->dir_output . "/".$fichinter->ref;
 	$urlsource=$_SERVER["PHP_SELF"]."?id=".$fichinter->id;
 	$genallowed=$user->rights->ficheinter->creer;

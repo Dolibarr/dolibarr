@@ -257,8 +257,8 @@ class Commande extends CommonObject
 			{
 				// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
 				// afin de ne pas perdre les fichiers attach�s
-				$comref = sanitizeFileName($this->ref);
-				$snum = sanitizeFileName($num);
+				$comref = dol_sanitizeFileName($this->ref);
+				$snum = dol_sanitizeFileName($num);
 				$dirsource = $conf->commande->dir_output.'/'.$comref;
 				$dirdest = $conf->commande->dir_output.'/'.$snum;
 				if (file_exists($dirsource))
@@ -699,7 +699,7 @@ class Commande extends CommonObject
 	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0)
 	{
 		dol_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
-		
+
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		// Clean parameters
@@ -763,7 +763,7 @@ class Commande extends CommonObject
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
 			$ligne->product_type=$type;
-			
+
 			// \TODO Ne plus utiliser
 			$ligne->price=$price;
 			$ligne->remise=$remise;
@@ -1066,7 +1066,7 @@ class Commande extends CommonObject
 	{
 		$this->lignes=array();	// deprecated
 		$this->lines=array();
-		
+
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
 		$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits,';
 		$sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.date_start, l.date_end,';
@@ -1799,7 +1799,7 @@ class Commande extends CommonObject
 		}
 
 		// On efface le repertoire de pdf provisoire
-		$comref = sanitizeFileName($this->ref);
+		$comref = dol_sanitizeFileName($this->ref);
 		if ($conf->commande->dir_output)
 		{
 			$dir = $conf->commande->dir_output . "/" . $comref ;
@@ -2170,7 +2170,7 @@ class Commande extends CommonObject
 			$clause = "AND";
 		}
 		$sql.= " ".$clause." s.entity = ".$conf->entity;
-		
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

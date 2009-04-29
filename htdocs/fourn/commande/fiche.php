@@ -995,7 +995,7 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Documents	generes
 		 */
-		$comfournref = sanitizeFileName($commande->ref);
+		$comfournref = dol_sanitizeFileName($commande->ref);
 		$file =	$conf->fournisseur->dir_commande . '/' . $comfournref .	'/'	. $comfournref . '.pdf';
 		$relativepath =	$comfournref.'/'.$comfournref.'.pdf';
 		$filedir = $conf->fournisseur->dir_commande	. '/' .	$comfournref;

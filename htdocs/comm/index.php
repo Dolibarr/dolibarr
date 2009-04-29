@@ -147,7 +147,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	$sql.= " AND s.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
-	
+
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -202,7 +202,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {
 	$langs->load("orders");
-	
+
 	$sql = "SELECT c.rowid, c.ref, c.total_ttc, s.rowid as socid, s.nom, s.client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -314,8 +314,8 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 			if (($objp->fk_statut <= 1) && $objp->dp < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 			print '</td>';
 			print '<td width="16" align="center" class="nobordernopadding">';
-			$filename=sanitizeFileName($objp->ref);
-			$filedir=$conf->propale->dir_output . '/' . sanitizeFileName($objp->ref);
+			$filename=dol_sanitizeFileName($objp->ref);
+			$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
 			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
 			print '</td></tr></table>';
@@ -513,8 +513,8 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				if ($obj->dp < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
 				print '<td width="16" align="center" class="nobordernopadding">';
-				$filename=sanitizeFileName($obj->ref);
-				$filedir=$conf->propale->dir_output . '/' . sanitizeFileName($obj->ref);
+				$filename=dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$obj->propalid;
 				$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
 				print '</td></tr></table>';

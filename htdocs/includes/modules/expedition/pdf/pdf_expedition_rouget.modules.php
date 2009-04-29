@@ -152,7 +152,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 			}
 			else
 			{
-				$expref = sanitizeFileName($this->expe->ref);
+				$expref = dol_sanitizeFileName($this->expe->ref);
 				$dir = $conf->expedition->dir_bon_expedition . "/" . $expref;
 				$file = $dir . "/" . $expref . ".pdf";
 			}
