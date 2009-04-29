@@ -54,6 +54,7 @@ class Conf
 
 	var $css_modules=array();
 	var $tabs_modules=array();
+	var $modules=array();
 
 	var $logbuffer=array();
 
@@ -66,22 +67,16 @@ class Conf
 	*/
 	function setValues($db)
 	{
-		global $conf;
-		
 		dol_syslog("Conf::setValues");
 
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;	// Par defaut, a oui
-		
-		$rootfordata = DOL_DATA_ROOT;
-		// If multicompany module is enabled, we redefine the root of data
-		if (! empty($conf->multicompany) && ! empty($conf->entity)) $rootfordata.='/'.$conf->entity;
 
 		/*
-		 * Definition de toutes les Constantes globales d'environnement
+		 * Definition de toutes les constantes globales d'environnement
 		 * - En constante php (TODO a virer)
 		 * - En $this->global->key=value
 		 */
-		$sql = "SELECT name, value, entity FROM ".MAIN_DB_PREFIX."const ";
+		$sql = "SELECT name, value, entity FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE entity IN (0,".$this->entity.")";
 		$result = $db->query($sql);
 		if ($result)
@@ -110,19 +105,22 @@ class Conf
 						$this->tabs_modules[$params[0]][]=$value;
 						//print 'xxx'.$params[0].'-'.$value;
 					}
-					// If this is constant for module directories 	 
-	        if (eregi('^MAIN_MODULE_([A-Z_]+)_DIR_([A-Z_]+)$',$key,$reg) && $value) 	 
-	        {
-	        	$module=strtolower($reg[1]); 	 
-	          $dir_name="dir_".strtolower($reg[2]);
-	          $this->$module->$dir_name = $rootfordata.$this->entity.$value; 	 
-	        }
+					// If this is constant for module directories
+					if (eregi('^MAIN_MODULE_([A-Z_]+)_DIR_([A-Z_]+)$',$key,$reg) && $value)
+					{
+						$module=strtolower($reg[1]);
+						$dir_name="dir_".strtolower($reg[2]);
+						$this->$module->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
+					}
 					// If this is a module constant
 					if (eregi('^MAIN_MODULE_([A-Z]+)$',$key,$reg) && $value)
 					{
 						$module=strtolower($reg[1]);
 						//print "Module ".$module." is enabled<br>\n";
 						$this->$module->enabled=true;
+
+						// Add this module in list of enabled modules
+						$this->modules[]=$module;
 					}
 				}
 				$i++;
@@ -148,12 +146,21 @@ class Conf
 		if (! isset($this->global->LDAP_KEY_CONTACTS)) $this->global->LDAP_KEY_CONTACTS=$this->global->LDAP_FIELD_FULLNAME;
 		if (! isset($this->global->LDAP_KEY_MEMBERS)) $this->global->LDAP_KEY_MEMBERS=$this->global->LDAP_FIELD_FULLNAME;
 
-
 		// Load translation object with current language
 		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT="en_US";
 
-		// Other global parameters
-		$this->users->dir_output=$rootfordata."/users";
+		$rootfordata = DOL_DATA_ROOT;
+		// If multicompany module is enabled, we redefine the root of data
+		if (! empty($this->global->MULTICOMPANY) && ! empty($this->entity)) $rootfordata.='/'.$this->entity;
+
+		// Define default dir_output and dir_temp for directories of modules
+		foreach($this->modules as $module)
+		{
+			if (empty($conf->$module->dir_output)) $conf->$module->dir_output=$rootfordata."/".$module;
+			else $conf->$module->dir_output=$rootfordata.$conf->$module->dir_output;
+			if (empty($conf->$module->dir_temp)) $conf->$module->dir_temp=$rootfordata."/".$module."/temp";
+			else $conf->$module->dir_temp=$rootfordata.$conf->$module->dir_temp;
+		}
 
 		// For backward compatibility
 		$this->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
@@ -161,24 +168,10 @@ class Conf
 		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
 		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
 
-		// Other global parameters
-		$this->users->dir_output=$rootfordata."/users";
-
-		// Module agenda
-		$this->agenda->dir_output=$rootfordata."/agenda";
-		$this->agenda->dir_temp=$rootfordata."/agenda/temp";
-
-		// Module externalrss
+		// Exception: This dir does are not the name of module. So we keep exception here
+		// for backward compatibility
 		$this->externalrss->dir_output=$rootfordata."/rss";
 		$this->externalrss->dir_temp=$rootfordata."/rss/temp";
-
-		// Module commande client
-		$this->commande->dir_output=$rootfordata."/commande";
-		$this->commande->dir_temp  =$rootfordata."/commande/temp";
-
-		// Module expeditions
-		$this->expedition->dir_output=$rootfordata."/expedition";
-		$this->expedition->dir_temp  =$rootfordata."/expedition/temp";
 
 		// Sous module bons d'expedition
 		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
@@ -190,8 +183,6 @@ class Conf
 		$this->livraison_bon->dir_temp  =$rootfordata."/expedition/receipt/temp";
 
 		// Module societe
-		$this->societe->dir_output=$rootfordata."/societe";
-		$this->societe->dir_temp  =$rootfordata."/societe/temp";
 		$this->societe->dir_logos =$rootfordata."/societe/logos";
 		if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $this->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 
@@ -203,23 +194,11 @@ class Conf
 		$this->tax->dir_output=$rootfordata."/taxes";
 		$this->tax->dir_temp  =$rootfordata."/taxes/temp";
 
-		// Module comptaexpert
-		$this->comptaexpert->dir_output=$rootfordata."/comptaexpert";
-		$this->comptaexpert->dir_temp  =$rootfordata."/comptaexpert/temp";
-
-		// Module compta
-		$this->compta->dir_output=$rootfordata."/compta";
-		$this->compta->dir_temp  =$rootfordata."/compta/temp";
-
-		// Module banque
-		$this->banque->dir_output=$rootfordata."/banque";
-		$this->banque->dir_temp  =$rootfordata."/banque/temp";
 		// Module don
 		$this->don->dir_output=$rootfordata."/dons";
 		$this->don->dir_temp  =$rootfordata."/dons/temp";
+
 		// Module fournisseur
-		$this->fournisseur->dir_output=$rootfordata."/fournisseur";
-		$this->fournisseur->dir_temp=$rootfordata."/fournisseur/temp";
 		$this->fournisseur->commande->dir_output=$rootfordata."/fournisseur/commande";
 		$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";
 		$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
@@ -228,12 +207,7 @@ class Conf
 		$this->fichinter->dir_output=$rootfordata."/ficheinter";
 		$this->fichinter->dir_temp  =$rootfordata."/ficheinter/temp";
 		if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $this->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par defaut
-		// Module adherent
-		$this->adherent->dir_output=$rootfordata."/adherent";
-		$this->adherent->dir_tmp=$rootfordata."/adherent/temp";
 		// Module produit
-		$this->produit->dir_output=$rootfordata."/produit";
-		$this->produit->dir_temp  =$rootfordata."/produit/temp";
 		$this->produit->MultiPricesEnabled=defined("PRODUIT_MULTIPRICES")?PRODUIT_MULTIPRICES:0;
 		// Module service
 		$this->service->dir_output=$rootfordata."/produit";
@@ -241,13 +215,8 @@ class Conf
 		// Module droipret
 		$this->droitpret->cat=defined('DROITPRET_CAT')?DROITPRET_CAT:'';
 		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
-		$this->droitpret->dir_output=$rootfordata.'/droitpret';
-		$this->droitpret->dir_temp=$rootfordata."/droitpret/temp";
 		// Module contrat
 		$this->contrat->dir_output=$rootfordata."/contracts";
-		// Module prelevement
-		$this->prelevement->dir_output=$rootfordata."/prelevement";
-		$this->prelevement->dir_temp  =$rootfordata."/prelevement/temp";
 		// Module webcal
 		$this->webcal->db->type=defined('PHPWEBCALENDAR_TYPE')?PHPWEBCALENDAR_TYPE:'__dolibarr_main_db_type__';
 		$this->webcal->db->host=defined('PHPWEBCALENDAR_HOST')?PHPWEBCALENDAR_HOST:'';
@@ -273,55 +242,18 @@ class Conf
 		$this->mantis->db->pass=defined('PHPMANTIS_PASS')?PHPMANTIS_PASS:'';
 		$this->mantis->db->name=defined('PHPMANTIS_DBNAME')?PHPMANTIS_DBNAME:'';
 		// Module facture
-		$this->facture->dir_output=$rootfordata."/facture";
-		$this->facture->dir_temp  =$rootfordata."/facture/temp";
 		if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $this->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par defaut
 		// Module propal
 		if (! defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
-		$this->propale->dir_output=$rootfordata."/propale";
-		$this->propale->dir_temp  =$rootfordata."/propale/temp";
 		if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $this->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
-		// Module telephonie
-		$this->telephonie->dir_output=$rootfordata."/telephonie";
-		$this->telephonie->dir_temp  =$rootfordata."/telephonie/temp";
-		// Module domaine
-		$this->domaine->enabled=0;
 		// Module voyage
 		$this->voyage->enabled=0;
 		// Module actions
 		$this->actions->dir_output=$rootfordata."/action";
 		$this->actions->dir_temp  =$rootfordata."/action/temp";
-		// Module export
-		$this->export->dir_output=$rootfordata."/export";
-		$this->export->dir_temp  =$rootfordata."/export/temp";
-		// Module import
-		$this->import->dir_output=$rootfordata."/import";
-		$this->import->dir_temp  =$rootfordata."/import/temp";
-		// Module ldap
-		$this->ldap->dir_temp=$rootfordata."/ldap/temp";
-		// Module FCKeditor
-		$this->fckeditor->dir_output=$rootfordata."/fckeditor";
-		// Module ECM
-		$this->ecm->dir_output=$rootfordata."/ecm";
-		// Module emailing
-		$this->mailings->dir_temp=$rootfordata."/mailings/temp";
 		// Module oscommerce 1
 		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
-		// Module Barcode
-		$this->barcode->dir_output=$rootfordata."/barcode";
-		$this->barcode->dir_temp=$rootfordata."/barcode/temp";
-		// Module stock
-		$this->stock->dir_output=$rootfordata."/stock";
-		$this->stock->dir_temp=$rootfordata."/stock/temp";
-		// Module prelevement
-		$this->prelevement->dir_output=$rootfordata."/prelevement";
-		// Module bittorrent
-		$this->bittorrent->dir_output=$rootfordata."/bittorrent";
-		// Module ECM
-		$this->ecm->dir_output=$rootfordata."/ecm";
-		// Module GED
-		$this->ged->dir_output=$rootfordata."/ged";
 		// Other
 		$this->admin->dir_output=$rootfordata.'/admin';
 		$this->admin->dir_temp=$rootfordata.'/admin/temp';
