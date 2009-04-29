@@ -17,14 +17,18 @@ To install Dolibarr:
 - Copy directory 'dolibarr' and all its files inside your web server root,
   or set up your web server to use dolibarr/htdocs as root for a new web
   server virtual host (second choice need to be web server administrator).
+  
 - Create an empty mysql database (postgresql support is experimental).
+
 - Set write permissions on directory 'dolibarr/htdocs/conf' for your web
   server user (write permissions will be removed once install is finished).
+  
 - From your browser, call the dolibarr "install/" page. Url depends on choice
   made on first step:
-   http://localhost/dolibarr/htdocs/install/index.php
+   http://localhost/dolibarr/htdocs/install/
   or
-   http://yourdolibarrvirtualhost/install/index.php
+   http://yourdolibarrvirtualhost/install/
+   
 - Follow instructions provided by installer...
 
 
@@ -32,20 +36,24 @@ II - DOLIBARR UPGRADE
 ---------------------
 
 To upgrade Dolibarr from an old version to this one:
+
 - Overwrite all old files inside old 'dolibarr' directory by files
   provided into new version package.
+  
 - If you came from version x.y.z to x.y.w (only third number differ),
   there is no need to run any migrate process.
+  
 - If you came from a beta version or from any version x.y.z to any
   other where x or y number differs, you must call the Dolibarr "install/"
   page in your browser.
   Url might be for example:
-   http://localhost/dolibarr/htdocs/install/index.php
+   http://localhost/dolibarr/htdocs/install/
   or
    http://yourdolibarrhost/install/index.php
+
   To know what is exactly correct URL for "install/" page, take URL you use
-  to go on login page. It it ends with "index.php", remove it, then add
-  "install/".
+  to go on login page. It it ends with "index.php", remove it. Then add
+  "install/" at the end.
   For example, if your login page is: 
   http://yourdolibarrhost/something/index.php
   Then, your "install/" pages will be 
