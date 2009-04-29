@@ -63,14 +63,15 @@ class modMyModule extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
 		$this->special = 0;
-		// Name of png file (without png) used for this module.
-		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
+		// Name of image file used for this module.
+		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
+		// If file is in module/images directory, use this->picto=DOL_URL_ROOT.'/module/images/file.png'
 		$this->picto='generic';
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
 		$r=0;
-			
+
 		//$this->dirs[$r][0] = "mymodule";
     //$this->dirs[$r][1] = "/mymodule";
     //$r++;
