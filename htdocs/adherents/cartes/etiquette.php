@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/member/PDF_card.class.php');
 
 
-$dir = $conf->adherent->dir_tmp;
+$dir = $conf->adherent->dir_temp;
 $file = $dir . "/tmplabel.pdf";
 
 if (! file_exists($dir))

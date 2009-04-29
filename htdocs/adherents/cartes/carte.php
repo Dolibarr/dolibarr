@@ -50,7 +50,7 @@ $patterns = array (
 		   );
 
 
-$dir = $conf->adherent->dir_tmp;
+$dir = $conf->adherent->dir_temp;
 $file = $dir . "/tmpcard.pdf";
 
 if (! file_exists($dir))
