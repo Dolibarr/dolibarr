@@ -183,22 +183,8 @@ function dol_syslog($message, $level=LOG_INFO)
 		// Check if log is to a file (SYSLOG_FILE defined) or to syslog
 		if (defined("SYSLOG_FILE") && SYSLOG_FILE)
 		{
-			if (eregi('(^[A-Za-z0-9_\-\\/:]+[\\/]+)([A-Za-z0-9_\-]+[.]?[A-Za-z0-9]+)?$', SYSLOG_FILE))
-			{
-				if (eregi('DOL_DATA_ROOT', SYSLOG_FILE))
-				{
-					$filelog = eregi_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $filelog);
-				}
-				else
-				{
-					$filelog = SYSLOG_FILE;
-				}
-			}
-			else if ($conf->syslog->dir_output)
-			{
-				$filelog = $conf->syslog->dir_output."/".SYSLOG_FILE;
-			}
-
+			$filelog=SYSLOG_FILE;
+			$filelog=eregi_replace('DOL_DATA_ROOT',DOL_DATA_ROOT,$filelog);
 			if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen($filelog,"a+");
 			else $file=fopen($filelog,"a+");
 
