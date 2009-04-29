@@ -1,5 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@ create table llx_commande
   fk_soc                integer NOT NULL,
   fk_projet             integer DEFAULT 0,             -- projet auquel est rattache la commande
   ref                   varchar(30) NOT NULL,          -- order number
+  entity                integer DEFAULT 1 NOT NULL,	   -- multi company id
   ref_client            varchar(30),                   -- customer order number
 
   date_creation         datetime,                      -- date de creation 
@@ -54,3 +56,11 @@ create table llx_commande
   fk_adresse_livraison  integer,                       -- adresse de livraison
   import_key            varchar(14)
 )type=innodb;
+
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company order
+-- 2 : second company order
+-- 3 : etc...
+--

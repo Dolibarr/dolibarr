@@ -3,7 +3,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 2.5.0 or higher. 
+-- when current version is 2.6.0 or higher. 
 --
 
 -- Multi company
@@ -24,6 +24,7 @@ ALTER TABLE llx_ecm_directories ADD COLUMN entity integer DEFAULT 1 NOT NULL AFT
 ALTER TABLE llx_mailing ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER titre;
 ALTER TABLE llx_categorie ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER label;
 ALTER TABLE llx_propal ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
+ALTER TABLE llx_commande ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
 
 ALTER TABLE llx_rights_def DROP PRIMARY KEY;
 ALTER TABLE llx_user_param DROP INDEX fk_user;
@@ -36,6 +37,7 @@ ALTER TABLE llx_document_model DROP INDEX uk_document_model;
 ALTER TABLE llx_menu DROP INDEX idx_menu_uk_menu;
 ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
 ALTER TABLE llx_propal DROP INDEX ref;
+ALTER TABLE llx_commande DROP INDEX ref;
 
 ALTER TABLE llx_rights_def ADD PRIMARY KEY (id, entity);
 ALTER TABLE llx_user_param ADD UNIQUE INDEX uk_user_param (fk_user,param,entity);
@@ -48,3 +50,4 @@ ALTER TABLE llx_document_model ADD UNIQUE INDEX uk_document_model (nom, type, en
 ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, url, entity);
 ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label, type, entity);
 ALTER TABLE llx_propal ADD UNIQUE INDEX uk_propal_ref (ref, entity);
+ALTER TABLE llx_commande ADD UNIQUE INDEX uk_commande_ref (ref, entity);
