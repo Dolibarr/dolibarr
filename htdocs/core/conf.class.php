@@ -169,7 +169,7 @@ class Conf
 		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
 
 		// Exception: Some dir are not the name of module. So we keep exception here
-		// for backward compatibility
+		// for backward compatibility.
 
 		// Module RSS
 		$this->externalrss->dir_output=$rootfordata."/rss";
@@ -215,6 +215,7 @@ class Conf
 		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
 		// Module contrat
 		$this->contrat->dir_output=$rootfordata."/contracts";
+		$this->contrat->dir_temp=$rootfordata."/contracts/temp";
 		// Module webcal
 		$this->webcal->db->type=defined('PHPWEBCALENDAR_TYPE')?PHPWEBCALENDAR_TYPE:'__dolibarr_main_db_type__';
 		$this->webcal->db->host=defined('PHPWEBCALENDAR_HOST')?PHPWEBCALENDAR_HOST:'';
@@ -222,8 +223,6 @@ class Conf
 		$this->webcal->db->user=defined('PHPWEBCALENDAR_USER')?PHPWEBCALENDAR_USER:'';
 		$this->webcal->db->pass=defined('PHPWEBCALENDAR_PASS')?PHPWEBCALENDAR_PASS:'';
 		$this->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
-		$this->webcal->dir_output=$rootfordata.'/webcal';
-		$this->webcal->dir_temp=$rootfordata.'/webcal/temp';
 		// Module phenix
 		$this->phenix->db->type=defined('PHPPHENIX_TYPE')?PHPPHENIX_TYPE:'__dolibarr_main_db_type__';
 		$this->phenix->db->host=defined('PHPPHENIX_HOST')?PHPPHENIX_HOST:'';
@@ -243,9 +242,6 @@ class Conf
 		if (! defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
 		// Module voyage
 		$this->voyage->enabled=0;
-		// Module actions
-		$this->actions->dir_output=$rootfordata."/action";
-		$this->actions->dir_temp  =$rootfordata."/action/temp";
 		// Module oscommerce 1
 		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
