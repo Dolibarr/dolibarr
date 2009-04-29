@@ -925,7 +925,7 @@ SyslogFacility=Facility
 SyslogLevel=Level
 SyslogSimpleFile=File
 SyslogFilename=File name and path
-YouCanUseDOL_DATA_ROOT=You can user DOL_DATA_ROOT/dolibarr.log for a log file in Dolibarr documents directory.
+SyslogFilenameDesc = This log file is located by default in the directory:<br><b>%s</b><br><br>You can set a different path to store this file.
 ErrorUnknownSyslogConstant=Constant %s is not a known syslog constant
 ##### Donations #####
 DonationsSetup=Donation module setup

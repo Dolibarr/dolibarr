@@ -56,8 +56,12 @@ class modSyslog extends DolibarrModules
 		$this->special = 2;
 		//$this->picto='phoning';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
+		$r=0;
+		
+		$this->dirs[$r][0] = "output";
+		$this->dirs[$r][1] = "/logs";
 
 		// Config pages
 		$this->config_page_url = array("syslog.php");

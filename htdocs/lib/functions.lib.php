@@ -183,8 +183,22 @@ function dol_syslog($message, $level=LOG_INFO)
 		// Check if log is to a file (SYSLOG_FILE defined) or to syslog
 		if (defined("SYSLOG_FILE") && SYSLOG_FILE)
 		{
-			$filelog=SYSLOG_FILE;
-			$filelog=eregi_replace('DOL_DATA_ROOT',DOL_DATA_ROOT,$filelog);
+			if (eregi('(^[A-Za-z0-9_\-\\/:]+[\\/]+)([A-Za-z0-9_\-]+[.]?[A-Za-z0-9]+)?$', SYSLOG_FILE))
+			{
+				if (eregi('DOL_DATA_ROOT', SYSLOG_FILE))
+				{
+					$filelog = eregi_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $filelog);
+				}
+				else
+				{
+					$filelog = SYSLOG_FILE;
+				}
+			}
+			else if ($conf->syslog->dir_output)
+			{
+				$filelog = $conf->syslog->dir_output."/".SYSLOG_FILE;
+			}
+
 			if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen($filelog,"a+");
 			else $file=fopen($filelog,"a+");
 
@@ -2615,10 +2629,10 @@ function dol_textishtml($msg,$option=0)
 }
 
 /**
- *    \brief      Effectue les substitutions des mots cl�s par les donn�es en fonction du tableau
+ *    \brief      Effectue les substitutions des mots cles par les donnees en fonction du tableau
  *    \param      chaine      			Chaine dans laquelle faire les substitutions
- *    \param      substitutionarray		Tableau cl� substitution => valeur a mettre
- *    \return     string      			Chaine avec les substitutions effectu�es
+ *    \param      substitutionarray		Tableau cle substitution => valeur a mettre
+ *    \return     string      			Chaine avec les substitutions effectuees
  */
 function make_substitutions($chaine,$substitutionarray)
 {

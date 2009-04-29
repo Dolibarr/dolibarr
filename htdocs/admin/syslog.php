@@ -62,11 +62,25 @@ if (! empty($_POST["action"]) && $_POST["action"] == 'set')
 			print '<div class="error">'.$langs->trans("ErrorUnknownSyslogConstant",$_POST["facility"]).'</div>';
 		}
 	}
+	
 	if ($optionlogoutput == "file")
 	{
-		$filelog=$_POST["filename"];
-		$filelog=eregi_replace('DOL_DATA_ROOT',DOL_DATA_ROOT,$filelog);
+		$filelog = $_POST["filename"];
+		
+		if (eregi('(^[A-Za-z0-9_\-\\/:]+[\\/]+)([A-Za-z0-9_\-]+[.]?[A-Za-z0-9]+)?$', $filelog))
+		{
+			if (eregi('DOL_DATA_ROOT', $filelog))
+			{
+				$filelog = eregi_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $filelog);
+			}
+		}
+		else if ($conf->syslog->dir_output)
+		{
+			$filelog = $conf->syslog->dir_output."/".$filelog;
+		}
+		
 		$file=fopen($filelog,"a+");
+		
 		if ($file)
 		{
 			fclose($file);
@@ -88,14 +102,16 @@ if (! empty($_POST["action"]) && $_POST["action"] == 'set')
 
 llxHeader();
 
+$html=new Form($db);
+
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("SyslogSetup"),$linkback,'setup');
 print '<br>';
 
 $def = array();
 
-$syslogfacility=$defaultsyslogfacility=dolibarr_get_const($db,"SYSLOG_FACILITY");
-$syslogfile=$defaultsyslogfile=dolibarr_get_const($db,"SYSLOG_FILE");
+$syslogfacility=$defaultsyslogfacility=dolibarr_get_const($db,"SYSLOG_FACILITY",$conf->entity);
+$syslogfile=$defaultsyslogfile=dolibarr_get_const($db,"SYSLOG_FILE",$conf->entity);
 
 if (! $defaultsyslogfacility) $defaultsyslogfacility='LOG_USER';
 if (! $defaultsyslogfile) $defaultsyslogfile='dolibarr.log';
@@ -109,19 +125,20 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Parameter").'</td>';
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '<td align="right" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=true;
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"140\"><input ".$bc[$var]." type=\"radio\" name=\"optionlogoutput\" value=\"syslog\" ".($syslogfacility?" checked":"")."> ".$langs->trans("SyslogSyslog")."</td>";
-print '<td colspan="2">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" value="'.$defaultsyslogfacility.'">';
+print '<td colspan="3">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" value="'.$defaultsyslogfacility.'">';
 print ' '.img_info('Only LOG_USER supported on Windows');
 print '</td></tr>';
 
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"140\"><input ".$bc[$var]." type=\"radio\" name=\"optionlogoutput\" value=\"file\"".($syslogfile?" checked":"")."> ".$langs->trans("SyslogSimpleFile")."</td>";
-print '<td colspan="2">'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" size="60" value="'.$defaultsyslogfile.'">';
-print ' '.img_info($langs->trans("YouCanUseDOL_DATA_ROOT"));
+print '<td width="250" nowrap>'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" size="60" value="'.$defaultsyslogfile.'"></td>';
+$htmltext = $langs->trans("SyslogFilenameDesc",$conf->syslog->dir_output);
+print "<td align=\"left\">".$html->textwithhelp('',$htmltext);
 print '</td></tr>';
 
 print "</table>\n";

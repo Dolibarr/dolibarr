@@ -347,30 +347,30 @@ class Translate {
      */
     function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
     {
-        if ($this->getTransFromTab($key))
-        {
-            // Translation is available
-            $str=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
-            if ($maxsize) $str=dol_trunc($str,$maxsize);
-            // On remplace les tags HTML par __xx__ pour eviter traduction par htmlentities
-            $newstr=ereg_replace('<','__lt__',$str);
-            $newstr=ereg_replace('>','__gt__',$newstr);
-            $newstr=ereg_replace('"','__quot__',$newstr);
+    	if ($this->getTransFromTab($key))
+      {
+      	// Translation is available
+        $str=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
+        if ($maxsize) $str=dol_trunc($str,$maxsize);
+        // On remplace les tags HTML par __xx__ pour eviter traduction par htmlentities
+        $newstr=ereg_replace('<','__lt__',$str);
+        $newstr=ereg_replace('>','__gt__',$newstr);
+        $newstr=ereg_replace('"','__quot__',$newstr);
+        
+        $newstr=$this->convToOutputCharset($newstr);	// Convert string to $this->charset_output
 
-			$newstr=$this->convToOutputCharset($newstr);	// Convert string to $this->charset_output
+        // Cryptage en html de la chaine
+        // $newstr est une chaine stockee en memoire au format $this->charset_output
+        $newstr=htmlentities($newstr,ENT_QUOTES,$this->charset_output);
 
-            // Cryptage en html de la chaine
-			// $newstr est une chaine stockee en memoire au format $this->charset_output
-            $newstr=htmlentities($newstr,ENT_QUOTES,$this->charset_output);
-
-            // On restaure les tags HTML
-            $newstr=ereg_replace('__lt__','<',$newstr);
-            $newstr=ereg_replace('__gt__','>',$newstr);
-            $newstr=ereg_replace('__quot__','"',$newstr);
-            return $newstr;
-        }
-		else
-		{
+        // On restaure les tags HTML
+        $newstr=ereg_replace('__lt__','<',$newstr);
+        $newstr=ereg_replace('__gt__','>',$newstr);
+        $newstr=ereg_replace('__quot__','"',$newstr);
+        return $newstr;
+      }
+      else
+      {
 			// Translation is not available
 			$newstr=$key;
 			if (eregi('CurrencyShort([A-Z]+)$',$key,$reg))

@@ -109,7 +109,7 @@ class Conf
 					{
 						$module=strtolower($reg[1]);
 						$dir_name="dir_".strtolower($reg[2]);
-						$this->$module->$dir_name = DOL_DATA_ROOT."/entity_".$this->entity."/".$value;
+						$this->$module->$dir_name = DOL_DATA_ROOT."/entity_".$this->entity.$value;
 					}
 					// If this is a module constant
 					if (eregi('^MAIN_MODULE_([A-Z]+)$',$key,$reg) && $value)
