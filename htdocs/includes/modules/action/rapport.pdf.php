@@ -85,7 +85,7 @@ class CommActionRapport
 
 		$outputlangs->setPhpLang();
 
-		$dir = $conf->actions->dir_temp."/";
+		$dir = $conf->commercial->dir_actions_temp."/";
 		$file = $dir . "actions-".$this->month."-".$this->year.".pdf";
 
 		if (! file_exists($dir))
@@ -105,7 +105,7 @@ class CommActionRapport
 				$pdf=new FPDI_Protection('P','mm',$this->format);
 				$pdfrights = array('print'); // Ne permet que l'impression du document
 				$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-				$pdfownerpass = NULL; // Mot de passe du propri�tire, cr�e al�atoirement si pas d�fini
+				$pdfownerpass = NULL; // Mot de passe du proprietire, cree aleatoirement si pas defini
 				$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 			}
 			else
