@@ -143,19 +143,21 @@ class Conf
 		// If multicompany module is enabled, we redefine the root of data
 		if (! empty($conf->multicompany) && ! empty($conf->entity)) $rootfordata.='/'.$conf->entity;
 
-		// Other global parameters
-		$this->users->dir_output=$rootfordata."/users";
-
 		// For backward compatibility
 		$this->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
 		$this->compta->enabled=defined("MAIN_MODULE_COMPTABILITE")?MAIN_MODULE_COMPTABILITE:0;
 		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
 		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
 
+		// Other global parameters
+		$this->users->dir_output=$rootfordata."/users";
+
 		// Module agenda
+		$this->agenda->dir_output=$rootfordata."/agenda";
 		$this->agenda->dir_temp=$rootfordata."/agenda/temp";
 
 		// Module externalrss
+		$this->externalrss->dir_output=$rootfordata."/rss";
 		$this->externalrss->dir_temp=$rootfordata."/rss/temp";
 
 		// Module commande client
@@ -180,6 +182,7 @@ class Conf
 		$this->societe->dir_temp  =$rootfordata."/societe/temp";
 		$this->societe->dir_logos =$rootfordata."/societe/logos";
 		if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $this->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
+
 		// Module commercial
 		$this->commercial->dir_output=$rootfordata."/comm";
 		$this->commercial->dir_temp  =$rootfordata."/comm/temp";
@@ -191,9 +194,11 @@ class Conf
 		// Module comptaexpert
 		$this->comptaexpert->dir_output=$rootfordata."/comptaexpert";
 		$this->comptaexpert->dir_temp  =$rootfordata."/comptaexpert/temp";
+
 		// Module compta
 		$this->compta->dir_output=$rootfordata."/compta";
 		$this->compta->dir_temp  =$rootfordata."/compta/temp";
+
 		// Module banque
 		$this->banque->dir_output=$rootfordata."/banque";
 		$this->banque->dir_temp  =$rootfordata."/banque/temp";
@@ -221,12 +226,11 @@ class Conf
 		// Module service
 		$this->service->dir_output=$rootfordata."/produit";
 		$this->service->dir_temp  =$rootfordata."/produit/temp";
-
 		// Module droipret
 		$this->droitpret->cat=defined('DROITPRET_CAT')?DROITPRET_CAT:'';
 		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
+		$this->droitpret->dir_output=$rootfordata.'/droitpret';
 		$this->droitpret->dir_temp=$rootfordata."/droitpret/temp";
-
 		// Module contrat
 		$this->contrat->dir_output=$rootfordata."/contracts";
 		// Module prelevement
@@ -239,6 +243,7 @@ class Conf
 		$this->webcal->db->user=defined('PHPWEBCALENDAR_USER')?PHPWEBCALENDAR_USER:'';
 		$this->webcal->db->pass=defined('PHPWEBCALENDAR_PASS')?PHPWEBCALENDAR_PASS:'';
 		$this->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
+		$this->webcal->dir_output=$rootfordata.'/webcal';
 		$this->webcal->dir_temp=$rootfordata.'/webcal/temp';
 		// Module phenix
 		$this->phenix->db->type=defined('PHPPHENIX_TYPE')?PHPPHENIX_TYPE:'__dolibarr_main_db_type__';
@@ -292,11 +297,22 @@ class Conf
 		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
 		// Module Barcode
+		$this->barcode->dir_output=$rootfordata."/barcode";
 		$this->barcode->dir_temp=$rootfordata."/barcode/temp";
 		// Module stock
+		$this->stock->dir_output=$rootfordata."/stock";
 		$this->stock->dir_temp=$rootfordata."/stock/temp";
 		// Module prelevement
 		$this->prelevement->dir_output=$rootfordata."/prelevement";
+		// Module bittorrent
+		$this->bittorrent->dir_output=$rootfordata."/bittorrent";
+		// Module ECM
+		$this->ecm->dir_output=$rootfordata."/ecm";
+		// Module GED
+		$this->ged->dir_output=$rootfordata."/ged";
+		// Other
+		$this->admin->dir_output=$rootfordata.'/admin';
+		$this->admin->dir_temp=$rootfordata.'/admin/temp';
 
 		/*
 		 * Modification de quelques variable de conf en fonction des Constantes

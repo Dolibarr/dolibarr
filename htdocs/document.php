@@ -324,7 +324,7 @@ if ($modulepart)
         {
 			$accessallowed=1;
         }
-        $original_file= DOL_DATA_ROOT.'/ged/'.$original_file;
+        $original_file= $this->ged->dir_output.'/'.$original_file;
     }
 
     // Wrapping pour les documents generaux
@@ -335,7 +335,7 @@ if ($modulepart)
         {
 			$accessallowed=1;
         }
-        $original_file= DOL_DATA_ROOT.'/ecm/'.$original_file;
+        $original_file= $this->ecm->dir_output.'/'.$original_file;
     }
 
     // Wrapping pour les dons
@@ -390,7 +390,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=DOL_DATA_ROOT.'/admin/temp/'.$original_file;
+        $original_file=$conf->admin->dir_temp.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
     }
 
@@ -400,7 +400,7 @@ if ($modulepart)
         $accessallowed=1;
         $dir='files';
         if ($type == 'application/x-bittorrent') $dir='torrents';
-        $original_file=DOL_DATA_ROOT.'/bittorrent/'.$dir.'/'.$original_file;
+        $original_file=$conf->bittorrent->dir_output.'/'.$dir.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
     }
 }
