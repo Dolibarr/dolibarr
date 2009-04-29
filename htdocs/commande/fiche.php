@@ -684,8 +684,8 @@ if ($_REQUEST['action'] == 'remove_file')
 if ($_POST['addfile'])
 {
 	// Set tmp user directory
-	$conf->users->dir_tmp=DOL_DATA_ROOT."/users/".$user->id;
-	$upload_dir = $conf->users->dir_tmp.'/temp/';
+	$vardir=$conf->users->dir_output."/".$user->id;
+	$upload_dir = $vardir.'/temp/';
 
 	if (! empty($_FILES['addedfile']['tmp_name']))
 	{

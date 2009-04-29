@@ -100,8 +100,9 @@ class FormMail
 	{
 		global $conf,$user;
 
-		$conf->users->dir_tmp=DOL_DATA_ROOT."/users/".$user->id;
-		$upload_dir = $conf->users->dir_tmp.'/temp';
+		// Set tmp user directory
+		$vardir=$conf->users->dir_output."/".$user->id;
+		$upload_dir = $vardir.'/temp/';
 		if (is_dir($upload_dir)) dol_delete_dir_recursive($upload_dir);
 
 		unset($_SESSION["listofpaths"]);
