@@ -3,9 +3,9 @@ English Dolibarr changelog
 ***** Changelog for 2.6 compared to 2.5 *****
 
 For users:
-- New: Add filter on statut in emailing selector for dolibarr users.
+- New: Add filter on status in emailing selector for Dolibarr users.
 - New: Can add bookmarks on all pages.
-- New: Enhance bank transactions reportings.
+- New: Enhance bank transactions reporting.
 - New: When creating a contact from a third party, informations from third party card
   are automatically suggested.
 - New: Sort list of languages in combo box.
@@ -23,10 +23,10 @@ For users:
 - New: Added keywords in PDF.
 - New: Add hidden option MAIN_DISABLE_PDF_COMPRESSION.
 - New: Add attachments on intervention cards.
-- New: Can add personalised fields in emailing selectors.
+- New: Can add personalized fields in emailing selectors.
 - New: Customer code and supplier code can be defined automatically.
 - New: Emailing feature can extract civility from contacts.
-- New: Can create a third party from a member of fundation module.
+- New: Can create a third party from a member of foundation module.
 - New: Can set a limit for stock alert to 0.
 - New: Support SMTPS.
 - New: Added a page /support to provide a help center service on Dolibarr.
@@ -34,7 +34,7 @@ For users:
   contract status.
 - New: Add a first version of a module for Paybox.
 - New: Can add contact to suppliers orders.
-- New: Changements to support the external BitTorrent module.
+- New: Changes to support the external Bit Torrent module.
 - New: Can filter on social contribution type in list.
 - New: Upload of joined files need create/modify permissions to work.
 - New: For admin users, show the SQL request in export build.
@@ -50,7 +50,7 @@ For users:
 - Fix: Failed to go on the future view of bank transaction if there is no 
   future bank transaction already wrote.  
 - Fix: Bad ref in supplier list.
-- Fix: Bad link in product statistics for supplier referers.
+- Fix: Bad link in product statistics for supplier referrers.
 - Fix: Usage of reset of cursor in personalized numbering modules for a particular
   month (@ option) was broken.
 - Can add contacts to a supplier invoice.
@@ -62,14 +62,14 @@ For users:
 - Fix: Project module and task creation.
 - Fix: Validation of order if a file was attached.
 - Fix: A lot of fixes in PDF generators.
-- Fix: Bad line/pagebreak with long description of products on PDF.
+- Fix: Bad line/page break with long description of products on PDF.
 - Fix: Option force invoice date to validation date working correctly.
 - Fix: Creation of a member from the example public page works.
 
 For translators:
 - Added 10 more new language files.
 - Added autotranslator tool. A tool to build/update automatically
-  languages files using Google API for a new language. Wonderfull to start a
+  languages files using Google API for a new language. Wonderful to start a
   new translation.
   
 For developers:
