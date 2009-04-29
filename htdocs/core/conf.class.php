@@ -156,10 +156,10 @@ class Conf
 		// Define default dir_output and dir_temp for directories of modules
 		foreach($this->modules as $module)
 		{
-			if (empty($conf->$module->dir_output)) $conf->$module->dir_output=$rootfordata."/".$module;
-			else $conf->$module->dir_output=$rootfordata.$conf->$module->dir_output;
-			if (empty($conf->$module->dir_temp)) $conf->$module->dir_temp=$rootfordata."/".$module."/temp";
-			else $conf->$module->dir_temp=$rootfordata.$conf->$module->dir_temp;
+			if (empty($this->$module->dir_output)) $this->$module->dir_output=$rootfordata."/".$module;
+			else $this->$module->dir_output=$rootfordata.$this->$module->dir_output;
+			if (empty($this->$module->dir_temp)) $this->$module->dir_temp=$rootfordata."/".$module."/temp";
+			else $this->$module->dir_temp=$rootfordata.$this->$module->dir_temp;
 		}
 
 		// For backward compatibility
@@ -368,7 +368,7 @@ class Conf
 		if (! isset($this->global->MAIN_MAX_DECIMALS_SHOWN)) $this->global->MAIN_MAX_DECIMALS_SHOWN=8;
 
 		// Define umask
-		if (empty($conf->global->MAIN_UMASK)) $conf->global->MAIN_UMASK='0664';
+		if (empty($this->global->MAIN_UMASK)) $this->global->MAIN_UMASK='0664';
 
 		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de desactiver la fonction TVA
 		 * (pour particuliers ou liberaux en franchise)
