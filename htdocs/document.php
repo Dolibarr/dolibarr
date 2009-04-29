@@ -100,309 +100,309 @@ $accessallowed=0;
 $sqlprotectagainstexternals='';
 if ($modulepart)
 {
-    // On fait une verification des droits et on definit le repertoire concerne
+	// On fait une verification des droits et on definit le repertoire concerne
 
-    // Wrapping pour les factures
-    if ($modulepart == 'facture')
-    {
-        $user->getrights('facture');
-        if ($user->rights->facture->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->facture->dir_output.'/'.$original_file;
+	// Wrapping pour les factures
+	if ($modulepart == 'facture')
+	{
+		$user->getrights('facture');
+		if ($user->rights->facture->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->facture->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='$refname'";
-    }
+	}
 
 	if ($modulepart == 'unpayed')
-    {
-        $user->getrights('facture');
-        if ($user->rights->facture->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->facture->dir_output.'/unpayed/temp/'.$original_file;
-    }
+	{
+		$user->getrights('facture');
+		if ($user->rights->facture->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->facture->dir_output.'/unpayed/temp/'.$original_file;
+	}
 
-    // Wrapping pour les fiches intervention
-    if ($modulepart == 'ficheinter')
-    {
-        $user->getrights('ficheinter');
-        if ($user->rights->ficheinter->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->ficheinter->dir_output.'/'.$original_file;
+	// Wrapping pour les fiches intervention
+	if ($modulepart == 'ficheinter')
+	{
+		$user->getrights('ficheinter');
+		if ($user->rights->ficheinter->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->ficheinter->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
-    }
+	}
 
-    // Wrapping pour les prelevements
-    if ($modulepart == 'prelevement')
-    {
-        $user->getrights('prelevement');
-        if ($user->rights->prelevement->bons->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->prelevement->dir_output.'/'.$original_file;
+	// Wrapping pour les prelevements
+	if ($modulepart == 'prelevement')
+	{
+		$user->getrights('prelevement');
+		if ($user->rights->prelevement->bons->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->prelevement->dir_output.'/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."$modulepart WHERE ref='$refname'";
-    }
+	}
 
-    // Wrapping pour les propales
-    if ($modulepart == 'propal')
-    {
-        $user->getrights('propale');
-        if ($user->rights->propale->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
+	// Wrapping pour les propales
+	if ($modulepart == 'propal')
+	{
+		$user->getrights('propale');
+		if ($user->rights->propale->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
 
-        $original_file=$conf->propale->dir_output.'/'.$original_file;
+		$original_file=$conf->propale->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='$refname'";
-    }
-	 // Wrapping pour les commandes
-    if ($modulepart == 'commande')
-    {
-        $user->getrights('commande');
-        if ($user->rights->commande->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->commande->dir_output.'/'.$original_file;
+	}
+	// Wrapping pour les commandes
+	if ($modulepart == 'commande')
+	{
+		$user->getrights('commande');
+		if ($user->rights->commande->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->commande->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='$refname'";
-    }
+	}
 
-    // Wrapping pour les commandes fournisseurs
-    if ($modulepart == 'commande_fournisseur')
-    {
-        $user->getrights('fournisseur');
-        if ($user->rights->fournisseur->commande->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->fournisseur->dir_commande.'/'.$original_file;
+	// Wrapping pour les commandes fournisseurs
+	if ($modulepart == 'commande_fournisseur')
+	{
+		$user->getrights('fournisseur');
+		if ($user->rights->fournisseur->commande->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->fournisseur->dir_commande.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='$refname'";
-    }
+	}
 
-    // Wrapping pour les factures fournisseurs
-    if ($modulepart == 'facture_fournisseur')
-    {
-        $user->getrights('fournisseur');
-        if ($user->rights->fournisseur->facture->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->fournisseur->dir_facture.'/'.$original_file;
+	// Wrapping pour les factures fournisseurs
+	if ($modulepart == 'facture_fournisseur')
+	{
+		$user->getrights('fournisseur');
+		if ($user->rights->fournisseur->facture->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->fournisseur->dir_facture.'/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='$refname'";
-    }
+	}
 
-    // Wrapping pour les rapport de paiements
-    if ($modulepart == 'facture_paiement')
-    {
-        $user->getrights('facture');
-        if ($user->rights->facture->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        if ($user->societe_id > 0) $original_file=DOL_DATA_ROOT.'/private/'.$user->id.'/compta/'.$original_file;
-        else $original_file=$conf->compta->dir_output.'/payments/'.$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
-    }
-
-    // Wrapping pour les exports de compta
-    if ($modulepart == 'export_compta')
-    {
-        $user->getrights('compta');
-        if ($user->rights->compta->ventilation->creer || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->compta->dir_output.'/'.$original_file;
-    }
-
-    // Wrapping pour les societe
-    if ($modulepart == 'societe')
-    {
-        $user->getrights('societe');
-        if ($user->rights->societe->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->societe->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE idp='$refname'";
-    }
-
-    // Wrapping pour les expedition
-    if ($modulepart == 'expedition')
-    {
-        $user->getrights('expedition');
-        if ($user->rights->expedition->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->expedition->dir_bon_expedition.'/'.$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
-    }
-
-    // Wrapping pour les bons de livraison
-    if ($modulepart == 'livraison')
-    {
-        $user->getrights('expedition');
-        if ($user->rights->expedition->livraison->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->expedition->dir_bon_livraison.'/'.$original_file;
+	// Wrapping pour les rapport de paiements
+	if ($modulepart == 'facture_paiement')
+	{
+		$user->getrights('facture');
+		if ($user->rights->facture->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		if ($user->societe_id > 0) $original_file=DOL_DATA_ROOT.'/private/'.$user->id.'/compta/'.$original_file;
+		else $original_file=$conf->compta->dir_output.'/payments/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
 	}
 
-    // Wrapping pour la telephonie
-    if ($modulepart == 'telephonie')
-    {
-        $user->getrights('telephonie');
-        if ($user->rights->telephonie->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->telephonie->dir_output.'/'.$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
-    }
-
-    // Wrapping pour les actions
-    if ($modulepart == 'actions')
-    {
-    	$user->getrights('commercial');
-      //if ($user->rights->commercial->actions->lire || eregi('^specimen',$original_file)) // TODO: revoir les droits car pas clair
-      //{
-        $accessallowed=1;
-      //}
-      $original_file=$conf->commercial->dir_actions.'/'.$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
-    }
-
-    // Wrapping pour les actions
-    if ($modulepart == 'actionsreport')
-    {
-    	$user->getrights('commercial');
-      //if ($user->rights->commercial->actions->lire || eregi('^specimen',$original_file)) // TODO: revoir les droits car pas clair
-      //{
-        $accessallowed=1;
-      //}
-      $original_file = $conf->commercial->dir_actions_temp."/".$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
-	  }
-
-    // Wrapping pour les produits et services
-    if ($modulepart == 'produit')
-    {
-    	$user->getrights('produit');
-      if ($user->rights->produit->lire || eregi('^specimen',$original_file))
-      {
-        $accessallowed=1;
-      }
-      $original_file=$conf->produit->dir_output.'/'.$original_file;
-      $sqlprotectagainstexternals = '';
-    }
-
-    // Wrapping pour les produits et services
-    if ($modulepart == 'contract')
-    {
-    	$user->getrights('contrat');
-      if ($user->rights->contrat->lire || eregi('^specimen',$original_file))
-      {
-      	$accessallowed=1;
-      }
-      $original_file=$conf->contrat->dir_output.'/'.$original_file;
-      $sqlprotectagainstexternals = '';
-    }
-
-    // Wrapping pour les documents generaux
-    if ($modulepart == 'ged')
-    {
-        $user->getrights('document');
-        if ($user->rights->document->lire)
-        {
+	// Wrapping pour les exports de compta
+	if ($modulepart == 'export_compta')
+	{
+		$user->getrights('compta');
+		if ($user->rights->compta->ventilation->creer || eregi('^specimen',$original_file))
+		{
 			$accessallowed=1;
-        }
-        $original_file= $this->ged->dir_output.'/'.$original_file;
-    }
+		}
+		$original_file=$conf->compta->dir_output.'/'.$original_file;
+	}
 
-    // Wrapping pour les documents generaux
-    if ($modulepart == 'ecm')
-    {
-        $user->getrights('ecm');
-        if ($user->rights->ecm->download)
-        {
+	// Wrapping pour les societe
+	if ($modulepart == 'societe')
+	{
+		$user->getrights('societe');
+		if ($user->rights->societe->lire || eregi('^specimen',$original_file))
+		{
 			$accessallowed=1;
-        }
-        $original_file= $this->ecm->dir_output.'/'.$original_file;
-    }
+		}
+		$original_file=$conf->societe->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE idp='$refname'";
+	}
 
-    // Wrapping pour les dons
-    if ($modulepart == 'donation')
-    {
-        $user->getrights('don');
-        if ($user->rights->don->lire || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->don->dir_output.'/'.$original_file;
+	// Wrapping pour les expedition
+	if ($modulepart == 'expedition')
+	{
+		$user->getrights('expedition');
+		if ($user->rights->expedition->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->expedition->dir_bon_expedition.'/'.$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
+	}
+
+	// Wrapping pour les bons de livraison
+	if ($modulepart == 'livraison')
+	{
+		$user->getrights('expedition');
+		if ($user->rights->expedition->livraison->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->expedition->dir_bon_livraison.'/'.$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
+	}
+
+	// Wrapping pour la telephonie
+	if ($modulepart == 'telephonie')
+	{
+		$user->getrights('telephonie');
+		if ($user->rights->telephonie->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->telephonie->dir_output.'/'.$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
+	}
+
+	// Wrapping pour les actions
+	if ($modulepart == 'actions')
+	{
+		$user->getrights('commercial');
+		//if ($user->rights->commercial->actions->lire || eregi('^specimen',$original_file)) // TODO: revoir les droits car pas clair
+		//{
+		$accessallowed=1;
+		//}
+		$original_file=$conf->commercial->dir_actions.'/'.$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
+	}
+
+	// Wrapping pour les actions
+	if ($modulepart == 'actionsreport')
+	{
+		$user->getrights('commercial');
+		//if ($user->rights->commercial->actions->lire || eregi('^specimen',$original_file)) // TODO: revoir les droits car pas clair
+		//{
+		$accessallowed=1;
+		//}
+		$original_file = $conf->commercial->dir_actions_temp."/".$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
+	}
+
+	// Wrapping pour les produits et services
+	if ($modulepart == 'produit')
+	{
+		$user->getrights('produit');
+		if ($user->rights->produit->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->produit->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
-    }
+	}
 
-    // Wrapping pour les remises de cheques
-    if ($modulepart == 'remisecheque')
-    {
-        $user->getrights('banque');
-        if ($user->rights->banque || eregi('^specimen',$original_file))
-        {
-            $accessallowed=1;
-        }
-
-        $original_file=DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir(basename($original_file,".pdf")).$original_file;
+	// Wrapping pour les contrats
+	if ($modulepart == 'contract')
+	{
+		$user->getrights('contrat');
+		if ($user->rights->contrat->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->contrat->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
-    }
+	}
 
-    // Wrapping pour les exports
-    if ($modulepart == 'export')
-    {
-        // Aucun test necessaire car on force le rep de doanwload sur
-        // le rep export qui est propre a l'utilisateur
-        $accessallowed=1;
-        $original_file=$conf->export->dir_temp.'/'.$user->id.'/'.$original_file;
-		$sqlprotectagainstexternals = '';
-    }
+	// Wrapping pour les documents generaux
+	if ($modulepart == 'ged')
+	{
+		$user->getrights('document');
+		if ($user->rights->document->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file= $this->ged->dir_output.'/'.$original_file;
+	}
 
-    // Wrapping pour l'editeur wysiwyg
-    if ($modulepart == 'editor')
-    {
-        // Aucun test necessaire car on force le rep de download sur
-        // le rep export qui est propre a l'utilisateur
-        $accessallowed=1;
-        $original_file=$conf->fckeditor->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = '';
-    }
+	// Wrapping pour les documents generaux
+	if ($modulepart == 'ecm')
+	{
+		$user->getrights('ecm');
+		if ($user->rights->ecm->download)
+		{
+			$accessallowed=1;
+		}
+		$original_file= $this->ecm->dir_output.'/'.$original_file;
+	}
 
-    // Wrapping pour les backups
-    if ($modulepart == 'systemtools')
-    {
-        if ($user->admin)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->admin->dir_temp.'/'.$original_file;
+	// Wrapping pour les dons
+	if ($modulepart == 'donation')
+	{
+		$user->getrights('don');
+		if ($user->rights->don->lire || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->don->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
-    }
+	}
 
-    // Wrapping pour BitTorrent
-    if ($modulepart == 'bittorrent')
-    {
-        $accessallowed=1;
-        $dir='files';
-        if ($type == 'application/x-bittorrent') $dir='torrents';
-        $original_file=$conf->bittorrent->dir_output.'/'.$dir.'/'.$original_file;
+	// Wrapping pour les remises de cheques
+	if ($modulepart == 'remisecheque')
+	{
+		$user->getrights('banque');
+		if ($user->rights->banque || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+
+		$original_file=DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir(basename($original_file,".pdf")).$original_file;
 		$sqlprotectagainstexternals = '';
-    }
+	}
+
+	// Wrapping pour les exports
+	if ($modulepart == 'export')
+	{
+		// Aucun test necessaire car on force le rep de doanwload sur
+		// le rep export qui est propre a l'utilisateur
+		$accessallowed=1;
+		$original_file=$conf->export->dir_temp.'/'.$user->id.'/'.$original_file;
+		$sqlprotectagainstexternals = '';
+	}
+
+	// Wrapping pour l'editeur wysiwyg
+	if ($modulepart == 'editor')
+	{
+		// Aucun test necessaire car on force le rep de download sur
+		// le rep export qui est propre a l'utilisateur
+		$accessallowed=1;
+		$original_file=$conf->fckeditor->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = '';
+	}
+
+	// Wrapping pour les backups
+	if ($modulepart == 'systemtools')
+	{
+		if ($user->admin)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->admin->dir_temp.'/'.$original_file;
+		$sqlprotectagainstexternals = '';
+	}
+
+	// Wrapping pour BitTorrent
+	if ($modulepart == 'bittorrent')
+	{
+		$accessallowed=1;
+		$dir='files';
+		if ($type == 'application/x-bittorrent') $dir='torrents';
+		$original_file=$conf->bittorrent->dir_output.'/'.$dir.'/'.$original_file;
+		$sqlprotectagainstexternals = '';
+	}
 }
 
 // Basic protection (against external users only)
@@ -413,10 +413,10 @@ if ($user->societe_id > 0)
 		$resql = $db->query($sqlprotectagainstexternals);
 		if ($resql)
 		{
-		   $obj = $db->fetch_object($resql);
-		   $num=$db->num_rows($resql);
-		   if ($num>0 && $user->societe_id != $obj->fk_soc)
-		      $accessallowed=0;
+			$obj = $db->fetch_object($resql);
+			$num=$db->num_rows($resql);
+			if ($num>0 && $user->societe_id != $obj->fk_soc)
+			$accessallowed=0;
 		}
 	}
 }
@@ -425,7 +425,7 @@ if ($user->societe_id > 0)
 // Limite acces si droits non corrects
 if (! $accessallowed)
 {
-    accessforbidden();
+	accessforbidden();
 }
 
 // Security:
@@ -453,8 +453,8 @@ if ($action == 'remove_file')
 
 	if (! file_exists($original_file))
 	{
-	    dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
-	    exit;
+		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
+		exit;
 	}
 	unlink($original_file);
 
@@ -476,8 +476,8 @@ else
 
 	if (! file_exists($original_file))
 	{
-	    dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
-	    exit;
+		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+		exit;
 	}
 
 
