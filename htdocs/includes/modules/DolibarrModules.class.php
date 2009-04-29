@@ -992,7 +992,7 @@ class DolibarrModules
 						if ($resql)
 						{
 							// On defini l'entite
-							$dir = DOL_DATA_ROOT."/entity_".$conf->entity.$dir;
+							$dir = DOL_DATA_ROOT."/".$conf->entity.$dir;
 							
 							if ($dir && ! file_exists($dir))
 							{

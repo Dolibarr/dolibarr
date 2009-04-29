@@ -185,6 +185,11 @@ function dol_syslog($message, $level=LOG_INFO)
 		{
 			$filelog=SYSLOG_FILE;
 			$filelog=eregi_replace('DOL_DATA_ROOT',DOL_DATA_ROOT,$filelog);
+			// Check if syslog module use the default path
+			if (!eregi('(^[A-Za-z0-9_\-\\/:]+[\\/]+)([A-Za-z0-9_\-]+[.]?[A-Za-z0-9]+)?$', SYSLOG_FILE) && $conf->syslog->dir_output)
+			{
+				$filelog = $conf->syslog->dir_output."/".$filelog;
+			}
 			if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen($filelog,"a+");
 			else $file=fopen($filelog,"a+");
 

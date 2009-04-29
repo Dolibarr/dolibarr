@@ -66,9 +66,15 @@ class Conf
 	*/
 	function setValues($db)
 	{
+		global $conf;
+		
 		dol_syslog("Conf::setValues");
 
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;	// Par defaut, a oui
+		
+		$rootfordata = DOL_DATA_ROOT;
+		// If multicompany module is enabled, we redefine the root of data
+		if (! empty($conf->multicompany) && ! empty($conf->entity)) $rootfordata.='/'.$conf->entity;
 
 		/*
 		 * Definition de toutes les Constantes globales d'environnement
@@ -104,6 +110,13 @@ class Conf
 						$this->tabs_modules[$params[0]][]=$value;
 						//print 'xxx'.$params[0].'-'.$value;
 					}
+					// If this is constant for module directories 	 
+	        if (eregi('^MAIN_MODULE_([A-Z_]+)_DIR_([A-Z_]+)$',$key,$reg) && $value) 	 
+	        {
+	        	$module=strtolower($reg[1]); 	 
+	          $dir_name="dir_".strtolower($reg[2]);
+	          $this->$module->$dir_name = $rootfordata.$this->entity.$value; 	 
+	        }
 					// If this is a module constant
 					if (eregi('^MAIN_MODULE_([A-Z]+)$',$key,$reg) && $value)
 					{
@@ -139,9 +152,8 @@ class Conf
 		// Load translation object with current language
 		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT="en_US";
 
-		$rootfordata = DOL_DATA_ROOT;
-		// If multicompany module is enabled, we redefine the root of data
-		if (! empty($conf->multicompany) && ! empty($conf->entity)) $rootfordata.='/'.$conf->entity;
+		// Other global parameters
+		$this->users->dir_output=$rootfordata."/users";
 
 		// For backward compatibility
 		$this->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
