@@ -97,7 +97,7 @@ class pdf_courrier_editeur
 
     $fichref = $year;
 
-    $dir = DOL_DATA_ROOT."/societe/courrier/" . get_exdir($id);
+    $dir = $conf->societe->dir_output."/courrier/" . get_exdir($id);
     $file = $dir . $fichref . ".pdf";
 
     if (! file_exists($dir))

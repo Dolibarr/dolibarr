@@ -71,7 +71,7 @@ $year = strftime('%Y',$now);
 /*
  *
  */
-$dir = DOL_DATA_ROOT."/product/temp";
+$dir = $conf->produit->dir_output."/temp";
 if (!is_dir($dir) )
 {
 	if (! create_exdir($dir,0755))
@@ -186,7 +186,7 @@ foreach ( $products as $id => $fdir)
 	  $legends[$i] = $row[0];
 	  $num[$i]  = $row[1];
 	  $ca[$i]  = $row[2];
-	   
+
 	  $i++;
 		}
 		$db->free($resql);

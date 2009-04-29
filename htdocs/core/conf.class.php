@@ -293,6 +293,10 @@ class Conf
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
 		// Module Barcode
 		$this->barcode->dir_temp=$rootfordata."/barcode/temp";
+		// Module stock
+		$this->stock->dir_temp=$rootfordata."/stock/temp";
+		// Module prelevement
+		$this->prelevement->dir_output=$rootfordata."/prelevement";
 
 		/*
 		 * Modification de quelques variable de conf en fonction des Constantes

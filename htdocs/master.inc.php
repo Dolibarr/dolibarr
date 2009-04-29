@@ -36,7 +36,7 @@ define('EURO',chr(128));
 // Definition des constantes syslog
 if (function_exists("define_syslog_variables"))
 {
-    define_syslog_variables();
+	define_syslog_variables();
 }
 else
 {
@@ -68,7 +68,7 @@ if (empty($dolibarr_main_db_host))
 {
 	print 'Error: Dolibarr setup was run but was not completed.<br>'."\n";
 	print 'Please, run <a href="install/index.php">Dolibarr install process</a> until the end...'."\n";
-  exit;
+	exit;
 }
 if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_data_root))
@@ -91,7 +91,7 @@ define('DOL_URL_ROOT', $pos);								// URL racine relative
  */
 if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
 {
-  print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
+	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
 	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
 	exit;
 }
@@ -159,8 +159,8 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 // Detection browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
-  if (eregi('firefox',$_SERVER["HTTP_USER_AGENT"]))   $conf->browser->firefox=1;
-  if (eregi('iceweasel',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->firefox=1;
+	if (eregi('firefox',$_SERVER["HTTP_USER_AGENT"]))   $conf->browser->firefox=1;
+	if (eregi('iceweasel',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->firefox=1;
 }
 
 // Chargement des includes principaux de librairies communes
@@ -262,17 +262,17 @@ if (! defined('NOREQUIRESOC'))
 	if (is_numeric($conf->global->MAIN_INFO_SOCIETE_PAYS))
 	{
 		$mysoc->pays_id=$conf->global->MAIN_INFO_SOCIETE_PAYS;
-	    $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
-	    $sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
-	    $result=$db->query($sql);
-	    if ($result)
-	    {
-	        $obj = $db->fetch_object();
-	        $mysoc->pays_code=$obj->code;
-	    }
-	    else {
-	        dol_print_error($db);
-	    }
+		$sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+		$sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
+		$result=$db->query($sql);
+		if ($result)
+		{
+			$obj = $db->fetch_object();
+			$mysoc->pays_code=$obj->code;
+		}
+		else {
+			dol_print_error($db);
+		}
 	}
 	// Si dans MAIN_INFO_SOCIETE_PAYS on a deja un code, tout est fait
 	else

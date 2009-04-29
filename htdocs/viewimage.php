@@ -48,7 +48,7 @@ else
 	if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 	if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 	if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
-	
+
 	// Pour autre que companylogo, on charge environnement + info issus de logon comme le user
 	require("./main.inc.php");
 	// master.inc.php is included in main.inc.php
@@ -90,7 +90,7 @@ if ($modulepart)
     	$accessallowed=1;
     	$original_file=$conf->adherent->dir_output.'/'.$original_file;
     }
-    
+
     // Wrapping pour les apercu factures
     elseif ($modulepart == 'apercufacture')
     {
@@ -112,7 +112,7 @@ if ($modulepart)
         }
         $original_file=$conf->propale->dir_output.'/'.$original_file;
     }
-    
+
     // Wrapping pour les apercu commande
     elseif ($modulepart == 'apercucommande')
     {
@@ -123,7 +123,7 @@ if ($modulepart)
         }
         $original_file=$conf->commande->dir_output.'/'.$original_file;
     }
-    
+
     // Wrapping pour les apercu intervention
     elseif ($modulepart == 'apercufichinter')
     {
@@ -165,7 +165,7 @@ if ($modulepart)
         }
         $original_file=$conf->fournisseur->dir_commande_temp.'/'.$original_file;
     }
-    
+
     // Wrapping pour les images des stats factures
     elseif ($modulepart == 'billstats')
     {
@@ -185,7 +185,7 @@ if ($modulepart)
         }
         $original_file=$conf->fournisseur->dir_facture_temp.'/'.$original_file;
     }
-    
+
     // Wrapping pour les images des stats expeditions
     elseif ($modulepart == 'expeditionstats')
     {
@@ -271,7 +271,7 @@ if ($modulepart)
     elseif ($modulepart == 'graph_stock')
     {
       $accessallowed=1;
-      $original_file=DOL_DATA_ROOT.'/entrepot/temp/'.$original_file;
+      $original_file=$conf->stock->dir_temp.'/'.$original_file;
     }
 
     // Wrapping pour les graph fournisseurs
@@ -294,7 +294,7 @@ if ($modulepart)
     	$accessallowed=1;
 		$original_file='';	// No files are built on disk
     }
-  	
+
     // images des stats du commercial
     elseif ($modulepart == 'graph_comm')
     {
@@ -318,7 +318,7 @@ if (! $accessallowed)
 }
 
 // Security:
-// On interdit les remont�es de repertoire ainsi que les pipe dans 
+// On interdit les remontees de repertoire ainsi que les pipe dans
 // les noms de fichiers.
 if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
 {
@@ -353,7 +353,7 @@ if ($modulepart == 'barcode')
 else
 {
 	// Ouvre et renvoi fichier
-	clearstatcache(); 
+	clearstatcache();
 
 	// Output files on disk
 	$filename = basename($original_file);

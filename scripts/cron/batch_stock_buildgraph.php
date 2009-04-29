@@ -70,7 +70,7 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
 }
 
 
-$dir = DOL_DATA_ROOT."/entrepot/temp";
+$dir = $conf->stock->dir_temp;
 $result=create_exdir($dir);
 
 
@@ -204,7 +204,7 @@ function graph_datas($file, $title, $values, $legends)
 	$height=230;
 
 	print "Build graph ".$file."\n";
-	
+
 	$newvalues=array();
 	foreach ($values as $abs=>$ord)
 	{

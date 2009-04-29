@@ -200,12 +200,12 @@ if (sizeof($factures_prev) > 0)
 
 		if ($db->query($sql))
 		{
-	  $row = $db->fetch_row();
+			$row = $db->fetch_row();
 		}
 		else
 		{
-	  $error++;
-	  dol_syslog("Erreur recherche reference");
+			$error++;
+			dol_syslog("Erreur recherche reference");
 		}
 
 		$ref = $ref . substr("00".($row[0]+1), -2);
@@ -222,15 +222,15 @@ if (sizeof($factures_prev) > 0)
 
 		if ($db->query($sql))
 		{
-	  $prev_id = $db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
+			$prev_id = $db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
 
-	  $bonprev = new BonPrelevement($db, DOL_DATA_ROOT."/prelevement/bon/".$filebonprev);
-	  $bonprev->id = $prev_id;
+			$bonprev = new BonPrelevement($db, $this->prelevement."/bon/".$filebonprev);
+			$bonprev->id = $prev_id;
 		}
 		else
 		{
-	  $error++;
-	  dol_syslog("Erreur création du bon de prelevement");
+			$error++;
+			dol_syslog("Erreur création du bon de prelevement");
 		}
 
 	}
