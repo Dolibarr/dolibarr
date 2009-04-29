@@ -69,11 +69,11 @@ class modService extends DolibarrModules
 		$r=0;
 		
 		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/service";
+		$this->dirs[$r][1] = "/produit";
 		
 		$r++;
 		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/service/temp";
+		$this->dirs[$r][1] = "/produit/temp";
 
 		// Dependances
 		$this->depends = array("modProduit");
