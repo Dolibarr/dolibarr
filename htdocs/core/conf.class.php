@@ -151,7 +151,7 @@ class Conf
 
 		$rootfordata = DOL_DATA_ROOT;
 		// If multicompany module is enabled, we redefine the root of data
-		if (! empty($this->global->MULTICOMPANY) && ! empty($this->entity)) $rootfordata.='/'.$this->entity;
+		if (! empty($this->global->MAIN_MODULE_MULTICOMPANY) && ! empty($this->entity)) $rootfordata.='/'.$this->entity;
 
 		// Define default dir_output and dir_temp for directories of modules
 		foreach($this->modules as $module)

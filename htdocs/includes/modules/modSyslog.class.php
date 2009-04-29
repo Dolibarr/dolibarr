@@ -62,6 +62,7 @@ class modSyslog extends DolibarrModules
 		
 		$this->dirs[$r][0] = "output";
 		$this->dirs[$r][1] = "/logs";
+		$this->dirs[$r][2] = 1;
 
 		// Config pages
 		$this->config_page_url = array("syslog.php");

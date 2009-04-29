@@ -80,6 +80,7 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->dirs[$r][0] = "logos";
 		$this->dirs[$r][1] = "/societe/logos";
+		$this->dirs[$r][2] = 1;
 
 		// Dependances
 		$this->depends = array();
