@@ -271,49 +271,49 @@ if ($modulepart)
     // Wrapping pour les actions
     if ($modulepart == 'actions')
     {
-        $user->getrights('commercial');
-        //if ($user->rights->commercial->actions->lire || eregi('^specimen',$original_file))	// Ce droit n'existe pas encore
-        //{
+    	$user->getrights('commercial');
+      //if ($user->rights->commercial->actions->lire || eregi('^specimen',$original_file)) // TODO: revoir les droits car pas clair
+      //{
         $accessallowed=1;
-        //}
-        $original_file=$conf->commercial->dir_actions.'/'.$original_file;
+      //}
+      $original_file=$conf->commercial->dir_actions.'/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
     }
 
     // Wrapping pour les actions
     if ($modulepart == 'actionsreport')
     {
-        $user->getrights('commercial');
-        //if ($user->rights->commercial->actions->lire || eregi('^specimen',$original_file))	// Ce droit n'existe pas encore
-        //{
+    	$user->getrights('commercial');
+      //if ($user->rights->commercial->actions->lire || eregi('^specimen',$original_file)) // TODO: revoir les droits car pas clair
+      //{
         $accessallowed=1;
-        //}
-		$original_file = $conf->commercial->dir_actions_temp."/".$original_file;
+      //}
+      $original_file = $conf->commercial->dir_actions_temp."/".$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
-	}
+	  }
 
     // Wrapping pour les produits et services
     if ($modulepart == 'produit')
     {
-        $user->getrights('produit');
-        //if ($user->rights->commercial->lire || eregi('^specimen',$original_file))	// Ce droit n'existe pas encore
-        //{
+    	$user->getrights('produit');
+      if ($user->rights->produit->lire || eregi('^specimen',$original_file))
+      {
         $accessallowed=1;
-        //}
-        $original_file=$conf->produit->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = '';
+      }
+      $original_file=$conf->produit->dir_output.'/'.$original_file;
+      $sqlprotectagainstexternals = '';
     }
 
     // Wrapping pour les produits et services
     if ($modulepart == 'contract')
     {
-        $user->getrights('contrat');
-        if ($user->rights->contrat->lire || eregi('^specimen',$original_file))	// Ce droit n'existe pas encore
-        {
-			$accessallowed=1;
-        }
-        $original_file=$conf->contrat->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = '';
+    	$user->getrights('contrat');
+      if ($user->rights->contrat->lire || eregi('^specimen',$original_file))
+      {
+      	$accessallowed=1;
+      }
+      $original_file=$conf->contrat->dir_output.'/'.$original_file;
+      $sqlprotectagainstexternals = '';
     }
 
     // Wrapping pour les documents generaux

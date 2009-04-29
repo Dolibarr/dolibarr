@@ -50,7 +50,7 @@ function llxHeader($head = "")
         $menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
     }
 
-    if ($conf->commercial->enabled && $user->rights->commercial->lire)
+    if ($conf->commercial->enabled && $user->rights->commercial->main->lire)
     {
         $langs->load("commercial");
         $menu->add(DOL_URL_ROOT."/comm/index.php",$langs->trans("Commercial"));

@@ -102,7 +102,7 @@ class modCommercial extends DolibarrModules
     $this->rights[$r][3] = 1;
     $this->rights[$r][4] = 'main';
     $this->rights[$r][5] = 'lire';
-    $r++;
+
   }
 
     /**

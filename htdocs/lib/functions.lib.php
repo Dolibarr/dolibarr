@@ -1332,7 +1332,9 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 	
 	if ($dbt_select != 'rowid') $objectid = "'".$objectid."'";
 
-	//print "$user->id, $feature, $objectid, $dbtablename, ".$user->rights->societe->contact->lire;
+	//print "user_id=".$user->id.", feature=".$feature.", feature2=".$feature2.", object_id=".$objectid;
+	//print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_socfield.", dbt_select=".$dbt_select;
+	//print ", user_societe_contact_lire=".$user->rights->societe->contact->lire."<br>";
 
 	// Check read permission from module
 	// TODO Replace "feature" param by permission for reading
@@ -1371,6 +1373,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 		if (empty($user->rights->$feature->lire)
 		&& empty($user->rights->$feature->read)) $readok=0;
 	}
+	//print "Read access is down";
 	if (! $readok) accessforbidden();
 	//print "Read access is ok";
 

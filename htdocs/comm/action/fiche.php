@@ -44,7 +44,8 @@ $langs->load("agenda");
 $socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
 $id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe', $id, 'actioncomm', '', '', 'id');
+// TODO: revoir les droits car pas clair
+//$result = restrictedArea($user, 'commercial', $id, 'actioncomm', 'actions', '', 'id');
 
 if (isset($_GET["error"])) $error=$_GET["error"];
 

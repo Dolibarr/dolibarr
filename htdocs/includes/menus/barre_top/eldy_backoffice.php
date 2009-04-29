@@ -148,7 +148,7 @@ class MenuTop {
         if ($conf->ficheinter->enabled) $showcommercial=1;
         if ($showcommercial)*/
 		if ($conf->commercial->enabled)
-        {
+    {
 	        $langs->load("commercial");
 
 	        $class="";
@@ -162,7 +162,7 @@ class MenuTop {
 	        }
 
     		$idsel='id="commercial" ';
-	        if($user->rights->societe->lire)
+	    if($user->rights->societe->lire)
 			{
 				print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
 			}
