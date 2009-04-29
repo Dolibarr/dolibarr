@@ -2,8 +2,8 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ $pagenext = $page + 1;
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     /*
-     * Creation r�pertoire si n'existe pas
+     * Creation repertoire si n'existe pas
      */
 	$upload_dir = $conf->actions->dir_output.'/'.sanitizeFileName($objectid);
 	if (! is_dir($upload_dir)) create_exdir($upload_dir);
@@ -83,7 +83,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
         }
         else
         {
-            // Echec transfert (fichier d�passant la limite ?)
+            // Echec transfert (fichier depassant la limite ?)
             $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
             // print_r($_FILES);
         }

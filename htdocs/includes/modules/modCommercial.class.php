@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2009 Regis Houssin      	<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,8 +99,8 @@ class modCommercial extends DolibarrModules
     }
 
     /**
-     *  \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-     *              D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+     *  \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+     *              Definit egalement les repertoires de donnees a creer pour ce module.
      */
     function init()
     {
@@ -112,7 +113,7 @@ class modCommercial extends DolibarrModules
     }
 	
     /**
-     *  \brief      Fonction appel�e lors de la d�sactivation d'un module.
+     *  \brief      Fonction appelee lors de la desactivation d'un module.
      *              Supprime de la base les constantes, boites et permissions du module.
      */
     function remove()
