@@ -290,6 +290,8 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  */
 function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date='')
 {
+	global $conf;
+	
 	// Clean parameters
 	if ($date == '') $date=mktime();	// We use local year and month of PHP server to search numbers
 	// but we should use local year and month of user
@@ -394,6 +396,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	$sql.= " FROM ".MAIN_DB_PREFIX.$table;
 	//		$sql.= " WHERE ".$field." not like '(%'";
 	$sql.= " WHERE ".$field." like '".$maskLike."'";
+	$sql.= " AND entity = ".$conf->entity;
 	if ($where) $sql.=$where;
 	if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
@@ -664,12 +667,12 @@ function numero_semaine($time)
 
 	/*
 	 * Norme ISO-8601:
-	 * - La semaine 1 de toute ann�e est celle qui contient le 4 janvier ou que la semaine 1 de toute ann�e est celle qui contient le 1er jeudi de janvier.
-	 * - La majorit� des ann�es ont 52 semaines mais les ann�es qui commence un jeudi et les ann�es bissextiles commen�ant un mercredi en poss�de 53.
+	 * - La semaine 1 de toute annee est celle qui contient le 4 janvier ou que la semaine 1 de toute annee est celle qui contient le 1er jeudi de janvier.
+	 * - La majorite des annees ont 52 semaines mais les annees qui commence un jeudi et les annees bissextiles commencant un mercredi en possede 53.
 	 * - Le 1er jour de la semaine est le Lundi
 	 */
 
-	// D�finition du Jeudi de la semaine
+	// Definition du Jeudi de la semaine
 	if (date("w",mktime(12,0,0,$mois,$jour,$annee))==0) // Dimanche
 	$jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-3*24*60*60;
 	else if (date("w",mktime(12,0,0,$mois,$jour,$annee))<4) // du Lundi au Mercredi
@@ -679,7 +682,7 @@ function numero_semaine($time)
 	else // Jeudi
 	$jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee);
 
-	// D�finition du premier Jeudi de l'ann�e
+	// Definition du premier Jeudi de l'annee
 	if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==0) // Dimanche
 	{
 		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+4*24*60*60;
@@ -697,7 +700,7 @@ function numero_semaine($time)
 		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine));
 	}
 
-	// D�finition du num�ro de semaine: nb de jours entre "premier Jeudi de l'ann�e" et "Jeudi de la semaine";
+	// D�finition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
 	$numeroSemaine =     (
 	(
 	date("z",mktime(12,0,0,date("m",$jeudiSemaine),date("d",$jeudiSemaine),date("Y",$jeudiSemaine)))
@@ -709,7 +712,7 @@ function numero_semaine($time)
 	// Cas particulier de la semaine 53
 	if ($numeroSemaine==53)
 	{
-		// Les ann�es qui commence un Jeudi et les ann�es bissextiles commen�ant un Mercredi en poss�de 53
+		// Les annees qui commence un Jeudi et les ann�es bissextiles commencant un Mercredi en possede 53
 		if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==4 || (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==3 && date("z",mktime(12,0,0,12,31,date("Y",$jeudiSemaine)))==365))
 		{
 			$numeroSemaine = 53;

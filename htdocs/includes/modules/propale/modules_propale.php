@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,31 +54,34 @@ class ModelePDFPropales extends FPDF
      */
     function liste_modeles($db)
     {
-        $type='propal';
-        $liste=array();
-        $sql ="SELECT nom as id, nom as lib";
-        $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
-        $sql.=" WHERE type = '".$type."'";
+    	global $conf;
+    	
+    	$type='propal';
+      $liste=array();
+      $sql = "SELECT nom as id, nom as lib";
+      $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+      $sql.= " WHERE type = '".$type."'";
+      $sql.= " AND entity = ".$cont->entity;
 
-        dol_syslog("modules_propale::liste_modeles sql=".$sql, LOG_DEBUG);
-        $resql = $db->query($sql);
-        if ($resql)
+      dol_syslog("modules_propale::liste_modeles sql=".$sql, LOG_DEBUG);
+      $resql = $db->query($sql);
+      if ($resql)
+      {
+      	$num = $db->num_rows($resql);
+        $i = 0;
+        while ($i < $num)
         {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $row = $db->fetch_row($resql);
-                $liste[$row[0]]=$row[1];
-                $i++;
-            }
+        	$row = $db->fetch_row($resql);
+          $liste[$row[0]]=$row[1];
+          $i++;
         }
-        else
-        {
-            $this->error=$db->error();
-            return -1;
-        }
-        return $liste;
+      }
+      else
+      {
+      	$this->error=$db->error();
+      	return -1;
+      }
+      return $liste;
     }
 }
 
@@ -184,12 +188,12 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
     // Si model pas encore bon
 	if (! $modelisok)
 	{
-	    $liste=array();
+		$liste=array();
 		$model=new ModelePDFPropales();
 		$liste=$model->liste_modeles($db);
-        $modele=key($liste);        // Renvoie premiere valeur de clé trouvé dans le tableau
-      	$file = "pdf_propale_".$modele.".modules.php";
-    	if (file_exists($dir.$file)) $modelisok=1;
+    $modele=key($liste);        // Renvoie premiere valeur de clé trouvé dans le tableau
+    $file = "pdf_propale_".$modele.".modules.php";
+    if (file_exists($dir.$file)) $modelisok=1;
 	}
 
 

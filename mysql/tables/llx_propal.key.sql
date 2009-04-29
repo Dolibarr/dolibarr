@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,7 +21,8 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_propal ADD INDEX idx_propal_fk_soc (fk_soc);
+ALTER TABLE llx_propal ADD UNIQUE INDEX uk_propal_ref (ref, entity);
 
+ALTER TABLE llx_propal ADD INDEX idx_propal_fk_soc (fk_soc);
 
 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);

@@ -21,7 +21,7 @@
 /**
      	\file       htdocs/includes/modules/propale/mod_propale_marbre.php
 		\ingroup    propale
-		\brief      Fichier contenant la classe du mod�le de num�rotation de r�f�rence de propale Marbre
+		\brief      Fichier contenant la classe du modele de numerotation de reference de propale Marbre
 		\version    $Id$
 */
 
@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php")
 
 
 /**	    \class      mod_propale_marbre
-		\brief      Classe du mod�le de num�rotation de r�f�rence de propale Marbre
+		\brief      Classe du modele de numerotation de reference de propale Marbre
 */
 
 class mod_propale_marbre extends ModeleNumRefPropales
@@ -65,10 +65,14 @@ class mod_propale_marbre extends ModeleNumRefPropales
      */
     function canBeActivated()
     {
+    	global $conf;
+    	
         $pryymm='';
         
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        $sql.= " WHERE entity = ".$conf->entity;
+        
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -81,7 +85,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
         }
         else
         {
-            $this->error='Une propal commeneant par $pryymm existe en base et est incompatible avec cette numerotation. Supprimer la ou renommer la pour activer ce module.';
+            $this->error='Une propal commencant par $pryymm existe en base et est incompatible avec cette numerotation. Supprimer la ou renommer la pour activer ce module.';
             return false;    
         }
     }
@@ -93,13 +97,14 @@ class mod_propale_marbre extends ModeleNumRefPropales
     */
 	function getNextValue($objsoc,$propal)
     {
-        global $db;
+        global $db,$conf;
 
         // D'abord on recupere la valeur max (reponse immediate car champ indexe)
         $posindice=8;
         $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal";
         $sql.= " WHERE ref like '".$this->prefix."%'";
+        $sql.= " AND entity = ".$conf->entity;
         
         $resql=$db->query($sql);
         if ($resql)

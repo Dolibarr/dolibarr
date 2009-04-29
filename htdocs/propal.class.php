@@ -527,22 +527,24 @@ class Propal extends CommonObject
 		$this->fetch_client();
 
 		// Insertion dans la base
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price,";
-		$sql.= " remise, remise_percent, remise_absolue,";
-		$sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite,";
-		$sql.= " fk_cond_reglement, fk_mode_reglement, ref_client,";
-		$sql.= " date_livraison";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price";
+		$sql.= ", remise, remise_percent, remise_absolue";
+		$sql.= ", tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite";
+		$sql.= ", fk_cond_reglement, fk_mode_reglement, ref_client";
+		$sql.= ", date_livraison";
+		$sql.= ", entity";
 		$sql.= ") ";
-		$sql.= " VALUES (".$this->socid.", 0,";
-		$sql.= " ".$this->remise.", ".($this->remise_percent?$this->remise_percent:'null').", ".($this->remise_absolue?$this->remise_absolue:'null').",";
-		$sql.= " 0,0,".$this->db->idate($this->datep).", ".$this->db->idate(mktime()).", '".$this->ref."', ";
-		$sql.= ($user->id > 0 ? "'".$user->id."'":"null").",";
-		$sql.= "'".addslashes($this->note)."',";
-		$sql.= "'".addslashes($this->note_public)."',";
-		$sql.= "'".$this->modelpdf."',".$this->db->idate($this->fin_validite).",";
-		$sql.= " ".$this->cond_reglement_id.", ".$this->mode_reglement_id.",";
-		$sql.= "'".addslashes($this->ref_client)."',";
-		$sql.= " ".($this->date_livraison!=''?$this->db->idate($this->date_livraison):'null');
+		$sql.= " VALUES (".$this->socid.", 0";
+		$sql.= ", ".$this->remise.", ".($this->remise_percent?$this->remise_percent:'null').", ".($this->remise_absolue?$this->remise_absolue:'null');
+		$sql.= ", 0, 0,".$this->db->idate($this->datep).", ".$this->db->idate(mktime()).", '".$this->ref;
+		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
+		$sql.= ", '".addslashes($this->note);
+		$sql.= ", '".addslashes($this->note_public)."',";
+		$sql.= ", '".$this->modelpdf."',".$this->db->idate($this->fin_validite);
+		$sql.= ", ".$this->cond_reglement_id.", ".$this->mode_reglement_id;
+		$sql.= ", '".addslashes($this->ref_client);
+		$sql.= ", ".($this->date_livraison!=''?$this->db->idate($this->date_livraison):'null');
+		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
 		dol_syslog("Propal::create sql=".$sql, LOG_DEBUG);
@@ -580,14 +582,20 @@ class Propal extends CommonObject
 				// Affectation au projet
 				if ($resql && $this->projetidp)
 				{
-					$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_projet=".$this->projetidp." WHERE ref='".$this->ref."'";
+					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+					$sql.= " SET fk_projet=".$this->projetidp;
+					$sql.= " WHERE ref='".$this->ref."'";
+					$sql.= " AND entity = ".$conf->entity;
 					$result=$this->db->query($sql);
 				}
 
 				// Affectation de l'adresse de livraison
 				if ($resql && $this->adresse_livraison_id)
 				{
-					$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison=$this->adresse_livraison_id WHERE ref='$this->ref'";
+					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+					$sql.= " SET fk_adresse_livraison = ".$this->adresse_livraison_id;
+					$sql.= " WHERE ref = '".$this->ref."'";
+					$sql.= " AND entity = ".$conf->entity;
 					$result=$this->db->query($sql);
 				}
 
@@ -712,6 +720,8 @@ class Propal extends CommonObject
 	 */
 	function fetch($rowid,$ref='')
 	{
+		global $conf;
+		
 		$sql = "SELECT p.rowid,ref,remise,remise_percent,remise_absolue,fk_soc";
 		$sql.= ", total, tva, total_ht";
 		$sql.= ", datec";
@@ -732,6 +742,7 @@ class Propal extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON p.fk_cond_reglement = cr.rowid';
 		$sql.= " WHERE p.fk_statut = c.id";
+		$sql.= " AND p.entity = ".$conf->entity;
 		if ($ref) $sql.= " AND p.ref='".$ref."'";
 		else $sql.= " AND p.rowid=".$rowid;
 
@@ -1133,14 +1144,14 @@ class Propal extends CommonObject
 		{
 			if ($statut == 2)
 			{
-				// Propale sign�e
+				// Propale signee
 				include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 				$result=$this->create_commande($user);
 
 				if ($result >= 0)
 				{
-					// Classe la soci�t� rattach�e comme client
+					// Classe la societe rattachee comme client
 					$soc=new Societe($this->db);
 					$soc->id = $this->socid;
 					$result=$soc->set_as_client();
@@ -1186,7 +1197,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *        \brief      Classe la propale comme factur�e
+	 *        \brief      Classe la propale comme facturee
 	 *        \return     int     <0 si ko, >0 si ok
 	 */
 	function classer_facturee()
@@ -1205,7 +1216,7 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      \brief      Cr�e une commande � partir de la proposition commerciale
+	 *      \brief      Cree une commande a partir de la proposition commerciale
 	 *      \param      user        Utilisateur
 	 *      \return     int         <0 si ko, >=0 si ok
 	 */
@@ -1217,7 +1228,7 @@ class Propal extends CommonObject
 		{
 			if ($this->statut == 2)
 			{
-				// Propale sign�e
+				// Propale signee
 				include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 				$commande = new Commande($this->db);
 				$result=$commande->create_from_propale($user, $this->id);
@@ -1261,35 +1272,31 @@ class Propal extends CommonObject
 
 
 	/**
-	 *    \brief      Renvoi la liste des propal (�ventuellement filtr�e sur un user) dans un tableau
+	 *    \brief      Renvoi la liste des propal (eventuellement filtree sur un user) dans un tableau
 	 *    \param      brouillon       0=non brouillon, 1=brouillon
 	 *    \param      user            Objet user de filtre
-	 *    \return     int             -1 si erreur, tableau r�sultat si ok
+	 *    \return     int             -1 si erreur, tableau resultat si ok
 	 */
 
 	function liste_array ($brouillon=0, $user='')
 	{
 		$ga = array();
 
-		$sql = "SELECT rowid, ref FROM ".MAIN_DB_PREFIX."propal";
+		$sql = "SELECT rowid, ref";
+		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
+		$sql.= " WHERE entity = ".$conf->entity;
 
 		if ($brouillon)
 		{
-			$sql .= " WHERE fk_statut = 0";
-			if ($user)
-			{
-				$sql .= " AND fk_user_author".$user;
-			}
+			$sql.= " AND fk_statut = 0";
+			if ($user) $sql.= " AND fk_user_author".$user;
 		}
 		else
 		{
-			if ($user)
-			{
-				$sql .= " WHERE fk_user_author".$user;
-			}
+			if ($user) $sql.= " AND fk_user_author".$user;
 		}
-
-		$sql .= " ORDER BY datep DESC";
+		
+		$sql.= " ORDER BY datep DESC";
 
 		$result=$this->db->query($sql);
 		if ($result)
@@ -1394,7 +1401,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie un tableau contenant les num�ros de factures associ�es
+	 *    	\brief      Renvoie un tableau contenant les numeros de factures associees
 	 *		\return		array		Tableau des id de factures
 	 */
 	function getInvoiceArrayList ()
@@ -1403,7 +1410,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie un tableau contenant les id et ref des factures associ�es
+	 *    	\brief      Renvoie un tableau contenant les id et ref des factures associees
 	 *		\param		id			Id propal
 	 *		\return		array		Tableau des id de factures
 	 */
@@ -1541,8 +1548,8 @@ class Propal extends CommonObject
 
 
 	/**
-	 *   \brief      Change les conditions de r�glement de la facture
-	 *   \param      cond_reglement_id      Id de la nouvelle condition de r�glement
+	 *   \brief      Change les conditions de reglement de la facture
+	 *   \param      cond_reglement_id      Id de la nouvelle condition de reglement
 	 *   \return     int                    >0 si ok, <0 si ko
 	 */
 	function cond_reglement($cond_reglement_id)
@@ -1575,7 +1582,7 @@ class Propal extends CommonObject
 
 
 	/**
-	 *   \brief      Change le mode de r�glement
+	 *   \brief      Change le mode de reglement
 	 *   \param      mode_reglement     Id du nouveau mode
 	 *   \return     int         		>0 si ok, <0 si ko
 	 */
@@ -1618,7 +1625,7 @@ class Propal extends CommonObject
 		$sql.= $this->db->pdate("datec")." as datec, ".$this->db->pdate("date_valid")." as datev, ".$this->db->pdate("date_cloture")." as dateo";
 		$sql.= ", fk_user_author, fk_user_valid, fk_user_cloture";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
-		$sql.= " WHERE c.rowid = $id";
+		$sql.= " WHERE c.rowid = ".$id;
 
 		$result = $this->db->query($sql);
 
@@ -1665,9 +1672,9 @@ class Propal extends CommonObject
 
 
 	/**
-	 *    	\brief      Retourne le libell� du statut d'une propale (brouillon, valid�e, ...)
-	 *    	\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string		Libell�
+	 *    	\brief      Retourne le libelle du statut d'une propale (brouillon, validee, ...)
+	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string		Libelle
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -1675,10 +1682,10 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libell� d'un statut donn�
+	 *    	\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      statut		id statut
-	 *    	\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string		Libell�
+	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string		Libelle
 	 */
 	function LibStatut($statut,$mode=1)
 	{
@@ -1743,17 +1750,15 @@ class Propal extends CommonObject
 		$this->nbtodo=$this->nbtodolate=0;
 		$clause = " WHERE";
 
-		$sql ="SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin";
-		$sql.=" FROM ".MAIN_DB_PREFIX."propal as p";
-		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin";
+		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = " AND";
 		}
-		$sql.= $clause." p.fk_soc = s.rowid";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= $clause." p.entity = ".$conf->entity;
 		if ($mode == 'opened') $sql.= " AND p.fk_statut = 1";
 		if ($mode == 'signed') $sql.= " AND p.fk_statut = 2";
 		if ($user->societe_id) $sql.= " AND p.fk_soc = ".$user->societe_id;
@@ -1793,11 +1798,15 @@ class Propal extends CommonObject
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs;
+		global $user,$langs,$conf;
 
-		// Charge tableau des id de soci�t� socids
+		// Charge tableau des id de societe socids
 		$socids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql.= " WHERE client = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " LIMIT 10";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1814,7 +1823,10 @@ class Propal extends CommonObject
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " WHERE envente = 1";
+		$sql.= " AND entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1828,7 +1840,7 @@ class Propal extends CommonObject
 			}
 		}
 
-		// Initialise param�tres
+		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
@@ -1884,7 +1896,7 @@ class Propal extends CommonObject
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= " ".$clause." s.entity = ".$conf->entity;
+		$sql.= " ".$clause." p.entity = ".$conf->entity;
 		
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1904,13 +1916,15 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      V�rifie si la ref n'est pas d�j� utilis�e
+	 *      \brief      Verifie si la ref n'est pas deja utilisee
 	 *      \param	    soc  		            objet societe
 	 */
 	function verifyNumRef($soc)
 	{
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal";
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql.= " WHERE ref = '".$this->ref."'";
+		$sql.= " AND entity = ".$conf->entity;
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -1925,8 +1939,8 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      \brief      Renvoie la r�f�rence de propale suivante non utilis�e en fonction du module
-	 *                  de num�rotation actif d�fini dans PROPALE_ADDON
+	 *      \brief      Renvoie la reference de propale suivante non utilisee en fonction du module
+	 *                  de numerotation actif defini dans PROPALE_ADDON
 	 *      \param	    soc  		            objet societe
 	 *      \return     string              reference libre pour la propale
 	 */
@@ -1941,7 +1955,7 @@ class Propal extends CommonObject
 		{
 			$file = PROPALE_ADDON.".php";
 
-			// Chargement de la classe de num�rotation
+			// Chargement de la classe de numerotation
 			$classname = PROPALE_ADDON;
 			require_once($dir.$file);
 
@@ -2244,7 +2258,7 @@ class PropaleLigne
 
 	/**
 	 *      \brief     	Mise a jour en base des champs total_xxx de ligne
-	 *		\remarks	Utilis� par migration
+	 *		\remarks	Utilise par migration
 	 *		\return		int		<0 si ko, >0 si ok
 	 */
 	function update_total()
