@@ -72,20 +72,28 @@ class modFournisseur extends DolibarrModules
 		$this->dirs[$r][1] = "/fournisseur/temp";
 		
 		$r++;
-		$this->dirs[$r][0] = "commande";
+		$this->dirs[$r][0] = "output";
 		$this->dirs[$r][1] = "/fournisseur/commande";
+		$this->dirs[$r][2] = 1;
+		$this->dirs[$r][3] = "commande";
 		
 		$r++;
-		$this->dirs[$r][0] = "commande_temp";
+		$this->dirs[$r][0] = "temp";
 		$this->dirs[$r][1] = "/fournisseur/commande/temp";
+		$this->dirs[$r][2] = 1;
+		$this->dirs[$r][3] = "commande";
 		
 		$r++;
-		$this->dirs[$r][0] = "facture";
+		$this->dirs[$r][0] = "output";
 		$this->dirs[$r][1] = "/fournisseur/facture";
+		$this->dirs[$r][2] = 1;
+		$this->dirs[$r][3] = "facture";
 		
 		$r++;
-		$this->dirs[$r][0] = "commande_temp";
+		$this->dirs[$r][0] = "temp";
 		$this->dirs[$r][1] = "/fournisseur/facture/temp";
+		$this->dirs[$r][2] = 1;
+		$this->dirs[$r][3] = "facture";
 
 
 		// Dependances

@@ -968,9 +968,17 @@ class DolibarrModules
 		{
 			foreach ($this->dirs as $key => $value)
 			{
-				$name  = $this->const_name."_DIR_".strtoupper($this->dirs[$key][0]);
-				$dir   = $this->dirs[$key][1];
-				$const = empty($this->dirs[$key][2])?'':$this->dirs[$key][2];
+				$constname = $this->const_name."_DIR_";
+				$dir       = $this->dirs[$key][1];
+				$const     = empty($this->dirs[$key][2])?'':$this->dirs[$key][2]; // Create constante in llx_const
+				$subname   = empty($this->dirs[$key][3])?'':strtoupper($this->dirs[$key][3]); // Add submodule name (ex: $conf->module->submodule->dir_output)
+				$forcename = empty($this->dirs[$key][4])?'':strtoupper($this->dirs[$key][4]); // Change the module name if different
+
+				if ($forcename) $constname = $forcename."_DIR_";
+				if ($subname)   $constname = $constname.$subname."_";
+				
+				$name      = $constname.strtoupper($this->dirs[$key][0]);
+
 
 				// Define directory full path
 				if (empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $fulldir = DOL_DATA_ROOT.$dir;

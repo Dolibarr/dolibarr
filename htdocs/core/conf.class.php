@@ -106,11 +106,21 @@ class Conf
 						//print 'xxx'.$params[0].'-'.$value;
 					}
 					// If this is constant for module directories
-					if (eregi('^MAIN_MODULE_([A-Z_]+)_DIR_([A-Z_]+)$',$key,$reg) && $value)
+					if (eregi('^MAIN_MODULE_([A-Z_]+)_DIR_',$key,$reg) && $value)
 					{
 						$module=strtolower($reg[1]);
-						$dir_name="dir_".strtolower($reg[2]);
-						$this->$module->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
+						// If with submodule name
+						if (eregi('_DIR_([A-Z_]+)?_([A-Z]+)$',$key,$reg))
+						{
+							$dir_name  = "dir_".strtolower($reg[2]);
+							$submodule = strtolower($reg[1]);
+							$this->$module->$submodule->$dir_name = $value;
+						}
+						else if (eregi('_DIR_([A-Z]+)$',$key,$reg))
+						{
+							$dir_name  = "dir_".strtolower($reg[1]);
+							$this->$module->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
+						}
 					}
 					// If this is a module constant
 					if (eregi('^MAIN_MODULE_([A-Z]+)$',$key,$reg) && $value)
