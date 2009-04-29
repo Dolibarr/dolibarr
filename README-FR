@@ -51,8 +51,8 @@ Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
    http://yourdolibarrhost/install/index.php
 
   Pour savoir quelle est l'URL exactement de la page "install/", prenez l'URL que
-  vous utilisez pour vous loguer. Si elle se termine par "index.php", enlevez le.
-  Dans tous les cas, ajouter ensuite "install/" à la fin.
+  vous utilisez pour vous loguer. Si elle se termine par "index.php". Dans tous
+  les cas, ajouter ensuite "install/" à la fin.
   Par exemple, si votre page de connexion est: 
   http://yourdolibarrhost/something/index.php
   Alors la page "install/" sera 
