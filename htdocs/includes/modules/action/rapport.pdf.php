@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +106,7 @@ class CommActionRapport
 				$pdf=new FPDI_Protection('P','mm',$this->format);
 				$pdfrights = array('print'); // Ne permet que l'impression du document
 				$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-				$pdfownerpass = NULL; // Mot de passe du proprietire, cree aleatoirement si pas defini
+				$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 				$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 			}
 			else

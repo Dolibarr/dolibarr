@@ -107,7 +107,7 @@ if ($resql)
 	
 			$name = "actions-".$obj->month."-".$obj->year.".pdf";
 			$relativepath= $name;
-			$file = $conf->actions->dir_temp."/".$name;
+			$file = $conf->commercial->dir_actions_temp."/".$name;
 	
 			if (file_exists($file))
 			{

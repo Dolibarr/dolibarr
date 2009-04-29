@@ -207,10 +207,7 @@ class Conf
 		$this->domaine->enabled=0;
 		// Module voyage
 		$this->voyage->enabled=0;
-		// Module actions
-		$this->actions->dir_output=DOL_DATA_ROOT."/action";
-		$this->actions->dir_temp  =DOL_DATA_ROOT."/action/temp";
-		
+
 		// Module oscommerce 1
 		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;

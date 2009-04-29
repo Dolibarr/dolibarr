@@ -71,7 +71,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
     /*
      * Creation repertoire si n'existe pas
      */
-	$upload_dir = $conf->actions->dir_output.'/'.sanitizeFileName($objectid);
+	$upload_dir = $conf->commercial->dir_actions.'/'.sanitizeFileName($objectid);
 	if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
     if (is_dir($upload_dir))
@@ -95,7 +95,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
  */
 if ($_GET["action"] == 'delete')
 {
-	$upload_dir = $conf->actions->dir_output.'/'.sanitizeFileName($objectid);
+	$upload_dir = $conf->commercial->dir_actions.'/'.sanitizeFileName($objectid);
 	$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
 	dol_delete_file($file);
 }
@@ -113,7 +113,7 @@ if ($objectid > 0)
 	$act = new ActionComm($db);
 	if ($act->fetch($objectid))
 	{
-		$upload_dir = $conf->actions->dir_output.'/'.sanitizeFileName($objectid);
+		$upload_dir = $conf->commercial->dir_actions.'/'.sanitizeFileName($objectid);
 
 		$company=new Societe($db);
 		$company->fetch($act->societe->id);

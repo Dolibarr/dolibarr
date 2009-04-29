@@ -276,7 +276,7 @@ if ($modulepart)
         //{
         $accessallowed=1;
         //}
-        $original_file=$conf->actions->dir_output.'/'.$original_file;
+        $original_file=$conf->commercial->dir_actions.'/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
     }
 
@@ -288,7 +288,7 @@ if ($modulepart)
         //{
         $accessallowed=1;
         //}
-		$original_file = $conf->actions->dir_temp."/".$original_file;
+		$original_file = $conf->commercial->dir_actions_temp."/".$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
 	}
 

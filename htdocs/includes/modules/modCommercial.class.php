@@ -40,63 +40,70 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 class modCommercial extends DolibarrModules
 {
-
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      Database handler
-    */
-    function modCommercial($DB)
-    {
-    	$this->db = $DB ;
-      $this->numero = 2 ;
+	/**
+   *   \brief      Constructeur. Definit les noms, constantes et boites
+   *   \param      DB      Database handler
+   */
+  function modCommercial($DB)
+  {
+  	$this->db = $DB ;
+    $this->numero = 2 ;
         
-      $this->family = "crm";
-      // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-      $this->name = eregi_replace('^mod','',get_class($this));
-      $this->description = "Gestion commercial";
+    $this->family = "crm";
+    // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+    $this->name = eregi_replace('^mod','',get_class($this));
+    $this->description = "Gestion commercial";
       
-      // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-      $this->version = 'dolibarr';
+    // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+    $this->version = 'dolibarr';
       
-      $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-      $this->special = 0;
-      $this->picto='commercial';
+    $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+    $this->special = 0;
+    $this->picto='commercial';
       
-      // Data directories to create when module is enabled
-      $this->dirs = array();
-      $r=0;
+    // Data directories to create when module is enabled
+    $this->dirs = array();
+    $r=0;
       
-      $this->dirs[$r][0] = "output";
-      $this->dirs[$r][1] = "/comm";
+    $this->dirs[$r][0] = "output";
+    $this->dirs[$r][1] = "/comm";
       
-      $r++;
-      $this->dirs[$r][0] = "temp";
-      $this->dirs[$r][1] = "/comm/temp";
+    $r++;
+    $this->dirs[$r][0] = "temp";
+    $this->dirs[$r][1] = "/comm/temp";
+    
+    $r++;
+    $this->dirs[$r][0] = "actions";
+    $this->dirs[$r][1] = "/action";
+    
+    $r++;
+    $this->dirs[$r][0] = "actions_temp";
+    $this->dirs[$r][1] = "/action/temp";
         
-        // Dependancies
-        $this->depends = array("modSociete");
-        $this->requiredby = array("modPropale","modContrat","modCommande","modFicheinter");
+    // Dependancies
+    $this->depends = array("modSociete");
+    $this->requiredby = array("modPropale","modContrat","modCommande","modFicheinter");
         
-        // Constantes
-        $this->const = array();
+    // Constantes
+    $this->const = array();
         
-        // Boxes
-        $this->boxes = array();
+    // Boxes
+    $this->boxes = array();
         
-        // Permissions
-        $this->rights = array();
-        $this->rights_class = 'commercial';
-        $r = 1;
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'commercial';
+    $r = 1;
         
-        // 261 : Permission generale
-        $this->rights[$r][0] = 261;
-        $this->rights[$r][1] = 'Consulter menu commercial';
-        $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 1;
-        $this->rights[$r][4] = 'main';
-        $this->rights[$r][5] = 'lire';
-        $r++;
-    }
+    // 261 : Permission generale
+    $this->rights[$r][0] = 261;
+    $this->rights[$r][1] = 'Consulter menu commercial';
+    $this->rights[$r][2] = 'r';
+    $this->rights[$r][3] = 1;
+    $this->rights[$r][4] = 'main';
+    $this->rights[$r][5] = 'lire';
+    $r++;
+  }
 
     /**
      *  \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
@@ -104,12 +111,12 @@ class modCommercial extends DolibarrModules
      */
     function init()
     {
-        // Permissions
-        $this->remove();
+    	// Permissions
+      $this->remove();
         
-        $sql = array();
+      $sql = array();
 
-        return $this->_init($sql);
+      return $this->_init($sql);
     }
 	
     /**
@@ -118,9 +125,9 @@ class modCommercial extends DolibarrModules
      */
     function remove()
     {
-        $sql = array();
+    	$sql = array();
         
-        return $this->_remove($sql);
+      return $this->_remove($sql);
     }
 }
 ?>
