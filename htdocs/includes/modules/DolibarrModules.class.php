@@ -101,7 +101,7 @@ class DolibarrModules
 
 		// Insere les constantes associees au module dans llx_const
 		if (! $err) $err+=$this->insert_menus();
-		
+
 		// Insert module's directories into llx_const and create dir
 		if (! $err) $err+=$this->insert_dirs();
 
@@ -169,7 +169,7 @@ class DolibarrModules
 
 		// Remove module's menus
 		if (! $err) $err+=$this->delete_menus();
-		
+
 		// Remove module's directories
 		if (! $err) $err+=$this->delete_dirs();
 
@@ -489,7 +489,7 @@ class DolibarrModules
 	function insert_boxes()
 	{
 		global $conf;
-		
+
 		$err=0;
 
 		if (is_array($this->boxes))
@@ -541,7 +541,7 @@ class DolibarrModules
 	function delete_boxes()
 	{
 		global $conf;
-		
+
 		$err=0;
 
 		if (is_array($this->boxes))
@@ -581,7 +581,7 @@ class DolibarrModules
 	function delete_style_sheet()
 	{
 		global $conf;
-		
+
 		$err=0;
 
 		if ($this->style_sheet)
@@ -606,7 +606,7 @@ class DolibarrModules
 	function delete_tabs()
 	{
 		global $conf;
-		
+
 		$err=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
@@ -628,7 +628,7 @@ class DolibarrModules
 	function insert_style_sheet()
 	{
 		global $conf;
-		
+
 		$err=0;
 
 		if ($this->style_sheet)
@@ -655,7 +655,7 @@ class DolibarrModules
 	function insert_tabs()
 	{
 		global $conf;
-		
+
 		$err=0;
 
 		if (! empty($this->tabs))
@@ -689,7 +689,7 @@ class DolibarrModules
 	function insert_const()
 	{
 		global $conf;
-		
+
 		$err=0;
 
 		foreach ($this->const as $key => $value)
@@ -753,7 +753,7 @@ class DolibarrModules
 	function insert_permissions()
 	{
 		global $conf;
-		
+
 		$err=0;
 
 		//print $this->rights_class." ".sizeof($this->rights)."<br>";
@@ -830,7 +830,7 @@ class DolibarrModules
 	function delete_permissions()
 	{
 		global $conf;
-		
+
 		$err=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def";
@@ -937,7 +937,7 @@ class DolibarrModules
 	function delete_menus()
 	{
 		global $conf;
-		
+
 		$err=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
@@ -953,17 +953,19 @@ class DolibarrModules
 
 		return $err;
 	}
-	
+
 	/**
-	 *	\brief      Insere et cree les répertoires output et temp
-	 *	\return     int     Nombre d'erreurs (0 si ok)
+	 *	\brief      Create directories required by module
+	 *	\return     int     Number of errors (0 if OK)
 	 */
 	function insert_dirs()
 	{
+		// TODO Keep only dir creation, no need to insert values in database.
+
 		global $langs, $conf;
-		
+
 		$err=0;
-		
+
 		if (is_array($this->dirs))
 		{
 			foreach ($this->dirs as $key => $value)
@@ -975,25 +977,26 @@ class DolibarrModules
 				$sql.= " FROM ".MAIN_DB_PREFIX."const";
 				$sql.= " WHERE name ='".$name."'";
 				$sql.= " AND entity = ".$conf->entity;
-				
+
 				$result=$this->db->query($sql);
 				if ($result)
 				{
 					$row = $this->db->fetch_row($result);
-					
+
 					if ($row[0] == 0)
 					{
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
 						$sql.= " VALUES ('".$name."','chaine','".$dir."','Directory for module ".$this->name."','0',".$conf->entity.")";
-			
+
 						dol_syslog("DolibarrModules::insert_dir_output sql=".$sql);
 						$resql=$this->db->query($sql);
-						
+
 						if ($resql)
 						{
-							// On defini l'entite
-							$dir = DOL_DATA_ROOT."/".$conf->entity.$dir;
-							
+							// Define directory full path
+							if (empty($conf->entity)) $dir = DOL_DATA_ROOT.'/'.$dir;
+							else $dir = DOL_DATA_ROOT."/".$conf->entity.'/'.$dir;
+							// Create dir if it does not exists
 							if ($dir && ! file_exists($dir))
 							{
 								if (create_exdir($dir) < 0)
@@ -1011,11 +1014,11 @@ class DolibarrModules
 				}
 			}
 		}
-		
+
 		return $err;
   }
-			
-	
+
+
 	/**
 	 *	\brief      Remove directory entries
 	 *	\return     int     Nombre d'erreurs (0 si ok)
@@ -1023,13 +1026,13 @@ class DolibarrModules
 	function delete_dirs()
 	{
 		global $conf;
-		
+
 		$err=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE name like '".$this->const_name."_DIR_%'";
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		dol_syslog("DolibarrModules::delete_tabs sql=".$sql);
 		if (! $this->db->query($sql))
 		{
