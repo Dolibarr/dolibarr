@@ -20,7 +20,7 @@ To install Dolibarr:
 - Create an empty mysql database (postgresql support is experimental).
 - Set write permissions on directory 'dolibarr/htdocs/conf' for your web
   server user (write permissions will be removed once install is finished).
-- From your browser, call the dolibarr install page. Url depends on choice
+- From your browser, call the dolibarr "install/" page. Url depends on choice
   made on first step:
    http://localhost/dolibarr/htdocs/install/index.php
   or
@@ -37,11 +37,20 @@ To upgrade Dolibarr from an old version to this one:
 - If you came from version x.y.z to x.y.w (only third number differ),
   there is no need to run any migrate process.
 - If you came from a beta version or from any version x.y.z to any
-  other where x or y number differs, you must call the Dolibarr install
-  page in your browser:
+  other where x or y number differs, you must call the Dolibarr "install/"
+  page in your browser.
+  Url might be for example:
    http://localhost/dolibarr/htdocs/install/index.php
   or
    http://yourdolibarrhost/install/index.php
+  To know what is exactly correct URL for "install/" page, take URL you use
+  to go on login page. It it ends with "index.php", remove it, then add
+  "install/".
+  For example, if your login page is: 
+  http://yourdolibarrhost/something/index.php
+  Then, your "install/" pages will be 
+  http://yourdolibarrhost/something/install/
+  
   Then choose the "update" option according to your case.
   Note: Migrate process can ben runned safely several times.
   

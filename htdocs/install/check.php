@@ -50,7 +50,10 @@ dolibarr_install_syslog("check: Dolibarr install/upgrade process started");
 
 pHeader($langs->trans("DolibarrWelcome"),"");   // Etape suivante = license
 
-print '<center><img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"></center><br>';
+print '<center>';
+print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
+print DOL_VERSION.'<br><br>';
+print '</center>';
 print "<br>\n";
 
 
