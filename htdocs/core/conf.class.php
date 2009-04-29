@@ -261,8 +261,8 @@ class Conf
 		if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $this->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par defaut
 		// Module propal
 		if (! defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
-		$this->propal->dir_output=$rootfordata."/propale";
-		$this->propal->dir_temp  =$rootfordata."/propale/temp";
+		$this->propale->dir_output=$rootfordata."/propale";
+		$this->propale->dir_temp  =$rootfordata."/propale/temp";
 		if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $this->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 		// Module telephonie
 		$this->telephonie->dir_output=$rootfordata."/telephonie";
