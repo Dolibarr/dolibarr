@@ -69,7 +69,7 @@ class Conf
 		dol_syslog("Conf::setValues");
 
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;	// Par defaut, a oui
-		
+
 		/*
 		 * Definition de toutes les Constantes globales d'environnement
 		 * - En constante php (TODO a virer)
@@ -139,8 +139,12 @@ class Conf
 		// Load translation object with current language
 		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT="en_US";
 
+		$rootfordata = DOL_DATA_ROOT;
+		// If multicompany module is enabled, we redefine the root of data
+		if (! empty($conf->multicompany) && ! empty($conf->entity)) $rootfordata.='/'.$conf->entity;
+
 		// Other global parameters
-		$this->users->dir_output=DOL_DATA_ROOT."/users";
+		$this->users->dir_output=$rootfordata."/users";
 
 		// For backward compatibility
 		$this->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
@@ -149,85 +153,85 @@ class Conf
 		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
 
 		// Module agenda
-		$this->agenda->dir_temp=DOL_DATA_ROOT."/agenda/temp";
+		$this->agenda->dir_temp=$rootfordata."/agenda/temp";
 
 		// Module externalrss
-		$this->externalrss->dir_temp=DOL_DATA_ROOT."/rss/temp";
+		$this->externalrss->dir_temp=$rootfordata."/rss/temp";
 
 		// Module commande client
-		$this->commande->dir_output=DOL_DATA_ROOT."/commande";
-		$this->commande->dir_temp  =DOL_DATA_ROOT."/commande/temp";
+		$this->commande->dir_output=$rootfordata."/commande";
+		$this->commande->dir_temp  =$rootfordata."/commande/temp";
 
 		// Module expeditions
-		$this->expedition->dir_output=DOL_DATA_ROOT."/expedition";
-		$this->expedition->dir_temp  =DOL_DATA_ROOT."/expedition/temp";
+		$this->expedition->dir_output=$rootfordata."/expedition";
+		$this->expedition->dir_temp  =$rootfordata."/expedition/temp";
 
 		// Sous module bons d'expedition
 		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
-		$this->expedition_bon->dir_output=DOL_DATA_ROOT."/expedition/sending";
-		$this->expedition_bon->dir_temp  =DOL_DATA_ROOT."/expedition/sending/temp";
+		$this->expedition_bon->dir_output=$rootfordata."/expedition/sending";
+		$this->expedition_bon->dir_temp  =$rootfordata."/expedition/sending/temp";
 		// Sous module bons de livraison
 		$this->livraison_bon->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
-		$this->livraison_bon->dir_output=DOL_DATA_ROOT."/expedition/receipt";
-		$this->livraison_bon->dir_temp  =DOL_DATA_ROOT."/expedition/receipt/temp";
+		$this->livraison_bon->dir_output=$rootfordata."/expedition/receipt";
+		$this->livraison_bon->dir_temp  =$rootfordata."/expedition/receipt/temp";
 
 		// Module societe
-		$this->societe->dir_output=DOL_DATA_ROOT."/societe";
-		$this->societe->dir_temp  =DOL_DATA_ROOT."/societe/temp";
-		$this->societe->dir_logos =DOL_DATA_ROOT."/societe/logos";
+		$this->societe->dir_output=$rootfordata."/societe";
+		$this->societe->dir_temp  =$rootfordata."/societe/temp";
+		$this->societe->dir_logos =$rootfordata."/societe/logos";
 		if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $this->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 		// Module commercial
-		$this->commercial->dir_output=DOL_DATA_ROOT."/comm";
-		$this->commercial->dir_temp  =DOL_DATA_ROOT."/comm/temp";
+		$this->commercial->dir_output=$rootfordata."/comm";
+		$this->commercial->dir_temp  =$rootfordata."/comm/temp";
 
 		// Module taxes et charges sociales
-		$this->tax->dir_output=DOL_DATA_ROOT."/taxes";
-		$this->tax->dir_temp  =DOL_DATA_ROOT."/taxes/temp";
+		$this->tax->dir_output=$rootfordata."/taxes";
+		$this->tax->dir_temp  =$rootfordata."/taxes/temp";
 
 		// Module comptaexpert
-		$this->comptaexpert->dir_output=DOL_DATA_ROOT."/comptaexpert";
-		$this->comptaexpert->dir_temp  =DOL_DATA_ROOT."/comptaexpert/temp";
+		$this->comptaexpert->dir_output=$rootfordata."/comptaexpert";
+		$this->comptaexpert->dir_temp  =$rootfordata."/comptaexpert/temp";
 		// Module compta
-		$this->compta->dir_output=DOL_DATA_ROOT."/compta";
-		$this->compta->dir_temp  =DOL_DATA_ROOT."/compta/temp";
+		$this->compta->dir_output=$rootfordata."/compta";
+		$this->compta->dir_temp  =$rootfordata."/compta/temp";
 		// Module banque
-		$this->banque->dir_output=DOL_DATA_ROOT."/banque";
-		$this->banque->dir_temp  =DOL_DATA_ROOT."/banque/temp";
+		$this->banque->dir_output=$rootfordata."/banque";
+		$this->banque->dir_temp  =$rootfordata."/banque/temp";
 		// Module don
-		$this->don->dir_output=DOL_DATA_ROOT."/dons";
-		$this->don->dir_temp  =DOL_DATA_ROOT."/dons/temp";
+		$this->don->dir_output=$rootfordata."/dons";
+		$this->don->dir_temp  =$rootfordata."/dons/temp";
 		// Module fournisseur
-		$this->fournisseur->dir_output=DOL_DATA_ROOT."/fournisseur";
-		$this->fournisseur->dir_temp=DOL_DATA_ROOT."/fournisseur/temp";
-		$this->fournisseur->commande->dir_output=DOL_DATA_ROOT."/fournisseur/commande";
-		$this->fournisseur->commande->dir_temp  =DOL_DATA_ROOT."/fournisseur/commande/temp";
-		$this->fournisseur->facture->dir_output =DOL_DATA_ROOT."/fournisseur/facture";
-		$this->fournisseur->facture->dir_temp   =DOL_DATA_ROOT."/fournisseur/facture/temp";
+		$this->fournisseur->dir_output=$rootfordata."/fournisseur";
+		$this->fournisseur->dir_temp=$rootfordata."/fournisseur/temp";
+		$this->fournisseur->commande->dir_output=$rootfordata."/fournisseur/commande";
+		$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";
+		$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
+		$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
 		// Module ficheinter
-		$this->fichinter->dir_output=DOL_DATA_ROOT."/ficheinter";
-		$this->fichinter->dir_temp  =DOL_DATA_ROOT."/ficheinter/temp";
+		$this->fichinter->dir_output=$rootfordata."/ficheinter";
+		$this->fichinter->dir_temp  =$rootfordata."/ficheinter/temp";
 		if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $this->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 		// Module adherent
-		$this->adherent->dir_output=DOL_DATA_ROOT."/adherent";
-		$this->adherent->dir_tmp=DOL_DATA_ROOT."/adherent/temp";
+		$this->adherent->dir_output=$rootfordata."/adherent";
+		$this->adherent->dir_tmp=$rootfordata."/adherent/temp";
 		// Module produit
-		$this->produit->dir_output=DOL_DATA_ROOT."/produit";
-		$this->produit->dir_temp  =DOL_DATA_ROOT."/produit/temp";
+		$this->produit->dir_output=$rootfordata."/produit";
+		$this->produit->dir_temp  =$rootfordata."/produit/temp";
 		$this->produit->MultiPricesEnabled=defined("PRODUIT_MULTIPRICES")?PRODUIT_MULTIPRICES:0;
 		// Module service
-		$this->service->dir_output=DOL_DATA_ROOT."/produit";
-		$this->service->dir_temp  =DOL_DATA_ROOT."/produit/temp";
+		$this->service->dir_output=$rootfordata."/produit";
+		$this->service->dir_temp  =$rootfordata."/produit/temp";
 
 		// Module droipret
 		$this->droitpret->cat=defined('DROITPRET_CAT')?DROITPRET_CAT:'';
 		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
-		$this->droitpret->dir_temp=DOL_DATA_ROOT."/droitpret/temp";
+		$this->droitpret->dir_temp=$rootfordata."/droitpret/temp";
 
 		// Module contrat
-		$this->contrat->dir_output=DOL_DATA_ROOT."/contracts";
+		$this->contrat->dir_output=$rootfordata."/contracts";
 		// Module prelevement
-		$this->prelevement->dir_output=DOL_DATA_ROOT."/prelevement";
-		$this->prelevement->dir_temp  =DOL_DATA_ROOT."/prelevement/temp";
+		$this->prelevement->dir_output=$rootfordata."/prelevement";
+		$this->prelevement->dir_temp  =$rootfordata."/prelevement/temp";
 		// Module webcal
 		$this->webcal->db->type=defined('PHPWEBCALENDAR_TYPE')?PHPWEBCALENDAR_TYPE:'__dolibarr_main_db_type__';
 		$this->webcal->db->host=defined('PHPWEBCALENDAR_HOST')?PHPWEBCALENDAR_HOST:'';
@@ -235,7 +239,7 @@ class Conf
 		$this->webcal->db->user=defined('PHPWEBCALENDAR_USER')?PHPWEBCALENDAR_USER:'';
 		$this->webcal->db->pass=defined('PHPWEBCALENDAR_PASS')?PHPWEBCALENDAR_PASS:'';
 		$this->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
-		$this->webcal->dir_temp=DOL_DATA_ROOT.'/webcal/temp';
+		$this->webcal->dir_temp=$rootfordata.'/webcal/temp';
 		// Module phenix
 		$this->phenix->db->type=defined('PHPPHENIX_TYPE')?PHPPHENIX_TYPE:'__dolibarr_main_db_type__';
 		$this->phenix->db->host=defined('PHPPHENIX_HOST')?PHPPHENIX_HOST:'';
@@ -252,43 +256,43 @@ class Conf
 		$this->mantis->db->pass=defined('PHPMANTIS_PASS')?PHPMANTIS_PASS:'';
 		$this->mantis->db->name=defined('PHPMANTIS_DBNAME')?PHPMANTIS_DBNAME:'';
 		// Module facture
-		$this->facture->dir_output=DOL_DATA_ROOT."/facture";
-		$this->facture->dir_temp  =DOL_DATA_ROOT."/facture/temp";
+		$this->facture->dir_output=$rootfordata."/facture";
+		$this->facture->dir_temp  =$rootfordata."/facture/temp";
 		if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $this->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par defaut
 		// Module propal
 		if (! defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
-		$this->propal->dir_output=DOL_DATA_ROOT."/propale";
-		$this->propal->dir_temp  =DOL_DATA_ROOT."/propale/temp";
+		$this->propal->dir_output=$rootfordata."/propale";
+		$this->propal->dir_temp  =$rootfordata."/propale/temp";
 		if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $this->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 		// Module telephonie
-		$this->telephonie->dir_output=DOL_DATA_ROOT."/telephonie";
-		$this->telephonie->dir_temp  =DOL_DATA_ROOT."/telephonie/temp";
+		$this->telephonie->dir_output=$rootfordata."/telephonie";
+		$this->telephonie->dir_temp  =$rootfordata."/telephonie/temp";
 		// Module domaine
 		$this->domaine->enabled=0;
 		// Module voyage
 		$this->voyage->enabled=0;
 		// Module actions
-		$this->actions->dir_output=DOL_DATA_ROOT."/action";
-		$this->actions->dir_temp  =DOL_DATA_ROOT."/action/temp";
+		$this->actions->dir_output=$rootfordata."/action";
+		$this->actions->dir_temp  =$rootfordata."/action/temp";
 		// Module export
-		$this->export->dir_output=DOL_DATA_ROOT."/export";
-		$this->export->dir_temp  =DOL_DATA_ROOT."/export/temp";
+		$this->export->dir_output=$rootfordata."/export";
+		$this->export->dir_temp  =$rootfordata."/export/temp";
 		// Module import
-		$this->import->dir_output=DOL_DATA_ROOT."/import";
-		$this->import->dir_temp  =DOL_DATA_ROOT."/import/temp";
+		$this->import->dir_output=$rootfordata."/import";
+		$this->import->dir_temp  =$rootfordata."/import/temp";
 		// Module ldap
-		$this->ldap->dir_temp=DOL_DATA_ROOT."/ldap/temp";
+		$this->ldap->dir_temp=$rootfordata."/ldap/temp";
 		// Module FCKeditor
-		$this->fckeditor->dir_output=DOL_DATA_ROOT."/fckeditor";
+		$this->fckeditor->dir_output=$rootfordata."/fckeditor";
 		// Module ECM
-		$this->ecm->dir_output=DOL_DATA_ROOT."/ecm";
+		$this->ecm->dir_output=$rootfordata."/ecm";
 		// Module emailing
-		$this->mailings->dir_temp=DOL_DATA_ROOT."/mailings/temp";
+		$this->mailings->dir_temp=$rootfordata."/mailings/temp";
 		// Module oscommerce 1
 		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
 		// Module Barcode
-		$this->barcode->dir_temp=DOL_DATA_ROOT."/barcode/temp";
+		$this->barcode->dir_temp=$rootfordata."/barcode/temp";
 
 		/*
 		 * Modification de quelques variable de conf en fonction des Constantes
