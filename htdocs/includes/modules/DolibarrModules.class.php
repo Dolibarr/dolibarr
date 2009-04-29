@@ -169,7 +169,7 @@ class DolibarrModules
 
 		// Remove module's menus
 		if (! $err) $err+=$this->delete_menus();
-		
+
 		// Remove module's directories
 		if (! $err) $err+=$this->delete_dirs();
 
@@ -179,9 +179,9 @@ class DolibarrModules
 			if (! $err)
 			{
 				if (!$this->db->query($array_sql[$i]))
-		  		{
-		  			$err++;
-		  		}
+				{
+					$err++;
+				}
 			}
 		}
 
@@ -391,7 +391,7 @@ class DolibarrModules
 		$this->db->query($sql);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,entity) VALUES";
-    	$sql.= " ('".$this->const_name."','1',0,".$conf->entity.")";
+		$sql.= " ('".$this->const_name."','1',0,".$conf->entity.")";
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		if (!$this->db->query($sql))
 		{
@@ -673,8 +673,8 @@ class DolibarrModules
 					 if (! $resql)
 					 {
 						$err++;
-					}
-					*/
+						}
+						*/
 				}
 				$i++;
 			}
@@ -970,10 +970,10 @@ class DolibarrModules
 			{
 				$name  = $this->const_name."_DIR_".strtoupper($this->dirs[$key][0]);
 				$dir   = $this->dirs[$key][1];
-				$const = $this->dirs[$key][2];
-				
+				$const = empty($this->dirs[$key][2])?'':$this->dirs[$key][2];
+
 				// Define directory full path
-				if (empty($conf->entity)) $fulldir = DOL_DATA_ROOT.$dir;
+				if (empty($conf->global->MULTICOMPANY)) $fulldir = DOL_DATA_ROOT.$dir;
 				else $fulldir = DOL_DATA_ROOT."/".$conf->entity.$dir;
 				// Create dir if it does not exists
 				if ($fulldir && ! file_exists($fulldir))
@@ -986,7 +986,7 @@ class DolibarrModules
 					}
 				}
 				// define the constant if requested
-				if (isset($const) && $const)
+				if ($const)
 				{
 					$result = $this->insert_dirs($name,$dir);
 					if ($result) $err++;
@@ -995,67 +995,69 @@ class DolibarrModules
 		}
 
 		return $err;
-  }
-  
-  /**
+	}
+
+
+	/**
 	 *	\brief      Insert directories in llx_const
 	 *	\return     int     Number of errors (0 if OK)
 	 */
 	function insert_dirs($name,$dir)
 	{
 		global $conf;
-		
+
 		$err=0;
-		
-		$sql = "SELECT count(*)"; 	 
-	  $sql.= " FROM ".MAIN_DB_PREFIX."const";
-	  $sql.= " WHERE name ='".$name."'";
-	  $sql.= " AND entity = ".$conf->entity;
-	  	 
-	  $result=$this->db->query($sql);
-	  if ($result)
-	  {
-	  	$row = $this->db->fetch_row($result);
-	  	
-	  	if ($row[0] == 0)
-	    {
-	    	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
-	    	$sql.= " VALUES ('".$name."','chaine','".$dir."','Directory for module ".$this->name."','0',".$conf->entity.")"; 	 
-	  	 
-	      dol_syslog("DolibarrModules::insert_dir_output sql=".$sql); 	 
-	      $resql=$this->db->query($sql);
-	    }
-	  }
-	  else
-	  {
-	  	$err++;
-	  }
-	  
-	  return $err;
+
+		$sql = "SELECT count(*)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE name ='".$name."'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			$row = $this->db->fetch_row($result);
+
+			if ($row[0] == 0)
+			{
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
+				$sql.= " VALUES ('".$name."','chaine','".$dir."','Directory for module ".$this->name."','0',".$conf->entity.")";
+
+				dol_syslog("DolibarrModules::insert_dir_output sql=".$sql);
+				$resql=$this->db->query($sql);
+			}
+		}
+		else
+		{
+			$err++;
+		}
+
+		return $err;
 	}
-	
-	/** 	 
-	 *      \brief      Remove directory entries
-	 *      \return     int     Nombre d'erreurs (0 si ok)
+
+
+	/**
+	 *	\brief      Remove directory entries
+	 *	\return     int     Number of errors (0 if OK)
 	 */
 	function delete_dirs()
 	{
 		global $conf;
-		
+
 		$err=0;
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE name like '".$this->const_name."_DIR_%'";
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		dol_syslog("DolibarrModules::delete_tabs sql=".$sql);
 		if (! $this->db->query($sql))
 		{
 			$err++;
 		}
-		
-		return $err; 	 
+
+		return $err;
 	}
-  
+
 }
 ?>
