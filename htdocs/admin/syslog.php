@@ -65,22 +65,9 @@ if (! empty($_POST["action"]) && $_POST["action"] == 'set')
 	
 	if ($optionlogoutput == "file")
 	{
-		$filelog = $_POST["filename"];
-		
-		if (eregi('(^[A-Za-z0-9_\-\\/:]+[\\/]+)([A-Za-z0-9_\-]+[.]?[A-Za-z0-9]+)?$', $filelog))
-		{
-			if (eregi('DOL_DATA_ROOT', $filelog))
-			{
-				$filelog = eregi_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $filelog);
-			}
-		}
-		else if ($conf->syslog->dir_output)
-		{
-			$filelog = $conf->syslog->dir_output."/".$filelog;
-		}
-		
+		$filelog=$_POST["filename"];
+		$filelog=eregi_replace('DOL_DATA_ROOT',DOL_DATA_ROOT,$filelog);
 		$file=fopen($filelog,"a+");
-		
 		if ($file)
 		{
 			fclose($file);
@@ -136,9 +123,8 @@ print '</td></tr>';
 
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"140\"><input ".$bc[$var]." type=\"radio\" name=\"optionlogoutput\" value=\"file\"".($syslogfile?" checked":"")."> ".$langs->trans("SyslogSimpleFile")."</td>";
-print '<td width="250" nowrap>'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" size="60" value="'.$defaultsyslogfile.'"></td>';
-$htmltext = $langs->trans("SyslogFilenameDesc",$conf->syslog->dir_output);
-print "<td align=\"left\">".$html->textwithhelp('',$htmltext);
+print '<td colspan="2">'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" size="60" value="'.$defaultsyslogfile.'">';
+print ' '.img_info($langs->trans("YouCanUseDOL_DATA_ROOT"));
 print '</td></tr>';
 
 print "</table>\n";
