@@ -37,7 +37,6 @@ if (!$user->rights->societe->lire)
 accessforbidden();
 
 $langs->load("commercial");
-$langs->load("orders");
 
 // Securite acces client
 $socid='';
@@ -49,11 +48,6 @@ if ($user->societe_id > 0)
 }
 
 $max=5;
-
-
-if ($conf->propal->enabled) $propalstatic=new Propal($db);
-
-
 
 /*
  * Actions
@@ -97,7 +91,13 @@ print_fiche_titre($langs->trans("CustomerArea"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<tr>';
+if (($conf->propal->enabled && $user->rights->propale->lire) ||
+    ($conf->contrat->enabled && $user->rights->contrat->lire) ||
+    ($conf->commande->enabled && $user->rights->commande->lire))
+{
+	print '<td valign="top" width="30%" class="notopnoleft">';
+}
 
 // Recherche Propal
 if ($conf->propal->enabled && $user->rights->propale->lire)
@@ -202,6 +202,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {
 	$langs->load("orders");
+	
 	$sql = "SELECT c.rowid, c.ref, c.total_ttc, s.rowid as socid, s.nom, s.client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -250,7 +251,17 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	}
 }
 
-print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+if (($conf->propal->enabled && $user->rights->propale->lire) ||
+    ($conf->contrat->enabled && $user->rights->contrat->lire) ||
+    ($conf->commande->enabled && $user->rights->commande->lire))
+{
+	print '</td>';
+	print '<td valign="top" width="70%" class="notopnoleftnoright">';
+}
+else
+{
+	print '<td valign="top" width="100%" class="notopnoleftnoright">';
+}
 
 
 
@@ -264,7 +275,6 @@ $max=3;
 
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-
 	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";

@@ -99,12 +99,18 @@ print_fiche_titre($langs->trans("AccountancyTreasuryArea"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<tr>';
+
+if (($conf->facture->enabled && $user->rights->facture->lire) ||
+    ($conf->fournisseur->enabled && $user->rights->fournisseur->lire))
+{
+	print '<td valign="top" width="30%" class="notopnoleft">';
+}
 
 /*
  * Find invoices
  */
-if ($conf->facture->enabled)
+if ($conf->facture->enabled && $user->rights->facture->lire)
 {
 	print '<form method="post" action="'.DOL_URL_ROOT.'/compta/facture.php">';
 	print '<table class="noborder" width="100%">';
@@ -117,7 +123,7 @@ if ($conf->facture->enabled)
 	print "</table></form><br>";
 }
 
-if ($conf->fournisseur->enabled)
+if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
 {
 	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/facture/index.php">';
 	print '<table class="noborder" width="100%">';
@@ -279,8 +285,16 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	}
 }
 
-
-print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+if (($conf->facture->enabled && $user->rights->facture->lire) ||
+    ($conf->fournisseur->enabled && $user->rights->fournisseur->lire))
+{
+	print '</td>';
+	print '<td valign="top" width="70%" class="notopnoleftnoright">';
+}
+else
+{
+	print '<td valign="top" width="100%" class="notopnoleftnoright">';
+}
 
 
 // Last customers
