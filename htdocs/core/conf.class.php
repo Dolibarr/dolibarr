@@ -183,6 +183,10 @@ class Conf
 		// Exception: Some dir are not the name of module. So we keep exception here
 		// for backward compatibility.
 
+		// Module user
+		$this->user->dir_output=$rootfordata."/users";
+		$this->user->dir_temp=$rootfordata."/users/temp";
+		
 		// Module RSS
 		$this->externalrss->dir_output=$rootfordata."/rss";
 		$this->externalrss->dir_temp=$rootfordata."/rss/temp";

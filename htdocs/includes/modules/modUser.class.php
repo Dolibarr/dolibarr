@@ -68,10 +68,12 @@ class modUser extends DolibarrModules
 		
 		$this->dirs[$r][0] = "output";
 		$this->dirs[$r][1] = "/users";
+		$this->dirs[$r][2] = 1;
 		
 		$r++;
 		$this->dirs[$r][0] = "temp";
 		$this->dirs[$r][1] = "/users/temp";
+		$this->dirs[$r][2] = 1;
 
 		// Config pages
 		// $this->config_page_url = array("/user/admin/index.php");
