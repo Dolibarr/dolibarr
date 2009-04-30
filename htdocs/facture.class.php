@@ -204,7 +204,7 @@ class Facture extends CommonObject
 		$sql.= ", note_public";
 		$sql.= ", ref_client";
 		$sql.= ", fk_facture_source, fk_user_author, fk_projet";
-		$sql.= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf"
+		$sql.= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf";
 		$sql.= ")";
 		$sql.= " VALUES (";
 		$sql.= "'(PROV)'";
