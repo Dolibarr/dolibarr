@@ -37,8 +37,6 @@ if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/propal.class.php"
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 if ($conf->stock->enabled)    require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
-if (! $user->rights->expedition->lire) accessforbidden();
-
 $langs->load("companies");
 $langs->load("bills");
 $langs->load('deliveries');
@@ -47,14 +45,18 @@ $langs->load('stocks');
 $langs->load('other');
 $langs->load('propal');
 
-// Security check
-$id = isset($_GET["id"])?$_GET["id"]:'';
-if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'expedition',$id,'');
-
+$origin = "expedition";
+$origin_id = isset($_GET["id"])?$_GET["id"]:'';
+$id = $origin_id;
 
 $origin     = $_GET["origin"]?$_GET["origin"]:$_POST["origin"];				// Example: commande, propal
 $origin_id  = $_GET["object_id"]?$_GET["object_id"]:$_POST["object_id"];	// Id of order or propal
+
+
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,$origin,$origin_id,'');
+
 
 
 /*

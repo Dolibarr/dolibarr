@@ -49,9 +49,8 @@ $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action'
 
 // Security check
 $socid=0;
-$comid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'commande',$comid,'');
+$result=restrictedArea($user,'commande',$id,'');
 
 // Chargement des permissions
 $error = $user->load_entrepots();

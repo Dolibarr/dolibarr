@@ -44,7 +44,7 @@ $langs->load('deliveries');
 // Security check
 $id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'expedition',$id,'','livraison');
+$result=restrictedArea($user,'expedition',$id,'livraison','livraison');
 
 
 /*
@@ -67,8 +67,8 @@ if ($_POST["action"] == 'add')
 		$expedition->entrepot_id     = $_POST["entrepot_id"];
 	}
 
-	// On boucle sur chaque ligne de commande pour compl�ter objet livraison
-	// avec qt� � livrer
+	// On boucle sur chaque ligne de commande pour completer objet livraison
+	// avec qte a livrer
 	$commande = new Commande($db);
 	$commande->fetch($livraison->commande_id);
 	$commande->fetch_lines();

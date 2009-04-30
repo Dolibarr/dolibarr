@@ -1,6 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2008 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2008-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 -- ===================================================================
 
 
+ALTER TABLE llx_expedition ADD UNIQUE INDEX idx_expedition_uk_ref (ref, entity);
+
 ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_soc (fk_soc);
 ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_user_author (fk_user_author);
 ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_user_valid (fk_user_valid);
@@ -31,5 +33,3 @@ ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_user_author        FO
 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_user_valid         FOREIGN KEY (fk_user_valid)          REFERENCES llx_user (rowid);
 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_adresse_livraison  FOREIGN KEY (fk_adresse_livraison)   REFERENCES llx_societe_adresse_livraison (rowid);
 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_expedition_methode FOREIGN KEY (fk_expedition_methode)  REFERENCES llx_expedition_methode (rowid);
-
-ALTER TABLE llx_expedition ADD UNIQUE INDEX idx_expedition_uk_ref (ref);

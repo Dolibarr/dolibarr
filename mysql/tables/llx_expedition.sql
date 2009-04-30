@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2008      Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2008-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,23 +23,27 @@ create table llx_expedition
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,
-  ref                   varchar(30) NOT NULL,
-  fk_soc                integer     NOT NULL,
-  date_creation         datetime,                -- date de creation
-  fk_user_author        integer,                 -- createur
-  date_valid            datetime,                -- date de validation
-  fk_user_valid         integer,                 -- valideur
-  date_expedition       date,                    -- date de l'expedition
-  fk_adresse_livraison  integer   DEFAULT NULL,  -- adresse de livraison
+  ref                   varchar(30)        NOT NULL,
+  entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
+  fk_soc                integer            NOT NULL,
+  
+  date_creation         datetime,                     -- date de creation
+  fk_user_author        integer,                      -- createur
+  date_valid            datetime,                     -- date de validation
+  fk_user_valid         integer,                      -- valideur
+  date_expedition       date,                         -- date de lexpedition
+  fk_adresse_livraison  integer   DEFAULT NULL,       -- adresse de livraison
   fk_expedition_methode integer,
   tracking_number       varchar(50),
   fk_statut             smallint  DEFAULT 0,
-  height 				integer,
-  width 				integer,
-  size_units 			integer,
-  size 					integer,
-  weight_units 			integer,
-  weight 				integer,
+  
+  height                integer,
+  width                 integer,
+  size_units            integer,
+  size                  integer,
+  weight_units          integer,
+  weight                integer,
   note                  text,
   model_pdf             varchar(50)
+  
 )type=innodb;
