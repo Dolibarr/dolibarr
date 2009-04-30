@@ -153,18 +153,19 @@ class User extends CommonObject
 		$sql.= " ".$this->db->pdate("u.datelastlogin")." as datel,";
 		$sql.= " ".$this->db->pdate("u.datepreviouslogin")." as datep";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		if ($sid)
 		{
 			// permet une recherche du user par son SID ActiveDirectory ou Samba
-			$sql .= " WHERE (u.ldap_sid = '".$sid."' || u.login = '".addslashes($login)."') LIMIT 1";
+			$sql.= " AND (u.ldap_sid = '".$sid."' || u.login = '".addslashes($login)."') LIMIT 1";
 		}
 		else if ($login)
 		{
-			$sql .= " WHERE u.login = '".addslashes($login)."'";
+			$sql.= " AND u.login = '".addslashes($login)."'";
 		}
 		else
 		{
-			$sql .= " WHERE u.rowid = ".$this->id;
+			$sql.= " AND u.rowid = ".$this->id;
 		}
 
 		dol_syslog("User::Fetch sql=".$sql, LOG_DEBUG);
@@ -1013,14 +1014,13 @@ class User extends CommonObject
 		{
 			$nbrowsaffected+=$this->db->affected_rows($resql);
 
-			// Mise a jour mot de passe
+			// Mise a jour mot de passe	
 			if ($this->pass)
 			{
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
 				{
 					// Si mot de passe saisi et different de celui en base
 					$result=$this->setPassword($user,$this->pass,0,$notrigger);
-
 					if (! $nbrowsaffected) $nbrowsaffected++;
 				}
 			}

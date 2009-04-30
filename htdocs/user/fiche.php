@@ -236,7 +236,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 		$edituser->nom           = $_POST["nom"];
 		$edituser->prenom        = $_POST["prenom"];
 		$edituser->login         = $_POST["login"];
-		$edituser->pass          = $_POST["pass"];
+		$edituser->pass          = $_POST["password"];
 		$edituser->admin         = $_POST["admin"];
 		$edituser->office_phone  = $_POST["office_phone"];
 		$edituser->office_fax    = $_POST["office_fax"];
@@ -260,22 +260,23 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 				$message.='<div class="error">'.$edituser->error.'</div>';
 			}
 		}
+		// Todo: doublon avec la fonction update qui fait deja appel a setPassword
+		/*
 		if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='')
 		{
-			$ret=$edituser->setPassword($user,$_POST["password"],1);
+			$ret=$edituser->setPassword($user,$_POST["password"]);
 			if ($ret < 0)
 			{
 				$message.='<div class="error">'.$edituser->error.'</div>';
 			}
 		}
-
+		*/
 		if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 		{
 			// If photo is provided
 			if (! is_dir($conf->user->dir_output))
 			{
 				create_exdir($conf->user->dir_output);
-							print 'photo ok='.$conf->user->dir_output.'<br>';;
 			}
 			if (is_dir($conf->user->dir_output))
 			{
@@ -1273,7 +1274,8 @@ else
 			}
 			else if ($caneditpassword)
 			{
-				$text='<input size="12" maxlength="32" type="password" class="flat" name="pass" value="'.$fuser->pass.'">';
+				// Todo: le champ type "password" modifie la valeur du mot de passe (test en mode crypte) !!
+				$text='<input size="12" maxlength="32" type="text" class="flat" name="password" value="'.$fuser->pass.'">';
 				if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
 				{
 					$text=$html->textwithwarning($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication));

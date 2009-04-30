@@ -43,10 +43,12 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 		// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
 		$table = MAIN_DB_PREFIX."user";
 		$usernamecol = 'login';
+		$entitycol = 'entity';
 		
 		$sql ='SELECT pass, pass_crypted';
-		$sql.=' from '.$table;
-		$sql.=' where '.$usernamecol." = '".addslashes($_POST["username"])."'";
+		$sql.=' FROM '.$table;
+		$sql.=' WHERE '.$usernamecol." = '".addslashes($_POST["username"])."'";
+		$sql.=' AND '.$entitycol." IN (0,".$_POST["entity"].")";
 
 		dol_syslog("functions_dolibarr::check_user_password_dolibarr sql=".$sql);
 		$resql=$db->query($sql);
