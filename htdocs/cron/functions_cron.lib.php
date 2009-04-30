@@ -40,8 +40,10 @@ function batch_fournisseur_updateturnover($year)
 
 
 	$sql  = "SELECT fk_soc, date_format(datef,'%Y'),sum(total_ht) ";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-	$sql .= " GROUP BY fk_soc, date_format(datef,'%Y') ";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+	$sql.= " WHERE entity = ".$conf->entity;
+	$sql.= " GROUP BY fk_soc, date_format(datef,'%Y') ";
+	
 	$resql = $db->query($sql) ;
 
 	if ($resql)
@@ -62,8 +64,9 @@ function batch_fournisseur_updateturnover($year)
 	 *
 	 *
 	 */
-	$sql  = "SELECT fk_product,fk_soc ";
-	$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
+	$sql = "SELECT fk_product,fk_soc ";
+	$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
+	$sql.= " WHERE entity = ".$conf->entity;
 
 	$resql = $db->query($sql) ;
 
@@ -125,7 +128,8 @@ function batch_fournisseur_updateturnover($year)
 		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " WHERE fk_product ='".$key."'";
 		$sql.= " AND f.rowid = fd.fk_facture";
-		$sql .=" AND date_format(f.datef,'%Y') = '".$year."';";
+		$sql.= " WHERE f.entity = ".$conf->entity;
+		$sql.= " AND date_format(f.datef,'%Y') = '".$year."';";
 			
 		$resql = $db->query($sql) ;
 
@@ -151,7 +155,8 @@ function batch_fournisseur_updateturnover($year)
 	foreach($ca_fourns as $key => $value)
 	{
 		$sqld = "DELETE FROM ".MAIN_DB_PREFIX."fournisseur_ca";
-		$sqld .= " WHERE year = ".$year." AND fk_societe=".$key;
+		$sqld .= " WHERE year = ".$year." AND fk_societe = ".$key;
+		
 		$resqld = $db->query($sqld);
 		if (! $resqld)
 		{
@@ -210,8 +215,9 @@ function batch_fournisseur_statsinvoice()
 	$now=gmmktime();
 
 	$sql = "SELECT paye, count(*)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-	$sql .= " GROUP BY paye";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture";
+	$sql.= " WHERE entity = ".$conf->entity;
+	$sql.= " GROUP BY paye";
 
 	$resql = $db->query($sql);
 
@@ -228,8 +234,9 @@ function batch_fournisseur_statsinvoice()
 	}
 
 	$sql = "SELECT paye, sum(total)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-	$sql .= " GROUP BY paye";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture";
+	$sql.= " WHERE entity = ".$conf->entity;
+	$sql.= " GROUP BY paye";
 
 	$resql = $db->query($sql);
 
