@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,12 +65,15 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	*/
     function getNextValue($objsoc=0,$livraison='')
     {
-        global $db;
+        global $db,$conf;
 
-        // D'abord on r�cup�re la valeur max (r�ponse imm�diate car champ ind�x�)
+        // D'abord on recupere la valeur max (reponse immediate car champ indexe)
         $blyy='';
+        
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
+        $sql.= " WHERE entity = ".$conf->entity;
+        
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -78,14 +81,17 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
             if ($row) $blyy = substr($row[0],0,4);
         }
     
-        // Si au moins un champ respectant le mod�le a �t� trouv�e
+        // Si au moins un champ respectant le modele a ete trouvee
         if (eregi('BL[0-9][0-9]',$blyy))
         {
-            // Recherche rapide car restreint par un like sur champ index�
+            // Recherche rapide car restreint par un like sur champ indexe
             $posindice=5;
+            
             $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
             $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
             $sql.= " WHERE ref like '".$blyy."%'";
+            $sql.= " AND entity = ".$conf->entity;
+            
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -106,8 +112,8 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
   
-    /**     \brief      Renvoie la r�f�rence de commande suivante non utilis�e
-     *      \param      objsoc      Objet soci�t�
+    /**     \brief      Renvoie la reference de commande suivante non utilisee
+     *      \param      objsoc      Objet societe
      *      \param      livraison	Objet livraison
      *      \return     string      Texte descripif
      */

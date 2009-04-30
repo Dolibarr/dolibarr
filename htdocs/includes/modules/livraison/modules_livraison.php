@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2006-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,14 +34,14 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 /**
  \class      ModelePDFDeliveryOrder
- \brief      Classe m�re des mod�les de bon de livraison
+ \brief      Classe mere des modeles de bon de livraison
  */
 class ModelePDFDeliveryOrder extends FPDF
 {
 	var $error='';
 
 	/**
-	 \brief Renvoi le dernier message d'erreur de cr�ation de PDF de bon de livraison
+	 \brief Renvoi le dernier message d'erreur de creation de PDF de bon de livraison
 	 */
 	function pdferror()
 	{
@@ -49,15 +49,19 @@ class ModelePDFDeliveryOrder extends FPDF
 	}
 
 	/**
-	 *      \brief      Renvoi la liste des mod�les actifs
+	 *      \brief      Renvoi la liste des modeles actifs
 	 */
 	function liste_modeles($db)
 	{
+		global $conf;
+		
 		$type='delivery';
 		$liste=array();
-		$sql ="SELECT nom as id, nom as lib";
-		$sql.=" FROM ".MAIN_DB_PREFIX."document_model";
-		$sql.=" WHERE type = '".$type."'";
+		
+		$sql = "SELECT nom as id, nom as lib";
+		$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+		$sql.= " WHERE type = '".$type."'";
+		$sql.= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -85,7 +89,7 @@ class ModelePDFDeliveryOrder extends FPDF
 
 /**
  \class      ModeleNumRefDeliveryOrder
- \brief      Classe m�re des mod�les de num�rotation des r�f�rences de bon de livraison
+ \brief      Classe mere des modeles de numerotation des references de bon de livraison
  */
 
 class ModeleNumRefDeliveryOrder
@@ -100,7 +104,7 @@ class ModeleNumRefDeliveryOrder
 		return true;
 	}
 
-	/**     \brief      Renvoi la description par defaut du modele de num�rotation
+	/**     \brief      Renvoi la description par defaut du modele de numerotation
 	 *      \return     string      Texte descripif
 	 */
 	function info()
@@ -110,7 +114,7 @@ class ModeleNumRefDeliveryOrder
 		return $langs->trans("NoDescription");
 	}
 
-	/**     \brief      Renvoi un exemple de num�rotation
+	/**     \brief      Renvoi un exemple de numerotation
 	 *      \return     string      Example
 	 */
 	function getExample()
@@ -120,8 +124,8 @@ class ModeleNumRefDeliveryOrder
 		return $langs->trans("NoExample");
 	}
 
-	/**     \brief      Test si les num�ros d�j� en vigueur dans la base ne provoquent pas d
-	 *                  de conflits qui empechera cette num�rotation de fonctionner.
+	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas d
+	 *                  de conflits qui empechera cette numerotation de fonctionner.
 	 *      \return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
@@ -129,7 +133,7 @@ class ModeleNumRefDeliveryOrder
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribu�e
+	/**     \brief      Renvoi prochaine valeur attribuee
 	 *      \return     string      Valeur
 	 */
 	function getNextValue()

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
@@ -87,16 +87,27 @@ class Livraison extends CommonObject
 		$this->brouillon = 1;
 
 		$this->user = $user;
+		if ($this->expedition_id) $expedition_id 
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (ref, fk_soc, date_creation, fk_user_author,";
-		$sql.= " fk_adresse_livraison";
-		if ($this->expedition_id) $sql.= ", fk_expedition";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (";
+		$sql.= "ref";
+		$sql.= ", entity";
+		$sql.= ", fk_soc";
+		$sql.= ", date_creation";
+		$sql.= ", fk_user_author";
+		$sql.= ", fk_adresse_livraison";
+		$sql.= ", fk_expedition";
 		$sql.= ")";
-		$sql.= " VALUES ('(PROV)', ".$this->socid.", ".$this->db->idate(mktime()).", $user->id,";
-		$sql.= " ".($this->adresse_livraison_id > 0?$this->adresse_livraison_id:"null");
-		if ($this->expedition_id) $sql.= ", $this->expedition_id";
+		$sql.= " VALUES (";
+		$sql.= "'(PROV)'";
+		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$this->socid;
+		$sql.= ", ".$this->db->idate(mktime());
+		$sql.= ", ".$user->id;
+		$sql.= ", ".($this->adresse_livraison_id > 0 ? $this->adresse_livraison_id : "null");
+		$sql.= ", ".($this->expedition_id ? $this->expedition_id : "null");
 		$sql.= ")";
 
 		dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
@@ -107,7 +118,8 @@ class Livraison extends CommonObject
 
 			$numref="(PROV".$this->id.")";
 			$sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
-			$sql.= "SET ref='".addslashes($numref)."' WHERE rowid=".$this->id;
+			$sql.= "SET ref = '".addslashes($numref);
+			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
@@ -139,7 +151,7 @@ class Livraison extends CommonObject
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 					$sql.= " SET fk_statut = 2";
-					$sql.= " WHERE rowid=".$this->commande_id;
+					$sql.= " WHERE rowid = ".$this->commande_id;
 
 					dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
 					$resql=$this->db->query($sql);
@@ -341,14 +353,14 @@ class Livraison extends CommonObject
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socid);
 
-					// on verifie si le bon de livraison est en num�rotation provisoire
+					// on verifie si le bon de livraison est en numerotation provisoire
 					$livref = substr($this->ref, 1, 4);
 					if ($livref == 'PROV')
 					{
 						$this->ref = $objMod->livraison_get_num($soc,$this);
 					}
 
-					// Tester si non dej� au statut valid�. Si oui, on arrete afin d'�viter
+					// Tester si non deja au statut valide. Si oui, on arrete afin d'eviter
           // de decrementer 2 fois le stock.
           $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."livraison where ref='".$this->ref."' AND fk_statut <> 0";
           $resql=$this->db->query($sql);
@@ -377,8 +389,10 @@ class Livraison extends CommonObject
 							dol_syslog("livraison.class.php::valid enregistrement des mouvements");
 
 							$sql = "SELECT cd.fk_product, ld.qty ";
-							$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
-							$sql.= " WHERE ld.fk_livraison = $this->id AND cd.rowid = ld.fk_commande_ligne";
+							$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+							$sql.= ", ".MAIN_DB_PREFIX."livraisondet as ld";
+							$sql.= " WHERE ld.fk_livraison = ".$this->id;
+							$sql.= " AND cd.rowid = ld.fk_commande_ligne";
 
 							$resql=$this->db->query($sql);
 							if ($resql)
@@ -463,9 +477,9 @@ class Livraison extends CommonObject
 		return 1;
 	}
 
-	/**     \brief      Cr�� le bon de livraison depuis une expedition existante
-	 *		\param      user            Utilisateur qui cr�e
-	 *		\param      sending_id      Id de l'exp�dition qui sert de mod�le
+	/**     \brief      Cree le bon de livraison depuis une expedition existante
+	 *		\param      user            Utilisateur qui cree
+	 *		\param      sending_id      Id de l'expedition qui sert de modele
 	*/
 	function create_from_sending($user, $sending_id)
 	{
@@ -523,7 +537,8 @@ class Livraison extends CommonObject
 	{
 		if ($this->statut == 0)
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet WHERE rowid = $idligne";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
+			$sql.= " WHERE rowid = ".$idligne;
 
 			if ($this->db->query($sql) )
 			{
@@ -546,10 +561,12 @@ class Livraison extends CommonObject
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraisondet WHERE fk_livraison = $this->id ;";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraisondet";
+		$sql.= " WHERE fk_livraison = ".$this->id;
 		if ( $this->db->query($sql) )
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison WHERE rowid = $this->id;";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison";
+			$sql.= " WHERE rowid = ".$this->id;
 			if ( $this->db->query($sql) )
 			{
 				$this->db->commit();
@@ -631,7 +648,8 @@ class Livraison extends CommonObject
 		$sql.= " p.ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
-		$sql.= " WHERE ld.fk_origin_line = cd.rowid AND ld.fk_livraison = ".$this->id;
+		$sql.= " WHERE ld.fk_origin_line = cd.rowid";
+		$sql.= " AND ld.fk_livraison = ".$this->id;
 
 		dol_syslog("Livraison::fetch_lignes sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -670,8 +688,8 @@ class Livraison extends CommonObject
 
 
     /**
-     *    \brief      Retourne le libell� du statut d'une expedition
-     *    \return     string      Libell�
+     *    \brief      Retourne le libelle du statut d'une expedition
+     *    \return     string      Libelle
      */
     function getLibStatut($mode=0)
     {
@@ -679,10 +697,10 @@ class Livraison extends CommonObject
     }
 
 	/**
-	 *		\brief      Renvoi le libell� d'un statut donn�
+	 *		\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      statut      Id statut
-	 *    	\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string		Libell�
+	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string		Libelle
 	 */
     function LibStatut($statut,$mode)
     {
@@ -714,11 +732,17 @@ class Livraison extends CommonObject
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs;
+		global $user,$langs,$conf;
 
 		// Charge tableau des id de societe socids
 		$socids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql.= " WHERE client = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " LIMIT 10";
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -735,7 +759,12 @@ class Livraison extends CommonObject
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " WHERE envente = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

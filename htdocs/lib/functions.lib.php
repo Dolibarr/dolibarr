@@ -1498,7 +1498,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			}
 		}
 
-		//print $sql."<br>";
+		print $sql."<br>";
 		if ($sql)
 		{
 			$resql=$db->query($sql);
