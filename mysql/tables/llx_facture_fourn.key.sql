@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref (facnumber, fk_soc);
+ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref (facnumber, fk_soc, entity);
 
 ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_date_lim_reglement (date_lim_reglement);
 

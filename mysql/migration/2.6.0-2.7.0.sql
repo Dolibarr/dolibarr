@@ -29,6 +29,7 @@ ALTER TABLE llx_commande_fournisseur ADD COLUMN entity integer DEFAULT 1 NOT NUL
 ALTER TABLE llx_product_fournisseur ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref_fourn;
 ALTER TABLE llx_facture ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER facnumber;
 ALTER TABLE llx_expedition ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
+ALTER TABLE llx_facture_fourn ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER facnumber;
 
 ALTER TABLE llx_rights_def DROP PRIMARY KEY;
 ALTER TABLE llx_user_param DROP INDEX fk_user;
@@ -47,6 +48,7 @@ ALTER TABLE llx_product_fournisseur DROP INDEX fk_product;
 ALTER TABLE llx_product_fournisseur DROP INDEX fk_soc;
 ALTER TABLE llx_facture DROP INDEX idx_facture_uk_facnumber;
 ALTER TABLE llx_expedition DROP INDEX idx_expedition_uk_ref;
+ALTER TABLE llx_facture_fourn DROP INDEX uk_facture_fourn_ref;
 
 ALTER TABLE llx_rights_def ADD PRIMARY KEY (id, entity);
 ALTER TABLE llx_user_param ADD UNIQUE INDEX uk_user_param (fk_user,param,entity);
@@ -66,3 +68,4 @@ ALTER TABLE llx_product_fournisseur ADD INDEX idx_product_fourn_fk_product (fk_p
 ALTER TABLE llx_product_fournisseur ADD INDEX idx_product_fourn_fk_soc (fk_soc, entity);
 ALTER TABLE llx_facture ADD UNIQUE INDEX idx_facture_uk_facnumber (facnumber, entity);
 ALTER TABLE llx_expedition ADD UNIQUE INDEX idx_expedition_uk_ref (ref, entity);
+ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref (facnumber, fk_soc, entity);
