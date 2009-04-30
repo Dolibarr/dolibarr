@@ -1,6 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2008 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2008-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 -- ===================================================================
 
 
+ALTER TABLE llx_livraison ADD UNIQUE INDEX idx_livraison_uk_ref (ref, entity);
+
 ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_soc (fk_soc);
 ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_user_author (fk_user_author);
 ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_user_valid (fk_user_valid);
@@ -29,5 +31,3 @@ ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_fk_soc                FORE
 ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_fk_user_author        FOREIGN KEY (fk_user_author)         REFERENCES llx_user (rowid);
 ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_fk_user_valid         FOREIGN KEY (fk_user_valid)          REFERENCES llx_user (rowid);
 ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_fk_adresse_livraison  FOREIGN KEY (fk_adresse_livraison)   REFERENCES llx_societe_adresse_livraison (rowid);
-
-ALTER TABLE llx_livraison ADD UNIQUE INDEX idx_livraison_uk_ref (ref);

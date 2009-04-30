@@ -1,6 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2008 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2008-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,9 +24,11 @@ create table llx_livraison
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,
   ref                   varchar(30)  NOT NULL,         -- delivery number
+  entity                integer DEFAULT 1 NOT NULL,    -- multi company id
   ref_client            varchar(30),                   -- customer number
   fk_soc                integer      NOT NULL,
   fk_expedition         integer,                       -- expedition auquel est rattache le bon de livraison
+  
   date_creation         datetime,                      -- date de creation
   fk_user_author        integer,                       -- createur du bon de livraison
   date_valid            datetime,                      -- date de validation
@@ -38,4 +40,5 @@ create table llx_livraison
   note                  text,
   note_public           text,
   model_pdf             varchar(50)
+  
 )type=innodb;
