@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Régis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Régis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  *
@@ -90,13 +90,37 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (ref, date_creation, fk_user_author, date_expedition,";
-		$sql.= " fk_soc, fk_expedition_methode, tracking_number, weight, size, width, height, weight_units, size_units";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (";
+		$sql.= "ref";
+		$sql.= ", entity";
+		$sql.= ", date_creation";
+		$sql.= ", fk_user_author";
+		$sql.= ", date_expedition";
+		$sql.= ", fk_soc";
+		$sql.= ", fk_expedition_methode";
+		$sql.= ", tracking_number";
+		$sql.= ", weight";
+		$sql.= ", size";
+		$sql.= ", width";
+		$sql.= ", height";
+		$sql.= ", weight_units";
+		$sql.= ", size_units";
 		$sql.= ")";
-		$sql.= " VALUES ('(PROV)', ".$this->db->idate(gmmktime()).", ".$user->id.", ".$this->db->idate($this->date_expedition).",";
-		$sql.= " ".$this->socid.",";
-		$sql.= " ".($this->expedition_method_id>0?$this->expedition_method_id:"null").",";
-		$sql.= " '". $this->tracking_number."',".$this->weight.",".$this->sizeS.",".$this->sizeW.",".$this->sizeH.",".$this->weight_units.",".$this->size_units;
+		$sql.= " VALUES (";
+		$sql.= "'(PROV)'";
+		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$this->db->idate(gmmktime());
+		$sql.= ", ".$user->id;
+		$sql.= ", ".$this->db->idate($this->date_expedition);
+		$sql.= ", ".$this->socid;
+		$sql.= ", ".($this->expedition_method_id>0?$this->expedition_method_id:"null");
+		$sql.= ", '". $this->tracking_number."'";
+		$sql.= ", ".$this->weight;
+		$sql.= ", ".$this->sizeS;
+		$sql.= ", ".$this->sizeW;
+		$sql.= ", ".$this->sizeH;
+		$sql.= ", ".$this->weight_units;
+		$sql.= ", ".$this->size_units;
 		$sql.= ")";
 
 		$resql=$this->db->query($sql);
@@ -104,7 +128,9 @@ class Expedition extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expedition");
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
+			$sql.= " SET ref = '(PROV".$this->id.")'";
+			$sql.= " WHERE rowid = ".$this->id;
 			if ($this->db->query($sql))
 	  {
 	  	// Insertion des lignes
@@ -337,7 +363,12 @@ class Expedition extends CommonObject
 
 			// Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter
 			// de décrémenter 2 fois le stock.
-			$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."expedition where ref='".$this->ref."' AND fk_statut <> '0'";
+			$sql = "SELECT ref";
+			$sql.= " FROM ".MAIN_DB_PREFIX."expedition";
+			$sql.= " WHERE ref='".$this->ref."'";
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND fk_statut <> '0'";
+			
 			$resql=$this->db->query($sql);
 			if ($resql)
 	  {
@@ -351,8 +382,12 @@ class Expedition extends CommonObject
 	  }
 
 	  $sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
-	  $sql.= " SET ref='".$this->ref."', fk_statut = 1, date_valid = ".$this->db->idate(mktime()).", fk_user_valid = ".$user->id;
-	  $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+	  $sql.= " SET ref='".$this->ref."'";
+	  $sql.= ", fk_statut = 1";
+	  $sql.= ", date_valid = ".$this->db->idate(mktime());
+	  $sql.= ", fk_user_valid = ".$user->id;
+	  $sql.= " WHERE rowid = ".$this->id;
+	  $sql.= " AND fk_statut = 0";
 
 	  dol_syslog("Expedition::valid update expedition sql=".$sql);
 	  $resql=$this->db->query($sql);
@@ -365,8 +400,10 @@ class Expedition extends CommonObject
 	  		 * Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
 	  		 */
 	  		$sql = "SELECT cd.fk_product, ed.qty, ed.fk_entrepot";
-	  		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."expeditiondet as ed";
-	  		$sql.= " WHERE ed.fk_expedition = $this->id AND cd.rowid = ed.fk_origin_line";
+	  		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+	  		$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed";
+	  		$sql.= " WHERE ed.fk_expedition = ".$this->id;
+	  		$sql.= " AND cd.rowid = ed.fk_origin_line";
 
 	  		dol_syslog("Expedition::valid select details sql=".$sql);
 	  		$resql=$this->db->query($sql);
@@ -504,7 +541,8 @@ class Expedition extends CommonObject
 	{
 		if ($this->statut == 0)
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet WHERE rowid = $idligne";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
+			$sql.= " WHERE rowid = ".$idligne;
 
 			if ($this->db->query($sql) )
 	  {
@@ -694,13 +732,19 @@ class Expedition extends CommonObject
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs;
+		global $user,$langs,$conf;
 
 		dol_syslog("Expedition::initAsSpecimen");
 
 		// Charge tableau des id de société socids
 		$socids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql.= " WHERE client = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " LIMIT 10";
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -717,7 +761,12 @@ class Expedition extends CommonObject
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " WHERE envente = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

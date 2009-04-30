@@ -368,8 +368,8 @@ if ($id > 0 || ! empty($ref))
 
 
 		/**
-		 *  Lignes de commandes avec quantit� livr�es et reste � livrer
-		 *  Les quantit�s livr�es sont stock�es dans $commande->expeditions[fk_product]
+		 *  Lignes de commandes avec quantite livrees et reste a livrer
+		 *  Les quantites livrees sont stockees dans $commande->expeditions[fk_product]
 		 */
 		print '<table class="liste" width="100%">';
 

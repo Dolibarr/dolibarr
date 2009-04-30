@@ -53,6 +53,7 @@ print "</form></table><br />\n";
  * Expeditions à valider
  */
 $clause = " WHERE ";
+
 $sql = "SELECT e.rowid, e.ref";
 $sql.= ", s.nom, s.rowid as socid";
 $sql.= ", c.ref as commande_ref, c.rowid as commande_id";
@@ -67,7 +68,7 @@ if (!$user->rights->societe->client->voir && !$socid)
 	$clause = " AND ";
 }
 $sql.= $clause." e.fk_statut = 0";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND e.entity = ".$conf->entity;
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 
 $resql=$db->query($sql);
