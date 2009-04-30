@@ -101,11 +101,11 @@ $sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
 $sql.= ", ".MAIN_DB_PREFIX."rights_def as rd";
 $sql.= " WHERE u.rowid = ur.fk_user";
 $sql.= " AND (u.entity IN (0,".$conf->entity.")";
-$sql.= " AND (rd.entity =".$conf->entity.")";
+$sql.= " AND rd.entity = ".$conf->entity.")";
 $sql.= " AND ur.fk_id = rd.id";
-$sql.= " AND module='fournisseur'";
-$sql.= " AND perms='commande'";
-$sql.= " AND subperms='approuver'";
+$sql.= " AND module = 'fournisseur'";
+$sql.= " AND perms = 'commande'";
+$sql.= " AND subperms = 'approuver'";
 
 $resql = $db->query($sql);
 if ($resql)
