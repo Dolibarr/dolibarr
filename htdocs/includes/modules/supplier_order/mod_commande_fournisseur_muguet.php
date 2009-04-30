@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 /**
  *    	\file       htdocs/includes/modules/supplier_order/mod_commande_fournisseur_muguet.php
  *		\ingroup    commande
- *		\brief      Fichier contenant la classe du mod�le de num�rotation de r�f�rence de commande fournisseur Muguet
+ *		\brief      Fichier contenant la classe du modele de numerotation de reference de commande fournisseur Muguet
  *		\version    $Id$
  */
 
@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/supplier_order/modules_comman
 
 
 /**	    \class      mod_commande_fournisseur_muguet
-		\brief      Classe du mod�le de num�rotation de r�f�rence de commande fournisseur Muguet
+		\brief      Classe du modele de numerotation de reference de commande fournisseur Muguet
 */
 class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
@@ -63,10 +63,13 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
      */
     function canBeActivated()
     {
+    	global $conf;
+    	
         $coyymm='';
         
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
+        $sql.= " WHERE entity = ".$conf->entity;
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -91,15 +94,16 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     */
     function getNextValue($objsoc=0,$object='')
     {
-        global $db;
+        global $db,$conf;
 
         // D'abord on recupere la valeur max (reponse immediate car champ indexe)
         $posindice=8;
         $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " WHERE ref like '".$this->prefix."%'";
-
-		$resql=$db->query($sql);
+        $sql.= " WHERE ref like '".$this->prefix."%'";
+        $sql.= " AND entity = ".$conf->entity;
+        
+        $resql=$db->query($sql);
         if ($resql)
         {
             $obj = $db->fetch_object($resql);
@@ -116,7 +120,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     }
 
 
-    /**     \brief      Renvoie la r�f�rence de commande suivante non utilis�e
+    /**     \brief      Renvoie la reference de commande suivante non utilisee
 	*      	\param      objsoc      Object third party
 	*      	\param      object		Object
     *      	\return     string      Texte descripif

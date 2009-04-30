@@ -24,16 +24,17 @@ create table llx_commande_fournisseur
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
   tms                 timestamp,
   fk_soc              integer NOT NULL,
-  fk_projet           integer DEFAULT 0,     -- projet auquel est rattache la commande
-  ref                 varchar(30) NOT NULL,  -- order number
+  fk_projet           integer DEFAULT 0,             -- projet auquel est rattache la commande
+  ref                 varchar(30) NOT NULL,          -- order number
+  entity              integer DEFAULT 1 NOT NULL,	   -- multi company id
 
-  date_creation       datetime,              -- date de creation 
-  date_valid          datetime,              -- date de validation
-  date_cloture        datetime,              -- date de cloture
-  date_commande       date,                  -- date de la commande
-  fk_user_author      integer,               -- createur de la commande
-  fk_user_valid       integer,               -- valideur de la commande
-  fk_user_cloture     integer,               -- auteur cloture
+  date_creation       datetime,                      -- date de creation 
+  date_valid          datetime,                      -- date de validation
+  date_cloture        datetime,                      -- date de cloture
+  date_commande       date,                          -- date de la commande
+  fk_user_author      integer,                       -- createur de la commande
+  fk_user_valid       integer,                       -- valideur de la commande
+  fk_user_cloture     integer,                       -- auteur cloture
   source              smallint NOT NULL,
   fk_statut           smallint  default 0,
   amount_ht           real      default 0,
@@ -48,3 +49,11 @@ create table llx_commande_fournisseur
 
   fk_methode_commande integer default 0
 )type=innodb;
+
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company order
+-- 2 : second company order
+-- 3 : etc...
+--

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/supplier_order/modules_comman
 
 /**
 	\class      mod_commande_fournisseur_orchidee
-	\brief      Classe du modèle de numérotation de référence de commande fournisseur Orchidee
+	\brief      Classe du modèle de numerotation de référence de commande fournisseur Orchidee
 */
 class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 {
@@ -40,7 +40,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	var $nom = 'Orchidee';
 
 
-    /**     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Renvoi la description du modele de numerotation
      *      \return     string      Texte descripif
      */
 	function info()
@@ -78,7 +78,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
@@ -123,8 +123,8 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	}
 
 
-    /**     \brief      Renvoie la référence de commande suivante non utilisée
-     *      \param      objsoc      Objet société
+    /**     \brief      Renvoie la référence de commande suivante non utilisee
+     *      \param      objsoc      Objet societe
      *      \param      commande		Objet commande
      *      \return     string      Texte descripif
      */

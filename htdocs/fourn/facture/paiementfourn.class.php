@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007 Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
+ * Copyright (C) 2005-2009 Regis Houssin          <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,12 +43,12 @@ class PaiementFourn
 	var $amount;
 	var $total;
 	var $author;
-	var $paiementid;	// Type de paiement. Stockï¿½ dans fk_paiement
-						// de llx_paiement qui est liï¿½ aux types de
+	var $paiementid;	// Type de paiement. Stocke dans fk_paiement
+						// de llx_paiement qui est lie aux types de
 						//paiement de llx_c_paiement
-	var $num_paiement;	// Numï¿½ro du CHQ, VIR, etc...
+	var $num_paiement;	// Numero du CHQ, VIR, etc...
 	var $bank_account;	// Id compte bancaire du paiement
-	var $bank_line;		// Id de la ligne d'ï¿½criture bancaire
+	var $bank_line;		// Id de la ligne d'ecriture bancaire
 	var $note;
     var $statut;        //Status of payment. 0 = unvalidated; 1 = validated
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
@@ -57,7 +58,7 @@ class PaiementFourn
 
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler accï¿½s base de donnï¿½es
+	 *    \param  DB          handler acces base de donnees
 	 */
 
 	function PaiementFourn($DB)
@@ -210,9 +211,9 @@ class PaiementFourn
 
 
 	/**
-	 *      \brief      Supprime un paiement ainsi que les lignes qu'il a gï¿½nï¿½rï¿½ dans comptes
-	 *                  Si le paiement porte sur un ï¿½criture compte qui est rapprochï¿½e, on refuse
-	 *                  Si le paiement porte sur au moins une facture ï¿½ "payï¿½e", on refuse
+	 *      \brief      Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
+	 *                  Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
+	 *                  Si le paiement porte sur au moins une facture a "payee", on refuse
 	 *      \return     int     <0 si ko, >0 si ok
 	 */
 	function delete()
@@ -221,14 +222,14 @@ class PaiementFourn
 
 		$this->db->begin();
 
-		// Vï¿½rifier si paiement porte pas sur une facture ï¿½ l'ï¿½tat payï¿½e
+		// Verifier si paiement porte pas sur une facture a l'etat payee
 		// Si c'est le cas, on refuse la suppression
 		$billsarray=$this->getBillsArray('paye=1');
 		if (is_array($billsarray))
 		{
 			if (sizeof($billsarray))
 			{
-				$this->error='Impossible de supprimer un paiement portant sur au moins une facture ï¿½ l\'ï¿½tat payï¿½';
+				$this->error='Impossible de supprimer un paiement portant sur au moins une facture a l\'etat paye';
 				$this->db->rollback();
 				return -1;
 			}
@@ -239,7 +240,7 @@ class PaiementFourn
 			return -2;
 		}
 
-		// Vï¿½rifier si paiement ne porte pas sur ecriture bancaire rapprochï¿½e
+		// Verifier si paiement ne porte pas sur ecriture bancaire rapprochee
 		// Si c'est le cas, on refuse le delete
 		if ($bank_line_id)
 		{
@@ -247,7 +248,7 @@ class PaiementFourn
 			$accline->fetch($bank_line_id);
 			if ($accline->rappro)
 			{
-				$this->error='Impossible de supprimer un paiement qui a gï¿½nï¿½rï¿½ une ï¿½criture qui a ï¿½tï¿½ rapprochï¿½e';
+				$this->error='Impossible de supprimer un paiement qui a genere une ecriture qui a ete rapprochee';
 				$this->db->rollback();
 				return -3;
 			}
@@ -269,7 +270,7 @@ class PaiementFourn
 				return -3;
 			}
 
-			// Supprimer l'ï¿½criture bancaire si paiement liï¿½ ï¿½ ï¿½criture
+			// Supprimer l'ecriture bancaire si paiement lie a ecriture
 			if ($bank_line_id)
 			{
     			$accline = new AccountLine($this->db);
@@ -294,7 +295,7 @@ class PaiementFourn
 	}
 
 	/**
-	 *      \brief      Mise a jour du lien entre le paiement et la ligne gï¿½nï¿½rï¿½e dans llx_bank
+	 *      \brief      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
 	 *      \param      id_bank     Id compte bancaire
 	 */
 	function update_fk_bank($id_bank)
@@ -413,8 +414,8 @@ class PaiementFourn
 	}
 
 	/**
-	*    	\brief      Retourne le libellï¿½ du statut d'une facture (brouillon, validï¿½e, abandonnï¿½e, payï¿½e)
-	*    	\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	*    	\brief      Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	*    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	*    	\return     string		Libelle
 	*/
 	function getLibStatut($mode=0)
@@ -423,10 +424,10 @@ class PaiementFourn
 	}
 
 	/**
-	*    	\brief      Renvoi le libellï¿½ d'un statut donne
+	*    	\brief      Renvoi le libelle d'un statut donne
 	*    	\param      status      Statut
-	*		\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
-	*    	\return     string      Libellï¿½ du statut
+	*		\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	*    	\return     string      Libelle du statut
 	*/
 	function LibStatut($status,$mode=0)
 	{
@@ -485,7 +486,7 @@ class PaiementFourn
 		$text=$this->ref;	// Sometimes ref contains label
 		if (eregi('^\((.*)\)$',$text,$reg))
 		{
-			// Label générique car entre parenthèses. On l'affiche en le traduisant
+			// Label gè¯©rique car entre parenthç²¥s. On l'affiche en le traduisant
 			if ($reg[1]=='paiement') $reg[1]='Payment';
 			$text=$langs->trans($reg[1]);
 		}
@@ -505,7 +506,9 @@ class PaiementFourn
     {
     	if(!empty($num) && $this->statut!=1)
         {
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.'paiementfourn SET num_paiement = \''.$this->db->escape($num).'\' WHERE rowid = '.$this->id;
+            $sql = "UPDATE ".MAIN_DB_PREFIX."paiementfourn";
+            $sql.= " SET num_paiement = '".$this->db->escape($num)."'";
+            $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog("PaiementFourn::update_num sql=".$sql);
             $result = $this->db->query($sql);
@@ -532,7 +535,10 @@ class PaiementFourn
     {
         if(!empty($date) && $this->statut!=1)
         {
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.'paiementfourn SET datep = '.$this->db->idate($date).' WHERE rowid = '.$this->id;
+            $sql = "UPDATE ".MAIN_DB_PREFIX."paiementfourn";
+            $sql.= " SET datep = ".$this->db->idate($date);
+            $sql.= " WHERE rowid = ".$this->id;
+            
             dol_syslog("PaiementFourn::update_date sql=".$sql);
             $result = $this->db->query($sql);
             if ($result)

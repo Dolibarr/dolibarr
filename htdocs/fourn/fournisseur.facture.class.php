@@ -107,7 +107,7 @@ class FactureFournisseur extends Facture
 	 */
 	function create($user)
 	{
-		global $langs;
+		global $langs,$conf;
 
 		// Clear parameters
 		if (empty($this->date)) $this->date=gmmktime();
@@ -122,13 +122,29 @@ class FactureFournisseur extends Facture
 		if (! $remise) $remise = 0 ;
 		$totalht = ($amount - $remise);
 
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn (facnumber, libelle, fk_soc, datec, datef,';
-		$sql.= ' note, note_public, fk_user_author, date_lim_reglement) ';
-		$sql.= " VALUES ('".addslashes($number)."','".addslashes($this->libelle)."',";
-		$sql.= " ".$this->socid.", ".$this->db->idate(gmmktime()).",'".$this->db->idate($this->date)."',";
-		$sql.= " '".addslashes($this->note)."',";
-		$sql.= " '".addslashes($this->note_public)."',";
-		$sql.= " ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (";
+		$sql.= "facnumber";
+		$sql.= ", entity";
+		$sql.= ", libelle";
+		$sql.= ", fk_soc";
+		$sql.= ", datec";
+		$sql.= ", datef";
+		$sql.= ", note";
+		$sql.= ", note_public";
+		$sql.= ", fk_user_author";
+		$sql.= ", date_lim_reglement";
+		$sql.= ")";
+		$sql.= " VALUES (";
+		$sql.= "'".addslashes($number)."'";
+		$sql.= ", ".$conf->entity;
+		$sql.= ", '".addslashes($this->libelle)."'";
+		$sql.= ", ".$this->socid;
+		$sql.= ", ".$this->db->idate(gmmktime());
+		$sql.= ", '".$this->db->idate($this->date)."'";
+		$sql.= ", '".addslashes($this->note)."'";
+		$sql.= ", '".addslashes($this->note_public)."'";
+		$sql.= ", ".$user->id.",'".$this->db->idate($this->date_echeance)."'";
+		$sql.= ")";
 
 		dol_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -377,8 +393,8 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 *      \brief      Tag la facture comme pay�e compl�tement
-	 *      \param      user        Objet utilisateur qui modifie l'�tat
+	 *      \brief      Tag la facture comme payee completement
+	 *      \param      user        Objet utilisateur qui modifie l'etat
      *      \return     int         <0 si ko, >0 si ok
 	 */
     function set_payed($user)
@@ -386,6 +402,7 @@ class FactureFournisseur extends Facture
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
 		$sql.= ' SET paye = 1';
 		$sql.= ' WHERE rowid = '.$this->id;
+		
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
@@ -409,8 +426,8 @@ class FactureFournisseur extends Facture
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
-        $sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
-        $sql.= " WHERE rowid = ".$this->id;
+    $sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
+    $sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("FactureFournisseur::set_valid sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -660,7 +677,7 @@ class FactureFournisseur extends Facture
 					$this->user_validation = $vuser;
 				}
 				$this->date_creation     = $obj->datec;
-				//$this->date_validation   = $obj->datev; \todo La date de validation n'est pas encore g�r�e
+				//$this->date_validation   = $obj->datev; \todo La date de validation n'est pas encore geree
 			}
 			$this->db->free($result);
 		}
@@ -685,12 +702,10 @@ class FactureFournisseur extends Facture
 		$this->nbtodo=$this->nbtodolate=0;
 		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
-		$sql.= ', '.MAIN_DB_PREFIX.'societe as s';
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= ' WHERE ff.paye=0';
 		$sql.= ' AND ff.fk_statut > 0';
-		$sql.= " AND ff.fk_soc = s.rowid";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND ff.entity = ".$conf->entity;
 		if ($user->societe_id) $sql.=' AND ff.fk_soc = '.$user->societe_id;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		
@@ -739,16 +754,22 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	*		\brief		Initialise la facture avec valeurs fictives al�atoire
-	*					Sert � g�n�rer une facture pour l'aperu des mod�les ou demo
+	*		\brief		Initialise la facture avec valeurs fictives aleatoire
+	*					Sert a generer une facture pour l'aperu des modeles ou demo
 	*/
 	function initAsSpecimen()
 	{
-		global $user,$langs;
+		global $user,$langs,$conf;
 
 		// Charge tableau des id de societe socids
 		$socids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE fournisseur=1 LIMIT 10";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql.= " WHERE fournisseur = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " LIMIT 10";
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -765,7 +786,12 @@ class FactureFournisseur extends Facture
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " WHERE envente = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

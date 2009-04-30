@@ -82,13 +82,14 @@ class CommandeFournisseur extends Commande
 		global $conf;
 		
 		$sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
-		$sql .= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
-		$sql .= " c.note, c.note_public, c.model_pdf,";
-		$sql .= " cm.libelle as methode_commande";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
-		if ($ref) $sql.= " WHERE c.ref='".$ref."'";
-		else $sql.= " WHERE c.rowid=".$id;
+		$sql.= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
+		$sql.= " c.note, c.note_public, c.model_pdf,";
+		$sql.= " cm.libelle as methode_commande";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
+		$sql.= " WHERE c.entity = ".$conf->entity;
+		if ($ref) $sql.= " AND c.ref='".$ref."'";
+		else $sql.= " AND c.rowid=".$id;
 
 		dol_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql) ;
@@ -255,8 +256,8 @@ class CommandeFournisseur extends Commande
 			}
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
-			$sql.= " SET ref='$num', fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=$user->id";
-			$sql.= " WHERE rowid = $this->id AND fk_statut = 0";
+			$sql.= " SET ref='".$num."', fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid = ".$user->id;
+			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -364,8 +365,8 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *    \brief      Retourne le libell� du statut d'une commande (brouillon, valid�e, abandonn�e, pay�e
-	 *    \param      mode          0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long
+	 *    \brief      Retourne le libelle du statut d'une commande (brouillon, validee, abandonnee, payee
+	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -374,10 +375,10 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *    	\brief      Renvoi le libell� d'un statut donn�
+	 *    	\brief      Renvoi le libelle d'un statut donne
 	 *		\param      statut        	Id statut
-	 *    	\param      mode          	0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string			Libell� du statut
+	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string			Libelle du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -705,8 +706,26 @@ class CommandeFournisseur extends Commande
 		/* On positionne en mode brouillon la commande */
 		$this->brouillon = 1;
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (ref, fk_soc, date_creation, fk_user_author, fk_statut, source, model_pdf) ";
-		$sql .= " VALUES ('',".$this->socid.", ".$this->db->idate(mktime()).", ".$user->id.",0,0,'".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (";
+		$sql.= "ref";
+		$sql.= ", entity";
+		$sql.= ", fk_soc";
+		$sql.= ", date_creation";
+		$sql.= ", fk_user_author";
+		$sql.= ", fk_statut";
+		$sql.= ", source";
+		$sql.= ", model_pdf";
+		$sql.= ") ";
+		$sql.= " VALUES (";
+		$sql.= "''";
+		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$this->socid;
+		$sql.= ", ".$this->db->idate(mktime());
+		$sql.= ", ".$user->id;
+		$sql.= ", 0";
+		$sql.= ", 0";
+		$sql.= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
+		$sql.= ")";
 
 		dol_syslog("CommandeFournisseur::Create sql=".$sql);
 		if ( $this->db->query($sql) )
@@ -940,7 +959,7 @@ class CommandeFournisseur extends Commande
 	  {
 	  	$error = -1;
 	  }
-	  // Si module stock g�r� et que expedition faite depuis un entrepot
+	  // Si module stock gere et que expedition faite depuis un entrepot
 	  if (!$error && $conf->stock->enabled && $entrepot)
 	  {
 	  	$mouv = new MouvementStock($this->db);
@@ -1059,8 +1078,9 @@ class CommandeFournisseur extends Commande
 	 */
 	function get_methodes_commande()
 	{
-		$sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-		$sql .= " WHERE active = 1";
+		$sql = "SELECT rowid, libelle";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
+		$sql.= " WHERE active = 1";
 
 		if ($this->db->query($sql))
 		{
@@ -1109,7 +1129,7 @@ class CommandeFournisseur extends Commande
 				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 				$sql.= " SET fk_statut = ".$statut;
 				$sql.= " WHERE rowid = ".$this->id;
-				$sql.= " AND (fk_statut = 3 OR fk_statut = 4)";
+				$sql.= " AND fk_statut IN (3,4)";
 
 				dol_syslog("CommandeFournisseur::Livraison sql=".$sql);
 				$resql=$this->db->query($sql);
@@ -1141,9 +1161,9 @@ class CommandeFournisseur extends Commande
 		return $result ;
 	}
 
-	/**     \brief      Cr�� la commande depuis une propale existante
-	 \param      user            Utilisateur qui cr�e
-	 \param      propale_id      id de la propale qui sert de mod�le
+	/**     \brief      Cree la commande depuis une propale existante
+	 \param      user            Utilisateur qui cree
+	 \param      propale_id      id de la propale qui sert de modele
 	 */
 	function updateFromCommandeClient($user, $idc, $comclientid)
 	{
@@ -1219,13 +1239,16 @@ class CommandeFournisseur extends Commande
 	 */
 	function ReadApprobators()
 	{
+		global $conf;
+		
 		$this->approbs = array();
 
 		$sql = "SELECT u.name, u.firstname, u.email";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " , ".MAIN_DB_PREFIX."user_rights as ur";
-		$sql .= " WHERE u.rowid = ur.fk_user";
-		$sql .= " AND ur.fk_id = 184";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql.= " , ".MAIN_DB_PREFIX."user_rights as ur";
+		$sql.= " WHERE u.rowid = ur.fk_user";
+		$sql.= " AND u.entity = ".$conf->entity;
+		$sql.= " AND ur.fk_id = 184";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1345,18 +1368,24 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *		\brief		Initialise la commande avec valeurs fictives al�atoire
-	 *					Sert � g�n�rer une commande pour l'aperu des mod�les ou demo
+	 *		\brief		Initialise la commande avec valeurs fictives aleatoire
+	 *					Sert a generer une commande pour l'aperu des modeles ou demo
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs;
+		global $user,$langs,$conf;
 
 		dol_syslog("CommandeFournisseur::initAsSpecimen");
 
-		// Charge tableau des id de soci�t� socids
+		// Charge tableau des id de societe socids
 		$socids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE fournisseur=1 LIMIT 10";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql.= " WHERE fournisseur=1";
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " LIMIT 10";
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1373,7 +1402,12 @@ class CommandeFournisseur extends Commande
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " WHERE envente = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1387,7 +1421,7 @@ class CommandeFournisseur extends Commande
 			}
 		}
 
-		// Initialise param�tres
+		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;

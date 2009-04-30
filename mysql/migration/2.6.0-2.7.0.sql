@@ -25,6 +25,8 @@ ALTER TABLE llx_mailing ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER titre
 ALTER TABLE llx_categorie ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER label;
 ALTER TABLE llx_propal ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
 ALTER TABLE llx_commande ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
+ALTER TABLE llx_product_fournisseur ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref_fourn;
 
 ALTER TABLE llx_rights_def DROP PRIMARY KEY;
 ALTER TABLE llx_user_param DROP INDEX fk_user;
@@ -38,6 +40,9 @@ ALTER TABLE llx_menu DROP INDEX idx_menu_uk_menu;
 ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
 ALTER TABLE llx_propal DROP INDEX ref;
 ALTER TABLE llx_commande DROP INDEX ref;
+ALTER TABLE llx_commande_fournisseur DROP INDEX uk_commande_fournisseur_ref;
+ALTER TABLE llx_product_fournisseur DROP INDEX fk_product;
+ALTER TABLE llx_product_fournisseur DROP INDEX fk_soc;
 
 ALTER TABLE llx_rights_def ADD PRIMARY KEY (id, entity);
 ALTER TABLE llx_user_param ADD UNIQUE INDEX uk_user_param (fk_user,param,entity);
@@ -51,3 +56,7 @@ ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, u
 ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label, type, entity);
 ALTER TABLE llx_propal ADD UNIQUE INDEX uk_propal_ref (ref, entity);
 ALTER TABLE llx_commande ADD UNIQUE INDEX uk_commande_ref (ref, entity);
+ALTER TABLE llx_commande_fournisseur ADD UNIQUE INDEX uk_commande_fournisseur_ref (ref, fk_soc, entity);
+ALTER TABLE llx_product_fournisseur ADD UNIQUE INDEX uk_product_fournisseur_ref (ref_fourn, fk_soc, entity);
+ALTER TABLE llx_product_fournisseur ADD INDEX idx_product_fourn_fk_product (fk_product, entity);
+ALTER TABLE llx_product_fournisseur ADD INDEX idx_product_fourn_fk_soc (fk_soc, entity);

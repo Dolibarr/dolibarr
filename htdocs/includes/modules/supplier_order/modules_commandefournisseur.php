@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,7 +42,7 @@ class ModelePDFSuppliersOrders extends FPDF
 	var $error='';
 
 	/**
-	 \brief Renvoi le dernier message d'erreur de cr�ation de PDF de commande
+	 \brief Renvoi le dernier message d'erreur de creation de PDF de commande
 	 */
 	function pdferror()
 	{
@@ -49,15 +50,19 @@ class ModelePDFSuppliersOrders extends FPDF
 	}
 
 	/**
-	 *      \brief      Renvoi la liste des mod�les actifs
+	 *      \brief      Renvoi la liste des modeles actifs
 	 */
 	function liste_modeles($db)
 	{
+		global $conf;
+		
 		$type='supplier_order';
 		$liste=array();
-		$sql ="SELECT nom as id, nom as lib";
-		$sql.=" FROM ".MAIN_DB_PREFIX."document_model";
-		$sql.=" WHERE type = '".$type."'";
+		
+		$sql = "SELECT nom as id, nom as lib";
+		$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+		$sql.= " WHERE type = '".$type."'";
+		$sql.= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -85,7 +90,7 @@ class ModelePDFSuppliersOrders extends FPDF
 
 /**
  \class      ModeleNumRefSuppliersOrders
- \brief      Classe m�re des mod�les de num�rotation des r�f�rences de commandes fournisseurs
+ \brief      Classe mere des modeles de numerotation des references de commandes fournisseurs
  */
 
 class ModeleNumRefSuppliersOrders
@@ -100,7 +105,7 @@ class ModeleNumRefSuppliersOrders
 		return true;
 	}
 
-	/**     \brief      Renvoi la description par defaut du modele de num�rotation
+	/**     \brief      Renvoi la description par defaut du modele de numerotation
 	 *      \return     string      Texte descripif
 	 */
 	function info()
@@ -120,8 +125,8 @@ class ModeleNumRefSuppliersOrders
 		return $langs->trans("NoExample");
 	}
 
-	/**     \brief      Test si les num�ros d�j� en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette num�rotation de fonctionner.
+	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numerotation de fonctionner.
 	 *      \return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
@@ -129,7 +134,7 @@ class ModeleNumRefSuppliersOrders
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribu�e
+	/**     \brief      Renvoi prochaine valeur attribuee
 	 *      \return     string      Valeur
 	 */
 	function getNextValue()
@@ -156,9 +161,9 @@ class ModeleNumRefSuppliersOrders
 
 /**
  *		\brief      Create object on disk
- *		\param	    db  			objet base de donn�e
+ *		\param	    db  			objet base de donnee
  *		\param	    deliveryid		id object
- *		\param	    modele			force le modele � utiliser ('' to not force)
+ *		\param	    modele			force le modele a utiliser ('' to not force)
  *		\param		outputlangs		objet lang a utiliser pour traduction
  *      \return     int         	0 si KO, 1 si OK
  */
@@ -169,7 +174,7 @@ function supplier_order_pdf_create($db, $comid, $modele,$outputlangs)
 
 	$dir = DOL_DOCUMENT_ROOT."//includes/modules/supplier_order/pdf/";
 
-	// Positionne modele sur le nom du modele de commande fournisseur � utiliser
+	// Positionne modele sur le nom du modele de commande fournisseur a utiliser
 	if (! strlen($modele))
 	{
 		if (defined("COMMANDE_SUPPLIER_ADDON_PDF") && COMMANDE_SUPPLIER_ADDON_PDF)

@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -27,6 +28,14 @@ create table llx_product_fournisseur
   fk_product      integer,
   fk_soc          integer,
   ref_fourn       varchar(30),
+  entity          integer DEFAULT 1 NOT NULL,	   -- multi company id
   fk_user_author  integer
 )type=innodb;
 
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company product
+-- 2 : second company product
+-- 3 : etc...
+--
