@@ -165,7 +165,7 @@ function batch_fournisseur_updateturnover($year)
 		}
 
 		$sqli = "INSERT INTO ".MAIN_DB_PREFIX."fournisseur_ca";
-		$sqli .= " VALUES ($key,".$db->idate(mktime()).",$year,'".price2num($value)."'";
+		$sqli .= " VALUES (".$key.",".$db->idate(mktime()).",".$year.",'".price2num($value)."'";
 		$sqli.=  ",'". $fournisseurs_ca_achat[$key][$year] ."');";
 		$resqli = $db->query($sqli);
 		if (! $resqli)
