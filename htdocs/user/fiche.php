@@ -275,6 +275,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 			if (! is_dir($conf->user->dir_output))
 			{
 				create_exdir($conf->user->dir_output);
+							print 'photo ok='.$conf->user->dir_output.'<br>';;
 			}
 			if (is_dir($conf->user->dir_output))
 			{
