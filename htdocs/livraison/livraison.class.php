@@ -87,7 +87,6 @@ class Livraison extends CommonObject
 		$this->brouillon = 1;
 
 		$this->user = $user;
-		if ($this->expedition_id) $expedition_id 
 
 		$this->db->begin();
 
@@ -116,9 +115,10 @@ class Livraison extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."livraison");
 
-			$numref="(PROV".$this->id.")";
+			$numref = "(PROV".$this->id.")";
+			
 			$sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
-			$sql.= "SET ref = '".addslashes($numref);
+			$sql.= "SET ref = '".addslashes($numref)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);

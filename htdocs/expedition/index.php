@@ -68,7 +68,8 @@ if (!$user->rights->societe->client->voir && !$socid)
 	$clause = " AND ";
 }
 $sql.= $clause." e.fk_statut = 0";
-$sql.= " AND e.entity = ".$conf->entity;
+$sql.= " AND (e.entity = ".$conf->entity;
+$sql.= " AND s.entity = ".$conf->entity.")";
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 
 $resql=$db->query($sql);
