@@ -788,7 +788,7 @@ class Form
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 		}
-		$sql.= " AND p.entity = ".$conf->entity;
+		$sql.= " WHERE p.entity = ".$conf->entity;
 		
 		if($finished == 0)
 		{
@@ -822,7 +822,10 @@ class Form
 		{
 			$sqld = "SELECT d.fk_product, d.label";
 			$sqld.= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_det as d ";
-			$sqld.= " WHERE d.fk_product=p.rowid AND p.envente=1 AND d.lang='". $langs->getDefaultLang() ."'";
+			$sqld.= " WHERE d.fk_product = p.rowid";
+			$sqld.= " AND p.entity = ".$conf->entity;
+			$sqld.= " AND p.envente = 1";
+			$sqld.= " AND d.lang='". $langs->getDefaultLang() ."'";
 			$sqld.= " ORDER BY p.ref";
 
 			dol_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
@@ -877,8 +880,10 @@ class Form
 				{
 					$sql= "SELECT price, price_ttc, price_base_type ";
 					$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
-					$sql.= "where fk_product='".$objp->rowid."' and price_level=".$price_level;
-					$sql.= " order by date_price DESC limit 1";
+					$sql.= "WHERE fk_product='".$objp->rowid;
+					$sql.= " AND price_level=".$price_level;
+					$sql.= " ORDER BY date_price";
+					$sql.= " DESC limit 1";
 
 					dol_syslog("Form::select_produits_do sql=".$sql);
 					$result2 = $this->db->query($sql);
