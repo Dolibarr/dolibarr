@@ -115,11 +115,13 @@ class Conf
 							$dir_name  = "dir_".strtolower($reg[2]);
 							$submodule = strtolower($reg[1]);
 							$this->$module->$submodule->$dir_name = $value;
+							//print '->'.$module.'->'.$submodule.'->'.$dir_name.' = '.$this->$module->$submodule->$dir_name.'<br>';
 						}
 						else if (eregi('_DIR_([A-Z]+)$',$key,$reg))
 						{
 							$dir_name  = "dir_".strtolower($reg[1]);
 							$this->$module->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
+							//print '->'.$module.'->'.$dir_name.' = '.$this->$module->$dir_name.'<br>';
 						}
 					}
 					// If this is a module constant

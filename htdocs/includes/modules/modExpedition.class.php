@@ -69,17 +69,29 @@ class modExpedition extends DolibarrModules
 		$this->dirs[$r][0] = "temp";
 		$this->dirs[$r][1] = "/expedition/temp";
 		$r++;
-		$this->dirs[$r][0] = "bon_expedition";
+		$this->dirs[$r][0] = "output";
 		$this->dirs[$r][1] = "/expedition/sending";
+		$this->dirs[$r][2] = 1;
+		$this->dirs[$r][3] = '';
+		$this->dirs[$r][4] = "expedition_bon";
 		$r++;
-		$this->dirs[$r][0] = "bon_expedition_temp";
+		$this->dirs[$r][0] = "temp";
 		$this->dirs[$r][1] = "/expedition/sending/temp";
+		$this->dirs[$r][2] = 1;
+		$this->dirs[$r][3] = '';
+		$this->dirs[$r][4] = "expedition_bon";
 		$r++;
-		$this->dirs[$r][0] = "bon_livraison";
+		$this->dirs[$r][0] = "output";
 		$this->dirs[$r][1] = "/expedition/receipt";
+		$this->dirs[$r][2] = 1;
+		$this->dirs[$r][3] = '';
+		$this->dirs[$r][4] = "livraison_bon";
 		$r++;
-		$this->dirs[$r][0] = "bon_livraison_temp";
+		$this->dirs[$r][0] = "temp";
 		$this->dirs[$r][1] = "/expedition/receipt/temp";
+		$this->dirs[$r][2] = 1;
+		$this->dirs[$r][3] = '';
+		$this->dirs[$r][4] = "livraison_bon";
 
 		// Config pages
 		$this->config_page_url = array("confexped.php");
@@ -181,9 +193,6 @@ class modExpedition extends DolibarrModules
 	{
 		// Permissions
 		$this->remove();
-
-		// Dir
-		$this->dirs[0] = DOL_DATA_ROOT."/expedition";
 
 		$sql = array();
 

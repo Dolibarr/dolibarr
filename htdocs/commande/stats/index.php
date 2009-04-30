@@ -62,7 +62,7 @@ if ($mode == 'customer')
 if ($mode == 'supplier') 
 {
 	$title=$langs->trans("OrdersStatisticsSuppliers");
-	$dir=$conf->fournisseur->dir_commande_temp;
+	$dir=$conf->fournisseur->commande->dir_temp;
 }
 
 print_fiche_titre($title, $mesg);

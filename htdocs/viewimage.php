@@ -163,7 +163,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->fournisseur->dir_commande_temp.'/'.$original_file;
+        $original_file=$conf->fournisseur->commande->dir_temp.'/'.$original_file;
     }
 
     // Wrapping pour les images des stats factures
@@ -183,7 +183,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->fournisseur->dir_facture_temp.'/'.$original_file;
+        $original_file=$conf->fournisseur->facture->dir_temp.'/'.$original_file;
     }
 
     // Wrapping pour les images des stats expeditions

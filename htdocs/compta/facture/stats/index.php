@@ -59,7 +59,7 @@ if ($mode == 'customer')
 if ($mode == 'supplier') 
 {
 	$title=$langs->trans("BillsStatisticsSuppliers");
-	$dir=$conf->fournisseur->dir_facture_temp;
+	$dir=$conf->fournisseur->facture->dir_temp;
 }
 
 print_fiche_titre($title, $mesg);

@@ -974,11 +974,10 @@ class DolibarrModules
 				$subname   = empty($this->dirs[$key][3])?'':strtoupper($this->dirs[$key][3]); // Add submodule name (ex: $conf->module->submodule->dir_output)
 				$forcename = empty($this->dirs[$key][4])?'':strtoupper($this->dirs[$key][4]); // Change the module name if different
 
-				if ($forcename) $constname = $forcename."_DIR_";
+				if ($forcename) $constname = 'MAIN_MODULE_'.$forcename."_DIR_";
 				if ($subname)   $constname = $constname.$subname."_";
 				
 				$name      = $constname.strtoupper($this->dirs[$key][0]);
-
 
 				// Define directory full path
 				if (empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $fulldir = DOL_DATA_ROOT.$dir;
