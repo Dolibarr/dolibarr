@@ -190,16 +190,29 @@ class Facture extends CommonObject
 
 		$totalht = ($amount - $remise);
 
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture (';
-		$sql.= ' facnumber, type, fk_soc, datec, amount, remise_absolue, remise_percent,';
-		$sql.= ' datef,';
-		$sql.= ' note,';
-		$sql.= ' note_public,';
-		$sql.= ' ref_client,';
-		$sql.= ' fk_facture_source, fk_user_author, fk_projet,';
-		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf)';
-		$sql.= ' VALUES (';
-		$sql.= "'(PROV)', '".$this->type."', '".$socid."', ".$this->db->idate(gmmktime()).", '".$totalht."'";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."facture (";
+		$sql.= " facnumber";
+		$sql.= ", entity";
+		$sql.= ", type";
+		$sql.= ", fk_soc";
+		$sql.= ", datec";
+		$sql.= ", amount";
+		$sql.= ", remise_absolue";
+		$sql.= ", remise_percent";
+		$sql.= ", datef";
+		$sql.= ", note";
+		$sql.= ", note_public";
+		$sql.= ", ref_client";
+		$sql.= ", fk_facture_source, fk_user_author, fk_projet";
+		$sql.= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf"
+		$sql.= ")";
+		$sql.= " VALUES (";
+		$sql.= "'(PROV)'";
+		$sql.= ", ".$conf->entity;
+		$sql.= ", '".$this->type."'";
+		$sql.= ", '".$socid."'";
+		$sql.= ", ".$this->db->idate(gmmktime());
+		$sql.= ", '".$totalht."'";
 		$sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
 		$sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
 		$sql.= ",".$this->db->idate($this->date);
@@ -507,8 +520,9 @@ class Facture extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'co_fa as cf ON cf.fk_facture = f.rowid';
-		if ($ref) $sql.= " WHERE f.facnumber='".$ref."'";
-		else $sql.= " WHERE f.rowid=".$rowid;
+		$sql.= ' WHERE f.entity = '.$conf->entity;
+		if ($ref) $sql.= " AND f.facnumber='".$ref."'";
+		else $sql.= " AND f.rowid=".$rowid;
 
 		dol_syslog("Facture::Fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1117,9 +1131,9 @@ class Facture extends CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 		$sql.= ' SET paye=0, fk_statut=1, close_code=null, close_note=null';
 		$sql.= ' WHERE rowid = '.$this->id;
-		$resql = $this->db->query($sql);
 
 		dol_syslog("Facture::set_unpayed sql=".$sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
@@ -1163,7 +1177,9 @@ class Facture extends CommonObject
 			// On désaffecte de la facture les remises liées
 			// car elles n'ont pas été utilisées vu que la facture est abandonnée.
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-			$sql.= ' SET fk_facture = NULL WHERE fk_facture = '.$this->id;
+			$sql.= ' SET fk_facture = NULL';
+			$sql.= ' WHERE fk_facture = '.$this->id;
+			
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -1397,7 +1413,8 @@ class Facture extends CommonObject
 
 		if ($this->statut != 0)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+			$sql.= " SET fk_statut = 0";
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog("Facture::set_draft sql=".$sql, LOG_DEBUG);
@@ -1692,7 +1709,9 @@ class Facture extends CommonObject
 
 		// Libere remise liee a ligne de facture
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-		$sql.= ' SET fk_facture_line = NULL where fk_facture_line = '.$rowid;
+		$sql.= ' SET fk_facture_line = NULL';
+		$sql.= ' WHERE fk_facture_line = '.$rowid;
+		
 		dol_syslog("Facture::Deleteline sql=".$sql);
 		$result = $this->db->query($sql);
 		if (! $result)
@@ -1704,7 +1723,9 @@ class Facture extends CommonObject
 		}
 
 		// Efface ligne de facture
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid = '.$rowid;
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet';
+		$sql.= ' WHERE rowid = '.$rowid;
+		
 		dol_syslog("Facture::Deleteline sql=".$sql);
 		$result = $this->db->query($sql);
 		if (! $result)
@@ -1745,7 +1766,8 @@ class Facture extends CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= ' SET remise_percent = '.$remise;
-			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+			$sql.= ' WHERE rowid = '.$this->id;
+			$sql.= ' AND fk_statut = 0 ;';
 
 			if ($this->db->query($sql))
 	  {
@@ -1778,7 +1800,8 @@ class Facture extends CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= ' SET remise_absolue = '.$remise;
-			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+			$sql.= ' WHERE rowid = '.$this->id;
+			$sql.= ' AND fk_statut = 0 ;';
 
 			dol_syslog("Facture::set_remise_absolue sql=$sql");
 
@@ -2309,6 +2332,7 @@ class Facture extends CommonObject
 			// pour ne pas avoir de trou dans la numérotation
 			$sql = "SELECT MAX(facnumber)";
 			$sql.= " FROM ".MAIN_DB_PREFIX."facture";
+			$sql.= " WHERE entity = ".$conf->entity;
 
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -2351,6 +2375,7 @@ class Facture extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON f.rowid = ff.fk_facture_source";
 		$sql.= " WHERE (f.fk_statut = 1 OR (f.fk_statut = 3 AND f.close_code = 'abandon'))";
+		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND f.paye = 0";					// Pas classée payée complètement
 		$sql.= " AND pf.fk_paiement IS NULL";		// Aucun paiement deja fait
 		$sql.= " AND ff.fk_statut IS NULL";			// Renvoi vrai si pas facture de remplacement
@@ -2388,14 +2413,16 @@ class Facture extends CommonObject
 	 */
 	function list_qualified_avoir_invoices($socid=0)
 	{
+		global $conf;
+		
 		$return = array();
 
 		$sql = "SELECT f.rowid as rowid, f.facnumber, f.fk_statut, pf.fk_paiement";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON (f.rowid = ff.fk_facture_source AND ff.type=1)";
-		$sql.= " WHERE ";
-		$sql.= " f.fk_statut in (1,2)";
+		$sql.= " WHERE f.entity = ".$conf->entity;
+		$sql.= " AND f.fk_statut in (1,2)";
 		//  $sql.= " WHERE f.fk_statut >= 1";
 		//	$sql.= " AND (f.paye = 1";				// Classée payée complètement
 		//	$sql.= " OR f.close_code IS NOT NULL)";	// Classée payée partiellement
@@ -2447,9 +2474,11 @@ class Facture extends CommonObject
 
 		if ($this->statut > 0 && $this->paye == 0 && $this->mode_reglement_id == 3)
 		{
-			$sql = 'SELECT count(*) FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
-			$sql .= ' WHERE fk_facture='.$this->id;
-			$sql .= ' AND traite = 0';
+			$sql = 'SELECT count(*)';
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
+			$sql.= ' WHERE fk_facture = '.$this->id;
+			$sql.= ' AND traite = 0';
+			
 			if ( $this->db->query( $sql) )
 			{
 				$row = $this->db->fetch_row();
@@ -2534,7 +2563,6 @@ class Facture extends CommonObject
 
 		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
@@ -2542,8 +2570,7 @@ class Facture extends CommonObject
 			$clause = " AND";
 		}
 		$sql.= $clause." f.paye=0";
-		$sql.= " AND f.fk_soc = s.rowid";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND f.fk_statut = 1";
 		if ($user->societe_id) $sql.= " AND f.fk_soc = ".$user->societe_id;
 
@@ -2593,11 +2620,17 @@ class Facture extends CommonObject
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs;
+		global $user,$langs,$conf;
 
 		// Charge tableau des id de société socids
 		$socids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql.= " WHERE client = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " LIMIT 10";
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2614,7 +2647,12 @@ class Facture extends CommonObject
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " WHERE envente = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2686,7 +2724,7 @@ class Facture extends CommonObject
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= " ".$clause." s.entity = ".$conf->entity;
+		$sql.= " ".$clause." f.entity = ".$conf->entity;
 
 		$resql=$this->db->query($sql);
 		if ($resql)

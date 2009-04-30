@@ -1,6 +1,7 @@
 -- ===========================================================================
 -- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,33 +25,34 @@ create table llx_facture
 (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
   facnumber           varchar(30)        NOT NULL,
-  type				  smallint DEFAULT 0 NOT NULL,
+  entity              integer  DEFAULT 1 NOT NULL,	-- multi company id
+  type                smallint DEFAULT 0 NOT NULL,
   ref_client          varchar(30),
   increment           varchar(10),
   fk_soc              integer            NOT NULL,
-  datec               datetime,  -- date de creation de la facture
-  datef               date,      -- date de la facture
-  date_valid          date,      -- date de validation
+  datec               datetime,                     -- date de creation de la facture
+  datef               date,                         -- date de la facture
+  date_valid          date,                         -- date de validation
   paye                smallint DEFAULT 0 NOT NULL,
   amount              real     DEFAULT 0 NOT NULL,
-  remise_percent      real     DEFAULT 0,   -- remise relative
-  remise_absolue      real     DEFAULT 0,   -- remise absolue
-  remise              real     DEFAULT 0,   -- remise totale calculee
+  remise_percent      real     DEFAULT 0,           -- remise relative
+  remise_absolue      real     DEFAULT 0,           -- remise absolue
+  remise              real     DEFAULT 0,           -- remise totale calculee
 
-  close_code          varchar(16),		-- Code motif cloture sans paiement complet
-  close_note          varchar(128),		-- Commentaire cloture sans paiement complet
+  close_code          varchar(16),		              -- Code motif cloture sans paiement complet
+  close_note          varchar(128),		              -- Commentaire cloture sans paiement complet
 
-  tva                 real     DEFAULT 0,   -- montant tva apres remise totale
-  total               real     DEFAULT 0,   -- montant total ht apres remise totale
-  total_ttc           real     DEFAULT 0,   -- montant total ttc apres remise totale
+  tva                 real     DEFAULT 0,           -- montant tva apres remise totale
+  total               real     DEFAULT 0,           -- montant total ht apres remise totale
+  total_ttc           real     DEFAULT 0,           -- montant total ttc apres remise totale
 
   fk_statut           smallint DEFAULT 0 NOT NULL,
 
-  fk_user_author      integer,   -- createur de la facture
-  fk_user_valid       integer,   -- valideur de la facture
+  fk_user_author      integer,                      -- createur de la facture
+  fk_user_valid       integer,                      -- valideur de la facture
 
-  fk_facture_source   integer,   -- facture origine si facture avoir
-  fk_projet           integer,   -- projet auquel est associée la facture
+  fk_facture_source   integer,                      -- facture origine si facture avoir
+  fk_projet           integer,                      -- projet auquel est associée la facture
 
   fk_cond_reglement   integer  DEFAULT 1 NOT NULL,  -- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement   integer,                      -- mode de reglement (Virement, Prélèvement)
@@ -62,3 +64,11 @@ create table llx_facture
   import_key          varchar(14)
 
 )type=innodb;
+
+-- 
+-- List of codes for the field entity
+--
+-- 1 : first company invoice
+-- 2 : second company invoice
+-- 3 : etc...
+--
