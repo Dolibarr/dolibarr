@@ -505,6 +505,8 @@ class Facture extends CommonObject
 	 */
 	function fetch($rowid,$ref='')
 	{
+		global $conf;
+		
 		$sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ','.$this->db->pdate('f.datef').' as df';
 		$sql.= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
