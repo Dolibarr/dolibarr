@@ -255,9 +255,9 @@ if ($_GET["action"] == 'create')
 		{
 			print '<tr class="liste_titre">';
 			print '<td width="54%">'.$langs->trans("Description").'</td>';
-			print '<td align="center">Quan. command�e</td>';
-			print '<td align="center">Quan. livr�e</td>';
-			print '<td align="center">Quan. � livrer</td>';
+			print '<td align="center">Quan. commandee</td>';
+			print '<td align="center">Quan. livree</td>';
+			print '<td align="center">Quan. a livrer</td>';
 			if ($conf->stock->enabled)
 			{
 				print '<td width="12%" align="center">'.$langs->trans("Stock").'</td>';
@@ -300,9 +300,9 @@ if ($_GET["action"] == 'create')
 			if ($conf->stock->enabled)
 			{
 				$stock = $product->stock_entrepot[$_GET["entrepot_id"]];
-				$stock+=0;  // Convertit en num�rique
+				$stock+=0;  // Convertit en numerique
 
-				// Quantit� � livrer
+				// Quantite a livrer
 				print '<td align="center">';
 				print '<input name="idl'.$i.'" type="hidden" value="'.$ligne->id.'">';
 				print '<input name="qtyl'.$i.'" type="text" size="6" value="'.min($quantite_a_livrer, $stock).'">';

@@ -39,17 +39,19 @@ if ($_REQUEST["socid"])
 {
 	if ($_REQUEST["typeid"] == 1) { $type = 'fournisseur'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:''; }
 	if ($_REQUEST["typeid"] == 2) { $type = 'societe'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:''; }
+	$objecttype = 'societe';
 	$objectid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 }
 else if ($_REQUEST["id"] || $_REQUEST["ref"])
 {
 	$type = 'produit';
+	$objecttype = 'produit';
 	$dbtablename = 'product';
 }
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, $type, $objectid, $dbtablename);
+$result = restrictedArea($user, $objecttype, $objectid, $dbtablename);
 
 
 
