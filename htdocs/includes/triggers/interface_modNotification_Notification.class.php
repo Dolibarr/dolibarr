@@ -132,7 +132,7 @@ class InterfaceNotification
 
 			$action_notify = 3;
             $ref = dol_sanitizeFileName($object->ref);
-            $filepdf = $conf->fournisseur->dir_commande . '/' . $ref . '/' . $ref . '.pdf';
+            $filepdf = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             $mesg = 'La commande fournisseur '.$object->ref." a été validée.\n";
 
             $notify = new Notify($this->db);

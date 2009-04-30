@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,8 +22,7 @@
 /**
  *	\file       htdocs/includes/modules/supplier_order/pdf/pdf_muscadet.modules.php
  *	\ingroup    fournisseur
- *	\brief      Fichier de la classe permettant de g�n�rer les commandes fournisseurs au mod�le Muscadet
- *	\author	    Regis Houssin
+ *	\brief      Fichier de la classe permettant de generer les commandes fournisseurs au modele Muscadet
  *	\version    $Id$
  */
 
@@ -35,14 +34,14 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
  *	\class      pdf_muscadet
- *	\brief      Classe permettant de g�n�rer les commandes fournisseurs au mod�le Muscadet
+ *	\brief      Classe permettant de generer les commandes fournisseurs au modele Muscadet
  */
 class pdf_muscadet extends ModelePDFSuppliersOrders
 {
 
 	/**
 	 *	\brief      Constructeur
-	 *	\param	    db		Handler acc�s base de donn�e
+	 *	\param	    db		Handler acces base de donnee
 	 */
 	function pdf_muscadet($db)
 	{
@@ -67,8 +66,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$this->option_logo = 1;                    // Affiche logo
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Affiche mode r�glement
-		$this->option_condreg = 1;                 // Affiche conditions r�glement
+		$this->option_modereg = 1;                 // Affiche mode reglement
+		$this->option_condreg = 1;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 
@@ -77,7 +76,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -93,8 +92,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	}
 
 	/**
-	 \brief      Renvoi derni�re erreur
-	 \return     string      Derni�re erreur
+	 \brief      Renvoi derniere erreur
+	 \return     string      Derniere erreur
 	 */
 	function pdferror()
 	{
@@ -124,9 +123,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$outputlangs->setPhpLang();
 
-		if ($conf->fournisseur->dir_commande)
+		if ($conf->fournisseur->commande->dir_output)
 		{
-			// D�finition de l'objet $com (pour compatibilite ascendante)
+			// Definition de l'objet $com (pour compatibilite ascendante)
 			if (! is_object($com))
 			{
 				$id = $com;
@@ -135,16 +134,16 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			}
 			$deja_regle = "";
 
-			// D�finition de $dir et $file
+			// Definition de $dir et $file
 			if ($com->specimen)
 			{
-				$dir = $conf->fournisseur->dir_commande;
+				$dir = $conf->fournisseur->commande->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$comref = dol_sanitizeFileName($com->ref);
-				$dir = $conf->fournisseur->dir_commande . "/" . $comref;
+				$dir = $conf->fournisseur->commande->dir_output . "/" . $comref;
 				$file = $dir . "/" . $comref . ".pdf";
 			}
 
@@ -168,7 +167,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
+					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -217,7 +216,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				{
 					$tab_top = 88;
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($com->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
@@ -247,11 +246,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					// Description de la ligne produit
 					$libelleproduitservice=pdf_getlinedesc($com->lignes[$i],$outputlangs);
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
 					$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
-					$pdf->SetFont('Arial','', 9);   // On repositionne la police par d�faut
+					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 
 					$nexY = $pdf->GetY();
 
@@ -387,7 +386,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	}
 
 	/**
-	 *   \brief      Affiche le total � payer
+	 *   \brief      Affiche le total a payer
 	 *   \param      pdf         	Objet PDF
 	 *   \param      object        	Objet order
 	 *   \param      deja_regle  	Montant deja regle
@@ -440,7 +439,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$index = 0;
 		}
 
-		// Affichage des totaux de TVA par taux (conform�ment � r�glementation)
+		// Affichage des totaux de TVA par taux (conformement a reglementation)
 		$pdf->SetFillColor(248,248,248);
 
 		foreach( $this->tva as $tvakey => $tvaval )
@@ -524,7 +523,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	{
 		global $conf;
 
-		// Montants exprim�s en     (en tab_top - 1
+		// Montants exprimes en     (en tab_top - 1
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
