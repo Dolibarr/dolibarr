@@ -58,10 +58,11 @@ class ModelePDFPropales extends FPDF
     	
     	$type='propal';
       $liste=array();
+      
       $sql = "SELECT nom as id, nom as lib";
       $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
       $sql.= " WHERE type = '".$type."'";
-      $sql.= " AND entity = ".$cont->entity;
+      $sql.= " AND entity = ".$conf->entity;
 
       dol_syslog("modules_propale::liste_modeles sql=".$sql, LOG_DEBUG);
       $resql = $db->query($sql);

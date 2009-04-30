@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,7 +53,7 @@ print_fiche_titre($langs->trans("NewProp"));
 
 $html=new Form($db);
 
-// R�cup�ration de l'id de projet
+// Recuperation de l'id de projet
 $projetid = 0;
 if ($_GET["projetid"])
 {
@@ -84,7 +84,11 @@ if ($_GET["action"] == 'create')
 
 	// Fix pour modele numerotation qui deconne
 	// Si numero deja pris (ne devrait pas arriver), on incremente par .num+1
-	$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."propal WHERE ref like '$numpr%'";
+	$sql = "SELECT count(*) as nb";
+	$sql.= " FROM ".MAIN_DB_PREFIX."propal";
+	$sql.= " WHERE ref like '$numpr%'";
+	$sql.= " AND entity = ".$conf->entity;
+	
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -146,7 +150,7 @@ if ($_GET["action"] == 'create')
 	$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
 	print '</td></tr>';
 
-	// Mode de r�glement
+	// Mode de reglement
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';
@@ -227,9 +231,15 @@ if ($_GET["action"] == 'create')
 		print '<td>';
 		$liste_propal = array();
 		$liste_propal[0] = '';
+		
 		$sql ="SELECT p.rowid as id, p.ref, s.nom";
-		$sql.=" FROM ".MAIN_DB_PREFIX."propal p, ".MAIN_DB_PREFIX."societe s";
-		$sql.=" WHERE s.rowid = p.fk_soc AND fk_statut <> 0 ORDER BY Id";
+		$sql.=" FROM ".MAIN_DB_PREFIX."propal p";
+		$sql.= ", ".MAIN_DB_PREFIX."societe s";
+		$sql.= " WHERE s.rowid = p.fk_soc";
+		$sql.= " AND p.entity = ".$conf->entity;
+		$sql.= " AND p.fk_statut <> 0";
+		$sql.= " ORDER BY Id";
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{

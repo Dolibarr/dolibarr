@@ -527,21 +527,46 @@ class Propal extends CommonObject
 		$this->fetch_client();
 
 		// Insertion dans la base
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price";
-		$sql.= ", remise, remise_percent, remise_absolue";
-		$sql.= ", tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite";
-		$sql.= ", fk_cond_reglement, fk_mode_reglement, ref_client";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (";
+		$sql.= "fk_soc";
+		$sql.= ", price";
+		$sql.= ", remise";
+		$sql.= ", remise_percent";
+		$sql.= ", remise_absolue";
+		$sql.= ", tva";
+		$sql.= ", total";
+		$sql.= ", datep";
+		$sql.= ", datec";
+		$sql.= ", ref";
+		$sql.= ", fk_user_author";
+		$sql.= ", note";
+		$sql.= ", note_public";
+		$sql.= ", model_pdf";
+		$sql.= ", fin_validite";
+		$sql.= ", fk_cond_reglement";
+		$sql.= ", fk_mode_reglement";
+		$sql.= ", ref_client";
 		$sql.= ", date_livraison";
 		$sql.= ", entity";
 		$sql.= ") ";
-		$sql.= " VALUES (".$this->socid.", 0";
-		$sql.= ", ".$this->remise.", ".($this->remise_percent?$this->remise_percent:'null').", ".($this->remise_absolue?$this->remise_absolue:'null');
-		$sql.= ", 0, 0,".$this->db->idate($this->datep).", ".$this->db->idate(mktime()).", '".$this->ref;
+		$sql.= " VALUES (";
+		$sql.= $this->socid;
+		$sql.= ", 0";
+		$sql.= ", ".$this->remise;
+		$sql.= ", ".($this->remise_percent?$this->remise_percent:'null');
+		$sql.= ", ".($this->remise_absolue?$this->remise_absolue:'null');
+		$sql.= ", 0";
+		$sql.= ", 0";
+		$sql.= ", ".$this->db->idate($this->datep);
+		$sql.= ", ".$this->db->idate(mktime());
+		$sql.= ", '".$this->ref."'";
 		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql.= ", '".addslashes($this->note)."'";
 		$sql.= ", '".addslashes($this->note_public)."'";
-		$sql.= ", '".$this->modelpdf."',".$this->db->idate($this->fin_validite)."'";
-		$sql.= ", ".$this->cond_reglement_id.", ".$this->mode_reglement_id;
+		$sql.= ", '".$this->modelpdf."'";
+		$sql.= ", ".$this->db->idate($this->fin_validite);
+		$sql.= ", ".$this->cond_reglement_id;
+		$sql.= ", ".$this->mode_reglement_id;
 		$sql.= ", '".addslashes($this->ref_client)."'";
 		$sql.= ", ".($this->date_livraison!=''?$this->db->idate($this->date_livraison):'null');
 		$sql.= ", ".$conf->entity;
@@ -586,6 +611,7 @@ class Propal extends CommonObject
 					$sql.= " SET fk_projet=".$this->projetidp;
 					$sql.= " WHERE ref='".$this->ref."'";
 					$sql.= " AND entity = ".$conf->entity;
+					
 					$result=$this->db->query($sql);
 				}
 
@@ -596,6 +622,7 @@ class Propal extends CommonObject
 					$sql.= " SET fk_adresse_livraison = ".$this->adresse_livraison_id;
 					$sql.= " WHERE ref = '".$this->ref."'";
 					$sql.= " AND entity = ".$conf->entity;
+					
 					$result=$this->db->query($sql);
 				}
 
