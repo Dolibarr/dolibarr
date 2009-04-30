@@ -95,7 +95,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	*/
     function getNextValue($objsoc,$commande)
     {
-    	global $db;
+    	global $db,$conf;
     	
     	// D'abord on recupere la valeur max (reponse immediate car champ indexe)
       $posindice=8;
