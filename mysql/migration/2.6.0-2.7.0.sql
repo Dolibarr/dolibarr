@@ -50,6 +50,7 @@ ALTER TABLE llx_product_fournisseur DROP INDEX fk_soc;
 ALTER TABLE llx_facture DROP INDEX idx_facture_uk_facnumber;
 ALTER TABLE llx_expedition DROP INDEX idx_expedition_uk_ref;
 ALTER TABLE llx_facture_fourn DROP INDEX uk_facture_fourn_ref;
+ALTER TABLE llx_livraison DROP INDEX idx_expedition_uk_ref;
 ALTER TABLE llx_livraison DROP INDEX idx_livraison_uk_ref;
 
 ALTER TABLE llx_rights_def ADD PRIMARY KEY (id, entity);

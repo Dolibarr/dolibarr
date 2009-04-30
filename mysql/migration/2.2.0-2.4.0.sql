@@ -143,7 +143,7 @@ ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_adresse_livraison (fk_adres
 -- V4 ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_fk_user_author        FOREIGN KEY (fk_user_author)         REFERENCES llx_user (rowid);
 -- V4 ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_fk_user_valid         FOREIGN KEY (fk_user_valid)          REFERENCES llx_user (rowid);
 -- V4 ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_fk_adresse_livraison  FOREIGN KEY (fk_adresse_livraison)   REFERENCES llx_societe_adresse_livraison (rowid);
-ALTER TABLE llx_livraison ADD UNIQUE INDEX idx_expedition_uk_ref (ref);
+ALTER TABLE llx_livraison ADD UNIQUE INDEX idx_livraison_uk_ref (ref);
 
 alter table llx_livraisondet add column fk_product  integer after fk_livraison;
 alter table llx_livraisondet add column description text after fk_product;
