@@ -306,8 +306,8 @@ if (is_array($resCached) || is_array($resRemoved))
 }
 else
 {
-	print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is :";
-	print "<br>";
+	print "<br><br>";
+	print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is : ";
 	print $_SERVER["SCRIPT_FILENAME"];
 }
 
