@@ -247,47 +247,52 @@ $var=true;
 
 $var=true;
 
-?>
-<br>
-<form name="ea_control" method="post">
-    <table class="noborder">
-		<tr class="liste_titre"><td colspan="2">Actions</td></tr>
-        <tr <?php $var = ! $var; print $bc[$var]; ?>>
-            <td>Caching</td>
-            <td align="right"><input type="submit" class="butAction" name="caching" value="<?php print $info['cache']?'disable':'enable'; ?>" /></td>
-        </tr>
-        <tr <?php $var = ! $var; print $bc[$var]; ?>>
-            <td>Optimizer</td>
-            <td align="right"><input type="submit" class="butAction" name="optimizer" value="<?php print $info['optimizer']?'disable':'enable'; ?>" /></td>
-        </tr>
-        <tr <?php $var = ! $var; print $bc[$var]; ?>>
-            <td>Clear cache</td>
-            <td align="right"><input type="submit" class="butAction" name="clear" value="clear" title="remove all unused scripts and data from shared memory and disk cache" /></td>
-        </tr>
-        <tr <?php $var = ! $var; print $bc[$var]; ?>>
-            <td>Clean cache</td>
-            <td align="right"><input type="submit" class="butAction" name="clean" value="clean" title=" remove all expired scripts and data from shared memory and disk cache" /></td>
-        </tr>
-        <tr <?php $var = ! $var; print $bc[$var]; ?>>
-            <td>Purge cache</td>
-            <td align="right"><input type="submit" class="butAction" name="purge" value="purge" title="remove all 'removed' scripts from shared memory" /></td>
-        </tr>
-    </table>
-</form>
-<!-- }}} -->
+$res = @eaccelerator_cached_scripts();			// If success return an array
+if (is_array($res))
+{
+	print "<br>";
+	print '<form name="ea_control" method="post">';
+	print '<table class="noborder">';
+	print '<tr class="liste_titre"><td colspan="2">Actions</td></tr>';
+	$var = ! $var;
+	print "<tr ".$bc[$var].">";
+	print "<td>Caching</td>";
+	print '<td align="right"><input type="submit" class="butAction" name="caching" value="'. ($info['cache']?'disable':'enable') .'" /></td>';
+	print "</tr>";
+	$var = ! $var;
+	print "<tr ".$bc[$var].">";
+	print "<td>Optimizer</td>";
+	print '<td align="right"><input type="submit" class="butAction" name="optimizer" value="'. ($info['optimizer']?'disable':'enable') .'" /></td>';
+	print "</tr>";
+	$var = ! $var;
+	print "<tr ".$bc[$var].">";
+	print "<td>Clear cache</td>";
+	print '<td align="right"><input type="submit" class="butAction" name="clear" value="clear" title="remove all unused scripts and data from shared memory and disk cache" /></td>';
+	print "</tr>";
+	$var = ! $var;
+	print "<tr ".$bc[$var].">";
+	print "<td>Clean cache</td>";
+	print '<td align="right"><input type="submit" class="butAction" name="clean" value="clean" title=" remove all expired scripts and data from shared memory and disk cache" /></td>';
+	print "</tr>";
+	$var = ! $var;
+	print "<tr ".$bc[$var].">";
+	print "<td>Purge cache</td>";
+	print '<td align="right"><input type="submit" class="butAction" name="purge" value="purge" title="remove all \'removed\' scripts from shared memory" /></td>';
+  print "</tr></table></form>";
+}
 
-<br><br>
-<b>Cached scripts</b><br>
-<table>
-<?php
-$res=eaccelerator_cached_scripts();			// If success return an array
+print "<br><br>";
+print "<b>Cached scripts</b><br>";
+print "<table>";
+
+$res = @eaccelerator_cached_scripts();			// If success return an array
 if (is_array($res)) create_script_table($res);
 else print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is "._FILE;
 
 print '<br><br>';
 print '<b>Removed scripts</b><br>';
 
-$res=eaccelerator_removed_scripts();
+$res = @eaccelerator_removed_scripts();
 if (is_array($res)) create_script_table($res);
 else print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is "._FILE;
 
