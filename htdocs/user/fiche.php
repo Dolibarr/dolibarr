@@ -52,7 +52,7 @@ if ($_GET["id"])
 }
 
 // Security check
-$result = restrictedArea($user, 'user',$_GET["id"]);
+$result = restrictedArea($user, 'user', $_GET["id"], '', 'user');
 if ($user->id <> $_GET["id"] && ! $canreadperms) accessforbidden();
 
 $langs->load("users");

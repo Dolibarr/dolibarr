@@ -37,7 +37,7 @@ $langs->load("users");
 $langs->load("other");
 
 // Security check
-$result = restrictedArea($user, 'usergroup',$_GET["id"]);
+$result = restrictedArea($user, 'user', $_GET["id"], '', 'user');
 
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
