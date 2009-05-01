@@ -308,7 +308,8 @@ else
 {
 	print "<br><br>";
 	print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is : ";
-	print $_SERVER["SCRIPT_FILENAME"];
+	print "<br>";
+	print "<b>".$_SERVER["SCRIPT_FILENAME"]."</b>";
 }
 
 if (function_exists('eaccelerator_get'))
