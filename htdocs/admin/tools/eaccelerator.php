@@ -247,55 +247,69 @@ $var=true;
 
 $var=true;
 
-$res = @eaccelerator_cached_scripts();			// If success return an array
-if (is_array($res))
+$resCached = @eaccelerator_cached_scripts();			// If success return an array
+$resRemoved = @eaccelerator_removed_scripts();
+
+if (is_array($resCached) || is_array($resRemoved))
 {
 	print "<br>";
 	print '<form name="ea_control" method="post">';
 	print '<table class="noborder">';
 	print '<tr class="liste_titre"><td colspan="2">Actions</td></tr>';
-	$var = ! $var;
-	print "<tr ".$bc[$var].">";
-	print "<td>Caching</td>";
-	print '<td align="right"><input type="submit" class="butAction" name="caching" value="'. ($info['cache']?'disable':'enable') .'" /></td>';
-	print "</tr>";
-	$var = ! $var;
-	print "<tr ".$bc[$var].">";
-	print "<td>Optimizer</td>";
-	print '<td align="right"><input type="submit" class="butAction" name="optimizer" value="'. ($info['optimizer']?'disable':'enable') .'" /></td>';
-	print "</tr>";
-	$var = ! $var;
-	print "<tr ".$bc[$var].">";
-	print "<td>Clear cache</td>";
-	print '<td align="right"><input type="submit" class="butAction" name="clear" value="clear" title="remove all unused scripts and data from shared memory and disk cache" /></td>';
-	print "</tr>";
-	$var = ! $var;
-	print "<tr ".$bc[$var].">";
-	print "<td>Clean cache</td>";
-	print '<td align="right"><input type="submit" class="butAction" name="clean" value="clean" title=" remove all expired scripts and data from shared memory and disk cache" /></td>';
-	print "</tr>";
-	$var = ! $var;
-	print "<tr ".$bc[$var].">";
-	print "<td>Purge cache</td>";
-	print '<td align="right"><input type="submit" class="butAction" name="purge" value="purge" title="remove all \'removed\' scripts from shared memory" /></td>';
-  print "</tr></table></form>";
+	
+	if (is_array($resCached))
+	{
+		$var = ! $var;
+		print "<tr ".$bc[$var].">";
+		print "<td>Caching</td>";
+		print '<td align="right"><input type="submit" class="butAction" name="caching" value="'. ($info['cache']?'disable':'enable') .'" /></td>';
+		print "</tr>";
+		$var = ! $var;
+		print "<tr ".$bc[$var].">";
+		print "<td>Optimizer</td>";
+		print '<td align="right"><input type="submit" class="butAction" name="optimizer" value="'. ($info['optimizer']?'disable':'enable') .'" /></td>';
+		print "</tr>";
+	}
+	
+	if (is_array($resRemoved))
+	{
+		$var = ! $var;
+		print "<tr ".$bc[$var].">";
+		print "<td>Clear cache</td>";
+		print '<td align="right"><input type="submit" class="butAction" name="clear" value="clear" title="remove all unused scripts and data from shared memory and disk cache" /></td>';
+		print "</tr>";
+		$var = ! $var;
+		print "<tr ".$bc[$var].">";
+		print "<td>Clean cache</td>";
+		print '<td align="right"><input type="submit" class="butAction" name="clean" value="clean" title=" remove all expired scripts and data from shared memory and disk cache" /></td>';
+		print "</tr>";
+		$var = ! $var;
+		print "<tr ".$bc[$var].">";
+		print "<td>Purge cache</td>";
+		print '<td align="right"><input type="submit" class="butAction" name="purge" value="purge" title="remove all \'removed\' scripts from shared memory" /></td>';
+		print "</tr></table></form>";
+	}
+  
+  if (is_array($resCached))
+  {
+  	print "<br><br>";
+  	print "<b>Cached scripts</b><br>";
+  	create_script_table($resCached);
+  }
+  
+  if (is_array($resRemoved))
+  {
+  	print "<br><br>";
+  	print "<b>Removed scripts</b><br>";
+  	create_script_table($resRemoved);
+  }
 }
-
-print "<br><br>";
-print "<b>Cached scripts</b><br>";
-print "<table>";
-
-$res = @eaccelerator_cached_scripts();			// If success return an array
-if (is_array($res)) create_script_table($res);
-else print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is "._FILE;
-
-print '<br><br>';
-print '<b>Removed scripts</b><br>';
-
-$res = @eaccelerator_removed_scripts();
-if (is_array($res)) create_script_table($res);
-else print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is "._FILE;
-
+else
+{
+	print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is :";
+	print "<br>";
+	print $_SERVER["SCRIPT_FILENAME"];
+}
 
 if (function_exists('eaccelerator_get'))
 {
@@ -304,17 +318,13 @@ if (function_exists('eaccelerator_get'))
     $res=eaccelerator_list_keys();
 	create_key_table($res);
 }
-?>
 
-<br /><br />
-<hr />
-<table>
-	<tr><td class="center">
-    <strong>Eaccelerator is created by the eAccelerator team, <a href="http://eaccelerator.net">http://eaccelerator.net</a></strong><br /><br />
-    </td></tr>
-</table>
+print "<br /><br />";
+print "<hr />";
+print '<table><tr><td class="center">';
+print '<strong>Eaccelerator is created by the eAccelerator team, <a href="http://eaccelerator.net">http://eaccelerator.net</a></strong><br /><br />';
+print "</td></tr></table>";
 
 
-<?php
 llxfooter('$Date$ - $Revision$');
 ?>
