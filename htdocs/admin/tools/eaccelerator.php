@@ -307,9 +307,10 @@ if (is_array($resCached) || is_array($resRemoved))
 else
 {
 	print "<br><br>";
-	print "<u>Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is : </u>";
+	print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path</b> parameter is : ";
 	print "<br><br>";
 	print "<b>".$_SERVER["SCRIPT_FILENAME"]."</b>";
+	print "<br><br>";
 }
 
 if (function_exists('eaccelerator_get'))
