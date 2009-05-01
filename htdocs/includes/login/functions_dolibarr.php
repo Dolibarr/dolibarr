@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 		$sql ='SELECT pass, pass_crypted';
 		$sql.=' FROM '.$table;
 		$sql.=' WHERE '.$usernamecol." = '".addslashes($_POST["username"])."'";
-		$sql.=' AND '.$entitycol." IN (0,".$_POST["entity"].")";
+		$sql.=' AND '.$entitycol." IN (0," . ($_POST["entity"] ? $_POST["entity"] : 1) . ")";
 
 		dol_syslog("functions_dolibarr::check_user_password_dolibarr sql=".$sql);
 		$resql=$db->query($sql);
