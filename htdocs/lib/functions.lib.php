@@ -1661,7 +1661,7 @@ function dol_print_error($db='',$error='')
 
 
 /**
- *	\brief  Deplacer les fichiers telecharg�s, apres quelques controles divers
+ *	\brief  Deplacer les fichiers telecharges, apres quelques controles divers
  *	\param	src_file			Source filename
  *	\param	dest_file			Target filename
  * 	\param	allowoverwrite		Overwrite if exists
