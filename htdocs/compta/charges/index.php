@@ -28,6 +28,8 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 
+$langs->load("compta");
+
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');

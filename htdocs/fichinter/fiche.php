@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -485,7 +485,7 @@ if ($_GET["action"] == 'create')
 		print "<form name='fichinter' action=\"fiche.php\" method=\"get\">";
 		print '<table class="border" width="100%">';
 		print "<tr><td>".$langs->trans("Company")."</td><td>";
-		$html->select_societes('','socid','',1);
+		$html->select_societes('','socid','s.client = 1',1);
 		print "</td></tr>";
 		print '<tr><td colspan="2" align="center">';
 		print "<input type=\"hidden\" name=\"action\" value=\"create\">";
@@ -792,7 +792,7 @@ elseif ($_GET["id"] > 0)
 
 			print '<tr '.$bc[$var].">\n";
 			print '<td>';
-			// �diteur wysiwyg
+			// editeur wysiwyg
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
