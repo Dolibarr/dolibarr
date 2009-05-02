@@ -32,6 +32,7 @@ ALTER TABLE llx_expedition ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER re
 ALTER TABLE llx_facture_fourn ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER facnumber;
 ALTER TABLE llx_livraison ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
 ALTER TABLE llx_fichinter ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
+ALTER TABLE llx_contrat ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
 
 ALTER TABLE llx_rights_def DROP PRIMARY KEY;
 ALTER TABLE llx_user_param DROP INDEX fk_user;
@@ -76,3 +77,4 @@ ALTER TABLE llx_expedition ADD UNIQUE INDEX idx_expedition_uk_ref (ref, entity);
 ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref (facnumber, fk_soc, entity);
 ALTER TABLE llx_livraison ADD UNIQUE INDEX idx_livraison_uk_ref (ref, entity);
 ALTER TABLE llx_fichinter ADD UNIQUE INDEX uk_fichinter_ref (ref, entity);
+ALTER TABLE llx_contrat ADD UNIQUE INDEX uk_contrat_ref (ref, entity);

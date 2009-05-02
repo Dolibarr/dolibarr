@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,6 +25,8 @@
 -- V4 DELETE llx_contratdet FROM llx_contratdet, llx_contrat LEFT JOIN llx_societe ON llx_contrat.fk_soc = llx_societe.rowid WHERE llx_contratdet.fk_contrat = llx_contrat.rowid AND llx_societe.rowid IS NULL; 
 -- V4 DELETE llx_contrat FROM llx_contrat LEFT JOIN llx_societe ON llx_contrat.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL;
 -- V4 DELETE llx_contrat FROM llx_contrat LEFT JOIN llx_user ON llx_contrat.fk_user_author = llx_user.rowid WHERE llx_user.rowid IS NULL;
+
+ALTER TABLE llx_contrat ADD UNIQUE INDEX uk_contrat_ref (ref, entity);
 
 ALTER TABLE llx_contrat ADD INDEX idx_contrat_fk_soc (fk_soc);
 ALTER TABLE llx_contrat ADD INDEX idx_contrat_fk_user_author (fk_user_author);
