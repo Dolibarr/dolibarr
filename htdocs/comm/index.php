@@ -144,7 +144,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_statut = 0";
 	$sql.= " AND p.fk_soc = s.rowid";
-	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " AND p.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
 
@@ -209,7 +209,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.fk_statut = 0";
-	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " AND c.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND c.fk_soc = ".$socid;
 
@@ -280,7 +280,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_soc = s.rowid";
-	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " AND p.entity = ".$conf->entity;
 	//$sql.= " AND p.fk_statut > 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
@@ -425,6 +425,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // \todo A REF
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND s.entity = ".$conf->entity;
+	//$sql.= " AND c.entity = ".$conf->entity;
 	$sql.= " AND c.fk_product = p.rowid";
 	if (!$user->rights->societe->client->voir && !$socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
@@ -475,7 +476,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_soc = s.rowid";
-	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " AND p.entity = ".$conf->entity;
 	$sql.= " AND p.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,8 +176,12 @@ if ($socid > 0)
 		$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql.= " ".$db->pdate("p.datep")." as dp, ".$db->pdate("p.fin_validite")." as datelimite,";
 		$sql.= " c.label as statut, c.id as statutid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-		$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+		$sql.= ", ".MAIN_DB_PREFIX."propal as p";
+		$sql.= ", ".MAIN_DB_PREFIX."c_propalst as c";
+		$sql.= " WHERE p.fk_soc = s.rowid";
+		$sql.= " AND p.fk_statut = c.id";
+		$sql.= " AND p.entity = ".$conf->entity;
 		$sql.= " AND s.rowid = ".$societe->id;
 		$sql.= " ORDER BY p.datep DESC";
 
