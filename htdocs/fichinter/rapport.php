@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2003 Xavier DUTOIT        <doli@sydesy.com>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +25,10 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
-if ($user->societe_id > 0)
-{
-  $socid = $user->societe_id ;
-}
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
+
 
 llxHeader();
 
@@ -52,9 +53,12 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT s.nom,s.rowid as socid, f.description, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f ";
-$sql .= " WHERE f.fk_soc = s.rowid";
+$sql = "SELECT s.nom, s.rowid as socid, f.description, f.ref";
+$sql.= ", ".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."fichinter as f ";
+$sql.= " WHERE f.fk_soc = s.rowid";
+$sql.= " AND f.entity = ".$conf->entity;
 
 
 if ($socid > 0)
@@ -68,10 +72,10 @@ if (empty($YY))
   $YY=strftime("%Y",time());;
 echo "<div class='noprint'>";
 echo "\n<form action='rapport.php'>";
-echo "<input type='hidden' name='socid' value='$socid'>";
+echo "<input type='hidden' name='socid' value='".$socid."'>";
 echo $langs->trans("Month")." <input name='MM' size='2' value='$MM'>";
 echo " Ann&eacute;e <input size='4' name='YY' value='$YY'>";
-echo "<input type='submit' name='g' value='Genérer le rapport'>";
+echo "<input type='submit' name='g' value='G&eacute;n&eacute;rer le rapport'>";
 echo "<form>";
 echo "</div>";
 
@@ -86,7 +90,7 @@ else
   $m = $MM+1;
   $end="$YY-$m-01 00:00:00";
 }
-$sql .= " AND datei >= '$start' AND datei < '$end'" ;
+$sql .= " AND datei >= '".$start."' AND datei < '".$end."'" ;
 
 $sql .= " ORDER BY $sortfield $sortorder ";
 
@@ -94,14 +98,14 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $title = $langs->trans("Report")." ".dol_print_date(strtotime($start),"%B %Y");
-  print_barre_liste($title, $page, "rapport.php","&socid=$socid",$sortfield,$sortorder,'',$num);
+  print_barre_liste($title, $page, "rapport.php","&socid=".$socid,$sortfield,$sortorder,'',$num);
 
   $i = 0;
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
   print "<tr class=\"liste_titre\">";
   print '<td>Num</td>';
   if (empty($socid))
-    print '<td>Société</td>';
+    print '<td>'.$langs->trans("Customers").'</td>';
   print '<td align="center">'.$langs->trans("Description").'</td>';
     
   print '<td align="center">Date</td>';
@@ -114,7 +118,7 @@ if ( $db->query($sql) )
       $objp = $db->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->fichid\">$objp->ref</a></td>\n";
+      print '<td><a href="fiche.php?id='.$objp->fichid.'">'.$objp->ref.'</a></td>\n';
 
       if (empty($socid))
       {
@@ -141,5 +145,5 @@ else
 }
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter("$Date$ - $Revision$");
 ?>

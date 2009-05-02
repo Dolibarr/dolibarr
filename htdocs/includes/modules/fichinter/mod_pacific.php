@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ class mod_pacific extends ModeleNumRefFicheinter
      */
 	function canBeActivated()
 	{
-		global $langs;
+		global $langs,$conf;
 	
 		$langs->load("bills");
 	
@@ -80,6 +80,8 @@ class mod_pacific extends ModeleNumRefFicheinter
 	
 		$sql = "SELECT MAX(ref)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
+		$sql.= " WHERE entity = ".$conf->entity;
+		
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -102,31 +104,33 @@ class mod_pacific extends ModeleNumRefFicheinter
 	*      	\param      ficheinter	Object ficheinter
 	*      	\return     string      Valeur
 	*/
-    function getNextValue($objsoc=0,$ficheinter='')
+  function getNextValue($objsoc=0,$ficheinter='')
 	{
-        global $db;
-
-        // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-        $posindice=8;
-        $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
-        $sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
+		global $db,$conf;
+		
+		// D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+    $posindice=8;
+    
+    $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
+    $sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql.= " WHERE ref like '".$this->prefix."%'";
+		$sql.= " AND entity = ".$conf->entity;
         
 		$resql=$db->query($sql);
-        if ($resql)
-        {
-            $obj = $db->fetch_object($resql);
-            if ($obj) $max = $obj->max;
-            else $max=0;
-        }
-
-		//$date=time();
-        $date=$ficheinter->date;
-        $yymm = strftime("%y%m",$date);
-        $num = sprintf("%04s",$max+1);
-        
-        return $this->prefix.$yymm."-".$num;
+    if ($resql)
+    {
+    	$obj = $db->fetch_object($resql);
+      if ($obj) $max = $obj->max;
+      else $max=0;
     }
+    
+    //$date=time();
+    $date=$ficheinter->date;
+    $yymm = strftime("%y%m",$date);
+    $num = sprintf("%04s",$max+1);
+        
+    return $this->prefix.$yymm."-".$num;
+  }
     
 	/**		\brief      Return next free value
     *      	\param      objsoc      Object third party

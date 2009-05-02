@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007  Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2005-2009  Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2009       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,11 +60,14 @@ class ModelePDFFicheinter extends FPDF
 	 */
 	function liste_modeles($db)
 	{
+		global $conf;
+		
 		$type='ficheinter';
 		$liste=array();
-		$sql ="SELECT nom as id, nom as lib";
-		$sql.=" FROM ".MAIN_DB_PREFIX."document_model";
-		$sql.=" WHERE type = '".$type."'";
+		$sql = "SELECT nom as id, nom as lib";
+		$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+		$sql.= " WHERE type = '".$type."'";
+		$sql.= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
 		if ($resql)

@@ -41,7 +41,7 @@ $page=$_GET["page"]?$_GET["page"]:$_POST["page"];
 // Security check
 $fichinterid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'ficheinter', $fichinterid,'');
+$result = restrictedArea($user, 'ficheinter', $fichinterid,'fichinter');
 
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="fd.date";
@@ -73,7 +73,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= ", ".MAIN_DB_PREFIX."fichinter as f)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 $sql.= " WHERE f.fk_soc = s.rowid ";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND f.entity = ".$conf->entity;
 if ($search_ref)     $sql .= " AND f.ref like '%".addslashes($search_ref)."%'";
 if ($search_company) $sql .= " AND s.nom like '%".addslashes($search_company)."%'";
 if ($search_desc)    $sql .= " AND (f.description like '%".addslashes($search_desc)."%' OR fd.description like '%".addslashes($search_desc)."%')";

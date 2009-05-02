@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,6 +87,8 @@ class Fichinter extends CommonObject
 	 */
 	function create()
 	{
+		global $conf;
+		
 		dol_syslog("Fichinter.class::create ref=".$this->ref);
 
 		if (! is_numeric($this->duree)) { $this->duree = 0; }
@@ -104,15 +106,26 @@ class Fichinter extends CommonObject
 		$result=$soc->fetch($this->socid);
 		$this->verifyNumRef($soc);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datec, ref, fk_user_author, description, model_pdf";
-		if ($this->projet_id) $sql.=  ", fk_projet";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (";
+		$sql.= "fk_soc";
+		$sql.= ", datec";
+		$sql.= ", ref";
+		$sql.= ", entity";
+		$sql.= ", fk_user_author";
+		$sql.= ", description";
+		$sql.= ", model_pdf";
+		$sql.=  ", fk_projet";
 		$sql.= ") ";
-		$sql.= " VALUES (".$this->socid.",";
-		$sql.= " ".$this->db->idate(mktime()).", '".$this->ref."', ".$this->author;
-		$sql.= ", '".addslashes($this->description)."', '".$this->modelpdf."'";
-		if ($this->projet_id) $sql .= ", ".$this->projet_id;
+		$sql.= " VALUES (";
+		$sql.= $this->socid;
+		$sql.= ", ".$this->db->idate(mktime());
+		$sql.= ", '".$this->ref."'";
+		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$this->author;
+		$sql.= ", '".addslashes($this->description)."'";
+		$sql.= ", '".$this->modelpdf."'";
+		$sql.= ", ".($this->projet_id ? $this->projet_id : 0);
 		$sql.= ")";
-		$sqlok = 0;
 
 		dol_syslog("Fichinter::create sql=".$sql);
 		$result=$this->db->query($sql);
@@ -138,6 +151,8 @@ class Fichinter extends CommonObject
 	 */
 	function update($id)
 	{
+		global $conf;
+		
 		if (! is_numeric($this->duree)) { $this->duree = 0; }
 		if (! strlen($this->projet_id))
 		{
@@ -148,10 +163,11 @@ class Fichinter extends CommonObject
 		 *  Insertion dans la base
 		 */
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
-		$sql .= ", description  = '".addslashes($this->description)."'";
-		$sql .= ", duree = ".$this->duree;
-		$sql .= ", fk_projet = ".$this->projet_id;
-		$sql .= " WHERE rowid = ".$id;
+		$sql.= ", description  = '".addslashes($this->description)."'";
+		$sql.= ", duree = ".$this->duree;
+		$sql.= ", fk_projet = ".$this->projet_id;
+		$sql.= " WHERE rowid = ".$id;
+		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("Fichinter::update sql=".$sql);
 		if (! $this->db->query($sql))
@@ -231,6 +247,7 @@ class Fichinter extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET fk_statut = 0";
 			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
 
 			dol_syslog("Fichinter::setDraft sql=".$sql);
 			$resql=$this->db->query($sql);
@@ -263,8 +280,12 @@ class Fichinter extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
-			$sql.= " SET fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=".$user->id;
-			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+			$sql.= " SET fk_statut = 1";
+			$sql.= ", date_valid = ".$this->db->idate(mktime());
+			$sql.= ", fk_user_valid = ".$user->id;
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND fk_statut = 0";
 
 			dol_syslog("Fichinter::setValid sql=".$sql);
 			$resql=$this->db->query($sql);
@@ -352,8 +373,10 @@ class Fichinter extends CommonObject
 	 */
 	function verifyNumRef($soc)
 	{
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."fichinter";
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql.= " WHERE ref = '".$this->ref."'";
+		$sql.= " AND entity = ".$conf->entity;
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -421,11 +444,16 @@ class Fichinter extends CommonObject
 	 */
 	function info($id)
 	{
+		global $conf;
+		
 		$sql = "SELECT f.rowid, ";
-		$sql.= $this->db->pdate("f.datec")." as datec, ".$this->db->pdate("f.date_valid")." as datev";
-		$sql.= ", f.fk_user_author, f.fk_user_valid";
+		$sql.= $this->db->pdate("f.datec")." as datec";
+		$sql.= ", ".$this->db->pdate("f.date_valid")." as datev";
+		$sql.= ", f.fk_user_author";
+		$sql.= ", f.fk_user_valid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		$sql.= " WHERE f.rowid = ".$id;
+		$sql.= " AND f.entity = ".$conf->entity;
 
 		$result = $this->db->query($sql);
 
@@ -469,11 +497,16 @@ class Fichinter extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE fk_fichinter = ".$this->id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet";
+		$sql.= " WHERE fk_fichinter = ".$this->id;
+		
 		dol_syslog("Fichinter::delete sql=".$sql);
 		if ( $this->db->query($sql) )
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter";
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			
 			dol_syslog("Fichinter::delete sql=".$sql);
 			if ( $this->db->query($sql) )
 			{
@@ -530,11 +563,15 @@ class Fichinter extends CommonObject
 	 */
 	function set_date_delivery($user, $date_delivery)
 	{
+		global $conf;
+		
 		if ($user->rights->ficheinter->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql.= " SET datei = ".$this->db->idate($date_delivery);
-			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND fk_statut = 0";
 
 			if ($this->db->query($sql))
 			{
@@ -558,11 +595,15 @@ class Fichinter extends CommonObject
 	 */
 	function set_description($user, $description)
 	{
+		global $conf;
+		
 		if ($user->rights->ficheinter->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql.= " SET description = '".addslashes($description)."'";
-			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND fk_statut = 0";
 
 			if ($this->db->query($sql))
 			{
@@ -625,11 +666,15 @@ class Fichinter extends CommonObject
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs;
+		global $user,$langs,$conf;
 
 		// Charge tableau des id de societe socids
 		$socids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql.= " WHERE client = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " LIMIT 10";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -646,7 +691,10 @@ class Fichinter extends CommonObject
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " WHERE envente = 1";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -909,6 +957,8 @@ class FichinterLigne
 	 */
 	function update_total()
 	{
+		global $conf;
+		
 		$sql = "SELECT SUM(duree) as total_duration";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql.= " WHERE fk_fichinter=".$this->fk_fichinter;
@@ -924,6 +974,7 @@ class FichinterLigne
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET duree = ".$total_duration;
 			$sql.= " WHERE rowid = ".$this->fk_fichinter;
+			$sql.= " AND entity ".$conf->entity;
 
 			dol_syslog("FichinterLigne::update_total sql=".$sql);
 			$resql=$this->db->query($sql);

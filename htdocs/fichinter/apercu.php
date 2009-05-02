@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,28 +30,17 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
-
-if (!$user->rights->ficheinter->lire)
-	accessforbidden();
+require_once(DOL_DOCUMENT_ROOT.'/fichinter/fichinter.class.php');
+if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 
 $langs->load('interventions');
 
-require_once(DOL_DOCUMENT_ROOT.'/fichinter/fichinter.class.php');
+$fichinterid = isset($_GET["id"])?$_GET["id"]:'';
 
-if ($conf->projet->enabled)
-{
-	require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-}
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
-
-/*
- * Sécurité accés client
-*/
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
 
 llxHeader();
 
@@ -84,6 +73,7 @@ if ($_GET["id"] > 0) {
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'fichinter as fi';
 		$sql.= ' WHERE fi.fk_soc = s.rowid';
 		$sql.= ' AND fi.rowid = '.$fichinter->id;
+		$sql.= ' AND fi.entity = '.$conf->entity;
 		if ($socid) $sql .= ' AND s.rowid = '.$socid;
 
 		$result = $db->query($sql);
