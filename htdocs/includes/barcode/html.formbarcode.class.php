@@ -62,7 +62,8 @@ class FormBarCode
 		$disable = '';
 		
 		// On vérifie si le code de barre est déjà sélectionné par défaut dans le module produit
-		if ($conf->produit->enabled && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id)
+		if (($conf->produit->enabled && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
+		    ($conf->societe->enabled && $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY == $code_id))
 		{
 			$disable = 'disabled="disabled"';
 		}

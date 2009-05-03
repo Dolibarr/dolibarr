@@ -81,12 +81,12 @@ class modPhpbarcode extends ModeleBarCode
 		return $supported;
 	}
 
-    /**
+  /**
 	 *		\brief      Return an image file on output
 	 *		\param   	$code			Valeur numérique a coder
 	 *		\param   	$encoding		Mode de codage
 	 *		\param   	$readable		Code lisible
-     */
+   */
     function buildBarCode($code,$encoding,$readable='Y')
     {
 		global $_GET,$_ENV,$_SERVER;
@@ -111,15 +111,15 @@ class modPhpbarcode extends ModeleBarCode
 		return 1;
     }
 
-    /**
+  /**
 	 *		\brief      Save an image file on disk
 	 *		\param   	$code			Valeur numérique a coder
 	 *		\param   	$encoding		Mode de codage
 	 *		\param   	$readable		Code lisible
-     */
-    function writeBarCode($code,$encoding,$readable='Y')
-    {
-    	global $conf,$filebarcode;
+   */
+  function writeBarCode($code,$encoding,$readable='Y')
+  {
+  	global $conf,$filebarcode;
 
 		create_exdir($conf->barcode->dir_temp);
 
@@ -130,7 +130,7 @@ class modPhpbarcode extends ModeleBarCode
 		$result=$this->buildBarCode($code,$encoding,$readable);
 
 		return $result;
-    }
+  }
 
 }
 

@@ -41,6 +41,7 @@ if ($_POST["action"] == 'setcoder')
 	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
 	$sqlp.= " SET coder = '" . $_POST["coder"]."'";
 	$sqlp.= " WHERE rowid = ". $_POST["code_id"];
+	
 	$resql=$db->query($sqlp);
 	//print $sqlp;
 }
@@ -132,7 +133,8 @@ print '<td align="center" width="60">'.$langs->trans("CodeBarGenerator").'</td>'
 print "</tr>\n";
 
 $sql = "SELECT rowid, code as encoding, libelle, coder, example";
-$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+
 dol_syslog("admin/barcode.php sql=".$sql);
 $resql=$db->query($sql);
 if ($resql)

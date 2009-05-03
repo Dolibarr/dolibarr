@@ -292,21 +292,21 @@ if ($modulepart)
     elseif ($modulepart == 'barcode')
     {
     	$accessallowed=1;
-		$original_file='';	// No files are built on disk
+    	$original_file=$conf->barcode->dir_temp.'/'.$original_file;
     }
 
     // images des stats du commercial
     elseif ($modulepart == 'graph_comm')
     {
     	$accessallowed=1;
-		$original_file= $conf->commercial->dir_temp . '/' .$original_file ;	// No files are built on disk
+    	$original_file= $conf->commercial->dir_temp . '/' .$original_file;	// No files are built on disk
     }
     // Wrapping generique (allows any module to open a file if file is in directory
     // called DOL_DATA_ROOT/modulepart.
     else
     {
     	$accessallowed=1;
-      	$original_file=DOL_DATA_ROOT.'/'.$modulepart.'/'.$original_file;
+    	$original_file=DOL_DATA_ROOT.'/'.$modulepart.'/'.$original_file;
     }
 }
 
@@ -367,7 +367,7 @@ else
 		exit;
 	}
 
-	// Les drois sont ok et fichier trouv�
+	// Les drois sont ok et fichier trouve
 	if ($type)
 	{
 	  header('Content-type: '.$type);
