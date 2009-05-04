@@ -127,7 +127,7 @@ function llxHeader($head = '', $title='', $help_url='')
 
 	if (! empty($conf->telephonie->enabled))
 	{
-		$menu->add(DOL_URL_ROOT."/telephonie/index.php", "T�l�phonie");
+		$menu->add(DOL_URL_ROOT."/telephonie/index.php", "Telephonie");
 	}
 
 	if (! empty($conf->don->enabled))
