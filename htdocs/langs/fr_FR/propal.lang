@@ -59,6 +59,7 @@ FileNotUploaded=Le fichier n'a pas été téléchargé
 FileUploaded=Le fichier a été téléchargé avec succès
 AssociatedDocuments=Documents associés à la proposition :
 ErrorCantOpenDir=Impossible d'ouvrir le répertoire
+DatePropal=Date proposition
 DateEndPropal=Date fin validité
 DateEndPropalShort=Date fin
 ValidityDuration=Durée de validité
@@ -77,6 +78,8 @@ DefaultProposalDurationValidity=Délai de validité par défaut (en jours)
 UseCustomerContactAsPropalRecipientIfExist=Utiliser adresse contact suivi client si défini plutot que adresse tiers comme destinataire des propositions
 ClonePropal=Cloner proposition commerciale
 ConfirmClonePropal=Etes-vous sur de vouloir cloner cette proposition commerciale <b>%s</b> ?
+ProposalsAndProposalsLines=Propositions commerciales clientes et lignes de propositions
+ProposalLine=Ligne de proposition
 
 # Documents models
 DocModelAzurDescription=Modèle de propositions commerciales complet (logo...)

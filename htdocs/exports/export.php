@@ -39,6 +39,7 @@ if (! $user->admin)
 $entitytoicon=array(
 	'invoice'=>'bill','invoice_line'=>'bill',
 	'order'=>'order' ,'order_line'=>'order',
+	'propal'=>'propal', 'propal_line'=>'propal',
 	'intervention'=>'intervention' ,'inter_line'=>'intervention',
 	'member'=>'user' ,'member_type'=>'group','subscription'=>'payment',
 	'tax'=>'generic' ,'tax_type'=>'generic',
@@ -53,6 +54,7 @@ $entitytolang=array(		// Translation code
 	'company'=>'Company','contact'=>'Contact',
 	'invoice'=>'Bill','invoice_line'=>'InvoiceLine',
 	'order'=>'Order','order_line'=>'OrderLine',
+    'propal'=>'Proposal','propal_line'=>'ProposalLine',
 	'intervention'=>'Intervention' ,'inter_line'=>'InterLine',
 	'member'=>'Member','member_type'=>'MemberType','subscription'=>'Subscription',
 	'tax'=>'SocialContribution','tax_type'=>'DictionnarySocialContributions',

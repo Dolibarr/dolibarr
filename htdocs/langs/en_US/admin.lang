@@ -344,6 +344,7 @@ Permission24=Validate commercial proposals
 Permission25=Send commercial proposals
 Permission26=Close commercial proposals
 Permission27=Delete commercial proposals
+Permission28=Export commercial proposals
 Permission31=Read products/services
 Permission32=Create/modify products/services
 Permission33=Command products/services

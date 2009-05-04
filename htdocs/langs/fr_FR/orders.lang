@@ -5,6 +5,7 @@ SuppliersOrdersArea=Espace commandes fournisseurs
 OrderCard=Fiche commande
 Order=Commande
 Orders=Commandes
+OrderLine=Ligne de commande
 OrderFollow=Suivi
 OrderContact=Contacts commande
 OrderDate=Date commande

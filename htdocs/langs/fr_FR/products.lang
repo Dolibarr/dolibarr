@@ -1,5 +1,7 @@
 # Dolibarr language file - fr_FR - products
 CHARSET=UTF-8
+ProductRef=Réf. produit
+ProductLabel=Libellé produit
 ProductServiceCard=Fiche produit/service
 Products=Produits
 Services=Services

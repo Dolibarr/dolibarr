@@ -4,8 +4,8 @@ English Dolibarr changelog
 ***** Changelog for 2.7 compared to 2.6 *****
 
 For users:
-- New: Add filter on status in emailing selector for Dolibarr users.
-
+- New: Can export commercial proposals
+ 
 For translators:
 - Update some language files.
   

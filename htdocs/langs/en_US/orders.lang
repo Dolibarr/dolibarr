@@ -5,6 +5,7 @@ SuppliersOrdersArea=Suppliers orders area
 OrderCard=Order card
 Order=Order
 Orders=Orders
+OrderLine=Order line
 OrderFollow=Follow up
 OrderContact=Order contact
 OrderDate=Order date

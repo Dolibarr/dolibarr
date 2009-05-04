@@ -59,6 +59,7 @@ FileNotUploaded=The file was not uploaded
 FileUploaded=The file was successfully uploaded
 AssociatedDocuments=Documents associated with the proposal:
 ErrorCantOpenDir=Can't open directory
+DatePropal=Date of proposal
 DateEndPropal=Date end validity
 DateEndPropalShort=Date end
 ValidityDuration=Validity duration
@@ -77,6 +78,8 @@ DefaultProposalDurationValidity=Default commercial proposal validity duration (i
 UseCustomerContactAsPropalRecipientIfExist=Use customer contact address if defined instead of third party address as proposal recipient address
 ClonePropal=Clone commercial proposal
 ConfirmClonePropal=Are you sure you want to clone this commercial proposal <b>%s</b> ?
+ProposalsAndProposalsLines=Commercial proposal and lines
+ProposalLine=Proposal line
 
 # Document models
 DocModelAzurDescription=A complete proposal model (logo...)
