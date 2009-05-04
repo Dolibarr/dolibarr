@@ -293,7 +293,7 @@ else
 
             print_fiche_titre($langs->trans("ListOfUsersInGroup"),'','');
 
-            // On sélectionne les users qui ne sont pas déjà dans le groupe
+            // On salectionne les users qui ne sont pas deja dans le groupe
             $userlistid = array();
             $uss = array();
             

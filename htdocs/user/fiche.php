@@ -1088,30 +1088,87 @@ else
 			print_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
 
 			// On selectionne les groups
-			$uss = array();
-
-			$sql = "SELECT ug.rowid, ug.nom ";
-			$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-			$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
-			$sql.= " ORDER BY ug.nom";
-
-			$resql = $db->query($sql);
-			if ($resql)
+			$grouplistid = array();
+      $uss = array();
+            
+      $sql = "SELECT ug.fk_usergroup";
+      $sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ug";
+      $sql.= ", ".MAIN_DB_PREFIX."usergroup as u";
+      $sql.= " WHERE ug.fk_user = ".$fuser->id;
+      $sql.= " AND ug.fk_usergroup = u.rowid";
+      $sql.= " AND u.entity IN (0,".$conf->entity.")";
+          
+      $result = $db->query($sql);
+      if ($result)
+      {
+      	$num = $db->num_rows($result);
+        $i = 0;
+              
+        while ($i < $num)
+        {
+        	$obj = $db->fetch_object($result);
+              	
+          $grouplistid[]=$obj->fk_usergroup;
+          $i++;
+        }
+      }
+      else {
+        dol_print_error($db);
+      }
+      
+      $idList = implode(",",$grouplistid);
+      
+      if (!empty($idList))
+      {
+      	$sql = "SELECT ug.rowid, ug.nom ";
+      	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
+      	$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
+      	$sql.= " AND ug.rowid NOT IN (".$idList.")";
+      	$sql.= " ORDER BY ug.nom";
+      	
+      	$resql = $db->query($sql);
+      	if ($resql)
+      	{
+      		$num = $db->num_rows($resql);
+      		$i = 0;
+      		
+      		while ($i < $num)
+      		{
+      			$obj = $db->fetch_object($resql);
+      			
+      			$uss[$obj->rowid] = $obj->nom;
+      			$i++;
+      		}
+      	}
+      	else {
+      		dol_print_error($db);
+      	}
+			}
+			else
 			{
-				$num = $db->num_rows($resql);
-				$i = 0;
-
-				while ($i < $num)
-				{
-					$obj = $db->fetch_object($resql);
-
-					$uss[$obj->rowid] = $obj->nom;
-					$i++;
-				}
-			}
-			else {
-				dol_print_error($db);
-			}
+				$sql = "SELECT ug.rowid, ug.nom ";
+      	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
+      	$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
+      	$sql.= " ORDER BY ug.nom";
+      	
+      	$resql = $db->query($sql);
+      	if ($resql)
+      	{
+      		$num = $db->num_rows($resql);
+      		$i = 0;
+      		
+      		while ($i < $num)
+      		{
+      			$obj = $db->fetch_object($resql);
+      			
+      			$uss[$obj->rowid] = $obj->nom;
+      			$i++;
+      		}
+      	}
+      	else {
+      		dol_print_error($db);
+      	}
+      }
 			$db->free($resql);
 
 			if ($caneditperms)
@@ -1120,7 +1177,6 @@ else
 				print '<form action="fiche.php?id='.$_GET["id"].'" method="post">'."\n";
 				print '<input type="hidden" name="action" value="addgroup">';
 				print '<table class="noborder" width="100%">'."\n";
-				//	  print '<tr class="liste_titre"><td width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 				print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
 				print '<td>';
 				print $form->select_array("group",$uss);
