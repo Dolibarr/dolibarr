@@ -894,7 +894,7 @@ else
 			print '<td>'.yn($fuser->admin);
 			if ($fuser->admin && !$fuser->entity)
 			{
-				print ' '.img_picto($langs->trans("SuperAdministrator"),"redstar");
+				print ' '.img_redstar($langs->trans("SuperAdministrator"));
 			}
 			else if ($fuser->admin)
 			{
