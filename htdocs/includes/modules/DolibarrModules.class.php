@@ -599,6 +599,8 @@ class DolibarrModules
 				dol_syslog("DolibarrModules::delete_boxes sql=".$sql);
 				if (! $this->db->query($sql))
 				{
+					$this->error=$this->db->lasterror();
+					dol_syslog("DolibarrModules::delete_boxes ".$this->error, LOG_ERR);
 					$err++;
 				}
 			}
@@ -626,6 +628,8 @@ class DolibarrModules
 			dol_syslog("DolibarrModules::delete_style_sheet sql=".$sql);
 			if (! $this->db->query($sql))
 			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("DolibarrModules::delete_style_sheet ".$this->error, LOG_ERR);
 				$err++;
 			}
 		}
@@ -650,6 +654,8 @@ class DolibarrModules
 		dol_syslog("DolibarrModules::delete_tabs sql=".$sql);
 		if (! $this->db->query($sql))
 		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("DolibarrModules::delete_tabs ".$this->error, LOG_ERR);
 			$err++;
 		}
 
@@ -902,8 +908,10 @@ class DolibarrModules
 		$sql.= " WHERE module = '".$this->rights_class."'";
 		$sql.= " AND entity = ".$conf->entity;
 		dol_syslog("DolibarrModules::delete_permissions sql=".$sql);
-		if (!$this->db->query($sql))
+		if (! $this->db->query($sql))
 		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("DolibarrModules::delete_dirs ".$this->error, LOG_ERR);
 			$err++;
 		}
 
@@ -1013,6 +1021,8 @@ class DolibarrModules
 		$resql=$this->db->query($sql);
 		if (! $resql)
 		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("DolibarrModules::delete_menus ".$this->error, LOG_ERR);
 			$err++;
 		}
 
@@ -1033,16 +1043,21 @@ class DolibarrModules
 		{
 			foreach ($this->dirs as $key => $value)
 			{
-				$constname = $this->const_name."_DIR_";
-				$dir       = $this->dirs[$key][1];
-				$const     = empty($this->dirs[$key][2])?'':$this->dirs[$key][2]; // Create constante in llx_const
-				$subname   = empty($this->dirs[$key][3])?'':strtoupper($this->dirs[$key][3]); // Add submodule name (ex: $conf->module->submodule->dir_output)
-				$forcename = empty($this->dirs[$key][4])?'':strtoupper($this->dirs[$key][4]); // Change the module name if different
+				$addtodatabase=0;
 
-				if ($forcename) $constname = 'MAIN_MODULE_'.$forcename."_DIR_";
-				if ($subname)   $constname = $constname.$subname."_";
-				
-				$name      = $constname.strtoupper($this->dirs[$key][0]);
+				if (! is_array($value)) $dir=$value;	// Default simple mode
+				else {
+					$constname = $this->const_name."_DIR_";
+					$dir       = $this->dirs[$key][1];
+					$addtodatabase = empty($this->dirs[$key][2])?'':$this->dirs[$key][2]; // Create constante in llx_const
+					$subname   = empty($this->dirs[$key][3])?'':strtoupper($this->dirs[$key][3]); // Add submodule name (ex: $conf->module->submodule->dir_output)
+					$forcename = empty($this->dirs[$key][4])?'':strtoupper($this->dirs[$key][4]); // Change the module name if different
+
+					if ($forcename) $constname = 'MAIN_MODULE_'.$forcename."_DIR_";
+					if ($subname)   $constname = $constname.$subname."_";
+
+					$name      = $constname.strtoupper($this->dirs[$key][0]);
+				}
 
 				// Define directory full path
 				if (empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $fulldir = DOL_DATA_ROOT.$dir;
@@ -1057,8 +1072,9 @@ class DolibarrModules
 						$err++;
 					}
 				}
-				// define the constant if requested
-				if ($const)
+
+				// Define the constant in database if requested (not the default mode)
+				if ($addtodatabase)
 				{
 					$result = $this->insert_dirs($name,$dir);
 					if ($result) $err++;
@@ -1122,9 +1138,11 @@ class DolibarrModules
 		$sql.= " WHERE name like '".$this->const_name."_DIR_%'";
 		$sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog("DolibarrModules::delete_tabs sql=".$sql);
+		dol_syslog("DolibarrModules::delete_dirs sql=".$sql);
 		if (! $this->db->query($sql))
 		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("DolibarrModules::delete_dirs ".$this->error, LOG_ERR);
 			$err++;
 		}
 

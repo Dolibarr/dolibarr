@@ -107,7 +107,8 @@ class Conf
 						$this->tabs_modules[$params[0]][]=$value;
 						//print 'xxx'.$params[0].'-'.$value;
 					}
-					// If this is constant for module directories
+					// If this is constant to force a module directories (used to manage some exceptions)
+					// Should not be used by modules
 					if (eregi('^MAIN_MODULE_([A-Z_]+)_DIR_',$key,$reg) && $value)
 					{
 						$module=strtolower($reg[1]);
@@ -116,7 +117,7 @@ class Conf
 						{
 							$dir_name  = "dir_".strtolower($reg[2]);
 							$submodule = strtolower($reg[1]);
-							$this->$module->$submodule->$dir_name = $value;
+							$this->$module->$submodule->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
 							//print '->'.$module.'->'.$submodule.'->'.$dir_name.' = '.$this->$module->$submodule->$dir_name.'<br>';
 						}
 						else if (eregi('_DIR_([A-Z]+)$',$key,$reg))
@@ -167,6 +168,13 @@ class Conf
 		// If multicompany module is enabled, we redefine the root of data
 		if (! empty($this->global->MAIN_MODULE_MULTICOMPANY) && ! empty($this->entity)) $rootfordata.='/'.$this->entity;
 
+		// For backward compatibility
+		// TODO Remove params this->xxx->enabled. Must be replaced by conf->global->MAIN_MODULE_XXX
+		$this->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
+		$this->compta->enabled=defined("MAIN_MODULE_COMPTABILITE")?MAIN_MODULE_COMPTABILITE:0;
+		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
+		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
+
 		// Define default dir_output and dir_temp for directories of modules
 		foreach($this->modules as $module)
 		{
@@ -176,19 +184,13 @@ class Conf
 			else $this->$module->dir_temp=$rootfordata.$this->$module->dir_temp;
 		}
 
-		// For backward compatibility
-		$this->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
-		$this->compta->enabled=defined("MAIN_MODULE_COMPTABILITE")?MAIN_MODULE_COMPTABILITE:0;
-		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
-		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
-
 		// Exception: Some dir are not the name of module. So we keep exception here
 		// for backward compatibility.
 
 		// Module user
 		$this->user->dir_output=$rootfordata."/users";
 		$this->user->dir_temp=$rootfordata."/users/temp";
-		
+
 		// Module RSS
 		$this->externalrss->dir_output=$rootfordata."/rss";
 		$this->externalrss->dir_temp=$rootfordata."/rss/temp";
@@ -223,8 +225,6 @@ class Conf
 		$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";
 		$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 		$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
-		// Module produit
-		$this->produit->MultiPricesEnabled=defined("PRODUIT_MULTIPRICES")?PRODUIT_MULTIPRICES:0;
 		// Module service
 		$this->service->dir_output=$rootfordata."/produit";
 		$this->service->dir_temp  =$rootfordata."/produit/temp";
@@ -364,8 +364,8 @@ class Conf
 			$this->global->MAIN_GRAPH_LIBRARY = 'artichow';
 		}
 
-		// Format de la date
-		// \todo Mettre les 4 formats dans fichier langue
+		// Format for date
+		// TODO Mettre les formats dans fichier langue
 		$this->format_date_short="%d/%m/%Y";
 		$this->format_hour_short="%H:%M";
 		$this->format_date_text_short="%d %b %Y";
@@ -384,7 +384,7 @@ class Conf
 		// Define umask
 		if (empty($this->global->MAIN_UMASK)) $this->global->MAIN_UMASK='0664';
 
-		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de desactiver la fonction TVA
+		/* TODO Ajouter une option Gestion de la TVA dans le module compta qui permet de desactiver la fonction TVA
 		 * (pour particuliers ou liberaux en franchise)
 		 * En attendant, valeur forcee a 1 car toujours interessant a avoir meme ceux qui veulent pas.
 		 */

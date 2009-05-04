@@ -69,20 +69,9 @@ class modMyModule extends DolibarrModules
 		$this->picto='generic';
 
 		// Data directories to create when module is enabled.
+		// Example: this->dirs = array("/mymodule/temp");
 		$this->dirs = array();
 		$r=0;
-			
-		//$this->dirs[$r][0] = "output";
-    //$this->dirs[$r][1] = "/mymodule";
-    //$this->dirs[$r][2] = 1;                // Create constante in database if different of "output" and "temp" (ex: MAIN_MODULE_MYMODULE_DIR_OUTPUT)
-		//$this->dirs[$r][3] = "submodule";      // Add submodule name (ex: $conf->mymodule->submodule->dir_output)
-		//$this->dirs[$r][4] = "newmodulename";  // Change the module name if different (ex: $conf->newmodulename->dir_output)
-    //$r++;
-		//$this->dirs[$r][0] = "temp";
-    //$this->dirs[$r][1] = "/mymodule/temp";
-    //$this->dirs[$r][2] = 1;                // Create constante in database if different of "output" and "temp" (ex: MAIN_MODULE_MYMODULE_DIR_TEMP)
-		//$this->dirs[$r][3] = "submodule";      // Add submodule name (ex: $conf->mymodule->submodule->dir_temp)
-		//$this->dirs[$r][4] = "newmodulename";  // Change the module name if different (ex: $conf->newmodulename->dir_temp)
 
 		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
 		$this->style_sheet = '';

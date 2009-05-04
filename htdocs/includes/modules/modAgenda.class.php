@@ -63,15 +63,7 @@ class modAgenda extends DolibarrModules
         $this->picto='calendar';
 
         // Data directories to create when module is enabled
-        $this->dirs = array();
-        $r=0;
-        
-        $this->dirs[$r][0] = "output";
-        $this->dirs[$r][1] = "/agenda";
-        
-        $r++;
-        $this->dirs[$r][0] = "temp";
-        $this->dirs[$r][1] = "/agenda/temp";
+        $this->dirs = array("/agenda/temp");
 
         // Config pages
         //-------------
@@ -182,7 +174,7 @@ class modAgenda extends DolibarrModules
     {
 		// Prevent pb of modules not correctly disabled
 		//$this->remove($options);
-    	
+
 		$sql = array();
 
         return $this->_init($sql,$options);
