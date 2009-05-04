@@ -754,7 +754,7 @@ else
 		 * Affichage onglets
 		 */
 		$head = user_prepare_head($fuser);
-		
+
 		$title = $fuser->admin ? $langs->trans("Administrator") : $langs->trans("User");
 		$title = !$fuser->entity ? $langs->trans("SuperAdministrator") : $title;
 
@@ -892,7 +892,7 @@ else
 			// Administrateur
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
 			print '<td>'.yn($fuser->admin);
-			if ($fuser->admin && !$fuser->entity)
+			if ($conf->global->MAIN_MODULE_MULTICOMPANY && $fuser->admin && ! $fuser->entity)
 			{
 				print ' '.img_redstar($langs->trans("SuperAdministrator"));
 			}
@@ -1337,7 +1337,7 @@ else
 				$text='<input size="12" maxlength="32" type="text" class="flat" name="password" value="'.$fuser->pass.'">';
 				if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
 				{
-					$text=$html->textwithwarning($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication));
+					$text=$html->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,0,'warning');
 				}
 			}
 			else
@@ -1366,7 +1366,7 @@ else
 				{
 					$yn = yn($fuser->admin);
 					print '<input type="hidden" name="admin" value="'.$fuser->admin.'">';
-					print $html->textwithwarning($yn,$langs->trans("DontChangeSuperAdmin"));
+					print $html->textwithpicto($yn,$langs->trans("DontChangeSuperAdmin"),1,0,'warning');
 				}
 				print '</td></tr>';
 			}

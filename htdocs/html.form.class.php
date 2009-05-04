@@ -145,12 +145,12 @@ class Form
 	}
 
 	/**
-	 *	\brief     Affiche un texte avec picto help qui affiche un tooltip
-	 *	\param     text				Texte à afficher
-	 *	\param     htmltooltip     	Contenu html du tooltip
-	 *	\param		direction			1=Le picto est après, -1=le picto est avant
-	 *	\param		usehelpcursor		1=Utilise curseur help, 0=Curseur par defaut
-	 *	\return	string				Code html du texte,picto
+	 *	\brief     Show a text with a picto and a tooltip on picto
+	 *	\param     	text				Text to show
+	 *	\param   	htmltooltip     	Content of tooltip
+	 *	\param		direction			1=Icon is after text, -1=Icon is before text
+	 *	\param		usehelpcursor		1=Use a help cursor, 0=Use default cursor
+	 * 	\return		string				HTML code of text, picto, tooltip
 	 */
 	function textwithhelp($text,$htmltext,$direction=1,$usehelpcursor=1)
 	{
@@ -161,33 +161,22 @@ class Form
 	}
 
 	/**
-	 *	\brief     Affiche un texte avec picto warning qui affiche un tooltip
-	 *	\param     text				Texte à afficher
-	 *	\param     htmltooltip     	Contenu html du tooltip
-	 *	\param		direction			1=Le picto est après, -1=le picto est avant
-	 *	\return	string				Code html du texte,picto
+	 *	\brief     	Show a text with a picto and a tooltip on picto
+	 *	\param     	text				Text to show
+	 *	\param   	htmltooltip     	Content of tooltip
+	 *	\param		direction			1=Icon is after text, -1=Icon is before text
+	 *	\param		usehelpcursor		1=Use a help cursor, 0=Use default cursor
+	 * 	\return		string				HTML code of text, picto, tooltip
 	 */
-	function textwithwarning($text,$htmltext,$direction=1)
+	function textwithpicto($text,$htmltext,$direction=1,$usehelpcursor=0,$type='help')
 	{
 		global $conf;
 		$alt='';
+		if ($type == 'help')    	$img=img_help($usehelpcursor,$alt);
+		if ($type == 'warning') 	$img=img_warning($alt);
+		if ($type == 'superadmin') 	$img=img_redstar($alt);
 		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';
-		return $this->textwithtooltip($text,$htmltext,2,$direction,img_warning($alt));
-	}
-	
-	/**
-	 *	\brief     Affiche un texte avec picto redstar qui affiche un tooltip
-	 *	\param     text				Texte à afficher
-	 *	\param     htmltooltip     	Contenu html du tooltip
-	 *	\param		direction			1=Le picto est après, -1=le picto est avant
-	 *	\return	string				Code html du texte,picto
-	 */
-	function textwithredstar($text,$htmltext,$direction=1)
-	{
-		global $conf;
-		$alt='';
-		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';
-		return $this->textwithtooltip($text,$htmltext,2,$direction,img_redstar($alt));
+		return $this->textwithtooltip($text,$htmltext,2,$direction,$img);
 	}
 
 
@@ -696,7 +685,7 @@ class Form
 	function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0)
 	{
 		global $conf;
-		
+
 		// Permettre l'exclusion d'utilisateurs
 		if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
 
@@ -804,7 +793,7 @@ class Form
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 		}
 		$sql.= " WHERE p.entity = ".$conf->entity;
-		
+
 		if($finished == 0)
 		{
 			$sql.= " AND p.finished = ".$finished;
@@ -1462,7 +1451,7 @@ class Form
 	function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0)
 	{
 		global $langs, $conf;
-		
+
 		$langs->load("admin");
 
 		$sql = "SELECT rowid, label, bank";
@@ -1485,7 +1474,7 @@ class Form
 				{
 					print '<option value="'.$obj->rowid.'">&nbsp;</option>';
 				}
-				
+
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);

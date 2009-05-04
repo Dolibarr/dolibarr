@@ -203,7 +203,7 @@ if (function_exists("imagecreatefrompng"))
 else
 {
 	$html = new Form($db);
-	$desc = $html->textwithwarning('',$langs->transnoentities("EnableGDLibraryDesc"),1);
+	$desc = $html->textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,0,'warning');
 	print $desc;
 }
 print "</td>";
@@ -246,7 +246,7 @@ if (function_exists("cl_scanfile")) // Clamav
 else
 {
 	$html = new Form($db);
-	$desc = $html->textwithwarning('',$langs->transnoentities("EnablePhpAVModuleDesc"),1);
+	$desc = $html->textwithpicto('',$langs->transnoentities("EnablePhpAVModuleDesc"),1,0,'warning');
 	print $desc;
 }
 print "</td>";

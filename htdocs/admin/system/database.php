@@ -128,7 +128,7 @@ else
 				}
 				if ($show==0) print $row[1];
 				if ($show==1) print $html->textwithhelp($row[1],$text);
-				if ($show==2) print $html->textwithwarning($row[1],$text);
+				if ($show==2) print $html->textwithpicto($row[1],$text,1,0,'warning');
 				print '</td>';
 				print "</tr>\n";
 			}

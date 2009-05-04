@@ -32,7 +32,7 @@ $langs->load("admin");
 $langs->load("mails");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 $substitutionarrayfortest=array(
 '__ID__' => 'TESTIdRecord',
@@ -43,8 +43,8 @@ $substitutionarrayfortest=array(
 
 
 /*
-* Actions
-*/
+ * Actions
+ */
 
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
@@ -72,26 +72,26 @@ if ($_POST['addfile'] || $_POST['addfilehtml'])
 
 	if (! empty($_FILES['addedfile']['tmp_name']))
 	{
-	    if (! is_dir($upload_dir)) create_exdir($upload_dir);
+		if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
-	    if (is_dir($upload_dir))
-	    {
-	    	if (dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0) > 0)
-	        {
-	        	$message = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-	            //print_r($_FILES);
+		if (is_dir($upload_dir))
+		{
+			if (dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0) > 0)
+			{
+				$message = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+				//print_r($_FILES);
 
 				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
 				$formmail = new FormMail($db);
 				$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
-	        }
-	        else
-	        {
-	            // Echec transfert (fichier d�passant la limite ?)
-	            $message = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-	            // print_r($_FILES);
-	        }
-	    }
+			}
+			else
+			{
+				// Echec transfert (fichier d�passant la limite ?)
+				$message = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+				// print_r($_FILES);
+			}
+		}
 	}
 	if ($_POST['addfile'])     $_GET["action"]='test';
 	if ($_POST['addfilehtml']) $_GET["action"]='testhtml';
@@ -101,7 +101,7 @@ if ($_POST['addfile'] || $_POST['addfilehtml'])
  * Send mail
  */
 if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
-	 && ! $_POST['addfile'] && ! $_POST['addfilehtml'] && ! $_POST['cancel'])
+&& ! $_POST['addfile'] && ! $_POST['addfilehtml'] && ! $_POST['cancel'])
 {
 	$error=0;
 
@@ -122,9 +122,9 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 	$formmail = new FormMail($db);
 
 	$attachedfiles=$formmail->get_attached_files();
-    $filepath = $attachedfiles['paths'];
-    $filename = $attachedfiles['names'];
-    $mimetype = $attachedfiles['mimes'];
+	$filepath = $attachedfiles['paths'];
+	$filename = $attachedfiles['names'];
+	$mimetype = $attachedfiles['mimes'];
 
 	if (empty($_POST["frommail"]))
 	{
@@ -138,41 +138,41 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 		$_GET["action"]='test';
 		$error++;
 	}
-    if (! $error)
-    {
+	if (! $error)
+	{
 		// Le message est-il en html
 		$msgishtml=0;	// Message is not HTML
 		if ($_POST['action'] == 'sendhtml') $msgishtml=1;	// Force message to HTML
 
-        // Pratique les substitutions sur le sujet et message
+		// Pratique les substitutions sur le sujet et message
 		$subject=make_substitutions($subject,$substitutionarrayfortest);
 		$body=make_substitutions($body,$substitutionarrayfortest);
 
-       	require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 		$mailfile = new CMailFile($subject,$sendto,$email_from,$body,
-       							$filepath,$mimetype,$filename,
-       							$sendtocc, $sendtoccc, $deliveryreceipt, $msgishtml,$errors_to);
+		$filepath,$mimetype,$filename,
+		$sendtocc, $sendtoccc, $deliveryreceipt, $msgishtml,$errors_to);
 
 		$result=$mailfile->sendfile();
 
-        if ($result)
-        {
-            $message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$email_from,$sendto).'</div>';
-        }
-        else
-        {
-            $message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result.'</div>';
-        }
+		if ($result)
+		{
+			$message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$email_from,$sendto).'</div>';
+		}
+		else
+		{
+			$message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result.'</div>';
+		}
 
-        $_GET["action"]='';
-    }
+		$_GET["action"]='';
+	}
 }
 
 
 
 /*
-* View
-*/
+ * View
+ */
 
 $linuxlike=1;
 if (eregi('^win',PHP_OS)) $linuxlike=0;
@@ -203,30 +203,30 @@ if ($message) print $message.'<br>';
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
 	$html=new Form($db);
-	
+
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-  print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="action" value="update">';
 
-  clearstatcache();
-  $var=true;
+	clearstatcache();
+	$var=true;
 
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-  // Disable
-  $var=!$var;
+	// Disable
+	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
 	print $html->selectyesno('MAIN_DISABLE_ALL_MAILS',$conf->global->MAIN_DISABLE_ALL_MAILS,1);
-  print '</td></tr>';
+	print '</td></tr>';
 
-  // Method
-  $var=!$var;
+	// Method
+	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 	$listofmethods=array();
 	$listofmethods['mail']='PHP mail function';
 	$listofmethods['smtps']='SMTP/SMTPS socket library';
 	// SuperAdministrator access only
-	if ((!$conf->global->MAIN_MODULE_MULTICOMPANY) || ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->admin && !$user->entity))
+	if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
 	{
 		print $html->select_array('MAIN_MAIL_SENDMODE',$listofmethods,$conf->global->MAIN_MAIL_SENDMODE);
 	}
@@ -236,189 +236,189 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		elseif ($conf->global->MAIN_MAIL_SENDMODE == 'smtps') $text = 'SMTPS library';
 		else { $text = $langs->trans("Undefined"); }
 		$htmltext = $langs->trans("ContactSuperAdminForChange");
-		print $html->textwithredstar($text,$htmltext);
+		print $html->textwithpicto($text,$htmltext,1,0,'superadmin');
 	}
-  print '</td></tr>';
-  
-  // Server
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td>';
-  if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
-  {
-  	print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
-  	print '</td><td>';
-  	print $langs->trans("SeeLocalSendMailSetup");
-  }
-  else
-  {
-  	$smtpserver = ini_get('SMTP')?ini_get('SMTP'):$langs->transnoentities("Undefined");
-  	print $langs->trans("MAIN_MAIL_SMTP_SERVER",$smtpserver);
-  	print '</td><td>';
-  	// SuperAdministrator access only
-  	if ((!$conf->global->MAIN_MODULE_MULTICOMPANY) || ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->admin && !$user->entity))
-  	{
-  		print '<input class="flat" name="MAIN_MAIL_SMTP_SERVER" size="18" value="' . $conf->global->MAIN_MAIL_SMTP_SERVER . '">';
-  	}
-  	else
-  	{
-  		$text = $conf->global->MAIN_MAIL_SMTP_SERVER ? $conf->global->MAIN_MAIL_SMTP_SERVER : $smtpserver;
-  		$htmltext = $langs->trans("ContactSuperAdminForChange");
-  		print $html->textwithredstar($conf->global->MAIN_MAIL_SMTP_SERVER,$htmltext);
-  	}
-  }
-  print '</td></tr>';
+	print '</td></tr>';
 
-  // Port
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td>';
-  if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
-  {
-  	print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
-  	print '</td><td>';
-  	print $langs->trans("SeeLocalSendMailSetup");
-  }
-  else
-  {
-  	$smtpport = ini_get('smtp_port')?ini_get('smtp_port'):$langs->transnoentities("Undefined");
-  	print $langs->trans("MAIN_MAIL_SMTP_PORT",$smtpport);
-  	print '</td><td>';
-  	// SuperAdministrator access only
-  	if ((!$conf->global->MAIN_MODULE_MULTICOMPANY) || ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->admin && !$user->entity))
-  	{
-  		print '<input class="flat" name="MAIN_MAIL_SMTP_PORT" size="3" value="' . $conf->global->MAIN_MAIL_SMTP_PORT . '">';
-  	}
-  	else
-  	{
-  		$text = $conf->global->MAIN_MAIL_SMTP_PORT ? $conf->global->MAIN_MAIL_SMTP_PORT : $smtpport;
-  		$htmltext = $langs->trans("ContactSuperAdminForChange");
-  		print $html->textwithredstar($text,$htmltext);
-  	}
-  }
-  print '</td></tr>';
-  
-  // ID
-  if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
-  {
-  	$var=!$var;
-  	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
-  	// SuperAdministrator access only
-  	if ((!$conf->global->MAIN_MODULE_MULTICOMPANY) || ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->admin && !$user->entity))
-  	{
-  		print '<input class="flat" name="MAIN_MAIL_SMTPS_ID" size="32" value="' . $conf->global->MAIN_MAIL_SMTPS_ID . '">';
-  	}
-  	else
-  	{
-  		$htmltext = $langs->trans("ContactSuperAdminForChange");
-  		print $html->textwithredstar($conf->global->MAIN_MAIL_SMTPS_ID,$htmltext);
-  	}
-  	print '</td></tr>';
-  }
+	// Server
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>';
+	if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	{
+		print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
+		print '</td><td>';
+		print $langs->trans("SeeLocalSendMailSetup");
+	}
+	else
+	{
+		$smtpserver = ini_get('SMTP')?ini_get('SMTP'):$langs->transnoentities("Undefined");
+		print $langs->trans("MAIN_MAIL_SMTP_SERVER",$smtpserver);
+		print '</td><td>';
+		// SuperAdministrator access only
+		if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
+		{
+			print '<input class="flat" name="MAIN_MAIL_SMTP_SERVER" size="18" value="' . $conf->global->MAIN_MAIL_SMTP_SERVER . '">';
+		}
+		else
+		{
+			$text = $conf->global->MAIN_MAIL_SMTP_SERVER ? $conf->global->MAIN_MAIL_SMTP_SERVER : $smtpserver;
+			$htmltext = $langs->trans("ContactSuperAdminForChange");
+			print $html->textwithpicto($text,$htmltext,1,0,'superadmin');
+		}
+	}
+	print '</td></tr>';
 
-  // PW
-  if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
-  {
-  	$var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
-    // SuperAdministrator access only
-    if ((!$conf->global->MAIN_MODULE_MULTICOMPANY) || ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->admin && !$user->entity))
-  	{
-  		print '<input class="flat" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . $conf->global->MAIN_MAIL_SMTPS_PW . '">';
-  	}
-  	else
-  	{
-  		$htmltext = $langs->trans("ContactSuperAdminForChange");
-  		print $html->textwithredstar($conf->global->MAIN_MAIL_SMTPS_PW,$htmltext);
-  	}
-  	print '</td></tr>';
-  }
+	// Port
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>';
+	if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	{
+		print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
+		print '</td><td>';
+		print $langs->trans("SeeLocalSendMailSetup");
+	}
+	else
+	{
+		$smtpport = ini_get('smtp_port')?ini_get('smtp_port'):$langs->transnoentities("Undefined");
+		print $langs->trans("MAIN_MAIL_SMTP_PORT",$smtpport);
+		print '</td><td>';
+		// SuperAdministrator access only
+		if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
+		{
+			print '<input class="flat" name="MAIN_MAIL_SMTP_PORT" size="3" value="' . $conf->global->MAIN_MAIL_SMTP_PORT . '">';
+		}
+		else
+		{
+			$text = $conf->global->MAIN_MAIL_SMTP_PORT ? $conf->global->MAIN_MAIL_SMTP_PORT : $smtpport;
+			$htmltext = $langs->trans("ContactSuperAdminForChange");
+			print $html->textwithpicto($text,$htmltext,1,0,'superadmin');
+		}
+	}
+	print '</td></tr>';
 
-  // From
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td><td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . $conf->global->MAIN_MAIL_EMAIL_FROM . '"></td></tr>';
+	// ID
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	{
+		$var=!$var;
+		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
+		// SuperAdministrator access only
+		if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
+		{
+			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID" size="32" value="' . $conf->global->MAIN_MAIL_SMTPS_ID . '">';
+		}
+		else
+		{
+			$htmltext = $langs->trans("ContactSuperAdminForChange");
+			print $html->textwithpicto($conf->global->MAIN_MAIL_SMTPS_ID,$htmltext,1,0,'superadmin');
+		}
+		print '</td></tr>';
+	}
 
-  print '</table>';
+	// PW
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	{
+		$var=!$var;
+		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
+		// SuperAdministrator access only
+		if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
+		{
+			print '<input class="flat" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . $conf->global->MAIN_MAIL_SMTPS_PW . '">';
+		}
+		else
+		{
+			$htmltext = $langs->trans("ContactSuperAdminForChange");
+			print $html->textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW,$htmltext,1,0,'superadmin');
+		}
+		print '</td></tr>';
+	}
 
-  print '<br><center>';
-  print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-  print '</center>';
+	// From
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td><td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . $conf->global->MAIN_MAIL_EMAIL_FROM . '"></td></tr>';
 
-  print '</form>';
-  print '<br>';
+	print '</table>';
+
+	print '<br><center>';
+	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '</center>';
+
+	print '</form>';
+	print '<br>';
 }
 else
 {
 	$var=true;
 
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-    // Disable
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_MAILS).'</td></tr>';
+	// Disable
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_MAILS).'</td></tr>';
 
-    // Method
-   	$var=!$var;
-   	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
-   	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail') print 'PHP mail function';
-   	elseif ($conf->global->MAIN_MAIL_SENDMODE == 'smtps') print 'SMTPS library';
-   	else { print $langs->trans("Undefined"); }
-   	print '</td></tr>';
+	// Method
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail') print 'PHP mail function';
+	elseif ($conf->global->MAIN_MAIL_SENDMODE == 'smtps') print 'SMTPS library';
+	else { print $langs->trans("Undefined"); }
+	print '</td></tr>';
 
-    // Server
-    $var=!$var;
-    if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
-    {
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
-    }
-    else
-    {
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER",ini_get('SMTP')?ini_get('SMTP'):$langs->transnoentities("Undefined")).'</td><td>'.$conf->global->MAIN_MAIL_SMTP_SERVER.'</td></tr>';
-    }
+	// Server
+	$var=!$var;
+	if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	{
+		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
+	}
+	else
+	{
+		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER",ini_get('SMTP')?ini_get('SMTP'):$langs->transnoentities("Undefined")).'</td><td>'.$conf->global->MAIN_MAIL_SMTP_SERVER.'</td></tr>';
+	}
 
-    // Port
-    $var=!$var;
-    if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
-    {
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
-    }
-    else
-    {
-	    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT",ini_get('smtp_port')?ini_get('smtp_port'):$langs->transnoentities("Undefined")).'</td><td>'.$conf->global->MAIN_MAIL_SMTP_PORT.'</td></tr>';
-    }
+	// Port
+	$var=!$var;
+	if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	{
+		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
+	}
+	else
+	{
+		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT",ini_get('smtp_port')?ini_get('smtp_port'):$langs->transnoentities("Undefined")).'</td><td>'.$conf->global->MAIN_MAIL_SMTP_PORT.'</td></tr>';
+	}
 
-    // SMTPS ID
-    $var=!$var;
-    if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
-    {
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_ID.'</td></tr>';
-    }
+	// SMTPS ID
+	$var=!$var;
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	{
+		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_ID.'</td></tr>';
+	}
 
-    // SMTPS PW
-    $var=!$var;
-    if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
-    {
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_PW.'</td></tr>';
-    }
+	// SMTPS PW
+	$var=!$var;
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	{
+		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_PW.'</td></tr>';
+	}
 
-    // From
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td><td>'.$conf->global->MAIN_MAIL_EMAIL_FROM.'</td></tr>';
+	// From
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td><td>'.$conf->global->MAIN_MAIL_EMAIL_FROM.'</td></tr>';
 
-    print '</table>';
+	print '</table>';
 
 
 	// Boutons actions
-    print '<div class="tabsAction">';
+	print '<div class="tabsAction">';
 	if (! $linuxlike)
 	{
-	    if (function_exists('fsockopen') && $port && $server)
+		if (function_exists('fsockopen') && $port && $server)
 		{
-		    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
 		}
 	}
 	else
 	{
-	    print '<a class="butActionRefused" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
 	if ($conf->fckeditor->enabled)
@@ -426,117 +426,117 @@ else
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&amp;mode=init">'.$langs->trans("DoTestSendHTML").'</a>';
 	}
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
-    print '</div>';
+	print '</div>';
 
 
 	// Affichage formulaire de TEST
 	if ($_GET["action"] == 'testconnect')
 	{
-			  print '<br>';
-			  print_titre($langs->trans("DoTestServerAvailability"));
+		print '<br>';
+		print_titre($langs->trans("DoTestServerAvailability"));
 
-			  // Cree l'objet formulaire mail
-			  include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-			  $mail = new CMailFile('','','','');
-			  $result=$mail->check_server_port($server,$port);
-			  if ($result) print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort",$server,$port).'</div>';
-			  else
-			  {
-				print '<div class="error">'.$langs->trans("ServerNotAvailableOnIPOrPort",$server,$port);
-				if ($mail->error) print ' - '.$langs->convToOutputCharset($mail->error,'ISO-8859-1');
-				print '</div>';
-			  }
-			  print '<br>';
+		// Cree l'objet formulaire mail
+		include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+		$mail = new CMailFile('','','','');
+		$result=$mail->check_server_port($server,$port);
+		if ($result) print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort",$server,$port).'</div>';
+		else
+		{
+			print '<div class="error">'.$langs->trans("ServerNotAvailableOnIPOrPort",$server,$port);
+			if ($mail->error) print ' - '.$langs->convToOutputCharset($mail->error,'ISO-8859-1');
+			print '</div>';
+		}
+		print '<br>';
 	}
 
 	// Affichage formulaire de TEST simple
 	if ($_GET["action"] == 'test')
 	{
-		  print '<br>';
-		  print_titre($langs->trans("DoTestSend"));
+		print '<br>';
+		print_titre($langs->trans("DoTestSend"));
 
-		  // Cree l'objet formulaire mail
-		  include_once(DOL_DOCUMENT_ROOT."/html.formmail.class.php");
-		  $formmail = new FormMail($db);
-		  $formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
-		  $formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
-		  $formmail->withfromreadonly=0;
-		  $formmail->withsubstit=0;
-		  $formmail->withfrom=1;
-		  $formmail->witherrorsto=1;
-		  $formmail->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->email?$user->email:1);
-		  $formmail->withtocc=(isset($_POST['sendtocc'])?$_POST['sendtocc']:1);
-		  $formmail->withtoccc=(isset($_POST['sendtoccc'])?$_POST['sendtoccc']:1);
-		  $formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
-		  $formmail->withtopicreadonly=0;
-		  $formmail->withfile=2;
-		  $formmail->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("Test"));
-		  $formmail->withbodyreadonly=0;
-		  $formmail->withcancel=1;
-		  $formmail->withdeliveryreceipt=1;
-		  $formmail->withfckeditor=0;
-		  // Tableau des substitutions
-		  $formmail->substit=$substitutionarrayfortest;
-		  // Tableau des parametres complementaires du post
-		  $formmail->param["action"]="send";
-		  $formmail->param["models"]="body";
-		  $formmail->param["mailid"]=$mil->id;
-		  $formmail->param["returnurl"]=DOL_URL_ROOT."/admin/mails.php";
+		// Cree l'objet formulaire mail
+		include_once(DOL_DOCUMENT_ROOT."/html.formmail.class.php");
+		$formmail = new FormMail($db);
+		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
+		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
+		$formmail->withfromreadonly=0;
+		$formmail->withsubstit=0;
+		$formmail->withfrom=1;
+		$formmail->witherrorsto=1;
+		$formmail->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->email?$user->email:1);
+		$formmail->withtocc=(isset($_POST['sendtocc'])?$_POST['sendtocc']:1);
+		$formmail->withtoccc=(isset($_POST['sendtoccc'])?$_POST['sendtoccc']:1);
+		$formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
+		$formmail->withtopicreadonly=0;
+		$formmail->withfile=2;
+		$formmail->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("Test"));
+		$formmail->withbodyreadonly=0;
+		$formmail->withcancel=1;
+		$formmail->withdeliveryreceipt=1;
+		$formmail->withfckeditor=0;
+		// Tableau des substitutions
+		$formmail->substit=$substitutionarrayfortest;
+		// Tableau des parametres complementaires du post
+		$formmail->param["action"]="send";
+		$formmail->param["models"]="body";
+		$formmail->param["mailid"]=$mil->id;
+		$formmail->param["returnurl"]=DOL_URL_ROOT."/admin/mails.php";
 
-			// Init list of files
-			if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
-			{
-				$formmail->clear_attached_files();
-			}
+		// Init list of files
+		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+		{
+			$formmail->clear_attached_files();
+		}
 
-		  $formmail->show_form('addfile');
+		$formmail->show_form('addfile');
 
-		  print '<br>';
+		print '<br>';
 	}
 
 	// Affichage formulaire de TEST HTML
 	if ($_GET["action"] == 'testhtml')
 	{
-		  print '<br>';
-		  print_titre($langs->trans("DoTestSendHTML"));
+		print '<br>';
+		print_titre($langs->trans("DoTestSendHTML"));
 
-		  // Cree l'objet formulaire mail
-		  include_once(DOL_DOCUMENT_ROOT."/html.formmail.class.php");
-		  $formmail = new FormMail($db);
-		  $formmail->fromname = $conf->global->MAIN_MAIL_EMAIL_FROM;
-		  $formmail->frommail = $conf->global->MAIN_MAIL_EMAIL_FROM;
-		  $formmail->withfromreadonly=0;
-		  $formmail->withsubstit=0;
-		  $formmail->withfrom=1;
-		  $formmail->witherrorsto=1;
-		  $formmail->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->email?$user->email:1);
-		  $formmail->withtocc=(isset($_POST['sendtocc'])?$_POST['sendtocc']:1);
-		  $formmail->withtoccc=(isset($_POST['sendtoccc'])?$_POST['sendtoccc']:1);
-		  $formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
-		  $formmail->withtopicreadonly=0;
-		  $formmail->withfile=2;
-		  $formmail->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("Test"));
-		  $formmail->withbodyreadonly=0;
-		  $formmail->withcancel=1;
-		  $formmail->withdeliveryreceipt=1;
-		  $formmail->withfckeditor=1;
-		  // Tableau des substitutions
-		  $formmail->substit=$substitutionarrayfortest;
-		  // Tableau des parametres complementaires du post
-		  $formmail->param["action"]="sendhtml";
-		  $formmail->param["models"]="body";
-		  $formmail->param["mailid"]=$mil->id;
-		  $formmail->param["returnurl"]=DOL_URL_ROOT."/admin/mails.php";
+		// Cree l'objet formulaire mail
+		include_once(DOL_DOCUMENT_ROOT."/html.formmail.class.php");
+		$formmail = new FormMail($db);
+		$formmail->fromname = $conf->global->MAIN_MAIL_EMAIL_FROM;
+		$formmail->frommail = $conf->global->MAIN_MAIL_EMAIL_FROM;
+		$formmail->withfromreadonly=0;
+		$formmail->withsubstit=0;
+		$formmail->withfrom=1;
+		$formmail->witherrorsto=1;
+		$formmail->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->email?$user->email:1);
+		$formmail->withtocc=(isset($_POST['sendtocc'])?$_POST['sendtocc']:1);
+		$formmail->withtoccc=(isset($_POST['sendtoccc'])?$_POST['sendtoccc']:1);
+		$formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
+		$formmail->withtopicreadonly=0;
+		$formmail->withfile=2;
+		$formmail->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("Test"));
+		$formmail->withbodyreadonly=0;
+		$formmail->withcancel=1;
+		$formmail->withdeliveryreceipt=1;
+		$formmail->withfckeditor=1;
+		// Tableau des substitutions
+		$formmail->substit=$substitutionarrayfortest;
+		// Tableau des parametres complementaires du post
+		$formmail->param["action"]="sendhtml";
+		$formmail->param["models"]="body";
+		$formmail->param["mailid"]=$mil->id;
+		$formmail->param["returnurl"]=DOL_URL_ROOT."/admin/mails.php";
 
-			// Init list of files
-			if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
-			{
-				$formmail->clear_attached_files();
-			}
+		// Init list of files
+		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+		{
+			$formmail->clear_attached_files();
+		}
 
-		  $formmail->show_form('addfilehtml');
+		$formmail->show_form('addfilehtml');
 
-		  print '<br>';
+		print '<br>';
 	}
 }
 
