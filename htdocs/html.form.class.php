@@ -145,7 +145,7 @@ class Form
 	}
 
 	/**
-	 *	\brief     Show a text with a picto and a tooltip on picto
+	 *	\brief     	Show a text with a picto and a tooltip on picto
 	 *	\param     	text				Text to show
 	 *	\param   	htmltooltip     	Content of tooltip
 	 *	\param		direction			1=Icon is after text, -1=Icon is before text
@@ -165,14 +165,13 @@ class Form
 	 *	\param     	text				Text to show
 	 *	\param   	htmltooltip     	Content of tooltip
 	 *	\param		direction			1=Icon is after text, -1=Icon is before text
-	 *	\param		usehelpcursor		1=Use a help cursor, 0=Use default cursor
 	 * 	\return		string				HTML code of text, picto, tooltip
 	 */
-	function textwithpicto($text,$htmltext,$direction=1,$usehelpcursor=0,$type='help')
+	function textwithpicto($text,$htmltext,$direction=1,$type='help')
 	{
 		global $conf;
 		$alt='';
-		if ($type == 'help')    	$img=img_help($usehelpcursor,$alt);
+		if ($type == 'help')    	$img=img_help($alt);
 		if ($type == 'warning') 	$img=img_warning($alt);
 		if ($type == 'superadmin') 	$img=img_redstar($alt);
 		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';
