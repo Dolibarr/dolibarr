@@ -936,9 +936,6 @@ class Product extends CommonObject
 			$this->barcode            = $result["barcode"];
 			$this->barcode_type       = $result["fk_barcode_type"];
 
-			$this->stock_in_command   = 0;	// TODO
-			$this->stock_in_propal    = 0;	// TODO
-
 			$this->next_prev_filter = 'entity = '.$conf->entity;
 
 			$this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
