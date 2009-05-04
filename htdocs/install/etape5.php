@@ -107,18 +107,18 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 	
   $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
   $ok = 0;
-
-  // Active module user
-  $modName='modUser';
-  $file = $modName . ".class.php";
-  dolibarr_install_syslog('install/etape5.php Load module user '.DOL_DOCUMENT_ROOT ."/includes/modules/".$file, LOG_INFO);
-	include_once(DOL_DOCUMENT_ROOT ."/includes/modules/".$file);
-  $objMod = new $modName($db);
-  $objMod->init();
     
   // If first install
   if ($_POST["action"] == "set")
   {
+  	// Active module user
+  	$modName='modUser';
+  	$file = $modName . ".class.php";
+  	dolibarr_install_syslog('install/etape5.php Load module user '.DOL_DOCUMENT_ROOT ."/includes/modules/".$file, LOG_INFO);
+  	include_once(DOL_DOCUMENT_ROOT ."/includes/modules/".$file);
+  	$objMod = new $modName($db);
+  	$objMod->init();
+  	
   	if ($db->connected == 1)
     {
     	$conf->setValues($db);
