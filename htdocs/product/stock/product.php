@@ -32,16 +32,24 @@ require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formproduct.class.php");
 
-if (! $user->rights->produit->lire || ! $product->type == 0 || ! $conf->stock->enabled)	accessforbidden();
-
 $langs->load("products");
 $langs->load("orders");
 $langs->load("bills");
 
 // Security check
-$id = isset($_GET["id"])?$_GET["id"]:'';
+$id = '';
+if (isset($_GET["id"]))
+{
+	$id = $_GET["id"];
+	$fieldid = 'rowid';
+}
+if (isset($_GET["ref"]))
+{
+	$id = $_GET["ref"];
+	$fieldid = 'ref';
+}
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product');
+$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
 
 $mesg = '';
 

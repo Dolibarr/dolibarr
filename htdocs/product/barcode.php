@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,20 @@ require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 $langs->load("products");
 $langs->load("bills");
 
-if (!$user->rights->barcode->lire)
-accessforbidden();
+// Security check
+$id = '';
+if (isset($_GET["id"]))
+{
+	$id = $_GET["id"];
+	$fieldid = 'rowid';
+}
+if (isset($_GET["ref"]))
+{
+	$id = $_GET["ref"];
+	$fieldid = 'ref';
+}
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
 
 /*
  * Actions

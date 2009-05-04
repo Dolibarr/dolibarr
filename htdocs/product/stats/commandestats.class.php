@@ -35,7 +35,12 @@ class CommandeStats
   function getNbCommandeByYear()
   {
     $result = array();
-    $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*)  FROM ".MAIN_DB_PREFIX."commande GROUP BY dm DESC WHERE fk_statut > 0";
+    $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+    $sql.= " WHERE fk_statut > 0";
+    $sql.= " AND entity = ".$conf->entity;
+    $sql.= " GROUP BY dm DESC";
+
     if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();
@@ -58,9 +63,12 @@ class CommandeStats
   function getNbCommandeByMonth($year)
   {
     $result = array();
-    $sql = "SELECT date_format(date_commande,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."commande";
-    $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
-    $sql .= " GROUP BY dm DESC";
+    $sql = "SELECT date_format(date_commande,'%m') as dm, count(*)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+    $sql.= " WHERE date_format(date_commande,'%Y') = ".$year;
+    $sql.= " AND fk_statut > 0";
+    $sql.= " AND entity = ".$conf->entity;
+    $sql.= " GROUP BY dm DESC";
 
     if ($this->db->query($sql))
       {
@@ -90,9 +98,12 @@ class CommandeStats
   function getCommandeAmountByMonth($year)
   {
     $result = array();
-    $sql = "SELECT date_format(date_commande,'%m') as dm, sum(total_ht)  FROM ".MAIN_DB_PREFIX."commande";
-    $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
-    $sql .= " GROUP BY dm DESC";
+    $sql = "SELECT date_format(date_commande,'%m') as dm, sum(total_ht)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+    $sql.= " WHERE date_format(date_commande,'%Y') = ".$year;
+    $sql.= " AND fk_statut > 0";
+    $sql.= " AND entity = ".$conf->entity;
+    $sql.= " GROUP BY dm DESC";
 
     if ($this->db->query($sql))
       {
@@ -122,9 +133,12 @@ class CommandeStats
   function getCommandeAverageByMonth($year)
   {
     $result = array();
-    $sql = "SELECT date_format(date_commande,'%m') as dm, avg(total_ht)  FROM ".MAIN_DB_PREFIX."commande";
-    $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
-    $sql .= " GROUP BY dm DESC";
+    $sql = "SELECT date_format(date_commande,'%m') as dm, avg(total_ht)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+    $sql.= " WHERE date_format(date_commande,'%Y') = ".$year;
+    $sql.= " AND fk_statut > 0";
+    $sql.= " AND entity = ".$conf->entity;
+    $sql.= " GROUP BY dm DESC";
 
     if ($this->db->query($sql))
       {

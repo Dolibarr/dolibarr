@@ -36,12 +36,22 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 $langs->load("other");
 $langs->load("products");
 
-// Security check
-$id = isset($_GET["id"])?$_GET["id"]:'';
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
-if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product');
 
+// Security check
+$id = '';
+if (isset($_GET["id"]))
+{
+	$id = $_GET["id"];
+	$fieldid = 'rowid';
+}
+if (isset($_GET["ref"]))
+{
+	$id = $_GET["ref"];
+	$fieldid = 'ref';
+}
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
 
 // Get parameters
 $page=$_GET["page"];

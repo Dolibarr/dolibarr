@@ -32,8 +32,9 @@ require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 $langs->load("products");
 $langs->load("stocks");
 
-if (!$user->rights->produit->lire)
-accessforbidden();
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit');
 
 
 $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];

@@ -28,6 +28,10 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
 
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit');
+
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = $_GET["page"];
@@ -46,7 +50,10 @@ $staticproduct=new Product($db);
 llxHeader();
 
 //On n'affiche le lien page suivante que s'il y a une page suivante ...
-$sql = "select count(*) as c from ".MAIN_DB_PREFIX."product";
+$sql = "SELECT count(*) as c";
+$sql.= " FROM ".MAIN_DB_PREFIX."product";
+$sql.= " WHERE entity = ".$conf->entity;
+
 $result=$db->query($sql);
 if ($result)
 {

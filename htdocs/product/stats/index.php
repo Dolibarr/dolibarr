@@ -31,6 +31,9 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit');
 
 llxHeader();
 

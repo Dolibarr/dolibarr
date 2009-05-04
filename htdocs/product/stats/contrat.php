@@ -34,6 +34,21 @@ $langs->load("contracts");
 $langs->load("products");
 $langs->load("companies");
 
+// Security check
+$id = '';
+if (isset($_GET["id"]))
+{
+	$id = $_GET["id"];
+	$fieldid = 'rowid';
+}
+if (isset($_GET["ref"]))
+{
+	$id = $_GET["ref"];
+	$fieldid = 'ref';
+}
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+
 $mesg = '';
 
 $page = $_GET["page"];
@@ -45,18 +60,6 @@ $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="c.datec";
-
-// Securite
-$socid = 0;
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socid = $user->societe_id;
-}
-else
-{
-  $socid = 0;
-}
 
 
 /*
