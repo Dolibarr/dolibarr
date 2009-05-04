@@ -1,6 +1,5 @@
--- ========================================================================
--- Copyright (C) 2007-2009 Regis Houssin        <regis@dolibarr.fr>
--- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- ============================================================================
+-- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,15 +16,7 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- ========================================================================
+-- ===========================================================================
 
-create table llx_c_barcode_type
-(
-  rowid    integer            AUTO_INCREMENT PRIMARY KEY,
-  code     varchar(16)        NOT NULL,
-  entity   integer  DEFAULT 1 NOT NULL,	-- multi company id
-  libelle  varchar(50)        NOT NULL,
-  coder    varchar(16)        NOT NULL,
-  example  varchar(16)        NOT NULL
-  
-)type=innodb;
+
+ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY (numero, entity);

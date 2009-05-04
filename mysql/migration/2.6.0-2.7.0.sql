@@ -33,6 +33,8 @@ ALTER TABLE llx_facture_fourn ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER
 ALTER TABLE llx_livraison ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
 ALTER TABLE llx_fichinter ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
 ALTER TABLE llx_contrat ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
+ALTER TABLE llx_c_barcode_type ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER code;
+ALTER TABLE llx_dolibarr_modules ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER numero;
 
 ALTER TABLE llx_rights_def DROP PRIMARY KEY;
 ALTER TABLE llx_user_param DROP INDEX fk_user;
@@ -55,6 +57,7 @@ ALTER TABLE llx_facture_fourn DROP INDEX uk_facture_fourn_ref;
 ALTER TABLE llx_livraison DROP INDEX idx_expedition_uk_ref;
 ALTER TABLE llx_livraison DROP INDEX idx_livraison_uk_ref;
 ALTER TABLE llx_fichinter DROP INDEX ref;
+ALTER TABLE llx_dolibarr_modules DROP PRIMARY KEY;
 
 ALTER TABLE llx_rights_def ADD PRIMARY KEY (id, entity);
 ALTER TABLE llx_user_param ADD UNIQUE INDEX uk_user_param (fk_user,param,entity);
@@ -78,3 +81,4 @@ ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref (facnumber, 
 ALTER TABLE llx_livraison ADD UNIQUE INDEX idx_livraison_uk_ref (ref, entity);
 ALTER TABLE llx_fichinter ADD UNIQUE INDEX uk_fichinter_ref (ref, entity);
 ALTER TABLE llx_contrat ADD UNIQUE INDEX uk_contrat_ref (ref, entity);
+ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY (numero, entity);

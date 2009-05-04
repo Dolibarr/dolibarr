@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ $actl[1] = $langs->trans("Disable");
 
 $active = 1;
 
-// Cette page est une page d'�dition g�n�rique des dictionnaires de donn�es
-// Mettre ici tous les caract�ristiques des dictionnaires
+// Cette page est une page d'edition generique des dictionnaires de donnees
+// Mettre ici tous les caracteristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
 $taborder=array(9,0,4,3,2,0,1,8,16,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,18,0,15);
@@ -502,7 +502,7 @@ if ($_GET["id"])
         foreach ($fieldlist as $field => $value)
         {
             // Determine le nom du champ par rapport aux noms possibles
-            // dans les dictionnaires de donn�es
+            // dans les dictionnaires de donnees
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
             if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
             if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
@@ -543,7 +543,7 @@ if ($_GET["id"])
         print '<td colspan="3"><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
         print "</tr>";
 
-        if ($alabelisused)  // Si un des champs est un libell�
+        if ($alabelisused)  // Si un des champs est un libelle
         {
             print '<tr><td colspan="'.(count($fieldlist)+2).'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
         }
@@ -565,7 +565,7 @@ if ($_GET["id"])
             foreach ($fieldlist as $field => $value)
 			{
                 // Determine le nom du champ par rapport aux noms possibles
-                // dans les dictionnaires de donn�es
+                // dans les dictionnaires de donnees
                 $showfield=1;							  	// Par defaut
 				$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
                 if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
@@ -635,7 +635,7 @@ if ($_GET["id"])
 					}
 
 					print '<td align="center" nowrap="nowrap">';
-					// Est-ce une entr�e du dictionnaire qui peut etre d�sactiv�e ?
+					// Est-ce une entree du dictionnaire qui peut etre desactivee ?
 					$iserasable=1;  // Oui par defaut
 					if (isset($obj->code) && ($obj->code == '0' || $obj->code == '' || eregi('unknown',$obj->code))) $iserasable=0;
 					if ($obj->type && $obj->type == 'system') $iserasable=0;

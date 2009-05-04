@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -198,7 +198,7 @@ insert into llx_const (name, value, type, note, visible) VALUES ('PROPALE_VALIDI
 --
 -- Barcode
 --
-insert into llx_const (name, value, type, note, visible) values ('GENBARCODE_LOCATION','/usr/local/bin/genbarcode','chaine','location of genbarcode',0);
+insert into llx_const (name, value, type, note, visible, entity) values ('GENBARCODE_LOCATION','/usr/local/bin/genbarcode','chaine','location of genbarcode',0,0);
 
 
 --

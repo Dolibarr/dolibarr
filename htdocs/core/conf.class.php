@@ -76,8 +76,10 @@ class Conf
 		 * - En constante php (TODO a virer)
 		 * - En $this->global->key=value
 		 */
-		$sql = "SELECT name, value, entity FROM ".MAIN_DB_PREFIX."const";
+		$sql = "SELECT name, value, entity";
+		$sql.= " FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE entity IN (0,".$this->entity.")";
+		
 		$result = $db->query($sql);
 		if ($result)
 		{
