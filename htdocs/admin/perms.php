@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,11 @@
  */
 
 /**
-    	\file       htdocs/admin/perms.php
-        \ingroup    core
-		\brief      Page d'administration/configuration des permissions par defaut
-		\version    $Id$
-*/
+ *   	\file       htdocs/admin/perms.php
+ *      \ingroup    core
+ *		\brief      Page d'administration/configuration des permissions par defaut
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -75,31 +75,40 @@ print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 print '<table class="noborder" width="100%">';
 
 
-// Charge les modules soumis a permissions
 $db->begin();
 
-$dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
-$handle=opendir($dir);
+// Charge les modules soumis a permissions
 $modules = array();
-while (($file = readdir($handle))!==false)
+foreach ($conf->dol_document_root as $dirroot)
 {
-    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, strlen($file) - 10) == '.class.php')
-    {
-        $modName = substr($file, 0, strlen($file) - 10);
+	$dir = $dirroot . "/includes/modules/";
 
-        if ($modName)
-        {
-            include_once("../includes/modules/$file");
-            $objMod = new $modName($db);
-            if ($objMod->rights_class) {
+	// Load modules attributes in arrays (name, numero, orders) from dir directory
+	//print $dir."\n<br>";
+	$handle=@opendir($dir);
+	if ($handle)
+	{
+		while (($file = readdir($handle))!==false)
+		{
+		    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, strlen($file) - 10) == '.class.php')
+		    {
+		        $modName = substr($file, 0, strlen($file) - 10);
 
-                $ret=$objMod->insert_permissions();
+		        if ($modName)
+		        {
+		            include_once($dir."/".$file);
+		            $objMod = new $modName($db);
+		            if ($objMod->rights_class) {
 
-                $modules[$objMod->rights_class]=$objMod;
-                //print "modules[".$objMod->rights_class."]=$objMod;";
-            }
-        }
-    }
+		                $ret=$objMod->insert_permissions();
+
+		                $modules[$objMod->rights_class]=$objMod;
+		                //print "modules[".$objMod->rights_class."]=$objMod;";
+		            }
+		        }
+		    }
+		}
+	}
 }
 
 $db->commit();

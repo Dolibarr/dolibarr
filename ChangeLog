@@ -1,5 +1,21 @@
 English Dolibarr changelog
 
+
+***** Changelog for 2.7 compared to 2.6 *****
+
+For users:
+- New: Add filter on status in emailing selector for Dolibarr users.
+
+For translators:
+- Update some language files.
+  
+For developers:
+- Removed some deprecated files.
+- Creation of directory in module descriptor is simpler.
+- Can use an alternate document_root directory to develop with 
+  sources on two repositories.
+
+
 ***** Changelog for 2.6 compared to 2.5 *****
 
 For users:
