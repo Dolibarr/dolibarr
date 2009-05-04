@@ -1,7 +1,7 @@
 <?php
 /*
  * PHP-Barcode 0.3pl1
- 
+
  * PHP-Barcode generates
  *   - Barcode-Images using libgd2 (png, jpg, gif)
  *   - HTML-Images (using 1x1 pixel and html-table)
@@ -13,22 +13,22 @@
  *     barcode-encoder which uses GNU-Barcode
  *     genbarcode can encode EAN-13, EAN-8, UPC, ISBN, 39, 128(a,b,c),
  *     I25, 128RAW, CBR, MSI, PLS
- *     genbarcode is available at www.ashberg.de/bar 
- 
+ *     genbarcode is available at www.ashberg.de/bar
+
  * (C) 2001,2002,2003,2004 by Folke Ashberg <folke@ashberg.de>
- 
+
  * The newest version can be found at http://www.ashberg.de/bar
- 
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -52,7 +52,7 @@ $text_color=Array(0,0,0);
 /* location the the ttf-font */
 /* the file arialbd.ttf isn't included! */
 
-/* SAMPLE1 : 
+/* SAMPLE1 :
  * use arialbd.ttf located in same directory like the script
  * which includes/requires php-barcode.php
  */
@@ -92,7 +92,7 @@ else
 
 require("encode_bars.php"); /* build-in encoders */
 
-/* 
+/*
  * barcode_outimage(text, bars [, scale [, mode [, total_y [, space ]]]] )
  *
  *  Outputs an image using libgd
@@ -123,7 +123,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png",
     if ($total_y<1) $total_y=(int)$scale * 60;
     if (!$space)
       $space=array('top'=>2*$scale,'bottom'=>2*$scale,'left'=>2*$scale,'right'=>2*$scale);
-    
+
     /* count total width */
     $xpos=0;
     $width=true;
@@ -137,7 +137,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png",
 	if (ereg("[a-z]", $val)){
 	    /* tall bar */
 	    $val=ord($val)-ord('a')+1;
-	} 
+	}
 	$xpos+=$val*$scale;
 	$width=true;
     }
@@ -209,7 +209,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png",
 
 	// DOLCHANGE LDR
     global $filebarcode;
-    
+
     /* output the image */
     $mode=strtolower($mode);
     if ($mode=='jpg' || $mode=='jpeg'){
@@ -224,7 +224,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png",
     {
 		imagepng($im,$filebarcode);
 	// End DOLCHANGE LDR
-		
+
     } else {
 	header("Content-Type: image/png; name=\"barcode.png\"");
 	imagepng($im);
@@ -264,7 +264,7 @@ function barcode_outtext($code,$bars){
     return $bar_line;
 }
 
-/* 
+/*
  * barcode_outhtml(text, bars [, scale [, total_y [, space ]]] )
  *
  *  returns(!) HTML-Code for barcode-image using html-code (using a table and with black.png and white.png)
@@ -302,7 +302,7 @@ function barcode_outhtml($code, $bars, $scale = 1, $total_y = 0, $space = ''){
       '<TR><TD><img src=white.png height="'.$space['top'].'" width=1></TD></TR>'."\n".
       '<TR><TD>'."\n".
       '<IMG src=white.png height="'.$height2.'" width="'.$space['left'].'">';
-    
+
     $width=true;
     for ($i=0;$i<strlen($bars);$i++){
 	$val=strtolower($bars[$i]);
@@ -375,18 +375,18 @@ function barcode_encode_genbarcode($code,$encoding){
  * You can use the following encodings (when you have genbarcode):
  *   ANY    choose best-fit (default)
  *   EAN    8 or 13 EAN-Code
- *   UPC    12-digit EAN 
- *   ISBN   isbn numbers (still EAN-13) 
- *   39     code 39 
- *   128    code 128 (a,b,c: autoselection) 
+ *   UPC    12-digit EAN
+ *   ISBN   isbn numbers (still EAN-13)
+ *   39     code 39
+ *   128    code 128 (a,b,c: autoselection)
  *   128C   code 128 (compact form for digits)
- *   128B   code 128, full printable ascii 
- *   I25    interleaved 2 of 5 (only digits) 
+ *   128B   code 128, full printable ascii
+ *   I25    interleaved 2 of 5 (only digits)
  *   128RAW Raw code 128 (by Leonid A. Broukhis)
- *   CBR    Codabar (by Leonid A. Broukhis) 
- *   MSI    MSI (by Leonid A. Broukhis) 
+ *   CBR    Codabar (by Leonid A. Broukhis)
+ *   MSI    MSI (by Leonid A. Broukhis)
  *   PLS    Plessey (by Leonid A. Broukhis)
- * 
+ *
  *   return:
  *    array[encoding] : the encoding which has been used
  *    array[bars]     : the bars
@@ -397,7 +397,7 @@ function barcode_encode($code,$encoding){
     if (
 		((eregi("^ean$", $encoding)
 		 && ( strlen($code)==12 || strlen($code)==13)))
-		 
+
 		|| (($encoding) && (eregi("^isbn$", $encoding))
 		 && (( strlen($code)==9 || strlen($code)==10) ||
 		 (((ereg("^978", $code) && strlen($code)==12) ||
@@ -405,7 +405,7 @@ function barcode_encode($code,$encoding){
 
 		|| (( !isset($encoding) || !$encoding || (eregi("^ANY$", $encoding) ))
 		 && (ereg("^[0-9]{12,13}$", $code)))
-	      
+
 		){
 	/* use built-in EAN-Encoder */
 	$bars=barcode_encode_ean($code, $encoding);
@@ -438,7 +438,10 @@ function barcode_encode($code,$encoding){
  *    array[text]     : text-positioning info
  */
 function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png" ){
-	dol_syslog("$code $encoding $scale $mode");
+
+	// DOLCHANGE LDR Add log
+	dol_syslog("php-barcode.php:barcode_print $code $encoding $scale $mode");
+
 	$bars=barcode_encode($code,$encoding);
     if (!$bars) return;
     if (!$mode) $mode="png";
