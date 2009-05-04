@@ -87,3 +87,18 @@ ALTER TABLE llx_livraison ADD UNIQUE INDEX idx_livraison_uk_ref (ref, entity);
 ALTER TABLE llx_fichinter ADD UNIQUE INDEX uk_fichinter_ref (ref, entity);
 ALTER TABLE llx_contrat ADD UNIQUE INDEX uk_contrat_ref (ref, entity);
 ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY (numero, entity);
+
+UPDATE llx_const SET entity=0 WHERE name='MAIN_MODULE_USER' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='MAIN_POPUP_CALENDAR' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='MAIN_MAIL_SMTP_SERVER' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='MAIN_MAIL_SMTP_PORT' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='MAIN_UPLOAD_DOC' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='MAIN_FEATURES_LEVEL' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='MAIN_SEARCHFORM_SOCIETE' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='MAIN_SEARCHFORM_CONTACT' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='MAIN_SEARCHFORM_PRODUITSERVICE' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='MAIN_SEARCHFORM_ADHERENT' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='MAIN_SIZE_LISTE_LIMIT' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='MAIN_SHOW_WORKBOARD' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='SOCIETE_NOLIST_COURRIER' AND entity=1;
+UPDATE llx_const SET entity=0 WHERE name='GENBARCODE_LOCATION' AND entity=1;

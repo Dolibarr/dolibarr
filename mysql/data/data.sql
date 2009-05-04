@@ -57,30 +57,30 @@ insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'
 insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTALLED','1','chaine','Setup is running',1);
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE','EUR','chaine','Monnaie',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_POPUP_CALENDAR','eldy','chaine','Popup calendar module',0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_POPUP_CALENDAR','eldy','chaine','Popup calendar module',0,0);
 
 insert into llx_const (name, value, type, note, visible) values ('SYSLOG_FILE','dolibarr.log','chaine','Directory where to write log file',0);
 insert into llx_const (name, value, type, note, visible) values ('SYSLOG_LEVEL','6','chaine','Level of debug info to show',0);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_SMTP_SERVER','','chaine','Host or ip address for SMTP server',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_SMTP_PORT','','chaine','Port for SMTP server',0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MAIL_SMTP_SERVER','','chaine','Host or ip address for SMTP server',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MAIL_SMTP_PORT','','chaine','Port for SMTP server',0,0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_EMAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les emails automatiques Dolibarr',0);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','2048','chaine','Max size for file upload (0 means no upload allowed)',0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_UPLOAD_DOC','2048','chaine','Max size for file upload (0 means no upload allowed)',0,0);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_FEATURES_LEVEL','0','chaine','Level of features to show (0=stable only, 1=stable+experimental, 2=stable+experimental+development',1);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_FEATURES_LEVEL','0','chaine','Level of features to show (0=stable only, 1=stable+experimental, 2=stable+experimental+development',1,0);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Show form for quick company search',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Show form for quick contact search',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_PRODUITSERVICE' ,'1','yesno','Show form for quick product search',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_ADHERENT','1','yesno','Show form for quick member search',0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Show form for quick company search',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Show form for quick contact search',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_PRODUITSERVICE' ,'1','yesno','Show form for quick product search',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_ADHERENT','1','yesno','Show form for quick member search',0,0);
 
 --
 -- IHM
 --
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_SIZE_LISTE_LIMIT','25','chaine','Longueur maximum des listes',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_SHOW_WORKBOARD','1','yesno','Affichage tableau de bord de travail Dolibarr',0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_LISTE_LIMIT','25','chaine','Longueur maximum des listes',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SHOW_WORKBOARD','1','yesno','Affichage tableau de bord de travail Dolibarr',0,0);
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_BARRETOP','eldy_backoffice.php','chaine','Module de gestion de la barre de menu du haut pour utilisateurs internes',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT_BARRETOP','eldy_frontoffice.php','chaine','Module de gestion de la barre de menu du haut pour utilisateurs externes',0);
@@ -107,7 +107,7 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_TRA
 --
 -- Tiers
 --
-insert into llx_const (name, value, type, note, visible) values('SOCIETE_NOLIST_COURRIER','1','yesno','Liste les fichiers du repertoire courrier',0);
+insert into llx_const (name, value, type, note, visible, entity) values('SOCIETE_NOLIST_COURRIER','1','yesno','Liste les fichiers du repertoire courrier',0,0);
 insert into llx_const (name, value, type, note, visible) values('SOCIETE_CODECLIENT_ADDON','mod_codeclient_leopard','yesno','Module to control third parties codes',0);
 insert into llx_const (name, value, type, note, visible) values('SOCIETE_CODECOMPTA_ADDON','mod_codecompta_panicum','yesno','Module to control third parties codes',0);
 
