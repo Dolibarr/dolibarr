@@ -174,6 +174,21 @@ class Form
 		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';
 		return $this->textwithtooltip($text,$htmltext,2,$direction,img_warning($alt));
 	}
+	
+	/**
+	 *	\brief     Affiche un texte avec picto redstar qui affiche un tooltip
+	 *	\param     text				Texte à afficher
+	 *	\param     htmltooltip     	Contenu html du tooltip
+	 *	\param		direction			1=Le picto est après, -1=le picto est avant
+	 *	\return	string				Code html du texte,picto
+	 */
+	function textwithredstar($text,$htmltext,$direction=1)
+	{
+		global $conf;
+		$alt='';
+		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';
+		return $this->textwithtooltip($text,$htmltext,2,$direction,img_redstar($alt));
+	}
 
 
 	/**

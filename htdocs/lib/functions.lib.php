@@ -1126,6 +1126,23 @@ function img_warning($alt = "default",$float=0)
 }
 
 /**
+ *	\brief      Affiche logo redstar
+ *	\param      alt         Texte sur le alt de l'image
+ *	\param      float       Si il faut afficher le style "float: right"
+ *	\return     string      Retourne tag img
+ */
+function img_redstar($alt = "default",$float=0)
+{
+	global $conf,$langs;
+	if ($alt=="default") $alt=$langs->trans("SuperAdministrator");
+	$img='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/redstar.png" border="0" alt="'.$alt.'" title="'.$alt.'"';
+	if ($float) $img.=' style="float: right"';
+	$img.='>';
+
+	return $img;
+}
+
+/**
  \brief      Affiche logo error
  \param      alt         Texte sur le alt de l'image
  \return     string      Retourne tag img
