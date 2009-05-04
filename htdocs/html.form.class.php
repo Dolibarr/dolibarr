@@ -171,7 +171,7 @@ class Form
 	{
 		global $conf;
 		$alt='';
-		if ($type == 'help')    	$img=img_help($alt);
+		if ($type == 'help')    	$img=img_help(1,$alt);
 		if ($type == 'warning') 	$img=img_warning($alt);
 		if ($type == 'superadmin') 	$img=img_redstar($alt);
 		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';

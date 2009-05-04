@@ -1090,24 +1090,24 @@ else
 			// On selectionne les groups
 			$grouplistid = array();
       $uss = array();
-            
+
       $sql = "SELECT ug.fk_usergroup";
       $sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ug";
       $sql.= ", ".MAIN_DB_PREFIX."usergroup as u";
       $sql.= " WHERE ug.fk_user = ".$fuser->id;
       $sql.= " AND ug.fk_usergroup = u.rowid";
       $sql.= " AND u.entity IN (0,".$conf->entity.")";
-          
+
       $result = $db->query($sql);
       if ($result)
       {
       	$num = $db->num_rows($result);
         $i = 0;
-              
+
         while ($i < $num)
         {
         	$obj = $db->fetch_object($result);
-              	
+
           $grouplistid[]=$obj->fk_usergroup;
           $i++;
         }
@@ -1115,9 +1115,9 @@ else
       else {
         dol_print_error($db);
       }
-      
+
       $idList = implode(",",$grouplistid);
-      
+
       if (!empty($idList))
       {
       	$sql = "SELECT ug.rowid, ug.nom ";
@@ -1125,17 +1125,17 @@ else
       	$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
       	$sql.= " AND ug.rowid NOT IN (".$idList.")";
       	$sql.= " ORDER BY ug.nom";
-      	
+
       	$resql = $db->query($sql);
       	if ($resql)
       	{
       		$num = $db->num_rows($resql);
       		$i = 0;
-      		
+
       		while ($i < $num)
       		{
       			$obj = $db->fetch_object($resql);
-      			
+
       			$uss[$obj->rowid] = $obj->nom;
       			$i++;
       		}
@@ -1150,17 +1150,17 @@ else
       	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
       	$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
       	$sql.= " ORDER BY ug.nom";
-      	
+
       	$resql = $db->query($sql);
       	if ($resql)
       	{
       		$num = $db->num_rows($resql);
       		$i = 0;
-      		
+
       		while ($i < $num)
       		{
       			$obj = $db->fetch_object($resql);
-      			
+
       			$uss[$obj->rowid] = $obj->nom;
       			$i++;
       		}
@@ -1337,7 +1337,7 @@ else
 				$text='<input size="12" maxlength="32" type="text" class="flat" name="password" value="'.$fuser->pass.'">';
 				if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
 				{
-					$text=$html->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,0,'warning');
+					$text=$html->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');
 				}
 			}
 			else
@@ -1366,7 +1366,7 @@ else
 				{
 					$yn = yn($fuser->admin);
 					print '<input type="hidden" name="admin" value="'.$fuser->admin.'">';
-					print $html->textwithpicto($yn,$langs->trans("DontChangeSuperAdmin"),1,0,'warning');
+					print $html->textwithpicto($yn,$langs->trans("DontChangeSuperAdmin"),1,'warning');
 				}
 				print '</td></tr>';
 			}
