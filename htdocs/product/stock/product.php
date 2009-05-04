@@ -37,17 +37,12 @@ $langs->load("orders");
 $langs->load("bills");
 
 // Security check
-$id = '';
-if (isset($_GET["id"]))
+if (isset($_GET["id"]) || isset($_GET["ref"]))
 {
-	$id = $_GET["id"];
-	$fieldid = 'rowid';
+	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+	$fieldid = isset($_REQUEST["ref"])?'ref':'rowid';
 }
-if (isset($_GET["ref"]))
-{
-	$id = $_GET["ref"];
-	$fieldid = 'ref';
-}
+
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
 

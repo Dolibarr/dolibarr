@@ -39,17 +39,12 @@ $langs->load("products");
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
 // Security check
-$id = '';
-if (isset($_GET["id"]))
+if (isset($_GET["id"]) || isset($_GET["ref"]))
 {
-	$id = $_GET["id"];
-	$fieldid = 'rowid';
+	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+	$fieldid = isset($_REQUEST["ref"])?'ref':'rowid';
 }
-if (isset($_GET["ref"]))
-{
-	$id = $_GET["ref"];
-	$fieldid = 'ref';
-}
+
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
 
