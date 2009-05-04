@@ -34,11 +34,11 @@ class ActionComm
 {
     var $db;
     var $error;
-    
+
     var $type_id;
     var $type_code;
     var $type;
-	
+
     var $id;
     var $label;
 
@@ -55,16 +55,16 @@ class ActionComm
     //var $durationa = -1;	// deprecated
 	var $priority;
 	var $punctual = 1;
-	
+
     var $usertodo;		// Object user that must do action
     var $userdone;	 	// Object user that did action
-	
+
     var $societe;		// Company linked to action (optionnal)
     var $contact;		// Contact linked tot action (optionnal)
     var $note;
     var $percentage;
-    
-	
+
+
     /**
      *      \brief      Constructeur
      *      \param      db      Handler d'acc�s base de donn�e
@@ -132,8 +132,8 @@ class ActionComm
 			$this->error="ErrorWrongParameters";
 			return -1;
 		}
-		
-		
+
+
 		$this->db->begin("ActionComm::add");
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
@@ -173,13 +173,13 @@ class ActionComm
         $sql.= ($this->propalrowid?$this->propalrowid:"null").",";
         $sql.= ($this->orderrowid?$this->orderrowid:"null");
         $sql.= ")";
-    
+
         dol_syslog("ActionComm::add sql=".$sql);
         $resql=$this->db->query($sql);
 		if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm");
-    
+
             if (! $notrigger)
             {
 	            // Appel des triggers
@@ -189,7 +189,7 @@ class ActionComm
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            // Fin appel triggers
 			}
-			
+
 			$this->db->commit("ActionComm::add");
             return $this->id;
         }
@@ -199,7 +199,7 @@ class ActionComm
 			$this->db->rollback("ActionComm::add");
             return -1;
         }
-    
+
     }
 
 	/**
@@ -209,7 +209,7 @@ class ActionComm
 	function fetch($id)
 	{
 		global $langs;
-	
+
 		$sql = "SELECT a.id,";
 		$sql.= " datep,";
 		$sql.= " datep2,";
@@ -226,7 +226,7 @@ class ActionComm
 		$sql.= " c.id as type_id, c.code as type_code, c.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
 		$sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
-	
+
 		dol_syslog("ActionComm::fetch sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -234,25 +234,25 @@ class ActionComm
 			if ($this->db->num_rows($resql))
 			{
 				$obj = $this->db->fetch_object($resql);
-	
+
 				$this->id        = $obj->id;
 				$this->ref       = $obj->id;
-				
+
 				$this->type_id   = $obj->type_id;
 				$this->type_code = $obj->type_code;
 				$transcode=$langs->trans("Action".$obj->type_code);
 				$type_libelle=($transcode!="Action".$obj->type_code?$transcode:$obj->libelle);
 				$this->type    = $type_libelle;
-				
+
 				$this->label   = $obj->label;
 				$this->datep   = $this->db->jdate($obj->datep);
 				$this->datef   = $this->db->jdate($obj->datep2);
 				//$this->date    = $this->db->jdate($obj->datea);
 				//$this->dateend = $this->db->jdate($obj->datea2);
-				
+
 				$this->datec   = $this->db->jdate($obj->datec);
 				$this->datem   = $this->db->jdate($obj->datem);
-				
+
 				$this->note =$obj->note;
 				$this->percentage =$obj->percentage;
 
@@ -263,7 +263,7 @@ class ActionComm
 				$this->userdone->id  = $obj->fk_user_done;
 				$this->priority = $obj->priority;
 				$this->location = $obj->location;
-				
+
 				$this->societe->id = $obj->fk_soc;
 				$this->contact->id = $obj->fk_contact;
 
@@ -287,7 +287,7 @@ class ActionComm
 					$this->objet_url = img_object($langs->trans("ShowOrder"),'order').' '.'<a href="'. DOL_URL_ROOT . '/commande/fiche.php?id='.$this->fk_commande.'">'.$langs->trans("Order").'</a>';
 					$this->objet_url_type = 'order';
 				}
-	
+
 			}
 			$this->db->free($resql);
 			return 1;
@@ -304,7 +304,7 @@ class ActionComm
 	*    \return     int     <0 si ko, >0 si ok
 	*/
 	function delete()
-    {      
+    {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
         $sql.= " WHERE id=".$this->id;
 
@@ -338,14 +338,14 @@ class ActionComm
 		if ($this->date  && $this->dateend) $this->durationa=($this->dateend - $this->date);
 		if ($this->datep && $this->datef && $this->datep > $this->datef) $this->datef=$this->datep;
 		if ($this->date  && $this->dateend && $this->date > $this->dateend) $this->dateend=$this->date;
-		
+
 		// Check parameters
 		if ($this->percentage == 0 && $this->userdone->id > 0)
 		{
 			$this->error="ErrorCantSaveADoneUserWithZeroPercentage";
 			return -1;
 		}
-		
+
 		//print 'eeea'.$this->datep.'-'.(strval($this->datep) != '').'-'.$this->db->idate($this->datep);
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
         $sql.= " SET percent='".$this->percentage."'";
@@ -363,7 +363,7 @@ class ActionComm
 		$sql.= ", fk_user_action=".($this->usertodo->id > 0 ? "'".$this->usertodo->id."'":"null");
 		$sql.= ", fk_user_done=".($this->userdone->id > 0 ? "'".$this->userdone->id."'":"null");
         $sql.= " WHERE id=".$this->id;
-    
+
 		dol_syslog("ActionComm::update sql=".$sql);
         if ($this->db->query($sql))
         {
@@ -376,8 +376,8 @@ class ActionComm
         	return -1;
     	}
     }
-    
-    
+
+
     /**
      *      \brief        Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
      *      \param        user    Objet user
@@ -386,7 +386,7 @@ class ActionComm
     function load_board($user)
     {
         global $conf, $user;
-        
+
         $now=gmmktime();		// gmmktime(0,0,0,1,1,1970) -> 0,  mktime(0,0,0,1,1,1970) -> -3600;
 
         $this->nbtodo=$this->nbtodolate=0;
@@ -399,7 +399,7 @@ class ActionComm
         $sql.= " AND s.entity = ".$conf->entity;
         if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND a.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-        
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -410,7 +410,7 @@ class ActionComm
             }
             return 1;
         }
-        else 
+        else
         {
             $this->error=$this->db->error();
             return -1;
@@ -485,7 +485,7 @@ class ActionComm
 	function LibStatut($percent,$mode)
 	{
 		global $langs;
-		
+
         if ($mode == 0)
         {
         	if ($percent==0) return $langs->trans('StatusActionToDo');
@@ -536,7 +536,7 @@ class ActionComm
 	function getNomUrl($withpicto=0,$maxlength,$class='',$option='')
 	{
 		global $langs;
-		
+
 		$result='';
 		if ($option=='birthday') $lien = '<a '.($class?'class="'.$class.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
 		else $lien = '<a '.($class?'class="'.$class.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
@@ -552,19 +552,19 @@ class ActionComm
         	$libelle=$this->libelle;
         	$libelleshort=dol_trunc($this->libelle,$maxlength);
         }
-		
+
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAction").': '.$libelle,'task').$lienfin);
-		if ($withpicto==1) $result.=' '; 
+		if ($withpicto==1) $result.=' ';
 		$result.=$lien.$libelleshort.$lienfin;
 		return $result;
 	}
 
-	
+
     /**
      *		\brief      Export events from database into a cal file.
 	 *		\param		format			'ical' or 'vcal'
 	 *		\param		type			'event' or 'journal'
-	 *		\param		cachedelay		Do not rebuild file if date older than cachedelay seconds	
+	 *		\param		cachedelay		Do not rebuild file if date older than cachedelay seconds
 	 *		\param		filename		Force filename
 	 *		\param		filters			Array of filters
      *		\return     int     		<0 if error, nb of events in new file if ok
@@ -587,24 +587,29 @@ class ActionComm
 			if ($format == 'ical') $extension='ics';
 			$filename=$format.'.'.$extension;
 		}
-		
+
 		$result=create_exdir($conf->agenda->dir_temp);
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
 		$result=0;
 
 		$buildfile=true;
 		$login='';$logina='';$logind='';$logint='';
-		
+
 		if ($cachedelay)
 		{
-			// \TODO Check cache
+			$now = gmmktime();
+			if (filemtime($outputfile) > ($now - $cachedelay))
+			{
+				dol_syslog("ActionComm::build_exportfile file ".$outputfile." not older than now - cachedelay (".$now." - ".$cachedelay."). Build is canceled");
+				$buildfile = false;
+			}
 		}
-		
+
 		if ($buildfile)
 		{
 			// Build event array
 			$eventarray=array();
-			
+
 			$sql = "SELECT a.id,";
 			$sql.= " a.datep,";
 			$sql.= " a.datep2,";
@@ -625,7 +630,7 @@ class ActionComm
 			{
 				if ($key == 'year')     $sql.=' AND ';
 				if ($key == 'idaction') $sql.=' AND a.id='.$value;
-				if ($key == 'login')    
+				if ($key == 'login')
 				{
 					$login=$value;
 					$userforfilter=new User($this->db);
@@ -636,21 +641,21 @@ class ActionComm
 					$sql.= " OR a.fk_user_done = ".$userforfilter->id;
 					$sql.= ")";
 				}
-				if ($key == 'logina')    
+				if ($key == 'logina')
 				{
 					$logina=$value;
 					$userforfilter=new User($this->db);
 					$userforfilter->fetch($value);
 					$sql.= " AND a.fk_user_author = ".$userforfilter->id;
 				}
-				if ($key == 'logint')    
+				if ($key == 'logint')
 				{
 					$logint=$value;
 					$userforfilter=new User($this->db);
 					$userforfilter->fetch($value);
 					$sql.= " AND a.fk_user_action = ".$userforfilter->id;
 				}
-				if ($key == 'logind')    
+				if ($key == 'logind')
 				{
 					$logind=$value;
 					$userforfilter=new User($this->db);
@@ -670,7 +675,7 @@ class ActionComm
 				while ($obj=$this->db->fetch_object($resql))
 				{
 					$qualified=true;
-					
+
 					// 'eid','startdate','duration','enddate','title','summary','category','email','url','desc','author'
 					$event=array();
 					$event['uid']='dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
@@ -696,7 +701,7 @@ class ActionComm
 					if (! eregi('\/$',$url)) $url.='/';
 					$url.='comm/action/fiche.php?id='.$obj->id;
 					$event['url']=$url;
-					
+
 					if ($qualified && $datestart)
 					{
 						$eventarray[$datestart]=$event;
@@ -709,9 +714,9 @@ class ActionComm
 				dol_syslog("ActionComm::build_exportfile ".$this->db->lasterror(), LOG_ERR);
 				return -1;
 			}
-			
+
 			$langs->load("agenda");
-			
+
 			// Define title and desc
 			$more='';
 			if ($login)  $more=$langs->transnoentities("User").' '.$langs->convToOutputCharset($login);
@@ -719,7 +724,7 @@ class ActionComm
 			if ($logint) $more=$langs->transnoentities("ActionsToDoBy").' '.$langs->convToOutputCharset($logint);
 			if ($logind) $more=$langs->transnoentities("ActionsDoneBy").' '.$langs->convToOutputCharset($logind);
 			if ($more)
-			{ 
+			{
 				$title=$langs->convToOutputCharset('Dolibarr actions - ').$more;
 				$desc=$more.$langs->convToOutputCharset(' - built by Dolibarr');
 			}
@@ -728,13 +733,13 @@ class ActionComm
 				$title=$langs->convToOutputCharset('Dolibarr actions');
 				$desc=$langs->transnoentities('ListOfActions').$langs->convToOutputCharset(' - built by Dolibarr');
 			}
-			
+
 			// Write file
 			if ($format == 'ical') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
 			if ($format == 'vcal') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
 			if ($format == 'rss')  $result=build_rssfile($format,$title,$desc,$eventarray,$outputfile);
 		}
-		
+
 		return $result;
 	}
 

@@ -5,7 +5,8 @@ English Dolibarr changelog
 
 For users:
 - New: Can export commercial proposals
- 
+- New: Can use a cache for xcal exports.
+
 For translators:
 - Update some language files.
   
