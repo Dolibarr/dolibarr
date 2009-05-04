@@ -171,10 +171,10 @@ class Form
 	{
 		global $conf;
 		$alt='';
-		if ($type == 'help')    	$img=img_help(1,$alt);
+		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';
+		$img=img_help(1,$alt);
 		if ($type == 'warning') 	$img=img_warning($alt);
 		if ($type == 'superadmin') 	$img=img_redstar($alt);
-		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';
 		return $this->textwithtooltip($text,$htmltext,2,$direction,$img);
 	}
 
