@@ -18,14 +18,14 @@
  */
 
 /**
- \file       htdocs/includes/menus/barre_top/eldy_frontoffice.php
- \brief      Gestionnaire nomme eldy du menu du haut
- \version    $Id$
-
- \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
- \remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
- \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
- \remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a>
+ *	\file       htdocs/includes/menus/barre_top/eldy_frontoffice.php
+ *	\brief      Gestionnaire nomme eldy du menu du haut
+ *	\version    $Id$
+ *
+ *	\remarks    La construction d'un gestionnaire pour le menu du haut est simple:
+ *	\remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
+ *	\remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
+ *	\remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a>
  */
 
 
