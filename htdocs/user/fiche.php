@@ -260,8 +260,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 				$message.='<div class="error">'.$edituser->error.'</div>';
 			}
 		}
-		// Todo: doublon avec la fonction update qui fait deja appel a setPassword
-		/*
+
 		if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='')
 		{
 			$ret=$edituser->setPassword($user,$_POST["password"]);
@@ -270,7 +269,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 				$message.='<div class="error">'.$edituser->error.'</div>';
 			}
 		}
-		*/
+
 		if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 		{
 			// If photo is provided
@@ -578,6 +577,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		}
 		else
 		{
+			// We do not use a field password but a field text to show new password to use.
 			print '<input size="30" maxsize="32" type="text" name="password" value="'.$password.'">';
 		}
 	}
@@ -1034,12 +1034,13 @@ else
 
 			print '<div class="tabsAction">';
 
-
-			if ($caneditfield && (($fuser->entity == $conf->entity)||($fuser->id == $user->id)))
+			if ($caneditfield &&
+			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
 			{
 				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 			}
-			elseif ($caneditpassword && ! $fuser->ldap_sid  && $fuser->entity == $conf->entity)
+			elseif ($caneditpassword && ! $fuser->ldap_sid &&
+			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
 			{
 				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a>';
 			}
@@ -1047,29 +1048,34 @@ else
 			// Si on a un gestionnaire de generation de mot de passe actif
 			if ($conf->global->USER_PASSWORD_GENERATED != 'none')
 			{
-				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login && !$fuser->ldap_sid && $fuser->entity == $conf->entity)
+				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
+				(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)))
 				{
 					print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
 				}
 
-				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login && !$fuser->ldap_sid && $fuser->entity == $conf->entity)
+				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login && !$fuser->ldap_sid &&
+				(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
 				{
 					print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
 				}
 			}
 
 			// Activer
-			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 0 && $fuser->entity == $conf->entity)
+			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 0 &&
+			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
 			{
 				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
 			}
 			// Desactiver
-			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 1 && $fuser->entity == $conf->entity)
+			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 1 &&
+			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
 			{
 				print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
 			}
 			// Delete
-			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->entity == $conf->entity)
+			if ($user->id <> $_GET["id"] && $candisableperms &&
+			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
 			{
 				print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
 			}
@@ -1087,86 +1093,86 @@ else
 
 			// On selectionne les groups
 			$grouplistid = array();
-      $uss = array();
+			$uss = array();
 
-      $sql = "SELECT ug.fk_usergroup";
-      $sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ug";
-      $sql.= ", ".MAIN_DB_PREFIX."usergroup as u";
-      $sql.= " WHERE ug.fk_user = ".$fuser->id;
-      $sql.= " AND ug.fk_usergroup = u.rowid";
-      $sql.= " AND u.entity IN (0,".$conf->entity.")";
+			$sql = "SELECT ug.fk_usergroup";
+			$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ug";
+			$sql.= ", ".MAIN_DB_PREFIX."usergroup as u";
+			$sql.= " WHERE ug.fk_user = ".$fuser->id;
+			$sql.= " AND ug.fk_usergroup = u.rowid";
+			$sql.= " AND u.entity IN (0,".$conf->entity.")";
 
-      $result = $db->query($sql);
-      if ($result)
-      {
-      	$num = $db->num_rows($result);
-        $i = 0;
+			$result = $db->query($sql);
+			if ($result)
+			{
+				$num = $db->num_rows($result);
+				$i = 0;
 
-        while ($i < $num)
-        {
-        	$obj = $db->fetch_object($result);
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($result);
 
-          $grouplistid[]=$obj->fk_usergroup;
-          $i++;
-        }
-      }
-      else {
-        dol_print_error($db);
-      }
+					$grouplistid[]=$obj->fk_usergroup;
+					$i++;
+				}
+			}
+			else {
+				dol_print_error($db);
+			}
 
-      $idList = implode(",",$grouplistid);
+			$idList = implode(",",$grouplistid);
 
-      if (!empty($idList))
-      {
-      	$sql = "SELECT ug.rowid, ug.nom ";
-      	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-      	$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
-      	$sql.= " AND ug.rowid NOT IN (".$idList.")";
-      	$sql.= " ORDER BY ug.nom";
+			if (!empty($idList))
+			{
+				$sql = "SELECT ug.rowid, ug.nom ";
+				$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
+				$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
+				$sql.= " AND ug.rowid NOT IN (".$idList.")";
+				$sql.= " ORDER BY ug.nom";
 
-      	$resql = $db->query($sql);
-      	if ($resql)
-      	{
-      		$num = $db->num_rows($resql);
-      		$i = 0;
+				$resql = $db->query($sql);
+				if ($resql)
+				{
+					$num = $db->num_rows($resql);
+					$i = 0;
 
-      		while ($i < $num)
-      		{
-      			$obj = $db->fetch_object($resql);
+					while ($i < $num)
+					{
+						$obj = $db->fetch_object($resql);
 
-      			$uss[$obj->rowid] = $obj->nom;
-      			$i++;
-      		}
-      	}
-      	else {
-      		dol_print_error($db);
-      	}
+						$uss[$obj->rowid] = $obj->nom;
+						$i++;
+					}
+				}
+				else {
+					dol_print_error($db);
+				}
 			}
 			else
 			{
 				$sql = "SELECT ug.rowid, ug.nom ";
-      	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-      	$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
-      	$sql.= " ORDER BY ug.nom";
+				$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
+				$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
+				$sql.= " ORDER BY ug.nom";
 
-      	$resql = $db->query($sql);
-      	if ($resql)
-      	{
-      		$num = $db->num_rows($resql);
-      		$i = 0;
+				$resql = $db->query($sql);
+				if ($resql)
+				{
+					$num = $db->num_rows($resql);
+					$i = 0;
 
-      		while ($i < $num)
-      		{
-      			$obj = $db->fetch_object($resql);
+					while ($i < $num)
+					{
+						$obj = $db->fetch_object($resql);
 
-      			$uss[$obj->rowid] = $obj->nom;
-      			$i++;
-      		}
-      	}
-      	else {
-      		dol_print_error($db);
-      	}
-      }
+						$uss[$obj->rowid] = $obj->nom;
+						$i++;
+					}
+				}
+				else {
+					dol_print_error($db);
+				}
+			}
 			$db->free($resql);
 
 			if ($caneditperms)
@@ -1246,6 +1252,7 @@ else
 		/*
 		 * Fiche en mode edition
 		 */
+
 		if ($_GET["action"] == 'edit' && ($caneditperms || ($user->id == $fuser->id)))
 		{
 
@@ -1331,8 +1338,7 @@ else
 			}
 			else if ($caneditpassword)
 			{
-				// Todo: le champ type "password" modifie la valeur du mot de passe (test en mode crypte) !!
-				$text='<input size="12" maxlength="32" type="text" class="flat" name="password" value="'.$fuser->pass.'">';
+				$text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$fuser->pass.'">';
 				if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
 				{
 					$text=$html->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');
@@ -1356,7 +1362,7 @@ else
 			else
 			{
 				print '<td>';
-				if ($user->admin && $fuser->entity!=0) // On ne modifie pas le superadmin
+				if ($user->admin && (empty($conf->global->MAIN_MODULE_MULTICOMPANY) || $fuser->entity!=0)) // On peut modifier le statut admin
 				{
 					print $form->selectyesno('admin',$fuser->admin,1);
 				}
@@ -1364,7 +1370,8 @@ else
 				{
 					$yn = yn($fuser->admin);
 					print '<input type="hidden" name="admin" value="'.$fuser->admin.'">';
-					print $html->textwithpicto($yn,$langs->trans("DontChangeSuperAdmin"),1,'warning');
+					if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) print $html->textwithpicto($yn,$langs->trans("DontChangeSuperAdmin"),1,'warning');
+					else print $yn;
 				}
 				print '</td></tr>';
 			}
@@ -1380,7 +1387,7 @@ else
 			{
 				print $langs->trans("DomainUser");
 			}
-			if ($fuser->admin && !$fuser->entity)
+			else if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $fuser->admin && !$fuser->entity)
 			{
 				print $langs->trans("SuperAdministrator");
 				print ' '.img_picto($langs->trans("SuperAdministrator"),"redstar");
