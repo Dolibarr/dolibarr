@@ -292,7 +292,10 @@ if ($modulepart)
     elseif ($modulepart == 'barcode')
     {
     	$accessallowed=1;
-    	$original_file=$conf->barcode->dir_temp.'/'.$original_file;
+		// If viewimage is called for barcode, we try to output an image on the fly,
+		// with not build of file on disk.
+    	//$original_file=$conf->barcode->dir_temp.'/'.$original_file;
+    	$original_file='';
     }
 
     // images des stats du commercial
@@ -333,16 +336,20 @@ if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
 
 if ($modulepart == 'barcode')
 {
-	// Output files with barcode generators
-	$dir = DOL_DOCUMENT_ROOT."/includes/modules/barcode/";
-
 	$generator=$_GET["generator"];
 	$code=$_GET["code"];
 	$encoding=$_GET["encoding"];
 	$readable=$_GET["readable"]?$_GET["readable"]:"Y";
 
+	// Output files with barcode generators
+	foreach ($conf->dol_document_root as $dirroot)
+	{
+		$dir=$dirroot . "/includes/modules/barcode/";
+		$result=@include_once($dir.$generator.".modules.php");
+		if ($result) break;
+	}
+
 	// Chargement de la classe de codage
-	require_once($dir.$generator.".modules.php");
 	$classname = "mod".ucfirst($generator);
 	$module = new $classname($db);
 	if ($module->encodingIsSupported($encoding))
