@@ -29,8 +29,6 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 
-$dir = DOL_DOCUMENT_ROOT."/includes/modules/barcode/";
-
 $langs->load("admin");
 
 if (!$user->admin)
@@ -41,7 +39,7 @@ if ($_POST["action"] == 'setcoder')
 	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
 	$sqlp.= " SET coder = '" . $_POST["coder"]."'";
 	$sqlp.= " WHERE rowid = ". $_POST["code_id"];
-	
+
 	$resql=$db->query($sqlp);
 	//print $sqlp;
 }
@@ -84,42 +82,48 @@ $barcodelist=array();
 
 clearstatcache();
 
-$handle=opendir($dir);
 
-$var=true;
-
-while (($file = readdir($handle))!==false)
+foreach ($conf->dol_document_root as $dirroot)
 {
-	if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+	$dir = $dirroot . "/includes/modules/barcode/";
+
+	$handle=@opendir($dir);
+	if ($handle)
 	{
-		if (is_readable($dir.$file))
+		while (($file = readdir($handle))!==false)
 		{
-			if (eregi('(.*)\.modules\.php',$file,$reg))
+			if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 			{
-				$filebis=$reg[1];
-
-				// Chargement de la classe de codage
-				require_once($dir.$file);
-				$classname = "mod".ucfirst($filebis);
-				$module = new $classname($db);
-
-				// Show modules according to features level
-				if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-				if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
-				if ($module->isEnabled())
+				if (is_readable($dir.$file))
 				{
-					$barcodelist[$filebis]=$module->info();
+					if (eregi('(.*)\.modules\.php',$file,$reg))
+					{
+						$filebis=$reg[1];
+
+						// Chargement de la classe de codage
+						require_once($dir.$file);
+						$classname = "mod".ucfirst($filebis);
+						$module = new $classname($db);
+
+						// Show modules according to features level
+						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+						if ($module->isEnabled())
+						{
+							$barcodelist[$filebis]=$module->info();
+						}
+					}
 				}
 			}
 		}
 	}
 }
 
-
 /*
  *  CHOIX ENCODAGE
  */
+$var=true;
 
 print '<br>';
 print_titre($langs->trans("BarcodeEncodeModule"));
@@ -161,7 +165,12 @@ if ($resql)
 		if ($obj->coder && $obj->coder != -1)
 		{
 			// Chargement de la classe de codage
-			$result=include_once($dir.$obj->coder.".modules.php");
+			foreach ($conf->dol_document_root as $dirroot)
+			{
+				$dir=$dirroot . "/includes/modules/barcode/";
+				$result=@include_once($dir.$obj->coder.".modules.php");
+				if ($result) break;
+			}
 			if ($result)
 			{
 				$classname = "mod".ucfirst($obj->coder);
