@@ -1037,11 +1037,11 @@ else
 			print '<div class="tabsAction">';
 
 
-			if ($caneditfield)
+			if ($caneditfield && (($fuser->entity == $conf->entity)||($fuser->id == $user->id)))
 			{
 				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 			}
-			elseif ($caneditpassword && ! $fuser->ldap_sid)
+			elseif ($caneditpassword && ! $fuser->ldap_sid  && $fuser->entity == $conf->entity)
 			{
 				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a>';
 			}
@@ -1049,29 +1049,29 @@ else
 			// Si on a un gestionnaire de generation de mot de passe actif
 			if ($conf->global->USER_PASSWORD_GENERATED != 'none')
 			{
-				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login && !$fuser->ldap_sid)
+				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login && !$fuser->ldap_sid && $fuser->entity == $conf->entity)
 				{
 					print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
 				}
 
-				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login && !$fuser->ldap_sid)
+				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login && !$fuser->ldap_sid && $fuser->entity == $conf->entity)
 				{
 					print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
 				}
 			}
 
 			// Activer
-			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 0)
+			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 0 && $fuser->entity == $conf->entity)
 			{
 				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
 			}
 			// Desactiver
-			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 1)
+			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 1 && $fuser->entity == $conf->entity)
 			{
 				print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
 			}
-
-			if ($user->id <> $_GET["id"] && $candisableperms)
+			// Delete
+			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->entity == $conf->entity)
 			{
 				print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
 			}
