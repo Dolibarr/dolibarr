@@ -62,7 +62,7 @@ $fgroup->getrights();
  */
 $head = group_prepare_head($fgroup);
 
-dol_fiche_head($head, 'ldap', $langs->trans("Group").": ".$fgroup->nom);
+dol_fiche_head($head, 'ldap', $langs->trans("Group"));
 
 
 
@@ -71,10 +71,21 @@ dol_fiche_head($head, 'ldap', $langs->trans("Group").": ".$fgroup->nom);
  */
 print '<table class="border" width="100%">';
 
-// Nom
+// Ref
+print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+print '<td colspan="2">';
+print $form->showrefnav($fgroup,'id','',$user->rights->user->group->lire || $user->admin);
+print '</td>';
+print '</tr>';
+
+// Name
 print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
-print '<td width="75%" class="valeur">'.$fgroup->nom.'</td>';
-print "</tr>\n";
+print '<td width="75%" class="valeur">'.$fgroup->nom;
+if (!$fgroup->entity)
+{
+	print img_redstar($langs->trans("GlobalGroup"));
+}
+print "</td></tr>\n";
 
 // Note
 print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';

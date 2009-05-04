@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -21,18 +21,15 @@
  */
 
 /**
-        \file       htdocs/user/group/perms.php
-        \brief      Onglet user et permissions de la fiche utilisateur
-        \version    $Id$
-*/
+ *       \file       htdocs/user/group/perms.php
+ *       \brief      Onglet user et permissions de la fiche utilisateur
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 $langs->load("users");
-
-
-$form = new Form($db);
 
 $module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
 
@@ -62,6 +59,8 @@ if ($_GET["action"] == 'delrights' && $caneditperms)
 /*                                                                            */
 /* ************************************************************************** */
 
+$form = new Form($db);
+
 llxHeader('',$langs->trans("Permissions"));
 
 if ($_GET["id"])
@@ -77,38 +76,47 @@ if ($_GET["id"])
 	$title = $langs->trans("Group");
 	if (!$fgroup->entity) $title = $langs->trans("GlobalGroup");
 
-	dol_fiche_head($head, 'rights', $title.": ".$fgroup->nom);
+	dol_fiche_head($head, 'rights', $title);
 
 
     $db->begin();
 
     // Charge les modules soumis a permissions
-    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
-    $handle=opendir($dir);
     $modules = array();
-    while (($file = readdir($handle))!==false)
-    {
-        if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
-        {
-            $modName = substr($file, 0, strlen($file) - 10);
+    foreach ($conf->dol_document_root as $dirroot)
+	{
+		$dir = $dirroot . "/includes/modules/";
 
-            if ($modName)
-            {
-                include_once("../../includes/modules/$file");
-                $objMod = new $modName($db);
-                if ($objMod->rights_class) {
+		// Load modules attributes in arrays (name, numero, orders) from dir directory
+		//print $dir."\n<br>";
+		$handle=@opendir($dir);
+		if ($handle)
+		{
+		    while (($file = readdir($handle))!==false)
+		    {
+		        if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
+		        {
+		            $modName = substr($file, 0, strlen($file) - 10);
 
-                    $ret=$objMod->insert_permissions();
+		            if ($modName)
+		            {
+		                include_once($dir."/".$file);
+		                $objMod = new $modName($db);
+		                if ($objMod->rights_class) {
 
-                    $modules[$objMod->rights_class]=$objMod;
-                    //print "modules[".$objMod->rights_class."]=$objMod;";
-                }
-            }
-        }
-    }
-    
+		                    $ret=$objMod->insert_permissions();
+
+		                    $modules[$objMod->rights_class]=$objMod;
+		                    //print "modules[".$objMod->rights_class."]=$objMod;";
+		                }
+		            }
+		        }
+		    }
+		}
+	}
+
     $db->commit();
-    
+
     // Lecture des droits groupes
     $permsgroup = array();
 
@@ -144,32 +152,32 @@ if ($_GET["id"])
      */
 
     print '<table class="border" width="100%">';
-    
+
     // Ref
     print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
     print '<td colspan="2">';
     print $form->showrefnav($fgroup,'id','',$user->rights->user->user->lire || $user->admin);
     print '</td>';
     print '</tr>';
-    
+
     // Nom
     print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
     print '<td colspan="2">'.$fgroup->nom.'';
-    if (!$obj->entity)
+    if (! $fgroup->entity)
     {
     	print img_redstar($langs->trans("GlobalGroup"));
     }
     print "</td></tr>\n";
-    
+
     // Note
     print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-    print '<td class="valeur">'.nl2br($fgroup->note).'&nbsp;</td>';
+    print '<td class="valeur">'.nl2br($fgroup->note).'</td>';
     print "</tr>\n";
-    
+
     print '</table><br>';
-    
+
     if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
-    
+
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
@@ -195,7 +203,7 @@ if ($_GET["id"])
             $obj = $db->fetch_object($result);
 
             // Si la ligne correspond a un module qui n'existe plus (absent de includes/module), on l'ignore
-            if (! $modules[$obj->module]) 
+            if (! $modules[$obj->module])
             {
                 $i++;
                 continue;
@@ -209,12 +217,12 @@ if ($_GET["id"])
                 // Rupture détectée, on récupère objMod
                 $objMod = $modules[$obj->module];
                 $picto=($objMod->picto?$objMod->picto:'generic');
-                
+
                 if ($caneditperms)
                 {
                    print '<tr '. $bc[$var].'>';
                    print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName();
-                   print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';    
+                   print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
                    print '<td align="center" nowrap="nowrap">';
                    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
                    print '/';
