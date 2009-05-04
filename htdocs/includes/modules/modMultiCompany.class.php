@@ -204,11 +204,7 @@ class modMultiCompany extends DolibarrModules
   {
   	$sql = array();
 
-		$init = $this->_init($sql);
-
-		$result=$this->load_tables('/multicompany/sql/init/');
-
-    return $init;
+    return $this->_init($sql);
   }
 
 	/**
@@ -221,24 +217,11 @@ class modMultiCompany extends DolibarrModules
 	{
 		$sql = array();
 
-		$result=$this->load_tables('/multicompany/sql/remove/');
 		$result = $this->destroy_cookie();
 
 		return $this->_remove($sql);
 	}
 
-
-	/**
-	*		\brief		Create tables and keys required by module
-	* 					Files mymodule.sql and mymodule.key.sql with create table and create keys
-	* 					commands must be stored in directory /mymodule/sql/
-	*					This function is called by this->init.
-	* 		\return		int		<=0 if KO, >0 if OK
-	*/
-	function load_tables($path)
-	{
-		return $this->_load_tables($path);
-	}
 
 	/**
 	*   \brief   Destroy a cookie

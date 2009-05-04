@@ -442,10 +442,13 @@ class DolibarrModules
 		global $conf;
 
 		$err = 0;
+		
+		// Common module
+		$entity = (isset($this->core_enabled) ? 0 : $conf->entity);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE name = '".$this->const_name."'";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity = ".$entity;
 		
 		dol_syslog("DolibarrModules::_unactive sql=".$sql);
 		$this->db->query($sql);
