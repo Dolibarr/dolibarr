@@ -890,7 +890,7 @@ else
 			// Administrateur
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
 			print '<td>'.yn($fuser->admin);
-			if ($conf->global->MAIN_MODULE_MULTICOMPANY && $fuser->admin && ! $fuser->entity)
+			if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $fuser->admin && ! $fuser->entity)
 			{
 				print ' '.img_redstar($langs->trans("SuperAdministrator"));
 			}
@@ -912,7 +912,7 @@ else
 			{
 				print $langs->trans("DomainUser",$ldap->domainFQDN);
 			}
-			else if ($fuser->entity!=0)
+			else if (empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ! empty($fuser->entity))
 			{
 				print $html->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
 			}

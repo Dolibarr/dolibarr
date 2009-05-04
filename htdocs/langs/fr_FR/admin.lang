@@ -233,6 +233,7 @@ ErrorCantUseRazInStartedYearIfNoYearMonthInMask = Erreur, ne peut utiliser l'opt
 UMask = Paramètre UMask des nouveaux fichiers sous Unix/Linux/BSD.
 UMaskExplanation = Ce paramètre permet de définir les droits des fichiers créés sur le serveur par Dolibarr (lors d'upload par exemple).<br>Ce doit être la valeur octal (par exemple 0666 signifie lecture/ecriture pour tous).<br>Ce paramètre n'a aucun effet sur un serveur Windows.
 SeeWikiForAllTeam = Voir le wiki pour le détail de tous les acteurs et leur organisation
+UseACacheDelay = Delay de mise en cache de l'export en secondes (0 ou vide pour aucun cache)
 # Modules = undefined
 Module0Name = Utilisateurs & groupes
 Module0Desc = Gestion des utilisateurs et groupes

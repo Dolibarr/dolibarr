@@ -32,59 +32,59 @@
  */
 function versiontostring($versionarray)
 {
-  $string='?';
-  if (isset($versionarray[0])) $string=$versionarray[0];
-  if (isset($versionarray[1])) $string.='.'.$versionarray[1];
-  if (isset($versionarray[2])) $string.='.'.$versionarray[2];
-  return $string;
+	$string='?';
+	if (isset($versionarray[0])) $string=$versionarray[0];
+	if (isset($versionarray[1])) $string.='.'.$versionarray[1];
+	if (isset($versionarray[2])) $string.='.'.$versionarray[2];
+	return $string;
 }
 
 /**
-   \brief      Compare 2 versions
-   \param      versionarray1       Tableau de version (vermajeur,vermineur,autre)
-   \param      versionarray2       Tableau de version (vermajeur,vermineur,autre)
-   \return     int                 <0 si versionarray1<versionarray2, 0 si =, >0 si versionarray1>versionarray2
-*/
+ \brief      Compare 2 versions
+ \param      versionarray1       Tableau de version (vermajeur,vermineur,autre)
+ \param      versionarray2       Tableau de version (vermajeur,vermineur,autre)
+ \return     int                 <0 si versionarray1<versionarray2, 0 si =, >0 si versionarray1>versionarray2
+ */
 function versioncompare($versionarray1,$versionarray2)
 {
-    $ret=0;
-    $i=0;
-    while ($i < max(sizeof($versionarray1),sizeof($versionarray1)))
-    {
-        $operande1=isset($versionarray1[$i])?$versionarray1[$i]:0;
-        $operande2=isset($versionarray2[$i])?$versionarray2[$i]:0;
-        if ($operande1 < $operande2) { $ret = -1; break; }
-        if ($operande1 > $operande2) { $ret =  1; break; }
-        $i++;
-    }
-    return $ret;
+	$ret=0;
+	$i=0;
+	while ($i < max(sizeof($versionarray1),sizeof($versionarray1)))
+	{
+		$operande1=isset($versionarray1[$i])?$versionarray1[$i]:0;
+		$operande2=isset($versionarray2[$i])?$versionarray2[$i]:0;
+		if ($operande1 < $operande2) { $ret = -1; break; }
+		if ($operande1 > $operande2) { $ret =  1; break; }
+		$i++;
+	}
+	return $ret;
 }
 
 
 /**
-   \brief      Return version PHP
-   \return     array               Tableau de version (vermajeur,vermineur,autre)
-*/
+ \brief      Return version PHP
+ \return     array               Tableau de version (vermajeur,vermineur,autre)
+ */
 function versionphparray()
 {
-  return split('\.',PHP_VERSION);
+	return split('\.',PHP_VERSION);
 }
 
 /**
-   \brief      Return version Dolibarr
-   \return     array               Tableau de version (vermajeur,vermineur,autre)
-*/
+ \brief      Return version Dolibarr
+ \return     array               Tableau de version (vermajeur,vermineur,autre)
+ */
 function versiondolibarrarray()
 {
-  return split('\.',DOL_VERSION);
+	return split('\.',DOL_VERSION);
 }
 
 
 /**
-*	\brief		Launch a sql file
-*	\param		sqlfile		Full path to sql file
-*	\return		int			<=0 if KO, >0 if OK
-*/
+ *	\brief		Launch a sql file
+ *	\param		sqlfile		Full path to sql file
+ *	\return		int			<=0 if KO, >0 if OK
+ */
 function run_sql($sqlfile,$silent=1)
 {
 	global $db, $conf, $langs, $user;
@@ -114,7 +114,7 @@ function run_sql($sqlfile,$silent=1)
 				//print var_dump($versioncommande);
 				//print var_dump($versionarray);
 				if (sizeof($versioncommande) && sizeof($versionarray)
-						&& versioncompare($versioncommande,$versionarray) <= 0)
+				&& versioncompare($versioncommande,$versionarray) <= 0)
 				{
 					// Version qualified, delete SQL comments
 					$buf=eregi_replace('^-- V([0-9\.]+)','',$buf);
@@ -282,13 +282,13 @@ function run_sql($sqlfile,$silent=1)
 
 
 /**
-	\brief		Effacement d'une constante dans la base de donnees
-	\sa			dolibarr_get_const, dolibarr_sel_const
-	\param	    db          Handler d'acces base
-	\param	    name				Nom ou rowid de la constante
-	\param	    entity			Multi company id
-	\return     int         <0 si ko, >0 si ok
-*/
+ \brief		Effacement d'une constante dans la base de donnees
+ \sa			dolibarr_get_const, dolibarr_sel_const
+ \param	    db          Handler d'acces base
+ \param	    name				Nom ou rowid de la constante
+ \param	    entity			Multi company id
+ \return     int         <0 si ko, >0 si ok
+ */
 function dolibarr_del_const($db, $name, $entity=1)
 {
 	global $conf;
@@ -297,7 +297,7 @@ function dolibarr_del_const($db, $name, $entity=1)
 	$sql.=" WHERE (name='".addslashes($name)."' OR rowid='".addslashes($name)."')";
 	$sql.= " AND entity = ".$entity;
 
-  dol_syslog("admin.lib::dolibarr_del_const sql=".$sql);
+	dol_syslog("admin.lib::dolibarr_del_const sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -311,86 +311,86 @@ function dolibarr_del_const($db, $name, $entity=1)
 }
 
 /**
-		\brief      Recupere une constante depuis la base de donnees.
-		\sa			dolibarr_del_const, dolibarr_set_const
-		\param	    db          Handler d'acces base
-		\param	    name				Nom de la constante
-		\param	    entity			Multi company id
-		\return     string      Valeur de la constante
-*/
+ \brief      Recupere une constante depuis la base de donnees.
+ \sa			dolibarr_del_const, dolibarr_set_const
+ \param	    db          Handler d'acces base
+ \param	    name				Nom de la constante
+ \param	    entity			Multi company id
+ \return     string      Valeur de la constante
+ */
 function dolibarr_get_const($db, $name, $entity=1)
 {
 	global $conf;
-  $value='';
+	$value='';
 
-  $sql = "SELECT value";
-  $sql.= " FROM llx_const";
-  $sql.= " WHERE name = '".addslashes($name)."'";
-  $sql.= " AND entity = ".$entity;
+	$sql = "SELECT value";
+	$sql.= " FROM llx_const";
+	$sql.= " WHERE name = '".addslashes($name)."'";
+	$sql.= " AND entity = ".$entity;
 
-  dol_syslog("admin.lib::dolibarr_get_const sql=".$sql);
-  $resql=$db->query($sql);
-  if ($resql)
-  {
-  	$obj=$db->fetch_object($resql);
-    if ($obj) $value=$obj->value;
-  }
-  return $value;
+	dol_syslog("admin.lib::dolibarr_get_const sql=".$sql);
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj=$db->fetch_object($resql);
+		if ($obj) $value=$obj->value;
+	}
+	return $value;
 }
 
 
 /**
-   \brief      	Insertion d'une constante dans la base de donnees.
-   \sa			dolibarr_del_const, dolibarr_get_const
-   \param	    db          Handler d'acces base
-   \param	    name				Nom de la constante
-   \param	    value				Valeur de la constante
-   \param	    type				Type de constante (chaine par defaut)
-   \param	    visible	    La constante est elle visible (0 par defaut)
-   \param	    note				Explication de la constante
-   \param	    entity			Multi company id
-   \return     	int         -1 if KO, 1 if OK
-*/
+ *	\brief      Insertion d'une constante dans la base de donnees.
+ *	\sa			dolibarr_del_const, dolibarr_get_const
+ *	\param	    db          Handler d'acces base
+ *	\param	    name		Nom de la constante
+ *	\param	    value		Valeur de la constante
+ *	\param	    type		Type de constante (chaine par defaut)
+ *	\param	    visible	    La constante est elle visible (0 par defaut)
+ *	\param	    note		Note on parameter
+ *	\param	    entity		Multi company id
+ *	\return     int         -1 if KO, 1 if OK
+ */
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='', $entity=1)
 {
 	global $conf;
 
 	if (empty($name))
-  {
-  	dol_print_error("Error: Call to function dolibarr_set_const with wrong parameters", LOG_ERR);
-    exit;
-  }
+	{
+		dol_print_error("Error: Call to function dolibarr_set_const with wrong parameters", LOG_ERR);
+		exit;
+	}
 
-  $db->begin();
+	$db->begin();
 
-  //dol_syslog("dolibarr_set_const name=$name, value=$value");
-  $sql = "DELETE FROM llx_const WHERE name = '".addslashes($name)."'";
-  $sql.= " AND entity = ".$entity;
-  dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
+	//dol_syslog("dolibarr_set_const name=$name, value=$value");
+	$sql = "DELETE FROM llx_const WHERE name = '".addslashes($name)."'";
+	$sql.= " AND entity = ".$entity;
+	dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 
-  if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
-  {
-  	$sql = "INSERT INTO llx_const(name,value,type,visible,note,entity)";
-	  $sql.= " VALUES ('".$name."','".addslashes($value)."','".$type."',".$visible.",'".addslashes($note)."',".$entity.")";
+	if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
+	{
+		$sql = "INSERT INTO llx_const(name,value,type,visible,note,entity)";
+		$sql.= " VALUES ('".$name."','".addslashes($value)."','".$type."',".$visible.",'".addslashes($note)."',".$entity.")";
 
 		dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
-	  $resql=$db->query($sql);
-  }
-  
-  if ($resql)
-  {
-  	$db->commit();
-    $conf->global->$name=$value;
-    return 1;
-  }
-  else
-  {
-  	$error=$db->lasterror();
-    dol_syslog("admin.lib::dolibarr_set_const ".$error, LOG_ERR);
-    $db->rollback();
-    return -1;
-  }
+		$resql=$db->query($sql);
+	}
+
+	if ($resql)
+	{
+		$db->commit();
+		$conf->global->$name=$value;
+		return 1;
+	}
+	else
+	{
+		$error=$db->lasterror();
+		dol_syslog("admin.lib::dolibarr_set_const ".$error, LOG_ERR);
+		$db->rollback();
+		return -1;
+	}
 }
 
 

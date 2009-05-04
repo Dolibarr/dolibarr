@@ -60,7 +60,7 @@ if (! $conf->agenda->enabled)
 if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY))
 {
 	$user->getrights();
-	
+
 	llxHeader();
 	print '<div class="error">Module Agenda was not configured properly.</div>';
 	llxFooter('$Date$ - $Revision$');
@@ -71,7 +71,7 @@ if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY))
 if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_GET["exportkey"])
 {
 	$user->getrights();
-	
+
 	llxHeader();
 	print '<div class="error">Bad value for key.</div>';
 	llxFooter('$Date$ - $Revision$');
@@ -97,10 +97,13 @@ if (! $filename)
 
 $agenda=new ActionComm($db);
 
+$cachedelay=0;
+if (! empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)) $cachedelay=$conf->global->MAIN_AGENDA_EXPORT_CACHE;
+
 // Build file
 if ($format == 'ical' || $format == 'vcal')
-{ 
-	$result=$agenda->build_exportfile($format,$type,0,$filename,$filters);
+{
+	$result=$agenda->build_exportfile($format,$type,$cachedelay,$filename,$filters);
 	if ($result >= 0)
 	{
 		$attachment = true;
@@ -111,19 +114,19 @@ if ($format == 'ical' || $format == 'vcal')
 		//$contenttype='text/plain';
 		$outputencoding='UTF-8';
 		//$contenttype='ISO-8859-1';
-		
+
 		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
 		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
-		
+
 		// Ajout directives pour resoudre bug IE
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
-		 
+
 		// Clean parameters
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
 		$result=readfile($outputfile);
 		if (! $result) print 'File '.$outputfile.' was empty.';
-	
+
 	//	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	}
@@ -131,7 +134,7 @@ if ($format == 'ical' || $format == 'vcal')
 
 if ($format == 'rss')
 {
-	$result=$agenda->build_exportfile($format,$type,0,$filename,$filters);
+	$result=$agenda->build_exportfile($format,$type,$cachedelay,$filename,$filters);
 	if ($result >= 0)
 	{
 		$attachment = false;
@@ -142,22 +145,22 @@ if ($format == 'rss')
 		//$contenttype='text/plain';
 		$outputencoding='UTF-8';
 		//$contenttype='ISO-8859-1';
-		
+
 		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
 		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
-		
+
 		// Ajout directives pour resoudre bug IE
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
-		 
+
 		// Clean parameters
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
 		$result=readfile($outputfile);
 		if (! $result) print 'File '.$outputfile.' was empty.';
-	
+
 	//	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
-	}	
+	}
 }
 
 

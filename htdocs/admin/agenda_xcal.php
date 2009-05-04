@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
  */
 
 /**
-	    \file       htdocs/admin/agenda.php
-        \ingroup    agenda
-        \brief      Page de configuration du module agenda
-		\version    $Id$
-*/
+ *	    \file       htdocs/admin/agenda.php
+ *      \ingroup    agenda
+ *      \brief      Page de configuration du module agenda
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -44,10 +44,11 @@ if ($actionsave)
     $i=0;
 
     $db->begin();
-    
-    $i+=dolibarr_set_const($db,'MAIN_AGENDA_XCAL_EXPORTKEY',trim($_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]),'chaine',0,'',$conf->entity);
 
-    if ($i > 0)
+    $i+=dolibarr_set_const($db,'MAIN_AGENDA_XCAL_EXPORTKEY',trim($_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_CACHE',trim($_POST["MAIN_AGENDA_EXPORT_CACHE"]),'chaine',0,'',$conf->entity);
+
+    if ($i >= 2)
     {
         $db->commit();
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
@@ -83,7 +84,7 @@ print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="po
 print "<table class=\"noborder\" width=\"100%\">";
 
 print "<tr class=\"liste_titre\">";
-print "<td width=\"30%\">".$langs->trans("Parameter")."</td>";
+print "<td>".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Value")."</td>";
 //print "<td>".$langs->trans("Examples")."</td>";
 print "<td>&nbsp;</td>";
@@ -92,6 +93,12 @@ print "</tr>";
 print "<tr class=\"impair\">";
 print "<td>".$langs->trans("PasswordTogetVCalExport")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_XCAL_EXPORTKEY\" value=\"". ($_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]?$_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]:$conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) . "\" size=\"40\"></td>";
+print "<td>&nbsp;</td>";
+print "</tr>";
+
+print "<tr class=\"pair\">";
+print "<td>".$langs->trans("UseACacheDelay")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_EXPORT_CACHE\" value=\"". ($_POST["MAIN_AGENDA_EXPORT_CACHE"]?$_POST["MAIN_AGENDA_EXPORT_CACHE"]:$conf->global->MAIN_AGENDA_EXPORT_CACHE) . "\" size=\"10\"></td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
