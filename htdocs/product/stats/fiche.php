@@ -42,9 +42,8 @@ $mode=isset($_GET["mode"])?$_GET["mode"]:'byunit';
 if (isset($_GET["id"]) || isset($_GET["ref"]))
 {
 	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-	$fieldid = isset($_GET["ref"])?'ref':'rowid';
 }
-
+$fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
 
