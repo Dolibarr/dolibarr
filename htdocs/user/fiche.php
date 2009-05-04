@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
@@ -755,9 +755,7 @@ else
 		 */
 		$head = user_prepare_head($fuser);
 
-		$title = $fuser->admin ? $langs->trans("Administrator") : $langs->trans("User");
-		$title = !$fuser->entity ? $langs->trans("SuperAdministrator") : $title;
-
+		$title = $langs->trans("User");
 		dol_fiche_head($head, 'user', $title);
 
 
