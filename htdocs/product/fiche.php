@@ -44,7 +44,7 @@ $langs->load("stocks");
 if (isset($_GET["id"]) || isset($_GET["ref"]))
 {
 	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-	$fieldid = isset($_REQUEST["ref"])?'ref':'rowid';
+	$fieldid = isset($_GET["ref"])?'ref':'rowid';
 }
 
 if ($user->societe_id) $socid=$user->societe_id;
