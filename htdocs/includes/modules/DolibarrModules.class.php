@@ -411,7 +411,7 @@ class DolibarrModules
 		$err = 0;
 		
 		// Common module
-		$entity = ((isset($this->always_enabled)||(isset($this->core_enabled)) ? 0 : $conf->entity);
+		$entity = ((isset($this->always_enabled)||isset($this->core_enabled)) ? 0 : $conf->entity);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE name = '".$this->const_name."'";
