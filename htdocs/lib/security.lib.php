@@ -143,15 +143,15 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
 	print '<td valign="top" nowrap="nowrap"><input id="password" name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
 	print '</td></tr>';
-	
+
 	// Entity field
-	if ($conf->multicompany->enabled)
+	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
 		$html = new Form($db);
-		
+
 		//TODO: creer class
 		$entity = array('1'=>'company1','2'=>'company2');
-		
+
 		print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Entity").'</b> &nbsp; </td>';
 		print '<td valign="top" nowrap="nowrap">';
 		$html->select_array('entity',$entity);
