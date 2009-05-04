@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ foreach ($conf->dol_document_root as $dirroot)
 			{
 				if (is_readable($dir.$file))
 				{
-					if (eregi('(.*)\.modules\.php',$file,$reg))
+					if (eregi('(.*)\.modules\.php$',$file,$reg))
 					{
 						$filebis=$reg[1];
 
