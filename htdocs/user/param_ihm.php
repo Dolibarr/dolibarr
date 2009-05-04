@@ -94,7 +94,7 @@ if ($_POST["action"] == 'update' && ($caneditfield  || $user->admin))
         $tabparam["MAIN_SEARCHFORM_SOCIETE"]=$_POST["main_searchform_societe"];
         $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
 
-        $result=dol_set_user_param($db, $fuser, $tabparam);
+        $result=dol_set_user_param($db, $conf, $fuser, $tabparam);
 
         $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
