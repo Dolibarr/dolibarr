@@ -754,8 +754,11 @@ else
 		 * Affichage onglets
 		 */
 		$head = user_prepare_head($fuser);
+		
+		$title = $fuser->admin ? $langs->trans("Administrator") : $langs->trans("User");
+		$title = !$fuser->entity ? $langs->trans("SuperAdministrator") : $title;
 
-		dol_fiche_head($head, 'user', $langs->trans("User"));
+		dol_fiche_head($head, 'user', $title);
 
 
 		/*
@@ -1299,13 +1302,15 @@ else
 			else
 			{
 				print '<td>';
-				if ($user->admin && ($fuser->entity!=0)) // On ne modifie pas le superadmin
+				if ($user->admin && $fuser->entity!=0) // On ne modifie pas le superadmin
 				{
 					print $form->selectyesno('admin',$fuser->admin,1);
 				}
 				else
 				{
-					print '<input type="hidden" name="admin" value="'.$fuser->admin.'">'.yn($fuser->admin);
+					$yn = yn($fuser->admin);
+					print '<input type="hidden" name="admin" value="'.$fuser->admin.'">';
+					print $html->textwithwarning($yn,$langs->trans("DontChangeSuperAdmin"));
 				}
 				print '</td></tr>';
 			}
@@ -1321,13 +1326,14 @@ else
 			{
 				print $langs->trans("DomainUser");
 			}
-			else if ($fuser->entity!=0)
+			if ($fuser->admin && !$fuser->entity)
 			{
-				print $langs->trans("Internal");
+				print $langs->trans("SuperAdministrator");
+				print ' '.img_picto($langs->trans("SuperAdministrator"),"redstar");
 			}
 			else
 			{
-				print $langs->trans("SuperAdmin");
+				print $langs->trans("Internal");
 			}
 			print '</td></tr>';
 

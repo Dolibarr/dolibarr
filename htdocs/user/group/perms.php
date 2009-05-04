@@ -154,8 +154,12 @@ if ($_GET["id"])
     
     // Nom
     print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
-    print '<td colspan="2">'.$fgroup->nom.'</td>';
-    print "</tr>\n";
+    print '<td colspan="2">'.$fgroup->nom.'';
+    if (!$obj->entity)
+    {
+    	print img_redstar($langs->trans("GlobalGroup"));
+    }
+    print "</td></tr>\n";
     
     // Note
     print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';

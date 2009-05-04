@@ -51,7 +51,10 @@ $fuser->info($_GET["id"]);
 
 $head = user_prepare_head($fuser);
 
-dol_fiche_head($head, 'info', $langs->trans("User"));
+$title = $fuser->admin ? $langs->trans("Administrator") : $langs->trans("User");
+$title = !$fuser->entity ? $langs->trans("SuperAdministrator") : $title;
+
+dol_fiche_head($head, 'info', $title);
 
 
 print '<table width="100%"><tr><td>';

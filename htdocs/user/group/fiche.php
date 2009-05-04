@@ -251,8 +251,12 @@ else
             
             // Nom
             print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
-            print '<td width="75%" class="valeur">'.$group->nom.'</td>';
-            print "</tr>\n";
+            print '<td width="75%" class="valeur">'.$group->nom;
+            if (!$group->entity)
+            {
+            	print img_redstar($langs->trans("GlobalGroup"));
+            }
+            print "</td></tr>\n";
 
             // Note
             print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
@@ -369,7 +373,7 @@ else
                         print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
                         if ($obj->admin  && !$obj->entity)
                         {
-                        	print img_picto($langs->trans("SuperAdministrator"),'redstar');
+                        	print img_redstar($langs->trans("SuperAdministrator"));
                         }
                         else if ($obj->admin)
                         {
@@ -417,8 +421,12 @@ else
 
             print '<table class="border" width="100%">';
             print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
-            print '<td width="75%" class="valeur"><input size="15" type="text" name="group" value="'.$group->nom.'"></td>';
-            print "</tr>\n";
+            print '<td width="75%" class="valeur"><input size="15" type="text" name="group" value="'.$group->nom.'">';
+            if (!$group->entity)
+            {
+            	print img_redstar($langs->trans("GlobalGroup"));
+            }
+            print "</td></tr>\n";
             print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
             print '<td class="valeur">';
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)

@@ -92,8 +92,10 @@ $form = new Form($db);
  */
 $head = user_prepare_head($fuser);
 
-dol_fiche_head($head, 'ldap', $langs->trans("User"));
+$title = $fuser->admin ? $langs->trans("Administrator") : $langs->trans("User");
+$title = !$fuser->entity ? $langs->trans("SuperAdministrator") : $title;
 
+dol_fiche_head($head, 'ldap', $title);
 
 
 /*

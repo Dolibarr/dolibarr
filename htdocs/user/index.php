@@ -100,7 +100,7 @@ if ($result)
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
         if ($obj->admin && !$obj->entity)
         {
-          	print img_picto($langs->trans("SuperAdministrator"),'redstar');
+          	print img_redstar($langs->trans("SuperAdministrator"));
         }
         else if ($obj->admin)
         {

@@ -94,7 +94,10 @@ $fuser->getrights();
  */
 $head = user_prepare_head($fuser);
 
-dol_fiche_head($head, 'rights', $langs->trans("User"));
+$title = $fuser->admin ? $langs->trans("Administrator") : $langs->trans("User");
+$title = !$fuser->entity ? $langs->trans("SuperAdministrator") : $title;
+
+dol_fiche_head($head, 'rights', $title);
 
 
 $db->begin();

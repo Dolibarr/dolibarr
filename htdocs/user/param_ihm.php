@@ -113,7 +113,10 @@ llxHeader();
  */
 $head = user_prepare_head($fuser);
 
-dol_fiche_head($head, 'guisetup', $langs->trans("User"));
+$title = $fuser->admin ? $langs->trans("Administrator") : $langs->trans("User");
+$title = !$fuser->entity ? $langs->trans("SuperAdministrator") : $title;
+
+dol_fiche_head($head, 'guisetup', $title);
 
 
 print '<table class="border" width="100%">';

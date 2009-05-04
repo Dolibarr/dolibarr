@@ -91,7 +91,7 @@ if ($resql)
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
         if (!$obj->entity)
         {
-        	print img_picto($langs->trans("GlobalGroup"),'redstar');
+        	print img_redstar($langs->trans("GlobalGroup"));
         }
         print "</td>";
         print '<td width="100" align="center">'.dol_print_date($obj->datec,"day").'</td>';
