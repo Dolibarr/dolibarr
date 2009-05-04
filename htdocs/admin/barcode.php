@@ -178,10 +178,10 @@ if ($resql)
 
 				if ($module->encodingIsSupported($obj->encoding))
 				{
-					// Build barcode on disk
+					// Build barcode on disk (not used, this is done to make debug easier)
 					$result=$module->writeBarCode($obj->example,$obj->encoding,'Y');
 
-					// Output files with barcode generators
+					// Generate on the fly and output barcode with generator
 					$url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($obj->coder).'&code='.urlencode($obj->example).'&encoding='.urlencode($obj->encoding);
 					//print $url;
 					print '<img src="'.$url.'" title="'.$obj->example.'" border="0">';
