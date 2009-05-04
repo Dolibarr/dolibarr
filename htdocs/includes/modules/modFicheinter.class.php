@@ -141,7 +141,7 @@ class modFicheinter  extends DolibarrModules
     $this->export_sql_start[$r]='SELECT DISTINCT ';
     $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'fichinter as f, '.MAIN_DB_PREFIX.'fichinterdet as fd, '.MAIN_DB_PREFIX.'societe as s)';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_fichinter';
-		$this->export_sql_end[$r] .=' AND s.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
     $r++;
 
 	}

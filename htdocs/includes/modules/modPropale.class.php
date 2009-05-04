@@ -153,7 +153,7 @@ class modPropale extends DolibarrModules
 		$this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'propal as c, '.MAIN_DB_PREFIX.'propaldet as cd, '.MAIN_DB_PREFIX.'societe as s)';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_propal';
-		$this->export_sql_end[$r] .=' AND s.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND c.entity = '.$conf->entity;
 	}
 
 
