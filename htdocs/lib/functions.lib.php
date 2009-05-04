@@ -1335,6 +1335,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 {
 	global $db, $conf;
 
+	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename,$feature2,$dbt_socfield,$dbt_select");
 	if ($dbt_select != 'rowid') $objectid = "'".$objectid."'";
 
 	//print "user_id=".$user->id.", feature=".$feature.", feature2=".$feature2.", object_id=".$objectid;
@@ -1431,7 +1432,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 		$sql='';
 
 		// If dbtable not defined, we use same name for table than module name
-		if (!$dbtablename) $dbtablename = $feature;
+		if (empty($dbtablename)) $dbtablename = $feature;
 
 		// Check permission for object with entity
 		if ($feature == 'user' || $feature == 'usergroup' || $feature == 'produit')
@@ -1441,14 +1442,14 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
 			$sql.= " AND dbt.entity IN (0,".$conf->entity.")";
 		}
-    else if ($feature == 'societe')
+   		else if ($feature == 'societe')
 		{
-			// Check permission for external users
+			// If external user: Check permission for external users
 			if ($user->societe_id > 0)
 			{
 				if ($user->societe_id <> $objectid) accessforbidden();
 			}
-			// Check permission for internal users that are restricted on their objects
+			// If internal user: Check permission for internal users that are restricted on their objects
 			else if (! $user->rights->societe->client->voir)
 			{
 				$sql = "SELECT sc.fk_soc";
@@ -1457,8 +1458,8 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 				$sql.= " AND sc.fk_soc = s.rowid";
 				$sql.= " AND s.entity = ".$conf->entity;
 			}
-			// Check permission for entity
-			else
+			// If multicompany and internal users with all permissions, check user is in correct entity
+			else if ($conf->global->MAIN_MODULE_MULTICOMPANY)
 			{
 				$sql = "SELECT s.rowid";
 				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -1468,7 +1469,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 		}
 		else
 		{
-			// Check permission for external users
+			// If external user: Check permission for external users
 			if ($user->societe_id > 0)
 			{
 				$sql = "SELECT dbt.fk_soc";
@@ -1476,7 +1477,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 				$sql.= " WHERE dbt.rowid = ".$objectid;
 				$sql.= " AND dbt.fk_soc = ".$user->societe_id;
 			}
-			// Check permission for internal users that are restricted on their objects
+			// If internal user: Check permission for internal users that are restricted on their objects
 			else if (! $user->rights->societe->client->voir)
 			{
 				$sql = "SELECT sc.fk_soc";
@@ -1487,8 +1488,8 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 				$sql.= " AND s.entity = ".$conf->entity;
 				$sql.= " AND IFNULL(sc.fk_user, ".$user->id.") = ".$user->id;
 			}
-			// Check permission for entity
-			else
+			// If multicompany and internal users with all permissions, check user is in correct entity
+			else if ($conf->global->MAIN_MODULE_MULTICOMPANY)
 			{
 				$sql = "SELECT dbt.".$dbt_select;
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt, ".MAIN_DB_PREFIX."societe as s";
@@ -1508,7 +1509,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			}
 			else
 			{
-				dol_syslog("functions.lib::restrictedArea sql=".$sql, LOG_ERR);
+				dol_syslog("functions.lib:restrictedArea sql=".$sql, LOG_ERR);
 				accessforbidden();
 			}
 		}

@@ -48,7 +48,7 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit',$id,'product','','',$fieldid?$fieldid:'rowid');
 
 $mesg = '';
 
@@ -65,7 +65,7 @@ if ($_GET["action"] == 'fastappro')
 }
 
 
-// Action ajout d'un produit ou service
+// Add a product or service
 if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 {
 	$error=0;
@@ -151,68 +151,73 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 		}
 	}
 }
-
-// Action mise a jour d'un produit ou service
-if ($_POST["action"] == 'update' &&
-$_POST["cancel"] <> $langs->trans("Cancel") &&
-$user->rights->produit->creer)
+// Update a product or service
+if ($_POST["action"] == 'update' && $user->rights->produit->creer)
 {
-	$product = new Product($db);
-	if ($product->fetch($_POST["id"]))
+	if (! empty($_POST["cancel"]))
 	{
-		$product->ref                = $_POST["ref"];
-		$product->libelle            = $_POST["libelle"];
-		$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
-		$product->note               = dol_htmlcleanlastbr($_POST["note"]);
-		$product->status             = $_POST["statut"];
-		$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-		$product->stock_loc          = $_POST["stock_loc"];
-		$product->duration_value     = $_POST["duration_value"];
-		$product->duration_unit      = $_POST["duration_unit"];
-		$product->canvas             = $_POST["canvas"];
-		$product->weight             = $_POST["weight"];
-		$product->weight_units       = $_POST["weight_units"];
-		$product->volume             = $_POST["volume"];
-		$product->volume_units       = $_POST["volume_units"];
-		$product->finished           = $_POST["finished"];
-
-		if ($product->check())
+		$_GET["action"] = '';
+		$_GET["id"] = $_POST["id"];
+	}
+	else
+	{
+		$product = new Product($db);
+		if ($product->fetch($_POST["id"]))
 		{
-			if ($product->update($product->id, $user) > 0)
+			$product->ref                = $_POST["ref"];
+			$product->libelle            = $_POST["libelle"];
+			$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
+			$product->note               = dol_htmlcleanlastbr($_POST["note"]);
+			$product->status             = $_POST["statut"];
+			$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+			$product->stock_loc          = $_POST["stock_loc"];
+			$product->duration_value     = $_POST["duration_value"];
+			$product->duration_unit      = $_POST["duration_unit"];
+			$product->canvas             = $_POST["canvas"];
+			$product->weight             = $_POST["weight"];
+			$product->weight_units       = $_POST["weight_units"];
+			$product->volume             = $_POST["volume"];
+			$product->volume_units       = $_POST["volume_units"];
+			$product->finished           = $_POST["finished"];
+
+			if ($product->check())
 			{
-				$_GET["action"] = '';
-				$_GET["id"] = $_POST["id"];
+				if ($product->update($product->id, $user) > 0)
+				{
+					$_GET["action"] = '';
+					$_GET["id"] = $_POST["id"];
+				}
+				else
+				{
+					$_GET["action"] = 'edit';
+					$_GET["id"] = $_POST["id"];
+					$mesg = $product->error;
+				}
 			}
 			else
 			{
 				$_GET["action"] = 'edit';
 				$_GET["id"] = $_POST["id"];
-				$mesg = $product->error;
+				$mesg = $langs->trans("ErrorProductBadRefOrLabel");
 			}
-		}
-		else
-		{
-			$_GET["action"] = 'edit';
-			$_GET["id"] = $_POST["id"];
-			$mesg = $langs->trans("ErrorProductBadRefOrLabel");
-		}
 
-		// Produit spécifique
-		if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
-		{
-			$class = 'Product'.ucfirst($product->canvas);
-			include_once('canvas/product.'.$product->canvas.'.class.php');
-
-			$product = new $class($db);
-			if ($product->FetchCanvas($_POST["id"]))
+			// Produit spécifique
+			if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
 			{
-				$product->UpdateCanvas($_POST);
+				$class = 'Product'.ucfirst($product->canvas);
+				include_once('canvas/product.'.$product->canvas.'.class.php');
+
+				$product = new $class($db);
+				if ($product->FetchCanvas($_POST["id"]))
+				{
+					$product->UpdateCanvas($_POST);
+				}
 			}
 		}
 	}
 }
 
-// clone d'un produit
+// Clone a product
 if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 {
 	$db->begin();
@@ -1335,7 +1340,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 		// Liste de "Mes commandes"
 		print '<tr><td width="50%" valign="top">';
-		
+
 		$sql = "SELECT s.nom, s.rowid as socid, c.rowid as commandeid, c.ref,".$db->pdate("c.date_commande")." as dc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql.= " WHERE c.fk_soc = s.rowid";
@@ -1448,7 +1453,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 		// Liste de Mes factures
 		print '<tr><td width="50%" valign="top">';
-		
+
 		$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " WHERE f.fk_soc = s.rowid";
