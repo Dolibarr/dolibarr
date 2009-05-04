@@ -75,45 +75,11 @@ class modComptabiliteExpert extends DolibarrModules
 
 		// Constantes
 		$this->const = array();
-		
+
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/comptaexpert";
-		$this->dirs[$r][2] = 1;
-		$this->dirs[$r][3] = "";
-		$this->dirs[$r][4] = "comptaexpert";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/comptaexpert/temp";
-		$this->dirs[$r][2] = 1;
-		$this->dirs[$r][3] = "";
-		$this->dirs[$r][4] = "comptaexpert";
-		
-		$r++;
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/comptaexpert/rapport";
-		$this->dirs[$r][2] = 1;
-		$this->dirs[$r][3] = "rapport";
-		$this->dirs[$r][4] = "comptaexpert";
-		
-		$r++;
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/comptaexpert/export";
-		$this->dirs[$r][2] = 1;
-		$this->dirs[$r][3] = "export";
-		$this->dirs[$r][4] = "comptaexpert";
+		$this->dirs = array("/comptabiliteexpert/temp");
 
-		// Repertoires
-		//$this->dirs = array();
-		//$this->dirs[0] = $conf->comptaexpert->dir_output;
-		//$this->dirs[1] = $conf->comptaexpert->dir_output."/rapport";
-		//$this->dirs[2] = $conf->comptaexpert->dir_output."/export";
-
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions

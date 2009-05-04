@@ -21,8 +21,8 @@
  */
 
 /**     \defgroup   tax		Module taxes
-        \brief      Module pour inclure des fonctions de saisies des taxes (tva) et charges sociales
-*/
+ \brief      Module pour inclure des fonctions de saisies des taxes (tva) et charges sociales
+ */
 
 /**
  *      \file       htdocs/includes/modules/modTax.class.php
@@ -35,16 +35,16 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-		\class 		modTax
-        \brief      Classe de description et activation du module Tax
-*/
+ \class 		modTax
+ \brief      Classe de description et activation du module Tax
+ */
 class modTax extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acces base
-    */
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acces base
+	 */
 	function modTax($DB)
 	{
 		global $conf;
@@ -63,18 +63,10 @@ class modTax extends DolibarrModules
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
-    $this->picto='bill';
-    
-    // Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/taxes";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/taxes/temp";
+		$this->picto='bill';
+
+		// Data directories to create when module is enabled
+		$this->dirs = array("/taxes/temp");
 
 		// Config pages
 		$this->config_page_url = array("taxes.php");
@@ -129,30 +121,30 @@ class modTax extends DolibarrModules
 		$this->rights[$r][5] = 'export';
 
 
-	    // Exports
-      //--------
-      $r=0;
+		// Exports
+		//--------
+		$r=0;
 
-      $r++;
-      $this->export_code[$r]=$this->rights_class.'_'.$r;
-      $this->export_label[$r]='Taxes et charges sociales, et leurs reglements';
-      $this->export_permission[$r]=array(array("tax","charges","export"));
-      $this->export_fields_array[$r]=array('cc.libelle'=>"Type",'c.rowid'=>"IdSocialContribution",'c.libelle'=>"Label",'c.date_ech'=>'DateDue','c.periode'=>'Period','c.amount'=>"AmountExpected","c.paye"=>"Status",'p.rowid'=>'PaymentId','p.datep'=>'DatePayment','p.amount'=>'AmountPayment','p.num_paiement'=>'Numero');
-      $this->export_entities_array[$r]=array('cc.libelle'=>"tax_type",'c.rowid'=>"tax",'c.libelle'=>'tax','c.date_ech'=>'tax','c.periode'=>'tax','c.amount'=>"tax","c.paye"=>"tax",'p.rowid'=>'payment','p.datep'=>'payment','p.amount'=>'payment','p.num_paiement'=>'payment');
-      $this->export_alias_array[$r]=array('cc.libelle'=>"type",'c.rowid'=>"idsocialcontrib",'c.libelle'=>'label','c.date_ech'=>'datedue','c.periode'=>'period','c.amount'=>"amount_clamed","c.paye"=>"status",'p.rowid'=>'paymentid','p.datep'=>'date_payment','p.amount'=>'amount_payment','p.num_paiement'=>'num_payment');
-        
-      $this->export_sql_start[$r]='SELECT DISTINCT ';
-      $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'c_chargesociales as cc, '.MAIN_DB_PREFIX.'chargesociales as c';
-      $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementcharge as p ON p.fk_charge = c.rowid';
-      $this->export_sql_end[$r] .=' WHERE c.fk_type = cc.id';
-      $this->export_sql_end[$r] .=' AND c.entity = '.$conf->entity;
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]='Taxes et charges sociales, et leurs reglements';
+		$this->export_permission[$r]=array(array("tax","charges","export"));
+		$this->export_fields_array[$r]=array('cc.libelle'=>"Type",'c.rowid'=>"IdSocialContribution",'c.libelle'=>"Label",'c.date_ech'=>'DateDue','c.periode'=>'Period','c.amount'=>"AmountExpected","c.paye"=>"Status",'p.rowid'=>'PaymentId','p.datep'=>'DatePayment','p.amount'=>'AmountPayment','p.num_paiement'=>'Numero');
+		$this->export_entities_array[$r]=array('cc.libelle'=>"tax_type",'c.rowid'=>"tax",'c.libelle'=>'tax','c.date_ech'=>'tax','c.periode'=>'tax','c.amount'=>"tax","c.paye"=>"tax",'p.rowid'=>'payment','p.datep'=>'payment','p.amount'=>'payment','p.num_paiement'=>'payment');
+		$this->export_alias_array[$r]=array('cc.libelle'=>"type",'c.rowid'=>"idsocialcontrib",'c.libelle'=>'label','c.date_ech'=>'datedue','c.periode'=>'period','c.amount'=>"amount_clamed","c.paye"=>"status",'p.rowid'=>'paymentid','p.datep'=>'date_payment','p.amount'=>'amount_payment','p.num_paiement'=>'num_payment');
+
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'c_chargesociales as cc, '.MAIN_DB_PREFIX.'chargesociales as c';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementcharge as p ON p.fk_charge = c.rowid';
+		$this->export_sql_end[$r] .=' WHERE c.fk_type = cc.id';
+		$this->export_sql_end[$r] .=' AND c.entity = '.$conf->entity;
 	}
 
 
-   /**
-    *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-    *               Definit egalement les repertoires de donnees a creer pour ce module.
-    */
+	/**
+	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *               Definit egalement les repertoires de donnees a creer pour ce module.
+	 */
 	function init()
 	{
 		global $conf;
@@ -163,10 +155,10 @@ class modTax extends DolibarrModules
 		return $this->_init($sql);
 	}
 
-  /**
-   *    \brief      Fonction appelee lors de la desactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
+	/**
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
 	function remove()
 	{
 		$sql = array();

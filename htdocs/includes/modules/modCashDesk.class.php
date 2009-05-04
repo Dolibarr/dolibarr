@@ -31,9 +31,9 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-        \class      modCategorie
-        \brief      Classe de description et activation du module Categorie
-*/
+ *       \class      modCategorie
+ *       \brief      Classe de description et activation du module Categorie
+ */
 class modCashDesk extends DolibarrModules
 {
 	/**
@@ -43,51 +43,51 @@ class modCashDesk extends DolibarrModules
 	function modCashDesk ($DB)
 	{
 		$this->db = $DB;
-		
+
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used module id).
 		$this->numero = 50100;
 		// Key text used to identify module (for permission, menus, etc...)
 		$this->rights_class = 'cashdesk';
-		
+
 		$this->family = "products";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "CashDesk module";
-	
+
 		$this->revision = explode(' ','$Revision$');
 		$this->version = 'development';
 		//$this->version = 'experimental';    // 'development' or 'experimental' or 'dolibarr' or version
-	
+
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto = 'generic';
-	
-		// Dir
+
+		// Data directories to create when module is enabled
 		$this->dirs = array();
-	
+
 		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
 		$this->style_sheet = '';
-		
+
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
 		$this->config_page_url = array("cashdesk.php");
-		
+
 		// Dependencies
 		$this->depends = array("modBanque","modFacture","modProduit","modStock");	// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();			// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("@cashdesk");
-	
+
 		// Constantes
 		$this->const = array();
-	
+
 		// Boxes
 		$this->boxes = array();
-	
+
 		// Permissions
 		$this->rights = array();
-		
+
 		// Main menu entries
 		$this->menus = array();			// List of menus to add
 		$r=0;
@@ -106,7 +106,7 @@ class modCashDesk extends DolibarrModules
 									'user'=>0);				// 0=Menu for internal users, 1=external users, 2=both
 
 		$r++;
-		
+
 		// This is to declare a Left Menu entry:
 		// $this->menu[$r]=array(	'fk_menu'=>'r=0',		// Use r=value where r is index key used for the top menu entry
 		//							'type'=>'left',			// This is a Left menu entry
@@ -131,9 +131,9 @@ class modCashDesk extends DolibarrModules
 	function init()
   	{
     	$sql = array();
-    
+
 		$result=$this->load_tables();
-	
+
     	return $this->_init($sql);
   	}
 
@@ -162,6 +162,6 @@ class modCashDesk extends DolibarrModules
 	{
 		return $this->_load_tables('/cashdesk/sql/');
 	}
-	  	
+
 }
 ?>

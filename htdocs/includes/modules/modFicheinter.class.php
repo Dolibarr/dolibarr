@@ -49,7 +49,7 @@ class modFicheinter  extends DolibarrModules
 	function modFicheinter($DB)
 	{
 		global $conf;
-		
+
 		$this->db = $DB ;
 		$this->numero = 70 ;
 
@@ -66,15 +66,7 @@ class modFicheinter  extends DolibarrModules
 		$this->picto = "intervention";
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/ficheinter";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/ficheinter/temp";
+		$this->dirs = array("/ficheinter/temp");
 
         // Dependencies
 		$this->depends = array("modSociete","modCommercial");
@@ -145,7 +137,7 @@ class modFicheinter  extends DolibarrModules
     $this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.cp'=>'Zip','s.ville'=>'Town','s.fk_pays'=>'Country','s.tel'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode','f.rowid'=>"InterId",'f.ref'=>"InterRef",'f.datec'=>"InterDateCreation",'f.duree'=>"InterDuration",'f.fk_statut'=>'InterStatus','f.description'=>"InterNote",'fd.rowid'=>'InterLineId','fd.date'=>"InterLineDate",'fd.duree'=>"InterLineDuration",'fd.description'=>"InterLineDesc");
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.cp'=>'company','s.ville'=>'company','s.fk_pays'=>'company','s.tel'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company','f.rowid'=>"intervention",'f.ref'=>"intervention",'f.datec'=>"intervention",'f.duree'=>"intervention",'f.fk_statut'=>"intervention",'f.description'=>"intervention",'fd.rowid'=>"inter_line",'fd.date'=>"inter_line",'fd.duree'=>'inter_line','fd.description'=>'inter_line');
     $this->export_alias_array[$r]=array('s.rowid'=>"socid",'s.nom'=>'soc_name','s.address'=>'soc_adres','s.cp'=>'soc_zip','s.ville'=>'soc_ville','s.fk_pays'=>'soc_pays','s.tel'=>'soc_tel','s.siren'=>'soc_siren','s.siret'=>'soc_siret','s.ape'=>'soc_ape','s.idprof4'=>'soc_idprof4','s.code_compta'=>'soc_customer_accountancy','s.code_compta_fournisseur'=>'soc_supplier_accountancy','f.rowid'=>"interid",'f.ref'=>"ref",'f.datec'=>"datecreation",'f.duree'=>"duration",'f.fk_statut'=>'status','f.description'=>"note",'fd.rowid'=>'lineid','fd.date'=>"linedate",'fd.duree'=>'lineduration','fd.description'=>"linedescription");
-    
+
     $this->export_sql_start[$r]='SELECT DISTINCT ';
     $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'fichinter as f, '.MAIN_DB_PREFIX.'fichinterdet as fd, '.MAIN_DB_PREFIX.'societe as s)';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_fichinter';

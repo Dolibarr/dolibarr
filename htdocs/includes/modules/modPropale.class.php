@@ -47,7 +47,7 @@ class modPropale extends DolibarrModules
 	function modPropale($DB)
 	{
 		global $conf;
-		
+
 		$this->db = $DB ;
 		$this->numero = 20 ;
 
@@ -58,27 +58,19 @@ class modPropale extends DolibarrModules
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
-		
+
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto='propal';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/propale";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/propale/temp";
+		$this->dirs = array("/propale/temp");
 
-		// Dependances
+		// Dependancies
 		$this->depends = array("modSociete","modCommercial");
 		$this->config_page_url = array("propale.php");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		$this->const[0][0] = "PROPALE_ADDON_PDF";

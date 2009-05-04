@@ -57,15 +57,7 @@ class modImport extends DolibarrModules
 		$this->picto='';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/import";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/import/temp";
+		$this->dirs = array("/import/temp");
 
 		// Config pages
 		$this->config_page_url = array();

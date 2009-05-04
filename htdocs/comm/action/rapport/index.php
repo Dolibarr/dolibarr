@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,23 +92,23 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$obj=$db->fetch_object($resql);
-		
+
 		if ($obj)
 		{
 			$var=!$var;
 			print "<tr $bc[$var]>";
-	
+
 			print "<td>$obj->df</td>\n";
 			print '<td align="center">'.$obj->cc.'</td>';
-	
+
 			print '<td>';
 			print '<a href="index.php?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_file_new().'</a>';
 			print '</td>';
-	
+
 			$name = "actions-".$obj->month."-".$obj->year.".pdf";
 			$relativepath= $name;
-			$file = $conf->commercial->dir_actions_temp."/".$name;
-	
+			$file = $conf->agenda->dir_temp."/".$name;
+
 			if (file_exists($file))
 			{
 				print '<td align="center"><a href="'.DOL_URL_ROOT.'/document.php?page='.$page.'&amp;file='.urlencode($relativepath).'&amp;modulepart=actionsreport">'.img_pdf().'</a></td>';
@@ -120,7 +120,7 @@ if ($resql)
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
 			}
-	
+
 			print "</tr>\n";
 		}
 		$i++;

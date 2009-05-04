@@ -61,15 +61,7 @@ class modDocument extends DolibarrModules
 		$this->picto='dir';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/ged";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/ged/temp";
+		$this->dirs = array("/ged/temp");
 
 		// Config pages
 		//$this->config_page_url = array("document.php");

@@ -58,7 +58,7 @@ class modNotification extends DolibarrModules
 		$this->special = 1;
 		$this->picto='email';
 
-		// Dir
+		// Data directories to create when module is enabled.
 		$this->dirs = array();
 
 		// Dependances
@@ -89,7 +89,7 @@ class modNotification extends DolibarrModules
 	{
 		// Permissions
 		$this->remove();
-		 
+
 		return $this->_init($sql);
 	}
 

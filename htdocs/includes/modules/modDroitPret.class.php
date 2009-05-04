@@ -60,10 +60,7 @@ class modDroitPret  extends DolibarrModules
 		// Dir
 		global $dolibarr_smarty_compile;
 		global $dolibarr_smarty_cache;
-		$this->dirs = array();
-		
-	  $this->dirs[0] = $dolibarr_smarty_compile;
-	  $this->dirs[1] = $dolibarr_smarty_cache;
+		$this->dirs = array($dolibarr_smarty_compile,$dolibarr_smarty_cache);
 
 		// Dependances
 		$this->depends = array();
@@ -79,13 +76,13 @@ class modDroitPret  extends DolibarrModules
 		// Constantes
 		$this->const=array();
 		$r=0;
-		
+
 		$this->const[$r][0] = "PRODUCT_CANVAS_ABILITY";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = 1;
 		$this->const[$r][3] = 'This is a constant';
 		$this->const[$r][4] = 1;
-		
+
 		$r++;
 		$this->const[$r][0] = "MAIN_NEED_SMARTY";
 		$this->const[$r][1] = "chaine";
@@ -106,7 +103,7 @@ class modDroitPret  extends DolibarrModules
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'lire';
-		
+
 		$r++;
 		$this->rights[$r][0] = 2201;
 		$this->rights[$r][1] = 'Creer/modifier les droits de prets';

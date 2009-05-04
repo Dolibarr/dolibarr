@@ -16,18 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     \defgroup   ldap     Module ldap
- \brief      Module pour interfacer les contacts avec un annuaire Ldap
+ 		\brief      Module pour interfacer les contacts avec un annuaire Ldap
  */
 
 /**
- \file       htdocs/includes/modules/modLdap.class.php
- \ingroup    ldap
- \brief      Fichier de description et activation du module Ldap
+ 	\file       htdocs/includes/modules/modLdap.class.php
+ 	\ingroup    ldap
+ 	\brief      Fichier de description et activation du module Ldap
+	\version	$Id$
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -57,24 +56,16 @@ class modLdap extends DolibarrModules
 		$this->special = 1;
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/ldap";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/ldap/temp";
+		$this->dirs = array("/ldap/temp");
 
 		// Config pages
 		$this->config_page_url = array("ldap.php");
 
-		// D�pendances
+		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$r=0;
 
@@ -132,7 +123,7 @@ class modLdap extends DolibarrModules
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mobile";
 		$r++;
-			
+
 		// Boites
 		$this->boxes = array();
 

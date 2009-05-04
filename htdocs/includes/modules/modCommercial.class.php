@@ -48,53 +48,37 @@ class modCommercial extends DolibarrModules
   {
   	$this->db = $DB ;
     $this->numero = 2 ;
-        
+
     $this->family = "crm";
     // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
     $this->name = eregi_replace('^mod','',get_class($this));
     $this->description = "Gestion commercial";
-      
+
     // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
     $this->version = 'dolibarr';
-      
+
     $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
     $this->special = 0;
     $this->picto='commercial';
-      
+
     // Data directories to create when module is enabled
-    $this->dirs = array();
-    $r=0;
-      
-    $this->dirs[$r][0] = "output";
-    $this->dirs[$r][1] = "/comm";
-      
-    $r++;
-    $this->dirs[$r][0] = "temp";
-    $this->dirs[$r][1] = "/comm/temp";
-    
-    $r++;
-    $this->dirs[$r][0] = "actions";
-    $this->dirs[$r][1] = "/action";
-    
-    $r++;
-    $this->dirs[$r][0] = "actions_temp";
-    $this->dirs[$r][1] = "/action/temp";
-        
+    $this->dirs = array("/comm/temp");
+
     // Dependancies
     $this->depends = array("modSociete");
     $this->requiredby = array("modPropale","modContrat","modCommande","modFicheinter");
-        
-    // Constantes
+
+    // Constants
     $this->const = array();
-        
+
     // Boxes
     $this->boxes = array();
-        
+
     // Permissions
     $this->rights = array();
     $this->rights_class = 'commercial';
     $r = 1;
-        
+
     // 261 : Permission generale
     $this->rights[$r][0] = 261;
     $this->rights[$r][1] = 'Consulter menu commercial';
@@ -113,12 +97,12 @@ class modCommercial extends DolibarrModules
     {
     	// Permissions
       $this->remove();
-        
+
       $sql = array();
 
       return $this->_init($sql);
     }
-	
+
     /**
      *  \brief      Fonction appelee lors de la desactivation d'un module.
      *              Supprime de la base les constantes, boites et permissions du module.
@@ -126,7 +110,7 @@ class modCommercial extends DolibarrModules
     function remove()
     {
     	$sql = array();
-        
+
       return $this->_remove($sql);
     }
 }

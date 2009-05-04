@@ -48,7 +48,7 @@ class modCommande extends DolibarrModules
 	function modCommande($DB)
 	{
 		global $conf;
-		
+
 		$this->db = $DB ;
 		$this->numero = 25 ;
 
@@ -58,21 +58,13 @@ class modCommande extends DolibarrModules
 		$this->description = "Gestion des commandes clients";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
-		
+
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto='order';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/commande";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/commande/temp";
+		$this->dirs = array("/commande/temp");
 
 		// Config pages
 		$this->config_page_url = array("commande.php");
@@ -86,13 +78,13 @@ class modCommande extends DolibarrModules
 		// Constantes
 		$this->const = array();
 		$r=0;
-		
+
 		$this->const[$r][0] = "COMMANDE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "einstein";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des commandes en PDF';
 		$this->const[$r][4] = 0;
-		
+
 		$r++;
 		$this->const[$r][0] = "COMMANDE_ADDON";
 		$this->const[$r][1] = "chaine";

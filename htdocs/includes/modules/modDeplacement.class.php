@@ -47,7 +47,7 @@ class modDeplacement extends DolibarrModules
 	function modDeplacement($DB)
 	{
 		global $conf;
-		
+
 		$this->db = $DB ;
 		$this->numero = 75 ;
 
@@ -58,23 +58,23 @@ class modDeplacement extends DolibarrModules
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
-		
+
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto = "trip";
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
 
 		// Config pages
 		$this->config_page_url = array();
 		$this->langfiles = array("companies","trips");
-		
-		// Dependances
+
+		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boxes
@@ -110,7 +110,7 @@ class modDeplacement extends DolibarrModules
 
 		// Exports
 		$r=0;
-		
+
 		$r++;
 		$this->export_code[$r]='trips_'.$r;
 		$this->export_label[$r]='ListTripsAndExpenses';
@@ -118,12 +118,12 @@ class modDeplacement extends DolibarrModules
 		$this->export_fields_array[$r]=array('d.rowid'=>"TripId",'d.type'=>"Type",'d.km'=>"FeesKilometersOrAmout",'d.note'=>'Note','s.nom'=>'ThirdParty');
 		$this->export_entities_array[$r]=array('d.rowid'=>"Trip",'d.type'=>"Trip",'d.km'=>"Trip",'d.note'=>'Trip','s.nom'=>'company');
 		$this->export_alias_array[$r]=array('d.rowid'=>"idtrip",'d.type'=>"type",'d.km'=>"km",'d.note'=>'note','s.nom'=>'name');
-		
+
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'deplacement as d, '.MAIN_DB_PREFIX.'societe as s';
 		$this->export_sql_end[$r] .=' WHERE d.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' AND s.entity = '.$conf->entity;
-		
+
 	}
 
 

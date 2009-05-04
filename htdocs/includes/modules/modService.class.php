@@ -59,30 +59,22 @@ class modService extends DolibarrModules
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
-		
+
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto='service';
-		
-		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/produit";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/produit/temp";
 
-		// Dependances
+		// Data directories to create when module is enabled
+		$this->dirs = array("/produit/temp");
+
+		// Dependancies
 		$this->depends = array("modProduit");
 		$this->requiredby = array("modContrat");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 		$this->boxes[0][1] = "box_services_vendus.php";
 

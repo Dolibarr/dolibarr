@@ -45,7 +45,7 @@ class modUser extends DolibarrModules
 	function modUser($DB)
 	{
 		global $conf;
-		
+
 		$this->db = $DB ;
 		$this->numero = 0;
 
@@ -63,30 +63,20 @@ class modUser extends DolibarrModules
 		$this->picto='group';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/users";
-		$this->dirs[$r][2] = 1;
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/users/temp";
-		$this->dirs[$r][2] = 1;
+		$this->dirs = array("/users/temp");
 
 		// Config pages
 		// $this->config_page_url = array("/user/admin/index.php");
 
-		// Dependances
+		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->langfiles = array("main","users","companies");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions
@@ -162,7 +152,7 @@ class modUser extends DolibarrModules
 		$this->export_fields_array[$r]=array('u.rowid'=>"Id",'u.login'=>"Login",'u.name'=>"Lastname",'u.firstname'=>"Firstname",'u.office_phone'=>'Tel','u.office_fax'=>'Fax','u.email'=>'EMail','u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",'u.admin'=>"Admin",'u.statut'=>'Status','u.note'=>"Note",'u.datelastlogin'=>'LastConnexion','u.datepreviouslogin'=>'PreviousConnexion','u.fk_socpeople'=>"IdContact",'u.fk_societe'=>"IdCompany",'u.fk_member'=>"MemberId");
 		$this->export_entities_array[$r]=array('u.rowid'=>"user",'u.login'=>"user",'u.name'=>"user",'u.firstname'=>"user",'u.office_phone'=>'user','u.office_fax'=>'user','u.email'=>'user','u.datec'=>"user",'u.tms'=>"user",'u.admin'=>"user",'u.statut'=>'user','u.note'=>"user",'u.datelastlogin'=>'user','u.datepreviouslogin'=>'user','u.fk_socpeople'=>"contact",'u.fk_societe'=>"company",'u.fk_member'=>"member");
 		$this->export_alias_array[$r]=array('u.rowid'=>"rowid",'u.login'=>"login",'u.name'=>"name",'u.firstname'=>"firstname",'u.office_phone'=>'tel','u.office_fax'=>'fax','u.email'=>'email','u.datec'=>"datecreation",'u.tms'=>"datelastmodification",'u.admin'=>"admin",'u.statut'=>'status','u.note'=>"note",'u.datelastlogin'=>'datelastlogin','u.datepreviouslogin'=>'datepreviouslogin','u.fk_socpeople'=>"idcontact",'u.fk_societe'=>"idcompany",'u.fk_member'=>"idmember");
-		
+
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .=' WHERE u.entity IN (0,'.$conf->entity.')';

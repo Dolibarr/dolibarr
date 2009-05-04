@@ -60,15 +60,7 @@ class modExternalRss extends DolibarrModules
 		$this->picto='rss';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/rss";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/rss/temp";
+		$this->dirs = array("/rss/temp");
 
 		// Config pages
 		$this->config_page_url = array("external_rss.php");
@@ -98,7 +90,7 @@ class modExternalRss extends DolibarrModules
 	function init()
 	{
 		global $conf;
-		
+
 		$sql = array();
 
 		// Recherche configuration de boites

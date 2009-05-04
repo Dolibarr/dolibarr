@@ -59,15 +59,7 @@ class modBarcode extends DolibarrModules
 		$this->picto='barcode';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/barcode";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/barcode/temp";
+		$this->dirs = array("/barcode/temp");
 
 		// Dependances
 		$this->depends = array("modProduit");

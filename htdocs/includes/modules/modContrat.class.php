@@ -18,131 +18,123 @@
  */
 
 /**
-        \defgroup   contrat     Module contrat
-        \brief      Module pour gerer la tenue de contrat de services
-		\version	$Id$
-*/
+ \defgroup   contrat     Module contrat
+ \brief      Module pour gerer la tenue de contrat de services
+ \version	$Id$
+ */
 
 /**
-        \file       htdocs/includes/modules/modContrat.class.php
-        \ingroup    contrat
-        \brief      Fichier de description et activation du module Contrat
-*/
+ \file       htdocs/includes/modules/modContrat.class.php
+ \ingroup    contrat
+ \brief      Fichier de description et activation du module Contrat
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-        \class      modContrat
-        \brief      Classe de description et activation du module Contrat
-*/
+ \class      modContrat
+ \brief      Classe de description et activation du module Contrat
+ */
 
 class modContrat extends DolibarrModules
 {
 
-    /**
-     *   \brief      Constructeur. Definit les noms, constantes et boites
-     *   \param      DB      handler d'acces base
-     */
-    function modContrat($DB)
-    {
-        $this->db = $DB ;
-        $this->numero = 54 ;
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acces base
+	 */
+	function modContrat($DB)
+	{
+		$this->db = $DB ;
+		$this->numero = 54 ;
 
-        $this->family = "crm";
+		$this->family = "crm";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
-        $this->description = "Gestion des contrats de services";
+		$this->description = "Gestion des contrats de services";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
-        
-        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        $this->special = 0;
-        $this->picto='contract';
 
-        // Data directories to create when module is enabled
-		    $this->dirs = array();
-		    $r=0;
-		
-		    $this->dirs[$r][0] = "output";
-		    $this->dirs[$r][1] = "/contracts";
-		
-		    $r++;
-		    $this->dirs[$r][0] = "temp";
-		    $this->dirs[$r][1] = "/contracts/temp";
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		$this->special = 0;
+		$this->picto='contract';
 
-        // Dependances
-        $this->depends = array("modService");
-        $this->requiredby = array();
+		// Data directories to create when module is enabled
+		$this->dirs = array("/contracts/temp");
 
-        // Constantes
-        $this->const = array();
+		// Dependances
+		$this->depends = array("modService");
+		$this->requiredby = array();
 
-        // Boites
-        $this->boxes = array();
+		// Constantes
+		$this->const = array();
 
-        // Permissions
-        $this->rights = array();
-        $this->rights_class = 'contrat';
+		// Boites
+		$this->boxes = array();
 
-        $this->rights[1][0] = 161;
-        $this->rights[1][1] = 'Lire les contrats';
-        $this->rights[1][2] = 'r';
-        $this->rights[1][3] = 1;
-        $this->rights[1][4] = 'lire';
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'contrat';
 
-        $this->rights[2][0] = 162;
-        $this->rights[2][1] = 'Creer / modifier les contrats';
-        $this->rights[2][2] = 'w';
-        $this->rights[2][3] = 0;
-        $this->rights[2][4] = 'creer';
+		$this->rights[1][0] = 161;
+		$this->rights[1][1] = 'Lire les contrats';
+		$this->rights[1][2] = 'r';
+		$this->rights[1][3] = 1;
+		$this->rights[1][4] = 'lire';
 
-        $this->rights[3][0] = 163;
-        $this->rights[3][1] = 'Activer un service d\'un contrat';
-        $this->rights[3][2] = 'w';
-        $this->rights[3][3] = 0;
-        $this->rights[3][4] = 'activer';
+		$this->rights[2][0] = 162;
+		$this->rights[2][1] = 'Creer / modifier les contrats';
+		$this->rights[2][2] = 'w';
+		$this->rights[2][3] = 0;
+		$this->rights[2][4] = 'creer';
 
-        $this->rights[4][0] = 164;
-        $this->rights[4][1] = 'Desactiver un service d\'un contrat';
-        $this->rights[4][2] = 'w';
-        $this->rights[4][3] = 0;
-        $this->rights[4][4] = 'desactiver';
+		$this->rights[3][0] = 163;
+		$this->rights[3][1] = 'Activer un service d\'un contrat';
+		$this->rights[3][2] = 'w';
+		$this->rights[3][3] = 0;
+		$this->rights[3][4] = 'activer';
 
-        $this->rights[5][0] = 165;
-        $this->rights[5][1] = 'Supprimer un contrat';
-        $this->rights[5][2] = 'd';
-        $this->rights[5][3] = 0;
-        $this->rights[5][4] = 'supprimer';
+		$this->rights[4][0] = 164;
+		$this->rights[4][1] = 'Desactiver un service d\'un contrat';
+		$this->rights[4][2] = 'w';
+		$this->rights[4][3] = 0;
+		$this->rights[4][4] = 'desactiver';
 
-    }
+		$this->rights[5][0] = 165;
+		$this->rights[5][1] = 'Supprimer un contrat';
+		$this->rights[5][2] = 'd';
+		$this->rights[5][3] = 0;
+		$this->rights[5][4] = 'supprimer';
+
+	}
 
 
-    /**
-     *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-     *               Definit egalement les repertoires de donnees a creer pour ce module.
-     */
-    function init()
-    {
-        global $conf;
-        
-        // Nettoyage avant activation
-        $this->remove();
+	/**
+	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *               Definit egalement les repertoires de donnees a creer pour ce module.
+	 */
+	function init()
+	{
+		global $conf;
 
-        return $this->_init($sql);
-    }
+		// Nettoyage avant activation
+		$this->remove();
 
-    /**
-     *    \brief      Fonction appelee lors de la desactivation d'un module.
-     *                Supprime de la base les constantes, boites et permissions du module.
-     */
-    function remove()
-    {
-        $sql = array();
+		return $this->_init($sql);
+	}
 
-        return $this->_remove($sql);
+	/**
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
 
-    }
+		return $this->_remove($sql);
+
+	}
 }
 ?>

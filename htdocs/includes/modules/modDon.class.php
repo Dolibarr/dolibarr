@@ -25,19 +25,18 @@
  */
 
 /**
- \file       htdocs/includes/modules/modDon.class.php
- \ingroup    don
- \brief      Fichier de description et activation du module Don
+ *	\file       htdocs/includes/modules/modDon.class.php
+ *	\ingroup    don
+ *	\brief      Fichier de description et activation du module Don
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- \class      modDon
- \brief      Classe de description et activation du module Don
+ *	\class      modDon
+ *	\brief      Classe de description et activation du module Don
  */
-
 class modDon  extends DolibarrModules
 {
 
@@ -59,24 +58,16 @@ class modDon  extends DolibarrModules
 		$this->special = 0;
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/dons";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/dons/temp";
+		$this->dirs = array("/dons/temp");
 
-		// Dependances
+		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
 
 		// Config pages
 		$this->config_page_url = array("dons.php");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$this->const[0][0] = "DON_FORM";
 		$this->const[0][1] = "chaine";

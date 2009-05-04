@@ -59,15 +59,7 @@ class modLabel extends DolibarrModules
 		$this->picto='label';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/label";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/label/temp";
+		$this->dirs = array("/label/temp");
 
 		// Dependancies
 		$this->depends = array();

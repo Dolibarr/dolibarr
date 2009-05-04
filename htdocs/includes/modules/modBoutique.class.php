@@ -33,7 +33,7 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/** 
+/**
 		\class 		modBoutique
 		\brief      Classe de description et activation du module OSCommerce
 */
@@ -57,23 +57,23 @@ class modBoutique extends DolibarrModules
 		$this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 1;
-	
-		// Dir
+
+		// Data directories to create when module is enabled
 		$this->dirs = array();
-	
+
 		// Config pages
 //		$this->config_page_url = array("boutique.php","osc-languages.php");
 		$this->config_page_url = array("boutique.php");
-	
-		// Dependances
+
+		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
 	    $this->conflictwith = array("modOSCommerceWS");
 	   	$this->langfiles = array("shop");
-	
-		// Constantes
+
+		// Constants
 		$this->const = array();
-	
+
 	    // Boites
 	    $this->boxes = array();
 
@@ -81,7 +81,7 @@ class modBoutique extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'boutique';
 	}
-  
+
    /**
     *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
     *               Definit egalement les repertoires de donnees a creer pour ce module.
@@ -89,7 +89,7 @@ class modBoutique extends DolibarrModules
 	function init()
 	{
 		$sql = array();
-		
+
 		return $this->_init($sql);
 	}
 
@@ -100,9 +100,9 @@ class modBoutique extends DolibarrModules
 	function remove()
 	{
 		$sql = array();
-		
+
 		return $this->_remove($sql);
 	}
-  
+
 }
 ?>

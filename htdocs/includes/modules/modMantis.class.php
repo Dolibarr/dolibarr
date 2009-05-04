@@ -15,8 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     \defgroup   mantis     Module Mantis
@@ -27,6 +25,7 @@
         \file       htdocs/includes/modules/modMantis.class.php
         \ingroup    mantis
         \brief      Description and activation file for module Mantis
+		\version	$Id$
 */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -46,43 +45,43 @@ class modMantis extends DolibarrModules
 	function modMantis($DB)
 	{
 		$this->db = $DB;
-		
+
 		// Id for module (must be unique).
 		// Use here a free id.
 		$this->numero = 1200;
-		
+
 		// Family can be 'crm','financial','hr','projects','product','technic','other'
-		// It is used to sort modules in module setup page 
-		$this->family = "projects";		
+		// It is used to sort modules in module setup page
+		$this->family = "projects";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
 		// Module description used translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "Interfacage avec le bug tracking Mantis";
 		// Possible values for version are: 'experimental' or 'dolibarr' or version
-		$this->version = 'dolibarr';    
-		// Id used in llx_const table to manage module status (enabled/disabled)	
+		$this->version = 'dolibarr';
+		// Id used in llx_const table to manage module status (enabled/disabled)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=other)
 		$this->special = 1;
 		// Name of png file (without png) used for this module
 		$this->picto='calendar';
-		
+
 		// Data directories to create when module is enabled
 		$this->dirs = array();
-		
+
 		// Config pages
 		$this->config_page_url = array("mantis.php");
-		
+
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		
+
 		// Constants
 		$this->const = array();			// List of parameters
-		
+
 		// Boxes
-		$this->boxes = array();			// List of boxes 
-		
+		$this->boxes = array();			// List of boxes
+
 		// Permissions
 		$this->rights_class = 'mantis';	// Permission key
 		$this->rights = array();		// Permission array used by this module
@@ -90,10 +89,10 @@ class modMantis extends DolibarrModules
         // Menus
 		//------
 		$r=0;
-		
+
 		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'BugTracker','mainmenu'=>'mantis','leftmenu'=>'1','url'=>'/mantis/mantis.php','langs'=>'other','position'=>100,'perms'=>'','target'=>'','user'=>0);
 		$r++;
-		
+
 	}
 
 	/**
@@ -104,7 +103,7 @@ class modMantis extends DolibarrModules
 	function init()
   	{
     	$sql = array();
-    
+
     	return $this->_init($sql);
   	}
 

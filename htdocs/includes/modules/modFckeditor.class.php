@@ -57,19 +57,7 @@ class modFckeditor extends DolibarrModules
 		$this->special = 2;
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/fckeditor";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/fckeditor/temp";
-		
-		$r++;
-		$this->dirs[$r][0] = "images";
-		$this->dirs[$r][1] = "/fckeditor/images";
+		$this->dirs = array("/fckeditor/temp","/fckeditor/images");
 
 		// Config pages
 		$this->config_page_url = array("fckeditor.php");

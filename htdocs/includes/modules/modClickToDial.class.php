@@ -60,7 +60,7 @@ class modClickToDial extends DolibarrModules
 		$this->special = 1;
 		$this->picto='phoning';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
 
 		// Dependencies

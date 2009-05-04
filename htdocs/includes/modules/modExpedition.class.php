@@ -51,7 +51,7 @@ class modExpedition extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion des expeditions";
-		
+
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 
@@ -60,9 +60,10 @@ class modExpedition extends DolibarrModules
 		$this->picto = "sending";
 
 		// Data directories to create when module is enabled
+		// TODO Replace with simple directories
 		$this->dirs = array();
 		$r=0;
-		
+
 		$this->dirs[$r][0] = "output";
 		$this->dirs[$r][1] = "/expedition";
 		$r++;

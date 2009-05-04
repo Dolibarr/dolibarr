@@ -58,7 +58,7 @@ class modCategorie extends DolibarrModules
 		$this->special = 2;
 		$this->picto = 'generic';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
 
 		// Dependencies

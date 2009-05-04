@@ -225,7 +225,7 @@ if ($modulepart)
         $user->getrights('prelevement');
         if ($user->rights->prelevement->bons->lire) $accessallowed=1;
 
-        $original_file=$conf->prelevement->dir_bon.'/'.$original_file;
+        $original_file=$conf->prelevement->dir_output.'/receipts/'.$original_file;
     }
 
     // Wrapping pour les graph telephonie
@@ -236,14 +236,14 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->telephonie->dir_graph.'/'.$original_file;
+        $original_file=$conf->telephonie->dir_temp.'/'.$original_file;
     }
 
     // Wrapping pour les graph energie
     elseif ($modulepart == 'energie')
     {
       $accessallowed=1;
-      $original_file=$conf->energie->dir_graph.'/'.$original_file;
+      $original_file=$conf->energie->dir_temp.'/'.$original_file;
     }
 
     // Wrapping pour les graph bank

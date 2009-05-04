@@ -18,15 +18,15 @@
  */
 
 /**
- \defgroup   bookmark    Module Bookmark
- \brief      Module pour g�rer les Bookmarks
- \version	$Id$
+ *	\defgroup   bookmark    Module Bookmark
+ *	\brief      Module to manage Bookmarks
+ *	\version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modBookmark.class.php
- \ingroup    bookmark
- \brief      Fichier de description et activation du module Bookmarks
+ *	\file       htdocs/includes/modules/modBookmark.class.php
+ *	\ingroup    bookmark
+ *	\brief      Fichier de description et activation du module Bookmarks
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -61,7 +61,7 @@ class modBookmark extends DolibarrModules
 		$this->special = 2;
 		$this->picto='bookmark';
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
 
 		// Dependancies

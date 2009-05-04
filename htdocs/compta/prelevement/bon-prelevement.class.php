@@ -830,7 +830,7 @@ class BonPrelevement extends CommonObject
                 {
                     $prev_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
 
-                    $dir=$conf->prelevement->dir_bon;
+                    $dir=$conf->prelevement->dir_output.'/receipts';
                     $file=$filebonprev;
                     if (! is_dir($dir)) create_exdir($dir);
 

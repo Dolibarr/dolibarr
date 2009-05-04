@@ -72,8 +72,6 @@ class modMultiCompany extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
-		//$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
-        //$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
 
 		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
 		$this->style_sheet = '';
@@ -207,7 +205,7 @@ class modMultiCompany extends DolibarrModules
   	$sql = array();
 
 		$init = $this->_init($sql);
-		
+
 		$result=$this->load_tables('/multicompany/sql/init/');
 
     return $init;
@@ -222,10 +220,10 @@ class modMultiCompany extends DolibarrModules
 	function remove()
 	{
 		$sql = array();
-		
+
 		$result=$this->load_tables('/multicompany/sql/remove/');
 		$result = $this->destroy_cookie();
-		
+
 		return $this->_remove($sql);
 	}
 
@@ -241,7 +239,7 @@ class modMultiCompany extends DolibarrModules
 	{
 		return $this->_load_tables($path);
 	}
-	
+
 	/**
 	*   \brief   Destroy a cookie
 	*/

@@ -23,9 +23,9 @@
  */
 
 /**
- \file       htdocs/includes/modules/modExport.class.php
- \ingroup    export
- \brief      Fichier de description et activation du module export
+ *	\file       htdocs/includes/modules/modExport.class.php
+ *	\ingroup    export
+ *	\brief      Fichier de description et activation du module export
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -57,15 +57,7 @@ class modExport extends DolibarrModules
 		$this->picto='';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/export";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/export/temp";
+		$this->dirs = array("/export/temp");
 
 		// Config pages
 		$this->config_page_url = array();

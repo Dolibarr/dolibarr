@@ -59,7 +59,7 @@ class modOSCommerceWS extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 1;
 
-		// Dir
+		// Data directories to create when module is enabled.
 		$this->dirs = array();
 
 		// Config pages

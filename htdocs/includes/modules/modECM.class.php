@@ -44,52 +44,44 @@ class modECM extends DolibarrModules
 	function modECM($DB)
 	{
 		$this->db = $DB;
-		
+
 		// Id for module (must be unique).
 		// Use here a free id.
 		$this->numero = 2500;
-		
+
 		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
-		// It is used to sort modules in module setup page 
-		$this->family = "ecm";		
+		// It is used to sort modules in module setup page
+		$this->family = "ecm";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "Electronic Content Management";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';    
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=other)
 		$this->special = 0;
 		// Name of png file (without png) used for this module
 		$this->picto='dir';
-		
+
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/ecm";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/ecm/temp";
-		
+		$this->dirs = array("/ecm/temp");
+
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module
 		$this->config_page_url = array();
-		
+
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		
+
 		// Constants
 		$this->const = array();			// List of parameters
-		
+
 		// Boxes
-		$this->boxes = array();			// List of boxes 
+		$this->boxes = array();			// List of boxes
 		$r=0;
-		
+
 		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
 		// Example:
         //$this->boxes[$r][1] = "myboxa.php";
@@ -122,12 +114,12 @@ class modECM extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'setup';
 
-		
+
         // Menus
 		//------
 		$this->menus = array();			// List of menus to add
 		$r=0;
-		
+
 		// Top menu
 		$this->menu[$r]=array('fk_menu'=>0,
 							  'type'=>'top',
@@ -156,7 +148,7 @@ class modECM extends DolibarrModules
 							  'target'=>'',
 							  'user'=>0);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'r=1',
 							  'type'=>'left',
 							  'titre'=>'ECMNewSection',
@@ -169,7 +161,7 @@ class modECM extends DolibarrModules
 							  'target'=>'',
 							  'user'=>0);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'r=1',
 							  'type'=>'left',
 							  'titre'=>'ECMFileManager',
@@ -182,7 +174,7 @@ class modECM extends DolibarrModules
 							  'target'=>'',
 							  'user'=>0);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'r=1',
 							  'type'=>'left',
 							  'titre'=>'Search',
@@ -206,7 +198,7 @@ class modECM extends DolibarrModules
 	function init()
   	{
     	$sql = array();
-    
+
     	return $this->_init($sql);
   	}
 

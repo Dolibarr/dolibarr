@@ -15,8 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     \defgroup   postnuke     Module postnuke
@@ -27,6 +25,7 @@
  \file       htdocs/includes/modules/modPostnuke.class.php
  \ingroup    postnuke
  \brief      Fichier de description et activation du module Postnuke
+ \version	$Id$
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -57,7 +56,7 @@ class modPostnuke extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 1;
 
-		// Dir
+		// Data directories to create when module is enabled
 		$this->dirs = array();
 
 		// D�pendances

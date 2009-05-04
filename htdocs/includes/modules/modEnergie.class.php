@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
- \defgroup   energie     Module energie
- \brief      Module pour le suivi de la consommation d'energie
+ 	\defgroup   energie     Module energie
+ 	\brief      Module pour le suivi de la consommation d'energie
+	\version	$Id$
  */
 
 /**
@@ -63,19 +62,7 @@ class modEnergie extends DolibarrModules
 		$this->picto='energie';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/energie";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/energie/temp";
-		
-		$r++;
-		$this->dirs[$r][0] = "graph";
-		$this->dirs[$r][1] = "/energie/graph";
+		$this->dirs = array("/energie/temp","/energie/graph");
 
 		// Dependances
 		$this->depends = array();

@@ -15,8 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
@@ -28,6 +26,7 @@
  \file       htdocs/includes/modules/modTelephonie.class.php
  \ingroup    telephonie
  \brief      Fichier de description et activation du module de Telephonie
+	\version	$Id$
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/modules/DolibarrModules.class.php");
@@ -64,57 +63,23 @@ class modTelephonie extends DolibarrModules
 		$this->picto='phoning';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/telephonie";
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/telephonie/temp";
-		$r++;
-		$this->dirs[$r][0] = "graph";
-		$this->dirs[$r][1] = "/telephonie/graph";
-		$r++;
-		$this->dirs[$r][0] = "logs";
-		$this->dirs[$r][1] = "/telephonie/logs";
-		$r++;
-		$this->dirs[$r][0] = "client";
-		$this->dirs[$r][1] = "/telephonie/client";
-		$r++;
-		$this->dirs[$r][0] = "rapports";
-		$this->dirs[$r][1] = "/telephonie/rapports";
-		$r++;
-		$this->dirs[$r][0] = "ligne";
-		$this->dirs[$r][1] = "/telephonie/ligne";
-		$r++;
-		$this->dirs[$r][0] = "ligne_commande";
-		$this->dirs[$r][1] = "/telephonie/ligne/commande";
-		$r++;
-		$this->dirs[$r][0] = "ligne_commande_retour";
-		$this->dirs[$r][1] = "/telephonie/ligne/commande/retour";
-		$r++;
-		$this->dirs[$r][0] = "ligne_commande_retour_traite";
-		$this->dirs[$r][1] = "/telephonie/ligne/commande/retour/traite";
-		$r++;
-		$this->dirs[$r][0] = "cdr";
-		$this->dirs[$r][1] = "/telephonie/cdr";
-		$r++;
-		$this->dirs[$r][0] = "cdr_archive";
-		$this->dirs[$r][1] = "/telephonie/cdr_archive";
-		$r++;
-		$this->dirs[$r][0] = "cdr_atraiter";
-		$this->dirs[$r][1] = "/telephonie/cdr/atraiter";
-		
+		$this->dirs = array("/telephonie/temp",
+							"/telephonie/graph",
+							"/telephonie/logs",
+							"/telephonie/client",
+							"/telephonie/rapports",
+							"/telephonie/ligne/commande/retour/traite",
+							"/telephonie/cdr/archives",
+							"/telephonie/cdr/atraiter");
 
-		// Dependances
+		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions

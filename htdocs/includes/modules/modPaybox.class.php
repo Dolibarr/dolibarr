@@ -69,9 +69,7 @@ class modPayBox extends DolibarrModules
 		$this->picto=DOL_URL_ROOT.'/paybox/images/paybox.png';
 
 		// Data directories to create when module is enabled.
-		$this->dirs = array();
-		//$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
-        //$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
+		$this->dirs = array('/paybox/temp');
 
 		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
 		$this->style_sheet = '';

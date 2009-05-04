@@ -14,13 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-        \defgroup   domain     Module domain
-        \brief      Module pour g�rer une base de noms de domaines
+ *      \defgroup   domain     Module domain
+ *      \brief      Module to manage a list of DNS names
+ *		\version	$Id$
 */
 
 /**
@@ -48,7 +47,7 @@ class modDomain extends DolibarrModules
     {
         $this->db = $DB;
         $this->numero = 1300 ;
-    
+
         $this->family = "other";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
@@ -57,29 +56,29 @@ class modDomain extends DolibarrModules
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 2;
         $this->picto='user';
-    
+
         // Dir
         //----
         $this->dirs = array();
-    
+
         // Config pages
         //-------------
         $this->config_page_url = array();
-    
-        // D�pendances
-        //------------
+
+        // Dependancies
+        //-------------
         $this->depends = array();
         $this->requiredby = array();
         $this->langfiles = array("domains");
-    
+
         // Constantes
         //-----------
         $this->const = array();
-    
+
         // Boites
         //-------
         $this->boxes = array();
-    
+
         // Permissions
         //------------
         $this->rights = array();
@@ -90,23 +89,23 @@ class modDomain extends DolibarrModules
 	    $this->rights[$r][0] = 1301;
 	    $this->rights[$r][1] = 'Read domain names';
 	    $this->rights[$r][2] = 'r';
-	    $this->rights[$r][3] = 1;    
+	    $this->rights[$r][3] = 1;
 	    $this->rights[$r][4] = 'read';
-        
+
 	    $r++;
 	    $this->rights[$r][0] = 1302;
 	    $this->rights[$r][1] = 'Create/modify domain names';
 	    $this->rights[$r][2] = 'w';
-	    $this->rights[$r][3] = 0;    
+	    $this->rights[$r][3] = 0;
 	    $this->rights[$r][4] = 'create';
-        
+
 	    $r++;
 	    $this->rights[$r][0] = 1303;
 	    $this->rights[$r][1] = 'Delete domain names';
 	    $this->rights[$r][2] = 'd';
-	    $this->rights[$r][3] = 0;    
+	    $this->rights[$r][3] = 0;
 	    $this->rights[$r][4] = 'delete';
-        
+
         // Exports
         //--------
         $r=0;
@@ -119,7 +118,7 @@ class modDomain extends DolibarrModules
         // $this->export_sql[$r]           Requete sql qui offre les donnees a l'export
     }
 
-    
+
     /**
      *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
      *               Definit egalement les repertoires de donnees a creer pour ce module.
@@ -127,15 +126,15 @@ class modDomain extends DolibarrModules
     function init()
     {
         global $conf;
-        
+
         // Permissions
         $this->remove();
-        
+
         $sql = array();
-        
+
         return $this->_init($sql);
     }
-    
+
     /**
      *    \brief      Fonction appelee lors de la desactivation d'un module.
      *                Supprime de la base les constantes, boites et permissions du module.
@@ -143,7 +142,7 @@ class modDomain extends DolibarrModules
     function remove()
     {
 		$sql = array();
-    
+
 		return $this->_remove($sql);
     }
 

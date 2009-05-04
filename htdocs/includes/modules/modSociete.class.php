@@ -49,7 +49,7 @@ class modSociete extends DolibarrModules
 	function modSociete($DB)
 	{
 		global $conf;
-		
+
 		$this->db = $DB ;
 		$this->numero = 1 ;
 
@@ -67,16 +67,17 @@ class modSociete extends DolibarrModules
 		$this->picto='company';
 
 		// Data directories to create when module is enabled
+		// TODO Replace with simple directories
 		$this->dirs = array();
 		$r=0;
-		
+
 		$this->dirs[$r][0] = "output";
 		$this->dirs[$r][1] = "/societe";
-		
+
 		$r++;
 		$this->dirs[$r][0] = "temp";
 		$this->dirs[$r][1] = "/societe/temp";
-		
+
 		$r++;
 		$this->dirs[$r][0] = "logos";
 		$this->dirs[$r][1] = "/societe/logos";
@@ -207,7 +208,7 @@ class modSociete extends DolibarrModules
 		$this->export_fields_array[$r]=array('s.rowid'=>"Id",'s.nom'=>"Name",'s.prefix_comm'=>"Prefix",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.idprof4'=>"IdProf4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note",'t.libelle'=>"ThirdPartyType",'ce.code'=>"Effectif","cfj.libelle"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel','fk_stcomm'=>'ProspectStatus');
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>"company",'s.prefix_comm'=>"company",'s.client'=>"company",'s.fournisseur'=>"company",'s.datec'=>"company",'s.tms'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company",'s.address'=>"company",'s.cp'=>"company",'s.ville'=>"company",'p.libelle'=>"company",'p.code'=>"company",'s.tel'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note'=>"company",'t.libelle'=>"company",'ce.code'=>"company","cfj.libelle"=>"company",'s.fk_prospectlevel'=>'company','fk_stcomm'=>'company');
 		$this->export_alias_array[$r]=array('s.rowid'=>"socid",'s.nom'=>"name",'s.prefix_comm'=>"prefix",'s.client'=>"iscustomer",'s.fournisseur'=>"issupplier",'s.datec'=>"datecreation",'s.tms'=>"datelastmodification",'s.code_client'=>"customercode",'s.code_fournisseur'=>"suppliercode",'s.address'=>"address",'s.cp'=>"zip",'s.ville'=>"town",'p.libelle'=>"country",'p.code'=>"countrycode",'s.tel'=>"phone",'s.fax'=>"fax",'s.url'=>"url",'s.email'=>"email",'s.siret'=>"idprof1",'s.siren'=>"idprof2",'s.ape'=>"idprof3",'s.idprof4'=>"idprof4",'s.tva_intra'=>"vatintra",'s.capital'=>"capital",'s.note'=>"note",'t.libelle'=>"thirdpartytype",'ce.code'=>"effectif","cfj.libelle"=>"juridicalstatus",'s.fk_prospectlevel'=>'prospectlevel','fk_stcomm'=>'prospectstatus');
-		
+
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
@@ -225,7 +226,7 @@ class modSociete extends DolibarrModules
 		$this->export_fields_array[$r]=array('c.rowid'=>"IdContact",'c.civilite'=>"CivilityCode",'c.name'=>'Lastname','c.firstname'=>'Firstname','c.datec'=>"DateCreation",'c.tms'=>"DateLastModification",'c.priv'=>"ContactPrivate",'c.address'=>"Address",'c.cp'=>"Zip",'c.ville'=>"Town",'c.phone'=>"Phone",'c.fax'=>"Fax",'c.email'=>"EMail",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.rowid'=>"IdCompany",'s.nom'=>"CompanyName",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode");
 		$this->export_entities_array[$r]=array('c.rowid'=>"contact",'c.civilite'=>"contact",'c.name'=>'contact','c.firstname'=>'contact','c.datec'=>"contact",'c.tms'=>"contact",'c.priv'=>"contact",'c.address'=>"contact",'c.cp'=>"contact",'c.ville'=>"contact",'c.phone'=>"contact",'c.fax'=>"contact",'c.email'=>"contact",'p.libelle'=>"contact",'p.code'=>"contact",'s.rowid'=>"company",'s.nom'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company");
 		$this->export_alias_array[$r]=array('c.rowid'=>"contactid",'c.civilite'=>"civilitycode",'c.name'=>'lastname','c.firstname'=>'firstname','c.datec'=>"datecreation",'c.tms'=>"datelastmodification",'c.priv'=>"private",'c.address'=>"address",'c.cp'=>"zip",'c.ville'=>"town",'c.phone'=>"phone",'c.fax'=>"fax",'c.email'=>"email",'p.libelle'=>"country",'p.code'=>"countrycode",'s.rowid'=>"socid",'s.nom'=>"companyname",'s.code_client'=>"customercode",'s.code_fournisseur'=>"suppliercode");
-		
+
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'c_pays as p, '.MAIN_DB_PREFIX.'socpeople as c';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
