@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,76 +19,80 @@
  */
 
 /**
-        \file       htdocs/includes/modules/barcode/phpbarcode.modules.php
-		\ingroup    facture
-		\brief      Fichier contenant la classe du modèle de generation code barre phpbarcode
-		\version    $Id$
-*/
+ *	\file       htdocs/includes/modules/barcode/phpbarcode.modules.php
+ *	\ingroup    facture
+ *	\brief      Fichier contenant la classe du modèle de generation code barre phpbarcode
+ *	\version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/barcode/modules_barcode.php");
 
-/**	    \class      modPhpbarcode
-		\brief      Classe du modèle de numérotation de generation code barre phpbarcode
-*/
-
+/**		\class      modPhpbarcode
+ *		\brief      Classe du modèle de numérotation de generation code barre phpbarcode
+ */
 class modPhpbarcode extends ModeleBarCode
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error='';
 
+
 	/**     \brief     	Return if a module can be used or not
-	*      	\return		boolean     true if module can be used
-	*/
+	 *      \return		boolean     true if module can be used
+	 */
 	function isEnabled()
 	{
 		return true;
 	}
 
+
 	/**     \brief      Renvoi la description du modele de numérotation
-     *      \return     string      Texte descripif
-     */
-    function info()
-    {
-	 	global $langs;
+	 *      \return     string      Texte descripif
+	 */
+	function info()
+	{
+		global $langs;
 
-    	return 'Php-barcode';
-    }
+		return 'Php-barcode';
+	}
 
-    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numérotation de fonctionner.
-     *      \return     boolean     false si conflit, true si ok
-     */
-    function canBeActivated()
-    {
-        global $langs;
+	/**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numérotation de fonctionner.
+	 *      \return     boolean     false si conflit, true si ok
+	 */
+	function canBeActivated()
+	{
+		global $langs;
 
-        return true;
-    }
+		return true;
+	}
+
 
 	/**
-		\brief		Return true if encodinf is supported
-		\return		int		>0 if supported, 0 if not
-	*/
-    function encodingIsSupported($encoding)
+	 *	\brief		Return true if encodinf is supported
+	 *	\return		int		>0 if supported, 0 if not
+	 */
+	function encodingIsSupported($encoding)
 	{
 		$supported=0;
-		if ($encoding == 'EAN8')  $supported=1;
 		if ($encoding == 'EAN13') $supported=1;
-		if ($encoding == 'UPC')   $supported=1;
 		if ($encoding == 'ISBN')  $supported=1;
-		if ($encoding == 'C39')   $supported=1;
-		if ($encoding == 'C128')  $supported=1;
+		// Formats that hangs on Windows (when genbarcode.exe for Windows is called, so they are not
+		// activated on Windows)
+		if ($encoding == 'EAN8' && empty($_SERVER["WINDIR"]))  $supported=1;
+		if ($encoding == 'UPC' && empty($_SERVER["WINDIR"]))   $supported=1;
+		if ($encoding == 'C39' && empty($_SERVER["WINDIR"]))   $supported=1;
+		if ($encoding == 'C128' && empty($_SERVER["WINDIR"]))  $supported=1;
 		return $supported;
 	}
 
-  /**
+	/**
 	 *		\brief      Return an image file on output
 	 *		\param   	$code			Valeur numérique a coder
 	 *		\param   	$encoding		Mode de codage
 	 *		\param   	$readable		Code lisible
-   */
-    function buildBarCode($code,$encoding,$readable='Y')
-    {
+	 */
+	function buildBarCode($code,$encoding,$readable='Y')
+	{
 		global $_GET,$_ENV,$_SERVER;
 		global $conf;
 		global $genbarcode_loc, $bar_color, $bg_color, $text_color, $font_loc;
@@ -106,20 +110,21 @@ class modPhpbarcode extends ModeleBarCode
 		$_GET["mode"]=$mode;
 
 		require_once(DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/php-barcode.php');
+		dol_syslog("modPhpbarcode::buildBarCode $code,$encoding,$scale,$mode");
 		if ($code) barcode_print($code,$encoding,$scale,$mode);
 
 		return 1;
-    }
+	}
 
-  /**
+	/**
 	 *		\brief      Save an image file on disk
 	 *		\param   	$code			Valeur numérique a coder
 	 *		\param   	$encoding		Mode de codage
 	 *		\param   	$readable		Code lisible
-   */
-  function writeBarCode($code,$encoding,$readable='Y')
-  {
-  	global $conf,$filebarcode;
+	 */
+	function writeBarCode($code,$encoding,$readable='Y')
+	{
+		global $conf,$filebarcode;
 
 		create_exdir($conf->barcode->dir_temp);
 
@@ -130,7 +135,7 @@ class modPhpbarcode extends ModeleBarCode
 		$result=$this->buildBarCode($code,$encoding,$readable);
 
 		return $result;
-  }
+	}
 
 }
 
