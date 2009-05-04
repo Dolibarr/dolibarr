@@ -155,7 +155,7 @@ if ($handle)
 
 	  print '<td align="center">';
 	  $s=$modCodeTiers->getToolTip($langs,$soc,-1);
-	  print $form->textwithhelp('',$s,1);
+	  print $form->textwithpicto('',$s,1);
 	  print '</td>';
 
 	  print '</tr>';

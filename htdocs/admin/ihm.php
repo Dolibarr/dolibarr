@@ -159,7 +159,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	    print $html->selectyesno('main_confirm_ajax',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,1);
 	    print ' ('.$langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled").')';
 	    print '</td>';
-		print '<td width="20">'.$html->textwithhelp('',$langs->trans("FeatureDevelopment")).'</td>';
+		print '<td width="20">'.$html->textwithpicto('',$langs->trans("FeatureDevelopment")).'</td>';
 		print '</tr>';
 	}
 
@@ -300,7 +300,7 @@ else
 	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
 	    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
 	    else print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td>";
-		print '<td width="20">'.$html->textwithhelp('',$langs->trans("FeatureDevelopment")).'</td>';
+		print '<td width="20">'.$html->textwithpicto('',$langs->trans("FeatureDevelopment")).'</td>';
 		print "</tr>";
 	}
 

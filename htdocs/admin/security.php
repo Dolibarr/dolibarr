@@ -358,7 +358,7 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">';
 $text = $langs->trans("ProtectAndEncryptPdfFiles");
-$desc = $html->textwithhelp($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
+$desc = $html->textwithpicto($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
 print $desc;
 print '</td>';
 print '<td align="center" width="60">';

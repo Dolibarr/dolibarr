@@ -595,7 +595,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	// Type
 	print '<tr><td valign="top">'.$langs->trans("Type").'</td>';
 	print '<td>';
-	print $html->textwithhelp($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
+	print $html->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
 	print '</td></tr>';
 
 	// Tel
@@ -908,7 +908,7 @@ else
 			print '<td>';
 			if ($fuser->societe_id)
 			{
-				print $html->textwithhelp($langs->trans("External"),$langs->trans("InternalExternalDesc"));
+				print $html->textwithpicto($langs->trans("External"),$langs->trans("InternalExternalDesc"));
 			}
 			else if ($fuser->ldap_sid)
 			{
@@ -916,11 +916,11 @@ else
 			}
 			else if ($fuser->entity!=0)
 			{
-				print $html->textwithhelp($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
+				print $html->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
 			}
 			else
 			{
-				print $html->textwithhelp($langs->trans("SuperAdministrator"),$langs->trans("SuperAdministratorDesc"));
+				print $html->textwithpicto($langs->trans("SuperAdministrator"),$langs->trans("SuperAdministratorDesc"));
 			}
 			print '</td></tr>';
 

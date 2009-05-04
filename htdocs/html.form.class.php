@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
@@ -51,8 +51,8 @@ class Form
 
 
 	/**
-	 \brief     Constructeur
-	 \param     DB      handler d'accès base de donnée
+	 *	\brief     Constructor
+	 *	\param     DB      Database handler
 	 */
 	function Form($DB)
 	{
@@ -149,32 +149,21 @@ class Form
 	 *	\param     	text				Text to show
 	 *	\param   	htmltooltip     	Content of tooltip
 	 *	\param		direction			1=Icon is after text, -1=Icon is before text
-	 *	\param		usehelpcursor		1=Use a help cursor, 0=Use default cursor
-	 * 	\return		string				HTML code of text, picto, tooltip
-	 */
-	function textwithhelp($text,$htmltext,$direction=1,$usehelpcursor=1)
-	{
-		global $conf;
-		$alt='';
-		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';
-		return $this->textwithtooltip($text,$htmltext,2,$direction,img_help($usehelpcursor,$alt));
-	}
-
-	/**
-	 *	\brief     	Show a text with a picto and a tooltip on picto
-	 *	\param     	text				Text to show
-	 *	\param   	htmltooltip     	Content of tooltip
-	 *	\param		direction			1=Icon is after text, -1=Icon is before text
+	 * 	\param		type				Type of picto (info, help, warning, superadmin...)
 	 * 	\return		string				HTML code of text, picto, tooltip
 	 */
 	function textwithpicto($text,$htmltext,$direction=1,$type='help')
 	{
 		global $conf;
+
+		if ("$type" == "0") $type='info';	// For backward compatibility
+
 		$alt='';
 		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';
-		$img=img_help(1,$alt);
-		if ($type == 'warning') 	$img=img_warning($alt);
-		if ($type == 'superadmin') 	$img=img_redstar($alt);
+		if ($type == 'info') 				$img=img_help(0,$alt);
+		if ($type == 'help' || $type ==1)	$img=img_help(1,$alt);
+		if ($type == 'warning') 			$img=img_warning($alt);
+		if ($type == 'superadmin') 			$img=img_redstar($alt);
 		return $this->textwithtooltip($text,$htmltext,2,$direction,$img);
 	}
 

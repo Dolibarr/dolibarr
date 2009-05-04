@@ -88,7 +88,7 @@ if ( $societe->fetch($socid) )
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	if ($societe->isInEEC()) print $form->textwithhelp($societe->pays,$langs->trans("CountryIsInEEC"),1,0);
+	if ($societe->isInEEC()) print $form->textwithpicto($societe->pays,$langs->trans("CountryIsInEEC"),1,0);
 	else print $societe->pays;
 	print '</td></tr>';
 

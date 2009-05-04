@@ -1530,7 +1530,7 @@ if ($_GET['action'] == 'create')
 	print '<tr height="18"><td width="16px" valign="middle">';
 	print '<input type="radio" name="type" value="0"'.($_POST['type']==0?' checked="true"':'').'>';
 	print '</td><td valign="middle">';
-	$desc=$html->textwithhelp($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
+	$desc=$html->textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
 	print $desc;
 	print '</td></tr>'."\n";
 
@@ -1538,7 +1538,7 @@ if ($_GET['action'] == 'create')
 	print '<tr height="18"><td width="16px" valign="middle">';
 	print '<input type="radio" name="type" value="3"'.($_POST['type']==3?' checked="true"':'').'>';
 	print '</td><td valign="middle">';
-	$desc=$html->textwithhelp($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
+	$desc=$html->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
 	print $desc;
 	print '</td></tr>'."\n";
 
@@ -1548,7 +1548,7 @@ if ($_GET['action'] == 'create')
 		print '<tr height="18"><td width="16px" valign="middle">';
 		print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked="true"':'').'>';
 		print '</td><td valign="middle">';
-		$desc=$html->textwithhelp($langs->trans("InvoiceProformat"),$langs->transnoentities("InvoiceProformatDesc"),1);
+		$desc=$html->textwithpicto($langs->trans("InvoiceProformat"),$langs->transnoentities("InvoiceProformatDesc"),1);
 		print $desc;
 		print '</td></tr>'."\n";
 	}
@@ -1573,7 +1573,7 @@ if ($_GET['action'] == 'create')
 		$text.='<option value="-1">'.$langs->trans("NoReplacableInvoice").'</option>';
 	}
 	$text.='</select>';
-	$desc=$html->textwithhelp($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
+	$desc=$html->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
 	print $desc;
 	print '</td></tr>'."\n";
 
@@ -1598,7 +1598,7 @@ if ($_GET['action'] == 'create')
 		$text.='<option value="-1">'.$langs->trans("NoInvoiceToCorrect").'</option>';
 	}
 	$text.='</select>';
-	$desc=$html->textwithhelp($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
+	$desc=$html->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
 	//.' ('.$langs->trans("FeatureNotYetAvailable").')',$langs->transnoentities("InvoiceAvoirDesc"),1);
 	print $desc;
 	print '</td></tr>'."\n";
@@ -2068,8 +2068,8 @@ else
 				$close[$i]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonBadCustomerDesc");$i++;
 				// Texte
 				$i=0;
-				$close[$i]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
-				$close[$i]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonBadCustomer",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
+				$close[$i]['reason']=$html->textwithpicto($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
+				$close[$i]['reason']=$html->textwithpicto($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonBadCustomer",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
 				// arrayreasons[code]=reason
 				foreach($close as $key => $val)
 				{
@@ -2111,8 +2111,8 @@ else
 					$close[1]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonBadCustomerDesc");
 					$close[2]['label']=$langs->trans("ConfirmClassifyAbandonReasonOtherDesc");
 					// Texte
-					$close[1]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonBadCustomer",$fac->ref),$close[1]['label'],1);
-					$close[2]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyAbandonReasonOther"),$close[2]['label'],1);
+					$close[1]['reason']=$html->textwithpicto($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonBadCustomer",$fac->ref),$close[1]['label'],1);
+					$close[2]['reason']=$html->textwithpicto($langs->transnoentities("ConfirmClassifyAbandonReasonOther"),$close[2]['label'],1);
 					// arrayreasons
 					$arrayreasons[$close[1]['code']]=$close[1]['reason'];
 					$arrayreasons[$close[2]['code']]=$close[2]['reason'];
@@ -2263,7 +2263,7 @@ else
 					else
 					{
 						$text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
-						print $html->textwithhelp($text,$langs->trans("AbsoluteDiscountUse"));
+						print $html->textwithpicto($text,$langs->trans("AbsoluteDiscountUse"));
 					}
 				}
 				else
@@ -2282,7 +2282,7 @@ else
 					if ($fac->statut == 0 && $fac->type != 3)
 					{
 						$text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie));
-						print $html->textwithhelp($text,$langs->trans("CreditNoteDepositUse"));
+						print $html->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
 					}
 					else print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'.';
 				}
@@ -2498,7 +2498,7 @@ else
 				if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'discount_vat')
 				{
 					print '<tr><td colspan="2" align="right" nowrap="1">';
-					print $html->textwithhelp($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
+					print $html->textwithpicto($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
 					print '</td><td align="right">'.price($fac->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 					$resteapayeraffiche=0;
 				}
@@ -2506,7 +2506,7 @@ else
 				if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'badcustomer')
 				{
 					print '<tr><td colspan="2" align="right" nowrap="1">';
-					print $html->textwithhelp($langs->trans("Abandoned").':',$langs->trans("HelpAbandonBadCustomer"),-1);
+					print $html->textwithpicto($langs->trans("Abandoned").':',$langs->trans("HelpAbandonBadCustomer"),-1);
 					print '</td><td align="right">'.price($fac->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 					//$resteapayeraffiche=0;
 				}
@@ -2514,7 +2514,7 @@ else
 				if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'product_returned')
 				{
 					print '<tr><td colspan="2" align="right" nowrap="1">';
-					print $html->textwithhelp($langs->trans("ProductReturned").':',$langs->trans("HelpAbandonProductReturned"),-1);
+					print $html->textwithpicto($langs->trans("ProductReturned").':',$langs->trans("HelpAbandonProductReturned"),-1);
 					print '</td><td align="right">'.price($fac->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 					$resteapayeraffiche=0;
 				}
@@ -2524,7 +2524,7 @@ else
 					print '<tr><td colspan="2" align="right" nowrap="1">';
 					$text=$langs->trans("HelpAbandonOther");
 					if ($fac->close_note) $text.='<br><br><b>'.$langs->trans("Reason").'</b>:'.$fac->close_note;
-					print $html->textwithhelp($langs->trans("Abandoned").':',$text,-1);
+					print $html->textwithpicto($langs->trans("Abandoned").':',$text,-1);
 					print '</td><td align="right">'.price($fac->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 					$resteapayeraffiche=0;
 				}

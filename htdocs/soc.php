@@ -412,7 +412,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '<input type="text" name="code_client" size="16" value="'.$tmpcode.'" maxlength="15">';
 		print '</td><td>';
 		$s=$modCodeClient->getToolTip($langs,$soc,0);
-		print $form->textwithhelp('',$s,1);
+		print $form->textwithpicto('',$s,1);
 		print '</td></tr></table>';
 
 		print '</td></tr>';
@@ -429,7 +429,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '<input type="text" name="code_fournisseur" size="16" value="'.$tmpcode.'" maxlength="15">';
 		print '</td><td>';
 		$s=$modCodeFournisseur->getToolTip($langs,$soc,1);
-		print $form->textwithhelp('',$s,1);
+		print $form->textwithpicto('',$s,1);
 		print '</td></tr></table>';
 
 		print '</td></tr>';
@@ -581,7 +581,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		if ($conf->use_javascript_ajax)
 		{
 			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
-			print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+			print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 		}
 		else
 		{
@@ -754,7 +754,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		}
 		print '</td><td>';
 		$s=$modCodeClient->getToolTip($langs,$soc,0);
-		print $form->textwithhelp('',$s,1);
+		print $form->textwithpicto('',$s,1);
 		print '</td></tr></table>';
 
 		print '</td></tr>';
@@ -784,7 +784,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		}
 		print '</td><td>';
 		$s=$modCodeFournisseur->getToolTip($langs,$soc,1);
-		print $form->textwithhelp('',$s,1);
+		print $form->textwithpicto('',$s,1);
 		print '</td></tr></table>';
 
 		print '</td></tr>';
@@ -902,7 +902,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		if ($conf->use_javascript_ajax)
 		{
 			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
-			print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+			print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 		}
 		else
 		{
@@ -1009,7 +1009,7 @@ else
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	if ($soc->isInEEC()) print $form->textwithhelp($soc->pays,$langs->trans("CountryIsInEEC"),1,0);
+	if ($soc->isInEEC()) print $form->textwithpicto($soc->pays,$langs->trans("CountryIsInEEC"),1,0);
 	else print $soc->pays;
 	print '</td></tr>';
 
@@ -1118,7 +1118,7 @@ else
 		if ($conf->use_javascript_ajax)
 		{
 			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
-			print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+			print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 		}
 		else
 		{

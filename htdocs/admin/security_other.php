@@ -138,7 +138,7 @@ $var=!$var;
 print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_UMASK" method="POST">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UMask").'</td><td align="right">';
-print $form->textwithhelp('',$langs->trans("UMaskExplanation"));
+print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td nowrap="1">';
 print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.$conf->global->MAIN_UMASK.'">';
@@ -153,7 +153,7 @@ if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIME
 print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_SESSION_TIMEOUT" method="POST">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
-print $form->textwithhelp('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
+print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
 print '<td nowrap="1">';
 print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.$conf->global->MAIN_SESSION_TIMEOUT.'"> '.$langs->trans("seconds");

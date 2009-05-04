@@ -244,7 +244,7 @@ while (($file = readdir($handle))!==false)
 	    	$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 	    	$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
 	    	print '<td align="center">';
-	    	print $html->textwithhelp('',$htmltooltip,1,0);
+	    	print $html->textwithpicto('',$htmltooltip,1,0);
 	    	print '</td>';
 	    	print '<td align="center">';
 	    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';

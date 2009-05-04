@@ -269,7 +269,7 @@ if ($handle)
 				}
 
 				print '<td align="center">';
-				print $html->textwithhelp('',$htmltooltip,1,0);
+				print $html->textwithpicto('',$htmltooltip,1,0);
 				print '</td>';
 
 				print '</tr>';
@@ -392,7 +392,7 @@ while (($file = readdir($handle))!==false)
 		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
 
 		print '<td align="center">';
-		print $html->textwithhelp('',$htmltooltip,1,0);
+		print $html->textwithpicto('',$htmltooltip,1,0);
 		print '</td>';
 		print '<td align="center">';
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';

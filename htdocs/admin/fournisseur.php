@@ -252,7 +252,7 @@ if ($handle)
 				}
 
 				print '<td align="center">';
-				print $html->textwithhelp('',$htmltooltip,1,0);
+				print $html->textwithpicto('',$htmltooltip,1,0);
 				print '</td>';
 
 				print '</tr>';
@@ -372,7 +372,7 @@ while (($file = readdir($handle))!==false)
 		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
 		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
 		print '<td align="center">';
-		print $html->textwithhelp('',$htmltooltip,1,0);
+		print $html->textwithpicto('',$htmltooltip,1,0);
 		print '</td>';
 		print '<td align="center">';
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';

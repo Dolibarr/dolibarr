@@ -104,7 +104,7 @@ if ($_GET["id"])
         {
         	print "<tr>".'<td width="25%" valign="top">ClickToDial URL</td>';
         	print '<td class="valeur">';
-    		print $form->textwithhelp($conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
+    		print $form->textwithpicto($conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
         	print '</td>';
         	print '</tr>';
         }
@@ -140,7 +140,7 @@ if ($_GET["id"])
         {
         	print "<tr>".'<td width="25%" valign="top">ClickToDial URL</td>';
         	print '<td class="valeur">';
-    		print $form->textwithhelp($conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
+    		print $form->textwithpicto($conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
         	print '</td>';
         	print '</tr>';
         }

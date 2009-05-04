@@ -325,7 +325,7 @@ while (($file = readdir($handle))!==false)
 				}
 
 		    	print '<td align="center">';
-		    	print $html->textwithhelp('',$htmltooltip,1,0);
+		    	print $html->textwithpicto('',$htmltooltip,1,0);
 		    	print '</td>';
 
 		        print "</tr>\n";
@@ -448,7 +448,7 @@ while (($file = readdir($handle))!==false)
 
 
     	print '<td align="center">';
-    	print $html->textwithhelp('',$htmltooltip,1,0);
+    	print $html->textwithpicto('',$htmltooltip,1,0);
     	print '</td>';
     	print '<td align="center">';
     	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';

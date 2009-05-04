@@ -230,7 +230,7 @@ foreach ($orders as $key => $value)
 		if ($disabledbymodule == 1) $text.=$langs->trans("TriggerActiveAsModuleActive",$module).'<br>';
 		if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
 	}
-	print $html->textwithhelp('',$text);
+	print $html->textwithpicto('',$text);
 	print "</td>\n";
 
     print "</tr>\n";

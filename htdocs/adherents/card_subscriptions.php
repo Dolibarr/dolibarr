@@ -478,7 +478,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 		$s2=$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b><br>';
 		$s2.=$langs->trans("MailRecipient").': <b>'.$adh->email.'</b>';
 		//$s2.='<br>'.$langs->trans("Content").': '.nl2br($conf->global->ADHERENT_MAIL_COTIS);
-		print $html->textwithhelp($s1,$s2,1);
+		print $html->textwithpicto($s1,$s2,1);
 	}
 	print '</td></tr>';
 

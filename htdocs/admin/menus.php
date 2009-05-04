@@ -123,10 +123,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
     print '<td>';
-	print $html->textwithhelp($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
+	print $html->textwithpicto($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
     print '</td>';
     print '<td>';
-	print $html->textwithhelp($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
+	print $html->textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
     print '</td>';
     print '</tr>';
 
@@ -168,10 +168,10 @@ else
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
     print '<td>';
-	print $html->textwithhelp($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
+	print $html->textwithpicto($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
     print '</td>';
     print '<td>';
-	print $html->textwithhelp($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
+	print $html->textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
     print '</td>';
     print '</tr>';
     

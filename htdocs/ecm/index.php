@@ -278,7 +278,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 		print '<td align="right">&nbsp;</td>';
 		print '<td align="center">';
 		$htmltooltip=$langs->trans("ECMAreaDesc2");
-		print $form->textwithhelp('',$htmltooltip,1,0);
+		print $form->textwithpicto('',$htmltooltip,1,0);
 		print '</td>';
 		//print '<td align="right">'.$langs->trans("ECMNbOfDocsSmall").' <a href="'.$_SERVER["PHP_SELF"].'?action=refreshauto">'.img_picto($langs->trans("Refresh"),'refresh').'</a></td>';
 		print '</tr>';
@@ -342,7 +342,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 				$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionAuto").'<br>';
 				$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$langs->trans("ECMTypeAuto").'<br>';
 				$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
-				print $form->textwithhelp('',$htmltooltip,1,0);
+				print $form->textwithpicto('',$htmltooltip,1,0);
 				print '</td>';
 
 				print "</tr>\n";
@@ -383,7 +383,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	print '<td align="right">&nbsp;</td>';
 	print '<td align="center">';
 	$htmltooltip=$langs->trans("ECMAreaDesc2");
-	print $form->textwithhelp('',$htmltooltip,1,0);
+	print $form->textwithpicto('',$htmltooltip,1,0);
 	print '</td>';
 	print '</tr>';
 
@@ -544,7 +544,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
 			if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
 			else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
-			print $form->textwithhelp('',$htmltooltip,1,0);
+			print $form->textwithpicto('',$htmltooltip,1,0);
 			print "</td>";
 
 			print "</tr>\n";

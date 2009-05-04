@@ -266,7 +266,7 @@ if ($handle)
 				}
 
 				print '<td align="center">';
-				print $html->textwithhelp('',$htmltooltip,1,0);
+				print $html->textwithpicto('',$htmltooltip,1,0);
 				print '</td>';
 
 				print '</tr>';
@@ -386,7 +386,7 @@ if(is_dir($dir))
 			$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
 			$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 	    	print '<td align="center">';
-	    	print $html->textwithhelp('',$htmltooltip,1,0);
+	    	print $html->textwithpicto('',$htmltooltip,1,0);
 	    	print '</td>';
 	    	print '<td align="center">';
 	    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'sending').'</a>';
