@@ -104,6 +104,7 @@ EMailTextOrderApproved=Commande %s approuvée
 EMailTextOrderApprovedBy=Commande %s approuvée par %s
 EMailTextOrderRefused=Commande %s réfusée
 EMailTextOrderRefusedBy=Commande %s réfusée par %s
+ImportedWithSet=Lot d'importation
 
 ##### Bookmark #####
 Bookmark=Marque page

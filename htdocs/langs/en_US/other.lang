@@ -104,6 +104,7 @@ EMailTextOrderApproved=Order %s approved
 EMailTextOrderApprovedBy=Order %s approved by %s
 EMailTextOrderRefused=Order %s refused
 EMailTextOrderRefusedBy=Order %s refused by %s
+ImportedWithSet=Importation data set
 
 ##### Bookmark #####
 Bookmark=Bookmark
