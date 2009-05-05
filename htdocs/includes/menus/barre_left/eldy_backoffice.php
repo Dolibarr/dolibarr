@@ -332,8 +332,6 @@ class MenuLeft {
 					if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/liste.php?leftmenu=orders&viewstatut=4", $langs->trans("StatusOrderProcessed"), 2, $user->rights->commande->lire);
 					if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/liste.php?leftmenu=orders&viewstatut=-1", $langs->trans("StatusOrderCanceledShort"), 2, $user->rights->commande->lire);
 					if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1 ,$user->rights->commande->lire);
-					// Statistiques de vente perso
-					if (! empty($conf->global->COMMANDE_SHOWMYSTATS) && $leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/comm/stats.php?leftmenu=orders", $langs->trans("Stats"), 1, $user->rights->commande->lire);
 				}
 
 				// Suppliers orders
