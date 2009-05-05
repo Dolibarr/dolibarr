@@ -178,9 +178,9 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql3.= " ORDER BY dlr ASC";
 
 	$error=0;
-	$tab_sqlobjorder=array();
+	$tab_sqlobjOrder=array();
 	$tab_sqlobj=array();
-	
+
 	// List customer invoices
 	$result = $db->query($sql);
 	if ($result)
@@ -195,7 +195,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 		$db->free($result);
 	}
 	else $error++;
-	
+
 	// List supplier invoices
 	$result2=$db->query($sql2);
 	if ($result2)
@@ -210,7 +210,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 		$db->free($result2);
 	}
 	else $error++;
-	
+
 	// List social contributions
 	$result3=$db->query($sql3);
 	if ($result3)
@@ -226,8 +226,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 		$db->free($result3);
 	}
 	else $error++;
-	
-	
+
+
 	// Sort array
 	if (! $error)
 	{
@@ -251,15 +251,15 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			$paiement = '';
 			$ref = '';
 			$refcomp = '';
-			
+
 			$var=!$var;
 			//$obj = $db->fetch_object($result);
 			$obj = array_shift($tab_sqlobj);
-				
+
 			if ($obj->family == 'supplier_invoice')
 			{
 				// \TODO This code is to avoid to count suppliers credit note (ff.type = 2)
-				// Ajouter gestion des avoirs fournisseurs, champ 
+				// Ajouter gestion des avoirs fournisseurs, champ
 				if (($obj->total_ttc < 0 && $obj->type != 2)
 				 || ($obj->total_ttc > 0 && $obj->type == 2))
 				{
@@ -294,10 +294,10 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$socialcontribstatic->id=$obj->objid;
 				$socialcontribstatic->lib=$obj->type;
 				$ref = $socialcontribstatic->getNomUrl(1,24);
-			
+
 				$paiement = -1*$socialcontribstatic->getSommePaiement();	// Payment already done
 			}
-			
+
 			$total_ttc = $obj->total_ttc;
 			if ($paiement) $total_ttc = $obj->total_ttc - $paiement;
 			$solde += $total_ttc;
@@ -324,7 +324,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").'</td>';
 	print '<td align="right" nowrap>'.price($solde).'</td>';
 	print '</tr>';
-	
+
 	print "</table>";
 
 }
