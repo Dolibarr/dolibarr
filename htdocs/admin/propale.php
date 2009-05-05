@@ -23,11 +23,11 @@
  */
 
 /**
-	    \file       htdocs/admin/propale.php
-		\ingroup    propale
-		\brief      Page d'administration/configuration du module Propale
-		\version    $Id$
-*/
+ *	    \file       htdocs/admin/propale.php
+ *		\ingroup    propale
+ *		\brief      Page d'administration/configuration du module Propale
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -39,7 +39,7 @@ $langs->load("propal");
 $langs->load("other");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 
 /*
@@ -90,32 +90,32 @@ if ($_GET["action"] == 'specimen')
 
 if ($_POST["action"] == 'set_PROPALE_DRAFT_WATERMARK')
 {
-    dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK",trim($_POST["PROPALE_DRAFT_WATERMARK"]),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK",trim($_POST["PROPALE_DRAFT_WATERMARK"]),'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'set_PROPALE_FREE_TEXT')
 {
-    dolibarr_set_const($db, "PROPALE_FREE_TEXT",trim($_POST["PROPALE_FREE_TEXT"]),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "PROPALE_FREE_TEXT",trim($_POST["PROPALE_FREE_TEXT"]),'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'setnbprod')
 {
-    dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$_POST["value"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$_POST["value"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'setdefaultduration')
 {
-    dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION",$_POST["value"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION",$_POST["value"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'setclassifiedinvoiced')
 {
-    dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER",$_POST["value"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER",$_POST["value"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'setusecustomercontactasrecipient')
 {
-    dolibarr_set_const($db, "PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["value"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["value"],'chaine',0,'',$conf->entity);
 }
 
 
@@ -125,57 +125,56 @@ if ($_GET["action"] == 'set')
 {
 	$type='propal';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
-  if ($db->query($sql))
-  {
+	if ($db->query($sql))
+	{
 
-  }
+	}
 }
 if ($_GET["action"] == 'del')
 {
 	$type='propal';
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-  $sql.= " WHERE nom = '".$_GET["value"];
-  $sql.= " AND type = '".$type."'";
-  $sql.= " AND entity = ".$conf->entity;
-  
-  if ($db->query($sql))
-  {
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql.= " WHERE nom = '".$_GET["value"]."'";
+	$sql.= " AND type = '".$type."'";
+	$sql.= " AND entity = ".$conf->entity;
+	if ($db->query($sql))
+	{
 
-  }
+	}
 }
 
 if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
-	
+
 	if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
-  {
-  	$conf->global->PROPALE_ADDON_PDF = $_GET["value"];
-  }
-  
-  // On active le modele
-  $type='propal';
-  $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-  $sql_del.= " WHERE nom = '".$_GET["value"];
-  $sql_del.= " AND type = '".$type."'";
-  $sql_del.= " AND entity = ".$conf->entity;
-  $result1=$db->query($sql_del);
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
-  $result2=$db->query($sql);
-  if ($result1 && $result2)
-  {
-  	$db->commit();
-  }
-  else
-  {
-  	$db->rollback();
-  }
+	{
+		$conf->global->PROPALE_ADDON_PDF = $_GET["value"];
+	}
+
+	// On active le modele
+	$type='propal';
+	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql_del.= " WHERE nom = '".$_GET["value"];
+	$sql_del.= " AND type = '".$type."'";
+	$sql_del.= " AND entity = ".$conf->entity;
+	$result1=$db->query($sql_del);
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+	$result2=$db->query($sql);
+	if ($result1 && $result2)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre active
-    // par appel methode canBeActivated
+	// \todo Verifier si module numerotation choisi peut etre active
+	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "PROPALE_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);
 }
@@ -214,54 +213,54 @@ clearstatcache();
 $handle = opendir($dir);
 if ($handle)
 {
-    $var=true;
-    while (($file = readdir($handle))!==false)
-    {
-        if (substr($file, 0, 12) == 'mod_propale_' && substr($file, strlen($file)-3, 3) == 'php')
-        {
-            $file = substr($file, 0, strlen($file)-4);
+	$var=true;
+	while (($file = readdir($handle))!==false)
+	{
+		if (substr($file, 0, 12) == 'mod_propale_' && substr($file, strlen($file)-3, 3) == 'php')
+		{
+			$file = substr($file, 0, strlen($file)-4);
 
-            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$file.".php");
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$file.".php");
 
-            $module = new $file;
+			$module = new $file;
 
 			// Show modules according to features level
-		    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-		    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+			if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-		    if ($module->isEnabled())
-		    {
-	            $var=!$var;
-	            print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
-	            print $module->info();
-	            print '</td>';
+			if ($module->isEnabled())
+			{
+				$var=!$var;
+				print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+				print $module->info();
+				print '</td>';
 
-	            // Examples
-	            print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
+				// Examples
+				print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
 
-	            print '<td align="center">';
-	            if ($conf->global->PROPALE_ADDON == "$file")
-	            {
-	                print img_tick($langs->trans("Activated"));
-	            }
-	            else
-	            {
-	                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
-	            }
-	            print '</td>';
+				print '<td align="center">';
+				if ($conf->global->PROPALE_ADDON == "$file")
+				{
+					print img_tick($langs->trans("Activated"));
+				}
+				else
+				{
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
+				}
+				print '</td>';
 
-	            $propale=new Propal($db);
+				$propale=new Propal($db);
 				$propale->initAsSpecimen();
 
 				// Info
 				$htmltooltip='';
 				$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 				$facture->type=0;
-		        $nextval=$module->getNextValue($mysoc,$propale);
+				$nextval=$module->getNextValue($mysoc,$propale);
 				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 				{
 					$htmltooltip.=''.$langs->trans("NextValue").': ';
-			        if ($nextval)
+					if ($nextval)
 					{
 						$htmltooltip.=$nextval.'<br>';
 					}
@@ -271,15 +270,15 @@ if ($handle)
 					}
 				}
 
-		    	print '<td align="center">';
-		    	print $html->textwithpicto('',$htmltooltip,1,0);
-		    	print '</td>';
+				print '<td align="center">';
+				print $html->textwithpicto('',$htmltooltip,1,0);
+				print '</td>';
 
-	            print "</tr>\n";
-		    }
-        }
-    }
-    closedir($handle);
+				print "</tr>\n";
+			}
+		}
+	}
+	closedir($handle);
 }
 print "</table><br>\n";
 
@@ -381,28 +380,28 @@ while (($file = readdir($handle))!==false)
 		print '</td>';
 
 		// Info
-    	$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-    	$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-    	$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
-    	$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-    	$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-    	$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-    	$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
-    	$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+		$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+		$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
 		//$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
 		//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
 		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark,1,1);
 
 
 
-    	print '<td align="center">';
-    	print $html->textwithpicto('',$htmltooltip,1,0);
-    	print '</td>';
-    	print '<td align="center">';
-    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'propal').'</a>';
-    	print '</td>';
+		print '<td align="center">';
+		print $html->textwithpicto('',$htmltooltip,1,0);
+		print '</td>';
+		print '<td align="center">';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'propal').'</a>';
+		print '</td>';
 
-        print "</tr>\n";
+		print "</tr>\n";
 	}
 }
 closedir($handle);
