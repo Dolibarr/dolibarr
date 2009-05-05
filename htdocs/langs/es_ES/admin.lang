@@ -233,6 +233,7 @@ ErrorCantUseRazInStartedYearIfNoYearMonthInMask = Error, no se puede usar opció
 UMask = Parámetro UMask de nuevos archivos en Unix/Linux/BSD.
 UMaskExplanation = Este parámetro determina los derechos de los archivos creados en el servidor Dolibarr (durante la subida, por ejemplo).<br>Este debe ser el valor octal (por ejemplo, 0666 significa lectura / escritura para todos).<br>Este parámetro no tiene ningún efecto sobre un servidor Windows.
 SeeWikiForAllTeam = Vea el wiki para más detalles de todos los actores y de su organización
+UseACacheDelay = Demora en caché de la exportación en segundos (0 o vacio sin caché)
 # Modules = undefined = 
 Module0Name = Usuarios y grupos
 Module0Desc = Gestión de usuarios y grupos
@@ -343,6 +344,7 @@ Permission24 = Validar presupuestos
 Permission25 = Enviar los presupuestos
 Permission26 = Cerrar presupuestos
 Permission27 = Eliminar presupuestos
+Permission28 = Exportar los presupuestos
 Permission31 = Consultar productos/servicios
 Permission32 = Crear/modificar productos/servicios
 Permission33 = Pedir productos/servicios
@@ -924,7 +926,7 @@ SyslogFacility = Facilidad
 SyslogLevel = Nivel
 SyslogSimpleFile = Archivo
 SyslogFilename = Nombre y ruta del archivo
-YouCanUseDOL_DATA_ROOT = Puede utilizar DOL_DATA_ROOT/dolibarr.log para un log en la carpeta 'documentos' de Dolibarr.
+SyslogFilenameDesc = Este archivo de log se encuentra por defecto en la carpeta: <br><b>%s</b><br> Puede definir una ruta diferente para guardar este archivo.
 ErrorUnknownSyslogConstant = La constante %s no es una constante syslog conocida
 ##### Donations ##### = undefined = 
 DonationsSetup = Configuración del módulo subvenciones

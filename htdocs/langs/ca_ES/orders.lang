@@ -5,6 +5,7 @@ SuppliersOrdersArea = Àrea comandes a proveïdors
 OrderCard = Fitxa comanda
 Order = Comanda
 Orders = Comandes
+OrderLine = Línia de comanda
 OrderFollow = Seguiment
 OrderContact = Contactes comanda
 OrderDate = Data comanda

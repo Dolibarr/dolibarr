@@ -59,6 +59,7 @@ FileNotUploaded = No s'ha pujat l'arxiu
 FileUploaded = L'arxiu s'ha carregat correctament
 AssociatedDocuments = Documents associats al pressupost:
 ErrorCantOpenDir = Impossible obrir la carpeta
+DatePropal = Data pressupost
 DateEndPropal = Data fi validesa
 DateEndPropalShort = Data fi
 ValidityDuration = Durada de validesa
@@ -77,6 +78,8 @@ DefaultProposalDurationValidity = Termini de validesa per defecte (en dies)
 UseCustomerContactAsPropalRecipientIfExist = Utilitzar adreça contacte de seguiment de client definit en comptes de la direcció del tercer com a destinatari dels pressupostos
 ClonePropal = Clonar pressupost
 ConfirmClonePropal = Esteu segur de voler clonar aquest pressupost <b>%s</b>?
+ProposalsAndProposalsLines = Pressupostos a clients i línies de pressupostos
+ProposalLine = Línia de pressupost
 # Documents models =  = 
 DocModelAzurDescription = Model de pressupost complet (logo...)
 DocModelJauneDescription = Model de pressupost Jaune

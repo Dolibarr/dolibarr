@@ -5,6 +5,7 @@ SuppliersOrdersArea = Área pedidos a proveedores
 OrderCard = Ficha pedido
 Order = Pedido
 Orders = Pedidos
+OrderLine = Línea de pedido
 OrderFollow = Seguimiento
 OrderContact = Contacos pedido
 OrderDate = Fecha pedido
