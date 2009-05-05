@@ -3,7 +3,7 @@
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copytight (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +36,16 @@ require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/facture/paiementfourn.class.php");
 
-// Security check
-if (!$user->rights->banque->lire)
-accessforbidden();
-
-
 $langs->load("bills");
+
+// Security check
+if (isset($_GET["account"]) || isset($_GET["ref"]))
+{
+	$id = isset($_GET["account"])?$_GET["account"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+}
+$fieldid = isset($_GET["ref"])?'ref':'rowid';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
 
 
 $account=isset($_GET["account"])?$_GET["account"]:$_POST["account"];
@@ -150,9 +154,12 @@ if ($account || $_GET["ref"])
 
 	// Chargement des categories bancaires dans $options
 	$nbcategories=0;
+	
 	$sql = "SELECT rowid, label";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
+	$sql.= " WHERE entity = ".$conf->entity;
 	$sql.= " ORDER BY label";
+	
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -195,18 +202,22 @@ if ($account || $_GET["ref"])
 	}
 	if ($_REQUEST["thirdparty"])
 	{
-		$sql_rech.=" AND (IFNULL(s.nom,'') like '%".$_REQUEST["thirdparty"]."%')";
+		$sql_rech.=" AND (IFNULL(s.nom,'') LIKE '%".$_REQUEST["thirdparty"]."%')";
 		$param.='&amp;thirdparty='.urlencode($_REQUEST["thirdparty"]);
 		$mode_search = 1;
 	}
 
-	$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql = "SELECT count(*) as nb";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
+	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
 	if ($mode_search)
 	{
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='company'";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 	}
-	$sql.= " WHERE b.fk_account=".$acct->id;
+	$sql.= " WHERE b.fk_account = ".$acct->id;
+	$sql.= " AND b.fk_account = ba.rowid";
+	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= $sql_rech;
 
 	dol_syslog("account.php count transactions - sql=".$sql);
@@ -417,7 +428,8 @@ if ($account || $_GET["ref"])
 	{
 
 	}
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
+	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
 	if ($mode_search)
 	{
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
@@ -435,6 +447,8 @@ if ($account || $_GET["ref"])
 		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu3.url_id = s.rowid";
 	}
 	$sql.= " WHERE b.fk_account=".$acct->id;
+	$sql.= " AND b.fk_account = ba.rowid";
+	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= $sql_rech;
 	$sql.= " ORDER BY b.datev ASC";
 	$sql.= $db->plimit($limitsql, 0);

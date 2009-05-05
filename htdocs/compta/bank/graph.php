@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +32,14 @@ require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 $langs->load("banks");
 
-if (!$user->rights->banque->lire)
-accessforbidden();
+// Security check
+if (isset($_GET["account"]) || isset($_GET["ref"]))
+{
+	$id = isset($_GET["account"])?$_GET["account"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+}
+$fieldid = isset($_GET["ref"])?'ref':'rowid';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
 
 $account=$_GET["account"];
 $mode='standard';
@@ -87,9 +94,14 @@ else
 	$height = 200;
 
 	// Calcul de $min et $max
-	$sql = "SELECT min(".$db->pdate("datev")."), max(".$db->pdate("datev").")";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-	if ($account && $_GET["option"]!='all') $sql.= " WHERE fk_account in (".$account.")";
+	$sql = "SELECT MIN(".$db->pdate("b.datev").")";
+	$sql.= ", MAX(".$db->pdate("b.datev").")";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+	$sql.= " WHERE b.fk_account = ba.rowid";
+	$sql.= " AND ba.entity = ".$conf->entity;
+	if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+	
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -112,14 +124,26 @@ else
 	{
 		// Chargement du tableau $amounts
 		$amounts = array();
-		$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$monthnext=$month+1; $yearnext=$year;
-		if ($monthnext > 12) { $monthnext=1; $yearnext++; }
-		$sql .= " WHERE datev >= '".$year."-".$month."-01 00:00:00'";
-		$sql .= " AND datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
-		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
-		$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
+		
+		$monthnext = $month+1;
+		$yearnext = $year;
+		if ($monthnext > 12)
+		{
+			$monthnext=1;
+			$yearnext++;
+		}
+		
+		$sql = "SELECT date_format(b.datev,'%Y%m%d')";
+		$sql.= ", SUM(b.amount)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity = ".$conf->entity;
+		$sql.= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
+		$sql.= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql.= " GROUP BY date_format(b.datev,'%Y%m%d')";
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -140,10 +164,15 @@ else
 
 		// Calcul de $solde avant le debut du graphe
 		$solde = 0;
-		$sql = "SELECT SUM(amount)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE datev < '".$year."-".sprintf("%02s",$month)."-01'";
-		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
+		
+		$sql = "SELECT SUM(b.amount)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity = ".$conf->entity;
+		$sql.= " AND b.datev < '".$year."-".sprintf("%02s",$month)."-01'";
+		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -240,12 +269,17 @@ else
 	{
 		// Chargement du tableau $amounts
 		$amounts = array();
-		$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE datev >= '".$year."-01-01 00:00:00'";
-		$sql .= " AND datev <= '".$year."-12-31 23:59:59'";
-		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
-		$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
+		$sql = "SELECT date_format(b.datev,'%Y%m%d')";
+		$sql.= ", SUM(b.amount)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity = ".$conf->entity;
+		$sql.= " AND b.datev >= '".$year."-01-01 00:00:00'";
+		$sql.= " AND b.datev <= '".$year."-12-31 23:59:59'";
+		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -266,10 +300,15 @@ else
 
 		// Calcul de $solde avant le debut du graphe
 		$solde = 0;
-		$sql = "SELECT sum(amount)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE datev < '".$year."-01-01'";
-		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
+		
+		$sql = "SELECT SUM(b.amount)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity = ".$conf->entity;
+		$sql.= " AND b.datev < '".$year."-01-01'";
+		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -359,10 +398,16 @@ else
 	{
 		// Chargement du tableau $amounts
 		$amounts = array();
-		$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		if ($account && $_GET["option"]!='all') $sql .= " WHERE fk_account in (".$account.")";
-		$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
+		
+		$sql = "SELECT date_format(b.datev,'%Y%m%d')";
+		$sql.= ", SUM(b.amount)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity = ".$conf->entity;
+		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql.= " GROUP BY date_format(b.datev,'%Y%m%d')";
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -457,15 +502,27 @@ else
 		// Chargement du tableau $credits, $debits
 		$credits = array();
 		$debits = array();
-		$sql = "SELECT date_format(datev,'%d'), sum(amount)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$monthnext=$month+1; $yearnext=$year;
-		if ($monthnext > 12) { $monthnext=1; $yearnext++; }
-		$sql .= " WHERE datev >= '".$year."-".$month."-01 00:00:00'";
-		$sql .= " AND datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
-		$sql .= " AND amount > 0";
-		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
-		$sql .= " GROUP BY date_format(datev,'%d')";
+		
+		$monthnext = $month+1;
+		$yearnext = $year;
+		if ($monthnext > 12)
+		{
+			$monthnext=1;
+			$yearnext++;
+		}
+		
+		$sql = "SELECT date_format(b.datev,'%d')";
+		$sql.= ", SUM(b.amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity = ".$conf->entity;
+		$sql.= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
+		$sql.= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		$sql.= " AND b.amount > 0";
+		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql.= " GROUP BY date_format(b.datev,'%d')";
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -483,15 +540,27 @@ else
 		{
 			dol_print_error($db);
 		}
-		$sql = "SELECT date_format(datev,'%d'), sum(amount)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$monthnext=$month+1; $yearnext=$year;
-		if ($monthnext > 12) { $monthnext=1; $yearnext++; }
-		$sql .= " WHERE datev >= '".$year."-".$month."-01 00:00:00'";
-		$sql .= " AND datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
-		$sql .= " AND amount < 0";
-		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
-		$sql .= " GROUP BY date_format(datev,'%d')";
+		
+		$monthnext = $month+1;
+		$yearnext = $year;
+		if ($monthnext > 12)
+		{
+			$monthnext=1;
+			$yearnext++;
+		}
+		
+		$sql = "SELECT date_format(b.datev,'%d')";
+		$sql.= ", SUM(b.amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity = ".$conf->entity;
+		$sql.= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
+		$sql.= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		$sql.= " AND b.amount < 0";
+		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql .= " GROUP BY date_format(b.datev,'%d')";
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -557,13 +626,18 @@ else
 		// Chargement du tableau $credits, $debits
 		$credits = array();
 		$debits = array();
-		$sql = "SELECT date_format(datev,'%m'), sum(amount)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE datev >= '".$year."-01-01 00:00:00'";
-		$sql .= " AND datev <= '".$year."-12-31 23:59:59'";
-		$sql .= " AND amount > 0";
-		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
-		$sql .= " GROUP BY date_format(datev,'%m');";
+		$sql = "SELECT date_format(b.datev,'%m')";
+		$sql.= ", SUM(b.amount)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity = ".$conf->entity;
+		$sql.= " AND b.datev >= '".$year."-01-01 00:00:00'";
+		$sql.= " AND b.datev <= '".$year."-12-31 23:59:59'";
+		$sql.= " AND b.amount > 0";
+		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql .= " GROUP BY date_format(b.datev,'%m');";
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -581,13 +655,18 @@ else
 		{
 			dol_print_error($db);
 		}
-		$sql = "SELECT date_format(datev,'%m'), sum(amount)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE datev >= '".$year."-01-01 00:00:00'";
-		$sql .= " AND datev <= '".$year."-12-31 23:59:59'";
-		$sql .= " AND amount < 0";
-		if ($account && $_GET["option"]!='all') $sql .= " AND fk_account in (".$account.")";
-		$sql .= " GROUP BY date_format(datev,'%m')";
+		$sql = "SELECT date_format(b.datev,'%m')";
+		$sql.= ", SUM(b.amount)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity = ".$conf->entity;
+		$sql.= " AND b.datev >= '".$year."-01-01 00:00:00'";
+		$sql.= " AND b.datev <= '".$year."-12-31 23:59:59'";
+		$sql.= " AND b.amount < 0";
+		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql .= " GROUP BY date_format(b.datev,'%m')";
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{

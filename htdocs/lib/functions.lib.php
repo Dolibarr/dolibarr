@@ -1459,7 +1459,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
 			$sql.= " AND dbt.entity IN (0,".$conf->entity.")";
 		}
-   		else if ($feature == 'societe')
+   	else if ($feature == 'societe')
 		{
 			// If external user: Check permission for external users
 			if ($user->societe_id > 0)
@@ -1508,11 +1508,22 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			// If multicompany and internal users with all permissions, check user is in correct entity
 			else if ($conf->global->MAIN_MODULE_MULTICOMPANY)
 			{
-				$sql = "SELECT dbt.".$dbt_select;
-				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt, ".MAIN_DB_PREFIX."societe as s";
-				$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
-				$sql.= " AND dbt.fk_soc = s.rowid";
-				$sql.= " AND s.entity = ".$conf->entity;
+				// If the objects do not have fk_soc
+				if ($feature == 'banque')
+				{
+					$sql = "SELECT dbt.".$dbt_select;
+					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+					$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
+					$sql.= " AND dbt.entity = ".$conf->entity;
+				}
+				else
+				{
+					$sql = "SELECT dbt.".$dbt_select;
+					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt, ".MAIN_DB_PREFIX."societe as s";
+					$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
+					$sql.= " AND dbt.fk_soc = s.rowid";
+					$sql.= " AND s.entity = ".$conf->entity;
+				}
 			}
 		}
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  *  \file       htdocs/compta/bank/bankid_fr.php
  *  \ingroup    banque
- *  \brief      Fiche cr�ation compte bancaire
+ *  \brief      Fiche creation compte bancaire
  *  \version    $Id$
  */
 
@@ -30,8 +31,15 @@ require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 
 $langs->load("banks");
 
-if (!$user->admin && !$user->rights->banque)
-accessforbidden();
+// Security check
+if (isset($_GET["id"]) || isset($_GET["ref"]))
+{
+	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+}
+$fieldid = isset($_GET["ref"])?'ref':'rowid';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
+
 
 /*
  * Actions
@@ -90,7 +98,7 @@ $form = new Form($db);
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Affichage page en mode cr�ation                                            */
+/* Affichage page en mode creation                                            */
 /*                                                                            */
 /* ************************************************************************** */
 

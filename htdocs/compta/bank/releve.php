@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +32,14 @@ $langs->load("companies");
 $langs->load("banks");
 $langs->load("bills");
 
-if (!$user->rights->banque->lire)
-accessforbidden();
-
+// Security check
+if (isset($_GET["account"]) || isset($_GET["ref"]))
+{
+	$id = isset($_GET["account"])?$_GET["account"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+}
+$fieldid = isset($_GET["ref"])?'ref':'rowid';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
 
 if ($_GET["action"] == 'dvnext')
 {
@@ -86,10 +92,11 @@ if (! isset($_GET["num"]))
 	/*
 	 *	Vue liste tous releves confondus
 	 */
-	$sql = "SELECT distinct(b.num_releve) as numr";
+	$sql = "SELECT DISTINCT(b.num_releve) as numr";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql.= " WHERE fk_account = ".$_GET["account"];
+	$sql.= " WHERE b.fk_account = ".$_GET["account"];
 	$sql.= " ORDER BY numr DESC";
+	
 	$sql.= $db->plimit($conf->liste_limit+1,$offset);
 
 	$result = $db->query($sql);
@@ -161,11 +168,13 @@ else
 	$found=false;
 	if ($_GET["rel"] == 'prev')
 	{
-		// Recherche valeur pour num = num�ro relev� pr�c�dent
-		$sql = "SELECT distinct(num_releve) as num";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql.= " WHERE num_releve < '".$_GET["num"]."' AND fk_account = ".$_GET["account"];
-		$sql.= " ORDER BY num_releve DESC";
+		// Recherche valeur pour num = numero releve precedent
+		$sql = "SELECT DISTINCT(b.num_releve) as num";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= " WHERE b.num_releve < '".$_GET["num"]."'";
+		$sql.= " AND b.fk_account = ".$_GET["account"];
+		$sql.= " ORDER BY b.num_releve DESC";
+		
 		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
@@ -181,11 +190,13 @@ else
 	}
 	elseif ($_GET["rel"] == 'next')
 	{
-		// Recherche valeur pour num = num�ro relev� pr�c�dent
-		$sql = "SELECT distinct(num_releve) as num";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql.= " WHERE num_releve > '".$_GET["num"]."' AND fk_account = ".$_GET["account"];
-		$sql.= " ORDER BY num_releve ASC";
+		// Recherche valeur pour num = numero releve precedent
+		$sql = "SELECT DISTINCT(b.num_releve) as num";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= " WHERE b.num_releve > '".$_GET["num"]."'";
+		$sql.= " AND b.fk_account = ".$_GET["account"];
+		$sql.= " ORDER BY b.num_releve ASC";
+		
 		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
@@ -227,9 +238,12 @@ else
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
 
-	// Calcul du solde de depart du relev
-	$sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank";
-	$sql.= " WHERE num_releve < '".$num."' AND fk_account = ".$acct->id;
+	// Calcul du solde de depart du releve
+	$sql = "SELECT sum(b.amount) as amount";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= " WHERE b.num_releve < '".$num."'";
+	$sql.= " AND b.fk_account = ".$acct->id;
+	
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -238,16 +252,15 @@ else
 		$db->free($resql);
 	}
 
-	// Recherche les �critures pour le relev
-	$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql .= " WHERE num_releve='".$num."'";
-	if (!isset($num))
-	{
-		$sql .= " or num_releve is null";
-	}
-	$sql .= " AND fk_account = ".$acct->id;
-	$sql .= " ORDER BY datev ASC";
+	// Recherche les ecritures pour le releve
+	$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv";
+	$sql.= ", b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= " WHERE b.num_releve='".$num."'";
+	if (!isset($num))	$sql.= " OR b.num_releve is null";
+	$sql.= " AND b.fk_account = ".$acct->id;
+	$sql.= " ORDER BY b.datev ASC";
+	
 	$result = $db->query($sql);
 
 	if ($result)
@@ -280,13 +293,13 @@ else
 			print img_next().'</a>';
 			print "</td>\n";
 
-			// Num chq
+			// Num cheque
 			print '<td nowrap="nowrap">'.$objp->fk_type.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
 
 			// Libelle
 			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
 			$reg=array();
-			eregi('\((.+)\)',$objp->label,$reg);	// Si texte entour� de parenth�e on tente recherche de traduction
+			eregi('\((.+)\)',$objp->label,$reg);	// Si texte entoure de parenthese on tente recherche de traduction
 			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
 			else print $objp->label;
 			print '</a>';
@@ -362,8 +375,13 @@ else
 			// Categories
 			if ($ve)
 			{
-				$sql = "SELECT label FROM ".MAIN_DB_PREFIX."bank_categ as ct, ".MAIN_DB_PREFIX."bank_class as cl";
-				$sql.= " WHERE ct.rowid=cl.fk_categ AND cl.lineid=".$objp->rowid;
+				$sql = "SELECT label";
+				$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ as ct";
+				$sql.= ", ".MAIN_DB_PREFIX."bank_class as cl";
+				$sql.= " WHERE ct.rowid = cl.fk_categ";
+				$sql.= " AND ct.entity = ".$conf->entity;
+				$sql.= " AND cl.lineid = ".$objp->rowid;
+				
 				$resc = $db->query($sql);
 				if ($resc)
 				{

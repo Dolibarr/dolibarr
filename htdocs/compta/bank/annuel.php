@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  *		\file        htdocs/compta/bank/annuel.php
  *		\ingroup     banque
- *		\brief       Page reporting mensuel Entr�es/Sorties d'un compte bancaire
+ *		\brief       Page reporting mensuel Entrees/Sorties d'un compte bancaire
  *		\version     $Id$
  */
 
@@ -28,7 +29,14 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
-if (!$user->rights->banque->lire) accessforbidden();
+// Security check
+if (isset($_GET["account"]) || isset($_GET["ref"]))
+{
+	$id = isset($_GET["account"])?$_GET["account"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+}
+$fieldid = isset($_GET["ref"])?'ref':'rowid';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
 
 $year_start=isset($_GET["year_start"])?$_GET["year_start"]:$_POST["year_start"];
 $year_current = strftime("%Y",time());
@@ -41,13 +49,6 @@ else
 {
 	$year_end=$year_start+2;
 }
-
-// S�curit� acc�s client
-if ($user->societe_id > 0)
-{
-	$socid = $user->societe_id;
-}
-
 
 
 llxHeader();
@@ -67,14 +68,18 @@ if ($_GET["ref"])
 }
 
 
-# Ce rapport de tr�sorerie est bas� sur llx_bank (car doit inclure les transactions sans facture)
+# Ce rapport de tresorerie est base sur llx_bank (car doit inclure les transactions sans facture)
 # plutot que sur llx_paiement + llx_paiementfourn
 
-$sql = "SELECT sum(f.amount), date_format(f.dateo,'%Y-%m') as dm";
-$sql .= " FROM llx_bank as f";
-$sql .= " WHERE f.amount >= 0";
-if ($_GET["account"]) { $sql .= " AND fk_account in (".$_GET["account"].")"; }
-$sql .= " GROUP BY dm";
+$sql = "SELECT SUM(b.amount)";
+$sql.= ", date_format(b.dateo,'%Y-%m') as dm";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+$sql.= " WHERE b.fk_account = ba.rowid";
+$sql.= " AND ba.entity = ".$conf->entity;
+$sql.= " AND b.amount >= 0";
+if ($_GET["account"]) $sql .= " AND b.fk_account IN (".$_GET["account"].")";
+$sql.= " GROUP BY dm";
 
 $resql=$db->query($sql);
 if ($resql)
@@ -93,11 +98,16 @@ else
 	dol_print_error($db);
 }
 
-$sql = "SELECT sum(f.amount), date_format(f.dateo,'%Y-%m') as dm";
-$sql .= " FROM llx_bank as f";
-$sql .= " WHERE f.amount <= 0";
-if ($_GET["account"]) { $sql .= " AND fk_account in (".$_GET["account"].")"; }
-$sql .= " GROUP BY dm";
+$sql = "SELECT SUM(b.amount)";
+$sql.= ", date_format(b.dateo,'%Y-%m') as dm";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+$sql.= " WHERE b.fk_account = ba.rowid";
+$sql.= " AND ba.entity = ".$conf->entity;
+$sql.= " AND b.amount <= 0";
+if ($_GET["account"]) $sql.= " AND b.fk_account IN (".$_GET["account"].")";
+$sql.= " GROUP BY dm";
+
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -235,9 +245,14 @@ print "</tr>\n";
 
 // Solde actuel
 $balance=0;
-$sql = "SELECT sum(f.amount) as total";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank as f";
-if ($_GET["account"]) { $sql .= " WHERE fk_account in (".$_GET["account"].")"; }
+
+$sql = "SELECT SUM(b.amount) as total";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+$sql.= " WHERE b.fk_account = ba.rowid";
+$sql.= " AND ba.entity = ".$conf->entity;
+if ($_GET["account"]) $sql.= " AND b.fk_account IN (".$_GET["account"].")";
+
 $resql=$db->query($sql);
 if ($resql)
 {

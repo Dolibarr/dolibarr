@@ -43,6 +43,7 @@ ALTER TABLE llx_fichinter ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref
 ALTER TABLE llx_contrat ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
 ALTER TABLE llx_c_barcode_type ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER code;
 ALTER TABLE llx_dolibarr_modules ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER numero;
+ALTER TABLE llx_bank_categ ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER label;
 
 ALTER TABLE llx_rights_def DROP PRIMARY KEY;
 ALTER TABLE llx_user_param DROP INDEX fk_user;

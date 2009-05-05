@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,21 +45,19 @@ class BankCateg // extends CommonObject
 	//var $element='bank_categ';			//!< Id that identify managed objects
 	//var $table_element='bank_categ';	//!< Name of table without prefix where object is stored
     
-    var $id;
+  var $id;
     
 	var $label;
 
-    
-
-	
+  	
     /**
      *      \brief      Constructor
      *      \param      DB      Database handler
      */
     function BankCateg($DB) 
     {
-        $this->db = $DB;
-        return 1;
+    	$this->db = $DB;
+      return 1;
     }
 
 	
@@ -71,39 +70,32 @@ class BankCateg // extends CommonObject
     function create($user, $notrigger=0)
     {
     	global $conf, $langs;
-		$error=0;
+    	$error=0;
     	
-		// Clean parameters
-        
-		if (isset($this->label)) $this->label=trim($this->label);
-
-        
-
-		// Check parameters
-		// Put here code to add control on parameters values
-		
-        // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ(";
-		
-		$sql.= "label";
-
-		
-        $sql.= ") VALUES (";
-        
-		$sql.= " ".(! isset($this->label)?'NULL':"'".addslashes($this->label)."'")."";
-
-        
-		$sql.= ")";
-
-		$this->db->begin();
+    	// Clean parameters
+    	if (isset($this->label)) $this->label=trim($this->label);
+    	
+    	// Check parameters
+    	// Put here code to add control on parameters values
+    	
+    	// Insert request
+    	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (";
+    	$sql.= "label";
+    	$sql.= ", entity";
+    	$sql.= ") VALUES (";
+    	$sql.= " ".(! isset($this->label)?'NULL':"'".addslashes($this->label)."'")."";
+    	$sql.= ", ".$conf->entity;
+    	$sql.= ")";
+    	
+    	$this->db->begin();
 		
 	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+      $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-        
-		if (! $error)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_categ");
+    	
+    	if (! $error)
+      {
+      	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_categ");
     
 			if (! $notrigger)
 			{
@@ -145,40 +137,36 @@ class BankCateg // extends CommonObject
      */
     function fetch($id)
     {
-    	global $langs;
-        $sql = "SELECT";
-		$sql.= " t.rowid,";
-		
-		$sql.= " t.label";
-
-		
-        $sql.= " FROM ".MAIN_DB_PREFIX."bank_categ as t";
-        $sql.= " WHERE t.rowid = ".$id;
+    	global $langs,$conf;
+    	
+    	$sql = "SELECT";
+    	$sql.= " t.rowid,";
+    	$sql.= " t.label";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ as t";
+    	$sql.= " WHERE t.rowid = ".$id;
+    	$sql.= " AND t.entity = ".$conf->entity;
     
     	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
+      $resql=$this->db->query($sql);
+      if ($resql)
+      {
+      	if ($this->db->num_rows($resql))
         {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
-    
-                $this->id    = $obj->rowid;
-                
-				$this->label = $obj->label;
-
-                
-            }
-            $this->db->free($resql);
-            
-            return 1;
+        	$obj = $this->db->fetch_object($resql);
+        	
+        	$this->id    = $obj->rowid;
+        	$this->label = $obj->label;
         }
-        else
-        {
-      	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
-            return -1;
-        }
+        $this->db->free($resql);
+        
+        return 1;
+      }
+      else
+      {
+      	$this->error="Error ".$this->db->lasterror();
+        dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+        return -1;
+      }
     }
     
 
@@ -191,35 +179,30 @@ class BankCateg // extends CommonObject
     function update($user=0, $notrigger=0)
     {
     	global $conf, $langs;
-		$error=0;
+    	$error=0;
     	
-		// Clean parameters
-        
-		if (isset($this->label)) $this->label=trim($this->label);
+    	// Clean parameters
+    	if (isset($this->label)) $this->label=trim($this->label);
 
-        
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ SET";
-        
-		$sql.= " label=".(isset($this->label)?"'".addslashes($this->label)."'":"null")."";
-
-        
-        $sql.= " WHERE rowid=".$this->id;
-
-		$this->db->begin();
-        
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
+      // Check parameters
+      // Put here code to add control on parameters values
+      
+      // Update request
+      $sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ SET";
+      $sql.= " label=".(isset($this->label)?"'".addslashes($this->label)."'":"null")."";
+      $sql.= " WHERE rowid=".$this->id;
+      $sql.= " AND entity = ".$conf->entity;
+      
+      $this->db->begin();
+      
+      dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+      $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-        
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+    	
+    	if (! $error)
+    	{
+    		if (! $notrigger)
+    		{
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action call a trigger.
 				
@@ -264,6 +247,7 @@ class BankCateg // extends CommonObject
 		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
 		$sql.= " WHERE rowid=".$this->id;
+		$sql.= " AND entity = ".$conf->entity;
 	
 		$this->db->begin();
 		

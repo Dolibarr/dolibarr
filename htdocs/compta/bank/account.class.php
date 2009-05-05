@@ -108,8 +108,19 @@ class Account extends CommonObject
 	 */
 	function add_url_line($line_id, $url_id, $url, $label, $type)
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (fk_bank, url_id, url, label, type)";
-		$sql .= " VALUES ('".$line_id."', '".$url_id."', '".$url."', '".addslashes($label)."', '".$type."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (";
+		$sql.= "fk_bank";
+		$sql.= ", url_id";
+		$sql.= ", url";
+		$sql.= ", label";
+		$sql.= ", type";
+		$sql.= ") VALUES (";
+		$sql.= "'".$line_id."'";
+		$sql.= ", '".$url_id."'";
+		$sql.= ", '".$url."'";
+		$sql.= ", '".addslashes($label)."'";
+		$sql.= ", '".$type."'";
+		$sql.= ")";
 
 		dol_syslog("Account::add_url_line sql=".$sql);
 		if ($this->db->query($sql))
@@ -132,6 +143,7 @@ class Account extends CommonObject
 	function get_url($line_id)
 	{
 		$lines = array();
+		
 		$sql = "SELECT url_id, url, label, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_url";
 		$sql.= " WHERE fk_bank = ".$line_id;
@@ -226,14 +238,29 @@ class Account extends CommonObject
 
 		$datev = $date;
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq, fk_account, fk_type,emetteur,banque)";
-		$sql.= " VALUES (".$this->db->idate(mktime()).", '".$this->db->idate($date)."', '".$this->db->idate($datev)."', ";
-		$sql.= " '".addslashes($label)."', " . price2num($amount).", '".$user->id."', ";
-		$sql.= " ".($num_chq?"'".$num_chq."'":"null").", ";
-		$sql.= " '".$this->rowid."', ";
-		$sql.= " '".$oper."', ";
-		$sql.= " ".($emetteur?"'".addslashes($emetteur)."'":"null").", ";
-		$sql.= " ".($banque?"'".addslashes($banque)."'":"null");
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (";
+		$sql.= "datec";
+		$sql.= ", dateo";
+		$sql.= ", datev";
+		$sql.= ", label";
+		$sql.= ", amount";
+		$sql.= ", fk_user_author";
+		$sql.= ", num_chq";
+		$sql.= ", fk_account";
+		$sql.= ", fk_type";
+		$sql.= ",emetteur,banque";
+		$sql.= ") VALUES (";
+		$sql.= $this->db->idate(mktime());
+		$sql.= ", '".$this->db->idate($date)."'";
+		$sql.= ", '".$this->db->idate($datev)."'";
+		$sql.= ", '".addslashes($label)."'";
+		$sql.= ", ".price2num($amount);
+		$sql.= ", '".$user->id."'";
+		$sql.= ", ".($num_chq?"'".$num_chq."'":"null");
+		$sql.= ", '".$this->rowid."'";
+		$sql.= ", '".$oper."'";
+		$sql.= ", ".($emetteur?"'".addslashes($emetteur)."'":"null");
+		$sql.= ", ".($banque?"'".addslashes($banque)."'":"null");
 		$sql.= ")";
 
 		dol_syslog("Account::addline sql=".$sql);
@@ -242,7 +269,14 @@ class Account extends CommonObject
 			$rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");
 			if ($categorie)
 			{
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ('$rowid', '$categorie')";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
+				$sql.= "lineid";
+				$sql.= ", fk_categ";
+				$sql.= ") VALUES (";
+				$sql.= "'".$rowid."'";
+				$sql.= ", '".$categorie."'";
+				$sql.= ")";
+				
 				$result = $this->db->query($sql);
 				if (! $result)
 				{
@@ -269,7 +303,7 @@ class Account extends CommonObject
 	 */
 	function create()
 	{
-		global $langs;
+		global $langs,$conf;
 
 		// Check parameters
 		if (! $this->min_allowed) $this->min_allowed=0;
@@ -285,14 +319,27 @@ class Account extends CommonObject
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (";
-		$sql.= "datec, ref, label, account_number, currency_code, ";
-		$sql.= "rappro, min_allowed, min_desired, ";
-		$sql.= "comment";
-		$sql.= ") values (";
-		$sql.= "".$this->db->idate(mktime()).",'" . addslashes($this->ref) . "', '" . addslashes($this->label) . "', ";
-		$sql.= "'".addslashes($this->account_number) . "', '".$this->currency_code."', ";
-		$sql.= $this->rappro.", ".price2num($this->min_allowed).", ".price2num($this->min_desired).", ";
-		$sql.= "'".addslashes($this->comment)."'";
+		$sql.= "datec";
+		$sql.= ", ref";
+		$sql.= ", label";
+		$sql.= ", entity";
+		$sql.= ", account_number";
+		$sql.= ", currency_code";
+		$sql.= ", rappro";
+		$sql.= ", min_allowed";
+		$sql.= ", min_desired";
+		$sql.= ", comment";
+		$sql.= ") VALUES (";
+		$sql.= $this->db->idate(mktime());
+		$sql.= ", '".addslashes($this->ref)."'";
+		$sql.= ", '".addslashes($this->label)."'";
+		$sql.= ", ".$conf->entity;
+		$sql.= ", '".addslashes($this->account_number)."'";
+		$sql.= ", '".$this->currency_code."'";
+		$sql.= ", ".$this->rappro;
+		$sql.= ", ".price2num($this->min_allowed);
+		$sql.= ", ".price2num($this->min_desired);
+		$sql.= ", '".addslashes($this->comment)."'";
 		$sql.= ")";
 
 		dol_syslog("Account::create sql=".$sql);
@@ -304,8 +351,26 @@ class Account extends CommonObject
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_account");
 				if ( $this->update() )
 				{
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, label, amount, fk_account, datev, dateo, fk_type, rappro) ";
-					$sql .= " VALUES (".$this->db->idate(mktime()).",'(".$langs->trans("InitialBankBalance").")'," . price2num($this->solde) . ",'$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (";
+					$sql.= "datec";
+					$sql.= ", label";
+					$sql.= ", amount";
+					$sql.= ", fk_account";
+					$sql.= ", datev";
+					$sql.= ", dateo";
+					$sql.= ", fk_type";
+					$sql.= ", rappro";
+					$sql.= ") VALUES (";
+					$sql.= $this->db->idate(mktime());
+					$sql.= ", '(".$langs->trans("InitialBankBalance").")'";
+					$sql.= ", ".price2num($this->solde);
+					$sql.= ", '".$this->id."'";
+					$sql.= ", '".$this->db->idate($this->date_solde)."'";
+					$sql.= ", '".$this->db->idate($this->date_solde)."'";
+					$sql.= ", 'SOLD'";
+					$sql.= ", 1";
+					$sql.= ")";
+					
 					$this->db->query($sql);
 				}
 				return $this->id;
@@ -334,7 +399,7 @@ class Account extends CommonObject
 	 */
 	function update($user='')
 	{
-		global $langs;
+		global $langs,$conf;
 
 		// Check parameters
 		if (! $this->min_allowed) $this->min_allowed=0;
@@ -350,22 +415,23 @@ class Account extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
 
-		$sql .= " ref   = '".addslashes($this->ref)."'";
-		$sql .= ",label = '".addslashes($this->label)."'";
+		$sql.= " ref   = '".addslashes($this->ref)."'";
+		$sql.= ",label = '".addslashes($this->label)."'";
 
-		$sql .= ",courant = ".$this->courant;
-		$sql .= ",clos = ".$this->clos;
-		$sql .= ",rappro = ".$this->rappro;
-		$sql .= ",url = ".($this->url?"'".$this->url."'":"null");
-		$sql .= ",account_number = '".$this->account_number."'";
+		$sql.= ",courant = ".$this->courant;
+		$sql.= ",clos = ".$this->clos;
+		$sql.= ",rappro = ".$this->rappro;
+		$sql.= ",url = ".($this->url?"'".$this->url."'":"null");
+		$sql.= ",account_number = '".$this->account_number."'";
 
-		$sql .= ",currency_code = '".$this->currency_code."'";
+		$sql.= ",currency_code = '".$this->currency_code."'";
 
-		$sql .= ",min_allowed = '".price2num($this->min_allowed)."'";
-		$sql .= ",min_desired = '".price2num($this->min_desired)."'";
-		$sql .= ",comment     = '".addslashes($this->comment)."'";
+		$sql.= ",min_allowed = '".price2num($this->min_allowed)."'";
+		$sql.= ",min_desired = '".price2num($this->min_desired)."'";
+		$sql.= ",comment     = '".addslashes($this->comment)."'";
 
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql.= " WHERE rowid = ".$this->id;
+		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("Account::update sql=".$sql);
 		$result = $this->db->query($sql);
@@ -404,17 +470,18 @@ class Account extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
-		$sql .= " bank  = '".addslashes($this->bank)."'";
-		$sql .= ",code_banque='".$this->code_banque."'";
-		$sql .= ",code_guichet='".$this->code_guichet."'";
-		$sql .= ",number='".$this->number."'";
-		$sql .= ",cle_rib='".$this->cle_rib."'";
-		$sql .= ",bic='".$this->bic."'";
-		$sql .= ",iban_prefix = '".$this->iban."'";
-		$sql .= ",domiciliation='".addslashes($this->domiciliation)."'";
-		$sql .= ",proprio = '".addslashes($this->proprio)."'";
-		$sql .= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql.= " bank  = '".addslashes($this->bank)."'";
+		$sql.= ",code_banque='".$this->code_banque."'";
+		$sql.= ",code_guichet='".$this->code_guichet."'";
+		$sql.= ",number='".$this->number."'";
+		$sql.= ",cle_rib='".$this->cle_rib."'";
+		$sql.= ",bic='".$this->bic."'";
+		$sql.= ",iban_prefix = '".$this->iban."'";
+		$sql.= ",domiciliation='".addslashes($this->domiciliation)."'";
+		$sql.= ",proprio = '".addslashes($this->proprio)."'";
+		$sql.= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
+		$sql.= " WHERE rowid = ".$this->id;
+		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("Account::update_bban sql=$sql");
 
@@ -434,19 +501,22 @@ class Account extends CommonObject
 
 	/*
 	 *      \brief      Charge un compte en memoire depuis la base
-	 *      \param      id      Id du compte � r�cup�rer
-	 *      \param      ref     Ref du compte � r�cup�rer
+	 *      \param      id      Id du compte a recuperer
+	 *      \param      ref     Ref du compte a recuperer
 	 */
 	function fetch($id,$ref='')
 	{
+		global $conf;
+		
 		$sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
 		$sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
 		$sql.= " domiciliation, proprio, adresse_proprio,";
 		$sql.= " account_number, currency_code,";
 		$sql.= " min_allowed, min_desired, comment";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-		if ($id)  $sql.= " WHERE rowid  = ".$id;
-		if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
+		$sql.= " WHERE entity = ".$conf->entity;
+		if ($id)  $sql.= " AND rowid  = ".$id;
+		if ($ref) $sql.= " AND ref = '".addslashes($ref)."'";
 
 		dol_syslog("Account::fetch sql=".$sql);
 		$result = $this->db->query($sql);
@@ -505,8 +575,11 @@ class Account extends CommonObject
 	 */
 	function delete()
 	{
+		global $conf;
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_account";
-		$sql .= " WHERE rowid  = ".$this->rowid;
+		$sql.= " WHERE rowid  = ".$this->rowid;
+		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("Account::delete sql=".$sql);
 		$result = $this->db->query($sql);
@@ -521,8 +594,8 @@ class Account extends CommonObject
 
 
 	/**
-	 *    \brief      Retourne le libell� du statut d'une facture (brouillon, valid�e, abandonn�e, pay�e)
-	 *    \param      mode          0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long
+	 *    \brief      Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -531,10 +604,10 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libell� d'un statut donn�
+	 *    	\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string        	Libell� du statut
+	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string        	Libelle du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -576,7 +649,7 @@ class Account extends CommonObject
 
 	/*
 	 *    \brief      Renvoi si un compte peut etre supprimer ou non (sans mouvements)
-	 *    \return     boolean     vrai si peut etre supprim�, faux sinon
+	 *    \return     boolean     vrai si peut etre supprime, faux sinon
 	 */
 	function can_be_deleted()
 	{
@@ -585,6 +658,7 @@ class Account extends CommonObject
 		$sql = "SELECT COUNT(rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql.= " WHERE fk_account=".$this->id;
+		
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj=$this->db->fetch_object($resql);
@@ -612,8 +686,9 @@ class Account extends CommonObject
 	 */
 	function solde($option=0)
 	{
-		$sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank";
-		$sql.= " WHERE fk_account=".$this->id;
+		$sql = "SELECT sum(amount) as amount";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
+		$sql.= " WHERE fk_account = ".$this->id;
 		if ($option == 1) $sql.= " AND dateo <= ".$this->db->idate(time());
 
 		$resql = $this->db->query($sql);
@@ -635,10 +710,8 @@ class Account extends CommonObject
 	function datev_next($rowid)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
-
-		$sql .= " datev = adddate(datev, interval 1 day)";
-
-		$sql .= " WHERE rowid = $rowid";
+		$sql.= " datev = adddate(datev, interval 1 day)";
+		$sql.= " WHERE rowid = ".$rowid;
 
 		$result = $this->db->query($sql);
 
@@ -662,10 +735,8 @@ class Account extends CommonObject
 	function datev_previous($rowid)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
-
-		$sql .= " datev = adddate(datev, interval -1 day)";
-
-		$sql .= " WHERE rowid = $rowid";
+		$sql.= " datev = adddate(datev, interval -1 day)";
+		$sql.= " WHERE rowid = ".$rowid;
 
 		$result = $this->db->query($sql);
 
@@ -699,6 +770,7 @@ class Account extends CommonObject
 		$now=gmmktime();
 
 		$this->nbtodo=$this->nbtodolate=0;
+		
 		$sql = "SELECT b.rowid, b.datev as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -826,17 +898,22 @@ class AccountLine
 
 	/**
 	 *      \brief      Charge en memoire depuis la base, une ecriture sur le compte
-	 *      \param      id      Id de la ligne �criture � r�cup�rer
+	 *      \param      id      Id de la ligne ecriture a recuperer
 	 *		\return		int		<0 if KO, >0 if OK
 	 */
 	function fetch($rowid)
 	{
+		global $conf;
+		
 		$sql = "SELECT b.datec, b.datev, b.dateo, b.amount, b.label as label, b.fk_account,";
 		$sql.= " b.fk_user_author, b.fk_user_rappro,";
 		$sql.= " b.fk_type, b.num_releve, b.num_chq, b.rappro, b.note,";
 		$sql.= " ba.label as bank_account_label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
-		$sql.= " WHERE b.fk_account = ba.rowid AND b.rowid  = ".$rowid;
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity = ".$conf->entity;
+		$sql.= " AND b.rowid  = ".$rowid;
 
 		dol_syslog("AccountLine::fetch sql=".$sql);
 		$result = $this->db->query($sql);
@@ -969,10 +1046,11 @@ class AccountLine
 	{
 		$this->db->begin();
 
-	    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-        $sql.= " set rappro=1, num_releve='".$this->num_releve."',";
-        $sql.= " fk_user_rappro=".$user->id;
-        $sql.= " WHERE rowid=".$this->id;
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
+        $sql.= " rappro = 1";
+        $sql.= ", num_releve = '".$this->num_releve."'";
+        $sql.= ", fk_user_rappro = ".$user->id;
+        $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog("AccountLine::update_conciliation sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -980,8 +1058,13 @@ class AccountLine
         {
         	if (! empty($cat))
             {
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ)";
-                $sql.= " VALUES (".$this->id.", ".$cat.")";
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
+                $sql.= "lineid";
+                $sql.= ", fk_categ";
+                $sql.= ") VALUES (";
+                $sql.= $this->id;
+                $sql.= ", ".$cat;
+                $sql.= ")";
 
                 dol_syslog("AccountLine::update_conciliation sql=".$sql, LOG_DEBUG);
                 $resql = $this->db->query($sql);
@@ -1007,8 +1090,8 @@ class AccountLine
 	 */
 	function info($rowid)
 	{
-		$sql = 'SELECT b.rowid, '.$this->db->pdate('datec').' as datec,';
-		$sql.= ' fk_user_author, fk_user_rappro';
+		$sql = 'SELECT b.rowid, '.$this->db->pdate('b.datec').' as datec,';
+		$sql.= ' b.fk_user_author, b.fk_user_rappro';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'bank as b';
 		$sql.= ' WHERE b.rowid = '.$rowid;
 

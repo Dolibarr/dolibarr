@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,14 @@ if ($_POST["action"] == 'add')
 {
 	if ($_POST["label"])
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (label) VALUES ('".addslashes($_POST["label"])."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (";
+		$sql.= "label";
+		$sql.= ", entity";
+		$sql.= ") VALUES (";
+		$sql.= "'".addslashes($_POST["label"])."'";
+		$sql.= ", ".$conf->entity;
+		$sql.= ")";
+		
 		$result = $db->query($sql);
 
 		if (!$result)
@@ -55,7 +63,10 @@ if ( $_REQUEST['action'] == 'delete' )
 {
 	if ( $_REQUEST['categid'] )
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ WHERE rowid='".$_REQUEST['categid']."'";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
+		$sql.= " WHERE rowid = '".$_REQUEST['categid']."'";
+		$sql.= " AND entity = ".$conf->entity;
+		
 		$result = $db->query($sql);
 
 		if (!$result)
@@ -84,7 +95,10 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Label").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label";
+$sql = "SELECT rowid, label";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
+$sql.= " WHERE entity = ".$conf->entity;
+$sql.= " ORDER BY label";
 
 $result = $db->query($sql);
 if ($result)

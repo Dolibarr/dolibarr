@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +32,9 @@ require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 
 $langs->load("banks");
 
-if (!$user->rights->banque->lire)
-accessforbidden();
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'banque');
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:'';
 
@@ -56,11 +58,10 @@ print '<br>';
 $accounts = array();
 
 $sql  = "SELECT rowid, courant, rappro";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
-if ($statut != 'all') {
-	$sql .= " WHERE clos = 0";
-}
-$sql .= $db->order('label', 'ASC');
+$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+$sql.= " WHERE entity = ".$conf->entity;
+if ($statut != 'all') $sql.= " AND clos = 0";
+$sql.= $db->order('label', 'ASC');
 
 $resql = $db->query($sql);
 if ($resql)

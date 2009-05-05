@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,9 @@ function llxHeader($head = "")
 	{
 		$sql = "SELECT rowid, label, courant";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-		$sql.= " WHERE clos = 0";
+		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " AND clos = 0";
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{

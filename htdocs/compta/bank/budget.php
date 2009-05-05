@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +29,9 @@ require("./pre.inc.php");
 
 $langs->load("categories");
 
-if (!$user->rights->banque->lire)
-  accessforbidden();
-
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'banque');
 
 
 /*
@@ -55,8 +56,14 @@ print '<td align="right">'.$langs->trans("Average").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c, ".MAIN_DB_PREFIX."bank_class as l, ".MAIN_DB_PREFIX."bank as d";
-$sql .= " WHERE d.rowid=l.lineid AND c.rowid = l.fk_categ GROUP BY c.label, c.rowid ORDER BY c.label";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ as c";
+$sql.= ", ".MAIN_DB_PREFIX."bank_class as l";
+$sql.= ", ".MAIN_DB_PREFIX."bank as d";
+$sql.= " WHERE c.entity = ".$conf->entity;
+$sql.= " AND c.rowid = l.fk_categ";
+$sql.= " AND d.rowid = l.lineid";
+$sql.= " GROUP BY c.label, c.rowid";
+$sql.= " ORDER BY c.label";
 
 $result = $db->query($sql);
 if ($result)

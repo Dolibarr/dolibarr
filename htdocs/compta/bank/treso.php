@@ -1,5 +1,5 @@
 <?php
-/* Copytight (C) 2005-2007 Regis Houssin               <regis@dolibarr.fr>
+/* Copytight (C) 2005-2009 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2008      Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
@@ -35,8 +35,15 @@ require_once(DOL_DOCUMENT_ROOT.'/chargesociales.class.php');
 $langs->load("banks");
 $langs->load("bills");
 
-if (!$user->admin && !$user->rights->banque)
-accessforbidden();
+// Security check
+if (isset($_GET["account"]) || isset($_GET["ref"]))
+{
+	$id = isset($_GET["account"])?$_GET["account"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+}
+$fieldid = isset($_GET["ref"])?'ref':'rowid';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
+
 
 $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
 $page=isset($_GET["page"])?$_GET["page"]:0;
@@ -149,7 +156,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " s.rowid as socid, s.nom, s.fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-	$sql.= " WHERE f.paye = 0 AND fk_statut = 1";	// Not payed
+	$sql.= " WHERE f.entity = ".$conf->entity;
+	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";	// Not payed
 	$sql.= " ORDER BY dlr ASC";
 
 	// Supplier invoices
@@ -157,14 +165,16 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql2.= " s.rowid as socid, s.nom, s.fournisseur";
 	$sql2.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
-	$sql2.= " WHERE ff.paye = 0 AND fk_statut = 1";	// Not payed
+	$sql2.= " WHERE ff.entity = ".$conf->entity;
+	$sql2.= " AND ff.paye = 0 AND fk_statut = 1";	// Not payed
 	$sql2.= " ORDER BY dlr ASC";
 
 	// Social contributions
 	$sql3= " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, ".$db->pdate("cs.date_ech")." as dlr";
 	$sql3.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql3.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
-	$sql3.= " WHERE cs.paye = 0";	// Not payed
+	$sql3.= " WHERE cs.entity = ".$conf->entity;
+	$sql3.= " AND cs.paye = 0";	// Not payed
 	$sql3.= " ORDER BY dlr ASC";
 
 	$error=0;

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +31,9 @@ require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/bankcateg.class.php");
 
-if (!$user->rights->banque->lire)
-accessforbidden();
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'banque');
 
 $description=$_REQUEST["description"];
 $debit=$_REQUEST["debit"];
@@ -77,8 +79,9 @@ $sql.= " bu.label as labelurl, bu.url_id";
 $sql.= " FROM (";
 if (! empty($_REQUEST["bid"])) $sql.= MAIN_DB_PREFIX."bank_class as l, ";
 $sql.= MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba)";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu on (bu.fk_bank = b.rowid AND type ='company')";
-$sql.= " WHERE b.fk_account=ba.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu on (bu.fk_bank = b.rowid AND type = 'company')";
+$sql.= " WHERE b.fk_account = ba.rowid";
+$sql.= " AND ba.entity = ".$conf->entity;
 if (! empty($_REQUEST["bid"])) 
 {
 	$sql.= " AND b.rowid=l.lineid AND l.fk_categ=".$_REQUEST["bid"];
