@@ -79,7 +79,7 @@ class Conf
 		$sql = "SELECT name, value, entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE entity IN (0,".$this->entity.")";
-		
+
 		$result = $db->query($sql);
 		if ($result)
 		{
@@ -207,10 +207,6 @@ class Conf
 		// Module societe
 		$this->societe->dir_logos =$rootfordata."/societe/logos";
 		if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $this->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
-
-		// Module commercial
-		$this->commercial->dir_output=$rootfordata."/comm";
-		$this->commercial->dir_temp  =$rootfordata."/comm/temp";
 
 		// Module taxes et charges sociales
 		$this->tax->dir_output=$rootfordata."/taxes";

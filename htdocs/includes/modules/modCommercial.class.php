@@ -62,7 +62,7 @@ class modCommercial extends DolibarrModules
     $this->picto='commercial';
 
     // Data directories to create when module is enabled
-    $this->dirs = array("/comm/temp");
+    $this->dirs = array();
 
     // Dependancies
     $this->depends = array("modSociete");
