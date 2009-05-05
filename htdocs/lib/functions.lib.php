@@ -35,6 +35,21 @@
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '..');
 if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
+/**
+ *	\brief          Return date for now
+ * 	\param			mode		'gmt' => we return GMT timestamp, 'tzref' => we use the company timezone
+ *	\return         date		Timestamp
+ */
+function dol_now($mode='tzref')
+{
+	if ($mode == 'gmt') $ret=gmmktime();
+	else if ($mode == 'tzref')
+	{
+		// TODO Should use the timezone of the company instead of timezone of server
+		$ret=mktime();
+	}
+	return $ret;
+}
 
 /**
  *	\brief          Clean a string to use it as a file name.
