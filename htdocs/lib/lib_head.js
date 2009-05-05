@@ -501,6 +501,8 @@ function getDateFromFormat(val,format)
 	var seconde=now.getSeconds();
 
 	var i=0;
+	var d=0;    // -d- follows the date string while -i- follows the format string 
+
 	while (i < format.length)
 	{
 		c=format.charAt(i);	// Recupere char du format
@@ -512,7 +514,7 @@ function getDateFromFormat(val,format)
 		}
 
 		//alert('substr='+substr);
-		if (substr == "yyyy") year=getIntegerInString(val,i,4,4);
+/*		if (substr == "yyyy") year=getIntegerInString(val,i,4,4);
 		if (substr == "yy")   year=""+(getIntegerInString(val,i,2,2)-0+1900);
 		if (substr == "MM")   month=getIntegerInString(val,i,2,2);
 		if (substr == "M")    month=getIntegerInString(val,i,1,2);
@@ -521,8 +523,36 @@ function getDateFromFormat(val,format)
 		if (substr == "HH")   hour=getIntegerInString(val,i,1,2);
 		if (substr == "mm")   minute=getIntegerInString(val,i,1,2);
 		if (substr == "ss")   seconde=getIntegerInString(val,i,1,2);
+*/
+        if (substr == "yyyy") year=getIntegerInString(val,d,4,4); 
+        if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+1900); 
+        if (substr == "MM" ||substr == "M") 
+        { 
+            month=getIntegerInString(val,d,1,2); 
+            d -= 2- month.length; 
+        } 
+        if (substr == "dd") 
+        { 
+            day=getIntegerInString(val,d,1,2); 
+            d -= 2- day.length; 
+        } 
+        if (substr == "HH" ||substr == "hh" ) 
+        { 
+            hour=getIntegerInString(val,d,1,2); 
+            d -= 2- hour.length; 
+        } 
+        if (substr == "mm"){ 
+            minute=getIntegerInString(val,d,1,2); 
+            d -= 2- minute.length; 
+        } 
+        if (substr == "ss") 
+        { 
+            seconde=getIntegerInString(val,d,1,2); 
+            d -= 2- seconde.length; 
+        } 
 	
 		i+=substr.length;
+		d+=substr.length;
 	}
 	
 	// Check if format param are ok
