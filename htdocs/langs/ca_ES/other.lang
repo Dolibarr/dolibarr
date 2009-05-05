@@ -104,6 +104,7 @@ EMailTextOrderApproved = Comanda %s aprovada
 EMailTextOrderApprovedBy = Comanda %s aprovada per %s
 EMailTextOrderRefused = Comanda %s rebutjada
 EMailTextOrderRefusedBy = Comanda %s rebutjada per %s
+ImportedWithSet=Lot d'importació
 ##### Bookmark ##### =  = 
 Bookmark = Marcador
 Bookmarks = Marcadors

@@ -104,6 +104,7 @@ EMailTextOrderApproved = Pedido %s aprobado
 EMailTextOrderApprovedBy = Pedido %s aprobado por %s
 EMailTextOrderRefused = Pedido %s rechazado
 EMailTextOrderRefusedBy = Pedido %s rechazado por %s
+ImportedWithSet = Lote de importación
 ##### Bookmark ##### = 
 Bookmark = Marcador
 Bookmarks = Marcadores
