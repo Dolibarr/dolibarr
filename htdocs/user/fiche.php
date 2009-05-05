@@ -1035,7 +1035,7 @@ else
 			print '<div class="tabsAction">';
 
 			if ($caneditfield &&
-			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
+			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || (($fuser->entity == $conf->entity) || $fuser->entity == $user->entity)) )
 			{
 				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 			}
