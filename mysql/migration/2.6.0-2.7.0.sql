@@ -10,6 +10,8 @@
 -- so we made first change to remove it
 alter table llx_menu_const drop foreign key fk_menu_const_fk_menu;
 
+update llx_menu_constraint set action = '$conf->societe->enabled' where action = '$conf->commercial->enabled';
+
 -- Clean no more required parameters
 delete from llx_const where name = 'MAIN_MODULE_COMMERCIAL';
 delete from llx_const where name like 'MAIN_MODULE_%_DIR_OUTPUT';

@@ -327,7 +327,7 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (31, '$conf->adhere
 insert into `llx_menu_constraint` (`rowid`, `action`) values (32, '($conf->societe->enabled && $user->rights->societe->lire) || ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (33, '$conf->produit->enabled || $conf->service->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (34, '$conf->fournisseur->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (35, '$conf->commercial->enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (35, '$conf->societe->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (36, '$conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled || $conf->commande->enabled || $conf->facture->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (37, '$conf->mailing->enabled || $conf->export->enabled || $conf->bookmark->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (38, '$conf->boutique->enabled');

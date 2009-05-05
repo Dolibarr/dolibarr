@@ -17,6 +17,8 @@ For developers:
 - Creation of directory in module descriptor is simpler.
 - Can use an alternate document_root directory to develop with 
   sources on two repositories.
+- Removed useless code of old commercial module.
+
 
 
 ***** Changelog for 2.6 compared to 2.5 *****

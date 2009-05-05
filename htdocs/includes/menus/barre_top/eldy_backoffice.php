@@ -140,14 +140,7 @@ class MenuTop {
 		}
 
 		// Commercial
-		/*$showcommercial=0;
-		if ($conf->societe->enabled)   $showcommercial=1;
-		if ($conf->propal->enabled)    $showcommercial=1;
-		if ($conf->commande->enabled)  $showcommercial=1;
-		if ($conf->contrat->enabled)   $showcommercial=1;
-		if ($conf->ficheinter->enabled) $showcommercial=1;
-		if ($showcommercial)*/
-		if ($conf->commercial->enabled)
+		if ($conf->societe->enabled)
 		{
 			$langs->load("commercial");
 
