@@ -162,7 +162,7 @@ class MenuTop {
 			}
 
 			$idsel='id="commercial" ';
-			if($user->rights->societe->lire)
+			if($user->rights->societe->lire || $user->rights->societe->contact->lire)
 			{
 				print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
 			}

@@ -37,45 +37,26 @@ function llxHeader($head = "", $title="", $help_url='')
 
 	$menu = new Menu();
 
-	if ($conf->societe->enabled && $user->rights->societe->lire)
+	if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 	{
 		$langs->load("companies");
-		$menu->add(DOL_URL_ROOT."/societe.php", $langs->trans("Companies"));
+		$menu->add(DOL_URL_ROOT."/societe.php", $langs->trans("ThirdParties"));
 
-		if(is_dir("societe/groupe"))
+		if ($user->rights->societe->creer)
 		{
-	  $menu->add_submenu(DOL_URL_ROOT."/societe/groupe/index.php", $langs->trans("MenuSocGroup"));
+	  		$menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", $langs->trans("MenuNewThirdParty"));
 		}
+
 		$menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
 	}
 
-	if ($conf->commercial->enabled && $user->rights->commercial->main->lire)
+	if (! empty($conf->categorie->enabled))
 	{
-		$langs->load("commercial");
-		$menu->add(DOL_URL_ROOT."/comm/index.php",$langs->trans("Commercial"));
-
-		$menu->add_submenu(DOL_URL_ROOT."/comm/clients.php",$langs->trans("Customers"));
-		$menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php",$langs->trans("Prospects"));
-
-		if ($user->rights->propale->lire)
-		{
-	  $langs->load("propal");
-	  $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
-		}
+		$langs->load("categories");
+		$menu->add(DOL_URL_ROOT."/categories/index.php?type=0", $langs->trans("Categories"));
 	}
 
-	if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-	{
-		$langs->load("compta");
-		$menu->add(DOL_URL_ROOT."/compta/index.php", $langs->trans("MenuFinancial"));
-
-		if ($user->rights->facture->lire) {
-			$langs->load("bills");
-			$menu->add_submenu(DOL_URL_ROOT."/compta/facture.php", $langs->trans("Bills"));
-		}
-	}
-
-	if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire)
+	if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
 	{
 		$langs->trans("interventions");
 		$menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));

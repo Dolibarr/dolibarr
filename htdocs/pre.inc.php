@@ -55,21 +55,6 @@ function llxHeader($head = '', $title='', $help_url='')
 		$menu->add(DOL_URL_ROOT."/categories/index.php?type=0", $langs->trans("Categories"));
 	}
 
-	if (! empty($conf->commercial->enabled) && isset($user->rights->commercial->main->lire) && $user->rights->commercial->main->lire)
-	{
-		$langs->load("commercial");
-		$menu->add(DOL_URL_ROOT."/comm/index.php",$langs->trans("Commercial"));
-
-		$menu->add_submenu(DOL_URL_ROOT."/comm/clients.php",$langs->trans("Customers"));
-		$menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php",$langs->trans("Prospects"));
-
-		if ($user->rights->propale->lire)
-		{
-	  		$langs->load("propal");
-	  		$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
-		}
-	}
-
 	if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
 	{
 		$langs->trans("interventions");
