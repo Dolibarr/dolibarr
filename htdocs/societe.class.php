@@ -25,7 +25,7 @@
 /**
  *	\file       htdocs/societe.class.php
  *	\ingroup    societe
- *	\brief      Fichier de la classe des societes
+ *	\brief      File for third party class
  *	\version    $Id$
  */
 
@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 
 /**
  *	\class 		Societe
- *	\brief 		Classe permettant la gestion des societes
+ *	\brief 		Class to manage third parties objects (customers, suppliers, prospects...)
  */
 class Societe extends CommonObject
 {
@@ -102,6 +102,8 @@ class Societe extends CommonObject
 
 	var $commercial_id; //Id du commercial affecte
 
+	var $import_key;
+	
 
 	/**
 	 *    \brief  Constructeur de la classe
@@ -475,7 +477,7 @@ class Societe extends CommonObject
 	 *    \brief      Load a third party from database into memory
 	 *    \param      socid       Id third party to load
 	 *    \param      user        User object
-	 *    \return     int         >0 si ok, <0 si ko
+	 *    \return     int         >0 if OK, <0 if KO
 	 */
 	function fetch($socid, $user=0)
 	{
@@ -514,6 +516,7 @@ class Societe extends CommonObject
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.gencod';
 		$sql .= ', s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
 		$sql .= ', s.fk_prospectlevel';
+		$sql .= ', s.import_key';
 		$sql .= ', fj.libelle as forme_juridique';
 		$sql .= ', e.libelle as effectif';
 		$sql .= ', p.code as pays_code, p.libelle as pays';
@@ -610,6 +613,8 @@ class Societe extends CommonObject
 				// multiprix
 				$this->price_level = $obj->price_level;
 
+				$this->import_key = $obj->import_key;
+				
 				$result = 1;
 			}
 			else
