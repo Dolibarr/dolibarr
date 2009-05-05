@@ -94,9 +94,7 @@ $fuser->getrights();
  */
 $head = user_prepare_head($fuser);
 
-$title = $fuser->admin ? $langs->trans("Administrator") : $langs->trans("User");
-$title = !$fuser->entity ? $langs->trans("SuperAdministrator") : $title;
-
+$title = $langs->trans("User");
 dol_fiche_head($head, 'rights', $title);
 
 
@@ -109,22 +107,22 @@ $listdir=$conf->dol_document_root;
 foreach($listdir as $dirroot)
 {
 	$dir=$dirroot."/includes/modules/";
-	
+
 	$handle=opendir($dir);
 	while (($file = readdir($handle))!==false)
 	{
 	    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
 	    {
 	        $modName = substr($file, 0, strlen($file) - 10);
-	
+
 	        if ($modName)
 	        {
 	            include_once($dir.$file);
 	            $objMod = new $modName($db);
 	            if ($objMod->rights_class) {
-	
+
 	                $ret=$objMod->insert_permissions();
-	
+
 	                $modules[$objMod->rights_class]=$objMod;
 	                //print "modules[".$objMod->rights_class."]=$objMod;";
 	            }
@@ -246,7 +244,7 @@ if ($result)
         $obj = $db->fetch_object($result);
 
         // Si la ligne correspond a un module qui n'existe plus (absent de includes/module), on l'ignore
-        if (! $modules[$obj->module]) 
+        if (! $modules[$obj->module])
         {
             $i++;
             continue;
@@ -266,7 +264,7 @@ if ($result)
                 // On affiche ligne pour modifier droits
                 print '<tr '. $bc[$var].'>';
                 print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName();
-                print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';    
+                print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
                 print '<td align="center" nowrap>';
                 print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
                 print '/';
@@ -280,7 +278,7 @@ if ($result)
         print '<tr '. $bc[$var].'>';
 
         print '<td>'.img_object('',$picto).' '.$objMod->getName();
-        print '</td>';    
+        print '</td>';
 
         if ($fuser->admin && $objMod->rights_admin_allowed)
         {
@@ -306,7 +304,7 @@ if ($result)
         }
         else if (in_array($obj->id, $permsgroup)) {
             // Permission own by group
-            if ($caneditperms) 
+            if ($caneditperms)
             {
                 print '<td align="center">';
 				print $form->textwithtooltip($langs->trans("Group"),$langs->trans("PermissionInheritedFromAGroup"));

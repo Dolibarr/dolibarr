@@ -55,7 +55,7 @@ if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))
 if ($_POST["action"] == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"])
 {
 	$db->begin();
-	
+
 	$res=$fuser->update_note($_POST["note"],$user);
 	if ($res < 0)
 	{
@@ -81,16 +81,14 @@ $html = new Form($db);
 if ($id)
 {
 	$head = user_prepare_head($fuser);
-	
-	$title = $fuser->admin ? $langs->trans("Administrator") : $langs->trans("User");
-	$title = !$fuser->entity ? $langs->trans("SuperAdministrator") : $title;
 
+	$title = $langs->trans("User");
 	dol_fiche_head($head, 'note', $title);
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
 	print "<form method=\"post\" action=\"note.php\">";
-	
+
     print '<table class="border" width="100%">';
 
     // Reference
@@ -147,7 +145,7 @@ if ($id)
     print "</table>";
 	print "</form>\n";
 
-	
+
     /*
     * Actions
     */

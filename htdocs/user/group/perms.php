@@ -74,8 +74,6 @@ if ($_GET["id"])
 	 */
 	$head = group_prepare_head($fgroup);
 	$title = $langs->trans("Group");
-	if (!$fgroup->entity) $title = $langs->trans("GlobalGroup");
-
 	dol_fiche_head($head, 'rights', $title);
 
 

@@ -219,8 +219,6 @@ else
 		 */
 		$head = group_prepare_head($group);
 		$title = $langs->trans("Group");
-		if (! $group->entity) $title = $langs->trans("GlobalGroup");
-
 		dol_fiche_head($head, 'group', $title);
 
 
@@ -296,24 +294,24 @@ else
             // On salectionne les users qui ne sont pas deja dans le groupe
             $userlistid = array();
             $uss = array();
-            
+
             $sql = "SELECT ug.fk_user";
             $sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ug";
             $sql.= ", ".MAIN_DB_PREFIX."user as u";
             $sql.= " WHERE ug.fk_usergroup = ".$group->id;
             $sql.= " AND ug.fk_user = u.rowid";
             $sql.= " AND u.entity IN (0,".$conf->entity.")";
-          
+
             $result = $db->query($sql);
             if ($result)
             {
             	$num = $db->num_rows($result);
               $i = 0;
-              
+
               while ($i < $num)
               {
               	$obj = $db->fetch_object($result);
-              	
+
               	$userlistid[]=$obj->fk_user;
               	$i++;
               }
@@ -321,9 +319,9 @@ else
             else {
                 dol_print_error($db);
             }
-            
+
             $idList = implode(",",$userlistid);
-            
+
             if (!empty($idList))
             {
             	$sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin";
@@ -331,7 +329,7 @@ else
             	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
             	$sql.= " AND u.rowid NOT IN (".$idList.")";
             	$sql.= " ORDER BY u.name";
-            	
+
             	$result = $db->query($sql);
             	if ($result)
             	{
@@ -357,7 +355,7 @@ else
             	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
             	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
             	$sql.= " ORDER BY u.name";
-            	
+
             	$result = $db->query($sql);
             	if ($result)
             	{
