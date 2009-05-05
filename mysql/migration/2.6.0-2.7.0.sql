@@ -7,10 +7,13 @@
 --
 
 -- Usage of llx_menu_const and llx_menu_constraint is too complicated
--- We remove it
+-- so we made first change to remove it
 alter table llx_menu_const drop foreign key fk_menu_const_fk_menu;
 
 
+alter table llx_societe add column import_key varchar(14);
+
+ 
 -- Multi company
 ALTER TABLE llx_rights_def ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER module;
 ALTER TABLE llx_events ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER type;

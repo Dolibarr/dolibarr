@@ -53,7 +53,7 @@ create table llx_product
   pmp                double(24,8) default 0 NOT NULL,
   canvas             varchar(15)  DEFAULT '',
   finished           tinyint      DEFAULT NULL,
-  import_key         varchar(14)
+  import_key         varchar(14)			   -- import key
 )type=innodb;
 
 -- 

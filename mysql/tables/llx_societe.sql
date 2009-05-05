@@ -70,9 +70,10 @@ create table llx_societe
   remise_client            real           DEFAULT 0,            -- remise systématique pour le client
   mode_reglement           tinyint,                             -- mode de réglement
   cond_reglement           tinyint,                             -- condition de réglement
-  tva_assuj                tinyint        DEFAULT 1,	          -- assujeti ou non à la TVA
+  tva_assuj                tinyint        DEFAULT 1,	        -- assujeti ou non à la TVA
   gencod                   varchar(255),                        -- barcode
-  price_level              tinyint(4) NULL                      -- level of price for multiprices
+  price_level              tinyint(4) NULL,                     -- level of price for multiprices
+  import_key               varchar(14)                          -- import key
 )type=innodb;
 
 -- 
