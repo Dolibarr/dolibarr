@@ -6,7 +6,9 @@ English Dolibarr changelog
 For users:
 - New: Can export commercial proposals
 - New: Can use a cache for xcal exports.
-
+- Fix: Customer code was not correct on PDF it if contains special 
+       characters.
+       
 For translators:
 - Update some language files.
   

@@ -1012,7 +1012,7 @@ class pdf_oursin extends ModelePDFFactures
 			$posy+=4;
 			$pdf->SetXY($this->marges['g'],$posy);
 			$pdf->SetFont('Arial','',9);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $object->client->code_client, '', 'L');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'L');
 		}
 
 

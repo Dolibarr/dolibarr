@@ -434,7 +434,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 			$posy+=5;
 			$pdf->SetXY(100,$posy);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $object->client->code_client, '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
 
 		$posy=39;
