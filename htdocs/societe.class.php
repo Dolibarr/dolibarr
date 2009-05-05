@@ -103,7 +103,7 @@ class Societe extends CommonObject
 	var $commercial_id; //Id du commercial affecte
 
 	var $import_key;
-	
+
 
 	/**
 	 *    \brief  Constructeur de la classe
@@ -614,7 +614,7 @@ class Societe extends CommonObject
 				$this->price_level = $obj->price_level;
 
 				$this->import_key = $obj->import_key;
-				
+
 				$result = 1;
 			}
 			else
@@ -628,8 +628,7 @@ class Societe extends CommonObject
 		}
 		else
 		{
-			dol_syslog('Erreur Societe::Fetch echec sql='.$sql);
-			dol_syslog('Erreur Societe::Fetch '.$this->db->error());
+			dol_syslog('Erreur Societe::Fetch '.$this->db->error(), LOG_ERR);
 			$this->error=$this->db->error();
 			$result = -3;
 		}

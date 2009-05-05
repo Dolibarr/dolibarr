@@ -611,7 +611,7 @@ class Propal extends CommonObject
 					$sql.= " SET fk_projet=".$this->projetidp;
 					$sql.= " WHERE ref='".$this->ref."'";
 					$sql.= " AND entity = ".$conf->entity;
-					
+
 					$result=$this->db->query($sql);
 				}
 
@@ -622,7 +622,7 @@ class Propal extends CommonObject
 					$sql.= " SET fk_adresse_livraison = ".$this->adresse_livraison_id;
 					$sql.= " WHERE ref = '".$this->ref."'";
 					$sql.= " AND entity = ".$conf->entity;
-					
+
 					$result=$this->db->query($sql);
 				}
 
