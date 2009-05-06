@@ -332,7 +332,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		{
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $html->textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW,$htmltext,1,'superadmin');
-			rint '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="'.$conf->global->MAIN_MAIL_SMTPS_PW.'">';
+			print '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="'.$conf->global->MAIN_MAIL_SMTPS_PW.'">';
 		}
 		print '</td></tr>';
 	}
