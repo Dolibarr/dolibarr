@@ -81,21 +81,21 @@ function analyse_sql_injection(&$var)
 		$result = array();
 		foreach ($var as $key => $value)
 		{
-		  if (test_sql_inject($key) > 0)
-		  {
-		  	unset($var[$key]);
-		  }
-		  else
-		  {
-		  	if (analyse_sql_injection($value))
-		  	{
-		  		$var[$key] = $value;
-		  	}
-		  	else
-		  	{
-		  		unset($var[$key]);
-		  	}
-		  }
+			if (test_sql_inject($key) > 0)
+			{
+				unset($var[$key]);
+			}
+			else
+			{
+				if (analyse_sql_injection($value))
+				{
+					$var[$key] = $value;
+				}
+				else
+				{
+					unset($var[$key]);
+				}
+			}
 		}
 		return true;
 	}
@@ -112,12 +112,8 @@ analyse_sql_injection($_POST);
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-// Retrieve the entity in login form, and after in the cookie
-$entityCookieName = "DOLENTITYID_dolibarr";
-if (isset($_POST["entity"])) $_SESSION["dol_entity"] = $_POST["entity"];
-if (isset($_COOKIE[$entityCookieName])) $_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
-
 // Set and init common variables
+// This include will set $conf, $langs and $mysoc objects
 require_once("master.inc.php");
 
 // Check if HTTPS
@@ -166,7 +162,27 @@ session_name($sessionname);
 session_start();
 dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".(isset($_SESSION["dol_login"])?$_SESSION["dol_login"]:'').", ".ini_get("session.gc_maxlifetime"));
 
-// Disable modules (this must be after session_start)
+// Retrieve the entity in login form and in the cookie.
+// This must be after the init of session (session_start) or this create serious pb of corrupted session.
+$entityCookieName = "DOLENTITYID_dolibarr";
+if (isset($_POST["loginfunction"]) && isset($_POST["entity"]))
+{
+	$_SESSION["dol_entity"] = $_POST["entity"];
+	$conf->entity=$_SESSION["dol_entity"];
+	dol_syslog("Will work on entity ".$conf->entity);
+	// Now we need to reload the conf with the choosed entity
+	$conf->setValues($db);
+}
+elseif (isset($_COOKIE[$entityCookieName]))
+{
+	$_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
+	$conf->entity=$_SESSION["dol_entity"];
+	dol_syslog("Will work on entity ".$conf->entity);
+	// Now we need to reload the conf with the choosed entity
+	$conf->setValues($db);
+}
+
+// Disable modules (this must be after session_start and after conf has been reloaded)
 if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
 if (! empty($_SESSION["disablemodules"]))
 {
@@ -663,7 +679,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	{
 		print "<head>\n";
 
-        print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->character_set_client."\">\n";
+		print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->character_set_client."\">\n";
 
 		// Affiche meta
 		print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
@@ -1088,8 +1104,8 @@ function llxFooter($foot='')
 		}
 		print '"</script>'."\n";
 
-	    // Add Xdebug coverage of code
-	    if (defined('XDEBUGCOVERAGE')) { var_dump(xdebug_get_code_coverage()); }
+		// Add Xdebug coverage of code
+		if (defined('XDEBUGCOVERAGE')) { var_dump(xdebug_get_code_coverage()); }
 	}
 
 	if ($conf->use_javascript_ajax)
@@ -1098,21 +1114,21 @@ function llxFooter($foot='')
 	}
 
 	// If there is some logs in buffer to show
-    if (sizeof($conf->logbuffer))
-    {
+	if (sizeof($conf->logbuffer))
+	{
 		print "\n";
 		print "<!-- Start of log output\n";
-    	//print '<div class="hidden">'."\n";
-	    foreach($conf->logbuffer as $logline)
-	    {
-	    	print $logline."<br>\n";
-	    }
-	    //print '</div>'."\n";
+		//print '<div class="hidden">'."\n";
+		foreach($conf->logbuffer as $logline)
+		{
+			print $logline."<br>\n";
+		}
+		//print '</div>'."\n";
 		print "End of log output -->\n";
-    }
+	}
 
 	print "\n";
-    if ($foot) print '<!-- '.$foot.' -->'."\n";
+	if ($foot) print '<!-- '.$foot.' -->'."\n";
 
 	print "</body>\n";
 	print "</html>\n";

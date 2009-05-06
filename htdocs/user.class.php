@@ -209,7 +209,7 @@ class User extends CommonObject
 				$this->societe_id           = $obj->fk_societe;
 				$this->contact_id           = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
-				
+
 				$this->next_prev_filter     = 'entity IN (0,'.$conf->entity.')';
 
 				if (! $this->lang) $this->lang='fr_FR';
@@ -273,7 +273,7 @@ class User extends CommonObject
 	function addrights($rid,$allmodule='',$allperms='')
 	{
 		global $conf;
-		
+
 		dol_syslog("User::addrights $rid, $allmodule, $allperms");
 		$err=0;
 		$whereforadd='';
@@ -371,7 +371,7 @@ class User extends CommonObject
 	function delrights($rid,$allmodule='',$allperms='')
 	{
 		global $conf;
-		
+
 		$err=0;
 		$wherefordel='';
 
@@ -474,7 +474,7 @@ class User extends CommonObject
 	function getrights($moduletag='')
 	{
 		global $conf;
-		
+
 		if ($moduletag && isset($this->tab_loaded[$moduletag]) && $this->tab_loaded[$moduletag])
 		{
 			// Le fichier de ce module est deja charge
@@ -684,7 +684,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  \brief      Cree l'utilisateur en base
+	 *  \brief      Create user in database
 	 *  \param      user        	Objet user qui demande la creation
 	 *  \param      notrigger		1 ne declenche pas les triggers, 0 sinon
 	 *  \return     int         	<0 si KO, id compte cree si OK
@@ -693,8 +693,9 @@ class User extends CommonObject
 	{
 		global $conf,$langs;
 
-		// Nettoyage parametres
+		// Clean parameters
 		$this->login = trim($this->login);
+		if (! isset($this->entity)) $this->entity=$conf->entity;	// If not defined, we use default value
 
 		dol_syslog("User::Create login=".$this->login.", user=".(is_object($user)?$user->id:''), LOG_DEBUG);
 
@@ -920,7 +921,7 @@ class User extends CommonObject
 	function set_default_rights()
 	{
 		global $conf;
-		
+
 		$sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def";
 		$sql.= " WHERE bydefault = 1";
 		$sql.= " AND entity = ".$conf->entity;
@@ -970,7 +971,7 @@ class User extends CommonObject
 
 		dol_syslog("User::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember);
 
-		// Nettoyage parametres
+		// Clean parameters
 		$this->nom          = trim($this->nom);
 		$this->prenom       = trim($this->prenom);
 		$this->fullname     = $this->prenom." ".$this->nom;
@@ -1014,7 +1015,7 @@ class User extends CommonObject
 		{
 			$nbrowsaffected+=$this->db->affected_rows($resql);
 
-			// Mise a jour mot de passe	
+			// Mise a jour mot de passe
 			if ($this->pass)
 			{
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
@@ -1025,9 +1026,23 @@ class User extends CommonObject
 				}
 			}
 
-			if ($nbrowsaffected)
+			// If user is linked to a member, remove old link to this member
+			if ($this->fk_member > 0)
 			{
-				if ($this->fk_member && ! $nosyncmember)
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->fk_member;
+				dol_syslog("User::update sql=".$sql, LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
+			}
+			// Set link to user
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member =".($this->fk_member>0?$this->fk_member:'null')." where rowid = ".$this->id;
+			dol_syslog("User::update sql=".$sql, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
+
+			if ($nbrowsaffected)	// If something has changed in data
+			{
+				if ($this->fk_member > 0 && ! $nosyncmember)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 
@@ -1042,7 +1057,7 @@ class User extends CommonObject
 						$adh->nom=$this->nom;
 						$adh->login=$this->login;
 						$adh->pass=$this->pass;
-						$adh->societe=$this->societe_id;
+						$adh->societe=(empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
 
 						$adh->email=$this->email;
 						$adh->phone=$this->office_phone;
@@ -1052,7 +1067,7 @@ class User extends CommonObject
 
 						$adh->user_id=$this->id;
 						$adh->user_login=$this->login;
-						
+
 						//$adh->entity=$this->entity;
 
 						$result=$adh->update($user,0,1);

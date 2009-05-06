@@ -829,7 +829,9 @@ else
 			print '<td colspan="2">'.$fuser->prenom.'</td>';
 			print "</tr>\n";
 
-			$rowspan=12;
+			$rowspan=11;
+			if ($conf->societe->enabled) $rowspan++;
+			if ($conf->adherent->enabled) $rowspan++;
 
 			// Login
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
@@ -922,30 +924,6 @@ else
 			}
 			print '</td></tr>';
 
-			// Company / Contact
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Company").' / '.$langs->trans("Contact").'</td>';
-			print '<td>';
-			if ($fuser->societe_id > 0)
-			{
-				$societe = new Societe($db);
-				$societe->fetch($fuser->societe_id);
-				print $societe->getNomUrl(1,'');
-			}
-			else
-			{
-				print $langs->trans("ThisUserIsNot");
-			}
-			if ($fuser->contact_id)
-			{
-				$contact = new Contact($db);
-				$contact->fetch($fuser->contact_id);
-				if ($fuser->societe_id > 0) print ' / ';
-				else print '<br>';
-				print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dol_trunc($contact->getFullName($langs),32).'</a>';
-			}
-			print '</td>';
-			print "</tr>\n";
-
 			// Tel pro
 			print '<tr><td width="25%" valign="top">'.$langs->trans("PhonePro").'</td>';
 			print '<td>'.dol_print_phone($fuser->office_phone,'',0,0,1).'</td>';
@@ -1000,12 +978,39 @@ else
 				print "</tr>\n";
 			}
 
+			// Company / Contact
+			if ($conf->societe->enabled)
+			{
+				print '<tr><td width="25%" valign="top">'.$langs->trans("LinkToCompanyContact").'</td>';
+				print '<td>';
+				if ($fuser->societe_id > 0)
+				{
+					$societe = new Societe($db);
+					$societe->fetch($fuser->societe_id);
+					print $societe->getNomUrl(1,'');
+				}
+				else
+				{
+					print $langs->trans("ThisUserIsNot");
+				}
+				if ($fuser->contact_id)
+				{
+					$contact = new Contact($db);
+					$contact->fetch($fuser->contact_id);
+					if ($fuser->societe_id > 0) print ' / ';
+					else print '<br>';
+					print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dol_trunc($contact->getFullName($langs),32).'</a>';
+				}
+				print '</td>';
+				print "</tr>\n";
+			}
+
 			// Module Adherent
 			if ($conf->adherent->enabled)
 			{
 				$langs->load("members");
-				print '<tr><td width="25%" valign="top">'.$langs->trans("MemberAccount").'</td>';
-				print '<td colspan="2">';
+				print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+				print '<td>';
 				if ($fuser->fk_member)
 				{
 					$adh=new Adherent($db);
@@ -1261,7 +1266,9 @@ else
 			print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 			print '<table width="100%" class="border">';
 
-			$rowspan=10;
+			$rowspan=9;
+			if ($conf->societe->enabled) $rowspan++;
+			if ($conf->adherent->enabled) $rowspan++;
 
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="2">';
@@ -1398,28 +1405,6 @@ else
 			}
 			print '</td></tr>';
 
-			// Company / Contact
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Company").' / '.$langs->trans("Contact").'</td>';
-			print '<td>';
-			if ($fuser->societe_id > 0)
-			{
-				$societe = new Societe($db);
-				$societe->fetch($fuser->societe_id);
-				print $societe->getNomUrl(1,'');
-				if ($fuser->contact_id)
-				{
-					$contact = new Contact($db);
-					$contact->fetch($fuser->contact_id);
-					print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dol_trunc($contact->getFullName($langs),32).'</a>';
-				}
-			}
-			else
-			{
-				print $langs->trans("ThisUserIsNot");
-			}
-			print '</td>';
-			print "</tr>\n";
-
 			// Tel pro
 			print "<tr>".'<td valign="top">'.$langs->trans("PhonePro").'</td>';
 			print '<td>';
@@ -1509,6 +1494,52 @@ else
 				if ($caneditfield) print '<input size="30" type="password" class="flat" name="phenix_pass" value="'.$fuser->phenix_pass_crypted.'">';
 				else print eregi_replace('.','*',$fuser->phenix_pass_crypted);
 				print '</td></tr>';
+			}
+
+			// Company / Contact
+			if ($conf->societe->enabled)
+			{
+				print '<tr><td width="25%" valign="top">'.$langs->trans("LinkToCompanyContact").'</td>';
+				print '<td>';
+				if ($fuser->societe_id > 0)
+				{
+					$societe = new Societe($db);
+					$societe->fetch($fuser->societe_id);
+					print $societe->getNomUrl(1,'');
+					if ($fuser->contact_id)
+					{
+						$contact = new Contact($db);
+						$contact->fetch($fuser->contact_id);
+						print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dol_trunc($contact->getFullName($langs),32).'</a>';
+					}
+				}
+				else
+				{
+					print $langs->trans("ThisUserIsNot");
+				}
+				print '</td>';
+				print "</tr>\n";
+			}
+
+			// Module Adherent
+			if ($conf->adherent->enabled)
+			{
+				$langs->load("members");
+				print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+				print '<td>';
+				if ($fuser->fk_member)
+				{
+					$adh=new Adherent($db);
+					$adh->fetch($fuser->fk_member);
+					$adh->ref=$adh->login;	// Force to show login instead of id
+					print $adh->getNomUrl(1);
+				}
+				else
+				{
+					print $langs->trans("UserNotLinkedToMember");
+				}
+				print '</td>';
+				print "</tr>\n";
 			}
 
 			print '<tr><td align="center" colspan="3">';

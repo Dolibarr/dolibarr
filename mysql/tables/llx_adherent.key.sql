@@ -20,6 +20,7 @@
 
 
 ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_login (login);
+ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_fk_soc (fk_soc);
 
 ALTER TABLE llx_adherent ADD INDEX idx_adherent_fk_soc (fk_soc);
 ALTER TABLE llx_adherent ADD INDEX idx_adherent_fk_adherent_type (fk_adherent_type);

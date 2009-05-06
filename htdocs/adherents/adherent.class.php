@@ -58,7 +58,6 @@ class Adherent extends CommonObject
 	var $login;
 	var $pass;
 	var $societe;
-	var $fk_soc;
 	var $adresse;
 	var $cp;
 	var $ville;
@@ -89,6 +88,8 @@ class Adherent extends CommonObject
 
 	var $user_id;
 	var $user_login;
+
+	var $fk_soc;
 
 	// Fields loaded by fetch_subscriptions()
 	var $fistsubscription_date;
@@ -296,11 +297,28 @@ class Adherent extends CommonObject
 				$this->id=$id;
 
 				// Update minor fields
-				$result=$this->update($user,1,1);
+				$result=$this->update($user,1,1); // nosync is 1 to avoid update data of user
 				if ($result < 0)
 				{
 					$this->db->rollback();
 					return -1;
+				}
+
+				// Add link to user
+				if ($this->user_id)
+				{
+					// Add link to user
+					$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
+					$sql.= " fk_member = '".$this->id."'";
+					$sql.= " WHERE rowid = ".$this->user_id;
+					dol_syslog("Adherent::create sql=".$sql);
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$this->error='Failed to update user to make link with member';
+						$this->db->rollback();
+						return -4;
+					}
 				}
 
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
@@ -456,9 +474,23 @@ class Adherent extends CommonObject
 				}
 			}
 
-			if ($nbrowsaffected)
+			// Remove link to user
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->id;
+			dol_syslog("Adherent::update sql=".$sql, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
+			// If there is a user linked to this member
+			if ($this->user_id > 0)
 			{
-				if ($this->user_id && ! $nosyncuser)
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id." where rowid = ".$this->user_id;
+				dol_syslog("Adherent::update sql=".$sql, LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
+			}
+
+			if ($nbrowsaffected)	// If something has change in data
+			{
+				if ($this->user_id > 0 && ! $nosyncuser)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 
@@ -1721,11 +1753,11 @@ class Adherent extends CommonObject
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$this->nbtodo=$this->nbtodolate=0;
-		
+
 		$sql = "SELECT a.rowid, a.datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql.= " WHERE a.statut=1";
-		
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

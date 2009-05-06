@@ -105,19 +105,22 @@ print '</form>';
 
 
 # Affiche lignes des constantes
-if ($all==1){
+if ($all==1)
+{
 	$sql = "SELECT rowid, name, value, note, entity ";
 	$sql.= "FROM llx_const ";
 	$sql.= "WHERE entity IN (0,".$conf->entity.") ";
 	$sql.= "ORDER BY name ASC";
-}else{
+}
+else
+{
 	$sql = "SELECT rowid, name, value, note, entity ";
 	$sql.= "FROM llx_const ";
 	$sql.= "WHERE visible = 1 ";
 	$sql.= "AND entity IN (0,".$conf->entity.") ";
 	$sql.= "ORDER BY name ASC";
 }
-dol_syslog("Const::listConstant sql=".$sql,LOG_DEBUG);
+dol_syslog("Const::listConstant sql=".$sql);
 $result = $db->query($sql);
 if ($result)
 {
@@ -130,22 +133,23 @@ if ($result)
 		$obj = $db->fetch_object($result);
 		$var=!$var;
 
-		print '<form action="const.php" method="POST">';
+		print "\n";
+		print '<form action="'.DOL_URL_ROOT.'/admin/const.php" method="POST">';
 		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+		print '<input type="hidden" name="rowid" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="constname" value="'.$obj->name.'">';
 
 		print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
 
 		// Value
 		print '<td>';
-		print '<input type="text" class="flat" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
+		print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
 		print '</td><td>';
 
 		// Note
-		print '<input type="text" class="flat" size="40" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
+		print '<input type="text" class="flat" size="40" name="constnote" value="'.nl2br($obj->note).'">';
 		print '</td>';
-		
+
 		// Entity
 		if ($conf->multicompany->enabled)
 		{
@@ -157,13 +161,14 @@ if ($result)
 		{
 			print '<input type="hidden" name="entity" value="'.$obj->entity.'">';
 		}
-		
+
 		print '<td align="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button"> &nbsp; ';
 		print '<a href="const.php?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete">'.img_delete().'</a>';
 		print "</td></tr>\n";
 
 		print '</form>';
+		print "\n";
 		$i++;
 	}
 }

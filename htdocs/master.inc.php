@@ -115,7 +115,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/conf.class.php");
 $conf = new Conf();
 
 // Retrieve the entity
-if (isset($_SESSION["dol_entity"])) $conf->entity = $_SESSION["dol_entity"];
+// Removed: The session has not been initialized yet so using SESSION is forbidden here
+//if (isset($_SESSION["dol_entity"])) $conf->entity = $_SESSION["dol_entity"];
 
 // Identifiant propres au serveur base de donnee
 $conf->db->host   = $dolibarr_main_db_host;

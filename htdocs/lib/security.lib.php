@@ -154,7 +154,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 		print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Entity").'</b> &nbsp; </td>';
 		print '<td valign="top" nowrap="nowrap">';
-		$html->select_array('entity',$entity);
+		print $html->selectarray('entity',$entity);
 		print '</td></tr>';
 	}
 

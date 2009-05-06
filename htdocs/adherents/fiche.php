@@ -133,6 +133,10 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 {
 	$result=$adh->fetch($_POST["rowid"]);
 
+	// Is it a new link to a user ?
+	$nosyncuser=0;
+	if ($adh->user_id != $_POST["userid"]) $nosyncuser=1;
+
 	// If change (allowed on all members) or (allowed on myself and i am edited memeber)
 	if ($user->rights->adherent->creer || ($user->rights->adherent->self->creer && $adh->user_id == $user->id))
 	{
@@ -177,6 +181,9 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 			$adh->statut      = $_POST["statut"];
 			$adh->public      = $_POST["public"];
 
+			$adh->fk_soc      = $_POST["socid"];
+			$adh->user_id     = $_POST["userid"];
+
 			foreach($_POST as $key => $value)
 			{
 				if (ereg("^options_",$key))
@@ -187,7 +194,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 				}
 			}
 
-			$result=$adh->update($user,0);
+			$result=$adh->update($user,0,$nosyncuser);
 			if ($result >= 0 && ! sizeof($adh->errors))
 			{
 				if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
@@ -230,7 +237,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 	}
 }
 
-if ($user->rights->adherent->creer && $_POST["action"] == 'add')
+if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
 {
 	$datenaiss='';
 	if (isset($_POST["naissday"]) && $_POST["naissday"]
@@ -265,6 +272,9 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
     $morphy=$_POST["morphy"];
     $cotisation=$_POST["cotisation"];
 
+    $userid=$_POST["userid"];
+    $socid=$_POST["socid"];
+
     $adh->prenom      = $prenom;
     $adh->nom         = $nom;
     $adh->societe     = $societe;
@@ -283,8 +293,12 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
     $adh->typeid      = $typeid;
     $adh->note        = $comment;
     $adh->morphy      = $morphy;
-    foreach($_POST as $key => $value){
-        if (ereg("^options_",$key)){
+    $adh->user_id     = $userid;
+    $adh->fk_soc      = $socid;
+    foreach($_POST as $key => $value)
+    {
+        if (ereg("^options_",$key))
+        {
 			//escape values from POST, at least with addslashes, to avoid obvious SQL injections
 			//(array_options is directly input in the DB in adherent.class.php::update())
 			$adh->array_options[$key]=addslashes($_POST[$key]);
@@ -374,9 +388,8 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
             }
 
 			$db->commit();
-
-            Header("Location: liste.php?statut=-1");
-            exit;
+			$rowid=$adh->id;
+			$action='';
         }
         else
 		{
@@ -537,6 +550,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_spip' && 
 
 llxHeader();
 
+$html = new Form($db);
 
 if ($errmsg)
 {
@@ -577,25 +591,34 @@ if ($action == 'edit')
 
 	dol_fiche_head($head, 'general', $langs->trans("Member"));
 
+	$rowspan=14;
+	$rowspan+=sizeof($adho->attribute_label);
+	if ($conf->societe->enabled) $rowspan++;
 
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 	print "<input type=\"hidden\" name=\"statut\" value=\"".$adh->statut."\">";
 
-	$htmls = new Form($db);
-
 	print '<table class="border" width="100%">';
 
     // Ref
-    print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$adh->id.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$adh->id.'</td></tr>';
+
+	// Physique-Moral
+	$morphys["phy"] = $langs->trans("Physical");
+	$morphys["mor"] = $langs->trans("Morale");
+	print "<tr><td>".$langs->trans("Person").'*</td><td colspan="2">';
+	$html->select_array("morphy",  $morphys, $adh->morphy);
+	print "</td></tr>";
+
+	// Societe
+	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2"><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
 
 	// Nom
 	print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
 
 	// Photo
-	$rowspan=16;
-	$rowspan+=sizeof($adho->attribute_label);
     print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
     if (file_exists($conf->adherent->dir_output."/".$adh->id.".jpg"))
     {
@@ -629,7 +652,7 @@ if ($action == 'edit')
 	print '<tr><td>'.$langs->trans("Type").'*</td><td>';
 	if ($user->rights->adherent->creer)	// If $user->rights->adherent->self->creer, we do not allow.
 	{
-		$htmls->select_array("typeid",  $adht->liste_array(), $adh->typeid);
+		$html->select_array("typeid",  $adht->liste_array(), $adh->typeid);
 	}
 	else
 	{
@@ -637,16 +660,6 @@ if ($action == 'edit')
 		print '<input type="hidden" name="typeid" value="'.$adh->typeid.'">';
 	}
 	print "</td></tr>";
-
-	// Physique-Moral
-	$morphys["phy"] = $langs->trans("Physical");
-	$morphys["mor"] = $langs->trans("Morale");
-	print "<tr><td>".$langs->trans("Person")."*</td><td>";
-	$htmls->select_array("morphy",  $morphys, $adh->morphy);
-	print "</td></tr>";
-
-	// Societe
-	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
 
 	// Adresse
 	print '<tr><td>'.$langs->trans("Address").'</td><td>';
@@ -657,7 +670,7 @@ if ($action == 'edit')
 
 	// Pays
 	print '<tr><td>'.$langs->trans("Country").'</td><td>';
-	$htmls->select_pays($adh->pays_code?$adh->pays_code:$mysoc->pays_code,'pays');
+	$html->select_pays($adh->pays_code?$adh->pays_code:$mysoc->pays_code,'pays');
 	print '</td></tr>';
 
 	// Tel
@@ -674,12 +687,12 @@ if ($action == 'edit')
 
 	// Date naissance
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-    $htmls->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'update');
+    $html->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'update');
     print "</td></tr>\n";
 
 	// Profil public
     print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-    print $htmls->selectyesno("public",$adh->public,1);
+    print $html->selectyesno("public",$adh->public,1);
     print "</td></tr>\n";
 
 	// Attributs supplementaires
@@ -687,6 +700,19 @@ if ($action == 'edit')
 	{
 		print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
 	}
+
+	// Third party Dolibarr
+    if ($conf->societe->enabled)
+    {
+	    print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td class="valeur">';
+		print $html->select_societes($adh->fk_soc,'socid','',1);
+	    print '</td></tr>';
+    }
+
+    // Login Dolibarr
+	print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td class="valeur">';
+	print $html->select_users($adh->user_id,'userid',1);
+	print '</td></tr>';
 
 	print '<tr><td colspan="3" align="center">';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
@@ -709,15 +735,24 @@ if ($action == 'create')
 	/*                                                                            */
 	/* ************************************************************************** */
 
-    $htmls = new Form($db);
     $adht = new AdherentType($db);
 
     print_fiche_titre($langs->trans("NewMember"));
 
-	print '<form name="add" action="fiche.php" method="post" enctype="multipart/form-data">';
+	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
     print '<input type="hidden" name="action" value="add">';
 
     print '<table class="border" width="100%">';
+
+	// Moral-Physique
+    $morphys["phy"] = "Physique";
+    $morphys["mor"] = "Morale";
+    print "<tr><td>".$langs->trans("Person")."*</td><td>\n";
+    $html->select_array("morphy", $morphys, $adh->morphy);
+    print "</td>\n";
+
+    // Company
+    print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
 
     // Nom
     print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" value="'.$adh->nom.'" size="40"></td>';
@@ -750,21 +785,11 @@ if ($action == 'create')
     $listetype=$adht->liste_array();
     if (sizeof($listetype))
     {
-        $htmls->select_array("typeid", $listetype, $typeid);
+        $html->select_array("typeid", $listetype, $typeid);
     } else {
         print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
     }
     print "</td>\n";
-
-
-	// Moral-Physique
-    $morphys["phy"] = "Physique";
-    $morphys["mor"] = "Morale";
-    print "<tr><td>".$langs->trans("Person")."*</td><td>\n";
-    $htmls->select_array("morphy", $morphys, $adh->morphy);
-    print "</td>\n";
-
-    print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
 
     // Adresse
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
@@ -775,7 +800,7 @@ if ($action == 'create')
 
 	// Pays
     print '<tr><td>'.$langs->trans("Country").'</td><td>';
-    $htmls->select_pays($adh->pays_id ? $adh->pays_id : $mysoc->pays_id,'pays_id');
+    $html->select_pays($adh->pays_id ? $adh->pays_id : $mysoc->pays_id,'pays_id');
     print '</td></tr>';
 
     // Tel pro
@@ -792,20 +817,32 @@ if ($action == 'create')
 
 	// Date naissance
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-    $htmls->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'add');
+    $html->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'add');
     print "</td></tr>\n";
 
-	// Attribut optionnels
+	// Profil public
+    print "<tr><td>".$langs->trans("Public")."</td><td>\n";
+    print $html->selectyesno("public",$adh->public,1);
+    print "</td></tr>\n";
+
+    // Attribut optionnels
     foreach($adho->attribute_label as $key=>$value)
     {
         print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
     }
 
-	// Profil public
-    print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-    print $htmls->selectyesno("public",$adh->public,1);
-    print "</td></tr>\n";
+	// Third party Dolibarr
+    if ($conf->societe->enabled)
+    {
+	    print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td class="valeur">';
+		print $html->select_societes($adh->fk_soc,'socid','',1);
+	    print '</td></tr>';
+    }
 
+    // Login Dolibarr
+	print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td class="valeur">';
+	print $html->select_users($adh->user_id,'userid',1);
+	print '</td></tr>';
 
     print "</table>\n";
     print '<br>';
@@ -939,6 +976,8 @@ if ($rowid && $action != 'edit')
         if ($ret == 'html') print '<br>';
     }
 
+    $rowspan=14+sizeof($adho->attribute_label);
+    if ($conf->societe->enabled) $rowspan++;
 
     print '<form action="fiche.php" method="post" enctype="multipart/form-data">';
     print '<table class="border" width="100%">';
@@ -949,7 +988,13 @@ if ($rowid && $action != 'edit')
 	print $html->showrefnav($adh,'rowid');
 	print '</td></tr>';
 
-    // Nom
+    // Morphy
+    print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur" colspan="2">'.$adh->getmorphylib().'</td></tr>';
+
+    // Company
+    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur" colspan="2">'.$adh->societe.'</td></tr>';
+
+	// Nom
     print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="2">'.$adh->nom.'&nbsp;</td>';
 	print '</tr>';
 
@@ -958,7 +1003,6 @@ if ($rowid && $action != 'edit')
 
     // Login
     print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td>';
-    $rowspan=16+sizeof($adho->attribute_label);
 	print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
     if (file_exists($conf->adherent->dir_output."/".$adh->id.".jpg"))
     {
@@ -977,13 +1021,7 @@ if ($rowid && $action != 'edit')
 	// Type
 	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
-    // Morphy
-    print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$adh->getmorphylib().'</td></tr>';
-
-    // Company
-    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'</td></tr>';
-
-    // Adresse
+    // Address
     print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'</td></tr>';
 
     // CP / Ville
@@ -1013,22 +1051,16 @@ if ($rowid && $action != 'edit')
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
 
-	// Login Dolibarr
-	print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td class="valeur">';
-	if ($adh->user_id)
-	{
-		$dolibarr_user=new User($db);
-		$dolibarr_user->id=$adh->user_id;
-		$result=$dolibarr_user->fetch();
-		print $dolibarr_user->getLoginUrl(1);
-	}
-	else print $langs->trans("NoDolibarrAccess");
-	print '</td></tr>';
+    // Other attributs
+    foreach($adho->attribute_label as $key=>$value)
+    {
+        print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
+    }
 
 	// Third party Dolibarr
     if ($conf->societe->enabled)
     {
-	    print '<tr><td>'.$langs->trans("ThirdPartyDolibarr").'</td><td class="valeur">';
+	    print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td class="valeur">';
 	    if ($adh->fk_soc)
 	    {
 	    	$company=new Societe($db);
@@ -1042,11 +1074,17 @@ if ($rowid && $action != 'edit')
 	    print '</td></tr>';
     }
 
-    // Other attributs
-    foreach($adho->attribute_label as $key=>$value)
-    {
-        print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
-    }
+	// Login Dolibarr
+	print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td class="valeur">';
+	if ($adh->user_id)
+	{
+		$dolibarr_user=new User($db);
+		$dolibarr_user->id=$adh->user_id;
+		$result=$dolibarr_user->fetch();
+		print $dolibarr_user->getLoginUrl(1);
+	}
+	else print $langs->trans("NoDolibarrAccess");
+	print '</td></tr>';
 
     print "</table>\n";
     print '</form>';
@@ -1122,19 +1160,6 @@ if ($rowid && $action != 'edit')
 		}
 	}
 
-	// Create user
-	if (! $user->societe_id && ! $adh->user_id)
-	{
-		if ($user->rights->user->user->creer)
-		{
-			print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
-		}
-		else
-		{
-			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("CreateDolibarrLogin")."</font>";
-		}
-	}
-
 	// Create third party
 	if ($conf->societe->enabled && ! $adh->fk_soc)
 	{
@@ -1145,6 +1170,19 @@ if ($rowid && $action != 'edit')
 		else
 		{
 			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("CreateDolibarrThirdParty")."</font>";
+		}
+	}
+
+	// Create user
+	if (! $user->societe_id && ! $adh->user_id)
+	{
+		if ($user->rights->user->user->creer)
+		{
+			print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+		}
+		else
+		{
+			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("CreateDolibarrLogin")."</font>";
 		}
 	}
 
