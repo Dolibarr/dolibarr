@@ -232,7 +232,7 @@ function pdf_getlinedesc($line,$outputlangs)
 
 		if ($desc == '(CREDIT_NOTE)' && $line->fk_remise_except)
 		{
-			$discount=new DiscountAbsolute($this->db);
+			$discount=new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
 			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
 		}
