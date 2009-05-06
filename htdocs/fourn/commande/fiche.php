@@ -224,7 +224,7 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 	}
 }
 
-if ($_REQUEST['action'] == 'confirm_deleteproductline' && ($_POST['confirm'] == 'yes' || empty($conf->global->PRODUIT_CONFIRM_DELETE_LINE)))
+if ($_REQUEST['action'] == 'confirm_deleteproductline' && ($_REQUEST['confirm'] == 'yes' || empty($conf->global->PRODUIT_CONFIRM_DELETE_LINE)))
 {
 	if ($user->rights->fournisseur->commande->creer)
 	{
@@ -262,21 +262,21 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 	}
 }
 
-if ($_POST['action'] ==	'confirm_approve' && $_POST["confirm"] == 'yes'	&& $user->rights->fournisseur->commande->approuver)
+if ($_REQUEST['action'] ==	'confirm_approve' && $_REQUEST["confirm"] == 'yes'	&& $user->rights->fournisseur->commande->approuver)
 {
 	$commande =	new	CommandeFournisseur($db);
 	$commande->fetch($id);
 	$result	= $commande->approve($user);
 }
 
-if ($_POST['action'] ==	'confirm_refuse' &&	$_POST['confirm'] == 'yes' && $user->rights->fournisseur->commande->approuver)
+if ($_REQUEST['action'] ==	'confirm_refuse' &&	$_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->approuver)
 {
 	$commande = new CommandeFournisseur($db);
 	$commande->fetch($id);
 	$result = $commande->refuse($user);
 }
 
-if ($_POST['action'] ==	'confirm_commande' && $_POST['confirm']	== 'yes' &&	$user->rights->fournisseur->commande->commander)
+if ($_REQUEST['action'] ==	'confirm_commande' && $_REQUEST['confirm']	== 'yes' &&	$user->rights->fournisseur->commande->commander)
 {
 	$commande =	new	CommandeFournisseur($db);
 	$commande->fetch($id);
@@ -284,7 +284,7 @@ if ($_POST['action'] ==	'confirm_commande' && $_POST['confirm']	== 'yes' &&	$use
 }
 
 
-if ($_POST['action'] ==	'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->commande->creer)
+if ($_REQUEST['action'] ==	'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->creer)
 {
 	$commande = new CommandeFournisseur($db);
 	$commande->id = $id;
@@ -320,13 +320,20 @@ if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->rec
 	}
 }
 
-if ($_POST["action"] ==	'confirm_cancel' &&	$_POST["confirm"] == yes &&	$user->rights->fournisseur->commande->annuler)
+if ($_REQUEST["action"] == 'confirm_cancel' && $_REQUEST["confirm"] == 'yes' &&	$user->rights->fournisseur->commande->annuler)
 {
 	$commande =	new	CommandeFournisseur($db);
 	$commande->fetch($id);
 	$result	= $commande->cancel($user);
-	Header("Location: fiche.php?id=".$id);
-	exit;
+	if ($result > 0)
+	{
+		Header("Location: fiche.php?id=".$id);
+		exit;
+	}
+	else
+	{
+		$mesg=$commande->error;
+	}
 }
 
 /*
@@ -501,7 +508,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action']	== 'delete')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'),	'confirm_delete');
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -525,7 +532,7 @@ if ($id > 0 || ! empty($ref))
 				$text.=$notify->confirmMessage(3,$commande->socid);
 			}
 
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text,	'confirm_valid');
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, ($conf->notification->enabled?0:1));
 			if ($ret == 'html') print '<br>';
 		}
 		/*
@@ -534,7 +541,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action']	== 'approve')
 		{
-			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder"),"confirm_approve");
+			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder"),"confirm_approve", '', 1, 1);
 			if ($ret == 'html') print '<br>';
 		}
 		/*
@@ -543,7 +550,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action']	== 'refuse')
 		{
-			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder"),"confirm_refuse");
+			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder"),"confirm_refuse", '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 		/*
@@ -551,7 +558,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action']	== 'cancel')
 		{
-			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder"),"confirm_cancel");
+			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder"),"confirm_cancel", '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -571,7 +578,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action'] == 'delete_product_line' && ! empty($conf->global->PRODUIT_CONFIRM_DELETE_LINE))
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline','',0,2);
 			if ($ret == 'html') print '<br>';
 		}
 

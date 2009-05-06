@@ -45,14 +45,17 @@ $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 /**
  *  Action suppression groupe
  */
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes")
 {
-	if($caneditperms){
+	if ($caneditperms)
+	{
 		$editgroup = new Usergroup($db, $_GET["id"]);
 		$editgroup->fetch($_GET["id"]);
 		$editgroup->delete();
 		Header("Location: index.php");
-	}else{
+	}
+	else
+	{
 		$message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
 	}
 }
@@ -62,14 +65,17 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
  */
 if ($_POST["action"] == 'add')
 {
-	if($caneditperms){
+	if($caneditperms)
+	{
 		$message="";
-		if (! $_POST["nom"]) {
+		if (! $_POST["nom"])
+		{
 			$message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
 			$action="create";       // Go back to create page
 		}
 
-		if (! $message) {
+		if (! $message)
+		{
 			$editgroup = new UserGroup($db,0);
 
 			$editgroup->nom    = trim($_POST["nom"]);
@@ -226,7 +232,7 @@ else
 		 */
 		if ($action == 'delete')
 		{
-			$ret=$html->form_confirm("fiche.php?id=$group->id",$langs->trans("DeleteAGroup"),$langs->trans("ConfirmDeleteGroup",$group->name),"confirm_delete");
+			$ret=$html->form_confirm("fiche.php?id=".$group->id,$langs->trans("DeleteAGroup"),$langs->trans("ConfirmDeleteGroup",$group->name),"confirm_delete", '',0,1);
 			if ($ret == 'html') print '<br>';
 		}
 

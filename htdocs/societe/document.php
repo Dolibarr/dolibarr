@@ -98,7 +98,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 }
 
 // Suppression fichier
-if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
+if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
 {
 	$file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
 	dol_delete_file($file);
@@ -157,11 +157,11 @@ if ($socid > 0)
 		if ($mesg) { print "$mesg<br>"; }
 
 		/*
-		 * Confirmation de la suppression d'une ligne produit
+		 * Confirmation suppression fichier
 		 */
 		if ($_GET['action'] == 'delete')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$_GET["id"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$_GET["id"].'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 

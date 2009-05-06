@@ -88,8 +88,8 @@ if ($action == 'add_paiement')
 		// d'un paiement
 		if (! $_POST['accountid'])
 		{
-	  $mesg = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
-	  $error++;
+			$mesg = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
+			$error++;
 		}
 	}
 
@@ -191,10 +191,7 @@ llxHeader();
 
 $html=new Form($db);
 
-if ($mesg)
-{
-	print '<tr><td colspan="3" align="center">'.$mesg.'</td></tr>';
-}
+if ($mesg) print $mesg;
 
 if ($action == 'create' || $action == 'add_paiement')
 {
@@ -222,6 +219,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			$total = $obj->total;
 
 			print_fiche_titre($langs->trans('DoPayment'));
+
 			print '<form name="addpaiement" action="paiement.php" method="post">';
 			print '<input type="hidden" name="action" value="add_paiement">';
 			print '<input type="hidden" name="facid" value="'.$facid.'">';

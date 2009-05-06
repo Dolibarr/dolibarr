@@ -80,7 +80,7 @@ if ($_GET["subaction"] == 'delrights' && $caneditperms)
 	$edituser->delrights($_GET["rights"]);
 }
 
-if ($_POST["action"] == 'confirm_disable' && $_POST["confirm"] == "yes")
+if ($_REQUEST["action"] == 'confirm_disable' && $_REQUEST["confirm"] == "yes")
 {
 	if ($_GET["id"] <> $user->id)
 	{
@@ -92,7 +92,7 @@ if ($_POST["action"] == 'confirm_disable' && $_POST["confirm"] == "yes")
 		exit;
 	}
 }
-if ($_POST["action"] == 'confirm_enable' && $_POST["confirm"] == "yes")
+if ($_REQUEST["action"] == 'confirm_enable' && $_REQUEST["confirm"] == "yes")
 {
 	if ($_GET["id"] <> $user->id)
 	{
@@ -105,7 +105,7 @@ if ($_POST["action"] == 'confirm_enable' && $_POST["confirm"] == "yes")
 	}
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes")
 {
 	if ($_GET["id"] <> $user->id)
 	{
@@ -299,8 +299,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 }
 
 // Action modif mot de passe
-if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
-|| $_POST["action"] == 'confirm_passwordsend') && $caneditpassword)
+if ((($_REQUEST["action"] == 'confirm_password' && $_REQUEST["confirm"] == 'yes')
+|| ($_REQUEST["action"] == 'confirm_passwordsend' && $_REQUEST["confirm"] == 'yes')) && $caneditpassword)
 {
 	$edituser = new User($db, $_GET["id"]);
 	$edituser->fetch();
@@ -314,7 +314,7 @@ if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
 	else
 	{
 		// Succes
-		if ($_POST["action"] == 'confirm_passwordsend')
+		if ($_REQUEST["action"] == 'confirm_passwordsend' && $_REQUEST["confirm"] == 'yes')
 		{
 			if ($edituser->send_password($user,$newpassword) > 0)
 			{
@@ -764,7 +764,7 @@ else
 		 */
 		if ($action == 'password')
 		{
-			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$fuser->login),"confirm_password");
+			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$fuser->login),"confirm_password", '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -773,7 +773,7 @@ else
 		 */
 		if ($action == 'passwordsend')
 		{
-			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$fuser->login),"confirm_passwordsend");
+			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$fuser->login),"confirm_passwordsend", '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -782,7 +782,7 @@ else
 		 */
 		if ($action == 'disable')
 		{
-			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_disable");
+			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_disable", '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -791,7 +791,7 @@ else
 		 */
 		if ($action == 'enable')
 		{
-			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$fuser->login),"confirm_enable");
+			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$fuser->login),"confirm_enable", '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -800,7 +800,7 @@ else
 		 */
 		if ($action == 'delete')
 		{
-			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete");
+			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete", '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 

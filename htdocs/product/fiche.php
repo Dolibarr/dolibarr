@@ -273,7 +273,7 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 /*
  * Suppression d'un produit/service pas encore affect
  */
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->produit->supprimer)
+if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->produit->supprimer)
 {
 	$product = new Product($db);
 	$product->fetch($_GET['id']);
@@ -806,7 +806,7 @@ if ($_GET["id"] || $_GET["ref"])
 			// Confirmation de la suppression de la facture
 			if ($_GET["action"] == 'delete')
 			{
-				$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete");
+				$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,2);
 				if ($ret == 'html') print '<br>';
 			}
 

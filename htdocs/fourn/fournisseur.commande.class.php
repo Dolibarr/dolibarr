@@ -80,7 +80,7 @@ class CommandeFournisseur extends Commande
 	function fetch($id,$ref='')
 	{
 		global $conf;
-		
+
 		$sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
 		$sql.= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
 		$sql.= " c.note, c.note_public, c.model_pdf,";
@@ -119,7 +119,7 @@ class CommandeFournisseur extends Commande
 			$this->note                = $obj->note;
 			$this->note_public         = $obj->note_public;
 			$this->modelpdf            = $obj->model_pdf;
-			
+
 			$this->next_prev_filter = 'fk_soc = s.rowid AND s.entity = '.$conf->entity;
 
 			$this->db->free();
@@ -322,8 +322,8 @@ class CommandeFournisseur extends Commande
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
-			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1";
-
+			$sql .= " WHERE rowid = ".$this->id;
+			dol_syslog("CommandeFournisseur::Cancel sql=".$sql);
 			if ($this->db->query($sql))
 			{
 				$result = 0;
@@ -350,9 +350,9 @@ class CommandeFournisseur extends Commande
 			}
 			else
 			{
-				dol_syslog("CommandeFournisseur::Cancel Error -1");
 				$this->db->rollback();
 				$this->error=$this->db->lasterror();
+				dol_syslog("CommandeFournisseur::Cancel ".$this->error);
 				return -1;
 			}
 		}
@@ -1240,7 +1240,7 @@ class CommandeFournisseur extends Commande
 	function ReadApprobators()
 	{
 		global $conf;
-		
+
 		$this->approbs = array();
 
 		$sql = "SELECT u.name, u.firstname, u.email";
@@ -1379,13 +1379,13 @@ class CommandeFournisseur extends Commande
 
 		// Charge tableau des id de societe socids
 		$socids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE fournisseur=1";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1402,12 +1402,12 @@ class CommandeFournisseur extends Commande
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE envente = 1";
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

@@ -55,7 +55,7 @@ $action=isset($_GET['action'])?$_GET['action']:$_POST['action'];
  */
 
 // Action clone object
-if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
+if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 {
 	if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
 	{
@@ -87,7 +87,7 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 	$result = $facturefourn->set_valid($user);
 }
 
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
+if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
 	if ($user->rights->fournisseur->facture->supprimer )
 	{
@@ -577,7 +577,7 @@ else
 			// Confirmation de la suppression d'une ligne produit
 			if ($_GET['action'] == 'confirm_delete_line')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline', '', 0, 0);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -590,21 +590,21 @@ else
 				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$fac->ref),'confirm_clone',$formquestion,'yes');
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$fac->ref),'confirm_clone',$formquestion,'yes', 1);
 				if ($ret == 'html') print '<br>';
 			}
 
 			// Confirmation de la validation
 			if ($_GET['action'] == 'valid')
 			{
-				$ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $fac->ref), 'confirm_valid');
+				$ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $fac->ref), 'confirm_valid', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
-			// Confirmation de la validation
+			// Confirmation set payed
 			if ($_GET['action'] == 'payed')
 			{
-				$ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ClassifyPayed'), $langs->trans('ConfirmClassifyPayedBill', $fac->ref), 'confirm_payed');
+				$ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ClassifyPayed'), $langs->trans('ConfirmClassifyPayedBill', $fac->ref), 'confirm_payed', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -613,7 +613,7 @@ else
 			 */
 			if ($_GET['action'] == 'delete')
 			{
-				$ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete');
+				$ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 

@@ -955,7 +955,7 @@ else
 	dol_fiche_head($head, 'company', $langs->trans("ThirdParty"));
 
 
-	// Confirmation de la suppression de la facture
+	// Confirm delete third party
 	if ($_GET["action"] == 'delete')
 	{
 		$html = new Form($db);
@@ -981,7 +981,8 @@ else
 
 	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
 
-	if ($soc->client) {
+	if ($soc->client)
+	{
 		print '<tr><td>';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
 		print $soc->code_client;
