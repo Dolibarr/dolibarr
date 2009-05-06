@@ -851,8 +851,8 @@ if ($rowid && $action != 'edit')
 		$formquestion=array(
 		array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
 
-		$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateLogin"),"confirm_create_user",$formquestion);
-		print '<br>';
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateLogin"),"confirm_create_user",$formquestion);
+		if ($ret == 'html') print '<br>';
 	}
 
 	// Confirm create third party
@@ -874,15 +874,15 @@ if ($rowid && $action != 'edit')
 		$formquestion=array(
 		array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
 
-		$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion);
-		print '<br>';
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion);
+		if ($ret == 'html') print '<br>';
 	}
 
 	// Confirm remove member
     if ($action == 'delete')
     {
-        $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete");
-        print '<br>';
+        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete");
+        if ($ret == 'html') print '<br>';
     }
 
     // Confirm validate member
@@ -892,15 +892,15 @@ if ($rowid && $action != 'edit')
 		$formquestion=array();
 		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $langs->trans("SendAnEMailToMember",$adh->email),  'value' => 'true');
 
-        $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion);
-        print '<br>';
+        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion);
+        if ($ret == 'html') print '<br>';
     }
 
     // Confirm send card by mail
     if ($action == 'sendinfo')
     {
-        $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail"),"confirm_sendinfo");
-        print '<br>';
+        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail"),"confirm_sendinfo");
+        if ($ret == 'html') print '<br>';
     }
 
     // Confirm resiliate
@@ -915,8 +915,8 @@ if ($rowid && $action != 'edit')
 		$label.=')';
 		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?'true':'false'));
 
-		$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
-        print '<br>';
+		$ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
+        if ($ret == 'html') print '<br>';
     }
 
     /*
@@ -924,8 +924,8 @@ if ($rowid && $action != 'edit')
     */
     if ($action == 'add_spip')
     {
-        $html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans spip","Etes-vous sur de vouloir ajouter cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_add_spip");
-        print '<br>';
+        $ret=$html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans spip","Etes-vous sur de vouloir ajouter cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_add_spip");
+        if ($ret == 'html') print '<br>';
     }
 
     /*
@@ -933,8 +933,8 @@ if ($rowid && $action != 'edit')
     */
     if ($action == 'del_spip')
     {
-        $html->form_confirm("fiche.php?rowid=$rowid","Supprimer dans spip","Etes-vous sur de vouloir effacer cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_del_spip");
-        print '<br>';
+        $ret=$html->form_confirm("fiche.php?rowid=$rowid","Supprimer dans spip","Etes-vous sur de vouloir effacer cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_del_spip");
+        if ($ret == 'html') print '<br>';
     }
 
 

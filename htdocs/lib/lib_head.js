@@ -677,7 +677,7 @@ function cleanSerialize(expr) {
 	Author:   Regis Houssin
 	Licence:  GPL
 ==================================================================*/
-function dialogConfirm(linkurl,message,ok,cancel,objectID) {
+function dialogConfirm(linkurlyes,linkurlno,message,ok,cancel,objectID) {
 	Dialog.confirm(message, {
 		width:560,
 		okLabel: ok,
@@ -685,8 +685,8 @@ function dialogConfirm(linkurl,message,ok,cancel,objectID) {
 		buttonClass: "buttonajax",
 		id: objectID,
 		destroyOnClose: true,
-		cancel:function(win){},
-		ok:function(win) {window.location.href=linkurl; return true;} 
+		ok:function(win) {window.location.href=linkurlyes; return true;},
+		cancel:function(win) { if (linkurlno!='') { window.location.href=linkurlno; return true; } }
 	});
 }
 

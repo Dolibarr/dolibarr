@@ -395,8 +395,8 @@ else
 			if ($_GET["action"] == 'delete')
 			{
 				$expedition_id = $_GET["expid"];
-				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id.'&amp;expid='.$expedition_id,$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm"),'confirm_delete');
-				print '<br>';
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id.'&amp;expid='.$expedition_id,$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm"),'confirm_delete');
+				if ($ret == 'html') print '<br>';
 			}
 
 			/*
@@ -405,8 +405,8 @@ else
 			 */
 			if ($_GET["action"] == 'valid')
 			{
-				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm"),'confirm_valid');
-				print '<br>';
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm"),'confirm_valid');
+				if ($ret == 'html') print '<br>';
 			}
 
 

@@ -56,7 +56,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	$account->number          = trim($_POST["number"]);
 	$account->cle_rib         = trim($_POST["cle_rib"]);
 	$account->bic             = trim($_POST["bic"]);
-	$account->iban            = trim($_POST["iban_prefix"]);	
+	$account->iban            = trim($_POST["iban_prefix"]);
 	$account->iban_prefix     = trim($_POST["iban_prefix"]);	// deprecated
 	$account->domiciliation   = trim($_POST["domiciliation"]);
 	$account->proprio 	      = trim($_POST["proprio"]);
@@ -127,17 +127,17 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 		*/
 	if ($_GET["action"] == 'delete')
 	{
-		$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
-		print '<br />';
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
+		if ($ret == 'html') print '<br>';
 	}
 
 	// Check BBAN
-	if (! checkBanForAccount($account)) 
+	if (! checkBanForAccount($account))
 	{
 		print '<div class="warning">'.$langs->trans("RIBControlError").'</div><br>';
 	}
-	
-	
+
+
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -165,23 +165,23 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 			print '<tr><td>'.$langs->trans("BankCode").'</td>';
 			print '<td colspan="3">'.$account->code_banque.'</td>';
 			print '</tr>';
-	
+
 			print '<tr><td>'.$langs->trans("DeskCode").'</td>';
 			print '<td colspan="3">'.$account->code_guichet.'</td>';
 			print '</tr>';
 		}
-	
+
 		print '<tr><td>'.$langs->trans("BankAccountNumber").'</td>';
 		print '<td colspan="3">'.$account->number.'</td>';
 		print '</tr>';
-			
+
 		if ($account->useDetailedBBAN())
 		{
 			print '<tr><td>'.$langs->trans("BankAccountNumberKey").'</td>';
 			print '<td colspan="3">'.$account->cle_rib.'</td>';
 			print '</tr>';
 		}
-		
+
 		print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
 		print '<td colspan="3">'.$account->iban_prefix.'</td></tr>';
 
@@ -273,12 +273,12 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 			print '<tr><td>'.$langs->trans("BankCode").'</td>';
 			print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
 			print '</tr>';
-	
+
 			print '<tr><td>'.$langs->trans("DeskCode").'</td>';
 			print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$account->code_guichet.'"></td>';
 			print '</tr>';
 		}
-		
+
 		print '<td>'.$langs->trans("BankAccountNumber").'</td>';
 		print '<td><input size="18" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
 		print '</tr>';

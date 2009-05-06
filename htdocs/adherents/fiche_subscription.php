@@ -297,8 +297,8 @@ if ($rowid && $action != 'edit')
         //$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
 		$text=$langs->trans("ConfirmDeleteSubscription");
 		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
-		$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$subscription->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion);
-        print '<br>';
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$subscription->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion);
+        if ($ret == 'html') print '<br>';
     }
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

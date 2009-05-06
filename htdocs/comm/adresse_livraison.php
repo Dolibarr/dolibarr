@@ -60,14 +60,14 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     $livraison->tel                   = $_POST["tel"];
     $livraison->fax                   = $_POST["fax"];
     $livraison->note                  = $_POST["note"];
-    
+
     if ($_POST["action"] == 'add')
     {
         $socid   = $_POST["socid"];
         $origin  = $_POST["origin"];
         $originid = $_POST["originid"];
         $result  = $livraison->create($socid, $user);
-    
+
         if ($result >= 0)
         {
         	if ($origin == commande)
@@ -92,14 +92,14 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
             $_GET["action"]='create';
         }
     }
-    
+
     if ($_POST["action"] == 'update')
     {
         $socid   = $_POST["socid"];
         $origin  = $_POST["origin"];
         $originid = $_POST["originid"];
         $result = $livraison->update($_POST["idl"], $socid, $user);
-        
+
         if ($result >= 0)
         {
         	if ($origin == commande)
@@ -132,7 +132,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user-
 {
   $livraison = new AdresseLivraison($db);
   $result = $livraison->delete($_GET["idl"], $socid);
- 
+
   if ($result == 0)
     {
       Header("Location: adresse_livraison.php?socid=".$socid);
@@ -165,11 +165,11 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
      */
 
 		$livraison = new AdresseLivraison($db);
-		
+
 		$societe=new Societe($db);
 		$societe->fetch($_GET["socid"]);
 		$head = societe_prepare_head($societe);
-		
+
 		dol_fiche_head($head, 'customer', $societe->nom);
 
         if ($_POST["label"] && $_POST["nom"])
@@ -202,23 +202,23 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             $livraison->pays_code=$obj->code;
             $livraison->pays=$obj->libelle;
         }
-    
+
         print_titre($langs->trans("NewDeliveryAddress"));
         print "<br>\n";
-    
+
         if ($livraison->error)
         {
             print '<div class="error">';
             print nl2br($livraison->error);
             print '</div>';
         }
-    
+
         print '<form action="adresse_livraison.php" method="post" name="formsoc">';
         print '<input type="hidden" name="socid" value="'.$socid.'">';
         print '<input type="hidden" name="origin" value="'.$origin.'">';
         print '<input type="hidden" name="originid" value="'.$originid.'">';
         print '<input type="hidden" name="action" value="add">';
-    
+
         print '<table class="border" width="100%">';
 
         print '<tr><td>'.$langs->trans('DeliveryAddressLabel').'</td><td><input type="text" size="30" name="label" value="'.$livraison->label.'"></td></tr>';
@@ -238,21 +238,21 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
         $form->select_pays($livraison->pays_id,'pays_id');
         print '</td></tr>';
-        
+
         print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$livraison->tel.'"></td></tr>';
-        
+
         print '<tr><td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$livraison->fax.'"></td></tr>';
-        
+
         print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3"><textarea name="note" cols="40" rows="6" wrap="soft">';
         print $livraison->note;
         print '</textarea></td></tr>';
 
         print '<tr><td colspan="4" align="center">';
         print '<input type="submit" class="button" value="'.$langs->trans('AddDeliveryAddress').'"></td></tr>'."\n";
-    
+
         print '</table>'."\n";
         print '</form>'."\n";
-    
+
     }
 }
 elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
@@ -261,11 +261,11 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
      * Fiche societe en mode edition
      */
 	$livraison = new AdresseLivraison($db);
-	
+
 	$societe=new Societe($db);
   $societe->fetch($_GET["socid"]);
 	$head = societe_prepare_head($societe);
-		
+
 	dol_fiche_head($head, 'customer', $societe->nom);
 
   print_titre($langs->trans("EditDeliveryAddress"));
@@ -344,11 +344,11 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
         $form->select_pays($livraison->pays_id,'pays_id');
         print '</td></tr>';
-        
+
         print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$livraison->tel.'"></td></tr>';
-        
+
         print '<tr><td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$livraison->fax.'"></td></tr>';
-        
+
         print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3"><textarea name="note" cols="40" rows="6" wrap="soft">';
         print $livraison->note;
         print '</textarea></td></tr>';
@@ -375,7 +375,7 @@ else
 	$societe=new Societe($db);
 	$societe->fetch($livraison->socid);
 	$head = societe_prepare_head($societe);
-	
+
 	dol_fiche_head($head, 'customer', $societe->nom);
 
 
@@ -383,8 +383,8 @@ else
 	if ($_GET["action"] == 'delete')
 	{
 		$html = new Form($db);
-		$html->form_confirm("adresse_livraison.php?socid=".$livraison->socid."&amp;idl=".$_GET["idl"],$langs->trans("DeleteDeliveryAddress"),$langs->trans("ConfirmDeleteDeliveryAdress"),"confirm_delete");
-		print "<br />\n";
+		$ret=$html->form_confirm("adresse_livraison.php?socid=".$livraison->socid."&amp;idl=".$_GET["idl"],$langs->trans("DeleteDeliveryAddress"),$langs->trans("ConfirmDeleteDeliveryAdress"),"confirm_delete");
+		if ($ret == 'html') print '<br>';
 	}
 
 	if ($livraison->error)
@@ -399,53 +399,53 @@ else
 	{
 		for ($i = 0 ; $i < $nblignes ; $i++)
 		{
-	
+
 			print '<table class="border" width="100%">';
-	
+
 			print '<tr><td width="20%">'.$langs->trans('DeliveryAddressLabel').'</td><td colspan="3">'.$livraison->lignes[$i]->label.'</td>';
 			print '<td valign="top" colspan="2" width="50%" rowspan="6">'.$langs->trans('Note').' :<br>'.nl2br($livraison->lignes[$i]->note).'</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$livraison->lignes[$i]->nom.'</td></tr>';
-	
+
 			print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($livraison->lignes[$i]->adresse)."</td></tr>";
-	
+
 			print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$livraison->lignes[$i]->cp."</td></tr>";
 			print '<tr><td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$livraison->lignes[$i]->ville."</td></tr>";
-	
+
 			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$livraison->lignes[$i]->pays.'</td>';
-			
+
 			print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($livraison->lignes[$i]->tel,$livraison->lignes[$i]->pays_code,0,$livraison->socid,'AC_TEL').'</td></tr>';
-        
+
       print '<tr><td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($livraison->lignes[$i]->fax,$livraison->lignes[$i]->pays_code,0,$livraison->socid,'AC_FAX').'</td></tr>';
-			
+
 			print '</td></tr>';
-	
+
 			print '</table>';
-	
-	
+
+
 			/*
 			*
 			*/
-	
+
 			print '<div class="tabsAction">';
-	
+
 			if ($user->rights->societe->creer)
 			{
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;idl='.$livraison->lignes[$i]->idl.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 			}
-	
+
 			if ($user->rights->societe->supprimer)
 			{
 				print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;idl='.$livraison->lignes[$i]->idl.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 			}
-	
-	
+
+
 			print '</div>';
 			print '<br>';
 		}
 	}
 	else
 	{
-		print $langs->trans("None");	
+		print $langs->trans("None");
 	}
 	print '</div>';
 
@@ -453,7 +453,7 @@ else
 	/*
 	 * Bouton actions
 	 */
-	 
+
 	if ($_GET["action"] == '')
 	{
 		print '<div class="tabsAction">';

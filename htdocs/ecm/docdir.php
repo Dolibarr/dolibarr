@@ -94,18 +94,18 @@ if ($_POST["action"] == 'add' && $user->rights->ecm->setup)
 	$ecmdir->fk_parent          = $_POST["catParent"];
 
 	$ok=true;
-	
+
 	if (! $ecmdir->label)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
 		$_GET["action"] = "create";
 		$ok=false;
 	}
-	
+
 	if ($ok)
 	{
 		$id = $ecmdir->create($user);
-	
+
 		if ($id > 0)
 		{
 			Header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
@@ -196,17 +196,17 @@ if (! $_GET["action"] || $_GET["action"] == 'delete_section')
 	//print ' -> <b>'.$ecmdir->getNomUrl(1).'</b><br>';
 	print "<br><br>";
 */
-	
+
 	// Confirmation de la suppression d'une ligne categorie
 	if ($_GET['action'] == 'delete_section')
 	{
-		$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urldecode($_GET["section"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
-		print '<br>';
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urldecode($_GET["section"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
+		if ($ret == 'html') print '<br>';
 	}
 
 	if ($mesg) { print $mesg."<br>"; }
 
-	
+
 	// Construit fiche  rubrique
 
 

@@ -3,12 +3,12 @@
  */
 
 /**
-    	\file       htdocs/ecm/docother.php
-		\ingroup    ecm
-		\brief      Main ecm page
-		\version    $Id$
-		\author		Laurent Destailleur
-*/
+ \file       htdocs/ecm/docother.php
+ \ingroup    ecm
+ \brief      Main ecm page
+ \version    $Id$
+ \author		Laurent Destailleur
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
@@ -27,8 +27,8 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 // Permissions
 if ($user->societe_id > 0)
 {
-    $action = '';
-    $socid = $user->societe_id;
+	$action = '';
+	$socid = $user->societe_id;
 }
 
 $section=$_GET["section"];
@@ -38,44 +38,44 @@ $upload_dir = $conf->ecm->dir_output.'/'.$section;
 
 
 /*******************************************************************
-* ACTIONS
-*
-* Put here all code to do according to value of "action" parameter
-********************************************************************/
+ * ACTIONS
+ *
+ * Put here all code to do according to value of "action" parameter
+ ********************************************************************/
 
 // Envoie fichier
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-  if (! is_dir($upload_dir)) create_exdir($upload_dir);
-  
-  if (is_dir($upload_dir))
-  {
-  	$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
-  	if ($result > 0)
-    {
-    	$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-    	//print_r($_FILES);
-    }
-    else if ($result < 0)
-    {
-    	// Echec transfert (fichier d?passant la limite ?)
-    	$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-    	// print_r($_FILES);
-    }
-    else
-    {
-    	// Fichier infect? par un virus
-    	$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWith",$result).'</div>';
-    }
-  }
+	if (! is_dir($upload_dir)) create_exdir($upload_dir);
+
+	if (is_dir($upload_dir))
+	{
+		$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
+		if ($result > 0)
+		{
+			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+			//print_r($_FILES);
+		}
+		else if ($result < 0)
+		{
+			// Echec transfert (fichier d?passant la limite ?)
+			$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+			// print_r($_FILES);
+		}
+		else
+		{
+			// Fichier infect? par un virus
+			$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWith",$result).'</div>';
+		}
+	}
 }
 
 // Suppression fichier
 if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
 {
-  $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
-  dol_delete_file($file);
-  $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+	$file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
+	dol_delete_file($file);
+	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
 }
 
 
@@ -83,10 +83,10 @@ if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
 
 
 /*******************************************************************
-* PAGE
-*
-* Put here all code to do according to value of "action" parameter
-********************************************************************/
+ * PAGE
+ *
+ * Put here all code to do according to value of "action" parameter
+ ********************************************************************/
 
 llxHeader();
 
@@ -101,12 +101,12 @@ print_fiche_titre($langs->trans("ECMAutoOrg"));
 
 
 /*
-* Confirmation de la suppression d'une ligne produit
-*/
+ * Confirmation de la suppression d'une ligne produit
+ */
 if ($_GET['action'] == 'delete_file')
 {
-$html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
-print '<br>';
+	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+	if ($ret == 'html') print '<br>';
 }
 
 // Construit liste des fichiers

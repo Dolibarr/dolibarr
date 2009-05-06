@@ -150,8 +150,8 @@ if ($_GET["id"])
 
 		if ($_GET["action"] == 'credite')
 		{
-			$html->form_confirm("fiche.php?id=".$bon->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite");
-			print '<br />';
+			$ret=$html->form_confirm("fiche.php?id=".$bon->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite");
+			if ($ret == 'html') print '<br>';
 		}
 
 		print '<table class="border" width="100%">';

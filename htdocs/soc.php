@@ -959,8 +959,8 @@ else
 	if ($_GET["action"] == 'delete')
 	{
 		$html = new Form($db);
-		$html->form_confirm("soc.php?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete");
-		print "<br />\n";
+		$ret=$html->form_confirm("soc.php?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,1);
+		if ($ret == 'html') print '<br>';
 	}
 
 	if ($mesg)
@@ -1244,17 +1244,7 @@ else
 
 		if ($user->rights->societe->supprimer)
 		{
-			print '<a class="butActionDelete" ';
-			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-			{
-				$url = $_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action=confirm_delete&confirm=yes';
-				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteCompany').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
-			}
-			else
-			{
-				print 'href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete"';
-			}
-			print '>'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}
 
 		print '</div>';

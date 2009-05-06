@@ -154,12 +154,12 @@ if ($account || $_GET["ref"])
 
 	// Chargement des categories bancaires dans $options
 	$nbcategories=0;
-	
+
 	$sql = "SELECT rowid, label";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
 	$sql.= " WHERE entity = ".$conf->entity;
 	$sql.= " ORDER BY label";
-	
+
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -313,8 +313,8 @@ if ($account || $_GET["ref"])
 	if ($_GET["action"]=='delete')
 	{
 		$text=$langs->trans('ConfirmDeleteTransaction');
-		$html->form_confirm($_SERVER['PHP_SELF'].'?account='.$acct->id.'&amp;rowid='.$_GET["rowid"],$langs->trans('DeleteTransaction'),$text,'confirm_delete');
-		print '<br />';
+		$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?account='.$acct->id.'&amp;rowid='.$_GET["rowid"],$langs->trans('DeleteTransaction'),$text,'confirm_delete');
+		if ($ret == 'html') print '<br>';
 	}
 
 

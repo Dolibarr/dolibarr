@@ -237,11 +237,8 @@ else
 				 */
 				if ($_GET["action"] == 'delete')
 				{
-
-					$html = new Form($db);
-					$html->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
-
-					print '<br>';
+					$ret=$html->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
+					if ($ret == 'html') print '<br>';
 				}
 
 				$soc = new Societe($db);
@@ -253,9 +250,9 @@ else
 				print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
 				print $deplacement->ref;
 				print '</td></tr>';
-				
+
 				print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($deplacement->type).'</td></tr>';
-				
+
 				print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td>';
 				print '<td>';
 				if ($soc->id) print $soc->getNomUrl(1);
@@ -266,13 +263,13 @@ else
 				$userfee->fetch();
 				print $userfee->getNomUrl(1);
 				print '</td></tr>';
-				
+
 				print '<tr><td>'.$langs->trans("Date").'</td><td>';
 				print dol_print_date($deplacement->date);
 				print '</td></tr>';
-				
+
 				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td>'.$deplacement->km.'</td></tr>';
-				
+
 				print "</table>";
 
 				print '</div>';

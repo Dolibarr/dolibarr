@@ -102,8 +102,8 @@ if ($result)
 
 	if ($_GET["action"] == 'purge')
 	{
-		$form->form_confirm($_SERVER["PHP_SELF"], $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'), 'confirm_purge');
-		print '<br>';
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"], $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'), 'confirm_purge');
+		if ($ret == 'html') print '<br>';
 	}
 
 	print '<table class="liste" width="100%">';

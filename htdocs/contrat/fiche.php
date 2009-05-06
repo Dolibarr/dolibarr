@@ -68,7 +68,7 @@ if ($_POST["action"] == 'confirm_active' && $_POST["confirm"] == 'yes' && $user-
     }
 }
 
-if ($_POST["action"] == 'confirm_closeline' && $_POST["confirm"] == 'yes' && $user->rights->contrat->activer)
+if ($_REQUEST["action"] == 'confirm_closeline' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->activer)
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
@@ -654,8 +654,8 @@ else
          */
         if ($_GET["action"] == 'delete')
         {
-            $form->form_confirm("fiche.php?id=$id",$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete");
-            print '<br>';
+            $ret=$form->form_confirm("fiche.php?id=$id",$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete");
+			if ($ret == 'html') print '<br>';
         }
 
         /*
@@ -664,8 +664,8 @@ else
         if ($_GET["action"] == 'valid')
         {
             //$numfa = contrat_get_num($soc);
-            $form->form_confirm("fiche.php?id=$id",$langs->trans("ValidateAContract"),$langs->trans("ConfirmValidateContract"),"confirm_valid");
-            print '<br>';
+            $ret=$form->form_confirm("fiche.php?id=$id",$langs->trans("ValidateAContract"),$langs->trans("ConfirmValidateContract"),"confirm_valid");
+			if ($ret == 'html') print '<br>';
         }
 
         /*
@@ -673,8 +673,8 @@ else
          */
         if ($_GET["action"] == 'close')
         {
-            $form->form_confirm("fiche.php?id=$id",$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close");
-            print '<br>';
+            $ret=$form->form_confirm("fiche.php?id=$id",$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close");
+			if ($ret == 'html') print '<br>';
         }
 
         /*
@@ -991,7 +991,11 @@ else
 				//print '<br />';
 				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("CloseService"),$langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")),"confirm_closeline");
+				$page=$_SERVER["PHP_SELF"]."?id=".$contrat->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend;
+				$title=$langs->trans("CloseService");
+				$question=$langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y"));
+				$action="confirm_closeline";
+				$html->form_confirm($page,$title,$question,$action,'','');
 				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 

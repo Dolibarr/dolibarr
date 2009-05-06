@@ -143,8 +143,8 @@ dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"));
  */
 if ($_GET['action'] == 'delete')
 {
-	$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
-	print '<br>';
+	$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
+	if ($ret == 'html') print '<br>';
 }
 
 /*
@@ -153,8 +153,8 @@ if ($_GET['action'] == 'delete')
 if ($_GET['action'] == 'valide')
 {
 	$facid = $_GET['facid'];
-	$html->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
-	print '<br>';
+	$ret=$html->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
+	if ($ret == 'html') print '<br>';
 }
 
 

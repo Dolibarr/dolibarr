@@ -35,7 +35,7 @@ $langs->load("admin");
 $langs->load("companies");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 $acts[0] = "activate";
 $acts[1] = "disable";
@@ -241,114 +241,114 @@ $sortorder=$_GET["sortorder"];
  */
 if ($_POST["actionadd"] || $_POST["actionmodify"])
 {
-    $listfield=split(',',$tabfield[$_POST["id"]]);
-    $listfieldinsert=split(',',$tabfieldinsert[$_POST["id"]]);
-    $listfieldmodify=split(',',$tabfieldinsert[$_POST["id"]]);
-    $listfieldvalue=split(',',$tabfieldvalue[$_POST["id"]]);
+	$listfield=split(',',$tabfield[$_POST["id"]]);
+	$listfieldinsert=split(',',$tabfieldinsert[$_POST["id"]]);
+	$listfieldmodify=split(',',$tabfieldinsert[$_POST["id"]]);
+	$listfieldvalue=split(',',$tabfieldvalue[$_POST["id"]]);
 
-    // Verifie que tous les champs sont renseign�s
-    $ok=1;
-    foreach ($listfield as $f => $value) {
-        if (! isset($_POST[$value]) || $_POST[$value]=='') {
-            $ok=0;
-            $msg.=$langs->trans("ErrorFieldRequired",$listfield[$f]).'<br>';
-        }
-    }
-    // Autres verif
-    if (isset($_POST["code"]) && $_POST["code"]=='0') {
-        $ok=0;
-        $msg.="Le Code ne peut avoir la valeur 0<br>";
-    }
-    if (isset($_POST["pays"]) && $_POST["pays"]=='0') {
-        $ok=0;
-        $msg.=$langs->trans("ErrorFieldRequired",$langs->trans("Country")).'<br>';
-    }
-    
-    // Si verif ok et action add, on ajoute la ligne
-    if ($ok && $_POST["actionadd"]) {
-        if ($tabrowid[$_POST["id"]]) {
-            // Recupere id libre pour insertion
-            $newid=0;
-            $sql = "SELECT max(".$tabrowid[$_POST["id"]].") newid from ".$tabname[$_POST["id"]];
-            $result = $db->query($sql);
-            if ($result)
-            {
-                $obj = $db->fetch_object($result);
-                $newid=($obj->newid + 1);
-                        
-            } else {
-                dol_print_error($db);
-            }
-        }
-    
-        // Add new entry
-        $sql = "INSERT INTO ".$tabname[$_POST["id"]]." (";
-        // List of fields
+	// Verifie que tous les champs sont renseign�s
+	$ok=1;
+	foreach ($listfield as $f => $value) {
+		if (! isset($_POST[$value]) || $_POST[$value]=='') {
+			$ok=0;
+			$msg.=$langs->trans("ErrorFieldRequired",$listfield[$f]).'<br>';
+		}
+	}
+	// Autres verif
+	if (isset($_POST["code"]) && $_POST["code"]=='0') {
+		$ok=0;
+		$msg.="Le Code ne peut avoir la valeur 0<br>";
+	}
+	if (isset($_POST["pays"]) && $_POST["pays"]=='0') {
+		$ok=0;
+		$msg.=$langs->trans("ErrorFieldRequired",$langs->trans("Country")).'<br>';
+	}
+
+	// Si verif ok et action add, on ajoute la ligne
+	if ($ok && $_POST["actionadd"]) {
+		if ($tabrowid[$_POST["id"]]) {
+			// Recupere id libre pour insertion
+			$newid=0;
+			$sql = "SELECT max(".$tabrowid[$_POST["id"]].") newid from ".$tabname[$_POST["id"]];
+			$result = $db->query($sql);
+			if ($result)
+			{
+				$obj = $db->fetch_object($result);
+				$newid=($obj->newid + 1);
+
+			} else {
+				dol_print_error($db);
+			}
+		}
+
+		// Add new entry
+		$sql = "INSERT INTO ".$tabname[$_POST["id"]]." (";
+		// List of fields
 		if ($tabrowid[$_POST["id"]] &&
-			! in_array($tabrowid[$_POST["id"]],$listfieldinsert)) $sql.= $tabrowid[$_POST["id"]].",";
-        $sql.= $tabfieldinsert[$_POST["id"]];
-        $sql.=",active)";
-        $sql.= " VALUES(";
-        // List of values
-        if ($tabrowid[$_POST["id"]] &&
-            ! in_array($tabrowid[$_POST["id"]],$listfieldinsert)) $sql.= $newid.",";
-        $i=0;
-        foreach ($listfieldinsert as $f => $value)
+		! in_array($tabrowid[$_POST["id"]],$listfieldinsert)) $sql.= $tabrowid[$_POST["id"]].",";
+		$sql.= $tabfieldinsert[$_POST["id"]];
+		$sql.=",active)";
+		$sql.= " VALUES(";
+		// List of values
+		if ($tabrowid[$_POST["id"]] &&
+		! in_array($tabrowid[$_POST["id"]],$listfieldinsert)) $sql.= $newid.",";
+		$i=0;
+		foreach ($listfieldinsert as $f => $value)
 		{
-        	if ($value == 'price') { $_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU'); }
+			if ($value == 'price') { $_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU'); }
 			if ($i) $sql.=",";
 			$sql.="'".addslashes($_POST[$listfieldvalue[$i]])."'";
 			$i++;
-        }
-        $sql.=",1)";
+		}
+		$sql.=",1)";
 
-	     dol_syslog("dict actionadd sql=".$sql);
-        $result = $db->query($sql);
-        if (!$result)
-        {
-            if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-                $msg=$langs->trans("ErrorRecordAlreadyExists").'<br>';
-            }
-            else {
-                dol_print_error($db);
-            }
-        }
-    }
-    
-    // Si verif ok et action modify, on modifie la ligne
-    if ($ok && $_POST["actionmodify"]) {
-    	if ($tabrowid[$_POST["id"]]) { $rowidcol=$tabrowid[$_POST["id"]]; }
-      else { $rowidcol="rowid"; }
-      
-        // Modify entry
-        $sql = "UPDATE ".$tabname[$_POST["id"]]." SET ";
-        // Modifie valeur des champs
+		dol_syslog("dict actionadd sql=".$sql);
+		$result = $db->query($sql);
+		if (!$result)
+		{
+			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$msg=$langs->trans("ErrorRecordAlreadyExists").'<br>';
+			}
+			else {
+				dol_print_error($db);
+			}
+		}
+	}
+
+	// Si verif ok et action modify, on modifie la ligne
+	if ($ok && $_POST["actionmodify"]) {
+		if ($tabrowid[$_POST["id"]]) { $rowidcol=$tabrowid[$_POST["id"]]; }
+		else { $rowidcol="rowid"; }
+
+		// Modify entry
+		$sql = "UPDATE ".$tabname[$_POST["id"]]." SET ";
+		// Modifie valeur des champs
 		if ($tabrowid[$_POST["id"]] && !in_array($tabrowid[$_POST["id"]],$listfieldmodify))
-        {
-        	$sql.= $tabrowid[$_POST["id"]]."=";
-        	$sql.= "'".addslashes($_POST["rowid"])."', ";
-        }
-        $i = 0;
-        foreach ($listfieldmodify as $field) {
-        	if ($field == 'price') { $_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU'); }
-        	if ($i) $sql.=",";
-        	$sql.= $field."=";
-        	$sql.= "'".addslashes($_POST[$listfieldvalue[$i]])."'";
-          $i++;
-        }
-        $sql.= " WHERE ".$rowidcol." = '".$_POST["rowid"]."'";
+		{
+			$sql.= $tabrowid[$_POST["id"]]."=";
+			$sql.= "'".addslashes($_POST["rowid"])."', ";
+		}
+		$i = 0;
+		foreach ($listfieldmodify as $field) {
+			if ($field == 'price') { $_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU'); }
+			if ($i) $sql.=",";
+			$sql.= $field."=";
+			$sql.= "'".addslashes($_POST[$listfieldvalue[$i]])."'";
+			$i++;
+		}
+		$sql.= " WHERE ".$rowidcol." = '".$_POST["rowid"]."'";
 
 		dol_syslog("dict actionmodify sql=".$sql);
 		//print $sql;
-        $resql = $db->query($sql);
-        if (! $resql)
-        {
-        	$msg=$db->error();
-        }
-    }
+		$resql = $db->query($sql);
+		if (! $resql)
+		{
+			$msg=$db->error();
+		}
+	}
 
-    if ($msg) $msg='<div class="error">'.$msg.'</div>';
-    $_GET["id"]=$_POST["id"];       // Force affichage dictionnaire en cours d'edition
+	if ($msg) $msg='<div class="error">'.$msg.'</div>';
+	$_GET["id"]=$_POST["id"];       // Force affichage dictionnaire en cours d'edition
 }
 
 if ($_POST["actioncancel"])
@@ -358,62 +358,62 @@ if ($_POST["actioncancel"])
 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')       // delete
 {
-    if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
-    else { $rowidcol="rowid"; }
+	if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
+	else { $rowidcol="rowid"; }
 
-    $sql = "DELETE from ".$tabname[$_GET["id"]]." WHERE ".$rowidcol."='".$_GET["rowid"]."'";
+	$sql = "DELETE from ".$tabname[$_GET["id"]]." WHERE ".$rowidcol."='".$_GET["rowid"]."'";
 
 	dol_syslog("dict delete sql=".$sql);
-    $result = $db->query($sql);
-    if (! $result)
-    {
-        if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
-        {
-            $msg='<div class="error">'.$langs->trans("ErrorRecordIsUsedByChild").'</div>';
-        }
-        else 
-        {
-            dol_print_error($db);
-        }
-    }
+	$result = $db->query($sql);
+	if (! $result)
+	{
+		if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
+		{
+			$msg='<div class="error">'.$langs->trans("ErrorRecordIsUsedByChild").'</div>';
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
 }
 
 if ($_GET["action"] == $acts[0])       // activate
 {
-    if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
-    else { $rowidcol="rowid"; }
+	if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
+	else { $rowidcol="rowid"; }
 
-    if ($_GET["rowid"]) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE ".$rowidcol."='".$_GET["rowid"]."'";
-    }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE code='".$_GET["code"]."'";
-    }
+	if ($_GET["rowid"]) {
+		$sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE ".$rowidcol."='".$_GET["rowid"]."'";
+	}
+	elseif ($_GET["code"]) {
+		$sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE code='".$_GET["code"]."'";
+	}
 
-    $result = $db->query($sql);
-    if (!$result)
-    {
-        dol_print_error($db);
-    }
+	$result = $db->query($sql);
+	if (!$result)
+	{
+		dol_print_error($db);
+	}
 }
 
 if ($_GET["action"] == $acts[1])       // disable
 {
-    if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
-    else { $rowidcol="rowid"; }
+	if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
+	else { $rowidcol="rowid"; }
 
-    if ($_GET["rowid"]) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE ".$rowidcol."='".$_GET["rowid"]."'";
-    }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE code='".$_GET["code"]."'";
-    }
+	if ($_GET["rowid"]) {
+		$sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE ".$rowidcol."='".$_GET["rowid"]."'";
+	}
+	elseif ($_GET["code"]) {
+		$sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE code='".$_GET["code"]."'";
+	}
 
-    $result = $db->query($sql);
-    if (!$result)
-    {
-        dol_print_error($db);
-    }
+	$result = $db->query($sql);
+	if (!$result)
+	{
+		dol_print_error($db);
+	}
 }
 
 
@@ -440,180 +440,180 @@ if (empty($_GET["id"]))
 	print $langs->trans("DictionnaryDesc");
 	print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 }
-	print "<br>\n";
+print "<br>\n";
 
-	
-  /*
-   * Confirmation de la suppression de la ligne
-   */
-  if ($_GET['action'] == 'delete')
-  {
-	$html = new Form($db);
-  	$html->form_confirm($_SERVER["PHP_SELF"].'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$_GET["rowid"].'&amp;code='.$_GET["code"].'&amp;id='.$_GET["id"], $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete');
-    print '<br>';
-  }
+
+/*
+ * Confirmation de la suppression de la ligne
+ */
+if ($_GET['action'] == 'delete')
+{
+	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$_GET["rowid"].'&amp;code='.$_GET["code"].'&amp;id='.$_GET["id"], $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete');
+	if ($ret == 'html') print '<br>';
+}
 
 /*
  * Affichage d'un dictionnaire particulier
  */
 if ($_GET["id"])
 {
-    if ($msg)
+	if ($msg)
 	{
-        print $msg.'<br>';
-    }
+		print $msg.'<br>';
+	}
 
-    // Complete requete recherche valeurs avec critere de tri
-    $sql=$tabsql[$_GET["id"]];
-    if ($_GET["sortfield"])
-    {
-        $sql.= " ORDER BY ".$_GET["sortfield"];
-        if ($_GET["sortorder"])
-        {
-            $sql.=" ".strtoupper($_GET["sortorder"]);
-        }
-        $sql.=", ";
+	// Complete requete recherche valeurs avec critere de tri
+	$sql=$tabsql[$_GET["id"]];
+	if ($_GET["sortfield"])
+	{
+		$sql.= " ORDER BY ".$_GET["sortfield"];
+		if ($_GET["sortorder"])
+		{
+			$sql.=" ".strtoupper($_GET["sortorder"]);
+		}
+		$sql.=", ";
 		// Remove from default sort order the choosed order
-        $tabsqlsort[$_GET["id"]]=eregi_replace($_GET["sortfield"].' '.$_GET["sortorder"].',','',$tabsqlsort[$_GET["id"]]);
-        $tabsqlsort[$_GET["id"]]=eregi_replace($_GET["sortfield"].',','',$tabsqlsort[$_GET["id"]]);
-    }
-    else {
-        $sql.=" ORDER BY ";   
-    }
-    $sql.=$tabsqlsort[$_GET["id"]];
+		$tabsqlsort[$_GET["id"]]=eregi_replace($_GET["sortfield"].' '.$_GET["sortorder"].',','',$tabsqlsort[$_GET["id"]]);
+		$tabsqlsort[$_GET["id"]]=eregi_replace($_GET["sortfield"].',','',$tabsqlsort[$_GET["id"]]);
+	}
+	else {
+		$sql.=" ORDER BY ";
+	}
+	$sql.=$tabsqlsort[$_GET["id"]];
 	//print $sql;
-    
-    $fieldlist=split(',',$tabfield[$_GET["id"]]);
 
-    print '<form action="dict.php" method="post">';
-    print '<table class="noborder" width="100%">';
+	$fieldlist=split(',',$tabfield[$_GET["id"]]);
 
-    // Ligne d'ajout
-    if ($tabname[$_GET["id"]])
-    {
-        $alabelisused=0;
-        $var=false;
-        
-        $fieldlist=split(',',$tabfield[$_GET["id"]]);
-//        print '<table class="noborder" width="100%">';
+	print '<form action="dict.php" method="post">';
+	print '<table class="noborder" width="100%">';
 
-        // Ligne de titre d'ajout
-        print '<tr class="liste_titre">';
-        foreach ($fieldlist as $field => $value)
-        {
-            // Determine le nom du champ par rapport aux noms possibles
-            // dans les dictionnaires de donnees
-            $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
-            if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
-            if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
-            if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
-            if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
-            if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
-            if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*"; } 
-            if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; } 
-            if ($fieldlist[$field]=='pays')            { $valuetoshow=$langs->trans("Country"); }
-            if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; }
-            if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
-            if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
-            if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
-            if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
-            if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
-            if ($fieldlist[$field]=='unit')            { $valuetoshow=$langs->trans("MeasuringUnit"); }
-            if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') { $valuetoshow=''; }
+	// Ligne d'ajout
+	if ($tabname[$_GET["id"]])
+	{
+		$alabelisused=0;
+		$var=false;
 
-            if ($valuetoshow != '')
-            {
-            	print '<td>';
-            	print $valuetoshow;
-            	print '</td>';
-            }
+		$fieldlist=split(',',$tabfield[$_GET["id"]]);
+		//        print '<table class="noborder" width="100%">';
 
-            if ($fieldlist[$field]=='libelle') $alabelisused=1; 
-        }
-        print '<td colspan="3">&nbsp;</td>';
-        print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
-        print '</tr>';
+		// Ligne de titre d'ajout
+		print '<tr class="liste_titre">';
+		foreach ($fieldlist as $field => $value)
+		{
+			// Determine le nom du champ par rapport aux noms possibles
+			// dans les dictionnaires de donnees
+			$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
+			if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
+			if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
+			if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
+			if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
+			if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
+			if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
+			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*"; }
+			if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
+			if ($fieldlist[$field]=='pays')            { $valuetoshow=$langs->trans("Country"); }
+			if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; }
+			if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
+			if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
+			if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
+			if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
+			if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
+			if ($fieldlist[$field]=='unit')            { $valuetoshow=$langs->trans("MeasuringUnit"); }
+			if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') { $valuetoshow=''; }
 
-        // Ligne d'ajout
-        print "<tr ".$bc[$var].">";
-
-        fieldList($fieldlist);
-        
-        print '<td colspan="3"><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
-        print "</tr>";
-
-        if ($alabelisused)  // Si un des champs est un libelle
-        {
-            print '<tr><td colspan="'.(count($fieldlist)+2).'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
-        }
-        print '<tr><td colspan="'.(count($fieldlist)+2).'">&nbsp;</td></tr>';
-    }
-
-    // Affiche table des valeurs
-	dol_syslog("htdocs/admin/dict sql=".$sql, LOG_DEBUG);
-    $resql=$db->query($sql);
-	if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        $i = 0;
-        $var=true;
-        if ($num)
-        {
-            // Ligne de titre
-            print '<tr class="liste_titre">';
-            foreach ($fieldlist as $field => $value)
+			if ($valuetoshow != '')
 			{
-                // Determine le nom du champ par rapport aux noms possibles
-                // dans les dictionnaires de donnees
-                $showfield=1;							  	// Par defaut
-				$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
-                if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
-                if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
-                if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
-                if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
-                if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
-                if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-                if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*";  }
-                if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
-                if ($fieldlist[$field]=='pays')            { $valuetoshow=$langs->trans("Country"); }
-                if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; }
-                if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
-                if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
-                if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
-                if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
-                if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
-                if ($fieldlist[$field]=='unit')            { $valuetoshow=$langs->trans("MeasuringUnit"); }
-                if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') { $showfield=0; }
-                
-                // Affiche nom du champ
-                if ($showfield)
-                {
-                	print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"],"","",$sortfield,$sortorder);
-                }
-            }
-            print_liste_field_titre($langs->trans("Action"),"dict.php","active","&id=".$_GET["id"],"",'align="center"',$sortfield,$sortorder);
-            print '<td colspan="2">&nbsp;</td>';
-            print '</tr>';
+				print '<td>';
+				print $valuetoshow;
+				print '</td>';
+			}
 
-            // Lignes de valeurs
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($resql);
-                $var=!$var;
+			if ($fieldlist[$field]=='libelle') $alabelisused=1;
+		}
+		print '<td colspan="3">';
+		print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+		print '&nbsp;</td>';
+		print '</tr>';
+
+		// Ligne d'ajout
+		print "<tr ".$bc[$var].">";
+
+		fieldList($fieldlist);
+
+		print '<td colspan="3"><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
+		print "</tr>";
+
+		if ($alabelisused)  // Si un des champs est un libelle
+		{
+			print '<tr><td colspan="'.(count($fieldlist)+2).'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
+		}
+		print '<tr><td colspan="'.(count($fieldlist)+2).'">&nbsp;</td></tr>';
+	}
+
+	// Affiche table des valeurs
+	dol_syslog("htdocs/admin/dict sql=".$sql, LOG_DEBUG);
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		$var=true;
+		if ($num)
+		{
+			// Ligne de titre
+			print '<tr class="liste_titre">';
+			foreach ($fieldlist as $field => $value)
+			{
+				// Determine le nom du champ par rapport aux noms possibles
+				// dans les dictionnaires de donnees
+				$showfield=1;							  	// Par defaut
+				$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
+				if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
+				if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
+				if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
+				if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
+				if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
+				if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
+				if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*";  }
+				if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
+				if ($fieldlist[$field]=='pays')            { $valuetoshow=$langs->trans("Country"); }
+				if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; }
+				if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
+				if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
+				if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
+				if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
+				if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
+				if ($fieldlist[$field]=='unit')            { $valuetoshow=$langs->trans("MeasuringUnit"); }
+				if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') { $showfield=0; }
+
+				// Affiche nom du champ
+				if ($showfield)
+				{
+					print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"],"","",$sortfield,$sortorder);
+				}
+			}
+			print_liste_field_titre($langs->trans("Action"),"dict.php","active","&id=".$_GET["id"],"",'align="center"',$sortfield,$sortorder);
+			print '<td colspan="2">&nbsp;</td>';
+			print '</tr>';
+
+			// Lignes de valeurs
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				$var=!$var;
 				//print_r($obj);
-                print "<tr $bc[$var]>";
-                if ($_GET["action"] == 'modify' && ($_GET["rowid"] == ($obj->rowid?$obj->rowid:$obj->code)))
-                {
-                	print '<form action="dict.php" method="post">';
-                	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
-                	print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
-                	fieldList($fieldlist,$obj);
-                	print '<td colspan="3" align="right"><a name="'.($obj->rowid?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-                	print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
-                }
-                else
-				{                	
+				print "<tr $bc[$var]>";
+				if ($_GET["action"] == 'modify' && ($_GET["rowid"] == ($obj->rowid?$obj->rowid:$obj->code)))
+				{
+					print '<form action="dict.php" method="post">';
+					print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+					print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
+					fieldList($fieldlist,$obj);
+					print '<td colspan="3" align="right"><a name="'.($obj->rowid?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
+				}
+				else
+				{
 					foreach ($fieldlist as $field => $value)
 					{
 						$showfield=1;
@@ -646,68 +646,68 @@ if ($_GET["id"])
 						print $langs->trans("AlwaysActive");
 					}
 					print "</td>";
-					
+
 					if ($iserasable) {
 						print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=modify#'.($obj->rowid?$obj->rowid:$obj->code).'">'.img_edit().'</a></td>';
 					} else {
-						print '<td>&nbsp;</td>';   
+						print '<td>&nbsp;</td>';
 					}
 					if ($iserasable) {
 						print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete">'.img_delete().'</a></td>';
 					} else {
-						print '<td>&nbsp;</td>';   
+						print '<td>&nbsp;</td>';
 					}
 					print "</tr>\n";
 				}
-                $i++;
-              }
-          }
-      }
-      else {
-        dol_print_error($db);
-    }
+				$i++;
+			}
+		}
+	}
+	else {
+		dol_print_error($db);
+	}
 
-    print '</table>';
+	print '</table>';
 
-    print '</form>';
+	print '</form>';
 }
 else
 {
-    /*
-     * Affichage de la liste des dictionnaires
-     */
+	/*
+	 * Affichage de la liste des dictionnaires
+	 */
 
-    $var=true;
+	$var=true;
 	$lastlineisempty=false;
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("Module").'</td>';
 	print '<td>'.$langs->trans("Dictionnary").'</td>';
 	print '<td>'.$langs->trans("Table").'</td>';
 	print '</tr>';
 
-    foreach ($taborder as $i)
-    {
-        if ($tabname[$i] && ! $tabcond[$i]) continue;	// If dictionnary and condition not true
-        
-        if ($i)
-        {
+	foreach ($taborder as $i)
+	{
+		if ($tabname[$i] && ! $tabcond[$i]) continue;	// If dictionnary and condition not true
+
+		if ($i)
+		{
 			$var=!$var;
 			$value=$tabname[$i];
-            print '<tr '.$bc[$var].'><td width="30%"><a href="dict.php?id='.$i.'">'.$tablib[$i].'</a></td><td>'.$tabname[$i].'</td></tr>';
+			print '<tr '.$bc[$var].'><td width="30%"><a href="dict.php?id='.$i.'">'.$tablib[$i].'</a></td><td>'.$tabname[$i].'</td></tr>';
 			$lastlineisempty=false;
-        }
-        else
-        {
+		}
+		else
+		{
 			if (! $lastlineisempty)
 			{
 				$var=!$var;
 				print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td></tr>';
 				$lastlineisempty=true;
 			}
-        }
-    }
-    print '</table>';
+		}
+	}
+	print '</table>';
 }
 
 print '<br>';
@@ -717,8 +717,8 @@ $db->close();
 llxFooter('$Date$ - $Revision$');
 
 /**
-        \brief      Affiche les champs
-*/
+ \brief      Affiche les champs
+ */
 function fieldList($fieldlist,$obj='')
 {
 	global $conf,$langs,$db;
@@ -727,7 +727,7 @@ function fieldList($fieldlist,$obj='')
 	$html = new Form($db);
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	
+
 	foreach ($fieldlist as $field => $value)
 	{
 		if ($fieldlist[$field] == 'pays') {

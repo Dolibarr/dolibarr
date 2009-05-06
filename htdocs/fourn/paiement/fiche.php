@@ -114,8 +114,8 @@ dol_fiche_head($head, $hselected, $langs->trans('SupplierPayment'));
  */
 if ($_GET['action'] == 'delete')
 {
-	$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
-	print '<br>';
+	$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
+	if ($ret == 'html') print '<br>';
 }
 
 /*
@@ -123,8 +123,8 @@ if ($_GET['action'] == 'delete')
  */
 if ($_GET['action'] == 'valide')
 {
-	$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
-	print '<br>';
+	$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
+	if ($ret == 'html') print '<br>';
 }
 
 if (!empty($_POST['action']) && $_POST['action'] == 'update_num' && !empty($_POST['new_num']))
@@ -278,7 +278,7 @@ if ($resql)
 		$var=True;
 
 		$facturestatic=new FactureFournisseur($db);
-		 
+
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);

@@ -66,7 +66,7 @@ if (! $section)
 
 // Load ecm object
 $ecmdir = new ECMDirectory($db);
-if (empty($_REQUEST["section"])) 
+if (empty($_REQUEST["section"]))
 {
 	dol_print_error('','Error, section parameter missing');
 	exit;
@@ -91,11 +91,11 @@ $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 // Envoie fichier
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	if (! is_dir($upload_dir)) 
+	if (! is_dir($upload_dir))
 	{
 		$result=create_exdir($upload_dir);
 	}
-	  
+
 	if (is_dir($upload_dir))
 	{
 		$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
@@ -132,7 +132,7 @@ if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
 {
   $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
   $result=dol_delete_file($file);
-  
+
   $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
 
   $result=$ecmdir->changeNbOfFiles('-');
@@ -152,11 +152,11 @@ if ($_POST['action'] == 'confirm_deletedir' && $_POST['confirm'] == 'yes')
 if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 {
 	$db->begin();
-	
+
 	$oldlabel=$ecmdir->label;
 	$olddir=$ecmdir->getRelativePath(0);
 	$olddir=$conf->ecm->dir_output.'/'.$olddir;
-	
+
 	// Fetch was already done
 	$ecmdir->label = $_POST["label"];
 	$ecmdir->description = $_POST["description"];
@@ -164,7 +164,7 @@ if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 	if ($result > 0)
 	{
 		$error=0;
-		
+
 		// Try to rename file if changed
 		if ($oldlabel != $ecmdir->label
 			&& file_exists($olddir))
@@ -180,18 +180,18 @@ if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 				$error++;
 			}
 		}
-		
+
 		if (! $error)
 		{
 			$db->commit();
-			
+
 			$relativepath=$ecmdir->getRelativePath();
 			$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 		}
 		else
 		{
 			$db->rollback();
-		}			
+		}
 	}
 	else
 	{
@@ -228,8 +228,8 @@ dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"));
 if ($_GET["action"] == 'edit')
 {
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="section" value="'.$section.'">';		
-	print '<input type="hidden" name="action" value="update">';		
+	print '<input type="hidden" name="section" value="'.$section.'">';
+	print '<input type="hidden" name="action" value="update">';
 }
 
 print '<table class="border" width="100%">';
@@ -310,12 +310,12 @@ print '</div>';
 if ($_GET["action"] != 'edit' && $_GET['action'] != 'delete_dir' && $_GET['action'] != 'delete')
 {
 	print '<div class="tabsAction">';
-	
+
 	if ($user->rights->ecm->setup)
 	{
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.$section.'">'.$langs->trans('Edit').'</a>';
 	}
-	
+
 	if (sizeof($filearray) == 0)
 	{
 		if ($user->rights->ecm->setup)
@@ -340,15 +340,15 @@ if ($mesg) { print '<br>'.$mesg.'<br>'; }
 // Confirm remove file
 if ($_GET['action'] == 'delete')
 {
-	$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
-	print '<br>';
+	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+	if ($ret == 'html') print '<br>';
 }
 
 // Confirm remove file
 if ($_GET['action'] == 'delete_dir')
 {
-	$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"], $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection'), 'confirm_deletedir');
-	print '<br>';
+	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"], $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection'), 'confirm_deletedir');
+	if ($ret == 'html') print '<br>';
 }
 
 $formfile=new FormFile($db);

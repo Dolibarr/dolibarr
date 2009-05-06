@@ -916,8 +916,8 @@ if ($id > 0 || ! empty($ref))
 		//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$propal->ref),'confirm_clone',$formquestion,'yes');
-		print '<br>';
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$propal->ref),'confirm_clone',$formquestion,'yes');
+		if ($ret == 'html') print '<br>';
 	}
 
 	/*
@@ -925,8 +925,8 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($_GET['action'] == 'delete')
 	{
-		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete');
-		print '<br>';
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete');
+		if ($ret == 'html') print '<br>';
 	}
 
 	/*
@@ -934,8 +934,8 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 	{
-		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
-		print '<br>';
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
+		if ($ret == 'html') print '<br>';
 	}
 
 	/*
@@ -943,8 +943,8 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($_GET['action'] == 'validate')
 	{
-		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmValidateProp'), 'confirm_validate');
-		print '<br>';
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmValidateProp'), 'confirm_validate');
+		if ($ret == 'html') print '<br>';
 	}
 
 
@@ -1460,15 +1460,7 @@ if ($id > 0 || ! empty($ref))
 					print '<td align="center">';
 					if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 					{
-						if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-						{
-							$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&lineid='.$objp->rowid.'&action=confirm_deleteline&confirm=yes';
-							print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProductLine').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'deleteline'.$i.'\')">';
-						}
-						else
-						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=ask_deleteline&amp;lineid='.$objp->rowid.'">';
-						}
+						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=ask_deleteline&amp;lineid='.$objp->rowid.'">';
 					}
 					else
 					{
@@ -1763,16 +1755,7 @@ if ($id > 0 || ! empty($ref))
 			// Valid
 			if ($propal->statut == 0 && $user->rights->propale->valider)
 			{
-				print '<a class="butAction" ';
-				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-				{
-					$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_validate&confirm=yes';
-					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateProp')).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
-				}
-				else
-				{
-					print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=validate"';
-				}
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=validate"';
 				print '>'.$langs->trans('Validate').'</a>';
 			}
 
@@ -1821,16 +1804,7 @@ if ($id > 0 || ! empty($ref))
 			// Delete
 			if ($user->rights->propale->supprimer)
 			{
-				print '<a class="butActionDelete" ';
-				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-				{
-					$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_delete&confirm=yes';
-					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
-				}
-				else
-				{
-					print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete"';
-				}
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete"';
 				print '>'.$langs->trans('Delete').'</a>';
 			}
 

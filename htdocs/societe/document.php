@@ -23,7 +23,7 @@
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
  *  \version    $Id$
-*/
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
@@ -73,42 +73,42 @@ $courrier_dir = $conf->societe->dir_output . "/courrier/" . get_exdir($socid) ;
 // Envoie fichier
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-  if (! is_dir($upload_dir)) create_exdir($upload_dir);
+	if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
-  if (is_dir($upload_dir))
-  {
-  	$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
-  	if ($result > 0)
-    {
-    	$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-    	//print_r($_FILES);
-    }
-    else if ($result < 0)
-    {
-    	// Echec transfert (fichier depassant la limite ?)
-    	$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-    	// print_r($_FILES);
-    }
-    else
-    {
-    	// Fichier infecte par un virus
-    	$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWith",$result).'</div>';
-    }
-  }
+	if (is_dir($upload_dir))
+	{
+		$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
+		if ($result > 0)
+		{
+			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+			//print_r($_FILES);
+		}
+		else if ($result < 0)
+		{
+			// Echec transfert (fichier depassant la limite ?)
+			$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+			// print_r($_FILES);
+		}
+		else
+		{
+			// Fichier infecte par un virus
+			$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWith",$result).'</div>';
+		}
+	}
 }
 
 // Suppression fichier
 if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
 {
-  $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
-  dol_delete_file($file);
-  $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+	$file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
+	dol_delete_file($file);
+	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
 }
 
 
 /*
-* View
-*/
+ * View
+ */
 
 llxHeader();
 
@@ -118,8 +118,8 @@ if ($socid > 0)
 	if ($societe->fetch($socid))
 	{
 		/*
-		* Affichage onglets
-		*/
+		 * Affichage onglets
+		 */
 		$head = societe_prepare_head($societe);
 
 		$html=new Form($db);
@@ -156,18 +156,18 @@ if ($socid > 0)
 
 		if ($mesg) { print "$mesg<br>"; }
 
-		  /*
-		   * Confirmation de la suppression d'une ligne produit
-		   */
-		  if ($_GET['action'] == 'delete')
-		  {
-		    $html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$_GET["id"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
-		    print '<br>';
-		  }
+		/*
+		 * Confirmation de la suppression d'une ligne produit
+		 */
+		if ($_GET['action'] == 'delete')
+		{
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$_GET["id"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+			if ($ret == 'html') print '<br>';
+		}
 
 
 		// Affiche formulaire upload
-       	$formfile=new FormFile($db);
+		$formfile=new FormFile($db);
 		$formfile->form_attach_new_file(DOL_URL_ROOT.'/societe/document.php?socid='.$socid,'',0,0,$user->rights->societe->creer);
 
 

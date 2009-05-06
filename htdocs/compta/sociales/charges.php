@@ -262,15 +262,15 @@ if ($chid > 0)
 		if ($_GET["action"] == 'payed')
 		{
 			$text=$langs->trans('ConfirmPaySocialContribution');
-			$html->form_confirm($_SERVER["PHP_SELF"]."?id=$cha->id&amp;action=confirm_payed",$langs->trans('PaySocialContribution'),$text,"confirm_payed");
-			print '<br>';
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=$cha->id&amp;action=confirm_payed",$langs->trans('PaySocialContribution'),$text,"confirm_payed");
+			if ($ret == 'html') print '<br>';
 		}
 
 		if ($_GET['action'] == 'delete')
 		{
 			$text=$langs->trans('ConfirmDeleteSocialContribution');
-			$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$cha->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete');
-			print '<br />';
+			$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$cha->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete');
+			if ($ret == 'html') print '<br>';
 		}
 
 		if ($_GET['action'] == 'edit') print "<form name=\"charge\" action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";

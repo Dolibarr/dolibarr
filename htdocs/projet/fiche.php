@@ -200,8 +200,8 @@ else
 
 	if ($_GET["action"] == 'delete')
 	{
-		$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteAProject"),$langs->trans("ConfirmDeleteAProject"),"confirm_delete");
-		print "<br>";
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteAProject"),$langs->trans("ConfirmDeleteAProject"),"confirm_delete");
+		if ($ret == 'html') print '<br>';
 	}
 
 	if ($_GET["action"] == 'edit')

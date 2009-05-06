@@ -223,8 +223,8 @@ if ($user->rights->societe->contact->supprimer)
 {
 	if ($_GET["action"] == 'delete')
 	{
-		$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete");
-		print '<br>';
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete");
+		if ($ret == 'html') print '<br>';
 	}
 }
 
@@ -487,8 +487,8 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 		$formquestion=array(
 		array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
 
-		$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$contact->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
-		print '<br>';
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$contact->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
+		if ($ret == 'html') print '<br>';
 	}
 
 	print '<table class="border" width="100%">';

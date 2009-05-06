@@ -554,8 +554,8 @@ else
 			 */
 			if ($_GET["action"] == 'delete')
 			{
-				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$expedition->ref),'confirm_delete');
-				print '<br>';
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$expedition->ref),'confirm_delete');
+				if ($ret == 'html') print '<br>';
 			}
 
 			/*
@@ -564,8 +564,8 @@ else
 			 */
 			if ($_GET["action"] == 'valid')
 			{
-				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('ValidateSending'),$langs->trans("ConfirmValidateSending",$expedition->ref),'confirm_valid');
-				print '<br>';
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('ValidateSending'),$langs->trans("ConfirmValidateSending",$expedition->ref),'confirm_valid');
+				if ($ret == 'html') print '<br>';
 			}
 			/*
 			 * Confirmation de l'annulation
@@ -573,8 +573,8 @@ else
 			 */
 			if ($_GET["action"] == 'annuler')
 			{
-				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$expedition->ref),'confirm_cancel');
-				print '<br>';
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$expedition->ref),'confirm_cancel');
+				if ($ret == 'html') print '<br>';
 			}
 
 			// Calcul du poids total et du volume total des produits

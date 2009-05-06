@@ -289,8 +289,8 @@ else
 		*/
 		if ($_GET["action"] == 'delete')
 		{
-			$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
-			print '<br />';
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
+			if ($ret == 'html') print '<br>';
 		}
 
 		print '<table class="border" width="100%">';

@@ -119,8 +119,8 @@ dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"));
 if ($_GET["action"] == 'edit')
 {
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="fileid" value="'.$fileid.'">';		
-	print '<input type="hidden" name="action" value="update">';		
+	print '<input type="hidden" name="fileid" value="'.$fileid.'">';
+	print '<input type="hidden" name="action" value="update">';
 }
 
 print '<table class="border" width="100%">';
@@ -202,13 +202,13 @@ if (! $_GET["action"] || $_GET["action"] == 'delete_section')
 	// Confirmation de la suppression d'une ligne categorie
 	if ($_GET['action'] == 'delete_section')
 	{
-		$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urldecode($_GET["section"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
-		print '<br>';
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urldecode($_GET["section"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
+		if ($ret == 'html') print '<br>';
 	}
 
 	if ($mesg) { print $mesg."<br>"; }
 
-	
+
 	// Construit fiche  rubrique
 
 

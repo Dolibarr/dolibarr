@@ -577,8 +577,8 @@ else
 			// Confirmation de la suppression d'une ligne produit
 			if ($_GET['action'] == 'confirm_delete_line')
 			{
-				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
-				print '<br>';
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+				if ($ret == 'html') print '<br>';
 			}
 
 			// Clone confirmation
@@ -590,22 +590,22 @@ else
 				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$fac->ref),'confirm_clone',$formquestion,'yes');
-				print '<br>';
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$fac->ref),'confirm_clone',$formquestion,'yes');
+				if ($ret == 'html') print '<br>';
 			}
 
 			// Confirmation de la validation
 			if ($_GET['action'] == 'valid')
 			{
-				$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $fac->ref), 'confirm_valid');
-				print '<br />';
+				$ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $fac->ref), 'confirm_valid');
+				if ($ret == 'html') print '<br>';
 			}
 
 			// Confirmation de la validation
 			if ($_GET['action'] == 'payed')
 			{
-				$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ClassifyPayed'), $langs->trans('ConfirmClassifyPayedBill', $fac->ref), 'confirm_payed');
-				print '<br />';
+				$ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ClassifyPayed'), $langs->trans('ConfirmClassifyPayedBill', $fac->ref), 'confirm_payed');
+				if ($ret == 'html') print '<br>';
 			}
 
 			/*
@@ -613,8 +613,8 @@ else
 			 */
 			if ($_GET['action'] == 'delete')
 			{
-				$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete');
-				print '<br />';
+				$ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete');
+				if ($ret == 'html') print '<br>';
 			}
 
 			print '<table width="100%" class="notopnoleftnoright">';
@@ -1059,17 +1059,7 @@ else
 
 		if ($_GET['action'] != 'edit' && $fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
 		{
-			print '<a class="butAction" ';
-			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-			{
-				$num = $fac->ref;
-				$url = $_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=confirm_payed&confirm=yes';
-				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmClassifPayed',$num)).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'validate\')"';
-			}
-			else
-			{
-				print 'href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=payed"';
-			}
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=payed"';
 			print '>'.$langs->trans('ClassifyPayed').'</a>';
 
 			//print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
@@ -1079,19 +1069,7 @@ else
 		{
 			if (sizeof($fac->lignes))
 			{
-				print '<a class="butAction" ';
-				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-				{
-					// We check if number is temporary number
-					if (eregi('^\(PROV',$fac->ref)) $num = $fac->getNextNumRef($soc);
-					else $num = $fac->ref;
-					$url = $_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=confirm_valid&confirm=yes';
-					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateBill',$num)).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'validate\')"';
-				}
-				else
-				{
-					print 'href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid"';
-				}
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid"';
 				print '>'.$langs->trans('Validate').'</a>';
 			}
 		}

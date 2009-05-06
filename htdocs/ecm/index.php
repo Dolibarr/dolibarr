@@ -221,8 +221,8 @@ print "<br>\n";
 // Confirm remove file
 if ($_GET['action'] == 'delete')
 {
-	$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
-	print '<br>';
+	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+	if ($ret == 'html') print '<br>';
 }
 
 if ($mesg) { print $mesg."<br>"; }
@@ -246,8 +246,8 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	// Confirmation de la suppression d'une ligne categorie
 	if ($_GET['action'] == 'delete_section')
 	{
-		$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urldecode($_GET["section"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
-		print '<br>';
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urldecode($_GET["section"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
+		if ($ret == 'html') print '<br>';
 	}
 
 	// Construit liste des repertoires

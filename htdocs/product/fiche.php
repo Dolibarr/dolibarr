@@ -806,9 +806,8 @@ if ($_GET["id"] || $_GET["ref"])
 			// Confirmation de la suppression de la facture
 			if ($_GET["action"] == 'delete')
 			{
-				$html = new Form($db);
-				$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete");
-				print "<br />\n";
+				$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete");
+				if ($ret == 'html') print '<br>';
 			}
 
 			print($mesg);

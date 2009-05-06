@@ -643,8 +643,8 @@ if ($_GET["id"])
 	// Confirmation suppression action
 	if ($_GET["action"] == 'delete')
 	{
-		$html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete");
-		print '<br>';
+		$ret=$html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete");
+		if ($ret == 'html') print '<br>';
 	}
 
 	if ($_REQUEST["action"] == 'edit')

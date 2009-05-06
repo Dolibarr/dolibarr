@@ -74,7 +74,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_GET["file"] && $_REQUEST['confi
   }
 }
 
-if ($_GET["action"] == 'addthumb' && $_GET["file"]) 
+if ($_GET["action"] == 'addthumb' && $_GET["file"])
 {
 	$product = new Product($db);
   $product->add_thumb($conf->produit->dir_output."/".$_GET["file"]);
@@ -93,7 +93,7 @@ if ($_GET["id"] || $_GET["ref"])
     $product = new Product($db);
     if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
-    
+
     llxHeader("","",$langs->trans("CardProduct".$product->type));
 
     if ($result)
@@ -104,14 +104,14 @@ if ($_GET["id"] || $_GET["ref"])
        $head=product_prepare_head($product, $user);
        $titre=$langs->trans("CardProduct".$product->type);
        dol_fiche_head($head, 'photos', $titre);
-       
+
        /*
         * Confirmation de la suppression de photo
         */
         if ($_GET['action'] == 'delete')
         {
-        	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$product->id.'&amp;file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete');
-        	print '<br>';
+        	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$product->id.'&amp;file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete');
+        	if ($ret == 'html') print '<br>';
         }
 
         print($mesg);
@@ -191,10 +191,10 @@ if ($_GET["id"] || $_GET["ref"])
         {
             $nbphoto=0;
             $nbbyrow=5;
-            
+
             $maxWidth = 160;
             $maxHeight = 120;
-            
+
             $pdir = get_exdir($product->id,2) . $product->id ."/photos/";
             $dir = $conf->produit->dir_output . '/'. $pdir;
 
@@ -209,7 +209,7 @@ if ($_GET["id"] || $_GET["ref"])
 
                 if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
                 if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
-                
+
                 print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$obj['photo']).'" alt="Taille origine" target="_blank">';
 
                 // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
@@ -221,10 +221,10 @@ if ($_GET["id"] || $_GET["ref"])
                 {
                 	$filename=$obj['photo'];
                 }
-                
+
                 // Nom affiché
                 $viewfilename=$obj['photo'];
-                
+
                 // Taille de l'image
                 $product->get_image_size($dir.$filename);
                 $imgWidth = ($product->imgWidth < $maxWidth) ? $product->imgWidth : $maxWidth;
@@ -243,28 +243,20 @@ if ($_GET["id"] || $_GET["ref"])
                 }
                 if ($user->rights->produit->creer)
                 {
-                	if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-                	{
-                		$url = $_SERVER["PHP_SELF"].'?id='.$product->id.'&file='.urlencode($pdir.$viewfilename).'&action=confirm_delete&confirm=yes';
-                		print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeletePicture').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')">';
-                	}
-                	else
-                	{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
-					}
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
 					print img_delete().'</a>';
                 }
                 if ($nbbyrow) print '</td>';
                 if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
             }
-            
+
             // Ferme tableau
             while ($nbphoto % $nbbyrow)
             {
                 print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
                 $nbphoto++;
             }
-            
+
             if ($nbphoto < 1)
             {
                 print '<tr align=center valign=middle border=1><td class="photo">';

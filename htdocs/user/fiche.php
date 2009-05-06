@@ -764,8 +764,8 @@ else
 		 */
 		if ($action == 'password')
 		{
-			$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$fuser->login),"confirm_password");
-			print '<br>';
+			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$fuser->login),"confirm_password");
+			if ($ret == 'html') print '<br>';
 		}
 
 		/*
@@ -773,8 +773,8 @@ else
 		 */
 		if ($action == 'passwordsend')
 		{
-			$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$fuser->login),"confirm_passwordsend");
-			print '<br>';
+			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$fuser->login),"confirm_passwordsend");
+			if ($ret == 'html') print '<br>';
 		}
 
 		/*
@@ -782,8 +782,8 @@ else
 		 */
 		if ($action == 'disable')
 		{
-			$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_disable");
-			print '<br>';
+			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_disable");
+			if ($ret == 'html') print '<br>';
 		}
 
 		/*
@@ -791,8 +791,8 @@ else
 		 */
 		if ($action == 'enable')
 		{
-			$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$fuser->login),"confirm_enable");
-			print '<br>';
+			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$fuser->login),"confirm_enable");
+			if ($ret == 'html') print '<br>';
 		}
 
 		/*
@@ -800,8 +800,8 @@ else
 		 */
 		if ($action == 'delete')
 		{
-			$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete");
-			print '<br>';
+			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete");
+			if ($ret == 'html') print '<br>';
 		}
 
 

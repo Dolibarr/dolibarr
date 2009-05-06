@@ -470,10 +470,9 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		if ($_POST["action"] == 'add_paiement')
 		{
 			//				print '<tr><td colspan="3">';
-			print '<br />';
+			print '<br>';
 			$text=$langs->trans('ConfirmCustomerPayment',$totalpaiement,$langs->trans("Currency".$conf->monnaie));
 			$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion);
-			//				print '</td></tr>';
 		}
 
 		print "</form>\n";

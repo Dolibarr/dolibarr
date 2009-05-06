@@ -150,8 +150,8 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET["action"] == 'cloture')
 		{
-			$html->form_confirm("commande.php?id=".$_GET["id"],"Cl�turer la commande","Etes-vous s�r de vouloir cl�turer cette commande ?","confirm_cloture");
-			print "<br />";
+			$ret=$html->form_confirm("commande.php?id=".$_GET["id"],"Cl�turer la commande","Etes-vous s�r de vouloir cl�turer cette commande ?","confirm_cloture");
+			if ($ret == 'html') print '<br>';
 		}
 
 		// Onglet commande

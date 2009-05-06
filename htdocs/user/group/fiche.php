@@ -221,16 +221,14 @@ else
 		$title = $langs->trans("Group");
 		dol_fiche_head($head, 'group', $title);
 
-
 		/*
 		 * Confirmation suppression
 		 */
 		if ($action == 'delete')
 		{
-			$html = new Form($db);
-			$html->form_confirm("fiche.php?id=$group->id",$langs->trans("DeleteAGroup"),$langs->trans("ConfirmDeleteGroup",$group->name),"confirm_delete");
+			$ret=$html->form_confirm("fiche.php?id=$group->id",$langs->trans("DeleteAGroup"),$langs->trans("ConfirmDeleteGroup",$group->name),"confirm_delete");
+			if ($ret == 'html') print '<br>';
 		}
-
 
 		/*
 		 * Fiche en mode visu

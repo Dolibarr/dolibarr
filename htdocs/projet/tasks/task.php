@@ -92,8 +92,8 @@ if ($_GET["id"] > 0)
 
 		if ($_GET["action"] == 'delete')
 		{
-			$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
-			print "<br>";
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
+			if ($ret == 'html') print '<br>';
 		}
 
 		print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
@@ -170,7 +170,7 @@ if ($_GET["id"] > 0)
 		{
 			$var=!$var;
   		    print "<tr ".$bc[$var].">";
-		    
+
   		    // Date
   		    print '<td>'.dol_print_date($db->jdate($task_time->task_date),'day').' '.dol_print_date($db->jdate($task_time->task_date),'%A').'</td>';
 
@@ -179,7 +179,7 @@ if ($_GET["id"] > 0)
 			$minutes = round((($task_time->task_duration - $heure) * 60),0);
 			$minutes = substr("00"."$minutes", -2);
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
-		    
+
 			// User
 			$user->id=$task_time->rowid;
 		    $user->nom=$task_time->login;

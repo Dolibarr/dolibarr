@@ -1534,104 +1534,120 @@ class Form
 
 
 	/**
-	 *    	\brief  Affiche formulaire de demande de confirmation
-	 *    	\param  page        	page
+	 *    	\brief  Show a confirmation HTML form or AJAX popup
+	 *    	\param  page        	page		Url of page to call if confirmation is OK
 	 *    	\param  title       	title
 	 *    	\param  question    	question
 	 *    	\param  action      	action
 	 *		\param	formquestion	an array with forms complementary inputs
 	 * 		\param	selectedchoice	"" or "no" or "yes"
+	 * 		\param	allowajax		0=No, 1=Yes (Yes works only if option activated)
+	 * 		\param	string			'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
 	 */
-	function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="")
+	function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $allowajax=0)
 	{
-		global $langs;
+		global $langs,$conf;
 
 		print "\n<!-- begin form_confirm -->\n";
-		print '<form method="post" action="'.$page.'" class="notoptoleftroright">';
-		print '<input type="hidden" name="action" value="'.$action.'">';
 
-		print '<table width="100%" class="valid">';
-
-		// Ligne titre
-		print '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('','recent').' '.$title.'</td></tr>';
-
-		// Ligne formulaire
-		if ($formquestion)
+		if ($allowajax && $conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 		{
-			print '<tr class="valid"><td class="valid" colspan="3">';
-			print '<table class="notopnoleftnoright" width="100%">';
-			print '<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>';
-			foreach ($formquestion as $key => $input)
+			$pageyes=$page.'&action='.$action.'&confirm=yes';
+			$pageno=$page.'&confirm=no';
+			print '<script type="text/javascript">dialogConfirm(\''.$pageyes.'\',\''.$pageno.'\',\''.dol_escape_js($question).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')</script>';
+			print "\n";
+			$ret='ajax';
+		}
+		else
+		{
+			print '<form method="post" action="'.$page.'" class="notoptoleftroright">';
+			print '<input type="hidden" name="action" value="'.$action.'">';
+
+			print '<table width="100%" class="valid">';
+
+			// Ligne titre
+			print '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('','recent').' '.$title.'</td></tr>';
+
+			// Ligne formulaire
+			if ($formquestion)
 			{
-				if ($input['type'] == 'text')
+				print '<tr class="valid"><td class="valid" colspan="3">';
+				print '<table class="notopnoleftnoright" width="100%">';
+				print '<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>';
+				foreach ($formquestion as $key => $input)
 				{
-					print '<tr><td valign="top">'.$input['label'].'</td><td colspan="2"><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>';
-				}
-				if ($input['type'] == 'select')
-				{
-					print '<tr><td valign="top">';
-					print $this->select_array($input['name'],$input['values'],'',1);
-					print '</td></tr>';
-				}
-				if ($input['type'] == 'checkbox')
-				{
-					print '<tr>';
-					print '<td valign="top">'.$input['label'].' &nbsp;';
-					print '<input type="checkbox" class="flat" name="'.$input['name'].'"';
-					if ($input['value'] != 'false') print ' checked="true"';
-					if ($input['disabled']) print ' disabled="true"';
-					print '></td>';
-					print '<td valign="top" align="left">&nbsp;</td>';
-					print '<td valign="top" align="left">&nbsp;</td>';
-					print '</tr>';
-				}
-				if ($input['type'] == 'radio')
-				{
-					$i=0;
-					foreach($input['values'] as $selkey => $selval)
+					if ($input['type'] == 'text')
+					{
+						print '<tr><td valign="top">'.$input['label'].'</td><td colspan="2"><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>';
+					}
+					if ($input['type'] == 'select')
+					{
+						print '<tr><td valign="top">';
+						print $this->select_array($input['name'],$input['values'],'',1);
+						print '</td></tr>';
+					}
+					if ($input['type'] == 'checkbox')
 					{
 						print '<tr>';
-						if ($i==0) print '<td valign="top">'.$input['label'].'</td>';
-						else print '<td>&nbsp;</td>';
-						print '<td valign="top" width="20"><input type="radio" class="flat" name="'.$input['name'].'" value="'.$selkey.'"';
+						print '<td valign="top">'.$input['label'].' &nbsp;';
+						print '<input type="checkbox" class="flat" name="'.$input['name'].'"';
+						if ($input['value'] != 'false') print ' checked="true"';
 						if ($input['disabled']) print ' disabled="true"';
 						print '></td>';
-						print '<td valign="top" align="left">';
-						print $selval;
-						print '</td></tr>';
-						$i++;
+						print '<td valign="top" align="left">&nbsp;</td>';
+						print '<td valign="top" align="left">&nbsp;</td>';
+						print '</tr>';
+					}
+					if ($input['type'] == 'radio')
+					{
+						$i=0;
+						foreach($input['values'] as $selkey => $selval)
+						{
+							print '<tr>';
+							if ($i==0) print '<td valign="top">'.$input['label'].'</td>';
+							else print '<td>&nbsp;</td>';
+							print '<td valign="top" width="20"><input type="radio" class="flat" name="'.$input['name'].'" value="'.$selkey.'"';
+							if ($input['disabled']) print ' disabled="true"';
+							print '></td>';
+							print '<td valign="top" align="left">';
+							print $selval;
+							print '</td></tr>';
+							$i++;
+						}
 					}
 				}
+				print '</table>';
+				print '</td></tr>';
+
+				//print '<tr class="valid"><td class="valid" colspan="3"><hr></td></tr>';
 			}
+
+			// Ligne message
+			print '<tr class="valid">';
+			print '<td class="valid">'.$question.'</td>';
+			print '<td class="valid">';
+			$newselectedchoice=empty($selectedchoice)?"no":$selectedchoice;
+			print $this->selectyesno("confirm",$newselectedchoice);
+			print '</td>';
+			print '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Validate").'"></td>';
+			print '</tr>';
+
 			print '</table>';
-			print '</td></tr>';
 
-			//print '<tr class="valid"><td class="valid" colspan="3"><hr></td></tr>';
-		}
-
-		// Ligne message
-		print '<tr class="valid">';
-		print '<td class="valid">'.$question.'</td>';
-		print '<td class="valid">';
-		$newselectedchoice=empty($selectedchoice)?"no":$selectedchoice;
-		print $this->selectyesno("confirm",$newselectedchoice);
-		print '</td>';
-		print '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Validate").'"></td>';
-		print '</tr>';
-
-		print '</table>';
-
-		if (is_array($formquestion))
-		{
-			foreach ($formquestion as $key => $input)
+			if (is_array($formquestion))
 			{
-				if ($input['type'] == 'hidden') print '<input type="hidden" name="'.$input['name'].'" value="'.$input['value'].'">';
+				foreach ($formquestion as $key => $input)
+				{
+					if ($input['type'] == 'hidden') print '<input type="hidden" name="'.$input['name'].'" value="'.$input['value'].'">';
+				}
 			}
+
+			print "</form>\n";
+			$ret='html';
 		}
 
-		print "</form>\n";
-
-		print "\n<!-- end form_confirm -->\n";
+		print "<!-- end form_confirm -->\n";
+		return $ret;
 	}
 
 

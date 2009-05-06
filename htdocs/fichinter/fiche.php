@@ -522,29 +522,29 @@ elseif ($_GET["id"] > 0)
 	// Confirmation de la suppression de la fiche d'intervention
 	if ($_GET['action'] == 'delete')
 	{
-		$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete');
-		print '<br>';
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete');
+		if ($ret == 'html') print '<br>';
 	}
 
 	// Confirmation de la validation de la fiche d'intervention
 	if ($_GET['action'] == 'validate')
 	{
-		$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('ValidateIntervention'), $langs->trans('ConfirmValidateIntervention'), 'confirm_validate');
-		print '<br>';
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('ValidateIntervention'), $langs->trans('ConfirmValidateIntervention'), 'confirm_validate');
+		if ($ret == 'html') print '<br>';
 	}
 
 	// Confirmation de la validation de la fiche d'intervention
 	if ($_GET['action'] == 'modify')
 	{
-		$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify');
-		print '<br>';
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify');
+		if ($ret == 'html') print '<br>';
 	}
 
 	// Confirmation de la suppression d'une ligne d'intervention
 	if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 	{
-		$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;ligne='.$_GET["ligne"], $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline');
-		print '<br>';
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;ligne='.$_GET["ligne"], $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline');
+		if ($ret == 'html') print '<br>';
 	}
 
 	print '<table class="border" width="100%">';
@@ -676,17 +676,8 @@ elseif ($_GET["id"] > 0)
 					print '<td align="center">';
 					if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 					{
-						if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-						{
-							$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&ligne='.$objp->rowid.'&action=confirm_deleteline&confirm=yes';
-							print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteInterventionLine').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'deleteline'.$i.'\')">';
-							print img_delete();
-						}
-						else
-						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=ask_deleteline&amp;ligne='.$objp->rowid.'">';
-							print img_delete();
-						}
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=ask_deleteline&amp;ligne='.$objp->rowid.'">';
+						print img_delete();
 					}
 					else
 					{
@@ -849,48 +840,21 @@ elseif ($_GET["id"] > 0)
 			// Validate
 			if ($fichinter->statut == 0 && $user->rights->ficheinter->creer)
 			{
-				print '<a class="butAction" ';
-				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-				{
-					$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_validate&confirm=yes';
-					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateIntervention')).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
-				}
-				else
-				{
-					print 'href="fiche.php?id='.$_GET["id"].'&action=validate"';
-				}
+				print '<a class="butAction" href="fiche.php?id='.$_GET["id"].'&action=validate"';
 				print '>'.$langs->trans("Valid").'</a>';
 			}
 
 			// Modify
 			if ($fichinter->statut == 1 && $user->rights->ficheinter->creer)
 			{
-				print '<a class="butAction" ';
-				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-				{
-					$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_modify&confirm=yes';
-					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmModifyIntervention')).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
-				}
-				else
-				{
-					print 'href="fiche.php?id='.$_GET["id"].'&action=modify"';
-				}
+				print '<a class="butAction" href="fiche.php?id='.$_GET["id"].'&action=modify"';
 				print '>'.$langs->trans("Modify").'</a>';
 			}
 
 			// Delete
 			if (($fichinter->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
 			{
-				print '<a class="butActionDelete" ';
-				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-				{
-					$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_delete&confirm=yes';
-					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans("ConfirmDeleteIntervention",$fichinter->ref)).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
-				}
-				else
-				{
-					print 'href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=delete"';
-				}
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=delete"';
 				print '>'.$langs->trans('Delete').'</a>';
 			}
 		}

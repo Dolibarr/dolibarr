@@ -133,7 +133,7 @@ if ($_POST['action'] == 'builddoc' && $user->rights->banque)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	
+
 	$result = $remisecheque->GeneratePdf($_POST["model"], $outputlangs);
 	if ($result <= 0)
 	{
@@ -197,8 +197,8 @@ else
 	 */
 	if ($_GET['action'] == 'delete')
 	{
-		$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete');
-		print '<br>';
+		$ret=$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete');
+		if ($ret == 'html') print '<br>';
 	}
 
 	/*
@@ -207,8 +207,8 @@ else
 	if ($_GET['action'] == 'valide')
 	{
 		$facid = $_GET['facid'];
-		$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide');
-		print '<br>';
+		$ret=$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide');
+		if ($ret == 'html') print '<br>';
 	}
 }
 

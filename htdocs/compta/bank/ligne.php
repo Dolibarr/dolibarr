@@ -219,8 +219,8 @@ if ($result)
 		// Confirmations
 		if ($_GET["action"] == 'delete_categ')
 		{
-			$html->form_confirm("ligne.php?rowid=".$_GET["rowid"]."&amp;cat1=".$_GET["fk_categ"]."&amp;orig_account=".$orig_account,$langs->trans("RemoveFromRubrique"),$langs->trans("RemoveFromRubriqueConfirm"),"confirm_delete_categ");
-			print '<br>';
+			$ret=$html->form_confirm("ligne.php?rowid=".$_GET["rowid"]."&amp;cat1=".$_GET["fk_categ"]."&amp;orig_account=".$orig_account,$langs->trans("RemoveFromRubrique"),$langs->trans("RemoveFromRubriqueConfirm"),"confirm_delete_categ");
+			if ($ret == 'html') print '<br>';
 		}
 
 		print '<table class="border" width="100%">';
@@ -238,7 +238,7 @@ if ($result)
 		print '<tr><td width="20%">'.$langs->trans("Ref")."</td>";
 		print '<td colspan="4">'.$objp->rowid.'</td>';
 		print '</tr>';
-		
+
 		// Author
 		print '<tr><td width="20%">'.$langs->trans("Author")."</td>";
 		if ($objp->fk_user_author)

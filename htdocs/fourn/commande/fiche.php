@@ -501,8 +501,8 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action']	== 'delete')
 		{
-			$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'),	'confirm_delete');
-			print '<br />';
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'),	'confirm_delete');
+			if ($ret == 'html') print '<br>';
 		}
 
 		/*
@@ -525,8 +525,8 @@ if ($id > 0 || ! empty($ref))
 				$text.=$notify->confirmMessage(3,$commande->socid);
 			}
 
-			$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text,	'confirm_valid');
-			print '<br />';
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text,	'confirm_valid');
+			if ($ret == 'html') print '<br>';
 		}
 		/*
 		 * Confirmation de l'approbation
@@ -534,8 +534,8 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action']	== 'approve')
 		{
-			$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder"),"confirm_approve");
-			print '<br />';
+			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder"),"confirm_approve");
+			if ($ret == 'html') print '<br>';
 		}
 		/*
 		 * Confirmation de la desapprobation
@@ -543,16 +543,16 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action']	== 'refuse')
 		{
-			$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder"),"confirm_refuse");
-			print '<br />';
+			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder"),"confirm_refuse");
+			if ($ret == 'html') print '<br>';
 		}
 		/*
 		 * Confirmation de l'annulation
 		 */
 		if ($_GET['action']	== 'cancel')
 		{
-			$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder"),"confirm_cancel");
-			print '<br />';
+			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder"),"confirm_cancel");
+			if ($ret == 'html') print '<br>';
 		}
 
 		/*
@@ -561,9 +561,9 @@ if ($id > 0 || ! empty($ref))
 		if ($_GET["action"]	== 'commande')
 		{
 			$date_com = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
-			$html->form_confirm("fiche.php?id=".$commande->id."&amp;datecommande=".$date_com."&amp;methode=".$_POST["methodecommande"]."&amp;comment=".urlencode($_POST["comment"]),
+			$ret=$html->form_confirm("fiche.php?id=".$commande->id."&amp;datecommande=".$date_com."&amp;methode=".$_POST["methodecommande"]."&amp;comment=".urlencode($_POST["comment"]),
 			$langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dol_print_date($date_com,'day')),"confirm_commande");
-			print '<br />';
+			if ($ret == 'html') print '<br>';
 		}
 
 		/*
@@ -571,8 +571,8 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action'] == 'delete_product_line' && ! empty($conf->global->PRODUIT_CONFIRM_DELETE_LINE))
 		{
-			$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
-			print '<br>';
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+			if ($ret == 'html') print '<br>';
 		}
 
 		/*
@@ -939,19 +939,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				if ($user->rights->fournisseur->commande->valider)
 				{
-					print '<a class="butAction" ';
-					if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-					{
-						// We check if number is temporary number
-						if (eregi('^\(PROV',$commande->ref)) $num = $commande->getNextNumRef($soc);
-						else $num = $commande->ref;
-						$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=confirm_valid&confirm=yes';
-						print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateOrder',$num)).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'validate\')"';
-					}
-					else
-					{
-						print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=valid"';
-					}
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=valid"';
 					print '>'.$langs->trans('Validate').'</a>';
 				}
 			}
