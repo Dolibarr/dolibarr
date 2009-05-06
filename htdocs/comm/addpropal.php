@@ -61,9 +61,7 @@ if ($_GET["projetid"])
 }
 
 /*
- *
  * Creation d'une nouvelle propale
- *
  */
 if ($_GET["action"] == 'create')
 {
@@ -88,7 +86,6 @@ if ($_GET["action"] == 'create')
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal";
 	$sql.= " WHERE ref like '$numpr%'";
 	$sql.= " AND entity = ".$conf->entity;
-	
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -231,7 +228,7 @@ if ($_GET["action"] == 'create')
 		print '<td>';
 		$liste_propal = array();
 		$liste_propal[0] = '';
-		
+
 		$sql ="SELECT p.rowid as id, p.ref, s.nom";
 		$sql.=" FROM ".MAIN_DB_PREFIX."propal p";
 		$sql.= ", ".MAIN_DB_PREFIX."societe s";
@@ -239,7 +236,7 @@ if ($_GET["action"] == 'create')
 		$sql.= " AND p.entity = ".$conf->entity;
 		$sql.= " AND p.fk_statut <> 0";
 		$sql.= " ORDER BY Id";
-		
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{

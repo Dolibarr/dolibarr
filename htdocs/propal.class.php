@@ -559,7 +559,7 @@ class Propal extends CommonObject
 		$sql.= ", 0";
 		$sql.= ", ".$this->db->idate($this->datep);
 		$sql.= ", ".$this->db->idate(mktime());
-		$sql.= ", '".$this->ref."'";
+		$sql.= ", '(PROV)'";
 		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql.= ", '".addslashes($this->note)."'";
 		$sql.= ", '".addslashes($this->note_public)."'";
@@ -580,6 +580,13 @@ class Propal extends CommonObject
 
 			if ($this->id)
 			{
+				if (empty($this->ref)) $this->ref='(PROV'.$this->id.')';
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."propal SET ref='".$this->ref."' WHERE rowid=".$this->id;
+
+				dol_syslog("Propal::create sql=".$sql);
+				$resql=$this->db->query($sql);
+				if (! $resql) $error++;
+
 				/*
 				 *  Insertion du detail des produits dans la base
 				 */
@@ -687,7 +694,7 @@ class Propal extends CommonObject
 	 */
 	function createFromClone($fromid,$invertdetail=0)
 	{
-		global $user,$langs;
+		global $user,$langs,$conf;
 
 		$error=0;
 
@@ -700,14 +707,23 @@ class Propal extends CommonObject
 		$object->id=0;
 		$object->statut=0;
 
+		if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
+		{
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php");
+		}
+		$obj = $conf->global->PROPALE_ADDON;
+		$modPropale = new $obj;
+		$numpr = $modPropale->getNextValue($soc,$object);
+
 		// Clear fields
+		$object->ref                = $numpr;
 		$object->user_author        = $user->id;
 		$object->user_valid         = '';
 		$object->date               = '';
-		$object->datep              = gmmktime();
+		$object->datep              = dol_now('gmt');
 		$object->fin_validite       = '';
 		$object->ref_client         = '';
-		$object->products = $object->lignes;	// Tant que products encore utilis�
+		$object->products = $object->lignes;	// Tant que products encore utilise
 
 		// Create clone
 		$result=$object->create($user);

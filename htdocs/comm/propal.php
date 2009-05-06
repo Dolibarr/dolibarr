@@ -78,7 +78,7 @@ $NBLINES=4;
 /******************************************************************************/
 
 // Action clone object
-if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
+if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 {
 	if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
 	{
@@ -129,7 +129,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 
 // Remove line
 if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-|| ($_GET['action'] == 'deleteline' && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE))
+|| ($_REQUEST['action'] == 'deleteline' && ! $conf->global->PRODUIT_CONFIRM_DELETE_LINE))
 {
 	if ($user->rights->propale->creer)
 	{
@@ -145,8 +145,10 @@ if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes
 		}
 		propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	}
-	Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
-	exit;
+	else
+	{
+		$mesg='<div class="error">'.$propal->error.'</div>';
+	}
 }
 
 // Validation
@@ -227,6 +229,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	{
 		if ($propal->fetch($_POST['copie_propal']) > 0)
 		{
+			$propal->ref       = $_POST['ref'];
 			$propal->datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			$propal->date_livraison = dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 			$propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
@@ -241,7 +244,6 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$propal->modelpdf  = $_POST['model'];
 			$propal->author    = $user->id;			// deprecated
 			$propal->note      = $_POST['note'];
-			$propal->ref       = $_POST['ref'];
 			$propal->statut    = 0;
 
 			$id = $propal->create_from($user);
@@ -253,6 +255,8 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	}
 	else
 	{
+		$propal->ref        = $_POST['ref'];
+		$propal->ref_client = $_POST['ref_client'];
 		$propal->datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		$propal->date_livraison = dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 		$propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
@@ -265,8 +269,6 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$propal->modelpdf   = $_POST['model'];
 		$propal->author     = $user->id;		// deprecated
 		$propal->note       = $_POST['note'];
-		$propal->ref_client = $_POST['ref_client'];
-		$propal->ref        = $_POST['ref'];
 
 		for ($i = 1 ; $i <= $conf->global->PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
 		{
@@ -916,7 +918,7 @@ if ($id > 0 || ! empty($ref))
 		//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$propal->ref),'confirm_clone',$formquestion,'yes');
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$propal->ref),'confirm_clone',$formquestion,'yes',1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -925,7 +927,7 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($_GET['action'] == 'delete')
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete');
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -934,7 +936,7 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -943,7 +945,7 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($_GET['action'] == 'validate')
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmValidateProp'), 'confirm_validate');
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmValidateProp'), 'confirm_validate','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -1708,37 +1710,30 @@ if ($id > 0 || ! empty($ref))
 	print '</div>';
 	print "\n";
 
-	/*
-	 * Formulaire cloture (signe ou non)
-	 */
-	$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
-	$form_close.= '<table class="border" width="100%">';
-	$form_close.= '<tr><td width="150" align="left">'.$langs->trans('Note').'</td><td align="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
-	$form_close.= $propal->note;
-	$form_close.= '</textarea></td></tr>';
-	$form_close.= '<tr><td width="150"  align="left">'.$langs->trans("CloseAs").'</td><td align="left">';
-	$form_close.= '<input type="hidden" name="action" value="setstatut">';
-	$form_close.= '<select name="statut">';
-	$form_close.= '<option value="0">&nbsp;</option>';
-	$form_close.= '<option value="2">'.$propal->labelstatut[2].'</option>';
-	$form_close.= '<option value="3">'.$propal->labelstatut[3].'</option>';
-	$form_close.= '</select>';
-	$form_close.= '</td></tr>';
-	$form_close.= '<tr><td align="center" colspan="2">';
-	$form_close.= '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">';
-	if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-	{
-		$form_close.= ' &nbsp; <input onClick="Dialog.closeInfo()" type="button" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
-	}
-	else
-	{
-		$form_close.= ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
-	}
-	$form_close.= '</td>';
-	$form_close.= '</tr></table></form>';
-
 	if ($_GET['action'] == 'statut')
 	{
+		/*
+		 * Formulaire cloture (signe ou non)
+		 */
+		$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
+		$form_close.= '<table class="border" width="100%">';
+		$form_close.= '<tr><td width="150" align="left">'.$langs->trans('Note').'</td><td align="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
+		$form_close.= $propal->note;
+		$form_close.= '</textarea></td></tr>';
+		$form_close.= '<tr><td width="150"  align="left">'.$langs->trans("CloseAs").'</td><td align="left">';
+		$form_close.= '<input type="hidden" name="action" value="setstatut">';
+		$form_close.= '<select name="statut">';
+		$form_close.= '<option value="0">&nbsp;</option>';
+		$form_close.= '<option value="2">'.$propal->labelstatut[2].'</option>';
+		$form_close.= '<option value="3">'.$propal->labelstatut[3].'</option>';
+		$form_close.= '</select>';
+		$form_close.= '</td></tr>';
+		$form_close.= '<tr><td align="center" colspan="2">';
+		$form_close.= '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">';
+		$form_close.= ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+		$form_close.= '</td>';
+		$form_close.= '</tr></table></form>';
+
 		print $form_close;
 	}
 
@@ -1779,19 +1774,7 @@ if ($id > 0 || ! empty($ref))
 			// Close
 			if ($propal->statut == 1 && $user->rights->propale->cloturer)
 			{
-				print '<div id="confirm_close" style="display:none">';
-				print $form_close."\n";
-				print '</div>'."\n";
-
-				print '<a class="butAction" ';
-				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-				{
-					print 'href="#" onClick="dialogInfo($(\'confirm_close\').innerHTML)"'."\n";
-				}
-				else
-				{
-					print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=statut"';
-				}
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=statut"';
 				print '>'.$langs->trans('Close').'</a>';
 			}
 

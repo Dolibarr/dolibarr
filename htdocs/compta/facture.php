@@ -72,7 +72,7 @@ $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 /******************************************************************************/
 
 // Action clone object
-if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
+if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 {
 	if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
 	{
@@ -139,7 +139,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
  *  Supprime une ligne produit AVEC ou SANS confirmation
  */
 if (($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-|| ($_GET['action'] == 'deleteline' && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE))
+|| ($_REQUEST['action'] == 'deleteline' && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE))
 {
 	if ($user->rights->facture->creer)
 	{
@@ -392,7 +392,7 @@ if ($_REQUEST['action'] == 'confirm_payed_partially' && $_REQUEST['confirm'] == 
 	}
 }
 // Classe à "abandonnée"
-if ($_POST['action'] == 'confirm_canceled' && $_POST['confirm'] == 'yes')
+if ($_REQUEST['action'] == 'confirm_canceled' && $_REQUEST['confirm'] == 'yes')
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
@@ -409,7 +409,7 @@ if ($_POST['action'] == 'confirm_canceled' && $_POST['confirm'] == 'yes')
 }
 
 // Convertir en reduc
-if ($_POST['action'] == 'confirm_converttoreduc' && $_POST['confirm'] == 'yes' && $user->rights->facture->creer)
+if ($_REQUEST['action'] == 'confirm_converttoreduc' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->creer)
 {
 	$db->begin();
 
