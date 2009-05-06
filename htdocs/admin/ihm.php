@@ -151,17 +151,14 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // Confirmation par popup ajax
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
-		$var=!$var;
-	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
-	    print $html->selectyesno('main_confirm_ajax',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,1);
-	    print ' ('.$langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled").')';
-	    print '</td>';
-		print '<td width="20">'.$html->textwithpicto('',$langs->trans("FeatureDevelopment")).'</td>';
-		print '</tr>';
-	}
+    // Use Ajax popups for confirmation
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
+    print $html->selectyesno('main_confirm_ajax',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,1);
+    print ' ('.$langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled").')';
+    print '</td>';
+	print '<td width="20">'.$html->textwithpicto('',$langs->trans("FeatureDevelopment")).'</td>';
+	print '</tr>';
 
     // Desactiver le calendrier popup
     $var=!$var;
