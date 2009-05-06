@@ -14,6 +14,7 @@ CustomerDoesNotHavePrefix=El cliente no tiene prefijo de definido
 InterventionContact=Contacto intervención
 DeleteIntervention=Eliminar intervención
 ValidateIntervention=Validar intervención
+ModifyIntervention=Modificar intervención
 DeleteInterventionLine=Eliminar línea de intervención
 ConfirmDeleteIntervention=¿Está seguro de querer eliminar esta intervención?
 ConfirmValidateIntervention=¿Está seguro de querer validar esta intervención?
