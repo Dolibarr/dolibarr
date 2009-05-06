@@ -1731,6 +1731,7 @@ if ($id > 0 || ! empty($ref))
 		$form_close.= '<tr><td align="center" colspan="2">';
 		$form_close.= '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">';
 		$form_close.= ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+		$form_close.= '<a name="close">&nbsp;</a>';
 		$form_close.= '</td>';
 		$form_close.= '</tr></table></form>';
 
@@ -1774,7 +1775,7 @@ if ($id > 0 || ! empty($ref))
 			// Close
 			if ($propal->statut == 1 && $user->rights->propale->cloturer)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=statut"';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=statut#close"';
 				print '>'.$langs->trans('Close').'</a>';
 			}
 
