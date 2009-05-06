@@ -107,7 +107,7 @@ if ($_REQUEST['action'] == 'confirm_modify' && $_REQUEST['confirm'] == 'yes')
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
-		$result=fichinter_create($db, $fichinter, $_REQUEST['model'], $outputlangs);
+		$result=fichinter_create($db, $fichinter, (empty($_REQUEST['model'])?$fichinter->model:$_REQUEST['model']), $outputlangs);
 	}
 	else
 	{
@@ -291,7 +291,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 /*
  *  Supprime une ligne d'intervention SANS confirmation
  */
-if ($_GET['action'] == 'deleteline' && $user->rights->ficheinter->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+if ($_REQUEST['action'] == 'deleteline' && $user->rights->ficheinter->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
 	$fichinterline = new FichinterLigne($db);
 	if ($fichinterline->fetch($_GET['ligne']) <= 0)
@@ -522,28 +522,28 @@ elseif ($_GET["id"] > 0)
 	// Confirmation de la suppression de la fiche d'intervention
 	if ($_GET['action'] == 'delete')
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete');
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
 
 	// Confirmation de la validation de la fiche d'intervention
 	if ($_GET['action'] == 'validate')
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('ValidateIntervention'), $langs->trans('ConfirmValidateIntervention'), 'confirm_validate');
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('ValidateIntervention'), $langs->trans('ConfirmValidateIntervention'), 'confirm_validate','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
 
 	// Confirmation de la validation de la fiche d'intervention
 	if ($_GET['action'] == 'modify')
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify');
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
 
 	// Confirmation de la suppression d'une ligne d'intervention
 	if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;ligne='.$_GET["ligne"], $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline');
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;ligne='.$_GET["ligne"], $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
 

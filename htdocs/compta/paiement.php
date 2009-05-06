@@ -256,7 +256,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 			exit;
 		}
 
-		// Initialise donnees pour page de confirmation
+		// Initialize data for confirmation (this is used because data can be change during confirmation)
 		if ($_POST["action"] == 'add_paiement')
 		{
 			$i=0;
@@ -264,8 +264,6 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 			$formquestion[$i++]=array('type' => 'hidden','name' => 'facid', 'value' => $facture->id);
 			$formquestion[$i++]=array('type' => 'hidden','name' => 'socid', 'value' => $facture->socid);
 			$formquestion[$i++]=array('type' => 'hidden','name' => 'type',  'value' => $facture->type);
-
-
 		}
 
 		print '<form name="add_paiement" action="paiement.php" method="post">';
@@ -469,7 +467,6 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		// Formulaire confirmation
 		if ($_POST["action"] == 'add_paiement')
 		{
-			//				print '<tr><td colspan="3">';
 			print '<br>';
 			$text=$langs->trans('ConfirmCustomerPayment',$totalpaiement,$langs->trans("Currency".$conf->monnaie));
 			$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion);

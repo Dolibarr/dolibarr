@@ -51,7 +51,7 @@ $mesg='';
  * Actions
  */
 
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
+if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$db->begin();
 
@@ -71,7 +71,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user-
 	}
 }
 
-if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
+if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$db->begin();
 
@@ -143,7 +143,7 @@ dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"));
  */
 if ($_GET['action'] == 'delete')
 {
-	$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
+	$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
 	if ($ret == 'html') print '<br>';
 }
 
@@ -153,7 +153,7 @@ if ($_GET['action'] == 'delete')
 if ($_GET['action'] == 'valide')
 {
 	$facid = $_GET['facid'];
-	$ret=$html->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
+	$ret=$html->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 	if ($ret == 'html') print '<br>';
 }
 

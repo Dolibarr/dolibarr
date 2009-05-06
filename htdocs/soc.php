@@ -959,7 +959,7 @@ else
 	if ($_GET["action"] == 'delete')
 	{
 		$html = new Form($db);
-		$ret=$html->form_confirm("soc.php?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,1);
+		$ret=$html->form_confirm("soc.php?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
 		if ($ret == 'html') print '<br>';
 	}
 

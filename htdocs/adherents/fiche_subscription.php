@@ -17,11 +17,11 @@
  */
 
 /**
-        \file       htdocs/adherents/fiche_subscription.php
-        \ingroup    adherent
-        \brief      Page d'ajout, edition, suppression d'une fiche adhésion
-        \version    $Id$
-*/
+ *       \file       htdocs/adherents/fiche_subscription.php
+ *       \ingroup    adherent
+ *       \brief      Page d'ajout, edition, suppression d'une fiche adhésion
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
@@ -126,7 +126,7 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 	}
 }
 
-if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
 	$result=$subscription->fetch($rowid);
     $result=$subscription->delete();
@@ -297,7 +297,7 @@ if ($rowid && $action != 'edit')
         //$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
 		$text=$langs->trans("ConfirmDeleteSubscription");
 		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$subscription->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion);
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$subscription->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion,0,1);
         if ($ret == 'html') print '<br>';
     }
 

@@ -121,7 +121,7 @@ if ($_POST["action"] == 'add' && $user->rights->societe->contact->creer)
 	}
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->contact->supprimer)
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->societe->contact->supprimer)
 {
 	$contact = new Contact($db);
 	$result=$contact->fetch($_GET["id"]);
@@ -130,9 +130,15 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user-
 	$contact->old_firstname = $_POST["old_firstname"];
 
 	$result = $contact->delete();
-
-	Header("Location: index.php");
-	exit;
+	if ($result > 0)
+	{
+		Header("Location: index.php");
+		exit;
+	}
+	else
+	{
+		$mesg=$contact->error;
+	}
 }
 
 if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
@@ -223,7 +229,7 @@ if ($user->rights->societe->contact->supprimer)
 {
 	if ($_GET["action"] == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete");
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
 		if ($ret == 'html') print '<br>';
 	}
 }

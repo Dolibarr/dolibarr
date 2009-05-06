@@ -356,7 +356,7 @@ if ($_POST["actioncancel"])
 	$_GET["id"]=$_POST["id"];       // Force affichage dictionnaire en cours d'edition
 }
 
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')       // delete
+if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')       // delete
 {
 	if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
 	else { $rowidcol="rowid"; }
@@ -448,7 +448,7 @@ print "<br>\n";
  */
 if ($_GET['action'] == 'delete')
 {
-	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$_GET["rowid"].'&amp;code='.$_GET["code"].'&amp;id='.$_GET["id"], $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete');
+	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$_GET["rowid"].'&code='.$_GET["code"].'&id='.$_GET["id"], $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
 	if ($ret == 'html') print '<br>';
 }
 

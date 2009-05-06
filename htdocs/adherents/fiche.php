@@ -117,7 +117,7 @@ if ($_POST["action"] == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes
 	}
 }
 
-if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
+if ($_REQUEST["action"] == 'confirm_sendinfo' && $_REQUEST["confirm"] == 'yes')
 {
     $adh->id = $rowid;
     $adh->fetch($rowid);
@@ -125,6 +125,7 @@ if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
 	if ($adh->email)
 	{
 		$result=$adh->send_an_email("Voici le contenu de votre fiche\n\n%INFOS%\n\n","Contenu de votre fiche adherent");
+		$mesg=$langs->trans("CardSent");
 	}
 }
 
@@ -392,7 +393,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
     }
 }
 
-if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->supprimer && $_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
 	$result=$adh->fetch($rowid);
     $result=$adh->delete($rowid);
@@ -542,6 +543,7 @@ if ($errmsg)
     print '<div class="error">'.$errmsg.'</div>';
     print "\n";
 }
+if ($mesg) print '<div class="ok">'.$mesg.'</div>';
 
 // fetch optionals attributes and labels
 $adho->fetch_name_optionals_label();
@@ -878,13 +880,6 @@ if ($rowid && $action != 'edit')
 		if ($ret == 'html') print '<br>';
 	}
 
-	// Confirm remove member
-    if ($action == 'delete')
-    {
-        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete");
-        if ($ret == 'html') print '<br>';
-    }
-
     // Confirm validate member
     if ($action == 'valid')
     {
@@ -899,7 +894,7 @@ if ($rowid && $action != 'edit')
     // Confirm send card by mail
     if ($action == 'sendinfo')
     {
-        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail"),"confirm_sendinfo");
+        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail"),"confirm_sendinfo",'',0,1);
         if ($ret == 'html') print '<br>';
     }
 
@@ -916,6 +911,13 @@ if ($rowid && $action != 'edit')
 		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?'true':'false'));
 
 		$ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
+        if ($ret == 'html') print '<br>';
+    }
+
+	// Confirm remove member
+    if ($action == 'delete')
+    {
+        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",'',0,1);
         if ($ret == 'html') print '<br>';
     }
 

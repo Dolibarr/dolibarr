@@ -610,6 +610,8 @@ class Contact extends CommonObject
 			$result=$interface->run_triggers('CONTACT_DELETE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
+
+            if ($error) $this->error=join(',',$this->errors);
 		}
 
 		if (! $error)

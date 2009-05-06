@@ -14,6 +14,7 @@ CustomerDoesNotHavePrefix=Customer does not have a prefix
 InterventionContact=Intervention contact
 DeleteIntervention=Delete intervention
 ValidateIntervention=Validate intervention
+ModifyIntervention=Modify intervention
 DeleteInterventionLine=Delete intervention line
 ConfirmDeleteIntervention=Are you sure you want to delete this intervention ?
 ConfirmValidateIntervention=Are you sure you want to validate this intervention ?

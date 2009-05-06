@@ -672,12 +672,12 @@ function cleanSerialize(expr) {
 }
 
 /*=================================================================
-	Purpose:  Affiche un message de confirmation
-	Input:    linkurl,message,ok,cancel,objectID
-	Author:   Regis Houssin
+	Purpose:  Show a confim popup
+	Input:    title,linkurlyes,linkurlno,message,ok,cancel,objectID
+	Author:   Regis Houssin, Laurent Destailleur
 	Licence:  GPL
 ==================================================================*/
-function dialogConfirm(linkurlyes,linkurlno,message,ok,cancel,objectID) {
+function dialogConfirm(title,linkurlyes,linkurlno,message,ok,cancel,objectID) {
 	Dialog.confirm(message, {
 		width:560,
 		okLabel: ok,

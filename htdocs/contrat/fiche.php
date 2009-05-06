@@ -51,7 +51,7 @@ $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
  * Actions
  */
 
-if ($_POST["action"] == 'confirm_active' && $_POST["confirm"] == 'yes' && $user->rights->contrat->activer)
+if ($_REQUEST["action"] == 'confirm_active' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->activer)
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
@@ -361,21 +361,21 @@ if ($_GET["action"] == 'deleteline' && $user->rights->contrat->creer)
 	}
 }
 
-if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->contrat->creer)
+if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
     $result = $contrat->validate($user,$langs,$conf);
 }
 
-if ($_POST["action"] == 'confirm_close' && $_POST["confirm"] == 'yes' && $user->rights->contrat->creer)
+if ($_REQUEST["action"] == 'confirm_close' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
     $result = $contrat->cloture($user,$langs,$conf);
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
     if ($user->rights->contrat->supprimer)
     {
@@ -394,7 +394,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
     }
 }
 
-if ($_POST["action"] == 'confirm_move' && $_POST["confirm"] == 'yes')
+if ($_REQUEST["action"] == 'confirm_move' && $_REQUEST["confirm"] == 'yes')
 {
     if ($user->rights->contrat->creer)
     {
@@ -654,7 +654,7 @@ else
          */
         if ($_GET["action"] == 'delete')
         {
-            $ret=$form->form_confirm("fiche.php?id=$id",$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete");
+            $ret=$form->form_confirm("fiche.php?id=$id",$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete",'',0,1);
 			if ($ret == 'html') print '<br>';
         }
 
@@ -664,7 +664,7 @@ else
         if ($_GET["action"] == 'valid')
         {
             //$numfa = contrat_get_num($soc);
-            $ret=$form->form_confirm("fiche.php?id=$id",$langs->trans("ValidateAContract"),$langs->trans("ConfirmValidateContract"),"confirm_valid");
+            $ret=$form->form_confirm("fiche.php?id=$id",$langs->trans("ValidateAContract"),$langs->trans("ConfirmValidateContract"),"confirm_valid",'',0,1);
 			if ($ret == 'html') print '<br>';
         }
 
@@ -673,7 +673,7 @@ else
          */
         if ($_GET["action"] == 'close')
         {
-            $ret=$form->form_confirm("fiche.php?id=$id",$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close");
+            $ret=$form->form_confirm("fiche.php?id=$id",$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close",'',0,1);
 			if ($ret == 'html') print '<br>';
         }
 
@@ -995,7 +995,7 @@ else
 				$title=$langs->trans("CloseService");
 				$question=$langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y"));
 				$action="confirm_closeline";
-				$html->form_confirm($page,$title,$question,$action,'','');
+				$html->form_confirm($page,$title,$question,$action,'',0,1);
 				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 

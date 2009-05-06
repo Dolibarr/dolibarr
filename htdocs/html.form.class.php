@@ -1541,20 +1541,73 @@ class Form
 	 *    	\param  action      	action
 	 *		\param	formquestion	an array with forms complementary inputs
 	 * 		\param	selectedchoice	"" or "no" or "yes"
-	 * 		\param	allowajax		0=No, 1=Yes (Yes works only if option activated)
+	 * 		\param	useajax			0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
 	 * 		\param	string			'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
 	 */
-	function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $allowajax=0)
+	function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0)
 	{
 		global $langs,$conf;
 
+		$more='';
+		if ($formquestion)
+		{
+			$more.='<tr class="valid"><td class="valid" colspan="3">';
+			$more.='<table class="notopnoleftnoright" width="100%">';
+			$more.='<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>';
+			foreach ($formquestion as $key => $input)
+			{
+				if ($input['type'] == 'text')
+				{
+					$more.='<tr><td valign="top">'.$input['label'].'</td><td colspan="2"><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>';
+				}
+				if ($input['type'] == 'select')
+				{
+					$more.='<tr><td valign="top">';
+					$more.=$this->select_array($input['name'],$input['values'],'',1);
+					$more.='</td></tr>';
+				}
+				if ($input['type'] == 'checkbox')
+				{
+					$more.='<tr>';
+					$more.='<td valign="top">'.$input['label'].' &nbsp;';
+					$more.='<input type="checkbox" class="flat" name="'.$input['name'].'"';
+					if ($input['value'] != 'false') $more.=' checked="true"';
+					if ($input['disabled']) $more.=' disabled="true"';
+					$more.='></td>';
+					$more.='<td valign="top" align="left">&nbsp;</td>';
+					$more.='<td valign="top" align="left">&nbsp;</td>';
+					$more.='</tr>';
+				}
+				if ($input['type'] == 'radio')
+				{
+					$i=0;
+					foreach($input['values'] as $selkey => $selval)
+					{
+						$more.='<tr>';
+						if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
+						else $more.='<td>&nbsp;</td>';
+						$more.='<td valign="top" width="20"><input type="radio" class="flat" name="'.$input['name'].'" value="'.$selkey.'"';
+						if ($input['disabled']) $more.=' disabled="true"';
+						$more.='></td>';
+						$more.='<td valign="top" align="left">';
+						$more.=$selval;
+						$more.='</td></tr>';
+						$i++;
+					}
+				}
+			}
+			$more.='</table>';
+			$more.='</td></tr>';
+		}
+
 		print "\n<!-- begin form_confirm -->\n";
 
-		if ($allowajax && $conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+		if ($useajax && $conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 		{
 			$pageyes=$page.'&action='.$action.'&confirm=yes';
-			$pageno=$page.'&confirm=no';
-			print '<script type="text/javascript">dialogConfirm(\''.$pageyes.'\',\''.$pageno.'\',\''.dol_escape_js($question).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')</script>';
+			$pageno=($useajax == 2?$page.'&confirm=no':'');
+			// Note: Title is not used by dialogConfirm function
+			print '<script type="text/javascript">dialogConfirm(\''.$title.'\',\''.$pageyes.'\',\''.$pageno.'\',\''.dol_escape_js('<b>'.$title.'</b><br>'.$more.$question).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')</script>';
 			print "\n";
 			$ret='ajax';
 		}
@@ -1569,58 +1622,7 @@ class Form
 			print '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('','recent').' '.$title.'</td></tr>';
 
 			// Ligne formulaire
-			if ($formquestion)
-			{
-				print '<tr class="valid"><td class="valid" colspan="3">';
-				print '<table class="notopnoleftnoright" width="100%">';
-				print '<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>';
-				foreach ($formquestion as $key => $input)
-				{
-					if ($input['type'] == 'text')
-					{
-						print '<tr><td valign="top">'.$input['label'].'</td><td colspan="2"><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>';
-					}
-					if ($input['type'] == 'select')
-					{
-						print '<tr><td valign="top">';
-						print $this->select_array($input['name'],$input['values'],'',1);
-						print '</td></tr>';
-					}
-					if ($input['type'] == 'checkbox')
-					{
-						print '<tr>';
-						print '<td valign="top">'.$input['label'].' &nbsp;';
-						print '<input type="checkbox" class="flat" name="'.$input['name'].'"';
-						if ($input['value'] != 'false') print ' checked="true"';
-						if ($input['disabled']) print ' disabled="true"';
-						print '></td>';
-						print '<td valign="top" align="left">&nbsp;</td>';
-						print '<td valign="top" align="left">&nbsp;</td>';
-						print '</tr>';
-					}
-					if ($input['type'] == 'radio')
-					{
-						$i=0;
-						foreach($input['values'] as $selkey => $selval)
-						{
-							print '<tr>';
-							if ($i==0) print '<td valign="top">'.$input['label'].'</td>';
-							else print '<td>&nbsp;</td>';
-							print '<td valign="top" width="20"><input type="radio" class="flat" name="'.$input['name'].'" value="'.$selkey.'"';
-							if ($input['disabled']) print ' disabled="true"';
-							print '></td>';
-							print '<td valign="top" align="left">';
-							print $selval;
-							print '</td></tr>';
-							$i++;
-						}
-					}
-				}
-				print '</table>';
-				print '</td></tr>';
-
-				//print '<tr class="valid"><td class="valid" colspan="3"><hr></td></tr>';
-			}
+			print $more;
 
 			// Ligne message
 			print '<tr class="valid">';

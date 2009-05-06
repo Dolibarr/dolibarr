@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/compta/facture/fiche-rec.php
- \ingroup    facture
- \brief      Page d'affichage d'une facture récurrent
- \version    $Id$
+ *	\file       htdocs/compta/facture/fiche-rec.php
+ *	\ingroup    facture
+ *	\brief      Page d'affichage d'une facture récurrent
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -101,7 +101,7 @@ $html = new Form($db);
  ************************************************************************/
 if ($_GET["action"] == 'create')
 {
-	print_titre($langs->trans("CreateRepeatableInvoice"));
+	print_fiche_titre($langs->trans("CreateRepeatableInvoice"));
 
 	if ($mesg) print $mesg.'<br>';
 

@@ -22,10 +22,10 @@
  */
 
 /**
- \file       htdocs/admin/fichinter.php
- \ingroup    fichinter
- \brief      Page d'administration/configuration du module FicheInter
- \version    $Id$
+ *	\file       htdocs/admin/fichinter.php
+ *	\ingroup    fichinter
+ *	\brief      Page d'administration/configuration du module FicheInter
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -108,7 +108,7 @@ if ($_GET["action"] == 'del')
 	$sql.= " WHERE nom = '".$_GET["value"];
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
-	
+
 	if ($db->query($sql))
 	{
 
@@ -129,11 +129,14 @@ if ($_GET["action"] == 'setdoc')
 	// On active le modele
 	$type='ficheinter';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$_GET["value"];
+	$sql_del.= " WHERE nom = '".$_GET["value"]."'";
 	$sql_del.= " AND type = '".$type."'";
 	$sql_del.= " AND entity = ".$conf->entity;
+	dol_syslog("fichinter: sql_del=".$sql_del);
 	$result1=$db->query($sql_del);
+
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+	dol_syslog("fichinter: sql_del=".$sql_del);
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
