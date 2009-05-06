@@ -166,7 +166,7 @@ class Conf
 
 		$rootfordata = DOL_DATA_ROOT;
 		// If multicompany module is enabled, we redefine the root of data
-		if (! empty($this->global->MAIN_MODULE_MULTICOMPANY) && ! empty($this->entity)) $rootfordata.='/'.$this->entity;
+		if (! empty($this->global->MAIN_MODULE_MULTICOMPANY) && ! empty($this->entity) && $this->entity > 1) $rootfordata.='/'.$this->entity;
 
 		// For backward compatibility
 		// TODO Remove params this->xxx->enabled. Must be replaced by conf->global->MAIN_MODULE_XXX
