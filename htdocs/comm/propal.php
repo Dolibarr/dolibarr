@@ -385,7 +385,7 @@ if ($_POST['addfile'])
 			}
 			else
 			{
-				// Echec transfert (fichier d�passant la limite ?)
+				// Echec transfert (fichier depassant la limite ?)
 				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 				// print_r($_FILES);
 			}
