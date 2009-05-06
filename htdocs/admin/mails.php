@@ -237,6 +237,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		else { $text = $langs->trans("Undefined"); }
 		$htmltext = $langs->trans("ContactSuperAdminForChange");
 		print $html->textwithpicto($text,$htmltext,1,'superadmin');
+		print '<input type="hidden" name="MAIN_MAIL_SENDMODE" value="'.$conf->global->MAIN_MAIL_SENDMODE.'">';
 	}
 	print '</td></tr>';
 
@@ -264,6 +265,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 			$text = $conf->global->MAIN_MAIL_SMTP_SERVER ? $conf->global->MAIN_MAIL_SMTP_SERVER : $smtpserver;
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $html->textwithpicto($text,$htmltext,1,'superadmin');
+			print '<input type="hidden" name="MAIN_MAIL_SMTP_SERVER" value="'.$conf->global->MAIN_MAIL_SMTP_SERVER.'">';
 		}
 	}
 	print '</td></tr>';
@@ -292,6 +294,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 			$text = $conf->global->MAIN_MAIL_SMTP_PORT ? $conf->global->MAIN_MAIL_SMTP_PORT : $smtpport;
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $html->textwithpicto($text,$htmltext,1,'superadmin');
+			print '<input type="hidden" name="MAIN_MAIL_SMTP_PORT" value="'.$conf->global->MAIN_MAIL_SMTP_PORT.'">';
 		}
 	}
 	print '</td></tr>';
@@ -310,6 +313,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		{
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $html->textwithpicto($conf->global->MAIN_MAIL_SMTPS_ID,$htmltext,1,'superadmin');
+			print '<input type="hidden" name="MAIN_MAIL_SMTPS_ID" value="'.$conf->global->MAIN_MAIL_SMTPS_ID.'">';
 		}
 		print '</td></tr>';
 	}
@@ -328,6 +332,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		{
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $html->textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW,$htmltext,1,'superadmin');
+			rint '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="'.$conf->global->MAIN_MAIL_SMTPS_PW.'">';
 		}
 		print '</td></tr>';
 	}
