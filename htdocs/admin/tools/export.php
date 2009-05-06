@@ -86,7 +86,7 @@ if ($what == 'mysql')
 		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $mysqldump,'chaine',0,'',$conf->entity);
 	}
 
-	create_exdir(DOL_DATA_ROOT.'/admin/temp');
+	create_exdir($conf->admin->dir_temp);
 
 	// Parameteres execution
 	$command=$mysqldump;
@@ -130,15 +130,12 @@ if ($what == 'mysql')
 		$paramclear.=" -p".$dolibarr_main_db_pass;
 	}
 
-	$relativepathdir='/admin/temp';
-	$relativepathfile=$relativepathdir.'/'.$file;
+	$outputdir  = $conf->admin->dir_temp;
+	$outputfile = $outputdir.'/'.$file;
 	// for compression format, we add extension
-	if ($compression == 'gz') $relativepathfile.='.gz';
-	if ($compression == 'bz') $relativepathfile.='.bz2';
-	$relativepatherr=$relativepathfile.'.err';
-	$outputdir=DOL_DATA_ROOT.$relativepathdir;
-	$outputfile=DOL_DATA_ROOT.$relativepathfile;
-	$outputerror=DOL_DATA_ROOT.$relativepatherr;
+	if ($compression == 'gz') $outputfile.='.gz';
+	if ($compression == 'bz') $outputfile.='.bz2';
+	$outputerror = $outputfile.'.err';
 
 	print $langs->trans("RunCommandSummary").':<br>'."\n";
 	print '<textarea rows="1" cols="120">'.$command." ".$paramcrypted.'</textarea><br>'."\n";
@@ -227,7 +224,7 @@ if ($what)
 	}
 }
 
-$result=$formfile->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1,'',array(),0,0,48,0,'',$langs->trans("Files"));
+$result=$formfile->show_documents('systemtools','',$conf->admin->dir_temp,$_SERVER['PHP_SELF'],0,1,'',array(),0,0,48,0,'',$langs->trans("Files"));
 
 if ($result == 0)
 {
