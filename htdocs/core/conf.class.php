@@ -165,6 +165,7 @@ class Conf
 		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT="en_US";
 
 		$rootfordata = DOL_DATA_ROOT;
+		$rootforuser = DOL_DATA_ROOT;
 		// If multicompany module is enabled, we redefine the root of data
 		if (! empty($this->global->MAIN_MODULE_MULTICOMPANY) && ! empty($this->entity) && $this->entity > 1) $rootfordata.='/'.$this->entity;
 
@@ -188,8 +189,8 @@ class Conf
 		// for backward compatibility.
 
 		// Module user
-		$this->user->dir_output=$rootfordata."/users";
-		$this->user->dir_temp=$rootfordata."/users/temp";
+		$this->user->dir_output=$rootforuser."/users";
+		$this->user->dir_temp=$rootforuser."/users/temp";
 
 		// Module RSS
 		$this->externalrss->dir_output=$rootfordata."/rss";
