@@ -98,7 +98,7 @@ var Effect = {
     }
   },
   DefaultOptions: {
-    duration:   1.0,   // seconds
+    duration:   0.3,   // seconds	(DOL CHANGE: Reduc time to show effect)
     fps:        100,   // 100= assume 66fps max.
     sync:       false, // true for combining
     from:       0.0,
