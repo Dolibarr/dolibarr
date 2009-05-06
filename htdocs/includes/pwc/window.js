@@ -1228,8 +1228,8 @@ var Windows = {
   observers: [],
   focusedWindow: null,
   maxZIndex: 0,
-  overlayShowEffectOptions: {duration: 0.5},
-  overlayHideEffectOptions: {duration: 0.5},
+  overlayShowEffectOptions: {duration: 0.3},
+  overlayHideEffectOptions: {duration: 0.3},
 
   addObserver: function(observer) {
     this.removeObserver(observer);
