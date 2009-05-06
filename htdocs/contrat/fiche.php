@@ -55,8 +55,7 @@ if ($_REQUEST["action"] == 'confirm_active' && $_REQUEST["confirm"] == 'yes' && 
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
-
-    $result = $contrat->active_line($user, $_GET["ligne"], $_GET["date"], $_GET["dateend"]);
+    $result = $contrat->active_line($user, $_GET["ligne"], $_GET["date"], $_GET["dateend"], urldecode($_GET["comment"]));
 
     if ($result > 0)
     {
@@ -72,7 +71,7 @@ if ($_REQUEST["action"] == 'confirm_closeline' && $_REQUEST["confirm"] == 'yes' 
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
-    $result = $contrat->close_line($user, $_GET["ligne"], $_GET["dateend"]);
+    $result = $contrat->close_line($user, $_GET["ligne"], $_GET["dateend"], urldecode($_GET["comment"]));
 
     if ($result > 0)
     {
@@ -344,7 +343,7 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
     }
 }
 
-if ($_GET["action"] == 'deleteline' && $user->rights->contrat->creer)
+if ($_REQUEST["action"] == 'confirm_deleteline' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
@@ -755,10 +754,10 @@ else
 		$arrayothercontracts=$contrat->getListOfContracts('others');
 
 		/*
-         * Lignes de contrats
+         * Lines of contracts
          */
 
-		// Menu list of services
+		// Title line for service
 		print '<table class="noborder" width="100%">';	// Array with (n*2)+1 lines
 		$cursorline=1;
 		while ($cursorline <= $nbofservices)
@@ -776,6 +775,7 @@ else
 			$sql.= " cd.tva_tx, cd.remise_percent, cd.info_bits, cd.subprice,";
 			$sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_debut, ".$db->pdate("cd.date_ouverture")." as date_debut_reelle,";
 			$sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin, ".$db->pdate("cd.date_cloture")." as date_fin_reelle,";
+			$sql.= " cd.commentaire as comment,";
 			$sql.= " p.ref, p.label";
 			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
@@ -837,7 +837,7 @@ else
 					print '<td align="right" nowrap="nowrap">';
 					if ($user->rights->contrat->creer && sizeof($arrayothercontracts) && ($contrat->statut == 0 || ($contrat->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED))))
 					{
-						print '<a href="fiche.php?id='.$id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
+						print '<a href="fiche.php?id='.$contrat->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"),'uparrow');
 						print '</a>';
 					}
@@ -846,7 +846,7 @@ else
 					}
 					if ($user->rights->contrat->creer && ($contrat->statut == 0 || ($contrat->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED))) )
 					{
-						print '<a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+						print '<a href="fiche.php?id='.$contrat->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
 					}
@@ -856,7 +856,7 @@ else
 					if ( $user->rights->contrat->creer && ($contrat->statut == 0 || ($contrat->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED))) )
 					{
 						print '&nbsp;';
-						print '<a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+						print '<a href="fiche.php?id='.$contrat->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
 					}
@@ -951,6 +951,15 @@ else
 
 
 			/*
+			 * Confirmation to delete service line of contract
+			 */
+			if ($_REQUEST["action"] == 'deleteline' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $contrat->lignes[$cursorline-1]->id == $_GET["rowid"])
+			{
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&lineid=".$_GET["rowid"],$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
+				if ($ret == 'html') print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
+			}
+
+			/*
 			 * Confirmation to move service toward another contract
 			 */
 			if ($_REQUEST["action"] == 'move' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $contrat->lignes[$cursorline-1]->id == $_GET["rowid"])
@@ -967,7 +976,7 @@ else
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
 				array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
-				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;lineid=".$_GET["rowid"],$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
+				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&lineid=".$_GET["rowid"],$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
 				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
@@ -979,7 +988,8 @@ else
 				//print '<br />';
 				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active");
+				$comment      = $_POST["comment"];
+				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
 				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
@@ -991,15 +1001,13 @@ else
 				//print '<br />';
 				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-				$page=$_SERVER["PHP_SELF"]."?id=".$contrat->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend;
-				$title=$langs->trans("CloseService");
-				$question=$langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y"));
-				$action="confirm_closeline";
-				$html->form_confirm($page,$title,$question,$action,'',0,1);
+				$comment      = $_POST["comment"];
+				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
 				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
-			// Area with activation info
+
+			// Area with status and activation info of line
 			if ($contrat->statut > 0)
 			{
 				print '<table class="noborder" width="100%">';
@@ -1043,12 +1051,11 @@ else
 					print $langs->trans("DateEndReal").': ';
 					print dol_print_date($objp->date_fin_reelle);
 				}
+				if (! empty($objp->comment)) print "<br>".$objp->comment;
 				print '</td>';
 
-				// Statut
-				print '<td align="center">';
-				print '&nbsp;';
-				print '</td>';
+				print '<td align="center">&nbsp;</td>';
+
 				print '</tr>';
 				print '</table>';
 			}
@@ -1095,7 +1102,7 @@ else
 
 				print '</tr>';
 
-				print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="3"><input size="80" type="text" name="commentaire" value="'.$_POST["commentaire"].'"></td></tr>';
+				print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="3"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
 
 				print '</table>';
 
@@ -1145,7 +1152,7 @@ else
 				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</td></tr>';
 
-				print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td><input size="70" type="text" class="flat" name="commentaire" value="'.$_POST["commentaire"].'"></td></tr>';
+				print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td><input size="70" type="text" class="flat" name="comment" value="'.$_POST["comment"].'"></td></tr>';
 				print '</table>';
 
 				print '</form>';

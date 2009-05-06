@@ -1563,7 +1563,7 @@ class Form
 				if ($input['type'] == 'select')
 				{
 					$more.='<tr><td valign="top">';
-					$more.=$this->select_array($input['name'],$input['values'],'',1);
+					$more.=$this->selectarray($input['name'],$input['values'],'',1);
 					$more.='</td></tr>';
 				}
 				if ($input['type'] == 'checkbox')
@@ -2437,55 +2437,78 @@ class Form
 	 *	\param  translate       Traduire la valeur
 	 * 	\param	maxlen			Length maximum for labels
 	 */
-	function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0, $maxlen=0)
+	function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0, $maxlen=0)
 	{
 		global $langs;
+
+		$out='';
+
 		// \TODO Simplify optionType and option (only one should be necessary)
 		if ($optionType == 1 && $option != '')
 		{
-			print '<select class="flat" name="'.$htmlname.'" '.$option.'>';
+			$out.='<select class="flat" name="'.$htmlname.'" '.$option.'>';
 		}
 		else
 		{
-			print '<select class="flat" name="'.$htmlname.'">';
+			$out.='<select class="flat" name="'.$htmlname.'">';
 		}
 
 		if ($show_empty)
 		{
-			print '<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
+			$out.='<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
 		}
 
 		if (is_array($array))
 		{
 			while (list($key, $value) = each ($array))
 			{
-				print '<option value="'.($value_as_key?$value:$key).'"';
+				$out.='<option value="'.($value_as_key?$value:$key).'"';
 				// Si il faut pré-sélectionner une valeur
 				if ($id != '' && ($id == $key || $id == $value))
 				{
-					print ' selected="true"';
+					$out.=' selected="true"';
 				}
 
-				print '>';
+				$out.='>';
 
 				if ($key_in_label)
 				{
 					$newval=($translate?$langs->trans($value):$value);
 					$selectOptionValue = $key.' - '.($maxlen?dol_trunc($newval,$maxlen):$newval);
-					print $selectOptionValue;
+					$out.=$selectOptionValue;
 				}
 				else
 				{
 					$newval=($translate?$langs->trans($value):$value);
 					$selectOptionValue = ($maxlen?dol_trunc($newval,$maxlen):$newval);
 					if ($value == '' || $value == '-') { $selectOptionValue='&nbsp;'; }
-					print $selectOptionValue;
+					$out.=$selectOptionValue;
 				}
-				print "</option>\n";
+				$out.="</option>\n";
 			}
 		}
 
-		print "</select>";
+		$out.="</select>";
+		return $out;
+	}
+
+	/**
+	 *	\brief  Show a select form from an array
+	 *	\param	htmlname        Nom de la zone select
+	 *	\param	array           Tableau de key+valeur
+	 *	\param	id              Preselected key
+	 *	\param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
+	 *	\param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
+	 *	\param	value_as_key    1 to use value as key
+	 *	\param	optionType      Type de l'option: 1 pour des fonctions javascript
+	 *	\param  option          Valeur de l'option en fonction du type choisi
+	 *	\param  translate       Traduire la valeur
+	 * 	\param	maxlen			Length maximum for labels
+	 * 	\deprecated				Use selectarray instead
+	 */
+	function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0, $maxlen=0)
+	{
+		print $this->selectarray($htmlname, $array, $id, $show_empty, $key_in_label, $value_as_key, $optionType, $option, $translate, $maxlen);
 	}
 
 

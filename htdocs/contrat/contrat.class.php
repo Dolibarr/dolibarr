@@ -92,9 +92,10 @@ class Contrat extends CommonObject
 	 *      \param      line_id     Id de la ligne de detail � activer
 	 *      \param      date        Date d'ouverture
 	 *      \param      date_end    Date fin prevue
-	 *      \return     int         < 0 si erreur, > 0 si ok
+	 * 		\param		comment		A comment typed by user
+	 *      \return     int         <0 if KO, >0 if OK
 	 */
-	function active_line($user, $line_id, $date, $date_end='')
+	function active_line($user, $line_id, $date, $date_end='', $comment='')
 	{
 		global $langs,$conf;
 
@@ -104,7 +105,8 @@ class Contrat extends CommonObject
 		$sql.= " date_ouverture = ".(strlen($date)!=0?"'".$this->db->idate($date)."'":"null").",";
 		$sql.= " date_fin_validite = ".(strlen($date_end)!=0?"'".$this->db->idate($date_end)."'":"null").",";
 		$sql.= " fk_user_ouverture = ".$user->id.",";
-		$sql.= " date_cloture = null";
+		$sql.= " date_cloture = null,";
+		$sql.= " commentaire = '".addslashes($comment)."'";
 		$sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3 OR statut = 5)";
 
 		dol_syslog("Contrat::active_line sql=".$sql);
@@ -135,18 +137,22 @@ class Contrat extends CommonObject
 	 *      \brief      Close a contract line
 	 *      \param      user        Objet User qui avtice le contrat
 	 *      \param      line_id     Id de la ligne de detail a activer
-	 *      \param      date_end     Date fin
-	 *      \return     int         <0 si erreur, >0 si ok
+	 *      \param      date_end	Date fin
+	 * 		\param		comment		A comment typed by user
+	 *      \return     int         <0 if KO, >0 if OK
 	 */
-	function close_line($user, $line_id, $date_end)
+	function close_line($user, $line_id, $date_end, $comment='')
 	{
 		global $langs,$conf;
 
 		// statut actif : 4
 
+		$this->db->begin();
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 5,";
 		$sql.= " date_cloture = '".$this->db->idate($date_end)."',";
-		$sql.= " fk_user_cloture = ".$user->id;
+		$sql.= " fk_user_cloture = ".$user->id.",";
+		$sql.= " commentaire = '".addslashes($comment)."'";
 		$sql.= " WHERE rowid = ".$line_id . " AND statut = 4";
 
 		$resql = $this->db->query($sql) ;
@@ -159,11 +165,14 @@ class Contrat extends CommonObject
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 
+			$this->db->commit();
 			return 1;
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
+			dol_syslog("Contrat::close_line error ".$this->error, LOG_ERR);
+			$this->db->rollback();
 			return -1;
 		}
 	}
@@ -1235,12 +1244,12 @@ class Contrat extends CommonObject
 		$now=gmmktime();
 
 		$this->nbtodo=$this->nbtodolate=0;
-		
+
 		$this->from = " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$this->from.= ", ".MAIN_DB_PREFIX."contratdet as cd";
 		$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $this->from.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		
+
 		if ($mode == 'inactives')
 		{
 			$sql = "SELECT cd.rowid, cd.date_ouverture_prevue as datefin";
@@ -1304,7 +1313,7 @@ class Contrat extends CommonObject
 			$clause = "AND";
 		}
 		$sql.= " ".$clause." s.entity = ".$conf->entity;
-		
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

@@ -70,7 +70,7 @@ if ($_GET["projetid"])
 /******************************************************************************/
 
 // Action clone object
-if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
+if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 {
 	if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
 	{
@@ -1203,7 +1203,7 @@ else
 			 */
 			if ($_GET['action'] == 'delete')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete');
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1224,7 +1224,7 @@ else
 				}
 
 				$text=$langs->trans('ConfirmValidateOrder',$num);
-				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text, 'confirm_validate');
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1233,7 +1233,7 @@ else
 			 */
 			if ($_GET['action'] == 'close')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close');
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1242,7 +1242,7 @@ else
 			 */
 			if ($_GET['action'] == 'cancel')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel');
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1251,7 +1251,7 @@ else
 			 */
 			if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1264,7 +1264,7 @@ else
 				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$commande->ref),'confirm_clone',$formquestion,'yes');
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$commande->ref),'confirm_clone',$formquestion,'yes',1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1982,6 +1982,12 @@ else
 						}
 					}
 
+					// Clone
+					if ($user->rights->commande->creer)
+					{
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$commande->id.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
+					}
+
 					// Annuler commande
 					if ($commande->statut == 1)
 					{
@@ -1991,12 +1997,6 @@ else
 							print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=cancel"';
 							print '>'.$langs->trans('CancelOrder').'</a>';
 						}
-					}
-
-					// Clone
-					if ($user->rights->commande->creer)
-					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$commande->id.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
 					}
 
 					// Delete order
