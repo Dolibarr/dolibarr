@@ -18,11 +18,11 @@
  */
 
 /**
-	    \file       htdocs/contact/info.php
-        \ingroup    societe
-		\brief      Onglet info d'un contact
-		\version    $Id$
-*/
+ *	    \file       htdocs/contact/info.php
+ *      \ingroup    societe
+ *		\brief      Onglet info d'un contact
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -49,30 +49,14 @@ $contact = new Contact($db);
 $contact->fetch($_GET["id"], $user);
 
 
-/*
- * Affichage onglets
- */
 $head = contact_prepare_head($contact);
 
 dol_fiche_head($head, 'info', $langs->trans("Contact"));
 
 
-/*
- * Visualisation de la fiche
- *
- */
-
 print '<table width="100%"><tr><td>';
 $contact->info($_GET["id"]);
 print '</td></tr></table>';
-
-if ($contact->socid > 0)
-{
-  $societe = new Societe($db);
-  $societe->fetch($contact->socid);
-
-  print $langs->trans("Company").' : '.$societe->getNomUrl(0).'<br>';
-}
 
 dol_print_object_info($contact);
 
