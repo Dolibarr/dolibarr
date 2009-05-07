@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - banks
+# Dolibarr language file - ca_ES - banks 
 CHARSET = UTF-8
 Bank = Banc
 Banks = Bancs
@@ -114,10 +114,10 @@ TransferFrom = De
 TransferTo = Cap a
 TransferFromToDone = La transferència de <b>%s</b> cap a <b>%s</b> de <b>%s</b> %s s'ha creat.
 CheckTransmitter = Emissor
-ValidateCheckReceipt = Validar aquesta fitxa de lliurament?
-ConfirmValidateCheckReceipt = Esteu segur de voler validar aquesta fitxa (cap modificació serà possible un cop la fitxa estigui validada)?
-DeleteCheckReceipt = Voleu suprimir aquesta fitxa de lliurament?
-ConfirmDeleteCheckReceipt = Esteu segur de voler eliminar aquesta fitxa?
+ValidateCheckReceipt = Validar aquesta remesa?
+ConfirmValidateCheckReceipt = Esteu segur de voler validar aquesta remesa (cap modificació serà possible un cop la remesa estigui validada)?
+DeleteCheckReceipt = Voleu suprimir aquesta remesa?
+ConfirmDeleteCheckReceipt = Esteu segur de voler eliminar aquesta remesa?
 BankChecks = Xecs
 BankChecksToReceipt = Xecs a dipositar
 NumberOfCheques = N º de xecs
