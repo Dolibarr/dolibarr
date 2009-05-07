@@ -259,6 +259,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<input name="mail" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_MAIL . '"></td></tr>';
 	print '</td></tr>'."\n";
 
+	// Web
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("Web").'</td><td>';
 	print '<input name="web" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
@@ -522,16 +523,17 @@ else
 	print '</td></tr>';
 
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Tel").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_TEL . '</td></tr>';
+	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Tel").'</td><td>' . dol_print_phone($conf->global->MAIN_INFO_SOCIETE_TEL,$mysoc->pays_code) . '</td></tr>';
 
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Fax").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_FAX . '</td></tr>';
+	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Fax").'</td><td>' . dol_print_phone($conf->global->MAIN_INFO_SOCIETE_FAX,$mysoc->pays_code) . '</td></tr>';
 
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Mail").'</td><td>' . dol_print_email($conf->global->MAIN_INFO_SOCIETE_MAIL) . '</td></tr>';
+	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Mail").'</td><td>' . dol_print_email($conf->global->MAIN_INFO_SOCIETE_MAIL,0,0,0,80) . '</td></tr>';
 
+	// Web
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_SOCIETE_WEB) . '</td></tr>';
+	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_SOCIETE_WEB,'_blank',80) . '</td></tr>';
 
 	if ($conf->barcode->enabled)
 	{
