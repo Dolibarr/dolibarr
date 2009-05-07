@@ -49,23 +49,29 @@ if ($_POST["action"] == 'setremise')
 {
 	if (price2num($_POST["amount_ht"]) > 0)
 	{
-		if (! $_POST["desc"])
+		$error=0;
+		if (empty($_POST["desc"]))
 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ReasonDiscount")).'</div>';
+			$error++;
 		}
 
-		$soc = new Societe($db);
-		$soc->fetch($_GET["id"]);
-		$soc->set_remise_except($_POST["amount_ht"],$user,$_POST["desc"],$_POST["tva_tx"]);
+		if (! $error)
+		{
+			$soc = new Societe($db);
+			$soc->fetch($_GET["id"]);
+			$soc->set_remise_except($_POST["amount_ht"],$user,$_POST["desc"],$_POST["tva_tx"]);
 
-		if ($result > 0)
-		{
-			Header("Location: remx.php?id=".$_GET["id"]);
-			exit;
-		}
-		else
-		{
-			$mesg='<div class="error">'.$soc->error.'</div>';
+			if ($result > 0)
+			{
+				Header("Location: remx.php?id=".$_GET["id"]);
+				exit;
+			}
+			else
+			{
+				$error++;
+				$mesg='<div class="error">'.$soc->error.'</div>';
+			}
 		}
 	}
 	else
