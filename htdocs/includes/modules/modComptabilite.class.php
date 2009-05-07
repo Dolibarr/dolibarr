@@ -76,23 +76,11 @@ class modComptabilite extends DolibarrModules
 		$this->const = array();
 		
 		// Data directories to create when module is enabled
-		$this->dirs = array();
-		$r=0;
-		
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/compta";
-		
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/compta/temp";
-		
-		$r++;
-		$this->dirs[$r][0] = "rapport";
-		$this->dirs[$r][1] = "/compta/rapport";
-		
-		$r++;
-		$this->dirs[$r][0] = "export";
-		$this->dirs[$r][1] = "/compta/export";
+		$this->dirs = array("/comptabilite/temp",
+		                    "/comptabilite/rapport",
+		                    "/comptabilite/export",
+		                    "/comptabilite/bordereau"
+		                    );
 	
 		// Boites
 		$this->boxes = array();

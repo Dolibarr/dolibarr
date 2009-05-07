@@ -360,7 +360,7 @@ if ($modulepart)
 			$accessallowed=1;
 		}
 
-		$original_file=DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir(basename($original_file,".pdf")).$original_file;
+		$original_file=$conf->comptabilite->dir_output.'/bordereau/'.get_exdir(basename($original_file,".pdf")).$original_file;
 		$sqlprotectagainstexternals = '';
 	}
 

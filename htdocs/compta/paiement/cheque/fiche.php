@@ -454,7 +454,7 @@ if ($_GET['action'] != 'new')
 {
 	if ($remisecheque->statut == 1)
 	{
-		$dir = DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir($remisecheque->number);
+		$dir = $conf->comptabilite->dir_output.'/bordereau/'.get_exdir($remisecheque->number);
 		$gen = array('blochet'=>'blochet');
 		$formfile->show_documents("remisecheque","",$dir,$_SERVER["PHP_SELF"].'?id='.$remisecheque->id,$gen,1);
 	}
