@@ -205,8 +205,8 @@ class Commande extends CommonObject
 
 	/**
 	 *  \brief   Validate order
-	 *  \param   user     	Utilisateur qui valide
-	 *  \return  int		<=0 si ko, >0 si ok
+	 *  \param   user     	User making status change
+	 *  \return  int		<=0 if OK, >0 if KO
 	 */
 	function valid($user)
 	{
@@ -217,12 +217,14 @@ class Commande extends CommonObject
 		// Protection
 		if ($this->statut == 1)
 		{
+			dol_syslog("Commande::valid no draft status", LOG_WARNING);
 			return 0;
 		}
 
 		if (! $user->rights->commande->valider)
 		{
 			$this->error='Permission denied';
+			dol_syslog("Commande::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -231,13 +233,12 @@ class Commande extends CommonObject
 		// Definition du nom de module de numerotation de commande
 		$soc = new Societe($this->db);
 		$soc->fetch($this->socid);
-		$num=$this->getNextNumRef($soc);
 
 		// Class of company linked to order
 		$result=$soc->set_as_client();
 
-		// check if temporary number
-		if (eregi('^\(PROV', $this->ref))
+		// Define new ref
+		if (! $error && (eregi('^\(PROV', $this->ref) || eregi('^PROV', $this->ref)))
 		{
 			$num = $this->getNextNumRef($soc);
 		}
@@ -246,22 +247,53 @@ class Commande extends CommonObject
 			$num = $this->ref;
 		}
 
+		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 		$sql.= " SET ref = '".$num."'";
 		$sql.= ", fk_statut = 1";
 		$sql.= ", date_valid=".$this->db->idate(mktime());
 		$sql.= ", fk_user_valid = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
-		$sql.= " AND fk_statut = 0";
 
+		dol_syslog("Commande::valid() sql=".$sql);
 		$resql=$this->db->query($sql);
-		if ($resql)
+		if (! $resql)
 		{
-			// On efface le repertoire de pdf provisoire
-			if (eregi('^\(PROV', $this->ref))
+			dol_syslog("Commande::valid() Echec update - 10 - sql=".$sql, LOG_ERR);
+			dol_print_error($this->db);
+			$error++;
+		}
+
+		if (! $error)
+		{
+			// If stock is incremented on validate order, we must increment it
+			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
-				// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
-				// afin de ne pas perdre les fichiers attachï¿½s
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+
+				// Loop on each line
+				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				{
+					if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
+					{
+						$mouvP = new MouvementStock($this->db);
+						// We decrement stock of product (and sub-products)
+						$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
+						// TODO Add price of product in method or '' to update PMP
+						$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+						if ($result < 0) { $error++; }
+					}
+				}
+			}
+		}
+
+		if (! $error)
+		{
+			// Rename directory if dir was a temporary ref
+			if (eregi('^\(PROV', $this->ref) || eregi('^PROV', $this->ref))
+			{
+				// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
+				// afin de ne pas perdre les fichiers attaches
 				$comref = dol_sanitizeFileName($this->ref);
 				$snum = dol_sanitizeFileName($num);
 				$dirsource = $conf->commande->dir_output.'/'.$comref;
@@ -278,44 +310,28 @@ class Commande extends CommonObject
 					}
 				}
 			}
+		}
 
+		// Set new ref
+		if (! $error)
+		{
+			$this->ref = $num;
+		}
 
-			// If stock is incremented on validate order, we must increment it
-			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
-			{
-				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+		if (! $error)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+		}
 
-				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-				{
-					$mouvP = new MouvementStock($this->db);
-					// We decrement stock of product (and sub-products)
-					$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-					$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
-					if ($result < 0) { $error++; }
-				}
-			}
-
-			if ($error == 0)
-			{
-				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
-			}
-
-			if ($error == 0)
-			{
-				$this->db->commit();
-				return 1;
-			}
-			else
-			{
-				$this->db->rollback();
-				$this->error=$this->db->lasterror();
-				return -1;
-			}
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
 		}
 		else
 		{
@@ -892,7 +908,7 @@ class Commande extends CommonObject
 	function fetch($id,$ref='')
 	{
 		global $conf;
-		
+
 		// Check parameters
 		if (empty($id) && empty($ref)) return -1;
 
@@ -1509,7 +1525,7 @@ class Commande extends CommonObject
 	function liste_array ($brouillon=0, $user='')
 	{
 		global $conf;
-		
+
 		$ga = array();
 
 		$sql = "SELECT rowid, ref";
@@ -2091,13 +2107,13 @@ class Commande extends CommonObject
 
 		// Charge tableau des id de societe socids
 		$socids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE client = 1";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2114,12 +2130,12 @@ class Commande extends CommonObject
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE envente = 1";
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

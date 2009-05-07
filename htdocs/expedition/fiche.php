@@ -139,7 +139,7 @@ if ($_GET["action"] == 'create_delivery' && $conf->livraison_bon->enabled && $us
 	}
 }
 
-if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->expedition->valider)
+if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $user->rights->expedition->valider)
 {
 	$expedition = new Expedition($db);
 	$expedition->fetch($_GET["id"]);
@@ -147,7 +147,7 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->
 	//$expedition->PdfWrite();
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
 	if ($user->rights->expedition->supprimer )
 	{
@@ -554,7 +554,7 @@ else
 			 */
 			if ($_GET["action"] == 'delete')
 			{
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$expedition->ref),'confirm_delete');
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$expedition->ref),'confirm_delete','',0,1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -564,7 +564,7 @@ else
 			 */
 			if ($_GET["action"] == 'valid')
 			{
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('ValidateSending'),$langs->trans("ConfirmValidateSending",$expedition->ref),'confirm_valid');
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('ValidateSending'),$langs->trans("ConfirmValidateSending",$expedition->ref),'confirm_valid','',0,1);
 				if ($ret == 'html') print '<br>';
 			}
 			/*
@@ -573,7 +573,7 @@ else
 			 */
 			if ($_GET["action"] == 'annuler')
 			{
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$expedition->ref),'confirm_cancel');
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$expedition->ref),'confirm_cancel','',0,1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -812,29 +812,26 @@ else
 		{
 			print '<div class="tabsAction">';
 
-			if (! eregi('^(valid|delete)',$_REQUEST["action"]))
+			if ($expedition->statut == 0 && $num_prod > 0)
 			{
-				if ($expedition->statut == 0 && $num_prod > 0)
+				if ($user->rights->expedition->valider)
 				{
-					if ($user->rights->expedition->valider)
-					{
-						print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
-					}
-					else
-					{
-						print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
-					}
+					print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 				}
+				else
+				{
+					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
+				}
+			}
 
-				if ($conf->livraison_bon->enabled && $expedition->statut == 1 && $user->rights->expedition->livraison->creer && !$expedition->livraison_id)
-				{
-					print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
-				}
+			if ($conf->livraison_bon->enabled && $expedition->statut == 1 && $user->rights->expedition->livraison->creer && !$expedition->livraison_id)
+			{
+				print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
+			}
 
-				if ($user->rights->expedition->supprimer)
-				{
-					print '<a class="butActionDelete" href="fiche.php?id='.$expedition->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-				}
+			if ($user->rights->expedition->supprimer)
+			{
+				print '<a class="butActionDelete" href="fiche.php?id='.$expedition->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 			}
 
 			print '</div>';

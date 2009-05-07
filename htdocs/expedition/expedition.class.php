@@ -138,7 +138,7 @@ class Expedition extends CommonObject
 	  	{
 	  		if (! $this->create_line($this->lignes[$i]->entrepot_id, $this->lignes[$i]->origin_line_id, $this->lignes[$i]->qty) > 0)
 	  		{
-			    $error++;
+	  			$error++;
 	  		}
 	  	}
 
@@ -146,32 +146,32 @@ class Expedition extends CommonObject
 	  	{
 	  		if ($conf->commande->enabled)
 	  		{
-			    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_exp (fk_expedition, fk_commande) VALUES ('.$this->id.','.$this->origin_id.')';
-			    if (!$this->db->query($sql))
-			    {
-			    	$error++;
-			    }
+	  			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_exp (fk_expedition, fk_commande) VALUES ('.$this->id.','.$this->origin_id.')';
+	  			if (!$this->db->query($sql))
+	  			{
+	  				$error++;
+	  			}
 
-			    $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->origin_id;
-			    if (! $this->db->query($sql))
-			    {
-			    	$error++;
-			    }
+	  			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->origin_id;
+	  			if (! $this->db->query($sql))
+	  			{
+	  				$error++;
+	  			}
 	  		}
 	  		else
 	  		{
-			    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'pr_exp (fk_expedition, fk_propal) VALUES ('.$this->id.','.$this->origin_id.')';
-			    if (!$this->db->query($sql))
-			    {
-			    	$error++;
-			    }
+	  			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'pr_exp (fk_expedition, fk_propal) VALUES ('.$this->id.','.$this->origin_id.')';
+	  			if (!$this->db->query($sql))
+	  			{
+	  				$error++;
+	  			}
 
-			    //Todo: definir un statut
-			    $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 9 WHERE rowid=".$this->origin_id;
-			    if (! $this->db->query($sql))
-			    {
-			    	$error++;
-			    }
+	  			//Todo: definir un statut
+	  			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 9 WHERE rowid=".$this->origin_id;
+	  			if (! $this->db->query($sql))
+	  			{
+	  				$error++;
+	  			}
 	  		}
 	  	}
 
@@ -340,7 +340,7 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *        \brief      Valide l'expedition, et met a jour le stock si stock géré
+	 *        \brief      Validate object and update stock if option enabled
 	 *        \param      user        Objet de l'utilisateur qui valide
 	 *        \return     int
 	 */
@@ -348,140 +348,143 @@ class Expedition extends CommonObject
 	{
 		global $conf;
 
-		require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
-
 		dol_syslog("Expedition::valid");
 
-		$this->db->begin();
-
-		$error = 0;
-		$provref = $this->ref;
-
-		if ($user->rights->expedition->valider)
+		// Protection
+		if ($this->statut)
 		{
-			$this->ref = "EXP".$this->id;
-
-			// Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter
-			// de décrémenter 2 fois le stock.
-			$sql = "SELECT ref";
-			$sql.= " FROM ".MAIN_DB_PREFIX."expedition";
-			$sql.= " WHERE ref='".$this->ref."'";
-			$sql.= " AND entity = ".$conf->entity;
-			$sql.= " AND fk_statut <> '0'";
-			
-			$resql=$this->db->query($sql);
-			if ($resql)
-	  {
-	  	$num = $this->db->num_rows($resql);
-	  	if ($num > 0)
-	  	{
-	  		dol_syslog("Expedition::valid already validated", LOG_WARNING);
-	  		$this->db->rollback();
-	  		return 0;
-	  	}
-	  }
-
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
-	  $sql.= " SET ref='".$this->ref."'";
-	  $sql.= ", fk_statut = 1";
-	  $sql.= ", date_valid = ".$this->db->idate(mktime());
-	  $sql.= ", fk_user_valid = ".$user->id;
-	  $sql.= " WHERE rowid = ".$this->id;
-	  $sql.= " AND fk_statut = 0";
-
-	  dol_syslog("Expedition::valid update expedition sql=".$sql);
-	  $resql=$this->db->query($sql);
-	  if ($resql)
-	  {
-	  	// If stock increment is done on sending (recommanded choice)
-	  	if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT)
-	  	{
-	  		/*
-	  		 * Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
-	  		 */
-	  		$sql = "SELECT cd.fk_product, ed.qty, ed.fk_entrepot";
-	  		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
-	  		$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed";
-	  		$sql.= " WHERE ed.fk_expedition = ".$this->id;
-	  		$sql.= " AND cd.rowid = ed.fk_origin_line";
-
-	  		dol_syslog("Expedition::valid select details sql=".$sql);
-	  		$resql=$this->db->query($sql);
-	  		if ($resql)
-	  		{
-		    $num = $this->db->num_rows($resql);
-		    $i=0;
-		    while($i < $num)
-		    {
-		    	dol_syslog("Expedition::valid movment nb ".$i);
-
-		    	$obj = $this->db->fetch_object($resql);
-
-		    	$mouvS = new MouvementStock($this->db);
-		    	$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty);
-		    	if ($result < 0)
-		    	{
-		    		$this->db->rollback();
-		    		$this->error=$this->db->error()." - sql=$sql";
-		    		dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
-		    		return -3;
-		    	}
-
-		    	$i++;
-		    }
-
-	  		}
-	  		else
-	  		{
-		    $this->db->rollback();
-		    $this->error=$this->db->error()." - sql=$sql";
-		    dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
-		    return -2;
-	  		}
-	  	}
-
-	  	// On efface le répertoire de pdf provisoire
-	  	$expeditionref = dol_sanitizeFileName($provref);
-	  	if ($conf->expedition->dir_output)
-	  	{
-	  		$dir = $conf->expedition->dir_output . "/" . $expeditionref;
-	  		$file = $dir . "/" . $expeditionref . ".pdf";
-	  		if (file_exists($file))
-	  		{
-		    if (!dol_delete_file($file))
-		    {
-		    	$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-		    }
-	  		}
-	  		if (file_exists($dir))
-	  		{
-		    if (!dol_delete_dir($dir))
-		    {
-		    	$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-		    }
-	  		}
-	  	}
-
-	  }
-	  else
-	  {
-	  	$this->db->rollback();
-	  	$this->error=$this->db->error();
-	  	dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
-	  	return -1;
-	  }
+			dol_syslog("Expedition::valid no draft status", LOG_WARNING);
+			return 0;
 		}
-		else
+
+		if (! $user->rights->expedition->valider)
 		{
-			$this->db->rollback();
-			$this->error="Non autorise";
+			$this->error='Permission denied';
 			dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 
-		$this->db->commit();
-		//dol_syslog("Expedition::valid commit");
-		return 1;
+		$this->db->begin();
+
+		// Define new ref
+		$num = "EXP".$this->id;
+
+		// Validate
+		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
+		$sql.= " SET ref='".$num."'";
+		$sql.= ", fk_statut = 1";
+		$sql.= ", date_valid = ".$this->db->idate(mktime());
+		$sql.= ", fk_user_valid = ".$user->id;
+		$sql.= " WHERE rowid = ".$this->id;
+
+		dol_syslog("Expedition::valid update expedition sql=".$sql);
+		$resql=$this->db->query($sql);
+		if (! $resql)
+		{
+			dol_syslog("Expedition::valid() Echec update - 10 - sql=".$sql, LOG_ERR);
+			dol_print_error($this->db);
+			$error++;
+		}
+
+		if (! $error)
+		{
+			// If stock increment is done on sending (recommanded choice)
+			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+			{
+				require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
+
+				// Loop on each product line to add a stock movement
+				$sql = "SELECT cd.fk_product, ed.qty, ed.fk_entrepot";
+				$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+				$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql.= " WHERE ed.fk_expedition = ".$this->id;
+				$sql.= " AND cd.rowid = ed.fk_origin_line";
+				dol_syslog("Expedition::valid select details sql=".$sql);
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					$num = $this->db->num_rows($resql);
+					$i=0;
+					while($i < $num)
+					{
+						dol_syslog("Expedition::valid movment index ".$i);
+						$obj = $this->db->fetch_object($resql);
+
+						if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
+						{
+							$mouvS = new MouvementStock($this->db);
+							// We decrement stock of product (and sub-products)
+							$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
+							// TODO Add price of product in method or '' to update PMP
+							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty);
+							if ($result < 0) { $error++; }
+						}
+
+						$i++;
+					}
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=$this->db->error()." - sql=$sql";
+					dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
+					return -2;
+				}
+			}
+		}
+
+		if (! $error)
+		{
+			// On efface le répertoire de pdf provisoire
+			$expeditionref = dol_sanitizeFileName($this->ref);
+			if ($conf->expedition->dir_output)
+			{
+				$dir = $conf->expedition->dir_output . "/" . $expeditionref;
+				$file = $dir . "/" . $expeditionref . ".pdf";
+				if (file_exists($file))
+				{
+					if (!dol_delete_file($file))
+					{
+						$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+					}
+				}
+				if (file_exists($dir))
+				{
+					if (!dol_delete_dir($dir))
+					{
+						$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+					}
+				}
+			}
+		}
+
+		// Set new ref
+		if (! $error)
+		{
+			$this->ref = $num;
+		}
+
+		if (! $error)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('ORDER_SHIPPING',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
 	}
 
 
@@ -572,8 +575,8 @@ class Expedition extends CommonObject
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition WHERE rowid = ".$this->id;
 				if ( $this->db->query($sql) )
-        		{
-	        		$this->db->commit();
+				{
+					$this->db->commit();
 
 					// On efface le répertoire de pdf provisoire
 					$expref = dol_sanitizeFileName($this->ref);
@@ -605,7 +608,7 @@ class Expedition extends CommonObject
 					$this->db->rollback();
 					return -3;
 				}
-       		}
+			}
 			else
 			{
 				$this->db->rollback();
@@ -738,13 +741,13 @@ class Expedition extends CommonObject
 
 		// Charge tableau des id de société socids
 		$socids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE client = 1";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -761,12 +764,12 @@ class Expedition extends CommonObject
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE envente = 1";
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

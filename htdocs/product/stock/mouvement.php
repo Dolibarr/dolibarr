@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/product/stock/mouvement.php
- \ingroup    stock
- \brief      Page liste des mouvements de stocks
- \version    $Id$
+ *	\file       htdocs/product/stock/mouvement.php
+ *	\ingroup    stock
+ *	\brief      Page liste des mouvements de stocks
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -49,7 +49,7 @@ $form=new Form($db);
 
 $sql = "SELECT p.rowid, p.label as produit,";
 $sql.= " s.label as stock, s.rowid as entrepot_id,";
-$sql.= " m.value, ".$db->pdate("m.datem")." as datem";
+$sql.= " m.rowid as mid, m.value, m.datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s";
 $sql.= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
@@ -121,7 +121,7 @@ if ($resql)
 			$head[$h][1] = $langs->trans("Users");
 			$h++;
 		}
-		 
+
 		$head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
 		$head[$h][1] = $langs->trans("Info");
 		$h++;
@@ -134,7 +134,7 @@ if ($resql)
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $form->showrefnav($entrepot,'id','',1,'rowid','libelle');
 		print '</td>';
-	  
+
 		print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
 
 		// Statut
@@ -152,6 +152,7 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
+	//print_liste_field_titre($langs->trans("Id"),"mouvement.php", "m.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),"mouvement.php", "m.datem","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Product"),"mouvement.php", "p.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Warehouse"),"mouvement.php", "s.label","",$param,"",$sortfield,$sortorder);
@@ -164,13 +165,19 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print '<td>'.dol_print_date($objp->datem,'dayhour').'</td>';
+		// Id movement
+		//print '<td>'.$objp->mid.'</td>';	// This is primary not movement id
+		// Date
+		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
+		// Product
 		print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
 		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
 		print "</a></td>\n";
+		// Warehouse
 		print '<td><a href="fiche.php?id='.$objp->entrepot_id.'">';
 		print img_object($langs->trans("ShowWarehouse"),"stock").' '.$objp->stock;
 		print "</a></td>\n";
+		// Value
 		print '<td align="right">';
 		if ($objp->value > 0) print '+';
 		print $objp->value.'</td>';

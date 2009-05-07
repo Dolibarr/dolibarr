@@ -506,7 +506,7 @@ class Facture extends CommonObject
 	function fetch($rowid,$ref='')
 	{
 		global $conf;
-		
+
 		$sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ','.$this->db->pdate('f.datef').' as df';
 		$sql.= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
@@ -1181,7 +1181,7 @@ class Facture extends CommonObject
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 			$sql.= ' SET fk_facture = NULL';
 			$sql.= ' WHERE fk_facture = '.$this->id;
-			
+
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -1223,111 +1223,149 @@ class Facture extends CommonObject
 	{
 		global $conf,$langs;
 
-		$error = 0;
-		if ($this->brouillon)
+		$error=0;
+
+		// Protection
+		if (! $this->brouillon)
 		{
-			$this->db->begin();
+			dol_syslog("Facture::valid no draft status", LOG_WARNING);
+			return 0;
+		}
 
-			$this->fetch_client();
-			$this->fetch_lines();
+		if (! $user->rights->commande->valider)
+		{
+			$this->error='Permission denied';
+			dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
+			return -1;
+		}
 
-			// Verification paramètres
-			if ($this->type == 1)		// si facture de remplacement
+		$this->db->begin();
+
+		$this->fetch_client();
+		$this->fetch_lines();
+
+		// Check parameters
+		if ($this->type == 1)		// si facture de remplacement
+		{
+			// Controle que facture source connue
+			if ($this->fk_facture_source <= 0)
 			{
-				// Controle que facture source connue
-				if ($this->fk_facture_source <= 0)
-				{
-					$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("InvoiceReplacement"));
-					$this->db->rollback();
-					return -10;
-				}
-
-				// Charge la facture source a remplacer
-				$facreplaced=new Facture($this->db);
-				$result=$facreplaced->fetch($this->fk_facture_source);
-				if ($result <= 0)
-				{
-					$this->error=$langs->trans("ErrorBadInvoice");
-					$this->db->rollback();
-					return -11;
-				}
-
-				// Controle que facture source non deja remplacee par une autre
-				$idreplacement=$facreplaced->getIdReplacingInvoice('validated');
-				if ($idreplacement && $idreplacement != $this->id)
-				{
-					$facreplacement=new Facture($this->db);
-					$facreplacement->fetch($idreplacement);
-					$this->error=$langs->trans("ErrorInvoiceAlreadyReplaced",$facreplaced->ref,$facreplacement->ref);
-					$this->db->rollback();
-					return -12;
-				}
-
-				$result=$facreplaced->set_canceled($user,'replaced','');
-				if ($result < 0)
-				{
-					$this->error=$facreplaced->error." sql=".$sql;
-					$this->db->rollback();
-					return -13;
-				}
+				$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("InvoiceReplacement"));
+				$this->db->rollback();
+				return -10;
 			}
 
-
-			// on vérifie si la facture est en numérotation provisoire
-			$facref = substr($this->ref, 1, 4);
-
-			if ($force_number)
+			// Charge la facture source a remplacer
+			$facreplaced=new Facture($this->db);
+			$result=$facreplaced->fetch($this->fk_facture_source);
+			if ($result <= 0)
 			{
-				$numfa = $force_number;
-			}
-			else if ($facref == 'PROV')
-			{
-				$savdate=$this->date;
-				if ($conf->global->FAC_FORCE_DATE_VALIDATION)	// If option enabled, we force invoice date
-				{
-					$this->date=gmmktime();
-					$this->date_lim_reglement=$this->calculate_date_lim_reglement();
-				}
-				$numfa = $this->getNextNumRef($this->client);
-			}
-			else
-			{
-				$numfa = $this->ref;
+				$this->error=$langs->trans("ErrorBadInvoice");
+				$this->db->rollback();
+				return -11;
 			}
 
-			$this->update_price();
+			// Controle que facture source non deja remplacee par une autre
+			$idreplacement=$facreplaced->getIdReplacingInvoice('validated');
+			if ($idreplacement && $idreplacement != $this->id)
+			{
+				$facreplacement=new Facture($this->db);
+				$facreplacement->fetch($idreplacement);
+				$this->error=$langs->trans("ErrorInvoiceAlreadyReplaced",$facreplaced->ref,$facreplacement->ref);
+				$this->db->rollback();
+				return -12;
+			}
 
-			// Validation de la facture
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql.= " SET facnumber='".$numfa."', fk_statut = 1, fk_user_valid = ".$user->id;
+			$result=$facreplaced->set_canceled($user,'replaced','');
+			if ($result < 0)
+			{
+				$this->error=$facreplaced->error." sql=".$sql;
+				$this->db->rollback();
+				return -13;
+			}
+		}
+
+		// Define new ref
+		if ($force_number)
+		{
+			$num = $force_number;
+		}
+		else if (eregi('^\(PROV', $this->ref) || eregi('^PROV', $this->ref))
+		{
 			if ($conf->global->FAC_FORCE_DATE_VALIDATION)	// If option enabled, we force invoice date
 			{
-				$sql.= ', datef='.$this->db->idate($this->date);
-				$sql.= ', date_lim_reglement='.$this->db->idate($this->date_lim_reglement);
+				$this->date=gmmktime();
+				$this->date_lim_reglement=$this->calculate_date_lim_reglement();
 			}
-			$sql.= ' WHERE rowid = '.$this->id;
+			$num = $this->getNextNumRef($this->client);
+		}
+		else
+		{
+			$num = $this->ref;
+		}
 
-			dol_syslog("Facture::set_valid() sql=".$sql, LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if ($resql)
+		$this->update_price();
+
+		// Validate
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+		$sql.= " SET facnumber='".$num."', fk_statut = 1, fk_user_valid = ".$user->id;
+		if ($conf->global->FAC_FORCE_DATE_VALIDATION)	// If option enabled, we force invoice date
+		{
+			$sql.= ', datef='.$this->db->idate($this->date);
+			$sql.= ', date_lim_reglement='.$this->db->idate($this->date_lim_reglement);
+		}
+		$sql.= ' WHERE rowid = '.$this->id;
+
+		dol_syslog("Facture::set_valid() sql=".$sql);
+		$resql=$this->db->query($sql);
+		if (! $resql)
+		{
+			dol_syslog("Facture::set_valid() Echec update - 10 - sql=".$sql, LOG_ERR);
+			dol_print_error($this->db);
+			$error++;
+		}
+
+		// On vérifie si la facture était une provisoire
+		if (! $error && (eregi('^\(PROV', $this->ref) || eregi('^PROV', $this->ref)))
+		{
+			// La vérif qu'une remise n'est pas utilisée 2 fois est faite au moment de l'insertion de ligne
+		}
+
+		if (! $error)
+		{
+			// Define third party as a customer
+			$result=$this->client->set_as_client();
+
+			// Si activé on décrémente le produit principal et ses composants à la validation de facture
+			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
 			{
-				$this->facnumber=$numfa;
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+
+				// Loop on each line
+				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				{
+					if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
+					{
+						$mouvP = new MouvementStock($this->db);
+						// We decrease stock for product
+						$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
+						// TODO Add price of product in method or '' to update PMP
+						$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+						if ($result < 0) { $error++; }
+					}
+				}
 			}
-			else
-			{
-				dol_syslog("Facture::set_valid() Echec update - 10 - sql=".$sql, LOG_DEBUG);
-				dol_print_error($this->db);
-				$error++;
-			}
+		}
 
-
-			// On vérifie si la facture était une provisoire
-			if ($facref == 'PROV')
+		if (! $error)
+		{
+			// Rename directory if dir was a temporary ref
+			if (eregi('^\(PROV', $this->ref) || eregi('^PROV', $this->ref))
 			{
-				// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
+				// On renomme repertoire facture ($this->ref = ancienne ref, $num = nouvelle ref)
 				// afin de ne pas perdre les fichiers attachés
 				$facref = dol_sanitizeFileName($this->ref);
-				$snumfa = dol_sanitizeFileName($numfa);
+				$snumfa = dol_sanitizeFileName($num);
 				$dirsource = $conf->facture->dir_output.'/'.$facref;
 				$dirdest = $conf->facture->dir_output.'/'.$snumfa;
 				if (file_exists($dirsource))
@@ -1342,65 +1380,38 @@ class Facture extends CommonObject
 					}
 				}
 			}
+		}
 
-			// On vérifie si la facture était une provisoire
-			if (! $error && $facref == 'PROV')
-			{
-				// La vérif qu'une remise n'est pas utilisée 2 fois est faite au moment de l'insertion de ligne
-			}
+		// Set new ref
+		if (! $error)
+		{
+			$this->ref = $num;
+			$this->facnumber=$num;
+		}
 
-			if (! $error)
-			{
-				// Define third party as a customer
-				$result=$this->client->set_as_client();
+		$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
-				// Si activé on décrémente le produit principal et ses composants à la validation de facture
-				if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
-				{
-					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+		// Trigger calls
+		if (! $error)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+		}
 
-					// Loop on each line
-					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-					{
-						if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
-						{
-							$mouvP = new MouvementStock($this->db);
-							// We decrease stock for product
-							$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
-							// TODO Add price of product in method or '' to update PMP
-							$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
-						}
-					}
-				}
-
-				$this->ref = $numfa;
-
-				$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-
-				if ($result > 0)
-				{
-					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
-
-					$this->db->commit();
-					return 1;
-				}
-				else
-				{
-					$this->db->rollback();
-					return -1;
-				}
-
-			}
-			else
-			{
-				$this->db->rollback();
-				return -1;
-			}
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error=$this->db->lasterror();
+			return -1;
 		}
 	}
 
@@ -1713,7 +1724,7 @@ class Facture extends CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 		$sql.= ' SET fk_facture_line = NULL';
 		$sql.= ' WHERE fk_facture_line = '.$rowid;
-		
+
 		dol_syslog("Facture::Deleteline sql=".$sql);
 		$result = $this->db->query($sql);
 		if (! $result)
@@ -1727,7 +1738,7 @@ class Facture extends CommonObject
 		// Efface ligne de facture
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet';
 		$sql.= ' WHERE rowid = '.$rowid;
-		
+
 		dol_syslog("Facture::Deleteline sql=".$sql);
 		$result = $this->db->query($sql);
 		if (! $result)
@@ -2416,7 +2427,7 @@ class Facture extends CommonObject
 	function list_qualified_avoir_invoices($socid=0)
 	{
 		global $conf;
-		
+
 		$return = array();
 
 		$sql = "SELECT f.rowid as rowid, f.facnumber, f.fk_statut, pf.fk_paiement";
@@ -2480,7 +2491,7 @@ class Facture extends CommonObject
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
 			$sql.= ' WHERE fk_facture = '.$this->id;
 			$sql.= ' AND traite = 0';
-			
+
 			if ( $this->db->query( $sql) )
 			{
 				$row = $this->db->fetch_row();
@@ -2626,13 +2637,13 @@ class Facture extends CommonObject
 
 		// Charge tableau des id de société socids
 		$socids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE client = 1";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2649,12 +2660,12 @@ class Facture extends CommonObject
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE envente = 1";
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
