@@ -112,6 +112,11 @@ analyse_sql_injection($_POST);
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
+// Retrieve the entity in login form, and after in the cookie 	 
+$entityCookieName = "DOLENTITYID_dolibarr"; 	 
+if (isset($_POST["entity"])) $_SESSION["dol_entity"] = $_POST["entity"]; 	 
+if (isset($_COOKIE[$entityCookieName])) $_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
+
 // Set and init common variables
 // This include will set $conf, $langs and $mysoc objects
 require_once("master.inc.php");
@@ -161,7 +166,7 @@ if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetim
 session_name($sessionname);
 session_start();
 dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".(isset($_SESSION["dol_login"])?$_SESSION["dol_login"]:'').", ".ini_get("session.gc_maxlifetime"));
-
+/*
 // Retrieve the entity in login form and in the cookie.
 // This must be after the init of session (session_start) or this create serious pb of corrupted session.
 $entityCookieName = "DOLENTITYID_dolibarr";
@@ -181,7 +186,7 @@ elseif (isset($_COOKIE[$entityCookieName]))
 	// Now we need to reload the conf with the choosed entity
 	$conf->setValues($db);
 }
-
+*/
 // Disable modules (this must be after session_start and after conf has been reloaded)
 if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
 if (! empty($_SESSION["disablemodules"]))
