@@ -73,8 +73,7 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 			if ($amounts[$cursorfacid] && $amounts[$cursorfacid] > $amountsresttopay[$cursorfacid])
 			{
 				$addwarning=1;
-				$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' Attention, le montant de paiement pour une ou plusieurs facture est superieur au reste a payer.';
-				$formquestion['text'].='<br>Corriger votre saisie, sinon, confirmer et penser a creer un avoir du trop percu lors de la fermeture de chacune des factures surpayees.';
+				$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' '.$langs->trans("HelpPaymentHigherThanReminderToPay");
 			}
 
 			$formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);

@@ -72,6 +72,7 @@ PaymentConditionsShort = Condiciones pago
 PaymentAmount = Importe pago
 ValidatePayment = Validar este pago
 PaymentHigherThanReminderToPay = Pago superior al resto a pagar
+HelpPaymentHigherThanReminderToPay =  Atención, el importe del pago de una o más facturas es superior al resto a pagar.<br> Corrija su entrada, de lo contrario, confirme y piense en crear un abono de lo percibido en exceso para cada factura sobrepagada.
 ClassifyPayed = Clasificar 'Pagado'
 ClassifyPayedPartially = Clasificar 'Pagado parcialmente'
 ClassifyCanceled = Clasificar 'Abandonado'

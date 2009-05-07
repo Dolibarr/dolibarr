@@ -72,6 +72,7 @@ PaymentConditionsShort = Condicions pagament
 PaymentAmount = Import pagament
 ValidatePayment = Validar aquest pagament
 PaymentHigherThanReminderToPay = Pagament superior a la resta a pagar
+HelpPaymentHigherThanReminderToPay =  Atenció, l'import del pagament d'una o més factures és superior a la resta a pagar.<br>Corregiu la entrada, en cas contrari, confirmeu i pensi en crear un abonament d'allò percebut en excés per cada factura sobrepagada.
 ClassifyPayed = Classificar 'Pagat'
 ClassifyPayedPartially = Classificar 'Pagat parcialment'
 ClassifyCanceled = Classificar 'Abandonat'

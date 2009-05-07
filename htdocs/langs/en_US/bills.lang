@@ -72,6 +72,7 @@ PaymentConditions=Payment term
 PaymentConditionsShort=Payment term
 PaymentAmount=Payment amount
 PaymentHigherThanReminderToPay=Payment higher than reminder to pay
+HelpPaymentHigherThanReminderToPay = Attention, the payment amount of one or more bills is higher than the rest to pay. <br> Edit your entry, otherwise confirm and think about creating a credit note of the excess received for each overpayed invoices.
 ClassifyPayed=Classify 'Payed'
 ClassifyPayedPartially=Classify 'Payed partially'
 ClassifyCanceled=Classify 'Abandonned'

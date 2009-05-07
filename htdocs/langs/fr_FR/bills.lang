@@ -72,6 +72,7 @@ PaymentConditionsShort=Conditions règlement
 PaymentAmount=Montant réglement
 ValidatePayment=Valider ce réglement
 PaymentHigherThanReminderToPay=Réglement supérieur au reste à payer
+HelpPaymentHigherThanReminderToPay =  Attention, le montant de paiement pour une ou plusieurs facture est superieur au reste a payer.<br>Corriger votre saisie, sinon, confirmer et penser a creer un avoir du trop percu lors de la fermeture de chacune des factures surpayees.
 ClassifyPayed=Classer 'Payée'
 ClassifyPayedPartially=Classer 'Payée partiellement'
 ClassifyCanceled=Classer 'Abandonnée'
