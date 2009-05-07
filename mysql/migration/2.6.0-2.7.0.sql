@@ -52,6 +52,7 @@ ALTER TABLE llx_contrat ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
 ALTER TABLE llx_c_barcode_type ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER code;
 ALTER TABLE llx_dolibarr_modules ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER numero;
 ALTER TABLE llx_bank_categ ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER label;
+ALTER TABLE llx_bordereau_cheque ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER number;
 
 ALTER TABLE llx_rights_def DROP PRIMARY KEY;
 ALTER TABLE llx_user_param DROP INDEX fk_user;
@@ -99,6 +100,7 @@ ALTER TABLE llx_livraison ADD UNIQUE INDEX idx_livraison_uk_ref (ref, entity);
 ALTER TABLE llx_fichinter ADD UNIQUE INDEX uk_fichinter_ref (ref, entity);
 ALTER TABLE llx_contrat ADD UNIQUE INDEX uk_contrat_ref (ref, entity);
 ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY (numero, entity);
+ALTER TABLE llx_bordereau_cheque ADD UNIQUE INDEX (number, entity);
 
 UPDATE llx_const SET entity=0 WHERE name='MAIN_MODULE_USER' AND entity=1;
 UPDATE llx_const SET entity=0 WHERE name='MAIN_POPUP_CALENDAR' AND entity=1;
