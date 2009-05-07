@@ -68,7 +68,7 @@ class Conf
 	function setValues($db)
 	{
 		dol_syslog("Conf::setValues");
-
+print 'entite='.$this->entity.'<br>';
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;	// Par defaut, a oui
 
 		/*
