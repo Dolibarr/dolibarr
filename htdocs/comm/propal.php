@@ -997,9 +997,11 @@ if ($id > 0 || ! empty($ref))
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 	if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
+	print '. ';
 	$absolute_discount=$societe->getAvailableDiscounts('','fk_facture_source IS NULL');
 	$absolute_creditnote=$societe->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
-	print '. ';
+	$absolute_discount=price2num($absolute_discount,'MT');
+	$absolute_creditnote=price2num($absolute_creditnote,'MT');
 	if ($absolute_discount)
 	{
 		if ($propal->statut > 0)

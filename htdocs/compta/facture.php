@@ -1985,6 +1985,8 @@ else
 
 			$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
 			$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
+			$absolute_discount=price2num($absolute_discount,'MT');
+			$absolute_creditnote=price2num($absolute_creditnote,'MT');
 
 			$author = new User($db);
 			if ($fac->user_author)

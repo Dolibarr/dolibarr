@@ -1316,9 +1316,11 @@ else
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			print '. ';
 			$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
 			$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
-			print '. ';
+			$absolute_discount=price2num($absolute_discount,'MT');
+			$absolute_creditnote=price2num($absolute_creditnote,'MT');
 			if ($absolute_discount)
 			{
 				if ($commande->statut > 0)
@@ -1335,7 +1337,7 @@ else
 			}
 			if ($absolute_creditnote)
 			{
-				print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
+				print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote,1),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
 			}
 			if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 			print '</td></tr>';
@@ -1354,7 +1356,7 @@ else
 			print '</td>';
 			print '</tr>';
 
-			// Date de livraison
+			// Delivery date
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DeliveryDate');
