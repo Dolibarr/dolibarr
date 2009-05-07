@@ -180,9 +180,11 @@ class Conf
 		foreach($this->modules as $module)
 		{
 			if (empty($this->$module->dir_output)) $this->$module->dir_output=$rootfordata."/".$module;
-			else $this->$module->dir_output=$rootfordata.$this->$module->dir_output;
+			//else $this->$module->dir_output=$rootfordata.$this->$module->dir_output;
+			//print 'this->'.$module.'->dir_output='.$this->$module->dir_output.'<br>';
 			if (empty($this->$module->dir_temp)) $this->$module->dir_temp=$rootfordata."/".$module."/temp";
-			else $this->$module->dir_temp=$rootfordata.$this->$module->dir_temp;
+			//else $this->$module->dir_temp=$rootfordata.$this->$module->dir_temp;
+			//print 'this->'.$module.'->dir_temp='.$this->$module->dir_temp.'<br>';
 		}
 
 		// Exception: Some dir are not the name of module. So we keep exception here

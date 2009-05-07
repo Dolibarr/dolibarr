@@ -79,7 +79,6 @@ if ($_GET["ref"])
 	$account=$acct->id;
 }
 
-
 $result=create_exdir($conf->banque->dir_temp);
 if ($result < 0)
 {

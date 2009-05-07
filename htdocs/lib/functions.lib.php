@@ -1355,10 +1355,11 @@ function info_admin($texte,$infoonimgalt=0)
  *	\param      objectid      	Object ID if we want to check permission on on object (optionnal)
  *	\param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnal)
  *	\param      feature2		    Feature to check (second level of permission)
- *  \param      dbt_socfield    Field name for socid foreign key if not fk_soc. (optionnal)
+ *  \param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
  *  \param      dbt_select      Field name for select if not rowid. (optionnal)
+ *  \param      dbt_tablename2  Secondary table name for compare keyfield. (optionnal)
  */
-function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',$feature2='',$dbt_socfield='fk_soc',$dbt_select='rowid')
+function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $dbtablename2='societe')
 {
 	global $db, $conf;
 
@@ -1366,7 +1367,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 	if ($dbt_select != 'rowid') $objectid = "'".$objectid."'";
 
 	//print "user_id=".$user->id.", feature=".$feature.", feature2=".$feature2.", object_id=".$objectid;
-	//print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_socfield.", dbt_select=".$dbt_select;
+	//print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
 	//print ", user_societe_contact_lire=".$user->rights->societe->contact->lire."<br>";
 
 	// Check read permission from module
@@ -1480,8 +1481,10 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			else if (! $user->rights->societe->client->voir)
 			{
 				$sql = "SELECT sc.fk_soc";
-				$sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-				$sql.= " WHERE sc.fk_soc = ".$objectid." AND sc.fk_user = ".$user->id;
+				$sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+				$sql.= " WHERE sc.fk_soc = ".$objectid;
+				$sql.= " AND sc.fk_user = ".$user->id;
 				$sql.= " AND sc.fk_soc = s.rowid";
 				$sql.= " AND s.entity = ".$conf->entity;
 			}
@@ -1508,8 +1511,9 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			else if (! $user->rights->societe->client->voir)
 			{
 				$sql = "SELECT sc.fk_soc";
-				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt, ".MAIN_DB_PREFIX."societe as s";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_socfield;
+				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_keyfield;
 				$sql.= " WHERE dbt.rowid = ".$objectid;
 				$sql.= " AND dbt.fk_soc = s.rowid";
 				$sql.= " AND s.entity = ".$conf->entity;
@@ -1519,7 +1523,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			else if ($conf->global->MAIN_MODULE_MULTICOMPANY)
 			{
 				// If the objects do not have fk_soc
-				if ($feature == 'banque')
+				if ($feature == 'banque' || $feature == 'cheque')
 				{
 					$sql = "SELECT dbt.".$dbt_select;
 					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1529,10 +1533,11 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 				else
 				{
 					$sql = "SELECT dbt.".$dbt_select;
-					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt, ".MAIN_DB_PREFIX."societe as s";
+					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+					$sql.= ", ".MAIN_DB_PREFIX.$dbtablename2." as dbt2";
 					$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
-					$sql.= " AND dbt.fk_soc = s.rowid";
-					$sql.= " AND s.entity = ".$conf->entity;
+					$sql.= " AND dbt2.rowid = dbt.".$dbt_keyfield;
+					$sql.= " AND dbt2.entity = ".$conf->entity;
 				}
 			}
 		}

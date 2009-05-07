@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +60,7 @@ $sql.= " ba.rowid as bid, ba.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE bc.fk_bank_account = ba.rowid";
+$sql.= " AND bc.entity = ".$conf->entity;
 if ($_GET["search_montant"])
 {
   $sql.=" AND bc.amount=".price2num($_GET["search_montant"]);

@@ -47,7 +47,7 @@ class RemiseCheque extends CommonObject
 
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler acc�s base de donn�es
+	 *    \param  DB          handler acces base de donnees
 	 *    \param  id          id compte (0 par defaut)
 	 */
 	function RemiseCheque($DB)
@@ -65,13 +65,16 @@ class RemiseCheque extends CommonObject
 	 */
 	function Fetch($id,$ref='')
 	{
-		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author,bc.fk_bank_account,bc.amount,bc.number,bc.statut,bc.nbcheque";
-		$sql.= ",".$this->db->pdate("date_bordereau"). " as date_bordereau";
-		$sql.=",ba.label as account_label";
+		global $conf;
+		
+		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.number, bc.statut, bc.nbcheque";
+		$sql.= ", ".$this->db->pdate("bc.date_bordereau"). " as date_bordereau";
+		$sql.= ", ba.label as account_label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON bc.fk_bank_account = ba.rowid";
-		if ($id)  $sql.= " WHERE bc.rowid = ".$id;
-		if ($ref) $sql.= " WHERE bc.number = '".addslashes($ref)."'";
+		$sql.= " WHERE bc.entity = ".$conf->entity;
+		if ($id)  $sql.= " AND bc.rowid = ".$id;
+		if ($ref) $sql.= " AND bc.number = '".addslashes($ref)."'";
 
 		dol_syslog("RemiseCheque::fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -117,13 +120,32 @@ class RemiseCheque extends CommonObject
 	 */
 	function Create($user, $account_id)
 	{
+		global $conf;
+		
 		$this->errno = 0;
 		$this->id = 0;
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_cheque (datec, date_bordereau, fk_user_author, fk_bank_account, amount, number, nbcheque)";
-		$sql.= " VALUES (".$this->db->idate(mktime()).",".$this->db->idate(mktime()).",".$user->id.",".$account_id.",0,0,0)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_cheque (";
+		$sql.= "datec";
+		$sql.= ", date_bordereau";
+		$sql.= ", fk_user_author";
+		$sql.= ", fk_bank_account";
+		$sql.= ", amount";
+		$sql.= ", number";
+		$sql.= ", entity";
+		$sql.= ", nbcheque";
+		$sql.= ") VALUES (";
+		$sql.= $this->db->idate(mktime());
+		$sql.= ", ".$this->db->idate(mktime());
+		$sql.= ", ".$user->id;
+		$sql.= ", ".$account_id;
+		$sql.= ", 0";
+		$sql.= ", 0";
+		$sql.= ", ".$conf->entity;
+		$sql.= ", 0";
+		$sql.= ")";
 
 		dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -156,9 +178,11 @@ class RemiseCheque extends CommonObject
 				$lines = array();
 				$sql = "SELECT b.rowid";
 				$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-				$sql.= " WHERE b.fk_type = 'CHQ' AND b.amount > 0";
-				$sql.= " AND b.fk_bordereau = 0 AND b.fk_account='".$account_id."'";
-				$sql.= " LIMIT 40"; // On limite a 40 pour ne g�n�rer des PDF que d'une page
+				$sql.= " WHERE b.fk_type = 'CHQ'";
+				$sql.= " AND b.amount > 0";
+				$sql.= " AND b.fk_bordereau = 0";
+				$sql.= " AND b.fk_account='".$account_id."'";
+				$sql.= " LIMIT 40"; // On limite a 40 pour ne generer des PDF que d'une page
 
 				dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -233,11 +257,14 @@ class RemiseCheque extends CommonObject
 	 */
 	function Delete($user='')
 	{
+		global $conf;
+		
 		$this->errno = 0;
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql .= " WHERE rowid = $this->id;";
+		$sql.= " WHERE rowid = ".$this->id;
+		$sql.= " AND entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
 		if ( $resql )
@@ -253,8 +280,9 @@ class RemiseCheque extends CommonObject
 	  if ( $this->errno === 0)
 	  {
 	  	$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-	  	$sql.= " SET fk_bordereau=0";
-	  	$sql.= " WHERE fk_bordereau='".$this->id."';";
+	  	$sql.= " SET fk_bordereau = 0";
+	  	$sql.= " WHERE fk_bordereau = '".$this->id."'";
+	  	
 	  	$resql = $this->db->query($sql);
 	  	if (!$resql)
 	  	{
@@ -283,7 +311,7 @@ class RemiseCheque extends CommonObject
 	 */
 	function Validate($user)
 	{
-		global $langs;
+		global $langs,$conf;
 
 		$this->errno = 0;
 
@@ -294,8 +322,11 @@ class RemiseCheque extends CommonObject
 		if ($this->errno == 0 && $num)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-			$sql.= " SET statut=1, number='".$num."'";
-			$sql .= " WHERE rowid = $this->id AND statut=0;";
+			$sql.= " SET statut = 1";
+			$sql.= ", number = '".$num."'";
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND statut = 0";
 
 			dol_syslog("RemiseCheque::Validate sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -342,10 +373,14 @@ class RemiseCheque extends CommonObject
 	 */
 	function getNextNumber()
 	{
+		global $conf;
+		
 		$num=0;
 
 		// We use +0 to convert varchar to number
-		$sql = "SELECT MAX(number+0) FROM ".MAIN_DB_PREFIX."bordereau_cheque";
+		$sql = "SELECT MAX(number+0)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
+		$sql.= " WHERE entity = ".$conf->entity;
 
 		dol_syslog("Remisecheque::getNextNumber sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -416,7 +451,7 @@ class RemiseCheque extends CommonObject
 	 */
 	function GeneratePdf($model='blochet', $outputlangs)
 	{
-		global $langs;
+		global $langs,$conf;
 
 		if (empty($model)) $model='blochet';
 
@@ -434,11 +469,14 @@ class RemiseCheque extends CommonObject
 			$classname='BordereauCheque'.ucfirst($model);
 			$pdf = new $classname($db);
 
-			$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq ";
-			$sql.= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba ";
-			$sql.= " , ".MAIN_DB_PREFIX."bordereau_cheque as bc";
-			$sql.= " WHERE b.fk_account = ba.rowid AND b.fk_bordereau = bc.rowid";
+			$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq";
+			$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+			$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+			$sql.= ", ".MAIN_DB_PREFIX."bordereau_cheque as bc";
+			$sql.= " WHERE b.fk_account = ba.rowid";
+			$sql.= " AND b.fk_bordereau = bc.rowid";
 			$sql.= " AND bc.rowid = ".$this->id;
+			$sql.= " AND bc.entity = ".$conf->entity;
 			$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
 
 			dol_syslog("RemiseCheque::GeneratePdf sql=".$sql, LOG_DEBUG);
@@ -468,7 +506,7 @@ class RemiseCheque extends CommonObject
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
-			$result=$pdf->write_file(DOL_DATA_ROOT.'/compta/bordereau', $this->number, $outputlangs);
+			$result=$pdf->write_file($conf->comptabilite->dir_output.'/bordereau', $this->number, $outputlangs);
 			if ($result > 0)
 			{
 				$outputlangs->charset_output=$sav_charset_output;
@@ -495,13 +533,15 @@ class RemiseCheque extends CommonObject
 	 */
 	function UpdateAmount()
 	{
+		global $conf;
+		
 		$this->errno = 0;
 		$this->db->begin();
 		$total = 0;
 		$nb = 0;
 		$sql = "SELECT amount ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql.= " WHERE fk_bordereau = $this->id;";
+		$sql.= " WHERE fk_bordereau = ".$this->id;
 
 		$resql = $this->db->query($sql);
 		if ( $resql )
@@ -515,9 +555,11 @@ class RemiseCheque extends CommonObject
 	  $this->db->free($resql);
 
 	  $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-	  $sql.= " SET amount='".price2num($total)."'";
-	  $sql.= " ,nbcheque=".$nb;
-	  $sql.= " WHERE rowid='".$this->id."';";
+	  $sql.= " SET amount = '".price2num($total)."'";
+	  $sql.= ", nbcheque = ".$nb;
+	  $sql.= " WHERE rowid = ".$this->id;
+	  $sql.= " AND entity = ".$conf->entity;
+	  
 	  $resql = $this->db->query($sql);
 	  if (!$resql)
 	  {
@@ -545,7 +587,7 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 \brief  Ins�re la remise en base
+	 \brief  Insere la remise en base
 	 \param  user utilisateur qui effectue l'operation
 	 \param  account_id Compte bancaire concerne
 	 */
@@ -556,8 +598,10 @@ class RemiseCheque extends CommonObject
 		if ($this->id > 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-			$sql.= " SET fk_bordereau = 0 ";
-			$sql.= " WHERE rowid = '".$account_id."' AND fk_bordereau='".$this->id."';";
+			$sql.= " SET fk_bordereau = 0";
+			$sql.= " WHERE rowid = '".$account_id."'";
+			$sql.= " AND fk_bordereau = ".$this->id;
+			
 			$resql = $this->db->query($sql);
 			if ($resql)
 	  {
@@ -572,16 +616,19 @@ class RemiseCheque extends CommonObject
 		return 0;
 	}
 	/**
-	 \brief      Charge les propri�t�s ref_previous et ref_next
+	 \brief      Charge les proprietes ref_previous et ref_next
 	 \return     int   <0 si ko, 0 si ok
 	 */
 	function load_previous_next_id()
 	{
+		global $conf;
+		
 		$this->errno = 0;
 
 		$sql = "SELECT MAX(rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql.= " WHERE rowid < '".$this->id."'";
+		$sql.= " WHERE rowid < ".$this->id;
+		$sql.= " AND entity = ".$conf->entity;
 
 		$result = $this->db->query($sql) ;
 		if (! $result)
@@ -593,7 +640,9 @@ class RemiseCheque extends CommonObject
 
 		$sql = "SELECT MIN(rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql.= " WHERE rowid > '".$this->id."'";
+		$sql.= " WHERE rowid > ".$this->id;
+		$sql.= " AND entity = ".$conf->entity;
+		
 		$result = $this->db->query($sql) ;
 		if (! $result)
 		{
@@ -630,8 +679,8 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Retourne le libell� du statut d'une facture (brouillon, valid�e, abandonn�e, pay�e)
-	 *    	\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
+	 *    	\brief      Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *    	\return     string		Libelle
 	 */
 	function getLibStatut($mode=0)

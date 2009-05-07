@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +36,13 @@ $langs->load('banks');
 $langs->load('companies');
 
 // Security check
+if (isset($_GET["id"]) || isset($_GET["ref"]))
+{
+	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+}
+$fieldid = isset($_GET["ref"])?'number':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'cheque', '','');
+$result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','',$fieldid);
 
 $mesg='';
 
@@ -230,8 +236,11 @@ if ($_GET['action'] == 'new')
 	$sql.= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b ";
 	$sql.= ",".MAIN_DB_PREFIX."bank_account as ba ";
-	$sql.= " WHERE b.fk_type = 'CHQ' AND b.fk_account = ba.rowid";
-	$sql.= " AND b.fk_bordereau = 0 AND b.amount > 0";
+	$sql.= " WHERE b.fk_type = 'CHQ'";
+	$sql.= " AND b.fk_account = ba.rowid";
+	$sql.= " AND ba.entity = ".$conf->entity;
+	$sql.= " AND b.fk_bordereau = 0";
+	$sql.= " AND b.amount > 0";
 	$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC";
 
 	$resql = $db->query($sql);
@@ -340,9 +349,12 @@ else
 	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
 	$sql.= " ".$db->pdate("b.dateo")." as date,".$db->pdate("b.datec")." as datec, b.banque,";
 	$sql.= " p.rowid as pid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
+	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
-	$sql.= " WHERE b.fk_type= 'CHQ'";
+	$sql.= " WHERE ba.rowid = b.fk_account";
+	$sql.= " AND ba.entity = ".$conf->entity;
+	$sql.= " AND b.fk_type= 'CHQ'";
 	$sql.= " AND b.fk_bordereau = ".$remisecheque->id;
 	$sql.= " ORDER BY $sortfield $sortorder";
 	//print $sql;

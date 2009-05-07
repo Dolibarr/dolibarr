@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,11 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 $sql = "SELECT count(b.rowid)";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-$sql.= " WHERE b.fk_type = 'CHQ' AND b.fk_bordereau = 0";
+$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+$sql.= " WHERE ba.rowid = b.fk_account";
+$sql.= " AND ba.entity = ".$conf->entity;
+$sql.= " AND b.fk_type = 'CHQ'";
+$sql.= " AND b.fk_bordereau = 0";
 $sql.= " AND b.amount > 0";
 
 $resql = $db->query($sql);
@@ -86,12 +91,13 @@ else
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
-$sql = "SELECT bc.rowid,".$db->pdate("bc.date_bordereau")." as db, bc.amount, bc.number,";
-$sql.= " bc.statut, bc.nbcheque,";
-$sql.= " ba.label, ba.rowid as bid";
-$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
-$sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
-$sql.= " WHERE ba.rowid=bc.fk_bank_account"; 
+$sql = "SELECT bc.rowid,".$db->pdate("bc.date_bordereau")." as db, bc.amount, bc.number";
+$sql.= ", bc.statut, bc.nbcheque";
+$sql.= ", ba.label, ba.rowid as bid";
+$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
+$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+$sql.= " WHERE ba.rowid = bc.fk_bank_account";
+$sql.= " AND bc.entity = ".$conf->entity; 
 $sql.= " ORDER BY bc.rowid";
 $sql.= " DESC LIMIT 10";
 
