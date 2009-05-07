@@ -787,7 +787,7 @@ LDAPGroupsSynchro=Groups
 LDAPContactsSynchro=Contacts
 LDAPMembersSynchro=Members
 LDAPSynchronization=LDAP synchronisation
-LDAPFunctionsNotAvailableOnPHP=LDAP functions are not availbale on your PHP
+LDAPFunctionsNotAvailableOnPHP=LDAP functions are not available on your PHP
 LDAPToDolibarr=LDAP -> Dolibarr
 DolibarrToLDAP=Dolibarr -> LDAP
 LDAPNamingAttribute=Key in LDAP
@@ -927,7 +927,7 @@ SyslogFacility=Facility
 SyslogLevel=Level
 SyslogSimpleFile=File
 SyslogFilename=File name and path
-SyslogFilenameDesc = This log file is located by default in the directory:<br><b>%s</b><br><br>You can set a different path to store this file.
+YouCanUseDOL_DATA_ROOT=You can use DOL_DATA_ROOT/dolibarr.log for a log file in Dolibarr "documents" directory. You can set a different path to store this file.
 ErrorUnknownSyslogConstant=Constant %s is not a known syslog constant
 ##### Donations #####
 DonationsSetup=Donation module setup

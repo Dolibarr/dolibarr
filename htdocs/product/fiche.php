@@ -1225,7 +1225,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.ref,".$db->pdate("p.datep")." as dp";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
 		$sql.= " WHERE p.fk_soc = s.rowid";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND p.entity = ".$conf->entity;
 		$sql.= " AND p.fk_statut = 0";
 		$sql.= " AND p.fk_user_author = ".$user->id;
 		$sql.= " ORDER BY p.datec DESC, tms DESC";
@@ -1342,7 +1342,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		$sql = "SELECT s.nom, s.rowid as socid, c.rowid as commandeid, c.ref,".$db->pdate("c.date_commande")." as dc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql.= " WHERE c.fk_soc = s.rowid";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND c.entity = ".$conf->entity;
 		$sql.= " AND c.fk_statut = 0";
 		$sql.= " AND c.fk_user_author = ".$user->id;
 		$sql.= " ORDER BY c.date_creation DESC";
@@ -1455,7 +1455,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " WHERE f.fk_soc = s.rowid";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND f.fk_statut = 0";
 		$sql.= " AND f.fk_user_author = ".$user->id;
 		$sql.= " ORDER BY f.datec DESC, f.rowid DESC";
@@ -1516,7 +1516,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	  $sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
 	  $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
 	  $sql.= " WHERE f.fk_soc = s.rowid";
-	  $sql.= " AND s.entity = ".$conf->entity;
+	  $sql.= " AND f.entity = ".$conf->entity;
 	  $sql.= " AND f.fk_statut = 0";
 	  $sql.= " AND f.fk_user_author <> ".$user->id;
 	  $sql.= " ORDER BY f.datec DESC, f.rowid DESC";

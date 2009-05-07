@@ -284,12 +284,6 @@ if (! isset($_SESSION["dol_login"]))
 					{
 						$test=false;
 						$conf->authmode=$mode;	// This properties is defined only when logged
-
-						// TODO Call function to check entity
-						if ($conf->multicompany->enabled && isset($_POST["entity"]))
-						{
-							$entitytotest=$_POST["entity"];
-						}
 					}
 				}
 				else
