@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,8 +216,12 @@ $sql.= ' '.$db->pdate('a.datea2').' as datea2,';
 $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
 $sql.= ' ca.code';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'c_actioncomm as ca';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
+$sql.= ', '.MAIN_DB_PREFIX.'c_actioncomm as ca';
+$sql.= ', '.MAIN_DB_PREFIX.'user as u';
 $sql.= ' WHERE a.fk_action = ca.id';
+$sql.= ' AND a.fk_user_author = u.rowid';
+$sql.= ' AND u.entity = '.$conf->entity;
 if ($_GET["action"] == 'show_day')
 {
 	$sql.= ' AND datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
@@ -312,6 +316,7 @@ if ($showbirthday)
 	$sql = 'SELECT sp.rowid, sp.name, sp.firstname, sp.birthday';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
 	$sql.= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.$user->id.'))';
+	$sql.= ' AND sp.entity = '.$conf->entity;
 	if ($_GET["action"] == 'show_day')
 	{
 		$sql.= ' AND MONTH(birthday) = '.$month;
@@ -322,7 +327,7 @@ if ($showbirthday)
 		$sql.= ' AND MONTH(birthday) = '.$month;
 	}
 	// Sort on date
-	$sql .= ' ORDER BY birthday';
+	$sql.= ' ORDER BY birthday';
 	//print $sql;
 
 	$resql=$db->query($sql);

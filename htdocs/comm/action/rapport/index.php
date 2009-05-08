@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +67,10 @@ $sql = "SELECT count(*) as cc, date_format(a.datep, '%m/%Y') as df";
 $sql.= ", date_format(a.datep, '%m') as month";
 $sql.= ", date_format(a.datep, '%Y') as year";
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-$sql.= " WHERE percent = 100";
+$sql.= ", ".MAIN_DB_PREFIX."user as u";
+$sql.= " WHERE a.fk_user_author = u.rowid";
+$sql.= " AND u.entity = ".$conf->entity;
+$sql.= " AND percent = 100";
 $sql.= " GROUP BY date_format(a.datep, '%m/%Y') ";
 $sql.= " ORDER BY a.datep DESC";
 $sql.= $db->plimit($limit+1,$offset);

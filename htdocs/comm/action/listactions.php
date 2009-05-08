@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,8 +133,8 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 	if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
 	$sql.= ")";
 }
-$sql .= " ORDER BY ".$sortfield." ".$sortorder;
-$sql .= $db->plimit( $limit + 1, $offset);
+$sql.= " ORDER BY ".$sortfield." ".$sortorder;
+$sql.= $db->plimit( $limit + 1, $offset);
 //print $sql;
 
 dol_syslog("comm/action/listactions.php sql=".$sql);
