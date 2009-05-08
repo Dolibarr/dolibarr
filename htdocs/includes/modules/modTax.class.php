@@ -66,7 +66,7 @@ class modTax extends DolibarrModules
 		$this->picto='bill';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/taxes/temp");
+		$this->dirs = array("/tax/temp");
 
 		// Config pages
 		$this->config_page_url = array("taxes.php");

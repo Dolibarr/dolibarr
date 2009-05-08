@@ -39,9 +39,8 @@ class Conf
     /** \public */
 	//! Object with database handler
 	var $db;
-
-	//! Charset for HTML output and for storing data in memory
-	var $character_set_client='UTF-8';	// UTF-8, ISO-8859-1
+	//! To store properties found in conf file
+	var $file;
 
 	var $dol_document_root;
 
@@ -57,6 +56,17 @@ class Conf
 	var $modules=array();
 
 	var $logbuffer=array();
+
+	/**
+	 * Constructor
+	 *
+	 * @return Conf
+	 */
+	function Conf()
+	{
+		//! Charset for HTML output and for storing data in memory
+		$this->file->character_set_client='UTF-8';	// UTF-8, ISO-8859-1
+	}
 
 
 	/**
@@ -140,12 +150,8 @@ class Conf
 		}
 		$db->free($result);
 
-		// On reprend parametres du fichier de config conf.php
-		// \TODO Mettre tous les param de conf DB dans une propriete de la classe
-
-
-		// Nettoyage variables des gestionnaires de menu
-		// conf->menu_top et conf->menu_left sont definis dans main.inc.php (selon user)
+		// Clean some variables
+		// conf->menu_top et conf->menu_left are defined in main.inc.php (according to user choice)
 		if (! $this->global->MAIN_MENU_BARRETOP) $this->global->MAIN_MENU_BARRETOP="eldy_backoffice.php";
 		if (! $this->global->MAIN_MENUFRONT_BARRETOP) $this->global->MAIN_MENUFRONT_BARRETOP="eldy_backoffice.php";
 		if (! $this->global->MAIN_MENU_BARRELEFT) $this->global->MAIN_MENU_BARRELEFT="eldy_backoffice.php";
@@ -207,10 +213,6 @@ class Conf
 		// Module societe
 		$this->societe->dir_logos =$rootfordata."/societe/logos";
 		if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $this->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
-
-		// Module taxes et charges sociales
-		$this->tax->dir_output=$rootfordata."/taxes";
-		$this->tax->dir_temp  =$rootfordata."/taxes/temp";
 
 		// Module don
 		$this->don->dir_output=$rootfordata."/dons";
