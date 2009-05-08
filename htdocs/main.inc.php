@@ -503,18 +503,22 @@ if (isset($user->conf->PRODUIT_LIMIT_SIZE))		// Can be 0
 	$conf->produit->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
 }
 
-// If user has choosed its own language
-if (! empty($user->conf->MAIN_LANG_DEFAULT))
+
+if (empty($_GET["lang"]))	// If language was not forced on URL
 {
-	// If different than current language
-	if ($langs->getDefaultLang() != $user->conf->MAIN_LANG_DEFAULT)
+	// If user has choosed its own language
+	if (! empty($user->conf->MAIN_LANG_DEFAULT))
 	{
-		$langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
-		$langs->setPhpLang();
+		// If different than current language
+		//print ">>>".$langs->getDefaultLang()."-".$user->conf->MAIN_LANG_DEFAULT;
+		if ($langs->getDefaultLang() != $user->conf->MAIN_LANG_DEFAULT)
+		{
+			$langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+			$langs->setPhpLang();
+		}
 	}
 }
-// If language was forced on URL
-if (! empty($_GET["lang"]))
+else	// If language was forced on URL
 {
 	$langs->setDefaultLang($_GET["lang"]);
 	$langs->setPhpLang();
