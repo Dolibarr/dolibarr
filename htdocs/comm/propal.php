@@ -128,8 +128,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 }
 
 // Remove line
-if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-|| ($_REQUEST['action'] == 'deleteline' && ! $conf->global->PRODUIT_CONFIRM_DELETE_LINE))
+if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes')
 {
 	if ($user->rights->propale->creer)
 	{
@@ -934,7 +933,7 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Confirmation de la suppression d'une ligne produit/service
 	 */
-	if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+	if ($_GET['action'] == 'ask_deleteline')
 	{
 		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
 		if ($ret == 'html') print '<br>';
@@ -1462,14 +1461,7 @@ if ($id > 0 || ! empty($ref))
 					}
 					print '</td>';
 					print '<td align="center">';
-					if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=ask_deleteline&amp;lineid='.$objp->rowid.'">';
-					}
-					else
-					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
-					}
+					print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=ask_deleteline&amp;lineid='.$objp->rowid.'">';
 					print img_delete();
 					print '</a></td>';
 					if ($num > 1)

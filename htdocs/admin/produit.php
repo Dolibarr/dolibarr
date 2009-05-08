@@ -104,16 +104,18 @@ else if ($_POST["action"] == 'viewProdDescInForm')
 {
 	dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $_POST["activate_viewProdDescInForm"],'chaine',0,'',$conf->entity);
 }
+/*
 else if ($_POST["action"] == 'confirmDeleteProdLineInForm')
 {
 	dolibarr_set_const($db, "PRODUIT_CONFIRM_DELETE_LINE", $_POST["activate_confirmDeleteProdLineInForm"],'chaine',0,'',$conf->entity);
 }
+*/
 else if ($_POST["action"] == 'ProductCanvasAbility')
 {
 	// Create temp directory for smarty
 	if (! empty($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
 	if (! empty($dolibarr_smarty_cache))   create_exdir($dolibarr_smarty_cache);
-	
+
 	dolibarr_set_const($db, "MAIN_NEED_SMARTY", $_POST["ProductCanvasAbility"],'chaine',0,'',$conf->entity);
 }
 else if ($_POST["action"] == 'usesearchtoselectproduct')
@@ -125,7 +127,7 @@ else if ($_GET["action"] == 'set')
 	// Create temp directory for smarty
 	if (! empty($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
 	if (! empty($dolibarr_smarty_cache))   create_exdir($dolibarr_smarty_cache);
-	
+
 	$const = "PRODUIT_SPECIAL_".strtoupper($_GET["spe"]);
 	if ($_GET["value"]) dolibarr_set_const($db, $const, $_GET["value"],'chaine',0,'',$conf->entity);
 	else dolibarr_del_const($db, $const,$conf->entity);
@@ -253,6 +255,7 @@ print '</tr>';
 print '</form>';
 
 // Confirmation de suppression d'un ligne produit dans les formulaires activation/desactivation
+/*
 $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"confirmDeleteProdLineInForm\">";
@@ -265,6 +268,7 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td>";
 print '</tr>';
 print '</form>';
+*/
 
 // Utilisation de l'ecotaxe
 $var=!$var;
@@ -310,14 +314,14 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 					$classname = 'Product'.ucfirst($parts[1]);
 					require_once($dir.$file);
 					$module = new $classname();
-						
+
 					$var=!$var;
 					print "<tr $bc[$var]><td>";
-						
+
 					print $module->description;
-						
+
 					print '</td><td align="right">';
-						
+
 					$const = "PRODUIT_SPECIAL_".strtoupper($parts[1]);
 					if ($conf->global->$const)
 					{
@@ -330,7 +334,7 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 						print '&nbsp;</td><td align="right">';
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=1">'.$langs->trans("Activate").'</a>';
 					}
-						
+
 					print '</td></tr>';
 				}
 			}

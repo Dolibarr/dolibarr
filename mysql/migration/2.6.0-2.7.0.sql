@@ -18,6 +18,7 @@ update llx_menu_constraint set action = '$conf->societe->enabled' where action =
 delete from llx_const where name = 'MAIN_MODULE_COMMERCIAL';
 delete from llx_const where name like 'MAIN_MODULE_%_DIR_OUTPUT';
 delete from llx_const where name like 'MAIN_MODULE_%_DIR_TEMP';
+delete from llx_const where name like 'PRODUIT_CONFIRM_DELETE_LINE';
 
 alter table llx_societe add column import_key varchar(14);
 
@@ -120,4 +121,6 @@ UPDATE llx_const SET entity=0 WHERE name='GENBARCODE_LOCATION' AND entity=1;
 UPDATE llx_const SET entity=0 WHERE name='MAIN_MODULE_SYSLOG';
 UPDATE llx_const SET entity=0 WHERE name='SYSLOG_FILE';
 UPDATE llx_const SET entity=0 WHERE name='SYSLOG_LEVEL';
+
+
 

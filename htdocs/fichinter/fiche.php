@@ -289,37 +289,9 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 }
 
 /*
- *  Supprime une ligne d'intervention SANS confirmation
- */
-if ($_REQUEST['action'] == 'deleteline' && $user->rights->ficheinter->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-{
-	$fichinterline = new FichinterLigne($db);
-	if ($fichinterline->fetch($_GET['ligne']) <= 0)
-	{
-		dol_print_error($db);
-		exit;
-	}
-	$result=$fichinterline->delete_line();
-	$fichinter = new Fichinter($db);
-	if ($fichinter->fetch($fichinterline->fk_fichinter) <= 0)
-	{
-		dol_print_error($db);
-		exit;
-	}
-
-	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
-	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-	}
-	fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
-}
-
-/*
  *  Supprime une ligne d'intervention AVEC confirmation
  */
-if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes')
 {
 	if ($user->rights->ficheinter->creer)
 	{
@@ -541,9 +513,9 @@ elseif ($_GET["id"] > 0)
 	}
 
 	// Confirmation de la suppression d'une ligne d'intervention
-	if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+	if ($_GET['action'] == 'ask_deleteline')
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;ligne='.$_GET["ligne"], $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&ligne='.$_GET["ligne"], $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -674,16 +646,8 @@ elseif ($_GET["id"] > 0)
 					print '</a>';
 					print '</td>';
 					print '<td align="center">';
-					if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=ask_deleteline&amp;ligne='.$objp->rowid.'">';
-						print img_delete();
-					}
-					else
-					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=deleteline&amp;ligne='.$objp->rowid.'">';
-						print img_delete();
-					}
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=ask_deleteline&amp;ligne='.$objp->rowid.'">';
+					print img_delete();
 					print '</a></td>';
 					if ($num > 1)
 					{

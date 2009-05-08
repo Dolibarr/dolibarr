@@ -224,7 +224,7 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 	}
 }
 
-if ($_REQUEST['action'] == 'confirm_deleteproductline' && ($_REQUEST['confirm'] == 'yes' || empty($conf->global->PRODUIT_CONFIRM_DELETE_LINE)))
+if ($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] == 'yes')
 {
 	if ($user->rights->fournisseur->commande->creer)
 	{
@@ -409,7 +409,7 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
 	}
 }
 
-// Efface les fichiers
+// Delete file
 if ($action=='remove_file')
 {
 	$commande = new CommandeFournisseur($db);
@@ -576,9 +576,9 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Confirmation de la suppression d'une ligne produit
 		 */
-		if ($_GET['action'] == 'delete_product_line' && ! empty($conf->global->PRODUIT_CONFIRM_DELETE_LINE))
+		if ($_GET['action'] == 'delete_product_line')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline','',0,2);
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline','',0,2);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -762,7 +762,6 @@ if ($id > 0 || ! empty($ref))
 					print '</a></td>';
 
 					$actiondelete='delete_product_line';
-					if (empty($conf->global->PRODUIT_CONFIRM_DELETE_LINE)) $actiondelete='confirm_deleteproductline';
 					print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action='.$actiondelete.'&amp;lineid='.$commandline->id.'">';
 					print img_delete();
 					print '</a></td>';

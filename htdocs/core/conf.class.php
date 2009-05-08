@@ -68,8 +68,6 @@ class Conf
 	{
 		dol_syslog("Conf::setValues");
 
-		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;	// Par defaut, a oui
-
 		/*
 		 * Definition de toutes les constantes globales d'environnement
 		 * - En constante php (TODO a virer)
