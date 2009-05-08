@@ -19,6 +19,9 @@ delete from llx_const where name = 'MAIN_MODULE_COMMERCIAL';
 delete from llx_const where name like 'MAIN_MODULE_%_DIR_OUTPUT';
 delete from llx_const where name like 'MAIN_MODULE_%_DIR_TEMP';
 delete from llx_const where name like 'PRODUIT_CONFIRM_DELETE_LINE';
+delete from llx_const where name = 'MAIN_MODULE_SYSLOG' and entity = 2;
+delete from llx_const where name = 'SYSLOG_FILE' and entity = 2;
+delete from llx_const where name = 'SYSLOG_LEVEL' and entity = 2;
 
 alter table llx_societe add column import_key varchar(14);
 
