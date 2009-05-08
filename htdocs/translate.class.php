@@ -111,12 +111,17 @@ class Translate {
             $langlist=split("[;,]",$langpref);
 
             $langpart=split("_",$langlist[0]);
-            //print $langpart[0].'/'.$langpart[1];
+            //print "Short before _ : ".$langpart[0].'/ Short after _ : '.$langpart[1];
 
-            if (isset($langpart[1])) $srclang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
+            if (isset($langpart[1])) {
+            	$srclang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
+            	// Array to convert long lang code into other long code.
+            	$longforlong=array('no_nb'=>'nb_NO');
+            	if (isset($longforlong[strtolower($srclang)])) $srclang=$longforlong[strtolower($srclang)];
+            }
             else {
             	// Array to convert short lang code into long code.
-            	$longforshort=array('ca'=>'ca_ES');
+            	$longforshort=array('ca'=>'ca_ES', 'nb'=>'nb_NO', 'no'=>'nb_NO');
             	if (isset($longforshort[strtolower($langpart[0])])) $srclang=$longforshort[strtolower($langpart[0])];
             	else $srclang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
             }
