@@ -1109,8 +1109,8 @@ class Ldap
     function convToOutputCharset($str,$pagecodefrom='UTF-8')
     {
     	global $conf;
-    	if ($pagecodefrom == 'ISO-8859-1' && $conf->character_set_client == 'UTF-8')  $str=utf8_encode($str);
-		if ($pagecodefrom == 'UTF-8' && $conf->character_set_client == 'ISO-8859-1')  $str=utf8_decode($str);
+    	if ($pagecodefrom == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8')  $str=utf8_encode($str);
+		if ($pagecodefrom == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1')  $str=utf8_decode($str);
 		return $str;
     }
 
@@ -1123,8 +1123,8 @@ class Ldap
     function convFromOutputCharset($str,$pagecodeto='UTF-8')
     {
     	global $conf;
-    	if ($pagecodeto == 'ISO-8859-1' && $conf->character_set_client == 'UTF-8')  $str=utf8_decode($str);
-		if ($pagecodeto == 'UTF-8' && $conf->character_set_client == 'ISO-8859-1')	$str=utf8_encode($str);
+    	if ($pagecodeto == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8')  $str=utf8_decode($str);
+		if ($pagecodeto == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1')	$str=utf8_encode($str);
 		return $str;
     }
 }

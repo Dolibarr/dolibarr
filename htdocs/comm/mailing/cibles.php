@@ -62,7 +62,7 @@ if ($_GET["action"] == 'add')
 	$result=0;
 
 	$var=true;
-	foreach ($conf->dol_document_root as $dirmod)
+	foreach ($conf->file->dol_document_root as $dirmod)
 	{
 		$dir=$dirmod."/includes/modules/mailings/";
 
@@ -209,7 +209,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		clearstatcache();
 
 		$var=true;
-		foreach ($conf->dol_document_root as $dirroot)
+		foreach ($conf->file->dol_document_root as $dirroot)
 		{
 			$dir=$dirroot."/includes/modules/mailings/";
 

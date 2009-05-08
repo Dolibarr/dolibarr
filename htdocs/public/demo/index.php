@@ -60,7 +60,7 @@ function llxHeaderVierge($title, $head = "")
 {
 	global $user, $conf, $langs;
 
-	header("Content-type: text/html; charset=".$conf->character_set_client);
+	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
@@ -124,7 +124,7 @@ llxHeaderVierge($langs->trans("DolibarrDemo"));
 
 
 // Search modules
-$dirlist=$conf->dol_document_root;
+$dirlist=$conf->file->dol_document_root;
 
 $filename = array();
 $modules = array();

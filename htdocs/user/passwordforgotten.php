@@ -227,7 +227,7 @@ print '<td valign="bottom"><input id="username" type="text" '.$disabled.' name="
 
 $title='';
 $title.=$langs->trans("SessionName").': '.session_name();
-if ($conf->main_authentication) $title.=", ".$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
+if ($conf->file->main_authentication) $title.=", ".$langs->trans("AuthenticationMode").': '.$conf->file->main_authentication;
 
 // Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 $width=0;

@@ -273,7 +273,7 @@ class DolibarrModules
 	function getDbVersion()
 	{
 		global $langs,$conf;
-		
+
 		$langs->load("admin");
 
 		$sql ="SELECT active_version";
@@ -346,13 +346,13 @@ class DolibarrModules
 	function _dbactive()
 	{
 		global $conf;
-		
+
 		$err = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules";
 		$sql.= " WHERE numero = ".$this->numero;
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		dol_syslog("DolibarrModules::_dbactive sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
 
@@ -370,7 +370,7 @@ class DolibarrModules
 		$sql.= ", ".$this->db->idate(gmmktime());
 		$sql.= ", '".$this->version."'";
 		$sql.= ")";
-		
+
 		dol_syslog("DolibarrModules::_dbactive sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
 
@@ -386,13 +386,13 @@ class DolibarrModules
 	function _dbunactive()
 	{
 		global $conf;
-		
+
 		$err = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules";
 		$sql.= " WHERE numero = ".$this->numero;
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		dol_syslog("DolibarrModules::_dbunactive sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
 
@@ -409,20 +409,20 @@ class DolibarrModules
 		global $conf;
 
 		$err = 0;
-		
+
 		// Common module
 		$entity = ((isset($this->always_enabled)||isset($this->core_enabled)) ? 0 : $conf->entity);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE name = '".$this->const_name."'";
 		$sql.= " AND entity = ".$entity;
-		
+
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,entity) VALUES";
 		$sql.= " ('".$this->const_name."','1',0,".$entity.")";
-		
+
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		if (!$this->db->query($sql))
 		{
@@ -442,14 +442,14 @@ class DolibarrModules
 		global $conf;
 
 		$err = 0;
-		
+
 		// Common module
 		$entity = (isset($this->core_enabled) ? 0 : $conf->entity);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE name = '".$this->const_name."'";
 		$sql.= " AND entity = ".$entity;
-		
+
 		dol_syslog("DolibarrModules::_unactive sql=".$sql);
 		$this->db->query($sql);
 
@@ -471,7 +471,7 @@ class DolibarrModules
 		include_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
 
 		$ok = 1;
-		foreach($conf->dol_document_root as $dirroot)
+		foreach($conf->file->dol_document_root as $dirroot)
 		{
 			if ($ok)
 			{
@@ -538,7 +538,7 @@ class DolibarrModules
 				$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."boxes_def";
 				$sql.= " WHERE file = '".$file."'";
 				$sql.= " AND entity = ".$conf->entity;
-				
+
 				if ($note) $sql.=" AND note ='".addslashes($note)."'";
 
 				$result=$this->db->query($sql);
@@ -552,7 +552,7 @@ class DolibarrModules
 						$sql.= $conf->entity.",";
 						$sql.= $note?"'".addslashes($note)."'":"null";
 						$sql.= ")";
-						
+
 						dol_syslog("DolibarrModules::insert_boxes sql=".$sql);
 						if (! $this->db->query($sql))
 						{
@@ -594,14 +594,14 @@ class DolibarrModules
 				$sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
 				$sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".addslashes($file)."'";
 				$sql.= " AND ".MAIN_DB_PREFIX."boxes_def.entity = ".$conf->entity;
-				
+
 				dol_syslog("DolibarrModules::delete_boxes sql=".$sql);
 				$this->db->query($sql);
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
 				$sql.= " WHERE file = '".addslashes($file)."'";
 				$sql.= " AND entity = ".$conf->entity;
-				
+
 				dol_syslog("DolibarrModules::delete_boxes sql=".$sql);
 				if (! $this->db->query($sql))
 				{
@@ -630,7 +630,7 @@ class DolibarrModules
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 			$sql.= " WHERE name = '".$this->const_name."_CSS'";
 			$sql.= " AND entity = ".$conf->entity;
-			
+
 			dol_syslog("DolibarrModules::delete_style_sheet sql=".$sql);
 			if (! $this->db->query($sql))
 			{
@@ -656,7 +656,7 @@ class DolibarrModules
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE name like '".$this->const_name."_TABS_%'";
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		dol_syslog("DolibarrModules::delete_tabs sql=".$sql);
 		if (! $this->db->query($sql))
 		{
@@ -696,7 +696,7 @@ class DolibarrModules
 			$sql.= ", '0'";
 			$sql.= ", ".$conf->entity;
 			$sql.= ")";
-			
+
 			dol_syslog("DolibarrModules::insert_style_sheet sql=".$sql);
 			$resql=$this->db->query($sql);
 			/* Allow duplicate key
@@ -743,7 +743,7 @@ class DolibarrModules
 					$sql.= ", '0'";
 					$sql.= ", ".$conf->entity;
 					$sql.= ")";
-					
+
 					dol_syslog("DolibarrModules::insert_tabs sql=".$sql);
 					$resql=$this->db->query($sql);
 					/* Allow duplicate key

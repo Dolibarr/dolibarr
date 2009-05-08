@@ -154,7 +154,7 @@ if ($_POST["action"] == "set")
 
 	                //print "<tr><td>Creation de la table $name/td>";
 					$requestnb++;
-					if ($conf->character_set_client == "UTF-8")
+					if ($conf->file->character_set_client == "UTF-8")
 					{
 						$buffer=utf8_encode($buffer);
 					}
@@ -266,7 +266,7 @@ if ($_POST["action"] == "set")
 	                    {
 			                //print "<tr><td>Creation des cles et index de la table $name: '$buffer'</td>";
 							$requestnb++;
-							if ($conf->character_set_client == "UTF-8")
+							if ($conf->file->character_set_client == "UTF-8")
 							{
 								$buffer=utf8_encode($buffer);
 							}

@@ -78,7 +78,7 @@ function Activate($value,$withdeps=1)
 		$file = $modName . ".class.php";
 
 		// Loop on each directory
-		foreach ($conf->dol_document_root as $dol_document_root)
+		foreach ($conf->file->dol_document_root as $dol_document_root)
 		{
 			$found=@include_once($dol_document_root."/includes/modules/".$file);
 			if ($found) break;
@@ -144,7 +144,7 @@ function UnActivate($value,$requiredby=1)
 		$file = $modName . ".class.php";
 
 		// Loop on each directory
-		foreach ($conf->dol_document_root as $dol_document_root)
+		foreach ($conf->file->dol_document_root as $dol_document_root)
 		{
 			$found=@include_once($dol_document_root."/includes/modules/".$file);
 			if ($found) break;
@@ -198,7 +198,7 @@ $categ = array();
 $dirmod = array();
 $i = 0;	// is a sequencer of modules found
 $j = 0;	// j is module number. Automatically affeted if module number not defined.
-foreach ($conf->dol_document_root as $dirroot)
+foreach ($conf->file->dol_document_root as $dirroot)
 {
 	$dir = $dirroot . "/includes/modules/";
 

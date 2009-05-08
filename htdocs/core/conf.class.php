@@ -62,7 +62,6 @@ class Conf
 	/**
 	*      \brief      Load setup values into conf object
 	*      \param      $db			    Handler d'acces base
-	*      \param      $entity			Id of company
 	*      \return     int         		< 0 if KO, >= 0 if OK
 	*/
 	function setValues($db)

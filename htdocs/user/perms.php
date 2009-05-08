@@ -103,7 +103,7 @@ $db->begin();
 // Charge les modules soumis a permissions
 $modules = array();
 
-$listdir=$conf->dol_document_root;
+$listdir=$conf->file->dol_document_root;
 foreach($listdir as $dirroot)
 {
 	$dir=$dirroot."/includes/modules/";

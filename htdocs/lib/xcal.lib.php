@@ -331,13 +331,13 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
  * 	\param		format		vcal or ical
  * 	\param 		string		string to encode
  * 	\return		string		string encoded
- * 	\remarks	string must be encoded in conf->character_set_client
+ * 	\remarks	string must be encoded in conf->file->character_set_client
  */
 function format_cal($format,$string)
 {
 	global $conf;
 	
-	if ($conf->character_set_client == 'ISO-8859-1') $newstring=utf8_encode($string);
+	if ($conf->file->character_set_client == 'ISO-8859-1') $newstring=utf8_encode($string);
 	else $newstring=$string;
 
 	// Now newstring is always UTF8 string

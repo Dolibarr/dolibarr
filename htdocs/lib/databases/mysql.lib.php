@@ -139,8 +139,8 @@ class DoliDb
 
 				// If client connected with different charset than Dolibarr HTML output
 				$clientmustbe='';
-				if (eregi('UTF-8',$conf->character_set_client))      $clientmustbe='utf8';
-				if (eregi('ISO-8859-1',$conf->character_set_client)) $clientmustbe='latin1';
+				if (eregi('UTF-8',$conf->file->character_set_client))      $clientmustbe='utf8';
+				if (eregi('ISO-8859-1',$conf->file->character_set_client)) $clientmustbe='latin1';
 				if (mysql_client_encoding($this->db) != $clientmustbe)
 				{
 					$this->query("SET NAMES '".$clientmustbe."'", $this->db);
@@ -165,8 +165,8 @@ class DoliDb
 			{
 				// If client connected with different charset than Dolibarr HTML output
 				$clientmustbe='';
-				if (eregi('UTF-8',$conf->character_set_client))      $clientmustbe='utf8';
-				if (eregi('ISO-8859-1',$conf->character_set_client)) $clientmustbe='latin1';
+				if (eregi('UTF-8',$conf->file->character_set_client))      $clientmustbe='utf8';
+				if (eregi('ISO-8859-1',$conf->file->character_set_client)) $clientmustbe='latin1';
 				if (mysql_client_encoding($this->db) != $clientmustbe)
 				{
 					$this->query("SET NAMES '".$clientmustbe."'", $this->db);

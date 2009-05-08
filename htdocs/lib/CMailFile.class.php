@@ -78,7 +78,7 @@ class CMailFile
 		// If ending method not defined
 		if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';
 
-		dol_syslog("CMailFile::CMailfile: MAIN_MAIL_SENDMODE=".$conf->global->MAIN_MAIL_SENDMODE." charset=".$conf->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to", LOG_DEBUG);
+		dol_syslog("CMailFile::CMailfile: MAIN_MAIL_SENDMODE=".$conf->global->MAIN_MAIL_SENDMODE." charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to", LOG_DEBUG);
 		dol_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml", LOG_DEBUG);
 
 		// Detect if message is HTML (use fast method)
@@ -162,7 +162,7 @@ class CMailFile
 
 			require_once(DOL_DOCUMENT_ROOT."/includes/smtps/SMTPs.php");
 			$smtps = new SMTPs();
-			$smtps->setCharSet($conf->character_set_client);
+			$smtps->setCharSet($conf->file->character_set_client);
 			$smtps->setSubject($subject);
 			$smtps->setTO($to);
 			$smtps->setFrom($from);
@@ -419,12 +419,12 @@ class CMailFile
 
 		if ($this->msgishtml)
 		{
-			if (! $this->atleastonefile) $out.= "Content-Type: text/html; charset=".$conf->character_set_client.$this->eol;
+			if (! $this->atleastonefile) $out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
 			$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 		}
 		else
 		{
-			if (! $this->atleastonefile) $out.= "Content-Type: text/plain; charset=".$conf->character_set_client.$this->eol;
+			if (! $this->atleastonefile) $out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
 			$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 		}
 
@@ -476,11 +476,11 @@ class CMailFile
 			$out.= "--" . $this->mime_boundary . $this->eol;
 			if ($this->msgishtml)
 			{
-				$out.= "Content-Type: text/html; charset=".$conf->character_set_client.$this->eol;
+				$out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
 			}
 			else
 			{
-				$out.= "Content-Type: text/plain; charset=".$conf->character_set_client.$this->eol;
+				$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
 			}
 			$out.= $this->eol;
 		}

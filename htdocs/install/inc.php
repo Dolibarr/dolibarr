@@ -115,7 +115,7 @@ if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_m
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
 
 define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
-if (empty($conf->character_set_client))     	  $conf->character_set_client="UTF-8";
+if (empty($conf->file->character_set_client))     	  $conf->file->character_set_client="UTF-8";
 if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
 if (empty($conf->db->user)) $conf->db->user='';
 
@@ -212,7 +212,7 @@ function conf($dolibarr_main_document_root)
 	$conf->db->pass = trim($dolibarr_main_db_pass);
 
 	if (empty($character_set_client)) $character_set_client="UTF-8";
-	$conf->character_set_client=strtoupper($character_set_client);
+	$conf->file->character_set_client=strtoupper($character_set_client);
 	if (empty($dolibarr_main_db_charset)) $dolibarr_main_db_charset='latin1';
 	$conf->db->character_set=$dolibarr_main_db_charset;
 	if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';
@@ -248,12 +248,12 @@ function pHeader($soutitre,$next,$action='set')
     $langs->load("admin");
 
 	// On force contenu dans format sortie
-	header("Content-type: text/html; charset=".$conf->character_set_client);
+	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
     print '<html>'."\n";
     print '<head>'."\n";
-    print '<meta http-equiv="content-type" content="text/html; charset='.$conf->character_set_client.'">'."\n";
+    print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
     print '<link rel="stylesheet" type="text/css" href="./default.css">'."\n";
     print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";
     print '</head>'."\n";

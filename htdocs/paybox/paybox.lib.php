@@ -32,7 +32,7 @@ function llxHeaderPaybox($title, $head = "")
 	// Si feuille de style en php existe
 	if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
 
-	header("Content-type: text/html; charset=".$conf->character_set_client);
+	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
@@ -156,11 +156,11 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     dol_syslog("PBX_SOURCE: $PBX_SOURCE", LOG_DEBUG);
     dol_syslog("PBX_TYPEPAIEMENT: $PBX_TYPEPAIEMENT", LOG_DEBUG);
 
-    header("Content-type: text/html; charset=".$conf->character_set_client);
+    header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
     print '<html>'."\n";
     print '<head>'."\n";
-    print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->character_set_client."\">\n";
+    print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->file->character_set_client."\">\n";
     print '</head>'."\n";
     print '<body>'."\n";
     print "\n";

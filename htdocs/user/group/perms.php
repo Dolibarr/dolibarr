@@ -81,7 +81,7 @@ if ($_GET["id"])
 
     // Charge les modules soumis a permissions
     $modules = array();
-    foreach ($conf->dol_document_root as $dirroot)
+    foreach ($conf->file->dol_document_root as $dirroot)
 	{
 		$dir = $dirroot . "/includes/modules/";
 

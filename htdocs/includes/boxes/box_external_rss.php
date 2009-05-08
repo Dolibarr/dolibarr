@@ -132,8 +132,8 @@ class box_external_rss extends ModeleBoxes {
 			if (is_numeric($date)) $date=dol_print_date($date,"dayhour");
 			
 			$isutf8 = utf8_check($title);
-	        if (! $isutf8 && $conf->character_set_client == 'UTF-8') $title=utf8_encode($title); 
-	        elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') $title=utf8_decode($title); 
+	        if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') $title=utf8_encode($title); 
+	        elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $title=utf8_decode($title); 
 
 	        $title=ereg_replace("([[:alnum:]])\?([[:alnum:]])","\\1'\\2",$title);   // Gère problème des apostrophes mal codée/décodée par utf8
             $title=ereg_replace("^\s+","",$title);                                  // Supprime espaces de début

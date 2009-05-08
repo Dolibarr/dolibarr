@@ -84,7 +84,7 @@ $barcodelist=array();
 clearstatcache();
 
 
-foreach ($conf->dol_document_root as $dirroot)
+foreach ($conf->file->dol_document_root as $dirroot)
 {
 	$dir = $dirroot . "/includes/modules/barcode/";
 

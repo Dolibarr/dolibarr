@@ -72,7 +72,7 @@ class DoliDb
     {
     	global $conf,$langs;
 
-		$this->forcecharset=$conf->character_set_client;
+		$this->forcecharset=$conf->file->character_set_client;
 	    $this->forcecollate=$conf->db->dolibarr_main_db_collation;
 	    $this->database_user=$user;
 
