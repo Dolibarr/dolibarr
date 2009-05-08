@@ -1,6 +1,6 @@
 ﻿<%
  ' FCKeditor - The text editor for Internet - http://www.fckeditor.net
- ' Copyright (C) 2003-2008 Frederico Caldeira Knabben
+ ' Copyright (C) 2003-2009 Frederico Caldeira Knabben
  '
  ' == BEGIN LICENSE ==
  '
@@ -30,6 +30,7 @@ Sub SetXmlHeaders()
 	Response.CacheControl = "no-cache"
 
 	' Set the response format.
+	Response.CodePage 		= 65001
 	Response.CharSet		= "UTF-8"
 	Response.ContentType	= "text/xml"
 End Sub

@@ -1,7 +1,7 @@
 [//lasso
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2008 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2009 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -74,38 +74,15 @@
 		-type='string',
 		-description='Sets the HTML response for the FCKEditor Quick Upload feature.'
 	);
-		$__html_reply__ = '\
-<script type="text/javascript">
-(function()
-{
-	var d = document.domain ;
 
-	while ( true )
-	{
-		// Test if we can access a parent property.
-		try
-		{
-			var test = window.top.opener.document.domain ;
-			break ;
-		}
-		catch( e ) {}
+		$__html_reply__ = '<script type="text/javascript">';
 
-		// Remove a domain part: www.mytest.example.com => mytest.example.com => example.com ...
-		d = d.replace( /.*?(?:\\.|$)/, "" ) ;
+		// Minified version of the document.domain automatic fix script (#1919).
+		// The original script can be found at _dev/domain_fix_template.js
+		// Note: in Lasso replace \ with \\
+		$__html_reply__ = $__html_reply__ + "(function(){var d=document.domain;while (true){try{var A=window.parent.document.domain;break;}catch(e) {};d=d.replace(/.*?(?:\\.|$)/,'');if (d.length==0) break;try{document.domain=d;}catch (e){break;}}})();";
 
-		if ( d.length == 0 )
-			break ;		// It was not able to detect the domain.
-
-		try
-		{
-			document.domain = d ;
-		}
-		catch (e)
-		{
-			break ;
-		}
-	}
-})() ;
+		$__html_reply__ = $__html_reply__ + '\
 	window.parent.OnUploadCompleted(' + #errorNumber + ',"'
 		+ string_replace(#fileUrl, -find='"', -replace='\\"') + '","'
 		+ string_replace(#fileName, -find='"', -replace='\\"') + '","'
