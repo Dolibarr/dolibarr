@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 	}
 }
 
-if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->adherent->cotisation->creer)
 {
 	$result=$subscription->fetch($rowid);
     $result=$subscription->delete();

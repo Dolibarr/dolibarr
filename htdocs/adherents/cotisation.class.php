@@ -181,13 +181,13 @@ class Cotisation extends CommonObject
 	}
 
 	/**
-			\brief		Fonction qui permet de supprimer la cotisation
-			\param 		rowid	Id cotisation
-			\return		int		<0 si KO, 0 si OK mais non trouve, >0 si OK
-	*/
-	function delete()
+	 *		\brief		Delete a subscription
+	 *		\param 		rowid	Id cotisation
+	 *		\return		int		<0 si KO, 0 si OK mais non trouve, >0 si OK
+	 */
+	function delete($user)
 	{
-		// Verification
+		// It subscription is linked to a bank transaction, we get it
 		if ($this->fk_bank)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
@@ -205,9 +205,14 @@ class Cotisation extends CommonObject
 			$num=$this->db->affected_rows($resql);
 			if ($num)
 			{
+				require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+				$member=new Adherent($this->db);
+				$result=$member->fetch($this->fk_adherent);
+				$result=$member->update_end_date($user);
+
 				if ($this->fk_bank)
 				{
-					$result=$accountline->delete();		// Renvoi faux si ligne rapprocher
+					$result=$accountline->delete($user);		// Return false if refused because line is conciliated
 					if ($result > 0)
 					{
 						$this->db->commit();

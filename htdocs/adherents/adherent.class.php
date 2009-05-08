@@ -96,6 +96,7 @@ class Adherent extends CommonObject
 	var $fistsubscription_amount;
 	var $lastsubscription_date;
 	var $lastsubscription_amount;
+	var $subscriptions=array();
 
 	//  var $public;
 	var $array_options;
@@ -937,9 +938,10 @@ class Adherent extends CommonObject
 		global $langs;
 
 		$sql = "SELECT c.rowid, c.fk_adherent, c.cotisation, c.note, c.fk_bank,";
-		$sql.= " ".$this->db->pdate("c.tms")." as datem,";
-		$sql.= " ".$this->db->pdate("c.datec")." as datec,";
-		$sql.= " ".$this->db->pdate("c.dateadh")." as dateadh";
+		$sql.= " c.tms as datem,";
+		$sql.= " c.datec as datec,";
+		$sql.= " c.dateadh as dateadh,";
+		$sql.= " c.datef as datef";
 		$sql.= " FROM ".MAIN_DB_PREFIX."cotisation as c";
 		$sql.= " WHERE c.fk_adherent = ".$this->id;
 		$sql.= " ORDER BY c.dateadh";
@@ -948,6 +950,8 @@ class Adherent extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$this->subscriptions=array();
+
 			$i=0;
 			while ($obj = $this->db->fetch_object($resql))
 			{
@@ -959,7 +963,18 @@ class Adherent extends CommonObject
 				$this->lastsubscription_date=$obj->dateadh;
 				$this->lastsubscription_amount=$obj->cotisation;
 
-				// TODO Add also array of subscription records
+				$subscription=new Cotisation($this->db);
+				$subscription->id=$obj->rowid;
+				$subscription->fk_adherent=$obj->fk_adherent;
+				$subscription->amount=$obj->cotisation;
+				$subscription->note=$obj->note;
+				$subscription->fk_bank=$obj->fk_bank;
+				$subscription->datem=$this->db->jdate($obj->datem);
+				$subscription->datec=$this->db->jdate($obj->datec);
+				$subscription->dateadh=$this->db->jdate($obj->dateadh);
+				$subscription->datef=$this->db->jdate($obj->datef);
+
+				$this->subscriptions[]=$subscription;
 
 				$i++;
 			}
