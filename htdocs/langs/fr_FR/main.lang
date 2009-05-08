@@ -48,6 +48,7 @@ SeeAbove=Voir ci-dessus
 HomeArea=Espace accueil
 LastConnexion=Dernière connexion
 PreviousConnexion=Connexion précédente
+ConnectedOnMultiCompany=Connexion sur l'entité
 ConnectedSince=Connecté depuis
 AuthenticationMode=Mode authentification
 RequestedUrl=Url sollicitée

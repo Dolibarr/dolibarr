@@ -49,6 +49,7 @@ SeeAbove=See above
 HomeArea=Home area
 LastConnexion=Last connection
 PreviousConnexion=Previous connection
+ConnectedOnMultiCompany=Connected on entity
 ConnectedSince=Connected since
 AuthenticationMode=Authentification mode
 RequestedUrl=Requested Url
