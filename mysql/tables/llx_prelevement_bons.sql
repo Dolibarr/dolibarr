@@ -1,5 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,6 +29,7 @@ create table llx_prelevement_bons
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   ref            varchar(12),        -- reference
+  entity         integer DEFAULT 1 NOT NULL, -- multi company id
   datec          datetime,           -- date de creation
   amount         real DEFAULT 0,     -- montant total du prélèvement
   statut         smallint DEFAULT 0, -- statut
@@ -37,7 +39,6 @@ create table llx_prelevement_bons
   method_trans   smallint,           -- méthode de transmission
   fk_user_trans  integer,            -- user qui a effectué la transmission
   date_credit    datetime,           -- date de crédit sur le compte
-  fk_user_credit integer,            -- user qui a remonté l'info de crédit
-  
-  UNIQUE(ref)
+  fk_user_credit integer             -- user qui a remonté l'info de crédit
+
 )type=innodb;
