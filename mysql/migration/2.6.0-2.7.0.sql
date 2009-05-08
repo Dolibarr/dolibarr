@@ -116,3 +116,8 @@ UPDATE llx_const SET entity=0 WHERE name='MAIN_SIZE_LISTE_LIMIT' AND entity=1;
 UPDATE llx_const SET entity=0 WHERE name='MAIN_SHOW_WORKBOARD' AND entity=1;
 UPDATE llx_const SET entity=0 WHERE name='SOCIETE_NOLIST_COURRIER' AND entity=1;
 UPDATE llx_const SET entity=0 WHERE name='GENBARCODE_LOCATION' AND entity=1;
+
+UPDATE llx_const SET entity=0 WHERE name='MAIN_MODULE_SYSLOG';
+UPDATE llx_const SET entity=0 WHERE name='SYSLOG_FILE';
+UPDATE llx_const SET entity=0 WHERE name='SYSLOG_LEVEL';
+
