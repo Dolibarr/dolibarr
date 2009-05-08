@@ -442,10 +442,11 @@ if (! isset($_SESSION["dol_login"]))
 		
 		$entity = $_POST["entity"];
 		$entityCookieName = "DOLENTITYID_dolibarr";
-		
+
 		if (!isset($HTTP_COOKIE_VARS[$entityCookieName]))
 		{
-			$entityCookie = new DolCookie($dolibarr_main_cookie_cryptkey);
+			// Todo: utiliser $user->datelastlogin pour un cryptage aléatoire
+			$entityCookie = new DolCookie($conf->file->main_cookie_cryptkey);
 			$entityCookie->_setCookie($entityCookieName, $entity);
 			
 			//setcookie($entityCookieName, $entity, 0, "/", "", 0);

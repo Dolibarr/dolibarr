@@ -136,6 +136,9 @@ $conf->file->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_m
 // Define charset for HTML Output (can set hidden value force_charset in conf.php file)
 if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
 $conf->file->character_set_client=strtoupper($force_charset_do_notuse);
+// Define the encrypt key for cookie
+if (empty($dolibarr_main_cookie_cryptkey)) $dolibarr_main_cookie_cryptkey='123';
+$conf->file->main_cookie_cryptkey=$dolibarr_main_cookie_cryptkey;
 
 // Define array of document root directories
 $conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT);
@@ -215,9 +218,10 @@ if (! defined('NOREQUIREDB'))
 	{
 		// TODO See to remove this later as it is a security hole
 		include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
-		$entityCookie = new DolCookie($dolibarr_main_cookie_cryptkey);
+
+		$entityCookie = new DolCookie($conf->file->main_cookie_cryptkey);
 		$conf->entity = $entityCookie->_getCookie($entityCookieName);
-			
+
 		//$conf->entity = $_COOKIE[$entityCookieName];
 	}
 	elseif (session_id() && isset($_SESSION["dol_entity"]))			// Inside an opened session
