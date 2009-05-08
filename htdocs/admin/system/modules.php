@@ -30,7 +30,7 @@ $langs->load("install");
 $langs->load("other");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 
 /*
@@ -53,21 +53,21 @@ $modules_names = array();
 $modules_files = array();
 while (($file = readdir($handle))!==false)
 {
-    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, strlen($file) - 10) == '.class.php')
-    {
-        $modName = substr($file, 0, strlen($file) - 10);
+	if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, strlen($file) - 10) == '.class.php')
+	{
+		$modName = substr($file, 0, strlen($file) - 10);
 
-        if ($modName)
-        {
-            include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
-            $objMod = new $modName($db);
+		if ($modName)
+		{
+			include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
+			$objMod = new $modName($db);
 
-            $modules[$objMod->numero]=$objMod;
-            $modules_names[$objMod->numero]=$objMod->name;
+			$modules[$objMod->numero]=$objMod;
+			$modules_names[$objMod->numero]=$objMod->name;
 			$modules_files[$objMod->numero]=$file;
-            $picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
-        }
-    }
+			$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
+		}
+	}
 }
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -82,37 +82,46 @@ ksort($sortorder);
 $rights_ids = array();
 foreach($sortorder as $numero=>$name)
 {
-    $idperms="";
-    $var=!$var;
-    // Module
-    print "<tr $bc[$var]><td width=\"300\" nowrap=\"nowrap\">";
+	$idperms="";
+	$var=!$var;
+	// Module
+	print "<tr $bc[$var]><td width=\"300\" nowrap=\"nowrap\">";
 	$alt=$name.' - '.$modules_files[$numero];
-	print img_object($alt,$picto[$numero]).' '.$modules[$numero]->getName();
-	print "</td>";
-    // Version
-    print '<td>'.$modules[$numero]->getVersion().'</td>';
-    // Id
-    print '<td align="center">'.$numero.'</td>';
-    // Permissions
-    if ($modules[$numero]->rights)
+    if (! empty($picto[$numero]))
     {
-        foreach($modules[$numero]->rights as $rights)
-        {
-            $idperms.=($idperms?", ":"").$rights[0];
-	    array_push($rights_ids, $rights[0]);
-        }
+       	if (eregi('^/',$picto[$numero])) print img_picto($alt,$picto[$numero],'',1);
+       	else print img_object($alt,$picto[$numero]);
     }
-    print '<td>'.($idperms?$idperms:"&nbsp;").'</td>';
-    print "</tr>\n";
+    else
+    {
+      	print img_object($alt,$picto[$numero]);
+    }
+	print ' '.$modules[$numero]->getName();
+	print "</td>";
+	// Version
+	print '<td>'.$modules[$numero]->getVersion().'</td>';
+	// Id
+	print '<td align="center">'.$numero.'</td>';
+	// Permissions
+	if ($modules[$numero]->rights)
+	{
+		foreach($modules[$numero]->rights as $rights)
+		{
+			$idperms.=($idperms?", ":"").$rights[0];
+			array_push($rights_ids, $rights[0]);
+		}
+	}
+	print '<td>'.($idperms?$idperms:"&nbsp;").'</td>';
+	print "</tr>\n";
 }
 print '</table>';
 print '<br>';
 sort($rights_ids);
 foreach($rights_ids as $right_id)
 {
-  if ($old == $right_id)
-    print "Attention doublon sur la permission : $right_id<br>";
-  $old = $right_id;
+	if ($old == $right_id)
+	print "Warning duplicate id on permission : ".$right_id."<br>";
+	$old = $right_id;
 }
 
 llxFooter('$Date$ - $Revision$');

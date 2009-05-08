@@ -62,7 +62,8 @@ class modSyslog extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
 		$this->special = 2;
-		//$this->picto='phoning';
+		// Name of image file used for this module.
+		$this->picto='generic';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();

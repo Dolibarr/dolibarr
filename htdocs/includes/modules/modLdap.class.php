@@ -53,6 +53,7 @@ class modLdap extends DolibarrModules
 		$this->description = "Synchronisation Ldap";
 		$this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
 		$this->special = 1;
 
 		// Data directories to create when module is enabled

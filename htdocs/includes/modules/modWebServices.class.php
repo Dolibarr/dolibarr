@@ -17,16 +17,16 @@
  */
 
 /**
-        \defgroup   webservices     Module WebServices
-        \brief      Module to enable the Dolibarr server of web services
-		\brief		$Id$
+ *      \defgroup   webservices     Module WebServices
+ *      \brief      Module to enable the Dolibarr server of web services
+ *		\brief		$Id$
 */
 
 /**
-        \file       htdocs/includes/modules/modWebServices.class.php
-        \ingroup    webservices
-        \brief      File to describe webservices module
-*/
+ *       \file       htdocs/includes/modules/modWebServices.class.php
+ *       \ingroup    webservices
+ *       \brief      File to describe webservices module
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
@@ -47,15 +47,17 @@ class modWebServices extends DolibarrModules
         $this->db = $DB;
         $this->numero = 2600;
 
-        $this->family = "projects";
+        $this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
         $this->description = "Enable the Dolibarr web services server";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        $this->special = 0;
-        $this->picto='generic';
+		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
+		$this->special = 1;
+		// Name of image file used for this module.
+		$this->picto='generic';
 
         // Data directories to create when module is enabled
         $this->dirs = array();

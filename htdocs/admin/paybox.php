@@ -17,9 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**	    \file       htdocs/admin/aybox.php
- *		\ingroup    bookmark
- *		\brief      Page to setup bookmark module
+/**	    \file       htdocs/admin/paybox.php
+ *		\ingroup    paybox
+ *		\brief      Page to setup paybox module
  *		\version    $Id$
  */
 

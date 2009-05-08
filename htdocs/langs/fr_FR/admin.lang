@@ -645,7 +645,7 @@ SystemAreaForAdminOnly = Cet espace n'est accessible qu'aux utilisateurs de type
 CompanyFundationDesc = Éditer sur cette page toutes les informations connues sur la société ou association que vous devez gérer
 DisplayDesc = Vous pouvez choisir ici tous les paramètres liés à l'apparence de Dolibarr
 AvailableModules = Modules disponibles
-ToActivateModule = Pour activer des modules, aller dans l'espace Configuration.
+ToActivateModule = Pour activer des modules, aller dans l'espace Configuration (Accueil->Configuration->Modules).
 SessionTimeOut = Time out des sessions
 SessionExplanation = Ce nombre garantie que la session n'expire pas avant ce délai. Mais la gestion de session PHP ne garantie pas que la session expire après ce délai: Ce sera le cas si un systeme de nettoyage des caches sessions est en place.<br>Note: Sans mécanisme special, le mécanisme interne à PHP nettoie la session tous les <b>%s/%s</b> accès environ mais uniquement lors d'accès fait par d'autres sessions. 
 TriggersAvailable = Triggers disponibles
@@ -1042,3 +1042,8 @@ CashDeskIdWareHouse = Entrepot à utiliser pour les ventes
 BookmarkSetup = Configuration du module Bookmark
 BookmarkDesc = Ce module vous permet de gérer des liens et raccourcis. Il permet aussi d'ajouter n'importe quelle page de Dolibarr ou lien web dans le menu d'accès rapide sur la gauche.
 NbOfBoomarkToShow = Nombre maximum de marques-pages à afficher dans le menu  
+##### WebServices #####
+WebServicesSetup=Configuration du module Webservices
+WebServicesDesc=En activant ce module, Dolibarr devient aussi serveur de web services offrant des web services divers.
+WSDLCanBeDownloadedHere=Le descripteur WSDL des services fournis peut etre récupéré ici
+EndPointIs=Les clients SOAP doivent envoyer leur requetes vers l'endpoint Dolibarr à l'URL

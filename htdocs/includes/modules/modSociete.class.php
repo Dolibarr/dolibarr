@@ -64,6 +64,7 @@ class modSociete extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->config_page_url = array("societe.php");
+		// Name of image file used for this module.
 		$this->picto='company';
 
 		// Data directories to create when module is enabled

@@ -32,7 +32,15 @@ require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
-// TODO Enable and test if module web services is enabled
+// Enable and test if module web services is enabled
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
+{
+	$langs->load("admin");
+	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+	print $langs->trans("ToActivateModule");
+	exit;
+}
 
 // Create the soap Object
 $server = new soap_server();
