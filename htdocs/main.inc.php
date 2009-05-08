@@ -446,7 +446,7 @@ if (! isset($_SESSION["dol_login"]))
 		if (!isset($HTTP_COOKIE_VARS[$entityCookieName]))
 		{
 			$entityCookie = new DolCookie($dolibarr_main_cookie_cryptkey);
-			$entityCookie->_setCookie($entityCookieName, $_POST["entity"]);
+			$entityCookie->_setCookie($entityCookieName, $entity);
 			
 			//setcookie($entityCookieName, $entity, 0, "/", "", 0);
 		}

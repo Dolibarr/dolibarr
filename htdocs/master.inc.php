@@ -214,7 +214,11 @@ if (! defined('NOREQUIREDB'))
 	else if (isset($_COOKIE[$entityCookieName]))					// Inside a browser navigation
 	{
 		// TODO See to remove this later as it is a security hole
-		$conf->entity = $_COOKIE[$entityCookieName];
+		include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
+		$entityCookie = new DolCookie($dolibarr_main_cookie_cryptkey);
+		$conf->entity = $entityCookie->_getCookie($entityCookieName);
+			
+		//$conf->entity = $_COOKIE[$entityCookieName];
 	}
 	elseif (session_id() && isset($_SESSION["dol_entity"]))			// Inside an opened session
 	{

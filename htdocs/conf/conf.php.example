@@ -148,6 +148,16 @@ $dolibarr_main_authentication="dolibarr";
 $dolibarr_main_force_https="0";
 
 
+# dolibarr_main_cookie_cryptkey
+# This parameter contains the key for crypted cookies.
+# Warning: This parameter must be configured with multicompany module
+# Default value: 123
+# Possible values: must be a integer
+# Examples:
+# $dolibarr_main_cookie_cryptkey="6589148567895233654";
+#
+# $dolibarr_main_cookie_cryptkey="123456789";
+
 # Parameters used to setup LDAP authentication.
 # Uncomment them if dolibarr_main_authentication = "ldap"
 #
