@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,9 +77,11 @@ $catotal=0;
 if ($modecompta == 'CREANCES-DETTES')
 {
     $sql = "SELECT s.rowid as socid, s.nom as name, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-    $sql .= " WHERE f.fk_statut in (1,2) AND f.fk_soc = s.rowid";
-    if ($year) $sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+    $sql.= ", ".MAIN_DB_PREFIX."facture as f";
+    $sql.= " WHERE f.fk_statut in (1,2)";
+    $sql.= " AND f.fk_soc = s.rowid";
+    if ($year) $sql.= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
 else
 {
@@ -87,13 +90,19 @@ else
      * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
      */
 	$sql = "SELECT s.rowid as socid, s.nom as name, sum(pf.amount) as amount_ttc";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-    $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid AND f.fk_soc = s.rowid";
-    if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
+	$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
+	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
+  $sql .= " WHERE p.rowid = pf.fk_paiement";
+  $sql.= " AND pf.fk_facture = f.rowid";
+  $sql.= " AND f.fk_soc = s.rowid";
+  if ($year) $sql.= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
-if ($socid) $sql .= " AND f.fk_soc = ".$socid;
-$sql .= " GROUP BY s.rowid";
-$sql .= " ORDER BY s.rowid";
+$sql.= " AND f.entity = ".$conf->entity;
+if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+$sql.= " GROUP BY s.rowid";
+$sql.= " ORDER BY s.rowid";
 
 $result = $db->query($sql);
 if ($result)
@@ -117,12 +126,17 @@ else {
 if ($modecompta != 'CREANCES-DETTES')
 {
     $sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
-    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql .= " WHERE pf.rowid IS NULL";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+    $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+    $sql.= ", ".MAIN_DB_PREFIX."paiement as p";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+    $sql.= " WHERE pf.rowid IS NULL";
+    $sql.= " AND p.fk_bank = b.rowid";
+    $sql.= " AND b.fk_account = ba.rowid";
+    $sql.= " AND ba.entity = ".$conf->entity;
     if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    $sql .= " GROUP BY nom";
-    $sql .= " ORDER BY nom";
+    $sql.= " GROUP BY nom";
+    $sql.= " ORDER BY nom";
 
     $result = $db->query($sql);
     if ($result)

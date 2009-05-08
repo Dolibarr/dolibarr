@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,33 +46,24 @@ print_titre("Chiffre d'affaire cumulé (".$langs->trans("Currency".$conf->monnaie
 print '<table width="100%"><tr><td valign="top">';
 
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-$sql .= " WHERE f.fk_statut in (1,2)";
-if ($modecompta != 'CREANCES-DETTES')
-{ 
-  $sql .= " AND f.paye = 1";
-}
-if ($socid)
-{
-  $sql .= " AND f.fk_soc = $socid";
-}
-$sql .= " GROUP BY dm";
+$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+$sql.= " WHERE f.fk_statut in (1,2)";
+$sql.= " AND f.entity = ".$conf->entity;
+if ($modecompta != 'CREANCES-DETTES') $sql.= " AND f.paye = 1";
+if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+$sql.= " GROUP BY dm";
 
 pt($db, $sql,"Suivi cumul par mois");
 
 print '</td><td valign="top">';
 
 $sql = "SELECT sum(f.total) as amount, year(f.datef) as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-$sql .= " WHERE f.fk_statut in (1,2)";
-if ($modecompta != 'CREANCES-DETTES') { 
-	$sql .= " AND f.paye = 1";
-}
-if ($socid)
-{
-  $sql .= " AND f.fk_soc = $socid";
-}
-$sql .= " GROUP BY dm";
+$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+$sql.= " WHERE f.fk_statut in (1,2)";
+$sql.= " AND f.entity = ".$conf->entity;
+if ($modecompta != 'CREANCES-DETTES') $sql.= " AND f.paye = 1";
+if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+$sql.= " GROUP BY dm";
 
 
 pt($db, $sql,"Suivi cumul par année");

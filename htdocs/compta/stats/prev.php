@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,37 +97,34 @@ print '<table width="100%">';
 
 print '<tr><td valign="top">';
 
-$sql = "SELECT sum(f.price) as amount, date_format(f.datep,'%Y-%m') as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in $in";
-if ($socid)
-{
-  $sql .= " AND f.fk_soc = $socid";
-}
-$sql .= " GROUP BY dm DESC";
+$sql = "SELECT sum(p.price) as amount, date_format(p.datep,'%Y-%m') as dm";
+$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
+$sql.= " WHERE p.fk_statut in ".$in;
+$sql.= " AND p.entity = ".$conf->entity;
+if ($socid) $sql.= " AND p.fk_soc = ".$socid;
+$sql.= " GROUP BY dm DESC";
 
 pt($db, $sql, $langs->trans("Month"));
 
 print '</td><td valign="top">';
 
-$sql = "SELECT sum(f.price) as amount, year(f.datep) as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in $in";
-if ($socid)
-{
-  $sql .= " AND f.fk_soc = $socid";
-}
-$sql .= " GROUP BY dm DESC";
+$sql = "SELECT sum(p.price) as amount, year(p.datep) as dm";
+$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
+$sql.= " WHERE p.fk_statut in ".$in;
+$sql.= " AND p.entity = ".$conf->entity;
+if ($socid) $sql.= " AND p.fk_soc = ".$socid;
+$sql.= " GROUP BY dm DESC";
 
 pt($db, $sql, "Année");
 
 print "<br>";
 
-$sql = "SELECT sum(f.price) as amount, month(f.datep) as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in $in";
-if ($socid)
-{
-  $sql .= " AND f.fk_soc = $socid";
-}
-$sql .= " GROUP BY dm";
+$sql = "SELECT sum(p.price) as amount, month(p.datep) as dm";
+$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
+$sql.= " WHERE p.fk_statut in ".$in;
+$sql.= " AND p.entity = ".$conf->entity;
+if ($socid) $sql.= " AND p.fk_soc = ".$socid;
+$sql.= " GROUP BY dm";
 
 pt($db, $sql, "Mois cumulés");
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ llxHeader();
 
 $html=new Form($db);
 
-// Affiche en-t�te du rapport
+// Affiche en-tete du rapport
 if ($modecompta=="CREANCES-DETTES")
 {
     $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByUserAuthorOfInvoice");
@@ -81,9 +82,10 @@ $catotal=0;
 if ($modecompta == 'CREANCES-DETTES')
 {
     $sql = "SELECT u.rowid as rowid, u.name as name, u.firstname as firstname, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
-    $sql.= " FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid";
     $sql.= " WHERE f.fk_statut in (1,2) ";
-    if ($year) $sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+    if ($year) $sql.= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
 else
 {
@@ -99,7 +101,8 @@ else
 	$sql.= " WHERE 1=1";
 	if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
-if ($socid) $sql .= " AND f.fk_soc = $socid";
+$sql.= " AND f.entity = ".$conf->entity;
+if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql .= " GROUP BY rowid";
 $sql .= " ORDER BY rowid";
 
@@ -125,12 +128,17 @@ else {
 if ($modecompta != 'CREANCES-DETTES')
 {
     $sql = "SELECT -1 as rowid, '' as name, '' as firstname, sum(p.amount) as amount_ttc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
-    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql .= " WHERE pf.rowid IS NULL";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+    $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+    $sql.= ", ".MAIN_DB_PREFIX."paiement as p";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+    $sql.= " WHERE pf.rowid IS NULL";
+    $sql.= " AND p.fk_bank = b.rowid";
+    $sql.= " AND b.fk_account = ba.rowid";
+    $sql.= " AND ba.entity = ".$conf->entity;
     if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    $sql .= " GROUP BY rowid";
-    $sql .= " ORDER BY rowid";
+    $sql.= " GROUP BY rowid";
+    $sql.= " ORDER BY rowid";
 
     $result = $db->query($sql);
     if ($result)

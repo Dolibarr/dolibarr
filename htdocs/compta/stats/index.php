@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ else {
 }
 
 /*
- * Sécurité accés client
+ * Securite acces client
  */
 if ($user->societe_id > 0) 
 {
@@ -78,19 +79,23 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 
 if ($modecompta == 'CREANCES-DETTES') { 
 	$sql  = "SELECT sum(f.total) as amount, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql .= " WHERE f.fk_statut in (1,2)";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql.= " WHERE f.fk_statut in (1,2)";
 } else {
     /*
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
      * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
      */
 	$sql  = "SELECT sum(pf.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-    $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
+	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
+  $sql.= " WHERE p.rowid = pf.fk_paiement";
+  $sql.= " AND pf.fk_facture = f.rowid";
 }
-if ($socid) $sql .= " AND f.fk_soc = $socid";
-$sql .= " GROUP BY dm DESC";
+$sql.= " AND f.entity = ".$conf->entity;
+if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+$sql.= " GROUP BY dm DESC";
 
 $result = $db->query($sql);
 if ($result)
@@ -117,11 +122,16 @@ else {
 // On ajoute les paiements anciennes version, non liés par paiement_facture
 if ($modecompta != 'CREANCES-DETTES') { 
     $sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
-    $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
-    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql .= " WHERE pf.rowid IS NULL";
-    $sql .= " GROUP BY dm";
-    $sql .= " ORDER BY dm";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+    $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+    $sql.= ", ".MAIN_DB_PREFIX."paiement as p";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+    $sql.= " WHERE pf.rowid IS NULL";
+    $sql.= " AND p.fk_bank = b.rowid";
+    $sql.= " AND b.fk_account = ba.rowid";
+    $sql.= " AND ba.entity = ".$conf->entity;
+    $sql.= " GROUP BY dm";
+    $sql.= " ORDER BY dm";
 
     $result = $db->query($sql);
     if ($result) {

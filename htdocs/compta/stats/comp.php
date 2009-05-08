@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +36,18 @@ if ($user->societe_id > 0)
 
 function propals ($db, $year, $month) 
 {
-	global $bc,$langs;
+	global $bc,$langs,$conf;
+	
 	$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-	$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
-	$sql .= " AND c.id in (1,2,4)";
-	$sql .= " AND date_format(p.datep, '%Y') = ".$year;
-	$sql .= " AND round(date_format(p.datep, '%m')) = ".$month;
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
+	$sql.= ", ".MAIN_DB_PREFIX."c_propalst as c";
+	$sql.= " WHERE p.fk_soc = s.rowid";
+	$sql.= " AND p.entity = ".$conf->entity;
+	$sql.= " AND p.fk_statut = c.id";
+	$sql.= " AND c.id in (1,2,4)";
+	$sql.= " AND date_format(p.datep, '%Y') = ".$year;
+	$sql.= " AND round(date_format(p.datep, '%m')) = ".$month;
 
 
 	$sql .= " ORDER BY p.fk_statut";
@@ -105,19 +111,20 @@ function propals ($db, $year, $month)
 }
 
 
-function factures ($db, $year, $month, $paye) {
+function factures ($db, $year, $month, $paye)
+{
 	global $bc,$conf;
 
 	$sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-	$sql .= " WHERE f.fk_statut = 1";
-	if ($conf->compta->mode != 'CREANCES-DETTES') {
-		$sql .= " AND f.paye = ".$paye;
-	}
-	$sql .= " AND f.fk_soc = s.rowid";
-	$sql .= " AND date_format(f.datef, '%Y') = ".$year;
-	$sql .= " AND round(date_format(f.datef, '%m')) = ".$month;
-	$sql .= " ORDER BY f.datef DESC ";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ",".MAIN_DB_PREFIX."facture as f";
+	$sql.= " WHERE f.fk_statut = 1";
+	$sql.= " AND f.entity = ".$conf->entity;
+	if ($conf->compta->mode != 'CREANCES-DETTES')	$sql.= " AND f.paye = ".$paye;
+	$sql.= " AND f.fk_soc = s.rowid";
+	$sql.= " AND date_format(f.datef, '%Y') = ".$year;
+	$sql.= " AND round(date_format(f.datef, '%m')) = ".$month;
+	$sql.= " ORDER BY f.datef DESC ";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -261,32 +268,26 @@ function ppt ($db, $year, $socid)
 
 	print '<tr><td valign="top" align="center" width="30%">';
 
-	$sql = "SELECT sum(f.price) as sum, round(date_format(f.datep,'%m')) as dm";
-	$sql .= " FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep,'%Y') = $year ";
-
-	if ($socid)
-	{
-		$sql .= " AND f.fk_soc = $socid";
-	}
-
-	$sql .= " GROUP BY dm";
+	$sql = "SELECT sum(p.price) as sum, round(date_format(p.datep,'%m')) as dm";
+	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
+	$sql.= " WHERE p.fk_statut in (1,2,4)";
+	$sql.= " AND p.entity = ".$conf->entity;
+	$sql.= " AND date_format(p.datep,'%Y') = ".$year;
+	if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
+	$sql.= " GROUP BY dm";
 
 	$prev = pt($db, $sql, $year);
 
 	print "</td><td valign=\"top\" width=\"30%\">";
 
 	$sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql .= " WHERE f.fk_statut in (1,2)";
-	if ($conf->compta->mode != 'CREANCES-DETTES') {
-		$sql .= " AND f.paye = 1";
-	}
-	$sql .= " AND date_format(f.datef,'%Y') = $year ";
-	if ($socid)
-	{
-		$sql .= " AND f.fk_soc = $socid";
-	}
-	$sql .= " GROUP BY dm";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql.= " WHERE f.fk_statut in (1,2)";
+	$sql.= " AND f.entity = ".$conf->entity;
+	if ($conf->compta->mode != 'CREANCES-DETTES')	$sql.= " AND f.paye = 1";
+	$sql.= " AND date_format(f.datef,'%Y') = ".$year;
+	if ($socid)	$sql.= " AND f.fk_soc = ".$socid;
+	$sql.= " GROUP BY dm";
 
 	$ca = pt($db, $sql, $year);
 

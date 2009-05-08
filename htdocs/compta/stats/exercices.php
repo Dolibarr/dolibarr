@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,10 +50,14 @@ function factures ($db, $year, $month, $paye)
   global $bc,$langs;
 
   $sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.total as amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid AND f.paye = ".$paye;
-  $sql .= " AND date_format(f.datef, '%Y') = ".$year;
-  $sql .= " AND round(date_format(f.datef, '%m')) = ".$month;
-  $sql .= " ORDER BY f.datef DESC ";
+  $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+  $sql.= ", ".MAIN_DB_PREFIX."facture as f";
+  $sql.= " WHERE f.fk_soc = s.rowid";
+  $sql.= " AND f.entity = ".$conf->entity;
+  $sql.= " AND f.paye = ".$paye;
+  $sql.= " AND date_format(f.datef, '%Y') = ".$year;
+  $sql.= " AND round(date_format(f.datef, '%m')) = ".$month;
+  $sql.= " ORDER BY f.datef DESC ";
 
   $result = $db->query($sql);
   if ($result) {
@@ -185,35 +190,26 @@ function ppt ($db, $year, $socid)
   print "<tr><td valign=\"top\" width=\"30%\">";
   
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-  $sql .= " WHERE f.fk_statut in (1,2)";
-  $sql .= " AND date_format(f.datef,'%Y') = ".($year-1);
-    
-    if ($conf->compta->mode != 'CREANCES-DETTES') { 
-    	$sql .= " AND f.paye = 1";
-    }
-    if ($socid)
-    {
-      $sql .= " AND f.fk_soc = $socid";
-    }
-  $sql .= " GROUP BY dm";
+  $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+  $sql.= " WHERE f.fk_statut in (1,2)";
+  $sql.= " AND f.entity = ".$conf->entity;
+  $sql.= " AND date_format(f.datef,'%Y') = ".($year-1);
+  if ($conf->compta->mode != 'CREANCES-DETTES') $sql.= " AND f.paye = 1";
+  if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+  $sql.= " GROUP BY dm";
   
   $prev = pt($db, $sql, $year - 1);
   
   print "</td><td valign=\"top\" width=\"30%\">";
   
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-  $sql .= " WHERE f.fk_statut in (1,2)";
-  $sql .= " AND date_format(f.datef,'%Y') = $year ";
-  if ($conf->compta->mode != 'CREANCES-DETTES') { 
-	$sql .= " AND f.paye = 1";
-  }
-  if ($socid)
-    {
-      $sql .= " AND f.fk_soc = $socid";
-    }
-  $sql .= " GROUP BY dm";
+  $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+  $sql.= " WHERE f.fk_statut in (1,2)";
+  $sql.= " AND f.entity = ".$conf->entity;
+  $sql.= " AND date_format(f.datef,'%Y') = $year ";
+  if ($conf->compta->mode != 'CREANCES-DETTES') $sql.= " AND f.paye = 1";
+  if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+  $sql.= " GROUP BY dm";
   
   $ca = pt($db, $sql, $year);
   
