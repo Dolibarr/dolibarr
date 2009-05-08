@@ -54,12 +54,12 @@ class Translate {
     function Translate($dir = "",$conf)
     {
 		// If charset output is forced
-		if (! empty($conf->character_set_client))
+		if (! empty($conf->file->character_set_client))
 		{
-			$this->charset_output=$conf->character_set_client;
+			$this->charset_output=$conf->file->character_set_client;
 		}
 		if ($dir) $this->dir=array($dir);
-		else $this->dir=$conf->dol_document_root;
+		else $this->dir=$conf->file->dol_document_root;
     }
 
 
@@ -356,7 +356,7 @@ class Translate {
         $newstr=ereg_replace('<','__lt__',$str);
         $newstr=ereg_replace('>','__gt__',$newstr);
         $newstr=ereg_replace('"','__quot__',$newstr);
-        
+
         $newstr=$this->convToOutputCharset($newstr);	// Convert string to $this->charset_output
 
         // Cryptage en html de la chaine
@@ -470,7 +470,7 @@ class Translate {
 
 
 	/**
-     *  \brief      Convert a string into output charset (this->charset_output that should be defined to conf->character_set_client)
+     *  \brief      Convert a string into output charset (this->charset_output that should be defined to conf->file->character_set_client)
      *  \param      str            	String to convert
      *  \param		pagecodefrom	Page code of src string
      *  \return     string         	Converted string

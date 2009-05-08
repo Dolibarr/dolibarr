@@ -112,17 +112,18 @@ analyse_sql_injection($_POST);
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-// Retrieve the entity in login form, and after in the cookie 	 
-$entityCookieName = "DOLENTITYID_dolibarr"; 	 
-if (isset($_POST["entity"])) $_SESSION["dol_entity"] = $_POST["entity"]; 	 
-if (isset($_COOKIE[$entityCookieName])) $_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
+// Retrieve the entity in login form, and after in the cookie
+// Removed: The session has not been initialized yet so using SESSION is forbidden here
+//$entityCookieName = "DOLENTITYID_dolibarr";
+//if (isset($_POST["entity"])) $_SESSION["dol_entity"] = $_POST["entity"];
+//if (isset($_COOKIE[$entityCookieName])) $_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
 
 // Set and init common variables
-// This include will set $conf, $langs and $mysoc objects
+// This include will set: $conf, $langs and $mysoc objects
 require_once("master.inc.php");
 
 // Check if HTTPS
-if ($conf->main_force_https)
+if ($conf->file->main_force_https)
 {
 	if (! empty($_SERVER["SCRIPT_URI"]))	// If SCRIPT_URI supported by server
 	{
@@ -130,7 +131,7 @@ if ($conf->main_force_https)
 		{
 			$newurl=eregi_replace('^http:','https:',$_SERVER["SCRIPT_URI"]);
 
-			dol_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl,LOG_DEBUG);
+			dol_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl);
 			header("Location: ".$newurl);
 			exit;
 		}
@@ -146,7 +147,7 @@ if ($conf->main_force_https)
 
 			$newurl='https://'.$domaineport.$_SERVER["REQUEST_URI"];
 			//print 'eee'.$newurl; 	exit;
-			dol_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl,LOG_DEBUG);
+			dol_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl);
 			header("Location: ".$newurl);
 			exit;
 		}
@@ -166,27 +167,20 @@ if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetim
 session_name($sessionname);
 session_start();
 dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".(isset($_SESSION["dol_login"])?$_SESSION["dol_login"]:'').", ".ini_get("session.gc_maxlifetime"));
-/*
-// Retrieve the entity in login form and in the cookie.
+
+// Retrieve the entity in login form or in the cookie.
 // This must be after the init of session (session_start) or this create serious pb of corrupted session.
-$entityCookieName = "DOLENTITYID_dolibarr";
-if (isset($_POST["loginfunction"]) && isset($_POST["entity"]))
+/*
+ $entityCookieName = "DOLENTITYID_dolibarr";
+if ((isset($_POST["loginfunction"]) && isset($_POST["entity"])) || isset($_COOKIE[$entityCookieName]))
 {
-	$_SESSION["dol_entity"] = $_POST["entity"];
+	$_SESSION["dol_entity"] = isset($_POST["entity"])?$_POST["entity"]:$_COOKIE[$entityCookieName];
 	$conf->entity=$_SESSION["dol_entity"];
-	dol_syslog("Will work on entity ".$conf->entity);
+	dol_syslog("We work on entity ".$conf->entity);
 	// Now we need to reload the conf with the choosed entity
-	$conf->setValues($db);
-}
-elseif (isset($_COOKIE[$entityCookieName]))
-{
-	$_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
-	$conf->entity=$_SESSION["dol_entity"];
-	dol_syslog("Will work on entity ".$conf->entity);
-	// Now we need to reload the conf with the choosed entity
-	$conf->setValues($db);
 }
 */
+
 // Disable modules (this must be after session_start and after conf has been reloaded)
 if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
 if (! empty($_SESSION["disablemodules"]))
@@ -198,8 +192,9 @@ if (! empty($_SESSION["disablemodules"]))
 	}
 }
 
+
 /*
- * Phase identification
+ * Phase authentication / login
  */
 
 // $authmode contient la liste des differents modes d'identification a tester par ordre de preference.
@@ -396,7 +391,7 @@ else
 		// Appel des triggers
 		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		$interface=new Interfaces($db);
-		$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
+		$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,(isset($_POST["entity"])?$_POST["entity"]:0));
 		if ($result < 0) { $error++; }
 		// Fin appel triggers
 
@@ -413,6 +408,7 @@ if (! isset($_SESSION["dol_login"]))
 	// New session for this login
 	$_SESSION["dol_login"]=$user->login;
 	$_SESSION["dol_authmode"]=$conf->authmode;
+	if ($conf->multicompany->enabled) $_SESSION["dol_entity"]=$conf->entity;
 	dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
 	$db->begin();
@@ -439,6 +435,7 @@ if (! isset($_SESSION["dol_login"]))
 	}
 
 	// Create entity cookie
+	// TODO Remove this as it is a security hole
 	if ($conf->multicompany->enabled && isset($_POST["entity"]))
 	{
 		$entity = $_POST["entity"];
@@ -615,7 +612,6 @@ if (defined("MAIN_NOT_INSTALLED"))
 
 
 // On charge les fichiers lang principaux
-// TODO Optimisation a faire ici
 $langs->load("main");
 $langs->load("dict");
 
@@ -625,6 +621,10 @@ $user->getrights();
 // Define some constants used for style of arrays
 $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
+
+// Sert uniquement dans module telephonie
+$yesno[0]="no";
+$yesno[1]="yes";
 
 // Constantes utilisees pour definir le nombre de lignes des textarea
 if (! eregi("firefox",$_SERVER["HTTP_USER_AGENT"]))
@@ -668,7 +668,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 	if (empty($conf->css))  $conf->css ='/theme/eldy/eldy.css.php';
 	//header("Content-type: text/html; charset=UTF-8");
-	header("Content-type: text/html; charset=".$conf->character_set_client);
+	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
@@ -678,7 +678,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	{
 		print "<head>\n";
 
-		print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->character_set_client."\">\n";
+		print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->file->character_set_client."\">\n";
 
 		// Affiche meta
 		print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
@@ -848,6 +848,7 @@ function top_menu($head, $title='', $target='')
 	$htmltext.='<br><b>'.$langs->trans("Type").'</b>: '.($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
 	$htmltext.='<br>';
 	$htmltext.='<br><u>'.$langs->trans("Connection").'</u>';
+	if ($conf->global->MAIN_MODULE_MULTICOMPANY) $htmltext.='<br><b>'.$langs->trans("ConnectedOnMultiCompany").'</b>: '.$conf->entity.' (user entity '.$user->entity.')';
 	$htmltext.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dol_print_date($user->datelastlogin,"dayhour");
 	$htmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dol_print_date($user->datepreviouslogin,"dayhour");
 	$htmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];

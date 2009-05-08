@@ -336,7 +336,7 @@ if ($modulepart == 'barcode')
 	$readable=$_GET["readable"]?$_GET["readable"]:"Y";
 
 	// Output files with barcode generators
-	foreach ($conf->dol_document_root as $dirroot)
+	foreach ($conf->file->dol_document_root as $dirroot)
 	{
 		$dir=$dirroot . "/includes/modules/barcode/";
 		$result=@include_once($dir.$generator.".modules.php");

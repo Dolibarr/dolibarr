@@ -671,7 +671,7 @@ class ActionComm
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				// Note: Output of sql request is encoded in $conf->character_set_client
+				// Note: Output of sql request is encoded in $conf->file->character_set_client
 				while ($obj=$this->db->fetch_object($resql))
 				{
 					$qualified=true;

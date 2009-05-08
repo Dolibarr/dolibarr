@@ -114,10 +114,6 @@ require_once(DOL_DOCUMENT_ROOT."/core/conf.class.php");
 
 $conf = new Conf();
 
-// Retrieve the entity
-// Removed: The session has not been initialized yet so using SESSION is forbidden here
-if (isset($_SESSION["dol_entity"])) $conf->entity = $_SESSION["dol_entity"];
-
 // Identifiant propres au serveur base de donnee
 $conf->db->host   = $dolibarr_main_db_host;
 if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
@@ -134,22 +130,22 @@ $conf->db->prefix = $dolibarr_main_db_prefix;
 if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';
 $conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
 // Identifiant autres
-$conf->main_authentication = empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
+$conf->file->main_authentication = empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
 // Force https
-$conf->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
+$conf->file->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
 // Define charset for HTML Output (can set hidden value force_charset in conf.php file)
 if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
-$conf->character_set_client=strtoupper($force_charset_do_notuse);
+$conf->file->character_set_client=strtoupper($force_charset_do_notuse);
 
 // Define array of document root directories
-$conf->dol_document_root=array(DOL_DOCUMENT_ROOT);
+$conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT);
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt contains several directories
 	$values=split(';',$dolibarr_main_document_root_alt);
 	foreach($values as $value)
 	{
-		$conf->dol_document_root[]=$value;
+		$conf->file->dol_document_root[]=$value;
 	}
 }
 
@@ -191,9 +187,9 @@ if (! defined('NOREQUIREDB'))
 		exit;
 	}
 }
-// Now database connexion is known we can forget password
-//$dolibarr_main_db_pass=''; 	// Comment this because pass is used in a lot of pages
-$conf->db->pass='';				// This is to avoir password to be shown in dump
+// Now database connexion is known, so we can forget password
+//$dolibarr_main_db_pass=''; 	// Comment this because this constant is used in a lot of pages
+$conf->db->pass='';				// This is to avoid password to be shown in dump
 
 /*
  * Creation objet $user
@@ -204,56 +200,43 @@ if (! defined('NOREQUIREUSER'))
 }
 
 /*
- * Chargement objet $conf
+ * Load object $conf
  * After this, all parameters conf->global->CONSTANTS are loaded
  */
 if (! defined('NOREQUIREDB'))
 {
+	$entityCookieName="DOLENTITYID_dolibarr";
+	// Retrieve the entity
+	if (isset($_POST["loginfunction"]) && isset($_POST["entity"]))	// Just after a login page
+	{
+		$conf->entity = $_POST["entity"];
+	}
+	else if (isset($_COOKIE[$entityCookieName]))					// Inside a browser navigation
+	{
+		// TODO See to remove this later as it is a security hole
+		$conf->entity = $_COOKIE[$entityCookieName];
+	}
+	elseif (session_id() && isset($_SESSION["dol_entity"]))			// Inside an opened session
+	{
+		// TODO This is not used for the moment as session is started after for the moment
+		$conf->entity = $_SESSION["dol_entity"];
+	}
+	elseif (isset($_ENV["dol_entity"]))								// If inside a CLI script
+	{
+		$conf->entity = $_ENV["dol_entity"];
+	}
 	$conf->setValues($db);
 }
 
 /*
- * Set default language (must be after the setValues of $conf)
+ * Creation objet $mysoc
+ * Objet Societe qui contient carac de l'institution gérée par Dolibarr.
  */
-if (! defined('NOREQUIRETRAN'))
+if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 {
-	$langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
-	$langs->setPhpLang();
-}
-
-/*
- * Pour utiliser d'autres versions des librairies externes que les
- * versions embarquées dans Dolibarr, définir les constantes adequates:
- * Pour FPDF:           FPDF_PATH
- * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
- * Pour MagpieRss:      MAGPIERSS_PATH
- * Pour PHPlot:         PHPLOT_PATH
- * Pour JPGraph:        JPGRAPH_PATH
- * Pour NuSOAP:         NUSOAP_PATH
- * Pour TCPDF:          TCPDF_PATH
- */
-// Les path racines
-if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
-if (! defined('FPDFI_PATH'))          { define('FPDFI_PATH',         DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdfi/'); }
-if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
-if (! defined('JPGRAPH_PATH'))        { define('JPGRAPH_PATH',       DOL_DOCUMENT_ROOT .'/includes/jpgraph/'); }
-if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
-if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
-if (! defined('PHPEXCELREADER'))      { define('PHPEXCELREADER',     DOL_DOCUMENT_ROOT .'/includes/phpexcelreader/'); }
-// Les autres path
-if (! defined('FPDF_FONTPATH'))       { define('FPDF_FONTPATH',      FPDF_PATH . 'font/'); }
-if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
-if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->externalrss->dir_temp); }
-
-
-
-/*
- * Creation objet mysoc
- * Objet Societe qui contient carac de l'institution géré par Dolibarr.
- */
-if (! defined('NOREQUIRESOC'))
-{
+	require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
 	$mysoc=new Societe($db);
+
 	$mysoc->id=0;
 	$mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM;
 	$mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
@@ -304,10 +287,40 @@ if (! defined('NOREQUIRESOC'))
 	$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
 }
 
-// Sert uniquement dans module telephonie
-$yesno[0]="no";
-$yesno[1]="yes";
 
-if ( ! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
+/*
+ * Set default language (must be after the setValues of $conf)
+ */
+if (! defined('NOREQUIRETRAN'))
+{
+	$langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
+	$langs->setPhpLang();
+}
 
+/*
+ * Pour utiliser d'autres versions des librairies externes que les
+ * versions embarquées dans Dolibarr, définir les constantes adequates:
+ * Pour FPDF:           FPDF_PATH
+ * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
+ * Pour MagpieRss:      MAGPIERSS_PATH
+ * Pour PHPlot:         PHPLOT_PATH
+ * Pour JPGraph:        JPGRAPH_PATH
+ * Pour NuSOAP:         NUSOAP_PATH
+ * Pour TCPDF:          TCPDF_PATH
+ */
+// Les path racines
+if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
+if (! defined('FPDFI_PATH'))          { define('FPDFI_PATH',         DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdfi/'); }
+if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
+if (! defined('JPGRAPH_PATH'))        { define('JPGRAPH_PATH',       DOL_DOCUMENT_ROOT .'/includes/jpgraph/'); }
+if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
+if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
+if (! defined('PHPEXCELREADER'))      { define('PHPEXCELREADER',     DOL_DOCUMENT_ROOT .'/includes/phpexcelreader/'); }
+// Les autres path
+if (! defined('FPDF_FONTPATH'))       { define('FPDF_FONTPATH',      FPDF_PATH . 'font/'); }
+if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
+if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->externalrss->dir_temp); }
+
+
+if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
 ?>

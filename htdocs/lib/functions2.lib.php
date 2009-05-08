@@ -45,8 +45,8 @@ function dol_print_file($langs,$filename,$searchalt=0)
 		{
 			$content=file_get_contents($htmlfile);
 			$isutf8=utf8_check($content);
-			if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content);
-			elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content);
+			if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') print utf8_encode($content);
+			elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') print utf8_decode($content);
 			else print $content;
 			return true;
 		}
@@ -62,8 +62,8 @@ function dol_print_file($langs,$filename,$searchalt=0)
 			{
 				$content=file_get_contents($htmlfilealt);
 				$isutf8=utf8_check($content);
-				if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content);
-				elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content);
+				if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') print utf8_encode($content);
+				elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') print utf8_decode($content);
 				else print $content;
 				return true;
 			}
