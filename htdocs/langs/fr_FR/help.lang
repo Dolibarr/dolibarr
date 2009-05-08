@@ -6,3 +6,5 @@ RemoteControlSupport=Support temps réel à distance
 ToSeeListOfAvailableRessources=Pour contacter/voir les ressources disponibles:
 ClickHere=Cliquez ici
 HelpCenter=Centre d'aide
+DolibarrHelpCenter=Centre de support et d'aide Dolibarr
+ToGoBackToDolibarr=Pour aller sur Dolibarr, <a href="%s">cliquer ici</a>.

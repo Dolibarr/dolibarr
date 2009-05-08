@@ -29,12 +29,16 @@ $langs->load("other");
 $langs->load("help");
 
 
-pHeader("Dolibarr Help Service Center",$_SERVER["PHP_SELF"]);
+pHeader($langs->trans("DolibarrHelpCenter"),$_SERVER["PHP_SELF"]);
 
 print $langs->trans("HelpCenterDesc1")."<br>\n";
 print $langs->trans("HelpCenterDesc2")."<br>\n";
 
-print '<br><br><br>';
+print '<br>';
+
+print $langs->trans("ToGoBackToDolibarr","/");
+
+print '<br><br>';
 
 print '<table border="1">';
 

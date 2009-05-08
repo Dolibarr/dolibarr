@@ -4,6 +4,7 @@ English Dolibarr changelog
 ***** Changelog for 2.7 compared to 2.6 *****
 
 For users:
+- New: Add an help and support center.
 - New: Can export commercial proposals.
 - New: Can use a cache for xcal exports.
 - New: Option for faster confirmation process with one ajax popup.
@@ -19,7 +20,7 @@ For developers:
 - Can use an alternate document_root directory to develop with 
   sources on two repositories.
 - Removed useless code of old commercial module.
-
+- Updated wiki documentation.
 
 
 ***** Changelog for 2.6 compared to 2.5 *****
