@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,21 @@
  */
 
 /**
- \defgroup   syslog  Module syslog
- \brief      Module pour gerer les messages d'erreur dans syslog
+ *	\defgroup   syslog  Module syslog
+ *	\brief      Module pour gerer les messages d'erreur dans syslog
  */
 
 /**
- \file       htdocs/includes/modules/modSyslog.class.php
- \ingroup    syslog
- \brief      Fichier de description et activation du module de syslog
+ *	\file       htdocs/includes/modules/modSyslog.class.php
+ *	\ingroup    syslog
+ *	\brief      Fichier de description et activation du module de syslog
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 /**
- \class      modSyslog
- \brief      Classe de description et activation du module Syslog
+ *	\class      modSyslog
+ *	\brief      Classe de description et activation du module Syslog
  */
 
 class modSyslog extends DolibarrModules
@@ -47,12 +47,20 @@ class modSyslog extends DolibarrModules
 		$this->db = $DB ;
 		$this->numero = 42 ;
 
-		$this->family = "technic";
+		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
+		// It is used to group modules in module setup page
+		$this->family = "base";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
-		$this->description = "Activation des traces debug (syslog)";
+		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
+		$this->description = "Activate debug logs (syslog)";
+		// Can be enabled / disabled only in the main company
+		$this->core_enabled = 1;
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
 		$this->special = 2;
 		//$this->picto='phoning';
 
