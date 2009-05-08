@@ -1,0 +1,5 @@
+# Dolibarr language file - no_NB - google
+CHARSET=UTF-8
+GoogleSetup=Oppsett av Google tools integrasjon
+GoogleSetupHelp=Hjelp til å angi parametere finnes på Google url %s
+GoogleAgendaNb=Agenda nb %s 

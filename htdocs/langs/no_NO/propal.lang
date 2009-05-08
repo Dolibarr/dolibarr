@@ -1,91 +1,80 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - no_NB - propal
 CHARSET=UTF-8
-Proposals=Kommersiell forslag
-Proposal=Kommersiell forslag
-ProposalsDraft=Utkast kommersielle forslag
-ProposalDraft=Utkast kommersielle forslag
-ProposalsOpened=Åpnet kommersiell forslag
-Prop=Kommersiell forslag
-CommercialProposal=Kommersiell forslag
-CommercialProposals=Kommersiell forslag
-ProposalContact=Forslaget kontakt
-NewProp=Ny kommersiell forslag
-NewProposal=Ny kommersiell forslag
-NewPropal=Nye forslaget
+Proposals=Tilbud
+Proposal=Tilbud
+ProposalsDraft=Tilbudskladder
+ProposalDraft=Tilbudskladd
+ProposalsOpened=Åpnede tilbud
+Prop=Tilbud
+CommercialProposal=Tilbud
+CommercialProposals=Tilbud
+ProposalContact=Tilbudskontakt
+NewProp=Nytt tilbud
+NewProposal=Nytt tilbud
+NewPropal=Nytt tilbud
 Prospect=Prospekt
-ProspectList=Prospect listen
-DeleteProp=Slett kommersielle forslag
-ValidateProp=Validate kommersielle forslag
-AddProp=Legg forslaget
-ConfirmDeleteProp=Er du sikker på at du vil slette denne kommersielle forslag?
-ConfirmValidateProp=Er du sikker på at du vil bekrefte dette kommersielle forslag?
-LastPropals=Siste% s forslag
-LastClosedProposals=Siste% s lukket forslag
-AllPropals=Alle forslagene
-LastProposals=Siste forslag
-SearchAProposal=Søk forslag
-ProposalsStatistics=Kommersiell forslag &#39;statistikk
-NumberOfProposalsByMonth=Nummer måned
-AmountOfProposalsByMonthHT=Beløp per måned (netto etter skatt)
-NbOfProposals=Antallet kommersielle forslag
-ShowPropal=Vis forslag
-PropalsDraft=Utkast
-PropalsOpened=Åpningstider
-PropalsNotBilled=Stengt faktureres ikke
-PropalStatusDraft=Utkast (må være validert)
-PropalStatusValidated=Validert (forslaget åpnes)
-PropalStatusOpened=Validert (forslaget åpnes)
-PropalStatusClosed=Stengt
-PropalStatusSigned=Signert (til fakturering)
-PropalStatusNotSigned=Ikke signert (stengt)
+ProspectList=Prospektliste
+DeleteProp=Slett tilbud
+ValidateProp=Godkjenn tilbud
+AddProp=Legg til tilbud
+ConfirmDeleteProp=Er du sikker på at du vil slette dette tilbudet?
+ConfirmValidateProp=Er du sikker på at du vil godkjenne dette tilbudet?
+LastPropals=Siste %s tilbud
+LastClosedProposals=Siste %s lukkede tilbud
+AllPropals=Alle tilbud
+LastProposals=Siste tilbud
+SearchAProposal=Søk i tilbud
+ProposalsStatistics=Tilbudsstatistikk
+NumberOfProposalsByMonth=Antall tilbud pr måned
+AmountOfProposalsByMonthHT=Tilbudsbeløp pr måned (eksl. MVA)
+NbOfProposals=Antall tilbud
+ShowPropal=Vis tilbud
+PropalsDraft=Kladder
+PropalsOpened=Åpnede
+PropalsNotBilled=Lukkede men ikke fakturerte
+PropalStatusDraft=Kladder (trenger godkjenning)
+PropalStatusValidated=Godkjent (tilbudet er åpnet)
+PropalStatusOpened=Godkjent (tilbudet er åpnet)
+PropalStatusClosed=Lukket
+PropalStatusSigned=Lukket (akseptert)
+PropalStatusNotSigned=Lukket (avslått)
 PropalStatusBilled=Fakturert
-PropalStatusDraftShort=Utkast
-PropalStatusValidatedShort=Validert
-PropalStatusOpenedShort=Åpningstider
-PropalStatusClosedShort=Stengt
-PropalStatusSignedShort=Signert
-PropalStatusNotSignedShort=Ikke pålogget
+PropalStatusDraftShort=Kladd
+PropalStatusValidatedShort=Godkjent
+PropalStatusOpenedShort=Åpnet
+PropalStatusClosedShort=Lukket
+PropalStatusSignedShort=Akseptert
+PropalStatusNotSignedShort=Avslått
 PropalStatusBilledShort=Fakturert
-PropalsToClose=Kommersiell forslag for å lukke
-PropalsToBill=Signert kommersielle forslag å fakturere
-ListOfProposals=Liste over kommersielle forslag
-ActionsOnPropal=Handlinger på forslaget
-NoOpenedPropals=Ingen åpnet kommersiell forslag
-NoOtherOpenedPropals=Ingen andre åpnet kommersiell forslag
-RefProposal=Kommersiell forslaget ref
-SendPropalByMail=Send kommersielle forslaget med post
+PropalsToClose=Åpne tilbud
+PropalsToBill=Aksepterte tilbud
+ListOfProposals=Oversikt over tilbud
+ActionsOnPropal=Handlinger i forbindelse med tilbud
+NoOpenedPropals=Ingen åpne tilbud
+NoOtherOpenedPropals=Ingen andre åpne tilbud
+RefProposal=Tilbudsreferanser
+SendPropalByMail=Send tilbud med e-post
 FileNotUploaded=Filen ble ikke lastet opp
 FileUploaded=Filen ble lastet opp
-AssociatedDocuments=Dokumenter knyttet til forslaget:
-ErrorCantOpenDir=Kan ikke åpne katalogen
-DateEndPropal=Dato slutten gyldigheten
-DateEndPropalShort=Dato slutten
-ValidityDuration=Gyldighet varighet
+AssociatedDocuments=Dokumenter relatert til tilbudet:
+ErrorCantOpenDir=Kan ikke åpne mappen
+DateEndPropal=Gyldig til
+DateEndPropalShort=Utløpsdato
+ValidityDuration=Gyldighet
 CloseAs=Lukk med status
-ClassifyBilled=Klassifisere fakturert
-BuildBill=Bygg faktura
-RelatedBill=Relaterte faktura
+ClassifyBilled=Sett som fakturert
+BuildBill=Lag faktura
+RelatedBill=Relatert faktura
 RelatedBills=Relaterte fakturaer
-ErrorPropalNotFound=Propal% s ikke funnet
-Estimate=Beregn:
-EstimateShort=Beregn
-OtherPropals=Andre forslag
-CopyPropalFrom=Lage kommersielle forslaget ved å kopiere eksisterende forslaget
-CreateEmptyPropal=Opprett tom kommersielle forslag vierge eller fra listen over produkter / tjenester
-DefaultProposalDurationValidity=Standard kommersielle forslaget gyldighet varighet (i dager)
-UseCustomerContactAsPropalRecipientIfExist=Bruk kundekontakt adressen hvis definert stedet for tredjepart adresse som forslaget mottakerens adresse
-ClonePropal=Klon kommersielle forslag
-ConfirmClonePropal=Er du sikker på at du vil klone denne kommersielle <b>forslaget% s?</b>
-DocModelAzurDescription=En komplett forslag modell (logo. ..)
-DocModelJauneDescription=Jaune forslaget modell
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+ErrorPropalNotFound=Tilbud %s ble ikke funnet
+Estimate=Estimat:
+EstimateShort=Estimate
+OtherPropals=Andre tilbud
+CopyPropalFrom=Opprett tilbud ved å kopiere et eksisterende tilbud
+CreateEmptyPropal=Opprett tomt tilbud eller fra fra en liste over produkter/tjenester
+DefaultProposalDurationValidity=Standard gyldighetstid for tilbud (dager)
+UseCustomerContactAsPropalRecipientIfExist=Bruk kontaktpersonens adresse (hvis den er definert) i stedet for tredjepartens adresse
+
+# Document models
+DocModelAzurDescription=En fullstendig tilbudsmodell (logo...)
+DocModelJauneDescription=Jaune tilbudsmodell

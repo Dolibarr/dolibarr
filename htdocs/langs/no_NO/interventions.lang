@@ -1,43 +1,33 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - no_NB - interventions
+CHARSET=UTF-8 
 Intervention=Intervensjon
 Interventions=Intervensjoner
-InterventionCard=Intervensjon kortet
-NewIntervention=Nye tiltak
-AddIntervention=Legg intervensjon
-ListOfInterventions=Liste over tiltak
-EditIntervention=Editer intervensjon
-LastInterventions=Siste% s intervensjoner
-AllInterventions=Alle tiltak
-CreateDraftIntervention=Lage utkast
-CustomerDoesNotHavePrefix=Kunden har ikke et prefiks
-InterventionContact=Intervensjon kontakt
+InterventionCard=Intervensjonskort
+NewIntervention=Ny intervensjon
+AddIntervention=Legg til interensjon
+ListOfInterventions=Oversikt over intervensjoner
+EditIntervention=Rediger intervensjon
+LastInterventions=Siste %s intervensjoner
+AllInterventions=Alle intervensjoner
+CreateDraftIntervention=Lag kladd
+CustomerDoesNotHavePrefix=Kunder har ikke noe prefix
+InterventionContact=Intervensjonskontakt
 DeleteIntervention=Slett intervensjon
-ValidateIntervention=Validate intervensjon
-DeleteInterventionLine=Slett intervensjon linje
-ConfirmDeleteIntervention=Er du sikker på at du vil slette denne intervensjon?
-ConfirmValidateIntervention=Er du sikker på at du vil bekrefte dette intervensjon?
-ConfirmModifyIntervention=Er du sikker på at du vil endre denne intervensjon?
-ConfirmDeleteInterventionLine=Er du sikker på at du vil slette denne intervensjon linjen?
-NameAndSignatureOfInternalContact=Navn og signatur for mellomliggende:
-NameAndSignatureOfExternalContact=Navn og signatur for kunden:
-DocumentModelStandard=Standarddokument modell for intervensjoner
-TypeContact_fichinter_internal_INTERREPFOLL=Representant følge opp intervensjon
-TypeContact_fichinter_internal_INTERVENING=Mellomliggende
-TypeContact_fichinter_external_BILLING=Fakturering kundekontakt
-TypeContact_fichinter_external_CUSTOMER=Følge opp kundekontakt
-ArcticNumRefModelDesc1=Generisk nummer modell
-ArcticNumRefModelError=Kunne ikke aktivere
-PacificNumRefModelDesc1=Return numero med format% syymm-nnnn der ÅÅ er årstallet, MM er måneden og nnnn er en sekvens uten pause og ingen retur til 0
-PacificNumRefModelError=En intervensjon kortet starter med $ syymm finnes allerede og er ikke kompatible med denne modellen sekvens. Fjerne den eller endre den for å aktivere denne modulen.
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+ValidateIntervention=Godkjenn intervensjon
+DeleteInterventionLine=Slett intervensjonslinje
+ConfirmDeleteIntervention=Er du sikker på at du vil slette denne intervensjonen?
+ConfirmValidateIntervention=Er du sikker på at du vil godkjenne denne intervensjonen?
+ConfirmModifyIntervention=Er du sikker på at du vil endre denne intervensjonen?
+ConfirmDeleteInterventionLine=Er du sikker på at du vil slette denne intervensjonslinjen?
+NameAndSignatureOfInternalContact=Navn og signatur tekniker :
+NameAndSignatureOfExternalContact=Navn og signatutr kunde :
+##### Types de contacts #####
+TypeContact_fichinter_internal_INTERREPFOLL=Ansvarlig for å følge opp intervensjonen
+TypeContact_fichinter_internal_INTERVENING=Tekniker
+TypeContact_fichinter_external_BILLING=Kundens fakturakontakt
+TypeContact_fichinter_external_CUSTOMER=Ansvarlig hos kunden for oppfølging
+# Modele numérotation
+ArcticNumRefModelDesc1=Generisk nummereringsmodell
+ArcticNumRefModelError=Feil ved aktivering
+PacificNumRefModelDesc1=Gir et nummer med formatet %sååmm-nnnn hvor åå er året, mm er måneden og nnnn er et løpenummer som ikke settes tilbake til null
+PacificNumRefModelError=Det finnes allerede et intervensjonskort som starter med  $sååmm, og dette er ikke kompatibelt med denne nummereringsmodellen. Du må fjerne denne for å aktivere denne modellen. 

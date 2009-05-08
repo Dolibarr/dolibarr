@@ -1,46 +1,35 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - no_NB - suppliers
 CHARSET=UTF-8
 Suppliers=Leverandører
-Supplier=Tilbydersøk
+Supplier=Leverandør
 AddSupplier=Legg til en leverandør
-SupplierRemoved=Tilbydersøk fjernet
-SuppliersInvoice=Leverandører faktura
-SuppliersInvoices=Leverandører fakturaer
+SupplierRemoved=Leverandør slettet
+SuppliersInvoice=Leverandørfaktura
+SuppliersInvoices=Leverandørfakturaer
 NewSupplier=Ny leverandør
-History=Historie
-ListOfSuppliers=Liste over leverandører
+History=Historikk
+ListOfSuppliers=Leverandøroversikt
 ShowSupplier=Vis leverandør
-OrderDate=Ordredato
-BuyingPrice=Kjøpe pris
-AddSupplierPrice=Legg leverandør pris
-ChangeSupplierPrice=Endre leverandør pris
-ErrorQtyTooLowForThisSupplier=Mengde for lavt for denne leverandøren eller ingen pris definert på dette produktet på denne leverandør
-ErrorSupplierCountryIsNotDefined=Landet for denne leverandøren er ikke definert. Riktig dette først.
-ProductHasAlreadyReferenceInThisSupplier=Dette produktet har allerede en referanse i denne leverandør
+OrderDate=Bestillingsdato
+BuyingPrice=Innkjøpspris
+AddSupplierPrice=Legg til leverandørpris
+ChangeSupplierPrice=Endre leverandørpris
+ErrorQtyTooLowForThisSupplier=Mengden er for lav for denne leverandørem, eller det er ikke definert noen pris for dette produktet for denne leverandøren
+ErrorSupplierCountryIsNotDefined=Det er ikke angitt noe land for denne leverandøren. Du må gjøre dette først.
+ProductHasAlreadyReferenceInThisSupplier=Dette produktet har allerede en referanse hos denne leverandøren
 NoRecordedSuppliers=Ingen leverandører registrert
-SupplierPayment=Tilbydersøk betaling
-SuppliersArea=Leverandører området
+SupplierPayment=Leverandørbetaling
+SuppliersArea=Leverandørområde
 RefSupplierShort=Ref. leverandør
-ExportDataset_fournisseur_1=Leverandørfakturaer og fakturaer &#39;linjer
+ExportDataset_fournisseur_1=Oversikt over leverandørfakturaer ig varelinjer
 ExportDataset_fournisseur_2=Leverandørfakturaer og betalinger
-ApproveThisOrder=Godkjenn denne bestillingen
-ConfirmApproveThisOrder=Er du sikker på at du vil godkjenne denne ordren?
-DenyingThisOrder=Avkrefte denne bestillingen
-ConfirmDenyingThisOrder=Er du sikker på at du vil avslå denne bestillingen?
-ConfirmCancelThisOrder=Er du sikker på at du vil kansellere denne bestillingen?
-AddCustomerOrder=Opprette kundeordre
-AddCustomerInvoice=Opprett kunde faktura
-AddSupplierOrder=Opprett leverandør bestilling
-AddSupplierInvoice=Opprett leverandør faktura
-ListOfSupplierProductForSupplier=Listen over produkter og priser for <b>leverandør% s</b>
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+ApproveThisOrder=Godkjenn denne innkjøpsordren
+ConfirmApproveThisOrder=Er du sikker på at du vil godkjenne denne innkjøpsordren?
+DenyingThisOrder=Avvis denne innkjøpsordren
+ConfirmDenyingThisOrder=Er du sikker på at du vil avvise denne innkjøpsordren?
+ConfirmCancelThisOrder=Er du sikker på at du vil avbryte denne innkjøpsordren?
+AddCustomerOrder=Opprett kundeordre
+AddCustomerInvoice=Opprett kundefaktura
+AddSupplierOrder=Opprett innkjøpsordre
+AddSupplierInvoice=Opprett innkjøpsfaktura
+ListOfSupplierProductForSupplier=Oversikt over produkter og priser for leverandøren <b>%s</b>

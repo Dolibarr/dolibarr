@@ -1,33 +1,24 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - no_NB - deliveries
 CHARSET=UTF-8
-Delivery=Leveranse
-Deliveries=Leveransene
-DeliveryCard=Levering kortet
-DeliveryOrder=Levering bestilling
-DeliveryOrders=Levering bestillinger
+Delivery=Levering
+Deliveries=Leveringer
+DeliveryCard=Leveringskort
+DeliveryOrder=Leveringsordre
+DeliveryOrders=Leveringsordre
 DeliveryDate=Leveringsdato
-DeliveryDateShort=Deliv. dato
-CreateDeliveryOrder=Generer levering bestilling
-QtyDelivered=Antall levert
-SetDeliveryDate=Set frakt dato
-ValidateDeliveryReceipt=Validate levering kvittering
-ValidateDeliveryReceiptConfirm=Er du sikker på at du vil bekrefte dette levering kvittering?
+DeliveryDateShort=Lev. dato
+CreateDeliveryOrder=Opprett leveringsordre
+QtyDelivered=Ant levert
+SetDeliveryDate=Angi leveringsdato
+ValidateDeliveryReceipt=Godkjenn leveringskvittering
+ValidateDeliveryReceiptConfirm=Er du sikker på at du vil godkjenne denne leveringskvitteringen?
 DeliveryMethod=Leveringsmåte
-TrackingNumber=Sporingsnummer
-NameAndSignature=Navn og Signatur:
-ToAndDate=To___________________________________ på ____ / _____ / __________
-GoodStatusDeclaration=Har mottatt varene ovenfor i god stand,
-Deliverer=Frelseren:
+TrackingNumber=Trackingnummer
+
+# merou PDF model						   
+NameAndSignature=Navn og signatur : 
+ToAndDate=Til___________________________________ den ____/_____/__________
+GoodStatusDeclaration=Forsendelsen er mottatt uten skader,
+Deliverer=Transportør : 
 Sender=Avsender
 Recipient=Mottaker
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser

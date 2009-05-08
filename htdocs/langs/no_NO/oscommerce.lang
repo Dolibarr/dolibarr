@@ -1,20 +1,9 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - no_NB - oscommerce
 CHARSET=UTF-8
 OSCommerce=OS Commerce
-OSCommerceSetup=OS handelsmodulen oppsett
-OSCommerceSetupSaved=OS Commerce oppsett lagret
-OSCommerceServer=OS Commerce Server host / ip
+OSCommerceSetup=OS Commerce moduloppsett
+OSCommerceSetupSaved=OS Commerce innstillinger lagret
+OSCommerceServer=OS Commerce server host/ip
 OSCommerceDatabaseName=OS Commerce databasenavn
-OSCommercePrefix=OS Commerce tabeller prefikset
-OSCommerceUser=OS Commerce database login
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+OSCommercePrefix=OS Commerce tabellprefix
+OSCommerceUser=OS Commerce databaseinnlogging

@@ -1,64 +1,53 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - no_NB - ecm
 CHARSET=UTF-8
 MenuECM=Dokumenter
 DocsMine=Mine dokumenter
-DocsGenerated=Generated dokumenter
-DocsElements=Elements dokumenter
+DocsGenerated=Opprettede dokumenter
+DocsElements=Dokumenter elementer
 DocsThirdParties=Dokumenter tredjeparter
 DocsContracts=Dokumenter kontrakter
-DocsProposals=Dokumenter forslag
-DocsOrders=Dokumenter bestillinger
+DocsProposals=Dokumenter tilbud
+DocsOrders=Dokomenter ordre
 DocsInvoices=Dokumenter fakturaer
-ECMNbOfDocs=NB av dokumenter i katalogen
-ECMNbOfDocsSmall=Nb av doc.
-ECMSection=Directory
-ECMSectionManual=Manuell katalog
-ECMSectionAuto=Automatisk katalog
-ECMSectionsManual=
-ECMSectionsAuto=Automatisk kataloger
-ECMSections=Kataloger
+ECMNbOfDocs=Ant. dokumenter i mappen
+ECMNbOfDocsSmall=Ant. dok.
+ECMSection=Mappe
+ECMSectionManual=Manuell mappe
+ECMSectionAuto=Automatisk mappe
+ECMSectionsManual=Manuelle mapper
+ECMSectionsAuto=Automatiske mapper
+ECMSections=Mapper
 ECMRoot=Rot
-ECMNewSection=Ny katalog
-ECMAddSection=Legg til en manuell katalog
-ECMNewSection=Ny manuell katalog
+ECMNewSection=Ny mappe
+ECMAddSection=Legg til manuell mappe
+ECMNewSection=Ny manuell mappe
 ECMNewDocument=Nytt dokument
-ECMCreationDate=Opprettelsesdato
-ECMNbOfFilesInDir=Antall filer i katalogen
-ECMNbOfSubDir=Antall sub-kataloger
-ECMNbOfFilesInSubDir=Nunber av iles i sub-kataloger
-ECMCreationUser=Creator
-ECMArea=ECM-området
-ECMAreaDesc=The ECM (Electronic Content Management)-området kan du lagre, dele og søke raskt alle slags dokumenter i Dolibarr.
-ECMAreaDesc2=* Automatisk kataloger fylles ut automatisk når du legger dokumenter fra kort av et element. <br> * Manual kataloger kan brukes til å lagre dokumenter som ikke er knyttet til et bestemt element.
-ECMSectionWasRemoved=<b>Directory% s</b> har blitt slettet.
-ECMDocumentsSection=Dokumentet i katalogen
-ECMSearchByKeywords=Søk med nøkkelord
-ECMSearchByEntity=Søk med objekt
-ECMSectionOfDocuments=Kataloger av dokumenter
+ECMCreationDate=Opprettet den
+ECMNbOfFilesInDir=Antall filer i mappen
+ECMNbOfSubDir=Antall undermapper
+ECMNbOfFilesInSubDir=Antall filer i undermapper
+ECMCreationUser=Opprettet av
+ECMArea=ECM-område
+ECMAreaDesc=ECM-området (Electronic Content Management) lar deg lagre, dele og søke hurtig alle slags dokumenter i Dolibarr.
+ECMAreaDesc2=* Automatiske mapper fylles automatisk når du legger til dokumenter fra et elementkort.<br>* Manuelle mapper kan du bruke til å lagre dokumenter som ikke er lenket til et spesielt element. 
+ECMSectionWasRemoved=Mappen <b>%s</b> er slettet.
+ECMDocumentsSection=Dokument i mappen
+ECMSearchByKeywords=Søk på nøkkelord
+ECMSearchByEntity=Søk på objekt
+ECMSectionOfDocuments=Mapper med dokumenter
 ECMTypeManual=Manuell
 ECMTypeAuto=Automatisk
 ECMDocsByThirdParties=Dokumenter knyttet til tredjeparter
-ECMDocsByProposals=Dokumenter knyttet til forslag
-ECMDocsByOrders=Dokumenter knyttet til kunder bestillinger
+ECMDocsByProposals=Dokumenter knyttet til tilbud
+ECMDocsByOrders=Dokumenter knyttet til kundeordre
 ECMDocsByContracts=Dokumenter knyttet til kontrakter
-ECMDocsByInvoices=Dokumenter knyttet til kunder fakturaer
+ECMDocsByInvoices=Dokumenter knyttet til kundefakturaer
 ECMDocsByProducts=Dokumenter knyttet til produkter
-ECMNoDirecotyYet=Ingen katalogen opprettet
-ShowECMSection=Vis katalog
-DeleteSection=Fjern katalog
-ConfirmDeleteSection=Kan du bekrefte at du vil slette <b>mappen% s?</b>
-ECMDirectoryForFiles=Relativ katalog for filer
-CannotRemoveDirectoryContainsFiles=Fjernet ikke mulig fordi det inneholder noen filer
-ECMFileManager=Filbehandling
-ECMSelectASection=Velg en katalog på venstre treet ...
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+ECMNoDirecotyYet=Ingen mapper opprettet
+ShowECMSection=Vis mappe
+DeleteSection=Fjern mappe
+ConfirmDeleteSection=Er du sikker på at du vil slette mappen <b>%s</b> ?
+ECMDirectoryForFiles=Relativ mappe for filer
+CannotRemoveDirectoryContainsFiles=Kunne ikke fjerne mappen, da den inneholder filer
+ECMFileManager=Filbehandler
+ECMSelectASection=Velg en mappe fra treet til venstre...

@@ -1,63 +1,41 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - no_NB - projects
 CHARSET=UTF-8
-Project=Project
+Project=Prosjekt
 Projects=Prosjekter
-SharedProject=Felles prosjekt
 Myprojects=Mine prosjekter
-ProjectsArea=Prosjekter området
+ProjectsArea=Prosjektområde
 NewProject=Nytt prosjekt
-AddProject=Legg prosjekt
+AddProject=Legg til prosjekt
 DeleteAProject=Slett et prosjekt
-DeleteATask=Slett en oppgave
+OfficerProject=Officer prosjekt
 ConfirmDeleteAProject=Er du sikker på at du vil slette dette prosjektet?
-ConfirmDeleteATask=Er du sikker på at du vil slette denne oppgaven?
-OfficerProject=Officer prosjektet
-LastProjects=Siste% s prosjekter
+LastProjects=Siste %s prosjekter
 AllProjects=Alle prosjekter
-ProjectsList=Liste over prosjekter
-ShowProject=Vis prosjektet
-SetProject=Set prosjekt
-NoProject=Ingen prosjekt definert
-NbOpenTasks=NB av åpnet oppgaver
-NbOfProjects=NB prosjekter
+ProjectsList=Oversikt over prosjekter
+ShowProject=Vis prosjekt
+SetProject=Sett prosjekt
+NoProject=Ingen prosjekter definert
+NbOpenTasks=Ant. åpne oppgaver
+NbOfProjects=Ant. prosjekter
 TimeSpent=Tid brukt
 RefTask=Ref. oppgave
-LabelTask=Label oppgave
-NewTimeSpent=Ny tid
-MyTimeSpent=Min tid
-MyTasks=Mine oppgaver
+LabelTask=Oppgave
+NewTimeSpent=Ny tid brukt
+MyTimeSpent=Mitt tidsforbruk
+Mytasks=Mine oppgaver
 Tasks=Oppgaver
 Task=Oppgave
 NewTask=Ny oppgave
 AddTask=Legg til oppgave
-AddDuration=Legg varighet
+AddDuration=Legg til varighet
 Activity=Aktivitet
-Activities=Oppgaver / aktiviteter
 MyActivity=Min aktivitet
-MyActivities=Mine oppgaver / aktiviteter
 DurationEffective=Effektiv varighet
-MyProjects=Mine prosjekter
 Time=Tid
-ListProposalsAssociatedProject=Lister over de kommersielle forslag knyttet til prosjektet
-ListOrdersAssociatedProject=Lister av bestillinger knyttet til prosjektet
-ListInvoicesAssociatedProject=Lister av fakturaer tilknyttet prosjektet
-ListSupplierOrdersAssociatedProject=Liste over leverandører bestillinger knyttet til prosjektet
-ListSupplierInvoicesAssociatedProject=Liste over leverandører fakturaer tilknyttet prosjektet
-ListContractAssociatedProject=Liste over kontrakter tilknyttet prosjektet
-ActivityOnProjectThisWeek=Aktivitet på prosjektet denne uken
-ActivityOnProjectThisMonth=Aktivitet på prosjektet denne måneden
-ActivityOnProjectThisYear=Aktivitet på prosjektet i år
-ChildOfTaks=Barn av prosjektet / oppgaven
-NotOwnerOfProject=Ikke eieren av denne private prosjekt
-AffectedTo=Berørte til
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+ListProposalsAssociatedProject=Oversikt over tilbud relatert til dette prosjektet
+ListOrdersAssociatedProject=Oversikt over ordre relatert til dette prosjektet
+ListInvoicesAssociatedProject=Oversikt over fakturaer relatert til dette prosjektet
+ActivityOnProjectThisWeek=Aktiviteter i prosjektet denne uke
+ActivityOnProjectThisMonth=Aktiviteter i prosjektet denne måned
+ActivityOnProjectThisYear=Aktiviteter i prosjektet dette år
+ChildOfTaks=barn av oppgaven

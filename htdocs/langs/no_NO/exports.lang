@@ -1,47 +1,35 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - no_NB - exports
 CHARSET=UTF-8
-ExportsArea=Eksport området
-ImportArea=Import området
-NewExport=Ny eksportere
+ExportsArea=Eksportområde
+ImportArea=Importområde
+NewExport=Ny eksport
 NewImport=Ny import
-ExportableDatas=Exportable datasett
-ImportableDatas=Importable datasett
-SelectExportDataSet=Velg datasett som du vil eksportere ...
-SelectExportFields=Velg feltene du vil eksportere, eller velg en forhåndsdefinert eksport profil
-SaveExportModel=Lagre denne eksporten profil dersom du planlegger å bruke det senere ...
-ExportModelName=Eksport Profilnavn
-ExportModelSaved=Eksport profil lagret under <b>navnet% s.</b>
-ExportableFields=Exportable felt
+ExportableDatas=Eksporterbart datasett
+ImportableDatas=Importerbart datasett
+SelectExportDataSet=Velg det datasett du vil eksportere...
+SelectExportFields=Velg felter for eksport, eller velg en forhåndsdefinert eksportprofil
+SaveExportModel=Lagre denne eksportprofilen hvis du har tenkt å bruke den senere ...
+ExportModelName=Navn på eksportprofil
+ExportModelSaved=Eksportprofilen er lagret med navnet <b>%s</b>.
+ExportableFields=Eksporterbare felt
 ExportedFields=Eksporterte felt
-DatasetToExport=Datasettet til å eksportere
+DatasetToExport=Datasett til eksport
 Dataset=Datasett
-ChooseFieldsOrdersAndTitle=Velg felt bestillingen ...
-FieldsOrder=Felt bestilling
-FieldsTitle=Felt tittel
-ChooseExportFormat=Velg eksport format
-NowClickToGenerateToBuildExportFile=Nå, klikk på &quot;Generer&quot; å bygge eksportfil ...
-AvailableFormats=Formater tilgjengelige
-LibraryUsed=Librairie
+ChooseFieldsOrdersAndTitle=Velg feltrekkefølge...
+FieldsOrder=Feltrekkefølge
+FieldsTitle=Felttittel
+ChooseExportFormat=Velg ekportformat
+NowClickToGenerateToBuildExportFile=Trykk på "Opprett" for å lage eksportfilen...
+AvailableFormats=Tilgjengelige formater
+LibraryUsed=Bibliotek
 LibraryVersion=Versjon
 Step=Trinn
-FormatedImport=Import assistent
-FormatedImportDesc1=Dette området kan importere personlige data, ved hjelp av en assistent som hjelper deg i prosessen uten teknisk kunnskap.
-FormatedImportDesc2=Første trinn er å velge en konge av data du vil laste ned, og deretter filen til å laste, og til å velge hvilke områder du ønsker å laste.
-FormatedExport=Eksport assistent
-FormatedExportDesc1=Dette området kan eksportere personlige data, ved hjelp av en assistent som hjelper deg i prosessen uten teknisk kunnskap.
-FormatedExportDesc2=Første trinn er å velge en forhåndsdefinert datasett, og deretter velge hvilket felt du ønsker i følge filer, og som pålegg.
-FormatedExportDesc3=Når data til eksport, er valgt, kan du definere output filformat du vil eksportere data til.
+FormatedImport=Importassistent
+FormatedImportDesc1=I dette området kan du uten teknisk kunnskap importere egne data ved hjelp av en assistent.
+FormatedImportDesc2=Første trinn er å velge type data du vil importere, deretter hvilken fil du vil importere og til slutt hvilke felt du vil importere.
+FormatedExportDesc1=I denne området kan du uten teknisk kunnskap eksportere egne data ved hjelp av en assistent.
+FormatedExportDesc2=Første trinn er å velge et forhåndsdefinert datasett, deretter hvilke felt du ønsker å eksportere og i hvilken rekkefølge du vil ha dem.
+FormatedExportDesc3=Når du har valgt hva du vil eksportere velger du hvilket filformat du vil eksportere til.
 Sheet=Ark
-NoImportableData=Ingen importable data (ingen modul med definisjoner for å la data import)
-FileSuccessfullyBuilt=Eksportfilen generert
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+NoImportableData=Ingen importerbare data (ingen modul tillater dataimport)
+FileSuccessfullyBuilt=Eksportfil er opprettet

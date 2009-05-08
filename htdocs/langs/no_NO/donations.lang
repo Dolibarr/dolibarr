@@ -1,36 +1,25 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - no_NB - donations
 CHARSET=UTF-8
-Donation=Donation
-Donationss=Donations
+Donation=Donasjon
+Donationss=Donasjoner
 Donor=Giver
 Donors=Givere
-AddDonation=Legg til en donasjon
+AddDonation=Legg til donasjon
 NewDonation=Ny donasjon
-DonationPromise=Gift love
-PromisesNotValid=Ikke validert løfter
-PromisesValid=Validert løfter
-DonationsPayed=Donations utbetales
-DonationsReceived=Donasjoner mottas
+DonationPromise=Lovet donasjon
+PromisesNotValid=Ikke godkjente løfter
+PromisesValid=Godkjente løfter
+DonationsPayed=Betalte donasjoner
+DonationsReceived=Mottatte donasjoner
 PublicDonation=Offentlig donasjon
-DonationsNumber=Donation nummer
-DonationsArea=Donations området
-DonationStatusPromiseNotValidated=Utkast løfte
-DonationStatusPromiseValidated=Validert løfte
-DonationStatusPayed=Donasjon mottatt
-DonationStatusPromiseNotValidatedShort=Utkast
-DonationStatusPromiseValidatedShort=Validert
+DonationsNumber=Donasjonsnummer
+DonationsArea=Donasjonsområde
+DonationStatusPromiseNotValidated=Løftekladd
+DonationStatusPromiseValidated=Godkjent løfte
+DonationStatusPayed=Mottatt donasjon
+DonationStatusPromiseNotValidatedShort=Kladd
+DonationStatusPromiseValidatedShort=Godkjent
 DonationStatusPayedShort=Mottatt
-ValidPromise=Validate løfte
-BuildDonationReceipt=Bygg kvittering
-DonationsModels=Dokumenter modeller for donasjonen kvitteringer
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+ValidPromise=Godkjenn løfte
+BuildDonationReceipt=Opprett kvittering
+DonationsModels=Dokumentmal for donasjonskvitteringer

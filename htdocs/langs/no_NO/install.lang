@@ -1,178 +1,188 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - no_NB - install
 CHARSET=UTF-8
-InstallEasy=Vi prøvde å gjøre Dolibarr setup så enkel som mulig. Bare følg instruksjonene trinn for trinn.
-MiscellanousChecks=Forutsetninger sjekk
-DolibarrWelcome=Velkommen til Dolibarr
-ConfFileExists=<b>Konfigurasjonsfil% s</b> eksisterer.
-ConfFileDoesNotExists=<b>Konfigurasjonsfil% s</b> eksisterer ikke!
-ConfFileDoesNotExistsAndCouldNotBeCreated=<b>Konfigurasjonsfil% s</b> eksisterer ikke og kunne ikke opprettes!
-ConfFileCouldBeCreated=<b>Konfigurasjonsfil% s</b> kan bli opprettet.
-ConfFileIsNotWritable=<b>Konfigurasjonsfil% s</b> er ikke skrivbar. Sjekk tillatelser. For først installere, nettserveren må gis for å kunne skrive inn denne filen under konfigureringen ( &quot;chmod 666&quot; for eksempel på Unix som OS).
-ConfFileIsWritable=<b>Konfigurasjonsfil% s</b> er skrivbar.
-PHPSupportSessions=Denne PHP støtter økter.
-PHPSupportPOSTGETOk=Denne PHP støtter variabler POST og GET.
-PHPSupportPOSTGETKo=Det er mulig din PHP konfigurasjon ikke støtte variabler POST og / eller GET. Sjekk parameter <b>variables_order</b> i php.ini.
-PHPSupportGD=Denne PHP støtte GD grafiske funksjoner.
-PHPSupportUTF8=Denne PHP støtte UTF8 funksjoner.
-PHPMemoryOK=PHP-max økt minnet er satt <b>til% s.</b> Dette bør være nok.
-PHPMemoryTooLow=PHP-max økt minnet er satt <b>til% s</b> bytes. Dette bør være for lavt. Endre <b>php.ini</b> å stille <b>memory_limit</b> parameter til <b>minst% s</b> bytes.
-Recheck=Klikk her for en mer significative test
-ErrorPHPDoesNotSupportSessions=PHP installasjonen støtter ikke økter. Denne funksjonen er nødvendig å gjøre Dolibarr fungere. Sjekk din PHP oppsett.
-ErrorPHPDoesNotSupportGD=PHP-installasjonen ikke støtter grafisk funksjon GD. Ingen diagrammet vil være tilgjengelig.
-ErrorPHPDoesNotSupportUTF8=PHP installasjonen støtter ikke UTF8 funksjoner. Dolibarr kan ikke fungere riktig. Løse dette før du installerer Dolibarr.
-ErrorDirDoesNotExists=Directory% s ikke finnes.
-ErrorGoBackAndCorrectParameters=Gå tilbake og rette feil parametere.
-ErrorWrongValueForParameter=Du kan ha skrevet inn en feil verdi for parameteren &#39;% s&#39;.
-ErrorFailedToCreateDatabase=Kunne ikke opprette databasen &#39;% s&#39;.
-ErrorFailedToConnectToDatabase=Kunne ikke koble til databasen &quot;% s&quot;.
-ErrorPHPVersionTooLow=PHP versjon for gammel. Versjon% s er nødvendig.
-ErrorConnectedButDatabaseNotFound=Tilkobling til server vellykket men databasen &#39;% s&#39; ikke funnet.
-ErrorDatabaseAlreadyExists=Databasen &quot;% s&quot; finnes allerede.
-IfDatabaseNotExistsGoBackAndUncheckCreate=Hvis databasen ikke finnes, gå tilbake og se alternativet &quot;Opprett database&quot;.
-IfDatabaseExistsGoBackAndCheckCreate=Hvis databasen allerede finnes, går du tilbake og fjern &quot;Opprett database&quot;-alternativet.
-PHPVersion=PHP versjon
-YouCanContinue=Du kan fortsette ...
-PleaseBePatient=Vennligst vent ...
-License=Bruke lisens
-ConfigurationFile=Konfigurasjonsfil
-WebPagesDirectory=Katalogen der nettsidene er lagret
-DocumentsDirectory=For å lagre opplastet og genererte dokumenter
+InstallEasy=We tried to make the Dolibarr setup as easy as possible. Just follow the instructions step by step.
+MiscellanousChecks=Prerequisites check
+DolibarrWelcome=Welcome to Dolibarr
+ConfFileExists=Configuration file <b>%s</b> exists.
+ConfFileDoesNotExists=Configuration file <b>%s</b> does not exist !
+ConfFileDoesNotExistsAndCouldNotBeCreated=Configuration file <b>%s</b> does not exist and could not be created !
+ConfFileCouldBeCreated=Configuration file <b>%s</b> could be created.
+ConfFileIsNotWritable=Configuration file <b>%s</b> is not writable. Check permissions. For first install, your web server must be granted to be able to write into this file during configuration process ("chmod 666" for example on Unix like OS).
+ConfFileIsWritable=Configuration file <b>%s</b> is writable.
+PHPSupportSessions=This PHP supports sessions.
+PHPSupportPOSTGETOk=This PHP supports variables POST and GET.
+PHPSupportPOSTGETKo=It's possible your PHP setup does not support variables POST and/or GET. Check your parameter <b>variables_order</b> in php.ini.
+PHPSupportGD=This PHP support GD graphical functions.
+PHPSupportUTF8=This PHP support UTF8 functions.
+PHPMemoryOK=Your PHP max session memory is set to <b>%s</b>. This should be enough.
+PHPMemoryTooLow=Your PHP max session memory is set to <b>%s</b> bytes. This should be too low. Change your <b>php.ini</b> to set <b>memory_limit</b> parameter to at least <b>%s</b> bytes.
+Recheck=Click here for a more significative test
+ErrorPHPDoesNotSupportSessions=Your PHP installation does not support sessions. This feature is required to make Dolibarr working. Check your PHP setup.
+ErrorPHPDoesNotSupportGD=Your PHP installation does not support graphical function GD. No graph will be available.
+ErrorPHPDoesNotSupportUTF8=Your PHP installation does not support UTF8 functions. Dolibarr can't work correctly. Solve this before installing Dolibarr.
+ErrorDirDoesNotExists=Directory %s does not exists.
+ErrorGoBackAndCorrectParameters=Go backward and correct wrong parameters.
+ErrorWrongValueForParameter=You may have typed a wrong value for parameter '%s'.
+ErrorFailedToCreateDatabase=Failed to create database '%s'.
+ErrorFailedToConnectToDatabase=Failed to connect to database '%s'.
+ErrorPHPVersionTooLow=PHP version too old. Version %s is required.
+ErrorConnectedButDatabaseNotFound=Connection to server successfull but database '%s' not found.
+ErrorDatabaseAlreadyExists=Database '%s' already exists.
+IfDatabaseNotExistsGoBackAndUncheckCreate=If database does not exists, go back and check option "Create database".
+IfDatabaseExistsGoBackAndCheckCreate=If database already exists, go back and uncheck "Create database" option.
+PHPVersion=PHP Version
+YouCanContinue=You can continue...
+PleaseBePatient=Please be patient...
+License=Using license
+ConfigurationFile=Configuration file
+WebPagesDirectory=Directory where web pages are stored
+DocumentsDirectory=Directory to store uploaded and generated documents
 URLRoot=URL Root
 DolibarrDatabase=Dolibarr Database
-DatabaseChoice=Database valg
+DatabaseChoice=Database choice
 DatabaseType=Database type
 DriverType=Driver type
 Server=Server
-ServerAddressDescription=Eller IP-adressen til databasetjeneren, vanligvis&#39; localhost &#39;når databasetenaren ligger på samme server enn web server
-ServerPortDescription=Database serverporten. Hold tom hvis ukjent.
+ServerAddressDescription=Name or ip address for database server, usually 'localhost' when database server is hosted on same server than web server
+ServerPortDescription=Database server port. Keep empty if unknown.
 DatabaseServer=Database server
-DatabaseName=Databasenavn
-Login=Innlogging
-AdminLogin=Logg inn for Dolibarr database administrator. Hold tomt hvis du kobler i anonyme
-Password=Passord
-PasswordAgain=Skriv inn passordet en gang
-AdminPassword=Passord for Dolibarr database administrator. Hold tomt hvis du kobler i anonyme
-CreateDatabase=Opprette database
-CreateUser=Opprett bruker
-DatabaseSuperUserAccess=Database - Superuser tilgang
-CheckToCreateDatabase=Boksen hvis databasen finnes ikke og må være opprettet. <br> I dette tilfellet, må du fylle påloggings-ID/passord for superuser kontoen nederst på denne siden.
-CheckToCreateUser=Boksen hvis innlogging finnes ikke og må være opprettet. <br> I dette tilfellet, må du fylle påloggings-ID/passord for superuser kontoen nederst på denne siden.
-Experimental=(eksperimentelt, ikke operationnal)
-DatabaseRootLoginDescription=Logg inn på brukeren lov til å opprette nye databaser eller nye brukere, ubrukelig hvis databasen og databasen finnes allerede (som når du er hos en web hosting leverandør).
-KeepEmptyIfNoPassword=Avreise tom hvis brukeren ikke har passord (unngå dette)
-SaveConfigurationFile=Lagre verdier
-ConfigurationSaving=Lagre konfigurasjonsfil
-ServerConnection=Servertilkoblingen
-DatabaseConnection=Database-tilkobling
-DatabaseCreation=Database etablering
-UserCreation=Bruker etablering
-CreateDatabaseObjects=Databaseobjektene etablering
-ReferenceDataLoading=Referanse data lasting
-TablesAndPrimaryKeysCreation=Tabeller og primærnøkler etablering
-CreateTableAndPrimaryKey=Lag tabell% s
-CreateOtherKeysForTable=Opprett utenlandske tastene og indekser for tabell% s
-OtherKeysCreation=Utenlandske tastene og indekser Opprettelsen
-FunctionsCreation=Funksjoner etablering
-AdminAccountCreation=Administrator login etablering
-PleaseTypePassword=Vennligst skriv inn et passord, tomme passord er ikke tillatt!
-PleaseTypeALogin=Vennligst skriv en pålogging!
-PasswordsMismatch=Passord forskjellig, prøv igjen!
-SetupEnd=Slutt på oppsett
-SystemIsInstalled=Denne installasjonen er fullført.
-SystemIsUpgraded=Dolibarr har blitt oppgradert vellykket.
-YouNeedToPersonalizeSetup=Du må konfigurere Dolibarr å passe dine behov (utseende, funksjoner, ...). For å gjøre dette, vennligst følg linken:
-AdminLoginCreatedSuccessfuly=Dolibarr administrator login <b>&#39;% s&#39;</b> opprettet successfuly.
-GoToSetupArea=Gå til Dolibarr (oppsett område)
-Examples=Eksempler
-WithNoSlashAtTheEnd=Uten skråstrek &quot;/&quot; på slutten
-DirectoryRecommendation=Det anbefales at du setter dette directry ut av websider katalog.
-LoginAlreadyExists=Det finnes allerede
+DatabaseName=Database name
+Login=Brukernavn
+AdminLogin=Login for Dolibarr database administrator. Keep empty if you connect in anonymous
+Password=Password
+PasswordAgain=Retype password a second time
+AdminPassword=Password for Dolibarr database administrator. Keep empty if you connect in anonymous
+CreateDatabase=Create database
+CreateUser=Create user
+DatabaseSuperUserAccess=Database - Superuser access
+CheckToCreateDatabase=Check box if database does not exist and must be created.<br>In this case, you must fill the login/password for superuser account at the bottom of this page.
+CheckToCreateUser=Check box if login does not exist and must be created.<br>In this case, you must fill the login/password for superuser account at the bottom of this page.
+Experimental=(experimental, non operationnal)
+DatabaseRootLoginDescription=Login of the user allowed to create new databases or new users, useless if your database and your database login already exists (like when you're hosted by a web hosting provider).
+KeepEmptyIfNoPassword=Leave empty if user has no password (avoid this)
+SaveConfigurationFile=Save values
+ConfigurationSaving=Saving configuration file
+ServerConnection=Server connection
+DatabaseConnection=Database connection
+DatabaseCreation=Database creation
+UserCreation=User creation
+CreateDatabaseObjects=Database objects creation
+ReferenceDataLoading=Reference data loading
+TablesAndPrimaryKeysCreation=Tables and Primary keys creation
+CreateTableAndPrimaryKey=Create table %s
+CreateOtherKeysForTable=Create foreign keys and indexes for table %s
+OtherKeysCreation=Foreign keys and indexes creation
+FunctionsCreation=Functions creation
+AdminAccountCreation=Administrator login creation
+PleaseTypePassword=Please type a password, empty passwords are not allowed !
+PleaseTypeALogin=Please type a login !
+PasswordsMismatch=Passwords differs, please try again !
+SetupEnd=End of setup
+SystemIsInstalled=This installation is complete.
+SystemIsUpgraded=Dolibarr has been upgraded successfully.
+YouNeedToPersonalizeSetup=You need to configure Dolibarr to match your needs (appearance, features, ...). To do this, please follow the link below:
+AdminLoginCreatedSuccessfuly=Dolibarr administrator login '<b>%s</b>' created successfuly.
+GoToSetupArea=Go to Dolibarr (setup area)
+Examples=Examples
+WithNoSlashAtTheEnd=Without the slash "/" at the end
+DirectoryRecommendation=It is recommended you put this directry out of the web pages directory.
+LoginAlreadyExists=Already exists
 DolibarrAdminLogin=Dolibarr admin login
-FailedToCreateAdminLogin=Kunne ikke opprette Dolibarr administator konto.
-AdminLoginAlreadyExists=Dolibarr administratorkonto <b>«% s»</b> finnes allerede.
-WarningRemoveInstallDir=Advarsel, av sikkerhetshensyn, når installere eller oppgraderingen er fullført, bør du fjerne <b>installer katalog eller endre navnet til install.lock for å unngå den skadelige bruk.</b>
-ThisPHPDoesNotSupportTypeBase=Denne PHP systemet støtter ikke noen grensesnitt for å få tilgang til databasen type% s
-FunctionNotAvailableInThisPHP=Ikke tilgjengelig på denne PHP
-MigrateScript=Migrer script
-ChoosedMigrateScript=Valgt migrere script
-DataMigration=Datamigrering
-DatabaseMigration=Organisering database migrering
-ProcessMigrateScript=Script behandling
-ChooseYourSetupMode=Velg ditt oppstillingsmodus og klikk &quot;Start&quot; ...
-FreshInstall=Fresh installere
-FreshInstallDesc=Bruk denne modusen hvis dette er første installere. Hvis ikke denne modusen kan reparere en tidligere ufullstendig installere, men hvis du vil oppgradere din versjon, velger du &quot;Upgrade&quot; modus.
-Upgrade=Oppgrader
-UpgradeDesc=Bruk denne modusen hvis du har byttet ut gamle Dolibarr filer med filer fra en nyere versjon. Dette vil oppgradere databasen og data.
+FailedToCreateAdminLogin=Failed to create Dolibarr administator account.
+AdminLoginAlreadyExists=Dolibarr administrator account '<b>%s</b>' already exists.
+WarningRemoveInstallDir=Warning, for security reasons, once the install or upgrade is complete, you should remove the <b>install<b> directory or rename it to <b>install.lock</b> in order to avoid its malicious use.
+ThisPHPDoesNotSupportTypeBase=This PHP system does not support any interface to access database type %s
+FunctionNotAvailableInThisPHP=Not available on this PHP
+MigrateScript=Migrate script
+ChoosedMigrateScript=Chosen migrate script
+DataMigration=Data migration
+DatabaseMigration=Structure database migration
+ProcessMigrateScript=Script processing
+ChooseYourSetupMode=Choose your setup mode and click "Start"...
+FreshInstall=Fresh install
+FreshInstallDesc=Use this mode if this is your first install. If not, this mode can repair a previous incomplete install, but if you want to upgrade your version, choose "Upgrade" mode.
+Upgrade=Upgrade
+UpgradeDesc=Use this mode if you have replaced old Dolibarr files with files from a newer version. This will upgrade your database and data.
 Start=Start
-InstallNotAllowed=Setup ikke tillates av <b>conf.php</b> tillatelser
-NotAvailable=Ikke tilgjengelig
-YouMustCreateWithPermission=Du må opprette filen% s og sett skrive rettigheter på det for web-server under installasjonen.
-CorrectProblemAndReloadPage=Fiks problemet og trykk F5 for å oppdatere siden.
-AlreadyDone=Allerede migrert
-DatabaseVersion=Database versjon
-ServerVersion=Database server versjonen
-YouMustCreateItAndAllowServerToWrite=Du må opprette denne katalogen og tillate nettserverloggene å skrive i den.
-CharsetChoice=Tegnsettet valg
-CharacterSetClient=Tegnsettet som brukes for genererte HTML websider
-CharacterSetClientComment=Velg tegnsettet for web displayet. <br/> Standard foreslått tegnsettet er en av databasen.
-CollationConnection=Tegnstøtte sortering bestilling
-CollationConnectionComment=Velg side koden som definerer tegnet&#39;s sortering rekkefølge brukes av databasen. Denne parameteren kalles også &quot;collation&quot; av noen databaser. <br/> Denne parameteren kan ikke definert hvis databasen finnes allerede.
-CharacterSetDatabase=Tegnsettet for databasen
-CharacterSetDatabaseComment=Velg tegnsettet ville for database skapelsen. <br/> Denne parameteren kan ikke definert hvis databasen finnes allerede.
-YouAskDatabaseCreationSoDolibarrNeedToConnect=Du spør om å opprette <b>databasen% s,</b> men dette Dolibarr trenger å koble til <b>server% s</b> med super <b>user% s</b> tillatelser.
-YouAskLoginCreationSoDolibarrNeedToConnect=Du spør om å opprette databasen <b>pålogging% s,</b> men dette Dolibarr trenger å koble til <b>server% s</b> med super <b>user% s</b> tillatelser.
-BecauseConnectionFailedParametersMayBeWrong=Som mislyktes, vert eller super user parametere må være galt.
-OrphelinsPaymentsDetectedByMethod=Orphelins betaling oppdaget av metoden% s
-RemoveItManuallyAndPressF5ToContinue=Fjern den manuelt og trykke F5 for å fortsette.
-KeepDefaultValues=Du bruker Doliwamp konfigureringsveiviseren, så verdiene foreslått her allerede er optimalisert. Endre dem hvis du vet hva du gjør.
-FieldRenamed=Felt omdøpt
-IfLoginDoesNotExistsCheckCreateUser=Hvis påloggingen ikke finnes ennå, må du se alternativet &quot;Opprett bruker&quot;
-ErrorConnection=Server <b>&quot;% s&quot;,</b> databasenavn <b>&quot;% s&quot;,</b> pålogging <b>&quot;% s&quot;,</b> eller database passord kan være galt eller PHP klientversjon være for gammel i forhold til databasen versjon.
-MigrationOrder=Datamigrering for kundenes ordre
-MigrationSupplierOrder=Datamigrering for leverandørenes bestillinger
-MigrationProposal=Datamigrering for kommersiell forslag
-MigrationInvoice=Datamigrering for kundenes fakturaer
-MigrationContract=Datamigrering for kontrakter
-MigrationSuccessfullUpdate=Oppgrader vellykket
-MigrationUpdateFailed=Falied Oppgraderingsprosessen
-MigrationPaymentsUpdate=Betaling data korreksjon
-MigrationPaymentsNumberToUpdate=% s betaling (er) for å oppdatere
-MigrationProcessPaymentUpdate=Update betalingen (s)% s
-MigrationPaymentsNothingToUpdate=Ingen flere ting å gjøre
-MigrationPaymentsNothingUpdatable=Ingen flere utbetalinger som kan rettes opp
-MigrationContractsUpdate=Contract data korreksjon
-MigrationContractsNumberToUpdate=% s kontrakten (e) for å oppdatere
-MigrationContractsLineCreation=Lag kontrakt linje for kontrakt ref% s
-MigrationContractsNothingToUpdate=Ingen flere ting å gjøre
-MigrationContractsFieldDontExist=Felt fk_facture ikke finnes lenger. Ingenting å gjøre.
-MigrationContractsEmptyDatesUpdate=Kontrakt tom dato korreksjon
-MigrationContractsEmptyDatesUpdateSuccess=Kontrakt emtpy dato korreksjon gjort successfuly
-MigrationContractsEmptyDatesNothingToUpdate=Ingen kontrakt tom dato å korrigere
-MigrationContractsEmptyCreationDatesNothingToUpdate=Ingen kontrakt opprettelsesdato å korrigere
-MigrationContractsInvalidDatesUpdate=Bad verdi dato kontrakt korreksjon
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Riktig kontrakt% s (Contract dato =% s, Starter service dato min =% s)
-MigrationContractsInvalidDatesNumber=% s kontrakter endret
-MigrationContractsInvalidDatesNothingToUpdate=Ingen dato med dårlig verdi til rette
-MigrationContractsIncoherentCreationDateUpdate=Bad verdi kontrakt opprettelsesdato korreksjon
-MigrationContractsIncoherentCreationDateUpdateSuccess=Bad verdi kontrakt opprettelsesdato korreksjon gjort suksess
-MigrationContractsIncoherentCreationDateNothingToUpdate=Ingen dårlig verdi for kontrakten opprettelsesdato å korrigere
-MigrationReopeningContracts=Åpne kontrakt lukket av feil
-MigrationReopenThisContract=Gjenåpne kontrakt% s
-MigrationReopenedContractsNumber=% s kontrakter endret
-MigrationReopeningContractsNothingToUpdate=Ingen lukket kontrakt for å åpne
-MigrationBankTransfertsUpdate=Oppdatere koblinger mellom bank transaksjoner og bank transfert
-MigrationBankTransfertsNothingToUpdate=Alle koblinger er oppdatert
-MigrationShipmentOrderMatching=Sendings kvittering oppdatering
-MigrationDeliveryOrderMatching=Levering kvittering oppdatering
-MigrationDeliveryDetail=Levering oppdatering
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+InstallNotAllowed=Setup not allowed by <b>conf.php</b> permissions
+NotAvailable=Not available
+YouMustCreateWithPermission=You must create file %s and set write permissions on it for web server during install process.
+CorrectProblemAndReloadPage=Please fix the problem and press F5 to reload page.
+AlreadyDone=Already migrated
+DatabaseVersion=Database version
+ServerVersion=Database server version
+YouMustCreateItAndAllowServerToWrite=You must create this directory and allow for the web server to write into it.
+CharsetChoice=Character set choice
+CharacterSetClient=Character set used for generated HTML web pages
+CharacterSetClientComment=Choose character set for web display.<br/> Default proposed character set is the one of your database.
+CollationConnection=Character sorting order
+CollationConnectionComment=Choose page code that defines character's sorting order used by database. This parameter is also called 'collation' by some databases.<br/>This parameter can't be defined if database already exists.
+CharacterSetDatabase=Character set for database
+CharacterSetDatabaseComment=Choose character set wanted for database creation.<br/>This parameter can't be defined if database already exists.
+YouAskDatabaseCreationSoDolibarrNeedToConnect=You ask to create database <b>%s</b>, but for this, Dolibarr need to connect to server <b>%s</b> with super user <b>%s</b> permissions.
+YouAskLoginCreationSoDolibarrNeedToConnect=You ask to create database login <b>%s</b>, but for this, Dolibarr need to connect to server <b>%s</b> with super user <b>%s</b> permissions.
+BecauseConnectionFailedParametersMayBeWrong=As connection failed, host or super user parameters must be wrong.
+OrphelinsPaymentsDetectedByMethod=Orphelins payment detected by method %s
+RemoveItManuallyAndPressF5ToContinue=Remove it manually and press F5 to continue.
+KeepDefaultValues=You use the Doliwamp setup wizard, so values proposed here are already optimized. Change them only if you know what you do.
+FieldRenamed=Field renamed
+IfLoginDoesNotExistsCheckCreateUser=If login does not exists yet, you must check option "Create user"
+ErrorConnection=Server "<b>%s</b>", database name "<b>%s</b>", login "<b>%s</b>", or database password may be wrong or PHP client version may be too old compared to database version.
+
+#########
+# upgrade
+#########
+MigrationOrder=Data migration for customers' orders
+MigrationSupplierOrder=Data migration for suppliers' orders
+MigrationProposal=Data migration for commercial proposals
+MigrationInvoice=Data migration for customers' invoices
+MigrationContract=Data migration for contracts
+MigrationSuccessfullUpdate=Upgrade successful
+MigrationUpdateFailed=Falied upgrade process
+
+# Payments Update
+MigrationPaymentsUpdate=Payment data correction
+MigrationPaymentsNumberToUpdate=%s payment(s) to update
+MigrationProcessPaymentUpdate=Update payment(s) %s
+MigrationPaymentsNothingToUpdate=No more things to do
+MigrationPaymentsNothingUpdatable=No more payments that can be corrected
+
+# Contracts Update
+MigrationContractsUpdate=Contract data correction
+MigrationContractsNumberToUpdate=%s contract(s) to update
+MigrationContractsLineCreation=Create contract line for contract ref %s
+MigrationContractsNothingToUpdate=No more things to do
+MigrationContractsFieldDontExist=Field fk_facture does not exists anymore. Nothing to do.
+
+# Contracts Empty Dates Update
+MigrationContractsEmptyDatesUpdate=Contract empty date correction
+MigrationContractsEmptyDatesUpdateSuccess=Contract emtpy date correction done successfuly
+MigrationContractsEmptyDatesNothingToUpdate=No contract empty date to correct
+MigrationContractsEmptyCreationDatesNothingToUpdate=No contract creation date to correct
+
+# Contracts Invalid Dates Update
+MigrationContractsInvalidDatesUpdate=Bad value date contract correction
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=%s)
+MigrationContractsInvalidDatesNumber=%s contracts modified
+MigrationContractsInvalidDatesNothingToUpdate=No date with bad value to correct
+
+# Contracts Incoherent Dates Update
+MigrationContractsIncoherentCreationDateUpdate=Bad value contract creation date correction
+MigrationContractsIncoherentCreationDateUpdateSuccess=Bad value contract creation date correction done succesfuly
+MigrationContractsIncoherentCreationDateNothingToUpdate=No bad value for contract creation date to correct
+
+# Reopening Contracts
+MigrationReopeningContracts=Open contract closed by error
+MigrationReopenThisContract=Reopen contract %s
+MigrationReopenedContractsNumber=%s contracts modified
+MigrationReopeningContractsNothingToUpdate=No closed contract to open
+
+# Migration transfert
+MigrationBankTransfertsUpdate=Update links between bank transaction and a bank transfert
+MigrationBankTransfertsNothingToUpdate=All links are up to date
+
+# Migration delivery
+MigrationShipmentOrderMatching=Sendings receipt update
+MigrationDeliveryOrderMatching=Delivery receipt update
+MigrationDeliveryDetail=Delivery update
+

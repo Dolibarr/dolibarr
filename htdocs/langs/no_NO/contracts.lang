@@ -1,92 +1,81 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
-ContractsArea=Kontrakter området
-ListOfContracts=Liste over kontrakter
-LastContracts=Siste% s endret kontrakter
+# Dolibarr language file - no_NB - contracts
+ContractsArea=Kontraktsområde
+ListOfContracts=Oversikt over kontrakter
+LastContracts=Siste %s endrede kontrakter
 AllContracts=Alle kontrakter
-ContractCard=Kontrakt kort
-ContractStatus=Kontrakt status
-ContractStatusNotRunning=Kjører ikke
-ContractStatusRunning=Publiseres
-ContractStatusDraft=Utkast
-ContractStatusValidated=Validert
-ContractStatusClosed=Stengt
-ServiceStatusInitial=Kjører ikke
-ServiceStatusRunning=Publiseres
-ServiceStatusLate=Kjører, utløpt
-ServiceStatusClosed=Stengt
-ServicesLegend=Tjenester legende
+ContractCard=Kontraktskort
+ContractStatus=Kontraktstatus
+ContractStatusNotRunning=Ikke i drift
+ContractStatusRunning=I drift
+ContractStatusDraft=Kladd
+ContractStatusValidated=Godkjent
+ContractStatusClosed=Lukket
+ServiceStatusInitial=Ikke i drift
+ServiceStatusRunning=I drift
+ServiceStatusLate=I drift, utløpt
+ServiceStatusClosed=Lukket
+ServicesLegend=Tjeneste legend
 Contracts=Kontrakter
 Contract=Kontrakt
-ContractContacts=Kontrakt kontakter
+ContractContacts=Kontaktperson for kontrakten
 NoContracts=Ingen kontrakter
 MenuServices=Tjenester
-MenuInactiveServices=Service ikke aktiv
-MenuRunningServices=Running tjenester
-MenuExpiredServices=Utløpt tjenester
+MenuInactiveServices=Ikke aktive tjenester
+MenuRunningServices=Løpende tjenester
+MenuExpiredServices=Utløpte tjenester
 MenuClosedServices=Lukkede tjenester
 NewContract=Ny kontrakt
-AddContract=Legg kontrakt
-SearchAContract=Søk kontrakt
-DeleteAContract=Slett en kontrakt
+AddContract=Legg til kontrakt
+SearchAContract=Finn kontrakt
+DeleteAContract=Slett kontrakt
 CloseAContract=Lukk kontrakt
-ConfirmDeleteAContract=Er du sikker på at du vil slette denne kontrakten og alle sine tjenester?
-ConfirmValidateContract=Er du sikker på at du ønsker å validere denne kontrakten?
-ConfirmCloseContract=Dette vil lukke alle tjenester (aktiv eller ikke). Er du sikker på at du vil lukke denne kontrakten?
-ConfirmCloseService=Er du sikker på at du vil lukke denne tjenesten med <b>dato% s?</b>
-ValidateAContract=Validate kontrakt
-ActivateService=Aktivere tjenesten
-ConfirmActivateService=Er du sikker på at du vil aktivere denne tjenesten med dato <b>for% s?</b>
-DateContract=Kontrakt dato
-DateServiceActivate=Dato for tjenesten aktivisering
-DateServiceUnactivate=Dato for tjenesten unactivation
-DateServiceStart=Dato for oppstart av tjenesten
-DateServiceEnd=Dato for utløpet av tjeneste
+ConfirmDeleteAContract=Er du sikker på at du vil slette denne kontrakten med alle tilhørende thenester?
+ConfirmValidateContract=Er du sikker på at du vil godkjenne denne kontrakten?
+ConfirmCloseContract=Dette vil lukke alle tjenester (aktive eller ikke). Er du sikker på at du vil lukke kontrakten?
+ConfirmCloseService=Er du sikker på at du vil lukke denne tjenesten med datoen <b>%s</b> ?
+ValidateAContract=Goskjenn en kontrakt
+ActivateService=Aktiver tjeneste
+ConfirmActivateService=Er du sikker på at du vil aktivere denne tjensten med datoen <b>%s</b> ?
+DateContract=Kontraktsdato
+DateServiceActivate=Dato for aktivering av tjenste
+DateServiceUnactivate=Dato for deaktivering av tjeneste
+DateServiceStart=Startdato for tjenstene
+DateServiceEnd=Sluttdato for tjenesten
 ShowContract=Vis kontrakt
-ListOfServices=Liste over tjenester
-ListOfRunningContractsLines=Liste over kjører kontrakt linjer
-ListOfRunningServices=Liste over kjører tjenester
-NotActivatedServices=Ikke aktivert tjenester (blant validated kontrakter)
-BoardNotActivatedServices=Tjenester for å aktivere blant validated kontrakter
-LastContracts=Sist% kontrakter
-LastActivatedServices=Siste% s aktivert tjenester
-LastModifiedServices=Siste% s endret tjenester
-EditServiceLine=Rediger service line
+ListOfServices=Oversikt over tjenester
+ListOfRunningContractsLines=Oversikt over løpende kontraktslinjer
+ListOfRunningServices=Overikt over løpende tjenster
+NotActivatedServices=Ikke aktiverte tjenester (blant godkjente kontrakter)
+BoardNotActivatedServices=Tjenester til aktivering blant godkjente kontrakter
+LastContracts=Siste % kontrakter
+LastActivatedServices=Siste %s aktiverte tjenester
+LastModifiedServices=Siste %s endrede tjenester
+EditServiceLine=Rediger tjenestelinje
 ContractStartDate=Startdato
 ContractEndDate=Sluttdato
 DateStartPlanned=Planlagt startdato
 DateStartPlannedShort=Planlagt startdato
 DateEndPlanned=Planlagt sluttdato
 DateEndPlannedShort=Planlagt sluttdato
-DateStartReal=Real startdato
-DateStartRealShort=Real startdato
-DateEndReal=Real sluttdato
-DateEndRealShort=Real sluttdato
-NbOfServices=NB tjenester
-CloseService=Lukk service
-ServicesNomberShort=% s tjeneste (r)
-RunningServices=Running tjenester
-BoardRunningServices=Utløpt kjører tjenester
-ServiceStatus=Status for tjenesten
-DraftContracts=Utkast kontrakter
-CloseRefusedBecauseOneServiceActive=Kontrakten kan ikke lukket som det er minst en åpen tjeneste på det
+DateStartReal=Virkelig startdato
+DateStartRealShort=Virkelig startdato
+DateEndReal=Virkelig sluttdato
+DateEndRealShort=Virkelig sluttdato
+NbOfServices=Ant. tjenester
+CloseService=Lukk tjeneste
+ServicesNomberShort=%s tjeneste(r)
+RunningServices=Løpende tjenester
+BoardRunningServices=Utløpte løpende tjenester
+ServiceStatus=Tjenestestatus
+DraftContracts=Kontraktskladder
+CloseRefusedBecauseOneServiceActive=Kontrakten kan ikke lukkes ettersom det er minst en åpen tjenste på den
 CloseAllContracts=Lukk alle kontrakter
-MoveToAnotherContract=Flytte tjenesten til en annen kontrakt.
-ConfirmMoveToAnotherContract=Jeg choosed nye målet kontrakt og bekrefter jeg ønsker å flytte dette inn i denne kontrakten.
-ConfirmMoveToAnotherContractQuestion=Velg hvor eksisterende kontrakt (av samme tredjepart), du ønsker å flytte dette til?
-TypeContact_contrat_internal_SALESREPSIGN=Salgsrepresentant signere kontrakt
-TypeContact_contrat_internal_SALESREPFOLL=Salgsrepresentant følge opp kontrakten
-TypeContact_contrat_external_BILLING=Fakturering kundekontakt
-TypeContact_contrat_external_CUSTOMER=Følge opp kundekontakt
-TypeContact_contrat_external_SALESREPSIGN=Signering kontrakt kundekontakt
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+MoveToAnotherContract=Flytt tjeneste til annen kontrakt
+ConfirmMoveToAnotherContract=Jeg bekrefter at jeg hat valgt ny målkontrakt og at jeg ønsker å flytte denne tjenesten inn i den nye kontrakten.
+ConfirmMoveToAnotherContractQuestion=Velg hvilken eksisterende kontrakt (eid av samme tredjepart) du vil flytte tjenesten til
+##### Types de contacts #####
+TypeContact_contrat_internal_SALESREPSIGN=Salgsrepresentant som signerer kontrakten
+TypeContact_contrat_internal_SALESREPFOLL=Salgsrepresentant som følger opp kontrakten
+TypeContact_contrat_external_BILLING=Kundens fakturakontakt
+TypeContact_contrat_external_CUSTOMER=Kundens oppfølgingskontakt
+TypeContact_contrat_external_SALESREPSIGN=Kundens signaturkontakt

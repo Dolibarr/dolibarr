@@ -1,62 +1,51 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - no_NB - boxes
 CHARSET=UTF-8
 BoxLastRssInfos=Rss informasjon
-BoxLastProducts=Siste produkter / tjenester
-BoxLastProductsInContract=Sist kontraktsfestede produkter / tjenester
-BoxLastSupplierBills=Sist leverandørs fakturaer
-BoxLastCustomerBills=Sist kundens fakturaer
-BoxOldestUnpayedCustomerBills=Eldste unpayed kundens fakturaer
-BoxOldestUnpayedSupplierBills=Eldste unpayed leverandørs fakturaer
-BoxLastProposals=Sist kommersielle forslag
-BoxLastProspects=Sist prospekter
+BoxLastProducts=Siste produkter/tjenester
+BoxLastProductsInContract=Siste kontraktsinngåtte produkter/tjenester
+BoxLastSupplierBills=Siste leverandørfakturaer
+BoxLastCustomerBills=Siste kundefakturaer
+BoxOldestUnpayedCustomerBills=Eldste ubetalte kundefakturaer
+BoxOldestUnpayedSupplierBills=Eldste ubetalte leverandørfakturaer
+BoxLastProposals=Siste tilbuder
+BoxLastProspects=Siste prospekter
 BoxLastCustomers=Siste kunder
-BoxLastCustomerOrders=Sist kundeordre
+BoxLastCustomerOrders=Siste kundeordre
 BoxLastSuppliers=Siste leverandører
-BoxLastBooks=Sist bøker
-BoxLastActions=Sist handlinger
-BoxCurrentAccounts=Gjeldende kontoer balanse
-BoxSalesTurnover=Salg omsetning
-BoxTotalUnpayedCustomerBills=Totalt unpayed kundens fakturaer
-BoxTotalUnpayedSuppliersBills=Totalt unpayed leverandørs fakturaer
-BoxTitleLastBooks=Siste% s innspilte bøker
-BoxTitleNbOfCustomers=Nombre de klient
-BoxTitleLastRssInfos=Siste% s nyheter fra% s
-BoxTitleLastProducts=Siste% s endrede produkter / tjenester
-BoxTitleLastCustomerOrders=Siste% s endret kundeordre
-BoxTitleLastSuppliers=Siste% s innspilt leverandører
-BoxTitleLastCustomers=Siste% s innspilt kunder
-BoxTitleLastCustomersOrProspects=Siste% s innspilt kunder eller prospekter
-BoxTitleLastPropals=Siste% s spilt inn forslag
-BoxTitleLastCustomerBills=Siste% s kundens fakturaer
-BoxTitleLastSupplierBills=Siste% s leverandørs fakturaer
-BoxTitleLastProspects=Siste% s innspilt prospekter
-BoxTitleLastProductsInContract=Siste% s derniers Produits / tjenester kontrakter
-BoxTitleOldestUnpayedCustomerBills=Eldste% s unpayed kundens fakturaer
-BoxTitleOldestUnpayedSupplierBills=Eldste% s unpayed leverandørs fakturaer
-BoxTitleCurrentAccounts=Gjeldende kontoen saldoer
-BoxTitleSalesTurnover=Salg omsetning
-BoxTitleTotalUnpayedCustomerBills=Unpayed kundens fakturaer
-BoxTitleTotalUnpayedSuppliersBills=Unpayed leverandørs fakturaer
-BoxMyLastBookmarks=Mine siste% s bokmerker
-FailedToRefreshDataInfoNotUpToDate=Kunne ikke oppdatere RSS forandring. Siste oppdateringsfrekvenser dato:% s
-NoRecordedBookmarks=No bookmarks defined. Click <a href=Ingen bokmerker definert. Klikk <a href="%s">her</a> for å legge til bokmerker.
-NoRecordedCustomers=Ingen registrert kunder
-BoxTitleLastActionsToDo=Siste% s handlinger å gjøre
-NoActionsToDo=Ingen handlinger å gjøre
-NoRecordedOrders=Ingen registrert kundens ordre
-NoRecordedProposals=Ingen registrert forslag
-NoRecordedInvoices=Ingen registrert kundens fakturaer
-NoUnpayedCustomerBills=Ingen unpayed kundens fakturaer
-NoRecordedSupplierInvoices=Ingen registrert leverandørs fakturaer
-NoUnpayedSupplierBills=Ingen unpayed leverandørs fakturaer
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+BoxLastBooks=Siste bøker
+BoxLastActions=Siste handlinger
+BoxCurrentAccounts=Gjeldende kontosaldo
+BoxSalesTurnover=Omsetning
+BoxTotalUnpayedCustomerBills=Totalt utestående kunder
+BoxTotalUnpayedSuppliersBills=Totalt utestående leverandører
+BoxTitleLastBooks=Siste %s registrerte bøker
+BoxTitleNbOfCustomers=Antall kunder
+BoxTitleLastRssInfos=Siste %s nyheter fra %s
+BoxTitleLastProducts=Siste %s endrede produkter/tjenester
+BoxTitleLastCustomerOrders=Siste %s endrede kundeordre
+BoxTitleLastSuppliers=Siste %s registrerte leverandører
+BoxTitleLastCustomers=Siste %s registrerte kunder
+BoxTitleLastCustomersOrProspects=Siste %s registrerte kunder eller prospekter
+BoxTitleLastPropals=Siste %s registrerte tilbud
+BoxTitleLastCustomerBills=Siste %s kundefakturaer
+BoxTitleLastSupplierBills=Siste %s leverandørfakturaer
+BoxTitleLastProspects=Siste %s registrerte prospekter
+BoxTitleLastProductsInContract=Siste %s produkter/tjenerster i kontraketer
+BoxTitleOldestUnpayedCustomerBills=Eldste %s ubetalte kundefakturaer
+BoxTitleOldestUnpayedSupplierBills=Eldste %s ubetalte leverandørfakturaer
+BoxTitleCurrentAccounts=Gjeldende kontosaldo
+BoxTitleSalesTurnover=Omsetning
+BoxTitleTotalUnpayedCustomerBills=Ubetalte kundefakturaer
+BoxTitleTotalUnpayedSuppliersBills=Ubetalte leverandørfakturaer
+BoxMyLastBookmarks=Mine siste %s bokmerker
+FailedToRefreshDataInfoNotUpToDate=Klarte ikke å oppdatere RSS-strøm. Siste vellykkede oppdatering: %s
+NoRecordedBookmarks=Ingen bokmerker definert. Trykk <a href="%s">her</a> for å legge til bokmerker.
+NoRecordedCustomers=Ingen registrerte kunder
+BoxTitleLastActionsToDo=Siste %s åpne handlinger
+NoActionsToDo=Ingen åpne handlinger
+NoRecordedOrders=Ingen registrerte kunderordre
+NoRecordedProposals=Ingen registrerte tilbud
+NoRecordedInvoices=Ingen registrerte kundefakturaer
+NoUnpayedCustomerBills=Ingen ubetalte kundefakturaer
+NoRecordedSupplierInvoices=Ingen registrte leverandørfakturaer
+NoUnpayedSupplierBills=Ingen ubetalte leverandørfakturaer

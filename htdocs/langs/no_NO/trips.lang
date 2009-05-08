@@ -1,29 +1,18 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - no_NB - trips
 CHARSET=UTF-8
-Trip=Tur
-Trips=Turer
-TripsAndExpenses=Turer og utgifter
-TripCard=Turen kortet
-AddTrip=Legg turen
-ListOfTrips=Liste over turer
-ListOfFees=Liste over avgifter
-NewTrip=Ny tur
-CompanyVisited=Firma / fundation besøkte
-Kilometers=Kilometers
+Trip=Reise
+Trips=Reiser
+TripsAndExpenses=Reiser og utgifter
+TripCard=Reisekort
+AddTrip=Legg til reise
+ListOfTrips=Oversikt over reiser
+ListOfFees=Oversikt over avgifter
+NewTrip=Ny reise
+CompanyVisited=Firma/organiasjon besøkt
+Kilometers=Kilometer
 FeesKilometersOrAmout=Beløp eller kilometer
-DeleteTrip=Slett tur
-ConfirmDeleteTrip=Er du sikker på at du vil slette denne turen?
+DeleteTrip=Slett reise
+ConfirmDeleteTrip=Er du sikker på at du vil slette denne reisen?
 TF_OTHER=Annet
 TF_LUNCH=Lunsj
-TF_TRIP=Tur
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+TF_TRIP=Reise

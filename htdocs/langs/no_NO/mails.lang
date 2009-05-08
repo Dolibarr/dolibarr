@@ -1,103 +1,97 @@
-/*
- * Language code: no_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:45:03
- */
-
-
-// Date 2009-01-19 21:45:03
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - no_NB - mails
 CHARSET=UTF-8
-Mailing=E-post
-EMailing=E-post
-Mailings=EMailings
-EMailings=EMailings
-MailCard=E-post kort
-MailTargets=Mål
-MailRecipients=Mottakere
-MailRecipient=Mottaker
-MailTitle=Tittel
+Mailing=E-postutsendelser
+EMailing=E-postutsendelser
+Mailings=E-postutsendelser
+EMailings=E-postutsendelser
+MailCard=E-postkort
+MailTargets=Målgruppe
+MailRecipients=Mottagere
+MailRecipient=Mottager
+MailTitle=Kampanjetittel
 MailFrom=Avsender
-MailErrorsTo=Feil å
+MailErrorsTo=Feilmeldinger til
 MailReply=Svar til
-MailTo=Mottaker (e)
-MailCC=Kopier til
-MailCCC=Hurtigbufret kopi til
-MailTopic=E-post emne
-MailText=Melding
-MailFile=Vedlagte filer
-MailMessage=E-post kroppen
-ShowEMailing=Vis e-post
-ListOfEMailings=Liste over emailings
-NewMailing=Ny e-post
-EditMailing=Rediger e-post
-DeleteMailing=Slett e-post
-DeleteAMailing=Slette en e-post
-PreviewMailing=Forhåndsvis e-post
-PrepareMailing=Forbered epost
-CreateMailing=Opprett e-post
-MailingDesc=Denne siden lar deg sende emailings til en gruppe mennesker.
-MailingResult=Sender e-post resultatet
-TestMailing=Test e-post
-ValidMailing=Gyldig e-post
-ApproveMailing=Godkjenn epost
-MailingStatusDraft=Utkast
-MailingStatusValidated=Validert
-MailingStatusApproved=Godkjent
+MailTo=Mottaker(e)
+MailCC=Kopi til
+MailCCC=Cached kopi til
+MailTopic=E-postemne
+MailText=Meldingstekst
+MailFile=Filvedlegg
+MailMessage=Meldingstekst
+ShowEMailing=Vis utsendelse
+ListOfEMailings=Oversikt over utsendelser
+NewMailing=Ny utsendelse
+EditMailing=Rediger utsendelse
+DeleteMailing=Slett utsendelse
+DeleteAMailing=Slett en utsendelse
+PreviewMailing=Forhåndsvis utsendelse
+PrepareMailing=Klargjør utsendelse
+CreateMailing=Opprett utsendelse
+MailingDesc=Her kan du sende e-postutesendelser til grupper av mottagere.
+MailingResult=Sendingsresultat
+TestMailing=Test utsendelse
+ValidMailing=Godkjenn utsendelse
+ApproveMailing=Aksepter utsendelse
+MailingStatusDraft=Kladd
+MailingStatusValidated=Godkjent
+MailingStatusApproved=Akseptert
 MailingStatusSent=Sendt
-MailingStatusSentPartialy=Sendt delvis
-MailingStatusSentCompletely=Sendt helt
+MailingStatusSentPartialy=Delvis sendt
+MailingStatusSentCompletely=Sendt fullt ut
 MailingStatusError=Feil
 MailingStatusNotSent=Ikke sendt
-MailSuccessfulySent=Epost successfuly sendt (fra% s til% s)
-ErrorMailRecipientIsEmpty=E-mottaker er tom
-WarningNoEMailsAdded=Ingen ny e-post for å legge til mottakerens listen.
-ConfirmValidMailing=Er du sikker på at du vil bekrefte denne e-post?
-ConfirmDeleteMailing=Er du sikker på at du vil slette denne emailling?
-NbOfRecipients=Antall mottakere
-NbOfUniqueEMails=NB unike eposter
-NbOfEMails=Nb av e-post
-TotalNbOfDistinctRecipients=Antall distinkte mottakere
-NoTargetYet=Ingen mottakere definert ennå (Gå på fanen &quot;mottakernes)
+MailSuccessfulySent=E-post ble sendt (fra %s til %s)
+ErrorMailRecipientIsEmpty=E-postmottager er ikke oppgitt
+WarningNoEMailsAdded=Ingen ny e-post å legge til mottagerlisten.
+ConfirmValidMailing=Er du sikker på at du vil godkjenne utsendelsen?
+ConfirmDeleteMailing=Er du sikker på at du vil slette utsendelsen?
+NbOfRecipients=Antall mottagere
+NbOfUniqueEMails=Ant. unike e-poster
+NbOfEMails=Ant. e-poster
+TotalNbOfDistinctRecipients=Antall bestemte mottagere
+NoTargetYet=Ingen mottagere angitt (Gå til fanen 'Mottakere')
 AddRecipients=Legg til mottakere
 RemoveRecipient=Fjern mottaker
-CommonSubstitutions=Vanlige tegn
-YouCanAddYourOwnPredefindedListHere=Hvis du vil opprette e-selektor modulen, se htdocs / inkluderer / modules / utsendelser / README.
-EMailTestSubstitutionReplacedByGenericValues=Når du bruker testmodus, erstatninger variabler erstattes av generiske verdier
-MailingAddFile=Fest denne filen
+CommonSubstitutions=Vanlige flettefelt
+YouCanAddYourOwnPredefindedListHere=Les mer om hvordan du lager din egen utvalgsliste her: htdocs/includes/modules/mailings/README.
+EMailTestSubstitutionReplacedByGenericValues=Når du er i testmodus blir flettefelt erstattet med generiske verdier
+MailingAddFile=Legg ved denne filen
 NoAttachedFiles=Ingen vedlagte filer
-MailingModuleDescContactCompanies=Kontakter for alle tredjepart (kunde, prospekt, leverandører, ...)
-MailingModuleDescDolibarrUsers=Alle Dolibarr brukere med e-post
-MailingModuleDescFundationMembers=Fundation medlemmer med e-post
-MailingModuleDescEmailsFromFile=E-post fra en tekstfil (email, navn, etternavn)
-MailingModuleDescContactsCategories=Kontakter for alle tredjepart (etter kategori)
-LineInFile=Linje% s i filen
-RecipientSelectionModules=Definert forespørsler etter mottakernes utvalg
-MailSelectedRecipients=Valgte mottakere
-MailingArea=EMailings området
-LastMailings=Siste% s emailings
-TargetsStatistics=Mål statistikk
-NbOfCompaniesContacts=Unike kontakter selskaper
-MailNoChangePossible=Mottakere for validated e-post kan ikke endres
-SearchAMailing=Søk postlister
-SendMailing=Send e-post
-SendMail=Send epost
+
+# Libelle des modules de liste de destinataires mailing
+MailingModuleDescContactCompanies=Alle tredjeparters kontaktpersoner (kunder, prospekter, leverandører, ...)
+MailingModuleDescDolibarrUsers=Alle Dolibarr-brukere med egen e-post
+MailingModuleDescFundationMembers=Medlemmer med e-postadresser
+MailingModuleDescEmailsFromFile=E-poster lest inn fra teksttil (e-post;fornavn;etternavn)
+MailingModuleDescContactsCategories=Alle tredjeparters kontakter (etter kategori)
+
+LineInFile=Antall linjer i filen: %s 
+RecipientSelectionModules=Foresøprsel om lesebekreftelse
+MailSelectedRecipients=Valgte mottagere
+MailingArea=Område for e-postutsendelser
+LastMailings=Siste %s utsendelser
+TargetsStatistics=Statistikk over målgruppe
+NbOfCompaniesContacts=Unike kontaktpersoner for firmaer
+MailNoChangePossible=Du kan ikke endre mottagere når utsendelsen er godkjent
+SearchAMailing=Finn utsendelse
+SendMailing=Send utesendelse
+SendMail=Send e-post
 SentBy=Sendt av
-MailingNeedCommand=For verdipapirer grunn, sende en e-post kan kun utføres fra kommandolinjen. Be administratoren å sette inn følgende kommando for å sende e-post til alle mottakerne:
-MailingNeedCommand2=Du kan imidlertid sende dem på Internett ved å legge til parameter MAILING_LIMIT_SENDBYWEB med verdien av maks antall e-poster du vil sende ved økt.
-ConfirmSendingEmailing=Er du sikker på at du vil sende postlister? <br> På linje sende emailings er begrenset av sikkerhetsmessige grunner <b>til% s</b> mottakerne ved å sende økt.
-TargetsReset=Tøm logg
-ToClearAllRecipientsClickHere=Å fjerne mottakere &quot;-listen for e-post, klikker knappen
-ToAddRecipientsChooseHere=Å legge til mottakere, velger i disse listene
-NbOfEMailingsReceived=Masse emailings mottatt
-IdRecord=ID posten
-DeliveryReceipt=Levering Kvitteringssideformat
+MailingNeedCommand=Av sikkerhetsgrunner kan utsendelser bare foretas fra kommandolinja. Be administrator om å kjøre følgedne kommando for å starte utsendelsen:
+MailingNeedCommand2=Du kan imidlertid sende dem online ver å sette parameteret MAILING_LIMIT_SENDBYWEB til en verdi tilsvarende den maksimale antalle e-poster du ønsker å sende i en økt.
+ConfirmSendingEmailing=Er du sikker på at du vil starte utsendelsen?<br>Av sikkerhetsgrunner er antall maksimalt antall e-poster som kan sendes i en økt <b>%s</b>.
+TargetsReset=Tøm liste
+ToClearAllRecipientsClickHere=Trykk på knappen for å tømme mottagerlisten
+ToAddRecipientsChooseHere=Velg i listene for å legge til mottagere
+NbOfEMailingsReceived=E-postutsendelser mottatt
+IdRecord=Post ID
+DeliveryReceipt=Mottaksbekreftelse
+
+# Module Notifications
 Notifications=Varsler
-NoNotificationsWillBeSent=Ingen e-postmeldinger er planlagt for denne hendelsen, og selskapet
-ANotificationsWillBeSent=1 varsel vil bli sendt via e-post
-SomeNotificationsWillBeSent=% s varsel vil bli sendt via e-post
-AddNewNotification=Aktivere en ny melding forespørsel
-ListOfActiveNotifications=List alle aktive varsler forespørsler
-// Date 2009-01-19 21:45:03
-// STOP - Lines generated via parser
+NoNotificationsWillBeSent=Ingen e-postvarsler er planlagt for denne hendelsen/firmaet
+ANotificationsWillBeSent=1 e-postvarsel vil bli sendt med e-post
+SomeNotificationsWillBeSent=%s e-postvarsler vil bli sendt med e-post
+AddNewNotification=Slå på en ny varslingsforespørsel
+ListOfActiveNotifications=Vis alle altive varslingsforespørsler
