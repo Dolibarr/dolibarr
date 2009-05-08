@@ -737,18 +737,27 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
 
 			// This one is required for all Ajax features
-			if (! defined('DISABLE_PROTOTYPE')) print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
+			if (! defined('DISABLE_PROTOTYPE'))
+			{
+				print '<!-- Includes for Prototype (Used by Scriptaculous and PWC) -->'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
+			}
 			// This one is required fox boxes
-			if (! defined('DISABLE_SCRIPTACULOUS')) print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
+			if (! defined('DISABLE_SCRIPTACULOUS'))
+			{
+				print '<!-- Includes for Scriptaculous (Used by Drag and drop and PWC) -->'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
+			}
 
 			// Those ones are required only with option "confirm by ajax popup"
-			if ($conf->global->MAIN_CONFIRM_AJAX)
+			if (! defined('DISABLE_PWC') && $conf->global->MAIN_CONFIRM_AJAX)
 			{
+				print '<!-- Includes for PWC (Used for confirm popup) -->'."\n";
 				// PWC css
 				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/alert.css">'."\n";
 				// Scriptaculous used by PWC
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/effects.js"></script>'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/controls.js"></script>'."\n";
+//				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/effects.js"></script>'."\n";
+//				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/controls.js"></script>'."\n";
 				// PWC js
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window.js"></script>'."\n";
 			}

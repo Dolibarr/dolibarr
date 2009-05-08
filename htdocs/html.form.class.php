@@ -1607,7 +1607,9 @@ class Form
 			$pageyes=$page.'&action='.$action.'&confirm=yes';
 			$pageno=($useajax == 2?$page.'&confirm=no':'');
 			// Note: Title is not used by dialogConfirm function
-			print '<script type="text/javascript">dialogConfirm(\''.$title.'\',\''.$pageyes.'\',\''.$pageno.'\',\''.dol_escape_js('<b>'.$title.'</b><br>'.$more.$question).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')</script>';
+			print '<script type="text/javascript">window.onload = function(){ dialogConfirm(\''.$title.'\',\''.$pageyes.'\',\''.$pageno.'\',\''.dol_escape_js('<b>'.$title.'</b><br>'.$more.$question).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\'); }</script>';
+//			print '<script id="eee" type="text/javascript">dialogConfirm(\'aaa\',\'bbb\',\'ccc\',\'eee\',\'yyy\',\'zzz\',\'validate\')</script>';
+
 			print "\n";
 			$ret='ajax';
 		}
