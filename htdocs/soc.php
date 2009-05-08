@@ -124,17 +124,20 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->commercial_id         = $_POST["commercial_id"];
 
 	// Check parameters
-	if (! empty($soc->email) && ! isValidEMail($soc->email))
+	if (empty($_POST["cancel"]))
 	{
-		$error = 1;
-		$soc->error = $langs->trans("ErrorBadEMail",$soc->email);
-		$_GET["action"]= $_POST["action"]=='add'?'add':'edit';
-	}
-	if ($soc->fournisseur && ! $conf->fournisseur->enabled)
-	{
-		$error = 1;
-		$soc->error = $langs->trans("ErrorSupplierModuleNotEnabled");
-		$_GET["action"]= $_POST["action"]=='add'?'add':'edit';
+		if (! empty($soc->email) && ! isValidEMail($soc->email))
+		{
+			$error = 1;
+			$soc->error = $langs->trans("ErrorBadEMail",$soc->email);
+			$_GET["action"]= $_POST["action"]=='add'?'add':'edit';
+		}
+		if ($soc->fournisseur && ! $conf->fournisseur->enabled)
+		{
+			$error = 1;
+			$soc->error = $langs->trans("ErrorSupplierModuleNotEnabled");
+			$_GET["action"]= $_POST["action"]=='add'?'add':'edit';
+		}
 	}
 
 	if (! $error)
