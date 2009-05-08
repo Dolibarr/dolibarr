@@ -67,7 +67,7 @@ class modPropale extends DolibarrModules
 		$this->dirs = array("/propale/temp");
 
 		// Dependancies
-		$this->depends = array("modSociete","modCommercial");
+		$this->depends = array("modSociete");
 		$this->requiredby = array();
 		$this->config_page_url = array("propale.php");
 		$this->langfiles = array("propal","bills","companies","deliveries","products");

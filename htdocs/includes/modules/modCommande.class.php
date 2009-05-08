@@ -70,7 +70,7 @@ class modCommande extends DolibarrModules
 		$this->config_page_url = array("commande.php");
 
 		// Dependancies
-		$this->depends = array("modCommercial");
+		$this->depends = array();
 		$this->requiredby = array("modExpedition");
 		$this->conflictwith = array();
 		$this->langfiles = array("orders","bills","companies","products");

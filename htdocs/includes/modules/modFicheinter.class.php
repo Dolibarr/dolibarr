@@ -69,7 +69,7 @@ class modFicheinter  extends DolibarrModules
 		$this->dirs = array("/ficheinter/temp");
 
         // Dependencies
-		$this->depends = array("modSociete","modCommercial");
+		$this->depends = array("modSociete");
 		$this->requiredby = array();
 		$this->conflictwith = array();
 		$this->langfiles = array("bills","companies","interventions");
