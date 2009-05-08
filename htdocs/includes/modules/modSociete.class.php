@@ -67,22 +67,8 @@ class modSociete extends DolibarrModules
 		$this->picto='company';
 
 		// Data directories to create when module is enabled
-		// TODO Replace with simple directories
-		$this->dirs = array();
-		$r=0;
-
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/societe";
-
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/societe/temp";
-
-		$r++;
-		$this->dirs[$r][0] = "logos";
-		$this->dirs[$r][1] = "/societe/logos";
-		$this->dirs[$r][2] = 1;
-
+		$this->dirs = array("/societe/temp","/societe/logos");
+		
 		// Dependances
 		$this->depends = array();
 		$this->requiredby = array("modExpedition","modFacture","modFournisseur","modFicheinter","modPropale","modContrat","modCommande");

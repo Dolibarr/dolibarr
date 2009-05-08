@@ -772,7 +772,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		$pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-		$logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
+		$logo=$conf->societe->dir_output.'/logos/'.$this->emetteur->logo;
 		if ($this->emetteur->logo)
 		{
 			if (is_readable($logo))

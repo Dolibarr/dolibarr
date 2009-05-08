@@ -593,7 +593,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-		$logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
+		$logo=$conf->societe->dir_output.'/logos/'.$mysoc->logo;
 		if ($mysoc->logo)
 		{
 			if (is_readable($logo))

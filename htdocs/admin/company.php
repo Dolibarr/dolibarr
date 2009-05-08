@@ -62,12 +62,12 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 			$isimage=image_format_supported($original_file);
 			if ($isimage >= 0)
 			{
-				dol_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->societe->dir_logos.'/'.$original_file);
-				if (! is_dir($conf->societe->dir_logos))
+				dol_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->societe->dir_output.'/logos/'.$original_file);
+				if (! is_dir($conf->societe->dir_output.'/logos/'))
 				{
-					create_exdir($conf->societe->dir_logos);
+					create_exdir($conf->societe->dir_output.'/logos/');
 				}
-				if (dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->societe->dir_logos.'/'.$original_file,1) > 0)
+				if (dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->societe->dir_output.'/logos/'.$original_file,1) > 0)
 				{
 					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file,'chaine',0,'',$conf->entity);
 
@@ -76,7 +76,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 					{
 						$quality = 80;
 
-						$imgThumbSmall = vignette($conf->societe->dir_logos.'/'.$original_file, 200, 100, '_small', $quality);
+						$imgThumbSmall = vignette($conf->societe->dir_output.'/logos/'.$original_file, 200, 100, '_small', $quality);
 						if (eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
 						{
 							$imgThumbSmall = $reg[1];
@@ -85,7 +85,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 						else dol_syslog($imgThumbSmall);
 
 						// Création de la vignette de la page "Société/Institution"
-						$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$original_file, 100, 30, '_mini', $quality);
+						$imgThumbMini = vignette($conf->societe->dir_output.'/logos/'.$original_file, 100, 30, '_mini', $quality);
 						if (eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
 						{
 							$imgThumbMini = $reg[1];
@@ -128,7 +128,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 
 if ($_GET["action"] == 'addthumb')
 {
-	if (file_exists($conf->societe->dir_logos.'/'.$_GET["file"]))
+	if (file_exists($conf->societe->dir_output.'/logos/'.$_GET["file"]))
 	{
 		$isimage=image_format_supported($_GET["file"]);
 
@@ -136,7 +136,7 @@ if ($_GET["action"] == 'addthumb')
 		if ($isimage > 0)
 		{
 			// Création de la vignette de la page login
-			$imgThumbSmall = vignette($conf->societe->dir_logos.'/'.$_GET["file"], 200, 100, '_small',80);
+			$imgThumbSmall = vignette($conf->societe->dir_output.'/logos/'.$_GET["file"], 200, 100, '_small',80);
 			if (image_format_supported($imgThumbSmall) >= 0 && eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
 			{
 				$imgThumbSmall = $reg[1];
@@ -145,7 +145,7 @@ if ($_GET["action"] == 'addthumb')
 			else dol_syslog($imgThumbSmall);
 
 			// Création de la vignette de la page "Société/Institution"
-			$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$_GET["file"], 100, 30, '_mini',80);
+			$imgThumbMini = vignette($conf->societe->dir_output.'/logos/'.$_GET["file"], 100, 30, '_mini',80);
 			if (image_format_supported($imgThumbSmall) >= 0 && eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
 			{
 				$imgThumbMini = $reg[1];
@@ -171,17 +171,17 @@ if ($_GET["action"] == 'addthumb')
 
 if ($_GET["action"] == 'removelogo')
 {
-	$logofile=$conf->societe->dir_logos.'/'.$mysoc->logo;
+	$logofile=$conf->societe->dir_output.'/logos/'.$mysoc->logo;
 	dol_delete_file($logofile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO",$conf->entity);
 	$mysoc->logo='';
 
-	$logosmallfile=$conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small;
+	$logosmallfile=$conf->societe->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
 	dol_delete_file($logosmallfile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$conf->entity);
 	$mysoc->logo_small='';
 
-	$logominifile=$conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini;
+	$logominifile=$conf->societe->dir_output.'/logos/thumbs/'.$mysoc->logo_mini;
 	dol_delete_file($logominifile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$conf->entity);
 	$mysoc->logo_mini='';
@@ -281,7 +281,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 	if ($mysoc->logo_mini)
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
-		if (file_exists($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini))
+		if (file_exists($conf->societe->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 		{
 			print ' &nbsp; ';
 			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
@@ -549,11 +549,11 @@ else
 	print '</td><td valign="center" align="right">';
 
 	// On propose la génération de la vignette si elle n'existe pas
-	if (!is_file($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini) && eregi('(\.jpg|\.jpeg|\.png)$',$mysoc->logo))
+	if (!is_file($conf->societe->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && eregi('(\.jpg|\.jpeg|\.png)$',$mysoc->logo))
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
 	}
-	else if ($mysoc->logo_mini && is_file($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini))
+	else if ($mysoc->logo_mini && is_file($conf->societe->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 	{
 		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
 	}

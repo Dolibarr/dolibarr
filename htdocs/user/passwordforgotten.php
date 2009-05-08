@@ -232,11 +232,11 @@ if ($conf->file->main_authentication) $title.=", ".$langs->trans("Authentication
 // Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 $width=0;
 $urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
-if (is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small))
+if (is_readable($conf->societe->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small);
 }
-elseif (is_readable($conf->societe->dir_logos.'/'.$mysoc->logo))
+elseif (is_readable($conf->societe->dir_output.'/logos/'.$mysoc->logo))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
 	$width=96;

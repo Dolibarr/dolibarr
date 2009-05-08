@@ -129,11 +129,11 @@ if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
 else if (! empty($conf->global->PAYBOX_LOGO)) $logosmall=$conf->global->PAYBOX_LOGO;
 // Define urllogo
 $urllogo='';
-if (! empty($logosmall) && is_readable($conf->societe->dir_logos.'/thumbs/'.$logosmall))
+if (! empty($logosmall) && is_readable($conf->societe->dir_output.'/logos/thumbs/'.$logosmall))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$logosmall);
 }
-elseif (! empty($logo) && is_readable($conf->societe->dir_logos.'/'.$logo))
+elseif (! empty($logo) && is_readable($conf->societe->dir_output.'/logos/'.$logo))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($logo);
 	$width=96;

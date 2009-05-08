@@ -211,7 +211,6 @@ class Conf
 		$this->livraison_bon->dir_temp  =$rootfordata."/expedition/receipt/temp";
 
 		// Module societe
-		$this->societe->dir_logos =$rootfordata."/societe/logos";
 		if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $this->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 
 		// Module don
