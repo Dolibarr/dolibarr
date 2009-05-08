@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

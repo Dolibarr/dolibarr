@@ -1066,7 +1066,7 @@ class DolibarrModules
 				}
 
 				// Define directory full path
-				if (empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $fulldir = DOL_DATA_ROOT.$dir;
+				if (empty($conf->global->MAIN_MODULE_MULTICOMPANY) || $conf->entity == 1) $fulldir = DOL_DATA_ROOT.$dir;
 				else $fulldir = DOL_DATA_ROOT."/".$conf->entity.$dir;
 				// Create dir if it does not exists
 				if ($fulldir && ! file_exists($fulldir))
