@@ -19,4 +19,4 @@
 -- ===========================================================================
 
 
-ALTER TABLE llx_bordereau_cheque ADD UNIQUE INDEX (number, entity);
+ALTER TABLE llx_bordereau_cheque ADD UNIQUE INDEX uk_bordereau_cheque (number, entity);
