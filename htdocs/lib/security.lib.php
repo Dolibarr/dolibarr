@@ -41,7 +41,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
 
 	header('Cache-Control: Public, must-revalidate');
-	header("Content-type: text/html; charset=".$conf->character_set_client);
+	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 	if (! empty($_REQUEST["urlfrom"])) $_SESSION["urlfrom"]=$_REQUEST["urlfrom"];
 	else unset($_SESSION["urlfrom"]);
@@ -154,7 +154,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 		print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Entity").'</b> &nbsp; </td>';
 		print '<td valign="top" nowrap="nowrap">';
-		print $html->selectarray('entity',$entity);
+		print $html->selectarray('entity',$entity,'',0,0,0,1,'tabindex="3"');
 		print '</td></tr>';
 	}
 
@@ -168,7 +168,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print '<td valign="top" nowrap="nowrap" align="left" class="e">';
 
 		print '<table><tr>';
-		print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="3"></td>';
+		print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4"></td>';
 		print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36"></td>';
 		print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>';
 		print '</tr></table>';
@@ -178,7 +178,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 
 	print '<tr><td colspan="3" style="text-align:center;"><br>';
-	print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />';
+	print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="5" />';
 	print '</td></tr>';
 
 	if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
@@ -215,7 +215,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 
 	print "\n";
-	print '<!-- authentication mode = '.$conf->main_authentication.' -->'."\n";
+	print '<!-- authentication mode = '.$conf->file->main_authentication.' -->'."\n";
 	print '<!-- cookie name used for this session = '.session_name().' -->'."\n";
 	print '<!-- urlfrom in this session = '.(isset($_SESSION["urlfrom"])?$_SESSION["urlfrom"]:'').' -->'."\n";
 
