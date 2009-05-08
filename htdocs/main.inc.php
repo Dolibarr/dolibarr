@@ -438,11 +438,17 @@ if (! isset($_SESSION["dol_login"]))
 	// TODO Remove this as it is a security hole
 	if ($conf->multicompany->enabled && isset($_POST["entity"]))
 	{
+		include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
+		
 		$entity = $_POST["entity"];
 		$entityCookieName = "DOLENTITYID_dolibarr";
+		
 		if (!isset($HTTP_COOKIE_VARS[$entityCookieName]))
 		{
-			setcookie($entityCookieName, $entity, 0, "/", "", 0);
+			$entityCookie = new DolCookie($dolibarr_main_cookie_cryptkey);
+			$entityCookie->_setCookie($entityCookieName, $_POST["entity"]);
+			
+			//setcookie($entityCookieName, $entity, 0, "/", "", 0);
 		}
 	}
 
