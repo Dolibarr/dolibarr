@@ -126,4 +126,6 @@ UPDATE llx_const SET entity=0 WHERE name='SYSLOG_FILE';
 UPDATE llx_const SET entity=0 WHERE name='SYSLOG_LEVEL';
 
 
-
+-- Fix to solve forgoten names on keys
+ALTER TABLE llx_dolibarr_modules drop primary KEY;
+ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
