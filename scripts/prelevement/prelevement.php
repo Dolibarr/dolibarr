@@ -68,20 +68,20 @@ if (!$error)
 {
 
 	$sql = "SELECT f.rowid, pfd.rowid as pfdrowid, f.fk_soc";
-	$sql .= ", pfd.code_banque, pfd.code_guichet, pfd.number, pfd.cle_rib";
-	$sql .= ", pfd.amount";
-	$sql .= ", s.nom";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql .= " , ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-
-	$sql .= " WHERE f.rowid = pfd.fk_facture";
-	$sql .= " AND s.rowid = f.fk_soc";
-	$sql .= " AND f.fk_statut = 1";
-	$sql .= " AND f.paye = 0";
-	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND f.total_ttc > 0";
-	$sql .= " AND f.fk_mode_reglement = 3";
+	$sql.= ", pfd.code_banque, pfd.code_guichet, pfd.number, pfd.cle_rib";
+	$sql.= ", pfd.amount";
+	$sql.= ", s.nom";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+	$sql.= " WHERE f.rowid = pfd.fk_facture";
+	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND s.rowid = f.fk_soc";
+	$sql.= " AND f.fk_statut = 1";
+	$sql.= " AND f.paye = 0";
+	$sql.= " AND pfd.traite = 0";
+	$sql.= " AND f.total_ttc > 0";
+	$sql.= " AND f.fk_mode_reglement = 3";
 
 	if ( $db->query($sql) )
 	{
@@ -97,7 +97,7 @@ if (!$error)
 	  $i++;
 		}
 		$db->free();
-		dol_syslog("$i factures à prélever");
+		dol_syslog("$i factures à prelever");
 	}
 	else
 	{
@@ -120,7 +120,7 @@ if (!$error)
 	 *
 	 */
 	$i = 0;
-	dol_syslog("Début vérification des RIB");
+	dol_syslog("Debut verification des RIB");
 
 	if (sizeof($factures) > 0)
 	{
@@ -147,7 +147,7 @@ if (!$error)
 	  	}
 	  	else
 	  	{
-	  		dol_syslog("Impossible de lire la société");
+	  		dol_syslog("Impossible de lire la societe");
 	  	}
 	  }
 	  else
@@ -168,7 +168,7 @@ if (!$error)
  *
  */
 
-dol_syslog(sizeof($factures_prev)." factures seront prélevées");
+dol_syslog(sizeof($factures_prev)." factures seront prelevees");
 print 'eeee'.$factures_prev;
 if (sizeof($factures_prev) > 0)
 {
@@ -195,8 +195,10 @@ if (sizeof($factures_prev) > 0)
 		 *
 		 *
 		 */
-		$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."prelevement_bons";
-		$sql .= " WHERE ref LIKE '$ref%'";
+		$sql = "SELECT count(*)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
+		$sql.= " WHERE ref LIKE '".$ref."%'";
+		$sql.= " AND entity = ".$conf->entity;
 
 		if ($db->query($sql))
 		{
@@ -217,20 +219,27 @@ if (sizeof($factures_prev) > 0)
 		 *
 		 */
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (ref,datec)";
-		$sql .= " VALUES ('".$ref."',".$db->idate(mktime()).")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
+		$sql.= "ref";
+		$sql.= ", entity";
+		$sql.= ", datec";
+		$sql.= ") VALUES (";
+		$sql.= "'".$ref."'";
+		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$db->idate(mktime());
+		$sql.= ")";
 
 		if ($db->query($sql))
 		{
 			$prev_id = $db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
 
-			$bonprev = new BonPrelevement($db, $this->prelevement."/bon/".$filebonprev);
+			$bonprev = new BonPrelevement($db, $this->prelevement."/receipts/".$filebonprev);
 			$bonprev->id = $prev_id;
 		}
 		else
 		{
 			$error++;
-			dol_syslog("Erreur création du bon de prelevement");
+			dol_syslog("Erreur creation du bon de prelevement");
 		}
 
 	}
@@ -242,7 +251,7 @@ if (sizeof($factures_prev) > 0)
 	 */
 	if (!$error)
 	{
-		dol_syslog("Début génération des paiements");
+		dol_syslog("Debut generation des paiements");
 		dol_syslog("Nombre de factures ".sizeof($factures_prev));
 
 		if (sizeof($factures_prev) > 0)
@@ -297,10 +306,10 @@ if (sizeof($factures_prev) > 0)
 					 *
 					 */
 					$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
-					$sql .= " SET traite = 1";
-					$sql .= ", date_traite=".$db->idate(mktime());
-					$sql .= ", fk_prelevement_bons = ".$prev_id;
-					$sql .= " WHERE rowid=".$fac[1];
+					$sql.= " SET traite = 1";
+					$sql.= ", date_traite = ".$db->idate(mktime());
+					$sql.= ", fk_prelevement_bons = ".$prev_id;
+					$sql.= " WHERE rowid = ".$fac[1];
 
 					if ($db->query($sql))
 					{
@@ -337,12 +346,12 @@ if (sizeof($factures_prev) > 0)
 			$bonprev->reference_remise = $ref;
 
 
-			$bonprev->numero_national_emetteur = PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR;
-			$bonprev->raison_sociale = PRELEVEMENT_RAISON_SOCIALE;
+			$bonprev->numero_national_emetteur    = $conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR;
+			$bonprev->raison_sociale              = $conf->global->PRELEVEMENT_RAISON_SOCIALE;
 
-			$bonprev->emetteur_code_etablissement = PRELEVEMENT_CODE_BANQUE;
-			$bonprev->emetteur_code_guichet       = PRELEVEMENT_CODE_GUICHET;
-			$bonprev->emetteur_numero_compte      = PRELEVEMENT_NUMERO_COMPTE;
+			$bonprev->emetteur_code_etablissement = $conf->global->PRELEVEMENT_CODE_BANQUE;
+			$bonprev->emetteur_code_guichet       = $conf->global->PRELEVEMENT_CODE_GUICHET;
+			$bonprev->emetteur_numero_compte      = $conf->global->PRELEVEMENT_NUMERO_COMPTE;
 
 
 			$bonprev->factures = $factures_prev_id;
@@ -359,8 +368,9 @@ if (sizeof($factures_prev) > 0)
 	 */
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
-	$sql .= " SET amount = ".price2num($bonprev->total);
-	$sql .= " WHERE rowid = ".$prev_id;
+	$sql.= " SET amount = ".price2num($bonprev->total);
+	$sql.= " WHERE rowid = ".$prev_id;
+	$sql.= " AND entity = ".$conf->entity;
 
 	if (!$db->query($sql))
 	{

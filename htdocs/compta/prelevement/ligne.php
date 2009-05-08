@@ -1,6 +1,7 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,25 +206,22 @@ if ($_GET["id"])
 	 *
 	 */
 	$sql = "SELECT pf.rowid";
-	$sql .= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc";
-	$sql .= " , s.rowid as socid, s.nom";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
-	$sql .= " , ".MAIN_DB_PREFIX."facture as f";
-	$sql .= " , ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
-	$sql .= " AND pl.fk_prelevement_bons = p.rowid";
-	$sql .= " AND f.fk_soc = s.rowid";
-	$sql .= " AND pf.fk_facture = f.rowid";
-	$sql .= " AND pl.rowid=".$_GET["id"];
-
-	if ($_GET["socid"])
-	{
-		$sql .= " AND s.rowid = ".$_GET["socid"];
-	}
-
-	$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+	$sql.= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc";
+	$sql.= " , s.rowid as socid, s.nom";
+	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+	$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+	$sql.= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+	$sql.= " , ".MAIN_DB_PREFIX."facture as f";
+	$sql.= " , ".MAIN_DB_PREFIX."societe as s";
+	$sql.= " WHERE pf.fk_prelevement_lignes = pl.rowid";
+	$sql.= " AND pl.fk_prelevement_bons = p.rowid";
+	$sql.= " AND f.fk_soc = s.rowid";
+	$sql.= " AND pf.fk_facture = f.rowid";
+	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND pl.rowid=".$_GET["id"];
+	if ($_GET["socid"])	$sql.= " AND s.rowid = ".$_GET["socid"];
+	$sql.= " ORDER BY $sortfield $sortorder ";
+	$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 	$result = $db->query($sql);
 

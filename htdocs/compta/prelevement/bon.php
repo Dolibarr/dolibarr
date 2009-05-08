@@ -90,8 +90,8 @@ if ($_GET["id"])
       print '</td></tr>';
       print '</table><br />';
 
-      $fileimage = DOL_DATA_ROOT.'/prelevement/bon/'.$bon->ref.'.ps.png.0';
-      $fileps = DOL_DATA_ROOT.'/prelevement/bon/'.$bon->ref.'.ps';
+      $fileimage = $conf->prelevement->dir_output.'/receipts/'.$bon->ref.'.ps.png.0';
+      $fileps = $conf->prelevement->dir_output.'/receipts/'.$bon->ref.'.ps';
 
       // Conversion du PDF en image png si fichier png non existant
       if (!file_exists($fileimage))

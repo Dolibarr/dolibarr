@@ -65,14 +65,14 @@ if (! $sortfield) $sortfield="f.facnumber";
  */
 
 $sql= "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid";
-$sql.= " , ".$db->pdate("pfd.date_demande")." as date_demande";
-$sql.= " , pfd.fk_user_demande";
+$sql.= ", ".$db->pdate("pfd.date_demande")." as date_demande";
+$sql.= ", pfd.fk_user_demande";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.rowid = f.fk_soc";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND f.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 if (!$statut) $sql.= " AND pfd.traite = 0";
@@ -82,7 +82,8 @@ if (strlen(trim($_GET["search_societe"])))
 {
 	$sql.= " AND s.nom LIKE '%".$_GET["search_societe"]."%'";
 }
-$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 if ( $db->query($sql) )
 {

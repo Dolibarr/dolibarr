@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ class LignePrelevement
 
   /**
    *    \brief      Constructeur de la classe
-   *    \param      DB          Handler accès base de données
+   *    \param      DB          Handler acces base de donnees
    *    \param      user        Objet user
    */
   function LignePrelevement($DB, $user)
@@ -51,24 +52,27 @@ class LignePrelevement
 
     $this->statuts = array();
     $this->statuts[0] = "En attente";
-    $this->statuts[2] = "Crédité";
-    $this->statuts[3] = "Rejeté";
+    $this->statuts[2] = "Credite";
+    $this->statuts[3] = "Rejete";
   }
 
   /**
-   *    \brief      Recupére l'objet prelevement
-   *    \param      rowid       id de la facture a récupérer
+   *    \brief      Recupere l'objet prelevement
+   *    \param      rowid       id de la facture a recuperer
    */
   function fetch($rowid)
   {
+  	global $conf;
+  	
     $result = 0;
     
     $sql = "SELECT pl.rowid, pl.amount, p.ref, p.rowid as bon_rowid";
-    $sql .= ", pl.statut, pl.fk_soc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-    $sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as p";
-    $sql .= " WHERE pl.rowid=".$rowid;
-    $sql .= " AND p.rowid = pl.fk_prelevement_bons";
+    $sql.= ", pl.statut, pl.fk_soc";
+    $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+    $sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as p";
+    $sql.= " WHERE pl.rowid=".$rowid;
+    $sql.= " AND p.rowid = pl.fk_prelevement_bons";
+    $sql.= " AND p.entity = ".$conf->entity;
        
     if ($this->db->query($sql))
       {

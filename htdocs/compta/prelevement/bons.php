@@ -57,7 +57,9 @@ if (! $sortfield) $sortfield="p.datec";
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut";
 $sql.= ", ".$db->pdate("p.datec")." as datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)

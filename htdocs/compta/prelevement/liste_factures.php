@@ -66,10 +66,9 @@ $sql.= " , ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE pf.fk_prelevement_lignes = pl.rowid";
 $sql.= " AND pl.fk_prelevement_bons = p.rowid";
 $sql.= " AND f.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND f.entity = ".$conf->entity;
 $sql.= " AND pf.fk_facture = f.rowid";
-
-if ($socid) $sql .= " AND s.rowid = ".$socid;
+if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 if ($_GET["search_fac"])
 {

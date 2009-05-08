@@ -133,6 +133,7 @@ $limit=5;
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut";
 $sql.= ", ".$db->pdate("p.datec")." as datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql.= " WHERE p.entity = ".$conf->entity;
 $sql.= " ORDER BY datec DESC";
 $sql.=$db->plimit($limit);
 
@@ -186,7 +187,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql.= " WHERE s.rowid = f.fk_soc";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND f.entity = ".$conf->entity;
 $sql.= " AND pfd.traite = 0";
 $sql.= " AND pfd.fk_facture = f.rowid";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;

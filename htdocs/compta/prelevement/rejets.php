@@ -86,7 +86,7 @@ $sql.= " , ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE pr.fk_prelevement_lignes = pl.rowid";
 $sql.= " AND pl.fk_prelevement_bons = p.rowid";
 $sql.= " AND pl.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND p.entity = ".$conf->entity;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 

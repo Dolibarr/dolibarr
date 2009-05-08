@@ -1,6 +1,7 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,23 +108,20 @@ if ($sortfield == "") {
 }
 
 /*
- * Liste des lignes de prélèvement
+ * Liste des lignes de prelevement
  *
  *
  */
 $sql = "SELECT pl.rowid, pl.statut, pl.amount";
-$sql .= " , s.rowid as socid, s.nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " , ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE pl.fk_prelevement_bons=".$prev_id;
-$sql .= " AND pl.fk_soc = s.rowid";
-
-if ($_GET["socid"])
-{
-	$sql .= " AND s.rowid = ".$_GET["socid"];
-}
-
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= ", s.rowid as socid, s.nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE pl.fk_prelevement_bons=".$prev_id;
+$sql.= " AND pl.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+if ($_GET["socid"])	$sql.= " AND s.rowid = ".$_GET["socid"];
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 

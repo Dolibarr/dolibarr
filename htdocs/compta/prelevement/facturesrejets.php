@@ -1,5 +1,6 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT."/paiement.class.php";
 
 
 /*
- * Sécurité accés client
+ * Sécurite acces client
  */
 if ($user->societe_id > 0) accessforbidden();
 
@@ -76,23 +77,20 @@ if ($sortfield == "") {
  *
  */
 $sql = "SELECT p.rowid, pf.statut, p.ref";
-$sql .= " ,f.rowid as facid, f.facnumber, f.total_ttc";
-$sql .= " , s.rowid as socid, s.nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement as p";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
-$sql .= " , ".MAIN_DB_PREFIX."facture as f";
-$sql .= " , ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE pf.fk_prelevement = p.rowid";
-$sql .= " AND f.fk_soc = s.rowid";
-$sql .= " AND pf.fk_facture = f.rowid";
-$sql .= " AND pf.statut = 2 ";
-
-if ($_GET["socid"])
-{
-  $sql .= " AND s.rowid = ".$_GET["socid"];
-}
-
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ,f.rowid as facid, f.facnumber, f.total_ttc";
+$sql.= " , s.rowid as socid, s.nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement as p";
+$sql.= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+$sql.= " , ".MAIN_DB_PREFIX."facture as f";
+$sql.= " , ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE pf.fk_prelevement = p.rowid";
+$sql.= " AND f.fk_soc = s.rowid";
+$sql.= " AND pf.fk_facture = f.rowid";
+$sql.= " AND pf.statut = 2 ";
+$sql.= " AND f.entity = ".$conf->entity;
+if ($_GET["socid"]) $sql.= " AND s.rowid = ".$_GET["socid"];
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)

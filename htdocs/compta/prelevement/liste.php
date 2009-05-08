@@ -56,8 +56,8 @@ $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql.= " , ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE pl.fk_prelevement_bons = p.rowid";
+$sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND s.rowid = pl.fk_soc";
-$sql.= " AND s.entity = ".$conf->entity;
 if ($socid) $sql.= " AND pl.fk_soc = ".$socid;
 if ($_GET["search_ligne"])
 {

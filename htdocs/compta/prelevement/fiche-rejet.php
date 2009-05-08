@@ -1,6 +1,7 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,24 +90,20 @@ $rej = new RejetPrelevement($db, $user);
  *
  */
 $sql = "SELECT pl.rowid, pl.amount, pl.statut";
-$sql .= " , s.rowid as socid, s.nom";
-$sql .= " , pr.motif, pr.afacturer, pr.fk_facture";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " , ".MAIN_DB_PREFIX."societe as s";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-$sql .= " WHERE p.rowid=".$prev_id;
-$sql .= " AND pl.fk_prelevement_bons = p.rowid";
-$sql .= " AND pl.fk_soc = s.rowid";
-$sql .= " AND pl.statut = 3 ";
-$sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
-
-if ($_GET["socid"])
-{
-  $sql .= " AND s.rowid = ".$_GET["socid"];
-}
-
-$sql .= " ORDER BY pl.amount DESC";
+$sql.= " , s.rowid as socid, s.nom";
+$sql.= " , pr.motif, pr.afacturer, pr.fk_facture";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql.= " , ".MAIN_DB_PREFIX."societe as s";
+$sql.= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+$sql.= " WHERE p.rowid=".$prev_id;
+$sql.= " AND pl.fk_prelevement_bons = p.rowid";
+$sql.= " AND p.entity = ".$conf->entity;
+$sql.= " AND pl.fk_soc = s.rowid";
+$sql.= " AND pl.statut = 3 ";
+$sql.= " AND pr.fk_prelevement_lignes = pl.rowid";
+if ($_GET["socid"]) $sql.= " AND s.rowid = ".$_GET["socid"];
+$sql.= " ORDER BY pl.amount DESC";
 
 $resql = $db->query($sql);
 if ($resql)

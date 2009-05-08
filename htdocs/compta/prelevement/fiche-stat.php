@@ -90,10 +90,9 @@ if ($prev_id)
    *
    */
   $sql = "SELECT sum(pl.amount), pl.statut";
-  $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-
-  $sql .= " WHERE pl.fk_prelevement_bons = ".$prev_id;
-  $sql .= " GROUP BY pl.statut";
+  $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+  $sql.= " WHERE pl.fk_prelevement_bons = ".$prev_id;
+  $sql.= " GROUP BY pl.statut";
   
   if ($db->query($sql))
     {
@@ -115,11 +114,11 @@ if ($prev_id)
 	  
 	  if ($row[1] == 2)
 	    {
-	      print 'Crédité';
+	      print 'Credite';
 	    }
 	  elseif ($row[1] == 3)
 	    {
-	      print 'Rejeté';
+	      print 'Rejete';
 	    }
 	  elseif ($row[1] == 1)
 	    {
