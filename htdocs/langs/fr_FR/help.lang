@@ -1,3 +1,7 @@
 # Dolibarr language file - fr_FR - help
 CHARSET=UTF-8
-HelpInvoice=Facturation
+CommunitySupport=Support communautaire
+EMailSupport=Support emails
+RemoteControlSupport=Support temps réel à distance
+ToSeeListOfAvailableRessources=Pour contacter/voir les ressources disponibles:
+ClickHere=Cliquez ici

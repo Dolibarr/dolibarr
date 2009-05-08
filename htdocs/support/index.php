@@ -26,6 +26,7 @@
 include_once("./inc.php");
 
 $langs->load("other");
+$langs->load("help");
 
 
 pHeader("Dolibarr Help Service Center",$_SERVER["PHP_SELF"]);
@@ -41,44 +42,48 @@ print '<table border="1">';
 // Line of possible services
 print '<tr>';
 print '<td align="center">';
-print '<b>Community support</b>';
+print '<b>'.$langs->trans("CommunitySupport").'</b>';
 print '</td>';
 print '<td align="center">';
-print '<b>EMailing support</b>';
+print '<b>'.$langs->trans("EMailSupport").'</b>';
 print '</td>';
 print '<td align="center">';
-print '<b>Remote control support</b>';
+print '<b>'.$langs->trans("RemoteControlSupport").'</b>';
 print '</td>';
 print '</tr>';
 
 
 // Area of support cells
 print '<tr>';
-print '<td width="33%" align="center" valign="top">';
+print '<td width="33%" align="center" valign="top" style="background:#FFFFFF">';
 
 print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
 print img_picto('','/theme/common/who.png','',1);
 print '</td></tr><tr><td align="center">';
-print '<br>'.$langs->trans("ForDocumentationSeeWiki",'http://wiki.dolibarr.org','http://wiki.dolibarr.org').'<br>';
-print '<br>'.$langs->trans("ForAnswersSeeForum",'http://www.dolibarr.org','http://www.dolibarr.org').'<br>';
+$urlwiki='http://wiki.dolibarr.org';
+if ($langs->defaultlang == 'fr_FR') $urlwiki='http://wiki.dolibarr.org/index.php/Accueil';
+if ($langs->defaultlang == 'es_ES') $urlwiki='http://wiki.dolibarr.org/index.php/Portada';
+print '<br>'.$langs->trans("ForDocumentationSeeWiki",$urlwiki,$urlwiki).'<br>';
+print '<br>'.$langs->trans("ForAnswersSeeForum",'http://www.dolibarr.org/forum/','http://www.dolibarr.org/forum/').'<br>';
 print '</td></tr></table>';
 
 print '</td>';
-print '<td width="34%" align="center" valign="top">';
+print '<td width="34%" align="center" valign="top" style="background:#FFFFFF">';
 
 print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
-print img_picto('','/theme/common/pagemaster.png','',1);
+print img_picto('','/theme/common/mail.png','',1);
 print '</td></tr><tr><td align="center">';
 print '<br>'.$langs->trans("FeatureNotYetAvailable").'.';
 print '</td></tr></table>';
 
 print '</td>';
-print '<td width="33%" align="center" valign="top">';
+print '<td width="33%" align="center" valign="top" style="background:#FFFFFF">';
 
 print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
 print img_picto('','/theme/common/internet.png','',1);
 print '</td></tr><tr><td align="center">';
-print '<br>'.$langs->trans("FeatureNotYetAvailable").'.';
+print '<br>'.$langs->trans("ToSeeListOfAvailableRessources").' ';
+print '<a href="online.php">'.$langs->trans("ClickHere").'</a>';
 print '</td></tr></table>';
 
 print '</td>';
