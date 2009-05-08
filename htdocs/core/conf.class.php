@@ -226,9 +226,6 @@ class Conf
 		// Module service
 		$this->service->dir_output=$rootfordata."/produit";
 		$this->service->dir_temp  =$rootfordata."/produit/temp";
-		// Module droipret
-		$this->droitpret->cat=defined('DROITPRET_CAT')?DROITPRET_CAT:'';
-		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
 		// Module contrat
 		$this->contrat->dir_output=$rootfordata."/contracts";
 		$this->contrat->dir_temp=$rootfordata."/contracts/temp";
