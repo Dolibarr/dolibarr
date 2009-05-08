@@ -103,7 +103,7 @@ ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref (facnumber, 
 ALTER TABLE llx_livraison ADD UNIQUE INDEX idx_livraison_uk_ref (ref, entity);
 ALTER TABLE llx_fichinter ADD UNIQUE INDEX uk_fichinter_ref (ref, entity);
 ALTER TABLE llx_contrat ADD UNIQUE INDEX uk_contrat_ref (ref, entity);
-ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY (numero, entity);
+ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
 ALTER TABLE llx_bordereau_cheque ADD UNIQUE INDEX uk_bordereau_cheque (number, entity);
 
 UPDATE llx_const SET entity=0 WHERE name='MAIN_MODULE_USER' AND entity=1;
