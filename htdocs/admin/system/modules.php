@@ -31,12 +31,12 @@ $langs->load("other");
 
 if (!$user->admin)
   accessforbidden();
- 
-  
+
+
 /*
  * View
  */
-  
+
 llxHeader();
 
 print_fiche_titre($langs->trans("AvailableModules"),'','setup');
@@ -46,8 +46,6 @@ print $langs->trans("ToActivateModule").'<br>';
 print "<br>\n";
 
 // Charge les modules
-$db->begin();
-
 $dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
 $handle=opendir($dir);
 $modules = array();
@@ -82,7 +80,7 @@ $var=false;
 $sortorder=$modules_names;
 ksort($sortorder);
 $rights_ids = array();
-foreach($sortorder as $numero=>$name) 
+foreach($sortorder as $numero=>$name)
 {
     $idperms="";
     $var=!$var;
