@@ -238,7 +238,7 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 	{
 	case 12:	// 8 + 4
 		$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
-	case 8:		// 8 + 4 (Pour compatibilite, ne devrait pas etre utilis�)
+	case 8:		// 8 + 4 (Pour compatibilite, ne devrait pas etre utilise)
 		$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
 	case 2:		// 2
 	default: 	// by default, fall back on Standard DES (should work everywhere)
@@ -313,9 +313,9 @@ function encodedecode_dbpassconf($level=0)
 }
 
 /**
- *	\brief   Encode une chaine de caract�re
- *	\param   chaine			chaine de caract�res a encoder
- *	\return  string_coded  	chaine de caract�res encod�e
+ *	\brief   Encode une chaine de caractere
+ *	\param   chaine			chaine de caracteres a encoder
+ *	\return  string_coded  	chaine de caracteres encodee
  */
 function dol_encode($chain)
 {
@@ -329,9 +329,9 @@ function dol_encode($chain)
 }
 
 /**
- *	\brief   Decode une chaine de caract�re
- *	\param   chain    chaine de caract�res a decoder
- *	\return  string_coded  chaine de caract�res decod�e
+ *	\brief   Decode une chaine de caractere
+ *	\param   chain    chaine de caracteres a decoder
+ *	\return  string_coded  chaine de caracteres decodee
  */
 function dol_decode($chain)
 {
@@ -350,7 +350,7 @@ function dol_decode($chain)
 /**
  *	\brief  Scan les fichiers avec un anti-virus
  *	\param	 file			Fichier a scanner
- *	\return	 malware	Nom du virus si infect� sinon retourne "null"
+ *	\return	 malware	Nom du virus si infecte sinon retourne "null"
  */
 function dol_avscan_file($file)
 {
