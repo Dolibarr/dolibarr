@@ -551,6 +551,7 @@ class CMailFile
 			if (! $htmlalreadyinmsg) $out .= "<html><head><title></title></head><body>";
 			$out.= $msgtext;
 			if (! $htmlalreadyinmsg) $out .= "</body></html>";
+			//$out.= "--" . $this->alternative_boundary . "--" . $this->eol;
 		}
 		else
 		{
