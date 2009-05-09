@@ -1,0 +1,6 @@
+@echo off
+REM Launch Dolibarr Help center
+REM ---------------------------
+
+REM Go to help center page
+start "WAMPBROWSER" http://localhost:WAMPAPACHEPORT/dolibarr/support/
