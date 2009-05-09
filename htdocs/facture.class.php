@@ -1232,10 +1232,10 @@ class Facture extends CommonObject
 			return 0;
 		}
 
-		if (! $user->rights->commande->valider)
+		if (! $user->rights->facture->valider)
 		{
 			$this->error='Permission denied';
-			dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
+			dol_syslog("Facture::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 
