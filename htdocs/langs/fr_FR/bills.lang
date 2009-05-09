@@ -266,6 +266,8 @@ InvoiceNotChecked=Aucune facture n'a été sélectionnée
 CloneInvoice=Cloner facture
 ConfirmCloneInvoice=Etes-vous sur de vouloir cloner cette facture <b>%s</b> ?
 DisabledBecauseReplacedInvoice=Action désactivée car facture remplacée
+DescTaxAndDividendsArea=Cet écran résumé la liste de toutes les taxes et charges sociales sociales exigées pour une année donnée. La date prise en compte est la période d'exigibilité.
+NbOfPayments=Nb de payements
 
 # PaymentConditions
 PaymentConditionShortRECEP=A réception

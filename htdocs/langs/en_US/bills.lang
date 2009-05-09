@@ -266,6 +266,8 @@ WatermarkOnDraftBill=Watermark on draft invoices (nothing if empty)
 CloneInvoice=Clone invoice
 ConfirmCloneInvoice=Are you sure you want to clone this invoice <b>%s</b> ?
 DisabledBecauseReplacedInvoice=Action disabled because invoice has been replaced
+DescTaxAndDividendsArea=This area presents a summary of all payments made for tax or social contributions. Only records with payment during the fixed year are included here.
+NbOfPayments=Nb of payments
 
 # PaymentConditions
 PaymentConditionShortRECEP=Immediate

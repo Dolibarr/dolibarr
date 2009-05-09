@@ -78,6 +78,7 @@ Always=Always
 Never=Never
 Under=under
 Period=Period
+PeriodEndDate=End date for period
 Activate=Activate
 Activated=Activated
 Closed=Closed

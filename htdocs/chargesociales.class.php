@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 
 /**     \class      ChargeSociales
 		\brief      Classe permettant la gestion des paiements des charges
-                    La tva collectée n'est calculée que sur les factures payées.
+                    La tva collectï¿½e n'est calculï¿½e que sur les factures payï¿½es.
 */
 class ChargeSociales extends CommonObject
 {
@@ -37,7 +37,7 @@ class ChargeSociales extends CommonObject
 	var $error;
 	var $element='rowid';
 	var $table_element='chargesociales';
-	
+
     var $id;
     var $date_ech;
     var $lib;
@@ -77,6 +77,7 @@ class ChargeSociales extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id             = $obj->rowid;
+                $this->ref            = $obj->rowid;
                 $this->date_ech       = $obj->date_ech;
                 $this->lib            = $obj->lib;
                 $this->type           = $obj->fk_type;
@@ -102,30 +103,30 @@ class ChargeSociales extends CommonObject
 
 
     /**
-     *      \brief      Crée une charge sociale
-     *      \param      user    Utilisateur qui crée
-     *      \return     int     <0 si KO, id charge créée si OK
+     *      \brief      Create a social contribution in database
+     *      \param      user    User making creation
+     *      \return     int     <0 if KO, id if OK
      */
     function create($user)
     {
 		// Nettoyage parametres
 		$newamount=price2num($this->amount,'MT');
-		
+
 		// Validation parametres
 		if (! $newamount > 0)
 		{
 			$this->error="ErrorBadParameter";
 			return -2;
 		}
-		
+
 		$this->db->begin();
-		
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, periode, amount)";
 		$sql.= " VALUES (".$this->type.",'".addslashes($this->lib)."',";
-		$sql.= " '".$this->db->idate($this->date_ech)."','".$this->periode."',";
+		$sql.= " '".$this->db->idate($this->date_ech)."','".$this->db->idate($this->periode)."',";
 		$sql.= " ".price2num($newamount);
 		$sql.= ")";
-		
+
 		dol_syslog("ChargesSociales::create sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -142,12 +143,12 @@ class ChargeSociales extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-	}	
+	}
 
-		
+
     /**
      *      \brief      Efface un charge sociale
-     *      \param      user    Utilisateur qui crée le paiement
+     *      \param      user    Utilisateur qui crï¿½e le paiement
      *      \return     int     <0 si erreur, >0 si ok
      */
     function delete($user)
@@ -166,7 +167,7 @@ class ChargeSociales extends CommonObject
 			return -1;
 		}
 	}
-	
+
 
     /**
      *      \brief      Met a jour une charge sociale
@@ -176,13 +177,13 @@ class ChargeSociales extends CommonObject
     function update($user)
     {
 		$this->db->begin();
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
 		$sql.= " SET libelle='".addslashes($this->lib)."',";
 		$sql.= " date_ech='".$this->db->idate($this->date_ech)."',";
-		$sql.= " periode='".$this->periode."'";
+		$sql.= " periode='".$this->db->idate($this->periode)."'";
 		$sql.= " WHERE rowid=".$this->id;
-		
+
 		dol_syslog("ChargesSociales::update sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -196,9 +197,9 @@ class ChargeSociales extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-	}	
-	
-	
+	}
+
+
     function solde($year = 0)
     {
         $sql = "SELECT sum(f.amount) as amount";
@@ -227,7 +228,7 @@ class ChargeSociales extends CommonObject
     }
 
 	/**
-	*    \brief      Tag la charge comme payée complètement
+	*    \brief      Tag la charge comme payï¿½e complï¿½tement
 	*    \param      rowid       id de la ligne a modifier
 	*/
 	function set_payed($rowid)
@@ -237,8 +238,8 @@ class ChargeSociales extends CommonObject
     }
 
 	/**
-	 *    \brief      Retourne le libellé du statut d'une charge (impayé, payée)
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \brief      Retourne le libellï¿½ du statut d'une charge (impayï¿½, payï¿½e)
+	 *    \param      mode          0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -247,10 +248,10 @@ class ChargeSociales extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\brief      Renvoi le libellï¿½ d'un statut donnï¿½
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string        	Libellé du statut
+	 *    	\param      mode          	0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string        	Libellï¿½ du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -301,9 +302,9 @@ class ChargeSociales extends CommonObject
 	function getNomUrl($withpicto=0,$maxlen=0)
 	{
 		global $langs;
-		
+
 		$result='';
-		
+
 		$lien = '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
@@ -348,7 +349,7 @@ class ChargeSociales extends CommonObject
 class PaiementCharge
 {
     var $db;
-    
+
     var $id;
     var $chid;
     var $paiementtype;
@@ -357,7 +358,7 @@ class PaiementCharge
     var $num_paiement;
     var $note;
 
-	
+
     function PaiementCharge($DB)
 	{
         $this->db = $DB;
@@ -366,8 +367,8 @@ class PaiementCharge
 
     /**
      *      \brief      Creation d'un paiement de charge sociale dans la base
-     *      \param      user    Utilisateur qui crée le paiement
-     *      \return     int     <0 si KO, id du paiement crée si OK
+     *      \param      user    Utilisateur qui crï¿½e le paiement
+     *      \return     int     <0 si KO, id du paiement crï¿½e si OK
      */
     function create($user)
 	{
@@ -380,9 +381,9 @@ class PaiementCharge
 			$this->error='ErrorBadValueForParameters';
 			return -1;
 		}
-		
+
         $this->db->begin();
-		
+
 		$total=0;
 		foreach ($this->amounts as $key => $value)
 		{
@@ -393,7 +394,7 @@ class PaiementCharge
 
 		if ($total > 0)
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount,"; 
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount,";
 			$sql.= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
 			$sql.= " VALUES ($this->chid, ".$this->db->idate(mktime()).", ";
 			$sql.= $this->db->idate($this->datepaye).", ";
@@ -429,18 +430,18 @@ class PaiementCharge
     }
 
     /**
-     *      \brief      Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank générée
+     *      \brief      Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank gï¿½nï¿½rï¿½e
      *      \param      id_bank         Id de la banque
      *      \return     int             >0 si OK, <=0 si KO
      */
     function update_fk_bank($id_bank)
 	{
         $sql = "UPDATE llx_paiementcharge set fk_bank = ".$id_bank." where rowid = ".$this->id;
-		
+
         dol_syslog("PaiementCharge::update_fk_bank sql=".$sql);
         $result = $this->db->query($sql);
-        if ($result) 
-        {	    
+        if ($result)
+        {
         	return 1;
         }
         else

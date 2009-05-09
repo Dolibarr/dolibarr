@@ -147,22 +147,24 @@ if ($resql)
 
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),"index.php","id","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateDue"),"index.php","de","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Period"),"index.php","periode","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Type"),"index.php","type","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Type"),"index.php","type","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PeriodEndDate"),"index.php","periode","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateDue"),"index.php","de","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print "<tr class=\"liste_titre\">";
 	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
+	// Type
 	print '<td align="left">';
     $html->select_type_socialcontrib($typeid,'typeid',1,16,0);
     print '</td>';
+	// Period end date
 	print '<td>&nbsp;</td>';
+    print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
 	print '<td align="right">';
 	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
@@ -176,16 +178,22 @@ if ($resql)
 		$var = !$var;
 		print "<tr $bc[$var]>";
 
+		// Ref
 		print '<td width="60">';
 		print '<a href="charges.php?id='.$obj->id.'">'.img_file().' '.$obj->id.'</a>';
 		print '</td>';
 
-		print '<td width="110">'.dol_print_date($obj->de, 'day').'</td>';
+		// Label
+		print '<td>'.dol_trunc($obj->libelle,42).'</td>';
 
+		// Type
+		print '<td>'.dol_trunc($obj->type_lib,16).'</td>';
+
+		// Date end period
 		print '<td align="center">';
 		if ($obj->periode)
 		{
-			print '<a href="index.php?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a>';
+			print '<a href="index.php?year='.strftime("%Y",$obj->periode).'">'.dol_print_date($obj->periode,'day').'</a>';
 		}
 		else
 		{
@@ -193,11 +201,10 @@ if ($resql)
 		}
 		print '</td>';
 
-		print '<td>'.dol_trunc($obj->type_lib,16).'</td>';
-
-		print '<td>'.dol_trunc($obj->libelle,42).'</td>';
-
 		print '<td align="right" width="100">'.price($obj->amount).'</td>';
+
+		// Due date
+		print '<td width="110" align="center">'.dol_print_date($obj->de, 'day').'</td>';
 
 		print '<td align="right" nowrap="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5).'</a></td>';
 

@@ -50,42 +50,28 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 /*
  * 	Classer paye
  */
-if ($_POST["action"] == 'confirm_payed')
+if ($_REQUEST["action"] == 'confirm_payed' && $_REQUEST["confirm"] == 'yes')
 {
-	if ($_POST["confirm"] == 'yes')
-	{
-		$chargesociales = new ChargeSociales($db);
-		$result = $chargesociales->set_payed($chid);
-	}
-	else
-	{
-		$_GET["action"]='';
-	}
+	$chargesociales = new ChargeSociales($db);
+	$result = $chargesociales->set_payed($chid);
 }
 
 /*
  *	Suppression d'une charge sociale
  */
-if ($_POST["action"] == 'confirm_delete')
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
-	if ($_POST["confirm"] == 'yes')
+	$chargesociales=new ChargeSociales($db);
+	$chargesociales->id=$_GET["id"];
+	$result=$chargesociales->delete($user);
+	if ($result > 0)
 	{
-		$chargesociales=new ChargeSociales($db);
-		$chargesociales->id=$_GET["id"];
-		$result=$chargesociales->delete($user);
-		if ($result > 0)
-		{
-			Header("Location: index.php");
-			exit;
-		}
-		else
-		{
-			$mesg='<div class="error">'.$chargesociales->error.'</div>';
-		}
+		Header("Location: index.php");
+		exit;
 	}
 	else
 	{
-		$_GET['action']='';
+		$mesg='<div class="error">'.$chargesociales->error.'</div>';
 	}
 }
 
@@ -97,12 +83,13 @@ if ($_POST["action"] == 'confirm_delete')
 if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 {
 	$dateech=@dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
+	$dateperiod=@dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
 	if (! $dateech)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
 		$_GET["action"] = 'create';
 	}
-	elseif (! $_POST["period"])
+	elseif (! $dateperiod)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")).'</div>';
 		$_GET["action"] = 'create';
@@ -119,7 +106,7 @@ if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 		$chargesociales->type=$_POST["actioncode"];
 		$chargesociales->lib=$_POST["label"];
 		$chargesociales->date_ech=$dateech;
-		$chargesociales->periode=$_POST["period"];
+		$chargesociales->periode=$dateperiod;
 		$chargesociales->amount=$_POST["amount"];
 
 		$chid=$chargesociales->create($user);
@@ -138,12 +125,13 @@ if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->creer)
 {
 	$dateech=@dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
+	$dateperiod=@dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
 	if (! $dateech)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
 		$_GET["action"] = 'edit';
 	}
-	elseif (! $_POST["period"])
+	elseif (! $dateperiod)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")).'</div>';
 		$_GET["action"] = 'edit';
@@ -155,7 +143,7 @@ if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->cha
 
 		$chargesociales->lib=$_POST["label"];
 		$chargesociales->date_ech=$dateech;
-		$chargesociales->periode=$_POST["period"];
+		$chargesociales->periode=$dateperiod;
 
 		$result=$chargesociales->update($user);
 		if ($result > 0)
@@ -168,6 +156,12 @@ if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->cha
 		}
 	}
 }
+
+
+
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -186,7 +180,7 @@ if ($_GET["action"] == 'create')
 
     $var=false;
 
-    print '<form name="charge" method="post" action="'.DOL_URL_ROOT.'/compta/sociales/charges.php">';
+    print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="action" value="add">';
 
 	print "<table class=\"noborder\" width=\"100%\">";
@@ -194,34 +188,42 @@ if ($_GET["action"] == 'create')
     print '<td>';
     print '&nbsp;';
     print '</td><td align="left">';
-    print $langs->trans("DateDue");
-    print '</td><td align="left">';
-    print $langs->trans("Period");
+    print $langs->trans("Label");
     print '</td><td align="left">';
     print $langs->trans("Type");
-    print '</td><td align="left">';
-    print $langs->trans("Label");
+    print '</td><td align="center">';
+    print $langs->trans("PeriodEndDate");
     print '</td><td align="right">';
     print $langs->trans("Amount");
     print '</td><td align="center">';
+    print $langs->trans("DateDue");
+    print '</td><td align="left">';
     print '&nbsp;';
     print '</td>';
     print "</tr>\n";
 
     print '<tr '.$bc[$var].' valign="top">';
+
     print '<td>&nbsp;</td>';
-    print '<td>';
-    print $html->select_date('-1', 'ech', 0, 0, 0, 'charge', 1);
-	print '</td>';
-    print '<td><input type="text" size="8" name="period"><br>YYYYMMDD</td>';
 
-    print '<td align="left">';
-    $html->select_type_socialcontrib();
-    print '</td>';
-
+    // Label
     print '<td align="left"><input type="text" size="34" name="label" class="flat"></td>';
 
+	// Type
+    print '<td align="left">';
+    $html->select_type_socialcontrib(isset($_POST["actioncode"])?$_POST["actioncode"]:'','actioncode',1);
+    print '</td>';
+
+	// Date end period
+	print '<td align="center">';
+    print $html->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
+	print '</td>';
+
     print '<td align="right"><input type="text" size="6" name="amount" class="flat"></td>';
+
+    print '<td align="center">';
+    print $html->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
+	print '</td>';
 
     print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
     print '</tr>';
@@ -277,23 +279,40 @@ if ($chid > 0)
 
 		print '<table class="border" width="100%">';
 
-		print "<tr><td>".$langs->trans("Ref").'</td><td colspan="2">'.$cha->id."</td></tr>";
+		// Ref
+		print "<tr><td>".$langs->trans("Ref").'</td><td colspan="2">';
+		print $html->showrefnav($cha,'id');
+		print "</td></tr>";
 
-		print "<tr><td>".$langs->trans("Type")."</td><td>$cha->type_libelle</td><td>".$langs->trans("Payments")."</td></tr>";
-
-		print "<tr><td>".$langs->trans("Period")."</td>";
-		print "<td>";
-		if ($cha->paye==0 && $_GET['action'] == 'edit')
+		// Label
+		if ($_GET['action'] == 'edit')
 		{
-			print "<input type=\"text\" name=\"period\" value=\"".dol_print_date($cha->periode,"%Y%m%d")."\"> (YYYYMMDD)";
+			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">';
+			print '<input type="text" name="label" size="40" value="'.$cha->lib.'">';
+			print '</td></tr>';
 		}
 		else
 		{
-			print dol_print_date($cha->periode,"%Y");
+			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$cha->lib.'</td></tr>';
+		}
+
+		// Type
+		print "<tr><td>".$langs->trans("Type")."</td><td>$cha->type_libelle</td><td>".$langs->trans("Payments")."</td></tr>";
+
+		// Period en date
+		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
+		print "<td>";
+		if ($_GET['action'] == 'edit')
+		{
+			print $html->select_date($cha->periode, 'period', 0, 0, 0, 'charge', 1);
+		}
+		else
+		{
+			print dol_print_date($cha->periode,"day");
 		}
 		print "</td>";
 
-		print '<td rowspan="5" valign="top">';
+		print '<td rowspan="4" valign="top">';
 
 		/*
 		* Paiements
@@ -355,17 +374,14 @@ if ($chid > 0)
 
 		print "</tr>";
 
-		if ($cha->paye==0 && $_GET['action'] == 'edit')
+		// Due date
+		if ($_GET['action'] == 'edit')
 		{
-			print '<tr><td>'.$langs->trans("Label").'</td><td>';
-			print '<input type="text" name="label" size="40" value="'.$cha->lib.'">';
-			print '</td></tr>';
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
 			print $html->select_date($cha->date_ech, 'ech', 0, 0, 0, 'charge', 1);
 			print "</td></tr>";
 		}
 		else {
-			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$cha->lib.'</td></tr>';
 			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($cha->date_ech,'day')."</td></tr>";
 		}
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($cha->amount).'</td></tr>';
@@ -391,12 +407,12 @@ if ($chid > 0)
 		/*
 		*   Boutons actions
 		*/
-		if (! $_GET["action"] || $_GET["action"] == 'update')
+		if ($_GET["action"] != 'edit')
 		{
 			print "<div class=\"tabsAction\">\n";
 
-			// Editer
-			if ($cha->paye == 0 && $user->rights->tax->charges->creer)
+			// Edit
+			if ($user->rights->tax->charges->creer)
 			{
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
 			}
@@ -407,13 +423,13 @@ if ($chid > 0)
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
 			}
 
-			// Classer 'payé'
+			// Classify 'payed'
 			if ($cha->paye == 0 && round($resteapayer) <=0 && $user->rights->tax->charges->creer)
 			{
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>";
 			}
 
-			// Supprimer
+			// Delete
 			if ($cha->paye == 0 && $totalpaye <=0 && $user->rights->tax->charges->supprimer)
 			{
 				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
@@ -424,7 +440,7 @@ if ($chid > 0)
 	}
 	else
 	{
-		/* Charge non trouvé */
+		/* Charge non trouvï¿½ */
 		dol_print_error('',$cha->error);
 	}
 }
