@@ -177,7 +177,7 @@ OfficialWiki = Wiki Dolibarr
 OfficialDemo = Démo en ligne Dolibarr
 ForDocumentationSeeWiki = Pour la documentation utilisateur, développeur ou les FAQs (questions-réponses fréquentes), consultez le wiki Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum = Pour d'autres questions ou poser vos propres questions, vous pouvez utiliser le forum Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
-HelpCenterDesc1 = Cet espace permet de vous aider à obtenir un service de support sur Dolibarr.
+HelpCenterDesc1 = Cette application, indépendante de Dolibarr, vous permet de vous aider à obtenir un service de support sur Dolibarr.
 HelpCenterDesc2 = Certain de ces services ne sont disponibles qu'en <b>anglais</b>.
 CurrentTopMenuHandler = Gestionnaire menu haut courant
 CurrentLeftMenuHandler = Gestionnaire menu gauche courant

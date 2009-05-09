@@ -19,7 +19,7 @@
  */
 
 body {
-font-size:13px;
+font-size:14px;
 font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
 background-color: #F4F4F4;
 margin-left: 20px;
@@ -181,4 +181,9 @@ font-size: 12px;
 {
 border: 1px solid #8CACBB;
 padding: 4px 4px 4px 4px;
+}
+
+tr.title
+{
+background: #DDDFDD;	
 }

@@ -44,7 +44,7 @@ if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"])
 // Definition des constantes syslog
 if (function_exists("define_syslog_variables"))
 {
-    define_syslog_variables();
+	define_syslog_variables();
 }
 else
 {
@@ -122,7 +122,7 @@ if (empty($conf->db->user)) $conf->db->user='';
 // En mode off (recommande il faut juste faire addslashes au moment d'un insert/update.
 function stripslashes_deep($value)
 {
-   return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
+	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
 }
 //if (! eregi('PHP/6', $_SERVER['SERVER_SOFTWARE']))
 if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en compte dans PHP6
@@ -146,11 +146,11 @@ $bc[false]=' class="bg1"';
 $bc[true]=' class="bg2"';
 
 
-/*
-*	\brief		Load conf file (file must exists)
-*	\param		dolibarr_main_document_root		Root directory of Dolibarr bin files
-*	\return		int								<0 if KO, >0 if OK
-*/
+/**
+ *	\brief		Load conf file (file must exists)
+ *	\param		dolibarr_main_document_root		Root directory of Dolibarr bin files
+ *	\return		int								<0 if KO, >0 if OK
+ */
 function conf($dolibarr_main_document_root)
 {
 	global $conf;
@@ -162,8 +162,8 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_db_pass;
 	global $character_set_client;
 
-    $return=include_once($dolibarr_main_document_root."/core/conf.class.php");
-    if (! $return) return -1;
+	$return=include_once($dolibarr_main_document_root."/core/conf.class.php");
+	if (! $return) return -1;
 
 	$conf=new Conf();
 	$conf->db->type = trim($dolibarr_main_db_type);
@@ -180,52 +180,63 @@ function conf($dolibarr_main_document_root)
 }
 
 
-/*
-*	\brief		Affiche entete HTML
-*/
+/**
+ *	\brief		Affiche entete HTML
+ */
 function pHeader($soutitre,$next,$action='none')
 {
 	global $conf;
-    global $langs;
-    $langs->load("main");
-    $langs->load("admin");
+	global $langs;
+	$langs->load("main");
+	$langs->load("admin");
 
 	// On force contenu dans format sortie
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
-    print '<html>'."\n";
-    print '<head>'."\n";
-    print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
-    print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
-    print '<title>'.$langs->trans("Help").'</title>'."\n";
-    print '</head>'."\n";
-    print '<body>'."\n";
-    print '<span class="titre">'.$soutitre.'</span>'."\n";
+	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
+	print '<html>'."\n";
+	print '<head>'."\n";
+	print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
+	print '<title>'.$langs->trans("Help").'</title>'."\n";
+	print '</head>'."\n";
+	print '<body>'."\n";
+	print '<span class="titre">'.$soutitre.'</span>'."\n";
 
-    print '<form action="'.$next.'" method="POST">'."\n";
-    print '<input type="hidden" name="action" value="'.$action.'">'."\n";
+	print '<form action="'.$next.'" method="POST">'."\n";
+	print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 
 	print '<table class="main" width="100%"><tr><td>'."\n";
 
 	print '<table class="main-inside" width="100%"><tr><td>'."\n";
 }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $nonext
+ * @param unknown_type $setuplang
+ */
 function pFooter($nonext=0,$setuplang='')
 {
-    global $langs;
-    $langs->load("main");
-    $langs->load("admin");
+	global $langs;
+	$langs->load("main");
+	$langs->load("admin");
 
-    print '</td></tr></table>'."\n";
-    print '</td></tr></table>'."\n";
+	print '</td></tr></table>'."\n";
+	print '</td></tr></table>'."\n";
 
-    print '</form>'."\n";
-    print '</body>'."\n";
-    print '</html>'."\n";
+	print '</form>'."\n";
+	print '</body>'."\n";
+	print '</html>'."\n";
 }
 
-
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $message
+ * @param unknown_type $level
+ */
 function dolibarr_support_syslog($message, $level=LOG_DEBUG)
 {
 	if (! defined('LOG_DEBUG')) define('LOG_DEBUG',6);

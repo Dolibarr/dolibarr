@@ -1,10 +1,14 @@
 # Dolibarr language file - fr_FR - help
 CHARSET=UTF-8
-CommunitySupport=Support communautaire
-EMailSupport=Support emails
-RemoteControlSupport=Support temps réel à distance
+CommunitySupport=Assistance Forums et Wiki
+EMailSupport=Assistance Emails
+RemoteControlSupport=Assistance en ligne temps réel
+OtherSupport=Autres type d'assistance
 ToSeeListOfAvailableRessources=Pour contacter/voir les ressources disponibles:
 ClickHere=Cliquez ici
 HelpCenter=Centre d'aide
 DolibarrHelpCenter=Centre de support et d'aide Dolibarr
 ToGoBackToDolibarr=Pour aller sur Dolibarr, <a href="%s">cliquer ici</a>.
+TypeOfSupport=Nature du support
+TypeSupportCommunauty=Communautaire (gratuit)
+TypeSupportCommercial=Commercial
