@@ -102,7 +102,7 @@ print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr>';
 
 if (($conf->facture->enabled && $user->rights->facture->lire) ||
-    ($conf->fournisseur->enabled && $user->rights->fournisseur->lire))
+    ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire))
 {
 	print '<td valign="top" width="30%" class="notopnoleft">';
 }
@@ -214,7 +214,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 /**
  * Draft suppliers invoices
  */
-if ($conf->facture->enabled && $user->rights->facture->lire)
+if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 {
 	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
 	$sql.= " s.nom, s.rowid as socid";
