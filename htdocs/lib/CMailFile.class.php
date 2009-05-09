@@ -53,6 +53,20 @@ class CMailFile
 	var $error='';
 
 	var $smtps;				// Contains SMTPs object (if this method is used)
+	
+	var $html;
+	var $image_boundary;
+	var $atleastoneimage=0;
+	var $html_images=array();
+	var $images_encoded=array();
+	var $image_types = array('gif'  => 'image/gif',
+                           'jpg'  => 'image/jpeg',
+                           'jpeg' => 'image/jpeg',
+                           'jpe'  => 'image/jpeg',
+                           'bmp'  => 'image/bmp',
+                           'png'  => 'image/png',
+                           'tif'  => 'image/tiff',
+                           'tiff' => 'image/tiff');
 
 
 	/**
@@ -85,11 +99,30 @@ class CMailFile
 		if ($msgishtml == -1)
 		{
 			$this->msgishtml = 0;
-			if (dol_textishtml($msg,1)) $this->msgishtml = 1;
+			if (dol_textishtml($msg)) $this->msgishtml = 1;
 		}
 		else
 		{
 			$this->msgishtml = $msgishtml;
+		}
+
+		// Detect images
+		if ($this->msgishtml)
+		{
+			$this->html = $msg;
+			$findimg = $this->findHtmlImages($conf->fckeditor->dir_output);
+			// Define if there is at least one file
+			if ($findimg)
+			{
+				foreach ($this->html_images as $i => $val)
+				{
+					if ($this->html_images[$i])
+					{
+						$this->atleastoneimage=1;
+						dol_syslog("CMailFile::CMailfile: html_images[$i]['name']=".$this->html_images[$i]['name'], LOG_DEBUG);
+					}
+				}
+			}
 		}
 
 		// Define if there is at least one file
@@ -110,6 +143,9 @@ class CMailFile
 
 			// On defini mime_boundary
 			$this->mime_boundary = md5(uniqid("dolibarr"));
+			
+			// On defini image_boundary
+			$this->image_boundary = md5(uniqid(time()));
 
 			// On definit fin de ligne
 			$this->eol="\n";
@@ -132,9 +168,16 @@ class CMailFile
 			$smtp_headers = $this->write_smtpheaders();
 
 			// En-tete suite dans $mime_headers
-			if ($this->atleastonefile)
+			if ($this->atleastonefile || $this->atleastoneimage)
 			{
 				$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
+			}
+			
+			// On encode les images
+			if ($this->atleastoneimage)
+			{
+				$images_encoded = $this->write_images($this->images_encoded);
+				$msg = $this->html;
 			}
 
 			// Corps message dans $text_body
@@ -148,7 +191,7 @@ class CMailFile
 
 			// On defini $this->headers et $this->message
 			$this->headers = $smtp_headers . $mime_headers;
-			$this->message = $text_body . $text_encoded;
+			$this->message = $text_body . $images_encoded . $text_encoded;
 
 			// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
 			// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees
@@ -442,19 +485,29 @@ class CMailFile
 	{
 		$mimedone=0;
 		$out = "";
-		for ($i = 0; $i < count($filename_list); $i++)
+		
+		if ($filename_list)
 		{
-			if ($filename_list[$i])
+			for ($i = 0; $i < count($filename_list); $i++)
 			{
-				if (! $mimedone)
+				if ($filename_list[$i])
 				{
-					$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mime_boundary."\"".$this->eol;
-					$mimedone=1;
+					if (! $mimedone)
+					{
+						$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mime_boundary."\"".$this->eol;
+						$mimedone=1;
+					}
+					if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
+					$out.= "X-attachments: $filename_list[$i]".$this->eol;
 				}
-				if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
-				$out.= "X-attachments: $filename_list[$i]".$this->eol;
 			}
 		}
+		
+		if ($this->atleastoneimage)
+		{
+			$out.= "Content-Type: multipart/related; boundary=\"".$this->image_boundary."\"".$this->eol;
+		}
+		
 		//$out.= $this->eol;
 		dol_syslog("CMailFile::write_mimeheaders mime_header=\n".$out, LOG_DEBUG);
 		return $out;
@@ -471,7 +524,7 @@ class CMailFile
 
 		$out='';
 
-		if ($this->atleastonefile)
+		if ($this->atleastonefile || $this->atleastoneimage)
 		{
 			$out.= "--" . $this->mime_boundary . $this->eol;
 			if ($this->msgishtml)
@@ -611,6 +664,111 @@ class CMailFile
 
 		return $_retVal;
 	}
+	
+	
+	function findHtmlImages($images_dir)
+  {
+  	// Build the list of image extensions
+    $extensions = array_keys($this->image_types);
+
+    preg_match_all('/(?:"|\')([^"\']+\.('.implode('|', $extensions).'))(?:"|\')/Ui', $this->html, $matches);
+
+    if ($matches)
+    {
+    	$i=0;
+    	foreach ($matches[1] as $full)
+    	{
+    		eregi('([A-Za-z0-9_\-]+[.]?[A-Za-z0-9]+)?$',$full,$regs);
+    		$img = $regs[1];
+
+    		if (file_exists($images_dir.'/'.$img))
+    		{
+    			// Image path
+    			$src = preg_quote($full);
+    			
+    			// Image name
+    			$this->html_images[$i]["name"] = $img;
+    			
+    			// Content type
+    			$ext = preg_replace('#^.*\.(\w{3,4})$#e', 'strtolower("$1")', $img);
+    			$this->html_images[$i]["content_type"] = $this->image_types[$ext];
+    			
+    			// cid
+    			$this->html_images[$i]["cid"] = md5(uniqid(time()));
+    			
+    			$this->html = preg_replace("#src=\"$src\"|src='$src'#", "src=\"cid:".$this->html_images[$i]["cid"]."\"", $this->html);
+    		}
+    		$i++;
+    	}
+  	
+    	if (!empty($this->html_images))
+    	{
+    		// If duplicate images are embedded, they may show up as attachments, so remove them.
+        $html_images = array_unique($this->html_images);
+        sort($html_images);
+        $i=0;
+ 
+        foreach ($html_images as $img)
+        {        	
+        	if ($image = file_get_contents($images_dir.'/'.$img["name"]))
+        	{
+        		$this->images_encoded[$i]['name'] = $img["name"];
+        		$this->images_encoded[$i]['content_type'] = $img["content_type"];
+        		$this->images_encoded[$i]['cid'] = $img["cid"];
+        		
+        		// Encodage de l'image
+        		$this->images_encoded[$i]["image_encoded"] = chunk_split(base64_encode($image), 68, $this->eol);
+        	}
+        }
+      }
+      else
+      {
+      	return -1;
+      }
+      
+      return 1;
+    }
+    else
+    {
+    	return 0;
+    }
+  }
+  
+  /**
+	 \brief 		Permet d'attacher une image
+	 \param 		image_list		Tableau
+	 \param 		mimetype_list		Tableau
+	 \return		out					Chaine images encodees
+	 */
+	function write_images($images_list)
+	{
+		$out = '';
+
+		if ($images_list)
+		{
+			foreach ($images_list as $img)
+			{
+				dol_syslog("CMailFile::write_images: i=$i");
+				
+				$out = $out . "--" . $this->image_boundary . $this->eol;
+				$out.= "Content-Type: " . $img["content_type"] . "; name=\"".$img["name"]."\"".$this->eol;
+				$out.= "Content-Transfer-Encoding: base64".$this->eol;
+				$out.= "Content-ID: <".$img["cid"].">".$this->eol;
+				$out.= $this->eol;
+				$out.= $img["image_encoded"];
+				$out.= $this->eol;
+			}
+		}
+		else
+		{
+			return 0;
+		}
+
+		// Fin de tous les attachements
+		$out = $out . "--" . $this->image_boundary . "--" . $this->eol;
+		return $out;
+	}
+
 }
 
 
