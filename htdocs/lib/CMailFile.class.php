@@ -462,7 +462,7 @@ class CMailFile
 
 		if ($this->msgishtml)
 		{
-			if (! $this->atleastonefile) $out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
+			if (! $this->atleastonefile || $this->atleastoneimage) $out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
 			$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 		}
 		else
@@ -551,7 +551,8 @@ class CMailFile
 		{
 			$out.= $msgtext;
 		}
-		$out.= $this->eol;
+		$out.= $this->eol . "--" . $this->mime_boundary . "--" . $this->eol;
+
 		return $out;
 	}
 
@@ -765,7 +766,8 @@ class CMailFile
 		}
 
 		// Fin de tous les attachements
-		$out = $out . "--" . $this->image_boundary . "--" . $this->eol;
+		$out.=  $this->eol . "--" . $this->image_boundary . "--" . $this->eol;
+		
 		return $out;
 	}
 
