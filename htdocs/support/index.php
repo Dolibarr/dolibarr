@@ -24,6 +24,7 @@
  */
 
 include_once("./inc.php");
+include_once("../master.inc.php");
 
 $langs->load("other");
 $langs->load("help");
@@ -36,7 +37,7 @@ print $langs->trans("HelpCenterDesc2")."<br>\n";
 
 print '<br>';
 
-print $langs->trans("ToGoBackToDolibarr","/");
+print $langs->trans("ToGoBackToDolibarr",DOL_URL_ROOT.'/');
 
 print '<br><br>';
 
