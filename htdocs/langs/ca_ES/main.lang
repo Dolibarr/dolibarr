@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - main  
+# Dolibarr language file - ca_ES - main 
 CHARSET = UTF-8
 SeparatorDecimal = ,
 SeparatorThousand = 
@@ -48,6 +48,7 @@ SeeAbove = Esmentar anteriorment
 HomeArea = Àrea inici
 LastConnexion = Darrera connexió
 PreviousConnexion = Connexió anterior
+ConnectedOnMultiCompany = Connexió a l'entitat
 ConnectedSince = Connectat des
 AuthenticationMode = Mode autentificació
 RequestedUrl = Url solicitada

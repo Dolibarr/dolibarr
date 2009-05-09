@@ -48,6 +48,7 @@ SeeAbove = Mencionar anteriormente
 HomeArea = Área inicio
 LastConnexion = Última conexión
 PreviousConnexion = Conexión anterior
+ConnectedOnMultiCompany = Conexión a la entidad
 ConnectedSince = Conectado desde
 AuthenticationMode = Modo autentificación
 RequestedUrl = Url solicitada

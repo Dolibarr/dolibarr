@@ -234,7 +234,7 @@ UMask = Paràmetre UMask de nous fitxers en Unix/Linux/BSD.
 UMaskExplanation = Aquest paràmetre determina els drets dels arxius creats en el servidor Dolibarr (durant la pujada, per exemple).<br>Aquest ha de ser el valor octal (per exemple, 0666 significa lectura/escriptura per a tots).<br>Aquest paràmetre no té cap efecte sobre un servidor Windows.
 SeeWikiForAllTeam = Mireu el wiki per a més detalls de tots els actors i de la seva organització
 UseACacheDelay = Demora en memòria cau de l'exportació en segons (0 o buit sense memòria)
-# Modules = undefined =  = undefined
+# Modules = undefined =  = 
 Module0Name = Usuaris y grups
 Module0Desc = Gestió d'usuaris i grups
 Module1Name = Tercers
@@ -547,7 +547,7 @@ Offset = Decàleg
 AlwaysActive = Sempre actiu
 UpdateRequired = El seu sistema necessita una actualització. Per actualitzar faci un clic a <a href="%s">Actualitzar</a>.
 Upgrade = Actualització
-AddExtensionThemeModuleOrOther = Ajustar extension (tema, mòdul, etc.)
+AddExtensionThemeModuleOrOther = Ajustar extensió (tema, mòdul, etc.)
 WebServer = Servidor web
 DocumentRootServer = Carpeta arrel de les pàgines web
 DataRootServer = Carpeta arrel dels arxius de dades
@@ -645,7 +645,7 @@ SystemAreaForAdminOnly = Aquesta àrea només és accessible als usuaris de tipu
 CompanyFundationDesc = Edita en aquesta pàgina tota la informació coneguda sobre l'empresa o associació a administrar
 DisplayDesc = Podeu trobar aquí tots els paràmetres relacionats amb l'aparença d'Dolibarr
 AvailableModules = Mòduls disponibles
-ToActivateModule = Per activar els mòduls, aneu a l'àrea de Configuració.
+ToActivateModule = Per activar els mòduls, aneu a l'àrea de Configuració (Inici->Configuració->Mòduls).
 SessionTimeOut = Time out de sesions
 SessionExplanation = Assegura que el període de sessions no expirarà abans d'aquest moment. Tanmateix, la gestió del període de sessions de PHP no garanteix que el període de sessions expirar després d'aquest període: Aquest serà el cas si un sistema de neteja del cau de sessions és actiu. <br>Nota: Sense mecanisme especial, el mecanisme intern per netejar el període de sessions de PHP tots els accessos <b>%s /%s</b>, però només al voltant de l'accés d'altres períodes de sessions.
 TriggersAvailable = Triggers disponibles
@@ -677,17 +677,17 @@ BackupDescY = L'arxiu de bolcat generat haurà de guardar-se en un lloc segur.
 RestoreDesc = Per restaurar una còpia de seguretat de Dolibarr, vostè ha de:
 RestoreDesc2 = * Prendre el fitxer (fitxer zip, per exemple) de la carpeta dels documents i descomprimir-lo a la carpeta dels documents d'una nova instal·lació de Dolibarr o en la carpeda dels documents d'aquesta instal·lació (<b>%s</b>).
 RestoreDesc3 = * Recarregar el fitxer de bolcat guardat a la base de dades d'una nova instal·lació de Dolibarr o d'aquesta instal·lació. Atenció, una vegada realitzada la restauració, haurà d'utilitzar un login/contrasenya d'administrador existent en el moment de la còpia de seguretat per connectar-se. Per restaurar la base de dades en la instal·lació actual, pot utilitzar l'assistent a continuació.
-##### Module password generation = undefined =  = undefined
+##### Module password generation = undefined =  = 
 PasswordGenerationStandard = Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone = No ofereix contrasenyes. La contrasenya s'introdueix manualment.
-##### Users setup ##### = undefined =  = undefined
+##### Users setup ##### = undefined =  = 
 UserGroupSetup = Configuració mòdul usuaris i grups
 GeneratePassword = Proposar una contrasenya generada
 RuleForGeneratedPasswords = Norma per a la generació de les contrasenyes propostes
 DoNotSuggest = No proposar
 EncryptedPasswordInDatabase = Permetre encriptació de les contrasenyes en la base de dades
 DisableForgetPasswordLinkOnLogonPage = No mostrar l'enllaç "Contrasenya oblidada" a la pàgina de login
-##### Company setup ##### = undefined =  = undefined
+##### Company setup ##### = undefined =  = 
 CompanySetup = Configuració del mòdul empreses
 CompanyCodeChecker = Mòdul de generació i control dels codis de tercers (clients/proveïdors)
 AccountCodeManager = Mòdul de generació dels codis comptables (clients/proveïdors)
@@ -696,7 +696,7 @@ ModuleCompanyCodePanicum = Retorna un codi comptable buit.
 ModuleCompanyCodeDigitaria = Retorna un codi comptable compost seguint el codi de tercer. El codi està format per caràcter 'C' en primera posició seguit dels 5 primers caràcters del codi tercer.
 UseNotifications = Utilitza notificacions
 NotificationsDesc = La funció de les notificacions permet enviar automàticament un correu electrònic per a un determinat esdeveniment Dolibarr en les empreses configurades per a això
-##### Webcal setup ##### = undefined =  = undefined
+##### Webcal setup ##### = undefined =  = 
 WebCalSetup = Configuració d'enllaç amb el calendari webcalendar
 WebCalSyncro = Integrar els esdeveniments Dolibarr a webcalendar
 WebCalAllways = Sempre, sense consultar
@@ -720,7 +720,7 @@ WebCalAddEventOnStatusBill = Afegir esdeveniment al calendari en el canvi d'esta
 WebCalAddEventOnStatusMember = Afegir esdeveniment al calendari en el canvi d'estat dels membres
 WebCalUrlForVCalExport = Un vincle d'exportació del calendari en format <b>%s</b> estarà disponible a la url: %s
 WebCalCheckWebcalSetup = La configuració del mòdul webcal pot ser incorrecta
-##### Invoices ##### = undefined =  = undefined
+##### Invoices ##### = undefined =  = 
 BillsSetup = Configuració del mòdul Factures
 BillsDate = Data de les factures
 BillsNumberingModule = Mòdul de numeració de factures i albarans
@@ -737,7 +737,7 @@ SuggestPaymentByRIBOnAccount = Sugerir el pagament per abonament en compte
 SuggestPaymentByChequeToAddress = Sugerir el pagament per xec a
 FreeLegalTextOnInvoices = Text lliure en factures
 WatermarkOnDraftInvoices = Marca d'aigua en les factures esborrany (en cas d'estar buit)
-##### Proposals ##### = undefined =  = undefined
+##### Proposals ##### = undefined =  = 
 PropalSetup = Configuració del mòdul Pressupostos
 CreateForm = Creació formulari
 NumberOfProductLines = Nombre de línies de productes
@@ -753,7 +753,7 @@ AddDeliveryAddressAbility = Possibilitat de seleccionar una adreça d'enviament
 UseOptionLineIfNoQuantity = Una línia de producte/servei que té una quantitat nul·la es considera com una opció
 FreeLegalTextOnProposal = Text lliure en pressupostos
 WatermarkOnDraftProposal = Marca d'aigua en pressupostos esborrany (en cas d'estar buit)
-##### Orders ##### = undefined =  = undefined
+##### Orders ##### = undefined =  = 
 OrdersSetup = Configuració del mòdul comandes
 OrdersNumberingModules = Mòduls de numeració de les comandes
 OrdersModelModule = Models de documents de comandes
@@ -761,24 +761,24 @@ HideTreadedOrders = Amaga les comandes processades o anul·lades del llistat
 ValidOrderAfterPropalClosed = Validar la comanda després del tancament del pressupost, permet no passar per la comanda provisional
 FreeLegalTextOnOrders = Text lliure en comandes
 WatermarkOnDraftOrders = Marca d'aigua en comandes esborrany (en cas d'estar buit)
-##### Fiche inter ##### = undefined =  = undefined
+##### Fiche inter ##### = undefined =  = 
 FicheinterNumberingModules = Mòduls de numeració de les fitxes d'intervenció
 TemplatePDFInterventions = Model de documents de les fitxes d'intervenció
 WatermarkOnDraftInterventionCards = Marca d'aigua en fitxes d'intervenció (en cas d'estar buit)
-##### Clicktodial ##### = undefined =  = undefined
+##### Clicktodial ##### = undefined =  = 
 ClickToDialSetup = Configuració del mòdul Click To Dial
 ClickToDialUrlDesc = Url de trucada fent clic en la icona telèfon. Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacé par le téléphone de l'appelé<br><b>%%2$s</b> qui sera remplacé par le téléphone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplacé par votre login clicktodial (défini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacé par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
-##### Bookmark4u ##### = undefined =  = undefined
+##### Bookmark4u ##### = undefined =  = 
 Bookmark4uSetup = Configuració del mòdul Bookmark4u
-##### Interventions ##### = undefined =  = undefined
+##### Interventions ##### = undefined =  = 
 InterventionsSetup = Configuració del mòdul intervencions
-##### Members ##### = undefined =  = undefined
+##### Members ##### = undefined =  = 
 MembersSetup = Configuració del mòdulo Associacions
 MemberMainOptions = Opcions principals
 AddSubscriptionIntoAccount = Registrar cotitzacions en compte bancari o la caixa del mòdul bancari
 AdherentMailRequired = E-Mail obligatori per crear un membre nou
 MemberSendInformationByMailByDefault = Casella de verificació per enviar un missatge de confirmació als membres és per defecte "sí"
-##### LDAP setup ##### = undefined =  = undefined
+##### LDAP setup ##### = undefined =  = 
 LDAPSetup = Configuracón del mòdul LDAP
 LDAPGlobalParameters = Paràmetres globals
 LDAPUsersSynchro = Usuaris
@@ -908,7 +908,7 @@ LDAPDescGroups = Aquesta pàgina permet definir el nom dels atributs de l'arbre 
 LDAPDescMembers = Aquesta pàgina permet definir el nom dels atributs de l'arbre LDAP per a cada informació dels membres del mòdul Associacions Dolibarr.
 LDAPDescValues = Els valors d'exemples s'adapten a <b>OpenLDAP</b> amb els schemas carregats: <b>core.schema, cosine.schema, inetorgperson.schema </b>). Si vostè utilitza els a valors suggerits i OpenLDAP, modifiqui el seu fitxer de configuració LDAP <b>slapd.conf </b> per a tenir tots aquests schemas actius.
 ForANonAnonymousAccess = Per un accés autentificat
-##### Products ##### = undefined =  = undefined
+##### Products ##### = undefined =  = 
 ProductSetup = Configuració del mòdul Productes
 NumberOfProductShowInSelect = Nº de productes màx a les llistes (0 = sense límit)
 ConfirmDeleteProductLineAbility = Confirmació d'eliminació d'una línia de producte en els formularis
@@ -918,7 +918,7 @@ UseSearchToSelectProduct = Utilitzar un formulari de cerca per a la selecció d'
 UseEcoTaxeAbility = Assumir ecotaxa (DEEE)
 SetDefaultBarcodeTypeProducts = Tipus de codi de barres utilitzat per defecte per als productes
 SetDefaultBarcodeTypeThirdParties = Tipus de codi de barres utilitzat per defecte per als tercers
-##### Syslog ##### = undefined =  = undefined
+##### Syslog ##### = undefined =  = 
 SyslogSetup = Configuració del mòdul Syslog
 SyslogOutput = Sortida del log
 SyslogSyslog = Syslog
@@ -926,11 +926,11 @@ SyslogFacility = Facilitat
 SyslogLevel = Nivell
 SyslogSimpleFile = Arxiu
 SyslogFilename = Nom i ruta de l'arxiu
-SyslogFilenameDesc = Aquest fitxer de log es troba per defecte a la carpeta: <br><b>%s</b><br>  Podeu definir una ruta diferent per guardar aquest arxiu.
+YouCanUseDOL_DATA_ROOT = Podeu utilitzar DOL_DATA_ROOT/dolibarr.log per a un registre a la carpeta  \"documents\" de Dolibarr. Tanmateix, pot establir una carpeta diferent per guardar aquest arxiu.
 ErrorUnknownSyslogConstant = La constant %s no és una constant syslog coneguda
-##### Donations ##### = undefined =  = undefined
+##### Donations ##### = undefined =  = 
 DonationsSetup = Configuració del mòdul subvencions
-##### Barcode ##### = undefined =  = undefined
+##### Barcode ##### = undefined =  = 
 BarcodeSetup = Configuració dels codis de barra
 PaperFormatModule = Mòduls de formats d'impressió
 BarcodeEncodeModule = Mòduls de codificació dels codis de barra
@@ -944,28 +944,28 @@ BarcodeDescUPC = Codis de barra tipus UPC
 BarcodeDescISBN = Codis de barra tipus ISBN
 BarcodeDescC39 = Codis de barra tipus C39
 BarcodeDescC128 = Codis de barra tipus C128
-##### Prelevements ##### = undefined =  = undefined
+##### Prelevements ##### = undefined =  = 
 WithdrawalsSetup = Configuració del mòdul domiciliacions
-##### ExternalRSS ##### = undefined =  = undefined
+##### ExternalRSS ##### = undefined =  = 
 ExternalRSSSetup = Configuració de les importacions del flux RSS
 NewRSS = Sindicació de un nou flux RSS
-##### Mailing ##### = undefined =  = undefined
+##### Mailing ##### = undefined =  = 
 MailingSetup = Configuració del mòdul E-Mailing
 MailingEMailFrom = E-Mail emissor (From) dels correus enviats per E-Mailing
-##### Notification ##### = undefined =  = undefined
+##### Notification ##### = undefined =  = 
 NotificationSetup = Configuració del mòdul notificacions
 NotificationEMailFrom = E-Mail emissor (From) dels correus enviats a través de notificacions
-##### Sendings ##### = undefined =  = undefined
+##### Sendings ##### = undefined =  = 
 SendingsSetup = Configuració del mòduls enviaments
 SendingsReceiptModel = Model de la fitxa d'expedició
 SendingsAbility = Ports pagats pel client
 NoNeedForDeliveryReceipts = En la majoria dels casos, els albarans s'utilitzen com a full de lliurament al client (llista de productes a enviar), es reben i signen pel client. Per tant, el full de lliurament de productes és una característica duplicada i poques vegades és activada.
 FreeLegalTextOnDeliveryReceipts = Text lliure en les notes de lliurament.
-##### Deliveries ##### = undefined =  = undefined
+##### Deliveries ##### = undefined =  = 
 DeliveryOrderNumberingModules = Mòdul de numeració dels trameses a clients
 DeliveryOrderModel = Model d'ordre d'enviament
 DeliveriesOrderAbility = Ports pagats pel client
-##### FCKeditor ##### = undefined =  = undefined
+##### FCKeditor ##### = undefined =  = 
 ActivateFCKeditor = Activar FCKeditor per a :
 FCKeditorForUsers = Creació/edició WYSIWIG de la descripció i notes dels usuaris
 FCKeditorForCompany = Creació/edició WYSIWIG de la descripció i notes dels tercers
@@ -974,12 +974,12 @@ FCKeditorForMembers = Creació/edició WYSIWIG de la descripció i notes dels me
 FCKeditorForProductDetails = Creació/edició WYSIWIG de les línies de detall dels productes (en comandes, pressupostos, factures, etc.)
 FCKeditorForProductDetailsPerso = Creació/edició WYSIWIG de les línies de detall en els productes personalitzades (en comandes, pressupostos, factures, etc.)
 FCKeditorForMailing = Creació/edició WYSIWIG dels E-Mails
-##### OSCommerce 1 ##### = undefined =  = undefined
+##### OSCommerce 1 ##### = undefined =  = 
 OSCommerceErrorConnectOkButWrongDatabase = La connexió s'ha establert, però la base de dades no sembla de OSCommerce.
 OSCommerceTestOk = La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s' és correcta.
 OSCommerceTestKo1 = La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s' no s'ha pogut fer.
 OSCommerceTestKo2 = La connexió al servidor '%s'  per l'usuari '%s' ha fallat.
-##### Mantis ##### = undefined =  = undefined
+##### Mantis ##### = undefined =  = 
 MantisSetup = Configuració de l'enllaç amb el sistema de seguiment Mantis
 MantisURL = Adreça (URL) d'accés a Mantis
 MantisServer = Servidor de la base de dades Mantis
@@ -990,10 +990,10 @@ MantisTestOk = La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s
 MantisTestKo1 = La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s' no s'ha pogut fer.
 MantisTestKo2 = La connexió al servidor '%s'  per l'usuari '%s' ha fallat.
 MantisErrorConnectOkButWrongDatabase = La connexió és correcta però la base de dades no sembla ser una base de dades Mantis.
-##### Stock ##### = undefined =  = undefined
+##### Stock ##### = undefined =  = 
 StockSetup = Configuració del mòdul Stock
 UserWarehouse = Utilitzar els stocks personals d'usuaris
-##### Menu ##### = undefined =  = undefined
+##### Menu ##### = undefined =  = 
 MenuDeleted = Menú eliminat
 TreeMenu = Estructura dels menús
 Menus = Menús
@@ -1021,24 +1021,30 @@ DeleteMenu = Eliminar entrada de menú
 ConfirmDeleteMenu = Esteu segur que voleu eliminar l'entrada de menú <b>%s</b> ?
 DeleteLine = Eliminació de línea
 ConfirmDeleteLine = Esteu segur de voler eliminar aquesta línia?
-##### Tax ##### = undefined =  = undefined
+##### Tax ##### = undefined =  = 
 TaxSetup = Configuració del mòdul d'impostos, càrregues socials i dividends
 OptionVatMode = Opció de càrrega d'IVA
 OptionVATDefault = Estandard
 OptionVATDebitOption = Opció serveis a dèbit
 OptionVatDefaultDesc = La càrrega de l'IVA és: <br>-en l'enviament dels béns<br>-sobre el pagament pels serveis
 OptionVatDebitOptionDesc = La càrrega de l'IVA és: <br>-en l'enviament dels béns <br>-sobre la facturació dels serveis
-##### Agenda ##### = undefined =  = undefined
+##### Agenda ##### = undefined =  = 
 AgendaSetup = Mòdul configuració d'accions i agenda
 PasswordTogetVCalExport = Clau d'autorització vCal export link
-##### ClickToDial ##### = undefined =  = undefined
+##### ClickToDial ##### = undefined =  = 
 ClickToDialDesc = Aquest mòdul permet afegir una icona després del número de telèfon de contactes Dolibarr. Un clic en aquesta icona, Truca a un servidor amb un URL que s'indica a continuació. Això pot ser usat per anomenar al sistema centre de Dolibarr que pot trucar al número de telèfon en un sistema SIP, per exemple.
-##### CashDesk ##### = undefined =  = undefined
+##### CashDesk ##### = undefined =  = 
 CashDeskSetup = Mòdul de configuració Caixa registradora
 CashDeskThirdPartyForSell = Tercer genéric a utilitzar per a les vendes
 CashDeskBankAccountForSell = Compte d'efectiu que s'utilitzarà per a les vendes
 CashDeskIdWareHouse = Magatzem a ultilitzar per a les vendes
-##### Bookmark ##### = undefined =  = undefined
+##### Bookmark ##### = undefined =  = 
 BookmarkSetup = Configuració del mòdul Bookmark
 BookmarkDesc = Aquest mòdul li permet gestionar els enllaços i accessos directes. També permet afegir qualsevol pàgina de Dolibarr o enllaç web al menú d'accés ràpid de l'esquerra.
 NbOfBoomarkToShow = Nombre màxim de marcadors que es mostrarà en el menú
+##### WebServices ##### =  = 
+WebServicesSetup = Configuració del mòdul webservices
+WebServicesDesc = Mitjançant l'activació d'aquest mòdul, Dolibarr es converteix en el servidor de serveis web oferint diversos serveis web.
+WSDLCanBeDownloadedHere = La descripció WSDL dels serveis prestats es poden recuperar aquí
+EndPointIs = Els clients SOAP hauran d'enviar les seves sol·licituds al punt final a la URL Dolibarr
+
