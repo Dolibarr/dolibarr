@@ -1518,7 +1518,7 @@ function migrate_modeles($db,$langs,$conf)
 
 	dolibarr_install_syslog("upgrade2::migrate_modeles");
 
-	if ($conf->facture->enabled)
+	if (! empty($conf->facture->enabled))
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
 		$model=new ModelePDFFactures();
@@ -1532,7 +1532,7 @@ function migrate_modeles($db,$langs,$conf)
 		}
 	}
 
-	if ($conf->commande->enabled)
+	if (! empty($conf->commande->enabled))
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
 		$model=new ModelePDFCommandes();
@@ -1546,7 +1546,7 @@ function migrate_modeles($db,$langs,$conf)
 		}
 	}
 
-	if ($conf->expedition->enabled)
+	if (! empty($conf->expedition->enabled))
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/expedition/pdf/ModelePdfExpedition.class.php');
 		$model=new ModelePDFExpedition();
