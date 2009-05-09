@@ -284,11 +284,11 @@ class FormMail
 			}
 			else
 			{
-				print "<input size=\"".(is_array($this->withto)?"30":"60")."\" name=\"sendto\" value=\"".(! is_array($this->withto) && ! is_numeric($this->withto)?$this->withto:"")."\">";
+				print "<input size=\"".(is_array($this->withto)?"30":"60")."\" name=\"sendto\" value=\"".(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_POST["sendto"])?$_POST["sendto"]:$this->withto) :"")."\">";
 				if (is_array($this->withto))
 				{
 					print " ".$langs->trans("or")." ";
-					$form->select_array("receiver",$this->withto);
+					print $form->selectarray("receiver", isset($_POST["receiver"])?$_POST["receiver"]:$this->withto);
 				}
 			}
 			print "</td></tr>\n";
@@ -306,11 +306,11 @@ class FormMail
 			}
 			else
 			{
-				print "<input size=\"".(is_array($this->withtocc)?"30":"60")."\" name=\"sendtocc\" value=\"".((! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"")."\">";
+				print "<input size=\"".(is_array($this->withtocc)?"30":"60")."\" name=\"sendtocc\" value=\"".((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") )."\">";
 				if (is_array($this->withtocc))
 				{
 					print " ".$langs->trans("or")." ";
-					$form->select_array("receivercc",$this->withtocc);
+					$form->select_array("receivercc", isset($_POST["receivercc"])?$_POST["receivercc"]:$this->withtocc);
 				}
 			}
 			print "</td></tr>\n";
@@ -328,11 +328,11 @@ class FormMail
 			}
 			else
 			{
-				print "<input size=\"".(is_array($this->withtoccc)?"30":"60")."\" name=\"sendtoccc\" value=\"".((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"")."\">";
+				print "<input size=\"".(is_array($this->withtoccc)?"30":"60")."\" name=\"sendtoccc\" value=\"".((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") )."\">";
 				if (is_array($this->withtoccc))
 				{
 					print " ".$langs->trans("or")." ";
-					$form->select_array("receiverccc",$this->withtoccc);
+					$form->select_array("receiverccc", isset($_POST["receiverccc"])?$_POST["receiverccc"]:$this->withtoccc);
 				}
 			}
 			print "</td></tr>\n";
@@ -349,7 +349,7 @@ class FormMail
 			}
 			else
 			{
-				print $form->selectyesno('deliveryreceipt',0,1);
+				print $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:0) ,1);
 			}
 
 			print "</td></tr>\n";
@@ -370,7 +370,7 @@ class FormMail
 			}
 			else
 			{
-				print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"".$this->withtopic."\">";
+				print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"". (isset($_POST["subject"])?$_POST["subject"]:$this->withtopic) ."\">";
 			}
 			print "</td></tr>\n";
 		}
@@ -417,6 +417,7 @@ class FormMail
 			if ($this->param["models"]=='order_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
 
 			$defaultmessage=make_substitutions($defaultmessage,$this->substit);
+			if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
 
 			print "<tr>";
 			print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";

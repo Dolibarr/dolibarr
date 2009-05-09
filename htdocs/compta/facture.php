@@ -1303,6 +1303,8 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
 		dol_syslog('Impossible de lire les données de la facture. Le fichier facture n\'a peut-être pas été généré.');
 	}
+
+	$_GET['action'] = 'presend';
 }
 
 /*
