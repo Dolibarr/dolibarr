@@ -146,6 +146,9 @@ class CMailFile
 			
 			// On defini image_boundary
 			$this->image_boundary = md5(uniqid(time()));
+			
+			// On defini alternative_boundary
+			$this->alternative_boundary = md5(uniqid(time()));
 
 			// On definit fin de ligne
 			$this->eol="\n";
@@ -462,7 +465,8 @@ class CMailFile
 
 		if ($this->msgishtml)
 		{
-			if (! $this->atleastonefile || $this->atleastoneimage) $out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
+			$out.= "Content-Type: multipart/alternative; boundary=\"".$this->alternative_boundary."\"".$this->eol;
+			if (! $this->atleastonefile) $out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
 			$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 		}
 		else
@@ -526,13 +530,14 @@ class CMailFile
 
 		if ($this->atleastonefile || $this->atleastoneimage)
 		{
-			$out.= "--" . $this->mime_boundary . $this->eol;
 			if ($this->msgishtml)
 			{
+				$out.= "--" . $this->alternative_boundary . $this->eol;
 				$out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
 			}
 			else
 			{
+				$out.= "--" . $this->mime_boundary . $this->eol;
 				$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
 			}
 			$out.= $this->eol;
@@ -551,8 +556,6 @@ class CMailFile
 		{
 			$out.= $msgtext;
 		}
-		$out.= $this->eol . "--" . $this->mime_boundary . "--" . $this->eol;
-
 		return $out;
 	}
 
@@ -595,7 +598,7 @@ class CMailFile
 		}
 
 		// Fin de tous les attachements
-		$out = $out . "--" . $this->mime_boundary . "--" . $this->eol;
+		$out.= "--" . $this->mime_boundary . "--" . $this->eol;
 		return $out;
 	}
 
@@ -751,7 +754,7 @@ class CMailFile
 			{
 				dol_syslog("CMailFile::write_images: i=$i");
 				
-				$out = $out . "--" . $this->image_boundary . $this->eol;
+				$out.= "--" . $this->image_boundary . $this->eol;
 				$out.= "Content-Type: " . $img["content_type"] . "; name=\"".$img["name"]."\"".$this->eol;
 				$out.= "Content-Transfer-Encoding: base64".$this->eol;
 				$out.= "Content-ID: <".$img["cid"].">".$this->eol;
@@ -766,7 +769,7 @@ class CMailFile
 		}
 
 		// Fin de tous les attachements
-		$out.=  $this->eol . "--" . $this->image_boundary . "--" . $this->eol;
+		$out.= "--" . $this->image_boundary . "--" . $this->eol;
 		
 		return $out;
 	}
