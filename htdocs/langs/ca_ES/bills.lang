@@ -265,6 +265,8 @@ InvoiceNotChecked = Cap factura pendent està seleccionada
 CloneInvoice = Clonar factura
 ConfirmCloneInvoice = Esteu segur de voler clonar aquesta factura?
 DisabledBecauseReplacedInvoice = Acció desactivada perquè és una factura reemplaçada
+DescTaxAndDividendsArea = Aquesta pantalla resumeix la llista de tots els impostos i les càrregues socials exigides per a un any determinat. La data presa en compte és el període de pagament.
+NbOfPayments = Nº de pagaments
 # PaymentConditions =  = 
 PaymentConditionShortRECEP = A la recepció
 PaymentConditionRECEP = A la recepció de la factura
