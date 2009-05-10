@@ -230,9 +230,6 @@ function pFooter($nonext=0,$setuplang='')
 	$langs->load("main");
 	$langs->load("admin");
 
-	print '</td></tr></table>'."\n";
-	print '</td></tr></table>'."\n";
-
 	print '</form>'."\n";
 	print '</body>'."\n";
 	print '</html>'."\n";

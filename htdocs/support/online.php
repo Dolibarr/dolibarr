@@ -35,10 +35,20 @@ $langs->load("help");
 
 pHeader($langs->trans("DolibarrHelpCenter"),$_SERVER["PHP_SELF"]);
 
+$urlsparkengels='http://www.spark-angels.com';
+$titlesparkangels='Spark-Angels';
 
-print '<br><br><br>';
+print '<br>';
 
-print $langs->trans("FeatureNotYetAvailable");
+print $langs->trans("ToGetHelpGoOnSparkAngle1",$titlesparkangels).'<br>';
+print '<br>';
+print '<a href="'.$urlsparkengels.'" target="_blank">';
+print '<img border="0" src="sparkangels.png" alt="SparkAngels web site" title="SparkAngels web site">';
+//print $titlesparkangels;
+print '</a><br>';
+
+print '<br><br>';
+print $langs->trans("ToGetHelpGoOnSparkAngle2",$titlesparkangels).'<br>';
 
 pFooter();
 ?>

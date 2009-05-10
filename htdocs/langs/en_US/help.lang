@@ -9,7 +9,14 @@ ClickHere=Click here
 HelpCenter=Help center
 DolibarrHelpCenter=Dolibarr help and support center
 ToGoBackToDolibarr=Click <a href="%s">here</a> to use
-TypeOfSupport=Nature of support
+TypeOfSupport=Source of support
 TypeSupportCommunauty=Community (free)
 TypeSupportCommercial=Commercial
+TypeOfHelp=Type
 NeedHelpCenter=Need help or support ?
+Efficiency=Efficiency
+TypeHelpOnly=Help only
+TypeHelpDev=Help+Development
+TypeHelpDevForm=Help+Development+Formation
+ToGetHelpGoOnSparkAngle1=Some companies can provide a fast (sometime immediate) and more efficient online support by taking control of your computer. Such helpers can be found by making a search on "dolibarr" on <b>%s</b> web site:
+ToGetHelpGoOnSparkAngle2=Sometimes, there is no company available at the moment you make your search, so think to change the filter to look for "all availability". You will be able to send more requests.

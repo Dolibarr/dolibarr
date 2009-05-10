@@ -9,7 +9,15 @@ ClickHere=Cliquez ici
 HelpCenter=Centre d'assistance
 DolibarrHelpCenter=Centre de support et d'aide Dolibarr
 ToGoBackToDolibarr=Cliquer <a href="%s">ici</a> pour utiliser 
-TypeOfSupport=Nature du support
+TypeOfSupport=Source du support
 TypeSupportCommunauty=Communautaire (gratuit)
 TypeSupportCommercial=Commercial
+TypeOfHelp=Type
 NeedHelpCenter=Besoin d'un support ou aide ?
+Efficiency=Efficacité
+TypeHelpOnly=Aide uniquement
+TypeHelpDev=Aide+Développement
+TypeHelpDevForm=Aide+Développement+Formation
+ToGetHelpGoOnSparkAngle1=Certaines sociétés ou indépendants offrent un service de support très rapide (parfois immédiat) et encore plus efficace grâce à la possibilité de prise de contrôle à distance de votre ordinateur pour mieux diagnostiquer et résoudre vos problèmes. Une telle aide peut être trouvée par une recherche de "dolibarr" sur la bourse des accompagnateurs de <b>%s</b>:
+ToGetHelpGoOnSparkAngle2=Parfois, aucun intervenant n'est disponible au moment de votre recherche, aussi pensez à modifier vos critères de recherche en indiquant "Toutes disponibilités". Vous pourrez alors prendre contact en différé.
+
