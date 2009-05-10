@@ -143,12 +143,6 @@ class CMailFile
 
 			// On defini mime_boundary
 			$this->mime_boundary = md5(uniqid("dolibarr"));
-			
-			// On defini image_boundary
-			$this->image_boundary = md5(uniqid(time()));
-			
-			// On defini alternative_boundary
-			$this->alternative_boundary = md5(uniqid(time()));
 
 			// On definit fin de ligne
 			$this->eol="\n";
@@ -161,7 +155,7 @@ class CMailFile
 			$text_encoded = "";
 
 			// En-tete dans $smtp_headers
-			$this->subject = $subject;
+			$this->subject = utf8_decode($subject);
 			$this->addr_from = $from;
 			$this->errors_to = $errors_to;
 			$this->addr_to = $to;
@@ -460,18 +454,22 @@ class CMailFile
 		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".getValidAddress($this->addr_from,2).$this->eol;
 
 		//$out .= "X-Priority: 3".$this->eol;
-		$out .= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol;
-		$out .= "MIME-Version: 1.0".$this->eol;
-
-		if ($this->msgishtml)
+		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol;
+		$out.= "MIME-Version: 1.0".$this->eol;
+		
+		if ($this->atleastoneimage)
 		{
-			$out.= "Content-Type: multipart/alternative; boundary=\"".$this->alternative_boundary."\"".$this->eol;
-			if (! $this->atleastonefile) $out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
+			if (! $this->atleastonefile) $out.= "Content-Type: multipart/related; boundary=\"".$this->mime_boundary."\"".$this->eol;
+			$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
+		}
+		else if ($this->msgishtml)
+		{
+			if (! $this->atleastonefile) $out.= "Content-Type: text/html; boundary=\"".$this->mime_boundary."\"".$this->eol;
 			$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 		}
 		else
 		{
-			if (! $this->atleastonefile) $out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
+			if (! $this->atleastonefile) $out.= "Content-Type: text/plain; boundary=\"".$this->mime_boundary."\"".$this->eol;
 			$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 		}
 
@@ -507,11 +505,6 @@ class CMailFile
 			}
 		}
 		
-		if ($this->atleastoneimage)
-		{
-			$out.= "Content-Type: multipart/related; boundary=\"".$this->image_boundary."\"".$this->eol;
-		}
-		
 		//$out.= $this->eol;
 		dol_syslog("CMailFile::write_mimeheaders mime_header=\n".$out, LOG_DEBUG);
 		return $out;
@@ -532,7 +525,7 @@ class CMailFile
 		{
 			if ($this->msgishtml)
 			{
-				$out.= "--" . $this->alternative_boundary . $this->eol;
+				$out.= "--" . $this->mime_boundary . $this->eol;
 				$out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
 			}
 			else
@@ -551,12 +544,17 @@ class CMailFile
 			if (! $htmlalreadyinmsg) $out .= "<html><head><title></title></head><body>";
 			$out.= $msgtext;
 			if (! $htmlalreadyinmsg) $out .= "</body></html>";
-			//$out.= "--" . $this->alternative_boundary . "--" . $this->eol;
+			if ($this->atleastonefile || $this->atleastoneimage)
+			{
+				$out.= $this->eol . "--" . $this->mime_boundary . $this->eol;
+			}
 		}
 		else
 		{
 			$out.= $msgtext;
+			$out.= $this->eol . "--" . $this->mime_boundary . $this->eol;
 		}
+
 		return $out;
 	}
 
@@ -589,7 +587,7 @@ class CMailFile
 					$out.= $this->eol;
 					$out.= $encoded;
 					$out.= $this->eol;
-					//	                $out.= $this->eol;
+					//$out.= $this->eol;
 				}
 				else
 				{
@@ -600,6 +598,7 @@ class CMailFile
 
 		// Fin de tous les attachements
 		$out.= "--" . $this->mime_boundary . "--" . $this->eol;
+
 		return $out;
 	}
 
@@ -705,16 +704,16 @@ class CMailFile
     		}
     		$i++;
     	}
-  	
+	
     	if (!empty($this->html_images))
     	{
     		// If duplicate images are embedded, they may show up as attachments, so remove them.
-        $html_images = array_unique($this->html_images);
-        sort($html_images);
+        //$html_images = array_unique($this->html_images);
+        //sort($html_images);
         $i=0;
- 
-        foreach ($html_images as $img)
-        {        	
+
+        foreach ($this->html_images as $img)
+        {
         	if ($image = file_get_contents($images_dir.'/'.$img["name"]))
         	{
         		$this->images_encoded[$i]['name'] = $img["name"];
@@ -724,6 +723,7 @@ class CMailFile
         		// Encodage de l'image
         		$this->images_encoded[$i]["image_encoded"] = chunk_split(base64_encode($image), 68, $this->eol);
         	}
+        	$i++;
         }
       }
       else
@@ -755,9 +755,10 @@ class CMailFile
 			{
 				dol_syslog("CMailFile::write_images: i=$i");
 				
-				$out.= "--" . $this->image_boundary . $this->eol;
+				$out.= "--" . $this->mime_boundary . $this->eol;
 				$out.= "Content-Type: " . $img["content_type"] . "; name=\"".$img["name"]."\"".$this->eol;
 				$out.= "Content-Transfer-Encoding: base64".$this->eol;
+				$out.= "Content-Disposition: inline; filename=\"".$img["name"]."\"".$this->eol;
 				$out.= "Content-ID: <".$img["cid"].">".$this->eol;
 				$out.= $this->eol;
 				$out.= $img["image_encoded"];
@@ -770,8 +771,8 @@ class CMailFile
 		}
 
 		// Fin de tous les attachements
-		$out.= "--" . $this->image_boundary . "--" . $this->eol;
-		
+		$out.= "--" . $this->mime_boundary . "--" . $this->eol;
+	
 		return $out;
 	}
 
@@ -798,7 +799,7 @@ function getValidAddress($adresses,$format)
 	{
 		if (eregi('^(.*)<(.*)>$',trim($val),$regs))
 		{
-			$name  = trim($regs[1]);
+			$name  = trim(utf8_decode($regs[1]));
 			$email = trim($regs[2]);
 		}
 		else
