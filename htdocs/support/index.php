@@ -38,48 +38,33 @@ $langs->load("help");
 
 pHeader($langs->trans("DolibarrHelpCenter"),$_SERVER["PHP_SELF"]);
 
-print '<table class="noborder"><tr valign="middle">';
-//print '<td width="20">';
-//print '<img src="/theme/common/helpcenter_large.png">';
-//print '</td>';
-print '<td>';
 print $langs->trans("HelpCenterDesc1")."<br>\n";
 print $langs->trans("HelpCenterDesc2")."<br>\n";
-print '</td></tr></table>';
 
 print '<br>';
 
 print $langs->trans("ToGoBackToDolibarr",DOL_URL_ROOT.'/');
+print '<img src="dolibarr_logo2.png" height="22px" alt="Dolibarr" title="Dolibarr">';
 
 print '<br><br>';
 
 $style1='color: #333344; font-size: 16px; font-weight: bold';
 $style2='color: #5D4455; font-weight: bold;';
 
+print "\n";
+print '<table border="0" style="spacing: 4px; padding: 0px" width="100%">';
+print '<tr><td width="50%" valign="top">';
 
-print '<table border="1" style="spacing: 4px; padding: 2px">';
-
-// Line of possible services
-print '<tr class="title">';
 // Forum/wiki support
-print '<td align="center" valign="middle">';
+print '<table class="login" width="100%">';
+print '<tr class="title" valign="top">';
+print '<td width="100%" align="center" valign="top">';
 //print img_picto('','/theme/common/who.png','',1).'<br>';
 print '<font style="'.$style1.'">'.$langs->trans("CommunitySupport").'</font>';
 print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommunauty").'</font>';
 print '</td>';
-// EMail support
-print '<td align="center">';
-//print img_picto('','/theme/common/mail.png','',1).'<br>';
-print '<font style="'.$style1.'">'.$langs->trans("EMailSupport").'</font>';
-print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
-print '</td>';
-print '</tr>';
-
-// Area of support cells
-print '<tr>';
-
-// Forum/wiki support
-print '<td width="33%" align="center" valign="top" style="background:#FFFFFF">';
+print '</tr><tr>';
+print '<td align="center" valign="top">';
 print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
 print img_picto('','/theme/common/who.png','',1);
 print '</td></tr><tr><td align="center">';
@@ -91,38 +76,46 @@ print '<br>'.$langs->trans("ForAnswersSeeForum",'http://www.dolibarr.org/forum/'
 print '<br>';
 print '</td></tr></table>';
 print '</td>';
+print '</tr>';
+print '</table>';
+
+
+print '</td><td width="50%" valign="top">';
 
 // EMail support
-print '<td width="34%" align="center" valign="top" style="background:#FFFFFF">';
+print '<table class="login" width="100%">';
+print '<tr class="title" valign="top">';
+print '<td width="100%" align="center" valign="top">';
+//print img_picto('','/theme/common/mail.png','',1).'<br>';
+print '<font style="'.$style1.'">'.$langs->trans("EMailSupport").'</font>';
+print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
+print '</td>';
+print '</tr><tr>';
+print '<td align="center" valign="top">';
 print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
 print img_picto('','/theme/common/mail.png','',1);
 print '</td></tr><tr><td align="center">';
 print '<br>'.$langs->trans("FeatureNotYetAvailable").'.';
 print '</td></tr></table>';
+print '<br><br>';
+print '<br><br>';
+print '<br><br>';
 print '</td>';
-
 print '</tr>';
+print '</table>';
 
+print '</td></tr>';
+print '<tr><td width="50%" valign="top">';
 
-// Line of possible services
+// Online support
+print '<table class="login" width="100%">';
 print '<tr class="title">';
-// Forum/wiki support
-print '<td align="center">';
+print '<td width="100%" align="center" valign="top">';
 print '<font style="'.$style1.'">'.$langs->trans("RemoteControlSupport").'</font>';
 print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
 print '</td>';
-// EMail support
-print '<td align="center">';
-print '<font style="'.$style1.'">'.$langs->trans("OtherSupport").'</font>';
-print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
-print '</td>';
-print '</tr>';
-
-// Area of support cells
-print '<tr>';
-
-// Online support
-print '<td width="33%" align="center" valign="top" style="background:#FFFFFF">';
+print '</tr><tr>';
+print '<td align="center" valign="top">';
 print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
 print img_picto('','/theme/common/internet.png','',1);
 print '</td></tr><tr><td align="center">';
@@ -133,22 +126,36 @@ print '<br><br>';
 print '<br><br>';
 print '</td></tr></table>';
 print '</td>';
+print '</tr>';
+print '</table>';
+
+print '</td><td width="50%" valign="top">';
 
 // Other support
+print '<table class="login" width="100%">';
+print '<tr class="title">';
+print '<td width="100%" align="center" valign="top">';
+print '<font style="'.$style1.'">'.$langs->trans("OtherSupport").'</font>';
+print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
+print '</td>';
+print '</tr><tr>';
 $urlwiki='http://wiki.dolibarr.org/index.php/List_of_OpenSource_Software_companies_and_freelancers';
-print '<td width="33%" align="center" valign="top" style="background:#FFFFFF">';
+print '<td align="center" valign="top">';
 print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
 print img_picto('','/theme/common/pagemaster.png','',1);
 print '</td></tr><tr><td align="center">';
 print '<br>';
 print '<br>'.$langs->trans("ToSeeListOfAvailableRessources").'<br>';
 print '<b><a href="'.$urlwiki.'">'.$langs->trans("ClickHere").'</a></b>';
+print '<br><br>';
+print '<br><br>';
 print '</td></tr></table>';
 print '</td>';
-
 print '</tr>';
+print '</table>';
 
-
+print '</td>';
+print '</tr>';
 print '</table>';
 
 pFooter();

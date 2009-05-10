@@ -19,13 +19,14 @@
  */
 
 body {
-font-size:14px;
+font-size:12px;
 font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
-background-color: #F4F4F4;
-margin-left: 20px;
-margin-right: 20px;
-margin-top: 20px;
-margin-bottom: 20px;
+background: #f9f9f9 url(headbg.jpg) 0 0 no-repeat;
+/* background-color: #F4F4F4; */
+margin-left: 10px;
+margin-right: 10px;
+margin-top: 5px;
+margin-bottom: 5px;
 }
 
 div.titre {
@@ -34,13 +35,13 @@ margin: 0em 0em 0em 0em;
 }
 
 span.titre {
-font-size:1.1em;
+font-size: 14px;
 font-weight: bold;
-background: #dcdcd3;
+background: #FFFFFF;
 color: #4965B3;
 padding: 5px 5px 5px 5px;
 margin: 0em 0em 0em 0em;
-border: 1px solid #8CACBB;
+border: 1px solid #AAAAAA;
 }
 
 
@@ -173,10 +174,6 @@ font-size: 13px;
 border-bottom: 1px solid #8CACBB;
 }
 
-table {
-font-size: 12px;
-}
-
 .install
 {
 border: 1px solid #8CACBB;
@@ -187,3 +184,6 @@ tr.title
 {
 background: #DDDFDD;	
 }
+
+table { font-size: 12px; }
+table.login {  border: 1px solid #C0C0C0; background: #F0F0F0 url(background.png) repeat-x;font-size: 12px;}';

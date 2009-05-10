@@ -8,7 +8,7 @@ ToSeeListOfAvailableRessources=To contact/see available ressources:
 ClickHere=Click here
 HelpCenter=Help center
 DolibarrHelpCenter=Dolibarr help and support center
-ToGoBackToDolibarr=To go back on Dolibarr, <a href="%s">click here</a>.
+ToGoBackToDolibarr=Click <a href="%s">here</a> to use
 TypeOfSupport=Nature of support
 TypeSupportCommunauty=Community (free)
 TypeSupportCommercial=Commercial

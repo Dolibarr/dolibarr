@@ -139,7 +139,8 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en comp
 
 // Defini objet langs
 $langs = new Translate('..',$conf);
-$langs->setDefaultLang('auto');
+if (isset($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);
+else $langs->setDefaultLang('auto');
 $langs->setPhpLang();
 
 $bc[false]=' class="bg1"';
@@ -201,14 +202,20 @@ function pHeader($soutitre,$next,$action='none')
 	print '<title>'.$langs->trans("Help").'</title>'."\n";
 	print '</head>'."\n";
 	print '<body>'."\n";
+	print '<table class="noborder"><tr valign="middle">';
+	print '<td width="20">';
+	print '<img src="'.DOL_URL_ROOT.'/theme/common/helpcenter.png">';
+	print '</td>';
+	print '<td>';
 	print '<span class="titre">'.$soutitre.'</span>'."\n";
+	print '</td></tr></table>';
 
 	print '<form action="'.$next.'" method="POST">'."\n";
 	print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 
-	print '<table class="main" width="100%"><tr><td>'."\n";
+//	print '<table class="main" width="100%"><tr><td>'."\n";
 
-	print '<table class="main-inside" width="100%"><tr><td>'."\n";
+//	print '<table class="main-inside" width="100%"><tr><td>'."\n";
 }
 
 /**
