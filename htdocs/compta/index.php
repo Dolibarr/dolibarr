@@ -81,8 +81,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
 
 
 /*
- * Affichage page
- *
+ * View
  */
 
 $now=gmmktime();
@@ -106,6 +105,9 @@ if (($conf->facture->enabled && $user->rights->facture->lire) ||
 {
 	print '<td valign="top" width="30%" class="notopnoleft">';
 }
+
+$max=3;
+
 
 /*
  * Find invoices
@@ -291,12 +293,178 @@ else
 	print '<td valign="top" width="100%" class="notopnoleftnoright">';
 }
 
+// Last modified customer invoices
+if ($conf->facture->enabled && $user->rights->facture->lire)
+{
+	$langs->load("boxes");
+	$facstatic=new Facture($db);
+
+	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, f.tms,";
+	$sql.= " f.date_lim_reglement as datelimite,";
+	$sql.= " sum(pf.amount) as am,";
+	$sql.= " s.nom, s.rowid as socid";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE s.rowid = f.fk_soc";
+	$sql.= " AND f.entity = ".$conf->entity;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.total, f.total_ttc, s.nom, s.rowid";
+	$sql.= " ORDER BY f.tms DESC ";
+	$sql.= $db->plimit($max, 0);
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$var=false;
+		$num = $db->num_rows($resql);
+		$i = 0;
+
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BoxTitleLastCustomerBills",min($max,$num)).'</td>';
+		if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
+		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
+		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+		print '<td width="16">&nbsp;</td>';
+		print '</tr>';
+		if ($num)
+		{
+			$total_ttc = $totalam = $total = 0;
+			while ($i < $num && $i < $conf->liste_limit)
+			{
+				$obj = $db->fetch_object($resql);
+
+				print '<tr '.$bc[$var].'>';
+				print '<td nowrap="nowrap">';
+
+				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
+				$facturestatic->ref=$obj->facnumber;
+				$facturestatic->id=$obj->rowid;
+				$facturestatic->type=$obj->type;
+				print $facturestatic->getNomUrl(1,'');
+				print '</td>';
+				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+				if ($obj->datelimite < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+				print '</td>';
+				print '<td width="16" align="right" class="nobordernopadding">';
+				$filename=dol_sanitizeFileName($obj->facnumber);
+				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
+				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
+				$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
+				print '</td></tr></table>';
+
+				print '</td>';
+				print '<td align="left"><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dol_trunc($obj->nom,44).'</a></td>';
+				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total).'</td>';
+				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="right">'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
+				print '<td>'.$facstatic->LibStatut($obj->paye,$obj->fk_statut,3,$obj->am).'</td>';
+				print '</tr>';
+
+				$total_ttc +=  $obj->total_ttc;
+				$total += $obj->total;
+				$totalam +=  $obj->am;
+				$var=!$var;
+				$i++;
+			}
+		}
+		else
+		{
+			$colspan=5;
+			if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) $colspan++;
+			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">'.$langs->trans("NoInvoice").'</td></tr>';
+		}
+		print '</table><br>';
+		$db->free($resql);
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
+
+
+
+// Last modified supplier invoices
+if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
+{
+	$langs->load("boxes");
+	$facstatic=new FactureFournisseur($db);
+
+	$sql = "SELECT ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.tms,";
+	$sql.= " sum(pf.amount) as am,";
+	$sql.= " s.nom, s.rowid as socid";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE s.rowid = ff.fk_soc";
+	$sql.= " AND s.entity = ".$conf->entity;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
+	$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total, ff.total_ttc, ff.tms, s.nom, s.rowid";
+	$sql.= " ORDER BY ff.tms DESC ";
+	$sql.= $db->plimit($max, 0);
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$var=false;
+		$num = $db->num_rows($resql);
+
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BoxTitleLastSupplierBills",min($max,$num)).'</td>';
+		if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
+		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
+		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+		print '<td width="16">&nbsp;</td>';
+		print "</tr>\n";
+		if ($num)
+		{
+			$i = 0;
+			$total = $total_ttc = $totalam = 0;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				print '<tr '.$bc[$var].'><td>';
+				$facstatic->ref=$obj->facnumber;
+				$facstatic->id=$obj->rowid;
+				print $facstatic->getNomUrl(1,'');
+				print '</td>';
+				print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dol_trunc($obj->nom,44).'</a></td>';
+				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total_ht).'</td>';
+				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="right">'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
+				print '<td>'.$facstatic->LibStatut($obj->paye,$obj->fk_statut,3).'</td>';
+				print '</tr>';
+				$total += $obj->total_ht;
+				$total_ttc +=  $obj->total_ttc;
+				$totalam +=  $obj->am;
+				$i++;
+				$var = !$var;
+			}
+		}
+		else
+		{
+			$colspan=5;
+			if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) $colspan++;
+			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">'.$langs->trans("NoInvoice").'</td></tr>';
+		}
+		print '</table><br>';
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
+
+
 
 // Last customers
 if ($conf->societe->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
-	$max=3;
 
 	$sql = "SELECT s.nom, s.rowid, ".$db->pdate("s.datec")." as dc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -319,7 +487,7 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastCustomers",min($max,$num)).'</td>';
-		print '<td align="right">'.$langs->trans("Date").'</td>';
+		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
 		print '</tr>';
 		if ($num)
 		{
@@ -356,7 +524,6 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
-	$max=3;
 
 	$sql = "SELECT s.nom, s.rowid, ".$db->pdate("s.datec")." as dc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -378,7 +545,7 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastSuppliers",min($max,$num)).'</td>';
-		print '<td align="right">'.$langs->trans("Date").'</td>';
+		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
 		print '</tr>';
 		if ($num)
 		{
@@ -684,11 +851,11 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 /*
  * Factures fournisseurs impayées
  */
-if ($conf->facture->enabled && $user->rights->facture->lire)
+if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 {
 	$facstatic=new FactureFournisseur($db);
 
-	$sql = "SELECT ff.rowid, ff.facnumber, ff.fk_statut, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc,";
+	$sql = "SELECT ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc,";
 	$sql.= " sum(pf.amount) as am,";
 	$sql.= " s.nom, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
@@ -699,7 +866,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	$sql.= " AND ff.paye=0 AND ff.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
-	$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.total, ff.total_ttc, s.nom, s.rowid";
+	$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total, ff.total_ttc, s.nom, s.rowid";
 
 	$resql=$db->query($sql);
 	if ($resql)

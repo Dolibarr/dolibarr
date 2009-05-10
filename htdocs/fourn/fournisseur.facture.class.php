@@ -402,7 +402,7 @@ class FactureFournisseur extends Facture
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
 		$sql.= ' SET paye = 1';
 		$sql.= ' WHERE rowid = '.$this->id;
-		
+
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
@@ -652,10 +652,10 @@ class FactureFournisseur extends Facture
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT c.rowid, '.$this->db->pdate('datec').' as datec';
-		$sql .= ', fk_user_author, fk_user_valid';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql = 'SELECT c.rowid, datec, tms as datem,';
+		$sql.= ' fk_user_author, fk_user_valid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as c';
+		$sql.= ' WHERE c.rowid = '.$id;
 
 		$result=$this->db->query($sql);
 		if ($result)
@@ -677,7 +677,8 @@ class FactureFournisseur extends Facture
 					$this->user_validation = $vuser;
 				}
 				$this->date_creation     = $obj->datec;
-				//$this->date_validation   = $obj->datev; \todo La date de validation n'est pas encore geree
+				$this->date_modification = $obj->datem;
+				//$this->date_validation   = $obj->datev; Should be stored in log table
 			}
 			$this->db->free($result);
 		}
@@ -708,7 +709,7 @@ class FactureFournisseur extends Facture
 		$sql.= " AND ff.entity = ".$conf->entity;
 		if ($user->societe_id) $sql.=' AND ff.fk_soc = '.$user->societe_id;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
-		
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -763,13 +764,13 @@ class FactureFournisseur extends Facture
 
 		// Charge tableau des id de societe socids
 		$socids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE fournisseur = 1";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -786,12 +787,12 @@ class FactureFournisseur extends Facture
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE envente = 1";
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

@@ -74,7 +74,7 @@ class box_factures extends ModeleBoxes {
 		if ($user->rights->facture->lire)
 		{
 			$sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.datef as df";
-			$sql.= ", f.paye, f.fk_statut, f.datec";
+			$sql.= ", f.paye, f.fk_statut, f.datec, f.tms";
 			$sql.= ", s.nom, s.rowid as socid";
 			$sql.= ", f.date_lim_reglement as datelimite";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -83,7 +83,7 @@ class box_factures extends ModeleBoxes {
 			$sql.= " AND s.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
+			$sql.= " ORDER BY f.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);

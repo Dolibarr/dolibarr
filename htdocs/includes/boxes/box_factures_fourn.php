@@ -76,7 +76,7 @@ class box_factures_fourn extends ModeleBoxes {
             $sql.= " f.paye, f.fk_statut,";
             $sql.= ' f.datef as df,';
             $sql.= ' f.datec as datec,';
-            $sql.= ' f.date_lim_reglement as datelimite ';
+            $sql.= ' f.date_lim_reglement as datelimite, f.tms';
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -84,7 +84,7 @@ class box_factures_fourn extends ModeleBoxes {
             $sql.= " AND s.entity = ".$conf->entity;
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-            $sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
+            $sql.= " ORDER BY f.tms DESC";
             $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);

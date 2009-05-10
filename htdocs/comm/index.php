@@ -339,10 +339,12 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 }
 
 /*
- * Last modified prospects
+ * Last modified customers prospects
  */
-if ($user->rights->societe->lire)
+if ($conf->societe->enabled && $user->rights->societe->lire)
 {
+	$langs->load("boxes");
+
 	$sql = "SELECT s.rowid,s.nom,s.client,s.tms";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -356,24 +358,24 @@ if ($user->rights->societe->lire)
 	$resql = $db->query($sql);
 	if ($resql)
 	{
+		$var=false;
 		$num = $db->num_rows($resql);
+		$i = 0;
+
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="3">'.$langs->trans("BoxTitleLastCustomersOrProspects",$max).'</td></tr>';
 		if ($num)
 		{
-			$langs->load("boxes");
-
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("BoxTitleLastCustomersOrProspects",$max).'</td></tr>';
-
-			$i = 0;
-			$var=false;
+			$company=new Societe($db);
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
-				print "<td nowrap>";
-				if ($objp->client == 1) print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->rowid."\">".img_object($langs->trans("ShowCustomer"),"company")." ".$objp->nom."</a></td>";
-				if ($objp->client == 2) print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$objp->rowid."\">".img_object($langs->trans("ShowCustomer"),"company")." ".$objp->nom."</a></td>";
+				$company->id=$objp->rowid;
+				$company->nom=$objp->nom;
+				$company->client=$objp->client;
+				print '<tr '.$bc[$var].'>';
+				print '<td nowrap="nowrap">'.$company->getNomUrl(1,'customer',48).'</td>';
 				print '<td align="right" nowrap>';
 				if ($objp->client == 1) print $langs->trans("Customer");
 				if ($objp->client == 2) print $langs->trans("Prospect");
@@ -388,6 +390,61 @@ if ($user->rights->societe->lire)
 
 			$db->free($resql);
 		}
+		else
+		{
+			print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
+		}
+	}
+}
+
+// Last suppliers
+if ($conf->fournisseur->enabled && $user->rights->societe->lire)
+{
+	$langs->load("boxes");
+
+	$sql = "SELECT s.nom, s.rowid, ".$db->pdate("s.datec")." as dc";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE s.fournisseur = 1";
+	$sql.= " AND s.entity = ".$conf->entity;
+	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid)	$sql.= " AND s.rowid = ".$socid;
+	$sql.= " ORDER BY s.datec DESC";
+	$sql.= $db->plimit($max, 0);
+
+	$result = $db->query($sql);
+	if ($result)
+	{
+		$var=false;
+		$num = $db->num_rows($result);
+		$i = 0;
+
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastSuppliers",min($max,$num)).'</td>';
+		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+		print '</tr>';
+		if ($num)
+		{
+			$company=new Societe($db);
+			while ($i < $num && $i < $max)
+			{
+				$objp = $db->fetch_object($result);
+				$company->id=$objp->rowid;
+				$company->nom=$objp->nom;
+				print '<tr '.$bc[$var].'>';
+				print '<td nowrap="nowrap">'.$company->getNomUrl(1,'supplier',48).'</td>';
+				print '<td align="right">'.dol_print_date($objp->dc,'day').'</td>';
+				print '</tr>';
+				$var=!$var;
+				$i++;
+			}
+
+		}
+		else
+		{
+			print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
+		}
+		print '</table><br>';
 	}
 }
 

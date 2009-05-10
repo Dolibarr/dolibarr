@@ -61,6 +61,7 @@ class Facture extends CommonObject
 	var $date;
 	var $date_creation;
 	var $date_validation;
+	var $datem;
 	var $ref;
 	var $ref_client;
 	//! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proformat invoice
@@ -512,6 +513,7 @@ class Facture extends CommonObject
 		$sql.= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
 		$sql.= ','.$this->db->pdate('f.datec').' as datec';
 		$sql.= ','.$this->db->pdate('f.date_valid').' as datev';
+		$sql.= ','.$this->db->pdate('f.tms').' as datem';
 		$sql.= ', f.note, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf';
 		$sql.= ', f.fk_facture_source';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
@@ -541,6 +543,7 @@ class Facture extends CommonObject
 				$this->date                   = $obj->df;
 				$this->date_creation          = $obj->datec;
 				$this->date_validation        = $obj->datev;
+				$this->datem                  = $this->db->jdate($obj->datem);
 				$this->amount                 = $obj->amount;
 				$this->remise_percent         = $obj->remise_percent;
 				$this->remise_absolue         = $obj->remise_absolue;
@@ -2177,8 +2180,7 @@ class Facture extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT c.rowid, '.$this->db->pdate('datec').' as datec,';
-		$sql.= ' '.$this->db->pdate('date_valid').' as datev,';
+		$sql = 'SELECT c.rowid, datec, date_valid as datev, tms as datem,';
 		$sql.= ' fk_user_author, fk_user_valid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as c';
 		$sql.= ' WHERE c.rowid = '.$id;
@@ -2202,8 +2204,9 @@ class Facture extends CommonObject
 					$vuser->fetch();
 					$this->user_validation = $vuser;
 				}
-				$this->date_creation     = $obj->datec;
-				$this->date_validation   = $obj->datev;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
+				$this->date_validation   = $this->db->jdate($obj->datev);	// Should be in log table
 			}
 			$this->db->free($result);
 		}
