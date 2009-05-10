@@ -682,7 +682,7 @@ class CMailFile
     	$i=0;
     	foreach ($matches[1] as $full)
     	{
-    		eregi('([A-Za-z0-9_\-]+[.]?[A-Za-z0-9]+)?$',$full,$regs);
+    		eregi('file=([A-Za-z0-9_\-\/]+[.]?[A-Za-z0-9]+)?$',$full,$regs);
     		$img = $regs[1];
 
     		if (file_exists($images_dir.'/'.$img))
