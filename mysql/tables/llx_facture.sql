@@ -33,6 +33,7 @@ create table llx_facture
   datec               datetime,                     -- date de creation de la facture
   datef               date,                         -- date de la facture
   date_valid          date,                         -- date de validation
+  tms                 timestamp,                    -- date creation/modification
   paye                smallint DEFAULT 0 NOT NULL,
   amount              real     DEFAULT 0 NOT NULL,
   remise_percent      real     DEFAULT 0,           -- remise relative
@@ -52,10 +53,10 @@ create table llx_facture
   fk_user_valid       integer,                      -- valideur de la facture
 
   fk_facture_source   integer,                      -- facture origine si facture avoir
-  fk_projet           integer,                      -- projet auquel est associée la facture
+  fk_projet           integer,                      -- projet auquel est associï¿½e la facture
 
   fk_cond_reglement   integer  DEFAULT 1 NOT NULL,  -- condition de reglement (30 jours, fin de mois ...)
-  fk_mode_reglement   integer,                      -- mode de reglement (Virement, Prélèvement)
+  fk_mode_reglement   integer,                      -- mode de reglement (Virement, Prï¿½lï¿½vement)
   date_lim_reglement  date,                         -- date limite de reglement
 
   note                text,

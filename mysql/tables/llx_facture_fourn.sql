@@ -30,6 +30,7 @@ create table llx_facture_fourn
   
   datec               datetime,                      -- date de creation de la facture
   datef               date,                          -- date de la facture
+  tms                 timestamp,                     -- date creation/modification
   libelle             varchar(255),
   paye                smallint         DEFAULT 0 NOT NULL,
   amount              double(24,8)     DEFAULT 0 NOT NULL,
@@ -45,7 +46,7 @@ create table llx_facture_fourn
   fk_user_author      integer,                       -- createur de la facture
   fk_user_valid       integer,                       -- valideur de la facture
 
-  fk_projet           integer,                       -- projet auquel est associée la facture
+  fk_projet           integer,                       -- projet auquel est associï¿½e la facture
 
   fk_cond_reglement   integer  DEFAULT 1 NOT NULL,   -- condition de reglement (30 jours, fin de mois ...)
   date_lim_reglement  date,                          -- date limite de reglement
