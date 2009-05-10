@@ -413,8 +413,10 @@ else
 
 
 	// Boutons actions
+
 	print '<div class="tabsAction">';
-	if (! $linuxlike)
+	
+	if ($conf->global->MAIN_MAIL_SENDMODE != 'mail' || ! $linuxlike)
 	{
 		if (function_exists('fsockopen') && $port && $server)
 		{
@@ -425,12 +427,16 @@ else
 	{
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}
+
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
+	
 	if ($conf->fckeditor->enabled)
 	{
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&amp;mode=init">'.$langs->trans("DoTestSendHTML").'</a>';
 	}
+	
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	
 	print '</div>';
 
 
