@@ -416,6 +416,8 @@ else
 
 	print '<div class="tabsAction">';
 	
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	
 	if ($conf->global->MAIN_MAIL_SENDMODE != 'mail' || ! $linuxlike)
 	{
 		if (function_exists('fsockopen') && $port && $server)
@@ -434,8 +436,6 @@ else
 	{
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&amp;mode=init">'.$langs->trans("DoTestSendHTML").'</a>';
 	}
-	
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 	
 	print '</div>';
 
