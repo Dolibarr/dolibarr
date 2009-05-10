@@ -669,7 +669,11 @@ class CMailFile
 		return $_retVal;
 	}
 	
-	
+	/**
+	 \brief 		Recherche la presence d'images dans le message html
+	 \param 		images_dir		Emplacement des images
+	 \return		int         	>0 if OK, <0 if KO
+	 */
 	function findHtmlImages($images_dir)
   {
   	// Build the list of image extensions
@@ -741,8 +745,7 @@ class CMailFile
   
   /**
 	 \brief 		Permet d'attacher une image
-	 \param 		image_list		Tableau
-	 \param 		mimetype_list		Tableau
+	 \param 		images_list		Tableau
 	 \return		out					Chaine images encodees
 	 */
 	function write_images($images_list)

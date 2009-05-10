@@ -1849,7 +1849,7 @@ function print_titre($titre)
 }
 
 /**
- *	\brief  Affichage d'un titre d'une fiche, align� a gauche
+ *	\brief  Affichage d'un titre d'une fiche, aligne a gauche
  *	\param	titre				Le titre a afficher
  *	\param	mesg				Message suplementaire a afficher a droite
  *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
