@@ -439,7 +439,7 @@ if (! isset($_SESSION["dol_login"]))
 	if ($conf->multicompany->enabled && isset($_POST["entity"]))
 	{
 		include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
-		
+
 		$entity = $_POST["entity"];
 		$entityCookieName = "DOLENTITYID_dolibarr";
 
@@ -448,7 +448,7 @@ if (! isset($_SESSION["dol_login"]))
 			// Todo: utiliser $user->datelastlogin pour un cryptage aléatoire
 			$entityCookie = new DolCookie($conf->file->main_cookie_cryptkey);
 			$entityCookie->_setCookie($entityCookieName, $entity);
-			
+
 			//setcookie($entityCookieName, $entity, 0, "/", "", 0);
 		}
 	}
@@ -782,7 +782,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 }
 
 /**
- *  \brief      Affiche en-tete HTML + BODY + Barre de menu superieure
+ *  \brief      Show an HTML header + a BODY + The top menu bar
  *  \param      head    lignes d'en-tete head
  *  \param      title   titre page web
  *  \param      target  target du menu Accueil
@@ -888,7 +888,7 @@ function top_menu($head, $title='', $target='')
 
 
 /**
- *  \brief      Affiche barre de menu gauche
+ *  \brief      Show left menu bar
  *  \param      menu_array      	Tableau des entrees de menu
  *  \param      helppagename    	Name of wiki page for help ('' by default).
  * 				Syntax is: 			For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
@@ -1021,13 +1021,14 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 			}
 		}
 
+		// Link to help pages
 		if ($helpbaseurl && $helppage)
 		{
 			print '<div class="help">';
 			print '<a class="help" target="_blank" title="'.$langs->trans("GoToHelpPage").'" href="';
 			print sprintf($helpbaseurl,$helppage);
 			print '">';
-			print img_help(0,'').' ';
+			print img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1).' ';
 			print $langs->trans("Help").'</a>';
 			print '</div>';
 		}
@@ -1035,7 +1036,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 
 	if (! empty($conf->global->MAIN_SHOW_BUGTRACK_LINK))
 	{
-		// Lien vers le bugtrack
+		// Link to bugtrack
 		$bugbaseurl='http://savannah.nongnu.org/bugs/?';
 		$bugbaseurl.='func=additem&group=dolibarr&privacy=1&';
 		$bugbaseurl.="&details=";

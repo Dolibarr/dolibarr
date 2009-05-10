@@ -38,8 +38,14 @@ $langs->load("help");
 
 pHeader($langs->trans("DolibarrHelpCenter"),$_SERVER["PHP_SELF"]);
 
+print '<table class="noborder"><tr valign="middle">';
+//print '<td width="20">';
+//print '<img src="/theme/common/helpcenter_large.png">';
+//print '</td>';
+print '<td>';
 print $langs->trans("HelpCenterDesc1")."<br>\n";
 print $langs->trans("HelpCenterDesc2")."<br>\n";
+print '</td></tr></table>';
 
 print '<br>';
 
@@ -47,7 +53,7 @@ print $langs->trans("ToGoBackToDolibarr",DOL_URL_ROOT.'/');
 
 print '<br><br>';
 
-$style1='color: #333344; font-size: 18px; font-weight: bold';
+$style1='color: #333344; font-size: 16px; font-weight: bold';
 $style2='color: #5D4455; font-weight: bold;';
 
 
