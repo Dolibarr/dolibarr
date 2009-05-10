@@ -1,10 +1,15 @@
 # Dolibarr language file - ca_ES - help 
 CHARSET = UTF-8
-CommunitySupport = Suport comunitari
-EMailSupport = Suport E-Mail
-RemoteControlSupport = Suport temps real a distància
+CommunitySupport = Assistència Forums i Wiki
+EMailSupport = Assistència E-Mail
+RemoteControlSupport =  Assistència en temps real a distància
+OtherSupport = Altres tipus d'assistència
 ToSeeListOfAvailableRessources = Per contactar/veure els recursos disponibles:
 ClickHere = Click aquí
-HelpCenter = Centre d'ajuda
+HelpCenter = Centre  d'assistència
 DolibarrHelpCenter = Centre de suport i ajuda Dolibarr
 ToGoBackToDolibarr = Per anar a Dolibarr, <a href="%s">faci click aquí</a>.
+TypeOfSupport = Tipus de suport
+TypeSupportCommunauty = Comunitari (gratuït)
+TypeSupportCommercial = Comercial
+NeedHelpCenter = Necessita suport o ajuda?

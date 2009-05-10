@@ -177,7 +177,7 @@ OfficialWiki = Wiki Dolibarr
 OfficialDemo = Demo en línia Dolibarr
 ForDocumentationSeeWiki = Per a la documentació d'usuari, desenvolupador o Preguntes Freqüents (FAQ), consulteu el wiki Dolibarr: <br><b><a href=\"%s\" target=\"_blank\">%s</a></b>
 ForAnswersSeeForum = Per altres qüestions o realitzar les seves pròpies consultes, pot utilitzar el fòrum Dolibarr: <br><b><a href=\"%s\" target=\"_blank\">%s</a></b>
-HelpCenterDesc1 = Aquesta àrea us permet ajudar a obtenir un servei de suport de Dolibarr.
+HelpCenterDesc1 = Aquesta aplicació, independent de Dolibarr, us permet ajudar a obtenir un servei de suport de Dolibarr.
 HelpCenterDesc2 = Alguns d'aquests serveis només estan disponibles en <b>anglès</b>.
 CurrentTopMenuHandler = Gestor de menú superior
 CurrentLeftMenuHandler = Gestor de menú esquerre
@@ -1047,4 +1047,3 @@ WebServicesSetup = Configuració del mòdul webservices
 WebServicesDesc = Mitjançant l'activació d'aquest mòdul, Dolibarr es converteix en el servidor de serveis web oferint diversos serveis web.
 WSDLCanBeDownloadedHere = La descripció WSDL dels serveis prestats es poden recuperar aquí
 EndPointIs = Els clients SOAP hauran d'enviar les seves sol·licituds al punt final a la URL Dolibarr
-
