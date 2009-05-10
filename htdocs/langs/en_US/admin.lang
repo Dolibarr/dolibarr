@@ -175,7 +175,7 @@ OfficialWebSiteFr=French official web site
 OfficialWikiFr=French wiki
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr online demo
-ForDocumentationSeeWiki=For a user or developer documentation, for FAQs (Frequently Asked Questions), take a lookt at the Dolibarr Wiki: <b><a href="%s" target="_blank">%s</a></b>
+ForDocumentationSeeWiki=For user's or developer's documentation, for FAQs (Frequently Asked Questions), take a look at the Dolibarr Wiki: <b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=For other questions, help, you can read/ask questions on Dolibarr forum: <b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=This area can help you to get a Help support service on Dolibarr.
 HelpCenterDesc2=Some part of this service are available in <b>english only</b>.

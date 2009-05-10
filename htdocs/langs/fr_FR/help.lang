@@ -6,9 +6,10 @@ RemoteControlSupport=Assistance en ligne temps réel
 OtherSupport=Autres type d'assistance
 ToSeeListOfAvailableRessources=Pour contacter/voir les ressources disponibles:
 ClickHere=Cliquez ici
-HelpCenter=Centre d'aide
+HelpCenter=Centre d'assistance
 DolibarrHelpCenter=Centre de support et d'aide Dolibarr
 ToGoBackToDolibarr=Pour aller sur Dolibarr, <a href="%s">cliquer ici</a>.
 TypeOfSupport=Nature du support
-TypeSupportCommunauty=Communitaire (gratuit)
+TypeSupportCommunauty=Communautaire (gratuit)
 TypeSupportCommercial=Commercial
+NeedHelpCenter=Besoin d'un support ou aide ?
