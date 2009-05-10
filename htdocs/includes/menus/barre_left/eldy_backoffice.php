@@ -162,6 +162,7 @@ class MenuLeft {
 					if ($leftmenu=="admintools" && function_exists('eaccelerator_info')) $newmenu->add_submenu(DOL_URL_ROOT."/admin/tools/eaccelerator.php", $langs->trans("EAccelerator"),1);
 					if ($leftmenu=="admintools") $newmenu->add_submenu(DOL_URL_ROOT."/admin/tools/listevents.php", $langs->trans("Audit"),1);
 					if ($leftmenu=="admintools") $newmenu->add_submenu(DOL_URL_ROOT."/admin/tools/purge.php", $langs->trans("Purge"),1);
+					if ($leftmenu=="admintools") $newmenu->add_submenu(DOL_URL_ROOT."/support/index.php", $langs->trans("HelpCenter"),1);
 				}
 
 				$newmenu->add(DOL_URL_ROOT."/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"));
