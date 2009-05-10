@@ -272,24 +272,24 @@ if ($modulepart)
 	// Wrapping pour les actions
 	if ($modulepart == 'actions')
 	{
-		$user->getrights('commercial');
-		//if ($user->rights->commercial->actions->lire || eregi('^specimen',$original_file)) // TODO: revoir les droits car pas clair
-		//{
+		$user->getrights('agenda');
+		if ($user->rights->agenda->myactions->read || eregi('^specimen',$original_file))
+		{
 		$accessallowed=1;
-		//}
-		$original_file=$conf->actions->dir_output.'/'.$original_file;
+		}
+		$original_file=$conf->agenda->dir_output.'/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
 	}
 
 	// Wrapping pour les actions
 	if ($modulepart == 'actionsreport')
 	{
-		$user->getrights('commercial');
-		//if ($user->rights->commercial->actions->lire || eregi('^specimen',$original_file)) // TODO: revoir les droits car pas clair
-		//{
-		$accessallowed=1;
-		//}
-		$original_file = $conf->actions->dir_temp."/".$original_file;
+		$user->getrights('agenda');
+		if ($user->rights->agenda->allactions->read || eregi('^specimen',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file = $conf->agenda->dir_temp."/".$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
 	}
 

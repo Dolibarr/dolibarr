@@ -86,7 +86,7 @@ class CommActionRapport
 
 		$outputlangs->setPhpLang();
 
-		$dir = $conf->commercial->dir_actions_temp."/";
+		$dir = $conf->agenda->dir_temp."/";
 		$file = $dir . "actions-".$this->month."-".$this->year.".pdf";
 
 		if (! file_exists($dir))

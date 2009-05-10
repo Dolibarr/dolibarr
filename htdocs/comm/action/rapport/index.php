@@ -54,6 +54,10 @@ if ($_GET["action"] == 'builddoc')
 {
 	$cat = new CommActionRapport($db, $_GET["month"], $_GET["year"]);
 	$result=$cat->generate($_GET["id"]);
+	if ($result < 0)
+	{
+		$mesg=$cat->error;
+	}
 }
 
 
