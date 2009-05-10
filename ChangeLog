@@ -16,6 +16,7 @@ For translators:
 - Update some language files.
   
 For developers:
+- Update fckeditor to 2.6.4.
 - Removed some deprecated files.
 - Creation of directory in module descriptor is simpler.
 - Can use an alternate document_root directory to develop with 
