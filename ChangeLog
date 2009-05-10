@@ -8,6 +8,7 @@ For users:
 - New: Can export commercial proposals.
 - New: Can use a cache for xcal exports.
 - New: Option for faster confirmation process with one ajax popup.
+- New: Complete theme bluelagoon and rodolphe
 - Fix: Customer code was not correct on PDF it if contains special 
        characters.
        
