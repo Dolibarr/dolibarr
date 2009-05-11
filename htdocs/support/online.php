@@ -44,18 +44,40 @@ print $langs->trans("ToGetHelpGoOnSparkAngels1",$titlesparkangels).'<br>';
 print '<br>';
 
 print '<table class="noborder"><tr valign="middle"><td>';
-print $langs->trans("ToGetHelpGoOnSparkAngels3");
+print '* '.$langs->trans("ToGetHelpGoOnSparkAngels3");
 print '</td><td>';
 print '<a href="'.$urlsparkengels.'" target="_blank">';
 print '<img border="0" src="sparkangels.png" alt="SparkAngels web site" title="SparkAngels web site">';
 //print $titlesparkangels;
 print '</a></td></tr></table><br>';
+print $langs->trans("ToGetHelpGoOnSparkAngels2",$titlesparkangels).'<br>';
 
-print $langs->trans("BackToHelpCenter",DOL_URL_ROOT.'/support/');
+$arrayofwidgets=array(
+// Widget for Laurent Destailleur
+array(	'name'=>'Laurent Destailleur',
+			'widget'=>'<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId=4255" width="172px" height="123px" frameborder="0" scrolling="no" marginheight="0" > </iframe>',
+			'lang'=>'fr,en')
+);
+
+// Preselected widgets
+print '<br><br>';
+print '* '.$langs->trans("LinkToGoldMember").'<br><br>';
+print '<table><tr>';
+foreach ($arrayofwidgets as $arraywidget)
+{
+	print '<td align="center">';
+	print $arraywidget['name'].'<br>';
+	print $arraywidget['widget'];
+	print '</td>';
+}
+print '</tr></table>';
+
+
+print '<br><br>';
+print '* '.$langs->trans("BackToHelpCenter",DOL_URL_ROOT.'/support/');
 print '<br><br>';
 
 
-print $langs->trans("ToGetHelpGoOnSparkAngels2",$titlesparkangels).'<br>';
 
 pFooter();
 ?>
