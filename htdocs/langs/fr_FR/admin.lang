@@ -178,7 +178,7 @@ OfficialDemo = Démo en ligne Dolibarr
 ForDocumentationSeeWiki = Pour la documentation utilisateur, développeur ou les FAQs,<br>consultez le wiki Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum = Pour tout autre question/aide, vous pouvez utiliser le forum Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1 = Cette application, indépendante de Dolibarr, vous permet de vous aider à obtenir un service de support sur Dolibarr.
-HelpCenterDesc2 = Certain de ces services ne sont disponibles qu'en <b>anglais</b>.
+HelpCenterDesc2 = Choisissez le service qui correspond à votre besoin en cliquant sur le lien adéquat (Certains de ces services ne sont disponibles qu'en <b>anglais</b>).
 CurrentTopMenuHandler = Gestionnaire menu haut courant
 CurrentLeftMenuHandler = Gestionnaire menu gauche courant
 MeasuringUnit = Unité de mesure

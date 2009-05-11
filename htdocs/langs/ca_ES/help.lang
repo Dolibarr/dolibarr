@@ -8,7 +8,7 @@ ToSeeListOfAvailableRessources = Per contactar/veure els recursos disponibles:
 ClickHere = Click aquí
 HelpCenter = Centre  d'assistència
 DolibarrHelpCenter = Centre de suport i ajuda Dolibarr
-ToGoBackToDolibarr = Cliqueu <a href=\"%s\">aquí</a> per utilitzar
+ToGoBackToDolibarr = Cliqueu <a href=\"%s\">aquí per utilitzar Dolibarr</a>
 TypeOfSupport = Tipus de suport
 TypeSupportCommunauty = Comunitari (gratuït)
 TypeSupportCommercial = Comercial
@@ -18,5 +18,5 @@ Efficiency = Eficàcia
 TypeHelpOnly = Només ajuda
 TypeHelpDev = Ajuda+Desenvolupament
 TypeHelpDevForm = Ajuda+Desenvolupament+Formació
-ToGetHelpGoOnSparkAngle1 = Algunes empreses o independents ofereixen serveis de suport molt ràpid (de vegades d'immediat) i més eficients gràcies a la capacitat de control remot del seu equip per ajudar a diagnosticar i resoldre els seus problemes. Aquesta assistència es pot trobar buscant "Dolibarr" a la borsa d'intercanvi de <b>%s</b>: 
-ToGetHelpGoOnSparkAngle2 = En ocasions, cap operador es troba disponible en el moment de la seva recerca, no oblideu canviar el criteri de cerca indicant "tots els disponibles". Pot, doncs, posar-se en contacte en diferit.
+ToGetHelpGoOnSparkAngels1 = Algunes empreses o independents ofereixen serveis de suport molt ràpid (de vegades d'immediat) i més eficients gràcies a la capacitat de control remot del seu equip per ajudar a diagnosticar i resoldre els seus problemes. Aquesta assistència es pot trobar buscant "Dolibarr" a la borsa d'intercanvi de <b>%s</b>: 
+ToGetHelpGoOnSparkAngels2 = En ocasions, cap operador es troba disponible en el moment de la seva recerca, no oblideu canviar el criteri de cerca indicant "tots els disponibles". Pot, doncs, posar-se en contacte en diferit.

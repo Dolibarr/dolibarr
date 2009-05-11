@@ -40,15 +40,22 @@ $titlesparkangels='Spark-Angels';
 
 print '<br>';
 
-print $langs->trans("ToGetHelpGoOnSparkAngle1",$titlesparkangels).'<br>';
+print $langs->trans("ToGetHelpGoOnSparkAngels1",$titlesparkangels).'<br>';
 print '<br>';
+
+print '<table class="noborder"><tr valign="middle"><td>';
+print $langs->trans("ToGetHelpGoOnSparkAngels3");
+print '</td><td>';
 print '<a href="'.$urlsparkengels.'" target="_blank">';
 print '<img border="0" src="sparkangels.png" alt="SparkAngels web site" title="SparkAngels web site">';
 //print $titlesparkangels;
-print '</a><br>';
+print '</a></td></tr></table><br>';
 
+print $langs->trans("BackToHelpCenter",DOL_URL_ROOT.'/support/');
 print '<br><br>';
-print $langs->trans("ToGetHelpGoOnSparkAngle2",$titlesparkangels).'<br>';
+
+
+print $langs->trans("ToGetHelpGoOnSparkAngels2",$titlesparkangels).'<br>';
 
 pFooter();
 ?>
