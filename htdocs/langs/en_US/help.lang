@@ -18,7 +18,9 @@ Efficiency=Efficiency
 TypeHelpOnly=Help only
 TypeHelpDev=Help+Development
 TypeHelpDevForm=Help+Development+Formation
-ToGetHelpGoOnSparkAngels1=Some companies can provide a fast (sometime immediate) and more efficient online support by taking control of your computer. Such helpers can be found by making a search on "dolibarr" on <b>%s</b> web site:
-ToGetHelpGoOnSparkAngels3=To go to search form, click this logo 
+ToGetHelpGoOnSparkAngels1=Some companies can provide a fast (sometime immediate) and more efficient online support by taking control of your computer. Such helpers can be found on <b>%s</b> web site:
+ToGetHelpGoOnSparkAngels3=To go to search form (then make a search on "dolibarr" keyword), click this logo 
 ToGetHelpGoOnSparkAngels2=Sometimes, there is no company available at the moment you make your search, so think to change the filter to look for "all availability". You will be able to send more requests.
 BackToHelpCenter=Otherwise, click here to go <a href="%s">back to help center home page</a>.
+LinkToGoldMember=If available, you can call one of the coach preselected by Dolibarr by clicking his Widget
+ 

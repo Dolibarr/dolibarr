@@ -38,7 +38,7 @@ pHeader($langs->trans("DolibarrHelpCenter"),$_SERVER["PHP_SELF"]);
 $urlsparkengels='http://www.spark-angels.com';
 $titlesparkangels='Spark-Angels';
 
-print '<br>';
+//print '<br>';
 
 print $langs->trans("ToGetHelpGoOnSparkAngels1",$titlesparkangels).'<br>';
 print '<br>';
