@@ -8,8 +8,15 @@ ToSeeListOfAvailableRessources = Para contactar/ver los recursos disponibles:
 ClickHere = Click aquí
 HelpCenter = Centro de asistencia
 DolibarrHelpCenter = Centro de soporte y ayuda Dolibarr
-ToGoBackToDolibarr = Para ir a Dolibarr,  <a href="%s">haga click aquí</a>.
+ToGoBackToDolibarr = Haga click <a href=\"%s\">aquí</a> para utilizar
 TypeOfSupport = Tipo de soporte
 TypeSupportCommunauty = Comunitario (gratuito)
 TypeSupportCommercial = Comercial
+TypeOfHelp = Tipo
 NeedHelpCenter = ¿ Necesita soporte o ayuda ?
+Efficiency = Eficacia
+TypeHelpOnly = Sólamente ayuda
+TypeHelpDev = Ayuda+Desarrollo
+TypeHelpDevForm = Ayuda+Desarrollo+Formación
+ToGetHelpGoOnSparkAngle1 = Algunas empresas o independientes ofrecen servicios de apoyo muy rápido (a veces de inmediato) y más eficientes gracias a la capacidad de control remoto de su equipo para ayudar a diagnosticar y resolver sus problemas. Esta asistencia se puede encontrar buscando "Dolibarr" en la bolsa de intercambio de <b>%s</b>:
+ToGetHelpGoOnSparkAngle2 = En ocasiones, ningún operador se encuentra disponible en el momento de su búsqueda, no olvide cambiar los criterios de búsqueda indicando "todos los disponibles". Puede, entonces, ponerse en contacto en diferido.
