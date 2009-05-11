@@ -3,17 +3,17 @@ Return-Path: dolibarr-robot@domain.com <dolibarr-robot@domain.com>
 X-Mailer: Dolibarr version 2.7.0-beta (using php mail)
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: multipart/mixed; boundary="8f5b32f1596aaf192b28988da8f0c4e9"
-X-attachments: images.jpg
---8f5b32f1596aaf192b28988da8f0c4e9
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/related; boundary="de50511a21aa12aa7e67f9606279f097"
+--de50511a21aa12aa7e67f9606279f097
+Content-Type: text/html; charset=UTF-8
 
-Testé
---8f5b32f1596aaf192b28988da8f0c4e9
---8f5b32f1596aaf192b28988da8f0c4e9
-Content-Type: image/jpeg; name="images.jpg"
+<html><head><title></title></head><body><img height="604" width="475" src="cid:1c184fb7828cd6c1cdb1606d3946f6a4" alt="" /></body></html>
+--de50511a21aa12aa7e67f9606279f097
+--de50511a21aa12aa7e67f9606279f097
+Content-Type: image/jpeg; name="image.jpg"
 Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="images.jpg"
+Content-Disposition: inline; filename="2pac.jpg"
+Content-ID: <1c184fb7828cd6c1cdb1606d3946f6a4>
 
 /9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYI
 DAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkF
@@ -33,4 +33,4 @@ YyTQzNcJoFxeoklw0HirwX+61iFJS5YXNmxKXQAkKl4yJCOAoo/ZX/ZRtXWO4KXtt4Ot
 LpZpL26t3s73xFcRPlCY2w8FpGy5CHDSMOflyXwlCrKvGop2ppaxsvefdvdJdEt+vn5X
 s68q3M3pf7l2ts79/uP/2Q==
 
---8f5b32f1596aaf192b28988da8f0c4e9--
+--de50511a21aa12aa7e67f9606279f097--

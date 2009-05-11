@@ -90,8 +90,10 @@ class CMailFile
 		global $conf;
 		
 		// Evite caractere bizarre avec les accents
-		$subject = utf8_decode($subject);
-		$from    = utf8_decode($from);
+		//Todo l'envoi par mailing donne des caractères bizarre,
+    // alors que l'envoi d'un document facture ou autre est correcte
+		//$subject = utf8_decode($subject);
+		//$from    = utf8_decode($from);
 
 		// If ending method not defined
 		if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';
@@ -147,6 +149,12 @@ class CMailFile
 
 			// On defini mime_boundary
 			$this->mime_boundary = md5(uniqid("dolibarr"));
+			
+			// On defini related_boundary
+			$this->related_boundary = md5(uniqid("dolibarr"));
+			
+			// On defini alternative_boundary
+			$this->alternative_boundary = md5(uniqid("dolibarr"));
 
 			// On definit fin de ligne
 			$this->eol="\n";
@@ -210,22 +218,7 @@ class CMailFile
 			$smtps->setSubject($subject);
 			$smtps->setTO($to);
 			$smtps->setFrom($from);
-			if ($this->atleastoneimage)
-			{
-				$msg = $this->html;
-				/*
-				$out='';
-				// Check if html header already in message
-				$htmlalreadyinmsg=0;
-				if (eregi('^[ \t]*<html',$this->html)) $htmlalreadyinmsg=1;
-
-			if (! $htmlalreadyinmsg) $out .= "<html><head><title></title></head><body>";
-			$out.= $this->html;
-			if (! $htmlalreadyinmsg) $out .= "</body></html>";
-			$msg = $out;
-			*/
-		}
-		
+			if ($this->atleastoneimage)	$msg = $this->html;
 			if ($this->msgishtml) $smtps->setBodyContent($msg,'html');
 			else $smtps->setBodyContent($msg,'plain');
 
@@ -487,18 +480,18 @@ class CMailFile
 		
 		if ($this->atleastoneimage)
 		{
-			if (! $this->atleastonefile) $out.= "Content-Type: multipart/related; boundary=\"".$this->mime_boundary."\"".$this->eol;
 			$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
+			if (! $this->atleastonefile) $out.= "Content-Type: multipart/related; boundary=\"".$this->mime_boundary."\"".$this->eol;
 		}
 		else if ($this->msgishtml)
 		{
-			if (! $this->atleastonefile) $out.= "Content-Type: text/html; boundary=\"".$this->mime_boundary."\"".$this->eol;
 			$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
+			if (! $this->atleastonefile) $out.= "Content-Type: text/html; boundary=\"".$this->mime_boundary."\"".$this->eol;
 		}
 		else
 		{
-			if (! $this->atleastonefile) $out.= "Content-Type: text/plain; boundary=\"".$this->mime_boundary."\"".$this->eol;
 			$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
+			if (! $this->atleastonefile) $out.= "Content-Type: text/plain; boundary=\"".$this->mime_boundary."\"".$this->eol;
 		}
 
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out, LOG_DEBUG);
@@ -529,6 +522,13 @@ class CMailFile
 					}
 					if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
 					$out.= "X-attachments: $filename_list[$i]".$this->eol;
+					
+					if ($mimedone!=2 && $this->atleastoneimage)
+					{
+						$out.= "--" . $this->mime_boundary . $this->eol;
+						$out.= "Content-Type: multipart/related; boundary=\"".$this->related_boundary."\"".$this->eol;
+						$mimedone=2;
+					}
 				}
 			}
 		}
@@ -553,7 +553,14 @@ class CMailFile
 		{
 			if ($this->msgishtml)
 			{
-				$out.= "--" . $this->mime_boundary . $this->eol;
+				if ($this->atleastonefile && $this->atleastoneimage)
+				{
+					$out.= "--" . $this->related_boundary . $this->eol;
+				}
+				else
+				{
+					$out.= "--" . $this->mime_boundary . $this->eol;
+				}
 				$out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
 			}
 			else
@@ -574,13 +581,23 @@ class CMailFile
 			if (! $htmlalreadyinmsg) $out .= "</body></html>";
 			if ($this->atleastonefile || $this->atleastoneimage)
 			{
-				$out.= $this->eol . "--" . $this->mime_boundary . $this->eol;
+				if ($this->atleastonefile && $this->atleastoneimage)
+				{
+					$out.= $this->eol . "--" . $this->related_boundary . $this->eol;
+				}
+				else
+				{
+					$out.= $this->eol . "--" . $this->mime_boundary . $this->eol;
+				}
 			}
 		}
 		else
 		{
 			$out.= $msgtext;
-			$out.= $this->eol . "--" . $this->mime_boundary . $this->eol;
+			if ($this->atleastonefile)
+			{
+				$out.= $this->eol . "--" . $this->mime_boundary . $this->eol;
+			}
 		}
 
 		return $out;
@@ -790,7 +807,14 @@ class CMailFile
 			{
 				dol_syslog("CMailFile::write_images: i=$i");
 				
-				$out.= "--" . $this->mime_boundary . $this->eol;
+				if (! $this->atleastonefile)
+				{
+					$out.= "--" . $this->mime_boundary . $this->eol;
+				}
+				else
+				{
+					$out.= "--" . $this->related_boundary . $this->eol;
+				}
 				$out.= "Content-Type: " . $img["content_type"] . "; name=\"".$img["name"]."\"".$this->eol;
 				$out.= "Content-Transfer-Encoding: base64".$this->eol;
 				$out.= "Content-Disposition: inline; filename=\"".$img["name"]."\"".$this->eol;
@@ -806,7 +830,14 @@ class CMailFile
 		}
 
 		// Fin de tous les attachements
-		$out.= "--" . $this->mime_boundary . "--" . $this->eol;
+		if (! $this->atleastonefile)
+		{
+			$out.= "--" . $this->mime_boundary . "--" . $this->eol;
+		}
+		else
+		{
+			$out.= "--" . $this->related_boundary . "--" . $this->eol;
+		}
 	
 		return $out;
 	}
