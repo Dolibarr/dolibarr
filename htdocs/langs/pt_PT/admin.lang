@@ -172,8 +172,8 @@ OfficialWebSiteFr=sitio web oficial falado/escrito em francês
 OfficialWikiFr=Wiki falado/escrito em francês
 OfficialWiki=Wiki ERP
 OfficialDemo=Demo em linha ERP
-ForDocumentationSeeWiki=Para a documentação de utilizador, programador ou Perguntas Frecuentes (FAQ), consulte o wiki do ERP: <br><b><a href=\"%s\" target=\"_blank\">%s</a></b>
-ForAnswersSeeForum=Para outras questões ou realizar as suas prórpias consultas, pode utilizar o forum do ERP: <br><b><a href=\"%s\" target=\"_blank\">%s</a></b>
+ForDocumentationSeeWiki=Para a documentação de utilizador, programador ou Perguntas Frecuentes (FAQ), consulte o wiki do ERP: <br><b><a href="%s" target="_blank">%s</a></b>
+ForAnswersSeeForum=Para outras questões ou realizar as suas prórpias consultas, pode utilizar o forum do ERP: <br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Esta área permite ajuda-lo a obter um serviço de suporte do ERP.
 HelpCenterDesc2=Alguns destes serviços só estão disponiveis em <b>inglés</b>.
 CurrentTopMenuHandler=Gestor de menu superior

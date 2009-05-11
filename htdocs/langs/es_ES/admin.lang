@@ -175,8 +175,8 @@ OfficialWebSiteFr = sitio web oficial habla francesa
 OfficialWikiFr = Wiki habla francesa
 OfficialWiki = Wiki Dolibarr
 OfficialDemo = Demo en línea Dolibarr
-ForDocumentationSeeWiki = Para la documentación de usuario, desarrollador o Preguntas Frecuentes (FAQ), consulte el wiki Dolibarr: <br><b><a href=\"%s\" target=\"_blank\">%s</a></b>
-ForAnswersSeeForum = Para otras cuestiones o realizar sus propias consultas, puede utilizar el foro Dolibarr: <br><b><a href=\"%s\" target=\"_blank\">%s</a></b>
+ForDocumentationSeeWiki = Para la documentación de usuario, desarrollador o Preguntas Frecuentes (FAQ), consulte el wiki Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
+ForAnswersSeeForum = Para otras cuestiones o realizar sus propias consultas, puede utilizar el foro Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1 = Esta aplicación, independiente de Dolibarr, le permite ayudarle a obtener un servicio de soporte de Dolibarr.
 HelpCenterDesc2 = Algunos de estos servicios sólo están disponibles en <b>inglés</b>.
 CurrentTopMenuHandler = Gestor de menú superior
