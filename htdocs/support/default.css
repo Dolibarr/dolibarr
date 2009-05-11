@@ -125,10 +125,12 @@ margin: 0px;
 }
 
 a:link,a:visited,a:active {
-text-decoration:none;
+	color: #2266DD;
+	text-decoration:none;
 }
 a:hover {
-text-decoration:underline;
+	color: #2266DD;
+	text-decoration:underline;
 }
 
 a.titre {
