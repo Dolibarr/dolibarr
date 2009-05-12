@@ -92,8 +92,8 @@ class CMailFile
 		// Evite caractere bizarre avec les accents
 		//Todo l'envoi par mailing donne des caractères bizarre,
     // alors que l'envoi d'un document facture ou autre est correcte
-		//$subject = utf8_decode($subject);
-		//$from    = utf8_decode($from);
+		$subject = utf8_decode($subject);
+		$from    = utf8_decode($from);
 
 		// If ending method not defined
 		if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';
@@ -219,6 +219,7 @@ class CMailFile
 			$smtps->setTO($to);
 			$smtps->setFrom($from);
 			if ($this->atleastoneimage)	$msg = $this->html;
+			$msg = $this->checkIfHTML($msg);
 			if ($this->msgishtml) $smtps->setBodyContent($msg,'html');
 			else $smtps->setBodyContent($msg,'plain');
 
@@ -573,12 +574,8 @@ class CMailFile
 		if ($this->msgishtml)
 		{
 			// Check if html header already in message
-			$htmlalreadyinmsg=0;
-			if (eregi('^[ \t]*<html',$msgtext)) $htmlalreadyinmsg=1;
+			$out.= $this->checkIfHTML($msgtext);
 
-			if (! $htmlalreadyinmsg) $out .= "<html><head><title></title></head><body>";
-			$out.= $msgtext;
-			if (! $htmlalreadyinmsg) $out .= "</body></html>";
 			if ($this->atleastonefile || $this->atleastoneimage)
 			{
 				if ($this->atleastonefile && $this->atleastoneimage)
@@ -598,6 +595,22 @@ class CMailFile
 			{
 				$out.= $this->eol . "--" . $this->mime_boundary . $this->eol;
 			}
+		}
+
+		return $out;
+	}
+	
+	function checkIfHTML($msg)
+	{
+		if (!eregi('^[ \t]*<html',$msg))
+		{
+			$out = "<html><head><title></title></head><body>";
+			$out.= $msg;
+			$out.= "</body></html>";
+		}
+		else
+		{
+			$out = $msg;
 		}
 
 		return $out;
@@ -774,7 +787,7 @@ class CMailFile
         		$this->images_encoded[$i]['cid'] = $img["cid"];
         		
         		// Encodage de l'image
-        		$this->images_encoded[$i]["image_encoded"] = chunk_split(base64_encode($image), 68, $this->eol);
+        		$this->images_encoded[$i]["image_encoded"] = rtrim(chunk_split(base64_encode($image), 68, $this->eol));
         	}
         	$i++;
         }

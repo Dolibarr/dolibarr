@@ -1992,6 +1992,8 @@ class SMTPs
             	{
             		$content = 'Content-Type: multipart/mixed;' . "\r\n"
             		         . '   boundary="' . $this->_getBoundary() . '"'   . "\r\n"
+            		         . "\r\n"
+            		         . 'This is a multi-part message in MIME format.' . "\r\n"
             		         . "\r\n--" . $this->_getBoundary() . "\r\n"
             		         . 'Content-Type: multipart/related;' . "\r\n"
             		         . '   boundary="' . $this->_getRelatedBoundary() . '"'   . "\r\n";
@@ -1999,7 +2001,9 @@ class SMTPs
             	else
             	{
             		$content = 'Content-Type: multipart/mixed;' . "\r\n"
-            		         . '   boundary="' . $this->_getBoundary() . '"'   . "\r\n";
+            		         . '   boundary="' . $this->_getBoundary() . '"'   . "\r\n"
+            		         . "\r\n"
+            		         . 'This is a multi-part message in MIME format.' . "\r\n";
             		$attachment=1;
             	}
             }
@@ -2016,9 +2020,8 @@ class SMTPs
             //$content = 'Content-Type: multipart/mixed;' . "\r\n"
             //         . '   boundary="' . $this->_getBoundary() . '"'   . "\r\n"
             //         . "\r\n"
-            $content .=  "\r\n"
-            // END DOL_CHANGE LDR
-                     . 'This is a multi-part message in MIME format.' . "\r\n";
+            //         . 'This is a multi-part message in MIME format.' . "\r\n";
+             // END DOL_CHANGE LDR
 
             // Loop through message content array
             foreach ($this->_msgContent as $type => $_content )
@@ -2089,9 +2092,10 @@ class SMTPs
                     //$content .= ( $type == 'html') ? '; name="HTML Part"' : '';  // DOL_CHANGE LDR
                     $content .=  "\r\n";
                     $content .= 'Content-Transfer-Encoding: ';
-                    $content .= ( $type == 'html') ? 'quoted-printable' : $this->getTransEncodeType();
+                    //$content .= ( $type == 'html') ? 'quoted-printable' : $this->getTransEncodeType(); // DOL_CHANGE LDR
+                    $content .= ( $type == 'html') ? '8bit' : $this->getTransEncodeType();
                     $content .=  "\r\n"
-                             . 'Content-Disposition: inline'  . "\r\n"
+                             //. 'Content-Disposition: inline'  . "\r\n"
                              . 'Content-Description: ' . $type . ' message' . "\r\n";
 
                     if ( $this->getMD5flag() )
@@ -2568,6 +2572,11 @@ class SMTPs
 
  /**
   * $Log$
+  * Revision 1.5  2009/05/12 10:12:02  hregis
+  * Add: possibilité d'envoyer un fichier attaché avec du html contenant des images avec
+  *  la classe SMTPS
+  * Fix: 'quoted-printable' truncated html code
+  *
   * Revision 1.4  2009/05/12 08:39:40  hregis
   * Add: possibilité d'envoyer un fichier attaché avec du html contenant des images avec
   *  la classe SMTPS
