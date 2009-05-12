@@ -56,8 +56,8 @@ print $langs->trans("ToGetHelpGoOnSparkAngels2",$titlesparkangels).'<br>';
 $arrayofwidgets=array(
 // Widget for Laurent Destailleur
 array('name'=>'Laurent Destailleur',
-			'id'=>'4255',
-			'lang'=>'fr,en'),	// Put always english at end
+			'id'=>'4256,4255',	// Put of list of sparkangels widget id (for each language)
+			'lang'=>'fr,en'),	// Put list of language code of widgets (always english at end)
 			// Widget for Regis Houssin
 array('name'=>'R&eacute;gis Houssin',
 			'id'=>'4611',
@@ -71,21 +71,29 @@ print '* '.$langs->trans("LinkToGoldMember",$langs->defaultlang).'<br><br>';
 print '<table><tr>';
 foreach ($arrayofwidgets as $arraywidget)	// Loop on each user
 {
+	$listofwidgets=split(',',$arraywidget['id']);
 	$listoflangs=split(',',$arraywidget['lang']);
-	foreach($listoflangs as $langcode)		// Loop on each lang
+	$pos=0;
+	foreach($listoflangs as $langcode)		// Loop on each lang of user
 	{
-		if (eregi($langcode,$langs->defaultlang) || $langcode == 'en')
+		$pos++;
+		if (eregi($langcode,$langs->defaultlang) || $langcode == 'en')	// If lang qualified
 		{
 			print '<td align="center">';
 			print $arraywidget['name'].'<br>';
 			print $langs->trans("PossibleLanguages").': ';
+			// All languages of user are shown
 			foreach ($listoflangs as $langcode2)
 			{
+				if (empty($widgetid)) $widgetid=$listoflangs[$pos-1];
 				if (! eregi($langcode,$langs->defaultlang) && $langcode2 != 'en') continue;	// Show only english
 				print $langcode2.' ';
 			}
 			print '<br>';
-			print '<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId='.$arraywidget['id'].'" width="172px" height="123px" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
+			// But only first language found is used for widget
+			$widgetid=$listofwidgets[$pos-1];
+			//print 'xx lang qualified='.$langcode.' id='.$widgetid;
+			print '<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId='.$widgetid.'" width="172px" height="123px" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
 			print '</td>';
 			$found=1;
 			break;
