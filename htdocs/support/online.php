@@ -54,12 +54,12 @@ print $langs->trans("ToGetHelpGoOnSparkAngels2",$titlesparkangels).'<br>';
 
 $arrayofwidgets=array(
 // Widget for Laurent Destailleur
-array(	'name'=>'Laurent Destailleur',
-			'widget'=>'<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId=4255" width="172px" height="123px" frameborder="0" scrolling="no" marginheight="0" > </iframe>',
+array('name'=>'Laurent Destailleur',
+			'id'=>'4255',
 			'lang'=>'fr,en'),
 			// Widget for Regis Houssin
-array(	'name'=>'Regis Houssin',
-			'widget'=>'<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId=4611" width="172px" height="123px" frameborder="0" scrolling="no" marginheight="0" > </iframe>',
+array('name'=>'R&eacute;gis Houssin',
+			'id'=>'4611',
 			'lang'=>'fr')
 );
 
@@ -71,7 +71,7 @@ foreach ($arrayofwidgets as $arraywidget)
 {
 	print '<td align="center">';
 	print $arraywidget['name'].'<br>';
-	print $arraywidget['widget'];
+	print '<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId='.$arraywidget['id'].'" width="172px" height="123px" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
 	print '</td>';
 }
 print '</tr></table>';
