@@ -24,3 +24,4 @@ ToGetHelpGoOnSparkAngels2=Sometimes, there is no company available at the moment
 BackToHelpCenter=Otherwise, click here to go <a href="%s">back to help center home page</a>.
 LinkToGoldMember=Also, you can call one of the coach preselected by Dolibarr for your language (%s) by clicking his Widget (status and maximum price are automatically updated):
 PossibleLanguages=Supported languages
+MakeADonation=Help Dolibarr project, make a donation

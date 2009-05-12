@@ -24,3 +24,4 @@ ToGetHelpGoOnSparkAngels2=Parfois, aucun intervenant n'est disponible au moment 
 BackToHelpCenter=Sinon, cliquez ici pour <a href="%s">retourner au centre d'assistance</a>.
 LinkToGoldMember=Autrement, vous pouvez aussi appeler immédiatement un des accompagnateurs préselectionnés par Dolibarr pour votre langue (%s) en cliquant son Widget (disponibilité et tarif maximum sont raffraichis automatiquement):
 PossibleLanguages=Langages possibles
+MakeADonation=Aidez le projet Dolibarr, faites un don 

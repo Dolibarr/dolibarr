@@ -108,6 +108,17 @@ if (eregi('^fr_',$langs->getDefaultLang()))
 }
 
 
+print '<br>'.$langs->trans("MakeADonation").':<br>';
+
+print '<ul>';
+print '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="5388905">';
+print '<input class="none" type="image" src="'.DOL_URL_ROOT.'/theme/common/paypal.png" border="0" name="submit" alt="Help Dolibarr making a donation">';
+print '</form>';
+print '</ul>';
+
+
 llxFooter('$Date$ - $Revision$');
 ?>
 
