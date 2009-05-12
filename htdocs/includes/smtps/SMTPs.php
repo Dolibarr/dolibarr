@@ -1985,7 +1985,9 @@ class SMTPs
             	if ($type == 'image')
             	{
             		$content = 'Content-Type: multipart/related;' . "\r\n"
-            		         . '   boundary="' . $this->_getBoundary() . '"'   . "\r\n";
+            		         . '   boundary="' . $this->_getBoundary() . '"'   . "\r\n"
+            		         . "\r\n"
+            		         . 'This is a multi-part message in MIME format.' . "\r\n";
             		$image=1;
             	}
             	else if ($type == 'attachment' && $image)
@@ -1997,6 +1999,7 @@ class SMTPs
             		         . "\r\n--" . $this->_getBoundary() . "\r\n"
             		         . 'Content-Type: multipart/related;' . "\r\n"
             		         . '   boundary="' . $this->_getRelatedBoundary() . '"'   . "\r\n";
+            		$attachment=1;
             	}
             	else
             	{
@@ -2004,7 +2007,6 @@ class SMTPs
             		         . '   boundary="' . $this->_getBoundary() . '"'   . "\r\n"
             		         . "\r\n"
             		         . 'This is a multi-part message in MIME format.' . "\r\n";
-            		$attachment=1;
             	}
             }
             // END DOL_CHANGE LDR
@@ -2095,27 +2097,23 @@ class SMTPs
                     //$content .= ( $type == 'html') ? 'quoted-printable' : $this->getTransEncodeType(); // DOL_CHANGE LDR
                     $content .= ( $type == 'html') ? '8bit' : $this->getTransEncodeType();
                     $content .=  "\r\n"
-                             //. 'Content-Disposition: inline'  . "\r\n"
+                    //       . 'Content-Disposition: inline'  . "\r\n"  // DOL_CHANGE LDR
                              . 'Content-Description: ' . $type . ' message' . "\r\n";
 
                     if ( $this->getMD5flag() )
                         $content .= 'Content-MD5: ' . $_content['md5'] . "\r\n";
 
+                    $content .= "\r\n"
+                             . $_content['data'] . "\r\n";
                     // DOL_CHANGE LDR
-                    //$content .= "\r\n"
-                    //         . $_content['data'] . "\r\n"
                     //         .  "\r\n--" . $this->_getBoundary() . "\r\n";
                     if ($attachment && $image)
                     {
-                    	$content .= "\r\n"
-                               . $_content['data'] . "\r\n"
-                    	         . "\r\n--" . $this->_getRelatedBoundary() . "\r\n";
+                    	$content .= "\r\n--" . $this->_getRelatedBoundary() . "\r\n";
                     }
                     else
                     {
-                    	$content .= "\r\n"
-                               . $_content['data'] . "\r\n"
-                               .  "\r\n--" . $this->_getBoundary() . "\r\n";
+                    	$content .= "\r\n--" . $this->_getBoundary() . "\r\n";
                     }
                     // END DOL_CHANGE LDR
                 }
@@ -2572,6 +2570,10 @@ class SMTPs
 
  /**
   * $Log$
+  * Revision 1.6  2009/05/12 11:44:59  hregis
+  * Add: possibilité d'envoyer un fichier attaché avec du html contenant des images avec
+  *  la classe SMTPS
+  *
   * Revision 1.5  2009/05/12 10:12:02  hregis
   * Add: possibilité d'envoyer un fichier attaché avec du html contenant des images avec
   *  la classe SMTPS

@@ -787,7 +787,7 @@ class CMailFile
         		$this->images_encoded[$i]['cid'] = $img["cid"];
         		
         		// Encodage de l'image
-        		$this->images_encoded[$i]["image_encoded"] = rtrim(chunk_split(base64_encode($image), 68, $this->eol));
+        		$this->images_encoded[$i]["image_encoded"] = chunk_split(base64_encode($image), 68, $this->eol);
         	}
         	$i++;
         }
