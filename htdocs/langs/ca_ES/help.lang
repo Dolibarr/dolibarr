@@ -19,7 +19,7 @@ TypeHelpOnly = Només ajuda
 TypeHelpDev = Ajuda+Desenvolupament
 TypeHelpDevForm = Ajuda+Desenvolupament+Formació
 ToGetHelpGoOnSparkAngels1 = Algunes empreses o independents ofereixen serveis de suport molt ràpid (de vegades d'immediat) i més eficients gràcies a la capacitat de control remot del seu equip per ajudar a diagnosticar i resoldre els seus problemes. Aquesta assistència es pot trobar  a la borsa d'assistents de <b>%s</b>: 
-ToGetHelpGoOnSparkAngels3 = Per accedir a la recerca de <b>assistents disponibles</b> (realitzant a continuació una recerca sobre la paraula clau "dolibarr"), feu clic al logotip
+ToGetHelpGoOnSparkAngels3 = Per accedir a la recerca de <b>assistents disponibles</b> (realitzant a continuació una recerca sobre la paraula clau "dolibarr"), feu <a href="%s" target="_blank">clic aqui</a>.
 ToGetHelpGoOnSparkAngels2 = En ocasions, cap operador es troba disponible en el moment de la seva recerca, no oblideu canviar el criteri de cerca indicant "tots els disponibles". Pot, doncs, posar-se en contacte en diferit.
 BackToHelpCenter = En cas contrari, feu clic aquí per <a href="%s"> tornar a ajuda</a>.
-LinkToGoldMember = Si hi ha un disponible, immediatament pot trucar a un dels assistents preseleccionats per Dolibarr fent clic en el seu Widget
+LinkToGoldMember = Si hi ha un disponible, immediatament pot trucar a un dels assistents preseleccionats per Dolibarr fent clic en el seu Widget:
