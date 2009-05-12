@@ -299,7 +299,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	$langs->load("boxes");
 	$facstatic=new Facture($db);
 
-	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, f.tms,";
+	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, f.paye, f.tms,";
 	$sql.= " f.date_lim_reglement as datelimite,";
 	$sql.= " sum(pf.amount) as am,";
 	$sql.= " s.nom, s.rowid as socid";
@@ -310,7 +310,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	$sql.= " AND f.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
-	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.total, f.total_ttc, s.nom, s.rowid";
+	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.total, f.total_ttc, f.paye, f.tms, s.nom, s.rowid";
 	$sql.= " ORDER BY f.tms DESC ";
 	$sql.= $db->plimit($max, 0);
 
@@ -346,7 +346,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-				if ($obj->datelimite < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+				if (! $obj->paye && $obj->datelimite < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding">';
 				$filename=dol_sanitizeFileName($obj->facnumber);
@@ -756,7 +756,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 {
 	$facstatic=new Facture($db);
 
-	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, ";
+	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, f.paye, f.tms,";
 	$sql.= $db->pdate("f.date_lim_reglement")." as datelimite,";
 	$sql.= " sum(pf.amount) as am,";
 	$sql.= " s.nom, s.rowid as socid";
@@ -767,7 +767,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	$sql.= " AND f.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
-	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.total, f.total_ttc, s.nom, s.rowid";
+	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.total, f.total_ttc, f.paye, f.tms, s.nom, s.rowid";
 	$sql.= " ORDER BY f.datef ASC, f.facnumber ASC";
 
 	$resql = $db->query($sql);
