@@ -125,7 +125,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("RefPayment"),"liste.php","p.rowid","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ThirdParty"),"liste.php","c.nom","",$paramlist,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdParty"),"liste.php","s.nom","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
