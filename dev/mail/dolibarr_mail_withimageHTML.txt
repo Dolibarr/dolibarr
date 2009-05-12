@@ -12,7 +12,7 @@ Content-Type: text/html; charset=UTF-8
 --de50511a21aa12aa7e67f9606279f097
 Content-Type: image/jpeg; name="image.jpg"
 Content-Transfer-Encoding: base64
-Content-Disposition: inline; filename="2pac.jpg"
+Content-Disposition: inline; filename="image.jpg"
 Content-ID: <1c184fb7828cd6c1cdb1606d3946f6a4>
 
 /9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYI
