@@ -56,7 +56,11 @@ $arrayofwidgets=array(
 // Widget for Laurent Destailleur
 array(	'name'=>'Laurent Destailleur',
 			'widget'=>'<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId=4255" width="172px" height="123px" frameborder="0" scrolling="no" marginheight="0" > </iframe>',
-			'lang'=>'fr,en')
+			'lang'=>'fr,en'),
+			// Widget for Regis Houssin
+array(	'name'=>'Regis Houssin',
+			'widget'=>'<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId=4611" width="172px" height="123px" frameborder="0" scrolling="no" marginheight="0" > </iframe>',
+			'lang'=>'fr')
 );
 
 // Preselected widgets
