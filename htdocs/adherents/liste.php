@@ -301,7 +301,7 @@ if ($resql)
 
 	if ($num > $conf->liste_limit)
 	{
-	    print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	    print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
 	}
 }
 else
