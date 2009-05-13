@@ -197,8 +197,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			if (! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) print '(';
 			else print '  -  ';
 			print $langs->trans("NeedHelpCenter");
+			print ')</a>';
 		}
-		print ')</a>';
 		print '</td></tr>';
 	}
 
