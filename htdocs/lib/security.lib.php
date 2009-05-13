@@ -188,7 +188,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		{
 			print '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">(';
 			print $langs->trans("PasswordForgotten");
-			if (! empty($conf->global->MAIN_HELPCENTER_DISABLELINK)) print ')';
 		}
 
 		if (empty($conf->global->MAIN_HELPCENTER_DISABLELINK))

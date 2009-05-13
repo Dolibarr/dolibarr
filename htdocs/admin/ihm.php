@@ -76,6 +76,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 
 	dolibarr_set_const($db, "MAIN_MOTD",               dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_HOME",               dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK", $_POST["MAIN_HELPCENTER_DISABLELINK"],'chaine',0,'',0);	// Param for all entities
 
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
@@ -244,7 +245,16 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '<textarea name="main_home" cols="90" rows="'.ROWS_5.'">'.dol_htmlentitiesbr_decode($conf->global->MAIN_HOME).'</textarea>';
 	}
 	print '</td></tr>';
-    print '</table>';
+
+    // Hide need help link on login page
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
+    print $html->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+	print '</table>';
 
     print '<br><center>';
     print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
@@ -355,7 +365,15 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td>';
     print nl2br($conf->global->MAIN_HOME);
     print '</td></tr>';
+
+    // Link to help center
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
+    print yn($conf->global->MAIN_HELPCENTER_DISABLELINK);
+    print '</td></tr>';
+
     print '</table>';
+
 
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
