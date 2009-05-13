@@ -192,10 +192,11 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 
 /**
  *   	\brief      Return line description translated in outputlangs and encoded in UTF8
- *		\param		line			Line to format
- *      \param      outputlang		Object lang for output
+ *		\param		line			    Line to format
+ *    \param    outputlang		Object lang for output
+ *    \param    showref       Show reference
  */
-function pdf_getlinedesc($line,$outputlangs)
+function pdf_getlinedesc($line,$outputlangs,$showref=1)
 {
 	global $db, $conf, $langs;
 
@@ -256,6 +257,7 @@ function pdf_getlinedesc($line,$outputlangs)
 		if ($prodser->ref)
 		{
 			$prefix_prodserv = "";
+			$ref_prodserv = "";
 			if ($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS)	// In standard mode, we do not show this
 			{
 				if($prodser->isservice())
@@ -267,8 +269,10 @@ function pdf_getlinedesc($line,$outputlangs)
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 				}
 			}
-
-			$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
+			
+			if ($showref) $ref_prodserv = $prodser->ref." - ";
+			
+			$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 		}
 	}
 	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
