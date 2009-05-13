@@ -1184,7 +1184,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (28
 -- AUTRICHE (id 41)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 411, 41,  '20','0','VAT standard rate',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 412, 41,  '10','0','VAT reduced rate', 1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 413, 41,   '0','0','VAT Rate 0 ou non applicable',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 413, 41,   '0','0','VAT Rate 0',1);
 
 -- BELGIQUE (id 2)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 21, 2,  '21','0','VAT standard rate',1);
