@@ -18,8 +18,10 @@ Efficiency = Eficàcia
 TypeHelpOnly = Només ajuda
 TypeHelpDev = Ajuda+Desenvolupament
 TypeHelpDevForm = Ajuda+Desenvolupament+Formació
-ToGetHelpGoOnSparkAngels1 = Algunes empreses o independents ofereixen serveis de suport molt ràpid (de vegades d'immediat) i més eficients gràcies a la capacitat de control remot del seu equip per ajudar a diagnosticar i resoldre els seus problemes. Aquesta assistència es pot trobar  a la borsa d'assistents de <b>%s</b>: 
-ToGetHelpGoOnSparkAngels3 = Per accedir a la recerca de <b>assistents disponibles</b> (realitzant a continuació una recerca sobre la paraula clau "dolibarr"), feu <a href="%s" target="_blank">clic aqui</a>.
+ToGetHelpGoOnSparkAngels1 = Algunes empreses o independents ofereixen serveis de suport molt ràpid (de vegades d'immediat) i més eficients gràcies a la capacitat de control remot del seu equip per ajudar a diagnosticar i resoldre els seus problemes. Aquesta assistència es pot trobar a la borsa d'assistents de <b>%s</b>: 
+ToGetHelpGoOnSparkAngels3 = Per accedir a la recerca de <b>assistents disponibles</b> (realitzant a continuació una recerca sobre la paraula clau "dolibarr"), <a href="%s" target="_blank">feu clic aquí</a>.
 ToGetHelpGoOnSparkAngels2 = En ocasions, cap operador es troba disponible en el moment de la seva recerca, no oblideu canviar el criteri de cerca indicant "tots els disponibles". Pot, doncs, posar-se en contacte en diferit.
-BackToHelpCenter = En cas contrari, feu clic aquí per <a href="%s"> tornar a ajuda</a>.
-LinkToGoldMember = Si hi ha un disponible, immediatament pot trucar a un dels assistents preseleccionats per Dolibarr fent clic en el seu Widget:
+BackToHelpCenter = Sinó, feu clic aquí per <a href="%s"> tornar al centre d'assistència</a>.
+LinkToGoldMember = En cas contrari, podeu trucar immediatament a un dels assistents preseleccionats per Dolibarr per al seu idioma (%s) fent clic en el seu widget (disponibilitat i tarifa màxima actualitzades automàticament):
+PossibleLanguages = Idiomes disponibles
+MakeADonation = Ajudeu-nos al projecte Dolibarr, feu una donació
