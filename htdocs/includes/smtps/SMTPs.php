@@ -1610,10 +1610,15 @@ class SMTPs
                     {
                         foreach ( $this->_msgRecipients[$_host][$_which] as $_addr => $_realName )
                         {
-                            if ( $_realName )
+                            if ( $_realName )	// DOL_CHANGE FIX
+                            {
                                 $_realName = '"' . $_realName . '"';
-
-                            $_RCPT_list[] = $_realName . ' <' . $_addr . '@' . $_host . '>';
+								$_RCPT_list[] = $_realName . ' <' . $_addr . '@' . $_host . '>';
+                            }
+                            else
+                            {
+                            	$_RCPT_list[] = $_addr . '@' . $_host;
+                            }
                         }
                     }
                 }
@@ -1977,10 +1982,12 @@ class SMTPs
            /*
             * @TODO  Investigate "nested" boundary message parts
             */
-            $content = 'Content-Type: multipart/mixed;' . "\r\n"
-                     . '   boundary="' . $this->_getBoundary() . '"'   . "\r\n"
-                     . "\r\n"
-                     . 'This is a multi-part message in MIME format.' . "\r\n";
+            $content = 'Content-Type: multipart/related; boundary="' . $this->_getBoundary() . '"'   . "\r\n";
+// TODO Restore
+//                     . "\r\n"
+//                     . 'This is a multi-part message in MIME format.' . "\r\n";
+			$content .= "Content-Transfer-Encoding: 8bit" . "\r\n";
+			$content .= "\r\n";
 
             // Loop through message content array
             foreach ($this->_msgContent as $type => $_content )
@@ -1991,7 +1998,8 @@ class SMTPs
                     foreach ( $_content as $_file => $_data )
                     {
 
-                        $content .= "\r\n--" . $this->_getBoundary() . "\r\n"
+                    	// TODO Restore "\r\n"
+                    	$content .= "--" . $this->_getBoundary() . "\r\n"
                                  .  'Content-Disposition: attachment; filename="' . $_data['fileName'] . '"' . "\r\n"
                                  .  'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['fileName'] . '"' . "\r\n"
                                  .  'Content-Transfer-Encoding: base64' . "\r\n"
@@ -2004,18 +2012,43 @@ class SMTPs
                                  .  $_data['data'] . "\r\n";
                     }
                 }
+                // DOL_CHANGE LDR
+                else if ( $type == 'image' )
+                {
+                    // loop through all images
+                    foreach ( $_content as $_image => $_data )
+                    {
+                    	// TODO Restore "\r\n"
+                    	$content .= "--" . $this->_getBoundary() . "\r\n";
+
+                        $content .= 'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['imageName'] . '"' . "\r\n"
+                                 .  'Content-Transfer-Encoding: base64' . "\r\n"
+                                 .  'Content-Disposition: inline; filename="' . $_data['imageName'] . '"' . "\r\n"
+                                 .  'Content-ID: <' . $_data['cid'] . '> ' . "\r\n";
+
+                        if ( $this->getMD5flag() )
+                            $content .= 'Content-MD5: ' . $_data['md5'] . "\r\n";
+
+                        $content .= "\r\n"
+                                 .  $_data['data'] . "\r\n";
+                    }
+                }
                 else
                 {
-                    $content .= "\r\n--" . $this->_getBoundary() . "\r\n"
+                    // TODO Restore "\r\n"
+                	$content .= "--" . $this->_getBoundary() . "\r\n"
                              . 'Content-Type: ' . $_content['mimeType'] . '; '
-                             . 'charset="' . $this->getCharSet() . '"';
-                    $content .= ( $type == 'html') ? '; name="HTML Part"' : '';
+//                             . 'charset="' . $this->getCharSet() . '"';
+                               . 'charset=' . $this->getCharSet() . '';
+
+// TODO Restore
+//                    $content .= ( $type == 'html') ? '; name="HTML Part"' : '';
                     $content .=  "\r\n";
-                    $content .= 'Content-Transfer-Encoding: ';
-                    $content .= ( $type == 'html') ? 'quoted-printable' : $this->getTransEncodeType();
-                    $content .=  "\r\n"
-                             . 'Content-Disposition: inline'  . "\r\n"
-                             . 'Content-Description: ' . $type . ' message' . "\r\n";
+//                    $content .= 'Content-Transfer-Encoding: ';
+//                    $content .= ( $type == 'html') ? 'quoted-printable' : $this->getTransEncodeType();
+//                    $content .=  "\r\n"
+//                             . 'Content-Disposition: inline'  . "\r\n"
+//                             . 'Content-Description: ' . $type . ' message' . "\r\n";
 
                     if ( $this->getMD5flag() )
                         $content .= 'Content-MD5: ' . $_content['md5'] . "\r\n";
@@ -2026,7 +2059,8 @@ class SMTPs
             }
 
             // Close message boundries
-            $content .= "\r\n--" . $this->_getBoundary() . '--' . "\r\n" ;
+//            $content .= "\r\n--" . $this->_getBoundary() . '--' . "\r\n" ;
+            $content .= "--" . $this->_getBoundary() . '--' . "\r\n" ;
         }
 
         return $content;
@@ -2065,6 +2099,36 @@ class SMTPs
                 $this->_msgContent['attachment'][$strFileName]['md5']      = md5($strContent);
         }
     }
+
+
+    // DOL_CHANGE LDR
+    /**
+    * Method public void setImageInline( string )
+    *
+    * Image attachments are added to the content array as sub-arrays,
+    * allowing for multiple images for each outbound email
+    *
+    * @param string $strContent  Image data to attach to message
+    * @param string $strImageName Image Name to give to attachment
+    * @param string $strMimeType Image Mime Type of attachment
+    * @return void
+    *
+    */
+    function setImageInline ( $strContent, $strImageName = 'unknown', $strMimeType = 'unknown', $strImageCid = 'unknown' )
+    {
+        if ( $strContent )
+        {
+        	$this->_msgContent['image'][$strImageName]['mimeType'] = $strMimeType;
+          $this->_msgContent['image'][$strImageName]['imageName'] = $strImageName;
+          $this->_msgContent['image'][$strImageName]['cid']      = $strImageCid;
+          $this->_msgContent['image'][$strImageName]['data']     = $strContent;
+
+          if ( $this->getMD5flag() )
+              $this->_msgContent['image'][$strFileName]['md5']      = md5($strContent);
+        }
+    }
+    // END DOL_CHANGE LDR
+
 
    /**
     * Method public void setSensitivity( string )
@@ -2361,9 +2425,9 @@ class SMTPs
 
     function socket_send_str ( $_strSend, $_returnCode = null, $CRLF = "\r\n" )
     {
-    	if ($this->_debug) $this->log.=$_strSend . ":&nbsp;";
+    	if ($this->_debug) $this->log.=$_strSend;	// DOL_CHANGE LDR for log
         fputs($this->socket, $_strSend . $CRLF);
-        if ($this->_debug) $this->log.=$_returnCode . "<br>";
+        if ($this->_debug) $this->log.=' ('.$_returnCode.')' . $CRLF;
 
         if ( $_returnCode )
             return $this->server_parse($this->socket, $_returnCode);
@@ -2435,6 +2499,9 @@ class SMTPs
 
  /**
   * $Log$
+  * Revision 1.8  2009/05/13 19:10:07  eldy
+  * New: Can use inline images.Everything seems to work with thunderbird and webmail gmail. New to be tested on other mail browsers.
+  *
   * Revision 1.7  2009/05/13 14:49:30  eldy
   * Fix: Make code so much simpler and solve a lot of problem with new version.
   *
