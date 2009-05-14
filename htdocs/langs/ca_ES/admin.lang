@@ -234,6 +234,7 @@ UMask = Paràmetre UMask de nous fitxers en Unix/Linux/BSD.
 UMaskExplanation = Aquest paràmetre determina els drets dels arxius creats en el servidor Dolibarr (durant la pujada, per exemple).<br>Aquest ha de ser el valor octal (per exemple, 0666 significa lectura/escriptura per a tots).<br>Aquest paràmetre no té cap efecte sobre un servidor Windows.
 SeeWikiForAllTeam = Mireu el wiki per a més detalls de tots els actors i de la seva organització
 UseACacheDelay = Demora en memòria cau de l'exportació en segons (0 o buit sense memòria)
+DisableLinkToHelpCenter = Amagar l'enllaç "Necessita suport o ajuda" a la pàgina de login
 # Modules = undefined =  = 
 Module0Name = Usuaris y grups
 Module0Desc = Gestió d'usuaris i grups
@@ -632,7 +633,7 @@ DelaysOfToleranceChequesToDeposit = Tolerància de retard abans de l'alerta (en 
 SetupDescription1 = Totes les opcions de l'àrea de configuració són opcions que permeten configurar Dolibarr abans de començar la seva utilització.
 SetupDescription2 = Els 2 passos indispensables de la configuració són les 2 primeres al menú esquerre: la configuració de l'empresa/institució i la configuració dels mòduls:
 SetupDescription3 = La configuració <b>Empresa/institució</b> a administrar és requerida ja que s'utilitza la informació per a la introducció de dades en la majoria de les pantalles, a insercions, o per modificar el comportament de Dolibarr (com, per exemple, de les funcions que depenen del seu país).
-SetupDescription4 = La configuració <b>Mòduls </b> és indispensable ja que Dolibarr no és un ERP/CRM monolític, és un conjunt de mòduls més o menys independent. Després d'activar els mòduls que li interessin comprovarà les seves funcionalitats en els menús de Dolibarr.
+SetupDescription4 = La configuració <b>Mòduls</b> és indispensable ja que Dolibarr no és un ERP/CRM monolític, és un conjunt de mòduls més o menys independent. Després d'activar els mòduls que li interessin comprovarà les seves funcionalitats en els menús de Dolibarr.
 EventsSetup = Configuració del registre d'esdeveniments
 LogEvents = Auditoria de la seguretat d'esdeveniments
 Audit = Auditoria

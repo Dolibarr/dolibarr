@@ -234,6 +234,7 @@ UMask = Parámetro UMask de nuevos archivos en Unix/Linux/BSD.
 UMaskExplanation = Este parámetro determina los derechos de los archivos creados en el servidor Dolibarr (durante la subida, por ejemplo).<br>Este debe ser el valor octal (por ejemplo, 0666 significa lectura / escritura para todos).<br>Este parámetro no tiene ningún efecto sobre un servidor Windows.
 SeeWikiForAllTeam = Vea el wiki para más detalles de todos los actores y de su organización
 UseACacheDelay = Demora en caché de la exportación en segundos (0 o vacio sin caché)
+DisableLinkToHelpCenter = Ocultar el enlace "¿Necesita soporte o ayuda?" en la página de login
 # Modules = undefined = 
 Module0Name = Usuarios y grupos
 Module0Desc = Gestión de usuarios y grupos
