@@ -113,6 +113,7 @@ dol_fiche_head($head, 'handler', $langs->trans("Menus"));
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
 
     clearstatcache();

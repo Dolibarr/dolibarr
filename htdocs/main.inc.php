@@ -1097,6 +1097,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
 	$ret.=$title.'</a><br>';
 	$ret.='</div>';
+	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
 	$ret.='<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';

@@ -83,6 +83,7 @@ $form = new Form($db);
 // Categorie
 $var=!$var;
 print '<form action="droitpret.php" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 print '<input type="hidden" name="constname" value="DROITPRET_CAT">';
@@ -99,6 +100,7 @@ print '</form>';
 // Adresse destination
 $var=!$var;
 print '<form action="droitpret.php" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 print '<input type="hidden" name="constname" value="DROITPRET_MAIL">';

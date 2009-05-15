@@ -119,6 +119,7 @@ print '<tr><td width="30%" class="notopnoleft" valign="top">';
 
 // Formulaire recherche adherent
 print '<form action="liste.php" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="search">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

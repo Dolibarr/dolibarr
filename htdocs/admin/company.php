@@ -211,6 +211,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 	 */
 
 	print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 	$var=true;
 
@@ -576,6 +577,7 @@ else
 
 	// Identifiants de la société (propre au pays)
 	print '<form name="formsoc" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 	$var=true;

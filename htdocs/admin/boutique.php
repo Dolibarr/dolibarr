@@ -139,6 +139,7 @@ print '<br>';
 
 $var=true;
 print '<form name="oscommerceconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td width=\"40%\">".$langs->trans("Parameter")."</td>";

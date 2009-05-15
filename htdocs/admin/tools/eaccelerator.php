@@ -254,6 +254,7 @@ if (is_array($resCached) || is_array($resRemoved))
 {
 	print "<br>";
 	print '<form name="ea_control" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder">';
 	print '<tr class="liste_titre"><td colspan="2">Actions</td></tr>';
 	

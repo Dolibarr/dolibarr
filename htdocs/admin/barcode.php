@@ -230,6 +230,7 @@ if (!isset($_ENV['windir']) && !file_exists($_ENV['windir']))
 {
 	$var=!$var;
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setgenbarcodelocation">';
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';

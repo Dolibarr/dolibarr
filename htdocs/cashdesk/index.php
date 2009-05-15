@@ -62,8 +62,8 @@ if ( $_SESSION['uid'] > 0 ) {
 <div class="contenu">
 <div class="principal_login">
 <fieldset class="cadre_facturation"><legend class="titre1">Identification</legend>
-<form class="formulaire_login" id="frmLogin" method="post"
-	action="index_verif.php">
+<form class="formulaire_login" id="frmLogin" method="post" action="index_verif.php">
+	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken'] ?>" />
 
 <table>
 

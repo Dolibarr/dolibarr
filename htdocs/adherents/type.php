@@ -332,6 +332,7 @@ if ($rowid > 0)
 
 
         print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
         print '<input type="hidden" name="action" value="update">';
         print '<table class="border" width="100%">';

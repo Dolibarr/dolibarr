@@ -115,6 +115,7 @@ print_titre($langs->trans("SyslogOutput"));
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -140,6 +141,7 @@ print "</form>\n";
 
 // Level
 print '<form action="syslog.php" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setlevel">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

@@ -74,6 +74,7 @@ $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst")
 if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
 {
     print '<form method="post" action="delais.php" name="form_index">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
     $var=true;
 

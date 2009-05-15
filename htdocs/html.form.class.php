@@ -1619,6 +1619,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'" class="notoptoleftroright">';
 			print '<input type="hidden" name="action" value="'.$action.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 			print '<table width="100%" class="valid">';
 
@@ -1675,6 +1676,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="classin">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="noborder" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			select_projects($socid,$selected,$htmlname);
@@ -1709,6 +1711,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setconditions">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="noborder" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			$this->select_conditions_paiements($selected,$htmlname,-1,$addempty);
@@ -1743,6 +1746,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
 			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="noborder" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			print $this->select_date($selected,$htmlname,0,0,1,'form'.$htmlname);
@@ -1776,6 +1780,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmode">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="noborder" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			$this->select_types_paiements($selected,$htmlname);
@@ -1813,6 +1818,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setabsolutediscount">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			if (! $filter || $filter=='fk_facture_source IS NULL') print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';
@@ -1860,6 +1866,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="set_contact">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="noborder" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			$num=$this->select_contacts($societe->id, $selected, $htmlname);
@@ -1903,6 +1910,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setdeliveryadress">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="noborder" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			$this->select_adresse_livraison($selected, $socid, $htmlname, 1);

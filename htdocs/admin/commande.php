@@ -422,6 +422,7 @@ $var=true;
 /*
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalidorder">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("ValidOrderAfterPropalClosed").'</td>';
@@ -435,6 +436,7 @@ print '</form>';
 /*
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="deliverycostline">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("AddDeliveryCostLine").'</td>';
@@ -447,6 +449,7 @@ print '</form>';
 // Utiliser le contact de la commande dans le document
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_use_customer_contact_as_recipient">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UseCustomerContactAsOrderRecipientIfExist").'</td>';
@@ -457,6 +460,7 @@ print '</form>';
 
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_COMMANDE_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").'<br>';
