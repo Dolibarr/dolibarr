@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 <!-- ========================= Cadre "Article" ============================= -->
 <fieldset class="cadre_facturation"><legend class="titre1">Article</legend>
 	<form id="frmFacturation" class="formulaire1" method="post" action="facturation_verif.php">
+		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 
 		<input type="hidden" name="hdnSource" value="NULL" />
 
@@ -103,6 +104,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	</form>
 
 	<form id="frmQte" class="formulaire1" method="post" action="facturation_verif.php?action=ajout_article" onsubmit ="javascript: return verifSaisie();">
+		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 		<table>
 			<tr><th class="label1">Quantité</th><th class="label1">Stock</th><th class="label1">Prix unitaire</th><th></th><th class="label1">Taux TVA</th><th class="label1">Remise (%)</th><th class="label1">Prix total</th></tr>
 			<tr>
@@ -145,6 +147,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 <!-- ========================= Cadre "Différence" ============================= -->
 <form id="frmDifference"  class="formulaire1" method="post" onsubmit="javascript: return verifReglement()" action="validation_verif.php?action=valide_achat">
+	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 <fieldset class="cadre_facturation"><legend class="titre1">Différence</legend>
 		<table>
 			<tr><th class="label1">Montant dû</th><th class="label1">Encaissé</th><th class="label1">Rendu</th></tr>

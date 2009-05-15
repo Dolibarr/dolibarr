@@ -66,7 +66,7 @@ if ($_GET["msg"])
 
 <!-- Dump of a server -->
 <form method="post" action="export.php" name="dump">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken'] ?>" />
+<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 
 <input type="hidden" name="export_type" value="server" />
 
