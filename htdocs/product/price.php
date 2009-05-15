@@ -70,7 +70,7 @@ if ($_POST["action"] == 'update_price' && ! $_POST["cancel"] && $user->rights->p
 				$newprice=price2num($_POST["price_".$i],'MU');
 				$newprice_min=price2num($_POST["price_min_".$i],'MU');
 				$newpricebase=$_POST["multiprices_base_type_".$i];
-				$newnpr=(eregi('\*',$_POST["tva_tx_".$i]) ? 1 : $defaultnpr);
+				$newnpr=(eregi('\*',$_POST["tva_tx_".$i]) ? 1 : 0);
 				$newvat=eregi_replace('\*','',$_POST["tva_tx_".$i]);
 			}
 		}
@@ -81,7 +81,7 @@ if ($_POST["action"] == 'update_price' && ! $_POST["cancel"] && $user->rights->p
 		$newprice=price2num($_POST["price"],'MU');
 		$newprice_min=price2num($_POST["price_min"],'MU');
 		$newpricebase=$_POST["price_base_type"];
-		$newnpr=(eregi('\*',$_POST["tva_tx"]) ? 1 : $defaultnpr);
+		$newnpr=(eregi('\*',$_POST["tva_tx"]) ? 1 : 0);
 		$newvat=eregi_replace('\*','',$_POST["tva_tx"]);
 	}
 

@@ -11,6 +11,7 @@ For users:
 - New: Complete theme bluelagoon and rodolphe
 - Fix: Customer code was not correct on PDF it if contains special 
        characters.
+- Fix: Can update price even with "NPR" VAT rates.
        
 For translators:
 - Update some language files.
