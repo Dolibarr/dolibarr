@@ -57,6 +57,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 $rowspan=2;
 if ($conf->barcode->enabled) $rowspan++;
 print '<form method="post" action="'.DOL_URL_ROOT.'/product/liste.php">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';

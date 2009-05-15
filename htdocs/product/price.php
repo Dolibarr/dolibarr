@@ -246,6 +246,7 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 	if (empty($conf->global->PRODUIT_MULTIPRICES))
 	{
 		print '<form action="price.php?id='.$product->id.'" method="post">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="'.$product->id.'">';
 		print '<table class="border" width="100%">';
@@ -302,6 +303,7 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 		for($i=1; $i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 		{
 			print '<form action="price.php?id='.$product->id.'" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update_price">';
 			print '<input type="hidden" name="id" value="'.$product->id.'">';
 			print '<table class="border" width="100%">';

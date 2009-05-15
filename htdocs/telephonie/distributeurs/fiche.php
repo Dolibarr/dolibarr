@@ -86,6 +86,7 @@ if ($_GET["action"] == 'create_commercial')
   dol_fiche_head($head, $hselected, $distri->nom);
 
   print '<form method="POST" action="fiche.php?distri='.$_GET["distri"].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<input type="hidden" name="action" value="add_commercial"></td></tr>';
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -120,6 +121,7 @@ $h++;
 dol_fiche_head($head, $hselected, "Distributeurs");
 
   print '<form method="POST" action="fiche.php">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<input type="hidden" name="action" value="add"></td></tr>';
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';

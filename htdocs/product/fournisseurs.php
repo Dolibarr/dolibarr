@@ -247,6 +247,7 @@ if ($_GET["id"] || $_GET["ref"])
 				}		  
 				print '<table class="border" width="100%">';
 				print '<form action="fournisseurs.php?id='.$product->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateprice">';
 				
 				print '<tr><td>'.$langs->trans("Supplier").'</td><td colspan="3">';

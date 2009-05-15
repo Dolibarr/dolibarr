@@ -142,6 +142,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
 	print '<form action="fiche.php" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="createtask">';
 	if ($_GET['id'])   print '<input type="hidden" name="id" value="'.$_GET['id'].'">';
 	if ($_GET['mode']) print '<input type="hidden" name="mode" value="'.$_GET['mode'].'">';
@@ -190,6 +191,7 @@ else
 	$param=($_REQUEST["mode"]=='mine'?'&mode=mine':'');
 
 	print '<form name="addtime" method="POST" action="fiche.php?id='.$projet->id.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	print '<table class="border" width="100%">';
 

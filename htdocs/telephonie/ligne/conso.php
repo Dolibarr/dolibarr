@@ -217,6 +217,7 @@ if ($_GET["id"] or $_GET["numero"])
 	      print_barre_liste("CDR", $page, "conso.php", $urladd, $sortfield, $sortorder, '', $num);
 
 	      print '<form action="conso.php?'.$urladd.'" method="POST">'."\n";
+	      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">'."\n";
 	      print '<tr class="liste_titre">';
 	      print '<td>Numero</td><td>Date</td><td align="right">Duree</td>';

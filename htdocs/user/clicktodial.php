@@ -97,6 +97,7 @@ if ($_GET["id"])
     if ($_GET["action"] == 'edit')
     {
         print '<form action="clicktodial.php?id='.$_GET["id"].'" method="post">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="update">';
         print '<table class="border" width="100%">';
         

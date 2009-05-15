@@ -130,7 +130,8 @@ print '</table>';
 
 print '</td><td valign="top" width="50%" rowspan="3">';
 
-print '<form name="userfile" action="index.php" enctype="multipart/form-data" METHOD="POST">';      
+print '<form name="userfile" action="index.php" enctype="multipart/form-data" METHOD="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';    
 print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';

@@ -140,6 +140,7 @@ if ( $soc->fetch($soc->id) )
 		print_fiche_titre($langs->trans("AddNewNotification"));
 		
 	    print '<form action="fiche.php?socid='.$socid.'" method="post">';
+	    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	
 	    // Ligne de titres
 	    print '<table width="100%" class="noborder">';

@@ -82,6 +82,7 @@ dol_fiche_head($head, $hselected, "Configuration des liens xDSL");
 
 print_titre("Workflow");
 print '<form method="post" action="xdsl_wkf.php?action=add">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 
 $form = new Form($db);

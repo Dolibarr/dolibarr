@@ -192,6 +192,7 @@ asort($orders);
 //var_dump($orders);
 
 print '<form name="choosedemo" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="username" value="demo">';
 print "\n";
 

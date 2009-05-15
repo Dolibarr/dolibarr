@@ -421,6 +421,7 @@ else
 			print_fiche_titre($langs->trans("WarehouseEdit"), $mesg);
 
 			print '<form action="fiche.php" method="POST">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$entrepot->id.'">';
 

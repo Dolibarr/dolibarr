@@ -112,6 +112,7 @@ else if (! empty($conf->global->PAYBOX_CREDITOR)) $creditor=$conf->global->PAYBO
 
 print '<center>';
 print '<form name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="dopayment">';
 print '<input type="hidden" name="amount" value="'.$_REQUEST["amount"].'">';
 print '<input type="hidden" name="tag" value="'.$_REQUEST["tag"].'">';

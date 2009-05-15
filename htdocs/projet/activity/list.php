@@ -122,6 +122,7 @@ $tasksarray=$projet->getTasksArray(0,0);
 //var_dump($tasksarray);
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$projet->id.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addtime">';
 
 print '<table class="noborder" width="100%">';

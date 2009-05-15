@@ -247,6 +247,7 @@ if ($id || $ref)
 		print '<tr><td colspan="2"><b>'.$langs->trans("ProductToAddSearch").'</b>';
 		print '<table class="noborder">';
 		print '<tr><td><form action="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?id='.$id.'" method="post">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print $langs->trans("KeywordFilter");
 		print '</td><td><input type="text" name="key" value="'.$key.'">';
 		print '<input type="hidden" name="action" value="search">';
@@ -269,6 +270,7 @@ if ($id || $ref)
 			print '<tr>';
 			print '<td><b>'.$langs->trans("Ref").'</b></td><td><b>'.$langs->trans("Label").'</b></td><td><b>'.$langs->trans("AddDel").'</b></td><td><b>'.$langs->trans("Quantity").'</b></td>';
 			print '<form action="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?id='.$id.'" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="add_prod"';
 			print '<input type="hidden" name="id" value="'.$id.'"';
 			if ($resql)

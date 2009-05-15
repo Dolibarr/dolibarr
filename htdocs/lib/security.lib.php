@@ -97,6 +97,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print $_SERVER['PHP_SELF'];
 	print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
 	print '">'."\n";
+	
+	// Token field
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	// Table 1
 	$title='Dolibarr '.DOL_VERSION;
