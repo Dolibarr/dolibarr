@@ -864,7 +864,9 @@ class Form
 						if ( $resultd ) $objtp = $this->db->fetch_object($resultd); // on charge la traduction suivante
 					}
 				}
-				$opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
+				$opt = '<option value="'.$objp->rowid.'"';
+				$opt.= ($objp->rowid == $selected)?' selected="true"':'';
+				$opt.= '>'.$objp->ref.' - ';
 				$opt.= dol_trunc($objp->label,32).' - ';
 
 				// Multiprice

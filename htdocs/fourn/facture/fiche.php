@@ -969,12 +969,12 @@ else
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('label','',100,'dolibarr_details');
+					$doleditor=new DolEditor('label',$_POST["label"],100,'dolibarr_details');
 					$doleditor->Create();
 				}
 				else
 				{
-					print '<textarea class="flat" cols="60" name="label" rows="'.ROWS_2.'"></textarea>';
+					print '<textarea class="flat" cols="60" name="label" rows="'.ROWS_2.'">'.$_POST["label"].'</textarea>';
 				}
 				print '</td>';
 				print '<td align="right">';

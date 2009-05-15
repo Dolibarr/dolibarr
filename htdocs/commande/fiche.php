@@ -1793,12 +1793,12 @@ else
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('dp_desc','',100,'dolibarr_details');
+					$doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],100,'dolibarr_details');
 					$doleditor->Create();
 				}
 				else
 				{
-					print '<textarea class="flat" cols="70" name="dp_desc" rows="'.ROWS_2.'"></textarea>';
+					print '<textarea class="flat" cols="70" name="dp_desc" rows="'.ROWS_2.'">'.$_POST["dp_desc"].'</textarea>';
 				}
 				print '</td>';
 				print '<td align="right">';
@@ -1870,12 +1870,12 @@ else
 					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 					{
 						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-						$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
+						$doleditor=new DolEditor('np_desc',$_POST["np_desc"],100,'dolibarr_details');
 						$doleditor->Create();
 					}
 					else
 					{
-						print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'" class="flat"></textarea>';
+						print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'" class="flat">'.$_POST["np_desc"].'</textarea>';
 					}
 
 					print '</td>';
