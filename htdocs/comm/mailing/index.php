@@ -50,6 +50,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 // Recherche emails
 $var=false;
 print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/liste.php">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAMailing").'</td></tr>';
 print '<tr '.$bc[$var].'><td nowrap>';

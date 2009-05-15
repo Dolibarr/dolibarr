@@ -114,6 +114,7 @@ print '<tr><td class="notopnoleft" valign="top" width="30%">';
 
 print "\n";
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="id" value="'.$categorie->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';

@@ -240,7 +240,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 									if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))
 									{
 										$qualified=0;
-										//print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
+										//print "Les prerequis d'activation du module mailing ne sont pas respectes. Il ne sera pas actif";
 										break;
 									}
 								}
@@ -251,7 +251,11 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 									$var = !$var;
 									print '<tr '.$bc[$var].'>';
 
-									if ($mil->statut == 0) print '<form name="'.$modulename.'" action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+									if ($mil->statut == 0)
+									{
+										print '<form name="'.$modulename.'" action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+										print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+									}
 
 									print '<td>';
 									if (! $obj->picto) $obj->picto='generic';
@@ -309,6 +313,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		print '<br>';
 
 		print '<form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print_titre($langs->trans("ToClearAllRecipientsClickHere"));
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -324,6 +329,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	// List of selected targets
 	print "\n<!-- Liste destinataires selectionnes -->\n";
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="id" value="'.$mil->id.'">';

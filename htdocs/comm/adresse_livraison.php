@@ -214,6 +214,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         }
 
         print '<form action="adresse_livraison.php" method="post" name="formsoc">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="socid" value="'.$socid.'">';
         print '<input type="hidden" name="origin" value="'.$origin.'">';
         print '<input type="hidden" name="originid" value="'.$originid.'">';
@@ -318,6 +319,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         }
 
         print '<form action="adresse_livraison.php?socid='.$livraison->socid.'" method="post" name="formsoc">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="update">';
         print '<input type="hidden" name="socid" value="'.$livraison->socid.'">';
         print '<input type="hidden" name="origin" value="'.$origin.'">';

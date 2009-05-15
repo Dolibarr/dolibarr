@@ -96,6 +96,7 @@ if ($_socid > 0)
      *
      */
     print '<form method="POST" action="remise.php?id='.$objsoc->id.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="setremise">';
     print '<table width="100%" border="0">';
     print '<tr><td valign="top">';
