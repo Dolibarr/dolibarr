@@ -30,9 +30,12 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
 
-if (!$user->admin)
+//Todo protection faille CSRF !!!
+if (!eregi(DOL_MAIN_URL_ROOT, $_SERVER['HTTP_REFERER']))
 accessforbidden();
 
+if (!$user->admin)
+accessforbidden();
 
 
 $typeconst=array('yesno','texte','chaine');
