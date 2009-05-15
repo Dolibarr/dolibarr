@@ -95,6 +95,7 @@ if ($_GET["action"] == 'edit')
     print '<table class="border" width="100%">';
 
     print '<form name="perso" method="post" action="perso.php?id='.$_GET["id"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="contactid" value="'.$contact->id.'">';
 

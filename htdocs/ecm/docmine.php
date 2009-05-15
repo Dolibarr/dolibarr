@@ -228,6 +228,7 @@ dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"));
 if ($_GET["action"] == 'edit')
 {
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="section" value="'.$section.'">';
 	print '<input type="hidden" name="action" value="update">';
 }

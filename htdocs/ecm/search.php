@@ -140,6 +140,7 @@ print '<table class="nobordernopadding" width="100%"><tr><td valign="top">';
 //print_fiche_titre($langs->trans("ECMSectionsManual"));
 
 print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="nobordernopadding" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="2">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
@@ -153,6 +154,7 @@ print "</table></form>";
 //print_fiche_titre($langs->trans("ECMSectionAuto"));
 
 print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="4">'.$langs->trans("ECMSearchByEntity").'</td></tr>';

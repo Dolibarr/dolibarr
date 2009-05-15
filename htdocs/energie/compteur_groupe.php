@@ -82,6 +82,7 @@ if ($_GET["id"] > 0)
       
       $html = new Form($db);
       print '<form action="compteur_groupe.php?id='.$compteur->id.'" method="post">';
+      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
       print '<input type="hidden" name="action" value="addvalue">';
       print '<table class="border" width="100%">';	  
       

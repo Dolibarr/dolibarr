@@ -462,6 +462,7 @@ if ($_GET["action"] == 'create')
             $soc->fetch($obj->rowid);
 
             print '<form name="contrat" action="fiche.php" method="post">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
@@ -682,6 +683,7 @@ else
         if ($contrat->brouillon && $user->rights->contrat->creer)
         {
             print '<form action="fiche.php?id='.$id.'" method="post">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="setremise">';
         }
 
@@ -1066,6 +1068,7 @@ else
 				 * Activer la ligne de contrat
 				 */
 				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$contrat->id.'&amp;ligne='.$_GET["ligne"].'&amp;action=active" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 				print '<table class="noborder" width="100%">';
 				//print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("Status").'</td></tr>';
@@ -1115,6 +1118,7 @@ else
 				 * Desactiver la ligne de contrat
 				 */
 				print '<form name="closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$contrat->id.'&amp;ligne='.$contrat->lignes[$cursorline-1]->id.'&amp;action=closeline" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 				print '<table class="noborder" width="100%">';
 
@@ -1189,6 +1193,7 @@ else
 
 			// Service sur produit predefini
 			print '<form name="addligne" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addligne">';
 			print '<input type="hidden" name="mode" value="predefined">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
@@ -1224,6 +1229,7 @@ else
 
 			// Service libre
 			print '<form name="addligne_sl" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addligne">';
 			print '<input type="hidden" name="mode" value="libre">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
