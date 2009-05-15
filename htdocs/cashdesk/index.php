@@ -69,16 +69,19 @@ if ( $_SESSION['uid'] > 0 ) {
 
 	<tr>
 		<td class="label1">Nom d'utilisateur</td>
-		<td><input name="txtUsername" class="texte_login" type="text"	value="<?php echo $_GET['user']; ?>" /></td>
+		<td><input name="txtUsername" class="texte_login" type="text"
+			value="<?php echo $_GET['user']; ?>" /></td>
 	</tr>
 	<tr>
 		<td class="label1">Mot de passe</td>
-		<td><input name="pwdPassword" class="texte_login" type="password"	value="" /></td>
+		<td><input name="pwdPassword" class="texte_login" type="password"
+			value="" /></td>
 	</tr>
 
 </table>
 
-<span class="bouton_login"><input name="sbmtConnexion" type="submit" value="Connexion" /></span>
+<span class="bouton_login"><input name="sbmtConnexion" type="submit"
+	value="Connexion" /></span>
 
 </form>
 </fieldset>
