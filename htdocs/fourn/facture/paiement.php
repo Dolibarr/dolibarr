@@ -221,6 +221,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			print_fiche_titre($langs->trans('DoPayment'));
 
 			print '<form name="addpaiement" action="paiement.php" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="add_paiement">';
 			print '<input type="hidden" name="facid" value="'.$facid.'">';
 			print '<input type="hidden" name="facnumber" value="'.$obj->facnumber.'">';

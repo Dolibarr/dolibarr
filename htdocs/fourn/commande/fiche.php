@@ -777,6 +777,7 @@ if ($id > 0 || ! empty($ref))
 			if ($_GET["action"]	== 'editline' && $user->rights->fournisseur->commande->creer && ($_GET["rowid"] == $commandline->id))
 			{
 				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;etat=1&amp;ligne_id='.$commandline->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateligne">';
 				print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
 				print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
@@ -842,6 +843,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Add free products/services form
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="addligne">';
 			print '<input type="hidden"	name="id" value="'.$commande->id.'">';
 
@@ -899,6 +901,7 @@ if ($id > 0 || ! empty($ref))
 				print '</tr>';
 
 				print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="addligne">';
 				print '<input type="hidden" name="id" value="'.$commande->id.'">';
 
@@ -1010,6 +1013,7 @@ if ($id > 0 || ! empty($ref))
 			 */
 			print '<br>';
 			print '<form name="commande" action="fiche.php?id='.$commande->id.'&amp;action=commande" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="commande">';
 			print '<table class="border" width="100%">';
 			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
@@ -1035,6 +1039,7 @@ if ($id > 0 || ! empty($ref))
 			 */
 			print '<br>';
 			print '<form action="fiche.php?id='.$commande->id.'" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="livraison">';
 			print '<table class="border" width="100%">';
 			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';

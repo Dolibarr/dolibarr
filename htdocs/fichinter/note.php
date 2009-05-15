@@ -114,6 +114,7 @@ if ($_GET['id'])
 			if ($_GET["action"] == 'edit')
 			{
 				print '<form method="post" action="note.php?id='.$fichinter->id.'">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="update_public">';
 				print '<textarea name="note_public" cols="80" rows="8">'.$fichinter->note_public."</textarea><br>";
 				print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -133,6 +134,7 @@ if ($_GET['id'])
 				if ($_GET["action"] == 'edit')
 				{
 					print '<form method="post" action="note.php?id='.$fichinter->id.'">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="update">';
 					print '<textarea name="note_private" cols="80" rows="8">'.$fichinter->note_private."</textarea><br>";
 					print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';

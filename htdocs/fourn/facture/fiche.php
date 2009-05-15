@@ -386,6 +386,7 @@ if ($_GET['action'] == 'create')
 	$dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
 
 	print '<form name="add" action="fiche.php" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<table class="border" width="100%">';
 
@@ -478,6 +479,7 @@ else
 			print_fiche_titre($langs->trans('SupplierInvoice'));
 
 			print '<form name="update" action="fiche.php?facid='.$fac->id.'" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 
 			print '<table class="border" width="100%">';
@@ -812,6 +814,7 @@ else
 				if ($fac->statut == 0 && $_GET['action'] == 'mod_ligne' && $_GET['etat'] == '0' && $_GET['ligne_id'] == $fac->lignes[$i]->rowid)
 				{
 					print '<form action="fiche.php?facid='.$fac->id.'&amp;etat=1&amp;ligne_id='.$fac->lignes[$i]->rowid.'" method="post">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="update_line">';
 					print '<tr '.$bc[$var].'>';
 
@@ -954,6 +957,7 @@ else
 
 				// Add free products/services form
 				print '<form action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 				print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 
@@ -1018,6 +1022,7 @@ else
 					print '</tr>';
 
 					print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="socid" value="'. $fac->socid .'">';
 					print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 					print '<input type="hidden" name="socid" value="'.$fac->socid.'">';

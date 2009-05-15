@@ -193,6 +193,7 @@ else
 	print '<td valign="top" width="140" colspan="2">'.$langs->trans('Date').'</td>';
 	print '<td colspan="3">';
 	print '<form name="formsoc" method="post" action="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'"><input type="hidden" name="action" value="update_date" />';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	if (!empty($_POST['remonth']) && !empty($_POST['reday']) && !empty($_POST['reyear']))
 	$sel_date=dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 	else
@@ -224,6 +225,7 @@ else
 	print '<td valign="top" width="140" colspan="2">'.$langs->trans('Numero').'</td>';
 	print '<td colspan="3">';
 	print '<form name="formsoc" method="post" action="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'"><input type="hidden" name="action" value="update_num" />';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	if (!empty($_POST['new_num']))
 	$num = $this->db->escape($_POST['new_num']);
 	else

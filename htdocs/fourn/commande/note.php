@@ -98,6 +98,7 @@ if ($id > 0 || ! empty($ref))
 		*   Commande
 		*/
 		print '<form action="note.php?id='.$commande->id.'" method="post">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="updatenote">';
 
 		print '<table class="border" width="100%">';
