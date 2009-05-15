@@ -30,9 +30,15 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
 
-//Todo protection faille CSRF !!!
+//Todo: protection faille CSRF !!!
 if (! empty($_SERVER['HTTP_REFERER']) && !eregi(DOL_MAIN_URL_ROOT, $_SERVER['HTTP_REFERER']))
 accessforbidden();
+
+//Todo: Verification de la presence et de la validite du jeton précédent
+if (isset($_POST['token']) && isset($_SESSION['oldtoken']))
+{
+	if ($_POST['token'] != $_SESSION['oldtoken']) accessforbidden();
+}
 
 if (!$user->admin)
 accessforbidden();
@@ -141,6 +147,9 @@ if ($result)
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="rowid" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="constname" value="'.$obj->name.'">';
+		
+		// Ajout du nouveau jeton dans les requetes POST
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
 

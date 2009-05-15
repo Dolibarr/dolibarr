@@ -168,6 +168,11 @@ session_name($sessionname);
 session_start();
 dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".(isset($_SESSION["dol_login"])?$_SESSION["dol_login"]:'').", ".ini_get("session.gc_maxlifetime"));
 
+//Todo: Creation d'un jeton contre les failles CSRF
+$token = md5(uniqid(rand(),TRUE)); // Genere un hash d'un nombre aleatoire
+$_SESSION['oldtoken'] = $_SESSION['newtoken']; // roulement des jetons car créé à chaque appel
+$_SESSION['newtoken'] = $token;
+
 // Retrieve the entity in login form or in the cookie.
 // This must be after the init of session (session_start) or this create serious pb of corrupted session.
 /*
