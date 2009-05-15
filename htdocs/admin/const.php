@@ -34,12 +34,6 @@ $langs->load("admin");
 if (! empty($_SERVER['HTTP_REFERER']) && !eregi(DOL_MAIN_URL_ROOT, $_SERVER['HTTP_REFERER']))
 accessforbidden();
 
-//Todo: Verification de la presence et de la validite du jeton précédent
-if (isset($_POST['token']) && isset($_SESSION['oldtoken']))
-{
-	if ($_POST['token'] != $_SESSION['oldtoken']) accessforbidden();
-}
-
 if (!$user->admin)
 accessforbidden();
 
