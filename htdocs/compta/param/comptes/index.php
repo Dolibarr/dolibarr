@@ -57,6 +57,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
  * Zone recherche facture
  */
 print '<form method="post" action="facture.php">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";

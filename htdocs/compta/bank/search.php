@@ -146,6 +146,7 @@ if ($resql)
 	print "</tr>\n";
 	
 	print '<form method="post" action="search.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';

@@ -121,6 +121,7 @@ if ($id > 0 || ! empty($ref))
 	if ($_GET["action"] == 'edit')
 	{
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<textarea name="note_public" cols="80" rows="8">'.$commande->note_public."</textarea><br>";
 	}

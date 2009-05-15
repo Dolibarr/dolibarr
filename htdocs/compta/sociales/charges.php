@@ -181,6 +181,7 @@ if ($_GET["action"] == 'create')
     $var=false;
 
     print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
 	print "<table class=\"noborder\" width=\"100%\">";

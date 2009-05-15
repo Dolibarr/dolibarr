@@ -172,6 +172,7 @@ if ($_GET["action"] == 'create')
 	}
 
 	  print '<form name="add_paiement" action="paiement_charge.php" method="post">';
+	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	  print "<input type=\"hidden\" name=\"id\" value=\"$charge->id\">";
 	  print '<input type="hidden" name="action" value="add_paiement">';
 

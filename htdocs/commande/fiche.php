@@ -921,6 +921,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			$nbrow=10;
 
 			print '<form name="crea_commande" action="fiche.php" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
 			print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
@@ -1293,6 +1294,7 @@ else
 			if ($user->rights->commande->creer && $_GET['action'] == 'RefCustomerOrder')
 			{
 				print '<form action="fiche.php?id='.$id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="set_ref_client">';
 				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
 				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -1367,6 +1369,7 @@ else
 			if ($_GET['action'] == 'editdate_livraison')
 			{
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
 				$html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -1669,6 +1672,7 @@ else
 					if ($_GET['action'] == 'editline' && $user->rights->commande->creer && $_GET['rowid'] == $objp->rowid)
 					{
 						print '<form action="'.$_SERVER["PHP_SELF"].'#'.$objp->rowid.'" method="post">';
+						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 						print '<input type="hidden" name="action" value="updateligne">';
 						print '<input type="hidden" name="id" value="'.$id.'">';
 						print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
@@ -1779,6 +1783,7 @@ else
 
 				// Add free products/services form
 				print '<form action="fiche.php?id='.$id.'#add" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
 
@@ -1848,6 +1853,7 @@ else
 					print '</tr>';
 
 					print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'#add" method="post">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="id" value="'.$id.'">';
 					print '<input type="hidden" name="action" value="addligne">';
 

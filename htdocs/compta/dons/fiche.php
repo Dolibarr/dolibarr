@@ -212,6 +212,7 @@ if ($_GET["action"] == 'create')
 	if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
 	print '<form name="add" action="fiche.php" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
 
 	print '<input type="hidden" name="action" value="add">';
@@ -278,6 +279,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 	dol_fiche_head($head, $hselected, $langs->trans("Ref"));
 
 	print '<form name="update" action="fiche.php" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
 
 	print '<input type="hidden" name="action" value="update">';

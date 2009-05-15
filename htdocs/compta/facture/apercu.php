@@ -117,6 +117,7 @@ if ($_GET["facid"] > 0)
 		if ($fac->brouillon == 1 && $user->rights->facture->creer)
 		{
 			print '<form action="facture.php?facid='.$fac->id.'" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setremise">';
 			print '<td colspan="3"><input type="text" name="remise" size="1" value="'.$fac->remise_percent.'">% ';
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'"></td>';

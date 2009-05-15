@@ -197,6 +197,7 @@ if ($resql)
         $var=!$var;
         print "<tr $bc[$var]>";
         print '<form method="post" action="rappro.php?account='.$_GET["account"].'">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
         print "<input type=\"hidden\" name=\"account\" value=\"".$_GET["account"]."\">";
         print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";

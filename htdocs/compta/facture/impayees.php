@@ -308,6 +308,7 @@ if ($result)
 		$total_payed=0;
 
 		print '<form id="form_generate_pdf" method="post" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $_GET['sortfield'] .'&sortorder='. $_GET['sortorder'] .'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		while ($i < $num)
 		{

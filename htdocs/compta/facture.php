@@ -1424,6 +1424,7 @@ if ($_GET['action'] == 'create')
 	if (empty($cond_reglement_id)) $cond_reglement_id=1;
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
 	print '<input name="facnumber" type="hidden" value="provisoire">';
@@ -2193,6 +2194,7 @@ else
 				if ($user->rights->facture->creer && $_GET['action'] == 'RefCustomerOrder')
 				{
 					print '<form action="facture.php?facid='.$id.'" method="post">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="set_ref_client">';
 					print '<input type="text" class="flat" size="20" name="ref_client" value="'.$fac->ref_client.'">';
 					print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -2890,6 +2892,7 @@ else
 					if ($_GET['action'] == 'editline' && $user->rights->facture->creer && $_GET['rowid'] == $objp->rowid)
 					{
 						print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'#'.$objp->rowid.'" method="post">';
+						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 						print '<input type="hidden" name="action" value="updateligne">';
 						print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 						print '<input type="hidden" name="rowid" value="'.$_GET['rowid'].'">';
@@ -3003,6 +3006,7 @@ else
 
 				// Add free products/services form
 				print '<form name="addligne" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
 
@@ -3071,6 +3075,7 @@ else
 					print '</tr>';
 
 					print '<form id="addpredefinedproduct" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 					print '<input type="hidden" name="action" value="addligne_predef">';
 

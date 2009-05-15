@@ -110,6 +110,7 @@ if ($_GET["action"] == 'create')
 	if ($facture->fetch($_GET["facid"]) > 0)
 	{
 		print '<form action="fiche-rec.php" method="post">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="facid" value="'.$facture->id.'">';
 
