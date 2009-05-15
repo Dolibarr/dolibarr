@@ -122,6 +122,10 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 // This include will set: $conf, $langs and $mysoc objects
 require_once("master.inc.php");
 
+// Protection faille CSRF !!!
+if (! empty($_SERVER['HTTP_REFERER']) && !eregi(DOL_MAIN_URL_ROOT, $_SERVER['HTTP_REFERER']))
+accessforbidden();
+
 // Check if HTTPS
 if ($conf->file->main_force_https)
 {
