@@ -110,7 +110,8 @@ analyse_sql_injection($_POST);
 // Security: CSRF protection
 if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_REFERER']) && !eregi(DOL_MAIN_URL_ROOT, $_SERVER['HTTP_REFERER']))
 {
-	return;
+	unset($_GET);
+	unset($_POST);
 }
 
 // This is to make Dolibarr working with Plesk
