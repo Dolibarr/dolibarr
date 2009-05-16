@@ -219,17 +219,17 @@ class CMailFile
 			require_once(DOL_DOCUMENT_ROOT."/includes/simplemail/class.mail.php");
 			$mail = new simplemail();
 			
-			foreach($to as $val)
+			$arrayaddress=split(',',$to);
+			
+			foreach($arrayaddress as $val)
 			{
 				if (eregi('^(.*)<(.*)>$',trim($val),$regs))
 				{
 					$name  = trim($regs[1]);
 					$email = trim($regs[2]);
 					$mail->addrecipient($email,$name);
-					print 'email='.$email.' name='.$name.'<br>';
 				}
-			}
-			//exit;		
+			}	
 			
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
