@@ -178,19 +178,6 @@ if (isset($_POST['token']) && isset($_SESSION['oldtoken']))
 	if ($_POST['token'] != $_SESSION['oldtoken']) unset($_POST);
 }
 
-// Retrieve the entity in login form or in the cookie.
-// This must be after the init of session (session_start) or this create serious pb of corrupted session.
-/*
- $entityCookieName = "DOLENTITYID_dolibarr";
-if ((isset($_POST["loginfunction"]) && isset($_POST["entity"])) || isset($_COOKIE[$entityCookieName]))
-{
-	$_SESSION["dol_entity"] = isset($_POST["entity"])?$_POST["entity"]:$_COOKIE[$entityCookieName];
-	$conf->entity=$_SESSION["dol_entity"];
-	dol_syslog("We work on entity ".$conf->entity);
-	// Now we need to reload the conf with the choosed entity
-}
-*/
-
 // Disable modules (this must be after session_start and after conf has been reloaded)
 if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
 if (! empty($_SESSION["disablemodules"]))
