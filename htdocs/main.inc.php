@@ -181,13 +181,21 @@ if (isset($_POST['token_level_1']) && isset($_SESSION['token_level_1']))
 {
 	//print 'post_token_level_1='.$_POST['token_level_1'].'<br>';
 	//print 'session_token_level_1='.$_SESSION['token_level_1'].'<br>';
-	if ($_POST['token_level_1'] != $_SESSION['token_level_1']) unset($_POST);
+	if ($_POST['token_level_1'] != $_SESSION['token_level_1'])
+	{
+		unset($_POST);
+		dol_syslog("Invalid token_level_1 in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token_level_1']=".$_POST['token_level_1'].", _SESSION['token_level_1']=".$_SESSION['token_level_1']);
+	}
 }
 else if (isset($_POST['token_level_2']) && isset($_SESSION['token_level_2']))
 {
 	//print 'post_token_level_2='.$_POST['token_level_2'].'<br>';
 	//print 'session_token_level_2='.$_SESSION['token_level_2'].'<br>';
-	if ($_POST['token_level_2'] != $_SESSION['token_level_2']) unset($_POST);
+	if ($_POST['token_level_2'] != $_SESSION['token_level_2'])
+	{
+		unset($_POST);
+		dol_syslog("Invalid token_level_2 in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token_level_2']=".$_POST['token_level_2'].", _SESSION['token_level_2']=".$_SESSION['token_level_2']);
+	}
 }
 
 
