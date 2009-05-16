@@ -88,7 +88,7 @@ class CMailFile
 	$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='')
 	{
 		global $conf;
-var_dump($to); exit;
+
 		// On definit fin de ligne
 		$this->eol="\n";
 		if (eregi('^win',PHP_OS)) $this->eol="\r\n";
@@ -218,6 +218,18 @@ var_dump($to); exit;
 
 			require_once(DOL_DOCUMENT_ROOT."/includes/simplemail/class.mail.php");
 			$mail = new simplemail();
+			
+			foreach($to as $val)
+			{
+				if (eregi('^(.*)<(.*)>$',trim($val),$regs))
+				{
+					$name  = trim($regs[1]);
+					$email = trim($regs[2]);
+					$mail->addrecipient($email,$name);
+					print 'email='.$email.' name='.$name.'<br>';
+				}
+			}
+			//exit;		
 			
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
