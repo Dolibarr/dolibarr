@@ -1619,7 +1619,7 @@ class Form
 		{
 			print '<form method="post" action="'.$page.'" class="notoptoleftroright">';
 			print '<input type="hidden" name="action" value="'.$action.'">';
-			print '<input type="hidden" name="token_level_2" value="'.$_SESSION['newtoken'].'">';
+			if (is_array($formquestion)) print '<input type="hidden" name="token_level_2" value="'.$_SESSION['newtoken'].'">';
 
 			print '<table width="100%" class="valid">';
 

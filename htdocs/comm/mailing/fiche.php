@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/comm/mailing/fiche.php
  *       \ingroup    mailing
- *       \brief      Fiche mailing, onglet g�n�ral
+ *       \brief      Fiche mailing, onglet general
  *       \version    $Id$
  */
 
@@ -527,21 +527,21 @@ else
 		// Confirmation de la validation du mailing
 		if ($_GET["action"] == 'valide')
 		{
-			$ret=$html->form_confirm("fiche.php?id=".$mil->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valide");
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valide");
 			if ($ret == 'html') print '<br>';
 		}
 
 		// Confirm reset
 		if ($_GET["action"] == 'reset')
 		{
-			$ret=$html->form_confirm("fiche.php?id=".$mil->id,$langs->trans("ResetMailing"),$langs->trans("ConfirmResetMailing",$mil->ref),"confirm_reset");
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("ResetMailing"),$langs->trans("ConfirmResetMailing",$mil->ref),"confirm_reset");
 			if ($ret == 'html') print '<br>';
 		}
 
 		// Confirm delete
 		if ($_GET["action"] == 'delete')
 		{
-			$ret=$html->form_confirm("fiche.php?id=".$mil->id,$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete");
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete");
 			if ($ret == 'html') print '<br>';
 		}
 
