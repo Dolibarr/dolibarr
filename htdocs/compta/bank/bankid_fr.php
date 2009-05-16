@@ -238,7 +238,7 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 	if ($message) { print "$message<br>\n"; }
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$account->id.'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">'."\n\n";
 

@@ -92,7 +92,7 @@ if ($_GET["action"] == 'create')
   $compteur = new EnergieCompteur($db, $user);
 
   print '<form action="compteur.php" method="post">';
-  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
   print '<input type="hidden" name="action" value="add">';
   
   print '<table class="border" width="100%">';
@@ -157,7 +157,7 @@ else
 	      
 	  $html = new Form($db);
 	  print '<form name="addvalue" action="compteur.php?id='.$compteur->id.'" method="post">';
-	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	  print '<input type="hidden" name="action" value="addvalue">';
 	  print '<table class="border" width="100%">';	  
 

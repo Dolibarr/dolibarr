@@ -102,7 +102,7 @@ if ($_GET["action"] == 'create')
   print_titre("Nouveau service");
 
   print '<form action="fiche.php" method="POST">';
-  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
   print '<input type="hidden" name="action" value="add">';
       
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -185,7 +185,7 @@ else
 	      print_fiche_titre('Edition du service', $mesg);
 	      
 	      print "<form action=\"fiche.php?id=$service->id\" method=\"post\">\n";
-	      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	      print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	      print '<input type="hidden" name="action" value="update">';
 	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';

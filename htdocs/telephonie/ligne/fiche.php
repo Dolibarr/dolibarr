@@ -374,7 +374,7 @@ elseif ($_GET["action"] == 'create' && $_GET["contratid"] > 0)
       else
 	{
 	  print '<form action="fiche.php" method="post">';
-	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="contrat" value="'.$contrat->id.'">'."\n";
 	  print '<input type="hidden" name="client_comm" value="'.$socc->id.'">'."\n";
@@ -835,7 +835,7 @@ else
 		   */
 
 		  print '<form action="fiche.php?id='.$ligne->id.'" method="POST">';
-		  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		  print '<input type="hidden" name="action" value="updateremise">';
 		  print '<table class="border" width="100%" cellpadding="4" cellspacing="0">';
 		  print '<tr class="liste_titre"><td colspan="2">Modification de la remise Local/Mobile/National</td></tr>';
@@ -859,7 +859,7 @@ else
 		   */
 
 		  print '<form action="fiche.php?id='.$ligne->id.'" method="POST">';
-		  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		  print '<input type="hidden" name="action" value="changecontrat">';
 		  print '<table class="border" width="100%" cellpadding="4" cellspacing="0">';
 		  print '<tr class="liste_titre"><td colspan="2">Migrer vers un autre contrat</td></tr>';
@@ -948,7 +948,7 @@ else
 	      print_fiche_titre('Edition de la ligne', $mesg);
 	      
 	      print "<form action=\"fiche.php?id=$ligne->id\" method=\"post\">\n";
-	      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	      print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	      print '<input type="hidden" name="action" value="update">';
 	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -1102,7 +1102,7 @@ else
 	      print_fiche_titre('Ajouter un contact', $mesg);
 
 	      print "<form action=\"fiche.php?id=$ligne->id\" method=\"post\">\n";
-	      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	      print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	      print '<input type="hidden" name="action" value="addcontact">';
 
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -1227,7 +1227,7 @@ if ( $user->rights->telephonie->ligne_commander && $ligne->statut == 3 )
       $form = new Form($db);      
       print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';      
       print '<form action="fiche.php?id='.$ligne->id.'&amp;action=transfer" method="post">';
-      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+      print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
       print '<table class="noborder" cellpadding="2" cellspacing="0">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">Commander la ligne chez un autre fournisseur</td></tr>';
@@ -1251,7 +1251,7 @@ if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 2 && $ligne->
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td valign="top">';
 
   print '<form name="active" action="fiche.php?id='.$ligne->id.'&amp;action=active" method="post">';
-  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Activer</td><td>';
   print '<tr><td>Date</td><td>';
@@ -1264,7 +1264,7 @@ if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 2 && $ligne->
 
 
   print '<form name="refuse" action="fiche.php?id='.$ligne->id.'&amp;action=refuse" method="post">';
-  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Refuser</td><td>';
   print '<tr><td>Date</td><td>';
@@ -1287,7 +1287,7 @@ if ( $user->rights->telephonie->ligne_activer && ( $ligne->statut == 5 || $ligne
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
   print '<form name="confirmresilier" action="fiche.php?id='.$ligne->id.'&amp;action=confirmresilier" method="post">';
-  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Confirmation de la r�siliation</td><td>';
   print '<tr><td>Date</td><td>';
@@ -1313,7 +1313,7 @@ if ( $user->rights->telephonie->ligne->creer && $ligne->statut == 6 && $ligne->t
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
   print '<form action="fiche.php?id='.$ligne->id.'&amp;action=acommander" method="post">';
-  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Recommander la ligne</td><td>';
   print '<tr><td>Date</td><td>';

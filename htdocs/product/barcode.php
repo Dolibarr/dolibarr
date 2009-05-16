@@ -154,7 +154,7 @@ print '</td><td colspan="2">';
 if ($_GET['action'] == 'editbarcode')
 {
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
   print '<input type="hidden" name="action" value="setbarcode">';
 	print '<input size="40" type="text" name="barcode" value="'.$product->barcode.'">';
 	print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';

@@ -379,7 +379,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '<form action="soc.php" method="post" name="formsoc">';
 
 		print '<input type="hidden" name="action" value="add">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="cleartype" value="0">';
 		print '<input type="hidden" name="private" value='.$soc->particulier.'>';
 		if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
@@ -712,7 +712,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
 		print '<form action="soc.php?socid='.$soc->id.'" method="post" name="formsoc">';
 		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 		if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
@@ -976,7 +976,7 @@ else
 	}
 
 	print '<form name="formsoc" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
 
 	// Name

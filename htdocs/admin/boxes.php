@@ -276,7 +276,7 @@ if ($resql)
 			$var = ! $var;
 	
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 			$logo=eregi_replace("^object_","",$box->boximg);
 			print '<tr '.$bc[$var].'>';
 			print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
@@ -389,7 +389,7 @@ print '<table class="noborder" width="100%">';
 
 $var=false;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addconst">';
 print "<tr $bc[$var] class=value><td>";
 print $langs->trans("MaxNbOfLinesForBoxes")."</td>\n";

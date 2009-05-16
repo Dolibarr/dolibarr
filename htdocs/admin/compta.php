@@ -86,7 +86,7 @@ print '<table class="noborder" width="100%">';
 
 // Cas du parametre COMPTA_MODE
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setcomptamode">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('OptionMode').'</td><td>'.$langs->trans('Description').'</td>';
@@ -142,7 +142,7 @@ if ($result)
 		$var=!$var;
 
 		print '<form action="compta.php" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 		print '<input type="hidden" name="constname" value="'.$obj->name.'">';

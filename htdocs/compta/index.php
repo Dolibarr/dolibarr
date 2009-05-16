@@ -115,7 +115,7 @@ $max=3;
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
 	print '<form method="post" action="'.DOL_URL_ROOT.'/compta/facture.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
 	print '<td colspan="3">'.$langs->trans("SearchACustomerInvoice").'</td></tr>';
@@ -129,7 +129,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
 {
 	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/facture/index.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchASupplierInvoice").'</td></tr>';
 	print "<tr ".$bc[0].">";

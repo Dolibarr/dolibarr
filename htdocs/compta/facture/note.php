@@ -117,7 +117,7 @@ if ($_GET["facid"])
     if ($_GET["action"] == 'edit')
     {
         print '<form method="post" action="note.php?facid='.$fac->id.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="update_public">';
         print '<textarea name="note_public" cols="80" rows="8">'.$fac->note_public."</textarea><br>";
         print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -137,7 +137,7 @@ if ($_GET["facid"])
 	    if ($_GET["action"] == 'edit')
 	    {
 	        print '<form method="post" action="note.php?facid='.$fac->id.'">';
-	        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	        print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	        print '<input type="hidden" name="action" value="update">';
 	        print '<textarea name="note" cols="80" rows="8">'.$fac->note."</textarea><br>";
 	        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';

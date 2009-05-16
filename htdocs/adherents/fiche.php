@@ -596,7 +596,7 @@ if ($action == 'edit')
 	if ($conf->societe->enabled) $rowspan++;
 
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 	print "<input type=\"hidden\" name=\"statut\" value=\"".$adh->statut."\">";
@@ -741,7 +741,7 @@ if ($action == 'create')
     print_fiche_titre($langs->trans("NewMember"));
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
     print '<table class="border" width="100%">';
@@ -982,7 +982,7 @@ if ($rowid && $action != 'edit')
     if ($conf->societe->enabled) $rowspan++;
 
     print '<form action="fiche.php" method="post" enctype="multipart/form-data">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
     print '<table class="border" width="100%">';
 
     // Ref

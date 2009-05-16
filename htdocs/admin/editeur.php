@@ -68,7 +68,7 @@ print_fiche_titre($langs->trans("Configuration du module Editeur"),$linkback,'se
 print '<br>';
 
 print '<form action="editeur.php" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 
 print '<input type="hidden" name="action" value="set">';

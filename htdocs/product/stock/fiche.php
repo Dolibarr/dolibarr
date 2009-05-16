@@ -133,7 +133,7 @@ if ($_GET["action"] == 'create')
 	print_fiche_titre($langs->trans("NewWarehouse"));
 	
 	print "<form action=\"fiche.php\" method=\"post\">\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="type" value="'.$type.'">'."\n";
 
@@ -422,7 +422,7 @@ else
 			print_fiche_titre($langs->trans("WarehouseEdit"), $mesg);
 
 			print '<form action="fiche.php" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$entrepot->id.'">';
 

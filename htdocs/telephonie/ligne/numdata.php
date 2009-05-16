@@ -127,7 +127,7 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 print '<form action="numdata.php" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addnum"></td>';  
 print '<td><input type="text" name="numero" size="12" maxlength="12"></td>';  
 

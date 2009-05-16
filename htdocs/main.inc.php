@@ -171,14 +171,21 @@ dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _
 
 // Creation d'un jeton contre les failles CSRF
 $token = md5(uniqid(rand(),TRUE)); // Genere un hash d'un nombre aleatoire
-$_SESSION['oldtoken'] = $_SESSION['newtoken']; // roulement des jetons car cree a chaque appel
+// roulement des jetons car cree a chaque appel
+$_SESSION['token_level_2'] = $_SESSION['token_level_1'];
+$_SESSION['token_level_1'] = $_SESSION['newtoken'];
 $_SESSION['newtoken'] = $token;
 
 // Verification de la presence et de la validite du jeton
-if (isset($_POST['token']) && isset($_SESSION['oldtoken']))
+if (isset($_POST['token_level_1']) && isset($_SESSION['token_level_1']))
 {
-	if ($_POST['token'] != $_SESSION['oldtoken']) unset($_POST);
+	if ($_POST['token_level_1'] != $_SESSION['token_level_1']) unset($_POST);
 }
+else if (isset($_POST['token_level_2']) && isset($_SESSION['token_level_2']))
+{
+	if ($_POST['token_level_2'] != $_SESSION['token_level_2']) unset($_POST);
+}
+
 
 // Disable modules (this must be after session_start and after conf has been reloaded)
 if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
@@ -1081,7 +1088,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
 	$ret.=$title.'</a><br>';
 	$ret.='</div>';
-	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	$ret.='<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
 	$ret.='<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';

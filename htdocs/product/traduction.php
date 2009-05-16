@@ -158,7 +158,7 @@ print '</table>';
 if ($_GET["action"] == 'edit')
 {
 	print '<form action="" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vedit">';
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 
@@ -254,7 +254,7 @@ if ($_GET["action"] == 'add' || $user->rights->produit->modifier)
 	$select.='</select>';
 
 	print '<form action="" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 	print '<table class="border" width="100%">';

@@ -363,7 +363,7 @@ if ($step == 2 && $datatoexport)
 
     // Liste deroulante des modeles d'export
     print '<form action="export.php" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="select_model">';
     print '<input type="hidden" name="step" value="2">';
     print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
@@ -582,7 +582,7 @@ if ($step == 3 && $datatoexport)
         print $langs->trans("SaveExportModel");
 
 		print '<form class="nocellnopadd" action="export.php" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add_export_model">';
         print '<input type="hidden" name="step" value="'.$step.'">';
         print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';

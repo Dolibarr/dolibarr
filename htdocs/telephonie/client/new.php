@@ -635,7 +635,7 @@ if ($user->rights->telephonie->ligne->creer)
 
 
 	print '<FORM NAME="formClient" action="new.php" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="codeclient_modifiable" value="1">';
 	print '<input type="hidden" name="codefournisseur_modifiable" value="1">';
 	print '<input type="hidden" name="action" value="add">';

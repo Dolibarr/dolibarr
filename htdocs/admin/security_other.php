@@ -120,7 +120,7 @@ print "</tr>\n";
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'?action=set_main_upload_doc" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].'>';
 print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
 $max=@ini_get('upload_max_filesize');
@@ -137,7 +137,7 @@ print '</tr></form>';
 
 $var=!$var;
 print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_UMASK" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UMask").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
@@ -153,7 +153,7 @@ print '</tr></form>';
 $var=!$var;
 if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=ini_get("session.gc_maxlifetime");
 print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_SESSION_TIMEOUT" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));

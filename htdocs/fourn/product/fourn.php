@@ -173,7 +173,7 @@ if ($_GET["id"])
 	  $action = 'fourn.php?id='.$product->id.'&amp;id_fourn='.$product->fourn->id;
 
 	  print '<form action="'.$action.'" method="post">';
-	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	  print '<input type="hidden" name="action" value="update">';
 	  print '<br /><table class="border" width="100%">';
 	  print '<tr><td width="20%">'.$langs->trans("Price").'</td>';

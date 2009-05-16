@@ -114,7 +114,7 @@ if ($soc->id)
    
   print '</table><br />';
   print '<form method="POST" action="permissions.php?id='.$soc->id.'">';
-  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
   print '<input type="hidden" name="action" value="add">';
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   

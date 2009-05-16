@@ -191,7 +191,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 
 	print "\n";
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 	print "<input type=\"hidden\" name=\"fk_bank\" value=\"".$subscription->fk_bank."\">";
@@ -303,7 +303,7 @@ if ($rowid && $action != 'edit')
     }
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
     print '<table class="border" width="100%">';
 
     // Ref

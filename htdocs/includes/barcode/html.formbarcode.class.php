@@ -69,7 +69,7 @@ class FormBarCode
 		}
 		
 		$select_encoder = '<form action="barcode.php" method="post" id="'.$idForm.'">';
-		$select_encoder.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$select_encoder.= '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		$select_encoder.= '<input type="hidden" name="action" value="update">';
 		$select_encoder.= '<input type="hidden" name="code_id" value="'.$code_id.'">';
 		$select_encoder.= '<select class="flat" name="coder" onChange="barcode_coder_save(\''.$idForm.'\')">';
@@ -151,7 +151,7 @@ class FormBarCode
         if ($htmlname != "none")
         {
             print '<form method="post" action="'.$page.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="setbarcodetype">';
             print '<table class="noborder" cellpadding="0" cellspacing="0">';
             print '<tr><td>';

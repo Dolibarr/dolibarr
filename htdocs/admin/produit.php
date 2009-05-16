@@ -164,7 +164,7 @@ print "  <td width=\"80\">&nbsp;</td></tr>\n";
 // multiprix activation/desactivation
 $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"multiprix\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("MultiPricesAbility").'</td>';
@@ -182,7 +182,7 @@ if($conf->global->PRODUIT_MULTIPRICES)
 {
 	$var=!$var;
 	print "<form method=\"post\" action=\"produit.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"multiprix_num\">";
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
@@ -195,7 +195,7 @@ if($conf->global->PRODUIT_MULTIPRICES)
 // sousproduits activation/desactivation
 $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"sousproduits\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
@@ -210,7 +210,7 @@ print '</form>';
 // utilisation formulaire Ajax sur choix produit
 $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"usesearchtoselectproduct\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("UseSearchToSelectProduct").'</td>';
@@ -235,7 +235,7 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 {
 	$var=!$var;
 	print "<form method=\"post\" action=\"produit.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"nbprod\">";
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
@@ -248,7 +248,7 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 // Visualiser description produit dans les formulaires activation/desactivation
 $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInForm\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
@@ -264,7 +264,7 @@ print '</form>';
 /*
 $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"confirmDeleteProdLineInForm\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("ConfirmDeleteProductLineAbility").'</td>';
@@ -280,7 +280,7 @@ print '</form>';
 // Utilisation de l'ecotaxe
 $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"useecotaxe\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("UseEcoTaxeAbility").'</td>';

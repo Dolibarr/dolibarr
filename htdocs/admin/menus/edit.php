@@ -294,7 +294,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	else print '<br>';
 	
 	print '<form action="./edit.php?action=add&menuId='.$_GET['menuId'].'" method="post" name="formmenucreate">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 
 	print '<table class="border" width="100%">';
 	
@@ -399,7 +399,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<br>';
 	
 	print '<form action="./edit.php?action=update" method="POST" name="formmenuedit">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="handler_origine" value="'.$menu_handler.'">';
 	
 	print '<table class="border" width="100%">';
@@ -517,7 +517,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		
 		// Ajout de contraintes personalisees
 		print '<form action="edit.php?action=add_const" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="menuId" value="'.$_GET['menuId'].'">';
 		print '<input type="hidden" name="type" value="perso">';
 
@@ -531,7 +531,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		
 		// Ajout de contraintes predefinis
 		print '<form action="edit.php?action=add_const" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="menuId" value="'.$_GET['menuId'].'">';
 		print '<input type="hidden" name="type" value="prede">';
 

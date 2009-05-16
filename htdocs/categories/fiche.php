@@ -179,7 +179,7 @@ if ($user->rights->categorie->creer)
 			print '</div>';
 		}
 		print '<form action="'.$_SERVER['PHP_SELF'].'?type='.$_GET['type'].'" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
 		//print '<input type="hidden" name="id" value="'.$_GET['id'].'">';			Mis dans origin

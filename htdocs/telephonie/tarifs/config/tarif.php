@@ -205,7 +205,7 @@ else
 
 
 print '<br><form action="tarif.php?id='.$_GET["id"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="add_prefix">';
 
 print '<table class="border" width="100%">';

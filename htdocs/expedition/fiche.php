@@ -242,7 +242,7 @@ if ($_GET["action"] == 'create')
 			 *   Document source
 			 */
 			print '<form action="fiche.php" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="origin" value="'.$origin.'">';
 			print '<input type="hidden" name="object_id" value="'.$object->id.'">';

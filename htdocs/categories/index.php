@@ -62,7 +62,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
  * Zone recherche produit/service
  */
 print '<form method="post" action="index.php?type='.$type.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

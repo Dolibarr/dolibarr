@@ -80,7 +80,7 @@ dol_fiche_head($head, $hselected, "Configuration des liens xDSL");
 $form = new Form($db);
 print_titre($langs->trans("Products"));
 print '<form method="post" action="xdsl_product.php?action=addproduct">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 
 $prods = array();

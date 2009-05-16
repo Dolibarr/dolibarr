@@ -134,7 +134,7 @@ if ($action == 'create')
      */
 
     print '<form action="fiche.php" method="post">'."\n";
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
     print_fiche_titre($langs->trans("NewBookmark"));
@@ -181,7 +181,7 @@ if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
     if ($_GET["action"] == 'edit')
     {
     	print '<form name="edit" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
     	print '<input type="hidden" name="action" value="update">';
     	print '<input type="hidden" name="id" value="'.$bookmark->id.'">';
     	print '<input type="hidden" name="urlsource" value="'.urlencode(DOL_URL_ROOT.'/bookmarks/fiche.php?id='.$bookmark->id).'">';

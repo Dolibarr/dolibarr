@@ -132,7 +132,7 @@ if ($_GET["action"] == 'create')
 	if ($mesg) print $mesg."<br>";
 
 	print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	print '<table class="border" width="100%">';
@@ -187,7 +187,7 @@ else
 				dol_fiche_head($head, $hselected, $langs->trans("TripCard"));
 
 				print "<form name='update' action=\"fiche.php\" method=\"post\">\n";
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="update">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 

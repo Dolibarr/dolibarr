@@ -466,7 +466,7 @@ if ($_GET["action"] == 'create')
 {
 	// EMailing in creation mode
 	print '<form action="fiche.php" method="post">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	print_fiche_titre($langs->trans("NewMailing"));
@@ -738,7 +738,7 @@ else
 			 * Mailing en mode edition
 			 */
 			print '<form action="fiche.php" method="post">'."\n";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$mil->id.'">';
 			print '<table class="border" width="100%">';

@@ -125,7 +125,7 @@ if ($_GET["id"])
       print '</table><br />';
       
       print '<form method="POST" action="commentaires.php?id='.$soc->id.'&action=add">';
-      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+      print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';	  
       print '<tr><td width="15%" valign="center">Nouveau<br>commentaire';
       print '</td><td><textarea cols="60" rows="3" name="comment"></textarea></td>';

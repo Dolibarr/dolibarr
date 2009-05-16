@@ -68,7 +68,7 @@ if ($socid > 0)
 	
 	
 	print "<form method=\"post\" action=\"".DOL_URL_ROOT."/societe/socnote.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	
 	print '<table class="border" width="100%">';
 

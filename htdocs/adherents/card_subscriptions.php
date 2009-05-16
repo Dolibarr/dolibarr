@@ -189,7 +189,7 @@ $head = member_prepare_head($adh);
 dol_fiche_head($head, 'subscription', $langs->trans("Member"));
 
 print '<form action="fiche.php" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<table class="border" width="100%">';
 
 // Ref
@@ -378,7 +378,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	print "\n\n<!-- Form add subscription -->\n";
 
 	print '<form name="cotisation" method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="cotisation">';
 	print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 	print "<table class=\"border\" width=\"100%\">\n";

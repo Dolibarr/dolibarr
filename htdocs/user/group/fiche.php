@@ -181,7 +181,7 @@ if ($action == 'create')
 	if ($message) { print $message."<br>"; }
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	print '<table class="border" width="100%">';
@@ -385,7 +385,7 @@ else
             {
                 $form = new Form($db);
                 print '<form action="fiche.php?id='.$group->id.'" method="post">'."\n";
-                print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
                 print '<input type="hidden" name="action" value="adduser">';
                 print '<table class="noborder" width="100%">'."\n";
                 print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
@@ -478,7 +478,7 @@ else
         if ($_GET["action"] == 'edit' && $caneditperms)
         {
             print '<form action="fiche.php?id='.$group->id.'" method="post" name="updategroup" enctype="multipart/form-data">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
 
             print '<table class="border" width="100%">';

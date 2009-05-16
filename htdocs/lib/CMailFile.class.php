@@ -88,7 +88,7 @@ class CMailFile
 	$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='')
 	{
 		global $conf;
-
+var_dump($to); exit;
 		// On definit fin de ligne
 		$this->eol="\n";
 		if (eregi('^win',PHP_OS)) $this->eol="\r\n";
@@ -210,6 +210,15 @@ class CMailFile
 			// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees
 			// comme des injections mail par les serveurs de messagerie.
 			$this->headers = eregi_replace("[\r\n]+$","",$this->headers);
+		}
+		else if ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail')
+		{
+			// Use Simplemail library
+			// ------------------------------------------
+
+			require_once(DOL_DOCUMENT_ROOT."/includes/simplemail/class.mail.php");
+			$mail = new simplemail();
+			
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 		{

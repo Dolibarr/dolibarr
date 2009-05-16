@@ -88,7 +88,7 @@ if ($id)
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
 	print "<form method=\"post\" action=\"note.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 
     print '<table class="border" width="100%">';
 

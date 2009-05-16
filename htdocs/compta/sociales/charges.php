@@ -181,7 +181,7 @@ if ($_GET["action"] == 'create')
     $var=false;
 
     print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
 	print "<table class=\"noborder\" width=\"100%\">";
@@ -279,7 +279,7 @@ if ($chid > 0)
 		if ($_GET['action'] == 'edit')
 		{
 			print "<form name=\"charge\" action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		}
 
 		print '<table class="border" width="100%">';

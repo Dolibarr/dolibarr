@@ -116,7 +116,7 @@ if ($_GET["id"])
 			print_titre($langs->trans("AddPhoto"));
 
 			print '<form name="userfile" action="photos.php?id='.$product->id.'" enctype="multipart/form-data" METHOD="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
 			print '<table class="border" width="100%"><tr>';

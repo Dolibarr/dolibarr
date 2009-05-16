@@ -144,7 +144,7 @@ if ($id)
 if ($_GET["action"] == 'create')
 {
     print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
     
     print_fiche_titre($langs->trans("NewVATPayment"));

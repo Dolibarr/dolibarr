@@ -147,7 +147,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	if ($mesg) print $mesg.'<br>';
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	//if ($_REQUEST["socid"]) print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
 	print '<table class="border" width="100%">';
 	print '<input type="hidden" name="action" value="add">';
@@ -208,7 +208,7 @@ else
 	if ($_GET["action"] == 'edit')
 	{
 		print '<form method="post" action="fiche.php">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 

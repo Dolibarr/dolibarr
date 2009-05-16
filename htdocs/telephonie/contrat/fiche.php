@@ -230,7 +230,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
       else
 	{
 	  print "<form action=\"fiche.php\" method=\"post\">\n";
-	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="client_comm" value="'.$socc->id.'">'."\n";
 	  
@@ -755,7 +755,7 @@ else
 	      print_fiche_titre('Edition du contrat', $mesg);
 	      
 	      print '<form action="fiche.php?id='.$contrat->id.'" method="post">';
-	      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	      print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	      print '<input type="hidden" name="action" value="update">';
 	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -963,7 +963,7 @@ else
 	      print_fiche_titre('Ajouter un contact', $mesg);
 
 	      print '<form action="fiche.php?id='.$contrat->id.'" method="post">';
-	      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	      print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	      print '<input type="hidden" name="action" value="addcontact">';
 
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -1055,7 +1055,7 @@ else
 	      print_fiche_titre('Ajouter une prise d\'ordre mensuelle');
 
 	      print '<form action="fiche.php?id='.$contrat->id.'" method="post">';
-	      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	      print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	      print '<input type="hidden" name="action" value="addpo">';
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print '<tr><td valign="top" width="20%">Montant mensuel</td><td valign="top" colspan="2">';

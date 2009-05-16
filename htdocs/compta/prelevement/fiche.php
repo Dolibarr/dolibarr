@@ -195,7 +195,7 @@ if ($_GET["id"])
 		if($bon->date_trans == 0)
 		{
 			print '<form method="post" name="userfile" action="fiche.php?id='.$bon->id.'" enctype="multipart/form-data">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="infotrans">';
 			print '<table class="border" width="100%">';
 			print '<tr><td width="20%">Date Transmission</td><td>';
@@ -217,7 +217,7 @@ if ($_GET["id"])
 		if($bon->date_trans <> 0 && $bon->date_credit == 0)
 		{
 			print '<form name="infocredit" method="post" action="fiche.php?id='.$bon->id.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="infocredit">';
 			print '<table class="border" width="100%">';
 			print '<tr><td width="20%">Crédité le</td><td>';

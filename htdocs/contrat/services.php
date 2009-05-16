@@ -140,7 +140,7 @@ if ($resql)
     print "</tr>\n";
 
     print '<form method="POST" action="services.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
     print '<input type="hidden" name="filter" value="'.$filter.'">';

@@ -331,7 +331,7 @@ if ($account || $_GET["ref"])
 	if ($user->rights->banque->modifier && $_GET["action"]=='addline')
 	{
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="vline" value="' . $vline . '">';
 		print '<input type="hidden" name="account" value="' . $acct->id . '">';
@@ -396,7 +396,7 @@ if ($account || $_GET["ref"])
 	print '</td></tr>';
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" name="search" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="search">';
 	print '<input type="hidden" name="account" value="' . $acct->id . '">';
 

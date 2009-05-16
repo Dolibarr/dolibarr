@@ -252,7 +252,7 @@ if ($_GET["id"])
 	  print_fiche_titre('Ajouter un service', $mesg);
 	  
 	  print '<form action="services.php?id='.$contrat->id.'" method="post">';
-	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	  print '<input type="hidden" name="action" value="addservice">';	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr><td valign="top" width="20%">Service</td><td valign="top" colspan="2">';

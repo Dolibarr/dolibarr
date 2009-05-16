@@ -50,7 +50,7 @@ print_fiche_titre($langs->trans("Energy"),$linkback,'setup');
 
 print '<br>';
 print '<form method="post" action="energie.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 print '<table class="border">';
 print '<tr class="liste_titre">';

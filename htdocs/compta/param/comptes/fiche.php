@@ -78,7 +78,7 @@ if ($_GET["action"] == 'create' && $user->rights->compta->ventilation->parametre
     print_fiche_titre($langs->trans("NewAccount"));
 
     print '<form action="fiche.php" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
     print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
 

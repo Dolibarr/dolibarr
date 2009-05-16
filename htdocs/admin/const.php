@@ -77,7 +77,7 @@ $form = new Form($db);
 # Affiche ligne d'ajout
 $var=false;
 print '<form action="const.php" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="add">';
 
 print "<tr $bc[$var] class=value><td><input type=\"text\" class=\"flat\" size=\"24\" name=\"constname\" value=\"\"></td>\n";
@@ -135,7 +135,7 @@ if ($result)
 
 		print "\n";
 		print '<form action="'.DOL_URL_ROOT.'/admin/const.php" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="rowid" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="constname" value="'.$obj->name.'">';

@@ -104,7 +104,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
 	print '<tr '.$bc[$var].'>';
@@ -123,7 +123,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
 	$var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';
 	print '<tr '.$bc[$var].'>';

@@ -55,7 +55,7 @@ if ($user->societe_id > 0)
 
 
 print '<form action="tarifs.php" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="add">';
 
 print '<table class="border" width="100%">';

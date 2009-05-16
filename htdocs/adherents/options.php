@@ -165,7 +165,7 @@ if ($_GET["action"] == 'create')
 	print_titre($langs->trans('NewAttribute'));
 
 	print '<form action="options.php" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
 
 	print '<input type="hidden" name="action" value="add">';
@@ -201,7 +201,7 @@ if ($_GET["attrname"] && $_GET["action"] == 'edit')
 	 * formulaire d'edition
 	 */
 	print '<form method="post" action="options.php?attrname='.$_GET["attrname"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="attrname" value="'.$_GET["attrname"].'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<table class="border" width="100%">';

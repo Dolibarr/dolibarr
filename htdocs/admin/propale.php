@@ -426,7 +426,7 @@ print "</tr>";
 
 $var=!$var;
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"setdefaultduration\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
@@ -437,7 +437,7 @@ print '</form>';
 
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setusecustomercontactasrecipient">';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("UseCustomerContactAsPropalRecipientIfExist");
@@ -452,7 +452,7 @@ if ($conf->commande->enabled)
 {
 	$var=!$var;
 	print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"setclassifiedinvoiced\">";
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("ClassifiedInvoicedWithOrder").'</td>';
@@ -466,7 +466,7 @@ if ($conf->commande->enabled)
 
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_PROPALE_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnProposal").'<br>';
@@ -478,7 +478,7 @@ print '</form>';
 
 $var=!$var;
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_PROPALE_DRAFT_WATERMARK\">";
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("WatermarkOnDraftProposal").'<br>';

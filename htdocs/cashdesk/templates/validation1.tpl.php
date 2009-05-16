@@ -62,7 +62,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	</table>
 
 	<form id="frmValidation" class="formulaire2" method="post" action="validation_verif.php?action=valide_facture">
-		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+		<input type="hidden" name="token_level_1" value="<?php echo $_SESSION['newtoken']; ?>" />
 
 		<p class="note_label">Notes<br /><textarea class="textarea_note" name="txtaNotes"></textarea></p>
 

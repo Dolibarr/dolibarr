@@ -343,7 +343,7 @@ if ($step == 2 && $datatoimport)
 
 	
 	print '<form name="userfile" action="index.php" enctype="multipart/form-data" METHOD="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';     
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';     
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 	
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -399,7 +399,7 @@ if ($step == 2 && $datatoimport)
 
     // Liste deroulante des modeles d'import
     print '<form action="import.php" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="select_model">';
     print '<input type="hidden" name="step" value="2">';
     print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
@@ -618,7 +618,7 @@ if ($step == 3 && $datatoimport)
         print $langs->trans("SaveImportModel");
 
 		print '<form class="nocellnopadd" action="import.php" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add_import_model">';
         print '<input type="hidden" name="step" value="'.$step.'">';
         print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';

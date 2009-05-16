@@ -254,7 +254,7 @@ if ($user->rights->societe->contact->creer)
 
 		print '<br>';
 		print '<form method="post" action="fiche.php">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<table class="border" width="100%">';
 
@@ -345,7 +345,7 @@ if ($user->rights->societe->contact->creer)
 		}
 
 		print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="contactid" value="'.$contact->id.'">';

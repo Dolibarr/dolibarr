@@ -99,7 +99,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '">'."\n";
 	
 	// Token field
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
 
 	// Table 1
 	$title='Dolibarr '.DOL_VERSION;
