@@ -45,7 +45,7 @@ if (! empty($_SERVER['DOL_TUNING']))
 // Forcage du parametrage PHP magic_quotes_gpc et nettoyage des parametres
 // (Sinon il faudrait a chaque POST, conditionner
 // la lecture de variable par stripslashes selon etat de get_magic_quotes).
-// En mode off (recommande il faut juste faire addslashes au moment d'un insert/update.
+// En mode off (recommande, il faut juste faire addslashes au moment d'un insert/update.
 function stripslashes_deep($value)
 {
 	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
@@ -62,7 +62,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 	@set_magic_quotes_runtime(0);
 }
 
-// Filtre les GET et POST pour supprimer les SQL INJECTION
+// Security: SQL Injection protection (Filters on GET and POST)
 function test_sql_inject($val)
 {
 	$sql_inj = 0;
@@ -106,25 +106,19 @@ function analyse_sql_injection(&$var)
 }
 analyse_sql_injection($_GET);
 analyse_sql_injection($_POST);
-// Fin filtre des GET et POST
 
+// Security: CSRF protection
+if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_REFERER']) && !eregi(DOL_MAIN_URL_ROOT, $_SERVER['HTTP_REFERER']))
+{
+	return;
+}
 
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-// Retrieve the entity in login form, and after in the cookie
-// Removed: The session has not been initialized yet so using SESSION is forbidden here
-//$entityCookieName = "DOLENTITYID_dolibarr";
-//if (isset($_POST["entity"])) $_SESSION["dol_entity"] = $_POST["entity"];
-//if (isset($_COOKIE[$entityCookieName])) $_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
-
 // Set and init common variables
 // This include will set: $conf, $langs and $mysoc objects
 require_once("master.inc.php");
-
-// Protection faille CSRF !!!
-if (! empty($_SERVER['HTTP_REFERER']) && !eregi(DOL_MAIN_URL_ROOT, $_SERVER['HTTP_REFERER']))
-accessforbidden();
 
 // Check if HTTPS
 if ($conf->file->main_force_https)

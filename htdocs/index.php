@@ -24,6 +24,8 @@
  *	\version    $Id$
  */
 
+define('NOCSRFCHECK');	// This is login page. We must be able to go on it from another web site.
+
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 
