@@ -107,19 +107,21 @@ function analyse_sql_injection(&$var)
 analyse_sql_injection($_GET);
 analyse_sql_injection($_POST);
 
-// Security: CSRF protection
-if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_REFERER']) && !eregi(DOL_MAIN_URL_ROOT, $_SERVER['HTTP_REFERER']))
-{
-	unset($_GET);
-	unset($_POST);
-}
-
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 // Set and init common variables
 // This include will set: $conf, $langs and $mysoc objects
 require_once("master.inc.php");
+
+// Security: CSRF protection
+//print 'HTTP_REFERER='.$_SERVER['HTTP_REFERER'].'<br>';
+//print 'DOL_MAIN_URL_ROOT='.DOL_MAIN_URL_ROOT.'<br>';
+if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_REFERER']) && !eregi(DOL_MAIN_URL_ROOT, $_SERVER['HTTP_REFERER']))
+{
+	unset($_GET);
+	unset($_POST);
+}
 
 // Check if HTTPS
 if ($conf->file->main_force_https)
