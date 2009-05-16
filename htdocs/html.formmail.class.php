@@ -177,6 +177,7 @@ class FormMail
 
 		print "\n<!-- Debut form mail -->\n";
 		print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		foreach ($this->param as $key=>$value)
 		{
 			print "<input type=\"hidden\" name=\"$key\" value=\"$value\">\n";

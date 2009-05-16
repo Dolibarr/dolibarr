@@ -185,6 +185,7 @@ else
 	      print_fiche_titre('Edition du service', $mesg);
 	      
 	      print "<form action=\"fiche.php?id=$service->id\" method=\"post\">\n";
+	      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	      print '<input type="hidden" name="action" value="update">';
 	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';

@@ -151,12 +151,12 @@ if ($_GET["id"] or $_GET["numero"])
 	      $cuser->fetch();
 	    }
 
-	  print '<tr><td width="20%">Ligne cr��e par</td><td colspan="2">'.$cuser->fullname.'</td></tr>';
+	  print '<tr><td width="20%">Ligne creee par</td><td colspan="2">'.$cuser->fullname.'</td></tr>';
 
 	  
 	  print '<tr><td width="20%">Code analytique</td><td colspan="2">'.$ligne->code_analytique.'&nbsp;</td></tr>';
 
-	  print '<tr><td width="20%">Mod�le de facture utilis�</td><td colspan="2">'.$ligne->pdfdetail.'</td></tr>';
+	  print '<tr><td width="20%">Modele de facture utilise</td><td colspan="2">'.$ligne->pdfdetail.'</td></tr>';
 
 	  
 	  print "</table>";
@@ -165,14 +165,15 @@ if ($_GET["id"] or $_GET["numero"])
       
       if ($_GET["action"] == 'edit' || $action == 're-edit')
 	{
-	  print_fiche_titre('Edition des informations compl�mentaires de la ligne', $mesg);
+	  print_fiche_titre('Edition des informations complementaires de la ligne', $mesg);
 	  
 	  print "<form action=\"infoc.php?id=$ligne->id\" method=\"post\">\n";
+	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	  print '<input type="hidden" name="action" value="update">';
 	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  
-	  print '<tr><td width="20%">Num�ro</td><td>'.$ligne->numero.'</td></tr>';
+	  print '<tr><td width="20%">Numero</td><td>'.$ligne->numero.'</td></tr>';
 	  
 	  $client = new Societe($db, $ligne->client_id);
 	  $client->fetch($ligne->client_id);
@@ -184,7 +185,7 @@ if ($_GET["id"] or $_GET["numero"])
 	  
 	  print '<tr><td width="20%">Code Analytique</td><td><input name="code_ana" size="13" maxlength="12" value="'.$ligne->code_analytique.'">&nbsp;</td></tr>';
 	  
-	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Mettre � jour">';
+	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Mettre a jour">';
 	  print '<a href="infoc.php?id='.$ligne->id.'">Annuler</a></td></tr>';
 	  print '</table>';
 	  print '</form>';	  

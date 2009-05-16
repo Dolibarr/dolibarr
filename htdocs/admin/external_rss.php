@@ -252,6 +252,7 @@ if ($resql)
 		// print_r($rss->items);
 		
 		print "<form name=\"externalrssconfig\" action=\"external_rss.php\" method=\"post\">";
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		
 		print "<tr class=\"liste_titre\">";
 		print "<td colspan=\"2\">".$langs->trans("RSS")." ".($i+1)."</td>";

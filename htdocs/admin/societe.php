@@ -237,9 +237,10 @@ print "  <td>".$langs->trans("Parameters")."</td>\n";
 print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
 print "  <td width=\"80\">&nbsp;</td></tr>\n";
 
-// Utilisation formulaire Ajax sur choix soci�t�
+// Utilisation formulaire Ajax sur choix societe
 $var=!$var;
 print "<form method=\"post\" action=\"societe.php\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"usesearchtoselectcompany\">";
 print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("UseSearchToSelectCompany").'</td>';

@@ -405,6 +405,7 @@ if ($_GET["action"] == 'create')
 	if ($_GET["socid"] > 0)
 	{
 		print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		print '<table class="border" width="100%">';
 

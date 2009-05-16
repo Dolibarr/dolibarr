@@ -276,7 +276,11 @@ if ($chid > 0)
 			if ($ret == 'html') print '<br>';
 		}
 
-		if ($_GET['action'] == 'edit') print "<form name=\"charge\" action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";
+		if ($_GET['action'] == 'edit')
+		{
+			print "<form name=\"charge\" action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		}
 
 		print '<table class="border" width="100%">';
 

@@ -152,7 +152,8 @@ if ($_GET["id"])
   
   print $langs->trans("AddProductToCat")."<br/><br/>";
   print '<table class="border" width="100%">';
-  print "<form method='post' action='".DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id."'>";
+  print '<form method="POST" action="'.DOL_URL_ROOT.'/fourn/product/categorie.php?id='.$product->id.'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print "<tr><td><select name='add_cat'><option value='-1'>".$langs->trans("Choose")."</option>";
   $cat = new Categorie($db);
   foreach ($cat->get_all_categories() as $categorie)

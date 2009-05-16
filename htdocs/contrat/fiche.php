@@ -896,6 +896,7 @@ else
 				else
 				{
 					print "<form name='update' action=\"fiche.php?id=$id\" method=\"post\">";
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="updateligne">';
 					print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
 					// Ligne carac

@@ -212,7 +212,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 	  print $socc->code_client;
 	  print '</td></tr>';
 	  print '</table><br /><br />';
-	  print 'Impossible de cr�er un contrat pour cette soci�t�, vous devez au pr�alablement lui affecter un code client.';
+	  print 'Impossible de cr�er un contrat pour cette societe, vous devez au prealablement lui affecter un code client.';
 	}
       elseif (strlen($socc->code_client) > 0 && $socc->check_codeclient() <> 0)
 	{
@@ -225,11 +225,12 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 	  print $socc->code_client;
 	  print '</td></tr>';
 	  print '</table><br /><br />';
-	  print 'Le code client de cette soci�t� est incorrect, vous devez lui affecter un code client correct.';
+	  print 'Le code client de cette societe est incorrect, vous devez lui affecter un code client correct.';
 	}
       else
 	{
 	  print "<form action=\"fiche.php\" method=\"post\">\n";
+	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="client_comm" value="'.$socc->id.'">'."\n";
 	  

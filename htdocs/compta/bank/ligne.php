@@ -256,7 +256,8 @@ if ($result)
 
 		$i++;
 
-		print "<form name='update' method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+		print '<form name="update" method="post" action="ligne.php?rowid='.$objp->rowid.'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
 
@@ -426,6 +427,7 @@ if ($result)
 		if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 		{
 			print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="type">';
 			print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
 			print $html->select_types_paiements($objp->fk_type,"value",'',2);
@@ -444,6 +446,7 @@ if ($result)
 		if ($user->rights->banque->modifier)
 		{
 			print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="banque">';
 			print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
 			print '<input type="text" class="flat" size="40" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
@@ -461,6 +464,7 @@ if ($result)
 		if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 		{
 			print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="emetteur">';
 			print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
 			print '<input type="text" class="flat" size="40" name="emetteur" value="'.(empty($objp->emetteur) ? '' : stripslashes($objp->emetteur)).'">';
@@ -481,6 +485,7 @@ if ($result)
 	  if ($user->rights->banque->consolidate)
 	  {
 		  print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+		  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		  print '<input type="hidden" name="action" value="num_releve">';
 		  print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
 		  print '<td colspan="3">';
@@ -511,6 +516,7 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 
 print "<form method=\"post\" action=\"ligne.php?rowid=$rowid&amp;account=$account\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"class\">";
 print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
 print "<tr class=\"liste_titre\"><td>".$langs->trans("Rubriques")."</td><td colspan=\"2\">";

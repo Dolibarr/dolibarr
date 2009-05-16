@@ -106,6 +106,7 @@ if ($_GET["action"] == 'create')
 {
   $fourn = new FournisseurTelephonie($db);
   print "<form action=\"fiche.php\" method=\"post\">\n";
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<input type="hidden" name="action" value="add">';
 
   print_titre("Nouveau  fournisseur");

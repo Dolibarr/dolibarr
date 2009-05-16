@@ -197,6 +197,7 @@ if ($_GET["action"] == 'create')
 	if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
 	print "<form action=\"type.php\" method=\"post\">";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
 
 	print '<input type="hidden" name="action" value="add">';

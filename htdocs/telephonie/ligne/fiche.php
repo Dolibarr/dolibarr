@@ -948,6 +948,7 @@ else
 	      print_fiche_titre('Edition de la ligne', $mesg);
 	      
 	      print "<form action=\"fiche.php?id=$ligne->id\" method=\"post\">\n";
+	      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	      print '<input type="hidden" name="action" value="update">';
 	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -960,7 +961,7 @@ else
 	      print '</td></tr>';
 	      print '<input type="hidden" name="client_comm" value="'.$client_comm->id.'">'."\n";
 	      
-	      print '<tr><td width="20%">Num�ro</td><td>';
+	      print '<tr><td width="20%">Numero</td><td>';
 	      if ($ligne->statut == -1)
 		{
 		  print '<input name="numero" size="12" value="'.$ligne->numero.'">';
@@ -1101,6 +1102,7 @@ else
 	      print_fiche_titre('Ajouter un contact', $mesg);
 
 	      print "<form action=\"fiche.php?id=$ligne->id\" method=\"post\">\n";
+	      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	      print '<input type="hidden" name="action" value="addcontact">';
 
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';

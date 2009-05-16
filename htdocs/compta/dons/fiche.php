@@ -364,6 +364,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 	dol_fiche_head($head, $hselected, $langs->trans("Ref").": ".$_GET["rowid"]);
 
 	print "<form action=\"fiche.php\" method=\"post\">";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
 
 	// Ref

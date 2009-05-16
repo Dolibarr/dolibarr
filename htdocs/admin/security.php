@@ -249,6 +249,7 @@ print '<br>';
 
 $var=true;
 print "<form method=\"post\" action=\"security.php\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
 
 print '<table class="noborder" width="100%">';
