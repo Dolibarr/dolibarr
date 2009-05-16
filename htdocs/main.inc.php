@@ -179,10 +179,14 @@ $_SESSION['newtoken'] = $token;
 // Verification de la presence et de la validite du jeton
 if (isset($_POST['token_level_1']) && isset($_SESSION['token_level_1']))
 {
+	//print 'post_token_level_1='.$_POST['token_level_1'].'<br>';
+	//print 'session_token_level_1='.$_SESSION['token_level_1'].'<br>';
 	if ($_POST['token_level_1'] != $_SESSION['token_level_1']) unset($_POST);
 }
 else if (isset($_POST['token_level_2']) && isset($_SESSION['token_level_2']))
 {
+	//print 'post_token_level_2='.$_POST['token_level_2'].'<br>';
+	//print 'session_token_level_2='.$_SESSION['token_level_2'].'<br>';
 	if ($_POST['token_level_2'] != $_SESSION['token_level_2']) unset($_POST);
 }
 
