@@ -18,10 +18,10 @@
  */
 
 /**
-		\file 		htdocs/admin/tools/update.php
-		\brief      Page de mise a jour online de dolibarr
-		\version    $Id$
-*/
+ *		\file 		htdocs/admin/tools/update.php
+ *		\brief      Page to make a Dolibarr online upgrade
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".lib.php";
@@ -53,10 +53,11 @@ if ($_POST["action"]=='update')
 
 
 /*
-* Affichage page
+* View
 */
 
-llxHeader();
+$wikihelp='EN:Installation_/_Upgrade|FR:Installation_/_Mise_a_jour|ES:Instalación_/_Actualización';
+llxHeader($langs->trans("Upgrade"),'',$wikihelp);
 
 print_fiche_titre($langs->trans("Upgrade"),'','setup');
 print '<br>';
