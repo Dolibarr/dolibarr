@@ -231,21 +231,24 @@ class CMailFile
 
 			// Ajout de l'expediteur
 			$this->addr_from = $from;
-			$this->splitAddress($from);
-			$mail->addfrom($this->sEmail,$this->sName);
+			//$this->splitAddress($from);
+			//$mail->addfrom($this->sEmail,$this->sName);
+			$mail->hfrom=$this->getValidAddress($this->addr_from,0,1);
 
 			// Ajout accuse reception
 			if ($deliveryreceipt)
 			{
-				$mail->adddeliveryreceipt($this->sEmail,$this->sName);
+				//$mail->adddeliveryreceipt($this->sEmail,$this->sName);
+				$mail->deliveryreceipt=$this->getValidAddress($this->addr_from,0,1);
 			}
 
 			// Ajout du destinataire
 			$arrayTo=split(',',$to);
 			foreach($arrayTo as $val)
 			{
-				$this->splitAddress($val);
-				$mail->addrecipient($this->sEmail,$this->sName);
+				//$this->splitAddress($val);
+				//$mail->addrecipient($this->sEmail,$this->sName);
+				$mail->recipientlist[] = array( 'mail'=>$this->getValidAddress($val,2), 'nameplusmail' => $this->getValidAddress($val,0,1));
 			}
 
 			// Ajout carbon copy
@@ -254,8 +257,10 @@ class CMailFile
 				$arrayTocc=split(',',$addr_cc);
 				foreach($arrayTocc as $val)
 				{
-					$this->splitAddress($val);
-					$mail->addcc($this->sEmail,$this->sName);
+					//$this->splitAddress($val);
+					//$mail->addcc($this->sEmail,$this->sName);
+					if (!empty($mail->hcc)) $mail->hcc.= ",";
+					$mail->hcc.= $this->getValidAddress($val,0,1);
 				}
 			}
 
@@ -265,8 +270,10 @@ class CMailFile
 				$arrayTobcc=split(',',$addr_bcc);
 				foreach($arrayTobcc as $val)
 				{
-					$this->splitAddress($val);
-					$mail->addbcc($this->sEmail,$this->sName);
+					//$this->splitAddress($val);
+					//$mail->addbcc($this->sEmail,$this->sName);
+					if (!empty($mail->hbcc)) $mail->hbcc.= ",";
+					$mail->hbcc.= $this->getValidAddress($val,0,1);
 				}
 			}
 
@@ -955,11 +962,12 @@ class CMailFile
 
 
 	/**
-	 *	\brief      Renvoie une adresse acceptee par le serveur SMTP
-	 *	\param      adresses		Exemple: 'John Doe <john@doe.com>' ou 'john@doe.com'
-	 *	\param		format			0=Auto, 1=emails avec <>, 2=emails sans <>
-	 *	\return	    string			Renvoi: Si format 1: '<john@doe.com>' ou 'John Doe <john@doe.com>'
-	 *								Si format 2: 'john@doe.com'
+	 *	\brief      Return an address for SMTP protocol
+	 *	\param      adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
+	 *	\param		format			0=Auto, 1=emails with <>, 2=emails without <>
+	 * 	\param		encode			1=Encode name to RFC2822
+	 *	\return	    string			If format 1: '<john@doe.com>' or 'John Doe <john@doe.com>'
+	 *								If format 2: 'john@doe.com'
 	 */
 	function getValidAddress($adresses,$format,$encode='')
 	{
