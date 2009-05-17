@@ -212,7 +212,7 @@ if ($result)
         if ($allowinsertbankafter && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
 		{
 			print "<form method=\"post\" action=\"cotisations.php\">";
-			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		}
         print "<tr $bc[$var]>";
 

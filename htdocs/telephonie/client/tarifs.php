@@ -215,7 +215,7 @@ if ($_GET["id"])
 	  print "</table>\n<br />\n";
 
 	  print '<form action="tarifs.php?id='.$soc->id.'" method="POST">';
-	  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	  print '<input type="hidden" name="action" value="addtarif">';
 	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';

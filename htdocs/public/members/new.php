@@ -238,7 +238,7 @@ print '<li> Les champs Commencant par un <FONT COLOR="blue">*</FONT> seront affi
 print "</ul><BR>\n";
 
 print "<form action=\"new.php\" method=\"POST\">\n";
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="add">';
 
 print '<table cellspacing="0" border="1" width="100%" cellpadding="3">'."\n";

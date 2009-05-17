@@ -590,7 +590,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 	if (! $conf->global->PRODUCT_CANVAS_ABILITY || !$_GET["canvas"])
 	{
 		print '<form action="fiche.php" method="post">';
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
 
@@ -1008,7 +1008,7 @@ if ($_GET["id"] || $_GET["ref"])
 		{
 	  print "<!-- CUT HERE -->\n";
 	  print "<form action=\"fiche.php\" method=\"post\">\n";
-	  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	  print '<input type="hidden" name="action" value="update">';
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
 	  print '<input type="hidden" name="canvas" value="'.$product->canvas.'">';
@@ -1246,7 +1246,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	  		$objp = $db->fetch_object($result);
 	  		$var=!$var;
 	  		print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-	  		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	  		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	  		print "<tr $bc[$var]>";
 	  		print "<td nowrap>";
 	  		print '<input type="hidden" name="action" value="addinpropal">';
@@ -1289,7 +1289,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	  {
 	  	$var=!$var;
 	  	print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-	  	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	  	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	  	print '<tr '.$bc[$var].'><td colspan="3">';
 	  	print '<input type="hidden" name="action" value="addinpropal">';
 	  	print $langs->trans("OtherPropals").'</td><td>';
@@ -1365,7 +1365,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	  		$objc = $db->fetch_object($result);
 	  		$var=!$var;
 	  		print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-	  		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	  		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	  		print "<tr $bc[$var]>";
 	  		print "<td nowrap>";
 	  		print '<input type="hidden" name="action" value="addincommande">';
@@ -1408,7 +1408,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	  {
 	  	$var=!$var;
 	  	print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-	  	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	  	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	  	print '<tr '.$bc[$var].'><td colspan="3">';
 	  	print '<input type="hidden" name="action" value="addincommande">';
 	  	print $langs->trans("OtherOrders").'</td><td>';
@@ -1480,7 +1480,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	  		$objp = $db->fetch_object($result);
 	  		$var=!$var;
 	  		print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-	  		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	  		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	  		print "<tr $bc[$var]>";
 	  		print "<td nowrap>";
 	  		print '<input type="hidden" name="action" value="addinfacture">';
@@ -1542,7 +1542,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 		    $var=!$var;
 		    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-		    print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		    print "<tr $bc[$var]>";
 		    print "<td><a href=\"../compta/facture.php?facid=".$objp->factureid."\">$objp->facnumber</a></td>\n";
 		    print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,24)."</a></td>\n";

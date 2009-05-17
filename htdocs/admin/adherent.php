@@ -98,7 +98,7 @@ $form = new Form($db);
 // Mail required for members
 $var=!$var;
 print '<form action="adherent.php" method="POST">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 print '<input type="hidden" name="constname" value="ADHERENT_MAIL_REQUIRED">';
@@ -112,7 +112,7 @@ print '</form>';
 // Send mail information is on by default
 $var=!$var;
 print '<form action="adherent.php" method="POST">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 print '<input type="hidden" name="constname" value="ADHERENT_DEFAULT_SENDINFOBYMAIL">';
@@ -129,7 +129,7 @@ print '</form>';
 // Insertion cotisations dans compte financier
 $var=!$var;
 print '<form action="adherent.php" method="POST">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 print '<input type="hidden" name="constname" value="ADHERENT_BANK_USE">';
@@ -272,7 +272,7 @@ $constantes=array(
 					$obj = $db->fetch_object($result);
 					$var=!$var;
 					print '<form action="adherent.php" method="POST">';
-					print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="update">';
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 					print '<input type="hidden" name="constname" value="'.$obj->name.'">';

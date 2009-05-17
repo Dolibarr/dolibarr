@@ -86,7 +86,7 @@ if ($_socid > 0)
 
 
 	print '<form method="POST" action="multiprix.php?id='.$objsoc->id.'">';
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setpricelevel">';
 	print '<table width="100%" border="0">';
 	print '<tr><td valign="top">';

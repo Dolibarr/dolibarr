@@ -121,7 +121,7 @@ if ($auth_write)
 {
 
   print '<form method="POST" action="grille.php?id='.$_GET["id"].'">';
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<input type="hidden" name="action" value="modif">';
   print '<table width="100%" class="border">';
   print '<tr><td colspan="2">Modification</td></tr>';

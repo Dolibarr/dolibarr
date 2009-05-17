@@ -49,7 +49,7 @@ print '<tr><td valign="top" width="30%">';
  * Zone recherche produit/service
  */
 print '<form method="post" action="liste.php">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">\n";
 print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';

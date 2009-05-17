@@ -77,7 +77,7 @@ $result = $db->query($sql);
 if ($result) {
 
   print "<form method=\"post\" action=\"index.php?viewall=$viewall&vline=$vline&account=$account\">";
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print "<table class=\"border\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<tr class=\"liste_titre\">";

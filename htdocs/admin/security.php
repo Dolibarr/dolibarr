@@ -178,7 +178,7 @@ $html = new Form($db);
 
 // Choix du gestionnaire du générateur de mot de passe
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
 print '<input type="hidden" name="consttype" value="yesno">';
@@ -249,7 +249,7 @@ print '<br>';
 
 $var=true;
 print "<form method=\"post\" action=\"security.php\">";
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
 
 print '<table class="noborder" width="100%">';

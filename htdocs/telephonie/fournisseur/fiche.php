@@ -106,7 +106,7 @@ if ($_GET["action"] == 'create')
 {
   $fourn = new FournisseurTelephonie($db);
   print "<form action=\"fiche.php\" method=\"post\">\n";
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<input type="hidden" name="action" value="add">';
 
   print_titre("Nouveau  fournisseur");
@@ -168,7 +168,7 @@ if ($_GET["id"] > 0)
 	print_titre("Modification fournisseur");
 
 	print '<form action="fiche.php?id='.$fourn->id.'" method="post">';
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';

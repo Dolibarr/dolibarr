@@ -412,7 +412,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
       else
 	{
 	  print "<form action=\"fiche.php\" method=\"post\">\n";
-	  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="client" value="'.$socc->id.'">'."\n";
 	  if ($_GET['contratid'] > 0)
@@ -744,7 +744,7 @@ if ( $user->rights->telephonie->adsl->commander && $ligne->statut == 1)
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
   print '<form name="commandefourn" action="fiche.php?id='.$ligne->id.'&amp;action=commandefourn" method="POST">';
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Commande chez le fournisseur</td><td>';
   print '<tr><td>Date de la commande</td><td>';
@@ -768,7 +768,7 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 2)
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
   print '<form name="activefourn" action="fiche.php?id='.$ligne->id.'&amp;action=activefourn" method="POST">';
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Activ�e chez le fournisseur</td><td>';
   print "<tr><td>Date de l'activation</td><td>";
@@ -795,7 +795,7 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 3)
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
   print '<form name="backbone" action="fiche.php?id='.$ligne->id.'&amp;action=backbone" method="POST">';
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Programm� sur le backbone</td><td>';
   print "<tr><td>Date de la programmation</td><td>";
@@ -813,7 +813,7 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 9)
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
   print '<form name="livraison" action="fiche.php?id='.$ligne->id.'&amp;action=livraison" method="POST">';
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Livr�e au client</td><td>';
   print "<tr><td>Date de la livraison client</td><td>";
@@ -830,7 +830,7 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 4)
 {
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
   print '<form name="resilier" action="fiche.php?id='.$ligne->id.'&amp;action=resilier" method="POST">';
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<table class="noborder" cellpadding="4" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">A r�silier</td><td>';
   print '<tr class="pair"><td>Date de r�siliation demand�e</td><td>';
@@ -846,7 +846,7 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 5)
 {
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
   print '<form name="resilierfourn" action="fiche.php?id='.$ligne->id.'&amp;action=resilierfourn" method="POST">';
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<table class="noborder" cellpadding="4" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Demande de r�siliatin fournisseur</td><td>';
   print '<tr class="pair"><td>Date de la demande de r�siliation</td><td>';
@@ -862,7 +862,7 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 6)
 {
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
   print '<form name="acquitresilierfourn" action="fiche.php?id='.$ligne->id.'&amp;action=acquitresilierfourn" method="POST">';
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<table class="noborder" cellpadding="4" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Confirmation de r�siliatin fournisseur</td><td>';
   print '<tr class="pair"><td>Date de la confirmation de r�siliation</td><td>';

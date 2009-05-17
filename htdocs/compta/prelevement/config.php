@@ -74,7 +74,7 @@ print "<br>";
 
 if ($user->rights->prelevement->bons->configurer)
 print '<form method="post" action="config.php?action=set">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -194,7 +194,7 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 
 	if ($user->rights->prelevement->bons->configurer)
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';

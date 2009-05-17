@@ -284,7 +284,7 @@ function formCategory($db,$object,$type,$typeid)
 	print '<br>';
 	print_fiche_titre($title,'','');
 	print '<form method="post" action="'.DOL_URL_ROOT.'/categories/categorie.php?'.$nameId.'='.$object->id.'">';
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>';

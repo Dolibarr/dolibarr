@@ -254,7 +254,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 									if ($mil->statut == 0)
 									{
 										print '<form name="'.$modulename.'" action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
-										print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+										print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 									}
 
 									print '<td>';
@@ -313,7 +313,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		print '<br>';
 
 		print '<form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST">';
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print_titre($langs->trans("ToClearAllRecipientsClickHere"));
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -329,7 +329,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	// List of selected targets
 	print "\n<!-- Liste destinataires selectionnes -->\n";
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="id" value="'.$mil->id.'">';

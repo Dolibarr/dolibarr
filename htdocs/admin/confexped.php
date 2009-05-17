@@ -107,7 +107,7 @@ $var=true;
 // expedition activation/desactivation
 $var=!$var;
 print "<form method=\"post\" action=\"confexped.php\">";
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Feature").'</td>';
@@ -144,7 +144,7 @@ print '</form>';
 // Bon de livraison activation/desactivation
 $var=!$var;
 print "<form method=\"post\" action=\"confexped.php\">";
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 print "<input type=\"hidden\" name=\"action\" value=\"delivery\">";
 print "<tr ".$bc[$var].">";

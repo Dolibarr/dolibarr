@@ -129,7 +129,7 @@ if ($resql)
 
 $form = new Form($db);
 print '<form action="permissions.php" method="POST">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="perms">';
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Grille</td>';

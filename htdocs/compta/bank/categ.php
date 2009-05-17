@@ -89,7 +89,7 @@ print_fiche_titre($langs->trans("Rubriques"));
 
 
 print '<form method="post" action="categ.php">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

@@ -178,7 +178,7 @@ if ($id > 0 || ! empty($ref))
 		if ($user->rights->commande->creer && $_GET['action'] == 'RefCustomerOrder')
 		{
 			print '<form action="fiche.php?id='.$id.'" method="post">';
-			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="set_ref_client">';
 			print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
 			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -252,7 +252,7 @@ if ($id > 0 || ! empty($ref))
 		if ($_GET['action'] == 'editdate_livraison')
 		{
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
-			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			$html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';

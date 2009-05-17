@@ -48,7 +48,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 // Recherche User
 $var=false;
 print '<form method="post" action="'.DOL_URL_ROOT.'/user/index.php">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAUser").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
@@ -60,7 +60,7 @@ print '</form>';
 // Recherche Group
 $var=false;
 print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAGroup").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';

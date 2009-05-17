@@ -230,7 +230,7 @@ if (!isset($_ENV['windir']) && !file_exists($_ENV['windir']))
 {
 	$var=!$var;
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setgenbarcodelocation">';
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
@@ -252,7 +252,7 @@ if ($conf->societe->enabled)
 {
 	$var=!$var;
 	print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"setdefaultbarcodetype\">";
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
@@ -270,7 +270,7 @@ if ($conf->produit->enabled)
 {
 	$var=!$var;
 	print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"GENBARCODE_BARCODETYPE_THIRDPARTY\">";
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';

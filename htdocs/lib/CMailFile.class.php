@@ -213,24 +213,42 @@ class CMailFile
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail')
 		{
-			// Use Simplemail library
+			// Todo: Use SimpleMail library
 			// ------------------------------------------
 
-			require_once(DOL_DOCUMENT_ROOT."/includes/simplemail/class.mail.php");
-			$mail = new simplemail();
-			
-			$arrayaddress=split(',',$to);
-			
-			foreach($arrayaddress as $val)
-			{
-				if (eregi('^(.*)<(.*)>$',trim($val),$regs))
-				{
-					$name  = trim($regs[1]);
-					$email = trim($regs[2]);
-					$mail->addrecipient($email,$name);
-				}
-			}	
-			
+			try {
+				require_once(DOL_DOCUMENT_ROOT."/includes/simplemail/SimpleMail.php");
+				
+				$mail = new SimpleMail();
+			  
+			  $mail->From = $from;
+			  
+			  $mail->To = split(',',$to);
+			  $mail->Cc = split(',',$sentocc);
+			  $mail->Bcc = split(',',$sentoccc);
+			  
+			  if (isset($deliveryreceipt) && $deliveryreceipt) $mail->DispositionNotificationTo = getValidAddress($from,2);
+			  if (isset($reply_to)  && $reply_to)  $mail->ReplyTo = getValidAddress($reply_to,2);
+			  
+			  $mail->Subject = $this->encodetorfc2822($subject);
+			  
+			  if ($this->msgishtml) $mail->addBody ($this->checkIfHTML($msg), 'text/html');
+			  else  $mail->addBody ($msg);
+			  
+			  if ($this->atleastonefile)
+			  {
+			  	foreach ($filename_list as $i => $val)
+			  	{
+			  		$mail->addAttachment($filename_list[$i],$mimetype_list[$i],$mimefilename_list[$i]);
+			  	}
+			  }
+			  
+			  $mail->send ();
+			}
+			catch (Exception $oE) {
+				var_dump ($oE);
+				echo 'An error occured during sending the message.<br />'.$oE->getMessage ();
+			}
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 		{

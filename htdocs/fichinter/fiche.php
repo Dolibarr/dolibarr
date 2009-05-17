@@ -405,7 +405,7 @@ if ($_GET["action"] == 'create')
 	if ($_GET["socid"] > 0)
 	{
 		print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		print '<table class="border" width="100%">';
 
@@ -572,7 +572,7 @@ elseif ($_GET["id"] > 0)
 	if ($_GET['action'] == 'editdescription')
 	{
 		print '<form name="editdescription" action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'" method="post">';
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="setdescription">';
 		print '<textarea name="description" wrap="soft" cols="70" rows="'.ROWS_3.'">'.dol_htmlentitiesbr_decode($fichinter->description).'</textarea><br>';
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -681,7 +681,7 @@ elseif ($_GET["id"] > 0)
 			if ($fichinter->statut == 0 && $_GET["action"] == 'editline' && $user->rights->ficheinter->creer && $_GET["ligne"] == $objp->rowid)
 			{
 				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'#'.$objp->rowid.'" method="post">';
-				print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateligne">';
 				print '<input type="hidden" name="fichinterid" value="'.$fichinter->id.'">';
 				print '<input type="hidden" name="ligne" value="'.$_GET["ligne"].'">';
@@ -743,7 +743,7 @@ elseif ($_GET["id"] > 0)
 
 			// Ajout ligne d'intervention
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'#add" name="addinter" method="post">';
-			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="fichinterid" value="'.$fichinter->id.'">';
 			print '<input type="hidden" name="action" value="addligne">';
 

@@ -112,7 +112,7 @@ function change_categorie(urlbase,leselect)
 print "<div><div><br>";    // Ouvre 3 div a la place de top_menu car le llxFooter en ferme 3
 
 print "<form method=\"post\" action=\"javascript:MAJ(" . $_GET['targetobject'] . ");\" name=\"villes\" enctype=\"application/x-www-form-urlencoded\">";
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<table class=\"noborder\" align=\"center\" width=\"90%\">";
 print "<tr class=\"liste_titre\">";
 print "  <td colspan=\"3\" align=\"center\">";

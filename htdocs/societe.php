@@ -238,7 +238,7 @@ if ($resql)
 	}
 
 	print '<form method="post" action="societe.php" name="formfilter">';
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	// Lignes des titres
 	print '<table class="liste" width="100%">';

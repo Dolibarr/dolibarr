@@ -974,7 +974,7 @@ if ($id > 0 || ! empty($ref))
 	if ($user->rights->propale->creer && $_GET['action'] == 'refclient')
 	{
 		print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="set_ref_client">';
 		print '<input type="text" class="flat" size="20" name="ref_client" value="'.$propal->ref_client.'">';
 		print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -1035,7 +1035,7 @@ if ($id > 0 || ! empty($ref))
 	if ($propal->brouillon && $_GET['action'] == 'editdate')
 	{
 		print '<form name="editdate" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="setdate">';
 		$html->select_date($propal->date,'re','','',0,"editdate");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -1073,7 +1073,7 @@ if ($id > 0 || ! empty($ref))
 	if ($propal->brouillon && $_GET['action'] == 'editecheance')
 	{
 		print '<form name="editecheance" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="setecheance">';
 		$html->select_date($propal->fin_validite,'ech','','','',"editecheance");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -1106,7 +1106,7 @@ if ($id > 0 || ! empty($ref))
 	if ($_GET['action'] == 'editdate_livraison')
 	{
 		print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
 		$html->select_date($propal->date_livraison,'liv_','','','',"editdate_livraison");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -1363,7 +1363,7 @@ if ($id > 0 || ! empty($ref))
 				if ($conf->global->PRODUIT_USE_MARKUP && $conf->use_javascript_ajax)
 				{
 					$formMarkup = '<form id="formMarkup" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">'."\n";
-					$formMarkup.= '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">'."\n";
+					$formMarkup.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 					$formMarkup.= '<table class="border" width="100%">'."\n";
 					if ($objp->fk_product > 0)
 					{
@@ -1499,7 +1499,7 @@ if ($id > 0 || ! empty($ref))
 			if ($propal->statut == 0 && $_GET["action"] == 'editline' && $user->rights->propale->creer && $_GET["lineid"] == $objp->rowid)
 			{
 				print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#'.$objp->rowid.'" method="post">';
-				print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateligne">';
 				print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 				print '<input type="hidden" name="lineid" value="'.$_GET["lineid"].'">';
@@ -1600,7 +1600,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Add free products/services form
 		print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#add" method="post">';
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 		print '<input type="hidden" name="action" value="addligne">';
 
@@ -1665,7 +1665,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td colspan="4">&nbsp;</td>';
 			print '</tr>';
 			print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#add" method="post">';
-			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 			print '<input type="hidden" name="action" value="addligne">';
 
@@ -1718,7 +1718,7 @@ if ($id > 0 || ! empty($ref))
 		 * Formulaire cloture (signe ou non)
 		 */
 		$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
-		$form_close.= '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		$form_close.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$form_close.= '<table class="border" width="100%">';
 		$form_close.= '<tr><td width="150" align="left">'.$langs->trans('Note').'</td><td align="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
 		$form_close.= $propal->note;

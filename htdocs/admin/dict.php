@@ -485,7 +485,7 @@ if ($_GET["id"])
 	$fieldlist=split(',',$tabfield[$_GET["id"]]);
 
 	print '<form action="dict.php" method="post">';
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 
 	// Ligne d'ajout
@@ -607,7 +607,7 @@ if ($_GET["id"])
 				if ($_GET["action"] == 'modify' && ($_GET["rowid"] == ($obj->rowid?$obj->rowid:$obj->code)))
 				{
 					print '<form action="dict.php" method="post">';
-					print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 					print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
 					fieldList($fieldlist,$obj);

@@ -59,7 +59,7 @@ print "<br>";
  */
 print_titre("Emails");
 print '<form method="post" action="mail.php?action=set">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>Nom</td>';

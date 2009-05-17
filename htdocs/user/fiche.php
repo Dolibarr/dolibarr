@@ -473,7 +473,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 			print "\n\n<!-- Form liste LDAP debut -->\n";
 
 			print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table width="100%" class="border"><tr>';
 			print '<td width="160">';
 			print $langs->trans("LDAPUsers");
@@ -492,7 +492,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 
 	print '<form action="fiche.php" method="post" name="createuser">';
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($ldap_sid) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
@@ -1186,7 +1186,7 @@ else
 			{
 				$form = new Form($db);
 				print '<form action="fiche.php?id='.$_GET["id"].'" method="post">'."\n";
-				print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="addgroup">';
 				print '<table class="noborder" width="100%">'."\n";
 				print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
@@ -1265,7 +1265,7 @@ else
 		{
 
 			print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';
-			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 			print '<table width="100%" class="border">';

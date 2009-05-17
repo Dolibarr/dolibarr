@@ -84,7 +84,7 @@ print '<table class="noborder" width="100%">';
 
 // Cas du parametre TAX_MODE
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="settaxmode">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';

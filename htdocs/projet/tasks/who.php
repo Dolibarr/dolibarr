@@ -68,7 +68,7 @@ if ($_GET["id"] > 0)
 		if ($mesg) print $mesg.'<br>';
 
 		print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="createtask">';
 		print '<table class="border" width="100%">';
 

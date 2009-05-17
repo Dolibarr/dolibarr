@@ -195,7 +195,7 @@ print '<body class="body" onload="donnefocus();">'."\n";
 
 // Form
 print '<form id="login" action="'.$_SERVER["PHP_SELF"].'" method="post" name="login">'."\n";
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="buildnewpassword">'."\n";
 
 // Table 1

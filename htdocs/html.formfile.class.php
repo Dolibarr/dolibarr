@@ -65,7 +65,7 @@ class FormFile
 
 		print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
 		print '<input type="hidden" name="section" value="'.$sectionid.'">';
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		print '<table width="100%" class="noborder">';
 		print '<tr><td width="50%" valign="top">';
@@ -295,7 +295,7 @@ class FormFile
 
 			if (empty($noform)) print '<form action="'.$urlsource.'#builddoc" method="post">';
 			print '<input type="hidden" name="action" value="builddoc">';
-			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 			print_titre($langs->trans("BuildDocuments"));
 			print '<table class="border" width="100%">';

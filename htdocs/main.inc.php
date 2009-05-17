@@ -177,23 +177,11 @@ $_SESSION['token_level_1'] = $_SESSION['newtoken'];
 $_SESSION['newtoken'] = $token;
 
 // Verification de la presence et de la validite du jeton
-if (isset($_POST['token_level_1']) && isset($_SESSION['token_level_1']))
+if (isset($_POST['token_level_1']) && isset($_SESSION['token_level_1']) && isset($_SESSION['token_level_2']))
 {
-	//print 'post_token_level_1='.$_POST['token_level_1'].'<br>';
-	//print 'session_token_level_1='.$_SESSION['token_level_1'].'<br>';
-	if ($_POST['token_level_1'] != $_SESSION['token_level_1'])
+	if (($_POST['token'] != $_SESSION['token_level_1']) || ($_POST['token'] != $_SESSION['token_level_2']))
 	{
-		dol_syslog("Invalid token_level_1 in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token_level_1']=".$_POST['token_level_1'].", _SESSION['token_level_1']=".$_SESSION['token_level_1']);
-		unset($_POST);
-	}
-}
-else if (isset($_POST['token_level_2']) && isset($_SESSION['token_level_2']))
-{
-	//print 'post_token_level_2='.$_POST['token_level_2'].'<br>';
-	//print 'session_token_level_2='.$_SESSION['token_level_2'].'<br>';
-	if ($_POST['token_level_2'] != $_SESSION['token_level_2'])
-	{
-		dol_syslog("Invalid token_level_2 in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token_level_2']=".$_POST['token_level_2'].", _SESSION['token_level_2']=".$_SESSION['token_level_2']);
+		dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token']=".$_POST['token'].", _SESSION['token_level_1']=".$_SESSION['token_level_1'].", _SESSION['token_level_2']=".$_SESSION['token_level_2']);
 		unset($_POST);
 	}
 }
@@ -1100,7 +1088,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
 	$ret.=$title.'</a><br>';
 	$ret.='</div>';
-	$ret.='<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
 	$ret.='<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';

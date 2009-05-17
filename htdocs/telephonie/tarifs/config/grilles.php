@@ -118,7 +118,7 @@ print "</table>";
 if ($_GET["action"] == 'delete')
 {
   print '<br><br><form action="grilles.php" method="post">';
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<input type="hidden" name="action" value="remove">';
   print '<input type="hidden" name="id" value="'.$_GET['id'].'">';
   print '<table class="border" width="100%">';
@@ -139,7 +139,7 @@ if ($_GET["action"] == 'delete')
 else
 {
   print '<br><br><form action="grilles.php" method="post">';
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<input type="hidden" name="action" value="add">';
   
   print '<table class="border" width="100%">';

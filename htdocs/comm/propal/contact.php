@@ -229,7 +229,7 @@ if ($id > 0)
 			$var = false;
 
 			print '<form action="contact.php?propalid='.$id.'" method="post">';
-			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="internal">';
 			print '<input type="hidden" name="propalid" value="'.$id.'">';
@@ -259,7 +259,7 @@ if ($id > 0)
 			print '</form>';
 
 			print '<form action="contact.php?propalid='.$id.'" method="post">';
-			print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="external">';
 			print '<input type="hidden" name="propalid" value="'.$id.'">';

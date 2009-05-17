@@ -245,7 +245,7 @@ if ($_GET["id"] || $_GET["ref"])
 	{
 		print_titre($langs->trans("StockCorrection"));
 		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="correct_stock">';
 		print '<table class="border" width="100%"><tr>';
 		print '<td width="20%">'.$langs->trans("Warehouse").'</td>';
@@ -276,7 +276,7 @@ if ($_GET["id"] || $_GET["ref"])
 	{
 		print_titre($langs->trans("Transfer"));
 		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="transfert_stock">';
 		print '<table class="border" width="100%"><tr>';
 		print '<td width="20%">'.$langs->trans("WarehouseSource").'</td><td width="20%">';
@@ -302,7 +302,7 @@ if ($_GET["id"] || $_GET["ref"])
 	{
 		print_titre($langs->trans("SetStock"));
 		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="create_stock">';
 		print '<table class="border" width="100%"><tr>';
 		print '<td width="20%">'.$langs->trans("Warehouse").'</td><td width="40%">';

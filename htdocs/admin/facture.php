@@ -470,7 +470,7 @@ print '<br>';
 print_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"));
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 print '<table class="noborder" width="100%">';
 $var=True;
@@ -572,7 +572,7 @@ $var=true;
 // Force date validation
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setforcedate">';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ForceInvoiceDate");
@@ -586,7 +586,7 @@ print '</form>';
 // Active la possibilite d'editer/supprimer une facture validee sans paiement
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_enable_editdelete">';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("EnableEditDeleteValidInvoice");
@@ -599,7 +599,7 @@ print '</form>';
 
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_use_bill_contact_as_recipient">';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("UsBillingContactAsIncoiveRecipientIfExist");
@@ -612,7 +612,7 @@ print '</form>';
 
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_FACTURE_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnInvoices").'<br>';
@@ -624,7 +624,7 @@ print '</form>';
 
 $var=!$var;
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_FACTURE_DRAFT_WATERMARK\">";
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("WatermarkOnDraftBill").'<br>';

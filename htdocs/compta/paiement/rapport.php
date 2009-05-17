@@ -89,7 +89,7 @@ print_fiche_titre($titre);
 
 // Formulaire de génération
 print '<form method="post" action="rapport.php?year='.$year.'">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="gen">';
 $cmonth = date("n", time());
 $syear = date("Y", time());

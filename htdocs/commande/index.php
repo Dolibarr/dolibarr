@@ -66,7 +66,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 $var=false;
 print '<table class="noborder" width="100%">';
 print '<form method="post" action="liste.php">';
-print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchOrder").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref" size=18></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';

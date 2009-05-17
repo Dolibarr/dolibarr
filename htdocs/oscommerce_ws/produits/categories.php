@@ -201,7 +201,7 @@ if ($_REQUEST["action"] == 'import')
 		print '</tr>'."\n";
 		print '<tr>';
 		print '<form method="post" action="categories.php">'; 
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<td><input name="osccat" value="'.$_POST["catid"].'"></td><td>'; 
 		print '<input type="hidden" name="action" value="maj"/>';
 //   	print '<input type="hidden" name="dolicat" value="'.$obj->dolicatid.'"/>';
@@ -209,7 +209,7 @@ if ($_REQUEST["action"] == 'import')
 	   print $html->select_all_categories(0,$categorie->id_mere).' <input type="submit" name="doit" class="button" value="'.$langs->trans("Classify").'"></td>';
 		print "</form>\n";
 		print '<form method="post" action="categories.php">';
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';		
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';		
 		print '<input type="hidden" name="action" value="create"/>';
 		print '<input type="hidden" name="nom" value="'.$_POST["description"].'"/>';
 		print '<input type="hidden" name="description" value="'.$_POST["description"].'"/>';
@@ -265,7 +265,7 @@ else
    	   print "\t\t<td><a href='../../categories/viewcat.php?id=".$obj->dolicatid."'>".$obj->dolicatid."</a></td>\n";
    	   print "\t\t<td><a href='../../categories/viewcat.php?id=".$obj->dolicatid."'>".$obj->label."</a></td>\n";
    	   print '<td><form action="categories.php" METHOD="POST">';
-   	   print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+   	   print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
    	   print '<input type="text" size="5" name="osccat" value="'.$obj->osccatid.'"/></td>'."\n";
    	   print '<input type="hidden" name="action" value="maj"/>';
    	   print '<input type="hidden" name="dolicat" value="'.$obj->dolicatid.'"/>';
@@ -333,7 +333,7 @@ elseif ( !($err = $client->getError()) )
 			    		
      		//print '<td><a href="categories.php?action=import&catid='.$result[$i]['categories_id'].'">Importer</a></td>';
 				print '<form method="POST" action="categories.php">';
-				print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="description" value="'.$result[$i]['categories_name'].'"/>';
 				print '<input type="hidden" name="nom" value="'.$result[$i]['categories_name'].'"/>';
 				print '<input type="hidden" name="visible" value="1"/>';

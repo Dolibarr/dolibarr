@@ -139,7 +139,7 @@ if ($_GET["action"] == 'vendre' )
 	  print '<td>'.$langs->trans('Qty').'</td>';
 	  print '</tr>';
 	  print '<form action="OSCvente.php?action=vendre" method="POST">';
-	  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	  print '<input type="hidden" name="prod" value="test"/>';
 	  print '<tr><td>';
 	  print $html->select_produits('','idprod'.$i,'',$conf->produit->limit_size,$soc->price_level);

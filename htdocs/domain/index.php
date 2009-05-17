@@ -41,7 +41,7 @@ if ($result)
   print_barre_liste($langs->trans("DomainNames"), $page, "liste.php","",$sortfield,$sortorder,"",$num);
 
   print "<form method=\"post\" action=\"index.php?viewall=$viewall&vline=$vline&account=$account\">";
-  print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print "<table class=\"border\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";

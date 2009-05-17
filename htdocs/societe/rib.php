@@ -192,7 +192,7 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 	if ($message) { print "$message<br><br>\n"; }
 
 	print '<form action="rib.php?socid='.$soc->id.'" method="post">';
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 

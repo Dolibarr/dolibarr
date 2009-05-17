@@ -148,7 +148,7 @@ if ($_GET["id"])
 		$rej = new RejetPrelevement($db, $user);
 
 		print '<form name="confirm_rejet" method="post" action="ligne.php?id='.$_GET["id"].'">';
-		print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="confirm_rejet">';
 		print '<table class="border" width="100%">';
 		print '<tr><td colspan="3">Rejet de prélèvement</td></tr>';

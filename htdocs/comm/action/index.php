@@ -161,7 +161,7 @@ print_fiche_titre($title,$nav);
 if ($canedit)
 {
 	print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token_level_1" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="status" value="'.$status.'">';
 	print '<input type="hidden" name="time" value="'.$_REQUEST["time"].'">';
 	print '<input type="hidden" name="year" value="'.$year.'">';
