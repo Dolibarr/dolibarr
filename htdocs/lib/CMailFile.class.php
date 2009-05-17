@@ -53,7 +53,7 @@ class CMailFile
 	var $error='';
 
 	var $smtps;				// Contains SMTPs object (if this method is used)
-	
+
 	// simplemail
 	var $simplemail;  // Contains simplemail object (if this method is used)
 	var $sName;
@@ -99,7 +99,7 @@ class CMailFile
 		$this->eol="\n";
 		if (eregi('^win',PHP_OS)) $this->eol="\r\n";
 		if (eregi('^mac',PHP_OS)) $this->eol="\r";
-		
+
 		// On defini mime_boundary
 		$this->mime_boundary = md5(uniqid("dolibarr"));
 
@@ -172,7 +172,7 @@ class CMailFile
 			$text_body = "";
 			$text_encoded = "";
 
-			// En-tete dans $smtp_headers
+			// Define smtp_headers
 			$this->subject = $subject;
 			$this->addr_from = $from;
 			$this->errors_to = $errors_to;
@@ -182,31 +182,27 @@ class CMailFile
 			$this->deliveryreceipt = $deliveryreceipt;
 			$smtp_headers = $this->write_smtpheaders();
 
-			// En-tete suite dans $mime_headers
-			//			if ($this->atleastonefile || $this->atleastoneimage)
-			//			{
+			// Define mime_headers
 			$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
-			//			}
 
 			if (! empty($this->html)) $msg = $this->html;
 
-			// Corps message dans $text_body
+			// Define body in text_body
 			$text_body = $this->write_body($msg);
 
-			// On encode les images
+			// Encode images
 			if ($this->atleastoneimage)
 			{
 				$images_encoded = $this->write_images($this->images_encoded);
-				//print 'xx'.sizeof($this->images_encoded['encoded']);
 			}
 
-			// Corps message suite (fichiers attaches) dans $text_encoded
+			// Add attachments to text_encoded
 			if ($this->atleastonefile)
 			{
 				$text_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
 			}
 
-			// On defini $this->headers et $this->message
+			// We now define $this->headers et $this->message
 			$this->headers = $smtp_headers . $mime_headers;
 
 			$this->message = $text_body . $images_encoded . $text_encoded;
@@ -221,29 +217,29 @@ class CMailFile
 		{
 			// Todo: Use simplemail library
 			// ------------------------------------------
-			
+
 			require_once(DOL_DOCUMENT_ROOT."/includes/simplemail/class.mail.php");
-				
+
 			$mail = new simplemail();
-			
+
 			// Bundaries
 			$mail->B1B = $this->mime_boundary;
 			$mail->B2B = $this->related_boundary;
 			$mail->B3B = $this->alternative_boundary;
-			
+
 			$mail->XMailer = "Dolibarr version " . DOL_VERSION ." (using simplemail)";
-			
+
 			// Ajout de l'expediteur
 			$this->addr_from = $from;
 			$this->splitAddress($from);
 			$mail->addfrom($this->sEmail,$this->sName);
-			
+
 			// Ajout accuse reception
 			if ($deliveryreceipt)
 			{
 				$mail->adddeliveryreceipt($this->sEmail,$this->sName);
 			}
-			
+
 			// Ajout du destinataire
 			$arrayTo=split(',',$to);
 			foreach($arrayTo as $val)
@@ -262,7 +258,7 @@ class CMailFile
 					$mail->addcc($this->sEmail,$this->sName);
 				}
 			}
-			
+
 			// Ajout carbon copy cache
 			if (!empty($addr_bcc))
 			{
@@ -273,10 +269,10 @@ class CMailFile
 					$mail->addbcc($this->sEmail,$this->sName);
 				}
 			}
-				
+
 			//ajout du sujet
 			$mail->addsubject($this->encodetorfc2822($subject));
-			
+
 			// Ajout du message
 			if ($this->msgishtml)
 			{
@@ -284,7 +280,7 @@ class CMailFile
 				{
 					$msg = $this->html;
 					$msg = $this->checkIfHTML($msg);
-					
+
 					// un attachement html ( image jointe afficher ds le html ).
 					if ($this->atleastoneimage)
 					{
@@ -302,7 +298,7 @@ class CMailFile
 				// le message format text
 				$mail->text = $msg;
 			}
-			
+
 			// une piece jointe.
 			if ($this->atleastonefile)
 			{
@@ -323,7 +319,7 @@ class CMailFile
 			$smtps->setCharSet($conf->file->character_set_client);
 
 			$smtps->setSubject($this->encodetorfc2822($subject));
-			$smtps->setTO(getValidAddress($to,2));
+			$smtps->setTO($this->getValidAddress($to,2));
 			$smtps->setFrom($from);
 
 			//if ($this->atleastoneimage)	$msg = $this->html;
@@ -396,19 +392,18 @@ class CMailFile
 				dol_syslog("CMailFile::sendfile header=\n".$this->headers, LOG_DEBUG);
 				//dol_syslog("CMailFile::sendfile message=\n".$message);
 
-
-				// Si Windows, addr_from doit obligatoirement etre defini
+				// If Windows, sendmail_from must be defined
 				if (isset($_SERVER["WINDIR"]))
 				{
 					if (empty($this->addr_from)) $this->addr_from = 'robot@mydomain.com';
-					@ini_set('sendmail_from',getValidAddress($this->addr_from,2));
+					@ini_set('sendmail_from',$this->getValidAddress($this->addr_from,2));
 				}
 
 				// Forcage parametres
 				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER)) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
 				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT))   ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
 
-				if ($conf->global->MAIN_MAIL_SENDMODE == 'mail') $dest=getValidAddress($this->addr_to,2);
+				if ($conf->global->MAIN_MAIL_SENDMODE == 'mail') $dest=$this->getValidAddress($this->addr_to,2);
 				if (! $dest && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
 				{
 					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
@@ -417,7 +412,6 @@ class CMailFile
 				else
 				{
 					dol_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
-					//dol_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
 
 					$bounce = '';
 					if ($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F)
@@ -439,7 +433,7 @@ class CMailFile
 					else
 					{
 						$res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
-					}					
+					}
 
 					if (! $res)
 					{
@@ -582,7 +576,7 @@ class CMailFile
 	}
 
 	/**
-	 \brief		Creation des headers smtp
+	 *	\brief		Create SMTP headers
 	 */
 	function write_smtpheaders()
 	{
@@ -591,50 +585,35 @@ class CMailFile
 
 		// Sender
 		//$out .= "X-Sender: ".getValidAddress($this->addr_from,2).$this->eol;
-		$out .= "From: ".getValidAddress($this->addr_from,0).$this->eol;
-		$out .= "Return-Path: ".getValidAddress($this->addr_from,0).$this->eol;
-		if (isset($this->reply_to)  && $this->reply_to)  $out .= "Reply-To: ".getValidAddress($this->reply_to,2).$this->eol;
-		if (isset($this->errors_to) && $this->errors_to) $out .= "Errors-To: ".getValidAddress($this->errors_to,2).$this->eol;
+		$out .= "From: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
+		$out .= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
+		if (isset($this->reply_to)  && $this->reply_to)  $out .= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol;
+		if (isset($this->errors_to) && $this->errors_to) $out .= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol;
 
 		// Receiver
-		if (isset($this->addr_cc)   && $this->addr_cc)   $out .= "Cc: ".getValidAddress($this->addr_cc,2).$this->eol;
-		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out .= "Bcc: ".getValidAddress($this->addr_bcc,2).$this->eol;
+		if (isset($this->addr_cc)   && $this->addr_cc)   $out .= "Cc: ".$this->getValidAddress($this->addr_cc,2).$this->eol;
+		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out .= "Bcc: ".$this->getValidAddress($this->addr_bcc,2).$this->eol;
 
 		// Accuse reception
-		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".getValidAddress($this->addr_from,2).$this->eol;
+		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".$this->getValidAddress($this->addr_from,2).$this->eol;
 
 		//$out .= "X-Priority: 3".$this->eol;
 		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol;
 		$out.= "MIME-Version: 1.0".$this->eol;
 
-		//		if ($this->atleastoneimage)
-		//		{
-		//if (! $this->atleastonefile)
 		$out.= "Content-Type: multipart/related; boundary=\"".$this->mime_boundary."\"".$this->eol;
 		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
-		/*		}
-		 else if ($this->msgishtml)
-		 {
-		 if (! $this->atleastonefile) $out.= "Content-Type: text/html; boundary=\"".$this->mime_boundary."\"".$this->eol;
-		 $out.= "Content-Transfer-Encoding: 8bit".$this->eol;
-		 }
-		 else
-		 {
-		 if (! $this->atleastonefile) $out.= "Content-Type: text/plain; boundary=\"".$this->mime_boundary."\"".$this->eol;
-		 $out.= "Content-Transfer-Encoding: 8bit".$this->eol;
-		 }
-		*/
 
 		$out.=$this->eol;
-		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out, LOG_DEBUG);
+		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
 		return $out;
 	}
 
 
 	/**
-	 \brief 		Creation header MIME
-	 \param 		filename_list
-	 \param 		mimefilename_list
+	 *	\brief 		Creation header MIME
+	 *	\param 		filename_list
+	 *	\param 		mimefilename_list
 	 */
 	function write_mimeheaders($filename_list, $mimefilename_list)
 	{
@@ -647,25 +626,12 @@ class CMailFile
 			{
 				if ($filename_list[$i])
 				{
-					//if (! $mimedone)
-					//{
-					//						$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mime_boundary."\"".$this->eol;
-					//	$mimedone=1;
-					//}
 					if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
 					$out.= "X-attachments: $filename_list[$i]".$this->eol;
-
-					//if ($mimedone!=2 && $this->atleastoneimage)
-					//{
-					//						$out.= "--" . $this->mime_boundary . $this->eol;
-					//						$out.= "Content-Type: multipart/related; boundary=\"".$this->related_boundary."\"".$this->eol;
-					//						$mimedone=2;
-					//					}
 				}
 			}
 		}
 
-		//$out.= $this->eol;
 		dol_syslog("CMailFile::write_mimeheaders mime_header=\n".$out, LOG_DEBUG);
 		return $out;
 	}
@@ -915,7 +881,7 @@ class CMailFile
 				{
 					// Image path in src
 					$src = preg_quote($full);
-					
+
 					// Image full path
 					$this->html_images[$i]["fullpath"] = $images_dir.'/'.$img;
 
@@ -971,8 +937,8 @@ class CMailFile
 			return 0;
 		}
 	}
-	
-	
+
+
 	function splitAddress($address)
 	{
 		if (eregi('^(.*)<(.*)>$',trim($address),$regs))
@@ -987,61 +953,60 @@ class CMailFile
 		}
 	}
 
-}
 
-
-/**
- \brief      Renvoie une adresse acceptee par le serveur SMTP
- \param      adresses		Exemple: 'John Doe <john@doe.com>' ou 'john@doe.com'
- \param		format			0=Auto, 1=emails avec <>, 2=emails sans <>
- \return	    string			Renvoi: Si format 1: '<john@doe.com>' ou 'John Doe <john@doe.com>'
- Si format 2: 'john@doe.com'
- */
-function getValidAddress($adresses,$format)
-{
-	global $conf;
-
-	$ret='';
-
-	$arrayaddress=split(',',$adresses);
-
-	// Boucle sur chaque composant de l'adresse
-	foreach($arrayaddress as $val)
+	/**
+	 *	\brief      Renvoie une adresse acceptee par le serveur SMTP
+	 *	\param      adresses		Exemple: 'John Doe <john@doe.com>' ou 'john@doe.com'
+	 *	\param		format			0=Auto, 1=emails avec <>, 2=emails sans <>
+	 *	\return	    string			Renvoi: Si format 1: '<john@doe.com>' ou 'John Doe <john@doe.com>'
+	 *								Si format 2: 'john@doe.com'
+	 */
+	function getValidAddress($adresses,$format,$encode='')
 	{
-		if (eregi('^(.*)<(.*)>$',trim($val),$regs))
-		{
-			$name  = trim(utf8_decode($regs[1]));
-			$email = trim($regs[2]);
-		}
-		else
-		{
-			$name  = '';
-			$email = trim($val);
-		}
+		global $conf;
 
-		if ($email)
+		$ret='';
+
+		$arrayaddress=split(',',$adresses);
+
+		// Boucle sur chaque composant de l'adresse
+		foreach($arrayaddress as $val)
 		{
-			$newemail='';
-			if ($format == 2)
+			if (eregi('^(.*)<(.*)>$',trim($val),$regs))
 			{
-				$newemail=$email;
+				$name  = trim($regs[1]);
+				$email = trim($regs[2]);
 			}
-			if ($format == 1)
+			else
 			{
-				$neweamil='<'.$email.'>';
-			}
-			if ($format == 0)
-			{
-				if ($conf->global->MAIN_MAIL_NO_FULL_EMAIL) $newemail='<'.$email.'>';
-				elseif (! $name) $newemail='<'.$email.'>';
-				else $newemail=$name.' <'.$email.'>';
+				$name  = '';
+				$email = trim($val);
 			}
 
-			$ret=($ret ? $ret.',' : '').$newemail;
+			if ($email)
+			{
+				$newemail='';
+				if ($format == 2)
+				{
+					$newemail=$email;
+				}
+				if ($format == 1)
+				{
+					$neweamil='<'.$email.'>';
+				}
+				if ($format == 0)
+				{
+					if ($conf->global->MAIN_MAIL_NO_FULL_EMAIL) $newemail='<'.$email.'>';
+					elseif (! $name) $newemail='<'.$email.'>';
+					else $newemail=($encode?$this->encodetorfc2822($name):$name).' <'.$email.'>';
+				}
+
+				$ret=($ret ? $ret.',' : '').$newemail;
+			}
 		}
+
+		return $ret;
 	}
-
-	return $ret;
 }
 
 ?>
