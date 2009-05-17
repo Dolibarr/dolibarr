@@ -54,9 +54,8 @@ class CMailFile
 
 	var $smtps;				// Contains SMTPs object (if this method is used)
 	
-	var $simplemail;  // Contains simplemail object (if this method is used)
-	
 	// simplemail
+	var $simplemail;  // Contains simplemail object (if this method is used)
 	var $sName;
 	var $sEmail;
 
@@ -235,6 +234,7 @@ class CMailFile
 			$mail->XMailer = "Dolibarr version " . DOL_VERSION ." (using simplemail)";
 			
 			// Ajout de l'expediteur
+			$this->addr_from = $from;
 			$this->splitAddress($from);
 			$mail->addfrom($this->sEmail,$this->sName);
 			
@@ -245,11 +245,11 @@ class CMailFile
 				$this->splitAddress($val);
 				$mail->addrecipient($this->sEmail,$this->sName);
 			}
-			
+
 			// Ajout carbon copy
-			if (!empty($sentoccc))
+			if (!empty($addr_cc))
 			{
-				$arrayTocc=split(',',$sentocc);
+				$arrayTocc=split(',',$addr_cc);
 				foreach($arrayTocc as $val)
 				{
 					$this->splitAddress($val);
@@ -258,10 +258,10 @@ class CMailFile
 			}
 			
 			// Ajout carbon copy cache
-			if (!empty($sentoccc))
+			if (!empty($addr_bcc))
 			{
-				$arrayToccc=split(',',$sentoccc);
-				foreach($arrayToccc as $val)
+				$arrayTobcc=split(',',$addr_bcc);
+				foreach($arrayTobcc as $val)
 				{
 					$this->splitAddress($val);
 					$mail->addbcc($this->sEmail,$this->sName);
@@ -269,7 +269,7 @@ class CMailFile
 			}
 			
 			//ajout du sujet
-			$mail->addsubject($subject);
+			$mail->addsubject($this->encodetorfc2822($subject));
 			
 			// Ajout du message
 			if ($this->msgishtml)
@@ -282,9 +282,9 @@ class CMailFile
 					// un attachement html ( image jointe afficher ds le html ).
 					if ($this->atleastoneimage)
 					{
-						foreach ($this->images_encoded as $img)
+						foreach ($this->html_images as $i => $val)
 						{
-							$mail->addhtmlattachement($img['fullpath'],$img['cid'],$img['content_type']);
+							$mail->addhtmlattachement($this->html_images[$i]['fullpath'],$this->html_images[$i]['cid'],$this->html_images[$i]['content_type']);
 						}
 					}
 				}
@@ -305,7 +305,7 @@ class CMailFile
 					$mail->addattachement($filename_list[$i]);
 				}
 			}
-			
+			$this->simplemail = $mail;
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 		{
@@ -381,7 +381,7 @@ class CMailFile
 		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS))
 		{
 			// Action according to choosed sending method
-			if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+			if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' || $conf->global->MAIN_MAIL_SENDMODE == 'simplemail')
 			{
 
 				// Use mail php function (default PHP method)
@@ -402,8 +402,8 @@ class CMailFile
 				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER)) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
 				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT))   ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
 
-				$dest=getValidAddress($this->addr_to,2);
-				if (! $dest)
+				if ($conf->global->MAIN_MAIL_SENDMODE == 'mail') $dest=getValidAddress($this->addr_to,2);
+				if (! $dest && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
 				{
 					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
@@ -426,7 +426,14 @@ class CMailFile
 
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
-					$res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
+					if ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail')
+					{
+						$res =  $this->simplemail->sendmail();
+					}
+					else
+					{
+						$res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
+					}					
 
 					if (! $res)
 					{
@@ -960,19 +967,19 @@ class CMailFile
 	}
 	
 	
-function splitAddress($address)
-{
-	if (eregi('^(.*)<(.*)>$',trim($address),$regs))
+	function splitAddress($address)
 	{
-		$this->sName  = trim($regs[1]);
-		$this->sEmail = trim($regs[2]);
+		if (eregi('^(.*)<(.*)>$',trim($address),$regs))
+		{
+			$this->sName  = trim(utf8_decode($regs[1]));
+			$this->sEmail = trim($regs[2]);
+		}
+		else
+		{
+			$this->sName  = '';
+			$this->sEmail = $address;
+		}
 	}
-	else
-	{
-		$this->sName  = '';
-		$this->sEmail = $address;
-	}
-}
 
 }
 

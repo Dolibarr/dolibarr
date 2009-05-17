@@ -225,6 +225,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 	$listofmethods=array();
 	$listofmethods['mail']='PHP mail function';
+	$listofmethods['simplemail']='Simplemail class';
 	$listofmethods['smtps']='SMTP/SMTPS socket library';
 	// SuperAdministrator access only
 	if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
@@ -234,6 +235,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	else
 	{
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail') $text = 'PHP mail function';
+		elseif ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail') $text = 'Simplemail class';
 		elseif ($conf->global->MAIN_MAIL_SENDMODE == 'smtps') $text = 'SMTPS library';
 		else { $text = $langs->trans("Undefined"); }
 		$htmltext = $langs->trans("ContactSuperAdminForChange");
@@ -245,7 +247,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	// Server
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>';
-	if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	if ($linuxlike && ($conf->global->MAIN_MAIL_SENDMODE == 'mail' || $conf->global->MAIN_MAIL_SENDMODE == 'simplemail'))
 	{
 		print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
 		print '</td><td>';
@@ -366,13 +368,14 @@ else
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail') print 'PHP mail function';
+	elseif ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail') print 'Simplemail class';
 	elseif ($conf->global->MAIN_MAIL_SENDMODE == 'smtps') print 'SMTPS library';
 	else { print $langs->trans("Undefined"); }
 	print '</td></tr>';
 
 	// Server
 	$var=!$var;
-	if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	if ($linuxlike && ($conf->global->MAIN_MAIL_SENDMODE == 'mail' || $conf->global->MAIN_MAIL_SENDMODE == 'simplemail'))
 	{
 		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
 	}
@@ -383,7 +386,7 @@ else
 
 	// Port
 	$var=!$var;
-	if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	if ($linuxlike && ($conf->global->MAIN_MAIL_SENDMODE == 'mail' || $conf->global->MAIN_MAIL_SENDMODE == 'simplemail'))
 	{
 		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
 	}
