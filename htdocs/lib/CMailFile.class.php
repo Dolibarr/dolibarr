@@ -53,7 +53,14 @@ class CMailFile
 	var $error='';
 
 	var $smtps;				// Contains SMTPs object (if this method is used)
+	
+	var $simplemail;  // Contains simplemail object (if this method is used)
+	
+	// simplemail
+	var $sName;
+	var $sEmail;
 
+	// Image
 	var $html;
 	var $image_boundary;
 	var $atleastoneimage=0;
@@ -228,71 +235,41 @@ class CMailFile
 			$mail->XMailer = "Dolibarr version " . DOL_VERSION ." (using simplemail)";
 			
 			// Ajout de l'expediteur
-			if (eregi('^(.*)<(.*)>$',trim($val),$regs))
-			{
-				$name  = trim($regs[1]);
-				$email = trim($regs[2]);
-			}
-			else
-			{
-				$name = '';
-				$email = $val;
-			}
-			$mail->addfrom($email,$name);
+			$this->splitAddress($from);
+			$mail->addfrom($this->sEmail,$this->sName);
 			
 			// Ajout du destinataire
 			$arrayTo=split(',',$to);
 			foreach($arrayTo as $val)
 			{
-				if (eregi('^(.*)<(.*)>$',trim($val),$regs))
-				{
-					$name  = trim($regs[1]);
-					$email = trim($regs[2]);
-				}
-				else
-				{
-					$name = '';
-					$email = $val;
-				}
-				$mail->addrecipient($email,$name);
+				$this->splitAddress($val);
+				$mail->addrecipient($this->sEmail,$this->sName);
 			}
 			
 			// Ajout carbon copy
-			$arrayTocc=split(',',$sentocc);
-			foreach($arrayTocc as $val)
+			if (!empty($sentoccc))
 			{
-				if (eregi('^(.*)<(.*)>$',trim($val),$regs))
+				$arrayTocc=split(',',$sentocc);
+				foreach($arrayTocc as $val)
 				{
-					$name  = trim($regs[1]);
-					$email = trim($regs[2]);
+					$this->splitAddress($val);
+					$mail->addcc($this->sEmail,$this->sName);
 				}
-				else
-				{
-					$name = '';
-					$email = $val;
-				}
-				$mail->addcc($email,$name);
 			}
 			
 			// Ajout carbon copy cache
-			$arrayToccc=split(',',$sentoccc);
-			foreach($arrayToccc as $val)
+			if (!empty($sentoccc))
 			{
-				if (eregi('^(.*)<(.*)>$',trim($val),$regs))
+				$arrayToccc=split(',',$sentoccc);
+				foreach($arrayToccc as $val)
 				{
-					$name  = trim($regs[1]);
-					$email = trim($regs[2]);
+					$this->splitAddress($val);
+					$mail->addbcc($this->sEmail,$this->sName);
 				}
-				else
-				{
-					$name = '';
-					$email = $val;
-				}
-				$mail->addbcc($email,$name);
 			}
 			
 			//ajout du sujet
-			$mail->addsubject($this->encodetorfc2822($subject));
+			$mail->addsubject($subject);
 			
 			// Ajout du message
 			if ($this->msgishtml)
@@ -328,7 +305,7 @@ class CMailFile
 					$mail->addattachement($filename_list[$i]);
 				}
 			}
-var_dump($mail); exit;
+			
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 		{
@@ -981,6 +958,21 @@ var_dump($mail); exit;
 			return 0;
 		}
 	}
+	
+	
+function splitAddress($address)
+{
+	if (eregi('^(.*)<(.*)>$',trim($address),$regs))
+	{
+		$this->sName  = trim($regs[1]);
+		$this->sEmail = trim($regs[2]);
+	}
+	else
+	{
+		$this->sName  = '';
+		$this->sEmail = $address;
+	}
+}
 
 }
 
@@ -1038,4 +1030,5 @@ function getValidAddress($adresses,$format)
 
 	return $ret;
 }
+
 ?>
