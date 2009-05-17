@@ -93,6 +93,15 @@ class CMailFile
 		$this->eol="\n";
 		if (eregi('^win',PHP_OS)) $this->eol="\r\n";
 		if (eregi('^mac',PHP_OS)) $this->eol="\r";
+		
+		// On defini mime_boundary
+		$this->mime_boundary = md5(uniqid("dolibarr"));
+
+		// On defini related_boundary
+		$this->related_boundary = md5(uniqid("dolibarr"));
+
+		// On defini alternative_boundary
+		$this->alternative_boundary = md5(uniqid("dolibarr"));
 
 		// Evite caractere bizarre avec les accents
 		//Todo l'envoi par mailing donne des caractères bizarre,
@@ -151,15 +160,6 @@ class CMailFile
 		{
 			// Use mail php function (default PHP method)
 			// ------------------------------------------
-
-			// On defini mime_boundary
-			$this->mime_boundary = md5(uniqid("dolibarr"));
-
-			// On defini related_boundary
-			$this->related_boundary = md5(uniqid("dolibarr"));
-
-			// On defini alternative_boundary
-			$this->alternative_boundary = md5(uniqid("dolibarr"));
 
 			$smtp_headers = "";
 			$mime_headers = "";
@@ -222,7 +222,7 @@ class CMailFile
 			
 			// Bundaries
 			$mail->B1B = $this->mime_boundary;
-			$mail->B2B = $this->relative_boundary;
+			$mail->B2B = $this->related_boundary;
 			$mail->B3B = $this->alternative_boundary;
 			
 			$mail->XMailer = "Dolibarr version " . DOL_VERSION ." (using simplemail)";
