@@ -678,7 +678,7 @@ BackupDescX=Archived directory should be stored in a secure place.
 BackupDescY=The generated dump file should be stored in a secure place.
 RestoreDesc=To restore a Dolibarr backup, you must:
 RestoreDesc2=* Restore archive file (zip file for example) of documents directory to extract tree of files in documents directory of a new Dolibarr installation or into this current documents directoy (<b>%s</b>).
-RestoreDesc3=* Restore, from saved dump file, the database of a new Dolibarr installation or database of this current installation. Warning, once restore is finished, you must use a login/password, that existed when backup was made, to connect again. To restore database for this current installation, you can follow this assistant.
+RestoreDesc3=* Restore the data, from a backup dump file, into the database of the new Dolibarr installation or into the database of this current installation. Warning, once restore is finished, you must use a login/password, that existed when backup was made, to connect again. To restore a backup database into this current installation, you can follow this assistant.
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.
