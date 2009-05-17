@@ -56,13 +56,13 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 	{
 		$_GET     = array_map('stripslashes_deep', $_GET);
 		$_POST    = array_map('stripslashes_deep', $_POST);
-		$_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
 		$_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+		$_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
 	}
 	@set_magic_quotes_runtime(0);
 }
 
-// Security: SQL Injection protection (Filters on GET and POST)
+// Security: SQL Injection protection (Filters on GET, POST, REQUEST, COOKIE)
 function test_sql_inject($val)
 {
 	$sql_inj = 0;
@@ -107,21 +107,22 @@ function analyse_sql_injection(&$var)
 analyse_sql_injection($_GET);
 analyse_sql_injection($_POST);
 
+// Security: CSRF protection
+// The test to do is to check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST']).
+if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! eregi($_SERVER['HTTP_HOST'], $_SERVER['HTTP_REFERER']))
+{
+	// exit;	Why not using simply an exit ?
+	unset($_GET);
+	unset($_POST);
+	unset($_REQUEST);
+}
+
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 // Set and init common variables
 // This include will set: $conf, $langs and $mysoc objects
 require_once("master.inc.php");
-
-// Security: CSRF protection
-//print 'HTTP_REFERER='.$_SERVER['HTTP_REFERER'].'<br>';
-//print 'DOL_MAIN_URL_ROOT='.DOL_MAIN_URL_ROOT.'<br>';
-if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_REFERER']) && !eregi(DOL_MAIN_URL_ROOT, $_SERVER['HTTP_REFERER']))
-{
-	unset($_GET);
-	unset($_POST);
-}
 
 // Check if HTTPS
 if ($conf->file->main_force_https)
