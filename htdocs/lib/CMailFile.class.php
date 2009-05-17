@@ -238,6 +238,12 @@ class CMailFile
 			$this->splitAddress($from);
 			$mail->addfrom($this->sEmail,$this->sName);
 			
+			// Ajout accuse reception
+			if ($deliveryreceipt)
+			{
+				$mail->adddeliveryreceipt($this->sEmail,$this->sName);
+			}
+			
 			// Ajout du destinataire
 			$arrayTo=split(',',$to);
 			foreach($arrayTo as $val)
@@ -267,7 +273,7 @@ class CMailFile
 					$mail->addbcc($this->sEmail,$this->sName);
 				}
 			}
-			
+				
 			//ajout du sujet
 			$mail->addsubject($this->encodetorfc2822($subject));
 			

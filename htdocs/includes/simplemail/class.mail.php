@@ -7,6 +7,7 @@ class simplemail {
 	var $hfrom;
 	var $hbcc;
 	var $hcc;
+	var $deliveryreceipt;
 	
 	var $Xsender;
 	var $ErrorsTo;
@@ -107,6 +108,13 @@ class simplemail {
 		$tmp=$this->makenameplusaddress($replyto,'');
 		if ( !$tmp ) { $this->error_log(" Reply-To: error"); return FALSE; }
 		$this->returnpath = $tmp;
+		return TRUE;
+	}
+	
+	function adddeliveryreceipt($deliveryreceipt) {
+		$tmp=$this->makenameplusaddress($deliveryreceipt,'');
+		if ( !$tmp ) { $this->error_log(" Disposition-Notification-To: error"); return FALSE; }
+		$this->deliveryreceipt = $tmp;
 		return TRUE;
 	}
 
@@ -279,6 +287,8 @@ class simplemail {
 		if ( !empty($this->returnpath) ) $this->AddField2Header("Return-Path",$this->returnpath);
 		
 		if ( !empty($this->replyto) ) $this->AddField2Header("Reply-To",$this->replyto);
+		
+		if ( !empty($this->deliveryreceipt) ) $this->AddField2Header("Disposition-Notification-To",$this->deliveryreceipt);
 		
 		$this->headers .="MIME-Version: 1.0\r\n";
 		
