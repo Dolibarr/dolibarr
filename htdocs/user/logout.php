@@ -20,10 +20,10 @@
  */
 
 /**
-        \file       htdocs/user/logout.php
-        \brief      Fichier de deconnexion
-		\version	$Id$
-*/
+ *      \file       htdocs/user/logout.php
+ *      \brief      Page called to disconnect a user
+ * 		\version	$Id$
+ */
 
 if ($_SESSION["dol_authmode"] == 'forceuser'
   	 && $_SESSION["dol_authmode"] == 'http')
