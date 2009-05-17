@@ -211,7 +211,6 @@ function pHeader($soutitre,$next,$action='none')
 	print '</td></tr></table>';
 
 	print '<form action="'.$next.'" method="POST">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 
 //	print '<table class="main" width="100%"><tr><td>'."\n";
