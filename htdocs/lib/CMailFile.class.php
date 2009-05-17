@@ -156,10 +156,10 @@ class CMailFile
 			$this->mime_boundary = md5(uniqid("dolibarr"));
 
 			// On defini related_boundary
-			//			$this->related_boundary = md5(uniqid("dolibarr"));
+			$this->related_boundary = md5(uniqid("dolibarr"));
 
 			// On defini alternative_boundary
-			//			$this->alternative_boundary = md5(uniqid("dolibarr"));
+			$this->alternative_boundary = md5(uniqid("dolibarr"));
 
 			$smtp_headers = "";
 			$mime_headers = "";
@@ -213,42 +213,122 @@ class CMailFile
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail')
 		{
-			// Todo: Use SimpleMail library
+			// Todo: Use simplemail library
 			// ------------------------------------------
-
-			try {
-				require_once(DOL_DOCUMENT_ROOT."/includes/simplemail/SimpleMail.php");
+			
+			require_once(DOL_DOCUMENT_ROOT."/includes/simplemail/class.mail.php");
 				
-				$mail = new SimpleMail();
-			  
-			  $mail->From = $from;
-			  
-			  $mail->To = split(',',$to);
-			  $mail->Cc = split(',',$sentocc);
-			  $mail->Bcc = split(',',$sentoccc);
-			  
-			  if (isset($deliveryreceipt) && $deliveryreceipt) $mail->DispositionNotificationTo = getValidAddress($from,2);
-			  if (isset($reply_to)  && $reply_to)  $mail->ReplyTo = getValidAddress($reply_to,2);
-			  
-			  $mail->Subject = $this->encodetorfc2822($subject);
-			  
-			  if ($this->msgishtml) $mail->addBody ($this->checkIfHTML($msg), 'text/html');
-			  else  $mail->addBody ($msg);
-			  
-			  if ($this->atleastonefile)
-			  {
-			  	foreach ($filename_list as $i => $val)
-			  	{
-			  		$mail->addAttachment($filename_list[$i],$mimetype_list[$i],$mimefilename_list[$i]);
-			  	}
-			  }
-			  
-			  $mail->send ();
+			$mail = new simplemail();
+			
+			// Bundaries
+			$mail->B1B = $this->mime_boundary;
+			$mail->B2B = $this->relative_boundary;
+			$mail->B3B = $this->alternative_boundary;
+			
+			$mail->XMailer = "Dolibarr version " . DOL_VERSION ." (using simplemail)";
+			
+			// Ajout de l'expediteur
+			if (eregi('^(.*)<(.*)>$',trim($val),$regs))
+			{
+				$name  = trim($regs[1]);
+				$email = trim($regs[2]);
 			}
-			catch (Exception $oE) {
-				var_dump ($oE);
-				echo 'An error occured during sending the message.<br />'.$oE->getMessage ();
+			else
+			{
+				$name = '';
+				$email = $val;
 			}
+			$mail->addfrom($email,$name);
+			
+			// Ajout du destinataire
+			$arrayTo=split(',',$to);
+			foreach($arrayTo as $val)
+			{
+				if (eregi('^(.*)<(.*)>$',trim($val),$regs))
+				{
+					$name  = trim($regs[1]);
+					$email = trim($regs[2]);
+				}
+				else
+				{
+					$name = '';
+					$email = $val;
+				}
+				$mail->addrecipient($email,$name);
+			}
+			
+			// Ajout carbon copy
+			$arrayTocc=split(',',$sentocc);
+			foreach($arrayTocc as $val)
+			{
+				if (eregi('^(.*)<(.*)>$',trim($val),$regs))
+				{
+					$name  = trim($regs[1]);
+					$email = trim($regs[2]);
+				}
+				else
+				{
+					$name = '';
+					$email = $val;
+				}
+				$mail->addcc($email,$name);
+			}
+			
+			// Ajout carbon copy cache
+			$arrayToccc=split(',',$sentoccc);
+			foreach($arrayToccc as $val)
+			{
+				if (eregi('^(.*)<(.*)>$',trim($val),$regs))
+				{
+					$name  = trim($regs[1]);
+					$email = trim($regs[2]);
+				}
+				else
+				{
+					$name = '';
+					$email = $val;
+				}
+				$mail->addbcc($email,$name);
+			}
+			
+			//ajout du sujet
+			$mail->addsubject($this->encodetorfc2822($subject));
+			
+			// Ajout du message
+			if ($this->msgishtml)
+			{
+				if (! empty($this->html))
+				{
+					$msg = $this->html;
+					$msg = $this->checkIfHTML($msg);
+					
+					// un attachement html ( image jointe afficher ds le html ).
+					if ($this->atleastoneimage)
+					{
+						foreach ($this->images_encoded as $img)
+						{
+							$mail->addhtmlattachement($img['fullpath'],$img['cid'],$img['content_type']);
+						}
+					}
+				}
+				// le message format html
+				$mail->html = $msg;
+			}
+			else
+			{
+				// le message format text
+				$mail->text = $msg;
+			}
+			
+			// une piece jointe.
+			if ($this->atleastonefile)
+			{
+				foreach ($filename_list as $i => $val)
+				{
+					$mail->addattachement($filename_list[$i]);
+				}
+			}
+var_dump($mail); exit;
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 		{
@@ -843,8 +923,11 @@ class CMailFile
 
 				if (file_exists($images_dir.'/'.$img))
 				{
-					// Image path
+					// Image path in src
 					$src = preg_quote($full);
+					
+					// Image full path
+					$this->html_images[$i]["fullpath"] = $images_dir.'/'.$img;
 
 					// Image name
 					$this->html_images[$i]["name"] = $img;
