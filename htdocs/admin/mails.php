@@ -419,9 +419,9 @@ else
 	// Boutons actions
 
 	print '<div class="tabsAction">';
-	
+
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
-	
+
 	if ($conf->global->MAIN_MAIL_SENDMODE != 'mail' || ! $linuxlike)
 	{
 		if (function_exists('fsockopen') && $port && $server)
@@ -435,12 +435,12 @@ else
 	}
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
-	
+
 	if ($conf->fckeditor->enabled)
 	{
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&amp;mode=init">'.$langs->trans("DoTestSendHTML").'</a>';
 	}
-	
+
 	print '</div>';
 
 
@@ -518,8 +518,8 @@ else
 		// Cree l'objet formulaire mail
 		include_once(DOL_DOCUMENT_ROOT."/html.formmail.class.php");
 		$formmail = new FormMail($db);
-		$formmail->fromname = $conf->global->MAIN_MAIL_EMAIL_FROM;
-		$formmail->frommail = $conf->global->MAIN_MAIL_EMAIL_FROM;
+		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
+		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->withfromreadonly=0;
 		$formmail->withsubstit=0;
 		$formmail->withfrom=1;
