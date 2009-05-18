@@ -831,9 +831,11 @@ else
 			print '<td colspan="2">'.$fuser->prenom.'</td>';
 			print "</tr>\n";
 
-			$rowspan=11;
+			$rowspan=12;
 			if ($conf->societe->enabled) $rowspan++;
 			if ($conf->adherent->enabled) $rowspan++;
+			if ($conf->webcal->enabled) $rowspan++;
+			if ($conf->phenix->enabled) $rowspan++;
 
 			// Login
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
@@ -964,7 +966,7 @@ else
 			{
 				$langs->load("other");
 				print '<tr><td width="25%" valign="top">'.$langs->trans("LoginWebcal").'</td>';
-				print '<td colspan="2">'.$fuser->webcal_login.'&nbsp;</td>';
+				print '<td>'.$fuser->webcal_login.'&nbsp;</td>';
 				print "</tr>\n";
 			}
 
@@ -973,10 +975,10 @@ else
 			{
 				$langs->load("other");
 				print '<tr><td width="25%" valign="top">'.$langs->trans("LoginPhenix").'</td>';
-				print '<td colspan="2">'.$fuser->phenix_login.'&nbsp;</td>';
+				print '<td>'.$fuser->phenix_login.'&nbsp;</td>';
 				print "</tr>\n";
 				print '<tr><td width="25%" valign="top">'.$langs->trans("PassPhenix").'</td>';
-				print '<td colspan="2">'.eregi_replace('.','*',$fuser->phenix_pass_crypted).'&nbsp;</td>';
+				print '<td>'.eregi_replace('.','*',$fuser->phenix_pass_crypted).'&nbsp;</td>';
 				print "</tr>\n";
 			}
 
@@ -1270,9 +1272,11 @@ else
 			print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 			print '<table width="100%" class="border">';
 
-			$rowspan=9;
+			$rowspan=10;
 			if ($conf->societe->enabled) $rowspan++;
 			if ($conf->adherent->enabled) $rowspan++;
+			if ($conf->webcal->enabled) $rowspan++;
+			if ($conf->phenix->enabled) $rowspan++;
 
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="2">';
@@ -1478,7 +1482,7 @@ else
 			{
 				$langs->load("other");
 				print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-				print '<td colspan="2">';
+				print '<td>';
 				if ($caneditfield) print '<input size="30" type="text" class="flat" name="webcal_login" value="'.$fuser->webcal_login.'">';
 				else print $fuser->webcal_login;
 				print '</td></tr>';
@@ -1489,12 +1493,12 @@ else
 			{
 				$langs->load("other");
 				print "<tr>".'<td valign="top">'.$langs->trans("LoginPhenix").'</td>';
-				print '<td colspan="2">';
+				print '<td>';
 				if ($caneditfield) print '<input size="30" type="text" class="flat" name="phenix_login" value="'.$fuser->phenix_login.'">';
 				else print $fuser->phenix_login;
 				print '</td></tr>';
 				print "<tr>".'<td valign="top">'.$langs->trans("PassPhenix").'</td>';
-				print '<td colspan="2">';
+				print '<td>';
 				if ($caneditfield) print '<input size="30" type="password" class="flat" name="phenix_pass" value="'.$fuser->phenix_pass_crypted.'">';
 				else print eregi_replace('.','*',$fuser->phenix_pass_crypted);
 				print '</td></tr>';
