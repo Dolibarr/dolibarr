@@ -24,10 +24,11 @@ create table llx_commande_fournisseur
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
   tms                 timestamp,
   fk_soc              integer NOT NULL,
-  fk_projet           integer DEFAULT 0,             -- projet auquel est rattache la commande
   ref                 varchar(30) NOT NULL,          -- order number
-  entity              integer DEFAULT 1 NOT NULL,	   -- multi company id
+  entity              integer DEFAULT 1 NOT NULL,	 -- multi company id
+  ref_supplier        varchar(30),
 
+  fk_projet           integer DEFAULT 0,             -- projet auquel est rattache la commande
   date_creation       datetime,                      -- date de creation 
   date_valid          datetime,                      -- date de validation
   date_cloture        datetime,                      -- date de cloture
@@ -46,7 +47,6 @@ create table llx_commande_fournisseur
   note                text,
   note_public         text,
   model_pdf           varchar(50),
-
   fk_methode_commande integer default 0
 )type=innodb;
 
