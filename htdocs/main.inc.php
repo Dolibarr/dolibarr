@@ -769,9 +769,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<!-- Includes for PWC (Used for confirm popup) -->'."\n";
 				// PWC css
 				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/alert.css">'."\n";
-				// Scriptaculous used by PWC
-//				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/effects.js"></script>'."\n";
-//				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/controls.js"></script>'."\n";
 				// PWC js
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window.js"></script>'."\n";
 			}
@@ -824,7 +821,7 @@ function top_menu($head, $title='', $target='')
 
 
 	/*
-	 * Barre de menu superieure
+	 * Top menu
 	 */
 	print "\n".'<!-- Start top horizontal menu -->'."\n";
 	print '<div class="tmenu">'."\n";
@@ -1006,10 +1003,11 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 			// If complete URL
 			$helpbaseurl='%s';
 			$helppage=$helppagename;
+			$mode='local';
 		}
 		else
 		{
-			// If relative URL
+			// If WIKI URL
 			$helppage='';
 			if (eregi('^es',$langs->defaultlang))
 			{
@@ -1026,17 +1024,22 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 				$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
 				if (eregi('EN:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
 			}
+			$mode='wiki';
 		}
 
 		// Link to help pages
 		if ($helpbaseurl && $helppage)
 		{
 			print '<div class="help">';
-			print '<a class="help" target="_blank" title="'.$langs->trans("GoToHelpPage").'" href="';
+			print '<a class="help" target="_blank" title="'.$langs->trans("GoToHelpPage");
+			if ($mode == 'wiki') print '  - '.$langs->trans("PageWiki").' '.$helppage;
+			print '" href="';
 			print sprintf($helpbaseurl,$helppage);
 			print '">';
 			print img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1).' ';
-			print $langs->trans("Help").'</a>';
+			print $langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
+			if ($mode == 'wiki') print ' ('.dol_trunc($helppage,8).')';
+			print '</a>';
 			print '</div>';
 		}
 	}
