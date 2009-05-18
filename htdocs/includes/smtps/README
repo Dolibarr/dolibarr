@@ -1,0 +1,7 @@
+README (english)
+----------------
+
+This directory contains a PHP library for manipulating SMTPS.
+Web:     http://www.paehl.de/cms/php_scripts	(Class from SMTP PHP Mail project)
+Author:  Dirk Paehl
+Licence: GPL
