@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,12 +110,6 @@ class CMailFile
 		// On defini alternative_boundary
 		$this->alternative_boundary = md5(uniqid("dolibarr"));
 
-		// Evite caractere bizarre avec les accents
-		//Todo l'envoi par mailing donne des caractères bizarre,
-		// alors que l'envoi d'un document facture ou autre est correcte
-		$subject = $subject;
-		$from    = $from;
-
 		// If ending method not defined
 		if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';
 
@@ -215,7 +210,7 @@ class CMailFile
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail')
 		{
-			// Todo: Use simplemail library
+			// Use simplemail library
 			// ------------------------------------------
 
 			require_once(DOL_DOCUMENT_ROOT."/includes/simplemail/class.mail.php");
@@ -229,58 +224,49 @@ class CMailFile
 
 			$mail->XMailer = "Dolibarr version " . DOL_VERSION ." (using simplemail)";
 
-			// Ajout de l'expediteur
+			// Add from
 			$this->addr_from = $from;
-			//$this->splitAddress($from);
-			//$mail->addfrom($this->sEmail,$this->sName);
 			$mail->hfrom=$this->getValidAddress($this->addr_from,0,1);
 
-			// Ajout accuse reception
+			// Add delivery receipt
 			if ($deliveryreceipt)
 			{
-				//$mail->adddeliveryreceipt($this->sEmail,$this->sName);
 				$mail->deliveryreceipt=$this->getValidAddress($this->addr_from,0,1);
 			}
 
-			// Ajout du destinataire
+			// Add to
 			$arrayTo=split(',',$to);
 			foreach($arrayTo as $val)
 			{
-				//$this->splitAddress($val);
-				//$mail->addrecipient($this->sEmail,$this->sName);
 				$mail->recipientlist[] = array( 'mail'=>$this->getValidAddress($val,2), 'nameplusmail' => $this->getValidAddress($val,0,1));
 			}
 
-			// Ajout carbon copy
+			// Add carbon copy
 			if (!empty($addr_cc))
 			{
 				$arrayTocc=split(',',$addr_cc);
 				foreach($arrayTocc as $val)
 				{
-					//$this->splitAddress($val);
-					//$mail->addcc($this->sEmail,$this->sName);
 					if (!empty($mail->hcc)) $mail->hcc.= ",";
 					$mail->hcc.= $this->getValidAddress($val,0,1);
 				}
 			}
 
-			// Ajout carbon copy cache
+			// Add carbon copy cache
 			if (!empty($addr_bcc))
 			{
 				$arrayTobcc=split(',',$addr_bcc);
 				foreach($arrayTobcc as $val)
 				{
-					//$this->splitAddress($val);
-					//$mail->addbcc($this->sEmail,$this->sName);
 					if (!empty($mail->hbcc)) $mail->hbcc.= ",";
 					$mail->hbcc.= $this->getValidAddress($val,0,1);
 				}
 			}
 
-			//ajout du sujet
+			// Add subject
 			$mail->addsubject($this->encodetorfc2822($subject));
 
-			// Ajout du message
+			// Add message
 			if ($this->msgishtml)
 			{
 				if (! empty($this->html))
@@ -297,16 +283,16 @@ class CMailFile
 						}
 					}
 				}
-				// le message format html
+				// HTML format
 				$mail->html = $msg;
 			}
 			else
 			{
-				// le message format text
+				// Text format
 				$mail->text = $msg;
 			}
 
-			// une piece jointe.
+			// Attach-files
 			if ($this->atleastonefile)
 			{
 				foreach ($filename_list as $i => $val)
@@ -944,22 +930,6 @@ class CMailFile
 			return 0;
 		}
 	}
-
-
-	function splitAddress($address)
-	{
-		if (eregi('^(.*)<(.*)>$',trim($address),$regs))
-		{
-			$this->sName  = trim(utf8_decode($regs[1]));
-			$this->sEmail = trim($regs[2]);
-		}
-		else
-		{
-			$this->sName  = '';
-			$this->sEmail = $address;
-		}
-	}
-
 
 	/**
 	 *	\brief      Return an address for SMTP protocol
