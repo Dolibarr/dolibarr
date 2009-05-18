@@ -135,31 +135,37 @@ class simplemail {
 	
 	function writeattachement(&$attachement,$B) {
 		$message = '';
+		$inline = array();
 		if ( !empty($attachement) ) {
 			foreach($attachement as $AttmFile){
 				$patharray = explode ("/", $AttmFile['filename']);
 				$FileName = $patharray[count($patharray)-1];
 				
-				$message .= "\n--".$B."\n";
-				
-				if (!empty($AttmFile['cid'])) {
-					$message .= "Content-Type: {$AttmFile['contenttype']};\n name=\"".$FileName."\"\n";
-					$message .= "Content-Transfer-Encoding: base64\n";
-					$message .= "Content-ID: <{$AttmFile['cid']}>\n";
-					$message .= "Content-Disposition: inline;\n filename=\"".$FileName."\"\n\n";
-				} else {
-					$message .= "Content-Type: application/octetstream;\n name=\"".$FileName."\"\n";
-					$message .= "Content-Transfer-Encoding: base64\n";
-					$message .= "Content-Disposition: attachment;\n filename=\"".$FileName."\"\n\n";
+				// If duplicate images are embedded, they may show up as attachments, so remove them.
+				if (!in_array($AttmFile['filename'],$inline))
+				{
+					$message .= "\n--".$B."\n";
+					
+					if (!empty($AttmFile['cid'])) {
+						$inline[] = $AttmFile['filename'];
+						$message .= "Content-Type: {$AttmFile['contenttype']};\n name=\"".$FileName."\"\n";
+						$message .= "Content-Transfer-Encoding: base64\n";
+						$message .= "Content-ID: <{$AttmFile['cid']}>\n";
+						$message .= "Content-Disposition: inline;\n filename=\"".$FileName."\"\n\n";
+					} else {
+						$message .= "Content-Type: application/octetstream;\n name=\"".$FileName."\"\n";
+						$message .= "Content-Transfer-Encoding: base64\n";
+						$message .= "Content-Disposition: attachment;\n filename=\"".$FileName."\"\n\n";
+					}
+					
+					$fd=fopen ($AttmFile['filename'], "rb");
+					$FileContent=fread($fd,filesize($AttmFile['filename']));
+					fclose ($fd);
+					
+					$FileContent = chunk_split(base64_encode($FileContent));
+					$message .= $FileContent;
+					$message .= "\n\n";
 				}
-				
-				$fd=fopen ($AttmFile['filename'], "rb");
-				$FileContent=fread($fd,filesize($AttmFile['filename']));
-				fclose ($fd);
-				
-				$FileContent = chunk_split(base64_encode($FileContent));
-				$message .= $FileContent;
-				$message .= "\n\n";
 			}
 			$message .= "\n--".$B."--\n";
 		}

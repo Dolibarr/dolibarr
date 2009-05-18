@@ -895,25 +895,31 @@ class CMailFile
 
 			if (!empty($this->html_images))
 			{
-				// If duplicate images are embedded, they may show up as attachments, so remove them.
-				//$html_images = array_unique($this->html_images);
-				//sort($html_images);
+				$inline = array();
+
 				$i=0;
 
 				foreach ($this->html_images as $img)
 				{
-					// Read imahe file
-					if ($image = file_get_contents($images_dir.'/'.$img["name"]))
+					$fullpath = $images_dir.'/'.$img["name"];
+					
+					// If duplicate images are embedded, they may show up as attachments, so remove them.
+					if (!in_array($fullpath,$inline))
 					{
-						// On garde que le nom de l'image
-						eregi('([A-Za-z0-9_-]+[.]?[A-Za-z0-9]+)?$',$img["name"],$regs);
-						$imgName = $regs[1];
-
-						$this->images_encoded[$i]['name'] = $imgName;
-						$this->images_encoded[$i]['content_type'] = $img["content_type"];
-						$this->images_encoded[$i]['cid'] = $img["cid"];
-						// Encodage de l'image
-						$this->images_encoded[$i]["image_encoded"] = chunk_split(base64_encode($image), 68, $this->eol);
+						// Read image file
+						if ($image = file_get_contents($fullpath))
+						{
+							// On garde que le nom de l'image
+							eregi('([A-Za-z0-9_-]+[.]?[A-Za-z0-9]+)?$',$img["name"],$regs);
+							$imgName = $regs[1];
+							
+							$this->images_encoded[$i]['name'] = $imgName;
+							$this->images_encoded[$i]['content_type'] = $img["content_type"];
+							$this->images_encoded[$i]['cid'] = $img["cid"];
+							// Encodage de l'image
+							$this->images_encoded[$i]["image_encoded"] = chunk_split(base64_encode($image), 68, $this->eol);
+							$inline[] = $fullpath;
+						}
 					}
 					$i++;
 				}
