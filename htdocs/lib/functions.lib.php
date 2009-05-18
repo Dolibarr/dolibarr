@@ -1357,6 +1357,7 @@ function info_admin($texte,$infoonimgalt=0)
  *	\param      feature2		    Feature to check (second level of permission)
  *  \param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
  *  \param      dbt_select      Field name for select if not rowid. (optionnal)
+ *  \param      dbt_tablename2  Secondary table name for compare keyfield. (optionnal)
  */
 function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
 {
@@ -1528,7 +1529,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			}
 		}
 
-		//print $sql."<br>";
+		print $sql."<br>";
 		if ($sql)
 		{
 			$resql=$db->query($sql);
