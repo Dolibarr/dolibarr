@@ -26,6 +26,8 @@ PHP_WriteExcel    0.3.0    LGPL 2.1                    Yes              Excel fi
 Prototype         1.6.0.3  MIT License                 Yes              Ajax library
 PWC               1.3      MIT License                 Yes              Ajax library
 Scriptaculous     1.8.2    MIT License                 Yes              Ajax library
+SimpleMail        1.2      GPL                         Yes              SMTP library
+SMTPs             1.15     GPL                         Yes              SMTPS library
 VCard             2.0      GPL 2.0                     Yes              Fonctions vcard
 
 For licenses compatibility informations:
@@ -54,7 +56,7 @@ Copyright (C) 2007
 
 Copyright (C) 2006
 - Auguria SARL <info@auguria.org>
-- Marc Barilley/Océbo <marc@ocebo.com>
+- Marc Barilley/Ocï¿½bo <marc@ocebo.com>
 - Laurent Destailleur <eldy@users.sourceforge.net>
 - Rodolphe Quiedeville <rodolphe@quiedeville.org>
 - Regis Houssin <regis@dolibarr.fr>
@@ -82,7 +84,7 @@ Copyright (C) 2003
 - Xavier Dutoit <doli@sydesy.com>
 - Rodolphe Quiedeville <rodolphe@quiedeville.org>
 - Emmanuel Raviart <eraviart@entrouvert.com>
-- Éric Seigne <erics@rycks.com>
+- ï¿½ric Seigne <erics@rycks.com>
 
 Copyright (C) 2002
 - Jean-Louis Bergamo <jlb@j1b.org>
