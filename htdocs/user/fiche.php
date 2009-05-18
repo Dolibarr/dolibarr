@@ -831,11 +831,11 @@ else
 			print '<td colspan="2">'.$fuser->prenom.'</td>';
 			print "</tr>\n";
 
-			$rowspan=12;
+			$rowspan=11;
 			if ($conf->societe->enabled) $rowspan++;
 			if ($conf->adherent->enabled) $rowspan++;
 			if ($conf->webcal->enabled) $rowspan++;
-			if ($conf->phenix->enabled) $rowspan++;
+			if ($conf->phenix->enabled) $rowspan+=2;
 
 			// Login
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
@@ -1272,11 +1272,11 @@ else
 			print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 			print '<table width="100%" class="border">';
 
-			$rowspan=10;
+			$rowspan=9;
 			if ($conf->societe->enabled) $rowspan++;
 			if ($conf->adherent->enabled) $rowspan++;
 			if ($conf->webcal->enabled) $rowspan++;
-			if ($conf->phenix->enabled) $rowspan++;
+			if ($conf->phenix->enabled) $rowspan+=2;
 
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="2">';
