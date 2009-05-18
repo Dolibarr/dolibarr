@@ -1357,9 +1357,8 @@ function info_admin($texte,$infoonimgalt=0)
  *	\param      feature2		    Feature to check (second level of permission)
  *  \param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
  *  \param      dbt_select      Field name for select if not rowid. (optionnal)
- *  \param      dbt_tablename2  Secondary table name for compare keyfield. (optionnal)
  */
-function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $dbtablename2='societe')
+function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
 {
 	global $db, $conf;
 
@@ -1522,23 +1521,10 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			// If multicompany and internal users with all permissions, check user is in correct entity
 			else if ($conf->global->MAIN_MODULE_MULTICOMPANY)
 			{
-				// If the objects do not have fk_soc
-				if ($feature == 'banque' || $feature == 'cheque')
-				{
-					$sql = "SELECT dbt.".$dbt_select;
-					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-					$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
-					$sql.= " AND dbt.entity = ".$conf->entity;
-				}
-				else
-				{
-					$sql = "SELECT dbt.".$dbt_select;
-					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-					$sql.= ", ".MAIN_DB_PREFIX.$dbtablename2." as dbt2";
-					$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
-					$sql.= " AND dbt2.rowid = dbt.".$dbt_keyfield;
-					$sql.= " AND dbt2.entity = ".$conf->entity;
-				}
+				$sql = "SELECT dbt.".$dbt_select;
+				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
+				$sql.= " AND dbt.entity = ".$conf->entity;
 			}
 		}
 

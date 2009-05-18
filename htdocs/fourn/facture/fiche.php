@@ -43,7 +43,7 @@ $facid = isset($_GET["facid"])?$_GET["facid"]:'';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $facid, '', 'facture');
+$result = restrictedArea($user, 'fournisseur', $facid, 'facture_fourn', 'facture');
 
 $html = new Form($db);
 $mesg='';
