@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /**
-	    \file       htdocs/commande/stats/index.php
-        \ingroup    commande
-		\brief      Page des stats commandes
-		\version    $Id$
+ *	    \file       htdocs/commande/stats/index.php
+ *      \ingroup    commande
+ *		\brief      Page des stats commandes
+ *		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -32,10 +32,14 @@ require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 $WIDTH=500;
 $HEIGHT=200;
 
-if (!$user->rights->commande->lire) accessforbidden();
+$mode='customer';
+if (isset($_GET["mode"])) $mode=$_GET["mode"];
 
-// Sécurité accés client
-if ($user->societe_id > 0) 
+if ($mode == 'customer' && ! $user->rights->commande->lire) accessforbidden();
+if ($mode == 'supplier' && ! $user->rights->fournisseur->commande->lire) accessforbidden();
+
+// Security check
+if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;
@@ -45,21 +49,20 @@ $year = strftime("%Y", time());
 $startyear=$year-2;
 $endyear=$year;
 
-$mode='customer';
-if (isset($_GET["mode"])) $mode=$_GET["mode"];
+
 
 /*
  * View
  */
- 
+
 llxHeader();
 
-if ($mode == 'customer') 
+if ($mode == 'customer')
 {
 	$title=$langs->trans("OrdersStatistics");
 	$dir=$conf->commande->dir_temp;
 }
-if ($mode == 'supplier') 
+if ($mode == 'supplier')
 {
 	$title=$langs->trans("OrdersStatisticsSuppliers");
 	$dir=$conf->fournisseur->commande->dir_temp;
@@ -114,7 +117,7 @@ if (! $mesg)
     $px->mode='depth';
 	$px->SetTitle($langs->trans("NumberOfOrdersByMonth"));
 	$px->draw($filenamenb);
-}      
+}
 
 // Build graphic amount of object
 $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
@@ -173,7 +176,7 @@ print '<td align="center">'.$langs->trans("NbOfOrders").'</td>';
 print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
-  
+
 $oldyear=0;
 foreach ($data as $val)
 {
