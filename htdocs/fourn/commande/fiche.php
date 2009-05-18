@@ -537,7 +537,6 @@ if ($id > 0 || ! empty($ref))
 		}
 		/*
 		 * Confirmation de l'approbation
-		 *
 		 */
 		if ($_GET['action']	== 'approve')
 		{
@@ -596,6 +595,11 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr>';
 
+		// Ref supplier
+/*		print '<tr><td>'.$langs->trans("RefSupplier")."</td>";
+		print '<td colspan="2">'.$commande->ref_supplier.'</td>';
+		print '</tr>';
+*/		
 		// Fournisseur
 		print '<tr><td>'.$langs->trans("Supplier")."</td>";
 		print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
