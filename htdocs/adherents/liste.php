@@ -247,27 +247,27 @@ if ($resql)
         print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
 
         // Statut
-        print "<td>";
+        print '<td nowrap="nowrap">';
         print $adh->LibStatut($objp->statut,$objp->cotisation,$objp->datefin,2);
         print "</td>";
 
         // Date fin cotisation
         if ($objp->datefin)
         {
-	        print '<td align="center">';
+	        print '<td align="center" nowrap="nowrap">';
             if ($objp->datefin < time() && $objp->statut > 0)
             {
-                print dol_print_date($objp->datefin)." ".img_warning($langs->trans("SubscriptionLate"));
+                print dol_print_date($objp->datefin,'day')." ".img_warning($langs->trans("SubscriptionLate"));
             }
             else
             {
-                print dol_print_date($objp->datefin);
+                print dol_print_date($objp->datefin,'day');
             }
             print '</td>';
         }
         else
         {
-	        print '<td align="left">';
+	        print '<td align="left" nowrap="nowrap">';
 	        if ($objp->cotisation == 'yes')
 	        {
                 print $langs->trans("SubscriptionNotReceived");
