@@ -695,11 +695,20 @@ class CMailFile
 	 * @param unknown_type $msg
 	 * @return unknown
 	 */
-	function checkIfHTML($msg)
+	function checkIfHTML($msg,$bg='')
 	{
 		if (!eregi('^[ \t]*<html',$msg))
 		{
-			$out = "<html><head><title></title></head><body>";
+			$out = "<html><head><title></title>";
+			if (!empty($bg))
+			{
+				$out.= '<style type="text/css">'
+				       . 'body {'
+				       . '  background-image: url("cid:'.$bg.'");'
+				       . '}'
+				       . '</style>';
+			}
+			$out.= "</head><body>";
 			$out.= $msg;
 			$out.= "</body></html>";
 		}

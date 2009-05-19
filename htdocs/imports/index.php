@@ -109,7 +109,7 @@ if (sizeof($import->array_import_code))
 
     }
 
-    print '<tr class="total"><td class="total" colspan="2" align="center"><form action="'.DOL_URL_ROOT.'/admin/import.php?leftmenu=import"><input type="submit" class="button" value="'.$langs->trans("NewImport").'"></form></td></tr>';
+    print '<tr class="total"><td class="total" colspan="2" align="center"><form action="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import"><input type="submit" class="button" value="'.$langs->trans("NewImport").'"></form></td></tr>';
 }
 else
 {
@@ -117,7 +117,7 @@ else
 }
 print '</table>';
 
-
+/*
 // Affiche les profils d'exports
 $sql  = "SELECT rowid, label, public, fk_user, ".$db->pdate("datec");
 $sql .= " FROM ".MAIN_DB_PREFIX."export as e";
@@ -151,7 +151,7 @@ if ($result)
 
     print "</table>";
 }
-
+*/
 
 print '</td></tr>';
 print '</table>';
