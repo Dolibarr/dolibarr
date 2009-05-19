@@ -43,10 +43,10 @@ class ExportTsv extends ModeleExports
     var $version_lib;
 
     var $separator="\t";
-    
+
     var $handle;    // Handle fichier
 
-    
+
     /**
     		\brief      Constructeur
     		\param	    db      Handler acc�s base de donn�e
@@ -59,11 +59,12 @@ class ExportTsv extends ModeleExports
         $this->id='tsv';                // Same value then xxx in file name export_xxx.modules.php
         $this->label='Tsv (Tab Separated Value)';             // Label of driver
         $this->extension='tsv';         // Extension for generated file by this driver
+        $this->picto='mime/other';		// Picto
         $ver=split(' ','$Revision$');
         $this->version=$ver[2];         // Driver version
 
         // If driver use an external library, put its name here
-        $this->label_lib='Dolibarr';            
+        $this->label_lib='Dolibarr';
         $this->version_lib=DOL_VERSION;
     }
 
@@ -106,11 +107,11 @@ class ExportTsv extends ModeleExports
 	function open_file($file,$outputlangs)
     {
         global $langs;
-        
+
         dol_syslog("ExportTsv::open_file file=".$file);
 
 		$ret=1;
-		
+
         $outputlangs->load("exports");
 		$this->handle = fopen($file, "wt");
         if (! $this->handle)
@@ -119,7 +120,7 @@ class ExportTsv extends ModeleExports
 			$this->error=$langs->trans("ErrorFailToCreateFile",$file);
 			$ret=-1;
 		}
-		
+
 		return $ret;
     }
 
@@ -143,7 +144,7 @@ class ExportTsv extends ModeleExports
         {
             $newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);
 			$newvalue=$this->tsv_clean($newvalue);
-            
+
 			fwrite($this->handle,$newvalue.$this->separator);
         }
         fwrite($this->handle,"\n");
@@ -168,9 +169,9 @@ class ExportTsv extends ModeleExports
 			{
 				$newvalue=$outputlangs->transnoentities($reg[1]);
 			}
-			
+
 			$newvalue=$this->tsv_clean($newvalue);
-			
+
 			fwrite($this->handle,$newvalue.$this->separator);
             $this->col++;
 		}
@@ -186,7 +187,7 @@ class ExportTsv extends ModeleExports
     {
 		return 0;
     }
-    
+
 	/**
 	 * 	\brief		Close file handle
 	 */
@@ -209,16 +210,16 @@ class ExportTsv extends ModeleExports
 		// Rule 1 TSV: No CR, LF in cells
     	$newvalue=ereg_replace("\r",'',$newvalue);
         $newvalue=ereg_replace("\n",'\n',$newvalue);
-    	
+
         // Rule 2 TSV: If value contains tab, we must replace by space
 		if (ereg($this->separator,$newvalue))
 		{
 			$newvalue=ereg_replace("\t"," ",$newvalue);
 		}
-    	
+
     	return $newvalue;
     }
-    
+
 }
 
 ?>

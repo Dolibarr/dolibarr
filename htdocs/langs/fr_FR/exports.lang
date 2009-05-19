@@ -52,3 +52,5 @@ LineTotalHT=Montant HT de la ligne
 LineTotalTTC=Montant TTC de la ligne
 LineTotalVAT=Montant TVA de la ligne
 TypeOfLineServiceOrProduct=Type de ligne (0=produit, 1=service)
+FileWithDataToImport=Fichier contenant les données à importer
+FileMustHaveOneOfFollowingFormat=Le fichier à importer doit avoir un des formats suivants

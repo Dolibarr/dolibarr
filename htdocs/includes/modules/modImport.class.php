@@ -78,18 +78,13 @@ class modImport extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'import';
 
+		/*
 		$this->rights[1][0] = 1401;
-		$this->rights[1][1] = 'Lire les imports';
+		$this->rights[1][1] = 'Réaliser un import';
 		$this->rights[1][2] = 'r';
 		$this->rights[1][3] = 1;
 		$this->rights[1][4] = 'lire';
-
-		$this->rights[2][0] = 1402;
-		$this->rights[2][1] = 'Creer/modifier un import';
-		$this->rights[2][2] = 'w';
-		$this->rights[2][3] = 0;
-		$this->rights[2][4] = 'creer';
-
+		*/
 	}
 
 	/**

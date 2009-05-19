@@ -43,10 +43,10 @@ class ImportCsv extends ModeleImports
     var $version_lib;
 
     var $separator;
-    
+
     var $handle;    // Handle fichier
 
-    
+
     /**
      *		\brief      Constructeur
      *		\param	    db      Handler acces base de donnee
@@ -59,13 +59,14 @@ class ImportCsv extends ModeleImports
         $this->id='csv';                // Same value then xxx in file name export_xxx.modules.php
         $this->label='Csv (Comma Separated Value)';             // Label of driver
         $this->extension='csv';         // Extension for generated file by this driver
+        $this->picto='mime/other';		// Picto
         $ver=split(' ','$Revision$');
         $this->version=$ver[2];         // Driver version
 
         // If driver use an external library, put its name here
-        $this->label_lib='Dolibarr';            
+        $this->label_lib='Dolibarr';
         $this->version_lib=DOL_VERSION;
-        
+
         $this->separator=',';
         if (! empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE)) $this->separator=$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
     }
@@ -109,11 +110,11 @@ class ImportCsv extends ModeleImports
 	function open_file($file,$outputlangs)
     {
     	global $langs;
-    	
+
         dol_syslog("ImportCsv::open_file file=".$file);
 
 		$ret=1;
-		
+
         $outputlangs->load("exports");
 		$this->handle = fread($file, "wt");
         if (! $this->handle)
@@ -122,7 +123,7 @@ class ImportCsv extends ModeleImports
 			$this->error=$langs->trans("ErrorFailToOpenFile",$file);
 			$ret=-1;
 		}
-		
+
 		return $ret;
     }
 
@@ -156,9 +157,9 @@ class ImportCsv extends ModeleImports
 			{
 				$newvalue=$outputlangs->transnoentities($reg[1]);
 			}
-			
+
 			$newvalue=$this->csv_clean($newvalue);
-			
+
 			fwrite($this->handle,$newvalue.$this->separator);
             $this->col++;
 		}
@@ -183,14 +184,14 @@ class ImportCsv extends ModeleImports
     function csv_clean($newvalue)
     {
     	$addquote=0;
-    	
+
 		// Rule Dolibarr: No HTML
 		$newvalue=dol_string_nohtmltag($newvalue);
 
 		// Rule 1 CSV: No CR, LF in cells
     	$newvalue=ereg_replace("\r",'',$newvalue);
         $newvalue=ereg_replace("\n",'\n',$newvalue);
-    	
+
         // Rule 2 CSV: If value contains ", we must duplicate ", and add "
 		if (ereg('"',$newvalue))
 		{
@@ -203,10 +204,10 @@ class ImportCsv extends ModeleImports
     	{
     		$addquote=1;
     	}
-    	
+
     	return ($addquote?'"':'').$newvalue.($addquote?'"':'');
     }
-    
+
 }
 
 ?>

@@ -159,21 +159,12 @@ class modProduit extends DolibarrModules
 		$r++;
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
 		$this->import_label[$r]="ProductsOrServices";	// Translation key
+		//$this->import_permission[$r]=array(array("societe","import"));
 		$this->import_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration");
 		$this->import_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product");
-		//$this->import_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration");
 
-		if($conf->global->PRODUIT_MULTIPRICES)
-		{
-			$this->import_multiprices[$r]=array();
-
-			for($i=1;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-			{
-				$this->import_multiprices[$r][$i]["price_ht"] = "SellingPriceHT ".$i;
-				$this->import_multiprices[$r][$i]["price_ttc"] = "SellingPriceTTC ".$i;
-			}
-		}
-
+		$this->import_sql_start[$r]='INSERT INTO '.MAIN_DB_PREFIX.'produit as s';
+		$this->import_sql_end[$r] .='';
 
 	}
 

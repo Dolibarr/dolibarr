@@ -64,6 +64,7 @@ class ExportExcel extends ModeleExports
 		$this->id='excel';                  // Same value then xxx in file name export_xxx.modules.php
 		$this->label='Excel';               // Label of driver
 		$this->extension='xls';             // Extension for generated file by this driver
+        $this->picto='mime/xls';					// Picto
 		$ver=split(' ','$Revision$');
 		$this->version=$ver[2];             // Driver version
 

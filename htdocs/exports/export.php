@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/exports/export.php
-        \ingroup    export
-        \brief      Page d'edition d'un export
-        \version    $Id$
-*/
+ *       \file       htdocs/exports/export.php
+ *       \ingroup    export
+ *       \brief      Page d'edition d'un export
+ *       \version    $Id$
+ */
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
@@ -699,7 +699,7 @@ if ($step == 4 && $datatoexport)
     $var=true;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("AvailableFormats").'</td>';
+    print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
     print '<td>'.$langs->trans("LibraryUsed").'</td>';
     print '<td>'.$langs->trans("LibraryVersion").'</td>';
     print '</tr>';
@@ -708,7 +708,9 @@ if ($step == 4 && $datatoexport)
     foreach($liste as $key)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$objmodelexport->getDriverLabel($key).'</td><td>'.$objmodelexport->getLibLabel($key).'</td><td>'.$objmodelexport->getLibVersion($key).'</td></tr>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20">'.img_picto_common($key,$objmodelexport->getPicto($key)).'</td>';
+        print '<td>'.$objmodelexport->getDriverLabel($key).'</td><td>'.$objmodelexport->getLibLabel($key).'</td><td>'.$objmodelexport->getLibVersion($key).'</td></tr>';
     }
     print '</table>';
 

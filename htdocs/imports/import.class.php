@@ -37,7 +37,7 @@ class Import
 	{
 		$this->db=$DB;
 	}
-	
+
 
     /**
      *    \brief  Load an importable dataset
@@ -50,101 +50,111 @@ class Import
 
         dol_syslog("Import::load_arrays user=".$user->id." filter=".$filter);
 
-        $dir=DOL_DOCUMENT_ROOT."/includes/modules";
-        $handle=opendir($dir);
+		//$dir=DOL_DOCUMENT_ROOT."/includes/modules";
+		foreach($conf->file->dol_document_root as $dirroot)
+		{
+			$dir = $dirroot.'/includes/modules';
+			$handle=opendir($dir);
 
-        // Recherche des exports disponibles
-        $var=True;
-        $i=0;
-        while (($file = readdir($handle))!==false)
-        {
-            if (eregi("^(mod.*)\.class\.php",$file,$reg))
-            {
-                $modulename=$reg[1];
+			// Search available exports
+			$handle=@opendir($dir);
+			if ($handle)
+			{
+		        // Recherche des exports disponibles
+		        $var=True;
+		        $i=0;
+		        while (($file = readdir($handle))!==false)
+		        {
+		            if (eregi("^(mod.*)\.class\.php",$file,$reg))
+		            {
+		                $modulename=$reg[1];
 
-                // Defined if module is enabled
-                $enabled=true;
-                $part=strtolower(eregi_replace('^mod','',$modulename));
-				if (empty($conf->$part->enabled)) $enabled=false;
+		                // Defined if module is enabled
+		                $enabled=true;
+		                $part=strtolower(eregi_replace('^mod','',$modulename));
+						if (empty($conf->$part->enabled)) $enabled=false;
 
-				if ($enabled)
-                {
-					// Chargement de la classe
-	                $file = $dir."/".$modulename.".class.php";
-	                $classname = $modulename;
-	                require_once($file);
-	                $module = new $classname($this->db);
+						if ($enabled)
+		                {
+							// Chargement de la classe
+			                $file = $dir."/".$modulename.".class.php";
+			                $classname = $modulename;
+			                require_once($file);
+			                $module = new $classname($this->db);
 
-                	if (is_array($module->export_code))
-	                {
-	                    foreach($module->export_code as $r => $value)
-	                    {
-	                        if ($filter && ($filter != $module->export_code[$r])) continue;
+		                	if (is_array($module->import_code))
+			                {
+			                    foreach($module->import_code as $r => $value)
+			                    {
+			                        if ($filter && ($filter != $module->import_code[$r])) continue;
 
-	                        // Test si permissions ok \todo tester sur toutes permissions
-	                        $perm=$module->export_permission[$r][0];
-	                        //print_r("$perm[0]-$perm[1]-$perm[2]<br>");
-	                        if ($perm[2])
-	                        {
-	                            $bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
-	                        }
-	                        else
-	                        {
-	                            $bool=$user->rights->$perm[0]->$perm[1];
-	                        }
-	                        if ($perm[0]=='user' && $user->admin) $bool=true;
-	                        //print $bool." $perm[0]"."<br>";
+			                        // Test if permissions are ok
+			                        /*$perm=$module->import_permission[$r][0];
+			                        //print_r("$perm[0]-$perm[1]-$perm[2]<br>");
+			                        if ($perm[2])
+			                        {
+			                            $bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
+			                        }
+			                        else
+			                        {
+			                            $bool=$user->rights->$perm[0]->$perm[1];
+			                        }
+			                        if ($perm[0]=='user' && $user->admin) $bool=true;
+			                        //print $bool." $perm[0]"."<br>";
+									*/
 
-	                        // Permissions ok
-//	                        if ($bool)
-//	                        {
-	                            // Charge fichier lang en rapport
-	                            $langtoload=$module->getLangFilesArray();
-	                            if (is_array($langtoload))
-	                            {
-	                                foreach($langtoload as $key)
-	                                {
-	                                    $langs->load($key);
-	                                }
-	                            }
+			                        // Permissions ok
+		//	                        if ($bool)
+		//	                        {
+			                            // Charge fichier lang en rapport
+			                            $langtoload=$module->getLangFilesArray();
+			                            if (is_array($langtoload))
+			                            {
+			                                foreach($langtoload as $key)
+			                                {
+			                                    $langs->load($key);
+			                                }
+			                            }
 
-	                            // Module
-	                            $this->array_export_module[$i]=$module;
-	                            // Permission
-	                            $this->array_export_perms[$i]=$bool;
-	                            // Icon
-	                            $this->array_export_icon[$i]=(isset($module->export_icon[$r])?$module->export_icon[$r]:$module->picto);
-	                            // Code du dataset export
-	                            $this->array_export_code[$i]=$module->export_code[$r];
-	                            // Libelle du dataset export
-	                            $this->array_export_label[$i]=$module->getDatasetLabel($r);
-	                            // Tableau des champ a exporter (cle=champ, valeur=libelle)
-	                            $this->array_export_fields[$i]=$module->export_fields_array[$r];
-	                            // Tableau des entites a exporter (cle=champ, valeur=entite)
-	                            $this->array_export_entities[$i]=$module->export_entities_array[$r];
-	                            // Tableau des alias a exporter (cle=champ, valeur=alias)
-	                            $this->array_export_alias[$i]=$module->export_alias_array[$r];
-	                            // Tableau des operations speciales sur champ
-	                            $this->array_export_special[$i]=$module->export_special_array[$r];
+			                            // Module
+			                            $this->array_import_module[$i]=$module;
+			                            // Permission
+			                            $this->array_import_perms[$i]=$user->admin;
+			                            // Icon
+			                            $this->array_import_icon[$i]=(isset($module->export_icon[$r])?$module->export_icon[$r]:$module->picto);
+			                            // Code du dataset export
+			                            $this->array_import_code[$i]=$module->export_code[$r];
+			                            // Libelle du dataset export
+			                            $this->array_import_label[$i]=$module->getDatasetLabel($r);
+			                            // Tableau des champ a exporter (cle=champ, valeur=libelle)
+			                            $this->array_import_fields[$i]=$module->export_fields_array[$r];
+			                            // Tableau des entites a exporter (cle=champ, valeur=entite)
+			                            $this->array_import_entities[$i]=$module->export_entities_array[$r];
+			                            // Tableau des alias a exporter (cle=champ, valeur=alias)
+			                            $this->array_import_alias[$i]=$module->export_alias_array[$r];
+			                            // Tableau des operations speciales sur champ
+			                            $this->array_import_special[$i]=$module->export_special_array[$r];
 
-	                            // Requete sql du dataset
-	                            $this->array_export_sql_start[$i]=$module->export_sql_start[$r];
-	                            $this->array_export_sql_end[$i]=$module->export_sql_end[$r];
-	                            //$this->array_export_sql[$i]=$module->export_sql[$r];
+			                            // Requete sql du dataset
+			                            $this->array_import_sql_start[$i]=$module->export_sql_start[$r];
+			                            $this->array_import_sql_end[$i]=$module->export_sql_end[$r];
+			                            //$this->array_import_sql[$i]=$module->export_sql[$r];
 
-	                            dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".sizeof($module->export_fields_code[$r]));
-	                            $i++;
-//	                        }
-	                    }
-	                }
-                }
-            }
+			                            dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".sizeof($module->export_fields_code[$r]));
+			                            $i++;
+		//	                        }
+			                    }
+			                }
+		                }
+		            }
+		        }
+			}
         }
         closedir($handle);
     }
-	
-	
-	
+
+
+
 	/*
 	 *	\brief Importe un fichier clients
 	 */
@@ -227,13 +237,13 @@ class Import
 			while (!feof($hf) )
 	  {
 	  	$cont = fgets($hf, 1024);
-	  	 
+
 	  	if (strlen(trim($cont)) > 0)
 	  	{
 	  		$this->lines[$i] = explode(";", $cont);
 	  	}
 	  	$i++;
-	  	 
+
 	  }
 		}
 		else
@@ -243,49 +253,6 @@ class Import
 
 		return $errno;
 	}
-	
-	/*
-	 \brief Cree le repertoire de backup
-	 */
-	function CreateBackupDir()
-	{
-		$time = time();
 
-		$upload_dir = DOL_DATA_ROOT."/import/";
-
-		if (! is_dir($upload_dir))
-		{
-			umask(0);
-			if (! mkdir($upload_dir, 0755))
-		  {
-		  	dol_syslog("Import::ReadFile Impossible de creer $upload_dir",LOG_ERR);
-		  }
-		}
-
-		$upload_dir = DOL_DATA_ROOT."/import/".strftime("%Y",$time);
-
-		if (! is_dir($upload_dir))
-		{
-			umask(0);
-			if (! mkdir($upload_dir, 0755))
-		  {
-		  	dol_syslog("Import::ReadFile Impossible de creer $upload_dir",LOG_ERR);
-		  }
-		}
-
-		$upload_dir = DOL_DATA_ROOT."/import/".strftime("%Y",$time)."/".strftime("%d-%m-%Y",$time);
-
-		if (! is_dir($upload_dir))
-		{
-			umask(0);
-			if (! mkdir($upload_dir, 0755))
-		  {
-		  	dol_syslog("Import::ReadFile Impossible de creer $upload_dir",LOG_ERR);
-		  }
-		}
-
-		$this->upload_dir = DOL_DATA_ROOT."/import/".strftime("%Y",$time)."/".strftime("%d-%m-%Y",$time);
-
-	}
 }
 ?>

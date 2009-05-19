@@ -904,7 +904,7 @@ function img_object($alt, $object)
 
 /**
  *	\brief      Show picto (generic function)
- *	\param      alt         		Texte sur le alt de l'image
+ *	\param      alt         		Text on alt and title of image
  *	\param      picto       		Nom de l'image a afficher (Si pas d'extension, on met '.png')
  *	\param		options				Attribut supplementaire a la balise img
  *	\param		pictoisfullpath		If 1, image path is a full path
@@ -920,7 +920,7 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 
 /**
  *	\brief      Show picto (generic function)
- *	\param      alt         		Texte sur le alt de l'image
+ *	\param      alt         		Text on alt and title of image
  *	\param      picto       		Nom de l'image a afficher (Si pas d'extension, on met '.png')
  *	\param		options				Attribut supplementaire a la balise img
  *	\param		pictoisfullpath		If 1, image path is a full path
@@ -1305,16 +1305,21 @@ function img_allow($allow)
 function img_mime($file,$alt='')
 {
 	$mime='other';
+
+	if (eregi('\.xls',$file) || eregi('\.xlsx',$file))        { $mime='xls'; }
+	if (eregi('\.ppt',$file) || eregi('\.pptx',$file))        { $mime='ppt'; }
+	if (eregi('\.doc',$file) || eregi('\.docx',$file))        { $mime='doc'; }
+
 	if (eregi('\.pdf',$file))        { $mime='pdf'; }
 	if (eregi('\.(html|htm)',$file)) { $mime='html'; }
 	if (eregi('\.txt',$file))        { $mime='other'; }
 	if (eregi('\.php',$file))        { $mime='php'; }
 	if (eregi('\.pl',$file))         { $mime='pl'; }
 	if (eregi('\.js',$file))         { $mime='jscript'; }
-	if (eregi('\.(png|bmp|jpg|jpeg|gif)',$file)) $mime='image';
-	if (eregi('\.(mp3|ogg|au)',$file))           $mime='audio';
-	if (eregi('\.(avi|mvw|divx|xvid)',$file))    $mime='video';
-	if (eregi('\.(zip|rar|gz|tgz|z|cab|bz2)',$file))       $mime='archive';
+	if (eregi('\.(png|bmp|jpg|jpeg|gif)',$file)) 		$mime='image';
+	if (eregi('\.(mp3|ogg|au)',$file))           		$mime='audio';
+	if (eregi('\.(avi|mvw|divx|xvid)',$file))    		$mime='video';
+	if (eregi('\.(zip|rar|gz|tgz|z|cab|bz2)',$file))	$mime='archive';
 	if (empty($alt)) $alt='Mime type: '.$mime;
 
 	$mime.='.png';
@@ -1357,7 +1362,6 @@ function info_admin($texte,$infoonimgalt=0)
  *	\param      feature2		    Feature to check (second level of permission)
  *  \param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
  *  \param      dbt_select      Field name for select if not rowid. (optionnal)
- *  \param      dbt_tablename2  Secondary table name for compare keyfield. (optionnal)
  */
 function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
 {
@@ -1529,7 +1533,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			}
 		}
 
-		print $sql."<br>";
+		//print $sql."<br>";
 		if ($sql)
 		{
 			$resql=$db->query($sql);

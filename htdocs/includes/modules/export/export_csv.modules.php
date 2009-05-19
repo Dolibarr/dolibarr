@@ -43,10 +43,10 @@ class ExportCsv extends ModeleExports
     var $version_lib;
 
     var $separator;
-    
+
     var $handle;    // Handle fichier
 
-    
+
     /**
      *		\brief      Constructeur
      *		\param	    db      Handler acces base de donnee
@@ -59,13 +59,14 @@ class ExportCsv extends ModeleExports
         $this->id='csv';                // Same value then xxx in file name export_xxx.modules.php
         $this->label='Csv (Comma Separated Value)';             // Label of driver
         $this->extension='csv';         // Extension for generated file by this driver
+        $this->picto='mime/other';		// Picto
         $ver=split(' ','$Revision$');
         $this->version=$ver[2];         // Driver version
 
         // If driver use an external library, put its name here
-        $this->label_lib='Dolibarr';            
+        $this->label_lib='Dolibarr';
         $this->version_lib=DOL_VERSION;
-        
+
         $this->separator=',';
         if (! empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE)) $this->separator=$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
     }
@@ -109,11 +110,11 @@ class ExportCsv extends ModeleExports
 	function open_file($file,$outputlangs)
   {
   	global $langs;
-  	
+
   	dol_syslog("ExportCsv::open_file file=".$file);
 
 		$ret=1;
-		
+
     $outputlangs->load("exports");
 		$this->handle = fopen($file, "wt");
     if (! $this->handle)
@@ -122,7 +123,7 @@ class ExportCsv extends ModeleExports
 			$this->error=$langs->trans("ErrorFailToCreateFile",$file);
 			$ret=-1;
 		}
-		
+
 		return $ret;
 	}
 
@@ -143,7 +144,7 @@ class ExportCsv extends ModeleExports
     function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs)
     {
     	global $conf;
-    	
+
     	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
     	{
     		$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
@@ -152,12 +153,12 @@ class ExportCsv extends ModeleExports
     	{
     		$outputlangs->charset_output = 'ISO-8859-1';
     	}
-    	
+
       foreach($array_selected_sorted as $code => $value)
       {
       	$newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);
       	$newvalue=$this->csv_clean($newvalue);
-      	
+
       	fwrite($this->handle,$newvalue.$this->separator);
       }
       fwrite($this->handle,"\n");
@@ -171,7 +172,7 @@ class ExportCsv extends ModeleExports
     function write_record($array_alias,$array_selected_sorted,$objp,$outputlangs)
     {
     	global $conf;
-    	
+
     	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
     	{
     		$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
@@ -187,19 +188,19 @@ class ExportCsv extends ModeleExports
       	$alias=$array_alias[$code];
         if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
         $newvalue=$outputlangs->convToOutputCharset($objp->$alias);
-        
+
         // Translation newvalue
         if (eregi('^\((.*)\)$',$newvalue,$reg))
         {
         	$newvalue=$outputlangs->transnoentities($reg[1]);
         }
-        
+
         $newvalue=$this->csv_clean($newvalue);
-        
+
         fwrite($this->handle,$newvalue.$this->separator);
         $this->col++;
       }
-      
+
       fwrite($this->handle,"\n");
       return 0;
     }
@@ -212,7 +213,7 @@ class ExportCsv extends ModeleExports
     {
 		return 0;
     }
-    
+
 	/**
 	 * 	\brief		Close file handle
 	 */
@@ -230,14 +231,14 @@ class ExportCsv extends ModeleExports
     function csv_clean($newvalue)
     {
     	$addquote=0;
-    	
+
 		// Rule Dolibarr: No HTML
 		$newvalue=dol_string_nohtmltag($newvalue);
 
 		// Rule 1 CSV: No CR, LF in cells
     	$newvalue=ereg_replace("\r",'',$newvalue);
         $newvalue=ereg_replace("\n",'\n',$newvalue);
-    	
+
         // Rule 2 CSV: If value contains ", we must duplicate ", and add "
 		if (ereg('"',$newvalue))
 		{
@@ -250,10 +251,10 @@ class ExportCsv extends ModeleExports
     	{
     		$addquote=1;
     	}
-    	
+
     	return ($addquote?'"':'').$newvalue.($addquote?'"':'');
     }
-    
+
 }
 
 ?>

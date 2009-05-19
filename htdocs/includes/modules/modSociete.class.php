@@ -21,9 +21,9 @@
  */
 
 /**
- \defgroup   societe     Module societe
- \brief      Module pour gerer les societes et contacts clients
- \version	$Id$
+ *	\defgroup   societe     Module societe
+ *	\brief      Module to manage third parties (customers, prospects)
+ *	\version	$Id$
  */
 
 /**
@@ -69,7 +69,7 @@ class modSociete extends DolibarrModules
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/societe/temp","/societe/logos");
-		
+
 		// Dependances
 		$this->depends = array();
 		$this->requiredby = array("modExpedition","modFacture","modFournisseur","modFicheinter","modPropale","modContrat","modCommande");
@@ -187,7 +187,7 @@ class modSociete extends DolibarrModules
 		//--------
 		$r=0;
 
-		// Export liste des societes et attributs
+		// Export list of third parties and attributes
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='ExportDataset_company_1';
@@ -204,7 +204,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
 		$this->export_sql_end[$r] .=' WHERE s.entity = '.$conf->entity;
 
-		// Export liste des contacts et attributs
+		// Export list of contacts and attributes
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='ExportDataset_company_2';
@@ -219,6 +219,23 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' WHERE c.fk_pays = p.rowid';
 		$this->export_sql_end[$r] .=' AND c.entity = '.$conf->entity;
+
+
+		// Imports
+		//--------
+		$r=0;
+
+		// Import list of third parties and attributes
+		$r++;
+		$this->import_code[$r]=$this->rights_class.'_'.$r;
+		$this->import_label[$r]='ImportDataset_company_1';
+		//$this->import_permission[$r]=array(array("societe","export"));
+		$this->import_fields_array[$r]=array('s.rowid'=>"Id",'s.nom'=>"Name",'s.prefix_comm'=>"Prefix",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.idprof4'=>"IdProf4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note",'t.libelle'=>"ThirdPartyType",'ce.code'=>"Effectif","cfj.libelle"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel','fk_stcomm'=>'ProspectStatus');
+		$this->import_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>"company",'s.prefix_comm'=>"company",'s.client'=>"company",'s.fournisseur'=>"company",'s.datec'=>"company",'s.tms'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company",'s.address'=>"company",'s.cp'=>"company",'s.ville'=>"company",'p.libelle'=>"company",'p.code'=>"company",'s.tel'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note'=>"company",'t.libelle'=>"company",'ce.code'=>"company","cfj.libelle"=>"company",'s.fk_prospectlevel'=>'company','fk_stcomm'=>'company');
+
+		$this->import_sql_start[$r]='INSERT INTO '.MAIN_DB_PREFIX.'societe as s';
+		$this->import_sql_end[$r] .='';
+
 	}
 
 

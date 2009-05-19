@@ -77,6 +77,8 @@ class ModeleImports
 				require_once($file);
 				$module = new $classname($db);
 
+				// Picto
+				$this->picto[$module->id]=$module->picto;
 				// Driver properties
 				$this->driverlabel[$module->id]=$module->getDriverLabel();
 				$this->driverversion[$module->id]=$module->getDriverVersion();
@@ -91,6 +93,14 @@ class ModeleImports
 		return array_keys($this->driverlabel);
 	}
 
+
+	/**
+	 *      \brief      Return picto of import driver
+	 */
+	function getPicto($key)
+	{
+		return $this->picto[$key];
+	}
 
 	/**
 	 *      \brief      Renvoi libelle d'un driver export
