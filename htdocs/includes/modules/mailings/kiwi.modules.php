@@ -137,14 +137,16 @@ class mailing_kiwi extends MailingTargets
      */
     function getNbOfRecipients()
     {
-        $sql = "SELECT count(distinct(s.email)) as nb";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE s.email != ''";
-        $sql.= " AND s.entity = ".$conf->entity;
+    	global $conf;
+    	
+    	$sql = "SELECT count(distinct(s.email)) as nb";
+      $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+      $sql.= " WHERE s.email != ''";
+      $sql.= " AND s.entity = ".$conf->entity;
 
-        // La requete doit retourner un champ "nb" pour etre comprise
-        // par parent::getNbOfRecipients
-        return parent::getNbOfRecipients($sql);
+      // La requete doit retourner un champ "nb" pour etre comprise
+      // par parent::getNbOfRecipients
+      return parent::getNbOfRecipients($sql);
     }
 
     /**
