@@ -97,7 +97,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print $_SERVER['PHP_SELF'];
 	print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
 	print '">'."\n";
-	
+
 	// Token field
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
@@ -116,9 +116,20 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	print '<tr>';
 
+	$demologin='';
+	$demopassword='';
+	if (isset($conf->global->MAIN_DEMO))
+	{
+		$tab=split(',',$conf->global->MAIN_DEMO);
+		$demologin=$tab[0];
+		$demopassword=$tab[1];
+	}
+
 	// Login field
 	print '<td align="left" valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
-	print '<td valign="bottom"><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="'.(isset($_REQUEST["username"])?$_REQUEST["username"]:'').'" tabindex="1" /></td>';
+	print '<td valign="bottom"><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="';
+	print (isset($_REQUEST["username"])?$_REQUEST["username"]:$demologin);
+	print '" tabindex="1" /></td>';
 
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 	$title='';
@@ -144,7 +155,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	// Password field
 	print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
-	print '<td valign="top" nowrap="nowrap"><input id="password" name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
+	print '<td valign="top" nowrap="nowrap"><input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="';
+	print $demopassword;
+	print '" tabindex="2">';
 	print '</td></tr>';
 
 	// Entity field
