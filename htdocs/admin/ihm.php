@@ -159,7 +159,9 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print $html->selectyesno('main_confirm_ajax',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,1);
     print ' ('.$langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled").')';
     print '</td>';
-	print '<td width="20">'.$html->textwithpicto('',$langs->trans("FeatureDevelopment")).'</td>';
+	print '<td width="20">';
+	//print $html->textwithpicto('',$langs->trans("FeatureDevelopment"));
+	print '&nbsp;</td>';
 	print '</tr>';
 
     // Desactiver le calendrier popup
@@ -198,12 +200,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     // Liste des zone de recherche permanantes supportees
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td></tr>';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td colspan="2">'.$langs->trans("Activated").'</td></tr>';
     $var=True;
     foreach ($searchform as $key => $value)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td>';
+        print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td colspan="2">';
         print $html->selectyesno($searchform[$key],$searchformconst[$key],1);
         print '</td></tr>';
     }
@@ -214,9 +216,9 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     // Message of the day
     $var=true;
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
 	if ($conf->fckeditor->enabled)
 	{
 		// Editeur wysiwyg
@@ -233,7 +235,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     // Message d'accueil'
 	$var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
 	if ($conf->fckeditor->enabled)
 	{
 		// Editeur wysiwyg
@@ -302,15 +304,14 @@ else
 	print "</tr>";
 
     // Confirm ajax
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
-	    $var=!$var;
-	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
-	    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
-	    else print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td>";
-		print '<td width="20">'.$html->textwithpicto('',$langs->trans("FeatureDevelopment")).'</td>';
-		print "</tr>";
-	}
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
+    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
+    else print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td>";
+	print '<td width="20">';
+	//print $html->textwithpicto('',$langs->trans("FeatureDevelopment"));
+	print '&nbsp;</td>';
+	print "</tr>";
 
     // Calendrier en popup
     $var=!$var;
