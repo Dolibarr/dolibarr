@@ -217,23 +217,22 @@ class FormOther
   /**
    *		Creation d'un icone de couleur
    *		@param	color		Couleur de l'image
+   *		@param	module  Nom du module
    *		@param	name	  Nom de l'image
+   *		@param	x       Largeur de l'image en pixels
+   *		@param	y       Hauteur de l'image en pixels
    */
-  function CreateIcon($color,$name)
+  function CreateColorIcon($color,$module,$name,$x='12',$y='12')
   {
   	global $conf;
   	
-  	$file = $conf->mailing->dir_temp.'/'.$name.'.png';
+  	$file = $conf->$module->dir_temp.'/'.$name.'.png';
   	
   	// On cree le repertoire contenant les icones
-  	if (! file_exists($conf->mailing->dir_temp))
+  	if (! file_exists($conf->$module->dir_temp))
   	{
-  		create_exdir($conf->mailing->dir_temp);
+  		create_exdir($conf->$module->dir_temp);
   	}
-	
-  	//header("Content-type: image/png");
-  	$x = 12; //largeur de mon image en PIXELS uniquement !
-  	$y = 12; //hauteur de mon image en PIXELS uniquement !
   	
   	// On cree l'image en vraies couleurs
   	$image = imagecreatetruecolor($x,$y);
@@ -251,19 +250,7 @@ class FormOther
   	ImagePng($image,$file); //renvoie une image sous format png
   	ImageDestroy($image);
   }
-  
-  /**
-   *    Affiche logo
-   *    @param    alt      Texte sur le alt de l'image
-   *    @param    name     Nom de l'image
-   *    @return   string   Retourne tag img
-   */
-  function img_icon($alt = "default",$name)
-  {
-  	global $langs;
-  	if ($alt=="default") $alt=$langs->trans("Icon");
-  	return '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=iconmailing&file='.$name.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-  }
+
 }
 
 

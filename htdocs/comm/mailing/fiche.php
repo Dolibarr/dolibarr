@@ -333,12 +333,6 @@ if ($_POST["action"] == 'add')
 	$mil->body         = trim($_POST["body"]);
 	$mil->bgcolor      = trim($_POST["bgcolor"]);
 	$mil->bgimage      = trim($_POST["bgimage"]);
-	
-	if (!empty($mil->bgcolor))
-	{
-		$htmlother = new FormOther($db);
-		$htmlother->CreateIcon($mil->bgcolor,$mil->id);
-	}
 
 	if (! $mil->titre) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTitle"));
 	if (! $mil->sujet) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
@@ -369,12 +363,6 @@ if ($_POST["action"] == 'update')
 	$mil->body         = $_POST["body"];
 	$mil->bgcolor      = $_POST["bgcolor"];
 	$mil->bgimage      = $_POST["bgimage"];
-
-	if (!empty($mil->bgcolor))
-	{
-		$htmlother = new FormOther($db);
-		$htmlother->CreateIcon($mil->bgcolor,$mil->id);
-	}
 
 	if ($mil->update())
 	{
@@ -633,14 +621,6 @@ else
 
 			// Subject
 			print '<tr><td>'.$langs->trans("MailTopic").'</td><td colspan="3">'.$mil->sujet.'</td></tr>';
-			
-			// Background color
-			if ($mil->bgcolor)
-			{
-				print '<tr><td>'.$langs->trans("BackgroundColor").'</td><td colspan="3">';
-				print $htmlother->img_icon($langs->trans("BackgroundColor"),$mil->id);
-				print '</td></tr>';
-			}
 
 			// Message
 			print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td>';

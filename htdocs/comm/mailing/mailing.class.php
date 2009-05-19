@@ -255,6 +255,8 @@ class Mailing extends CommonObject
 			$object->titre              = $langs->trans("Draft").' '.mktime();
 			$object->sujet              = '';
 			$object->body               = '';
+			$object->bgcolor            = '';
+			$object->bgimage            = '';
 
 			$object->email_from         = '';
 			$object->email_replyto      = '';
