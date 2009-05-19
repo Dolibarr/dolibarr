@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - admin 
+# Dolibarr language file - ca_ES - admin
 CHARSET = UTF-8
 Version = Versió
 VersionProgram = Versió programa
@@ -212,7 +212,7 @@ MenuAdmin = Editor de menú
 ThisIsProcessToFollow = Heus aquí el procediment a seguir:
 StepNb = Pas %s
 DownloadPackageFromWebSite = Descarregar el paquet des del lloc %s.
-UnpackPackageInDolibarrRoot = Descomprimir el paquet a la carpeta arrel de Dolibarr <b>%s</b>
+UnpackPackageInDolibarrRoot = Descomprimir el paquet a la carpeta arrel de Dolibarr <b>%s</b> sobre els arxius existents (sense desplaçar o esborrar els existents, sota pena de perdre la seva configuració o els mòduls no oficials instal·lats)
 SetupIsReadyForUse = La instal·lació ha finalitzat i Dolibarr està disponible amb el nou component.
 CurrentVersion = Versió actual de Dolibarr
 CallUpdatePage = Trucar a la pàgina d'actualització de l'estructura i dades de la base de dades %s.
