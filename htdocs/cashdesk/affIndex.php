@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
+ * Copyright (C) 2008      Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * Copyright (C) 2009      Régis Houssin         <regis@dolibarr.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,56 +24,51 @@ if ( $_SESSION['uid'] <= 0 ) {
 	header ('Location: index.php');
 	exit;
 }
+
+print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+
+print '<html>';
+print '<head>';
+print '<title>Caisse</title>';
+
+print '<meta name="robots" content="none" />';
+
+print '<meta name="author" content="Jeremie Ollivier - jeremie.o@laposte.net" />';
+print '<meta name="Generator" content="Kwrite, Gimp, Inkscape" />';
+
+print '<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />';
+print '<meta http-equiv="Content-Language" content="fr" />';
+
+print '<meta http-equiv="Content-Style-Type" content="text/css" />';
+print '<link href="style.css" rel="stylesheet" type="text/css" media="screen" />';
+
+print '<!-- Import des fichiers necessaires a JsCalendar -->';
+print '<style type="text/css">';
+print '@import url(include/jscalendar/calendar-blue.css);';
+print '</style>';
+print '<script type="text/javascript" src="include/jscalendar/calendar.js"></script>';
+print '<script type="text/javascript"	src="include/jscalendar/lang/calendar-fr.js"></script>';
+print '<script type="text/javascript"	src="include/jscalendar/calendar-setup.js"></script>';
+print '</head>';
+
+print '<body>';
+
+print '<div class="conteneur">';
+print '<div class="conteneur_img_gauche">';
+print '<div class="conteneur_img_droite">';
+
+print '<h1 class="entete"><span>CAISSE</span></h1>';
+
+print '<div class="menu_principal">';
+include('templates/menu.tpl.php');
+print '</div>';
+
+print '<div class="contenu">';
+include('affContenu.php');
+print '</div>';
+
+include('affPied.php');
+
+print '</div></div></div>';
+print '</body></html>';
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html>
-<head>
-<title>Caisse</title>
-
-<meta name="robots" content="none" />
-
-<meta name="author" content="Jeremie Ollivier - jeremie.o@laposte.net" />
-<meta name="Generator" content="Kwrite, Gimp, Inkscape" />
-
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
-<meta http-equiv="Content-Language" content="fr" />
-
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<link href="style.css" rel="stylesheet" type="text/css" media="screen" />
-
-<!-- Import des fichiers necessaires a JsCalendar -->
-<style type="text/css">
-@import url(include/jscalendar/calendar-blue.css);
-</style>
-<script type="text/javascript" src="include/jscalendar/calendar.js"></script>
-<script type="text/javascript"
-	src="include/jscalendar/lang/calendar-fr.js"></script>
-<script type="text/javascript"
-	src="include/jscalendar/calendar-setup.js"></script>
-</head>
-
-<body>
-
-<div class="conteneur">
-<div class="conteneur_img_gauche">
-<div class="conteneur_img_droite">
-
-<h1 class="entete"><span>CAISSE</span></h1>
-
-<div class="menu_principal"><?php
-include ('templates/menu.tpl.php');
-?></div>
-
-<div class="contenu"><?php
-include ('affContenu.php');
-?></div>
-
-<?php include ('affPied.php'); ?></div>
-</div>
-</div>
-
-</body>
-
-</html>

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
+ * Copyright (C) 2008      Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * Copyright (C) 2009      Régis Houssin         <regis@dolibarr.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,45 +21,40 @@
 require ('classes/Facturation.class.php');
 
 // Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)
-if ( $_GET['id'] == 'NOUV' ) {
-
-	unset ($_SESSION['serObjFacturation']);
-
+if ( $_GET['id'] == 'NOUV' )
+{
+	unset($_SESSION['serObjFacturation']);
 	$sql->query ('DELETE FROM '.MAIN_DB_PREFIX.'tmp_caisse');
-
 }
 
 // Recuperation, s'il existe, de l'objet contenant les infos de la vente en cours ...
-if ( isset ($_SESSION['serObjFacturation']) ) {
-
-	$obj_facturation = unserialize ($_SESSION['serObjFacturation']);
+if ( isset ($_SESSION['serObjFacturation']) )
+{
+	$obj_facturation = unserialize($_SESSION['serObjFacturation']);
 	unset ($_SESSION['serObjFacturation']);
-
+}
+else
+{
 	// ... sinon, c'est une nouvelle vente
-} else {
-
 	$obj_facturation = new Facturation;
-
 }
 
-?>
+print '<div class="liste_articles">';
+include('liste_articles.php');
+print '</div>';
 
-<div class="liste_articles"><?php include ('liste_articles.php'); ?></div>
+print '<div class="principal">';
 
-<div class="principal"><?php
-
-if ( $_GET['menu'] ) {
-
-	include ($_GET['menu'].'.php');
-
-} else {
-
+if ( $_GET['menu'] )
+{
+	include($_GET['menu'].'.php');
+}
+else
+{
 	include ('facturation.php');
-
 }
-?></div>
 
-<?php
+print '</div>';
 
 $_SESSION['serObjFacturation'] = serialize ($obj_facturation);
 

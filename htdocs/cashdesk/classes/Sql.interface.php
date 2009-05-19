@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
+ * Copyright (C) 2008      Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * Copyright (C) 2009      Régis Houssin         <regis@dolibarr.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +20,16 @@
 
 	interface intSql {
 
-		// Envoie une requ�te et retourne le pointeur vers le r�sultat
+		// Envoie une requete et retourne le pointeur vers le resultat
 		public function query ($aRequete);
 
-		// Renvoie le nombre de r�sultats contenus dans la ressource
+		// Renvoie le nombre de resultats contenus dans la ressource
 		public function num_rows ($aRes);
 
-		// Parcours tous les r�sultats de la ressource et les enregistre dans un tableau � 2 dimensions : $tab[ligne][nom_champ/indice]
+		// Parcours tous les resultats de la ressource et les enregistre dans un tableau a 2 dimensions : $tab[ligne][nom_champ/indice]
 		public function fetch_array ($aRes);
 
-		// Enregistre seulement le premier r�sultat de la ressource dans un tableau � 1 dimension : $tab[nom_champ/indice]
+		// Enregistre seulement le premier resultat de la ressource dans un tableau a 1 dimension : $tab[nom_champ/indice]
 		public function fetchFirst ($aRes);
 
 	}
