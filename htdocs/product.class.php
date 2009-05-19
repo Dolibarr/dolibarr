@@ -800,7 +800,7 @@ class Product extends CommonObject
 
 		if ($newvat == '') $newvat=$this->tva_tx;
 
-		if ($newprice)
+		if ($newprice!='' || $newprice==0)
 		{
 			if ($newpricebase == 'TTC')
 			{
@@ -808,7 +808,7 @@ class Product extends CommonObject
 				$price = price2num($newprice) / (1 + ($newvat / 100));
 				$price = price2num($price,'MU');
 
-				if ($newminprice!='')
+				if ($newminprice!='' || $newminprice==0)
 				{
 					$price_min_ttc = price2num($newminprice,'MU');
 					$price_min = price2num($newminprice) / (1 + ($newvat / 100));
@@ -826,7 +826,7 @@ class Product extends CommonObject
 				$price_ttc = price2num($newprice) * (1 + ($newvat / 100));
 				$price_ttc = price2num($price_ttc,'MU');
 
-				if ($newminprice!='')
+				if ($newminprice!='' || $newminprice==0)
 				{
 					$price_min = price2num($newminprice,'MU');
 					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
