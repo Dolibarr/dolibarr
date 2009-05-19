@@ -2604,7 +2604,7 @@ function _enddoc()
 		* Converti les noms des polices FckEditor.
 		* @string string chaine à convertir
 		* @return string chaine convertie.
-		* @author Régis Houssin
+		* @author Regis Houssin
 		*/
 		function convertNameFont($namefont)
 		{

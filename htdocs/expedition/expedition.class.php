@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Régis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  *
