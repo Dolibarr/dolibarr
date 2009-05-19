@@ -177,7 +177,7 @@ $_SESSION['newtoken'] = $token;
 // Verification de la presence et de la validite du jeton
 if (isset($_POST['token']) && isset($_SESSION['token_level_1']) && isset($_SESSION['token_level_2']))
 {
-	if (($_POST['token'] != $_SESSION['token_level_1']) || ($_POST['token'] != $_SESSION['token_level_2']))
+	if (($_POST['token'] != $_SESSION['token_level_1']) && ($_POST['token'] != $_SESSION['token_level_2']))
 	{
 		dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token']=".$_POST['token'].", _SESSION['token_level_1']=".$_SESSION['token_level_1'].", _SESSION['token_level_2']=".$_SESSION['token_level_2']);
 		unset($_POST);
