@@ -640,7 +640,7 @@ else
 
 			// Message
 			print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td>';
-			print '<td colspan="3">';
+			print '<td colspan="3" bgcolor="'.($mil->bgcolor?$mil->bgcolor:'white').'">';
 			print dol_htmlentitiesbr($mil->body);
 			print '</td>';
 			print '</tr>';
