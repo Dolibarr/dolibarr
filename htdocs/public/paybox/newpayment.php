@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,24 @@
  *		\author	    Laurent Destailleur
  *		\version    $Id$
  */
+
+// Creation d'un jeton contre les failles CSRF
+$sessionname="DOLSESSID_PAYBOX";
+session_name($sessionname);
+session_start();
+$token = md5(uniqid(rand(),TRUE)); // Genere un hash d'un nombre aleatoire
+// roulement des jetons car cree a chaque appel
+if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
+$_SESSION['newtoken'] = $token;
+
+// Verification de la presence et de la validite du jeton
+if (isset($_POST['token']) && isset($_SESSION['token']))
+{
+	if ($_POST['token'] != $_SESSION['token'])
+	{
+		unset($_POST);
+	}
+}
 
 require("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paybox/paybox.lib.php");
@@ -53,17 +72,20 @@ else $currency=$_REQUEST["currency"];
 if (empty($_REQUEST["amount"]))
 {
 	dol_print_error('','ErrorBadParameters');
+	session_destroy();
 	exit;
 }
 $amount=$_REQUEST["amount"];
 if (is_numeric($amount) && empty($_REQUEST["tag"]))
 {
 	dol_print_error('','ErrorBadParameters');
+	session_destroy();
 	exit;
 }
 if (! is_numeric($amount) && empty($_REQUEST["ref"]))
 {
 	dol_print_error('','ErrorBadParameters');
+	session_destroy();
 	exit;
 }
 $suffix=$_REQUEST["suffix"];
@@ -91,6 +113,7 @@ if ($_REQUEST["action"] == 'dopayment')
 	if (empty($mesg))
 	{
 		print_paybox_redirect($PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $TAG, $ID);
+		session_destroy();
 		exit;
 	}
 }

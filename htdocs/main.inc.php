@@ -170,12 +170,12 @@ dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _
 // Creation d'un jeton contre les failles CSRF
 $token = md5(uniqid(rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 // roulement des jetons car cree a chaque appel
-$_SESSION['token_level_2'] = $_SESSION['token_level_1'];
-$_SESSION['token_level_1'] = $_SESSION['newtoken'];
+if (isset($_SESSION['token_level_1'])) $_SESSION['token_level_2'] = $_SESSION['token_level_1'];
+if (isset($_SESSION['newtoken'])) $_SESSION['token_level_1'] = $_SESSION['newtoken'];
 $_SESSION['newtoken'] = $token;
 
 // Verification de la presence et de la validite du jeton
-if (isset($_POST['token_level_1']) && isset($_SESSION['token_level_1']) && isset($_SESSION['token_level_2']))
+if (isset($_POST['token']) && isset($_SESSION['token_level_1']) && isset($_SESSION['token_level_2']))
 {
 	if (($_POST['token'] != $_SESSION['token_level_1']) || ($_POST['token'] != $_SESSION['token_level_2']))
 	{
