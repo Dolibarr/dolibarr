@@ -753,7 +753,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<!-- Includes for Prototype (Used by Scriptaculous and PWC) -->'."\n";
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
 			}
-			// This one is required fox boxes
+			// This one is required for boxes
 			if (! defined('DISABLE_SCRIPTACULOUS'))
 			{
 				print '<!-- Includes for Scriptaculous (Used by Drag and drop and PWC) -->'."\n";

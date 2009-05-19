@@ -33,6 +33,8 @@ create table llx_mailing
   entity             integer DEFAULT 1 NOT NULL,	        -- multi company id
   sujet              varchar(60),                         -- Sujet of mailing
   body               text,
+  bgcolor            varchar(8),                          -- Backgroud color of mailing
+  bgimage            varchar(255),                        -- Backgroud image of mailing
   cible              varchar(60),
   nbemail            integer,
   email_from         varchar(160),                        -- Email address of sender

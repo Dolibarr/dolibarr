@@ -45,6 +45,8 @@ class Mailing extends CommonObject
 	var $sujet;
 	var $body;
 	var $nbemail;
+	var $bgcolor;
+	var $bgimage;
 
 	var $email_from;
 	var $email_replyto;
@@ -139,9 +141,11 @@ class Mailing extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
 		$sql .= " SET titre = '".addslashes($this->titre)."'";
-		$sql .= " , sujet = '".addslashes($this->sujet)."'";
-		$sql .= " , body = '".addslashes($this->body)."'";
-		$sql .= " , email_from = '".$this->email_from."'";
+		$sql .= ", sujet = '".addslashes($this->sujet)."'";
+		$sql .= ", body = '".addslashes($this->body)."'";
+		$sql .= ", email_from = '".$this->email_from."'";
+		$sql .= ", bgcolor = '".($this->bgcolor?$this->bgcolor:null)."'";
+		$sql .= ", bgimage = '".($this->bgimage?$this->bgimage:null)."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Mailing::Update sql=".$sql);
@@ -165,7 +169,7 @@ class Mailing extends CommonObject
 	 */
 	function fetch($rowid)
 	{
-		$sql = "SELECT m.rowid, m.titre, m.sujet, m.body";
+		$sql = "SELECT m.rowid, m.titre, m.sujet, m.body, m.bgcolor, m.bgimage";
 		$sql .= ", m.email_from, m.email_replyto, m.email_errorsto";
 		$sql .= ", m.statut, m.nbemail";
 		$sql .= ", m.fk_user_creat, m.fk_user_valid";
@@ -190,6 +194,8 @@ class Mailing extends CommonObject
 				$this->titre              = $obj->titre;
 				$this->sujet              = $obj->sujet;
 				$this->body               = $obj->body;
+				$this->bgcolor            = $obj->bgcolor;
+				$this->bgimage            = $obj->bgimage;
 
 				$this->email_from         = $obj->email_from;
 				$this->email_replyto      = $obj->email_replyto;

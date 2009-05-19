@@ -26,7 +26,8 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-require_once DOL_DOCUMENT_ROOT.'/comm/mailing/mailing.class.php';
+require_once(DOL_DOCUMENT_ROOT."/comm/mailing/mailing.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 
 $langs->load("mails");
 
@@ -326,6 +327,14 @@ if ($_POST["action"] == 'add')
 	$mil->titre        = trim($_POST["titre"]);
 	$mil->sujet        = trim($_POST["sujet"]);
 	$mil->body         = trim($_POST["body"]);
+	$mil->bgcolor      = trim($_POST["bgcolor"]);
+	$mil->bgimage      = trim($_POST["bgimage"]);
+	
+	if (!empty($mil->bgcolor))
+	{
+		$htmlother = new FormOther($db);
+		$htmlother->CreateIcon($mil->bgcolor,$mil->id);
+	}
 
 	if (! $mil->titre) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTitle"));
 	if (! $mil->sujet) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
@@ -354,6 +363,14 @@ if ($_POST["action"] == 'update')
 	$mil->titre        = $_POST["titre"];
 	$mil->sujet        = $_POST["sujet"];
 	$mil->body         = $_POST["body"];
+	$mil->bgcolor      = $_POST["bgcolor"];
+	$mil->bgimage      = $_POST["bgimage"];
+
+	if (!empty($mil->bgcolor))
+	{
+		$htmlother = new FormOther($db);
+		$htmlother->CreateIcon($mil->bgcolor,$mil->id);
+	}
 
 	if ($mil->update())
 	{
@@ -459,13 +476,15 @@ llxHeader("","","Fiche Mailing");
 
 $html = new Form($db);
 
+$htmlother = new FormOther($db);
+
 $mil = new Mailing($db);
 
 
 if ($_GET["action"] == 'create')
 {
 	// EMailing in creation mode
-	print '<form action="fiche.php" method="post">'."\n";
+	print '<form name="new_mailing" action="fiche.php" method="post">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
@@ -475,10 +494,13 @@ if ($_GET["action"] == 'create')
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value=""></td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
 	print '<tr><td colspan="2">&nbsp;</td></tr>';
 	print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
-	print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value=""></td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value="'.$_POST['sujet'].'"></td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("BackgroundColor").'</td><td colspan="3">';
+	$htmlother->select_color($_POST['bgcolor'],'bgcolor','new_mailing');
+	print '</td></tr>';
 	print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
 	print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
 	foreach($substitutionarray as $key => $val)
@@ -491,12 +513,12 @@ if ($_GET["action"] == 'create')
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('body','',320,'dolibarr_mailings','',true,true);
+		$doleditor=new DolEditor('body',$_POST['body'],320,'dolibarr_mailings','',true,true);
 		$doleditor->Create();
 	}
 	else
 	{
-		print '<textarea cols="70" rows="20" name="body"></textarea>';
+		print '<textarea cols="70" rows="20" name="body" value="'.$_POST['body'].'"></textarea>';
 	}
 	print '</td></tr>';
 	print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></td></tr>';
@@ -605,8 +627,16 @@ else
 				print '<td>'.dol_print_date($mil->date_envoi,"dayhour").'</td></tr>';
 			}
 
-			// Sujet
+			// Subject
 			print '<tr><td>'.$langs->trans("MailTopic").'</td><td colspan="3">'.$mil->sujet.'</td></tr>';
+			
+			// Background color
+			if ($mil->bgcolor)
+			{
+				print '<tr><td>'.$langs->trans("BackgroundColor").'</td><td colspan="3">';
+				print $htmlother->img_icon($langs->trans("BackgroundColor"),$mil->id);
+				print '</td></tr>';
+			}
 
 			// Message
 			print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td>';
@@ -737,7 +767,8 @@ else
 			/*
 			 * Mailing en mode edition
 			 */
-			print '<form action="fiche.php" method="post">'."\n";
+			
+			print '<form name="edit_mailing" action="fiche.php" method="post">'."\n";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$mil->id.'">';
@@ -747,6 +778,9 @@ else
 			print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3"><input class="flat" type="text" size=40 name="titre" value="'.$mil->titre.'"></td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3"><input class="flat" type="text" size=40 name="from" value="'.$mil->email_from.'"></td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.$mil->sujet.'"></td></tr>';
+			print '<tr><td width="25%">'.$langs->trans("BackgroundColor").'</td><td colspan="3">';
+			$htmlother->select_color($mil->bgcolor,'bgcolor','edit_mailing');
+			print '</td></tr>';
 			print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
 			print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
 			print '__ID__ = '.$langs->trans("IdRecord").'<br>';

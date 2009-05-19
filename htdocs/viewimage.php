@@ -297,6 +297,13 @@ if ($modulepart)
     	//$original_file=$conf->barcode->dir_temp.'/'.$original_file;
     	$original_file='';
     }
+    
+    // Wrapping pour les icones de background des mailings
+    elseif ($modulepart == 'iconmailing')
+    {
+      $accessallowed=1;
+      $original_file=$conf->mailing->dir_temp.'/'.$original_file;
+    }
 
     // Wrapping generique (allows any module to open a file if file is in directory
     // called DOL_DATA_ROOT/modulepart).

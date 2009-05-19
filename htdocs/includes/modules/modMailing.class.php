@@ -82,7 +82,7 @@ class modMailing extends DolibarrModules
 		$this->rights[1][0] = 221; // id de la permission
 		$this->rights[1][1] = 'Consulter les mailings'; // libelle de la permission
 		$this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[1][3] = 1; // La permission est-elle une permission par d�faut
+		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 222;

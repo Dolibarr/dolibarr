@@ -142,3 +142,5 @@ ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, en
 
 alter table llx_commande_fournisseur add column   ref_supplier        varchar(30) after entity;
 
+alter table llx_mailing add column bgcolor  varchar(8) after body;
+alter table llx_mailing add column bgimage  varchar(255) after bgcolor;

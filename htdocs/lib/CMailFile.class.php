@@ -695,19 +695,12 @@ class CMailFile
 	 * @param unknown_type $msg
 	 * @return unknown
 	 */
-	function checkIfHTML($msg,$bg='')
+	function checkIfHTML($msg,$css='')
 	{
 		if (!eregi('^[ \t]*<html',$msg))
 		{
 			$out = "<html><head><title></title>";
-			if (!empty($bg))
-			{
-				$out.= '<style type="text/css">'
-				       . 'body {'
-				       . '  background-image: url("cid:'.$bg.'");'
-				       . '}'
-				       . '</style>';
-			}
+			if (!empty($css)) $out.= $css;
 			$out.= "</head><body>";
 			$out.= $msg;
 			$out.= "</body></html>";
@@ -718,6 +711,24 @@ class CMailFile
 		}
 
 		return $out;
+	}
+	
+	/**
+	 * Build a css style
+	 *
+	 * @param  $value
+	 * @return css
+	 */
+	function buildCSS($value)
+	{
+		// Todo: finir la construction
+		$out = '<style type="text/css">'
+				 . 'body {'
+				 . '  background-image: url("cid:'.$bg.'");'
+				 . '}'
+				 . '</style>';
+				 
+	  return $out;
 	}
 
 	/**
