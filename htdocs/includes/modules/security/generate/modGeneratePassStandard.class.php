@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/security/generate/modules_gen
 
 /**
 	    \class      modGeneratePassNone
-		\brief      Classe permettant de g�n�rer un mot de passe selon r�gle standard
+		\brief      Classe permettant de generer un mot de passe selon regle standard
 */
 class modGeneratePassStandard extends ModeleGenPassword
 {
@@ -44,10 +44,10 @@ class modGeneratePassStandard extends ModeleGenPassword
 	
 	/**
 	 *		\brief      Constructeur
-	 *		\param		db			Handler d'acc�s base
+	 *		\param		db			Handler d'acces base
 	 *		\param		conf		Handler de conf
 	 *		\param		lang		Handler de langue
-	 *		\param		user		Handler du user connect�
+	 *		\param		user		Handler du user connecte
 	 */
 	function modGeneratePassStandard($db, $conf, $langs, $user)
 	{
@@ -71,7 +71,7 @@ class modGeneratePassStandard extends ModeleGenPassword
 	}
 
 	/**
-	 * 		\brief		Renvoie exemple de mot de passe g�n�r� par cette r�gle
+	 * 		\brief		Renvoie exemple de mot de passe genere par cette regle
  	 *      \return     string      Exemple
 	 */
 	function getExample()
@@ -80,8 +80,8 @@ class modGeneratePassStandard extends ModeleGenPassword
 	}
 
 	/**
-	 * 		\brief		G�n�re le mot de passe
- 	 *      \return     string      Renvoi mot de passe g�n�r�
+	 * 		\brief		Genere le mot de passe
+ 	 *      \return     string      Renvoi mot de passe genere
 	 */
 	function getNewGeneratedPassword()
 	{
