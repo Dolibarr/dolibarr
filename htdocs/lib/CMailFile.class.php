@@ -60,6 +60,10 @@ class CMailFile
 	var $sName;
 	var $sEmail;
 
+	//CSS
+	var $css;
+	var $styleCSS;
+	
 	// Image
 	var $html;
 	var $image_boundary;
@@ -87,12 +91,14 @@ class CMailFile
 	 *	\param 	mimefilename_list   List of attached file name in message
 	 *	\param 	addr_cc             Email cc
 	 *	\param 	addr_bcc            Email bcc
-	 *	\param 	deliveryreceipt		Ask a delivery receipt
-	 *	\param	msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
+	 *	\param 	deliveryreceipt		  Ask a delivery receipt
+	 *	\param 	msgishtml       		1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
+	 *	\param 	error_to        		Email errors
+	 *	\param	css			            Css option
 	 */
 	function CMailFile($subject,$to,$from,$msg,
 	$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
-	$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='')
+	$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='')
 	{
 		global $conf;
 
@@ -270,7 +276,13 @@ class CMailFile
 			if ($this->msgishtml)
 			{
 				if (! empty($this->html))
-				{
+				{					
+					if (!empty($css))
+					{
+						$this->css = $css;
+						$this->styleCSS = $this->buildCSS();
+					}
+					
 					$msg = $this->html;
 					$msg = $this->checkIfHTML($msg);
 
@@ -315,9 +327,13 @@ class CMailFile
 			$smtps->setTO($this->getValidAddress($to,2));
 			$smtps->setFrom($from);
 
-			//if ($this->atleastoneimage)	$msg = $this->html;
 			if (! empty($this->html))
 			{
+				if (!empty($css))
+				{
+					$this->css = $css;
+					$this->styleCSS = $this->buildCSS();
+				}
 				$msg = $this->html;
 				$msg = $this->checkIfHTML($msg);
 			}
@@ -639,8 +655,6 @@ class CMailFile
 
 		$out='';
 
-		//		if ($this->atleastonefile || $this->atleastoneimage)
-		//		{
 		if ($this->msgishtml)
 		{
 			$out.= "--" . $this->mime_boundary . $this->eol;
@@ -652,39 +666,23 @@ class CMailFile
 			$out.= "Content-Type: text/plain; charset=\"".$conf->file->character_set_client."\"".$this->eol;
 		}
 		$out.= $this->eol;
-		//		}
+
 		if ($this->msgishtml)
 		{
 			// Check if html header already in message
 			$strContent = $this->checkIfHTML($msgtext);
-
-			/*if ($this->atleastonefile || $this->atleastoneimage)
-			 {
-				if ($this->atleastonefile && $this->atleastoneimage)
-				{
-				$out.= $this->eol . "--" . $this->related_boundary . $this->eol;
-				}
-				else
-				{
-				$out.= $this->eol . "--" . $this->mime_boundary . $this->eol;
-				}
-				}*/
 		}
 		else
 		{
 			$strContent.= $msgtext;
-			/*			if ($this->atleastonefile || $this->atleastoneimage)
-			 {
-			 $out.= $this->eol . "--" . $this->mime_boundary . $this->eol;
-			 }*/
 		}
 
 		// Make RFC821 Compliant, replace bare linefeeds
-        $strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent );
+    $strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent );
 
-        $strContent = rtrim(wordwrap($strContent));
+    $strContent = rtrim(wordwrap($strContent));
 
-        $out.=$strContent.$this->eol;
+    $out.=$strContent.$this->eol;
 
 		return $out;
 	}
@@ -695,12 +693,12 @@ class CMailFile
 	 * @param unknown_type $msg
 	 * @return unknown
 	 */
-	function checkIfHTML($msg,$css='')
+	function checkIfHTML($msg)
 	{
 		if (!eregi('^[ \t]*<html',$msg))
 		{
 			$out = "<html><head><title></title>";
-			if (!empty($css)) $out.= $css;
+			if (!empty($this->styleCSS)) $out.= $this->styleCSS;
 			$out.= "</head><body>";
 			$out.= $msg;
 			$out.= "</body></html>";
@@ -716,18 +714,30 @@ class CMailFile
 	/**
 	 * Build a css style
 	 *
-	 * @param  $value
 	 * @return css
 	 */
-	function buildCSS($value)
+	function buildCSS()
 	{
-		// Todo: finir la construction
-		$out = '<style type="text/css">'
-				 . 'body {'
-				 . '  background-image: url("cid:'.$bg.'");'
-				 . '}'
-				 . '</style>';
-				 
+		$out = '';
+		
+		if (!empty($this->css))
+		{
+			$out.= '<style type="text/css">';
+			$out.= 'body {';
+			
+			if ($this->css['bgcolor'])
+			{
+				$out.= '  background-color: '.$this->css['bgcolor'].';';
+			}
+			if ($this->css['bgimage'])
+			{
+				// Todo: récupérer cid
+				$out.= '  background-image: url("cid:'.$this->css['bgimage_cid'].'");';
+			}
+			$out.= '}';
+			$out.= '</style>';
+		}
+			 
 	  return $out;
 	}
 

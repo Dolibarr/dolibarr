@@ -288,6 +288,11 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 		$arr_file = array();
 		$arr_mime = array();
 		$arr_name = array();
+		$arr_css  = array();
+
+		// Ajout CSS
+		if (!empty($mil->bgcolor)) $arr_css['bgcolor'] = $mil->bgcolor;
+		if (!empty($mil->bgimage)) $arr_css['bgimage'] = $mil->bgimage;
 
 		// Le message est-il en html
 		$msgishtml=-1;	// Inconnu par defaut
@@ -298,8 +303,7 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 		$mil->body=make_substitutions($mil->body,$substitutionarrayfortest);
 
 		$mailfile = new CMailFile($mil->sujet,$mil->sendto,$mil->email_from,$mil->body,
-		$arr_file,$arr_mime,$arr_name,
-        							'', '', 0, $msgishtml);
+		$arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,'',$arr_css);
 
 		$result=$mailfile->sendfile();
 		if ($result)
