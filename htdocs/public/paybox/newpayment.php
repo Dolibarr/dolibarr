@@ -30,7 +30,7 @@
 $sessionname="DOLSESSID_PAYBOX";
 session_name($sessionname);
 session_start();
-$token = md5(uniqid(rand(),TRUE)); // Genere un hash d'un nombre aleatoire
+$token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 // roulement des jetons car cree a chaque appel
 if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
 $_SESSION['newtoken'] = $token;

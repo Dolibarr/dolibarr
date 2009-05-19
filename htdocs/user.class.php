@@ -1784,7 +1784,7 @@ function creer_pass_aleatoire_1($sel = "")
 {
 	$longueur = 8;
 
-	return strtolower(substr(md5(uniqid(rand())),0,$longueur));
+	return strtolower(substr(md5(uniqid(mt_rand())),0,$longueur));
 }
 
 
@@ -1806,7 +1806,7 @@ function creer_pass_aleatoire_2($sel = "")
 	{
 		if (!$s)
 		{
-	  if (!$s) $s = rand();
+	  if (!$s) $s = mt_rand();
 	  $s = substr(md5(uniqid($s).$sel), 0, 16);
 		}
 		$r = unpack("Cr", pack("H2", $s.$s));

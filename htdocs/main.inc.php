@@ -168,7 +168,7 @@ session_start();
 dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".(isset($_SESSION["dol_login"])?$_SESSION["dol_login"]:'').", ".ini_get("session.gc_maxlifetime"));
 
 // Creation d'un jeton contre les failles CSRF
-$token = md5(uniqid(rand(),TRUE)); // Genere un hash d'un nombre aleatoire
+$token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 // roulement des jetons car cree a chaque appel
 if (isset($_SESSION['token_level_1'])) $_SESSION['token_level_2'] = $_SESSION['token_level_1'];
 if (isset($_SESSION['newtoken'])) $_SESSION['token_level_1'] = $_SESSION['newtoken'];

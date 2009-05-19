@@ -277,7 +277,7 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 		$saltlen=2; $saltprefix=''; $saltsuffix=''; break;
 	}
 	$salt='';
-	while(strlen($salt) < $saltlen) $salt.=chr(rand(64,126));
+	while(strlen($salt) < $saltlen) $salt.=chr(mt_rand(64,126));
 
 	$result=$saltprefix.$salt.$saltsuffix;
 	dol_syslog("security.lib.php::makesalt return=".$result);
