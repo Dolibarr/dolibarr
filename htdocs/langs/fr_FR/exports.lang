@@ -29,6 +29,7 @@ FieldsTitle=Titre champs
 ChooseExportFormat=Choisissez le format d'export
 NowClickToGenerateToBuildExportFile=Maintenant, cliquez sur "Générer" pour générer le fichier export...
 AvailableFormats=Formats dispo.
+LibraryShort=Librairie
 LibraryUsed=Librairie utilisée
 LibraryVersion=Version
 Step=Etape

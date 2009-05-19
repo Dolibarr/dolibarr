@@ -701,7 +701,7 @@ if ($step == 4 && $datatoexport)
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
     print '<td>'.$langs->trans("LibraryUsed").'</td>';
-    print '<td>'.$langs->trans("LibraryVersion").'</td>';
+    print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
     print '</tr>';
 
     $liste=$objmodelexport->liste_modeles($db);
@@ -709,8 +709,8 @@ if ($step == 4 && $datatoexport)
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
-        print '<td width="20">'.img_picto_common($key,$objmodelexport->getPicto($key)).'</td>';
-        print '<td>'.$objmodelexport->getDriverLabel($key).'</td><td>'.$objmodelexport->getLibLabel($key).'</td><td>'.$objmodelexport->getLibVersion($key).'</td></tr>';
+        print '<td width="16">'.img_picto_common($key,$objmodelexport->getPicto($key)).'</td>';
+        print '<td>'.$objmodelexport->getDriverLabel($key).'</td><td>'.$objmodelexport->getLibLabel($key).'</td><td align="right">'.$objmodelexport->getLibVersion($key).'</td></tr>';
     }
     print '</table>';
 

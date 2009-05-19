@@ -381,7 +381,7 @@ if ($step == 2 && $datatoimport)
 	{
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-        print '<td width="20">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
+        print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
         print '<td>'.$objmodelimport->getDriverLabel($key).'</td>';
 		//print '<td>'.$objmodelimport->getLibLabel($key).'</td><td>'.$objmodelimport->getLibVersion($key).'</td>';
 		print '</tr>';
@@ -759,16 +759,18 @@ if ($step == 4 && $datatoimport)
 	$var=true;
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("AvailableFormats").'</td>';
+	print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
 	print '<td>'.$langs->trans("LibraryUsed").'</td>';
-	print '<td>'.$langs->trans("LibraryVersion").'</td>';
+	print '<td alig="right">'.$langs->trans("LibraryVersion").'</td>';
 	print '</tr>';
 
 	$liste=$objmodelimport->liste_modeles($db);
 	foreach($liste as $key)
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].'><td>'.$objmodelimport->getDriverLabel($key).'</td><td>'.$objmodelimport->getLibLabel($key).'</td><td>'.$objmodelimport->getLibVersion($key).'</td></tr>';
+		print '<tr '.$bc[$var].'>';
+        print '<td width="16">'.img_picto_common($key,$objmodelexport->getPicto($key)).'</td>';
+		print '<td>'.$objmodelimport->getDriverLabel($key).'</td><td>'.$objmodelimport->getLibLabel($key).'</td><td align="right">'.$objmodelimport->getLibVersion($key).'</td></tr>';
 	}
 	print '</table>';
 

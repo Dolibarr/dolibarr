@@ -14,18 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/admin/imports/index.php
-        \ingroup    core
-        \brief      Page accueil de la zone import
-        \version    $Revision$
-*/
- 
+ *       \file       htdocs/admin/imports/index.php
+ *       \ingroup    core
+ *       \brief      Page accueil de la zone import
+ *       \version    $Id$
+ */
+
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/imports/import.class.php");
 
@@ -34,12 +31,14 @@ $langs->load("exports");
 if (! $user->societe_id == 0)
   accessforbidden();
 
-	  
-
 $import=new Import($db);
-//$import->load_arrays($user);
+$import->load_arrays($user);
 
- 
+
+/*
+ * View
+ */
+
 llxHeader('',$langs->trans("ImportArea"));
 
 print_fiche_titre($langs->trans("ImportArea"));
@@ -57,9 +56,9 @@ print '<tr><td valign="top" width="40%" class="notopnoleft">';
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("AvailableFormats").'</td>';
-print '<td>'.$langs->trans("LibraryUsed").'</td>';
-print '<td>'.$langs->trans("LibraryVersion").'</td>';
+print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
+print '<td>'.$langs->trans("LibraryShort").'</td>';
+print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
 include_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
@@ -70,9 +69,10 @@ foreach($liste as $key)
 {
     $var=!$var;
     print '<tr '.$bc[$var].'>';
-    print '<td>'.$model->getDriverLabel($key).'</td>';
+    print '<td width="16">'.img_picto_common($model->getDriverLabel($key),$model->getPicto($key)).'</td>';
+    print '<td>'.dol_trunc($model->getDriverLabel($key),24).'</td>';
     print '<td>'.$model->getLibLabel($key).'</td>';
-    print '<td nowrap="nowrap" align="center">'.$model->getLibVersion($key).'</td>';
+    print '<td nowrap="nowrap" align="right">'.$model->getLibVersion($key).'</td>';
     print '</tr>';
 }
 
@@ -115,14 +115,14 @@ else
 {
     print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoImportableData").'</td></tr>';
 }
-print '</table>';    
+print '</table>';
 
 
 // Affiche les profils d'exports
 $sql  = "SELECT rowid, label, public, fk_user, ".$db->pdate("datec");
 $sql .= " FROM ".MAIN_DB_PREFIX."export as e";
 $result=$db->query($sql);
-if ($result) 
+if ($result)
 {
     print '<br>';
     print '<table class="noborder" width="100%">';
