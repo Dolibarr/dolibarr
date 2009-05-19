@@ -54,7 +54,6 @@ class Import
 		foreach($conf->file->dol_document_root as $dirroot)
 		{
 			$dir = $dirroot.'/includes/modules';
-			$handle=opendir($dir);
 
 			// Search available exports
 			$handle=@opendir($dir);

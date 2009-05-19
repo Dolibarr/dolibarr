@@ -364,16 +364,18 @@ if ($step == 2 && $datatoimport)
 
 
 
-	print '<form name="userfile" action="index.php" enctype="multipart/form-data" METHOD="POST">';
+	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
+	$filetoimport='';
+	$fullpathfiletoimport='';
 	$var=true;
 
 	// Add help informations
-	print '<tr class="liste_titre"><td colspan="2">';
+	print '<tr class="liste_titre"><td colspan="4">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
 	$liste=$objmodelimport->liste_modeles($db);
@@ -382,43 +384,144 @@ if ($step == 2 && $datatoimport)
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
         print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
-        print '<td>'.$objmodelimport->getDriverLabel($key).'</td>';
+        print '<td colspan="3">'.$objmodelimport->getDriverLabel($key).'</td>';
 		//print '<td>'.$objmodelimport->getLibLabel($key).'</td><td>'.$objmodelimport->getLibVersion($key).'</td>';
 		print '</tr>';
 	}
 
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FileWithDataToImport").'</td></tr>';
+	print '<tr><td colspan="4">&nbsp;</td></tr>';
+
+	print '<tr><td colspan="4">'.$langs->trans("ChooseFileToImport").'</td></tr>';
+
+	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("FileWithDataToImport").'</td></tr>';
 
 	// Input file name box
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td colspan="2">';
+	$var=false;
+	print '<tr '.$bc[$var].'><td colspan="4">';
 	print '<input type="file"   name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" value="'.$langs->trans("Upload").'" name="sendit">';
-	//print ' &nbsp; <input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><br>';
-
+	print '<input type="submit" class="button" value="'.$langs->trans("AddFile").'" name="sendit">';
+	print '<input type="hidden" value="'.$step.'" name="step">';
+	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 	print "</tr>\n";
-	print '</table></form>';
 
 	if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
-		$imp = new DolibarrImport($db);
-		print "eee".$conf->import->dir_temp;
-		create_ext_dir($conf->import->dir_temp);
-		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $imp->upload_dir . "/" . $_FILES['userfile']['name'],1) > 0)
+		create_exdir($conf->import->dir_temp);
+		$nowyearmonth=dol_date('YmdHis',dol_now(),0);
+
+		$fullpath=$conf->import->dir_temp . "/" . $nowyearmonth . '-'.$_FILES['userfile']['name'];
+		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath,1) > 0)
 		{
-
-			$imp->ImportClients($imp->upload_dir . "/" . $_FILES['userfile']['name']);
-
-			print "Imports : ".$imp->nb_import."<br>";
-			print "Imports corrects : ".$imp->nb_import_ok."<br>";
-			print "Imports erreurs : ".$imp->nb_import_ko."<br>";
-
+			dol_syslog("File ".$fullpath." was added for import");
 		}
 		else
 		{
-			$mesg = "Files was not read";
+			$langs->load("errors");
+			$mesg = $langs->trans("ErrorFailedToSaveFile");
 		}
 	}
+
+	$dir = $conf->import->dir_temp;
+
+	// Search available imports
+	$handle=@opendir($dir);
+	if ($handle)
+	{
+        //print '<tr><td colspan="4">';
+		//print '<table class="noborder" width="100%">';
+
+		// Search available files to import
+        $i=0;
+        while (($file = readdir($handle))!==false)
+        {
+        	if (eregi('^\.',$file)) continue;
+
+        	$var=!$var;
+        	print '<tr '.$bc[$var].'>';
+			print '<td width="16">'.img_mime($file).'</td>';
+			print '<td>'.$file.'</td>';
+			print '<td align="center">del</td>';
+			print '<td align="right">next</td>';
+			print '</tr>';
+        }
+        //print '</table></td></tr>';
+	}
+
+	print '</table></form>';
+
+
+	print '</div>';
+
+	if ($mesg) print $mesg;
+
+}
+
+if ($step == 3 && $datatoimport)
+{
+	asort($array_selected);
+
+	llxHeader('',$langs->trans("NewImport"));
+
+	/*
+	 * Affichage onglets
+	 */
+	$h = 0;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
+	$head[$h][1] = $langs->trans("Step")." 1";
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
+	$head[$h][1] = $langs->trans("Step")." 2";
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport;
+	$head[$h][1] = $langs->trans("Step")." 3";
+	$hselected=$h;
+	$h++;
+
+	dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
+
+	print '<table width="100%" class="border">';
+
+	// Module
+	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+	print '<td>';
+	//print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
+	print $objimport->array_import_module[0]->getName();
+	print '</td></tr>';
+
+	// Lot de donnees a importer
+	print '<tr><td width="25%">'.$langs->trans("DatasetToImport").'</td>';
+	print '<td>';
+	print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
+	print $objimport->array_import_label[0];
+	print '</td></tr>';
+
+	// Nbre champs importes
+	print '<tr><td width="25%">'.$langs->trans("ImportedFields").'</td>';
+	$list='';
+	foreach($array_selected as $code=>$value)
+	{
+		$list.=($list?',':'');
+		$list.=$langs->trans($objimport->array_import_fields[0][$code]);
+	}
+	print '<td>'.$list.'</td></tr>';
+
+	print '</table>';
+	print '<br>';
+
+	print $langs->trans("ChooseFieldsOrdersAndTitle").'<br>';
+
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Entities").'</td>';
+	print '<td>'.$langs->trans("ImportedFields").'</td>';
+	print '<td align="right" colspan="2">'.$langs->trans("Position").'</td>';
+	print '<td>&nbsp;</td>';
+	print '<td>'.$langs->trans("FieldsTitle").'</td>';
+	print '</tr>';
+
 
 	// List deroulante des modeles d'import
 	/*		print '<form action="import.php" method="post">';
@@ -497,94 +600,6 @@ if ($step == 2 && $datatoimport)
 	print '</table>';
 	*/
 
-	print '</div>';
-
-	if ($mesg) print $mesg;
-
-	/*
-	 * Barre d'action
-	 *
-	 */
-	print '<div class="tabsAction">';
-
-	if (sizeof($array_selected))
-	{
-		print '<a class="butAction" href="import.php?step=3&datatoimport='.$datatoimport.'">'.$langs->trans("NextStep").'</a>';
-	}
-	else
-	{
-		print '<a class="butActionRefused" href="#">'.$langs->trans("NextStep").'</a>';
-	}
-
-	print '</div>';
-
-}
-
-if ($step == 3 && $datatoimport)
-{
-	asort($array_selected);
-
-	llxHeader('',$langs->trans("NewImport"));
-
-	/*
-	 * Affichage onglets
-	 */
-	$h = 0;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
-	$head[$h][1] = $langs->trans("Step")." 1";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
-	$head[$h][1] = $langs->trans("Step")." 2";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport;
-	$head[$h][1] = $langs->trans("Step")." 3";
-	$hselected=$h;
-	$h++;
-
-	dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
-
-	print '<table width="100%" class="border">';
-
-	// Module
-	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
-	print '<td>';
-	//print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
-	print $objimport->array_import_module[0]->getName();
-	print '</td></tr>';
-
-	// Lot de donn�es � importer
-	print '<tr><td width="25%">'.$langs->trans("DatasetToImport").'</td>';
-	print '<td>';
-	print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
-	print $objimport->array_import_label[0];
-	print '</td></tr>';
-
-	// Nbre champs import�s
-	print '<tr><td width="25%">'.$langs->trans("ImportedFields").'</td>';
-	$list='';
-	foreach($array_selected as $code=>$value)
-	{
-		$list.=($list?',':'');
-		$list.=$langs->trans($objimport->array_import_fields[0][$code]);
-	}
-	print '<td>'.$list.'</td></tr>';
-
-	print '</table>';
-	print '<br>';
-
-	print $langs->trans("ChooseFieldsOrdersAndTitle").'<br>';
-
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Entities").'</td>';
-	print '<td>'.$langs->trans("ImportedFields").'</td>';
-	print '<td align="right" colspan="2">'.$langs->trans("Position").'</td>';
-	print '<td>&nbsp;</td>';
-	print '<td>'.$langs->trans("FieldsTitle").'</td>';
-	print '</tr>';
 
 	$var=true;
 	foreach($array_selected as $code=>$value)

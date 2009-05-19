@@ -37,7 +37,9 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 
 /**
  *	\brief          Return date for now
- * 	\param			mode		'gmt' => we return GMT timestamp, 'tzref' => we use the company timezone
+ * 	\param			mode		'gmt' => we return GMT timestamp,
+ * 								'tzref' => we use the company timezone
+ * 								'tzuser' => we use the user timezone
  *	\return         date		Timestamp
  */
 function dol_now($mode='tzref')
@@ -46,6 +48,11 @@ function dol_now($mode='tzref')
 	else if ($mode == 'tzref')
 	{
 		// TODO Should use the timezone of the company instead of timezone of server
+		$ret=mktime();
+	}
+	else if ($mode == 'tzuser')
+	{
+		// TODO Should use the timezone of the user instead of timezone of server
 		$ret=mktime();
 	}
 	return $ret;
@@ -559,6 +566,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
  *	@param		gm				1=Input informations are GMT values, otherwise local to user
  *	@param		check			0=No check on parameters (Can use day 32, etc...)
  *	@return		timestamp		Date en timestamp, '' if error
+ * 	@see 		dol_date
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 {
@@ -614,9 +622,10 @@ function dolibarr_date($fmt, $timestamp, $gm=0)
 /**
  *	\brief  	Returns formated date
  *	\param		fmt				Format (Exemple: 'Y-m-d H:i:s')
- *	\param		timestamp		Date. Exemple: Si timestamp=0 et gm=1, renvoi 01/01/1970 00:00:00
+ *	\param		timestamp		Date. Example: If timestamp=0 and gm=1, return 01/01/1970 00:00:00
  *	\param		gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
  *	\return		string			Formated date
+ * 	\see		dol_mktime
  */
 function dol_date($fmt, $timestamp, $gm=0)
 {

@@ -123,7 +123,7 @@ class FormFile
 	/**
 	 *      \brief      Affiche la cartouche de la liste des documents d'une propale, facture...
 	 *      \param      modulepart          propal=propal, facture=facture, ...
-	 *      \param      filename            Sub dir to scan (vide si filedir deja complet)
+	 *      \param      filename            Sub dir to scan (use '' if filedir already complete)
 	 *      \param      filedir             Dir to scan
 	 *      \param      urlsource           Url of origin page (for return)
 	 *      \param      genallowed          Generation is allowed (1/0 or array of formats)
@@ -137,8 +137,6 @@ class FormFile
 	 * 		\param		param				More param on http links
 	 * 		\param		title				Title to show on top of form
 	 * 		\param		buttonlabel			Label on submit button
-	 *      \remarks    Le fichier de facture detaillee est de la forme
-	 *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
 	 *		\return		int					<0 si ko, nbre de fichiers affiches si ok
 	 */
 	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='')
