@@ -822,7 +822,7 @@ else
 					print '<td>';
 					if ($conf->produit->enabled && $fac->lignes[$i]->fk_product)
 					{
-						print '<input type="hidden" name="productid" value="'.$objp->fk_product.'">';
+						print '<input type="hidden" name="idprod" value="'.$fac->lignes[$i]->fk_product.'">';
 						$product_static=new ProductFournisseur($db);
 						$product_static->fetch($fac->lignes[$i]->fk_product);
 						$text=$product_static->getNomUrl(1);
