@@ -679,7 +679,7 @@ if ($step == 3 && $datatoimport)
 			}
 		}
 		else {
-			dol_print_error($this->db);
+			dol_print_error($db);
 		}
 
 		print '</table>';
@@ -763,7 +763,7 @@ if ($step == 4 && $datatoimport)
 	{
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-        print '<td width="16">'.img_picto_common($key,$objmodelexport->getPicto($key)).'</td>';
+        print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
 		print '<td>'.$objmodelimport->getDriverLabel($key).'</td><td>'.$objmodelimport->getLibLabel($key).'</td><td align="right">'.$objmodelimport->getLibVersion($key).'</td></tr>';
 	}
 	print '</table>';
