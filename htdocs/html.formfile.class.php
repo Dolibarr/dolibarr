@@ -376,7 +376,7 @@ class FormFile
 			print '</a>';
 			if (!$iconPDF) print '</td>';
 			// Affiche taille fichier
-			if (!$iconPDF) print '<td align="right">'.filesize($filedir."/".$file["name"]). ' bytes</td>';
+			if (!$iconPDF) print '<td align="right">'.dol_filesize($filedir."/".$file["name"]).'</td>';
 			// Affiche date fichier
 			if (!$iconPDF) print '<td align="right">'.dol_print_date(filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
 
@@ -487,6 +487,18 @@ class FormFile
 
 	}
 
+}
+
+/**
+ * Return size of a file with units
+ *
+ * @param 	$pathoffile
+ * @return 	string		File size with units translated
+ */
+function dol_filesize($pathoffile)
+{
+	global $langs;
+	return filesize($pathoffile). ' '.$langs->trans("Bytes");
 }
 
 ?>

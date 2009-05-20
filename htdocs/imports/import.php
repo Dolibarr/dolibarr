@@ -375,7 +375,7 @@ if ($step == 2 && $datatoimport)
 	$var=true;
 
 	// Add help informations
-	print '<tr class="liste_titre"><td colspan="4">';
+	print '<tr class="liste_titre"><td colspan="6">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
 	$liste=$objmodelimport->liste_modeles($db);
@@ -384,20 +384,20 @@ if ($step == 2 && $datatoimport)
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
         print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
-        print '<td colspan="3">'.$objmodelimport->getDriverLabel($key).'</td>';
+        print '<td colspan="5">'.$objmodelimport->getDriverLabel($key).'</td>';
 		//print '<td>'.$objmodelimport->getLibLabel($key).'</td><td>'.$objmodelimport->getLibVersion($key).'</td>';
 		print '</tr>';
 	}
 
-	print '<tr><td colspan="4">&nbsp;</td></tr>';
+	print '<tr><td colspan="6">&nbsp;</td></tr>';
 
-	print '<tr><td colspan="4">'.$langs->trans("ChooseFileToImport").'</td></tr>';
+	print '<tr><td colspan="6">'.$langs->trans("ChooseFileToImport").'</td></tr>';
 
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("FileWithDataToImport").'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("FileWithDataToImport").'</td></tr>';
 
 	// Input file name box
 	$var=false;
-	print '<tr '.$bc[$var].'><td colspan="4">';
+	print '<tr '.$bc[$var].'><td colspan="6">';
 	print '<input type="file"   name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" value="'.$langs->trans("AddFile").'" name="sendit">';
 	print '<input type="hidden" value="'.$step.'" name="step">';
@@ -436,12 +436,25 @@ if ($step == 2 && $datatoimport)
         {
         	if (eregi('^\.',$file)) continue;
 
+        	$modulepart='import';
+        	$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.'&datatoimport='.$datatoimport;
+        	$relativepath=$file;
         	$var=!$var;
         	print '<tr '.$bc[$var].'>';
 			print '<td width="16">'.img_mime($file).'</td>';
 			print '<td>'.$file.'</td>';
-			print '<td align="center">del</td>';
-			print '<td align="right">next</td>';
+			// Affiche taille fichier
+			print '<td align="right">'.dol_filesize($dir.'/'.$file).'</td>';
+			// Affiche date fichier
+			print '<td align="right">'.dol_print_date(filemtime($dir.'/'.$file),'dayhour').'</td>';
+			// Del button
+			print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
+			print '&amp;urlsource='.urlencode($urlsource);
+			print '">'.img_delete().'</a></td>';
+			// Action button
+			print '<td align="right">';
+			print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
+			print '</td>';
 			print '</tr>';
         }
         //print '</table></td></tr>';
@@ -499,56 +512,23 @@ if ($step == 3 && $datatoimport)
 	print '</td></tr>';
 
 	// Nbre champs importes
-	print '<tr><td width="25%">'.$langs->trans("ImportedFields").'</td>';
-	$list='';
-	foreach($array_selected as $code=>$value)
-	{
-		$list.=($list?',':'');
-		$list.=$langs->trans($objimport->array_import_fields[0][$code]);
-	}
-	print '<td>'.$list.'</td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("FileToImport").'</td>';
+	print '<td>'.$_GET["filetoimport"].'</td></tr>';
 
 	print '</table>';
 	print '<br>';
 
-	print $langs->trans("ChooseFieldsOrdersAndTitle").'<br>';
+	print $langs->trans("SelectImportFields");
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("FieldsTitle").'</td>';
+	print '<td>&nbsp;</td>';
 	print '<td>'.$langs->trans("Entities").'</td>';
 	print '<td>'.$langs->trans("ImportedFields").'</td>';
 	print '<td align="right" colspan="2">'.$langs->trans("Position").'</td>';
-	print '<td>&nbsp;</td>';
-	print '<td>'.$langs->trans("FieldsTitle").'</td>';
 	print '</tr>';
 
-
-	// List deroulante des modeles d'import
-	/*		print '<form action="import.php" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="select_model">';
-	print '<input type="hidden" name="step" value="2">';
-	print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
-	print '<table><tr><td>';
-	print $langs->trans("SelectImportFields");
-	print '</td><td>';
-	$htmlother->select_import_model($importmodelid,'importmodelid',$datatoimport,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
-	print '</td></tr></table>';
-	print '</form>';
-
-
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Entities").'</td>';
-	print '<td>'.$langs->trans("ImportableFields").'</td>';
-	print '<td width="12" align="middle">';
-	print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoimport='.$datatoimport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
-	print '/';
-	print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoimport='.$datatoimport.'&action=unselectfield&field=all">'.$langs->trans("None")."</a>";
-	print '</td>';
-	print '<td width="44%">'.$langs->trans("ImportedFields").'</td>';
-	print '</tr>';
 
 	// Champs importables
 	$fieldsarray=$objimport->array_import_fields[0];
@@ -598,7 +578,6 @@ if ($step == 3 && $datatoimport)
 	}
 
 	print '</table>';
-	*/
 
 
 	$var=true;

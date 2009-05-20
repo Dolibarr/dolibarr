@@ -78,15 +78,22 @@ else $type=dol_mimetype($original_file);
 
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
+// Documents
+if (eregi('\.doc$',$original_file))     { $attachment = true; }
+if (eregi('\.ppt$',$original_file))     { $attachment = true; }
+if (eregi('\.xls$',$original_file))     { $attachment = true; }
+if (eregi('\.pdf$',$original_file))  	{ $attachment = true; }
+// Misc
 if (eregi('\.sql$',$original_file))     { $attachment = true; }
 if (eregi('\.html$',$original_file)) 	{ $attachment = false; }
+// Text files
 if (eregi('\.csv$',$original_file))  	{ $attachment = true; }
 if (eregi('\.tsv$',$original_file))  	{ $attachment = true; }
-if (eregi('\.pdf$',$original_file))  	{ $attachment = true; }
-if (eregi('\.xls$',$original_file))  	{ $attachment = true; }
+// Images
 if (eregi('\.jpg$',$original_file)) 	{ $attachment = true; }
 if (eregi('\.png$',$original_file)) 	{ $attachment = true; }
 if (eregi('\.tiff$',$original_file)) 	{ $attachment = true; }
+// Calendar
 if (eregi('\.vcs$',$original_file))  	{ $attachment = true; }
 if (eregi('\.ics$',$original_file))  	{ $attachment = true; }
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
@@ -364,13 +371,23 @@ if ($modulepart)
 		$sqlprotectagainstexternals = '';
 	}
 
-	// Wrapping pour les exports
+	// Wrapping for export module
 	if ($modulepart == 'export')
 	{
 		// Aucun test necessaire car on force le rep de doanwload sur
 		// le rep export qui est propre a l'utilisateur
 		$accessallowed=1;
 		$original_file=$conf->export->dir_temp.'/'.$user->id.'/'.$original_file;
+		$sqlprotectagainstexternals = '';
+	}
+
+	// Wrapping for import module
+	if ($modulepart == 'import')
+	{
+		// Aucun test necessaire car on force le rep de doanwload sur
+		// le rep export qui est propre a l'utilisateur
+		$accessallowed=1;
+		$original_file=$conf->import->dir_temp.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
 	}
 

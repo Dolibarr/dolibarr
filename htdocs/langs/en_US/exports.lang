@@ -54,5 +54,6 @@ LineTotalTTC=Amount with tax for line
 LineTotalVAT=Amount of VAT for line
 TypeOfLineServiceOrProduct=Type of line (0=product, 1=service)
 FileWithDataToImport=File with data to import
+FileToImport=File to import
 FileMustHaveOneOfFollowingFormat=File to import must have one of following format
 ChooseFileToImport=Choose file to import...
