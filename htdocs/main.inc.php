@@ -127,7 +127,7 @@ if (!isset($_SESSION['cryptkey'])) $_SESSION['cryptkey'] = mt_rand();
 // This include will set: $conf, $langs and $mysoc objects
 require_once("master.inc.php");
 
-//Fermeture de la session de sécurite, ses donnees sont sauvegardees
+//Fermeture de la session de securite, ses donnees sont sauvegardees
 session_write_close();
 
 // Check if HTTPS
@@ -448,7 +448,6 @@ if (! isset($_SESSION["dol_login"]))
 	}
 
 	// Create entity cookie
-	// TODO Remove this as it is a security hole
 	if ($conf->multicompany->enabled && isset($_POST["entity"]))
 	{
 		include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
