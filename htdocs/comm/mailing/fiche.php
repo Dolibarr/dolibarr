@@ -751,7 +751,7 @@ else
 			/*
 			 * Mailing en mode edition
 			 */
-			
+
 			print '<form name="edit_mailing" action="fiche.php" method="post">'."\n";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
@@ -798,6 +798,10 @@ else
 
 			print "</div>";
 		}
+	}
+	else
+	{
+		dol_print_error($db,$mil->error);
 	}
 
 }
