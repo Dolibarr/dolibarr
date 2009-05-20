@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_Es - exports 
+# Dolibarr language file - ca_ES - exports 
 CHARSET = UTF-8
 ExportsArea = Àrea exportació
 ImportArea = Àrea importació
@@ -29,6 +29,7 @@ FieldsTitle = Títol camps
 ChooseExportFormat = Trieu el format d'exportació
 NowClickToGenerateToBuildExportFile = Ara, faci click "Generar" per generar el fitxer exportació ...
 AvailableFormats = Formats dispo.
+LibraryShort = Llibreria
 LibraryUsed = Llibreria utilitzada
 LibraryVersion = Versió
 Step = Pas
@@ -52,3 +53,6 @@ LineTotalHT = Import sense IVA de la línia
 LineTotalTTC = Import total de la línia
 LineTotalVAT = Import IVA de la línia
 TypeOfLineServiceOrProduct = Tipus de línia (0 = producte, 1 = servei)
+FileWithDataToImport = Arxiu que conté les dades a importar
+FileMustHaveOneOfFollowingFormat = El fitxer d'importació ha de tenir un dels següents formats
+ChooseFileToImport = Trieu el fitxer a importar...

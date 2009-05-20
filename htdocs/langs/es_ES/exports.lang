@@ -29,6 +29,7 @@ FieldsTitle = Título campos
 ChooseExportFormat = Elija el formato de exportación
 NowClickToGenerateToBuildExportFile = Ahora, haga click "Generar" para generar el fichero exportación...
 AvailableFormats = Formatos dispo.
+LibraryShort = Librería
 LibraryUsed = Librería utilizada
 LibraryVersion = Versión
 Step = Paso
@@ -52,4 +53,6 @@ LineTotalHT = Importe sin IVA de la línea
 LineTotalTTC = Importe total de la línea
 LineTotalVAT = Importe IVA de la línea
 TypeOfLineServiceOrProduct = Tipo de línea (0=producto, 1=servicio)
-
+FileWithDataToImport = Archivo que contiene los datos a importar
+FileMustHaveOneOfFollowingFormat = El archivo de importación debe tener uno de los siguientes formatos
+ChooseFileToImport = Elija el archivo a importar...
