@@ -51,6 +51,12 @@ session_name($sessionname);
 session_destroy();
 dol_syslog("End session in DOLSESSID_".$dolibarr_main_db_name);
 
+// Destroy security session
+$sessionname="DOLSESSID_SECURITY";
+session_name($sessionname);
+session_destroy();
+dol_syslog("End security session in DOLSESSID_".$dolibarr_main_db_name);
+
 // Init session
 $sessionname="DOLSESSID_".$dolibarr_main_db_name;
 if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);

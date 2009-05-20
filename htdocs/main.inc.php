@@ -117,9 +117,18 @@ if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERV
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
+// Security session
+$sessionname="DOLSESSID_SECURITY";
+session_name($sessionname);
+session_start();
+if (!isset($_SESSION['cryptkey'])) $_SESSION['cryptkey'] = mt_rand();
+
 // Set and init common variables
 // This include will set: $conf, $langs and $mysoc objects
 require_once("master.inc.php");
+
+//Fermeture de la session de sécurite, ses donnees sont sauvegardees
+session_write_close();
 
 // Check if HTTPS
 if ($conf->file->main_force_https)
@@ -449,11 +458,9 @@ if (! isset($_SESSION["dol_login"]))
 
 		if (!isset($HTTP_COOKIE_VARS[$entityCookieName]))
 		{
-			// Todo: utiliser $user->datelastlogin pour un cryptage aléatoire
-			$entityCookie = new DolCookie($conf->file->main_cookie_cryptkey);
+			// Utilisation de $_SESSION['cryptkey'] comme cle de cryptage
+			$entityCookie = new DolCookie($_SESSION['cryptkey']);
 			$entityCookie->_setCookie($entityCookieName, $entity);
-
-			//setcookie($entityCookieName, $entity, 0, "/", "", 0);
 		}
 	}
 
