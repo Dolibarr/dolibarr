@@ -119,20 +119,19 @@ if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERV
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-// Security session
-// TODO MULTICOMP Must fix this. Using 2 session in same page will create problems on some session handlers
-$sessionname="DOLSESSID_SECURITY";
+// Init session. Name of session is specific to Dolibarr instance.
+$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+if (! empty($_SERVER["DOLSESSTIMEOUT"])) ini_set('session.gc_maxlifetime',$_SERVER["DOLSESSTIMEOUT"]);
+if (! empty($_COOKIE["DOLSESSTIMEOUT"])) ini_set('session.gc_maxlifetime',$_REQUEST["DOLSESSTIMEOUT"]);
 session_name($sessionname);
 session_start();
+
+// Security. TODO Check if this is usefull.
 if (!isset($_SESSION['cryptkey'])) $_SESSION['cryptkey'] = mt_rand();
 
 // Set and init common variables
 // This include will set: config file variable $dolibarr_xxx, $conf, $langs and $mysoc objects
 require_once("master.inc.php");
-
-//Fermeture de la session de securite, ses donnees sont sauvegardees
-// TODO MULTICOMP Must fix this. Using 2 session in same page will create problems on some web servers.
-session_write_close();
 
 // Check if HTTPS
 if ($conf->file->main_force_https)
@@ -173,20 +172,12 @@ if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.clas
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');	// Need 20ko memory
 //stopwithmem();
 
-// Init session. Name of session is specific to Dolibarr instance.
-$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
-session_name($sessionname);
-session_start();
-dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".(isset($_SESSION["dol_login"])?$_SESSION["dol_login"]:'').", ".ini_get("session.gc_maxlifetime"));
-
 // Creation d'un jeton contre les failles CSRF
 $token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 // roulement des jetons car cree a chaque appel
 if (isset($_SESSION['token_level_1'])) $_SESSION['token_level_2'] = $_SESSION['token_level_1'];
 if (isset($_SESSION['newtoken'])) $_SESSION['token_level_1'] = $_SESSION['newtoken'];
 $_SESSION['newtoken'] = $token;
-
 // Verification de la presence et de la validite du jeton
 if (isset($_POST['token']) && isset($_SESSION['token_level_1']) && isset($_SESSION['token_level_2']))
 {

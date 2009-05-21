@@ -26,12 +26,14 @@
  *		\version    $Id$
  */
 
-// Creation d'un jeton contre les failles CSRF
-
 // Init session. Name of session is specific to Dolibarr instance.
 $sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$sessiontimeout);
 session_name($sessionname);
 session_start();
+
+// Creation d'un jeton contre les failles CSRF
 $token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 // roulement des jetons car cree a chaque appel
 if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];

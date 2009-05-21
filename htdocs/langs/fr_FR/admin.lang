@@ -9,6 +9,7 @@ VersionDevelopment = Développement
 VersionUnknown = Inconnue
 VersionRecommanded = Recommandé
 SessionId = ID Session
+SessionSavePath=Localisation sauvegarde sessions
 HTMLCharset = Charset des pages HTML générées
 DBStoringCharset = Charset base pour stockage données
 DBSortingCharset = Charset base pour tri données

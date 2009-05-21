@@ -49,18 +49,11 @@ session_unregister("dol_entity");
 
 // Destroy session
 $sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
+$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$sessiontimeout);
 session_name($sessionname);
 session_destroy();
 dol_syslog("End of session ".$sessionname);
-
-// Destroy security session
-// TODO MULTICOMP Must fix this. Using 2 session in same page will create problems on some PHP session handlers.
-$sessionname="DOLSESSID_SECURITY";
-session_name($sessionname);
-session_destroy();
-dol_syslog("End of session ".$sessionname);
-
 
 // Destroy entity cookie
 // TODO MULTICOMP Must fix this. Use session instead of cookie.

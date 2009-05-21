@@ -205,31 +205,34 @@ if (! defined('NOREQUIREUSER'))
  */
 if (! defined('NOREQUIREDB'))
 {
-	// TODO MULTICOMP Must fix this. Using cookie object inside the master.inc.php
-	// should be forbidden. Must replace cookie usage with session to save
-	// a lot of code and avoid cookie forging.
-	$entityCookieName="DOLENTITYID_dolibarr";
-	// Retrieve the entity
-	if (isset($_POST["loginfunction"]) && isset($_POST["entity"]))	// Just after a login page
+	if (session_id() && isset($_SESSION["dol_entity"]))				// Entity inside an opened session
 	{
-		$conf->entity = $_POST["entity"];
-	}
-	else if (isset($_COOKIE[$entityCookieName]))					// Inside a browser navigation
-	{
-		include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
-
-		// Utilisation de $_SESSION['cryptkey'] comme cle de cryptage
-		$entityCookie = new DolCookie($_SESSION['cryptkey']);
-		$conf->entity = $entityCookie->_getCookie($entityCookieName);
-	}
-	elseif (session_id() && isset($_SESSION["dol_entity"]))			// Inside an opened session
-	{
-		// TODO MULTICOMP This is not used for the moment as session is started after for the moment
 		$conf->entity = $_SESSION["dol_entity"];
 	}
-	elseif (isset($_ENV["dol_entity"]))								// If inside a CLI script
+	elseif (isset($_ENV["dol_entity"]))								// Entity inside a CLI script
 	{
 		$conf->entity = $_ENV["dol_entity"];
+	}
+	else															// Entity from login page
+	{
+		if (isset($_POST["loginfunction"]) && isset($_POST["entity"]))	// Just after a login page
+		{
+			$conf->entity = $_POST["entity"];
+		}
+		else
+		{
+			// TODO MULTICOMP This can be removed now.
+			// Cookie usage replaced with session to save a lot of code and avoid cookie forging.
+			$entityCookieName="DOLENTITYID_dolibarr";
+			if (isset($_COOKIE[$entityCookieName]))					// Should not be used anymore
+			{
+				include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
+
+				// Utilisation de $_SESSION['cryptkey'] comme cle de cryptage
+				$entityCookie = new DolCookie($_SESSION['cryptkey']);
+				$conf->entity = $entityCookie->_getCookie($entityCookieName);
+			}
+		}
 	}
 	$conf->setValues($db);
 }
