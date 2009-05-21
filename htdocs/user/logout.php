@@ -25,14 +25,13 @@
  * 		\version	$Id$
  */
 
-if ($_SESSION["dol_authmode"] == 'forceuser'
-  	 && $_SESSION["dol_authmode"] == 'http')
+require_once("../main.inc.php");
+
+if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuser'
+  	 || $_SESSION["dol_authmode"] == 'http'))
 {
    die("Disconnection does not work when connection was made in mode ".$_SESSION["dol_authmode"]);
 }
-
-include_once("../conf/conf.php");
-require_once("../main.inc.php");
 
 // Define url to go after disconnect
 $urlfrom=empty($_SESSION["urlfrom"])?'':$_SESSION["urlfrom"];
@@ -43,6 +42,10 @@ if ($conf->phenix->enabled && $conf->phenix->cookie)
 	// Destroy cookie
 	setcookie($conf->phenix->cookie, '', 1, "/");
 }
+
+// Destroy object of session
+session_unregister("dol_login");
+session_unregister("dol_entity");
 
 // Destroy session
 $sessionname='DOLSESSID_'.eregi_replace('[^a-z0-9]','',$_SERVER["SERVER_NAME"].'_'.$_SERVER["DOCUMENT_ROOT"]);
@@ -58,15 +61,6 @@ session_name($sessionname);
 session_destroy();
 dol_syslog("End of session ".$sessionname);
 
-// Init session. Name of session is specific to Dolibarr instance.
-$sessionname='DOLSESSID_'.eregi_replace('[^a-z0-9]','',$_SERVER["SERVER_NAME"].'_'.$_SERVER["DOCUMENT_ROOT"]);
-if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
-session_name($sessionname);
-session_start();
-dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"].", ".ini_get("session.gc_maxlifetime"));
-
-session_unregister("dol_login");
-session_unregister("dol_entity");
 
 // Destroy entity cookie
 // TODO MULTICOMP Must fix this. Use session instead of cookie.
