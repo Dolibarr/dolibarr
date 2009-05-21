@@ -111,7 +111,9 @@ analyse_sql_injection($_POST);
 // The test to do is to check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST']).
 if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! eregi($_SERVER['HTTP_HOST'], $_SERVER['HTTP_REFERER']))
 {
-	exit;	//Why not using simply an exit ? Yes we can...
+	//print 'HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
+	print 'Access refused by CSRF protection in main.inc.php.';
+	exit;
 }
 
 // This is to make Dolibarr working with Plesk
