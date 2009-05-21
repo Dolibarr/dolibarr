@@ -217,7 +217,7 @@ if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
     print '<tr><td>'.$langs->trans("Owner").'</td><td>';
     if ($_GET["action"] == 'edit' && $user->admin)
     {
-	    $html->select_users(isset($_POST['userid'])?$_POST['userid']:($bookmark->fk_user?$bookmark->fk_user:$user->id),'userid',1);
+	    $html->select_users(isset($_POST['userid'])?$_POST['userid']:($bookmark->fk_user?$bookmark->fk_user:''),'userid',1);
     }
     else
     {
