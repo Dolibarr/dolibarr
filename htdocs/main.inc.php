@@ -118,16 +118,18 @@ if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERV
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 // Security session
+// TODO MULTICOMP Must fix this. Using 2 session in same page will create problems on some session handlers
 $sessionname="DOLSESSID_SECURITY";
 session_name($sessionname);
 session_start();
 if (!isset($_SESSION['cryptkey'])) $_SESSION['cryptkey'] = mt_rand();
 
 // Set and init common variables
-// This include will set: $conf, $langs and $mysoc objects
+// This include will set: config file variable $dolibarr_xxx, $conf, $langs and $mysoc objects
 require_once("master.inc.php");
 
 //Fermeture de la session de securite, ses donnees sont sauvegardees
+// TODO MULTICOMP Must fix this. Using 2 session in same page will create problems on some web servers.
 session_write_close();
 
 // Check if HTTPS
@@ -169,8 +171,8 @@ if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.clas
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');	// Need 20ko memory
 //stopwithmem();
 
-// Init session
-$sessionname="DOLSESSID_".$dolibarr_main_db_name;
+// Init session. Name of session is specific to Dolibarr instance.
+$sessionname='DOLSESSID_'.eregi_replace('[^a-z0-9]','',$_SERVER["SERVER_NAME"].'_'.$_SERVER["DOCUMENT_ROOT"]);
 if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
 session_name($sessionname);
 session_start();
@@ -448,6 +450,11 @@ if (! isset($_SESSION["dol_login"]))
 	}
 
 	// Create entity cookie
+	// TODO Replace cookie usage to store entity in session to make code so much simpler with no
+	// need to crypt, no need to use token, etc...
+	// No data specific to session must be stored in cookies as this is the goal of session
+	// object and not cookie. Saving entity in session should  save a large amount of useless code,
+	// make code cleaner and solve pb of forged cookie.
 	if ($conf->multicompany->enabled && isset($_POST["entity"]))
 	{
 		include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
@@ -455,7 +462,7 @@ if (! isset($_SESSION["dol_login"]))
 		$entity = $_POST["entity"];
 		$entityCookieName = "DOLENTITYID_dolibarr";
 
-		if (!isset($HTTP_COOKIE_VARS[$entityCookieName]))
+		if (!isset($_COOKIE[$entityCookieName]))
 		{
 			// Utilisation de $_SESSION['cryptkey'] comme cle de cryptage
 			$entityCookie = new DolCookie($_SESSION['cryptkey']);
@@ -467,18 +474,16 @@ if (! isset($_SESSION["dol_login"]))
 	if (! empty($conf->webcal->enabled) && $user->webcal_login != "")
 	{
 		$domain='';
-		// Extract domain from url (Useless because only cookie on same domain are authorized by browser
-		//if (eregi('^(https:[\\\/]+[^\\\/]+)',$conf->global->PHPWEBCALENDAR_URL,$reg)) $domain=$reg[1];
 
 		// Creation du cookie permettant de sauver le login
 		$cookiename='webcalendar_login';
-		if (! isset($HTTP_COOKIE_VARS[$cookiename]))
+		if (! isset($_COOKIE[$cookiename]))
 		{
 			setcookie($cookiename, $user->webcal_login, 0, "/", $domain, 0);
 		}
 		// Creation du cookie permettant de sauver la session
 		$cookiename='webcalendar_session';
-		if (! isset($HTTP_COOKIE_VARS[$cookiename]))
+		if (! isset($_COOKIE[$cookiename]))
 		{
 			setcookie($cookiename, 'TODO', 0, "/", $domain, 0);
 		}
@@ -488,7 +493,7 @@ if (! isset($_SESSION["dol_login"]))
 	if (! empty($conf->phenix->enabled) && $user->phenix_login != "" && $conf->phenix->cookie)
 	{
 		// Creation du cookie permettant la connexion automatique, valide jusqu'a la fermeture du browser
-		if (!isset($HTTP_COOKIE_VARS[$conf->phenix->cookie]))
+		if (!isset($_COOKIE[$conf->phenix->cookie]))
 		{
 			setcookie($conf->phenix->cookie, $user->phenix_login.":".$user->phenix_pass_crypted.":1", 0, "/", "", 0);
 		}

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
+/* Copyright (C) 2007-2008 Jï¿½rï¿½mie Ollivier <jeremie.o@laposte.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
  */
 include('../master.inc.php');
 
-// Init session
-$sessionname="DOLSESSID_".$dolibarr_main_db_name;
+// Init session. Name of session is specific to Dolibarr instance.
+$sessionname='DOLSESSID_'.eregi_replace('[^a-z0-9]','',$_SERVER["SERVER_NAME"].'_'.$_SERVER["DOCUMENT_ROOT"]);
 if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
 session_name($sessionname);
 session_start();
@@ -40,7 +40,7 @@ if ( $_SESSION['uid'] > 0 ) {
 
 <meta name="robots" content="none" />
 
-<meta name="author" content="Jérémie Ollivier - jeremie.o@laposte.net" />
+<meta name="author" content="Jï¿½rï¿½mie Ollivier - jeremie.o@laposte.net" />
 <meta name="Generator" content="Kwrite, Gimp, Inkscape" />
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />

@@ -205,6 +205,9 @@ if (! defined('NOREQUIREUSER'))
  */
 if (! defined('NOREQUIREDB'))
 {
+	// TODO MULTICOMP Must fix this. Using cookie object inside the master.inc.php
+	// should be forbidden. Must replace cookie usage with session to save
+	// a lot of code and avoid cookie forging.
 	$entityCookieName="DOLENTITYID_dolibarr";
 	// Retrieve the entity
 	if (isset($_POST["loginfunction"]) && isset($_POST["entity"]))	// Just after a login page
@@ -221,7 +224,7 @@ if (! defined('NOREQUIREDB'))
 	}
 	elseif (session_id() && isset($_SESSION["dol_entity"]))			// Inside an opened session
 	{
-		// TODO This is not used for the moment as session is started after for the moment
+		// TODO MULTICOMP This is not used for the moment as session is started after for the moment
 		$conf->entity = $_SESSION["dol_entity"];
 	}
 	elseif (isset($_ENV["dol_entity"]))								// If inside a CLI script

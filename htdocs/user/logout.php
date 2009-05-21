@@ -45,28 +45,31 @@ if ($conf->phenix->enabled && $conf->phenix->cookie)
 }
 
 // Destroy session
-$sessionname="DOLSESSID_".$dolibarr_main_db_name;
+$sessionname='DOLSESSID_'.eregi_replace('[^a-z0-9]','',$_SERVER["SERVER_NAME"].'_'.$_SERVER["DOCUMENT_ROOT"]);
 if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
 session_name($sessionname);
 session_destroy();
-dol_syslog("End session in DOLSESSID_".$dolibarr_main_db_name);
+dol_syslog("End of session ".$sessionname);
 
 // Destroy security session
+// TODO MULTICOMP Must fix this. Using 2 session in same page will create problems on some PHP session handlers.
 $sessionname="DOLSESSID_SECURITY";
 session_name($sessionname);
 session_destroy();
-dol_syslog("End security session in DOLSESSID_".$dolibarr_main_db_name);
+dol_syslog("End of session ".$sessionname);
 
-// Init session
-$sessionname="DOLSESSID_".$dolibarr_main_db_name;
+// Init session. Name of session is specific to Dolibarr instance.
+$sessionname='DOLSESSID_'.eregi_replace('[^a-z0-9]','',$_SERVER["SERVER_NAME"].'_'.$_SERVER["DOCUMENT_ROOT"]);
 if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
 session_name($sessionname);
 session_start();
 dol_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"].", ".ini_get("session.gc_maxlifetime"));
 
 session_unregister("dol_login");
+session_unregister("dol_entity");
 
 // Destroy entity cookie
+// TODO MULTICOMP Must fix this. Use session instead of cookie.
 if ($conf->multicompany->enabled)
 {
 	$entityCookieName = "DOLENTITYID_dolibarr";
