@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -79,10 +79,10 @@ class Facturation {
 //		global $conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base;
 //		$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
 
-		global $sql;			
+		global $sql;
 		$resql=$sql->query ('SELECT taux FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$this->tva());
-	
-		$tab_tva = mysql_fetch_array($resql);
+
+		$tab_tva = $sql->fetch_array($resql);
 		$ret=array();
 		foreach ( $tab_tva as $cle => $valeur )
 		{
@@ -90,7 +90,7 @@ class Facturation {
 		}
 		$tab_tva=$ret;
 //		var_dump($tab_tva);exit;
-			
+
 		// TODO Mettre methode de calcul arrondi TVA de Dolibarr
 
 		// Calcul du total ht sans remise
@@ -110,7 +110,7 @@ class Facturation {
 		// Calcul du total ttc
 		$total_ttc = ($total_ht - $montant_remise) * (($tab_tva['taux'] / 100) + 1);
 
-			
+
 		$sql->query('INSERT INTO '.MAIN_DB_PREFIX.'tmp_caisse (
 					fk_article,
 					qte,
@@ -151,18 +151,18 @@ class Facturation {
 //		global $conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base;
 //		$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
 
-		global $sql;			
+		global $sql;
 		$res = $sql->query ('SELECT remise, total_ht, total_ttc, taux FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
 				LEFT JOIN '.MAIN_DB_PREFIX.'c_tva as t ON c.fk_tva = t.rowid
 				ORDER BY id');
 
 		$total_ht=0;
 		$total_ttc=0;
-			
+
 		if ( $sql->num_rows($res) ) {
 
 			$ret=array(); $i=0;
-			while ( $tab = mysql_fetch_array($res) )
+			while ( $tab = $sql->fetch_array($res) )
 			{
 				foreach ( $tab as $cle => $valeur )
 				{
@@ -171,7 +171,7 @@ class Facturation {
 				$i++;
 			}
 			$tab=$ret;
-						
+
 			for ( $i = 0; $i < count($tab); $i++ ) {
 
 				// Total HT

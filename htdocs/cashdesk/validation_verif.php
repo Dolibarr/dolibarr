@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -43,12 +43,12 @@ switch ( $_GET['action'] ) {
 		if ( $sql->num_rows ($res) ) {
 
 			$ret=array();
-			$tab = mysql_fetch_array($res);
+			$tab = $sql->fetch_array($res);
 			foreach ( $tab as $cle => $valeur )
 			{
 				$ret[$cle] = $valeur;
 			}
-				
+
 			$tab_num_facture = $ret;
 
 			$tab = explode ('-', $tab_num_facture['facnumber']);
@@ -212,9 +212,9 @@ switch ( $_GET['action'] ) {
 						FROM ".MAIN_DB_PREFIX."facture
 						WHERE 1
 						ORDER BY rowid DESC");
-			
+
 			$ret=array();
-			$tab = mysql_fetch_array($resql);
+			$tab = $sql->fetch_array($resql);
 			foreach ( $tab as $cle => $valeur )
 			{
 				$ret[$cle] = $valeur;
@@ -296,9 +296,9 @@ switch ( $_GET['action'] ) {
 						FROM ".MAIN_DB_PREFIX."facture
 						WHERE 1
 						ORDER BY rowid DESC");
-			
+
 			$ret=array();
-			$tab = mysql_fetch_array($resql);
+			$tab = $sql->fetch_array($resql);
 			foreach ( $tab as $cle => $valeur )
 			{
 				$ret[$cle] = $valeur;
@@ -351,7 +351,7 @@ switch ( $_GET['action'] ) {
 						ORDER BY rowid DESC");
 
 			$ret=array();
-			$tab = mysql_fetch_array($resql);
+			$tab = $sql->fetch_array($resql);
 			foreach ( $tab as $cle => $valeur )
 			{
 				$ret[$cle] = $valeur;
@@ -401,9 +401,9 @@ switch ( $_GET['action'] ) {
 					FROM ".MAIN_DB_PREFIX."paiement
 					WHERE 1
 					ORDER BY rowid DESC");
-			
+
 			$ret=array();
-			$tab = mysql_fetch_array($resql);
+			$tab = $sql->fetch_array($resql);
 			foreach ( $tab as $cle => $valeur )
 			{
 				$ret[$cle] = $valeur;
@@ -453,7 +453,7 @@ switch ( $_GET['action'] ) {
 				LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'tmp_caisse.fk_article = '.MAIN_DB_PREFIX.'product_stock.fk_product
 				WHERE 1');
 		$ret=array(); $i=0;
-		while ( $tab = mysql_fetch_array($res) )
+		while ( $tab = $sql->fetch_array($res) )
 		{
 			foreach ( $tab as $cle => $valeur )
 			{
@@ -472,7 +472,7 @@ switch ( $_GET['action'] ) {
 					FROM '.MAIN_DB_PREFIX.'product
 					WHERE rowid = '.$tab_liste[$i]['fk_article']);
 			$ret=array();
-			$tab = mysql_fetch_array($res);
+			$tab = $sql->fetch_array($res);
 			foreach ( $tab as $cle => $valeur )
 			{
 				$ret[$cle] = $valeur;
@@ -484,14 +484,14 @@ switch ( $_GET['action'] ) {
 					FROM '.MAIN_DB_PREFIX.'c_tva
 					WHERE rowid = '.$tab_liste[$i]['fk_tva']);
 			$ret=array();
-			$tab = mysql_fetch_array($res);
+			$tab = $sql->fetch_array($res);
 			foreach ( $tab as $cle => $valeur )
 			{
 				$ret[$cle] = $valeur;
 			}
 			$tab_tva = $ret;
-				
-				
+
+
 			// Calcul du montant de la TVA
 			$montant_tva = $tab_liste[$i]['total_ttc'] - $tab_liste[$i]['total_ht'];
 

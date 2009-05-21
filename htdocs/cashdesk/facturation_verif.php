@@ -55,7 +55,7 @@ switch ( $_GET['action'] ) {
 			if ( $sql->num_rows ($res) ) {
 
 				$ret=array();
-				$tab = mysql_fetch_array($res);
+				$tab = $sql->fetch_array($res);
 				foreach ( $tab as $cle => $valeur )
 				{
 					$ret[$cle] = $valeur;

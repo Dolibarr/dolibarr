@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -32,7 +32,7 @@ if ( $_GET['filtre'] ) {
 				AND ref LIKE \'%'.$_GET['filtre'].'%\'
 				OR label LIKE \'%'.$_GET['filtre'].'%\'
 			ORDER BY label');
-	while ( $tab = mysql_fetch_array($resql) )
+	while ( $tab = $sql->fetch_array($resql) )
 	{
 		foreach ( $tab as $cle => $valeur )
 		{
@@ -52,7 +52,7 @@ if ( $_GET['filtre'] ) {
 				AND fk_product_type = 0
 				AND fk_entrepot = '.$conf_fkentrepot.'
 			ORDER BY label');
-	while ( $tab = mysql_fetch_array($resql) )
+	while ( $tab = $sql->fetch_array($resql) )
 	{
 		foreach ( $tab as $cle => $valeur )
 		{
@@ -92,7 +92,7 @@ if ( $nbr_enreg > 1 ) {
 global $mysoc;
 $request="SELECT t.rowid, t.taux
 		FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p
-		WHERE t.fk_pays = p.rowid AND t.active = 1 AND p.code = '".$mysoc->pays_code."'"; 
+		WHERE t.fk_pays = p.rowid AND t.active = 1 AND p.code = '".$mysoc->pays_code."'";
 //print $request;
 
 $ret=array(); $i=0;

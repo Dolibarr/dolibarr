@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 J�r�mie Ollivier <jeremie.o@laposte.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/**
+ *	\file       htdocs/cashdesk/index.php
+ * 	\ingroup	cashdesk
+ *  \brief      File to login to point of sales
+ *  \version    $Id$
  */
 
 // Init session. Name of session is specific to Dolibarr instance.
@@ -41,7 +48,7 @@ if ( $_SESSION['uid'] > 0 )
 
 <meta name="robots" content="none" />
 
-<meta name="author" content="J�r�mie Ollivier - jeremie.o@laposte.net" />
+<meta name="author" content="Jeremie Ollivier - jeremie.o@laposte.net" />
 <meta name="Generator" content="Kwrite, Gimp, Inkscape" />
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />

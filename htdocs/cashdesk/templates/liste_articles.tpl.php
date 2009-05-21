@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	if ( $sql->num_rows($res) ) {
 
 		$ret=array(); $i=0;
-		while ( $tab = mysql_fetch_array($res) )
+		while ( $tab = $sql->fetch_array($res) )
 		{
 			foreach ( $tab as $cle => $valeur )
 			{

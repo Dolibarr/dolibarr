@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -96,62 +96,69 @@
 			protected function verif_utilisateurs () {
 
 				global $conf, $db;
-				
+
 				//var_dump($conf->db);
 				//$sql = new Sql ($conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name);
 				$sql = $db;
-				
+
 				// Verification des informations dans la base
-				$res = $sql->query ($this->sql);
-				$num = $sql->num_rows ($res);
+				$resql = $sql->query ($this->sql);
+				if ($resql)
+				{
+					$num = $sql->num_rows ($resql);
 
-				if ( $num ) {
+					if ( $num ) {
 
-					// fetchFirst
-					$ret=array();
-					$tab = mysql_fetch_array($res);
-					foreach ( $tab as $cle => $valeur )
-					{
-						$ret[$cle] = $valeur;
-					}
-					$tab=$ret;
+						// fetchFirst
+						$ret=array();
+						$tab = $sql->fetch_array($resql);
+						foreach ( $tab as $cle => $valeur )
+						{
+							$ret[$cle] = $valeur;
+						}
+						$tab=$ret;
 
-					if ( ($tab['pass_crypted'] == md5 ($this->passwd)) || (($tab['pass'] == $this->passwd) && ($tab['pass'] != ''))) {
+						if ( ($tab['pass_crypted'] == md5 ($this->passwd)) || (($tab['pass'] == $this->passwd) && ($tab['pass'] != ''))) {
 
-						// On verifie que le compte soit bien actif
-						if ( $tab['statut'] ) {
+							// On verifie que le compte soit bien actif
+							if ( $tab['statut'] ) {
 
-							$this->reponse(0);
+								$this->reponse(0);
+
+							} else {
+
+								$this->reponse(-2);
+
+							}
 
 						} else {
 
-							$this->reponse(-2);
+							$this->reponse(-1);
 
 						}
 
 					} else {
 
-						$this->reponse(-1);
+						$this->reponse(-10);
 
 					}
-
-				} else {
-
-					$this->reponse(-10);
+				}
+				else
+				{
 
 				}
-
 
 			}
 
 		public function verif ($aLogin, $aPasswd) {
+			global $conf;
 
 			$this->login ($aLogin);
 			$this->passwd ($aPasswd);
 
 			$this->sql = "SELECT rowid, pass_crypted, statut
 					FROM ".MAIN_DB_PREFIX."user
-					WHERE login = '".$this->login."'";
+					WHERE login = '".$this->login."' and entity IN (0,".$conf->entity.")";
 
 
 			$this->verif_utilisateurs();

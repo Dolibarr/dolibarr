@@ -24,7 +24,6 @@ require ('classes/Auth.class.php');
 $username = $_POST['txtUsername'];
 $password = $_POST['pwdPassword'];
 
-
 $auth = new Auth ($conf_db_host,$conf_db_user, $conf_db_pass, $conf_db_base );
 
 $retour = $auth->verif ($username, $password);
@@ -37,10 +36,10 @@ if ( $retour >= 0 ) {
 	$res=$sql->query (
 	"SELECT rowid, name, firstname
 			FROM ".MAIN_DB_PREFIX."user
-			WHERE login = '".$username."'");
+			WHERE login = '".$username."' and entity IN (0,".$conf->entity.")");
 
 	$ret=array();
-	$tab = mysql_fetch_array($res);
+	$tab = $sql->fetch_array($res);
 	foreach ( $tab as $cle => $valeur )
 	{
 		$ret[$cle] = $valeur;
