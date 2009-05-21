@@ -63,6 +63,8 @@ $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Session").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("SessionSavePath").'</td><td colspan="2">'.session_save_path()."</td></tr>\n";
+$var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("SessionName").'</td><td colspan="2">'.session_name()."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("SessionId").'</td><td colspan="2">'.session_id()."</td></tr>\n";
