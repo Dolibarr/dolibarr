@@ -29,7 +29,7 @@
 // Creation d'un jeton contre les failles CSRF
 
 // Init session. Name of session is specific to Dolibarr instance.
-$sessionname='DOLSESSID_'.eregi_replace('[^a-z0-9]','',$_SERVER["SERVER_NAME"].'_'.$_SERVER["DOCUMENT_ROOT"]);
+$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
 session_name($sessionname);
 session_start();
 $token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire

@@ -17,7 +17,7 @@
  */
 
 // Init session. Name of session is specific to Dolibarr instance.
-$sessionname='DOLSESSID_'.eregi_replace('[^a-z0-9]','',$_SERVER["SERVER_NAME"].'_'.$_SERVER["DOCUMENT_ROOT"]);
+$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
 if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
 session_name($sessionname);
 session_start();
