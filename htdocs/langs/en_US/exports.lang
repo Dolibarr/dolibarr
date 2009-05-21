@@ -57,3 +57,5 @@ FileWithDataToImport=File with data to import
 FileToImport=File to import
 FileMustHaveOneOfFollowingFormat=File to import must have one of following format
 ChooseFileToImport=Choose file to import...
+FieldsInSourceFile=Fields in source file
+FieldsInTargetDatabase=Target fields in Dolibarr database

@@ -57,3 +57,5 @@ FileWithDataToImport=Fichier contenant les données à importer
 FileToImport=Fichier à importer
 FileMustHaveOneOfFollowingFormat=Le fichier à importer doit avoir un des formats suivants
 ChooseFileToImport=Choisissez le fichier à importer...
+FieldsInSourceFile=Champs dans le fichier source
+FieldsInTargetDatabase=Champs cibles dans la base Dolibarr

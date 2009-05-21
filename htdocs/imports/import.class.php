@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,21 +123,21 @@ class Import
 			                            // Icon
 			                            $this->array_import_icon[$i]=(isset($module->export_icon[$r])?$module->export_icon[$r]:$module->picto);
 			                            // Code du dataset export
-			                            $this->array_import_code[$i]=$module->export_code[$r];
+			                            $this->array_import_code[$i]=$module->import_code[$r];
 			                            // Libelle du dataset export
 			                            $this->array_import_label[$i]=$module->getDatasetLabel($r);
 			                            // Tableau des champ a exporter (cle=champ, valeur=libelle)
-			                            $this->array_import_fields[$i]=$module->export_fields_array[$r];
+			                            $this->array_import_fields[$i]=$module->import_fields_array[$r];
 			                            // Tableau des entites a exporter (cle=champ, valeur=entite)
-			                            $this->array_import_entities[$i]=$module->export_entities_array[$r];
+			                            $this->array_import_entities[$i]=$module->import_entities_array[$r];
 			                            // Tableau des alias a exporter (cle=champ, valeur=alias)
-			                            $this->array_import_alias[$i]=$module->export_alias_array[$r];
+			                            $this->array_import_alias[$i]=$module->import_alias_array[$r];
 			                            // Tableau des operations speciales sur champ
-			                            $this->array_import_special[$i]=$module->export_special_array[$r];
+			                            $this->array_import_special[$i]=$module->import_special_array[$r];
 
 			                            // Requete sql du dataset
-			                            $this->array_import_sql_start[$i]=$module->export_sql_start[$r];
-			                            $this->array_import_sql_end[$i]=$module->export_sql_end[$r];
+			                            $this->array_import_sql_start[$i]=$module->import_sql_start[$r];
+			                            $this->array_import_sql_end[$i]=$module->import_sql_end[$r];
 			                            //$this->array_import_sql[$i]=$module->export_sql[$r];
 
 			                            dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".sizeof($module->export_fields_code[$r]));

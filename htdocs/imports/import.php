@@ -383,8 +383,8 @@ if ($step == 2 && $datatoimport)
 	{
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-        print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
-        print '<td colspan="5">'.$objmodelimport->getDriverLabel($key).'</td>';
+		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
+		print '<td colspan="5">'.$objmodelimport->getDriverLabel($key).'</td>';
 		//print '<td>'.$objmodelimport->getLibLabel($key).'</td><td>'.$objmodelimport->getLibVersion($key).'</td>';
 		print '</tr>';
 	}
@@ -427,20 +427,20 @@ if ($step == 2 && $datatoimport)
 	$handle=@opendir($dir);
 	if ($handle)
 	{
-        //print '<tr><td colspan="4">';
+		//print '<tr><td colspan="4">';
 		//print '<table class="noborder" width="100%">';
 
 		// Search available files to import
-        $i=0;
-        while (($file = readdir($handle))!==false)
-        {
-        	if (eregi('^\.',$file)) continue;
+		$i=0;
+		while (($file = readdir($handle))!==false)
+		{
+			if (eregi('^\.',$file)) continue;
 
-        	$modulepart='import';
-        	$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.'&datatoimport='.$datatoimport;
-        	$relativepath=$file;
-        	$var=!$var;
-        	print '<tr '.$bc[$var].'>';
+			$modulepart='import';
+			$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.'&datatoimport='.$datatoimport;
+			$relativepath=$file;
+			$var=!$var;
+			print '<tr '.$bc[$var].'>';
 			print '<td width="16">'.img_mime($file).'</td>';
 			print '<td>'.$file.'</td>';
 			// Affiche taille fichier
@@ -456,8 +456,8 @@ if ($step == 2 && $datatoimport)
 			print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
 			print '</td>';
 			print '</tr>';
-        }
-        //print '</table></td></tr>';
+		}
+		//print '</table></td></tr>';
 	}
 
 	print '</table></form>';
@@ -518,98 +518,91 @@ if ($step == 3 && $datatoimport)
 	print '</table>';
 	print '<br>';
 
+
+	// Load source fields
+	$fieldssource=array(
+		1=>array('name'=>'aa','example1'=>'val1','example2'=>'val2'),
+		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2')
+		);
+
+	// Load targets fileds in database
+	$fieldstarget=$objimport->array_import_fields[0];
+
+	$maxpos=max(sizeof($fieldssource),sizeof($fieldstarget));
+
+
 	print $langs->trans("SelectImportFields");
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="nobordernopadding" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("FieldsTitle").'</td>';
-	print '<td>&nbsp;</td>';
-	print '<td>'.$langs->trans("Entities").'</td>';
-	print '<td>'.$langs->trans("ImportedFields").'</td>';
-	print '<td align="right" colspan="2">'.$langs->trans("Position").'</td>';
+	print '<td>'.$langs->trans("FieldsInSourceFile").'</td>';
+	print '<td>&nbsp</td>';
+	print '<td>'.$langs->trans("FieldsInTargetDatabase").'</td>';
 	print '</tr>';
 
+	print '<tr valign="top"><td width="48%">';
 
-	// Champs importables
-	$fieldsarray=$objimport->array_import_fields[0];
-
-	#    $this->array_import_module[0]=$module;
-	#    $this->array_import_code[0]=$module->import_code[$r];
-	#    $this->array_import_label[0]=$module->import_label[$r];
-	#    $this->array_import_sql[0]=$module->import_sql[$r];
-	#    $this->array_import_fields[0]=$module->import_fields_array[$r];
-	#    $this->array_import_entities[0]=$module->import_fields_entities[$r];
-	#    $this->array_import_alias[0]=$module->import_fields_alias[$r];
-
+	// List of source fields
+	print '<table width="100%" class="noborder">';
+	$pos=1;
 	$var=true;
-	$i = 0;
-
-	foreach($fieldsarray as $code=>$label)
+	while($pos <= $maxpos)
 	{
-	$var=!$var;
-	print "<tr $bc[$var]>";
-
-	$i++;
-
-	$entity=$objimport->array_import_entities[0][$code];
-	$entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
-	$entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
-
-	print '<td nowrap="nowrap">'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
-	if ((isset($array_selected[$code]) && $array_selected[$code]) || $modelchoice == 1)
-	{
-	// Selected fields
-	print '<td>&nbsp;</td>';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoimport='.$datatoimport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
-	print '<td>'.$langs->trans($label).' ('.$code.')</td>';
-	$bit=1;
-	}
-	else
-	{
-	// Fields not selected
-	print '<td>'.$langs->trans($label).' ('.$code.')</td>';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoimport='.$datatoimport.'&action=selectfield&field='.$code.'">'.img_right().'</a></td>';
-	print '<td>&nbsp;</td>';
-	$bit=0;
-	}
-
-	print '</tr>';
-	$save_select.=$bit;
+		$var=!$var;
+		print "<tr ".$bc[$var].' height="20">';
+		print '<td>';
+		if (! empty($fieldssource[$pos]['name'])) print $fieldssource[$pos]['name'].' ('.$fieldssource[$pos]['example1'].')';
+		else print '&nbsp;';
+		print '</td>';
+		print '</tr>';
+		$pos++;
 	}
 
 	print '</table>';
 
-
+	print '</td><td width="4%">';
+	// Arrows
+	print '<table width="100%" class="noborder">';
+	$pos=1;
 	$var=true;
-	foreach($array_selected as $code=>$value)
+	while ($pos <= $maxpos)
 	{
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].' height="20">';
+		print '<td align="center">&nbsp;';
+		if ($pos <= sizeof($fieldssource)) print img_right();
+		print '&nbsp;</td>';
+		print '</tr>';
+		$pos++;
+	}
+	print '</table>';
+	print '</td><td width="48%">';
+
+	$i = 0;
+	$var=true;
+	print '<table width="100%" class="noborder">';
+	foreach($fieldstarget as $code=>$label)
+	{
+		$var=!$var;
+		print "<tr ".$bc[$var].' height="20">';
+
+		$i++;
 
 		$entity=$objimport->array_import_entities[0][$code];
 		$entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
 		$entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
-		print '<td>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
-
-		print '<td>'.$langs->trans($objimport->array_import_fields[0][$code]).' ('.$code.')</td>';
-
-		print '<td align="right" width="100">';
-		print $value.' ';
-		print '</td><td align="center" width="20">';
-		if ($value < sizeof($array_selected)) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=downfield&field='.$code.'">'.img_down().'</a>';
-		if ($value > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=upfield&field='.$code.'">'.img_up().'</a>';
-		print '</td>';
-
-		print '<td>&nbsp;</td>';
-
-		print '<td>'.$langs->trans($objimport->array_import_fields[0][$code]).'</td>';
+		print '<td nowrap="nowrap">'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
+		print '<td>'.$langs->trans($label).' ('.$code.')</td>';
 
 		print '</tr>';
+		$save_select.=$bit;
 	}
-
 	print '</table>';
 
+	print '</td></tr>';
+
+	print '</table>';
 
 	print '</div>';
 
@@ -763,7 +756,7 @@ if ($step == 4 && $datatoimport)
 	{
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-        print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
+		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
 		print '<td>'.$objmodelimport->getDriverLabel($key).'</td><td>'.$objmodelimport->getLibLabel($key).'</td><td align="right">'.$objmodelimport->getLibVersion($key).'</td></tr>';
 	}
 	print '</table>';
