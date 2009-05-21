@@ -227,8 +227,6 @@ print '<td align="left" valign="bottom"><br> &nbsp; <b>'.$langs->trans("Login").
 print '<td valign="bottom"><input id="username" type="text" '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="'.(isset($_POST["username"])?$_POST["username"]:'').'" tabindex="1" /></td>';
 
 $title='';
-$title.=$langs->trans("SessionName").': '.session_name();
-if ($conf->file->main_authentication) $title.=", ".$langs->trans("AuthenticationMode").': '.$conf->file->main_authentication;
 
 // Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 $width=0;
