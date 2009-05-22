@@ -67,6 +67,7 @@ MailingModuleDescDolibarrUsers = Usuarios de Dolibarr que tienen e-mail
 MailingModuleDescFundationMembers = Miembros que tienen e-mail
 MailingModuleDescEmailsFromFile = E-Mails de un archivo (e-mail;nombre;varios)
 MailingModuleDescContactsCategories = Terceros con e-mail (por categoría)
+MailingModuleDescDolibarrContractsLinesExpired = Terceros con líneas de contratos de servicos expirados
 LineInFile = Línea %s en archivo
 RecipientSelectionModules = Módulos de selección de los destinatarios
 MailSelectedRecipients = Destinatarios seleccionados
