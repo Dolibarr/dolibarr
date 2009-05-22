@@ -2533,7 +2533,7 @@ function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
  */
 function dol_htmlcleanlastbr($stringtodecode)
 {
-	$ret=eregi_replace('(<br>|<br( [ a-zA-Z_="]*)?/?>|\n|\r)+$',"",$stringtodecode);
+	$ret=eregi_replace('(<br>|<br( [ a-zA-Z_="]*)?/?>|'."\n".'|'."\r".')+$',"",$stringtodecode);
 	return $ret;
 }
 
