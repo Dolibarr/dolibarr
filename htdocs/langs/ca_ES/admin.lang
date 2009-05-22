@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - admin
+# Dolibarr language file - ca_ES - admin 
 CHARSET = UTF-8
 Version = Versió
 VersionProgram = Versió programa
@@ -9,6 +9,7 @@ VersionDevelopment = Desenvolupament
 VersionUnknown = Desconeguda
 VersionRecommanded = Recomanada
 SessionId = Sesió ID
+SessionSavePath = Localització salvaguardat de sessions
 HTMLCharset = Charset de les pàgines HTML
 DBStoringCharset = Charset base de dades per emmagatzematge de dades
 DBSortingCharset = Charset base de dades per classificar les dades
