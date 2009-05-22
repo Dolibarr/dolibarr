@@ -40,7 +40,7 @@
 	   *      \brief      Constructor
 	   *      \param      key      Personnal key
 	   */
-    function DolCookie($key = 123)
+    function DolCookie($key = '')
     {
     	$this->myKey = $key;
       $this->cookiearray = array();
@@ -55,10 +55,17 @@
 	   */
     function cryptCookie()
     {
-    	$valuecrypt = base64_encode($this->myValue);
-      for ($f=0 ; $f<=strlen($valuecrypt)-1; $f++)
+    	if (!empty($this->myKey))
+    	{
+    		$valuecrypt = base64_encode($this->myValue);
+    		for ($f=0 ; $f<=strlen($valuecrypt)-1; $f++)
+    		{
+    			$this->cookie .= intval(ord($valuecrypt[$f]))*$this->myKey."|";
+    		}
+      }
+      else
       {
-      	$this->cookie .= intval(ord($valuecrypt[$f]))*$this->myKey."|";    
+      	$this->cookie = $this->myValue;
       }
       
       setcookie($this->myCookie, $this->cookie, $this->myExpire, $this->myPath, $this->myDomain, $this->mySecure);
@@ -69,14 +76,21 @@
 	   */
     function decryptCookie()
     {
-    	$this->cookiearray = explode("|",$_COOKIE[$this->myCookie]);
-    	$this->myValue = "" ; 
-    	for ($f=0 ; $f<=count($this->cookiearray)-2; $f++)
+    	if (!empty($this->myKey))
     	{
-    		$this->myValue .= strval(chr($this->cookiearray[$f]/$this->myKey));
+    		$this->cookiearray = explode("|",$_COOKIE[$this->myCookie]);
+    		$this->myValue = "" ;
+    		for ($f=0 ; $f<=count($this->cookiearray)-2; $f++)
+    		{
+    			$this->myValue .= strval(chr($this->cookiearray[$f]/$this->myKey));
+    		}
+    		
+    		return(base64_decode($this->myValue)) ;
     	}
-    	
-      return(base64_decode($this->myValue)) ;
+    	else
+    	{
+    		return($_COOKIE[$this->myCookie]);
+    	}
     }
 
     /**
@@ -92,6 +106,8 @@
     	$this->myPath = $path;
     	$this->myDomain = $domain;
     	$this->mySsecure = $secure;
+    	
+    	//print 'key='.$this->myKey.' name='.$this->myCookie.' value='.$this->myValue.' expire='.$this->myExpire;
     	
     	$this->cryptCookie();
     }

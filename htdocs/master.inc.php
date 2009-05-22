@@ -213,28 +213,9 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = $_ENV["dol_entity"];
 	}
-	else															// Entity from login page
+	elseif (isset($_POST["loginfunction"]) && isset($_POST["entity"]))	// Just after a login page
 	{
-		if (isset($_POST["loginfunction"]) && isset($_POST["entity"]))	// Just after a login page
-		{
-			$conf->entity = $_POST["entity"];
-		}
-		else
-		{
-			// TODO MULTICOMP This can be removed now.
-			// Cookie usage replaced with session to save a lot of code and avoid cookie forging.
-			/*
-			$entityCookieName="DOLENTITYID_dolibarr";
-			if (isset($_COOKIE[$entityCookieName]))					// Should not be used anymore
-			{
-				include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
-
-				// Utilisation de $_SESSION['cryptkey'] comme cle de cryptage
-				$entityCookie = new DolCookie($_SESSION['cryptkey']);
-				$conf->entity = $entityCookie->_getCookie($entityCookieName);
-			}
-			*/
-		}
+		$conf->entity = $_POST["entity"];
 	}
 	$conf->setValues($db);
 }

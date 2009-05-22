@@ -126,9 +126,6 @@ if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$sessio
 session_name($sessionname);
 session_start();
 
-// Security. TODO Check if this is usefull.
-//if (!isset($_SESSION['cryptkey'])) $_SESSION['cryptkey'] = mt_rand();
-
 // Set and init common variables
 // This include will set: config file variable $dolibarr_xxx, $conf, $langs and $mysoc objects
 require_once("master.inc.php");
@@ -184,6 +181,7 @@ if (isset($_POST['token']) && isset($_SESSION['token_level_1']) && isset($_SESSI
 	if (($_POST['token'] != $_SESSION['token_level_1']) && ($_POST['token'] != $_SESSION['token_level_2']))
 	{
 		dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token']=".$_POST['token'].", _SESSION['token_level_1']=".$_SESSION['token_level_1'].", _SESSION['token_level_2']=".$_SESSION['token_level_2']);
+		print 'Unset POST by CSRF protection in main.inc.php.';
 		unset($_POST);
 	}
 }
@@ -442,27 +440,21 @@ if (! isset($_SESSION["dol_login"]))
 		$db->commit();
 	}
 
-	// Create entity cookie
-	// TODO Replace cookie usage to store entity in session to make code so much simpler with no
-	// need to crypt, no need to use token, etc...
-	// No data specific to session must be stored in cookies as this is the goal of session
-	// object and not cookie. Saving entity in session should  save a large amount of useless code,
-	// make code cleaner and solve pb of forged cookie.
-/*	if ($conf->multicompany->enabled && isset($_POST["entity"]))
+	// Create entity cookie, just used for login page
+	if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && !empty($conf->global->MAIN_MULTICOMPANY_COOKIE) && isset($_POST["entity"]))
 	{
-		include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
+		include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
 
 		$entity = $_POST["entity"];
-		$entityCookieName = "DOLENTITYID_dolibarr";
-
-		if (!isset($_COOKIE[$entityCookieName]))
-		{
-			// Utilisation de $_SESSION['cryptkey'] comme cle de cryptage
-			$entityCookie = new DolCookie($_SESSION['cryptkey']);
-			$entityCookie->_setCookie($entityCookieName, $entity);
-		}
+		$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+		// TTL : sera defini dans la page de config multicompany
+		$ttl = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_TTL) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_TTL : time()+60*60*8 );
+		// Cryptkey : sera cree aleatoirement dans la page de config multicompany
+		$cryptkey = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_CRYPTKEY) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_CRYPTKEY : '' );
+			
+		$entityCookie = new DolCookie($cryptkey);
+		$entityCookie->_setCookie($entityCookieName, $entity);
 	}
-*/
 
 	// Module webcalendar
 	if (! empty($conf->webcal->enabled) && $user->webcal_login != "")

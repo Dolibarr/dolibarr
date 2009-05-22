@@ -168,13 +168,28 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
 		$html = new Form($db);
+		$lastentity = '';
+		
+		if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
+		{
+			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+			if (isset($_COOKIE[$entityCookieName]))
+			{
+				include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
+				
+				$cryptkey = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_CRYPTKEY) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_CRYPTKEY : '' );
+				
+				$entityCookie = new DolCookie($cryptkey);
+				$lastentity = $entityCookie->_getCookie($entityCookieName);
+			}
+		}
 
 		//TODO: creer class
 		$entity = array('1'=>'company1','2'=>'company2');
 
 		print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Entity").'</b> &nbsp; </td>';
 		print '<td valign="top" nowrap="nowrap">';
-		print $html->selectarray('entity',$entity,'',0,0,0,1,'tabindex="3"');
+		print $html->selectarray('entity',$entity,$lastentity,0,0,0,1,'tabindex="3"');
 		print '</td></tr>';
 	}
 

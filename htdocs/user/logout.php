@@ -55,14 +55,6 @@ session_name($sessionname);
 session_destroy();
 dol_syslog("End of session ".$sessionname);
 
-// Destroy entity cookie
-// TODO MULTICOMP Must fix this. Use session instead of cookie.
-if ($conf->multicompany->enabled)
-{
-	$entityCookieName = "DOLENTITYID_dolibarr";
-	setcookie($entityCookieName, '', 1, "/");
-}
-
 // Define url to go
 $url=DOL_URL_ROOT."/index.php";		// By default go to login page
 if ($urlfrom)
