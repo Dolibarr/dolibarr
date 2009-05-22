@@ -60,7 +60,7 @@ class Product extends CommonObject
 	var $multiprices_base_type=array();
 	//! Taux de TVA
 	var $tva_tx;
-	//! Type 0 for regural product, 1 for service, 2 for assembly kit, 3 for stock kit
+	//! Type 0 for regular product, 1 for service, 2 for assembly kit, 3 for stock kit
 	var $type;
 	var $typestring;
 	var $stock_reel;

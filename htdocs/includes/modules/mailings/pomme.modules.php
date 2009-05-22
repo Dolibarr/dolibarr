@@ -19,171 +19,171 @@
  */
 
 /**
-       	\file       htdocs/includes/modules/mailings/pomme.modules.php
-		\ingroup    mailing
-		\brief      Fichier de la classe permettant de générer la liste de destinataires Pomme
-		\version    $Id$
-*/
+ \file       htdocs/includes/modules/mailings/pomme.modules.php
+ \ingroup    mailing
+ \brief      Fichier de la classe permettant de gï¿½nï¿½rer la liste de destinataires Pomme
+ \version    $Id$
+ */
 
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 
 
 /**
-	    \class      mailing_pomme
-		\brief      Classe permettant de générer la liste des destinataires Pomme
-*/
+ \class      mailing_pomme
+ \brief      Classe permettant de gï¿½nï¿½rer la liste des destinataires Pomme
+ */
 
 class mailing_pomme extends MailingTargets
 {
 	var $name='DolibarrUsers';                      // Identifiant du module mailing
-  var $desc='Utilisateurs de Dolibarr avec emails';  // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
-  var $require_module=array();                    // Module mailing actif si modules require_module actifs
-  var $require_admin=1;                           // Module mailing actif pour user admin ou non
-  var $picto='user';
+	var $desc='Utilisateurs de Dolibarr avec emails';  // Libellï¿½ utilisï¿½ si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvï¿½e
+	var $require_module=array();                    // Module mailing actif si modules require_module actifs
+	var $require_admin=1;                           // Module mailing actif pour user admin ou non
+	var $picto='user';
 
-  var $db;
+	var $db;
 
 
-  function mailing_pomme($DB)
-  {
-  	$this->db=$DB;
-  }
+	function mailing_pomme($DB)
+	{
+		$this->db=$DB;
+	}
 
 
 	function getSqlArrayForStats()
 	{
 		global $conf, $langs;
-		
+
 		$langs->load("users");
-		
+
 		$statssql=array();
-    $sql = "SELECT '".$langs->trans("DolibarrUsers")."' as label";
-    $sql.= ", count(distinct(u.email)) as nb";
-    $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
-    $sql.= " AND u.entity IN (0,".$conf->entity.")";
-    $statssql[0]=$sql;
+		$sql = "SELECT '".$langs->trans("DolibarrUsers")."' as label";
+		$sql.= ", count(distinct(u.email)) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql.= " AND u.entity IN (0,".$conf->entity.")";
+		$statssql[0]=$sql;
 
 		return $statssql;
 	}
 
 
-    /*
-     *		\brief		Return here number of distinct emails returned by your selector.
-     *					For example if this selector is used to extract 500 different
-     *					emails from a text file, this function must return 500.
-     *		\return		int
-     */
-    function getNbOfRecipients()
-    {
-    	global $conf;
-    	
-    	$sql = "SELECT count(distinct(u.email)) as nb";
-      $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-      $sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
-      $sql.= " AND u.entity IN (0,".$conf->entity.")";
+	/*
+	 *		\brief		Return here number of distinct emails returned by your selector.
+	 *					For example if this selector is used to extract 500 different
+	 *					emails from a text file, this function must return 500.
+	 *		\return		int
+	 */
+	function getNbOfRecipients()
+	{
+		global $conf;
 
-      // La requete doit retourner un champ "nb" pour etre comprise
-      // par parent::getNbOfRecipients
-      return parent::getNbOfRecipients($sql);
-    }
+		$sql = "SELECT count(distinct(u.email)) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql.= " AND u.entity IN (0,".$conf->entity.")";
 
-
-    /**
-     *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
-     *                  des destinataires de mailings
-     *      \return     string      Retourne zone select
-     */
-    function formFilter()
-    {
-        global $langs;
-        
-        $langs->load("users");
-
-        $s='';
-        $s.='<select name="filter" class="flat">';
-        $s.='<option value="1">'.$langs->trans("Enabled").'</option>';
-        $s.='<option value="0">'.$langs->trans("Disabled").'</option>';
-        $s.='</select>';
-        return $s;
-    }
+		// La requete doit retourner un champ "nb" pour etre comprise
+		// par parent::getNbOfRecipients
+		return parent::getNbOfRecipients($sql);
+	}
 
 
 	/**
-     *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
-     *      \return     string      Url lien
-     */
-    function url($id)
-    {
-        return '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$id.'">'.img_object('',"user").'</a>';
-    }
+	 *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
+	 *                  des destinataires de mailings
+	 *      \return     string      Retourne zone select
+	 */
+	function formFilter()
+	{
+		global $langs;
+
+		$langs->load("users");
+
+		$s='';
+		$s.='<select name="filter" class="flat">';
+		$s.='<option value="1">'.$langs->trans("Enabled").'</option>';
+		$s.='<option value="0">'.$langs->trans("Disabled").'</option>';
+		$s.='</select>';
+		return $s;
+	}
 
 
-    /**
-     *    \brief      Ajoute destinataires dans table des cibles
-     *    \param      mailing_id    Id du mailing concerné
-     *    \param      filterarray   Requete sql de selection des destinataires
-     *    \return     int           < 0 si erreur, nb ajout si ok
-     */
-    function add_to_target($mailing_id,$filtersarray=array())
-    {
-    	global $conf, $langs;
+	/**
+	 *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *      \return     string      Url lien
+	 */
+	function url($id)
+	{
+		return '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$id.'">'.img_object('',"user").'</a>';
+	}
 
-        $cibles = array();
 
-        // La requete doit retourner: id, email, fk_contact, name, firstname
-        $sql = "SELECT u.rowid as id, u.email as email, null as fk_contact,";
-        $sql.= " u.name as name, u.firstname as firstname, u.login, u.office_phone";
-        $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
-        $sql.= " AND u.entity IN (0,".$conf->entity.")";
-        foreach($filtersarray as $key)
-        {
-            if ($key == '1') $sql.= " AND u.statut=1";
-            if ($key == '0') $sql.= " AND u.statut=0";
-        }
-        $sql.= " ORDER BY u.email";
+	/**
+	 *    \brief      Ajoute destinataires dans table des cibles
+	 *    \param      mailing_id    Id du mailing concernï¿½
+	 *    \param      filterarray   Requete sql de selection des destinataires
+	 *    \return     int           < 0 si erreur, nb ajout si ok
+	 */
+	function add_to_target($mailing_id,$filtersarray=array())
+	{
+		global $conf, $langs;
 
-        // Stocke destinataires dans cibles
-        $result=$this->db->query($sql);
-        if ($result)
-        {
-            $num = $this->db->num_rows($result);
-            $i = 0;
-            $j = 0;
+		$cibles = array();
 
-            dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
+		// La requete doit retourner: id, email, fk_contact, name, firstname
+		$sql = "SELECT u.rowid as id, u.email as email, null as fk_contact,";
+		$sql.= " u.name as name, u.firstname as firstname, u.login, u.office_phone";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql.= " AND u.entity IN (0,".$conf->entity.")";
+		foreach($filtersarray as $key)
+		{
+			if ($key == '1') $sql.= " AND u.statut=1";
+			if ($key == '0') $sql.= " AND u.statut=0";
+		}
+		$sql.= " ORDER BY u.email";
 
-            $old = '';
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($result);
-                if ($old <> $obj->email)
-                {
-                    $cibles[$j] = array(
+		// Stocke destinataires dans cibles
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			$j = 0;
+
+			dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
+
+			$old = '';
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($result);
+				if ($old <> $obj->email)
+				{
+					$cibles[$j] = array(
                     			'email' => $obj->email,
                     			'fk_contact' => $obj->fk_contact,
                     			'name' => $obj->name,
                     			'firstname' => $obj->firstname,
                     			'other' => $langs->transnoentities("Login").'='.$obj->login.';'.$langs->transnoentities("PhonePro").'='.$obj->office_phone,
                     			'url' => $this->url($obj->id)
-                    			);
-                    $old = $obj->email;
-                    $j++;
-                }
+					);
+					$old = $obj->email;
+					$j++;
+				}
 
-                $i++;
-            }
-        }
-        else
-        {
-            dol_syslog($this->db->error());
-            $this->error=$this->db->error();
-            return -1;
-        }
+				$i++;
+			}
+		}
+		else
+		{
+			dol_syslog($this->db->error());
+			$this->error=$this->db->error();
+			return -1;
+		}
 
-        return parent::add_to_target($mailing_id, $cibles);
-    }
+		return parent::add_to_target($mailing_id, $cibles);
+	}
 
 }
 

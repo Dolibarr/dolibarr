@@ -38,7 +38,7 @@ create table llx_product
   tva_tx             double(6,3),
   fk_user_author     integer,
   envente            tinyint      DEFAULT 1,
-  fk_product_type    integer      DEFAULT 0,
+  fk_product_type    integer      DEFAULT 0,	-- Type 0 for regular product, 1 for service
   duration           varchar(6),
   seuil_stock_alerte integer      DEFAULT 0,
   stock_loc          varchar(10),               -- emplacement dans le stock
