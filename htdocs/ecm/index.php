@@ -411,7 +411,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 
 	// Update expandedsectionarray in session
 	$expandedsectionarray=array();
-	if (isset($_SESSION['expandedsectionarray'])) $expandedsectionarray=split(',',$_SESSION['expandedsectionarray']);
+	if (isset($_SESSION['dol_ecmexpandedsectionarray'])) $expandedsectionarray=split(',',$_SESSION['dol_ecmexpandedsectionarray']);
 
 	if ($section && $_GET['sectionexpand'] == 'true')
 	{
@@ -424,7 +424,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 				$expandedsectionarray[]=$idcursor;
 			}
 		}
-		$_SESSION['expandedsectionarray']=join(',',$expandedsectionarray);
+		$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
 	}
 	if ($section && $_GET['sectionexpand'] == 'false')
 	{
@@ -436,9 +436,9 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			// is_in_subtree(fulltree,sectionparent,sectionchild)
 			if ($sectioncursor && ! is_in_subtree($fulltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
 		}
-		$_SESSION['expandedsectionarray']=join(',',$expandedsectionarray);
+		$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
 	}
-	//print $_SESSION['expandedsectionarray'].'<br>';
+	//print $_SESSION['dol_ecmexpandedsectionarray'].'<br>';
 
 	$nbofentries=0;
 	$oldvallevel=0;

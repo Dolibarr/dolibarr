@@ -164,7 +164,7 @@ foreach($fulltree as $key => $val)
 
 // Update expandedsectionarray in session
 $expandedsectionarray=array();
-if (isset($_SESSION['dol_expandedsectionarray'])) $expandedsectionarray=split(',',$_SESSION['dol_expandedsectionarray']);
+if (isset($_SESSION['dol_catexpandedsectionarray'.$type])) $expandedsectionarray=split(',',$_SESSION['dol_catexpandedsectionarray'.$type]);
 
 if ($section && $_GET['sectionexpand'] == 'true')
 {
@@ -177,7 +177,7 @@ if ($section && $_GET['sectionexpand'] == 'true')
 			$expandedsectionarray[]=$idcursor;
 		}
 	}
-	$_SESSION['dol_expandedsectionarray']=join(',',$expandedsectionarray);
+	$_SESSION['dol_catexpandedsectionarray'.$type]=join(',',$expandedsectionarray);
 }
 if ($section && $_GET['sectionexpand'] == 'false')
 {
@@ -189,9 +189,9 @@ if ($section && $_GET['sectionexpand'] == 'false')
 		// is_in_subtree(fulltree,sectionparent,sectionchild)
 		if ($sectioncursor && ! is_in_subtree($fulltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
 	}
-	$_SESSION['dol_expandedsectionarray']=join(',',$expandedsectionarray);
+	$_SESSION['dol_catexpandedsectionarray'.$type]=join(',',$expandedsectionarray);
 }
-//print $_SESSION['dol_expandedsectionarray'].'<br>';
+//print $_SESSION['dol_catexpandedsectionarray'.$type].'<br>';
 
 $nbofentries=0;
 $oldvallevel=0;
