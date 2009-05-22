@@ -1,0 +1,74 @@
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns="http://usefulinc.com/ns/doap#">
+
+	<name>Dolibarr ERP/CRM</name>
+	<homepage rdf:resource="http://www.dolibarr.org" />
+	<created>2003-09-01</created>
+
+	<shortdesc xml:lang="en">
+	  Dolibarr ERP/CRM is an open source/free software for small and medium companies, foundations or freelances. It includes different features for Enterprise Resource Planning (ERP) and Customer Relationship Management (CRM) but also other features for different activities. 
+	</shortdesc>
+	<shortdesc xml:lang="fr">
+	  Dolibarr ERP/CRM est un logiciel simple de gestion des TPE/PME, indépendants, autoentrepreneurs et associations.
+	</shortdesc>
+	<shortdesc xml:lang="es">
+		Dolibarr ERP/CRM es un software de Planificación de recursos empresariales (PRE, ERP en inglés) y administración de la relación con los clientes (CRM en inglés) open source para la Pequeña y mediana empresa, autónomos o asociaciones.
+	</shortdesc>
+	<shortdesc xml:lang="no">
+		Dolibarr ERP/CRM er en fri programpakke utgitt med åpen kildekode for små og mellomstore bedrifter, organisasjoner og konsulenter. Programmet har en rekke funksjoner for Enterprise resource planning (ERP), kunderelasjonshåndtering (CRM) og andre aktiviteter.
+	</shortdesc>
+
+	<description xml:lang="en">
+	  Dolibarr ERP/CRM is an open source/free software for small and medium companies, foundations or freelances. It includes different features for Enterprise Resource Planning (ERP) and Customer Relationship Management (CRM) but also other features for different activities. 
+	</description>
+	<description xml:lang="fr">
+	  Dolibarr ERP/CRM est un logiciel simple de gestion des TPE/PME, indépendants, autoentrepreneurs et associations.
+	</description>
+	<description xml:lang="es">
+      Dolibarr ERP/CRM es un software de Planificación de recursos empresariales (PRE, ERP en inglés) y administración de la relación con los clientes (CRM en inglés) open source para la Pequeña y mediana empresa, autónomos o asociaciones.
+	</description>
+	<description xml:lang="no">
+		Dolibarr ERP/CRM er en fri programpakke utgitt med åpen kildekode for små og mellomstore bedrifter, organisasjoner og konsulenter. Programmet har en rekke funksjoner for Enterprise resource planning (ERP), kunderelasjonshåndtering (CRM) og andre aktiviteter.
+	</description>
+
+	<mailing-list rdf:resource="http://lists.usefulinc.com/mailman/listinfo/doap-interest" />
+	<maintainer>
+		<foaf:Person>
+			<foaf:name>Dolibarr Team</foaf:name>
+			<foaf:homepage rdf:resource="http://www.dolibarr.org" />
+		</foaf:Person>
+	</maintainer>
+
+	<translator>
+		<foaf:Person>
+			<foaf:name>Laurent Destailleur</foaf:name>
+			<foaf:mbox rdf:resource="mailto:eldy@users.sourceforge.net" />
+			<rdfs:seeAlso rdf:resource="http://wiki.dolibarr.org/index.php/Translator_documentation" />
+		</foaf:Person>
+	</translator>
+
+	<!-- currently supported versions -->
+	<release>
+		<Version>
+			<name>stable</name>
+			<created>2009-04-25</created>
+			<revision>2.6</revision>
+		</Version>
+	</release>
+
+	<!-- Freshmeat category:
+		Information Management :: Metadata/Semantic Models -->
+	<category rdf:resource="http://software.freshmeat.net/tags/officebusiness" />
+
+	<license rdf:resource="http://wiki.dolibarr.org/index.php/FAQ_What_is_Dolibarr_licence_%3F" />
+
+	<repository>
+		<SVNRepository>
+			<location rdf:resource="pserver:anonymous@cvs.savannah.nongnu.org:/sources/dolibarr" />
+			<browse rdf:resource="http://cvs.savannah.nongnu.org/viewvc/dolibarr/?root=dolibarr" />
+		</SVNRepository>
+	</repository>
+
+</Project>
