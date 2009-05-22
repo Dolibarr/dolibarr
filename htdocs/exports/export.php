@@ -32,9 +32,9 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
 
 $langs->load("exports");
 
-
-if (! $user->admin)
-  accessforbidden();
+// Everybody should be able to go on this page
+//if (! $user->admin)
+//  accessforbidden();
 
 $entitytoicon=array(
 	'invoice'=>'bill','invoice_line'=>'bill',
