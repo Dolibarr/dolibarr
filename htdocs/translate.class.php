@@ -352,10 +352,10 @@ class Translate {
 	 */
 	function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
 	{
-		if ($this->getTransFromTab($key))
+		if ($this->getTransFromTab($key))	// Translation is available
 		{
-			// Translation is available
-			$str=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
+			$str=eregi_replace('\\\"','"',$this->tab_translate[$key]);	// To solve some translation keys containing key=abc\"def\"ghi instead of abc"def"ghi
+			$str=sprintf($str,$param1,$param2,$param3,$param4);
 			if ($maxsize) $str=dol_trunc($str,$maxsize);
 			// On remplace les tags HTML par __xx__ pour eviter traduction par htmlentities
 			$newstr=ereg_replace('<','__lt__',$str);
@@ -374,9 +374,8 @@ class Translate {
 			$newstr=ereg_replace('__quot__','"',$newstr);
 			return $newstr;
 		}
-		else
+		else								// Translation is not available
 		{
-			// Translation is not available
 			$newstr=$key;
 			if (eregi('CurrencyShort([A-Z]+)$',$key,$reg))
 			{
