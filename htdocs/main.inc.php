@@ -453,7 +453,7 @@ if (! isset($_SESSION["dol_login"]))
 		$cryptkey = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_CRYPTKEY) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_CRYPTKEY : '' );
 			
 		$entityCookie = new DolCookie($cryptkey);
-		$entityCookie->_setCookie($entityCookieName, $entity);
+		$entityCookie->_setCookie($entityCookieName, $entity, $ttl);
 	}
 
 	// Module webcalendar
