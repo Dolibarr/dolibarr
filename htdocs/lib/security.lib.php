@@ -43,6 +43,10 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	header('Cache-Control: Public, must-revalidate');
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
+	// Set cookie for timeout management
+	$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+	if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', 0);
+
 	if (! empty($_REQUEST["urlfrom"])) $_SESSION["urlfrom"]=$_REQUEST["urlfrom"];
 	else unset($_SESSION["urlfrom"]);
 

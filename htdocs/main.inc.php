@@ -121,13 +121,13 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 // Init session. Name of session is specific to Dolibarr instance.
 $sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-if (! empty($_SERVER["DOLSESSTIMEOUT"])) ini_set('session.gc_maxlifetime',$_SERVER["DOLSESSTIMEOUT"]);
-if (! empty($_COOKIE["DOLSESSTIMEOUT"])) ini_set('session.gc_maxlifetime',$_REQUEST["DOLSESSTIMEOUT"]);
+$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$sessiontimeout);
 session_name($sessionname);
 session_start();
 
 // Security. TODO Check if this is usefull.
-if (!isset($_SESSION['cryptkey'])) $_SESSION['cryptkey'] = mt_rand();
+//if (!isset($_SESSION['cryptkey'])) $_SESSION['cryptkey'] = mt_rand();
 
 // Set and init common variables
 // This include will set: config file variable $dolibarr_xxx, $conf, $langs and $mysoc objects
@@ -189,7 +189,7 @@ if (isset($_POST['token']) && isset($_SESSION['token_level_1']) && isset($_SESSI
 }
 
 
-// Disable modules (this must be after session_start and after conf has been reloaded)
+// Disable modules (this must be after session_start and after conf has been loaded)
 if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
 if (! empty($_SESSION["disablemodules"]))
 {
@@ -448,7 +448,7 @@ if (! isset($_SESSION["dol_login"]))
 	// No data specific to session must be stored in cookies as this is the goal of session
 	// object and not cookie. Saving entity in session should  save a large amount of useless code,
 	// make code cleaner and solve pb of forged cookie.
-	if ($conf->multicompany->enabled && isset($_POST["entity"]))
+/*	if ($conf->multicompany->enabled && isset($_POST["entity"]))
 	{
 		include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
 
@@ -462,6 +462,7 @@ if (! isset($_SESSION["dol_login"]))
 			$entityCookie->_setCookie($entityCookieName, $entity);
 		}
 	}
+*/
 
 	// Module webcalendar
 	if (! empty($conf->webcal->enabled) && $user->webcal_login != "")
