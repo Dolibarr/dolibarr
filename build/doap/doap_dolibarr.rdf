@@ -33,7 +33,11 @@
 		Dolibarr ERP/CRM er en fri programpakke utgitt med åpen kildekode for små og mellomstore bedrifter, organisasjoner og konsulenter. Programmet har en rekke funksjoner for Enterprise resource planning (ERP), kunderelasjonshåndtering (CRM) og andre aktiviteter.
 	</description>
 
-	<mailing-list rdf:resource="http://lists.usefulinc.com/mailman/listinfo/doap-interest" />
+	<mailing-list rdf:resource="http://lists.nongnu.org/mailman/listinfo/dolibarr-dev" />
+    <mailing-list rdf:resource="http://lists.nongnu.org/mailman/listinfo/dolibarr-user" />
+
+    <download-page rdf:resource="http://www.dolibarr.org/downloads/cat_view/62-stable-versions" />
+
 	<maintainer>
 		<foaf:Person>
 			<foaf:name>Dolibarr Team</foaf:name>
@@ -48,7 +52,14 @@
 			<rdfs:seeAlso rdf:resource="http://wiki.dolibarr.org/index.php/Translator_documentation" />
 		</foaf:Person>
 	</translator>
-
+	<maintainer>
+		<foaf:Person>
+			<foaf:name>Laurent Destailleur</foaf:name>
+			<foaf:mbox rdf:resource="mailto:eldy@users.sourceforge.net" />
+			<rdfs:seeAlso rdf:resource="http://wiki.dolibarr.org/index.php/Translator_documentation" />
+		</foaf:Person>
+	</maintainer>
+	
 	<!-- currently supported versions -->
 	<release>
 		<Version>
@@ -58,17 +69,42 @@
 		</Version>
 	</release>
 
-	<!-- Freshmeat category:
-		Information Management :: Metadata/Semantic Models -->
+	<!-- Freshmeat -->
 	<category rdf:resource="http://software.freshmeat.net/tags/officebusiness" />
+	<!-- Sourceforge category: -->
+    <category rdf:resource="http://sourceforge.net/softwaremap/trove_list.php?form_cat=129" />
 
 	<license rdf:resource="http://wiki.dolibarr.org/index.php/FAQ_What_is_Dolibarr_licence_%3F" />
 
-	<repository>
+	<screenshots rdf:resource="http://wiki.dolibarr.org/index.php/Screenshots" />
+
+    <!-- source repository -->
+    <repository>
+        <CVSRepository>
+            <anon-root>:pserver:anonymous@cvs.savannah.nongnu.org:/sources/dolibarr</anon-root>
+            <module>dolibarr</module>
+            <browse rdf:resource="http://cvs.savannah.nongnu.org/viewvc/dolibarr/?root=dolibarr" />
+        </CVSRepository>
+
+		<!--
 		<SVNRepository>
-			<location rdf:resource="pserver:anonymous@cvs.savannah.nongnu.org:/sources/dolibarr" />
+			<location rdf:resource="http://sv..." />
 			<browse rdf:resource="http://cvs.savannah.nongnu.org/viewvc/dolibarr/?root=dolibarr" />
 		</SVNRepository>
-	</repository>
+		-->
+    </repository>
+
+
+<!--
+     authoring tools can add more here if they'd like.
+-->
+<rdf:Description rdf:about="">
+     <foaf:maker>
+          <foaf:Person>
+               <foaf:name>Laurent Destailleur</foaf:name>
+               <foaf:mbox rdf:resource="mailto:eldy@users.sourceforge.net" />
+          </foaf:Person>
+     </foaf:maker>
+</rdf:Description>
 
 </Project>
