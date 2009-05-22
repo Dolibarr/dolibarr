@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005      ï¿½ric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -71,7 +71,7 @@ print '</tr>';
 print '<tr '.$bc[0].'><td>';
 print $langs->trans("Name").':</td><td><input class="flat" type="text" size="20" name="catname" value="' . $_POST['catname'] . '"/></td><td><input type="submit" class="button" value="'.$langs->trans ("Search").'"></td></tr>';
 /*
-// faire une rech dans une sous catégorie uniquement
+// faire une rech dans une sous catï¿½gorie uniquement
 print '<tr '.$bc[0].'><td>';
 print $langs->trans("SubCatOf").':</td><td>';
 
@@ -86,7 +86,7 @@ print '</td><td valign="top" width="70%">';
 
 
 /*
- * Catégories trouvées
+ * Categories found
  */
 if($_POST['catname'] || $_REQUEST['id'])
 {
@@ -164,7 +164,7 @@ foreach($fulltree as $key => $val)
 
 // Update expandedsectionarray in session
 $expandedsectionarray=array();
-if (isset($_SESSION['expandedsectionarray'])) $expandedsectionarray=split(',',$_SESSION['expandedsectionarray']);
+if (isset($_SESSION['dol_expandedsectionarray'])) $expandedsectionarray=split(',',$_SESSION['dol_expandedsectionarray']);
 
 if ($section && $_GET['sectionexpand'] == 'true')
 {
@@ -177,7 +177,7 @@ if ($section && $_GET['sectionexpand'] == 'true')
 			$expandedsectionarray[]=$idcursor;
 		}
 	}
-	$_SESSION['expandedsectionarray']=join(',',$expandedsectionarray);
+	$_SESSION['dol_expandedsectionarray']=join(',',$expandedsectionarray);
 }
 if ($section && $_GET['sectionexpand'] == 'false')
 {
@@ -189,9 +189,9 @@ if ($section && $_GET['sectionexpand'] == 'false')
 		// is_in_subtree(fulltree,sectionparent,sectionchild)
 		if ($sectioncursor && ! is_in_subtree($fulltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
 	}
-	$_SESSION['expandedsectionarray']=join(',',$expandedsectionarray);
+	$_SESSION['dol_expandedsectionarray']=join(',',$expandedsectionarray);
 }
-//print $_SESSION['expandedsectionarray'].'<br>';
+//print $_SESSION['dol_expandedsectionarray'].'<br>';
 
 $nbofentries=0;
 $oldvallevel=0;
