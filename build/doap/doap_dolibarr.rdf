@@ -7,31 +7,15 @@
 	<homepage rdf:resource="http://www.dolibarr.org" />
 	<created>2003-09-01</created>
 
-	<shortdesc xml:lang="en">
-	  Dolibarr ERP/CRM is an open source/free software for small and medium companies, foundations or freelances. It includes different features for Enterprise Resource Planning (ERP) and Customer Relationship Management (CRM) but also other features for different activities. 
-	</shortdesc>
-	<shortdesc xml:lang="fr">
-	  Dolibarr ERP/CRM est un logiciel simple de gestion des TPE/PME, indépendants, autoentrepreneurs et associations.
-	</shortdesc>
-	<shortdesc xml:lang="es">
-		Dolibarr ERP/CRM es un software de Planificación de recursos empresariales (PRE, ERP en inglés) y administración de la relación con los clientes (CRM en inglés) open source para la Pequeña y mediana empresa, autónomos o asociaciones.
-	</shortdesc>
-	<shortdesc xml:lang="no">
-		Dolibarr ERP/CRM er en fri programpakke utgitt med åpen kildekode for små og mellomstore bedrifter, organisasjoner og konsulenter. Programmet har en rekke funksjoner for Enterprise resource planning (ERP), kunderelasjonshåndtering (CRM) og andre aktiviteter.
-	</shortdesc>
+	<shortdesc xml:lang="fr">Dolibarr ERP/CRM, le logiciel simple de gestion d'entreprise et associations.</shortdesc>
+	<shortdesc xml:lang="es">Dolibarr ERP/CRM es un software de Planificación de recursos empresariales y administración de la relación con los clientes.</shortdesc>
+	<shortdesc xml:lang="no">Dolibarr ERP/CRM er en fri programpakke utgitt med åpen kildekode for små og mellomstore bedrifter, organisasjoner og konsulenter.</shortdesc>
+	<shortdesc xml:lang="en">Dolibarr ERP/CRM is a free opensource software to manage small and medium companies, foundations or freelancers.</shortdesc>
 
-	<description xml:lang="en">
-	  Dolibarr ERP/CRM is an open source/free software for small and medium companies, foundations or freelances. It includes different features for Enterprise Resource Planning (ERP) and Customer Relationship Management (CRM) but also other features for different activities. 
-	</description>
-	<description xml:lang="fr">
-	  Dolibarr ERP/CRM est un logiciel simple de gestion des TPE/PME, indépendants, autoentrepreneurs et associations.
-	</description>
-	<description xml:lang="es">
-      Dolibarr ERP/CRM es un software de Planificación de recursos empresariales (PRE, ERP en inglés) y administración de la relación con los clientes (CRM en inglés) open source para la Pequeña y mediana empresa, autónomos o asociaciones.
-	</description>
-	<description xml:lang="no">
-		Dolibarr ERP/CRM er en fri programpakke utgitt med åpen kildekode for små og mellomstore bedrifter, organisasjoner og konsulenter. Programmet har en rekke funksjoner for Enterprise resource planning (ERP), kunderelasjonshåndtering (CRM) og andre aktiviteter.
-	</description>
+	<description xml:lang="fr">Dolibarr ERP/CRM est un logiciel simple de gestion des TPE/PME, indépendants, autoentrepreneurs et associations.</description>
+	<description xml:lang="es">Dolibarr ERP/CRM es un software de Planificación de recursos empresariales (PRE, ERP en inglés) y administración de la relación con los clientes (CRM en inglés) open source para la Pequeña y mediana empresa, autónomos o asociaciones.</description>
+	<description xml:lang="no">Dolibarr ERP/CRM er en fri programpakke utgitt med åpen kildekode for små og mellomstore bedrifter, organisasjoner og konsulenter. Programmet har en rekke funksjoner for Enterprise resource planning (ERP), kunderelasjonshåndtering (CRM) og andre aktiviteter.</description>
+	<description xml:lang="en">Dolibarr ERP/CRM is an open source/free software for small and medium companies, foundations or freelances. It includes different features for Enterprise Resource Planning (ERP) and Customer Relationship Management (CRM) but also other features for different activities.</description>
 
 	<mailing-list rdf:resource="http://lists.nongnu.org/mailman/listinfo/dolibarr-dev" />
     <mailing-list rdf:resource="http://lists.nongnu.org/mailman/listinfo/dolibarr-user" />
@@ -93,18 +77,5 @@
 		</SVNRepository>
 		-->
     </repository>
-
-
-<!--
-     authoring tools can add more here if they'd like.
--->
-<rdf:Description rdf:about="">
-     <foaf:maker>
-          <foaf:Person>
-               <foaf:name>Laurent Destailleur</foaf:name>
-               <foaf:mbox rdf:resource="mailto:eldy@users.sourceforge.net" />
-          </foaf:Person>
-     </foaf:maker>
-</rdf:Description>
 
 </Project>
