@@ -136,6 +136,11 @@ $conf->file->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_m
 // Define charset for HTML Output (can set hidden value force_charset in conf.php file)
 if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
 $conf->file->character_set_client=strtoupper($force_charset_do_notuse);
+// Cookie cryptkey
+if (! empty($dolibarr_main_cookie_cryptkey))
+{
+	$conf->cookie->cryptkey = $dolibarr_main_cookie_cryptkey;
+}
 
 // Define array of document root directories
 $conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT);
@@ -205,6 +210,8 @@ if (! defined('NOREQUIREUSER'))
  */
 if (! defined('NOREQUIREDB'))
 {
+	$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+	
 	if (session_id() && isset($_SESSION["dol_entity"]))				// Entity inside an opened session
 	{
 		$conf->entity = $_SESSION["dol_entity"];
@@ -217,6 +224,19 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = $_POST["entity"];
 	}
+	elseif (isset($_COOKIE[$entityCookieName]) && isset($conf->cookie->cryptkey)) // Just for view specific login page
+	{
+		include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
+		
+		$lastuser = '';
+		$lastentity = '';
+
+		$entityCookie = new DolCookie($conf->cookie->cryptkey);
+		$cookieValue = $entityCookie->_getCookie($entityCookieName);
+		list($lastuser, $lastentity) = split('\|', $cookieValue);
+		$conf->entity = $lastentity;
+	}
+
 	$conf->setValues($db);
 }
 

@@ -126,6 +126,86 @@
     	
     	return $decryptValue;
     }
+    
+    /**
+     *  \brief   	Add cookie cryptkey in config file
+     *	\return		int		<0 if KO, >0 if OK
+     */
+    function add_cookiecryptkeyconf()
+    {
+    	dol_syslog("cookie.class::add_cookiecryptkeyconf", LOG_DEBUG);
+    	$config = '';
+    	$added=0;
+    	
+    	if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','r'))
+    	{
+    		while(!feof($fp))
+    		{
+    			$buffer = fgets($fp,4096);
+    			
+    			if (strstr($buffer,"\$dolibarr_main_cookie_cryptkey"))
+    			{
+    				$config .= "\$dolibarr_main_cookie_cryptkey=\"$this->myKey\";\n";
+    				$added++;
+    			}
+    			else
+    			{
+    				$config .= $buffer;
+    			}
+    		}
+    		fclose($fp);
+
+    		if (!$added)
+    		{
+    			$config = '';
+    			
+    			if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','r'))
+    			{
+    				while(!feof($fp))
+    				{
+    					$buffer = fgets($fp,4096);
+    					
+    					if (strstr($buffer,"\$dolibarr_main_authentication"))
+    					{
+    						$config .= $buffer;
+    						$config .= "\$dolibarr_main_cookie_cryptkey=\"$this->myKey\";\n";
+    					}
+    					else
+    					{
+    						$config .= $buffer;
+    					}
+    				}
+    				fclose($fp);
+    			}
+    			else
+    			{
+    				dol_syslog("cookie.class::add_cookiecryptkeyconf Failed to read conf.php", LOG_ERR);
+    				return -2;
+    			}
+    		}
+
+    		$file=DOL_DOCUMENT_ROOT.'/conf/conf.php';
+    		if ($fp = @fopen($file,'w'))
+    		{
+    			fputs($fp, $config, strlen($config));
+    			fclose($fp);
+    			// It's config file, so we set permission for creator only
+    			// @chmod($file, octdec('0600'));
+    			
+    			return 1;
+    		}
+    		else
+    		{
+    			dol_syslog("cookie.class::add_cookiecryptkeyconf Failed to open conf.php file for writing", LOG_WARNING);
+    			return -1;
+    		}
+    	}
+    	else
+    	{
+    		dol_syslog("cookie.class::add_cookiecryptkeyconf Failed to read conf.php", LOG_ERR);
+    		return -2;
+    	}
+    }
 
   }
   

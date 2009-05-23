@@ -141,7 +141,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			{
 				include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
 				
-				$cryptkey = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_CRYPTKEY) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_CRYPTKEY : '' );
+				$cryptkey = ( isset($conf->cookie->cryptkey) ? $conf->cookie->cryptkey : '' );
 				
 				$entityCookie = new DolCookie($cryptkey);
 				$cookieValue = $entityCookie->_getCookie($entityCookieName);
