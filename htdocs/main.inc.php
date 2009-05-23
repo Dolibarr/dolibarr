@@ -445,7 +445,7 @@ if (! isset($_SESSION["dol_login"]))
 	{
 		include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
 
-		$entity = $_POST["entity"];
+		$entity = $_SESSION["dol_login"].'|'.$_POST["entity"];
 		$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
 		// TTL : sera defini dans la page de config multicompany
 		$ttl = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_TTL) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_TTL : time()+60*60*8 );

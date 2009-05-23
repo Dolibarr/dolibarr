@@ -128,11 +128,32 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		$demologin=$tab[0];
 		$demopassword=$tab[1];
 	}
+	
+	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+	{
+		$lastuser = '';
+		$lastentity = '';
+		
+		if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
+		{
+			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+			if (isset($_COOKIE[$entityCookieName]))
+			{
+				include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
+				
+				$cryptkey = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_CRYPTKEY) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_CRYPTKEY : '' );
+				
+				$entityCookie = new DolCookie($cryptkey);
+				$cookieValue = $entityCookie->_getCookie($entityCookieName);
+				list($lastuser, $lastentity) = split('\|', $cookieValue);
+			}
+		}
+	}
 
 	// Login field
 	print '<td align="left" valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
 	print '<td valign="bottom"><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="';
-	print (isset($_REQUEST["username"])?$_REQUEST["username"]:$demologin);
+	print (!empty($lastuser)?$lastuser:(isset($_REQUEST["username"])?$_REQUEST["username"]:$demologin));
 	print '" tabindex="1" /></td>';
 
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
@@ -168,21 +189,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
 		$html = new Form($db);
-		$lastentity = '';
-		
-		if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
-		{
-			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-			if (isset($_COOKIE[$entityCookieName]))
-			{
-				include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
-				
-				$cryptkey = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_CRYPTKEY) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_CRYPTKEY : '' );
-				
-				$entityCookie = new DolCookie($cryptkey);
-				$lastentity = $entityCookie->_getCookie($entityCookieName);
-			}
-		}
 
 		//TODO: creer class
 		$entity = array('1'=>'company1','2'=>'company2');
