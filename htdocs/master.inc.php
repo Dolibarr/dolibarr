@@ -137,7 +137,7 @@ $conf->file->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_m
 if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
 $conf->file->character_set_client=strtoupper($force_charset_do_notuse);
 // Cookie cryptkey
-if (! empty($dolibarr_main_cookie_cryptkey))
+if (isset($dolibarr_main_cookie_cryptkey))
 {
 	$conf->cookie->cryptkey = $dolibarr_main_cookie_cryptkey;
 }
@@ -224,12 +224,13 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = $_POST["entity"];
 	}
-	elseif (isset($_COOKIE[$entityCookieName]) && isset($conf->cookie->cryptkey)) // Just for view specific login page
+	elseif (isset($_COOKIE[$entityCookieName])) // Just for view specific login page
 	{
 		include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
 		
 		$lastuser = '';
 		$lastentity = '';
+		$cryptkey = ( isset($conf->cookie->cryptkey) ? $conf->cookie->cryptkey : '' );
 
 		$entityCookie = new DolCookie($conf->cookie->cryptkey);
 		$cookieValue = $entityCookie->_getCookie($entityCookieName);
