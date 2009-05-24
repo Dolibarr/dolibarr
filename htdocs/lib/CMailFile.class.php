@@ -359,8 +359,8 @@ class CMailFile
 				}
 			}
 
-			$smtps->setCC($sentocc);
-			$smtps->setBCC($sentoccc);
+			$smtps->setCC($addr_cc);
+			$smtps->setBCC($addr_bcc);
 			$smtps->setErrorsTo($errors_to);
 			$smtps->setDeliveryReceipt($deliveryreceipt);
 
