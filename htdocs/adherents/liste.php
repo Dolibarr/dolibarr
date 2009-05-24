@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/adherents/liste.php
  *      \ingroup    adherent
- *		\brief      Page to list all members of fundation
+ *		\brief      Page to list all members of foundation
  *		\version    $Id$
  */
 

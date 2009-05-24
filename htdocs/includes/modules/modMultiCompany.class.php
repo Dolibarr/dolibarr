@@ -102,7 +102,7 @@ class modMultiCompany extends DolibarrModules
 		// 'order'            to add a tab in customer order view
 		// 'product'          to add a tab in product view
 		// 'propal'           to add a tab in propal view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 
 
 		// Boxes
