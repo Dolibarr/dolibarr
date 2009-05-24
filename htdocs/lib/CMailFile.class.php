@@ -63,7 +63,7 @@ class CMailFile
 	//CSS
 	var $css;
 	var $styleCSS;
-	
+
 	// Image
 	var $html;
 	var $image_boundary;
@@ -222,8 +222,9 @@ class CMailFile
 			require_once(DOL_DOCUMENT_ROOT."/includes/simplemail/class.mail.php");
 
 			$mail = new simplemail();
+			$mail->set_mode='php';		// php or socket
 
-			// Bundaries
+			// Boundaries
 			$mail->B1B = $this->mime_boundary;
 			$mail->B2B = $this->related_boundary;
 			$mail->B3B = $this->alternative_boundary;
@@ -276,13 +277,13 @@ class CMailFile
 			if ($this->msgishtml)
 			{
 				if (! empty($this->html))
-				{					
+				{
 					if (!empty($css))
 					{
 						$this->css = $css;
 						$this->styleCSS = $this->buildCSS();
 					}
-					
+
 					$msg = $this->html;
 					$msg = $this->checkIfHTML($msg);
 
@@ -392,9 +393,8 @@ class CMailFile
 		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS))
 		{
 			// Action according to choosed sending method
-			if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' || $conf->global->MAIN_MAIL_SENDMODE == 'simplemail')
+			if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 			{
-
 				// Use mail php function (default PHP method)
 				// ------------------------------------------
 				dol_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject, LOG_DEBUG);
@@ -416,7 +416,7 @@ class CMailFile
 				if (! $dest && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
 				{
 					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
-					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
+					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERROR);
 				}
 				else
 				{
@@ -435,19 +435,68 @@ class CMailFile
 
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
-					if ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail')
-					{
-						$res =  $this->simplemail->sendmail();
-					}
-					else
-					{
-						$res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
-					}
+					$res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
 
 					if (! $res)
 					{
 						$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
-						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
+						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERROR);
+					}
+					else
+					{
+						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
+					}
+				}
+
+				if (isset($_SERVER["WINDIR"]))
+				{
+					@ini_restore('sendmail_from');
+				}
+
+				// Forcage parametres
+				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER))	ini_restore('SMTP');
+				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT)) 	ini_restore('smtp_port');
+			}
+			else if ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail')
+			{
+				// Use simplemmail function (Simplemail method)
+				// --------------------------------------------
+				dol_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject, LOG_DEBUG);
+				dol_syslog("CMailFile::sendfile header=\n".$this->headers, LOG_DEBUG);
+				//dol_syslog("CMailFile::sendfile message=\n".$message);
+
+				// If Windows, sendmail_from must be defined
+				if (isset($_SERVER["WINDIR"]))
+				{
+					if (empty($this->addr_from)) $this->addr_from = 'robot@mydomain.com';
+					@ini_set('sendmail_from',$this->getValidAddress($this->addr_from,2));
+				}
+
+				// Forcage parametres
+				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER)) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
+				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT))   ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
+
+				if ($conf->global->MAIN_MAIL_SENDMODE == 'mail') $dest=$this->getValidAddress($this->addr_to,2);
+				if (! $dest && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+				{
+					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
+					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERROR);
+				}
+				else
+				{
+					dol_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
+
+					$this->message=stripslashes($this->message);
+
+					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
+
+					$res =  $this->simplemail->sendmail();
+
+					if (! $res)
+					{
+						$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
+						$this->error.="\n".$this->simplemail->error_log;
+						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					}
 					else
 					{
@@ -481,7 +530,6 @@ class CMailFile
 				if (! empty($conf->global->MAIN_MAIL_SMTPS_ID)) $this->smtps->setID($conf->global->MAIN_MAIL_SMTPS_ID);
 				if (! empty($conf->global->MAIN_MAIL_SMTPS_PW)) $this->smtps->setPW($conf->global->MAIN_MAIL_SMTPS_PW);
 				//$smtps->_msgReplyTo  = 'reply@web.com';
-
 
 				$dest=$this->smtps->getFrom('org');
 				if (! $dest)
@@ -710,7 +758,7 @@ class CMailFile
 
 		return $out;
 	}
-	
+
 	/**
 	 * Build a css style
 	 *
@@ -719,12 +767,12 @@ class CMailFile
 	function buildCSS()
 	{
 		$out = '';
-		
+
 		if (!empty($this->css))
 		{
 			$out.= '<style type="text/css">';
 			$out.= 'body {';
-			
+
 			if ($this->css['bgcolor'])
 			{
 				$out.= '  background-color: '.$this->css['bgcolor'].';';
@@ -737,7 +785,7 @@ class CMailFile
 			$out.= '}';
 			$out.= '</style>';
 		}
-			 
+
 	  return $out;
 	}
 
@@ -932,7 +980,7 @@ class CMailFile
 				foreach ($this->html_images as $img)
 				{
 					$fullpath = $images_dir.'/'.$img["name"];
-					
+
 					// If duplicate images are embedded, they may show up as attachments, so remove them.
 					if (!in_array($fullpath,$inline))
 					{
@@ -942,7 +990,7 @@ class CMailFile
 							// On garde que le nom de l'image
 							eregi('([A-Za-z0-9_-]+[.]?[A-Za-z0-9]+)?$',$img["name"],$regs);
 							$imgName = $regs[1];
-							
+
 							$this->images_encoded[$i]['name'] = $imgName;
 							$this->images_encoded[$i]['content_type'] = $img["content_type"];
 							$this->images_encoded[$i]['cid'] = $img["cid"];
