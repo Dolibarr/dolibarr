@@ -412,8 +412,8 @@ class CMailFile
 				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER)) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
 				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT))   ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
 
-				if ($conf->global->MAIN_MAIL_SENDMODE == 'mail') $dest=$this->getValidAddress($this->addr_to,2);
-				if (! $dest && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+				$dest=$this->getValidAddress($this->addr_to,2);
+				if (! $dest)
 				{
 					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERROR);
@@ -476,32 +476,24 @@ class CMailFile
 				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER)) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
 				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT))   ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
 
-				if ($conf->global->MAIN_MAIL_SENDMODE == 'mail') $dest=$this->getValidAddress($this->addr_to,2);
-				if (! $dest && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+				dol_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
+
+				$this->message=stripslashes($this->message);
+
+				if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
+
+				$res =  $this->simplemail->sendmail();
+
+				if (! $res)
 				{
-					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
-					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERROR);
+					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
+					dol_syslog("CMailFile::sendfile: mail end error ".$this->error, LOG_ERR);
+					dol_syslog("CMailFile::sendfile: ".$this->simplemail->error_log, LOG_ERR);
 				}
 				else
 				{
-					dol_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
-
-					$this->message=stripslashes($this->message);
-
-					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
-
-					$res =  $this->simplemail->sendmail();
-
-					if (! $res)
-					{
-						$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
-						$this->error.="\n".$this->simplemail->error_log;
-						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
-					}
-					else
-					{
-						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
-					}
+					dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
+					dol_syslog("CMailFile::sendfile: ".$this->simplemail->error_log, LOG_DEBUG);
 				}
 
 				if (isset($_SERVER["WINDIR"]))
@@ -535,7 +527,7 @@ class CMailFile
 				if (! $dest)
 				{
 					$this->error="Failed to send mail to SMTP=".$conf->global->MAIN_MAIL_SMTP_SERVER.", PORT=".$conf->global->MAIN_MAIL_SMTP_PORT."<br>Recipient address '$dest' invalid";
-					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_DEBUG);
+					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 				}
 				else
 				{

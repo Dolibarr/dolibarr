@@ -263,7 +263,9 @@ class simplemail {
 		$this->headers = '';
 
 		if ( empty($this->recipientlist) ) { $this->error_log("destinataire manquant"); return FALSE; }
-		//		else { $this->AddField2Header("To",$this->recipient); }
+		else { // DOLCHANGE LDR Fix missing recipients in header
+			$this->AddField2Header("To",$this->recipient);
+		}
 
 		if ( empty($this->subject) ) {
 			$this->error_log("sujet manquant");
@@ -322,18 +324,22 @@ class simplemail {
 			case 'socket': $this->socketmailloop(); break;
 		}
 
-		// DOLCHANGE LDR
-		return (empty($this->error_log)?TRUE:FALSE);
+		return TRUE;
 	}
 
 	// Mail send by PHPmail
 
 	function phpmail() {
-		while ( list($key, $to) = each($this->recipientlist) ) {
-			$this->recipient = $to['mail'];
+		// DOLCHANGE LDR Fix the To in header was not filled
+		foreach ($this->recipientlist as $key => $to)
+		{
+			$this->recipient = ($this->recipient?$this->recipient.', ':'').$to['mail'];
+		}
+		foreach ($this->recipientlist as $key => $to)
+		{
+			// $this->recipient = $to['mail'];		DOLCHANGE LDR Fix the To in header was not filled
 			if ( mail($to['mail'], $this->subject, $this->body, $this->makeheader() ) ) {
-				// DOLCHANGE LDR Comment this to have no error when no error !
-				//$this->error_log("envoie vers {$to['nameplusmail']} reussi");
+				$this->error_log("envoie vers {$to['nameplusmail']} reussi");
 			} else {
 				$this->error_log("envoie vers {$to['nameplusmail']} echoue");
 			}
@@ -358,9 +364,11 @@ class simplemail {
 	function SocketSend($in,$wait='') {
 		fputs($this->connect, $in, strlen($in));
 		//echo $in;
+		$this->error_log($in);	// DOLCHANGE LDR Add debug
 		//flush();
 		if(empty($wait)) {
 			$rcv = fgets($this->connect, 1024);
+			$this->error_log('('.$rcv.')');	// DOLCHANGE LDR Add debug
 			return $rcv;
 		}
 		return TRUE;
@@ -373,25 +381,27 @@ class simplemail {
 		$this->SocketStart();
 		if (!isset($_SERVER['SERVER_NAME'])  || empty($_SERVER['SERVER_NAME'])) { $serv = 'unknown'; }
 		else { $serv = $_SERVER['SERVER_NAME']; }
-		$this->SocketSend("HELO $serv\r\n");
+		// DOLCHANGE LDR
+		$serv = ini_get('SMTP');
+		$this->SocketSend("HELO $serv\r\n",'250');
 	}
 
 	function socketmailsend($to) {
 
-		$this->recipient = $to;
-		// DOLCHANGE LDR To have no error when no error
-		//$this->error_log("Socket vers $to");
+		// $this->recipient = $to;	// DOLCHANGE LDR Must not reset this property
+		$this->error_log("Socket vers $to");
 
-		$this->SocketSend( "MAIL FROM:{$this->hfrom}\r\n" );
-		$this->SocketSend( "RCPT TO:$to\r\n" );
-		$this->SocketSend( "DATA\r\n" );
-		$this->SocketSend( $this->CleanMailDataString($this->headers)."\r\n", 'NOWAIT' );
-		$this->SocketSend( $this->CleanMailDataString($this->body)."\r\n", 'NOWAIT' );
+		// DOLCHANGE LDR: From has to be the raw email address, strip the "name" off
+		$fromarray=split(' ',$this->hfrom);
+		$from=(empty($fromarray[1])?$fromarray[0]:$fromarray[1]);
+		$this->SocketSend( "MAIL FROM: ".$from."\r\n", '250');
+		$this->SocketSend( "RCPT TO: <".$to.">\r\n", '250');
+		$this->SocketSend( "DATA\r\n", '354');
+		$this->SocketSend( $this->CleanMailDataString($this->headers)."\r\n".$this->CleanMailDataString($this->body)."\r\n", '250');	// DOLCHANGE LDR Must wait return 250
 		$this->SocketSend( ".\r\n" );
 		$this->SocketSend( "RSET\r\n" );
 
-		// DOLCHANGE LDR To have no error when no error
-		//$this->error_log("Fin de l'envoi vers $to");
+		$this->error_log("Fin de l'envoi vers $to");
 
 		return TRUE;
 	}
@@ -404,8 +414,13 @@ class simplemail {
 
 	function socketmailloop() {
 		$this->socketmailstart();
-		while ( list($key, $to) = each($this->recipientlist)) {
-			$this->recipient = $to['mail'];
+		// DOLCHANGE LDR Fix the To in header was not filled
+		foreach ($this->recipientlist as $key => $to)
+		{
+			$this->recipient = ($this->recipient?$this->recipient.', ':'').$to['mail'];
+		}
+		foreach ($this->recipientlist as $key => $to)
+		{
 			$this->makeheader();
 			$this->socketmailsend($to['mail']);
 		}
@@ -416,7 +431,9 @@ class simplemail {
 
 	function error_log($msg='') {
 		if(!empty($msg)) {
-			$this->error_log .= $msg . "\r\n--\r\n";
+			//$this->error_log .= $msg . "\r\n--\r\n";
+			//DOLCHANGE LDR Better to read log
+			$this->error_log .= $msg;
 			return TRUE;
 		}
 		return " --- Error Log --- \r\n\r\n".$this->error_log;
