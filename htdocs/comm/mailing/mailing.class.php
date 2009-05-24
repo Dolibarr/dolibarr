@@ -79,7 +79,7 @@ class Mailing extends CommonObject
 
 	/**
 	 *    \brief      Create an EMailing
-	 *    \param      user object utilisateur qui cree
+	 *    \param      user 		Object of user making creation
 	 *    \return     -1 if error, Id of created object if OK
 	 */
 	function create($user)
@@ -134,16 +134,19 @@ class Mailing extends CommonObject
 	}
 
 	/**
-	 *    \brief      Update les infos du mailing
-	 *    \return     < 0 si erreur, > 0 si ok
+	 *    \brief      Update emailing record
+	 *    \param      user 		Object of user making change
+	 *    \return     < 0 if KO, > 0 if OK
 	 */
-	function update()
+	function update($user)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
 		$sql .= " SET titre = '".addslashes($this->titre)."'";
 		$sql .= ", sujet = '".addslashes($this->sujet)."'";
 		$sql .= ", body = '".addslashes($this->body)."'";
 		$sql .= ", email_from = '".$this->email_from."'";
+		$sql .= ", email_replyto = '".$this->email_replyto."'";
+		$sql .= ", email_errorsto = '".$this->email_errorsto."'";
 		$sql .= ", bgcolor = '".($this->bgcolor?$this->bgcolor:null)."'";
 		$sql .= ", bgimage = '".($this->bgimage?$this->bgimage:null)."'";
 		$sql .= " WHERE rowid = ".$this->id;

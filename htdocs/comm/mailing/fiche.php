@@ -26,6 +26,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/mailing/mailing.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 
@@ -87,7 +88,7 @@ if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
 	}
 }
 
-// Action envoi mailing pour tous
+// Action send emailing for everybody
 if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 {
 	if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
@@ -272,7 +273,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 	}
 }
 
-// Action envoi test mailing
+// Action send test emailing
 if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 {
 	$mil = new Mailing($db);
@@ -320,19 +321,21 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 	}
 }
 
-// Action ajout mailing
+// Action add emailing
 if ($_POST["action"] == 'add')
 {
 	$message='';
 
 	$mil = new Mailing($db);
 
-	$mil->email_from   = trim($_POST["from"]);
-	$mil->titre        = trim($_POST["titre"]);
-	$mil->sujet        = trim($_POST["sujet"]);
-	$mil->body         = trim($_POST["body"]);
-	$mil->bgcolor      = trim($_POST["bgcolor"]);
-	$mil->bgimage      = trim($_POST["bgimage"]);
+	$mil->email_from     = trim($_POST["from"]);
+	$mil->email_replyto  = trim($_POST["replyto"]);
+	$mil->email_errorsto = trim($_POST["errorsto"]);
+	$mil->titre          = trim($_POST["titre"]);
+	$mil->sujet          = trim($_POST["sujet"]);
+	$mil->body           = trim($_POST["body"]);
+	$mil->bgcolor        = trim($_POST["bgcolor"]);
+	$mil->bgimage        = trim($_POST["bgimage"]);
 
 	if (! $mil->titre) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTitle"));
 	if (! $mil->sujet) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
@@ -351,22 +354,25 @@ if ($_POST["action"] == 'add')
 	$_GET["action"]="create";
 }
 
-// Action mise a jour mailing
+// Action update emailing
 if ($_POST["action"] == 'update')
 {
 	$mil = new Mailing($db);
 
-	$mil->id           = $_POST["id"];
-	$mil->email_from   = $_POST["from"];
-	$mil->titre        = $_POST["titre"];
-	$mil->sujet        = $_POST["sujet"];
-	$mil->body         = $_POST["body"];
-	$mil->bgcolor      = $_POST["bgcolor"];
-	$mil->bgimage      = $_POST["bgimage"];
+	$mil->id             = $_POST["id"];
+	$mil->email_from     = trim($_POST["from"]);
+	$mil->email_replyto  = trim($_POST["replyto"]);
+	$mil->email_errorsto = trim($_POST["errorsto"]);
+	$mil->titre          = trim($_POST["titre"]);
+	$mil->sujet          = trim($_POST["sujet"]);
+	$mil->body           = trim($_POST["body"]);
+	$mil->bgcolor        = trim($_POST["bgcolor"]);
+	$mil->bgimage        = trim($_POST["bgimage"]);
 
-	if ($mil->update())
+	if ($mil->update($user))
 	{
 		Header("Location: fiche.php?id=".$mil->id);
+		exit;
 	}
 }
 
@@ -489,6 +495,7 @@ if ($_GET["action"] == 'create')
 	print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
 	print '<tr><td colspan="2">&nbsp;</td></tr>';
 	print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td><input class="flat" name="errorsto" size="40" value="'.$conf->global->MAILING_EMAIL_ERRORSTO.'"></td></tr>';
 	print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value="'.$_POST['sujet'].'"></td></tr>';
 	print '<tr><td width="25%">'.$langs->trans("BackgroundColor").'</td><td colspan="3">';
 	$htmlother->select_color($_POST['bgcolor'],'bgcolor','new_mailing');
@@ -593,7 +600,12 @@ else
 			print '</td></tr>';
 
 			print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
-			print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.htmlentities($mil->email_from).'</td></tr>';
+			print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.htmlentities($mil->email_from);
+			if (! isValidEMail($mil->email_from)) print img_warning($langs->trans("BadEMail"));
+			print '</td></tr>';
+			print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.htmlentities($mil->email_errorsto);
+			if (! isValidEMail($mil->email_errorsto)) print img_warning($langs->trans("BadEMail"));
+			print '</td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("TotalNbOfDistinctRecipients").'</td><td colspan="3">'.($mil->nbemail?$mil->nbemail:'<font class="error">'.$langs->trans("NoTargetYet").'</font>').'</td></tr>';
 
@@ -761,6 +773,7 @@ else
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$mil->id.'</td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3"><input class="flat" type="text" size=40 name="titre" value="'.$mil->titre.'"></td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3"><input class="flat" type="text" size=40 name="from" value="'.$mil->email_from.'"></td></tr>';
+			print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3"><input class="flat" type="text" size=40 name="errorsto" value="'.$mil->email_errorsto.'"></td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.$mil->sujet.'"></td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("BackgroundColor").'</td><td colspan="3">';
 			$htmlother->select_color($mil->bgcolor,'bgcolor','edit_mailing');
