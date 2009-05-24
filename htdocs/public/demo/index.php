@@ -68,7 +68,7 @@ function llxHeaderVierge($title, $head = "")
 	print "<html>\n";
 	print "<head>\n";
 	print '<meta name="robots" content="index,nofollow">'."\n";
-	print '<meta name="keywords" content="dolibarr,demo,online,demonstration,example,test,web,erp,crm,demos">'."\n";
+	print '<meta name="keywords" content="dolibarr,demo,online,demonstration,example,test,web,erp,crm,demos,online">'."\n";
 	print '<meta name="description" content="Dolibarr simple ERP/CRM demo. You can test here several profiles of Dolibarr ERP/CRM demos.">'."\n";
 	print "<title>".$title."</title>\n";
 	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css.php">'."\n";
@@ -109,7 +109,6 @@ if ($_REQUEST["action"] == 'gotodemo')
 	{
 		$url=DOL_URL_ROOT.'/index.php?disablemodules='.$disablestring;
 		if (! empty($_REQUEST["urlfrom"]))     $url.='&urlfrom='.$_REQUEST["urlfrom"];
-		if (! empty($conf->global->MAIN_DEMO)) $url.='&username='.urlencode($conf->global->MAIN_DEMO);
 		header("Location: ".$url);
 		exit;
 	}
