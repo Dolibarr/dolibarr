@@ -128,21 +128,21 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		$demologin=$tab[0];
 		$demopassword=$tab[1];
 	}
-	
+
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
 		$lastuser = '';
 		$lastentity = '';
-		
+
 		if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
 		{
 			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
 			if (isset($_COOKIE[$entityCookieName]))
 			{
 				include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
-				
-				$cryptkey = ( isset($conf->cookie->cryptkey) ? $conf->cookie->cryptkey : '' );
-				
+
+				$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
+
 				$entityCookie = new DolCookie($cryptkey);
 				$cookieValue = $entityCookie->_getCookie($entityCookieName);
 				list($lastuser, $lastentity) = split('\|', $cookieValue);

@@ -450,8 +450,8 @@ if (! isset($_SESSION["dol_login"]))
 		// TTL : sera defini dans la page de config multicompany
 		$ttl = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_TTL) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_TTL : time()+60*60*8 );
 		// Cryptkey : sera cree aleatoirement dans la page de config multicompany
-		$cryptkey = ( isset($conf->cookie->cryptkey) ? $conf->cookie->cryptkey : '' );
-			
+		$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
+
 		$entityCookie = new DolCookie($cryptkey);
 		$entityCookie->_setCookie($entityCookieName, $entity, $ttl);
 	}

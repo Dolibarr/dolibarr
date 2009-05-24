@@ -137,10 +137,7 @@ $conf->file->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_m
 if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
 $conf->file->character_set_client=strtoupper($force_charset_do_notuse);
 // Cookie cryptkey
-if (isset($dolibarr_main_cookie_cryptkey))
-{
-	$conf->cookie->cryptkey = $dolibarr_main_cookie_cryptkey;
-}
+$conf->file->cookie_cryptkey = empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
 
 // Define array of document root directories
 $conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT);
@@ -210,8 +207,6 @@ if (! defined('NOREQUIREUSER'))
  */
 if (! defined('NOREQUIREDB'))
 {
-	$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-	
 	if (session_id() && isset($_SESSION["dol_entity"]))				// Entity inside an opened session
 	{
 		$conf->entity = $_SESSION["dol_entity"];
@@ -224,18 +219,22 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = $_POST["entity"];
 	}
-	elseif (isset($_COOKIE[$entityCookieName])) // Just for view specific login page
+	else
 	{
-		include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
-		
-		$lastuser = '';
-		$lastentity = '';
-		$cryptkey = ( isset($conf->cookie->cryptkey) ? $conf->cookie->cryptkey : '' );
+		$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+		if (isset($_COOKIE[$entityCookieName])) 						// Just for view specific login page
+		{
+			include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
 
-		$entityCookie = new DolCookie($conf->cookie->cryptkey);
-		$cookieValue = $entityCookie->_getCookie($entityCookieName);
-		list($lastuser, $lastentity) = split('\|', $cookieValue);
-		$conf->entity = $lastentity;
+			$lastuser = '';
+			$lastentity = '';
+			$cryptkey = ( ! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
+
+			$entityCookie = new DolCookie($conf->file->cookie_cryptkey);
+			$cookieValue = $entityCookie->_getCookie($entityCookieName);
+			list($lastuser, $lastentity) = split('\|', $cookieValue);
+			$conf->entity = $lastentity;
+		}
 	}
 
 	$conf->setValues($db);
