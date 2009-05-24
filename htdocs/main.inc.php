@@ -175,17 +175,18 @@ $token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 if (isset($_SESSION['token_level_1'])) $_SESSION['token_level_2'] = $_SESSION['token_level_1'];
 if (isset($_SESSION['newtoken'])) $_SESSION['token_level_1'] = $_SESSION['newtoken'];
 $_SESSION['newtoken'] = $token;
-// Verification de la presence et de la validite du jeton
-if (isset($_POST['token']) && isset($_SESSION['token_level_1']) && isset($_SESSION['token_level_2']))
+if (empty($conf->global->MAIN_FEATURES_LEVEL))	// Check validity of token, only if not a dev instance (this make developper tests no more working)
 {
-	if (($_POST['token'] != $_SESSION['token_level_1']) && ($_POST['token'] != $_SESSION['token_level_2']))
+	if (isset($_POST['token']) && isset($_SESSION['token_level_1']) && isset($_SESSION['token_level_2']))
 	{
-		dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token']=".$_POST['token'].", _SESSION['token_level_1']=".$_SESSION['token_level_1'].", _SESSION['token_level_2']=".$_SESSION['token_level_2']);
-		print 'Unset POST by CSRF protection in main.inc.php.';
-		unset($_POST);
+		if (($_POST['token'] != $_SESSION['token_level_1']) && ($_POST['token'] != $_SESSION['token_level_2']))
+		{
+			dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token']=".$_POST['token'].", _SESSION['token_level_1']=".$_SESSION['token_level_1'].", _SESSION['token_level_2']=".$_SESSION['token_level_2']);
+			print 'Unset POST by CSRF protection in main.inc.php.';
+			unset($_POST);
+		}
 	}
 }
-
 
 // Disable modules (this must be after session_start and after conf has been loaded)
 if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
