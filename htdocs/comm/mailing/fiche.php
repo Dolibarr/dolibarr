@@ -115,6 +115,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 		$subject  = $mil->sujet;
 		$message  = $mil->body;
 		$from     = $mil->email_from;
+		$replyto  = $mil->email_replyto;
 		$errorsto = $mil->email_errorsto;
 		// Le message est-il en html
 		$msgishtml=-1;	// Unknown by default
@@ -187,10 +188,8 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 
 					// Fabrication du mail
 					$mail = new CMailFile($newsubject, $sendto, $from, $newmessage,
-					array(), array(), array(),
-		            						'', '', 0, $msgishtml);
-					$mail->errors_to = $errorsto;
-
+											array(), array(), array(),
+		            						'', '', 0, $msgishtml, $errorsto);
 
 					if ($mail->error)
 					{
@@ -202,7 +201,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 						$res=0;
 					}
 
-					// Envoi du mail
+					// Send mail
 					if ($res)
 					{
 						$res=$mail->sendfile();
@@ -210,7 +209,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 
 					if ($res)
 					{
-						// Mail envoye avec succes
+						// Mail successful
 						$nbok++;
 
 						dol_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
@@ -225,7 +224,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 					}
 					else
 					{
-						// Mail en echec
+						// Mail failed
 						$nbko++;
 
 						dol_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);

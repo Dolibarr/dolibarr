@@ -17,9 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$
- * $Source$
- *
  *
  * !!! Envoi mailing !!!
  *
@@ -39,16 +36,17 @@
 
 
 /**
-        \file       scripts/mailing/mailing-send.php
-        \ingroup    mailing
-        \brief      Script d'envoi d'un mailing pr�par� et valid�
-*/
+ *      \file       scripts/mailing/mailing-send.php
+ *      \ingroup    mailing
+ *      \brief      Script d'envoi d'un mailing prepare et valide
+ *		\version	$Id$
+ */
 
 
-// Test si mode batch
+// Test if CLI mode
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    echo "Error: You are using PH for CGI/Web. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 
@@ -69,13 +67,13 @@ require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 $error = 0;
 
 
-// On r�cup�re donn�es du mail
-$sql = "SELECT m.rowid, m.titre, m.sujet, m.body";
-$sql .= " , m.email_from, m.email_replyto, m.email_errorsto";
-$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-$sql .= " WHERE m.statut >= 1";
-$sql .= " AND m.rowid= ".$id;
-$sql .= " LIMIT 1";
+// We read data of email
+$sql = "SELECT m.rowid, m.titre, m.sujet, m.body,";
+$sql.= " m.email_from, m.email_replyto, m.email_errorsto";
+$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
+$sql.= " WHERE m.statut >= 1";
+$sql.= " AND m.rowid= ".$id;
+$sql.= " LIMIT 1";
 
 $resql=$db->query($sql);
 if ($resql)
@@ -93,6 +91,7 @@ if ($resql)
 		$subject  = $obj->sujet;
 		$message  = $obj->body;
 		$from     = $obj->email_from;
+		$replyto  = $obj->email_replyto;
 		$errorsto = $obj->email_errorsto;
 
 		// Le message est-il en html
@@ -166,9 +165,7 @@ if ($resql)
             // Fabrication du mail
             $mail = new CMailFile($newsubject, $sendto, $from, $newmessage,
             						array(), array(), array(),
-            						'', '', 0, $msgishtml);
-            $mail->errors_to = $errorsto;
-
+            						'', '', 0, $msgishtml, $errorsto);
 
 			if ($mail->error)
 			{
@@ -180,7 +177,7 @@ if ($resql)
 				$res=0;
 			}
 
-            // Envoi du mail
+            // Send Email
 			if ($res)
 			{
     			$res=$mail->sendfile();
@@ -188,7 +185,7 @@ if ($resql)
 
             if ($res)
             {
-                // Mail envoye avec succes
+                // Mail successful
                 $nbok++;
 
 		        dol_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
@@ -203,7 +200,7 @@ if ($resql)
             }
             else
             {
-                // Mail en echec
+                // Mail failed
                 $nbko++;
 
 		        dol_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
