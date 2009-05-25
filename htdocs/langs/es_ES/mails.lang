@@ -61,6 +61,7 @@ YouCanAddYourOwnPredefindedListHere = Para crear su módulo de selección e-mail
 EMailTestSubstitutionReplacedByGenericValues = En modo prueba, las variables de sustitución son sustituidas por valores genéricos
 MailingAddFile = Adjuntar este archivo
 NoAttachedFiles = Sin ficheros adjuntos
+BadEMail = E-Mail incorrecto
 # Libelle des modules de liste de destinataires mailing = 
 MailingModuleDescContactCompanies = Contactos de terceros (clientes potenciales, clientes, proveedores...)
 MailingModuleDescDolibarrUsers = Usuarios de Dolibarr que tienen e-mail
