@@ -27,14 +27,14 @@
 
 /**
  *	\file       htdocs/html.formother.class.php
- *	\brief      Fichier de la classe des fonctions prédéfinie de composants html autre
+ *	\brief      Fichier de la classe des fonctions prï¿½dï¿½finie de composants html autre
  *	\version	$Id$
  */
 
 
 /**
  *	\class      FormOther
- *	\brief      Classe permettant la génération de composants html autre
+ *	\brief      Classe permettant la gï¿½nï¿½ration de composants html autre
  *	\remarks	Only common components must be here.
  */
 class FormOther
@@ -45,7 +45,7 @@ class FormOther
 
 	/**
 	 *	\brief     Constructeur
-	 *	\param     DB      handler d'accès base de donnée
+	 *	\param     DB      handler d'accï¿½s base de donnï¿½e
 	 */
 	function FormOther($DB)
 	{
@@ -56,10 +56,10 @@ class FormOther
 
 
 	/**
-	 *    \brief      Retourne la liste des modèles d'export
-	 *    \param      selected          Id modèle pré-sélectionné
+	 *    \brief      Retourne la liste des modï¿½les d'export
+	 *    \param      selected          Id modï¿½le prï¿½-sï¿½lectionnï¿½
 	 *    \param      htmlname          Nom de la zone select
-	 *    \param      type              Type des modèles recherchés
+	 *    \param      type              Type des modï¿½les recherchï¿½s
 	 *    \param      useempty          Affiche valeur vide dans liste
 	 */
 	function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
@@ -185,18 +185,19 @@ class FormOther
 			print '<div class="warning">'.$langs->trans("NoProject").'</div>';
 		}
 	}
-	
+
+
 	/**
-   *		Affiche zone de selection de couleur
-   *		@param	set_color		Couleur de pré-sélection
-   *		@param	prefix			Prefix pour nom champ
-   *		@param	form_name		Nom du formulaire de provenance.
-   */
-  function select_color($set_color='', $prefix='f_color', $form_name='objForm')
-  {
-	  print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/colorpicker.css" />'."\n";
-	  print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_colorpicker.js"></script>'."\n";
-	  print '<script type="text/javascript">
+	 *		Affiche zone de selection de couleur
+	 *		@param	set_color		Couleur de pre-selection
+	 *		@param	prefix			Prefix pour nom champ
+	 *		@param	form_name		Nom du formulaire de provenance.
+	 */
+	function select_color($set_color='', $prefix='f_color', $form_name='objForm')
+	{
+		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/colorpicker.css" />'."\n";
+		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_colorpicker.js"></script>'."\n";
+		print '<script type="text/javascript">
 	           window.onload = function()
 	           {
 	             fctLoad();
@@ -206,50 +207,50 @@ class FormOther
 	             fctShow();
 	           }
 	           window.onresize = function()
-	           { 
+	           {
 	             fctShow();
 	           }
 	         </script>'."\n";
-	  print '<input type="text" size="10" name="'.$prefix.'" value="'.$set_color.'" maxlength="7" style="font-family:Tahoma;font-size:x-small;">'."\n";
-	  print '<img src="'.DOL_URL_ROOT.'/theme/common/colorpicker.png" width="21" height="20" border="0" align="absmiddle" onClick="fctShow(document.'.$form_name.'.'.$prefix.');" style="cursor:pointer;">'."\n";
-  }
-  
-  /**
-   *		Creation d'un icone de couleur
-   *		@param	color		Couleur de l'image
-   *		@param	module  Nom du module
-   *		@param	name	  Nom de l'image
-   *		@param	x       Largeur de l'image en pixels
-   *		@param	y       Hauteur de l'image en pixels
-   */
-  function CreateColorIcon($color,$module,$name,$x='12',$y='12')
-  {
-  	global $conf;
-  	
-  	$file = $conf->$module->dir_temp.'/'.$name.'.png';
-  	
-  	// On cree le repertoire contenant les icones
-  	if (! file_exists($conf->$module->dir_temp))
-  	{
-  		create_exdir($conf->$module->dir_temp);
-  	}
-  	
-  	// On cree l'image en vraies couleurs
-  	$image = imagecreatetruecolor($x,$y);
-  	
-  	$color = substr($color,1,6);
-  	
-  	$rouge = hexdec(substr($color,0,2)); //conversion du canal rouge
-  	$vert  = hexdec(substr($color,2,2)); //conversion du canal vert
-  	$bleu  = hexdec(substr($color,4,2)); //conversion du canal bleu
-  	
-  	$couleur = imagecolorallocate($image,$rouge,$vert,$bleu);
-  	//print $rouge.$vert.$bleu;
-  	imagefill($image,0,0,$couleur); //on remplit l'image
-  	// On cree la couleur et on l'attribue à une variable pour ne pas la perdre
-  	ImagePng($image,$file); //renvoie une image sous format png
-  	ImageDestroy($image);
-  }
+		print '<input type="text" size="10" name="'.$prefix.'" value="'.$set_color.'" maxlength="7" style="font-family:Tahoma;font-size:x-small;">'."\n";
+		print '<img src="'.DOL_URL_ROOT.'/theme/common/colorpicker.png" width="21" height="20" border="0" onClick="fctShow(document.'.$form_name.'.'.$prefix.');" style="cursor:pointer;">'."\n";
+	}
+
+	/**
+	 *		Creation d'un icone de couleur
+	 *		@param	color		Couleur de l'image
+	 *		@param	module  Nom du module
+	 *		@param	name	  Nom de l'image
+	 *		@param	x       Largeur de l'image en pixels
+	 *		@param	y       Hauteur de l'image en pixels
+	 */
+	function CreateColorIcon($color,$module,$name,$x='12',$y='12')
+	{
+		global $conf;
+
+		$file = $conf->$module->dir_temp.'/'.$name.'.png';
+
+		// On cree le repertoire contenant les icones
+		if (! file_exists($conf->$module->dir_temp))
+		{
+			create_exdir($conf->$module->dir_temp);
+		}
+
+		// On cree l'image en vraies couleurs
+		$image = imagecreatetruecolor($x,$y);
+
+		$color = substr($color,1,6);
+
+		$rouge = hexdec(substr($color,0,2)); //conversion du canal rouge
+		$vert  = hexdec(substr($color,2,2)); //conversion du canal vert
+		$bleu  = hexdec(substr($color,4,2)); //conversion du canal bleu
+
+		$couleur = imagecolorallocate($image,$rouge,$vert,$bleu);
+		//print $rouge.$vert.$bleu;
+		imagefill($image,0,0,$couleur); //on remplit l'image
+		// On cree la couleur et on l'attribue ï¿½ une variable pour ne pas la perdre
+		ImagePng($image,$file); //renvoie une image sous format png
+		ImageDestroy($image);
+	}
 
 }
 

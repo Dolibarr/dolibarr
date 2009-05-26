@@ -944,10 +944,10 @@ function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 }
 
 /**
- *	\brief      Affiche logo action
- *	\param      alt         Texte sur le alt de l'image
- *	\param      numaction   Determine image action
- *	\return     string      Retourne tag img
+ *	\brief      Show logo action
+ *	\param      alt         Text for image alt and title
+ *	\param      numaction   Action to show
+ *	\return     string      Return an img tag
  */
 function img_action($alt = "default", $numaction)
 {
@@ -959,7 +959,7 @@ function img_action($alt = "default", $numaction)
 		if ($numaction == 2)  $alt=$langs->trans("ChangeContactInProcess");
 		if ($numaction == 3)  $alt=$langs->trans("ChangeContactDone");
 	}
-	return '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/stcomm'.$numaction.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/stcomm'.$numaction.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
