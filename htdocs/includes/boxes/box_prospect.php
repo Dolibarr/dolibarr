@@ -36,7 +36,7 @@ class box_prospect extends ModeleBoxes {
     var $boximg="object_company";
     var $boxlabel;
     var $depends = array("societe");
-    
+
     var $db;
     var $param;
 
@@ -50,10 +50,10 @@ class box_prospect extends ModeleBoxes {
     {
     	global $langs;
       $langs->load("boxes");
-      
+
       $this->db=$DB;
       $this->param=$param;
-      
+
       $this->boxlabel=$langs->trans("BoxLastProspects");
     }
 
@@ -64,9 +64,9 @@ class box_prospect extends ModeleBoxes {
     function loadBox($max=5)
     {
     	global $user, $langs, $db, $conf;
-    	
+
     	$this->max=$max;
-    	
+
     	$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProspects",$max));
 
       if ($user->rights->societe->lire)
@@ -80,20 +80,20 @@ class box_prospect extends ModeleBoxes {
         if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
         $sql.= " ORDER BY s.tms DESC";
         $sql.= $db->plimit($max, 0);
-        
+
         dol_syslog("box_prospect::loadBox sql=".$sql,LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
         	$num = $db->num_rows($resql);
-        	
+
         	$i = 0;
     			$prospectstatic=new Prospect($db);
           while ($i < $num)
           {
           	$objp = $db->fetch_object($resql);
     				$datem=$objp->tms;
-    				
+
     				$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
             'logo' => $this->boximg,
             'url' => DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$objp->socid);
@@ -104,13 +104,13 @@ class box_prospect extends ModeleBoxes {
 
             $this->info_box_contents[$i][2] = array('td' => 'align="right"',
             'text' => dol_print_date($datem, "day"));
-            
+
             $this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
-            'text' => eregi_replace('img ','img height="14px" ',$prospectstatic->LibStatut($objp->fk_stcomm,3)));
+            'text' => eregi_replace('img ','img height="14" ',$prospectstatic->LibStatut($objp->fk_stcomm,3)));
 
             $i++;
           }
-          
+
           if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProspects"));
         }
         else

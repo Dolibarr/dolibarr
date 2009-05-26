@@ -93,7 +93,7 @@ foreach ($arrayofwidgets as $arraywidget)	// Loop on each user
 			// But only first language found is used for widget
 			$widgetid=$listofwidgets[$pos-1];
 			//print 'xx lang qualified='.$langcode.' id='.$widgetid;
-			print '<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId='.$widgetid.'" width="172px" height="123px" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
+			print '<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId='.$widgetid.'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
 			print '</td>';
 			$found=1;
 			break;
