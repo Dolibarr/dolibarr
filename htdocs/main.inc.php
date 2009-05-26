@@ -170,11 +170,14 @@ if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_D
 //stopwithmem();
 
 // Creation d'un jeton contre les failles CSRF
-$token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
-// roulement des jetons car cree a chaque appel
-if (isset($_SESSION['token_level_1'])) $_SESSION['token_level_2'] = $_SESSION['token_level_1'];
-if (isset($_SESSION['newtoken'])) $_SESSION['token_level_1'] = $_SESSION['newtoken'];
-$_SESSION['newtoken'] = $token;
+if (! defined('NOTOKENRENEWAL'))
+{
+	$token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
+	// roulement des jetons car cree a chaque appel
+	if (isset($_SESSION['token_level_1'])) $_SESSION['token_level_2'] = $_SESSION['token_level_1'];
+	if (isset($_SESSION['newtoken'])) $_SESSION['token_level_1'] = $_SESSION['newtoken'];
+	$_SESSION['newtoken'] = $token;
+}
 if (empty($conf->global->MAIN_FEATURES_LEVEL))	// Check validity of token, only if not a dev instance (this make developper tests no more working)
 {
 	if (isset($_POST['token']) && isset($_SESSION['token_level_1']) && isset($_SESSION['token_level_2']))
