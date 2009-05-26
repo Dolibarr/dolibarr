@@ -41,7 +41,7 @@ class ModelePdfExpedition extends FPDF
 
 
    /**
-        \brief Renvoi le dernier message d'erreur de cr�ation de PDF de commande
+        \brief Renvoi le dernier message d'erreur de creation de PDF de commande
     */
     function pdferror()
     {
@@ -55,30 +55,33 @@ class ModelePdfExpedition extends FPDF
      */
     function liste_modeles($db)
     {
-        $type='shipping';
-        $liste=array();
-        $sql ="SELECT nom as id, nom as lib";
-        $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
-        $sql.=" WHERE type = '".$type."'";
-
-        $resql = $db->query($sql);
-        if ($resql)
+    	global $conf;
+    	
+    	$type='shipping';
+    	$liste=array();
+    	$sql ="SELECT nom as id, nom as lib";
+    	$sql.=" FROM ".MAIN_DB_PREFIX."document_model";
+    	$sql.=" WHERE type = '".$type."'";
+    	$sql.= " AND entity = ".$conf->entity;
+    	
+    	$resql = $db->query($sql);
+      if ($resql)
+      {
+      	$num = $db->num_rows($resql);
+        $i = 0;
+        while ($i < $num)
         {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $row = $db->fetch_row($resql);
-                $liste[$row[0]]=$row[1];
-                $i++;
-            }
+        	$row = $db->fetch_row($resql);
+          $liste[$row[0]]=$row[1];
+          $i++;
         }
-        else
-        {
-            $this->error=$db->error();
-            return -1;
-        }
-        return $liste;
+      }
+      else
+      {
+      	$this->error=$db->error();
+        return -1;
+      }
+      return $liste;
     }
 
 }
@@ -117,7 +120,7 @@ function expedition_pdf_create($db, $id, $modele, $outputlangs)
 	    $liste=array();
 		$model=new ModelePDFExpedition();
 		$liste=$model->liste_modeles($db);
-        $modele=key($liste);        // Renvoie premiere valeur de cl� trouv� dans le tableau
+        $modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau
       	$file = "pdf_expedition_".$modele.".modules.php";
     	if (file_exists($dir.$file)) $modelisok=1;
 	}
