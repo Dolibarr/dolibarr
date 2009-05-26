@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis ca
 
 /**
  \class      ModelePDFFactures
- \brief      Classe mï¿½re des modï¿½les de facture
+ \brief      Classe mere des modeles de facture
  */
 
 class ModelePDFFactures extends FPDF
@@ -44,7 +44,7 @@ class ModelePDFFactures extends FPDF
 	var $error='';
 
 	/**
-	 *       \brief      Renvoi le dernier message d'erreur de crï¿½ation de facture
+	 *       \brief      Renvoi le dernier message d'erreur de creation de facture
 	 */
 	function pdferror()
 	{
@@ -52,16 +52,19 @@ class ModelePDFFactures extends FPDF
 	}
 
 	/**
-	 *      \brief      Renvoi la liste des modï¿½les actifs
+	 *      \brief      Renvoi la liste des modeles actifs
 	 *      \param      db      Handler de base
 	 */
 	function liste_modeles($db)
 	{
+		global $conf;
+		
 		$type='invoice';
 		$liste=array();
-		$sql ="SELECT nom as id, nom as lib";
-		$sql.=" FROM ".MAIN_DB_PREFIX."document_model";
-		$sql.=" WHERE type = '".$type."'";
+		$sql = "SELECT nom as id, nom as lib";
+		$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+		$sql.= " WHERE type = '".$type."'";
+		$sql.= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -87,7 +90,7 @@ class ModelePDFFactures extends FPDF
 
 /**
  \class      ModeleNumRefFactures
- \brief      Classe mï¿½re des modï¿½les de numï¿½rotation des rï¿½fï¿½rences de factur
+ \brief      Classe mere des modeles de numerotation des references de facture
  */
 class ModeleNumRefFactures
 {
@@ -101,7 +104,7 @@ class ModeleNumRefFactures
 		return true;
 	}
 
-	/**		\brief		Renvoi la description par defaut du modele de numï¿½rotation
+	/**		\brief		Renvoi la description par defaut du modele de numerotation
 	 *      	\return     string      Texte descripif
 	 */
 	function info()
@@ -111,7 +114,7 @@ class ModeleNumRefFactures
 		return $langs->trans("NoDescription");
 	}
 
-	/**     \brief     	Renvoi un exemple de numï¿½rotation
+	/**     \brief     	Renvoi un exemple de numerotation
 	 *		\return		string      Example
 	 */
 	function getExample()
@@ -121,8 +124,8 @@ class ModeleNumRefFactures
 		return $langs->trans("NoExample");
 	}
 
-	/**     \brief     	Test si les numï¿½ros dï¿½jï¿½ en vigueur dans la base ne provoquent pas d
-	 *                  	de conflits qui empechera cette numï¿½rotation de fonctionner.
+	/**     \brief     	Test si les numeros deja en vigueur dans la base ne provoquent pas
+	 *                  	de conflits qui empecheraient cette numerotation de fonctionner.
 	 *      	\return		boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
@@ -130,7 +133,7 @@ class ModeleNumRefFactures
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribuï¿½e
+	/**     \brief      Renvoi prochaine valeur attribuee
 	 *      	\param      objsoc		Objet societe
 	 *      	\param      facture		Objet facture
 	 *      	\return     string      Valeur
@@ -226,7 +229,9 @@ function facture_pdf_create($db, $id, $message, $modele, $outputlangs)
 }
 
 /**
- *	\brief      Cree un meta fichier a coté de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payï¿½e ou compliquï¿½e ï¿½ gï¿½rer ... avec un rgrep c'est vite fait bien fait [eric seigne
+ *	\brief      Cree un meta fichier a cote de la facture sur le disque pour faciliter les recherches en texte plein.
+ *              Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de
+ *              connexion internet "rapide" pour retrouver en 2 secondes une facture non payee ou compliquee a gerer ... avec un rgrep c'est vite fait bien fait [eric seigne]
  *	\param	    db  		Objet base de donnee
  *	\param	    facid		Id de la facture a creer
  *	\param      message     Message
@@ -282,9 +287,9 @@ ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->
 
 
 /**
- \brief       Supprime l'image de prï¿½visualitation, pour le cas de rï¿½gï¿½nï¿½ration de facture
- \param	    db  		objet base de donnï¿½e
- \param	    facid		id de la facture ï¿½ crï¿½er
+ \brief       Supprime l'image de previsualitation, pour le cas de regeneration de facture
+ \param	    db  		objet base de donnee
+ \param	    facid		id de la facture a creer
  */
 function facture_delete_preview($db, $facid)
 {

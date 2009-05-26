@@ -29,12 +29,12 @@
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis car utilisé dans les classes qui héritent
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis car utilise dans les classes qui heritent
 
 
 /**
     	\class      ModelePDFPropales
-		\brief      Classe mère des modèles de propale
+		\brief      Classe mere des modeles de propale
 */
 
 class ModelePDFPropales extends FPDF
@@ -42,7 +42,7 @@ class ModelePDFPropales extends FPDF
     var $error='';
 
     /**
-     *      \brief      Renvoi le dernier message d'erreur de création de propale
+     *      \brief      Renvoi le dernier message d'erreur de creation de propale
      */
     function pdferror()
     {
@@ -50,7 +50,7 @@ class ModelePDFPropales extends FPDF
     }
 
     /**
-     *      \brief      Renvoi la liste des modèles actifs
+     *      \brief      Renvoi la liste des modeles actifs
      */
     function liste_modeles($db)
     {
@@ -89,7 +89,7 @@ class ModelePDFPropales extends FPDF
 
 /**
         \class      ModeleNumRefPropales
-        \brief      Classe mère des modèles de numérotation des références de propales
+        \brief      Classe mere des modeles de numerotation des references de propales
 */
 
 class ModeleNumRefPropales
@@ -104,7 +104,7 @@ class ModeleNumRefPropales
 		return true;
 	}
 
-    /**     \brief      Renvoi la description par defaut du modele de numérotation
+    /**     \brief      Renvoi la description par defaut du modele de numerotation
      *      \return     string      Texte descripif
      */
     function info()
@@ -114,7 +114,7 @@ class ModeleNumRefPropales
         return $langs->trans("NoDescription");
     }
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
@@ -124,8 +124,8 @@ class ModeleNumRefPropales
         return $langs->trans("NoExample");
     }
 
-    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numérotation de fonctionner.
+    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numerotation de fonctionner.
      *      \return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
@@ -133,7 +133,7 @@ class ModeleNumRefPropales
         return true;
     }
 
-    /**     \brief      Renvoi prochaine valeur attribuée
+    /**     \brief      Renvoi prochaine valeur attribuee
      *      \return     string      Valeur
      */
     function getNextValue()
@@ -159,9 +159,9 @@ class ModeleNumRefPropales
 
 
 /**
-		\brief      Crée une propale sur disque en fonction du modèle de PROPALE_ADDON_PDF
-		\param	    db  			objet base de donnée
-		\param	    id				id de la propale à créer
+		\brief      Cree une propale sur disque en fonction du modele de PROPALE_ADDON_PDF
+		\param	    db  			objet base de donnee
+		\param	    id				id de la propale à creer
 		\param	    modele			force le modele à utiliser ('' to not force)
 		\param		outputlangs		objet lang a utiliser pour traduction
         \return     int         	0 si KO, 1 si OK
@@ -174,7 +174,7 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/propale/";
 	$modelisok=0;
 
-	// Positionne modele sur le nom du modele de propale à utiliser
+	// Positionne modele sur le nom du modele de propale a utiliser
 	$file = "pdf_propale_".$modele.".modules.php";
 	if ($modele && file_exists($dir.$file)) $modelisok=1;
 
@@ -192,7 +192,7 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
 		$liste=array();
 		$model=new ModelePDFPropales();
 		$liste=$model->liste_modeles($db);
-    $modele=key($liste);        // Renvoie premiere valeur de clé trouvé dans le tableau
+    $modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau
     $file = "pdf_propale_".$modele.".modules.php";
     if (file_exists($dir.$file)) $modelisok=1;
 	}
@@ -239,10 +239,10 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
 }
 
 /**
-   \brief      Supprime l'image de prévisualitation, pour le cas de régénération de propal
+   \brief      Supprime l'image de previsualitation, pour le cas de regeneration de propal
    \param	    db  		objet base de donnée
-   \param	    propalid	id de la propal à effacer
-   \param     propalref référence de la propal si besoin
+   \param	    propalid	id de la propal a effacer
+   \param     propalref reference de la propal si besoin
 */
 function propale_delete_preview($db, $propalid, $propalref='')
 {
