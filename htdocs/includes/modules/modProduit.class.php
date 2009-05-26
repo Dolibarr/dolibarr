@@ -164,7 +164,7 @@ class modProduit extends DolibarrModules
 		$this->import_entities_array[$r]=array('p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product");
 
 		$this->import_sql_start[$r]='INSERT INTO '.MAIN_DB_PREFIX.'produit as s';
-		$this->import_sql_end[$r] .='';
+		$this->import_sql_end[$r]  ='';
 
 	}
 

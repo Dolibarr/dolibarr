@@ -109,6 +109,7 @@ class modWebcalendar extends DolibarrModules
 													'langs'=>'other',
 													'position'=>100,
 													'perms'=>'',
+													'enabled'=>'$conf->webcalendar->enabled',
 													'target'=>'',
 													'user'=>0
 													);

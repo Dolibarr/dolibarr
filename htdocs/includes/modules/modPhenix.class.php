@@ -107,6 +107,7 @@ class modPhenix extends DolibarrModules
 													'langs'=>'other',
 													'position'=>100,
 													'perms'=>'',
+													'enabled'=>'$conf->phenix->enabled',
 													'target'=>'',
 													'user'=>0);
 		$r++;

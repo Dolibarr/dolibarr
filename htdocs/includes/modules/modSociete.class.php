@@ -234,7 +234,7 @@ class modSociete extends DolibarrModules
 		$this->import_entities_array[$r]=array('s.nom'=>"company",'s.prefix_comm'=>"company",'s.client'=>"company",'s.fournisseur'=>"company",'s.datec'=>"company",'s.tms'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company",'s.address'=>"company",'s.cp'=>"company",'s.ville'=>"company",'p.libelle'=>"company",'p.code'=>"company",'s.tel'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note'=>"company",'t.libelle'=>"company",'ce.code'=>"company","cfj.libelle"=>"company",'s.fk_prospectlevel'=>'company','fk_stcomm'=>'company');
 
 		$this->import_sql_start[$r]='INSERT INTO '.MAIN_DB_PREFIX.'societe as s';
-		$this->import_sql_end[$r] .='';
+		$this->import_sql_end[$r]  ='';
 
 	}
 
