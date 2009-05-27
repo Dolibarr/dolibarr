@@ -867,6 +867,7 @@ class Form
 				}
 				$opt = '<option value="'.$objp->rowid.'"';
 				$opt.= ($objp->rowid == $selected)?' selected="true"':'';
+				$opt.= ($conf->stock->enabled && isset($objp->stock) && $objp->fk_product_type == 0 && $objp->stock <= 0) ? ' style="color:#FF0000;"':'';
 				$opt.= '>'.$objp->ref.' - ';
 				$opt.= dol_trunc($objp->label,32).' - ';
 
