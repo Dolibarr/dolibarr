@@ -6,6 +6,8 @@
 -- when current version is 2.6.0 or higher. 
 --
 
+delete from llx_const where name = 'FACTURE_ENABLE_RECUR';
+
 alter table llx_facturedet_rec add column  product_type		  integer    DEFAULT 0 after fk_product;
 
 -- Usage of llx_menu_const and llx_menu_constraint is too complicated

@@ -108,7 +108,7 @@ if ($_GET["action"] == 'del')
     $sql.= " WHERE nom = '".$_GET["value"];
     $sql.= " AND type = '".$type."'";
     $sql.= " AND entity = ".$conf->entity;
-    
+
     if ($db->query($sql))
     {
 
@@ -145,7 +145,7 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre activ�
+    // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
 	dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);

@@ -431,10 +431,8 @@ class MenuLeft {
 					{
 						if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/clients.php?action=facturer&amp;leftmenu=customers_bills",$langs->trans("NewBill"),2,$user->rights->facture->creer);
 					}
-					if ($conf->global->FACTURE_ENABLE_RECUR)
-					{
-						if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php?leftmenu=customers_bills",$langs->trans("Repeatables"),2,$user->rights->facture->lire);
-					}
+					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php?leftmenu=customers_bills",$langs->trans("Repeatables"),2,$user->rights->facture->lire);
+
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php?leftmenu=customers_bills",$langs->trans("Unpayed"),2,$user->rights->facture->lire);
 
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php?leftmenu=customers_bills_payments",$langs->trans("Payments"),2,$user->rights->facture->lire);

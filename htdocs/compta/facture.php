@@ -1449,39 +1449,36 @@ if ($_GET['action'] == 'create')
 	}
 
 	// Factures prédéfinnies
-	if ($conf->global->FACTURE_ENABLE_RECUR)
+	if ($_GET['propalid'] == 0 && $_GET['commandeid'] == 0 && $_GET['contratid'] == 0)
 	{
-		if ($_GET['propalid'] == 0 && $_GET['commandeid'] == 0 && $_GET['contratid'] == 0)
+		$sql = 'SELECT r.rowid, r.titre, r.total_ttc FROM '.MAIN_DB_PREFIX.'facture_rec as r';
+		$sql.= ' WHERE r.fk_soc = '.$soc->id;
+		$resql=$db->query($sql);
+		if ($resql)
 		{
-			$sql = 'SELECT r.rowid, r.titre, r.total_ttc FROM '.MAIN_DB_PREFIX.'facture_rec as r';
-			$sql.= ' WHERE r.fk_soc = '.$soc->id;
-			$resql=$db->query($sql);
-			if ($resql)
-			{
-				$num = $db->num_rows($resql);
-				$i = 0;
+			$num = $db->num_rows($resql);
+			$i = 0;
 
-				if ($num > 0)
-				{
-					print '<tr><td>'.$langs->trans('CreateFromRepeatableInvoice').'</td><td>';
-					print '<select class="flat" name="fac_rec">';
-					print '<option value="0" selected="true"></option>';
-					while ($i < $num)
-					{
-						$objp = $db->fetch_object($resql);
-						print '<option value="'.$objp->rowid.'"';
-						if ($_POST["fac_rec"] == $objp->rowid) print ' selected="true"';
-						print '>'.$objp->titre.' ('.$objp->total_ttc.' '.$langs->trans("TTC").')</option>';
-						$i++;
-					}
-					print '</select></td></tr>';
-				}
-				$db->free();
-			}
-			else
+			if ($num > 0)
 			{
-				dol_print_error($db);
+				print '<tr><td>'.$langs->trans('CreateFromRepeatableInvoice').'</td><td>';
+				print '<select class="flat" name="fac_rec">';
+				print '<option value="0" selected="true"></option>';
+				while ($i < $num)
+				{
+					$objp = $db->fetch_object($resql);
+					print '<option value="'.$objp->rowid.'"';
+					if ($_POST["fac_rec"] == $objp->rowid) print ' selected="true"';
+					print '>'.$objp->titre.' ('.$objp->total_ttc.' '.$langs->trans("TTC").')</option>';
+					$i++;
+				}
+				print '</select></td></tr>';
 			}
+			$db->free();
+		}
+		else
+		{
+			dol_print_error($db);
 		}
 	}
 
@@ -3296,7 +3293,7 @@ else
 					}
 
 					// Clone as predefined
-					if ($conf->global->FACTURE_ENABLE_RECUR && ($fac->type == 0 || $fac->type == 3 || $fac->type == 4) && $fac->statut == 0 && $user->rights->facture->creer)
+					if (($fac->type == 0 || $fac->type == 3 || $fac->type == 4) && $fac->statut == 0 && $user->rights->facture->creer)
 					{
 						if (! $facidnext)
 						{

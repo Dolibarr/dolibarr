@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/**   
+/**
       \file   	    htdocs/compta/commande/pre.inc.php
       \ingroup      compta,commande
       \brief  	    Fichier gestionnaire du menu commande de compta
@@ -69,11 +69,7 @@ function llxHeader($head = "", $title="", $help_url='')
         $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
         $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
         $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"));
-
-	if ($conf->global->FACTURE_ENABLE_RECUR)
-        {
-            $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php", $langs->trans("Repeatable"));
-        }
+        $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php", $langs->trans("Repeatable"));
 
         $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"));
     }
@@ -86,7 +82,7 @@ function llxHeader($head = "", $title="", $help_url='')
     }
 
 
-    // Les dépenses
+    // Les dï¿½penses
     if ($conf->fournisseur->enabled)
     {
         $langs->load("suppliers");
@@ -95,7 +91,7 @@ function llxHeader($head = "", $title="", $help_url='')
 
     if ($conf->deplacement->enabled && $user->societe_id == 0)
     {
-        $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
+        $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Dï¿½placement");
     }
 
     if ($conf->tax->enabled && $conf->compta->tva && $user->societe_id == 0)
@@ -109,7 +105,7 @@ function llxHeader($head = "", $title="", $help_url='')
     }
 
 
-    // Vision des recettes-dépenses
+    // Vision des recettes-dï¿½penses
     if ($conf->banque->enabled && $user->rights->banque->lire)
     {
         $langs->load("banks");
@@ -129,7 +125,7 @@ function llxHeader($head = "", $title="", $help_url='')
 		{
 	    	$menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
 		}
-	
+
 	    if ($user->rights->compta->ventilation->parametrer)
 	    {
 	        $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));

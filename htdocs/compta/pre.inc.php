@@ -66,11 +66,7 @@ function llxHeader($head = '', $title='', $help_url='')
         $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
         $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
         $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"));
-
-	if ($conf->global->FACTURE_ENABLE_RECUR)
-        {
-            $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php", $langs->trans("Repeatable"));
-        }
+        $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php", $langs->trans("Repeatable"));
 
         $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"));
     }
