@@ -217,6 +217,15 @@ function run_sql($sqlfile,$silent=1)
 				$newsql=str_replace($from,$to,$newsql);
 				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
 			}
+			
+			// Replace __ENTITY__ with current entity id
+			while (eregi('(__ENTITY__)',$newsql,$reg))
+			{
+				$from   = $reg[1];
+				$to     = $conf->entity;
+				$newsql = str_replace($from,$to,$newsql);
+				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+			}
 
 			$result=$db->query($newsql);
 			if ($result)
