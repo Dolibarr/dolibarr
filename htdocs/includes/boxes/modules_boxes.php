@@ -117,14 +117,14 @@ class ModeleBoxes
 		if (! empty($head['text']) || ! empty($head['sublink']))
 		{
 			print '<div id="boxto_'.$this->box_id.'_title">'."\n";
-			print '<table width="100%" class="noborder">'."\n";
+			print '<table summary="boxtabletitle'.$this->box_id.'" width="100%" class="noborder">'."\n";
 			print '<tr class="box_titre">';
 			print '<td';
 			if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
 			print '>';
 			if ($conf->use_javascript_ajax)
 			{
-				print '<table class="nobordernopadding" width="100%"><tr><td align="left">';
+				print '<table summary="" class="nobordernopadding" width="100%"><tr><td align="left">';
 			}
 			if (! empty($head['text']))
 			{
@@ -151,7 +151,7 @@ class ModeleBoxes
 		// Show box lines
 		if ($nblines)
 		{
-			print '<table width="100%" class="noborder">'."\n";
+			print '<table summary="boxtablelines'.$this->box_id.'" width="100%" class="noborder">'."\n";
 			// Loop on each record
 			for ($i=0, $n=$nblines; $i < $n; $i++)
 			{

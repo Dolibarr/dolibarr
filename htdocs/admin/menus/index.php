@@ -156,34 +156,6 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
 	$db->begin();
 
-	/*
-	$sql = "SELECT c.rowid, c.fk_constraint";
-	$sql.= " FROM ".MAIN_DB_PREFIX."menu_const as c";
-	$sql.= " WHERE c.fk_menu = ".$_GET['menuId'];
-	$res  = $db->query($sql);
-	if ($res)
-	{
-		while ($obj = $db->fetch_object ($res))
-		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_const";
-			$sql.= " WHERE rowid = ".$obj->rowid;
-			$db->query($sql);	// Do not test error since table can does not exists
-
-			$sql = "SELECT count(rowid) as countId";
-			$sql.= " FROM ".MAIN_DB_PREFIX."menu_const";
-			$sql.= " WHERE fk_constraint = ".$obj->fk_constraint;
-			$result = $db->query($sql);
-			$objc = $db->fetch_object($result);
-
-			if($objc->countId == 0)
-			{
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_constraint WHERE rowid = ".$obj->fk_constraint;
-				$db->query($sql);
-			}
-		}
-	}
-	*/
-
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 	$sql.= " WHERE rowid = ".$_GET['menuId'];
 	$resql=$db->query($sql);
@@ -205,8 +177,9 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 
 
 /*
- * Affichage page
+ * View
  */
+
 $html=new Form($db);
 $htmladmin=new FormAdmin($db);
 

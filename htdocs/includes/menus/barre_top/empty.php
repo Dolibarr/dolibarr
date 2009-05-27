@@ -51,7 +51,7 @@ class MenuTop {
     {
         global $user,$conf,$langs,$dolibarr_main_db_name;;
 
-        print '<table class="tmenu"><tr class="tmenu">';
+        print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
 
 		// Menu Home
 	    print '<td class="tmenu"><a href="'.DOL_URL_ROOT.'/index.php?mainmenu=home">'.$langs->trans("Home").'</a></td>';

@@ -64,7 +64,7 @@ class MenuTop {
         $_SESSION["leftmenuopened"]="";
 
 
-        print '<table class="tmenu"><tr class="tmenu">';
+        print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
 
         // Home
         $class="";

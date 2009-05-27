@@ -808,7 +808,7 @@ function top_menu($head, $title='', $target='')
 	{
 		$langs->load("admin");
 		print '<div class="fiche">'."\n";
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder" width="100%" summary="">';
 		print '<tr><td>';
 		print $langs->trans("UpdateRequired",DOL_URL_ROOT.'/install/index.php');
 		print '</td></tr>';
@@ -905,7 +905,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	$bookmarks='';
 
 	//    print '<div class="vmenuplusfiche">'."\n";
-	print '<table width="100%" class="notopnoleftnoright"><tr><td class="vmenu" valign="top">';
+	print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable"><tr><td class="vmenu" valign="top">';
 
 	print "\n";
 
