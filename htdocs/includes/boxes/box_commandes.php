@@ -53,8 +53,8 @@ class box_commandes extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-     *      \param      $max        Nombre maximum d'enregistrements � charger
+     *      \brief      Charge les donnees en memoire pour affichage ulterieur
+     *      \param      $max        Nombre maximum d'enregistrements a charger
      */
     function loadBox($max=5)
     {
@@ -113,7 +113,7 @@ class box_commandes extends ModeleBoxes {
                     );
                     
                     $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
-                    'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facturee,3));
+                    'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3));
 
                     $i++;
                 }
