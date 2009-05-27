@@ -51,9 +51,11 @@ $result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
 
 $mesg = '';
 
+
 /*
- *
+ * Actions
  */
+
 if ($_GET["action"] == 'fastappro')
 {
 	$product = new Product($db);
@@ -216,57 +218,64 @@ if ($_POST["action"] == 'update' && $user->rights->produit->creer)
 	}
 }
 
-// Clone a product
-if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
+// Action clone object
+if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes' && $user->rights->produit->creer)
 {
-	$db->begin();
-
-	$product = new Product($db);
-	$originalId = $_GET["id"];
-	if ($product->fetch($_GET["id"]) > 0)
+	if (empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_prices"]))
 	{
-		$product->ref = "Clone ".$product->ref;
-		$product->status = 0;
-		$product->finished = 1;
-		$product->id = null;
-
-		if ($product->check())
-		{
-			$id = $product->create($user);
-			if ($id > 0)
-			{
-				// $product->clone_fournisseurs($originalId, $id);
-
-				$db->commit();
-				$db->close();
-
-				Header("Location: fiche.php?id=$id");
-				exit;
-			}
-			else
-			{
-				if ($product->error == 'ErrorProductAlreadyExists')
-				{
-					$db->rollback();
-
-					$_error = 1;
-					$_GET["action"] = "";
-
-					$mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$product->ref).'</div>';
-					//dol_print_error($product->db);
-				}
-				else
-				{
-					$db->rollback();
-					dol_print_error($product->db);
-				}
-			}
-		}
+		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
 	}
 	else
 	{
-		$db->rollback();
-		dol_print_error($product->db);
+		$db->begin();
+
+		$product = new Product($db);
+		$originalId = $_GET["id"];
+		if ($product->fetch($_GET["id"]) > 0)
+		{
+			$product->ref = $langs->trans("CopyOf").' '.$product->ref;
+			$product->status = 0;
+			$product->finished = 1;
+			$product->id = null;
+
+			if ($product->check())
+			{
+				$id = $product->create($user);
+				if ($id > 0)
+				{
+					// $product->clone_fournisseurs($originalId, $id);
+
+					$db->commit();
+					$db->close();
+
+					Header("Location: fiche.php?id=$id");
+					exit;
+				}
+				else
+				{
+					if ($product->error == 'ErrorProductAlreadyExists')
+					{
+						$db->rollback();
+
+						$_error = 1;
+						$_GET["action"] = "";
+
+						$mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$product->ref).'</div>';
+						//dol_print_error($product->db);
+					}
+					else
+					{
+						$db->rollback();
+						dol_print_error($product->db);
+					}
+				}
+			}
+		}
+		else
+		{
+			$db->rollback();
+			dol_print_error($product->db);
+		}
 	}
 }
 
@@ -1006,129 +1015,129 @@ if ($_GET["id"] || $_GET["ref"])
 
 		if ( $product->canvas == '')
 		{
-	  print "<!-- CUT HERE -->\n";
-	  print "<form action=\"fiche.php\" method=\"post\">\n";
-	  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	  print '<input type="hidden" name="action" value="update">';
-	  print '<input type="hidden" name="id" value="'.$product->id.'">';
-	  print '<input type="hidden" name="canvas" value="'.$product->canvas.'">';
-	  print '<table class="border" width="100%">';
-	  print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="32" value="'.$product->ref.'"></td></tr>';
-	  print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+			print "<!-- CUT HERE -->\n";
+			print "<form action=\"fiche.php\" method=\"post\">\n";
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="action" value="update">';
+			print '<input type="hidden" name="id" value="'.$product->id.'">';
+			print '<input type="hidden" name="canvas" value="'.$product->canvas.'">';
+			print '<table class="border" width="100%">';
+			print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="32" value="'.$product->ref.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
-	  // Status
-	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
-	  print '<select class="flat" name="statut">';
-	  if ($product->status)
-	  {
-	  	print '<option value="1" selected="true">'.$langs->trans("OnSell").'</option>';
-	  	print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
-	  }
-	  else
-	  {
-	  	print '<option value="1">'.$langs->trans("OnSell").'</option>';
-	  	print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
-	  }
-	  print '</select>';
-	  print '</td></tr>';
+			// Status
+			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+			print '<select class="flat" name="statut">';
+			if ($product->status)
+			{
+				print '<option value="1" selected="true">'.$langs->trans("OnSell").'</option>';
+				print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
+			}
+			else
+			{
+				print '<option value="1">'.$langs->trans("OnSell").'</option>';
+				print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
+			}
+			print '</select>';
+			print '</td></tr>';
 
-	  // Description (utilisé dans facture, propale...)
-	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
-	  print "\n";
-	  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
-	  {
-	  	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-	  	$doleditor=new DolEditor('desc',$product->description,160,'dolibarr_notes','',false);
-	  	$doleditor->Create();
-	  }
-	  else
-	  {
-	  	print '<textarea name="desc" rows="4" cols="90">';
-	  	print dol_htmlentitiesbr_decode($product->description);
-	  	print "</textarea>";
-	  }
-	  print "</td></tr>";
-	  print "\n";
+			// Description (utilisé dans facture, propale...)
+			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
+			print "\n";
+			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				$doleditor=new DolEditor('desc',$product->description,160,'dolibarr_notes','',false);
+				$doleditor->Create();
+			}
+			else
+			{
+				print '<textarea name="desc" rows="4" cols="90">';
+				print dol_htmlentitiesbr_decode($product->description);
+				print "</textarea>";
+			}
+			print "</td></tr>";
+			print "\n";
 
-	  // Nature
-	  if($product->type!=1)
-	  {
-	  	print '<tr><td>'.$langs->trans("Nature").'</td><td>';
-	  	$statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-	  	$html->select_array('finished',$statutarray,$product->finished);
-	  	print '</td></tr>';
-	  }
+			// Nature
+			if($product->type!=1)
+			{
+				print '<tr><td>'.$langs->trans("Nature").'</td><td>';
+				$statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+				$html->select_array('finished',$statutarray,$product->finished);
+				print '</td></tr>';
+			}
 
-	  if ($product->isproduct() && $conf->stock->enabled)
-	  {
-	  	print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
-	  	print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
-	  	print '</td></tr>';
-	  }
-	  else
-	  {
-	  	print '<input name="seuil_stock_alerte" type="hidden" value="'.$product->seuil_stock_alerte.'">';
-	  }
+			if ($product->isproduct() && $conf->stock->enabled)
+			{
+				print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
+				print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
+				print '</td></tr>';
+			}
+			else
+			{
+				print '<input name="seuil_stock_alerte" type="hidden" value="'.$product->seuil_stock_alerte.'">';
+			}
 
-	  if ($product->isservice())
-	  {
-	  	// Duration
-	  	print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$product->duration_value.'">';
-	  	print '&nbsp; ';
-	  	print '<input name="duration_unit" type="radio" value="h"'.($product->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
-	  	print '&nbsp; ';
-	  	print '<input name="duration_unit" type="radio" value="d"'.($product->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
-	  	print '&nbsp; ';
-	  	print '<input name="duration_unit" type="radio" value="w"'.($product->duration_unit=='w'?' checked':'').'>'.$langs->trans("Week");
-	  	print '&nbsp; ';
-	  	print '<input name="duration_unit" type="radio" value="m"'.($product->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
-	  	print '&nbsp; ';
-	  	print '<input name="duration_unit" type="radio" value="y"'.($product->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
+			if ($product->isservice())
+			{
+				// Duration
+				print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$product->duration_value.'">';
+				print '&nbsp; ';
+				print '<input name="duration_unit" type="radio" value="h"'.($product->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
+				print '&nbsp; ';
+				print '<input name="duration_unit" type="radio" value="d"'.($product->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
+				print '&nbsp; ';
+				print '<input name="duration_unit" type="radio" value="w"'.($product->duration_unit=='w'?' checked':'').'>'.$langs->trans("Week");
+				print '&nbsp; ';
+				print '<input name="duration_unit" type="radio" value="m"'.($product->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
+				print '&nbsp; ';
+				print '<input name="duration_unit" type="radio" value="y"'.($product->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
 
-	  	print '</td></tr>';
-	  }
-	  else
-	  {
-	  	// Weight / Volume
-	  	print '<tr><td>'.$langs->trans("Weight").'</td><td>';
-	  	print '<input name="weight" size="5" value="'.$product->weight.'"> ';
-	  	print $formproduct->select_measuring_units("weight_units", "weight", $product->weight_units);
-	  	print '</td></tr>';
+				print '</td></tr>';
+			}
+			else
+			{
+				// Weight / Volume
+				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+				print '<input name="weight" size="5" value="'.$product->weight.'"> ';
+				print $formproduct->select_measuring_units("weight_units", "weight", $product->weight_units);
+				print '</td></tr>';
 
-	  	print '<tr><td>'.$langs->trans("Volume").'</td><td>';
-	  	print '<input name="volume" size="5" value="'.$product->volume.'"> ';
-	  	print $formproduct->select_measuring_units("volume_units", "volume", $product->volume_units);
-	  	print '</td></tr>';
-	  }
+				print '<tr><td>'.$langs->trans("Volume").'</td><td>';
+				print '<input name="volume" size="5" value="'.$product->volume.'"> ';
+				print $formproduct->select_measuring_units("volume_units", "volume", $product->volume_units);
+				print '</td></tr>';
+			}
 
-	  // Note
-	  print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
-	  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
-	  {
-	  	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-	  	$doleditor=new DolEditor('note',$product->note,200,'dolibarr_notes','',false);
-	  	$doleditor->Create();
-	  }
-	  else
-	  {
-	  	print '<textarea name="note" rows="8" cols="70">';
-	  	print dol_htmlentitiesbr_decode($product->note);
-	  	print "</textarea>";
-	  }
-	  print "</td></tr>";
+			// Note
+			print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
+			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				$doleditor=new DolEditor('note',$product->note,200,'dolibarr_notes','',false);
+				$doleditor->Create();
+			}
+			else
+			{
+				print '<textarea name="note" rows="8" cols="70">';
+				print dol_htmlentitiesbr_decode($product->note);
+				print "</textarea>";
+			}
+			print "</td></tr>";
 
-	  print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-	  print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-	  print '</table>';
-	  print '</form>';
-	  print "<!-- CUT HERE -->\n";
+			print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+			print '</table>';
+			print '</form>';
+			print "<!-- CUT HERE -->\n";
 		}
 		else
 		{
-	  $tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'','');
-	  $smarty->assign('tva_taux_value', $tvaarray['value']);
-	  $smarty->assign('tva_taux_libelle', $tvaarray['label']);
-	  $smarty->display($product->canvas.'-edit.tpl');
+			$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'','');
+			$smarty->assign('tva_taux_value', $tvaarray['value']);
+			$smarty->assign('tva_taux_libelle', $tvaarray['label']);
+			$smarty->display($product->canvas.'-edit.tpl');
 		}
 	}
 }
@@ -1136,6 +1145,21 @@ else if (!$_GET["action"] == 'create')
 {
 	Header("Location: index.php");
 	exit;
+}
+
+
+
+// Clone confirmation
+if ($_GET["action"] == 'clone')
+{
+	// Create an array for form
+	$formquestion=array(
+		'text' => $langs->trans("ConfirmClone"),
+	array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneContentProduct"),   'value' => 1),
+	array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
+	);
+	// Paiement incomplet. On demande si motif = escompte ou autre
+	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$product->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$product->ref),'confirm_clone',$formquestion,'yes');
 }
 
 
@@ -1211,12 +1235,12 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 		if ($user->rights->societe->client->voir)
 		{
-	  print '<td width="50%" valign="top" class="liste_titre">';
-	  print $langs->trans("AddToOtherProposals").'</td>';
+			print '<td width="50%" valign="top" class="liste_titre">';
+			print $langs->trans("AddToOtherProposals").'</td>';
 		}
 		else
 		{
-	  print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
+			print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
 		}
 
 		print '</tr>';
@@ -1235,83 +1259,83 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		$result=$db->query($sql);
 		if ($result)
 		{
-	  $var=true;
-	  $num = $db->num_rows($result);
-	  print '<table class="noborder" width="100%">';
-	  if ($num)
-	  {
-	  	$i = 0;
-	  	while ($i < $num)
-	  	{
-	  		$objp = $db->fetch_object($result);
-	  		$var=!$var;
-	  		print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-	  		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	  		print "<tr $bc[$var]>";
-	  		print "<td nowrap>";
-	  		print '<input type="hidden" name="action" value="addinpropal">';
-	  		print "<a href=\"../comm/propal.php?propalid=".$objp->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a></td>\n";
-	  		print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,18)."</a></td>\n";
-	  		print "<td nowrap=\"nowrap\">".dol_print_date($objp->dp,"%d %b")."</td>\n";
-	  		print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
-	  		print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
-	  		print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
-	  		print " ".$product->stock_proposition;
-	  		print '</td><td align="right">';
-	  		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	  		print '</td>';
-	  		print '</tr>';
-	  		print '</form>';
-	  		$i++;
-	  	}
-	  }
-	  else {
-	  	print "<tr ".$bc[!$var]."><td>";
-	  	print $langs->trans("NoOpenedPropals");
-	  	print "</td></tr>";
-	  }
-	  print "</table>";
-	  $db->free($result);
+			$var=true;
+			$num = $db->num_rows($result);
+			print '<table class="noborder" width="100%">';
+			if ($num)
+			{
+				$i = 0;
+				while ($i < $num)
+				{
+					$objp = $db->fetch_object($result);
+					$var=!$var;
+					print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print "<tr $bc[$var]>";
+					print "<td nowrap>";
+					print '<input type="hidden" name="action" value="addinpropal">';
+					print "<a href=\"../comm/propal.php?propalid=".$objp->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a></td>\n";
+					print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,18)."</a></td>\n";
+					print "<td nowrap=\"nowrap\">".dol_print_date($objp->dp,"%d %b")."</td>\n";
+					print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
+					print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
+					print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
+					print " ".$product->stock_proposition;
+					print '</td><td align="right">';
+					print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+					print '</td>';
+					print '</tr>';
+					print '</form>';
+					$i++;
+				}
+			}
+			else {
+				print "<tr ".$bc[!$var]."><td>";
+				print $langs->trans("NoOpenedPropals");
+				print "</td></tr>";
+			}
+			print "</table>";
+			$db->free($result);
 		}
 
 		print '</td>';
 
 		if ($user->rights->societe->client->voir)
 		{
-	  // Liste de "Other propals"
-	  print '<td width="50%" valign="top">';
+			// Liste de "Other propals"
+			print '<td width="50%" valign="top">';
 
-	  $var=true;
-	  $otherprop = $propal->liste_array(1, ' <> '.$user->id);
-	  print '<table class="noborder" width="100%">';
+			$var=true;
+			$otherprop = $propal->liste_array(1, ' <> '.$user->id);
+			print '<table class="noborder" width="100%">';
 
-	  if (is_array($otherprop) && sizeof($otherprop))
-	  {
-	  	$var=!$var;
-	  	print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-	  	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	  	print '<tr '.$bc[$var].'><td colspan="3">';
-	  	print '<input type="hidden" name="action" value="addinpropal">';
-	  	print $langs->trans("OtherPropals").'</td><td>';
-	  	$html->select_array("propalid", $otherprop);
-	  	print '</td></tr>';
-	  	print '<tr '.$bc[$var].'><td nowrap="nowrap" colspan="2">'.$langs->trans("Qty");
-	  	print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
-	  	print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
-	  	print '</td><td align="right">';
-	  	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	  	print '</td></tr>';
-	  	print '</form>';
-	  }
-	  else
-	  {
-	  	print "<tr ".$bc[!$var]."><td>";
-	  	print $langs->trans("NoOtherOpenedPropals");
-	  	print '</td></tr>';
-	  }
-	  print '</table>';
+			if (is_array($otherprop) && sizeof($otherprop))
+			{
+				$var=!$var;
+				print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<tr '.$bc[$var].'><td colspan="3">';
+				print '<input type="hidden" name="action" value="addinpropal">';
+				print $langs->trans("OtherPropals").'</td><td>';
+				$html->select_array("propalid", $otherprop);
+				print '</td></tr>';
+				print '<tr '.$bc[$var].'><td nowrap="nowrap" colspan="2">'.$langs->trans("Qty");
+				print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
+				print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
+				print '</td><td align="right">';
+				print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+				print '</td></tr>';
+				print '</form>';
+			}
+			else
+			{
+				print "<tr ".$bc[!$var]."><td>";
+				print $langs->trans("NoOtherOpenedPropals");
+				print '</td></tr>';
+			}
+			print '</table>';
 
-	  print '</td>';
+			print '</td>';
 		}
 
 		print '</tr>';
@@ -1330,12 +1354,12 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 		if ($user->rights->societe->client->voir)
 		{
-	  print '<td width="50%" valign="top" class="liste_titre">';
-	  print $langs->trans("AddToOtherOrders").'</td>';
+			print '<td width="50%" valign="top" class="liste_titre">';
+			print $langs->trans("AddToOtherOrders").'</td>';
 		}
 		else
 		{
-	  print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
+			print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
 		}
 
 		print '</tr>';
@@ -1354,81 +1378,81 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		$result=$db->query($sql);
 		if ($result)
 		{
-	  $num = $db->num_rows($result);
-	  $var=true;
-	  print '<table class="noborder" width="100%">';
-	  if ($num)
-	  {
-	  	$i = 0;
-	  	while ($i < $num)
-	  	{
-	  		$objc = $db->fetch_object($result);
-	  		$var=!$var;
-	  		print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-	  		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	  		print "<tr $bc[$var]>";
-	  		print "<td nowrap>";
-	  		print '<input type="hidden" name="action" value="addincommande">';
-	  		print "<a href=\"../commande/fiche.php?id=".$objc->commandeid."\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
-	  		print "<td><a href=\"../comm/fiche.php?socid=".$objc->socid."\">".dol_trunc($objc->nom,18)."</a></td>\n";
-	  		print "<td nowrap=\"nowrap\">".dol_print_date($objc->dc,"%d %b")."</td>\n";
-	  		print '<td><input type="hidden" name="commandeid" value="'.$objc->commandeid.'">';
-	  		print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
-	  		print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
-	  		print " ".$product->stock_proposition;
-	  		print '</td><td align="right">';
-	  		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	  		print '</td>';
-	  		print '</tr>';
-	  		print '</form>';
-	  		$i++;
-	  	}
-	  }
-	  else
-	  {
-	  	print "<tr ".$bc[!$var]."><td>";
-	  	print $langs->trans("NoOpenedOrders");
-	  	print '</td></tr>';
-	  }
-	  print "</table>";
-	  $db->free($result);
+			$num = $db->num_rows($result);
+			$var=true;
+			print '<table class="noborder" width="100%">';
+			if ($num)
+			{
+				$i = 0;
+				while ($i < $num)
+				{
+					$objc = $db->fetch_object($result);
+					$var=!$var;
+					print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print "<tr $bc[$var]>";
+					print "<td nowrap>";
+					print '<input type="hidden" name="action" value="addincommande">';
+					print "<a href=\"../commande/fiche.php?id=".$objc->commandeid."\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
+					print "<td><a href=\"../comm/fiche.php?socid=".$objc->socid."\">".dol_trunc($objc->nom,18)."</a></td>\n";
+					print "<td nowrap=\"nowrap\">".dol_print_date($objc->dc,"%d %b")."</td>\n";
+					print '<td><input type="hidden" name="commandeid" value="'.$objc->commandeid.'">';
+					print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
+					print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
+					print " ".$product->stock_proposition;
+					print '</td><td align="right">';
+					print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+					print '</td>';
+					print '</tr>';
+					print '</form>';
+					$i++;
+				}
+			}
+			else
+			{
+				print "<tr ".$bc[!$var]."><td>";
+				print $langs->trans("NoOpenedOrders");
+				print '</td></tr>';
+			}
+			print "</table>";
+			$db->free($result);
 		}
 
 		print '</td>';
 
 		if ($user->rights->societe->client->voir)
 		{
-	  // Liste de "Other orders"
-	  print '<td width="50%" valign="top">';
+			// Liste de "Other orders"
+			print '<td width="50%" valign="top">';
 
-	  $var=true;
-	  $othercom = $commande->liste_array(1, ' <> '.$user->id);
-	  print '<table class="noborder" width="100%">';
-	  if (is_array($othercom) && sizeof($othercom))
-	  {
-	  	$var=!$var;
-	  	print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-	  	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	  	print '<tr '.$bc[$var].'><td colspan="3">';
-	  	print '<input type="hidden" name="action" value="addincommande">';
-	  	print $langs->trans("OtherOrders").'</td><td>';
-	  	$html->select_array("commandeid", $othercom);
-	  	print '</td></tr>';
-	  	print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("Qty");
-	  	print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
-	  	print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
-	  	print '</td><td align="right">';
-	  	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	  	print '</td></tr>';
-	  	print '</form>';
-	  }
-	  else
-	  {
-	  	print "<tr ".$bc[!$var]."><td>";
-	  	print $langs->trans("NoOtherOpenedOrders");
-	  	print '</td></tr>';
-	  }
-	  print '</table>';
+			$var=true;
+			$othercom = $commande->liste_array(1, ' <> '.$user->id);
+			print '<table class="noborder" width="100%">';
+			if (is_array($othercom) && sizeof($othercom))
+			{
+				$var=!$var;
+				print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<tr '.$bc[$var].'><td colspan="3">';
+				print '<input type="hidden" name="action" value="addincommande">';
+				print $langs->trans("OtherOrders").'</td><td>';
+				$html->select_array("commandeid", $othercom);
+				print '</td></tr>';
+				print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("Qty");
+				print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
+				print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
+				print '</td><td align="right">';
+				print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+				print '</td></tr>';
+				print '</form>';
+			}
+			else
+			{
+				print "<tr ".$bc[!$var]."><td>";
+				print $langs->trans("NoOtherOpenedOrders");
+				print '</td></tr>';
+			}
+			print '</table>';
 		}
 		print '</td>';
 
@@ -1445,12 +1469,12 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 		if ($user->rights->societe->client->voir)
 		{
-	  print '<td width="50%" valign="top" class="liste_titre">';
-	  print $langs->trans("AddToOtherBills").'</td>';
+			print '<td width="50%" valign="top" class="liste_titre">';
+			print $langs->trans("AddToOtherBills").'</td>';
 		}
 		else
 		{
-	  print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
+			print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
 		}
 
 		print '</tr>';

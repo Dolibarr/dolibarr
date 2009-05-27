@@ -62,6 +62,10 @@ EMailTestSubstitutionReplacedByGenericValues=When using test mode, substitutions
 MailingAddFile=Attach this file
 NoAttachedFiles=No attached files
 BadEMail=Bad value for EMail
+CloneEMailing=Clone Emailing
+ConfirmCloneEMailing=Are you sure you want to clone this emailing ?
+CloneContent=Clone message
+CloneReceivers=Cloner recipients
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacts of all third parties (customer, prospect, supplier, ...)

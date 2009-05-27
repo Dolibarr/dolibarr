@@ -142,3 +142,7 @@ ServiceNb=Service #%s
 ListProductByPopularity=List of products/services by popularity
 Finished=Manufactured product
 RowMaterial=First material
+CloneProduct=Clone product or service
+ConfirmCloneProduct=Are you sure you want to clone product or service <b>%s</b> ?
+CloneContentProduct=Clone all main informations of product/service
+ClonePricesProduct=Clone main informations and prices

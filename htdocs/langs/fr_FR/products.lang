@@ -144,3 +144,7 @@ ServiceNb=Service no %s
 ListProductByPopularity=Liste des produits/services par popularité
 Finished=Produit manufacturé
 RowMaterial=Matière première
+CloneProduct=Cloner produit/service
+ConfirmCloneProduct=Etes-vous sur de vouloir cloner le produit ou service <b>%s</b> ?
+CloneContentProduct=Cloner les informations générales du produit/service uniquement
+ClonePricesProduct=Cloner les informations générales et les prix
