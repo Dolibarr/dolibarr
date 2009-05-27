@@ -285,16 +285,7 @@ class Propal extends CommonObject
 			// Clean parameters
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
-			/*
-			if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty)
-			{
-				$qty=0;
-			}
-			else if (! $qty)
-			{
-				$qty=1;
-			}
-			*/
+			if (empty($qty)) $qty=0;	// If qty=''
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$txtva=price2num($txtva);
