@@ -1306,3 +1306,95 @@ form.inplaceeditor-form a { /* The cancel link */
 	border: 1px solid;
 	cursor:pointer;
 }
+
+
+
+/* ============================================================================== */
+/*  CSS for color picker                                                          */
+/* ============================================================================== */
+
+FIELDSET {
+ padding : 0px;
+ margin : 0px;
+ color : black;
+}
+LEGEND {
+ font-family : Tahoma;
+ font-size : 10pt;
+ color : black;
+}
+A.color, A.color:active, A.color:visited {
+ position : relative;
+ display : block;
+ text-decoration : none;
+ width : 10px;
+ height : 10px;
+ line-height : 10px;
+ margin : 0px;
+ padding : 0px;
+ border : 1px inset white;
+}
+A.color:hover {
+ border : 1px outset white;
+}
+A.none, A.none:active, A.none:visited, A.none:hover {
+ position : relative;
+ display : block;
+ text-decoration : none;
+ width : 10px;
+ height : 10px;
+ line-height : 10px;
+ margin : 0px;
+ padding : 0px;
+ cursor : default;
+ border : 1px solid threedface;
+}
+.tblColor {
+ display : none;
+}
+.tdColor {
+ padding : 1px;
+}
+.tblContainer {
+ background-color : threedface;
+}
+.tblGlobal {
+ position : absolute;
+ top : 0px;
+ left : 0px;
+ display : none;
+ background-color : threedface;
+ border : 2px outset;
+}
+.tdContainer {
+ padding : 5px;
+}
+.tdDisplay {
+ width : 50%;
+ height : 20px;
+ line-height : 20px;
+ border : 1px outset white;
+}
+.tdDisplayTxt {
+ width : 50%;
+ height : 24px;
+ line-height : 12px;
+ font-family : Tahoma;
+ font-size : 8pt;
+ color : black;
+ text-align : center;
+}
+.btnColor {
+ width : 100%;
+ font-family : Tahoma;
+ font-size : 10pt;
+ padding : 0px;
+ margin : 0px;
+}
+.btnPalette {
+ width : 100%;
+ font-family : Tahoma;
+ font-size : 8pt;
+ padding : 0px;
+ margin : 0px;
+}

@@ -195,6 +195,7 @@ class FormOther
 	 */
 	function select_color($set_color='', $prefix='f_color', $form_name='objForm')
 	{
+		print "\n".'<table class="nobordernopadding"><tr><td valign="middle">';
 		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/colorpicker.css" />'."\n";
 		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_colorpicker.js"></script>'."\n";
 		print '<script type="text/javascript">
@@ -212,7 +213,9 @@ class FormOther
 	           }
 	         </script>'."\n";
 		print '<input type="text" size="10" name="'.$prefix.'" value="'.$set_color.'" maxlength="7" style="font-family:Tahoma;font-size:x-small;">'."\n";
+		print '</td><td valign="middle">';
 		print '<img src="'.DOL_URL_ROOT.'/theme/common/colorpicker.png" width="21" height="20" border="0" onClick="fctShow(document.'.$form_name.'.'.$prefix.');" style="cursor:pointer;">'."\n";
+		print '</td></tr></table>';
 	}
 
 	/**
