@@ -774,7 +774,7 @@ class Form
 		{
 			$sql.="DISTINCT";
 		}
-		$sql.= " p.rowid, p.label, p.ref, p.price, p.price_ttc, p.price_base_type, p.duration";
+		$sql.= " p.rowid, p.label, p.ref, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.duration, p.stock";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
 		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
 		{
@@ -905,6 +905,11 @@ class Form
 					$opt.= price($objp->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
 					else
 					$opt.= price($objp->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+				}
+
+				if ($conf->stock->enabled && isset($objp->stock) && $objp->fk_product_type == 0)
+				{
+					$opt.= ' - '.$langs->trans("Stock").':'.$objp->stock;
 				}
 
 				if ($objp->duration)
