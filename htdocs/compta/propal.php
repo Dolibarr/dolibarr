@@ -319,7 +319,7 @@ if ($id > 0 || ! empty($ref))
 	$sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.fk_remise_except,';
 	$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
 	$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc,';
-	$sql.= ' p.rowid as prodid, p.label as product, p.ref, p.fk_product_type, ';
+	$sql.= ' p.rowid as prodid, p.label as product_label, p.ref, p.fk_product_type, ';
 	$sql.= ' p.description as product_desc';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
@@ -371,9 +371,9 @@ if ($id > 0 || ! empty($ref))
 					$product_static->type=$objp->fk_product_type;
 					$product_static->id=$objp->fk_product;
 					$product_static->ref=$objp->ref;
-					$product_static->libelle=$objp->product;
+					$product_static->libelle=$objp->product_label;
 					$text=$product_static->getNomUrl(1);
-					$text.= ' - '.$objp->product;
+					$text.= ' - '.$objp->product_label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 					print $html->textwithtooltip($text,$description,3,'','',$i);
 
@@ -383,7 +383,7 @@ if ($id > 0 || ! empty($ref))
 					// Add description in form
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{
-						print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+						print ($objp->description && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 					}
 					print '</td>';
 				}

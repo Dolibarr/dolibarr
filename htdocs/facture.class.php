@@ -154,7 +154,7 @@ class Facture extends CommonObject
 
 		$this->db->begin();
 
-		// Facture récurrente
+		// Create invoice from a predefined invoice
 		if ($this->fac_rec > 0)
 		{
 			require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture-rec.class.php');
@@ -171,7 +171,7 @@ class Facture extends CommonObject
 			$this->remise_percent    = $_facrec->remise_percent;
 			$this->remise		     = $_facrec->remise;
 
-			// Nettoyage parametres
+			// Clean parametres
 			if (! $this->type) $this->type = 0;
 			$this->ref_client=trim($this->ref_client);
 			$this->note=trim($this->note);
@@ -297,7 +297,10 @@ class Facture extends CommonObject
 					$_facrec->lignes[$i]->qty,
 					$tva_tx,
 					$_facrec->lignes[$i]->produit_id,
-					$_facrec->lignes[$i]->remise_percent);
+					$_facrec->lignes[$i]->remise_percent,
+					'','',0,0,'','HT',
+					$_facref->lignes[$i]->product_type
+					);
 
 					if ( $result_insert < 0)
 					{
@@ -595,7 +598,7 @@ class Facture extends CommonObject
 				if ($this->statut == 0)	$this->brouillon = 1;
 
 				/*
-				 * Lignes
+				 * Lines
 				 */
 				$result=$this->fetch_lines();
 				if ($result < 0)
@@ -623,8 +626,8 @@ class Facture extends CommonObject
 
 
 	/**
-	 *	\brief      Recupére les lignes de factures dans this->lignes
-	 *	\return     int         1 si ok, < 0 si erreur
+	 *	\brief      Recupere les lignes de factures dans this->lignes
+	 *	\return     int         1 if OK, < 0 if KO
 	 */
 	function fetch_lines()
 	{
@@ -632,7 +635,7 @@ class Facture extends CommonObject
 		$sql.= ' l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' '.$this->db->pdate('l.date_start').' as date_start,'.$this->db->pdate('l.date_end').' as date_end,';
 		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
-		$sql.= ' p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc';
+		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
@@ -650,10 +653,12 @@ class Facture extends CommonObject
 				$faclig = new FactureLigne($this->db);
 
 				$faclig->rowid	          = $objp->rowid;
-				$faclig->desc             = $objp->description;     // Description ligne
-				$faclig->libelle          = $objp->label;           // Label produit
-				$faclig->product_desc     = $objp->product_desc;    // Description produit
+				$faclig->desc             = $objp->description;     // Description line
 				$faclig->product_type     = $objp->product_type;	// Type of line
+				$faclig->product_ref      = $objp->product_ref;     // Ref product
+				$faclig->libelle          = $objp->label;           // Label product
+				$faclig->product_desc     = $objp->product_desc;    // Description product
+				$faclig->fk_product_type  = $objp->fk_product_type;	// Type of product
 				$faclig->qty              = $objp->qty;
 				$faclig->subprice         = $objp->subprice;
 				$faclig->tva_tx           = $objp->tva_taux;
@@ -661,7 +666,6 @@ class Facture extends CommonObject
 				$faclig->fk_remise_except = $objp->fk_remise_except;
 				$faclig->produit_id       = $objp->fk_product;
 				$faclig->fk_product       = $objp->fk_product;
-				$faclig->fk_product_type  = $objp->fk_product_type;
 				$faclig->date_start       = $objp->date_start;
 				$faclig->date_end         = $objp->date_end;
 				$faclig->date_start       = $objp->date_start;
@@ -1542,7 +1546,7 @@ class Facture extends CommonObject
 				$price = ($pu - $remise);
 			}
 
-			$product_type=0;
+			$product_type=$type;
 			if ($fk_product)
 			{
 				$product=new Product($this->db);
@@ -1569,7 +1573,6 @@ class Facture extends CommonObject
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
-			$ligne->product_type=$type;
 
 			// \TODO Ne plus utiliser
 			$ligne->price=$price;

@@ -2711,7 +2711,7 @@ else
 			$sql.= ' '.$db->pdate('l.date_start').' as date_start,';
 			$sql.= ' '.$db->pdate('l.date_end').' as date_end,';
 			$sql.= ' l.product_type,';
-			$sql.= ' p.ref, p.fk_product_type, p.label as product,';
+			$sql.= ' p.ref as product_ref, p.fk_product_type, p.label as product_label,';
 			$sql.= ' p.description as product_desc';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON l.fk_product=p.rowid';
@@ -2753,7 +2753,7 @@ else
 					if (! empty($objp->date_start)) $type=1;
 					if (! empty($objp->date_end)) $type=1;
 
-					// Ligne en mode visu
+					// Show line
 					if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
 					{
 						print '<tr '.$bc[$var].'>';
@@ -2765,10 +2765,10 @@ else
 							// Show product and description
 							$product_static->type=$objp->fk_product_type;
 							$product_static->id=$objp->fk_product;
-							$product_static->ref=$objp->ref;
-							$product_static->libelle=$objp->product;
+							$product_static->ref=$objp->product_ref;
+							$product_static->libelle=$objp->product_label;
 							$text=$product_static->getNomUrl(1);
-							$text.= ' - '.$objp->product;
+							$text.= ' - '.$objp->product_label;
 							$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 							print $html->textwithtooltip($text,$description,3,'','',$i);
 
@@ -2776,7 +2776,7 @@ else
 							print_date_range($objp->date_start,$objp->date_end);
 
 							// Add description in form
-							if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+							if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 
 							print '</td>';
 						}
@@ -2906,10 +2906,10 @@ else
 							print '<input type="hidden" name="productid" value="'.$objp->fk_product.'">';
 							$product_static->type=$objp->fk_product_type;
 							$product_static->id=$objp->fk_product;
-							$product_static->ref=$objp->ref;
-							$product_static->libelle=$objp->product;
+							$product_static->ref=$objp->product_ref;
+							$product_static->libelle=$objp->product_label;
 							$text=$product_static->getNomUrl(1);
-							$text.= ' - '.$objp->product;
+							$text.= ' - '.$objp->product_label;
 							print $text;
 							print '<br>';
 						}

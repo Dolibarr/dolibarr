@@ -778,6 +778,7 @@ class CommonObject
 			// Now update field total_ht, total_ttc and tva
 			$fieldht='total_ht';
 			if ($this->element == 'facture') $fieldht='total';
+			if ($this->element == 'facturerec') $fieldht='total';
 			$fieldtva='tva';
 			if ($this->element == 'facture_fourn') $fieldtva='total_tva';
 			$fieldttc='total_ttc';

@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,14 +24,15 @@ create table llx_facturedet_rec
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_facture      integer NOT NULL,
   fk_product      integer,
+  product_type    integer DEFAULT 0,
   description     text,
   tva_taux        real DEFAULT 19.6, -- taux tva
-  qty             real,              -- quantité
+  qty             real,              -- quantity
   remise_percent  real DEFAULT 0,    -- pourcentage de remise
   remise          real DEFAULT 0,    -- montant de la remise
   subprice        real,              -- prix avant remise
   price           real,               -- prix final
-  total_ht        real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
-  total_tva       real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
-  total_ttc       real	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  total_ht        real,	             	-- Total HT de la ligne toute quantity et incluant remise ligne et globale
+  total_tva       real,	             	-- Total TVA de la ligne toute quantity et incluant remise ligne et globale
+  total_ttc       real	             	-- Total TTC de la ligne toute quantity et incluant remise ligne et globale
 )type=innodb;

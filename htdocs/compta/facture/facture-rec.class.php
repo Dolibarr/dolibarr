@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/compta/facture/facture-rec.class.php
-        \ingroup    facture
-        \brief      Fichier de la classe des factures recurentes
-        \version    $Id$
-*/
+ *	\file       htdocs/compta/facture/facture-rec.class.php
+ *	\ingroup    facture
+ *	\brief      Fichier de la classe des factures recurentes
+ *	\version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/notify.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
@@ -30,9 +30,9 @@ require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 
 /**
-        \class      FactureRec
-        \brief      Classe de gestion des factures recurrentes/Modèles
-*/
+ *	\class      FactureRec
+ *	\brief      Classe de gestion des factures recurrentes/Modï¿½les
+ */
 class FactureRec extends Facture
 {
 	var $db ;
@@ -44,47 +44,46 @@ class FactureRec extends Facture
 	var $id ;
 
 	var $socid;		// Id client
-	var $client;		// Objet societe client (à charger par fetch_client)
+	var $client;		// Objet societe client (ï¿½ charger par fetch_client)
 
-    var $number;
-    var $author;
-    var $date;
-    var $ref;
-    var $amount;
-    var $remise;
-    var $tva;
-    var $total;
-    var $note;
-    var $db_table;
-    var $propalid;
-    var $projetid;
+	var $number;
+	var $author;
+	var $date;
+	var $ref;
+	var $amount;
+	var $remise;
+	var $tva;
+	var $total;
+	var $note;
+	var $db_table;
+	var $propalid;
+	var $projetid;
 
 
-    /**
-     * 		\brief		Initialisation de la class
-     *
-     */
-    function FactureRec($DB, $facid=0)
-    {
-        $this->db = $DB ;
-        $this->facid = $facid;
-    }
+	/**
+	 * 		\brief		Initialisation de la class
+	 */
+	function FactureRec($DB, $facid=0)
+	{
+		$this->db = $DB ;
+		$this->facid = $facid;
+	}
 
-    /**
-     * 		\brief		Créé la facture recurrente/modele
-     *		\return		int			<0 si ko, id facture rec crée si ok
-     */
-    function create($user)
-    {
-    	global $langs;
+	/**
+	 * 		\brief		Create a predefined invoice
+	 *		\return		int			<0 if KO, id of invoice if OK
+	 */
+	function create($user)
+	{
+		global $langs;
 
-    	$error=0;
+		$error=0;
 
-		// Nettoyage parametere
+		// Clean parameters
 		$this->titre=trim($this->titre);
 
-		// Validation parameteres
-		if (! $this->titre)
+		// Validate parameters
+		if (empty($this->titre))
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Title"));
 			return -3;
@@ -92,73 +91,76 @@ class FactureRec extends Facture
 
 		$this->db->begin();
 
-    	// Charge facture modele
-    	$facsrc=new Facture($this->db);
-    	$result=$facsrc->fetch($this->facid);
-        if ($result > 0)
-        {
-            // On positionne en mode brouillon la facture
-            $this->brouillon = 1;
+		// Charge facture modele
+		$facsrc=new Facture($this->db);
+		$result=$facsrc->fetch($this->facid);
+		if ($result > 0)
+		{
+			// On positionne en mode brouillon la facture
+			$this->brouillon = 1;
 
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_rec (titre, fk_soc, datec, amount, remise, note, fk_user_author,fk_projet, fk_cond_reglement, fk_mode_reglement) ";
-            $sql.= " VALUES ('$this->titre', '$facsrc->socid', ".$this->db->idate(mktime()).", '$facsrc->amount', '$facsrc->remise', '".addslashes($this->note)."','$user->id',";
-            $sql.= " ".($facsrc->projetid?"'".$facsrc->projetid."'":"null").", ";
-            $sql.= " '".$facsrc->cond_reglement_id."',";
-            $sql.= " '".$facsrc->mode_reglement_id."')";
-            if ( $this->db->query($sql) )
-            {
-                $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_rec");
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_rec (titre, fk_soc, datec, amount, remise, note, fk_user_author,fk_projet, fk_cond_reglement, fk_mode_reglement) ";
+			$sql.= " VALUES ('$this->titre', '$facsrc->socid', ".$this->db->idate(mktime()).", '$facsrc->amount', '$facsrc->remise', '".addslashes($this->note)."','$user->id',";
+			$sql.= " ".($facsrc->projetid?"'".$facsrc->projetid."'":"null").", ";
+			$sql.= " '".$facsrc->cond_reglement_id."',";
+			$sql.= " '".$facsrc->mode_reglement_id."')";
+			if ( $this->db->query($sql) )
+			{
+				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_rec");
 
-                /*
-                 * Produits
-                 */
-                for ($i = 0 ; $i < sizeof($facsrc->lignes) ; $i++)
-                {
-                    $result_insert = $this->addline($this->id,
-		                    $facsrc->lignes[$i]->desc,
-		                    $facsrc->lignes[$i]->subprice,
-		                    $facsrc->lignes[$i]->qty,
-		                    $facsrc->lignes[$i]->tva_tx,
-		                    $facsrc->lignes[$i]->fk_product,
-		                    $facsrc->lignes[$i]->remise_percent);
+				/*
+				 * Lines
+				 */
+				for ($i = 0 ; $i < sizeof($facsrc->lignes) ; $i++)
+				{
+					$result_insert = $this->addline($this->id,
+					$facsrc->lignes[$i]->desc,
+					$facsrc->lignes[$i]->subprice,
+					$facsrc->lignes[$i]->qty,
+					$facsrc->lignes[$i]->tva_tx,
+					$facsrc->lignes[$i]->fk_product,
+					$facsrc->lignes[$i]->remise_percent,
+		                    'HT',0,'',0,
+					$facsrc->lignes[$i]->product_type
+					);
 
-                    if ($result_insert < 0)
-                    {
-                    	$error++;
-                    }
-                }
+					if ($result_insert < 0)
+					{
+						$error++;
+					}
+				}
 
-                if ($error)
-                {
+				if ($error)
+				{
 					$this->db->rollback();
-                }
-                else
-                {
+				}
+				else
+				{
 					$this->db->commit();
-                	return $this->id;
-                }
-            }
-            else
-            {
-                $this->error=$this->db->error().' sql='.$sql;
+					return $this->id;
+				}
+			}
+			else
+			{
+				$this->error=$this->db->error().' sql='.$sql;
 				$this->db->rollback();
-                return -2;
-            }
-        }
-        else
-        {
+				return -2;
+			}
+		}
+		else
+		{
 			$this->db->rollback();
-        	return -1;
-        }
-    }
+			return -1;
+		}
+	}
 
 
 	/**
-		\brief      Recupére l'objet facture et ses lignes de factures
-		\param      rowid       id de la facture a récupérer
-		\param      societe_id  id de societe
-		\return     int         >0 si ok, <0 si ko
-	*/
+	 *	\brief      Recupere l'objet facture et ses lignes de factures
+	 *	\param      rowid       id de la facture a recuperer
+	 *	\param      societe_id  id de societe
+	 *	\return     int         >0 si ok, <0 si ko
+	 */
 	function fetch($rowid, $societe_id=0)
 	{
 		dol_syslog("Facture::Fetch rowid=".$rowid.", societe_id=".$societe_id, LOG_DEBUG);
@@ -242,8 +244,8 @@ class FactureRec extends Facture
 				if ($this->statut == 0)	$this->brouillon = 1;
 
 				/*
-				* Lignes
-				*/
+				 * Lines
+				 */
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
@@ -270,15 +272,15 @@ class FactureRec extends Facture
 
 
 	/**
-		\brief      Recupére les lignes de factures dans this->lignes
-		\return     int         1 si ok, < 0 si erreur
-	*/
+	 *	\brief      Recupere les lignes de factures predefinies dans this->lignes
+	 *	\return     int         1 if OK, < 0 if KO
+ 	 */
 	function fetch_lines()
 	{
-		$sql = 'SELECT l.rowid, l.fk_product, l.description, l.price, l.qty, l.tva_taux, ';
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.description, l.price, l.qty, l.tva_taux, ';
 		$sql.= ' l.remise, l.remise_percent, l.subprice,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
-		$sql.= ' p.label as label, p.description as product_desc';
+		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
@@ -294,9 +296,12 @@ class FactureRec extends Facture
 				$objp = $this->db->fetch_object($result);
 				$faclig = new FactureLigne($this->db);
 				$faclig->rowid	          = $objp->rowid;
-				$faclig->desc             = $objp->description;     // Description ligne
-				$faclig->libelle          = $objp->label;           // Label produit
-				$faclig->product_desc     = $objp->product_desc;    // Description produit
+				$faclig->desc             = $objp->description;     // Description line
+				$faclig->product_type     = $objp->product_type;	// Type of line
+				$faclig->product_ref      = $objp->product_ref;     // Ref product
+				$faclig->libelle          = $objp->label;           // Label product
+				$faclig->product_desc     = $objp->product_desc;    // Description product
+				$faclig->fk_product_type  = $objp->fk_product_type;	// Type of product
 				$faclig->qty              = $objp->qty;
 				$faclig->subprice         = $objp->subprice;
 				$faclig->tva_tx           = $objp->tva_taux;
@@ -334,51 +339,66 @@ class FactureRec extends Facture
 	}
 
 
-    /**
-     * Supprime la facture
-     */
-    function delete($rowid)
-    {
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = $rowid;";
+	/**
+	 * Supprime la facture
+	 */
+	function delete($rowid)
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = $rowid;";
 
-        if ($this->db->query( $sql) )
-        {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = $rowid";
+		if ($this->db->query( $sql) )
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = $rowid";
 
-            if ($this->db->query( $sql) )
-            {
-                return 1;
-            }
-            else
-            {
-                print "Err : ".$this->db->error();
-                return -1;
-            }
-        }
-        else
-        {
-            print "Err : ".$this->db->error();
-            return -2;
-        }
-    }
+			if ($this->db->query( $sql) )
+			{
+				return 1;
+			}
+			else
+			{
+				print "Err : ".$this->db->error();
+				return -1;
+			}
+		}
+		else
+		{
+			print "Err : ".$this->db->error();
+			return -2;
+		}
+	}
 
 
 	/**
-	 *		\brief		Ajoute une ligne de facture
+	 *		\brief		Add a line to invoice
 	 */
-	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0)
+	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0)
 	{
+		dol_syslog("FactureRec::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+
+		// Check parameters
+		if ($type < 0) return -1;
 
 		if ($this->brouillon)
 		{
-			if (strlen(trim($qty))==0)
+			// Clean parameters
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			if (! $qty) $qty=1;
+			if (! $ventil) $ventil=0;
+			if (! $info_bits) $info_bits=0;
+			$pu_ht=price2num($pu_ht);
+			$pu_ttc=price2num($pu_ttc);
+			$txtva=price2num($txtva);
+
+			if ($price_base_type=='HT')
 			{
-				$qty=1;
+				$pu=$pu_ht;
 			}
-			$remise = 0;
-			$price = $pu;
-			$subprice = $price;
+			else
+			{
+				$pu=$pu_ttc;
+			}
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -389,26 +409,37 @@ class FactureRec extends Facture
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 
+			// \TODO A virer
+			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			if (trim(strlen($remise_percent)) > 0)
 			{
 				$remise = round(($pu * $remise_percent / 100), 2);
 				$price = $pu - $remise;
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, total_ht, total_tva, total_ttc)";
+			$product_type=$type;
+			if ($fk_product)
+			{
+				$product=new Product($this->db);
+				$result=$product->fetch($fk_product);
+				$product_type=$product->type;
+			}
+
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, product_type, remise_percent, subprice, remise, total_ht, total_tva, total_ttc)";
 			$sql .= " VALUES ('".$facid."', '".addslashes($desc)."'";
 			$sql .= ",".price2num($price);
 			$sql .= ",".price2num($qty);
 			$sql .= ",".price2num($txtva);
 			$sql .= ",".($fk_product?"'".$fk_product."'":"null");
+			$sql .= ",".$product_type;
 			$sql .= ",'".price2num($remise_percent)."'";
-			$sql .= ",'".price2num($subprice)."'";
+			$sql .= ",'".price2num($pu_ht)."'";
 			$sql .= ",'".price2num($remise)."'";
 			$sql .= ",'".price2num($total_ht)."'";
 			$sql .= ",'".price2num($total_tva)."'";
 			$sql .= ",'".price2num($total_ttc)."') ;";
 
-			dol_syslog("Facture-rec::addline sql=".$sql, LOG_DEBUG);
+			dol_syslog("FactureRec::addline sql=".$sql, LOG_DEBUG);
 			if ($this->db->query( $sql))
 			{
 				$this->id=$facid;	// \TODO A virer
@@ -418,7 +449,7 @@ class FactureRec extends Facture
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("Facture-rec::addline sql=".$this->error, LOG_ERR);
+				dol_syslog("FactureRec::addline sql=".$this->error, LOG_ERR);
 				return -1;
 			}
 		}

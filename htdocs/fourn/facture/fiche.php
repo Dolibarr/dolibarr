@@ -889,10 +889,10 @@ else
 						print $html->textwithtooltip($text,$description,3,'','',$i);
 
 						// Show range
-						print_date_range($objp->date_start,$objp->date_end);
+						print_date_range($fac->lignes[$i]->date_start,$fac->lignes[$i]->date_end);
 
 						// Add description in form
-						if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+						if ($conf->global->PRODUIT_DESC_IN_FORM) print ($fac->lignes[$i]->description && $fac->lignes[$i]->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($fac->lignes[$i]->description):'';
 					}
 
 					// Description - Editor wysiwyg

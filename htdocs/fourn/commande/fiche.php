@@ -599,7 +599,7 @@ if ($id > 0 || ! empty($ref))
 /*		print '<tr><td>'.$langs->trans("RefSupplier")."</td>";
 		print '<td colspan="2">'.$commande->ref_supplier.'</td>';
 		print '</tr>';
-*/		
+*/
 		// Fournisseur
 		print '<tr><td>'.$langs->trans("Supplier")."</td>";
 		print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
@@ -727,7 +727,7 @@ if ($id > 0 || ! empty($ref))
 					print_date_range($commandline->date_start,$commandline->date_end);
 
 					// Add description in form
-					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($commandline->description && $commandline->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($commandline->description):'';
 				}
 
 				// Description - Editor wysiwyg

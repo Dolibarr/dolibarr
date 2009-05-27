@@ -69,6 +69,7 @@ class Form
 	 *	\param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et forcé en Ajax
 	 *	\param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est après
 	 *	\param	img					Code img du picto
+	 * 	\param	i					Numero of tooltip
 	 *	\return	string				Code html du tooltip (texte+picto)
 	 */
 	function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$i=1,$width='200',$shiftX='10')

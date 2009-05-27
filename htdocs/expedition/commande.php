@@ -381,7 +381,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " cd.qty,";
 		$sql.= ' '.$db->pdate('cd.date_start').' as date_start,';
 		$sql.= ' '.$db->pdate('cd.date_end').' as date_end,';
-		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
+		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
 		$sql.= ' p.description as product_desc';
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
@@ -437,9 +437,9 @@ if ($id > 0 || ! empty($ref))
 					$product_static->type=$objp->fk_product_type;
 					$product_static->id=$objp->fk_product;
 					$product_static->ref=$objp->ref;
-					$product_static->libelle=$objp->product;
+					$product_static->libelle=$objp->product_label;
 					$text=$product_static->getNomUrl(1);
-					$text.= ' - '.$objp->product;
+					$text.= ' - '.$objp->product_label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 					print $html->textwithtooltip($text,$description,3,'','',$i);
 
@@ -449,7 +449,7 @@ if ($id > 0 || ! empty($ref))
 					// Add description in form
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{
-						print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+						print ($objp->description && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 					}
 
 					print '</td>';
