@@ -13,10 +13,9 @@ alter table llx_facturedet_rec add column  product_type		  integer    DEFAULT 0 
 -- Usage of llx_menu_const and llx_menu_constraint is too complicated
 -- so we made first change to remove it
 alter table llx_menu_const drop foreign key fk_menu_const_fk_menu;
+update llx_menu_constraint set action = '$conf->societe->enabled' where action = '$conf->commercial->enabled';
 
 ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_fk_soc (fk_soc);
-
-update llx_menu_constraint set action = '$conf->societe->enabled' where action = '$conf->commercial->enabled';
 
 alter table llx_facture add column  tms timestamp after date_valid;
 alter table llx_facture_fourn add column  tms timestamp after datef;
