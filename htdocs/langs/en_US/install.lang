@@ -188,3 +188,6 @@ MigrationDeliveryDetail=Delivery update
 
 # Migration stock
 MigrationStockDetail=Update stock value of products
+
+# Migration menus
+MigrationMenusDetail=Update dynamic menus tables

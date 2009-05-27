@@ -190,4 +190,7 @@ MigrationDeliveryDetail=Mise a jour bon reception
 # Migration stock
 MigrationStockDetail=Mise a jour valeur en stock des produits
 
+# Migration menus
+MigrationMenusDetail=Mise a jour table des menus dynamiques
+
 
