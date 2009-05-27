@@ -601,7 +601,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
 /*
  *  Ajout d'une ligne produit dans la propale
  */
-if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
+if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 {
 	if (isset($_POST['qty']) && (($_POST['np_price']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
@@ -702,13 +702,18 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 					$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 				}
 				propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+
+				unset($_POST['qty']);
+				unset($_POST['type']);
+				unset($_POST['np_price']);
+				unset($_POST['dp_desc']);
+				unset($_POST['np_tva_tx']);
 			}
 			else
 			{
 				$mesg='<div class="error">'.$propal->error.'</div>';
 			}
 		}
-
 	}
 }
 
@@ -1602,7 +1607,7 @@ if ($id > 0 || ! empty($ref))
 		print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#add" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
-		print '<input type="hidden" name="action" value="addligne">';
+		print '<input type="hidden" name="action" value="addline">';
 
 		$var=true;
 		print '<tr '.$bc[$var].">\n";
@@ -1632,7 +1637,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td align="right"><input type="text" size="5" name="np_price"></td>';
 		print '<td align="right"><input type="text" size="2" name="qty" value="'.(isset($_POST["qty"])?$_POST["qty"]:1).'"></td>';
 		print '<td align="right" nowrap><input type="text" size="1" value="'.$societe->remise_client.'" name="remise_percent">%</td>';
-		print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
+		print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
 		print '</tr>';
 
 		print '</form>';
@@ -1667,7 +1672,7 @@ if ($id > 0 || ! empty($ref))
 			print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#add" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
-			print '<input type="hidden" name="action" value="addligne">';
+			print '<input type="hidden" name="action" value="addline">';
 
 			$var=!$var;
 
@@ -1700,7 +1705,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
 			print '<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="'.$societe->remise_client.'">%</td>';
 
-			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addligne">';
+			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addline">';
 			print '</td></tr>'."\n";
 
 			print '</form>';

@@ -310,7 +310,7 @@ if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
 /*
  *  Ajout d'une ligne produit dans la commande
  */
-if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
+if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 {
 	$result=0;
 
@@ -434,6 +434,15 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 					}
 					commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+
+					unset($_POST['qty']);
+					unset($_POST['type']);
+					unset($_POST['idprod']);
+					unset($_POST['remmise_percent']);
+					unset($_POST['dp_desc']);
+					unset($_POST['np_desc']);
+					unset($_POST['pu']);
+					unset($_POST['tva_tx']);
 				}
 				else
 				{
@@ -1785,7 +1794,7 @@ else
 				print '<form action="fiche.php?id='.$id.'#add" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
-				print '<input type="hidden" name="action" value="addligne">';
+				print '<input type="hidden" name="action" value="addline">';
 
 				$var=true;
 				print '<tr '.$bc[$var].'>';
@@ -1824,9 +1833,9 @@ else
 					// Start and end dates selector
 					print '<tr '.$bc[$var].'>';
 					print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-					print $html->select_date('','date_start',$usehm,$usehm,1,"addligne");
+					print $html->select_date('','date_start',$usehm,$usehm,1,"addline");
 					print ' '.$langs->trans('to').' ';
-					print $html->select_date('','date_end',$usehm,$usehm,1,"addligne");
+					print $html->select_date('','date_end',$usehm,$usehm,1,"addline");
 					print '</td>';
 					print '</tr>';
 				}
@@ -1855,7 +1864,7 @@ else
 					print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'#add" method="post">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="id" value="'.$id.'">';
-					print '<input type="hidden" name="action" value="addligne">';
+					print '<input type="hidden" name="action" value="addline">';
 
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
@@ -1896,9 +1905,9 @@ else
 						// Start and end dates selector
 						print '<tr '.$bc[$var].'>';
 						print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-						print $html->select_date('','date_start_prod',$usehm,$usehm,1,"addligne");
+						print $html->select_date('','date_start_prod',$usehm,$usehm,1,"addline");
 						print ' '.$langs->trans('to').' ';
-						print $html->select_date('','date_end_prod',$usehm,$usehm,1,"addligne");
+						print $html->select_date('','date_end_prod',$usehm,$usehm,1,"addline");
 						print '</td>';
 						print '</tr>';
 					}

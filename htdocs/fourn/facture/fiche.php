@@ -282,7 +282,7 @@ if ($_REQUEST['action'] == 'update_line')
 	}
 }
 
-if ($_GET['action'] == 'add_ligne')
+if ($_GET['action'] == 'addline')
 {
 	$facfou = new FactureFournisseur($db, '', $_GET['facid']);
 	$ret=$facfou->fetch($_GET['facid']);
@@ -292,10 +292,10 @@ if ($_GET['action'] == 'add_ligne')
 		exit;
 	}
 
-	if ($_POST['prodfournpriceid'])	// > 0 or -1
+	if ($_POST['idprodfournprice'])	// > 0 or -1
 	{
 		$product = new ProductFournisseur($db);
-		$idprod=$product->get_buyprice($_POST['prodfournpriceid'], $_POST['qty']);
+		$idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);
 		if ($idprod > 0)
 		{
 			$result=$product->fetch($idprod);
@@ -337,17 +337,43 @@ if ($_GET['action'] == 'add_ligne')
 				$ht = price2num($_POST['amount']);
 				$price_base_type = 'HT';
 				//$desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
-				$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
+				$result=$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
 			}
 			else
 			{
 				$ttc = price2num($_POST['amountttc']);
 				$ht = $ttc / (1 + ($tauxtva / 100));
 				$price_base_type = 'HT';
-				$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
+				$result=$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
 			}
 		}
 	}
+
+	//print "xx".$tva_tx; exit;
+	if ($result > 0)
+	{
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		//supplier_invoice_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+
+		unset($_POST['qty']);
+		unset($_POST['type']);
+		unset($_POST['idprodfournprice']);
+		unset($_POST['remmise_percent']);
+		unset($_POST['dp_desc']);
+		unset($_POST['np_desc']);
+		unset($_POST['pu']);
+		unset($_POST['tva_tx']);
+	}
+	else if (empty($mesg))
+	{
+		$mesg='<div class="error">'.$facfou->error.'</div>';
+	}
+
 	$_GET['action'] = '';
 }
 
@@ -957,7 +983,7 @@ else
 				print '</tr>';
 
 				// Add free products/services form
-				print '<form action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
+				print '<form action="fiche.php?facid='.$fac->id.'&amp;action=addline" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 				print '<input type="hidden" name="socid" value="'.$societe->id.'">';
@@ -1022,7 +1048,7 @@ else
 					print '<td colspan="4">&nbsp;</td>';
 					print '</tr>';
 
-					print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
+					print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=addline" method="post">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="socid" value="'. $fac->socid .'">';
 					print '<input type="hidden" name="facid" value="'.$fac->id.'">';
@@ -1030,7 +1056,7 @@ else
 					$var=! $var;
 					print '<tr '.$bc[$var].'>';
 					print '<td colspan="4">';
-					$html->select_produits_fournisseurs($fac->socid,'','prodfournpriceid','',$filtre);
+					$html->select_produits_fournisseurs($fac->socid,'','idprodfournprice','',$filtre);
 					print '</td>';
 					print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
 					print '<td>&nbsp;</td>';

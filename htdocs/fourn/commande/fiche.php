@@ -83,7 +83,7 @@ if ($_REQUEST['action'] ==	'setremisepercent' && $user->rights->fournisseur->com
 /*
  *	Ajout d'une	ligne produit dans la commande
  */
-if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->creer)
+if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer)
 {
 	if ($_POST['qty'] && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice']))
 	{
@@ -180,8 +180,17 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+
+			unset($_POST['qty']);
+			unset($_POST['type']);
+			unset($_POST['idprodfournprice']);
+			unset($_POST['remmise_percent']);
+			unset($_POST['dp_desc']);
+			unset($_POST['np_desc']);
+			unset($_POST['pu']);
+			unset($_POST['tva_tx']);
 		}
-		else
+		else if (empty($mesg))
 		{
 			$mesg='<div class="error">'.$commande->error.'</div>';
 		}
@@ -848,7 +857,7 @@ if ($id > 0 || ! empty($ref))
 			// Add free products/services form
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden"	name="action" value="addligne">';
+			print '<input type="hidden"	name="action" value="addline">';
 			print '<input type="hidden"	name="id" value="'.$commande->id.'">';
 
 			$var=true;
@@ -906,7 +915,7 @@ if ($id > 0 || ! empty($ref))
 
 				print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="action" value="addligne">';
+				print '<input type="hidden" name="action" value="addline">';
 				print '<input type="hidden" name="id" value="'.$commande->id.'">';
 
 				$var=!$var;

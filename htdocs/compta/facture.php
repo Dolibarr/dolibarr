@@ -842,7 +842,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 /*
  *  Ajout d'une ligne produit dans la facture
  */
-if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') && $user->rights->facture->creer)
+if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $user->rights->facture->creer)
 {
 	$result=0;
 
@@ -971,6 +971,15 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
 		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+
+		unset($_POST['qty']);
+		unset($_POST['type']);
+		unset($_POST['idprod']);
+		unset($_POST['remmise_percent']);
+		unset($_POST['dp_desc']);
+		unset($_POST['np_desc']);
+		unset($_POST['pu']);
+		unset($_POST['tva_tx']);
 	}
 	else
 	{
@@ -3005,10 +3014,10 @@ else
 				print "</tr>\n";
 
 				// Add free products/services form
-				print '<form name="addligne" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
+				print '<form name="addline" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-				print '<input type="hidden" name="action" value="addligne">';
+				print '<input type="hidden" name="action" value="addline">';
 
 				$var=true;
 				print '<tr '.$bc[$var].'>';
@@ -3045,9 +3054,9 @@ else
 				{
 					print '<tr '.$bc[$var].'>';
 					print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-					print $html->select_date('','date_start',$usehm,$usehm,1,"addligne");
+					print $html->select_date('','date_start',$usehm,$usehm,1,"addline");
 					print ' '.$langs->trans('to').' ';
-					print $html->select_date('','date_end',$usehm,$usehm,1,"addligne");
+					print $html->select_date('','date_end',$usehm,$usehm,1,"addline");
 					print '</td>';
 					print '</tr>';
 				}
@@ -3077,7 +3086,7 @@ else
 					print '<form id="addpredefinedproduct" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-					print '<input type="hidden" name="action" value="addligne_predef">';
+					print '<input type="hidden" name="action" value="addline_predef">';
 
 					$var=! $var;
 					print '<tr '.$bc[$var].'>';
@@ -3115,9 +3124,9 @@ else
 					{
 						print '<tr '.$bc[$var].'>';
 						print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-						print $html->select_date('','date_start_predef',$usehm,$usehm,1,"addligne_predef");
+						print $html->select_date('','date_start_predef',$usehm,$usehm,1,"addline_predef");
 						print ' '.$langs->trans('to').' ';
-						print $html->select_date('','date_end_predef',$usehm,$usehm,1,"addligne_predef");
+						print $html->select_date('','date_end_predef',$usehm,$usehm,1,"addline_predef");
 						print '</td>';
 						print '</tr>';
 					}
