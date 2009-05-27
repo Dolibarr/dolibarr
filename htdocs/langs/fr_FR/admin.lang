@@ -1014,6 +1014,7 @@ DetailTitre = Libellé du menu ou code libellé à traduire
 DetailMainmenu = Groupe auquel il appartient (obsolete)
 DetailUrl = URL vers laquelle le menu pointe (Lien URL absolu ou lien externe avec http://)
 DetailLeftmenu = Condition d'affichage ou non (obsolete)
+DetailEnabled = Condition d'affichage ou non
 DetailRight = Condition d'affichage plein ou grisé
 DetailLangs = Fichier .lang pour la traduction du code libellé
 DetailUser = Interne / Externe / Tous

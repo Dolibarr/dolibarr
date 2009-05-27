@@ -156,6 +156,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
 	$db->begin();
 
+	/*
 	$sql = "SELECT c.rowid, c.fk_constraint";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu_const as c";
 	$sql.= " WHERE c.fk_menu = ".$_GET['menuId'];
@@ -166,7 +167,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_const";
 			$sql.= " WHERE rowid = ".$obj->rowid;
-			$db->query($sql);
+			$db->query($sql);	// Do not test error since table can does not exists
 
 			$sql = "SELECT count(rowid) as countId";
 			$sql.= " FROM ".MAIN_DB_PREFIX."menu_const";
@@ -181,6 +182,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 			}
 		}
 	}
+	*/
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 	$sql.= " WHERE rowid = ".$_GET['menuId'];

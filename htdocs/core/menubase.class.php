@@ -224,7 +224,7 @@ class Menubase
 	function fetch($id, $user=0)
 	{
 		global $langs;
-   
+
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.menu_handler,";
@@ -340,7 +340,7 @@ class Menubase
 	}
 
 	/**
-	 *	Add entries found in database in a menu array
+	 *	Load entries found in database in a menu array
 	 *
 	 * @param unknown_type $newmenu		Menu array to complete
 	 * @param unknown_type $mainmenu	Value for mainmenu that defined top menu
@@ -362,15 +362,12 @@ class Menubase
 		$tabMenu = array ();
 
 		$sql = "SELECT m.rowid, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu";
-		//$sql.= ", mo.action";
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_const as mc ON m.rowid = mc.fk_menu";
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_constraint as mo ON mc.fk_constraint = mo.rowid";
 		$sql.= " WHERE m.menu_handler in('".$menu_handler."','all')";
 		$sql.= " AND m.entity = ".$conf->entity;
 		if ($type_user == 0) $sql.= " AND m.user in (0,2)";
 		if ($type_user == 1) $sql.= " AND m.user in (1,2)";
-		// If type_user == 2, no test requires
+		// If type_user == 2, no test required
 		$sql.= " ORDER BY m.position, m.rowid";
 
 		dol_syslog("Menubase::menuLeftCharger sql=".$sql);
@@ -404,7 +401,7 @@ class Menubase
 				{
 					$chaine = $langs->trans($title);
 				}
-				 
+
 				// Define $right
 				$perms = true;
 				if ($menu['perms'])
@@ -420,7 +417,7 @@ class Menubase
 					$constraint = $this->verifCond($menu['action']);
 					//print "verifCond rowid=".$menu['rowid']." ".$menu['action'].":".$constraint."<br>\n";
 				}
-*/				
+*/
 				// Define $enabled
 				$enabled = true;
 				if ($menu['enabled'])
@@ -461,14 +458,14 @@ class Menubase
 
 		// Get menutopid
 		$menutopid='';
-		
+
 		$sql = "SELECT m.rowid, m.titre, m.type";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
 		$sql.= " WHERE m.mainmenu = '".$mainmenu."'";
 		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
 		$sql.= " AND m.entity = ".$conf->entity;
 		$sql.= " AND type = 'top'";
-		
+
 		// It should have only one response
 		$resql = $this->db->query($sql);
 		$menutop = $this->db->fetch_object($resql);
@@ -476,7 +473,7 @@ class Menubase
 		$this->db->free($resql);
 		//print "menutopid=".$menutopid." sql=".$sql;
 
-		// Now edit this->newmenu to add entries in tabMenu that are in parent sons
+		// Now edit this->newmenu to add entries in tabMenu that are in childs
 		$this->recur($tabMenu, $menutopid, 1);
 
 		return $this->newmenu;
@@ -548,7 +545,7 @@ class Menubase
 		{
 			$rights = true;
 		}
-		
+
 		return $rights;
 	}
 
@@ -561,7 +558,7 @@ class Menubase
 	function listeMainmenu()
 	{
 		global $conf;
-		
+
 		$overwritemenufor=array();
 
 		$sql = "SELECT DISTINCT m.mainmenu";
@@ -602,10 +599,7 @@ class Menubase
 		$tabMenu=array();
 
 		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.perms, m.enabled, m.target";
-		//$sql.= ", mo.action";
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_const as mc ON m.rowid = mc.fk_menu";
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_constraint as mo ON mc.fk_constraint = mo.rowid";
 		$sql.= " WHERE m.type = 'top'";
 		$sql.= " AND m.entity = ".$conf->entity;
 		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
@@ -667,7 +661,7 @@ class Menubase
 				{
 					$constraint = $this->verifCond($objm->action);
 				}
-				
+
 				// Define $constraint
 				$enabled = true;
 				if ($objm->enabled)

@@ -199,6 +199,10 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		migrate_stocks($db,$langs,$conf);
 
 
+		// Script pour V2.6 -> V2.5
+		migrate_menus($db,$langs,$conf);
+
+
 		// On commit dans tous les cas.
 		// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
 		$db->commit();
@@ -1957,6 +1961,78 @@ function migrate_stocks($db,$langs,$conf)
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
 				$sql.= " stock = '".$obj->total."'";
 				$sql.= " WHERE rowid=".$obj->fk_product;
+
+				$resql2=$db->query($sql);
+				if ($resql2)
+				{
+
+				}
+				else
+				{
+					$error++;
+					dol_print_error($db);
+				}
+				print ". ";
+				$i++;
+			}
+
+		}
+
+		if ($error == 0)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+	print '</td></tr>';
+}
+
+
+
+/*
+ * Migration of menus (use only 1 table instead of 3)
+ */
+function migrate_menus($db,$langs,$conf)
+{
+	dolibarr_install_syslog("upgrade2::migrate_menus");
+
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationMenusDetail')."</b><br>\n";
+
+	$error = 0;
+
+	$db->begin();
+
+	$sql = "SELECT m.rowid, mc.action";
+	$sql.= " FROM ".MAIN_DB_PREFIX."menu_constraint as mc, ".MAIN_DB_PREFIX."menu_const as md, ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " WHERE md.fk_menu = m.rowid AND md.fk_constraint = mc.rowid";
+	$sql.= " AND m.enabled = '1'";
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
+				$sql.= " enabled = '".$obj->action."'";
+				$sql.= " WHERE rowid=".$obj->rowid;
+				$sql.= " AND enabled = '1'";
 
 				$resql2=$db->query($sql);
 				if ($resql2)

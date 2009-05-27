@@ -18,11 +18,11 @@
  */
 
 /**
-		\file       htdocs/admin/menus/edit.php
-		\ingroup    core
-		\brief      Edition des menus
-		\version	$Id$
-*/
+ *		\file       htdocs/admin/menus/edit.php
+ *		\ingroup    core
+ *		\brief      Edition des menus
+ *		\version	$Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
@@ -58,9 +58,9 @@ if ($_REQUEST["menu_handler"])    $menu_handler=$_REQUEST["menu_handler"];
 */
 
 if (isset($_GET["action"]) && $_GET["action"] == 'update')
-{	
+{
 	if (! $_POST['cancel'])
-	{		
+	{
 		$menu = new Menubase($db);
 		$result=$menu->fetch($_POST['menuId']);
 		if ($result > 0)
@@ -70,6 +70,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'update')
 			$menu->url=$_POST['url'];
 			$menu->langs=$_POST['langs'];
 			$menu->position=$_POST['position'];
+			$menu->enabled=$_POST['enabled'];
 			$menu->perms=$_POST['perms'];
 			$menu->target=$_POST['target'];
 			$menu->user=$_POST['user'];
@@ -95,16 +96,16 @@ if (isset($_GET["action"]) && $_GET["action"] == 'update')
 		header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
 		exit;
 	}
-	
+
 	if ($_GET['return'])
 	{
 		header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
 		exit;
 	}
-} 
+}
 
 if (isset($_GET["action"]) && $_GET["action"] == 'add')
-{	
+{
 	if ($_POST['cancel'])
 	{
 		header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
@@ -155,13 +156,14 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add')
 	{
 		$menu = new Menubase($db);
 		$menu->fk_menu=$_POST['menuId'];
-		$menu->menu_handler=$_POST['menu_handler'];	
-		$menu->type=$_POST['type'];	
+		$menu->menu_handler=$_POST['menu_handler'];
+		$menu->type=$_POST['type'];
 		$menu->titre=$_POST['titre'];
 		$menu->leftmenu=$_POST['leftmenu'];
 		$menu->url=$_POST['url'];
 		$menu->langs=$_POST['langs'];
 		$menu->position=$_POST['position'];
+		$menu->enabled=$_POST['enabled'];
 		$menu->perms=$_POST['perms'];
 		$menu->target=$_POST['target'];
 		$menu->user=$_POST['user'];
@@ -177,11 +179,11 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add')
 			$mesg='<div class="error">'.$menu->error.'</div>';
 		}
 	}
-} 
+}
 
-
+/*
 if (isset($_GET["action"]) && $_GET["action"] == 'add_const')
-{	
+{
 
 	if($_POST['type'] == 'prede')
 	{
@@ -189,26 +191,26 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add_const')
 	}
 	else
 	{
-	
+
 		$sql = "SELECT max(rowid) as maxId FROM ".MAIN_DB_PREFIX."menu_constraint";
 		$result = $db->query($sql);
 		$objc = $db->fetch_object($result);
 		$constraint = ($objc->maxId)  + 1;
-	
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_constraint(rowid,action) VALUES(".$constraint.",'".$_POST['constraint']."')";
 		$db->query($sql);
-		
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_const(fk_menu, fk_constraint) VALUES(".$_POST['menuId'].",".$constraint.")";
 	}
-	
-	$db->query($sql);	
-	
-	header("location:edit.php?action=edit&menuId=".$_POST['menuId']);	
-	exit;	
+
+	$db->query($sql);
+
+	header("location:edit.php?action=edit&menuId=".$_POST['menuId']);
+	exit;
 }
 
 if (isset($_GET["action"]) && $_GET["action"] == 'del_const')
-{	
+{
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_const WHERE fk_menu = ".$_GET['menuId']." AND fk_constraint = ".$_GET['constId'];
 	$db->query($sql);
 
@@ -219,17 +221,19 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_const')
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_constraint WHERE rowid = ".$_GET['constId'];
 		$db->query($sql);
-	}	
-	
+	}
+
 	header("location:edit.php?action=edit&menuId=".$_GET['menuId']);
 	exit;
 }
+*/
 
 // Suppression
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
 	$this->db->begin();
-	
+
+	/*
 	$sql = "SELECT c.rowid, c.fk_constraint FROM ".MAIN_DB_PREFIX."menu_const as c WHERE c.fk_menu = ".$_GET['menuId'];
 	$res  = $db->query($sql);
 	if ($res)
@@ -239,18 +243,19 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_const WHERE rowid = ".$obj->rowid;
 			$result = $db->query($sql);
-			
+
 			$sql = "SELECT count(rowid) as countId FROM ".MAIN_DB_PREFIX."menu_const WHERE fk_constraint = ".$obj->fk_constraint;
 			$result = $db->query($sql);
 			$objc = $db->fetch_object($result);
-			
+
 			if($objc->countId == 0)
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_constraint WHERE rowid = ".$obj->fk_constraint;
 				$db->query($sql);
-			}	
+			}
 		}
 	}
+	*/
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".$_GET['menuId'];
 	$db->query($sql);
@@ -272,11 +277,11 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 		$_GET["action"]='';
 	}
 }
-  
-  
+
+
 
 /*
- * Affichage page
+ * View
  */
 
 $html=new Form($db);
@@ -285,19 +290,18 @@ $htmladmin=new FormAdmin($db);
 llxHeader();
 
 
-
 if (isset($_GET["action"]) && $_GET["action"] == 'create')
 {
-	print_titre($langs->trans("NewMenu"),'','setup');
-	
+	print_fiche_titre($langs->trans("NewMenu"),'','setup');
+
 	if ($mesg) print $mesg;
 	else print '<br>';
-	
+
 	print '<form action="./edit.php?action=add&menuId='.$_GET['menuId'].'" method="post" name="formmenucreate">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	print '<table class="border" width="100%">';
-	
+
 	// Id
 	$parent_rowid = $_GET['menuId'];
 	if ($_GET['menuId'])
@@ -306,13 +310,13 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 		$res  = $db->query($sql);
 		if ($res)
 		{
-	
+
 			while ($menu = $db->fetch_array ($res))
 			{
 				$parent_rowid = $menu['rowid'];
 				$parent_mainmenu = $menu['mainmenu'];
 				$parent_langs = $menu['langs'];
-				$parent_level = $menu['level'];	
+				$parent_level = $menu['level'];
 			}
 		}
 	}
@@ -380,13 +384,17 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	print '<option value=""'.($menu->target==""?' selected="true"':'').'>'.$langs->trans('').'</option>';
 	print '<option value="_blank"'.($menu->target=="_blank"?' selected="true"':'').'>'.$langs->trans('_blank').'</option>';
 	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
+
+	//Enabled
+	print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" size="60" name="enabled" value="'.$_POST["enabled"].'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
+
 	//Perms
 	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="60" name="perms" value="'.$_POST["perms"].'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
 	// Boutons
 	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';	
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 
 	print '</table>';
 
@@ -395,15 +403,16 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 
 elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
-	print_titre($langs->trans("ModifMenu"),'','setup');
+	print_fiche_titre($langs->trans("ModifMenu"),'','setup');
 	print '<br>';
-	
+
 	print '<form action="./edit.php?action=update" method="POST" name="formmenuedit">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="handler_origine" value="'.$menu_handler.'">';
-	
+	print '<input type="hidden" name="menuId" value="'.$_GET['menuId'].'">';
+
 	print '<table class="border" width="100%">';
-	
+
 	$menu = new Menubase($db);
 	$result=$menu->fetch($_GET['menuId']);
 
@@ -413,7 +422,6 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	//print '<td><input type="text" size="50" name="handler" value="all"></td>';
 	print '<td>'.$menu->fk_menu.'</td>';
 	print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
-	print '<input type="hidden" name="menuId" value="'.$_GET['menuId'].'">';
 
 	// Id
 	print '<tr><td>'.$langs->trans('Id').'</td><td>'.$menu->id.'</td><td>'.$langs->trans('DetailId').'</td></tr>';
@@ -423,7 +431,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
 	// Module
 	print '<tr><td>'.$langs->trans('MenuModule').'</td><td>'.$menu->module.'</td><td>'.$langs->trans('DetailMenuModule').'</td></tr>';
-	
+
 	// Type
 	print '<tr><td>'.$langs->trans('Type').'</td><td>'.$menu->type.'</td><td>'.$langs->trans('DetailType').'</td></tr>';
 
@@ -453,27 +461,31 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
 	print '<option value=""'.($menu->target==""?' selected="true"':'').'>'.$langs->trans('').'</option>';
 	print '<option value="_blank"'.($menu->target=="_blank"?' selected="true"':'').'>'.$langs->trans('_blank').'</option>';
-	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
-	
+	print '</select></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
+
+	// Enabled
+	print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" size="60" name="enabled" value="'.$menu->enabled.'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
+
 	// Perms
 	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="60" name="perms" value="'.$menu->perms.'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
-	// Bouton			
+	// Bouton
 	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 
 	print '</table>';
-	
+
 	print '</form>';
-	
+
 	print '<br>';
 
 	if ($mesg) print $mesg.'<br>';
-	
+
 	/*
 	* Lignes de contraintes
 	*/
+	/*
 	$sql = 'SELECT c.rowid, c.action';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'menu_constraint as c, '.MAIN_DB_PREFIX.'menu_const as mc';
 	$sql.= ' WHERE c.rowid = mc.fk_constraint';
@@ -485,7 +497,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	{
 		$num = $db->num_rows($resql);
 		$i = 0;
-		
+
 		print '<table class="noborder" width="100%">';
 		if ($num)
 		{
@@ -495,26 +507,26 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 			print "</tr>\n";
 		}
 		$var=true;
-		
+
 		$var = true;
 		while ($i < $num)
 		{
 			$objc = $db->fetch_object($resql);
-			
+
 			$var = !$var;
 			print '<tr '.$bc[$var].'>';
-			print '<td>'.$objc->action.'</td>';	
+			print '<td>'.$objc->action.'</td>';
 			print '<td align="center"><a href="edit.php?action=del_const&menuId='.$_GET['menuId'].'&constId='.$objc->rowid.'">'.img_delete().'</a></td>';
 
 			$i++;
 		}
-		
+
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('ConstraintsToShowOrNotEntry').'</td>';
 		print '<td width="16">&nbsp;</td>';
 		print "</tr>\n";
-		
-		
+
+
 		// Ajout de contraintes personalisees
 		print '<form action="edit.php?action=add_const" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -527,8 +539,8 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '  <td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 		print '</tr>';
 		print '</form>';
-		
-		
+
+
 		// Ajout de contraintes predefinis
 		print '<form action="edit.php?action=add_const" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -548,10 +560,10 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 			$objc = $db->fetch_object($resql);
 			print '<option value="'.$objc->rowid.'">'.dol_trunc($objc->action,70).'</option>';
 			$i++;
-			
+
 		}
-			
-		
+
+
 		print '</select>';
 		print '</td>';
 		print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
@@ -562,14 +574,9 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '</table>';
 		$db->free($resql);
 	}
-	
-	
-	print '</table>';
-	
+	*/
 
 }
-
-print '</div>';
 
 
 $db->close();
