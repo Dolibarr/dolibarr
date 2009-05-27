@@ -327,6 +327,7 @@ class FactureRec extends Facture
 				$this->lignes[$i] = $faclig;
 				$i++;
 			}
+
 			$this->db->free($result);
 			return 1;
 		}

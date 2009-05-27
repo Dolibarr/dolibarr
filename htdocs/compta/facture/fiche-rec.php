@@ -543,11 +543,11 @@ else
 					{
 						if ($objp->fk_statut == 0)
 						{
-							print '<td align="center">brouillon</td>';
+							print '<td align="center">'.$langs->trans("Draft").'</td>';
 						}
 						else
 						{
-							print '<td align="center"><a href="facture.php?filtre=paye:0,fk_statut:1">impay�e</a></td>';
+							print '<td align="center"><a href="facture.php?filtre=paye:0,fk_statut:1">'.$langs->trans("Validated").'</a></td>';
 						}
 					}
 					else

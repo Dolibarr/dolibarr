@@ -483,7 +483,7 @@ if ($_REQUEST['action'] == 'confirm_converttoreduc' && $_REQUEST['confirm'] == '
 
 
 /*
- * Insert invoice
+ * Insert new invoice in database
  */
 if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 {
@@ -533,7 +533,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		}
 	}
 
-	// Facture avoir
+	// Credit note invoice
 	if ($_POST['type'] == 2)
 	{
 		if (! $_POST['fac_avoir'] > 0)
@@ -1453,7 +1453,7 @@ if ($_GET['action'] == 'create')
 	{
 		if ($_GET['propalid'] == 0 && $_GET['commandeid'] == 0 && $_GET['contratid'] == 0)
 		{
-			$sql = 'SELECT r.rowid, r.titre, r.amount FROM '.MAIN_DB_PREFIX.'facture_rec as r';
+			$sql = 'SELECT r.rowid, r.titre, r.total_ttc FROM '.MAIN_DB_PREFIX.'facture_rec as r';
 			$sql.= ' WHERE r.fk_soc = '.$soc->id;
 			$resql=$db->query($sql);
 			if ($resql)
@@ -1463,12 +1463,15 @@ if ($_GET['action'] == 'create')
 
 				if ($num > 0)
 				{
-					print '<tr><td>'.$langs->trans('CreateFromRepeatableInvoice').'</td><td><select class="flat" name="fac_rec">';
+					print '<tr><td>'.$langs->trans('CreateFromRepeatableInvoice').'</td><td>';
+					print '<select class="flat" name="fac_rec">';
 					print '<option value="0" selected="true"></option>';
 					while ($i < $num)
 					{
 						$objp = $db->fetch_object($resql);
-						print '<option value="'.$objp->rowid.'">'.$objp->titre.' : '.$objp->amount.'</option>';
+						print '<option value="'.$objp->rowid.'"';
+						if ($_POST["fac_rec"] == $objp->rowid) print ' selected="true"';
+						print '>'.$objp->titre.' ('.$objp->total_ttc.' '.$langs->trans("TTC").')</option>';
 						$i++;
 					}
 					print '</select></td></tr>';

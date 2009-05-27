@@ -158,7 +158,7 @@ class Facture extends CommonObject
 		if ($this->fac_rec > 0)
 		{
 			require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture-rec.class.php');
-			$_facrec = new FactureRec($this->db, $this->fac_rec);
+			$_facrec = new FactureRec($this->db);
 			$result=$_facrec->fetch($this->fac_rec);
 
 			$this->projetid          = $_facrec->projetid;
@@ -277,7 +277,7 @@ class Facture extends CommonObject
 			}
 
 			/*
-			 * Produits de la facture récurrente
+			 * Insert lines of predefined invoices
 			 */
 			if (! $error && $this->fac_rec > 0)
 			{
@@ -298,8 +298,8 @@ class Facture extends CommonObject
 					$tva_tx,
 					$_facrec->lignes[$i]->produit_id,
 					$_facrec->lignes[$i]->remise_percent,
-					'','',0,0,'','HT',
-					$_facref->lignes[$i]->product_type
+					'','',0,0,'','HT',0,
+					$_facrec->lignes[$i]->product_type
 					);
 
 					if ( $result_insert < 0)
