@@ -199,7 +199,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		migrate_stocks($db,$langs,$conf);
 
 
-		// Script pour V2.6 -> V2.5
+		// Script pour V2.6 -> V2.7
 		migrate_menus($db,$langs,$conf);
 
 
