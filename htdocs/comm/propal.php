@@ -1608,7 +1608,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr '.$bc[$var].">\n";
 		print '<td '.$colspan.'>';
 
-		print $html->select_type_of_lines(-1,'type',1);
+		print $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
 		if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
 
 		// Editor wysiwyg
@@ -1630,7 +1630,7 @@ if ($id > 0 || ! empty($ref))
 		$html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $societe);
 		print "</td>\n";
 		print '<td align="right"><input type="text" size="5" name="np_price"></td>';
-		print '<td align="right"><input type="text" size="2" value="1" name="qty"></td>';
+		print '<td align="right"><input type="text" size="2" name="qty" value="'.(isset($_POST["qty"])?$_POST["qty"]:1).'"></td>';
 		print '<td align="right" nowrap><input type="text" size="1" value="'.$societe->remise_client.'" name="remise_percent">%</td>';
 		print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
 		print '</tr>';

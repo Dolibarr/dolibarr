@@ -3014,7 +3014,7 @@ else
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 
-				print $html->select_type_of_lines(-1,'type',1);
+				print $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
 				if (($conf->produit->enabled && $conf->service->enabled)
 				|| (empty($conf->produit->enabled) && empty($conf->service->enabled))) print '<br>';
 
