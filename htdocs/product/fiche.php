@@ -260,7 +260,9 @@ if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes' && $user->
 						$_error = 1;
 						$_GET["action"] = "";
 
-						$mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$product->ref).'</div>';
+						$mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$product->ref);
+						$mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
+						$mesg.='</div>';
 						//dol_print_error($product->db);
 					}
 					else

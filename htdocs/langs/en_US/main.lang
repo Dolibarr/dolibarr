@@ -112,6 +112,7 @@ ConfirmClone=Choose data you want to clone :
 NoCloneOptionsSpecified=No data to clone defined.
 CopyOf=Copy of
 Show=Show
+ShowCardHere=Show card
 Search=Search
 Valid=Valid
 Approve=Approve

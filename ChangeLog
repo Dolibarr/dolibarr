@@ -14,6 +14,7 @@ For users:
 - New: Can add a field errors-to in emailing.
 - New: Can use inline images in emails.
 - New: Add predefined invoices (can be use for repeated invoices).
+- New: Add a confirmation when cloning products.
 - Fix: Customer code was not correct on PDF it if contains special 
        characters.
 - Fix: Can update price even with "NPR" VAT rates.
