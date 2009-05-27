@@ -266,48 +266,6 @@ class DolibarrModules
 
 
 	/**
-	 *	\brief      Return version of module stored in database table.
-	 *	\return     string      Version of module
-	 * 	\remarks	This function is not used but is kept in code because it can be used later.
-	 */
-	function getDbVersion()
-	{
-		global $langs,$conf;
-
-		$langs->load("admin");
-
-		$sql ="SELECT active_version";
-		$sql.= " FROM ".MAIN_DB_PREFIX."dolibarr_modules";
-		$sql.= " WHERE numero = ".$this->numero;
-		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " AND active = 1";
-
-		dol_syslog("DolibarrModules::getDbVersion sql=".$sql);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-
-			if ($num > 0)
-			{
-				$row = $this->db->fetch_row($resql);
-
-				$this->dbversion = $row[0];
-			}
-
-			$this->db->free($resql);
-		}
-
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		elseif ($this->version == 'dolibarr') return DOL_VERSION;
-		elseif ($this->version) return $this->version;
-		else return "";
-
-	}
-
-
-	/**
 	 *	\brief      Retourne la liste des fichiers lang en rapport avec le module
 	 *	\return     array       Tableau des fichier lang
 	 */
