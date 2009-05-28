@@ -377,7 +377,7 @@ if ($result)
 		}
 
 		print '<tr class="liste_total">';
-		print "<td colspan=\"5\" align=\"left\">".$langs->trans("Total").": </td>";
+		print "<td colspan=\"4\" align=\"left\">".$langs->trans("Total")."</td>";
 		print "<td align=\"right\"><b>".price($total_ht)."</b></td>";
 		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 		print "<td align=\"right\"><b>".price($total_payed)."</b></td>";
