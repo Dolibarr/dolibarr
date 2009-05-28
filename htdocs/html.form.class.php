@@ -119,7 +119,7 @@ class Form
 			}
 
 			$s="";
-			$s.='<table class="nobordernopadding"><tr>';
+			$s.='<table class="nobordernopadding" summary=""><tr>';
 			if ($direction > 0)
 			{
 				if ($text)

@@ -296,7 +296,7 @@ class FormFile
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 			print_titre($langs->trans("BuildDocuments"));
-			print '<table class="border" width="100%">';
+			print '<table class="border" summary="listofdocumentstable" width="100%">';
 
 			print '<tr '.$bc[$var].'>';
 			if (! empty($modellist))
@@ -345,7 +345,7 @@ class FormFile
 			$titletoshow=$langs->trans("Documents");
 			if (! empty($title)) $titletoshow=$title;
 			print_titre($titletoshow);
-			print '<table class="border" width="100%">';
+			print '<table class="border" summary="listofdocumentstable" width="100%">';
 		}
 
 		// Boucle sur chaque ligne trouvee
