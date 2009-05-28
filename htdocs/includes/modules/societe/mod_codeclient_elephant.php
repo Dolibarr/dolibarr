@@ -45,7 +45,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 	var $searchcode; // String de recherche
 	var $numbitcounter; // Nombre de chiffres du compteur
-	var $prefixIsRequired; // Le champ prefix du tiers doit etre renseign� quand on utilise {pre}
+	var $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
 
 
 	/**		\brief      Constructeur classe
