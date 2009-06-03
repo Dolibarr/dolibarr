@@ -655,14 +655,7 @@ class Menubase
 					$perms = $this->verifCond($objm->perms);
 				}
 
-				// Define $constraint
-				$constraint = true;
-				if ($objm->action)
-				{
-					$constraint = $this->verifCond($objm->action);
-				}
-
-				// Define $constraint
+				// Define $enabled
 				$enabled = true;
 				if ($objm->enabled)
 				{

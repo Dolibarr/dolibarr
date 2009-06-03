@@ -62,6 +62,10 @@ EMailTestSubstitutionReplacedByGenericValues = En mode prova, les variables de s
 MailingAddFile = Adjuntar aquest arxiu
 NoAttachedFiles = Sense fitxers adjunts
 BadEMail = E-Mail incorrecte
+CloneEMailing = Clonar E-Mailing
+ConfirmCloneEMailing = Esteu segur de voler clonar aquest e-mailing?
+CloneContent = Clonar missatge
+CloneReceivers = Clonar destinataris
 # Libelle des modules de liste de destinataires mailing =  = 
 MailingModuleDescContactCompanies = Contactes de tercers (clients potencials, clients, proveïdors ...)
 MailingModuleDescDolibarrUsers = Usuaris de Dolibarr que tenen e-mail

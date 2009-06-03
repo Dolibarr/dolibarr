@@ -974,7 +974,7 @@ class FichinterLigne
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET duree = ".$total_duration;
 			$sql.= " WHERE rowid = ".$this->fk_fichinter;
-			$sql.= " AND entity ".$conf->entity;
+			$sql.= " AND entity = ".$conf->entity;
 
 			dol_syslog("FichinterLigne::update_total sql=".$sql);
 			$resql=$this->db->query($sql);

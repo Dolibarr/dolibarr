@@ -54,13 +54,19 @@ class MenuTop {
         print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
 
 		// Menu Home
-	    print '<td class="tmenu"><a href="'.DOL_URL_ROOT.'/index.php?mainmenu=home">'.$langs->trans("Home").'</a></td>';
+	    print '<td class="tmenu">';
+	    print '<a href="'.DOL_URL_ROOT.'/index.php?mainmenu=home">'.$langs->trans("Home").'</a>';
+	    print '</td>';
 
 	    // Put here top menu entries
 	    // ***** START *****
 
-		// print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/thepage1.php>My menu entry 1</a></td>';
-		// print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/thepage2.php>My menu entry 2</a></td>';
+		// print '<td class="tmenu">';
+		// print '<a '.$class.' href="'.DOL_URL_ROOT.'/thepage1.php>My menu entry 1</a>';
+		// print '</td>';
+		// print '<td class="tmenu">';
+		// print '<a '.$class.' href="'.DOL_URL_ROOT.'/thepage2.php>My menu entry 2</a>';
+		// print '</td>';
 	    // ...
 
 	    // ***** END *****
@@ -86,13 +92,20 @@ class MenuTop {
 					$url.="&idmenu=".$tabMenu[$i]['rowid'];
 					if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $class='class="tmenusel"';
 					else $class='class="tmenu"';
-					print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>';
+					print '<td class="tmenu">';
+					print '<a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>';
 					print $tabMenu[$i]['titre'];
-					print '</a></td>';
+					print '</a>';
+					print '</td>';
 	        	}
 	        	else
 	        	{
-	        		if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$tabMenu[$i]['titre'].'</a></td>';
+	        		if (! $this->hideifnotallowed) 
+					{
+						print '<td class="tmenu">';
+						print '<a class="tmenudisabled" '.$idsel.'href="#">'.$tabMenu[$i]['titre'].'</a>';
+						print '</td>';
+					}
 	        	}
 			}
         }

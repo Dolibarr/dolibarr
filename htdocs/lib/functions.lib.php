@@ -900,9 +900,9 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='')
 
 
 /**
- *	\brief      Affiche picto propre a une notion/module (fonction g�n�rique)
- *	\param      alt         Texte sur le alt de l'image
- *	\param      object      Objet pour lequel il faut afficher le logo (exemple: user, group, action, bill, contract, propal, product, ...)
+ *	\brief      Show a picto according to module/object (generic function)
+ *	\param      alt         Text of alt on image
+ *	\param      object      Objet pour lequel il faut afficher le logo (example: user, group, action, bill, contract, propal, product, ...)
  *	\return     string      Retourne tag img
  */
 function img_object($alt, $object)
@@ -2590,7 +2590,7 @@ function dol_nboflines($s,$maxchar=0)
 /**
  *	\brief     Return nb of lines of a formated text with \n and <br>
  *	\param	   texte      	Text
- *	\param	   maxlinesize  Largeur de ligne en caracteres(ou 0 si pas de limite - defaut)
+ *	\param	   maxlinesize  Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
  *	\return    int			Number of lines
  */
 function dol_nboflines_bis($texte,$maxlinesize=0)

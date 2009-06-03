@@ -236,6 +236,7 @@ UMaskExplanation=This parameter allow you to define permissions set by default o
 SeeWikiForAllTeam=Take a look at the wiki page for full list of all actors and their organisation
 UseACacheDelay = Delay for caching export response in seconds (0 or empty for no cache)
 DisableLinkToHelpCenter=Hide link "Need help or support" on login page
+AddCRIfTooLong=There is no automatic wrapping, so if line is out of page on documents because too long, you must add yourself carriage returns in the textarea.
 
 # Modules
 Module0Name=Users & groups

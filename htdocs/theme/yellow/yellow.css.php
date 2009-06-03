@@ -188,13 +188,6 @@ a.tmenudisabled:active
     font-weight: normal;
 }
 
-table.tmenu
-{
-    padding: 0px 0px 10px 0px;
-    margin: 0px 0px 0px 6px;
-}
-
-
 a.tmenu:link
 {
   color: #234046;
@@ -230,16 +223,24 @@ a.tmenusel
 
 
 
-/* Pour menu TOP auguria uniquement */
-* html div.tmenu li a
+/* Top menu */
+
+table.tmenu
+{
+    padding: 0px 0px 10px 0px;
+    margin: 0px 0px 0px 6px;
+}
+
+* html li.tmenu a
 {
 	width:40px;
 }
-div.tmenu ul {
+
+ul.tmenu {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-div.tmenu li {
+li.tmenu {
 	float: left;
 	border-right: solid 1px #000000;
 	height: 18px;
@@ -248,7 +249,7 @@ div.tmenu li {
 	margin:0;
 	padding:0;
 }
-div.tmenu li a{
+li.tmenu a{
   	font-size: 13px;
 	color:#000000;
 	text-decoration:none;
@@ -259,29 +260,29 @@ div.tmenu li a{
 	display: block;
 	font-weight: normal;
 }
-div.tmenu li a.tmenusel
+li.tmenu a.tmenusel
 {
 	background:#FFFFFF;
 	color:#000000;
 	font-weight: normal;
 }
-div.tmenu li a:visited
+li.tmenu a:visited
 {
 	color:#000000;
 	font-weight: normal;
 }
-div.tmenu li a:hover
+li.tmenu a:hover
 {
 	background:#FFFFFF;
 	color:#000000;
 	font-weight: normal;
 }
-div.tmenu li a:active
+li.tmenu a:active
 {
 	color:#000000;
 	font-weight: normal;
 }
-div.tmenu li a:link
+li.tmenu a:link
 {
 	font-weight: normal;
 }
@@ -294,7 +295,7 @@ a.login
 {
   position: absolute;
   right: 24px;
-  top: 3px;
+  top: 2px;
 
   color: #234046;
   padding: 0px 8px;
@@ -312,7 +313,7 @@ img.login
 {
   position: absolute;
   right: 8px;
-  top: 3px;
+  top: 2px;
 
   text-decoration:none;
   color:white;

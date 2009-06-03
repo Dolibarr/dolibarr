@@ -1013,6 +1013,7 @@ DetailTitre = Etiqueta de menú
 DetailMainmenu = Grup al qual pertany (obsolet)
 DetailUrl = URL de la pàgina cap a la qual el menú apunta
 DetailLeftmenu = Condició de visualització o no (obsolet)
+DetailEnabled = Condició de mostrar o no
 DetailRight = Condició de visualització completa o vidrossa
 DetailLangs = Arxiu langs per a la traducció del títol
 DetailUser = Intern / Extern / Tots

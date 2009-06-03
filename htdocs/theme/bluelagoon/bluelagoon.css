@@ -30,7 +30,7 @@ body {
   font-family: sans-serif; font-size: 0.95em; 
 }
 
-/***** Styles par défaut *****/
+/***** Styles par defaut *****/
 input
 { 
     font: 12px helvetica, verdana, arial, sans-serif; 
@@ -107,12 +107,6 @@ div.tmenu
     text-decoration: none;
 }
 
-table.tmenu
-{
-    padding: 0px 0px 10px 0px;
-    margin: 0px 0px 0px 10px;
-}
-
 a.tmenu:link
 {
   padding: 0em 1em;
@@ -142,18 +136,25 @@ a.tmenu:hover
 }
 
 
-/* Pour menu TOP auguria uniquement */
+/* Top menu */
+
+table.tmenu
+{
+    padding: 0px 0px 10px 0px;
+    margin: 0px 0px 0px 10px;
+}
+
 * html div.tmenu li a
 {
 	width:40px;
 }
-div.tmenu ul {
+
+ul.tmenu {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
-	
 }
-div.tmenu li {
+li.tmenu {
 	float: left;
 	border-right: solid 1px #000000;
 	height: 18px;
@@ -162,7 +163,8 @@ div.tmenu li {
 	margin:0;
 	padding:0;
 }
-div.tmenu li a{
+li.tmenu a
+{
   	font-size: 13px;
 	color:#000000;
 	text-decoration:none;
@@ -173,29 +175,29 @@ div.tmenu li a{
 	display: block;
 	font-weight: normal;
 }
-div.tmenu li a.tmenusel
+li.tmenu a.tmenusel
 {
 	background:#FFFFFF;
 	color:#000000;
 	font-weight: normal;
 }
-div.tmenu li a:visited
+li.tmenu a:visited
 {
 	color:#000000;
 	font-weight: normal;
 }
-div.tmenu li a:hover
+li.tmenu a:hover
 {
 	background:#FFFFFF;
 	color:#000000;
 	font-weight: normal;
 }
-div.tmenu li a:active
+li.tmenu a:active
 {
 	color:#000000;
 	font-weight: normal;
 }
-div.tmenu li a:link
+li.tmenu a:link
 {
 	font-weight: normal;
 }
@@ -367,7 +369,7 @@ a.tab:hover {
 
 /*
  *   Boutons actions
- *   Nouvelle syntaxe à utiliser
+ *   Nouvelle syntaxe ï¿½ utiliser
  */
 
 a.butAction:link { font-weight: normal; font: verdana,arial,helvetica; font-size: 12px; background: white; border: 1px solid #8CACBB; color: #436976; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; }

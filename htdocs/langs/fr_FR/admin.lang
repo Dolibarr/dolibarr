@@ -236,6 +236,7 @@ UMaskExplanation = Ce paramètre permet de définir les droits des fichiers cré
 SeeWikiForAllTeam = Voir le wiki pour le détail de tous les acteurs et leur organisation
 UseACacheDelay = Delay de mise en cache de l'export en secondes (0 ou vide pour aucun cache)
 DisableLinkToHelpCenter=Cacher le lien "Besoin d'un support ou aide" sur la page de login
+AddCRIfTooLong=Il n'y a pas de coupures de lignes automatiques, aussi si votre texte est trop long sur les documents, il vous faut ajouter par vous-meme des retours chariots dans la zone de saisie du texte.
 
 # Modules = undefined
 Module0Name = Utilisateurs & groupes

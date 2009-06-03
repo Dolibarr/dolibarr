@@ -16,15 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-        \file       htdocs/user/group/index.php
-        \brief      Page d'accueil de la gestion des groupes
-        \version    $Revision$
-*/
+ *      \file       htdocs/user/group/index.php
+ * 		\ingroup	core
+ *      \brief      Page d'accueil de la gestion des groupes
+ *      \version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -72,8 +71,6 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
-
-    print "<br>";
 
     $param="search_group=$search_group&amp;sall=$sall";
     print "<table class=\"noborder\" width=\"100%\">";

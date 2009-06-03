@@ -735,9 +735,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print '<link rel="alternate stylesheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
 		*/
 
-		print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'/">'."\n";
-		print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-		print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
+		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'">'."\n";
+		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
+		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
 		// Output javascript links
 		if (! $disablejs && $conf->use_javascript_ajax)
@@ -853,14 +853,14 @@ function top_menu($head, $title='', $target='')
 		$text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
 		$text.='>';
 		$text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-		$text.=' alt="" title=""';
+		$text.=' alt="'.$langs->trans("Logout").'" title=""';
 		$text.='>';
 		$text.='</a>';
 	}
 	else
 	{
 		$text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-		$text.=' alt="" title=""';
+		$text.=' alt="'.$langs->trans("Logout").'" title=""';
 		$text.='>';
 	}
 	$htmltext.='<u>'.$langs->trans("User").'</u>';
@@ -915,28 +915,28 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	{
 		$langs->load("companies");
 		$searchform.=printSearchForm(DOL_URL_ROOT.'/societe.php', DOL_URL_ROOT.'/societe.php',
-		img_object($langs->trans("List"),'company').' '.$langs->trans("Companies"), 'soc', 'socname');
+		img_object('','company').' '.$langs->trans("Companies"), 'soc', 'socname');
 	}
 
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
 	{
 		$langs->load("companies");
 		$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/index.php', DOL_URL_ROOT.'/contact/index.php',
-		img_object($langs->trans("List"),'contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
+		img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
 	}
 
 	if (($conf->produit->enabled || $conf->service->enabled) && $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE && $user->rights->produit->lire)
 	{
 		$langs->load("products");
 		$searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/index.php',
-		img_object($langs->trans("List"),'product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
+		img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
 	}
 
 	if ($conf->adherent->enabled && $conf->global->MAIN_SEARCHFORM_ADHERENT && $user->rights->adherent->lire)
 	{
 		$langs->load("members");
 		$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php',
-		img_object($langs->trans("List"),'user').' '.$langs->trans("Members"), 'member', 'sall');
+		img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
 	}
 
 	// Define $bookmarks
@@ -1085,11 +1085,12 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
 	global $langs;
-	$ret ='<form action="'.$urlaction.'" method="post">';
+	$ret='';
 	$ret.='<div class="menu_titre">';
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
 	$ret.=$title.'</a><br>';
 	$ret.='</div>';
+	$ret.='<form action="'.$urlaction.'" method="post">';
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';

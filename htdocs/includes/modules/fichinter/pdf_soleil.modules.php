@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/includes/modules/fichinter/pdf_soleil.modules.php
- \ingroup    ficheinter
- \brief      Fichier de la classe permettant de generer les fiches d'intervention au modele Soleil
- \version    $Id$
+ *	\file       htdocs/includes/modules/fichinter/pdf_soleil.modules.php
+ *	\ingroup    ficheinter
+ *	\brief      Fichier de la classe permettant de generer les fiches d'intervention au modele Soleil
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
@@ -31,16 +31,16 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
- \class      pdf_soleil
- \brief      Classe permettant de g�n�rer les fiches d'intervention au mod�le Soleil
+ *	\class      pdf_soleil
+ *	\brief      Class to build interventions documents with model Soleil
  */
 
 class pdf_soleil extends ModelePDFFicheinter
 {
 
 	/**
-	 \brief      Constructeur
-	 \param	    db		Handler acces base de donnee
+	 *	\brief      Constructeur
+	 *	\param	    db		Handler acces base de donnee
 	 */
 	function pdf_soleil($db=0)
 	{
@@ -74,7 +74,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	}
 
 	/**
-	 *	\brief      Fonction g�n�rant la fiche d'intervention sur le disque
+	 *	\brief      Fonction generant la fiche d'intervention sur le disque
 	 *	\param	    fichinter		Object fichinter
 	 *	\param		outputlangs		Lang output object
 	 *	\return	    int     		1=ok, 0=ko
@@ -265,7 +265,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$nexY = $pdf->GetY();
 
 				$tab_height = 0;
-				$tab_top=$nexY;
+				$tab_top=$nexY+3;
 				$pdf->line(10, $nexY, 200, $nexY);
 
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3. Then writeMultiCell must use 3 also.
@@ -298,10 +298,10 @@ class pdf_soleil extends ModelePDFFicheinter
 						$i++;
 					}
 				}
-				$pdf->line(10, $tab_top+$tab_height, 200, $tab_top+$tab_height);
+				$pdf->line(10, $tab_top+$tab_height+3, 200, $tab_top+$tab_height+3);
 
 				// Rectangle for title and all lines
-				$pdf->Rect(10, 100, 190, $tab_height+ ($tab_top - 100));
+				$pdf->Rect(10, 100, 190, $tab_top+$tab_height+3-100);
 				$pdf->SetXY (10, $pdf->GetY() + 20);
 				$pdf->MultiCell(60, 5, '', 0, 'J', 0);
 

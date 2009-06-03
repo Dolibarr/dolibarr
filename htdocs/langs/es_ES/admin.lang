@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - admin 
+# Dolibarr language file - es_ES - admin
 CHARSET = UTF-8
 Version = Versión
 VersionProgram = Versión programa
@@ -1013,6 +1013,7 @@ DetailTitre = Etiqueta de menú
 DetailMainmenu = Grupo al cual pertenece (obsoleto)
 DetailUrl = URL de la página hacia la cual el menú apunta
 DetailLeftmenu = Condición de visualización o no (obsoleto)
+DetailEnabled = Condición de mostrar o no
 DetailRight = Condición de visualización completa o cristálida
 DetailLangs = Archivo langs para la traducción del título
 DetailUser = Interno / Externo / Todos

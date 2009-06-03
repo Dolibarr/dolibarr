@@ -19,10 +19,11 @@
  */
 
 /**
-        \file       htdocs/user/index.php
-        \brief      Page d'accueil de la gestion des utilisateurs
-        \version    $Id$
-*/
+ *      \file       htdocs/user/index.php
+ * 		\ingroup	core
+ *      \brief      Page d'accueil de la gestion des utilisateurs
+ *      \version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -76,8 +77,6 @@ if ($result)
 {
     $num = $db->num_rows($result);
     $i = 0;
-
-    print "<br>";
 
     $param="search_user=$search_user&amp;sall=$sall";
     print "<table class=\"noborder\" width=\"100%\">";

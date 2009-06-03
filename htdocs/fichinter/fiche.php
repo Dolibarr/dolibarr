@@ -269,7 +269,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 		dol_print_error($db);
 		exit;
 	}
-	$desc=$_POST['desc'];
+	$desc=$_POST['np_desc'];
 	$date_intervention = dol_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
 	$duration = ConvertTime2Seconds($_POST['durationhour'],$_POST['durationmin']);
 
@@ -277,7 +277,12 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 	$fichinterline->desc=$desc;
 	$fichinterline->duration=$duration;
 	$result = $fichinterline->update();
-
+	if ($result < 0)
+	{
+		dol_print_error($db);
+		exit;
+	}
+	
 	$outputlangs = $langs;
 	if (! empty($_REQUEST['lang_id']))
 	{
@@ -286,6 +291,13 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 	}
 	fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
 
+	unset($_POST['dihour']);
+	unset($_POST['dimin']);
+	unset($_POST['dimonth']);
+	$dateintervention='';
+	unset($_POST['np_desc']);
+	unset($_POST['durationhour']);
+	unset($_POST['durationmin']);
 }
 
 /*
@@ -689,16 +701,16 @@ elseif ($_GET["id"] > 0)
 				print '<td>';
 				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
-				// �diteur wysiwyg
+				// Editeur wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('desc',$objp->description,164,'dolibarr_details');
+					$doleditor=new DolEditor('np_desc',$objp->description,164,'dolibarr_details');
 					$doleditor->Create();
 				}
 				else
 				{
-					print '<textarea name="desc" cols="70" class="flat" rows="'.ROWS_2.'">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
+					print '<textarea name="np_desc" cols="70" class="flat" rows="'.ROWS_2.'">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
 				}
 				print '</td>';
 
