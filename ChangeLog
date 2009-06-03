@@ -15,17 +15,20 @@ For users:
 - New: Can use inline images in emails.
 - New: Add predefined invoices (can be use for repeated invoices).
 - New: Add a confirmation when cloning products.
-- New: Add stock in product lists
+- New: Add stock in product lists.
+- New: Can filter list of stock movement on date or product.
+- New: Added a link from product list to their stock movements.
 - Fix: Customer code was not correct on PDF it if contains special 
        characters.
 - Fix: Can update price even with "NPR" VAT rates.
 - Fix: When product type is missing, description is not lost when adding 
        new product lines.
 - Fix: CC and BCC in emails was not used if using SMTPS handler.
-       
+- Fix: Last character was lost when text end with n or r.
+
 For translators:
 - Update some language files.
-  
+
 For developers:
 - Update fckeditor to 2.6.4.
 - Removed some deprecated files.
@@ -34,7 +37,7 @@ For developers:
   sources on two repositories.
 - Removed useless code of old commercial module.
 - Updated wiki documentation.
-- Better W3C standard
+- Better W3C standard.
  
 
 ***** Changelog for 2.6 compared to 2.5 *****
