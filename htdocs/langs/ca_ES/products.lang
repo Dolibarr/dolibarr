@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - products 
+# Dolibarr language file - ca_ES - products
 CHARSET = UTF-8
 ProductRef = Ref. producte
 ProductLabel = Etiqueta producte
@@ -144,3 +144,7 @@ ServiceNb = Servei nº %s
 ListProductByPopularity = Llistat de productes/serveis per popularitat
 Finished = Producte manofacturat
 RowMaterial = Matèria prima
+CloneProduct = Clonar producte/servei
+ConfirmCloneProduct = Esteu segur de voler clonar el producte o servei <b>%s</b> ?
+CloneContentProduct = Clonar només la informació general del producte/servei
+ClonePricesProduct = Clonar la informació general i els preus
