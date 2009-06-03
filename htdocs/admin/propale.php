@@ -469,7 +469,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_PROPALE_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnProposal").'<br>';
+print $langs->trans("FreeLegalTextOnProposal").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 print '<textarea name="PROPALE_FREE_TEXT" class="flat" cols="100">'.$conf->global->PROPALE_FREE_TEXT.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';

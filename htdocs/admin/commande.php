@@ -463,7 +463,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_COMMANDE_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnOrders").'<br>';
+print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 print '<textarea name="COMMANDE_FREE_TEXT" class="flat" cols="100">'.$conf->global->COMMANDE_FREE_TEXT.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';

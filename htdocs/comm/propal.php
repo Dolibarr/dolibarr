@@ -51,6 +51,7 @@ if (isset($_GET["msg"])) { $mesg=urldecode($_GET["mesg"]); }
 $year=isset($_GET["year"])?$_GET["year"]:"";
 $month=isset($_GET["month"])?$_GET["month"]:"";
 $socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
+$mesg=isset($_GET['mesg'])?urldecode($_GET['mesg']):'';
 
 // Security check
 $module='propale';
@@ -505,7 +506,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 						{
 							// Redirect here
 							// This avoid sending mail twice if going out and then back to page
-							Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&msg='.urlencode($mesg));
+							Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&mesg='.urlencode($mesg));
 							exit;
 						}
 					}

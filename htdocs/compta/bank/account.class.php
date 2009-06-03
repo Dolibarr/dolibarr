@@ -143,7 +143,7 @@ class Account extends CommonObject
 	function get_url($line_id)
 	{
 		$lines = array();
-		
+
 		$sql = "SELECT url_id, url, label, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_url";
 		$sql.= " WHERE fk_bank = ".$line_id;
@@ -276,7 +276,7 @@ class Account extends CommonObject
 				$sql.= "'".$rowid."'";
 				$sql.= ", '".$categorie."'";
 				$sql.= ")";
-				
+
 				$result = $this->db->query($sql);
 				if (! $result)
 				{
@@ -370,7 +370,7 @@ class Account extends CommonObject
 					$sql.= ", 'SOLD'";
 					$sql.= ", 1";
 					$sql.= ")";
-					
+
 					$this->db->query($sql);
 				}
 				return $this->id;
@@ -441,8 +441,8 @@ class Account extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db.' sql='.$sql;
-			dol_print_error($this->error, LOG_ERR);
+			$this->error=$this->db->lasterror();
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -450,12 +450,12 @@ class Account extends CommonObject
 
 	/*
 	 *    	\brief      Update BBAN (RIB) account fields
-	 *    	\param      user        Object utilisateur qui modifie
-	 *		\return		int			<0 si ko, >0 si ok
+	 *    	\param      user        Object user making update
+	 *		\return		int			<0 if KO, >0 if OK
 	 */
 	function update_bban($user='')
 	{
-		global $langs;
+		global $conf,$langs;
 
 		// Chargement librairie pour acces fonction controle RIB
 		require_once(DOL_DOCUMENT_ROOT.'/lib/bank.lib.php');
@@ -492,8 +492,8 @@ class Account extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db.' sql='.$sql;
-			dol_print_error($this->error, LOG_ERR);
+			$this->error=$this->db->lasterror();
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -507,7 +507,7 @@ class Account extends CommonObject
 	function fetch($id,$ref='')
 	{
 		global $conf;
-		
+
 		$sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
 		$sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
 		$sql.= " domiciliation, proprio, adresse_proprio,";
@@ -576,7 +576,7 @@ class Account extends CommonObject
 	function delete()
 	{
 		global $conf;
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE rowid  = ".$this->rowid;
 		$sql.= " AND entity = ".$conf->entity;
@@ -658,7 +658,7 @@ class Account extends CommonObject
 		$sql = "SELECT COUNT(rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql.= " WHERE fk_account=".$this->id;
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj=$this->db->fetch_object($resql);
@@ -770,7 +770,7 @@ class Account extends CommonObject
 		$now=gmmktime();
 
 		$this->nbtodo=$this->nbtodolate=0;
-		
+
 		$sql = "SELECT b.rowid, b.datev as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -904,7 +904,7 @@ class AccountLine
 	function fetch($rowid)
 	{
 		global $conf;
-		
+
 		$sql = "SELECT b.datec, b.datev, b.dateo, b.amount, b.label as label, b.fk_account,";
 		$sql.= " b.fk_user_author, b.fk_user_rappro,";
 		$sql.= " b.fk_type, b.num_releve, b.num_chq, b.rappro, b.note,";
@@ -1004,9 +1004,9 @@ class AccountLine
 
 
 	/**
-	 *		\brief 		Met a jour en base la ligne
-	 *		\param 		user			Objet user qui met a jour
-	 *		\param 		notrigger		0=Desactive les triggers
+	 *		\brief 		Update bank account record in database
+	 *		\param 		user			Object user making update
+	 *		\param 		notrigger		0=Disable all triggers
 	 *		\param		int				<0 if KO, >0 if OK
 	 */
 	function update($user,$notrigger=0)

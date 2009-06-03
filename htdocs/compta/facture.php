@@ -42,9 +42,6 @@ if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT.'/propal.class.php'
 if ($conf->contrat->enabled)  require_once(DOL_DOCUMENT_ROOT.'/contrat/contrat.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 
-if (! $user->rights->facture->lire)
-accessforbidden();
-
 $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');

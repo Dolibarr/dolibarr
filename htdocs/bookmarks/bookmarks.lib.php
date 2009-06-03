@@ -72,7 +72,7 @@ function printBookmarksList ($aDb, $aLangs)
 			while ($i < $conf->global->BOOKMARKS_SHOW_IN_MENU && $obj = $db->fetch_object($resql))
 			{
 				$ret.='<div class="menu_contenu"><a class="vsmenu" title="'.$obj->title.'" href="'.$obj->url.'"'.($obj->target == 1?' target="_blank"':'').'>';
-				$ret.=' '.img_object($langs->trans("BookmarkThisPage"),'bookmark').' ';
+				$ret.=' '.img_object('','bookmark').' ';
 				$ret.= dol_trunc($obj->title, 20).'</a><br></div>';
 				$i++;
 			}
