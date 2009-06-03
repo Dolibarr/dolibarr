@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("products");
 
@@ -34,6 +35,9 @@ if (!$user->rights->produit->lire) accessforbidden();
 $page = $_GET["page"];
 $sortfield = $_GET["sortfield"];
 $sortorder = $_GET["sortorder"];
+$idproduct = isset($_GET["idproduct"])?$_GET["idproduct"]:$_PRODUCT["idproduct"];
+$year = isset($_GET["year"])?$_GET["year"]:$_POST["year"];
+$month = isset($_GET["month"])?$_GET["month"]:$_POST["month"];
 if ($page < 0) $page = 0;
 $offset = $conf->liste_limit * $page;
 
@@ -67,6 +71,22 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
 	$sql.= " AND IFNULL(c.visible,1)=1";
 }
+if ($month > 0)
+{
+	if ($year > 0)
+	$sql.= " AND date_format(m.datem, '%Y-%m') = '$year-$month'";
+	else
+	$sql.= " AND date_format(m.datem, '%m') = '$month'";
+}
+if ($year > 0)         $sql .= " AND date_format(m.datem, '%Y') = $year";
+if (! empty($_GET['search_product']))
+{
+	$sql.= " AND p.label LIKE '%".addslashes($_GET['search_product'])."%'";
+}
+if (! empty($_GET['idproduct']))
+{
+	$sql.= " AND p.rowid = '".$_GET['idproduct']."'";
+}
 $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit($conf->liste_limit + 1 ,$offset);
 
@@ -75,6 +95,12 @@ $resql = $db->query($sql) ;
 if ($resql)
 {
 	$num = $db->num_rows($resql);
+
+	if ($idproduct)
+	{
+		$product = new Product($db);
+		$product->fetch($idproduct);
+	}
 
 	if ($_GET["id"])
 	{
@@ -158,6 +184,28 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Warehouse"),"mouvement.php", "s.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Units"),"mouvement.php", "m.value","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
+
+	// Lignes des champs de filtre
+	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+
+	print '<tr class="liste_titre">';
+	print '<td valign="right">';
+	print $langs->trans('Month').': <input class="flat" type="text" size="2" maxlength="2" name="month" value="'.$month.'">';
+	print '&nbsp;'.$langs->trans('Year').': ';
+	$max_year = date("Y");
+	$syear = $year;
+	$form->select_year($syear,'year',1, '', $max_year);
+	print '</td>';
+	print '<td align="left">';
+	print '<input class="flat" type="text" size="20" name="search_product" value="'.($idproduct?$product->libelle:$_GET['search_product']).'">';
+	print '</td>';
+	print '<td align="right">';
+	print '&nbsp;';
+	print '</td>';
+	print '<td align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+	print '</td>';
+	print "</tr>\n";
+	print '</form>';
 
 	$var=True;
 	while ($i < min($num,$conf->liste_limit))
