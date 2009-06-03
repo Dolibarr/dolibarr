@@ -177,7 +177,7 @@ if ($id > 0 || ! empty($ref))
 
 	$rowspan=8;
 
-	// Soci�t�
+	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
 
 	// Ligne info remises tiers
