@@ -212,28 +212,19 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '</table>';
     print '<br>';
 
-
-    // Message of the day
     $var=true;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
+
+    // Hide need help link on login page
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
-	if ($conf->fckeditor->enabled)
-	{
-		// Editeur wysiwyg
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('main_motd',$conf->global->MAIN_MOTD,158,'dolibarr_notes','In',false);
-		$doleditor->Create();
-	}
-	else
-	{
-		print '<textarea name="main_motd" cols="90" rows="'.ROWS_5.'">'.dol_htmlentitiesbr_decode($conf->global->MAIN_MOTD).'</textarea>';
-	}
-	print '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
+    print $html->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
 
-
-    // Message d'accueil'
+    // Message on login page
 	$var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
 	if ($conf->fckeditor->enabled)
@@ -249,13 +240,21 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	}
 	print '</td></tr>';
 
-    // Hide need help link on login page
+	// Message of the day on home page
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
-    print $html->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
-    print '</td>';
-	print '<td width="20">&nbsp;</td>';
-	print '</tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
+	if ($conf->fckeditor->enabled)
+	{
+		// Editeur wysiwyg
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('main_motd',$conf->global->MAIN_MOTD,158,'dolibarr_notes','In',false);
+		$doleditor->Create();
+	}
+	else
+	{
+		print '<textarea name="main_motd" cols="90" rows="'.ROWS_5.'">'.dol_htmlentitiesbr_decode($conf->global->MAIN_MOTD).'</textarea>';
+	}
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -344,7 +343,8 @@ else
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td><td>&nbsp;</td></tr>';
     $var=true;
-    foreach ($searchform as $key => $value) {
+    foreach ($searchform as $key => $value)
+    {
         $var=!$var;
         print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>' . ($searchformconst[$key]?$langs->trans("yes"):$langs->trans("no")).'</td>';
 		print '<td align="left">'.$langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
@@ -353,25 +353,26 @@ else
     print '</table>';
     print '<br>';
 
-	// Message of the day
     $var=true;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>';
-    print nl2br($conf->global->MAIN_MOTD);
-    print '</td></tr>';
-
-	// Message login
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td>';
-    print nl2br($conf->global->MAIN_HOME);
-    print '</td></tr>';
 
     // Link to help center
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
     print yn($conf->global->MAIN_HELPCENTER_DISABLELINK);
+    print '</td></tr>';
+
+    // Message login
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td>';
+    print nl2br($conf->global->MAIN_HOME);
+    print '</td></tr>';
+
+    // Message of the day
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>';
+    print nl2br($conf->global->MAIN_MOTD);
     print '</td></tr>';
 
     print '</table>';

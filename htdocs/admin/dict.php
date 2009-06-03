@@ -100,7 +100,7 @@ $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.t
 $tabsql[7] = "SELECT a.id    as rowid, a.id as code, a.libelle AS libelle, a.deductible, a.actioncompta, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
 $tabsql[9] = "SELECT code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
-$tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, t.fk_pays as pays_id, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
+$tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, p.code as pays_code, t.fk_pays as pays_id, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX."cond_reglement AS c";
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
@@ -620,17 +620,27 @@ if ($_GET["id"])
 					{
 						$showfield=1;
 						$valuetoshow=$obj->$fieldlist[$field];
-
 						if ($valuetoshow=='all') {
 							$valuetoshow=$langs->trans('All');
 						}
-						if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm') {
+						else if ($fieldlist[$field]=='pays') {
+							$key=$langs->trans("Country".strtoupper($obj->pays_code));
+							$valuetoshow=($key != "Country".strtoupper($obj->pays_code))?$key:$obj->pays;
+						}
+						else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm') {
 							$valuetoshow=yn($valuetoshow);
 						}
-						if ($fieldlist[$field]=='price') {
+						else if ($fieldlist[$field]=='price') {
 							$valuetoshow=price($valuetoshow);
 						}
-						if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') {
+						else if ($fieldlist[$field]=='price') {
+							$valuetoshow=price($valuetoshow);
+						}
+						else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]=='llx_c_pays') {
+							$key=$langs->trans("Country".strtoupper($obj->code));
+							$valuetoshow=($obj->code && $key != "Country".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
+						}
+						else if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') {
 							$showfield=0;
 						}
 						if ($showfield) print '<td>'.$valuetoshow.'</td>';
