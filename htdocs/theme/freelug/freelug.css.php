@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /**
-		\file       htdocs/theme/freelug/freelug.css.php
-		\brief      Fichier de style CSS du theme Freelug
-		\version    $Id$
-*/
+ *		\file       htdocs/theme/freelug/freelug.css.php
+ *		\brief      Fichier de style CSS du theme Freelug
+ *		\version    $Id$
+ */
 
 require("../../conf/conf.php");
 
@@ -203,21 +203,6 @@ a.tmenudisabled:active
     font-weight: normal;
 }
 
-table.tmenu
-{
-    padding: 0px 0px 10px 0px;
-    margin: 0px 0px 0px 6px;
-}
-
-.menu
-{
-  background: #ccccb3;
-  font-size: 12px;
-  color: #000000;
-  text-decoration: none;
-}
-
-
 a.tmenu:link
 {
   color: #234046;
@@ -245,6 +230,15 @@ a.tmenu:hover
   border: 1px solid #eeeedd;
   text-decoration: none;
 }
+a.tmenu:active
+{
+  color: #202020;
+  background: #bbbbcc;
+  padding: 0px 8px;
+  margin: 0px 0px 6px 0px;
+  border: 1px solid #eeeedd;
+  text-decoration: none;
+}
 
 a.tmenusel
 {
@@ -256,18 +250,26 @@ a.tmenusel
 }
 
 
-/* Pour menu TOP auguria uniquement */
-* html div.tmenu li a
+/* Top menu */
+
+table.tmenu
+{
+    padding: 0px 0px 10px 0px;
+    margin: 0px 0px 0px 6px;
+}
+
+* html li.tmenu a
 {
 	width:40px;
 }
-div.tmenu ul {
+
+ul.tmenu {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
 
 }
-div.tmenu li {
+li.tmenu {
 	float: left;
 	border-right: solid 1px #000000;
 	height: 18px;
@@ -276,7 +278,7 @@ div.tmenu li {
 	margin:0;
 	padding:0;
 }
-div.tmenu li a{
+li.tmenu a{
   	font-size: 13px;
 	color:#000000;
 	text-decoration:none;
@@ -287,29 +289,29 @@ div.tmenu li a{
 	display: block;
 	font-weight: normal;
 }
-div.tmenu li a.tmenusel
+li.tmenu a.tmenusel
 {
 	background:#FFFFFF;
 	color:#000000;
 	font-weight: normal;
 }
-div.tmenu li a:visited
+li.tmenu a:visited
 {
 	color:#000000;
 	font-weight: normal;
 }
-div.tmenu li a:hover
+li.tmenu a:hover
 {
 	background:#FFFFFF;
 	color:#000000;
 	font-weight: normal;
 }
-div.tmenu li a:active
+li.tmenu a:active
 {
 	color:#000000;
 	font-weight: normal;
 }
-div.tmenu li a:link
+li.tmenu a:link
 {
 
 	font-weight: normal;

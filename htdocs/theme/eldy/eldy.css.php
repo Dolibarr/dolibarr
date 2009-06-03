@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C)      2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -19,10 +19,10 @@
  */
 
 /**
-		\file       htdocs/theme/eldy/eldy.css.php
-		\brief      Fichier de style CSS du theme Eldy
-		\version    $Id$
-*/
+ *		\file       htdocs/theme/eldy/eldy.css.php
+ *		\brief      Fichier de style CSS du theme Eldy
+ *		\version    $Id$
+ */
 
 require("../../conf/conf.php");
 
@@ -178,41 +178,45 @@ div.tmenu
     text-decoration: none;
 }
 
-a.tmenudisabled
-{
-	color: #757575;
-	font-size: 12px;
-	padding-left: 6px;
-	padding-right: 6px;
-	padding-top: 3px;
-	cursor: not-allowed;
-    font-weight: normal;
-}
 a.tmenudisabled:link
 {
 	color: #757575;
+    font-weight: normal;
+	font-size: 12px;
+	padding: 0px 5px 0px 5px;
+	margin: 0px 1px 2px 1px;
+	cursor: not-allowed;
     font-weight: normal;
 }
 a.tmenudisabled:visited
 {
 	color: #757575;
     font-weight: normal;
+	font-size: 12px;
+	padding: 0px 5px 0px 5px;
+	margin: 0px 1px 2px 1px;
+	cursor: not-allowed;
+    font-weight: normal;
 }
 a.tmenudisabled:hover
 {
 	color: #757575;
+    font-weight: normal;
+	font-size: 12px;
+	padding: 0px 5px 0px 5px;
+	margin: 0px 1px 2px 1px;
+	cursor: not-allowed;
     font-weight: normal;
 }
 a.tmenudisabled:active
 {
 	color: #757575;
     font-weight: normal;
-}
-
-table.tmenu
-{
-    padding: 0px 0px 10px 0px;
-    margin: 0px 0px 0px 6px;
+	font-size: 12px;
+	padding: 0px 5px 0px 5px;
+	margin: 0px 1px 2px 1px;
+	cursor: not-allowed;
+    font-weight: normal;
 }
 
 a.tmenu:link
@@ -220,8 +224,6 @@ a.tmenu:link
   color: #234046;
   padding: 0px 5px 0px 5px;
   margin: 0px 1px 2px 1px;
-  font-size: 12px;
-  font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
 }
 a.tmenu:visited
@@ -229,9 +231,6 @@ a.tmenu:visited
   color: #234046;
   padding: 0px 5px 0px 5px;
   margin: 0px 1px 2px 1px;
-  border: 0px solid #b3c5cc;
-  font-size: 12px;
-  font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
 }
 a.tmenu:hover
@@ -239,9 +238,6 @@ a.tmenu:hover
   color: #234046;
   padding: 0px 5px 0px 5px;
   margin: 0px 0px 0px 0px;
-  text-decoration: none;
-  font-size: 12px;
-  font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
   background: #dee7ec;
   border-right: 1px solid #555555;
@@ -251,136 +247,96 @@ a.tmenu:hover
 }
 a.tmenu:active
 {
+  color: #234046;
   padding: 0px 5px 0px 5px;
   margin: 0px 0px 0px 0px;
-  text-decoration: none;
-  font-size: 12px;
-  font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
-  background:#F4F4F4;
+  background: #F4F4F4;
   border-right: 1px solid #555555;
   border-top: 1px solid #D8D8D8;
   border-left: 1px solid #D8D8D8;
   border-bottom: 2px solid #dee7ec;
 }
-a.tmenusel
+
+a.tmenusel:link
 {
-  color: #234046;
   padding: 0px 5px 0px 5px;
   margin: 0px 0px 0px 0px;
-  font-size: 12px;
-  font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
+  color: #234046;
   background: #F4F4F4;
   border-right: 1px solid #555555;
   border-top: 1px solid #D8D8D8;
   border-left: 1px solid #D8D8D8;
   border-bottom: 2px solid #F4F4F4;
 }
-a.tmenusel:link
-{
-  font-weight: normal;
-}
 a.tmenusel:visited
 {
+  padding: 0px 5px 0px 5px;
+  margin: 0px 0px 0px 0px;
   font-weight: normal;
+  color: #234046;
+  background: #F4F4F4;
+  border-right: 1px solid #555555;
+  border-top: 1px solid #D8D8D8;
+  border-left: 1px solid #D8D8D8;
+  border-bottom: 2px solid #F4F4F4;
 }
 a.tmenusel:hover
 {
+  padding: 0px 5px 0px 5px;
+  margin: 0px 0px 0px 0px;
   font-weight: normal;
+  color: #234046;
+  background: #F4F4F4;
+  border-right: 1px solid #555555;
+  border-top: 1px solid #D8D8D8;
+  border-left: 1px solid #D8D8D8;
+  border-bottom: 2px solid #F4F4F4;
 }
 a.tmenusel:active
 {
+  padding: 0px 5px 0px 5px;
+  margin: 0px 0px 0px 0px;
   font-weight: normal;
+  color: #234046;
+  background: #F4F4F4;
+  border-right: 1px solid #555555;
+  border-top: 1px solid #D8D8D8;
+  border-left: 1px solid #D8D8D8;
+  border-bottom: 2px solid #F4F4F4;
 }
 
+/* Top menu */
 
-/* Pour menu TOP auguria uniquement */
-* html div.tmenu li a{
+table.tmenu
+{
+    padding: 0px 0px 10px 0px;	// x y z w x=top offset
+    margin: 0px 0px 0px 6px;
+}
+
+* html li.tmenu a
+{
 	width:40px;
 }
-div.tmenu ul {
-	padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-	list-style: none;
 
+ul.tmenu {
+    padding: 0px 0px 10px 0px;
+    margin: 3px 0px 0px 6px;
+	list-style: none;
 }
-div.tmenu li {
+li.tmenu {
 	float: left;
-	border-right: solid 1px #7699A9;
 	padding-left:5px;
 	padding-right:5px;
 	padding-top: 2px;
 	height: 18px;
 	position:relative;
 	display: block;
-	margin:0;
-	padding:0;
-	font-weight: normal;
-	}
-div.tmenu li a
-{
-  	font-size: 13px;
-	color:#000000;
-	text-decoration:none;
-	padding-left:5px;
-	padding-right:5px;
-	padding-top: 2px;
-	height: 18px;
-	display: block;
-	margin:0;
-	padding:0;
+	padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 	font-weight: normal;
 }
-div.tmenu li a.tmenusel
-{
-	background:#F4F4F4;
-	color:#000000;
-	padding-left:5px;
-	padding-right:5px;
-	padding-top: 2px;
-	height: 18px;
-	font-weight: normal;
-}
-div.tmenu li a:visited
-{
-	color:#000000;
-	padding-left:5px;
-	padding-right:5px;
-	padding-top: 2px;
-	height: 18px;
-	font-weight: normal;
-}
-div.tmenu li a:hover
-{
-	background:#F4F4F4;
-	color:#000000;
-	padding-left:5px;
-	padding-right:5px;
-	padding-top: 2px;
-	height: 18px;
-	font-weight: normal;
-	border-bottom: 0px;
-}
-div.tmenu li a:active
-{
-	color:#4F9EC9;
-	padding-left:5px;
-	padding-right:5px;
-	padding-top: 2px;
-	height: 18px;
-	font-weight: normal;
-}
-div.tmenu li a:link
-{
-	color:#000000;
-	padding-left:5px;
-	padding-right:5px;
-	padding-top: 2px;
-	height: 18px;
-	font-weight: normal;
-}
-
 
 
 /* Login */

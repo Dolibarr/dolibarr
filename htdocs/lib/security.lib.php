@@ -108,13 +108,13 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Table 1
 	$title='Dolibarr '.DOL_VERSION;
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
-	print '<table summary="'.$title.'" cellpadding="0" cellspacing="0" border="0" align="center" width="480">'."\n";;
+	print '<table summary="'.$title.'" cellpadding="0" cellspacing="0" border="0" align="center" width="498">'."\n";;
 	print '<tr class="vmenu"><td align="center">'.$title.'</td></tr>'."\n";
 	print '</table>'."\n";
 	print '<br>'."\n\n";
 
 	// Table 2
-	print '<table summary="Login area" cellpadding="2" align="center" width="480">'."\n";
+	print '<table summary="Login area" cellpadding="2" align="center" width="498">'."\n";
 
 	print '<tr><td colspan="3">&nbsp;</td></tr>';
 
@@ -122,7 +122,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$demologin='';
 	$demopassword='';
-	if (isset($conf->global->MAIN_DEMO))
+	if (! empty($conf->global->MAIN_DEMO))
 	{
 		$tab=split(',',$conf->global->MAIN_DEMO);
 		$demologin=$tab[0];
@@ -151,8 +151,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 
 	// Login field
-	print '<td align="left" valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
-	print '<td valign="bottom"><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="';
+	print '<td align="left" valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b> &nbsp; </td>';
+	print '<td valign="bottom" nowrap="nowrap"><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="';
 	print (!empty($lastuser)?$lastuser:(isset($_REQUEST["username"])?$_REQUEST["username"]:$demologin));
 	print '" tabindex="1" /></td>';
 

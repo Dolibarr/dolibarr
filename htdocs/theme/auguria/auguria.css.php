@@ -148,19 +148,21 @@ div.tmenu
     border-left: 0px;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 2px 0px;
-    font-size: 12px;
+    font-size: 13px;
     background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/nav.jpg' ?>) ;
     height: 22px;
 }
+
 a.tmenudisabled
 {
 	color: #9FCED9;
 	font-size: 12px;
 	padding-left: 6px;
 	padding-right: 6px;
-	padding-top: 3px;
+	padding-top: 2px;
 	cursor: not-allowed;
     font-weight: normal;
+	font-size: 13px;
 }
 a.tmenudisabled:link
 {
@@ -183,64 +185,49 @@ a.tmenudisabled:active
     font-weight: normal;
 }
 
-table.tmenu
-{
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-}
-
-a.tmenu:link
+a.tmenu
 {
   	color:#FFFFFF;
 	text-decoration:none;
-	padding-left:5px;
-	padding-right:5px;
+	padding-left:6px;
+	padding-right:6px;
 	padding-top: 2px;
-	height: 21px;
+	height: 22px;
 	font-weight: normal;
+	font-size: 13px;
+}
+a.tmenu:link
+{
+  	color:#FFFFFF;
+    font-weight: normal;
 }
 a.tmenu:visited
 {
   	color:#FFFFFF;
-	text-decoration:none;
-	padding-left:5px;
-	padding-right:5px;
-	padding-top: 2px;
-	height: 21px;
-	font-weight: normal;
+    font-weight: normal;
 }
 a.tmenu:hover
 {
 	color:#234046;
-	text-decoration:none;
-	padding-left:5px;
-	padding-right:5px;
-	padding-top: 2px;
-	height: 21px;
-	font-weight: normal;
-	background: #FFFFFF;
+    font-weight: normal;
 }
 a.tmenu:active
 {
 	color:#234046;
-	background:#4F9EC9;
-	text-decoration:none;
-	padding-left:5px;
-	padding-right:5px;
-	padding-top: 2px;
-	height: 21px;
     font-weight: normal;
 }
+
 a.tmenusel
 {
 	color:#234046;
 	text-decoration:none;
-	padding-left:5px;
-	padding-right:5px;
+	padding-left: 6px;
+	padding-right: 6px;
 	padding-top: 2px;
-	height: 21px;
+	height: 22px;
 	font-weight: normal;
 	background: #FFFFFF;
+	font-size: 13px;
 }
 a.tmenusel:link
 {
@@ -260,63 +247,33 @@ a.tmenusel:active
 }
 
 
-/* Pour menu TOP auguria uniquement */
-* html div.tmenu li a
+/* Top menu */
+
+table.tmenu
+{
+    padding: 1px 0px 0px 0px;	// x y z w x=top offset
+    margin: 0px 0px 0px 0px;
+}
+
+* html li.tmenu a
 {
 	width:40px;
 }
-div.tmenu ul {
-	padding: 0px 0px 0px 0px;
+
+ul.tmenu {
+	padding: 3px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
 }
-div.tmenu li {
+li.tmenu {
 	float: left;
 	border-right: solid 1px #4F9EC9;
-	height: 22px;
+	height: 18px;
 	position:relative;
 	display: block;
-	margin:0;
-	padding:0;
+	padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
-div.tmenu li a
-{
-  	font-size: 13px;
-	color:#FFFFFF;
-	text-decoration:none;
-	padding-left: 6px;
-	padding-right: 6px;
-	padding-top: 2px;
-	height: 22px;
-	display: block;
-	font-weight: normal;
-}
-div.tmenu li a:visited
-{
-	font-weight: normal;
-}
-div.tmenu li a:hover
-{
-	background:#FFFFFF;
-	color:#4F9EC9;
-	font-weight: normal;
-}
-div.tmenu li a:active
-{
-	color:#4F9EC9;
-	font-weight: normal;
-}
-div.tmenu li a:link
-{
-	font-weight: normal;
-}
-div.tmenu li a.tmenusel
-{
-	background:#FFFFFF;
-	color:#4F9EC9;
-	font-weight: normal;
-}
-
 
 
 /* Login */

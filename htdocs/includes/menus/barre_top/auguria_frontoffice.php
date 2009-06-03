@@ -18,91 +18,115 @@
  */
 
 /**
-	    \file       htdocs/includes/menus/barre_top/auguria_backoffice.php
-		\brief      Gestionnaire nomme Auguria du menu du haut
-		\version    $Id$
+ \file       htdocs/includes/menus/barre_top/auguria_backoffice.php
+ \brief      Gestionnaire nomme Auguria du menu du haut
+ \version    $Id$
 
-        \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
-        \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
-		\remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a>
-*/
+ \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
+ \remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
+ \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
+ \remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a>
+ */
 
 
 /**
-        \class      MenuTop
-	    \brief      Classe permettant la gestion du menu du haut Auguria
-*/
+ *	\class      MenuTop
+ *	\brief      Classe permettant la gestion du menu du haut Auguria
+ */
 
 class MenuTop {
 
-    var $require_left=array("auguria_backoffice");     // Si doit etre en phase avec un gestionnaire de menu gauche particulier
-    var $atarget="";                                // Valeur du target a utiliser dans les liens
+	var $require_left=array("auguria_backoffice");	// Si doit etre en phase avec un gestionnaire de menu gauche particulier
+	var $hideifnotallowed=1;						// Put 0 for back office menu, 1 for front office menu
+	var $atarget="";                                // Valeur du target a utiliser dans les liens
 
 
-    /**
-     *    \brief      Constructeur
-     *    \param      db      Handler d'acc�s base de donn�e
-     */
-    function MenuTop($db)
-    {
-        $this->db=$db;
-    }
+	/**
+	 *    \brief      Constructeur
+	 *    \param      db      Database access handler
+	 */
+	function MenuTop($db)
+	{
+		$this->db=$db;
+	}
 
 
-    /**
-     *    \brief      Affiche le menu
-     */
-    function showmenu()
-    {
-    	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
-    	
-    	global $user,$conf,$langs,$dolibarr_main_db_name;
-    	
-    	// On sauve en session le menu principal choisi
-    	if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
-    	if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
-    	$_SESSION["leftmenuopened"]="";
-    	
-    	$menuArbo = new Menubase($this->db,'auguria','top');
-    	$tabMenu = $menuArbo->menuTopCharger(1,$_SESSION['mainmenu'], 'auguria');
-    	
-    	print '<ul>';
-    	
-    	for($i=0; $i<count($tabMenu); $i++)
-      {
-      	if ($tabMenu[$i]['enabled'] == true)
-      	{
-      		if ($tabMenu[$i]['right'] == true)
-      		{
-      			// Define url
-      			if (eregi($tabMenu[$i]['url'],"^(http:\/\/|https:\/\/)"))
-	        	{
-	        		$url = $tabMenu[$i]['url'];
-	        	}
-	        	else
-	        	{
-	        		$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-	        		if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
-	        		else $url.='&';
-	        		$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
-	        		$url.="&idmenu=".$tabMenu[$i]['rowid'];
-	        	}
-      			if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $class='class="tmenusel"';
-      			else  $class='class="tmenu"';
-      			// Define idsel
-      			$idsel='';
-      			print '<li><a '.$class.' '.$idsel.'href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
-      		}
-      		else
-	        {
-	        	print '<li><div class="tmenudisabled">'.$tabMenu[$i]['titre'].'</div></li>';
-	        }
-	      }
-	    }
 
-        print '</ul>';
-    }
+	/**
+	 *    \brief      Show menu
+	 */
+	function showmenu()
+	{
+		require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+
+		global $user,$conf,$langs,$dolibarr_main_db_name;
+
+		// On sauve en session le menu principal choisi
+		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
+		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
+		$_SESSION["leftmenuopened"]="";
+
+		$menuArbo = new Menubase($this->db,'auguria','top');
+		$tabMenu = $menuArbo->menuTopCharger($this->hideifnotallowed,$_SESSION['mainmenu'], 'auguria');
+
+		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<ul class="tmenu">'."\n";
+		else print '<table class="tmenu" summary="topmenu"><tr class="tmenu">'."\n";
+
+		for($i=0; $i<count($tabMenu); $i++)
+		{
+			if ($tabMenu[$i]['enabled'] == true)
+			{
+				$idsel=(empty($tabMenu[$i]['mainmenu'])?'none':$tabMenu[$i]['mainmenu']);
+				if ($tabMenu[$i]['right'] == true)	// Is allowed
+				{
+					// Define url
+					if (eregi($tabMenu[$i]['url'],"^(http:\/\/|https:\/\/)"))
+					{
+						$url = $tabMenu[$i]['url'];
+					}
+					else
+					{
+						$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
+						if (! eregi('\?',$url)) $url.='?';
+						else $url.='&';
+						if (! eregi('mainmenu',$url) || ! eregi('leftmenu',$url))
+						{
+							$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=&';
+						}
+						$url.="idmenu=".$tabMenu[$i]['rowid'];
+					}
+					if (! empty($_SESSION['mainmenu']) && $tabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $class='class="tmenusel"';
+					else $class='class="tmenu"';
+
+					if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<li class="tmenu" id="li_'.$idsel.'">';
+					else print '<td class="tmenu" id="td_'.$idsel.'">';
+
+					print '<a '.$class.' id="mainmenu_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":"").'>';
+					print $tabMenu[$i]['titre'];
+					print '</a>';
+
+					if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '</li>'."\n";
+					else print '</td>'."\n";
+				}
+				else
+				{
+					if (! $this->hideifnotallowed)
+					{
+						if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<li class="tmenu" id="li_'.$idsel.'">';
+						else print '<td class="tmenu" id="td_'.$idsel.'">';
+
+						print '<a class="tmenudisabled" id="mainmenu_'.$idsel.'" href="#">'.$tabMenu[$i]['titre'].'</a>';
+
+						if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '</li>'."\n";
+						else print '</td>'."\n";
+					}
+				}
+			}
+		}
+
+		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '</ul>'."\n";
+		else print '</tr></table>'."\n";
+	}
 
 }
 
