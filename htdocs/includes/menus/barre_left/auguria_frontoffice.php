@@ -40,11 +40,11 @@ class MenuLeft {
 
     var $require_top=array("auguria_frontoffice");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
 	var $newmenu;
-	var $menuArbo;
-    
+
 	var $overwritemenufor = array();
-    var $leftmenu;    
-    
+    var $leftmenu;
+
+
     /**
      *    \brief      Constructeur
      *    \param      db            Handler d'acc�s base de donn�e
@@ -54,18 +54,17 @@ class MenuLeft {
     {
         $this->db=$db;
         $this->menu_array=$menu_array;
-  
         $this->newmenu = new Menu();
     }
-  
-    
+
+
     /**
      *    \brief      Affiche le menu
      */
     function showmenu()
     {
         global $user,$conf,$langs,$dolibarr_main_db_name;
-        
+
         // On recupere mainmenu et leftmenu qui definissent le menu a afficher
         if (isset($_GET["mainmenu"])) {
             // On sauve en session le menu principal choisi
@@ -73,7 +72,7 @@ class MenuLeft {
             $_SESSION["mainmenu"]=$mainmenu;
             $_SESSION["leftmenuopened"]="";
         } else {
-            // On va le chercher en session si non defini par le lien    
+            // On va le chercher en session si non defini par le lien
             $mainmenu=$_SESSION["mainmenu"];
         }
 
@@ -89,22 +88,22 @@ class MenuLeft {
                 $_SESSION["leftmenuopened"]=$this->leftmenu;
             }
         } else {
-            // On va le chercher en session si non d�fini par le lien    
+            // On va le chercher en session si non d�fini par le lien
             $this->leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
         }
-        
-        
-        
+
+        //this->menu_array contains menu in pre.inc.php
+
         /**
          * On definit newmenu en fonction de mainmenu et leftmenu
          * ------------------------------------------------------
          */
-        if ($mainmenu) 
+        if ($mainmenu)
         {
        		require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
-        	
+
        		$menuArbo = new Menubase($this->db,'auguria','left');
- 			$this->overwritemenufor = $menuArbo->listeMainmenu();        
+ 			$this->overwritemenufor = $menuArbo->listeMainmenu();
  			$this->newmenu = $menuArbo->menuLeftCharger($this->newmenu,$mainmenu,$this->leftmenu,1,'auguria');
 
             /*
@@ -113,30 +112,31 @@ class MenuLeft {
             if ($mainmenu && ! in_array($mainmenu,$this->overwritemenufor)) { $mainmenu=""; }
         }
 
+		//var_dump($this->newmenu->liste);
+		//var_dump($this->menu_array);
 
-        
+
         /**
-         *  Si on est sur un cas g�r� de surcharge du menu, on ecrase celui par defaut
+         *  Si on est sur un cas gere de surcharge du menu, on ecrase celui par defaut
          */
         if ($mainmenu) {
             $this->menu_array=$this->newmenu->liste;
         }
-		
 
-				
-		
+
+
         // Affichage du menu
         $alt=0;
         if (! sizeof($this->menu_array))
         {
             print '<div class="blockvmenuimpair">'."\n";
             print $langs->trans("NoMenu");
-            print '</div>';        
+            print '</div>';
         }
         else
         {
             $contenu = 0;
-            for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++) 
+            for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++)
             {
                 $alt++;
                 if ($this->menu_array[$i]['level']==0)
@@ -150,7 +150,7 @@ class MenuLeft {
                         print '<div class="blockvmenupair">'."\n";
                     }
                 }
-    
+
 				// Place tabulation
 				$tabstring='';
 				$tabul=($this->menu_array[$i]['level'] - 1);
@@ -158,24 +158,33 @@ class MenuLeft {
 				{
 					for ($j=0; $j < $tabul; $j++)
 					{
-						$tabstring.='&nbsp; &nbsp; ';
+						$tabstring.='&nbsp; &nbsp;';
 					}
 				}
 
-                // Menu niveau 0
-				if ($this->menu_array[$i]['level']==0) 
+				// Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
+				$url=$this->menu_array[$i]['url'];
+				if (! eregi('mainmenu=',$this->menu_array[$i]['url']))
+				{
+					if (! eregi('\?',$url)) $url.='?';
+					else $url.='&';
+					$url.='mainmenu='.$mainmenu;
+				}
+
+				// Menu niveau 0
+				if ($this->menu_array[$i]['level']==0)
                 {
                     if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
-                    if ($this->menu_array[$i]['enabled']) 
+                    if ($this->menu_array[$i]['enabled'])
                     {
-                        	
-                        print '<div class="menu_titre">'.$tabstring.'<a class="menu_titre" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>';	
+
+                        print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$url.'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>';
                     }
                     else
-                    { 
-						print '<div class="menu_titre">'.$tabstring.'<font class="menu_titre_disabled">'.$this->menu_array[$i]['titre'].'</font></div>';
-                    } 
-                    $contenu = 0;  
+                    {
+						print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font></div>';
+                    }
+                    $contenu = 0;
                 }
 				// Menu niveau > 0
 				if ($this->menu_array[$i]['level'] > 0)
@@ -184,18 +193,18 @@ class MenuLeft {
 
 					if ($this->menu_array[$i]['enabled'])
 					{
-						print '<div class="menu_contenu">'.$tabstring.'<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>';
+						print '<div class="menu_contenu">'.$tabstring.'<a class="vsmenu" href="'.$url.'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>';
 					}
-					else 
+					else
 					{
 						print '<div class="menu_contenu">'.$tabstring.'<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font></div>';
 					}
                 }
-				
+
                 if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)  {
                     print "</div>\n";
                 }
-                
+
             }
             if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
         }
