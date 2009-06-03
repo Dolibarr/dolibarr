@@ -182,7 +182,7 @@ function conf($dolibarr_main_document_root)
 
 
 /**
- *	\brief		Affiche entete HTML
+ *	\brief		Show HTML header
  */
 function pHeader($soutitre,$next,$action='none')
 {
@@ -201,21 +201,16 @@ function pHeader($soutitre,$next,$action='none')
 	print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
 	print '<title>'.$langs->trans("Help").'</title>'."\n";
 	print '</head>'."\n";
+
 	print '<body>'."\n";
-	print '<table class="noborder"><tr valign="middle">';
+
+	print '<table class="noborder" summary="helpcentertitle"><tr valign="middle">';
 	print '<td width="20">';
-	print '<img src="'.DOL_URL_ROOT.'/theme/common/helpcenter.png">';
+	print '<img src="'.DOL_URL_ROOT.'/theme/common/helpcenter.png" alt="logohelpcenter">';
 	print '</td>';
 	print '<td>';
 	print '<span class="titre">'.$soutitre.'</span>'."\n";
 	print '</td></tr></table>';
-
-	print '<form action="'.$next.'" method="POST">'."\n";
-	print '<input type="hidden" name="action" value="'.$action.'">'."\n";
-
-//	print '<table class="main" width="100%"><tr><td>'."\n";
-
-//	print '<table class="main-inside" width="100%"><tr><td>'."\n";
 }
 
 /**
@@ -230,7 +225,6 @@ function pFooter($nonext=0,$setuplang='')
 	$langs->load("main");
 	$langs->load("admin");
 
-	print '</form>'."\n";
 	print '</body>'."\n";
 	print '</html>'."\n";
 }
