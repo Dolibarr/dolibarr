@@ -774,7 +774,7 @@ class pdf_oursin extends ModelePDFFactures
 		{
 			$pdf->Text($this->marges['g']+163, $tab_top + 5,$outputlangs->transnoentities("Note"));
 		}
-		$pdf->Text($this->marges['g']+175, $tab_top + 5, $outputlangs->transnoentities("TotalHT"));
+		$pdf->Text($this->marges['g']+175, $tab_top + 5, $outputlangs->transnoentities("TotalHTShort"));
 
 		return $pdf->GetY();
 	}
@@ -1015,26 +1015,47 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'L');
 		}
 
+		// Add list of linked orders and proposals
+	    $object->load_object_linked();
 
-		/*
-		 * ref propal
-		 */
-		if ($conf->propal->enabled)
+	    if ($conf->propal->enabled)
 		{
 			$outputlangs->load('propal');
-
-			$sql = "SELECT ".$object->db->pdate("p.datep")." as dp, p.ref, p.rowid as propalid";
-			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $object->id";
-			$result = $object->db->query($sql);
-			if ($result)
+			foreach($object->linked_object as $key => $val)
 			{
-				$objp = $object->db->fetch_object();
-				if ($objp->ref)
+				if ($val['type'] == 'propal')
 				{
-					$posy+=4;
-					$pdf->SetXY($this->marges['g'],$posy);
-					$pdf->SetFont('Arial','',9);
-					$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefProposal")." : ".$objp->ref);
+					$newobject=new Propal($this->db);
+					$result=$newobject->fetch($val['linkid']);
+					if ($result >= 0)
+					{
+						$posy+=4;
+						$pdf->SetXY($this->marges['g'],$posy);
+						$pdf->SetFont('Arial','',9);
+						$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($newobject->ref));
+					}
+				}
+			}
+		}
+
+	    if ($conf->commande->enabled)
+		{
+			$outputlangs->load('orders');
+			foreach($object->linked_object as $key => $val)
+			{
+				if ($val['type'] == 'order')
+				{
+					$newobject=new Propal($this->db);
+					$result=$newobject->fetch($val['linkid']);
+					if ($result >= 0)
+					{
+						$posy+=4;
+						$pdf->SetXY($this->marges['g'],$posy);
+						$pdf->SetFont('Arial','',9);
+						$text=$newobject->ref;
+						if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+						$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text));
+					}
 				}
 			}
 		}

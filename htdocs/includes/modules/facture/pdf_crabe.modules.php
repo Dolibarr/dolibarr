@@ -124,13 +124,14 @@ class pdf_crabe extends ModelePDFFactures
 
 		if ($conf->facture->dir_output)
 		{
-			// D�finition de l'objet $fac (pour compatibilite ascendante)
+			// Definition de l'objet $fac (pour compatibilite ascendante)
 			if (! is_object($fac))
 			{
 				$id = $fac;
 				$fac = new Facture($this->db,"",$id);
 				$ret=$fac->fetch($id);
 			}
+
 			$fac->fetch_client();
 
 			$deja_regle = $fac->getSommePaiement();
@@ -1008,6 +1009,51 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetXY(100,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
+		}
+
+		// Add list of linked orders and proposals
+	    $object->load_object_linked();
+
+	    if ($conf->propal->enabled)
+		{
+			$outputlangs->load('propal');
+			foreach($object->linked_object as $key => $val)
+			{
+				if ($val['type'] == 'propal')
+				{
+					$newobject=new Propal($this->db);
+					$result=$newobject->fetch($val['linkid']);
+					if ($result >= 0)
+					{
+						$posy+=4;
+						$pdf->SetXY(100,$posy);
+						$pdf->SetFont('Arial','',9);
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($newobject->ref), '', 'R');
+					}
+				}
+			}
+		}
+
+	    if ($conf->commande->enabled)
+		{
+			$outputlangs->load('orders');
+			foreach($object->linked_object as $key => $val)
+			{
+				if ($val['type'] == 'order')
+				{
+					$newobject=new Commande($this->db);
+					$result=$newobject->fetch($val['linkid']);
+					if ($result >= 0)
+					{
+						$posy+=4;
+						$pdf->SetXY(100,$posy);
+						$pdf->SetFont('Arial','',9);
+						$text=$newobject->ref;
+						if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+					}
+				}
+			}
 		}
 
 		if ($showadress)

@@ -333,10 +333,10 @@ if ($chid > 0)
 		$sql.= " AND p.fk_typepaiement = c.id";
 		$sql.= " ORDER BY dp DESC";
 
-		$result = $db->query($sql);
-		if ($result)
+		$resql = $db->query($sql);
+		if ($resql)
 		{
-			$num = $db->num_rows($result);
+			$num = $db->num_rows($resql);
 			$i = 0; $total = 0;
 			echo '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
@@ -346,7 +346,7 @@ if ($chid > 0)
 			$var=True;
 			while ($i < $num)
 			{
-				$objp = $db->fetch_object($result);
+				$objp = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr $bc[$var]><td>";
 				print img_object($langs->trans("Payment"),"payment").' ';
@@ -369,7 +369,7 @@ if ($chid > 0)
 				print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
 			}
 			print "</table>";
-			$db->free();
+			$db->free($resql);
 		}
 		else
 		{

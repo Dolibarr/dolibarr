@@ -811,6 +811,109 @@ class CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 * 	Load array of objects linked to current object. Links are loaded into this->linked_object array.
+	 */
+	function load_object_linked()
+	{
+		$this->linked_object=array();
+
+		// Links beetween objects are stored in this table
+		$sql = 'SELECT sourceid, sourcetype, targetid, targettype';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
+		$sql.= " WHERE (source_id = '.$this->id.' AND source_type = 'invoice')";
+		$sql.= " OR    (target_id = '.$this->id.' AND target_id = 'invoice')";
+		dol_syslog("CommonObject::load_object_linked sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+				if ($obj->sourceid == $this->id)
+				{
+					$this->linked_object[]=array('linkid'=>$obj->targetid, 'type'=>$obj->targettype);
+				}
+				if ($obj->targetid == $this->id)
+				{
+					$this->linked_object[]=array('linkid'=>$obj->sourceid, 'type'=>$obj->sourcetype);
+				}
+				$i++;
+			}
+		}
+
+
+		// For backward compatibility, read other old link tables co_fa (will be moved later)
+		if ($this->element == 'facture' || $this->element == 'commande')
+		{
+			if ($this->element == 'facture')  $sql = "SELECT fk_commande as sourceid";
+			if ($this->element == 'commande') $sql = "SELECT fk_facture  as sourceid";
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'co_fa';
+			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+			dol_syslog("CommonObject::load_object_linked sql=".$sql);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					if ($this->element == 'facture')  $this->linked_object[]=array('linkid'=>$obj->sourceid,	'type'=>'order');
+					if ($this->element == 'commande') $this->linked_object[]=array('linkid'=>$obj->sourceid,	'type'=>'invoice');
+					$i++;
+				}
+			}
+		}
+		// For backward compatibility, read other old link tables fa_pr (will be moved later)
+		if ($this->element == 'facture' || $this->element == 'propal')
+		{
+			if ($this->element == 'facture')  $sql = "SELECT fk_propal as sourceid";
+			if ($this->element == 'propal') $sql = "SELECT fk_facture  as sourceid";
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'fa_pr';
+			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+			dol_syslog("CommonObject::load_object_linked sql=".$sql);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					if ($this->element == 'facture') $this->linked_object[]=array('linkid'=>$obj->sourceid,	'type'=>'propal');
+					if ($this->element == 'propal')  $this->linked_object[]=array('linkid'=>$obj->sourceid,	'type'=>'invoice');
+					$i++;
+				}
+			}
+		}
+		// For backward compatibility, read other old link tables co_pr (will be moved later)
+		if ($this->element == 'commande' || $this->element == 'propal')
+		{
+			if ($this->element == 'commande') $sql = "SELECT fk_propale as sourceid";
+			if ($this->element == 'propal')   $sql = "SELECT fk_commande as sourceid";
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'co_pr';
+			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+			dol_syslog("CommonObject::load_object_linked sql=".$sql);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					if ($this->element == 'commande') $this->linked_object[]=array('linkid'=>$obj->sourceid,	'type'=>'propal');
+					if ($this->element == 'propal')   $this->linked_object[]=array('linkid'=>$obj->sourceid,	'type'=>'order');
+					$i++;
+				}
+			}
+		}
+	}
+
 }
 
 ?>

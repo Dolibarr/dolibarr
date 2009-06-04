@@ -3369,7 +3369,7 @@ else
 						print '<td width="150">'.$langs->trans('Ref').'</td>';
 						print '<td>'.$langs->trans('RefCustomer').'</td>';
 						print '<td align="center">'.$langs->trans('Date').'</td>';
-						print '<td align="right">'.$langs->trans('AmountHT').'</td>';
+						print '<td align="right">'.$langs->trans('AmountHTShort').'</td>';
 						print '</tr>';
 
 						$var=True;
@@ -3423,7 +3423,7 @@ else
 							print '<td width="150">'.$langs->trans('Ref').'</td>';
 							print '<td>'.$langs->trans('RefCustomerOrderShort').'</td>';
 							print '<td align="center">'.$langs->trans('Date').'</td>';
-							print '<td align="right">'.$langs->trans('AmountHT').'</td>';
+							print '<td align="right">'.$langs->trans('AmountHTShort').'</td>';
 							print '</tr>';
 							$var=true;
 							while ($i < $num)
