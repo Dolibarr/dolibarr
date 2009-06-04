@@ -52,3 +52,7 @@ SendingMethodCOLSUI=Colissimo
 
 # NumRef
 NumRefModelJade=Return a reference number with format BLYY00001, ... where YY is year. Number at end is never reset to zero.
+
+# ModelDocument
+DocumentModelSirocco=Simple document model for delivery receipts
+DocumentModelTyphon=More complete document model for delivery receipts (logo...)

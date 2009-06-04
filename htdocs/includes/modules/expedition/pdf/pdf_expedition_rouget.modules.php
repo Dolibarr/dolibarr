@@ -73,7 +73,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 	 *      \param      showadress      0=non, 1=oui
 	 *      \param      outputlang		Objet lang cible
 	 */
-	function _pagehead(&$pdf, $exp, $showadress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
 	{
 		global $conf;
 
@@ -90,7 +90,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 		if ($conf->barcode->enabled)
 		{
-			// TODO Build code bar with function writeBarCode of barcode module for sending ref $this->expe->ref
+			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
 		}
@@ -99,31 +99,56 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 		$pdf->SetFont('Arial','', 14);
 		$pdf->Text($posx, 16, $outputlangs->transnoentities("SendingSheet"));	// Bordereau expedition
-		$pdf->Text($posx, 22, $outputlangs->transnoentities("Ref") ." : ".$this->expe->ref);
-		$pdf->Text($posx, 28, $outputlangs->transnoentities("Date")." : ".dol_print_date($this->expe->date,"%d %b %Y",false,$outputlangs,true));
+		$pdf->Text($posx, 22, $outputlangs->transnoentities("Ref") ." : ".$object->ref);
+		$pdf->Text($posx, 28, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date,"%d %b %Y",false,$outputlangs,true));
 		$pdf->Text($posx, 34, $outputlangs->transnoentities("Page")." : ".$pdf->PageNo() ."/{nb}", 0);
 
 		if ($conf->barcode->enabled)
 		{
-			// TODO Build code bar with function writeBarCode of barcode module for sending ref $this->expe->ref
+			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
 		}
 
 		$pdf->SetFont('Arial','', 14);
-		$pdf->Text($posx, 48, $outputlangs->transnoentities("Order"));
-		$pdf->Text($posx, 54, $outputlangs->transnoentities("Ref") ." : ".$this->expe->commande->ref);
-		$pdf->Text($posx, 60, $outputlangs->transnoentities("Date")." : ".dol_print_date($this->expe->commande->date,"%d %b %Y",false,$outputlangs,true));
+	    $Yoff=40;
+
+	    // Add list of linked orders
+	    $object->load_object_linked();
+
+	    if ($conf->commande->enabled)
+		{
+			$outputlangs->load('orders');
+			foreach($object->linked_object as $key => $val)
+			{
+				if ($val['type'] == 'order')
+				{
+					$newobject=new Commande($this->db);
+					$result=$newobject->fetch($val['linkid']);
+					if ($result >= 0)
+					{
+						$Yoff = $Yoff+8;
+						$pdf->SetXY($Xoff,$Yoff);
+						$pdf->SetFont('Arial','',8);
+						$text=$newobject->ref;
+						if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+						$pdf->Text($posx, $Yoff, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text));
+						$pdf->Text($posx, $Yoff+4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"%d %b %Y",false,$outputlangs,true));
+					}
+				}
+			}
+		}
+
 	}
 
 
 	/**
-	 *		\brief      Fonction g�n�rant le document sur le disque
-	 *		\param	    obj				Objet expedition � g�n�rer (ou id si ancienne methode)
+	 *		\brief      Fonction generant le document sur le disque
+	 *		\param	    obj				Objet expedition a generer (ou id si ancienne methode)
 	 *		\param		outputlangs		Lang output object
 	 * 	 	\return	    int     		1=ok, 0=ko
 	 */
-	function write_file(&$obj, $outputlangs)
+	function write_file(&$object, $outputlangs)
 	{
 		global $user,$conf,$langs;
 
@@ -142,17 +167,15 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 		if ($conf->expedition_bon->dir_output)
 		{
-			$this->expe = $obj;
-
-			// D�finition de $dir et $file
-			if ($this->expe->specimen)
+			// Definition de $dir et $file
+			if ($object->specimen)
 			{
 				$dir = $conf->expedition_bon->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
-				$expref = dol_sanitizeFileName($this->expe->ref);
+				$expref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->expedition_bon->dir_output . "/" . $expref;
 				$file = $dir . "/" . $expref . ".pdf";
 			}
@@ -169,8 +192,6 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 			if (file_exists($dir))
 			{
 				$pdf=new ModelePdfExpedition();
-				//$this = new ModelePdfExpedition();
-				//$this->expe = &$this->expe;
 
 				$pdf->Open();
 				$pagenb=0;
@@ -178,7 +199,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 				$pdf->AliasNbPages();
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset($this->expe->ref));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
@@ -191,7 +212,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $this->exp, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('Arial','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -220,17 +241,17 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 				$nexY = $this->tableau_top + 14;
 
-				for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
+				for ($i = 0 ; $i < sizeof($object->lignes) ; $i++)
 				{
 					$curY = $nexY;
 
 					if ($this->barcode->enabled)
 					{
-						$pdf->i25($this->marge_gauche+3, ($curY - 2), "000000".$this->expe->lignes[$i]->fk_product, 1, 8);
+						$pdf->i25($this->marge_gauche+3, ($curY - 2), "000000".$object->lignes[$i]->fk_product, 1, 8);
 					}
 
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($this->expe->lignes[$i],$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($object->lignes[$i],$outputlangs);
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
 					$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
@@ -239,17 +260,17 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					$nexY = $pdf->GetY();
 
 					$pdf->SetXY (160, $curY);
-					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_asked);
+					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_asked);
 
 					$pdf->SetXY (186, $curY);
-					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_shipped);
+					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_shipped);
 
 					$nexY+=2;    // Passe espace entre les lignes
 				}
 
 
 				// Pied de page
-				$this->_pagefoot($pdf,$this->expe,$outputlangs);
+				$this->_pagefoot($pdf,$object,$outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();

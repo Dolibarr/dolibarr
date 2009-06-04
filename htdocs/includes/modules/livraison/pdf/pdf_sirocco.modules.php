@@ -83,12 +83,12 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 
 	/**
-	 *	\brief      Fonction g�n�rant le bon de livraison sur le disque
-	 *	\param	    delivery		Object livraison � g�n�rer
+	 *	\brief      Fonction generant le bon de livraison sur le disque
+	 *	\param	    delivery		Object livraison a generer
 	 *	\param		outputlangs		Lang output object
 	 *	\return	    int         	1 if OK, <=0 if KO
 	 */
-	function write_file($delivery,$outputlangs)
+	function write_file($object,$outputlangs)
 	{
 		global $user,$conf,$langs;
 
@@ -108,25 +108,25 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		if ($conf->livraison_bon->dir_output)
 		{
-			// If $delivery is id instead of object
-			if (! is_object($delivery))
+			// If $object is id instead of object
+			if (! is_object($object))
 			{
-				$id = $delivery;
-				$delivery = new Livraison($this->db);
-				$delivery->fetch($id);
-				$delivery->id = $id;
+				$id = $object;
+				$object = new Livraison($this->db);
+				$object->fetch($id);
+				$object->id = $id;
 				if ($result < 0)
 				{
-					dol_print_error($db,$delivery->error);
+					dol_print_error($db,$object->error);
 				}
 			}
 
-			$nblignes = sizeof($delivery->lignes);
+			$nblignes = sizeof($object->lignes);
 
-			$deliveryref = dol_sanitizeFileName($delivery->ref);
+			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->livraison_bon->dir_output;
-			if (! eregi('specimen',$deliveryref)) $dir.= "/" . $deliveryref;
-			$file = $dir . "/" . $deliveryref . ".pdf";
+			if (! eregi('specimen',$objectref)) $dir.= "/" . $objectref;
+			$file = $dir . "/" . $objectref . ".pdf";
 
 			if (! file_exists($dir))
 			{
@@ -157,11 +157,11 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset($delivery->ref));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("DeliveryOrder"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($delivery->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -170,7 +170,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $delivery, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('Arial','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -189,7 +189,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($delivery->lignes[$i],$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($object->lignes[$i],$outputlangs);
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
@@ -200,22 +200,22 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 					$pdf->SetXY (10, $curY );
 
-					$pdf->MultiCell(20, 3, $outputlangs->convToOutputCharset($delivery->lignes[$i]->ref), 0, 'C');
+					$pdf->MultiCell(20, 3, $outputlangs->convToOutputCharset($object->lignes[$i]->ref), 0, 'C');
 
 					// \TODO Field not yet saved in database
 					//$pdf->SetXY (133, $curY );
-					//$pdf->MultiCell(10, 5, $delivery->lignes[$i]->tva_tx, 0, 'C');
+					//$pdf->MultiCell(10, 5, $object->lignes[$i]->tva_tx, 0, 'C');
 
 					$pdf->SetXY (145, $curY );
-					$pdf->MultiCell(10, 3, $delivery->lignes[$i]->qty_shipped, 0, 'C');
+					$pdf->MultiCell(10, 3, $object->lignes[$i]->qty_shipped, 0, 'C');
 
 					// \TODO Field not yet saved in database
 					//$pdf->SetXY (156, $curY );
-					//$pdf->MultiCell(18, 3, price($delivery->lignes[$i]->price), 0, 'R', 0);
+					//$pdf->MultiCell(18, 3, price($object->lignes[$i]->price), 0, 'R', 0);
 
 					// \TODO Field not yet saved in database
 					//$pdf->SetXY (174, $curY );
-					//$total = price($delivery->lignes[$i]->price * $delivery->lignes[$i]->qty_shipped);
+					//$total = price($object->lignes[$i]->price * $object->lignes[$i]->qty_shipped);
 					//$pdf->MultiCell(26, 3, $total, 0, 'R', 0);
 
 					$pdf->line(10, $curY-1, 200, $curY-1);
@@ -227,7 +227,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
 						//on r�cup�re la description du produit suivant
-						$follow_descproduitservice = $delivery->lignes[$i+1]->desc;
+						$follow_descproduitservice = $object->lignes[$i+1]->desc;
 						//on compte le nombre de ligne afin de v�rifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52)*4);
 					}
@@ -264,7 +264,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $delivery, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->SetFont('Arial','', 9);
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
@@ -346,9 +346,9 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	 *   	\param      delivery    	object delivery
 	 *      \param      showadress      0=non, 1=oui
 	 */
-	function _pagehead(&$pdf, $delivery, $showadress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
 	{
-		global $langs;
+		global $langs,$conf,$mysoc;
 
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('Arial','B',13);
@@ -397,29 +397,50 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		}
 		else
 		{
-			$client->fetch($delivery->socid);
+			$client->fetch($object->socid);
 		}
-		$delivery->client = $client;
+		$object->client = $client;
 
 		$pdf->SetXY(102,42);
-		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($delivery->client->nom));
+		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($object->client->nom));
 		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY(102,47);
-		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($delivery->client->adresse) . "\n" . $outputlangs->convToOutputCharset($delivery->client->cp) . " " . $outputlangs->convToOutputCharset($delivery->client->ville));
+		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($object->client->adresse) . "\n" . $outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville));
 		$pdf->rect(100, 40, 100, 40);
 
 
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dol_print_date($delivery->date_valid,"day",false,$outputlangs,true));
-		$pdf->Text(11, 94, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($delivery->ref));
+		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_valid,"day",false,$outputlangs,true));
+		$pdf->Text(11, 94, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref));
 
 		$pdf->SetFont('Arial','B',9);
-		$commande = new Commande ($this->db);
-		if ($commande->fetch($delivery->commande_id) >0)
+
+		// Add list of linked orders
+	    $object->load_object_linked();
+
+	    if ($conf->commande->enabled)
 		{
-			$pdf->Text(11, 98, $outputlangs->transnoentities("RefOrder")." ".$outputlangs->convToOutputCharset($commande->ref));
+			$outputlangs->load('orders');
+			foreach($object->linked_object as $key => $val)
+			{
+				if ($val['type'] == 'order')
+				{
+					$newobject=new Commande($this->db);
+					$result=$newobject->fetch($val['linkid']);
+					if ($result >= 0)
+					{
+						$posy+=4;
+						$pdf->SetXY(102,$posy);
+						$pdf->SetFont('Arial','',9);
+						$text=$newobject->ref;
+						if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+						$pdf->Text(11, 94, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+					}
+				}
+			}
 		}
+
 	}
 
 	/**

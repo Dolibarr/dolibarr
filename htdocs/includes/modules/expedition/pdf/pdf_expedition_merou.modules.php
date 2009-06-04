@@ -74,7 +74,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	 *		\param		outputlangs		Lang output object
 	 * 	 	\return	    int     		1=ok, 0=ko
 	 */
-	function write_file(&$obj, $outputlangs)
+	function write_file(&$object, $outputlangs)
 	{
 		global $user,$conf,$langs;
 
@@ -93,14 +93,14 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$outputlangs->setPhpLang();
 
 		//Generation de la fiche
-		$this->expe = $obj;
+		$this->expe = $object;
 
 		//Verification de la configuration
 		if ($conf->expedition_bon->dir_output)
 		{
 			//Creation du Client
 			$soc = new Societe($this->db);
-			$soc->fetch($this->expe->commande->socid);
+			$soc->fetch($object->commande->socid);
 
 			//Creation de l expediteur
 			$this->expediteur = $mysoc;
@@ -109,24 +109,24 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			$this->destinataire = new Contact($this->db);
 			//		$pdf->expe->commande->fetch($pdf->commande->id);
 			//print_r($pdf->expe);
-			$idcontact = $this->expe->commande->getIdContact('external','SHIPPING');
+			$idcontact = $object->commande->getIdContact('external','SHIPPING');
 			$this->destinataire->fetch($idcontact[0]);
 
 			//Creation du livreur
-			$idcontact = $this->expe->commande->getIdContact('internal','LIVREUR');
+			$idcontact = $object->commande->getIdContact('internal','LIVREUR');
 			$this->livreur = new User($this->db,$idcontact[0]);
 			if ($idcontact[0]) $this->livreur->fetch();
 
 
 			// Definition de $dir et $file
-			if ($this->expe->specimen)
+			if ($object->specimen)
 			{
 				$dir = $conf->expedition_bon->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
-				$expref = dol_sanitizeFileName($this->expe->ref);
+				$expref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->expedition_bon->dir_output . "/" . $expref;
 				$file = $dir . "/" . $expref . ".pdf";
 			}
@@ -160,11 +160,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->SetDrawColor(128,128,128);
 
 				//Generation de l entete du fichier
-				$pdf->SetTitle($outputlangs->convToOutputCharset($this->expe->ref));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($this->expe->ref)." ".$outputlangs->transnoentities("Sending"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Sending"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins(10, 10, 10);
@@ -194,14 +194,14 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 
 				//Recuperation des produits de la commande.
-				$Produits = $this->expe->commande->lignes;
+				$Produits = $object->commande->lignes;
 				$nblignes = sizeof($Produits);
 
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($this->expe->commande->lignes[$i],$outputlangs);
-					//if ($i==1) { print $this->expe->commande->lignes[$i]->libelle.' - '.$libelleproduitservice; exit; }
+					$libelleproduitservice=pdf_getlinedesc($object->commande->lignes[$i],$outputlangs);
+					//if ($i==1) { print $object->commande->lignes[$i]->libelle.' - '.$libelleproduitservice; exit; }
 
 					//Creation des cases a cocher
 					$pdf->rect(10+3, $curY+1, 3, 3);
@@ -209,7 +209,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					//Insertion de la reference du produit
 					$pdf->SetXY (30, $curY+1 );
 					$pdf->SetFont('Arial','B', 7);
-					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($this->expe->commande->lignes[$i]->ref), 0, 'L', 0);
+					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($object->commande->lignes[$i]->ref), 0, 'L', 0);
 					//Insertion du libelle
 					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (50, $curY+1 );
@@ -217,11 +217,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					//Insertion de la quantite commandee
 					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (140, $curY+1 );
-					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_asked, 0, 'C', 0);
+					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_asked, 0, 'C', 0);
 					//Insertion de la quantite a envoyer
 					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (170, $curY+1 );
-					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_shipped, 0, 'C', 0);
+					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_shipped, 0, 'C', 0);
 
 					//Generation de la page 2
 					$curY += (dol_nboflines_bis($libelleproduitservice)*3+1);
@@ -369,20 +369,38 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("SendingSheet"), '' , 'L');	// Bordereau expedition
 		//Num Expedition
 		$Yoff = $Yoff+7;
-		$Xoff = 154;
+		$Xoff = 142;
 		//		$pdf->rect($Xoff, $Yoff, 85, 8);
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($object->ref), '' , 'L');
-		//$this->Code39($Xoff+43, $Yoff+1, $this->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
-		//Num Commande
-		$Yoff = $Yoff+4;
-		//		$pdf->rect($Xoff, $Yoff, 85, 8);
-		$pdf->SetXY($Xoff,$Yoff);
-		$pdf->SetFont('Arial','',8);
-		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefOrder").': '.$outputlangs->convToOutputCharset($object->commande->ref), '' , 'L');
+		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($object->ref), '' , 'R');
+		//$this->Code39($Xoff+43, $Yoff+1, $object->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
+
+		// Add list of linked orders
+	    $object->load_object_linked();
+
+	    if ($conf->commande->enabled)
+		{
+			$outputlangs->load('orders');
+			foreach($object->linked_object as $key => $val)
+			{
+				if ($val['type'] == 'order')
+				{
+					$newobject=new Commande($this->db);
+					$result=$newobject->fetch($val['linkid']);
+					if ($result >= 0)
+					{
+						$Yoff = $Yoff+4;
+						$pdf->SetXY($Xoff,$Yoff);
+						$pdf->SetFont('Arial','',8);
+						$text=$newobject->ref;
+						if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+						$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+					}
+				}
+			}
+		}
 
 		//$this->Code39($Xoff+43, $Yoff+1, $object->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Definition Emplacement du bloc Societe

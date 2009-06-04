@@ -290,9 +290,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
-						//on récupère la description du produit suivant
+						//on rï¿½cupï¿½re la description du produit suivant
 						$follow_descproduitservice = $delivery->lignes[$i+1]->desc;
-						//on compte le nombre de ligne afin de vérifier la place disponible (largeur de ligne 52 caracteres)
+						//on compte le nombre de ligne afin de vï¿½rifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52)*4);
 					}
 					else	// If it's last line
@@ -479,12 +479,31 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetTextColor(0,0,60);
 		}
 
-		$posy+=6;
-		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$commande = new Commande ($this->db);
-		if ($commande->fetch($object->origin_id) >0) {
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->convToOutputCharset($commande->ref), '' , 'R');
+
+		// Add list of linked orders
+	    $object->load_object_linked();
+
+	    if ($conf->commande->enabled)
+		{
+			$outputlangs->load('orders');
+			foreach($object->linked_object as $key => $val)
+			{
+				if ($val['type'] == 'order')
+				{
+					$newobject=new Commande($this->db);
+					$result=$newobject->fetch($val['linkid']);
+					if ($result >= 0)
+					{
+						$posy+=4;
+						$pdf->SetXY(100,$posy);
+						$pdf->SetFont('Arial','',9);
+						$text=$newobject->ref;
+						if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+						$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+					}
+				}
+			}
 		}
 
 		if ($showadress)

@@ -39,6 +39,7 @@ class Expedition extends CommonObject
 	var $db;
 	var $error;
 	var $element="expedition";
+	var $fk_element="fk_expedition";
 	var $table_element="expedition";
 
 	var $id;

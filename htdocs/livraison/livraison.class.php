@@ -40,8 +40,12 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande
 class Livraison extends CommonObject
 {
 	var $db;
-	var $id;
+	var $error;
+	var $element="delivery";
+	var $fk_element="fk_livraison";
+	var $table_element="livraison";
 
+	var $id;
 	var $brouillon;
 	var $origin;
 	var $origin_id;
@@ -116,7 +120,7 @@ class Livraison extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."livraison");
 
 			$numref = "(PROV".$this->id.")";
-			
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
 			$sql.= "SET ref = '".addslashes($numref)."'";
 			$sql.= " WHERE rowid = ".$this->id;
@@ -736,13 +740,13 @@ class Livraison extends CommonObject
 
 		// Charge tableau des id de societe socids
 		$socids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE client = 1";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -759,12 +763,12 @@ class Livraison extends CommonObject
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE envente = 1";
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

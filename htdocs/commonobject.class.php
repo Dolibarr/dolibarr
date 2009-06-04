@@ -822,8 +822,8 @@ class CommonObject
 		// Links beetween objects are stored in this table
 		$sql = 'SELECT sourceid, sourcetype, targetid, targettype';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
-		$sql.= " WHERE (source_id = '.$this->id.' AND source_type = 'invoice')";
-		$sql.= " OR    (target_id = '.$this->id.' AND target_id = 'invoice')";
+		$sql.= " WHERE (sourceid = '".$this->id."' AND sourcetype = 'invoice')";
+		$sql.= " OR    (targetid = '".$this->id."' AND targetid = 'invoice')";
 		dol_syslog("CommonObject::load_object_linked sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -843,6 +843,10 @@ class CommonObject
 				}
 				$i++;
 			}
+		}
+		else
+		{
+			dol_print_error($this->db);
 		}
 
 
@@ -908,6 +912,28 @@ class CommonObject
 					$obj = $this->db->fetch_object($resql);
 					if ($this->element == 'commande') $this->linked_object[]=array('linkid'=>$obj->sourceid,	'type'=>'propal');
 					if ($this->element == 'propal')   $this->linked_object[]=array('linkid'=>$obj->sourceid,	'type'=>'order');
+					$i++;
+				}
+			}
+		}
+		// For backward compatibility, read other old link tables co_exp (will be moved later)
+		if ($this->element == 'commande' || $this->element == 'expedition')
+		{
+			if ($this->element == 'commande')   $sql = "SELECT fk_expedition as sourceid";
+			if ($this->element == 'expedition') $sql = "SELECT fk_commande as sourceid";
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'co_exp';
+			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+			dol_syslog("CommonObject::load_object_linked sql=".$sql);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					if ($this->element == 'commande')   $this->linked_object[]=array('linkid'=>$obj->sourceid,	'type'=>'sending');
+					if ($this->element == 'expedition') $this->linked_object[]=array('linkid'=>$obj->sourceid,	'type'=>'order');
 					$i++;
 				}
 			}
