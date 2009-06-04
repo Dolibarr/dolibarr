@@ -173,7 +173,7 @@ class Conf
 		if (! empty($this->global->MAIN_MODULE_MULTICOMPANY) && ! empty($this->entity) && $this->entity > 1) $rootfordata.='/'.$this->entity;
 
 		// For backward compatibility
-		// TODO Remove params this->xxx->enabled. Must be replaced by conf->global->MAIN_MODULE_XXX
+		// TODO Replace this->xxx->enabled by this->modulename->enabled to remove this code
 		$this->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
 		$this->compta->enabled=defined("MAIN_MODULE_COMPTABILITE")?MAIN_MODULE_COMPTABILITE:0;
 		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
