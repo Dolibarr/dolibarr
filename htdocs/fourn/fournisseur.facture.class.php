@@ -21,19 +21,19 @@
  */
 
 /**
-		\file       htdocs/fourn/fournisseur.facture.class.php
-		\ingroup    fournisseur,facture
-		\brief      Fichier de la classe des factures fournisseurs
-		\version    $Id$
-*/
+ \file       htdocs/fourn/fournisseur.facture.class.php
+ \ingroup    fournisseur,facture
+ \brief      Fichier de la classe des factures fournisseurs
+ \version    $Id$
+ */
 
 include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 
 /**
-		\class      FactureFournisseur
-		\brief      Classe permettant la gestion des factures fournisseurs
-*/
+ \class      FactureFournisseur
+ \brief      Classe permettant la gestion des factures fournisseurs
+ */
 
 class FactureFournisseur extends Facture
 {
@@ -359,6 +359,15 @@ class FactureFournisseur extends Facture
 	 */
 	function delete($rowid)
 	{
+		global $user,$langs,$conf;
+
+		if (! $rowid) $rowid=$this->id;
+
+		dol_syslog("FactureFournisseur::delete rowid=".$rowid, LOG_DEBUG);
+
+		// TODO Test if there is at least on payment. If yes, refuse to delete.
+
+		$error=0;
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
@@ -366,21 +375,23 @@ class FactureFournisseur extends Facture
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
-				dol_syslog("FactureFournisseur sql=".$sql, LOG_DEBUG);
-				$resql2 = $this->db->query($sql);
-				if ($resql2)
-				{
-					$this->db->commit();
-					return 1;
-				}
-				else
-				{
-					$this->db->rollback();
-					$this->error=$this->db->lasterror();
-					dol_syslog("FactureFournisseur::delete ".$this->error, LOG_ERR);
-					return -1;
-				}
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
+			dol_syslog("FactureFournisseur sql=".$sql, LOG_DEBUG);
+			$resql2 = $this->db->query($sql);
+			if (! $resql2) $error++;
+
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				dol_syslog("FactureFournisseur::delete ".$this->error, LOG_ERR);
+				return -1;
+			}
 		}
 		else
 		{
@@ -395,9 +406,9 @@ class FactureFournisseur extends Facture
 	/**
 	 *      \brief      Tag la facture comme payee completement
 	 *      \param      user        Objet utilisateur qui modifie l'etat
-     *      \return     int         <0 si ko, >0 si ok
+	 *      \return     int         <0 si ko, >0 si ok
 	 */
-    function set_payed($user)
+	function set_payed($user)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
 		$sql.= ' SET paye = 1';
@@ -408,16 +419,16 @@ class FactureFournisseur extends Facture
 		{
 			$this->error=$this->db->error();
 			dol_print_error($this->db);
-            return -1;
+			return -1;
 		}
-        return 1;
+		return 1;
 	}
 
 
 	/**
 	 *      \brief      Set invoice status as validate
 	 *      \param      user        Objet utilisateur qui valide la facture
-     *      \return     int         <0 si ko, >0 si ok
+	 *      \return     int         <0 si ko, >0 si ok
 	 */
 	function set_valid($user)
 	{
@@ -426,8 +437,8 @@ class FactureFournisseur extends Facture
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
-    $sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
-    $sql.= " WHERE rowid = ".$this->id;
+		$sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
+		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("FactureFournisseur::set_valid sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -479,30 +490,30 @@ class FactureFournisseur extends Facture
 		{
 			$this->error=$this->db->error();
 			$this->db->rollback();
-            return -1;
+			return -1;
 		}
 	}
 
 
 	/**
-	* 		\brief     	Ajoute une ligne de facture (associ� � aucun produit/service pr�d�fini)
-	* 		\param    	desc            Description de la ligne
-	* 		\param    	pu              Prix unitaire (HT ou TTC selon price_base_type)
-	* 		\param    	txtva           Taux de tva forc�, sinon -1
-	* 		\param    	qty             Quantit�
-	*		\param    	fk_product      Id du produit/service pred�fini
-	* 		\param    	remise_percent  Pourcentage de remise de la ligne
-	* 		\param    	date_start      Date de debut de validit� du service
-	* 		\param    	date_end        Date de fin de validit� du service
-	* 		\param    	ventil          Code de ventilation comptable
-	* 		\param    	info_bits		Bits de type de lignes
-	* 		\param    	price_base_type HT ou TTC
-	* 		\param		type			Type of line (0=product, 1=service)
-	* 		\remarks	Les parametres sont deja cens� etre juste et avec valeurs finales a l'appel
-	*					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete d�fini
-	*					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
-	*					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
-	*/
+	 * 		\brief     	Ajoute une ligne de facture (associ� � aucun produit/service pr�d�fini)
+	 * 		\param    	desc            Description de la ligne
+	 * 		\param    	pu              Prix unitaire (HT ou TTC selon price_base_type)
+	 * 		\param    	txtva           Taux de tva forc�, sinon -1
+	 * 		\param    	qty             Quantit�
+	 *		\param    	fk_product      Id du produit/service pred�fini
+	 * 		\param    	remise_percent  Pourcentage de remise de la ligne
+	 * 		\param    	date_start      Date de debut de validit� du service
+	 * 		\param    	date_end        Date de fin de validit� du service
+	 * 		\param    	ventil          Code de ventilation comptable
+	 * 		\param    	info_bits		Bits de type de lignes
+	 * 		\param    	price_base_type HT ou TTC
+	 * 		\param		type			Type of line (0=product, 1=service)
+	 * 		\remarks	Les parametres sont deja cens� etre juste et avec valeurs finales a l'appel
+	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete d�fini
+	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
+	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+	 */
 	function addline($desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
 	{
 		dol_syslog("FactureFourn::Addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type", LOG_DEBUG);
@@ -732,7 +743,7 @@ class FactureFournisseur extends Facture
 
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-     *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		\param		option			Sur quoi pointe le lien
 	 * 		\param		max				Max length of shown ref
 	 * 		\return		string			Chaine avec URL
@@ -755,9 +766,9 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	*		\brief		Initialise la facture avec valeurs fictives aleatoire
-	*					Sert a generer une facture pour l'aperu des modeles ou demo
-	*/
+	 *		\brief		Initialise la facture avec valeurs fictives aleatoire
+	 *					Sert a generer une facture pour l'aperu des modeles ou demo
+	 */
 	function initAsSpecimen()
 	{
 		global $user,$langs,$conf;

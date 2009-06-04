@@ -936,6 +936,9 @@ class Facture extends CommonObject
 
 		dol_syslog("Facture::delete rowid=".$rowid, LOG_DEBUG);
 
+		// TODO Test if there is at least on payment. If yes, refuse to delete.
+
+		$error=0;
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'fa_pr WHERE fk_facture = '.$rowid;
