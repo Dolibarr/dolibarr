@@ -35,6 +35,11 @@ delete from llx_const where name = 'SYSLOG_LEVEL' and entity = 2;
 alter table llx_societe add column import_key varchar(14);
 
  
+-- V4.1 delete from llx_paiementfourn where rowid not in (select fk_paiementfourn from llx_paiementfourn_facturefourn);
+-- V4.1 delete from llx_paiementfourn_facturefourn where fk_facturefourn not in (select rowid from llx_facture_fourn);
+
+
+ 
 -- Multi company
 ALTER TABLE llx_rights_def ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER module;
 ALTER TABLE llx_events ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER type;
