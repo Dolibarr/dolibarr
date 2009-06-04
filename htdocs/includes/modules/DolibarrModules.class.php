@@ -442,7 +442,7 @@ class DolibarrModules
 				{
 					while (($file = readdir($handle))!==false)
 					{
-						if (eregi('\.sql$',$file) && ! eregi('\.key\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file,0,8) != 'llx_data')
+						if (eregi('\.sql$',$file) && ! eregi('\.key\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
 						{
 							$result=run_sql($dir.$file,1);
 						}
@@ -456,7 +456,7 @@ class DolibarrModules
 				{
 					while (($file = readdir($handle))!==false)
 					{
-						if (eregi('\.key\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file,0,8) != 'llx_data')
+						if (eregi('\.key\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
 						{
 							$result=run_sql($dir.$file,1);
 						}
@@ -464,13 +464,13 @@ class DolibarrModules
 					closedir($handle);
 				}
 
-				// Run llx_data.sql files
+				// Run data.sql files
 				$handle=@opendir($dir);			// Dir may not exist
 				if ($handle)
 				{
 					while (($file = readdir($handle))!==false)
 					{
-						if (eregi('\.sql$',$file) && ! eregi('\.key\.sql$',$file) && substr($file,0,8) == 'llx_data')
+						if (eregi('\.sql$',$file) && ! eregi('\.key\.sql$',$file) && substr($file,0,4) == 'data')
 						{
 							$result=run_sql($dir.$file,1);
 						}
