@@ -312,22 +312,22 @@ if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
  */
 if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 {
+	$commande = new Commande($db);
 	$result=0;
 
 	if (empty($_POST['idprod']) && $_POST["type"] < 0)
 	{
-		$fac->error = $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")) ;
+		$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
 		$result = -1 ;
 	}
-	if (empty($_POST['idprod']) && empty($_POST["pu"]))
+	if (empty($_POST['idprod']) && ! isset($_POST["pu"])) // Field pu can be 0
 	{
-		$fac->error = $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")) ;
+		$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")).'</div>';
 		$result = -1 ;
 	}
 
 	if ($_POST['qty'] && (($_POST['pu'] != '' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
-		$commande = new Commande($db);
 		$ret=$commande->fetch($_POST['id']);
 		if ($ret < 0)
 		{
@@ -1531,7 +1531,7 @@ else
 					print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
+					print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
 					print '<td width="48" colspan="3">&nbsp;</td>';
 					print "</tr>\n";
 				}

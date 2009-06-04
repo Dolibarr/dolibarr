@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,16 +25,16 @@ create table llx_commandedet
   fk_commande        integer,
   fk_product         integer,
   description        text,
-  tva_tx             double(6,3),	              -- taux tva
-  qty                real,                            -- quantité
+  tva_tx             double(6,3),	                  -- vat rate
+  qty                real,                            -- quantity
   remise_percent     real         DEFAULT 0,          -- pourcentage de remise
   remise             real         DEFAULT 0,          -- montant de la remise
   fk_remise_except   integer      NULL,               -- Lien vers table des remises fixes
   price              real,                            -- prix final
   subprice           double(24,8) DEFAULT 0,          -- prix unitaire
-  total_ht           double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantité et incluant remise ligne et globale
-  total_tva          double(24,8) DEFAULT 0,          -- Total TVA de la ligne toute quantité et incluant remise ligne et globale
-  total_ttc          double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  total_ht           double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantitï¿½ et incluant remise ligne et globale
+  total_tva          double(24,8) DEFAULT 0,          -- Total TVA de la ligne toute quantitï¿½ et incluant remise ligne et globale
+  total_ttc          double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantitï¿½ et incluant remise ligne et globale
   product_type		 integer      DEFAULT 0,
   date_start         datetime     DEFAULT NULL,       -- date debut si service
   date_end           datetime     DEFAULT NULL,       -- date fin si service

@@ -820,8 +820,8 @@ else
 					print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 					print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
 					print '<td align="right">'.$langs->trans('Qty').'</td>';
-					print '<td align="right">'.$langs->trans('TotalHT').'</td>';
-					print '<td align="right">'.$langs->trans('TotalTTC').'</td>';
+					print '<td align="right">'.$langs->trans('TotalHTShort').'</td>';
+					print '<td align="right">'.$langs->trans('TotalTTCShort').'</td>';
 					print '<td>&nbsp;</td>';
 					print '<td>&nbsp;</td>';
 					print '</tr>';
@@ -976,8 +976,8 @@ else
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
 				print '<td align="right">'.$langs->trans('Qty').'</td>';
-				print '<td align="right">'.$langs->trans('TotalHT').'</td>';
-				print '<td align="right">'.$langs->trans('TotalTTC').'</td>';
+				print '<td align="right">&nbsp;</td>';
+				print '<td align="right">&nbsp;</td>';
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
 				print '</tr>';
