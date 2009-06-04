@@ -841,22 +841,23 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
  */
 if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $user->rights->facture->creer)
 {
+	$fac = new Facture($db);
 	$result=0;
 
 	if (empty($_POST['idprod']) && $_POST["type"] < 0)
 	{
-		$fac->error = $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")) ;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
 		$result = -1 ;
 	}
-	if (empty($_POST['idprod']) && empty($_POST["pu"]))
+	if (empty($_POST['idprod']) && (! isset($_POST["pu"]) || $_POST["pu"]==''))	// Unit price can be 0 but not ''
 	{
-		$fac->error = $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")) ;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")).'</div>';
 		$result = -1 ;
 	}
 
+	// qty can't be null for invoice (no option)
 	if ($result >= 0 && $_POST['qty'] && (($_POST['pu']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
-		$fac = new Facture($db);
 		$ret=$fac->fetch($_POST['facid']);
 		if ($ret < 0)
 		{
@@ -980,7 +981,7 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 	}
 	else
 	{
-		$mesg='<div class="error">'.$fac->error.'</div>';
+		if (empty($mesg)) $mesg='<div class="error">'.$fac->error.'</div>';
 	}
 
 	$_GET['facid']=$_POST['facid'];   // Pour réaffichage de la fiche en cours d'édition

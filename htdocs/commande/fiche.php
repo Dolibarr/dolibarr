@@ -320,13 +320,13 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 		$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
 		$result = -1 ;
 	}
-	if (empty($_POST['idprod']) && ! isset($_POST["pu"])) // Field pu can be 0
+	if (empty($_POST['idprod']) && (! isset($_POST["pu"]) || $_POST["pu"]==''))	// Unit price can be 0 but not ''
 	{
 		$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")).'</div>';
 		$result = -1 ;
 	}
 
-	if ($_POST['qty'] && (($_POST['pu'] != '' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
+	if ($result >= 0 && $_POST['qty'] && (($_POST['pu'] != '' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
 		$ret=$commande->fetch($_POST['id']);
 		if ($ret < 0)

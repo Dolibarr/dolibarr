@@ -604,9 +604,22 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
  */
 if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 {
-	if (isset($_POST['qty']) && (($_POST['np_price']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
+	$propal = new Propal($db);
+	$result=0;
+
+	if (empty($_POST['idprod']) && $_POST["type"] < 0)
 	{
-		$propal = new Propal($db);
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
+		$result = -1 ;
+	}
+	if (empty($_POST['idprod']) && (! isset($_POST["np_price"]) || $_POST["np_price"]==''))	// Unit price can be 0 but not ''
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")).'</div>';
+		$result = -1 ;
+	}
+
+	if ($result >= 0 && isset($_POST['qty']) && (($_POST['np_price']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
+	{
 		$ret=$propal->fetch($_POST['propalid']);
 		if ($ret < 0)
 		{
