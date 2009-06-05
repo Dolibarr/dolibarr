@@ -257,9 +257,12 @@ class pdf_propale_azur extends ModelePDFPropales
 					$nexY = $pdf->GetY();
 
 					// TVA
-					$pdf->SetXY ($this->posxtva, $curY);
-					$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, vatrate($propale->lignes[$i]->tva_tx,1,$propale->lignes[$i]->info_bits), 0, 'R');
-
+					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+					{
+						$pdf->SetXY ($this->posxtva, $curY);
+						$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, vatrate($propale->lignes[$i]->tva_tx,1,$propale->lignes[$i]->info_bits), 0, 'R');
+					}
+					
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->posxup, $curY);
 					$pdf->MultiCell($this->posxqty-$this->posxup-1, 4, price($propale->lignes[$i]->subprice), 0, 'R', 0);
@@ -565,6 +568,8 @@ class pdf_propale_azur extends ModelePDFPropales
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
+		global $conf;
+		
 		$tab2_top = $posy;
 		$tab2_hl = 5;
 		$tab2_height = $tab2_hl * 4;
@@ -583,53 +588,63 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		$index = 0;
 
-		// Affichage des totaux de TVA par taux (conformément à réglementation)
+		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
-		foreach( $this->tva as $tvakey => $tvaval )
+		
+		$this->atleastoneratenotnull=0;
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
-			if ($tvakey)    // On affiche pas taux 0
+			foreach( $this->tva as $tvakey => $tvaval )
 			{
-				$this->atleastoneratenotnull++;
+				if ($tvakey)    // On affiche pas taux 0
+				{
+					$this->atleastoneratenotnull++;
+	
+					$index++;
+					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+	
+					$tvacompl='';
+					if (eregi('\*',$tvakey))
+					{
+						$tvakey=eregi_replace('\*','',$tvakey);
+						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+					}
+					$totalvat =$outputlangs->transnoentities("TotalVAT").' ';
+					$totalvat.=vatrate($tvakey,1).$tvacompl;
+					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+	
+					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+				}
+			}
 
+			if (! $this->atleastoneratenotnull) // If not vat at all
+			{
 				$index++;
 				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-
-				$tvacompl='';
-				if (eregi('\*',$tvakey))
-				{
-					$tvakey=eregi_replace('\*','',$tvakey);
-					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-				}
-				$totalvat =$outputlangs->transnoentities("TotalVAT").' ';
-				$totalvat.=vatrate($tvakey,1).$tvacompl;
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
+	
 				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
 			}
 		}
-		if (! $this->atleastoneratenotnull) // If not vat at all
+		
+		$useborder=0;
+
+		// Total TTC
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
 			$index++;
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
-
+			$pdf->SetTextColor(0,0,60);
+			$pdf->SetFillColor(224,224,224);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
+	
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
+			$pdf->SetTextColor(0,0,0);
 		}
-
-		$useborder=0;
-
-		$index++;
-		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFillColor(224,224,224);
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
-
-		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
-		$pdf->SetTextColor(0,0,0);
-
+		
 		if ($deja_regle > 0)
 		{
 			$index++;
@@ -701,10 +716,13 @@ class pdf_propale_azur extends ModelePDFPropales
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
 		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 
-		$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxtva-1, $tab_top+2);
-		$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
-
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+		{
+			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
+			$pdf->SetXY ($this->posxtva-1, $tab_top+2);
+			$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
+		}
+		
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxup-1, $tab_top+2);
 		$pdf->MultiCell(18,2, $outputlangs->transnoentities("PriceUHT"),'','C');
