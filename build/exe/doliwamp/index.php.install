@@ -1,10 +1,10 @@
 <?php
 
-// Page cr�� par Shepard [Fabian Pijcke] <Shepard8@laposte.net>
+// Page created by Shepard [Fabian Pijcke] <Shepard8@laposte.net>
 // Arno Esterhuizen <arno.esterhuizen@gmail.com>
-// et Romain Bourdon <romain@anaska.com>
+// and Romain Bourdon <romain@anaska.com>
 //  
-// ic�nes par Mark James <http://www.famfamfam.com/lab/icons/silk/>
+// icones by Mark James <http://www.famfamfam.com/lab/icons/silk/>
 //
 // Modified from WampServer project by Laurent Destailleur (NLTechno)
 // for DoliWamp project.
@@ -17,18 +17,18 @@ $appDir = '../apps/';
 
 
 
-//on r�cp�res les versions des applis
+// we set version of applications
 $phpVersion = '5.2.5';
 $apacheVersion = '2.2.6';
 $mysqlVersion = '5.0.45';
 
 
 
-// repertoires � ignorer dans les projets
+// directories to ignore in project list
 $projectsListIgnore = array ('.','..');
 
 
-// textes
+// texts
 $langues = array(
 	'en' => array(
 		'langue' => 'English',
@@ -287,7 +287,7 @@ if (isset($_GET['img']))
 
 
 
-// D�finition de la langue et des textes 
+// Definition de la langue et des textes 
 
 if (isset ($_GET['lang']))
 {
@@ -296,6 +296,10 @@ if (isset ($_GET['lang']))
 elseif (preg_match("/^fr/", $_SERVER['HTTP_ACCEPT_LANGUAGE']))
 {
 	$langue = 'fr';
+}
+elseif (preg_match("/^es/", $_SERVER['HTTP_ACCEPT_LANGUAGE']))
+{
+	$langue = 'es';
 }
 else
 {
