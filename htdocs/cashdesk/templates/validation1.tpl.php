@@ -1,4 +1,4 @@
-<!--Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
+<!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,11 +14,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -->
-<fieldset class="cadre_facturation"><legend class="titre1">Résumé</legend>
+<fieldset class="cadre_facturation"><legend class="titre1">Resume</legend>
 
 	<table class="table_resume">
 
-		<tr><td class="resume_label">Facture N°</td><td><?php  echo $obj_facturation->num_facture(); ?></td></tr>
+		<tr><td class="resume_label">Facture NÂ°</td><td><?php  echo $obj_facturation->num_facture(); ?></td></tr>
 		<tr><td class="resume_label">Prix HT :</td><td><?php echo price2num($obj_facturation->prix_total_ht()).' '.$conf->monnaie; ?></td></tr>
 		<?php
 			// Affichage de la tva par taux
@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 			}
 		?>
 		<tr><td class="resume_label">A payer :</td><td><?php echo price2num($obj_facturation->prix_total_ttc()).' '.$conf->monnaie; ?></td></tr>
-		<tr><td class="resume_label">Mode de réglement :</td><td><?php echo $obj_facturation->mode_reglement(); ?></td></tr>
+		<tr><td class="resume_label">Mode de reglement :</td><td><?php echo $obj_facturation->mode_reglement(); ?></td></tr>
 
 		<?php
 
@@ -46,11 +46,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 			} else {
 
-				echo ('<tr><td class="resume_label">Encaissé :</td><td>'.price2num($obj_facturation->montant_encaisse()).' '.$conf->monnaie.'</td></tr>');
+				echo ('<tr><td class="resume_label">Encaissï¿½ :</td><td>'.price2num($obj_facturation->montant_encaisse()).' '.$conf->monnaie.'</td></tr>');
 
 			}
 
-			// Affichage du montant rendu (réglement en espèces)
+			// Affichage du montant rendu (reglement en especes)
 			if ( $obj_facturation->montant_rendu() ) {
 
 				echo ('<tr><td class="resume_label">Rendu :</td><td>'.price2num($obj_facturation->montant_rendu()).' '.$conf->monnaie.'</td></tr>');
