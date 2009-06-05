@@ -46,7 +46,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 			} else {
 
-				echo ('<tr><td class="resume_label">Encaiss� :</td><td>'.price2num($obj_facturation->montant_encaisse()).' '.$conf->monnaie.'</td></tr>');
+				echo ('<tr><td class="resume_label">Encaisse :</td><td>'.price2num($obj_facturation->montant_encaisse()).' '.$conf->monnaie.'</td></tr>');
 
 			}
 
