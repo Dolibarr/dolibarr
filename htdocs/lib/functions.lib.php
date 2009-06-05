@@ -1292,7 +1292,7 @@ function img_tick($alt = "default")
  \param      allow       Authorise ou non
  \return     string      Retourne tag img
  */
-function img_allow($allow)
+function img_allow($allow,$alt='default')
 {
 	global $conf,$langs;
 	if ($alt=="default") $alt=$langs->trans("Active");
@@ -1858,7 +1858,7 @@ function print_titre($titre)
  *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
  *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
  */
-function print_fiche_titre($titre, $mesg='', $picto='title.gif', $pictoisfullpath=0)
+function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0)
 {
 	print "\n";
 	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
@@ -1887,7 +1887,7 @@ function print_fiche_titre($titre, $mesg='', $picto='title.gif', $pictoisfullpat
  *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
  *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title.gif', $pictoisfullpath=0)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title.png', $pictoisfullpath=0)
 {
 	global $conf,$langs;
 
