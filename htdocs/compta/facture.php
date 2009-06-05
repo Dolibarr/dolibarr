@@ -1820,7 +1820,7 @@ if ($_GET['action'] == 'create')
 		$title=$langs->trans('ProductsAndServices');
 
 		$sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.fk_remise_except,';
-		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
+		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.product_type, pt.info_bits,';
 		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
 		$sql.= ' p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
@@ -1832,7 +1832,8 @@ if ($_GET['action'] == 'create')
 	{
 		$title=$langs->trans('Products');
 
-		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.fk_remise_except, pt.remise_percent, pt.description, pt.info_bits, pt.date_start as date_debut_prevue, pt.date_end as date_fin_prevue,';
+		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.fk_remise_except, pt.remise_percent,';
+		$sql.= ' pt.description, pt.info_bits, pt.date_start as date_debut_prevue, pt.date_end as date_fin_prevue,';
 		$sql.= ' p.label as product, p.ref, p.rowid as prodid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
@@ -1892,7 +1893,9 @@ if ($_GET['action'] == 'create')
 				}
 				else if ($objp->prodid)
 				{
-					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(''),'service').' '.$objp->ref.'</a>';
+					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">';
+					print ($objp->fk_product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product'));
+					print ' '.$objp->ref.'</a>';
 					print $objp->product?' - '.$objp->product:'';
 					// Dates
 					if ($date_start || $date_end)
@@ -1902,6 +1905,7 @@ if ($_GET['action'] == 'create')
 				}
 				else
 				{
+					print ($objp->product_type == -1 ? '&nbsp;' : ($objp->product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product')));
 					// Dates
 					if ($date_start || $date_end)
 					{
@@ -1928,6 +1932,10 @@ if ($_GET['action'] == 'create')
 					{
 						print dol_trunc($objp->description,60);
 					}
+				}
+				else
+				{
+					print '&nbsp;';
 				}
 				print '</td>';
 				print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';

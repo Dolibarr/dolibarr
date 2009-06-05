@@ -186,7 +186,7 @@ if ($id > 0 || ! empty($ref))
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	$absolute_discount=$societe->getAvailableDiscounts();
 	print '. ';
-	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
 	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 	print '.';
 	print '</td></tr>';
@@ -319,6 +319,7 @@ if ($id > 0 || ! empty($ref))
 	$sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.fk_remise_except,';
 	$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
 	$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc,';
+	$sql.= ' pt.product_type,';
 	$sql.= ' p.rowid as prodid, p.label as product_label, p.ref, p.fk_product_type, ';
 	$sql.= ' p.description as product_desc';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';

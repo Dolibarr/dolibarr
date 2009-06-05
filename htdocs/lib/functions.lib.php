@@ -863,6 +863,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='')
 	global $conf;
 
 	if ($size==0) return $string;
+	if (dol_textishtml($string)) $string = dol_string_nohtmltag($string,1);
 	if (! defined('USE_SHORT_TITLE') || (defined('USE_SHORT_TITLE') && USE_SHORT_TITLE))
 	{
 		// We go always here
