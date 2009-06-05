@@ -863,32 +863,34 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='')
 	global $conf;
 
 	if ($size==0) return $string;
-	if (dol_textishtml($string)) $string = dol_string_nohtmltag($string,1);
-	if (! defined('USE_SHORT_TITLE') || (defined('USE_SHORT_TITLE') && USE_SHORT_TITLE))
+	if (! defined('USE_SHORT_TITLE') || USE_SHORT_TITLE)
 	{
 		// We go always here
 		if ($trunc == 'right')
 		{
-			if (dol_strlen($string,$stringencoding) > $size)
-			return dol_substr($string,0,$size,$stringencoding).'...';
+			$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
+			if (dol_strlen($newstring,$stringencoding) > $size)
+			return dol_substr($newstring,0,$size,$stringencoding).'...';
 			else
 			return $string;
 		}
 		if ($trunc == 'middle')
 		{
-			if (dol_strlen($string,$stringencoding) > 2 && dol_strlen($string,$stringencoding) > $size)
+			$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
+			if (dol_strlen($newstring,$stringencoding) > 2 && dol_strlen($newstring,$stringencoding) > $size)
 			{
 				$size1=round($size/2);
 				$size2=round($size/2);
-				return dol_substr($string,0,$size1,$stringencoding).'...'.dol_substr($string,dol_strlen($string,$stringencoding) - $size2,$size2,$stringencoding);
+				return dol_substr($newstring,0,$size1,$stringencoding).'...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size2,$size2,$stringencoding);
 			}
 			else
 			return $string;
 		}
 		if ($trunc == 'left')
 		{
-			if (dol_strlen($string,$stringencoding) > $size)
-			return '...'.dol_substr($string,dol_strlen($string,$stringencoding) - $size,$size,$stringencoding);
+			$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
+			if (dol_strlen($newstring,$stringencoding) > $size)
+			return '...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size,$size,$stringencoding);
 			else
 			return $string;
 		}
