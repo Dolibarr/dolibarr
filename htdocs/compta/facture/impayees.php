@@ -176,7 +176,7 @@ $sql.= " AND f.type in (0,1) AND f.fk_statut = 1";
 $sql.= " AND f.paye = 0";
 if ($option == 'late')
 {
-	$sql.=" AND f.date_lim_reglement < ".$db->idate(mktime());
+	$sql.=" AND f.date_lim_reglement < ".$db->idate(dol_now('tzref'));
 }
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql .= " AND s.rowid = ".$socid;
