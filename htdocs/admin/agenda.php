@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
  */
 
 /**
-	    \file       htdocs/admin/agenda.php
-        \ingroup    agenda
-        \brief      Autocreate actions for agenda module setup page
-		\version    $Id$
-*/
+ *	    \file       htdocs/admin/agenda.php
+ *      \ingroup    agenda
+ *      \brief      Autocreate actions for agenda module setup page
+ *      \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -63,7 +63,7 @@ $eventstolog=array(
 /*
 *	Actions
 */
-if ($action == "save")
+if ($_POST["action"] == "save" && empty($_POST["cancel"]))
 {
     $i=0;
 
@@ -108,7 +108,8 @@ print '<input type="hidden" name="action" value="save">';
 $var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
-print "<td colspan=\"2\">".$langs->trans("ActionsEvents")."</td>";
+print "<td>".$langs->trans("ActionsEvents")."</td>";
+print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=selectall">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone">'.$langs->trans("None").'</a>';
 print "</tr>\n";
 foreach ($eventstolog as $key => $arr)
 {
@@ -116,18 +117,23 @@ foreach ($eventstolog as $key => $arr)
 	{
 	    $var=!$var;
 	    print '<tr '.$bc[$var].'>';
-	    print '<td>'.$arr['id'].'</td>';
-	    print '<td>';
+	    print '<td>'.$arr['id'];
+	    if (! $arr['test']) print ' ('.$langs->trans("ModuleDisabledSoNoEvent").')';
+	    print '</td>';
+	    print '<td align="right" width="40">';
 	    $key='MAIN_AGENDA_ACTIONAUTO_'.$arr['id'];
 		$value=$conf->global->$key;
-		print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked="true"':'').'>';
-	    print '</td></tr>'."\n";
+		if ($arr['test']) print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($_GET["action"]=='selectall'||$value) && $_GET["action"]!="selectnone")?' checked="true"':'').'>';
+	    else print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="0" disabled="true">';
+		print '</td></tr>'."\n";
 	}
 }
 print '</table>';
 
 print '<br><center>';
-print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
+print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+print ' &nbsp; &nbsp; ';
+print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 print "</center>";
 
 print "</form>\n";
