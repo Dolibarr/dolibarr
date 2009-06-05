@@ -1,4 +1,4 @@
-<!--Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
+<!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 		<input type="hidden" name="hdnSource" value="NULL" />
 
 		<table>
-			<tr><th class="label1">Code</th><th class="label1">Désignation</th></tr>
+			<tr><th class="label1">Code</th><th class="label1">Designation</th></tr>
 			<tr>
-			<!-- Affichage de la référence et de la désignation -->
+			<!-- Affichage de la reference et de la designation -->
 			<td><input class="texte_ref" type="text" id ="txtRef" name="txtRef" autocomplete="off" value="<?php echo $obj_facturation->ref() ?>"
 				onchange="javascript: setSource('REF');"
 				onfocus="javascript: this.select(); verifResultat('resultats_dhtml', this.value);"
@@ -41,7 +41,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 						$id = $obj_facturation->id();
 
-						// Si trop d'articles ont été trouvés, on n'affiche que les X premiers (défini dans le fichier de configuration) ...
+						// Si trop d'articles ont ete trouves, on n'affiche que les X premiers (defini dans le fichier de configuration) ...
 						if ( $nbr_enreg > $conf_taille_listes ) {
 
 							for ($i = 0; $i < $conf_taille_listes; $i++) {
@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 								else
 									$selected = '';
 
-								// On coupe la ligne si elle contient plus de $conf_nbr_car_listes caractères
+								// On coupe la ligne si elle contient plus de $conf_nbr_car_listes caracteres
 								if ( strlen ($tab_designations[$i]['label']) > $conf_nbr_car_listes ) {
 
 									$label = substr ($tab_designations[$i]['label'], 0, $conf_nbr_car_listes - 3);
@@ -77,7 +77,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 								else
 									$selected = '';
 
-								// On coupe la ligne si elle contient plus de $conf_nbr_car_listes caractères
+								// On coupe la ligne si elle contient plus de $conf_nbr_car_listes caracteres
 								if ( strlen ($tab_designations[$i]['label']) > $conf_nbr_car_listes ) {
 
 									$label = substr ($tab_designations[$i]['label'], 0, $conf_nbr_car_listes - 3);
@@ -106,7 +106,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	<form id="frmQte" class="formulaire1" method="post" action="facturation_verif.php?action=ajout_article" onsubmit ="javascript: return verifSaisie();">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 		<table>
-			<tr><th class="label1">Quantité</th><th class="label1">Stock</th><th class="label1">Prix unitaire</th><th></th><th class="label1">Taux TVA</th><th class="label1">Remise (%)</th><th class="label1">Prix total</th></tr>
+			<tr><th class="label1">Quantite</th><th class="label1">Stock</th><th class="label1">Prix unitaire</th><th></th><th class="label1">Taux TVA</th><th class="label1">Remise (%)</th><th class="label1">Prix total</th></tr>
 			<tr>
 				<td><input class="texte1" type="text" name="txtQte" value="1" onkeyup="javascript: modif();" onfocus="javascript: this.select();" /></td>
 				<!-- Affichage du stock pour l'article courant -->
@@ -145,16 +145,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	</form>
 </fieldset>
 
-<!-- ========================= Cadre "Différence" ============================= -->
+<!-- ========================= Cadre "Difference" ============================= -->
 <form id="frmDifference"  class="formulaire1" method="post" onsubmit="javascript: return verifReglement()" action="validation_verif.php?action=valide_achat">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
-<fieldset class="cadre_facturation"><legend class="titre1">Différence</legend>
+<fieldset class="cadre_facturation"><legend class="titre1">Difference</legend>
 		<table>
-			<tr><th class="label1">Montant dû</th><th class="label1">Encaissé</th><th class="label1">Rendu</th></tr>
+			<tr><th class="label1">Montant du</th><th class="label1">Encaisse</th><th class="label1">Rendu</th></tr>
 			<tr>
-			<!-- Affichage du montant dû -->
+			<!-- Affichage du montant du -->
 			<td><input class="texte2_off" type="text" name="txtDu" value="<?php echo number_format ($obj_facturation->prix_total_ttc (), 2, '.', ''); ?>" disabled="disabled" /></td>
-			<!-- Choix du montant encaissé -->
+			<!-- Choix du montant encaisse -->
 			<td><input class="texte2" type="text" name="txtEncaisse" value="" onkeyup="javascript: verifDifference();" onfocus="javascript: this.select();" /></td>
 			<!-- Affichage du montant rendu -->
 			<td><input class="texte2_off" type="text" name="txtRendu" value="0" disabled="disabled" /></td>
@@ -167,15 +167,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 		<table>
 			<input type="hidden" name="hdnChoix" value="" />
 			<tr>
-			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Espèces" onclick="javascript: verifClic('ESP');" /></td>
+			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Especes" onclick="javascript: verifClic('ESP');" /></td>
 			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Carte" onclick="javascript: verifClic('CB');" /></td>
-			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Chèque" onclick="javascript: verifClic('CHQ');" /></td>
+			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Cheque" onclick="javascript: verifClic('CHQ');" /></td>
 			</tr>
 		</table>
 		<table>
 			<tr>
 				<td>
-				<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Différé" onclick="javascript: verifClic('DIF');" />
+				<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Differe" onclick="javascript: verifClic('DIF');" />
 				Date limite de paiement :
 				<input class="texte2" type="text" id="txtDatePaiement" name="txtDatePaiement" value="" />
 				<input class="bouton_cal" type="image" src="images/calendrier.png" id="btnCalendrier" value="..." title="Cliquez pour afficher le calendrier" />
