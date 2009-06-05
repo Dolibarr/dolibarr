@@ -1,10 +1,10 @@
 <?php
 
-// Page créé par Shepard [Fabian Pijcke] <Shepard8@laposte.net>
+// Page crï¿½ï¿½ par Shepard [Fabian Pijcke] <Shepard8@laposte.net>
 // Arno Esterhuizen <arno.esterhuizen@gmail.com>
 // et Romain Bourdon <romain@anaska.com>
 //  
-// icônes par Mark James <http://www.famfamfam.com/lab/icons/silk/>
+// icï¿½nes par Mark James <http://www.famfamfam.com/lab/icons/silk/>
 //
 // Modified from WampServer project by Laurent Destailleur (NLTechno)
 // for DoliWamp project.
@@ -17,14 +17,14 @@ $appDir = '../apps/';
 
 
 
-//on récpères les versions des applis
+//on rï¿½cpï¿½res les versions des applis
 $phpVersion = '5.2.5';
 $apacheVersion = '2.2.6';
 $mysqlVersion = '5.0.45';
 
 
 
-// repertoires à ignorer dans les projets
+// repertoires ï¿½ ignorer dans les projets
 $projectsListIgnore = array ('.','..');
 
 
@@ -51,9 +51,9 @@ $langues = array(
 		'askhelp' => 'Request a help support'
 	),
 	'fr' => array(
-		'langue' => 'Français',
-		'autreLangue' => 'English Version',
-		'autreLangueLien' => 'en',
+		'langue' => 'Franï¿½ais',
+		'autreLangue' => 'Versi&oacute;n Espa&ntilde;ol',
+		'autreLangueLien' => 'es',
 		'titreHtml' => 'Accueil DoliWamp',
 		'titreConf' => 'Configuration Serveur',
 		'versa' => 'Version de Apache:',
@@ -69,6 +69,26 @@ $langues = array(
 		'faq' => 'http://www.wampserver.com/faq.php',
 		'ipserver' => 'Name/IP Serveur:',
 		'askhelp' => 'Demander une aide au support'
+	),
+	'es' => array(
+		'langue' => 'EspaÃ±ol',
+		'autreLangue' => 'English Version',
+		'autreLangueLien' => 'en',
+		'titreHtml' => 'Inicio DoliWamp',
+		'titreConf' => 'Configuraci&oacute;n Servidor',
+		'versa' => 'Versi&oacute;n de Apache:',
+		'versp' => 'Versi&oacute;n de PHP:',
+		'versm' => 'Versi&oacute;n de MySQL:',
+		'phpExt' => 'Extensiones Cargadas: ',
+		'titrePage' => 'Utilidades',
+		'txtAlias' => 'Alias de aplicaciones',
+		'txtNoAlias' => 'Ning&uacute;n alias.',
+		'txtProjet' => 'Otras aplicaciones (sin alias)',
+		'txtNoProjet' => 'Ninguna otra aplicaci&oacute;n. Para a&ntilde;adir una nueva, simplemente cree una carpeta en \'www\'.',
+		'txtApp' => 'Aplicaciones',
+		'faq' => 'http://www.wampserver.com/faq.php',
+		'ipserver' => 'Nombre/IP Servidor',
+		'askhelp' => 'Pedir ayuda o soporte'
 	)
 );
 
@@ -267,7 +287,7 @@ if (isset($_GET['img']))
 
 
 
-// Définition de la langue et des textes 
+// Dï¿½finition de la langue et des textes 
 
 if (isset ($_GET['lang']))
 {
