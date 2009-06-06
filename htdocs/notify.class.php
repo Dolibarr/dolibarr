@@ -43,14 +43,14 @@ class Notify
     var $note;
     var $projet_id;
 
-	// Les codes actions sont définis dans la table llx_notify_def
-	// \todo utiliser des codes texte plutot que numérique
+	// Les codes actions sont definis dans la table llx_notify_def
+	// \todo utiliser des codes texte plutot que numerique
 	// 1 = Validation fiche inter
 	// 2 = Validation facture
 
     /**
      *    \brief      Constructeur
-     *    \param      DB      Handler accès base
+     *    \param      DB      Handler acces base
      */
     function Notify($DB)
     {
@@ -76,8 +76,8 @@ class Notify
 	}
 	
     /**
-     *    	\brief      Renvoie le nombre de notifications configurés pour l'action et la société donnée
-     *		\return		int		<0 si ko, sinon nombre de notifications définies
+     *    	\brief      Renvoie le nombre de notifications configures pour l'action et la societe donnee
+     *		\return		int		<0 si ko, sinon nombre de notifications definies
      */
 	function countDefinedNotifications($action,$socid)
 	{
@@ -107,7 +107,7 @@ class Notify
 	}
 
     /**
-     *    	\brief      Vérifie si notification actice. Si oui, envoi mail et sauve trace
+     *    	\brief      Verifie si notification actice. Si oui, envoi mail et sauve trace
      *		\return		int		<0 si ko, sinon nombre de notifications faites
      */
     function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
@@ -160,7 +160,7 @@ class Notify
                         $sql.= " VALUES (".$this->db->idate(mktime()).", ".$action." ,".$obj->rowid." , '".$objet_type."', ".$objet_id.");";
                         if (! $this->db->query($sql) )
                         {
-                            dol_print_error($db);
+                            dol_print_error($this->db);
                         }
                     }
                     else

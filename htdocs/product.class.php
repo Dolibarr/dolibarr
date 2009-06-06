@@ -23,7 +23,7 @@
 /**
  *	\file       htdocs/product.class.php
  *	\ingroup    produit
- *	\brief      Fichier de la classe des produits pr�d�finis
+ *	\brief      Fichier de la classe des produits predefinis
  *	\version    $Id$
  */
 
@@ -71,7 +71,7 @@ class Product extends CommonObject
 	var $duration_unit;
 	// Statut indique si le produit est en vente '1' ou non '0'
 	var $status;
-	// Statut indique si le produit est un produit finis '1' ou une matiere premi�re '0'
+	// Statut indique si le produit est un produit finis '1' ou une matiere premiere '0'
 	var $finished;
 
 	//! Unites de mesure
@@ -108,7 +108,7 @@ class Product extends CommonObject
 
 	/**
 	 *    \brief      Constructeur de la classe
-	 *    \param      DB          Handler acc�s base de donn�es
+	 *    \param      DB          Handler acces base de donnees
 	 *    \param      id          Id produit (0 par defaut)
 	 */
 	function Product($DB, $id=0)

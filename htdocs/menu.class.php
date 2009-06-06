@@ -42,7 +42,7 @@ class Menu {
     }
 
     /**
-     *  \brief      Vide l'objet menu de ces entrées
+     *  \brief      Vide l'objet menu de ces entrees
      */
     function clear()
     {
@@ -50,10 +50,10 @@ class Menu {
     }
 
     /**
-     *  \brief      Ajoute une entrée de menu
+     *  \brief      Ajoute une entree de menu
      *  \param      url         Url a suivre sur le clic
-     *  \param      titre       Libelle menu à afficher
-     *  \param      level       Niveau du menu à ajouter
+     *  \param      titre       Libelle menu a afficher
+     *  \param      level       Niveau du menu a ajouter
      *  \param      enabled     Menu actif ou non
      *  \param      target		Target lien
      */
@@ -77,10 +77,10 @@ class Menu {
     }
 
     /**
-     *  \brief      Ajoute une entrée de menu de niveau inférieur
+     *  \brief      Ajoute une entree de menu de niveau inferieur
      *  \param      url         Url a suivre sur le clic
-     *  \param      titre       Libelle menu à afficher
-     *  \param      level       Niveau du menu à ajouter
+     *  \param      titre       Libelle menu a afficher
+     *  \param      level       Niveau du menu a ajouter
      *  \param      enabled     Menu actif ou non
      *  \param      target		Target lien
      */

@@ -22,7 +22,7 @@
         \file       htdocs/paiement.class.php
         \ingroup    facture
         \brief      Fichier de la classe des paiement de factures clients
-        \remarks	Cette classe est presque identique à paiementfourn.class.php
+        \remarks	Cette classe est presque identique a paiementfourn.class.php
         \version    $Id$
 */
 
@@ -40,12 +40,12 @@ class Paiement
 	var $amount;
 	var $total;
 	var $author;
-	var $paiementid;	// Type de paiement. Stocké dans fk_paiement
-						// de llx_paiement qui est lié aux types de
+	var $paiementid;	// Type de paiement. Stocke dans fk_paiement
+						// de llx_paiement qui est lie aux types de
 						//paiement de llx_c_paiement
-	var $num_paiement;	// Numéro du CHQ, VIR, etc...
+	var $num_paiement;	// Numero du CHQ, VIR, etc...
 	var $bank_account;	// Id compte bancaire du paiement
-	var $bank_line;     // Id de la ligne d'écriture bancaire
+	var $bank_line;     // Id de la ligne d'ecriture bancaire
 	var $note;
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
@@ -55,7 +55,7 @@ class Paiement
 
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler accès base de données
+	 *    \param  DB          handler acces base de donnees
 	 */
 	function Paiement($DB)
 	{
@@ -63,9 +63,9 @@ class Paiement
 	}
 
     /**
-     *    \brief      Récupère l'objet paiement
-     *    \param      id      id du paiement a récupérer
-     *    \return     int     <0 si ko, 0 si non trouvé, >0 si ok
+     *    \brief      Recupere l'objet paiement
+     *    \param      id      id du paiement a recuperer
+     *    \return     int     <0 si ko, 0 si non trouve, >0 si ok
      */
     function fetch($id)
 	{
@@ -79,7 +79,7 @@ class Paiement
 
 		dol_syslog("Paiement::fetch sql=".$sql);
 		$result = $this->db->query($sql);
-		
+
 		if ($result)
 		{
 			if ($this->db->num_rows($result))
@@ -114,14 +114,14 @@ class Paiement
 	}
 
 	/**
- 	 *    \brief      Création du paiement en base
-	 *    \param      user        object utilisateur qui crée
-	 *    \return     int         id du paiement crée, < 0 si erreur
+ 	 *    \brief      Creation du paiement en base
+	 *    \param      user        object utilisateur qui cree
+	 *    \return     int         id du paiement cree, < 0 si erreur
 	 */
 	function create($user)
 	{
 		global $langs,$conf;
-		
+
 		$error = 0;
 
 		// Nettoyage parametres
@@ -138,7 +138,7 @@ class Paiement
 
 		$this->db->begin();
 
-		if ($this->total <> 0) // On accepte les montants négatifs pour les rejets de prélèvement
+		if ($this->total <> 0) // On accepte les montants negatifs pour les rejets de prelevement
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)';
 			$sql.= ' VALUES ('.$this->db->idate(mktime()).', '.$this->db->idate($this->datepaye).', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.addslashes($this->note).'\', '.$user->id.')';
@@ -148,7 +148,7 @@ class Paiement
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'paiement');
-				
+
 				// Insere liens montants / factures
 				foreach ($this->amounts as $key => $amount)
 				{
@@ -173,7 +173,7 @@ class Paiement
 						dol_syslog('Paiement::Create Montant non numérique');
 					}
 				}
-				
+
 				if (! $error)
 				{
 		            // Appel des triggers
@@ -192,7 +192,7 @@ class Paiement
 			}
 		}
 
-		if ($this->total <> 0 && ! $error) // On accepte les montants négatifs
+		if ($this->total <> 0 && ! $error) // On accepte les montants negatifs
 		{
 			$this->db->commit();
 			return $this->id;
@@ -206,9 +206,9 @@ class Paiement
 
 
     /**
-     *      \brief      Supprime un paiement ainsi que les lignes qu'il a généré dans comptes
-     *                  Si le paiement porte sur un écriture compte qui est rapprochée, on refuse
-     *                  Si le paiement porte sur au moins une facture à "payée", on refuse
+     *      \brief      Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
+     *                  Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
+     *                  Si le paiement porte sur au moins une facture a "payee", on refuse
      *      \return     int     <0 si ko, >0 si ok
      */
 	function delete()
@@ -217,14 +217,14 @@ class Paiement
 
 		$this->db->begin();
 
-        // Vérifier si paiement porte pas sur une facture classée
+        // Verifier si paiement porte pas sur une facture classee
         // Si c'est le cas, on refuse la suppression
         $billsarray=$this->getBillsArray('fk_statut > 1');
         if (is_array($billsarray))
         {
             if (sizeof($billsarray))
             {
-                $this->error="Impossible de supprimer un paiement portant sur au moins une facture fermée";
+                $this->error="Impossible de supprimer un paiement portant sur au moins une facture fermee";
                 $this->db->rollback();
                 return -1;
             }
@@ -233,9 +233,9 @@ class Paiement
         {
             $this->db->rollback();
             return -2;
-        }       
+        }
 
-      	// Vérifier si paiement ne porte pas sur ecriture bancaire rapprochée
+      	// Verifier si paiement ne porte pas sur ecriture bancaire rapprochee
       	// Si c'est le cas, on refuse le paiement
 		if ($bank_line_id)
 		{
@@ -243,10 +243,10 @@ class Paiement
             $accline->fetch($bank_line_id);
             if ($accline->rappro)
             {
-                $this->error="Impossible de supprimer un paiement qui a généré une écriture qui a été rapprochée";
+                $this->error="Impossible de supprimer un paiement qui a genere une ecriture qui a ete rapprochee";
                 $this->db->rollback();
                 return -3;
-            }            
+            }
         }
 
         // Efface la ligne de paiement (dans paiement_facture et paiement)
@@ -265,7 +265,7 @@ class Paiement
     			return -3;
     	    }
 
-    		// Supprimer l'écriture bancaire si paiement lié à écriture
+    		// Supprimer l'ecriture bancaire si paiement lie a ecriture
     		if ($bank_line_id)
     		{
     			$accline = new AccountLine($this->db);
@@ -291,7 +291,7 @@ class Paiement
 	}
 
     /**
-     *      \brief      Mise a jour du lien entre le paiement et la ligne générée dans llx_bank
+     *      \brief      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
      *      \param      id_bank     Id compte bancaire
      */
 	function update_fk_bank($id_bank)
@@ -344,7 +344,7 @@ class Paiement
 
 		dol_syslog('Paiement::info sql='.$sql);
 		$result = $this->db->query($sql);
-		
+
 		if ($result)
 		{
 			if ($this->db->num_rows($result))
@@ -373,7 +373,7 @@ class Paiement
 			dol_print_error($this->db);
 		}
 	}
-	
+
     /**
      *      \brief      Retourne la liste des factures sur lesquels porte le paiement
      *      \param      filter          Critere de filtre
@@ -419,7 +419,7 @@ class Paiement
 	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;
-		
+
 		$result='';
 
 		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$this->id.'">';
@@ -430,26 +430,26 @@ class Paiement
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;
 	}
-	
+
 	/**
-	*    	\brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-	*    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	*    	\brief      Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	*    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	*    	\return     string		Libelle
 	*/
 	function getLibStatut($mode=0)
 	{
 		return $this->LibStatut($this->statut,$mode);
 	}
-	
+
 	/**
-	*    	\brief      Renvoi le libellé d'un statut donne
+	*    	\brief      Renvoi le libelle d'un statut donne
 	*    	\param      status      Statut
-	*		\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	*    	\return     string      Libellé du statut
+	*		\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	*    	\return     string      Libelle du statut
 	*/
 	function LibStatut($status,$mode=0)
 	{
-		global $langs;	// TODO Renvoyer le libellé anglais et faire traduction a affichage
+		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 		$langs->load('compta');
 		if ($mode == 0)
 		{
@@ -483,6 +483,6 @@ class Paiement
 		}
 		return $langs->trans('Unknown');
 	}
-	
+
 }
 ?>
