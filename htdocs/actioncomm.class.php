@@ -67,7 +67,7 @@ class ActionComm
 
     /**
      *      \brief      Constructeur
-     *      \param      db      Handler d'acc�s base de donn�e
+     *      \param      db      Handler d'acces base de donnee
      */
     function ActionComm($db)
     {
@@ -204,7 +204,7 @@ class ActionComm
 
 	/**
 	*    \brief      Charge l'objet action depuis la base
-	*    \param      id      id de l'action a r�cup�rer
+	*    \param      id      id de l'action a recuperer
 	*/
 	function fetch($id)
 	{

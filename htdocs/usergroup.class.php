@@ -49,8 +49,8 @@ class UserGroup extends CommonObject
 
 	/**
 	 *    \brief Constructeur de la classe
-	 *    \param  DB         Handler accès base de données
-	 *    \param  id         Id du groupe (0 par défaut)
+	 *    \param  DB         Handler acces base de donnees
+	 *    \param  id         Id du groupe (0 par defaut)
 	 */
 	function UserGroup($DB, $id=0)
 	{
@@ -62,8 +62,8 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *	\brief      Charge un objet group avec toutes ces caractéristiques
-	 *	\param      id      id du groupe à charger
+	 *	\brief      Charge un objet group avec toutes ces caracteristiques
+	 *	\param      id      id du groupe a charger
 	 *	\return		int		<0 si KO, >0 si OK
 	 */
 	function fetch($id)
@@ -151,7 +151,7 @@ class UserGroup extends CommonObject
 
 	/**
 	 *    \brief      Ajoute un droit a l'utilisateur
-	 *    \param      rid         id du droit à ajouter
+	 *    \param      rid         id du droit a ajouter
 	 *    \param      allmodule   Ajouter tous les droits du module allmodule
 	 *    \param      allperms    Ajouter tous les droits du module allmodule, perms allperms
 	 *    \return     int         > 0 si ok, < 0 si erreur
@@ -167,8 +167,8 @@ class UserGroup extends CommonObject
 
 		if ($rid)
 		{
-			// Si on a demandé ajout d'un droit en particulier, on récupère
-			// les caractéristiques (module, perms et subperms) de ce droit.
+			// Si on a demande ajout d'un droit en particulier, on recupere
+			// les caracteristiques (module, perms et subperms) de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE id = '".$rid."'";
@@ -186,18 +186,18 @@ class UserGroup extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			// Where pour la liste des droits à ajouter
+			// Where pour la liste des droits a ajouter
 			$whereforadd="id=".$rid;
 			// Ajout des droits induits
 			if ($subperms) $whereforadd.=" OR (module='$module' AND perms='$perms' AND subperms='lire')";
 			if ($perms)    $whereforadd.=" OR (module='$module' AND perms='lire' AND subperms IS NULL)";
 
-			// Pour compatibilité, si lowid = 0, on est en mode ajout de tout
-			// \todo A virer quand sera géré par l'appelant
+			// Pour compatibilite, si lowid = 0, on est en mode ajout de tout
+			// TODO A virer quand sera gere par l'appelant
 			if (substr($rid,-1,1) == 0) $whereforadd="module='$module'";
 		}
 		else {
-			// Where pour la liste des droits à ajouter
+			// Where pour la liste des droits a ajouter
 			if ($allmodule) $whereforadd="module='$allmodule'";
 			if ($allperms)  $whereforadd=" AND perms='$allperms'";
 		}
@@ -250,7 +250,7 @@ class UserGroup extends CommonObject
 
 	/**
 	 *    \brief      Retire un droit a l'utilisateur
-	 *    \param      rid         id du droit à retirer
+	 *    \param      rid         id du droit a retirer
 	 *    \param      allmodule   Retirer tous les droits du module allmodule
 	 *    \param      allperms    Retirer tous les droits du module allmodule, perms allperms
 	 *    \return     int         > 0 si ok, < 0 si erreur
@@ -266,8 +266,8 @@ class UserGroup extends CommonObject
 
 		if ($rid)
 		{
-			// Si on a demandé supression d'un droit en particulier, on récupère
-			// les caractéristiques module, perms et subperms de ce droit.
+			// Si on a demande supression d'un droit en particulier, on recupere
+			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE id = '".$rid."'";
@@ -285,18 +285,18 @@ class UserGroup extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			// Where pour la liste des droits à supprimer
+			// Where pour la liste des droits a supprimer
 			$wherefordel="id=".$rid;
 			// Suppression des droits induits
 			if ($subperms=='lire') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
 			if ($perms=='lire')    $wherefordel.=" OR (module='$module')";
 
-			// Pour compatibilité, si lowid = 0, on est en mode suppression de tout
-			// \todo A virer quand sera géré par l'appelant
+			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
+			// \todo A virer quand sera gere par l'appelant
 			if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		}
 		else {
-			// Where pour la liste des droits à supprimer
+			// Where pour la liste des droits a supprimer
 			if ($allmodule) $wherefordel="module='$allmodule'";
 			if ($allperms)  $wherefordel=" AND perms='$allperms'";
 		}
@@ -347,7 +347,7 @@ class UserGroup extends CommonObject
 
 	/**
 	 *    \brief      Charge dans l'objet group, la liste des permissions auquels le groupe a droit
-	 *    \param      module    	Nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
+	 *    \param      module    	Nom du module dont il faut recuperer les droits ('' par defaut signifie tous les droits)
 	 */
 	function getrights($module='')
 	{
@@ -355,12 +355,12 @@ class UserGroup extends CommonObject
 
 		if ($this->all_permissions_are_loaded)
 		{
-			// Si les permissions ont déja été chargées, on quitte
+			// Si les permissions ont deja ete chargees, on quitte
 			return;
 		}
 
 		/*
-		 * Récupération des droits
+		 * Recuperation des droits
 		 */
 		$sql = "SELECT r.module, r.perms, r.subperms ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
@@ -395,8 +395,8 @@ class UserGroup extends CommonObject
 
 		if ($module == '')
 		{
-			// Si module etait non defini, alors on a tout chargé, on peut donc considérer
-			// que les droits sont en cache (car tous chargés) pour cet instance de user
+			// Si module etait non defini, alors on a tout charge, on peut donc considerer
+			// que les droits sont en cache (car tous charges) pour cet instance de user
 			$this->all_permissions_are_loaded=1;
 		}
 
@@ -444,7 +444,7 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 *        \brief      Crée un groupe en base
+	 *        \brief      Cree un groupe en base
 	 *        \return     si erreur <0, si ok renvoie id groupe cr
 	 */
 	function create()
@@ -480,7 +480,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *		\brief      Mise à jour en base d'un utilisateur
+	 *		\brief      Mise a jour en base d'un utilisateur
 	 *      	\param      notrigger	    0=non, 1=oui
 	 *    	\return     int				<0 si KO, >=0 si OK
 	 */
@@ -563,13 +563,13 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise le groupe avec valeurs fictives aléatoire
+	 *		\brief		Initialise le groupe avec valeurs fictives aleatoire
 	 */
 	function initAsSpecimen()
 	{
 		global $user,$langs;
 
-		// Initialise paramètres
+		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
