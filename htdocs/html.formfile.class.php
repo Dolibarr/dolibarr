@@ -421,7 +421,7 @@ class FormFile
 	 * 		\param		textifempty			Text to show if filearray is empty
 	 * 		\return		int					<0 if KO, nb of files shown if OK
 	 */
-	function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='')
+	function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0)
 	{
 		global $user, $conf, $langs;
 		global $bc;
@@ -461,7 +461,7 @@ class FormFile
 				if ($forcedownload) print '&type=application/binary';
 				print '&file='.urlencode($relativepath.$file['name']).'">';
 				print img_mime($file['name']).' ';
-				print $file['name'];
+				print dol_trunc($file['name'],$maxlength,'middle');
 				print '</a>';
 				print "</td>\n";
 				print '<td align="right">'.dol_print_size($file['size']).'</td>';
