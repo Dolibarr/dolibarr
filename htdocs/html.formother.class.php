@@ -27,14 +27,14 @@
 
 /**
  *	\file       htdocs/html.formother.class.php
- *	\brief      Fichier de la classe des fonctions pr�d�finie de composants html autre
+ *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
  *	\version	$Id$
  */
 
 
 /**
  *	\class      FormOther
- *	\brief      Classe permettant la g�n�ration de composants html autre
+ *	\brief      Classe permettant la generation de composants html autre
  *	\remarks	Only common components must be here.
  */
 class FormOther
@@ -45,7 +45,7 @@ class FormOther
 
 	/**
 	 *	\brief     Constructeur
-	 *	\param     DB      handler d'acc�s base de donn�e
+	 *	\param     DB      handler d'acces base de donnee
 	 */
 	function FormOther($DB)
 	{
@@ -56,10 +56,10 @@ class FormOther
 
 
 	/**
-	 *    \brief      Retourne la liste des mod�les d'export
-	 *    \param      selected          Id mod�le pr�-s�lectionn�
+	 *    \brief      Retourne la liste des modeles d'export
+	 *    \param      selected          Id modele pre-selectionne
 	 *    \param      htmlname          Nom de la zone select
-	 *    \param      type              Type des mod�les recherch�s
+	 *    \param      type              Type des modeles recherches
 	 *    \param      useempty          Affiche valeur vide dans liste
 	 */
 	function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
