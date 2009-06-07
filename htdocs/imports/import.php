@@ -63,7 +63,7 @@ $entitytolang=array(		// Translation code
 	'other'=>'Other'
 );
 
-$array_selected=isset($_SESSION["import_selected_fields"])?$_SESSION["import_selected_fields"]:array();
+$array_match_file_to_database=isset($_SESSION["dol_array_match_file_to_database"])?$_SESSION["dol_array_match_file_to_database"]:array();
 $datatoimport=isset($_GET["datatoimport"])? $_GET["datatoimport"] : (isset($_POST["datatoimport"])?$_POST["datatoimport"]:'');
 $action=isset($_GET["action"]) ? $_GET["action"] : (isset($_POST["action"])?$_POST["action"]:'');
 $step=isset($_GET["step"])? $_GET["step"] : (isset($_POST["step"])?$_POST["step"]:1);
@@ -85,6 +85,7 @@ $sqlusedforimport='';
  * Actions
  */
 
+/*
 if ($action=='selectfield')
 {
 	if ($_GET["field"]=='all')
@@ -92,17 +93,17 @@ if ($action=='selectfield')
 		$fieldsarray=$objimport->array_import_alias[0];
 		foreach($fieldsarray as $key=>$val)
 		{
-			if (! empty($array_selected[$key])) continue;		// If already selected, select next
-			$array_selected[$key]=sizeof($array_selected)+1;
-			//print_r($array_selected);
-			$_SESSION["import_selected_fields"]=$array_selected;
+			if (! empty($array_match_file_to_database[$key])) continue;		// If already selected, select next
+			$array_match_file_to_database[$key]=sizeof($array_match_file_to_database)+1;
+			//print_r($array_match_file_to_database);
+			$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
 		}
 	}
 	else
 	{
-		$array_selected[$_GET["field"]]=sizeof($array_selected)+1;
-		//print_r($array_selected);
-		$_SESSION["import_selected_fields"]=$array_selected;
+		$array_match_file_to_database[$_GET["field"]]=sizeof($array_match_file_to_database)+1;
+		//print_r($array_match_file_to_database);
+		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
 	}
 
 }
@@ -110,33 +111,35 @@ if ($action=='unselectfield')
 {
 	if ($_GET["field"]=='all')
 	{
-		$array_selected=array();
-		$_SESSION["import_selected_fields"]=$array_selected;
+		$array_match_file_to_database=array();
+		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
 	}
 	else
 	{
-		unset($array_selected[$_GET["field"]]);
+		unset($array_match_file_to_database[$_GET["field"]]);
 		// Renumber fields of array_selected (from 1 to nb_elements)
-		asort($array_selected);
+		asort($array_match_file_to_database);
 		$i=0;
-		$array_selected_save=$array_selected;
-		foreach($array_selected as $code=>$value)
+		$array_match_file_to_database_save=$array_match_file_to_database;
+		foreach($array_match_file_to_database as $code=>$value)
 		{
 			$i++;
-			$array_selected[$code]=$i;
+			$array_match_file_to_database[$code]=$i;
 			//print "x $code x $i y<br>";
 		}
-		$_SESSION["import_selected_fields"]=$array_selected;
+		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
 	}
 }
+*/
+
 if ($action=='downfield' || $action=='upfield')
 {
-	$pos=$array_selected[$_GET["field"]];
+	$pos=$array_match_file_to_database[$_GET["field"]];
 	if ($action=='downfield') $newpos=$pos+1;
 	if ($action=='upfield') $newpos=$pos-1;
-	// Recherche code avec qui switch�
+	// Recherche code avec qui switcher
 	$newcode="";
-	foreach($array_selected as $code=>$value)
+	foreach($array_match_file_to_database as $code=>$value)
 	{
 		if ($value == $newpos)
 		{
@@ -145,24 +148,18 @@ if ($action=='downfield' || $action=='upfield')
 		}
 	}
 	//print("Switch pos=$pos (code=".$_GET["field"].") and newpos=$newpos (code=$newcode)");
-	if ($newcode)   // Si newcode trouv� (prtoection contre resoumission de page
+	if ($newcode)   // Si newcode trouve (protection contre resoumission de page)
 	{
-		$array_selected[$_GET["field"]]=$newpos;
-		$array_selected[$newcode]=$pos;
-		$_SESSION["import_selected_fields"]=$array_selected;
+		$array_match_file_to_database[$_GET["field"]]=$newpos;
+		$array_match_file_to_database[$newcode]=$pos;
+		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
 	}
-}
-
-if ($step == 1 || $action == 'cleanselect')
-{
-	$_SESSION["import_selected_fields"]=array();
-	$array_selected=array();
 }
 
 if ($action == 'builddoc')
 {
 	// Build import file
-	$result=$objimport->build_file($user, $_POST['model'], $datatoimport, $array_selected);
+	$result=$objimport->build_file($user, $_POST['model'], $datatoimport, $array_match_file_to_database);
 	if ($result < 0)
 	{
 		$mesg='<div class="error">'.$objimport->error.'</div>';
@@ -185,13 +182,14 @@ if ($action == 'deleteprof')
 
 if ($action == 'add_import_model')
 {
+	// TODO Save a matching model
 	if ($import_name)
 	{
-		asort($array_selected);
+		asort($array_match_file_to_database);
 
 		// Set save string
 		$hexa='';
-		foreach($array_selected as $key=>$val)
+		foreach($array_match_file_to_database as $key=>$val)
 		{
 			if ($hexa) $hexa.=',';
 			$hexa.=$key;
@@ -222,10 +220,11 @@ if ($action == 'add_import_model')
 	}
 }
 
-if ($step == 2 && $action == 'select_model')
+if ($step == 3 && $action == 'select_model')
 {
-	$_SESSION["import_selected_fields"]=array();
-	$array_selected=array();
+	// TODO Use a matching model
+	$_SESSION["dol_array_match_file_to_database"]=array();
+	$array_match_file_to_database=array();
 	$result = $objimport->fetch($importmodelid);
 	if ($result > 0)
 	{
@@ -233,10 +232,10 @@ if ($step == 2 && $action == 'select_model')
 		$i=1;
 		foreach($fieldsarray as $val)
 		{
-			$array_selected[$val]=$i;
+			$array_match_file_to_database[$val]=$i;
 			$i++;
 		}
-		$_SESSION["import_selected_fields"]=$array_selected;
+		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
 	}
 }
 
@@ -471,7 +470,45 @@ if ($step == 2 && $datatoimport)
 
 if ($step == 3 && $datatoimport)
 {
-	asort($array_selected);
+	// Load source fields in input file
+	$fieldssource=array(
+		1=>array('name'=>'aa','example1'=>'val1','example2'=>'val2'),
+		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2')
+		);
+
+	// Load targets fields in database
+	$fieldstarget=$objimport->array_import_fields[0];
+
+	$maxpos=max(sizeof($fieldssource),sizeof($fieldstarget));
+
+	if (sizeof($array_match_file_to_database) == 0)
+	{
+		// This is first input in screen, we need to define the $array_match_file_to_database array
+		$pos=1;
+		while ($pos <= sizeof($fieldssource))
+		{
+			if (sizeof($fieldssource) > 1 && $pos <= sizeof($fieldssource))
+			{
+				$posbis=1;
+				foreach($fieldstarget as $key => $val)
+				{
+					if ($posbis < $pos)
+					{
+						$posbis++;
+						continue;
+					}
+					// We found the key of targets that is at position pos
+					$array_match_file_to_database[$pos]=$key;
+					break;
+				}
+			}
+			$pos++;
+		}
+		// Save the match array in session. We now will use the array in session.
+		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
+	}
+var_dump($array_match_file_to_database);
+
 
 	llxHeader('',$langs->trans("NewImport"));
 
@@ -519,49 +556,17 @@ if ($step == 3 && $datatoimport)
 	print '<br>';
 
 
-	// Load source fields
-	$fieldssource=array(
-		1=>array('name'=>'aa','example1'=>'val1','example2'=>'val2'),
-		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2')
-		);
-
-	// Load targets fileds in database
-	$fieldstarget=$objimport->array_import_fields[0];
-
-	$maxpos=max(sizeof($fieldssource),sizeof($fieldstarget));
-
-
 	print $langs->trans("SelectImportFields");
 
 	print '<table class="nobordernopadding" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("FieldsInSourceFile").'</td>';
-	print '<td>&nbsp</td>';
 	print '<td>'.$langs->trans("FieldsInTargetDatabase").'</td>';
 	print '</tr>';
 
-	print '<tr valign="top"><td width="48%">';
+	print '<tr valign="top"><td width="50%">';
 
 	// List of source fields
-	print '<table width="100%" class="noborder">';
-	$pos=1;
-	$var=true;
-	while($pos <= $maxpos)
-	{
-		$var=!$var;
-		print "<tr ".$bc[$var].' height="20">';
-		print '<td>';
-		if (! empty($fieldssource[$pos]['name'])) print $fieldssource[$pos]['name'].' ('.$fieldssource[$pos]['example1'].')';
-		else print '&nbsp;';
-		print '</td>';
-		print '</tr>';
-		$pos++;
-	}
-
-	print '</table>';
-
-	print '</td><td width="4%">';
-	// Arrows
 	print '<table width="100%" class="noborder">';
 	$pos=1;
 	$var=true;
@@ -569,14 +574,53 @@ if ($step == 3 && $datatoimport)
 	{
 		$var=!$var;
 		print "<tr ".$bc[$var].' height="20">';
+		print '<td>';
+		// Get name of database field at position $pos into $namefield
+		$namefield='';
+		$posbis=1;
+		foreach($fieldstarget as $key => $val)
+		{
+			if ($posbis < $pos)
+			{
+				$posbis++;
+				continue;
+			}
+			// We found the key of targets that is at position pos
+			$namefield=$key;
+			break;
+		}
+		// Now we check if there is a file field linked to this $namefield database field
+		foreach($fieldssource as $key => $val)
+		{
+			if (! empty($array_match_file_to_database[$key]) && $array_match_file_to_database[$key] == $namefield)
+			{
+				print $langs->trans("Field").' '.$key.': ';
+				print $fieldssource[$key]['name'].' ('.$fieldssource[$key]['example1'].')';
+				break;
+			}
+		}
+		print '</td>';
+
+		// Arrows
 		print '<td align="center">&nbsp;';
-		if ($pos <= sizeof($fieldssource)) print img_right();
+		if (sizeof($fieldssource) > 1 && $pos <= sizeof($fieldssource))
+		{
+	        if ($pos < $maxpos) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=downfield&field='.$fieldssource[$pos]['name'].'">'.img_down().'</a>';
+    	    if ($pos > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=upfield&field='.$fieldssource[$pos]['name'].'">'.img_up().'</a>';
+		}
 		print '&nbsp;</td>';
+
+		print '<td>';
+		if (sizeof($fieldssource) > 1 && $pos <= sizeof($fieldssource)) print ' -> ';
+		print '</td>';
+
 		print '</tr>';
 		$pos++;
 	}
+
 	print '</table>';
-	print '</td><td width="48%">';
+
+	print '</td><td width="50%">';
 
 	$i = 0;
 	$var=true;
@@ -614,7 +658,7 @@ if ($step == 3 && $datatoimport)
 	 */
 	print '<div class="tabsAction">';
 
-	if (sizeof($array_selected))
+	if (sizeof($array_match_file_to_database))
 	{
 		print '<a class="butAction" href="import.php?step=4&datatoimport='.$datatoimport.'">'.$langs->trans("NextStep").'</a>';
 	}
@@ -623,7 +667,7 @@ if ($step == 3 && $datatoimport)
 
 
 	// Area for profils import
-	if (sizeof($array_selected))
+	if (sizeof($array_match_file_to_database))
 	{
 		print '<br>';
 		print $langs->trans("SaveImportModel");
@@ -683,7 +727,7 @@ if ($step == 3 && $datatoimport)
 
 if ($step == 4 && $datatoimport)
 {
-	asort($array_selected);
+	asort($array_match_file_to_database);
 
 	llxHeader('',$langs->trans("NewImport"));
 
@@ -730,7 +774,7 @@ if ($step == 4 && $datatoimport)
 	// Nbre champs importes
 	print '<tr><td width="25%">'.$langs->trans("ImportedFields").'</td>';
 	$list='';
-	foreach($array_selected as $code=>$label)
+	foreach($array_match_file_to_database as $code=>$label)
 	{
 		$list.=($list?',':'');
 		$list.=$langs->trans($objimport->array_import_fields[0][$code]);

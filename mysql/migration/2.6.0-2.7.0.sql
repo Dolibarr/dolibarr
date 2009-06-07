@@ -6,6 +6,18 @@
 -- when current version is 2.6.0 or higher. 
 --
 
+-- Create new table for import module
+create table llx_import_model
+(
+  	rowid         integer AUTO_INCREMENT PRIMARY KEY,
+	fk_user		  integer DEFAULT 0 NOT NULL,
+  	label         varchar(50) NOT NULL,
+  	type		  varchar(20) NOT NULL,
+  	field         text NOT NULL
+)type=innodb;
+
+ALTER TABLE llx_import_model ADD UNIQUE INDEX uk_import_model (label,type);
+
 delete from llx_const where name = 'FACTURE_ENABLE_RECUR';
 
 alter table llx_facturedet_rec add column  product_type		  integer    DEFAULT 0 after fk_product;

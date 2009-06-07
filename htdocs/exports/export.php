@@ -136,7 +136,7 @@ if ($action=='downfield' || $action=='upfield')
     $pos=$array_selected[$_GET["field"]];
     if ($action=='downfield') $newpos=$pos+1;
     if ($action=='upfield') $newpos=$pos-1;
-    // Recherche code avec qui switch�
+    // Recherche code avec qui switcher
     $newcode="";
     foreach($array_selected as $code=>$value)
     {
@@ -147,7 +147,7 @@ if ($action=='downfield' || $action=='upfield')
         }
     }
     //print("Switch pos=$pos (code=".$_GET["field"].") and newpos=$newpos (code=$newcode)");
-    if ($newcode)   // Si newcode trouv� (prtoection contre resoumission de page
+    if ($newcode)   // Si newcode trouve (protection contre resoumission de page)
     {
         $array_selected[$_GET["field"]]=$newpos;
         $array_selected[$newcode]=$pos;
