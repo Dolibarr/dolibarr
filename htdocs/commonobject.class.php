@@ -27,7 +27,7 @@
 
 /**
  \class 		CommonObject
- \brief 		Classe mere pour h�ritage des classes metiers
+ \brief 		Classe mere pour heritage des classes metiers
  */
 
 class CommonObject
@@ -115,7 +115,7 @@ class CommonObject
 
 	/**
 	 *      \brief      Mise a jour du statut d'un contact
-	 *      \param      rowid               La reference du lien contact-entit�
+	 *      \param      rowid               La reference du lien contact-entite
 	 * 		\param		statut	            Le nouveau statut
 	 *      \param      type_contact_id     Description du type de contact
 	 *      \return     int                 <0 si erreur, =0 si ok
@@ -290,7 +290,7 @@ class CommonObject
 	}
 
 	/**
-	 *      \brief      Retourne id des contacts d'une source et d'un type actif donn�
+	 *      \brief      Retourne id des contacts d'une source et d'un type actif donne
 	 *                  Exemple: contact client de facturation ('external', 'BILLING')
 	 *                  Exemple: contact client de livraison ('external', 'SHIPPING')
 	 *                  Exemple: contact interne suivi paiement ('internal', 'SALESREPFOLL')
@@ -538,7 +538,7 @@ class CommonObject
 
 
 	/**
-	 *      \brief      Stocke un num�ro de rang pour toutes les lignes de
+	 *      \brief      Stocke un numero de rang pour toutes les lignes de
 	 *                  detail d'une facture qui n'en ont pas.
 	 */
 	function line_order()

@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 
 /**     \class      ChargeSociales
 		\brief      Classe permettant la gestion des paiements des charges
-                    La tva collect�e n'est calcul�e que sur les factures pay�es.
+                    La tva collectee n'est calculee que sur les factures payees.
 */
 class ChargeSociales extends CommonObject
 {
@@ -148,7 +148,7 @@ class ChargeSociales extends CommonObject
 
     /**
      *      \brief      Efface un charge sociale
-     *      \param      user    Utilisateur qui cr�e le paiement
+     *      \param      user    Utilisateur qui cree le paiement
      *      \return     int     <0 si erreur, >0 si ok
      */
     function delete($user)
@@ -228,7 +228,7 @@ class ChargeSociales extends CommonObject
     }
 
 	/**
-	*    \brief      Tag la charge comme pay�e compl�tement
+	*    \brief      Tag la charge comme payee completement
 	*    \param      rowid       id de la ligne a modifier
 	*/
 	function set_payed($rowid)
@@ -238,8 +238,8 @@ class ChargeSociales extends CommonObject
     }
 
 	/**
-	 *    \brief      Retourne le libell� du statut d'une charge (impay�, pay�e)
-	 *    \param      mode          0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long
+	 *    \brief      Retourne le libelle du statut d'une charge (impaye, payee)
+	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -248,10 +248,10 @@ class ChargeSociales extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libell� d'un statut donn�
+	 *    	\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string        	Libell� du statut
+	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string        	Libelle du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -367,8 +367,8 @@ class PaiementCharge
 
     /**
      *      \brief      Creation d'un paiement de charge sociale dans la base
-     *      \param      user    Utilisateur qui cr�e le paiement
-     *      \return     int     <0 si KO, id du paiement cr�e si OK
+     *      \param      user    Utilisateur qui cree le paiement
+     *      \return     int     <0 si KO, id du paiement cree si OK
      */
     function create($user)
 	{
@@ -430,7 +430,7 @@ class PaiementCharge
     }
 
     /**
-     *      \brief      Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank g�n�r�e
+     *      \brief      Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
      *      \param      id_bank         Id de la banque
      *      \return     int             >0 si OK, <=0 si KO
      */
