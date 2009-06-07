@@ -68,7 +68,7 @@ class Contact extends CommonObject
 
     /**
      *      \brief      Constructeur de l'objet contact
-     *      \param      DB      Habler d'acc�s base
+     *      \param      DB      Habler d'acces base
      *      \param      id      Id contact
      */
     function Contact($DB, $id=0)
@@ -133,9 +133,9 @@ class Contact extends CommonObject
     }
 
     /*
-     *      \brief      Mise � jour des infos en base
-     *      \param      id          	Id du contact � mettre � jour
-     *      \param      user        	Objet utilisateur qui effectue la mise � jour
+     *      \brief      Mise a jour des infos en base
+     *      \param      id          	Id du contact a mettre a jour
+     *      \param      user        	Objet utilisateur qui effectue la mise a jour
      *      \param      notrigger	    0=non, 1=oui
      *      \return     int         	<0 si erreur, >0 si ok
      */
@@ -287,7 +287,7 @@ class Contact extends CommonObject
 
 
 	/*
-	*    \brief      Mise � jour des alertes
+	*    \brief      Mise a jour des alertes
 	*    \param      id          id du contact
 	*    \param      user        Utilisateur qui demande l'alerte
 	*/
@@ -358,7 +358,7 @@ class Contact extends CommonObject
     /*
      *    \brief      Charge l'objet contact
      *    \param      id          id du contact
-     *    \param      user        Utilisateur li� au contact pour une alerte
+     *    \param      user        Utilisateur lie au contact pour une alerte
      *    \return     int         -1 if KO, 0 if OK but not found, 1 if OK
      */
     function fetch($id, $user=0)
@@ -492,7 +492,7 @@ class Contact extends CommonObject
 
 
     /*
-     *    \brief        Charge le nombre d'elements auquel est li� ce contact
+     *    \brief        Charge le nombre d'elements auquel est lie ce contact
      *                  ref_facturation
      *                  ref_contrat
      *                  ref_commande
@@ -630,7 +630,7 @@ class Contact extends CommonObject
 
     /*
      *    \brief      Charge les informations sur le contact, depuis la base
-     *    \param      id      id du contact � charger
+     *    \param      id      id du contact a charger
      */
     function info($id)
     {
@@ -674,7 +674,7 @@ class Contact extends CommonObject
     }
 
     /*
-     *    \brief        Renvoi nombre d'emailings re�u par le contact avec son email
+     *    \brief        Renvoi nombre d'emailings recu par le contact avec son email
      *    \return       int     Nombre d'emailings
      */
     function getNbOfEMailings()
@@ -682,7 +682,7 @@ class Contact extends CommonObject
         $sql = "SELECT count(mc.email) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
         $sql.= " WHERE mc.email = '".addslashes($this->email)."'";
-        $sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoy�, 1 envoy� avec succ�s
+        $sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoye, 1 envoye avec succes
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -730,7 +730,7 @@ class Contact extends CommonObject
 
     /**
      *    \brief      Retourne le libelle de civilite du contact
-     *    \return     string      Nom traduit de la civilit�
+     *    \return     string      Nom traduit de la civilite
      */
     function getCivilityLabel()
     {
@@ -775,9 +775,9 @@ class Contact extends CommonObject
 
 
 	/**
-	 *    	\brief      Retourne le libell� du statut du contact
-	 *    	\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string      Libell�
+	 *    	\brief      Retourne le libelle du statut du contact
+	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string      Libelle
 	 */
 	function getLibStatut($mode)
 	{
@@ -785,10 +785,10 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *		\brief      Renvoi le libell� d'un statut donn�
+	 *		\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      statut      Id statut
-	 *    	\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string		Libell�
+	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string		Libelle
 	 */
 	function LibStatut($statut,$mode)
 	{
@@ -853,13 +853,13 @@ class Contact extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise le contact avec valeurs fictives al�atoire
+	 *		\brief		Initialise le contact avec valeurs fictives aleatoire
 	 */
 	function initAsSpecimen()
 	{
 		global $user,$langs;
 
-		// Charge tableau des id de soci�t� socids
+		// Charge tableau des id de societe socids
 		$socids = array();
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe LIMIT 10";
 		$resql = $this->db->query($sql);

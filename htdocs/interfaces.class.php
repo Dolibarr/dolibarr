@@ -37,7 +37,7 @@ class Interfaces
 
 	/**
 	*   \brief      Constructeur.
-	*   \param      DB      handler d'accès base
+	*   \param      DB      handler d'acces base
 	*/
 	function Interfaces($DB)
 	{
@@ -46,8 +46,8 @@ class Interfaces
 	}
 
 	/**
-	*   \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
-	*               Cette fonction déclenche tous les triggers trouvés actifs.
+	*   \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
+	*               Cette fonction declenche tous les triggers trouves actifs.
 	*   \param      action      Code de l'evenement
 	*   \param      object      Objet concern
 	*   \param      user        Objet user
