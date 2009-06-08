@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - admin
+# Dolibarr language file - es_ES - admin 
 CHARSET = UTF-8
 Version = Versión
 VersionProgram = Versión programa
@@ -236,6 +236,9 @@ UMaskExplanation = Este parámetro determina los derechos de los archivos creado
 SeeWikiForAllTeam = Vea el wiki para más detalles de todos los actores y de su organización
 UseACacheDelay = Demora en caché de la exportación en segundos (0 o vacio sin caché)
 DisableLinkToHelpCenter = Ocultar el enlace "¿Necesita soporte o ayuda?" en la página de login
+AddCRIfTooLong = No hay líneas de corte automático, de modo que si el texto es demasiado largo en los documentos, debe agregar sus propios retornos de carro en el texto mecanografiado.
+ModuleDisabled = Módulo desactivado
+ModuleDisabledSoNoEvent = Módulo desactivado, por lo que evento nunca se crea
 # Modules = undefined = 
 Module0Name = Usuarios y grupos
 Module0Desc = Gestión de usuarios y grupos

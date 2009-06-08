@@ -236,6 +236,9 @@ UMaskExplanation = Aquest paràmetre determina els drets dels arxius creats en e
 SeeWikiForAllTeam = Mireu el wiki per a més detalls de tots els actors i de la seva organització
 UseACacheDelay = Demora en memòria cau de l'exportació en segons (0 o buit sense memòria)
 DisableLinkToHelpCenter = Amagar l'enllaç "Necessita suport o ajuda" a la pàgina de login
+AddCRIfTooLong = No hi ha línies de tall automàtic, de manera que si el text és massa llarg en els documents, cal afegir els seus propis retorns de carro en el text mecanografiat.
+ModuleDisabled = Mòdul desactivat
+ModuleDisabledSoNoEvent = Mòdul desactivat, per la qual cosa el esdeveniment mai es crea
 # Modules = undefined =  = 
 Module0Name = Usuaris y grups
 Module0Desc = Gestió d'usuaris i grups
