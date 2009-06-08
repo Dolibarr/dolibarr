@@ -1646,6 +1646,20 @@ function migrate_module_menus($db,$langs,$conf)
 		$mod->remove('noboxes');
 		$mod->init('noboxes');
 	}
+	if (! empty($conf->global->MAIN_MODULE_PRODUIT))	// Permission has changed into 2.7
+	{
+		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Produit");
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modProduit.class.php');
+		$mod=new modProduit($db);
+		$mod->init();
+	}
+	if (! empty($conf->global->MAIN_MODULE_SERVICE))	// Permission has changed into 2.7
+	{
+		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Service");
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modService.class.php');
+		$mod=new modService($db);
+		$mod->init();
+	}
 }
 
 /*
