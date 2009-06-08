@@ -184,25 +184,25 @@ if ($account || $_GET["ref"])
 	$mode_search = 0;
 	if ($_REQUEST["req_desc"])
 	{
-		$sql_rech.= " AND b.label like '%".$_REQUEST["req_desc"]."%'";
+		$sql_rech.= " AND b.label like '%".addslashes($_REQUEST["req_desc"])."%'";
 		$param.='&amp;req_desc='.urlencode($_REQUEST["req_desc"]);
 		$mode_search = 1;
 	}
 	if ($_REQUEST["req_debit"])
 	{
-		$sql_rech.=" AND b.amount = -".$_REQUEST["req_debit"];
+		$sql_rech.=" AND b.amount = -".price2num($_REQUEST["req_debit"]);
 		$param.='&amp;req_debit='.urlencode($_REQUEST["req_debit"]);
 		$mode_search = 1;
 	}
 	if ($_REQUEST["req_credit"])
 	{
-		$sql_rech.=" AND b.amount = ".$_REQUEST["req_credit"];
+		$sql_rech.=" AND b.amount = ".price2num($_REQUEST["req_credit"]);
 		$param.='&amp;req_credit='.urlencode($_REQUEST["req_credit"]);
 		$mode_search = 1;
 	}
 	if ($_REQUEST["thirdparty"])
 	{
-		$sql_rech.=" AND (IFNULL(s.nom,'') LIKE '%".$_REQUEST["thirdparty"]."%')";
+		$sql_rech.=" AND (IFNULL(s.nom,'') LIKE '%".addslashes($_REQUEST["thirdparty"])."%')";
 		$param.='&amp;thirdparty='.urlencode($_REQUEST["thirdparty"]);
 		$mode_search = 1;
 	}
