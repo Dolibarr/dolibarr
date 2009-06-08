@@ -27,14 +27,14 @@
 
 /**
  *	\file       htdocs/html.form.class.php
- *	\brief      Fichier de la classe des fonctions pr�d�finie de composants html
+ *	\brief      Fichier de la classe des fonctions predefinie de composants html
  *	\version	$Id$
  */
 
 
 /**
  *	\class      Form
- *	\brief      Classe permettant la g�n�ration de composants html
+ *	\brief      Classe permettant la generation de composants html
  *	\remarks	Only common components must be here.
  */
 class Form
@@ -64,10 +64,10 @@ class Form
 
 	/**
 	 *	\brief	Affiche un texte+picto avec tooltip sur texte ou sur picto
-	 *	\param  text				Texte � afficher
-	 *	\param  htmltext	    	Contenu html du tooltip, cod� en html
-	 *	\param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et forc� en Ajax
-	 *	\param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apr�s
+	 *	\param  text				Texte a afficher
+	 *	\param  htmltext	    	Contenu html du tooltip, code en html
+	 *	\param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et force en Ajax
+	 *	\param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
 	 *	\param	img					Code img du picto
 	 * 	\param	i					Numero of tooltip
 	 *	\return	string				Code html du tooltip (texte+picto)
@@ -170,11 +170,11 @@ class Form
 
 
 	/**
-	 *    \brief     Retourne la liste d�roulante des pays actifs, dans la langue de l'utilisateur
-	 *    \param     selected         Id ou Code pays ou Libelle pays pr�-s�lectionn�
+	 *    \brief     Retourne la liste deroulante des pays actifs, dans la langue de l'utilisateur
+	 *    \param     selected         Id ou Code pays ou Libelle pays pre-selectionne
 	 *    \param     htmlname         Nom de la liste deroulante
 	 *    \param     htmloption       Options html sur le select
-	 *    \todo      trier liste sur noms apr�s traduction plutot que avant
+	 *    \todo      trier liste sur noms apres traduction plutot que avant
 	 */
 	function select_pays($selected='',$htmlname='pays_id',$htmloption='')
 	{
@@ -259,7 +259,7 @@ class Form
 						{
 							print '<option value="'.$obj->rowid.'">';
 						}
-						// Si traduction existe, on l'utilise, sinon on prend le libell� par d�faut
+						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 						if ($obj->code) { print $obj->code . ' - '; }
 						print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
 						print '</option>';
@@ -280,7 +280,7 @@ class Form
 
 	/**
 	 *    \brief      Retourne la liste des types de comptes financiers
-	 *    \param      selected        Type pr�-s�lectionn�
+	 *    \param      selected        Type pre-selectionne
 	 *    \param      htmlname        Nom champ formulaire
 	 */
 	function select_type_comptes_financiers($selected=1,$htmlname='type')
@@ -528,7 +528,7 @@ class Form
 
 	/**
 	 *    	\brief      Return HTML combo list of absolute discounts
-	 *    	\param      selected        Id remise fixe pr�-s�lectionn�e
+	 *    	\param      selected        Id remise fixe pre-selectionnee
 	 *    	\param      htmlname        Nom champ formulaire
 	 *    	\param      filter          Criteres optionnels de filtre
 	 * 		\param		maxvalue		Max value for lines that can be selected
@@ -592,12 +592,12 @@ class Form
 
 
 	/**
-	 *    	\brief      Retourne la liste d�roulante des contacts d'une soci�t� donn�e
-	 *    	\param      socid      	    Id de la soci�t�
-	 *    	\param      selected   	    Id contact pr�-s�lectionn�
+	 *    	\brief      Retourne la liste deroulante des contacts d'une societe donnee
+	 *    	\param      socid      	    Id de la societe
+	 *    	\param      selected   	    Id contact pre-selectionne
 	 *    	\param      htmlname  	    Nom champ formulaire ('none' pour champ non editable)
 	 *      \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 *      \param      exclude         Liste des id contacts � exclure
+	 *      \param      exclude         Liste des id contacts a exclure
 	 *		\return		int				<0 if KO, Nb of contact in list if OK
 	 */
 	function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='')
@@ -664,7 +664,7 @@ class Form
 
 
 	/**
-	 *	\brief      Retourne la liste d�roulante des utilisateurs
+	 *	\brief      Retourne la liste deroulante des utilisateurs
 	 *  \param      selected        Id user preselected
 	 *  \param      htmlname        Field name in form
 	 *  \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
@@ -723,7 +723,7 @@ class Form
 	 *  \param    selected        Preselected products
 	 *  \param    htmlname        Name of HTML select
 	 *  \param    filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-	 *  \param    limit           Limit sur le nombre de lignes retourn�es
+	 *  \param    limit           Limit sur le nombre de lignes retournees
 	 *  \param    price_level     Level of price to show
 	 *  \param	  status		  -1=Return all products, 0=Products not on sell, 1=Products on sell
 	 *  \param	  finished     	  2=all, 1=finished, 0=raw material
@@ -760,7 +760,7 @@ class Form
 	 *	\param      selected        Preselected product
 	 *	\param      htmlname        Name of select html
 	 *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-	 *	\param      limit           Limite sur le nombre de lignes retourn�es
+	 *	\param      limit           Limite sur le nombre de lignes retournees
 	 *	\param      price_level     Level of price to show
 	 * 	\param      ajaxkeysearch   Filter on product if ajax is used
 	 *	\param		status			-1=Return all products, 0=Products not on sell, 1=Products on sell
