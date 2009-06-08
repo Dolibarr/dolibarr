@@ -20,11 +20,11 @@
  */
 
 /**
-	    \file       htdocs/compta/bank/fiche.php
-        \ingroup    banque
-		\brief      Fiche creation compte bancaire
-		\version    $Id$
-*/
+ *	    \file       htdocs/compta/bank/fiche.php
+ *      \ingroup    banque
+ *		\brief      Fiche creation compte bancaire
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
@@ -148,6 +148,9 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user-
 }
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -198,13 +201,13 @@ if ($_GET["action"] == 'create')
 	// Currency
 	print '<tr><td valign="top">'.$langs->trans("Currency").'</td>';
 	print '<td colspan="3">';
-/*
+
 	$selectedcode=$account->account_currency_code;
 	if (! $selectedcode) $selectedcode=$conf->monnaie;
 	$form->select_currency($selectedcode, 'account_currency_code');
-*/
-	print $langs->trans("Currency".$conf->monnaie);
-	print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
+	//print $langs->trans("Currency".$conf->monnaie);
+	//print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
+
 	print '</td></tr>';
 
 	// Pays
@@ -286,7 +289,7 @@ else
 		dol_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"));
 
 		/*
-		* Confirmation de la suppression
+		* Confirmation to delete
 		*/
 		if ($_GET["action"] == 'delete')
 		{
@@ -327,13 +330,11 @@ else
 		// Currency
 		print '<tr><td valign="top">'.$langs->trans("Currency").'</td>';
 		print '<td colspan="3">';
-	/*
+
 		$selectedcode=$account->account_currency_code;
 		if (! $selectedcode) $selectedcode=$conf->monnaie;
-		$form->select_currency($selectedcode, 'account_currency_code');
-	*/
-		print $langs->trans("Currency".$conf->monnaie);
-		print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
+		print $langs->trans("Currency".$selectedcode);
+
 		print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -439,13 +440,13 @@ else
 		print '<input type="hidden" value="'.$account->currency_code.'">';
 		print '</td>';
 		print '<td colspan="3">';
-	/*
+
 		$selectedcode=$account->account_currency_code;
 		if (! $selectedcode) $selectedcode=$conf->monnaie;
 		$form->select_currency($selectedcode, 'account_currency_code');
-	*/
-		print $langs->trans("Currency".$conf->monnaie);
-		print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
+		//print $langs->trans("Currency".$conf->monnaie);
+		//print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
+
 		print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';

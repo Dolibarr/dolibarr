@@ -551,6 +551,7 @@ class Account extends CommonObject
 				$this->account_number = $obj->account_number;
 
 				$this->currency_code  = $obj->currency_code;
+				$this->account_currency_code  = $obj->currency_code;
 				$this->min_allowed    = $obj->min_allowed;
 				$this->min_desired    = $obj->min_desired;
 				$this->comment        = $obj->comment;
