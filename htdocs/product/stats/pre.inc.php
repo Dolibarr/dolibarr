@@ -34,70 +34,72 @@ function llxHeader($head = "", $urlp = "", $title="")
 {
 	global $user, $conf, $langs;
 	$langs->load("products");
-	
+
 	top_menu($head, $title);
-	
+
 	$menu = new Menu();
-	
+
+	// Products
 	if ($conf->produit->enabled)
 	{
 		$menu->add(DOL_URL_ROOT."/product/index.php?type=0", $langs->trans("Products"));
 		$menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("List"));
-	
-		if ($user->societe_id == 0 && $user->rights->produit->creer)
+
+		if ($user->societe_id == 0 && ($user->rights->produit->creer || $user->rights->service->creer))
 		{
 			$menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
 		}
 	}
-	
+
+	// Services
 	if ($conf->service->enabled)
 	{
 		$menu->add(DOL_URL_ROOT."/product/index.php?type=1", $langs->trans("Services"));
 		$menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=1", $langs->trans("List"));
-		if ($user->societe_id == 0  && $user->rights->produit->creer)
+		if ($user->societe_id == 0 && ($user->rights->produit->creer || $user->rights->service->creer))
 		{
 			$menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=1", $langs->trans("NewService"));
 		}
 	}
-	
+
 	if ($conf->boutique->enabled)
 	{
-	
+
 		$menu->add(DOL_URL_ROOT."/product/osc-liste.php", "Osc");
-		$menu->add_submenu(DOL_URL_ROOT."/product/osc-liste.php?reqstock=epuise", "Produits Epuisés");
-	
-	
+		$menu->add_submenu(DOL_URL_ROOT."/product/osc-liste.php?reqstock=epuise", "Produits Epuisï¿½s");
+
+
 		$menu->add(DOL_URL_ROOT."/product/osc-reviews.php", "Critiques");
-	
+
 		$menu->add_submenu(DOL_URL_ROOT."/product/osc-productsbyreviews.php", "Meilleurs produits");
-	
+
 		$menu->add(DOL_URL_ROOT."/product/album/", "Albums");
 		$menu->add(DOL_URL_ROOT."/product/groupart/", "Groupes/Artistes");
-	
+
 		$menu->add(DOL_URL_ROOT."/product/categorie/", $langs->trans("Categories"));
 	}
-	
+
 	if ($conf->fournisseur->enabled) {
 		$langs->load("suppliers");
 		$menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
 	}
-	
+
 	$menu->add(DOL_URL_ROOT."/product/stats/", $langs->trans("Statistics"));
 	if ($conf->propal->enabled)
 	{
 		$menu->add_submenu(DOL_URL_ROOT."/product/popuprop.php", $langs->trans("Popularity"));
 	}
-	
+
 	if ($conf->stock->enabled)
 	{
 		$menu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"));
 	}
-	
+
 	if ($conf->categorie->enabled)
 	{
 		$menu->add(DOL_URL_ROOT."/categories/", $langs->trans("Categories"));
 	}
-	
+
 	left_menu($menu->liste);
 }
 ?>

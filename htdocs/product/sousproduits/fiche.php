@@ -42,7 +42,7 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 $mesg = '';
 
@@ -67,7 +67,7 @@ $html = new Form($db);
 // Action association d'un sousproduit
 if ($action == 'add_prod' &&
 $cancel <> $langs->trans("Cancel") &&
-$user->rights->produit->creer)
+($user->rights->produit->creer || $user->rights->service->creer))
 {
 
 	for($i=0;$i<$_POST["max_prod"];$i++)
@@ -119,7 +119,7 @@ if($action == 'search' )
 	}
 	$sql.= " ORDER BY p.ref ASC ";
 	// $sql.= $db->plimit($limit + 1 ,$offset);
-	
+
 	$resql = $db->query($sql) ;
 }
 
@@ -212,7 +212,7 @@ if ($id || $ref)
 	/*
 	 * Fiche en mode edition
 	 */
-	if (($action == 'edit' || $action == 'search' || $action == 're-edit') && $user->rights->produit->creer)
+	if (($action == 'edit' || $action == 'search' || $action == 're-edit') && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
 		print '<table class="border" width="100%">';
 
@@ -354,13 +354,10 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '')
 {
-
-	if ( $user->rights->produit->creer)
+	if ($user->rights->produit->creer || $user->rights->service->creer)
 	{
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?action=edit&amp;id='.$id.'">'.$langs->trans("EditAssociate").'</a>';
-
 	}
-
 }
 
 print "\n</div>\n";

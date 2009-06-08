@@ -41,14 +41,14 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'update_price' && ! $_POST["cancel"] && $user->rights->produit->creer)
+if ($_POST["action"] == 'update_price' && ! $_POST["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$product = new Product($db);
 
@@ -226,7 +226,7 @@ if (empty($_GET["action"]) || $_GET["action"]=='delete')
 {
 	print "\n<div class=\"tabsAction\">\n";
 
-	if ($user->rights->produit->modifier || $user->rights->produit->creer)
+	if ($user->rights->produit->creer || $user->rights->service->creer)
 	{
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/price.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("UpdatePrice").'</a>';
 	}
@@ -239,7 +239,7 @@ if (empty($_GET["action"]) || $_GET["action"]=='delete')
 /*
  * Edition du prix
  */
-if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
+if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	print_fiche_titre($langs->trans("NewPrice"),'','');
 

@@ -28,11 +28,11 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
-if (!$user->rights->produit->lire) accessforbidden();
+if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbidden();
 
 
 /*
- *
+ *	View
  */
 
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
@@ -83,7 +83,7 @@ if ($_GET["id"])
 		$hselected = $h;
 		$h++;
 
-		//Affichage onglet Catégories
+		//Affichage onglet Catï¿½gories
 		if ($conf->categorie->enabled){
 			$head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id;
 			$head[$h][1] = $langs->trans('Categories');
@@ -111,7 +111,7 @@ if ($_GET["id"])
 		 * Ajouter une photo
 		 *
 		 */
-		if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
+		if ($_GET["action"] == 'ajout_photo' && ($user->rights->produit->creer || $user->rights->service->creer) && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
 			print_titre($langs->trans("AddPhoto"));
 
@@ -162,7 +162,7 @@ if ($_GET["id"])
 
 				print '</a>';
 				print '<br>'.$langs->trans("File").': '.dol_trunc($filename,16);
-				if ($user->rights->produit->creer)
+				if ($user->rights->produit->creer || $user->rights->service->creer)
 				{
 					print '<br>'.'<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$filename).'">'.img_delete().'</a>';
 				}
@@ -196,16 +196,14 @@ if ($_GET["id"])
 
 	if ($_GET["action"] == '')
 	{
-		if ( $user->rights->produit->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
+		if (($user->rights->produit->creer || $user->rights->service->creer) && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
-	  print '<a class="butAction" href="photos.php?action=ajout_photo&amp;id='.$product->id.'">';
-	  print $langs->trans("AddPhoto").'</a>';
+			print '<a class="butAction" href="photos.php?action=ajout_photo&amp;id='.$product->id.'">';
+			print $langs->trans("AddPhoto").'</a>';
 		}
 	}
 
 	print "\n</div>\n";
-
-
 
 }
 else
@@ -215,11 +213,7 @@ else
 
 
 
-
-
-
-
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

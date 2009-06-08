@@ -121,7 +121,7 @@ class Import
 			                            // Permission
 			                            $this->array_import_perms[$i]=$user->admin;
 			                            // Icon
-			                            $this->array_import_icon[$i]=(isset($module->export_icon[$r])?$module->export_icon[$r]:$module->picto);
+			                            $this->array_import_icon[$i]=(isset($module->import_icon[$r])?$module->import_icon[$r]:$module->picto);
 			                            // Code du dataset export
 			                            $this->array_import_code[$i]=$module->import_code[$r];
 			                            // Libelle du dataset export
@@ -138,9 +138,9 @@ class Import
 			                            // Requete sql du dataset
 			                            $this->array_import_sql_start[$i]=$module->import_sql_start[$r];
 			                            $this->array_import_sql_end[$i]=$module->import_sql_end[$r];
-			                            //$this->array_import_sql[$i]=$module->export_sql[$r];
+			                            //$this->array_import_sql[$i]=$module->import_sql[$r];
 
-			                            dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".sizeof($module->export_fields_code[$r]));
+			                            dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".sizeof($module->import_fields_code[$r]));
 			                            $i++;
 		//	                        }
 			                    }

@@ -26,15 +26,15 @@ $langs->load("categories");
 
 $mesg = '';
 
-if (!$user->rights->produit->lire) accessforbidden();
+if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbidden();
 
 /*
- * Creation de l'objet produit correspondant à l'id
- */  
+ * Creation de l'objet produit correspondant a l'id
+ */
 if ($_GET["id"])
-{           
+{
   $product = new Product($db);
-  $result = $product->fetch($_GET["id"]);      
+  $result = $product->fetch($_GET["id"]);
 }
 
 llxHeader("","",$langs->trans("CardProduct0"));
@@ -44,61 +44,61 @@ llxHeader("","",$langs->trans("CardProduct0"));
  */
 if ($_GET["id"])
 {
-  //on veut supprimer une catégorie
+  //on veut supprimer une catï¿½gorie
   if ($_REQUEST["cat"])
     {
       $cat = new Categorie($db,$_REQUEST["cat"]);
       $cat->del_product($product);
     }
 
-  //on veut ajouter une catégorie
+  //on veut ajouter une catï¿½gorie
   if (isset($_REQUEST["add_cat"]) && $_REQUEST["add_cat"]>=0)
     {
       $cat = new Categorie($db,$_REQUEST["add_cat"]);
       $cat->add_product($product);
     }
-  
+
   if ( $result )
-    { 
+    {
 
       /*
        *  En mode visu
        */
-	  
+
       $h=0;
-          
+
       $head[$h][0] = DOL_URL_ROOT."/fourn/product/fiche.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Card");
       $h++;
-	  
-  
+
+
       if ($conf->stock->enabled)
 	{
 	  $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
 	  $head[$h][1] = $langs->trans("Stock");
 	  $h++;
 	}
-      
+
       if ($conf->fournisseur->enabled)
 	{
 	  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
 	  $head[$h][1] = $langs->trans("Suppliers");
 	  $h++;
 	}
-      
+
       $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Photos");
       $h++;
-      	      
+
       $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
       $head[$h][1] = $langs->trans('Statistics');
       $h++;
-	
-      //affichage onglet catégorie
+
+      //affichage onglet catï¿½gorie
       if ($conf->categorie->enabled){
 	$head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id;
 	$head[$h][1] = $langs->trans('Categories');
-	$hselected = $h;	      
+	$hselected = $h;
 	$h++;
       }
 
@@ -109,47 +109,47 @@ if ($_GET["id"])
       print '<table class="border" width="100%">';
       print "<tr>";
       print '<td>'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
-            
+
       print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
       print "</table><br>\n";
 
       $c = new Categorie($db);
       $cats = $c->containing($_REQUEST['id'],"product");
-      
+
       if (sizeof($cats) > 0)
 	{
-	  print "Vous avez stocké le produit dans les catégorie suivantes:<br/><br/>";
+	  print "Vous avez stockï¿½ le produit dans les catï¿½gorie suivantes:<br/><br/>";
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("AllWays").'</td></tr>';
-	
-	
+
+
 	  foreach ($cats as $cat)
 	    {
-	    
+
 	      $ways = $cat->print_all_ways ();
 	      foreach ($ways as $way)
 		{
 		  $i = !$i;
 		  print "<tr ".$bc[$i]."><td>".$way."</td>";
 		  print "<td><a href= '".DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id."&amp;cat=".$cat->id."'>".$langs->trans("DeleteFromCat")."</a></td></tr>\n";
-		
+
 		}
-	    
+
 	    }
 	  print "</table><br/><br/>\n";
-	}      
+	}
       else if($cats < 0)
 	{
 	  print $langs->trans("ErrorUnknown");
 	}
-      
+
       else
 	{
 	  print $langs->trans("NoCat")."<br/><br/>";
 	}
-      
+
     }
-  
+
   print $langs->trans("AddProductToCat")."<br/><br/>";
   print '<table class="border" width="100%">';
   print '<form method="POST" action="'.DOL_URL_ROOT.'/fourn/product/categorie.php?id='.$product->id.'">';
@@ -162,7 +162,7 @@ if ($_GET["id"])
     }
   print "</select></td><td><input type='submit' value='".$langs->trans("Select")."'></td></tr>";
   print "</form></table><br/>";
-  
+
 }
 $db->close();
 

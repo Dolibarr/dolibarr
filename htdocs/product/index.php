@@ -28,7 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
 
-if (!$user->rights->produit->lire)
+if (!$user->rights->produit->lire && !$user->rights->service->lire)
 accessforbidden();
 
 $staticproduct=new Product($db);

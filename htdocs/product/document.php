@@ -45,7 +45,7 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 // Get parameters
 $page=$_GET["page"];
@@ -77,7 +77,7 @@ $modulepart='produit';
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     /*
-     * Creation répertoire si n'existe pas
+     * Creation rï¿½pertoire si n'existe pas
      */
     if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
@@ -90,7 +90,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
         }
         else
         {
-            // Echec transfert (fichier dépassant la limite ?)
+            // Echec transfert (fichier dï¿½passant la limite ?)
             $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
             // print_r($_FILES);
         }
@@ -173,7 +173,7 @@ if ($product->id)
 
     // Affiche formulaire upload
    	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/product/document.php?id='.$product->id,'',0,0,$user->rights->produit->creer);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/product/document.php?id='.$product->id,'',0,0,($user->rights->produit->creer||$user->rights->service->creer));
 
 
 	// List of document

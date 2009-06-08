@@ -55,7 +55,7 @@ function llxHeader($head = "", $title="", $help_url='',$addons='')
         $menu->add(DOL_URL_ROOT."/fourn/product/", $langs->trans("Products"));
         $menu->add_submenu(DOL_URL_ROOT."/fourn/product/liste.php?type=0", $langs->trans("List"));
 
-        if ($user->societe_id == 0 && $user->rights->produit->creer)
+        if ($user->societe_id == 0 && ($user->rights->produit->creer || $user->rights->service->creer))
         {
             $menu->add_submenu(DOL_URL_ROOT."/fourn/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
         }

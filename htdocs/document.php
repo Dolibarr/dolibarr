@@ -304,7 +304,8 @@ if ($modulepart)
 	if ($modulepart == 'produit')
 	{
 		$user->getrights('produit');
-		if ($user->rights->produit->lire || eregi('^specimen',$original_file))
+		$user->getrights('service');
+		if (($user->rights->produit->lire || $user->rights->service->lire) || eregi('^specimen',$original_file))
 		{
 			$accessallowed=1;
 		}

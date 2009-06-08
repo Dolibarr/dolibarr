@@ -46,7 +46,7 @@ function llxHeader($head = '', $title='', $help_url='')
 	{
 		$menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
 
-		// Sécurité accés client
+		// Sï¿½curitï¿½ accï¿½s client
 		if ($user->societe_id == 0 && $user->rights->societe->creer)
 		{
 			$menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=f",$langs->trans("NewSupplier"));
@@ -80,18 +80,15 @@ function llxHeader($head = '', $title='', $help_url='')
 	{
 		$menu->add(DOL_URL_ROOT."/fourn/commande/",$langs->trans("Orders"));
 	}
-	if ($conf->produit->enabled || $conf->service->enabled)
+	if (($conf->produit->enabled && $user->rights->produit->lire) || ($conf->service->enabled && $user->rights->service->lire))
 	{
-		if ($user->rights->produit->lire)
-		{
-			$menu->add(DOL_URL_ROOT."/product/", $langs->trans("Products"));
-		}
+		$menu->add(DOL_URL_ROOT."/product/", $langs->trans("Products"));
 	}
 
 	if ($conf->categorie->enabled)
 	{
 		$langs->load("categories");
-		// Catégories fournisseurs
+		// Catï¿½gories fournisseurs
 		$menu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=1", $langs->trans("SuppliersCategoriesShort"), 0);
 	}
 

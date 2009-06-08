@@ -846,7 +846,7 @@ else
 
 					// Show product and description
 					print '<td>';
-					if ($conf->produit->enabled && $fac->lignes[$i]->fk_product)
+					if (($conf->produit->enabled || $conf->service->enabled) && $fac->lignes[$i]->fk_product)
 					{
 						print '<input type="hidden" name="idprod" value="'.$fac->lignes[$i]->fk_product.'">';
 						$product_static=new ProductFournisseur($db);
@@ -1029,7 +1029,7 @@ else
 				print '</form>';
 
 				// Ajout de produits/services predefinis
-				if ($conf->produit->enabled)
+				if ($conf->produit->enabled || $conf->service->enabled)
 				{
 					print '<tr class="liste_titre">';
 					print '<td colspan="4">';

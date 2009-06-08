@@ -588,27 +588,27 @@ class MenuLeft {
 					}
 					if ($conf->propal->enabled)
 					{
-						$newmenu->add_submenu(DOL_URL_ROOT."/product/popuprop.php?leftmenu=stats&amp;type=0", $langs->trans("Popularity"), 1, $user->rights->propale->lire);
+						$newmenu->add_submenu(DOL_URL_ROOT."/product/popuprop.php?leftmenu=stats&amp;type=0", $langs->trans("Popularity"), 1, $user->rights->produit->lire && $user->rights->propale->lire);
 					}
 					if ($conf->stock->enabled)
 					{
-						$newmenu->add_submenu(DOL_URL_ROOT."/product/reassort.php?type=0", $langs->trans("Stocks"), 1, $user->rights->stock->lire);
+						$newmenu->add_submenu(DOL_URL_ROOT."/product/reassort.php?type=0", $langs->trans("Stocks"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
 					}
 				}
 
 				// Services
 				if ($conf->service->enabled)
 				{
-					$newmenu->add(DOL_URL_ROOT."/product/index.php?leftmenu=service&amp;type=1", $langs->trans("Services"), 0, $user->rights->produit->lire);
+					$newmenu->add(DOL_URL_ROOT."/product/index.php?leftmenu=service&amp;type=1", $langs->trans("Services"), 0, $user->rights->service->lire);
 					if ($user->societe_id == 0)
 					{
-						$newmenu->add_submenu(DOL_URL_ROOT."/product/fiche.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->rights->produit->creer);
+						$newmenu->add_submenu(DOL_URL_ROOT."/product/fiche.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->rights->service->creer);
 					}
+					$newmenu->add_submenu(DOL_URL_ROOT."/product/liste.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->rights->service->lire);
 					if ($conf->propal->enabled)
 					{
-						$newmenu->add_submenu(DOL_URL_ROOT."/product/popuprop.php?leftmenu=stats&amp;type=1", $langs->trans("Popularity"), 1, $user->rights->propale->lire);
+						$newmenu->add_submenu(DOL_URL_ROOT."/product/popuprop.php?leftmenu=stats&amp;type=1", $langs->trans("Popularity"), 1, $user->rights->service->lire && $user->rights->propale->lire);
 					}
-					$newmenu->add_submenu(DOL_URL_ROOT."/product/liste.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->rights->produit->lire);
 				}
 
 				// Categories

@@ -32,7 +32,7 @@ if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/categ
 $langs->load("products");
 
 // Security check
-if (!$user->rights->produit->lire)
+if (!$user->rights->produit->lire && !$user->rights->service->lire)
 accessforbidden();
 
 

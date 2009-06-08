@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 $langs->load("products");
 $langs->load("suppliers");
 
-if (!$user->rights->produit->lire) accessforbidden();
+if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbidden();
 
 $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
 $sRefSupplier=isset($_GET["srefsupplier"])?$_GET["srefsupplier"]:$_POST["srefsupplier"];
@@ -52,7 +52,7 @@ $offset = $limit * $page ;
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
-if (! empty($_POST["button_removefilter"])) 
+if (! empty($_POST["button_removefilter"]))
 {
 	$sref="";
 	$sRefSupplier="";
@@ -155,11 +155,11 @@ if ($resql)
 	}
 
 	if (! empty($supplier->id)) $texte = $langs->trans("ListOfSupplierProductForSupplier",$supplier->nom);
-	else $texte = $langs->trans("List"); 
+	else $texte = $langs->trans("List");
 
 	llxHeader("","",$texte);
 
-	
+
 	$param="&envente=$envente&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"");
 	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
 
@@ -225,21 +225,21 @@ if ($resql)
 		$productstatic->type=$objp->fk_product_type;
 		print $productstatic->getNomUrl(1,'supplier');
 		print '</td>';
-		
+
 		print '<td>'.$objp->ref_fourn.'</td>';
-		
+
 		print '<td>'.$objp->label.'</td>'."\n";
-		
+
 		$companystatic->nom=$objp->nom;
 		$companystatic->id=$objp->socid;
 		print '<td>'.$companystatic->getNomUrl(1,'supplier').'</td>';
-		
+
 		print '<td align="right">'.price($objp->price).'</td>';
-		
+
 		print '<td align="right">'.$objp->qty.'</td>';
-		
+
 		print '<td align="right">'.price($objp->unitprice).'</td>';
-		
+
 		print "</tr>\n";
 		$i++;
 	}

@@ -1397,6 +1397,10 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 	{
 		if (! $user->rights->societe->contact->lire) $readok=0;
 	}
+	else if ($feature == 'produit|service')
+	{
+		if (! $user->rights->produit->lire && ! $user->rights->service->lire) $readok=0;
+	}
 	else if ($feature == 'prelevement')
 	{
 		if (! $user->rights->prelevement->bons->lire) $readok=0;
@@ -1440,6 +1444,10 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 		{
 			if (! $user->rights->societe->contact->creer) $createok=0;
 		}
+		else if ($feature == 'produit|service')
+		{
+			if (! $user->rights->produit->creer && ! $user->rights->service->creer) $createok=0;
+		}
 		else if ($feature == 'prelevement')
 		{
 			if (! $user->rights->prelevement->bons->creer) $createok=0;
@@ -1479,7 +1487,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 		if (empty($dbtablename)) $dbtablename = $feature;
 
 		// Check permission for object with entity
-		if ($feature == 'user' || $feature == 'usergroup' || $feature == 'produit')
+		if ($feature == 'user' || $feature == 'usergroup' || $feature == 'produit' || $feature == 'service' || $feature == 'produit|service')
 		{
 			$sql = "SELECT dbt.".$dbt_select;
 			$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";

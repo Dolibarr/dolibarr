@@ -42,7 +42,7 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 $mesg = '';
 
@@ -67,13 +67,13 @@ $html = new Form($db);
 if ($_GET["id"] || $_GET["ref"])
 {
     $product = new Product($db);
-    if ($_GET["ref"]) 
+    if ($_GET["ref"])
     {
     	$result = $product->fetch('',$_GET["ref"]);
     	$_GET["id"]=$product->id;
     }
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
-    
+
     llxHeader("","",$langs->trans("CardProduct".$product->type));
 
     if ($result > 0)
@@ -98,7 +98,7 @@ if ($_GET["id"] || $_GET["ref"])
 		// Libelle
         print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
         print '</tr>';
-        
+
         // Prix
         print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">';
 		if ($product->price_base_type == 'TTC')
@@ -110,18 +110,18 @@ if ($_GET["id"] || $_GET["ref"])
 			print price($product->price).' '.$langs->trans($product->price_base_type);
 		}
 		print '</td></tr>';
-        
+
         // Statut
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 		print $product->getLibStatut(2);
         print '</td></tr>';
 
 		show_stats_for_company($product,$socid);
-        
+
         print "</table>";
 
         print '</div>';
-        
+
 
         $sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, c.rowid, c.total_ht as total_ht, c.ref,";
         $sql.= " ".$db->pdate("c.date_creation")." as date, c.fk_statut as statut, c.facture, c.rowid as commandeid";

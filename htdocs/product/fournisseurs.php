@@ -42,12 +42,12 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 $mesg = '';
 
 
-//Récupère le résultat de la recherche Ajax
+//Rï¿½cupï¿½re le rï¿½sultat de la recherche Ajax
 //Todo: voir pour le supprimer par la suite
 if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && $_POST['id_fourn_id'])
 {
@@ -71,7 +71,7 @@ if ($_GET["action"] == 'remove_pf')
             $mesg = '<div class="ok">'.$langs->trans("PriceRemoved").'.</div>';
 		}
         else
-        {	
+        {
         	// Deprecated. Should not occurs
             if ($product->remove_fournisseur($_GET["socid"]) > 0)
             {
@@ -93,7 +93,7 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 	if ($result > 0)
 	{
 		$db->begin();
-		
+
 		$error=0;
 		if (! $_POST["ref_fourn"])
 		{
@@ -106,7 +106,7 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 			$error++;
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")).'</div>';
 		}
-		
+
 		if (! $error)
 		{
 			$ret=$product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]);
@@ -115,14 +115,14 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 				$error++;
 				$mesg='<div class="error">'.$product->error.'</div>';
 			}
-			
+
 			if ($_POST["qty"])
 			{
 				if ($_POST["price"] >= 0)
 				{
 					$supplier=new Fournisseur($db);
 					$result=$supplier->fetch($_POST["id_fourn"]);
-					
+
 					$ret=$product->update_buyprice($_POST["qty"], $_POST["price"], $user, $_POST["price_base_type"], $supplier);
 					if ($ret < 0)
 					{
@@ -144,9 +144,9 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 			{
 				$error++;
 				$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")).'</div>';
-			}			
+			}
 		}
-		
+
 		if (! $error)
 		{
 			$db->commit();
@@ -172,7 +172,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
  * Affichage fiche
  */
 $html = new Form($db);
- 
+
 if ($_GET["id"] || $_GET["ref"])
 {
 	if ($_GET["action"] <> 're-edit')
@@ -185,8 +185,8 @@ if ($_GET["id"] || $_GET["ref"])
 	}
 
 	if ( $result )
-	{ 
-		
+	{
+
 		if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 		{
 			/*
@@ -206,10 +206,10 @@ if ($_GET["id"] || $_GET["ref"])
 			print $html->showrefnav($product,'ref','',1,'ref');
 			print '</td>';
 			print '</tr>';
-			
+
 			// Libelle
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
-			
+
 			// Prix
 			print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
 			if ($product->price_base_type == 'TTC')
@@ -228,32 +228,32 @@ if ($_GET["id"] || $_GET["ref"])
 			print '</td></tr>';
 
 			print '</table>';
-			
+
 			print "</div>\n";
 
 			if ($mesg) print($mesg);
 
 
 			// Form to add or update a price
-			if (($_GET["action"] == 'add_price' || $_POST["action"] == 'updateprice' )&& $user->rights->produit->creer)
+			if (($_GET["action"] == 'add_price' || $_POST["action"] == 'updateprice' ) && ($user->rights->produit->creer || $user->rights->service->creer))
 			{
 				$langs->load("suppliers");
-				
+
 				if ($_GET["rowid"]) {
 					$product->fetch_product_fournisseur_price($_GET["rowid"]);
 					print_fiche_titre($langs->trans("ChangeSupplierPrice"));
 				} else {
 					print_fiche_titre($langs->trans("AddSupplierPrice"));
-				}		  
+				}
 				print '<table class="border" width="100%">';
 				print '<form action="fournisseurs.php?id='.$product->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateprice">';
-				
+
 				print '<tr><td>'.$langs->trans("Supplier").'</td><td colspan="3">';
 				if ($_GET["rowid"])
 				{
-					$supplier=new Fournisseur($db); 
+					$supplier=new Fournisseur($db);
 					$supplier->fetch($_GET["socid"]);
 					print $supplier->getNomUrl(1);
 					print '<input type="hidden" name="id_fourn" value="'.$_GET["socid"].'">';
@@ -266,7 +266,7 @@ if ($_GET["id"] || $_GET["ref"])
 					$html->select_societes($_POST["id_fourn"],'id_fourn','fournisseur=1',1);
 				}
 				print '</td></tr>';
-				
+
 				print '<tr><td>'.$langs->trans("SupplierRef").'</td><td colspan="3">';
 				if ($_GET["rowid"])
 				{
@@ -278,7 +278,7 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				print '</td>';
 				print '</tr>';
-				
+
 				print '<tr>';
 				print '<td>'.$langs->trans("QtyMin").'</td>';
 				print '<td>';
@@ -299,33 +299,33 @@ if ($_GET["id"] || $_GET["ref"])
 				print $html->select_PriceBaseType(($_POST["price_base_type"]?$_POST["price_base_type"]:$product->price_base_type), "price_base_type");
 				print '</td>';
 				print '</tr>';
-				
+
 				print '<tr><td colspan="4" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
 				print '&nbsp; &nbsp;';
 				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 
 				print '</form>';
 				print '</table>';
-			}    
-			
+			}
+
 			/* ************************************************************************** */
-			/*                                                                            */ 
-			/* Barre d'action                                                             */ 
-			/*                                                                            */ 
+			/*                                                                            */
+			/* Barre d'action                                                             */
+			/*                                                                            */
 			/* ************************************************************************** */
-			
+
 			print "\n<div class=\"tabsAction\">\n";
-			
+
 			if ($_GET["action"] != 'add_price') {
 
-				if ($user->rights->produit->creer)
+				if ($user->rights->produit->creer || $user->rights->service->creer)
 				{
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$product->id.'&amp;action=add_price">';
 					print $langs->trans("AddSupplierPrice").'</a>';
 				}
 
 			}
-			
+
 			print "\n</div>\n";
 			print '<br>';
 
@@ -365,54 +365,54 @@ if ($_GET["id"] || $_GET["ref"])
 					$num = $db->num_rows($resql);
 					$i = 0;
 
-					$var=True;      
+					$var=True;
 					while ($i < $num)
 					{
 						$objp = $db->fetch_object($resql);
 						$var=!$var;
-						
+
 						print "<tr $bc[$var]>";
 						print '<td><a href="../fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$objp->nom.'</a></td>';
 
 						// Fournisseur
 						print '<td align="left">'.$objp->ref_fourn.'</td>';
 
-						// Quantité
+						// Quantitï¿½
 						print '<td align="center">';
 						print $objp->quantity;
 						print '</td>';
 
-						// Prix quantité
+						// Prix quantitï¿½
 						print '<td align="right">';
 						print $objp->price?price($objp->price):"";
 						print '</td>';
-						
+
 						// Prix unitaire
 						print '<td align="right">';
 						print $objp->unitprice? price($objp->unitprice) : ($objp->quantity?price($objp->price/$objp->quantity):"&nbsp;");
 						print '</td>';
-						
+
 						// Modifier-Supprimer
 						print '<td align="center">';
-						if ($user->rights->produit->creer)
+						if ($user->rights->produit->creer || $user->rights->service->creer)
 						{
 							print '<a href="fournisseurs.php?id='.$product->id.'&amp;socid='.$objp->socid.'&amp;action=add_price&amp;rowid='.$objp->rowid.'">'.img_edit()."</a>";
 							print '<a href="fournisseurs.php?id='.$product->id.'&amp;socid='.$objp->socid.'&amp;action=remove_pf&amp;rowid='.$objp->rowid.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';
 						}
 
 						print '</td>';
-						
+
 						print '</tr>';
-						
+
 						$i++;
 					}
-					
+
 					$db->free($resql);
 				}
 				else {
 					dol_print_error($db);
 				}
-				
+
 				print '</table>';
 			}
 		}

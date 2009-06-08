@@ -34,7 +34,7 @@ $langs->load("stocks");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit');
+$result=restrictedArea($user,'produit|service');
 
 
 $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];

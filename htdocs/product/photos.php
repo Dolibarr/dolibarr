@@ -41,7 +41,7 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 $mesg = '';
 
@@ -65,7 +65,7 @@ if ($_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global
 	}
 }
 
-if ($_REQUEST["action"] == 'confirm_delete' && $_GET["file"] && $_REQUEST['confirm'] == 'yes' && $user->rights->produit->creer)
+if ($_REQUEST["action"] == 'confirm_delete' && $_GET["file"] && $_REQUEST['confirm'] == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$product = new Product($db);
 	$product->delete_photo($conf->produit->dir_output."/".$_GET["file"]);
@@ -157,7 +157,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 		print "\n<div class=\"tabsAction\">\n";
 
-		if ($_GET["action"] != 'ajout_photo' && $user->rights->produit->creer)
+		if ($_GET["action"] != 'ajout_photo' && ($user->rights->produit->creer || $user->rights->service->creer))
 		{
 			if (! empty($conf->global->MAIN_UPLOAD_DOC))
 			{
@@ -176,7 +176,7 @@ if ($_GET["id"] || $_GET["ref"])
 		/*
 		 * Ajouter une photo
 		 */
-		if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
+		if ($_GET["action"] == 'ajout_photo' && ($user->rights->produit->creer || $user->rights->service->creer) && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
 			// Affiche formulaire upload
 			$formfile=new FormFile($db);
@@ -219,7 +219,7 @@ if ($_GET["id"] || $_GET["ref"])
 					$filename=$obj['photo'];
 				}
 
-				// Nom affiché
+				// Nom affichï¿½
 				$viewfilename=$obj['photo'];
 
 				// Taille de l'image
@@ -233,12 +233,12 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<br>'.$viewfilename;
 				print '<br>';
 
-				// On propose la génération de la vignette si elle n'existe pas et si la taille est supérieure aux limites
+				// On propose la gï¿½nï¿½ration de la vignette si elle n'existe pas et si la taille est supï¿½rieure aux limites
 				if (!$obj['photo_vignette'] && eregi('(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$',$obj['photo']) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
 				}
-				if ($user->rights->produit->creer)
+				if ($user->rights->produit->creer || $user->rights->service->creer)
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
 					print img_delete().'</a>';

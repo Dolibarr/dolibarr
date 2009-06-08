@@ -132,7 +132,7 @@ if ($user->societe_id == 0)
 	! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire,
 	! empty($conf->adherent->enabled) && $user->rights->adherent->lire,
 	! empty($conf->produit->enabled) && $user->rights->produit->lire,
-	! empty($conf->service->enabled) && $user->rights->produit->lire,
+	! empty($conf->service->enabled) && $user->rights->service->lire,
 	! empty($conf->propal->enabled) && $user->rights->propale->lire,
 	! empty($conf->commande->enabled) && $user->rights->commande->lire,
 	! empty($conf->facture->enabled) && $user->rights->facture->lire,

@@ -30,11 +30,11 @@
 
 require("./pre.inc.php");
 
-if (!$user->rights->produit->lire) accessforbidden();
+if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbidden();
+
 
 /*
- * Affichage page accueil
- *
+ * View
  */
 
 llxHeader("","",$langs->trans("ProductsAndServices"));

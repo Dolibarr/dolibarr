@@ -22,7 +22,7 @@
  *
  */
 
-/** 
+/**
         \file       htdocs/product/stats/index.php
         \brief      Page accueil statistiques produits
         \version    $Revision$
@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit');
+$result=restrictedArea($user,'produit|service');
 
 llxHeader();
 
@@ -125,7 +125,7 @@ if ($conf->service->enabled)
     $nbproduct = $row[0];
   }
   $db->free();
-  
+
   $sql = "SELECT count(*)";
   $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
   if ($conf->categorie->enabled && !$user->rights->categorie->voir)
@@ -165,8 +165,8 @@ print '<br>';
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print "<tr class=\"liste_titre\">";
 print "<td>Produit/Service</td>";
-print "<td>Qté en facture</td>";
-print "<td>Qté en propale</td>";
+print "<td>Qtï¿½ en facture</td>";
+print "<td>Qtï¿½ en propale</td>";
 print "</tr>\n";
 $sql = "SELECT p.label, sum(f.qty) as sumf, sum(pr.qty) as sumpr FROM ".MAIN_DB_PREFIX."product as p";
 $sql.=" left join ".MAIN_DB_PREFIX."facturedet as f on p.rowid = f.fk_product";
@@ -188,13 +188,13 @@ if ($db->query($sql))
 	}
 }
 else {
-	dol_print_error($db);	
+	dol_print_error($db);
 }
 print "</table>\n";
 $db->free();
 */
 
-       
+
 $db->close();
 
 llxFooter('$Date$ - $Revision$');

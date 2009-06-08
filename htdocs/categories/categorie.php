@@ -46,7 +46,7 @@ if ($_REQUEST["socid"])
 else if ($_REQUEST["id"] || $_REQUEST["ref"])
 {
 	$type = 'produit';
-	$objecttype = 'produit';
+	$objecttype = 'produit|service';
 	$objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["ref"])?$_REQUEST["ref"]:'');
 	$dbtablename = 'product';
 	$fieldid = isset($_REQUEST["ref"])?'ref':'rowid';
@@ -68,7 +68,7 @@ if ($_REQUEST["removecat"])
 		$object = new Societe($db);
 		$result = $object->fetch($_REQUEST["socid"]);
 	}
-	else if (($_REQUEST["id"] || $_REQUEST["ref"]) && $user->rights->produit->creer)
+	else if (($_REQUEST["id"] || $_REQUEST["ref"]) && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
 		$object = new Product($db);
 		if ($_REQUEST["ref"]) $result = $object->fetch('',$_REQUEST["ref"]);
@@ -87,7 +87,7 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 		$object = new Societe($db);
 		$result = $object->fetch($_REQUEST["socid"]);
 	}
-	else if (($_REQUEST["id"] || $_REQUEST["ref"]) && $user->rights->produit->creer)
+	else if (($_REQUEST["id"] || $_REQUEST["ref"]) && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
 		$object = new Product($db);
 		if ($_REQUEST["ref"]) $result = $object->fetch('',$_REQUEST["ref"]);
@@ -333,7 +333,7 @@ function formCategory($db,$object,$type,$typeid)
 				$permission=0;
 				if ($type == 'fournisseur') $permission=$user->rights->societe->creer;
 				if ($type == 'societe')     $permission=$user->rights->societe->creer;
-				if ($type == 'product')     $permission=$user->rights->produit->creer;
+				if ($type == 'product')     $permission=($user->rights->produit->creer || $user->rights->service->creer);
 				if ($permission)
 				{
 					print "<a href= '".DOL_URL_ROOT."/categories/categorie.php?".$nameId."=".$object->id."&amp;typeid=".$typeid."&amp;removecat=".$cat->id."'>";

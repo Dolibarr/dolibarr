@@ -18,98 +18,98 @@
  */
 
 /**
-        \file       htdocs/comm/pre.inc.php
-        \ingroup    commercial
-        \brief      Fichier de gestion du menu gauche de l'espace commercial
-        \version    $Id$
-*/
+ \file       htdocs/comm/pre.inc.php
+ \ingroup    commercial
+ \brief      Fichier de gestion du menu gauche de l'espace commercial
+ \version    $Id$
+ */
 require("../main.inc.php");
 
 
 function llxHeader($head = '', $title='', $help_url='')
 {
-  global $user, $conf, $langs;
+	global $user, $conf, $langs;
 
-  $langs->load("companies");
-  $langs->load("commercial");
+	$langs->load("companies");
+	$langs->load("commercial");
 
-  top_menu($head, $langs->trans($title));
+	top_menu($head, $langs->trans($title));
 
-  $menu = new Menu();
+	$menu = new Menu();
 
-  // Clients
-  $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
-  if ($user->rights->societe->creer)
-    {
-      $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=c", $langs->trans("MenuNewCustomer"));
-    }
+	// Clients
+	$menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
+	if ($user->rights->societe->creer)
+	{
+		$menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=c", $langs->trans("MenuNewCustomer"));
+	}
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
-
-
-  // Prospects
-  $menu->add(DOL_URL_ROOT."/comm/prospect/index.php", $langs->trans("Prospects"));
-  if ($user->rights->societe->creer)
-    {
-      $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=p", $langs->trans("MenuNewProspect"));
-    }
-
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
+	$menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
 
 
-  $menu->add(DOL_URL_ROOT."/comm/action/index.php", $langs->trans("Actions"));
+	// Prospects
+	$menu->add(DOL_URL_ROOT."/comm/prospect/index.php", $langs->trans("Prospects"));
+	if ($user->rights->societe->creer)
+	{
+		$menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=p", $langs->trans("MenuNewProspect"));
+	}
 
-  // Propal
-  if ($conf->propal->enabled && $user->rights->propale->lire)
-    {
-      $langs->load("propal");
-      $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
-      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=0", $langs->trans("PropalsDraft"));
-      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=1", $langs->trans("PropalsOpened"));
-      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=2,3,4", $langs->trans("PropalStatusClosedShort"));
-      $menu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"));
-    }
+	$menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
 
-  if ($conf->contrat->enabled && $user->rights->contrat->lire)
-    {
-      $langs->load("contracts");
-      $menu->add(DOL_URL_ROOT."/contrat/index.php", $langs->trans("Contracts"));
-    }
 
-  if ($conf->commande->enabled && $user->rights->commande->lire)
-    {
-      $langs->load("orders");
-      $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
-    }
+	$menu->add(DOL_URL_ROOT."/comm/action/index.php", $langs->trans("Actions"));
 
-  if ($user->mailing->enabled && $user->rights->mailing->lire)
-    {
-      $langs->load("mails");
-      $menu->add(DOL_URL_ROOT."/comm/mailing/", $langs->trans("EMailings"));
-    }
+	// Propal
+	if ($conf->propal->enabled && $user->rights->propale->lire)
+	{
+		$langs->load("propal");
+		$menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
+		$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=0", $langs->trans("PropalsDraft"));
+		$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=1", $langs->trans("PropalsOpened"));
+		$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=2,3,4", $langs->trans("PropalStatusClosedShort"));
+		$menu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"));
+	}
 
-  if ($conf->ficheinter->enabled  && $user->rights->ficheinter->lire)
-    {
-      $langs->load("interventions");
-      $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
-    }
+	if ($conf->contrat->enabled && $user->rights->contrat->lire)
+	{
+		$langs->load("contracts");
+		$menu->add(DOL_URL_ROOT."/contrat/index.php", $langs->trans("Contracts"));
+	}
 
-  if (($conf->produit->enabled || $conf->service->enabled) && $user->rights->produit->lire)
-    {
-      $langs->load("products");
-      $chaine="";
-      if ($conf->produit->enabled) { $chaine.=$langs->trans("Products"); }
-      if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
-      if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
-      $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
-    }
+	if ($conf->commande->enabled && $user->rights->commande->lire)
+	{
+		$langs->load("orders");
+		$menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
+	}
 
-  if ($conf->projet->enabled && $user->rights->projet->lire)
-    {
-      $langs->load("projects");
-      $menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));
-    }
+	if ($user->mailing->enabled && $user->rights->mailing->lire)
+	{
+		$langs->load("mails");
+		$menu->add(DOL_URL_ROOT."/comm/mailing/", $langs->trans("EMailings"));
+	}
 
-  left_menu($menu->liste, $help_url);
+	if ($conf->ficheinter->enabled  && $user->rights->ficheinter->lire)
+	{
+		$langs->load("interventions");
+		$menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
+	}
+
+	if (($conf->produit->enabled && $user->rights->produit->lire) || ($conf->service->enabled && $user->rights->service->lire))
+	{
+		$langs->load("products");
+		$chaine="";
+		if ($conf->produit->enabled) { $chaine.=$langs->trans("Products"); }
+		if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
+		if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
+		$menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
+	}
+
+	if ($conf->projet->enabled && $user->rights->projet->lire)
+	{
+		$langs->load("projects");
+		$menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));
+	}
+
+	left_menu($menu->liste, $help_url);
 }
 ?>

@@ -42,7 +42,7 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 $mesg = '';
 
@@ -66,13 +66,13 @@ $html = new Form($db);
 if ($_GET["id"] || $_GET["ref"])
 {
     $product = new Product($db);
-    if ($_GET["ref"]) 
+    if ($_GET["ref"])
     {
     	$result = $product->fetch('',$_GET["ref"]);
     	$_GET["id"]=$product->id;
     }
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
-    
+
     llxHeader("","",$langs->trans("CardProduct".$product->type));
 
     if ($result > 0)
@@ -83,18 +83,18 @@ if ($_GET["id"] || $_GET["ref"])
       $head=product_prepare_head($product, $user);
       $titre=$langs->trans("CardProduct".$product->type);
       dol_fiche_head($head, 'referers', $titre);
-            
+
       print '<table class="border" width="100%">';
-      
+
       // Reference
       print '<tr>';
       print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">';
 	  print $html->showrefnav($product,'ref','',1,'ref');
       print '</td></tr>';
-      
+
       // Libelle
       print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td></tr>';
-      
+
       // Prix
       print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">';
 		if ($product->price_base_type == 'TTC')
@@ -106,17 +106,17 @@ if ($_GET["id"] || $_GET["ref"])
 			print price($product->price).' '.$langs->trans($product->price_base_type);
 		}
 		print '</td></tr>';
-      
+
       // Statut
       print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
       print $product->getLibStatut(2);
       print '</td></tr>';
 
       show_stats_for_company($product,$socid);
-        
+
       print "</table>";
       print '</div>';
-      
+
       $sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, c.rowid, c.total_ht as total_ht, c.ref,";
       $sql.= " ".$db->pdate("c.date_creation")." as date, c.fk_statut as statut, c.rowid as commandeid";
       if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
@@ -132,17 +132,17 @@ if ($_GET["id"] || $_GET["ref"])
       if ($socid)	$sql.= " AND c.fk_soc = ".$socid;
       $sql.= " ORDER BY $sortfield $sortorder ";
       $sql.= $db->plimit($conf->liste_limit +1, $offset);
-      
+
       $result = $db->query($sql);
       if ($result)
         {
 	  $num = $db->num_rows($result);
-	  
+
 	  print_barre_liste($langs->trans("SuppliersOrders"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
-	  
+
 	  $i = 0;
 	  print "<table class=\"noborder\" width=\"100%\">";
-	  
+
 	  print '<tr class="liste_titre">';
 	  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
 	  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
@@ -151,9 +151,9 @@ if ($_GET["id"] || $_GET["ref"])
 	  print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.total_ht","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
 	  print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
 	  print "</tr>\n";
-	  
+
 	  $commandestatic=new Commande($db);
-	  
+
 	  if ($num > 0)
             {
 	      $var=True;
@@ -161,7 +161,7 @@ if ($_GET["id"] || $_GET["ref"])
                 {
 		  $objp = $db->fetch_object($result);
 		  $var=!$var;
-		  
+
 		  print "<tr $bc[$var]>";
 		  print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$objp->commandeid.'">'.img_object($langs->trans("ShowOrder"),"order").' ';
 		  print $objp->ref;

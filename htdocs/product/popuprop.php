@@ -21,7 +21,7 @@
 
 /**     \file       htdocs/product/popuprop.php
 		\ingroup    propal, produit
-		\brief      Liste des produits/services par popularité
+		\brief      Liste des produits/services par popularitï¿½
 		\version    $Id$
 */
 
@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit');
+$result=restrictedArea($user,'produit|service');
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -46,6 +46,10 @@ $offset = $limit * $page ;
 
 $staticproduct=new Product($db);
 
+
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -101,7 +105,7 @@ if ($result)
   while ($i < $num)
     {
       $objp = $db->fetch_object($result);
-      
+
       	  // Multilangs
 	    if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 	    {
@@ -117,7 +121,7 @@ if ($result)
 			    if ($objtp->label != '') $objp->label = $objtp->label;
 		    }
 	    }
-      
+
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$objp->rowid.'">';

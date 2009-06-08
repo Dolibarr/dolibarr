@@ -42,7 +42,7 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 
 /*
@@ -58,7 +58,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 // Validation de l'ajout
 if ($_POST["action"] == 'vadd' &&
 $_POST["cancel"] != $langs->trans("Cancel") &&
-$user->rights->produit->creer)
+($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$product = new Product($db);
 	$product->fetch($_POST["id"]);
@@ -82,19 +82,19 @@ $user->rights->produit->creer)
 	if ( $product->setMultiLangs() > 0 )
 	{
 		$_GET["action"] = '';
-		$mesg = 'Fiche mise à jour';
+		$mesg = 'Fiche mise ï¿½ jour';
 	}
 	else
 	{
 		$_GET["action"] = 'add';
-		$mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+		$mesg = 'Fiche non mise ï¿½ jour !' . "<br>" . $product->mesg_error;
 	}
 }
 
 // Validation de l'edition
 if ($_POST["action"] == 'vedit' &&
 $_POST["cancel"] != $langs->trans("Cancel") &&
-$user->rights->produit->creer)
+($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$product = new Product($db);
 	$product->fetch($_POST["id"]);
@@ -119,12 +119,12 @@ $user->rights->produit->creer)
 	if ( $product->setMultiLangs() > 0 )
 	{
 		$_GET["action"] = '';
-		$mesg = 'Fiche mise à jour';
+		$mesg = 'Fiche mise ï¿½ jour';
 	}
 	else
 	{
 		$_GET["action"] = 'edit';
-		$mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+		$mesg = 'Fiche non mise ï¿½ jour !' . "<br>" . $product->mesg_error;
 	}
 }
 
@@ -229,7 +229,7 @@ print "</div>\n";
 print "\n<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '')
-if ($user->rights->produit->modifier || $user->rights->produit->creer)
+if ($user->rights->produit->creer || $user->rights->service->creer)
 {
 	print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=edit&id='.$product->id.'">'.$langs->trans("Update").'</a>';
 	print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=add&id='.$product->id.'">'.$langs->trans("Add").'</a>';
@@ -241,12 +241,12 @@ print "\n</div>\n";
 /*
  * Formulaire d'ajout de traduction
  */
-if ($_GET["action"] == 'add' || $user->rights->produit->modifier)
+if ($_GET["action"] == 'add' || ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$langs_available = $langs->get_available_languages();
 	$current_lang = $langs->getDefaultLang();
 
-	// on construit la liste des traduction qui n'existe pas déjà
+	// on construit la liste des traduction qui n'existe pas deja
 	$select = '<select class="flat" name="lang">';
 	foreach ($langs_available as $value)
 	if ( !array_key_exists($value, $product->multilangs) ) // si la traduction n'existe pas

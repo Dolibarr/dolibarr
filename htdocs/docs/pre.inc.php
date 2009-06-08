@@ -62,7 +62,7 @@ function llxHeader($head = "", $title="", $help_url='')
 		$menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
 	}
 
-	if (($conf->produit->enabled || $conf->service->enabled) && $user->rights->produit->lire)
+	if (($conf->produit->enabled && $user->rights->produit->lire) || ($conf->service->enabled && $user->rights->service->lire))
 	{
 		$langs->load("products");
 		$chaine="";

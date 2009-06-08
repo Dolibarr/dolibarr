@@ -201,7 +201,7 @@ if ($modulepart)
     elseif (eregi('^productstats_',$modulepart))
     {
         $user->getrights('produit');
-        if ($user->rights->produit->lire)
+        if ($user->rights->produit->lire || $user->rights->service->lire)
         {
             $accessallowed=1;
         }
@@ -212,7 +212,7 @@ if ($modulepart)
     elseif ($modulepart == 'product')
     {
         $user->getrights('produit');
-        if ($user->rights->produit->lire)
+        if ($user->rights->produit->lire || $user->rights->service->lire)
         {
             $accessallowed=1;
         }
@@ -297,7 +297,7 @@ if ($modulepart)
     	//$original_file=$conf->barcode->dir_temp.'/'.$original_file;
     	$original_file='';
     }
-    
+
     // Wrapping pour les icones de background des mailings
     elseif ($modulepart == 'iconmailing')
     {

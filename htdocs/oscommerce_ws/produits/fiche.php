@@ -50,19 +50,20 @@ if ($action == '' && !$cancel) {
 			/* ************************************************************************** */
 			print "\n<div class=\"tabsAction\">\n";
 
-	  if ( $user->rights->produit->creer) {
-	  	print '<a class="butAction" href="fiche.php?action=import&amp;id='.$osc_prod->osc_id.'">'.$langs->trans("Import").'</a>';
-	  }
+			if ($user->rights->produit->creer || $user->rights->service->creer)
+			{
+				print '<a class="butAction" href="fiche.php?action=import&amp;id='.$osc_prod->osc_id.'">'.$langs->trans("Import").'</a>';
+			}
 
-	  print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
-	  print "\n</div><br>\n";
-	  // seule action importer
+			print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
+			print "\n</div><br>\n";
+			// seule action importer
 
 		}
 		else
 		{
-	  print "<p>ERROR 1</p>\n";
-	  dol_print_error('',"erreur webservice ".$osc_prod->error);
+			print "<p>ERROR 1</p>\n";
+			dol_print_error('',"erreur webservice ".$osc_prod->error);
 		}
 	}
 	else
@@ -71,11 +72,11 @@ if ($action == '' && !$cancel) {
 		print "Error";
 	}
 }
-/* action Import création de l'objet product de dolibarr
+/* action Import crï¿½ation de l'objet product de dolibarr
  *
  */
 
-if (($_GET["action"] == 'import' ) && ( $_GET["id"] != '' ) && $user->rights->produit->creer)
+if (($_GET["action"] == 'import' ) && ( $_GET["id"] != '' ) && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$osc_prod = new Osc_product($db, $_GET['id']);
 	$result = $osc_prod->fetch($_GET['id']);
@@ -99,7 +100,7 @@ if (($_GET["action"] == 'import' ) && ( $_GET["id"] != '' ) && $user->rights->pr
 	/* utilisation de la table de transco*/
 	if ($osc_prod->get_productid($osc_prod->osc_id)>0)
 	{
-		print '<p>Ce produit existe déjà</p>';
+		print '<p>Ce produit existe dï¿½jï¿½</p>';
 	}
 	else
 	{
@@ -113,7 +114,7 @@ if (($_GET["action"] == 'import' ) && ( $_GET["id"] != '' ) && $user->rights->pr
 			$res = $prod->fetch($id);
 
 			$prod->add_photo_web($conf->produit->dir_output,$osc_prod->osc_image);
-			print '<p>création réussie produit '.$id.' référence : '.$product->ref;
+			print '<p>crï¿½ation rï¿½ussie produit '.$id.' rï¿½fï¿½rence : '.$product->ref;
 			$res = $osc_prod->transcode($osc_prod->osc_id,$product->id);
 
 			print ' Id osc : '.$osc_prod->osc_id.'</p>';
@@ -135,7 +136,7 @@ if (($_GET["action"] == 'import' ) && ( $_GET["id"] != '' ) && $user->rights->pr
 			}
 			if ($id == -2)
 			{
-				/* la référence existe on fait un update */
+				/* la rï¿½fï¿½rence existe on fait un update */
 				$product_control = new Product($db);
 				if ($_error == 1)
 				{

@@ -23,23 +23,22 @@
  */
 
 /**
- \defgroup   service     Module service
- \brief      Module pour gerer le suivi de services predefinis
+ *	\defgroup   service     Module service
+ *	\brief      Module pour gerer le suivi de services predefinis
  */
 
 /**
- \file       htdocs/includes/modules/modService.class.php
- \ingroup    service
- \brief      Fichier de description et activation du module Service
+ *	\file       htdocs/includes/modules/modService.class.php
+ *	\ingroup    service
+ *	\brief      Fichier de description et activation du module Service
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/** \class modService
- \brief      Classe de description et activation du module Service
+/** \class 		modService
+ *	\brief      Classe de description et activation du module Service
  */
-
 class modService extends DolibarrModules
 {
 
@@ -68,7 +67,7 @@ class modService extends DolibarrModules
 		$this->dirs = array("/produit/temp");
 
 		// Dependancies
-		$this->depends = array("modProduit");
+		$this->depends = array();
 		$this->requiredby = array("modContrat");
 
 		// Constants
@@ -81,33 +80,35 @@ class modService extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'service';
+		$r=0;
 
-		/* Pour l'instant droits sur services non geres
-		 $this->rights[1][0] = 331; // id de la permission
-		 $this->rights[1][1] = 'Lire les services'; // libelle de la permission
-		 $this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
-		 $this->rights[1][3] = 1; // La permission est-elle une permission par defaut
-		 $this->rights[1][4] = 'lire';
+		$r++;
+		$this->rights[$r][0] = 531; // id de la permission
+		$this->rights[$r][1] = 'Lire les services'; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'lire';
 
-		 $this->rights[2][0] = 332; // id de la permission
-		 $this->rights[2][1] = 'Creer/modifier les services'; // libelle de la permission
-		 $this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
-		 $this->rights[2][3] = 0; // La permission est-elle une permission par defaut
-		 $this->rights[2][4] = 'creer';
+		$r++;
+		$this->rights[$r][0] = 532; // id de la permission
+		$this->rights[$r][1] = 'Creer/modifier les services'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'creer';
 
-		 $this->rights[3][0] = 333; // id de la permission
-		 $this->rights[3][1] = 'Commander un service'; // libelle de la permission
-		 $this->rights[3][2] = 'w'; // type de la permission (deprecie a ce jour)
-		 $this->rights[3][3] = 0; // La permission est-elle une permission par defaut
-		 $this->rights[3][4] = 'commander';
+		$r++;
+		$this->rights[$r][0] = 534; // id de la permission
+		$this->rights[$r][1] = 'Supprimer les services'; // libelle de la permission
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'supprimer';
 
-		 $this->rights[4][0] = 334; // id de la permission
-		 $this->rights[4][1] = 'Supprimer les services'; // libelle de la permission
-		 $this->rights[4][2] = 'd'; // type de la permission (deprecie a ce jour)
-		 $this->rights[4][3] = 0; // La permission est-elle une permission par defaut
-		 $this->rights[4][4] = 'supprimer';
-		 */
-
+		$r++;
+		$this->rights[$r][0] = 538;	// Must be same permission than in product module
+		$this->rights[$r][1] = 'Exporter les services';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'export';
 	}
 
 

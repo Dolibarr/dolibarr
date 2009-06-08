@@ -63,16 +63,16 @@ class box_produits extends ModeleBoxes {
 		global $user, $langs, $db, $conf;
 
 		$this->max=$max;
-		
+
 		include_once(DOL_DOCUMENT_ROOT."/product.class.php");
 		$productstatic=new Product($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts",$max));
 
-		if ($user->rights->produit->lire)
+		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
 			$clause = " WHERE";
-			
+
 			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.envente";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
@@ -83,6 +83,8 @@ class box_produits extends ModeleBoxes {
 				$clause = " AND";
 			}
 			$sql.= $clause." p.entity = ".$conf->entity;
+			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
+			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
 			$sql.= " ORDER BY p.datec DESC";
 			$sql.= $db->plimit($max, 0);
 
@@ -120,7 +122,7 @@ class box_produits extends ModeleBoxes {
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->label,
                     'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
-					
+
 					if ($objp->price_base_type == 'HT')
 					{
 						$price=price($objp->price);
@@ -164,7 +166,7 @@ class box_produits extends ModeleBoxes {
 	{
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 	}
-	 
+
 }
 
 ?>

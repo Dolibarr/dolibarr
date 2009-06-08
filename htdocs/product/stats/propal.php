@@ -41,7 +41,7 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 $mesg = '';
 
@@ -71,7 +71,7 @@ if ($_GET["id"] || $_GET["ref"])
     	$_GET["id"]=$product->id;
     }
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
-    
+
     llxHeader("","",$langs->trans("CardProduct".$product->type));
 
     if ( $result > 0)
@@ -96,7 +96,7 @@ if ($_GET["id"] || $_GET["ref"])
 		// Libelle
         print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
         print '</tr>';
-        
+
         // Prix
         print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">';
 		if ($product->price_base_type == 'TTC')
@@ -115,7 +115,7 @@ if ($_GET["id"] || $_GET["ref"])
         print '</td></tr>';
 
 		show_stats_for_company($product,$socid);
-        
+
         print "</table>";
 
         print '</div>';

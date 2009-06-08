@@ -797,7 +797,7 @@ if ($id > 0 || ! empty($ref))
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 				print '<a name="'.$commandline->id.'"></a>'; // ancre pour retourner sur la ligne
-				if ($conf->produit->enabled && $commandline->fk_product > 0)
+				if (($conf->produit->enabled || $conf->service->enabled) && $commandline->fk_product > 0)
 				{
 					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$commandline->product_id.'">';
 					print img_object($langs->trans('ShowProduct'),'product');
@@ -894,7 +894,7 @@ if ($id > 0 || ! empty($ref))
 			print '</form>';
 
 			// Ajout de produits/services predefinis
-			if ($conf->produit->enabled)
+			if ($conf->produit->enabled || $conf->service->enabled)
 			{
 				print '<tr class="liste_titre">';
 				print '<td colspan="3">';

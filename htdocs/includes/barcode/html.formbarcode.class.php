@@ -21,14 +21,14 @@
 
 /**
         \file       htdocs/html.form.class.php
-        \brief      Fichier de la classe des fonctions prédéfinie de composants html
+        \brief      Fichier de la classe des fonctions prï¿½dï¿½finie de composants html
         \version    $Revision$
 */
 
 
 /**
         \class      Form
-        \brief      Classe permettant la génération de composants html
+        \brief      Classe permettant la gï¿½nï¿½ration de composants html
 */
 
 class FormBarCode
@@ -39,35 +39,35 @@ class FormBarCode
 
 	/**
 		\brief     Constructeur
-		\param     DB      handler d'accès base de donnée
+		\param     DB      handler d'accï¿½s base de donnï¿½e
 	*/
 	function FormBarCode($DB)
 	{
 		$this->db = $DB;
-		
+
 		return 1;
 	}
 
 
 	/**
-	 *    \brief      Liste de sélection du générateur de codes barres
-	 *    \param      selected          Id code pré-sélectionné
+	 *    \brief      Liste de sï¿½lection du gï¿½nï¿½rateur de codes barres
+	 *    \param      selected          Id code prï¿½-sï¿½lectionnï¿½
 	 *    \param      code_id           Id du code barre
 	 *    \param      idForm            Id du formulaire
 	 */
 	function setBarcodeEncoder($selected=0,$barcodelist,$code_id,$idForm='formbarcode')
 	{
 		global $conf, $langs;
-		
+
 		$disable = '';
-		
-		// On vérifie si le code de barre est déjà sélectionné par défaut dans le module produit
-		if (($conf->produit->enabled && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
+
+		// We check if barcode is already selected by default
+		if ((($conf->produit->enabled || $conf->service->enabled) && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
 		    ($conf->societe->enabled && $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY == $code_id))
 		{
 			$disable = 'disabled="disabled"';
 		}
-		
+
 		$select_encoder = '<form action="barcode.php" method="post" id="'.$idForm.'">';
 		$select_encoder.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$select_encoder.= '<input type="hidden" name="action" value="update">';
@@ -83,30 +83,30 @@ class FormBarCode
 
 		return $select_encoder;
 	}
-   
+
    /**
      *    \brief      Retourne la liste des types de codes barres
-     *    \param      selected          Id code pré-sélectionné
+     *    \param      selected          Id code prï¿½-sï¿½lectionnï¿½
      *    \param      htmlname          Nom de la zone select
      *    \param      useempty          Affiche valeur vide dans liste
      */
     function select_barcode_type($selected='',$htmlname='coder_id',$useempty=0)
     {
         global $langs,$conf;
-        
+
         $sql = "SELECT rowid, code, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
         $sql.= " WHERE coder <> '0'";
         $sql.= " AND entity = ".$conf->entity;
         $sql.= " ORDER BY rowid";
-        
+
         $result = $this->db->query($sql);
         if ($result)
         {
             $num = $this->db->num_rows($result);
             $i = 0;
-            
-            if ($useempty && $num > 0) 
+
+            if ($useempty && $num > 0)
             {
             	print '<select class="flat" name="'.$htmlname.'">';
             	print '<option value="0">&nbsp;</option>';
@@ -116,7 +116,7 @@ class FormBarCode
             	print '<select disabled="disabled" class="flat" name="'.$htmlname.'">';
             	print '<option value="0" selected="true">'.$langs->trans('NoActivatedBarcode').'</option>';
             }
- 
+
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($result);
@@ -138,11 +138,11 @@ class FormBarCode
             dol_print_error($this->db);
         }
     }
-    
+
    /**
      *    	\brief      Affiche formulaire de selection du type de code barre
      *    	\param      page        	Page
-     *    	\param      selected    	Id condition pré-sélectionnée
+     *    	\param      selected    	Id condition prï¿½-sï¿½lectionnï¿½e
      *    	\param      htmlname    	Nom du formulaire select
      */
     function form_barcode_type($page, $selected='', $htmlname='barcodetype_id')

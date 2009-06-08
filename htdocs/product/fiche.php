@@ -47,7 +47,7 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 $mesg = '';
 
@@ -67,7 +67,7 @@ if ($_GET["action"] == 'fastappro')
 
 
 // Add a product or service
-if ($_POST["action"] == 'add' && $user->rights->produit->creer)
+if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$error=0;
 
@@ -153,7 +153,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 	}
 }
 // Update a product or service
-if ($_POST["action"] == 'update' && $user->rights->produit->creer)
+if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	if (! empty($_POST["cancel"]))
 	{
@@ -219,7 +219,7 @@ if ($_POST["action"] == 'update' && $user->rights->produit->creer)
 }
 
 // Action clone object
-if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes' && $user->rights->produit->creer)
+if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	if (empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_prices"]))
 	{
@@ -566,7 +566,7 @@ $formproduct = new FormProduct($db);
 /*
  * Fiche création du produit
  */
-if ($_GET["action"] == 'create' && $user->rights->produit->creer)
+if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	if ($conf->global->PRODUCT_CANVAS_ABILITY)
 	{
@@ -1003,7 +1003,7 @@ if ($_GET["id"] || $_GET["ref"])
 	/*
 	 * Fiche en mode edition
 	 */
-	if ($_GET["action"] == 'edit' && $user->rights->produit->creer)
+	if ($_GET["action"] == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
 		if ($product->isservice()) {
 			print_fiche_titre($langs->trans('Modify').' '.$langs->trans('Service').' : '.$product->ref, "");
@@ -1175,7 +1175,7 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '')
 {
-	if ( $user->rights->produit->creer)
+	if ($user->rights->produit->creer || $user->rights->service->creer)
 	{
 		if ($product->no_button_edit <> 1)
 		print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Modify").'</a>';

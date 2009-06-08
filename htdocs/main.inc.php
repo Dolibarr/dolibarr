@@ -925,7 +925,8 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
 	}
 
-	if (($conf->produit->enabled || $conf->service->enabled) && $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE && $user->rights->produit->lire)
+	if ((($conf->produit->enabled && $user->rights->produit->lire) || ($conf->service->enabled && $user->rights->service->lire))
+			&& $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE)
 	{
 		$langs->load("products");
 		$searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/index.php',

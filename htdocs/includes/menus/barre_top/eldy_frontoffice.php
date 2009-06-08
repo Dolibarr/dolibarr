@@ -137,7 +137,7 @@ class MenuTop {
 			if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
 
 			$idsel='id="mainmenu_products" ';
-			if ($user->rights->produit->lire)
+			if ($user->rights->produit->lire || $user->service->lire)
 			{
 				print '<td class="tmenu">';
 				print '<a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$chaine.'</a>';
@@ -452,7 +452,7 @@ class MenuTop {
 
 		print '</tr></table>';
 	}
-		
+
 }
 
 ?>

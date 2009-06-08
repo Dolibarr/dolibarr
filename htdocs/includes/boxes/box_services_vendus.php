@@ -61,13 +61,13 @@ class box_services_vendus extends ModeleBoxes {
 		global $user, $langs, $db, $conf;
 
 		$this->max=$max;
-		
+
 		include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 		$contratlignestatic=new ContratLigne($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract",$max));
 
-		if ($user->rights->produit->lire && $user->rights->contrat->lire)
+		if ($user->rights->service->lire && $user->rights->contrat->lire)
 		{
 			$sql = "SELECT s.nom, s.rowid as socid,";
 			$sql.= " c.rowid,";
@@ -101,14 +101,14 @@ class box_services_vendus extends ModeleBoxes {
 			{
 				$num = $db->num_rows($result);
 				$now=gmmktime();
-				
+
 				$i = 0;
 
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($result);
 					$datem=$db->jdate($objp->datem);
-					
+
 					// Multilangs
 					if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 					{
@@ -132,7 +132,7 @@ class box_services_vendus extends ModeleBoxes {
                     'text' => $objp->label,
                     'maxlength' => 16,
                     'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
-					
+
 					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'maxlength' => 28,
@@ -144,12 +144,12 @@ class box_services_vendus extends ModeleBoxes {
 					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
                     'text' => $contratlignestatic->LibStatut($objp->statut,3)
 					);
-						
+
 					$i++;
 				}
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoContractedProducts"));
 			}
-			else 
+			else
 			{
 				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
     	        										'maxlength'=>500,
