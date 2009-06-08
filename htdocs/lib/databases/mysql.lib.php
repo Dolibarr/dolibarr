@@ -343,7 +343,7 @@ class DoliDb
 	}
 
 	/**
-		\brief      Effectue une requete et renvoi le resultset de r�ponse de la base
+		\brief      Effectue une requete et renvoi le resultset de reponse de la base
 		\param	    query	    Contenu de la query
 		\return	    resource    Resultset de la reponse
 		*/
@@ -390,7 +390,7 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie les donn�es dans un tableau.
+	 \brief      Renvoie les donnees dans un tableau.
 	 \param      resultset   Curseur de la requete voulue
 	 \return	    array
 	 */
@@ -403,7 +403,7 @@ class DoliDb
 
 
 	/**
-	 \brief      Renvoie les donn�es comme un tableau.
+	 \brief      Renvoie les donnees comme un tableau.
 	 \param      resultset   Curseur de la requete voulue
 	 \return	    array
 	 */
@@ -422,7 +422,7 @@ class DoliDb
 	 */
 	function num_rows($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return mysql_num_rows($resultset);
 	}
@@ -435,7 +435,7 @@ class DoliDb
 	 */
 	function affected_rows($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		// mysql necessite un link de base pour cette fonction contrairement
 		// a pqsql qui prend un resultset
@@ -444,14 +444,14 @@ class DoliDb
 
 
 	/**
-	 \brief      Lib�re le dernier resultset utilis� sur cette connexion.
+	 \brief      Libere le dernier resultset utilise sur cette connexion.
 	 \param      resultset   Curseur de la requete voulue
 	 */
 	function free($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
-		// Si resultset en est un, on libere la m�moire
+		// Si resultset en est un, on libere la memoire
 		if (is_resource($resultset)) mysql_free_result($resultset);
 	}
 

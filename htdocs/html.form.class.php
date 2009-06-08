@@ -823,7 +823,6 @@ class Form
 
 			dol_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
 			$resultd = $this->db->query($sqld);
-			if ( $resultd ) $objtp = $this->db->fetch_object($resultd);
 		}
 
 		if ($result)
@@ -859,10 +858,10 @@ class Form
 				// Multilangs : modification des donnée si une traduction existe
 				if ($conf->global->MAIN_MULTILANGS)
 				{
+					if ( $resultd ) $objtp = $this->db->fetch_object($resultd);
 					if ( $objp->rowid == $objtp->fk_product ) // si on a une traduction
 					{
 						if ( $objtp->label != '') $objp->label = $objtp->label;
-						if ( $resultd ) $objtp = $this->db->fetch_object($resultd); // on charge la traduction suivante
 					}
 				}
 				$opt = '<option value="'.$objp->rowid.'"';
@@ -883,21 +882,24 @@ class Form
 
 					dol_syslog("Form::select_produits_do sql=".$sql);
 					$result2 = $this->db->query($sql);
-					$objp2 = $this->db->fetch_object($result2);
-					if ($objp2)
+					if ($result2)
 					{
-						if ($objp2->price_base_type == 'HT')
-						$opt.= price($objp2->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+						$objp2 = $this->db->fetch_object($result2);
+						if ($objp2)
+						{
+							if ($objp2->price_base_type == 'HT')
+							$opt.= price($objp2->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+							else
+							$opt.= price($objp2->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+						}
+						//si il n'y a pas de prix multiple on prend le prix de base du produit/service
 						else
-						$opt.= price($objp2->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
-					}
-					//si il n'y a pas de prix multiple on prend le prix de base du produit/service
-					else
-					{
-						if ($objp->price_base_type == 'HT')
-						$opt.= price($objp->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
-						else
-						$opt.= price($objp->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+						{
+							if ($objp->price_base_type == 'HT')
+							$opt.= price($objp->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+							else
+							$opt.= price($objp->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+						}
 					}
 				}
 				else

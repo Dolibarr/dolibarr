@@ -435,7 +435,7 @@ class DoliDb
 	 */
 	function num_rows($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_object($resultset)) { $resultset=$this->results; }
 		return mysqli_num_rows($resultset);
 	}

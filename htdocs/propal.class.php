@@ -308,7 +308,7 @@ class Propal extends CommonObject
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 
-			// \TODO A virer
+			// TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			$remise = 0;
@@ -340,7 +340,7 @@ class Propal extends CommonObject
 			//if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty) $ligne->special_code=3;
 			if (empty($qty)) $ligne->special_code=3;
 
-			// \TODO deprecated
+			// TODO deprecated
 			$ligne->price=$price;
 			$ligne->remise=$remise;
 
@@ -2088,9 +2088,9 @@ class PropaleLigne
 	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
 	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 
-	var $total_ht;			// Total HT  de la ligne toute quantit� et incluant la remise ligne
-	var $total_tva;			// Total TVA  de la ligne toute quantit� et incluant la remise ligne
-	var $total_ttc;			// Total TTC de la ligne toute quantit� et incluant la remise ligne
+	var $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
+	var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
+	var $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
 
 	// Ne plus utiliser
 	var $remise;
@@ -2104,7 +2104,7 @@ class PropaleLigne
 
 	/**
 	 *      \brief     Constructeur d'objets ligne de propal
-	 *      \param     DB      handler d'acc�s base de donn�e
+	 *      \param     DB      handler d'acces base de donnee
 	 */
 	function PropaleLigne($DB)
 	{
