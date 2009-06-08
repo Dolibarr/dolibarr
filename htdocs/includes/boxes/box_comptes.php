@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/includes/boxes/box_comptes.php
-        \ingroup    banque
-        \brief      Module de génération de l'affichage de la box comptes
-		\version	$Id$
-*/
+ *      \file       htdocs/includes/boxes/box_comptes.php
+ *      \ingroup    banque
+ *      \brief      Module de generation de l'affichage de la box comptes
+ *		\version	$Id$
+ */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
@@ -34,7 +34,7 @@ class box_comptes extends ModeleBoxes {
 	var $boxcode="currentaccounts";
 	var $boximg="object_bill";
 	var $boxlabel;
-	var $depends = array("banque");     // Box active si module banque actif
+	var $depends = array("banque");     // Box active if module banque active
 
 	var $db;
 	var $param;
@@ -44,8 +44,8 @@ class box_comptes extends ModeleBoxes {
 
 
 	/**
-	*      \brief      Constructeur de la classe
-	*/
+	 *      \brief      Constructor for class
+	 */
 	function box_comptes()
 	{
 		global $langs;
@@ -55,24 +55,24 @@ class box_comptes extends ModeleBoxes {
 	}
 
 	/**
-	*      \brief      Charge les données en mémoire pour affichage ultérieur
-	*      \param      $max        Nombre maximum d'enregistrements à charger
-	*/
+	 *      \brief      Load data into info_box_contents array to show array later.
+	 *      \param      $max        Maximum number of records to load
+	 */
 	function loadBox($max=5)
 	{
 		global $user, $langs, $db, $conf;
 
 		$this->max=$max;
-		
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
 		if ($user->rights->banque->lire)
 		{
-	    $sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
-	    $sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
-	    $sql.= " domiciliation, proprio, adresse_proprio,";
-	    $sql.= " account_number, currency_code,";
-	    $sql.= " min_allowed, min_desired, comment";
+			$sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
+			$sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
+			$sql.= " domiciliation, proprio, adresse_proprio,";
+			$sql.= " account_number, currency_code,";
+			$sql.= " min_allowed, min_desired, comment";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 			$sql.= " WHERE entity = ".$conf->entity;
 			$sql.= " AND clos = 0";
@@ -89,20 +89,21 @@ class box_comptes extends ModeleBoxes {
 				$i = 0;
 				$solde_total = 0;
 
+				$listofcurrencies=array();
 				$account_static = new Account($db);
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($result);
-					
+
 					$account_static->id = $objp->rowid;
 					$solde=$account_static->solde(0);
-					
+
 					$solde_total += $solde;
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
 					'logo' => $this->boximg,
 					'url' => DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid);
-					
+
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
 					'text' => $objp->label,
 					'url' => DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid);
@@ -115,17 +116,21 @@ class box_comptes extends ModeleBoxes {
 					'text' => price($solde).' '.$langs->trans("Currency".$objp->currency_code)
 					);
 
+					$listofcurrencies[$objp->currency_code]=1;
 					$i++;
 				}
 
-                // Total
-				$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="right" colspan="3" class="liste_total"',
-				'text' => $langs->trans('Total')
-				);
-				$this->info_box_contents[$i][1] = array('td' => 'align="right" class="liste_total"',
-				'text' => price($solde_total).' '.$langs->trans("Currency".$conf->monnaie)
-				);
-
+				// Total
+				if (sizeof($listofcurrencies) < 1)
+				{
+					$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="right" colspan="3" class="liste_total"',
+					'text' => $langs->trans('Total')
+					);
+					$totalamount=price($solde_total).' '.$langs->trans("Currency".$conf->monnaie);
+					$this->info_box_contents[$i][1] = array('td' => 'align="right" class="liste_total"',
+					'text' => $totalamount
+					);
+				}
 			}
 			else {
 				dol_print_error($db);
