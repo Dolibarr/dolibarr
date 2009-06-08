@@ -27,14 +27,14 @@
 
 /**
  *	\file       htdocs/html.form.class.php
- *	\brief      Fichier de la classe des fonctions prédéfinie de composants html
+ *	\brief      Fichier de la classe des fonctions prï¿½dï¿½finie de composants html
  *	\version	$Id$
  */
 
 
 /**
  *	\class      Form
- *	\brief      Classe permettant la génération de composants html
+ *	\brief      Classe permettant la gï¿½nï¿½ration de composants html
  *	\remarks	Only common components must be here.
  */
 class Form
@@ -64,10 +64,10 @@ class Form
 
 	/**
 	 *	\brief	Affiche un texte+picto avec tooltip sur texte ou sur picto
-	 *	\param  text				Texte à afficher
-	 *	\param  htmltext	    	Contenu html du tooltip, codé en html
-	 *	\param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et forcé en Ajax
-	 *	\param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est après
+	 *	\param  text				Texte ï¿½ afficher
+	 *	\param  htmltext	    	Contenu html du tooltip, codï¿½ en html
+	 *	\param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et forcï¿½ en Ajax
+	 *	\param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est aprï¿½s
 	 *	\param	img					Code img du picto
 	 * 	\param	i					Numero of tooltip
 	 *	\return	string				Code html du tooltip (texte+picto)
@@ -170,11 +170,11 @@ class Form
 
 
 	/**
-	 *    \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
-	 *    \param     selected         Id ou Code pays ou Libelle pays pré-sélectionné
+	 *    \brief     Retourne la liste dï¿½roulante des pays actifs, dans la langue de l'utilisateur
+	 *    \param     selected         Id ou Code pays ou Libelle pays prï¿½-sï¿½lectionnï¿½
 	 *    \param     htmlname         Nom de la liste deroulante
 	 *    \param     htmloption       Options html sur le select
-	 *    \todo      trier liste sur noms après traduction plutot que avant
+	 *    \todo      trier liste sur noms aprï¿½s traduction plutot que avant
 	 */
 	function select_pays($selected='',$htmlname='pays_id',$htmloption='')
 	{
@@ -259,7 +259,7 @@ class Form
 						{
 							print '<option value="'.$obj->rowid.'">';
 						}
-						// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+						// Si traduction existe, on l'utilise, sinon on prend le libellï¿½ par dï¿½faut
 						if ($obj->code) { print $obj->code . ' - '; }
 						print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
 						print '</option>';
@@ -280,7 +280,7 @@ class Form
 
 	/**
 	 *    \brief      Retourne la liste des types de comptes financiers
-	 *    \param      selected        Type pré-sélectionné
+	 *    \param      selected        Type prï¿½-sï¿½lectionnï¿½
 	 *    \param      htmlname        Nom champ formulaire
 	 */
 	function select_type_comptes_financiers($selected=1,$htmlname='type')
@@ -528,7 +528,7 @@ class Form
 
 	/**
 	 *    	\brief      Return HTML combo list of absolute discounts
-	 *    	\param      selected        Id remise fixe pré-sélectionnée
+	 *    	\param      selected        Id remise fixe prï¿½-sï¿½lectionnï¿½e
 	 *    	\param      htmlname        Nom champ formulaire
 	 *    	\param      filter          Criteres optionnels de filtre
 	 * 		\param		maxvalue		Max value for lines that can be selected
@@ -592,12 +592,12 @@ class Form
 
 
 	/**
-	 *    	\brief      Retourne la liste déroulante des contacts d'une société donnée
-	 *    	\param      socid      	    Id de la société
-	 *    	\param      selected   	    Id contact pré-sélectionné
+	 *    	\brief      Retourne la liste dï¿½roulante des contacts d'une sociï¿½tï¿½ donnï¿½e
+	 *    	\param      socid      	    Id de la sociï¿½tï¿½
+	 *    	\param      selected   	    Id contact prï¿½-sï¿½lectionnï¿½
 	 *    	\param      htmlname  	    Nom champ formulaire ('none' pour champ non editable)
 	 *      \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 *      \param      exclude         Liste des id contacts à exclure
+	 *      \param      exclude         Liste des id contacts ï¿½ exclure
 	 *		\return		int				<0 if KO, Nb of contact in list if OK
 	 */
 	function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='')
@@ -664,7 +664,7 @@ class Form
 
 
 	/**
-	 *	\brief      Retourne la liste déroulante des utilisateurs
+	 *	\brief      Retourne la liste dï¿½roulante des utilisateurs
 	 *  \param      selected        Id user preselected
 	 *  \param      htmlname        Field name in form
 	 *  \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
@@ -723,7 +723,7 @@ class Form
 	 *  \param    selected        Preselected products
 	 *  \param    htmlname        Name of HTML select
 	 *  \param    filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-	 *  \param    limit           Limit sur le nombre de lignes retournées
+	 *  \param    limit           Limit sur le nombre de lignes retournï¿½es
 	 *  \param    price_level     Level of price to show
 	 *  \param	  status		  -1=Return all products, 0=Products not on sell, 1=Products on sell
 	 *  \param	  finished     	  2=all, 1=finished, 0=raw material
@@ -760,7 +760,7 @@ class Form
 	 *	\param      selected        Preselected product
 	 *	\param      htmlname        Name of select html
 	 *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-	 *	\param      limit           Limite sur le nombre de lignes retournées
+	 *	\param      limit           Limite sur le nombre de lignes retournï¿½es
 	 *	\param      price_level     Level of price to show
 	 * 	\param      ajaxkeysearch   Filter on product if ajax is used
 	 *	\param		status			-1=Return all products, 0=Products not on sell, 1=Products on sell
@@ -810,7 +810,7 @@ class Form
 		$result=$this->db->query($sql);
 		if (! $result) dol_print_error($this->db);
 
-		// Multilang : on construit une liste des traductions des produits listés
+		// Multilang : on construit une liste des traductions des produits listes
 		if ($conf->global->MAIN_MULTILANGS)
 		{
 			$sqld = "SELECT d.fk_product, d.label";
@@ -855,7 +855,7 @@ class Form
 			{
 				$objp = $this->db->fetch_object($result);
 
-				// Multilangs : modification des donnée si une traduction existe
+				// Multilangs : modification des donnees si une traduction existe
 				if ($conf->global->MAIN_MULTILANGS)
 				{
 					if ( $resultd ) $objtp = $this->db->fetch_object($resultd);
@@ -969,12 +969,12 @@ class Form
 
 	/**
 	 *	\brief      Retourne la liste des produits de fournisseurs
-	 *	\param		socid   		Id société fournisseur (0 pour aucun filtre)
-	 *	\param      selected        Produit pré-sélectionné
+	 *	\param		socid   		Id societe fournisseur (0 pour aucun filtre)
+	 *	\param      selected        Produit pre-selectionne
 	 *	\param      htmlname        Nom de la zone select
 	 *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
 	 *	\param      filtre          Pour filtre sql
-	 *	\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
+	 *	\param      ajaxkeysearch   Filtre des produits si ajax est utilise
 	 */
 	function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$ajaxkeysearch='')
 	{
@@ -1162,8 +1162,8 @@ class Form
 	}
 
 	/**
-	 *    \brief      Retourne la liste déroulante des adresses de livraison
-	 *    \param      selected        Id contact pré-sélectionn
+	 *    \brief      Retourne la liste deroulante des adresses de livraison
+	 *    \param      selected        Id contact pre-selectionn
 	 *    \param      htmlname        Nom champ formulaire
 	 */
 	function select_adresse_livraison($selected='', $socid, $htmlname='adresse_livraison_id',$showempty=0)
@@ -1210,13 +1210,13 @@ class Form
 
 	/**
 	 *      \brief      Charge dans cache la liste des conditions de paiements possibles
-	 *      \return     int             Nb lignes chargées, 0 si déjà chargées, <0 si ko
+	 *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
 	 */
 	function load_cache_conditions_paiements()
 	{
 		global $langs;
 
-		if (sizeof($this->cache_conditions_paiements)) return 0;    // Cache déja chargé
+		if (sizeof($this->cache_conditions_paiements)) return 0;    // Cache deja charge
 
 		$sql = "SELECT rowid, code, libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
@@ -1232,7 +1232,7 @@ class Form
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$libelle=($langs->trans("PaymentConditionShort".$obj->code)!=("PaymentConditionShort".$obj->code)?$langs->trans("PaymentConditionShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
 				$this->cache_conditions_paiements[$obj->rowid]['code'] =$obj->code;
 				$this->cache_conditions_paiements[$obj->rowid]['label']=$libelle;
@@ -1248,13 +1248,13 @@ class Form
 
 	/**
 	 *      \brief      Charge dans cache la liste des types de paiements possibles
-	 *      \return     int             Nb lignes chargées, 0 si déjà chargées, <0 si ko
+	 *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
 	 */
 	function load_cache_types_paiements()
 	{
 		global $langs;
 
-		if (sizeof($this->cache_types_paiements)) return 0;    // Cache déja chargé
+		if (sizeof($this->cache_types_paiements)) return 0;    // Cache deja charge
 
 		$sql = "SELECT id, code, libelle, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -1270,7 +1270,7 @@ class Form
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$libelle=($langs->trans("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->trans("PaymentTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
 				$this->cache_types_paiements[$obj->id]['code'] =$obj->code;
 				$this->cache_types_paiements[$obj->id]['label']=$libelle;
@@ -1288,10 +1288,10 @@ class Form
 
 	/**
 	 *      \brief      Retourne la liste des types de paiements possibles
-	 *      \param      selected        Id du type de paiement pré-sélectionné
+	 *      \param      selected        Id du type de paiement pre-selectionne
 	 *      \param      htmlname        Nom de la zone select
 	 *      \param      filtertype      Pour filtre
-	 *		\param		addempty		Ajoute entrée vide
+	 *		\param		addempty		Ajoute entree vide
 	 */
 	function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
 	{
@@ -1321,7 +1321,7 @@ class Form
 
 	/**
 	 *      \brief      Retourne la liste des modes de paiements possibles
-	 *      \param      selected        Id du mode de paiement pré-sélectionné
+	 *      \param      selected        Id du mode de paiement pre-selectionne
 	 *      \param      htmlname        Nom de la zone select
 	 *      \param      filtertype      Pour filtre
 	 *      \param      format          0=id+libelle, 1=code+code, 2=code+libelle
@@ -1345,7 +1345,7 @@ class Form
 		if ($empty) print '<option value="">&nbsp;</option>';
 		foreach($this->cache_types_paiements as $id => $arraytypes)
 		{
-			// On passe si on a demandé de filtrer sur des modes de paiments particuliers
+			// On passe si on a demandï¿½ de filtrer sur des modes de paiments particuliers
 			if (sizeof($filterarray) && ! in_array($arraytypes['type'],$filterarray)) continue;
 
 			if ($format == 0) print '<option value="'.$id.'"';
@@ -1367,7 +1367,7 @@ class Form
 
 	/**
 	 *      \brief      Selection HT ou TTC
-	 *      \param      selected        Id pré-sélectionné
+	 *      \param      selected        Id pre-selectionne
 	 *      \param      htmlname        Nom de la zone select
 	 */
 	function select_PriceBaseType($selected='',$htmlname='price_base_type')
@@ -1394,9 +1394,9 @@ class Form
 	}
 
 	/**
-	 *    \brief      Retourne la liste déroulante des différents états d'une propal.
+	 *    \brief      Retourne la liste deroulante des differents etats d'une propal.
 	 *                Les valeurs de la liste sont les id de la table c_propalst
-	 *    \param      selected    etat pre-séléctionné
+	 *    \param      selected    etat pre-selectionne
 	 */
 	function select_propal_statut($selected='')
 	{
@@ -1423,7 +1423,7 @@ class Form
 					{
 						print '<option value="'.$obj->id.'">';
 					}
-					// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 					//print ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite!='-'?$obj->civilite:''));
 					print $obj->label;
 					print '</option>';
@@ -1441,9 +1441,9 @@ class Form
 
 	/**
 	 *    \brief      Retourne la liste des comptes
-	 *    \param      selected          Id compte pré-sélectionné
+	 *    \param      selected          Id compte pre-selectionne
 	 *    \param      htmlname          Nom de la zone select
-	 *    \param      statut            Statut des comptes recherchés (0=open, 1=closed)
+	 *    \param      statut            Statut des comptes recherches (0=open, 1=closed)
 	 *    \param      filtre            Pour filtre sur la liste
 	 *    \param      useempty          Affiche valeur vide dans liste
 	 */
@@ -1502,7 +1502,7 @@ class Form
 	}
 
 	/**
-	 *    \brief    Retourne la liste des catégories du type choisi
+	 *    \brief    Retourne la liste des categories du type choisi
 	 *    \param    type			Type de categories (0=produit, 1=fournisseur, 2=client)
 	 *    \param    selected    	Id categorie preselectionnee
 	 *    \param    select_name		Nom formulaire HTML
@@ -1671,7 +1671,7 @@ class Form
 	 *    \brief      Affiche formulaire de selection de projet
 	 *    \param      page        Page
 	 *    \param      socid       Id societe
-	 *    \param      selected    Id projet pré-sélectionné
+	 *    \param      selected    Id projet pre-selectionne
 	 *    \param      htmlname    Nom du formulaire select
 	 */
 	function form_project($page, $socid, $selected='', $htmlname='projectid')
@@ -1709,9 +1709,9 @@ class Form
 	/**
 	 *    	\brief      Affiche formulaire de selection de conditions de paiement
 	 *    	\param      page        	Page
-	 *    	\param      selected    	Id condition pré-sélectionné
+	 *    	\param      selected    	Id condition pre-selectionne
 	 *    	\param      htmlname    	Name of select html field
-	 *		\param		addempty		Ajoute entrée vide
+	 *		\param		addempty		Ajoute entree vide
 	 */
 	function form_conditions_reglement($page, $selected='', $htmlname='cond_reglement_id', $addempty=0)
 	{
@@ -1779,7 +1779,7 @@ class Form
 	/**
 	 *    \brief      Affiche formulaire de selection des modes de reglement
 	 *    \param      page        Page
-	 *    \param      selected    Id mode pré-sélectionné
+	 *    \param      selected    Id mode pre-selectionne
 	 *    \param      htmlname    Name of select html field
 	 */
 	function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id')
@@ -1865,7 +1865,7 @@ class Form
 	/**
 	 *    \brief      Affiche formulaire de selection des contacts
 	 *    \param      page        Page
-	 *    \param      selected    Id contact pré-sélectionné
+	 *    \param      selected    Id contact pre-selectionne
 	 *    \param      htmlname    Nom du formulaire select
 	 */
 	function form_contacts($page, $societe, $selected='', $htmlname='contactidp')
@@ -1881,7 +1881,7 @@ class Form
 			$num=$this->select_contacts($societe->id, $selected, $htmlname);
 			if ($num==0)
 			{
-				print '<font class="error">Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale</font><br>';
+				print '<font class="error">Cette societe n\'a pas de contact, veuillez en crï¿½er un avant de faire votre proposition commerciale</font><br>';
 				print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$langs->trans('AddContact').'</a>';
 			}
 			print '</td>';
@@ -1907,9 +1907,9 @@ class Form
 	/**
 	 *    	\brief      Affiche formulaire de selection de l'adresse de livraison
 	 *    	\param      page        	Page
-	 *    	\param      selected    	Id condition pré-sélectionné
+	 *    	\param      selected    	Id condition pre-selectionne
 	 *    	\param      htmlname    	Nom du formulaire select
-	 *		\param		origin        	Origine de l'appel pour pouvoir créer un retour
+	 *		\param		origin        	Origine de l'appel pour pouvoir creer un retour
 	 *      \param      originid      	Id de l'origine
 	 */
 	function form_adresse_livraison($page, $selected='', $socid, $htmlname='adresse_livraison_id', $origin='', $originid='')
@@ -1947,16 +1947,16 @@ class Form
 
 	/**
 	 *    \brief     Retourne la liste des devises, dans la langue de l'utilisateur
-	 *    \param     selected    code devise pré-sélectionné
+	 *    \param     selected    code devise prï¿½-sï¿½lectionnï¿½
 	 *    \param     htmlname    nom de la liste deroulante
-	 *    \todo      trier liste sur noms après traduction plutot que avant
+	 *    \todo      trier liste sur noms aprï¿½s traduction plutot que avant
 	 */
 	function select_currency($selected='',$htmlname='currency_id')
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
 
-		if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilité
+		if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilitï¿½
 
 		$sql = "SELECT code, code_iso, label, active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
@@ -1985,7 +1985,7 @@ class Form
 						print '<option value="'.$obj->code_iso.'">';
 					}
 					if ($obj->code_iso) { print $obj->code_iso . ' - '; }
-					// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+					// Si traduction existe, on l'utilise, sinon on prend le libellï¿½ par dï¿½faut
 					print ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
 					print '</option>';
 					$i++;
@@ -2005,16 +2005,16 @@ class Form
 	/**
 	 *      \brief      Output an HTML select vat rate
 	 *      \param      name                Nom champ html
-	 *      \param      selectedrate        Forçage du taux tva pré-sélectionné. Mettre '' pour aucun forcage.
-	 *      \param      societe_vendeuse    Objet société vendeuse
-	 *      \param      societe_acheteuse   Objet société acheteuse
+	 *      \param      selectedrate        Forï¿½age du taux tva prï¿½-sï¿½lectionnï¿½. Mettre '' pour aucun forcage.
+	 *      \param      societe_vendeuse    Objet sociï¿½tï¿½ vendeuse
+	 *      \param      societe_acheteuse   Objet sociï¿½tï¿½ acheteuse
 	 *      \param      taux_produit        Taux par defaut du produit vendu
 	 *      \param      info_bits           Miscellanous information on line
-	 *      \remarks    Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.
-	 *                  Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.
-	 *                  Si (vendeur et acheteur dans Communauté européenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
-	 *                  Si (vendeur et acheteur dans Communauté européenne) et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.
-	 *                  Sinon la TVA proposée par défaut=0. Fin de règle.
+	 *      \remarks    Si vendeur non assujeti ï¿½ TVA, TVA par dï¿½faut=0. Fin de rï¿½gle.
+	 *                  Si le (pays vendeur = pays acheteur) alors la TVA par dï¿½faut=TVA du produit vendu. Fin de rï¿½gle.
+	 *                  Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par dï¿½faut=0 (La TVA doit ï¿½tre payï¿½ par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de rï¿½gle.
+	 *                  Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et bien vendu autre que transport neuf alors la TVA par dï¿½faut=TVA du produit vendu. Fin de rï¿½gle.
+	 *                  Sinon la TVA proposï¿½e par dï¿½faut=0. Fin de rï¿½gle.
 	 */
 	function select_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='', $info_bits=0)
 	{
@@ -2083,14 +2083,14 @@ class Form
 			print '<font class="error">'.$this->db->error().'</font>';
 		}
 
-		// Définition du taux à pré-sélectionner (si defaulttx non forcé et donc vaut -1 ou '')
+		// Dï¿½finition du taux ï¿½ prï¿½-sï¿½lectionner (si defaulttx non forcï¿½ et donc vaut -1 ou '')
 		if ($defaulttx < 0 || strlen($defaulttx) == 0)
 		{
 			$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
 			$defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$taux_produit);
 		}
-		// Si taux par defaut n'a pu etre déterminé, on prend dernier de la liste.
-		// Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
+		// Si taux par defaut n'a pu etre dï¿½terminï¿½, on prend dernier de la liste.
+		// Comme ils sont triï¿½s par ordre croissant, dernier = plus ï¿½levï¿½ = taux courant
 		if ($defaulttx < 0 || strlen($defaulttx) == 0)
 		{
 			$defaulttx = $txtva[sizeof($txtva)-1];
@@ -2128,16 +2128,16 @@ class Form
 	/**
 	 *		Affiche zone de selection de date
 	 *      Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
-	 *      Les champs sont pré-sélectionnés avec:
+	 *      Les champs sont prï¿½-sï¿½lectionnï¿½s avec:
 	 *            	- La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
 	 *            	- La date du jour si set_time vaut ''
 	 *            	- Aucune date (champs vides) si set_time vaut -1 (dans ce cas empty doit valoir 1)
-	 *		@param	set_time 		Date de pré-sélection
+	 *		@param	set_time 		Date de prï¿½-sï¿½lection
 	 *		@param	prefix			Prefix pour nom champ
 	 *		@param	h				1=Affiche aussi les heures
 	 *		@param	m				1=Affiche aussi les minutes
 	 *		@param	empty			0=Champ obligatoire, 1=Permet une saisie vide
-	 *		@param	form_name 		Nom du formulaire de provenance. Utilisé pour les dates en popup.
+	 *		@param	form_name 		Nom du formulaire de provenance. Utilisï¿½ pour les dates en popup.
 	 *		@param	d				1=Affiche aussi les jours, mois, annees
 	 * 		@param	addnowbutton	Add a button "Now"
 	 */
@@ -2152,7 +2152,7 @@ class Form
 
 		if (! $set_time && $empty == 0) $set_time = time();
 
-		// Analyse de la date de pré-selection
+		// Analyse de la date de prï¿½-selection
 		if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg))
 		{
 			// Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
@@ -2285,7 +2285,7 @@ class Form
 				}
 				print "</select>";
 
-				// Année
+				// Annï¿½e
 				if ($empty || $set_time == -1)
 				{
 					print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
@@ -2407,7 +2407,7 @@ class Form
 	}
 
 	/**
-	 *	\brief  	Fonction servant a afficher une durée dans une liste déroulante
+	 *	\brief  	Fonction servant a afficher une durï¿½e dans une liste dï¿½roulante
 	 *	\param		prefix   	prefix
 	 *	\param  	iSecond  	Nombre de secondes
 	 */
@@ -2484,7 +2484,7 @@ class Form
 			while (list($key, $value) = each ($array))
 			{
 				$out.='<option value="'.($value_as_key?$value:$key).'"';
-				// Si il faut pré-sélectionner une valeur
+				// Si il faut prï¿½-sï¿½lectionner une valeur
 				if ($id != '' && ($id == $key || $id == $value))
 				{
 					$out.=' selected="true"';
@@ -2536,7 +2536,7 @@ class Form
 	/**
 	 *    \brief      Selection de oui/non en chaine (renvoie yes/no)
 	 *    \param      name            Nom du select
-	 *    \param      value           Valeur pré-sélectionnée
+	 *    \param      value           Valeur prï¿½-sï¿½lectionnï¿½e
 	 *    \param      option          0 retourne yes/no, 1 retourne 1/0
 	 */
 	function selectyesno($htmlname,$value='',$option=0)
@@ -2569,10 +2569,10 @@ class Form
 
 
 	/**
-	 *    \brief      Retourne la liste des modèles d'export
-	 *    \param      selected          Id modèle pré-sélectionné
+	 *    \brief      Retourne la liste des modï¿½les d'export
+	 *    \param      selected          Id modï¿½le prï¿½-sï¿½lectionnï¿½
 	 *    \param      htmlname          Nom de la zone select
-	 *    \param      type              Type des modèles recherchés
+	 *    \param      type              Type des modï¿½les recherchï¿½s
 	 *    \param      useempty          Affiche valeur vide dans liste
 	 */
 	function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
@@ -2617,7 +2617,7 @@ class Form
 
 	/**
 	 *    \brief      Retourne la liste des mois
-	 *    \param      selected          Id mois pré-sélectionné
+	 *    \param      selected          Id mois prï¿½-sï¿½lectionnï¿½
 	 *    \param      htmlname          Nom de la zone select
 	 *    \param      useempty          Affiche valeur vide dans liste
 	 */
@@ -2646,12 +2646,12 @@ class Form
 		return $select_month;
 	}
 	/**
-	 *    \brief      Retourne la liste des années
-	 *    \param      selected          Année pré-sélectionné
+	 *    \brief      Retourne la liste des annï¿½es
+	 *    \param      selected          Annï¿½e prï¿½-sï¿½lectionnï¿½
 	 *    \param      htmlname          Nom de la zone select
 	 *    \param      useempty          Affiche valeur vide dans liste
-	 *    \param      $min_year         Valeur minimum de l'année dans la liste (par défaut année courante -10)
-	 *    \param      $max_year         Valeur maximum de l'année dans la liste (par défaut année courante + 5)
+	 *    \param      $min_year         Valeur minimum de l'annï¿½e dans la liste (par dï¿½faut annï¿½e courante -10)
+	 *    \param      $max_year         Valeur maximum de l'annï¿½e dans la liste (par dï¿½faut annï¿½e courante + 5)
 	 */
 	function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year='', $max_year='')
 	{
