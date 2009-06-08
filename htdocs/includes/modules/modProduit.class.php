@@ -74,9 +74,9 @@ class modProduit extends DolibarrModules
 
 		// Config pages
 		$this->config_page_url = array("produit.php");
-		$this->langfiles = array("products","companies","stocks");
+		$this->langfiles = array("products","companies","stocks","bills");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$r=0;
 
@@ -131,18 +131,18 @@ class modProduit extends DolibarrModules
 
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]="ProductsOrServices";	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_label[$r]="Products";	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("produit","export"));
-		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"Price",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
+		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",'p.tva_tx'=>'VATRate','p.envente'=>"OnSell",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
 		if (! empty($conf->stock->enabled)) $this->export_fields_array[$r]=array_merge ($this->export_fields_array[$r],array('p.stock'=>'Stock'));
-		$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product",'p.datec'=>'product','p.tms'=>'product');
+		$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price_base_type'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>"product",'p.envente'=>"product",'p.datec'=>"product",'p.tms'=>"product");
 		if (! empty($conf->stock->enabled)) $this->export_entities_array[$r]=array_merge ($this->export_entities_array[$r],array('p.stock'=>'product'));
-		$this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration",'p.datec'=>'datecreation','p.tms'=>'datemodification');
+		$this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price_base_type'=>'pricebase','p.price'=>"priceht",'p.price_ttc'=>"pricettc",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.datec'=>'datecreation','p.tms'=>'datemodification');
 		if (! empty($conf->stock->enabled)) $this->export_alias_array[$r]=array_merge ($this->export_alias_array[$r],array('p.stock'=>'stock'));
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
-		$this->export_sql_end[$r] .=' WHERE p.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity = '.$conf->entity;
 
 
 		// Imports
@@ -151,10 +151,10 @@ class modProduit extends DolibarrModules
 
 		$r++;
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]="ProductsOrServices";	// Translation key
+		$this->import_label[$r]="Products";	// Translation key
 		//$this->import_permission[$r]=array(array("societe","import"));
-		$this->import_fields_array[$r]=array('p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration");
-		$this->import_entities_array[$r]=array('p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product");
+		$this->import_fields_array[$r]=array('p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration");
+		$this->import_entities_array[$r]=array('p.ref'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product");
 
 		$this->import_sql_start[$r]='INSERT INTO '.MAIN_DB_PREFIX.'produit as s';
 		$this->import_sql_end[$r]  ='';

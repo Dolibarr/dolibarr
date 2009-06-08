@@ -48,6 +48,8 @@ class modService extends DolibarrModules
 	 */
 	function modService($DB)
 	{
+		global $conf;
+
 		$this->db = $DB ;
 		$this->numero = 53 ;
 
@@ -69,6 +71,10 @@ class modService extends DolibarrModules
 		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array("modContrat");
+
+		// Config pages
+		$this->config_page_url = array("produit");
+		$this->langfiles = array("products","companies","bills");
 
 		// Constants
 		$this->const = array();
@@ -109,6 +115,27 @@ class modService extends DolibarrModules
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
+
+
+		// Exports
+		//--------
+		$r=0;
+
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]="Services";	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r]=array(array("service","export"));
+		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",'p.tva_tx'=>'VATRate','p.envente'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
+		if (! empty($conf->stock->enabled)) $this->export_fields_array[$r]=array_merge ($this->export_fields_array[$r],array('p.stock'=>'Stock'));
+		$this->export_entities_array[$r]=array('p.rowid'=>"service",'p.ref'=>"service",'p.label'=>"service",'p.description'=>"service",'p.note'=>"service",'p.price_base_type'=>"service",'p.price'=>"service",'p.price_ttc'=>"service",'p.tva_tx'=>"service",'p.envente'=>"service",'p.duration'=>"service",'p.datec'=>"service",'p.tms'=>"service");
+		if (! empty($conf->stock->enabled)) $this->export_entities_array[$r]=array_merge ($this->export_entities_array[$r],array('p.stock'=>'product'));
+		$this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price_base_type'=>'pricebase','p.price'=>"priceht",'p.price_ttc'=>"pricettc",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration",'p.datec'=>'datecreation','p.tms'=>'datemodification');
+		if (! empty($conf->stock->enabled)) $this->export_alias_array[$r]=array_merge ($this->export_alias_array[$r],array('p.stock'=>'stock'));
+
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
+		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 1 AND p.entity = '.$conf->entity;
+
 	}
 
 
