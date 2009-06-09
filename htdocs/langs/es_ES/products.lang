@@ -123,6 +123,7 @@ ProductDeleted = El producto/servicio "%s" se ha eliminado de la base de datos.
 DeletePicture = Eliminar una foto
 ConfirmDeletePicture = ¿Está seguro de querer eliminar esta foto?
 ExportDataset_produit_1 = Productos y servicios
+ExportDataset_service_1 = Servicios
 DeleteProductLine = Eliminar línea de producto
 ConfirmDeleteProductLine = ¿Está seguro de querer eliminar esta línea de producto?
 NoProductMatching = Ningún producto/servicio responde al criterio

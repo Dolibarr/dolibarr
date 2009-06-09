@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - products
+# Dolibarr language file - ca_ES - products 
 CHARSET = UTF-8
 ProductRef = Ref. producte
 ProductLabel = Etiqueta producte
@@ -123,6 +123,7 @@ ProductDeleted = El producte/servei "%s" s'ha eliminat de la base de dades.
 DeletePicture = Eliminar una foto
 ConfirmDeletePicture = Esteu segur de voler eliminar aquesta foto?
 ExportDataset_produit_1 = Productes i serveis
+ExportDataset_service_1 = Serveis
 DeleteProductLine = Eliminar línia de producte
 ConfirmDeleteProductLine = Esteu segur de voler eliminar aquesta línia de producte?
 NoProductMatching = Cap producte/servei respon al criteri
