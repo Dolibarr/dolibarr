@@ -19,23 +19,23 @@
  */
 
 /**
- \defgroup   mailing  Module mailing
- \brief      Module pour gerer les mailings
- \version	$Id$
+ *	\defgroup   mailing  Module mailing
+ *	\brief      Module pour gerer les mailings
+ *	\version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modMailing.class.php
- \ingroup    mailing
- \brief      Fichier de description et activation du module Mailing
+ *	\file       htdocs/includes/modules/modMailing.class.php
+ *	\ingroup    mailing
+ *	\brief      Fichier de description et activation du module Mailing
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- \class      modMailing
- \brief      Classe de description et activation du module Mailing
+ *	\class      modMailing
+ *	\brief      Classe de description et activation du module Mailing
  */
 class modMailing extends DolibarrModules
 {

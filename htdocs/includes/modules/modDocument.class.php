@@ -49,24 +49,24 @@ class modDocument extends DolibarrModules
 		$this->db = $DB ;
 		$this->numero = 51 ;
 
-		$this->family = "other";
+		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
-		$this->description = "Generation de courriers/publipostages";
+		$this->description = "Generation de courriers/publipostages papiers";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 3;
-		$this->picto='dir';
+		$this->special = 0;
+		$this->picto='email';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/ged/temp");
+		$this->dirs = array("/document/temp");
 
 		// Config pages
 		//$this->config_page_url = array("document.php");
 
-		// D�pendances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
