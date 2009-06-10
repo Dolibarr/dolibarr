@@ -141,7 +141,6 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en comp
 $langs = new Translate('..',$conf);
 if (isset($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);
 else $langs->setDefaultLang('auto');
-$langs->setPhpLang();
 
 $bc[false]=' class="bg1"';
 $bc[true]=' class="bg2"';

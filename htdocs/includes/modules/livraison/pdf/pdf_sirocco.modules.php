@@ -104,8 +104,6 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$outputlangs->load("deliveries");
 		$outputlangs->load("sendings");
 
-		$outputlangs->setPhpLang();
-
 		if ($conf->livraison_bon->dir_output)
 		{
 			// If $object is id instead of object

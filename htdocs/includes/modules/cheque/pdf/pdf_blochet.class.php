@@ -67,7 +67,7 @@ class BordereauChequeBlochet extends FPDF
 
         // Recupere emmetteur
         $this->emetteur=$mysoc;
-        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
 
         // Defini position des colonnes
         $this->line_height = 5;
@@ -94,8 +94,6 @@ class BordereauChequeBlochet extends FPDF
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
-
-		$outputlangs->setPhpLang();
 
 		$dir = $_dir . "/".get_exdir($number);
 
@@ -156,13 +154,12 @@ class BordereauChequeBlochet extends FPDF
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-		$langs->setPhpLang();	// On restaure langue session
 		return 1;   // Pas d'erreur
 	}
 
 
 	/**
-     *      \brief      Renvoi le dernier message d'erreur de création de propale
+     *      \brief      Renvoi le dernier message d'erreur de crï¿½ation de propale
      */
     function pdferror()
     {

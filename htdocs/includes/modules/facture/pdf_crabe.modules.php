@@ -120,8 +120,6 @@ class pdf_crabe extends ModelePDFFactures
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
-		$outputlangs->setPhpLang();
-
 		if ($conf->facture->dir_output)
 		{
 			// Definition de l'objet $fac (pour compatibilite ascendante)
@@ -381,24 +379,20 @@ class pdf_crabe extends ModelePDFFactures
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}
 			else
 			{
 				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-				$langs->setPhpLang();	// On restaure langue session
 				return 0;
 			}
 		}
 		else
 		{
 			$this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
-			$langs->setPhpLang();	// On restaure langue session
 			return 0;
 		}
 		$this->error=$langs->trans("ErrorUnknown");
-		$langs->setPhpLang();	// On restaure langue session
 		return 0;   // Erreur par defaut
 	}
 

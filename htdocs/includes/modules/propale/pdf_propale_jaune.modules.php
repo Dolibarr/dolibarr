@@ -105,8 +105,6 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$outputlangs->load("propal");
 		$outputlangs->load("products");
 
-		$outputlangs->setPhpLang();
-
 		if ($conf->propale->dir_output)
 		{
 			// D�finition de l'objet $propal (pour compatibilite ascendante)
@@ -302,7 +300,6 @@ class pdf_propale_jaune extends ModelePDFPropales
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}
 		}

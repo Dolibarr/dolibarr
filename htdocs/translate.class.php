@@ -82,7 +82,7 @@ class Translate {
 	}
 
 	/**
-	 *	\brief		Positionne la chaine traduite pour une cl� donn�e.
+	 *	\brief		Positionne la chaine traduite pour une cle donnee.
 	 *	\param		key			Key to translate
 	 *	\return		string		Translated string
 	 */
@@ -143,30 +143,12 @@ class Translate {
 
 
 	/**
-	 \brief      Positionne environnement PHP en fonction du langage
-	 \remarks    Le code langue long (fr_FR, en_US, ...) doit avoir etre positionne par setDefaultLang
-	 \return     int             >0 si ok, <0 so ko
-	 \deprecated
+	 *	\brief      	Deprecated function. Do nothing. Kept for backward compatibility.
+	 *	\deprecated
 	 */
 	function setPhpLang()
 	{
-		//dol_syslog("Translate::setPhpLang ".$this->defaultlang,LOG_DEBUG);
 		return;
-		/*
-		 $code_lang_tiret=ereg_replace('_','-',$this->defaultlang);
-		 //print 'code_lang_tiret='.$code_lang_tiret;
-		 setlocale(LC_ALL, $this->defaultlang);    	// Some OS (Windows) need local with _
-		 setlocale(LC_ALL, $code_lang_tiret);    	// Other OS need local with -
-
-		 if (defined("MAIN_FORCE_SETLOCALE_LC_ALL") && MAIN_FORCE_SETLOCALE_LC_ALL)
-		 $res_lc_all=setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_ALL.'.UTF-8', MAIN_FORCE_SETLOCALE_LC_ALL);
-		 if (defined("MAIN_FORCE_SETLOCALE_LC_NUMERIC") && MAIN_FORCE_SETLOCALE_LC_NUMERIC)
-		 $res_lc_numeric=setlocale(LC_NUMERIC, MAIN_FORCE_SETLOCALE_LC_NUMERIC.'.UTF-8', MAIN_FORCE_SETLOCALE_LC_NUMERIC);
-		 if (defined("MAIN_FORCE_SETLOCALE_LC_MONETARY") && MAIN_FORCE_SETLOCALE_LC_MONETARY)
-		 $res_lc_monetary=setlocale(LC_MONETARY, MAIN_FORCE_SETLOCALE_LC_MONETARY.'UTF-8', MAIN_FORCE_SETLOCALE_LC_MONETARY);
-		 //print 'x'.$res_lc_all;
-		 return 1;
-		 */
 	}
 
 
@@ -182,6 +164,7 @@ class Translate {
 	 */
 	function Load($domain,$alt=0)
 	{
+		global $conf;
 		//dol_syslog("Translate::Load domain=".$domain." alt=".$alt);
 
 		// Check parameters
@@ -304,6 +287,18 @@ class Translate {
 				}
 			}
 		}
+
+		// Format for date
+		/* TODO If lang file is main, we modify the format constants
+		$this->format_date_short="%d/%m/%Y";			# Format of day with PHP/C tags (strftime functions)
+		$this->format_date_short_java="dd/MM/yyyy";		# Format of day with Java tags
+		$this->format_hour_short="%H:%M";
+		$this->format_date_text_short="%d %b %Y";
+		$this->format_date_text="%d %B %Y";
+		$this->format_date_hour_short="%d/%m/%Y %H:%M";
+		$this->format_date_hour_text_short="%d %b %Y %H:%M";
+		$this->format_date_hour_text="%d %B %Y %H:%M";
+		*/
 
 		if (empty($this->tab_loaded[$domain])) $this->tab_loaded[$domain]=2;           // Marque ce fichier comme non trouve
 

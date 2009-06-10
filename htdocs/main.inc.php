@@ -526,14 +526,12 @@ if (empty($_GET["lang"]))	// If language was not forced on URL
 		if ($langs->getDefaultLang() != $user->conf->MAIN_LANG_DEFAULT)
 		{
 			$langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
-			$langs->setPhpLang();
 		}
 	}
 }
 else	// If language was forced on URL
 {
 	$langs->setDefaultLang($_GET["lang"]);
-	$langs->setPhpLang();
 }
 
 

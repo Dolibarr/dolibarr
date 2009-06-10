@@ -29,12 +29,12 @@
 ////////////////////////////////////////////////////
 // PDF_Label
 //
-// Classe afin d'éditer au format PDF des étiquettes
-// au format Avery ou personnalisé
+// Classe afin d'ï¿½diter au format PDF des ï¿½tiquettes
+// au format Avery ou personnalisï¿½
 //
 //
 // Copyright (C) 2003 Laurent PASSEBECQ (LPA)
-// Basé sur les fonctions de Steve Dillon : steved@mad.scientist.com
+// Basï¿½ sur les fonctions de Steve Dillon : steved@mad.scientist.com
 //
 //-------------------------------------------------------------------
 // VERSIONS :
@@ -56,7 +56,7 @@
 /**
  \file       htdocs/adherents/cartes/PDF_card.class.php
  \ingroup    adherent
- \brief      Fichier de la classe permettant d'éditer au format PDF des étiquettes au format Avery ou personnalisé
+ \brief      Fichier de la classe permettant d'ï¿½diter au format PDF des ï¿½tiquettes au format Avery ou personnalisï¿½
  \author     Steve Dillon
  \author	    Laurent Passebecq
  \author	    Rodolphe Quiedville
@@ -70,22 +70,22 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 /**
  \class      PDF_card
- \brief      Classe afin d'éditer au format PDF des étiquettes au format Avery ou personnalisé
+ \brief      Classe afin d'ï¿½diter au format PDF des ï¿½tiquettes au format Avery ou personnalisï¿½
  */
 class PDF_card extends FPDF {
 
-	// Propriétés privées
-	var $_Avery_Name	= '';	// Nom du format de l'étiquette
-	var $_Margin_Left	= 0;	// Marge de gauche de l'étiquette
-	var $_Margin_Top	= 0;	// marge en haut de la page avant la première étiquette
-	var $_X_Space 	= 0;	// Espace horizontal entre 2 bandes d'étiquettes
-	var $_Y_Space 	= 0;	// Espace vertical entre 2 bandes d'étiquettes
-	var $_X_Number 	= 0;	// Nombre d'étiquettes sur la largeur de la page
-	var $_Y_Number 	= 0;	// Nombre d'étiquettes sur la hauteur de la page
-	var $_Width 		= 0;	// Largeur de chaque étiquette
-	var $_Height 		= 0;	// Hauteur de chaque étiquette
-	var $_Char_Size	= 10;	// Hauteur des caractères
-	var $_Line_Height	= 10;	// Hauteur par défaut d'une ligne
+	// Propriï¿½tï¿½s privï¿½es
+	var $_Avery_Name	= '';	// Nom du format de l'ï¿½tiquette
+	var $_Margin_Left	= 0;	// Marge de gauche de l'ï¿½tiquette
+	var $_Margin_Top	= 0;	// marge en haut de la page avant la premiï¿½re ï¿½tiquette
+	var $_X_Space 	= 0;	// Espace horizontal entre 2 bandes d'ï¿½tiquettes
+	var $_Y_Space 	= 0;	// Espace vertical entre 2 bandes d'ï¿½tiquettes
+	var $_X_Number 	= 0;	// Nombre d'ï¿½tiquettes sur la largeur de la page
+	var $_Y_Number 	= 0;	// Nombre d'ï¿½tiquettes sur la hauteur de la page
+	var $_Width 		= 0;	// Largeur de chaque ï¿½tiquette
+	var $_Height 		= 0;	// Hauteur de chaque ï¿½tiquette
+	var $_Char_Size	= 10;	// Hauteur des caractï¿½res
+	var $_Line_Height	= 10;	// Hauteur par dï¿½faut d'une ligne
 	var $_Metric 		= 'mm';	// Type of metric.. Will help to calculate good values
 	var $_Metric_Doc 	= 'mm';	// Type of metric for the doc..
 
@@ -227,7 +227,7 @@ class PDF_card extends FPDF {
 		$this->SetAutoPageBreak(false);
 
 		$this->_Metric_Doc = $unit;
-		// Permet de commencer l'impression à l'étiquette désirée dans le cas où la page a déjà servie
+		// Permet de commencer l'impression ï¿½ l'ï¿½tiquette dï¿½sirï¿½e dans le cas oï¿½ la page a dï¿½jï¿½ servie
 		if ($posX > 0) $posX--; else $posX=0;
 		if ($posY > 0) $posY--; else $posY=0;
 		$this->_COUNTX = $posX;
@@ -236,7 +236,7 @@ class PDF_card extends FPDF {
 	}
 
 
-	//Méthode qui permet de modifier la taille des caractères
+	//Mï¿½thode qui permet de modifier la taille des caractï¿½res
 	// Cela modiera aussi l'espace entre chaque ligne
 	function Set_Char_Size($pt) {
 		if ($pt > 3) {
@@ -247,7 +247,7 @@ class PDF_card extends FPDF {
 	}
 
 
-	// On imprime une étiqette
+	// On imprime une ï¿½tiqette
 	function Add_PDF_card($texte,$header='',$footer='',$outputlangs)
 	{
 		global $langs;
@@ -260,8 +260,6 @@ class PDF_card extends FPDF {
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("members");
-
-//		$outputlangs->setPhpLang();
 
 		// We are in a new page, then we must add a page
 		if (($this->_COUNTX ==0) and ($this->_COUNTY==0) and (!$this->_First==1)) {
@@ -317,8 +315,6 @@ class PDF_card extends FPDF {
 			$this->_COUNTX=0;
 			$this->_COUNTY=0;
 		}
-
-//		$langs->setPhpLang();	// On restaure langue session
 	}
 
 
@@ -390,7 +386,7 @@ class PDF_card extends FPDF {
 
 	// Give the height for a char size given.
 	function _Get_Height_Chars($pt) {
-		// Tableau de concordance entre la hauteur des caractères et de l'espacement entre les lignes
+		// Tableau de concordance entre la hauteur des caractï¿½res et de l'espacement entre les lignes
 		$_Table_Hauteur_Chars = array(6=>2, 7=>2.5, 8=>3, 9=>4, 10=>5, 11=>6, 12=>7, 13=>8, 14=>9, 15=>10);
 		if (in_array($pt, array_keys($_Table_Hauteur_Chars))) {
 			return $_Table_Hauteur_Chars[$pt];

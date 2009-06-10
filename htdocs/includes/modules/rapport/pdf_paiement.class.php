@@ -81,8 +81,6 @@ class pdf_paiement extends FPDF
 		// Force output charset to ISO, because FPDF expect text to be encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->setPhpLang();
-
 		$this->month=$month;
 		$this->year=$year;
 
@@ -206,7 +204,6 @@ class pdf_paiement extends FPDF
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-		$langs->setPhpLang();	// On restaure langue session
 		return 1;
 	}
 

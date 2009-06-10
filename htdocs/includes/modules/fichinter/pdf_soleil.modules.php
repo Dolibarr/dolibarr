@@ -92,8 +92,6 @@ class pdf_soleil extends ModelePDFFicheinter
 		$outputlangs->load("companies");
 		$outputlangs->load("interventions");
 
-		$outputlangs->setPhpLang();
-
 		if ($conf->ficheinter->dir_output)
 		{
 			// If $fichinter is id instead of object
@@ -328,7 +326,6 @@ class pdf_soleil extends ModelePDFFicheinter
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}
 			else

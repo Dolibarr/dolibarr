@@ -119,8 +119,6 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->load("products");
 		$outputlangs->load("orders");
 
-		$outputlangs->setPhpLang();
-
 		if ($conf->commande->dir_output)
 		{
 			// Definition de l'objet $com (pour compatibilite ascendante)
@@ -368,24 +366,20 @@ class pdf_einstein extends ModelePDFCommandes
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}
 			else
 			{
 				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-				$langs->setPhpLang();	// On restaure langue session
 				return 0;
 			}
 		}
 		else
 		{
 			$this->error=$langs->trans("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
-			$langs->setPhpLang();	// On restaure langue session
 			return 0;
 		}
 		$this->error=$langs->trans("ErrorUnknown");
-		$langs->setPhpLang();	// On restaure langue session
 		return 0;   // Erreur par defaut
 	}
 

@@ -306,7 +306,6 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 if (! defined('NOREQUIRETRAN'))
 {
 	$langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
-	$langs->setPhpLang();
 }
 
 /*

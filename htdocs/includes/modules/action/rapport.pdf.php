@@ -84,8 +84,6 @@ class CommActionRapport
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
-		$outputlangs->setPhpLang();
-
 		$dir = $conf->agenda->dir_temp."/";
 		$file = $dir . "actions-".$this->month."-".$this->year.".pdf";
 

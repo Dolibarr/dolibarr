@@ -156,18 +156,15 @@ class html_cerfafr extends ModeleDon
             else
             {
                 $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-				$langs->setPhpLang();	// On restaure langue session
                 return 0;
             }
 	    }
         else
         {
             $this->error=$langs->trans("ErrorConstantNotDefined","DON_OUTPUTDIR");
-			$langs->setPhpLang();	// On restaure langue session
             return 0;
 		}
         $this->error=$langs->trans("ErrorUnknown");
-		$langs->setPhpLang();	// On restaure langue session
         return 0;   // Erreur par defaut
 
     }

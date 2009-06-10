@@ -114,8 +114,6 @@ class pdf_edison extends ModelePDFCommandes
 		$outputlangs->load("products");
         $outputlangs->load("orders");
 
-		$outputlangs->setPhpLang();
-
 		// Definition de l'objet $com (pour compatibilite ascendante)
 		if (! is_object($com))
 		{
@@ -144,7 +142,6 @@ class pdf_edison extends ModelePDFCommandes
 				if (create_exdir($dir) < 0)
 				{
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
-					$langs->setPhpLang();	// On restaure langue session
 					return 0;
 				}
 			}
@@ -303,19 +300,16 @@ class pdf_edison extends ModelePDFCommandes
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}
 		}
 		else
 		{
 			$this->error=$langs->transnoentities("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
-			$langs->setPhpLang();	// On restaure langue session
 			return 0;
 		}
 
 		$this->error=$langs->transnoentities("ErrorUnknown");
-		$langs->setPhpLang();	// On restaure langue session
 		return 0;   // Erreur par defaut
 	}
 

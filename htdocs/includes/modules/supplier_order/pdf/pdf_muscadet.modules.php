@@ -121,8 +121,6 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$outputlangs->load("products");
 		$outputlangs->load("orders");
 
-		$outputlangs->setPhpLang();
-
 		if ($conf->fournisseur->commande->dir_output)
 		{
 			// Definition de l'objet $com (pour compatibilite ascendante)

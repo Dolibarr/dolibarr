@@ -90,8 +90,6 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$outputlangs->load("propal");
 		$outputlangs->load("sendings");
 
-		$outputlangs->setPhpLang();
-
 		//Generation de la fiche
 		$this->expe = $object;
 
@@ -252,24 +250,20 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 				$pdf->Output($file);
 
-				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}
 			else
 			{
 				$this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
-				$langs->setPhpLang();	// On restaure langue session
 				return 0;
 			}
 		}
 		else
 		{
 			$this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
-			$langs->setPhpLang();	// On restaure langue session
 			return 0;
 		}
 		$this->error=$outputlangs->transnoentities("ErrorUnknown");
-		$langs->setPhpLang();	// On restaure langue session
 		return 0;   // Erreur par defaut
 
 	}

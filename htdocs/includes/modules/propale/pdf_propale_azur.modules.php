@@ -121,8 +121,6 @@ class pdf_propale_azur extends ModelePDFPropales
 		$outputlangs->load("propal");
 		$outputlangs->load("products");
 
-		$outputlangs->setPhpLang();
-
 		if ($conf->propale->dir_output)
 		{
 			// Définition de l'objet $propale (pour compatibilite ascendante)
@@ -262,7 +260,7 @@ class pdf_propale_azur extends ModelePDFPropales
 						$pdf->SetXY ($this->posxtva, $curY);
 						$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, vatrate($propale->lignes[$i]->tva_tx,1,$propale->lignes[$i]->info_bits), 0, 'R');
 					}
-					
+
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->posxup, $curY);
 					$pdf->MultiCell($this->posxqty-$this->posxup-1, 4, price($propale->lignes[$i]->subprice), 0, 'R', 0);
@@ -392,25 +390,21 @@ class pdf_propale_azur extends ModelePDFPropales
 				//$pdfConcat->Output($file);
 
 				$outputlangs->charset_output=$sav_charset_output;
-				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}
 			else
 			{
 				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-				$langs->setPhpLang();	// On restaure langue session
 				return 0;
 			}
 		}
 		else
 		{
 			$this->error=$langs->trans("ErrorConstantNotDefined","PROP_OUTPUTDIR");
-			$langs->setPhpLang();	// On restaure langue session
 			return 0;
 		}
 
 		$this->error=$langs->trans("ErrorUnknown");
-		$langs->setPhpLang();	// On restaure langue session
 		return 0;   // Erreur par defaut
 	}
 
@@ -569,7 +563,7 @@ class pdf_propale_azur extends ModelePDFPropales
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		global $conf;
-		
+
 		$tab2_top = $posy;
 		$tab2_hl = 5;
 		$tab2_height = $tab2_hl * 4;
@@ -590,7 +584,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
-		
+
 		$this->atleastoneratenotnull=0;
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
@@ -599,10 +593,10 @@ class pdf_propale_azur extends ModelePDFPropales
 				if ($tvakey)    // On affiche pas taux 0
 				{
 					$this->atleastoneratenotnull++;
-	
+
 					$index++;
 					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-	
+
 					$tvacompl='';
 					if (eregi('\*',$tvakey))
 					{
@@ -612,7 +606,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					$totalvat =$outputlangs->transnoentities("TotalVAT").' ';
 					$totalvat.=vatrate($tvakey,1).$tvacompl;
 					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-	
+
 					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 				}
@@ -623,12 +617,12 @@ class pdf_propale_azur extends ModelePDFPropales
 				$index++;
 				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
-	
+
 				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
 			}
 		}
-		
+
 		$useborder=0;
 
 		// Total TTC
@@ -639,12 +633,12 @@ class pdf_propale_azur extends ModelePDFPropales
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFillColor(224,224,224);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
-	
+
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
 			$pdf->SetTextColor(0,0,0);
 		}
-		
+
 		if ($deja_regle > 0)
 		{
 			$index++;
@@ -722,7 +716,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			$pdf->SetXY ($this->posxtva-1, $tab_top+2);
 			$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
 		}
-		
+
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxup-1, $tab_top+2);
 		$pdf->MultiCell(18,2, $outputlangs->transnoentities("PriceUHT"),'','C');

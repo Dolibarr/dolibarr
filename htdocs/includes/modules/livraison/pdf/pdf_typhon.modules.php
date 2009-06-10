@@ -125,8 +125,6 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$outputlangs->load("deliveries");
 		$outputlangs->load("sendings");
 
-		$outputlangs->setPhpLang();
-
 		if ($conf->livraison_bon->dir_output)
 		{
 			// If $delivery is id instead of object

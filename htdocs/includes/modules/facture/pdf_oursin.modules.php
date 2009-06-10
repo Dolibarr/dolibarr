@@ -120,8 +120,6 @@ class pdf_oursin extends ModelePDFFactures
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
-		$outputlangs->setPhpLang();
-
 		if ($conf->facture->dir_output)
 		{
 			// Definition de l'objet $fac (pour compatibilite ascendante)
@@ -155,7 +153,6 @@ class pdf_oursin extends ModelePDFFactures
 				if (create_exdir($dir) < 0)
 				{
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
-					$langs->setPhpLang();	// On restaure langue session
 					return 0;
 				}
 			}
@@ -293,24 +290,20 @@ class pdf_oursin extends ModelePDFFactures
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}
 			else
 			{
 				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
-				$langs->setPhpLang();	// On restaure langue session
 				return 0;
 			}
 		}
 		else
 		{
 			$this->error=$langs->transnoentities("ErrorConstantNotDefined","FAC_OUTPUTDIR");
-			$langs->setPhpLang();	// On restaure langue session
 			return 0;
 		}
 		$this->error=$langs->transnoentities("ErrorUnknown");
-		$langs->setPhpLang();	// On restaure langue session
 		return 0;   // Erreur par defaut
 	}
 
