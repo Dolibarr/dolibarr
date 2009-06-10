@@ -359,16 +359,14 @@ class Conf
 		}
 
 		// Format for date
-		// TODO Mettre les formats dans fichier langue
-		$this->format_date_short="%d/%m/%Y";
+		$this->format_date_short="%d/%m/%Y";			# Format of day with PHP/C tags (strftime functions)
+		$this->format_date_short_java="dd/MM/yyyy";		# Format of day with Java tags
 		$this->format_hour_short="%H:%M";
 		$this->format_date_text_short="%d %b %Y";
 		$this->format_date_text="%d %B %Y";
 		$this->format_date_hour_short="%d/%m/%Y %H:%M";
 		$this->format_date_hour_text_short="%d %b %Y %H:%M";
 		$this->format_date_hour_text="%d %B %Y %H:%M";
-
-		$this->format_date_short_java="dd/MM/yyyy";
 
 		// Limites decimales si non definie (peuvent etre egale a 0)
 		if (! isset($this->global->MAIN_MAX_DECIMALS_UNIT))  $this->global->MAIN_MAX_DECIMALS_UNIT=5;
