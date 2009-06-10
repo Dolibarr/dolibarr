@@ -36,16 +36,17 @@ $langs->load("suppliers");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
-$search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
-$search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
-$socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
+$search_nom=trim(isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"]);
+$search_ville=trim(isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"]);
+$socname=trim(isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"]);
+$search_idprof1=trim($_REQUEST['search_idprof1']);
+$search_idprof2=trim($_REQUEST['search_idprof2']);
+$search_idprof3=trim($_REQUEST['search_idprof3']);
+$search_idprof4=trim($_REQUEST['search_idprof4']);
+
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
-$search_idprof1=$_REQUEST['search_idprof1'];
-$search_idprof2=$_REQUEST['search_idprof2'];
-$search_idprof3=$_REQUEST['search_idprof3'];
-$search_idprof4=$_REQUEST['search_idprof4'];
 
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
@@ -99,7 +100,7 @@ if ($mode == 'search')
 		}
 		$db->free($result);
 	}
-	// Sécurité accès client
+	// Sï¿½curitï¿½ accï¿½s client
 	if ($user->societe_id > 0)
 	{
 		$action = '';
@@ -143,8 +144,8 @@ if ($_GET['delsoc']) print '<div class="warning">'.$langs->trans("CompanyDeleted
 /*
  REM: Regle sur droits "Voir tous les clients"
  REM: Exemple, voir la page societe.php dans le mode liste.
- Utilisateur interne socid=0 + Droits voir tous clients        => Voit toute société
- Utilisateur interne socid=0 + Pas de droits voir tous clients => Ne voit que les sociétés liées comme commercial
+ Utilisateur interne socid=0 + Droits voir tous clients        => Voit toute sociï¿½tï¿½
+ Utilisateur interne socid=0 + Pas de droits voir tous clients => Ne voit que les sociï¿½tï¿½s liï¿½es comme commercial
  Utilisateur externe socid=x + Droits voir tous clients        => Ne voit que lui meme
  Utilisateur externe socid=x + Pas de droits voir tous clients => Ne voit que lui meme
  */
