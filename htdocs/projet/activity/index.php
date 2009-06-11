@@ -18,10 +18,10 @@
  */
 
 /**
- \file       htdocs/projet/activity/myactivity.php
- \ingroup    projet
- \brief      Page activite perso du module projet
- \version    $Id$
+ *	\file       htdocs/projet/activity/myactivity.php
+ *	\ingroup    projet
+ *	\brief      Page activite perso du module projet
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -64,15 +64,14 @@ print '<td align="right">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.rowid, p.ref, p.title, count(t.rowid) as nb";
-$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 if ($mode == 'mine') $sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as pta";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ")";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as s on s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 $sql.= " WHERE t.fk_projet = p.rowid";
-$sql.= " AND p.fk_soc = s.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND p.fk_soc = ".$socid;
 if ($mode == 'mine') $sql.=" AND t.rowid = pta.fk_projet_task";
 if ($mode == 'mine') $sql.=" AND pta.fk_user = ".$user->id;
