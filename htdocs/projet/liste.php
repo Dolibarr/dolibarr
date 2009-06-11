@@ -77,7 +77,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= ")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on p.fk_user_resp = u.rowid";
-$sql.= " WHERE s.entity = ".$conf->entity;
+$sql.= " WHERE p.entity = ".$conf->entity;
 if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 if ($socid)	$sql.= " AND s.rowid = ".$socid;

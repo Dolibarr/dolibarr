@@ -57,15 +57,12 @@ print '<td align="right">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, count(t.rowid)";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
-$sql.= ", ".MAIN_DB_PREFIX."projet as p";
-//$sql.= ", ".MAIN_DB_PREFIX."projet_task as t"; // pourquoi est-ce que c'était en commentaire ? => Si on laisse ce lien, les projet sans taches se retrouvent invisibles
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
-$sql.= " WHERE p.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " WHERE p.entity = ".$conf->entity;
 if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 $sql.= " GROUP BY p.rowid";
 
@@ -105,14 +102,12 @@ print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$s
 print '<td align="right">'.$langs->trans("NbOfProjects").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT s.nom, s.rowid as socid, count(p.rowid)";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."projet as p";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE p.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql = "SELECT count(p.rowid) as nb, s.nom, s.rowid as socid";
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+$sql.= " WHERE p.entity = ".$conf->entity;
 if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= " GROUP BY s.nom";
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
@@ -126,11 +121,20 @@ if ( $resql )
 
 	while ($i < $num)
 	{
-		$row = $db->fetch_row( $resql);
+		$obj = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$row[1].'">'.img_object($langs->trans("ShowCompany"),"company")." ".$row[0].'</a></td>';
-		print '<td align="right">'.$row[2].'</td>';
+		print '<td nowrap="nowrap">';
+		if ($obj->socid)
+		{
+			print '<a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company")." ".$obj->nom.'</a>';
+		}
+		else
+		{
+			print $langs->trans("Public");
+		}
+		print '</td>';
+		print '<td align="right">'.$obj->nb.'</td>';
 		print "</tr>\n";
 
 		$i++;

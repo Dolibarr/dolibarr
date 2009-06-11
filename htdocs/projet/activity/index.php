@@ -71,7 +71,7 @@ if ($mode == 'mine') $sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as pta";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND p.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND p.fk_soc = ".$socid;
 if ($mode == 'mine') $sql.=" AND t.rowid = pta.fk_projet_task";
@@ -295,7 +295,7 @@ else
 }
 print "</table>";
 
-/* Affichage de la liste des projets de l'année */
+/* Affichage de la liste des projets de l'annï¿½e */
 print '<br /><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now).'</td>';
