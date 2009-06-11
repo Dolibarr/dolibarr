@@ -55,7 +55,7 @@ print '<br><br>';
 $limit=4;
 $arrayofwidgets=array(
 // Widget for Laurent Destailleur
-array('name'=>'Laurent Destailleur',
+array('name'=>'Laurent Destailleur',	# id user 4702
 		'sort'=>1,
 		'id'=>'4256,4255',	// Put of list of sparkangels widget id (for each language)
 		'lang'=>'fr,en'),	// Put list of language code of widgets (always english at end)
@@ -92,10 +92,14 @@ foreach ($arrayofwidgets as $arraywidget)	// Loop on each user
 				print $langcode2.' ';
 			}
 			print '<br>';
-			// But only first language found is used for widget
+
+			// Only first language found is used for widget
 			$widgetid=$listofwidgets[$pos-1];
-			//print 'xx lang qualified='.$langcode.' id='.$widgetid;
-			print '<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId='.$widgetid.'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
+			// Widget V1
+			// print '<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId='.$widgetid.'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
+			// Widget V2
+			print '<iframe src="http://www.spark-angels.com/static/widget/widgetpro2-iframe.html?accountId='.$widgetid.'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
+
 			print '</td>';
 			$found++;
 			break;
@@ -113,7 +117,7 @@ if (! in_array($sparkangellangcode,array('fr','en','sp'))) $sparkangellangcode='
 print '<table class="noborder" summary="ListOfSupport"><tr valign="middle"><td>';
 print '* '.$langs->trans("ToGetHelpGoOnSparkAngels3",$urlsparkengels);
 print '<div id="sparkom_bsaHelpersSearch">'."\n";
-print '<form target="_blank" id="frJSkw" action="http://www.spark-angels.com//rss/action/resultsearch.html" name="fResult" method="get">'."\n";
+print '<form target="_blank" id="frJSkw" action="http://www.spark-angels.com/rss/action/resultsearch.html" name="fResult" method="get">'."\n";
 print '   <input type="hidden" value="" title="Rechercher" maxlength="1024" name="kws" id="kws"/> <!-- mots clés pour la recherche dont la ou les compétences matchent avec ces mots -->'."\n";
 print '   <input id="dhids" name="dhids" type="hidden" value=""><!-- identifiant SHSAPI communiqué par SparkAngels. -->'."\n";
 print '   <input id="lgSearch" name="lgS" type="hidden" value=""><!-- code langue, les accompagnateurs proposés suite à cette recherche prétendent pouvoir fournir de l assistance dans au moins cette langue-->'."\n";
@@ -123,7 +127,7 @@ print '   <input type="submit" value="'.$langs->trans("Search").'" onclick="getS
 print '<script type="text/javascript">'."\n";
 print '<!--'."\n";
 print '   function getSAParams(){'."\n";
-print '       document.getElementById(\'dhids\').value= "?????";'."\n";
+print '       document.getElementById(\'dhids\').value= "4702";'."\n";
 print '       document.getElementById(\'kws\').value= "dolibarr";'."\n";
 print '       document.getElementById(\'lgSearch\').value= "'.$sparkangellangcode.'";'."\n";
 print '       document.getElementById(\'myLv\').value= "0";'."\n";
