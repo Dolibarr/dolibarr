@@ -152,7 +152,7 @@ div.tmenu
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
     padding: 0px 0px 0px 0px;
-    margin: 0px 0px 2px 0px;
+    margin: 0px 0px 4px 0px;
     font-weight: bold;
     font-size: 12px;
     height: 20px;
@@ -452,6 +452,16 @@ a.tabTitle {
     text-decoration: none;
     white-space: nowrap;
 }
+a.tabTitle:hover {
+    background: #436976;
+    border: 1px solid #8CACBB;
+    color: white;
+    font-weight: normal;
+    padding: 0px 6px;
+    margin: 0px 6px;
+    text-decoration: none;
+    white-space: nowrap;
+}
 
 a.tab:link {
   background: white;
@@ -471,7 +481,7 @@ a.tab:visited {
   text-decoration: none;
   white-space: nowrap;
 }
-a.tab#active {
+a.tab:active {
   background: #dcdcd3;
   border-bottom: #dcdcd3 1px solid;
   padding: 0px 6px;
