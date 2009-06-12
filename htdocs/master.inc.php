@@ -222,13 +222,12 @@ if (! defined('NOREQUIREDB'))
 	else
 	{
 		$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-		if (isset($_COOKIE[$entityCookieName])) 						// Just for view specific login page
+		if (isset($_COOKIE[$entityCookieName]) && ! empty($conf->file->cookie_cryptkey)) 						// Just for view specific login page
 		{
 			include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
 
 			$lastuser = '';
 			$lastentity = '';
-			$cryptkey = ( ! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
 
 			$entityCookie = new DolCookie($conf->file->cookie_cryptkey);
 			$cookieValue = $entityCookie->_getCookie($entityCookieName);
