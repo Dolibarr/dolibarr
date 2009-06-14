@@ -168,7 +168,7 @@ div.tmenu
     border-right: 0px solid #555555;
     border-bottom: 1px solid #8B9999;
     padding: 0px 0px 0px 0px;
-    margin: 0px 0px 2px 0px;
+    margin: 0px 0px 4px 0px;
     font-weight: normal;
     font-size: 12px;
     height: 19px;

@@ -1866,7 +1866,7 @@ function print_titre($titre)
  *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
  *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
  */
-function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0)
+function print_fiche_titre($titre, $mesg='', $picto='title.gif', $pictoisfullpath=0)
 {
 	print "\n";
 	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
