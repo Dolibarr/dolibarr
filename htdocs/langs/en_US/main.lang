@@ -2,6 +2,14 @@
 CHARSET=UTF-8
 SeparatorDecimal=.
 SeparatorThousand=,
+FormatDateShort=%d/%m/%Y			# Format of day with PHP/C tags (strftime functions)
+FormatDateShort_java=dd/MM/yyyy		# Format of day with Java tags
+FormatHourShort=%I:%M %p
+FormatDateTextShort=%b %d, %Y
+FormatDateText=%B %d, %Y
+FormatDateHourShort=%d/%m/%Y %I:%M %p
+FormatDateHourTextShort=%b %d, %Y, %I:%M %p
+FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=Database connection
 Error=Error
 ErrorFieldRequired=Field '%s' is required

@@ -4,13 +4,20 @@
  * Generation date 2009-01-19 21:30:52
  */
 
-
 // Date 2009-01-19 21:30:52
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
 SeparatorDecimal=,
 SeparatorThousand= 
+FormatDateShort=%d.%m.%Y			# Format of day with PHP/C tags (strftime functions)
+FormatDateShort_java=dd.MM.yyyy		# Format of day with Java tags
+FormatHourShort=%H:%M
+FormatDateTextShort=%d %b %Y
+FormatDateText=%d %B %Y
+FormatDateHourShort=%d.%m.%Y %H:%M
+FormatDateHourTextShort=%d %b %Y %H:%M
+FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Подключение к базе данных
 Error=Ошибка
 ErrorFieldRequired=Поле &#39;% S&#39; требуется

@@ -290,14 +290,15 @@ class Translate {
 		// Format for date
 		if ($domain == 'main')
 		{
-			$this->format_date_short=empty($this->tab_translate['FormatDateShort'])?"%d/%m/%Y":$this->tab_translate['FormatDateShort'];			# Format of day with PHP/C tags (strftime functions)
-			$this->format_date_short_java=empty($this->tab_translate['FormatDateShort'])?"dd/MM/yyyy":$this->tab_translate['FormatDateShort'];		# Format of day with Java tags
-			$this->format_hour_short=empty($this->tab_translate['FormatHourShort'])?"%H:%M":$this->tab_translate['FormatHourShort'];
-			$this->format_date_text_short=empty($this->tab_translate['FormatDateTextShort'])?"%d %b %Y":$this->tab_translate['FormatDateTextShort'];
-			$this->format_date_text=empty($this->tab_translate['FormatDateText'])?"%d %B %Y":$this->tab_translate['FormatDateText'];
-			$this->format_date_hour_short=empty($this->tab_translate['FormatDateHourShort'])?"%d/%m/%Y %H:%M":$this->tab_translate['FormatDateHourShort'];
-			$this->format_date_hour_text_short=empty($this->tab_translate['FormatDateHourTextShort'])?"%d %b %Y %H:%M":$this->tab_translate['FormatDateHourTextShort'];
-			$this->format_date_hour_text=empty($this->tab_translate['FormatDateHourText'])?"%d %B %Y %H:%M":$this->tab_translate['FormatDateHourText'];
+			$conf->format_date_short=empty($this->tab_translate['FormatDateShort'])?"%d/%m/%Y":$this->tab_translate['FormatDateShort'];			# Format of day with PHP/C tags (strftime functions)
+			$conf->format_date_short_java=empty($this->tab_translate['FormatDateShort'])?"dd/MM/yyyy":$this->tab_translate['FormatDateShort'];		# Format of day with Java tags
+			$conf->format_hour_short=empty($this->tab_translate['FormatHourShort'])?"%H:%M":$this->tab_translate['FormatHourShort'];
+			$conf->format_date_text_short=empty($this->tab_translate['FormatDateTextShort'])?"%d %b %Y":$this->tab_translate['FormatDateTextShort'];
+			$conf->format_date_text=empty($this->tab_translate['FormatDateText'])?"%d %B %Y":$this->tab_translate['FormatDateText'];
+			$conf->format_date_hour_short=empty($this->tab_translate['FormatDateHourShort'])?"%d/%m/%Y %H:%M":$this->tab_translate['FormatDateHourShort'];
+			$conf->format_date_hour_text_short=empty($this->tab_translate['FormatDateHourTextShort'])?"%d %b %Y %H:%M":$this->tab_translate['FormatDateHourTextShort'];
+			$conf->format_date_hour_text=empty($this->tab_translate['FormatDateHourText'])?"%d %B %Y %H:%M":$this->tab_translate['FormatDateHourText'];
+			//print $domain." => ".$this->defaultlang." ".$conf->format_date_hour_short." ".$this->tab_translate['FormatDateHourShort'];
 		}
 
 		if (empty($this->tab_loaded[$domain])) $this->tab_loaded[$domain]=2;           // Marque ce fichier comme non trouve

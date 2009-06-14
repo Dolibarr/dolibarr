@@ -1,7 +1,7 @@
-# Dolibarr language file - fr_BE - main
+# Dolibarr language file - en_GB - main
 CHARSET=UTF-8
-SeparatorDecimal=,
-SeparatorThousand=
+SeparatorDecimal=.
+SeparatorThousand=,
 FormatDateShort=%d/%m/%Y			# Format of day with PHP/C tags (strftime functions)
 FormatDateShort_java=dd/MM/yyyy		# Format of day with Java tags
 FormatHourShort=%H:%M
