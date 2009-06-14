@@ -53,7 +53,7 @@ class Commande extends CommonObject
 	var $contactid;
 	var $projet_id;
 	var $statut;		// -1=Annulee, 0=Brouillon, 1=Validee, 2=Acceptee, 3=Envoyee/Recue (facturee ou non)
-	var $facturee;
+	var $facturee;		// Facturee ou non
 	var $brouillon;
 	var $cond_reglement_id;
 	var $cond_reglement_code;
@@ -278,7 +278,7 @@ class Commande extends CommonObject
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We decrement stock of product (and sub-products)
-						$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
+						$entrepot_id = "1"; // TODO ajouter possibilitï¿½ de choisir l'entrepot
 						// TODO Add price of product in method or '' to update PMP
 						$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 						if ($result < 0) { $error++; }
@@ -1889,7 +1889,7 @@ class Commande extends CommonObject
 		$this->nbtodo=$this->nbtodolate=0;
 		$clause = " WHERE";
 
-		$sql = "SELECT c.rowid, c.date_creation as datec";
+		$sql = "SELECT c.rowid, c.date_creation as datec, c.fk_statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -1907,7 +1907,7 @@ class Commande extends CommonObject
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nbtodo++;
-				if ($this->db->jdate($obj->datec) < ($now - $conf->commande->traitement->warning_delay)) $this->nbtodolate++;
+				if ($obj->fk_statut != 3 && $this->db->jdate($obj->datec) < ($now - $conf->commande->traitement->warning_delay)) $this->nbtodolate++;
 			}
 			return 1;
 		}
