@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/commande/liste.php
- \ingroup    commande
- \brief      Page liste des commandes
- \version    $Id$
+ *	\file       htdocs/commande/liste.php
+ *	\ingroup    commande
+ *	\brief      Page to list orders
+ *	\version    $Id$
  */
 
 
@@ -93,16 +93,16 @@ if ($viewstatut <> '')
 		$sql.= ' AND c.fk_statut ='.$viewstatut; // brouillon, validee, en cours, annulee
 		if ($viewstatut == 3)
 		{
-			$sql.= ' AND c.facture = 0'; // a facturer
+			$sql.= ' AND c.facture = 0'; // need to create invoice
 		}
 	}
 	if ($viewstatut == 4)
 	{
-		$sql.= ' AND c.facture = 1'; // factur�e
+		$sql.= ' AND c.facture = 1'; // invoice created
 	}
-	if ($viewstatut == -2)
+	if ($viewstatut == -2)	// To process
 	{
-		$sql .= ' AND c.fk_statut >= 0 and c.fk_statut <= 3 and c.facture = 0';
+		$sql .= ' AND c.fk_statut > 0 and c.fk_statut <= 3 and c.facture = 0';
 	}
 }
 if ($_GET['month'] > 0)
