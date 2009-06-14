@@ -8,22 +8,22 @@ complete release of Dolibarr, step by step.
 - Update version number in htdocs/build/exe/doliwamp/doliwamp.iss
 - Update version number in htdocs/master.inc.php
 - Update version number in htdocs/install/inc.php
-- Update PAD files
-- Commit all changes
-- Add a CVS Tag and create a branch
+- Update PAD files.
+- Commit all changes.
+- Add a CVS Tag and create a branch.
 
-- Build packages with makepack-dolibarr.pl
-- Build DoliWamp with doliwamp.iss file.
+- Build Dolibarr and DoliWamp with makepack-dolibarr.pl
 - Check content of built packages.
-- Move build files (exe+tgz) and ChangeLog into NLTechno web site repository.
-- Update NLTechno web site page dolibarrwinbin.php
+- Move build files (tgz+exe) and ChangeLog into Dolibarr web site repository
+  /home/dolibarr/wwwroot/files.
 - Upload NLTechno web site on web server.
-- Move links in files dir on server to point to new files.
+- Move links in directory "/files" on server to point to new files.
 
-- Upload file (tgz) on joomla web site www.dolibarr.org and update exe link.
+- Upload files dolibarr.*.tgz and doliwamp.*.exe on sourceforge.
+- Update entries on joomla web site www.dolibarr.org with new sourceforge link.
 - Upload pad files on joomla web site www.dolibarr.org
 - Replace link dolibarr.tgz in /home/dolibarr/wwwroot/files to point to
-  new uploaded files in joomla (dir dmdocuments).  
-- Upload files on sourceforge or Dolibarr.org
+  new uploaded files in nltechno.  
+
 - Send mail on mailings-list
-- Send a news on OpenSource web sites (if major beta or release)
+- Send news on OpenSource web sites (if major beta or release)
