@@ -60,7 +60,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$this->marge_haute=10;
 		$this->marge_basse=10;
 
-		$this->option_logo = 0;
+		$this->option_logo = 1;
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
@@ -78,6 +78,55 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		global $conf,$langs,$mysoc;
 		$langs->load("orders");
 
+		//Affiche le filigrane brouillon - Print Draft Watermark
+		if($object->statut==0 && (! empty($conf->global->SENDING_DRAFT_WATERMARK)) )
+		{
+			$watermark_angle=atan($this->page_hauteur/$this->page_largeur);
+			$watermark_x=5;
+			$watermark_y=$this->page_hauteur-25;  //Set to $this->page_hauteur-50 or less if problems
+			$watermark_width=$this->page_hauteur;
+			$pdf->SetFont('Arial','B',50);
+			$pdf->SetTextColor(255,192,203);
+			//rotate
+			$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',cos($watermark_angle),sin($watermark_angle),-sin($watermark_angle),cos($watermark_angle),$watermark_x*$pdf->k,($pdf->h-$watermark_y)*$pdf->k,-$watermark_x*$pdf->k,-($pdf->h-$watermark_y)*$pdf->k));
+			//print watermark
+			$pdf->SetXY($watermark_x,$watermark_y);
+			$pdf->Cell($watermark_width,25,$outputlangs->convToOutputCharset($conf->global->SENDING_DRAFT_WATERMARK),0,2,"C",0);
+			//antirotate
+			$pdf->_out('Q');
+		}
+
+		//Prepare la suite
+		$pdf->SetTextColor(0,0,60);
+		$pdf->SetFont('Arial','B',13);
+
+		$posy=$this->marge_haute;
+
+		$pdf->SetXY($this->marge_gauche,$posy);
+
+		// Logo
+		$logo=$conf->societe->dir_output.'/logos/'.$this->emetteur->logo;
+		if ($this->emetteur->logo)
+		{
+			if (is_readable($logo))
+			{
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+			}
+			else
+			{
+				$pdf->SetTextColor(200,0,0);
+				$pdf->SetFont('Arial','B',8);
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+			}
+		}
+		else
+		{
+			$text=$this->emetteur->nom;
+			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+		}
+
+		// Show barcode
 		if ($conf->barcode->enabled)
 		{
 			$posx=105;
@@ -86,9 +135,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		{
 			$posx=$this->marge_gauche+3;
 		}
-
-		$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-
+		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
 		if ($conf->barcode->enabled)
 		{
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
@@ -97,19 +144,43 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		}
 
 		$pdf->SetDrawColor(128,128,128);
-
-		$pdf->SetFont('Arial','', 14);
-		$pdf->Text($posx, 16, $outputlangs->transnoentities("SendingSheet"));	// Bordereau expedition
-		$pdf->Text($posx, 22, $outputlangs->transnoentities("Ref") ." : ".$object->ref);
-		$pdf->Text($posx, 28, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date,"%d %b %Y",false,$outputlangs,true));
-		$pdf->Text($posx, 34, $outputlangs->transnoentities("Page")." : ".$pdf->PageNo() ."/{nb}", 0);
-
 		if ($conf->barcode->enabled)
 		{
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
 		}
+
+
+		$posx=100;
+		$posy=$this->marge_haute;
+
+		$pdf->SetFont('Arial','B',13);
+		$pdf->SetXY(100,$posy);
+		$pdf->SetTextColor(0,0,60);
+		$title=$outputlangs->transnoentities("SendingSheet");
+		$pdf->MultiCell(100, 4, $title, '' , 'R');
+
+		$pdf->SetFont('Arial','B',12);
+
+		$posy+=5;
+		$pdf->SetXY(100,$posy);
+		$pdf->SetTextColor(0,0,60);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref") ." : ".$object->ref, '', 'R');
+
+		$posy+=5;
+		$pdf->SetXY(100,$posy);
+		$pdf->SetTextColor(0,0,60);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date,"%d %b %Y",false,$outputlangs,true), '', 'R');
+
+		if ($object->client->code_client)
+		{
+			$posy+=5;
+			$pdf->SetXY(100,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
+		}
+
 
 		$pdf->SetFont('Arial','', 14);
 	    $Yoff=40;
