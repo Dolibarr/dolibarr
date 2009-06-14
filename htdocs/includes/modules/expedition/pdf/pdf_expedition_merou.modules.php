@@ -483,9 +483,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		$object->fetch_client();
 
-		/**********************************/
-		//Emplacement Informations Destinataire
-		/**********************************/
+		// If SHIPPING contact defined on invoice, we use it
 		$usecontact=false;
 		//if ($conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT)
 		//{

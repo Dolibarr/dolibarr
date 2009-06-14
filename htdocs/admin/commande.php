@@ -104,7 +104,7 @@ if ($_GET["action"] == 'del')
 	$sql.= " WHERE nom = '".$_GET["value"];
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
-	
+
 	if ($db->query($sql))
 	{
 
@@ -447,6 +447,7 @@ print '</form>';
 */
 
 // Utiliser le contact de la commande dans le document
+/*
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -457,6 +458,7 @@ print '<td width="60" align="center">'.$html->selectyesno("use_customer_contact_
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
+*/
 
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

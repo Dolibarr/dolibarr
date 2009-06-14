@@ -827,15 +827,15 @@ class pdf_einstein extends ModelePDFCommandes
 
 			// If CUSTOMER contact defined on invoice, we use it
 			$usecontact=false;
-			if ($conf->global->COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT)
-			{
+			//if ($conf->global->COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT)
+			//{
 				$arrayidcontact=$object->getIdContact('external','CUSTOMER');
 				if (sizeof($arrayidcontact) > 0)
 				{
 					$usecontact=true;
 					$result=$object->fetch_contact($arrayidcontact[0]);
 				}
-			}
+			//}
 
 			if ($usecontact)
 			{

@@ -897,19 +897,19 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);
 
-
-			// If BILLING contact defined, we use it
 			$pdf->SetTextColor(0,0,0);
+
+			// If CUSTOMER contact defined, we use it
 			$usecontact=false;
-			if ($conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT)
-			{
+			//if ($conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT)
+			//{
 				$arrayidcontact=$object->getIdContact('external','CUSTOMER');
 				if (sizeof($arrayidcontact) > 0)
 				{
 					$usecontact=true;
 					$result=$object->fetch_contact($arrayidcontact[0]);
 				}
-			}
+			//}
 			if ($usecontact)
 			{
 				// On peut utiliser le nom de la societe du contact

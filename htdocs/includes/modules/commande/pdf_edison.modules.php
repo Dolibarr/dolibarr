@@ -347,13 +347,13 @@ class pdf_edison extends ModelePDFCommandes
 	}
 
 
-	function _pagehead(&$pdf, $com, $showaddress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
 		global $conf,$langs,$mysoc;
 		$langs->load("orders");
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
-		if($com->statut==0 && (! empty($conf->global->COMMANDE_DRAFT_WATERMARK)) )
+		if($object->statut==0 && (! empty($conf->global->COMMANDE_DRAFT_WATERMARK)) )
 		{
 			$watermark_angle=atan($this->page_hauteur/$this->page_largeur);
 			$watermark_x=5;
@@ -421,23 +421,75 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->MultiCell(80, 4, $carac_emetteur);
 
 		// Client destinataire
+		$client = new Societe($this->db);
+		$client->fetch($object->socid);
+		$object->client = $client;
+
+		// If CUSTOMER contact defined on invoice, we use it
+		$usecontact=false;
+		//if ($conf->global->COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT)
+		//{
+			$arrayidcontact=$object->getIdContact('external','CUSTOMER');
+			if (sizeof($arrayidcontact) > 0)
+			{
+				$usecontact=true;
+				$result=$object->fetch_contact($arrayidcontact[0]);
+			}
+		//}
+
+		if ($usecontact)
+		{
+			// Nom societe
+			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+
+			// Customer name
+			$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
+
+			// Customer properties
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
+			if ($object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
+		}
+		else
+		{
+			// Customer name
+			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+
+			// Nom du contact suivi commande si c'est une soci�t�
+			$arrayidcontact = $object->getIdContact('external','CUSTOMER');
+			if (sizeof($arrayidcontact) > 0)
+			{
+				$object->fetch_contact($arrayidcontact[0]);
+				// On verifie si c'est une societe ou un particulier
+				if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
+				{
+					$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
+				}
+			}
+
+			// Caracteristiques client
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->adresse);
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
+			if ($object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
+		}
+		// Numero TVA intracom
+		if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
+
+		// Show customer/recipient
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','B',12);
-		$client = new Societe($this->db);
-		$client->fetch($com->socid);
-		$com->client = $client;
 		$pdf->SetXY(102,42);
-		$pdf->MultiCell(96, 5, $outputlangs->convToOutputCharset($com->client->nom));
+		$pdf->MultiCell(96, 5, $carac_client_name);
 		$pdf->SetFont('Arial','',11);
 		$pdf->SetXY(102,$pdf->GetY());
-		$pdf->MultiCell(96, 5, $outputlangs->convToOutputCharset($com->client->adresse) . "\n" . $outputlangs->convToOutputCharset($com->client->cp) . " " . $outputlangs->convToOutputCharset($com->client->ville));
-		$pdf->rect(100, 40, 100, 40);
+		$pdf->MultiCell(96, 5, $carac_client);
 
+		$pdf->rect(100, 40, 100, 40);
 
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dol_print_date($com->date,'day',false,$outputlangs));
-		$pdf->Text(11, 94, $outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($com->ref));
+		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs));
+		$pdf->Text(11, 94, $outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($object->ref));
 	}
 
     /*

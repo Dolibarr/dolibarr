@@ -1104,15 +1104,15 @@ class pdf_crabe extends ModelePDFFactures
 
 			// If BILLING contact defined on invoice, we use it
 			$usecontact=false;
-			if ($conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT)
-			{
+			//if ($conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT)
+			//{
 				$arrayidcontact=$object->getIdContact('external','BILLING');
 				if (sizeof($arrayidcontact) > 0)
 				{
 					$usecontact=true;
 					$result=$object->fetch_contact($arrayidcontact[0]);
 				}
-			}
+			//}
 			if ($usecontact)
 			{
 				// On peut utiliser le nom de la societe du contact

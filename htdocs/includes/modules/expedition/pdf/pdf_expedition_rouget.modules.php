@@ -75,7 +75,8 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 	 */
 	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
 	{
-		global $conf;
+		global $conf,$langs,$mysoc;
+		$langs->load("orders");
 
 		if ($conf->barcode->enabled)
 		{
