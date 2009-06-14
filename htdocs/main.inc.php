@@ -640,8 +640,8 @@ $bc[1]="class=\"pair\"";
 $yesno[0]="no";
 $yesno[1]="yes";
 
-// Constantes utilisees pour definir le nombre de lignes des textarea
-if (! eregi("firefox",$_SERVER["HTTP_USER_AGENT"]))
+// Constants used to defined number of lines in textarea
+if (empty($conf->browser->firefox))
 {
 	define('ROWS_1',1);
 	define('ROWS_2',2);

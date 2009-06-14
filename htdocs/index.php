@@ -702,13 +702,6 @@ if (sizeof($boxarray))
 	}
 }
 
-// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
-/*if (empty($conf->browser->firefox))
-{
-	print '<div class="tabsAction">&nbsp;</div>';
-}*/
-
-
 $db->close();
 
 llxFooter('$Date$ - $Revision$');

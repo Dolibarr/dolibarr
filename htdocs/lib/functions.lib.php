@@ -1866,8 +1866,11 @@ function print_titre($titre)
  *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
  *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
  */
-function print_fiche_titre($titre, $mesg='', $picto='title.gif', $pictoisfullpath=0)
+function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0)
 {
+	global $conf;
+	if (empty($conf->browser->firefox) && $picto=='title.png') $picto='title.gif';
+
 	print "\n";
 	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
 	if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
@@ -1898,6 +1901,7 @@ function print_fiche_titre($titre, $mesg='', $picto='title.gif', $pictoisfullpat
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title.png', $pictoisfullpath=0)
 {
 	global $conf,$langs;
+	if (empty($conf->browser->firefox) && $picto=='title.png') $picto='title.gif';
 
 	if ($num > $conf->liste_limit or $num == -1)
 	{
