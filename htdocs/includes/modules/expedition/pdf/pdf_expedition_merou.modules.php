@@ -49,11 +49,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		global $conf,$langs,$mysoc;
 
 		$this->db = $db;
-		$this->name = "Merou";
-		$this->description = "Modele Merou 2*A5\n
-	Attention !! Il est possible de creer 2 nouveaux types de contact : \n
-	 |element->commande,source->internal,code->LIVREUR \n
-	 |element->commande,source->external,code->EXPEDITEUR";
+		$this->name = "merou";
+		$this->description = "Modele Merou A5";
 
 		$this->type = 'pdf';
 		$this->page_largeur = 148.5;
