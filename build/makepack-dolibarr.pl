@@ -10,17 +10,18 @@ use Cwd;
 
 $PROJECT="dolibarr";
 $MAJOR="2";
-$MINOR="6";
+$MINOR="7";
 $BUILD="0";				# Mettre x pour release, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="1";		# A incrementer au moment de la release
 
-@LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE");   # Possible packages
+@LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE","EXEDOLIWAMP");   # Possible packages
 %REQUIREMENTTARGET=(                            # Tool requirement for each package
 "TGZ"=>"tar",
 "ZIP"=>"7z",
 "RPM"=>"rpmbuild",
 "DEB"=>"dpkg-buildpackage",
-"EXE"=>"makensis.exe"
+"EXE"=>"makensis.exe",
+"EXEDOLIWAMP"=>"iscc.exe"
 );
 %ALTERNATEPATH=(
 "7z"=>"7-ZIP",
@@ -33,6 +34,7 @@ $FILENAMEZIP="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMERPM="$PROJECT-$MAJOR.$MINOR.$BUILD-$RPMSUBVERSION";
 $FILENAMEDEB="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEEXE="$PROJECT-$MAJOR.$MINOR.$BUILD";
+$FILENAMEEXEDOLIWAMP="$PROJECT-$MAJOR.$MINOR.$BUILD";
 if (-d "/usr/src/redhat") {
     # redhat
     $RPMDIR="/usr/src/redhat";
@@ -120,7 +122,7 @@ else {
     		printf(" %d - %3s    (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
     	}
     
-    	# On demande de choisir le fichier à passer
+    	# On demande de choisir le fichier Ã  passer
     	print "Choose one package number or several separated with space: ";
     	$NUM_SCRIPT=<STDIN>; 
     	chomp($NUM_SCRIPT);
@@ -183,33 +185,40 @@ print "\n";
 # Check if there is at least on target to build
 #----------------------------------------------
 $nboftargetok=0;
+$nboftargetneedbuildroot=0;
 foreach my $target (keys %CHOOSEDTARGET) {
     if ($CHOOSEDTARGET{$target} < 0) { next; }
-    $nboftargetok++;
+	if ($target ne 'EXE' && $target ne 'EXEDOLIWAMP') 
+	{
+		$nboftargetneedbuildroot++;
+	}
+	$nboftargetok++;
 }
 
 if ($nboftargetok) {
 
     # Update buildroot
     #-----------------
-    if (! $copyalreadydone) {
-    	print "Delete directory $BUILDROOT\n";
-    	$ret=`rm -fr "$BUILDROOT"`;
-    
-    	mkdir "$BUILDROOT";
-    	mkdir "$BUILDROOT/dolibarr";
-    	print "Copy $SOURCE into $BUILDROOT/dolibarr\n";
-    	$ret=`cp -pr "$SOURCE" "$BUILDROOT/dolibarr"`;
-    }
-    print "Clean $BUILDROOT\n";
-    $ret=`rm -fr $BUILDROOT/$PROJECT/index.php`;
-    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
-    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
-    $ret=`rm -fr $BUILDROOT/$PROJECT/build`;
-    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
-    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
-    rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
-    
+    if ($nboftargetneedbuildroot)
+	{
+	    if (! $copyalreadydone) {
+	    	print "Delete directory $BUILDROOT\n";
+	    	$ret=`rm -fr "$BUILDROOT"`;
+	    
+	    	mkdir "$BUILDROOT";
+	    	mkdir "$BUILDROOT/dolibarr";
+	    	print "Copy $SOURCE into $BUILDROOT/dolibarr\n";
+	    	$ret=`cp -pr "$SOURCE" "$BUILDROOT/dolibarr"`;
+	    }
+	    print "Clean $BUILDROOT\n";
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/index.php`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/build`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
+	    rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
+	}    
     
     # Build package for each target
     #------------------------------
@@ -292,6 +301,19 @@ if ($nboftargetok) {
     		next;
     	}
     
+    	if ($target eq 'EXEDOLIWAMP') 
+    	{
+    		unlink "$FILENAMEEXEDOLIWAMP.exe";
+    		print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCE\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
+    		$cmd= "iscc.exe \"$SOURCE\\build\\exe\\doliwamp\\doliwamp.iss\"";
+			print "$cmd\n";
+			$ret= `$cmd`;
+			#print "$ret\n";
+			print "Move \"$SOURCE\\build\\$FILENAMEEXEDOLIWAMP.exe\" to $DESTI/$FILENAMEEXEDOLIWAMP.exe\n";
+    		rename("$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe","$DESTI/$FILENAMEEXEDOLIWAMP.exe");
+    		next;
+    	}
+	
     }
 
 }
