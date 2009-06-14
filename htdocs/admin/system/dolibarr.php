@@ -123,10 +123,9 @@ $var=!$var;
 print "<tr ".$bc[$var].'><td width="300">=> price(1234.56)</td><td>'.price(1234.56)."</td>";
 //print '<tr class="liste_titre"><td>'.$langs->trans("TimeZone").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 // Timezone
+// PHP server
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("ClientTZ")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("ServerTZ")." (variable system TZ)</td><td>".$_ENV["TZ"]."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("OSTZ")." (variable system TZ)</td><td>".$_ENV["TZ"]."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("PHPTZ")." (php.ini date.timezone)</td><td>".ini_get("date.timezone")."</td></tr>\n";	// date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 if (function_exists('date_default_timezone_get'))
@@ -139,9 +138,21 @@ if (function_exists('date_default_timezone_get'))
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("PHPServerOffsetWithGreenwich")."</td><td>".(- dol_mktime(0,0,0,1,1,1970))."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CurrentHour")."</td><td>".dol_print_date(time(),'dayhour')."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CurrentHour")."</td><td>".dol_print_date(dol_now('tzserver'),'dayhour')."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var].'><td width="300">=> dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext")."</td>";
+# Parent company
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CompanyTZ")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
+$var=!$var;
+#print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CompanyHour")."</td><td>".dol_print_date(dol_now('tzuser'),'dayhour')."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CompanyHour")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
+# Client
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("ClientTZ")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
+$var=!$var;
+#print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".dol_print_date(dol_now('tzuser'),'dayhour')."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
 print '</table>';
 print '<br>';
 

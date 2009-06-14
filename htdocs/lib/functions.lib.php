@@ -38,19 +38,24 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 /**
  *	\brief          Return date for now
  * 	\param			mode		'gmt' => we return GMT timestamp,
- * 								'tzref' => we use the company timezone
+ * 								'tzserver' => we use the PHP server timezone
+ *  							'tzref' => we use the company timezone
  * 								'tzuser' => we use the user timezone
  *	\return         date		Timestamp
  */
-function dol_now($mode='tzref')
+function dol_now($mode='tzserver')
 {
-	if ($mode == 'gmt') $ret=gmmktime();
-	else if ($mode == 'tzref')
+	if ($mode == 'gmt') $ret=gmmktime();	// Time for now at greenwich.
+	else if ($mode == 'tzserver')			// Time for now where PHP server is located
+	{
+		$ret=mktime();
+	}
+	else if ($mode == 'tzref')				// Time for now where the parent company is located
 	{
 		// TODO Should use the timezone of the company instead of timezone of server
 		$ret=mktime();
 	}
-	else if ($mode == 'tzuser')
+	else if ($mode == 'tzuser')				// Time for now where the user is located
 	{
 		// TODO Should use the timezone of the user instead of timezone of server
 		$ret=mktime();
