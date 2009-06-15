@@ -884,6 +884,8 @@ class pdf_crabe extends ModelePDFFactures
 		$outputlangs->load("propal");
 		$outputlangs->load("companies");
 
+		pdf_pagehead($pdf,$outputlangs,$pdf->page_hauteur);
+
 		//Affiche le filigrane brouillon - Print Draft Watermark
 		if($object->statut==0 && (! empty($conf->global->FACTURE_DRAFT_WATERMARK)) )
 		{

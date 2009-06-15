@@ -785,6 +785,8 @@ class pdf_oursin extends ModelePDFFactures
 		$langs->load("propal");
 		$langs->load("companies");
 
+		pdf_pagehead($pdf,$outputlangs,$pdf->page_hauteur);
+
 		//Affiche le filigrane brouillon - Print Draft Watermark
 		if($object->statut==0 && (! empty($conf->global->FACTURE_DRAFT_WATERMARK)) )
 		{

@@ -217,6 +217,9 @@ class pdf_paiement extends FPDF
 	{
 		global $langs;
 
+		// Do not add the BACKGROUND as this is a report
+		//pdf_pagehead($pdf,$outputlangs,$pdf->page_hauteur);
+
 		$title=$outputlangs->transnoentities("ListOfCustomerPayments");
 		$title.=' - '.dol_print_date(dol_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs,true);
 		$pdf->SetFont('Arial','B',12);

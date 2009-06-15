@@ -20,11 +20,30 @@
  */
 
 /**
- *	\file       htdocs/lib/company.lib.php
- *	\brief      Ensemble de fonctions de base pour le module societe
- *	\ingroup    societe
+ *	\file       htdocs/lib/pdf.lib.php
+ *	\brief      Set of functions used for PDF generation
+ *	\ingroup    core
  *	\version    $Id$
  */
+
+
+/**
+ *   	\brief      Show header of page for PDF generation
+ *   	\param      pdf     		Object PDF
+ *      \param      outputlang		Object lang for output
+ * 		\param		page_height
+ */
+function pdf_pagehead(&$pdf,$outputlangs,$page_height)
+{
+	global $conf;
+
+	// Add a background image on document
+	if (! empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF))
+	{
+		$pdf->Image($conf->societe->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, 0, 0, 0, $page_height);
+	}
+}
+
 
 /**
  *   	\brief      Show bank informations for PDF generation
@@ -269,9 +288,9 @@ function pdf_getlinedesc($line,$outputlangs,$showref=1)
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 				}
 			}
-			
+
 			if ($showref) $ref_prodserv = $prodser->ref." - ";
-			
+
 			$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 		}
 	}
