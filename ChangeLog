@@ -42,6 +42,7 @@ For developers:
 - Updated wiki documentation.
 - Better W3C standard.
 - Can add data provided with a module.
+- Can fix some corruptions in database by calling the update page with action=repair
 
 
 ***** Changelog for 2.6 compared to 2.5 *****
