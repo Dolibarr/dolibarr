@@ -106,7 +106,7 @@ class box_factures extends ModeleBoxes {
 					if ($objp->type == 1) $picto.='r';
 					if ($objp->type == 2) $picto.='a';
 					$late = '';
-					if ($objp->paye == 0 && $objp->fk_statut != 3 && $datelimite < ($now - $conf->facture->warning_delay)) { $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));}
+					if ($objp->paye == 0 && ($objp->fk_statut != 2 && $objp->fk_statut != 3) && $datelimite < ($now - $conf->facture->warning_delay)) { $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));}
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $picto,
