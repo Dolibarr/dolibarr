@@ -171,3 +171,9 @@ alter table llx_commande_fournisseur add column   ref_supplier        varchar(30
 
 alter table llx_mailing add column bgcolor  varchar(8) after body;
 alter table llx_mailing add column bgimage  varchar(255) after bgcolor;
+
+
+-- Request to clean corrupted database
+delete from llx_facture where facnumber = '(PROV)';
+delete from llx_commande where ref = '(PROV)';
+delete from llx_propal where ref = '(PROV)';
