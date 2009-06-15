@@ -353,14 +353,10 @@ a.tab {
   text-decoration: none;
   white-space: nowrap;
 }
-
-
-
 a.tab:active {
   background: #dee7ec;
   border-bottom: #dee7ec 1px solid;
 }
-
 a.tab:hover {
   background: #dee7ec;
   text-decoration: none;

@@ -583,7 +583,7 @@ a.tab:visited {
     border-left: 1px solid #D8D8D8;
     border-top: 1px solid #D8D8D8;
 }
-a.tab:active {
+a.tab#active {
     background: #dee7ec;
     border-bottom: #dee7ec 1px solid;
 	font-family: helvetica, verdana, arial, sans-serif;

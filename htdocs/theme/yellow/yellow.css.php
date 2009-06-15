@@ -481,7 +481,7 @@ a.tab:visited {
   text-decoration: none;
   white-space: nowrap;
 }
-a.tab:active {
+a.tab#active {
   background: #dcdcd3;
   border-bottom: #dcdcd3 1px solid;
   padding: 0px 6px;
