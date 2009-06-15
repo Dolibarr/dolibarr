@@ -311,7 +311,7 @@ a.tmenusel:active
 
 table.tmenu
 {
-    padding: 0px 0px 10px 0px;	// x y z w x=top offset
+    padding: 0px 0px 10px 0px;	/* x y z w x=top offset */
     margin: 0px 0px 0px 6px;
 }
 
