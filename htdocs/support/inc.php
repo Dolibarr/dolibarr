@@ -197,8 +197,11 @@ function pHeader($soutitre,$next,$action='none')
 	print '<html>'."\n";
 	print '<head>'."\n";
 	print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
+	print '<meta name="robots" content="index,follow">'."\n";
+	print '<meta name="keywords" content="help, center, dolibarr, doliwamp">'."\n";
+	print '<meta name="description" content="Dolibarr help center">'."\n";
 	print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
-	print '<title>'.$langs->trans("Help").'</title>'."\n";
+	print '<title>'.$langs->trans("DolibarrHelpCenter").'</title>'."\n";
 	print '</head>'."\n";
 
 	print '<body>'."\n";
