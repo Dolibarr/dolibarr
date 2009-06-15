@@ -290,8 +290,8 @@ class Translate {
 		// Format for date
 		if ($domain == 'main')
 		{
-			$conf->format_date_short=empty($this->tab_translate['FormatDateShort'])?"%d/%m/%Y":$this->tab_translate['FormatDateShort'];			# Format of day with PHP/C tags (strftime functions)
-			$conf->format_date_short_java=empty($this->tab_translate['FormatDateShort'])?"dd/MM/yyyy":$this->tab_translate['FormatDateShort'];		# Format of day with Java tags
+			$conf->format_date_short=empty($this->tab_translate['FormatDateShort'])?"%d/%m/%Y":$this->tab_translate['FormatDateShort'];					# Format of day with PHP/C tags (strftime functions)
+			$conf->format_date_short_java=empty($this->tab_translate['FormatDateShortJava'])?"dd/MM/yyyy":$this->tab_translate['FormatDateShortJava'];	# Format of day with Java tags
 			$conf->format_hour_short=empty($this->tab_translate['FormatHourShort'])?"%H:%M":$this->tab_translate['FormatHourShort'];
 			$conf->format_date_text_short=empty($this->tab_translate['FormatDateTextShort'])?"%d %b %Y":$this->tab_translate['FormatDateTextShort'];
 			$conf->format_date_text=empty($this->tab_translate['FormatDateText'])?"%d %B %Y":$this->tab_translate['FormatDateText'];
