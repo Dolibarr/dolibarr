@@ -62,6 +62,9 @@ class modTelephonie extends DolibarrModules
 		$this->special = 3;
 		$this->picto='phoning';
 
+		// Relative path to module style sheet if exists
+		$this->style_sheet = '/telephonie/telephonie.css';
+
 		// Data directories to create when module is enabled
 		$this->dirs = array("/telephonie/temp",
 							"/telephonie/graph",

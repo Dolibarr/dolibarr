@@ -583,7 +583,7 @@ a.tab:visited {
     border-left: 1px solid #D8D8D8;
     border-top: 1px solid #D8D8D8;
 }
-a.tab#active {
+a.tab:active {
     background: #dee7ec;
     border-bottom: #dee7ec 1px solid;
 	font-family: helvetica, verdana, arial, sans-serif;
@@ -941,6 +941,10 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 
 
+td.small {
+           font-size: 10px;
+           }
+
 
 /*
  *  Lignes titre espace
@@ -953,7 +957,7 @@ div.titre {
 
 
 /* ============================================================================== */
-/* Formulaire confirmation                                                        */
+/* Formulaire confirmation (HTML)                                                 */
 /* ============================================================================== */
 
 table.valid {
@@ -974,23 +978,153 @@ table.valid {
 	font-weight: bold;
 }
 
+/* ============================================================================== */
+/* Formulaire confirmation (AJAX)                                                 */
+/* ============================================================================== */
 
-td.small {
-           font-size: 10px;
-           }
-
-tr.nonpayed {
-           font-weight: bold;
-           }
-
-
-div.version {
-background: #F4F4F4;
-text-align: right;
-font-size: 9px;
-margin: 1px 0em 0em 0em;
-padding: 2px;
+.overlay_alert {
+	background-color: #DDDDDD;
+	filter: alpha(opacity=50); /* Does not respect CSS standard, but required to avoid IE bug */
+	-moz-opacity: 0.5;
+	opacity: 0.5;
 }
+
+.alert_nw {
+	width: 5px;
+	height: 5px;
+	background: transparent url(alert/top_left.gif) no-repeat bottom left;
+}
+
+.alert_n {
+	height: 5px;
+	background: transparent url(alert/top.gif) repeat-x bottom left;
+}
+
+.alert_ne {
+	width: 5px;
+	height: 5px;
+	background: transparent url(alert/top_right.gif) no-repeat bottom left
+}
+
+.alert_e {
+	width: 5px;
+	background: transparent url(alert/right.gif) repeat-y 0 0;
+}
+
+.alert_w {
+	width: 5px;
+	background: transparent url(alert/left.gif) repeat-y 0 0;
+}
+
+.alert_sw {
+	width: 5px;
+	height: 5px;
+	background: transparent url(alert/bottom_left.gif) no-repeat 0 0;
+}
+
+.alert_s {
+	height: 5px;
+	background: transparent url(alert/bottom.gif) repeat-x 0 0;
+}
+
+.alert_se, .alert_sizer {
+	width: 5px;
+	height: 5px;
+	background: transparent url(alert/bottom_right.gif) no-repeat 0 0;
+}
+
+.alert_close {
+	width:0px;
+	height:0px;
+	display:none;
+}
+
+.alert_minimize {
+	width:0px;
+	height:0px;
+	display:none;
+}
+
+.alert_maximize {
+	width:0px;
+	height:0px;
+	display:none;
+}
+
+.alert_title {
+	float:left;
+	height:1px;
+	width:100%;
+}
+
+.alert_content {
+	overflow:visible;
+	color: #000;
+	font-family: Tahoma, Arial, sans-serif;
+  	font: 12px arial;
+	background: #FFF;
+}
+
+/* For alert/confirm dialog */
+.alert_window {
+	background: #FFF;
+	padding:30px;
+	margin-left:auto;
+	margin-right:auto;
+	width:400px;
+}
+
+.alert_message {
+  font: 12px arial;
+  text-align:left;
+	width:100%;
+	color:#012;
+	padding-top:5px;
+	padding-left:5px;
+	padding-bottom:5px;
+}
+
+.alert_buttons {
+	text-align:center;
+	width:100%;
+}
+
+.alert_buttons input {
+	width:20%;
+	margin:5px;
+}
+
+.alert_progress {
+	float:left;
+	margin:auto;
+	text-align:center;
+	width:100%;
+	height:16px;
+	background: #FFF url('alert/progress.gif') no-repeat center center
+}
+
+.dialog {
+	display: block;
+	position: absolute;
+}
+
+.dialog table.table_window  {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+	margin: 0px;
+	padding:0px;
+}
+
+.dialog table.table_window td , .dialog table.table_window th {
+  padding: 0;
+}
+
+.dialog .title_window {
+  -moz-user-select:none;
+}
+
+
 
 
 /* ============================================================================== */
@@ -1082,27 +1216,6 @@ vertical-align:middle;
 cursor: pointer;
 }
 
-
-
-/* ============================================================================== */
-/*  Autre (telephonie)                                                            */
-/* ============================================================================== */
-
-#corpForm fieldset {	/*** Mise en forme des cadres ***/
-	margin: 0;
-	font-style: normal;
-	padding: 0 1em 1em;
-	font-size: 12px;
-}
-
-#corpForm .focus {	/*** Mise en avant des champs en cours d'utilisation ***/
-	background: #FFF0F0;
-	color: black;
-}
-#corpForm .normal {	/*** Retour e l'etat normal apres l'utilisation ***/
-	background: white;
-	color: black;
-}
 
 /* ============================================================================== */
 /*  Afficher/cacher                                                               */

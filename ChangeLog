@@ -18,6 +18,8 @@ For users:
 - New: Add stock in product lists.
 - New: Can filter list of stock movement on date or product.
 - New: Added a link from product list to their stock movements.
+- New: Several speed enhancements after using the Google Page speed 
+  plugin for FireBug.
 - Fix: Nb of orders to process was wrong.
 - Fix: Customer code was not correct on PDF it if contains special 
        characters.

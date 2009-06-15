@@ -756,15 +756,15 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			if (! defined('DISABLE_SCRIPTACULOUS'))
 			{
 				print '<!-- Includes for Scriptaculous (Used by Drag and drop and PWC) -->'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
+				//print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
+				//print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js?load=builder,effects,dragdrop,controls,slider,sound"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js?load=effects,dragdrop"></script>'."\n";
 			}
 
 			// Those ones are required only with option "confirm by ajax popup"
 			if (! defined('DISABLE_PWC') && $conf->global->MAIN_CONFIRM_AJAX)
 			{
 				print '<!-- Includes for PWC (Used for confirm popup) -->'."\n";
-				// PWC css
-				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/alert.css">'."\n";
 				// PWC js
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window.js"></script>'."\n";
 			}
@@ -850,14 +850,14 @@ function top_menu($head, $title='', $target='')
 		$text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
 		$text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
 		$text.='>';
-		$text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+		$text.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
 		$text.=' alt="'.$langs->trans("Logout").'" title=""';
 		$text.='>';
 		$text.='</a>';
 	}
 	else
 	{
-		$text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+		$text.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
 		$text.=' alt="'.$langs->trans("Logout").'" title=""';
 		$text.='>';
 	}

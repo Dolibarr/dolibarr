@@ -411,6 +411,7 @@ function formDisplayHideId(baliseId,numField)
 				 Minute       | mm (2 digits)
 				 Second       | ss (2 digits)
 	Author:   Laurent Destailleur
+	Author:   Matelli (see http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
 	Licence:  GPL
 ==================================================================*/
 function formatDate(date,format)
@@ -426,8 +427,6 @@ function formatDate(date,format)
 	var month=date.getMonth()+1;
 	var day=date.getDate();
 	var hour=date.getHours();
-	// Fixed by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
-	// The variable is later called "minute", not "min"
 	var minute=date.getMinutes();
 	var seconde=date.getSeconds();
 
@@ -448,9 +447,6 @@ function formatDate(date,format)
 		else if (substr == 'MM')   { result=result+(month<1||month>9?"":"0")+month; }
 		else if (substr == 'd')    { result=result+day; }
 		else if (substr == 'dd')   { result=result+(day<1||day>9?"":"0")+day; }
-		// Fixed by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
-		// An hour, minute, or second of "0" is valid, so we must also add a "0" in this case
-		// So, the condition should begin with "hour/minute/seconde<0", not "<1"
 		else if (substr == 'hh')   { if (hour > 12) hour-=12; result=result+(hour<0||hour>9?"":"0")+hour; }
 		else if (substr == 'HH')   { result=result+(hour<0||hour>9?"":"0")+hour; }
 		else if (substr == 'mm')   { result=result+(minute<0||minute>9?"":"0")+minute; }
@@ -514,16 +510,6 @@ function getDateFromFormat(val,format)
 		}
 
 		//alert('substr='+substr);
-/*		if (substr == "yyyy") year=getIntegerInString(val,i,4,4);
-		if (substr == "yy")   year=""+(getIntegerInString(val,i,2,2)-0+1900);
-		if (substr == "MM")   month=getIntegerInString(val,i,2,2);
-		if (substr == "M")    month=getIntegerInString(val,i,1,2);
-		if (substr == "dd")   day=getIntegerInString(val,i,1,2);
-		if (substr == "hh")   hour=getIntegerInString(val,i,1,2);
-		if (substr == "HH")   hour=getIntegerInString(val,i,1,2);
-		if (substr == "mm")   minute=getIntegerInString(val,i,1,2);
-		if (substr == "ss")   seconde=getIntegerInString(val,i,1,2);
-*/
         if (substr == "yyyy") year=getIntegerInString(val,d,4,4); 
         if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+1900); 
         if (substr == "MM" ||substr == "M") 

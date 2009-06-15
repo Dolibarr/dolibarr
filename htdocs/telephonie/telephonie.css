@@ -1,0 +1,20 @@
+
+/* ============================================================================== */
+/*  CSS module telephonie                                                         */
+/* ============================================================================== */
+
+#corpForm fieldset {	/*** Mise en forme des cadres ***/
+	margin: 0;
+	font-style: normal;
+	padding: 0 1em 1em;
+	font-size: 12px;
+}
+
+#corpForm .focus {	/*** Mise en avant des champs en cours d'utilisation ***/
+	background: #FFF0F0;
+	color: black;
+}
+#corpForm .normal {	/*** Retour à l'état normal après l'utilisation ***/
+	background: white;
+	color: black;
+}
