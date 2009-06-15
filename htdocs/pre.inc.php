@@ -138,11 +138,6 @@ function llxHeader($head = '', $title='', $help_url='')
 		$menu->add(DOL_URL_ROOT."/domain/index.php", "Domaines");
 	}
 
-	if (! empty($conf->postnuke->enabled))
-	{
-		$menu->add(DOL_URL_ROOT."/postnuke/articles/index.php", "Editorial");
-	}
-
 	if (! empty($conf->export->enabled))
 	{
 		$langs->load("exports");
