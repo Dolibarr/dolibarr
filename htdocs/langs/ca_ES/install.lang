@@ -95,8 +95,8 @@ ThisPHPDoesNotSupportTypeBase = El sistema PHP no suporta les interfícies d'acc
 FunctionNotAvailableInThisPHP = No disponible en aquest PHP
 MigrateScript = Script de migració
 ChoosedMigrateScript = Elecció de l'script de migració
-DatabaseMigration = Migració del format de la base de dades
 DataMigration = Migració de les dades
+DatabaseMigration = Migració del format de la base de dades
 ProcessMigrateScript = Execució del script
 ChooseYourSetupMode = Triï el seu mètode d'instal·lació i feu clic en "Començar" ...
 FreshInstall = Primera instal·lació
@@ -128,6 +128,7 @@ KeepDefaultValues = Està utilitzant l'assistent d'instal·lació Doliwamp, els 
 FieldRenamed = Camp renombrat
 IfLoginDoesNotExistsCheckCreateUser = Si l'login encara no existeix, ha de seleccionar l'opció "Creació de l'usuari"
 ErrorConnection = El servidor "<b>%s </b>", base de dades "<b>%s</b>", login "<b>%s</b>", o la contrasenya de la base de dades poden ser incorrectes o la versió de PHP molt vella en comparació amb la versió de la base de dades.
+InstallChoiceRecommanded = Opció recomanada per a instal·lar la versió <b>%s</b> sobre la seva actual versió <b>%s</b>
 ######### =  = 
 # upgrade =  = 
 MigrationOrder = Migració de dades de les comandes clients
@@ -153,7 +154,6 @@ MigrationContractsFieldDontExist = Els camps fk_facture no existeixen ja. No hi 
 MigrationContractsEmptyDatesUpdate = Actualització de les dades de contractes no indicades
 MigrationContractsEmptyDatesUpdateSuccess = Ok per data de contracte
 MigrationContractsEmptyDatesNothingToUpdate = No hi ha més properes dates de contractes.
-MigrationContractsEmptyCreationDatesUpdateSuccess = OK per la data de creació
 MigrationContractsEmptyCreationDatesNothingToUpdate = No hi ha més properes dates de creació.
 # Contracts Invalid Dates Update =  = 
 MigrationContractsInvalidDatesUpdate = Actualització dades contracte incorrectes (per contractes amb detall en servei)
