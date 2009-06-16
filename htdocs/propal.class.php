@@ -770,7 +770,7 @@ class Propal extends CommonObject
 		$sql.= ", p.fk_cond_reglement";
 		$sql.= ", p.fk_mode_reglement";
 		$sql.= ", c.label as statut_label";
-		$sql.= ", cr.code as cond_reglement_code, cr.libelle, cr.libelle_facture";
+		$sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture";
 		$sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
@@ -820,8 +820,8 @@ class Propal extends CommonObject
 				$this->mode_reglement          = $obj->mode_reglement;
 				$this->cond_reglement_id       = $obj->fk_cond_reglement;
 				$this->cond_reglement_code     = $obj->cond_reglement_code;
-				$this->cond_reglement          = $objc->libelle;
-				$this->cond_reglement_document = $objc->libelle_facture;
+				$this->cond_reglement          = $obj->cond_reglement;
+				$this->cond_reglement_document = $obj->libelle_facture;
 
 				$this->user_author_id = $obj->fk_user_author;
 

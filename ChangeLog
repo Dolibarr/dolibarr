@@ -20,6 +20,7 @@ For users:
 - New: Added a link from product list to their stock movements.
 - New: Several speed enhancements after using the Google Page speed 
   plugin for FireBug.
+- Fix: Fix payment conditions on commercial proposals.
 - Fix: Nb of orders to process was wrong.
 - Fix: Customer code was not correct on PDF it if contains special 
        characters.
