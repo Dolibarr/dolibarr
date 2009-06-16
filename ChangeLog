@@ -4,6 +4,7 @@ English Dolibarr changelog
 ***** Changelog for 2.7 compared to 2.6 *****
 
 For users:
+- New: Price level can be defined also for prospects.
 - New: Add a help and support center.
 - New: Can export commercial proposals.
 - New: Can use a cache for xcal exports.

@@ -102,7 +102,9 @@ if ($socid > 0)
 	print '<tr><td width="25%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
 	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse)."</td></tr>";
 
-	print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td colspan="3">'.$societe->cp." ".$societe->ville.'</td></tr>';
+	// Zip / Town
+	print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$societe->cp.'</td>';
+	print '<td>'.$langs->trans('Town').'</td><td>'.$societe->ville.'</td></tr>';
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
@@ -115,7 +117,7 @@ if ($socid > 0)
 
 	print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$societe->forme_juridique.'</td></tr>';
 
-	// Level
+	// Level of prospect
 	print '<tr><td nowrap>';
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('ProspectLevelShort');
@@ -134,6 +136,22 @@ if ($socid > 0)
 	}
 	print "</td>";
 	print '</tr>';
+
+	// Multiprice level
+	if ($conf->global->PRODUIT_MULTIPRICES)
+	{
+		print '<tr><td nowrap>';
+		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+		print $langs->trans("PriceLevel");
+		print '<td><td align="right">';
+		if ($user->rights->societe->creer)
+		{
+			print '<a href="'.DOL_URL_ROOT.'/comm/multiprix.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+		}
+		print '</td></tr></table>';
+		print '</td><td colspan="3">'.$societe->price_level."</td>";
+		print '</tr>';
+	}
 
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$societe->getLibStatut(4).'</td>';

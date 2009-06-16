@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/comm/multiprix.php
- \ingroup    commercial
- \brief      Onglet choix du niveau de prix
- \version    $Id$
+ *	\file       htdocs/comm/multiprix.php
+ *	\ingroup    societe
+ *	\brief      Onglet choix du niveau de prix
+ *	\version    $Id$
  */
 
 require_once("./pre.inc.php");
@@ -82,7 +82,11 @@ if ($_socid > 0)
 
 	$head = societe_prepare_head($objsoc);
 
-	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"));
+	$tabchoice='';
+	if ($objsoc->client == 1) $tabchoice='customer';
+	if ($objsoc->client == 2) $tabchoice='prospect';
+
+	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"));
 
 
 	print '<form method="POST" action="multiprix.php?id='.$objsoc->id.'">';

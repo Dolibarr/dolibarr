@@ -179,6 +179,7 @@ if ($socid > 0)
 
     print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($objsoc->adresse)."</td></tr>";
 
+    // Zip / Town
     print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$objsoc->cp."</td>";
     print '<td>'.$langs->trans('Town').'</td><td>'.$objsoc->ville."</td></tr>";
 
@@ -280,7 +281,7 @@ if ($socid > 0)
     print '</td>';
     print '</tr>';
 
-	// Multiprix
+	// Multiprice level
 	if ($conf->global->PRODUIT_MULTIPRICES)
 	{
 		print '<tr><td nowrap>';
