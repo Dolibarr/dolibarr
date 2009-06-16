@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,17 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-	    \file       htdocs/admin/comptaexpert.php
-        \ingroup    comptaexpert
-        \brief      Page de configuration du module comptabilit� expert
-		\version    $Revision$
-*/
+ *	    \file       htdocs/admin/accounting.php
+ *      \ingroup    accounting
+ *      \brief      Page de configuration du module comptabilite expert
+ *		\version    $Id$
+ */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -36,8 +33,6 @@ $langs->load('compta');
 if (!$user->admin)
   accessforbidden();
 
-
-llxHeader();
 
 
 $compta_mode = defined('COMPTA_MODE')?COMPTA_MODE:'RECETTES-DEPENSES';
@@ -72,8 +67,10 @@ if ($_GET['action'] == 'delete')
 
 
 /*
- * Affichage page
+ * View
  */
+
+llxHeader();
 
 $html=new Form($db);
 
@@ -85,7 +82,7 @@ print '<br>';
 
 print '<table class="noborder" width="100%">';
 
-// Cas du param�tre COMPTA_MODE
+// Cas du parametre COMPTA_MODE
 print '<form action="compta.php" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setcomptamode">';
@@ -109,7 +106,7 @@ $sql ="SELECT rowid, name, value, type, note";
 $sql.=" FROM llx_const";
 $sql.=" WHERE name like 'COMPTA_%' and name not in ('COMPTA_MODE')";
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
 	$num = $db->num_rows($result);
 	$i = 0;
@@ -160,7 +157,7 @@ if ($result)
 
 		$i++;
 	}
-    
+
 	if ($num)
 	{
 		print "</table>\n";

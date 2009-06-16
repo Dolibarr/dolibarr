@@ -166,7 +166,7 @@ class MenuTop {
 		}
 
         // Financial
-        if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled
+        if ($conf->compta->enabled || $conf->accounting->enabled || $conf->banque->enabled
         	|| $conf->facture->enabled)
         {
             $langs->load("compta");
@@ -182,7 +182,7 @@ class MenuTop {
             }
 
     		$idsel='id="accountancy" ';
-            if ($user->rights->compta->resultat->lire || $user->rights->comptaexpert->plancompte->lire
+            if ($user->rights->compta->resultat->lire || $user->rights->accounting->plancompte->lire
             	|| $user->rights->facture->lire || $user->rights->banque->lire)
             {
             	print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuFinancial").'</a></td>';

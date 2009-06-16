@@ -64,7 +64,7 @@ function societe_prepare_head($objsoc)
 		$head[$h][2] = 'supplier';
 		$h++;
 	}
-	if ($conf->facture->enabled || $conf->compta->enabled || $conf->comptaexpert->enabled)
+	if ($conf->facture->enabled || $conf->compta->enabled || $conf->accounting->enabled)
 	{
 		$langs->load("compta");
 		$head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;

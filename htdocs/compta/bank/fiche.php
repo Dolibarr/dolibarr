@@ -188,7 +188,7 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 
 	// Code compta
-	if ($conf->comptaexpert->enabled)
+	if ($conf->accounting->enabled)
 	{
 		print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';
@@ -321,7 +321,7 @@ else
 		print '</td></tr>';
 
 		// Code compta
-		if ($conf->comptaexpert->enabled)
+		if ($conf->accounting->enabled)
 		{
 			print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
 			print '<td colspan="3">'.$account->account_number.'</td></tr>';
@@ -425,7 +425,7 @@ else
         print '</td></tr>';
 
 		// Code compta
-		if ($conf->comptaexpert->enabled)
+		if ($conf->accounting->enabled)
 		{
 			print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
 	        print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';

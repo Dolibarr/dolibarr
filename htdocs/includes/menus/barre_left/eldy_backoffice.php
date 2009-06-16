@@ -513,7 +513,7 @@ class MenuLeft {
 				}
 
 				// Compta expert
-				if ($conf->comptaexpert->enabled)
+				if ($conf->accounting->enabled)
 				{
 
 				}
@@ -557,18 +557,18 @@ class MenuLeft {
 				}
 
 				// Rapports
-				if ($conf->compta->enabled || $conf->comptaexpert->enabled)
+				if ($conf->compta->enabled || $conf->accounting->enabled)
 				{
 					// Bilan, résultats
-					$newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca&amp;mainmenu=accountancy",$langs->trans("Reportings"),0,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
+					$newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca&amp;mainmenu=accountancy",$langs->trans("Reportings"),0,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 
-					if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca",$langs->trans("ReportInOut"),1,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
-					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
+					if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca",$langs->trans("ReportInOut"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
+					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 					/* On verra ca avec module compabilité expert
 					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php?leftmenu=ca","Compte de résultat",2,$user->rights->compta->resultat->lire);
 					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php?leftmenu=ca","Bilan",2,$user->rights->compta->resultat->lire);
 					*/
-					if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca",$langs->trans("ReportTurnover"),1,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
+					if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca",$langs->trans("ReportTurnover"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 
 					/*
 					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php?leftmenu=ca","Cumulé",2,$user->rights->compta->resultat->lire);
@@ -578,8 +578,8 @@ class MenuLeft {
 					}
 					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php?leftmenu=ca",$langs->trans("Evolution"),2,$user->rights->compta->resultat->lire);
 					*/
-					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
-					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
+					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
+					if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 				}
 
 			}

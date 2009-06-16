@@ -18,7 +18,7 @@
 
 /**
  *	\file       htdocs/accountancy/accountancysystem.class.php
- * 	\ingroup    comptaexpert
+ * 	\ingroup    accounting
  * 	\brief      Fichier de la classe des plans de comptes comptables
  * 	\version    $Id$
  */

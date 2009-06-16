@@ -69,7 +69,7 @@ class modFacture extends DolibarrModules
 
 		// Dependencies
 		$this->depends = array("modSociete");
-		$this->requiredby = array("modComptabilite","modComptabiliteExpert");
+		$this->requiredby = array("modComptabilite","modAccounting");
 		$this->conflictwith = array();
 		$this->langfiles = array("bills","companies","compta","products");
 

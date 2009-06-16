@@ -38,7 +38,7 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 	global $conf;
 
    	$list=array();
-	//print "xx".$conf->global->MAIN_MODULE_COMPTABILITEEXPERT;
+	//print "xx".$conf->global->MAIN_MODULE_ACCOUNTING;
 	//print "xx".$conf->global->MAIN_MODULE_COMPTABILITE;
 
 	if ($direction == 'sell')
@@ -61,11 +61,11 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 	if ($modetax == 1)
     {
         // If vat payed on due invoices (non draft)
-		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
+		if ($conf->global->MAIN_MODULE_ACCOUNTING)
 		{
 	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stocké dans la table des payments.
-	        // Seul le module compta expert peut résoudre ce problème.
+	        // n'est pas stockï¿½ dans la table des payments.
+	        // Seul le module compta expert peut rï¿½soudre ce problï¿½me.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql = 'TODO';
@@ -85,19 +85,19 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
     }
     else
     {
-		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
+		if ($conf->global->MAIN_MODULE_ACCOUNTING)
 		{
 			// If vat payed on payments
 	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stocké dans la table des payments.
-	        // Seul le module compta expert peut résoudre ce problème.
+	        // n'est pas stockï¿½ dans la table des payments.
+	        // Seul le module compta expert peut rï¿½soudre ce problï¿½me.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql = 'TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
-	        // Tva sur factures payés (should be on payment)
+	        // Tva sur factures payï¿½s (should be on payment)
 /*	        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra,";
 			$sql.= " sum(fd.total_ht) as amount, sum(".$total_tva.") as tva,";
 			$sql.= " s.tva_assuj as assuj, s.rowid as socid";
@@ -184,11 +184,11 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	if ($modetax == 1)	// Option vat on debit
     {
         // If vat payed on due invoices (non draft)
-		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
+		if ($conf->global->MAIN_MODULE_ACCOUNTING)
 		{
 	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stocké dans la table des payments.
-	        // Seul le module compta expert peut résoudre ce problème.
+	        // n'est pas stockï¿½ dans la table des payments.
+	        // Seul le module compta expert peut rï¿½soudre ce problï¿½me.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql='TODO';
@@ -216,18 +216,18 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
     else	// Option vat on payments
     {
         // If vat payed on payments
-		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
+		if ($conf->global->MAIN_MODULE_ACCOUNTING)
 		{
 	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stocké dans la table des payments.
-	        // Seul le module compta expert peut résoudre ce problème.
+	        // n'est pas stockï¿½ dans la table des payments.
+	        // Seul le module compta expert peut rï¿½soudre ce problï¿½me.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql='TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
-	        // Tva sur factures payés (should be on shipment, done on payment instead !)
+	        // Tva sur factures payï¿½s (should be on shipment, done on payment instead !)
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 			$sql.= " d.date_start as date_start, d.date_end as date_end,";
 	        $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
@@ -315,11 +315,11 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	if ($modetax == 1)	// Option vat on debit
     {
         // If vat payed on due invoices (non draft)
-		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
+		if ($conf->global->MAIN_MODULE_ACCOUNTING)
 		{
 	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stocké dans la table des payments.
-	        // Seul le module compta expert peut résoudre ce problème.
+	        // n'est pas stockï¿½ dans la table des payments.
+	        // Seul le module compta expert peut rï¿½soudre ce problï¿½me.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql='TODO';
@@ -347,18 +347,18 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
     else	// Option vat on payments
     {
         // If vat payed on payments
-		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
+		if ($conf->global->MAIN_MODULE_ACCOUNTING)
 		{
 	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stocké dans la table des payments.
-	        // Seul le module compta expert peut résoudre ce problème.
+	        // n'est pas stockï¿½ dans la table des payments.
+	        // Seul le module compta expert peut rï¿½soudre ce problï¿½me.
 	        // (Il faut quand un paiement a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql='TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
-	        // Tva sur factures payés (should be on payment)
+	        // Tva sur factures payï¿½s (should be on payment)
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 			$sql.= " d.date_start as date_start, d.date_end as date_end,";
 	        $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";

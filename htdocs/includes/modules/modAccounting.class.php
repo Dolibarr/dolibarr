@@ -19,33 +19,32 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   comptabilite_expert     Module comptabilite expert
- \brief      Module pour inclure des fonctions de comptabilitï¿½ (gestion de comptes comptables et rapports)
- \version	$Id$
+/**     \defgroup   accounting 			Module accounting
+ *		\brief      Module pour inclure des fonctions de comptabilite (gestion de comptes comptables et rapports)
+ *		\version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modComptabiliteExpert.class.php
- \ingroup    comptabilite_expert
- \brief      Fichier de description et activation du module Comptabilite Expert
+ *		\file       htdocs/includes/modules/modAccounting.class.php
+ *		\ingroup    accounting
+ * 		\brief      Fichier de description et activation du module Comptabilite Expert
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- \class      modComptabiliteExpert
- \brief      Classe de description et activation du module Comptabilite Expert
+ *	\class      modAccounting
+ *	\brief      Classe de description et activation du module Comptabilite Expert
  */
-
-class modComptabiliteExpert extends DolibarrModules
+class modAccounting extends DolibarrModules
 {
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
 	 *   \param      DB      handler d'acces base
 	 */
-	function modComptabiliteExpert($DB)
+	function modAccounting($DB)
 	{
 		global $conf;
 
@@ -55,7 +54,7 @@ class modComptabiliteExpert extends DolibarrModules
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
-		$this->description = "Gestion expert de comptabilite (doubles parties)";
+		$this->description = "Gestion complète de comptabilite (doubles parties)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		//$this->version = 'dolibarr';
@@ -65,7 +64,7 @@ class modComptabiliteExpert extends DolibarrModules
 		$this->special = 0;
 
 		// Config pages
-		$this->config_page_url = array("comptaexpert.php");
+		$this->config_page_url = array("accounting.php");
 
 		// Dependances
 		$this->depends = array("modFacture","modBanque");
@@ -77,14 +76,14 @@ class modComptabiliteExpert extends DolibarrModules
 		$this->const = array();
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/comptabiliteexpert/temp");
+		$this->dirs = array("/accounting/temp");
 
 		// Boxes
 		$this->boxes = array();
 
 		// Permissions
 		$this->rights = array();
-		$this->rights_class = 'comptaexpert';
+		$this->rights_class = 'accounting';
 
 		$this->rights[1][0] = 131;
 		$this->rights[1][1] = 'Lire le plan de compte';

@@ -47,49 +47,49 @@ class modComptabilite extends DolibarrModules
 	function modComptabilite($DB)
 	{
 		global $conf;
-	
+
 		$this->db = $DB ;
 		$this->numero = 10 ;
-	
+
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion sommaire de comptabilite";
-	
+
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
-			
+
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
         $this->picto='';
-	
+
 		// Config pages
 		$this->config_page_url = array("compta.php");
-	
+
 		// Dependances
 		$this->depends = array("modFacture","modBanque");
 		$this->requiredby = array();
-		$this->conflictwith = array("modComptabiliteExpert");
+		$this->conflictwith = array("modAccounting");
 		$this->langfiles = array("compta");
-	
+
 		// Constantes
 		$this->const = array();
-		
+
 		// Data directories to create when module is enabled
 		$this->dirs = array("/comptabilite/temp",
 		                    "/comptabilite/rapport",
 		                    "/comptabilite/export",
 		                    "/comptabilite/bordereau"
 		                    );
-	
+
 		// Boites
 		$this->boxes = array();
-	
+
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'compta';
 		$r=0;
-	
+
 		$r++;
 		$this->rights[$r][0] = 95;
 		$this->rights[$r][1] = 'Lire CA, bilans, resultats';
@@ -97,7 +97,7 @@ class modComptabilite extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'resultat';
 		$this->rights[$r][5] = 'lire';
-	
+
 		$r++;
 		$this->rights[$r][0] = 96;
 		$this->rights[$r][1] = 'Parametrer la ventilation';
@@ -105,7 +105,7 @@ class modComptabilite extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'ventilation';
 		$this->rights[$r][5] = 'parametrer';
-	
+
 		$r++;
 		$this->rights[$r][0] = 97;
 		$this->rights[$r][1] = 'Lire les ventilations de factures';
@@ -113,7 +113,7 @@ class modComptabilite extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'ventilation';
 		$this->rights[$r][5] = 'lire';
-	
+
 		$r++;
 		$this->rights[$r][0] = 98;
 		$this->rights[$r][1] = 'Ventiler les lignes de factures';
@@ -131,10 +131,10 @@ class modComptabilite extends DolibarrModules
 	function init()
 	{
 		global $conf;
-	
+
 		// Nettoyage avant activation
 		$this->remove();
-	
+
 		return $this->_init($sql);
 	}
 
@@ -145,7 +145,7 @@ class modComptabilite extends DolibarrModules
 	function remove()
 	{
 		$sql = array();
-	
+
 		return $this->_remove($sql);
 	}
 
