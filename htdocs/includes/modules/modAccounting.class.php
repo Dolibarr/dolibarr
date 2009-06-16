@@ -49,7 +49,7 @@ class modAccounting extends DolibarrModules
 		global $conf;
 
 		$this->db = $DB ;
-		$this->numero = 130 ;
+		$this->numero = 1400 ;
 
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
@@ -85,48 +85,47 @@ class modAccounting extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'accounting';
 
-		$this->rights[1][0] = 131;
+		$this->rights[1][0] = 1401;
 		$this->rights[1][1] = 'Lire le plan de compte';
 		$this->rights[1][2] = 'r';
 		$this->rights[1][3] = 1;
 		$this->rights[1][4] = 'plancompte';
 		$this->rights[1][5] = 'lire';
 
-		$this->rights[2][0] = 132;
+		$this->rights[2][0] = 1402;
 		$this->rights[2][1] = 'Creer/modifier un plan de compte';
 		$this->rights[2][2] = 'w';
 		$this->rights[2][3] = 0;
 		$this->rights[2][4] = 'plancompte';
 		$this->rights[2][5] = 'creer';
 
-		$this->rights[3][0] = 133;
+		$this->rights[3][0] = 1403;
 		$this->rights[3][1] = 'Cloturer plan de compte';
 		$this->rights[3][2] = 'w';
 		$this->rights[3][3] = 0;
 		$this->rights[3][4] = 'plancompte';
 		$this->rights[3][5] = 'cloturer';
 
-		$this->rights[4][0] = 141;
+		$this->rights[4][0] = 1411;
 		$this->rights[4][1] = 'Lire les mouvements comptables';
 		$this->rights[4][2] = 'r';
 		$this->rights[4][3] = 1;
 		$this->rights[4][4] = 'mouvements';
 		$this->rights[4][5] = 'lire';
 
-		$this->rights[5][0] = 142;
+		$this->rights[5][0] = 1412;
 		$this->rights[5][1] = 'Creer/modifier/annuler les mouvements comptables';
 		$this->rights[5][2] = 'w';
 		$this->rights[5][3] = 0;
 		$this->rights[5][4] = 'mouvements';
 		$this->rights[5][5] = 'creer';
 
-		$this->rights[6][0] = 145;
+		$this->rights[6][0] = 1415;
 		$this->rights[6][1] = 'Lire CA, bilans, resultats, journaux, grands livres';
 		$this->rights[6][2] = 'r';
 		$this->rights[6][3] = 0;
 		$this->rights[6][4] = 'comptarapport';
 		$this->rights[6][5] = 'lire';
-
 	}
 
 

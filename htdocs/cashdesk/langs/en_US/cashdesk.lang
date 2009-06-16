@@ -1,5 +1,6 @@
 # Language file - en_US - cashdesk
-CashDesk=Cash desk
-CashDeskBank=Bank accountre
+CHARSET=UTF-8
+CashDesk=Point of sales
+CashDeskBank=Bank account
 CashDeskWarehouse=Warehouse
 CashDeskThirdParty=Third party

@@ -1,5 +1,6 @@
 # Language file - fr_FR - cashdesk
+CHARSET=UTF-8
 CashDesk=Caisse
 CashDeskBank=Compte bancaire
-CashDeskWarehouse=Entrepôt
+CashDeskWarehouse=EntrepÃ´t
 CashDeskThirdParty=Tiers
