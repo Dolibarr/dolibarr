@@ -64,7 +64,7 @@ if ($_POST["action"] == 'update_price' && ! $_POST["cancel"] && ($user->rights->
 
 		for($i=1; $i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 		{
-			if ($_POST["price_".$i])
+			if (isset($_POST["price_".$i]))
 			{
 				$level=$i;
 				$newprice=price2num($_POST["price_".$i],'MU');
@@ -72,6 +72,7 @@ if ($_POST["action"] == 'update_price' && ! $_POST["cancel"] && ($user->rights->
 				$newpricebase=$_POST["multiprices_base_type_".$i];
 				$newnpr=(eregi('\*',$_POST["tva_tx_".$i]) ? 1 : 0);
 				$newvat=eregi_replace('\*','',$_POST["tva_tx_".$i]);
+				break;	// We found submited price
 			}
 		}
 	}
@@ -354,12 +355,11 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx,";
 $sql.= " p.price_level, p.price_min, p.price_min_ttc,";
 $sql.= " ".$db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
-$sql.= " FROM ".MAIN_DB_PREFIX."product_price as p";
-$sql.= ", ".MAIN_DB_PREFIX."user as u";
+$sql.= " FROM ".MAIN_DB_PREFIX."product_price as p,";
+$sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE fk_product = ".$product->id;
 $sql.= " AND p.fk_user_author = u.rowid";
-if ($conf->global->PRODUIT_MULTIPRICES)	$sql.= " ORDER BY p.price_level ASC, p.date_price DESC";
-else $sql.= " ORDER BY p.date_price DESC";
+$sql.= " ORDER BY p.date_price DESC, p.price_level ASC";
 //$sql .= $db->plimit();
 
 $result = $db->query($sql) ;

@@ -557,7 +557,7 @@ class Product extends CommonObject
 			$sql.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
 
 			$result = $this->db->query($sql);
-			
+
 			if ($value == $current_lang)
 			{
 				if ($this->db->num_rows($result)) // si aucune ligne dans la base
@@ -594,7 +594,7 @@ class Product extends CommonObject
 					$sql2.= "','".addslashes($this->multilangs["$value"]["description"]);
 					$sql2.= "','".addslashes($this->multilangs["$value"]["note"])."')";
 				}
-				
+
 				// on ne sauvegarde pas des champs vides
 				if ( $this->multilangs["$value"]["libelle"] || $this->multilangs["$value"]["description"] || $this->multilangs["$value"]["note"] )
 				if (!$this->db->query($sql2)) return -1;
@@ -633,7 +633,7 @@ class Product extends CommonObject
 					$this->libelle		= $obj->label;
 					$this->description	= $obj->description;
 					$this->note			= $obj->note;
-					
+
 				}
 				$this->multilangs["$obj->lang"]["libelle"]		= $obj->label;
 				$this->multilangs["$obj->lang"]["description"]	= $obj->description;

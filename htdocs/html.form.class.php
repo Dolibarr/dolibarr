@@ -875,7 +875,7 @@ class Form
 				{
 					$sql= "SELECT price, price_ttc, price_base_type ";
 					$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
-					$sql.= "WHERE fk_product='".$objp->rowid;
+					$sql.= "WHERE fk_product='".$objp->rowid."'";
 					$sql.= " AND price_level=".$price_level;
 					$sql.= " ORDER BY date_price";
 					$sql.= " DESC limit 1";
@@ -888,18 +888,22 @@ class Form
 						if ($objp2)
 						{
 							if ($objp2->price_base_type == 'HT')
-							$opt.= price($objp2->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+							$opt.= price($objp2->price,1).' '.$conf->monnaie.' '.$langs->trans("HT");
 							else
-							$opt.= price($objp2->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+							$opt.= price($objp2->price_ttc,1).' '.$conf->monnaie.' '.$langs->trans("TTC");
 						}
 						//si il n'y a pas de prix multiple on prend le prix de base du produit/service
 						else
 						{
 							if ($objp->price_base_type == 'HT')
-							$opt.= price($objp->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+							$opt.= price($objp->price,1).' '.$conf->monnaie.' '.$langs->trans("HT");
 							else
-							$opt.= price($objp->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+							$opt.= price($objp->price_ttc,1).' '.$conf->monnaie.' '.$langs->trans("TTC");
 						}
+					}
+					else
+					{
+						dol_print_error($this->db);
 					}
 				}
 				else
