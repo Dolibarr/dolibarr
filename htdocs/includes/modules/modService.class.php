@@ -73,7 +73,7 @@ class modService extends DolibarrModules
 		$this->requiredby = array("modContrat");
 
 		// Config pages
-		$this->config_page_url = array("produit");
+		$this->config_page_url = array("produit.php");
 		$this->langfiles = array("products","companies","bills");
 
 		// Constants
