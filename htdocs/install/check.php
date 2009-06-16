@@ -251,6 +251,8 @@ else
 	// Si prerequis ok, on affiche le bouton pour passer à l'étape suivante
 	if ($checksok)
 	{
+		$ok=0;
+
 		print $langs->trans("ChooseYourSetupMode");
 
 		print '<table width="100%" cellspacing="1" cellpadding="4" border="1">';
@@ -276,15 +278,66 @@ else
 								array('from'=>'2.5.0', 'to'=>'2.6.0'),
 								array('from'=>'2.6.0', 'to'=>'2.7.0')
 								);
-		# Upgrade lines
+
+
+		// Try to create db connexion
+		if (file_exists($conffile))
+		{
+			include_once($conffile);
+			if (! empty($dolibarr_main_db_type))
+			{
+				require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
+				require_once($dolibarr_main_document_root."/lib/admin.lib.php");
+				// $conf is already instancied inside inc.php
+				$conf->db->type = $dolibarr_main_db_type;
+				$conf->db->host = $dolibarr_main_db_host;
+				$conf->db->port = $dolibarr_main_db_port;
+				$conf->db->name = $dolibarr_main_db_name;
+				$conf->db->user = $dolibarr_main_db_user;
+				$conf->db->pass = $dolibarr_main_db_pass;
+				$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+				if ($db->connected == 1 && $db->database_selected == 1)
+				{
+					$ok=1;
+				}
+			}
+		}
+
+
+		# If a database access is available, we set more variable
+		if ($ok)
+		{
+			$conf->setValues($db);
+			// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
+			// Version to install is DOL_VERSION
+			$dolibarrcurrentversionarray=split('[\.-]',$conf->global->MAIN_VERSION_LAST_UPGRADE);
+			$dolibarrversiontoinstallarray=versiondolibarrarray();
+		}
+
+		# Show upgrade lines
+		$foundrecommandedchoice=0;
 		foreach ($migrationscript as $migarray)
 		{
 			$versionfrom=$migarray['from'];
 			$versionto=$migarray['to'];
 		    $newversionfrom=eregi_replace('\.[0-9]+$','.*',$versionfrom);
 		    $newversionto=eregi_replace('\.[0-9]+$','.*',$versionto);
-			print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$newversionfrom.' -> '.$newversionto.'</b></td><td>';
-			print $langs->trans("UpgradeDesc").'</td>';
+			print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$newversionfrom.' -> '.$newversionto.'</b></td>';
+			print '<td>';
+			print $langs->trans("UpgradeDesc");
+			if ($ok && sizeof($dolibarrcurrentversionarray) > 0)	// If a database access is available and a version already available
+			{
+				$dolibarrversionfromarray=split('[\.-]',$versionfrom);
+				$dolibarrversiontoarray=split('[\.-]',$versionto);
+				if (empty($foundrecommandedchoice) && versioncompare($dolibarrversiontoarray,$dolibarrcurrentversionarray) >= 0)
+				{
+					print '<br>';
+					print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
+					// <img src="../theme/eldy/img/tick.png" alt="Ok"> ';
+					$foundrecommandedchoice=1;	// To show only once
+				}
+			}
+			print '</td>';
 			print '<td align="center">';
 			if ($allowupgrade)
 			{
@@ -297,6 +350,7 @@ else
 			print '</td>';
 			print '</tr>'."\n";
 		}
+
 		print '</table>';
 		print "\n";
 	}
