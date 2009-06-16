@@ -126,39 +126,39 @@ if ($handle)
 	{
 		if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php')
 		{
-	  $file = substr($file, 0, strlen($file)-4);
+			$file = substr($file, 0, strlen($file)-4);
 
-	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
 
-	  $modCodeTiers = new $file;
+			$modCodeTiers = new $file;
 
-	  // Show modules according to features level
-	  if ($modCodeTiers->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-	  if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+			// Show modules according to features level
+			if ($modCodeTiers->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+			if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-	  $var = !$var;
-	  print "<tr ".$bc[$var].">\n  <td width=\"140\">".$modCodeTiers->nom."</td>\n  <td>";
-	  print $modCodeTiers->info($langs);
-	  print "</td>\n";
-	  print '<td nowrap="nowrap">'.$modCodeTiers->getExample($langs)."</td>\n";
+			$var = !$var;
+			print "<tr ".$bc[$var].">\n  <td width=\"140\">".$modCodeTiers->nom."</td>\n  <td>";
+			print $modCodeTiers->info($langs);
+			print "</td>\n";
+			print '<td nowrap="nowrap">'.$modCodeTiers->getExample($langs)."</td>\n";
 
-	  if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
-	  {
-	  	print "<td align=\"center\">\n";
-	  	print img_tick();
-	  	print "</td>\n";
-	  }
-	  else
-	  {
-	  	print '<td align="center"><a href="societe.php?action=setcodeclient&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
-	  }
+			if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
+			{
+				print "<td align=\"center\">\n";
+				print img_tick();
+				print "</td>\n";
+			}
+			else
+			{
+				print '<td align="center"><a href="societe.php?action=setcodeclient&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
+			}
 
-	  print '<td align="center">';
-	  $s=$modCodeTiers->getToolTip($langs,$soc,-1);
-	  print $form->textwithpicto('',$s,1);
-	  print '</td>';
+			print '<td align="center">';
+			$s=$modCodeTiers->getToolTip($langs,$soc,-1);
+			print $form->textwithpicto('',$s,1);
+			print '</td>';
 
-	  print '</tr>';
+			print '</tr>';
 		}
 	}
 	closedir($handle);

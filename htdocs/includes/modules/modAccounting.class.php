@@ -54,7 +54,7 @@ class modAccounting extends DolibarrModules
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
-		$this->description = "Gestion complète de comptabilite (doubles parties)";
+		$this->description = "Gestion complete de comptabilite (doubles parties)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		//$this->version = 'dolibarr';
@@ -66,14 +66,14 @@ class modAccounting extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("accounting.php");
 
-		// Dependances
+		// Dependancies
 		$this->depends = array("modFacture","modBanque");
 		$this->requiredby = array();
 		$this->conflictwith = array("modComptabilite");
 		$this->langfiles = array("compta");
 
-		// Constantes
-		$this->const = array();
+		// Constants
+		$this->const = array(0=>array('MAIN_COMPANY_CODE_ALWAYS_REQUIRED','chaine','1','With this constants on, third party codes are always required whatever is numbering module behaviour',0));			// List of particular constants to add when module is enabled
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/accounting/temp");
@@ -134,25 +134,27 @@ class modAccounting extends DolibarrModules
 	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
 	 *               Definit egalement les repertoires de donnees e creer pour ce module.
 	 */
-	function init()
+	function init($options='')
 	{
-		global $conf;
+		// Prevent pb of modules not correctly disabled
+		//$this->remove($options);
 
-		// Nettoyage avant activation
-		$this->remove();
+		$sql = array();
 
-		return $this->_init($sql);
+		return $this->_init($sql,$options);
 	}
 
 	/**
 	 *    \brief      Fonction appelee lors de la desactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
-	function remove()
+	function remove($options='')
 	{
-		$sql = array();
+		global $conf;
 
-		return $this->_remove($sql);
+		$sql = array("DELETE FROM ".MAIN_DB_PREFIX."const where name='MAIN_COMPANY_CODE_ALWAYS_REQUIRED' and entity IN ('0','".$conf->entity."')");
+
+		return $this->_remove($sql,$options);
 	}
 }
 ?>

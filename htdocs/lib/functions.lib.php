@@ -2349,7 +2349,7 @@ function get_default_npr($societe_vendeuse, $societe_acheteuse, $taux_produit)
  *	\brief  Renvoie oui ou non dans la langue choisie
  *	\param	yesno			Variable pour test si oui ou non
  *	\param	case			1=Yes/No, 0=yes/no
- *	\param	color			0=texte only, 1=Text is formated with a color font style (red or blue), 2=Text is formated with blue color.
+ *	\param	color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
  */
 function yn($yesno, $case=1, $color=0)
 {

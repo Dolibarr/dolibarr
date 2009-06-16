@@ -134,6 +134,8 @@ class ModeleThirdPartyCode
      */
     function getToolTip($langs,$soc,$type)
     {
+    	global $conf;
+
     	$langs->load("admin");
 
 		$s='';
@@ -144,10 +146,33 @@ class ModeleThirdPartyCode
 		if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
 		$s.='<br>';
 		$s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
-		if ($type == 0)  $s.=$langs->trans("RequiredIfCustomer").': '.yn(!$this->code_null,1,2).'<br>';
-		if ($type == 1)  $s.=$langs->trans("RequiredIfSupplier").': '.yn(!$this->code_null,1,2).'<br>';
-		if ($type == -1) $s.=$langs->trans("Required").': '.yn(!$this->code_null,1,2).'<br>';
-		$s.=$langs->trans("CanBeModifiedIfOk").': '.yn($this->code_modifiable,1,2).'<br>';
+		if ($type == 0)
+		{
+			$s.=$langs->trans("RequiredIfCustomer").': ';
+			if ($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED && !empty($this->code_null)) $s.='<strike>';
+			$s.=yn(!$this->code_null,1,2);
+			if ($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED && !empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+			$s.='<br>';
+		}
+		if ($type == 1)
+		{
+			$s.=$langs->trans("RequiredIfSupplier").': ';
+			if ($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED && !empty($this->code_null)) $s.='<strike>';
+			$s.=yn(!$this->code_null,1,2);
+			if ($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED && !empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+			$s.='<br>';
+		}
+		if ($type == -1)
+		{
+			$s.=$langs->trans("Required").': ';
+			if ($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED && !empty($this->code_null)) $s.='<strike>';
+			$s.=yn(!$this->code_null,1,2);
+			if ($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED && !empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+			$s.='<br>';
+		}
+		$s.=$langs->trans("CanBeModifiedIfOk").': ';
+		$s.=yn($this->code_modifiable,1,2);
+		$s.='<br>';
 		$s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,2).'<br>';
 		$s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,2).'<br>';
 		$s.='<br>';

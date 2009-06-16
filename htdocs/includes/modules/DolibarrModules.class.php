@@ -178,8 +178,12 @@ class DolibarrModules
 		{
 			if (! $err)
 			{
-				if (!$this->db->query($array_sql[$i]))
+				dol_syslog("DolibarrModules::_remove sql=".$array_sql[$i], LOG_DEBUG);
+				$result=$this->db->query($array_sql[$i]);
+				if (! $result)
 				{
+					$this->error=$this->db->error();
+					dol_syslog("DolibarrModules::_remove Error ".$this->error, LOG_ERR);
 					$err++;
 				}
 			}

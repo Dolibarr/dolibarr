@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/includes/modules/societe/mod_codeclient_lion.class.php
+ *       \file       htdocs/includes/modules/societe/mod_codeclient_monkey.class.php
  *       \ingroup    societe
  *       \brief      Fichier de la classe des gestion lion des codes clients
  *       \version    $Id$
@@ -105,7 +105,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if ($type == 0) $prefix=$this->prefixcustomer;
 		if ($type == 1) $prefix=$this->prefixsupplier;
 
-        // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+        // D'abord on rï¿½cupï¿½re la valeur max (rï¿½ponse immï¿½diate car champ indï¿½xï¿½)
         $posindice=8;
         $sql = "SELECT MAX(0+SUBSTRING(".$field.",".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe";
