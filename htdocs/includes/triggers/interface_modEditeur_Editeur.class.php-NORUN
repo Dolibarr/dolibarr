@@ -27,7 +27,7 @@
 
 /**
    \class      InterfaceEditeur
-   \brief      Classe des fonctions triggers des actions personalisées du workflow
+   \brief      Classe des fonctions triggers des actions personalisees du workflow
 */
 
 class InterfaceEditeur
@@ -37,7 +37,7 @@ class InterfaceEditeur
   
   /**
    *   \brief      Constructeur.
-   *   \param      DB      Handler d'accès base
+   *   \param      DB      Handler d'acces base
    */
   function InterfaceEditeur($DB)
   {
@@ -84,8 +84,8 @@ class InterfaceEditeur
   }
   
   /**
-   *      \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
-   *                  D'autres fonctions run_trigger peuvent etre présentes dans includes/triggers
+   *      \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
+   *                  D'autres fonctions run_trigger peuvent etre presentes dans includes/triggers
    *      \param      action      Code de l'evenement
    *      \param      object      Objet concern
    *      \param      user        Objet user
@@ -95,8 +95,8 @@ class InterfaceEditeur
    */
   function run_trigger($action,$object,$user,$langs,$conf)
   {
-    // Mettre ici le code à exécuter en réaction de l'action
-    // Les données de l'action sont stockées dans $object
+    // Mettre ici le code a executer en reaction de l'action
+    // Les donnees de l'action sont stockees dans $object
     
     // Users
     if ($action == 'LINEBILL_INSERT')

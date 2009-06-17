@@ -44,7 +44,7 @@ class InterfacePhenixsynchro
 
     /**
      *   \brief      Constructeur.
-     *   \param      DB      Handler d'accès base
+     *   \param      DB      Handler d'acces base
      */
     function InterfacePhenixsynchro($DB)
     {
@@ -90,10 +90,10 @@ class InterfacePhenixsynchro
     }
 
     /**
-     *      \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
-     *                  D'autres fonctions run_trigger peuvent etre présentes dans includes/triggers
+     *      \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
+     *                  D'autres fonctions run_trigger peuvent etre presentes dans includes/triggers
      *      \param      action      Code de l'evenement
-     *      \param      object      Objet concerné
+     *      \param      object      Objet concerne
      *      \param      user        Objet user
      *      \param      lang        Objet lang
      *      \param      conf        Objet conf
@@ -101,8 +101,8 @@ class InterfacePhenixsynchro
      */
     function run_trigger($action,$object,$user,$langs,$conf)
     {
-        // Mettre ici le code à exécuter en réaction de l'action
-        // Les données de l'action sont stockées dans $object
+        // Mettre ici le code a executer en reaction de l'action
+        // Les donnees de l'action sont stockees dans $object
 
         if (! $conf->phenix->enabled) return 0;     // Module non actif
         if (! $object->use_phenix) return 0;        // Option syncro phenix non active
@@ -382,17 +382,17 @@ class InterfacePhenixsynchro
         }
 */
 
-        // Ajoute entrée dans phenix
+        // Ajoute entree dans phenix
         if ($this->date)
         {
 
-            // Crée objet phenix et connexion avec params $conf->phenix->db->xxx
+            // Cree objet phenix et connexion avec params $conf->phenix->db->xxx
             $phenix = new Phenix();
             if (! $phenix->localdb->ok)
             {
                 // Si la creation de l'objet n'as pu se connecter
-                $error ="Dolibarr n'a pu se connecter à la base Phenix avec les identifiants définis (host=".$conf->phenix->db->host." dbname=".$conf->phenix->db->name." user=".$conf->phenix->db->user."). ";
-                $error.="La mise a jour Webcalendar a été ignorée.";
+                $error ="Dolibarr n'a pu se connecter a la base Phenix avec les identifiants definis (host=".$conf->phenix->db->host." dbname=".$conf->phenix->db->name." user=".$conf->phenix->db->user."). ";
+                $error.="La mise a jour Webcalendar a ete ignoree.";
                 $this->error=$error;
 
                 //dol_syslog("interface_phenix.class.php: ".$this->error, LOG_ERR);
@@ -412,7 +412,7 @@ class InterfacePhenixsynchro
             else
             {
                 $error ="Echec insertion dans phenix: ".$phenix->error." ";
-                $error.="La mise a jour Phenix a été ignorée.";
+                $error.="La mise a jour Phenix a ete ignoree.";
                 $this->error=$error;
 
                 //dol_syslog("interface_phenix.class.php: ".$this->error, LOG_ERR);

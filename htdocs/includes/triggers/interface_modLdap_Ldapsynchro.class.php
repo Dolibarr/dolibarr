@@ -39,7 +39,7 @@ class InterfaceLdapsynchro
 
     /**
      *   \brief      Constructeur.
-     *   \param      DB      Handler d'accès base
+     *   \param      DB      Handler d'acces base
      */
     function InterfaceLdapsynchro($DB)
     {
@@ -85,10 +85,10 @@ class InterfaceLdapsynchro
     }
 
     /**
-     *      \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
-     *                  D'autres fonctions run_trigger peuvent etre présentes dans includes/triggers
+     *      \brief      Fonction appelï¿½e lors du dï¿½clenchement d'un ï¿½vï¿½nement Dolibarr.
+     *                  D'autres fonctions run_trigger peuvent etre prï¿½sentes dans includes/triggers
      *      \param      action      Code de l'evenement
-     *      \param      object      Objet concerné
+     *      \param      object      Objet concernï¿½
      *      \param      user        Objet user
      *      \param      lang        Objet lang
      *      \param      conf        Objet conf
@@ -96,8 +96,8 @@ class InterfaceLdapsynchro
      */
 	function run_trigger($action,$object,$user,$langs,$conf)
     {
-        // Mettre ici le code à exécuter en réaction de l'action
-        // Les données de l'action sont stockées dans $object
+        // Mettre ici le code ï¿½ exï¿½cuter en rï¿½action de l'action
+        // Les donnï¿½es de l'action sont stockï¿½es dans $object
 
         if (! $conf->ldap->enabled) return 0;     // Module non actif
 
