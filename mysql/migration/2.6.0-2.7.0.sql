@@ -16,6 +16,8 @@ create table llx_import_model
   	field         text NOT NULL
 )type=innodb;
 
+update llx_bank_url set type='banktransfert' where type='?' and label='(banktransfert)';
+
 ALTER TABLE llx_import_model ADD UNIQUE INDEX uk_import_model (label,type);
 
 delete from llx_const where name = 'FACTURE_ENABLE_RECUR';
