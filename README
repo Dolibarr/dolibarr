@@ -13,7 +13,15 @@ Starter documentation
 I - DOLIBARR INSTALL
 --------------------
 
-To install Dolibarr:
+If you have no technical knowledge, use Windows and you are looking for an
+autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download 
+DoliWamp (the all-in-one package of Dolibarr for Windows). 
+You can download it at:
+http://www.dolibarr.org/downloads/cat_view/62-stable-versions
+
+If you already have installed a Web server and a Mysql database, you can
+install this version like this:
+
 - Copy directory 'dolibarr' and all its files inside your web server root,
   or set up your web server to use dolibarr/htdocs as root for a new web
   server virtual host (second choice need to be web server administrator).
@@ -116,20 +124,18 @@ Miscellanous:
 - A trigger architecture to allow you to make Dolibarr business events run
   PHP code to update your own information system.
 - "NPR VAT Rate" (French particularity for managing VAT in DOM-TOM 
-  called "Non Perçue Récupérable").
+  called "Non Perï¿½ue Rï¿½cupï¿½rable").
 
 
 
 V - WHAT DOLIBARR CAN'T DO YET (TODO LIST)
 ------------------------------------------
-This is feature Dolibarr does not support completely yet:
+This is features that Dolibarr does not support completely yet:
 - Accountancy.
 - Dolibarr can manage only one currency.
 - Dolibarr does not support the double Canadian Tax.
 - Dolibarr does not make coffee (not yet).
-- The module to manage stock is not stable yet.
 - Stock management with option increase/decrease on invoice works on
   warehouse number one only (no way to choose warehouse).
 - Stock management with option increase/decrease on orders works on
   warehouse number one only (no way to choose warehouse).
-

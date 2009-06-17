@@ -1,10 +1,10 @@
 README (french)
 --------------------------------
-Documentation démarrage rapide
+Documentation demarrage rapide
 --------------------------------
 
 1) Installer Dolibarr
-2) Mettre à jour Dolibarr depuis une ancienne version
+2) Mettre a jour Dolibarr depuis une ancienne version
 3) Ce qui est nouveau dans cette version
 4) Ce que peux faire Dolibarr
 5) Ce que ne peux pas faire Dolibarr (pas encore)
@@ -13,20 +13,28 @@ Documentation démarrage rapide
 I - INSTALLER DOLIBARR
 ----------------------
 
-Pour installer Dolibarr:
-- Copier le répertoire 'dolibarr' et tous ses fichiers dans la racine de
+Si vous n'avez pas de connaissances techniques, que vous Ãªtes sous Windows et
+que vous recherchez un programme d'installation qui install ERP/CRM en quelques
+clics, vous devez vous rÃ©orienter vers DoliWamp (la version tout-en-un de Dolibarr
+pour Windows). Vous pouvez la tÃ©lÃ©charger Ã  l'adresse: 
+http://www.dolibarr.fr/telechargements/cat_view/62-versions-stables
+
+Si vous avez dÃ©jÃ  installÃ© un serveur Web et une base de donnÃ©e (Mysql), vous pouvez
+installer Dolibarr avec cette version de la maniÃ¨re suivante:
+
+- Copier le repertoire 'dolibarr' et tous ses fichiers dans la racine de
   votre serveur web or configurer votre serveur pour utiliser 
   dolibarr/htdocs comme racine d'un nouveau virtual host (ce second choix
-  requiert des compétences et habilitations en administration du serveur web).
+  requiert des compï¿½tences et habilitations en administration du serveur web).
   
-- Creée une base vide mysql (support postgresql experimentale).
+- Creï¿½e une base vide mysql (support postgresql experimentale).
 
-- Définissez les permissions sur le répertoire 'dolibarr/htdocs/conf' pour votre
-  user du serveur web (les permissions en écriture seront supprimés une fois
-  l'installation terminée).
+- Dï¿½finissez les permissions sur le repertoire 'dolibarr/htdocs/conf' pour votre
+  user du serveur web (les permissions en ecriture seront supprimes une fois
+  l'installation terminee).
   
 - Depuis votre navigateur, appeler la page "install/" de dolibarr. L'url depend du
-  choix fait à la première étape:
+  choix fait a la premiere etape:
    http://localhost/dolibarr/htdocs/install/
   ou
    http://yourdolibarrvirtualhost/install/
@@ -37,29 +45,29 @@ Pour installer Dolibarr:
 II - METTRE A JOUR DOLIBARR
 ---------------------------
 
-Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
-- Ecraser les vieux fichiers dans le vieux répertoire 'dolibarr' par les fichiers
+Pour mettre a jour Dolibarr depuis une vieille version vers celle ci:
+- Ecraser les vieux fichiers dans le vieux repertoire 'dolibarr' par les fichiers
   fournis dans ce nouveau package.
   
 - Si vous venez d'une version x.y.z vers x.y.w (seul le 3eme chiffre varie),
-  il n'y a pas besoin de migration de données.
+  il n'y a pas besoin de migration de donnï¿½es.
   
-- Si vous venez d'une beta ou d'un version x.y.z vers une autre où les numéros x
+- Si vous venez d'une beta ou d'un version x.y.z vers une autre ou les numeros x
   ou y varient, vous devez appelez la page de migration dans votre navigateur:
    http://localhost/dolibarr/htdocs/install/index.php
   ou
    http://yourdolibarrhost/install/index.php
 
   Pour savoir quelle est l'URL exactement de la page "install/", prenez l'URL que
-  vous utilisez pour vous loguer. Si elle se termine par "index.php". Dans tous
-  les cas, ajouter ensuite "install/" à la fin.
+  vous utilisez pour vous loguer. Si elle se termine par "index.php", enlevez le.
+  Dans tous les cas, ajouter ensuite "install/" ï¿½ la fin.
   Par exemple, si votre page de connexion est: 
   http://yourdolibarrhost/something/index.php
   Alors la page "install/" sera 
   http://yourdolibarrhost/something/install/
 
-  Ensuite, choisir l'option de "mise à jour" en rapport avec votre cas.
-  Note: Le processus de migration peut etre lancé plusieurs fois sans risque.
+  Ensuite, choisir l'option de "mise a jour" en rapport avec votre cas.
+  Note: Le processus de migration peut etre lance plusieurs fois sans risque.
   
 
 III - CE QUI EST NOUVEAU
@@ -111,8 +119,7 @@ Miscellanous:
 
 V - CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)
 ------------------------------------------------------
-Voici un liste de fonctionnalités pas encore gérées par Dolibarr:
-- "TVA NPR" (TVA "Non Perçue Récupérable").
-- Pas de compta (uniquement gestion de trésorerie).
-- Dolibarr ne gère qu'une seule monnaie.
-- Dolibarr ne fait pas le café (pas encore).
+Voici un liste de fonctionnalites pas encore gerees par Dolibarr:
+- Pas de comptabilitÃ© (uniquement gestion de tresorerie).
+- Dolibarr ne gere qu'une seule monnaie.
+- Dolibarr ne fait pas le cafe (pas encore).
