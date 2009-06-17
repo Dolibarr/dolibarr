@@ -153,7 +153,7 @@ var value: String;
 
 //-----------------------------------------------
 
-//procedures lanc�es au d�but de l'installation
+//procedures lancees au debut de l'installation
 
 function InitializeSetup(): Boolean;
 begin
@@ -162,7 +162,7 @@ end;
 
 procedure InitializeWizard();
 begin
-  //version des applis, � modifier pour chaque version de WampServer 2
+  //version des applis, a modifier pour chaque version de WampServer 2
   apacheVersion := '2.2.6';
   phpVersion := '5.2.5' ;
   mysqlVersion := '5.0.45';
@@ -171,7 +171,7 @@ begin
   sqlitemanagerVersion := '1.2.0';
 
   smtpServer := 'localhost';
-  apachePort := '81';
+  apachePort := '80';
   mysqlPort := '3307';
   newPassword := 'changeme';
 
