@@ -67,6 +67,10 @@ class modBanque extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/banque/temp");
 
+        // Config pages
+        //-------------
+        $this->config_page_url = array("bank.php");
+
 		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array("modComptabilite","modAccounting");

@@ -1064,3 +1064,6 @@ WebServicesSetup=Webservices module setup
 WebServicesDesc=By enabling this module, Dolibarr become a web service server to provide miscellaneous web services.
 WSDLCanBeDownloadedHere=WSDL descriptor file of provided serviceses can be download here
 EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint available at Url
+##### Bank #####
+BankSetupModule=Bank module setup
+FreeLegalTextOnChequeReceipts=Free text on cheque receipts

@@ -1063,3 +1063,6 @@ WebServicesSetup=Configuration du module Webservices
 WebServicesDesc=En activant ce module, Dolibarr devient aussi serveur de web services offrant des web services divers.
 WSDLCanBeDownloadedHere=Le descripteur WSDL des services fournis peut etre récupéré ici
 EndPointIs=Les clients SOAP doivent envoyer leur requetes vers l'endpoint Dolibarr à l'URL
+##### Bank #####
+BankSetupModule=Configuration du module Banque
+FreeLegalTextOnChequeReceipts=Mention complémentaire sur les bordereaux de remises de chèques

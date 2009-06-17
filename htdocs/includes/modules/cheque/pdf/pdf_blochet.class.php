@@ -130,6 +130,17 @@ class BordereauChequeBlochet extends FPDF
 		$pagenb=0;
 		$pdf->SetDrawColor(128,128,128);
 
+		$pdf->SetDrawColor(128,128,128);
+		$pdf->SetTitle($outputlangs->convToOutputCharset($fac->ref));
+		$pdf->SetSubject($outputlangs->transnoentities("CheckReceipt"));
+		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+		$pdf->SetKeyWords($outputlangs->transnoentities("CheckReceipt")." ".$number);
+		if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+
+		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+		$pdf->SetAutoPageBreak(1,0);
+
 
 		$pages = intval($lignes / $this->line_per_page);
 
@@ -149,6 +160,12 @@ class BordereauChequeBlochet extends FPDF
 		$this->Header($pdf, 1, $pages, $outputlangs);
 
 		$this->Body($pdf, 1, $outputlangs);
+
+		// Pied de page
+		$this->_pagefoot($pdf,'',$outputlangs);
+		$pdf->AliasNbPages();
+
+		$pdf->Close();
 
 		$pdf->Output($_file);
 		if (! empty($conf->global->MAIN_UMASK))
@@ -290,6 +307,63 @@ class BordereauChequeBlochet extends FPDF
 
 			$yp = $yp + $this->line_height;
 		}
+	}
+
+
+	/**
+	 *   	\brief      Show footer of page
+	 *   	\param      pdf     		Object PDF
+	 * 		\param		object			Object invoice
+	 *      \param      outputlang		Object lang for output
+	 * 		\remarks	Need this->emetteur object
+	 */
+	function _pagefoot(&$pdf,$object,$outputlangs)
+	{
+		global $conf;
+
+		//return pdf_pagefoot($pdf,$outputlangs,'BANK_CHEQUERECEIPT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+		$paramfreetext='BANK_CHEQUERECEIPT_FREE_TEXT';
+		$marge_basse=$this->marge_basse;
+		$marge_gauche=$this->marge_gauche;
+		$page_hauteur=$this->page_hauteur;
+
+		// Line of free text
+		$ligne=(! empty($conf->global->$paramfreetext))?$outputlangs->convToOutputCharset($conf->global->$paramfreetext):"";
+
+		$pdf->SetFont('Arial','',7);
+		$pdf->SetDrawColor(224,224,224);
+
+		// On positionne le debut du bas de page selon nbre de lignes de ce bas de page
+		$nbofligne=dol_nboflines_bis($ligne);
+		//print 'e'.$ligne.'t'.dol_nboflines($ligne);exit;
+		$posy=$marge_basse + ($nbofligne*3) + ($ligne1?3:0) + ($ligne2?3:0);
+
+		if ($ligne)	// Free text
+		{
+			$pdf->SetXY($marge_gauche,-$posy);
+			$pdf->MultiCell(20000, 3, $ligne, 0, 'L', 0);	// Use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
+			$posy-=($nbofligne*3);	// 6 of ligne + 3 of MultiCell
+		}
+
+		$pdf->SetY(-$posy);
+		$pdf->line($marge_gauche, $page_hauteur-$posy, 200, $page_hauteur-$posy);
+		$posy--;
+
+		if ($ligne1)
+		{
+			$pdf->SetXY($marge_gauche,-$posy);
+			$pdf->MultiCell(200, 2, $ligne1, 0, 'C', 0);
+		}
+
+		if ($ligne2)
+		{
+			$posy-=3;
+			$pdf->SetXY($marge_gauche,-$posy);
+			$pdf->MultiCell(200, 2, $ligne2, 0, 'C', 0);
+		}
+
+		$pdf->SetXY(-20,-$posy);
+		$pdf->MultiCell(11, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
 	}
 
 }
