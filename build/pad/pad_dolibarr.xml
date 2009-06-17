@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <XML_DIZ_INFO>
 	<MASTER_PAD_VERSION_INFO>
 		<MASTER_PAD_VERSION>3.01</MASTER_PAD_VERSION>
@@ -34,9 +34,9 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>Dolibarr</Program_Name>
-		<Program_Version>2.6.0</Program_Version>
-		<Program_Release_Month>03</Program_Release_Month>
-		<Program_Release_Day>28</Program_Release_Day>
+		<Program_Version>2.6.1</Program_Version>
+		<Program_Release_Month>06</Program_Release_Month>
+		<Program_Release_Day>17</Program_Release_Day>
 		<Program_Release_Year>2009</Program_Release_Year>
 		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
@@ -69,18 +69,36 @@
 		<English>
 			<Keywords>dolibarr</Keywords>
 			<Char_Desc_45>Dolibarr ERP/CRM</Char_Desc_45>
-			<Char_Desc_80>Dolibarr ERP/CRM</Char_Desc_80>
-			<Char_Desc_250>Dolibarr ERP/CRM is an open source tool to manage invoices, customers, suppliers, contracts and any other things a small or medium company needs.</Char_Desc_250>
-			<Char_Desc_450>Dolibarr ERP/CRM is an open source tool to manage invoices, customers, suppliers, contracts and any other things a small or medium company needs.</Char_Desc_450>
-			<Char_Desc_2000>Dolibarr ERP/CRM is an open source tool to manage invoices, customers, suppliers, contracts and any other things a small or medium company needs.</Char_Desc_2000>
+			<Char_Desc_80>Dolibarr ERP/CRM, the easy to use open source software to manage your activity</Char_Desc_80>
+			<Char_Desc_250>Dolibarr ERP/CRM, the easy to use open source software to manage your activity (invoices, customers, suppliers, contracts, agenda, emailings...) and any other things a small or medium company or a foundation needs to follow.</Char_Desc_250>
+			<Char_Desc_450>Dolibarr ERP/CRM is a software built by modules addition (you enable only features you need), to manage small or medium companies, freelancers or foundations. We can say Dolibarr is an ERP or CRM. Dolibarr is also available with an auto-installer for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. See DoliWamp software for this.</Char_Desc_450>
+			<Char_Desc_2000>Dolibarr ERP/CRM is a software built by modules addition (you enable only features you need), to manage small or medium companies, freelancers or foundations. We can say Dolibarr is an ERP or CRM (or both depending on activated modules).
+
+It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, PHP for all Operating Systems). Dolibarr differs from other ERP or CRM softwares (like OpenAguila, OpenBravo, OpenERP, Neogia, Compiere, etc) because everything was made to be more simple:
+
+    * Simple to install
+    * Simple to use
+    * Simple to develop 
+
+Note that Dolibarr is also available with an auto-installer for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. This version is called DoliWamp.</Char_Desc_2000>
 		</English>
-		<French>
-			<Keywords />
+		<Spanish>
+			<Keywords>dolibarr</Keywords>
 			<Char_Desc_45 />
 			<Char_Desc_80 />
 			<Char_Desc_250 />
 			<Char_Desc_450 />
 			<Char_Desc_2000 />
+		</Spanish>
+		<French>
+			<Keywords>dolibarr</Keywords>
+			<Char_Desc_45>Dolibarr ERP/CRM</Char_Desc_45>
+			<Char_Desc_80>Dolibarr ERP/CRM, la gestion facile de votre activité professionnelle</Char_Desc_80>
+			<Char_Desc_250>Dolibarr ERP/CRM, le logiciel open source de gestion facile de votre activité (pour les PME, autoindépendants ou associations).</Char_Desc_250>
+			<Char_Desc_450>Dolibarr ERP/CRM, le logiciel open source de gestion facile de votre activité (pour les PME, autoindépendants ou associations). Dolibarr est également disponible en version avec autoinstalleur pour Windows pour les personnes ne disposant pas de connaissances techniques pour installer un site Web. Cette version s'appelle DoliWamp.</Char_Desc_450>
+			<Char_Desc_2000>Dolibarr ERP/CRM, le logiciel open source de gestion facile de votre activité (pour les PME, autoindépendants ou associations). 
+
+Dolibarr est également disponible en version avec autoinstalleur pour Windows pour les personnes ne disposant pas de connaissances techniques pour installer un site Web. Cette version s'appelle DoliWamp.</Char_Desc_2000>
 		</French>
 	</Program_Descriptions>
 	<Web_Info>
