@@ -1951,16 +1951,16 @@ class Form
 
 	/**
 	 *    \brief     Retourne la liste des devises, dans la langue de l'utilisateur
-	 *    \param     selected    code devise pr�-s�lectionn�
+	 *    \param     selected    code devise pre-selectionne
 	 *    \param     htmlname    nom de la liste deroulante
-	 *    \todo      trier liste sur noms apr�s traduction plutot que avant
+	 *    \todo      trier liste sur noms apres traduction plutot que avant
 	 */
 	function select_currency($selected='',$htmlname='currency_id')
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
 
-		if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilit�
+		if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
 		$sql = "SELECT code, code_iso, label, active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
@@ -1989,7 +1989,7 @@ class Form
 						print '<option value="'.$obj->code_iso.'">';
 					}
 					if ($obj->code_iso) { print $obj->code_iso . ' - '; }
-					// Si traduction existe, on l'utilise, sinon on prend le libell� par d�faut
+					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 					print ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
 					print '</option>';
 					$i++;
@@ -2009,16 +2009,16 @@ class Form
 	/**
 	 *      \brief      Output an HTML select vat rate
 	 *      \param      name                Nom champ html
-	 *      \param      selectedrate        For�age du taux tva pr�-s�lectionn�. Mettre '' pour aucun forcage.
-	 *      \param      societe_vendeuse    Objet soci�t� vendeuse
-	 *      \param      societe_acheteuse   Objet soci�t� acheteuse
+	 *      \param      selectedrate        Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
+	 *      \param      societe_vendeuse    Objet societe vendeuse
+	 *      \param      societe_acheteuse   Objet societe acheteuse
 	 *      \param      taux_produit        Taux par defaut du produit vendu
 	 *      \param      info_bits           Miscellanous information on line
-	 *      \remarks    Si vendeur non assujeti � TVA, TVA par d�faut=0. Fin de r�gle.
-	 *                  Si le (pays vendeur = pays acheteur) alors la TVA par d�faut=TVA du produit vendu. Fin de r�gle.
-	 *                  Si (vendeur et acheteur dans Communaut� europ�enne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par d�faut=0 (La TVA doit �tre pay� par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de r�gle.
-	 *                  Si (vendeur et acheteur dans Communaut� europ�enne) et bien vendu autre que transport neuf alors la TVA par d�faut=TVA du produit vendu. Fin de r�gle.
-	 *                  Sinon la TVA propos�e par d�faut=0. Fin de r�gle.
+	 *      \remarks    Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+	 *                  Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
+	 *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+	 *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
+	 *                  Sinon la TVA proposee par defaut=0. Fin de regle.
 	 */
 	function select_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='', $info_bits=0)
 	{
@@ -2087,14 +2087,14 @@ class Form
 			print '<font class="error">'.$this->db->error().'</font>';
 		}
 
-		// D�finition du taux � pr�-s�lectionner (si defaulttx non forc� et donc vaut -1 ou '')
+		// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
 		if ($defaulttx < 0 || strlen($defaulttx) == 0)
 		{
 			$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
 			$defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$taux_produit);
 		}
-		// Si taux par defaut n'a pu etre d�termin�, on prend dernier de la liste.
-		// Comme ils sont tri�s par ordre croissant, dernier = plus �lev� = taux courant
+		// Si taux par defaut n'a pu etre determine, on prend dernier de la liste.
+		// Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
 		if ($defaulttx < 0 || strlen($defaulttx) == 0)
 		{
 			$defaulttx = $txtva[sizeof($txtva)-1];
@@ -2132,16 +2132,16 @@ class Form
 	/**
 	 *		Affiche zone de selection de date
 	 *      Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
-	 *      Les champs sont pr�-s�lectionn�s avec:
+	 *      Les champs sont pre-selectionnes avec:
 	 *            	- La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
 	 *            	- La date du jour si set_time vaut ''
 	 *            	- Aucune date (champs vides) si set_time vaut -1 (dans ce cas empty doit valoir 1)
-	 *		@param	set_time 		Date de pr�-s�lection
+	 *		@param	set_time 		Date de pre-selection
 	 *		@param	prefix			Prefix pour nom champ
 	 *		@param	h				1=Affiche aussi les heures
 	 *		@param	m				1=Affiche aussi les minutes
 	 *		@param	empty			0=Champ obligatoire, 1=Permet une saisie vide
-	 *		@param	form_name 		Nom du formulaire de provenance. Utilis� pour les dates en popup.
+	 *		@param	form_name 		Nom du formulaire de provenance. Utilise pour les dates en popup.
 	 *		@param	d				1=Affiche aussi les jours, mois, annees
 	 * 		@param	addnowbutton	Add a button "Now"
 	 */
@@ -2411,7 +2411,7 @@ class Form
 	}
 
 	/**
-	 *	\brief  	Fonction servant a afficher une dur�e dans une liste d�roulante
+	 *	\brief  	Fonction servant a afficher une duree dans une liste deroulante
 	 *	\param		prefix   	prefix
 	 *	\param  	iSecond  	Nombre de secondes
 	 */
@@ -2488,7 +2488,7 @@ class Form
 			while (list($key, $value) = each ($array))
 			{
 				$out.='<option value="'.($value_as_key?$value:$key).'"';
-				// Si il faut pr�-s�lectionner une valeur
+				// Si il faut pre-selectionner une valeur
 				if ($id != '' && ($id == $key || $id == $value))
 				{
 					$out.=' selected="true"';
@@ -2540,7 +2540,7 @@ class Form
 	/**
 	 *    \brief      Selection de oui/non en chaine (renvoie yes/no)
 	 *    \param      name            Nom du select
-	 *    \param      value           Valeur pr�-s�lectionn�e
+	 *    \param      value           Valeur pre-selectionnee
 	 *    \param      option          0 retourne yes/no, 1 retourne 1/0
 	 */
 	function selectyesno($htmlname,$value='',$option=0)
@@ -2573,10 +2573,10 @@ class Form
 
 
 	/**
-	 *    \brief      Retourne la liste des mod�les d'export
-	 *    \param      selected          Id mod�le pr�-s�lectionn�
+	 *    \brief      Retourne la liste des modeles d'export
+	 *    \param      selected          Id modele pre-selectionne
 	 *    \param      htmlname          Nom de la zone select
-	 *    \param      type              Type des mod�les recherch�s
+	 *    \param      type              Type des modeles recherches
 	 *    \param      useempty          Affiche valeur vide dans liste
 	 */
 	function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
@@ -2621,7 +2621,7 @@ class Form
 
 	/**
 	 *    \brief      Retourne la liste des mois
-	 *    \param      selected          Id mois pr�-s�lectionn�
+	 *    \param      selected          Id mois pre-selectionne
 	 *    \param      htmlname          Nom de la zone select
 	 *    \param      useempty          Affiche valeur vide dans liste
 	 */
@@ -2650,12 +2650,12 @@ class Form
 		return $select_month;
 	}
 	/**
-	 *    \brief      Retourne la liste des ann�es
-	 *    \param      selected          Ann�e pr�-s�lectionn�
+	 *    \brief      Retourne la liste des annees
+	 *    \param      selected          Annee pre-selectionne
 	 *    \param      htmlname          Nom de la zone select
 	 *    \param      useempty          Affiche valeur vide dans liste
-	 *    \param      $min_year         Valeur minimum de l'ann�e dans la liste (par d�faut ann�e courante -10)
-	 *    \param      $max_year         Valeur maximum de l'ann�e dans la liste (par d�faut ann�e courante + 5)
+	 *    \param      $min_year         Valeur minimum de l'annee dans la liste (par defaut annee courante -10)
+	 *    \param      $max_year         Valeur maximum de l'annee dans la liste (par defaut annee courante + 5)
 	 */
 	function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year='', $max_year='')
 	{
