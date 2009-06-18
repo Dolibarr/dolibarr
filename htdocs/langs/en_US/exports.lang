@@ -54,8 +54,8 @@ LineTotalTTC=Amount with tax for line
 LineTotalVAT=Amount of VAT for line
 TypeOfLineServiceOrProduct=Type of line (0=product, 1=service)
 FileWithDataToImport=File with data to import
-FileToImport=File to import
+FileToImport=Source file to import
 FileMustHaveOneOfFollowingFormat=File to import must have one of following format
-ChooseFileToImport=Choose file to import...
+ChooseFileToImport=Choose file to import then click on picto %s ...
 FieldsInSourceFile=Fields in source file
 FieldsInTargetDatabase=Target fields in Dolibarr database

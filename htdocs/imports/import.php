@@ -390,7 +390,7 @@ if ($step == 2 && $datatoimport)
 
 	print '<tr><td colspan="6">&nbsp;</td></tr>';
 
-	print '<tr><td colspan="6">'.$langs->trans("ChooseFileToImport").'</td></tr>';
+	print '<tr><td colspan="6">'.$langs->trans("ChooseFileToImport",img_picto('','filenew')).'</td></tr>';
 
 	print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("FileWithDataToImport").'</td></tr>';
 
@@ -447,7 +447,7 @@ if ($step == 2 && $datatoimport)
 			// Affiche date fichier
 			print '<td align="right">'.dol_print_date(filemtime($dir.'/'.$file),'dayhour').'</td>';
 			// Del button
-			print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
+			print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;setp=2&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
 			print '&amp;urlsource='.urlencode($urlsource);
 			print '">'.img_delete().'</a></td>';
 			// Action button
@@ -507,8 +507,8 @@ if ($step == 3 && $datatoimport)
 		// Save the match array in session. We now will use the array in session.
 		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
 	}
-var_dump($array_match_file_to_database);
 
+var_dump($array_match_file_to_database);
 
 	llxHeader('',$langs->trans("NewImport"));
 
@@ -525,7 +525,7 @@ var_dump($array_match_file_to_database);
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport.'&filetoimport='.urlencode($_GET["filetoimport"]);
 	$head[$h][1] = $langs->trans("Step")." 3";
 	$hselected=$h;
 	$h++;
@@ -605,8 +605,8 @@ var_dump($array_match_file_to_database);
 		print '<td align="center">&nbsp;';
 		if (sizeof($fieldssource) > 1 && $pos <= sizeof($fieldssource))
 		{
-	        if ($pos < $maxpos) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=downfield&field='.$fieldssource[$pos]['name'].'">'.img_down().'</a>';
-    	    if ($pos > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=upfield&field='.$fieldssource[$pos]['name'].'">'.img_up().'</a>';
+	        if ($pos < $maxpos) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=downfield&fieldpos='.$pos.'&field='.$fieldssource[$pos]['name'].'&filetoimport='.urlencode($_GET["filetoimport"]).'">'.img_down().'</a>';
+    	    if ($pos > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=upfield&fieldpos='.$pos.'&field='.$fieldssource[$pos]['name'].'&filetoimport='.urlencode($_GET["filetoimport"]).'">'.img_up().'</a>';
 		}
 		print '&nbsp;</td>';
 
