@@ -1,4 +1,4 @@
-#Fri May 08 23:29:44 CEST 2009
+#Tue Jun 16 23:27:50 CEST 2009
 eclipse.preferences.version=1
 encoding//dev/initdemo/initdemo.sql=UTF-8
 encoding//dev/skeletons/modMyModule.class.php=ISO-8859-1
@@ -44,7 +44,6 @@ encoding//htdocs/fourn/facture/fiche.php=ISO-8859-1
 encoding//htdocs/fourn/facture/paiement.php=ISO-8859-1
 encoding//htdocs/fourn/facture/paiementfourn.class.php=ISO-8859-1
 encoding//htdocs/fourn/liste.php=ISO-8859-1
-encoding//htdocs/html.form.class.php=ISO-8859-1
 encoding//htdocs/includes/menus/barre_left/eldy_backoffice.php=ISO-8859-1
 encoding//htdocs/includes/menus/barre_left/eldy_frontoffice.php=ISO-8859-1
 encoding//htdocs/includes/menus/barre_top/empty.php=ISO-8859-1
@@ -54,7 +53,6 @@ encoding//htdocs/includes/modules/facture/pdf_crabe.modules.php=ISO-8859-1
 encoding//htdocs/includes/modules/modAdherent.class.php=ISO-8859-1
 encoding//htdocs/includes/modules/modBanque.class.php=ISO-8859-1
 encoding//htdocs/includes/modules/modCategorie.class.php=ISO-8859-1
-encoding//htdocs/includes/modules/modComptabiliteExpert.class.php=ISO-8859-1
 encoding//htdocs/includes/modules/modTelephonie.class.php=ISO-8859-1
 encoding//htdocs/includes/modules/propale/pdf_propale_azur.modules.php=ISO-8859-1
 encoding//htdocs/index.php=ISO-8859-1
