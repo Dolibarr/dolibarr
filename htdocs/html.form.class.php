@@ -871,7 +871,7 @@ class Form
 				$opt.= dol_trunc($objp->label,32).' - ';
 
 				// Multiprice
-				if ($price_level > 0)
+				if ($price_level > 1)
 				{
 					$sql= "SELECT price, price_ttc, price_base_type ";
 					$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
@@ -888,17 +888,9 @@ class Form
 						if ($objp2)
 						{
 							if ($objp2->price_base_type == 'HT')
-							$opt.= price($objp2->price,1).' '.$conf->monnaie.' '.$langs->trans("HT");
+							$opt.= price($objp2->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
 							else
-							$opt.= price($objp2->price_ttc,1).' '.$conf->monnaie.' '.$langs->trans("TTC");
-						}
-						//si il n'y a pas de prix multiple on prend le prix de base du produit/service
-						else
-						{
-							if ($objp->price_base_type == 'HT')
-							$opt.= price($objp->price,1).' '.$conf->monnaie.' '.$langs->trans("HT");
-							else
-							$opt.= price($objp->price_ttc,1).' '.$conf->monnaie.' '.$langs->trans("TTC");
+							$opt.= price($objp2->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
 						}
 					}
 					else
@@ -906,6 +898,7 @@ class Form
 						dol_print_error($this->db);
 					}
 				}
+				//si il n'y a pas de prix multiple on prend le prix de base du produit/service
 				else
 				{
 					if ($objp->price_base_type == 'HT')

@@ -1040,7 +1040,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
 			print '</textarea></td></tr>';
 
-			// Note priv�e
+			// Note privee
 			if (! $user->societe_id)
 			{
 				print '<tr>';
