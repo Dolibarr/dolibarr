@@ -54,8 +54,8 @@ LineTotalTTC = Import total de la línia
 LineTotalVAT = Import IVA de la línia
 TypeOfLineServiceOrProduct = Tipus de línia (0 = producte, 1 = servei)
 FileWithDataToImport = Arxiu que conté les dades a importar
-FileToImport = Arxiu a importar
+FileToImport = Arxiu origen a importar
 FileMustHaveOneOfFollowingFormat = El fitxer d'importació ha de tenir un dels següents formats
-ChooseFileToImport = Trieu el fitxer a importar...
+ChooseFileToImport = Trieu el fitxer d'importació i feu clic al picto %s ...
 FieldsInSourceFile = Camps en el fitxer orige
 FieldsInTargetDatabase = Camps destinació a la base de dades Dolibarr

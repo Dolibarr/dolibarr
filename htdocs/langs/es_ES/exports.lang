@@ -54,8 +54,8 @@ LineTotalTTC = Importe total de la línea
 LineTotalVAT = Importe IVA de la línea
 TypeOfLineServiceOrProduct = Tipo de línea (0=producto, 1=servicio)
 FileWithDataToImport = Archivo que contiene los datos a importar
-FileToImport = Archivo a importar
+FileToImport = Archivo origen a importar
 FileMustHaveOneOfFollowingFormat = El archivo de importación debe tener uno de los siguientes formatos
-ChooseFileToImport = Elija el archivo a importar...
+ChooseFileToImport = Elija el archivo de importación y haga clic en el picto %s ...
 FieldsInSourceFile = Campos en el archivo origen
 FieldsInTargetDatabase = Campos destino en la base de datos Dolibarr
