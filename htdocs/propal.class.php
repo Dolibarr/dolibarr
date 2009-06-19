@@ -155,7 +155,7 @@ class Propal extends CommonObject
 
 			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
 			// multiprix
-			if($conf->global->PRODUIT_MULTIPRICES)
+			if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
 			{
 				$price = $prod->multiprices[$this->client->price_level];
 			}

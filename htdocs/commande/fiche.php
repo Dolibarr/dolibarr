@@ -354,7 +354,7 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 			$tva_tx = get_default_tva($mysoc,$commande->client,$prod->tva_tx);
 
 			// multiprix
-			if ($conf->global->PRODUIT_MULTIPRICES)
+			if ($conf->global->PRODUIT_MULTIPRICES && $commande->client->price_level)
 			{
 				$pu_ht = $prod->multiprices[$commande->client->price_level];
 				$pu_ttc = $prod->multiprices_ttc[$commande->client->price_level];

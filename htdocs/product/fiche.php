@@ -338,7 +338,7 @@ if ($_POST["action"] == 'addinpropal')
 	$price_base_type = 'HT';
 
 	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES)
+	if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
 	{
 		$pu_ht = $prod->multiprices[$soc->price_level];
 		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
@@ -417,7 +417,7 @@ if ($_POST["action"] == 'addincommande')
 	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 
 	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES)
+	if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
 	{
 		$pu_ht = $prod->multiprices[$soc->price_level];
 		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
@@ -497,7 +497,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 
 	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES)
+	if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
 	{
 		$pu_ht = $prod->multiprices[$soc->price_level];
 		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];

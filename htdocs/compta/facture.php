@@ -885,7 +885,7 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 			$tva_npr = get_default_npr($mysoc,$fac->client,$prod->tva_tx);
 
 			// We define price for product
-			if ($conf->global->PRODUIT_MULTIPRICES)
+			if ($conf->global->PRODUIT_MULTIPRICES && $fac->client->price_level)
 			{
 				$pu_ht = $prod->multiprices[$fac->client->price_level];
 				$pu_ttc = $prod->multiprices_ttc[$fac->client->price_level];

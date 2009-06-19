@@ -281,7 +281,7 @@ if ($_GET["action"] == 'create')
 			{
 				print '<tr><td>';
 				// multiprix
-				if($conf->global->PRODUIT_MULTIPRICES)
+				if($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
 				$html->select_produits('',"idprod".$i,'',$conf->produit->limit_size,$soc->price_level);
 				else
 				$html->select_produits('',"idprod".$i,'',$conf->produit->limit_size);

@@ -642,7 +642,7 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 			$tva_npr = get_default_npr($mysoc,$propal->client,$prod->tva_tx);
 
 			// On defini prix unitaire
-			if ($conf->global->PRODUIT_MULTIPRICES && isset($prod->multiprices_base_type[$propal->client->price_level]))
+			if ($conf->global->PRODUIT_MULTIPRICES && $propal->client->price_level)
 			{
 				$pu_ht  = $prod->multiprices[$propal->client->price_level];
 				$pu_ttc = $prod->multiprices_ttc[$propal->client->price_level];

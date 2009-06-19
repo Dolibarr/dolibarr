@@ -870,8 +870,12 @@ class Form
 				$opt.= '>'.$objp->ref.' - ';
 				$opt.= dol_trunc($objp->label,32).' - ';
 
+				$found=0;
+				$currencytext=$langs->trans("Currency".$conf->monnaie);
+				if (strlen($currencytext) > 10) $currencytext=$conf->monnaie;	// If text is too long, we use the short code
+				
 				// Multiprice
-				if ($price_level > 1)
+				if ($price_level >= 1)		// If we need a particular price level (from 1 to 6)
 				{
 					$sql= "SELECT price, price_ttc, price_base_type ";
 					$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
@@ -887,10 +891,11 @@ class Form
 						$objp2 = $this->db->fetch_object($result2);
 						if ($objp2)
 						{
+							$found=1;
 							if ($objp2->price_base_type == 'HT')
-							$opt.= price($objp2->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+							$opt.= price($objp2->price,1).' '.$currencytext.' '.$langs->trans("HT");
 							else
-							$opt.= price($objp2->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+							$opt.= price($objp2->price_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
 						}
 					}
 					else
@@ -898,13 +903,14 @@ class Form
 						dol_print_error($this->db);
 					}
 				}
-				//si il n'y a pas de prix multiple on prend le prix de base du produit/service
-				else
+
+				// If level no defined or multiprice not found, we used the default price
+				if (! $found)
 				{
 					if ($objp->price_base_type == 'HT')
-					$opt.= price($objp->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+					$opt.= price($objp->price,1).' '.$currencytext.' '.$langs->trans("HT");
 					else
-					$opt.= price($objp->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+					$opt.= price($objp->price_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
 				}
 
 				if ($conf->stock->enabled && isset($objp->stock) && $objp->fk_product_type == 0)

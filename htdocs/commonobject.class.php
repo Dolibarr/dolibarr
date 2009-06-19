@@ -18,21 +18,20 @@
  */
 
 /**
- \file       htdocs/commonobject.class.php
- \ingroup    core
- \brief      Fichier de la classe mere des classes metiers (facture, contrat, propal, commande, etc...)
- \version    $Id$
+ *	\file       htdocs/commonobject.class.php
+ *	\ingroup    core
+ *	\brief      Fichier de la classe mere des classes metiers (facture, contrat, propal, commande, etc...)
+ *	\version    $Id$
  */
 
 
 /**
- \class 		CommonObject
- \brief 		Classe mere pour heritage des classes metiers
+ *	\class 		CommonObject
+ *	\brief 		Classe mere pour heritage des classes metiers
  */
 
 class CommonObject
 {
-
 	/**
 	 *      \brief      Ajoute un contact associe au l'entite definie dans $this->element
 	 *      \param      fk_socpeople        Id du contact a ajouter
@@ -352,9 +351,15 @@ class CommonObject
 	 */
 	function fetch_client()
 	{
+		global $conf;
+		
 		$client = new Societe($this->db);
 		$result=$client->fetch($this->socid);
 		$this->client = $client;
+
+		// Use first price level if level not defined for third party
+		if ($conf->global->PRODUIT_MULTIPRICES && empty($this->client->price_level)) $this->client->price_level=1;
+		
 		return $result;
 	}
 

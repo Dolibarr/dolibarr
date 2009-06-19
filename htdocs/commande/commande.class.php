@@ -853,48 +853,48 @@ class Commande extends CommonObject
 
 			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
 			// multiprix
-			if($conf->global->PRODUIT_MULTIPRICES)
-	  $price = $prod->multiprices[$this->client->price_level];
-	  else
-	  $price = $prod->price;
+			if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
+			$price = $prod->multiprices[$this->client->price_level];
+			else
+			$price = $prod->price;
 
-	  $line=new CommandeLigne($this->db);
-	  $line->fk_product=$idproduct;
-	  $line->desc=$prod->description;
-	  $line->qty=$qty;
-	  $line->subprice=$price;
-	  $line->remise_percent=$remise_percent;
-	  $line->tva_tx=$tva_tx;
-	  $line->ref=$prod->ref;
-	  $line->libelle=$prod->libelle;
-	  $line->product_desc=$prod->description;
+			$line=new CommandeLigne($this->db);
+			$line->fk_product=$idproduct;
+			$line->desc=$prod->description;
+			$line->qty=$qty;
+			$line->subprice=$price;
+			$line->remise_percent=$remise_percent;
+			$line->tva_tx=$tva_tx;
+			$line->ref=$prod->ref;
+			$line->libelle=$prod->libelle;
+			$line->product_desc=$prod->description;
 
-	  // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	  // Save the start and end date of the line in the object
-	  if ($date_start) { $line->date_start = $date_start; }
-	  if ($date_end)   { $line->date_end = $date_end; }
+			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+			// Save the start and end date of the line in the object
+			if ($date_start) { $line->date_start = $date_start; }
+			if ($date_end)   { $line->date_end = $date_end; }
 
-	  $this->lines[] = $line;
+			$this->lines[] = $line;
 
-	  /** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
-	   if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
-	   {
-	   $prod = new Product($this->db, $idproduct);
-	   $prod -> get_sousproduits_arbo ();
-	   $prods_arbo = $prod->get_each_prod();
-	   if(sizeof($prods_arbo) > 0)
-	   {
-	   foreach($prods_arbo as $key => $value)
-	   {
-	   // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
-	   if(! in_array($value[1],$this->products))
-	   $this->add_product($value[1], $value[0]);
+			/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
+			 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
+			 {
+			 $prod = new Product($this->db, $idproduct);
+			 $prod -> get_sousproduits_arbo ();
+			 $prods_arbo = $prod->get_each_prod();
+			 if(sizeof($prods_arbo) > 0)
+			 {
+			 foreach($prods_arbo as $key => $value)
+			 {
+			 // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
+			 if(! in_array($value[1],$this->products))
+			 $this->add_product($value[1], $value[0]);
 
-	   }
-	   }
+			 }
+			 }
 
-	   }
-	   **/
+			 }
+			 **/
 		}
 	}
 
