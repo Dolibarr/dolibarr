@@ -241,6 +241,7 @@ DolibarrLogin=Dolibarr login
 NoDolibarrAccess=No Dolibarr access
 ExportDataset_company_1=Companies/foundations and properties
 ExportDataset_company_2=Contacts and properties
+PriceLevel=Price level
 DeliveriesAddress=Delivery addresses
 DeliveryAddress=Delivery address
 DeliveryAddressLabel=Delivery address label
