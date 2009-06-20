@@ -1,6 +1,7 @@
 index.php
 *.htaccess
 *.settings
+*.buildpath
 *.project
 *.cache
 *.log
