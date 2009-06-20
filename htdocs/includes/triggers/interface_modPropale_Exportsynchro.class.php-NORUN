@@ -1,0 +1,212 @@
+<?php
+/* Copyright (C) 2009  Regis Houssin  <regis@dolibarr.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/**
+        \file       htdocs/includes/triggers/interface_modPropale_Exportsynchro.class.php
+        \ingroup    propale
+        \brief      Trigger file for
+		\version	$Id$
+*/
+
+
+/**
+        \class      InterfaceExportsynchro
+        \brief      Classe des fonctions triggers des actions personalisees du workflow
+*/
+
+class InterfaceExportsynchro
+{
+    var $db;
+    
+    /**
+     *   \brief      Constructeur.
+     *   \param      DB      Handler d'acces base
+     */
+    function InterfaceExportsynchro($DB)
+    {
+        $this->db = $DB ;
+    
+        $this->name = eregi_replace('^Interface','',get_class($this));
+        $this->family = "propale";
+        $this->description = "Triggers of this module allows to export signed propal for synchro with an other application. (in csv files)";
+        $this->version = 'development';            // 'development', 'experimental', 'dolibarr' or version
+    }
+    
+    
+    /**
+     *   \brief      Renvoi nom du lot de triggers
+     *   \return     string      Nom du lot de triggers
+     */
+    function getName()
+    {
+        return $this->name;
+    }
+    
+    /**
+     *   \brief      Renvoi descriptif du lot de triggers
+     *   \return     string      Descriptif du lot de triggers
+     */
+    function getDesc()
+    {
+        return $this->description;
+    }
+
+    /**
+     *   \brief      Renvoi version du lot de triggers
+     *   \return     string      Version du lot de triggers
+     */
+    function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
+
+        if ($this->version == 'development') return $langs->trans("Development");
+        elseif ($this->version == 'experimental') return $langs->trans("Experimental");
+        elseif ($this->version == 'dolibarr') return DOL_VERSION;
+        elseif ($this->version) return $this->version;
+        else return $langs->trans("Unknown");
+    }
+    
+    /**
+     *      \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
+     *                  D'autres fonctions run_trigger peuvent etre presentes dans includes/triggers
+     *      \param      action      Code de l'evenement
+     *      \param      object      Objet concerne
+     *      \param      user        Objet user
+     *      \param      lang        Objet lang
+     *      \param      conf        Objet conf
+     *      \return     int         <0 if fatal error, 0 si nothing done, >0 if ok
+     */
+	function run_trigger($action,$object,$user,$langs,$conf)
+    {	
+        // Mettre ici le code a executer en reaction de l'action
+        // Les donnees de l'action sont stockees dans $object
+
+        // Proposals
+        if ($action == 'PROPAL_CLOSE_SIGNED')
+        {
+        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            return $this->_create_csv_files($action,$object,$user,$langs,$conf);
+        }
+
+		return 0;
+    }
+    
+    function _create_csv_files($action,$object,$user,$langs,$conf)
+    {
+    	include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+    	include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+    	
+    	$propal_filename = $conf->propale->dir_temp.'/propal_exportsynchro.csv';
+    	$propalLines_filename = $conf->propale->dir_temp.'/propal_lines_exportsynchro.csv';
+    	$separator = ',';
+    	
+    	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
+    	{
+    		$langs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
+    	}
+    	else
+    	{
+    		$langs->charset_output = 'ISO-8859-1';
+    	}
+    	
+    	$propal = new Propal($this->db);
+    	$propal->fetch($object->id);
+    	
+    	$societe = new Societe($this->db, $propal->socid);
+    	$societe->fetch($propal->socid);
+    	
+    	// Create propal csv file
+    	$objPropal = array(	"CompanyName"=>$societe->nom,
+            				"Zip"=>$societe->cp,
+            				"Ref"=>$propal->ref,
+            				"RefClient"=>$propal->ref_client,
+            				"DateCreation"=>$propal->datec
+            			);
+            
+        if(!file_exists($propal_filename))
+        {
+        	$this->handle = fopen($propal_filename, "wt");
+        	
+        	foreach ($objPropal as $head => $value)
+            {
+            	$field = $langs->transnoentities($head);
+            	fwrite($this->handle,$field.$separator);
+            }
+            fwrite($this->handle,"\n");
+            fclose($this->handle);
+        }
+        
+        $this->handle = fopen($propal_filename, "a+");
+
+        foreach ($objPropal as $head => $value)
+        {
+        	fwrite($this->handle,$value.$separator);
+        }
+        fwrite($this->handle,"\n");
+        fclose($this->handle);
+            
+        // Create propal lines csv files
+        $objPropalLine_head = array(	"Ref",
+           								"ProductRef",
+           								"Label",
+           								"LineQty",
+           								"LineTotalHT"
+           							);
+            
+        $i=0;
+        while ($i < count($propal->lignes))
+        {
+        	$objPropalLine_data[$i] = array(	"Ref"=>$propal->ref,
+            									"ProductRef"=>$propal->lignes[$i]->ref,
+            									"Label"=>$propal->lignes[$i]->libelle,
+            									"LineQty"=>$propal->lignes[$i]->qty,
+            									"LineTotalHT"=>$propal->lignes[$i]->total_ht
+           									);
+           	$i++;
+        }
+            
+        if(!file_exists($propalLines_filename))
+        {
+        	$this->handle = fopen($propalLines_filename, "wt");
+            	
+            foreach ($objPropalLine_head as $value)
+            {
+            	$field = $langs->transnoentities($value);
+            	fwrite($this->handle,$field.$separator);
+            }
+            fwrite($this->handle,"\n");
+            fclose($this->handle);
+        }
+            
+        $this->handle = fopen($propalLines_filename, "a+");
+        $i=0;
+        while ($i < count($objPropalLine_data))
+        {
+        	foreach ($objPropalLine_data[$i] as $head => $value)
+        	{
+        		fwrite($this->handle,$value.$separator);
+            }
+            fwrite($this->handle,"\n");
+            $i++;
+        }
+        fclose($this->handle);	
+    }
+
+}
+?>
