@@ -147,6 +147,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 <!-- ========================= Cadre "Difference" ============================= -->
 <form id="frmDifference"  class="formulaire1" method="post" onsubmit="javascript: return verifReglement()" action="validation_verif.php?action=valide_achat">
+	<input type="hidden" name="hdnChoix" value="" />
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 <fieldset class="cadre_facturation"><legend class="titre1">Difference</legend>
 		<table>
@@ -166,7 +167,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 <fieldset class="cadre_facturation"><legend class="titre1">Mode de paiement</legend>
 		<table>
 			<tr>
-			<input type="hidden" name="hdnChoix" value="" />
 			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Especes" onclick="javascript: verifClic('ESP');" /></td>
 			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Carte" onclick="javascript: verifClic('CB');" /></td>
 			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Cheque" onclick="javascript: verifClic('CHQ');" /></td>
