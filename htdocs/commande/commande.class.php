@@ -278,7 +278,7 @@ class Commande extends CommonObject
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We decrement stock of product (and sub-products)
-						$entrepot_id = "1"; // TODO ajouter possibilit� de choisir l'entrepot
+						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
 						// TODO Add price of product in method or '' to update PMP
 						$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 						if ($result < 0) { $error++; }
@@ -349,6 +349,8 @@ class Commande extends CommonObject
 	function set_draft($user)
 	{
 		global $conf,$langs;
+		
+		$error=0;
 
 		// Protection
 		if ($this->statut <= 0)
@@ -378,13 +380,17 @@ class Commande extends CommonObject
 
 				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 				{
-					$mouvP = new MouvementStock($this->db);
-					// We increment stock of product (and sub-products)
-					$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-					$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+					if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
+					{
+						$mouvP = new MouvementStock($this->db);
+						// We increment stock of product (and sub-products)
+						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+						if ($result < 0) { $error++; }
+					}
 				}
 
-				if ($result > 0)
+				if (!$error)
 				{
 					$this->statut=0;
 					$this->db->commit();
