@@ -105,21 +105,17 @@ print '</form>';
 
 
 # Affiche lignes des constantes
-if ($all==1)
-{
-	$sql = "SELECT rowid, name, value, note, entity ";
-	$sql.= "FROM llx_const ";
-	$sql.= "WHERE entity IN (0,".$conf->entity.") ";
-	$sql.= "ORDER BY name ASC";
-}
-else
-{
-	$sql = "SELECT rowid, name, value, note, entity ";
-	$sql.= "FROM llx_const ";
-	$sql.= "WHERE visible = 1 ";
-	$sql.= "AND entity IN (0,".$conf->entity.") ";
-	$sql.= "ORDER BY name ASC";
-}
+$sql = "SELECT";
+$sql.= " rowid";
+$sql.= ", ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as name";
+$sql.= ", ".$db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+$sql.= ", note";
+$sql.= ", entity";
+$sql.= " FROM ".MAIN_DB_PREFIX."const";
+$sql.= " WHERE entity IN (0,".$conf->entity.")";
+if (!isset($all)) $sql.= " AND visible = 1";
+$sql.= " ORDER BY name ASC";
+
 dol_syslog("Const::listConstant sql=".$sql);
 $result = $db->query($sql);
 if ($result)
