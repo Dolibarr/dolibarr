@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -465,7 +465,7 @@ class DoliDb
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_object($resultset)) { $resultset=$this->results; }
-		// Si resultset en est un, on libere la m�moire
+		// Si resultset en est un, on libere la memoire
 		if (is_object($resultset)) mysqli_free_result($resultset);
 	}
 
@@ -743,6 +743,7 @@ class DoliDb
 
 		return $return;
 	}
+	
 	/**
 	 *	\brief          Decrypt sensitive data in database
 	 *	\param	        field			Field name to decrypt
@@ -750,7 +751,7 @@ class DoliDb
 	 * 	\param			cryptKey		Encryption key
 	 * 	\return	        return			Field to decrypt if used
 	 */
-	function decrypt($field, $cryptType=2, $cryptKey='')
+	function decrypt($field, $cryptType=0, $cryptKey='')
 	{
 		$return = $field;
 		
