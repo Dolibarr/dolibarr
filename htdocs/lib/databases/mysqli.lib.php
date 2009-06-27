@@ -465,7 +465,7 @@ class DoliDb
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_object($resultset)) { $resultset=$this->results; }
-		// Si resultset en est un, on libere la memoire
+		// Si resultset en est un, on libere la m�moire
 		if (is_object($resultset)) mysqli_free_result($resultset);
 	}
 
@@ -750,7 +750,7 @@ class DoliDb
 	 * 	\param			cryptKey		Encryption key
 	 * 	\return	        return			Field to decrypt if used
 	 */
-	function decrypt($field, $cryptType=0, $cryptKey='')
+	function decrypt($field, $cryptType=2, $cryptKey='')
 	{
 		$return = $field;
 		
