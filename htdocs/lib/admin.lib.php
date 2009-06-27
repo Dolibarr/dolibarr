@@ -303,7 +303,7 @@ function dolibarr_del_const($db, $name, $entity=1)
 	global $conf;
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql.=" WHERE (".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".addslashes($name)."' OR rowid = '".addslashes($name)."')";
+	$sql.=" WHERE (".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".addslashes($name)."' OR rowid = '".addslashes($name)."')";
 	$sql.= " AND entity = ".$entity;
 
 	dol_syslog("admin.lib::dolibarr_del_const sql=".$sql);
@@ -334,7 +334,7 @@ function dolibarr_get_const($db, $name, $entity=1)
 
 	$sql = "SELECT ".$db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
 	$sql.= " FROM ".MAIN_DB_PREFIX."const";
-	$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".addslashes($name)."'";
+	$sql.= " WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".addslashes($name)."'";
 	$sql.= " AND entity = ".$entity;
 
 	dol_syslog("admin.lib::dolibarr_get_const sql=".$sql);
@@ -374,7 +374,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
 	//dol_syslog("dolibarr_set_const name=$name, value=$value");
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".addslashes($name)."'";
+	$sql.= " WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".addslashes($name)."'";
 	$sql.= " AND entity = ".$entity;
 	dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
@@ -382,7 +382,10 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 	if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
 	{
 		$sql = "INSERT INTO llx_const(name,value,type,visible,note,entity)";
-		$sql.= " VALUES ('".$db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)."','".$db->encrypt(addslashes($value),$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)."','".$type."',".$visible.",'".addslashes($note)."',".$entity.")";
+		$sql.= " VALUES (";
+		$sql.= "'".$db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)."'";
+		$sql.= ",'".$db->encrypt(addslashes($value),$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)."'";
+		$sql.= ",'".$type."',".$visible.",'".addslashes($note)."',".$entity.")";
 
 		dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
