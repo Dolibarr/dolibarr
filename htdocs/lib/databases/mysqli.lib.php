@@ -72,10 +72,10 @@ class DoliDb
 
 
 	/**
-	 \brief     Ouverture d'une connexion vers le serveur et �ventuellement une database.
-	 \param     type		Type de base de donn�es (mysql ou pgsql)
-	 \param	    host		Addresse de la base de donn�es
-	 \param	    user		Nom de l'utilisateur autoris�
+	 \brief     Ouverture d'une connexion vers le serveur et eventuellement une database.
+	 \param     type		Type de base de donnees (mysql ou pgsql)
+	 \param	    host		Addresse de la base de donnees
+	 \param	    user		Nom de l'utilisateur autorise
 	 \param	    pass		Mot de passe
 	 \param	    name		Nom de la database
 	 \param	    port		Port of database server
@@ -349,7 +349,7 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Effectue une requete et renvoi le resultset de r�ponse de la base
+	 \brief      Effectue une requete et renvoi le resultset de reponse de la base
 	 \param	    query	    Contenu de la query
 	 \return	    resource    Resultset de la reponse
 	 */
@@ -449,7 +449,7 @@ class DoliDb
 
 	function affected_rows($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_object($resultset)) { $resultset=$this->results; }
 		// mysql necessite un link de base pour cette fonction contrairement
 		// a pqsql qui prend un resultset
@@ -458,22 +458,22 @@ class DoliDb
 
 
 	/**
-	 \brief      Lib�re le dernier resultset utilis� sur cette connexion.
+	 \brief      Libere le dernier resultset utilise sur cette connexion.
 	 \param      resultset   Curseur de la requete voulue
 	 */
 	function free($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_object($resultset)) { $resultset=$this->results; }
-		// Si resultset en est un, on libere la m�moire
+		// Si resultset en est un, on libere la memoire
 		if (is_object($resultset)) mysqli_free_result($resultset);
 	}
 
 
 	/**
-	 \brief      D�fini les limites de la requ�te.
-	 \param	    limit       nombre maximum de lignes retourn�es
-	 \param	    offset      num�ro de la ligne � partir de laquelle recup�rer les ligne
+	 \brief      Defini les limites de la requete.
+	 \param	    limit       nombre maximum de lignes retournees
+	 \param	    offset      numero de la ligne a partir de laquelle recuperer les ligne
 	 \return	    string      chaine exprimant la syntax sql de la limite
 	 */
 	function plimit($limit=0,$offset=0)
@@ -486,7 +486,7 @@ class DoliDb
 
 
 	/**
-	 \brief      D�fini le tri de la requ�te.
+	 \brief      Defini le tri de la requete.
 	 \param	    sortfield   liste des champ de tri
 	 \param	    sortorder   ordre du tri
 	 \return	    string      chaine exprimant la syntax sql de l'ordre de tri
@@ -704,8 +704,8 @@ class DoliDb
 	}
 
 	/**
-	 \brief     R�cup�re l'id gen�r� par le dernier INSERT.
-	 \param     tab     Nom de la table concern�e par l'insert. Ne sert pas sous MySql mais requis pour compatibilit� avec Postgresql
+	 \brief     Recupere l'id genere par le dernier INSERT.
+	 \param     tab     Nom de la table concernee par l'insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
 	 \return    int     id
 	 */
 	function last_insert_id($tab)
@@ -717,8 +717,57 @@ class DoliDb
 
 	// Next function are not required. Only minor features use them.
 	//--------------------------------------------------------------
+	
+	/**
+	 *	\brief          Encrypt sensitive data in database
+	 *	\param	        field			Field name to encrypt
+	 * 	\param			cryptType		Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
+	 * 	\param			cryptKey		Encryption key
+	 * 	\return	        return			Field to encrypt if used
+	 */
+	function encrypt($field, $cryptType=0, $cryptKey='')
+	{
+		$return = $field;
+		
+		if ($cryptType && !empty($cryptKey))
+		{
+			if ($cryptType == 2)
+			{
+				$return = 'AES_ENCRYPT('.$field.',\''.$cryptKey.'\')';
+			}
+			else if ($cryptType == 1)
+			{
+				$return = 'DES_ENCRYPT('.$field.',\''.$cryptKey.'\')';
+			}
+		}
 
-
+		return $return;
+	}
+	/**
+	 *	\brief          Decrypt sensitive data in database
+	 *	\param	        field			Field name to decrypt
+	 * 	\param			cryptType		Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
+	 * 	\param			cryptKey		Encryption key
+	 * 	\return	        return			Field to decrypt if used
+	 */
+	function decrypt($field, $cryptType=0, $cryptKey='')
+	{
+		$return = $field;
+		
+		if ($cryptType && !empty($cryptKey))
+		{
+			if ($cryptType == 2)
+			{
+				$return = 'AES_DECRYPT('.$field.',\''.$cryptKey.'\')';
+			}
+			else if ($cryptType == 1)
+			{
+				$return = 'DES_DECRYPT('.$field.',\''.$cryptKey.'\')';
+			}
+		}
+		
+		return $return;
+	}
 
 	/**
 	 \brief          Renvoie l'id de la connexion
@@ -765,7 +814,7 @@ class DoliDb
 	/**
 		\brief     	Liste des tables dans une database.
 		\param	    database		Nom de la database
-		\param	    table   		Filtre sur tables � rechercher
+		\param	    table   		Filtre sur tables a rechercher
 		\return	    array			Tableau des tables de la base
 		*/
 	function DDLListTables($database, $table='')
@@ -785,19 +834,19 @@ class DoliDb
 	}
 
 	/**
-		\brief      Cr�e une table
+		\brief      Cree une table
 		\param	    table 			Nom de la table
 		\param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
 		\param	    primary_key 	Nom du champ qui sera la clef primaire
 		\param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
-		\param	    fulltext 		Tableau des Nom de champs qui seront index�s en fulltext
-		\param	    key 			Tableau des champs cl�s noms => valeur
+		\param	    fulltext 		Tableau des Nom de champs qui seront indexes en fulltext
+		\param	    key 			Tableau des champs cles noms => valeur
 		\param	    type 			Type de la table
 		\return	    int				<0 si KO, >=0 si OK
 		*/
 	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
 	{
-		// cl�s recherch�es dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
+		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "create table ".$table."(";
 		$i=0;
@@ -861,7 +910,7 @@ class DoliDb
 	}
 
 	/**
-		\brief      d�crit une table dans une database.
+		\brief      decrit une table dans une database.
 		\param	    table	Nom de la table
 		\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
 		\return	    resource
@@ -879,13 +928,13 @@ class DoliDb
 	 *	\brief      Insert a new field in table
 	 *	\param	    table 			Nom de la table
 	 *	\param		field_name 		Nom du champ a inserer
-	 *	\param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du param�tre]
+	 *	\param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
 	 *	\param	    field_position 	Optionnel ex.: "after champtruc"
 	 *	\return	    int				<0 si KO, >0 si OK
 	 */
 	function DDLAddField($table,$field_name,$field_desc,$field_position="")
 	{
-		// cl�s recherch�es dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
@@ -934,8 +983,8 @@ class DoliDb
 	/**
 	 \brief      Create a user
 	 \param	    dolibarr_main_db_host 		Ip serveur
-	 \param	    dolibarr_main_db_user 		Nom user � cr�er
-	 \param	    dolibarr_main_db_pass 		Mot de passe user � cr�er
+	 \param	    dolibarr_main_db_user 		Nom user a creer
+	 \param	    dolibarr_main_db_pass 		Mot de passe user a creer
 	 \param		dolibarr_main_db_name		Database name where user must be granted
 	 \return	    int							<0 si KO, >=0 si OK
 	 */

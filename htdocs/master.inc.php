@@ -129,6 +129,10 @@ if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_';
 $conf->db->prefix = $dolibarr_main_db_prefix;
 if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';
 $conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
+if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
+$conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
+if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey=''; // TODO la cle devra ne doit pas etre stockee sur le serveur
+$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 // Identifiant autres
 $conf->file->main_authentication = empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
 // Force https
