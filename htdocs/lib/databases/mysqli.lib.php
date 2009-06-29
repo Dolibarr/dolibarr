@@ -230,8 +230,8 @@ class DoliDb
 	}
 
 	/**
-	 \brief          Renvoie la version du serveur
-	 \return	        string      Chaine version
+	 *	\brief          Renvoie la version du serveur
+	 *	\return	        string      Chaine version
 	 */
 	function getVersion()
 	{
@@ -242,8 +242,8 @@ class DoliDb
 	}
 
 	/**
-	 \brief          Renvoie la version du serveur sous forme de nombre
-	 \return	        string      Chaine version
+	 *	\brief          Renvoie la version du serveur sous forme de nombre
+	 *	\return	        string      Chaine version
 	 */
 	function getIntVersion()
 	{
@@ -259,8 +259,8 @@ class DoliDb
 	}
 
 	/**
-	 \brief          Renvoie la version du serveur dans un tableau
-	 \return	        array  		Tableau de chaque niveau de version
+	 *	\brief          Renvoie la version du serveur dans un tableau
+	 *	\return	        array  		Tableau de chaque niveau de version
 	 */
 	function getVersionArray()
 	{
@@ -269,9 +269,9 @@ class DoliDb
 
 
 	/**
-	 \brief      Fermeture d'une connexion vers une database.
-	 \return	    resource
-	 \seealso	connect
+	 *	\brief      Fermeture d'une connexion vers une database.
+	 *	\return	    resource
+	 *	\seealso	connect
 	 */
 	function close()
 	{
@@ -281,8 +281,8 @@ class DoliDb
 
 
 	/**
-	 \brief      Debut d'une transaction.
-	 \return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
+	 *	\brief      Debut d'une transaction.
+	 *	\return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
 	 */
 	function begin()
 	{
@@ -349,9 +349,9 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Effectue une requete et renvoi le resultset de reponse de la base
-	 \param	    query	    Contenu de la query
-	 \return	    resource    Resultset de la reponse
+	 *	\brief      Effectue une requete et renvoi le resultset de reponse de la base
+	 *	\param	    query	    Contenu de la query
+	 *	\return	    resource    Resultset de la reponse
 	 */
 	function query($query)
 	{
@@ -383,9 +383,9 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
-	 \param      resultset   Curseur de la requete voulue
-	 \return	    resource
+	 *	\brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
+	 *	\param      resultset   Curseur de la requete voulue
+	 *	\return	    resource
 	 */
 	function fetch_object($resultset=0)
 	{
@@ -428,10 +428,10 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
-	 \see    	affected_rows
-	 \param      resultset   Curseur de la requete voulue
-	 \return     int		    Nombre de lignes
+	 *	\brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
+	 *	\see    	affected_rows
+	 *	\param      resultset   Curseur de la requete voulue
+	 *	\return     int		    Nombre de lignes
 	 */
 	function num_rows($resultset=0)
 	{
@@ -441,10 +441,10 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
-	 \see    	num_rows
-	 \param      resultset   Curseur de la requete voulue
-	 \return     int		    Nombre de lignes
+	 *	\brief      Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 *	\see    	num_rows
+	 *	\param      resultset   Curseur de la requete voulue
+	 *	\return     int		    Nombre de lignes
 	 */
 
 	function affected_rows($resultset=0)
@@ -458,8 +458,8 @@ class DoliDb
 
 
 	/**
-	 \brief      Libere le dernier resultset utilise sur cette connexion.
-	 \param      resultset   Curseur de la requete voulue
+	 *	\brief      Libere le dernier resultset utilise sur cette connexion.
+	 *	\param      resultset   Curseur de la requete voulue
 	 */
 	function free($resultset=0)
 	{
@@ -471,10 +471,10 @@ class DoliDb
 
 
 	/**
-	 \brief      Defini les limites de la requete.
-	 \param	    limit       nombre maximum de lignes retournees
-	 \param	    offset      numero de la ligne a partir de laquelle recuperer les ligne
-	 \return	    string      chaine exprimant la syntax sql de la limite
+	 *	\brief      Defini les limites de la requete.
+	 *	\param	    limit       nombre maximum de lignes retournees
+	 *	\param	    offset      numero de la ligne a partir de laquelle recuperer les ligne
+	 *	\return	    string      chaine exprimant la syntax sql de la limite
 	 */
 	function plimit($limit=0,$offset=0)
 	{
@@ -486,12 +486,12 @@ class DoliDb
 
 
 	/**
-	 \brief      Defini le tri de la requete.
-	 \param	    sortfield   liste des champ de tri
-	 \param	    sortorder   ordre du tri
-	 \return	    string      chaine exprimant la syntax sql de l'ordre de tri
-		\TODO		A mutualiser dans classe mere
-		*/
+	 *	\brief      Defini le tri de la requete.
+	 *	\param	    sortfield   liste des champ de tri
+	 *	\param	    sortorder   ordre du tri
+	 *	\return	    string      chaine exprimant la syntax sql de l'ordre de tri
+	 *	\TODO		A mutualiser dans classe mere
+	 */
 	function order($sortfield=0,$sortorder=0)
 	{
 		if ($sortfield)
@@ -563,32 +563,6 @@ class DoliDb
 		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 		return $date;
 	}
-
-	/**
-	 *   \brief     Convert (by PHP) a GM Timestamp date into a GM string date to insert into a date field.
-	 *              Function to use to build INSERT, UPDATE or WHERE predica
-	 *   \param	    param       Date TMS to convert
-	 *   \return	string      Date in a string YYYYMMDDHHMMSS
-	 */
-	/*function gmtosdate($param)
-	{
-		return adodb_strftime("%Y%m%d%H%M%S",$param,true);
-	}*/
-
-	/**
-	 *	\brief  	Convert (by PHP) a GM string date into a GM Timestamps date
-	 *	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	\return		date			Date TMS
-	 * 	\example	19700101020000 -> 7200
-	 */
-	/*function gmtotdate($string)
-	{
-		$string=eregi_replace('[^0-9]','',$string);
-		$tmp=$string.'000000';
-		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
-		return $date;
-	}
-	*/
 
 	/**
 	 *	\brief      Formatage d'un if SQL
@@ -689,8 +663,8 @@ class DoliDb
 	}
 
 	/**
-	 \brief     Renvoie le texte de l'erreur mysql de l'operation precedente.
-	 \return    error_text
+	 *	\brief     Renvoie le texte de l'erreur mysql de l'operation precedente.
+	 *	\return    error_text
 	 */
 	function error()
 	{
@@ -704,9 +678,9 @@ class DoliDb
 	}
 
 	/**
-	 \brief     Recupere l'id genere par le dernier INSERT.
-	 \param     tab     Nom de la table concernee par l'insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
-	 \return    int     id
+	 *	\brief     Recupere l'id genere par le dernier INSERT.
+	 *	\param     tab     Nom de la table concernee par l'insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 *	\return    int     id
 	 */
 	function last_insert_id($tab)
 	{
@@ -715,9 +689,9 @@ class DoliDb
 
 
 
-	// Next function are not required. Only minor features use them.
-	//--------------------------------------------------------------
-	
+	// Next functions are not required. Only minor features use them.
+	//---------------------------------------------------------------
+
 	/**
 	 *	\brief          Encrypt sensitive data in database
 	 *	\param	        field			Field name to encrypt
@@ -728,7 +702,7 @@ class DoliDb
 	function encrypt($field, $cryptType=0, $cryptKey='')
 	{
 		$return = $field;
-		
+
 		if ($cryptType && !empty($cryptKey))
 		{
 			if ($cryptType == 2)
@@ -743,7 +717,7 @@ class DoliDb
 
 		return $return;
 	}
-	
+
 	/**
 	 *	\brief          Decrypt sensitive data in database
 	 *	\param	        field			Field name to decrypt
@@ -754,7 +728,7 @@ class DoliDb
 	function decrypt($field, $cryptType=0, $cryptKey='')
 	{
 		$return = $field;
-		
+
 		if ($cryptType && !empty($cryptKey))
 		{
 			if ($cryptType == 2)
@@ -766,13 +740,13 @@ class DoliDb
 				$return = 'DES_DECRYPT('.$field.',\''.$cryptKey.'\')';
 			}
 		}
-		
+
 		return $return;
 	}
 
 	/**
-	 \brief          Renvoie l'id de la connexion
-	 \return	        string      Id connexion
+	 *	\brief          Renvoie l'id de la connexion
+	 *	\return	        string      Id connexion
 	 */
 	function DDLGetConnectId()
 	{
@@ -780,7 +754,6 @@ class DoliDb
 		$row=$this->fetch_row($resql);
 		return $row[0];
 	}
-
 
 	/**
 	 *	\brief          Create a new database
@@ -813,11 +786,11 @@ class DoliDb
 	}
 
 	/**
-		\brief     	Liste des tables dans une database.
-		\param	    database		Nom de la database
-		\param	    table   		Filtre sur tables a rechercher
-		\return	    array			Tableau des tables de la base
-		*/
+	 *	\brief     	Liste des tables dans une database.
+	 *	\param	    database		Nom de la database
+	 *	\param	    table   		Filtre sur tables a rechercher
+	 *	\return	    array			Tableau des tables de la base
+	 */
 	function DDLListTables($database, $table='')
 	{
 		$listtables=array();
@@ -835,16 +808,16 @@ class DoliDb
 	}
 
 	/**
-		\brief      Cree une table
-		\param	    table 			Nom de la table
-		\param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
-		\param	    primary_key 	Nom du champ qui sera la clef primaire
-		\param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
-		\param	    fulltext 		Tableau des Nom de champs qui seront indexes en fulltext
-		\param	    key 			Tableau des champs cles noms => valeur
-		\param	    type 			Type de la table
-		\return	    int				<0 si KO, >=0 si OK
-		*/
+	 *	\brief      Cree une table
+	 *	\param	    table 			Nom de la table
+	 *	\param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
+	 *	\param	    primary_key 	Nom du champ qui sera la clef primaire
+	 *	\param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
+	 *	\param	    fulltext 		Tableau des Nom de champs qui seront indexes en fulltext
+	 *	\param	    key 			Tableau des champs cles noms => valeur
+	 *	\param	    type 			Type de la table
+	 *	\return	    int				<0 si KO, >=0 si OK
+	 */
 	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
 	{
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
@@ -911,11 +884,11 @@ class DoliDb
 	}
 
 	/**
-		\brief      decrit une table dans une database.
-		\param	    table	Nom de la table
-		\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
-		\return	    resource
-		*/
+	 *	\brief      decrit une table dans une database.
+	 *	\param	    table	Nom de la table
+	 *	\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
+	 *	\return	    resource
+	 */
 	function DDLDescTable($table,$field="")
 	{
 		$sql="DESC ".$table." ".$field;
@@ -982,12 +955,12 @@ class DoliDb
 
 
 	/**
-	 \brief      Create a user
-	 \param	    dolibarr_main_db_host 		Ip serveur
-	 \param	    dolibarr_main_db_user 		Nom user a creer
-	 \param	    dolibarr_main_db_pass 		Mot de passe user a creer
-	 \param		dolibarr_main_db_name		Database name where user must be granted
-	 \return	    int							<0 si KO, >=0 si OK
+	 *	\brief      Create a user
+	 *	\param	    dolibarr_main_db_host 		Ip serveur
+	 *	\param	    dolibarr_main_db_user 		Nom user a creer
+	 *	\param	    dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	\param		dolibarr_main_db_name		Database name where user must be granted
+	 *	\return	    int							<0 si KO, >=0 si OK
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{

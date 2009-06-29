@@ -551,32 +551,6 @@ class DoliDb
 	}
 
 	/**
-	 *   \brief     Convert (by PHP) a GM Timestamp date into a GM string date to insert into a date field.
-	 *              Function to use to build INSERT, UPDATE or WHERE predica
-	 *   \param	    param       Date TMS to convert
-	 *   \return	string      Date in a string YYYYMMDDHHMMSS
-	 */
-	/*function gmtosdate($param)
-	{
-		return adodb_strftime("%Y%m%d%H%M%S",$param,true);
-	}*/
-
-	/**
-	 *	\brief  	Convert (by PHP) a GM string date into a GM Timestamps date
-	 *	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	\return		date			Date TMS
-	 * 	\example	19700101020000 -> 7200
-	 */
-	/*function gmtotdate($string)
-	{
-		$string=eregi_replace('[^0-9]','',$string);
-		$tmp=$string.'000000';
-		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
-		return $date;
-	}*/
-
-
-	/**
 	 *	\brief      Formatage d'un if SQL
 	 *	\param		test            chaine test
 	 *	\param		resok           resultat si test egal
@@ -701,9 +675,9 @@ class DoliDb
 
 
 
-	// Next function are not required. Only minor features use them.
-	//--------------------------------------------------------------
-	
+	// Next functions are not required. Only minor features use them.
+	//---------------------------------------------------------------
+
 	/**
 	 *	\brief          Encrypt sensitive data in database
 	 *	\param	        field			Field name to encrypt
@@ -714,7 +688,7 @@ class DoliDb
 	function encrypt($field, $cryptType=0, $cryptKey='')
 	{
 		$return = $field;
-		
+
 		if ($cryptType && !empty($cryptKey))
 		{
 			if ($cryptType == 2)
@@ -729,7 +703,7 @@ class DoliDb
 
 		return $return;
 	}
-	
+
 	/**
 	 *	\brief          Decrypt sensitive data in database
 	 *	\param	        field			Field name to decrypt
@@ -740,7 +714,7 @@ class DoliDb
 	function decrypt($field, $cryptType=0, $cryptKey='')
 	{
 		$return = $field;
-		
+
 		if ($cryptType && !empty($cryptKey))
 		{
 			if ($cryptType == 2)
@@ -752,14 +726,15 @@ class DoliDb
 				$return = 'DES_DECRYPT('.$field.',\''.$cryptKey.'\')';
 			}
 		}
-		
+
 		return $return;
 	}
 
+
 	/**
-		\brief          Renvoie l'id de la connexion
-		\return	        string      Id connexion
-		*/
+	 *	\brief          Renvoie l'id de la connexion
+	 *	\return	        string      Id connexion
+	 */
 	function DDLGetConnectId()
 	{
 		$resql=$this->query('SELECT CONNECTION_ID()');
@@ -799,11 +774,11 @@ class DoliDb
 	}
 
 	/**
-		\brief     	Liste des tables dans une database.
-		\param	    database		Nom de la database
-		\param	    table   		Filtre sur tables a rechercher
-		\return	    array			Tableau des tables de la base
-		*/
+	 *	\brief     	Liste des tables dans une database.
+	 *	\param	    database		Nom de la database
+	 *	\param	    table   		Filtre sur tables a rechercher
+	 *	\return	    array			Tableau des tables de la base
+	 */
 	function DDLListTables($database, $table='')
 	{
 		$listtables=array();
@@ -821,15 +796,15 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Cree une table
-	 \param	    table 			Nom de la table
-	 \param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
-	 \param	    primary_key 	Nom du champ qui sera la clef primaire
-	 \param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
-	 \param	    fulltext 		Tableau des Nom de champs qui seront indexes en fulltext
-	 \param	    key 			Tableau des champs cles noms => valeur
-	 \param	    type 			Type de la table
-	 \return	    int				<0 si KO, >=0 si OK
+	 *	\brief      Cree une table
+	 *	\param	    table 			Nom de la table
+	 *	\param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
+	 *	\param	    primary_key 	Nom du champ qui sera la clef primaire
+	 *	\param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
+	 *	\param	    fulltext 		Tableau des Nom de champs qui seront indexes en fulltext
+	 *	\param	    key 			Tableau des champs cles noms => valeur
+	 *	\param	    type 			Type de la table
+	 *	\return	    int				<0 si KO, >=0 si OK
 	 */
 	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
 	{
@@ -897,11 +872,11 @@ class DoliDb
 	}
 
 	/**
-	 \brief      decrit une table dans une database.
-		\param	    table	Nom de la table
-		\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
-		\return	    resource
-		*/
+	 *	\brief      decrit une table dans une database.
+	 *	\param	    table	Nom de la table
+	 *	\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
+	 *	\return	    resource
+	 */
 	function DDLDescTable($table,$field="")
 	{
 		$sql="DESC ".$table." ".$field;
@@ -967,12 +942,12 @@ class DoliDb
 
 
 	/**
-	 \brief      Create a user
-	 \param	    dolibarr_main_db_host 		Ip serveur
-	 \param	    dolibarr_main_db_user 		Nom user a creer
-	 \param	    dolibarr_main_db_pass 		Mot de passe user a creer
-	 \param		dolibarr_main_db_name		Database name where user must be granted
-	 \return	    int							<0 si KO, >=0 si OK
+	 *	\brief      Create a user
+	 *	\param	    dolibarr_main_db_host 		Ip serveur
+	 *	\param	    dolibarr_main_db_user 		Nom user a creer
+	 *	\param	    dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	\param		dolibarr_main_db_name		Database name where user must be granted
+	 *	\return	    int							<0 si KO, >=0 si OK
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
