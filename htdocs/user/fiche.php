@@ -1372,6 +1372,7 @@ else
 			{
 				print '<td>';
 				print '<input type="hidden" name="admin" value="'.$fuser->admin.'">'.yn($fuser->admin);
+				print ' ('.$langs->trans("ExternalUser").')';
 				print '</td></tr>';
 			}
 			else
