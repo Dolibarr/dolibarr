@@ -121,7 +121,7 @@ $sql.= ", note";
 $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
 $sql.= " WHERE entity IN (0,".$conf->entity.")";
-if (!empty($all)) $sql.= " AND visible = 1";
+if (empty($all)) $sql.= " AND visible = 1";
 $sql.= " ORDER BY name ASC";
 
 dol_syslog("Const::listConstant sql=".$sql);
