@@ -78,6 +78,10 @@ class Conf
 	{
 		dol_syslog("Conf::setValues");
 
+		// Avoid warning if not defined
+		if (empty($this->db->dolibarr_main_db_encryption)) $this->db->dolibarr_main_db_encryption=0;
+		if (empty($this->db->dolibarr_main_db_cryptkey))   $this->db->dolibarr_main_db_cryptkey='';
+
 		/*
 		 * Definition de toutes les constantes globales d'environnement
 		 * - En constante php (TODO a virer)
