@@ -1377,7 +1377,7 @@ else
 			else
 			{
 				print '<td>';
-				if ($user->admin && (empty($conf->global->MAIN_MODULE_MULTICOMPANY) || $fuser->entity!=0)) // On peut modifier le statut admin
+				if ($user->admin && $fuser->entity!=0) // On ne doit pas rétrograder le superadmin
 				{
 					print $form->selectyesno('admin',$fuser->admin,1);
 				}
