@@ -55,6 +55,8 @@ if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
+$dir=$conf->banque->dir_output.'/bordereau/';
+
 
 /*
  * Actions
@@ -454,9 +456,9 @@ if ($_GET['action'] != 'new')
 {
 	if ($remisecheque->statut == 1)
 	{
-		$dir = $conf->comptabilite->dir_output.'/bordereau/'.get_exdir($remisecheque->number);
+		$dirchequereceipts = $dir.get_exdir($remisecheque->number,2,1).'/'.$remisecheque->ref;
 		$gen = array('blochet'=>'blochet');
-		$formfile->show_documents("remisecheque","",$dir,$_SERVER["PHP_SELF"].'?id='.$remisecheque->id,$gen,1);
+		$formfile->show_documents("remisecheque","",$dirchequereceipts,$_SERVER["PHP_SELF"].'?id='.$remisecheque->id,$gen,1);
 	}
 }
 

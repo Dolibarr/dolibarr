@@ -212,8 +212,8 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		if ($user->societe_id > 0) $original_file=DOL_DATA_ROOT.'/private/'.$user->id.'/compta/'.$original_file;
-		else $original_file=$conf->compta->dir_output.'/payments/'.$original_file;
+		if ($user->societe_id > 0) $original_file=$conf->facture->dir_output.'/payments/private/'.$user->id.'/'.$original_file;
+		else $original_file=$conf->facture->dir_output.'/payments/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
 	}
 

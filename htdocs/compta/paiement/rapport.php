@@ -38,7 +38,7 @@ if ($user->societe_id > 0)
 {
 	$action = '';
 	$socid = $user->societe_id;
-	$dir = DOL_DATA_ROOT.'/private/'.$user->id.'/compta';
+	$dir = $conf->facture->dir_output.'/payments/private/'.$user->id;
 }
 
 $year = $_GET["year"];

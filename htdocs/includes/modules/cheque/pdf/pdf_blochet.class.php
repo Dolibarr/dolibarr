@@ -95,7 +95,7 @@ class BordereauChequeBlochet extends FPDF
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
-		$dir = $_dir . "/".get_exdir($number);
+		$dir = $_dir . "/".get_exdir($number,2,1)."/".$number;
 
 		if (! is_dir($dir))
 		{
@@ -110,7 +110,7 @@ class BordereauChequeBlochet extends FPDF
 
 		$month = sprintf("%02d",$month);
 		$year = sprintf("%04d",$year);
-		$_file = $dir . "bordereau-00".$number.".pdf"; //Todo: r�paration provisoire, ajout de 2 zero
+		$_file = $dir . "/bordereau-".$number.".pdf";
 
 		// Protection et encryption du pdf
 		if ($conf->global->PDF_SECURITY_ENCRYPTION)

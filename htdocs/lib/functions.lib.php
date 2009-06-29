@@ -2376,11 +2376,13 @@ function yn($yesno, $case=1, $color=0)
  *	\remarks    Examples: 1->"0/0/1/", 15->"0/1/5/"
  *	\param      $num        Id to develop
  *	\param      $level		Level of development (1, 2 or 3 level)
+ * 	\param		$alpha		Use alpha ref
  */
-function get_exdir($num,$level=3)
+function get_exdir($num,$level=3,$alpha=0)
 {
 	$path = '';
-	$num = eregi_replace('[^0-9]','',$num);
+	if (empty($alpha)) $num = eregi_replace('[^0-9]','',$num);
+	else $num = eregi_replace('^.*\-','',$num);
 	$num = substr("000".$num, -$level);
 	if ($level == 1) $path = substr($num,0,1).'/';
 	if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1).'/';
