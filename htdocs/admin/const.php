@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/admin/const.php
- \ingroup    setup
- \brief      Page d'administration/configuration des constantes autres
- \version    $Id$
+ *	\file       htdocs/admin/const.php
+ *	\ingroup    setup
+ *	\brief      Admin page to defined miscellaneous constants
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -35,6 +35,10 @@ accessforbidden();
 
 
 $typeconst=array('yesno','texte','chaine');
+
+/*
+ * Actions
+ */
 
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
@@ -52,6 +56,10 @@ if ($_GET["action"] == 'delete')
 	}
 }
 
+
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -113,7 +121,7 @@ $sql.= ", note";
 $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
 $sql.= " WHERE entity IN (0,".$conf->entity.")";
-if (!isset($all)) $sql.= " AND visible = 1";
+if (!empty($all)) $sql.= " AND visible = 1";
 $sql.= " ORDER BY name ASC";
 
 dol_syslog("Const::listConstant sql=".$sql);
