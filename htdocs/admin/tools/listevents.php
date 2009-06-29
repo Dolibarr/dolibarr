@@ -37,6 +37,8 @@ if ($user->societe_id > 0)
 }
 
 $langs->load("companies");
+$langs->load("users");
+$langs->load("other");
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
