@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/rapport/pdf_paiement.class.php
 if (! $user->rights->facture->lire)
 accessforbidden();
 
-$dir = $conf->compta->dir_output.'/payments';
+$dir = $conf->facture->dir_output.'/payments';
 
 $socid=0;
 if ($user->societe_id > 0)
@@ -49,7 +49,7 @@ if (! $year) { $year=date("Y"); }
  * Actions
  */
 
-if ($_POST["action"] == 'gen')
+if ($_POST["action"] == 'builddoc')
 {
 	$rap = new pdf_paiement($db);
 
@@ -87,10 +87,10 @@ llxHeader();
 $titre=($year?$langs->trans("PaymentsReportsForYear",$year):$langs->trans("PaymentsReports"));
 print_fiche_titre($titre);
 
-// Formulaire de génération
+// Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="gen">';
+print '<input type="hidden" name="action" value="builddoc">';
 $cmonth = date("n", time());
 $syear = date("Y", time());
 
@@ -127,7 +127,7 @@ print '<br>';
 
 clearstatcache();
 
-// Affiche lien sur autres années
+// Affiche lien sur autres annï¿½es
 $linkforyear=array();
 $found=0;
 if (is_dir($dir))
