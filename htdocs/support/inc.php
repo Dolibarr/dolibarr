@@ -107,11 +107,15 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 	}
 }
 
+// Define prefix
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
+
 define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
-if (empty($conf->file->character_set_client))     	  $conf->file->character_set_client=$charset;
-if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
+if (empty($conf->file->character_set_client))      $conf->file->character_set_client=$charset;
+if (empty($conf->db->dolibarr_main_db_collation))  $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
+if (empty($conf->db->dolibarr_main_db_encryption)) $conf->db->dolibarr_main_db_encryption=0;
+if (empty($conf->db->dolibarr_main_db_cryptkey))   $conf->db->dolibarr_main_db_cryptkey='';
 if (empty($conf->db->user)) $conf->db->user='';
 
 
