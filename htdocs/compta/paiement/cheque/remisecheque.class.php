@@ -66,7 +66,7 @@ class RemiseCheque extends CommonObject
 	function Fetch($id,$ref='')
 	{
 		global $conf;
-		
+
 		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.number, bc.statut, bc.nbcheque";
 		$sql.= ", ".$this->db->pdate("bc.date_bordereau"). " as date_bordereau";
 		$sql.= ", ba.label as account_label";
@@ -121,7 +121,7 @@ class RemiseCheque extends CommonObject
 	function Create($user, $account_id)
 	{
 		global $conf;
-		
+
 		$this->errno = 0;
 		$this->id = 0;
 
@@ -258,7 +258,7 @@ class RemiseCheque extends CommonObject
 	function Delete($user='')
 	{
 		global $conf;
-		
+
 		$this->errno = 0;
 		$this->db->begin();
 
@@ -282,7 +282,7 @@ class RemiseCheque extends CommonObject
 	  	$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 	  	$sql.= " SET fk_bordereau = 0";
 	  	$sql.= " WHERE fk_bordereau = '".$this->id."'";
-	  	
+
 	  	$resql = $this->db->query($sql);
 	  	if (!$resql)
 	  	{
@@ -374,7 +374,7 @@ class RemiseCheque extends CommonObject
 	function getNextNumber()
 	{
 		global $conf;
-		
+
 		$num=0;
 
 		// We use +0 to convert varchar to number
@@ -415,7 +415,7 @@ class RemiseCheque extends CommonObject
 		$now=gmmktime();
 
 		$this->nbtodo=$this->nbtodolate=0;
-		
+
 		$sql = "SELECT b.rowid, b.datev as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -506,7 +506,7 @@ class RemiseCheque extends CommonObject
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
-			$result=$pdf->write_file($conf->comptabilite->dir_output.'/bordereau', $this->number, $outputlangs);
+			$result=$pdf->write_file($conf->banque->dir_output.'/bordereau', $this->number, $outputlangs);
 			if ($result > 0)
 			{
 				$outputlangs->charset_output=$sav_charset_output;
@@ -534,7 +534,7 @@ class RemiseCheque extends CommonObject
 	function UpdateAmount()
 	{
 		global $conf;
-		
+
 		$this->errno = 0;
 		$this->db->begin();
 		$total = 0;
@@ -559,7 +559,7 @@ class RemiseCheque extends CommonObject
 	  $sql.= ", nbcheque = ".$nb;
 	  $sql.= " WHERE rowid = ".$this->id;
 	  $sql.= " AND entity = ".$conf->entity;
-	  
+
 	  $resql = $this->db->query($sql);
 	  if (!$resql)
 	  {
@@ -601,7 +601,7 @@ class RemiseCheque extends CommonObject
 			$sql.= " SET fk_bordereau = 0";
 			$sql.= " WHERE rowid = '".$account_id."'";
 			$sql.= " AND fk_bordereau = ".$this->id;
-			
+
 			$resql = $this->db->query($sql);
 			if ($resql)
 	  {
@@ -622,7 +622,7 @@ class RemiseCheque extends CommonObject
 	function load_previous_next_id()
 	{
 		global $conf;
-		
+
 		$this->errno = 0;
 
 		$sql = "SELECT MAX(rowid)";
@@ -642,7 +642,7 @@ class RemiseCheque extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
 		$sql.= " WHERE rowid > ".$this->id;
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		$result = $this->db->query($sql) ;
 		if (! $result)
 		{
