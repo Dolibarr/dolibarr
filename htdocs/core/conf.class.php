@@ -76,8 +76,6 @@ class Conf
 	*/
 	function setValues($db)
 	{
-		global $conf;
-		
 		dol_syslog("Conf::setValues");
 
 		/*
@@ -85,8 +83,8 @@ class Conf
 		 * - En constante php (TODO a virer)
 		 * - En $this->global->key=value
 		 */
-		$sql = "SELECT ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as name";
-		$sql.= ",".$db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value, entity";
+		$sql = "SELECT ".$db->decrypt('name',$this->db->dolibarr_main_db_encryption,$this->db->dolibarr_main_db_cryptkey)." as name";
+		$sql.= ",".$db->decrypt('value',$this->db->dolibarr_main_db_encryption,$this->db->dolibarr_main_db_cryptkey)." as value, entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE entity IN (0,".$this->entity.")";
 
