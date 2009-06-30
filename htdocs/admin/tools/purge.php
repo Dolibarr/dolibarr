@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
  */
 
 /**
-		\file 		htdocs/admin/tools/purge.php
-		\brief      Page de purge des fichiers temporaires
-		\version    $Id$
-*/
+ *		\file 		htdocs/admin/tools/purge.php
+ *		\brief      Page to purge files (temporary or not)
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/lib/databases/".$conf->db->type.".lib.php");
@@ -29,19 +29,27 @@ include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 $langs->load("admin");
 
 if (! $user->admin)
-  accessforbidden();
+accessforbidden();
 
 if ($_GET["msg"]) $message='<div class="error">'.$_GET["msg"].'</div>';
+
+// Define filelog to discard it from purge
+$filelog='';
+if ($conf->syslog->enabled)
+{
+	$filelog=SYSLOG_FILE;
+	$filelog=eregi_replace('DOL_DATA_ROOT',DOL_DATA_ROOT,$filelog);
+}
 
 
 
 /*
-*	Actions
-*/
+ *	Actions
+ */
 if ($_POST["action"]=='purge')
 {
 	$filesarray=array();
-	
+
 	if ($_POST["choice"]=='tempfiles')
 	{
 		// Delete temporary files
@@ -60,15 +68,32 @@ if ($_POST["action"]=='purge')
 		}
 	}
 
+	if ($_POST["choice"]=='logfile')
+	{
+		$filesarray[]=array('fullname'=>$filelog,'type'=>'file');
+	}
+
 	$count=0;
 	if (sizeof($filesarray))
 	{
+
 		foreach($filesarray as $key => $value)
 		{
 			//print "x ".$filesarray[$key]['fullname']."<br>\n";
-			$count+=dol_delete_dir_recursive($filesarray[$key]['fullname']);
+			if ($filesarray[$key]['type'] == 'dir')
+			{
+				$count+=dol_delete_dir_recursive($filesarray[$key]['fullname']);
+			}
+			elseif ($filesarray[$key]['type'] == 'file')
+			{
+				// If (file that is not logfile) or (if logfile with option logfile)
+				if ($filesarray[$key]['fullname'] != $filelog || $_POST["choice"]=='logfile')
+				{
+					$count+=dol_delete_file($filesarray[$key]['fullname']);
+				}
+			}
 		}
-		
+
 		// Update cachenbofdoc
 		if ($conf->ecm->enabled && $_POST["choice"]=='allfiles')
 		{
@@ -85,8 +110,8 @@ if ($_POST["action"]=='purge')
 
 
 /*
-* Affichage page
-*/
+ * View
+ */
 
 llxHeader();
 
@@ -98,7 +123,7 @@ print '<br>';
 print $langs->trans("PurgeAreaDesc",$dolibarr_main_data_root).'<br>';
 print '<br>';
 
-if ($message) 
+if ($message)
 {
 	print $message.'<br>';
 	print "\n";
@@ -109,13 +134,25 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 print '<input type="hidden" name="action" value="purge">';
 
-print '<table class="border" width="100%"><tr><td>';
+print '<table class="border" width="100%">';
+
+print '<tr><td>';
+
 print '<input type="radio" name="choice" value="tempfiles"';
 print (! $_POST["choice"] || $_POST["choice"]=='tempfiles') ? ' checked="true"' : '';
 print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br>';
+
 print '<input type="radio" name="choice" value="allfiles"';
 print ($_POST["choice"] && $_POST["choice"]=='allfiles') ? ' checked="true"' : '';
 print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir",$dolibarr_main_data_root).'<br>';
+
+if ($conf->syslog->enabled)
+{
+	print '<input type="radio" name="choice" value="logfile"';
+	print ($_POST["choice"] && $_POST["choice"]=='logfile') ? ' checked="true"' : '';
+	print '> '.$langs->trans("PurgeDeleteLogFile",$filelog).'<br>';
+}
+
 print '</td></tr></table>';
 
 print '<br>';

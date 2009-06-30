@@ -33,7 +33,7 @@
  *  \param		$sortcriteria	Sort criteria ("name","date","size")
  *  \param		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	\param		$mode			0=Return array with only keys needed, 1=Force all keys to be loaded
- *  \return		array			Array of array('name'=>xxx,'date'=>yyy,'size'=>zzz)
+ *  \return		array			Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
  */
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
 {
@@ -73,7 +73,8 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 						"name" => $file,
 						"fullname" => $path.'/'.$file,
 						"date" => $filedate,
-						"size" => $filesize
+						"size" => $filesize,
+						"type" => 'dir'
 						);
 					}
 
@@ -94,7 +95,8 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 						"name" => $file,
 						"fullname" => $path.'/'.$file,
 						"date" => $filedate,
-						"size" => $filesize
+						"size" => $filesize,
+						"type" => 'file'
 						);
 					}
 				}

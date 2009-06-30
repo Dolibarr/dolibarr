@@ -2017,9 +2017,9 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
 
 
 /**
- *	\brief  Effacement d'un fichier
- *	\param	file			Fichier a effacer ou masque de fichier a effacer
- *	\param	boolean			true if file deleted, false if error
+ *	\brief  	Remove a file
+ *	\param		file			Fichier a effacer ou masque de fichier a effacer
+ *	\param		boolean			true if file deleted, false if error
  */
 function dol_delete_file($file)
 {
@@ -2052,6 +2052,7 @@ function dol_delete_dir($dir)
  */
 function dol_delete_dir_recursive($dir,$count=0)
 {
+	//dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
 	if ($handle = opendir("$dir"))
 	{
 		while (false !== ($item = readdir($handle)))
