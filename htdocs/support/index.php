@@ -75,7 +75,9 @@ if (eregi('fr',$langs->defaultlang)) $urlwiki='http://wiki.dolibarr.org/index.ph
 if (eregi('es',$langs->defaultlang)) $urlwiki='http://wiki.dolibarr.org/index.php/Portada';
 print '<br>'.$langs->trans("ForDocumentationSeeWiki",$urlwiki,$urlwiki);
 print '<br>';
-print '<br>'.$langs->trans("ForAnswersSeeForum",'http://www.dolibarr.org/forum/','http://www.dolibarr.org/forum/').'<br>';
+$urlforum='http://www.dolibarr.org/forum/';
+if (eregi('fr',$langs->defaultlang)) $urlforum='http://www.dolibarr.fr/forum/';
+print '<br>'.$langs->trans("ForAnswersSeeForum",$urlforum,$urlforum).'<br>';
 print '</td></tr></table>';
 print '</td>';
 print '</tr>';
