@@ -136,22 +136,22 @@ print '<input type="hidden" name="action" value="purge">';
 
 print '<table class="border" width="100%">';
 
-print '<tr><td>';
-
-print '<input type="radio" name="choice" value="tempfiles"';
-print (! $_POST["choice"] || $_POST["choice"]=='tempfiles') ? ' checked="true"' : '';
-print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br>';
-
-print '<input type="radio" name="choice" value="allfiles"';
-print ($_POST["choice"] && $_POST["choice"]=='allfiles') ? ' checked="true"' : '';
-print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir",$dolibarr_main_data_root).'<br>';
+print '<tr class="border"><td style="padding: 4px">';
 
 if ($conf->syslog->enabled)
 {
 	print '<input type="radio" name="choice" value="logfile"';
 	print ($_POST["choice"] && $_POST["choice"]=='logfile') ? ' checked="true"' : '';
-	print '> '.$langs->trans("PurgeDeleteLogFile",$filelog).'<br>';
+	print '> '.$langs->trans("PurgeDeleteLogFile",$filelog).'<br><br>';
 }
+
+print '<input type="radio" name="choice" value="tempfiles"';
+print (! $_POST["choice"] || $_POST["choice"]=='tempfiles') ? ' checked="true"' : '';
+print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br><br>';
+
+print '<input type="radio" name="choice" value="allfiles"';
+print ($_POST["choice"] && $_POST["choice"]=='allfiles') ? ' checked="true"' : '';
+print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir",$dolibarr_main_data_root).'<br>';
 
 print '</td></tr></table>';
 
