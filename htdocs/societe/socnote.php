@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,14 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
-/**	 
-    \file       htdocs/societe/socnote.php
-    \brief      Tab for notes on third party
-    \ingroup    societe
-    \version    $Id$
-*/
- 
+
+/**
+ *   \file       htdocs/societe/socnote.php
+ *   \brief      Tab for notes on third party
+ *   \ingroup    societe
+ *   \version    $Id$
+ */
+
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
@@ -37,6 +37,10 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid);
 
+/*
+ * Actions
+ */
+
 if ($_POST["action"] == 'add')
 {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".addslashes($_POST["note"])."' WHERE rowid=".$_POST["socid"];
@@ -48,28 +52,29 @@ if ($_POST["action"] == 'add')
 
 
 /*
- *
+ *	View
  */
 
-llxHeader();
 $form = new Form($db);
+
+llxHeader();
 
 if ($socid > 0)
 {
     $societe = new Societe($db, $socid);
     $societe->fetch($socid);
-    
+
 	/*
 	 * Affichage onglets
 	 */
 	$head = societe_prepare_head($societe);
 
 	dol_fiche_head($head, 'note', $langs->trans("ThirdParty"));
-	
-	
+
+
 	print "<form method=\"post\" action=\"".DOL_URL_ROOT."/societe/socnote.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	
+
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="20%">'.$langs->trans('Name').'</td>';
@@ -79,7 +84,8 @@ if ($socid > 0)
 
     print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
 
-    if ($societe->client) {
+    if ($societe->client)
+    {
         print '<tr><td>';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
         print $societe->code_client;
@@ -87,7 +93,8 @@ if ($socid > 0)
         print '</td></tr>';
     }
 
-    if ($societe->fournisseur) {
+    if ($societe->fournisseur)
+    {
         print '<tr><td>';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
         print $societe->code_fournisseur;
@@ -124,7 +131,7 @@ if ($socid > 0)
 	{
 		print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 	}
-	
+
 	print "</table>";
 
 	print '</form>';
@@ -144,7 +151,7 @@ if ($_GET["action"] == '')
     {
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/societe/socnote.php?socid='.$societe->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
     }
-    
+
     print '</div>';
 }
 

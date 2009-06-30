@@ -110,6 +110,8 @@ if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes'
  * View
  */
 
+$form = new Form($db);
+
 llxHeader();
 
 if ($socid > 0)
@@ -139,12 +141,33 @@ if ($socid > 0)
 		print '<table class="border"width="100%">';
 
 		// Ref
-		print '<tr><td width="30%">'.$langs->trans("Name").'</td><td colspan="3">'.$societe->nom.'</td></tr>';
+		print '<tr><td width="30%">'.$langs->trans("Name").'</td>';
+		print '<td colspan="3">';
+		print $form->showrefnav($societe,'socid','',1,'rowid','nom');
+		print '</td></tr>';
 
 		// Prefix
 		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
 
-		// Nbre fichiers
+	    if ($societe->client)
+	    {
+	        print '<tr><td>';
+	        print $langs->trans('CustomerCode').'</td><td colspan="3">';
+	        print $societe->code_client;
+	        if ($societe->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+	        print '</td></tr>';
+	    }
+
+	    if ($societe->fournisseur)
+	    {
+	        print '<tr><td>';
+	        print $langs->trans('SupplierCode').'</td><td colspan="3">';
+	        print $societe->code_fournisseur;
+	        if ($societe->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
+	        print '</td></tr>';
+	    }
+
+    	// Nbre fichiers
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 
 		//Total taille
