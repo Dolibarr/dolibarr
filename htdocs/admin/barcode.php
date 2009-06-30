@@ -167,7 +167,7 @@ if ($resql)
 		if ($obj->coder && $obj->coder != -1)
 		{
 			// Chargement de la classe de codage
-			foreach ($conf->dol_document_root as $dirroot)
+			foreach ($conf->file->dol_document_root as $dirroot)
 			{
 				$dir=$dirroot . "/includes/modules/barcode/";
 				$result=@include_once($dir.$obj->coder.".modules.php");
