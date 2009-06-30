@@ -15,16 +15,14 @@ complete release of Dolibarr, step by step.
 
 - Build Dolibarr and DoliWamp with makepack-dolibarr.pl
 - Check content of built packages.
-- Move build files (tgz+exe) and ChangeLog into Dolibarr web site repository
-  /home/dolibarr/wwwroot/files.
-- Upload NLTechno web site on web server.
-- Move links in directory "/files" on server to point to new files.
+- Move build files (tgz+exe), ChangeLog and PAD/DOAP files into Dolibarr
+  web site repository /home/dolibarr/wwwroot/files.
+- Move links in directory "/home/dolibarr/wwwroot/files" on server to point
+  to new files.
+- Upload NLTechno web page with DoliWamp version.
 
 - Upload files dolibarr.*.tgz and doliwamp.*.exe on sourceforge.
-- Upload PAD and DOAP files on joomla web site www.dolibarr.org
 - Update entries on joomla web site www.dolibarr.org with new sourceforge link.
-- Replace link dolibarr.tgz in /home/dolibarr/wwwroot/files to point to
-  new uploaded files in nltechno.  
 
 - Send mail on mailings-list
 - Send news on OpenSource web sites (if major beta or release)
