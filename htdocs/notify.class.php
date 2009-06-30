@@ -67,14 +67,14 @@ class Notify
 	{
 		global $langs;
 		$langs->load("mails");
-		
+
 		$nb=$this->countDefinedNotifications($action,$socid);
 		if ($nb <= 0) $texte=$langs->trans("NoNotificationsWillBeSent");
 		if ($nb == 1) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ANotificationsWillBeSent");
 		if ($nb >= 2) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("SomeNotificationsWillBeSent",$nb);
 		return $texte;
 	}
-	
+
     /**
      *    	\brief      Renvoie le nombre de notifications configures pour l'action et la societe donnee
      *		\return		int		<0 si ko, sinon nombre de notifications definies
@@ -82,7 +82,7 @@ class Notify
 	function countDefinedNotifications($action,$socid)
 	{
         $num=-1;
-        
+
         $sql = "SELECT n.rowid, c.email, c.rowid, c.name, c.firstname, a.titre, s.nom";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
@@ -102,7 +102,7 @@ class Notify
 			$this->error=$this->db->error.' sql='.$sql;
 			return -1;
 		}
-		
+
 		return $num;
 	}
 
@@ -117,7 +117,8 @@ class Notify
         $sql = "SELECT s.nom, c.email, c.rowid, c.name, c.firstname, a.titre,n.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
         $sql .= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
-        $sql .= " AND n.fk_soc = s.rowid AND n.fk_action = ".$action;
+        $sql .= " AND n.fk_soc = s.rowid";
+        $sql .= " AND a.code = 'NOTIFY_".$action."'";
         $sql .= " AND s.rowid = ".$socid;
 
 		dol_syslog("Notify.class::send $action, $socid, $texte, $objet_type, $objet_id, $file");
@@ -139,7 +140,7 @@ class Notify
                     $message = $texte;
                     $filename = split("/",$file);
 					$msgishtml=0;
-					
+
                     $replyto = $conf->notification->email_from;
 
                     $mailfile = new CMailFile($subject,

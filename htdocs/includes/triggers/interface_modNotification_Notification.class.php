@@ -104,7 +104,7 @@ class InterfaceNotification
 		{
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			$action_notify = 2;
+			$action_notify = 'NOTIFY_VAL_FAC';
             $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             $mesg = 'La facture '.$object->ref." a été validée.\n";
@@ -117,7 +117,7 @@ class InterfaceNotification
 		{
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			$action_notify = 1;
+			$action_notify = 'NOTIFY_VAL_FICHINTER';
             $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             $mesg = 'La fiche intervention '.$object->ref." a été validée.\n";
@@ -130,7 +130,7 @@ class InterfaceNotification
 		{
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			$action_notify = 3;
+			$action_notify = 'NOTIFY_VAL_ORDER_SUPPLIER';
             $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             $mesg = 'La commande fournisseur '.$object->ref." a été validée.\n";
