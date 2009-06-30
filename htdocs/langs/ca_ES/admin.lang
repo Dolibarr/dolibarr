@@ -106,6 +106,7 @@ SystemTools = Utilitats Sistema
 SystemToolsArea = Àrea utilitats del sistema
 SystemToolsAreaDesc = Aquesta àrea ofereix diverses funcions d'administració. Utilitzeu el menú per triar la funcionalitat cercada.
 PurgeAreaDesc = Aquesta pàgina li permet eliminar tots els arxius creats o guardats per Dolibarr (arxius temporals o tots els fitxers de la carpeta <b>%s</b>). L'ús d'aquesta funció no és necessària. Es dóna per als usuaris que alberguen Dolibarr en un servidor que no ofereix els permisos d'eliminació d'arxius salvaguardat pel servidor web.
+PurgeDeleteLogFile = Esborrar el fitxer log <b>%s</b> definit pel mòdul Syslog (no hi ha risc de pèrdua de dades)
 PurgeDeleteTemporaryFiles = Eliminar tots els arxius temporals (sense risc de pèrdua de dades)
 PurgeDeleteAllFilesInDocumentsDir = Eliminar tots els fitxers de la carpeta <b>%s</b>. Arxius temporals i arxius adjunts a elements (tercers, factures, etc.) Seran eliminats.
 PurgeRunNow = Purgar
