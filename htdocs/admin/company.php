@@ -63,7 +63,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 			if ($isimage >= 0)
 			{
 				dol_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->societe->dir_output.'/logos/'.$original_file);
-				if (! is_dir($conf->societe->dir_output.'/logos/'))
+				if (! is_dir($conf->societe->dir_output.'/logos/')) // TODO ne fonctionne qu'avec le module Tiers d'activé
 				{
 					create_exdir($conf->societe->dir_output.'/logos/');
 				}

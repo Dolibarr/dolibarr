@@ -286,6 +286,7 @@ else
 			include_once($conffile);
 			if (! empty($dolibarr_main_db_type))
 			{
+				// TODO message d'erreur sur fresh install lorsque conf.php existe et est vide, path invalide ($dolibarr_main_document_root)
 				require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
 				require_once($dolibarr_main_document_root."/lib/admin.lib.php");
 				// $conf is already instancied inside inc.php
