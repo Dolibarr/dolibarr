@@ -18,14 +18,14 @@
 
 /**
  *	\file       htdocs/html.formfile.class.php
- *	\brief      Fichier de la classe des fonctions pr�d�finie de composants html fichiers
+ *	\brief      Fichier de la classe des fonctions predefinie de composants html fichiers
  *	\version	$Id$
  */
 
 
 /**
  *	\class      FormFile
- *	\brief      Classe permettant la g�n�ration de composants html fichiers
+ *	\brief      Classe permettant la generation de composants html fichiers
  */
 class FormFile
 {
@@ -35,7 +35,7 @@ class FormFile
 
 	/**
 	 *		\brief     Constructeur
-	 *		\param     DB      handler d'acc�s base de donn�e
+	 *		\param     DB      handler d'acces base de donnee
 	 */
 	function FormFile($DB)
 	{

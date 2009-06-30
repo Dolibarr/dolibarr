@@ -307,6 +307,11 @@ else
 		# If a database access is available, we set more variable
 		if ($ok)
 		{
+			if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
+			$conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
+			if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey=''; // TODO la cle devra ne doit pas etre stockee sur le serveur
+			$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
+			
 			$conf->setValues($db);
 			// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
 			// Version to install is DOL_VERSION
