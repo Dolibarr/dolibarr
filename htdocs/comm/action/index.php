@@ -222,7 +222,7 @@ $sql.= ', '.MAIN_DB_PREFIX.'c_actioncomm as ca';
 $sql.= ', '.MAIN_DB_PREFIX.'user as u';
 $sql.= ' WHERE a.fk_action = ca.id';
 $sql.= ' AND a.fk_user_author = u.rowid';
-$sql.= ' AND u.entity = '.$conf->entity;
+$sql.= ' AND u.entity in (0,'.$conf->entity.')';
 if ($_GET["action"] == 'show_day')
 {
 	$sql.= ' AND datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
@@ -246,7 +246,7 @@ if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
 // Sort on date
 $sql.= ' ORDER BY datep';
-//print $sql;
+dol_syslog("comm/action/index.php sql=".$sql, LOG_DEBUG);
 
 $resql=$db->query($sql);
 if ($resql)
