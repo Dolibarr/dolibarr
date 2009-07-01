@@ -211,20 +211,23 @@ class ActionComm
 		global $langs;
 
 		$sql = "SELECT a.id,";
-		$sql.= " datep,";
-		$sql.= " datep2,";
-		//$sql.= " datea,";
-		//$sql.= " datea2,";
-		$sql.= " datec,";
-		$sql.= " tms as datem,";
+		$sql.= " a.datep,";
+		$sql.= " a.datep2,";
+		$sql.= " a.datec,";
+        $sql.= " a.durationp,";
+		$sql.= " a.tms as datem,";
 		$sql.= " a.note, a.label, a.fk_action as type_id,";
 		$sql.= " a.fk_soc,";
 		$sql.= " a.fk_user_author, a.fk_user_mod,";
 		$sql.= " a.fk_user_action, a.fk_user_done,";
 		$sql.= " a.fk_contact, a.percent as percentage, a.fk_facture, a.fk_commande, a.propalrowid,";
 		$sql.= " a.priority, a.location,";
-		$sql.= " c.id as type_id, c.code as type_code, c.libelle";
-		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
+		$sql.= " c.id as type_id, c.code as type_code, c.libelle,";
+		$sql.= " s.nom as socname,";
+		$sql.= " u.firstname, u.name";
+		$sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c)";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
 		$sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
 
 		dol_syslog("ActionComm::fetch sql=".$sql);
@@ -247,8 +250,6 @@ class ActionComm
 				$this->label   = $obj->label;
 				$this->datep   = $this->db->jdate($obj->datep);
 				$this->datef   = $this->db->jdate($obj->datep2);
-				//$this->date    = $this->db->jdate($obj->datea);
-				//$this->dateend = $this->db->jdate($obj->datea2);
 
 				$this->datec   = $this->db->jdate($obj->datec);
 				$this->datem   = $this->db->jdate($obj->datem);
@@ -613,18 +614,20 @@ class ActionComm
 			$sql = "SELECT a.id,";
 			$sql.= " a.datep,";
 			$sql.= " a.datep2,";
-			//$sql.= " datea,";
-			//$sql.= " datea2,";
-			$sql.= " a.durationp, a.durationa,";
-			$sql.= " a.datec, tms as datem,";
+			$sql.= " a.durationp,";
+			$sql.= " a.datec, a.tms as datem,";
 			$sql.= " a.note, a.label, a.fk_action as type_id,";
 			$sql.= " a.fk_soc,";
 			$sql.= " a.fk_user_author, a.fk_user_mod,";
 			$sql.= " a.fk_user_action, a.fk_user_done,";
 			$sql.= " a.fk_contact, a.fk_facture, a.percent as percentage, a.fk_commande,";
-			$sql.= " a.priority,a.location,";
+			$sql.= " a.priority, a.location,";
+			$sql.= " u.firstname, u.name,";
+			$sql.= " s.nom as socname,";
 			$sql.= " c.id as type_id, c.code as type_code, c.libelle";
-			$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
+			$sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c)";
+        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
+        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
 			$sql.= " WHERE a.fk_action=c.id";
 			foreach ($filters as $key => $value)
 			{
@@ -687,12 +690,12 @@ class ActionComm
 					//print $datestart.'x'; exit;
 					$dateend=$this->db->jdate($obj->datep2);
 					$duration=$obj->durationp;
-					$event['summary']=$langs->convToOutputCharset($obj->label);
+					$event['summary']=$langs->convToOutputCharset($obj->label.($obj->socname?" (".$obj->socname.")":""));
 					$event['desc']=$langs->convToOutputCharset($obj->note);
 					$event['startdate']=$datestart;
 					$event['duration']=$duration;	// Not required with type 'journal'
 					$event['enddate']=$dateend;		// Not required with type 'journal'
-					$event['author']=$obj->fk_user_author;
+					$event['author']=$obj->firstname.($obj->name?" ".$obj->name:"");
 					$event['priority']=$obj->priority;
 					$event['location']=$langs->convToOutputCharset($obj->location);
 					$event['transparency']='TRANSPARENT';		// TRANSPARENT or OPAQUE
