@@ -448,7 +448,20 @@ class Propal extends CommonObject
 			if ($result > 0)
 			{
 				$this->update_price();
-				$this->db->commit();
+
+				$this->fk_propal = $this->id;
+				$this->rowid = $rowid;
+				if (! $notrigger)
+				{
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result = $interface->run_triggers('LINEPROPAL_UPDATE',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
+				}
+
+                $this->db->commit();
 				return $result;
 			}
 			else
@@ -2167,7 +2180,9 @@ class PropaleLigne
 	 *		\return		int		<0 si ko, >0 si ok
 	 */
 	function insert()
-	{
+	{    
+        global $conf;
+    
 		dol_syslog("PropaleLigne::insert rang=".$this->rang);
 		$this->db->begin();
 
@@ -2232,6 +2247,18 @@ class PropaleLigne
 		if ($resql)
 		{
 			$this->rang=$rangmax;
+            
+			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
+			if (! $notrigger)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result = $interface->run_triggers('LINEPROPAL_INSERT',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}            
+            
 			$this->db->commit();
 			return 1;
 		}

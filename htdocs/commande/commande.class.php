@@ -1717,7 +1717,9 @@ class Commande extends CommonObject
 	 *  \return   	int              	< 0 si erreur, > 0 si ok
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0)
-	{
+	{        
+        global $conf;	
+        
 		dol_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $date_start, $date_end, $type");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
@@ -1783,6 +1785,13 @@ class Commande extends CommonObject
 			{
 				// Mise a jour info denormalisees
 				$this->update_price();
+
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('LINEORDER_UPDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
 
 				$this->db->commit();
 				return $result;

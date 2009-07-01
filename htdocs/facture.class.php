@@ -3045,7 +3045,9 @@ class FactureLigne
 	 */
 	function update()
 	{
-		// Clean parameters
+		global $conf;		
+
+        // Clean parameters
 		$this->desc=trim($this->desc);
 
 		// Check parameters
@@ -3082,6 +3084,15 @@ class FactureLigne
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			if (! $notrigger)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result = $interface->run_triggers('LINEBILL_UPDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
 			$this->db->commit();
 			return 1;
 		}
