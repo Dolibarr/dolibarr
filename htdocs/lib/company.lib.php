@@ -508,7 +508,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
 		$sql.= " AND c.id=a.fk_action";
 		$sql.= " AND a.percent = 100";
-		$sql.= " ORDER BY a.datea DESC, a.id DESC";
+		$sql.= " ORDER BY a.datep DESC, a.id DESC";
 
 		dol_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
