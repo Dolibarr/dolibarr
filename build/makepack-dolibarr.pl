@@ -16,6 +16,7 @@ $RPMSUBVERSION="1";		# A incrementer au moment de la release
 
 @LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE","EXEDOLIWAMP");   # Possible packages
 %REQUIREMENTTARGET=(                            # Tool requirement for each package
+"SNAPSHOT"=>"tar",
 "TGZ"=>"tar",
 "ZIP"=>"7z",
 "RPM"=>"rpmbuild",
@@ -29,6 +30,7 @@ $RPMSUBVERSION="1";		# A incrementer au moment de la release
 );
 
 $FILENAME="$PROJECT";
+$FILENAMESNAPSHOT="$PROJECT-snapshot";
 $FILENAMETGZ="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEZIP="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMERPM="$PROJECT-$MAJOR.$MINOR.$BUILD-$RPMSUBVERSION";
@@ -96,15 +98,15 @@ $BUILDROOT="$TEMP/buildroot";
 
 
 my $copyalreadydone=0;
-my $batch=0;
 
 print "Makepack version $VERSION\n";
 print "Building package name: $PROJECT\n";
 print "Building package version: $MAJOR.$MINOR.$BUILD\n";
 
 for (0..@ARGV-1) {
-	if ($ARGV[$_] =~ /^-*target=(\w+)/i)    { $target=$1; $batch=1; }
+	if ($ARGV[$_] =~ /^-*target=(\w+)/i)    { $target=$1; }
 }
+
 
 # Choose package targets
 #-----------------------
@@ -197,8 +199,8 @@ foreach my $target (keys %CHOOSEDTARGET) {
 
 if ($nboftargetok) {
 
-    # Update buildroot
-    #-----------------
+    # Update buildroot if required
+    #-----------------------------
     if ($nboftargetneedbuildroot)
 	{
 	    if (! $copyalreadydone) {
@@ -217,7 +219,6 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/build`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
-	    rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
 	}    
     
     # Build package for each target
@@ -226,8 +227,27 @@ if ($nboftargetok) {
         if ($CHOOSEDTARGET{$target} < 0) { next; }
     
         print "\nBuild package for target $target\n";
-        
+
+    	if ($target eq 'SNAPSHOT') {
+			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMESNAPSHOT");
+    		unlink $FILENAMESNAPSHOT.tgz;
+    		print "Compress $SOURCE into $FILENAMESNAPSHOT.tgz...\n";
+   		    $cmd="tar --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
+			$ret=`$cmd`;
+            if ($OS =~ /windows/i)
+            {
+        		print "Move $FILENAMESNAPSHOT.tgz to $DESTI/$FILENAMESNAPSHOT.tgz\n";
+        		$ret=`mv "$FILENAMESNAPSHOT.tgz" "$DESTI/$FILENAMESNAPSHOT.tgz"`;
+            }
+            else
+            {
+        		$ret=`mv "$FILENAMESNAPSHOT.tgz" "$DESTI/$FILENAMESNAPSHOT.tgz"`;
+            }
+    		next;
+    	}
+
     	if ($target eq 'TGZ') {
+			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
    		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
@@ -245,6 +265,7 @@ if ($nboftargetok) {
     	}
 
     	if ($target eq 'ZIP') {
+			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
     		unlink $FILENAMEZIP.zip;
     		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
      		chdir("$BUILDROOT");
@@ -257,7 +278,7 @@ if ($nboftargetok) {
     	}
     
     	if ($target eq 'RPM') {                 # Linux only
-    		$BUILDFIC="$FILENAME.spec";
+			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
     		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
@@ -266,6 +287,7 @@ if ($nboftargetok) {
     		$cmd="mv \"$BUILDROOT/$FILENAMETGZ.tgz\" \"$RPMDIR/SOURCES/$FILENAMETGZ.tgz\"";
             $ret=`$cmd`;
 
+    		$BUILDFIC="$FILENAME.spec";
     		print "Copy $SOURCE/make/rpm/${BUILDFIC} to $BUILDROOT\n";
 #    		$ret=`cp -p "$SOURCE/make/rpm/${BUILDFIC}" "$BUILDROOT"`;
             open (SPECFROM,"<$SOURCE/make/rpm/${BUILDFIC}") || die "Error";
