@@ -234,7 +234,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		if (empty($conf->global->MAIN_HELPCENTER_DISABLELINK))
 		{
 			$langs->load("help");
-			print '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/support/index.php">';
+			print '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/support/index.php" target="_blank">';
 			if (! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) print '(';
 			else print '  -  ';
 			print $langs->trans("NeedHelpCenter");
