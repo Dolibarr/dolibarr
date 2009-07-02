@@ -74,7 +74,7 @@ if ($modulepart)
     if ($modulepart == 'companylogo')
     {
     	$accessallowed=1;
-   		$original_file=$conf->societe->dir_output.'/logos/'.$original_file;
+   		$original_file=$conf->mycompany->dir_output.'/logos/'.$original_file;
     }
 
     // Wrapping pour les photos utilisateurs

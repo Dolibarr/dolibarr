@@ -40,7 +40,7 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 	// Add a background image on document
 	if (! empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF))
 	{
-		$pdf->Image($conf->societe->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, 0, 0, 0, $page_height);
+		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, 0, 0, 0, $page_height);
 	}
 }
 

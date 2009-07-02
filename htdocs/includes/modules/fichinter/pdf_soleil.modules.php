@@ -174,7 +174,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetXY($this->marge_gauche,$posy);
 
 				// Logo
-				$logo=$conf->societe->dir_output.'/logos/'.$mysoc->logo;
+				$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
 				if ($mysoc->logo)
 				{
 					if (is_readable($logo))

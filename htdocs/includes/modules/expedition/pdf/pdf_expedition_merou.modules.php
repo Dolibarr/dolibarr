@@ -351,7 +351,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		//*********************LOGO****************************
 		$pdf->SetXY(11,7);
-		$logo=$conf->societe->dir_output.'/logos/'.$this->emetteur->logo;
+		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 		if ($this->emetteur->logo)
 		{
 			if (is_readable($logo))

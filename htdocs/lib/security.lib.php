@@ -160,11 +160,11 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$title='';
 	$width=0;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
-	if (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
+	if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 	{
 		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
 	}
-	elseif (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_output.'/logos/'.$mysoc->logo))
+	elseif (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
 	{
 		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
 		$width=96;

@@ -812,7 +812,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetXY($this->marges['g'],6);
 
 		// Logo
-		$logo=$conf->societe->dir_output.'/logos/'.$this->emetteur->logo;
+		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 		if ($this->emetteur->logo)
 		{
 			if (is_readable($logo))

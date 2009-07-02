@@ -194,12 +194,20 @@ class Conf
 			//print 'this->'.$module.'->dir_temp='.$this->$module->dir_temp.'<br>';
 		}
 
-		// Exception: Some dir are not the name of module. So we keep exception here
-		// for backward compatibility.
+		// For mycompany setup
+		$this->mycompany->dir_output=$rootfordata."/mycompany";
+		$this->mycompany->dir_temp=$rootfordata."/mycompany/temp";
+
+		// For admin features
+		$this->admin->dir_output=$rootfordata.'/admin';
+		$this->admin->dir_temp=$rootfordata.'/admin/temp';
 
 		// Module user
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
+
+		// Exception: Some dir are not the name of module. So we keep exception here
+		// for backward compatibility.
 
 		// Module RSS
 		$this->externalrss->dir_output=$rootfordata."/rss";
@@ -213,9 +221,6 @@ class Conf
 		$this->livraison_bon->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
 		$this->livraison_bon->dir_output=$rootfordata."/expedition/receipt";
 		$this->livraison_bon->dir_temp  =$rootfordata."/expedition/receipt/temp";
-
-		// Module societe
-		if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $this->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 
 		// Module don
 		$this->don->dir_output=$rootfordata."/dons";
@@ -261,9 +266,6 @@ class Conf
 		// Module oscommerce 1
 		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
-		// Other
-		$this->admin->dir_output=$rootfordata.'/admin';
-		$this->admin->dir_temp=$rootfordata.'/admin/temp';
 
 		/*
 		 * Modification de quelques variable de conf en fonction des Constantes

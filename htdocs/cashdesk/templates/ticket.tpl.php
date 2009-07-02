@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	}
 
 		.logo {
-			background: url('<?php echo $conf_url_racine; ?>/documents/societe/logos/logo.jpg') no-repeat top left;
+			background: url('<?php echo DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini); ?>') no-repeat top left;
 			height: 128px;
 			width: 650px;
 		}
