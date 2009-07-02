@@ -192,17 +192,31 @@ print "\n";
 #----------------------------------------------
 $nboftargetok=0;
 $nboftargetneedbuildroot=0;
+$nboftargetneedcvs=0;
 foreach my $target (keys %CHOOSEDTARGET) {
     if ($CHOOSEDTARGET{$target} < 0) { next; }
 	if ($target ne 'EXE' && $target ne 'EXEDOLIWAMP') 
 	{
 		$nboftargetneedbuildroot++;
 	}
+	if ($target eq 'SNAPSHOT')
+	{
+		$nboftargetneedcvs++;
+	}
 	$nboftargetok++;
 }
 
 if ($nboftargetok) {
 
+    # Update CVS if required
+    #-----------------------
+    if ($nboftargetneedcvs)
+	{
+   		chdir("$SOURCE");
+    	print "Run cvs update\n";
+    	$ret=`cvs update -P -d`;
+	}
+	
     # Update buildroot if required
     #-----------------------------
     if ($nboftargetneedbuildroot)
