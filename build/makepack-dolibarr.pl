@@ -363,7 +363,7 @@ foreach my $target (keys %CHOOSEDTARGET) {
     if ($CHOOSEDTARGET{$target} < 0) {
         print "Package $target not built (bad requirement).\n";
     } else {
-        print "Package $target built succeessfully in $DESTI\n";
+        print "Package $target built successfully in $DESTI\n";
     }
 }
 
