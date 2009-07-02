@@ -284,9 +284,8 @@ else
 		if (file_exists($conffile))
 		{
 			include_once($conffile);
-			if (! empty($dolibarr_main_db_type))
+			if (! empty($dolibarr_main_db_type) && ! empty($dolibarr_main_document_root))
 			{
-				// TODO message d'erreur sur fresh install lorsque conf.php existe et est vide, path invalide ($dolibarr_main_document_root)
 				require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
 				require_once($dolibarr_main_document_root."/lib/admin.lib.php");
 				// $conf is already instancied inside inc.php
@@ -310,9 +309,9 @@ else
 		{
 			if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 			$conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
-			if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey=''; // TODO la cle devra ne doit pas etre stockee sur le serveur
+			if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 			$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
-			
+
 			$conf->setValues($db);
 			// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
 			// Version to install is DOL_VERSION
