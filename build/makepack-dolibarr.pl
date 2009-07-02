@@ -99,13 +99,17 @@ $BUILDROOT="$TEMP/buildroot";
 
 my $copyalreadydone=0;
 
+for (0..@ARGV-1) {
+	if ($ARGV[$_] =~ /^-*target=(\w+)/i)   { $target=$1; }
+	if ($ARGV[$_] =~ /^-*desti=(.+)/i)     { $DESTI=$1; }
+}
+
 print "Makepack version $VERSION\n";
 print "Building package name: $PROJECT\n";
 print "Building package version: $MAJOR.$MINOR.$BUILD\n";
+print "Source directory: $SOURCE\n";
+print "Target directory: $DESTI\n";
 
-for (0..@ARGV-1) {
-	if ($ARGV[$_] =~ /^-*target=(\w+)/i)    { $target=$1; }
-}
 
 
 # Choose package targets
