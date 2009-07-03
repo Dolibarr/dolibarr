@@ -112,7 +112,7 @@ class Mailing extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id($this->db_table);
 
-			if ($this->update() > 0)
+			if ($this->update($user) > 0)
 			{
 				$this->db->commit();
 			}
