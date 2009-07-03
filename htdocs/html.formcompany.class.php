@@ -188,9 +188,9 @@ class FormCompany
 	function select_departement($selected='',$pays_code=0)
 	{
 		global $conf,$langs,$user;
-			
+
 		dol_syslog("Form::select_departement selected=$selected, pays_code=$pays_code",LOG_DEBUG);
-			
+
 		$langs->load("dict");
 
 		$htmlname='departement_id';
@@ -270,29 +270,32 @@ class FormCompany
 		global $conf,$langs;
 		$langs->load("dict");
 
-		$sql = "SELECT r.rowid, r.code_region as code, r.nom as libelle, r.active, p.libelle as libelle_pays FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p";
-		$sql .= " WHERE r.fk_pays=p.rowid AND r.active = 1 and p.active = 1 ORDER BY libelle_pays, libelle ASC";
+		$sql = "SELECT r.rowid, r.code_region as code, r.nom as libelle, r.active, p.code as pays_code, p.libelle as libelle_pays FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p";
+		$sql .= " WHERE r.fk_pays=p.rowid AND r.active = 1 and p.active = 1 ORDER BY pays_code, libelle ASC";
 
 		dol_syslog("Form::select_region sql=".$sql);
-		if ($this->db->query($sql))
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
 			{
 				$pays='';
 				while ($i < $num)
 				{
-					$obj = $this->db->fetch_object();
+					$obj = $this->db->fetch_object($resql);
 					if ($obj->code == 0) {
 						print '<option value="0">&nbsp;</option>';
 					}
 					else {
 						if ($pays == '' || $pays != $obj->libelle_pays)
 						{
-							// Affiche la rupture
-							print '<option value="-1" disabled="disabled">----- '.$obj->libelle_pays." -----</option>\n";
+							// Show break
+							$key=$langs->trans("Country".strtoupper($obj->pays_code));
+							$valuetoshow=($key != "Country".strtoupper($obj->pays_code))?$obj->pays_code." - ".$key:$obj->libelle_pays;
+							print '<option value="-1" disabled="disabled">----- '.$valuetoshow." -----</option>\n";
 							$pays=$obj->libelle_pays;
 						}
 
