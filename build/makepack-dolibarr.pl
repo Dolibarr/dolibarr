@@ -98,9 +98,10 @@ $BUILDROOT="$TEMP/buildroot";
 
 
 my $copyalreadydone=0;
+my $batch=0;
 
 for (0..@ARGV-1) {
-	if ($ARGV[$_] =~ /^-*target=(\w+)/i)   { $target=$1; }
+	if ($ARGV[$_] =~ /^-*target=(\w+)/i)   { $target=$1; $batch=1; }
 	if ($ARGV[$_] =~ /^-*desti=(.+)/i)     { $DESTI=$1; }
 }
 
@@ -367,7 +368,7 @@ foreach my $target (keys %CHOOSEDTARGET) {
     }
 }
 
-if (! $btach) {
+if (! $batch) {
     print "\nPress key to finish...";
     my $WAITKEY=<STDIN>;
 }
