@@ -174,17 +174,16 @@ if (! defined('NOTOKENRENEWAL'))
 {
 	$token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 	// roulement des jetons car cree a chaque appel
-	if (isset($_SESSION['token_level_1'])) $_SESSION['token_level_2'] = $_SESSION['token_level_1'];
-	if (isset($_SESSION['newtoken'])) $_SESSION['token_level_1'] = $_SESSION['newtoken'];
+	if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
 	$_SESSION['newtoken'] = $token;
 }
 if (empty($conf->global->MAIN_FEATURES_LEVEL))	// Check validity of token, only if not a dev instance (this make developper tests no more working)
 {
-	if (isset($_POST['token']) && isset($_SESSION['token_level_1']) && isset($_SESSION['token_level_2']))
+	if (isset($_POST['token']) && isset($_SESSION['token']))
 	{
-		if (($_POST['token'] != $_SESSION['token_level_1']) && ($_POST['token'] != $_SESSION['token_level_2']))
+		if (($_POST['token'] != $_SESSION['token']))
 		{
-			dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token']=".$_POST['token'].", _SESSION['token_level_1']=".$_SESSION['token_level_1'].", _SESSION['token_level_2']=".$_SESSION['token_level_2']);
+			dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token']=".$_POST['token'].", _SESSION['token']=".$_SESSION['token']);
 			//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
 			unset($_POST);
 		}
