@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -92,8 +92,8 @@ $tablib[18]= $langs->trans("DictionnarySendingMethods");
 
 // Requete pour extraction des donnees des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
-$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, d.fk_region as region_id, r.nom as region, p.libelle as pays, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
-$tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, r.fk_pays as pays_id, p.libelle as pays, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
+$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, p.code as pays_code, p.libelle as pays, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
+$tabsql[3] = "SELECT r.rowid as rowid, code_region as code, nom as libelle, r.fk_pays as pays_id, p.code as pays_code, p.libelle as pays, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
 $tabsql[4] = "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_pays";
 $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.active FROM ".MAIN_DB_PREFIX."c_civilite AS c";
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
@@ -114,7 +114,7 @@ $tabsql[18]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsqlsort[1] ="pays, code ASC";
 $tabsqlsort[2] ="pays, code ASC";
 $tabsqlsort[3] ="pays, code ASC";
-$tabsqlsort[4] ="libelle ASC";
+$tabsqlsort[4] ="code ASC";
 $tabsqlsort[5] ="libelle ASC";
 $tabsqlsort[6] ="a.type ASC, a.code ASC";
 $tabsqlsort[7] ="a.libelle ASC";
@@ -132,7 +132,7 @@ $tabsqlsort[18]="code ASC, libelle ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
-$tabfield[2] = "code,libelle,region_id,region";   // "code,libelle,region"
+$tabfield[2] = "code,libelle,region_id,region,pays";   // "code,libelle,region,pays_code-pays"
 $tabfield[3] = "code,libelle,pays_id,pays";
 $tabfield[4] = "code,libelle";
 $tabfield[5] = "code,libelle";
@@ -150,7 +150,7 @@ $tabfield[16]= "code,libelle";
 $tabfield[17]= "code,libelle";
 $tabfield[18]= "code,libelle";
 
-// Nom des champs d'edition pour modification du dictionnaire
+// Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue[1] = "code,libelle,pays";
 $tabfieldvalue[2] = "code,libelle,region";   // "code,libelle,region"
 $tabfieldvalue[3] = "code,libelle,pays";
@@ -246,10 +246,16 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
 	$listfieldmodify=split(',',$tabfieldinsert[$_POST["id"]]);
 	$listfieldvalue=split(',',$tabfieldvalue[$_POST["id"]]);
 
-	// Verifie que tous les champs sont renseign�s
+	// Check that all fields are filled
 	$ok=1;
-	foreach ($listfield as $f => $value) {
-		if (! isset($_POST[$value]) || $_POST[$value]=='') {
+	foreach ($listfield as $f => $value)
+	{
+		if ($value == 'pays')
+		{
+			if (in_array('region_id',$listfield)) { continue; }		// For region page, we do not require the country input
+		}
+		if (! isset($_POST[$value]) || $_POST[$value]=='')
+		{
 			$ok=0;
 			$msg.=$langs->trans("ErrorFieldRequired",$listfield[$f]).'<br>';
 		}
@@ -257,7 +263,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
 	// Autres verif
 	if (isset($_POST["code"]) && $_POST["code"]=='0') {
 		$ok=0;
-		$msg.="Le Code ne peut avoir la valeur 0<br>";
+		$msg.="Code can't contains value 0<br>";
 	}
 	if (isset($_POST["pays"]) && $_POST["pays"]=='0') {
 		$ok=0;
@@ -265,8 +271,10 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
 	}
 
 	// Si verif ok et action add, on ajoute la ligne
-	if ($ok && $_POST["actionadd"]) {
-		if ($tabrowid[$_POST["id"]]) {
+	if ($ok && $_POST["actionadd"])
+	{
+		if ($tabrowid[$_POST["id"]])
+		{
 			// Recupere id libre pour insertion
 			$newid=0;
 			$sql = "SELECT max(".$tabrowid[$_POST["id"]].") newid from ".$tabname[$_POST["id"]];
@@ -316,7 +324,8 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
 	}
 
 	// Si verif ok et action modify, on modifie la ligne
-	if ($ok && $_POST["actionmodify"]) {
+	if ($ok && $_POST["actionmodify"])
+	{
 		if ($tabrowid[$_POST["id"]]) { $rowidcol=$tabrowid[$_POST["id"]]; }
 		else { $rowidcol="rowid"; }
 
@@ -466,6 +475,8 @@ if ($_GET["id"])
 	$sql=$tabsql[$_GET["id"]];
 	if ($_GET["sortfield"])
 	{
+		// If sort order is "pays", we use pays_code instead
+		if ($_GET["sortfield"] == 'pays') $_GET["sortfield"]='pays_code';
 		$sql.= " ORDER BY ".$_GET["sortfield"];
 		if ($_GET["sortorder"])
 		{
@@ -488,7 +499,7 @@ if ($_GET["id"])
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 
-	// Ligne d'ajout
+	// Form to add a new line
 	if ($tabname[$_GET["id"]])
 	{
 		$alabelisused=0;
@@ -497,7 +508,7 @@ if ($_GET["id"])
 		$fieldlist=split(',',$tabfield[$_GET["id"]]);
 		//        print '<table class="noborder" width="100%">';
 
-		// Ligne de titre d'ajout
+		// Line for title
 		print '<tr class="liste_titre">';
 		foreach ($fieldlist as $field => $value)
 		{
@@ -512,7 +523,9 @@ if ($_GET["id"])
 			if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
 			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*"; }
 			if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
-			if ($fieldlist[$field]=='pays')            { $valuetoshow=$langs->trans("Country"); }
+			if ($fieldlist[$field]=='pays')            {
+				if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
+				$valuetoshow=$langs->trans("Country"); }
 			if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; }
 			if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
 			if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
@@ -536,12 +549,12 @@ if ($_GET["id"])
 		print '&nbsp;</td>';
 		print '</tr>';
 
-		// Ligne d'ajout
+		// Line to type new values
 		print "<tr ".$bc[$var].">";
 
 		fieldList($fieldlist);
 
-		print '<td colspan="3"><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
+		print '<td colspan="3" align="right"><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
 		print "</tr>";
 
 		if ($alabelisused)  // Si un des champs est un libelle
@@ -551,7 +564,8 @@ if ($_GET["id"])
 		print '<tr><td colspan="'.(count($fieldlist)+2).'">&nbsp;</td></tr>';
 	}
 
-	// Affiche table des valeurs
+
+	// List of available values in database
 	dol_syslog("htdocs/admin/dict sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
@@ -625,7 +639,7 @@ if ($_GET["id"])
 						}
 						else if ($fieldlist[$field]=='pays') {
 							$key=$langs->trans("Country".strtoupper($obj->pays_code));
-							$valuetoshow=($key != "Country".strtoupper($obj->pays_code))?$key:$obj->pays;
+							$valuetoshow=($key != "Country".strtoupper($obj->pays_code))?$obj->pays_code." - ".$key:$obj->pays;
 						}
 						else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm') {
 							$valuetoshow=yn($valuetoshow);
@@ -728,8 +742,11 @@ $db->close();
 
 llxFooter('$Date$ - $Revision$');
 
+
 /**
- \brief      Affiche les champs
+ *	\brief      Show field
+ * 	\param		fieldlist		Array of fields
+ * 	\param		obj				If we show a particular record, obj is filled with record fields
  */
 function fieldList($fieldlist,$obj='')
 {
@@ -742,8 +759,9 @@ function fieldList($fieldlist,$obj='')
 
 	foreach ($fieldlist as $field => $value)
 	{
+		//var_dump($obj);
 		if ($fieldlist[$field] == 'pays') {
-			//var_dump($obj);
+			if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }	// For region page, we do not show the country input
 			print '<td>';
 			$html->select_pays($obj->pays,'pays');
 			print '</td>';
