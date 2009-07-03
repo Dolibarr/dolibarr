@@ -794,6 +794,26 @@ class DoliDb
 		}
 		return $listtables;
 	}
+	
+	/**
+	 *	\brief     	Liste les informations des champs d'une table.
+	 *	\param	    table			Nom de la table
+	 *	\return	    array			Tableau des informations des champs de la table
+	 */
+	function DDLInfoTable($table)
+	{
+		$infotables=array();
+
+		$sql="SHOW FULL COLUMNS FROM ".$table.";";
+		
+		dol_syslog($sql,LOG_DEBUG);
+		$result = $this->query($sql);
+		while($row = $this->fetch_row($result))
+		{
+			$infotables[] = $row;
+		}
+		return $infotables;
+	}
 
 	/**
 	 *	\brief      Cree une table

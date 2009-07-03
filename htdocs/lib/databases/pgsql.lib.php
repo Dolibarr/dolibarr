@@ -3,7 +3,8 @@
  * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Benoit Mortier		<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 
 /**
 	    \file       htdocs/lib/databases/pgsql.lib.php
-		\brief      Fichier de la classe permettant de g�r�r une base pgsql
+		\brief      Fichier de la classe permettant de gerer une base pgsql
 		\version	$Id$
 */
 // For compatibility during upgrade
@@ -32,7 +33,7 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 
 /**
         \class      DoliDb
-        \brief      Classe permettant de g�r�r la database de dolibarr
+        \brief      Classe permettant de gerer la database de dolibarr
 */
 class DoliDb
 {
@@ -42,11 +43,11 @@ class DoliDb
     var $forcecharset='latin1';
 	var $versionmin=array(8,1,0);	// Version min database
 
-    var $results;                 // Resultset de la derni�re requete
+    var $results;                 // Resultset de la derniere requete
 
-    var $connected;               // 1 si connect�, 0 sinon
-    var $database_selected;       // 1 si base s�lectionn�, 0 sinon
-    var $database_name;			  // Nom base s�lectionn�e
+    var $connected;               // 1 si connecte, 0 sinon
+    var $database_selected;       // 1 si base selectionne, 0 sinon
+    var $database_name;			  // Nom base selectionnee
     var $database_user;	   //! Nom user base
     var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
     var $lastquery;
@@ -59,15 +60,15 @@ class DoliDb
 
 
     /**
-        \brief      Ouverture d'une connexion vers le serveur et une database.
-        \param		type		type de base de donn�es (mysql ou pgsql)
-        \param		host		addresse de la base de donn�es
-    	\param	    user		nom de l'utilisateur autoris�
-        \param		pass		mot de passe
-        \param		name		nom de la database
-		\param	    port		Port of database server
-        \return		int			1 en cas de succ�s, 0 sinon
-    */
+     * \brief      Ouverture d'une connexion vers le serveur et une database.
+     * \param		type		type de base de donnees (mysql ou pgsql)
+     * \param		host		addresse de la base de donnees
+     * \param	    user		nom de l'utilisateur autorise
+     * \param		pass		mot de passe
+     * \param		name		nom de la database
+     * \param	    port		Port of database server
+     * \return		int			1 en cas de succes, 0 sinon
+     */
     function DoliDb($type='pgsql', $host, $user, $pass, $name='', $port=0)
     {
     	global $conf,$langs;
@@ -115,7 +116,7 @@ class DoliDb
             dol_syslog("DoliDB::DoliDB : Erreur Connect ".$this->error,LOG_ERR);
         }
 
-        // Si connexion serveur ok et si connexion base demand�e, on essaie connexion base
+        // Si connexion serveur ok et si connexion base demandee, on essaie connexion base
         if ($this->connected && $name)
         {
             if ($this->select_db($name))
@@ -331,12 +332,12 @@ class DoliDb
 	}
 
     /**
-        \brief      Selectionne une database.
-        \param		database		nom de la database
-        \return		boolean         true si ok, false si ko
-        \remarks 	Ici postgresql n'a aucune fonction equivalente de mysql_select_db
-        \remarks 	On compare juste manuellement si la database choisie est bien celle activ�e par la connexion
-    */
+     * \brief      Selectionne une database.
+     * \param		database		nom de la database
+     * \return		boolean         true si ok, false si ko
+     * \remarks 	Ici postgresql n'a aucune fonction equivalente de mysql_select_db
+     * \remarks 	On compare juste manuellement si la database choisie est bien celle activee par la connexion
+     */
     function select_db($database)
     {
         if ($database == $this->database_name)
@@ -346,14 +347,14 @@ class DoliDb
     }
 
     /**
-        \brief      Connection vers le serveur
-        \param		host		addresse de la base de donn�es
-        \param		login		nom de l'utilisateur autoris
-        \param		passwd		mot de passe
-        \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
-		\param		port		Port of database server
-        \return		resource	handler d'acc�s � la base
-    */
+     * \brief      Connection vers le serveur
+     * \param		host		addresse de la base de donnees
+     * \param		login		nom de l'utilisateur autorise
+     * \param		passwd		mot de passe
+     * \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
+     * \param		port		Port of database server
+     * \return		resource	handler d'acces a la base
+     */
     function connect($host, $login, $passwd, $name, $port=0)
     {
     	if (!$name){
@@ -368,11 +369,10 @@ class DoliDb
         return $this->db;
     }
 
-
     /**
-            \brief          Renvoie la version du serveur
-            \return	        string      Chaine version
-    */
+     * \brief          Renvoie la version du serveur
+     * \return	        string      Chaine version
+     */
     function getVersion()
     {
     	$resql=$this->query('SHOW server_version');
@@ -381,46 +381,45 @@ class DoliDb
     }
 
     /**
-     \brief          Renvoie la version du serveur sous forme de nombre
-     \return	        string      Chaine version
-	  */
-	  function getIntVersion()
-	  {
-			$version=	$this->getVersion();
-			$vlist=split('[.-]',$version);
-			if (strlen($vlist[1])==1){
-				$vlist[1]="0".$vlist[1];
-			}
-			if (strlen($vlist[2])==1){
-				$vlist[2]="0".$vlist[2];
-			}
-			return $vlist[0].$vlist[1].$vlist[2];
-	  }
+     * \brief		Renvoie la version du serveur sous forme de nombre
+     * \return		string      Chaine version
+     */
+    function getIntVersion()
+	{
+		$version = $this->getVersion();
+		$vlist = split('[.-]',$version);
+		if (strlen($vlist[1])==1){
+			$vlist[1]="0".$vlist[1];
+		}
+		if (strlen($vlist[2])==1){
+			$vlist[2]="0".$vlist[2];
+		}
+		return $vlist[0].$vlist[1].$vlist[2];
+	}
 
     /**
-            \brief          Renvoie la version du serveur dans un tableau
-            \return	        array  		Tableau de chaque niveau de version
-    */
+     * \brief		Renvoie la version du serveur dans un tableau
+     * \return		array  		Tableau de chaque niveau de version
+     */
     function getVersionArray()
     {
         return split('\.',$this->getVersion());
     }
 
     /**
-            \brief      Fermeture d'une connexion vers une database.
-            \return	    resource
-    */
+     * \brief      Fermeture d'une connexion vers une database.
+     * \return	    resource
+     */
     function close()
     {
 		dol_syslog("DoliDB::disconnect",LOG_DEBUG);
     	return pg_close($this->db);
     }
 
-
     /**
-        \brief      Debut d'une transaction.
-        \return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
-    */
+     * \brief      Debut d'une transaction.
+     * \return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
+     */
     function begin()
     {
         if (! $this->transaction_opened)
@@ -441,9 +440,9 @@ class DoliDb
     }
 
     /**
-        \brief      Validation d'une transaction
-        \return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
-    */
+     * \brief      Validation d'une transaction
+     * \return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
+     */
     function commit()
     {
         if ($this->transaction_opened<=1)
@@ -464,9 +463,9 @@ class DoliDb
     }
 
     /**
-        \brief      Annulation d'une transaction et retour aux anciennes valeurs
-        \return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
-    */
+     * \brief      Annulation d'une transaction et retour aux anciennes valeurs
+     * \return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+     */
     function rollback()
     {
         if ($this->transaction_opened<=1)
@@ -485,10 +484,10 @@ class DoliDb
 
 
     /**
-        \brief      Effectue une requete et renvoi le resultset de r�ponse de la base
-        \param		query		Contenu de la query
-        \return	    resource    Resultset de la reponse
-    */
+     * \brief      Effectue une requete et renvoi le resultset de reponse de la base
+     * \param		query		Contenu de la query
+     * \return	    resource    Resultset de la reponse
+     */
     function query($query)
     {
         $query = trim($query);
@@ -514,63 +513,63 @@ class DoliDb
     }
 
     /**
-        \brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
-        \param      resultset   Curseur de la requete voulue
-        \return	    resource
-    */
+     * \brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
+     * \param      resultset   Curseur de la requete voulue
+     * \return	    resource
+     */
     function fetch_object($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+        // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_fetch_object($resultset);
     }
 
     /**
-        \brief      Renvoie les donn�es dans un tableau.
-        \param      resultset   Curseur de la requete voulue
-        \return		array
-    */
+     * \brief      Renvoie les donnees dans un tableau.
+     * \param      resultset   Curseur de la requete voulue
+     * \return		array
+     */
     function fetch_array($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+        // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_fetch_array($resultset);
     }
 
     /**
-        \brief      Renvoie les donn�es comme un tableau.
-        \param      resultset   Curseur de la requete voulue
-        \return	    array
-    */
+     * \brief      Renvoie les donnees comme un tableau.
+     * \param      resultset   Curseur de la requete voulue
+     * \return	    array
+     */
     function fetch_row($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+        // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_fetch_row($resultset);
     }
 
     /**
-        \brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
-        \see    	affected_rows
-        \param      resultset   Curseur de la requete voulue
-        \return     int		    Nombre de lignes
-    */
+     * \brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
+     * \see    	affected_rows
+     * \param      resultset   Curseur de la requete voulue
+     * \return     int		    Nombre de lignes
+     */
     function num_rows($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+        // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_num_rows($resultset);
     }
 
     /**
-        \brief      Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
-        \see    	num_rows
-        \param      resultset   Curseur de la requete voulue
-        \return     int		    Nombre de lignes
-    */
+     * \brief      Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+     * \see    	num_rows
+     * \param      resultset   Curseur de la requete voulue
+     * \return     int		    Nombre de lignes
+     */
     function affected_rows($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+        // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
         // pgsql necessite un resultset pour cette fonction contrairement
         // a mysql qui prend un link de base
@@ -579,12 +578,12 @@ class DoliDb
 
 
     /**
-        \brief      Lib�re le dernier resultset utilis� sur cette connexion.
-        \param      resultset   Curseur de la requete voulue
-    */
+     * \brief      Libere le dernier resultset utilise sur cette connexion.
+     * \param      resultset   Curseur de la requete voulue
+     */
     function free($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+        // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
         // Si resultset en est un, on libere la m�moire
         if (is_resource($resultset)) pg_free_result($resultset);
@@ -592,11 +591,11 @@ class DoliDb
 
 
     /**
-        \brief      D�fini les limites de la requ�te.
-        \param	    limit       nombre maximum de lignes retourn�es
-        \param	    offset      num�ro de la ligne � partir de laquelle recup�rer les lignes
-        \return	    string      chaine exprimant la syntax sql de la limite
-    */
+     * \brief      Defini les limites de la requete.
+     * \param	    limit       nombre maximum de lignes retournees
+     * \param	    offset      numero de la ligne a partir de laquelle recuperer les lignes
+     * \return	    string      chaine exprimant la syntax sql de la limite
+     */
     function plimit($limit=0,$offset=0)
     {
         global $conf;
@@ -607,12 +606,12 @@ class DoliDb
 
 
 	/**
-        \brief      D�fini le tri de la requ�te.
-        \param	    sortfield   liste des champ de tri
-        \param	    sortorder   ordre du tri
-        \return	    string      chaine exprimant la syntax sql de l'ordre de tri
-		\TODO		A mutualiser dans classe mere
-    */
+	 * \brief      Defini le tri de la requete.
+	 * \param	    sortfield   liste des champ de tri
+	 * \param	    sortorder   ordre du tri
+	 * \return	    string      chaine exprimant la syntax sql de l'ordre de tri
+	 * \TODO		A mutualiser dans classe mere
+	 */
     function order($sortfield=0,$sortorder=0)
     {
 		if ($sortfield)
@@ -637,21 +636,21 @@ class DoliDb
 
 
 	/**
-        \brief      Escape a string to insert data.
-        \param	    stringtoencode		String to escape
-        \return	    string				String escaped
-    */
+	 * \brief      Escape a string to insert data.
+	 * \param	    stringtoencode		String to escape
+	 * \return	    string				String escaped
+	 */
     function escape($stringtoencode)
 	{
 		return addslashes($stringtoencode);
 	}
 
 
-    /**
-    *   \brief      Formatage (par la base de donn�es) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
-    *               afin de retourner une donn�e toujours au format universel date tms unix.
-    *               Fonction � utiliser pour g�n�rer les SELECT.
-    *   \param	    param       Date au format text � convertir
+   /**
+    *   \brief      Formatage (par la base de donnees) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
+    *               afin de retourner une donnee toujours au format universel date tms unix.
+    *               Fonction a utiliser pour generer les SELECT.
+    *   \param	    param       Date au format text a convertir
     *   \return	    date        Date au format tms.
     */
     function pdate($param)
@@ -689,7 +688,7 @@ class DoliDb
      *   \param		test            chaine test
      *   \param		resok           resultat si test egal
      *   \param		resko           resultat si test non egal
-     *   \return		string          chaine format� SQL
+     *   \return		string          chaine formate SQL
      */
     function ifsql($test,$resok,$resko)
     {
@@ -716,27 +715,27 @@ class DoliDb
 	}
 
     /**
-        \brief      Renvoie le libelle derniere erreur
-        \return	    string	lasterror
-    */
+     * \brief      Renvoie le libelle derniere erreur
+     * \return	    string	lasterror
+     */
 	function lasterror()
 	{
 		return $this->lasterror;
 	}
 
     /**
-        \brief      Renvoie le code derniere erreur
-        \return	    string	lasterrno
-    */
+     * \brief      Renvoie le code derniere erreur
+     * \return	    string	lasterrno
+     */
 	function lasterrno()
 	{
 		return $this->lasterrno;
 	}
 
     /**
-         \brief     Renvoie le code erreur generique de l'operation precedente.
-         \return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
-    */
+     * \brief     Renvoie le code erreur generique de l'operation precedente.
+     * \return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+     */
     function errno()
     {
         if (empty($error_regexps))
@@ -762,19 +761,19 @@ class DoliDb
     }
 
     /**
-        \brief 		Renvoie le texte de l'erreur pgsql de l'operation precedente.
-        \return		error_text
-    */
+     * \brief 		Renvoie le texte de l'erreur pgsql de l'operation precedente.
+     * \return		error_text
+     */
     function error()
     {
         return pg_last_error($this->db);
     }
 
     /**
-        \brief      R�cup�re l'id gen�r� par le dernier INSERT.
-        \param     	tab     Nom de la table concern�e par l'insert. Ne sert pas sous MySql mais requis pour compatibilit� avec Postgresql
-        \return     int     id
-    */
+     * \brief      Recupere l'id genere par le dernier INSERT.
+     * \param     	tab     Nom de la table concernee par l'insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+     * \return     int     id
+     */
     function last_insert_id($tab)
     {
         $result = pg_query($this->db,"SELECT MAX(rowid) FROM ".$tab." ;");
@@ -786,12 +785,68 @@ class DoliDb
 	// Next function are not required. Only minor features use them.
 	//--------------------------------------------------------------
 
+	/**
+	 *	\brief          Encrypt sensitive data in database
+	 *	\param	        field			Field name to encrypt
+	 * 	\param			cryptType		Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
+	 * 	\param			cryptKey		Encryption key
+	 * 	\return	        return			Field to encrypt if used
+	 * TODO modifier pour postgresql
+	 */
+	function encrypt($field, $cryptType=0, $cryptKey='')
+	{
+		/*
+		$return = $field;
 
+		if ($cryptType && !empty($cryptKey))
+		{
+			if ($cryptType == 2)
+			{
+				$return = 'AES_ENCRYPT('.$field.',\''.$cryptKey.'\')';
+			}
+			else if ($cryptType == 1)
+			{
+				$return = 'DES_ENCRYPT('.$field.',\''.$cryptKey.'\')';
+			}
+		}
+
+		return $return;
+		*/
+	}
+
+	/**
+	 *	\brief          Decrypt sensitive data in database
+	 *	\param	        field			Field name to decrypt
+	 * 	\param			cryptType		Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
+	 * 	\param			cryptKey		Encryption key
+	 * 	\return	        return			Field to decrypt if used
+	 * TODO modifier pour postgresql
+	 */
+	function decrypt($field, $cryptType=0, $cryptKey='')
+	{
+		/*
+		$return = $field;
+
+		if ($cryptType && !empty($cryptKey))
+		{
+			if ($cryptType == 2)
+			{
+				$return = 'AES_DECRYPT('.$field.',\''.$cryptKey.'\')';
+			}
+			else if ($cryptType == 1)
+			{
+				$return = 'DES_DECRYPT('.$field.',\''.$cryptKey.'\')';
+			}
+		}
+
+		return $return;
+		*/
+	}
 
     /**
-            \brief          Renvoie l'id de la connexion
-            \return	        string      Id connexion
-    */
+     * \brief          Renvoie l'id de la connexion
+     * \return	        string      Id connexion
+     */
     function DDLGetConnectId()
     {
         return '?';
@@ -817,25 +872,48 @@ class DoliDb
     }
 
     /**
-        \brief      Liste des tables dans une database.
-        \param	    database	Nom de la database
-        \return	    resource
-    */
+     * \brief      Liste des tables dans une database.
+     * \param	    database	Nom de la database
+     * \return	    resource
+     */
     function DDLListTables($database)
     {
         $this->results = pg_query($this->db, "SHOW TABLES;");
         return  $this->results;
     }
+    
+	/**
+	 *	\brief     	Liste les informations des champs d'une table.
+	 *	\param	    table			Nom de la table
+	 *	\return	    array			Tableau des informations des champs de la table
+	 *	TODO modifier pour postgresql
+	 */
+	function DDLInfoTable($table)
+	{
+		/*
+		$infotables=array();
+
+		$sql="SHOW FULL COLUMNS FROM ".$table.";";
+		
+		dol_syslog($sql,LOG_DEBUG);
+		$result = $this->pg_query($this->db,$sql);
+		while($row = $this->fetch_row($result))
+		{
+			$infotables[] = $row;
+		}
+		return $infotables;
+		*/
+	}
 
 
 	/**
-			\brief      Create a user
-			\param	    dolibarr_main_db_host 		Ip serveur
-			\param	    dolibarr_main_db_user 		Nom user � cr�er
-			\param	    dolibarr_main_db_pass 		Mot de passe user � cr�er
-			\param		dolibarr_main_db_name		Database name where user must be granted
-			\return	    int							<0 si KO, >=0 si OK
-	*/
+	 * 	\brief      Create a user
+	 *	\param	    dolibarr_main_db_host 		Ip serveur
+	 *	\param	    dolibarr_main_db_user 		Nom user a creer
+	 *	\param	    dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	\param		dolibarr_main_db_name		Database name where user must be granted
+	 *	\return	    int							<0 si KO, >=0 si OK
+	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
 		$sql = "create user \"".$dolibarr_main_db_user."\" with password '".$dolibarr_main_db_pass."'";
@@ -854,13 +932,13 @@ class DoliDb
 	 *	\brief      Insert a new field in table
 	 *	\param	    table 			Nom de la table
 	 *	\param		field_name 		Nom du champ a inserer
-	 *	\param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du param�tre]
+	 *	\param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
 	 *	\param	    field_position 	Optionnel ex.: "after champtruc"
 	 *	\return	    int				<0 si KO, >0 si OK
 	 */
 	function DDLAddField($table,$field_name,$field_desc,$field_position="")
 	{
-		// cl�s recherch�es dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
@@ -904,13 +982,20 @@ class DoliDb
 		else return 1;
 	}
 
-
+	/**
+	 *	\brief		Return charset used to store data in database
+	 *	\return		string		Charset
+	 */
 	function getDefaultCharacterSetDatabase(){
 		 $resql=$this->query('SHOW SERVER_ENCODING');
 	    $liste=$this->fetch_array($resql);
 	    return $liste['server_encoding'];
 	}
 
+	/**
+	 *	\brief		Return list of available charset that can be used to store data in database
+	 *	\return		array		List of Charset
+	 */
 	function getListOfCharacterSet(){
 		 $resql=$this->query('SHOW CHARSET');
 		$liste = array();
@@ -931,6 +1016,10 @@ class DoliDb
     	return $liste;
 	}
 
+	/**
+	 *	\brief		Return collation used in database
+	 *	\return		string		Collation value
+	 */
 	function getDefaultCollationDatabase(){
 		$resql=$this->query('SHOW VARIABLES LIKE \'collation_database\'');
 		 if (!$resql)
@@ -942,6 +1031,10 @@ class DoliDb
 	    return $liste['Value'];
 	}
 
+	/**
+	 *	\brief		Return list of available collation that can be used for database
+	 *	\return		array		Liste of Collation
+	 */
 	function getListOfCollation(){
 		 $resql=$this->query('SHOW COLLATION');
 		$liste = array();
