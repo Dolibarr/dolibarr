@@ -96,6 +96,14 @@ if (eregi('^fr_',$langs->getDefaultLang()))
 print '</ul>';
 
 
+print $langs->trans("HelpCenter");
+print '<ul>';
+print '<li>';
+//print $langs->trans("SeeWikiPage",'http://wiki.dolibarr.org/index.php/List_of_OpenSource_Software_companies_and_freelancers');
+print '<a target="_blank" href="'.DOL_URL_ROOT.'/support/index.php">'.$langs->trans("HelpCenter").'</a>';
+print '</li>';
+print '</ul>';
+
 
 print '<br>'.$langs->trans("MakeADonation").':<br>';
 
