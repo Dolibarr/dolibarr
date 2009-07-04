@@ -27,15 +27,15 @@ create table llx_facturedet
   fk_product          integer    NULL,      	     -- Doit pouvoir etre nul pour ligne detail sans produits
   description         text,
   tva_taux            real, 			     -- Taux tva produit/service (exemple 19.6)
-  qty                 real,              	     -- Quantité (exemple 2)
+  qty                 real,              	     -- Quantity (exemple 2)
   remise_percent      real       DEFAULT 0,    	     -- % de la remise ligne (exemple 20%)
-  remise              real       DEFAULT 0,    	     -- Montant calculé de la remise % sur PU HT (exemple 20)
+  remise              real       DEFAULT 0,    	     -- Montant calculï¿½ de la remise % sur PU HT (exemple 20)
   fk_remise_except    integer    NULL,    	     -- Lien vers table des remises fixes
   subprice            real,              	     -- P.U. HT (exemple 100)
   price               real,              	     -- P.U. HT apres remise % de ligne
-  total_ht            real,	             	     -- Total HT de la ligne toute quantité et incluant remise ligne et globale
-  total_tva           real,	             	     -- Total TVA de la ligne toute quantité et incluant remise ligne et globale
-  total_ttc           real,	             	     -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  total_ht            real,	             	     -- Total HT de la ligne toute quantitï¿½ et incluant remise ligne et globale
+  total_tva           real,	             	     -- Total TVA de la ligne toute quantitï¿½ et incluant remise ligne et globale
+  total_ttc           real,	             	     -- Total TTC de la ligne toute quantitï¿½ et incluant remise ligne et globale
   product_type		  integer    DEFAULT 0,
   date_start          datetime   DEFAULT NULL,       -- date debut si service
   date_end            datetime   DEFAULT NULL,       -- date fin si service
