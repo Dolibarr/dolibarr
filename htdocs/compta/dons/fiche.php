@@ -369,7 +369,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
 	// Ref
 	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
-	print $don->getNomUrl();
+	print $html->showrefnav($don,'rowid','',1,'rowid','ref','');
 	print '</td>';
 	print '</tr>';
 
