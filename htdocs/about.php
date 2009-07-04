@@ -89,23 +89,12 @@ if (eregi('^fr_',$langs->getDefaultLang()))
 	print '</li>';
 
 	print '<li>';
-	print 'Le code source de Dolibarr est consultable par l\'<a target="blank" href="http://savannah.nongnu.org/cgi-bin/viewcvs/dolibarr/dolibarr/">interface web du cvs</a>.';
+	print 'Le code source de Dolibarr est consultable par l\'<a target="_blank" href="http://savannah.nongnu.org/cgi-bin/viewcvs/dolibarr/dolibarr/">interface web du cvs</a>.';
 	print '</li>';
 }
 
 print '</ul>';
 
-
-if (eregi('^fr_',$langs->getDefaultLang()))
-{
-    print '<p>';
-    print 'Vente / Support';
-    print '<ul>';
-    print '<li>';
-    print 'Contactez Rodolphe Quiedeville sur <a target="blank" href="http://rodolphe.quiedeville.org">rodolphe.quiedeville.org</a>';
-    print '</li>';
-    print '</ul>';
-}
 
 
 print '<br>'.$langs->trans("MakeADonation").':<br>';
