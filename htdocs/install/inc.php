@@ -218,6 +218,10 @@ function conf($dolibarr_main_document_root)
 	$conf->db->character_set=$dolibarr_main_db_charset;
 	if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';
 	$conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
+	if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
+	$conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
+	if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
+	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
 	// Forcage du log pour les install et mises a jour
 	$conf->syslog->enabled=1;

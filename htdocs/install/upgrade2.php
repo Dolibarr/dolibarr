@@ -109,6 +109,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		}
 	}
 
+	if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
+	$conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
+	if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
+	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
+	
 	// Chargement config
 	if (! $error) $conf->setValues($db);
 
