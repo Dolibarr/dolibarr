@@ -40,19 +40,11 @@ $langs->load("bills");
 $langs->load("members");
 $langs->load("users");
 
-// Defini si peux creer un utilisateur ou gerer groupe sur un utilisateur
-$canadduser=$user->rights->adherent->creer;
-// Defini si peux lire/modifier info user ou mot de passe
-if ($_GET["rowid"])
-{
-	$caneditfield=$user->rights->adherent->creer;
-	$caneditpassword=$user->rights->adherent->creer;
-}
+// Security check
 if (! $user->rights->adherent->lire)
 {
 	accessforbidden();
 }
-
 
 $adh = new Adherent($db);
 $adho = new AdherentOptions($db);
@@ -61,6 +53,38 @@ $errmsg='';
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
+
+if ($rowid)
+{
+	// Load member
+	$result = $adh->fetch($rowid);
+
+	// Define variables to know what current user can do on users
+	$canadduser=($user->admin || $user->rights->user->user->creer);
+	$canreadpermsuser=($user->admin || $user->rights->user->user->lire);
+	$caneditpermsuser=($user->admin || $user->rights->user->user->creer);
+	$candisablepermsuser=($user->admin || $user->rights->user->user->supprimer);
+	// Define variables to know what current user can do on properties of user linked to edited member
+	if ($adh->user_id)
+	{
+		// $user est le user qui edite, $adh->user_id est l'id de l'utilisateur lies au membre edite
+		$caneditfielduser=( (($user->id == $adh->user_id) && $user->rights->user->self->creer)
+		|| (($user->id != $adh->user_id) && $user->rights->user->user->creer) );
+		$caneditpassworduser=( (($user->id == $adh->user_id) && $user->rights->user->self->password)
+		|| (($user->id != $adh->user_id) && $user->rights->user->user->password) );
+	}
+}
+
+// Define variables to know what current user can do on members
+$canaddmember=$user->rights->adherent->creer;
+// Define variables to know what current user can do on properties of a member
+if ($rowid)
+{
+	$caneditfieldmember=( (($user->id == $adh->user_id) && $user->rights->adherent->self->creer)
+		|| (($user->id != $adh->user_id) && $user->rights->adherent->creer) );
+	$caneditpasswordmember=( (($user->id == $adh->user_id) && $user->rights->adherent->self->password)
+		|| (($user->id != $adh->user_id) && $user->rights->adherent->password) );
+}
 
 
 
@@ -71,10 +95,6 @@ $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
 // Create user from a member
 if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
 {
-	// Recuperation contact actuel
-	$adh = new Adherent($db);
-	$result = $adh->fetch($_GET["rowid"]);
-
 	if ($result > 0)
 	{
 		// Creation user
@@ -96,9 +116,6 @@ if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $
 // Create third party from a member
 if ($_POST["action"] == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes' && $user->rights->societe->creer)
 {
-	$adh = new Adherent($db);
-	$result = $adh->fetch($_GET["rowid"]);
-
 	if ($result > 0)
 	{
 		// Creation user
@@ -119,9 +136,6 @@ if ($_POST["action"] == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes
 
 if ($_REQUEST["action"] == 'confirm_sendinfo' && $_REQUEST["confirm"] == 'yes')
 {
-    $adh->id = $rowid;
-    $adh->fetch($rowid);
-
 	if ($adh->email)
 	{
 		$result=$adh->send_an_email("Voici le contenu de votre fiche\n\n%INFOS%\n\n","Contenu de votre fiche adherent");
@@ -131,8 +145,6 @@ if ($_REQUEST["action"] == 'confirm_sendinfo' && $_REQUEST["confirm"] == 'yes')
 
 if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 {
-	$result=$adh->fetch($_POST["rowid"]);
-
 	// Is it a new link to a user ?
 	$nosyncuser=0;
 	if ($adh->user_id != $_POST["userid"]) $nosyncuser=1;
@@ -408,7 +420,6 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
 
 if ($user->rights->adherent->supprimer && $_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
-	$result=$adh->fetch($rowid);
     $result=$adh->delete($rowid);
     if ($result > 0)
     {
@@ -423,7 +434,6 @@ if ($user->rights->adherent->supprimer && $_REQUEST["action"] == 'confirm_delete
 
 if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 {
-	$result=$adh->fetch($rowid);
     $result=$adh->validate($user);
 
     $adht = new AdherentType($db);
@@ -476,7 +486,6 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_P
 
 if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
 {
-    $result=$adh->fetch($rowid);
     $result=$adh->resiliate($user);
 
     $adht = new AdherentType($db);
@@ -521,8 +530,7 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' &
 
 if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
 {
-    $result=$adh->fetch($rowid);
-	if ($result >= 0 && ! sizeof($adh->errors))
+	if (! sizeof($adh->errors))
 	{
 	    if(!$adh->del_to_spip()){
 	        $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$adh->error."<BR>\n";
@@ -532,8 +540,7 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_spip'
 
 if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == 'yes')
 {
-    $result=$adh->fetch($rowid);
-	if ($result >= 0 && ! sizeof($adh->errors))
+	if (! sizeof($adh->errors))
 	{
 	    if (!$adh->add_to_spip())
 	    {
@@ -629,7 +636,7 @@ if ($action == 'edit')
     {
         print '<img src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
     }
-    if ($caneditfield)
+    if ($caneditfieldmember)
     {
         print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
         print '<tr><td>';
@@ -662,14 +669,14 @@ if ($action == 'edit')
 	}
 	print "</td></tr>";
 
-	// Adresse
+	// Address
 	print '<tr><td>'.$langs->trans("Address").'</td><td>';
 	print '<textarea name="adresse" wrap="soft" cols="40" rows="2">'.$adh->adresse.'</textarea></td></tr>';
 
 	// Cp
 	print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="6" value="'.$adh->cp.'"> <input type="text" name="ville" size="32" value="'.$adh->ville.'"></td></tr>';
 
-	// Pays
+	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td>';
 	$html->select_pays($adh->pays_code?$adh->pays_code:$mysoc->pays_code,'pays');
 	print '</td></tr>';

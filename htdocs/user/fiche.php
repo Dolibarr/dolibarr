@@ -35,13 +35,12 @@ require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 if ($conf->ldap->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 
-// Defini si peux creer un utilisateur ou gerer groupe sur un utilisateur
+// Define value to know what current user can do on users
 $canadduser=($user->admin || $user->rights->user->user->creer);
-// Defini si peux lire/modifier permisssions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 $candisableperms=($user->admin || $user->rights->user->user->supprimer);
-// Defini si peux lire/modifier info user ou mot de passe
+// Define value to know what current user can do on properties of edited user
 if ($_GET["id"])
 {
 	// $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edite
