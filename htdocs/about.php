@@ -53,7 +53,7 @@ print "<br>\n";
 
 print $langs->trans("Developpers").':';
 print '<ul>';
-print '<li>'.$langs->trans("SeeWikiForAllTeam").': <a href="http://wiki.dolibarr.org/index.php/DolibarrProject" target="_blank">http://wiki.dolibarr.org/index.php/DolibarrProject</a></li>';
+print '<li>'.$langs->trans("SeeWikiForAllTeam").': <a href="http://wiki.dolibarr.org/index.php/Dolibarr_Project" target="_blank">http://wiki.dolibarr.org/index.php/Dolibarr_Project</a></li>';
 print '</ul>';
 
 print "<br>\n";
@@ -113,7 +113,7 @@ print '<br>'.$langs->trans("MakeADonation").':<br>';
 print '<ul>';
 print '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
 <input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="5388905">';
+<input type="hidden" name="hosted_button_id" value="6573525">';
 print '<input class="none" type="image" src="'.DOL_URL_ROOT.'/theme/common/paypal.png" border="0" name="submit" alt="Help Dolibarr making a donation">';
 print '</form>';
 print '</ul>';
