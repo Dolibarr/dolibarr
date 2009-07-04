@@ -243,6 +243,7 @@ DisableLinkToHelpCenter = Ocultar el enlace "¿Necesita soporte o ayuda?" en la 
 AddCRIfTooLong = No hay líneas de corte automático, de modo que si el texto es demasiado largo en los documentos, debe agregar sus propios retornos de carro en el texto mecanografiado.
 ModuleDisabled = Módulo desactivado
 ModuleDisabledSoNoEvent = Módulo desactivado, por lo que evento nunca se crea
+ConfirmPurge = ¿ Está seguro de querer realizar esta purga ?<br>Esto borrará definitivamente todos los datos de sus ficheros (área GED, archivos adjuntos etc.).
 # Modules = undefined = 
 Module0Name = Usuarios y grupos
 Module0Desc = Gestión de usuarios y grupos
