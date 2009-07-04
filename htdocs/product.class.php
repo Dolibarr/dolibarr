@@ -1034,7 +1034,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE p.rowid = pd.fk_propal";
 		$sql.= " AND p.fk_soc = s.rowid";
-	  $sql.= " AND s.entity = ".$conf->entity;
+	  	$sql.= " AND s.entity = ".$conf->entity;
 		$sql.= " AND pd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		//$sql.= " AND pr.fk_statut != 0";

@@ -210,25 +210,25 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 
 
 /**
- *   	\brief      Return line description translated in outputlangs and encoded in UTF8
- *		\param		line			    Line to format
- *    \param    outputlang		Object lang for output
- *    \param    showref       Show reference
+ *	\brief		Return line description translated in outputlangs and encoded in UTF8
+ *	\param		line				Line to format
+ *  \param    	outputlang			Object lang for output
+ *  \param    	showref       		Show reference
+ * 	\param		issupplierline		Is it a line for a supplier object ?
  */
-function pdf_getlinedesc($line,$outputlangs,$showref=1)
+function pdf_getlinedesc($line,$outputlangs,$showref=1,$issupplierline=0)
 {
 	global $db, $conf, $langs;
 
-	$label=$line->label;
-	$desc=$line->desc;
+	$idprod=$line->fk_product; if (empty($idprod)) $idprod=$line->produit_id;
+	$label=$line->label; if (empty($label))  $label=$line->libelle;
+	$desc=$line->desc; if (empty($desc))   $desc=$line->description;
+	$ref_supplier=$line->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$line->ref_fourn;	// TODO Not yeld saved for supplier invoices, only supplier orders
 	$note=$line->note;
-	$idprod=$line->fk_product;
 
-	if (empty($label))  $label=$line->libelle;
-	if (empty($desc))   $desc=$line->description;
-	if (empty($idprod)) $idprod=$line->produit_id;
+	if ($issupplierline) $prodser = new ProductFournisseur($db);
+	else $prodser = new Product($db);
 
-	$prodser = new Product($db);
 	if ($idprod)
 	{
 		$prodser->fetch($idprod);
@@ -269,7 +269,7 @@ function pdf_getlinedesc($line,$outputlangs,$showref=1)
 		}
 	}
 
-	// Si ligne associee a un code produit
+	// If line linked to a product
 	if ($idprod)
 	{
 		// On ajoute la ref
@@ -289,7 +289,13 @@ function pdf_getlinedesc($line,$outputlangs,$showref=1)
 				}
 			}
 
-			if ($showref) $ref_prodserv = $prodser->ref." - ";
+			if ($showref)
+			{
+				if ($issupplierline) $ref_prodserv = $prodser->ref.' ('.$outputlangs->trans("SupplierRef").' '.$ref_supplier.')';	// Show local ref and supplier ref
+				else $ref_prodserv = $prodser->ref;	// Show local ref only
+
+				$ref_prodserv .= " - ";
+			}
 
 			$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 		}

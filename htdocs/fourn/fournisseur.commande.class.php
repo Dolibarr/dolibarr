@@ -1432,7 +1432,7 @@ class CommandeFournisseur extends Commande
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
 		$this->note_public='SPECIMEN';
-		$nbp = rand(1, 9);
+		$nbp = rand(3, 5);
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
@@ -1441,6 +1441,7 @@ class CommandeFournisseur extends Commande
 			$ligne->qty=1;
 			$ligne->subprice=100;
 			$ligne->tva_tx=19.6;
+			$ligne->ref_fourn='SUPPLIER_REF_'.$xnbp;
 			$prodid = rand(1, $num_prods);
 			$ligne->produit_id=$prodids[$prodid];
 			$this->lignes[$xnbp]=$ligne;

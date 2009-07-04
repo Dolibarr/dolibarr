@@ -229,3 +229,6 @@ insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('WI', 110, '', 0, 'WISCONSIN', 'Wisconsin', 1);
 insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('WY', 110, '', 0, 'WYOMONG', 'Wyoming', 1);
 
+alter table llx_facture_fourn_det add column ref               varchar(50) after fk_product;
+alter table llx_facture_fourn_det add column label             varchar(255) after ref;
+

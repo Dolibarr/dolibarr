@@ -24,6 +24,8 @@ create table llx_facture_fourn_det
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_facture_fourn  integer NOT NULL,
   fk_product        integer NULL,
+  ref               varchar(50),   -- supplier product ref
+  label             varchar(255),  -- product label
   description       text,
   pu_ht             double(24,8),
   pu_ttc            double(24,8),

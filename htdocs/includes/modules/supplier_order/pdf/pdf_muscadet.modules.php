@@ -242,7 +242,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($com->lignes[$i],$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($com->lignes[$i],$outputlangs,1,1);
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
@@ -256,7 +256,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf->SetXY ($this->posxtva, $curY);
 					$pdf->MultiCell(10, 3, ($com->lignes[$i]->tva_tx < 0 ? '*':'').abs($com->lignes[$i]->tva_tx), 0, 'R');
 
-					// Prix unitaire HT avant remise
+					// Unit price before discount
 					$pdf->SetXY ($this->posxup, $curY);
 					$pdf->MultiCell(18, 3, price($com->lignes[$i]->subprice), 0, 'R', 0);
 
@@ -264,14 +264,14 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf->SetXY ($this->posxqty, $curY);
 					$pdf->MultiCell(10, 3, $com->lignes[$i]->qty, 0, 'R');
 
-					// Remise sur ligne
+					// Discount on line
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($com->lignes[$i]->remise_percent)
 					{
 						$pdf->MultiCell(14, 3, $com->lignes[$i]->remise_percent."%", 0, 'R');
 					}
 
-					// Total HT ligne
+					// Total HT line
 					$pdf->SetXY ($this->postotalht, $curY);
 					$total = price($com->lignes[$i]->total_ht);
 					$pdf->MultiCell(23, 3, $total, 0, 'R', 0);
@@ -563,7 +563,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
 		$pdf->SetXY ($this->postotalht-1, $tab_top+2);
-		$pdf->MultiCell(23,2, $outputlangs->transnoentities("TotalHT"),'','C');
+		$pdf->MultiCell(23,2, $outputlangs->transnoentities("TotalHTShort"),'','C');
 
 	}
 
@@ -673,7 +673,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(100,$posy-5);
-			$pdf->MultiCell(96, 4, $outputlangs->transnoentities("BillTo").":");
+			$pdf->MultiCell(96, 4, $outputlangs->transnoentities("Supplier").":");
 			//
 			$client = new Societe($this->db);
 			$client->fetch($object->socid);
