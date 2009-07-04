@@ -42,11 +42,10 @@ if ($conf->syslog->enabled)
 }
 
 
-
 /*
  *	Actions
  */
-if ($_POST["action"]=='purge' && ! eregi('^confirm',$_REQUEST["choice"]) && ($_REQUEST["choice"] != 'allfiles' || $_POST["confirm"] == 'yes') )
+if ($_REQUEST["action"]=='purge' && ! eregi('^confirm',$_REQUEST["choice"]) && ($_REQUEST["choice"] != 'allfiles' || $_REQUEST["confirm"] == 'yes') )
 {
 	$filesarray=array();
 
@@ -169,7 +168,7 @@ if (eregi('^confirm',$_REQUEST["choice"]))
 {
 	print '<br>';
 	$formquestion=array();
-	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?choice=allfiles',$langs->trans('Purge'),$langs->trans('ConfirmPurge'),'purge',$formquestion,'no',1);
+	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?choice=allfiles',$langs->trans('Purge'),$langs->trans('ConfirmPurge'),'purge',$formquestion,'no',2);
 	if ($ret == 'html') print '<br>';
 }
 
