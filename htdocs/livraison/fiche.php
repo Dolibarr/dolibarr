@@ -583,7 +583,7 @@ else
 			 */
 
 			$livraisonref = dol_sanitizeFileName($livraison->ref);
-			$filedir = $conf->livraison_bon->dir_output . '/' . $livraisonref;
+			$filedir = $conf->expedition->dir_output . "/receipt/" . $livraisonref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$livraison->id;
 
 			$genallowed=$user->rights->expedition->livraison->creer;

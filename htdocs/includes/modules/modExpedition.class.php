@@ -60,39 +60,12 @@ class modExpedition extends DolibarrModules
 		$this->picto = "sending";
 
 		// Data directories to create when module is enabled
-		// TODO Replace with simple directories
-		$this->dirs = array();
-		$r=0;
-
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/expedition";
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/expedition/temp";
-		$r++;
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/expedition/sending";
-		$this->dirs[$r][2] = 1;
-		$this->dirs[$r][3] = '';
-		$this->dirs[$r][4] = "expedition_bon";
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/expedition/sending/temp";
-		$this->dirs[$r][2] = 1;
-		$this->dirs[$r][3] = '';
-		$this->dirs[$r][4] = "expedition_bon";
-		$r++;
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/expedition/receipt";
-		$this->dirs[$r][2] = 1;
-		$this->dirs[$r][3] = '';
-		$this->dirs[$r][4] = "livraison_bon";
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/expedition/receipt/temp";
-		$this->dirs[$r][2] = 1;
-		$this->dirs[$r][3] = '';
-		$this->dirs[$r][4] = "livraison_bon";
+		$this->dirs = array("/expedition/temp",
+							"/expedition/sending",
+		                    "/expedition/sending/temp",
+		                    "/expedition/receipt",
+		                    "/expedition/receipt/temp"
+		                    );
 
 		// Config pages
 		$this->config_page_url = array("confexped.php");

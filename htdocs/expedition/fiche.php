@@ -848,7 +848,7 @@ else
 		if ($conf->expedition_bon->enabled)
 		{
 			$expeditionref = dol_sanitizeFileName($expedition->ref);
-			$filedir = $conf->expedition_bon->dir_output . "/" .$expeditionref;
+			$filedir = $conf->expedition->dir_output . "/sending/" .$expeditionref;
 
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$expedition->id;
 

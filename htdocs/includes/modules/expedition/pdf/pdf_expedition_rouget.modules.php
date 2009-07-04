@@ -237,18 +237,18 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$outputlangs->load("products");
 		$outputlangs->load("propal");
 
-		if ($conf->expedition_bon->dir_output)
+		if ($conf->expedition->dir_output."/sending")
 		{
 			// Definition de $dir et $file
 			if ($object->specimen)
 			{
-				$dir = $conf->expedition_bon->dir_output;
+				$dir = $conf->expedition->dir_output."/sending";
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$expref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->expedition_bon->dir_output . "/" . $expref;
+				$dir = $conf->expedition->dir_output."/sending/" . $expref;
 				$file = $dir . "/" . $expref . ".pdf";
 			}
 

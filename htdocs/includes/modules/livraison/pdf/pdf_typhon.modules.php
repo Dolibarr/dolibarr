@@ -125,7 +125,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$outputlangs->load("deliveries");
 		$outputlangs->load("sendings");
 
-		if ($conf->livraison_bon->dir_output)
+		if ($conf->expedition->dir_output."/receipt")
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
@@ -143,7 +143,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$nblignes = sizeof($object->lignes);
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->livraison_bon->dir_output;
+			$dir = $conf->expedition->dir_output."/receipt";
 			if (! eregi('specimen',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".pdf";
 

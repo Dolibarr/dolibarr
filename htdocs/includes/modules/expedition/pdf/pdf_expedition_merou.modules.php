@@ -91,7 +91,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$this->expe = $object;
 
 		//Verification de la configuration
-		if ($conf->expedition_bon->dir_output)
+		if ($conf->expedition->dir_output."/sending")
 		{
 			//Creation du Client
 			$soc = new Societe($this->db);
@@ -116,13 +116,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			// Definition de $dir et $file
 			if ($object->specimen)
 			{
-				$dir = $conf->expedition_bon->dir_output;
+				$dir = $conf->expedition->dir_output."/sending";
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$expref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->expedition_bon->dir_output . "/" . $expref;
+				$dir = $conf->expedition->dir_output . "/sending/" . $expref;
 				$file = $dir . "/" . $expref . ".pdf";
 			}
 

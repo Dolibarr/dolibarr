@@ -248,7 +248,7 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->expedition_bon->dir_output.'/'.$original_file;
+		$original_file=$conf->expedition->dir_output."/sending/".$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
 	}
 
@@ -260,7 +260,7 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->livraison_bon->dir_output.'/'.$original_file;
+		$original_file=$conf->expedition->dir_output."/receipt/".$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
 	}
 

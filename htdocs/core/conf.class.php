@@ -215,12 +215,8 @@ class Conf
 
 		// Sous module bons d'expedition
 		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
-		$this->expedition_bon->dir_output=$rootfordata."/expedition/sending";
-		$this->expedition_bon->dir_temp  =$rootfordata."/expedition/sending/temp";
 		// Sous module bons de livraison
 		$this->livraison_bon->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
-		$this->livraison_bon->dir_output=$rootfordata."/expedition/receipt";
-		$this->livraison_bon->dir_temp  =$rootfordata."/expedition/receipt/temp";
 
 		// Module don
 		$this->don->dir_output=$rootfordata."/dons";
