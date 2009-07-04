@@ -94,7 +94,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.f
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE fac.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 {
   $sql .= " AND s.rowid = ".$socid;
