@@ -2034,57 +2034,63 @@ function migrate_menus($db,$langs,$conf)
 
 	$error = 0;
 
-	$db->begin();
-
-	$sql = "SELECT m.rowid, mc.action";
-	$sql.= " FROM ".MAIN_DB_PREFIX."menu_constraint as mc, ".MAIN_DB_PREFIX."menu_const as md, ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE md.fk_menu = m.rowid AND md.fk_constraint = mc.rowid";
-	$sql.= " AND m.enabled = '1'";
-	$resql = $db->query($sql);
-	if ($resql)
+	if ($db->DDLInfoTable(MAIN_DB_PREFIX."menu_constraint"))
 	{
-		$i = 0;
-		$num = $db->num_rows($resql);
-		if ($num)
+		$db->begin();
+		
+		$sql = "SELECT m.rowid, mc.action";
+		$sql.= " FROM ".MAIN_DB_PREFIX."menu_constraint as mc, ".MAIN_DB_PREFIX."menu_const as md, ".MAIN_DB_PREFIX."menu as m";
+		$sql.= " WHERE md.fk_menu = m.rowid AND md.fk_constraint = mc.rowid";
+		$sql.= " AND m.enabled = '1'";
+		$resql = $db->query($sql);
+		if ($resql)
 		{
-			while ($i < $num)
+			$i = 0;
+			$num = $db->num_rows($resql);
+			if ($num)
 			{
-				$obj = $db->fetch_object($resql);
-
-				$sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
-				$sql.= " enabled = '".$obj->action."'";
-				$sql.= " WHERE rowid=".$obj->rowid;
-				$sql.= " AND enabled = '1'";
-
-				$resql2=$db->query($sql);
-				if ($resql2)
+				while ($i < $num)
 				{
-
+					$obj = $db->fetch_object($resql);
+					
+					$sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
+					$sql.= " enabled = '".$obj->action."'";
+					$sql.= " WHERE rowid=".$obj->rowid;
+					$sql.= " AND enabled = '1'";
+					
+					$resql2=$db->query($sql);
+					if ($resql2)
+					{
+						
+					}
+					else
+					{
+						$error++;
+						dol_print_error($db);
+					}
+					print ". ";
+					$i++;
 				}
-				else
-				{
-					$error++;
-					dol_print_error($db);
-				}
-				print ". ";
-				$i++;
 			}
-
-		}
-
-		if ($error == 0)
-		{
-			$db->commit();
+			
+			if ($error == 0)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
 		}
 		else
 		{
+			dol_print_error($db);
 			$db->rollback();
 		}
 	}
 	else
 	{
-		dol_print_error($db);
-		$db->rollback();
+		print $langs->trans('AlreadyDone')."<br>\n";
 	}
 
 	print '</td></tr>';
