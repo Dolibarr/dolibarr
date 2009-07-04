@@ -243,6 +243,7 @@ DisableLinkToHelpCenter=Cacher le lien "Besoin d'un support ou aide" sur la page
 AddCRIfTooLong=Il n'y a pas de coupures de lignes automatiques, aussi si votre texte est trop long sur les documents, il vous faut ajouter par vous-meme des retours chariots dans la zone de saisie du texte.
 ModuleDisabled=Module désactivé
 ModuleDisabledSoNoEvent=Module désactivé donc évênement jamais créé
+ConfirmPurge=Etes vous sur de vouloir réaliser cette purge ?<br>Ceci effacera définitivement toutes vos données fichier (espace GED, pièces jointes, etc...). 
 
 # Modules = undefined
 Module0Name = Utilisateurs & groupes

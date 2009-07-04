@@ -46,11 +46,11 @@ if ($conf->syslog->enabled)
 /*
  *	Actions
  */
-if ($_POST["action"]=='purge')
+if ($_POST["action"]=='purge' && ! eregi('^confirm',$_REQUEST["choice"]) && ($_REQUEST["choice"] != 'allfiles' || $_POST["confirm"] == 'yes') )
 {
 	$filesarray=array();
 
-	if ($_POST["choice"]=='tempfiles')
+	if ($_REQUEST["choice"]=='tempfiles')
 	{
 		// Delete temporary files
 		if ($dolibarr_main_data_root)
@@ -59,7 +59,7 @@ if ($_POST["action"]=='purge')
 		}
 	}
 
-	if ($_POST["choice"]=='allfiles')
+	if ($_REQUEST["choice"]=='allfiles')
 	{
 		// Delete all files
 		if ($dolibarr_main_data_root)
@@ -68,7 +68,7 @@ if ($_POST["action"]=='purge')
 		}
 	}
 
-	if ($_POST["choice"]=='logfile')
+	if ($_REQUEST["choice"]=='logfile')
 	{
 		$filesarray[]=array('fullname'=>$filelog,'type'=>'file');
 	}
@@ -95,7 +95,7 @@ if ($_POST["action"]=='purge')
 		}
 
 		// Update cachenbofdoc
-		if ($conf->ecm->enabled && $_POST["choice"]=='allfiles')
+		if ($conf->ecm->enabled && $_REQUEST["choice"]=='allfiles')
 		{
 			require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
 			$ecmdirstatic = new ECMDirectory($db);
@@ -123,11 +123,6 @@ print '<br>';
 print $langs->trans("PurgeAreaDesc",$dolibarr_main_data_root).'<br>';
 print '<br>';
 
-if ($message)
-{
-	print $message.'<br>';
-	print "\n";
-}
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -141,25 +136,43 @@ print '<tr class="border"><td style="padding: 4px">';
 if ($conf->syslog->enabled)
 {
 	print '<input type="radio" name="choice" value="logfile"';
-	print ($_POST["choice"] && $_POST["choice"]=='logfile') ? ' checked="true"' : '';
+	print ($_REQUEST["choice"] && $_REQUEST["choice"]=='logfile') ? ' checked="true"' : '';
 	print '> '.$langs->trans("PurgeDeleteLogFile",$filelog).'<br><br>';
 }
 
 print '<input type="radio" name="choice" value="tempfiles"';
-print (! $_POST["choice"] || $_POST["choice"]=='tempfiles') ? ' checked="true"' : '';
+print (! $_REQUEST["choice"] || $_REQUEST["choice"]=='tempfiles' || $_REQUEST["choice"]=='allfiles') ? ' checked="true"' : '';
 print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br><br>';
 
-print '<input type="radio" name="choice" value="allfiles"';
-print ($_POST["choice"] && $_POST["choice"]=='allfiles') ? ' checked="true"' : '';
+print '<input type="radio" name="choice" value="confirm_allfiles"';
+print ($_REQUEST["choice"] && $_REQUEST["choice"]=='confirm_allfiles') ? ' checked="true"' : '';
 print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir",$dolibarr_main_data_root).'<br>';
 
 print '</td></tr></table>';
 
-print '<br>';
-print '<center><input class="button" type="submit" value="'.$langs->trans("PurgeRunNow").'"></center>';
-
+if ($_REQUEST['choice'] != 'confirm_allfiles')
+{
+	print '<br>';
+	print '<center><input class="button" type="submit" value="'.$langs->trans("PurgeRunNow").'"></center>';
+}
 
 print '</form>';
+
+
+if ($message)
+{
+	print '<br>'.$message.'<br>';
+	print "\n";
+}
+
+if (eregi('^confirm',$_REQUEST["choice"]))
+{
+	print '<br>';
+	$formquestion=array();
+	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?choice=allfiles',$langs->trans('Purge'),$langs->trans('ConfirmPurge'),'purge',$formquestion,'no',1);
+	if ($ret == 'html') print '<br>';
+}
+
 
 llxFooter('$Date$ - $Revision$');
 ?>

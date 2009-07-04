@@ -243,7 +243,7 @@ DisableLinkToHelpCenter=Hide link "Need help or support" on login page
 AddCRIfTooLong=There is no automatic wrapping, so if line is out of page on documents because too long, you must add yourself carriage returns in the textarea.
 ModuleDisabled=Module disabled
 ModuleDisabledSoNoEvent=Module disabled so event never created
-
+ConfirmPurge=Are you sure you want to execute this purge ?<br>This will delete definitely all your file data with no way to restore them (ECM files, attached files...). 
 
 # Modules
 Module0Name=Users & groups
