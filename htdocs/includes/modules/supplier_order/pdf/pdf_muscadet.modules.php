@@ -121,7 +121,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$outputlangs->load("products");
 		$outputlangs->load("orders");
 
-		if ($conf->fournisseur->commande->dir_output)
+		if ($conf->fournisseur->dir_output.'/commande')
 		{
 			// Definition de l'objet $com (pour compatibilite ascendante)
 			if (! is_object($com))
@@ -135,13 +135,13 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			// Definition de $dir et $file
 			if ($com->specimen)
 			{
-				$dir = $conf->fournisseur->commande->dir_output;
+				$dir = $conf->fournisseur->dir_output.'/commande';
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$comref = dol_sanitizeFileName($com->ref);
-				$dir = $conf->fournisseur->commande->dir_output . "/" . $comref;
+				$dir = $conf->fournisseur->dir_output . "/commande/" . $comref;
 				$file = $dir . "/" . $comref . ".pdf";
 			}
 

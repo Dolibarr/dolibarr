@@ -1006,9 +1006,9 @@ if ($id > 0 || ! empty($ref))
 		 * Documents	generes
 		 */
 		$comfournref = dol_sanitizeFileName($commande->ref);
-		$file =	$conf->fournisseur->commande->dir_output . '/' . $comfournref .	'/'	. $comfournref . '.pdf';
+		$file =	$conf->fournisseur->dir_output . '/commande/' . $comfournref .	'/'	. $comfournref . '.pdf';
 		$relativepath =	$comfournref.'/'.$comfournref.'.pdf';
-		$filedir = $conf->fournisseur->commande->dir_output	. '/' .	$comfournref;
+		$filedir = $conf->fournisseur->dir_output	. '/commande/' .	$comfournref;
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
 		$genallowed=$user->rights->fournisseur->commande->creer;
 		$delallowed=$user->rights->fournisseur->commande->supprimer;

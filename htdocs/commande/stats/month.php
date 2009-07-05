@@ -60,7 +60,7 @@ if ($mode == 'customer')
 if ($mode == 'supplier') 
 {
 	$title=$langs->trans("OrdersStatisticsSuppliers");
-	$dir=$conf->fournisseur->dir_temp;
+	$dir=$conf->fournisseur->dir_output.'/commande/temp';
 }
 
 $mesg = '<a href="month.php?year='.($year - 1).'&amp;mode='.$mode.'">'.img_previous().'</a> ';

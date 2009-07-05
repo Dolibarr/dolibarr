@@ -22,7 +22,7 @@
 /**
         \file       htdocs/fourn/facture/document.php
         \ingroup    facture, fournisseur
-        \brief      Page de gestion des documents attachées à une facture fournisseur
+        \brief      Page de gestion des documents attachees a une facture fournisseur
         \version    $Id$
 */
 
@@ -69,7 +69,7 @@ if ($_POST['sendit'] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	$facture = new FactureFournisseur($db);
 	if ($facture->fetch($facid))
     {
-        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
+        $upload_dir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($facture->id,2).$facture->id;
 
         if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
@@ -82,7 +82,7 @@ if ($_POST['sendit'] && ! empty($conf->global->MAIN_UPLOAD_DOC))
             }
             else
             {
-                // Echec transfert (fichier dépassant la limite ?)
+                // Echec transfert (fichier depassant la limite ?)
                 $mesg = '<div class="error">'.$langs->trans('ErrorFileNotUploaded').'</div>';
                 // print_r($_FILES);
             }
@@ -98,7 +98,7 @@ if ($action=='delete')
    	$facture = new FactureFournisseur($db);
 	if ($facture->fetch($facid))
     {
-        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
+        $upload_dir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($facture->id,2).$facture->id;
 
         $file = $upload_dir . '/' . urldecode($_GET['urlfile']);
     	dol_delete_file($file);
@@ -120,7 +120,7 @@ if ($facid > 0)
     {
         $facture->fetch_fournisseur();
 
-		$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
+		$upload_dir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($facture->id,2).$facture->id;
 
 		$head = facturefourn_prepare_head($facture);
 		dol_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'));
@@ -145,7 +145,7 @@ if ($facid > 0)
 		print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$facture->ref_supplier.'</td>';
 		print "</tr>\n";
 
-        // Société
+        // Societe
         print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$facture->fournisseur->getNomUrl(1).'</td></tr>';
 
         print '<tr><td>'.$langs->trans('NbOfAttachedFiles').'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';

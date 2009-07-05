@@ -61,41 +61,12 @@ class modFournisseur extends DolibarrModules
 		$this->picto='company';
 
 		// Data directories to create when module is enabled
-		// TODO Replace with simple directories
-		$this->dirs = array();
-		$r=0;
-
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/fournisseur";
-
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/fournisseur/temp";
-
-		$r++;
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/fournisseur/commande";
-		$this->dirs[$r][2] = 1;
-		$this->dirs[$r][3] = "commande";
-
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/fournisseur/commande/temp";
-		$this->dirs[$r][2] = 1;
-		$this->dirs[$r][3] = "commande";
-
-		$r++;
-		$this->dirs[$r][0] = "output";
-		$this->dirs[$r][1] = "/fournisseur/facture";
-		$this->dirs[$r][2] = 1;
-		$this->dirs[$r][3] = "facture";
-
-		$r++;
-		$this->dirs[$r][0] = "temp";
-		$this->dirs[$r][1] = "/fournisseur/facture/temp";
-		$this->dirs[$r][2] = 1;
-		$this->dirs[$r][3] = "facture";
-
+		$this->dirs = array("/fournisseur/temp",
+							"/fournisseur/commande",
+		                    "/fournisseur/commande/temp",
+		                    "/fournisseur/facture",
+		                    "/fournisseur/facture/temp"
+		                    );
 
 		// Dependances
 		$this->depends = array("modSociete");

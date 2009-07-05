@@ -188,7 +188,7 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->fournisseur->commande->dir_output.'/'.$original_file;
+		$original_file=$conf->fournisseur->dir_output.'/commande/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='$refname'";
 	}
 
@@ -200,7 +200,7 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->fournisseur->facture->dir_output.'/'.$original_file;
+		$original_file=$conf->fournisseur->dir_output.'/facture/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='$refname'";
 	}
 
