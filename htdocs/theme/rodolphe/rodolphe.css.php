@@ -1,5 +1,7 @@
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net> 
+<?php
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C)      2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +18,24 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id$ */
+/**
+ *		\file       htdocs/theme/rodolphe/rodoplhe.css.php
+ *		\brief      Fichier de style CSS du theme Rodolphe
+ *		\version    $Id$
+ */
+
+require("../../conf/conf.php");
+
+// Define css type
+header('Content-type: text/css');
+// Important: Avoid page request by browser and dynamic build at
+// each Dolibarr page access.
+if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
+{
+	header('Cache-Control: max-age=3600, public, must-revalidate');
+}
+?>
+
 
 /***** Style du fond *****/
 body {
