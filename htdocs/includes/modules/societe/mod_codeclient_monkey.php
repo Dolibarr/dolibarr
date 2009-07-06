@@ -29,9 +29,9 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.
 
 
 /**
-        \class 		mod_codeclient_monkey
-        \brief 		Classe permettant la gestion monkey des codes tiers
-*/
+ \class 		mod_codeclient_monkey
+ \brief 		Classe permettant la gestion monkey des codes tiers
+ */
 class mod_codeclient_monkey extends ModeleThirdPartyCode
 {
 	var $nom;							// Nom du modele
@@ -46,7 +46,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	var $prefixsupplier='SU';
 
 	/**		\brief      Constructeur classe
-	*/
+	 */
 	function mod_codeclient_monkey()
 	{
 		$this->nom = "Monkey";
@@ -60,8 +60,8 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 
 	/**		\brief      Renvoi la description du module
-	*      	\return     string      Texte descripif
-	*/
+	 *      	\return     string      Texte descripif
+	 */
 	function info($langs)
 	{
 		return $langs->trans("MonkeyNumRefModelDesc",$this->prefixcustomer,$this->prefixsupplier);
@@ -69,8 +69,8 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 
 	/**		\brief      Renvoi la description du module
-	*      	\return     string      Texte descripif
-	*/
+	 *      	\return     string      Texte descripif
+	 */
 	function getExample($langs,$objsoc=0,$type=-1)
 	{
 		return $this->prefixcustomer.'0901-0001<br>'.$this->prefixsupplier.'0901-0001';
@@ -105,50 +105,61 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if ($type == 0) $prefix=$this->prefixcustomer;
 		if ($type == 1) $prefix=$this->prefixsupplier;
 
-        // D'abord on r�cup�re la valeur max (r�ponse imm�diate car champ ind�x�)
-        $posindice=8;
-        $sql = "SELECT MAX(0+SUBSTRING(".$field.",".$posindice.")) as max";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe";
+		// D'abord on r�cup�re la valeur max (r�ponse imm�diate car champ ind�x�)
+		$posindice=8;
+		$sql = "SELECT MAX(0+SUBSTRING(".$field.",".$posindice.")) as max";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE ".$field." LIKE '".$prefix."%'";
 
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $obj = $db->fetch_object($resql);
-            if ($obj) $max = $obj->max;
-            else $max=0;
-        }
-        else
-        {
-        	dol_syslog("mod_codeclient_monkey::getNextValue sql=".$sql);
-        	return -1;
-        }
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $max = $obj->max;
+			else $max=0;
+		}
+		else
+		{
+			dol_syslog("mod_codeclient_monkey::getNextValue sql=".$sql);
+			return -1;
+		}
 
-        //$date=time();
-        $date=gmmktime();
-        $yymm = strftime("%y%m",$date);
-        $num = sprintf("%04s",$max+1);
+		//$date=time();
+		$date=gmmktime();
+		$yymm = strftime("%y%m",$date);
+		$num = sprintf("%04s",$max+1);
 
-        dol_syslog("mod_codeclient_monkey::getNextValue return ".$prefix.$yymm."-".$num);
-        return $prefix.$yymm."-".$num;
+		dol_syslog("mod_codeclient_monkey::getNextValue return ".$prefix.$yymm."-".$num);
+		return $prefix.$yymm."-".$num;
 	}
 
 
 	/**
-	* 		\brief		Verifie la validite du code
-	*		\param		$db			Handler acces base
-	*		\param		$code		Code a verifier/corriger
-	*		\param		$soc		Objet societe
-	*		\return		int			<0 si KO, 0 si OK
-	*/
-	function verif($db, &$code, $soc)
+	 * 		\brief		Check validity of code according to its rules
+	 *		\param		$db			Database handler
+	 *		\param		$code		Code to check/correct
+	 *		\param		$soc		Object third party
+	 *		\param    	$type   	0 = customer/prospect , 1 = supplier
+	 *    	\return     int		0 if OK
+	 * 							-1 ErrorBadCustomerCodeSyntax
+	 * 							-2 ErrorCustomerCodeRequired
+	 * 							-3 ErrorCustomerCodeAlreadyUsed
+	 * 							-4 ErrorPrefixRequired
+	 */
+	function verif($db, &$code, $soc, $type)
 	{
+		global $conf;
+
 		$result=0;
 		$code = strtoupper(trim($code));
 
-		if (! $code && $this->code_null)
+		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
 		{
 			$result=0;
+		}
+		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+		{
+			$result=-2;
 		}
 		else
 		{
@@ -176,18 +187,19 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 				}
 			}
 		}
-		dol_syslog("mod_codeclient_monkey::verif result=".$result);
+
+		dol_syslog("mod_codeclient_monkey::verif type=".$type." result=".$result);
 		return $result;
 	}
 
 
 	/**
-	*		\brief		Renvoi si un code est pris ou non (par autre tiers)
-	*		\param		$db			Handler acces base
-	*		\param		$code		Code a verifier
-	*		\param		$soc		Objet societe
-	*		\return		int			0 si dispo, <0 si erreur
-	*/
+	 *		\brief		Renvoi si un code est pris ou non (par autre tiers)
+	 *		\param		$db			Handler acces base
+	 *		\param		$code		Code a verifier
+	 *		\param		$soc		Objet societe
+	 *		\return		int			0 si dispo, <0 si erreur
+	 */
 	function verif_dispo($db, $code, $soc)
 	{
 		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
@@ -215,10 +227,10 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 
 	/**
-	*	\brief		Renvoi si un code respecte la syntaxe
-	*	\param		$code		Code a verifier
-	*	\return		int			0 si OK, <0 si KO
-	*/
+	 *	\brief		Renvoi si un code respecte la syntaxe
+	 *	\param		$code		Code a verifier
+	 *	\return		int			0 si OK, <0 si KO
+	 */
 	function verif_syntax($code)
 	{
 		$res = 0;

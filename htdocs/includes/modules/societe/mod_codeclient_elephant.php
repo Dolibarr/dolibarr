@@ -197,12 +197,16 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 
 	/**
-	 * 		\brief		Verifie la validite du code
-	 *		\param		$db			Handler acces base
-	 *		\param		$code		Code a verifier/corriger
-	 *		\param		$soc		Objet societe
-	 *   	\param    	$type   	0 = client/prospect , 1 = fournisseur
-	 *		\return		int			<0 if KO, 0 if OK
+	 * 		\brief		Check validity of code according to its rules
+	 *		\param		$db			Database handler
+	 *		\param		$code		Code to check/correct
+	 *		\param		$soc		Object third party
+	 *   	\param    	$type   	0 = customer/prospect , 1 = supplier
+	 *    	\return     int		0 if OK
+	 * 							-1 ErrorBadCustomerCodeSyntax
+	 * 							-2 ErrorCustomerCodeRequired
+	 * 							-3 ErrorCustomerCodeAlreadyUsed
+	 * 							-4 ErrorPrefixRequired
 	 */
 	function verif($db, &$code, $soc, $type)
 	{
@@ -213,9 +217,13 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$result=0;
 		$code = strtoupper(trim($code));
 
-		if (! $code && $this->code_null)
+		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
 		{
 			$result=0;
+		}
+		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+		{
+			$result=-2;
 		}
 		else
 		{

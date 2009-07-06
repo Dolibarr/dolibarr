@@ -147,10 +147,11 @@ class Societe extends CommonObject
 
 		$this->db->begin();
 
-		// For automatic creation during create action (not used by Dolibarr)
+		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
 		if ($this->code_client == -1)      $this->get_codeclient($this->prefix_comm,0);
 		if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
 
+		// Check more parameters
 		$result = $this->verify();
 
 		if ($result >= 0)
@@ -229,7 +230,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    \brief      Check properties of third party are ok
+	 *    \brief      Check properties of third party are ok (like name, third party codes, ...)
 	 *    \return     int		0 if OK, <0 if KO
 	 */
 	function verify()
@@ -1553,8 +1554,12 @@ class Societe extends CommonObject
 
 
 	/**
-	 *    \brief      Verifie code client
-	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilise
+	 *    \brief      Check customer code
+	 *    \return     int		0 if OK
+	 * 							-1 ErrorBadCustomerCodeSyntax
+	 * 							-2 ErrorCustomerCodeRequired
+	 * 							-3 ErrorCustomerCodeAlreadyUsed
+	 * 							-4 ErrorPrefixRequired
 	 */
 	function check_codeclient()
 	{
@@ -1578,8 +1583,12 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    \brief      Verifie code fournisseur
-	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilise
+	 *    \brief      Check supplier code
+	 *    \return     int		0 if OK
+	 * 							-1 ErrorBadCustomerCodeSyntax
+	 * 							-2 ErrorCustomerCodeRequired
+	 * 							-3 ErrorCustomerCodeAlreadyUsed
+	 * 							-4 ErrorPrefixRequired
 	 */
 	function check_codefournisseur()
 	{

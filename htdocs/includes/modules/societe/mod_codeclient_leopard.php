@@ -29,17 +29,17 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.
 
 
 /**
-        \class 		mod_codeclient_leopard
-        \brief 		Classe permettant la gestion leopard des codes tiers
-*/
+ \class 		mod_codeclient_leopard
+ \brief 		Classe permettant la gestion leopard des codes tiers
+ */
 class mod_codeclient_leopard extends ModeleThirdPartyCode
 {
 	/*
-	* Attention ce module est utilise par defaut si aucun module n'a
-	* ete definit dans la configuration
-	*
-	* Le fonctionnement de celui-ci doit dont rester le plus ouvert possible
-	*/
+	 * Attention ce module est utilise par defaut si aucun module n'a
+	 * ete definit dans la configuration
+	 *
+	 * Le fonctionnement de celui-ci doit dont rester le plus ouvert possible
+	 */
 
 	var $nom;							// Nom du modele
 	var $code_modifiable;				// Code modifiable
@@ -51,7 +51,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 
 
 	/**		\brief      Constructeur classe
-	*/
+	 */
 	function mod_codeclient_leopard()
 	{
 		$this->nom = "Leopard";
@@ -65,9 +65,9 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 
 
 	/**
-	*		\brief      Renvoie la description du module
-	*		\return     string      Texte descripif
-	*/
+	 *		\brief      Renvoie la description du module
+	 *		\return     string      Texte descripif
+	 */
 	function info($langs)
 	{
 		return $langs->trans("LeopardNumRefModelDesc");
@@ -75,27 +75,45 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 
 
 	/**     \brief      Return next value available
-     *      \return     string      Value
-     */
-    function getNextValue($objsoc=0,$type=-1)
-    {
-    	global $langs;
-        return '';
-    }
+	 *      \return     string      Value
+	 */
+	function getNextValue($objsoc=0,$type=-1)
+	{
+		global $langs;
+		return '';
+	}
 
 
 	/**
-	* 		\brief		check validity of code
-	*		\param		$db			Handler acces base
-	*		\param		$code		Code to check
-	*		\param		$soc		Objet societe
-	*/
-	function verif($db, &$code, $soc)
+	 * 		\brief		Check validity of code according to its rules
+	 *		\param		$db			Database handler
+	 *		\param		$code		Code to check/correct
+	 *		\param		$soc		Object third party
+	 *   	\param    	$type   	0 = customer/prospect , 1 = supplier
+	 *    	\return     int		0 if OK
+	 * 							-1 ErrorBadCustomerCodeSyntax
+	 * 							-2 ErrorCustomerCodeRequired
+	 * 							-3 ErrorCustomerCodeAlreadyUsed
+	 * 							-4 ErrorPrefixRequired
+	 */
+	function verif($db, &$code, $soc, $type)
 	{
+		global $conf;
+
+		$result=0;
 		$code = strtoupper(trim($code));
 
-		// Renvoie toujours ok
-		return 0;
+		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
+		{
+			$result=0;
+		}
+		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+		{
+			$result=-2;
+		}
+
+		dol_syslog("mod_codeclient_leopard::verif type=".$type." result=".$result);
+		return $result;
 	}
 }
 
