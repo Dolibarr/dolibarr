@@ -72,6 +72,9 @@ print "Makepack module version $VERSION\n";
 print "Enter name for your module (mymodule, mywonderfulmondule, ...) : ";
 $PROJECT=<STDIN>;
 chomp($PROJECT);
+print "Move to ".$DIR." directory.\n";
+chdir($DIR);
+
 if (! -f "makepack-".$PROJECT.".conf")
 {
     print "Error: can't open conf file makepack-".$PROJECT.".conf\n";
