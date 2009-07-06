@@ -1196,14 +1196,14 @@ if ($rowid && $action != 'edit')
 		}
 	}
 
-	// Supprimer
+	// Delete
     if ($user->rights->adherent->supprimer)
     {
         print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";
     }
 	else
 	{
-		print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Delete")."</font>";
+		print "<font class=\"butActionRefused\" href=\"#\" alt=\"".$langs->trans("NoPermissions")."\">".$langs->trans("Delete")."</font>";
 	}
 
     // Action SPIP

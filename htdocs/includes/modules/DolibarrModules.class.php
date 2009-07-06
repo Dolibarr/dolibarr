@@ -106,19 +106,22 @@ class DolibarrModules
 		if (! $err) $err+=$this->create_dirs();
 
 		// Execute les requetes sql complementaires
-		for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
+		if (! $err)
 		{
-			if (! $err)
+			for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
 			{
-				$sql=$array_sql[$i];
-
-				dol_syslog("DolibarrModules::_init sql=".$sql, LOG_DEBUG);
-				$result=$this->db->query($sql);
-				if (! $result)
+				if (! $err)
 				{
-					$this->error=$this->db->error();
-					dol_syslog("DolibarrModules::_init Error ".$this->error, LOG_ERR);
-					$err++;
+					$sql=$array_sql[$i];
+
+					dol_syslog("DolibarrModules::_init sql=".$sql, LOG_DEBUG);
+					$result=$this->db->query($sql);
+					if (! $result)
+					{
+						$this->error=$this->db->error();
+						dol_syslog("DolibarrModules::_init Error ".$this->error, LOG_ERR);
+						$err++;
+					}
 				}
 			}
 		}
@@ -540,6 +543,8 @@ class DolibarrModules
 				}
 				else
 				{
+					$this->error=$this->db->lasterror();
+					dol_syslog("DolibarrModules::insert_boxes ".$this->error, LOG_ERR);
 					$err++;
 				}
 			}
@@ -820,8 +825,8 @@ class DolibarrModules
 	}
 
 	/**
-	 \brief      Insere les permissions associees au module dans llx_rights_def
-	 \return     int     Nombre d'erreurs (0 si ok)
+	 *	\brief      Insert permissions related to module to activate into llx_rights_def
+	 *	\return     int     Number of error (0 if OK)
 	 */
 	function insert_permissions()
 	{
@@ -837,11 +842,11 @@ class DolibarrModules
 		$sql_del.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$this->const_name."'";
 		$sql_del.= " AND entity IN (0,".$conf->entity.")";
 		$resql=$this->db->query($sql_del);
-		if ($resql) {
-
+		if ($resql)
+		{
 			$obj=$this->db->fetch_object($resql);
-			if ($obj->value) {
-
+			if ($obj->value)
+			{
 				// Si module actif
 				foreach ($this->rights as $key => $value)
 				{
@@ -891,6 +896,12 @@ class DolibarrModules
 					}
 				}
 			}
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("DolibarrModules::insert_boxes ".$this->error, LOG_ERR);
+			$err++;
 		}
 
 		return $err;
@@ -1101,9 +1112,10 @@ class DolibarrModules
 
 		$sql = "SELECT count(*)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = ".$name;
+		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$name."'";
 		$sql.= " AND entity = ".$conf->entity;
 
+		dol_syslog("DolibarrModules::insert_dirs sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -1114,12 +1126,14 @@ class DolibarrModules
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
 				$sql.= " VALUES (".$this->db->encrypt("'".$name."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",'chaine',".$this->db->encrypt("'".$dir."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",'Directory for module ".$this->name."','0',".$conf->entity.")";
 
-				dol_syslog("DolibarrModules::insert_dir_output sql=".$sql);
+				dol_syslog("DolibarrModules::insert_dirs sql=".$sql);
 				$resql=$this->db->query($sql);
 			}
 		}
 		else
 		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("DolibarrModules::insert_dirs ".$this->error, LOG_ERR);
 			$err++;
 		}
 
