@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,27 +45,31 @@ print "<br>\n";
 print $langs->trans("ToActivateModule").'<br>';
 print "<br>\n";
 
-// Charge les modules
-$dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
-$handle=opendir($dir);
 $modules = array();
 $modules_names = array();
 $modules_files = array();
-while (($file = readdir($handle))!==false)
+
+// Load list of modules
+foreach($conf->file->dol_document_root as $searchdir)
 {
-	if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, strlen($file) - 10) == '.class.php')
+	$dirtoscan=$searchdir.'/includes/modules/';
+	$handle=opendir($dirtoscan);
+	while (($file = readdir($handle))!==false)
 	{
-		$modName = substr($file, 0, strlen($file) - 10);
-
-		if ($modName)
+		if (is_readable($dirtoscan.$file) && substr($file, 0, 3) == 'mod' && substr($file, strlen($file) - 10) == '.class.php')
 		{
-			include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
-			$objMod = new $modName($db);
+			$modName = substr($file, 0, strlen($file) - 10);
 
-			$modules[$objMod->numero]=$objMod;
-			$modules_names[$objMod->numero]=$objMod->name;
-			$modules_files[$objMod->numero]=$file;
-			$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
+			if ($modName)
+			{
+				include_once($dirtoscan.$file);
+				$objMod = new $modName($db);
+
+				$modules[$objMod->numero]=$objMod;
+				$modules_names[$objMod->numero]=$objMod->name;
+				$modules_files[$objMod->numero]=$file;
+				$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
+			}
 		}
 	}
 }
