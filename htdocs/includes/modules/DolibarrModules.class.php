@@ -837,10 +837,11 @@ class DolibarrModules
 		//print $this->rights_class." ".sizeof($this->rights)."<br>";
 
 		// Test si module actif
-		$sql_del = "SELECT ".$this->db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+		$sql_del = "SELECT ".$this->db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
 		$sql_del.= " FROM ".MAIN_DB_PREFIX."const";
 		$sql_del.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$this->const_name."'";
 		$sql_del.= " AND entity IN (0,".$conf->entity.")";
+
 		$resql=$this->db->query($sql_del);
 		if ($resql)
 		{
