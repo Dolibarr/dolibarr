@@ -211,7 +211,7 @@ class FormOther
 	             fctShow();
 	           }
 	         </script>'."\n";
-		print '<input type="text" size="10" name="'.$prefix.'" value="'.$set_color.'" maxlength="7" style="font-family:Tahoma;font-size:x-small;">'."\n";
+		print '<input type="text" size="10" name="'.$prefix.'" value="'.$set_color.'" maxlength="7" class="flat">'."\n";
 		print '</td><td valign="middle">';
 		print '<img src="'.DOL_URL_ROOT.'/theme/common/colorpicker.png" width="21" height="20" border="0" onClick="fctShow(document.'.$form_name.'.'.$prefix.');" style="cursor:pointer;">'."\n";
 		print '</td></tr></table>';
