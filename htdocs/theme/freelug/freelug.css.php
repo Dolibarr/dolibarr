@@ -1224,16 +1224,6 @@ div.menuFleche
 /*  CSS for color picker                                                          */
 /* ============================================================================== */
 
-FIELDSET {
- padding : 0px;
- margin : 0px;
- color : black;
-}
-LEGEND {
- font-family : Tahoma;
- font-size : 10pt;
- color : black;
-}
 A.color, A.color:active, A.color:visited {
  position : relative;
  display : block;
@@ -1258,7 +1248,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  margin : 0px;
  padding : 0px;
  cursor : default;
- border : 1px solid threedface;
+ border : 1px solid #b3c5cc;
 }
 .tblColor {
  display : none;
@@ -1267,14 +1257,14 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  padding : 1px;
 }
 .tblContainer {
- background-color : threedface;
+ background-color : #DDDDDD;
 }
 .tblGlobal {
  position : absolute;
  top : 0px;
  left : 0px;
  display : none;
- background-color : threedface;
+ background-color : #DDDDDD;
  border : 2px outset;
 }
 .tdContainer {
@@ -1290,21 +1280,21 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  width : 50%;
  height : 24px;
  line-height : 12px;
- font-family : Tahoma;
+ font: helvetica, verdana, arial, sans-serif;
  font-size : 8pt;
  color : black;
  text-align : center;
 }
 .btnColor {
  width : 100%;
- font-family : Tahoma;
+ font: helvetica, verdana, arial, sans-serif;
  font-size : 10pt;
  padding : 0px;
  margin : 0px;
 }
 .btnPalette {
  width : 100%;
- font-family : Tahoma;
+ font: helvetica, verdana, arial, sans-serif;
  font-size : 8pt;
  padding : 0px;
  margin : 0px;

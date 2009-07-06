@@ -25,9 +25,9 @@
 
 /***** Style du fond *****/
 body {
-  background: #e0ebeb; 
-  margin: 0px;
-  font-family: sans-serif; font-size: 0.95em; 
+	background: #e0ebeb; 
+	margin: 0px;
+	font: 12px helvetica, verdana, arial, sans-serif; 
 }
 
 /***** Styles par defaut *****/
@@ -100,8 +100,8 @@ div.tmenu
     border-bottom: 1px solid #000000;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 2px 0px;
-    font-weight:bold;
-    font-size:12px;
+    font-weight: bold;
+    font-size: 12px;
     height: 18px;
     color: #000000; 
     text-decoration: none;
@@ -343,7 +343,7 @@ a.tabTitle {
     border-top: 1px solid #D8D8D8;
 }
 
-a.tab {
+a.tab:link {
   background: white;
   border: 1px solid #8CACBB;
   color: #436976;
@@ -353,7 +353,17 @@ a.tab {
   text-decoration: none;
   white-space: nowrap;
 }
-a.tab:active {
+a.tab:visited {
+  background: white;
+  border: 1px solid #8CACBB;
+  color: #436976;
+  font-weight: normal;
+  padding: 0px 6px;
+  margin: 0em 0.2em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+a.tab#active {
   background: #dee7ec;
   border-bottom: #dee7ec 1px solid;
 }
@@ -1014,16 +1024,6 @@ div.menuFleche
 /*  CSS for color picker                                                          */
 /* ============================================================================== */
 
-FIELDSET {
- padding : 0px;
- margin : 0px;
- color : black;
-}
-LEGEND {
- font-family : Tahoma;
- font-size : 10pt;
- color : black;
-}
 A.color, A.color:active, A.color:visited {
  position : relative;
  display : block;
@@ -1048,7 +1048,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  margin : 0px;
  padding : 0px;
  cursor : default;
- border : 1px solid threedface;
+ border : 1px solid #b3c5cc;
 }
 .tblColor {
  display : none;
@@ -1057,14 +1057,14 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  padding : 1px;
 }
 .tblContainer {
- background-color : threedface;
+ background-color : #EFEFDE;
 }
 .tblGlobal {
  position : absolute;
  top : 0px;
  left : 0px;
  display : none;
- background-color : threedface;
+ background-color : #EFEFDE;
  border : 2px outset;
 }
 .tdContainer {
@@ -1080,21 +1080,21 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  width : 50%;
  height : 24px;
  line-height : 12px;
- font-family : Tahoma;
+ font: helvetica, verdana, arial, sans-serif;
  font-size : 8pt;
  color : black;
  text-align : center;
 }
 .btnColor {
  width : 100%;
- font-family : Tahoma;
+ font: helvetica, verdana, arial, sans-serif;
  font-size : 10pt;
  padding : 0px;
  margin : 0px;
 }
 .btnPalette {
  width : 100%;
- font-family : Tahoma;
+ font: helvetica, verdana, arial, sans-serif;
  font-size : 8pt;
  padding : 0px;
  margin : 0px;
