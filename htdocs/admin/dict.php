@@ -638,8 +638,12 @@ if ($_GET["id"])
 							$valuetoshow=$langs->trans('All');
 						}
 						else if ($fieldlist[$field]=='pays') {
-							$key=$langs->trans("Country".strtoupper($obj->pays_code));
-							$valuetoshow=($key != "Country".strtoupper($obj->pays_code))?$obj->pays_code." - ".$key:$obj->pays;
+							if (empty($obj->pays_code)) print '-';
+							else
+							{
+								$key=$langs->trans("Country".strtoupper($obj->pays_code));
+								$valuetoshow=($key != "Country".strtoupper($obj->pays_code))?$obj->pays_code." - ".$key:$obj->pays;
+							}
 						}
 						else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm') {
 							$valuetoshow=yn($valuetoshow);

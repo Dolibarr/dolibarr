@@ -57,7 +57,7 @@ $pagenext = $page + 1;
  */
 
 // Purge audit events
-if ($_POST['action'] == 'confirm_purge' && $_POST['confirm'] == 'yes' && $user->admin)
+if ($_REQUEST['action'] == 'confirm_purge' && $_REQUEST['confirm'] == 'yes' && $user->admin)
 {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
 	$sql.= " WHERE entity = ".$conf->entity;
@@ -104,7 +104,8 @@ if ($result)
 
 	if ($_GET["action"] == 'purge')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"], $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'), 'confirm_purge');
+		$formquestion=array();
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'),'confirm_purge',$formquestion,'no',1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -203,7 +204,7 @@ if ($result)
 	print "</table>";
 	$db->free();
 
-	if ($num && $_GET["action"] != 'purge')
+	if ($num)
 	{
 	    print '<div class="tabsAction">';
     	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
