@@ -784,7 +784,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  *  \brief      Show an HTML header + a BODY + The top menu bar
  *  \param      head    lignes d'en-tete head
  *  \param      title   titre page web
- *  \param      target  target du menu Accueil
+ *  \param      target  target to add in menu links
  */
 function top_menu($head, $title='', $target='')
 {
@@ -793,7 +793,7 @@ function top_menu($head, $title='', $target='')
 	if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
 	if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
 
-	top_htmlhead($head, $title);
+	top_htmlhead($head, $title);	// Show html headers
 
 	print '<body id="mainbody"><div id="dhtmltooltip"></div>';
 
