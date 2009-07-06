@@ -196,7 +196,6 @@ class FormOther
 	function select_color($set_color='', $prefix='f_color', $form_name='objForm')
 	{
 		print "\n".'<table class="nobordernopadding"><tr><td valign="middle">';
-		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/colorpicker.css" />'."\n";
 		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_colorpicker.js"></script>'."\n";
 		print '<script type="text/javascript">
 	           window.onload = function()
