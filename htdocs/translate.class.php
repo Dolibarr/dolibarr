@@ -505,7 +505,7 @@ class Translate {
 
 	/**
 	 *  \brief      Renvoi si le fichier $filename existe dans la version de la langue courante ou alternative
-	 *  \param      filename        nom du fichier � rechercher
+	 *  \param      filename        nom du fichier a rechercher
 	 *  \param      searchalt       cherche aussi dans langue alternative
 	 *  \return     boolean         true si existe, false sinon
 	 */
