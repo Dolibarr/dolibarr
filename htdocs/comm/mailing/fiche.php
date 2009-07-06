@@ -273,7 +273,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 }
 
 // Action send test emailing
-if ($_POST["action"] == 'send' && ! $_POST["cancel"])
+if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 {
 	$mil = new Mailing($db);
 	$result=$mil->fetch($_POST["mailid"]);
@@ -354,7 +354,7 @@ if ($_POST["action"] == 'add')
 }
 
 // Action update emailing
-if ($_POST["action"] == 'update')
+if ($_POST["action"] == 'update' && empty($_POST["cancel"]))
 {
 	$mil = new Mailing($db);
 
@@ -458,9 +458,10 @@ if ($_POST["action"] == 'confirm_delete')
 	}
 }
 
-if ($_POST["cancel"] == $langs->trans("Cancel"))
+if (! empty($_POST["cancel"]))
 {
 	$action = '';
+	$_GET["id"] = isset($_POST["mailid"])?$_POST["mailid"]:$_POST["id"];
 }
 
 
@@ -472,9 +473,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 llxHeader("","","Fiche Mailing");
 
 $html = new Form($db);
-
 $htmlother = new FormOther($db);
-
 $mil = new Mailing($db);
 
 
@@ -603,7 +602,7 @@ else
 			if (! isValidEMail($mil->email_from)) print img_warning($langs->trans("BadEMail"));
 			print '</td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.htmlentities($mil->email_errorsto);
-			if (! isValidEMail($mil->email_errorsto)) print img_warning($langs->trans("BadEMail"));
+			if (! empty($mil->email_errorsto) && ! isValidEMail($mil->email_errorsto)) print img_warning($langs->trans("BadEMail"));
 			print '</td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("TotalNbOfDistinctRecipients").'</td><td colspan="3">'.($mil->nbemail?$mil->nbemail:'<font class="error">'.$langs->trans("NoTargetYet").'</font>').'</td></tr>';
@@ -804,7 +803,11 @@ else
 			}
 			print '</td></tr>';
 
-			print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+			print '<tr><td colspan="4" align="center">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Save").'" name="save">';
+			print ' &nbsp; ';
+			print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel">';
+			print '</td></tr>';
 			print '</table>';
 			print '</form>';
 
