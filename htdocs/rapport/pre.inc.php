@@ -30,7 +30,7 @@ function llxHeader($head = '', $title='', $help_url='')
 	 *
 	 *
 	 */
-	top_menu($head);
+	top_menu($head, $title);
 
 	$menu = new Menu();
 

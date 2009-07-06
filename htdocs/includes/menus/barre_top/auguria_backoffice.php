@@ -101,7 +101,7 @@ class MenuTop {
 					if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<li class="tmenu" id="li_'.$idsel.'">';
 					else print '<td class="tmenu" id="td_'.$idsel.'">';
 
-					print '<a '.$class.' id="mainmenu_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":"").'>';
+					print '<a '.$class.' id="mainmenu_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($this->atarget?" target=$this->atarget":"")).'>';
 					print $tabMenu[$i]['titre'];
 					print '</a>';
 

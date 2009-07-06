@@ -372,7 +372,7 @@ class MenuTop {
 	        		}
 	        		if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $class='class="tmenusel"';
 	        		else $class='class="tmenu"';
-	        		print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":"").'>';
+	        		print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($this->atarget?" target=$this->atarget":"")).'>';
 	        		print $tabMenu[$i]['titre'];
 	        		print '</a></td>';
 	        	}

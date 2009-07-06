@@ -55,7 +55,7 @@ class MenuTop {
 
 		// Menu Home
 	    print '<td class="tmenu">';
-	    print '<a href="'.DOL_URL_ROOT.'/index.php?mainmenu=home">'.$langs->trans("Home").'</a>';
+	    print '<a href="'.DOL_URL_ROOT.'/index.php?mainmenu=home"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a>';
 	    print '</td>';
 
 	    // Put here top menu entries
@@ -93,14 +93,14 @@ class MenuTop {
 					if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $class='class="tmenusel"';
 					else $class='class="tmenu"';
 					print '<td class="tmenu">';
-					print '<a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>';
+					print '<a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":($this->atarget?" target=$this->atarget":"")).'>';
 					print $tabMenu[$i]['titre'];
 					print '</a>';
 					print '</td>';
 	        	}
 	        	else
 	        	{
-	        		if (! $this->hideifnotallowed) 
+	        		if (! $this->hideifnotallowed)
 					{
 						print '<td class="tmenu">';
 						print '<a class="tmenudisabled" '.$idsel.'href="#">'.$tabMenu[$i]['titre'].'</a>';
