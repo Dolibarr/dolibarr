@@ -18,7 +18,8 @@
 
 /**
  *		\file 		htdocs/admin/tools/dolibarr_import.php
- *		\brief      Page import de la base
+ *		\ingroup	core
+ * 		\brief      Page to import database
  *		\version    $Id$
  */
 

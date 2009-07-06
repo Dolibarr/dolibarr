@@ -17,11 +17,11 @@
  */
 
 /**
-		\file 		htdocs/admin/tools/dolibarr_export.php
-		\ingroup	core
-		\brief      Page export de la base
-		\version    $Id$
-*/
+ *		\file 		htdocs/admin/tools/dolibarr_export.php
+ *		\ingroup	core
+ *		\brief      Page to export database
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
