@@ -30,16 +30,14 @@ require("../../conf/conf.php");
 header('Content-type: text/css');
 // Important: Avoid page request by browser and dynamic build at
 // each Dolibarr page access.
-if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
-{
-	header('Cache-Control: max-age=3600, public, must-revalidate');
-}
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
+else header('Cache-Control: no-cache');
 ?>
 
 
 /***** Style du fond *****/
 body {
-  background: #AAA5A0; 
+  background: #AAA5A0;
   font-size: 12px;
   font-family: helvetica, verdana, arial, sans-serif;
   margin-top: 0;
@@ -55,14 +53,14 @@ a:visited { font-family: helvetica, verdana, arial, sans-serif; font-weight: bol
 a:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
 input
-{ 
+{
 	font-size: 12px;
-    font-family: helvetica, verdana, arial, sans-serif; 
+    font-family: helvetica, verdana, arial, sans-serif;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 input.flat
-{ 
+{
 	font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
     padding: 0px 0px 0px 0px;
@@ -76,7 +74,7 @@ textarea  {
     margin: 0px 0px 0px 0px;
 }
 textarea.flat
-{ 
+{
 	font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
     padding: 0px 0px 0px 0px;
@@ -138,8 +136,8 @@ div.tmenu
     font-weight:bold;
     font-size:12px;
     height: 19px;
-    background: #ded8d2; 
-    color: #000000; 
+    background: #ded8d2;
+    color: #000000;
     text-decoration: none;
 }
 
@@ -162,7 +160,7 @@ a.tmenu:visited
   font-size:12px;
 }
 a.tmenusel
-{ 
+{
   color: #ffffff;
   background: #78746d;
   padding: 0em 1em;
@@ -303,7 +301,7 @@ div.blockvmenupair
   border-bottom: 1px solid #000000;
   background: #ded8d2;
   font-family: helvetica, verdana, arial, sans-serif;
-  color: #000000; 
+  color: #000000;
   text-align:left;
   text-decoration: none;
   padding: 3px;
@@ -316,7 +314,7 @@ div.blockvmenuimpair
   border-bottom: 1px solid #000000;
   background: #ded8d2;
   font-family: helvetica, verdana, arial, sans-serif;
-  color: #000000; 
+  color: #000000;
   text-align:left;
   text-decoration: none;
   padding: 3px;
@@ -329,7 +327,7 @@ div.help
 	border-bottom: 1px solid #000000;
 	background: #f0f0f0;
 	font-family: helvetica, verdana, arial, sans-serif;
-	color: #000000; 
+	color: #000000;
 	text-align:left;
 	text-decoration: none;
     padding: 3px;
@@ -337,23 +335,23 @@ div.help
 }
 
 
-td.barre { 
+td.barre {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #b3c5cc;
 	font-family: helvetica, verdana, arial, sans-serif;
-	color: #000000; 
+	color: #000000;
 	text-align:left;
 	text-decoration: none
 }
 
-td.barre_select { 
-                  background: #b3c5cc; 
-                  color: #ffffff 
+td.barre_select {
+                  background: #b3c5cc;
+                  color: #ffffff
 }
-td.photo { 
-           background: #FFFFFF; 
-           color: #000000 
+td.photo {
+           background: #FFFFFF;
+           color: #000000
            }
 
 
@@ -446,8 +444,8 @@ a.butActionDelete:link    { font-family: helvetica, verdana, arial, sans-serif; 
 a.butActionDelete:active  { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butActionDelete:visited { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butActionDelete:hover   { font-family: helvetica, verdana, arial, sans-serif; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-                      
-                      
+
+
 /* ============================================================================== */
 /* Tables                                                                         */
 /* ============================================================================== */
@@ -479,7 +477,7 @@ margin: 0px 0px;
 }
 
 table.border {
-font-family: helvetica, verdana, arial, sans-serif; 
+font-family: helvetica, verdana, arial, sans-serif;
 border-collapse: collapse;
 border: 1px white ridge;
 }
@@ -517,17 +515,17 @@ background: #ddddcc;
 
 /*
  *  Tableaux
- */ 
+ */
 
-td.border { 
+td.border {
             border-top: 1px solid #000000;
             border-right: 1px solid #000000;
             border-bottom: 1px solid #000000;
             border-left: 1px solid #000000;
             }
 
-div.menus { 
-            background: #78746d; 
+div.menus {
+            background: #78746d;
             color: #bbbb88;
             font-size: 0.95em;
             border-top:    1px dashed #ccccb3;
@@ -537,15 +535,15 @@ div.menus {
             }
 
 
-a.leftmenu { 
-             font-weight: bold; 
+a.leftmenu {
+             font-weight: bold;
              color: #202020;
              }
 
 
 
-div.leftmenu { 
-               background: #ccccb3; 
+div.leftmenu {
+               background: #ccccb3;
                text-align: left;
                border-right: 1px solid #000000;
                border-bottom: 1px solid #000000;
@@ -564,11 +562,11 @@ div.leftmenu {
 .error   { color: #550000; }
 
 td.warning
-{ 
-  background: #FF9988; 
+{
+  background: #FF9988;
   font-weight: bold;
   font-size: 0.95em;
-  color: #000000; 
+  color: #000000;
   text-decoration: none
 }
 
@@ -581,7 +579,7 @@ div.warning {
 }
 
 div.error {
-  color: #550000; font-weight: bold; 
+  color: #550000; font-weight: bold;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #000000;
@@ -592,7 +590,7 @@ div.error {
  *   Liens Payes/Non payes
  */
 
-a.normal:link { font-weight: normal } 
+a.normal:link { font-weight: normal }
 a.normal:visited { font-weight: normal }
 a.normal:active { font-weight: normal }
 a.normal:hover { font-weight: normal }
@@ -609,21 +607,21 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 /*
  *  ???
  */
-div.titre { 
+div.titre {
 	font-family: helvetica, verdana, arial, sans-serif;
-            font-weight: bold; 
-            color: #666633; 
+            font-weight: bold;
+            color: #666633;
             text-decoration: none }
 
 /*
  *  Tableaux
- */ 
+ */
 
-input.liste_titre { 
+input.liste_titre {
     background: #cc9966;
 }
 
-tr.liste_titre { 
+tr.liste_titre {
     background: #cc9966;
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
@@ -633,7 +631,7 @@ tr.liste_titre {
                  white-space: nowrap;
 }
 
-tr.liste_search { 
+tr.liste_search {
     background: #cc9966;
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
@@ -642,7 +640,7 @@ tr.liste_search {
                   white-space: nowrap;
 }
 
-td.liste_titre { 
+td.liste_titre {
     background: #cc9966;
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
@@ -652,27 +650,27 @@ td.liste_titre {
 }
 
 .liste_titre_sel
-{ 
+{
     color: #fcfffc;
     background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold; 
+    font-weight: bold;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
 }
 
-tr.liste_total { 
+tr.liste_total {
                  background: #F0F0F0;
                  font-weight: bold;
                  white-space: nowrap;
                  border-top: 1px solid #FFFFFF;
                  border-bottom: 1px solid #78746d;
 
-                 
+
 }
 
-th { 
+th {
     background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
@@ -684,54 +682,54 @@ th {
     font-size: 1.0em;
 }
 
-tr.pair { 
+tr.pair {
           background: #ded8d2;
-          font-size: 1.0em; 
+          font-size: 1.0em;
           border: 1px solid #78746d;
           }
 
-tr.impair { 
+tr.impair {
             background: #ded8d2;
-            font-size: 1.0em; 
+            font-size: 1.0em;
             border: 1px solid #78746d;
             }
 
 /*
  *
  */
-tr.box_titre { 
+tr.box_titre {
                background: #BBBB88;
                font-family: Helvetica, Verdana;
                font-size: 1.0em;
                font-weight: bold; }
 
-tr.box_pair { 
-              background: #ded8d2; 
+tr.box_pair {
+              background: #ded8d2;
               font-size: 0.95em; }
 
-tr.box_impair { 
-                background: #78746d; 
+tr.box_impair {
+                background: #78746d;
                 font-family: Helvetica, Verdana;
                 font-size: 0.95em; }
 
-tr.fiche { 
+tr.fiche {
            font-family: Helvetica, Verdana;
            font-size: 0.6em; }
 /*
  * Widgets standard
  */
 
-td.delete { 
+td.delete {
             background: red;
             font-weight: bold;
             }
 
-td.valid { 
+td.valid {
            background: pink;
            font-weight: bold;
            }
 
-td.small { 
+td.small {
            font-size: 10px;
            }
 
@@ -775,45 +773,45 @@ table.valid {
 .alert_nw {
 	width: 5px;
 	height: 5px;
-	background: transparent url(alert/top_left.gif) no-repeat bottom left;			
+	background: transparent url(alert/top_left.gif) no-repeat bottom left;
 }
 
 .alert_n {
 	height: 5px;
-	background: transparent url(alert/top.gif) repeat-x bottom left;			
+	background: transparent url(alert/top.gif) repeat-x bottom left;
 }
 
 .alert_ne {
 	width: 5px;
 	height: 5px;
-	background: transparent url(alert/top_right.gif) no-repeat bottom left			
+	background: transparent url(alert/top_right.gif) no-repeat bottom left
 }
 
 .alert_e {
 	width: 5px;
-	background: transparent url(alert/right.gif) repeat-y 0 0;			
+	background: transparent url(alert/right.gif) repeat-y 0 0;
 }
 
 .alert_w {
 	width: 5px;
-	background: transparent url(alert/left.gif) repeat-y 0 0;			
+	background: transparent url(alert/left.gif) repeat-y 0 0;
 }
 
 .alert_sw {
 	width: 5px;
 	height: 5px;
-	background: transparent url(alert/bottom_left.gif) no-repeat 0 0;			
+	background: transparent url(alert/bottom_left.gif) no-repeat 0 0;
 }
 
 .alert_s {
 	height: 5px;
-	background: transparent url(alert/bottom.gif) repeat-x 0 0;			
+	background: transparent url(alert/bottom.gif) repeat-x 0 0;
 }
 
 .alert_se, .alert_sizer {
 	width: 5px;
 	height: 5px;
-	background: transparent url(alert/bottom_right.gif) no-repeat 0 0;			
+	background: transparent url(alert/bottom_right.gif) no-repeat 0 0;
 }
 
 .alert_close {
@@ -891,16 +889,16 @@ table.valid {
 	position: absolute;
 }
 
-.dialog table.table_window  { 
-  border-collapse: collapse; 
-  border-spacing: 0; 
+.dialog table.table_window  {
+  border-collapse: collapse;
+  border-spacing: 0;
   width: 100%;
 	margin: 0px;
 	padding:0px;
 }
 
-.dialog table.table_window td , .dialog table.table_window th { 
-  padding: 0; 
+.dialog table.table_window td , .dialog table.table_window th {
+  padding: 0;
 }
 
 .dialog .title_window {
@@ -928,13 +926,13 @@ z-index: 100;
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
-.bodyline { 
+.bodyline {
 	-moz-border-radius:8px;
-	border: 1px #E4ECEC outset; 
+	border: 1px #E4ECEC outset;
 	padding:0px;
 	margin-bottom:5px;
 }
-table.dp { 
+table.dp {
     width: 180px;
     background-color: #FFFFFF;
     border-top: solid 2px #DDDDDD;
@@ -944,10 +942,10 @@ table.dp {
 }
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
 /* Barre titre */
-.dpHead,.tpHead,.tpHour td:Hover .tpHead{ 
+.dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
 	background-color:#b3c5cc;
-	color:white; 
+	color:white;
 	font-size:11px;
 	cursor:auto;
 }
@@ -956,9 +954,9 @@ table.dp {
 	text-align:center;
 	background-color:#617389;
 	color:#FFFFFF;
-	font-weight:bold; 
+	font-weight:bold;
 	border: 1px outset black;
-	cursor:pointer;	
+	cursor:pointer;
 }
 .dpButtons:Active,.tpButtons:Active{border: 1px outset black;}
 .dpDayNames td,.dpExplanation {background-color:#D9DBE1; font-weight:bold; text-align:center; font-size:11px;}
@@ -982,7 +980,7 @@ table.dp {
 .tpMinute td:Hover {background-color:black; color:white; }
 .tpMinute td {background-color:#D9DBE1; text-align:center; cursor:pointer;}
 
-/* Bouton X fermer */	
+/* Bouton X fermer */
 .dpInvisibleButtons
 {
 border-style:none;
@@ -992,7 +990,7 @@ font-size:9px;
 border-width:0px;
 color:#0B63A2;
 vertical-align:middle;
-cursor: pointer; 
+cursor: pointer;
 }
 
 

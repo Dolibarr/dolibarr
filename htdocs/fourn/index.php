@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/fourn/index.php
- \ingroup    fournisseur
- \brief      Page accueil de la zone fournisseurs
- \version    $Id$
+ *	\file       htdocs/fourn/index.php
+ *	\ingroup    fournisseur
+ *	\brief      Page accueil de la zone fournisseurs
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -122,7 +122,7 @@ if ($conf->fournisseur->enabled)
 		{
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
+			print '<td colspan="3">'.$langs->trans("DraftOrders").' ('.$num.')</td></tr>';
 
 			$i = 0;
 			$var = true;

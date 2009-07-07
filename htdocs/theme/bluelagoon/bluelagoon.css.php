@@ -30,29 +30,27 @@ require("../../conf/conf.php");
 header('Content-type: text/css');
 // Important: Avoid page request by browser and dynamic build at
 // each Dolibarr page access.
-if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
-{
-	header('Cache-Control: max-age=3600, public, must-revalidate');
-}
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
+else header('Cache-Control: no-cache');
 ?>
 
 
 /***** Style du fond *****/
 body {
-	background: #e0ebeb; 
+	background: #e0ebeb;
 	margin: 0px;
-	font: 12px helvetica, verdana, arial, sans-serif; 
+	font: 12px helvetica, verdana, arial, sans-serif;
 }
 
 /***** Styles par defaut *****/
 input
-{ 
-    font: 12px helvetica, verdana, arial, sans-serif; 
+{
+    font: 12px helvetica, verdana, arial, sans-serif;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 input.flat
-{ 
+{
     font: 12px helvetica, verdana, arial, sans-serif;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -63,7 +61,7 @@ textarea  {
     margin: 0px 0px 0px 0px;
 }
 textarea.flat
-{ 
+{
     font: 12px helvetica, verdana, arial, sans-serif;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -117,7 +115,7 @@ div.tmenu
     font-weight: bold;
     font-size: 12px;
     height: 18px;
-    color: #000000; 
+    color: #000000;
     text-decoration: none;
 }
 
@@ -136,7 +134,7 @@ a.tmenu:visited
   font-size:12px;
 }
 a.tmenusel
-{ 
+{
   padding: 0em 1em;
   margin: 0em 0em 1em 0em;
   font-size:12px;
@@ -221,7 +219,7 @@ li.tmenu a:link
 /* Login */
 
 a.login
-{ 
+{
   position: absolute;
   right: 24px;
   top: 4px;
@@ -271,11 +269,11 @@ a.help:active       { font-size:11px; font-family: helvetica, verdana, arial, sa
 a.help:hover        { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 
 div.blockvmenupair
-{ 
+{
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	font: helvetica, verdana, arial, sans-serif;
-	color: #202020; 
+	color: #202020;
 	text-align:left;
 	text-decoration: none;
     padding: 3px;
@@ -287,31 +285,31 @@ div.blockvmenuimpair
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	font: helvetica, verdana, arial, sans-serif;
-	color: #202020; 
+	color: #202020;
 	text-align:left;
 	text-decoration: none;
     padding: 3px;
     margin: 1px 0px 0px 0px;
 }
 
-a.leftmenu {              
-             font-size: 0.9em; 
-             font-weight: bold; 
-             color: #202020; 
+a.leftmenu {
+             font-size: 0.9em;
+             font-weight: bold;
+             color: #202020;
              }
 
-td.barre { 
+td.barre {
            border-right: 1px solid #000000;
            border-bottom: 1px solid #000000;
            background: #b3cccc;
            font-family: Helvetica, Verdana;
-           font-size: 0.9em; 
-           color: #000000; 
+           font-size: 0.9em;
+           color: #000000;
            text-decoration: none;
 }
 
-td.barre_select { 
-                  background: #b3cccc; 
+td.barre_select {
+                  background: #b3cccc;
                   color: #000000;
                   }
 
@@ -464,25 +462,25 @@ padding: 0px 0px;
 
 /*
  *  Tableaux
- */ 
+ */
 
-a { 
+a {
     text-decoration: none;
     font-weight: bold;
     color: #000000;
     }
 
 
-td.menu { 
+td.menu {
           border: 1px solid #000000;
           }
 
-td.border { 
+td.border {
             border: 1px solid #000000;
             }
 
-div.menus { 
-            background: #eeeecc; 
+div.menus {
+            background: #eeeecc;
             color: #bbbb88;
             border-top:    1px dashed #ccccb3;
             border-right:  1px dashed #ccccb3;
@@ -491,19 +489,19 @@ div.menus {
             }
 
 
-.menu { 
-        background: #b3cccc; 
-        font-size: 0.9em; font-weight: bold; 
-        color: #000000; 
+.menu {
+        background: #b3cccc;
+        font-size: 0.9em; font-weight: bold;
+        color: #000000;
         text-decoration: none }
 
-.submenu { 
-           background: #b3cccc; 
+.submenu {
+           background: #b3cccc;
            font-size: 0.9em;
-           color: #000000; 
+           color: #000000;
            text-decoration: none }
 
-a.normal{ font-weight: normal } 
+a.normal{ font-weight: normal }
 a.impayee { font-weight: bold }
 
 /*
@@ -548,7 +546,7 @@ div.warning {
 }
 
 div.error {
-  color: #550000; font-weight: bold; 
+  color: #550000; font-weight: bold;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #8C9CAB;
@@ -566,7 +564,7 @@ div.info {
  *   Liens Payes/Non payes
  */
 
-a.normal:link { font-weight: normal } 
+a.normal:link { font-weight: normal }
 a.normal:visited { font-weight: normal }
 a.normal:active { font-weight: normal }
 a.normal:hover { font-weight: normal }
@@ -582,18 +580,18 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 /*
  *  Lignes titre espace
  */
-div.titre { 
+div.titre {
             font-family: Helvetica, Verdana;
-            font-size: 0.9em; 
-            font-weight: bold; 
-            color: #336666; 
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #336666;
             text-decoration: none }
 
 /*
  *  Tableaux
- */ 
+ */
 
-input.liste_titre { 
+input.liste_titre {
     background: #b3cccc;
     border: 0px;
 }
@@ -616,11 +614,11 @@ td.liste_titre {
     white-space: nowrap;
 }
 
-.liste_titre_sel { 
-    color: #000000; 
-    background: #cceeee; 
+.liste_titre_sel {
+    color: #000000;
+    background: #cceeee;
     font-family: Helvetica, Verdana;
-    font-weight: bold; 
+    font-weight: bold;
     border-top: 1px solid #8CACBB;
     border-right: 0px;
     border-right: 0px;
@@ -652,21 +650,21 @@ tr.liste_total td {
  *
  */
 
-td.delete { 
+td.delete {
             background: red;
             font-weight: bold;
             }
 
-td.valid { 
+td.valid {
            background: pink;
            font-weight: bold;
            }
 
-td.small { 
+td.small {
            font-size: 0.8em;
            }
 
-              
+
 /* ============================================================================== */
 /* Formulaire confirmation (AJAX)                                                 */
 /* ============================================================================== */
@@ -681,45 +679,45 @@ td.small {
 .alert_nw {
 	width: 5px;
 	height: 5px;
-	background: transparent url(alert/top_left.gif) no-repeat bottom left;			
+	background: transparent url(alert/top_left.gif) no-repeat bottom left;
 }
 
 .alert_n {
 	height: 5px;
-	background: transparent url(alert/top.gif) repeat-x bottom left;			
+	background: transparent url(alert/top.gif) repeat-x bottom left;
 }
 
 .alert_ne {
 	width: 5px;
 	height: 5px;
-	background: transparent url(alert/top_right.gif) no-repeat bottom left			
+	background: transparent url(alert/top_right.gif) no-repeat bottom left
 }
 
 .alert_e {
 	width: 5px;
-	background: transparent url(alert/right.gif) repeat-y 0 0;			
+	background: transparent url(alert/right.gif) repeat-y 0 0;
 }
 
 .alert_w {
 	width: 5px;
-	background: transparent url(alert/left.gif) repeat-y 0 0;			
+	background: transparent url(alert/left.gif) repeat-y 0 0;
 }
 
 .alert_sw {
 	width: 5px;
 	height: 5px;
-	background: transparent url(alert/bottom_left.gif) no-repeat 0 0;			
+	background: transparent url(alert/bottom_left.gif) no-repeat 0 0;
 }
 
 .alert_s {
 	height: 5px;
-	background: transparent url(alert/bottom.gif) repeat-x 0 0;			
+	background: transparent url(alert/bottom.gif) repeat-x 0 0;
 }
 
 .alert_se, .alert_sizer {
 	width: 5px;
 	height: 5px;
-	background: transparent url(alert/bottom_right.gif) no-repeat 0 0;			
+	background: transparent url(alert/bottom_right.gif) no-repeat 0 0;
 }
 
 .alert_close {
@@ -797,16 +795,16 @@ td.small {
 	position: absolute;
 }
 
-.dialog table.table_window  { 
-  border-collapse: collapse; 
-  border-spacing: 0; 
+.dialog table.table_window  {
+  border-collapse: collapse;
+  border-spacing: 0;
   width: 100%;
 	margin: 0px;
 	padding:0px;
 }
 
-.dialog table.table_window td , .dialog table.table_window th { 
-  padding: 0; 
+.dialog table.table_window td , .dialog table.table_window th {
+  padding: 0;
 }
 
 .dialog .title_window {
@@ -834,13 +832,13 @@ z-index: 100;
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
-.bodyline { 
+.bodyline {
 	-moz-border-radius:8px;
-	border: 1px #E4ECEC outset; 
+	border: 1px #E4ECEC outset;
 	padding:0px;
 	margin-bottom:5px;
 }
-table.dp { 
+table.dp {
     width: 180px;
     background-color: #FFFFFF;
     border-top: solid 2px #DDDDDD;
@@ -850,10 +848,10 @@ table.dp {
 }
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
 /* Barre titre */
-.dpHead,.tpHead,.tpHour td:Hover .tpHead{ 
+.dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
 	background-color:#b3c5cc;
-	color:white; 
+	color:white;
 	font-size:11px;
 	cursor:auto;
 }
@@ -862,9 +860,9 @@ table.dp {
 	text-align:center;
 	background-color:#617389;
 	color:#FFFFFF;
-	font-weight:bold; 
+	font-weight:bold;
 	border: 1px outset black;
-	cursor:pointer;	
+	cursor:pointer;
 }
 .dpButtons:Active,.tpButtons:Active{border: 1px outset black;}
 .dpDayNames td,.dpExplanation {background-color:#D9DBE1; font-weight:bold; text-align:center; font-size:11px;}
@@ -888,7 +886,7 @@ table.dp {
 .tpMinute td:Hover {background-color:black; color:white; }
 .tpMinute td {background-color:#D9DBE1; text-align:center; cursor:pointer;}
 
-/* Bouton X fermer */	
+/* Bouton X fermer */
 .dpInvisibleButtons
 {
 border-style:none;
@@ -898,7 +896,7 @@ font-size:9px;
 border-width:0px;
 color:#0B63A2;
 vertical-align:middle;
-cursor: pointer; 
+cursor: pointer;
 }
 
 

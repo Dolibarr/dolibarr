@@ -218,10 +218,6 @@ class Conf
 		// Sous module bons de livraison
 		$this->livraison_bon->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
 
-		// Module don
-		$this->don->dir_output=$rootfordata."/dons";
-		$this->don->dir_temp  =$rootfordata."/dons/temp";
-
 		// Module fournisseur
 		$this->fournisseur->commande->dir_output=$rootfordata."/fournisseur/commande";
 		$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";

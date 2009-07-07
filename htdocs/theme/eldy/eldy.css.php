@@ -30,10 +30,8 @@ require("../../conf/conf.php");
 header('Content-type: text/css');
 // Important: Avoid page request by browser and dynamic build at
 // each Dolibarr page access.
-if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
-{
-	header('Cache-Control: max-age=3600, public, must-revalidate');
-}
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
+else header('Cache-Control: no-cache');
 ?>
 
 /* ============================================================================== */
@@ -106,7 +104,7 @@ select.flat
 	border: 0px;
 	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
-    padding: 0px 0px 0px 0px;
+    padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
 }
 .button:focus  {
@@ -116,7 +114,7 @@ select.flat
 	border: 0px;
 	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
-    padding: 0px 0px 0px 0px;
+    padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
 }
 .buttonajax
@@ -770,16 +768,25 @@ width: 100%;
 }
 
 tr.liste_titre {
-background: #7699A9;
-background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+height: 16px;
+/* background: #7699A9; */
+background: #91ABB3;
+<?php if (eregi('firefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE6 ?>
+background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre_2.png' ?>);
+background-repeat: repeat-y;
+<?php } ?>
 color: #334444;
 font-family: helvetica, verdana, arial, sans-serif;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
 td.liste_titre {
-background: #7699A9;
+/* background: #7699A9; */
+background: #91ABB3;
+<?php if (eregi('firefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE6 ?>
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-repeat: repeat-x;
+<?php } ?>
 color: #334444;
 font-family: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
@@ -788,8 +795,12 @@ white-space: nowrap;
 }
 td.liste_titre_sel
 {
-background: #7699A9;
+/* background: #7699A9; */
+background: #91ABB3;
+<?php if (eregi('firefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE6 ?>
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-repeat: repeat-x;
+<?php } ?>
 color: #F5FFFF;
 font-family: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
@@ -797,8 +808,12 @@ border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
 input.liste_titre {
-background: #7699A9;
+/* background: #7699A9; */
+background: #91ABB3;
+<?php if (eregi('firefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE6 ?>
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-repeat: repeat-x;
+<?php } ?>
 border: 0px;
 }
 
@@ -810,7 +825,8 @@ white-space: nowrap;
 }
 
 th {
-background: #7699A9;
+/* background: #7699A9; */
+background: #91ABB3;
 color: #334444;
 font-family: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
@@ -860,16 +876,20 @@ margin: 2px;
 }
 
 tr.box_titre {
-background: #7699A9;
-background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+/* background: #7699A9; */
+background: #91ABB3;
+<?php if (eregi('firefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE6 ?>
+background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre_2.png' ?>);
+background-repeat: repeat-y;
+<?php } ?>
 color: #334444;
 font-size: 12px;
 font-family: arial, helvetica, verdana, sans-serif;
-font-weight: bold;
+font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
--moz-border-radius-topleft:6px;
--moz-border-radius-topright:6px;
+-moz-border-radius-topleft:4px;
+-moz-border-radius-topright:4px;
 }
 
 tr.box_impair {

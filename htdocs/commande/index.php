@@ -33,7 +33,7 @@ if (!$user->rights->commande->lire) accessforbidden();
 
 $langs->load("orders");
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 $socid='';
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if ($user->societe_id > 0)
@@ -117,7 +117,7 @@ if ($conf->commande->enabled)
 }
 
 /*
- * Commandes à traiter
+ * Orders to process
  */
 if ($conf->commande->enabled)
 {
@@ -183,73 +183,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*
- * Commandes en cours
- */
-if ($conf->commande->enabled)
-{
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity = ".$conf->entity;
-	$sql.= " AND c.fk_statut = 2 ";
-	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	$sql.= " ORDER BY c.rowid DESC";
-
-	if ( $db->query($sql) )
-	{
-		$num = $db->num_rows();
-
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' ('.$num.')</td></tr>';
-
-		if ($num)
-		{
-			$i = 0;
-			$var = True;
-			while ($i < $num)
-			{
-				$var=!$var;
-				$obj = $db->fetch_object();
-				print "<tr $bc[$var]>";
-				print '<td width="20%" nowrap="nowrap">';
-
-				$commandestatic->id=$obj->rowid;
-				$commandestatic->ref=$obj->ref;
-
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
-				print $commandestatic->getNomUrl(1);
-				print '</td>';
-
-				print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
-				print '&nbsp;';
-				print '</td>';
-
-				print '<td width="16" align="right" class="nobordernopadding">';
-				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
-				print '</td></tr></table>';
-
-				print '</td>';
-
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
-				print '</tr>';
-				$i++;
-			}
-		}
-		print "</table><br>";
-	}
-}
-
-/*
- * Dernières commandes traitées
+ * Last closes orders
  */
 $max=5;
 
@@ -318,6 +252,71 @@ if ($resql)
 }
 
 
+/*
+ * Commandes en cours
+ */
+if ($conf->commande->enabled)
+{
+	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid";
+	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
+	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE c.fk_soc = s.rowid";
+	$sql.= " AND c.entity = ".$conf->entity;
+	$sql.= " AND c.fk_statut = 2 ";
+	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql.= " ORDER BY c.rowid DESC";
+
+	if ( $db->query($sql) )
+	{
+		$num = $db->num_rows();
+
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commandes/liste.php?viewstatut=2">('.$num.')</a></td></tr>';
+
+		if ($num)
+		{
+			$i = 0;
+			$var = True;
+			while ($i < $num)
+			{
+				$var=!$var;
+				$obj = $db->fetch_object();
+				print "<tr $bc[$var]>";
+				print '<td width="20%" nowrap="nowrap">';
+
+				$commandestatic->id=$obj->rowid;
+				$commandestatic->ref=$obj->ref;
+
+				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+				print $commandestatic->getNomUrl(1);
+				print '</td>';
+
+				print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
+				print '&nbsp;';
+				print '</td>';
+
+				print '<td width="16" align="right" class="nobordernopadding">';
+				$filename=dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+				print '</td></tr></table>';
+
+				print '</td>';
+
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+				print '</tr>';
+				$i++;
+			}
+		}
+		print "</table><br>";
+	}
+}
 
 
 print '</td></tr></table>';

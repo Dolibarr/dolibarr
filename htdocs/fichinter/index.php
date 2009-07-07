@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/fichinter/index.php
- \brief      Page accueil espace fiches interventions
- \ingroup    ficheinter
- \version    $Id$
+ *	\file       htdocs/fichinter/index.php
+ *	\brief      Page accueil espace fiches interventions
+ *	\ingroup    ficheinter
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -96,13 +96,13 @@ if ($result)
 	print '<table class="noborder" width="100%">';
 
 	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","",$urlparam,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Description"),"index.php","f.description","",$urlparam,'',$sortfield,$sortorder);
-	print '<td>&nbsp;</td>';
-	print_liste_field_titre($langs->trans("Date"),"index.php","fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Duration"),"index.php","fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"index.php","f.fk_statut","",$urlparam,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$urlparam,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$urlparam,'',$sortfield,$sortorder);
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
+	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.fk_statut","",$urlparam,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';

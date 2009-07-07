@@ -70,6 +70,8 @@ class Form
 	 *	\param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
 	 *	\param	img					Code img du picto
 	 * 	\param	i					Numero of tooltip
+	 * 	\param	width				Width of tooltip
+	 * 	\param	shiftX				Shift of tooltip
 	 *	\return	string				Code html du tooltip (texte+picto)
 	 */
 	function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$i=1,$width='200',$shiftX='10')
@@ -873,7 +875,7 @@ class Form
 				$found=0;
 				$currencytext=$langs->trans("Currency".$conf->monnaie);
 				if (strlen($currencytext) > 10) $currencytext=$conf->monnaie;	// If text is too long, we use the short code
-				
+
 				// Multiprice
 				if ($price_level >= 1)		// If we need a particular price level (from 1 to 6)
 				{
