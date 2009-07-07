@@ -56,11 +56,11 @@ $search_level_to = isset($_GET["search_level_to"])?$_GET["search_level_to"]:(isS
 
 // If both parameters are set, search for everything BETWEEN them
 if ($search_level_from != '' && $search_level_to != '')
-{	
+{
 	// Ensure that these parameters are numbers
 	$search_level_from = (int) $search_level_from;
 	$search_level_to = (int) $search_level_to;
-	
+
 	// If from is greater than to, reverse orders
 	if ($search_level_from > $search_level_to)
 	{
@@ -77,7 +77,7 @@ else if ($search_level_from != '')
 {
 	// Ensure that this parameter is a number
 	$search_level_from = (int) $search_level_from;
-	
+
 	// Generate the SQL request
 	$sortwhere = '(sortorder >= '.$search_level_from.') AS is_in_range';
 }
@@ -86,7 +86,7 @@ else if ($search_level_to != '')
 {
 	// Ensure that this parameter is a number
 	$search_level_to = (int) $search_level_to;
-	
+
 	// Generate the SQL request
 	$sortwhere = '(sortorder <= '.$search_level_to.') AS is_in_range';
 }
@@ -107,25 +107,25 @@ if ($resql)
 {
 	$tab_level = array();
 	$search_levels = array();
-	
+
 	while ($obj = $db->fetch_object($resql))
 	{
 		// Compute level text
 		$level=$langs->trans($obj->code);
 		if ($level == $obj->code) $level=$langs->trans($obj->label);
-		
+
 		// Put it in the array sorted by sortorder
 		$tab_level[$obj->sortorder] = $level;
-		
+
 		// If this potentiel fit in parameters, add its code to the $search_levels array
 		if ($obj->is_in_range == 1)
 		{
 			$search_levels[] = '"'.preg_replace('[^A-Za-z0-9_-]', '', $obj->code).'"';
 		}
-		
+
 		$i++;
 	}
-	
+
 	// Implode the $search_levels array so that it can be use in a "IN (...)" where clause.
 	// If no paramters was set, $search_levels will be empty
 	$search_levels = implode(',', $search_levels);
@@ -267,39 +267,41 @@ if ($resql)
  	}
  	// $param and $urladd should have the same value
  	$urladd = $param;
-	
+
 	print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"], $param, $sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
- 	
+
  	// Print the search-by-sale and search-by-categ filters
  	print '<form method="get" action="prospects.php" id="formulaire_recherche">';
- 	
+
+ 	$moreforfilter='';
+
  	// If the user can view prospects other than his'
  	if ($user->rights->societe->client->voir || $socid)
  	{
  		// Select each sales and print them in a select input
- 		print $langs->trans('SalesRepresentatives'). ': ';
- 		print '<select class="flat" name="search_sale">';
- 		print '<option value="">'.$langs->trans('All').'</option>';
- 		
+ 		$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
+ 		$moreforfilter.='<select class="flat" name="search_sale">';
+ 		$moreforfilter.='<option value="">'.$langs->trans('All').'</option>';
+
  		$sql_usr = "SELECT u.rowid, u.name, u.firstname, u.login";
  		$sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
  		$sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
  		$sql_usr.= " ORDER BY u.name ASC ";
- 	    
+
  		$resql_usr = $db->query($sql_usr);
  		if ($resql_usr)
  		{
  			while ($obj_usr = $db->fetch_object($resql_usr))
- 			{			
- 				print '<option value="'.$obj_usr->rowid.'"';
- 				
+ 			{
+ 				$moreforfilter.='<option value="'.$obj_usr->rowid.'"';
+
  				if ($obj_usr->rowid == $search_sale)
- 					print ' selected="true"';
- 				
- 				print '>';
- 				print stripslashes($obj_usr->firstname)." ".stripslashes($obj_usr->name)." (".$obj_usr->login.')';
- 				print '</option>';
+ 					$moreforfilter.=' selected="true"';
+
+ 				$moreforfilter.='>';
+ 				$moreforfilter.=stripslashes($obj_usr->firstname)." ".stripslashes($obj_usr->name)." (".$obj_usr->login.')';
+ 				$moreforfilter.='</option>';
  				$i++;
  			}
  			$db->free($resql_usr);
@@ -308,36 +310,36 @@ if ($resql)
  		{
  			dol_print_error($db);
  		}
- 		print '</select> &nbsp;  &nbsp;  &nbsp; ';
+ 		$moreforfilter.='</select> &nbsp;  &nbsp;  &nbsp; ';
  	}
- 	
+
  	// Include Categorie class
 	if ($conf->categorie->enabled)
 	{
 	 	require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
-	 
+
 	 	// Load list of "categories"
 	 	$static_categs = new Categorie($db);
 	 	$tab_categs = $static_categs->get_full_arbo(2);
-	 	
+
 	 	// Print a select with each of them
-	 	print $langs->trans('Categories'). ': ';
-	 	print '<select class="flat" name="search_categ">';
-	 	print '<option value="">'.$langs->trans('All').'</option>';
-	 	
+	 	$moreforfilter.=$langs->trans('Categories'). ': ';
+	 	$moreforfilter.='<select class="flat" name="search_categ">';
+	 	$moreforfilter.='<option value="">'.$langs->trans('All').'</option>';
+
 	 	if (is_array($tab_categs))
 	 	{
 	 		foreach ($tab_categs as $categ)
 	 		{
-	 			print '<option value="'.$categ['id'].'"';
+	 			$moreforfilter.='<option value="'.$categ['id'].'"';
 	 			if ($categ['id'] == $search_categ)
-	 				print ' selected="true"';
-	 			print '>'.$categ['fulllabel'].'</option>';
+	 				$moreforfilter.=' selected="true"';
+	 			$moreforfilter.='>'.$categ['fulllabel'].'</option>';
 	 		}
 	 	}
-	 	print '</select><br/>';
+	 	$moreforfilter.='</select><br/>';
 	}
-		
+
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","",$param,"valign=\"center\"",$sortfield,$sortorder);
@@ -361,46 +363,52 @@ if ($resql)
     print '<td class="liste_titre">';
     print '&nbsp;';
     print '</td>';
- 	
- 	// Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/enhance-prospect-searching.html)	
- 	print '<td class="liste_titre">';
+
+ 	// Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/enhance-prospect-searching.html)
+ 	print '<td class="liste_titre" align="center">';
  	// Generate in $options_from the list of each option sorted
  	$options_from = '<option value="">&nbsp;</option>';
  	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
  	{
  		$options_from .= '<option value="'.$tab_level_sortorder.'"'.($search_level_from == $tab_level_sortorder ? ' selected="true"':'').'>';
  		$options_from .= $langs->trans($tab_level_label);
- 		$options_from .= '</option>';			
+ 		$options_from .= '</option>';
  	}
- 	
+
  	// Reverse the list
  	array_reverse($tab_level, true);
- 	
+
  	// Generate in $options_to the list of each option sorted in the reversed order
  	$options_to = '<option value="">&nbsp;</option>';
  	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
  	{
  		$options_to .= '<option value="'.$tab_level_sortorder.'"'.($search_level_to == $tab_level_sortorder ? ' selected="true"':'').'>';
  		$options_to .= $langs->trans($tab_level_label);
- 		$options_to .= '</option>';			
+ 		$options_to .= '</option>';
  	}
- 
+
  	// Print these two select
  	print $langs->trans("From").' <select class="flat" name="search_level_from">'.$options_from.'</select>';
- 	print ' ';	
+ 	print ' ';
  	print $langs->trans("To").' <select class="flat" name="search_level_to">'.$options_to.'</select>';
 
     print '</td>';
     print '<td class="liste_titre" align="center">';
 	print '&nbsp;';
     print '</td>';
- 	
+
  	// Print the search button
     print '<td colspan="3" class="liste_titre" align="right">';
 	print '<input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '</td>';
 
 	print "</tr>\n";
+
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre" colspan="9">';
+    print $moreforfilter;
+    print '</td></tr>';
+
 
 	$i = 0;
 	$var=true;
@@ -453,9 +461,9 @@ if ($resql)
 	if ($num > $conf->liste_limit || $page > 0) print_barre_liste('', $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	print "</table>";
-	
+
 	print "</form>";
-	
+
 	$db->free($resql);
 }
 else
