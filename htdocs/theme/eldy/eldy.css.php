@@ -746,7 +746,15 @@ border-collapse: collapse;
 
 table.noborder {
 border-collapse: collapse;
-border: 0px;
+border-top-color: #FEFEFE;
+/*
+border-right-width: 1px;
+border-right-color: #BBBBBB;
+border-right-style: solid;
+*/
+border-bottom-width: 1px;
+border-bottom-color: #BBBBBB;
+border-bottom-style: solid;
 }
 table.noborder td {
 border: 0px;

@@ -113,11 +113,17 @@ class ModeleBoxes
 		print "\n\n<!-- Box start -->\n";
 		print '<div style="padding-right: 2px; padding-left: 2px; padding-bottom: 4px;" id="boxto_'.$this->box_id.'">'."\n";
 
+		if (! empty($head['text']) || ! empty($head['sublink']) || $nblines)
+		{
+			print '<div id="boxto_'.$this->box_id.'_title">'."\n";
+			print '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder">'."\n";
+		}
+
 		// Show box title
 		if (! empty($head['text']) || ! empty($head['sublink']))
 		{
-			print '<div id="boxto_'.$this->box_id.'_title">'."\n";
-			print '<table summary="boxtabletitle'.$this->box_id.'" width="100%" class="noborder">'."\n";
+			//print '<div id="boxto_'.$this->box_id.'_title">'."\n";
+			//print '<table summary="boxtabletitle'.$this->box_id.'" width="100%" class="noborder">'."\n";
 			print '<tr class="box_titre">';
 			print '<td';
 			if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
@@ -144,14 +150,14 @@ class ModeleBoxes
 			}
 			print '</td>';
 			print "</tr>\n";
-			print "</table>\n";
-			print "</div>\n";
+//			print "</table>\n";
+//			print "</div>\n";
 		}
 
 		// Show box lines
 		if ($nblines)
 		{
-			print '<table summary="boxtablelines'.$this->box_id.'" width="100%" class="noborder">'."\n";
+			//print '<table summary="boxtablelines'.$this->box_id.'" width="100%" class="noborder">'."\n";
 			// Loop on each record
 			for ($i=0, $n=$nblines; $i < $n; $i++)
 			{
@@ -224,7 +230,13 @@ class ModeleBoxes
 				$i++;
 			}*/
 
+			//print "</table>\n";
+		}
+
+		if (! empty($head['text']) || ! empty($head['sublink']) || $nblines)
+		{
 			print "</table>\n";
+			print "</div>\n";
 		}
 
 		// If invisible box with no contents

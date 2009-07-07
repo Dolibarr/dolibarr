@@ -352,14 +352,14 @@ class CommonObject
 	function fetch_client()
 	{
 		global $conf;
-		
+
 		$client = new Societe($this->db);
 		$result=$client->fetch($this->socid);
 		$this->client = $client;
 
 		// Use first price level if level not defined for third party
 		if ($conf->global->PRODUIT_MULTIPRICES && empty($this->client->price_level)) $this->client->price_level=1;
-		
+
 		return $result;
 	}
 

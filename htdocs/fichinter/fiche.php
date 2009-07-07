@@ -44,8 +44,19 @@ if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/mod
 $langs->load("companies");
 $langs->load("interventions");
 
-// Get parameters
-$fichinterid = isset($_GET["id"])?$_GET["id"]:'';
+// Load object if defined
+$fichinterid=0;
+$fichinter = new Fichinter($db);
+if ($_GET["id"] > 0 || ! empty($_GET["ref"]))
+{
+	$result=$fichinter->fetch($_GET["id"],$_GET["ref"]);
+	if (! $result > 0)
+	{
+		dol_print_error($db);
+		exit;
+	}
+	$fichinterid=$fichinter->id;
+}
 
 // If socid provided by ajax company selector
 if (! empty($_POST['socid_id']))
@@ -63,7 +74,7 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 /*
  * Traitements des actions
  */
-if ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add' && ! $_REQUEST["id"] > 0)
+if ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add' && ! $_REQUEST["id"] > 0 && empty($_REQUEST["ref"]))
 {
 	Header("Location: index.php");
 	return;
@@ -282,7 +293,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 		dol_print_error($db);
 		exit;
 	}
-	
+
 	$outputlangs = $langs;
 	if (! empty($_REQUEST['lang_id']))
 	{
@@ -481,18 +492,11 @@ if ($_GET["action"] == 'create')
 	}
 
 }
-elseif ($_GET["id"] > 0)
+elseif ($fichinterid)
 {
 	/*
 	 * Affichage en mode visu
 	 */
-	$fichinter = new Fichinter($db);
-	$result=$fichinter->fetch($_GET["id"]);
-	if (! $result > 0)
-	{
-		dol_print_error($db);
-		exit;
-	}
 	$fichinter->fetch_client();
 
 	$societe=new Societe($db);
@@ -535,7 +539,9 @@ elseif ($_GET["id"] > 0)
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>'.$fichinter->ref.'</td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
+	print $html->showrefnav($fichinter,'ref','',1,'ref','ref');
+	print '</td></tr>';
 
 	// Societe
 	print "<tr><td>".$langs->trans("Company")."</td><td>".$fichinter->client->getNomUrl(1)."</td></tr>";
