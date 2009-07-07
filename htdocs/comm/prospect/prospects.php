@@ -334,7 +334,7 @@ if ($resql)
 	 			$moreforfilter.='<option value="'.$categ['id'].'"';
 	 			if ($categ['id'] == $search_categ)
 	 				$moreforfilter.=' selected="true"';
-	 			$moreforfilter.='>'.$categ['fulllabel'].'</option>';
+	 			$moreforfilter.='>'.dol_trunc($categ['fulllabel'],50,'middle').'</option>';
 	 		}
 	 	}
 	 	$moreforfilter.='</select><br/>';
