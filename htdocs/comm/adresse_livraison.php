@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/comm/adresse_livraison.class.php");
 $langs->load("companies");
 $langs->load("commercial");
 
-$idl = isset($_GET["idl"])?$_GET["idl"]:'';
+$id = isset($_GET["id"])?$_GET["id"]:'';
 $origin = isset($_GET["origin"])?$_GET["origin"]:'';
 $originid = isset($_GET["originid"])?$_GET["originid"]:'';
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -269,24 +269,24 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 	$livraison = new AdresseLivraison($db);
 
 	$societe=new Societe($db);
-  $societe->fetch($_GET["socid"]);
+	$societe->fetch($_GET["socid"]);
 	$head = societe_prepare_head($societe);
 
 	dol_fiche_head($head, 'customer', $societe->nom);
-
-  print_titre($langs->trans("EditDeliveryAddress"));
-  print "<br>\n";
+	
+	print_titre($langs->trans("EditDeliveryAddress"));
+	print "<br>\n";
 
     if ($socid)
     {
         if ($reload || ! $_POST["nom"])
         {
             $livraison->socid = $socid;
-            $livraison->fetch_adresse($idl);
+            $livraison->fetch_adresse($id);
         }
         else
         {
-            $livraison->idl=$_POST["idl"];
+            $livraison->id=$_POST["id"];
             $livraison->socid=$_POST["socid"];
             $livraison->label=$_POST["label"];
             $livraison->nom=$_POST["nom"];
@@ -329,7 +329,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<input type="hidden" name="socid" value="'.$livraison->socid.'">';
         print '<input type="hidden" name="origin" value="'.$origin.'">';
         print '<input type="hidden" name="originid" value="'.$originid.'">';
-        print '<input type="hidden" name="idl" value="'.$livraison->idl.'">';
+        print '<input type="hidden" name="id" value="'.$livraison->id.'">';
 
         print '<table class="border" width="100%">';
 
@@ -437,12 +437,12 @@ else
 
 			if ($user->rights->societe->creer)
 			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;idl='.$livraison->lignes[$i]->idl.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;id='.$livraison->lignes[$i]->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 			}
 
 			if ($user->rights->societe->supprimer)
 			{
-				print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;idl='.$livraison->lignes[$i]->idl.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+				print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;id='.$livraison->lignes[$i]->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 			}
 
 
