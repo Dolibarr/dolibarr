@@ -20,7 +20,7 @@
 
 /**
  *	    \file       htdocs/comm/remx.php
- *      \ingroup    commercial, invoice
+ *      \ingroup    societe
  *		\brief      Page to edit absolute discounts for a customer
  *		\version    $Id$
  */

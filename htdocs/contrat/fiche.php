@@ -367,6 +367,7 @@ if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $
     $result = $contrat->validate($user,$langs,$conf);
 }
 
+// Close all lines
 if ($_REQUEST["action"] == 'confirm_close' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
     $contrat = new Contrat($db);
@@ -751,7 +752,7 @@ else
 		echo '<br>';
 
 		$servicepos=(isset($_REQUEST["servicepos"])?$_REQUEST["servicepos"]:1);
-		$colorb='333333';
+		$colorb='666666';
 
 		$arrayothercontracts=$contrat->getListOfContracts('others');
 
@@ -760,7 +761,7 @@ else
          */
 
 		// Title line for service
-		print '<table class="noborder" width="100%">';	// Array with (n*2)+1 lines
+		print '<table class="notopnoleft" width="100%">';	// Array with (n*2)+1 lines
 		$cursorline=1;
 		while ($cursorline <= $nbofservices)
 		{
@@ -771,7 +772,7 @@ else
 			print '<td class="tab" style="border-right: 1px solid #'.$colorb.'; border-top: 1px solid #'.$colorb.'; border-bottom: 1px solid #'.$colorb.';" rowspan="2">';
 
 			// Area with common detail of line
-			print '<table class="noborder" width="100%">';
+			print '<table class="notopnoleft" width="100%">';
 
 			$sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.description, cd.price_ht, cd.qty,";
 			$sql.= " cd.tva_tx, cd.remise_percent, cd.info_bits, cd.subprice,";
@@ -959,7 +960,7 @@ else
 			if ($_REQUEST["action"] == 'deleteline' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $contrat->lignes[$cursorline-1]->id == $_GET["rowid"])
 			{
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&lineid=".$_GET["rowid"],$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
-				if ($ret == 'html') print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
+				if ($ret == 'html') print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
 			/*
@@ -980,7 +981,7 @@ else
 				array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
 				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&lineid=".$_GET["rowid"],$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
-				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
+				print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
 			/*
@@ -993,7 +994,7 @@ else
 				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				$comment      = $_POST["comment"];
 				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
-				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
+				print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
 			/*
@@ -1006,14 +1007,14 @@ else
 				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				$comment      = $_POST["comment"];
 				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
-				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
+				print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
 
 			// Area with status and activation info of line
 			if ($contrat->statut > 0)
 			{
-				print '<table class="noborder" width="100%">';
+				print '<table class="notopnoleft" width="100%">';
 
 				print '<tr '.$bc[false].'>';
 				print '<td>'.$langs->trans("ServiceStatus").': '.$contrat->lignes[$cursorline-1]->getLibStatut(4).'</td>';

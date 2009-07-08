@@ -107,8 +107,8 @@ if ($resql)
     print_liste_field_titre($langs->trans("DateContract"), $_SERVER["PHP_SELF"], "c.date_contrat","","$param",'align="center"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.statut","","$param",'align="center"',$sortfield,$sortorder);
     print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(0,3).'</td>';
-    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3,false).'</td>';
-    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3,true).'</td>';
+    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3,0).'</td>';
+    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3,1).'</td>';
     print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
     print "</tr>\n";
 

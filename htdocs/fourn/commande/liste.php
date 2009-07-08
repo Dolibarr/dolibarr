@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/** 
+/**
     \file       htdocs/fourn/commande/liste.php
     \ingroup    fournisseur
     \brief      Liste des commandes fournisseurs
@@ -28,6 +28,10 @@
 require("./pre.inc.php");
 
 $langs->load("orders");
+
+$sref=isset($_GET['search_ref'])?$_GET['search_ref']:$_POST['search_ref'];
+$snom=isset($_GET['search_nom'])?$_GET['search_nom']:$_POST['search_nom'];
+$sall=isset($_GET['search_all'])?$_GET['search_all']:$_POST['search_all'];
 
 $page  = ( is_numeric($_GET["page"]) ?  $_GET["page"] : 0 );
 $socid = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
@@ -74,6 +78,18 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= " WHERE cf.fk_soc = s.rowid ";
 $sql.= " AND s.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($sref)
+{
+	$sql.= " AND cf.ref like '%".addslashes($sref)."%'";
+}
+if ($snom)
+{
+	$sql.= " AND s.nom like '%".addslashes($snom)."%'";
+}
+if ($sall)
+{
+	$sql.= " AND (cf.ref like '%".addslashes($sall)."%' OR cf.note like '%".addslashes($sall)."%')";
+}
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 if (strlen($_GET["statut"]))
@@ -81,22 +97,12 @@ if (strlen($_GET["statut"]))
     $sql .= " AND fk_statut =".$_GET["statut"];
 }
 
-if (strlen($_GET["search_ref"]))
-{
-    $sql .= " AND cf.ref LIKE '%".$_GET["search_ref"]."%'";
-}
-
-if (strlen($_GET["search_nom"]))
-{
-    $sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
-}
-
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
 {
-   
+
     $num = $db->num_rows($resql);
     $i = 0;
 
@@ -113,8 +119,8 @@ if ($resql)
 
     print '<tr class="liste_titre">';
 
-    print '<td><input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
-    print '<td><input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+    print '<td><input type="text" class="flat" name="search_ref" value="'.$sref.'"></td>';
+    print '<td><input type="text" class="flat" name="search_nom" value="'.$snom.'"></td>';
     print '<td colspan="2" class="liste_titre" align="right">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
     print '</td>';
@@ -132,7 +138,7 @@ if ($resql)
         // Ref
         print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>'."\n";
 
-        // Société
+        // Sociï¿½tï¿½
         print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
         print $obj->nom.'</a></td>'."\n";
 

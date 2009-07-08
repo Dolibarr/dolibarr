@@ -48,6 +48,26 @@ print_barre_liste($langs->trans("SuppliersOrdersArea"), $page, "index.php", "", 
 print '<table class="notopnoleftnoright" width="100%">';
 print '<tr valign="top"><td class="notopnoleft" width="30%">';
 
+
+/*
+ * Search form
+ */
+$var=false;
+print '<table class="noborder" width="100%">';
+print '<form method="post" action="liste.php">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchOrder").'</td></tr>';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_ref" size=18></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="search_all" size="18"></td>';
+print '</tr>';
+print "</form></table><br>\n";
+
+
+/*
+ * Legends / Status
+ */
+
 $sql = "SELECT count(cf.rowid), fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
@@ -63,9 +83,9 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
   $i = 0;
-  
+
   print '<table class="liste" width="100%">';
-  
+
   print '<tr class="liste_titre"><td>'.$langs->trans("Status").'</td>';
   print '<td align="right">'.$langs->trans("Nb").'</td>';
   print "</tr>\n";
@@ -83,12 +103,53 @@ if ($resql)
       print "</tr>\n";
       $i++;
     }
-  print "</table>";
+  print "</table><br>";
   $db->free($resql);
 }
-else 
+else
 {
   dol_print_error($db);
+}
+
+/*
+ * Commandes brouillons
+ */
+if ($conf->fournisseur->enabled)
+{
+	$sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
+	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE c.fk_soc = s.rowid";
+	$sql.= " AND c.entity = ".$conf->entity;
+	$sql.= " AND c.fk_statut = 0";
+	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+
+	if ( $db->query($sql) )
+	{
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
+		$langs->load("orders");
+		$num = $db->num_rows();
+		if ($num)
+		{
+			$i = 0;
+			$var = True;
+			while ($i < $num)
+			{
+				$var=!$var;
+				$obj = $db->fetch_object();
+				print "<tr $bc[$var]>";
+				print '<td nowrap="nowrap">';
+				print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td></tr>';
+				$i++;
+			}
+		}
+		print "</table><br>";
+	}
 }
 
 
@@ -112,7 +173,7 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
   $i = 0;
-  
+
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre"><td>'.$langs->trans("UserWithApproveOrderGrant").'</td>';
   print "</tr>\n";
@@ -136,7 +197,7 @@ if ($resql)
   print "</table>";
   $db->free($resql);
 }
-else 
+else
 {
   dol_print_error($db);
 }

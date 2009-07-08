@@ -113,10 +113,6 @@ if ($_GET['year'] > 0)
 {
 	$sql.= " AND date_format(c.date_commande, '%Y') = $year";
 }
-if (strlen($_POST['sf_ref']) > 0)
-{
-	$sql.= " AND c.ref like '%".addslashes($_POST['sf_ref']) . "%'";
-}
 if (!empty($snom))
 {
 	$sql.= ' AND s.nom like \'%'.addslashes($snom).'%\'';

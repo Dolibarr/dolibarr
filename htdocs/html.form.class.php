@@ -1568,7 +1568,7 @@ class Form
 		if ($formquestion)
 		{
 			$more.='<tr class="valid"><td class="valid" colspan="3">';
-			$more.='<table class="notopnoleftnoright" width="100%">';
+			$more.='<table class="nobordernopadding" width="100%">';
 			$more.='<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>';
 			foreach ($formquestion as $key => $input)
 			{
@@ -1691,7 +1691,7 @@ class Form
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="classin">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<table class="noborder" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			select_projects($socid,$selected,$htmlname);
 			print '</td>';
@@ -1726,7 +1726,7 @@ class Form
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setconditions">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<table class="noborder" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			$this->select_conditions_paiements($selected,$htmlname,-1,$addempty);
 			print '</td>';
@@ -1761,7 +1761,7 @@ class Form
 			print '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
 			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<table class="noborder" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			print $this->select_date($selected,$htmlname,0,0,1,'form'.$htmlname);
 			print '</td>';
@@ -1795,7 +1795,7 @@ class Form
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmode">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<table class="noborder" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			$this->select_types_paiements($selected,$htmlname);
 			print '</td>';
@@ -1881,7 +1881,7 @@ class Form
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="set_contact">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<table class="noborder" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			$num=$this->select_contacts($societe->id, $selected, $htmlname);
 			if ($num==0)
@@ -1925,7 +1925,7 @@ class Form
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setdeliveryadress">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<table class="noborder" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			$this->select_adresse_livraison($selected, $socid, $htmlname, 1);
 			print '</td>';

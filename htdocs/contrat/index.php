@@ -63,23 +63,10 @@ print '<table class="notopnoleftnoright" width="100%">';
 
 print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
-// Legend
-$var=false;
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ServicesLegend").'</td></tr>';
-print '<tr '.$bc[$var].'><td nowrap>';
-print $staticcontratligne->LibStatut(0,4).'<br />';
-print $staticcontratligne->LibStatut(4,4,false).'<br />';
-print $staticcontratligne->LibStatut(4,4,true).'<br />';
-print $staticcontratligne->LibStatut(5,4).'<br />';
-print '</td></tr>';
-print '</table>';
-print "<br>";
-
 // Search contract
 if ($conf->contrat->enabled)
 {
-    $var=false;
+	$var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
@@ -92,6 +79,86 @@ if ($conf->contrat->enabled)
 	print "</table></form>\n";
 	print "<br>";
 }
+
+/*
+ * Legends / Status
+ */
+$nb=array();
+// Search by status (except expired)
+$sql = "SELECT count(cd.rowid), cd.statut";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
+$sql.= " AND (cd.statut != 4 OR (cd.statut = 4 AND (cd.date_fin_validite is null or cd.date_fin_validite >= ".$db->idate(dol_now('tzref')).')))';
+$sql.= " AND s.entity = ".$conf->entity;
+if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " GROUP BY cd.statut";
+$resql = $db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+	$i = 0;
+
+	while ($i < $num)
+	{
+		$row = $db->fetch_row($resql);
+		$nb[$row[1]]=$row[0];
+		$i++;
+	}
+	$db->free($resql);
+}
+else
+{
+	dol_print_error($db);
+}
+// Search by status (only expired)
+$sql = "SELECT count(cd.rowid), cd.statut";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
+$sql.= " AND (cd.statut = 4 AND cd.date_fin_validite < ".$db->idate(dol_now('tzref')).')';
+$sql.= " AND s.entity = ".$conf->entity;
+if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " GROUP BY cd.statut";
+$resql = $db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+	$i = 0;
+
+	while ($i < $num)
+	{
+		$row = $db->fetch_row($resql);
+		$nb[$row[1].true]=$row[0];
+		$i++;
+	}
+	$db->free($resql);
+}
+else
+{
+	dol_print_error($db);
+}
+print '<table class="liste" width="100%">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Status").'</td>';
+print '<td align="right">'.$langs->trans("Nb").'</td>';
+print "</tr>\n";
+$var=true;
+$listofstatus=array(0,4,4,5); $bool=false;
+foreach($listofstatus as $status)
+{
+	$var=!$var;
+	print "<tr $bc[$var]>";
+	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
+	print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
+	if ($status==4 && $bool==false) $bool=true;
+	else $bool=false;
+}
+print "</tr>\n";
+print "</table><br>";
 
 /**
  * Draft contratcs
@@ -186,52 +253,52 @@ dol_syslog("contrat/index.php sql=".$sql, LOG_DEBUG);
 $result=$db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows($result);
-    $i = 0;
+	$num = $db->num_rows($result);
+	$i = 0;
 
-    print '<table class="noborder" width="100%">';
+	print '<table class="noborder" width="100%">';
 
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastContracts",5).'</td>';
-    print '<td align="center">'.$langs->trans("DateModification").'</td>';
-    //print '<td align="left">'.$langs->trans("Status").'</td>';
-    print '<td align="right" width="80" colspan="4">'.$langs->trans("Services").'</td>';
-    print "</tr>\n";
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastContracts",5).'</td>';
+	print '<td align="center">'.$langs->trans("DateModification").'</td>';
+	//print '<td align="left">'.$langs->trans("Status").'</td>';
+	print '<td align="right" width="80" colspan="4">'.$langs->trans("Services").'</td>';
+	print "</tr>\n";
 
-    $var=True;
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($result);
-        $var=!$var;
+	$var=True;
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($result);
+		$var=!$var;
 
-        print "<tr $bc[$var]>";
-        print '<td width="80" nowrap="nowrap">';
+		print "<tr $bc[$var]>";
+		print '<td width="80" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->cid);
 		$staticcontrat->id=$obj->cid;
 		print $staticcontrat->getNomUrl(1,16);
-        if ($obj->nb_late) print img_warning($langs->trans("Late"));
-        print '</td>';
-        print '<td>';
+		if ($obj->nb_late) print img_warning($langs->trans("Late"));
+		print '</td>';
+		print '<td>';
 		$staticcompany->id=$obj->socid;
 		$staticcompany->nom=$obj->nom;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
-        print '<td align="center">'.dol_print_date($obj->tms,'dayhour').'</td>';
-        //print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
-        print '<td align="right" width="32">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0,3):'').'</td>';
-        print '<td align="right" width="32">'.($obj->nb_running>0 ? $obj->nb_running.$staticcontratligne->LibStatut(4,3,false):'').'</td>';
-        print '<td align="right" width="32">'.($obj->nb_expired>0 ? $obj->nb_expired.$staticcontratligne->LibStatut(4,3,true):'').'</td>';
-        print '<td align="right" width="32">'.($obj->nb_closed>0  ? $obj->nb_closed.$staticcontratligne->LibStatut(5,3):'').'</td>';
-        print "</tr>\n";
-        $i++;
-    }
-    $db->free($result);
+		print '<td align="center">'.dol_print_date($obj->tms,'dayhour').'</td>';
+		//print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
+		print '<td align="right" width="32">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0,3):'').'</td>';
+		print '<td align="right" width="32">'.($obj->nb_running>0 ? $obj->nb_running.$staticcontratligne->LibStatut(4,3,0):'').'</td>';
+		print '<td align="right" width="32">'.($obj->nb_expired>0 ? $obj->nb_expired.$staticcontratligne->LibStatut(4,3,1):'').'</td>';
+		print '<td align="right" width="32">'.($obj->nb_closed>0  ? $obj->nb_closed.$staticcontratligne->LibStatut(5,3):'').'</td>';
+		print "</tr>\n";
+		$i++;
+	}
+	$db->free($result);
 
-    print "</table>";
+	print "</table>";
 
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 print '<br>';
@@ -254,49 +321,49 @@ $sql.= " ORDER BY cd.tms DESC";
 
 if ( $db->query($sql) )
 {
-    $num = $db->num_rows();
-    $i = 0;
+	$num = $db->num_rows();
+	$i = 0;
 
-    print '<table class="noborder" width="100%">';
+	print '<table class="noborder" width="100%">';
 
-    print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("NotActivatedServices").'</td>';
-    print "</tr>\n";
+	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("NotActivatedServices").'</td>';
+	print "</tr>\n";
 
-    $var=True;
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object();
-        $var=!$var;
-        print "<tr $bc[$var]>";
+	$var=True;
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object();
+		$var=!$var;
+		print "<tr $bc[$var]>";
 
-        print '<td width="80" nowrap="nowrap">';
+		print '<td width="80" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
 		print '</td>';
-        print '<td nowrap="1">';
+		print '<td nowrap="1">';
 		print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
-        if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a></td>';
-        else print '</a> '.dol_trunc($obj->note,20).'</td>';
-        print '<td>';
+		if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a></td>';
+		else print '</a> '.dol_trunc($obj->note,20).'</td>';
+		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
 		$staticcompany->nom=$obj->nom;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
-        print '<td width="16" align="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
-        print $staticcontratligne->LibStatut($obj->statut,3);
-        print '</a></td>';
-        print "</tr>\n";
-        $i++;
-    }
-    $db->free();
+		print '<td width="16" align="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print $staticcontratligne->LibStatut($obj->statut,3);
+		print '</a></td>';
+		print "</tr>\n";
+		$i++;
+	}
+	$db->free();
 
-    print "</table>";
+	print "</table>";
 
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 print '<br>';
@@ -321,49 +388,49 @@ $sql.= " ORDER BY cd.tms DESC";
 $resql=$db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    print '<table class="noborder" width="100%">';
+	print '<table class="noborder" width="100%">';
 
-    print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastModifiedServices",min($num,$max)).'</td>';
-    print "</tr>\n";
+	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastModifiedServices",min($num,$max)).'</td>';
+	print "</tr>\n";
 
-    $var=True;
-    while ($i < min($num,$max))
-    {
-        $obj = $db->fetch_object($resql);
-        $var=!$var;
-        print "<tr $bc[$var]>";
-        print '<td width="80" nowrap="nowrap">';
+	$var=True;
+	while ($i < min($num,$max))
+	{
+		$obj = $db->fetch_object($resql);
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		print '<td width="80" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
-        //if (1 == 1) print img_warning($langs->trans("Late"));
-        print '</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
-        if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a></td>';
-        else print '</a> '.dol_trunc($obj->note,20).'</td>';
-        print '<td>';
+		//if (1 == 1) print img_warning($langs->trans("Late"));
+		print '</td>';
+		print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
+		if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a></td>';
+		else print '</a> '.dol_trunc($obj->note,20).'</td>';
+		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
 		$staticcompany->nom=$obj->nom;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
-        print '<td nowrap="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
-        $dateend=$db->jdate($obj->date_fin_validite);
-        print $staticcontratligne->LibStatut($obj->statut, 3, ($dateend && $dateend < $now));
-        print '</a></td>';
-        print "</tr>\n";
-        $i++;
-    }
-    $db->free();
+		print '<td nowrap="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		$dateend=$db->jdate($obj->date_fin_validite);
+		print $staticcontratligne->LibStatut($obj->statut, 3, ($dateend && $dateend < $now)?1:0);
+		print '</a></td>';
+		print "</tr>\n";
+		$i++;
+	}
+	$db->free();
 
-    print "</table>";
+	print "</table>";
 
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 print '</td></tr></table>';
