@@ -54,7 +54,7 @@ class AdresseLivraison
 
   /**
    *    \brief  Constructeur de la classe
-   *    \param  DB     handler acc�s base de donn�es
+   *    \param  DB     handler acces base de donnees
    *    \param  id     id societe (0 par defaut)
    */
   function AdresseLivraison($DB, $id=0)
@@ -69,8 +69,8 @@ class AdresseLivraison
   }
 
   /**
-   *    \brief      Cr�e l'adresse de livraison de la soci�t� en base
-   *    \param      user        Objet utilisateur qui demande la cr�ation
+   *    \brief      Cree l'adresse de livraison de la societe en base
+   *    \param      user        Objet utilisateur qui demande la creation
    *    \return     int         0 si ok, < 0 si erreur
    */
 
@@ -78,7 +78,7 @@ class AdresseLivraison
     {
         global $langs,$conf;
 
-        // Nettoyage param�tres
+        // Nettoyage parametres
         $this->nom=trim($this->nom);
         $this->label=trim($this->label);
 
@@ -163,13 +163,13 @@ class AdresseLivraison
      *      \param      user            Utilisateur qui demande la mise a jour
      *      \return     int             <0 si ko, >=0 si ok
      */
-    function update($idl, $socid, $user='')
+    function update($id, $socid, $user='')
     {
         global $langs;
 
         dol_syslog("Societe::Update");
 
-		// Nettoyage des param�tres
+		// Nettoyage des parametres
 		
         $this->fk_societe = $socid;
         $this->label      = trim($this->label);
@@ -180,10 +180,10 @@ class AdresseLivraison
         $this->pays_id    = trim($this->pays_id);
         $this->tel        = trim($this->tel);
         $this->tel        = ereg_replace(" ","",$this->tel);
-		    $this->tel        = ereg_replace("\.","",$this->tel);
-		    $this->fax        = trim($this->fax);
-		    $this->fax        = ereg_replace(" ","",$this->fax);
-		    $this->fax        = ereg_replace("\.","",$this->fax);
+	    $this->tel        = ereg_replace("\.","",$this->tel);
+	    $this->fax        = trim($this->fax);
+	    $this->fax        = ereg_replace(" ","",$this->fax);
+	    $this->fax        = ereg_replace("\.","",$this->fax);
         $this->note       = trim($this->note);
 
         $result = $this->verify();		// Verifie que nom et label obligatoire
@@ -213,7 +213,7 @@ class AdresseLivraison
             { $sql .= ",fax = '" . $this->fax ."'"; }
 
             if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
-            $sql .= " WHERE fk_societe = '" . $socid ."' AND rowid = '" . $idl ."'";
+            $sql .= " WHERE fk_societe = '" . $socid ."' AND rowid = '" . $id ."'";
         
             $resql=$this->db->query($sql);
             if ($resql)
@@ -277,7 +277,7 @@ class AdresseLivraison
              // Adresses de livraison liees a la societe
              if ($this->socid)
              {
-             	  $sql = 'SELECT a.rowid as idl, a.label, a.nom, a.address,'.$this->db->pdate('a.datec').' as dc';
+             	  $sql = 'SELECT a.rowid as id, a.label, a.nom, a.address,'.$this->db->pdate('a.datec').' as dc';
              	  $sql .= ','. $this->db->pdate('a.tms').' as date_update, a.fk_societe';
              	  $sql .= ', a.cp, a.ville, a.note, a.fk_pays, a.tel, a.fax';
              	  $sql .= ', p.code as pays_code, p.libelle as pays';
@@ -296,10 +296,10 @@ class AdresseLivraison
 				            
 				            $ligne                 = new AdresseLivraisonLigne();
 
-				            $ligne->idl             = $objp->idl;
+				            $ligne->id              = $objp->id;
 				            $ligne->date_creation   = $objp->dc;
 				            $ligne->date_update     = $objp->date_update;
-                    $ligne->label           = stripslashes($objp->label);
+				            $ligne->label           = stripslashes($objp->label);
 				            $ligne->nom             = stripslashes($objp->nom);
 				            $ligne->adresse         = stripslashes($objp->address);
 				            $ligne->cp              = $objp->cp;
@@ -312,7 +312,7 @@ class AdresseLivraison
 				            $ligne->fax             = $objp->fax;
 				            $ligne->note            = $objp->note;
 				            
-				            $this->lignes[$i]      = $ligne;
+				            $this->lignes[$i]       = $ligne;
 				            $i++;
                    }
                    $this->db->free($resql);
@@ -339,11 +339,11 @@ class AdresseLivraison
      
          /**
      *    \brief      Charge depuis la base l'objet adresse de livraison
-     *    \param      socid       Id de l'adresse de livraison a charger en memoire
+     *    \param      id       Id de l'adresse de livraison a charger en memoire
      *    \param      user        Objet de l'utilisateur
      *    \return     int         >0 si ok, <0 si ko
      */
-    function fetch_adresse($idl, $user=0)
+    function fetch_adresse($id, $user=0)
     {
 		global $langs;
 		global $conf;
@@ -354,7 +354,7 @@ class AdresseLivraison
 		$sql .= ', p.code as pays_code, p.libelle as pays';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_adresse_livraison as a';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
-		$sql .= ' WHERE a.rowid = '.$idl;
+		$sql .= ' WHERE a.rowid = '.$id;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -362,26 +362,26 @@ class AdresseLivraison
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->idl = $obj->rowid;
-				$this->socid = $obj->fk_societe;
+				$this->id				= $obj->rowid;
+				$this->socid			= $obj->fk_societe;
 
-				$this->date_update = $obj->date_update;
-				$this->date_creation = $obj->date_creation;
+				$this->date_update		= $obj->date_update;
+				$this->date_creation 	= $obj->date_creation;
 
-				$this->label = stripslashes($obj->label);
-				$this->nom = stripslashes($obj->nom);
-				$this->adresse =  stripslashes($obj->address);
-				$this->cp = $obj->cp;
-				$this->ville =  stripslashes($obj->ville);
-				$this->adresse_full =  stripslashes($obj->address) . "\n". $obj->cp . ' '. stripslashes($obj->ville);
+				$this->label 			= stripslashes($obj->label);
+				$this->nom 				= stripslashes($obj->nom);
+				$this->adresse 			=  stripslashes($obj->address);
+				$this->cp 				= $obj->cp;
+				$this->ville 			=  stripslashes($obj->ville);
+				$this->adresse_full 	=  stripslashes($obj->address) . "\n". $obj->cp . ' '. stripslashes($obj->ville);
 
-				$this->pays_id = $obj->fk_pays;
-				$this->pays_code = $obj->fk_pays?$obj->pays_code:'';
-				$this->pays = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
+				$this->pays_id 			= $obj->fk_pays;
+				$this->pays_code 		= $obj->fk_pays?$obj->pays_code:'';
+				$this->pays				= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
 
-				$this->tel  = $obj->tel;
-				$this->fax  = $obj->fax;
-				$this->note = $obj->note;
+				$this->tel				= $obj->tel;
+				$this->fax				= $obj->fax;
+				$this->note				= $obj->note;
 
 				$result = 1;
 			}
@@ -410,12 +410,12 @@ class AdresseLivraison
      *    \brief      Suppression d'une adresse de livraison
      *    \param      id      id de la societe a supprimer
      */
-    function delete($idl,$socid)
+    function delete($id,$socid)
     {
       dol_syslog("Societe::Delete delivery adress");
 
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_adresse_livraison";
-      $sql .= " WHERE rowid=".$idl." AND fk_societe = ".$socid;
+      $sql .= " WHERE rowid=".$id." AND fk_societe = ".$socid;
 
       $result = $this->db->query($sql);
 
@@ -476,7 +476,7 @@ class AdresseLivraison
 class AdresseLivraisonLigne  
 {
     
-    var $idl;
+    var $id;
     var $date_creation;
     var $date_update;
     var $label;

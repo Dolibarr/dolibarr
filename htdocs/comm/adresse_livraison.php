@@ -98,7 +98,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         $socid   = $_POST["socid"];
         $origin  = $_POST["origin"];
         $originid = $_POST["originid"];
-        $result = $livraison->update($_POST["idl"], $socid, $user);
+        $result = $livraison->update($_POST["id"], $socid, $user);
 
         if ($result >= 0)
         {
@@ -136,7 +136,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->supprimer)
 {
   $livraison = new AdresseLivraison($db);
-  $result = $livraison->delete($_GET["idl"], $socid);
+  $result = $livraison->delete($_GET["id"], $socid);
 
   if ($result == 0)
     {
@@ -390,7 +390,7 @@ else
 	if ($_GET["action"] == 'delete')
 	{
 		$html = new Form($db);
-		$ret=$html->form_confirm("adresse_livraison.php?socid=".$livraison->socid."&amp;idl=".$_GET["idl"],$langs->trans("DeleteDeliveryAddress"),$langs->trans("ConfirmDeleteDeliveryAdress"),"confirm_delete");
+		$ret=$html->form_confirm("adresse_livraison.php?socid=".$livraison->socid."&amp;id=".$_GET["id"],$langs->trans("DeleteDeliveryAddress"),$langs->trans("ConfirmDeleteDeliveryAdress"),"confirm_delete");
 		if ($ret == 'html') print '<br>';
 	}
 

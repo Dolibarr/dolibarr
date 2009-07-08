@@ -288,10 +288,8 @@ if ($_GET["action"] == 'create')
 			print '<td colspan="3">';
 			if (!empty($object->fk_delivery_address))
 			{
-				require_once(DOL_DOCUMENT_ROOT ."/comm/adresse_livraison.class.php");
-				$deliveryAddress=new AdresseLivraison($db);
-				$deliveryAddress->fetch_adresse($object->fk_delivery_address);
-				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$deliveryAddress->socid.'&idl='.$deliveryAddress->idl.'&action=edit&origin='.$origin.'&originid='.$origin_id.'>'.$deliveryAddress->label.'</a>';
+				$deliveryAddress = $soc->fetch_adresse_livraison($object->fk_delivery_address);
+				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$deliveryAddress->socid.'&id='.$deliveryAddress->id.'&action=edit&origin='.$origin.'&originid='.$origin_id.'>'.$deliveryAddress->label.'</a>';
 			}
 			print '</td></tr>'."\n";
 
@@ -655,10 +653,8 @@ else
 			print '<td colspan="3">';
 			if (!empty($expedition->fk_delivery_address))
 			{
-				require_once(DOL_DOCUMENT_ROOT ."/comm/adresse_livraison.class.php");
-				$deliveryAddress=new AdresseLivraison($db);
-				$deliveryAddress->fetch_adresse($expedition->fk_delivery_address);
-				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$deliveryAddress->socid.'&idl='.$deliveryAddress->idl.'&action=edit&origin=shipment&originid='.$expedition->id.'>'.$deliveryAddress->label.'</a>';
+				$deliveryAddress = 	$soc->fetch_adresse_livraison($expedition->fk_delivery_address);
+				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$deliveryAddress->socid.'&id='.$deliveryAddress->id.'&action=edit&origin=shipment&originid='.$expedition->id.'>'.$deliveryAddress->label.'</a>';
 			}
 			print '</td></tr>'."\n";
 

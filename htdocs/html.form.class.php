@@ -1941,7 +1941,7 @@ class Form
 				require_once(DOL_DOCUMENT_ROOT ."/comm/adresse_livraison.class.php");
 				$livraison=new AdresseLivraison($this->db);
 				$livraison->fetch_adresse($selected);
-				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&idl='.$livraison->idl.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$livraison->label.'</a>';
+				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&id='.$livraison->id.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$livraison->label.'</a>';
 			}
 			else
 			{
