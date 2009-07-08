@@ -107,7 +107,7 @@ class Societe extends CommonObject
 
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB     handler acc�s base de donn�es
+	 *    \param  DB     handler acces base de donnees
 	 *    \param  id     id societe (0 par defaut)
 	 */
 	function Societe($DB, $id=0)
@@ -990,10 +990,10 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    	\brief      D�finit la soci�t� comme un client
+	 *    	\brief      Definit la societe comme un client
 	 *    	\param      remise		Valeur en % de la remise
 	 *    	\param      note		Note/Motif de modification de la remise
-	 *    	\param      user		Utilisateur qui d�finie la remise
+	 *    	\param      user		Utilisateur qui definie la remise
 	 *		\return		int			<0 si ko, >0 si ok
 	 */
 	function set_remise_client($remise, $note, $user)

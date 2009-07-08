@@ -288,8 +288,8 @@ if ($_GET["action"] == 'create')
 			print '<td colspan="3">';
 			if (!empty($object->fk_delivery_address))
 			{
-				$deliveryAddress = $soc->fetch_adresse_livraison($object->fk_delivery_address);
-				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$deliveryAddress->socid.'&id='.$deliveryAddress->id.'&action=edit&origin='.$origin.'&originid='.$origin_id.'>'.$deliveryAddress->label.'</a>';
+				$expedition->fetch_adresse_livraison($object->fk_delivery_address);
+				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$expedition->deliveryaddress->socid.'&id='.$expedition->deliveryaddress->id.'&action=edit&origin='.$origin.'&originid='.$origin_id.'>'.$expedition->deliveryaddress->label.'</a>';
 			}
 			print '</td></tr>'."\n";
 
@@ -653,8 +653,8 @@ else
 			print '<td colspan="3">';
 			if (!empty($expedition->fk_delivery_address))
 			{
-				$deliveryAddress = 	$soc->fetch_adresse_livraison($expedition->fk_delivery_address);
-				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$deliveryAddress->socid.'&id='.$deliveryAddress->id.'&action=edit&origin=shipment&originid='.$expedition->id.'>'.$deliveryAddress->label.'</a>';
+				$expedition->fetch_adresse_livraison($expedition->fk_delivery_address);
+				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$expedition->deliveryaddress->socid.'&id='.$expedition->deliveryaddress->id.'&action=edit&origin=shipment&originid='.$expedition->id.'>'.$expedition->deliveryaddress->label.'</a>';
 			}
 			print '</td></tr>'."\n";
 

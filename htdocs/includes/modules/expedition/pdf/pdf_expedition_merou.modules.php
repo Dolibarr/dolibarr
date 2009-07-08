@@ -502,15 +502,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		// If SHIPPING contact defined on invoice, we use it
 		$usecontact=false;
-		//if ($conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT)
-		//{
-			$arrayidcontact=$object->commande->getIdContact('external','SHIPPING');
-			if (sizeof($arrayidcontact) > 0)
-			{
-				$usecontact=true;
-				$result=$object->fetch_contact($arrayidcontact[0]);
-			}
-		//}
+		$arrayidcontact=$object->commande->getIdContact('external','SHIPPING');
+		if (sizeof($arrayidcontact) > 0)
+		{
+			$usecontact=true;
+			$result=$object->fetch_contact($arrayidcontact[0]);
+		}
+
 		if ($usecontact)
 		{
 			// On peut utiliser le nom de la societe du contact
@@ -526,6 +524,18 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
 			if ($object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
+		}
+		else if (!empty($object->fk_delivery_address))
+		{
+			$object->fetch_adresse_livraison($object->fk_delivery_address);
+			
+			// Customer name
+			$carac_client_name=$outputlangs->convToOutputCharset($object->deliveryaddress->nom);
+			
+			// Customer properties
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->deliveryaddress->address);
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->deliveryaddress->cp) . " " . $outputlangs->convToOutputCharset($object->deliveryaddress->ville)."\n";
+			if ($object->deliveryaddress->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->deliveryaddress->pays_code))."\n";
 		}
 		else
 		{
