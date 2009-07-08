@@ -18,23 +18,23 @@
  */
 
 /**
- 	\defgroup   energie     Module energie
- 	\brief      Module pour le suivi de la consommation d'energie
-	\version	$Id$
+ *	\defgroup   energie     Module energie
+ * 	\brief      Module pour le suivi de la consommation d'energie
+ *	\version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modEnergie.class.php
- \ingroup    energie
- \brief      Fichier de description et activation du module Energie
+ *	\file       htdocs/includes/modules/modEnergie.class.php
+ *	\ingroup    energie
+ *	\brief      Fichier de description et activation du module Energie
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- \class modEnergie
- \brief      Classe de description et activation du module Energie
+ *	\class 		modEnergie
+ *	\brief      Classe de description et activation du module Energie
  */
 
 class modEnergie extends DolibarrModules
@@ -62,7 +62,7 @@ class modEnergie extends DolibarrModules
 		$this->picto='energie';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/energie/temp","/energie/graph");
+		$this->dirs = array('/energie/temp','/energie/graph');
 
 		// Dependances
 		$this->depends = array();
@@ -98,9 +98,6 @@ class modEnergie extends DolibarrModules
 		$this->remove();
 
 		$sql = array();
-
-		$this->dirs[0] = DOL_DATA_ROOT."/energie";
-		$this->dirs[1] = DOL_DATA_ROOT."/energie/graph";
 
 		return $this->_init($sql);
 	}
