@@ -206,6 +206,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
 		// Script pour V2.6 -> V2.7
 		migrate_menus($db,$langs,$conf);
+		
+		migrate_commande_deliveryaddress($db,$langs,$conf);
 
 
 		// On commit dans tous les cas.
@@ -2091,6 +2093,78 @@ function migrate_menus($db,$langs,$conf)
 	else
 	{
 		print $langs->trans('AlreadyDone')."<br>\n";
+	}
+
+	print '</td></tr>';
+}
+
+/*
+ * Migration du champ fk_adresse_livraison dans expedition
+ */
+function migrate_commande_deliveryaddress($db,$langs,$conf)
+{
+	dolibarr_install_syslog("upgrade2::migrate_commande_deliveryaddress");
+
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationDeliveryAddress')."</b><br>\n";
+
+	$error = 0;
+
+	$db->begin();
+
+	$sql = "SELECT c.fk_adresse_livraison, ce.fk_expedition";
+	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
+	$sql.= ", ".MAIN_DB_PREFIX."co_exp as ce";
+	$sql.= " WHERE c.rowid = ce.fk_commande";
+	$sql.= " AND c.fk_adresse_livraison IS NOT NULL";
+	
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
+				$sql.= " fk_adresse_livraison = '".$obj->fk_adresse_livraison."'";
+				$sql.= " WHERE rowid=".$obj->fk_expedition;
+
+				$resql2=$db->query($sql);
+				if ($resql2)
+				{
+
+				}
+				else
+				{
+					$error++;
+					dol_print_error($db);
+				}
+				print ". ";
+				$i++;
+			}
+
+		}
+
+		if ($error == 0)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
 	}
 
 	print '</td></tr>';
