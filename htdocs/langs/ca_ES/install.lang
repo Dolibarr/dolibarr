@@ -95,8 +95,8 @@ ThisPHPDoesNotSupportTypeBase = El sistema PHP no suporta les interfícies d'acc
 FunctionNotAvailableInThisPHP = No disponible en aquest PHP
 MigrateScript = Script de migració
 ChoosedMigrateScript = Elecció de l'script de migració
-DataMigration = Migració de les dades
 DatabaseMigration = Migració del format de la base de dades
+DataMigration = Migració de les dades
 ProcessMigrateScript = Execució del script
 ChooseYourSetupMode = Triï el seu mètode d'instal·lació i feu clic en "Començar" ...
 FreshInstall = Primera instal·lació
@@ -154,6 +154,7 @@ MigrationContractsFieldDontExist = Els camps fk_facture no existeixen ja. No hi 
 MigrationContractsEmptyDatesUpdate = Actualització de les dades de contractes no indicades
 MigrationContractsEmptyDatesUpdateSuccess = Ok per data de contracte
 MigrationContractsEmptyDatesNothingToUpdate = No hi ha més properes dates de contractes.
+MigrationContractsEmptyCreationDatesUpdateSuccess = Ok per la data de creació
 MigrationContractsEmptyCreationDatesNothingToUpdate = No hi ha més properes dates de creació.
 # Contracts Invalid Dates Update =  = 
 MigrationContractsInvalidDatesUpdate = Actualització dades contracte incorrectes (per contractes amb detall en servei)
@@ -180,3 +181,5 @@ MigrationDeliveryDetail = Actualitzar recepcions
 MigrationStockDetail = Actualitzar valor en stock dels productes
 # Migration menus =  = 
 MigrationMenusDetail = Actualització de la taula de menús dinàmics
+# Migration delivery address =  = 
+MigrationDeliveryAddress = Actualització de les adreces d'enviament en les notes de lliurament
