@@ -410,7 +410,7 @@ class FormMail
 		{
 			$defaultmessage="";
 
-			// \TODO    A partir du type, proposer liste de messages dans table llx_models
+			// TODO    A partir du type, proposer liste de messages dans table llx_models
 			if ($this->param["models"]=='body') 			{ $defaultmessage=$this->withbody; }
 			if ($this->param["models"]=='facture_send')    	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
 			if ($this->param["models"]=='facture_relance') 	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }

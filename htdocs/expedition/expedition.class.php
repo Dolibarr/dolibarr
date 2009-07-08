@@ -167,7 +167,7 @@ class Expedition extends CommonObject
 	  				$error++;
 	  			}
 
-	  			//Todo: definir un statut
+	  			// TODO definir un statut
 	  			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 9 WHERE rowid=".$this->origin_id;
 	  			if (! $this->db->query($sql))
 	  			{
@@ -602,6 +602,7 @@ class Expedition extends CommonObject
 							}
 						}
 					}
+					// TODO il faut incrementer le stock si on supprime une expedition validee
 					return 1;
 				}
 				else
