@@ -89,6 +89,7 @@ if ($_POST["action"] == 'add')
 	//$object->fetch_lines();
 
 	$expedition->socid  = $object->socid;
+	$expedition->fk_delivery_address = $object->fk_delivery_address;
 	$expedition->expedition_method_id = $_POST["expedition_method_id"];
 	$expedition->tracking_number = $_POST["tracking_number"];
 

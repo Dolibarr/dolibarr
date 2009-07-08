@@ -98,6 +98,7 @@ class Expedition extends CommonObject
 		$sql.= ", fk_user_author";
 		$sql.= ", date_expedition";
 		$sql.= ", fk_soc";
+		$sql.= ", fk_adresse_livraison";
 		$sql.= ", fk_expedition_methode";
 		$sql.= ", tracking_number";
 		$sql.= ", weight";
@@ -114,6 +115,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$this->db->idate($this->date_expedition);
 		$sql.= ", ".$this->socid;
+		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:"null");
 		$sql.= ", ".($this->expedition_method_id>0?$this->expedition_method_id:"null");
 		$sql.= ", '". $this->tracking_number."'";
 		$sql.= ", ".$this->weight;
@@ -277,7 +279,8 @@ class Expedition extends CommonObject
 				$this->livraison_id         = $obj->livraison_id;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date                 = $obj->date_expedition;
-				$this->adresse_livraison_id = $obj->fk_adresse_livraison;
+				$this->adresse_livraison_id = $obj->fk_adresse_livraison; // TODO obsolete
+				$this->fk_delivery_address  = $obj->fk_adresse_livraison;
 				$this->modelpdf             = $obj->model_pdf;
 				$this->expedition_method_id = $obj->fk_expedition_methode;
 				$this->tracking_number      = $obj->tracking_number;
@@ -800,7 +803,8 @@ class Expedition extends CommonObject
 		}
 		$this->date                 = time();
 		$this->entrepot_id          = 0;
-		$this->adresse_livraison_id = 0;
+		$this->adresse_livraison_id = 0; // TODO obsolete
+		$this->fk_delivery_address  = 0;
 		$this->socid = $socids[$socid];
 
 		$this->commande_id          = 0;

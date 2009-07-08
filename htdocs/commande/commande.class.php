@@ -59,7 +59,8 @@ class Commande extends CommonObject
 	var $cond_reglement_code;
 	var $mode_reglement_id;
 	var $mode_reglement_code;
-	var $adresse_livraison_id;
+	var $adresse_livraison_id; // TODO obsolete
+	var $fk_delivery_address;
 	var $adresse;
 	var $date;				// Date commande
 	var $date_commande;		// Date commande (deprecated)
@@ -970,7 +971,8 @@ class Commande extends CommonObject
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_facture = $obj->cond_reglement_libelle_facture;
 				$this->date_livraison         = $obj->date_livraison;
-				$this->adresse_livraison_id   = $obj->fk_adresse_livraison;
+				$this->adresse_livraison_id   = $obj->fk_adresse_livraison; // TODO obsolete
+				$this->fk_delivery_address    = $obj->fk_adresse_livraison;
 				$this->propale_id             = $obj->fk_propale;
 				$this->lignes                 = array();
 
