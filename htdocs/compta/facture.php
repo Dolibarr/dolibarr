@@ -3759,7 +3759,7 @@ else
 			print '</td><td class="liste_titre" align="right">';
 			print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET['search_montant_ttc'].'">';
 			print '</td>';
-			print '<td align="right">';
+			print '<td class="liste_titre" align="right">';
 			print '&nbsp;';
 			print '</td>';
 			print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';

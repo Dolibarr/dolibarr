@@ -21,11 +21,11 @@
  */
 
 /**
-	\file       htdocs/compta/propal.php
-	\ingroup    propale
-	\brief      Page liste des propales (vision compta)
-	\version	$Id$
-	*/
+ *	\file       htdocs/compta/propal.php
+ *	\ingroup    propale
+ *	\brief      Page liste des propales (vision compta)
+ *	\version	$Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
@@ -725,10 +725,10 @@ else
 		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 
 		print '<tr class="liste_titre">';
-		print '<td valign="right">';
+		print '<td class="liste_titre" valign="right">';
 		print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
 		print '</td>';
-		print '<td align="left">';
+		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="40" name="search_societe" value="'.$_GET['search_societe'].'">';
 		print '</td>';
 		print '<td class="liste_titre" colspan="1" align="right">';
@@ -740,13 +740,13 @@ else
 		$syear = date("Y");
 		$html->select_year($syear,'year',1, '', $max_year);
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="liste_titre" align="right">';
 		$html->select_propal_statut($viewstatut);
 		print '</td>';
-		print '<td align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+		print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 		print '</td>';
 		print "</tr>\n";
 		print '</form>';
