@@ -41,7 +41,7 @@ body {
     background-color: #FFFFFF;
 	color: #101010;
 	font-size: 12px;
-    font-family: arial,sans-serif,verdana, helvetica;
+    font-family: arial, sans-serif, verdana, helvetica;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -54,6 +54,9 @@ a:active  {font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   {font-weight: bold; color: #000000; text-decoration: none; }
 input
 {
+    font-size: 12px;
+	font-family: helvetica, verdana, arial, sans-serif;
+	font-weight: normal;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -61,12 +64,18 @@ input
 }
 input.flat
 {
+    font-size: 12px;
+	font-family: helvetica, verdana, arial, sans-serif;
+	font-weight: normal;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea  {
+    font-size: 12px;
+	font-family: helvetica, verdana, arial, sans-serif;
+	font-weight: normal;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -74,6 +83,9 @@ textarea  {
 }
 textarea.flat
 {
+    font-size: 12px;
+	font-family: helvetica, verdana, arial, sans-serif;
+	font-weight: normal;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -307,11 +319,11 @@ img.login
 /* Barre de gauche                                                                */
 /* ============================================================================== */
 
-a.vmenu:link        { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 4px; }
-a.vmenu:visited     { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 4px; }
-a.vmenu:active      { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 4px; }
-a.vmenu:hover       { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 4px; }
-font.vmenudisabled  { font-size:11px; text-align:left; font-weight: bold; color: #9FCED9; margin: 1px 1px 1px 4px; }
+a.vmenu:link        { font-size:12px; text-align:left; font-weight: normal; color: #FFFFFF; margin: 1px 1px 1px 4px; }
+a.vmenu:visited     { font-size:12px; text-align:left; font-weight: normal; color: #FFFFFF; margin: 1px 1px 1px 4px; }
+a.vmenu:active      { font-size:12px; text-align:left; font-weight: normal; color: #FFFFFF; margin: 1px 1px 1px 4px; }
+a.vmenu:hover       { font-size:12px; text-align:left; font-weight: normal; color: #FFFFFF; margin: 1px 1px 1px 4px; }
+font.vmenudisabled  { font-size:12px; text-align:left; font-weight: normal; color: #9FCED9; margin: 1px 1px 1px 4px; }
 
 a.vsmenu:link       { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 4px; }
 a.vsmenu:visited    { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 4px; }
@@ -346,7 +358,6 @@ div.blockvmenuimpair
 div.blockvmenuimpair form a.vmenu, div.blockvmenupair form a.vmenu
 {
 	width: 166px;
-
 	color: #000000;
 	text-align:left;
 	text-decoration: none;
@@ -450,6 +461,7 @@ div.tabBar {
     border-bottom: 1px solid #68ACCF;
     border-left: 1px solid #68ACCF;
     border-top: 1px solid #68ACCF;
+    background: #F0F0F0 url(<?php echo $dolibarr_main_url_root.'/theme/login_background.png' ?>) repeat-x;
 }
 
 div.tabsAction {
@@ -532,7 +544,7 @@ a.tab:visited {
 }
 a.tab#active {
     background: #FFFFFF;
-    border-bottom: #dee7ec 1px solid;
+    border-bottom: #FFFFFF 1px solid;
     color: #6198BA;
     padding: 0px 6px;
     margin: 0em 0.2em;
@@ -686,7 +698,8 @@ border-collapse: collapse;
 
 
 table.noborder {
-border: 2px;
+border: 1px solid #FFFFFF;
+border-spacing: 1px;
 }
 table.noborder td {
 border: 0px;
