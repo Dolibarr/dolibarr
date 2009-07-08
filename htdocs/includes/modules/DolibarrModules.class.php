@@ -356,7 +356,7 @@ class DolibarrModules
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules";
 		$sql.= " WHERE numero = ".$this->numero;
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity in (0, ".$conf->entity.")";
 
 		dol_syslog("DolibarrModules::_dbunactive sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
@@ -376,11 +376,11 @@ class DolibarrModules
 		$err = 0;
 
 		// Common module
-		$entity = ((isset($this->always_enabled)||isset($this->core_enabled)) ? 0 : $conf->entity);
+		$entity = ((! empty($this->always_enabled) || ! empty($this->core_enabled)) ? 0 : $conf->entity);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$this->const_name."'";
-		$sql.= " AND entity = ".$entity;
+		$sql.= " AND entity in (0, ".$entity.")";
 
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
@@ -411,11 +411,11 @@ class DolibarrModules
 		$err = 0;
 
 		// Common module
-		$entity = (isset($this->core_enabled) ? 0 : $conf->entity);
+		$entity = ((! empty($this->always_enabled) || ! empty($this->core_enabled)) ? 0 : $conf->entity);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$this->const_name."'";
-		$sql.= " AND entity = ".$entity;
+		$sql.= " AND entity in (0, ".$entity.")";
 
 		dol_syslog("DolibarrModules::_unactive sql=".$sql);
 		$this->db->query($sql);
