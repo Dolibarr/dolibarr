@@ -21,209 +21,211 @@
  */
 
 /**
-   \file       htdocs/energie/EnergieCompteur.class.php
-   \ingroup    energie
-   \brief      Fichier des classes de compteur
-   \version    $Revision$
-*/
+ \file       htdocs/energie/EnergieCompteur.class.php
+ \ingroup    energie
+ \brief      Fichier des classes de compteur
+ \version    $Revision$
+ */
 
 
-/**	
-   \class      Compteur
-   \brief      Classe de gestion des compteurs
-*/
+/**
+ \class      Compteur
+ \brief      Classe de gestion des compteurs
+ */
 
 class EnergieCompteur
 {
-  var $db ;
-  var $id ;
-  var $user;
+	var $db ;
+	var $id ;
+	var $user;
 
-  /**  \brief  Constructeur
-   */
-  function EnergieCompteur($DB, $user)
-  {
-    $this->db = $DB;
-    $this->user = $user;
+	/**  \brief  Constructeur
+	 */
+	function EnergieCompteur($DB, $user)
+	{
+		global $langs;
 
-    $this->energies[1] = "Electricité";
-    $this->energies[2] = "Eau";
-    $this->energies[3] = "Gaz naturel";
+		$this->db = $DB;
+		$this->user = $user;
 
-    $this->couleurs[1] = "gray";
-    $this->couleurs[2] = "blue";
-    $this->couleurs[3] = "yellow";
-  }
+		$this->energies[1] = $langs->trans("Electricity");
+		$this->energies[2] = $langs->trans("Water");
+		$this->energies[3] = $langs->trans("NaturalGaz");
+
+		$this->couleurs[1] = "gray";
+		$this->couleurs[2] = "blue";
+		$this->couleurs[3] = "yellow";
+	}
 
 
-  /** 
-   * Lecture
-   *
-   */
-  function fetch ($id)
-  {
-    $sql = "SELECT c.rowid, c.libelle, fk_energie";
-    $sql .= " FROM ".MAIN_DB_PREFIX."energie_compteur as c";
-    $sql .= " WHERE c.rowid = ".$id;
-    
-    $resql = $this->db->query($sql) ;
-    
-    if ( $resql )
-      {
-	$obj = $this->db->fetch_object($resql);
-	
-	$this->id              = $obj->rowid;
-	$this->libelle         = $obj->libelle;
-	$this->energie         = $obj->fk_energie;
-	$this->db->free();
-	
-	return 0;
-      }
-    else
-      {
-	dol_syslog("");
-	return -1;
-      }
-  }
+	/**
+	 * Lecture
+	 *
+	 */
+	function fetch ($id)
+	{
+		$sql = "SELECT c.rowid, c.libelle, fk_energie";
+		$sql .= " FROM ".MAIN_DB_PREFIX."energie_compteur as c";
+		$sql .= " WHERE c.rowid = ".$id;
 
-  /** 
-   * Lecture
-   *
-   */
-  function Create ($libelle, $energie)
-  {
-    $sql  = "INSERT INTO ".MAIN_DB_PREFIX."energie_compteur";
-    $sql .= " (libelle, datec, fk_user_author, fk_energie, note)";
-    $sql .= " VALUES (";
-    $sql .= "'".trim($libelle)."'";
-    $sql .= ",now()";
-    $sql .= ",'".$this->user->id."'";
-    $sql .= ",'".$energie."'";
-    $sql .= ",'');";
+		$resql = $this->db->query($sql) ;
 
-    $resql = $this->db->query($sql) ;
+		if ( $resql )
+		{
+			$obj = $this->db->fetch_object($resql);
 
-    if ( $resql )
-      {
-	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."energie_compteur");
+			$this->id              = $obj->rowid;
+			$this->libelle         = $obj->libelle;
+			$this->energie         = $obj->fk_energie;
+			$this->db->free();
 
-	return 0;
-      }
-    else
-      {
-	dol_syslog("EnergieCompteur::Create Erreur 1");
-	dol_syslog($this->db->error());
-	return -1;
-      }
-  }
+			return 0;
+		}
+		else
+		{
+			dol_syslog("");
+			return -1;
+		}
+	}
 
-  /** 
-   * Ajout d'une valeur relevée
-   *
-   */
-  function AjoutReleve ($date_releve, $valeur)
-  {
-    $sql  = "INSERT INTO ".MAIN_DB_PREFIX."energie_compteur_releve";
-    $sql .= " (fk_compteur, date_releve, valeur, datec, fk_user_author)";
-    $sql .= " VALUES (";
-    $sql .= "'".$this->id."'";
-    $sql .= ",'".$this->db->idate($date_releve)."'";
-    $sql .= ",'".$valeur."'";
-    $sql .= ",now()";
-    $sql .= ",'".$this->user->id."');";
-   
-    $resql = $this->db->query($sql) ;
+	/**
+	 * Lecture
+	 *
+	 */
+	function Create ($libelle, $energie)
+	{
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."energie_compteur";
+		$sql .= " (libelle, datec, fk_user_author, fk_energie, note)";
+		$sql .= " VALUES (";
+		$sql .= "'".trim($libelle)."'";
+		$sql .= ",now()";
+		$sql .= ",'".$this->user->id."'";
+		$sql .= ",'".$energie."'";
+		$sql .= ",'');";
 
-    if ( $resql )
-      {
-	return 0;
-      }
-    else
-      {
-	dol_syslog("EnergieCompteur::AjoutReleve Erreur 1");
-	dol_syslog($this->db->error());
-	return -1;
-      }
-  }
-  /** 
-   * Suppression d'une valeur relevée
-   *
-   */
-  function DeleteReleve ($rowid)
-  {
-    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."energie_compteur_releve";
-    $sql .= " WHERE rowid = '".$rowid."';";
-   
-    $resql = $this->db->query($sql) ;
+		$resql = $this->db->query($sql) ;
 
-    if ( $resql )
-      {
-	return 0;
-      }
-    else
-      {
-	dol_syslog("EnergieCompteur::AjoutReleve Erreur 1");
-	dol_syslog($this->db->error());
-	return -1;
-      }
-  }
-  /** 
-   * Ajout d'une valeur relevée
-   *
-   */
-  function AddGroup ($groupe)
-  {
-    $sql  = "INSERT INTO ".MAIN_DB_PREFIX."energie_compteur_groupe";
-    $sql .= " (fk_energie_compteur, fk_energie_groupe)";
-    $sql .= " VALUES ('".$this->id."','".$groupe."');";
-   
-    $resql = $this->db->query($sql);
+		if ( $resql )
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."energie_compteur");
 
-    if ( $resql )
-      {
-	return 0;
-      }
-    else
-      {
-	dol_syslog("EnergieCompteur::AddGroup Erreur 1");
-	dol_syslog($this->db->error());
-	return -1;
-      }
-  }
-  /** 
-   * 
-   *
-   */
-  function GroupsAvailable ()
-  {
-    $this->groups_available = array();
+			return 0;
+		}
+		else
+		{
+			dol_syslog("EnergieCompteur::Create Erreur 1");
+			dol_syslog($this->db->error());
+			return -1;
+		}
+	}
 
-    $sql = "SELECT g.rowid, g.libelle";
-    $sql .= " FROM ".MAIN_DB_PREFIX."energie_groupe as g";
-    
-    $resql = $this->db->query($sql) ;
-    
-    if ( $resql )
-      {
-	$num = $this->db->num_rows($resql);
-	$i = 0;
+	/**
+	 * Ajout d'une valeur relevï¿½e
+	 *
+	 */
+	function AjoutReleve ($date_releve, $valeur)
+	{
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."energie_compteur_releve";
+		$sql .= " (fk_compteur, date_releve, valeur, datec, fk_user_author)";
+		$sql .= " VALUES (";
+		$sql .= "'".$this->id."'";
+		$sql .= ",'".$this->db->idate($date_releve)."'";
+		$sql .= ",'".$valeur."'";
+		$sql .= ",now()";
+		$sql .= ",'".$this->user->id."');";
 
-	while ($i < $num)
+		$resql = $this->db->query($sql) ;
+
+		if ( $resql )
+		{
+			return 0;
+		}
+		else
+		{
+			dol_syslog("EnergieCompteur::AjoutReleve Erreur 1");
+			dol_syslog($this->db->error());
+			return -1;
+		}
+	}
+	/**
+	 * Suppression d'une valeur relevï¿½e
+	 *
+	 */
+	function DeleteReleve ($rowid)
+	{
+		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."energie_compteur_releve";
+		$sql .= " WHERE rowid = '".$rowid."';";
+
+		$resql = $this->db->query($sql) ;
+
+		if ( $resql )
+		{
+			return 0;
+		}
+		else
+		{
+			dol_syslog("EnergieCompteur::AjoutReleve Erreur 1");
+			dol_syslog($this->db->error());
+			return -1;
+		}
+	}
+	/**
+	 * Ajout d'une valeur relevï¿½e
+	 *
+	 */
+	function AddGroup ($groupe)
+	{
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."energie_compteur_groupe";
+		$sql .= " (fk_energie_compteur, fk_energie_groupe)";
+		$sql .= " VALUES ('".$this->id."','".$groupe."');";
+
+		$resql = $this->db->query($sql);
+
+		if ( $resql )
+		{
+			return 0;
+		}
+		else
+		{
+			dol_syslog("EnergieCompteur::AddGroup Erreur 1");
+			dol_syslog($this->db->error());
+			return -1;
+		}
+	}
+	/**
+	 *
+	 *
+	 */
+	function GroupsAvailable ()
+	{
+		$this->groups_available = array();
+
+		$sql = "SELECT g.rowid, g.libelle";
+		$sql .= " FROM ".MAIN_DB_PREFIX."energie_groupe as g";
+
+		$resql = $this->db->query($sql) ;
+
+		if ( $resql )
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+
+			while ($i < $num)
 	  {
-	    $obj = $this->db->fetch_object($resql);
-	
-	    $this->groups_available[$obj->rowid] = $obj->libelle;
-	    $i++;
+	  	$obj = $this->db->fetch_object($resql);
+
+	  	$this->groups_available[$obj->rowid] = $obj->libelle;
+	  	$i++;
 	  }
-	$this->db->free();
-	
-	return 0;
-      }
-    else
-      {
-	dol_syslog("");
-	return -1;
-      }
-  }
+	  $this->db->free();
+
+	  return 0;
+		}
+		else
+		{
+			dol_syslog("");
+			return -1;
+		}
+	}
 }
 ?>

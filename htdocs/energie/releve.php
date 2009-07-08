@@ -21,17 +21,18 @@
  */
 
 /**
-   \file       htdocs/energie/compteur.php
-   \ingroup    energie
-   \brief      Fiche compteur
-   \version    $Revision$
-*/
+ *  \file       htdocs/energie/compteur.php
+ *  \ingroup    energie
+ *  \brief      Fiche compteur
+ *  \version    $Revision$
+ */
 
 require("./pre.inc.php");
 
+
 /*
- *
- */	
+ *	Actions
+ */
 
 if ($_GET["action"] == 'delete')
 {
@@ -44,9 +45,11 @@ if ($_GET["action"] == 'delete')
 	}
     }
 }
+
+
 /*
- *
- */	
+ * 	View
+ */
 
 llxHeader($langs, '',$langs->trans("Compteur"),"Compteur");
 
@@ -55,59 +58,59 @@ if ($_GET["id"] > 0)
 {
   $compteur = new EnergieCompteur($db, $user);
   if ( $compteur->fetch($_GET["id"]) == 0)
-    {	  
-      
+    {
+
       $head[0][0] = DOL_URL_ROOT.'/energie/compteur.php?id='.$compteur->id;
-      $head[0][1] = "Compteur";
+      $head[0][1] = $langs->trans("Compteur");
       $h++;
-      
+
       $head[$h][0] = DOL_URL_ROOT.'/energie/compteur_graph.php?id='.$compteur->id;
-      $head[$h][1] = "Graph";
+      $head[$h][1] = $langs->trans("Graph");
       $h++;
-      
+
       $head[$h][0] = DOL_URL_ROOT.'/energie/releve.php?id='.$compteur->id;
-      $head[$h][1] = "Relevés";
+      $head[$h][1] = $langs->trans("Releves");
       $h++;
       $a = 2;
 
       $head[$h][0] = DOL_URL_ROOT.'/energie/compteur_groupe.php?id='.$compteur->id;
-      $head[$h][1] = "Groupe";
+      $head[$h][1] = $langs->trans("Groups");
       $h++;
-      
+
       dol_fiche_head($head, $a, $soc->nom);
-      
+
       print '<table class="border" width="100%">';
       print "<tr><td>".$langs->trans("Compteur")."</td>";
       print '<td width="50%">';
       print $compteur->libelle;
-      print "</td></tr>";	  	  
+      print "</td></tr>";
       print "</table><br>";
       print '</div>';
-      
-      $page = $_GET["page"];	  
+
+      $page = $_GET["page"];
       $limit = $conf->liste_limit;
       $offset = $limit * $page ;
-      
+
       $sql = "SELECT ".$db->pdate("date_releve")." as date_releve, valeur, rowid";
       $sql .= " FROM ".MAIN_DB_PREFIX."energie_compteur_releve as ecr";
       $sql .= " WHERE ecr.fk_compteur = '".$compteur->id."'";
-      
+
       $sql .= " ORDER BY ecr.date_releve DESC";
       $sql .= $db->plimit($limit + 1 ,$offset);
-      
+
       $resql = $db->query($sql);
       if ($resql)
 	{
 	  $num = $db->num_rows($resql);
 	  $i = 0;
 	  $var=True;
-	  
-	  print_barre_liste("Relevés", $page, "", "&amp;id=".$compteur->id, $sortfield, $sortorder,'',$num);
-	  
+
+	  print_barre_liste("Releves", $page, "", "&amp;id=".$compteur->id, $sortfield, $sortorder,'',$num, 0, '');
+
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td>'.$langs->trans("Date").'</td>';
-	  print '<td colspan="2">'.$langs->trans("Relevé").'</td></tr>';
-	  
+	  print '<td colspan="2">'.$langs->trans("Releve").'</td></tr>';
+
 	  while ($i < $num)
 	    {
 	      $obj = $db->fetch_object($resql);
@@ -125,10 +128,10 @@ if ($_GET["id"] > 0)
     }
   else
     {
-      /* Commande non trouvée */
+      /* Commande non trouvï¿½e */
       print "Compteur inexistant";
     }
-}  
+}
 else
 {
   print "Compteur inexistant";

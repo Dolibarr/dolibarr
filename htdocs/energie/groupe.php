@@ -21,17 +21,17 @@
  */
 
 /**
-   \file       htdocs/energie/groupe.php
-   \ingroup    energie
-   \brief      Fiche groupe
-   \version    $Revision$
-*/
+ *  \file       htdocs/energie/groupe.php
+ *  \ingroup    energie
+ *  \brief      Fiche groupe
+ *  \version    $Revision$
+ */
 
 require("./pre.inc.php");
 
 /*
- *
- */	
+ *	Actions
+ */
 
 if ($_POST["action"] == 'add')
 {
@@ -47,11 +47,12 @@ if ($_POST["action"] == 'add')
     }
 }
 
-/*
- *
- */	
 
-llxHeader($langs, '',$langs->trans("Groupe"),"Groupe");
+/*
+ *	View
+ */
+
+llxHeader($langs, '',$langs->trans("Group"), "Group");
 
 /*********************************************************************
  *
@@ -59,10 +60,10 @@ llxHeader($langs, '',$langs->trans("Groupe"),"Groupe");
  *
  *
  ************************************************************************/
-if ($_GET["action"] == 'create') 
+if ($_GET["action"] == 'create')
 {
   $head[0][0] = DOL_URL_ROOT.'/energie/groupe.php?action=create';
-  $head[0][1] = "Nouveau groupe";
+  $head[0][1] = $langs->trans("NewGroup");
   $h++;
   $a = 0;
 
@@ -73,50 +74,50 @@ if ($_GET["action"] == 'create')
   print '<form action="groupe.php" method="post">';
   print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print '<input type="hidden" name="action" value="add">';
-  
+
   print '<table class="border" width="100%">';
   print "<tr $bc[$var]>";
-  print '<td>Libellé</td>';
-  
+  print '<td>'.$langs->trans("Label").'</td>';
+
   print '<td><input type="text" size="40" maxlength="255" name="libelle"></td></tr>';
-  
+
   print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
-  
+
   print "</table></form>";
-	  
+
   print '</div>';
-  
-} 
-else 
+
+}
+else
 /* *************************************************************************** */
 /*                                                                             */
 /* Mode vue                                                                    */
 /*                                                                             */
 /* *************************************************************************** */
-{  
+{
   if ($_GET["id"] > 0)
     {
       $groupe = new EnergieGroupe($db, $user);
       if ( $groupe->fetch($_GET["id"]) == 0)
-	{	  
-	  
+	{
+
 	  $head[0][0] = DOL_URL_ROOT.'/energie/groupe.php?id='.$commande->id;
-	  $head[0][1] = "Groupe";
+	  $head[0][1] = $langs->trans("Group");
 	  $h++;
 	  $a = 0;
 
 	  dol_fiche_head($head, $a, $soc->nom);
-	  	  
+
 	  print '<table class="border" width="100%">';
-	  print "<tr><td>".$langs->trans("Groupe")."</td>";
+	  print "<tr><td>".$langs->trans("Group")."</td>";
 	  print '<td width="50%">';
 	  print $groupe->libelle;
-	  print "</td></tr>";	  	  
+	  print "</td></tr>";
 	  print "</table><br>";
-	  	      
+
 	  /*
 	   *
-	   */	  
+	   */
 
 
 	  print '<table class="noborder" width="100%">';
@@ -137,15 +138,15 @@ else
 	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
 	  print '</td></tr></table><br>';
 
-	  print '</div>';	  
+	  print '</div>';
 	  print "<br>\n";
 	}
       else
 	{
-	  /* Commande non trouvée */
+	  /* Commande non trouvï¿½e */
 	  print "Groupe inexistant";
 	}
-    }  
+    }
   else
     {
       print "Groupe inexistant";
