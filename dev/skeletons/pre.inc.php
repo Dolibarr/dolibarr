@@ -38,7 +38,7 @@ function llxHeader($head = '', $title='', $help_url='')
 {
 	global $user, $conf, $langs;
 
-	top_menu($head);
+	top_menu($head, $title);
 
 	$menu = new Menu();
 
