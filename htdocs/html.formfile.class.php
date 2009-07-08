@@ -67,7 +67,7 @@ class FormFile
 		print '<input type="hidden" name="section" value="'.$sectionid.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-		print '<table width="100%" class="noborder">';
+		print '<table width="100%" class="nobordernopadding">';
 		print '<tr><td width="50%" valign="top">';
 
 		$max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
