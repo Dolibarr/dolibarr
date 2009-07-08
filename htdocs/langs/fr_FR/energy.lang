@@ -1,5 +1,12 @@
 # Dolibarr language file - fr_FR - energy
 CHARSET=UTF-8
 Energy=Energie
+Compteur=Compteur
+Compteurs=Compteurs
 NewCounter=Nouveau compteur
 NewGroup=Nouveau groupe
+Group=Groupe
+Electricity=Electricité
+Water=Eau
+NaturalGaz=Gaz naturel
+Releves=Relevés
