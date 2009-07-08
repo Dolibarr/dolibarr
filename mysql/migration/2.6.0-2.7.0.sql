@@ -6,6 +6,8 @@
 -- when current version is 2.6.0 or higher. 
 --
 
+update llx_actioncomm set datep = datec where datep is null and datec is not null;
+
 -- Create new table for import module
 create table llx_import_model
 (

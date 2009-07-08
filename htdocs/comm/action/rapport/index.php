@@ -20,11 +20,11 @@
  */
 
 /**
-	    \file       htdocs/comm/action/rapport/index.php
-        \ingroup    commercial
-		\brief      Page accueil des rapports des actions
-		\version    $Id$
-*/
+ *	    \file       htdocs/comm/action/rapport/index.php
+ *      \ingroup    commercial
+ *		\brief      Page accueil des rapports des actions
+ *		\version    $Id$
+ */
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -79,6 +79,7 @@ $sql.= " GROUP BY date_format(a.datep, '%m/%Y') ";
 $sql.= " ORDER BY a.datep DESC";
 $sql.= $db->plimit($limit+1,$offset);
 
+//print $sql;
 $resql=$db->query($sql);
 if ($resql)
 {

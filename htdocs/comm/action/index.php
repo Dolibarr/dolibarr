@@ -109,7 +109,7 @@ llxHeader('','','EN:AgendaEn|FR:Agenda|ES:AgendaES');
 $form=new Form($db);
 
 //print $langs->trans("FeatureNotYetAvailable");
-$now=gmmktime(0,0,0);
+$now=dol_now('tzref');
 
 $prev = dol_get_prev_month($month, $year);
 $prev_year  = $prev['year'];
@@ -248,6 +248,7 @@ if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
 $sql.= ' ORDER BY datep';
 dol_syslog("comm/action/index.php sql=".$sql, LOG_DEBUG);
 
+//print $sql;
 $resql=$db->query($sql);
 if ($resql)
 {
