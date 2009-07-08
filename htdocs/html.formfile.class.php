@@ -48,20 +48,20 @@ class FormFile
 	/**
 	 *    	\brief      Show file add form
 	 *    	\param      url				Url
-	 *    	\param      titre			Titre zone
-	 *    	\param      addcancel		1=Ajoute un bouton 'Annuler'
+	 *    	\param      title			Title zone
+	 *    	\param      addcancel		1=Add 'Cancel' button
 	 *		\param		sectionid		If upload must be done inside a particular ECM section
-	 * 		\param		perm			Value of permission ot allow upload
+	 * 		\param		perm			Value of permission to allow upload
 	 * 		\return		int				<0 si ko, >0 si ok
 	 */
-	function form_attach_new_file($url,$titre='',$addcancel=0, $sectionid=0, $perm=1)
+	function form_attach_new_file($url,$title='',$addcancel=0, $sectionid=0, $perm=1)
 	{
 		global $conf,$langs;
 
 		print "\n\n<!-- Start form attach new file -->\n";
 
-		if (! $titre) $titre=$langs->trans("AttachANewFile");
-		print_titre($titre);
+		if (! $title) $title=$langs->trans("AttachANewFile");
+		print_titre($title);
 
 		print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
 		print '<input type="hidden" name="section" value="'.$sectionid.'">';
