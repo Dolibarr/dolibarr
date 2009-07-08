@@ -367,14 +367,16 @@ foreach ($orders as $key => $value)
     }
 
     // Print a separator if we change family
+    //print "<tr><td>xx".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
     if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
         print "<tr class=\"liste_titre\">\n  <td colspan=\"9\"></td>\n</tr>\n";
         $atleastoneforfamily=0;
+        //print "<tr><td>yy".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
     }
 
     if ($objMod->special == $mode)
     {
-        $atleastoneforfamily=1;
+        $atleastoneforfamily++;
         $var=!$var;
 
         print "<tr $bc[$var]>\n";
