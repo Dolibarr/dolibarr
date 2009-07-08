@@ -130,6 +130,10 @@ form
 /* ============================================================================== */
 
 /* Removed div.vmenuplusfiche, replaced div.vmenu by td.vmenu, removed div.fiche */
+div.vmenu
+{
+    margin-left: 2px;
+}
 
 td.vmenu
 {
