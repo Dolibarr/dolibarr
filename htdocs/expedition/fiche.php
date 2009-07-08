@@ -282,6 +282,18 @@ if ($_GET["action"] == 'create')
 			// Date
 			print "<tr><td>".$langs->trans("Date")."</td>";
 			print '<td colspan="3">'.dol_print_date($object->date,"day")."</td></tr>\n";
+			
+			// Delivery address
+			print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
+			print '<td colspan="3">';
+			if (!empty($object->fk_delivery_address))
+			{
+				require_once(DOL_DOCUMENT_ROOT ."/comm/adresse_livraison.class.php");
+				$deliveryAddress=new AdresseLivraison($db);
+				$deliveryAddress->fetch_adresse($object->fk_delivery_address);
+				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$deliveryAddress->socid.'&idl='.$deliveryAddress->idl.'&action=edit&origin='.$origin.'&originid='.$origin_id.'>'.$deliveryAddress->label.'</a>';
+			}
+			print '</td></tr>'."\n";
 
 			// Warehouse (id forced)
 			if ($conf->stock->enabled && $_GET["entrepot_id"])
@@ -637,6 +649,18 @@ else
 			print '<tr><td>'.$langs->trans("Date").'</td>';
 			print '<td colspan="3">'.dol_print_date($expedition->date,"daytext")."</td>\n";
 			print '</tr>';
+			
+			// Delivery address
+			print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
+			print '<td colspan="3">';
+			if (!empty($expedition->fk_delivery_address))
+			{
+				require_once(DOL_DOCUMENT_ROOT ."/comm/adresse_livraison.class.php");
+				$deliveryAddress=new AdresseLivraison($db);
+				$deliveryAddress->fetch_adresse($expedition->fk_delivery_address);
+				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$deliveryAddress->socid.'&idl='.$deliveryAddress->idl.'&action=edit&origin=shipment&originid='.$expedition->id.'>'.$deliveryAddress->label.'</a>';
+			}
+			print '</td></tr>'."\n";
 
 			// Weight
 			print '<tr><td>'.$langs->trans("TotalWeight").'</td>';

@@ -54,7 +54,7 @@ class AdresseLivraison
 
   /**
    *    \brief  Constructeur de la classe
-   *    \param  DB     handler accès base de données
+   *    \param  DB     handler accï¿½s base de donnï¿½es
    *    \param  id     id societe (0 par defaut)
    */
   function AdresseLivraison($DB, $id=0)
@@ -69,8 +69,8 @@ class AdresseLivraison
   }
 
   /**
-   *    \brief      Crée l'adresse de livraison de la société en base
-   *    \param      user        Objet utilisateur qui demande la création
+   *    \brief      Crï¿½e l'adresse de livraison de la sociï¿½tï¿½ en base
+   *    \param      user        Objet utilisateur qui demande la crï¿½ation
    *    \return     int         0 si ok, < 0 si erreur
    */
 
@@ -78,7 +78,7 @@ class AdresseLivraison
     {
         global $langs,$conf;
 
-        // Nettoyage paramètres
+        // Nettoyage paramï¿½tres
         $this->nom=trim($this->nom);
         $this->label=trim($this->label);
 
@@ -150,7 +150,7 @@ class AdresseLivraison
 		$result = 0;
 		if (!$this->nom || !$this->label)
 		{
-			$this->error = "Le nom de la société et le label ne peut être vide.\n";
+			$this->error = "The name of company and the label can not be empty.\n";
 			$result = -2;
 		}
 		return $result;
@@ -158,9 +158,9 @@ class AdresseLivraison
 
 
     /**
-     *      \brief      Mise a jour des paramètres de l'adresse de livraison
+     *      \brief      Mise a jour des parametres de l'adresse de livraison
      *      \param      id              id adresse de livraison
-     *      \param      user            Utilisateur qui demande la mise à jour
+     *      \param      user            Utilisateur qui demande la mise a jour
      *      \return     int             <0 si ko, >=0 si ok
      */
     function update($idl, $socid, $user='')
@@ -169,7 +169,7 @@ class AdresseLivraison
 
         dol_syslog("Societe::Update");
 
-		// Nettoyage des paramètres
+		// Nettoyage des paramï¿½tres
 		
         $this->fk_societe = $socid;
         $this->label      = trim($this->label);
@@ -243,8 +243,8 @@ class AdresseLivraison
     }
 
     /**
-     *    \brief      Charge depuis la base toutes les adresses de livraison d'une société
-     *    \param      socid       Id de la société à charger en mémoire
+     *    \brief      Charge depuis la base toutes les adresses de livraison d'une societe
+     *    \param      socid       Id de la societe a charger en memoire
      *    \param      user        Objet de l'utilisateur
      *    \return     int         >0 si ok, <0 si ko
      */
@@ -274,7 +274,7 @@ class AdresseLivraison
              $this->lignes = array();
              $this->db->free($resqlsoc);
              
-             // Adresses de livraison liées à la société
+             // Adresses de livraison liees a la societe
              if ($this->socid)
              {
              	  $sql = 'SELECT a.rowid as idl, a.label, a.nom, a.address,'.$this->db->pdate('a.datec').' as dc';
@@ -339,7 +339,7 @@ class AdresseLivraison
      
          /**
      *    \brief      Charge depuis la base l'objet adresse de livraison
-     *    \param      socid       Id de l'adresse de livraison à charger en mémoire
+     *    \param      socid       Id de l'adresse de livraison a charger en memoire
      *    \param      user        Objet de l'utilisateur
      *    \return     int         >0 si ok, <0 si ko
      */
@@ -408,7 +408,7 @@ class AdresseLivraison
 
     /**
      *    \brief      Suppression d'une adresse de livraison
-     *    \param      id      id de la societe à supprimer
+     *    \param      id      id de la societe a supprimer
      */
     function delete($idl,$socid)
     {

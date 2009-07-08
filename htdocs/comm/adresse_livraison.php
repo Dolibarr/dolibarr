@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,6 +112,11 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         		Header("Location: ../comm/propal.php?propalid=".$originid);
         		exit;
         	}
+        	elseif ($origin == shipment)
+        	{
+        		Header("Location: ../expedition/fiche.php?id=".$originid);
+        		exit;
+        	}
         	else
         	{
             Header("Location: adresse_livraison.php?socid=".$socid);
@@ -161,7 +166,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 	if ($user->rights->societe->creer)
   {
   	/*
-     * Fiche adresse de livraison en mode cr�ation
+     * Fiche adresse de livraison en mode creation
      */
 
 		$livraison = new AdresseLivraison($db);
@@ -364,7 +369,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 else
 {
 	/*
-	* Fiche soci�t� en mode visu
+	* Fiche societe en mode visu
 	*/
 	$livraison = new AdresseLivraison($db);
 	$result=$livraison->fetch($socid);

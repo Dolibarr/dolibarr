@@ -143,17 +143,17 @@ if ($_GET["action"] == 'create')
 
 	print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td colspan="2"><input name="duree_validite" size="5" value="'.$conf->global->PROPALE_VALIDITY_DURATION.'"> '.$langs->trans("days").'</td></tr>';
 
-	// Conditions de r�glement
+	// Terms of payment
 	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
 	print '</td></tr>';
 
-	// Mode de reglement
+	// Mode of payment
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';
 
-	// Date de livraison (ou de fabrication)
+	// Delivery date (or manufacturing)
 	print '<tr><td>'.$langs->trans("DeliveryDate").'</td>';
 	print '<td colspan="2">';
 	if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "")
@@ -171,7 +171,7 @@ if ($_GET["action"] == 'create')
 	}
 	print '</td></tr>';
 
-	// Adresse de livraison
+	// Delivery address
 	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
 	{
 		print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
@@ -193,7 +193,7 @@ if ($_GET["action"] == 'create')
 	$html->select_array('model',$liste,$conf->global->PROPALE_ADDON_PDF);
 	print "</td></tr>";
 
-	// Projet
+	// Project
 	if ($conf->projet->enabled)
 	{
 		print '<tr>';

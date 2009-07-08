@@ -268,30 +268,27 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr>';
 
-		if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
+		// Delivery address
+		print '<tr><td height="10">';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('DeliveryAddress');
+		print '</td>';
+
+		if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="2">';
+
+		if ($_GET['action'] == 'editdelivery_adress')
 		{
-			// Adresse de livraison
-			print '<tr><td height="10">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('DeliveryAddress');
-			print '</td>';
-
-			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="2">';
-
-			if ($_GET['action'] == 'editdelivery_adress')
-			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
-			}
-			else
-			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
-			}
-			print '</td></tr>';
+			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
 		}
+		else
+		{
+			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
+		}
+		print '</td></tr>';
 
-		// Conditions et modes de r�glement
+		// Terms of payment
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
@@ -309,6 +306,8 @@ if ($id > 0 || ! empty($ref))
 			$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->cond_reglement_id,'none');
 		}
 		print '</td></tr>';
+		
+		// Mode of payment
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
@@ -326,7 +325,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		print '</td></tr>';
 
-		// Projet
+		// Project
 		if ($conf->projet->enabled)
 		{
 			$langs->load('projects');
