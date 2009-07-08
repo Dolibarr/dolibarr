@@ -18,15 +18,15 @@
  */
 
 /**
-	    \file       htdocs/includes/menus/barre_top/rodolphe.php
-		\brief      Gestionnaire nomme rodolphe du menu du haut
-		\version    $Id$
-
-        \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
-        \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
-		\remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a>
-*/
+ *	    \file       htdocs/includes/menus/barre_top/rodolphe.php
+ *		\brief      Gestionnaire nomme rodolphe du menu du haut
+ *		\version    $Id$
+ *
+ *      \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
+ *      \remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
+ *      \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
+ * 		\remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a>
+ */
 
 
 /**
@@ -370,8 +370,12 @@ class MenuTop {
 	        			$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
 	        			$url.="&idmenu=".$tabMenu[$i]['rowid'];
 	        		}
-	        		if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $class='class="tmenusel"';
-	        		else $class='class="tmenu"';
+
+					// Define the class (top menu selected or not)
+					if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $class='class="tmenusel"';
+					else if (! empty($_SESSION['mainmenu']) && $tabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $class='class="tmenusel"';
+					else $class='class="tmenu"';
+
 	        		print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($this->atarget?" target=$this->atarget":"")).'>';
 	        		print $tabMenu[$i]['titre'];
 	        		print '</a></td>';

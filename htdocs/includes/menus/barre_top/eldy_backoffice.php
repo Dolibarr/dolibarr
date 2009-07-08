@@ -402,7 +402,8 @@ class MenuTop {
 			}
 		}
 
-		// Affichage des menus personnalises
+
+		// Show personalized menus
 		require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
 
 		$menuArbo = new Menubase($this->db,'eldy','top');
@@ -430,8 +431,12 @@ class MenuTop {
 						}
 						$url.="idmenu=".$tabMenu[$i]['rowid'];
 					}
+
+					// Define the class (top menu selected or not)
 					if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $class='class="tmenusel"';
+					else if (! empty($_SESSION['mainmenu']) && $tabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $class='class="tmenusel"';
 					else $class='class="tmenu"';
+
 					print '<td class="tmenu" id="td_'.$idsel.'">';
 					print '<a '.$class.' id="mainmenu_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($this->atarget?" target=$this->atarget":"")).'>';
 					print $tabMenu[$i]['titre'];

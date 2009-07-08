@@ -95,7 +95,10 @@ class MenuTop {
 						}
 						$url.="idmenu=".$tabMenu[$i]['rowid'];
 					}
-					if (! empty($_SESSION['mainmenu']) && $tabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $class='class="tmenusel"';
+
+					// Define the class (top menu selected or not)
+					if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $class='class="tmenusel"';
+					else if (! empty($_SESSION['mainmenu']) && $tabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $class='class="tmenusel"';
 					else $class='class="tmenu"';
 
 					if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<li class="tmenu" id="li_'.$idsel.'">';
