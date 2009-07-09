@@ -1238,14 +1238,14 @@ class Facture extends CommonObject
 		// Protection
 		if (! $this->brouillon)
 		{
-			dol_syslog("Facture::valid no draft status", LOG_WARNING);
+			dol_syslog("Facture::set_valid no draft status", LOG_WARNING);
 			return 0;
 		}
 
 		if (! $user->rights->facture->valider)
 		{
 			$this->error='Permission denied';
-			dol_syslog("Facture::valid ".$this->error, LOG_ERR);
+			dol_syslog("Facture::set_valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -1326,11 +1326,11 @@ class Facture extends CommonObject
 		}
 		$sql.= ' WHERE rowid = '.$this->id;
 
-		dol_syslog("Facture::set_valid() sql=".$sql);
+		dol_syslog("Facture::set_valid sql=".$sql);
 		$resql=$this->db->query($sql);
 		if (! $resql)
 		{
-			dol_syslog("Facture::set_valid() Echec update - 10 - sql=".$sql, LOG_ERR);
+			dol_syslog("Facture::set_valid Echec update - 10 - sql=".$sql, LOG_ERR);
 			dol_print_error($this->db);
 			$error++;
 		}
@@ -1379,7 +1379,7 @@ class Facture extends CommonObject
 				$dirdest = $conf->facture->dir_output.'/'.$snumfa;
 				if (file_exists($dirsource))
 				{
-					dol_syslog("Facture::set_valid() rename dir ".$dirsource." into ".$dirdest);
+					dol_syslog("Facture::set_valid rename dir ".$dirsource." into ".$dirdest);
 
 					if (@rename($dirsource, $dirdest))
 					{

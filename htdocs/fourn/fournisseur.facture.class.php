@@ -21,20 +21,19 @@
  */
 
 /**
- \file       htdocs/fourn/fournisseur.facture.class.php
- \ingroup    fournisseur,facture
- \brief      Fichier de la classe des factures fournisseurs
- \version    $Id$
+ *	\file       htdocs/fourn/fournisseur.facture.class.php
+ *	\ingroup    fournisseur,facture
+ *	\brief      Fichier de la classe des factures fournisseurs
+ *	\version    $Id$
  */
 
 include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 
 /**
- \class      FactureFournisseur
- \brief      Classe permettant la gestion des factures fournisseurs
+ *	\class      FactureFournisseur
+ *	\brief      Classe permettant la gestion des factures fournisseurs
  */
-
 class FactureFournisseur extends Facture
 {
 	var $id;
@@ -426,13 +425,20 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 *      \brief      Set invoice status as validate
-	 *      \param      user        Objet utilisateur qui valide la facture
-	 *      \return     int         <0 si ko, >0 si ok
+	 *      \brief      Set invoice status as validated
+	 *      \param      user        Object user
+	 *      \return     int         <0 if KO, =0 if nothing to do, >0 if OK
 	 */
 	function set_valid($user)
 	{
 		global $conf,$langs;
+
+		// Protection
+		if ($this->statut > 0)	// This is to avoid to validate twice (avoid errors on logs and stock management)
+		{
+			dol_syslog("FactureFournisseur::set_valid no draft status", LOG_WARNING);
+			return 0;
+		}
 
 		$this->db->begin();
 
