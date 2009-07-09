@@ -1041,8 +1041,11 @@ class Form
 				$opt.= dol_trunc($objp->label,18).' - ';
 				if ($objp->fprice != '') 	// Keep != ''
 				{
+					$currencytext=$langs->trans("Currency".$conf->monnaie);
+					if (strlen($currencytext) > 10) $currencytext=$conf->monnaie;	// If text is too long, we use the short code
+
 					$opt.= price($objp->fprice);
-					$opt.= $langs->trans("Currency".$conf->monnaie)."/".$objp->quantity;
+					$opt.= ' '.$currencytext."/".$objp->quantity;
 					if ($objp->quantity == 1)
 					{
 						$opt.= strtolower($langs->trans("Unit"));
@@ -1054,7 +1057,7 @@ class Form
 					if ($objp->quantity >= 1)
 					{
 						$opt.=" (";
-						$opt.= price($objp->unitprice).$langs->trans("Currency".$conf->monnaie)."/".strtolower($langs->trans("Unit"));
+						$opt.= price($objp->unitprice).' '.$currencytext."/".strtolower($langs->trans("Unit"));
 						$opt.=")";
 					}
 					if ($objp->duration) $opt .= " - ".$objp->duration;
