@@ -63,3 +63,6 @@ IdWarehouse=Id entrepôt
 DescWareHouse=Description entrepôt
 LieuWareHouse=Lieu entrepôt
 WarehousesAndProducts=Entrepôts et produits
+AverageUnitPricePMP=Prix moyen pondéré (PMP)
+EstimatedStockValueForProduct=Valeur estimée du produit en stock
+EstimatedStockValue=Valeur estimée du stock

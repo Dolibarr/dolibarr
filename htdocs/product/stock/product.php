@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -22,8 +22,8 @@
 
 /**
  *	\file       htdocs/product/stock/product.php
- *	\ingroup    product
- *	\brief      Page de la fiche stock d'un produit
+ *	\ingroup    product, stock
+ *	\brief      Page to list detailed stock of a product
  *	\version    $Id$
  */
 
@@ -350,9 +350,12 @@ print '</div>';
  */
 print '<br><table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</td>';
-print '<td align="right">'.$langs->trans("NumberOfUnit").'</td></tr>';
+print '<td align="right">'.$langs->trans("NumberOfUnit").'</td>';
+print '<td align="right">'.$langs->trans("AverageUnitPricePMP").'</td>';
+print '<td align="right">'.$langs->trans("EstimatedStockValue").'</td>';
+print '</tr>';
 
-$sql = "SELECT e.rowid, e.label, ps.reel";
+$sql = "SELECT e.rowid, e.label, ps.reel, ps.pmp";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= ", ".MAIN_DB_PREFIX."product_stock as ps";
 $sql.= " WHERE ps.reel != 0";
@@ -362,6 +365,8 @@ $sql.= " AND ps.fk_product = ".$product->id;
 $sql.= " ORDER BY lower(e.label)";
 
 $entrepotstatic=new Entrepot($db);
+$total=0;
+$totalvalue=0;
 
 $resql=$db->query($sql);
 if ($resql)
@@ -376,13 +381,20 @@ if ($resql)
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$obj->reel.'</td>';
+		print '<td align="right">'.price2num($obj->pmp,'MU').'</td>';
+		print '<td align="right">'.price(price2num($obj->pmp,'MU')*$obj->reel).'</td>';
 		print '</tr>'; ;
 		$total = $total + $obj->reel;
+		$totalvalue = $totalvalue + price2num($obj->pmp,'MU')*$obj->reel;
 		$i++;
 		$var=!$var;
 	}
 }
-print '<tr class="liste_total"><td align="right" class="liste_total">'.$langs->trans("Total").':</td><td class="liste_total" align="right">'.$total."</td></tr>";
+print '<tr class="liste_total"><td align="right" class="liste_total">'.$langs->trans("Total").':</td>';
+print '<td class="liste_total" align="right">'.$total.'</td>';
+print '<td class="liste_total" align="right">&nbsp;</td>';
+print '<td class="liste_total" align="right">'.price($totalvalue).'</td>';
+print "</tr>";
 print "</table>";
 
 

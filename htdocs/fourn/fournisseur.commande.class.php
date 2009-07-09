@@ -607,6 +607,8 @@ class CommandeFournisseur extends Commande
 	 */
 	function refuse($user)
 	{
+		global $conf, $langs;
+
 		dol_syslog("CommandeFournisseur::Refuse");
 		$result = 0;
 		if ($user->rights->fournisseur->commande->approuver)
@@ -615,21 +617,21 @@ class CommandeFournisseur extends Commande
 			$sql .= " WHERE rowid = ".$this->id;
 
 			if ($this->db->query($sql) )
-	  {
-	  	$result = 0;
-	  	$this->log($user, 9, time());
+			{
+				$result = 0;
+				$this->log($user, 9, time());
 
-	  	$subject = $langs->trans("EMailTextOrderRefused",$this->ref);
-	  	$message = $langs->trans("Hello").",\n\n";
-	  	$message .= $langs->trans("EMailTextOrderRefusedBy",$this->ref,$user->fullname);
+				$subject = $langs->trans("EMailTextOrderRefused",$this->ref);
+				$message = $langs->trans("Hello").",\n\n";
+				$message .= $langs->trans("EMailTextOrderRefusedBy",$this->ref,$user->fullname);
 
-	  	$this->_NotifyCreator($user, $subject, $message);
-	  }
-	  else
-	  {
-	  	dol_syslog("CommandeFournisseur::Refuse Error -1");
-	  	$result = -1;
-	  }
+				$this->_NotifyCreator($user, $subject, $message);
+			}
+			else
+			{
+				dol_syslog("CommandeFournisseur::Refuse Error -1");
+				$result = -1;
+			}
 		}
 		else
 		{
