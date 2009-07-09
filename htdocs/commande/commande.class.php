@@ -280,8 +280,7 @@ class Commande extends CommonObject
 						$mouvP = new MouvementStock($this->db);
 						// We decrement stock of product (and sub-products)
 						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-						// TODO Add price of product in method or '' to update PMP
-						$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+						$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
 						if ($result < 0) { $error++; }
 					}
 				}
@@ -350,7 +349,7 @@ class Commande extends CommonObject
 	function set_draft($user)
 	{
 		global $conf,$langs;
-		
+
 		$error=0;
 
 		// Protection
@@ -386,7 +385,7 @@ class Commande extends CommonObject
 						$mouvP = new MouvementStock($this->db);
 						// We increment stock of product (and sub-products)
 						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
 						if ($result < 0) { $error++; }
 					}
 				}
@@ -474,7 +473,7 @@ class Commande extends CommonObject
 					$mouvP = new MouvementStock($this->db);
 					// We increment stock of product (and sub-products)
 					$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-					$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+					$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
 
 					if ($result > 0)
 					{
@@ -1157,12 +1156,12 @@ class Commande extends CommonObject
 				$ligne->date_start       = $this->db->jdate($objp->date_start);
 				$ligne->date_end         = $this->db->jdate($objp->date_end);
 
-				$this->lignes[$i] = $ligne;
+				$this->lignes[$i] = $ligne;		// For backward compatibility
+				$this->lines[$i] = $line;
 				$i++;
 			}
 			$this->db->free($result);
 
-			$this->lines = $this->lignes;	// For backward compatibility
 			return 1;
 		}
 		else
@@ -1244,10 +1243,10 @@ class Commande extends CommonObject
 		$sql = 'SELECT count(*) FROM '.MAIN_DB_PREFIX.'expedition as e';
 		$sql .=" WHERE e.fk_commande = ".$this->id;
 
-		$result = $this->db->query($sql);
-		if ($result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			$row = $this->db->fetch_row(0);
+			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
 	}
@@ -1266,14 +1265,14 @@ class Commande extends CommonObject
 		$sql.=' AND cd.fk_commande =' .$this->id;
 		if ($filtre_statut >= 0) $sql.=' AND l.fk_statut = '.$filtre_statut;
 		$sql .= ' GROUP BY cd.fk_product ';
-		$result = $this->db->query($sql);
-		if ($result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
 			{
-				$row = $this->db->fetch_row( $i);
+				$row = $this->db->fetch_row($resql);
 				$this->livraisons[$row[0]] = $row[1];
 				$i++;
 			}
@@ -1719,9 +1718,9 @@ class Commande extends CommonObject
 	 *  \return   	int              	< 0 si erreur, > 0 si ok
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0)
-	{        
-        global $conf;	
-        
+	{
+        global $conf;
+
 		dol_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $date_start, $date_end, $type");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
@@ -2263,10 +2262,10 @@ class CommandeLigne
 	var $fk_product;		// Id produit predefini
 	var $product_type = 0;	// Type 0 = product, 1 = Service
 
-	var $qty;		// Quantite (exemple 2)
-	var $tva_tx;		// Taux tva produit/service (exemple 19.6)
-	var $subprice;      	// P.U. HT (exemple 100)
-	var $remise_percent;	// % de la remise ligne (exemple 20%)
+	var $qty;				// Quantity (example 2)
+	var $tva_tx;			// VAT Rate for product/service (example 19.6)
+	var $subprice;      	// U.P. HT (example 100)
+	var $remise_percent;	// % for line discount (example 20%)
 	var $rang = 0;
 	var $marge_tx;
 	var $marque_tx;

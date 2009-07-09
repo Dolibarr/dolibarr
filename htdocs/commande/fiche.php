@@ -549,7 +549,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->valider)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($_GET['id']);	// Load order and lines
 
 	$result=$commande->valid($user);
 	if ($result	>= 0)
@@ -567,14 +567,16 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 if ($_REQUEST['action'] == 'confirm_close' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($_GET['id']);		// Load order and lines
+
 	$result = $commande->cloture($user);
 }
 
 if ($_REQUEST['action'] == 'confirm_cancel' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->valider)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($_GET['id']);		// Load order and lines
+
 	$result = $commande->cancel($user);
 }
 
@@ -584,8 +586,7 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 	 *  Repasse la commande en mode brouillon
 	 */
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
-	$commande->set_draft($user);
+	$commande->fetch($_GET['id']);		// Load order and lines
 
 	$result = $commande->set_draft($user);
 	if ($result	>= 0)

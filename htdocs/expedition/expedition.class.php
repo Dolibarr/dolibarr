@@ -398,7 +398,7 @@ class Expedition extends CommonObject
 				require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
 
 				// Loop on each product line to add a stock movement
-				$sql = "SELECT cd.fk_product, ed.qty, ed.fk_entrepot";
+				$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot";
 				$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 				$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed";
 				$sql.= " WHERE ed.fk_expedition = ".$this->id;
@@ -419,8 +419,7 @@ class Expedition extends CommonObject
 							$mouvS = new MouvementStock($this->db);
 							// We decrement stock of product (and sub-products)
 							$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
-							// TODO Add price of product in method or '' to update PMP
-							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty);
+							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice);
 							if ($result < 0) { $error++; }
 						}
 

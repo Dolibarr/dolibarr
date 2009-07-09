@@ -392,7 +392,7 @@ class Livraison extends CommonObject
 
 							dol_syslog("livraison.class.php::valid enregistrement des mouvements");
 
-							$sql = "SELECT cd.fk_product, ld.qty ";
+							$sql = "SELECT cd.fk_product, cd.subprice, ld.qty ";
 							$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 							$sql.= ", ".MAIN_DB_PREFIX."livraisondet as ld";
 							$sql.= " WHERE ld.fk_livraison = ".$this->id;
@@ -410,8 +410,7 @@ class Livraison extends CommonObject
 									$obj = $this->db->fetch_object($resql);
 
 									$mouvS = new MouvementStock($this->db);
-									// TODO Add price of product in method or '' to update PMP
-									$result=$mouvS->livraison($user, $obj->fk_product, $this->entrepot_id, $obj->qty);
+									$result=$mouvS->livraison($user, $obj->fk_product, $this->entrepot_id, $obj->qty, $obj->subprice);
 									if ($result < 0)
 									{
 										$this->db->rollback();

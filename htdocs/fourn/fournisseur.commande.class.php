@@ -546,8 +546,7 @@ class CommandeFournisseur extends Commande
 						$mouvP = new MouvementStock($this->db);
 						// We decrement stock of product (and sub-products)
 						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-						// TODO Add price of product in method or '' to update PMP
-						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
 						if ($result < 0) { $error++; }
 					}
 				}
@@ -958,34 +957,33 @@ class CommandeFournisseur extends Commande
 
 			$resql = $this->db->query($sql);
 			if (! $resql)
-	  {
-	  	$error = -1;
-	  }
-	  // Si module stock gere et que expedition faite depuis un entrepot
-	  if (!$error && $conf->stock->enabled && $entrepot)
-	  {
-	  	$mouv = new MouvementStock($this->db);
-	  	// TODO Add price of product in method or '' to update PMP
-	  	$result=$mouv->reception($user, $product, $entrepot, $qty, $price);
-	  	if ($result < 0)
-	  	{
-	  		$this->error=$this->db->error()." - sql=$sql";
-	  		dol_syslog("CommandeFournisseur::DispatchProduct".$this->error, LOG_ERR);
-	  		$error = -2;
-	  	}
-	  	$i++;
-	  }
+			{
+				$error = -1;
+			}
+			// Si module stock gere et que expedition faite depuis un entrepot
+			if (!$error && $conf->stock->enabled && $entrepot)
+			{
+				$mouv = new MouvementStock($this->db);
+				$result=$mouv->reception($user, $product, $entrepot, $qty, $price);
+				if ($result < 0)
+				{
+					$this->error=$this->db->error()." - sql=$sql";
+					dol_syslog("CommandeFournisseur::DispatchProduct".$this->error, LOG_ERR);
+					$error = -2;
+				}
+				$i++;
+			}
 
-	  if ($error == 0)
-	  {
-	  	$this->db->commit();
-	  	return 0;
-	  }
-	  else
-	  {
-	  	$this->db->rollback();
-	  	return -1;
-	  }
+			if ($error == 0)
+			{
+				$this->db->commit();
+				return 0;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
 		}
 		else
 		{
