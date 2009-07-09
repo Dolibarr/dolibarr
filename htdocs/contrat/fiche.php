@@ -347,7 +347,7 @@ if ($_REQUEST["action"] == 'confirm_deleteline' && $_REQUEST["confirm"] == 'yes'
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
-    $result = $contrat->delete_line($_GET["lineid"]);
+    $result = $contrat->delete_line($_GET["lineid"],$user);
 
     if ($result >= 0)
     {
