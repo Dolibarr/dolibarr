@@ -28,8 +28,6 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 
-if (!$user->rights->fournisseur->facture->lire) accessforbidden();
-
 $langs->load('bills');
 $langs->load("companies");
 
@@ -38,7 +36,7 @@ $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action'
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $facid, '', 'facture');
+$result = restrictedArea($user, 'fournisseur', $facid, 'facture_fourn', 'facture');
 
 $fac = new FactureFournisseur($db);
 $fac->fetch($_GET["facid"]);
@@ -109,7 +107,7 @@ if ($_GET["facid"])
 	print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$fac->ref_supplier.'</td>';
 	print "</tr>\n";
 
-    // Société
+    // Sociï¿½tï¿½
     print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$fac->fournisseur->getNomUrl(1).'</td></tr>';
 
 	// Note publique
@@ -130,7 +128,7 @@ if ($_GET["facid"])
     }
 	print "</td></tr>";
 
-	// Note privée
+	// Note privï¿½e
 	if (! $user->societe_id)
 	{
 	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';

@@ -32,8 +32,6 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
-if (!$user->rights->fournisseur->facture->lire) accessforbidden();
-
 $langs->load('bills');
 $langs->load('other');
 $langs->load("companies");
@@ -43,7 +41,7 @@ $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action'
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $facid, '', 'facture');
+$result = restrictedArea($user, 'fournisseur', $facid, 'facture_fourn', 'facture');
 
 // Get parameters
 $page=$_GET["page"];

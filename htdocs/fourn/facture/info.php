@@ -29,15 +29,13 @@ require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 
-if (!$user->rights->fournisseur->facture->lire) accessforbidden();
-
 $langs->load('bills');
 
 $facid = isset($_GET["facid"])?$_GET["facid"]:'';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $facid, '', 'facture');
+$result = restrictedArea($user, 'fournisseur', $facid, 'facture_fourn', 'facture');
 
 llxHeader();
 
