@@ -1115,7 +1115,7 @@ if ($rowid && $action != 'edit')
     }
 	else
 	{
-		print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Modify")."</font>";
+		print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Modify")."</font>";
 	}
 
 	// Valider
@@ -1127,7 +1127,7 @@ if ($rowid && $action != 'edit')
 		}
 		else
 		{
-			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Validate")."</font>";
+			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Validate")."</font>";
 		}
 	}
 
@@ -1140,7 +1140,7 @@ if ($rowid && $action != 'edit')
 	    }
 		else
 		{
-			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Reenable")."</font>";
+			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Reenable")."</font>";
 		}
 	}
 
@@ -1153,7 +1153,7 @@ if ($rowid && $action != 'edit')
 	    }
 		else
 		{
-			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("SendCardByMail")."</font>";
+			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("SendCardByMail")."</font>";
 		}
 	}
 
@@ -1166,7 +1166,7 @@ if ($rowid && $action != 'edit')
 	    }
 		else
 		{
-			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Resiliate")."</font>";
+			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Resiliate")."</font>";
 		}
 	}
 
@@ -1179,7 +1179,7 @@ if ($rowid && $action != 'edit')
 		}
 		else
 		{
-			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("CreateDolibarrThirdParty")."</font>";
+			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("CreateDolibarrThirdParty")."</font>";
 		}
 	}
 
@@ -1192,7 +1192,7 @@ if ($rowid && $action != 'edit')
 		}
 		else
 		{
-			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("CreateDolibarrLogin")."</font>";
+			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("CreateDolibarrLogin")."</font>";
 		}
 	}
 
@@ -1203,7 +1203,7 @@ if ($rowid && $action != 'edit')
     }
 	else
 	{
-		print "<font class=\"butActionRefused\" href=\"#\" alt=\"".$langs->trans("NoPermissions")."\">".$langs->trans("Delete")."</font>";
+		print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Delete")."</font>";
 	}
 
     // Action SPIP
