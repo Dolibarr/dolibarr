@@ -65,4 +65,5 @@ LieuWareHouse=Localisation warehouse
 WarehousesAndProducts=Warehouses and products
 AverageUnitPricePMP=Average price
 EstimatedStockValueForProduct=Estimated value for product's stock
+EstimatedStockValueInWarehouse=Estimated value in warehouse
 EstimatedStockValue=Estimated value in stock

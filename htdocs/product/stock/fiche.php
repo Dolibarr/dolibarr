@@ -131,7 +131,7 @@ llxHeader("","",$langs->trans("WarehouseCard"));
 if ($_GET["action"] == 'create')
 {
 	print_fiche_titre($langs->trans("NewWarehouse"));
-	
+
 	print "<form action=\"fiche.php\" method=\"post\">\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -246,7 +246,7 @@ else
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 			print $form->showrefnav($entrepot,'id','',1,'rowid','libelle');
 			print '</td>';
-				
+
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
 
 			// Description
@@ -323,15 +323,15 @@ else
 			print_liste_field_titre($langs->trans("Product"),"", "p.ref","&amp;id=".$_GET['id'],"","",$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$_GET['id'],"","",$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$_GET['id'],"",'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("PMP"),"", "ps.pmp","&amp;id=".$_GET['id'],"",'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AverageUnitPricePMP"),"", "ps.pmp","&amp;id=".$_GET['id'],"",'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("EstimatedStockValueInWarehouse"),"", "","&amp;id=".$_GET['id'],"",'align="center"',$sortfield,$sortorder);
 			if ($user->rights->stock->mouvement->creer) print '<td>&nbsp;</td>';
 			if ($user->rights->stock->creer)            print '<td>&nbsp;</td>';
 			print "</tr>";
 
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit,";
-			$sql.= " ps.reel as value";
-			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock ps";
-			$sql.= ", ".MAIN_DB_PREFIX."product p ";
+			$sql.= " ps.pmp, ps.reel as value";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p";
 			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
@@ -385,22 +385,24 @@ else
 
 					print '<td align="right">'.$objp->value.'</td>';
 
-					print '<td align="center">'.$langs->trans("FeatureNotYetAvailableShort").'</td>';
-					
+					print '<td align="center">'.price(price2num($objp->pmp,'MT')).'</td>';
+
+					print '<td align="center">'.price(price2num($objp->pmp,'MT')*$objp->value).'</td>';
+
 					if ($user->rights->stock->mouvement->creer)
 					{
 						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$entrepot->id.'&amp;id='.$objp->rowid.'&amp;action=transfert">';
-						print $langs->trans("StockMovement");
+						print img_picto($langs->trans("StockMovement"),'uparrow.png').' '.$langs->trans("StockMovement");
 						print "</a></td>";
 					}
-						
+
 					if ($user->rights->stock->creer)
 					{
 						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$entrepot->id.'&amp;id='.$objp->rowid.'&amp;action=correction">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
 					}
-						
+
 					print "</tr>";
 					$i++;
 				}
