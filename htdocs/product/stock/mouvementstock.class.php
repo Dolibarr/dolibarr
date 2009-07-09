@@ -116,16 +116,18 @@ class MouvementStock
 				}
 			}
 
-			// Calculate new PMP
+			// Calculate new PMP. Price should always be >0 or 0. pmp should always be >0 or 0.
 			if (! $error)
 			{
 				$newpmp=0;
 				$newpmpwarehouse=0;
 				if ($price > 0)
 				{
-					if ($oldqty > 0 && $oldpmp > 0) $newpmp=($oldqty * $oldpmp + $qty * $price) / ($oldqty + $qty);
+					if (($oldqty + $qty) == 0) $newpmp=0;
+					else if ($oldpmp > 0) $newpmp=price2num((($oldqty * $oldpmp) + ($qty * $price)) / ($oldqty + $qty), 'MU');
 					else $newpmp=$price;
-					if ($oldqtywarehouse > 0 && $oldpmpwarehouse > 0) $newpmpwarehouse=($oldqtywarehouse * $oldpmpwarehouse + $qty * $price) / ($oldqtywarehouse + $qty);
+					if (($oldqtywarehouse + $qty) == 0) $newpmpwarehouse=0;
+					else if ($oldpmpwarehouse > 0) $newpmpwarehouse=price2num((($oldqtywarehouse * $oldpmpwarehouse) + ($qty * $price)) / ($oldqtywarehouse + $qty), 'MU');
 					else $newpmpwarehouse=$price;
 				}
 				else
@@ -238,7 +240,7 @@ class MouvementStock
 		// Create movement for each subproduct
 		foreach($pids as $key => $value)
 		{
-			$this->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, $price);
+			$this->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0);
 		}
 
 		return $error;
@@ -246,12 +248,12 @@ class MouvementStock
 
 
 	/**
-	 *      \brief      Cr�e un mouvement en base pour toutes les compositions de produits
+	 *      \brief      Cree un mouvement en base pour toutes les compositions de produits
 	 *      \return     int     <0 si ko, 0 si ok
 	 */
 	function _createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
 	{
-		dol_syslog("MouvementStock::_createComposition $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
+		dol_syslog("MouvementStock::_createProductComposition $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
 		$products_compo = array();
 
 		$sql = "SELECT fk_product_composition, qte, etat_stock";
@@ -270,13 +272,14 @@ class MouvementStock
 		}
 		else
 		{
-			dol_syslog("MouvementStock::_Create echec update ".$this->error, LOG_ERR);
+			dol_syslog("MouvementStock::_createProductComposition echec update ".$this->error, LOG_ERR);
 			return -1;
 		}
 
+		// Create movement for each subproduct
 		foreach($products_compo as $product)
 		{
-			$this->_create($user, $product->fk_product_composition, $entrepot_id, ($qty*$product->qte), $type, $price=0);
+			$this->_create($user, $product->fk_product_composition, $entrepot_id, ($qty*$product->qte), $type, 0);
 		}
 
 		return 0;
@@ -287,9 +290,9 @@ class MouvementStock
 	 *	\brief		Decrease stock for product and subproducts
 	 *	\return		int		<0 if KO, >0 if OK
 	 */
-	function livraison($user, $fk_product, $entrepot_id, $qty)
+	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0)
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2);
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price);
 	}
 
 
@@ -304,7 +307,7 @@ class MouvementStock
 
 
 	/**
-	 * Return nb of subproducts for a product
+	 * Return nb of subproducts lines for a product
 	 *
 	 * @param unknown_type $id
 	 * @return unknown
