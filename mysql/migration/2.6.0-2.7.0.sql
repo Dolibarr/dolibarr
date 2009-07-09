@@ -234,3 +234,4 @@ insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 alter table llx_facture_fourn_det add column ref               varchar(50) after fk_product;
 alter table llx_facture_fourn_det add column label             varchar(255) after ref;
 
+alter table llx_societe_rib modify column iban_prefix varchar(50);

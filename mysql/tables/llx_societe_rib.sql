@@ -1,5 +1,6 @@
 -- =============================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ create table llx_societe_rib
   number         varchar(255),
   cle_rib        varchar(5),
   bic            varchar(10),
-  iban_prefix    varchar(5),
+  iban_prefix    varchar(50),
   domiciliation  varchar(255),
   proprio        varchar(60),
   adresse_proprio varchar(255)

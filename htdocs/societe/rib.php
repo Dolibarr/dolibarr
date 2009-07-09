@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +67,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	$account->bic             = $_POST["bic"];
 	$account->iban_prefix     = $_POST["iban_prefix"];
 	$account->domiciliation   = $_POST["domiciliation"];
-	$account->proprio 	    = $_POST["proprio"];
+	$account->proprio 	      = $_POST["proprio"];
 	$account->adresse_proprio = $_POST["adresse_proprio"];
 
 	$result = $account->update($user);
