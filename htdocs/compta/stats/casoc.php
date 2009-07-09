@@ -21,7 +21,7 @@
 
 /**
         \file        htdocs/compta/stats/casoc.php
-        \brief       Page reporting CA par société
+        \brief       Page reporting CA par societe
         \version     $Id$
 */
 
@@ -41,7 +41,7 @@ $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 if (! $sortorder) $sortorder="asc";
 if (! $sortfield) $sortfield="nom";
 
-// Sécurité accés client
+// Securite acces client
 if ($user->societe_id > 0) $socid = $user->societe_id;
 
 
@@ -49,13 +49,13 @@ llxHeader();
 
 $html=new Form($db);
 
-// Affiche en-tête de rapport
+// Affiche en-tete de rapport
 if ($modecompta=="CREANCES-DETTES")
 {
     $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
     $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
     $period=$langs->trans("Year")." ".$year;
-    $periodlink='<a href='.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+    $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesCADue");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -122,7 +122,7 @@ else {
     dol_print_error($db);   
 }
 
-// On ajoute les paiements anciennes version, non liés par paiement_facture
+// On ajoute les paiements anciennes version, non lies par paiement_facture
 if ($modecompta != 'CREANCES-DETTES')
 {
     $sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc";
@@ -171,7 +171,7 @@ if (sizeof($amount))
 {
     $arrayforsort=$name;
     
-    // On définit tableau arrayforsort
+    // On dï¿½finit tableau arrayforsort
     if ($sortfield == 'nom' && $sortorder == 'asc') {
         asort($name);
         $arrayforsort=$name;
