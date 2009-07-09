@@ -24,6 +24,8 @@ For users:
   plugin for FireBug.
 - New: Add a confirmation on dangerous admin purge feature.
 - New: Add navigation on donation sheets.
+- New: Added estimated value for stocks.
+- Fix: Error Call to a member function trans when refusing a supplier order.
 - Fix: Fix payment conditions on commercial proposals.
 - Fix: Nb of orders to process was wrong.
 - Fix: Customer code was not correct on PDF it if contains special 
@@ -38,8 +40,8 @@ For translators:
 - Update some language files.
 
 For developers:
-- An external module can force the third party code to be required whatever is the rule of 
-  third party code module.
+- An external module can force the third party code to be required whatever
+  is the rule of third party code module.
 - Update fckeditor to 2.6.4.
 - Removed some deprecated files.
 - Creation of directory in module descriptor is simpler.
