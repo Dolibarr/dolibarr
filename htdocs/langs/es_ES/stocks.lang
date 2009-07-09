@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - stocks
+# Dolibarr language file - es_ES - stocks 
 CHARSET = UTF-8
 WarehouseCard = Ficha almacén
 Warehouse = Almacén
@@ -63,3 +63,6 @@ IdWarehouse = Id. almacén
 DescWareHouse = Descripción almacén
 LieuWareHouse = Localización almacén
 WarehousesAndProducts = almacenes y productos
+AverageUnitPricePMP = Precio Medio Ponderado (PMP)
+EstimatedStockValueForProduct = Valor estimado del producto en stock
+EstimatedStockValue = Valor estimado de stock
