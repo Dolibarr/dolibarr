@@ -52,6 +52,7 @@ scripts/addons
 scripts/books
 scripts/courrier
 scripts/lolix
+scripts/product/import-product.php
 scripts/product/materiel.net.php
 CVS
 *~

@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2009Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@
  */
 
 /**
- \file       scripts/cron/product-graph.php
- \ingroup    product
- \brief      Cr�e les graphiques pour les produits
- \version	$Id$
+ *	\file       scripts/cron/product-graph.php
+ *	\ingroup    product
+ *	\brief      Cree les graphiques pour les produits
+ * 	\deprecated	Ce script n'est plus utilise car les graphiques sont dynamiques maintenant.
+ *	\version	$Id$
  */
 
 // Test si mode CLI
