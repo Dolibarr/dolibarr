@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
  */
 
 /**
-		\file       	scripts/banque/graph-solde.php
-		\ingroup    	banque
-		\brief      	Script de génération des images des soldes des comptes
-		\deprecated		Ce script n'est pas utilise.
-		\version		$Id$
-*/
+ *		\file       	scripts/banque/graph-solde.php
+ *		\ingroup    	banque
+ *		\brief      	Script de génération des images des soldes des comptes
+ *		\deprecated		Ce script n'est plus utilise car les graphiques sont generes dynamiquement maintenant.
+ *		\version		$Id$
+ */
 
 
 // Test si mode batch
@@ -126,8 +126,8 @@ foreach ($accounts as $account)
     $year = strftime("%Y", $datetime);
     $month = strftime("%m", $datetime);
     $day = strftime("%d", $datetime);
-    
-	
+
+
 	// Definition de $width et $height
 	$width = 750;
 	$height = 280;
@@ -243,7 +243,7 @@ foreach ($accounts as $account)
 	$px->SetType('lines');
     $px->draw($file);
 
-	
+
 	// Chargement du tableau $amounts
 	// \todo peut etre optimise en virant les date_format
 	$amounts = array();
@@ -269,7 +269,7 @@ foreach ($accounts as $account)
 	{
 		dol_print_error($db);
 	}
-	
+
 	// Calcul de $solde avant le debut du graphe
 	$solde = 0;
 	$sql = "SELECT sum(amount)";

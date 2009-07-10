@@ -43,7 +43,7 @@ For developers:
 - An external module can force the third party code to be required whatever
   is the rule of third party code module.
 - Update fckeditor to 2.6.4.
-- Removed some deprecated files.
+- Removed some deprecated code and files.
 - Creation of directory in module descriptor is simpler.
 - Can use an alternate document_root directory to develop with 
   sources on two repositories.
