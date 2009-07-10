@@ -382,10 +382,10 @@ if ($resql)
 		print '<td>'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$obj->reel.'</td>';
 		print '<td align="right">'.price2num($obj->pmp,'MU').'</td>';
-		print '<td align="right">'.price(price2num($obj->pmp,'MU')*$obj->reel).'</td>';
+		print '<td align="right">'.price(price2num($obj->pmp*$obj->reel,'MT')).'</td>';
 		print '</tr>'; ;
 		$total = $total + $obj->reel;
-		$totalvalue = $totalvalue + price2num($obj->pmp,'MU')*$obj->reel;
+		$totalvalue = $totalvalue + price2num($obj->pmp,'MT')*$obj->reel;
 		$i++;
 		$var=!$var;
 	}

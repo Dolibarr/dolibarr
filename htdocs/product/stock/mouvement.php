@@ -27,6 +27,8 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 $langs->load("products");
 
@@ -49,9 +51,11 @@ if (! $sortorder) $sortorder="DESC";
  * View
  */
 
+$productstatic=new Product($db);
+$warehousestatic=new Entrepot($db);
 $form=new Form($db);
 
-$sql = "SELECT p.rowid, p.label as produit,";
+$sql = "SELECT p.rowid, p.label as produit, p.fk_product_type as type,";
 $sql.= " s.label as stock, s.rowid as entrepot_id,";
 $sql.= " m.rowid as mid, m.value, m.datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s";
@@ -91,7 +95,6 @@ $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit($conf->liste_limit + 1 ,$offset);
 
 $resql = $db->query($sql) ;
-
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -218,13 +221,18 @@ if ($resql)
 		// Date
 		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
 		// Product
-		print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
-		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
-		print "</a></td>\n";
+		print '<td>';
+		$productstatic->id=$objp->rowid;
+		$productstatic->ref=$objp->produit;
+		$productstatic->type=$objp->type;
+		print $productstatic->getNomUrl(1,'',16);
+		print "</td>\n";
 		// Warehouse
-		print '<td><a href="fiche.php?id='.$objp->entrepot_id.'">';
-		print img_object($langs->trans("ShowWarehouse"),"stock").' '.$objp->stock;
-		print "</a></td>\n";
+		print '<td>';
+		$warehousestatic->id=$objp->entrepot_id;
+		$warehousestatic->libelle=$objp->stock;
+		print $warehousestatic->getNomUrl(1);
+		print "</td>\n";
 		// Value
 		print '<td align="right">';
 		if ($objp->value > 0) print '+';

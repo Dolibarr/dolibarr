@@ -27,6 +27,8 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("products");
 $langs->load("stocks");
@@ -123,6 +125,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
  * View
  */
 
+$productstatic=new Product($db);
 $form=new Form($db);
 
 llxHeader("","",$langs->trans("WarehouseCard"));
@@ -329,7 +332,7 @@ else
 			if ($user->rights->stock->creer)            print '<td>&nbsp;</td>';
 			print "</tr>";
 
-			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit,";
+			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type,";
 			$sql.= " ps.pmp, ps.reel as value";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p";
 			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
@@ -337,14 +340,14 @@ else
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 			}
-			$sql .= " WHERE ps.fk_product = p.rowid ";
+			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0";	// We do not show if stock is 0 (no product in this warehouse)
 			$sql .= " AND ps.fk_entrepot = ".$entrepot->id;
 			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 			{
 				$sql.= ' AND IFNULL(c.visible,1)=1';
 			}
-			$sql.=  " ORDER BY " . $sortfield . " " . $sortorder;
+			$sql.= " ORDER BY " . $sortfield . " " . $sortorder;
 
 			//$sql .= $db->plimit($limit + 1 ,$offset);
 
@@ -378,16 +381,19 @@ else
 					$var=!$var;
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print "<tr $bc[$var]>";
-					print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
-					print img_object($langs->trans("ShowProduct"),"product").' '.$objp->ref;
-					print "</a></td>";
+					print "<td>";
+					$productstatic->id=$objp->rowid;
+					$productstatic->ref=$objp->ref;
+					$productstatic->type=$objp->type;
+					print $productstatic->getNomUrl(1,'',16);
+					print '</td>';
 					print '<td>'.$objp->produit.'</td>';
 
 					print '<td align="right">'.$objp->value.'</td>';
 
-					print '<td align="center">'.price(price2num($objp->pmp,'MT')).'</td>';
+					print '<td align="center">'.price(price2num($objp->pmp,'MU')).'</td>';
 
-					print '<td align="center">'.price(price2num($objp->pmp,'MT')*$objp->value).'</td>';
+					print '<td align="center">'.price(price2num($objp->pmp*$objp->value,'MT')).'</td>';
 
 					if ($user->rights->stock->mouvement->creer)
 					{
