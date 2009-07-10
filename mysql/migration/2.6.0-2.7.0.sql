@@ -6,6 +6,7 @@
 -- when current version is 2.6.0 or higher. 
 --
 
+drop table llx_facture_stats;
 drop table llx_stock_valorisation;
 drop table llx_entrepot_valorisation;
 

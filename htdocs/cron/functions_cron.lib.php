@@ -43,7 +43,7 @@ function batch_fournisseur_updateturnover($year)
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
 	$sql.= " WHERE entity = ".$conf->entity;
 	$sql.= " GROUP BY fk_soc, date_format(datef,'%Y') ";
-	
+
 	$resql = $db->query($sql) ;
 
 	if ($resql)
@@ -93,7 +93,7 @@ function batch_fournisseur_updateturnover($year)
 		$sql = "SELECT fk_product ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_subproduct";
 		$sql.= " WHERE fk_product_subproduct ='".$key."';";
-			
+
 		$resql = $db->query($sql) ;
 
 		if ($resql)
@@ -130,7 +130,7 @@ function batch_fournisseur_updateturnover($year)
 		$sql.= " AND f.rowid = fd.fk_facture";
 		$sql.= " WHERE f.entity = ".$conf->entity;
 		$sql.= " AND date_format(f.datef,'%Y') = '".$year."';";
-			
+
 		$resql = $db->query($sql) ;
 
 		if ($resql)
@@ -156,7 +156,7 @@ function batch_fournisseur_updateturnover($year)
 	{
 		$sqld = "DELETE FROM ".MAIN_DB_PREFIX."fournisseur_ca";
 		$sqld .= " WHERE year = ".$year." AND fk_societe = ".$key;
-		
+
 		$resqld = $db->query($sqld);
 		if (! $resqld)
 		{
@@ -202,56 +202,4 @@ function batch_fournisseur_updateturnover($year)
 	return 1;
 }
 
-
-
-/**
- * 		\brief			Update table facture_stats
- * 		\deprecated		Function no more used
- */
-function batch_fournisseur_statsinvoice()
-{
-	global $conf, $user, $db, $langs;
-
-	$now=gmmktime();
-
-	$sql = "SELECT paye, count(*)";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-	$sql.= " WHERE entity = ".$conf->entity;
-	$sql.= " GROUP BY paye";
-
-	$resql = $db->query($sql);
-
-	if ($resql)
-	{
-		while ($row = $db->fetch_row($resql))
-		{
-			$sqli = "INSERT INTO ".MAIN_DB_PREFIX."facture_stats";
-			$sqli .= " VALUES (".$db->idate(mktime()).",".$db->idate($now).",'paye $row[0]',$row[1])";
-
-			$resqli = $db->query($sqli);
-		}
-		$db->free($resql);
-	}
-
-	$sql = "SELECT paye, sum(total)";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-	$sql.= " WHERE entity = ".$conf->entity;
-	$sql.= " GROUP BY paye";
-
-	$resql = $db->query($sql);
-
-	if ($resql)
-	{
-		while ($row = $db->fetch_row($resql))
-		{
-			$sqli = "INSERT INTO ".MAIN_DB_PREFIX."facture_stats";
-			$sqli .= " VALUES (".$db->idate(mktime()).",".$db->idate($now).",'total $row[0]','$row[1]')";
-
-			$resqli = $db->query($sqli);
-		}
-		$db->free($resql);
-	}
-
-	return 1;
-}
 ?>
