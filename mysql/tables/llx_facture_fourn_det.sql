@@ -27,13 +27,13 @@ create table llx_facture_fourn_det
   ref               varchar(50),   -- supplier product ref
   label             varchar(255),  -- product label
   description       text,
-  pu_ht             double(24,8),
-  pu_ttc            double(24,8),
-  qty               smallint DEFAULT 1,
-  tva_taux          double(24,8) DEFAULT 0,
-  total_ht          double(24,8) DEFAULT 0,
-  tva               double(24,8) DEFAULT 0,
-  total_ttc         double(24,8) DEFAULT 0,
+  pu_ht             double(24,8), -- unit price excluding tax
+  pu_ttc            double(24,8), -- unit price with tax
+  qty               real,         -- quantity of product/service
+  tva_taux          double(6,3),  -- TVA tax product/service
+  total_ht          double(24,8), -- Total line price of product excluding tax
+  tva               double(24,8), -- Total TVA of line
+  total_ttc         double(24,8), -- Total line with tax
   product_type	    integer      DEFAULT 0,
   date_start        datetime   DEFAULT NULL,       -- date debut si service
   date_end          datetime   DEFAULT NULL,       -- date fin si service
