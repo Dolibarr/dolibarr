@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,8 +54,9 @@ $year = strftime("%Y",time());
  */
 
 // Affichage valorisation par entrepot
-$sql = "SELECT e.rowid as ref, e.label, e.statut, e.lieu";
-$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+$sql = "SELECT e.rowid as ref, e.label, e.statut, e.lieu,";
+$sql.= " SUM(ps.pmp * ps.reel) as estimatedvalue";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " WHERE e.entity = ".$conf->entity;
 if ($sref)
 {
@@ -69,6 +70,7 @@ if ($sall)
 	$sql.= " OR e.address LIKE '%".addslashes($sall)."%'";
 	$sql.= " OR e.ville LIKE '%".addslashes($sall)."%')";
 }
+$sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu";
 $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit($limit + 1, $offset);
 
@@ -87,7 +89,7 @@ if ($result)
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),"valo.php", "e.label","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("LocationSummary"),"valo.php", "e.lieu","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PMPValue"),"valo.php", "valo",'','','align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("EstimatedStockValue"),"valo.php", "valo",'','','align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"valo.php", "e.statut",'','','align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
@@ -103,12 +105,11 @@ if ($result)
 			print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->label.'</a></td>';
 			print '<td>'.$objp->lieu.'</td>';
 			print '<td align="right">';
-			// This value is real QTY * PMP of products in llx_product_stock for the warehouse
-			print $langs->trans("FeatureNotYetAvailableShort");
+			print price(price2num($objp->estimatedvalue,'MT'));
 			print '</td>';
 			print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
 			print "</tr>\n";
-			$total += $objp->valo;
+			$total += price2num($objp->estimatedvalue,'MU');
 			$var=!$var;
 			$i++;
 		}
@@ -129,14 +130,14 @@ if ($result)
 	if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file))
 	{
 		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
-		print '<img src="'.$url.'" alt="Valorisation du stock année '.($year).'">';
+		print '<img src="'.$url.'" alt="Valorisation du stock annï¿½e '.($year).'">';
 	}
 
 	$file='entrepot-'.($year-1).'.png';
 	if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file))
 	{
 		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
-		print '<br /><img src="'.$url.'" alt="Valorisation du stock année '.($year-1).'">';
+		print '<br /><img src="'.$url.'" alt="Valorisation du stock annï¿½e '.($year-1).'">';
 	}
 
 }

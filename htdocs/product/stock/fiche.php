@@ -326,8 +326,8 @@ else
 			print_liste_field_titre($langs->trans("Product"),"", "p.ref","&amp;id=".$_GET['id'],"","",$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$_GET['id'],"","",$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$_GET['id'],"",'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("AverageUnitPricePMP"),"", "ps.pmp","&amp;id=".$_GET['id'],"",'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("EstimatedStockValueInWarehouse"),"", "","&amp;id=".$_GET['id'],"",'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AverageUnitPricePMPShort"),"", "ps.pmp","&amp;id=".$_GET['id'],"",'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("EstimatedStockValueShort"),"", "","&amp;id=".$_GET['id'],"",'align="center"',$sortfield,$sortorder);
 			if ($user->rights->stock->mouvement->creer) print '<td>&nbsp;</td>';
 			if ($user->rights->stock->creer)            print '<td>&nbsp;</td>';
 			print "</tr>";

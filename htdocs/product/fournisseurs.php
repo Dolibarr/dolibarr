@@ -178,9 +178,9 @@ if ($_GET["id"] || $_GET["ref"])
 	if ($_GET["action"] <> 're-edit')
 	{
 		$product = new ProductFournisseur($db);
-		if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
-		if ($_GET["id"])  $result = $product->fetch($_GET["id"]);
-		$product->fetch_fourn_data($_GET["socid"]);
+		$result = $product->fetch($_GET["id"],$_GET["ref"]);
+		$result = $product->fetch_fourn_data($_REQUEST["id_fourn"]);
+		//print 'eeeee'.$_GET["socid"];exit;
 		llxHeader("","",$langs->trans("CardProduct".$product->type));
 	}
 

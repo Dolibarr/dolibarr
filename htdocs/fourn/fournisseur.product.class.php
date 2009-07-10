@@ -21,7 +21,7 @@
 /**
 		\file       htdocs/fourn/fournisseur.product.class.php
 		\ingroup    produit
-		\brief      Fichier de la classe des produits prédéfinis
+		\brief      Fichier de la classe des produits prï¿½dï¿½finis
 		\version    $Id$
 */
 
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
 
 /**
 		\class      Product
-		\brief      Classe permettant la gestion des produits prédéfinis
+		\brief      Classe permettant la gestion des produits prï¿½dï¿½finis
 */
 class ProductFournisseur extends Product
 {
@@ -146,12 +146,12 @@ class ProductFournisseur extends Product
 	function remove_product_fournisseur_price($rowid)
 	{
 		global $conf;
-		
+
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE rowid = ".$rowid;
-		
+
 		dol_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -162,7 +162,7 @@ class ProductFournisseur extends Product
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pfp.fk_product_fournisseur = pf.rowid";
 			$sql.= " WHERE pfp.rowid IS NULL";
 			$sql.= " AND pf.entity = ".$conf->entity;
-			
+
 			dol_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -175,7 +175,7 @@ class ProductFournisseur extends Product
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur";
 					$sql.= " WHERE rowid = ".$rowidpf;
-					
+
 					dol_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
 					$resql2 = $this->db->query($sql);
 					if (! $resql2)
@@ -223,11 +223,11 @@ class ProductFournisseur extends Product
 	{
 		$this->fourn_ref = $ref;
 
-		/* Mise à jour du prix */
+		/* Mise ï¿½ jour du prix */
 
 		$this->update_buyprice($qty, $buyprice, $user);
 
-		/* Mise à jour de la référence */
+		/* Mise ï¿½ jour de la rï¿½fï¿½rence */
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur ";
 		$sql .= " SET ref_fourn = '" . $this->fourn_ref ."'";
@@ -241,7 +241,7 @@ class ProductFournisseur extends Product
 	/**
 	*    \brief  Modifie le prix d'achat pour un fournisseur
 	*    \param  qty             	Quantite min pour lequel le prix est valide
-	*    \param  buyprice        	Prix d'achat pour la quantité min
+	*    \param  buyprice        	Prix d'achat pour la quantitï¿½ min
 	*    \param  user            	Objet user de l'utilisateur qui modifie
 	*    \param  price_base_type	HT or TTC
 	*    \param  fourn				Supplier
@@ -255,7 +255,7 @@ class ProductFournisseur extends Product
 		$error=0;
 		$this->db->begin();
 
-		// Supprime prix courant du fournisseur pour cette quantité
+		// Supprime prix courant du fournisseur pour cette quantitï¿½
 		$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price ";
 		if ($this->product_fourn_price_id)
 		{
@@ -275,7 +275,7 @@ class ProductFournisseur extends Product
 			}
 			$unitBuyPrice = price2num($buyprice/$qty,'MU');
 
-			// Ajoute prix courant du fournisseur pour cette quantité
+			// Ajoute prix courant du fournisseur pour cette quantitï¿½
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price";
 			$sql.= " SET datec = ".$this->db->idate(mktime());
 			$sql.= " ,fk_product_fournisseur = ".$this->product_fourn_id;
@@ -328,18 +328,18 @@ class ProductFournisseur extends Product
 
 
 	/**
-		\brief  Modifie le prix d'achat pour un fournisseur par la référecne du produit chez le fournisseur
+		\brief  Modifie le prix d'achat pour un fournisseur par la rï¿½fï¿½recne du produit chez le fournisseur
 		\param  id_fourn        		Id du fournisseur
 		\param  product_fourn_ref 		Ref du produit chez le fournisseur
 		\param  qty             		Quantite pour lequel le prix est valide
-		\param  buyprice        		Prix d'achat pour la quantité
+		\param  buyprice        		Prix d'achat pour la quantitï¿½
 		\param  user            		Objet user de l'utilisateur qui modifie
 		\return	int						<0 si KO, >0 si OK
 	*/
 	function UpdateBuyPriceByFournRef($id_fourn, $product_fourn_ref, $qty, $buyprice, $user, $price_base_type='HT')
 	{
 		global $conf;
-		
+
 		$result=0;
 
 		// Recherche id produit pour cette ref et fournisseur
@@ -353,7 +353,7 @@ class ProductFournisseur extends Product
 		{
 			if ($obj = $this->db->fetch_object($resql))
 			{
-				// Met a jour prix pour la qté
+				// Met a jour prix pour la qtï¿½
 				$this->id = $obj->fk_product;
 				$result = $this->update_buyprice($id_fourn, $qty, $buyprice, $user, $price_base_type);
 			}
@@ -364,14 +364,17 @@ class ProductFournisseur extends Product
 
 
 	/**
-	*    \brief      Charge les informations relatives à un fournisseur
+	*    \brief      Charge les informations relatives a un fournisseur
 	*    \param      fournid         id du fournisseur
 	*    \return     int             < 0 si erreur, > 0 si ok
 	*/
 	function fetch_fourn_data($fournid)
 	{
 		global $conf;
-		
+
+		// Check parameters
+		if (empty($fournid)) return -1;
+
 		$sql = "SELECT rowid, ref_fourn";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur ";
 		$sql.= " WHERE fk_product = ".$this->id;
@@ -390,13 +393,13 @@ class ProductFournisseur extends Product
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Product::fetch_fourn_data error=".$this->error, LOG_ERR);
+			dol_syslog("ProductFournisseur::fetch_fourn_data error=".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
 
 		/**
-	*    \brief      Charge les informations relatives à un prix de fournisseur
+	*    \brief      Charge les informations relatives ï¿½ un prix de fournisseur
 	*    \param      rowid	         id ligne
 	*    \return     int             < 0 if KO, 0 if OK but not found, > 0 if OK
 	*/
@@ -409,7 +412,7 @@ class ProductFournisseur extends Product
 		$sql.= " WHERE pfp.rowid = ".$rowid;
 		$sql.= " AND pf.rowid = pfp.fk_product_fournisseur";
 
-		dol_syslog("Product::fetch_product_fournisseur_price sql=".$sql, LOG_DEBUG);
+		dol_syslog("ProductFournisseur::fetch_product_fournisseur_price sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql) ;
 		if ($resql)
 		{
@@ -434,7 +437,7 @@ class ProductFournisseur extends Product
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Product::fetch_product_fournisseur_price error=".$this->error, LOG_ERR);
+			dol_syslog("ProductFournisseur::fetch_product_fournisseur_price error=".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

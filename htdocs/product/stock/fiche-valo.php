@@ -92,7 +92,7 @@ if ($_GET["id"])
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $form->showrefnav($entrepot,'id','',1,'rowid','libelle');
 	print '</td>';
-	
+
 	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
 
 	// Description
@@ -127,24 +127,31 @@ if ($_GET["id"])
 
 	print "<div class=\"graph\">\n";
 	$year = strftime("%Y",time());
-	
+
 	$file=DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year).'.png';
+
+	// TODO Build graph in $file from a table called llx_stock_log
+
+
+
+
+
 
 	if (file_exists($file))
 	{
 		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.$year.'.png';
-		print '<img src="'.$url.'" alt="Valorisation du stock année '.($year).'">';
-	
+		print '<img src="'.$url.'" alt="Valorisation du stock annee '.($year).'">';
+
 		if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year-1).'.png'))
 		{
 			$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.($year-1).'.png';
-			print '<br /><img src="'.$url.'" alt="Valorisation du stock année '.($year-1).'">';
+			print '<br /><img src="'.$url.'" alt="Valorisation du stock annee '.($year-1).'">';
 		}
 	}
 	else
 	{
 		$langs->load("errors");
-		if ($user->admin) print info_admin($langs->trans("WarningBuildScriptNotRunned",'stock-graph.php'));
+		print $langs->trans("FeatureNotYetAvailable");
 	}
 
 	print "</div>";

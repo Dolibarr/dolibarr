@@ -1651,6 +1651,7 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
 		$sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn." AND ref_fourn = '".$ref_fourn."'";
 
+		dol_syslog("Product::add_fournisseur sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1661,6 +1662,7 @@ class Product extends CommonObject
 				$sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
 				$sql .= " VALUES (".$this->db->idate(mktime()).", ".$this->id.", ".$id_fourn.", '".$ref_fourn."', ".$user->id.")";
 
+				dol_syslog("Product::add_fournisseur sql=".$sql);
 				if ($this->db->query($sql))
 				{
 					$this->product_fourn_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur");
@@ -1668,7 +1670,8 @@ class Product extends CommonObject
 				}
 				else
 				{
-					$this->error=$this->db->error();
+					$this->error=$this->db->lasterror();
+					dol_syslog("Product::add_fournisseur ".$this->error, LOG_ERR);
 					return -1;
 				}
 			}
@@ -1689,7 +1692,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -2;
 		}
 	}

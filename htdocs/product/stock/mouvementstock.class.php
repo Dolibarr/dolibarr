@@ -42,7 +42,7 @@ class MouvementStock
 	 * 		\param		user		User object
 	 * 		\param		fk_product	Id of product
 	 * 		\param		entrepot_id	Id of warehouse
-	 * 		\param		qty			Qty of movement
+	 * 		\param		qty			Qty of movement (can be <0 or >0)
 	 * 		\param		type		Direction of movement: 2=output (stock decrease), 3=input (stock increase)
 	 * 		\param		type		Unit price HT of product
 	 *      \return     int     	<0 if KO, >0 if OK
@@ -116,18 +116,21 @@ class MouvementStock
 				}
 			}
 
-			// Calculate new PMP. Price should always be >0 or 0. pmp should always be >0 or 0.
+			// Calculate new PMP.
 			if (! $error)
 			{
 				$newpmp=0;
 				$newpmpwarehouse=0;
-				if ($price > 0)
+				// Note: PMP is calculated on stock input only (type = 3). If type == 3, qty should be > 0.
+				// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
+				if ($type == 3 && $price > 0)
 				{
-					if (($oldqty + $qty) == 0) $newpmp=0;
-					else if ($oldpmp > 0) $newpmp=price2num((($oldqty * $oldpmp) + ($qty * $price)) / ($oldqty + $qty), 'MU');
+					$oldqtytouse=($oldqty >= 0?$oldqty:0);
+					// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
+					if ($oldpmp > 0) $newpmp=price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
 					else $newpmp=$price;
-					if (($oldqtywarehouse + $qty) == 0) $newpmpwarehouse=0;
-					else if ($oldpmpwarehouse > 0) $newpmpwarehouse=price2num((($oldqtywarehouse * $oldpmpwarehouse) + ($qty * $price)) / ($oldqtywarehouse + $qty), 'MU');
+					$oldqtywarehousetouse=($oldqtywarehouse >= 0?$oldqty:0);
+					if ($oldpmpwarehouse > 0) $newpmpwarehouse=price2num((($oldqtywarehousetouse * $oldpmpwarehouse) + ($qty * $price)) / ($oldqtywarehousetouse + $qty), 'MU');
 					else $newpmpwarehouse=$price;
 				}
 				else

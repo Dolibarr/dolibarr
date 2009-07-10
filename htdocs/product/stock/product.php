@@ -351,8 +351,8 @@ print '</div>';
 print '<br><table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</td>';
 print '<td align="right">'.$langs->trans("NumberOfUnit").'</td>';
-print '<td align="right">'.$langs->trans("AverageUnitPricePMP").'</td>';
-print '<td align="right">'.$langs->trans("EstimatedStockValue").'</td>';
+print '<td align="right">'.$langs->trans("AverageUnitPricePMPShort").'</td>';
+print '<td align="right">'.$langs->trans("EstimatedStockValueShort").'</td>';
 print '</tr>';
 
 $sql = "SELECT e.rowid, e.label, ps.reel, ps.pmp";
