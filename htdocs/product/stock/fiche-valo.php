@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,9 +112,18 @@ if ($_GET["id"])
 	// Statut
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
 
+	$calcproducts=$entrepot->nb_products();
+
+	// Nb of products
 	print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
-	print $entrepot->nb_products();
+	print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
 	print "</td></tr>";
+
+	// Value
+	print '<tr><td valign="top">'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
+	print empty($calcproducts['value'])?'0':$calcproducts['value'];
+	print "</td></tr>";
+
 	print "</table>";
 	print '</div>';
 

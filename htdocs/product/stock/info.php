@@ -17,10 +17,10 @@
  */
 
 /**
- \file       htdocs/product/stock/info.php
- \ingroup    facture
- \brief      Page des informations d'un entrepot
- \version    $Id$
+ *	\file       htdocs/product/stock/info.php
+ *	\ingroup    stock
+ *	\brief      Page des informations d'un entrepot
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");

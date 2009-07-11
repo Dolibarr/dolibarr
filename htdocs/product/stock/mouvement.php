@@ -166,8 +166,55 @@ if ($resql)
 
 		print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
 
+		// Description
+		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
+
+		// Address
+		print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
+		print $entrepot->address;
+		print '</td></tr>';
+
+		// Ville
+		print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$entrepot->cp.'</td>';
+		print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$entrepot->ville.'</td></tr>';
+
+		// Country
+		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+		print $entrepot->pays;
+		print '</td></tr>';
+
 		// Statut
 		print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
+
+		$calcproducts=$entrepot->nb_products();
+
+		// Nb of products
+		print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
+		print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
+		print "</td></tr>";
+
+		// Value
+		print '<tr><td valign="top">'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
+		print empty($calcproducts['value'])?'0':$calcproducts['value'];
+		print "</td></tr>";
+
+		// Last movement
+		$sql = "SELECT max( ".$db->pdate("m.datem").") as datem";
+		$sql .= " FROM llx_stock_mouvement as m";
+		$sql .= " WHERE m.fk_entrepot = '".$entrepot->id."';";
+		$resqlbis = $db->query($sql);
+		if ($resqlbis)
+		{
+			$row = $db->fetch_row($resqlbis);
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+
+		print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
+		print '<a href="mouvement.php?id='.$entrepot->id.'">'.dol_print_date($row[0]).'</a>';
+		print "</td></tr>";
 
 		print "</table>";
 

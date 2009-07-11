@@ -255,13 +255,16 @@ else
 			// Description
 			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
 
+			// Address
 			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
 			print $entrepot->address;
 			print '</td></tr>';
 
+			// Ville
 			print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$entrepot->cp.'</td>';
 			print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$entrepot->ville.'</td></tr>';
 
+			// Country
 			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
 			print $entrepot->pays;
 			print '</td></tr>';
@@ -269,10 +272,16 @@ else
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
 
+			$calcproducts=$entrepot->nb_products();
+
 			// Nb of products
 			print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
-			$nb=$entrepot->nb_products();
-			print empty($nb)?'0':$nb;
+			print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
+			print "</td></tr>";
+
+			// Value
+			print '<tr><td valign="top">'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
+			print empty($calcproducts['value'])?'0':$calcproducts['value'];
 			print "</td></tr>";
 
 			// Last movement
@@ -326,11 +335,14 @@ else
 			print_liste_field_titre($langs->trans("Product"),"", "p.ref","&amp;id=".$_GET['id'],"","",$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$_GET['id'],"","",$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$_GET['id'],"",'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("AverageUnitPricePMPShort"),"", "ps.pmp","&amp;id=".$_GET['id'],"",'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("EstimatedStockValueShort"),"", "","&amp;id=".$_GET['id'],"",'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AverageUnitPricePMPShort"),"", "ps.pmp","&amp;id=".$_GET['id'],"",'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("EstimatedStockValueShort"),"", "","&amp;id=".$_GET['id'],"",'align="right"',$sortfield,$sortorder);
 			if ($user->rights->stock->mouvement->creer) print '<td>&nbsp;</td>';
 			if ($user->rights->stock->creer)            print '<td>&nbsp;</td>';
 			print "</tr>";
+
+			$totalunit=0;
+			$totalvalue=0;
 
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type,";
 			$sql.= " ps.pmp, ps.reel as value";
@@ -348,7 +360,6 @@ else
 				$sql.= ' AND IFNULL(c.visible,1)=1';
 			}
 			$sql.= " ORDER BY " . $sortfield . " " . $sortorder;
-
 			//$sql .= $db->plimit($limit + 1 ,$offset);
 
 			$resql = $db->query($sql) ;
@@ -390,10 +401,12 @@ else
 					print '<td>'.$objp->produit.'</td>';
 
 					print '<td align="right">'.$objp->value.'</td>';
+					$totalunit+=$objp->value;
 
-					print '<td align="center">'.price(price2num($objp->pmp,'MU')).'</td>';
+					print '<td align="right">'.price(price2num($objp->pmp,'MU')).'</td>';
 
-					print '<td align="center">'.price(price2num($objp->pmp*$objp->value,'MT')).'</td>';
+					print '<td align="right">'.price(price2num($objp->pmp*$objp->value,'MT')).'</td>';
+					$totalvalue+=price2num($objp->pmp*$objp->value,'MT');
 
 					if ($user->rights->stock->mouvement->creer)
 					{
@@ -413,6 +426,15 @@ else
 					$i++;
 				}
 				$db->free($resql);
+
+				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
+				print '<td class="liste_total" align="right">'.$totalunit.'</td>';
+				print '<td class="liste_total">&nbsp;</td>';
+				print '<td class="liste_total" align="right">'.$totalvalue.'</td>';
+				print '<td class="liste_total">&nbsp;</td>';
+				print '<td class="liste_total">&nbsp;</td>';
+				print '</tr>';
+
 			}
 			else
 			{

@@ -54,7 +54,7 @@ class Entrepot extends CommonObject
 
 	/*
 	 *    \brief      Constructeur de l'objet entrepot
-	 *    \param      DB      Handler d'accès à la base de donnée
+	 *    \param      DB      Handler d'accï¿½s ï¿½ la base de donnï¿½e
 	 */
 	function Entrepot($DB)
 	{
@@ -67,7 +67,7 @@ class Entrepot extends CommonObject
 
 	/*
 	 *    \brief      Creation d'un entrepot en base
-	 *    \param      Objet user qui crée l'entrepot
+	 *    \param      Objet user qui crï¿½e l'entrepot
 	 */
 	function create($user)
 	{
@@ -122,7 +122,7 @@ class Entrepot extends CommonObject
 
 	/*
 	 *    \brief      Mise a jour des information d'un entrepot
-	 *    \param      id      id de l'entrepot à modifier
+	 *    \param      id      id de l'entrepot ï¿½ modifier
 	 *    \param      user
 	 */
 	function update($id, $user)
@@ -162,8 +162,8 @@ class Entrepot extends CommonObject
 
 
 	/**
-	 *    \brief      Recupéeration de la base d'un entrepot
-	 *    \param      id      id de l'entrepot a récupérer
+	 *    \brief      Recupï¿½eration de la base d'un entrepot
+	 *    \param      id      id de l'entrepot a rï¿½cupï¿½rer
 	 */
 	function fetch ($id)
 	{
@@ -262,7 +262,7 @@ class Entrepot extends CommonObject
 
 
 	/**
-	 *    \brief      Renvoie la liste des entrepôts ouverts
+	 *    \brief      Renvoie la liste des entrepï¿½ts ouverts
 	 */
 	function list_array()
 	{
@@ -290,13 +290,16 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *    \brief      Renvoie le stock (nombre de produits) de l'entrepot
+	 *    	\brief      Renvoie le stock (nombre de produits) et valorisation de l'entrepot
+	 * 		\return		Array		Array('nb'=>Nb, 'value'=>Value)
 	 */
 	function nb_products()
 	{
 		global $conf,$user;
 
-		$sql = "SELECT sum(ps.reel)";
+		$ret=array();
+
+		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * ps.pmp) as value";
 		$sql .= " FROM llx_product_stock as ps";
 		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 		{
@@ -309,24 +312,28 @@ class Entrepot extends CommonObject
 			$sql.= ' AND IFNULL(c.visible,1)=1';
 		}
 
+		//print $sql;
 		$result = $this->db->query($sql) ;
-
-		if ( $result )
+		if ($result)
 		{
-			$row = $this->db->fetch_row(0);
-			return $row[0];
+			$obj = $this->db->fetch_object($result);
+			$ret['nb']=$obj->nb;
+			$ret['value']=$obj->value;
 
 			$this->db->free();
 		}
 		else
 		{
-			return 0;
+			$this->error=$this->db->lasterror();
+			return -1;
 		}
+
+		return $ret;
 	}
 
 	/**
-	 *    \brief      Retourne le libellé du statut d'un entrepot (ouvert, ferme)
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \brief      Retourne le libellï¿½ du statut d'un entrepot (ouvert, ferme)
+	 *    \param      mode          0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -335,10 +342,10 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\brief      Renvoi le libellï¿½ d'un statut donnï¿½
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string        	Libellé du statut
+	 *    	\param      mode          	0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string        	Libellï¿½ du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{
