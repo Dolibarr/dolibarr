@@ -18,10 +18,10 @@
 
 /**
  *	\file       htdocs/asterisk/wrapper.php
- *  \brief      File that is entry point to call Dolibarr WebServices
+ *  \brief      File that is entry point to call an Asterisk server
  *  \version    $Id$
  *	\remarks	To be used, an Asterisk user must be created by adding this
- * 				in /etc/asterisk/manager.conf 
+ * 				in /etc/asterisk/manager.conf
  * 				[dolibarr]
  * 				secret = dolibarr
  * 				deny=0.0.0.0/0.0.0.0
@@ -79,12 +79,12 @@ $prefix = $conf->global->ASTERISK_INDICATIF;
 #Port
 $port = $conf->global->ASTERISK_PORT;
 
-?>
-<html>
-<head>
-<title>Asterisk redirection ...</title>
-</head>
-<?php
+
+print '<html>'."\n";
+print '<head>'."\n";
+print '<title>Asterisk redirection ...</title>'."\n";
+print '</head>'."\n";
+
 
 $number=strtolower($called) ;
 $pos=strpos ($number,"local");
@@ -104,7 +104,7 @@ if (! empty($number))
 		$txt=$errstr." (".$errno.")<br>\n";
 		echo $txt;
 		dol_syslog($txt,LOG_ERR);
-	} 
+	}
 	else
 	{
 		echo '<body onload="javascript:history.go(-1);">'."\n";
@@ -125,6 +125,6 @@ if (! empty($number))
 	}
 	endif ;
 }
-?>
-</body>
-</html>
+
+print '</body>'."\n";
+print '</html>'."\n";
