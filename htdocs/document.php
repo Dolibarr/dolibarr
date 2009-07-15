@@ -28,9 +28,11 @@
  * 				document.php?modulepart=repfichierconcerne&file=pathrelatifdufichier
  */
 
-$original_file = urldecode($_GET["file"]);
-$modulepart = urldecode($_GET["modulepart"]);
-$type = isset($_GET["type"]) ? urldecode($_GET["type"]) : '';
+// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+$action = isset($_GET["action"])?$_GET["action"]:'';
+$original_file = isset($_GET["file"])?$_GET["file"]:'';
+$modulepart = isset($_GET["modulepart"])?$_GET["modulepart"]:'';
+$urlsource = isset($_GET["urlsource"])?$_GET["urlsource"]:'';
 
 // Define if we need master or master+main
 $needmasteronly=false;
@@ -63,13 +65,6 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 // C'est un wrapper, donc header vierge
 function llxHeader() { }
 
-// Default encoding for HTTP output if no encoding can be found for file to download
-//$encoding='ISO-8859-1';
-
-$action = $_GET["action"];
-$original_file = urldecode($_GET["file"]);
-$modulepart = urldecode($_GET["modulepart"]);
-$urlsource = urldecode($_GET["urlsource"]);
 
 // Define mime type
 $type = 'application/octet-stream';
