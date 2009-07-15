@@ -161,7 +161,7 @@ if ($_POST["action"] == 'add_action')
 	if ($actioncomm->type_code == 'AC_RDV')
 	{
 		// RDV
-		if ($actioncomm->datef)
+		if ($actioncomm->datef && $actioncomm->datef < dol_now('tzref'))
 		{
 			$actioncomm->percentage = 100;
 		}
