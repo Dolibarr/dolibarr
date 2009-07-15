@@ -1584,32 +1584,34 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
  *	\param		printheader		Affiche avant le header
  *	\remarks    L'appel a cette fonction termine le code.
  */
-function accessforbidden($message='',$printheader=1)
+function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymessage=0)
 {
 	global $user, $langs;
 	$langs->load("other");
 
-	if ($printheader && function_exists("llxHeader")) llxHeader();
+	if ($printheader)
+	{
+		if (function_exists("llxHeader")) llxHeader('');
+		else if (function_exists("llxHeaderVierge")) llxHeaderVierge('');
+	}
 	print '<div class="error">';
 	if (! $message) print $langs->trans("ErrorForbidden");
 	else print $message;
 	print '</div>';
 	print '<br>';
-	if ($user->login)
+	if (empty($showonlymessage))
 	{
-		print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
-		print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
+		if ($user->login)
+		{
+			print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
+			print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
+		}
+		else
+		{
+			print $langs->trans("ErrorForbidden3");
+		}
 	}
-	elseif (! empty($_SERVER["REMOTE_USER"]))
-	{
-		print $langs->trans("CurrentLogin").': <font class="error">'.$_SERVER["REMOTE_USER"]."</font><br>";
-		print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
-	}
-	else
-	{
-		print $langs->trans("ErrorForbidden3");
-	}
-	if (function_exists("llxFooter")) llxFooter();
+	if ($printfooter && function_exists("llxFooter")) llxFooter('');
 	exit(0);
 }
 

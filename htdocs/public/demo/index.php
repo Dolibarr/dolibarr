@@ -33,6 +33,12 @@ $langs->setDefaultLang($langcode);
 $langs->load("main");
 $langs->load("other");
 
+// Security check
+if (! empty($conf->global->MAIN_DEMO))
+{
+	accessforbidden('Constant MAIN_DEMO must be defined in Home->Setup->Misc to enable the demo entry page',1,1,1);
+	exit;
+}
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
@@ -83,6 +89,7 @@ function llxHeaderVierge($title, $head = "")
 
 function llxFooter()
 {
+	print "\n";
 	print "</body>\n";
 	print "</html>\n";
 }
