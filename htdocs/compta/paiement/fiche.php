@@ -20,12 +20,12 @@
  */
 
 /**
-	    \file       htdocs/compta/paiement/fiche.php
-		\ingroup    facture
-		\brief      Onglet paiement d'un paiement client
-		\remarks	Fichier presque identique a fournisseur/paiement/fiche.php
-		\version    $Id$
-*/
+ *	    \file       htdocs/compta/paiement/fiche.php
+ *		\ingroup    facture
+ *		\brief      Onglet paiement d'un paiement client
+ *		\remarks	Fichier presque identique a fournisseur/paiement/fiche.php
+ *		\version    $Id$
+ */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
@@ -41,7 +41,7 @@ $langs->load('companies');
 $id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 if ($user->societe_id) $socid=$user->societe_id;
-// TODO ajouter règle pour restreindre acces paiement
+// TODO ajouter rï¿½gle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $mesg='';
@@ -81,7 +81,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 	{
 		$db->commit();
 
-		// \TODO Boucler sur les facture liées à ce paiement et régénèrer le pdf
+		// \TODO Boucler sur les facture liees a ce paiement et regenerer le pdf
 		$factures=array();
 		foreach($factures as $id)
 		{

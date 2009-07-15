@@ -321,6 +321,8 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print '</td>';
 		print '<td><input name="chqbank" size="30" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
 
+		print '</table>';
+
 		/*
 		 * List of unpayed invoices
 		 */
@@ -349,7 +351,8 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 			{
 
 				$i = 0;
-				print '<tr><td colspan="3">';
+				//print '<tr><td colspan="3">';
+				print '<br>';
 				print '<table class="noborder" width="100%">';
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans('Invoice').'</td>';
@@ -439,7 +442,8 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					print '<td align="center">&nbsp;</td>';
 					print "</tr>\n";
 				}
-				print "</table></td></tr>\n";
+				print "</table>";
+				//print "</td></tr>\n";
 			}
 			$db->free($resql);
 		}
@@ -452,10 +456,11 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		// Bouton Enregistrer
 		if ($_POST["action"] != 'add_paiement')
 		{
-			print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'"></td></tr>';
+//			print '<tr><td colspan="3" align="center">';
+			print '<br><center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
+//			print '</td></tr>';
 		}
 
-		print '</table>';
 
 
 		// Message d'erreur
