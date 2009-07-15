@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,7 +53,7 @@ print '<tr><td width="30%" valign="top" class="notopnoleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Project"),"index.php","","","","",$sortfield,$sortorder);
-print '<td align="right">'.$langs->trans("NbOpenTasks").'</td>';
+print_liste_field_titre($langs->trans("NbOpenTasks"),"","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, count(t.rowid)";
@@ -99,7 +99,7 @@ print '</td><td width="70%" valign="top" class="notopnoleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield,$sortorder);
-print '<td align="right">'.$langs->trans("NbOfProjects").'</td>';
+print_liste_field_titre($langs->trans("NbOfProjects"),"","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
 $sql = "SELECT count(p.rowid) as nb, s.nom, s.rowid as socid";

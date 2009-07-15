@@ -59,7 +59,7 @@ print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
+print '<td align="left">'.$langs->trans("Project").'</td>';
 print '<td align="right">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 

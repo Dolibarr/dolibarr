@@ -178,17 +178,17 @@ if ($resql)
     print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","d.datefin",$param,"","",$sortfield,$sortorder);
-    print '<td width="60" align="center">'.$langs->trans("Action")."</td>\n";
+    print_liste_field_titre($langs->trans("Action"),"liste.php","",$param,"",'width="60" align="center"',$sortfield,$sortorder);
     print "</tr>\n";
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<tr class="liste_titre">';
 
-	print '<td align="left">';
+	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="search_nom" value="'.$_REQUEST["search_nom"].'" size="12"></td>';
 
-	print '<td align="left">';
+	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="search_login" value="'.$_REQUEST["search_login"].'" size="7"></td>';
 
 	print '<td class="liste_titre">';
@@ -198,7 +198,7 @@ if ($resql)
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
-	print '<td align="left">';
+	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="search_email" value="'.$_REQUEST["search_email"].'" size="12"></td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -301,7 +301,7 @@ if ($resql)
 
 	if ($num > $conf->liste_limit)
 	{
-	    print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
+	    print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
 	}
 }
 else

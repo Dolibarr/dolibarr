@@ -113,23 +113,22 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Label"),"liste.php","p.title","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("OfficerProject"),"liste.php","","","","",$sortfield,$sortorder);
-	print '<td>&nbsp;</td>';
+	print_liste_field_titre('','','');
 	print "</tr>\n";
 
 	print '<form method="get" action="liste.php">';
 	print '<tr class="liste_titre">';
-	print '<td valign="right">';
+	print '<td class="liste_titre"valign="right">';
 	print '<input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'" size="6">';
 	print '</td>';
-	print '<td valign="right">';
+	print '<td class="liste_titre"valign="right">';
 	print '<input type="text" class="flat" name="search_label" value="'.$_GET["search_label"].'">';
 	print '</td>';
-	print '<td valign="right">';
+	print '<td class="liste_titre"valign="right">';
 	print '<input type="text" class="flat" name="search_societe" value="'.$_GET["search_societe"].'">';
 	print '</td>';
-	print '<td>&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-	print "</td>";
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
 	print "</tr>\n";
 
 	while ($i < $num)
