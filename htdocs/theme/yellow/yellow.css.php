@@ -335,10 +335,10 @@ a.vsmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-alig
 a.vsmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
 font.vsmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #aaa593; margin: 1px 1px 1px 6px; }
 
-a.help:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:link    { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:visited { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:active  { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:hover   { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 
 div.blockvmenupair
 {
