@@ -19,11 +19,11 @@
  */
 
 /**
-	    \file       htdocs/compta/bank/budget.php
-        \ingroup    banque
-		\brief      Page de budget
-		\version    $Id$
-*/
+ *	    \file       htdocs/compta/bank/budget.php
+ *      \ingroup    banque
+ *		\brief      Page de budget
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -40,7 +40,7 @@ $result=restrictedArea($user,'banque');
  */
 
 $companystatic=new Societe($db);
-  
+
 llxHeader();
 
 

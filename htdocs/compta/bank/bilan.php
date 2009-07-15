@@ -15,10 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
+ */
+
+/**
+ *	    \file       htdocs/compta/bank/bilan.php
+ *      \ingroup    banque
+ *		\brief      Page de bilan
+ *		\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -48,13 +51,13 @@ print '<br>';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
 print "<tr class=\"liste_titre\">";
-echo '<td colspan="2">Résumé</td>';
+echo '<td colspan="2">Rï¿½sumï¿½</td>';
 print "</tr>\n";
 
 $var=!$var;
 $sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."paiement";
 $paiem = valeur($sql);
-print "<tr $bc[$var]><td>Somme des paiements (associés à une facture)</td><td align=\"right\">".price($paiem)."</td></tr>";
+print "<tr $bc[$var]><td>Somme des paiements (associes a une facture)</td><td align=\"right\">".price($paiem)."</td></tr>";
 
 $var=!$var;
 $sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank WHERE amount > 0";
