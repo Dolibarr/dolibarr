@@ -100,7 +100,7 @@ if ($search_priv < 0) $search_priv='';
  * View
  */
 
-llxHeader();
+llxHeader($langs->trans("Contacts"),'','EN:Third_Parties|FR:Tiers|ES:Empresas');
 
 $form=new Form($db);
 
