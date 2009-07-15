@@ -35,11 +35,10 @@ $langs->load('bills');
 $langs->load('banks');
 $langs->load('companies');
 
+$id = isset($_REQUEST["id"])?$_REQUEST["id"]:'';
+$ref= isset($_REQUEST["ref"])?$_REQUEST["ref"]:'';
+
 // Security check
-if (isset($_GET["id"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-}
 $fieldid = isset($_GET["ref"])?'number':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','',$fieldid);
@@ -77,7 +76,7 @@ if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banq
 	}
 }
 
-if ($_GET['action'] == 'remove' && $_GET["id"] > 0 && $_GET["lineid"] > 0 && $user->rights->banque)
+if ($_GET['action'] == 'remove' && $_GET["id"] > 0 && $_GET["lineid"] > 0 && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
 	$remisecheque->id = $_GET["id"];
@@ -93,7 +92,7 @@ if ($_GET['action'] == 'remove' && $_GET["id"] > 0 && $_GET["lineid"] > 0 && $us
 	}
 }
 
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->banque)
+if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
 	$remisecheque->id = $_GET["id"];
@@ -109,7 +108,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user-
 	}
 }
 
-if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->banque)
+if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
 	$result = $remisecheque->Fetch($_GET["id"]);
@@ -125,7 +124,7 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 	}
 }
 
-if ($_POST['action'] == 'builddoc' && $user->rights->banque)
+if ($_POST['action'] == 'builddoc' && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
 	$result = $remisecheque->Fetch($_GET["id"]);
@@ -178,16 +177,12 @@ if ($_GET['action'] == 'new')
 else
 {
 	$remisecheque = new RemiseCheque($db);
-	if ($_GET["id"])
+	$result = $remisecheque->fetch($_REQUEST["id"],$_REQUEST["ref"]);
+	if ($result < 0)
 	{
-		$result = $remisecheque->Fetch($_GET["id"]);
+		dol_print_error($db,$remisecheque->error);
+		exit;
 	}
-	if ($_GET["ref"])
-	{
-		$result = $remisecheque->Fetch('',$_GET["ref"]);
-	}
-
-
 
 	$h=0;
 	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$remisecheque->id;
@@ -205,7 +200,7 @@ else
 	 */
 	if ($_GET['action'] == 'delete')
 	{
-		$ret=$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete');
+		$ret=$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -215,7 +210,7 @@ else
 	if ($_GET['action'] == 'valide')
 	{
 		$facid = $_GET['facid'];
-		$ret=$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide');
+		$ret=$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
 		if ($ret == 'html') print '<br>';
 	}
 }
@@ -344,6 +339,10 @@ else
 	print price($remisecheque->amount);
 	print '</td></tr>';
 
+	print '<tr><td>'.$langs->trans('Status').'</td><td colspan="2">';
+	print $remisecheque->getLibStatut(4);
+	print '</td></tr>';
+
 	print '</table><br />';
 
 
@@ -369,15 +368,15 @@ else
 
 		$param="&amp;id=".$remisecheque->id;
 		print '<tr class="liste_titre">';
-		'<td width="30">'.$langs->trans("Num").'</td>';
-		print '<td>'.$langs->trans("Cheque").'</td>';
+		print_liste_field_titre($langs->trans("Cheque"),'','','','','width="30"');
 		print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("CheckTransmitter"),$_SERVER["PHP_SELF"],"b.emetteur", "",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Bank"),$_SERVER["PHP_SELF"],"b.banque", "",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("LineRecord"),$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("DateChequeReceived"),$_SERVER["PHP_SELF"],"b.datec", "",$param,'align="center"',$sortfield,$sortorder);
-		print "<td>&nbsp;</td></tr>\n";
+		print_liste_field_titre('','','');
+		print "</tr>\n";
 		$i=1;
 		$var=false;
 		while ( $objp = $db->fetch_object($resql) )
@@ -386,7 +385,7 @@ else
 			$accounts[$objp->bid] += 1;
 
 			print "<tr $bc[$var]>";
-			print '<td align="center" width="24">'.$i.'</td>';
+			print '<td align="center">'.$i.'</td>';
 			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';
 			print '<td>'.dol_trunc($objp->emetteur,24).'</td>';
 			print '<td>'.dol_trunc($objp->banque,24).'</td>';
@@ -433,19 +432,19 @@ print '</div>';
 
 print '<div class="tabsAction">';
 
-if ($user->societe_id == 0 && sizeof($accounts) == 1 && $_GET['action'] == 'new')
+if ($user->societe_id == 0 && sizeof($accounts) == 1 && $_GET['action'] == 'new' && $user->rights->banque->cheque)
 {
 	print '<a class="butAction" href="fiche.php?action=create&amp;accountid='.$account_id.'">'.$langs->trans('NewCheckReceipt').'</a>';
 }
 
-if ($user->societe_id == 0 && $remisecheque->statut == 0 && $_GET['action'] == '')
+if ($user->societe_id == 0 && $remisecheque->statut == 0 && $remisecheque->id && $user->rights->banque->cheque)
 {
-	print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+	print '<a class="butAction" href="fiche.php?id='.$remisecheque->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 }
 
-if ($user->societe_id == 0 && $_GET['action'] == '')
+if ($user->societe_id == 0 && $remisecheque->id && $user->rights->banque->cheque)
 {
-	print '<a class="butActionDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+	print '<a class="butActionDelete" href="fiche.php?id='.$remisecheque->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 
 }
 print '</div>';
@@ -456,9 +455,9 @@ if ($_GET['action'] != 'new')
 {
 	if ($remisecheque->statut == 1)
 	{
-		$dirchequereceipts = $dir.get_exdir($remisecheque->number,2,1).'/'.$remisecheque->ref;
+		$dirchequereceipts = $dir.get_exdir($remisecheque->number,2,1).$remisecheque->ref;
 		$gen = array('blochet'=>'blochet');
-		$formfile->show_documents("remisecheque","",$dirchequereceipts,$_SERVER["PHP_SELF"].'?id='.$remisecheque->id,$gen,1);
+		$formfile->show_documents("remisecheque",$remisecheque->ref,$dirchequereceipts,$_SERVER["PHP_SELF"].'?id='.$remisecheque->id,$gen,1);
 	}
 }
 

@@ -2376,10 +2376,11 @@ function yn($yesno, $case=1, $color=0)
 
 /**
  *	\brief      Return a path to class a directory according to an id
- *	\remarks    Examples: 1->"0/0/1/", 15->"0/1/5/"
  *	\param      $num        Id to develop
  *	\param      $level		Level of development (1, 2 or 3 level)
  * 	\param		$alpha		Use alpha ref
+ *	\remarks    Examples: 	'001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
+ *	\remarks    Examples: 	'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
  */
 function get_exdir($num,$level=3,$alpha=0)
 {

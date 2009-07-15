@@ -363,12 +363,12 @@ if ($modulepart)
 	if ($modulepart == 'remisecheque')
 	{
 		$user->getrights('banque');
-		if ($user->rights->banque || eregi('^specimen',$original_file))
+		if ($user->rights->banque->lire || eregi('^specimen',$original_file))
 		{
 			$accessallowed=1;
 		}
 
-		$original_file=$conf->comptabilite->dir_output.'/bordereau/'.get_exdir(basename($original_file,".pdf")).$original_file;
+		$original_file=$conf->banque->dir_output.'/bordereau/'.get_exdir(basename($original_file,".pdf"),2,1).$original_file;
 		$sqlprotectagainstexternals = '';
 	}
 

@@ -95,7 +95,7 @@ class BordereauChequeBlochet extends FPDF
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
-		$dir = $_dir . "/".get_exdir($number,2,1)."/".$number;
+		$dir = $_dir . "/".get_exdir($number,2,1).$number;
 
 		if (! is_dir($dir))
 		{
