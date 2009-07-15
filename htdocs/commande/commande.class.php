@@ -567,7 +567,7 @@ class Commande extends CommonObject
 				 */
 				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					$resql = $this->addline(
+					$result = $this->addline(
 					$this->id,
 					$this->lines[$i]->desc,
 					$this->lines[$i]->subprice,
@@ -583,11 +583,12 @@ class Commande extends CommonObject
 					$this->lines[$i]->date_end,
 					$this->lines[$i]->product_type
 					);
-					if ($resql < 0)
+					if ($result < 0)
 					{
-						$this->error=$this->db->error;
+						$this->error=$this->db->lasterror();
 						dol_print_error($this->db);
-						break;
+						$this->db->rollback();
+						return -1;
 					}
 				}
 
@@ -739,7 +740,7 @@ class Commande extends CommonObject
 		// Clean parameters
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
-		if (! $qty) $qty=1;
+		if (! $qty) $qty=0;
 		if (! $info_bits) $info_bits=0;
 		$pu_ht=price2num($pu_ht);
 		$pu_ttc=price2num($pu_ttc);
@@ -818,8 +819,6 @@ class Commande extends CommonObject
 				}
 				else
 				{
-					$this->error=$this->db->error();
-					dol_syslog("Error sql=$sql, error=".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -1;
 				}
@@ -827,6 +826,7 @@ class Commande extends CommonObject
 			else
 			{
 				$this->error=$ligne->error;
+				dol_syslog("Commande::addline error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -1157,7 +1157,7 @@ class Commande extends CommonObject
 				$ligne->date_end         = $this->db->jdate($objp->date_end);
 
 				$this->lignes[$i] = $ligne;		// For backward compatibility
-				$this->lines[$i] = $line;
+				$this->lines[$i] = $ligne;
 				$i++;
 			}
 			$this->db->free($result);
@@ -1731,7 +1731,8 @@ class Commande extends CommonObject
 			// Nettoyage parametres
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
-			if (! $qty) $qty=1;
+			if (! $qty) $qty=0;
+			if (! $info_bits) $info_bits=0;
 			$pu = price2num($pu);
 			$txtva=price2num($txtva);
 
@@ -2397,6 +2398,7 @@ class CommandeLigne
 		global $langs, $conf, $user;
 
 		dol_syslog("CommandeLigne::insert rang=".$this->rang);
+
 		$this->db->begin();
 
 		$rangtouse=$this->rang;
@@ -2457,7 +2459,7 @@ class CommandeLigne
 		else { $sql.='null'; }
 		$sql.= ')';
 
-		dol_syslog("CommandeLigne::insert sql=$sql");
+		dol_syslog("CommandeLigne::insert sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

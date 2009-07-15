@@ -1512,7 +1512,7 @@ class Facture extends CommonObject
 			// Clean parameters
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
-			if (! $qty) $qty=1;
+			if (! $qty) $qty=0;
 			if (! $ventil) $ventil=0;
 			if (! $info_bits) $info_bits=0;
 			$pu_ht=price2num($pu_ht);
@@ -1635,7 +1635,7 @@ class Facture extends CommonObject
 			// Clean parameters
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
-			if (! $qty) $qty=1;
+			if (! $qty) $qty=0;
 			$pu = price2num($pu);
 			$txtva=price2num($txtva);
 
