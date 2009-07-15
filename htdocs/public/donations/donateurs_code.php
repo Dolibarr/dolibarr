@@ -17,15 +17,28 @@
  */
 
 /**
- * 	\version	$Id$
+ *	    \file       htdocs/public/donations/donateurs_code.php
+ *      \ingroup    donation
+ *		\brief      Page to list donators
+ * 		\version	$Id$
  */
 
 require("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT ."/don.class.php");
 
+// Define lang object automatically using browser language
 $langs->setDefaultLang('auto');
 
+// Security check
+if (empty($conf->don->enabled)) accessforbidden('',1,1,1);
+
+
 $langs->load("donations");
+
+
+/*
+ * View
+ */
 
 $sql = "SELECT ".$db->pdate("d.datedon")." as datedon, d.nom, d.prenom, d.amount, d.public, d.societe";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d";

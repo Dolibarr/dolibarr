@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +19,20 @@
  */
 
 /**
-        \file       htdocs/public/members/priv_liste.php
-        \brief      File sample to list members
-        \version    $Id$
-*/
+ *	\file       htdocs/public/members/priv_liste.php
+ *	\ingroup    adherent
+ *  \brief      File sample to list members
+ *  \version    $Id$
+ */
 
 require("../../master.inc.php");
 
+// Define lang object automatically using browser language
 $langs->setDefaultLang('auto');
+
+// Security check
+if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
+
 
 $langs->load("main");
 $langs->load("members");

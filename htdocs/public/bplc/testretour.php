@@ -17,8 +17,19 @@
  */
 
 /**
- * 	\version	$Id$
+ *     	\file       htdocs/public/bplc/testretour.php
+ *		\ingroup    banque
+ *		\brief      Page to test the back link page bplc.php
+ * 		\version	$Id$
  */
+
+require("../../master.inc.php");
+
+// Define lang object automatically using browser language
+$langs->setDefaultLang('auto');
+
+// Security check
+if (empty($conf->banque->enabled)) accessforbidden('',1,1,1);
 
 ?>
 <form action="bplc.php" method="post">

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2009      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +18,22 @@
  */
 
 /**
+ *	\ingroup    banque
  * 	\brief		Gestion du retour du systeme de Cyberpaiement
- * 				Cette page est appellee par le serveur de la BPLC lors de l'utilisation
- * 				au systeme RSTS
+ * 				Cette page est appellee par le serveur de la BPLC lors de
+ * 				l'utilisation au systeme RSTS.
  * 	\version	$Id$
  */
 
-require("../../main.inc.php");
+require("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/public/bplc/retourbplc.class.php");
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
+
+// Define lang object automatically using browser language
+$langs->setDefaultLang('auto');
+
+// Security check
+if (empty($conf->banque->enabled)) accessforbidden('',1,1,1);
 
 
 $retbplc = new Retourbplc($db);
@@ -65,14 +73,14 @@ if($return)
        * Validation de la commande
        *
        */
-      
+
       $don = new Don($db);
 
       $don_id = strstr($retbplc->ref_commande, 0, strlen($retbplc->ref_commande) -2);
 
       // 5 correspond au paiement en ligne voir table llx_c_paiement
 
-      $don->set_paye($don_id, 5); 
+      $don->set_paye($don_id, 5);
 
     }
 

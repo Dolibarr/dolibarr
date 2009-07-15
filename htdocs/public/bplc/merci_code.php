@@ -17,13 +17,26 @@
  */
 
 /**
- * 	\version	$Id$
+ *     	\file       htdocs/public/bplc/merci_code.php
+ *		\ingroup    banque
+ *		\brief      File to offer a way to make a payment by BPLC
+ *		\version    $Id$
  */
+
+require("../../master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/public/bplc/retourbplc.class.php");
+require_once(DOL_DOCUMENT_ROOT."/don.class.php");
+
+// Define lang object automatically using browser language
+$langs->setDefaultLang('auto');
+
+// Security check
+if (empty($conf->banque->enabled)) accessforbidden('',1,1,1);
+
 
 if ($conf->don->onlinepayment)
 {
-
-  require(DOL_DOCUMENT_ROOT."../../cyberpaiement.class.php");
+  require(DOL_DOCUMENT_ROOT."public/bplc/cyberpaiement.class.php");
 
   $cyberp = new Cyberpaiement($conf);
 

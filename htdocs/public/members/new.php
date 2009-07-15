@@ -34,6 +34,9 @@ require_once(DOL_DOCUMENT_ROOT."/html.form.class.php");
 // Define lang object automatically using browser language
 $langs->setDefaultLang('auto');
 
+// Security check
+if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
+
 // Load translation files
 $langs->load("main");
 $langs->load("members");

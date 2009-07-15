@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
- * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
 
 /**
  *	\file       htdocs/public/members/priv_fiche.php
- *	\brief      Fichier de gestion de la popup de selection de date eldy
+ *	\ingroup    adherent
+ * 	\brief      Fichier de gestion de la popup de selection de date eldy
  *	\version    $Id$
  */
 
@@ -29,7 +30,12 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 
+// Define lang object automatically using browser language
 $langs->setDefaultLang('auto');
+
+// Security check
+if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
+
 
 $langs->load("main");
 $langs->load("members");

@@ -18,22 +18,27 @@
  */
 
 /**
-	    \file       htdocs/public/donations/therm.php
-        \ingroup    donation
-		\brief      Screen with thermometer
-		\version    $Id$
-*/
+ *	    \file       htdocs/public/donations/therm.php
+ *      \ingroup    donation
+ *		\brief      Screen with thermometer
+ *		\version    $Id$
+ */
 
 require("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 
+// Define lang object automatically using browser language
 $langs->setDefaultLang('auto');
+
+// Security check
+if (empty($conf->don->enabled)) accessforbidden('',1,1,1);
+
 
 
 /*
-* 	View
-*/
+ * 	View
+ */
 $dontherm = new Don($db);
 
 $intentValue  = $dontherm->sum_donations(1);

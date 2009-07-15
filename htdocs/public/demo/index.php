@@ -20,7 +20,7 @@
 /**
  *     	\file       htdocs/public/demo/index.php
  *		\ingroup    core
- *		\brief      File to access demo
+ *		\brief      Entry page to access demo
  *		\author	    Laurent Destailleur
  *		\version    $Id$
  */
@@ -34,11 +34,8 @@ $langs->load("main");
 $langs->load("other");
 
 // Security check
-if (! empty($conf->global->MAIN_DEMO))
-{
-	accessforbidden('Constant MAIN_DEMO must be defined in Home->Setup->Misc to enable the demo entry page',1,1,1);
-	exit;
-}
+if (empty($conf->global->MAIN_DEMO)) accessforbidden('Constant MAIN_DEMO must be defined in Home->Setup->Misc to enable the demo entry page',1,1,1);
+
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',

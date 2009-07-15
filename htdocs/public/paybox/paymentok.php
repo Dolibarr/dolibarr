@@ -19,7 +19,7 @@
 
 /**
  *     	\file       htdocs/public/paybox/paymentok.php
- *		\ingroup    core
+ *		\ingroup    paybox
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
  *		\version    $Id$
@@ -32,13 +32,15 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 $langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
 $langs->setDefaultLang($langcode);
 
+// Security check
+if (empty($conf->paybox->enabled)) accessforbidden('',1,1,1);
+
 $langs->load("main");
 $langs->load("other");
 $langs->load("paybox");
 $langs->load("dict");
 $langs->load("bills");
 $langs->load("companies");
-
 
 
 
