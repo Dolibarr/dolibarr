@@ -23,7 +23,7 @@
 /**
  *	\file       htdocs/livraison/fiche.php
  *	\ingroup    livraison
- *	\brief      Fiche descriptive d'un bon de livraison
+ *	\brief      Fiche descriptive d'un bon de livraison=reception
  *	\version    $Id$
  */
 
@@ -98,7 +98,7 @@ if ($_POST["action"] == 'add')
 	}
 }
 
-if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->expedition->livraison->valider)
+if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $user->rights->expedition->livraison->valider)
 {
 	$livraison = new Livraison($db);
 	$livraison->fetch($_GET["id"]);
@@ -106,14 +106,18 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->
 	//$livraison->PdfWrite();
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->expedition->livraison->supprimer)
 {
-	if ($user->rights->expedition->livraison->supprimer )
+	$livraison = new Livraison($db);
+	$livraison->fetch($_GET["id"]);
+	$expedition_id = $livraison->expedition_id;
+
+	$db->begin();
+	$result=$livraison->delete();
+
+	if ($result > 0)
 	{
-		$livraison = new Livraison($db);
-		$livraison->fetch($_GET["id"]);
-		$expedition_id = $_GET["expid"];
-		$livraison->delete();
+		$db->commit();
 		if ($conf->expedition_bon->enabled)
 		{
 			Header("Location: ".DOL_URL_ROOT.'/expedition/fiche.php?id='.$expedition_id);
@@ -123,6 +127,10 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 			Header("Location: liste.php");
 		}
 		exit;
+	}
+	else
+	{
+		$db->rollback();
 	}
 }
 
@@ -396,7 +404,7 @@ else
 			if ($_GET["action"] == 'delete')
 			{
 				$expedition_id = $_GET["expid"];
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id.'&amp;expid='.$expedition_id,$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm"),'confirm_delete');
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id.'&amp;expid='.$expedition_id,$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm"),'confirm_delete','','',1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -406,7 +414,7 @@ else
 			 */
 			if ($_GET["action"] == 'valid')
 			{
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm"),'confirm_valid');
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm"),'confirm_valid','','',1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -552,14 +560,14 @@ else
 			{
 				print '<div class="tabsAction">';
 
-				if (! eregi('^(valid|delete)',$_REQUEST["action"]))
-				{
+//				if (! eregi('^(valid|delete)',$_REQUEST["action"]))
+//				{
 					if ($livraison->statut == 0 && $user->rights->expedition->livraison->valider && $num_prod > 0)
 					{
 						print '<a class="butAction" href="fiche.php?id='.$livraison->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 					}
 
-					if ($livraison->brouillon && $user->rights->expedition->livraison->supprimer)
+					if ($user->rights->expedition->livraison->supprimer)
 					{
 						if ($conf->expedition_bon->enabled)
 						{
@@ -570,7 +578,7 @@ else
 							print '<a class="butActionDelete" href="fiche.php?id='.$livraison->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 						}
 					}
-				}
+//				}
 
 				print '</div>';
 			}
@@ -604,14 +612,14 @@ else
 		}
 		else
 		{
-			/* Expedition non trouv�e */
-			print "Expedition inexistante ou acc�s refus�";
+			/* Expedition non trouvee */
+			print "Expedition inexistante ou acces refuse";
 		}
 	}
 	else
 	{
-		/* Expedition non trouv�e */
-		print "Expedition inexistante ou acc�s refus�";
+		/* Expedition non trouvee */
+		print "Expedition inexistante ou acces refuse";
 	}
 }
 

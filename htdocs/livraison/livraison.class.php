@@ -51,6 +51,8 @@ class Livraison extends CommonObject
 	var $origin_id;
 	var $socid;
 
+	var $expedition_id;
+
 	var $date_livraison;
 	var $date_creation;
 	var $date_valid;
