@@ -9,6 +9,8 @@
 drop table llx_facture_stats;
 drop table llx_stock_valorisation;
 drop table llx_entrepot_valorisation;
+drop table llx_groupesociete_remise;
+drop table llx_groupesociete;
 
 update llx_actioncomm set datep = datec where datep is null and datec is not null;
 
