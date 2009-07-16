@@ -37,7 +37,7 @@ create table llx_bank_account
   number         varchar(255),
   cle_rib        varchar(5),
   bic            varchar(11),
-  iban_prefix    varchar(50),                 -- Code IBAN
+  iban_prefix    varchar(34),                 -- 34 according to ISO 13616
   country_iban   varchar(2),
   cle_iban       varchar(2),
   domiciliation  varchar(255),
