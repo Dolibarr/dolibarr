@@ -46,23 +46,19 @@ $result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 $mesg = '';
 
+$id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 $ref=isset($_GET["ref"])?$_GET["ref"]:$_POST["ref"];
 $key=isset($_GET["key"])?$_GET["key"]:$_POST["key"];
 $catMere=isset($_GET["catMere"])?$_GET["catMere"]:$_POST["catMere"];
-$id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $cancel=isset($_GET["cancel"])?$_GET["cancel"]:$_POST["cancel"];
 
-if ($action <> 're-edit')
+$product = new Product($db);
+if ($id || $ref)
 {
-	$product = new Product($db);
-	if ($id) $result = $product->fetch($id);
-	if ($ref) $result = $product->fetch($ref);
-	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
-	if ($_GET["id"])  $result = $product->fetch($_GET["id"]);
+	$result = $product->fetch($id,$ref);
 }
 
-$html = new Form($db);
 
 // Action association d'un sousproduit
 if ($action == 'add_prod' &&
@@ -104,7 +100,7 @@ $cancel <> $langs->trans("Cancel") &&
 // action recherche des produits par mot-cle et/ou par categorie
 if($action == 'search' )
 {
-	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.price';
+	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.price, p.fk_product_type as type';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
 	$sql.= " WHERE p.entity = ".$conf->entity;
@@ -117,7 +113,7 @@ if($action == 'search' )
 	{
 		$sql.= " AND cp.fk_categorie ='".addslashes($catMere)."'";
 	}
-	$sql.= " ORDER BY p.ref ASC ";
+	$sql.= " ORDER BY p.ref ASC";
 	// $sql.= $db->plimit($limit + 1 ,$offset);
 
 	$resql = $db->query($sql) ;
@@ -134,6 +130,8 @@ if ($cancel == $langs->trans("Cancel"))
 /*
  * View
  */
+
+$html = new Form($db);
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
 $html = new Form($db);
@@ -205,7 +203,6 @@ if ($id || $ref)
 
 			print "</table>\n";
 
-			print "</div>\n";
 		}
 	}
 
@@ -240,13 +237,20 @@ if ($id || $ref)
 		// Libelle
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 		print '</tr>';
+
 		// Nombre de sousproduits associes
 		$product->get_sousproduits_arbo ();
 		print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
 		print '</tr>';
-		print '<tr><td colspan="2"><b>'.$langs->trans("ProductToAddSearch").'</b>';
-		print '<table class="noborder">';
-		print '<tr><td><form action="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?id='.$id.'" method="post">';
+
+		print '</table>';
+
+		print '<br>';
+
+		print '<form action="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?id='.$id.'" method="post">';
+		print '<table class="nobordernopadding">';
+		print '<tr><td><b>'.$langs->trans("ProductToAddSearch").'</b></td></tr>';
+		print '<tr><td>';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print $langs->trans("KeywordFilter");
 		print '</td><td><input type="text" name="key" value="'.$key.'">';
@@ -261,24 +265,31 @@ if ($id || $ref)
 		}
 
 		print '<tr><td colspan="2"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+		print '</table>';
 		print '</form>';
-		print '<tr><td colspan="2"><br>';
 
 		if($action == 'search')
 		{
-			print '<table class="border">';
-			print '<tr>';
-			print '<td><b>'.$langs->trans("Ref").'</b></td><td><b>'.$langs->trans("Label").'</b></td><td><b>'.$langs->trans("AddDel").'</b></td><td><b>'.$langs->trans("Quantity").'</b></td>';
+			print '<br>';
 			print '<form action="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?id='.$id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="add_prod"';
 			print '<input type="hidden" name="id" value="'.$id.'"';
+			print '<table class="nobordernopadding" width="100%">';
+			print '<tr class="liste_titre">';
+			print '<td class="liste_titre">'.$langs->trans("Ref").'</td>';
+			print '<td class="liste_titre">'.$langs->trans("Label").'</td>';
+			print '<td class="liste_titre" align="center">'.$langs->trans("AddDel").'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans("Quantity").'</td>';
+			print '</tr>';
 			if ($resql)
 			{
 				$num = $db->num_rows($resql);
 				$i=0;
-				if($num == 0)
-				print '<tr><td colspan="4">'.$langs->trans("NoMatchFound").'</td></tr>';
+				$var=true;
+
+				if($num == 0) print '<tr><td colspan="4">'.$langs->trans("NoMatchFound").'</td></tr>';
+
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
@@ -293,8 +304,10 @@ if ($id || $ref)
 							// associations sousproduits
 							$prods_arbo = $prod_arbo->get_arbo_each_prod();
 							if(sizeof($prods_arbo) > 0) {
-								foreach($prods_arbo as $key => $value) {
-									if ($value[1]==$id) {
+								foreach($prods_arbo as $key => $value)
+								{
+									if ($value[1]==$id)
+									{
 										$is_pere=1;
 									}
 								}
@@ -304,8 +317,14 @@ if ($id || $ref)
 								continue;
 							}
 						}
-						print "\n<tr>";
-						print '<td>'.$objp->ref.'</td>';
+						$var=!$var;
+						print "\n<tr ".$bc[$var].">";
+						$productstatic->id=$objp->rowid;
+						$productstatic->ref=$objp->ref;
+						$productstatic->libelle=$objp->label;
+						$productstatic->type=$objp->type;
+
+						print '<td>'.$productstatic->getNomUrl(1,'',24).'</td>';
 						print '<td>'.$objp->label.'</td>';
 						if($product->is_sousproduit($id, $objp->rowid))
 						{
@@ -319,7 +338,7 @@ if ($id || $ref)
 						}
 						print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'">';
 						print '<input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';
-						print '<td align="center"><input type="text" size="3" name="prod_qty_'.$i.'" value="'.$qty.'"></td>';
+						print '<td align="right"><input type="text" size="3" name="prod_qty_'.$i.'" value="'.$qty.'"></td>';
 						print '</td>';
 						print '</tr>';
 					}
@@ -332,16 +351,15 @@ if ($id || $ref)
 				dol_print_error($db);
 			}
 			print '<input type="hidden" name="max_prod" value="'.$i.'">';
-			if($num > 0)
-			print '<tr><td colspan="2"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td></tr>';
+			if($num > 0) print '<tr><td colspan="4" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'"></td></tr>';
 			print '</table>';
+			print '</form>';
 		}
 
-		print '</form></td></tr>';
-		print '</td></tr>';
-		print '</table>';
 	}
 }
+
+print "</div>\n";
 
 
 /* ************************************************************************** */
@@ -356,7 +374,7 @@ if ($action == '')
 {
 	if ($user->rights->produit->creer || $user->rights->service->creer)
 	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?action=edit&amp;id='.$id.'">'.$langs->trans("EditAssociate").'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("EditAssociate").'</a>';
 	}
 }
 
