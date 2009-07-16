@@ -68,7 +68,7 @@ function llxHeader() { }
 
 // Define mime type
 $type = 'application/octet-stream';
-if (! empty($_GET["type"])) $type=urldecode($_GET["type"]);
+if (! empty($_GET["type"])) $type=$_GET["type"];
 else $type=dol_mimetype($original_file);
 
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
@@ -93,9 +93,9 @@ if (eregi('\.vcs$',$original_file))  	{ $attachment = true; }
 if (eregi('\.ics$',$original_file))  	{ $attachment = true; }
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 
-
 // Suppression de la chaine de caractere ../ dans $original_file
-$original_file = str_replace("../","/", "$original_file");
+$original_file = str_replace("../","/", $original_file);
+
 // find the subdirectory name as the reference
 $refname=basename(dirname($original_file)."/");
 

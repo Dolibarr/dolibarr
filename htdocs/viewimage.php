@@ -26,9 +26,11 @@
 		\version    $Id$
 */
 
-$original_file = isset($_GET["file"])?urldecode($_GET["file"]):'';
-$modulepart = urldecode($_GET["modulepart"]);
-$type = isset($_GET["type"]) ? urldecode($_GET["type"]) : '';
+// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+$action = isset($_GET["action"])?$_GET["action"]:'';
+$original_file = isset($_GET["file"])?$_GET["file"]:'';
+$modulepart = isset($_GET["modulepart"])?$_GET["modulepart"]:'';
+$urlsource = isset($_GET["urlsource"])?$_GET["urlsource"]:'';
 
 // Define if we need master or master+main
 $needmasteronly=false;
@@ -59,11 +61,13 @@ else
 function llxHeader() { }
 
 
+// Define mime type
+$type = 'application/octet-stream';
+if (! empty($_GET["type"])) $type=$_GET["type"];
+else $type=dol_mimetype($original_file);
 
-// Protection, on interdit les .. dans les chemins
-$original_file = eregi_replace('\.\.','',$original_file);
-
-
+// Suppression de la chaine de caractere ../ dans $original_file
+$original_file = str_replace("../","/", $original_file);
 
 $accessallowed=0;
 if ($modulepart)

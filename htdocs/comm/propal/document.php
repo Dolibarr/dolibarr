@@ -22,7 +22,7 @@
 /**
         \file       htdocs/comm/propal/document.php
         \ingroup    propale
-        \brief      Page de gestion des documents attachées à une proposition commerciale
+        \brief      Page de gestion des documents attachï¿½es ï¿½ une proposition commerciale
         \version    $Id$
 */
 
@@ -84,7 +84,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
             }
             else
             {
-                // Echec transfert (fichier dépassant la limite ?)
+                // Echec transfert (fichier dï¿½passant la limite ?)
                 $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
                 // print_r($_FILES);
             }
@@ -101,7 +101,7 @@ if ($action=='delete')
 	if ($propal->fetch($propalid))
     {
         $upload_dir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
-    	$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
+    	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
     	dol_delete_file($file);
         $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
     }
@@ -142,7 +142,7 @@ if ($propalid > 0)
 		// Ref
         print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref.'</td></tr>';
 
-        // Société
+        // Sociï¿½tï¿½
         print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
 
         print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';

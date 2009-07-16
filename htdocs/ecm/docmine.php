@@ -130,7 +130,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 // Remove file
 if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
 {
-  $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
+  $file = $upload_dir . "/" . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
   $result=dol_delete_file($file);
 
   $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -341,7 +341,7 @@ if ($mesg) { print '<br>'.$mesg.'<br>'; }
 // Confirm remove file
 if ($_GET['action'] == 'delete')
 {
-	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 	if ($ret == 'html') print '<br>';
 }
 

@@ -132,27 +132,6 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	}
 }
 
-// Remove file
-if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
-{
-	$result=$ecmdir->fetch($_REQUEST["section"]);
-	if (! $result > 0)
-	{
-		dol_print_error($db,$ecmdir->error);
-		exit;
-	}
-	$relativepath=$ecmdir->getRelativePath();
-	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-	$file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
-
-	$result=dol_delete_file($file);
-
-	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
-
-	$result=$ecmdir->changeNbOfFiles('-');
-	$action='file_manager';
-}
-
 // Action ajout d'un produit ou service
 if ($_POST["action"] == 'add' && $user->rights->ecm->setup)
 {
@@ -173,8 +152,29 @@ if ($_POST["action"] == 'add' && $user->rights->ecm->setup)
 	}
 }
 
-// Suppression fichier
-if ($_POST['action'] == 'confirm_deletesection' && $_POST['confirm'] == 'yes')
+// Remove file
+if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
+{
+	$result=$ecmdir->fetch($_REQUEST["section"]);
+	if (! $result > 0)
+	{
+		dol_print_error($db,$ecmdir->error);
+		exit;
+	}
+	$relativepath=$ecmdir->getRelativePath();
+	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+	$file = $upload_dir . "/" . $_REQUEST['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+
+	$result=dol_delete_file($file);
+
+	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+
+	$result=$ecmdir->changeNbOfFiles('-');
+	$action='file_manager';
+}
+
+// Remove directory
+if ($_REQUEST['action'] == 'confirm_deletesection' && $_REQUEST['confirm'] == 'yes')
 {
 	$result=$ecmdir->delete($user);
 	$mesg = '<div class="ok">'.$langs->trans("ECMSectionWasRemoved", $ecmdir->label).'</div>';
@@ -221,7 +221,7 @@ print "<br>\n";
 // Confirm remove file
 if ($_GET['action'] == 'delete')
 {
-	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 	if ($ret == 'html') print '<br>';
 }
 
@@ -246,7 +246,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	// Confirmation de la suppression d'une ligne categorie
 	if ($_GET['action'] == 'delete_section')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urldecode($_GET["section"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urlencode($_GET["section"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
 		if ($ret == 'html') print '<br>';
 	}
 

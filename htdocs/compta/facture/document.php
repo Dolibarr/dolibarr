@@ -22,7 +22,7 @@
 /**
  \file       htdocs/compta/facture/document.php
  \ingroup    facture
- \brief      Page de gestion des documents attachées à une facture
+ \brief      Page de gestion des documents attachï¿½es ï¿½ une facture
  \version    $Id$
  */
 
@@ -85,7 +85,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 			}
 			else
 			{
-		  		// Echec transfert (fichier dépassant la limite ?)
+		  		// Echec transfert (fichier dï¿½passant la limite ?)
 		  		$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 		  		// print_r($_FILES);
 			}
@@ -102,7 +102,7 @@ if ($action=='delete')
 	if ($facture->fetch($facid))
 	{
 		$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($facture->ref);
-		$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
+		$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		dol_delete_file($file);
 		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
 	}
@@ -143,7 +143,7 @@ if ($facid > 0)
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$facture->ref.'</td></tr>';
 
-		// Société
+		// Sociï¿½tï¿½
 		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';

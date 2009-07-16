@@ -98,7 +98,7 @@ if ($action=='delete')
     {
         $upload_dir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($facture->id,2).$facture->id;
 
-        $file = $upload_dir . '/' . urldecode($_GET['urlfile']);
+        $file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
     	dol_delete_file($file);
         $mesg = '<div class="ok">'.$langs->trans('FileWasRemoved').'</div>';
     }

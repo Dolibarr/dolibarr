@@ -1757,7 +1757,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	// les noms de fichiers.
 	if (eregi('^\.',$src_file) || eregi('\.\.',$src_file) || eregi('[<>|]',$src_file))
 	{
-		dol_syslog("Refused to deliver file ".$src_file);
+		dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
 		return -1;
 	}
 
@@ -1766,14 +1766,18 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	// les noms de fichiers.
 	if (eregi('^\.',$dest_file) || eregi('\.\.',$dest_file) || eregi('[<>|]',$dest_file))
 	{
-		dol_syslog("Refused to deliver file ".$dest_file);
+		dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
 		return -1;
 	}
+
+	// The file functions are ISO and data are stored in UTF8 in memory.
+	$src_file_iso=utf8_decode($src_file);
+	$file_name_iso=utf8_decode($file_name);
 
 	// Check if destination file already exists
 	if (! $allowoverwrite)
 	{
-		if (file_exists($file_name))
+		if (file_exists($file_name_iso))
 		{
 			dol_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." already exists", LOG_WARNING);
 			return -2;
@@ -1781,7 +1785,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	}
 
 	// Move file
-	$return=move_uploaded_file($src_file, $file_name);
+	$return=move_uploaded_file($src_file_iso, $file_name_iso);
 	if ($return)
 	{
 		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name, octdec($conf->global->MAIN_UMASK));

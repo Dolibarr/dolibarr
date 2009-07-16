@@ -70,7 +70,7 @@ $modulepart='fichinter';
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     /*
-     * Creation répertoire si n'existe pas
+     * Creation rï¿½pertoire si n'existe pas
      */
     if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
@@ -83,7 +83,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
         }
         else
         {
-            // Echec transfert (fichier dépassant la limite ?)
+            // Echec transfert (fichier dï¿½passant la limite ?)
             $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
             // print_r($_FILES);
         }
@@ -114,7 +114,7 @@ if ($object->id)
 
 	if ($_GET["action"] == 'delete')
 	{
-		$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
+		$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		$result=dol_delete_file($file);
 		//if ($result >= 0) $mesg=$langs->trans("FileWasRemoced");
 	}

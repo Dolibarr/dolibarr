@@ -461,7 +461,7 @@ class FormFile
 				if ($forcedownload) print '&type=application/binary';
 				print '&file='.urlencode($relativepath.$file['name']).'">';
 				print img_mime($file['name']).' ';
-				print dol_trunc($file['name'],$maxlength,'middle');
+				print htmlentities(dol_trunc($file['name'],$maxlength,'middle'));
 				print '</a>';
 				print "</td>\n";
 				print '<td align="right">'.dol_print_size($file['size']).'</td>';
@@ -469,7 +469,7 @@ class FormFile
 				print '<td align="right">';
 				//print '&nbsp;';
 				if ($permtodelete)
-				print '<a href="'.$url.'?id='.$object->id.'&amp;section='.$_REQUEST["section"].'&amp;action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
 				else
 				print '&nbsp;';
 				print "</td></tr>\n";

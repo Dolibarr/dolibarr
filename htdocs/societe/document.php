@@ -100,7 +100,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 // Suppression fichier
 if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
 {
-	$file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
+	$file = $upload_dir . "/" . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	dol_delete_file($file);
 	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
 }
