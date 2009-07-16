@@ -54,9 +54,11 @@ $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $cancel=isset($_GET["cancel"])?$_GET["cancel"]:$_POST["cancel"];
 
 $product = new Product($db);
+$productid=0;
 if ($id || $ref)
 {
 	$result = $product->fetch($id,$ref);
+	$productid=$product->id;
 }
 
 
@@ -131,12 +133,12 @@ if ($cancel == $langs->trans("Cancel"))
  * View
  */
 
+$productstatic = new Product($db);
 $html = new Form($db);
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
 $html = new Form($db);
 
-$productstatic = new Product($db);
 
 if ($mesg) {
 	print '<br><div class="error">'.$mesg.'</div><br>';
@@ -374,7 +376,7 @@ if ($action == '')
 {
 	if ($user->rights->produit->creer || $user->rights->service->creer)
 	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("EditAssociate").'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?action=edit&amp;id='.$productid.'">'.$langs->trans("EditAssociate").'</a>';
 	}
 }
 
