@@ -193,6 +193,7 @@ else
 	$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 }
 
+//print $sql;
 dol_syslog("contact/index.php sql=".$sql);
 $result = $db->query($sql);
 if ($result)
@@ -200,11 +201,14 @@ if ($result)
 	$contactstatic=new Contact($db);
 
     $begin=$_GET["begin"];
+    $param ='&begin='.urlencode($begin).'&view='.urlencode($_GET["view"]).'&userid='.urlencode($_GET["userid"]).'&contactname='.urlencode($sall);
+    $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_nom='.urlencode($search_nom).'&search_prenom='.urlencode($search_prenom).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
+	if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
 
-    $num = $db->num_rows($result);
+	$num = $db->num_rows($result);
     $i = 0;
 
-    print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num,$nbtotalofrecords);
+    print_barre_liste($titre ,$page, "index.php", $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
 
     print '<form method="post" action="index.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -218,9 +222,6 @@ if ($result)
     }
 
     print '<table class="liste" width="100%">';
-
-	$param="&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email";
-	if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=$search_priv";
 
     // Ligne des titres
     print '<tr class="liste_titre">';
