@@ -681,7 +681,7 @@ class Form
 		if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
 
 		// On recherche les utilisateurs
-		$sql = "SELECT u.rowid, u.name, u.firstname FROM";
+		$sql = "SELECT u.rowid, u.name, u.firstname, u.login FROM";
 		$sql.= " ".MAIN_DB_PREFIX ."user as u";
 		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
@@ -702,12 +702,15 @@ class Form
 
 					if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
 					{
-						print '<option value="'.$obj->rowid.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
+						print '<option value="'.$obj->rowid.'" selected="true">';
 					}
 					else
 					{
-						print '<option value="'.$obj->rowid.'">'.$obj->name.' '.$obj->firstname.'</option>';
+						print '<option value="'.$obj->rowid.'">';
 					}
+					print $obj->name.($obj->name && $obj->firstname?' ':'').$obj->firstname;
+					print ' ('.$obj->login.')';
+					print '</option>';
 					$i++;
 				}
 			}
@@ -1777,6 +1780,46 @@ class Form
 			{
 				$this->load_cache_types_paiements();
 				print $this->cache_types_paiements[$selected]['label'];
+			} else {
+				print "&nbsp;";
+			}
+		}
+	}
+
+
+	/**
+	 *    \brief      Affiche formulaire de selection d'un utilisateur
+	 *    \param      page        Page
+	 *    \param      selected    Id of user preselected
+	 *    \param      htmlname    Name of input html field
+	 */
+	function form_users($page, $selected='', $htmlname='userid')
+	{
+		global $langs;
+
+		if ($htmlname != "none")
+		{
+			print '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
+			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<tr><td>';
+			print $this->select_users($selected,$htmlname,1,0,0);
+			print '</td>';
+			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '</tr></table></form>';
+		}
+		else
+		{
+			if ($selected)
+			{
+				require_once(DOL_DOCUMENT_ROOT ."/user.class.php");
+				//$this->load_cache_contacts();
+				//print $this->cache_contacts[$selected];
+				$theuser=new User($this->db);
+				$theuser->id=$selected;
+				$theuser->fetch();
+				print $theuser->getNomUrl(1);
 			} else {
 				print "&nbsp;";
 			}

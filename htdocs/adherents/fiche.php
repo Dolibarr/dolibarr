@@ -92,6 +92,21 @@ if ($rowid)
  * 	Actions
  */
 
+if ($_POST['action'] == 'setuserid')
+{
+	$result=$adh->setUserId($_POST["userid"]);
+	if ($result < 0) dol_print_error($adh->db,$adh->error);
+	$_POST['action']='';
+	$action='';
+}
+if ($_POST['action'] == 'setsocid')
+{
+	$result=$adh->setThirdPartyId($_POST["socid"]);
+	if ($result < 0) dol_print_error($adh->db,$adh->error);
+	$_POST['action']='';
+	$action='';
+}
+
 // Create user from a member
 if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
 {
@@ -712,14 +727,27 @@ if ($action == 'edit')
 	// Third party Dolibarr
     if ($conf->societe->enabled)
     {
-	    print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td class="valeur">';
-		print $html->select_societes($adh->fk_soc,'socid','',1);
+    	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td class="valeur">';
+    	if ($adh->fk_soc)
+	    {
+	    	$company=new Societe($db);
+	    	$result=$company->fetch($adh->fk_soc);
+	    	print $company->getNomUrl(1);
+	    }
+	    else
+	    {
+	    	print $langs->trans("NoThirdPartyAssociatedToMember");
+	    }
 	    print '</td></tr>';
     }
 
     // Login Dolibarr
 	print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td class="valeur">';
-	print $html->select_users($adh->user_id,'userid',1);
+	if ($adh->user_id)
+	{
+		print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'none');
+	}
+	else print $langs->trans("NoDolibarrAccess");
 	print '</td></tr>';
 
 	print '<tr><td colspan="3" align="center">';
@@ -988,7 +1016,6 @@ if ($rowid && $action != 'edit')
     $rowspan=14+sizeof($adho->attribute_label);
     if ($conf->societe->enabled) $rowspan++;
 
-    print '<form action="fiche.php" method="post" enctype="multipart/form-data">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="border" width="100%">';
 
@@ -1070,34 +1097,66 @@ if ($rowid && $action != 'edit')
 	// Third party Dolibarr
     if ($conf->societe->enabled)
     {
-	    print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td class="valeur">';
-	    if ($adh->fk_soc)
-	    {
-	    	$company=new Societe($db);
-	    	$result=$company->fetch($adh->fk_soc);
-	    	print $company->getNomUrl(1);
-	    }
-	    else
-	    {
-	    	print $langs->trans("NoThirdPartyAssociatedToMember");
-	    }
+	    print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+	    print $langs->trans("LinkedToDolibarrThirdParty");
+	    print '</td>';
+		if ($_GET['action'] != 'editthirdparty' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$adh->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
+		print '</tr></table>';
+	    print '</td><td class="valeur">';
+		if ($_GET['action'] == 'editthirdparty')
+		{
+			$page=$_SERVER['PHP_SELF'].'?rowid='.$adh->id;
+			$htmlname='socid';
+			print '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
+			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<tr><td>';
+			print $html->select_societes($adh->fk_soc,'socid','',1);
+			print '</td>';
+			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '</tr></table></form>';
+		}
+		else
+		{
+			if ($adh->fk_soc)
+		    {
+		    	$company=new Societe($db);
+		    	$result=$company->fetch($adh->fk_soc);
+		    	print $company->getNomUrl(1);
+		    }
+		    else
+		    {
+		    	print $langs->trans("NoThirdPartyAssociatedToMember");
+		    }
+		}
 	    print '</td></tr>';
     }
 
 	// Login Dolibarr
-	print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td class="valeur">';
-	if ($adh->user_id)
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans("LinkedToDolibarrUser");
+	print '</td>';
+	if ($_GET['action'] != 'editlogin' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$adh->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td class="valeur">';
+	if ($_GET['action'] == 'editlogin')
 	{
-		$dolibarr_user=new User($db);
-		$dolibarr_user->id=$adh->user_id;
-		$result=$dolibarr_user->fetch();
-		print $dolibarr_user->getLoginUrl(1);
+		print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'userid');
 	}
-	else print $langs->trans("NoDolibarrAccess");
+	else
+	{
+		if ($adh->user_id)
+		{
+			print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'none');
+		}
+		else print $langs->trans("NoDolibarrAccess");
+	}
 	print '</td></tr>';
 
     print "</table>\n";
-    print '</form>';
 
     print "</div>\n";
 

@@ -804,6 +804,71 @@ class Adherent extends CommonObject
 
 
 	/**
+	 *    \brief     Set link to a user
+	 *    \param     userid           	Id of user to link to
+	 *    \return    int				1=OK, -1=KO
+	 */
+	function setUserId($userid)
+	{
+		global $conf, $langs;
+
+		$this->db->begin();
+
+		// If user is linked to this member, remove old link to this member
+		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->id;
+		dol_syslog("Adherent::setUserId sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -1; }
+
+		// Set link to user
+		if ($userid > 0)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id;
+			$sql.= " WHERE rowid = ".$userid;
+			dol_syslog("Adherent::setUserId sql=".$sql, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -2; }
+		}
+
+		$this->db->commit();
+
+		return 1;
+	}
+
+
+	/**
+	 *    \brief     Set link to a third party
+	 *    \param     userid           	Id of user to link to
+	 *    \return    int				1=OK, -1=KO
+	 */
+	function setThirdPartyId($thirdpartyid)
+	{
+		global $conf, $langs;
+
+		$this->db->begin();
+
+		// Update link to third party
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = ".($thirdpartyid>0 ? $thirdpartyid : 'null');
+		$sql.= " WHERE rowid = ".$this->id;
+
+		dol_syslog("Adherent::setThirdPartyId sql=".$sql);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dol_syslog("Adherent::setThirdPartyId ".$this->error, LOG_ERR);
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+
+	/**
 	 *		\brief      Fonction qui recupere l'adherent depuis son login
 	 *		\param	    login		login de l'adherent
 	 */
