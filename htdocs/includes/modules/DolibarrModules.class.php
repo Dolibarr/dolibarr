@@ -894,6 +894,7 @@ class DolibarrModules
 							$this->error=$this->db->lasterror();
 							dol_syslog("DolibarrModules::insert_permissions error ".$this->error, LOG_ERR);
 							$err++;
+							break;
 						}
 					}
 				}

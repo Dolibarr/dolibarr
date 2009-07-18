@@ -121,50 +121,42 @@ class modAdherent extends DolibarrModules
 
         $r++;
         $this->rights[$r][0] = 71;
-        $this->rights[$r][1] = 'Lire les fiche adherents';
+        $this->rights[$r][1] = 'Read members\' card';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;
         $this->rights[$r][4] = 'lire';
 
         $r++;
         $this->rights[$r][0] = 72;
-        $this->rights[$r][1] = 'Creer/modifier tous les adherents';
+        $this->rights[$r][1] = 'Create/modify members (need also user module permissions if member linked to a user)';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'creer';
 
         $r++;
-        $this->rights[$r][0] = 73;
-        $this->rights[$r][1] = 'Creer/modifier ses propres infos adherents';
-        $this->rights[$r][2] = 'w';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'self';
-        $this->rights[$r][5] = 'creer';
-
-        $r++;
         $this->rights[$r][0] = 74;
-        $this->rights[$r][1] = 'Supprimer les adherents';
+        $this->rights[$r][1] = 'Remove members';
         $this->rights[$r][2] = 'd';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'supprimer';
 
         $r++;
         $this->rights[$r][0] = 76;
-        $this->rights[$r][1] = 'Exporter les adherents';
+        $this->rights[$r][1] = 'Export members';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'export';
 
         $r++;
         $this->rights[$r][0] = 75;
-        $this->rights[$r][1] = 'Configurer les types et attributs des adherents';
+        $this->rights[$r][1] = 'Setup types and attributes of members';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'configurer';
 
         $r++;
         $this->rights[$r][0] = 78;
-        $this->rights[$r][1] = 'Lire les cotisations';
+        $this->rights[$r][1] = 'Read subscriptions';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;
         $this->rights[$r][4] = 'cotisation';
@@ -172,7 +164,7 @@ class modAdherent extends DolibarrModules
 
         $r++;
         $this->rights[$r][0] = 79;
-        $this->rights[$r][1] = 'Creer/modifier/supprimer les cotisations';
+        $this->rights[$r][1] = 'Create/modify/remove subscriptions';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'cotisation';
