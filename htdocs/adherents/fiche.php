@@ -868,7 +868,8 @@ if ($action == 'create')
         print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
     }
 
-	// Third party Dolibarr
+/*
+ 	// Third party Dolibarr
     if ($conf->societe->enabled)
     {
 	    print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td class="valeur">';
@@ -880,7 +881,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td class="valeur">';
 	print $html->select_users($adh->user_id,'userid',1);
 	print '</td></tr>';
-
+*/
     print "</table>\n";
     print '<br>';
 
