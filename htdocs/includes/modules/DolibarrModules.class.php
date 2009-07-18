@@ -891,7 +891,8 @@ class DolibarrModules
 					if (! $resql)
 					{
 						if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS") {
-							dol_syslog("DolibarrModules::insert_permissions error ".$this->db->lasterror(), LOG_ERR);
+							$this->error=$this->db->lasterror();
+							dol_syslog("DolibarrModules::insert_permissions error ".$this->error, LOG_ERR);
 							$err++;
 						}
 					}
@@ -901,7 +902,7 @@ class DolibarrModules
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("DolibarrModules::insert_boxes ".$this->error, LOG_ERR);
+			dol_syslog("DolibarrModules::insert_permissions ".$this->error, LOG_ERR);
 			$err++;
 		}
 
