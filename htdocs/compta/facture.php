@@ -2267,7 +2267,7 @@ else
 			}
 			print '</td></tr>';
 
-			// Discount
+			// Discounts
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
@@ -2343,14 +2343,17 @@ else
 			print '</td>';
 
 
-			// Payments
+			/*
+			 * List of payments
+			 */
+
 			$nbrows=8;
 			if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
 			if ($conf->projet->enabled) $nbrows++;
 
 			print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="nobordernopadding" width="100%">';
 
 			// List of payments already done
 			print '<tr class="liste_titre">';
@@ -2361,10 +2364,6 @@ else
 			print '</tr>';
 
 			$var=true;
-
-			/*
-			 * List of payments
-			 */
 
 			// Payments already done (from deposits)
 			/*

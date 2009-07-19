@@ -645,8 +645,6 @@ else
 				if ($ret == 'html') print '<br>';
 			}
 
-			print '<table width="100%" class="notopnoleftnoright">';
-			print '<tr><td width="50%" valign="top" class="notopnoleft">';
 
 			/*
 			 *   Facture
@@ -654,84 +652,70 @@ else
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
+			print '<tr><td nowrap="nowrap" width="20%">'.$langs->trans("Ref").'</td><td colspan="4">';
 			print $html->showrefnav($fac,'facid','',1,'rowid','ref',$morehtmlref);
 			print '</td>';
 			print "</tr>\n";
 
 			// Ref supplier
-			print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$fac->ref_supplier.'</td>';
+			print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="4">'.$fac->ref_supplier.'</td>';
 			print "</tr>\n";
 
-			// Societe
-			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$societe->getNomUrl(1).'</td>';
-			print '<td align="right"><a href="index.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a></td>';
-			print '</tr>';
+			// Third party
+			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="4">'.$societe->getNomUrl(1).' (<a href="index.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a>)</td></tr>';
 
+			// Type
+			print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';
+			print $fac->getLibType();
+			if ($fac->type == 1)
+			{
+				$facreplaced=new FactureFournisseur($db);
+				$facreplaced->fetch($fac->fk_facture_source);
+				print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
+			}
+			if ($fac->type == 2)
+			{
+				$facusing=new FactureFournisseur($db);
+				$facusing->fetch($fac->fk_facture_source);
+				print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNomUrl(1)).')';
+			}
+
+			$facidavoir=$fac->getListIdAvoirFromInvoice();
+			if (sizeof($facidavoir) > 0)
+			{
+				print ' ('.$langs->transnoentities("InvoiceHasAvoir");
+				$i=0;
+				foreach($facidavoir as $id)
+				{
+					if ($i==0) print ' ';
+					else print ',';
+					$facavoir=new FactureFournisseur($db);
+					$facavoir->fetch($id);
+					print $facavoir->getNomUrl(1);
+				}
+				print ')';
+			}
+			if ($facidnext > 0)
+			{
+				$facthatreplace=new FactureFournisseur($db);
+				$facthatreplace->fetch($facidnext);
+				print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
+			}
+			print '</td></tr>';
+
+
+			// Label
 			print '<tr><td>'.$langs->trans('Label').'</td><td colspan="3">';
 			print $fac->libelle;
 			print '</td>';
-			print '</tr>';
-
-			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3" nowrap="nowrap">';
-			print dol_print_date($fac->datep,'daytext').'</td></tr>';
-
-			print '<tr>';
-			print '<td>'.$langs->trans('DateEcheance').'</td><td colspan="3">';
-			print dol_print_date($fac->date_echeance,'daytext');
-			if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
-			print '</td></tr>';
-
-			// Status
-			$alreadypayed=$fac->getSommePaiement();
-			print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$fac->getLibStatut(4,$alreadypayed).'</td></tr>';
-
-			print '<tr><td>'.$langs->trans('AmountHT').'</td><td><b>'.price($fac->total_ht).'</b></td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($fac->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($fac->total_ttc).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-
-			// Project
-			if ($conf->projet->enabled)
-			{
-				$langs->load('projects');
-				print '<tr>';
-				print '<td>';
-
-				print '<table class="nobordernopadding" width="100%"><tr><td>';
-				print $langs->trans('Project');
-				print '</td>';
-				if ($_GET['action'] != 'classer')
-				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;facid='.$fac->id.'">';
-					print img_edit($langs->trans('SetProject'),1);
-					print '</a></td>';
-				}
-				print '</tr></table>';
-
-				print '</td><td colspan="3">';
-				if ($_GET['action'] == 'classer')
-				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'projetid');
-				}
-				else
-				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'none');
-				}
-				print '</td>';
-				print '</tr>';
-			}
-
-			print '</table>';
-
-			print '</td><td valign="top" class="notopnoleftnoright">';
-
-
-			print '<table width="100%" class="noborder">';
 
 			/*
 			 * List of payments
 			 */
-			print '<tr><td colspan="2">';
+			$nbrows=7;
+			if ($conf->projet->enabled) $nbrows++;
+
+			print '<td rowspan="'.$nbrows.'" valign="top">';
 			$sql  = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
 			$sql .= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
@@ -745,7 +729,7 @@ else
 			{
 				$num = $db->num_rows($result);
 				$i = 0; $totalpaye = 0;
-				print '<table class="noborder" width="100%">';
+				print '<table class="nobordernopadding" width="100%">';
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans('Payments').'</td>';
 				print '<td>'.$langs->trans('Type').'</td>';
@@ -796,12 +780,59 @@ else
 			{
 				dol_print_error($db);
 			}
+			print '</td>';
+
+
+			print '</tr>';
+
+			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3" nowrap="nowrap">';
+			print dol_print_date($fac->datep,'daytext').'</td></tr>';
+
+			print '<tr>';
+			print '<td>'.$langs->trans('DateEcheance').'</td><td colspan="3">';
+			print dol_print_date($fac->date_echeance,'daytext');
+			if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 			print '</td></tr>';
-			print '</table>';
 
+			// Status
+			$alreadypayed=$fac->getSommePaiement();
+			print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$fac->getLibStatut(4,$alreadypayed).'</td></tr>';
 
+			print '<tr><td>'.$langs->trans('AmountHT').'</td><td><b>'.price($fac->total_ht).'</b></td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($fac->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($fac->total_ttc).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
-			print '</td></tr>';
+			// Project
+			if ($conf->projet->enabled)
+			{
+				$langs->load('projects');
+				print '<tr>';
+				print '<td>';
+
+				print '<table class="nobordernopadding" width="100%"><tr><td>';
+				print $langs->trans('Project');
+				print '</td>';
+				if ($_GET['action'] != 'classer')
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;facid='.$fac->id.'">';
+					print img_edit($langs->trans('SetProject'),1);
+					print '</a></td>';
+				}
+				print '</tr></table>';
+
+				print '</td><td colspan="3">';
+				if ($_GET['action'] == 'classer')
+				{
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'projetid');
+				}
+				else
+				{
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'none');
+				}
+				print '</td>';
+				print '</tr>';
+			}
+
 			print '</table>';
 
 

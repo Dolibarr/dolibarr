@@ -20,11 +20,11 @@
  */
 
 /**
-        \file       htdocs/fourn/facture/document.php
-        \ingroup    facture, fournisseur
-        \brief      Page de gestion des documents attachees a une facture fournisseur
-        \version    $Id$
-*/
+ *       \file       htdocs/fourn/facture/document.php
+ *       \ingroup    facture, fournisseur
+ *       \brief      Page de gestion des documents attachees a une facture fournisseur
+ *       \version    $Id$
+ */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
@@ -66,42 +66,42 @@ if ($_POST['sendit'] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	$facture = new FactureFournisseur($db);
 	if ($facture->fetch($facid))
-    {
-        $upload_dir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($facture->id,2).$facture->id;
+	{
+		$upload_dir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($facture->id,2).$facture->id;
 
-        if (! is_dir($upload_dir)) create_exdir($upload_dir);
+		if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
-        if (is_dir($upload_dir))
-        {
-            if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . '/' . $_FILES['userfile']['name'],0) > 0)
-            {
-                $mesg = '<div class="ok">'.$langs->trans('FileTransferComplete').'</div>';
-                //print_r($_FILES);
-            }
-            else
-            {
-                // Echec transfert (fichier depassant la limite ?)
-                $mesg = '<div class="error">'.$langs->trans('ErrorFileNotUploaded').'</div>';
-                // print_r($_FILES);
-            }
-        }
-    }
+		if (is_dir($upload_dir))
+		{
+			if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . '/' . $_FILES['userfile']['name'],0) > 0)
+			{
+				$mesg = '<div class="ok">'.$langs->trans('FileTransferComplete').'</div>';
+				//print_r($_FILES);
+			}
+			else
+			{
+				// Echec transfert (fichier depassant la limite ?)
+				$mesg = '<div class="error">'.$langs->trans('ErrorFileNotUploaded').'</div>';
+				// print_r($_FILES);
+			}
+		}
+	}
 }
 
 // Delete
 if ($action=='delete')
 {
-   	$facid=$_GET["id"];
+	$facid=$_GET["id"];
 
-   	$facture = new FactureFournisseur($db);
+	$facture = new FactureFournisseur($db);
 	if ($facture->fetch($facid))
-    {
-        $upload_dir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($facture->id,2).$facture->id;
+	{
+		$upload_dir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($facture->id,2).$facture->id;
 
-        $file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-    	dol_delete_file($file);
-        $mesg = '<div class="ok">'.$langs->trans('FileWasRemoved').'</div>';
-    }
+		$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+		dol_delete_file($file);
+		$mesg = '<div class="ok">'.$langs->trans('FileWasRemoved').'</div>';
+	}
 }
 
 
@@ -109,14 +109,16 @@ if ($action=='delete')
  * Affichage
  */
 
+$html = new Form($db);
+
 llxHeader();
 
 if ($facid > 0)
 {
 	$facture = new FactureFournisseur($db);
 	if ($facture->fetch($facid))
-    {
-        $facture->fetch_fournisseur();
+	{
+		$facture->fetch_fournisseur();
 
 		$upload_dir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($facture->id,2).$facture->id;
 
@@ -133,31 +135,33 @@ if ($facid > 0)
 		}
 
 
-        print '<table class="border"width="100%">';
+		print '<table class="border"width="100%">';
 
 		// Ref
-		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">'.$facture->ref.'</td>';
+		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
+		print $html->showrefnav($facture,'facid','',1,'rowid','ref',$morehtmlref);
+		print '</td>';
 		print "</tr>\n";
 
 		// Ref supplier
 		print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$facture->ref_supplier.'</td>';
 		print "</tr>\n";
 
-        // Societe
-        print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$facture->fournisseur->getNomUrl(1).'</td></tr>';
+		// Societe
+		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$facture->fournisseur->getNomUrl(1).'</td></tr>';
 
-        print '<tr><td>'.$langs->trans('NbOfAttachedFiles').'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
+		print '<tr><td>'.$langs->trans('NbOfAttachedFiles').'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 
-        print '<tr><td>'.$langs->trans('TotalSizeOfAttachedFiles').'</td><td colspan="3">'.$totalsize.' '.$langs->trans('bytes').'</td></tr>';
+		print '<tr><td>'.$langs->trans('TotalSizeOfAttachedFiles').'</td><td colspan="3">'.$totalsize.' '.$langs->trans('bytes').'</td></tr>';
 
-        print '</table>';
-        print '</div>';
+		print '</table>';
+		print '</div>';
 
-        if ($mesg) { print $mesg.'<br>'; }
+		if ($mesg) { print $mesg.'<br>'; }
 
 
-        // Affiche formulaire upload
-       	$formfile=new FormFile($db);
+		// Affiche formulaire upload
+		$formfile=new FormFile($db);
 		$formfile->form_attach_new_file(DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$facture->id,'',0,0,$user->rights->fournisseur->facture->creer);
 
 

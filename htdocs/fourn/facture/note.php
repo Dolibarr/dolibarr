@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/fourn/facture/note.php
-        \ingroup    facture
-        \brief      Fiche de notes sur une facture fournisseur
-		\version    $Id$
-*/
+ *      \file       htdocs/fourn/facture/note.php
+ *      \ingroup    facture
+ *      \brief      Fiche de notes sur une facture fournisseur
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
@@ -49,7 +49,7 @@ $fac->fetch($_GET["facid"]);
 if ($_POST["action"] == 'update_public' && $user->rights->facture->creer)
 {
 	$db->begin();
-	
+
 	$res=$fac->update_note_public($_POST["note_public"],$user);
 	if ($res < 0)
 	{
@@ -65,7 +65,7 @@ if ($_POST["action"] == 'update_public' && $user->rights->facture->creer)
 if ($_POST["action"] == 'update' && $user->rights->fournisseur->facture->creer)
 {
 	$db->begin();
-	
+
 	$res=$fac->update_note($_POST["note"],$user);
 	if ($res < 0)
 	{
@@ -80,13 +80,13 @@ if ($_POST["action"] == 'update' && $user->rights->fournisseur->facture->creer)
 
 
 
-/******************************************************************************/
-/* Affichage fiche                                                            */
-/******************************************************************************/
-
-llxHeader();
+/*
+ * View
+ */
 
 $html = new Form($db);
+
+llxHeader();
 
 if ($_GET["facid"])
 {
@@ -100,7 +100,9 @@ if ($_GET["facid"])
     print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">'.$fac->ref.'</td>';
+	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print $html->showrefnav($fac,'facid','',1,'rowid','ref',$morehtmlref);
+	print '</td>';
 	print "</tr>\n";
 
 	// Ref supplier
@@ -148,7 +150,7 @@ if ($_GET["facid"])
 		}
 		print "</td></tr>";
 	}
-	
+
     print "</table>";
 
 

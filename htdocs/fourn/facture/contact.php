@@ -179,7 +179,7 @@ if ($id > 0)
 
 		// Reference du facture
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $facture->ref;
+		print $html->showrefnav($facture,'facid','',1,'rowid','ref',$morehtmlref);
 		print "</td></tr>";
 
         // Ref supplier
