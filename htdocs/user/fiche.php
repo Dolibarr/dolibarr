@@ -846,15 +846,9 @@ else
 			{
 				print '<td width="50%">'.$fuser->login.'</td>';
 			}
+			// Photo
 			print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-			if (file_exists($conf->user->dir_output."/".$fuser->id.".jpg"))
-			{
-				print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
-			}
-			else
-			{
-				print '<img width="100" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
-			}
+			print $html->showphoto('userphoto',$fuser);
 			print '</td>';
 			print '</tr>';
 
@@ -892,7 +886,7 @@ else
 			}
 			print "</tr>\n";
 
-			// Administrateur
+			// Administrator
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
 			print '<td>'.yn($fuser->admin);
 			if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $fuser->admin && ! $fuser->entity)
@@ -1324,18 +1318,13 @@ else
 				print $fuser->login;
 			}
 			print '</td>';
+
+			// Photo
 			print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-			if (file_exists($conf->user->dir_output."/".$fuser->id.".jpg"))
-			{
-				print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
-			}
-			else
-			{
-				print '<img src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
-			}
+			print $html->showphoto('userphoto',$fuser);
 			if ($caneditfield)
 			{
-				print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+				print '<br><br><table class="nobordernopadding"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
 				print '<tr><td>';
 				print '<input type="file" class="flat" name="photo">';
 				print '</td></tr></table>';
@@ -1365,7 +1354,7 @@ else
 			print $text;
 			print "</td></tr>\n";
 
-			// Administrateur
+			// Administrator
 			print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
 			if ($fuser->societe_id > 0)
 			{

@@ -1105,7 +1105,7 @@ function img_delete($alt = "default")
 /**
  *	\brief      Affiche logo help avec curseur "?"
  * 	\param		usehelpcursor
- * 	\param		usealttitle
+ * 	\param		usealttitle		Texte to use as alt title
  * 	\return     string      	Retourne tag img
  */
 function img_help($usehelpcursor=1,$usealttitle=1)
@@ -1119,6 +1119,7 @@ function img_help($usehelpcursor=1,$usealttitle=1)
 		if (is_string($usealttitle)) $s.=' alt="'.$usealttitle.'" title="'.$usealttitle.'"';
 		else $s.=' alt="'.$langs->trans("Info").'" title="'.$langs->trans("Info").'"';
 	}
+	else $s.=' alt=""';
 	$s.='>';
 	return $s;
 }

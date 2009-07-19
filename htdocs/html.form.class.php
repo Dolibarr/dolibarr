@@ -2775,6 +2775,49 @@ class Form
 		return $ret;
 	}
 
+
+	/**
+	 *    	\brief      Return HTML code to output a photo
+	 *    	\param      modulepart		Id to define module concerned
+	 *     	\param      object			Object containing data to retreive file name
+	 * 		\param		width			Width of photo
+	 * 	  	\return     string    		HTML code to output photo
+	 */
+	function showphoto($modulepart,$object,$width=100)
+	{
+		global $conf;
+
+		$ret='';$dir='';$file='';
+
+		if ($modulepart=='userphoto')
+		{
+			$dir=$conf->user->dir_output;
+			$file=$object->id.".jpg";
+		}
+		if ($modulepart=='member')
+		{
+			$dir=$conf->adherent->dir_output;
+			$file=$object->id.".jpg";
+		}
+
+		if ($dir && $file)
+		{
+			if (file_exists($dir."/".$file))
+		    {
+		        $ret.='<img alt="Photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($file).'">';
+		    }
+		    else
+		    {
+		        $ret.='<img alt="No photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+		    }
+		}
+		else
+		{
+			dol_print_error('','Call to showrefnav with wrong parameters');
+		}
+
+		return $ret;
+	}
 }
 
 ?>

@@ -613,7 +613,7 @@ if ($action == 'edit')
 
 	dol_fiche_head($head, 'general', $langs->trans("Member"));
 
-	$rowspan=14;
+	$rowspan=15;
 	$rowspan+=sizeof($adho->attribute_label);
 	if ($conf->societe->enabled) $rowspan++;
 
@@ -643,17 +643,10 @@ if ($action == 'edit')
 
 	// Photo
     print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-    if (file_exists($conf->adherent->dir_output."/".$adh->id.".jpg"))
-    {
-        print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=memberphoto&file='.$adh->id.'.jpg">';
-    }
-    else
-    {
-        print '<img src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
-    }
+	print $html->showphoto('member',$adh);
     if ($caneditfieldmember)
     {
-        print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+        print '<br><br><table class="nobordernopadding"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
         print '<tr><td>';
         print '<input type="file" class="flat" name="photo">';
         print '</td></tr></table>';
@@ -1042,14 +1035,7 @@ if ($rowid && $action != 'edit')
     // Login
     print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td>';
 	print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-    if (file_exists($conf->adherent->dir_output."/".$adh->id.".jpg"))
-    {
-        print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=memberphoto&file='.$adh->id.'.jpg">';
-    }
-    else
-    {
-        print '<img width="100" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
-    }
+	print $html->showphoto('member',$adh);
     print '</td>';
 	print '</tr>';
 

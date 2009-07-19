@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,11 +20,11 @@
  */
 
 /**
-		\file       htdocs/viewimage.php
-		\brief      Wrapper permettant l'affichage de fichiers images Dolibarr
-        \remarks    L'appel est viewimage.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
-		\version    $Id$
-*/
+ *		\file       htdocs/viewimage.php
+ *		\brief      Wrapper permettant l'affichage de fichiers images Dolibarr
+ *      \remarks    L'appel est viewimage.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
+ *		\version    $Id$
+ */
 
 // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 $action = isset($_GET["action"])?$_GET["action"]:'';
@@ -55,6 +55,7 @@ else
 	require("./main.inc.php");
 	// master.inc.php is included in main.inc.php
 }
+require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 
 // C'est un wrapper, donc header vierge
