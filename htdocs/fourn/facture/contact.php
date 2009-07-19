@@ -183,7 +183,7 @@ if ($id > 0)
 		print "</td></tr>";
 
         // Ref supplier
-        print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$fac->ref_supplier.'</td>';
+        print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$facture->ref_supplier.'</td>';
         print "</tr>\n";
 
 		// Third party
