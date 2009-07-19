@@ -2787,17 +2787,19 @@ class Form
 	{
 		global $conf;
 
-		$ret='';$dir='';$file='';
+		$ret='';$dir='';$file='';$email='';
 
 		if ($modulepart=='userphoto')
 		{
 			$dir=$conf->user->dir_output;
 			$file=$object->id.".jpg";
+			$email=$object->email;
 		}
 		if ($modulepart=='member')
 		{
 			$dir=$conf->adherent->dir_output;
 			$file=$object->id.".jpg";
+			$email=$object->email;
 		}
 
 		if ($dir && $file)
@@ -2808,7 +2810,16 @@ class Form
 		    }
 		    else
 		    {
-		        $ret.='<img alt="No photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+		    	if ($conf->gravatar->enabled)
+		    	{
+		    		global $dolibarr_main_url_root;
+		    		$ret.='<!-- Put link to gravatar -->';
+		    		$ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" width="'.$width.'" src="http://www.gravatar.com/avatar/'.md5($email).'?s='.$width.'&d='.urlencode($dolibarr_main_url_root.DOL_URL_ROOT.'/theme/common/nophoto.jpg').'">';
+		    	}
+		    	else
+		    	{
+		        	$ret.='<img alt="No photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+		    	}
 		    }
 		}
 		else

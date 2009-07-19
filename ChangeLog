@@ -25,6 +25,8 @@ For users:
 - New: Add a confirmation on dangerous admin purge feature.
 - New: Add navigation on donation sheets.
 - New: Added estimated value for stocks.
+- New: Added module Gravatar to found photo of users or members
+       from their email on gravatar.com.
 - Fix: Error Call to a member function trans when refusing a supplier order.
 - Fix: Fix payment conditions on commercial proposals.
 - Fix: Nb of orders to process was wrong.
