@@ -61,9 +61,6 @@ if ($rowid)
 
 	// Define variables to know what current user can do on users
 	$canadduser=($user->admin || $user->rights->user->user->creer);
-	$canreadpermsuser=($user->admin || $user->rights->user->user->lire);
-	$caneditpermsuser=($user->admin || $user->rights->user->user->creer);
-	$candisablepermsuser=($user->admin || $user->rights->user->user->supprimer);
 	// Define variables to know what current user can do on properties of user linked to edited member
 	if ($adh->user_id)
 	{
@@ -82,8 +79,6 @@ if ($rowid)
 {
 	$caneditfieldmember=( (($user->id == $adh->user_id) && $user->rights->adherent->self->creer)
 		|| (($user->id != $adh->user_id) && $user->rights->adherent->creer) );
-	$caneditpasswordmember=( (($user->id == $adh->user_id) && $user->rights->adherent->self->password)
-		|| (($user->id != $adh->user_id) && $user->rights->adherent->password) );
 }
 
 
