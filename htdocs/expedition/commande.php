@@ -58,6 +58,15 @@ $error = $user->load_entrepots();
 /*
  * Actions
  */
+
+// Categorisation dans projet
+if ($_POST['action'] == 'classin')
+{
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$commande->setProject($_POST['projetid']);
+}
+
 if ($_POST["action"] == 'confirm_cloture' && $_POST["confirm"] == 'yes')
 {
 	$commande = new Commande($db);
@@ -306,7 +315,7 @@ if ($id > 0 || ! empty($ref))
 			$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->cond_reglement_id,'none');
 		}
 		print '</td></tr>';
-		
+
 		// Mode of payment
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -333,7 +342,7 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Project');
 			print '</td>';
-			if ($_GET['action'] != 'classer' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'classer')

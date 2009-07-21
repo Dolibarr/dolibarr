@@ -398,6 +398,7 @@ class CommonObject
 		$address = new Societe($this->db);
 		$result=$address->fetch_adresse_livraison($deliveryaddressid);
 		$this->deliveryaddress = $address;
+		$this->adresse = $adresse;
 		return $result;
 	}
 

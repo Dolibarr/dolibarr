@@ -54,6 +54,14 @@ $result=restrictedArea($user,'commande',$comid,'');
  *	Actions
  */
 
+// Categorisation dans projet
+if ($_POST['action'] == 'classin')
+{
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$commande->setProject($_POST['projetid']);
+}
+
 if ($_GET["action"] == 'facturee')
 {
 	$commande = new Commande($db);
@@ -316,7 +324,7 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Project');
 			print '</td>';
-			if ($_GET['action'] != 'classer' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'classer')

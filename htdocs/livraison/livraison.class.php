@@ -631,19 +631,6 @@ class Livraison extends CommonObject
 	*
 	*
 	*/
-
-	function fetch_adresse_livraison($id)
-	{
-		$idadresse = $id;
-		$adresse = new Societe($this->db);
-		$adresse->fetch_adresse_livraison($idadresse);
-		$this->adresse = $adresse;
-	}
-
-	/**
-	*
-	*
-	*/
 	function fetch_lignes()
 	{
 		$this->lignes = array();

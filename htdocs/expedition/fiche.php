@@ -282,13 +282,13 @@ if ($_GET["action"] == 'create')
 			// Date
 			print "<tr><td>".$langs->trans("Date")."</td>";
 			print '<td colspan="3">'.dol_print_date($object->date,"day")."</td></tr>\n";
-			
+
 			// Delivery address
 			print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
 			print '<td colspan="3">';
 			if (!empty($object->fk_delivery_address))
 			{
-				$expedition->fetch_adresse_livraison($object->fk_delivery_address);
+				$object->fetch_adresse_livraison($object->fk_delivery_address);
 				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$expedition->deliveryaddress->socid.'&id='.$expedition->deliveryaddress->id.'&action=edit&origin='.$origin.'&originid='.$origin_id.'>'.$expedition->deliveryaddress->label.'</a>';
 			}
 			print '</td></tr>'."\n";
@@ -343,7 +343,7 @@ if ($_GET["action"] == 'create')
 			 * Lignes de commandes
 			 *
 			 */
-			print '<br><table class="noborder" width="100%">';
+			print '<br><table class="nobordernopadding" width="100%">';
 
 			//$lignes = $object->fetch_lines(1);
 			$numAsked = sizeof($object->lignes);
@@ -647,7 +647,7 @@ else
 			print '<tr><td>'.$langs->trans("Date").'</td>';
 			print '<td colspan="3">'.dol_print_date($expedition->date,"daytext")."</td>\n";
 			print '</tr>';
-			
+
 			// Delivery address
 			print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
 			print '<td colspan="3">';
