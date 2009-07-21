@@ -987,16 +987,15 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			}
 			print "</td></tr>";
 
-			// Adresse de livraison
-			print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td>';
-			$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socid'],'adresse_livraison_id',1);
-
-			if ($numaddress==0)
+			// Delivery address
+			if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
 			{
+				// Link to edit: $html->form_adresse_livraison($_SERVER['PHP_SELF'].'?action=create','',$soc->id,'adresse_livraison_id','commande','');
+				print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td>';
+				$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socid'],'adresse_livraison_id',1);
 				print ' &nbsp; <a href="../comm/adresse_livraison.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
+				print '</td></tr>';
 			}
-
-			print '</td></tr>';
 
 			// Conditions de reglement
 			print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
@@ -1396,24 +1395,27 @@ else
 			print '</tr>';
 
 			// Delivery address
-			print '<tr><td height="10">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('DeliveryAddress');
-			print '</td>';
-
-			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="2">';
-
-			if ($_GET['action'] == 'editdelivery_adress')
+			if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
+				print '<tr><td height="10">';
+				print '<table class="nobordernopadding" width="100%"><tr><td>';
+				print $langs->trans('DeliveryAddress');
+				print '</td>';
+
+				if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+				print '</tr></table>';
+				print '</td><td colspan="2">';
+
+				if ($_GET['action'] == 'editdelivery_adress')
+				{
+					$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
+				}
+				else
+				{
+					$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
+				}
+				print '</td></tr>';
 			}
-			else
-			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
-			}
-			print '</td></tr>';
 
 			// Terms of payment
 			print '<tr><td height="10">';

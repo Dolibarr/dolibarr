@@ -284,13 +284,17 @@ if ($_GET["action"] == 'create')
 			print '<td colspan="3">'.dol_print_date($object->date,"day")."</td></tr>\n";
 
 			// Delivery address
-			print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
-			print '<td colspan="3">';
-			if (!empty($object->fk_delivery_address))
+			if (($origin == 'commande' && $conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
+				|| ($origin == 'propal' && $conf->global->PROPAL_ADD_DELIVERY_ADDRESS))
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'none','commande',$object->id);
+				print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
+				print '<td colspan="3">';
+				if (!empty($object->fk_delivery_address))
+				{
+					$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'none','commande',$object->id);
+				}
+				print '</td></tr>'."\n";
 			}
-			print '</td></tr>'."\n";
 
 			// Warehouse (id forced)
 			if ($conf->stock->enabled && $_GET["entrepot_id"])
@@ -532,6 +536,7 @@ else
 		if ($expedition->id > 0)
 		{
 			$typeobject = $expedition->origin;
+			$origin = $expedition->origin;
 			$expedition->fetch_object();
 
 			if (strlen($expedition->tracking_number))
@@ -617,24 +622,23 @@ else
 
 			// Linked documents
 			print '<tr><td>';
-			if ($conf->commande->enabled)
+			if ($origin == 'commande')
 			{
 				$order=new Commande($db);
-				$order->fetch($expedition->$typeobject->id);
+				$order->fetch($expedition->$origin->id);
 				print $langs->trans("RefOrder").'</td>';
 				print '<td colspan="3">';
 				print $order->getNomUrl(1,'commande');
-				print "</td>\n";
 			}
-			else
+			if ($origin == 'propal')
 			{
 				$propal=new Propal($db);
-				$propal->fetch($livraison->origin_id);
+				$propal->fetch($expedition->$origin->id);
 				print $langs->trans("RefProposal").'</td>';
 				print '<td colspan="3">';
 				print $propal->getNomUrl(1,'expedition');
-				print "</td>\n";
 			}
+			print "</td>\n";
 			print '</tr>';
 
 			// Ref customer
@@ -648,13 +652,17 @@ else
 			print '</tr>';
 
 			// Delivery address
-			print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
-			print '<td colspan="3">';
-			if (!empty($expedition->fk_delivery_address))
+			if (($origin == 'commande' && $conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
+				|| ($origin == 'propal' && $conf->global->PROPAL_ADD_DELIVERY_ADDRESS))
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$expedition->id,$expedition->fk_delivery_address,$expedition->deliveryaddress->socid,'none','shipment',$expedition->id);
+				print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
+				print '<td colspan="3">';
+				if (!empty($expedition->fk_delivery_address))
+				{
+					$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$expedition->id,$expedition->fk_delivery_address,$expedition->deliveryaddress->socid,'none','shipment',$expedition->id);
+				}
+				print '</td></tr>'."\n";
 			}
-			print '</td></tr>'."\n";
 
 			// Weight
 			print '<tr><td>'.$langs->trans("TotalWeight").'</td>';

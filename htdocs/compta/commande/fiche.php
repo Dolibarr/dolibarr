@@ -260,26 +260,28 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr>';
 
-
-		// Adresse de livraison
-		print '<tr><td height="10">';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('DeliveryAddress');
-		print '</td>';
-
-		if (1 == 2 && $_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="2">';
-
-		if ($_GET['action'] == 'editdelivery_adress')
+		// Delivery address
+		if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
 		{
-			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DeliveryAddress');
+			print '</td>';
+
+			if (1 == 2 && $_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+
+			if ($_GET['action'] == 'editdelivery_adress')
+			{
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
+			}
+			else
+			{
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
+			}
+			print '</td></tr>';
 		}
-		else
-		{
-			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
-		}
-		print '</td></tr>';
 
 		// Conditions et modes de règlement
 		print '<tr><td height="10">';
