@@ -698,6 +698,8 @@ extension=php_sqlite.dll
 ;extension=php_xmlrpc.dll
 ;extension=php_xsl.dll
 extension=php_zip.dll
+;extension=php_xdebug-2.0.5-5.2.dll
+
 
 ;;;;;;;;;;;;;;;;;;;
 ; Module Settings ;
@@ -1330,6 +1332,15 @@ soap.wsdl_cache_dir="/tmp"
 ; (time to live) Sets the number of second while cached file will be used 
 ; instead of original one.
 soap.wsdl_cache_ttl=86400
+
+[xdebug]
+xdebug.remote_enable=on
+xdebug.remote_handle=dbgp
+xdebug.remote_host=localhost
+xdebug.remote_port=9000
+xdebug.profiler_enable=0
+xdebug.show_local_vars=off
+xdebug.profiler_output_dir=c:/
 
 ; Local Variables:
 ; tab-width: 4
