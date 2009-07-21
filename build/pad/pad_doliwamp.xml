@@ -28,7 +28,7 @@
 			<General_Email>dolibarr@nltechno.com</General_Email>
 			<Sales_Phone />
 			<Support_Phone />
-			<General_Phone />
+			<General_Phone ></General_Phone>
 			<Fax_Phone />
 		</Support_Info>
 	</Company_Info>
