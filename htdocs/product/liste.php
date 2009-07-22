@@ -180,7 +180,7 @@ if ($resql)
 		print '<div class="warning">'.$langs->trans("ProductDeleted",$_GET['delprod']).'</div><br />';
 	}
 
-	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"];
+	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$envente;
 	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
 	$param.=isset($type)?"&amp;type=".$type:"";
 	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
@@ -361,11 +361,11 @@ if ($resql)
 		{
 			if ($sref || $snom || $sall || $sbarcode || $_POST["search"])
 			{
-				print_barre_liste('', $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
+				print_barre_liste('', $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$envente, $sortfield, $sortorder,'',$num);
 			}
 			else
 			{
-				print_barre_liste('', $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
+				print_barre_liste('', $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"")."&amp;envente=".$envente, $sortfield, $sortorder,'',$num);
 			}
 		}
 
