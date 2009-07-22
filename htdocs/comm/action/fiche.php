@@ -45,7 +45,7 @@ $socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
 $id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO: revoir les droits car pas clair
-//$result = restrictedArea($user, 'commercial', $id, 'actioncomm', 'actions', '', 'id');
+//$result = restrictedArea($user, 'agenda', $id, 'actioncomm', 'actions', '', 'id');
 
 if (isset($_GET["error"])) $error=$_GET["error"];
 
@@ -273,22 +273,26 @@ if ($_POST["action"] == 'add_action')
 
 /*
  * Action suppression de l'action
- *
  */
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
 	$actioncomm = new ActionComm($db);
 	$actioncomm->fetch($_GET["id"]);
-	$result=$actioncomm->delete();
 
-	if ($result >= 0)
+	if ($user->rights->agenda->myactions->create
+		|| $user->rights->agenda->allactions->create)
 	{
-		Header("Location: index.php");
-		exit;
-	}
-	else
-	{
-		$mesg=$actioncomm->error;
+		$result=$actioncomm->delete();
+
+		if ($result >= 0)
+		{
+			Header("Location: index.php");
+			exit;
+		}
+		else
+		{
+			$mesg=$actioncomm->error;
+		}
 	}
 }
 
@@ -644,7 +648,7 @@ if ($_GET["id"])
 	// Confirmation suppression action
 	if ($_GET["action"] == 'delete')
 	{
-		$ret=$html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete");
+		$ret=$html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -867,7 +871,7 @@ if ($_GET["id"])
 
 	print '<div class="tabsAction">';
 
-	if ($_GET["action"] != 'edit' && $_GET["action"] != 'delete')
+	if ($_GET["action"] != 'edit')
 	{
 		if ($user->rights->agenda->allactions->create)
 		{

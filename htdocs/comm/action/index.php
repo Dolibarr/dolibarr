@@ -225,14 +225,30 @@ $sql.= ' AND a.fk_user_author = u.rowid';
 $sql.= ' AND u.entity in (0,'.$conf->entity.')';
 if ($_GET["action"] == 'show_day')
 {
-	$sql.= ' AND datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
-	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year));
+	$sql.= ' AND (';
+	$sql.= ' (datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
+	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year)).')';
+	$sql.= ' OR ';
+	$sql.= ' (datep2 BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
+	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year)).')';
+	$sql.= ' OR ';
+	$sql.= ' (datep < '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
+	$sql.= ' AND datep2 > '.$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year)).')';
+	$sql.= ')';
 }
 else
 {
 	// To limit array
-    $sql.= ' AND datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));	// Start 7 days before
-    $sql.= ' AND '.$db->idate(dol_mktime(0,0,0,$month,28,$year)+(60*60*24*10));	// End 7 days after + 3 to go from 28 to 31
+	$sql.= ' AND (';
+	$sql.= ' (datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));	// Start 7 days before
+    $sql.= ' AND '.$db->idate(dol_mktime(0,0,0,$month,28,$year)+(60*60*24*10)).')';			// End 7 days after + 3 to go from 28 to 31
+	$sql.= ' OR ';
+	$sql.= ' (datep2 BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));
+	$sql.= ' AND '.$db->idate(dol_mktime(0,0,0,$month,28,$year)+(60*60*24*10)).')';
+	$sql.= ' OR ';
+	$sql.= ' (datep < '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));
+	$sql.= ' AND datep2 > '.$db->idate(dol_mktime(0,0,0,$month,28,$year)+(60*60*24*10)).')';
+	$sql.= ')';
 }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
@@ -257,6 +273,8 @@ if ($resql)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
+
+		// Create a new object action
 		$action=new ActionComm($db);
 		$action->id=$obj->id;
 		$action->datep=$obj->datep;
@@ -289,22 +307,37 @@ if ($resql)
 			$action->ponctuel=1;
 		}
 
+		if ($action->date_start_in_calendar < $firstdaytoshow) $action->date_start_in_calendar=$firstdaytoshow;
+		if ($action->date_end_in_calendar > $lastdaytoshow) $action->date_end_in_calendar=$lastdaytoshow;
+
 		// Add an entry in actionarray for each day
 		$daycursor=$action->date_start_in_calendar;
 		$annee = date('Y',$daycursor);
 		$mois = date('m',$daycursor);
 		$jour = date('d',$daycursor);
 
-		$loop=true;
+		// Loop on each day covered by action to prepare an index to show on calendar
+		$loop=true; $j=0;
 		$daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
 		do
 		{
-			$actionarray[$daykey][]=$action;
+			//if ($action->id==408) print 'daykey='.$daykey.' '.$action->datep.' '.$action->datef.'<br>';
+
+			//if ($action->datef && $action->datef == $daykey && $action->datep < $action->datef)
+			//{	// We discard such index. This means it's end of a range ending on last day + 1 at 00:00:00.
+			//}
+			//else
+			//{
+				$actionarray[$daykey][]=$action;
+				$j++;
+			//}
 			$daykey+=60*60*24;
 			if ($daykey > $action->date_end_in_calendar) $loop=false;
 		}
 		while ($loop);
 		$i++;
+
+		//print 'Event '.$i.' id='.$action->id.' (start='.dol_print_date($action->datep).'-end='.dol_print_date($action->datef).') was added in '.$j.' different index days in array<br>';
 	}
 }
 else
@@ -502,7 +535,7 @@ llxFooter('$Date$ - $Revision$');
  * @param unknown_type $maxPrint		Nb of actions to show each day on month view (0 means non limit)
  * @param unknown_type nbofchartoshow	Nb of characters to show for event line
  */
-function show_day_events($db, $day, $month, $year, $monthshown, $style, $actionarray, $maxPrint=0, $nbofchartoshow=14)
+function show_day_events($db, $day, $month, $year, $monthshown, $style, &$actionarray, $maxPrint=0, $nbofchartoshow=14)
 {
 	global $user, $conf, $langs;
 	global $filtera, $filtert, $filted;
