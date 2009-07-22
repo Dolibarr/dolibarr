@@ -998,7 +998,8 @@ class Form
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pf.fk_soc = s.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
-		$sql.= " WHERE p.envente = 1";
+		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= " AND p.envente = 1";
 		if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		if (! empty($filtre)) $sql.=" ".$filtre;
