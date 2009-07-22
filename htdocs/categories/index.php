@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005      �ric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -71,7 +71,7 @@ print '</tr>';
 print '<tr '.$bc[0].'><td>';
 print $langs->trans("Name").':</td><td><input class="flat" type="text" size="20" name="catname" value="' . $_POST['catname'] . '"/></td><td><input type="submit" class="button" value="'.$langs->trans ("Search").'"></td></tr>';
 /*
-// faire une rech dans une sous cat�gorie uniquement
+// faire une rech dans une sous categorie uniquement
 print '<tr '.$bc[0].'><td>';
 print $langs->trans("SubCatOf").':</td><td>';
 

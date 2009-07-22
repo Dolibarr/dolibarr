@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ if ($_GET["id"] || $_GET["ref"])
 		 */
 		if ($_GET['action'] == 'delete')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$c->id.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$c->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -207,12 +207,12 @@ if ($_GET["id"] || $_GET["ref"])
 		{
 			if (! empty($conf->global->MAIN_UPLOAD_DOC))
 			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/photos.php?action=ajout_photo&amp;id='.$c->id.'">';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/photos.php?action=ajout_photo&amp;id='.$c->id.'&amp;type='.$type.'">';
 				print $langs->trans("AddPhoto").'</a>';
 			}
 			else
 			{
-				print '<a class="butActionRefused" href="#">e';
+				print '<a class="butActionRefused" href="#">';
 				print $langs->trans("AddPhoto").'</a>';
 			}
 		}
@@ -226,10 +226,9 @@ if ($_GET["id"] || $_GET["ref"])
 		{
 			// Affiche formulaire upload
 			$formfile=new FormFile($db);
-			$formfile->form_attach_new_file(DOL_URL_ROOT.'/categories/photos.php?id='.$c->id,$langs->trans("AddPhoto"),1);
+			$formfile->form_attach_new_file(DOL_URL_ROOT.'/categories/photos.php?id='.$c->id.'&amp;type='.$type,$langs->trans("AddPhoto"),1);
 		}
 
-		// Affiche photos
 		// Affiche photos
 		if ($_GET["action"] != 'ajout_photo')
 		{
@@ -282,11 +281,11 @@ if ($_GET["id"] || $_GET["ref"])
 				// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
 				if (!$obj['photo_vignette'] && eregi('(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$',$obj['photo']) && ($c->imgWidth > $maxWidth || $c->imgHeight > $maxHeight))
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
 				}
 				if ($user->rights->categorie->creer)
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">';
 					print img_delete().'</a>';
 				}
 				if ($nbbyrow) print '</td>';
